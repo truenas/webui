@@ -26,7 +26,7 @@ import { EntityTableAction, EntityTableConfig } from 'app/modules/entity/entity-
 import { EntityUtils } from 'app/modules/entity/utils';
 import { VirtualMachineRow } from 'app/pages/vm/vm-list/virtual-machine-row.interface';
 import {
-  WebSocketService, StorageService, AppLoaderService, DialogService, VmService, NetworkService, SystemGeneralService,
+  WebSocketService, StorageService, AppLoaderService, DialogService, VmService, NetworkService,
 } from 'app/services';
 import { ModalService } from 'app/services/modal.service';
 import { PreferencesService } from 'app/services/preferences.service';
@@ -104,7 +104,6 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow>, On
     private messageService: MessageService,
     private prefService: PreferencesService,
     private translate: TranslateService,
-    private systemGeneralService: SystemGeneralService,
   ) {
     if (this.productType !== ProductType.Scale) {
       // TODO: Check if it can be removed

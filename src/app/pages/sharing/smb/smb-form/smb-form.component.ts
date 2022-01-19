@@ -21,7 +21,7 @@ import { FieldSet } from 'app/modules/entity/entity-form/models/fieldset.interfa
 import { forbiddenValues } from 'app/modules/entity/entity-form/validators/forbidden-values-validation';
 import { EntityUtils } from 'app/modules/entity/utils';
 import {
-  AppLoaderService, DialogService, SystemGeneralService, WebSocketService,
+  AppLoaderService, DialogService, WebSocketService,
 } from 'app/services';
 import { ModalService } from 'app/services/modal.service';
 
@@ -299,7 +299,6 @@ export class SmbFormComponent implements FormConfiguration {
     protected ws: WebSocketService,
     private dialog: DialogService,
     protected loader: AppLoaderService,
-    private sysGeneralService: SystemGeneralService,
     private modalService: ModalService,
     private translate: TranslateService,
   ) {
@@ -595,11 +594,6 @@ export class SmbFormComponent implements FormConfiguration {
         this.isTimeMachineOn = true;
       }
     }, 700);
-
-    this.sysGeneralService.getAdvancedConfig$.pipe(untilDestroyed(this)).subscribe((config) => {
-      this.isBasicMode = !config.advancedmode;
-      this.updateForm();
-    });
 
     entityForm.formGroup.controls['purpose'].valueChanges.pipe(untilDestroyed(this)).subscribe((res) => {
       this.clearPresets();

@@ -48,7 +48,7 @@ import { PreferencesService } from 'app/services/preferences.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { Theme, ThemeService } from 'app/services/theme/theme.service';
 import { WebSocketService } from 'app/services/ws.service';
-import { alertIndicatorPressed } from 'app/store/actions/topbar.actions';
+import { alertIndicatorPressed } from 'app/store/topbar/topbar.actions';
 import { AboutDialogComponent } from '../dialog/about/about-dialog.component';
 import { DirectoryServicesMonitorComponent } from '../dialog/directory-services-monitor/directory-services-monitor.component';
 import { ResilverProgressDialogComponent } from '../dialog/resilver-progress/resilver-progress.component';

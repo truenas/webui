@@ -3,6 +3,7 @@ import {
 } from '@angular/core';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
@@ -10,8 +11,10 @@ import { DeviceType } from 'app/enums/device-type.enum';
 import { Device } from 'app/interfaces/device.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
-import { SystemGeneralService, WebSocketService } from 'app/services';
+import { WebSocketService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { AppState } from 'app/store';
+import { advancedConfigUpdated } from 'app/store/system-config/system-config.actions';
 
 @UntilDestroy()
 @Component({
@@ -33,12 +36,12 @@ export class IsolatedGpuPcisFormComponent implements OnInit {
 
   constructor(
     protected ws: WebSocketService,
-    private sysGeneralService: SystemGeneralService,
     private modal: IxSlideInService,
     private fb: FormBuilder,
     private errorHandler: FormErrorHandlerService,
     private translate: TranslateService,
     private cdr: ChangeDetectorRef,
+    private store$: Store<AppState>,
   ) { }
 
   ngOnInit(): void {
@@ -92,7 +95,7 @@ export class IsolatedGpuPcisFormComponent implements OnInit {
     ).subscribe(() => {
       this.isFormLoading = false;
       this.cdr.markForCheck();
-      this.sysGeneralService.refreshSysGeneral();
+      this.store$.dispatch(advancedConfigUpdated());
       this.modal.close();
     }, (error) => {
       this.isFormLoading = false;

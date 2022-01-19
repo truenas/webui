@@ -16,14 +16,15 @@ import { SysInfoEvent } from 'app/interfaces/events/sys-info-event.interface';
 import { UserPreferencesChangedEvent } from 'app/interfaces/events/user-preferences-event.interface';
 import { SubMenuItem } from 'app/interfaces/menu-item.interface';
 import { alertPanelClosed } from 'app/modules/alerts/store/alert.actions';
-import { AlertSlice, selectIsAlertPanelOpen } from 'app/modules/alerts/store/alert.selectors';
+import { selectIsAlertPanelOpen } from 'app/modules/alerts/store/alert.selectors';
 import { WebSocketService, SystemGeneralService } from 'app/services';
 import { CoreService } from 'app/services/core-service/core.service';
 import { LayoutService } from 'app/services/layout.service';
 import { LocaleService } from 'app/services/locale.service';
 import { PreferencesService } from 'app/services/preferences.service';
 import { Theme, ThemeService } from 'app/services/theme/theme.service';
-import { adminUiInitialized } from 'app/store/actions/admin.actions';
+import { AppState } from 'app/store';
+import { selectGeneralConfig } from 'app/store/system-config/system-config.selectors';
 
 @UntilDestroy()
 @Component({
@@ -72,7 +73,7 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
     private localeService: LocaleService,
     private layoutService: LayoutService,
     private prefService: PreferencesService,
-    private store$: Store<AlertSlice>,
+    private store$: Store<AppState>,
   ) {
     // detect server type
     this.sysGeneralService.getProductType$.pipe(untilDestroyed(this)).subscribe((res) => {
@@ -145,16 +146,14 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
     }
     this.sysGeneralService.toggleSentryInit();
 
-    this.checkIfConsoleMsgShows();
-    this.sysGeneralService.refreshSysGeneral$.pipe(untilDestroyed(this)).subscribe(() => {
+    this.store$.select(selectGeneralConfig).pipe(untilDestroyed(this)).subscribe((config) => {
+      this.onShowConsoleFooterBar(config.ui_consolemsg);
       this.sysGeneralService.toggleSentryInit();
-      this.checkIfConsoleMsgShows();
     });
 
     this.isSidenavCollapsed = this.layoutService.isMenuCollapsed;
 
     this.core.emit({ name: 'SysInfoRequest', sender: this });
-    this.store$.dispatch(adminUiInitialized());
   }
 
   ngAfterViewChecked(): void {
@@ -199,12 +198,6 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
     try {
       this.footerBarScroll.nativeElement.scrollTop = this.footerBarScroll.nativeElement.scrollHeight;
     } catch (err: unknown) { }
-  }
-
-  checkIfConsoleMsgShows(): void {
-    this.sysGeneralService.getGeneralConfig$.pipe(
-      untilDestroyed(this),
-    ).subscribe((res) => this.onShowConsoleFooterBar(res.ui_consolemsg));
   }
 
   getLogConsoleMsg(): void {

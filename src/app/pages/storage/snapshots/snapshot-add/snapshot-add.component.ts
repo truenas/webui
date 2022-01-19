@@ -4,6 +4,7 @@ import {
 import { FormControl, ValidatorFn } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { format, utcToZonedTime, zonedTimeToUtc } from 'date-fns-tz';
 import { map } from 'rxjs/operators';
@@ -14,8 +15,10 @@ import { FieldConfig, FormSelectConfig } from 'app/modules/entity/entity-form/mo
 import { FieldSet } from 'app/modules/entity/entity-form/models/fieldset.interface';
 import { EntityUtils } from 'app/modules/entity/utils';
 import {
-  DialogService, SystemGeneralService, WebSocketService,
+  DialogService, WebSocketService,
 } from 'app/services';
+import { AppState } from 'app/store';
+import { selectTimezone } from 'app/store/system-config/system-config.selectors';
 
 @UntilDestroy()
 @Component({
@@ -83,8 +86,8 @@ export class SnapshotAddComponent implements AfterViewInit, FormConfiguration {
     protected route: ActivatedRoute,
     protected ws: WebSocketService,
     protected dialog: DialogService,
-    private sysGeneralService: SystemGeneralService,
     protected translate: TranslateService,
+    private store$: Store<AppState>,
   ) {
   }
 
@@ -128,7 +131,7 @@ export class SnapshotAddComponent implements AfterViewInit, FormConfiguration {
     const nameConfig = this.fieldConfig.find((config) => config.name === 'name');
     const namingSchemaControl = this.entityForm.formGroup.get('naming_schema');
 
-    this.sysGeneralService.getGeneralConfig$.pipe(untilDestroyed(this)).subscribe((res) => {
+    this.store$.select(selectTimezone).pipe(untilDestroyed(this)).subscribe((timezone) => {
       nameControl.setValue(
         'manual-' + format(
           utcToZonedTime(
@@ -136,10 +139,10 @@ export class SnapshotAddComponent implements AfterViewInit, FormConfiguration {
               new Date(),
               Intl.DateTimeFormat().resolvedOptions().timeZone,
             ),
-            res.timezone,
+            timezone,
           ),
           'yyyy-MM-dd_HH-mm',
-          { timeZone: res.timezone },
+          { timeZone: timezone },
         ),
       );
     });

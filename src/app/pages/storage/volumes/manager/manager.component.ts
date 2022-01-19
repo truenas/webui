@@ -4,6 +4,7 @@ import {
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { DatatableComponent } from '@swimlane/ngx-datatable';
 import * as filesize from 'filesize';
@@ -25,8 +26,10 @@ import { FormParagraphConfig } from 'app/modules/entity/entity-form/models/field
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { ManagerDisk } from 'app/pages/storage/volumes/manager/manager-disk.interface';
-import { DialogService, WebSocketService, SystemGeneralService } from 'app/services';
+import { DialogService, WebSocketService } from 'app/services';
 import { StorageService } from 'app/services/storage.service';
+import { AppState } from 'app/store';
+import { selectAdvancedConfig } from 'app/store/system-config/system-config.selectors';
 import { VdevComponent } from './vdev/vdev.component';
 
 @UntilDestroy()
@@ -158,7 +161,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
     public mdDialog: MatDialog,
     public translate: TranslateService,
     public sorter: StorageService,
-    private sysGeneralService: SystemGeneralService,
+    private store$: Store<AppState>,
   ) {}
 
   duplicate(): void {
@@ -306,8 +309,8 @@ export class ManagerComponent implements OnInit, AfterViewInit {
         }
       }
     });
-    this.sysGeneralService.getAdvancedConfig$.pipe(untilDestroyed(this)).subscribe((res) => {
-      this.swapondrive = res.swapondrive;
+    this.store$.select(selectAdvancedConfig).pipe(untilDestroyed(this)).subscribe((config) => {
+      this.swapondrive = config.swapondrive;
     });
     this.route.params.pipe(untilDestroyed(this)).subscribe((params) => {
       if (params['pk']) {

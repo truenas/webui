@@ -7,6 +7,7 @@ import {
 } from '@angular/forms';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { filter } from 'rxjs/operators';
 import { ServiceName } from 'app/enums/service-name.enum';
@@ -21,6 +22,9 @@ import {
   DialogService, SystemGeneralService, WebSocketService,
 } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { AppState } from 'app/store';
+import { generalConfigUpdated } from 'app/store/system-config/system-config.actions';
+import { selectGeneralConfig } from 'app/store/system-config/system-config.selectors';
 
 @UntilDestroy()
 @Component({
@@ -64,8 +68,9 @@ export class GuiFormComponent {
     private loader: AppLoaderService,
     private translate: TranslateService,
     private errorHandler: FormErrorHandlerService,
+    private store$: Store<AppState>,
   ) {
-    this.sysGeneralService.getGeneralConfig$.pipe(
+    this.store$.select(selectGeneralConfig).pipe(
       untilDestroyed(this),
     ).subscribe((config) => {
       this.configData = config;
@@ -154,7 +159,7 @@ export class GuiFormComponent {
     const httpsPortChanged = current.ui_httpsport !== changed.ui_httpsport;
     const isServiceRestartRequired = this.getIsServiceRestartRequired(current, changed);
 
-    this.sysGeneralService.refreshSysGeneral();
+    this.store$.dispatch(generalConfigUpdated());
 
     if (isServiceRestartRequired) {
       this.dialog.confirm({
