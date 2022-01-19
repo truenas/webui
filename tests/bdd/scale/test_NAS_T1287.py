@@ -128,22 +128,25 @@ def confirm_installation_is_successful(driver):
     """confirm installation is successful."""
     assert wait_on_element(driver, 10, '//div[contains(text(),"Installed Applications")]', 'clickable')
     driver.find_element_by_xpath('//div[contains(text(),"Installed Applications")]').click()
-    time.sleep(10)  # we have to wait for the page to settle down and the card to fully load
-    assert wait_on_element(driver, 7, '//strong[contains(.,"collabora-test")]')
-    assert wait_on_element(driver, 20, '//strong[contains(.,"collabora-test")]', 'clickable')
-    driver.find_element_by_xpath('//strong[contains(.,"collabora-test")]').click()
-    assert wait_on_element(driver, 5, '//*[contains(.,"Please wait")]')
-    time.sleep(1) # sometimes the please wait window opens and closes so fast that the test fails here, other times it shows for about a second 
-    #assert wait_on_element(driver, 5, '//*[contains(.,"Please wait")]')
-    #assert wait_on_element_disappear(driver, 10, '//*[contains(.,"Please wait")]')    
-
-    # refresh loop
-    while wait_on_element(driver, 10, '//strong[not(contains(text(),"Started container collabora")]'):
-        time.sleep(2)
-        assert wait_on_element(driver, 10, '//strong[contains(.,"Refresh Events")]', 'clickable')
-        driver.find_element_by_xpath('//strong[contains(.,"Refresh Events")]').click()
-    else:
-        assert wait_on_element(driver, 10, '//span[contains(.,"Close")]', 'clickable')
-        driver.find_element_by_xpath('//span[contains(.,"Close")]').click()
-        time.sleep(1) #wait for popup to close
-        assert wait_on_element(driver, 20, '//span[@class="status active"]')
+    time.sleep(2)  # we have to wait for the page to settle down and the card to fully load
+    if wait_on_element(driver, 20, '//mat-card[contains(.,"collabora-test")]//span[@class="status other"]')
+        assert wait_on_element(driver, 20, '//strong[contains(.,"collabora-test")]')
+        assert wait_on_element(driver, 20, '//strong[contains(.,"collabora-test")]', 'clickable')
+        driver.find_element_by_xpath('//strong[contains(.,"collabora-test")]').click()
+        assert wait_on_element(driver, 5, '//*[contains(.,"Please wait")]')
+        # sometimes the please wait window opens and closes so fast that the test fails here, other times it shows for about a second 
+        time.sleep(1) 
+        #assert wait_on_element(driver, 5, '//*[contains(.,"Please wait")]')
+        #assert wait_on_element_disappear(driver, 10, '//*[contains(.,"Please wait")]')    
+        # refresh loop
+        while wait_on_element(driver, 10, '//strong[not(contains(text(),"Started container collabora")]'):
+            time.sleep(2)
+            assert wait_on_element(driver, 10, '//strong[contains(.,"Refresh Events")]', 'clickable')
+            driver.find_element_by_xpath('//strong[contains(.,"Refresh Events")]').click()
+        else:
+            assert wait_on_element(driver, 10, '//span[contains(.,"Close")]', 'clickable')
+            driver.find_element_by_xpath('//span[contains(.,"Close")]').click()
+            time.sleep(1) #wait for popup to close
+            assert wait_on_element(driver, 20, '//mat-card[contains(.,"collabora-test")]//span[@class="status active"]')
+    else
+        assert wait_on_element(driver, 20, '//mat-card[contains(.,"collabora-test")]//span[@class="status active"]')
