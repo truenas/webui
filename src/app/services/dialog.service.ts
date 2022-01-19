@@ -14,7 +14,7 @@ import { ErrorDialogComponent } from 'app/pages/common/error-dialog/error-dialog
 import { GeneralDialogComponent, GeneralDialogConfig } from 'app/pages/common/general-dialog/general-dialog.component';
 import { InfoDialogComponent } from 'app/pages/common/info-dialog/info-dialog.component';
 import { SelectDialogComponent } from 'app/pages/common/select-dialog/select-dialog.component';
-import { AppLoaderService } from './app-loader/app-loader.service';
+import { AppLoaderService } from '../modules/app-loader/app-loader.service';
 import { WebSocketService } from './ws.service';
 
 @UntilDestroy()

@@ -10,8 +10,8 @@ export interface ReportingRealtimeUpdate {
 export interface AllCpusUpdate {
   [cpuNumber: number]: CpuUpdate;
   average: CpuUpdate;
-  temperature: any;
-  temperature_celsius: any;
+  temperature: number[];
+  temperature_celsius: number[];
 }
 
 export interface CpuUpdate {

@@ -10,6 +10,7 @@ import { helptextSystemCa } from 'app/helptext/system/ca';
 import { helptextSystemCertificates } from 'app/helptext/system/certificates';
 import { Certificate, CertificateProfile } from 'app/interfaces/certificate.interface';
 import { WizardConfiguration } from 'app/interfaces/entity-wizard.interface';
+import { AppLoaderService } from 'app/modules/app-loader/app-loader.service';
 import { FieldConfig, FormSelectConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
 import { RelationAction } from 'app/modules/entity/entity-form/models/relation-action.enum';
 import { RelationConnection } from 'app/modules/entity/entity-form/models/relation-connection.enum';
@@ -18,7 +19,6 @@ import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.com
 import { EntityWizardComponent } from 'app/modules/entity/entity-wizard/entity-wizard.component';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { SystemGeneralService, WebSocketService } from 'app/services';
-import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { DialogService } from 'app/services/dialog.service';
 import { ModalService } from 'app/services/modal.service';
 
@@ -712,9 +712,8 @@ export class CertificateAddComponent implements WizardConfiguration {
   }
 
   getSummaryValueLabel(fieldConfig: FieldConfig, value: any): any {
-    if (fieldConfig.type == 'select') {
-      const selectConfig: FormSelectConfig = fieldConfig;
-      const option = selectConfig.options.find((option) => option.value == value);
+    if (fieldConfig.type === 'select') {
+      const option = fieldConfig.options.find((option) => option.value == value);
       if (option) {
         value = option.label;
       }
@@ -734,11 +733,6 @@ export class CertificateAddComponent implements WizardConfiguration {
         this.summary[fieldConfig.placeholder] = this.getSummaryValueLabel(fieldConfig, res);
       });
     }
-  }
-
-  removeFromSummary(fieldName: string): void {
-    const fieldConfig = this.getTarget(fieldName);
-    delete this.summary[fieldConfig.placeholder];
   }
 
   setSummary(): void {
@@ -764,7 +758,7 @@ export class CertificateAddComponent implements WizardConfiguration {
     this.getField('create_type').valueChanges.pipe(untilDestroyed(this)).subscribe((res) => {
       this.wizardConfig[2].skip = false;
 
-      if (res == 'CERTIFICATE_CREATE_INTERNAL') {
+      if (res === 'CERTIFICATE_CREATE_INTERNAL') {
         this.csrFields.forEach((field) => this.hideField(field, true));
         this.importFields.forEach((field) => this.hideField(field, true));
         this.importCsrFields.forEach((field) => this.hideField(field, true));
@@ -779,7 +773,7 @@ export class CertificateAddComponent implements WizardConfiguration {
           this.setDisabled('key_length', true);
           this.hideField('ec_curve', false);
         }
-      } else if (res == 'CERTIFICATE_CREATE_CSR') {
+      } else if (res === 'CERTIFICATE_CREATE_CSR') {
         this.importFields.forEach((field) => this.hideField(field, true));
         this.importCsrFields.forEach((field) => this.hideField(field, true));
         this.internalFields.forEach((field) => this.hideField(field, true));
@@ -797,7 +791,7 @@ export class CertificateAddComponent implements WizardConfiguration {
           this.setDisabled('key_length', true);
           this.hideField('ec_curve', false);
         }
-      } else if (res == 'CERTIFICATE_CREATE_IMPORTED') {
+      } else if (res === 'CERTIFICATE_CREATE_IMPORTED') {
         this.csrFields.forEach((field) => this.hideField(field, true));
         this.importCsrFields.forEach((field) => this.hideField(field, true));
         this.internalFields.forEach((field) => this.hideField(field, true));
@@ -814,7 +808,7 @@ export class CertificateAddComponent implements WizardConfiguration {
         }
 
         this.wizardConfig[2].skip = true;
-      } else if (res == 'CERTIFICATE_CREATE_IMPORTED_CSR') {
+      } else if (res === 'CERTIFICATE_CREATE_IMPORTED_CSR') {
         this.csrFields.forEach((field) => this.hideField(field, true));
         this.importFields.forEach((field) => this.hideField(field, true));
         this.internalFields.forEach((field) => this.hideField(field, true));

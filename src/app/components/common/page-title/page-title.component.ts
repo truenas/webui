@@ -1,15 +1,15 @@
 import {
-  AfterViewInit, Component, Input, OnDestroy, OnInit, ViewChild,
+  AfterViewInit, Component, Input, OnDestroy, OnInit, Type, ViewChild,
 } from '@angular/core';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { filter } from 'rxjs/operators';
 import { ViewControllerComponent } from 'app/core/components/view-controller/view-controller.component';
-import { CoreService } from 'app/core/services/core-service/core.service';
 import { ProductType } from 'app/enums/product-type.enum';
 import { GlobalActionsEvent } from 'app/interfaces/events/global-actions-event.interface';
 import { PseudoRouteChangeEvent } from 'app/interfaces/events/pseudo-route-change-event.interface';
 import { GlobalAction, GlobalActionConfig } from 'app/interfaces/global-action.interface';
+import { CoreService } from 'app/services/core-service/core.service';
 import { LocaleService } from 'app/services/locale.service';
 import { PageTitleService } from 'app/services/page-title.service';
 import { RoutePart, RoutePartsService } from 'app/services/route-parts/route-parts.service';
@@ -129,7 +129,7 @@ export class PageTitleComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     this.viewcontroller.layoutContainer = { layout: 'row', align: 'end center', gap: '2px' };
-    this.globalActions = this.viewcontroller.create(config.actionType);
+    this.globalActions = this.viewcontroller.create(config.actionType as Type<any>);
 
     if (!this.globalActions.applyConfig) {
       throw new Error('Components must implement GlobalAction Interface');

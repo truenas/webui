@@ -16,6 +16,8 @@ import helptext from 'app/helptext/storage/volumes/zvol-form';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { Option } from 'app/interfaces/option.interface';
+import { QueryFilter } from 'app/interfaces/query-api.interface';
+import { AppLoaderService } from 'app/modules/app-loader/app-loader.service';
 import { EntityFormComponent } from 'app/modules/entity/entity-form/entity-form.component';
 import {
   FieldConfig,
@@ -26,7 +28,6 @@ import { FieldSet } from 'app/modules/entity/entity-form/models/fieldset.interfa
 import { forbiddenValues } from 'app/modules/entity/entity-form/validators/forbidden-values-validation';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { StorageService, WebSocketService } from 'app/services';
-import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { DialogService } from 'app/services/dialog.service';
 import { ModalService } from 'app/services/modal.service';
 
@@ -58,7 +59,7 @@ export class ZvolFormComponent implements FormConfiguration {
   isEntity = true;
   parent: string;
   volid: string;
-  customFilter: any[] = [];
+  customFilter: [[QueryFilter<unknown>]?] = [];
   edit_data: any;
   protected entityForm: EntityFormComponent;
   minimum_recommended_zvol_volblocksize: string;

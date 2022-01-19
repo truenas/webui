@@ -9,9 +9,6 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { UUID } from 'angular2-uuid';
 import { ConsolePanelDialogComponent } from 'app/components/common/dialog/console-panel/console-panel-dialog.component';
-import { CoreService } from 'app/core/services/core-service/core.service';
-import { LayoutService } from 'app/core/services/layout.service';
-import { PreferencesService } from 'app/core/services/preferences.service';
 import { ProductType } from 'app/enums/product-type.enum';
 import { ForceSidenavEvent } from 'app/interfaces/events/force-sidenav-event.interface';
 import { SidenavStatusEvent } from 'app/interfaces/events/sidenav-status-event.interface';
@@ -21,7 +18,10 @@ import { SubMenuItem } from 'app/interfaces/menu-item.interface';
 import { alertPanelClosed } from 'app/modules/alerts/store/alert.actions';
 import { AlertSlice, selectIsAlertPanelOpen } from 'app/modules/alerts/store/alert.selectors';
 import { WebSocketService, SystemGeneralService } from 'app/services';
+import { CoreService } from 'app/services/core-service/core.service';
+import { LayoutService } from 'app/services/layout.service';
 import { LocaleService } from 'app/services/locale.service';
+import { PreferencesService } from 'app/services/preferences.service';
 import { Theme, ThemeService } from 'app/services/theme/theme.service';
 import { adminUiInitialized } from 'app/store/actions/admin.actions';
 
@@ -163,8 +163,8 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
 
   updateSidenav(force?: 'open' | 'close'): void {
     if (force) {
-      this.isSidenavOpen = force == 'open';
-      if (force == 'close') {
+      this.isSidenavOpen = force === 'open';
+      if (force === 'close') {
         this.layoutService.isMenuCollapsed = false;
       }
       return;
@@ -187,9 +187,9 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
 
   get sidenavWidth(): string {
     const iconified = this.layoutService.isMenuCollapsed;
-    if (this.isSidenavOpen && iconified && this.sidenavMode == 'side') {
+    if (this.isSidenavOpen && iconified && this.sidenavMode === 'side') {
       return '48px';
-    } if (this.isSidenavOpen && !iconified && this.sidenavMode == 'side') {
+    } if (this.isSidenavOpen && !iconified && this.sidenavMode === 'side') {
       return '240px';
     }
     return '0px';

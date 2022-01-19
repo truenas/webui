@@ -11,8 +11,10 @@ import { IdmapName } from 'app/enums/idmap-name.enum';
 import helptext from 'app/helptext/directory-service/dashboard';
 import idmapHelptext from 'app/helptext/directory-service/idmap';
 import { Idmap } from 'app/interfaces/idmap.interface';
+import { KerberosKeytab } from 'app/interfaces/kerberos-config.interface';
 import { KerberosRealm } from 'app/interfaces/kerberos-realm.interface';
 import { Option } from 'app/interfaces/option.interface';
+import { AppLoaderService } from 'app/modules/app-loader/app-loader.service';
 import { EmptyConfig } from 'app/modules/entity/entity-empty/entity-empty.component';
 import { AppTableConfig } from 'app/modules/entity/table/table.component';
 import { ActiveDirectoryComponent } from 'app/pages/directory-service/components/active-directory/active-directory.component';
@@ -22,7 +24,6 @@ import { requiredIdmapDomains } from 'app/pages/directory-service/utils/required
 import {
   DialogService, IdmapService, WebSocketService,
 } from 'app/services';
-import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { ModalService } from 'app/services/modal.service';
 import { IdmapFormComponent } from './components/idmap/idmap-form.component';
@@ -157,7 +158,7 @@ export class DirectoryServicesComponent implements OnInit {
     add: () => {
       this.onCardButtonPressed(DirectoryServicesCardId.KerberosKeytab);
     },
-    edit: (row) => {
+    edit: (row: KerberosKeytab) => {
       this.onCardButtonPressed(DirectoryServicesCardId.KerberosKeytab, row.id);
     },
   };

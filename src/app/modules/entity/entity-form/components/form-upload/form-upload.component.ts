@@ -6,9 +6,9 @@ import { FormGroup } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
+import { AppLoaderService } from 'app/modules/app-loader/app-loader.service';
 import { FormUploadConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
 import { WebSocketService, DialogService } from 'app/services';
-import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 
 @UntilDestroy()
 @Component({

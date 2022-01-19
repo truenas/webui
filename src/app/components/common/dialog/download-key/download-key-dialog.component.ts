@@ -4,12 +4,12 @@ import { MatDialogRef } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import helptext from 'app/helptext/storage/volumes/download-key';
+import { AppLoaderService } from 'app/modules/app-loader/app-loader.service';
 import { EntityUtils } from 'app/modules/entity/utils';
 import {
   WebSocketService,
   StorageService, DialogService,
 } from 'app/services';
-import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 
 @UntilDestroy()
 @Component({
@@ -36,7 +36,7 @@ export class DownloadKeyDialogComponent {
   ) { }
 
   downloadKey(): void {
-    const payload: any[] = [this.volumeId];
+    const payload: [volumeId: number, fileName?: string] = [this.volumeId];
     if (this.fileName !== undefined) {
       payload.push(this.fileName);
     }

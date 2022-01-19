@@ -1,4 +1,4 @@
-import { ApplicationRef, Component, Injector } from '@angular/core';
+import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { ExplorerType } from 'app/enums/explorer-type.enum';
@@ -107,8 +107,6 @@ export class ServiceTftpComponent implements FormConfiguration {
     protected router: Router,
     protected route: ActivatedRoute,
     protected ws: WebSocketService,
-    protected _injector: Injector,
-    protected _appRef: ApplicationRef,
     protected userService: UserService,
   ) {}
 

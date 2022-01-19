@@ -5,7 +5,6 @@ import { TranslateService } from '@ngx-translate/core';
 import * as ipRegex from 'ip-regex';
 import { Subject, combineLatest } from 'rxjs';
 import { filter } from 'rxjs/operators';
-import { ViewControllerComponent } from 'app/core/components/view-controller/view-controller.component';
 import { NetworkActivityType } from 'app/enums/network-activity-type.enum';
 import { NetworkInterfaceType } from 'app/enums/network-interface.enum';
 import { ProductType } from 'app/enums/product-type.enum';
@@ -32,6 +31,7 @@ import {
   StorageService,
   WebSocketService,
 } from 'app/services';
+import { CoreService } from 'app/services/core-service/core.service';
 import { IpmiService } from 'app/services/ipmi.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { ModalService } from 'app/services/modal.service';
@@ -49,7 +49,7 @@ import { OpenvpnServerComponent } from './forms/service-openvpn-server.component
   templateUrl: './network.component.html',
   styleUrls: ['./network.component.scss'],
 })
-export class NetworkComponent extends ViewControllerComponent implements OnInit, OnDestroy {
+export class NetworkComponent implements OnInit, OnDestroy {
   protected summaryCall = 'network.general.summary' as const;
   protected configCall = 'network.configuration.config' as const;
   formEvent$: Subject<CoreEvent>;
@@ -217,8 +217,8 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
     private tableService: TableService,
     private ipmiService: IpmiService,
     private slideInService: IxSlideInService,
+    private core: CoreService,
   ) {
-    super();
     this.getGlobalSettings();
     this.navigation = this.router.getCurrentNavigation();
   }

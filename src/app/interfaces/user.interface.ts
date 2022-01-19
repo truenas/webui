@@ -33,7 +33,7 @@ export interface UserGroup {
   bsdgrp_builtin: boolean;
   bsdgrp_sudo: boolean;
   bsdgrp_sudo_nopasswd: boolean;
-  bsdgrp_sudo_commands: { [property: string]: any }[];
+  bsdgrp_sudo_commands: { [property: string]: unknown }[];
   bsdgrp_smb: boolean;
 }
 

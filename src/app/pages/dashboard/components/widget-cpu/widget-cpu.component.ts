@@ -22,7 +22,8 @@ import { ViewChartBarComponent } from 'app/modules/charts/components/view-chart-
 import { GaugeConfig, ViewChartGaugeComponent } from 'app/modules/charts/components/view-chart-gauge/view-chart-gauge.component';
 import { WidgetComponent } from 'app/pages/dashboard/components/widget/widget.component';
 import { WidgetCpuData } from 'app/pages/dashboard/interfaces/widget-data.interface';
-import { Theme } from 'app/services/theme/theme.service';
+import { CoreService } from 'app/services/core-service/core.service';
+import { Theme, ThemeService } from 'app/services/theme/theme.service';
 
 @UntilDestroy()
 @Component({
@@ -78,6 +79,8 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
     public translate: TranslateService,
     public mediaObserver: MediaObserver,
     private el: ElementRef<HTMLElement>,
+    public themeService: ThemeService,
+    public core: CoreService,
   ) {
     super(translate);
 
@@ -146,7 +149,7 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
   parseCpuData(cpuData: AllCpusUpdate): (string | number)[][] {
     this.tempAvailable = Boolean(cpuData.temperature && Object.keys(cpuData.temperature).length > 0);
     const usageColumn: (string | number)[] = ['Usage'];
-    let temperatureColumn: string[] = ['Temperature'];
+    let temperatureColumn: (string | number)[] = ['Temperature'];
     const temperatureValues = [];
 
     // Filter out stats per thread
@@ -326,12 +329,6 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
   coresChartInit(): void {
     this.currentTheme = this.themeService.currentTheme();
     this.renderChart();
-  }
-
-  coresChartUpdate(): void {
-    this.chart.load({
-      columns: this.cpuData.data,
-    });
   }
 
   protected makeDatasets(data: (string | number)[][]): ChartDataSets[] {

@@ -152,7 +152,7 @@ export class SystemProfiler {
 
   private parseSensorData(obj: Sensor[]): void {
     const powerStatus = obj.filter((v) => v.name.startsWith('PS'));
-    if (this.enclosures[this.headIndex] && this.enclosures[this.headIndex].model == 'M Series') {
+    if (this.enclosures[this.headIndex] && this.enclosures[this.headIndex].model === 'M Series') {
       const elements = powerStatus.map((item) => {
         const status = item.value == 1 ? 'OK' : 'FAILED';
         return {
@@ -196,12 +196,12 @@ export class SystemProfiler {
 
       const stats: { [name: string]: VDevStats } = {}; // Store stats from pool.query disk info
 
-      if (vdev.children.length == 0 && vdev.device) {
+      if (vdev.children.length === 0 && vdev.device) {
         const name = vdev.disk;
         v.disks[name] = -1; // no children so we use this as placeholder
       } else if (vdev.children.length > 0) {
         vdev.children.forEach((disk, dIndex) => {
-          if (disk.device && disk.status != 'REMOVED') {
+          if (disk.device && disk.status !== 'REMOVED') {
             const name = disk.disk;
             v.disks[name] = dIndex;
             stats[name] = disk.stats;
@@ -302,12 +302,12 @@ export class SystemProfiler {
         result = index;
       }
     });
-    return typeof result == 'undefined' ? -1 : result;
+    return typeof result === 'undefined' ? -1 : result;
   }
 
   getEnclosureExpanders(index: number): EnclosureElement[] | EnclosureElementsGroup[] {
     if (this.rearIndex && index == this.rearIndex) { index = this.headIndex; }
-    const raw = this.enclosures[index].elements.filter((item) => item.name == 'SAS Expander');
+    const raw = this.enclosures[index].elements.filter((item) => item.name === 'SAS Expander');
 
     if (raw.length > 0) {
       return raw[0].elements;

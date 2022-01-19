@@ -4,17 +4,12 @@ import {
 import { NgForm } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
 import { IxObject } from 'app/core/classes/ix-object';
-import { CoreServiceInjector } from 'app/core/services/core-service-injector';
-import { CoreService } from 'app/core/services/core-service/core.service';
-import { ThemeService } from 'app/services/theme/theme.service';
 
 @Component({
   selector: 'widget',
   templateUrl: './widget.component.html',
 })
 export class WidgetComponent extends IxObject {
-  protected core: CoreService;
-  themeService: ThemeService;
   @Input() widgetSize: string;
   @Input() rendered?: boolean = true;
   @Input() configurable = false;
@@ -27,10 +22,10 @@ export class WidgetComponent extends IxObject {
   flipDirection = 'vertical';
   isFlipped = false;
 
-  constructor(public translate: TranslateService) {
+  constructor(
+    public translate: TranslateService,
+  ) {
     super();
-    this.core = CoreServiceInjector.get(CoreService);
-    this.themeService = CoreServiceInjector.get(ThemeService);
   }
 
   toggleConfig(): void {

@@ -3,7 +3,6 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
 import { of, Subject } from 'rxjs';
-import { PreferencesService } from 'app/core/services/preferences.service';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { Preferences } from 'app/interfaces/preferences.interface';
 import { User } from 'app/interfaces/user.interface';
@@ -11,7 +10,8 @@ import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxTableModule } from 'app/modules/ix-tables/ix-table.module';
 import { IxTableHarness } from 'app/modules/ix-tables/testing/ix-table.harness';
 import { DialogService, ModalService, WebSocketService } from 'app/services';
-import { CoreService } from '../../../../core/services/core-service/core.service';
+import { PreferencesService } from 'app/services/preferences.service';
+import { CoreService } from '../../../../services/core-service/core.service';
 import { UserListDetailsComponent } from '../user-list-details/user-list-details.component';
 import { UserListComponent } from './user-list.component';
 

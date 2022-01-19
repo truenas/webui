@@ -8,9 +8,9 @@ import { TranslateService } from '@ngx-translate/core';
 import { Subject } from 'rxjs';
 import { CoreEvent } from 'app/interfaces/events';
 import { GlobalAction } from 'app/interfaces/global-action.interface';
+import { AppLoaderService } from 'app/modules/app-loader/app-loader.service';
 import { ToolbarConfig } from 'app/modules/entity/entity-toolbar/models/control-config.interface';
 import { Control } from 'app/modules/entity/entity-toolbar/models/control.interface';
-import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 
 @UntilDestroy()
 @Component({

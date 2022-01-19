@@ -55,15 +55,15 @@ def on_the_dashboard_click_on_the_accounts_on_the_side_menu_click_on_users(drive
 def the_users_page_should_open_click_the_greaterthansign_right_of_the_users(driver):
     """the Users page should open, click the Greater-Than-Sign right of the users."""
     assert wait_on_element(driver, 7, '//div[contains(.,"Users")]')
-    assert wait_on_element(driver, 10, '//tbody/tr[@id="ericbsd"]/td[5]/mat-icon[1]', 'clickable')
-    driver.find_element_by_xpath('//tbody/tr[@id="ericbsd"]/td[5]/mat-icon[1]').click()
+    assert wait_on_element(driver, 10, '//tr[contains(.,"ericbsd")]//mat-icon', 'clickable')
+    driver.find_element_by_xpath('//tr[contains(.,"ericbsd")]//mat-icon').click()
 
 
 @then('the User Field should expand down, click the Edit button')
 def the_user_field_should_expand_down_click_the_edit_button(driver):
     """the User Field should expand down, click the Edit button."""
-    assert wait_on_element(driver, 10, '//button[@ix-auto="button__EDIT_ericbsd"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__EDIT_ericbsd"]').click()
+    assert wait_on_element(driver, 10, '(//tr[contains(.,"ericbsd")]/following-sibling::tr)[1]//button[contains(.,"Edit")]', 'clickable')
+    driver.find_element_by_xpath('(//tr[contains(.,"ericbsd")]/following-sibling::tr)[1]//button[contains(.,"Edit")]').click()
 
 
 @then('the User Edit Page should open, change some permissions for the Home Directory and click save')
@@ -87,10 +87,10 @@ def reopen_the_user_edit_page_and_verify_all_permissions_are_save_properly(drive
     """reopen the user edit page and verify all permissions are save properly."""
     assert wait_on_element_disappear(driver, 60, '//h6[contains(.,"Please wait")]')
     assert wait_on_element(driver, 7, '//div[contains(.,"Users")]')
-    assert wait_on_element(driver, 10, '//tbody/tr[@id="ericbsd"]/td[5]/mat-icon[1]', 'clickable')
-    driver.find_element_by_xpath('//tbody/tr[@id="ericbsd"]/td[5]/mat-icon[1]').click()
-    assert wait_on_element(driver, 10, '//button[@ix-auto="button__EDIT_ericbsd"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__EDIT_ericbsd"]').click()
+    assert wait_on_element(driver, 10, '//tr[contains(.,"ericbsd")]//mat-icon', 'clickable')
+    driver.find_element_by_xpath('//tr[contains(.,"ericbsd")]//mat-icon').click()
+    assert wait_on_element(driver, 10, '(//tr[contains(.,"ericbsd")]/following-sibling::tr)[1]//button[contains(.,"Edit")]', 'clickable')
+    driver.find_element_by_xpath('(//tr[contains(.,"ericbsd")]/following-sibling::tr)[1]//button[contains(.,"Edit")]').click()
     assert wait_on_element(driver, 10, '//h3[contains(.,"Edit User")]')
     assert wait_on_element_disappear(driver, 10, '//h6[contains(.,"Please wait")]')
     time.sleep(1)

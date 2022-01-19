@@ -8,7 +8,6 @@ import { TranslateService } from '@ngx-translate/core';
 import {
   catchError, filter, switchMap, tap,
 } from 'rxjs/operators';
-import { CoreService } from 'app/core/services/core-service/core.service';
 import { JobState } from 'app/enums/job-state.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { SystemUpdateOperationType, SystemUpdateStatus } from 'app/enums/system-update.enum';
@@ -17,6 +16,7 @@ import { helptextSystemUpdate as helptext } from 'app/helptext/system/update';
 import { ApiMethod } from 'app/interfaces/api-directory.interface';
 import { SysInfoEvent, SystemInfoWithFeatures } from 'app/interfaces/events/sys-info-event.interface';
 import { SystemUpdateTrain } from 'app/interfaces/system-update.interface';
+import { AppLoaderService } from 'app/modules/app-loader/app-loader.service';
 import { DialogFormConfiguration } from 'app/modules/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/modules/entity/entity-dialog/entity-dialog.component';
 import { FieldConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
@@ -24,7 +24,7 @@ import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.com
 import { EntityUtils } from 'app/modules/entity/utils';
 import { ConfirmDialogComponent } from 'app/pages/common/confirm-dialog/confirm-dialog.component';
 import { StorageService, SystemGeneralService, WebSocketService } from 'app/services';
-import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
+import { CoreService } from 'app/services/core-service/core.service';
 import { DialogService } from 'app/services/dialog.service';
 
 @UntilDestroy()
@@ -77,6 +77,8 @@ export class UpdateComponent implements OnInit {
   train_version: string = null;
   updateTitle = this.translate.instant('Update');
   private savedConfiguration = false;
+
+  readonly clickForInformationLink = helptext.clickForInformationLink;
 
   protected saveConfigFieldConf: FieldConfig[] = [
     {

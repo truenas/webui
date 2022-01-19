@@ -9,6 +9,7 @@ import { helptextSystemCertificates } from 'app/helptext/system/certificates';
 import { Certificate } from 'app/interfaces/certificate.interface';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { QueryFilter } from 'app/interfaces/query-api.interface';
+import { AppLoaderService } from 'app/modules/app-loader/app-loader.service';
 import { EntityFormComponent } from 'app/modules/entity/entity-form/entity-form.component';
 import {
   FieldConfig, FormListConfig, FormParagraphConfig, FormSelectConfig,
@@ -18,7 +19,6 @@ import { EntityFormService } from 'app/modules/entity/entity-form/services/entit
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { WebSocketService, DialogService } from 'app/services';
-import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { ModalService } from 'app/services/modal.service';
 
 @UntilDestroy()

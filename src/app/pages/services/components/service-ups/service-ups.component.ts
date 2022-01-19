@@ -1,4 +1,4 @@
-import { ApplicationRef, Component, Injector } from '@angular/core';
+import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { UpsMode } from 'app/enums/ups-mode.enum';
@@ -240,8 +240,6 @@ export class ServiceUpsComponent implements FormConfiguration {
     protected router: Router,
     protected route: ActivatedRoute,
     protected ws: WebSocketService,
-    protected _injector: Injector,
-    protected _appRef: ApplicationRef,
   ) {}
 
   afterInit(entityForm: EntityFormComponent): void {

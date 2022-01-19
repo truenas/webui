@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
+import { AppLoaderService } from 'app/modules/app-loader/app-loader.service';
 import { WebSocketService } from 'app/services/';
-import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { DialogService } from 'app/services/dialog.service';
 
 @Component({

@@ -9,6 +9,7 @@ import helptext from 'app/helptext/network/ipmi/ipmi';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { Ipmi, IpmiUpdate } from 'app/interfaces/ipmi.interface';
 import { QueryParams } from 'app/interfaces/query-api.interface';
+import { AppLoaderService } from 'app/modules/app-loader/app-loader.service';
 import { EntityFormComponent } from 'app/modules/entity/entity-form/entity-form.component';
 import { FieldConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/modules/entity/entity-form/models/fieldset.interface';
@@ -16,7 +17,6 @@ import { RelationAction } from 'app/modules/entity/entity-form/models/relation-a
 import { ipv4Validator } from 'app/modules/entity/entity-form/validators/ip-validation';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { DialogService, WebSocketService } from 'app/services';
-import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { IpmiService } from 'app/services/ipmi.service';
 
 @UntilDestroy()

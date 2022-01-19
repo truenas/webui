@@ -13,6 +13,7 @@ import { KeychainCredential } from 'app/interfaces/keychain-credential.interface
 import { QueryFilter } from 'app/interfaces/query-api.interface';
 import { SshConnectionSetup } from 'app/interfaces/ssh-connection-setup.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
+import { AppLoaderService } from 'app/modules/app-loader/app-loader.service';
 import { EntityFormComponent } from 'app/modules/entity/entity-form/entity-form.component';
 import { FieldConfig, FormSelectConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/modules/entity/entity-form/models/fieldset.interface';
@@ -22,7 +23,6 @@ import { EntityUtils } from 'app/modules/entity/utils';
 import {
   KeychainCredentialService, WebSocketService, DialogService, ReplicationService,
 } from 'app/services';
-import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { ModalService } from 'app/services/modal.service';
 
 @UntilDestroy()

@@ -7,7 +7,6 @@ import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
-import { PreferencesService } from 'app/core/services/preferences.service';
 import { ProductType } from 'app/enums/product-type.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { VmBootloader, VmDeviceType } from 'app/enums/vm.enum';
@@ -30,6 +29,7 @@ import {
   WebSocketService, StorageService, AppLoaderService, DialogService, VmService, NetworkService, SystemGeneralService,
 } from 'app/services';
 import { ModalService } from 'app/services/modal.service';
+import { PreferencesService } from 'app/services/preferences.service';
 import { VmWizardComponent } from '../vm-wizard/vm-wizard.component';
 
 @UntilDestroy()

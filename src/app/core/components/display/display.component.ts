@@ -54,7 +54,7 @@ export class DisplayComponent<T = unknown> {
 
   getChild(instance: T): ComponentRef<T> {
     for (const item of this.children) {
-      if (item.instance == instance) {
+      if (item.instance === instance) {
         return item;
       }
     }

@@ -21,7 +21,6 @@ import { ServiceSshComponent } from 'app/pages/services/components/service-ssh/s
 import { ServiceTftpComponent } from 'app/pages/services/components/service-tftp/service-tftp.component';
 import { ServiceUpsComponent } from 'app/pages/services/components/service-ups/service-ups.component';
 import { ServiceWebdavComponent } from 'app/pages/services/components/service-webdav/service-webdav.component';
-import { AppConfirmModule } from 'app/services/app-confirm/app-confirm.module';
 import { EntityModule } from '../../modules/entity/entity.module';
 import { ServiceSmartComponent } from './components/service-smart/service-smart.component';
 import { ServicesComponent } from './services.component';
@@ -34,7 +33,6 @@ import { routing } from './services.routing';
     EntityModule,
     routing,
     MaterialModule,
-    AppConfirmModule,
     TranslateModule,
     CommonDirectivesModule,
     IxFormsModule,

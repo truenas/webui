@@ -8,7 +8,6 @@ import {
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { Subject, BehaviorSubject, forkJoin } from 'rxjs';
-import { CoreService } from 'app/core/services/core-service/core.service';
 import { ReportTab } from 'app/enums/report-tab.enum';
 import { CoreEvent } from 'app/interfaces/events';
 import {
@@ -24,6 +23,7 @@ import {
   SystemGeneralService,
   WebSocketService,
 } from 'app/services';
+import { CoreService } from 'app/services/core-service/core.service';
 import { ErdService } from 'app/services/erd.service';
 import { ModalService } from 'app/services/modal.service';
 import { Report } from './components/report/report.component';
