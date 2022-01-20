@@ -16,7 +16,6 @@ import { LocaleService } from 'app/services/locale.service';
 })
 export default class WidgetHelpComponent extends WidgetComponent implements OnInit {
   copyrightYear = this.localeService.getCopyrightYearFromBuildTime();
-  extraMsg: boolean;
   systemType: ProductType;
   helptext = helptext;
   readonly ProductType = ProductType;
