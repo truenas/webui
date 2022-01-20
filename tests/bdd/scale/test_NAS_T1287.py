@@ -139,7 +139,7 @@ def confirm_installation_is_successful(driver):
         #assert wait_on_element(driver, 5, '//*[contains(.,"Please wait")]')
         #assert wait_on_element_disappear(driver, 10, '//*[contains(.,"Please wait")]')    
         # refresh loop
-        while wait_on_element(driver, 10, '//strong[not(contains(text(),"Started container collabora")]'):
+        while is_element_present(driver, '//strong[contains(text(),"Started container collabora")]') is False:
             time.sleep(2)
             assert wait_on_element(driver, 10, '//strong[contains(.,"Refresh Events")]', 'clickable')
             driver.find_element_by_xpath('//strong[contains(.,"Refresh Events")]').click()
