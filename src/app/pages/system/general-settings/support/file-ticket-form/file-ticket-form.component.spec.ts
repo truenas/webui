@@ -6,6 +6,7 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { of, Subject } from 'rxjs';
 import { JobsManagerModule } from 'app/components/common/dialog/jobs-manager/jobs-manager.module';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
+import { JobState } from 'app/enums/job-state.enum';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
@@ -50,6 +51,16 @@ describe('FileTicketFormComponent', () => {
         }),
         call: jest.fn((method) => {
           switch (method) {
+            case 'core.get_jobs':
+              return of([{
+                id: 1,
+                method: 'support.new_ticket',
+                progress: {
+                  percent: 99,
+                  description: 'progress description',
+                },
+                state: JobState.Running,
+              }]);
             case 'support.fetch_categories':
               return of({
                 API: '11008',

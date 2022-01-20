@@ -109,7 +109,7 @@ describe('JobItemComponent', () => {
     });
     jest.spyOn(spectator.component.opened, 'emit').mockImplementation();
 
-    spectator.click(spectator.query('.job-clickable'));
+    spectator.click(spectator.query('.job-item-body'));
 
     expect(spectator.component.opened.emit).toHaveBeenCalledTimes(1);
   });
