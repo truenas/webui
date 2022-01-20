@@ -6,7 +6,6 @@
         <mat-icon *ngIf="systemType === ProductType.Enterprise" svgIcon="truenas_enterprise_logo_full" class="logo" alt="TrueNAS ENTERPRISE logo"></mat-icon>
         <mat-icon *ngIf="systemType === ProductType.Scale || systemType === ProductType.ScaleEnterprise" svgIcon="truenas_scale_logo_full" class="logo" alt="TrueNAS SCALE logo"></mat-icon>
       </div>
-      <div id="title" *ngIf="extraMsg">{{ helptext.tagline | translate }}</div>
     </div>
   </div>
 
@@ -41,10 +40,6 @@
     <div id="open-source">TrueNAS {{systemType}} {{ helptext.opensourceA | translate }} <a href="https://github.com/truenas/" target="_blank"
 			class="external-link">{{ helptext.opensourceB | translate }}</a> {{ helptext.opensourceC | translate }}
     </div>
-    <div id="findme" *ngIf="extraMsg">
-      {{ helptext.findagainA | translate }} <mat-icon>settings</mat-icon> {{ helptext.findagainB | translate }}
-      <span class="emphasis">{{ helptext.findagainC | translate }}</span>
-    </div>
   </div>
 
 </div>
@@ -56,25 +51,12 @@
   </div>
   <div id="button-wrapper" fxFlex="55%" fxFlex.xs="100">
     <button
-      *ngIf="extraMsg; else aboutButton"
       mat-button class="mat-button mat-primary"
       (click)="dialogRef.close(false)"
-      (click)="turnOffWelcomeDialog()"
-		  ix-auto ix-auto-type="button" ix-auto-identifier="CLOSE"
+      ix-auto ix-auto-type="button" ix-auto-identifier="CLOSE"
     >
-      {{ helptext.actionBtnText.splash | translate | uppercase }}
+      {{ helptext.actionBtnText.about | translate | uppercase }}
     </button>
-
-    <ng-template #aboutButton>
-      <button
-        mat-button class="mat-button mat-primary"
-        (click)="dialogRef.close(false)"
-        (click)="turnOffWelcomeDialog()"
-			  ix-auto ix-auto-type="button" ix-auto-identifier="CLOSE"
-      >
-        {{ helptext.actionBtnText.about | translate | uppercase }}
-      </button>
-    </ng-template>
 
   </div>
 </div>
