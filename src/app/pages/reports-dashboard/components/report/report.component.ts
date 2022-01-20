@@ -66,6 +66,7 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
   @Input() identifier?: string;
   // TODO: Make boolean
   @Input() retroLogo?: string | number;
+  @Input() isReversed?: boolean;
   @ViewChild(LineChartComponent, { static: false }) lineChart: LineChartComponent;
 
   data: ReportingData;
