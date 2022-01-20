@@ -205,3 +205,13 @@ button.vdev-option p {
 .row-details {
   padding-left: 35px;
 }
+
+.non-unique-serial-disks-checkbox {
+  padding-left: 0.6rem;
+}
+
+.non-unique-serial-disks-warning {
+  color: var(--orange);
+  margin: 0;
+  padding: 1.2rem 1.2rem 0;
+}

@@ -109,7 +109,7 @@ export class ChartReleasesComponent implements OnInit {
       type: 'input',
       name: 'command',
       placeholder: helptext.podConsole.chooseCommand.placeholder,
-      value: '/bin/bash',
+      value: '/bin/sh',
     }],
     saveButtonText: helptext.podConsole.choosePod.action,
     customSubmit: (entityDialog) => this.doPodSelect(entityDialog),

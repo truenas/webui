@@ -36,6 +36,7 @@ export class LineChartComponent extends ViewComponent implements AfterViewInit, 
   get data(): ReportingData {
     return this._data;
   }
+  @Input() isReversed = false;
   @Input() report: Report;
   @Input() title: string;
   @Input() timezone: string;
@@ -95,15 +96,12 @@ export class LineChartComponent extends ViewComponent implements AfterViewInit, 
 
   // dygraph renderer
   renderGraph(update?: boolean): void {
-    if (this.data.name == 'cpu') {
+    if (this.isReversed) {
       this.data.legend = this.data.legend.reverse();
-      for (let i = 0; i < this.data.data.length; i++) {
-        const newRow = [];
-        while (this.data.data[i].length) {
-          newRow.push(this.data.data[i].pop());
-        }
-        this.data.data[i] = newRow;
-      }
+      this.data.data.forEach((row, i) => this.data.data[i] = row.slice().reverse());
+      this.data.aggregations.min = this.data.aggregations.min.slice().reverse();
+      this.data.aggregations.max = this.data.aggregations.max.slice().reverse();
+      this.data.aggregations.mean = this.data.aggregations.mean.slice().reverse();
     }
 
     const data = this.makeTimeAxis(this.data);

@@ -17,7 +17,7 @@ import { CoreEvent } from 'app/interfaces/events';
 import { Job } from 'app/interfaces/job.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { Pool, PoolScan, PoolTopologyCategory } from 'app/interfaces/pool.interface';
-import { VDev, VDevStats } from 'app/interfaces/storage.interface';
+import { VDev, VDevStats, UnusedDisk } from 'app/interfaces/storage.interface';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import { FieldConfig, FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
@@ -150,6 +150,8 @@ export class VolumeStatusComponent implements OnInit, OnDestroy {
 
   protected pool: Pool;
 
+  private duplicateSerialDisks: UnusedDisk[] = [];
+
   constructor(
     protected aroute: ActivatedRoute,
     protected core: CoreService,
@@ -216,6 +218,8 @@ export class VolumeStatusComponent implements OnInit, OnDestroy {
 
       const newDiskConfig = _.find(this.extendVdevFormFields, { name: 'new_disk' }) as FormSelectConfig;
       newDiskConfig.options = availableDisksForExtend;
+
+      this.duplicateSerialDisks = disks.filter((disk) => disk.duplicate_serial.length);
     });
   }
 
@@ -480,14 +484,18 @@ export class VolumeStatusComponent implements OnInit, OnDestroy {
           fieldConfig: this.extendVdevFormFields,
           saveButtonText: helptext.extend_disk.saveButtonText,
           customSubmit: (entityDialog: EntityDialogComponent) => {
-            delete entityDialog.formValue['passphrase2'];
+            const body = { ...entityDialog.formValue };
+            delete body['passphrase2'];
 
             const dialogRef = this.matDialog.open(EntityJobComponent, {
               data: { title: helptext.extend_disk.title },
               disableClose: true,
             });
+            if (this.duplicateSerialDisks.find((disk) => disk.name === entityDialog.formValue.new_disk)) {
+              body['allow_duplicate_serials'] = true;
+            }
             dialogRef.componentInstance.setDescription(helptext.extend_disk.description);
-            dialogRef.componentInstance.setCall('pool.attach', [pk, entityDialog.formValue]);
+            dialogRef.componentInstance.setCall('pool.attach', [pk, body]);
             dialogRef.componentInstance.submit();
             dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
               dialogRef.close(true);

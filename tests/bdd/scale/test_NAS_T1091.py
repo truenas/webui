@@ -53,10 +53,10 @@ def you_should_be_on_the_dashboard_click_on_the_accounts_on_the_side_menu_click_
 def the_users_page_should_open_expand_the_user_and_click_the_edit_button(driver):
     """the Users page should open, expand the user and click the edit button."""
     assert wait_on_element(driver, 7, '//div[contains(.,"Users")]')
-    assert wait_on_element(driver, 10, '//tr[@ix-auto="expander__ericbsd"]/td', 'clickable')
-    driver.find_element_by_xpath('//tr[@ix-auto="expander__ericbsd"]/td').click()
-    assert wait_on_element(driver, 10, '//button[@ix-auto="button__EDIT_ericbsd"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__EDIT_ericbsd"]').click()
+    assert wait_on_element(driver, 10, '//tr[contains(.,"ericbsd")]//mat-icon', 'clickable')
+    driver.find_element_by_xpath('//tr[contains(.,"ericbsd")]//mat-icon').click()
+    assert wait_on_element(driver, 10, '(//tr[contains(.,"ericbsd")]/following-sibling::tr)[1]//button[contains(.,"Edit")]', 'clickable')
+    driver.find_element_by_xpath('(//tr[contains(.,"ericbsd")]/following-sibling::tr)[1]//button[contains(.,"Edit")]').click()
 
 
 @then('the User Edit Page should open, change the path of the users Home Directory')
@@ -76,6 +76,6 @@ def click_save_and_changes_should_be_saved_the_dropdown_details_pane_should_show
     driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
     assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
     assert wait_on_element(driver, 7, '//div[contains(.,"Users")]')
-    assert wait_on_element(driver, 10, '//tr[@ix-auto="expander__ericbsd"]/td', 'clickable')
-    driver.find_element_by_xpath('//tr[@ix-auto="expander__ericbsd"]/td').click()
+    assert wait_on_element(driver, 10, '//tr[contains(.,"ericbsd")]//mat-icon', 'clickable')
+    driver.find_element_by_xpath('//tr[contains(.,"ericbsd")]//mat-icon').click()
     assert wait_on_element(driver, 10, '//h4[contains(.,"/nonexistent")]') is False

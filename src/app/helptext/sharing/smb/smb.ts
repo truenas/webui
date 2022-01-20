@@ -94,7 +94,7 @@ export const helptextSharingSmb = {
 
   placeholder_abe: T('Access Based Share Enumeration'),
   tooltip_abe: T('Restrict share visibility to users with read or write access\
- to the share. See the <a href="https://www.freebsd.org/cgi/man.cgi?query=smb.conf"\
+ to the share. See the <a href="https://www.samba.org/samba/docs/current/man-html/smb.conf.5.html"\
  target=_blank>smb.conf</a> manual page.'),
 
   placeholder_hostsallow: T('Hosts Allow'),
@@ -134,7 +134,7 @@ export const helptextSharingSmb = {
 
   placeholder_auxsmbconf: T('Auxiliary Parameters'),
   tooltip_auxsmbconf: T('Additional \
- <a href="https://www.freebsd.org/cgi/man.cgi?query=smb.conf" target="_blank">smb.conf</a> \
+ <a href="https://www.samba.org/samba/docs/current/man-html/smb.conf.5.html" target="_blank">smb.conf</a> \
  parameters.'),
 
   placeholder_aapl_name_mangling: T('Use Apple-style Character Encoding'),
@@ -163,7 +163,7 @@ export const helptextSharingSmb = {
   tooltip_path_suffix: T('Appends a suffix to the share connection path. \
  This is used to provide unique shares on a per-user, per-computer, or per-IP address basis. \
  Suffixes can contain a macro. See the \
- <a href="https://www.freebsd.org/cgi/man.cgi?query=smb.conf" target="_blank">smb.conf</a> manual page for \
+ <a href="https://www.samba.org/samba/docs/current/man-html/smb.conf.5.html" target="_blank">smb.conf</a> manual page for \
  a list of supported macros. The connectpath **must** be preset before a client connects.'),
 
   actions_basic_mode: T('Basic Mode'),

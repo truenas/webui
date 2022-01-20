@@ -114,6 +114,10 @@ export class WebSocketService {
       return;
     }
 
+    if (data.error && data.error == 13 /** Not Authenticated */) {
+      return this.socket.close(); // will trigger onClose which handles redirection
+    }
+
     if (data.msg == ApiEventMessage.Result) {
       const call = this.pendingCalls.get(data.id);
 

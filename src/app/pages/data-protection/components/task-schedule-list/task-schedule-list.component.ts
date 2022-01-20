@@ -5,6 +5,14 @@ import { UntilDestroy } from '@ngneat/until-destroy';
 import { EntityTableComponent } from 'app/pages/common/entity/entity-table/entity-table.component';
 import { TaskService } from 'app/services';
 
+interface TaskScheduleRowConfig {
+  schedule?: string;
+  cron_schedule?: string;
+  cron?: string;
+  scrub_schedule?: string;
+  enabled?: boolean;
+}
+
 @UntilDestroy()
 @Component({
   selector: 'app-task-schedule-list',
@@ -13,7 +21,7 @@ import { TaskService } from 'app/services';
 export class TaskScheduleListComponent implements OnInit, OnChanges {
   private static readonly LIST_LENGTH = 5;
   @Input() value: string;
-  @Input() config: { schedule?: string; cron_schedule?: string; cron?: string; scrub_schedule?: string };
+  @Input() config: TaskScheduleRowConfig;
   @Input() parent: EntityTableComponent;
 
   futureRuns: string[];
@@ -29,15 +37,23 @@ export class TaskScheduleListComponent implements OnInit, OnChanges {
   }
 
   private buildFutureRuns(): void {
-    const scheduleExpression = this.config.cron_schedule
-      || this.config.cron
-      || this.config.scrub_schedule
-      || this.config.schedule;
+    if (this.config.enabled) {
+      const scheduleExpression = this.config.cron_schedule
+        || this.config.cron
+        || this.config.scrub_schedule
+        || this.config.schedule;
 
-    if (scheduleExpression !== 'Disabled') {
-      this.futureRuns = this.taskService
+      this.futureRuns = this.getTaskNextRuns(scheduleExpression);
+    }
+  }
+
+  private getTaskNextRuns(scheduleExpression: string): string[] {
+    try {
+      return this.taskService
         .getTaskNextRuns(scheduleExpression, TaskScheduleListComponent.LIST_LENGTH)
         .map((run) => run.toLocaleString());
+    } catch (error: unknown) {
+      console.error(error);
     }
   }
 }

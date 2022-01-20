@@ -5,6 +5,7 @@ import { IxComboboxHarness } from 'app/pages/common/ix-forms/components/ix-combo
 import { IxExplorerHarness } from 'app/pages/common/ix-forms/components/ix-explorer/ix-explorer.harness';
 import { IxInputHarness } from 'app/pages/common/ix-forms/components/ix-input/ix-input.harness';
 import { IxSelectHarness } from 'app/pages/common/ix-forms/components/ix-select/ix-select.harness';
+import { IxSlideToggleHarness } from 'app/pages/common/ix-forms/components/ix-slide-toggle/ix-slide-toggle.harness';
 import { IxTextareaHarness } from 'app/pages/common/ix-forms/components/ix-textarea/ix-textarea.harness';
 import { IxFormControlHarness } from 'app/pages/common/ix-forms/interfaces/ix-form-control-harness.interface';
 
@@ -16,6 +17,7 @@ const childSelectors = [
   IxComboboxHarness,
   IxChipsHarness,
   IxExplorerHarness,
+  IxSlideToggleHarness,
 ] as const;
 
 type SupportedFormControlHarness = InstanceType<(typeof childSelectors)[number]>;

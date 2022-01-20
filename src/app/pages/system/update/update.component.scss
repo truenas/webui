@@ -1,11 +1,19 @@
 #train-card {
-  max-height: 85px;
   padding: 15px 20px 20px;
-  /* min-width: 660px; */
 }
 
 .train-card-row {
   margin-bottom: 10px;
+}
+
+.click-for-information {
+  font-size: 0.75rem;
+  margin-bottom: 12px;
+  margin-top: 5px;
+
+  &::ng-deep a {
+    text-decoration: underline;
+  }
 }
 
 #train-label {

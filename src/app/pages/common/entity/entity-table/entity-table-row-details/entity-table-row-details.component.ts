@@ -1,9 +1,9 @@
 import {
   Component, Input, OnChanges, OnInit,
 } from '@angular/core';
-import cronstrue from 'cronstrue';
 import * as _ from 'lodash';
 import { EntityTableAction, EntityTableColumn } from 'app/pages/common/entity/entity-table/entity-table.interface';
+import { TaskService } from 'app/services';
 import { EntityTableComponent } from '../entity-table.component';
 
 @Component({
@@ -18,6 +18,10 @@ export class EntityTableRowDetailsComponent implements OnInit, OnChanges {
   columns: EntityTableColumn[] = [];
   actions: EntityTableAction[] = [];
 
+  constructor(
+    private taskService: TaskService,
+  ) {}
+
   ngOnInit(): void {
     this.buildColumns();
     this.actions = this.getActions();
@@ -29,16 +33,16 @@ export class EntityTableRowDetailsComponent implements OnInit, OnChanges {
   }
 
   getPropValue(prop: string, isCronTime = false): any {
-    let val = _.get(this.config, prop.split('.'));
+    const val = _.get(this.config, prop.split('.'));
     if (val === undefined || val === null) {
-      val = 'N/A';
+      return 'N/A';
     }
 
-    if (!isCronTime) {
-      return val;
+    if (isCronTime) {
+      return this.tryGetTaskCronDescription(val);
     }
 
-    return val !== 'N/A' && val !== 'Disabled' ? cronstrue.toString(val) : val;
+    return val;
   }
 
   buildColumns(): void {
@@ -49,5 +53,14 @@ export class EntityTableRowDetailsComponent implements OnInit, OnChanges {
 
   getActions(): EntityTableAction[] {
     return this.parent.conf.getActions ? this.parent.conf.getActions(this.config) : this.parent.getActions(this.config);
+  }
+
+  private tryGetTaskCronDescription(val: string): string {
+    try {
+      return this.taskService.getTaskCronDescription(val, {});
+    } catch (err: unknown) {
+      console.error(err);
+      return val;
+    }
   }
 }
