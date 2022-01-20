@@ -7,10 +7,9 @@ import {
 } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { Subject, BehaviorSubject } from 'rxjs';
+import { Subject, BehaviorSubject, forkJoin } from 'rxjs';
 import { ReportTab } from 'app/enums/report-tab.enum';
 import { CoreEvent } from 'app/interfaces/events';
-import { ReportingGraphsEvent } from 'app/interfaces/events/reporting-graphs-event.interface';
 import {
   UserPreferencesChangedEvent, UserPreferencesEvent,
   UserPreferencesReadyEvent,
@@ -92,7 +91,7 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /* HandleCh
   ) {}
 
   ngOnInit(): void {
-    this.scrollContainer = document.querySelector('.rightside-content-hold ');// this.container.nativeElement;
+    this.scrollContainer = document.querySelector('.rightside-content-hold ');
     this.scrollContainer.style.overflow = 'hidden';
 
     this.core.register({ observerClass: this, eventName: 'UserPreferencesReady' }).pipe(untilDestroyed(this)).subscribe((evt: UserPreferencesReadyEvent) => {
@@ -109,38 +108,30 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /* HandleCh
 
     this.core.emit({ name: 'UserPreferencesRequest' });
 
-    this.core.register({ observerClass: this, eventName: 'ReportingGraphs' }).pipe(untilDestroyed(this)).subscribe((evt: ReportingGraphsEvent) => {
-      if (evt.data) {
-        const allReports = evt.data.map((report) => {
-          const list = [];
-          if (report.identifiers) {
-            report.identifiers.forEach(() => list.push(true));
-          } else {
-            list.push(true);
-          }
-          return {
-            ...report,
-            isRendered: list,
-          };
-        });
+    forkJoin([
+      this.ws.call('disk.query'),
+      this.ws.call('reporting.graphs'),
+    ]).pipe(untilDestroyed(this)).subscribe(([disks, reports]) => {
+      this.parseDisks(disks);
+      const allReports = reports.map((report) => {
+        const list = [];
+        if (report.identifiers) {
+          report.identifiers.forEach(() => list.push(true));
+        } else {
+          list.push(true);
+        }
+        return {
+          ...report,
+          isRendered: list,
+        };
+      });
 
-        this.diskReports = allReports.filter((report) => report.name.startsWith('disk'));
+      this.diskReports = allReports.filter((report) => report.name.startsWith('disk'));
+      this.otherReports = allReports.filter((report) => !report.name.startsWith('disk'));
 
-        this.otherReports = allReports.filter((report) => !report.name.startsWith('disk'));
+      this.allTabs = this.getAllTabs();
 
-        this.allTabs = this.getAllTabs();
-
-        this.activateTabFromUrl();
-      }
-    });
-
-    this.diskQuery();
-  }
-
-  diskQuery(): void {
-    this.ws.call('disk.query').pipe(untilDestroyed(this)).subscribe((res) => {
-      this.parseDisks(res);
-      this.core.emit({ name: 'ReportingGraphsRequest', sender: this });
+      this.activateTabFromUrl();
     });
   }
 

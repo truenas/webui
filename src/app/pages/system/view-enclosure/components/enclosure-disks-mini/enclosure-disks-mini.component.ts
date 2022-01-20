@@ -10,6 +10,7 @@ import { MiniX } from 'app/pages/system/view-enclosure/classes/hardware/mini-x';
 import { MiniXlPlus } from 'app/pages/system/view-enclosure/classes/hardware/mini-xl-plus';
 import { EnclosureMetadata } from 'app/pages/system/view-enclosure/classes/system-profiler';
 import { EnclosureDisksComponent } from 'app/pages/system/view-enclosure/components/enclosure-disks/enclosure-disks.component';
+import { WebSocketService } from 'app/services';
 import { CoreService } from 'app/services/core-service/core.service';
 import { DialogService } from 'app/services/dialog.service';
 import { Theme } from 'app/services/theme/theme.service';
@@ -19,7 +20,6 @@ import { Theme } from 'app/services/theme/theme.service';
   templateUrl: './enclosure-disks-mini.component.html',
   styleUrls: ['../enclosure-disks/enclosure-disks.component.scss'],
 })
-
 export class EnclosureDisksMiniComponent extends EnclosureDisksComponent {
   @ViewChild('cardcontent', { static: true }) cardContent: ElementRef;
 
@@ -33,8 +33,9 @@ export class EnclosureDisksMiniComponent extends EnclosureDisksComponent {
     public cdr: ChangeDetectorRef,
     public dialogService: DialogService,
     protected translate: TranslateService,
+    protected ws: WebSocketService,
   ) {
-    super(el, core, sanitizer, mediaObserver, cdr, dialogService, translate);
+    super(el, core, sanitizer, mediaObserver, cdr, dialogService, translate, ws);
     this.pixiWidth = 320;// 960 * 0.6; // PIXI needs an explicit number. Make sure the template flex width matches this
     this.pixiHeight = 480;
   }

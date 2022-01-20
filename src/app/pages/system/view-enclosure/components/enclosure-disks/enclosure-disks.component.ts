@@ -17,6 +17,7 @@ import { ThemeUtils } from 'app/core/classes/theme-utils/theme-utils';
 import { EnclosureSlotStatus } from 'app/enums/enclosure-slot-status.enum';
 import { EnclosureElement, EnclosureElementsGroup } from 'app/interfaces/enclosure.interface';
 import { CoreEvent } from 'app/interfaces/events';
+import { EnclosureLabelChangedEvent } from 'app/interfaces/events/enclosure-events.interface';
 import { LabelDrivesEvent } from 'app/interfaces/events/label-drives-event.interface';
 import { MediaChangeEvent } from 'app/interfaces/events/media-change-event.interface';
 import { ThemeChangedEvent, ThemeDataEvent } from 'app/interfaces/events/theme-events.interface';
@@ -48,6 +49,7 @@ import {
 } from 'app/pages/system/view-enclosure/classes/system-profiler';
 import { VDevLabelsSvg } from 'app/pages/system/view-enclosure/classes/v-dev-labels-svg';
 import { ViewConfig } from 'app/pages/system/view-enclosure/interfaces/view.config';
+import { WebSocketService } from 'app/services';
 import { CoreService } from 'app/services/core-service/core.service';
 import { DialogService } from 'app/services/dialog.service';
 import { Temperature } from 'app/services/disk-temperature.service';
@@ -183,6 +185,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
     public cdr: ChangeDetectorRef,
     public dialogService: DialogService,
     protected translate: TranslateService,
+    protected ws: WebSocketService,
   ) {
     this.themeUtils = new ThemeUtils();
 
@@ -1050,10 +1053,10 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
     const enclosureId = this.system.enclosures[selectedEnclosure.enclosureKey].id;
     const slot = this.selectedDisk.enclosure.slot;
     const status = !this.identifyBtnRef && !kill ? EnclosureSlotStatus.Identify : EnclosureSlotStatus.Clear;
-    const args = [enclosureId, slot, status];
 
-    // Arguments are Str("enclosure_id"), Int("slot"), Str("status", enum=["CLEAR", "FAULT", "IDENTIFY"])
-    this.core.emit({ name: 'SetEnclosureSlotStatus', data: args, sender: this });
+    this.ws.call('enclosure.set_slot_status', [enclosureId, slot, status])
+      .pipe(untilDestroyed(this))
+      .subscribe(() => {});
 
     this.radiate();
   }
@@ -1139,8 +1142,15 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
       value = enclosure.name;
     }
 
-    const args = { index: this.selectedEnclosure.enclosureKey, id: enclosure.id, label: value };
-    this.controllerEvent$.next({ name: 'SetEnclosureLabel', data: args, sender: this });
+    this.ws.call('enclosure.update', [enclosure.id, { label: value }])
+      .pipe(untilDestroyed(this))
+      .subscribe(() => {
+        this.core.emit({
+          name: 'EnclosureLabelChanged',
+          sender: this,
+          data: { index: this.selectedEnclosure.enclosureKey, id: enclosure.id, label: value },
+        } as EnclosureLabelChangedEvent);
+      });
   }
 
   labelForm(): void {
