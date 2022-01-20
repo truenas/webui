@@ -141,14 +141,19 @@ def confirm_installation_is_successful(driver):
         # refresh loop
         assert wait_on_element(driver, 10, '//mat-panel-title[contains(.,"Application Events")]', 'clickable')
         driver.find_element_by_xpath('//mat-panel-title[contains(.,"Application Events")]').click()
-        while is_element_present(driver, '//strong[contains(text(),"Started container collabora")]') is False:
+        while is_element_present(driver, '//div[(normalize-space(text())="Started container collabora")]') is False:
             time.sleep(2)
-            #assert wait_on_element(driver, 10, '//strong[contains(.,"Refresh Events")]', 'clickable')
-            driver.find_element_by_xpath('//strong[contains(.,"Refresh Events")]').click()
+            assert wait_on_element(driver, 10, '//span[contains(.,"Refresh Events")]', 'clickable')
+            driver.find_element_by_xpath('//span[contains(.,"Refresh Events")]').click()
         else:
             assert wait_on_element(driver, 10, '//span[contains(.,"Close")]', 'clickable')
             driver.find_element_by_xpath('//span[contains(.,"Close")]').click()
             time.sleep(1) #wait for popup to close
+            # we have to change tab for UI to refresh
+            assert wait_on_element(driver, 10, '//div[contains(text(),"Available Applications")]', 'clickable')
+            driver.find_element_by_xpath('//div[contains(text(),"Available Applications")]').click()
+            assert wait_on_element(driver, 10, '//div[contains(text(),"Installed Applications")]', 'clickable')
+            driver.find_element_by_xpath('//div[contains(text(),"Installed Applications")]').click()
             assert wait_on_element(driver, 20, '//mat-card[contains(.,"collabora-test")]//span[@class="status active"]')
     else:
         assert wait_on_element(driver, 20, '//mat-card[contains(.,"collabora-test")]//span[@class="status active"]')
