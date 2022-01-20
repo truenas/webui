@@ -16,7 +16,6 @@ import { NetworkService } from 'app/services';
 import { CoreService } from 'app/services/core-service/core.service';
 import { EntityFormService } from '../../modules/entity/entity-form/services/entity-form.service';
 import { EntityModule } from '../../modules/entity/entity.module';
-import { CardWidgetComponent } from './card-widget/card-widget.component';
 import { ConfigurationComponent } from './forms/configuration.component';
 import { InterfacesFormComponent } from './forms/interfaces-form.component';
 import { IpmiFormComponent } from './forms/ipmi-form.component';
@@ -46,7 +45,6 @@ import { routing } from './network.routing';
     ConfigurationComponent,
     IpmiFormComponent,
     NetworkComponent,
-    CardWidgetComponent,
     OpenvpnClientComponent,
     OpenvpnServerComponent,
     NetworkConfigurationCardComponent,
