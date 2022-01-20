@@ -11,6 +11,7 @@ import { Job } from 'app/interfaces/job.interface';
 })
 export class JobItemComponent {
   @Input() job: Job;
+  @Input() clickable = false;
   @Output() aborted = new EventEmitter();
   @Output() opened = new EventEmitter();
   readonly JobState = JobState;

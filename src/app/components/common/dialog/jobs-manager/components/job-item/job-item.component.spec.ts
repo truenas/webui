@@ -104,6 +104,7 @@ describe('JobItemComponent', () => {
           state: JobState.Running,
           abortable: true,
         } as Job,
+        clickable: true,
       },
     });
     jest.spyOn(spectator.component.opened, 'emit').mockImplementation();

@@ -208,7 +208,7 @@ import {
   FetchSupportParams,
   CreateNewTicket,
   NewTicketResponse,
-  SupportConfig, SupportConfigUpdate,
+  SupportConfig, SupportConfigUpdate, AttachTicketParams,
 } from 'app/interfaces/support.interface';
 import { SystemGeneralConfig, SystemGeneralConfigUpdate } from 'app/interfaces/system-config.interface';
 import { SystemDatasetConfig, SystemDatasetUpdate } from 'app/interfaces/system-dataset-config.interface';
@@ -802,6 +802,7 @@ export type ApiDirectory = {
   'support.config': { params: void; response: SupportConfig };
   'support.update': { params: [SupportConfigUpdate]; response: SupportConfig };
   'support.new_ticket': { params: [CreateNewTicket]; response: NewTicketResponse };
+  'support.attach_ticket': { params: AttachTicketParams; response: Job };
   'support.fetch_categories': { params: FetchSupportParams; response: Choices };
 
   // SMART

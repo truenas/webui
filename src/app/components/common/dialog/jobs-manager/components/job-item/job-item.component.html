@@ -1,5 +1,12 @@
-<div class="job-item" fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="8px" [class.abortable]="job?.state === JobState.Running && job?.abortable">
-  <div fxFlex="100%" (click)="open()" class="job-clickable">
+<div
+  class="job-item"
+  fxLayout="row"
+  fxLayoutAlign="space-between center"
+  fxLayoutGap="8px"
+  [class.abortable]="job?.state === JobState.Running && job?.abortable"
+  [class.interactive]="clickable"
+>
+  <div class="job-item-body" (click)="clickable && open()">
     <div fxLayout="row" fxLayoutAlign="space-between baseline" fxLayoutGap="8px">
       <span class="job-description">{{ job.description ? job.description : job.method }}</span>
       <small class="job-progress-percent" *ngIf="job.state === JobState.Running">{{ job.progress.percent || 0 | number: '1.2-2' }}%</small>
@@ -48,7 +55,7 @@
     type="button"
     [disabled]="true"
   >
-    <mat-icon matTooltipPosition="left" class="job-icon-waiting">schedule</mat-icon>
+    <mat-icon class="job-icon-waiting">schedule</mat-icon>
   </button>
 
   <button
@@ -58,5 +65,14 @@
     [disabled]="true"
   >
     <mat-icon [matTooltip]="job.error" matTooltipPosition="left" class="job-icon-failed">warning</mat-icon>
+  </button>
+
+  <button
+    *ngIf="job.state === JobState.Success"
+    mat-icon-button
+    type="button"
+    [disabled]="true"
+  >
+    <mat-icon class="job-icon-success">check_circle</mat-icon>
   </button>
 </div>

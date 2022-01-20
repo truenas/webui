@@ -1,25 +1,29 @@
 :host {
   display: block;
-  padding: 8px 12px 8px 24px;
 
   &:not(:last-child) {
     border-bottom: 1px solid var(--lines);
   }
-
-  &:hover {
-    background: var(--hover-bg);
-    cursor: pointer;
-  }
-
-  &:focus,
-  &:active {
-    background: var(--hover-bg);
-  }
 }
 
 .job-item {
-  &.abortable .job-clickable {
-    max-width: calc(100% - 48px) !important;
+  display: block;
+  padding: 8px 12px 8px 24px;
+
+  &.abortable .job-item-body {
+    max-width: calc(100% - 48px);
+  }
+
+  &.interactive {
+    &:hover {
+      background: var(--hover-bg);
+      cursor: pointer;
+    }
+
+    &:focus,
+    &:active {
+      background: var(--hover-bg);
+    }
   }
 }
 
@@ -44,4 +48,8 @@
 
 .job-icon-waiting {
   color: var(--accent);
+}
+
+.job-icon-success {
+  color: var(--green);
 }
