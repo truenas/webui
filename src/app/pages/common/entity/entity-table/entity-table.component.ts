@@ -720,9 +720,9 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, A
     return res;
   }
 
-  patchCurrentRows(
-    rowSelector: (row: any) => boolean,
-    rowMutator: (row: any) => any,
+  patchCurrentRows<T>(
+    rowSelector: (row: T) => boolean,
+    rowMutator: (row: T) => T,
   ): void {
     this.currentRows = this.currentRows.map((row) => {
       if (rowSelector(row)) {

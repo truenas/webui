@@ -138,7 +138,7 @@ export class VMListComponent implements EntityTableConfig<VirtualMachineRow>, On
 
     this.ws.subscribe('vm.query').pipe(untilDestroyed(this)).subscribe((event) => {
       entityList.patchCurrentRows(
-        (row) => row.id === event.id,
+        (row: VirtualMachineRow) => row.id === event.id,
         (changedRow) => {
           if (event.fields.status.state === ServiceStatus.Running) {
             changedRow.state = ServiceStatus.Running;
