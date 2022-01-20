@@ -40,8 +40,4 @@ export default class WidgetHelpComponent extends WidgetComponent implements OnIn
       this.systemType = productType as ProductType;
     });
   }
-
-  turnOffWelcomeDialog(): void {
-
-  }
 }

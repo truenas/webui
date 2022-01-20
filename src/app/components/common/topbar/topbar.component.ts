@@ -81,7 +81,6 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
   pendingUpgradeChecked = false;
   sysName = 'TrueNAS CORE';
   hostname: string;
-  showWelcome: boolean;
   checkin_remaining: number;
   checkin_interval: Interval;
   updateIsRunning = false;
@@ -305,7 +304,6 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
     this.dialog.open(AboutDialogComponent, {
       maxWidth: '600px',
       data: {
-        extraMsg: this.showWelcome,
         systemType: this.systemType,
       },
       disableClose: true,

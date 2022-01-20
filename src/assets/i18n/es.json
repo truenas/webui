@@ -3659,7 +3659,6 @@
   "Webhook URL": "",
   "Wednesday": "",
   "Week(s)": "",
-  "Welcome to your new NAS": "",
   "What and Where": "",
   "When <code>tls_crypt_auth_enabled</code> is enabled and <code>tls_crypt_auth</code> is not provided,  a static key is automatically generated to be used with OpenVPN client.": "",
   "When <i>Syslog Server</i> is defined, only logs matching this level are sent.": "",
