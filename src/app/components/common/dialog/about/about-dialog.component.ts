@@ -32,9 +32,4 @@ export class AboutDialogComponent {
     this.extraMsg = data.extraMsg;
     this.systemType = data.systemType;
   }
-
-  turnOffWelcomeDialog(): void {
-    localStorage.setItem('turnOffWelcomeDialog', 'true');
-    this.core.emit({ name: 'ChangePreference', data: { key: 'showWelcomeDialog', value: false }, sender: this });
-  }
 }

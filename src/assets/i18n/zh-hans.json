@@ -4034,7 +4034,6 @@
   "Week(s)": "周",
   "Weekly": "每周",
   "Weeks": "周数",
-  "Welcome to your new NAS": "欢迎使用新NAS",
   "What and Where": "做什么和在哪里",
   "When": "什么时候",
   "When <code>tls_crypt_auth_enabled</code> is enabled and <code>tls_crypt_auth</code> is not provided,  a static key is automatically generated to be used with OpenVPN client.": "启用<code>tls_crypt_auth_enabled</code>且未提供<code>tls_crypt_auth</code>时，将自动生成一个静态密钥以用于OpenVPN客户端。",

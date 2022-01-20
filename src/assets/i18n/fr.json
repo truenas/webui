@@ -4082,7 +4082,6 @@
   "Wed": "Mer",
   "Weekly": "Hebdomadaire",
   "Weeks": "Semaines",
-  "Welcome to your new NAS": "Bienvenue sur votre nouveau NAS",
   "What and Where": "Quoi et où",
   "When": "Quand",
   "When <code>tls_crypt_auth_enabled</code> is enabled and <code>tls_crypt_auth</code> is not provided,  a static key is automatically generated to be used with OpenVPN client.": "Lorsque <code>tls_crypt_auth_enabled</code> est activé et que <code>tls_crypt_auth</code> n'est pas fourni, une clé statique est automatiquement générée pour être utilisée avec le client OpenVPN.",

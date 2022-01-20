@@ -1,7 +1,6 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
 export default {
-  tagline: T('Welcome to your new NAS'),
   help: T('Looking for help?'),
 
   docsA: T('The'),

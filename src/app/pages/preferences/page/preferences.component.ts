@@ -192,9 +192,6 @@ export class PreferencesPageComponent implements EmbeddedFormConfig, OnInit, OnD
   }
 
   beforeSubmit(data: any): void {
-    if (data.reset) {
-      localStorage.removeItem('turnOffWelcomeDialog');
-    }
     if (data.tableDisplayedColumns) {
       data.tableDisplayedColumns = [];
     } else {
