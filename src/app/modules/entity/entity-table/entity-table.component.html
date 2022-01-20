@@ -242,6 +242,8 @@
     </mat-card-footer>
   </ng-container>
   <ng-container *ngIf="isTableEmpty">
-    <entity-empty [conf]="emptyTableConf"></entity-empty>
+    <div class="entity-empty-wrapper" fxFlex="100%" fxLayout="row" fxLayoutAlign="center center" fxLayoutGap="32px">
+      <entity-empty [conf]="emptyTableConf"></entity-empty>
+    </div>
   </ng-container>
 </div>

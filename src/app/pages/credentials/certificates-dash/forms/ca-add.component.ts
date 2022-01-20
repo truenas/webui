@@ -7,12 +7,12 @@ import * as _ from 'lodash';
 import { helptextSystemCa } from 'app/helptext/system/ca';
 import { CertificateProfile } from 'app/interfaces/certificate.interface';
 import { WizardConfiguration } from 'app/interfaces/entity-wizard.interface';
+import { AppLoaderService } from 'app/modules/app-loader/app-loader.service';
 import { FieldConfig, FormSelectConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
 import { RelationAction } from 'app/modules/entity/entity-form/models/relation-action.enum';
 import { Wizard } from 'app/modules/entity/entity-form/models/wizard.interface';
 import { EntityWizardComponent } from 'app/modules/entity/entity-wizard/entity-wizard.component';
 import { SystemGeneralService, WebSocketService } from 'app/services';
-import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { DialogService } from 'app/services/dialog.service';
 import { ModalService } from 'app/services/modal.service';
 
@@ -622,9 +622,8 @@ export class CertificateAuthorityAddComponent implements WizardConfiguration {
   }
 
   getSummaryValueLabel(fieldConfig: FieldConfig, value: any): any {
-    if (fieldConfig.type == 'select') {
-      const config = fieldConfig;
-      const option = config.options.find((option) => option.value == value);
+    if (fieldConfig.type === 'select') {
+      const option = fieldConfig.options.find((option) => option.value == value);
       if (option) {
         value = option.label;
       }
@@ -644,11 +643,6 @@ export class CertificateAuthorityAddComponent implements WizardConfiguration {
         this.summary[fieldConfig.placeholder] = this.getSummaryValueLabel(fieldConfig, res);
       });
     }
-  }
-
-  removeFromSummary(fieldName: string): void {
-    const fieldConfig = this.getTarget(fieldName);
-    delete this.summary[fieldConfig.placeholder];
   }
 
   setSummary(): void {
@@ -673,7 +667,7 @@ export class CertificateAuthorityAddComponent implements WizardConfiguration {
       this.wizardConfig[1].skip = false;
       this.wizardConfig[2].skip = false;
 
-      if (res == 'CA_CREATE_INTERNAL') {
+      if (res === 'CA_CREATE_INTERNAL') {
         this.intermediatecaFields.forEach((field) => this.hideField(field, true));
         this.importcaFields.forEach((field) => this.hideField(field, true));
         this.internalcaFields.forEach((field) => this.hideField(field, false));
@@ -685,7 +679,7 @@ export class CertificateAuthorityAddComponent implements WizardConfiguration {
         } else if (this.getField('key_type').value === 'EC') {
           this.hideField('key_length', true);
         }
-      } else if (res == 'CA_CREATE_INTERMEDIATE') {
+      } else if (res === 'CA_CREATE_INTERMEDIATE') {
         this.intermediatecaFields.forEach((field) => this.hideField(field, false));
         this.importcaFields.forEach((field) => this.hideField(field, true));
         this.internalcaFields.forEach((field) => this.hideField(field, true));
@@ -695,7 +689,7 @@ export class CertificateAuthorityAddComponent implements WizardConfiguration {
         } else if (this.getField('key_type').value === 'EC') {
           this.hideField('key_length', true);
         }
-      } else if (res == 'CA_CREATE_IMPORTED') {
+      } else if (res === 'CA_CREATE_IMPORTED') {
         this.intermediatecaFields.forEach((field) => this.hideField(field, true));
         this.importcaFields.forEach((field) => this.hideField(field, false));
         this.internalcaFields.forEach((field) => this.hideField(field, true));

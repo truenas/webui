@@ -11,6 +11,8 @@ import globalHelptext from 'app/helptext/global-helptext';
 import { helptextSharingIscsi } from 'app/helptext/sharing';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { IscsiExtent } from 'app/interfaces/iscsi.interface';
+import { QueryFilter } from 'app/interfaces/query-api.interface';
+import { AppLoaderService } from 'app/modules/app-loader/app-loader.service';
 import { EntityFormComponent } from 'app/modules/entity/entity-form/entity-form.component';
 import { FieldConfig, FormSelectConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/modules/entity/entity-form/models/fieldset.interface';
@@ -18,7 +20,6 @@ import { EntityUtils } from 'app/modules/entity/utils';
 import {
   IscsiService, WebSocketService, StorageService,
 } from 'app/services';
-import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 
 @UntilDestroy()
 @Component({
@@ -30,7 +31,7 @@ export class ExtentFormComponent implements FormConfiguration {
   addCall = 'iscsi.extent.create' as const;
   queryCall = 'iscsi.extent.query' as const;
   editCall = 'iscsi.extent.update' as const;
-  customFilter: any[] = [[['id', '=']]];
+  customFilter: [[Partial<QueryFilter<IscsiExtent>>]] = [[['id', '=']]];
   routeSuccess: string[] = ['sharing', 'iscsi', 'extent'];
   isEntity = true;
   protected entityForm: EntityFormComponent;
@@ -367,7 +368,7 @@ export class ExtentFormComponent implements FormConfiguration {
 
   customEditCall(value: any): void {
     this.loader.open();
-    if (value['type'] == 'DISK') {
+    if (value['type'] === 'DISK') {
       value['path'] = value['disk'];
     }
     this.ws.call(this.editCall, [parseInt(this.pk, 10), value]).pipe(untilDestroyed(this)).subscribe(

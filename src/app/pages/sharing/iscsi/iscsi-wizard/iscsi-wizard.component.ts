@@ -11,6 +11,7 @@ import globalHelptext from 'app/helptext/global-helptext';
 import { helptextSharingIscsi } from 'app/helptext/sharing/iscsi/iscsi';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { WizardConfiguration } from 'app/interfaces/entity-wizard.interface';
+import { AppLoaderService } from 'app/modules/app-loader/app-loader.service';
 import { FormListConfig, FormSelectConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
 import { Wizard } from 'app/modules/entity/entity-form/models/wizard.interface';
 import { forbiddenValues } from 'app/modules/entity/entity-form/validators/forbidden-values-validation';
@@ -21,7 +22,6 @@ import { EntityUtils } from 'app/modules/entity/utils';
 import {
   IscsiService, WebSocketService, NetworkService, StorageService, DialogService,
 } from 'app/services';
-import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { CloudCredentialService } from 'app/services/cloud-credential.service';
 
 @UntilDestroy()

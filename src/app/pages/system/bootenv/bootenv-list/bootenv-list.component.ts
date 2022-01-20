@@ -10,6 +10,7 @@ import { BootEnvironmentActions } from 'app/enums/bootenv-actions.enum';
 import { helptextSystemBootenv } from 'app/helptext/system/boot-env';
 import { Bootenv } from 'app/interfaces/bootenv.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
+import { AppLoaderService } from 'app/modules/app-loader/app-loader.service';
 import { DialogFormConfiguration } from 'app/modules/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/modules/entity/entity-dialog/entity-dialog.component';
 import { FieldConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
@@ -18,7 +19,6 @@ import { EntityTableAction, EntityTableConfig } from 'app/modules/entity/entity-
 import { EntityUtils } from 'app/modules/entity/utils';
 import { BootEnvironmentFormComponent } from 'app/pages/system/bootenv/bootenv-form/bootenv-form.component';
 import { DialogService, WebSocketService, SystemGeneralService } from 'app/services';
-import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LocaleService } from 'app/services/locale.service';
 import { StorageService } from 'app/services/storage.service';
@@ -122,7 +122,7 @@ export class BootEnvironmentListComponent implements EntityTableConfig {
   }
 
   isActionVisible(actionId: string): boolean {
-    if (actionId == 'edit' || actionId == 'add') {
+    if (actionId === 'edit' || actionId === 'add') {
       return false;
     }
     return true;

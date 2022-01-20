@@ -1,8 +1,10 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, OnDestroy } from '@angular/core';
-import { CoreService } from 'app/core/services/core-service/core.service';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { CoreEvent } from 'app/interfaces/events';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
+import { CoreService } from 'app/services/core-service/core.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 /*
@@ -123,20 +125,11 @@ export class ReportsService implements OnDestroy {
     return data;
   }
 
-  async getServerTime(): Promise<Date> {
-    let date;
-    const options = {
-      observe: 'response' as const,
-      responseType: 'text' as const,
-    };
-    await this.http.get(window.location.origin.toString(), options).toPromise().then((resp) => {
-      const serverTime = resp.headers.get('Date');
-      const seconds = new Date(serverTime).getTime();
-      const secondsToTrim = 60;
-      const trimmed = new Date(seconds - (secondsToTrim * 1000));
-      date = trimmed;
-    });
-
-    return date;
+  getServerTime(): Observable<Date> {
+    return this.ws.call('system.info')
+      .pipe(map((systemInfo) => {
+        const msToTrim = 60_000;
+        return new Date(systemInfo.datetime.$date - msToTrim);
+      }));
   }
 }

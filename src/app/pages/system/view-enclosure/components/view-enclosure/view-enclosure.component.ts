@@ -4,19 +4,19 @@ import {
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Subject } from 'rxjs';
-import { CoreService } from 'app/core/services/core-service/core.service';
 import { PoolScanState } from 'app/enums/pool-scan-state.enum';
 import { CoreEvent } from 'app/interfaces/events';
 import { DisksDataEvent } from 'app/interfaces/events/disks-data-event.interface';
-import { EnclosureDataEvent, EnclosureLabelChangedEvent } from 'app/interfaces/events/enclosure-events.interface';
+import { EnclosureLabelChangedEvent } from 'app/interfaces/events/enclosure-events.interface';
 import { PoolDataEvent } from 'app/interfaces/events/pool-data-event.interface';
 import { ResilveringEvent } from 'app/interfaces/events/resilvering-event.interface';
-import { SensorDataEvent } from 'app/interfaces/events/sensor-data-event.interface';
 import { SysInfoEvent } from 'app/interfaces/events/sys-info-event.interface';
 import { EntityToolbarComponent } from 'app/modules/entity/entity-toolbar/entity-toolbar.component';
 import { EnclosureMetadata, SystemProfiler } from 'app/pages/system/view-enclosure/classes/system-profiler';
 import { ErrorMessage } from 'app/pages/system/view-enclosure/interfaces/error-message.interface';
 import { ViewConfig } from 'app/pages/system/view-enclosure/interfaces/view.config';
+import { WebSocketService } from 'app/services';
+import { CoreService } from 'app/services/core-service/core.service';
 
 @UntilDestroy()
 @Component({
@@ -73,7 +73,7 @@ export class ViewEnclosureComponent implements OnDestroy {
   set system_product(value) {
     if (!this._system_product) {
       this._system_product = value;
-      this.core.emit({ name: 'EnclosureDataRequest', sender: this });
+      this.loadEnclosureData();
     }
   }
 
@@ -81,7 +81,11 @@ export class ViewEnclosureComponent implements OnDestroy {
     this.currentView = this.views[index];
   }
 
-  constructor(private core: CoreService, public router: Router) {
+  constructor(
+    private core: CoreService,
+    public router: Router,
+    private ws: WebSocketService,
+  ) {
     this.events = new Subject<CoreEvent>();
     this.events.pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
       switch (evt.name) {
@@ -108,9 +112,6 @@ export class ViewEnclosureComponent implements OnDestroy {
           this.errors.push(evt.data);
           console.warn({ ERROR_REPORT: this.errors });
           break;
-        case 'SetEnclosureLabel':
-          core.emit(evt);
-          break;
       }
     });
 
@@ -118,22 +119,6 @@ export class ViewEnclosureComponent implements OnDestroy {
       if (this.system) {
         this.extractVisualizations();
       }
-    });
-
-    core.register({ observerClass: this, eventName: 'EnclosureData' }).pipe(untilDestroyed(this)).subscribe((evt: EnclosureDataEvent) => {
-      if (evt.data?.length === 0) {
-        const noDataError: ErrorMessage = {
-          name: 'No Enclosure Data',
-          message: 'The system did not return any enclosure data. Nothing to display',
-        };
-        this.errors.push(noDataError);
-        return;
-      }
-
-      this.system = new SystemProfiler(this.system_product, evt.data);
-      this.selectedEnclosure = this.system.profile[this.system.headIndex];
-      core.emit({ name: 'DisksRequest', sender: this });
-      core.emit({ name: 'SensorDataRequest', sender: this });
     });
 
     core.register({ observerClass: this, eventName: 'EnclosureLabelChanged' }).pipe(untilDestroyed(this)).subscribe((evt: EnclosureLabelChangedEvent) => {
@@ -145,10 +130,6 @@ export class ViewEnclosureComponent implements OnDestroy {
       this.system.pools = evt.data;
       this.events.next({ name: 'PoolsChanged', sender: this });
       this.addViews();
-    });
-
-    core.register({ observerClass: this, eventName: 'SensorData' }).pipe(untilDestroyed(this)).subscribe((evt: SensorDataEvent) => {
-      this.system.sensorData = evt.data;
     });
 
     core.register({ observerClass: this, eventName: 'Resilvering' }).pipe(untilDestroyed(this)).subscribe((evt: ResilveringEvent) => {
@@ -302,5 +283,26 @@ export class ViewEnclosureComponent implements OnDestroy {
     if (this.views && this.views.length > 1) {
       this.core.emit({ name: 'GlobalActions', data: actionsConfig, sender: this });
     }
+  }
+
+  private loadEnclosureData(): void {
+    this.ws.call('enclosure.query').pipe(untilDestroyed(this)).subscribe((enclosures) => {
+      if (enclosures.length === 0) {
+        const noDataError: ErrorMessage = {
+          name: 'No Enclosure Data',
+          message: 'The system did not return any enclosure data. Nothing to display',
+        };
+        this.errors.push(noDataError);
+        return;
+      }
+
+      this.system = new SystemProfiler(this.system_product, enclosures);
+      this.selectedEnclosure = this.system.profile[this.system.headIndex];
+      this.core.emit({ name: 'DisksRequest', sender: this });
+
+      this.ws.call('sensor.query').pipe(untilDestroyed(this)).subscribe((sensorData) => {
+        this.system.sensorData = sensorData;
+      });
+    });
   }
 }

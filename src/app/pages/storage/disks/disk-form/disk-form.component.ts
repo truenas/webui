@@ -4,6 +4,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import helptext from 'app/helptext/storage/disks/disks';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { QueryFilter } from 'app/interfaces/query-api.interface';
 import { Disk } from 'app/interfaces/storage.interface';
 import { FieldConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/modules/entity/entity-form/models/fieldset.interface';
@@ -19,7 +20,7 @@ export class DiskFormComponent implements FormConfiguration {
   routeSuccess: string[] = ['storage', 'disks'];
   queryCall = 'disk.query' as const;
   editCall = 'disk.update' as const;
-  customFilter: any[] = [[['identifier', '=']]];
+  customFilter: [[Partial<QueryFilter<Disk>>]] = [[['identifier', '=']]];
   isEntity = true;
 
   fieldConfig: FieldConfig[];

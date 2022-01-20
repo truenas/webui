@@ -21,6 +21,7 @@ import { RsyncTaskUi } from 'app/interfaces/rsync-task.interface';
 import { ScrubTaskUi } from 'app/interfaces/scrub-task.interface';
 import { SmartTestUi } from 'app/interfaces/smart-test.interface';
 import { Disk } from 'app/interfaces/storage.interface';
+import { AppLoaderService } from 'app/modules/app-loader/app-loader.service';
 import { DialogFormConfiguration } from 'app/modules/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/modules/entity/entity-dialog/entity-dialog.component';
 import { FormParagraphConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
@@ -40,7 +41,6 @@ import {
   TaskService,
   WebSocketService,
 } from 'app/services';
-import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { JobService } from 'app/services/job.service';
 import { ModalService } from 'app/services/modal.service';
 

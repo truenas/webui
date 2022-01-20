@@ -9,7 +9,6 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { Subject } from 'rxjs';
 import { filter } from 'rxjs/operators';
-import { CoreService } from 'app/core/services/core-service/core.service';
 import { JobState } from 'app/enums/job-state.enum';
 import { JobViewLogState } from 'app/enums/job-view-log-state.enum';
 import { CoreEvent } from 'app/interfaces/events';
@@ -20,6 +19,7 @@ import { EntityToolbarComponent } from 'app/modules/entity/entity-toolbar/entity
 import { ToolbarConfig } from 'app/modules/entity/entity-toolbar/models/control-config.interface';
 import { JobsListStore } from 'app/pages/jobs/jobs-list/jobs-list.store';
 import { DialogService } from 'app/services';
+import { CoreService } from 'app/services/core-service/core.service';
 import { JobTab } from './jobs-list.store';
 
 @UntilDestroy()

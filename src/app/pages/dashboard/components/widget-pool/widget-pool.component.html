@@ -93,25 +93,19 @@
 
                     <div class="pool-status tr" >
                       <div class="td label"><strong>Pool Status:</strong></div>
-                      <div class="td">
+                      <div class="td status-cell">
                         <span class="capitalize">{{poolState.status}}</span>
-
-                        <ng-container *ngIf="isErrorStatus(poolState.status); else noerrors">
-                          <span class="error icon">
-                            <mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-close-circle"></mat-icon>
-                          </span>
-                        </ng-container>
-
-                        <ng-template #noerrors>
-                          <span *ngIf="poolState.status == PoolStatus.Locked"
-                            class="lock-icon-wrapper icon">
-                            <mat-icon>lock</mat-icon>
-                          </span>
-                          <span *ngIf="poolState.status == PoolStatus.Online || poolState.status == PoolStatus.Healthy"
-                            class="{{poolHealth.level}} icon">
+                        <ng-container [ngSwitch]="poolState.status">
+                          <span *ngSwitchCase="PoolStatus.Locked" class="lock-icon-wrapper icon"><mat-icon>lock</mat-icon></span>
+                          <span *ngSwitchCase="PoolStatus.Online" class="{{poolHealth.level}} icon">
                             <mat-icon role="img" fontSet="mdi-set" [fontIcon]="poolHealth.isHealthy ? 'mdi-check-circle' : 'mdi-alert'"></mat-icon>
                           </span>
-                        </ng-template>
+                          <span *ngSwitchCase="PoolStatus.Healthy" class="{{poolHealth.level}} icon">
+                            <mat-icon role="img" fontSet="mdi-set" [fontIcon]="poolHealth.isHealthy ? 'mdi-check-circle' : 'mdi-alert'"></mat-icon>
+                          </span>
+                          <span *ngSwitchDefault class="error icon"><mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-close-circle"></mat-icon></span>
+                        </ng-container>
+                        
                       </div>
                     </div>
 
@@ -231,11 +225,11 @@
               >
                 <strong>{{vdev.type}}:</strong>&nbsp;&nbsp; {{vdev.status}}
                 <!-- STATUS ICONS -->
-                <span *ngIf="vdev.status == 'ONLINE'" class="{{poolHealth.level}} healthy" >
+                <span *ngIf="vdev.status === VDevStatus.Online" class="{{poolHealth.level}} healthy" >
                   <mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-check-circle"></mat-icon>
                   &nbsp;&nbsp;
                 </span>
-                <span *ngIf="vdev.status !== 'ONLINE'" class="{{poolHealth.level}} healthy" >
+                <span *ngIf="vdev.status !== VDevStatus.Online" class="{{poolHealth.level}} healthy" >
                   <mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-alert"></mat-icon>
                   &nbsp;&nbsp;
                 </span>
@@ -293,10 +287,10 @@
                 &nbsp;&nbsp; {{disk.status | translate}}
 
                 <!-- STATUS ICONS -->
-                <span *ngIf="disk.status == 'ONLINE'" class="{{poolHealth.level}} healthy" >
+                <span *ngIf="disk.status === VDevStatus.Online" class="{{poolHealth.level}} healthy" >
                   <mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-check-circle"></mat-icon>
                 </span>
-                <span *ngIf="disk.status != 'ONLINE'" class="{{poolHealth.level}} healthy" >
+                <span *ngIf="disk.status !== VDevStatus.Online" class="{{poolHealth.level}} healthy" >
                   <mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-alert"></mat-icon>
                 </span>
 
@@ -318,7 +312,7 @@
                   :
                 </strong>
                 &nbsp;&nbsp; {{path[2].dataSource.status | translate}}
-                <span *ngIf="path[2].dataSource.status == 'ONLINE'" class="{{poolHealth.level}} healthy" >
+                <span *ngIf="path[2].dataSource.status === VDevStatus.Online" class="{{poolHealth.level}} healthy" >
                   <mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-check-circle"></mat-icon>
                 </span>
                 <mat-icon class="next-slide" ix-auto ix-auto-type="button" ix-auto-identifier="nextSlide">chevron_right</mat-icon>

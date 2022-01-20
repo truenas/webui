@@ -6,12 +6,10 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { tween, styler } from 'popmotion';
 import { Subject } from 'rxjs';
-import { CoreService } from 'app/core/services/core-service/core.service';
 import { NetworkInterfaceAliasType, NetworkInterfaceType } from 'app/enums/network-interface.enum';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { CoreEvent } from 'app/interfaces/events';
 import { MemoryStatsEventData } from 'app/interfaces/events/memory-stats-event.interface';
-import { NicInfoEvent } from 'app/interfaces/events/nic-info-event.interface';
 import { PoolDataEvent } from 'app/interfaces/events/pool-data-event.interface';
 import { SysInfoEvent, SystemInfoWithFeatures } from 'app/interfaces/events/sys-info-event.interface';
 import { VolumeDataEvent } from 'app/interfaces/events/volume-data-event.interface';
@@ -29,6 +27,7 @@ import { EntityToolbarComponent } from 'app/modules/entity/entity-toolbar/entity
 import { DashboardFormComponent } from 'app/pages/dashboard/components/dashboard-form/dashboard-form.component';
 import { DashConfigItem } from 'app/pages/dashboard/components/widget-controller/widget-controller.component';
 import { WebSocketService } from 'app/services';
+import { CoreService } from 'app/services/core-service/core.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { ModalService } from 'app/services/modal.service';
 
@@ -141,7 +140,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     const st = window.innerWidth < 600 ? 'Mobile' : 'Desktop';
 
     // If leaving .xs screen then reset mobile position
-    if (st == 'Desktop' && this.screenType == 'Mobile') {
+    if (st === 'Desktop' && this.screenType === 'Mobile') {
       this.onMobileBack();
     }
 
@@ -149,7 +148,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
     // Eliminate top level scrolling
     const wrapper = document.querySelector<HTMLElement>('.fn-maincontent');
-    wrapper.style.overflow = this.screenType == 'Mobile' ? 'hidden' : 'auto';
+    wrapper.style.overflow = this.screenType === 'Mobile' ? 'hidden' : 'auto';
     this.optimizeWidgetContainer();
   }
 
@@ -208,7 +207,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   onMobileResize(evt: Event): void {
-    if (this.screenType == 'Desktop') { return; }
+    if (this.screenType === 'Desktop') { return; }
     const vp = this.el.nativeElement.querySelector('.mobile-viewport');
     const viewport = styler(vp);
     const c = this.el.nativeElement.querySelector('.mobile-viewport .carousel');
@@ -245,18 +244,18 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   init(): void {
     this.startListeners();
 
-    this.core.register({ observerClass: this, eventName: 'NicInfo' }).pipe(untilDestroyed(this)).subscribe((evt: NicInfoEvent) => {
-      const clone = [...evt.data] as DashboardNetworkInterface[];
+    this.ws.call('interface.query').pipe(untilDestroyed(this)).subscribe((interfaces) => {
+      const clone = [...interfaces] as DashboardNetworkInterface[];
       const removeNics: { [nic: string]: number | string } = {};
 
       // Store keys for fast lookup
       const nicKeys: { [nic: string]: number | string } = {};
-      evt.data.forEach((item, index) => {
+      interfaces.forEach((item, index) => {
         nicKeys[item.name] = index.toString();
       });
 
       // Process Vlans (attach vlans to their parent)
-      evt.data.forEach((item, index) => {
+      interfaces.forEach((item, index) => {
         if (item.type !== NetworkInterfaceType.Vlan && !clone[index].state.vlans) {
           clone[index].state.vlans = [];
         }
@@ -273,7 +272,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       });
 
       // Process LAGGs
-      evt.data.forEach((item, index) => {
+      interfaces.forEach((item, index) => {
         if (item.type == NetworkInterfaceType.LinkAggregation) {
           clone[index].state.lagg_ports = item.lag_ports;
           item.lag_ports.forEach((nic) => {
@@ -310,7 +309,6 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       this.isDataReady();
     });
 
-    this.core.emit({ name: 'NicInfoRequest' });
     this.getDisksData();
   }
 
@@ -404,7 +402,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     });
 
     this.core.register({ observerClass: this, eventName: 'SysInfo' }).pipe(untilDestroyed(this)).subscribe((evt: SysInfoEvent) => {
-      if (typeof this.systemInformation == 'undefined') {
+      if (typeof this.systemInformation === 'undefined') {
         this.systemInformation = evt.data;
         if (!this.pools || this.pools.length == 0) {
           this.core.emit({ name: 'PoolDataRequest', sender: this });

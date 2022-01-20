@@ -7,8 +7,6 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { Subject } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
-import { CoreService } from 'app/core/services/core-service/core.service';
-import { PreferencesService } from 'app/core/services/preferences.service';
 import { ConfirmOptions } from 'app/interfaces/dialog.interface';
 import { CoreEvent } from 'app/interfaces/events';
 import { User } from 'app/interfaces/user.interface';
@@ -16,7 +14,9 @@ import { EmptyConfig, EmptyType } from 'app/modules/entity/entity-empty/entity-e
 import { EntityToolbarComponent } from 'app/modules/entity/entity-toolbar/entity-toolbar.component';
 import { ControlConfig, ToolbarConfig } from 'app/modules/entity/entity-toolbar/models/control-config.interface';
 import { DialogService } from 'app/services';
+import { CoreService } from 'app/services/core-service/core.service';
 import { ModalService } from 'app/services/modal.service';
+import { PreferencesService } from 'app/services/preferences.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { UserFormComponent } from '../user-form/user-form.component';
 

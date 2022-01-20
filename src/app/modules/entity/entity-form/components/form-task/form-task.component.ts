@@ -74,10 +74,10 @@ export class FormTaskComponent implements Field, AfterViewInit, OnInit {
 
   setControlValue(): void {
     this.value = this.tabFormGroup.controls[this.activeTabField.name].value;
-    if (this.activeTabField.type == 'slider' && this.value) {
+    if (this.activeTabField.type === 'slider' && this.value) {
       this.value = '*/' + this.value;
     }
-    if (this.activeTabField.type == 'togglebutton' && this.value) {
+    if (this.activeTabField.type === 'togglebutton' && this.value) {
       this.value = this.value.join();
     }
     this.control.setValue(this.value);

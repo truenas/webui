@@ -1,11 +1,11 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { CoreService } from 'app/core/services/core-service/core.service';
 import { GlobalAction } from 'app/interfaces/global-action.interface';
 import { EntityTableAction, EntityTableConfig } from 'app/modules/entity/entity-table/entity-table.interface';
 import { VolumeImportWizardComponent } from 'app/pages/storage/volumes/volume-import-wizard/volume-import-wizard.component';
 import { VolumesListComponent } from 'app/pages/storage/volumes/volumes-list/volumes-list.component';
+import { CoreService } from 'app/services/core-service/core.service';
 import { ModalService } from 'app/services/modal.service';
 
 @UntilDestroy()

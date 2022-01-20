@@ -542,7 +542,7 @@ export class CloudsyncFormComponent implements FormConfiguration {
         return children;
       },
       (err) => {
-        if (err.extra && err.extra[0] && err.extra[0][0].split('.').pop() == 'bucket') {
+        if (err.extra && err.extra[0] && err.extra[0][0].split('.').pop() === 'bucket') {
           this.setBucketError(err.extra[0][1]);
         } else {
           new EntityUtils().handleWsError(this, err, this.dialog);
@@ -758,7 +758,7 @@ export class CloudsyncFormComponent implements FormConfiguration {
               }
 
               // update bucket fields name and tooltips based on provider
-              if (item.provider == 'AZUREBLOB' || item.provider == 'HUBIC') {
+              if (item.provider === 'AZUREBLOB' || item.provider === 'HUBIC') {
                 this.bucketField.placeholder = this.translate.instant('Container');
                 this.bucketField.tooltip = this.translate.instant('Select the pre-defined container to use.');
                 this.bucketInputField.placeholder = this.translate.instant('Container');
@@ -951,7 +951,7 @@ export class CloudsyncFormComponent implements FormConfiguration {
       }
       const subLimit = {
         time: sublimitArr[0],
-        bandwidth: sublimitArr[1] == 'off' ? null : sublimitArr[1],
+        bandwidth: sublimitArr[1] === 'off' ? null : sublimitArr[1],
       };
 
       bwlimtArr.push(subLimit);

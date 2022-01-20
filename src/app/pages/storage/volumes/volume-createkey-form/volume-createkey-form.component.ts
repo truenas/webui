@@ -1,7 +1,5 @@
 import {
-  ApplicationRef,
   Component,
-  Injector,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -11,12 +9,12 @@ import * as _ from 'lodash';
 import helptext from 'app/helptext/storage/volumes/volume-key';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { Pool } from 'app/interfaces/pool.interface';
+import { AppLoaderService } from 'app/modules/app-loader/app-loader.service';
 import { EntityFormComponent } from 'app/modules/entity/entity-form/entity-form.component';
 import {
   FieldConfig, FormParagraphConfig,
 } from 'app/modules/entity/entity-form/models/field-config.interface';
 import { WebSocketService } from 'app/services';
-import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { DialogService } from 'app/services/dialog.service';
 import { EncryptionService } from 'app/services/encryption.service';
 
@@ -112,8 +110,6 @@ export class VolumeCreatekeyFormComponent implements FormConfiguration {
     protected router: Router,
     protected route: ActivatedRoute,
     protected ws: WebSocketService,
-    protected _injector: Injector,
-    protected _appRef: ApplicationRef,
     protected dialogService: DialogService,
     protected loader: AppLoaderService,
     private mdDialog: MatDialog,

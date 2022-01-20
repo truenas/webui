@@ -29,6 +29,7 @@ export interface AppTableColumn {
   prop1?: string;
   prop2?: string;
   checkbox?: boolean;
+  slideToggle?: boolean;
   onChange?(data: any): void;
   width?: string;
   state?: any;
@@ -40,12 +41,12 @@ export interface AppTableColumn {
   hidden?: boolean;
   hiddenIfEmpty?: boolean;
   listview?: boolean;
-  getIcon?(element: any, prop: string): string;
+  getIcon?(element: unknown, prop: string): string;
 }
 
 export interface AppTableConfirmDeleteDialog {
-  buildTitle?(args: any): string;
-  buttonMsg?(args: any): string;
+  buildTitle?(args: unknown): string;
+  buttonMsg?(args: unknown): string;
   title?: string;
   message?: string;
   button?: string;
@@ -82,14 +83,14 @@ export interface AppTableConfig<P = any> {
   add?(): void; // add action function
   afterGetData?(data: unknown): void;
   afterDelete?(): void;
-  edit?(any: any): void; // edit row
-  delete?(item: any, table: TableComponent): void; // customize delete row method
+  edit?(any: unknown): void; // edit row
+  delete?(item: unknown, table: TableComponent): void; // customize delete row method
   dataSourceHelper?(any: any): any; // customise handle/modify dataSource
-  getInOutInfo?(any: any): any; // get in out info if has state column
+  getInOutInfo?(any: unknown): void; // get in out info if has state column
   getActions?: () => AppTableAction[]; // actions for each row
-  isActionVisible?(actionId: string, entity: any): boolean; // determine if action is visible
+  isActionVisible?(actionId: string, entity: unknown): boolean; // determine if action is visible
   getDeleteCallParams?(row: any, id: any): any; // get delete Params
-  onButtonClick?(row: any): void;
+  onButtonClick?(row: unknown): void;
 
   expandable?: boolean; // field introduced by ExpandableTable, "fake" field
   afterGetDataExpandable?(data: any): any; // field introduced by ExpandableTable, "fake" field
@@ -327,6 +328,10 @@ export class TableComponent implements OnInit, AfterViewInit, AfterViewChecked {
 
     if (column.checkbox) {
       return 'checkbox';
+    }
+
+    if (column.slideToggle) {
+      return 'slide-toggle';
     }
 
     if (column.state && column.state.prop && this._tableConf.getInOutInfo) {

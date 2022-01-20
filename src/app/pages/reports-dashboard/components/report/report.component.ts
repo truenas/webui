@@ -24,6 +24,7 @@ import { WidgetComponent } from 'app/pages/dashboard/components/widget/widget.co
 import { LineChartComponent } from 'app/pages/reports-dashboard/components/line-chart/line-chart.component';
 import { ReportingDatabaseError, ReportsService } from 'app/pages/reports-dashboard/reports.service';
 import { WebSocketService, SystemGeneralService } from 'app/services/';
+import { CoreService } from 'app/services/core-service/core.service';
 import { DialogService } from 'app/services/dialog.service';
 import { LocaleService } from 'app/services/locale.service';
 import { Theme } from 'app/services/theme/theme.service';
@@ -140,6 +141,7 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
     protected localeService: LocaleService,
     private sysGeneralService: SystemGeneralService,
     private dialog: DialogService,
+    private core: CoreService,
   ) {
     super(translate);
 
@@ -272,7 +274,7 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
     let durationUnit: keyof Duration;
     let value: number;
 
-    const now = await this.reportsService.getServerTime();
+    const now = await this.reportsService.getServerTime().pipe(untilDestroyed(this)).toPromise();
 
     let startDate: Date;
     let endDate: Date;
