@@ -196,12 +196,12 @@ export class SystemProfiler {
 
       const stats: { [name: string]: VDevStats } = {}; // Store stats from pool.query disk info
 
-      if (vdev.children.length == 0 && vdev.device) {
+      if (vdev.children.length === 0 && vdev.device) {
         const name = vdev.disk;
         v.disks[name] = -1; // no children so we use this as placeholder
       } else if (vdev.children.length > 0) {
         vdev.children.forEach((disk, dIndex) => {
-          if (disk.device && disk.status != 'REMOVED') {
+          if (disk.device && disk.status !== 'REMOVED') {
             const name = disk.disk;
             v.disks[name] = dIndex;
             stats[name] = disk.stats;
@@ -319,7 +319,7 @@ export class SystemProfiler {
     if (!this.diskData || this.diskData.length == 0) { return; }
     let capacity = 0;
     this.diskData.forEach((disk: any) => {
-      if (disk.vdev && disk.vdev.topology == 'data') {
+      if (disk.vdev && disk.vdev.topology === 'data') {
         capacity += disk.size;
       }
     });
