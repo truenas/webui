@@ -143,7 +143,7 @@ export class LayoutObject {
     const newX = this.screenPositions[index].left;
     const newY = this.screenPositions[index].top;
 
-    if (startX === newX && startY === newY) {
+    if (startX == newX && startY == newY) {
       return;
     }
     tween({

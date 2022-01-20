@@ -56,7 +56,7 @@ export class MINIXLPLUS extends Chassis {
           0.9,
           0.905,
         );
-      } else if (i === 0) {
+      } else if (i == 0) {
         // SSD
         dt.container.setTransform(0, 121 - backY, 0.73, 0.73);
       }

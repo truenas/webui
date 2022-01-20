@@ -250,7 +250,7 @@ export class DisplayObject {
     const startY = (this.anchorXY.get() as any).y;
 
     // RESERVED SPACE
-    if (!this.boundary && this.reservedTop !== 0) {
+    if (!this.boundary && this.reservedTop != 0) {
       const viewportOffset = this.rawElement.getBoundingClientRect();
       // these are relative to the viewport, i.e. the window
       const topBounds = viewportOffset.top;
