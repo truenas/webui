@@ -139,9 +139,11 @@ def confirm_installation_is_successful(driver):
         #assert wait_on_element(driver, 5, '//*[contains(.,"Please wait")]')
         #assert wait_on_element_disappear(driver, 10, '//*[contains(.,"Please wait")]')    
         # refresh loop
+        assert wait_on_element(driver, 10, '//mat-panel-title[contains(.,"Application Events")]', 'clickable')
+        driver.find_element_by_xpath('//mat-panel-title[contains(.,"Application Events")]').click()
         while is_element_present(driver, '//strong[contains(text(),"Started container collabora")]') is False:
             time.sleep(2)
-            assert wait_on_element(driver, 10, '//strong[contains(.,"Refresh Events")]', 'clickable')
+            #assert wait_on_element(driver, 10, '//strong[contains(.,"Refresh Events")]', 'clickable')
             driver.find_element_by_xpath('//strong[contains(.,"Refresh Events")]').click()
         else:
             assert wait_on_element(driver, 10, '//span[contains(.,"Close")]', 'clickable')
