@@ -158,7 +158,7 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
   updateSidenav(force?: 'open' | 'close'): void {
     if (force) {
       this.isSidenavOpen = force === 'open';
-      this.isSidenotOpen = force != 'open';
+      this.isSidenotOpen = force !== 'open';
       if (force === 'close') {
         this.layoutService.isMenuCollapsed = false;
       }
@@ -239,7 +239,7 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
   }
 
   onShowConsoleFooterBar(data: boolean): void {
-    if (data && this.consoleMsg == '') {
+    if (data && this.consoleMsg === '') {
       this.getLogConsoleMsg();
     } else if (!data) {
       this.ws.unsub(this.consoleMsgsSubName, this.consoleMsgsSubscriptionId);

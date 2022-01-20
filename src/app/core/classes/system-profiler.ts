@@ -101,7 +101,7 @@ export class SystemProfiler {
 
       const series = this.getSeriesFromModel(this.platform);
       const enclosure: EnclosureMetadata = {
-        model: this.headIndex == i ? series : this.enclosures[i].model,
+        model: this.headIndex === i ? series : this.enclosures[i].model,
         disks: [],
         diskKeys: {},
         poolKeys: {},
@@ -154,7 +154,7 @@ export class SystemProfiler {
     const powerStatus = obj.filter((v) => v.name.startsWith('PS'));
     if (this.enclosures[this.headIndex] && this.enclosures[this.headIndex].model === 'M Series') {
       const elements = powerStatus.map((item) => {
-        const status = item.value == 1 ? 'OK' : 'FAILED';
+        const status = item.value === 1 ? 'OK' : 'FAILED';
         return {
           descriptor: item.name,
           status,
@@ -246,7 +246,7 @@ export class SystemProfiler {
     }
 
     let poolDisk;
-    if (vdev.disks[diskName] == -1) {
+    if (vdev.disks[diskName] === -1) {
       poolDisk = this.pools[vdev.poolIndex].topology[vdev.topology][vdev.vdevIndex];
     } else {
       poolDisk = this.pools[vdev.poolIndex].topology[vdev.topology][vdev.vdevIndex].children[vdev.disks[diskName]];
@@ -302,12 +302,12 @@ export class SystemProfiler {
         result = index;
       }
     });
-    return typeof result == 'undefined' ? -1 : result;
+    return typeof result === 'undefined' ? -1 : result;
   }
 
   getEnclosureExpanders(index: number): EnclosureElement[] | EnclosureElementsGroup[] {
-    if (this.rearIndex && index == this.rearIndex) { index = this.headIndex; }
-    const raw = this.enclosures[index].elements.filter((item) => item.name == 'SAS Expander');
+    if (this.rearIndex && index === this.rearIndex) { index = this.headIndex; }
+    const raw = this.enclosures[index].elements.filter((item) => item.name === 'SAS Expander');
 
     if (raw.length > 0) {
       return raw[0].elements;
@@ -316,7 +316,7 @@ export class SystemProfiler {
   }
 
   rawCapacity(): number {
-    if (!this.diskData || this.diskData.length == 0) { return; }
+    if (!this.diskData || this.diskData.length === 0) { return; }
     let capacity = 0;
     this.diskData.forEach((disk: any) => {
       if (disk.vdev && disk.vdev.topology === 'data') {
@@ -327,6 +327,6 @@ export class SystemProfiler {
   }
 
   getDiskById(id: string): Disk {
-    return this.diskData ? this.diskData.find((disk) => disk.identifier == id) : null;
+    return this.diskData ? this.diskData.find((disk) => disk.identifier === id) : null;
   }
 }
