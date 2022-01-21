@@ -25,7 +25,7 @@
                 <div dynamicField [config]="diskField" [group]="diskFormGroup"></div>
               </div>
             </div>
-            <div *ngSwitch="VmDeviceType.Raw" fxFlex="100%" fxFlex.gt-xs="calc(100% - 16px)" class="form-line">
+            <div *ngSwitchCase="VmDeviceType.Raw" fxFlex="100%" fxFlex.gt-xs="calc(100% - 16px)" class="form-line">
               <div *ngFor="let rawfileField of fieldSet.rawfileFieldConfig;">
                 <div dynamicField [config]="rawfileField" [group]="rawfileFormGroup"></div>
               </div>
