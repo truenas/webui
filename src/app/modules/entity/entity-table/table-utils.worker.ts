@@ -44,7 +44,7 @@ const tableUtils = {
       units = 'bits';
     }
 
-    if (typeof units == 'undefined') {
+    if (typeof units === 'undefined') {
       console.warn('Could not infer units from ' + label);
     }
 
@@ -78,7 +78,7 @@ const tableUtils = {
       output = input / kilo;
     }
 
-    if (units == 'bits') {
+    if (units === 'bits') {
       shortName = shortName.replace(/i/, '');
       shortName = shortName.toLowerCase();
     }
@@ -118,7 +118,7 @@ const tableUtils = {
       case '°':
       default:
         converted = convertByKilo(output);
-        return typeof output == 'number' ? maxDecimals(converted.value).toString() + converted.suffix : value;// [this.limitDecimals(value), ''];
+        return typeof output === 'number' ? maxDecimals(converted.value).toString() + converted.suffix : value;// [this.limitDecimals(value), ''];
         // break;
     }
 
@@ -141,7 +141,7 @@ const tableUtils = {
 function processTableCommands(list: any[]): any {
   let output: any;
   list.forEach((item) => {
-    const input = item.input == '--pipe' || item.input == '|' ? output : item.input;
+    const input = item.input === '--pipe' || item.input == '|' ? output : item.input;
     output = item.options
       ? (tableUtils as any)[item.command](input, item.options)
       : (tableUtils as any)[item.command](input);

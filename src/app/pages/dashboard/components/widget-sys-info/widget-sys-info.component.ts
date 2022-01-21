@@ -75,7 +75,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnDestroy
     });
 
     mediaObserver.media$.pipe(untilDestroyed(this)).subscribe((evt) => {
-      const st = evt.mqAlias == 'xs' ? 'Mobile' : 'Desktop';
+      const st = evt.mqAlias === 'xs' ? 'Mobile' : 'Desktop';
       this.screenType = st;
     });
   }
@@ -87,7 +87,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnDestroy
 
     if (this.isHA && this.isPassive) {
       this.core.register({ observerClass: this, eventName: 'HA_Status' }).pipe(untilDestroyed(this)).subscribe((evt: HaStatusEvent) => {
-        if (evt.data.status == 'HA Enabled' && !this.data) {
+        if (evt.data.status === 'HA Enabled' && !this.data) {
           this.ws.call('failover.call_remote', ['system.info']).pipe(untilDestroyed(this)).subscribe((systemInfo: SystemInfo) => {
             this.processSysInfo(systemInfo);
           });
@@ -161,7 +161,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnDestroy
     this.memory = this.formatMemory(this.data.physmem, 'GiB');
 
     // PLATFORM INFO
-    if (this.data.system_manufacturer && this.data.system_manufacturer.toLowerCase() == 'ixsystems') {
+    if (this.data.system_manufacturer && this.data.system_manufacturer.toLowerCase() === 'ixsystems') {
       this.manufacturer = 'ixsystems';
     } else {
       this.manufacturer = 'other';
@@ -206,9 +206,9 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnDestroy
 
   formatMemory(physmem: number, units: string): string {
     let result: string;
-    if (units == 'MiB') {
+    if (units === 'MiB') {
       result = Number(physmem / 1024 / 1024).toFixed(0) + ' MiB';
-    } else if (units == 'GiB') {
+    } else if (units === 'GiB') {
       result = Number(physmem / 1024 / 1024 / 1024).toFixed(0) + ' GiB';
     }
     return result;
@@ -320,7 +320,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnDestroy
       sessionStorage.updateLastChecked
       && Number(sessionStorage.updateLastChecked) + oneDay > Date.now()
     ) {
-      if (sessionStorage.updateAvailable == 'true') {
+      if (sessionStorage.updateAvailable === 'true') {
         this.updateAvailable = true;
       }
       return;

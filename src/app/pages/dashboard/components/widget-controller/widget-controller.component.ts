@@ -49,7 +49,7 @@ export class WidgetControllerComponent extends WidgetComponent implements OnDest
     super(translate);
 
     mediaObserver.media$.pipe(untilDestroyed(this)).subscribe((evt) => {
-      const st = evt.mqAlias == 'xs' ? 'Mobile' : 'Desktop';
+      const st = evt.mqAlias === 'xs' ? 'Mobile' : 'Desktop';
       this.screenType = st;
     });
   }
@@ -63,7 +63,7 @@ export class WidgetControllerComponent extends WidgetComponent implements OnDest
     const key = spl[0];
     const value = spl[1];
 
-    if (key == 'name') {
+    if (key === 'name') {
       return value;
     }
     return '';

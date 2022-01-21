@@ -51,17 +51,17 @@ export class TerminalComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.formEvent$ = new Subject();
     this.formEvent$.pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
-      if (evt.data.event_control == 'restore') {
+      if (evt.data.event_control === 'restore') {
         this.resetDefault();
         this.refreshToolbarButtons();
-      } else if (evt.data.event_control == 'reconnect') {
+      } else if (evt.data.event_control === 'reconnect') {
         if (this.conf.customReconnectAction) {
           this.conf.customReconnectAction();
         } else {
           this.reconnect();
           this.refreshToolbarButtons();
         }
-      } else if (evt.data.event_control == 'fontsize') {
+      } else if (evt.data.event_control === 'fontsize') {
         this.fontSize = evt.data.fontsize;
         this.resizeTerm();
       }

@@ -1182,7 +1182,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
 
     if (item === 'ssh_credentials') {
       item += '_' + data['setup_method'];
-      if (data['setup_method'] == 'manual') {
+      if (data['setup_method'] === 'manual') {
         payload = {
           name: data['name'],
           type: KeychainCredentialType.SshCredentials,
@@ -1417,7 +1417,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
         let prerequisite = true;
         this.entityWizard.loader.open();
 
-        if (value['private_key'] == 'NEW') {
+        if (value['private_key'] === 'NEW') {
           await this.replicationService.genSshKeypair().then(
             (keyPair) => {
               value['sshkeypair'] = keyPair;
@@ -1428,7 +1428,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
             },
           );
         }
-        if (value['setup_method'] == 'manual') {
+        if (value['setup_method'] === 'manual') {
           await this.getRemoteHostKey(value).then(
             (res) => {
               value['remote_host_key'] = res;

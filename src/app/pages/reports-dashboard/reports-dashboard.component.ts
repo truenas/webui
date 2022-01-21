@@ -228,25 +228,25 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /* HandleCh
         let condition;
         switch (activeTab.value) {
           case ReportTab.Cpu:
-            condition = (report.name == 'cpu' || report.name == 'load' || report.name == 'cputemp');
+            condition = (report.name === 'cpu' || report.name === 'load' || report.name === 'cputemp');
             break;
           case ReportTab.Memory:
-            condition = (report.name == 'memory' || report.name == 'swap');
+            condition = (report.name === 'memory' || report.name === 'swap');
             break;
           case ReportTab.Network:
-            condition = (report.name == 'interface');
+            condition = (report.name === 'interface');
             break;
           case ReportTab.Nfs:
-            condition = (report.name == 'nfsstat' || report.name == 'nfsstatbytes');
+            condition = (report.name === 'nfsstat' || report.name === 'nfsstatbytes');
             break;
           case ReportTab.Partition:
-            condition = (report.name == 'df');
+            condition = (report.name === 'df');
             break;
           case ReportTab.System:
-            condition = (report.name == 'processes' || report.name == 'uptime');
+            condition = (report.name === 'processes' || report.name === 'uptime');
             break;
           case ReportTab.Target:
-            condition = (report.name == 'ctl');
+            condition = (report.name === 'ctl');
             break;
           case ReportTab.Ups:
             condition = report.name.startsWith('ups');
@@ -416,13 +416,13 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /* HandleCh
 
   buildDiskReport(device: string | any[], metric: string | any[]): void {
     // Convert strings to arrays
-    if (typeof device == 'string') {
+    if (typeof device === 'string') {
       device = [device];
     } else {
       device = device.map((v) => v.value);
     }
 
-    if (typeof metric == 'string') {
+    if (typeof metric === 'string') {
       metric = [metric];
     } else {
       metric = metric.map((v) => v.value);
@@ -453,7 +453,7 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /* HandleCh
   }
 
   isReportReversed(report: Report): boolean {
-    return report.name == 'cpu';
+    return report.name === 'cpu';
   }
 
   showConfigForm(): void {

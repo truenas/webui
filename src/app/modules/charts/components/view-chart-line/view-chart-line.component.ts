@@ -35,7 +35,7 @@ export class ViewChartLineComponent extends ViewChartComponent {
   }
 
   set chartType(str: string) {
-    if (str == 'line' || str == 'area' || str == 'spline' || str == 'area-spline' || !str) {
+    if (str === 'line' || str === 'area' || str === 'spline' || str === 'area-spline' || !str) {
       this._chartType = str;
     } else {
       console.warn('chartType must be a valid line chart type (line, area, spline or area-spline)');
