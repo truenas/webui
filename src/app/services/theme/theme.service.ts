@@ -374,7 +374,7 @@ export class ThemeService {
   }
 
   findTheme(name: string, reset?: boolean): Theme {
-    if (name == 'default') {
+    if (name === 'default') {
       name = this.defaultTheme;
     }
 

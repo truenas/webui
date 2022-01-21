@@ -145,7 +145,7 @@ export class ZvolFormComponent implements FormConfiguration {
           (control: FormControl): ValidationErrors => {
             const config = this.fieldSets[0].config.find((c) => c.name === 'volsize');
 
-            const size = control.value && typeof control.value == 'string' ? this.storageService.convertHumanStringToNum(control.value, true) : null;
+            const size = control.value && typeof control.value === 'string' ? this.storageService.convertHumanStringToNum(control.value, true) : null;
             const humanSize = control.value;
 
             let errors = control.value && Number.isNaN(size)

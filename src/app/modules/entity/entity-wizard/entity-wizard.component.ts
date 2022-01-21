@@ -219,7 +219,7 @@ export class EntityWizardComponent implements OnInit {
    */
   selectionChange(event: StepperSelectionEvent): void {
     if (this.conf.isAutoSummary) {
-      if (event.selectedIndex == this.conf.wizardConfig.length) {
+      if (event.selectedIndex === this.conf.wizardConfig.length) {
         let value = {};
         for (const i in this.formGroup.value.formArray) {
           value = _.merge(value, _.cloneDeep(this.formGroup.value.formArray[i]));

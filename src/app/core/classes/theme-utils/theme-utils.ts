@@ -3,7 +3,7 @@ export class ThemeUtils {
     let txtColor = '';
     // Convert hex value to RGB
     const cssVarType = this.getValueType(cssVar);
-    const props = cssVarType == 'hex' ? this.hexToRgb(cssVar) : { rgb: this.rgbToArray(cssVar) };
+    const props = cssVarType === 'hex' ? this.hexToRgb(cssVar) : { rgb: this.rgbToArray(cssVar) };
 
     // Find the average value to determine brightness
     const brightest = (props.rgb[0] + props.rgb[1] + props.rgb[2]) / 3;
@@ -64,7 +64,7 @@ export class ThemeUtils {
 
     const spl = str.split('#');
     let hex = spl[1];
-    if (hex.length == 3) {
+    if (hex.length === 3) {
       hex = hex[0] + hex[0] + hex[1] + hex[1] + hex[2] + hex[2];
     }
 

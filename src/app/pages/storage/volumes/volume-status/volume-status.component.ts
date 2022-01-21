@@ -166,7 +166,7 @@ export class VolumeStatusComponent implements OnInit, OnDestroy {
   getZfsPoolScan(poolName: string): void {
     this.ws.subscribe('zfs.pool.scan').pipe(untilDestroyed(this)).subscribe(
       (res) => {
-        if (res.fields && res.fields.name == poolName) {
+        if (res.fields && res.fields.name === poolName) {
           this.poolScan = res.fields.scan;
           const seconds = this.poolScan.total_secs_left;
           this.timeRemaining = {
@@ -312,7 +312,7 @@ export class VolumeStatusComponent implements OnInit, OnDestroy {
           );
         });
       },
-      isHidden: data.status == 'OFFLINE',
+      isHidden: data.status === 'OFFLINE',
     }, {
       id: 'online',
       label: helptext.actions_label.online,
@@ -342,7 +342,7 @@ export class VolumeStatusComponent implements OnInit, OnDestroy {
           );
         });
       },
-      isHidden: !!(data.status == 'ONLINE' || this.pool.encrypt !== 0),
+      isHidden: !!(data.status === 'ONLINE' || this.pool.encrypt !== 0),
     }, {
       id: 'replace',
       label: helptext.actions_label.replace,
@@ -450,13 +450,13 @@ export class VolumeStatusComponent implements OnInit, OnDestroy {
       isHidden: true,
     }];
 
-    if (category == 'data') {
+    if (category === 'data') {
       _.find(actions, { id: 'remove' }).isHidden = true;
-    } else if (category == 'spare') {
+    } else if (category === 'spare') {
       _.find(actions, { id: 'online' }).isHidden = true;
       _.find(actions, { id: 'offline' }).isHidden = true;
       _.find(actions, { id: 'replace' }).isHidden = true;
-    } else if (category == 'cache') {
+    } else if (category === 'cache') {
       _.find(actions, { id: 'online' }).isHidden = true;
       _.find(actions, { id: 'offline' }).isHidden = true;
     }

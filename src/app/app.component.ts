@@ -118,7 +118,7 @@ export class AppComponent {
     if (browserVersion && (temp = ua.match(/version\/([\.\d]+)/i)) != null) browserVersion[2] = temp[1];
     const browserName = browserVersion ? browserVersion[1] : appName;
 
-    return name == browserName;
+    return name === browserName;
   }
 
   private globalPreviewControl(): void {

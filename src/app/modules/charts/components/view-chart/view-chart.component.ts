@@ -78,7 +78,7 @@ export class ViewChartComponent extends ViewComponent implements OnChanges, Afte
       const time = raw[0].x;
       for (const legend of this.legend) {
         for (const item of raw) {
-          if (legend.name == item.name) {
+          if (legend.name === item.name) {
             legend.value = item.value;
           }
         }
@@ -173,7 +173,7 @@ export class ViewChartComponent extends ViewComponent implements OnChanges, Afte
   findLegendItem(item: Legend): number {
     for (let i = 0; i < this.legend.length; i++) {
       const legendItem = this.legend[i];
-      if (legendItem.name == item.name) {
+      if (legendItem.name === item.name) {
         return i;
       }
     }

@@ -61,7 +61,7 @@ export class SystemProfileService extends BaseService {
     if (this.cache && this.authenticated) {
       return true;
     } if (!this.cache && this.authenticated) {
-      if (this.buffer.length == 0) {
+      if (this.buffer.length === 0) {
         this.fetchProfile();
       }
       this.buffer.push(evt);
@@ -120,7 +120,7 @@ export class SystemProfileService extends BaseService {
     }
 
     // HIGH AVAILABILITY SUPPORT
-    if ((profile.license && profile.license.system_serial_ha) || profile.system_product == 'BHYVE') {
+    if ((profile.license && profile.license.system_serial_ha) || profile.system_product === 'BHYVE') {
       this.features.HA = true;
 
       // HA Status Change Call
@@ -133,9 +133,9 @@ export class SystemProfileService extends BaseService {
   }
 
   updateHa(res: FailoverDisabledReason[]): void {
-    const haEnabled = res.length == 0;
+    const haEnabled = res.length === 0;
 
-    const enabledText = res.length == 0 ? 'HA Enabled' : 'HA Disabled';
+    const enabledText = res.length === 0 ? 'HA Enabled' : 'HA Disabled';
 
     window.sessionStorage.setItem('ha_status', haEnabled.toString());
     this.haStatus = { status: enabledText, reasons: res };
