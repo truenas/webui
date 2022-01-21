@@ -446,8 +446,6 @@ export class CloudsyncFormComponent implements FormConfiguration {
         dialogRef.componentInstance.submit();
         dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
           dialogRef.componentInstance.showCloseButton = true;
-          // this.matDialog.closeAll();
-          // this.job.showLogs(res);
         });
         dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((err) => {
           this.matDialog.closeAll();

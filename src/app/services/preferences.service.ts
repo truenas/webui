@@ -9,7 +9,7 @@ import { UserPreferencesRequestEvent } from 'app/interfaces/events/user-preferen
 import { Preferences } from 'app/interfaces/preferences.interface';
 import { ApiService } from 'app/services/api.service';
 import { CoreService } from 'app/services/core-service/core.service';
-import { ThemeService, Theme } from 'app/services/theme/theme.service';
+import { ThemeService } from 'app/services/theme/theme.service';
 
 interface PropertyReport {
   middlewareProperties: string[];
@@ -104,20 +104,6 @@ export class PreferencesService {
       this.core.emit({ name: 'UserDataUpdate', data: this.preferences });
     });
 
-    this.core.register({ observerClass: this, eventName: 'ChangeCustomThemesPreference' }).pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
-      this.preferences.customThemes = evt.data;
-      this.core.emit({ name: 'UserDataUpdate', data: this.preferences });
-    });
-
-    this.core.register({ observerClass: this, eventName: 'ReplaceCustomThemePreference' }).pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
-      let oldTheme: Theme;
-      const newTheme = evt.data;
-      const replaced: boolean = this.replaceCustomTheme(oldTheme, newTheme);
-      if (replaced) {
-        this.core.emit({ name: 'UserDataUpdate', data: this.preferences });
-      }
-    });
-
     // Reset the entire preferences object to default
     this.core.register({ observerClass: this, eventName: 'ResetPreferences' }).pipe(untilDestroyed(this)).subscribe(() => {
       const prefs = Object.assign(this.defaultPreferences, {});
@@ -180,15 +166,6 @@ export class PreferencesService {
       data = this.preferences;
     }
     this.core.emit({ name: 'UserDataUpdate', data });
-  }
-
-  replaceCustomTheme(oldTheme: Theme, newTheme: Theme): boolean {
-    const index = this.preferences.customThemes.indexOf(oldTheme);
-    if (index && index >= 0) {
-      this.preferences.customThemes[index] = newTheme;
-      return true;
-    }
-    return false;
   }
 
   setShowGuide(value: boolean): void {
