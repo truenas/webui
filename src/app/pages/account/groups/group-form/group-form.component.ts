@@ -7,9 +7,8 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { UUID } from 'angular2-uuid';
 import * as _ from 'lodash';
-import {
-  concat, Observable, of,
-} from 'rxjs';
+import { forkJoin, Observable, of } from 'rxjs';
+import { delay, map } from 'rxjs/operators';
 import helptext from 'app/helptext/account/groups';
 import { Group } from 'app/interfaces/group.interface';
 import { Option } from 'app/interfaces/option.interface';
@@ -17,7 +16,7 @@ import { forbiddenValues } from 'app/pages/common/entity/entity-form/validators/
 import { regexValidator } from 'app/pages/common/entity/entity-form/validators/regex-validation';
 import { IxCombobox2Provider } from 'app/pages/common/ix-forms/components/ix-combobox2/ix-combobox2-provider.interface';
 import { FormErrorHandlerService } from 'app/pages/common/ix-forms/services/form-error-handler.service';
-import { IxUserComboboxProvider } from 'app/pages/common/ix-forms/services/ix-user-combobox-provider.service';
+import { IxUserComboboxProviderService } from 'app/pages/common/ix-forms/services/ix-user-combobox-provider.service';
 import { UserService, WebSocketService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
@@ -47,16 +46,37 @@ export class GroupFormComponent {
     normalCombobox: [''],
   });
 
+  userProvider = this.ixUsersProvider.getNewProvider();
+
+  normalLoading = false;
   normalProvider: IxCombobox2Provider = {
     options$: of([
       { label: UUID.UUID().substring(0, 6), value: UUID.UUID() },
       { label: UUID.UUID().substring(0, 6), value: UUID.UUID() },
+      { label: UUID.UUID().substring(0, 6), value: UUID.UUID() },
+      { label: UUID.UUID().substring(0, 6), value: UUID.UUID() },
+      { label: UUID.UUID().substring(0, 6), value: UUID.UUID() },
+      { label: UUID.UUID().substring(0, 6), value: UUID.UUID() },
+      { label: UUID.UUID().substring(0, 6), value: UUID.UUID() },
+      { label: UUID.UUID().substring(0, 6), value: UUID.UUID() },
+      { label: UUID.UUID().substring(0, 6), value: UUID.UUID() },
+      { label: UUID.UUID().substring(0, 6), value: UUID.UUID() },
+      { label: UUID.UUID().substring(0, 6), value: UUID.UUID() },
+      { label: UUID.UUID().substring(0, 6), value: UUID.UUID() },
+      { label: UUID.UUID().substring(0, 6), value: UUID.UUID() },
+      { label: UUID.UUID().substring(0, 6), value: UUID.UUID() },
+      { label: UUID.UUID().substring(0, 6), value: UUID.UUID() },
+      { label: UUID.UUID().substring(0, 6), value: UUID.UUID() },
+      { label: UUID.UUID().substring(0, 6), value: UUID.UUID() },
+      { label: UUID.UUID().substring(0, 6), value: UUID.UUID() },
     ]),
-    pageOffset: 1,
+    pageOffset: 18,
     filter: (options$: Observable<Option[]>, value: string): void => {
       if (value) {
+        this.normalLoading = true;
         options$.pipe(untilDestroyed(this)).subscribe((syncOptions) => {
           this.normalProvider.options$ = of(syncOptions.filter((option: Option) => {
+            this.normalLoading = false;
             return option.label.toLowerCase().includes(value.toLowerCase())
                 || option.value.toString().toLowerCase().includes(value.toLowerCase());
           }));
@@ -64,14 +84,31 @@ export class GroupFormComponent {
       }
     },
     onScrollEnd: () => {
-      this.normalProvider.pageOffset += 2;
-      this.normalProvider.options$ = concat(
+      this.normalProvider.pageOffset += 12;
+      this.normalLoading = true;
+
+      this.normalProvider.options$ = forkJoin([
         this.normalProvider.options$,
         of([
-          { label: UUID.UUID().substring(0, 6), value: UUID.UUID() },
-          { label: UUID.UUID().substring(0, 6), value: UUID.UUID() },
-        ]),
-      );
+          { label: 'Rehan - ' + UUID.UUID().substring(0, 6), value: UUID.UUID() },
+          { label: 'Rehan - ' + UUID.UUID().substring(0, 6), value: UUID.UUID() },
+          { label: 'Rehan - ' + UUID.UUID().substring(0, 6), value: UUID.UUID() },
+          { label: 'Rehan - ' + UUID.UUID().substring(0, 6), value: UUID.UUID() },
+          { label: 'Rehan - ' + UUID.UUID().substring(0, 6), value: UUID.UUID() },
+          { label: 'Rehan - ' + UUID.UUID().substring(0, 6), value: UUID.UUID() },
+          { label: 'Rehan - ' + UUID.UUID().substring(0, 6), value: UUID.UUID() },
+          { label: 'Rehan - ' + UUID.UUID().substring(0, 6), value: UUID.UUID() },
+          { label: 'Rehan - ' + UUID.UUID().substring(0, 6), value: UUID.UUID() },
+          { label: 'Rehan - ' + UUID.UUID().substring(0, 6), value: UUID.UUID() },
+          { label: 'Rehan - ' + UUID.UUID().substring(0, 6), value: UUID.UUID() },
+          { label: 'Rehan - ' + UUID.UUID().substring(0, 6), value: UUID.UUID() },
+        ] as Option[]),
+      ]).pipe(delay(3000)).pipe(map(([arr1, arr2]) => {
+        this.normalLoading = false;
+        return [...arr1, ...arr2];
+      }));
+      this.normalProvider = _.cloneDeep(this.normalProvider);
+      this.cdr.markForCheck();
     },
   };
 
@@ -90,8 +127,13 @@ export class GroupFormComponent {
     private cdr: ChangeDetectorRef,
     private errorHandler: FormErrorHandlerService,
     private translate: TranslateService,
-    public ixUsersProvider: IxUserComboboxProvider,
-  ) {}
+    public ixUsersProvider: IxUserComboboxProviderService,
+  ) {
+    this.userProvider.providerUpdater$.pipe(untilDestroyed(this)).subscribe(() => {
+      this.userProvider = _.cloneDeep(this.userProvider);
+      this.cdr.markForCheck();
+    });
+  }
 
   /**
    * @param group Skip argument to add new group.

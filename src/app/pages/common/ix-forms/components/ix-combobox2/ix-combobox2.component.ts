@@ -34,6 +34,7 @@ export class IxCombobox2Component implements ControlValueAccessor, OnChanges, On
   @Input() required: boolean;
   @Input() tooltip: string;
   @ViewChild('ixInput') inputElementRef: ElementRef;
+  @Input() loading = false;
   @ViewChild('auto') autoCompleteRef: MatAutocomplete;
   @ViewChild(MatAutocompleteTrigger) autocompleteTrigger: MatAutocompleteTrigger;
   placeholder = this.translate.instant('Search');
@@ -144,9 +145,9 @@ export class IxCombobox2Component implements ControlValueAccessor, OnChanges, On
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes.options) {
+    if (changes.provider) {
       if (changes.provider.currentValue) {
-        changes.provider.currentValue.options.pipe(untilDestroyed(this)).subscribe((options: Option[]) => {
+        changes.provider.currentValue.options$.pipe(untilDestroyed(this)).subscribe((options: Option[]) => {
           this.options$ = of(options);
           const setOption = options.find((option: Option) => option.value === this.value);
           this.selectedOption = setOption ? { ...setOption } : null;
@@ -155,16 +156,6 @@ export class IxCombobox2Component implements ControlValueAccessor, OnChanges, On
           }
         });
       }
-      // if (changes.options.currentValue) {
-      //   changes.options.currentValue.pipe(untilDestroyed(this)).subscribe((options: Option[]) => {
-      //     this.options$ = of(options);
-      //     const setOption = options.find((option: Option) => option.value === this.value);
-      //     this.selectedOption = setOption ? { ...setOption } : null;
-      //     if (this.selectedOption) {
-      //       this.filterChanged$.next('');
-      //     }
-      //   });
-      // }
     }
   }
 
