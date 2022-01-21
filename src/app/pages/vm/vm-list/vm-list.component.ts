@@ -26,10 +26,9 @@ import { EntityTableAction, EntityTableConfig } from 'app/modules/entity/entity-
 import { EntityUtils } from 'app/modules/entity/utils';
 import { VirtualMachineRow } from 'app/pages/vm/vm-list/virtual-machine-row.interface';
 import {
-  WebSocketService, StorageService, AppLoaderService, DialogService, VmService, NetworkService,
+  WebSocketService, StorageService, AppLoaderService, DialogService, VmService,
 } from 'app/services';
 import { ModalService } from 'app/services/modal.service';
-import { PreferencesService } from 'app/services/preferences.service';
 import { VmWizardComponent } from '../vm-wizard/vm-wizard.component';
 
 @UntilDestroy()
@@ -100,9 +99,6 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow>, On
     private http: HttpClient,
     private modalService: ModalService,
     private vmService: VmService,
-    private networkService: NetworkService,
-    private messageService: MessageService,
-    private prefService: PreferencesService,
     private translate: TranslateService,
   ) {
     if (this.productType !== ProductType.Scale) {
@@ -141,16 +137,21 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow>, On
     });
 
     this.ws.subscribe('vm.query').pipe(untilDestroyed(this)).subscribe((event) => {
-      const changedRow = this.entityList.rows.find((o) => o.id === event.id);
-      if (event.fields.status.state === ServiceStatus.Running) {
-        changedRow.state = ServiceStatus.Running;
-        changedRow.status.state = event.fields.status.state;
-        changedRow.status.domain_state = event.fields.status.domain_state;
-      } else {
-        changedRow.state = ServiceStatus.Stopped;
-        changedRow.status.state = event.fields.status.state;
-        changedRow.status.domain_state = event.fields.status.domain_state;
-      }
+      entityList.patchCurrentRows(
+        (row: VirtualMachineRow) => row.id === event.id,
+        (changedRow) => {
+          if (event.fields.status.state === ServiceStatus.Running) {
+            changedRow.state = ServiceStatus.Running;
+            changedRow.status.state = event.fields.status.state;
+            changedRow.status.domain_state = event.fields.status.domain_state;
+          } else {
+            changedRow.state = ServiceStatus.Stopped;
+            changedRow.status.state = event.fields.status.state;
+            changedRow.status.domain_state = event.fields.status.domain_state;
+          }
+          return changedRow;
+        },
+      );
     });
   }
 
@@ -276,7 +277,7 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow>, On
   }
 
   doRowAction(row: VirtualMachineRow, method: ApiMethod, params: any[] = [row.id], updateTable = false): void {
-    if (method === 'vm.stop') {
+    if (method === this.wsMethods.stop) {
       this.dialogRef = this.dialog.open(EntityJobComponent,
         { data: { title: this.translate.instant('Stopping {rowName}', { rowName: row.name }) } });
       this.dialogRef.componentInstance.setCall(method, [params[0], params[1]]);
@@ -556,7 +557,7 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow>, On
     {
       id: 'SERIAL',
       icon: 'keyboard_arrow_right',
-      label: this.translate.instant('Serial'),
+      label: this.translate.instant('Serial Shell'),
       onClick: (vm: VirtualMachineRow) => {
         this.router.navigate(new Array('').concat(['vm', 'serial', String(vm.id)]));
       },

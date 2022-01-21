@@ -10,7 +10,6 @@ import { NetworkInterfaceAliasType, NetworkInterfaceType } from 'app/enums/netwo
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { CoreEvent } from 'app/interfaces/events';
 import { MemoryStatsEventData } from 'app/interfaces/events/memory-stats-event.interface';
-import { NicInfoEvent } from 'app/interfaces/events/nic-info-event.interface';
 import { PoolDataEvent } from 'app/interfaces/events/pool-data-event.interface';
 import { SysInfoEvent, SystemInfoWithFeatures } from 'app/interfaces/events/sys-info-event.interface';
 import { VolumeDataEvent } from 'app/interfaces/events/volume-data-event.interface';
@@ -245,18 +244,18 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   init(): void {
     this.startListeners();
 
-    this.core.register({ observerClass: this, eventName: 'NicInfo' }).pipe(untilDestroyed(this)).subscribe((evt: NicInfoEvent) => {
-      const clone = [...evt.data] as DashboardNetworkInterface[];
+    this.ws.call('interface.query').pipe(untilDestroyed(this)).subscribe((interfaces) => {
+      const clone = [...interfaces] as DashboardNetworkInterface[];
       const removeNics: { [nic: string]: number | string } = {};
 
       // Store keys for fast lookup
       const nicKeys: { [nic: string]: number | string } = {};
-      evt.data.forEach((item, index) => {
+      interfaces.forEach((item, index) => {
         nicKeys[item.name] = index.toString();
       });
 
       // Process Vlans (attach vlans to their parent)
-      evt.data.forEach((item, index) => {
+      interfaces.forEach((item, index) => {
         if (item.type !== NetworkInterfaceType.Vlan && !clone[index].state.vlans) {
           clone[index].state.vlans = [];
         }
@@ -273,7 +272,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       });
 
       // Process LAGGs
-      evt.data.forEach((item, index) => {
+      interfaces.forEach((item, index) => {
         if (item.type == NetworkInterfaceType.LinkAggregation) {
           clone[index].state.lagg_ports = item.lag_ports;
           item.lag_ports.forEach((nic) => {
@@ -310,7 +309,6 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       this.isDataReady();
     });
 
-    this.core.emit({ name: 'NicInfoRequest' });
     this.getDisksData();
   }
 
@@ -471,6 +469,8 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
         name: 'System Information(Standby)', identifier: 'passive,true', rendered: true, id: conf.length.toString(),
       });
     }
+
+    conf.push({ name: 'Help', rendered: true });
 
     conf.push({ name: 'CPU', rendered: true, id: conf.length.toString() });
     conf.push({ name: 'Memory', rendered: true, id: conf.length.toString() });

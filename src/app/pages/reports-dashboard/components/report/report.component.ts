@@ -69,6 +69,7 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
   @Input() identifier?: string;
   // TODO: Make boolean
   @Input() retroLogo?: string | number;
+  @Input() isReversed?: boolean;
   @ViewChild(LineChartComponent, { static: false }) lineChart: LineChartComponent;
 
   data: ReportingData;
@@ -281,11 +282,11 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
 
     let startDate: Date;
     let endDate: Date;
-    if (direction == 'backward' && !currentDate) {
+    if (direction === 'backward' && !currentDate) {
       endDate = now;
-    } else if (direction == 'backward' && currentDate) {
+    } else if (direction === 'backward' && currentDate) {
       endDate = new Date(currentDate);
-    } else if (direction == 'forward' && currentDate) {
+    } else if (direction === 'forward' && currentDate) {
       startDate = new Date(currentDate);
     } else {
       throw new Error(
@@ -316,11 +317,11 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
         break;
     }
 
-    if (direction == 'backward') {
+    if (direction === 'backward') {
       const subOptions: Duration = {};
       subOptions[durationUnit] = value;
       startDate = sub(endDate, subOptions);
-    } else if (direction == 'forward') {
+    } else if (direction === 'forward') {
       const subOptions: Duration = {};
       subOptions[durationUnit] = value;
       endDate = add(startDate, subOptions);

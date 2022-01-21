@@ -36,7 +36,6 @@ export interface Preferences {
   hide_builtin_groups: boolean;
   dateFormat: string;
   timeFormat: string;
-  showWelcomeDialog: boolean;
   showUserListMessage: boolean;
   showGroupListMessage: boolean;
   expandAvailablePlugins: boolean;

@@ -1,7 +1,7 @@
 import { User } from 'app/interfaces/user.interface';
 
 export interface UserDataEvent {
-  name: 'UpdateChecked';
+  name: 'UserData';
   sender: unknown;
   data: User[];
 }

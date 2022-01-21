@@ -7,10 +7,9 @@ import {
 } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { Subject, BehaviorSubject } from 'rxjs';
+import { Subject, BehaviorSubject, forkJoin } from 'rxjs';
 import { ReportTab } from 'app/enums/report-tab.enum';
 import { CoreEvent } from 'app/interfaces/events';
-import { ReportingGraphsEvent } from 'app/interfaces/events/reporting-graphs-event.interface';
 import {
   UserPreferencesChangedEvent, UserPreferencesEvent,
   UserPreferencesReadyEvent,
@@ -92,7 +91,7 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /* HandleCh
   ) {}
 
   ngOnInit(): void {
-    this.scrollContainer = document.querySelector('.rightside-content-hold ');// this.container.nativeElement;
+    this.scrollContainer = document.querySelector('.rightside-content-hold ');
     this.scrollContainer.style.overflow = 'hidden';
 
     this.core.register({ observerClass: this, eventName: 'UserPreferencesReady' }).pipe(untilDestroyed(this)).subscribe((evt: UserPreferencesReadyEvent) => {
@@ -109,38 +108,30 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /* HandleCh
 
     this.core.emit({ name: 'UserPreferencesRequest' });
 
-    this.core.register({ observerClass: this, eventName: 'ReportingGraphs' }).pipe(untilDestroyed(this)).subscribe((evt: ReportingGraphsEvent) => {
-      if (evt.data) {
-        const allReports = evt.data.map((report) => {
-          const list = [];
-          if (report.identifiers) {
-            report.identifiers.forEach(() => list.push(true));
-          } else {
-            list.push(true);
-          }
-          return {
-            ...report,
-            isRendered: list,
-          };
-        });
+    forkJoin([
+      this.ws.call('disk.query'),
+      this.ws.call('reporting.graphs'),
+    ]).pipe(untilDestroyed(this)).subscribe(([disks, reports]) => {
+      this.parseDisks(disks);
+      const allReports = reports.map((report) => {
+        const list = [];
+        if (report.identifiers) {
+          report.identifiers.forEach(() => list.push(true));
+        } else {
+          list.push(true);
+        }
+        return {
+          ...report,
+          isRendered: list,
+        };
+      });
 
-        this.diskReports = allReports.filter((report) => report.name.startsWith('disk'));
+      this.diskReports = allReports.filter((report) => report.name.startsWith('disk'));
+      this.otherReports = allReports.filter((report) => !report.name.startsWith('disk'));
 
-        this.otherReports = allReports.filter((report) => !report.name.startsWith('disk'));
+      this.allTabs = this.getAllTabs();
 
-        this.allTabs = this.getAllTabs();
-
-        this.activateTabFromUrl();
-      }
-    });
-
-    this.diskQuery();
-  }
-
-  diskQuery(): void {
-    this.ws.call('disk.query').pipe(untilDestroyed(this)).subscribe((res) => {
-      this.parseDisks(res);
-      this.core.emit({ name: 'ReportingGraphsRequest', sender: this });
+      this.activateTabFromUrl();
     });
   }
 
@@ -237,25 +228,25 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /* HandleCh
         let condition;
         switch (activeTab.value) {
           case ReportTab.Cpu:
-            condition = (report.name == 'cpu' || report.name == 'load' || report.name == 'cputemp');
+            condition = (report.name === 'cpu' || report.name === 'load' || report.name === 'cputemp');
             break;
           case ReportTab.Memory:
-            condition = (report.name == 'memory' || report.name == 'swap');
+            condition = (report.name === 'memory' || report.name === 'swap');
             break;
           case ReportTab.Network:
-            condition = (report.name == 'interface');
+            condition = (report.name === 'interface');
             break;
           case ReportTab.Nfs:
-            condition = (report.name == 'nfsstat' || report.name == 'nfsstatbytes');
+            condition = (report.name === 'nfsstat' || report.name === 'nfsstatbytes');
             break;
           case ReportTab.Partition:
-            condition = (report.name == 'df');
+            condition = (report.name === 'df');
             break;
           case ReportTab.System:
-            condition = (report.name == 'processes' || report.name == 'uptime');
+            condition = (report.name === 'processes' || report.name === 'uptime');
             break;
           case ReportTab.Target:
-            condition = (report.name == 'ctl');
+            condition = (report.name === 'ctl');
             break;
           case ReportTab.Ups:
             condition = report.name.startsWith('ups');
@@ -425,13 +416,13 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /* HandleCh
 
   buildDiskReport(device: string | any[], metric: string | any[]): void {
     // Convert strings to arrays
-    if (typeof device == 'string') {
+    if (typeof device === 'string') {
       device = [device];
     } else {
       device = device.map((v) => v.value);
     }
 
-    if (typeof metric == 'string') {
+    if (typeof metric === 'string') {
       metric = [metric];
     } else {
       metric = metric.map((v) => v.value);
@@ -459,6 +450,10 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /* HandleCh
       const spl = devname.split(' ');
       return { label: devname, value: spl[0] };
     });
+  }
+
+  isReportReversed(report: Report): boolean {
+    return report.name === 'cpu';
   }
 
   showConfigForm(): void {

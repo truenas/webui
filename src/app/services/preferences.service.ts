@@ -42,7 +42,6 @@ export class PreferencesService {
     hide_builtin_groups: true,
     dateFormat: 'YYYY-MM-DD',
     timeFormat: 'HH:mm:ss',
-    showWelcomeDialog: true,
     showUserListMessage: true,
     showGroupListMessage: true,
     expandAvailablePlugins: true,

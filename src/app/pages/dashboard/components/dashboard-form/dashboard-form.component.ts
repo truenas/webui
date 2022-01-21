@@ -69,6 +69,7 @@ export class DashboardFormComponent {
           break;
         case 'System Information':
         case 'CPU':
+        case 'Help':
         case 'Memory':
           this.systemWidgets.push(widget);
           break;
