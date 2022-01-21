@@ -52,7 +52,7 @@ export class WidgetNicComponent extends WidgetComponent implements AfterViewInit
   }
 
   get previousSlide(): number {
-    return this.currentSlide == '0' ? 0 : parseInt(this.currentSlide) - 1;
+    return this.currentSlide === '0' ? 0 : parseInt(this.currentSlide) - 1;
   }
 
   title = 'Interface';
@@ -93,13 +93,13 @@ export class WidgetNicComponent extends WidgetComponent implements AfterViewInit
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.nicState) {
-      this.title = this.currentSlide == '0' ? 'Interface' : this.nicState.name;
+      this.title = this.currentSlide === '0' ? 'Interface' : this.nicState.name;
     }
   }
 
   ngAfterViewInit(): void {
     this.stats.pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
-      if (evt.name == 'NetTraffic_' + this.nicState.name) {
+      if (evt.name === 'NetTraffic_' + this.nicState.name) {
         const sent = this.utils.convert(evt.data.sent_bytes_rate);
         const received = this.utils.convert(evt.data.received_bytes_rate);
 
@@ -139,11 +139,11 @@ export class WidgetNicComponent extends WidgetComponent implements AfterViewInit
     }).start(el.set);
 
     this.currentSlide = value.toString();
-    this.title = this.currentSlide == '0' ? 'Interface' : this.nicState.name;
+    this.title = this.currentSlide === '0' ? 'Interface' : this.nicState.name;
   }
 
   vlanAliases(vlanIndex: string | number): NetworkInterfaceAlias[] {
-    if (typeof vlanIndex == 'string') { vlanIndex = parseInt(vlanIndex); }
+    if (typeof vlanIndex === 'string') { vlanIndex = parseInt(vlanIndex); }
     const vlan = this.nicState.vlans[vlanIndex];
     return vlan.aliases.filter((item) => {
       return [NetworkInterfaceAliasType.Inet, NetworkInterfaceAliasType.Inet6].includes(item.type);

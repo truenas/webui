@@ -132,7 +132,7 @@ export class PreferencesPageComponent implements EmbeddedFormConfig, OnInit, OnD
         name: 'userTheme',
         placeholder: this.translate.instant('Choose Theme'),
         options: this.themeOptions,
-        value: prefs.userTheme == 'default' ? defaultTheme.name : prefs.userTheme,
+        value: prefs.userTheme === 'default' ? defaultTheme.name : prefs.userTheme,
         tooltip: this.translate.instant('Choose a preferred theme.'),
         class: 'inline',
       },
@@ -203,7 +203,7 @@ export class PreferencesPageComponent implements EmbeddedFormConfig, OnInit, OnD
     const keys = Object.keys(this.embeddedForm.formGroup.controls);
     keys.forEach((key) => {
       if (key !== 'reset') {
-        if (key == 'userTheme' && prefs[key] == 'default') {
+        if (key === 'userTheme' && prefs[key] === 'default') {
           this.embeddedForm.formGroup.controls[key].setValue(defaultTheme.name);
         } else {
           this.embeddedForm.formGroup.controls[key].setValue(prefs[key]);

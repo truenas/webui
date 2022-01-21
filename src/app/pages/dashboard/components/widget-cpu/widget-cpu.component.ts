@@ -88,11 +88,11 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
 
     mediaObserver.media$.pipe(untilDestroyed(this)).subscribe((evt) => {
       const size = {
-        width: evt.mqAlias == 'xs' ? 320 : 536,
+        width: evt.mqAlias === 'xs' ? 320 : 536,
         height: 140,
       };
 
-      const st = evt.mqAlias == 'xs' ? 'Mobile' : 'Desktop';
+      const st = evt.mqAlias === 'xs' ? 'Mobile' : 'Desktop';
       if (this.chart && this.screenType !== st) {
         this.chart.resize(size);
       }
@@ -258,7 +258,7 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
       const options: ChartOptions = {
         events: ['mousemove', 'mouseout'],
         onHover: (e: MouseEvent) => {
-          if (e.type == 'mouseout') {
+          if (e.type === 'mouseout') {
             this.legendData = null;
             this.legendIndex = null;
           }
@@ -269,7 +269,7 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
           intersect: true,
           callbacks: {
             label: (tt: ChartTooltipItem, data: ChartData) => {
-              if (this.screenType.toLowerCase() == 'mobile') {
+              if (this.screenType.toLowerCase() === 'mobile') {
                 this.legendData = null;
                 this.legendIndex = null;
                 return;
@@ -351,10 +351,10 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
 
       const accent = this.themeService.isDefaultTheme ? 'orange' : 'accent';
       let color;
-      if (accent !== 'accent' && ds.label == 'Temperature') {
+      if (accent !== 'accent' && ds.label === 'Temperature') {
         color = accent;
       } else {
-        const cssVar = ds.label == 'Temperature' ? accent : 'primary';
+        const cssVar = ds.label === 'Temperature' ? accent : 'primary';
         color = this.stripVar(this.currentTheme[cssVar]);
       }
 
@@ -388,7 +388,7 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
     const valueType = this.utils.getValueType(txtColor);
 
     // convert to rgb
-    const rgb = valueType == 'hex' ? this.utils.hexToRgb(txtColor).rgb : this.utils.rgbToArray(txtColor);
+    const rgb = valueType === 'hex' ? this.utils.hexToRgb(txtColor).rgb : this.utils.rgbToArray(txtColor);
 
     // return rgba
     const rgba = 'rgba(' + rgb[0] + ',' + rgb[1] + ',' + rgb[2] + ',' + opacity + ')';

@@ -78,7 +78,7 @@ export class WidgetMemoryComponent extends WidgetComponent implements AfterViewI
     this.utils = new ThemeUtils();
 
     mediaObserver.media$.pipe(untilDestroyed(this)).subscribe((evt) => {
-      const st = evt.mqAlias == 'xs' ? 'Mobile' : 'Desktop';
+      const st = evt.mqAlias === 'xs' ? 'Mobile' : 'Desktop';
       this.screenType = st;
     });
   }
@@ -93,7 +93,7 @@ export class WidgetMemoryComponent extends WidgetComponent implements AfterViewI
         switchMap(() => this.data),
         untilDestroyed(this),
       ).subscribe((evt: CoreEvent) => {
-        if (evt.name == 'MemoryStats') {
+        if (evt.name === 'MemoryStats') {
           if (!evt.data.used) {
             return;
           }
@@ -230,7 +230,7 @@ export class WidgetMemoryComponent extends WidgetComponent implements AfterViewI
       const bgColor = this.colorPattern[index];
       const bgColorType = this.utils.getValueType(bgColor);
 
-      const bgRgb = bgColorType == 'hex' ? this.utils.hexToRgb(bgColor).rgb : this.utils.rgbToArray(bgColor);
+      const bgRgb = bgColorType === 'hex' ? this.utils.hexToRgb(bgColor).rgb : this.utils.rgbToArray(bgColor);
 
       (ds.backgroundColor as ChartColor[]).push(this.rgbToString(bgRgb, 0.85));
       (ds.borderColor as ChartColor[]).push(this.rgbToString(bgRgb));

@@ -84,7 +84,7 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
   }
 
   get previousSlide(): number {
-    return this.currentSlide == '0' ? 0 : parseInt(this.currentSlide) - 1;
+    return this.currentSlide === '0' ? 0 : parseInt(this.currentSlide) - 1;
   }
 
   path: Slide[] = [];
@@ -144,7 +144,7 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
       }
 
       category.forEach((item) => {
-        if (item.type == 'DISK' && item.disk) {
+        if (item.type === 'DISK' && item.disk) {
           allDiskNames.push(item.disk);
         } else {
           item.children.forEach((device) => {
@@ -257,7 +257,7 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
       usedValue = filesize(this.volumeData.used, { exponent: 3 });
     }
 
-    if (usedValue == 'Locked') {
+    if (usedValue === 'Locked') {
       // When Locked, Bail before we try to get details.
       // (errors start after this...)
       return 0;
@@ -317,7 +317,7 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
     if (name !== 'overview' && !verified) { return; }
     const dataSource = vdev || { children: this.poolState.topology[topology] };
     const direction = parseInt(this.currentSlide) < slideIndex ? 'forward' : 'back';
-    if (direction == 'forward') {
+    if (direction === 'forward') {
       // Setup next path segment
       const slide: Slide = {
         name,
@@ -328,7 +328,7 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
       };
 
       this.path[slideIndex] = slide;
-    } else if (direction == 'back') {
+    } else if (direction === 'back') {
       // empty the path segment
       this.path[parseInt(this.currentSlide)] = { name: 'empty', template: this.empty };
     }
@@ -355,7 +355,7 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
     }).start(el.set);
 
     this.currentSlide = value.toString();
-    this.title = this.currentSlide == '0' ? 'Pool' : this.poolState.name;
+    this.title = this.currentSlide === '0' ? 'Pool' : this.poolState.name;
   }
 
   private isStatusError(poolState: Pool): boolean {
