@@ -1,6 +1,6 @@
 <div class="full-width container has-tooltip">
 
-  <div *ngIf="label" class="label-container">
+  <div *ngIf="label || tooltip" class="label-container">
     <label class="label">
       {{label}}
       <span *ngIf="required" class="required">*</span>
