@@ -25,7 +25,7 @@ import { CoreService } from 'app/services/core-service/core.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LocaleService } from 'app/services/locale.service';
 import { AppState } from 'app/store';
-import { selectGeneralConfig } from 'app/store/system-config/system-config.selectors';
+import { waitForGeneralConfig } from 'app/store/system-config/system-config.selectors';
 import { GuiFormComponent } from './gui-form/gui-form.component';
 
 enum GeneralCardId {
@@ -123,9 +123,6 @@ export class GeneralSettingsComponent implements OnInit {
 
   ngOnInit(): void {
     this.getDataCardData();
-    this.store$.select(selectGeneralConfig).pipe(untilDestroyed(this)).subscribe(() => {
-      this.getDataCardData();
-    });
 
     this.formEvent$ = new Subject();
     this.formEvent$.pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
@@ -168,7 +165,7 @@ export class GeneralSettingsComponent implements OnInit {
   }
 
   getDataCardData(): void {
-    this.store$.select(selectGeneralConfig).pipe(untilDestroyed(this)).subscribe((config) => {
+    this.store$.pipe(waitForGeneralConfig, untilDestroyed(this)).subscribe((config) => {
       this.configData = config;
       this.dataCards = [
         {

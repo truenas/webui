@@ -29,7 +29,7 @@ import { ManagerDisk } from 'app/pages/storage/volumes/manager/manager-disk.inte
 import { DialogService, WebSocketService } from 'app/services';
 import { StorageService } from 'app/services/storage.service';
 import { AppState } from 'app/store';
-import { selectAdvancedConfig } from 'app/store/system-config/system-config.selectors';
+import { waitForAdvancedConfig } from 'app/store/system-config/system-config.selectors';
 import { VdevComponent } from './vdev/vdev.component';
 
 @UntilDestroy()
@@ -309,7 +309,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
         }
       }
     });
-    this.store$.select(selectAdvancedConfig).pipe(untilDestroyed(this)).subscribe((config) => {
+    this.store$.pipe(waitForAdvancedConfig, untilDestroyed(this)).subscribe((config) => {
       this.swapondrive = config.swapondrive;
     });
     this.route.params.pipe(untilDestroyed(this)).subscribe((params) => {

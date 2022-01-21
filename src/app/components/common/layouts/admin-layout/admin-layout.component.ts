@@ -24,7 +24,8 @@ import { LocaleService } from 'app/services/locale.service';
 import { PreferencesService } from 'app/services/preferences.service';
 import { Theme, ThemeService } from 'app/services/theme/theme.service';
 import { AppState } from 'app/store';
-import { selectGeneralConfig } from 'app/store/system-config/system-config.selectors';
+import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
+import { waitForGeneralConfig } from 'app/store/system-config/system-config.selectors';
 
 @UntilDestroy()
 @Component({
@@ -146,14 +147,14 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
     }
     this.sysGeneralService.toggleSentryInit();
 
-    this.store$.select(selectGeneralConfig).pipe(untilDestroyed(this)).subscribe((config) => {
+    this.store$.pipe(waitForGeneralConfig, untilDestroyed(this)).subscribe((config) => {
       this.onShowConsoleFooterBar(config.ui_consolemsg);
-      this.sysGeneralService.toggleSentryInit();
     });
 
     this.isSidenavCollapsed = this.layoutService.isMenuCollapsed;
 
     this.core.emit({ name: 'SysInfoRequest', sender: this });
+    this.store$.dispatch(adminUiInitialized());
   }
 
   ngAfterViewChecked(): void {

@@ -11,7 +11,7 @@ import { Choices } from 'app/interfaces/choices.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { SystemInfo } from 'app/interfaces/system-info.interface';
 import { AppState } from 'app/store';
-import { selectGeneralConfig } from 'app/store/system-config/system-config.selectors';
+import { waitForGeneralConfig } from 'app/store/system-config/system-config.selectors';
 import { WebSocketService } from './ws.service';
 
 @Injectable({ providedIn: 'root' })
@@ -27,7 +27,7 @@ export class SystemGeneralService {
     combineLatest([
       this.isStable(),
       this.getSysInfo(),
-      this.store$.select(selectGeneralConfig),
+      this.store$.pipe(waitForGeneralConfig),
     ]).subscribe(([isStable, sysInfo, generalConfig]) => {
       if (!isStable && generalConfig.crash_reporting) {
         Sentry.init({

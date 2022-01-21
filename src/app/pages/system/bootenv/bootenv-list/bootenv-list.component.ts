@@ -24,7 +24,7 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LocaleService } from 'app/services/locale.service';
 import { StorageService } from 'app/services/storage.service';
 import { AppState } from 'app/store';
-import { selectAdvancedConfig } from 'app/store/system-config/system-config.selectors';
+import { waitForAdvancedConfig } from 'app/store/system-config/system-config.selectors';
 import { BootenvRow } from './bootenv-row.interface';
 
 @UntilDestroy()
@@ -83,7 +83,7 @@ export class BootEnvironmentListComponent implements EntityTableConfig {
   };
 
   preInit(): void {
-    this.store$.select(selectAdvancedConfig).pipe(untilDestroyed(this)).subscribe((config) => {
+    this.store$.pipe(waitForAdvancedConfig, untilDestroyed(this)).subscribe((config) => {
       this.scrubInterval = config.boot_scrub;
       this.updateBootState();
     });
@@ -332,7 +332,7 @@ export class BootEnvironmentListComponent implements EntityTableConfig {
     }, {
       label: this.translate.instant('Stats/Settings'),
       onClick: () => {
-        this.store$.select(selectAdvancedConfig).pipe(untilDestroyed(this)).subscribe((config) => {
+        this.store$.pipe(waitForAdvancedConfig, untilDestroyed(this)).subscribe((config) => {
           this.scrubInterval = config.boot_scrub;
           const localWs = this.ws;
           const localDialog = this.dialog;

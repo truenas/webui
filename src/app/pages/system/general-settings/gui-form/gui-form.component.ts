@@ -24,7 +24,7 @@ import {
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { AppState } from 'app/store';
 import { generalConfigUpdated } from 'app/store/system-config/system-config.actions';
-import { selectGeneralConfig } from 'app/store/system-config/system-config.selectors';
+import { waitForGeneralConfig } from 'app/store/system-config/system-config.selectors';
 
 @UntilDestroy()
 @Component({
@@ -70,7 +70,8 @@ export class GuiFormComponent {
     private errorHandler: FormErrorHandlerService,
     private store$: Store<AppState>,
   ) {
-    this.store$.select(selectGeneralConfig).pipe(
+    this.store$.pipe(
+      waitForGeneralConfig,
       untilDestroyed(this),
     ).subscribe((config) => {
       this.configData = config;

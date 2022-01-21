@@ -48,7 +48,7 @@ import { CoreService } from 'app/services/core-service/core.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { ModalService } from 'app/services/modal.service';
 import { AppState } from 'app/store';
-import { selectAdvancedConfig } from 'app/store/system-config/system-config.selectors';
+import { waitForAdvancedConfig } from 'app/store/system-config/system-config.selectors';
 import { TunableFormComponent } from '../tunable/tunable-form/tunable-form.component';
 import { ConsoleFormComponent } from './console-form/console-form.component';
 import { IsolatedGpuPcisFormComponent } from './isolated-gpu-pcis/isolated-gpu-pcis-form.component';
@@ -228,7 +228,7 @@ export class AdvancedSettingsComponent implements OnInit {
 
   ngOnInit(): void {
     this.getDatasetData();
-    this.store$.select(selectAdvancedConfig).pipe(untilDestroyed(this)).subscribe(() => {
+    this.store$.pipe(waitForAdvancedConfig, untilDestroyed(this)).subscribe(() => {
       this.getDatasetData();
     });
 

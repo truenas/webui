@@ -27,7 +27,7 @@ import {
   WebSocketService,
 } from 'app/services';
 import { AppState } from 'app/store';
-import { selectAdvancedConfig } from 'app/store/system-config/system-config.selectors';
+import { waitForAdvancedConfig } from 'app/store/system-config/system-config.selectors';
 
 @UntilDestroy()
 @Component({
@@ -284,7 +284,7 @@ export class VmFormComponent implements FormConfiguration {
       });
     }
 
-    this.store$.select(selectAdvancedConfig).pipe(untilDestroyed(this)).subscribe((config) => {
+    this.store$.pipe(waitForAdvancedConfig, untilDestroyed(this)).subscribe((config) => {
       this.isolatedGpuPciIds = config.isolated_gpu_pci_ids;
     });
 
