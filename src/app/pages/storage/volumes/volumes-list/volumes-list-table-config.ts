@@ -998,9 +998,23 @@ export class VolumesListTableConfig implements EntityTableConfig {
   }
 
   private getStorageFlattenedAttachments(attachments: PoolAttachment[]): string {
-    const flattenAttachment = (obj: PoolAttachment): string => obj.attachments.map((a) => a.split(',').map((i) => `<br> - ${i}`).join()).join();
+    function formatPoolAttachment(obj: PoolAttachment): string {
+      return obj.attachments
+        .map((a) => formatAttachments(a.split(',')))
+        .join();
+    }
 
-    return attachments.map((item) => `<br><b>${item.type}:</b>${flattenAttachment(item)}`).join();
+    function formatAttachments(arr: string[]): string {
+      return arr
+        .map((str) => formatAttachment(str))
+        .join();
+    }
+
+    function formatAttachment(str: string): string {
+      return `<br> - ${str}`;
+    }
+
+    return attachments.map((item) => `<br><b>${item.type}:</b>${formatPoolAttachment(item)}`).join();
   }
 
   private getStorageFlattenedProcesses(processes: PoolProcess[]): string {
@@ -1020,29 +1034,29 @@ export class VolumesListTableConfig implements EntityTableConfig {
     attachments: PoolAttachment[],
     processes: PoolProcess[],
   ): string {
-    let res = '';
+    let summary = '';
 
     if (attachments.length) {
-      res += this.translate.instant(helptext.zvolDeleteMsg, { name: zvolName });
-      res += this.getStorageFlattenedAttachments(attachments);
-      res += '<br /><br />';
+      summary += this.translate.instant(helptext.zvolDeleteMsg, { name: zvolName });
+      summary += this.getStorageFlattenedAttachments(attachments);
+      summary += '<br /><br />';
     }
 
     const runningProcesses = processes.filter((p) => !p.service && p.name);
     if (runningProcesses.length) {
-      res += this.translate.instant(helptext.exportMessages.running);
-      res += `<b>${zvolName}</b>:`;
-      res += this.getStorageFlattenedProcesses(runningProcesses);
+      summary += this.translate.instant(helptext.exportMessages.running);
+      summary += `<b>${zvolName}</b>:`;
+      summary += this.getStorageFlattenedProcesses(runningProcesses);
     }
 
     const runningUnknownProcesses = processes.filter((p) => !p.service && !p.name);
     if (runningUnknownProcesses.length) {
-      res += '<br><br>' + this.translate.instant(helptext.exportMessages.unknown);
-      res += this.getStorageFlattenedProcesses(runningUnknownProcesses);
-      res += '<br><br>' + this.translate.instant(helptext.exportMessages.terminated);
+      summary += '<br><br>' + this.translate.instant(helptext.exportMessages.unknown);
+      summary += this.getStorageFlattenedProcesses(runningUnknownProcesses);
+      summary += '<br><br>' + this.translate.instant(helptext.exportMessages.terminated);
     }
 
-    return res;
+    return summary;
   }
 
   private getDatasetRelatedSummary(
@@ -1050,29 +1064,29 @@ export class VolumesListTableConfig implements EntityTableConfig {
     attachments: PoolAttachment[],
     processes: PoolProcess[],
   ): string {
-    let res = '';
+    let summary = '';
 
     if (attachments.length) {
-      res += this.translate.instant(helptext.datasetDeleteMsg, { name: datasetName });
-      res += this.getStorageFlattenedAttachments(attachments);
-      res += '<br /><br />';
+      summary += this.translate.instant(helptext.datasetDeleteMsg, { name: datasetName });
+      summary += this.getStorageFlattenedAttachments(attachments);
+      summary += '<br /><br />';
     }
 
     const runningProcesses = processes.filter((p) => !p.service && p.name);
     if (runningProcesses.length) {
-      res += this.translate.instant(helptext.exportMessages.running);
-      res += `<b>${datasetName}</b>:`;
-      res += this.getStorageFlattenedProcesses(runningProcesses);
+      summary += this.translate.instant(helptext.exportMessages.running);
+      summary += `<b>${datasetName}</b>:`;
+      summary += this.getStorageFlattenedProcesses(runningProcesses);
     }
 
     const runningUnknownProcesses = processes.filter((p) => !p.service && !p.name);
     if (runningUnknownProcesses.length) {
-      res += '<br><br>' + this.translate.instant(helptext.exportMessages.unknown);
-      res += this.getStorageFlattenedProcesses(runningUnknownProcesses);
-      res += '<br><br>' + this.translate.instant(helptext.exportMessages.terminated);
+      summary += '<br><br>' + this.translate.instant(helptext.exportMessages.unknown);
+      summary += this.getStorageFlattenedProcesses(runningUnknownProcesses);
+      summary += '<br><br>' + this.translate.instant(helptext.exportMessages.terminated);
     }
 
-    return res;
+    return summary;
   }
 
   private deleteDataset(datasetId: string, datasetName: string, relatedSummary: string): void {
