@@ -3,10 +3,9 @@ import { Router } from '@angular/router';
 import {
   createRoutingFactory, mockProvider, Spectator,
 } from '@ngneat/spectator/jest';
-import { of } from 'rxjs';
+import { provideMockStore } from '@ngrx/store/testing';
 import { JobItemComponent } from 'app/components/common/dialog/jobs-manager/components/job-item/job-item.component';
 import { CoreComponents } from 'app/core/components/core-components.module';
-import { FormatDateTimePipe } from 'app/core/components/pipes/format-datetime.pipe';
 import { byButton } from 'app/core/testing/utils/by-button.utils';
 import { mockWebsocket, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
 import { JobState } from 'app/enums/job-state.enum';
@@ -14,7 +13,8 @@ import { Job } from 'app/interfaces/job.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { ConfirmDialogComponent } from 'app/pages/common/confirm-dialog/confirm-dialog.component';
-import { DialogService, SystemGeneralService } from 'app/services';
+import { DialogService } from 'app/services';
+import { selectGeneralConfig } from 'app/store/system-config/system-config.selectors';
 import { JobsManagerComponent } from './jobs-manager.component';
 import { JobsManagerStore } from './jobs-manager.store';
 
@@ -68,8 +68,10 @@ describe('JobsManagerComponent', () => {
         provide: MAT_DIALOG_DATA,
         useValue: {},
       },
-      mockProvider(SystemGeneralService, {
-        getGeneralConfig$: of({ timezone: 'UTC' }),
+      provideMockStore({
+        selectors: [
+          { selector: selectGeneralConfig, value: { timezone: 'UTC' } },
+        ],
       }),
     ],
   });
@@ -95,7 +97,6 @@ describe('JobsManagerComponent', () => {
 
   it('checks component body is present', () => {
     const jobs = spectator.queryAll('app-job-item');
-    const dateTimePipe = new FormatDateTimePipe(spectator.inject(SystemGeneralService));
 
     expect(jobs).toHaveLength(3);
 
@@ -106,13 +107,13 @@ describe('JobsManagerComponent', () => {
     expect(jobs[0].querySelector('.job-icon-abort')).toBeTruthy();
 
     expect(jobs[1].querySelector('.job-description')).toHaveExactText('cloudsync.sync');
-    expect(jobs[1].querySelector('.job-time')).toHaveText(`Waiting: ${dateTimePipe.transform(waitingJob.time_started.$date)}`);
+    expect(jobs[1].querySelector('.job-time')).toHaveText('Waiting: 2021-09-23 15:37:19');
     expect(jobs[1].querySelector('.job-icon-failed')).toBeFalsy();
     expect(jobs[1].querySelector('.job-icon-waiting')).toBeTruthy();
     expect(jobs[1].querySelector('.job-icon-abort')).toBeFalsy();
 
     expect(jobs[2].querySelector('.job-description')).toHaveExactText('cloudsync.sync');
-    expect(jobs[2].querySelector('.job-time')).toHaveText(`Stopped: ${dateTimePipe.transform(failedJob.time_finished.$date)}`);
+    expect(jobs[2].querySelector('.job-time')).toHaveText('Stopped: 2021-09-23 15:37:19');
     expect(jobs[2].querySelector('.job-icon-failed')).toBeTruthy();
     expect(jobs[2].querySelector('.job-icon-waiting')).toBeFalsy();
     expect(jobs[2].querySelector('.job-icon-abort')).toBeFalsy();

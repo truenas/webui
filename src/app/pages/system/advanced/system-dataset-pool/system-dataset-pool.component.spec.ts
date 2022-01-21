@@ -3,12 +3,13 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
 import { mockCall, mockJob, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
-import { DialogService, SystemGeneralService } from 'app/services';
+import { DialogService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { MockWebsocketService } from '../../../../core/testing/classes/mock-websocket.service';
 import { ServiceName } from '../../../../enums/service-name.enum';
@@ -47,7 +48,7 @@ describe('SystemDatasetPoolComponent', () => {
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),
-      mockProvider(SystemGeneralService),
+      provideMockStore(),
     ],
   });
 
@@ -79,7 +80,6 @@ describe('SystemDatasetPoolComponent', () => {
     expect(ws.job).toHaveBeenCalledWith('systemdataset.update', [{
       pool: 'new-pool',
     }]);
-    expect(spectator.inject(SystemGeneralService).refreshSysGeneral).toHaveBeenCalled();
   });
 
   it('should warns user about restarting an SMB service when it is running and form is saved', async () => {

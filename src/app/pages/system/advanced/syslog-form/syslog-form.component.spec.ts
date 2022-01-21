@@ -3,6 +3,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { provideMockStore } from '@ngrx/store/testing';
 import { mockCall, mockJob, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { SyslogLevel, SyslogTransport } from 'app/enums/syslog.enum';
 import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
@@ -10,7 +11,7 @@ import { SystemDatasetConfig } from 'app/interfaces/system-dataset-config.interf
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { SyslogFormComponent } from 'app/pages/system/advanced/syslog-form/syslog-form.component';
-import { DialogService, SystemGeneralService, WebSocketService } from 'app/services';
+import { DialogService, WebSocketService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 describe('SyslogFormComponent', () => {
@@ -47,8 +48,8 @@ describe('SyslogFormComponent', () => {
         mockJob('systemdataset.update'),
       ]),
       mockProvider(IxSlideInService),
-      mockProvider(SystemGeneralService),
       mockProvider(DialogService),
+      provideMockStore(),
     ],
   });
 
