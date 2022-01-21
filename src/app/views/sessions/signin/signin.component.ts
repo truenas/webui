@@ -152,7 +152,7 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
 
   ngOnInit(): void {
     this.core.register({ observerClass: this, eventName: 'ThemeChanged' }).pipe(untilDestroyed(this)).subscribe((evt: ThemeChangedEvent) => {
-      if (this.router.url == '/sessions/signin' && evt.sender.userThemeLoaded) {
+      if (this.router.url === '/sessions/signin' && evt.sender.userThemeLoaded) {
         this.redirect();
       }
     });

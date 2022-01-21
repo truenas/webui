@@ -278,7 +278,7 @@ export class LdapComponent implements FormConfiguration {
       });
 
       // Handle case when there is no data
-      if (res.length == 0) {
+      if (res.length === 0) {
         this.ldapCertificateField.zeroStateMessage = 'No Certificates Found';
       }
     });

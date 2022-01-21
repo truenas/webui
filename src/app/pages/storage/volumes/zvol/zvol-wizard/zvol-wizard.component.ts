@@ -156,7 +156,7 @@ export class ZvolWizardComponent implements WizardConfiguration {
             (control: FormControl): ValidationErrors => {
               const config = this.wizardConfig[1].fieldConfig.find((c) => c.name === 'volsize');
 
-              const size = control.value && typeof control.value == 'string' ? this.storageService.convertHumanStringToNum(control.value, true) : null;
+              const size = control.value && typeof control.value === 'string' ? this.storageService.convertHumanStringToNum(control.value, true) : null;
               const humanSize = control.value;
 
               let errors = control.value && Number.isNaN(size)

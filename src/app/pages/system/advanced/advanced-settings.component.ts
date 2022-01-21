@@ -426,7 +426,7 @@ export class AdvancedSettingsComponent implements OnInit {
           items: [{ label: this.translate.instant('Isolated GPU Device(s)'), value: isolatedGpus }],
         } as DataCard<AdvancedCardId>;
 
-        if (isolatedGpus.length == 0) {
+        if (isolatedGpus.length === 0) {
           gpuCard.emptyConf = {
             type: EmptyType.NoPageData,
             title: this.translate.instant('No Isolated GPU Device(s) configured'),

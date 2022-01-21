@@ -268,8 +268,8 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
             if (
               !element
               || !element.classList
-              || mutation.addedNodes.length == 0
-              || element.classList.length == 0
+              || mutation.addedNodes.length === 0
+              || element.classList.length === 0
             ) {
               break;
             }
@@ -1097,7 +1097,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
   hexToRgb(str: string): { hex: string; rgb: number[] } {
     const spl = str.split('#');
     let hex = spl[1];
-    if (hex.length == 3) {
+    if (hex.length === 3) {
       hex = hex[0] + hex[0] + hex[1] + hex[1] + hex[2] + hex[2];
     }
 

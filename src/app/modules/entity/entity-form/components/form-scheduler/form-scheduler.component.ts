@@ -606,7 +606,7 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, Aft
     const calMonth = cal[0][0] + cal[0][1] + cal[0][2]; // limit month to 3 letters
     const calYear = cal[2];
     let calDay;
-    if (cd[0].length == 1) {
+    if (cd[0].length === 1) {
       calDay = '0' + cd[0];
     } else {
       calDay = cd[0];
@@ -634,7 +634,7 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, Aft
         rule += monthStrings[i];
       }
     }
-    if (rule.length == 0) {
+    if (rule.length === 0) {
       rule = '*';
     }
     this._months = rule;
@@ -651,7 +651,7 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, Aft
         rule += dowStrings[i];
       }
     }
-    if (rule.length == 0) {
+    if (rule.length === 0) {
       rule = '*';
     }
     this._daysOfWeek = rule;

@@ -27,7 +27,7 @@ export class WizardSummaryComponent {
     const fieldValue = this.value[fieldConfig.name];
     if (fieldValue === undefined) {
       result = false;
-    } else if (fieldConfig.type === 'list' && fieldValue.length == 0) {
+    } else if (fieldConfig.type === 'list' && fieldValue.length === 0) {
       result = false;
     } else if (fieldConfig.type === 'dict') {
       result = false;
