@@ -123,6 +123,6 @@ describe('NetworkConfigurationCardComponent', () => {
     const settingsButton = await loader.getHarness(MatButtonHarness.with({ text: 'Settings' }));
     await settingsButton.click();
 
-    expect(ixSlideInService.open).toHaveBeenCalledWith(NetworkConfigurationComponent);
+    expect(ixSlideInService.open).toHaveBeenCalledWith(NetworkConfigurationComponent, { wide: true });
   });
 });
