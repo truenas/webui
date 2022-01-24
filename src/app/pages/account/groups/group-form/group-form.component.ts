@@ -15,7 +15,7 @@ import { forbiddenValues } from 'app/pages/common/entity/entity-form/validators/
 import { regexValidator } from 'app/pages/common/entity/entity-form/validators/regex-validation';
 import { IxCombobox2Provider } from 'app/pages/common/ix-forms/components/ix-combobox2/ix-combobox2-provider.interface';
 import { FormErrorHandlerService } from 'app/pages/common/ix-forms/services/form-error-handler.service';
-import { IxUserComboboxProviderService } from 'app/pages/common/ix-forms/services/ix-user-combobox-provider.service';
+import IxUsersService from 'app/pages/common/ix-forms/services/ix-users.service';
 import { UserService, WebSocketService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
@@ -49,7 +49,7 @@ export class GroupFormComponent {
     normalCombobox: [''],
   });
 
-  userProvider = this.ixUsersProvider.getNewProvider();
+  userProvider = this.ixUsersService.getNewProvider();
 
   normalProvider: NormalComboboxProvider = {
     isLoading: false,
@@ -146,7 +146,7 @@ export class GroupFormComponent {
     private cdr: ChangeDetectorRef,
     private errorHandler: FormErrorHandlerService,
     private translate: TranslateService,
-    public ixUsersProvider: IxUserComboboxProviderService,
+    public ixUsersService: IxUsersService,
   ) { }
 
   /**

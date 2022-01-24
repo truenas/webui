@@ -3,6 +3,7 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Option } from 'app/interfaces/option.interface';
 import { User } from 'app/interfaces/user.interface';
+import { UserComboboxProvider } from 'app/pages/common/ix-forms/classes/user-combobox-provider';
 import { UserService } from 'app/services';
 
 @Injectable()
@@ -21,5 +22,9 @@ export default class IxUsersService {
 
   searchQuery(filterValue: string, currentOffset: number): Observable<Option[]> {
     return this.loadUsers(filterValue, currentOffset);
+  }
+
+  getNewProvider(): UserComboboxProvider {
+    return new UserComboboxProvider(this);
   }
 }

@@ -9,7 +9,6 @@ import { GroupFormComponent } from 'app/pages/account/groups/group-form/group-fo
 import { GroupListComponent } from 'app/pages/account/groups/group-list/group-list.component';
 import { UserFormComponent } from 'app/pages/account/users/user-form/user-form.component';
 import { IxFormsModule } from 'app/pages/common/ix-forms/ix-forms.module';
-import { IxUserComboboxProviderService } from 'app/pages/common/ix-forms/services/ix-user-combobox-provider.service';
 import { IxTableModule } from 'app/pages/common/ix-tables/ix-table.module';
 import { StorageService } from 'app/services/storage.service';
 import { EntityModule } from '../common/entity/entity.module';
@@ -42,7 +41,6 @@ import { UserListComponent } from './users/user-list/user-list.component';
   ],
   providers: [
     StorageService,
-    IxUserComboboxProviderService,
   ],
 })
 export class AccountModule {}
