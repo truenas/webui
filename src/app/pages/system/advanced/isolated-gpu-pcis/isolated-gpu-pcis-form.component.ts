@@ -58,24 +58,23 @@ export class IsolatedGpuPcisFormComponent implements OnInit {
       if (selectedGpus.length >= this.availableGpus?.length) {
         const prevSelectedGpus = [];
         for (const gpu of this.availableGpus) {
-          if (this.isolatedGpuPciIds.findIndex((igpi) => igpi === gpu.addr.pci_slot) >= 0) {
+          if (this.isolatedGpuPciIds.find((igpi) => igpi === gpu.addr.pci_slot)) {
             prevSelectedGpus.push(gpu);
           }
         }
-        let manualValidateErrorMsg = '';
+        let message = '';
         const atLeastOneGpu = this.translate.instant('At least 1 GPU is required by the host for it’s functions.');
         const noGpuAvailable = this.translate.instant('With your selection, no GPU is available for the host to consume.');
         if (prevSelectedGpus.length > 0) {
-          const gpus = '<li>' + prevSelectedGpus.map((gpu, index) => (index + 1) + '. ' + gpu.description).join('</li><li>') + '</li>';
+          const gpus = '<li>' + prevSelectedGpus.map((gpu) => gpu.description).join('</li><li>') + '</li>';
 
           const selectedGpu = this.translate.instant('<p>Currently following GPU(s) have been isolated:<ol>{gpus}</ol></p>', { gpus });
-          manualValidateErrorMsg = `${atLeastOneGpu} ${selectedGpu} ${noGpuAvailable}`;
+          message = `${atLeastOneGpu} ${selectedGpu} ${noGpuAvailable}`;
         } else {
-          manualValidateErrorMsg = `${atLeastOneGpu} ${noGpuAvailable}`;
+          message = `${atLeastOneGpu} ${noGpuAvailable}`;
         }
         gpusFormControl.setErrors({
-          manualValidateError: true,
-          manualValidateErrorMsg,
+          manualValidateError: { message },
         });
       } else {
         gpusFormControl.setErrors(null);

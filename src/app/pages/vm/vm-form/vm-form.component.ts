@@ -298,12 +298,19 @@ export class VmFormComponent implements FormConfiguration {
       if (finalIsolatedPciIds.length && finalIsolatedPciIds.length >= gpusConf.options.length) {
         const prevSelectedGpus = [];
         for (const gpu of this.gpus) {
-          if (this.isolatedGpuPciIds.findIndex((igpi) => igpi === gpu.addr.pci_slot) >= 0) {
+          if (this.isolatedGpuPciIds.find((igpi) => igpi === gpu.addr.pci_slot)) {
             prevSelectedGpus.push(gpu);
           }
         }
         const listItems = '<li>' + prevSelectedGpus.map((gpu, index) => (index + 1) + '. ' + gpu.description).join('</li><li>') + '</li>';
-        gpusConf.warnings = 'At least 1 GPU is required by the host for it’s functions.<p>Currently following GPU(s) have been isolated:<ol>' + listItems + '</ol></p><p>With your selection, no GPU is available for the host to consume.</p>';
+        gpusConf.warnings = this.translate.instant('At least 1 GPU is required by the host for it’s functions.');
+        if (prevSelectedGpus.length) {
+          gpusConf.warnings += this.translate.instant(
+            '<p>Currently following GPU(s) have been isolated:<ol>{gpus}</ol></p>',
+            { gpus: listItems },
+          );
+        }
+        gpusConf.warnings += `<p>${this.translate.instant('With your selection, no GPU is available for the host to consume.')}</p>`;
         gpusFormControl.setErrors({ maxPCIIds: true });
       } else {
         gpusConf.warnings = null;
