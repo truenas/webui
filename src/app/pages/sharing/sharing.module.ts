@@ -6,7 +6,9 @@ import { TranslateModule } from '@ngx-translate/core';
 import { MaterialModule } from 'app/app-material.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { CastModule } from 'app/modules/cast/cast.module';
+import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
+import { TargetGlobalConfigurationComponent } from 'app/pages/sharing/iscsi/target-global-configuration/target-global-configuration.component';
 import { UserService } from 'app/services/user.service';
 import { EntityFormService } from '../../modules/entity/entity-form/services/entity-form.service';
 import { EntityModule } from '../../modules/entity/entity.module';
@@ -19,7 +21,6 @@ import { ExtentFormComponent } from './iscsi/extent/extent-form/extent-form.comp
 import { ExtentListComponent } from './iscsi/extent/extent-list/extent-list.component';
 import { FibreChannelPortComponent } from './iscsi/fibre-channel-ports/fibre-channel-port/fibre-channel-port.component';
 import { FibreChannelPortsComponent } from './iscsi/fibre-channel-ports/fibre-channel-ports.component';
-import { GlobalconfigurationComponent } from './iscsi/globalconfiguration/globalconfiguration.component';
 import { DynamicListComponent } from './iscsi/initiator/initiator-form/dynamic-list/dynamic-list-component';
 import { InitiatorFormComponent } from './iscsi/initiator/initiator-form/initiator-form.component';
 import { InitiatorListComponent } from './iscsi/initiator/initiator-list/initiator-list.component';
@@ -51,6 +52,7 @@ import { WebdavListComponent } from './webdav/webdav-list/webdav-list.component'
     CommonDirectivesModule,
     TooltipModule,
     CastModule,
+    IxFormsModule,
   ],
   declarations: [
     NfsListComponent,
@@ -63,7 +65,7 @@ import { WebdavListComponent } from './webdav/webdav-list/webdav-list.component'
     SmbAclComponent,
     IscsiComponent,
     IscsiWizardComponent,
-    GlobalconfigurationComponent,
+    TargetGlobalConfigurationComponent,
     PortalListComponent,
     PortalFormComponent,
     DynamicListComponent,
