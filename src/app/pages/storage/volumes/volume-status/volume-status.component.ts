@@ -205,7 +205,9 @@ export class VolumeStatusComponent implements OnInit {
       }
       _.find(this.replaceDiskFormFields, { name: 'disk' }).options = availableDisks;
       _.find(this.extendVdevFormFields, { name: 'new_disk' }).options = availableDisksForExtend;
-      this.duplicateSerialDisks = res.filter((disk) => disk.duplicate_serial.length);
+      if (res.some((disk) => disk.duplicate_serial)) {
+        this.duplicateSerialDisks = res.filter((disk) => disk.duplicate_serial.length);
+      }
     });
   }
   ngOnInit() {
