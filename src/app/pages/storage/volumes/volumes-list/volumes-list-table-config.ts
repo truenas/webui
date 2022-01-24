@@ -688,6 +688,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
               ],
               saveButtonText: helptext.expand_pool_dialog.save_button,
               customSubmit(entityDialog: EntityDialogComponent) {
+                // eslint-disable-next-line @typescript-eslint/no-use-before-define
                 doExpand(entityDialog);
               },
             };
@@ -894,6 +895,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
                   }
                 }
 
+                // eslint-disable-next-line @typescript-eslint/no-use-before-define
                 doDelete();
               },
               (err) => {

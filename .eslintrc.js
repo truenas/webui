@@ -73,6 +73,7 @@ module.exports = {
           "ts": "never",
           "tsx": "never"
         }],
+        "@typescript-eslint/no-use-before-define": ["error", "nofunc"],
 
         // TODO: Partially implemented
         '@typescript-eslint/naming-convention': [
@@ -128,7 +129,6 @@ module.exports = {
         "@typescript-eslint/no-shadow": "off",
         "no-case-declarations": "off",
         "no-multi-str": "off",
-        "@typescript-eslint/no-use-before-define": "off",
         "no-useless-escape": "off",
         "no-cond-assign": "off",
         "no-mixed-operators": "off",
