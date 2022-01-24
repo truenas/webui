@@ -19,6 +19,10 @@ import { IxUserComboboxProviderService } from 'app/pages/common/ix-forms/service
 import { UserService, WebSocketService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
+interface NormalComboboxProvider extends IxCombobox2Provider {
+  pageOffset: number;
+}
+
 @UntilDestroy()
 @Component({
   templateUrl: './group-form.component.html',
@@ -47,7 +51,7 @@ export class GroupFormComponent {
 
   userProvider = this.ixUsersProvider.getNewProvider();
 
-  normalProvider: IxCombobox2Provider = {
+  normalProvider: NormalComboboxProvider = {
     isLoading: false,
     providerUpdater$: new Subject<void>(),
     options: [
@@ -105,7 +109,7 @@ export class GroupFormComponent {
       this.normalProvider.pageOffset = this.normalProvider.options.length;
       this.normalProvider.providerUpdater$.next();
     },
-    onScrollEnd: () => {
+    nextPage: () => {
       this.normalProvider.pageOffset += 12;
       this.normalProvider.isLoading = true;
       this.normalProvider.providerUpdater$.next();

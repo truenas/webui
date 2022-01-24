@@ -108,7 +108,7 @@ export class IxCombobox2Component implements ControlValueAccessor, OnInit {
             const { scrollTop, scrollHeight, clientHeight: elementHeight } = this.autoCompleteRef.panel.nativeElement;
             const atBottom = scrollHeight === scrollTop + elementHeight;
             if (atBottom) {
-              this.provider.onScrollEnd(this.filterValue);
+              this.provider.nextPage(this.filterValue);
             }
           });
       }

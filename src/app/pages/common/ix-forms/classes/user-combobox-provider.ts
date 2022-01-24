@@ -25,7 +25,7 @@ export class UserComboboxProvider implements IxCombobox2Provider {
     });
   };
 
-  onScrollEnd: (filterValue: string) => void =
+  nextPage: (filterValue: string) => void =
   (filterValue: string = '') => {
     this.loading = true;
     this.updateProvider();
