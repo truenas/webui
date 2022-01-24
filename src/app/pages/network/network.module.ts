@@ -9,12 +9,14 @@ import { CommonDirectivesModule } from 'app/directives/common/common-directives.
 import { CastModule } from 'app/modules/cast/cast.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { NetworkConfigurationComponent } from 'app/pages/network/configuration/configuration.component';
+import {
+  NetworkConfigurationCardComponent,
+} from 'app/pages/network/network-configuration-card/network-configuration-card.component';
 import { StaticRouteFormComponent } from 'app/pages/network/static-route-form/static-route-form.component';
 import { NetworkService } from 'app/services';
 import { CoreService } from 'app/services/core-service/core.service';
 import { EntityFormService } from '../../modules/entity/entity-form/services/entity-form.service';
 import { EntityModule } from '../../modules/entity/entity.module';
-import { CardWidgetComponent } from './card-widget/card-widget.component';
 import { InterfacesFormComponent } from './forms/interfaces-form.component';
 import { IpmiFormComponent } from './forms/ipmi-form.component';
 import { OpenvpnClientComponent } from './forms/service-openvpn-client.component';
@@ -43,9 +45,9 @@ import { routing } from './network.routing';
     NetworkConfigurationComponent,
     IpmiFormComponent,
     NetworkComponent,
-    CardWidgetComponent,
     OpenvpnClientComponent,
     OpenvpnServerComponent,
+    NetworkConfigurationCardComponent,
   ],
   providers: [NetworkService, EntityFormService, CoreService, TranslateService],
 })

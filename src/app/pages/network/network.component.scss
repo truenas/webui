@@ -24,3 +24,8 @@ div.disabled-notice {
   cursor: pointer;
   text-decoration: underline;
 }
+
+.dashboard-card {
+  display: flex;
+  flex: 1 1 0;
+}

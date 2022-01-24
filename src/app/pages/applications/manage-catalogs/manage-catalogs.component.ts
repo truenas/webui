@@ -74,7 +74,7 @@ export class ManageCatalogsComponent implements EntityTableConfig<Catalog>, OnIn
 
   ngOnInit(): void {
     this.ws.subscribe('core.get_jobs').pipe(untilDestroyed(this)).subscribe((event) => {
-      if (event.fields.method == 'catalog.sync') {
+      if (event.fields.method === 'catalog.sync') {
         const jobId = event.fields.id;
         if (!this.catalogSyncJobIds.includes(jobId) && event.fields.state === JobState.Running) {
           this.refresh();

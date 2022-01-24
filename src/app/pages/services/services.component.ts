@@ -232,7 +232,7 @@ export class ServicesComponent implements OnInit {
     this.settingsEvent$.pipe(
       untilDestroyed(this),
     ).subscribe((event: CoreEvent) => {
-      if (event.data.event_control == 'filter') {
+      if (event.data.event_control === 'filter') {
         this.filterString = event.data.filter;
         this.dataSource.filter = event.data.filter;
       }

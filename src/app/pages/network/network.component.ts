@@ -2,10 +2,8 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Navigation, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import * as ipRegex from 'ip-regex';
-import { Subject, combineLatest } from 'rxjs';
+import { Subject } from 'rxjs';
 import { filter } from 'rxjs/operators';
-import { NetworkActivityType } from 'app/enums/network-activity-type.enum';
 import { NetworkInterfaceType } from 'app/enums/network-interface.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
@@ -22,7 +20,6 @@ import { StaticRoute } from 'app/interfaces/static-route.interface';
 import { Interval } from 'app/interfaces/timeout.interface';
 import { AppTableAction, AppTableConfig, TableComponent } from 'app/modules/entity/table/table.component';
 import { TableService } from 'app/modules/entity/table/table.service';
-import { NetworkConfigurationComponent } from 'app/pages/network/configuration/configuration.component';
 import { IpmiRow } from 'app/pages/network/network-dashboard.interface';
 import { NetworkInterfaceUi } from 'app/pages/network/network-interface-ui.interface';
 import { StaticRouteFormComponent } from 'app/pages/network/static-route-form/static-route-form.component';
@@ -37,7 +34,6 @@ import { IpmiService } from 'app/services/ipmi.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { ModalService } from 'app/services/modal.service';
 import { EntityUtils } from '../../modules/entity/utils';
-import { CardWidgetConf } from './card-widget/card-widget.component';
 import { InterfacesFormComponent } from './forms/interfaces-form.component';
 import { IpmiFormComponent } from './forms/ipmi-form.component';
 import { OpenvpnClientComponent } from './forms/service-openvpn-client.component';
@@ -144,18 +140,6 @@ export class NetworkComponent implements OnInit, OnDestroy {
     },
   };
 
-  globalSettingsWidget: CardWidgetConf<NetworkComponent> = {
-    title: this.translate.instant('Global Configuration'),
-    data: {},
-    parent: this,
-    icon: 'router',
-    showGroupTitle: true,
-    name: 'globalSettings',
-    onclick: () => {
-      this.showConfigForm();
-    },
-  };
-
   openvpnTableConf: AppTableConfig<NetworkComponent> = {
     title: this.translate.instant('OpenVPN'),
     queryCall: 'service.query',
@@ -219,76 +203,7 @@ export class NetworkComponent implements OnInit, OnDestroy {
     private slideInService: IxSlideInService,
     private core: CoreService,
   ) {
-    this.getGlobalSettings();
     this.navigation = this.router.getCurrentNavigation();
-  }
-
-  getGlobalSettings(): void {
-    combineLatest([this.ws.call(this.configCall), this.ws.call(this.summaryCall)])
-      .pipe(untilDestroyed(this))
-      .subscribe(([networkConfig, summary]) => {
-        this.networkSummary = summary;
-        this.globalSettingsWidget.data.nameserver = [];
-        const nameserverAttributes: ('nameserver1' | 'nameserver2' | 'nameserver3')[] = [
-          'nameserver1', 'nameserver2', 'nameserver3',
-        ];
-        nameserverAttributes.forEach((attribute, n) => {
-          const nameserver = networkConfig[attribute];
-          if (nameserver) {
-            this.globalSettingsWidget.data.nameserver.push({
-              label: this.translate.instant('Nameserver {n}', { n: n + 1 }),
-              value: nameserver,
-            });
-          }
-        });
-
-        summary.nameservers.forEach((nameserver) => {
-          if (nameserverAttributes.some((attribute) => networkConfig[attribute] === nameserver)) {
-            return;
-          }
-
-          this.globalSettingsWidget.data.nameserver.push({
-            label: this.translate.instant('Nameserver (DHCP)'),
-            value: nameserver,
-          });
-        });
-
-        this.globalSettingsWidget.data.ipv4 = summary.default_routes.filter((item) => ipRegex.v4().test(item));
-        this.globalSettingsWidget.data.ipv6 = summary.default_routes.filter((item) => ipRegex.v6().test(item));
-
-        this.globalSettingsWidget.data.hostname = networkConfig.hostname_local;
-        this.globalSettingsWidget.data.domain = networkConfig.domain;
-        this.globalSettingsWidget.data.netwait = networkConfig.netwait_enabled ? this.translate.instant('ENABLED') : this.translate.instant('DISABLED');
-        const tempArr: string[] = [];
-        if (networkConfig.service_announcement.netbios) {
-          tempArr.push(this.translate.instant('NETBIOS-NS'));
-        }
-        if (networkConfig.service_announcement.mdns) {
-          tempArr.push(this.translate.instant('mDNS'));
-        }
-        if (networkConfig.service_announcement.wsd) {
-          tempArr.push(this.translate.instant('WS-DISCOVERY'));
-        }
-        this.globalSettingsWidget.data.service_announcement = tempArr.join(', ');
-        this.globalSettingsWidget.data.additional_domains = networkConfig.domains.length > 0 ? networkConfig.domains.join(', ') : '---';
-        this.globalSettingsWidget.data.httpproxy = networkConfig.httpproxy !== '' ? networkConfig.httpproxy : '---';
-        this.globalSettingsWidget.data.hostnameDB = networkConfig.hosts !== '' ? networkConfig.hosts : '---';
-
-        if (networkConfig.activity.type === NetworkActivityType.Deny) {
-          this.globalSettingsWidget.data.outbound = this.translate.instant('Allow All');
-        } else if (networkConfig.activity.activities.length === 0) {
-          this.globalSettingsWidget.data.outbound = this.translate.instant('Deny All');
-        } else {
-          this.globalSettingsWidget.data.outbound = this.translate.instant('Allow ') + networkConfig.activity.activities.join(', ');
-        }
-      });
-
-    this.ws
-      .call('ipmi.is_loaded')
-      .pipe(untilDestroyed(this))
-      .subscribe((isIpmiLoaded) => {
-        this.ipmiEnabled = isIpmiLoaded;
-      });
   }
 
   ngOnInit(): void {
@@ -301,7 +216,6 @@ export class NetworkComponent implements OnInit, OnDestroy {
 
     this.slideInService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
       this.staticRoutesTableConf.tableComponent.getData();
-      this.getGlobalSettings();
     });
 
     this.checkInterfacePendingChanges();
@@ -630,10 +544,6 @@ export class NetworkComponent implements OnInit, OnDestroy {
         window.open(`http://${row.ipaddress}`);
       },
     }];
-  }
-
-  showConfigForm(): void {
-    this.slideInService.open(NetworkConfigurationComponent, { wide: true });
   }
 
   showInterfacesForm(id?: string): void {

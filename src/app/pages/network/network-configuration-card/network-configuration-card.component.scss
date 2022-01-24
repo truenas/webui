@@ -1,0 +1,49 @@
+.card {
+  width: 100%;
+}
+
+.mat-toolbar-row {
+  display: flex;
+  justify-content: space-between;
+}
+
+.columns {
+  display: flex;
+  min-height: 100px;
+
+  .first-column {
+    flex-grow: 1;
+    margin-right: 30px;
+    max-width: 35%;
+  }
+}
+
+.section-title {
+  font-size: 120%;
+  font-weight: bold;
+}
+
+.details-list li {
+  line-height: 2em;
+
+  .label {
+    margin-right: 16px;
+    opacity: 0.65;
+  }
+}
+
+.list {
+  margin-bottom: 10px;
+
+  .list-icon {
+    padding: 4px 5px 4px 0;
+  }
+
+  .label {
+    margin-right: 16px;
+  }
+
+  .value {
+    font-weight: 500;
+  }
+}

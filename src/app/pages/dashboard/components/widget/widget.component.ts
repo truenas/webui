@@ -35,9 +35,9 @@ export class WidgetComponent extends IxObject {
       this.flipAnimation = 'flip';
     }
 
-    if (this.flipDirection == 'vertical') {
+    if (this.flipDirection === 'vertical') {
       this.flipAnimation += 'V';
-    } else if (this.flipDirection == 'horizontal') {
+    } else if (this.flipDirection === 'horizontal') {
       this.flipAnimation += 'H';
     }
 

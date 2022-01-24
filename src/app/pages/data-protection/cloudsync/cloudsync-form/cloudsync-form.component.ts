@@ -529,7 +529,7 @@ export class CloudsyncFormComponent implements FormConfiguration {
         res.forEach((file) => {
           const child = {} as ListdirChild;
           if (file.IsDir) {
-            if (data.attributes.folder == '/') {
+            if (data.attributes.folder === '/') {
               child['name'] = data.attributes.folder + file.Name;
             } else {
               child['name'] = data.attributes.folder + '/' + file.Name;
