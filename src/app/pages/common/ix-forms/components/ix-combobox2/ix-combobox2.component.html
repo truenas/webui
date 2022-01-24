@@ -26,14 +26,14 @@
     <mat-autocomplete #auto="matAutocomplete" [displayWith]="getDisplayWith"
       (optionSelected)="optionSelected($event.option.value)" (opened)="onOpenDropdown()">
       <mat-option
-        *ngFor="let option of options$ | async"
+        *ngFor="let option of provider.options"
         [value]="option"
         [class.ix-selected]="option.value === selectedOption?.value"
         [class.ix-unselected]="option.value !== selectedOption?.value"
       >
         {{option.label}}
       </mat-option>
-      <mat-progress-bar mode="indeterminate" *ngIf="loading"></mat-progress-bar>
+      <mat-progress-bar mode="indeterminate" *ngIf="provider.isLoading"></mat-progress-bar>
     </mat-autocomplete>
   </div>
   <ix-errors [control]="controlDirective.control" [label]="label"></ix-errors>

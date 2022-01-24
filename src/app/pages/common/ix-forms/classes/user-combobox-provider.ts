@@ -1,50 +1,43 @@
-import { forkJoin, Observable, Subject } from 'rxjs';
-import { map, tap } from 'rxjs/operators';
+import { Subject } from 'rxjs';
 import { Option } from 'app/interfaces/option.interface';
 import { IxCombobox2Provider } from 'app/pages/common/ix-forms/components/ix-combobox2/ix-combobox2-provider.interface';
 import IxUsersService from 'app/pages/common/ix-forms/services/ix-users.service';
 
 export class UserComboboxProvider implements IxCombobox2Provider {
-  private ProviderUpdater$ = new Subject();
-  isLoading = false;
-  get loading(): boolean {
-    return this.isLoading;
+  private ProviderUpdater$ = new Subject<void>();
+  private loading = false;
+  get isLoading(): boolean {
+    return this.loading;
   }
 
   pageOffset: number;
-  options$: Observable<Option[]> = this.ixUsersService.loadUsers().pipe(
-    tap((options) => {
-      this.pageOffset = (options).length;
-    }),
-  );
+  options: Option[];
 
-  filter: (options$: Observable<Option[]>, query: string) => void =
-  (options$: Observable<Option[]>, query: string) => {
-    this.isLoading = true;
-    this.options$ = this.ixUsersService.loadUsers(query)
-      .pipe(tap((options: Option[]) => {
-        this.isLoading = false;
-        this.pageOffset = options.length;
-      }));
+  filter: (query: string) => void =
+  (query: string) => {
+    this.loading = true;
     this.updateProvider();
+    this.ixUsersService.loadUsers(query).subscribe((filteredOptions) => {
+      this.loading = false;
+      this.pageOffset = filteredOptions.length;
+      this.options = filteredOptions;
+      this.updateProvider();
+    });
   };
+
   onScrollEnd: (filterValue: string) => void =
   (filterValue: string = '') => {
-    this.isLoading = true;
-    this.options$ = forkJoin([
-      this.options$,
-      this.ixUsersService.loadUsers(filterValue, this.pageOffset)
-        .pipe(
-          tap((options) => {
-            this.isLoading = false;
-            this.pageOffset += (options).length;
-          }),
-        ),
-    ]).pipe(map(([arr1, arr2]) => [...(arr1), ...(arr2)]));
+    this.loading = true;
     this.updateProvider();
+    this.ixUsersService.loadUsers(filterValue, this.pageOffset).subscribe((nextPage) => {
+      this.loading = false;
+      this.pageOffset += nextPage.length;
+      this.options.push(...nextPage);
+      this.updateProvider();
+    });
   };
 
-  get providerUpdater$(): Subject<any> {
+  get providerUpdater$(): Subject<void> {
     return this.ProviderUpdater$;
   }
 
@@ -54,5 +47,11 @@ export class UserComboboxProvider implements IxCombobox2Provider {
 
   constructor(
     private ixUsersService: IxUsersService,
-  ) {}
+  ) {
+    this.ixUsersService.loadUsers().subscribe((options) => {
+      this.pageOffset = (options).length;
+      this.options = options;
+      this.updateProvider();
+    });
+  }
 }

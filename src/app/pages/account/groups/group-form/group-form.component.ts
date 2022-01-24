@@ -7,8 +7,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { UUID } from 'angular2-uuid';
 import * as _ from 'lodash';
-import { forkJoin, Observable, of } from 'rxjs';
-import { delay, map } from 'rxjs/operators';
+import { Observable, Subject } from 'rxjs';
 import helptext from 'app/helptext/account/groups';
 import { Group } from 'app/interfaces/group.interface';
 import { Option } from 'app/interfaces/option.interface';
@@ -48,9 +47,10 @@ export class GroupFormComponent {
 
   userProvider = this.ixUsersProvider.getNewProvider();
 
-  normalLoading = false;
   normalProvider: IxCombobox2Provider = {
-    options$: of([
+    isLoading: false,
+    providerUpdater$: new Subject<void>(),
+    options: [
       { label: UUID.UUID().substring(0, 6), value: UUID.UUID() },
       { label: UUID.UUID().substring(0, 6), value: UUID.UUID() },
       { label: UUID.UUID().substring(0, 6), value: UUID.UUID() },
@@ -69,46 +69,61 @@ export class GroupFormComponent {
       { label: UUID.UUID().substring(0, 6), value: UUID.UUID() },
       { label: UUID.UUID().substring(0, 6), value: UUID.UUID() },
       { label: UUID.UUID().substring(0, 6), value: UUID.UUID() },
-    ]),
+    ],
     pageOffset: 18,
-    filter: (options$: Observable<Option[]>, value: string): void => {
+    filter: (value: string): void => {
       if (value) {
-        this.normalLoading = true;
-        options$.pipe(untilDestroyed(this)).subscribe((syncOptions) => {
-          this.normalProvider.options$ = of(syncOptions.filter((option: Option) => {
-            this.normalLoading = false;
-            return option.label.toLowerCase().includes(value.toLowerCase())
-                || option.value.toString().toLowerCase().includes(value.toLowerCase());
-          }));
+        this.normalProvider.isLoading = true;
+        this.normalProvider.providerUpdater$.next();
+        this.normalProvider.options = this.normalProvider.options.filter((option: Option) => {
+          this.normalProvider.isLoading = false;
+          return option.label.toLowerCase().includes(value.toLowerCase())
+              || option.value.toString().toLowerCase().includes(value.toLowerCase());
         });
+      } else {
+        this.normalProvider.options = [
+          { label: UUID.UUID().substring(0, 6), value: UUID.UUID() },
+          { label: UUID.UUID().substring(0, 6), value: UUID.UUID() },
+          { label: UUID.UUID().substring(0, 6), value: UUID.UUID() },
+          { label: UUID.UUID().substring(0, 6), value: UUID.UUID() },
+          { label: UUID.UUID().substring(0, 6), value: UUID.UUID() },
+          { label: UUID.UUID().substring(0, 6), value: UUID.UUID() },
+          { label: UUID.UUID().substring(0, 6), value: UUID.UUID() },
+          { label: UUID.UUID().substring(0, 6), value: UUID.UUID() },
+          { label: UUID.UUID().substring(0, 6), value: UUID.UUID() },
+          { label: UUID.UUID().substring(0, 6), value: UUID.UUID() },
+          { label: UUID.UUID().substring(0, 6), value: UUID.UUID() },
+          { label: UUID.UUID().substring(0, 6), value: UUID.UUID() },
+          { label: UUID.UUID().substring(0, 6), value: UUID.UUID() },
+          { label: UUID.UUID().substring(0, 6), value: UUID.UUID() },
+          { label: UUID.UUID().substring(0, 6), value: UUID.UUID() },
+          { label: UUID.UUID().substring(0, 6), value: UUID.UUID() },
+          { label: UUID.UUID().substring(0, 6), value: UUID.UUID() },
+          { label: UUID.UUID().substring(0, 6), value: UUID.UUID() },
+        ];
       }
+      this.normalProvider.pageOffset = this.normalProvider.options.length;
+      this.normalProvider.providerUpdater$.next();
     },
     onScrollEnd: () => {
       this.normalProvider.pageOffset += 12;
-      this.normalLoading = true;
-
-      this.normalProvider.options$ = forkJoin([
-        this.normalProvider.options$,
-        of([
-          { label: 'Rehan - ' + UUID.UUID().substring(0, 6), value: UUID.UUID() },
-          { label: 'Rehan - ' + UUID.UUID().substring(0, 6), value: UUID.UUID() },
-          { label: 'Rehan - ' + UUID.UUID().substring(0, 6), value: UUID.UUID() },
-          { label: 'Rehan - ' + UUID.UUID().substring(0, 6), value: UUID.UUID() },
-          { label: 'Rehan - ' + UUID.UUID().substring(0, 6), value: UUID.UUID() },
-          { label: 'Rehan - ' + UUID.UUID().substring(0, 6), value: UUID.UUID() },
-          { label: 'Rehan - ' + UUID.UUID().substring(0, 6), value: UUID.UUID() },
-          { label: 'Rehan - ' + UUID.UUID().substring(0, 6), value: UUID.UUID() },
-          { label: 'Rehan - ' + UUID.UUID().substring(0, 6), value: UUID.UUID() },
-          { label: 'Rehan - ' + UUID.UUID().substring(0, 6), value: UUID.UUID() },
-          { label: 'Rehan - ' + UUID.UUID().substring(0, 6), value: UUID.UUID() },
-          { label: 'Rehan - ' + UUID.UUID().substring(0, 6), value: UUID.UUID() },
-        ] as Option[]),
-      ]).pipe(delay(3000)).pipe(map(([arr1, arr2]) => {
-        this.normalLoading = false;
-        return [...arr1, ...arr2];
-      }));
-      this.normalProvider = _.cloneDeep(this.normalProvider);
-      this.cdr.markForCheck();
+      this.normalProvider.isLoading = true;
+      this.normalProvider.providerUpdater$.next();
+      this.normalProvider.options.push(...[
+        { label: 'Rehan - ' + UUID.UUID().substring(0, 6), value: UUID.UUID() },
+        { label: 'Rehan - ' + UUID.UUID().substring(0, 6), value: UUID.UUID() },
+        { label: 'Rehan - ' + UUID.UUID().substring(0, 6), value: UUID.UUID() },
+        { label: 'Rehan - ' + UUID.UUID().substring(0, 6), value: UUID.UUID() },
+        { label: 'Rehan - ' + UUID.UUID().substring(0, 6), value: UUID.UUID() },
+        { label: 'Rehan - ' + UUID.UUID().substring(0, 6), value: UUID.UUID() },
+        { label: 'Rehan - ' + UUID.UUID().substring(0, 6), value: UUID.UUID() },
+        { label: 'Rehan - ' + UUID.UUID().substring(0, 6), value: UUID.UUID() },
+        { label: 'Rehan - ' + UUID.UUID().substring(0, 6), value: UUID.UUID() },
+        { label: 'Rehan - ' + UUID.UUID().substring(0, 6), value: UUID.UUID() },
+        { label: 'Rehan - ' + UUID.UUID().substring(0, 6), value: UUID.UUID() },
+        { label: 'Rehan - ' + UUID.UUID().substring(0, 6), value: UUID.UUID() },
+      ] as Option[]);
+      this.normalProvider.providerUpdater$.next();
     },
   };
 
@@ -128,12 +143,7 @@ export class GroupFormComponent {
     private errorHandler: FormErrorHandlerService,
     private translate: TranslateService,
     public ixUsersProvider: IxUserComboboxProviderService,
-  ) {
-    this.userProvider.providerUpdater$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.userProvider = _.cloneDeep(this.userProvider);
-      this.cdr.markForCheck();
-    });
-  }
+  ) { }
 
   /**
    * @param group Skip argument to add new group.

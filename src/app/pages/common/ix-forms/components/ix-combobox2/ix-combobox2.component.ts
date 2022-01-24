@@ -3,9 +3,7 @@ import {
   Component,
   ElementRef,
   Input,
-  OnChanges,
   OnInit,
-  SimpleChanges,
   ViewChild,
 } from '@angular/core';
 import { ControlValueAccessor, FormControl, NgControl } from '@angular/forms';
@@ -13,7 +11,7 @@ import { MatAutocomplete, MatAutocompleteTrigger } from '@angular/material/autoc
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import {
-  fromEvent, Observable, of, Subject,
+  fromEvent, Subject,
 } from 'rxjs';
 import {
   debounceTime, distinctUntilChanged, map, takeUntil,
@@ -28,13 +26,12 @@ import { IxCombobox2Provider } from './ix-combobox2-provider.interface';
   styleUrls: ['./ix-combobox2.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class IxCombobox2Component implements ControlValueAccessor, OnChanges, OnInit {
+export class IxCombobox2Component implements ControlValueAccessor, OnInit {
   @Input() label: string;
   @Input() hint: string;
   @Input() required: boolean;
   @Input() tooltip: string;
   @ViewChild('ixInput') inputElementRef: ElementRef;
-  @Input() loading = false;
   @ViewChild('auto') autoCompleteRef: MatAutocomplete;
   @ViewChild(MatAutocompleteTrigger) autocompleteTrigger: MatAutocompleteTrigger;
   placeholder = this.translate.instant('Search');
@@ -48,7 +45,6 @@ export class IxCombobox2Component implements ControlValueAccessor, OnChanges, On
   isDisabled = false;
   filterValue = '';
   selectedOption: Option = null;
-  options$: Observable<Option[]>;
 
   onChange: (value: string | number) => void = (): void => {};
   onTouch: () => void = (): void => {};
@@ -63,10 +59,8 @@ export class IxCombobox2Component implements ControlValueAccessor, OnChanges, On
 
   writeValue(value: string | number): void {
     this.value = value;
-    if (this.value && this.options$) {
-      this.options$.pipe(untilDestroyed(this)).subscribe((options) => {
-        this.selectedOption = { ...(options.find((option: Option) => option.value === this.value)) };
-      });
+    if (this.value && this.provider.options) {
+      this.selectedOption = { ...(this.provider.options.find((option: Option) => option.value === this.value)) };
     }
     if (this.selectedOption) {
       this.filterChanged$.next('');
@@ -82,8 +76,16 @@ export class IxCombobox2Component implements ControlValueAccessor, OnChanges, On
       untilDestroyed(this),
     ).subscribe((changedValue: string) => {
       this.filterValue = changedValue;
-      this.provider.filter(this.options$, changedValue);
+      this.provider.filter(changedValue);
+      this.cdr.markForCheck();
+    });
 
+    this.provider.providerUpdater$.pipe(untilDestroyed(this)).subscribe(() => {
+      const setOption = this.provider.options.find((option: Option) => option.value === this.value);
+      this.selectedOption = setOption ? { ...setOption } : null;
+      if (this.selectedOption) {
+        this.filterChanged$.next('');
+      }
       this.cdr.markForCheck();
     });
   }
@@ -142,21 +144,6 @@ export class IxCombobox2Component implements ControlValueAccessor, OnChanges, On
 
   displayWith(): string {
     return this.selectedOption ? this.selectedOption.label : '';
-  }
-
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes.provider) {
-      if (changes.provider.currentValue) {
-        changes.provider.currentValue.options$.pipe(untilDestroyed(this)).subscribe((options: Option[]) => {
-          this.options$ = of(options);
-          const setOption = options.find((option: Option) => option.value === this.value);
-          this.selectedOption = setOption ? { ...setOption } : null;
-          if (this.selectedOption) {
-            this.filterChanged$.next('');
-          }
-        });
-      }
-    }
   }
 
   shouldShowResetInput(): boolean {

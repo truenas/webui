@@ -1,9 +1,11 @@
-import { Observable } from 'rxjs';
+import { Subject } from 'rxjs';
 import { Option } from '../../../../../interfaces/option.interface';
 
 export interface IxCombobox2Provider {
   pageOffset: number;
-  options$: Observable<Option[]>;
-  filter: (options$: Observable<Option[]>, query: string) => void;
+  providerUpdater$: Subject<void>;
+  options: Option[];
+  filter: (query: string) => void;
   onScrollEnd: (filterValue: string) => void;
+  isLoading: boolean;
 }
