@@ -9,8 +9,9 @@ import { NetworkActivityType } from 'app/enums/network-activity-type.enum';
 import { NetworkConfiguration } from 'app/interfaces/network-configuration.interface';
 import { NetworkSummary } from 'app/interfaces/network-summary.interface';
 import { Option } from 'app/interfaces/option.interface';
-import { ConfigurationComponent } from 'app/pages/network/forms/configuration.component';
+import { NetworkConfigurationComponent } from 'app/pages/network/configuration/configuration.component';
 import { ModalService, WebSocketService } from 'app/services';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
 @Component({
@@ -29,6 +30,7 @@ export class NetworkConfigurationCardComponent implements OnInit {
     private translate: TranslateService,
     private modalService: ModalService,
     private cdr: ChangeDetectorRef,
+    private slideInService: IxSlideInService,
   ) {}
 
   ngOnInit(): void {
@@ -105,8 +107,10 @@ export class NetworkConfigurationCardComponent implements OnInit {
   }
 
   onSettingsClicked(): void {
-    const configurationComponent = this.modalService.openInSlideIn(ConfigurationComponent);
-    configurationComponent.afterModalFormClosed = this.loadNetworkConfigAndSummary.bind(this);
+    this.slideInService.open(NetworkConfigurationComponent, { wide: true });
+    this.slideInService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
+      this.loadNetworkConfigAndSummary();
+    });
   }
 
   private loadNetworkConfigAndSummary(): void {
