@@ -570,12 +570,8 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
   }
   /////////////////// END SpecSelectors
 
-  .cdk-overlay-pane {
-    overflow-x: hidden;
-    overflow-y: auto;
-  }
-
   .mat-dialog-container {
+    max-height: calc(100vh - 100px);
     max-width: 800px;
   }
 
@@ -1051,7 +1047,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
   // Bring tooltips to the front in dialogs
   .mat-dialog-container,
   .mat-dialog-content {
-    overflow: visible !important;
+    overflow: auto !important;
   }
 
   // Fix for overscrolling problem with sidenav
