@@ -1,8 +1,11 @@
 :host {
   display: block;
+  padding-bottom: 15px;
+}
+
+form {
   margin: 0 auto;
   max-width: 960px;
-  padding-bottom: 15px;
   padding-left: 7px;
   padding-right: 7px;
 }
