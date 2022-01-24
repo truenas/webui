@@ -22,6 +22,28 @@ export interface NetworkConfiguration {
   state: NetworkConfigurationState;
 }
 
+export interface NetworkConfigurationConfig {
+  domain: string;
+  domains: string[];
+  hostname: string;
+  hostname_b: string;
+  hostname_virtual: string;
+  hosts: string[];
+  httpproxy: string;
+  ipv4gateway: string;
+  ipv6gateway: string;
+  nameserver1: string;
+  nameserver2: string;
+  nameserver3: string;
+  netwait_enabled: boolean;
+  netwait_ip: string[];
+  netbios: false;
+  mdns: true;
+  wsd: true;
+  outbound_network_activity: NetworkActivityType;
+  outbound_network_value: string[];
+}
+
 export interface NetworkConfigurationState {
   ipv4gateway: string;
   ipv6gateway: string;
@@ -40,11 +62,6 @@ export interface NetworkConfigurationActivity {
   type: NetworkActivityType;
   activities: string[];
 }
-
-export type NetworkActivityChoice = [
-  value: string,
-  label: string,
-];
 
 export interface NetworkConfigurationUpdate {
   activity: NetworkConfigurationActivity;

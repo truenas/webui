@@ -5,12 +5,12 @@ import { Validators } from '@angular/forms';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { of } from 'rxjs';
-import { map } from 'rxjs/operators';
 import { NetworkActivityType } from 'app/enums/network-activity-type.enum';
 import { ProductType } from 'app/enums/product-type.enum';
+import { arrayToOptions } from 'app/helpers/options.helper';
 import helptext from 'app/helptext/network/configuration/configuration';
 import {
-  NetworkConfiguration, NetworkConfigurationActivity, NetworkConfigurationUpdate,
+  NetworkConfiguration, NetworkConfigurationActivity, NetworkConfigurationConfig, NetworkConfigurationUpdate,
 } from 'app/interfaces/network-configuration.interface';
 import { ipv4Validator, ipv6Validator } from 'app/modules/entity/entity-form/validators/ip-validation';
 import { EntityUtils } from 'app/modules/entity/utils';
@@ -41,7 +41,7 @@ export class NetworkConfigurationComponent implements OnInit {
     nameserver3: [''],
     ipv4gateway: ['', ipv4Validator()],
     ipv6gateway: ['', ipv6Validator()],
-    outbound_network_activity: ['DENY'],
+    outbound_network_activity: [NetworkActivityType.Deny],
     outbound_network_value: [[] as string[]],
     httpproxy: [''],
     netwait_enabled: [false],
@@ -160,11 +160,7 @@ export class NetworkConfigurationComponent implements OnInit {
     fcName: 'outbound_network_value',
     label: '',
     tooltip: helptext.outbound_network_value.tooltip,
-    options: this.ws.call('network.configuration.activity_choices').pipe(
-      map((choices) => {
-        return choices.map(([value, label]) => ({ label, value }));
-      }),
-    ),
+    options: this.ws.call('network.configuration.activity_choices').pipe(arrayToOptions()),
     hidden: true,
   };
 
@@ -208,10 +204,7 @@ export class NetworkConfigurationComponent implements OnInit {
 
     this.form.controls.outbound_network_activity.valueChanges.pipe(untilDestroyed(this)).subscribe(
       (value: NetworkActivityType) => {
-        if (
-          value === NetworkActivityType.Allow
-          || value === NetworkActivityType.Deny
-        ) {
+        if ([NetworkActivityType.Allow, NetworkActivityType.Deny].includes(value)) {
           this.outbound_network_value.hidden = true;
         } else {
           this.outbound_network_value.hidden = false;
@@ -241,24 +234,38 @@ export class NetworkConfigurationComponent implements OnInit {
       .pipe(untilDestroyed(this))
       .subscribe(
         (config: NetworkConfiguration) => {
-          const transformed: any = { ...config };
+          const transformed: NetworkConfigurationConfig = {
+            hostname: config.hostname,
+            hostname_b: config.hostname_b,
+            hostname_virtual: config.hostname_virtual,
+            domain: config.domain,
+            domains: config.domains,
+            nameserver1: config.nameserver1,
+            nameserver2: config.nameserver2,
+            nameserver3: config.nameserver3,
+            ipv4gateway: config.ipv4gateway,
+            ipv6gateway: config.ipv6gateway,
+            outbound_network_activity: NetworkActivityType.Allow,
+            outbound_network_value: [],
+            httpproxy: config.httpproxy,
+            netwait_enabled: config.netwait_enabled,
+            netwait_ip: config.netwait_ip,
+            hosts: [],
+            netbios: config.service_announcement.netbios,
+            mdns: config.service_announcement.mdns,
+            wsd: config.service_announcement.wsd,
+          };
 
-          if (transformed.hosts && transformed.hosts !== '') {
-            transformed.hosts = transformed.hosts.split('\n');
-          } else {
-            transformed.hosts = [];
+          if (config.hosts && config.hosts !== '') {
+            transformed.hosts = config.hosts.split('\n');
           }
 
-          transformed.netbios = transformed.service_announcement.netbios;
-          transformed.mdns = transformed.service_announcement.mdns;
-          transformed.wsd = transformed.service_announcement.wsd;
-
-          if (transformed.activity) {
-            if (transformed.activity.activities.length === 0) {
-              transformed.outbound_network_activity = transformed.activity.type;
-            } else if (transformed.activity.type === NetworkActivityType.Allow) {
-              transformed.outbound_network_activity = 'SPECIFIC';
-              transformed.outbound_network_value = transformed.activity.activities;
+          if (config.activity) {
+            if (config.activity.activities.length === 0) {
+              transformed.outbound_network_activity = config.activity.type;
+            } else if (config.activity.type === NetworkActivityType.Allow) {
+              transformed.outbound_network_activity = 'SPECIFIC' as NetworkActivityType;
+              transformed.outbound_network_value = config.activity.activities;
             }
           }
 
@@ -278,10 +285,7 @@ export class NetworkConfigurationComponent implements OnInit {
     const values = this.form.value;
     let activity: NetworkConfigurationActivity;
 
-    if (
-      values.outbound_network_activity === NetworkActivityType.Allow
-      || values.outbound_network_activity === NetworkActivityType.Deny
-    ) {
+    if ([NetworkActivityType.Allow, NetworkActivityType.Deny].includes(values.outbound_network_activity)) {
       activity = { type: values.outbound_network_activity, activities: [] };
     } else {
       activity = { type: NetworkActivityType.Allow, activities: values.outbound_network_value };
