@@ -6,8 +6,9 @@ import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.u
 import { NetworkActivityType } from 'app/enums/network-activity-type.enum';
 import { NetworkConfiguration } from 'app/interfaces/network-configuration.interface';
 import { NetworkSummary } from 'app/interfaces/network-summary.interface';
-import { ConfigurationComponent } from 'app/pages/network/forms/configuration.component';
-import { ModalService, WebSocketService } from 'app/services';
+import { NetworkConfigurationComponent } from 'app/pages/network/configuration/configuration.component';
+import { WebSocketService } from 'app/services';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { NetworkConfigurationCardComponent } from './network-configuration-card.component';
 
 describe('NetworkConfigurationCardComponent', () => {
@@ -116,12 +117,12 @@ describe('NetworkConfigurationCardComponent', () => {
   });
 
   it('opens settings form when Settings button is clicked', async () => {
-    const modalService = spectator.inject(ModalService);
-    jest.spyOn(modalService, 'openInSlideIn').mockImplementation();
+    const ixSlideInService = spectator.inject(IxSlideInService);
+    jest.spyOn(ixSlideInService, 'open').mockImplementation();
 
     const settingsButton = await loader.getHarness(MatButtonHarness.with({ text: 'Settings' }));
     await settingsButton.click();
 
-    expect(modalService.openInSlideIn).toHaveBeenCalledWith(ConfigurationComponent);
+    expect(ixSlideInService.open).toHaveBeenCalledWith(NetworkConfigurationComponent, { wide: true });
   });
 });
