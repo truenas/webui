@@ -30,7 +30,7 @@ export class DisplayComponent<T = unknown> {
     const compRef = this.getChild(instance);
 
     // Insert into DOM
-    this.viewContainerRef.insert(compRef.hostView);// addChild();
+    this.viewContainerRef.insert(compRef.hostView);
 
     // Setup ChangeDetection and add to DisplayList
     compRef.changeDetectorRef.detectChanges();
