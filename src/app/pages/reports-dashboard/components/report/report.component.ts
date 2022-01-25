@@ -224,7 +224,7 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
   async timeZoomIn(): Promise<void> {
     // more detail
     const max = 4;
-    if (this.timeZoomIndex == max) { return; }
+    if (this.timeZoomIndex === max) { return; }
     this.timeZoomIndex += 1;
     const zoom = this.zoomLevels[this.timeZoomIndex];
     const rrdOptions = await this.convertTimespan(zoom.timespan);
@@ -238,7 +238,7 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
   async timeZoomOut(): Promise<void> {
     // less detail
     const min = Number(0);
-    if (this.timeZoomIndex == min) { return; }
+    if (this.timeZoomIndex === min) { return; }
     this.timeZoomIndex -= 1;
     const zoom = this.zoomLevels[this.timeZoomIndex];
     const rrdOptions = await this.convertTimespan(zoom.timespan);
