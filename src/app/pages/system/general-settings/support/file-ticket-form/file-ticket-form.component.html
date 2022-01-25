@@ -1,0 +1,68 @@
+<ix-modal-header [title]="'File Ticket' | translate" [loading]="isFormLoading$ | async"></ix-modal-header>
+<div class="ix-modal-subheader" *ngFor="let job$ of jobs$ | async">
+  <app-job-item *ngIf="job$ | async as job" [job]="job"></app-job-item>
+</div>
+<mat-card>
+  <mat-card-content>
+    <form [formGroup]="form" class="ix-form-container" (submit)="onSubmit()">
+      <ix-fieldset>
+        <app-jira-oauth
+          formControlName="token"
+          [label]="'Token' | translate"
+          [tooltip]="tooltips.token | translate"
+          [required]="true"
+        ></app-jira-oauth>
+        <ix-select
+          formControlName="category"
+          [label]="'Category' | translate"
+          [options]="categoryOptions$"
+          [tooltip]="tooltips.category | translate"
+          [required]="true"
+        ></ix-select>
+        <ix-select
+          formControlName="type"
+          [label]="'Type' | translate"
+          [options]="typeOptions$"
+          [tooltip]="tooltips.type | translate"
+          [required]="true"
+        ></ix-select>
+        <ix-checkbox
+          formControlName="attach_debug"
+          [label]="'Attach Debug' | translate"
+          [tooltip]="tooltips.attach_debug | translate"
+        ></ix-checkbox>
+        <ix-input
+          formControlName="title"
+          [label]="'Subject' | translate"
+          [tooltip]="tooltips.title | translate"
+          [placeholder]="tooltips.title | translate"
+          [required]="true"
+        ></ix-input>
+        <ix-textarea
+          formControlName="body"
+          [label]="'Body' | translate"
+          [tooltip]="tooltips.body | translate"
+          [placeholder]="tooltips.body | translate"
+          [rows]="8"
+          [required]="true"
+        ></ix-textarea>
+        <ix-file-input
+          formControlName="screenshot"
+          [label]="'Attach screenshots' | translate"
+          [tooltip]="tooltips.screenshot | translate"
+          [multiple]="true"
+          [acceptedFiles]="'image/png,image/jpeg,image/gif'"
+        ></ix-file-input>
+      </ix-fieldset>
+
+      <div class="form-actions">
+        <button
+          mat-button
+          type="submit"
+          [disabled]="isFormDisabled$ | async"
+          color="primary"
+        >{{ 'Save' | translate }}</button>
+      </div>
+    </form>
+  </mat-card-content>
+</mat-card>

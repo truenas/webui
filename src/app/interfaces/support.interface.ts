@@ -38,3 +38,9 @@ export type OauthJiraMessage = MessageEvent<{
   result?: string;
   data?: string;
 }>;
+
+export type AttachTicketParams = [
+  token: string,
+  filename: string,
+  ticket: number,
+];

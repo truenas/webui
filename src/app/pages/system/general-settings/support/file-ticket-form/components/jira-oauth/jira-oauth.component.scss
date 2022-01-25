@@ -1,0 +1,15 @@
+:host {
+  display: block;
+}
+
+.full-width.container {
+  &.hidden {
+    display: none;
+  }
+}
+
+.action-button {
+  display: block;
+  margin-bottom: 20px;
+  width: 100%;
+}

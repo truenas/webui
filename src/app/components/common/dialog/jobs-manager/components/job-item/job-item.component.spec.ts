@@ -104,11 +104,12 @@ describe('JobItemComponent', () => {
           state: JobState.Running,
           abortable: true,
         } as Job,
+        clickable: true,
       },
     });
     jest.spyOn(spectator.component.opened, 'emit').mockImplementation();
 
-    spectator.click(spectator.query('.job-clickable'));
+    spectator.click(spectator.query('.job-item-body'));
 
     expect(spectator.component.opened.emit).toHaveBeenCalledTimes(1);
   });

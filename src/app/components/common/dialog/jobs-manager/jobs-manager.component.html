@@ -20,6 +20,7 @@
       <app-job-item
         *ngFor="let job of jobs"
         [job]="job"
+        [clickable]="true"
         (aborted)="onAbort(job)"
         (opened)="openEntityJobDialog(job)"
       ></app-job-item>
