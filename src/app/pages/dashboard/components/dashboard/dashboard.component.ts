@@ -375,7 +375,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       if (typeof this.systemInformation === 'undefined') {
         this.systemInformation = evt.data;
         if (!this.pools || this.pools.length === 0) {
-          this.core.emit({ name: 'PoolDataRequest', sender: this });
+          this.loadPoolData();
         }
       }
     });

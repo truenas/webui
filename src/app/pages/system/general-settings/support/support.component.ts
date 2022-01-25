@@ -1,4 +1,4 @@
-import { Component, OnInit, Type } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { MatCheckboxChange } from '@angular/material/checkbox/checkbox';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { helptextSystemSupport as helptext } from 'app/helptext/system/support';
@@ -11,10 +11,10 @@ import { SystemInfoInSupport } from 'app/pages/system/general-settings/support/s
 import { WebSocketService, AppLoaderService, DialogService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { ModalService } from 'app/services/modal.service';
+import { FileTicketFormComponent } from './file-ticket-form/file-ticket-form.component';
 import { LicenseComponent } from './license/license.component';
 import { ProactiveComponent } from './proactive/proactive.component';
 import { SupportFormLicensedComponent } from './support-licensed/support-form-licensed.component';
-import { SupportFormUnlicensedComponent } from './support-unlicensed/support-form-unlicensed.component';
 
 @UntilDestroy()
 @Component({
@@ -146,10 +146,11 @@ export class SupportComponent implements OnInit {
   }
 
   fileTicket(): void {
-    const component: Type<SupportFormLicensedComponent | SupportFormUnlicensedComponent> = this.hasLicense
-      ? SupportFormLicensedComponent
-      : SupportFormUnlicensedComponent;
-    this.modalService.openInSlideIn(component);
+    if (this.hasLicense) {
+      this.modalService.openInSlideIn(SupportFormLicensedComponent);
+    } else {
+      this.slideInService.open(FileTicketFormComponent);
+    }
   }
 
   openProactive(): void {

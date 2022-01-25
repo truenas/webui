@@ -220,23 +220,6 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
 
     this.cdr.detectChanges();
 
-    this.core.register({ observerClass: this, eventName: 'DisksData' }).pipe(untilDestroyed(this)).subscribe((evt: DisksDataEvent) => {
-      const currentPath = this.path[this.currentSlideIndex];
-      const currentName = currentPath?.dataSource?.disk || 'unknown';
-
-      if ((!currentName || currentName === 'unknown') && evt.data.length === 0) {
-        this.currentDiskDetails = null;
-      } else if (currentName && evt.data.length > 0 && currentName === evt.data[0].name) {
-        delete evt.data[0].enclosure;
-        delete evt.data[0].name;
-        delete evt.data[0].devname;
-        delete evt.data[0].multipath_name;
-        delete evt.data[0].multipath_member;
-        delete evt.data[0].zfs_guid;
-        this.currentDiskDetails = evt.data[0];
-      }
-    });
-
     this.checkVolumeHealth(this.poolState);
   }
 
