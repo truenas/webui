@@ -23,7 +23,6 @@ import { NgxWebstorageModule } from 'ngx-webstorage';
 import { MaterialModule } from 'app/app-material.module';
 import { ConsolePanelDialogComponent } from 'app/components/common/dialog/console-panel/console-panel-dialog.component';
 import { DownloadKeyDialogComponent } from 'app/components/common/dialog/download-key/download-key-dialog.component';
-import { JobsManagerStore } from 'app/components/common/dialog/jobs-manager/jobs-manager.store';
 import { IcuMissingTranslationHandler } from 'app/core/classes/icu-missing-translation-handler';
 import { createTranslateLoader } from 'app/core/classes/icu-translations-loader';
 import { CoreComponents } from 'app/core/components/core-components.module';
@@ -41,7 +40,6 @@ import { rootRouterConfig } from './app.routes';
 import { AppCommonModule } from './components/common/app-common.module';
 import { AboutDialogComponent } from './components/common/dialog/about/about-dialog.component';
 import { DirectoryServicesMonitorComponent } from './components/common/dialog/directory-services-monitor/directory-services-monitor.component';
-import { JobsManagerModule } from './components/common/dialog/jobs-manager/jobs-manager.module';
 import { ResilverProgressDialogComponent } from './components/common/dialog/resilver-progress/resilver-progress.component';
 import { TruecommandComponent } from './components/common/dialog/truecommand/truecommand.component';
 import { AppLoaderComponent } from './modules/app-loader/app-loader.component';
@@ -95,7 +93,6 @@ import { WebSocketService } from './services/ws.service';
     MarkdownModule.forRoot(),
     CoreComponents,
     FormsModule,
-    JobsManagerModule,
     ReactiveFormsModule,
     EntityModule,
     TerminalModule,
@@ -132,7 +129,6 @@ import { WebSocketService } from './services/ws.service';
     WebSocketService,
     AppLoaderService,
     ErdService,
-    JobsManagerStore,
     IxSlideInService,
     IxFileUploadService,
     {

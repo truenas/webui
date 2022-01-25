@@ -3,37 +3,14 @@
   flex: 1;
   flex-direction: column;
 
-  mat-spinner {
-    margin: 30px auto;
+  entity-empty {
+    align-items: center;
+    display: flex;
+    justify-content: center;
   }
 
-  .mat-tab-body-wrapper {
-    min-height: 100%;
-    padding: 16px;
-  }
-}
-
-mat-table.jobs-table {
-  background-color: var(--bg2);
-
-  .mat-cell,
-  .mat-header-cell,
-  .mat-footer-cell {
-    color: var(--fg2);
-    padding: 0 8px;
-
-    &:first-of-type {
-      padding-left: 24px;
-    }
-  }
-
-  .mat-column-name {
+  .cdk-column-name {
     padding-right: 24px;
-  }
-
-  .mat-column-state,
-  .mat-column-logs_excerpt {
-    min-width: 110px;
   }
 
   .jobs-item {
@@ -78,21 +55,20 @@ mat-table.jobs-table {
       margin: 0;
     }
   }
-}
 
-.jobs-container {
-  display: flex;
-  margin-top: 16px;
+  .jobs-container {
+    display: flex;
+    padding: 0;
+    position: relative;
 
-  .jobs-table {
-    flex-grow: 1;
-    overflow-x: hidden;
-  }
+    .ix-table {
+      flex-grow: 1;
+      overflow-x: hidden;
+    }
 
-  .job-logs-sidebar {
-    flex-shrink: 0;
-    position: sticky;
-    top: 0;
-    width: 320px;
+    .job-logs-sidebar {
+      flex-grow: 0;
+      width: 320px;
+    }
   }
 }

@@ -8,10 +8,8 @@ import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
-import { Observable, Subject, Subscription } from 'rxjs';
+import { Subject, Subscription } from 'rxjs';
 import { filter } from 'rxjs/operators';
-import { JobsManagerComponent } from 'app/components/common/dialog/jobs-manager/jobs-manager.component';
-import { JobsManagerStore } from 'app/components/common/dialog/jobs-manager/jobs-manager.store';
 import { DirectoryServiceState } from 'app/enums/directory-service-state.enum';
 import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
 import { JobState } from 'app/enums/job-state.enum';
@@ -36,6 +34,9 @@ import { EntityDialogComponent } from 'app/modules/entity/entity-dialog/entity-d
 import { matchOtherValidator } from 'app/modules/entity/entity-form/validators/password-validation/password-validation';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { EntityUtils } from 'app/modules/entity/utils';
+import { JobsPanelComponent } from 'app/modules/jobs/components/jobs-panel/jobs-panel.component';
+import { jobPanelClosed } from 'app/modules/jobs/store/job.actions';
+import { selectIsJobPanelOpen, selectRunningJobsCount } from 'app/modules/jobs/store/job.selectors';
 import { CoreService } from 'app/services/core-service/core.service';
 import { DialogService } from 'app/services/dialog.service';
 import { LayoutService } from 'app/services/layout.service';
@@ -44,7 +45,7 @@ import { PreferencesService } from 'app/services/preferences.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { ThemeService } from 'app/services/theme/theme.service';
 import { WebSocketService } from 'app/services/ws.service';
-import { alertIndicatorPressed } from 'app/store/actions/topbar.actions';
+import { alertIndicatorPressed, jobIndicatorPressed } from 'app/store/actions/topbar.actions';
 import { AboutDialogComponent } from '../dialog/about/about-dialog.component';
 import { DirectoryServicesMonitorComponent } from '../dialog/directory-services-monitor/directory-services-monitor.component';
 import { ResilverProgressDialogComponent } from '../dialog/resilver-progress/resilver-progress.component';
@@ -69,7 +70,7 @@ export class TopbarComponent implements OnInit, OnDestroy {
   currentTheme = 'ix-blue';
   isTaskMangerOpened = false;
   isDirServicesMonitorOpened = false;
-  taskDialogRef: MatDialogRef<JobsManagerComponent>;
+  taskDialogRef: MatDialogRef<JobsPanelComponent>;
   dirServicesMonitor: MatDialogRef<DirectoryServicesMonitorComponent>;
   dirServicesStatus: DirectoryServiceState[] = [];
   showDirServicesIcon = false;
@@ -91,9 +92,11 @@ export class TopbarComponent implements OnInit, OnDestroy {
   isWaiting = false;
   target: Subject<CoreEvent> = new Subject();
   screenSize = 'waiting';
-  numberOfRunningJobs$: Observable<number> = this.jobsManagerStore.numberOfRunningJobs$;
 
+  jobBadgeCount$ = this.store$.select(selectRunningJobsCount);
   alertBadgeCount$ = this.store$.select(selectImportantUnreadAlertsCount);
+
+  isJobPanelOpen$ = this.store$.select(selectIsJobPanelOpen);
 
   protected tcConnected = false;
   protected tc_queryCall = 'truecommand.config' as const;
@@ -117,7 +120,6 @@ export class TopbarComponent implements OnInit, OnDestroy {
     private loader: AppLoaderService,
     private mediaObserver: MediaObserver,
     private layoutService: LayoutService,
-    private jobsManagerStore: JobsManagerStore,
     private prefService: PreferencesService,
     private store$: Store<AlertSlice>,
     private core: CoreService,
@@ -247,6 +249,27 @@ export class TopbarComponent implements OnInit, OnDestroy {
     this.ws.onCloseSubject$.pipe(untilDestroyed(this)).subscribe(() => {
       this.modalService.closeSlideIn();
     });
+
+    this.isJobPanelOpen$.pipe(
+      filter(Boolean),
+      untilDestroyed(this),
+    ).subscribe(() => {
+      this.taskDialogRef = this.dialog.open(JobsPanelComponent, {
+        width: '400px',
+        hasBackdrop: true,
+        panelClass: 'topbar-panel',
+        position: {
+          top: '48px',
+          right: '16px',
+        },
+      });
+
+      this.taskDialogRef.beforeClosed().pipe(
+        untilDestroyed(this),
+      ).subscribe(() => {
+        this.onJobPanelClosed();
+      });
+    });
   }
 
   preferencesHandler(): void {
@@ -268,6 +291,14 @@ export class TopbarComponent implements OnInit, OnDestroy {
 
   onAlertIndicatorPressed(): void {
     this.store$.dispatch(alertIndicatorPressed());
+  }
+
+  onJobIndicatorPressed(): void {
+    this.store$.dispatch(jobIndicatorPressed());
+  }
+
+  onJobPanelClosed(): void {
+    this.store$.dispatch(jobPanelClosed());
   }
 
   toggleCollapse(): void {
@@ -440,29 +471,6 @@ export class TopbarComponent implements OnInit, OnDestroy {
 
   showResilveringDetails(): void {
     this.dialog.open(ResilverProgressDialogComponent);
-  }
-
-  onShowTaskManager(): void {
-    if (this.isTaskMangerOpened) {
-      this.taskDialogRef.close(true);
-    } else {
-      this.isTaskMangerOpened = true;
-      this.taskDialogRef = this.dialog.open(JobsManagerComponent, {
-        width: '400px',
-        hasBackdrop: true,
-        panelClass: 'topbar-panel',
-        position: {
-          top: '48px',
-          right: '16px',
-        },
-      });
-    }
-
-    this.taskDialogRef.afterClosed().pipe(untilDestroyed(this)).subscribe(
-      () => {
-        this.isTaskMangerOpened = false;
-      },
-    );
   }
 
   onShowDirServicesMonitor(): void {

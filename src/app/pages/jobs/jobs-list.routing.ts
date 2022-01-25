@@ -5,12 +5,12 @@ import { JobsListComponent } from './jobs-list/jobs-list.component';
 export const routes: Routes = [
   {
     path: '',
-    data: { title: 'Jobs' },
+    data: { title: 'Tasks' },
     children: [
       {
         path: '',
         component: JobsListComponent,
-        data: { title: 'Job Log', breadcrumb: 'Job Log' },
+        data: { title: 'Tasks', breadcrumb: 'Tasks' },
       },
     ],
   },

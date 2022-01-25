@@ -5,183 +5,170 @@
     (focusChange)="onTabChange($event)"
     fxFlex="100%"
   >
-    <mat-tab label="{{ 'All' | translate }}" ix-auto ix-auto-type="tab" ix-auto-identifier="filter-all">
-      <ng-container *ngIf="isLoading; then loading; else jobsTable"></ng-container>
-    </mat-tab>
-    <mat-tab label="{{ 'Active' | translate }}" ix-auto ix-auto-type="tab" ix-auto-identifier="filter-active">
-      <ng-container *ngIf="isLoading; then loading; else jobsTable"></ng-container>
-    </mat-tab>
-    <mat-tab label="{{ 'Failed' | translate }}" ix-auto ix-auto-type="tab" ix-auto-identifier="filter-failed">
-      <ng-container *ngIf="isLoading; then loading; else jobsTable"></ng-container>
-    </mat-tab>
+    <mat-tab label="{{ 'All' | translate }}" ix-auto ix-auto-type="tab" ix-auto-identifier="filter-all"></mat-tab>
+    <mat-tab label="{{ 'Active' | translate }}" ix-auto ix-auto-type="tab" ix-auto-identifier="filter-active"></mat-tab>
+    <mat-tab label="{{ 'Failed' | translate }}" ix-auto ix-auto-type="tab" ix-auto-identifier="filter-failed"></mat-tab>
   </mat-tab-group>
 </div>
 
-<ng-template #loading>
-  <entity-empty [conf]="loadingConfig"></entity-empty>
-</ng-template>
+<entity-empty *ngIf="isLoading$ | async; else loaded" [conf]="loadingConfig"></entity-empty>
 
-<ng-template #empty>
-  <entity-empty [conf]="emptyConfig"></entity-empty>
-</ng-template>
-
-<ng-template #jobsTable>
-  <ng-container *ngIf="dataSource?.data?.length; else empty">
-    <div *ngFor="let jobTableIndex of jobTableIndexes">
-      <div class="jobs-container" *ngIf="selectedIndex === jobTableIndex">
-        <mat-table
-          #taskTable
-          [dataSource]="dataSource"
-          multiTemplateDataRows
-          class="jobs-table"
-          matSort
-          matSortActive="id"
-          matSortDirection="desc"
+<ng-template #loaded>
+  <div class="jobs-container">
+    <table
+      ix-table
+      [dataSource]="dataSource"
+      [multiTemplateDataRows]="true"
+      [trackBy]="trackByJobId"
+      matSort
+      matSortActive="id"
+      matSortDirection="desc"
+    >
+      <ng-container matColumnDef="name">
+        <th
+          mat-header-cell
+          *matHeaderCellDef
+          ix-auto
+          ix-auto-type="tab"
+          ix-auto-identifier="name"
         >
-          <ng-container matColumnDef="name">
-            <mat-header-cell
-              *matHeaderCellDef
-              class="jobs-name-column"
-              ix-auto
-              ix-auto-type="tab"
-              ix-auto-identifier="name"
-            >
-              {{ 'Name' | translate }}
-            </mat-header-cell>
-            <mat-cell *matCellDef="let element" class="jobs-name-column">
-              <div class="jobs-item" fxFlex="100" fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="8px">
-                <div fxFlex="100" fxLayout="row" fxLayoutGap="8px" fxLayoutAlign="start center">
-                  <div class="jobs-item-icon" [ngSwitch]="element.state">
-                    <mat-icon *ngSwitchCase="JobState.Success" class="state-success">check_circle_outline</mat-icon>
-                    <mat-icon *ngSwitchCase="JobState.Failed" class="state-failed" [matTooltip]="element.error"
-                      >highlight_off</mat-icon
-                    >
-                    <ng-container *ngSwitchCase="JobState.Running">
-                      <mat-spinner class="state-running" [diameter]="22" [matTooltip]="element.progress.description"></mat-spinner>
-                    </ng-container>
-                    <mat-icon *ngSwitchCase="JobState.Waiting" class="state-waiting">schedule</mat-icon>
-                    <mat-icon *ngSwitchCase="JobState.Aborted" class="state-aborted">report</mat-icon>
-                  </div>
+          {{ 'Name' | translate }}
+        </th>
+        <td mat-cell *matCellDef="let job; dataSource: dataSource">
+          <div class="jobs-item" fxFlex="1 1 100%" fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="8px">
+            <div fxFlex fxLayout="row" fxLayoutGap="8px" fxLayoutAlign="start center">
+              <div class="jobs-item-icon" [ngSwitch]="job.state">
+                <mat-icon *ngSwitchCase="JobState.Success" class="state-success">check_circle_outline</mat-icon>
+                <mat-icon *ngSwitchCase="JobState.Failed" class="state-failed" [matTooltip]="job.error"
+                  >highlight_off</mat-icon
+                >
+                <ng-container *ngSwitchCase="JobState.Running">
+                  <mat-spinner class="state-running" [diameter]="22" [matTooltip]="job.progress.description"></mat-spinner>
+                </ng-container>
+                <mat-icon *ngSwitchCase="JobState.Waiting" class="state-waiting">schedule</mat-icon>
+                <mat-icon *ngSwitchCase="JobState.Aborted" class="state-aborted">report</mat-icon>
+              </div>
 
-                  <div fxFlex="100" fxLayout="column">
-                    <div fxLayout="row" fxLayoutAlign="space-between baseline" fxLayoutGap="8px">
-                      <span>{{ element.description ? element.description : element.method }}</span>
-                      <small *ngIf="element.state === JobState.Running">{{ element.progress.percent || 0 | number: '1.2-2' }}%</small>
-                    </div>
-
-                    <mat-progress-bar
-                      *ngIf="element.state === JobState.Running"
-                      [value]="element.progress.percent"
-                      [mode]="element.progress.percent ? 'determinate' : 'indeterminate'"
-                      class="jobs-progress"
-                      [matTooltip]="element.progress.description"
-                    ></mat-progress-bar>
-                  </div>
+              <div fxFlex="100" fxLayout="column">
+                <div fxLayout="row" fxLayoutAlign="space-between baseline" fxLayoutGap="8px">
+                  <span>{{ job.description ? job.description : job.method }}</span>
+                  <small *ngIf="job.state === JobState.Running">{{ job.progress.percent || 0 | number: '1.2-2' }}%</small>
                 </div>
 
-                <button
-                  mat-icon-button
-                  type="button"
-                  (click)="onAborted(element)"
-                  *ngIf="element.state === JobState.Running && element.abortable"
-                  [matTooltip]="'Abort' | translate"
-                >
-                  <mat-icon fontSet="mdi-set" fontIcon="mdi-close-circle"></mat-icon>
-                </button>
+                <mat-progress-bar
+                  *ngIf="job.state === JobState.Running"
+                  [value]="job.progress.percent"
+                  [mode]="job.progress.percent ? 'determinate' : 'indeterminate'"
+                  class="jobs-progress"
+                  [matTooltip]="job.progress.description"
+                ></mat-progress-bar>
               </div>
-            </mat-cell>
-          </ng-container>
-          <ng-container matColumnDef="state">
-            <mat-header-cell *matHeaderCellDef mat-sort-header ix-auto ix-auto-type="tab" ix-auto-identifier="State">
-              {{ 'State' | translate }}
-            </mat-header-cell>
-            <mat-cell *matCellDef="let element">{{ element.state }}</mat-cell>
-          </ng-container>
-          <ng-container matColumnDef="id">
-            <mat-header-cell
-              *matHeaderCellDef
-              mat-sort-header
-              ix-auto
-              ix-auto-type="tab"
-              ix-auto-identifier="ID"
-              fxFlex="74px"
+            </div>
+
+            <button
+              mat-icon-button
+              type="button"
+              (click)="onAborted(job)"
+              *ngIf="job.state === JobState.Running && job.abortable"
+              [matTooltip]="'Abort' | translate"
             >
-              {{ 'ID' | translate }}
-            </mat-header-cell>
-            <mat-cell *matCellDef="let element" fxFlex="74px">{{ element.id }}</mat-cell>
-          </ng-container>
-          <ng-container matColumnDef="time_started">
-            <mat-header-cell *matHeaderCellDef ix-auto ix-auto-type="tab" ix-auto-identifier="DateStarted">
-              {{ 'Started' | translate }}
-            </mat-header-cell>
-            <mat-cell *matCellDef="let element">{{
-              element.time_started?.$date ? (element.time_started.$date | formatDateTime) : '–'
-            }}</mat-cell>
-          </ng-container>
-          <ng-container matColumnDef="time_finished">
-            <mat-header-cell *matHeaderCellDef ix-auto ix-auto-type="tab" ix-auto-identifier="DateFinished">
-              {{ 'Finished' | translate }}
-            </mat-header-cell>
-            <mat-cell *matCellDef="let element">{{
-              element.time_finished?.$date ? (element.time_finished.$date | formatDateTime) : '–'
-            }}</mat-cell>
-          </ng-container>
-          <ng-container matColumnDef="arguments">
-            <mat-header-cell *matHeaderCellDef ix-auto ix-auto-type="tab" ix-auto-identifier="Arguments">
-              {{ 'Arguments' | translate }}
-            </mat-header-cell>
-            <mat-cell *matCellDef="let element">
-              <button mat-button type="button" (click)="viewLogs(element, JobViewLogState.Arguments)">{{ 'View' | translate }}</button>
-            </mat-cell>
-          </ng-container>
-          <ng-container matColumnDef="logs_excerpt">
-            <mat-header-cell *matHeaderCellDef ix-auto ix-auto-type="tab" ix-auto-identifier="LogsErrors">
-              {{ 'Logs/Errors' | translate }}
-            </mat-header-cell>
-            <mat-cell *matCellDef="let element">
-              <ng-container
-                *ngIf="element.logs_excerpt || element.error; then viewLogsTemplate; else emptyLogsTemplate"
-              ></ng-container>
+              <mat-icon fontSet="mdi-set" fontIcon="mdi-close-circle"></mat-icon>
+            </button>
+          </div>
+        </td>
+      </ng-container>
 
-              <ng-template #emptyLogsTemplate>
-                {{ 'None' | translate }}
-              </ng-template>
+      <ng-container matColumnDef="state">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header ix-auto ix-auto-type="tab" ix-auto-identifier="State">
+          {{ 'State' | translate }}
+        </th>
+        <td mat-cell *matCellDef="let job">{{ job.state }}</td>
+      </ng-container>
 
-              <ng-template #viewLogsTemplate>
-                <button mat-button type="button" (click)="viewLogs(element, JobViewLogState.Logs)">{{ 'View Logs' | translate }}</button>
-              </ng-template>
-            </mat-cell>
-          </ng-container>
+      <ng-container matColumnDef="id">
+        <th
+          mat-header-cell
+          *matHeaderCellDef
+          mat-sort-header
+          ix-auto
+          ix-auto-type="tab"
+          ix-auto-identifier="ID"
+        >
+          {{ 'ID' | translate }}
+        </th>
+        <td mat-cell *matCellDef="let job; dataSource: dataSource">{{ job.id }}</td>
+      </ng-container>
 
-          <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-          <mat-row
-            *matRowDef="let row; columns: displayedColumns"
-            class="element-row"
-            ix-auto
-            ix-auto-type="expander"
-            ix-auto-identifier="{{ row.method }}"
-          ></mat-row>
-        </mat-table>
+      <ng-container matColumnDef="time_started">
+        <th mat-header-cell *matHeaderCellDef ix-auto ix-auto-type="tab" ix-auto-identifier="DateStarted">
+          {{ 'Started' | translate }}
+        </th>
+        <td mat-cell *matCellDef="let job; dataSource: dataSource">{{
+          job.time_started?.$date ? (job.time_started.$date | formatDateTime) : '–'
+        }}</td>
+      </ng-container>
 
-        <app-job-logs-sidebar
-          *ngIf="viewingLogsForJob"
-          class="job-logs-sidebar"
-          [job]="viewingLogsForJob"
-          [viewType]="viewType"
-          (closed)="onLogsSidebarClosed()"
-        ></app-job-logs-sidebar>
-      </div>
-    </div>
+      <ng-container matColumnDef="time_finished">
+        <th mat-header-cell *matHeaderCellDef ix-auto ix-auto-type="tab" ix-auto-identifier="DateFinished">
+          {{ 'Finished' | translate }}
+        </th>
+        <td mat-cell *matCellDef="let job; dataSource: dataSource">{{
+          job.time_finished?.$date ? (job.time_finished.$date | formatDateTime) : '–'
+        }}</td>
+      </ng-container>
 
-    <mat-paginator
-      [hidden]="!dataSource?.data"
-      [length]="dataSource?.data?.length"
-      [pageIndex]="paginationPageIndex"
-      [pageSize]="paginationPageSize"
-      [pageSizeOptions]="paginationPageSizeOptions"
-      [showFirstLastButtons]="paginationShowFirstLastButtons"
-      (page)="onPageChange($event)"
-    ></mat-paginator>
+      <ng-container matColumnDef="arguments">
+        <th mat-header-cell *matHeaderCellDef ix-auto ix-auto-type="tab" ix-auto-identifier="Arguments">
+          {{ 'Arguments' | translate }}
+        </th>
+        <td mat-cell *matCellDef="let job; dataSource: dataSource">
+          <button mat-button type="button" (click)="viewLogs(job, JobViewLogState.Arguments)">{{ 'View' | translate }}</button>
+        </td>
+      </ng-container>
 
-  </ng-container>
+      <ng-container matColumnDef="logs_excerpt">
+        <th mat-header-cell *matHeaderCellDef ix-auto ix-auto-type="tab" ix-auto-identifier="LogsErrors">
+          {{ 'Logs/Errors' | translate }}
+        </th>
+        <td mat-cell *matCellDef="let job; dataSource: dataSource">
+          <ng-container
+            *ngIf="job.logs_excerpt || job.error; then viewLogsTemplate; else emptyLogsTemplate"
+          ></ng-container>
+
+          <ng-template #emptyLogsTemplate>
+            {{ 'None' | translate }}
+          </ng-template>
+
+          <ng-template #viewLogsTemplate>
+            <button mat-button type="button" (click)="viewLogs(job, JobViewLogState.Logs)">{{ 'View Logs' | translate }}</button>
+          </ng-template>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row
+        *matRowDef="let row; columns: displayedColumns"
+        class="job-row"
+        ix-auto
+        ix-auto-type="expander"
+        [ix-auto-identifier]="row.method"
+      ></tr>
+
+      <tr class="mat-row no-data-row" *matNoDataRow>
+        <td class="mat-cell" [attr.colspan]="displayedColumns.length">
+          <entity-empty [conf]="emptyConfig"></entity-empty>
+        </td>
+      </tr>
+    </table>
+
+    <app-job-logs-sidebar
+      *ngIf="viewingLogsForJob"
+      class="job-logs-sidebar"
+      [job]="viewingLogsForJob"
+      [viewType]="viewType"
+      (closed)="onLogsSidebarClosed()"
+    ></app-job-logs-sidebar>
+  </div>
+
+  <ix-table-paginator [dataSource]="dataSource"></ix-table-paginator>
 </ng-template>

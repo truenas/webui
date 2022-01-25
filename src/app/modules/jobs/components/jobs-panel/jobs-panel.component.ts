@@ -1,76 +1,47 @@
 import {
-  trigger, animate, style, transition, query, stagger,
-} from '@angular/animations';
-import {
-  Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef,
+  Component, ChangeDetectionStrategy, ChangeDetectorRef, TrackByFunction,
 } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
+import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
-import { filter } from 'rxjs/operators';
-import { JobsManagerStore } from 'app/components/common/dialog/jobs-manager/jobs-manager.store';
+import { filter, map } from 'rxjs/operators';
 import { JobState } from 'app/enums/job-state.enum';
 import { Job } from 'app/interfaces/job.interface';
-import { EmptyConfig, EmptyType } from 'app/modules/entity/entity-empty/entity-empty.component';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
+import { abortJobPressed, jobPanelClosed } from 'app/modules/jobs/store/job.actions';
+import {
+  JobSlice, selectJobState, selectRunningJobsCount, selectWaitingJobsCount, selectFailedJobsCount, selectJobsPanelSlice,
+} from 'app/modules/jobs/store/job.selectors';
 import { DialogService } from 'app/services';
 
 @UntilDestroy()
 @Component({
-  selector: 'app-jobs-manager',
-  templateUrl: './jobs-manager.component.html',
-  styleUrls: ['./jobs-manager.component.scss'],
+  selector: 'ix-jobs-panel',
+  templateUrl: './jobs-panel.component.html',
+  styleUrls: ['./jobs-panel.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  animations: [
-    trigger('list', [
-      transition('* <=> *', [
-        query(':enter',
-          [style({ opacity: 0 }), stagger('60ms', animate('600ms ease-out', style({ opacity: 1 })))],
-          { optional: true }),
-        query(':leave',
-          animate('200ms', style({ opacity: 0 })),
-          { optional: true }),
-      ]),
-    ]),
-  ],
 })
-export class JobsManagerComponent implements OnInit {
-  isLoading: boolean;
-  jobs: Job[] = [];
-  numberOfRunningJobs$ = this.store.numberOfRunningJobs$;
-  numberOfWaitingJobs$ = this.store.numberOfWaitingJobs$;
-  numberOfFailedJobs$ = this.store.numberOfFailedJobs$;
-  emptyConfig: EmptyConfig = {
-    type: EmptyType.NoPageData,
-    large: false,
-    title: this.translate.instant('No jobs are available.'),
-    icon: 'assignment',
-    message: this.translate.instant('Click the button below to see all jobs.'),
-    button: {
-      label: this.translate.instant('History'),
-      action: this.goToJobs.bind(this),
-    },
-  };
+export class JobsPanelComponent {
+  isLoading$ = this.store$.select(selectJobState).pipe(map((state) => state.isLoading));
+  error$ = this.store$.select(selectJobState).pipe(map((state) => state.error));
+  runningJobsCount$ = this.store$.select(selectRunningJobsCount);
+  waitingJobsCount$ = this.store$.select(selectWaitingJobsCount);
+  failedJobsCount$ = this.store$.select(selectFailedJobsCount);
+  availableJobs$ = this.store$.select(selectJobsPanelSlice);
+
+  readonly trackByJobId: TrackByFunction<Job> = (_, job) => job.id;
 
   constructor(
     private router: Router,
-    private store: JobsManagerStore,
+    private store$: Store<JobSlice>,
     private cdr: ChangeDetectorRef,
-    private dialogRef: MatDialogRef<JobsManagerComponent>,
+    private dialogRef: MatDialogRef<JobsPanelComponent>,
     private translate: TranslateService,
     private dialog: DialogService,
     private matDialog: MatDialog,
   ) {
-    this.isLoading = true;
-  }
-
-  ngOnInit(): void {
-    this.store.state$.pipe(untilDestroyed(this)).subscribe((state) => {
-      this.isLoading = state.isLoading;
-      this.jobs = state.jobs;
-      this.cdr.markForCheck();
-    });
   }
 
   onAbort(job: Job): void {
@@ -85,7 +56,7 @@ export class JobsManagerComponent implements OnInit {
       })
       .pipe(filter(Boolean), untilDestroyed(this))
       .subscribe(() => {
-        this.store.remove(job);
+        this.store$.dispatch(abortJobPressed({ job }));
       });
   }
 
@@ -109,6 +80,7 @@ export class JobsManagerComponent implements OnInit {
 
   goToJobs(): void {
     this.dialogRef.close();
+    this.store$.dispatch(jobPanelClosed());
     this.router.navigate(['/jobs']);
   }
 }

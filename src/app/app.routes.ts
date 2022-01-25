@@ -125,8 +125,8 @@ export const rootRouterConfig: Routes = [{
   },
   {
     path: 'jobs',
-    loadChildren: () => import('./pages/jobs/jobs.module').then((module) => module.JobsModule),
-    data: { title: 'Jobs', breadcrumb: 'Jobs' },
+    loadChildren: () => import('./pages/jobs/jobs-list.module').then((module) => module.JobsListModule),
+    data: { title: 'Tasks', breadcrumb: 'Tasks' },
   },
   ],
 },

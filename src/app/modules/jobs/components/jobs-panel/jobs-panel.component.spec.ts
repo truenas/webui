@@ -1,73 +1,85 @@
-import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
-import {
-  createRoutingFactory, mockProvider, Spectator,
-} from '@ngneat/spectator/jest';
+import { mockProvider, Spectator, createRoutingFactory } from '@ngneat/spectator/jest';
+import { EffectsModule } from '@ngrx/effects';
+import { Store, StoreModule } from '@ngrx/store';
 import { of } from 'rxjs';
-import { JobItemComponent } from 'app/components/common/dialog/jobs-manager/components/job-item/job-item.component';
 import { CoreComponents } from 'app/core/components/core-components.module';
 import { FormatDateTimePipe } from 'app/core/components/pipes/format-datetime.pipe';
 import { byButton } from 'app/core/testing/utils/by-button.utils';
 import { mockWebsocket, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
 import { JobState } from 'app/enums/job-state.enum';
 import { Job } from 'app/interfaces/job.interface';
-import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { EntityModule } from 'app/modules/entity/entity.module';
-import { ConfirmDialogComponent } from 'app/pages/common/confirm-dialog/confirm-dialog.component';
-import { DialogService, SystemGeneralService } from 'app/services';
-import { JobsManagerComponent } from './jobs-manager.component';
-import { JobsManagerStore } from './jobs-manager.store';
+import { JobItemComponent } from 'app/modules/jobs/components/job-item/job-item.component';
+import { JobsPanelComponent } from 'app/modules/jobs/components/jobs-panel/jobs-panel.component';
+import { JobEffects } from 'app/modules/jobs/store/job.effects';
+import { adapter, jobReducer, jobsInitialState } from 'app/modules/jobs/store/job.reducer';
+import { jobStateKey } from 'app/modules/jobs/store/job.selectors';
+import { DialogService, SystemGeneralService, WebSocketService } from 'app/services';
+import { adminUiInitialized } from 'app/store/actions/admin.actions';
 
-describe('JobsManagerComponent', () => {
-  let spectator: Spectator<JobsManagerComponent>;
-  let matDialog: MatDialog;
-  const runningJob = {
-    method: 'cloudsync.sync',
-    progress: {
-      percent: 99,
-      description: 'progress description',
-    },
-    state: JobState.Running,
-    abortable: true,
-    time_started: {
-      $date: 1632411439081,
-    },
-  } as Job;
-  const waitingJob = {
-    method: 'cloudsync.sync',
-    state: JobState.Waiting,
-    time_started: {
-      $date: 1632411439081,
-    },
-  } as Job;
-  const failedJob = {
-    method: 'cloudsync.sync',
-    state: JobState.Failed,
-    time_finished: {
-      $date: 1632411439082,
-    },
-  } as Job;
+const runningJob = {
+  id: 1,
+  method: 'cloudsync.sync',
+  progress: {
+    percent: 99,
+    description: 'progress description',
+  },
+  state: JobState.Running,
+  abortable: true,
+  time_started: {
+    $date: 1632411439081,
+  },
+} as Job;
+const waitingJob = {
+  id: 2,
+  method: 'cloudsync.sync',
+  state: JobState.Waiting,
+  time_started: {
+    $date: 1632411439081,
+  },
+} as Job;
+const failedJob = {
+  id: 3,
+  method: 'cloudsync.sync',
+  state: JobState.Failed,
+  time_started: {
+    $date: 1632411439081,
+  },
+  time_finished: {
+    $date: 1632411439082,
+  },
+} as Job;
+
+describe('JobsPanelComponent', () => {
+  let spectator: Spectator<JobsPanelComponent>;
+  let websocket: WebSocketService;
 
   const createComponent = createRoutingFactory({
-    component: JobsManagerComponent,
+    component: JobsPanelComponent,
     imports: [
       EntityModule,
       CoreComponents,
+      StoreModule.forRoot({ [jobStateKey]: jobReducer }, {
+        initialState: {
+          [jobStateKey]: adapter.setAll([runningJob, waitingJob, failedJob], jobsInitialState),
+        },
+      }),
+      EffectsModule.forRoot([JobEffects]),
     ],
     declarations: [
       JobItemComponent,
     ],
     providers: [
-      JobsManagerStore,
-      DialogService,
+      mockProvider(DialogService, {
+        confirm: jest.fn(() => of(true)),
+      }),
       mockWebsocket([
         mockCall('core.get_jobs', [runningJob, waitingJob, failedJob]),
+        mockCall('core.job_abort'),
       ]),
       mockProvider(MatDialogRef),
-      {
-        provide: MAT_DIALOG_DATA,
-        useValue: {},
-      },
       mockProvider(SystemGeneralService, {
         getGeneralConfig$: of({ timezone: 'UTC' }),
       }),
@@ -76,8 +88,8 @@ describe('JobsManagerComponent', () => {
 
   beforeEach(() => {
     spectator = createComponent();
-    matDialog = spectator.inject(MatDialog);
-    jest.spyOn(matDialog, 'open').mockImplementation();
+    websocket = spectator.inject(WebSocketService);
+    spectator.inject(Store).dispatch(adminUiInitialized());
   });
 
   afterEach(() => {
@@ -86,7 +98,9 @@ describe('JobsManagerComponent', () => {
 
   it('checks component header is present', () => {
     expect(spectator.query('.jobs-header h3')).toHaveExactText('Task Manager');
-    expect(spectator.query('.jobs-header span')).toHaveText('1 in progress, 1 in waiting, 1 failed');
+    expect(spectator.query('.job-badge.running .job-badge-count')).toHaveText('1');
+    expect(spectator.query('.job-badge.waiting .job-badge-count')).toHaveText('1');
+    expect(spectator.query('.job-badge.failed .job-badge-count')).toHaveText('1');
   });
 
   it('checks component footer is present', () => {
@@ -121,31 +135,7 @@ describe('JobsManagerComponent', () => {
   it('shows confirm dialog if user clicks on the abort button', () => {
     spectator.click(spectator.query('.job-button-abort'));
 
-    expect(matDialog.open).toHaveBeenCalledWith(
-      ConfirmDialogComponent,
-      {
-        disableClose: true,
-      },
-    );
-  });
-
-  xit('shows entity job dialog if user clicks on the job', () => {
-    spectator.click(spectator.query('.job-item-body'));
-
-    /*
-      TODO: Find a way to mock componentInstance
-      Error: Cannot read property 'componentInstance' of undefined
-    */
-    expect(matDialog.open).toHaveBeenCalledWith(
-      EntityJobComponent,
-      {
-        data: {
-          title: 'Updating',
-        },
-        hasBackdrop: true,
-        width: '400px',
-      },
-    );
+    expect(websocket.call).toHaveBeenCalledWith('core.job_abort', [1]);
   });
 
   it('checks redirect when "History" button is pressed', () => {

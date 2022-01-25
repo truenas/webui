@@ -1,12 +1,12 @@
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
-import { JobItemComponent } from 'app/components/common/dialog/jobs-manager/components/job-item/job-item.component';
 import { CoreComponents } from 'app/core/components/core-components.module';
 import { FormatDateTimePipe } from 'app/core/components/pipes/format-datetime.pipe';
 import { mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { JobState } from 'app/enums/job-state.enum';
 import { Job } from 'app/interfaces/job.interface';
 import { EntityModule } from 'app/modules/entity/entity.module';
+import { JobItemComponent } from 'app/modules/jobs/components/job-item/job-item.component';
 import { SystemGeneralService } from 'app/services';
 
 describe('JobItemComponent', () => {
@@ -62,6 +62,7 @@ describe('JobItemComponent', () => {
           },
           error: 'Broken pipe',
         } as Job,
+        clickable: true,
       },
     });
     const dateTimePipe = new FormatDateTimePipe(spectator.inject(SystemGeneralService));
