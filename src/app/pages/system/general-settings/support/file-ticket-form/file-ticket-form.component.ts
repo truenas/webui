@@ -14,7 +14,6 @@ import {
 } from 'rxjs/operators';
 import { JobState } from 'app/enums/job-state.enum';
 import { NewTicketType } from 'app/enums/new-ticket-type.enum';
-import { choicesToOptions } from 'app/helpers/options.helper';
 import { helptextSystemSupport as helptext } from 'app/helptext/system/support';
 import { Job } from 'app/interfaces/job.interface';
 import { Option } from 'app/interfaces/option.interface';
@@ -124,7 +123,7 @@ export class FileTicketFormComponent implements OnInit {
       filter((token) => !!token),
       debounceTime(300),
       switchMap((token) => this.ws.call('support.fetch_categories', [token])),
-      choicesToOptions(true),
+      map((choices) => Object.entries(choices).map(([label, value]) => ({ label, value }))),
       map((options) => _.sortBy(options, ['label'])),
       catchError((error: WebsocketError) => {
         this.errorHandler.handleWsFormError(error, this.form);
