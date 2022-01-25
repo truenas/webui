@@ -548,6 +548,7 @@
   "Networking": "",
   "Never pull image even if it is not present on host.": "",
   "Never restart containers if they exit.": "",
+  "New password and confirmation should match.": "",
   "New password will be sent to your email address": "",
   "No": "",
   "No Applications Installed": "",

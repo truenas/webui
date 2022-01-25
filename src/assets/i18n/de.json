@@ -1318,6 +1318,7 @@
   "Networking": "",
   "Never pull image even if it is not present on host.": "",
   "Never restart containers if they exit.": "",
+  "New password and confirmation should match.": "",
   "New password will be sent to your email address": "",
   "New users are not given <b>su</b> permissions if <i>wheel</i> is their primary group.": "",
   "Newer Clone": "",
