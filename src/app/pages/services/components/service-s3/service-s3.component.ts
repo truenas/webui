@@ -104,6 +104,7 @@ export class ServiceS3Component implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.isFormLoading = true;
     this.ws.call('s3.config').pipe(untilDestroyed(this)).subscribe(
       (config) => {
         this.form.patchValue(config, { emitEvent: false });

@@ -42,7 +42,7 @@ import { LayoutService } from 'app/services/layout.service';
 import { ModalService } from 'app/services/modal.service';
 import { PreferencesService } from 'app/services/preferences.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
-import { Theme, ThemeService } from 'app/services/theme/theme.service';
+import { ThemeService } from 'app/services/theme/theme.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { alertIndicatorPressed } from 'app/store/actions/topbar.actions';
 import { AboutDialogComponent } from '../dialog/about/about-dialog.component';
@@ -66,7 +66,6 @@ export class TopbarComponent implements OnInit, OnDestroy {
   pendingNetworkChanges = false;
   waitingNetworkCheckin = false;
   resilveringDetails: ResilverData;
-  themesMenu: Theme[] = this.themeService.themesMenu;
   currentTheme = 'ix-blue';
   isTaskMangerOpened = false;
   isDirServicesMonitorOpened = false;
@@ -181,9 +180,6 @@ export class TopbarComponent implements OnInit, OnDestroy {
     });
     const theme = this.themeService.currentTheme();
     this.currentTheme = theme.name;
-    this.core.register({ observerClass: this, eventName: 'ThemeListsChanged' }).pipe(untilDestroyed(this)).subscribe(() => {
-      this.themesMenu = this.themeService.themesMenu;
-    });
 
     this.ws.call(this.tc_queryCall).pipe(untilDestroyed(this)).subscribe((config) => {
       this.tcStatus = config;

@@ -81,9 +81,7 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, Aft
   private _fri = false;
   private _sat = false;
 
-  // private _monthsValues: boolean[] = [];
   private _months = '*';
-  // private _daysOfWeekValues: boolean[] = [];
   private _daysOfWeek = '*';
 
   get minutes(): string { return this._minutes; }
@@ -254,7 +252,7 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, Aft
     if (!p.value) {
       this.crontab = '0 0 * * *';
       this.convertPreset('0 0 * * *');
-      this._preset = this.customOption; // { label: this.translate.instant('Custom'), value: this.crontab };
+      this._preset = this.customOption;
     } else {
       this.crontab = p.value;
       this.convertPreset(p.value);

@@ -12,7 +12,7 @@ import { WebSocketService, IscsiService } from 'app/services';
   providers: [IscsiService],
 })
 export class IscsiComponent implements OnInit {
-  activedTab = 'configuration';
+  activeTab = 'configuration';
   navLinks = [{
     label: this.translate.instant('Target Global Configuration') as string,
     path: '/sharing/iscsi/configuration',
@@ -65,7 +65,7 @@ export class IscsiComponent implements OnInit {
       },
     );
     this.aroute.params.pipe(untilDestroyed(this)).subscribe((params) => {
-      this.activedTab = params['pk'];
+      this.activeTab = params['pk'];
     });
   }
 

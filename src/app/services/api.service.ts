@@ -2,11 +2,8 @@ import { Injectable } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
 import { ApiMethod } from 'app/interfaces/api-directory.interface';
-import { Dataset, ExtraDatasetQueryOptions } from 'app/interfaces/dataset.interface';
 import { CoreEvent } from 'app/interfaces/events';
-import { Pool } from 'app/interfaces/pool.interface';
 import { QueryParams } from 'app/interfaces/query-api.interface';
-import { Disk } from 'app/interfaces/storage.interface';
 import { User } from 'app/interfaces/user.interface';
 import { CoreService } from 'app/services/core-service/core.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -30,22 +27,6 @@ interface ApiDefinition {
 })
 export class ApiService {
   private apiDefinitions: { [eventName: string]: ApiDefinition } = {
-    UserAttributesRequest: {
-      apiCall: {
-        namespace: 'user.query',
-        args: [] as QueryParams<User>[],
-        responseEvent: 'UserAttributes',
-      },
-      preProcessor(def: ApiCall) {
-        const clone = { ...def };
-        clone.args = [[['id', '=', 1]]];
-        return clone;
-      },
-      postProcessor(res: User[]) {
-        const cloneRes = { ...res };
-        return cloneRes[0].attributes;
-      },
-    },
     UserDataRequest: {
       apiCall: {
         namespace: 'user.query',
@@ -70,27 +51,6 @@ export class ApiService {
           core.emit({ name: 'UserDataRequest', data: [[['id', '=', 1]]] });
         }
         return cloneRes;
-      },
-    },
-    VolumeDataRequest: {
-      apiCall: {
-        namespace: 'pool.dataset.query',
-        args: [[], { extra: { retrieve_children: false } }] as QueryParams<Dataset, ExtraDatasetQueryOptions>,
-        responseEvent: 'VolumeData',
-      },
-    },
-    DisksRequest: {
-      apiCall: {
-        args: [] as QueryParams<Disk>[],
-        namespace: 'disk.query',
-        responseEvent: 'DisksData',
-      },
-    },
-    PoolDataRequest: {
-      apiCall: {
-        args: [] as QueryParams<Pool>[],
-        namespace: 'pool.query',
-        responseEvent: 'PoolData',
       },
     },
   };
