@@ -145,11 +145,11 @@ export class PodLogsComponent implements OnInit, OnDestroy {
   setupToolbarButtons(): void {
     this.formEvent$ = new Subject();
     this.formEvent$.pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
-      if (evt.data.event_control == 'download') {
+      if (evt.data.event_control === 'download') {
         this.showChooseLogsDialog(true);
-      } else if (evt.data.event_control == 'reconnect') {
+      } else if (evt.data.event_control === 'reconnect') {
         this.showChooseLogsDialog(false);
-      } else if (evt.data.event_control == 'fontsize') {
+      } else if (evt.data.event_control === 'fontsize') {
         this.fontSize = evt.data.fontsize;
       }
     });

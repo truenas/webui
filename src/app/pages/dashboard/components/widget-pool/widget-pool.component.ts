@@ -19,11 +19,11 @@ import { styler, tween } from 'popmotion';
 import { PoolStatus } from 'app/enums/pool-status.enum';
 import { VDevType } from 'app/enums/v-dev-type.enum';
 import { VDevStatus } from 'app/enums/vdev-status.enum';
-import { DisksDataEvent } from 'app/interfaces/events/disks-data-event.interface';
 import { Pool, PoolTopologyCategory } from 'app/interfaces/pool.interface';
 import { Disk, VDev } from 'app/interfaces/storage.interface';
 import { VolumeData } from 'app/interfaces/volume-data.interface';
 import { WidgetComponent } from 'app/pages/dashboard/components/widget/widget.component';
+import { WebSocketService } from 'app/services';
 import { CoreService } from 'app/services/core-service/core.service';
 
 interface Slide {
@@ -84,7 +84,7 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
   }
 
   get previousSlide(): number {
-    return this.currentSlide == '0' ? 0 : parseInt(this.currentSlide) - 1;
+    return this.currentSlide === '0' ? 0 : parseInt(this.currentSlide) - 1;
   }
 
   path: Slide[] = [];
@@ -144,7 +144,7 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
       }
 
       category.forEach((item) => {
-        if (item.type == 'DISK' && item.disk) {
+        if (item.type === 'DISK' && item.disk) {
           allDiskNames.push(item.disk);
         } else {
           item.children.forEach((device) => {
@@ -181,6 +181,7 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
     public translate: TranslateService,
     private cdr: ChangeDetectorRef,
     private core: CoreService,
+    private ws: WebSocketService,
   ) {
     super(translate);
     this.configurable = false;
@@ -219,23 +220,6 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
 
     this.cdr.detectChanges();
 
-    this.core.register({ observerClass: this, eventName: 'DisksData' }).pipe(untilDestroyed(this)).subscribe((evt: DisksDataEvent) => {
-      const currentPath = this.path[this.currentSlideIndex];
-      const currentName = currentPath?.dataSource?.disk || 'unknown';
-
-      if ((!currentName || currentName === 'unknown') && evt.data.length == 0) {
-        this.currentDiskDetails = null;
-      } else if (currentName && evt.data.length > 0 && currentName === evt.data[0].name) {
-        delete evt.data[0].enclosure;
-        delete evt.data[0].name;
-        delete evt.data[0].devname;
-        delete evt.data[0].multipath_name;
-        delete evt.data[0].multipath_member;
-        delete evt.data[0].zfs_guid;
-        this.currentDiskDetails = evt.data[0];
-      }
-    });
-
     this.checkVolumeHealth(this.poolState);
   }
 
@@ -257,7 +241,7 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
       usedValue = filesize(this.volumeData.used, { exponent: 3 });
     }
 
-    if (usedValue == 'Locked') {
+    if (usedValue === 'Locked') {
       // When Locked, Bail before we try to get details.
       // (errors start after this...)
       return 0;
@@ -283,7 +267,22 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
   }
 
   getDiskDetails(key: string, value: string): void {
-    this.core.emit({ name: 'DisksRequest', data: [[[key, '=', value]]] });
+    this.ws.call('disk.query', [[[key, '=', value]]]).pipe(untilDestroyed(this)).subscribe((disks) => {
+      const currentPath = this.path[this.currentSlideIndex];
+      const currentName = currentPath?.dataSource?.disk || 'unknown';
+
+      if ((!currentName || currentName === 'unknown') && disks.length == 0) {
+        this.currentDiskDetails = null;
+      } else if (currentName && disks.length > 0 && currentName === disks[0].name) {
+        delete disks[0].enclosure;
+        delete disks[0].name;
+        delete disks[0].devname;
+        delete disks[0].multipath_name;
+        delete disks[0].multipath_member;
+        delete disks[0].zfs_guid;
+        this.currentDiskDetails = disks[0];
+      }
+    });
   }
 
   /**
@@ -317,7 +316,7 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
     if (name !== 'overview' && !verified) { return; }
     const dataSource = vdev || { children: this.poolState.topology[topology] };
     const direction = parseInt(this.currentSlide) < slideIndex ? 'forward' : 'back';
-    if (direction == 'forward') {
+    if (direction === 'forward') {
       // Setup next path segment
       const slide: Slide = {
         name,
@@ -328,7 +327,7 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
       };
 
       this.path[slideIndex] = slide;
-    } else if (direction == 'back') {
+    } else if (direction === 'back') {
       // empty the path segment
       this.path[parseInt(this.currentSlide)] = { name: 'empty', template: this.empty };
     }
@@ -355,7 +354,7 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
     }).start(el.set);
 
     this.currentSlide = value.toString();
-    this.title = this.currentSlide == '0' ? 'Pool' : this.poolState.name;
+    this.title = this.currentSlide === '0' ? 'Pool' : this.poolState.name;
   }
 
   private isStatusError(poolState: Pool): boolean {

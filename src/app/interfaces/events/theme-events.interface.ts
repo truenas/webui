@@ -29,9 +29,3 @@ export interface ThemeDataEvent {
   sender: unknown;
   data: Theme;
 }
-
-export interface ThemeChangeRequestEvent {
-  name: 'ThemeChangeRequest';
-  sender: unknown;
-  data: string;
-}

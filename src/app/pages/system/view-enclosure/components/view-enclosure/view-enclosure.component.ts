@@ -6,9 +6,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Subject } from 'rxjs';
 import { PoolScanState } from 'app/enums/pool-scan-state.enum';
 import { CoreEvent } from 'app/interfaces/events';
-import { DisksDataEvent } from 'app/interfaces/events/disks-data-event.interface';
 import { EnclosureLabelChangedEvent } from 'app/interfaces/events/enclosure-events.interface';
-import { PoolDataEvent } from 'app/interfaces/events/pool-data-event.interface';
 import { ResilveringEvent } from 'app/interfaces/events/resilvering-event.interface';
 import { SysInfoEvent } from 'app/interfaces/events/sys-info-event.interface';
 import { EntityToolbarComponent } from 'app/modules/entity/entity-toolbar/entity-toolbar.component';
@@ -126,26 +124,12 @@ export class ViewEnclosureComponent implements OnDestroy {
       this.events.next(evt);
     });
 
-    core.register({ observerClass: this, eventName: 'PoolData' }).pipe(untilDestroyed(this)).subscribe((evt: PoolDataEvent) => {
-      this.system.pools = evt.data;
-      this.events.next({ name: 'PoolsChanged', sender: this });
-      this.addViews();
-    });
-
     core.register({ observerClass: this, eventName: 'Resilvering' }).pipe(untilDestroyed(this)).subscribe((evt: ResilveringEvent) => {
       if (evt.data.scan.state == PoolScanState.Finished) this.fetchData();
     });
 
     core.register({ observerClass: this, eventName: 'DisksChanged' }).pipe(untilDestroyed(this)).subscribe(() => {
       this.fetchData();
-    });
-
-    core.register({ observerClass: this, eventName: 'DisksData' }).pipe(untilDestroyed(this)).subscribe((evt: DisksDataEvent) => {
-      this.system.diskData = evt.data;
-      core.emit({ name: 'PoolDataRequest', sender: this });
-      setTimeout(() => {
-        this.spinner = false;
-      }, 1500);
     });
 
     core.register({ observerClass: this, eventName: 'SysInfo' }).pipe(untilDestroyed(this)).subscribe((evt: SysInfoEvent) => {
@@ -160,7 +144,7 @@ export class ViewEnclosureComponent implements OnDestroy {
   }
 
   fetchData(): void {
-    this.core.emit({ name: 'DisksRequest', sender: this });
+    this.loadDiskData();
   }
 
   ngOnDestroy(): void {
@@ -298,11 +282,27 @@ export class ViewEnclosureComponent implements OnDestroy {
 
       this.system = new SystemProfiler(this.system_product, enclosures);
       this.selectedEnclosure = this.system.profile[this.system.headIndex];
-      this.core.emit({ name: 'DisksRequest', sender: this });
+      this.loadDiskData();
 
       this.ws.call('sensor.query').pipe(untilDestroyed(this)).subscribe((sensorData) => {
         this.system.sensorData = sensorData;
       });
+    });
+  }
+
+  private loadDiskData(): void {
+    this.ws.call('disk.query').pipe(untilDestroyed(this)).subscribe((disks) => {
+      this.system.diskData = disks;
+
+      this.ws.call('pool.query').pipe(untilDestroyed(this)).subscribe((pools) => {
+        this.system.pools = pools;
+        this.events.next({ name: 'PoolsChanged', sender: this });
+        this.addViews();
+      });
+
+      setTimeout(() => {
+        this.spinner = false;
+      }, 1500);
     });
   }
 }

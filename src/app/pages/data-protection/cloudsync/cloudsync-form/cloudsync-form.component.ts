@@ -446,8 +446,6 @@ export class CloudsyncFormComponent implements FormConfiguration {
         dialogRef.componentInstance.submit();
         dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
           dialogRef.componentInstance.showCloseButton = true;
-          // this.matDialog.closeAll();
-          // this.job.showLogs(res);
         });
         dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((err) => {
           this.matDialog.closeAll();
@@ -529,7 +527,7 @@ export class CloudsyncFormComponent implements FormConfiguration {
         res.forEach((file) => {
           const child = {} as ListdirChild;
           if (file.IsDir) {
-            if (data.attributes.folder == '/') {
+            if (data.attributes.folder === '/') {
               child['name'] = data.attributes.folder + file.Name;
             } else {
               child['name'] = data.attributes.folder + '/' + file.Name;

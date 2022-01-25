@@ -15,6 +15,7 @@ import { IxExplorerComponent } from 'app/modules/ix-forms/components/ix-explorer
 import { IxFieldsetComponent } from 'app/modules/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxFileInputComponent } from 'app/modules/ix-forms/components/ix-file-input/ix-file-input.component';
 import { IxInputComponent } from 'app/modules/ix-forms/components/ix-input/ix-input.component';
+import { IxRadioGroupComponent } from 'app/modules/ix-forms/components/ix-radio-group/ix-radio-group.component';
 import { IxSelectComponent } from 'app/modules/ix-forms/components/ix-select/ix-select.component';
 import { IxModalHeaderComponent } from 'app/modules/ix-forms/components/ix-slide-in/components/ix-modal-header/ix-modal-header.component';
 import { IxSlideInComponent } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.component';
@@ -55,6 +56,7 @@ import { EnclosureModule } from 'app/pages/system/view-enclosure/enclosure.modul
     IxExplorerComponent,
     IxFileInputComponent,
     IxSlideToggleComponent,
+    IxRadioGroupComponent,
   ],
   exports: [
     IxErrorsComponent,
@@ -71,6 +73,7 @@ import { EnclosureModule } from 'app/pages/system/view-enclosure/enclosure.modul
     IxExplorerComponent,
     IxFileInputComponent,
     IxSlideToggleComponent,
+    IxRadioGroupComponent,
   ],
   providers: [
     IxFormatterService,

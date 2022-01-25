@@ -63,7 +63,7 @@ export class ReportsService implements OnDestroy {
 
         // We average out cputemps for v11.3.
         // Move this to backend for 12.
-        if (evt.data.report.name == 'cputemp') {
+        if (evt.data.report.name === 'cputemp') {
           // Do a complete replacement instead...
           const repl = [{
             command: 'avgCpuTempReport',
@@ -80,7 +80,7 @@ export class ReportsService implements OnDestroy {
     });
 
     this.reportsUtils.onmessage = ({ data }) => {
-      if (data.name == 'ReportData') {
+      if (data.name === 'ReportData') {
         this.core.emit({ name: 'ReportData-' + data.sender, data: data.data, sender: this });
       }
     };

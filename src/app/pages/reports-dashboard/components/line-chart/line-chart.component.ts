@@ -101,7 +101,7 @@ export class LineChartComponent extends ViewComponent implements AfterViewInit, 
 
     const fg2 = this.themeService.currentTheme().fg2;
     const fg2Type = this.utils.getValueType(fg2);
-    const fg2Rgb = fg2Type == 'hex' ? this.utils.hexToRgb(this.themeService.currentTheme().fg2).rgb : this.utils.rgbToArray(fg2);
+    const fg2Rgb = fg2Type === 'hex' ? this.utils.hexToRgb(this.themeService.currentTheme().fg2).rgb : this.utils.rgbToArray(fg2);
     const gridLineColor = 'rgba(' + fg2Rgb[0] + ', ' + fg2Rgb[1] + ', ' + fg2Rgb[2] + ', 0.25)';
     const yLabelSuffix = this.labelY === 'Bits/s' ? this.labelY.toLowerCase() : this.labelY;
 
@@ -199,8 +199,8 @@ export class LineChartComponent extends ViewComponent implements AfterViewInit, 
   }
 
   protected makeTimeAxis(rd: ReportingData): any[] {
-    const structure = this.library == 'chart.js' ? 'columns' : 'rows';
-    if (structure == 'rows') {
+    const structure = this.library === 'chart.js' ? 'columns' : 'rows';
+    if (structure === 'rows') {
       // Push dates to row based data...
       const rows = [];
       // Add legend with axis to beginning of array
@@ -223,7 +223,7 @@ export class LineChartComponent extends ViewComponent implements AfterViewInit, 
       }
 
       return rows;
-    } if (structure == 'columns') {
+    } if (structure === 'columns') {
       const columns = [];
 
       for (let i = 0; i < rd.data.length; i++) {
@@ -277,7 +277,7 @@ export class LineChartComponent extends ViewComponent implements AfterViewInit, 
       units = 'bits';
     }
 
-    if (typeof units == 'undefined') {
+    if (typeof units === 'undefined') {
       console.warn('Could not infer units from ' + this.labelY);
     }
 
@@ -335,25 +335,25 @@ export class LineChartComponent extends ViewComponent implements AfterViewInit, 
     let output: number = value;
     let shortName = '';
 
-    if (value > tera || (prefixRules && this.yLabelPrefix == 'Tera')) {
+    if (value > tera || (prefixRules && this.yLabelPrefix === 'Tera')) {
       prefix = 'Tera';
       shortName = 'TiB';
       output = value / tera;
-    } else if ((value < tera && value > giga) || (prefixRules && this.yLabelPrefix == 'Giga')) {
+    } else if ((value < tera && value > giga) || (prefixRules && this.yLabelPrefix === 'Giga')) {
       prefix = 'Giga';
       shortName = 'GiB';
       output = value / giga;
-    } else if ((value < giga && value > mega) || (prefixRules && this.yLabelPrefix == 'Mega')) {
+    } else if ((value < giga && value > mega) || (prefixRules && this.yLabelPrefix === 'Mega')) {
       prefix = 'Mega';
       shortName = 'MiB';
       output = value / mega;
-    } else if ((value < mega && value > kilo || (prefixRules && this.yLabelPrefix == 'Kilo'))) {
+    } else if ((value < mega && value > kilo || (prefixRules && this.yLabelPrefix === 'Kilo'))) {
       prefix = 'Kilo';
       shortName = 'KB';
       output = value / kilo;
     }
 
-    if (units == 'bits') {
+    if (units === 'bits') {
       shortName = shortName.replace(/i/, '').trim();
       shortName = ` ${shortName.charAt(0).toUpperCase()}${shortName.substr(1).toLowerCase()}`; // Kb, Mb, Gb, Tb
     }
@@ -372,7 +372,6 @@ export class LineChartComponent extends ViewComponent implements AfterViewInit, 
 
     if (changes.data) {
       if (this.chart) {
-        // this.chart.destroy();
         this.render(true);
       } else {
         this.render();// make an update method?

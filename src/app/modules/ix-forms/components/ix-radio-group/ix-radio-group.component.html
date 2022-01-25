@@ -1,0 +1,15 @@
+<mat-radio-group
+  color="primary"
+  [required]="required"
+  [disabled]="isDisabled"
+  [value]="value"
+  (change)="onRadiosChanged($event)"
+>
+  <div *ngFor="let option of options | async">
+    <mat-radio-button [value]="option.value">
+      {{option.label}}
+    </mat-radio-button>
+    <tooltip *ngIf="option.tooltip" [header]="option.label" class="tooltip" [message]="option.tooltip"></tooltip>
+  </div>
+</mat-radio-group>
+<ix-errors [control]="controlDirective.control" [label]="label"></ix-errors>

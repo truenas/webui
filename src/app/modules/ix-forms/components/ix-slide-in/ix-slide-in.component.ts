@@ -28,6 +28,7 @@ export class IxSlideInComponent implements OnInit, OnDestroy {
   }
 
   isSlideInOpen = false;
+  wide = false;
   private element: HTMLElement;
 
   constructor(
@@ -76,8 +77,9 @@ export class IxSlideInComponent implements OnInit, OnDestroy {
     }, 200);
   }
 
-  openSlideIn<T>(componentType: Type<T>): T {
+  openSlideIn<T>(componentType: Type<T>, params?: { wide: boolean }): T {
     this.isSlideInOpen = true;
+    this.wide = !!params?.wide;
     const componentFactory = this.componentFactoryResolver.resolveComponentFactory(componentType);
 
     this.slideInBody.clear();

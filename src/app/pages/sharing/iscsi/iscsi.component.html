@@ -8,14 +8,16 @@
       {{link.label | translate}}
     </a>
   </nav>
-  <router-outlet>
-    <app-iscsi-globalconfiguration *ngIf="activedTab == 'configuration'"></app-iscsi-globalconfiguration>
-    <app-iscsi-portal-list *ngIf="activedTab == 'portals'"></app-iscsi-portal-list>
-    <app-iscsi-initiator-list *ngIf="activedTab == 'initiator'"></app-iscsi-initiator-list>
-    <app-iscsi-authorizedaccess-list *ngIf="activedTab == 'auth'"></app-iscsi-authorizedaccess-list>
-    <app-iscsi-target-list *ngIf="activedTab == 'target'" [fcEnabled]="fcEnabled"></app-iscsi-target-list>
-    <app-iscsi-extent-list *ngIf="activedTab == 'extent'"></app-iscsi-extent-list>
-    <app-iscsi-associated-target-list *ngIf="activedTab == 'associatedtarget'"></app-iscsi-associated-target-list>
-    <app-iscsi-fibre-channel-ports *ngIf="activedTab == 'fibrechannel' && fcEnabled"></app-iscsi-fibre-channel-ports>
+  <router-outlet [ngSwitch]="activeTab">
+    <ix-target-global-configuration *ngSwitchCase="'configuration'"></ix-target-global-configuration>
+    <app-iscsi-portal-list *ngSwitchCase="'portals'"></app-iscsi-portal-list>
+    <app-iscsi-initiator-list *ngSwitchCase="'initiator'"></app-iscsi-initiator-list>
+    <app-iscsi-authorizedaccess-list *ngSwitchCase="'auth'"></app-iscsi-authorizedaccess-list>
+    <app-iscsi-target-list *ngSwitchCase="'target'" [fcEnabled]="fcEnabled"></app-iscsi-target-list>
+    <app-iscsi-extent-list *ngSwitchCase="'extent'"></app-iscsi-extent-list>
+    <app-iscsi-associated-target-list *ngSwitchCase="'associatedtarget'"></app-iscsi-associated-target-list>
+    <ng-container *ngSwitchCase="'fibrechannel'">
+      <app-iscsi-fibre-channel-ports *ngIf="fcEnabled"></app-iscsi-fibre-channel-ports>
+    </ng-container>
   </router-outlet>
 </mat-card>

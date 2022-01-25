@@ -1,8 +1,6 @@
 import { Injectable } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { ThemeUtils } from 'app/core/classes/theme-utils/theme-utils';
-import { CoreEvent } from 'app/interfaces/events';
-import { ThemeChangeRequestEvent } from 'app/interfaces/events/theme-events.interface';
 import {
   UserPreferencesChangedEvent,
   UserPreferencesReadyEvent,
@@ -89,7 +87,6 @@ export class ThemeService {
   readonly freeThemeDefaultIndex = 0;
   activeTheme = 'default';
   defaultTheme = 'ix-dark';
-  defaultLightTheme = 'ix-blue';
   activeThemeSwatch: string[];
 
   // Theme lists
@@ -287,9 +284,6 @@ export class ThemeService {
     },
   ];
 
-  savedUserTheme = '';
-  globalPreview = false;
-  globalPreviewData: any;
   private utils: ThemeUtils;
 
   userThemeLoaded = false;
@@ -305,27 +299,6 @@ export class ThemeService {
 
     this.core.register({ observerClass: this, eventName: 'ThemeDataRequest' }).pipe(untilDestroyed(this)).subscribe(() => {
       this.core.emit({ name: 'ThemeData', data: this.findTheme(this.activeTheme), sender: this });
-    });
-
-    // Use only for testing
-    this.core.register({ observerClass: this, eventName: 'ThemeChangeRequest' }).pipe(untilDestroyed(this)).subscribe((evt: ThemeChangeRequestEvent) => {
-      this.changeTheme(evt.data);
-      this.core.emit({ name: 'ThemeChanged', data: this.findTheme(this.activeTheme), sender: this });
-    });
-
-    this.core.register({ observerClass: this, eventName: 'GlobalPreviewChanged' }).pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
-      if (evt.data) {
-        this.globalPreview = true;
-      } else {
-        this.globalPreview = false;
-      }
-      this.globalPreviewData = evt.data;
-      if (this.globalPreview) {
-        this.setCssVars(evt.data.theme);
-      } else if (!this.globalPreview) {
-        this.setCssVars(this.findTheme(this.activeTheme));
-        this.globalPreviewData = null;
-      }
     });
 
     this.core.register({ observerClass: this, eventName: 'UserPreferencesChanged' }).pipe(untilDestroyed(this)).subscribe((evt: UserPreferencesChangedEvent) => {
@@ -395,11 +368,6 @@ export class ThemeService {
 
   changeTheme(theme: string): void {
     this.core.emit({ name: 'ChangeThemePreference', data: theme, sender: this });
-  }
-
-  saveCurrentTheme(): void {
-    const theme = this.currentTheme();
-    this.core.emit({ name: 'ChangeThemePreference', data: theme.name });
   }
 
   setCssVars(theme: Theme): void {

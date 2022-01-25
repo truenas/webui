@@ -27,9 +27,9 @@ export class WizardSummaryComponent {
     const fieldValue = this.value[fieldConfig.name];
     if (fieldValue === undefined) {
       result = false;
-    } else if (fieldConfig.type == 'list' && fieldValue.length == 0) {
+    } else if (fieldConfig.type === 'list' && fieldValue.length == 0) {
       result = false;
-    } else if (fieldConfig.type == 'dict') {
+    } else if (fieldConfig.type === 'dict') {
       result = false;
       for (const key in fieldValue) {
         const subValue = fieldValue[key];
@@ -46,9 +46,9 @@ export class WizardSummaryComponent {
     let result;
     const fieldValue = this.value[fieldConfig.name];
     result = fieldValue;
-    if (fieldConfig.type == 'list') {
+    if (fieldConfig.type === 'list') {
       result = fieldValue.length;
-    } else if (fieldConfig.type == 'select') {
+    } else if (fieldConfig.type === 'select') {
       const selectedOption = fieldConfig.options.find((option) => {
         return option.value == new EntityUtils().changeNull2String(fieldValue);
       });

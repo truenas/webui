@@ -10,9 +10,7 @@ import { NetworkInterfaceAliasType, NetworkInterfaceType } from 'app/enums/netwo
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { CoreEvent } from 'app/interfaces/events';
 import { MemoryStatsEventData } from 'app/interfaces/events/memory-stats-event.interface';
-import { PoolDataEvent } from 'app/interfaces/events/pool-data-event.interface';
 import { SysInfoEvent, SystemInfoWithFeatures } from 'app/interfaces/events/sys-info-event.interface';
-import { VolumeDataEvent } from 'app/interfaces/events/volume-data-event.interface';
 import { EntityToolbarActionConfig } from 'app/interfaces/global-action.interface';
 import {
   NetworkInterface,
@@ -313,13 +311,6 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   startListeners(): void {
-    this.core.register({ observerClass: this, eventName: 'UserAttributes' }).pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
-      if (evt.data.dashState) {
-        this.applyState(evt.data.dashState);
-      }
-      this.dashStateReady = true;
-    });
-
     this.ws.sub<ReportingRealtimeUpdate>('reporting.realtime').pipe(untilDestroyed(this)).subscribe((update) => {
       if (update.cpu) {
         this.statsDataEvent$.next({ name: 'CpuStats', data: update.cpu });
@@ -377,35 +368,14 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     this.interval = setInterval(() => {
-      this.core.emit({ name: 'VolumeDataRequest' });
+      this.loadVolumeData();
     }, 15000);
-
-    this.core.register({ observerClass: this, eventName: 'PoolData' }).pipe(untilDestroyed(this)).subscribe((evt: PoolDataEvent) => {
-      this.pools = evt.data;
-
-      if (this.pools.length > 0) {
-        this.core
-          .register({ observerClass: this, eventName: 'VolumeData' })
-          .pipe(untilDestroyed(this))
-          .subscribe((evt: VolumeDataEvent) => {
-            this.setVolumeData(evt.data);
-            if (this.initialLoading) {
-              this.isDataReady();
-            }
-            this.initialLoading = false;
-          });
-        this.core.emit({ name: 'VolumeDataRequest' });
-      } else {
-        this.setVolumeData([]);
-        this.isDataReady();
-      }
-    });
 
     this.core.register({ observerClass: this, eventName: 'SysInfo' }).pipe(untilDestroyed(this)).subscribe((evt: SysInfoEvent) => {
       if (typeof this.systemInformation === 'undefined') {
         this.systemInformation = evt.data;
         if (!this.pools || this.pools.length == 0) {
-          this.core.emit({ name: 'PoolDataRequest', sender: this });
+          this.loadPoolData();
         }
       }
     });
@@ -418,45 +388,47 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       this.statsDataEvent$ && Array.isArray(this.pools) && this.nics,
     );
 
-    if (isReady) {
-      this.availableWidgets = this.generateDefaultConfig();
-      if (!this.dashState) {
-        this.dashState = this.availableWidgets;
-      }
-
-      this.formEvents$.pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
-        switch (evt.name) {
-          case 'FormSubmit':
-            this.dashState = evt.data;
-            break;
-          case 'ToolbarChanged':
-            this.showConfigForm();
-            break;
-        }
-      });
-
-      // Setup Global Actions
-      const actionsConfig = {
-        actionType: EntityToolbarComponent,
-        actionConfig: {
-          target: this.formEvents$,
-          controls: [
-            {
-              name: 'dashConfig',
-              label: 'Configure',
-              type: 'button',
-              value: 'click',
-              color: 'primary',
-            },
-          ],
-        },
-      };
-
-      this.actionsConfig = actionsConfig;
-
-      this.core.emit({ name: 'GlobalActions', data: actionsConfig, sender: this });
-      this.core.emit({ name: 'UserAttributesRequest' }); // Fetch saved dashboard state
+    if (!isReady) {
+      return;
     }
+
+    this.availableWidgets = this.generateDefaultConfig();
+    if (!this.dashState) {
+      this.dashState = this.availableWidgets;
+    }
+
+    this.formEvents$.pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
+      switch (evt.name) {
+        case 'FormSubmit':
+          this.dashState = evt.data;
+          break;
+        case 'ToolbarChanged':
+          this.showConfigForm();
+          break;
+      }
+    });
+
+    // Setup Global Actions
+    const actionsConfig = {
+      actionType: EntityToolbarComponent,
+      actionConfig: {
+        target: this.formEvents$,
+        controls: [
+          {
+            name: 'dashConfig',
+            label: 'Configure',
+            type: 'button',
+            value: 'click',
+            color: 'primary',
+          },
+        ],
+      },
+    };
+
+    this.actionsConfig = actionsConfig;
+
+    this.core.emit({ name: 'GlobalActions', data: actionsConfig, sender: this });
+    this.loadUserAttributes();
   }
 
   generateDefaultConfig(): DashConfigItem[] {
@@ -597,5 +569,40 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     });
 
     this.dashState = clone;
+  }
+
+  private loadPoolData(): void {
+    this.ws.call('pool.query').pipe(untilDestroyed(this)).subscribe((pools) => {
+      this.pools = pools;
+
+      if (this.pools.length > 0) {
+        this.loadVolumeData();
+      } else {
+        this.setVolumeData([]);
+        this.isDataReady();
+      }
+    });
+  }
+
+  private loadVolumeData(): void {
+    this.ws
+      .call('pool.dataset.query', [[], { extra: { retrieve_children: false } }])
+      .pipe(untilDestroyed(this))
+      .subscribe((dataset) => {
+        this.setVolumeData(dataset);
+        if (this.initialLoading) {
+          this.isDataReady();
+        }
+        this.initialLoading = false;
+      });
+  }
+
+  private loadUserAttributes(): void {
+    this.ws.call('user.query', [[['id', '=', 1]]]).pipe(untilDestroyed(this)).subscribe((user) => {
+      if (user[0].attributes.preferences.dashState) {
+        this.applyState(user[0].attributes.preferences.dashState);
+      }
+      this.dashStateReady = true;
+    });
   }
 }

@@ -107,7 +107,7 @@ export class JobsListComponent implements OnInit, AfterViewInit {
   setupToolbar(): void {
     this.settingsEvent$ = new Subject();
     this.settingsEvent$.pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
-      if (evt.data.event_control == 'filter') {
+      if (evt.data.event_control === 'filter') {
         this.filterString = evt.data.filter;
         this.dataSource.filter = evt.data.filter;
       }

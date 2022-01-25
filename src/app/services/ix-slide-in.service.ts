@@ -13,8 +13,8 @@ export class IxSlideInService {
     this.slideInComponent = modal;
   }
 
-  open<T>(modal: Type<T>): T {
-    return this.slideInComponent.openSlideIn(modal);
+  open<T>(modal: Type<T>, params?: { wide: boolean }): T {
+    return this.slideInComponent.openSlideIn(modal, params);
   }
 
   close(error?: Error, response?: unknown): void {

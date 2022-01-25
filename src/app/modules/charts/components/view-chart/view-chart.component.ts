@@ -130,7 +130,7 @@ export class ViewChartComponent extends ViewComponent implements OnChanges, Afte
         const legendHtmlItem: Legend = {
           swatch: '', name: data.legend, value: 'empty', x: 'empty', visible: true,
         };
-        if (this.chartType == 'donut' || this.chartType == 'pie') {
+        if (this.chartType === 'donut' || this.chartType === 'pie') {
           legendHtmlItem.value = data.data[0];
           this.showLegendValues = true;
         }

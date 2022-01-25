@@ -34,7 +34,7 @@ export class FormToggleButtonComponent implements Field, OnInit {
         this.init = false;
         let allSelected = false;
         const values = _.split(this.control.value, ',');
-        if (this.control.value == '*') {
+        if (this.control.value === '*') {
           allSelected = true;
         }
         this.config.options.forEach((option) => {
