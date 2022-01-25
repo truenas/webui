@@ -1,0 +1,41 @@
+<button
+  mat-button
+  type="button"
+  (click)="initSession()"
+  class="action-button"
+  [disabled]="hasValue()"
+  [color]="value ? 'accent' : 'primary'"
+>{{ (hasValue() ? 'Logged In To Jira' : 'Login to Jira') | translate }}</button>
+
+<div class="full-width container has-tooltip hidden">
+  <div *ngIf="label" class="label-container">
+    <label class="label">
+      {{label}}
+      <span *ngIf="required" class="required">*</span>
+    </label>
+    <tooltip *ngIf="tooltip" [header]="label" class="tooltip" [message]="tooltip"></tooltip>
+  </div>
+
+  <div class="outlined input-container" [class.has-reset-button]="shouldShowResetInput()">
+    <input
+      matInput
+      [value]="value"
+      [placeholder]="placeholder"
+      (blur)="onTouch()"
+      [readonly]="readonly"
+      [disabled]="disabled"
+    >
+    <span *ngIf="shouldShowResetInput()" class="reset-input">
+      <mat-icon
+        [matTooltip]="'Reset the token' | translate"
+        (click)="resetInput()"
+        role="img"
+        fontSet="mdi-set"
+        fontIcon="mdi-close-circle"
+      ></mat-icon>
+    </span>
+  </div>
+  <ix-errors [control]="controlDirective.control" [label]="label"></ix-errors>
+
+  <mat-hint *ngIf="hint">{{hint}}</mat-hint>
+</div>
