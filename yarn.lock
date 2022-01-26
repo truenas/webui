@@ -6053,6 +6053,11 @@ eslint-module-utils@^2.7.0:
     find-up "^2.1.0"
     pkg-dir "^2.0.0"
 
+eslint-plugin-angular-file-naming@~1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/eslint-plugin-angular-file-naming/-/eslint-plugin-angular-file-naming-1.0.2.tgz#b16a3443d5ab7b7568c10194a646ec5453eb5029"
+  integrity sha512-ulYzIQ4c42K0EYViCIO+Wgz4OErAJKk4FkXRO4kUnFbn7j63C+mPxULL25apxOYB05YB0Bvr3K9VDCpedRyXZw==
+
 eslint-plugin-import@^2.22.1:
   version "2.25.2"
   resolved "https://registry.yarnpkg.com/eslint-plugin-import/-/eslint-plugin-import-2.25.2.tgz#b3b9160efddb702fc1636659e71ba1d10adbe9e9"
