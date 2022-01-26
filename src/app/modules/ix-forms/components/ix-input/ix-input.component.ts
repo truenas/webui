@@ -3,6 +3,7 @@ import {
 } from '@angular/core';
 import { ControlValueAccessor, FormControl, NgControl } from '@angular/forms';
 import { UntilDestroy } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
 
 @UntilDestroy()
 @Component({
@@ -34,12 +35,14 @@ export class IxInputComponent implements ControlValueAccessor {
 
   isDisabled = false;
   showPassword = false;
+  inValid = false;
 
   onChange: (value: string | number) => void = (): void => {};
   onTouch: () => void = (): void => {};
 
   constructor(
     public controlDirective: NgControl,
+    private translate: TranslateService,
     private cdr: ChangeDetectorRef,
   ) {
     this.controlDirective.valueAccessor = this;
@@ -57,13 +60,19 @@ export class IxInputComponent implements ControlValueAccessor {
     this.cdr.markForCheck();
   }
 
-  input(value: string): void {
+  input(e: HTMLInputElement): void {
+    this.inValid = e.validity?.badInput;
+    const value = e.value;
     this.value = value;
     this.formatted = value;
     if (this.parse && !!value) {
       this.value = this.parse(value);
     }
     this.onChange(this.value);
+  }
+
+  inValidMessage(): string {
+    return this.translate.instant('Value must be a {type}', { type: this.type });
   }
 
   registerOnChange(onChange: (value: string | number) => void): void {

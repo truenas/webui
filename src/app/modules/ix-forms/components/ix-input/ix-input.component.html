@@ -19,7 +19,7 @@
     [disabled]="isDisabled"
     [type]="getType()"
     [value]="formatted"
-    (input)="input(ixInput.value)"
+    (input)="input(ixInput)"
     (blur)="blur()"
     [autocomplete]="autocomplete"
     [autocapitalize]="autocapitalize"
@@ -36,6 +36,11 @@
     <i class="material-icons" matTooltip="Hide" *ngIf="showPassword">visibility</i>
     <i class="material-icons" matTooltip="Show" *ngIf="!showPassword">visibility_off</i>
   </button>
+</div>
+<div *ngIf="inValid">
+  <mat-error>
+    <div [innerHTML]="inValidMessage()"></div>
+  </mat-error>
 </div>
 <ix-errors [control]="controlDirective.control" [label]="label"></ix-errors>
 
