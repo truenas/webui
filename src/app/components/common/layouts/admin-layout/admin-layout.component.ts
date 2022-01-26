@@ -236,14 +236,14 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
     return msgs;
   }
 
-  onShowConsoleFooterBar(data: boolean): void {
-    if (data && this.consoleMsg == '') {
+  onShowConsoleFooterBar(isConsoleFooterEnabled: boolean): void {
+    if (isConsoleFooterEnabled && this.consoleMsg == '') {
       this.getLogConsoleMsg();
-    } else if (!data) {
+    } else if (!isConsoleFooterEnabled && this.consoleMsgsSubscriptionId) {
       this.ws.unsub(this.consoleMsgsSubName, this.consoleMsgsSubscriptionId);
     }
 
-    this.isShowFooterConsole = data;
+    this.isShowFooterConsole = isConsoleFooterEnabled;
   }
 
   onShowConsolePanel(): void {
