@@ -342,7 +342,7 @@ export class ThemeService {
       this.customThemes = evt.data.customThemes as any;
     }
 
-    this.activeTheme = evt.data.userTheme == 'default' ? this.defaultTheme : evt.data.userTheme;
+    this.activeTheme = evt.data.userTheme === 'default' ? this.defaultTheme : evt.data.userTheme;
     this.setCssVars(this.findTheme(this.activeTheme, true));
     this.userThemeLoaded = true;
     this.core.emit({ name: 'ThemeChanged', data: this.findTheme(this.activeTheme), sender: this });
@@ -378,7 +378,7 @@ export class ThemeService {
       name = this.defaultTheme;
     }
 
-    const theme = this.allThemes.find((theme) => theme.name == name);
+    const theme = this.allThemes.find((theme) => theme.name === name);
     if (theme) {
       return theme;
     }
