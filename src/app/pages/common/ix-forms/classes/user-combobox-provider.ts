@@ -4,7 +4,7 @@ import { IxCombobox2Provider } from 'app/pages/common/ix-forms/components/ix-com
 import IxUsersService from 'app/pages/common/ix-forms/services/ix-users.service';
 
 export class UserComboboxProvider implements IxCombobox2Provider {
-  private ProviderUpdater$ = new Subject<void>();
+  private userProviderUpdater$ = new Subject<void>();
   private loading = false;
   get isLoading(): boolean {
     return this.loading;
@@ -38,7 +38,7 @@ export class UserComboboxProvider implements IxCombobox2Provider {
   };
 
   get providerUpdater$(): Subject<void> {
-    return this.ProviderUpdater$;
+    return this.userProviderUpdater$;
   }
 
   private updateProvider(): void {
