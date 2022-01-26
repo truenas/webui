@@ -48,6 +48,7 @@
   "Pattern of naming custom snapshots to be  replicated. Enter the name and  <a href=\"https://man7.org/linux/man-pages/man3/strftime.3.html\" target=\"_blank\">strftime(3)</a>  <i>&percnt;Y</i>, <i>&percnt;m</i>, <i>&percnt;d</i>, <i>&percnt;H</i>, and <i>&percnt;M</i> strings that  match the snapshots to include in the replication. Separate entries by  pressing <code>Enter</code>. The number of snapshots matching the  patterns are shown.": "",
   "Remove file": "",
   "Replication Tasks Limit": "",
+  "Reports Config": "",
   "Reset the token": "",
   "Restrict share visibility to users with read or write access to the share. See the <a href=\"https://www.samba.org/samba/docs/current/man-html/smb.conf.5.html\" target=_blank>smb.conf</a> manual page.": "",
   "See <i>Public key authentication</i> in <a href=\"https://man7.org/linux/man-pages/man1/ssh.1.html\" target=\"_blank\">SSH/Authentication</a>.": "",
