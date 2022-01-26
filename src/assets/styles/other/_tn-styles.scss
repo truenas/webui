@@ -571,8 +571,12 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
   /////////////////// END SpecSelectors
 
   .mat-dialog-container {
-    max-height: calc(100vh - 100px);
     max-width: 800px;
+  }
+
+  .overflow-dialog .mat-dialog-container {
+    max-height: calc(100vh - 100px);
+    overflow: auto !important;
   }
 
   .mat-dialog-title {
@@ -1047,7 +1051,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
   // Bring tooltips to the front in dialogs
   .mat-dialog-container,
   .mat-dialog-content {
-    overflow: auto !important;
+    overflow: visible !important;
   }
 
   // Fix for overscrolling problem with sidenav

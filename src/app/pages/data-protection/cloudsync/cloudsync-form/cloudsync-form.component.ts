@@ -724,6 +724,7 @@ export class CloudsyncFormComponent implements FormConfiguration {
       if (res === '') {
         const dialogRef = this.matDialog.open(CloudCredentialsFormComponent, {
           width: '600px',
+          panelClass: 'overflow-dialog',
         });
         dialogRef.componentInstance.finishSubmit = (value) => {
           dialogRef.componentInstance.prepareAttributes(value);
