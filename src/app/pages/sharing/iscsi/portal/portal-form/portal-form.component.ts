@@ -184,7 +184,7 @@ export class PortalFormComponent implements FormConfiguration {
     this.authgroupField = _.find(authgroupFieldset.config, { name: 'discovery_authgroup' }) as FormSelectConfig;
     this.iscsiService.getAuth().pipe(untilDestroyed(this)).subscribe((accessRecords) => {
       accessRecords.forEach((record) => {
-        if (_.find(this.authgroupField.options, { value: record.tag }) == undefined) {
+        if (_.find(this.authgroupField.options, { value: record.tag }) === undefined) {
           this.authgroupField.options.push({ label: String(record.tag), value: record.tag });
         }
       });

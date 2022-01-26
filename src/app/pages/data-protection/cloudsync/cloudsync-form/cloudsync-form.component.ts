@@ -935,7 +935,7 @@ export class CloudsyncFormComponent implements FormConfiguration {
           sublimitArr.unshift('00:00');
         }
       }
-      if (sublimitArr[1] && sublimitArr[1] != 'off') {
+      if (sublimitArr[1] && sublimitArr[1] !== 'off') {
         if (sublimitArr[1].endsWith('/s') || sublimitArr[1].endsWith('/S')) {
           sublimitArr[1] = sublimitArr[1].substring(0, sublimitArr[1].length - 2);
         }
@@ -1051,7 +1051,7 @@ export class CloudsyncFormComponent implements FormConfiguration {
       return;
     }
 
-    if (value['direction'] == Direction.Pull) {
+    if (value['direction'] === Direction.Pull) {
       value['snapshot'] = false;
     }
     return value;

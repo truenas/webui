@@ -362,7 +362,7 @@ export class ChartReleasesComponent implements OnInit {
   edit(name: string): void {
     const catalogApp = this.chartItems[name];
     const chartFormComponent = this.modalService.openInSlideIn(ChartFormComponent, name);
-    if (catalogApp.chart_metadata.name == ixChartApp) {
+    if (catalogApp.chart_metadata.name === ixChartApp) {
       chartFormComponent.setTitle(helptext.launch);
     } else {
       chartFormComponent.setTitle(catalogApp.chart_metadata.name);
@@ -381,7 +381,7 @@ export class ChartReleasesComponent implements OnInit {
 
   checkAll(checkedItems: string[]): void {
     let selectAll = true;
-    if (checkedItems.length == this.filteredChartItems.length) {
+    if (checkedItems.length === this.filteredChartItems.length) {
       selectAll = false;
     }
 

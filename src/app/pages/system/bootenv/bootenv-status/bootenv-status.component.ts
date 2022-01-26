@@ -127,7 +127,7 @@ export class BootStatusListComponent implements OnInit {
     }
 
     let name = (data as BootPoolState).name;
-    if ('type' in data && data.type != 'disk') {
+    if ('type' in data && data.type !== 'disk') {
       name = data.type;
     }
     // use path as the device name if the device name is null
