@@ -129,7 +129,7 @@ export class FormExplorerComponent implements Field, OnInit {
   valueHandler(selectedTreeNodes: TreeNode[]): void {
     const res: string[] = [];
     selectedTreeNodes.forEach((node) => {
-      if (node == undefined) {
+      if (node === undefined) {
         return;
       }
       if (node.parent.isAllSelected && this.config.tristate) {
