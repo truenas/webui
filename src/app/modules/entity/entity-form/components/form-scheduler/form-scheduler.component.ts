@@ -288,7 +288,7 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, Aft
     this.control.valueChanges.pipe(untilDestroyed(this)).subscribe((evt: string) => {
       this.crontab = evt;
 
-      const isPreset: boolean = this.presets.filter((preset) => evt == preset.value).length !== 0;
+      const isPreset: boolean = this.presets.filter((preset) => evt === preset.value).length !== 0;
       if (!isPreset) {
         this.customOption.value = evt;
         this.selectedOption = this.customOption;
