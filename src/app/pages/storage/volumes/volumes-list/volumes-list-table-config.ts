@@ -1,5 +1,4 @@
 import { HttpClient } from '@angular/common/http';
-import { Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatDialogRef } from '@angular/material/dialog/dialog-ref';
 import { Router } from '@angular/router';
@@ -9,8 +8,10 @@ import { TranslateService } from '@ngx-translate/core';
 import { format } from 'date-fns';
 import * as _ from 'lodash';
 import { TreeNode } from 'primeng/api';
-import { combineLatest, Observable } from 'rxjs';
-import { filter, map, switchMap } from 'rxjs/operators';
+import { combineLatest, forkJoin, Observable } from 'rxjs';
+import {
+  filter, map, switchMap,
+} from 'rxjs/operators';
 import { DatasetEncryptionType } from 'app/enums/dataset-encryption-type.enum';
 import { DatasetType } from 'app/enums/dataset-type.enum';
 import { JobState } from 'app/enums/job-state.enum';
@@ -33,15 +34,16 @@ import { PoolProcess } from 'app/interfaces/pool-process.interface';
 import { PoolUnlockQuery } from 'app/interfaces/pool-unlock-query.interface';
 import { Pool, PoolExpandParams, UpdatePool } from 'app/interfaces/pool.interface';
 import { Subs } from 'app/interfaces/subs.interface';
+import { SystemDatasetConfig } from 'app/interfaces/system-dataset-config.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import { FormUploadComponent } from 'app/pages/common/entity/entity-form/components/form-upload/form-upload.component';
-import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
 import { MessageService } from 'app/pages/common/entity/entity-form/services/message.service';
 import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
 import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
 import { EntityUtils } from 'app/pages/common/entity/utils';
+import { ExportDisconnectModalComponent, ExportDisconnectModalState } from 'app/pages/storage/volumes/volumes-list/components/export-disconnect-modal.component';
 import {
   VolumesListDataset,
   VolumesListPool,
@@ -355,219 +357,39 @@ export class VolumesListTableConfig implements EntityTableConfig {
         label: helptext.exportAction,
         color: 'warn',
         onClick: (row1: VolumesListPool) => {
-          const doDetach = async (): Promise<void> => {
-            const sysPool = await this.ws.call('systemdataset.config').pipe(map((res) => res['pool'])).toPromise();
-            const title = this.translate.instant(helptext.exportDialog.title);
-            const warningA = this.translate.instant(helptext.exportDialog.warningA);
-            const warningB = this.translate.instant(helptext.exportDialog.warningB);
-            const unknownA = this.translate.instant(helptext.exportDialog.unknownStateA);
-            const unknownB = this.translate.instant(helptext.exportDialog.unknownStateB);
-            const sysPoolWarning = this.translate.instant(helptext.exportDialog.warningSysDataset);
-            const conf: DialogFormConfiguration = {
-              title: title + row1.name + "'",
-              fieldConfig: [{
-                type: 'paragraph',
-                name: 'sysdataset_warning',
-                paraText: sysPoolWarning,
-                isHidden: sysPool !== row1.name,
-              }, {
-                type: 'paragraph',
-                name: 'pool_detach_warning',
-                paraText: warningA + row1.name + warningB,
-                isHidden: rowData.status === PoolStatus.Unknown,
-              }, {
-                type: 'paragraph',
-                name: 'unknown_status_detach_warning',
-                paraText: `${unknownA} ${row1.name} ${unknownB}`,
-                isHidden: rowData.status !== PoolStatus.Unknown,
-              }, {
-                type: 'paragraph',
-                name: 'pool_processes',
-                paraText: p1,
-                isHidden: p1 === '',
-              }, {
-                type: 'checkbox',
-                name: 'destroy',
-                value: false,
-                placeholder: helptext.exportDialog.destroy,
-                isHidden: rowData.status === PoolStatus.Unknown,
-              }, {
-                type: 'checkbox',
-                name: 'cascade',
-                value: rowData.status !== PoolStatus.Unknown,
-                placeholder: helptext.exportDialog.cascade,
-              }, {
-                type: 'input',
-                name: 'nameInput',
-                required: true,
-                isDoubleConfirm: true,
-                maskValue: row1.name,
-                validation: [Validators.pattern(row1.name)],
-                relation: [
-                  {
-                    action: RelationAction.Hide,
-                    when: [{
-                      name: 'destroy',
-                      value: false,
-                    }],
-                  },
-                ],
-              }, {
-                type: 'checkbox',
-                name: 'confirm',
-                placeholder: rowData.status === PoolStatus.Unknown
-                  ? `${helptext.exportDialog.confirm} ${helptext.exportDialog.unknown_status_alt_text}`
-                  : `${helptext.exportDialog.confirm}`,
-                required: true,
-              }],
-              saveButtonText: helptext.exportDialog.saveButton,
-              customSubmit: (entityDialog: EntityDialogComponent) => {
-                const value = entityDialog.formValue;
-                const dialogRef = this.mdDialog.open(EntityJobComponent, {
-                  data: { title: helptext.exporting },
-                  disableClose: true,
-                });
-                dialogRef.updateSize('300px');
-                dialogRef.componentInstance.setDescription(helptext.exporting);
-                dialogRef.componentInstance.setCall('pool.export', [row1.id, {
-                  destroy: value.destroy,
-                  cascade: value.cascade,
-                  restart_services: this.restartServices,
-                }]);
-                dialogRef.componentInstance.submit();
-                dialogRef.componentInstance.success.pipe(untilDestroyed(this, 'destroy')).subscribe(() => {
-                  entityDialog.dialogRef.close(true);
-                  const msg = this.translate.instant(helptext.exportSuccess);
-                  const destroyed = this.translate.instant(helptext.destroyed);
-                  if (!value.destroy) {
-                    this.dialogService.info(helptext.exportDisconnect, msg + row1.name + "'", '500px', 'info');
-                  } else {
-                    this.dialogService.info(helptext.exportDisconnect, msg + row1.name + destroyed, '500px', 'info');
-                  }
-                  dialogRef.close(true);
-                  this.parentVolumesListComponent.repaintMe();
-                });
-                dialogRef.componentInstance.failure.pipe(untilDestroyed(this, 'destroy')).subscribe((res) => {
-                  let conditionalErrMessage = '';
-                  if (res.error) {
-                    if (res.exc_info.extra && res.exc_info.extra['code'] === 'control_services') {
-                      entityDialog.dialogRef.close(true);
-                      dialogRef.close(true);
-                      const stopMsg = this.translate.instant(helptext.exportMessages.onfail.stopServices);
-                      const restartMsg = this.translate.instant(helptext.exportMessages.onfail.restartServices);
-                      const continueMsg = this.translate.instant(helptext.exportMessages.onfail.continueMessage);
-                      if ((res.exc_info.extra.stop_services as string[]).length > 0) {
-                        conditionalErrMessage += '<div class="warning-box">' + stopMsg;
-                        (res.exc_info.extra.stop_services as string[]).forEach((item) => {
-                          conditionalErrMessage += `<br>- ${item}`;
-                        });
-                      }
-                      if ((res.exc_info.extra.restart_services as string[]).length > 0) {
-                        if ((res.exc_info.extra.stop_services as string[]).length > 0) {
-                          conditionalErrMessage += '<br><br>';
-                        }
-                        conditionalErrMessage += '<div class="warning-box">' + restartMsg;
-                        (res.exc_info.extra.restart_services as string[]).forEach((item) => {
-                          conditionalErrMessage += `<br>- ${item}`;
-                        });
-                      }
-                      conditionalErrMessage += '<br><br>' + continueMsg + '</div><br />';
-                      this.dialogService.confirm({
-                        title: helptext.exportError,
-                        message: conditionalErrMessage,
-                        hideCheckBox: true,
-                        buttonMsg: helptext.exportMessages.onfail.continueAction,
-                      }).pipe(
-                        filter(Boolean),
-                        untilDestroyed(this, 'destroy'),
-                      ).subscribe(() => {
-                        this.restartServices = true;
-                        entityDialog.conf.customSubmit(entityDialog);
-                      });
-                    } else if ((res as any).extra && (res as any).extra['code'] === 'unstoppable_processes') {
-                      entityDialog.dialogRef.close(true);
-                      const msg = this.translate.instant(helptext.exportMessages.onfail.unableToTerminate);
-                      conditionalErrMessage = msg + (res as any).extra['processes'];
-                      dialogRef.close(true);
-                      this.dialogService.errorReport(helptext.exportError, conditionalErrMessage, res.exception);
-                    } else {
-                      entityDialog.dialogRef.close(true);
-                      dialogRef.close(true);
-                      this.dialogService.errorReport(helptext.exportError, res.error, res.exception);
-                    }
-                  } else {
-                    entityDialog.dialogRef.close(true);
-                    dialogRef.close(true);
-                    this.dialogService.errorReport(helptext.exportError, res.error, res.exception);
-                  }
-                });
-              },
-            };
-            this.dialogService.dialogFormWide(conf);
-          };
-
           if (rowData.status !== PoolStatus.Unknown) {
             this.loader.open();
-            this.ws.call('pool.attachments', [row1.id]).pipe(untilDestroyed(this, 'destroy')).subscribe((attachments) => {
-              if (attachments.length > 0) {
-                p1 = this.translate.instant(helptext.exportMessages.services, { name: row1.name });
-                attachments.forEach((item) => {
-                  p1 += `<br><b>${item.type}:</b>`;
-                  item.attachments.forEach((i) => {
-                    const tempArr = i.split(',');
-                    tempArr.forEach((i) => {
-                      p1 += `<br> - ${i}`;
-                    });
-                  });
+            forkJoin([
+              this.ws.call('pool.attachments', [row1.id]),
+              this.ws.call('pool.processes', [row1.id]),
+              this.ws.call('systemdataset.config'),
+            ]).pipe(
+              untilDestroyed(this, 'destroy'),
+            ).subscribe(([attachments, processes, systemConfig]) => {
+              this.loader.close();
+
+              this.openDetachModal(row1, attachments, processes, systemConfig)
+                .pipe(
+                  filter(Boolean),
+                  untilDestroyed(this, 'destroy'),
+                )
+                .subscribe(() => {
+                  this.parentVolumesListComponent.repaintMe();
                 });
-                p1 += '<br /><br />';
-              }
-              this.ws.call('pool.processes', [row1.id]).pipe(untilDestroyed(this, 'destroy')).subscribe((res) => {
-                const runningProcesses: PoolProcess[] = [];
-                const runningUnknownProcesses: PoolProcess[] = [];
-                if (res.length > 0) {
-                  res.forEach((item) => {
-                    if (!item.service) {
-                      if (item.name && item.name !== '') {
-                        runningProcesses.push(item);
-                      } else {
-                        runningUnknownProcesses.push(item);
-                      }
-                    }
-                  });
-                  if (runningProcesses.length > 0) {
-                    const runningMsg = this.translate.instant(helptext.exportMessages.running);
-                    p1 += runningMsg + `<b>${row1.name}</b>:`;
-                    runningProcesses.forEach((process) => {
-                      if (process.name) {
-                        p1 += `<br> - ${process.name}`;
-                      }
-                    });
-                  }
-                  if (runningUnknownProcesses.length > 0) {
-                    p1 += '<br><br>' + this.translate.instant(helptext.exportMessages.unknown);
-                    runningUnknownProcesses.forEach((process) => {
-                      if (process.pid) {
-                        p1 += `<br> - ${process.pid} - ${process.cmdline.substring(0, 40)}`;
-                      }
-                    });
-                    p1 += '<br><br>' + this.translate.instant(helptext.exportMessages.terminated);
-                  }
-                }
-                this.loader.close();
-                doDetach();
-              },
-              (err) => {
-                this.loader.close();
-                new EntityUtils().handleWsError(this, err, this.dialogService);
-              });
             },
             (err) => {
               this.loader.close();
               this.dialogService.errorReport(helptext.exportError, err.reason, err.trace.formatted);
             });
           } else {
-            doDetach();
+            this.openDetachModal(row1)
+              .pipe(
+                filter(Boolean),
+                untilDestroyed(this, 'destroy'),
+              )
+              .subscribe(() => {
+                this.parentVolumesListComponent.repaintMe();
+              });
           }
         },
       });
@@ -982,9 +804,12 @@ export class VolumesListTableConfig implements EntityTableConfig {
             this.ws.call('pool.dataset.promote', [row1.id]).pipe(untilDestroyed(this, 'destroy')).subscribe(() => {
               this.loader.close();
               // Showing info here because there is no feedback on list parent for this if promoted.
-              this.dialogService.info(T('Promote Dataset'), T('Successfully Promoted ') + row1.id, '500px', 'info').pipe(untilDestroyed(this, 'destroy')).subscribe(() => {
-                this.parentVolumesListComponent.repaintMe();
-              });
+              this.dialogService
+                .info(T('Promote Dataset'), T('Successfully Promoted ') + row1.id, '500px', 'info')
+                .pipe(untilDestroyed(this, 'destroy'))
+                .subscribe(() => {
+                  this.parentVolumesListComponent.repaintMe();
+                });
             }, (res) => {
               this.loader.close();
               const msg = this.translate.instant('Error Promoting dataset ');
@@ -1015,6 +840,25 @@ export class VolumesListTableConfig implements EntityTableConfig {
     }
 
     return attachments.map((item) => `<br><b>${item.type}:</b>${formatPoolAttachment(item)}`).join();
+  }
+  private openDetachModal(
+    pool: VolumesListPool,
+    attachments?: PoolAttachment[],
+    processes?: PoolProcess[],
+    systemConfig?: SystemDatasetConfig,
+  ): Observable<unknown> {
+    return this.mdDialog
+      .open(ExportDisconnectModalComponent, {
+        width: '550px',
+        disableClose: true,
+        data: {
+          pool,
+          attachments,
+          processes,
+          systemConfig,
+        } as ExportDisconnectModalState,
+      })
+      .afterClosed();
   }
 
   private getStorageFlattenedProcesses(processes: PoolProcess[]): string {
