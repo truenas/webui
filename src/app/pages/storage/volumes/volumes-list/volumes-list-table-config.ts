@@ -6,7 +6,6 @@ import { Router } from '@angular/router';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { format } from 'date-fns';
 import * as _ from 'lodash';
 import { TreeNode } from 'primeng/api';
 import { combineLatest, Observable } from 'rxjs';
@@ -41,6 +40,9 @@ import { MessageService } from 'app/modules/entity/entity-form/services/message.
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { EntityTableAction, EntityTableConfig } from 'app/modules/entity/entity-table/entity-table.interface';
 import { EntityUtils } from 'app/modules/entity/utils';
+import {
+  CreateSnapshotDialogComponent,
+} from 'app/pages/storage/volumes/create-snapshot-dialog/create-snapshot-dialog.component';
 import {
   VolumesListDataset,
   VolumesListPool,
@@ -1024,58 +1026,8 @@ export class VolumesListTableConfig implements EntityTableConfig {
         name: T('Create Snapshot'),
         label: T('Create Snapshot'),
         onClick: (row: VolumesListDataset) => {
-          this.ws.call('vmware.dataset_has_vms', [row.id, false]).pipe(untilDestroyed(this, 'destroy')).subscribe((datasetHasVms) => {
-            this.datasetHasVms = datasetHasVms;
-          });
-          this.dialogConf = {
-            title: 'One time snapshot of ' + rowData.id,
-            fieldConfig: [
-              {
-                type: 'input',
-                name: 'dataset',
-                placeholder: helptext.snapshotDialog_dataset_placeholder,
-                value: rowData.id,
-                isHidden: true,
-                readonly: true,
-              },
-              {
-                type: 'input',
-                name: 'name',
-                placeholder: helptext.snapshotDialog_name_placeholder,
-                tooltip: helptext.snapshotDialog_name_tooltip,
-                validation: helptext.snapshotDialog_name_validation,
-                required: true,
-                value: 'manual-' + this.getTimestamp(),
-              },
-              {
-                type: 'checkbox',
-                name: 'recursive',
-                placeholder: helptext.snapshotDialog_recursive_placeholder,
-                tooltip: helptext.snapshotDialog_recursive_tooltip,
-                parent: this,
-                updater: (parent: VolumesListTableConfig) => {
-                  parent.recursiveIsChecked = !parent.recursiveIsChecked;
-                  parent.ws.call('vmware.dataset_has_vms', [row.id, parent.recursiveIsChecked]).pipe(untilDestroyed(parent, 'destroy')).subscribe((datasetHasVms) => {
-                    parent.datasetHasVms = datasetHasVms;
-                    _.find(parent.dialogConf.fieldConfig, { name: 'vmware_sync' })['isHidden'] = !parent.datasetHasVms;
-                  });
-                },
-              },
-              {
-                type: 'checkbox',
-                name: 'vmware_sync',
-                placeholder: helptext.vmware_sync_placeholder,
-                tooltip: helptext.vmware_sync_tooltip,
-                isHidden: !this.datasetHasVms,
-              },
-            ],
-            method_ws: 'zfs.snapshot.create',
-            saveButtonText: T('Create Snapshot'),
-          };
-          this.dialogService.dialogForm(this.dialogConf).pipe(untilDestroyed(this, 'destroy')).subscribe((res) => {
-            if (res) {
-              this.dialogService.info(T('Create Snapshot'), T('Snapshot successfully taken.'), '500px', 'info');
-            }
+          this.mdDialog.open(CreateSnapshotDialogComponent, {
+            data: row.id,
           });
         },
       });
@@ -1477,11 +1429,6 @@ export class VolumesListTableConfig implements EntityTableConfig {
       }
     }
     return encryptionActions as EntityTableAction[];
-  }
-
-  getTimestamp(): string {
-    const dateTime = new Date();
-    return format(dateTime, 'yyyy-MM-dd_HH-mm');
   }
 
   dataHandler(tempData: any): TreeNode {

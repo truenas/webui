@@ -42,6 +42,7 @@
   "Maximum number of replication tasks being executed simultaneously.": "",
   "New password and confirmation should match.": "",
   "Off by default. When set, <a href=\"https://www.samba.org/samba/docs/current/man-html/smbd.8.html\" target=\"_blank\">smbd(8)</a> attempts to authenticate users with the insecure and vulnerable NTLMv1 encryption. This setting allows backward compatibility with older versions of Windows, but is not recommended and should not be used on untrusted networks.": "",
+  "One time snapshot of {dataset}": "",
   "Open Ticket": "",
   "Parent dataset path (read-only).": "",
   "Parent path": "",
