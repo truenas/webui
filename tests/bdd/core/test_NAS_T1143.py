@@ -207,6 +207,7 @@ def under_directory_files_choose_backblaze_b2_and_under_transfer_mode_select_cop
 @then('the Backblaze B2 tasks should save without error')
 def the_backblaze_b2_tasks_should_save_without_error(driver):
     """the Backblaze B2 tasks should save without error."""
+    assert wait_on_element(driver, 5, '//div[contains(.,"Cloud Sync Tasks")]')
     assert wait_on_element(driver, 5, '//div[contains(text(),"My Backblaze B2 task")]')
 
 
@@ -244,9 +245,10 @@ def verify_all_files_are_copied_from_backblaze_b2_are_into_the_dataset(driver, n
 def on_the_nas_cloud_sync_task_tab_click_edit(driver):
     """on the NAS cloud sync task tab, click Edit."""
     driver.switch_to.window(driver.window_handles[0])
+    assert wait_on_element(driver, 5, '//div[contains(.,"Cloud Sync Tasks")]')
     assert wait_on_element(driver, 5, '//div[contains(text(),"My Backblaze B2 task")]')
+    assert wait_on_element(driver, 5, '//a[@ix-auto="expander__My Backblaze B2 task"]', 'clickable')
     if not wait_on_element(driver, 1, '//button[@ix-auto="button___edit"]', 'clickable'):
-        assert wait_on_element(driver, 5, '//a[@ix-auto="expander__My Backblaze B2 task"]', 'clickable')
         driver.find_element_by_xpath('//a[@ix-auto="expander__My Backblaze B2 task"]').click()
     time.sleep(1.5)
     assert wait_on_element(driver, 5, '//p[contains(text(),"backblazecreds")]')
@@ -337,6 +339,7 @@ def click_save_the_backblaze_b2_tasks_should_save_without_error(driver):
     assert wait_on_element(driver, 5, '//button[@id="save_button"]', 'clickable')
     driver.find_element_by_xpath('//button[@id="save_button"]').click()
     assert wait_on_element_disappear(driver, 30, '//h6[contains(.,"Please wait")]')
+    assert wait_on_element(driver, 5, '//div[contains(.,"Cloud Sync Tasks")]')
     assert wait_on_element(driver, 5, '//div[contains(text(),"My Backblaze B2 task")]')
 
 
@@ -482,6 +485,7 @@ def on_the_backblaze_b2_test_folder_tab_delete_one_file(driver):
 def on_the_nas_cloud_sync_task_tab_click_run_now(driver):
     """on the NAS cloud sync task tab, click Run Now."""
     driver.switch_to.window(driver.window_handles[0])
+    assert wait_on_element(driver, 5, '//div[contains(.,"Cloud Sync Tasks")]')
     assert wait_on_element(driver, 5, '//div[contains(text(),"My Backblaze B2 task")]')
     assert wait_on_element(driver, 5, '//button[@id="action_button___run_now"]', 'clickable')
     driver.find_element_by_xpath('//button[@id="action_button___run_now"]').click()

@@ -157,6 +157,7 @@ def under_transfer_mode_select_copy_click_save(driver):
 @then('the new Cloud Sync Tasks should save without error')
 def the_new_cloud_sync_tasks_should_save_without_error(driver):
     """the new Cloud Sync Tasks should save without error."""
+    assert wait_on_element(driver, 5, '//div[contains(.,"Cloud Sync Tasks")]')
     assert wait_on_element(driver, 5, '//div[contains(.,"My S3 AWS Share")]')
 
 
@@ -206,6 +207,7 @@ def click_on_the_bucket_being_used_and_then_upload_a_file(driver):
 def on_the_nas_tab_expand_the_task_on_the_nas_ui_and_click_run_now(driver):
     """on the NAS tab, expand the task on the NAS UI and click Run Now."""
     driver.switch_to.window(driver.window_handles[0])
+    assert wait_on_element(driver, 5, '//div[contains(.,"Cloud Sync Tasks")]')
     assert wait_on_element(driver, 5, '//div[contains(.,"My S3 AWS Share")]')
     assert wait_on_element(driver, 5, '//a[@title="Expand/Collapse Row"]', 'clickable')
     driver.find_element_by_xpath('//a[@title="Expand/Collapse Row"]').click()
@@ -254,6 +256,7 @@ def on_the_nas_tad_on_the_cloud_sync_task_click_run_now(driver):
     """on the NAS tad on the cloud sync task, click Run Now."""
     driver.switch_to.window(driver.window_handles[0])
     time.sleep(1)
+    assert wait_on_element(driver, 5, '//div[contains(.,"Cloud Sync Tasks")]')
     assert wait_on_element(driver, 5, '//div[contains(.,"My S3 AWS Share")]')
     if not wait_on_element(driver, 2, '//button[@id="action_button___run_now"]', 'clickable'):
         assert wait_on_element(driver, 5, '//a[@title="Expand/Collapse Row"]', 'clickable')
@@ -293,6 +296,7 @@ def on_the_cloud_sync_task_and_click_edit(driver):
     """on the cloud sync task and click Edit."""
     driver.switch_to.window(driver.window_handles[0])
     time.sleep(1)
+    assert wait_on_element(driver, 5, '//div[contains(.,"Cloud Sync Tasks")]')
     assert wait_on_element(driver, 5, '//div[contains(.,"My S3 AWS Share")]')
     if not wait_on_element(driver, 2, '//button[@ix-auto="button___edit"]', 'clickable'):
         assert wait_on_element(driver, 5, '//a[@title="Expand/Collapse Row"]', 'clickable')
@@ -534,6 +538,7 @@ def on_the_nas_tab_expand_the_task_and_click_run_now(driver):
     """on the NAS tab, expand the task and click Run Now."""
     driver.switch_to.window(driver.window_handles[0])
     time.sleep(1)
+    assert wait_on_element(driver, 5, '//div[contains(.,"Cloud Sync Tasks")]')
     assert wait_on_element(driver, 5, '//div[contains(.,"My S3 AWS Share")]')
     if not wait_on_element(driver, 2, '//button[@id="action_button___run_now"]', 'clickable'):
         assert wait_on_element(driver, 5, '//a[@title="Expand/Collapse Row"]', 'clickable')
@@ -611,6 +616,7 @@ def delete_the_file_from_the_dataset_and_click_run_now(driver, nas_ip):
     assert results['result'] is True
     driver.switch_to.window(driver.window_handles[0])
     time.sleep(1)
+    assert wait_on_element(driver, 5, '//div[contains(.,"Cloud Sync Tasks")]')
     assert wait_on_element(driver, 5, '//div[contains(.,"My S3 AWS Share")]')
     if not wait_on_element(driver, 2, '//button[@id="action_button___run_now"]', 'clickable'):
         assert wait_on_element(driver, 5, '//a[@title="Expand/Collapse Row"]', 'clickable')
@@ -642,6 +648,7 @@ def delete_the_folder_from_the_dataset_then_click_run_now(driver, nas_ip):
     assert results['result'] is True
     driver.switch_to.window(driver.window_handles[0])
     time.sleep(1)
+    assert wait_on_element(driver, 5, '//div[contains(.,"Cloud Sync Tasks")]')
     assert wait_on_element(driver, 5, '//div[contains(.,"My S3 AWS Share")]')
     if not wait_on_element(driver, 2, '//button[@id="action_button___run_now"]', 'clickable'):
         assert wait_on_element(driver, 5, '//a[@title="Expand/Collapse Row"]', 'clickable')
