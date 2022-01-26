@@ -488,7 +488,7 @@ export class ChartReleasesComponent implements OnInit {
       this.filteredChartItems = this.getChartItems();
     }
 
-    if (this.filteredChartItems.length == 0) {
+    if (this.filteredChartItems.length === 0) {
       if (this.filterString) {
         this.showLoadStatus(EmptyType.NoSearchResults);
       } else {
@@ -508,7 +508,7 @@ export class ChartReleasesComponent implements OnInit {
       this.appLoaderService.close();
       this.podDetails = { ...res };
       this.podList = Object.keys(this.podDetails);
-      if (this.podList.length == 0) {
+      if (this.podList.length === 0) {
         this.dialogService.confirm({
           title: helptext.podConsole.nopod.title,
           message: helptext.podConsole.nopod.message,
@@ -547,7 +547,7 @@ export class ChartReleasesComponent implements OnInit {
       this.appLoaderService.close();
       this.podDetails = { ...res };
       this.podList = Object.keys(this.podDetails);
-      if (this.podList.length == 0) {
+      if (this.podList.length === 0) {
         this.dialogService.confirm({
           title: helptext.podConsole.nopod.title,
           message: helptext.podConsole.nopod.message,

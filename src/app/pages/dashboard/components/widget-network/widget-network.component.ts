@@ -219,9 +219,9 @@ export class WidgetNetworkComponent extends WidgetComponent implements AfterView
     let colSpan = 6;
     if (this.availableNics.length <= 3) {
       colSpan = 6;
-    } else if (this.availableNics.length == 4) {
+    } else if (this.availableNics.length === 4) {
       colSpan = 3;
-    } else if (this.availableNics.length == 5) {
+    } else if (this.availableNics.length === 5) {
       if (index < 2) {
         colSpan = 3;
       } else {

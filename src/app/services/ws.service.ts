@@ -68,7 +68,7 @@ export class WebSocketService {
 
   connect(): void {
     this.socket = new WebSocket(
-      (this.protocol == 'https:' ? 'wss://' : 'ws://')
+      (this.protocol === 'https:' ? 'wss://' : 'ws://')
         + this.remote + '/websocket',
     );
     this.socket.onmessage = this.onmessage.bind(this);
@@ -136,7 +136,7 @@ export class WebSocketService {
       this.onconnect();
     } else if (data.msg == ApiEventMessage.Changed || data.msg == ApiEventMessage.Added) {
       this.subscriptions.forEach((v, k) => {
-        if (k == '*' || k == data.collection) {
+        if (k === '*' || k == data.collection) {
           v.forEach((item) => { item.next(data); });
         }
       });

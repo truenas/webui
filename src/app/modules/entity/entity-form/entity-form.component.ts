@@ -318,7 +318,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
                       this.data[key] = _.split(this.data[key], ',');
                     }
                   }
-                  if (!(selectField.type === 'select' && selectField.options.length == 0)) {
+                  if (!(selectField.type === 'select' && selectField.options.length === 0)) {
                     fg.setValue(this.data[key]);
                   }
                 }
@@ -354,7 +354,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
                     this.setArrayValue(this.wsResponse[key], this.wsfg as FormArray, key);
                   } else if (currentField.type === 'list' || currentField.type === 'dict') {
                     this.setObjectListValue(this.wsResponse[key], this.wsfg, currentField);
-                  } else if (!(selectField.type === 'select' && selectField.options.length == 0)) {
+                  } else if (!(selectField.type === 'select' && selectField.options.length === 0)) {
                     this.wsfg.setValue(this.wsResponse[key]);
                   }
                 } else if (this.conf.dataAttributeHandler) {
