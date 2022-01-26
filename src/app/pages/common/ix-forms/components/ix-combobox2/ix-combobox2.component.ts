@@ -75,19 +75,20 @@ export class IxCombobox2Component implements ControlValueAccessor, OnInit {
       distinctUntilChanged(),
       untilDestroyed(this),
     ).subscribe((changedValue: string) => {
-      if (this.filterValue === changedValue) {
-        return;
-      }
       this.filterValue = changedValue;
       this.provider.filter(changedValue);
       this.cdr.markForCheck();
     });
 
     this.provider.providerUpdater$.pipe(untilDestroyed(this)).subscribe(() => {
-      const setOption = this.provider.options.find((option: Option) => option.value === this.value);
-      this.selectedOption = setOption ? { ...setOption } : null;
-      if (this.selectedOption) {
-        this.filterChanged$.next('');
+      if (!this.selectedOption) {
+        const setOption = this.provider.options.find((option: Option) => option.value === this.value);
+        if (setOption) {
+          this.selectedOption = { ...setOption };
+          if (this.selectedOption) {
+            this.filterChanged$.next('');
+          }
+        }
       }
       this.cdr.markForCheck();
     });
