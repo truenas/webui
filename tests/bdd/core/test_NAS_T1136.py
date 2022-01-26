@@ -551,8 +551,9 @@ def verify_all_files_are_sync_to_the_Dropbox_test_folder_tab(driver):
     assert wait_on_element(driver, 7, '//span[text()="Explaining_BSD.pdf"]', 'clickable')
     assert wait_on_element(driver, 5, '//span[text()="music"]', 'clickable')
     driver.find_element_by_xpath('//span[text()="music"]').click()
-    assert wait_on_element(driver, 5, '//nav[contains(.,"music")]//span[text()="music"]')
-    assert wait_on_element(driver, 5, '//span[text()="Mr_Smith_Pequeñas_Guitarras.mp3"]', 'clickable')
+    time.sleep(0.5)
+    assert wait_on_element(driver, 10, '//nav[contains(.,"music")]//span[text()="music"]')
+    assert wait_on_element(driver, 10, '//span[text()="Mr_Smith_Pequeñas_Guitarras.mp3"]', 'clickable')
     assert wait_on_element(driver, 5, '//nav[contains(.,"test")]//a[contains(.,"test")]', 'clickable')
     driver.find_element_by_xpath('//nav[contains(.,"test")]//a[contains(.,"test")]').click()
 
