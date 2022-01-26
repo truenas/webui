@@ -1,4 +1,5 @@
 import { Subject } from 'rxjs';
+import { delay } from 'rxjs/operators';
 import { Option } from 'app/interfaces/option.interface';
 import { IxCombobox2Provider } from 'app/pages/common/ix-forms/components/ix-combobox2/ix-combobox2-provider.interface';
 import IxUsersService from 'app/pages/common/ix-forms/services/ix-users.service';
@@ -48,7 +49,7 @@ export class UserComboboxProvider implements IxCombobox2Provider {
   constructor(
     private ixUsersService: IxUsersService,
   ) {
-    this.ixUsersService.loadUsers().subscribe((options) => {
+    this.ixUsersService.loadUsers().pipe(delay(3000)).subscribe((options) => {
       this.pageOffset = (options).length;
       this.options = options;
       this.updateProvider();

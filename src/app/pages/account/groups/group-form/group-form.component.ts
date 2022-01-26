@@ -13,6 +13,7 @@ import { Group } from 'app/interfaces/group.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { forbiddenValues } from 'app/pages/common/entity/entity-form/validators/forbidden-values-validation';
 import { regexValidator } from 'app/pages/common/entity/entity-form/validators/regex-validation';
+import { SimpleComboboxProvider } from 'app/pages/common/ix-forms/classes/normal-combobox-provider';
 import { IxCombobox2Provider } from 'app/pages/common/ix-forms/components/ix-combobox2/ix-combobox2-provider.interface';
 import { FormErrorHandlerService } from 'app/pages/common/ix-forms/services/form-error-handler.service';
 import IxUsersService from 'app/pages/common/ix-forms/services/ix-users.service';
@@ -45,8 +46,9 @@ export class GroupFormComponent {
     sudo: [false],
     smb: [false],
     allowDuplicateGid: [false],
-    userCombobox: [''],
+    userCombobox: ['root'],
     normalCombobox: [''],
+    normalCombobox2: [''],
   });
 
   userProvider = this.ixUsersService.getNewProvider();
@@ -130,6 +132,21 @@ export class GroupFormComponent {
       this.normalProvider.providerUpdater$.next();
     },
   };
+
+  normalProvider2: SimpleComboboxProvider = new SimpleComboboxProvider(
+    [
+      { label: UUID.UUID().substring(0, 6), value: UUID.UUID() },
+      { label: UUID.UUID().substring(0, 6), value: UUID.UUID() },
+      { label: UUID.UUID().substring(0, 6), value: UUID.UUID() },
+      { label: UUID.UUID().substring(0, 6), value: UUID.UUID() },
+      { label: UUID.UUID().substring(0, 6), value: UUID.UUID() },
+      { label: UUID.UUID().substring(0, 6), value: UUID.UUID() },
+      { label: UUID.UUID().substring(0, 6), value: UUID.UUID() },
+      { label: UUID.UUID().substring(0, 6), value: UUID.UUID() },
+      { label: UUID.UUID().substring(0, 6), value: UUID.UUID() },
+      { label: UUID.UUID().substring(0, 6), value: UUID.UUID() },
+    ],
+  );
 
   readonly tooltips = {
     gid: helptext.bsdgrp_gid_tooltip,
