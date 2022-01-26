@@ -35,15 +35,11 @@ export const helptextSystemSupport = {
   token: {
     placeholder: T('OAuth Token'),
     tooltip: T('OAuth Token for current session'),
-    validation: [Validators.required],
   },
 
   type: {
     placeholder: T('Type'),
-    tooltip: T(
-      'Select <i>Bug</i> when reporting an issue or\
- <i>Feature</i> when requesting new functionality.',
-    ),
+    tooltip: T('Select <i>Bug</i> when reporting an issue or <i>Suggestion</i> when requesting new functionality.'),
   },
 
   name: {

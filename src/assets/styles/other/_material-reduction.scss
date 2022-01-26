@@ -209,7 +209,8 @@ entity-table .mat-toolbar.mat-card-toolbar {
 }
 
 /* Bring back the native placeholder */
-input.mat-input-element::placeholder {
+input.mat-input-element::placeholder,
+textarea.mat-input-element::placeholder {
   color: var(--fg2) !important;
   opacity: 0.5;
   -webkit-text-fill-color: var(--fg2) !important;

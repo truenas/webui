@@ -19,11 +19,11 @@ import { styler, tween } from 'popmotion';
 import { PoolStatus } from 'app/enums/pool-status.enum';
 import { VDevType } from 'app/enums/v-dev-type.enum';
 import { VDevStatus } from 'app/enums/vdev-status.enum';
-import { DisksDataEvent } from 'app/interfaces/events/disks-data-event.interface';
 import { Pool, PoolTopologyCategory } from 'app/interfaces/pool.interface';
 import { Disk, VDev } from 'app/interfaces/storage.interface';
 import { VolumeData } from 'app/interfaces/volume-data.interface';
 import { WidgetComponent } from 'app/pages/dashboard/components/widget/widget.component';
+import { WebSocketService } from 'app/services';
 import { CoreService } from 'app/services/core-service/core.service';
 
 interface Slide {
@@ -181,6 +181,7 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
     public translate: TranslateService,
     private cdr: ChangeDetectorRef,
     private core: CoreService,
+    private ws: WebSocketService,
   ) {
     super(translate);
     this.configurable = false;
@@ -218,23 +219,6 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
     ];
 
     this.cdr.detectChanges();
-
-    this.core.register({ observerClass: this, eventName: 'DisksData' }).pipe(untilDestroyed(this)).subscribe((evt: DisksDataEvent) => {
-      const currentPath = this.path[this.currentSlideIndex];
-      const currentName = currentPath?.dataSource?.disk || 'unknown';
-
-      if ((!currentName || currentName === 'unknown') && evt.data.length === 0) {
-        this.currentDiskDetails = null;
-      } else if (currentName && evt.data.length > 0 && currentName === evt.data[0].name) {
-        delete evt.data[0].enclosure;
-        delete evt.data[0].name;
-        delete evt.data[0].devname;
-        delete evt.data[0].multipath_name;
-        delete evt.data[0].multipath_member;
-        delete evt.data[0].zfs_guid;
-        this.currentDiskDetails = evt.data[0];
-      }
-    });
 
     this.checkVolumeHealth(this.poolState);
   }
@@ -283,7 +267,22 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
   }
 
   getDiskDetails(key: string, value: string): void {
-    this.core.emit({ name: 'DisksRequest', data: [[[key, '=', value]]] });
+    this.ws.call('disk.query', [[[key, '=', value]]]).pipe(untilDestroyed(this)).subscribe((disks) => {
+      const currentPath = this.path[this.currentSlideIndex];
+      const currentName = currentPath?.dataSource?.disk || 'unknown';
+
+      if ((!currentName || currentName === 'unknown') && disks.length == 0) {
+        this.currentDiskDetails = null;
+      } else if (currentName && disks.length > 0 && currentName === disks[0].name) {
+        delete disks[0].enclosure;
+        delete disks[0].name;
+        delete disks[0].devname;
+        delete disks[0].multipath_name;
+        delete disks[0].multipath_member;
+        delete disks[0].zfs_guid;
+        this.currentDiskDetails = disks[0];
+      }
+    });
   }
 
   /**

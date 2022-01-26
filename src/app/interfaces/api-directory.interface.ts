@@ -144,7 +144,6 @@ import { LdapConfig, LdapConfigUpdate, LdapConfigUpdateResult } from 'app/interf
 import { LldpConfig, LldpConfigUpdate } from 'app/interfaces/lldp-config.interface';
 import { MailConfig, MailConfigUpdate, SendMailParams } from 'app/interfaces/mail-config.interface';
 import {
-  NetworkActivityChoice,
   NetworkConfiguration,
   NetworkConfigurationUpdate,
 } from 'app/interfaces/network-configuration.interface';
@@ -155,6 +154,7 @@ import { NfsShare, NfsShareUpdate } from 'app/interfaces/nfs-share.interface';
 import { CreateNtpServer, NtpServer } from 'app/interfaces/ntp-server.interface';
 import { OpenvpnClientConfig, OpenvpnClientConfigUpdate } from 'app/interfaces/openvpn-client-config.interface';
 import { OpenvpnServerConfig, OpenvpnServerConfigUpdate } from 'app/interfaces/openvpn-server-config.interface';
+import { MapOption } from 'app/interfaces/option.interface';
 import { PeriodicSnapshotTask, PeriodSnapshotTaskUpdate } from 'app/interfaces/periodic-snapshot-task.interface';
 import { PoolAttachment } from 'app/interfaces/pool-attachment.interface';
 import { PoolExportParams } from 'app/interfaces/pool-export.interface';
@@ -208,7 +208,7 @@ import {
   FetchSupportParams,
   CreateNewTicket,
   NewTicketResponse,
-  SupportConfig, SupportConfigUpdate,
+  SupportConfig, SupportConfigUpdate, AttachTicketParams,
 } from 'app/interfaces/support.interface';
 import { SystemGeneralConfig, SystemGeneralConfigUpdate } from 'app/interfaces/system-config.interface';
 import { SystemDatasetConfig, SystemDatasetUpdate } from 'app/interfaces/system-dataset-config.interface';
@@ -583,7 +583,7 @@ export type ApiDirectory = {
 
   // Network
   'network.general.summary': { params: void; response: NetworkSummary };
-  'network.configuration.activity_choices': { params: void; response: NetworkActivityChoice[] };
+  'network.configuration.activity_choices': { params: void; response: MapOption[] };
   'network.configuration.update': { params: [NetworkConfigurationUpdate]; response: NetworkConfiguration };
   'network.configuration.config': { params: void; response: NetworkConfiguration };
 
@@ -802,6 +802,7 @@ export type ApiDirectory = {
   'support.config': { params: void; response: SupportConfig };
   'support.update': { params: [SupportConfigUpdate]; response: SupportConfig };
   'support.new_ticket': { params: [CreateNewTicket]; response: NewTicketResponse };
+  'support.attach_ticket': { params: AttachTicketParams; response: Job };
   'support.fetch_categories': { params: FetchSupportParams; response: Choices };
 
   // SMART

@@ -33,16 +33,18 @@ import { AlertSlice, selectImportantUnreadAlertsCount } from 'app/modules/alerts
 import { AppLoaderService } from 'app/modules/app-loader/app-loader.service';
 import { DialogFormConfiguration } from 'app/modules/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/modules/entity/entity-dialog/entity-dialog.component';
-import { matchOtherValidator } from 'app/modules/entity/entity-form/validators/password-validation/password-validation';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { EntityUtils } from 'app/modules/entity/utils';
+import {
+  ChangePasswordDialogComponent,
+} from 'app/modules/layout/components/change-password-dialog/change-password-dialog.component';
 import { CoreService } from 'app/services/core-service/core.service';
 import { DialogService } from 'app/services/dialog.service';
 import { LayoutService } from 'app/services/layout.service';
 import { ModalService } from 'app/services/modal.service';
 import { PreferencesService } from 'app/services/preferences.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
-import { Theme, ThemeService } from 'app/services/theme/theme.service';
+import { ThemeService } from 'app/services/theme/theme.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { alertIndicatorPressed } from 'app/store/actions/topbar.actions';
 import { AboutDialogComponent } from '../dialog/about/about-dialog.component';
@@ -66,7 +68,6 @@ export class TopbarComponent implements OnInit, OnDestroy {
   pendingNetworkChanges = false;
   waitingNetworkCheckin = false;
   resilveringDetails: ResilverData;
-  themesMenu: Theme[] = this.themeService.themesMenu;
   currentTheme = 'ix-blue';
   isTaskMangerOpened = false;
   isDirServicesMonitorOpened = false;
@@ -181,9 +182,6 @@ export class TopbarComponent implements OnInit, OnDestroy {
     });
     const theme = this.themeService.currentTheme();
     this.currentTheme = theme.name;
-    this.core.register({ observerClass: this, eventName: 'ThemeListsChanged' }).pipe(untilDestroyed(this)).subscribe(() => {
-      this.themesMenu = this.themeService.themesMenu;
-    });
 
     this.ws.call(this.tc_queryCall).pipe(untilDestroyed(this)).subscribe((config) => {
       this.tcStatus = config;
@@ -781,63 +779,7 @@ export class TopbarComponent implements OnInit, OnDestroy {
   }
 
   openChangePasswordDialog(): void {
-    const conf: DialogFormConfiguration = {
-      title: this.translate.instant('Change Password'),
-      message: helptext.changePasswordDialog.pw_form_title_name,
-      fieldConfig: [
-        {
-          type: 'input',
-          name: 'curr_password',
-          placeholder: helptext.changePasswordDialog.pw_current_pw_placeholder,
-          inputType: 'password',
-          required: true,
-          togglePw: true,
-        },
-        {
-          type: 'input',
-          name: 'password',
-          placeholder: helptext.changePasswordDialog.pw_new_pw_placeholder,
-          inputType: 'password',
-          required: true,
-          tooltip: helptext.changePasswordDialog.pw_new_pw_tooltip,
-        },
-        {
-          type: 'input',
-          name: 'password_conf',
-          placeholder: helptext.changePasswordDialog.pw_confirm_pw_placeholder,
-          inputType: 'password',
-          required: true,
-          validation: [matchOtherValidator('password')],
-        },
-      ],
-      saveButtonText: this.translate.instant('Save'),
-      custActions: [],
-      customSubmit: (entityDialog: EntityDialogComponent) => {
-        this.loader.open();
-        const pwChange = entityDialog.formValue;
-        delete pwChange.password_conf;
-        entityDialog.dialogRef.close();
-        this.ws.call('auth.check_user', ['root', pwChange.curr_password]).pipe(untilDestroyed(this)).subscribe((check) => {
-          if (check) {
-            delete pwChange.curr_password;
-            this.ws.call('user.update', [1, pwChange]).pipe(untilDestroyed(this)).subscribe(() => {
-              this.loader.close();
-              this.dialogService.info(this.translate.instant('Success'), helptext.changePasswordDialog.pw_updated, '300px', 'info', false);
-            }, (res) => {
-              this.loader.close();
-              this.dialogService.info(this.translate.instant('Error'), res, '300px', 'warning', false);
-            });
-          } else {
-            this.loader.close();
-            this.dialogService.info(helptext.changePasswordDialog.pw_invalid_title, helptext.changePasswordDialog.pw_invalid_title, '300px', 'warning', false);
-          }
-        }, (res) => {
-          this.loader.close();
-          this.dialogService.info(this.translate.instant('Error'), res, '300px', 'warning', false);
-        });
-      },
-    };
-    this.dialogService.dialogForm(conf);
+    this.dialog.open(ChangePasswordDialogComponent);
   }
 
   navExternal(link: string): void {

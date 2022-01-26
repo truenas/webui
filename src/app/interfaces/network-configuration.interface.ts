@@ -1,6 +1,6 @@
 import { NetworkActivityType } from 'app/enums/network-activity-type.enum';
 
-export interface NetworkConfiguration {
+export interface NetworkConfiguration extends NetworkConfigurationState {
   activity: NetworkConfigurationActivity;
   domain: string;
   domains: string[];
@@ -11,15 +11,24 @@ export interface NetworkConfiguration {
   hosts: string;
   httpproxy: string;
   id: number;
-  ipv4gateway: string;
-  ipv6gateway: string;
-  nameserver1: string;
-  nameserver2: string;
-  nameserver3: string;
   netwait_enabled: boolean;
   netwait_ip: string[];
   service_announcement: NetworkServiceAnnouncement;
   state: NetworkConfigurationState;
+}
+
+export interface NetworkConfigurationConfig extends NetworkConfigurationState, NetworkServiceAnnouncement {
+  domain: string;
+  domains: string[];
+  hostname: string;
+  hostname_b: string;
+  hostname_virtual: string;
+  hosts: string[];
+  httpproxy: string;
+  netwait_enabled: boolean;
+  netwait_ip: string[];
+  outbound_network_activity: NetworkActivityType;
+  outbound_network_value: string[];
 }
 
 export interface NetworkConfigurationState {
@@ -41,12 +50,7 @@ export interface NetworkConfigurationActivity {
   activities: string[];
 }
 
-export type NetworkActivityChoice = [
-  value: string,
-  label: string,
-];
-
-export interface NetworkConfigurationUpdate {
+export interface NetworkConfigurationUpdate extends NetworkConfigurationState {
   activity: NetworkConfigurationActivity;
   domain: string;
   domains: string[];
@@ -55,11 +59,6 @@ export interface NetworkConfigurationUpdate {
   hostname_virtual: string;
   hosts: string;
   httpproxy: string;
-  ipv4gateway: string;
-  ipv6gateway: string;
-  nameserver1: string;
-  nameserver2: string;
-  nameserver3: string;
   netwait_enabled: boolean;
   netwait_ip: string[];
   service_announcement: NetworkServiceAnnouncement;

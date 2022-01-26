@@ -372,7 +372,6 @@ export class LineChartComponent extends ViewComponent implements AfterViewInit, 
 
     if (changes.data) {
       if (this.chart) {
-        // this.chart.destroy();
         this.render(true);
       } else {
         this.render();// make an update method?

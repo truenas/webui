@@ -150,15 +150,6 @@ export class UserFormComponent implements FormConfiguration {
           required: true,
           validation: helptext.user_form_uid_validation,
         },
-        {
-          type: 'checkbox',
-          name: helptext.user_form_group_create_name,
-          placeholder: helptext.user_form_group_create_placeholder,
-          tooltip: helptext.user_form_group_create_tooltip,
-          value: true,
-          isHidden: false,
-          expandedHeight: true,
-        },
       ],
     },
     {
@@ -168,6 +159,15 @@ export class UserFormComponent implements FormConfiguration {
       width: '50%',
       config: [
         {
+          type: 'checkbox',
+          name: helptext.user_form_group_create_name,
+          placeholder: helptext.user_form_group_create_placeholder,
+          tooltip: helptext.user_form_group_create_tooltip,
+          value: true,
+          isHidden: false,
+          expandedHeight: true,
+        },
+        {
           type: 'select',
           name: helptext.user_form_primary_group_name,
           placeholder: helptext.user_form_primary_group_placeholder,
@@ -175,7 +175,7 @@ export class UserFormComponent implements FormConfiguration {
           options: [],
           relation: [
             {
-              action: RelationAction.Disable,
+              action: RelationAction.Hide,
               when: [{
                 name: 'group_create',
                 value: true,

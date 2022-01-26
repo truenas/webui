@@ -18,6 +18,7 @@ import { AlertsModule } from 'app/modules/alerts/alerts.module';
 import { CastModule } from 'app/modules/cast/cast.module';
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
+import { LayoutModule } from 'app/modules/layout/layout.module';
 import { DialogService } from 'app/services/dialog.service';
 import { LanguageService } from 'app/services/language.service';
 import { LocaleService } from 'app/services/locale.service';
@@ -48,6 +49,7 @@ import { TopbarComponent } from './topbar/topbar.component';
     AngularSvgIconModule.forRoot(),
     CastModule,
     AlertsModule,
+    LayoutModule,
   ],
   declarations: [
     AdminLayoutComponent,

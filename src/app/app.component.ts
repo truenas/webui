@@ -7,7 +7,7 @@ import {
 } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { customSvgIcons } from 'app/core/classes/custom-icons';
-import { DataService } from 'app/services/data.service';
+import { SystemProfileService } from 'app/services/system-profile.service';
 import { ThemeService } from 'app/services/theme/theme.service';
 import productText from './helptext/product';
 import { SystemGeneralService } from './services';
@@ -31,10 +31,9 @@ export class AppComponent {
     public domSanitizer: DomSanitizer,
     public matIconRegistry: MatIconRegistry,
     private sysGeneralService: SystemGeneralService,
-
     // TODO: Keep or do proper refactoring.
     // Currently our code relies for SysInfo to be emitted by SystemProfileService constructor.
-    private cache: DataService,
+    private sysInfo: SystemProfileService,
   ) {
     this.matIconRegistry.addSvgIconSetInNamespace(
       'mdi',
@@ -77,10 +76,6 @@ export class AppComponent {
         }
       }
 
-      if (this.themeservice.globalPreview) {
-        // Only for globally applied theme preview
-        this.globalPreviewControl();
-      }
       if (s instanceof NavigationCancel) {
         const params = new URLSearchParams(s.url.split('#')[1]);
         const isEmbedded = params.get('embedded');
@@ -105,7 +100,6 @@ export class AppComponent {
     const link: HTMLLinkElement = document.querySelector("link[rel*='icon']") || document.createElement('link');
     link['rel'] = 'icon';
     link['type'] = 'image/png';
-    // link.sizes = "16x16";
     link['href'] = str;
     document.getElementsByTagName('head')[0].appendChild(link);
   }
@@ -119,16 +113,5 @@ export class AppComponent {
     const browserName = browserVersion ? browserVersion[1] : appName;
 
     return name === browserName;
-  }
-
-  private globalPreviewControl(): void {
-    const snackBarRef = this.snackBar.open('Custom theme Global Preview engaged', 'Back to form');
-    snackBarRef.onAction().pipe(untilDestroyed(this)).subscribe(() => {
-      this.router.navigate(['ui-preferences', 'create-theme']);
-    });
-
-    if (this.router.url === '/ui-preferences/create-theme' || this.router.url === '/ui-preferences/edit-theme') {
-      snackBarRef.dismiss();
-    }
   }
 }

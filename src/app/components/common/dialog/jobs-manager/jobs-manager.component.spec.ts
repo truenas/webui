@@ -130,7 +130,7 @@ describe('JobsManagerComponent', () => {
   });
 
   xit('shows entity job dialog if user clicks on the job', () => {
-    spectator.click(spectator.query('.job-clickable'));
+    spectator.click(spectator.query('.job-item-body'));
 
     /*
       TODO: Find a way to mock componentInstance
