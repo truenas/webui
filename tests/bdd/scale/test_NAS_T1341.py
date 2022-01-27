@@ -64,8 +64,8 @@ def click_install(driver):
     time.sleep(2)  # we have to wait for the page to settle down and the card to fully load
     assert wait_on_element(driver, 20, '//mat-card[contains(.,"ipfs")]//span[contains(.,"Install")]', 'clickable')
     driver.find_element_by_xpath('//mat-card[contains(.,"ipfs")]//span[contains(.,"Install")]').click()
-    assert wait_on_element(driver, 5, '//*[contains(.,"Please wait")]')
-    assert wait_on_element_disappear(driver, 10, '//*[contains(.,"Please wait")]')
+    if is_element_present(driver, '//*[contains(.,"Please wait")]'):
+        assert wait_on_element_disappear(driver, 10, '//*[contains(.,"Please wait")]')
 
 
 @then('set application name')
