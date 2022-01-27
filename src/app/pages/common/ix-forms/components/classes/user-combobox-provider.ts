@@ -1,11 +1,11 @@
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { Option } from 'app/interfaces/option.interface';
-import { User } from 'app/interfaces/user.interface';
-import { IxComboboxProvider } from 'app/pages/common/ix-forms/components/ix-combobox2/ix-combobox-provider';
 import { UserService } from 'app/services';
+import { Option } from '../../../../../interfaces/option.interface';
+import { User } from '../../../../../interfaces/user.interface';
+import { IxComboboxProvider } from '../ix-combobox2/ix-combobox-provider';
 
-export class IxUserComboboxProvider implements IxComboboxProvider {
+export class UserComboboxProvider implements IxComboboxProvider {
   private page = 1;
   readonly pageSize = 50;
 

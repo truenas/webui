@@ -14,6 +14,7 @@ import { Group } from 'app/interfaces/group.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { forbiddenValues } from 'app/pages/common/entity/entity-form/validators/forbidden-values-validation';
 import { regexValidator } from 'app/pages/common/entity/entity-form/validators/regex-validation';
+import { SimpleComboboxProvider } from 'app/pages/common/ix-forms/components/classes/simple-combobox-provider';
 import { IxComboboxProvider } from 'app/pages/common/ix-forms/components/ix-combobox2/ix-combobox-provider';
 import { FormErrorHandlerService } from 'app/pages/common/ix-forms/services/form-error-handler.service';
 import { IxUserComboboxService } from 'app/pages/common/ix-forms/services/ix-user-combobox.service';
@@ -44,6 +45,7 @@ export class GroupFormComponent {
     allowDuplicateGid: [false],
     userCombo: [''],
     normalCombo: [''],
+    simpleCombo: [''],
   });
 
   readonly tooltips = {
@@ -57,6 +59,39 @@ export class GroupFormComponent {
   userProvider = this.userService.getNewProvider();
   normalPage = 0;
   readonly normalPageSize = 6;
+
+  simpleProvider = new SimpleComboboxProvider([
+    { label: UUID.UUID().toString().substring(0, 6), value: UUID.UUID().toString() },
+    { label: UUID.UUID().toString().substring(0, 6), value: UUID.UUID().toString() },
+    { label: UUID.UUID().toString().substring(0, 6), value: UUID.UUID().toString() },
+    { label: UUID.UUID().toString().substring(0, 6), value: UUID.UUID().toString() },
+    { label: UUID.UUID().toString().substring(0, 6), value: UUID.UUID().toString() },
+    { label: UUID.UUID().toString().substring(0, 6), value: UUID.UUID().toString() },
+    { label: UUID.UUID().toString().substring(0, 6), value: UUID.UUID().toString() },
+    { label: UUID.UUID().toString().substring(0, 6), value: UUID.UUID().toString() },
+    { label: UUID.UUID().toString().substring(0, 6), value: UUID.UUID().toString() },
+    { label: UUID.UUID().toString().substring(0, 6), value: UUID.UUID().toString() },
+    { label: UUID.UUID().toString().substring(0, 6), value: UUID.UUID().toString() },
+    { label: UUID.UUID().toString().substring(0, 6), value: UUID.UUID().toString() },
+    { label: UUID.UUID().toString().substring(0, 6), value: UUID.UUID().toString() },
+    { label: UUID.UUID().toString().substring(0, 6), value: UUID.UUID().toString() },
+    { label: UUID.UUID().toString().substring(0, 6), value: UUID.UUID().toString() },
+    { label: UUID.UUID().toString().substring(0, 6), value: UUID.UUID().toString() },
+    { label: UUID.UUID().toString().substring(0, 6), value: UUID.UUID().toString() },
+    { label: UUID.UUID().toString().substring(0, 6), value: UUID.UUID().toString() },
+    { label: UUID.UUID().toString().substring(0, 6), value: UUID.UUID().toString() },
+    { label: UUID.UUID().toString().substring(0, 6), value: UUID.UUID().toString() },
+    { label: UUID.UUID().toString().substring(0, 6), value: UUID.UUID().toString() },
+    { label: UUID.UUID().toString().substring(0, 6), value: UUID.UUID().toString() },
+    { label: UUID.UUID().toString().substring(0, 6), value: UUID.UUID().toString() },
+    { label: UUID.UUID().toString().substring(0, 6), value: UUID.UUID().toString() },
+    { label: UUID.UUID().toString().substring(0, 6), value: UUID.UUID().toString() },
+    { label: UUID.UUID().toString().substring(0, 6), value: UUID.UUID().toString() },
+    { label: UUID.UUID().toString().substring(0, 6), value: UUID.UUID().toString() },
+    { label: UUID.UUID().toString().substring(0, 6), value: UUID.UUID().toString() },
+    { label: UUID.UUID().toString().substring(0, 6), value: UUID.UUID().toString() },
+    { label: UUID.UUID().toString().substring(0, 6), value: UUID.UUID().toString() },
+  ]);
 
   normalOptionsRepo: Option[];
   normalProvider: IxComboboxProvider = {
