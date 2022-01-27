@@ -1,5 +1,5 @@
 # coding=utf-8
-"""SCALE UI: Apps Page - Validate nextcloud feature tests."""
+"""SCALE UI: feature tests."""
 
 import time
 from function import (
@@ -17,8 +17,8 @@ from pytest_bdd import (
 )
 
 
-@scenario('features/NAS-T1343.feature', 'SCALE UI: Apps Page - Validate nextcloud')
-def test_scale_ui_apps_page__validate_nextcloud():
+@scenario('features/NAS-T1343.feature', 'Apps Page - Validate nextcloud')
+def test__apps_page__validate_nextcloud():
     """SCALE UI: Apps Page - Validate nextcloud."""
 
 
