@@ -129,7 +129,7 @@ def confirm_installation_is_successful(driver):
         driver.find_element_by_xpath('//strong[contains(.,"chia-test")]').click()
         assert wait_on_element(driver, 5, '//*[contains(.,"Please wait")]')
         # sometimes the please wait window opens and closes so fast that the test fails here, other times it shows for about a second 
-        time.sleep(1) 
+        time.sleep(3)  # we have to wait for the page to settle down and the cards to fully load
         #assert wait_on_element(driver, 5, '//*[contains(.,"Please wait")]')
         #assert wait_on_element_disappear(driver, 10, '//*[contains(.,"Please wait")]')    
         # refresh loop
