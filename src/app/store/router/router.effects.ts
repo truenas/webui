@@ -4,7 +4,7 @@ import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { routerNavigationAction, RouterNavigationAction } from '@ngrx/router-store';
 import { TranslateService } from '@ngx-translate/core';
 import { tap } from 'rxjs/operators';
-import { CustomRouterState } from 'app/store/serializers/custom-router-serializer';
+import { CustomRouterState } from 'app/store/router/custom-router-serializer';
 
 @Injectable()
 export class RouterEffects {

@@ -10,6 +10,7 @@ import {
 import { NgForm } from '@angular/forms';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { UUID } from 'angular2-uuid';
 import { add, sub } from 'date-fns';
@@ -23,11 +24,13 @@ import { EmptyConfig, EmptyType } from 'app/modules/entity/entity-empty/entity-e
 import { WidgetComponent } from 'app/pages/dashboard/components/widget/widget.component';
 import { LineChartComponent } from 'app/pages/reports-dashboard/components/line-chart/line-chart.component';
 import { ReportingDatabaseError, ReportsService } from 'app/pages/reports-dashboard/reports.service';
-import { WebSocketService, SystemGeneralService } from 'app/services/';
+import { WebSocketService } from 'app/services/';
 import { CoreService } from 'app/services/core-service/core.service';
 import { DialogService } from 'app/services/dialog.service';
 import { LocaleService } from 'app/services/locale.service';
 import { Theme } from 'app/services/theme/theme.service';
+import { AppState } from 'app/store';
+import { selectTimezone } from 'app/store/system-config/system-config.selectors';
 
 interface DateTime {
   dateFormat: string;
@@ -140,9 +143,9 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
     private reportsService: ReportsService,
     private ws: WebSocketService,
     protected localeService: LocaleService,
-    private sysGeneralService: SystemGeneralService,
     private dialog: DialogService,
     private core: CoreService,
+    private store$: Store<AppState>,
   ) {
     super(translate);
 
@@ -169,9 +172,9 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
 
     this.core.emit({ name: 'ThemeDataRequest', sender: this });
 
-    this.sysGeneralService.getGeneralConfig$.pipe(
-      untilDestroyed(this),
-    ).subscribe((res) => this.timezone = res.timezone);
+    this.store$.select(selectTimezone).pipe(untilDestroyed(this)).subscribe((timezone) => {
+      this.timezone = timezone;
+    });
   }
 
   ngOnDestroy(): void {
