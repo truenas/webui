@@ -128,6 +128,7 @@ export class VolumeStatusComponent implements OnInit {
   }];
 
   protected pool: any;
+  private duplicateSerialDisks: any[] = [];
 
   constructor(protected aroute: ActivatedRoute,
     protected ws: WebSocketService,
@@ -204,6 +205,9 @@ export class VolumeStatusComponent implements OnInit {
       }
       _.find(this.replaceDiskFormFields, { name: 'disk' }).options = availableDisks;
       _.find(this.extendVdevFormFields, { name: 'new_disk' }).options = availableDisksForExtend;
+      if (res.some((disk) => disk.duplicate_serial)) {
+        this.duplicateSerialDisks = res.filter((disk) => disk.duplicate_serial.length);
+      }
     });
   }
   ngOnInit() {
@@ -319,11 +323,15 @@ export class VolumeStatusComponent implements OnInit {
           saveButtonText: helptext.replace_disk.saveButtonText,
           parent: this,
           customSubmit(entityDialog: any) {
-            delete entityDialog.formValue['passphrase2'];
+            const body = { ...entityDialog.formValue };
+            delete body['passphrase2'];
+            if (this.duplicateSerialDisks.find((disk) => disk.name === entityDialog.formValue.new_disk)) {
+              body['allow_duplicate_serials'] = true;
+            }
 
             const dialogRef = entityDialog.parent.matDialog.open(EntityJobComponent, { data: { title: helptext.replace_disk.title }, disableClose: true });
             dialogRef.componentInstance.setDescription(helptext.replace_disk.description);
-            dialogRef.componentInstance.setCall('pool.replace', [pk, entityDialog.formValue]);
+            dialogRef.componentInstance.setCall('pool.replace', [pk, body]);
             dialogRef.componentInstance.submit();
             dialogRef.componentInstance.success.subscribe((res) => {
               dialogRef.close(true);

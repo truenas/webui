@@ -19,6 +19,7 @@ import { DialogFormConfiguration } from '../../../common/entity/entity-dialog/di
 import { EntityUtils } from '../../../common/entity/utils';
 import { DiskComponent } from './disk';
 import { VdevComponent } from './vdev';
+import { DiskBus } from 'app/enums/disk-bus.enum';
 
 @Component({
   selector: 'app-manager',
@@ -36,8 +37,8 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
     data: [{}], cache: [], spares: [], log: [], special: [], dedup: [],
   };
   original_vdevs: any = {};
-  original_disks: any[];
-  orig_suggestable_disks: any[];
+  original_disks: any[] = [];
+  orig_suggestable_disks: any[] = [];
   error: string;
   @ViewChild('disksdnd', { static: true }) disksdnd;
   @ViewChildren(VdevComponent) vdevComponents: QueryList < VdevComponent > ;
@@ -134,6 +135,26 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
   protected mindisks = {
     stripe: 1, mirror: 2, raidz: 3, raidz2: 4, raidz3: 5,
   };
+
+  includeNonUniqueSerialDisks = false;
+  nonUniqueSerialDisks: any[] = [];
+  get availableNonUniqueSerialDisksCount(): number {
+    if (this.original_disks.length === this.temp.length) {
+      return this.nonUniqueSerialDisks.length;
+    }
+    return this.temp.filter((disk) => this.nonUniqueSerialDisks.includes(disk)).length;
+  }
+  get nonUniqueSerialDisksWarning(): string {
+    if (!this.nonUniqueSerialDisks.length) {
+      return null;
+    }
+
+    if (this.nonUniqueSerialDisks.every((disk) => disk.bus === DiskBus.Usb)) {
+      return this.translate.instant('Warning: There are ') + this.availableNonUniqueSerialDisksCount + this.translate.instant(' USB disks available that have non-unique serial numbers. USB controllers may report disk serial incorrectly, making such disks indistinguishable from each other. Adding such disks to a pool can result in lost data.');
+    }
+
+    return this.translate.instant('Warning: There are ') + this.availableNonUniqueSerialDisksCount + this.translate.instant(' disks available that have non-unique serial numbers. Non-unique serial numbers can be caused by a cabling issue and adding such disks to a pool can result in lost data.');
+  }
 
   constructor(
     private ws: WebSocketService,
@@ -375,6 +396,10 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
       this.can_suggest = this.suggestable_disks.length < 11;
 
       this.temp = [...this.disks];
+      if (this.disks.some((disk) => disk.duplicate_serial)) {
+        this.nonUniqueSerialDisks = this.disks.filter((disk) => disk.duplicate_serial.length);
+        this.disks = this.disks.filter((disk) => !disk.duplicate_serial.length);
+      }
       this.getDuplicableDisks();
     }, (err) => {
       this.loader.close();
@@ -581,6 +606,7 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
   doSubmit() {
     let confirmButton = T('Create Pool');
     let diskWarning = this.diskAddWarning;
+    let allowDuplicateSerials = false;
     if (!this.isNew) {
       confirmButton = T('Add Vdevs');
       diskWarning = this.diskExtendWarning;
@@ -594,6 +620,9 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
         this.vdevComponents.forEach((vdev) => {
           const disks = [];
           vdev.getDisks().forEach((disk) => {
+            if (disk.duplicate_serial && disk.duplicate_serial.length) {
+              allowDuplicateSerials = true;
+            }
             disks.push(disk.devname);
           });
           if (disks.length > 0) {
@@ -619,6 +648,10 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
           }
         } else {
           body = { topology: layout };
+        }
+
+        if (allowDuplicateSerials) {
+          body['allow_duplicate_serials'] = true;
         }
 
         const dialogRef = this.mdDialog.open(EntityJobComponent, {
@@ -808,5 +841,14 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
       const heightStr = `height: ${newHeight}px`;
       document.getElementsByClassName('ngx-datatable')[0].setAttribute('style', heightStr);
     }, 100);
+  }
+
+  toggleNonUniqueSerialDisks(): void {
+    this.includeNonUniqueSerialDisks = !this.includeNonUniqueSerialDisks;
+    if (this.includeNonUniqueSerialDisks) {
+      this.disks = this.original_disks.filter((disk) => this.temp.includes(disk));
+    } else {
+      this.disks = this.disks.filter((disk) => !this.nonUniqueSerialDisks.includes(disk));
+    }
   }
 }
