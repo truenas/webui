@@ -115,9 +115,4 @@ export default {
   other_title: T('Other Options'),
 
   formTitle: T('SNMP'),
-
-  iftop: {
-    placeholder: T('Enable Network Performance Statistics'),
-    tooltip: T('Include iftop network performance statistics in SNMP messages.'),
-  },
 };
