@@ -8,8 +8,8 @@ import {
   alertsLoaded,
   alertsNotLoaded, dismissAlertPressed, dismissAllAlertsPressed, reopenAlertPressed, reopenAllAlertsPressed,
 } from 'app/modules/alerts/store/alert.actions';
-import { adminUiInitialized } from 'app/store/actions/admin.actions';
-import { alertIndicatorPressed } from 'app/store/actions/topbar.actions';
+import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
+import { alertIndicatorPressed } from 'app/store/topbar/topbar.actions';
 
 export interface AlertsState extends EntityState<Alert> {
   isLoading: boolean;

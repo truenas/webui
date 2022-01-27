@@ -1,22 +1,22 @@
 import {
-  byText, createComponentFactory, mockProvider, Spectator,
+  byText, createComponentFactory, Spectator,
 } from '@ngneat/spectator/jest';
 import { EffectsModule } from '@ngrx/effects';
 import { Store, StoreModule } from '@ngrx/store';
 import { MockPipe, ngMocks } from 'ng-mocks';
-import { of } from 'rxjs';
 import { first, map } from 'rxjs/operators';
 import { FormatDateTimePipe } from 'app/core/components/pipes/format-datetime.pipe';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { AlertLevel } from 'app/enums/alert-level.enum';
 import { Alert } from 'app/interfaces/alert.interface';
-import { SystemGeneralConfig } from 'app/interfaces/system-config.interface';
 import { AlertComponent } from 'app/modules/alerts/components/alert/alert.component';
 import { AlertPageObject } from 'app/modules/alerts/components/alert/alert.page-object';
 import { AlertEffects } from 'app/modules/alerts/store/alert.effects';
 import { adapter, alertReducer, alertsInitialState } from 'app/modules/alerts/store/alert.reducer';
 import { alertStateKey, selectAlerts } from 'app/modules/alerts/store/alert.selectors';
-import { SystemGeneralService, WebSocketService } from 'app/services';
+import { WebSocketService } from 'app/services';
+import { systemConfigReducer, SystemConfigState } from 'app/store/system-config/system-config.reducer';
+import { systemConfigStateKey } from 'app/store/system-config/system-config.selectors';
 
 const dummyAlert = {
   id: '79',
@@ -35,9 +35,17 @@ describe('AlertComponent', () => {
   const createComponent = createComponentFactory({
     component: AlertComponent,
     imports: [
-      StoreModule.forRoot({ [alertStateKey]: alertReducer }, {
+      StoreModule.forRoot({
+        [alertStateKey]: alertReducer,
+        [systemConfigStateKey]: systemConfigReducer,
+      }, {
         initialState: {
           [alertStateKey]: adapter.setAll([dummyAlert], alertsInitialState),
+          [systemConfigStateKey]: {
+            generalConfig: {
+              timezone: 'America/Alaska',
+            },
+          } as SystemConfigState,
         },
       }),
       EffectsModule.forRoot([AlertEffects]),
@@ -50,11 +58,6 @@ describe('AlertComponent', () => {
         mockCall('alert.dismiss'),
         mockCall('alert.restore'),
       ]),
-      mockProvider(SystemGeneralService, {
-        getGeneralConfig$: of({
-          timezone: 'America/Alaska',
-        } as SystemGeneralConfig),
-      }),
     ],
   });
 

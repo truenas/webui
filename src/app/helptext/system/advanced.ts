@@ -90,9 +90,6 @@ simultaneously.'),
   traceback_tooltip: T('Provides a pop-up window of diagnostic information if a\
  fatal error occurs.'),
 
-  advancedmode_placeholder: T('Show Advanced Fields by Default'),
-  advancedmode_tooltip: T('Set to always show advanced fields, when available.'),
-
   fqdn_placeholder: T('Use FQDN for Logging'),
   fqdn_tooltip: T('Set to include the Fully-Qualified Domain Name (FQDN)\
  in logs to precisely identify systems with similar\

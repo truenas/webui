@@ -1,5 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Store } from '@ngrx/store';
 import { map } from 'rxjs/operators';
 import { Option } from 'app/interfaces/option.interface';
 import { ZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
@@ -8,8 +9,10 @@ import {
   EntityRowDetails,
 } from 'app/modules/entity/entity-table/entity-row-details/entity-row-details.interface';
 import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-table.component';
-import { WebSocketService, StorageService, SystemGeneralService } from 'app/services';
+import { WebSocketService, StorageService } from 'app/services';
 import { LocaleService } from 'app/services/locale.service';
+import { AppState } from 'app/store';
+import { selectTimezone } from 'app/store/system-config/system-config.selectors';
 import { SnapshotListComponent } from '../snapshot-list.component';
 
 @UntilDestroy()
@@ -34,12 +37,12 @@ export class SnapshotDetailsComponent implements EntityRowDetails<{ name: string
     private ws: WebSocketService,
     private localeService: LocaleService,
     protected storageService: StorageService,
-    private sysGeneralService: SystemGeneralService,
+    private store$: Store<AppState>,
   ) {}
 
   ngOnInit(): void {
-    this.sysGeneralService.getGeneralConfig$.pipe(untilDestroyed(this)).subscribe((res) => {
-      this.timezone = res.timezone;
+    this.store$.select(selectTimezone).pipe(untilDestroyed(this)).subscribe((timezone) => {
+      this.timezone = timezone;
       this.ws
         .call('zfs.snapshot.query', [[['id', '=', this.config.name]]])
         .pipe(

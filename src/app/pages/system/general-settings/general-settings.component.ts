@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Store } from '@ngrx/store';
 import { Subject } from 'rxjs';
 import { helptextSystemGeneral as helptext } from 'app/helptext/system/general';
 import { CoreEvent } from 'app/interfaces/events';
@@ -23,6 +24,8 @@ import { SystemGeneralService, DialogService, StorageService } from 'app/service
 import { CoreService } from 'app/services/core-service/core.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LocaleService } from 'app/services/locale.service';
+import { AppState } from 'app/store';
+import { waitForGeneralConfig } from 'app/store/system-config/system-config.selectors';
 import { GuiFormComponent } from './gui-form/gui-form.component';
 
 enum GeneralCardId {
@@ -115,13 +118,11 @@ export class GeneralSettingsComponent implements OnInit {
     private slideInService: IxSlideInService,
     private storage: StorageService,
     private http: HttpClient,
+    private store$: Store<AppState>,
   ) { }
 
   ngOnInit(): void {
     this.getDataCardData();
-    this.sysGeneralService.refreshSysGeneral$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.getDataCardData();
-    });
 
     this.formEvent$ = new Subject();
     this.formEvent$.pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
@@ -164,34 +165,34 @@ export class GeneralSettingsComponent implements OnInit {
   }
 
   getDataCardData(): void {
-    this.sysGeneralService.getGeneralConfig$.pipe(untilDestroyed(this)).subscribe((res) => {
-      this.configData = res;
+    this.store$.pipe(waitForGeneralConfig, untilDestroyed(this)).subscribe((config) => {
+      this.configData = config;
       this.dataCards = [
         {
           title: helptext.guiTitle,
           id: GeneralCardId.Gui,
           items: [
-            { label: helptext.ui_certificate.label, value: res.ui_certificate.name },
-            { label: helptext.ui_address.label, value: res.ui_address.join(', ') },
-            { label: helptext.ui_v6address.label, value: res.ui_v6address.join(', ') },
-            { label: helptext.ui_port.label, value: res.ui_port },
-            { label: helptext.ui_httpsport.label, value: res.ui_httpsport },
-            { label: helptext.ui_httpsprotocols.label, value: res.ui_httpsprotocols.join(', ') },
+            { label: helptext.ui_certificate.label, value: config.ui_certificate.name },
+            { label: helptext.ui_address.label, value: config.ui_address.join(', ') },
+            { label: helptext.ui_v6address.label, value: config.ui_v6address.join(', ') },
+            { label: helptext.ui_port.label, value: config.ui_port },
+            { label: helptext.ui_httpsport.label, value: config.ui_httpsport },
+            { label: helptext.ui_httpsprotocols.label, value: config.ui_httpsprotocols.join(', ') },
             {
               label: helptext.ui_httpsredirect.label,
-              value: res.ui_httpsredirect ? helptext.enabled : helptext.disabled,
+              value: config.ui_httpsredirect ? helptext.enabled : helptext.disabled,
             },
             {
               label: helptext.crash_reporting.label,
-              value: res.crash_reporting ? helptext.enabled : helptext.disabled,
+              value: config.crash_reporting ? helptext.enabled : helptext.disabled,
             },
             {
               label: helptext.usage_collection.label,
-              value: res.usage_collection ? helptext.enabled : helptext.disabled,
+              value: config.usage_collection ? helptext.enabled : helptext.disabled,
             },
             {
               label: helptext.ui_consolemsg.label,
-              value: res.ui_consolemsg ? helptext.enabled : helptext.disabled,
+              value: config.ui_consolemsg ? helptext.enabled : helptext.disabled,
             },
           ],
           actions: [
@@ -205,22 +206,22 @@ export class GeneralSettingsComponent implements OnInit {
       this.sysGeneralService.languageChoices().pipe(untilDestroyed(this)).subscribe((languages) => {
         this.sysGeneralService.kbdMapChoices().pipe(untilDestroyed(this)).subscribe((mapchoices) => {
           const keyboardMap = mapchoices.find((x) => x.value === this.configData.kbdmap);
-          const dateTime = this.localeService.getDateAndTime(res.timezone);
+          const dateTime = this.localeService.getDateAndTime(config.timezone);
           this.localeData = {
             title: helptext.localeTitle,
             id: GeneralCardId.Localization,
             items: [
-              { label: helptext.stg_language.placeholder, value: languages[res.language] },
+              { label: helptext.stg_language.placeholder, value: languages[config.language] },
               { label: helptext.date_format.placeholder, value: dateTime[0] },
               { label: helptext.time_format.placeholder, value: dateTime[1] },
-              { label: helptext.stg_timezone.placeholder, value: res.timezone },
-              { label: helptext.stg_kbdmap.placeholder, value: res.kbdmap ? keyboardMap.label : helptext.default },
+              { label: helptext.stg_timezone.placeholder, value: config.timezone },
+              { label: helptext.stg_kbdmap.placeholder, value: config.kbdmap ? keyboardMap.label : helptext.default },
             ],
           };
           this.localizationSettings = {
-            language: res.language,
-            kbdMap: res.kbdmap,
-            timezone: res.timezone,
+            language: config.language,
+            kbdMap: config.kbdmap,
+            timezone: config.timezone,
             dateFormat: this.localeService.getPreferredDateFormat(),
             timeFormat: this.localeService.getPreferredTimeFormat(),
           };
@@ -240,7 +241,6 @@ export class GeneralSettingsComponent implements OnInit {
         localizationFormModal.setupForm(this.localizationSettings);
         break;
     }
-    this.sysGeneralService.sendConfigData(this.configData);
   }
 
   saveConfigSubmit(entityDialog: EntityDialogComponent): void {

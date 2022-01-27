@@ -1,10 +1,12 @@
 import { Injectable } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 import { Observable, of } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
-import { SystemGeneralService } from 'app/services/system-general.service';
+import { AppState } from 'app/store';
+import { selectGeneralConfig } from 'app/store/system-config/system-config.selectors';
 import { WebSocketService } from './ws.service';
 
 @UntilDestroy()
@@ -370,7 +372,7 @@ export class LanguageService {
   constructor(
     protected translate: TranslateService,
     protected ws: WebSocketService,
-    private sysGeneralService: SystemGeneralService,
+    private store$: Store<AppState>,
   ) {
   }
 
@@ -384,9 +386,9 @@ export class LanguageService {
   }
 
   setLanguageFromMiddleware(): Observable<boolean> {
-    return this.sysGeneralService.getGeneralConfig$.pipe(switchMap((res) => {
-      if (res?.language) {
-        return this.setLanguage(res.language);
+    return this.store$.select(selectGeneralConfig).pipe(switchMap((config) => {
+      if (config?.language) {
+        return this.setLanguage(config.language);
       }
 
       return this.setLanguageFromBrowser();
