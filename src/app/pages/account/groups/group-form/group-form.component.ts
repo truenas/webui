@@ -5,13 +5,18 @@ import { Validators } from '@angular/forms';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+import { UUID } from 'angular2-uuid';
 import * as _ from 'lodash';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
+import { delay } from 'rxjs/operators';
 import helptext from 'app/helptext/account/groups';
 import { Group } from 'app/interfaces/group.interface';
+import { Option } from 'app/interfaces/option.interface';
 import { forbiddenValues } from 'app/pages/common/entity/entity-form/validators/forbidden-values-validation';
 import { regexValidator } from 'app/pages/common/entity/entity-form/validators/regex-validation';
+import { IxComboboxProvider } from 'app/pages/common/ix-forms/components/ix-combobox2/ix-combobox-provider';
 import { FormErrorHandlerService } from 'app/pages/common/ix-forms/services/form-error-handler.service';
+import { IxUserComboboxService } from 'app/pages/common/ix-forms/services/ix-user-combobox.service';
 import { UserService, WebSocketService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
@@ -37,6 +42,8 @@ export class GroupFormComponent {
     sudo: [false],
     smb: [false],
     allowDuplicateGid: [false],
+    userCombo: [''],
+    normalCombo: [''],
   });
 
   readonly tooltips = {
@@ -47,6 +54,32 @@ export class GroupFormComponent {
     allowDuplicateGid: helptext.allow_tooltip,
   };
 
+  userProvider = this.userService.getNewProvider();
+  normalPage = 0;
+  readonly normalPageSize = 6;
+
+  normalOptionsRepo: Option[];
+  normalProvider: IxComboboxProvider = {
+    filter: (options: Option[], filterValue: string): Observable<Option[]> => {
+      if (filterValue) {
+        return of(this.normalOptionsRepo.filter((option: Option) => {
+          return option.label.toLowerCase().includes(filterValue.toLowerCase())
+              || option.value.toString().toLowerCase().includes(filterValue.toLowerCase());
+        }));
+      }
+      this.normalPage = 0;
+      return of([...this.normalOptionsRepo.slice(0, 6)]);
+    },
+    nextPage: (): Observable<Option[]> => {
+      this.normalPage++;
+      const offset = this.normalPage * this.normalPageSize;
+      if (offset >= this.normalOptionsRepo.length) {
+        return of([]);
+      }
+      return of(this.normalOptionsRepo.slice(offset, offset + this.normalPageSize)).pipe(delay(3000));
+    },
+  };
+
   constructor(
     private fb: FormBuilder,
     private ws: WebSocketService,
@@ -54,7 +87,41 @@ export class GroupFormComponent {
     private cdr: ChangeDetectorRef,
     private errorHandler: FormErrorHandlerService,
     private translate: TranslateService,
-  ) {}
+    private userService: IxUserComboboxService,
+  ) {
+    this.normalOptionsRepo = [
+      { label: UUID.UUID().toString().substring(0, 6), value: UUID.UUID().toString() },
+      { label: UUID.UUID().toString().substring(0, 6), value: UUID.UUID().toString() },
+      { label: UUID.UUID().toString().substring(0, 6), value: UUID.UUID().toString() },
+      { label: UUID.UUID().toString().substring(0, 6), value: UUID.UUID().toString() },
+      { label: UUID.UUID().toString().substring(0, 6), value: UUID.UUID().toString() },
+      { label: UUID.UUID().toString().substring(0, 6), value: UUID.UUID().toString() },
+      { label: UUID.UUID().toString().substring(0, 6), value: UUID.UUID().toString() },
+      { label: UUID.UUID().toString().substring(0, 6), value: UUID.UUID().toString() },
+      { label: UUID.UUID().toString().substring(0, 6), value: UUID.UUID().toString() },
+      { label: UUID.UUID().toString().substring(0, 6), value: UUID.UUID().toString() },
+      { label: UUID.UUID().toString().substring(0, 6), value: UUID.UUID().toString() },
+      { label: UUID.UUID().toString().substring(0, 6), value: UUID.UUID().toString() },
+      { label: UUID.UUID().toString().substring(0, 6), value: UUID.UUID().toString() },
+      { label: UUID.UUID().toString().substring(0, 6), value: UUID.UUID().toString() },
+      { label: UUID.UUID().toString().substring(0, 6), value: UUID.UUID().toString() },
+      { label: UUID.UUID().toString().substring(0, 6), value: UUID.UUID().toString() },
+      { label: UUID.UUID().toString().substring(0, 6), value: UUID.UUID().toString() },
+      { label: UUID.UUID().toString().substring(0, 6), value: UUID.UUID().toString() },
+      { label: UUID.UUID().toString().substring(0, 6), value: UUID.UUID().toString() },
+      { label: UUID.UUID().toString().substring(0, 6), value: UUID.UUID().toString() },
+      { label: UUID.UUID().toString().substring(0, 6), value: UUID.UUID().toString() },
+      { label: UUID.UUID().toString().substring(0, 6), value: UUID.UUID().toString() },
+      { label: UUID.UUID().toString().substring(0, 6), value: UUID.UUID().toString() },
+      { label: UUID.UUID().toString().substring(0, 6), value: UUID.UUID().toString() },
+      { label: UUID.UUID().toString().substring(0, 6), value: UUID.UUID().toString() },
+      { label: UUID.UUID().toString().substring(0, 6), value: UUID.UUID().toString() },
+      { label: UUID.UUID().toString().substring(0, 6), value: UUID.UUID().toString() },
+      { label: UUID.UUID().toString().substring(0, 6), value: UUID.UUID().toString() },
+      { label: UUID.UUID().toString().substring(0, 6), value: UUID.UUID().toString() },
+      { label: UUID.UUID().toString().substring(0, 6), value: UUID.UUID().toString() },
+    ];
+  }
 
   /**
    * @param group Skip argument to add new group.
