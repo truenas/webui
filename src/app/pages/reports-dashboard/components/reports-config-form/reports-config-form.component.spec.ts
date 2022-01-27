@@ -89,7 +89,7 @@ describe('ReportsConfigFormComponent', () => {
     }]);
   });
 
-  it('should warns user about clearing report history when it is required form is saved', async () => {
+  it('should warn user about clearing report history when it is required form is saved', async () => {
     const form = await loader.getHarness(IxFormHarness);
     await form.fillForm({
       'Graph Age in Months': 18,
