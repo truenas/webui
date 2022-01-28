@@ -141,7 +141,7 @@ def when_the_Interfaces_page_appears_verify_vnet0_DHCP_is_no(driver):
     """when the Interfaces page appears verify vnet0 DHCP is "no"."""
     assert wait_on_element(driver, 7, '//div[contains(.,"Interfaces")]')
     assert wait_on_element(driver, 7, '//div[@id="vtnet0_Name"]')
-    dhcp = driver.find_element_by_xpath('//div[@id="vtnet0_DHCP"]').text
+    dhcp = driver.find_element_by_xpath('//div[contains(@id,"vtnet0_DHCP")]').text
     assert dhcp == "no"
 
 
@@ -193,5 +193,5 @@ def on_the_interfaces_page_vnet0_dhcp_is_no(driver):
     """on the Interfaces page vnet0 DHCP is "no"."""
     assert wait_on_element(driver, 7, '//div[contains(.,"Interfaces")]')
     assert wait_on_element(driver, 7, '//div[@id="vtnet0_Name"]')
-    dhcp = driver.find_element_by_xpath('//div[@id="vtnet0_DHCP"]').text
+    dhcp = driver.find_element_by_xpath('//div[contains(@id,"vtnet0_DHCP")]').text
     assert dhcp == "no"
