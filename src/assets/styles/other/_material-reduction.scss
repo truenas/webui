@@ -439,6 +439,10 @@ entity-form-list .list-action-block-wrapper .form-element select {
   position: relative;
 }
 
+.form-element .has_toggle_pw input {
+  padding-right: 35px;
+}
+
 .form-element button.toggle_pw {
   bottom: -2px;
   position: absolute;
