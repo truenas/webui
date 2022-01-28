@@ -11,11 +11,15 @@ import { TreeTableModule } from 'primeng/treetable';
 import { MaterialModule } from 'app/app-material.module';
 import { CoreComponents } from 'app/core/components/core-components.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
+import { AppLoaderModule } from 'app/modules/app-loader/app-loader.module';
 import { CastModule } from 'app/modules/cast/cast.module';
 import { MessageService } from 'app/modules/entity/entity-form/services/message.service';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
 import { DatasetFormComponent } from 'app/pages/storage/volumes/datasets/dataset-form/dataset-form.component';
+import {
+  DeleteDatasetDialogComponent,
+} from 'app/pages/storage/volumes/delete-dataset-dialog/delete-dataset-dialog.component';
 import {
   EncryptionOptionsDialogComponent,
 } from 'app/pages/storage/volumes/encyption-options-dialog/encryption-options-dialog.component';
@@ -74,6 +78,7 @@ import { ZvolWizardComponent } from './volumes/zvol/zvol-wizard/zvol-wizard.comp
     NgxDatatableModule, TranslateModule, FlexLayoutModule,
     NgxFilesizeModule, CommonDirectivesModule, CdkAccordionModule,
     TooltipModule, CoreComponents, CastModule, IxFormsModule,
+    AppLoaderModule,
   ],
   declarations: [
     VolumesListComponent,
@@ -118,6 +123,7 @@ import { ZvolWizardComponent } from './volumes/zvol/zvol-wizard/zvol-wizard.comp
     EditPosixAceComponent,
     SelectPresetModalComponent,
     EncryptionOptionsDialogComponent,
+    DeleteDatasetDialogComponent,
   ],
   exports: [VolumesListControlsComponent],
   entryComponents: [SnapshotDetailsComponent, UnlockDialogComponent],
