@@ -3,9 +3,6 @@ import { Option } from '../../../../../interfaces/option.interface';
 import { IxComboboxProvider } from '../ix-combobox2/ix-combobox-provider';
 
 export class SimpleComboboxProvider implements IxComboboxProvider {
-  private page = 1;
-  readonly pageSize = 50;
-
   filter(options: Option[], filterValue: string): Observable<Option[]> {
     if (filterValue) {
       return of(this.options.filter((option: Option) => {
