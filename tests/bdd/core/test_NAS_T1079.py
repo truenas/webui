@@ -92,7 +92,7 @@ def click_the_submit_button_testzvol_zvol_should_be_created_and_in_the_tank_list
     """click the SUBMIT button, testzvol zvol should be created and in the Tank list."""
     assert wait_on_element(driver, 5, '//button[@ix-auto="button__SUBMIT"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__SUBMIT"]').click()
-    assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
+    assert wait_on_element_disappear(driver, 60, '//h6[contains(.,"Please wait")]')
     assert wait_on_element(driver, 5, f'//span[contains(.,"{zvol_name}")]')
 
 
@@ -114,7 +114,7 @@ def on_the_edit_zvol_page_change_the_zvol_size_to_4_gib_then_click_save(driver, 
     driver.find_element_by_xpath('//input[@ix-auto="input__Size for this zvol"]').send_keys(zvol_size)
     assert wait_on_element(driver, 5, '//button[@ix-auto="button__SAVE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
-    assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
+    assert wait_on_element_disappear(driver, 60, '//h6[contains(.,"Please wait")]')
 
 
 @then(parsers.parse('the {zvol_name} should be saved and show the new size'))
