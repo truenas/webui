@@ -6,6 +6,7 @@
       <span *ngIf="required">*</span>
     </label>
     <tooltip *ngIf="tooltip" [header]="label" class="tooltip" [message]="tooltip"></tooltip>
+    <mat-progress-spinner *ngIf="loading" class="loader" mode="indeterminate" [diameter]="15"></mat-progress-spinner>
   </div>
 
 
@@ -33,7 +34,6 @@
       >
         {{option.label}}
       </mat-option>
-      <mat-progress-bar mode="indeterminate" *ngIf="loading"></mat-progress-bar>
     </mat-autocomplete>
   </div>
   <ix-errors [control]="controlDirective.control" [label]="label"></ix-errors>

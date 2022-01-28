@@ -40,7 +40,16 @@
   }
 }
 
+.loader {
+  display: inline-block;
+  margin-left: 8px;
+}
+
 .label-container {
+  align-items: center;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
   margin-bottom: 5px;
   margin-left: 1px;
 }
