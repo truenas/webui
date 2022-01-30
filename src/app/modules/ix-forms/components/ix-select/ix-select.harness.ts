@@ -64,4 +64,8 @@ export class IxSelectHarness extends ComponentHarness implements IxFormControlHa
 
     await select.clickOptions({ text: newLabels as string });
   }
+
+  async isDisabled(): Promise<boolean> {
+    return (await this.getSelectHarness()).isDisabled();
+  }
 }

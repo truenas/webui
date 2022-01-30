@@ -73,7 +73,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   // For empty state
   get empty(): boolean {
     const rendered = this.dashState.filter((widget) => widget.rendered);
-    return rendered.length == 0;
+    return rendered.length === 0;
   }
 
   emptyDashConf: EmptyConfig = {
@@ -374,7 +374,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     this.core.register({ observerClass: this, eventName: 'SysInfo' }).pipe(untilDestroyed(this)).subscribe((evt: SysInfoEvent) => {
       if (typeof this.systemInformation === 'undefined') {
         this.systemInformation = evt.data;
-        if (!this.pools || this.pools.length == 0) {
+        if (!this.pools || this.pools.length === 0) {
           this.loadPoolData();
         }
       }
@@ -563,7 +563,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
         return widget[key] == w[key];
       });
 
-      if (matches.length == 1) {
+      if (matches.length === 1) {
         clone[index] = matches[0];
       }
     });

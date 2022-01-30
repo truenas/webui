@@ -185,14 +185,14 @@ export class ApplicationsComponent implements OnInit, AfterViewInit {
     };
 
     if (this.isSelectedPool) {
-      if (setting.options.length == 2) {
+      if (setting.options.length === 2) {
         const unsetOption = {
           label: helptext.unset_pool,
           value: 'unset_pool',
         };
         setting.options.push(unsetOption);
       }
-    } else if (setting.options.length == 3) {
+    } else if (setting.options.length === 3) {
       setting.options = setting.options.filter((ctl) => ctl.label !== helptext.unset_pool);
     }
     this.toolbarConfig.controls.push(setting);

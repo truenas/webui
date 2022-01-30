@@ -26,7 +26,8 @@ module.exports = {
       "plugins": [
         "rxjs",
         "rxjs-angular",
-        "unicorn"
+        "unicorn",
+        "angular-file-naming"
       ],
       "rules": {
         // TODO: Conflicts with ngx-translate-extract
@@ -73,6 +74,7 @@ module.exports = {
           "ts": "never",
           "tsx": "never"
         }],
+        "@typescript-eslint/no-use-before-define": ["error", "nofunc"],
 
         // TODO: Partially implemented
         '@typescript-eslint/naming-convention': [
@@ -128,7 +130,6 @@ module.exports = {
         "@typescript-eslint/no-shadow": "off",
         "no-case-declarations": "off",
         "no-multi-str": "off",
-        "@typescript-eslint/no-use-before-define": "off",
         "no-useless-escape": "off",
         "no-cond-assign": "off",
         "no-mixed-operators": "off",
@@ -203,6 +204,15 @@ module.exports = {
           "variables": true,
           "functions": false,
           "methods": false,
+        }],
+
+        // File Naming
+        "angular-file-naming/component-filename-suffix": "error",
+        "angular-file-naming/directive-filename-suffix": "error",
+        "angular-file-naming/module-filename-suffix": "error",
+        "angular-file-naming/pipe-filename-suffix": "error",
+        "angular-file-naming/service-filename-suffix": ["error", {
+          "suffixes": ["service", "effects", "store", "guard"]
         }],
       }
     },

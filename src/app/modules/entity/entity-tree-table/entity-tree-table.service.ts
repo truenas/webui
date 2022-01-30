@@ -95,7 +95,7 @@ export class EntityTreeTableService {
         // Log ancestors so we know which ones to keep
         const parents = this.findParents(row.indexPath, data);
         preserve = Object.assign(preserve, parents);
-      } else if (row.children.length == 0 || !preserve[row.data.id]) {
+      } else if (row.children.length === 0 || !preserve[row.data.id]) {
         flattened.splice(index, 1);
       }
     }

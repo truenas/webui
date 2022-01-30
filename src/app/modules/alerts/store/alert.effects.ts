@@ -19,7 +19,7 @@ import {
 } from 'app/modules/alerts/store/alert.actions';
 import { AlertSlice, selectDismissedAlerts, selectUnreadAlerts } from 'app/modules/alerts/store/alert.selectors';
 import { WebSocketService } from 'app/services';
-import { adminUiInitialized } from 'app/store/actions/admin.actions';
+import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
 
 @Injectable()
 export class AlertEffects {

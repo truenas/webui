@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 import { combineLatest, Observable } from 'rxjs';
@@ -22,10 +23,11 @@ import {
   AppLoaderService,
   DialogService,
   StorageService,
-  SystemGeneralService,
   VmService,
   WebSocketService,
 } from 'app/services';
+import { AppState } from 'app/store';
+import { waitForAdvancedConfig } from 'app/store/system-config/system-config.selectors';
 
 @UntilDestroy()
 @Component({
@@ -218,7 +220,7 @@ export class VmFormComponent implements FormConfiguration {
     protected route: ActivatedRoute,
     private translate: TranslateService,
     private dialogService: DialogService,
-    private systemGeneralService: SystemGeneralService,
+    private store$: Store<AppState>,
   ) {}
 
   preInit(entityForm: EntityFormComponent): void {
@@ -282,8 +284,8 @@ export class VmFormComponent implements FormConfiguration {
       });
     }
 
-    this.systemGeneralService.getAdvancedConfig$.pipe(untilDestroyed(this)).subscribe((res) => {
-      this.isolatedGpuPciIds = res.isolated_gpu_pci_ids;
+    this.store$.pipe(waitForAdvancedConfig, untilDestroyed(this)).subscribe((config) => {
+      this.isolatedGpuPciIds = config.isolated_gpu_pci_ids;
     });
 
     const gpusFormControl = this.entityForm.formGroup.controls['gpus'];

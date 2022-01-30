@@ -15,7 +15,13 @@ import { CastModule } from 'app/modules/cast/cast.module';
 import { MessageService } from 'app/modules/entity/entity-form/services/message.service';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
+import {
+  CreateSnapshotDialogComponent,
+} from 'app/pages/storage/volumes/create-snapshot-dialog/create-snapshot-dialog.component';
 import { DatasetFormComponent } from 'app/pages/storage/volumes/datasets/dataset-form/dataset-form.component';
+import {
+  EncryptionOptionsDialogComponent,
+} from 'app/pages/storage/volumes/encyption-options-dialog/encryption-options-dialog.component';
 import { AclEditorListComponent } from 'app/pages/storage/volumes/permissions/components/acl-editor-list/acl-editor-list.component';
 import { EditNfsAceComponent } from 'app/pages/storage/volumes/permissions/components/edit-nfs-ace/edit-nfs-ace.component';
 import { EditPosixAceComponent } from 'app/pages/storage/volumes/permissions/components/edit-posix-ace/edit-posix-ace.component';
@@ -114,6 +120,8 @@ import { ZvolWizardComponent } from './volumes/zvol/zvol-wizard/zvol-wizard.comp
     EditNfsAceComponent,
     EditPosixAceComponent,
     SelectPresetModalComponent,
+    EncryptionOptionsDialogComponent,
+    CreateSnapshotDialogComponent,
   ],
   exports: [VolumesListControlsComponent],
   entryComponents: [SnapshotDetailsComponent, UnlockDialogComponent],

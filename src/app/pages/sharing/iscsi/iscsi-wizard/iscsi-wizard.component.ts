@@ -565,7 +565,7 @@ export class IscsiWizardComponent implements WizardConfiguration {
     });
 
     this.entityWizard.formArray.get([0]).get('disk').valueChanges.pipe(untilDestroyed(this)).subscribe((value: string) => {
-      const disableZvolGroup = !(value == 'NEW' && this.entityWizard.formArray.get([0]).get('type').value == IscsiExtentType.Disk);
+      const disableZvolGroup = !(value === 'NEW' && this.entityWizard.formArray.get([0]).get('type').value == IscsiExtentType.Disk);
       this.disablefieldGroup(this.zvolFieldGroup, disableZvolGroup, 0);
     });
 
@@ -677,7 +677,7 @@ export class IscsiWizardComponent implements WizardConfiguration {
             } else {
               this.summaryObj[name] = value;
               // get label value
-              if (name == 'disk' || name == 'usefor' || name == 'portal' || name == 'target') {
+              if (name === 'disk' || name === 'usefor' || name === 'portal' || name === 'target') {
                 const field = _.find(this.wizardConfig[step].fieldConfig, { name }) as FormSelectConfig;
                 if (field) {
                   this.summaryObj[name] = _.find(field.options, { value }).label;
@@ -799,7 +799,7 @@ export class IscsiWizardComponent implements WizardConfiguration {
     const pool = dataset.split('/')[0];
     this.ws.call('pool.dataset.query', [[['id', '=', dataset]]]).pipe(untilDestroyed(this)).subscribe(
       (datasets) => {
-        if (datasets.length == 0) {
+        if (datasets.length === 0) {
           datasetField.hasErrors = true;
         } else {
           this.zvolFieldGroup.forEach((fieldName) => {

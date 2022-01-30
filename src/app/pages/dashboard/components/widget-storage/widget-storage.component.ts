@@ -214,7 +214,7 @@ export class WidgetStorageComponent extends WidgetComponent implements AfterView
           });
         }
       });
-      if (unhealthy.length == 0) {
+      if (unhealthy.length === 0) {
         value = '0';
         level = 'safe';
         icon = 'mdi-check-circle';
