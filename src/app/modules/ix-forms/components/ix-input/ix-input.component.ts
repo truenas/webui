@@ -71,7 +71,7 @@ export class IxInputComponent implements ControlValueAccessor {
     this.onChange(this.value);
   }
 
-  inValidMessage(): string {
+  invalidMessage(): string {
     return this.translate.instant('Value must be a {type}', { type: this.type });
   }
 
@@ -96,10 +96,12 @@ export class IxInputComponent implements ControlValueAccessor {
   }
 
   hasValue(): boolean {
-    return this.value && this.value.toString().length > 0;
+    return this.inValid || this.value && this.value.toString().length > 0;
   }
 
-  resetInput(): void {
+  resetInput(e: HTMLInputElement): void {
+    e.value = '';
+    this.inValid = false;
     this.value = '';
     this.formatted = '';
     this.onChange('');

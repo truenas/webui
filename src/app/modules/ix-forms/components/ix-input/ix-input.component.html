@@ -26,7 +26,7 @@
     [placeholder]="placeholder"
   >
   <span *ngIf="shouldShowResetInput()" class="reset-input">
-    <mat-icon (click)="resetInput()" role="img" fontSet="mdi-set" fontIcon="mdi-close-circle"></mat-icon>
+    <mat-icon (click)="resetInput(ixInput)" role="img" fontSet="mdi-set" fontIcon="mdi-close-circle"></mat-icon>
   </span>
   <button
     *ngIf="type === 'password'"
@@ -39,7 +39,7 @@
 </div>
 <div *ngIf="inValid">
   <mat-error>
-    <div [innerHTML]="inValidMessage()"></div>
+    <div [innerHTML]="invalidMessage()"></div>
   </mat-error>
 </div>
 <ix-errors [control]="controlDirective.control" [label]="label"></ix-errors>
