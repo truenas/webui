@@ -1675,7 +1675,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     margin-bottom: 5px;
   }
 
-  .external-link {
+  a[href*='//'] {
     color: var(--primary);
   }
 

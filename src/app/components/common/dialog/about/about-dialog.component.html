@@ -14,7 +14,7 @@
     <div class="line-item">
       <div fxFlex="10%"><mat-icon class="bullet-icon">assignment</mat-icon></div>
       <div fxFlex="90%" class="medium-font">{{ helptext.docsA | translate }}
-        <a href="https://www.truenas.com/docs/" target="_blank" class="external-link">
+        <a href="https://www.truenas.com/docs/" target="_blank">
           {{ helptext.docsB | translate }}</a> {{ helptext.docsC | translate }}
       </div>
     </div>
@@ -22,7 +22,7 @@
     <div class="line-item">
       <div fxFlex="10%"><mat-icon class="bullet-icon">group</mat-icon></div>
       <div fxFlex="90%" class="medium-font">{{ helptext.forumsA | translate}} <a href="https://www.ixsystems.com/community/"
-				target="_blank" class="external-link">
+				target="_blank">
         {{ helptext.forumsB | translate }}</a> {{ helptext.forumsC | translate }} {{systemType}} {{ helptext.forumsD }}.
       </div>
     </div>
@@ -31,14 +31,14 @@
       <div fxFlex="10%"><img id="ix-img" src="assets/images/iX_Logomark.svg"></div>
       <div fxFlex="90%" class="medium-font">{{ helptext.contactA | translate }}
         <a href="https://www.ixsystems.com/truenas/?utm_source=truenas+core+ui&utm_medium=os&utm_campaign=welcome"
-					target="_blank" class="external-link">
+					target="_blank">
           {{ helptext.contactB | translate }}</a> {{ helptext.contactC | translate }}
         <a href="https://www.ixsystems.com/quote-form/?utm_source=truenas+core+ui&utm_medium=os&utm_campaign=welcome"
-					target="_blank" class="external-link">{{ helptext.contactD | translate }}</a>
+					target="_blank">{{ helptext.contactD | translate }}</a>
       </div>
     </div>
     <div id="open-source">TrueNAS {{systemType}} {{ helptext.opensourceA | translate }} <a href="https://github.com/truenas/" target="_blank"
-			class="external-link">{{ helptext.opensourceB | translate }}</a> {{ helptext.opensourceC | translate }}
+		>{{ helptext.opensourceB | translate }}</a> {{ helptext.opensourceC | translate }}
     </div>
   </div>
 
@@ -46,7 +46,7 @@
 
 <div mat-dialog-actions id="actions">
   <div fxFlex="45%" fxFlex.xs="100" class="copyright-txt">TrueNAS {{ systemType }}® © {{copyrightYear}} -
-    <a href="http://www.ixsystems.com" target="_blank" title="iXsystems, Inc." class="external-link">
+    <a href="http://www.ixsystems.com" target="_blank" title="iXsystems, Inc.">
       iXsystems, Inc</a>.
   </div>
   <div id="button-wrapper" fxFlex="55%" fxFlex.xs="100">
