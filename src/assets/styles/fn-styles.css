@@ -949,9 +949,6 @@ div.hopscotch-bubble .hopscotch-nav-button.prev:hover {
     overflow: visible;
     height: auto;
 }
-.sidebar-panel.mat-sidenav .sidebar-list-item.open > .mat-list-item-content > .sub-menu {
-    max-height: 1000px;
-}
 .sidebar-panel.mat-sidenav .sidebar-list-item .sub-menu {
     padding: 0;
     -webkit-transition: max-height .3s cubic-bezier(.35,0,.25,1);
