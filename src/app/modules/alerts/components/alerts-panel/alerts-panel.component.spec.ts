@@ -13,7 +13,7 @@ import { AlertEffects } from 'app/modules/alerts/store/alert.effects';
 import { adapter, alertReducer, alertsInitialState } from 'app/modules/alerts/store/alert.reducer';
 import { alertStateKey } from 'app/modules/alerts/store/alert.selectors';
 import { WebSocketService } from 'app/services';
-import { adminUiInitialized } from 'app/store/actions/admin.actions';
+import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
 
 const unreadAlerts = [
   {

@@ -1,21 +1,19 @@
 import {
   ChangeDetectionStrategy,
-  ChangeDetectorRef,
   Component,
   HostBinding,
   Input,
   OnChanges,
-  OnInit,
 } from '@angular/core';
 import { ThemePalette } from '@angular/material/core/common-behaviors/color';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { UntilDestroy } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { AlertLevel, alertLevelLabels } from 'app/enums/alert-level.enum';
 import { Alert } from 'app/interfaces/alert.interface';
 import { dismissAlertPressed, reopenAlertPressed } from 'app/modules/alerts/store/alert.actions';
-import { AlertSlice } from 'app/modules/alerts/store/alert.selectors';
-import { SystemGeneralService } from 'app/services';
+import { AppState } from 'app/store';
+import { selectTimezone } from 'app/store/system-config/system-config.selectors';
 
 @UntilDestroy()
 @Component({
@@ -24,13 +22,15 @@ import { SystemGeneralService } from 'app/services';
   styleUrls: ['./alert.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AlertComponent implements OnInit, OnChanges {
+export class AlertComponent implements OnChanges {
   @Input() alert: Alert;
 
   alertLevelColor: ThemePalette;
   icon: string;
   iconTooltip: string;
   timezone: string;
+
+  timezone$ = this.store$.select(selectTimezone);
 
   @HostBinding('class.dismissed')
   get isDismissed(): boolean {
@@ -40,21 +40,12 @@ export class AlertComponent implements OnInit, OnChanges {
   readonly alertLevelLabels = alertLevelLabels;
 
   constructor(
-    private store$: Store<AlertSlice>,
+    private store$: Store<AppState>,
     private translate: TranslateService,
-    private sysGeneralService: SystemGeneralService,
-    private cdr: ChangeDetectorRef,
   ) {}
 
   get alertLevelLabel(): string {
     return this.translate.instant(alertLevelLabels.get(this.alert.level));
-  }
-
-  ngOnInit(): void {
-    this.sysGeneralService.getGeneralConfig$.pipe(untilDestroyed(this)).subscribe((res) => {
-      this.timezone = res.timezone;
-      this.cdr.markForCheck();
-    });
   }
 
   ngOnChanges(): void {

@@ -1828,10 +1828,10 @@
   dependencies:
     tslib "^2.3.0"
 
-"@ngneat/spectator@~8.0.4":
-  version "8.0.4"
-  resolved "https://registry.yarnpkg.com/@ngneat/spectator/-/spectator-8.0.4.tgz#4201a3b3b7077157cff649aa077f0ddc202bf79f"
-  integrity sha512-9h/ldUAV1soJewXciR5Xt/Z69igOaJcCPRMGQyal9n6D4encqSzqXRxXnQzO+pOB0hqbrPMOUSvADVM/Ry7bKg==
+"@ngneat/spectator@~8.3.2":
+  version "8.3.2"
+  resolved "https://registry.yarnpkg.com/@ngneat/spectator/-/spectator-8.3.2.tgz#51c584addd2d06b733af1654d04567f491be0218"
+  integrity sha512-jzodobAYIZmI+J7KG7PZ2tFe3wAs2RwA+hOL01l6XiiSj7JpkAyu3ORuM+l+Jn/fh20ApLu5mPSfvgwibSvKDA==
   dependencies:
     "@testing-library/dom" "7.26.5"
     jquery "3.6.0"
@@ -6052,6 +6052,11 @@ eslint-module-utils@^2.7.0:
     debug "^3.2.7"
     find-up "^2.1.0"
     pkg-dir "^2.0.0"
+
+eslint-plugin-angular-file-naming@~1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/eslint-plugin-angular-file-naming/-/eslint-plugin-angular-file-naming-1.0.2.tgz#b16a3443d5ab7b7568c10194a646ec5453eb5029"
+  integrity sha512-ulYzIQ4c42K0EYViCIO+Wgz4OErAJKk4FkXRO4kUnFbn7j63C+mPxULL25apxOYB05YB0Bvr3K9VDCpedRyXZw==
 
 eslint-plugin-import@^2.22.1:
   version "2.25.2"

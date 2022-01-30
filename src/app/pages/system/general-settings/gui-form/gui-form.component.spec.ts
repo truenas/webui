@@ -4,6 +4,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialog } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { Certificate } from 'app/interfaces/certificate.interface';
@@ -15,6 +16,7 @@ import { ConfirmDialogComponent } from 'app/pages/common/confirm-dialog/confirm-
 import { GuiFormComponent } from 'app/pages/system/general-settings/gui-form/gui-form.component';
 import { WebSocketService, SystemGeneralService, DialogService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { selectGeneralConfig } from 'app/store/system-config/system-config.selectors';
 
 describe('GuiFormComponent', () => {
   let spectator: Spectator<GuiFormComponent>;
@@ -58,7 +60,6 @@ describe('GuiFormComponent', () => {
       ]),
       mockProvider(IxSlideInService),
       mockProvider(SystemGeneralService, {
-        getGeneralConfig$: of(mockSystemGeneralConfig),
         uiCertificateOptions: () => of({ 1: 'freenas_default' }),
         ipChoicesv4: () => of({ '0.0.0.0': '0.0.0.0' }),
         ipChoicesv6: () => of({ '::': '::' }),
@@ -70,6 +71,11 @@ describe('GuiFormComponent', () => {
         }),
       }),
       mockProvider(FormErrorHandlerService),
+      provideMockStore({
+        selectors: [
+          { selector: selectGeneralConfig, value: mockSystemGeneralConfig },
+        ],
+      }),
     ],
   });
 

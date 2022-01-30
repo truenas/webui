@@ -3,12 +3,13 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { provideMockStore } from '@ngrx/store/testing';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { KernelFormComponent } from 'app/pages/system/advanced/kernel-form/kernel-form.component';
-import { SystemGeneralService, WebSocketService } from 'app/services';
+import { WebSocketService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 describe('KernelFormComponent', () => {
@@ -26,7 +27,7 @@ describe('KernelFormComponent', () => {
         mockCall('system.advanced.update'),
       ]),
       mockProvider(IxSlideInService),
-      mockProvider(SystemGeneralService),
+      provideMockStore(),
     ],
   });
 

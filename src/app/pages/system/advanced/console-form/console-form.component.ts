@@ -3,15 +3,18 @@ import {
 } from '@angular/core';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Store } from '@ngrx/store';
 import { of } from 'rxjs';
 import { choicesToOptions } from 'app/helpers/options.helper';
 import { helptextSystemAdvanced as helptext } from 'app/helptext/system/advanced';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import {
-  DialogService, SystemGeneralService, WebSocketService,
+  DialogService, WebSocketService,
 } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { AppState } from 'app/store';
+import { advancedConfigUpdated } from 'app/store/system-config/system-config.actions';
 
 @UntilDestroy()
 @Component({
@@ -54,8 +57,8 @@ export class ConsoleFormComponent implements OnInit {
     private slideInService: IxSlideInService,
     private cdr: ChangeDetectorRef,
     private errorHandler: FormErrorHandlerService,
-    private sysGeneralService: SystemGeneralService,
     private dialogService: DialogService,
+    private store$: Store<AppState>,
   ) {}
 
   ngOnInit(): void {
@@ -87,7 +90,7 @@ export class ConsoleFormComponent implements OnInit {
 
     this.ws.call('system.advanced.update', [values]).pipe(untilDestroyed(this)).subscribe(() => {
       this.isFormLoading = false;
-      this.sysGeneralService.refreshSysGeneral();
+      this.store$.dispatch(advancedConfigUpdated());
       this.cdr.markForCheck();
       this.slideInService.close();
     }, (error) => {

@@ -3,6 +3,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { provideMockStore } from '@ngrx/store/testing';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
 import { Device } from 'app/interfaces/device.interface';
@@ -48,6 +49,7 @@ describe('IsolatedGpuPcisFormComponent', () => {
       mockProvider(IxSlideInService),
       mockProvider(FormErrorHandlerService),
       mockProvider(DialogService),
+      provideMockStore(),
     ],
   });
 

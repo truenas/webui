@@ -645,7 +645,7 @@ export type ApiDirectory = {
   'pool.attachments': { params: [id: number]; response: PoolAttachment[] };
   'pool.create': { params: [CreatePool]; response: Pool };
   'pool.dataset.attachments': { params: [datasetId: string]; response: PoolAttachment[] };
-  'pool.dataset.change_key': { params: [id: number, params: DatasetChangeKeyParams]; response: void };
+  'pool.dataset.change_key': { params: [id: string, params: DatasetChangeKeyParams]; response: void };
   'pool.dataset.compression_choices': { params: void; response: Choices };
   'pool.dataset.create': { params: any; response: Dataset };
   'pool.dataset.delete': { params: [path: string, params: { recursive: boolean; force?: boolean }]; response: boolean };

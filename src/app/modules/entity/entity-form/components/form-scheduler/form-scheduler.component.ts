@@ -6,6 +6,7 @@ import {
 import { FormGroup, FormControl, AbstractControl } from '@angular/forms';
 import { MatMonthView } from '@angular/material/datepicker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { CronDate } from 'cron-parser';
 import * as parser from 'cron-parser';
@@ -16,9 +17,10 @@ import globalHelptext from 'app/helptext/global-helptext';
 import { FormSchedulerConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
 import { Field } from 'app/modules/entity/entity-form/models/field.interface';
 import { EntityUtils } from 'app/modules/entity/utils';
-import { SystemGeneralService } from 'app/services';
 import { LocaleService } from 'app/services/locale.service';
 import { WebSocketService } from 'app/services/ws.service';
+import { AppState } from 'app/store';
+import { selectTimezone } from 'app/store/system-config/system-config.selectors';
 
 interface CronPreset {
   label: string;
@@ -264,15 +266,20 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, Aft
     }
   }
 
-  constructor(public translate: TranslateService, private renderer: Renderer2,
-    private cd: ChangeDetectorRef, public overlay: Overlay,
-    protected localeService: LocaleService, protected ws: WebSocketService,
-    private sysGeneralService: SystemGeneralService) {
+  constructor(
+    public translate: TranslateService,
+    private renderer: Renderer2,
+    private cd: ChangeDetectorRef,
+    public overlay: Overlay,
+    protected localeService: LocaleService,
+    protected ws: WebSocketService,
+    private store$: Store<AppState>,
+  ) {
     // Set default value
     this._months = '*';
 
-    this.sysGeneralService.getGeneralConfig$.pipe(untilDestroyed(this)).subscribe((res) => {
-      this.timezone = res.timezone;
+    this.store$.select(selectTimezone).pipe(untilDestroyed(this)).subscribe((timezone) => {
+      this.timezone = timezone;
       this.minDate = this.zonedTime;
       this.maxDate = dateFns.endOfMonth(this.minDate);
       this.currentDate = this.minDate;
