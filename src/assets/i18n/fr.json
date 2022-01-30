@@ -486,6 +486,7 @@
   "Oct": "",
   "Off by default. When set, <a href=\"https://www.samba.org/samba/docs/current/man-html/smbd.8.html\" target=\"_blank\">smbd(8)</a> attempts to authenticate users with the insecure and vulnerable NTLMv1 encryption. This setting allows backward compatibility with older versions of Windows, but is not recommended and should not be used on untrusted networks.": "",
   "Ok": "",
+  "One time snapshot of {dataset}": "",
   "Only appears if <i>Device</i> is selected. Select the unused zvol or zvol snapshot.": "",
   "Only image(s) will be updated": "",
   "Only one can be active at a time": "",
