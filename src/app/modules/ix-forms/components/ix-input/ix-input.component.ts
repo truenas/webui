@@ -35,7 +35,7 @@ export class IxInputComponent implements ControlValueAccessor {
 
   isDisabled = false;
   showPassword = false;
-  inValid = false;
+  invalid = false;
 
   onChange: (value: string | number) => void = (): void => {};
   onTouch: () => void = (): void => {};
@@ -60,9 +60,9 @@ export class IxInputComponent implements ControlValueAccessor {
     this.cdr.markForCheck();
   }
 
-  input(e: HTMLInputElement): void {
-    this.inValid = e.validity?.badInput;
-    const value = e.value;
+  input(ixInput: HTMLInputElement): void {
+    this.invalid = ixInput.validity?.badInput;
+    const value = ixInput.value;
     this.value = value;
     this.formatted = value;
     if (this.parse && !!value) {
@@ -96,12 +96,12 @@ export class IxInputComponent implements ControlValueAccessor {
   }
 
   hasValue(): boolean {
-    return this.inValid || this.value && this.value.toString().length > 0;
+    return this.invalid || this.value && this.value.toString().length > 0;
   }
 
   resetInput(e: HTMLInputElement): void {
     e.value = '';
-    this.inValid = false;
+    this.invalid = false;
     this.value = '';
     this.formatted = '';
     this.onChange('');
