@@ -1,7 +1,7 @@
 <div class="widgets-wrapper-container" (window:resize)="onMobileResize($event)">
 
   <div class="widgets-wrapper" *ngIf="screenType == 'Desktop' && dashStateReady && empty" fxLayout="column" fxLayoutAlign="center center">
-    <entity-empty fxFlex="'320px'" fxFlex.xs="100" [conf]="emptyDashConf"></entity-empty>
+    <entity-empty [conf]="emptyDashConf"></entity-empty>
   </div>
 
   <div
