@@ -13,7 +13,7 @@ export function regexValidator(regexString: RegExp): ValidatorFn {
       thisControl = control;
     }
 
-    if (thisControl.value == '' || thisControl.value == undefined) {
+    if (thisControl.value == '' || thisControl.value === undefined) {
       return null;
     }
 

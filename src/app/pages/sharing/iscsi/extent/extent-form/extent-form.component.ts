@@ -326,7 +326,7 @@ export class ExtentFormComponent implements FormConfiguration {
   }
 
   formUpdate(type: string): void {
-    const isDevice = type != 'FILE';
+    const isDevice = type !== 'FILE';
 
     this.fileFieldGroup.forEach((field) => {
       const control = _.find(this.fieldConfig, { name: field });
@@ -354,7 +354,7 @@ export class ExtentFormComponent implements FormConfiguration {
   resourceTransformIncomingRestData(data: IscsiExtent): any {
     this.originalFilesize = parseInt(data.filesize, 10);
     const transformed: any = { ...data };
-    if (data.type == IscsiExtentType.Disk) {
+    if (data.type === IscsiExtentType.Disk) {
       if (_.startsWith(data.path, 'zvol')) {
         transformed['disk'] = data.path;
       }

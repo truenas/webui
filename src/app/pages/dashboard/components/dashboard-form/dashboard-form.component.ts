@@ -95,9 +95,9 @@ export class DashboardFormComponent {
         if (widget.identifier) {
           const spl = widget.identifier.split(',');
           const name = spl[1];
-          return key == name;
+          return key === name;
         }
-        return key == widget.name;
+        return key === widget.name;
       });
 
       if (dashItem) {

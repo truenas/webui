@@ -118,7 +118,7 @@ export class WebSocketService {
       return this.socket.close(); // will trigger onClose which handles redirection
     }
 
-    if (data.msg == ApiEventMessage.Result) {
+    if (data.msg === ApiEventMessage.Result) {
       const call = this.pendingCalls.get(data.id);
 
       this.pendingCalls.delete(data.id);
@@ -130,11 +130,11 @@ export class WebSocketService {
         call.observer.next(data.result);
         call.observer.complete();
       }
-    } else if (data.msg == ApiEventMessage.Connected) {
+    } else if (data.msg === ApiEventMessage.Connected) {
       this.connected = true;
       setTimeout(() => this.ping(), 20000);
       this.onconnect();
-    } else if (data.msg == ApiEventMessage.Changed || data.msg == ApiEventMessage.Added) {
+    } else if (data.msg === ApiEventMessage.Changed || data.msg === ApiEventMessage.Added) {
       this.subscriptions.forEach((v, k) => {
         if (k === '*' || k == data.collection) {
           v.forEach((item) => { item.next(data); });

@@ -81,7 +81,7 @@ export class ManageCatalogsComponent implements EntityTableConfig<Catalog>, OnIn
           this.catalogSyncJobIds.push(jobId);
         }
 
-        if (event.fields.state == JobState.Success || event.fields.state == JobState.Failed) {
+        if (event.fields.state === JobState.Success || event.fields.state === JobState.Failed) {
           this.catalogSyncJobIds.splice(this.catalogSyncJobIds.indexOf(jobId));
         }
       }

@@ -85,7 +85,7 @@ export class ChartFormComponent implements FormConfiguration {
         });
       });
       this.catalogApp.chart_schema.schema.questions.forEach((question) => {
-        const fieldSet = fieldSets.find((fieldSet) => fieldSet.name == question.group);
+        const fieldSet = fieldSets.find((fieldSet) => fieldSet.name === question.group);
         if (fieldSet) {
           const fieldConfigs = this.entityUtils.parseSchemaFieldConfig(question);
 

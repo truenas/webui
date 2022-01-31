@@ -789,7 +789,7 @@ export class CertificateAuthorityAddComponent implements WizardConfiguration {
 
   getStep(fieldName: string): number {
     const stepNumber = this.wizardConfig.findIndex((step) => {
-      const index = step.fieldConfig.findIndex((field) => fieldName == field.name);
+      const index = step.fieldConfig.findIndex((field) => fieldName === field.name);
       return index > -1;
     });
 
