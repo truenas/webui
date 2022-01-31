@@ -1,7 +1,6 @@
 {
   "": "",
   " for monthly updates and latest developments.": "",
-  "<a href=\"https://jira.ixsystems.com/secure/Signup!default.jspa\" target=\"_blank\" class=\"native-link\">   Create a Jira account</a> to file an issue. Use a valid    email address when registering to receive issue status updates.": "",
   "Access Control Entry (ACE) user or group. Select a specific <i>User</i> or <i>Group</i> for this entry, <i>owner@</i> to apply this entry to the user that owns the dataset, <i>group@</i> to apply this entry to the group that owns the dataset, or <i>everyone@</i> to apply this entry to all users and groups. See <a href=\"https://man7.org/linux/man-pages/man1/nfs4_setfacl.1.html\" target=\"_blank\">nfs4_setfacl(1) NFSv4 ACL ENTRIES</a>.": "",
   "Add any more <a href=\"https://man7.org/linux/man-pages/man5/sshd_config.5.html\" target=\"_blank\">sshd_config(5)</a> options not covered in this screen. Enter one option per line. These options are case-sensitive. Misspellings can prevent the SSH service from starting.": "",
   "Add more options from <a href=\"https://linux.die.net/man/8/tftpd\" target=\"_blank\">tftpd(8)</a>. Add one option on each line.": "",
@@ -125,6 +124,7 @@
   "<a href=\"https://en.wikipedia.org/wiki/Authentication_protocol\"  target=\"_blank\">Authentication protocol</a> used to authenticate  messages sent on behalf of the specified <i>Username</i>.": "<a href=\"https://en.wikipedia.org/wiki/Authentication_protocol\"  target=\"_blank\">身份验证协议</a>用于验证指定<i> 用户名 </i>发送的消息。",
   "<a href=\"https://en.wikipedia.org/wiki/Cryptographic_protocol\"  target=\"_blank\">Encryption protocol</a> used to encrypt messages  sent on behalf of the specified <i>Username</i>.": "<a href=\"https://en.wikipedia.org/wiki/Cryptographic_protocol\"  target=\"_blank\">加密协议</a>用于加密指定<i> 用户名 </i>发送的消息。",
   "<a href=\"https://en.wikipedia.org/wiki/Extended_file_attributes\"                target=\"_blank\">Extended attributes</a> are                preserved, but must be supported by both systems.": "<a href=\"https://en.wikipedia.org/wiki/Extended_file_attributes\" target=\"_blank\">扩展属性</a>被保留，但是两个系统都必须支持。",
+  "<a href=\"https://jira.ixsystems.com/secure/Signup!default.jspa\" target=\"_blank\" class=\"native-link\">   Create a Jira account</a> to file an issue. Use a valid    email address when registering to receive issue status updates.": "<a href=\"https://jira.ixsystems.com/secure/Signup!default.jspa\" target=\"_blank\" class=\"native-link\"> 创建jira账户</a> 归档问题. 注册时使用有效的 电子邮件地址以接收问题状态更新。",
   "<a href=\"https://mega.nz/\" target=\"_blank\">MEGA</a> account  password.": "<a href=\"https://mega.nz/\" target=\"_blank\">MEGA</a> 帐户的密码。",
   "<a href=\"https://mega.nz/\" target=\"_blank\">MEGA</a> account  username.": "<a href=\"https://mega.nz/\" target=\"_blank\">MEGA</a> 帐户的用户名。",
   "<a href=\"https://rclone.org/swift/#standard-options\" target=\"_blank\">(rclone documentation)</a>.": "<a href=\"https://rclone.org/swift/\\#standard-options\" target=\"_blank\">（rclone文档）</a>。",
