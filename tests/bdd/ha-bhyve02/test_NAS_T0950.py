@@ -124,10 +124,10 @@ def open_the_user_drop_down_to_verify_the_email_has_been_changed(driver):
     """Open the user drop down to verify the email has been changed."""
     driver.find_element_by_xpath('//tr[contains(.,"ericbsd")]/td').click()
     assert wait_on_element(driver, 7, '(//tr[contains(.,"ericbsd")]/following-sibling::tr)[1]//button[contains(.,"Edit")]')
-    driver.find_element_by_xpath('//h4[contains(.,"Email:")]')
+    driver.find_element_by_xpath('//dt[contains(.,"Email:")]')
 
 
 @then('Updated value should be visible')
 def updated_value_should_be_visible(driver):
     """Updated value should be visible."""
-    driver.find_element_by_xpath('//p[contains(.,"eturgeon@ixsystems.com")]')
+    driver.find_element_by_xpath('//dd[contains(.,"eturgeon@ixsystems.com")]')
