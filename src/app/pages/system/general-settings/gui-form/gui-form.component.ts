@@ -8,9 +8,7 @@ import {
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { combineLatest } from 'rxjs';
 import { filter, tap } from 'rxjs/operators';
-import { ServiceName } from 'app/enums/service-name.enum';
 import { choicesToOptions } from 'app/helpers/options.helper';
 import { helptextSystemGeneral as helptext } from 'app/helptext/system/general';
 import { SystemGeneralConfig, SystemGeneralConfigUpdate } from 'app/interfaces/system-config.interface';
@@ -152,7 +150,6 @@ export class GuiFormComponent {
     const current: SystemGeneralConfig = { ...this.configData };
     const httpPortChanged = current.ui_port !== changed.ui_port;
     const httpsPortChanged = current.ui_httpsport !== changed.ui_httpsport;
-    const uiCertificateChanged = current.ui_certificate?.id !== changed.ui_certificate;
     const isServiceRestartRequired = this.getIsServiceRestartRequired(current, changed);
 
     this.sysGeneralService.refreshSysGeneral();
@@ -181,11 +178,7 @@ export class GuiFormComponent {
 
         this.loader.open();
         this.ws.shuttingdown = true; // not really shutting down, just stop websocket detection temporarily
-        const obs = [this.ws.call('service.restart', [ServiceName.Http])];
-        if (uiCertificateChanged) {
-          obs.push(this.ws.call('system.general.ui_restart'));
-        }
-        combineLatest(obs).pipe(
+        this.ws.call('system.general.ui_restart').pipe(
           untilDestroyed(this),
         ).subscribe(
           () => {
