@@ -37,7 +37,7 @@
     <i class="material-icons" matTooltip="Show" *ngIf="!showPassword">visibility_off</i>
   </button>
 </div>
-<div *ngIf="inValid">
+<div *ngIf="invalid">
   <mat-error>
     <div [innerHTML]="invalidMessage()"></div>
   </mat-error>
