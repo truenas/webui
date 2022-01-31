@@ -46,7 +46,7 @@ export class IxCombobox2Component implements ControlValueAccessor, OnInit {
   formControl = new FormControl(this);
   value: string | number = '';
   isDisabled = false;
-  filterValue = '';
+  filterValue: string;
   selectedOption: Option = null;
   syncOptions: Option[];
 
@@ -79,14 +79,17 @@ export class IxCombobox2Component implements ControlValueAccessor, OnInit {
       distinctUntilChanged(),
       untilDestroyed(this),
     ).subscribe((changedValue: string) => {
+      if (this.filterValue === changedValue) {
+        return;
+      }
       this.filterValue = changedValue;
       this.filterOptions(changedValue);
     });
-    this.filterOptions('');
+    this.filterChanged$.next('');
   }
 
   filterOptions(filterValue: string): void {
-    this.loading = true;
+    this.loading = this.filterValue !== '';
     this.cdr.markForCheck();
     this.provider.filter(this.options, filterValue).pipe(untilDestroyed(this)).subscribe((options: Option[]) => {
       this.loading = false;
@@ -123,11 +126,12 @@ export class IxCombobox2Component implements ControlValueAccessor, OnInit {
             if (atBottom) {
               this.loading = true;
               this.cdr.markForCheck();
-              this.provider.nextPage(this.filterValue).pipe(untilDestroyed(this)).subscribe((options: Option[]) => {
-                this.loading = false;
-                this.options.push(...options);
-                this.cdr.markForCheck();
-              });
+              this.provider.nextPage(this.filterValue !== null || this.filterValue !== undefined ? this.filterValue : '')
+                .pipe(untilDestroyed(this)).subscribe((options: Option[]) => {
+                  this.loading = false;
+                  this.options.push(...options);
+                  this.cdr.markForCheck();
+                });
             }
           });
       }
