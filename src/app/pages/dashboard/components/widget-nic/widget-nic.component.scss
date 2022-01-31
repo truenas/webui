@@ -27,10 +27,6 @@
   font-family: var(--font-family-body);
 }
 
-.view-overview .primary-nav .card-title-text {
-  /*display:none;*/
-}
-
 .primary-nav .card-title-text {
   display: inline-block;
   font-size: 1.5rem;
@@ -43,24 +39,13 @@
 .carousel {
   height: 100%;
   position: absolute;
-  /*top:48px;*/
   width: 300%;
-  /*height:calc(100% - 48px);*/
-  /*background:var(--alt-bg2);*/
 }
 
-/*.carousel.lagg{
-  width:400%;
-}*/
-
 .slide {
-  /*position:absolute;
-  top:48px;*/
   display: inline;
-  /*height:calc(100% - 96px);*/
   height: 100%;
   width: 100%;
-  /*border-left:solid 1px var(--bg1);*/
 }
 
 .slide .hidden {
@@ -70,7 +55,6 @@
 .slide .left,
 .slide .right {
   display: inline-block;
-  /*width:50%;*/
   height: 100%;
   padding: 32px 0;
 }
@@ -85,7 +69,6 @@
 
 .slide.overview .left {
   background-blend-mode: overlay;
-  /*background-color:var(--primary);*/
   background-color: #666;
   background-image: url('../../../../../assets/images/backgrounds/rj45.jpg');
   background-position-x: 65%;
@@ -101,7 +84,6 @@
   padding: 48px 0;
   position: absolute;
   text-shadow: 0 0 48px #000;
-  /*background:linear-gradient(180deg,rgba(0,0,0,0.65),rgba(0,0,0,0.5), rgba(0,0,0,0.15));*/
   width: 100%;
 }
 
@@ -163,8 +145,6 @@
   position: absolute;
   right: 16px;
   top: 0;
-  /*font-weight:500;
-  text-transform:capitalize;*/
 }
 
 .controls button {
@@ -217,10 +197,6 @@
 
 .nic-traffic .td.label {
   text-align: right;
-}
-
-.stat {
-  /*font-size: 250%;*/
 }
 
 .slide {
