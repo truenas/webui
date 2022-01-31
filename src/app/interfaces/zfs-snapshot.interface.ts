@@ -21,7 +21,7 @@ export interface CreateZfsSnapshot {
   naming_schema?: string;
   recursive?: boolean;
   vmware_sync?: boolean;
-  properties: Record<string, unknown>;
+  properties?: Record<string, unknown>;
 }
 
 export interface CloneZfsSnapshot {

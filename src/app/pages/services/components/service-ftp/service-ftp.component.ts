@@ -414,9 +414,9 @@ export class ServiceFtpComponent implements FormConfiguration, OnInit {
   ];
 
   isCustActionVisible(actionId: string): boolean {
-    if (actionId == 'advanced_mode' && !this.isBasicMode) {
+    if (actionId === 'advanced_mode' && !this.isBasicMode) {
       return false;
-    } if (actionId == 'basic_mode' && this.isBasicMode) {
+    } if (actionId === 'basic_mode' && this.isBasicMode) {
       return false;
     }
     return true;

@@ -1,4 +1,3 @@
-import { Validators } from '@angular/forms';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
 export default {
@@ -12,17 +11,8 @@ export default {
   unlockDialog_services_placeholder: T('Restart Services'),
   unlockDialog_services_tooltip: T('List of system services to restart when the pool is unlocked.'),
 
-  snapshotDialog_dataset_placeholder: T('Pool/Dataset'),
-
-  snapshotDialog_name_placeholder: T('Name'),
   snapshotDialog_name_tooltip: T('Add a name for the new snapshot.'),
-  snapshotDialog_name_validation: [Validators.required],
-
-  snapshotDialog_recursive_placeholder: T('Recursive'),
   snapshotDialog_recursive_tooltip: T('Set to include child datasets of the chosen dataset.'),
-
-  vmware_sync_placeholder: T('VMWare Sync'),
-  vmware_sync_tooltip: T(''),
 
   exportAction: T('Export/Disconnect'),
 

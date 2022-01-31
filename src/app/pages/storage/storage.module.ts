@@ -16,6 +16,9 @@ import { CastModule } from 'app/modules/cast/cast.module';
 import { MessageService } from 'app/modules/entity/entity-form/services/message.service';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
+import {
+  CreateSnapshotDialogComponent,
+} from 'app/pages/storage/volumes/create-snapshot-dialog/create-snapshot-dialog.component';
 import { DatasetFormComponent } from 'app/pages/storage/volumes/datasets/dataset-form/dataset-form.component';
 import {
   DeleteDatasetDialogComponent,
@@ -123,6 +126,7 @@ import { ZvolWizardComponent } from './volumes/zvol/zvol-wizard/zvol-wizard.comp
     EditPosixAceComponent,
     SelectPresetModalComponent,
     EncryptionOptionsDialogComponent,
+    CreateSnapshotDialogComponent,
     DeleteDatasetDialogComponent,
   ],
   exports: [VolumesListControlsComponent],

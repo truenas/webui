@@ -140,7 +140,7 @@ export class AcmednsFormComponent implements FormConfiguration {
   beforeSubmit(value: any): void {
     const attributes: any = {};
     for (const item in value) {
-      if (item != 'name' && item != 'authenticator') {
+      if (item !== 'name' && item !== 'authenticator') {
         attributes[item] = value[item];
         delete value[item];
       }

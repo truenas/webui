@@ -533,7 +533,7 @@ export class DeviceAddComponent implements OnInit, OnDestroy {
           this.displayFormGroup.controls['type'].setValue(typeField.options[0].value);
         }
       }
-      // if type == 'Container Provider' and rawfile boot device exists, hide rootpwd and boot fields.
+      // if type === 'Container Provider' and rawfile boot device exists, hide rootpwd and boot fields.
       if (_.find(vm[0].devices, { dtype: VmDeviceType.Raw }) && (vm[0] as any).type === 'Container Provider') {
         vm[0].devices.forEach((element) => {
           if (element.dtype === VmDeviceType.Raw) {

@@ -125,7 +125,7 @@ export class ViewEnclosureComponent implements OnDestroy {
     });
 
     core.register({ observerClass: this, eventName: 'Resilvering' }).pipe(untilDestroyed(this)).subscribe((evt: ResilveringEvent) => {
-      if (evt.data.scan.state == PoolScanState.Finished) this.fetchData();
+      if (evt.data.scan.state === PoolScanState.Finished) this.fetchData();
     });
 
     core.register({ observerClass: this, eventName: 'DisksChanged' }).pipe(untilDestroyed(this)).subscribe(() => {
