@@ -8,6 +8,7 @@ import { of } from 'rxjs';
 import { SshSftpLogFacility, SshSftpLogLevel, SshWeakCipher } from 'app/enums/ssh.enum';
 import { choicesToOptions } from 'app/helpers/options.helper';
 import helptext from 'app/helptext/services/components/service-ssh';
+import { numberValidator } from 'app/modules/entity/entity-form/validators/number-validation';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { DialogService, WebSocketService } from 'app/services';
@@ -23,7 +24,7 @@ export class ServiceSshComponent implements OnInit {
   isBasicMode = true;
 
   form = this.fb.group({
-    tcpport: [null as number],
+    tcpport: [null as number, numberValidator()],
     rootlogin: [false],
     passwordauth: [false],
     kerberosauth: [false],

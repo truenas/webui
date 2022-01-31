@@ -84,6 +84,8 @@
   "TrueNAS Newsletter": "",
   "Unknown PID": "",
   "Use compressed WRITE records to make the  stream more efficient. The destination system must also support  compressed WRITE records. See  <a href=\"https://linux.die.net/man/8/zfs\"  target=\"_blank\">zfs(8)</a>.": "",
+  "Value must be a number": "",
+  "Value must be a {type}": "",
   "WARNING: These unknown processes will be terminated while exporting the pool.": "",
   "Warning: There are {n} USB disks available that have non-unique serial numbers. USB controllers may report disk serial incorrectly, making such disks indistinguishable from each other. Adding such disks to a pool can result in lost data.": "",
   "Warning: There are {n} disks available that have non-unique serial numbers. Non-unique serial numbers can be caused by a cabling issue and adding such disks to a pool can result in lost data.": "",
