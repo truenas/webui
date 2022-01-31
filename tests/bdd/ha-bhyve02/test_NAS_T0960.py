@@ -106,8 +106,8 @@ def the_users_page_should_open(driver):
 @then('On the right side of the table, click the expand arrow for the root user')
 def on_the_right_side_of_the_table_click_the_expand_arrow_for_the_root_user(driver):
     """On the right side of the table, click the expand arrow for the root user."""
-    assert wait_on_element(driver, 7, '//tr[@ix-auto="expander__root"]/td', 'clickable')
-    driver.find_element_by_xpath('//tr[@ix-auto="expander__root"]/td').click()
+    assert wait_on_element(driver, 5, '//tr[contains(.,"root")]/td', 'clickable')
+    driver.find_element_by_xpath('//tr[contains(.,"root")]/td').click()
 
 
 @then('The User Field should expand down to list further details')
@@ -150,8 +150,8 @@ def change_should_be_saved(driver):
 @then('Reopen the user edit page and ensure that the key was saved')
 def reopen_the_user_edit_page_and_ensure_that_the_key_was_saved(driver):
     """Reopen the user edit page and ensure that the key was saved."""
-    assert wait_on_element(driver, 7, '//tr[@ix-auto="expander__root"]/td', 'clickable')
-    driver.find_element_by_xpath('//tr[@ix-auto="expander__root"]/td').click()
+    assert wait_on_element(driver, 5, '//tr[contains(.,"root")]/td', 'clickable')
+    driver.find_element_by_xpath('//tr[contains(.,"root")]/td').click()
     assert wait_on_element(driver, 5, '//button[@ix-auto="button__EDIT_root"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__EDIT_root"]').click()
     assert wait_on_element(driver, 5, '//h3[contains(.,"Edit User")]')
