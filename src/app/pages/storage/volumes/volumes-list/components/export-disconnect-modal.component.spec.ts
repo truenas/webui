@@ -8,10 +8,10 @@ import {
 } from '@ngneat/spectator/jest';
 import { mockJob, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { PoolStatus } from 'app/enums/pool-status.enum';
-import { PoolAttachment } from 'app/interfaces/pool-attachment.interface';
-import { PoolProcess } from 'app/interfaces/pool-process.interface';
-import { IxFormsModule } from 'app/pages/common/ix-forms/ix-forms.module';
-import { IxFormHarness } from 'app/pages/common/ix-forms/testing/ix-form.harness';
+import { DatasetAttachment } from 'app/interfaces/pool-attachment.interface';
+import { Process } from 'app/interfaces/process.interface';
+import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
+import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { ExportDisconnectModalComponent } from 'app/pages/storage/volumes/volumes-list/components/export-disconnect-modal.component';
 import { DialogService, WebSocketService } from 'app/services';
 
@@ -27,13 +27,13 @@ const fakeData = {
   attachments: [
     { type: 'type1', attachments: ['partA,partB', 'part1,part2,part3'] },
     { type: 'type2', attachments: ['partX,partY', 'part4,part5,part6'] },
-  ] as PoolAttachment[],
+  ] as DatasetAttachment[],
   processes: [
     { name: 'process name 1' },
     { pid: 'pid1', cmdline: 'cmdline1' },
     { name: 'process name 2' },
     { pid: 'pid2', cmdline: 'cmdline2' },
-  ] as PoolProcess[],
+  ] as Process[],
 };
 
 const warningPoolDetach = 'Back up critical data';
