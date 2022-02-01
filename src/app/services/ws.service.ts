@@ -83,10 +83,16 @@ export class WebSocketService {
 
   onconnect(): void {
     this.shuttingdown = false;
-    while (this.pendingMessages.length > 0) {
-      const payload = this.pendingMessages.pop();
-      this.send(payload);
-    }
+    this.loginToken(this.token).subscribe((result) => {
+      if (!result) {
+        this.router.navigate(['/sessions/signin']);
+      } else {
+        while (this.pendingMessages.length > 0) {
+          const payload = this.pendingMessages.pop();
+          this.send(payload);
+        }
+      }
+    });
   }
 
   onclose(): void {

@@ -5,93 +5,112 @@
   </div>
 
   <div
-    *ngIf="dashStateReady && !empty"
     class="widgets-wrapper"
     [style.width]="optimalDesktopWidth"
     fxLayout="row wrap"
     fxLayoutGap="grid 4px"
+    ixDropGrid 
+    [ixDropGridModel]="renderedWidgets"
+    (ixDropGridModelChange)="onWidgetReorder($event)"
   >
     <!-- SORTABLE WIDGETS -->
-    <ng-container  *ngIf="!empty && screenType == 'Desktop' && statsDataEvent$ && pools && nics && volumeData && sysinfoReady">
-      <ng-container  *ngIf="dashState">
-        <ng-container  *ngFor="let widget of dashState">
-          <ng-container  *ngIf="widget.rendered">
-            <ng-container [ngSwitch]="widget.name.toLowerCase()">
+    <ng-container *ngIf="dashStateReady && !empty && screenType == 'Desktop' && statsDataEvent$ && pools && nics && volumeData && sysinfoReady">
+      <ng-container *ngIf="renderedWidgets">
+        <div *ngFor="let widget of renderedWidgets; let index = index; trackBy: getWidgetId" ixDropGridItem>
+          <ng-container [ngSwitch]="widget.name.toLowerCase()">
 
-              <widget-sysinfo *ngSwitchCase="'system information'"
-                id="active"
-                fxFlex="{{widgetWidth}}px"
-                fxFlex.xs="100"
-                [enclosureSupport]="systemInformation.features.enclosure"
-                [isHA]="isHa"
-                [isPassive]="false"
-                [widgetSize]="medium">
-              </widget-sysinfo>
+            <widget-sysinfo *ngSwitchCase="'system information'"
+              id="active"
+              fxFlex="{{widgetWidth}}px"
+              fxFlex.xs="100"
+              ixDrag
+              [enclosureSupport]="systemInformation.features.enclosure"
+              [isHA]="isHa"
+              [isPassive]="false"
+              [widgetSize]="medium"
+              [showReorderHandle]="reorderMode"
+            ><span ixDragHandle></span></widget-sysinfo>
 
-              <widget-sysinfo *ngSwitchCase="'system information(standby)'"
-                id="passive"
-                fxFlex="{{widgetWidth}}px"
-                fxFlex.xs="100"
-                [enclosureSupport]="systemInformation.features.enclosure"
-                [isHA]="isHa"
-                [isPassive]="true"
-                [widgetSize]="medium">
-              </widget-sysinfo>
+            <widget-sysinfo *ngSwitchCase="'system information(standby)'"
+              id="passive"
+              fxFlex="{{widgetWidth}}px"
+              fxFlex.xs="100"
+              ixDrag
+              [enclosureSupport]="systemInformation.features.enclosure"
+              [isHA]="isHa"
+              [isPassive]="true"
+              [widgetSize]="medium"
+              [showReorderHandle]="reorderMode"
+            ><span ixDragHandle></span></widget-sysinfo>
 
-              <widget-help  *ngSwitchCase="'help'"></widget-help>
+            <widget-help 
+              *ngSwitchCase="'help'"
+              ixDrag
+              [showReorderHandle]="reorderMode"
+            ></widget-help>
 
+            <widget-cpu *ngSwitchCase="'cpu'"
+              fxFlex="{{widgetWidth}}px"
+              fxFlex.xs="100"
+              ixDrag
+              [data]="dataFromConfig(widget) | cast"
+              [cpuModel]="systemInformation.model"
+              [widgetSize]="medium"
+              [showReorderHandle]="reorderMode"
+            ><span ixDragHandle></span></widget-cpu>
 
-              <widget-cpu *ngSwitchCase="'cpu'"
-                fxFlex="{{widgetWidth}}px"
-                fxFlex.xs="100"
-                [data]="dataFromConfig(widget) | cast"
-                [cpuModel]="systemInformation.model"
-                [widgetSize]="medium"
-              ></widget-cpu>
+            <widget-memory *ngSwitchCase="'memory'"
+              fxFlex="{{widgetWidth}}px"
+              fxFlex.xs="100"
+              ixDrag
+              [ecc]="systemInformation.ecc_memory"
+              [data]="dataFromConfig(widget) | cast"
+              [widgetSize]="medium"
+              [showReorderHandle]="reorderMode"
+            ><span ixDragHandle></span></widget-memory>
 
-              <widget-memory *ngSwitchCase="'memory'"
-                fxFlex="{{widgetWidth}}px"
-                fxFlex.xs="100"
-                [ecc]="systemInformation.ecc_memory"
-                [data]="dataFromConfig(widget) | cast"
-                [widgetSize]="medium"
-              ></widget-memory>
+            <widget-pool *ngSwitchCase="'pool'"
+              fxFlex="{{widgetWidth}}px"
+              fxFlex.xs="100"
+              ixDrag
+              [poolState]="dataFromConfig(widget) | cast"
+              [volumeData]="volumeDataFromConfig(widget)"
+              [widgetSize]="medium"
+              [showReorderHandle]="reorderMode"
+            ><span ixDragHandle></span></widget-pool>
 
-              <widget-pool *ngSwitchCase="'pool'"
-                fxFlex="{{widgetWidth}}px"
-                fxFlex.xs="100"
-                [poolState]="dataFromConfig(widget) | cast"
-                [volumeData]="volumeDataFromConfig(widget)"
-                [widgetSize]="medium"
-              ></widget-pool>
+            <widget-storage *ngSwitchCase="'storage'"
+              fxFlex="{{widgetWidth}}px"
+              fxFlex.xs="100"
+              ixDrag
+              [pools]="dataFromConfig(widget) | cast"
+              [volumeData]="volumeDataFromConfig(widget) | cast"
+              [widgetSize]="medium"
+              [showReorderHandle]="reorderMode"
+            ><span ixDragHandle></span></widget-storage>
 
-              <widget-storage *ngSwitchCase="'storage'"
-                fxFlex="{{widgetWidth}}px"
-                fxFlex.xs="100"
-                [pools]="dataFromConfig(widget) | cast"
-                [volumeData]="volumeDataFromConfig(widget) | cast"
-                [widgetSize]="medium"
-              ></widget-storage>
+            <widget-nic *ngSwitchCase="'interface'"
+              fxFlex="{{widgetWidth}}px"
+              fxFlex.xs="100"
+              ixDrag
+              [nicState]="dataFromConfig(widget) | cast"
+              [stats]="statsDataEvent$"
+              [widgetSize]="medium"
+              [showReorderHandle]="reorderMode"
+            ><span ixDragHandle></span></widget-nic>
 
-              <widget-nic *ngSwitchCase="'interface'"
-                fxFlex="{{widgetWidth}}px"
-                fxFlex.xs="100"
-                [nicState]="dataFromConfig(widget) | cast"
-                [stats]="statsDataEvent$"
-                [widgetSize]="medium"
-              ></widget-nic>
+            <widget-network *ngSwitchCase="'network'"
+              fxFlex="{{widgetWidth}}px"
+              fxFlex.xs="100"
+              ixDrag
+              [nics]="nics"
+              [stats]="statsDataEvent$"
+              [widgetSize]="medium"
+              [showReorderHandle]="reorderMode"
+            ><span ixDragHandle></span></widget-network>
 
-              <widget-network *ngSwitchCase="'network'"
-                fxFlex="{{widgetWidth}}px"
-                fxFlex.xs="100"
-                [nics]="nics"
-                [stats]="statsDataEvent$"
-                [widgetSize]="medium"
-              ></widget-network>
-
-            </ng-container>
           </ng-container>
-        </ng-container>
+        </div>
       </ng-container>
     </ng-container>
   </div>

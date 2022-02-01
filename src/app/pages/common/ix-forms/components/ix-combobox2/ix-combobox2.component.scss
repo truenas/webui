@@ -1,0 +1,87 @@
+:host {
+  display: block;
+  margin-bottom: 12px;
+}
+
+.full-width {
+  color: var(--fg1);
+  width: 100%;
+}
+
+.container {
+  padding: 8px 0;
+}
+
+.tooltip {
+  margin-left: 8px;
+}
+
+.input-container {
+  background: var(--bg1);
+  border: 1.5px solid var(--lines);
+  border-radius: 2px;
+  display: flex;
+  flex-direction: row;
+  font-size: 12px;
+  padding: 6px;
+  position: relative;
+
+  &:focus-within {
+    border-color: var(--primary);
+  }
+
+  &.disabled {
+    opacity: 0.38;
+
+    input {
+      cursor: not-allowed;
+      opacity: 1;
+    }
+  }
+}
+
+.loader {
+  display: inline-block;
+  margin-left: 4px;
+}
+
+.label-container {
+  align-items: center;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  margin-bottom: 5px;
+  margin-left: 1px;
+}
+
+.label {
+  font-size: x-small;
+}
+
+.reset-input {
+  align-items: center;
+  bottom: 0;
+  cursor: pointer;
+  display: flex;
+  opacity: 0.5;
+  padding: 5px;
+  position: absolute;
+  right: 0.3rem;
+  top: 0;
+  user-select: none;
+}
+
+.input-container mat-icon {
+  font-size: 1rem;
+  height: auto;
+  margin-left: 4px;
+  width: auto;
+}
+
+.ix-selected {
+  background: var(--primary) !important;
+}
+
+.ix-unselected {
+  background: var(--bg2) !important;
+}
