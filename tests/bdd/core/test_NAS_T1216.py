@@ -3,15 +3,10 @@
 
 import time
 import glob
-import sys
 import os
-import zipfile
-from selenium.webdriver.common.keys import Keys
 from function import (
     wait_on_element,
     is_element_present,
-    wait_on_element_disappear,
-    attribute_value_exist,
     word_xor
 )
 from pytest_bdd import (
@@ -42,26 +37,19 @@ def the_browser_is_open_the_freenas_url_and_logged_in(driver, nas_ip, root_passw
         driver.find_element_by_xpath('//input[@placeholder="Password"]').send_keys(root_password)
         assert wait_on_element(driver, 5, '//button[@name="signin_button"]')
         driver.find_element_by_xpath('//button[@name="signin_button"]').click()
-    else:
+    if is_element_present(driver, '//li[contains(.,"Dashboard")]'):
+        assert wait_on_element(driver, 10, '//span[contains(.,"root")]')
+        element = driver.find_element_by_xpath('//span[contains(.,"root")]')
+        driver.execute_script("arguments[0].scrollIntoView();", element)
+        assert wait_on_element(driver, 5, '//mat-list-item[@ix-auto="option__Dashboard"]', 'clickable')
         driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
 
 
 @when('you should be on the dashboard, click on Directory Services and then Kerberos Keytabs in the side menu')
 def you_should_be_on_the_dashboard_click_on_directory_services_and_then_kerberos_keytabs_in_the_side_menu(driver):
     """you should be on the dashboard, click on Directory Services and then Kerberos Keytabs in the side menu."""
-    time.sleep(2)
-    # temp fix for 1st start popup bug
-    #assert wait_on_element(driver, 5, '//div[contains(.,"Welcome to your new NAS")]')
-    #assert wait_on_element(driver, 5, '//button[@ix-auto="button__CLOSE"]', 'clickable')
-    #driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
-    #assert wait_on_element(driver, 10, '//span[contains(.,"Dashboard")]')
-    #assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Dashboard"]', 'clickable')
-    #driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
-    # / temp fix for 1st start popup bug
-    time.sleep(1)
     assert wait_on_element(driver, 7, '//span[contains(text(),"Directory Services")]', 'clickable')
     driver.find_element_by_xpath('//span[contains(text(),"Directory Services")]').click()
-    time.sleep(1)
     assert wait_on_element(driver, 7, '//mat-list-item[@ix-auto="option__Kerberos Keytabs"]', 'clickable') 
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Kerberos Keytabs"]').click()
 
@@ -69,10 +57,8 @@ def you_should_be_on_the_dashboard_click_on_directory_services_and_then_kerberos
 @then('click on Add on the Kerberos Keytab page')
 def click_on_add_on_the_kerberos_keytab_page(driver):
     """click on Add on the Kerberos Keytab page."""
-    time.sleep(1)
     assert wait_on_element(driver, 7, '//div[contains(text(),"Kerberos Keytabs")]')
-    time.sleep(1)
-    driver.find_element_by_xpath('//button[@ix-auto="button__Kerberos Keytabs_ADD"]').click()    
+    driver.find_element_by_xpath('//button[@ix-auto="button__Kerberos Keytabs_ADD"]').click()
 
 
 @then(parsers.parse('decode the tabfile with "{tabfile_string}"'))
@@ -87,11 +73,10 @@ def decode_the_tabfile_with_tabfile_string(driver, tabfile_string):
     print("tabfile_path=")
     print(tabfile_path)
     print("-----")
-    #tabfile = sorted(glob.glob(tabfile_path))[-1]
     datafile = open(os.path.expanduser(tabfile_path), 'rb').read()
     tab_result = word_xor(datafile, tabfile_string)
     time.sleep(2)
-    open('KEYTABNAME.KEYTAB','wb').write(tab_result)
+    open('KEYTABNAME.KEYTAB', 'wb').write(tab_result)
 
 
 @then('name the keytab and upload the file and click save')
@@ -110,19 +95,12 @@ def name_the_keytab_and_upload_the_file_and_click_save(driver):
     keytab_file = sorted(glob.glob(keytab_file_path))[-1]
     assert wait_on_element(driver, 7, '//input[@type="file"]', 'clickable')
     driver.find_element_by_xpath('//input[@type="file"]').send_keys(keytab_file)
-    #save
-    time.sleep(2)
-    #assert wait_on_element(driver, 7, '//button[@ix-auto="button__SUBMIT"', 'clickable') 
+    time.sleep(1)
+    assert wait_on_element(driver, 7, '//button[@ix-auto="button__SUBMIT"', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__SUBMIT"]').click()
 
 
 @then('verify that the file was accepted and utilized')
 def verify_that_the_file_was_accepted_and_utilized(driver):
     """verify that the file was accepted and utilized."""
-    time.sleep(1)
     assert wait_on_element(driver, 7, '//div[contains(text(),"keytab_test")]')
-
-    ## return to dashboard
-    assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Dashboard"]', 'clickable')
-    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
-    time.sleep(1)
