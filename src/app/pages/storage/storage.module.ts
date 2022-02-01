@@ -34,7 +34,6 @@ import { VolumeChangekeyFormComponent } from 'app/pages/storage/volumes/volume-c
 import { VolumeCreatekeyFormComponent } from 'app/pages/storage/volumes/volume-createkey-form/volume-createkey-form.component';
 import { VolumesListControlsComponent } from 'app/pages/storage/volumes/volume-list-controls/volumes-list-controls.component';
 import { VolumeRekeyFormComponent } from 'app/pages/storage/volumes/volume-rekey-form/volume-rekey-form.component';
-import { ExportDisconnectModalComponent } from 'app/pages/storage/volumes/volumes-list/components/export-disconnect-modal.component';
 import { JobService } from 'app/services';
 import { StorageService } from 'app/services/storage.service';
 import { UserService } from 'app/services/user.service';
@@ -115,7 +114,6 @@ import { ZvolWizardComponent } from './volumes/zvol/zvol-wizard/zvol-wizard.comp
     EditNfsAceComponent,
     EditPosixAceComponent,
     SelectPresetModalComponent,
-    ExportDisconnectModalComponent,
   ],
   exports: [VolumesListControlsComponent],
   entryComponents: [SnapshotDetailsComponent, UnlockDialogComponent],
