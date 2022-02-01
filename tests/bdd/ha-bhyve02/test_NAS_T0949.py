@@ -131,14 +131,14 @@ def open_the_user_drop_down_to_verify_the_value_has_been_changed(driver):
     assert wait_on_element(driver, 7, '//tr[contains(.,"ericbsd")]/td', 'clickable')
     driver.find_element_by_xpath('//tr[contains(.,"ericbsd")]/td').click()
     assert wait_on_element(driver, 7, '(//tr[contains(.,"ericbsd")]/following-sibling::tr)[1]//button[contains(.,"Edit")]')
-    driver.find_element_by_xpath('//dt[contains(.,"Permit Sudo:")]')
+    driver.find_element_by_xpath('//tr[contains(.,"ericbsd")]/following-sibling::tr//dt[contains(.,"Permit Sudo:")]')
 
 
 @then('Updated value should be visible')
 def updated_value_should_be_visible(driver):
     """Updated value should be visible."""
-    assert wait_on_element(driver, 7, '//dt[contains(.,"Permit Sudo:")]/../dd')
-    element_text = driver.find_element_by_xpath('//dt[contains(.,"Permit Sudo:")]/../dd').text
+    assert wait_on_element(driver, 7, '//tr[contains(.,"ericbsd")]/following-sibling::tr//dt[contains(.,"Permit Sudo:")]/../dd')
+    element_text = driver.find_element_by_xpath('//tr[contains(.,"ericbsd")]/following-sibling::tr//dt[contains(.,"Permit Sudo:")]/../dd').text
     assert element_text == 'true'
 
 
