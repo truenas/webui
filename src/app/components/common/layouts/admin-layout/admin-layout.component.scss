@@ -26,7 +26,31 @@
 .retro .app-logo {
   height: 40px;
   width: 40px;
-  /*left: 32px;*/
+}
+
+.branding {
+  align-items: center;
+  color: #444;
+  display: flex;
+  height: 48px;
+  justify-content: center;
+  left: 0;
+  line-height: 64px;
+  max-width: var(--sidenav-width); /*15rem;*/
+  position: fixed;
+  text-align: center;
+  top: 0;
+  width: 100%;
+  z-index: 9999;
+
+  .app-logo {
+    margin-right: 8px;
+  }
+
+  .app-logo-text {
+    height: 40px;
+    width: auto;
+  }
 }
 
 .branding .app-logo-text {
@@ -48,6 +72,11 @@
 .branding.topbar {
   background-color: var(--topbar) !important;
   color: var(--topbar-txt) !important;
+}
+
+.app-side-nav-container {
+  height: 100vh;
+  height: 100%;
 }
 
 .enterprise-logo mat-icon {
@@ -114,4 +143,43 @@ jw-modal {
 #scroll-area {
   max-height: 100vh;
   overflow: auto;
+}
+
+.rightside-content-hold {
+  display: block;
+  height: calc(100% - 48px);
+  overflow-x: hidden;
+  overflow-y: auto;
+  padding: 14px 16px 15px;
+  position: absolute;
+  top: 50px;
+  width: 100%;
+
+  &.has-footer {
+    height: calc(100% - 95px);
+    padding-bottom: 95px;
+  }
+}
+
+.footer-console-bar {
+  background-color: #000;
+  bottom: 0;
+  height: 45px;
+  position: absolute;
+  width: 100%;
+  z-index: 10;
+
+  .message {
+    background-color: #000;
+    color: #0f0;
+    font-family: monospace, Courier New, Courier;
+    font-size: 9pt;
+    height: 39px;
+    line-height: 1;
+    margin: 0;
+    max-height: 42px;
+    overflow: hidden;
+    padding: 3px 20px 0;
+    white-space: pre-wrap;
+  }
 }

@@ -59,7 +59,7 @@ export class EntityTableActionsComponent implements OnInit, OnChanges {
   }
 
   get singleAction(): EntityTableAction {
-    if (this.actions[0].actions == undefined) {
+    if (this.actions[0].actions === undefined) {
       return null;
     }
     const hasGroups = (this.actions);

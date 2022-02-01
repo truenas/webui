@@ -1,6 +1,6 @@
 <div *ngIf="label" class="label-container">
   <label class="label">
-    {{label}}
+    <span [innerHTML]="label"></span>
     <span *ngIf="required" class="required">*</span>
   </label>
   <tooltip *ngIf="tooltip" [header]="label" class="tooltip" [message]="tooltip"></tooltip>
@@ -19,14 +19,14 @@
     [disabled]="isDisabled"
     [type]="getType()"
     [value]="formatted"
-    (input)="input(ixInput.value)"
+    (input)="input(ixInput)"
     (blur)="blur()"
     [autocomplete]="autocomplete"
     [autocapitalize]="autocapitalize"
     [placeholder]="placeholder"
   >
   <span *ngIf="shouldShowResetInput()" class="reset-input">
-    <mat-icon (click)="resetInput()" role="img" fontSet="mdi-set" fontIcon="mdi-close-circle"></mat-icon>
+    <mat-icon (click)="resetInput(ixInput)" role="img" fontSet="mdi-set" fontIcon="mdi-close-circle"></mat-icon>
   </span>
   <button
     *ngIf="type === 'password'"
@@ -36,6 +36,11 @@
     <i class="material-icons" matTooltip="Hide" *ngIf="showPassword">visibility</i>
     <i class="material-icons" matTooltip="Show" *ngIf="!showPassword">visibility_off</i>
   </button>
+</div>
+<div *ngIf="invalid">
+  <mat-error>
+    <div [innerHTML]="invalidMessage()"></div>
+  </mat-error>
 </div>
 <ix-errors [control]="controlDirective.control" [label]="label"></ix-errors>
 

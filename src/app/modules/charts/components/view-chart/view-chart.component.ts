@@ -30,7 +30,7 @@ export const viewChartMetadata = {
         <div class="legend-x legend-item" *ngIf="chartConfig.data.x">Time: <span *ngIf="showLegendValues" class="legend-item-time">{{legend[0].x}}</span></div>
         <div class="legend-html" fxLayout="row wrap" fxLayoutAlign="space-between" fxLayoutGap="16px" >
           <ng-container *ngFor="let item of legend; let i=index ">
-            <div fxFlex.xs="calc(33% - 16px)" class="legend-item" *ngIf="chartType != 'gauge'" (click)="focus(legend[i])" [ngClass]="{'legend-item-disabled':!legend[i].visible}">
+            <div fxFlex.xs="calc(33% - 16px)" class="legend-item" *ngIf="chartType !== 'gauge'" (click)="focus(legend[i])" [ngClass]="{'legend-item-disabled':!legend[i].visible}">
               <div>
                 <span class="legend-swatch" [style.background-color]="legend[i].swatch"></span>
                 <span class="legend-name">{{legend[i].name}}: </span>
@@ -78,7 +78,7 @@ export class ViewChartComponent extends ViewComponent implements OnChanges, Afte
       const time = raw[0].x;
       for (const legend of this.legend) {
         for (const item of raw) {
-          if (legend.name == item.name) {
+          if (legend.name === item.name) {
             legend.value = item.value;
           }
         }
@@ -173,7 +173,7 @@ export class ViewChartComponent extends ViewComponent implements OnChanges, Afte
   findLegendItem(item: Legend): number {
     for (let i = 0; i < this.legend.length; i++) {
       const legendItem = this.legend[i];
-      if (legendItem.name == item.name) {
+      if (legendItem.name === item.name) {
         return i;
       }
     }

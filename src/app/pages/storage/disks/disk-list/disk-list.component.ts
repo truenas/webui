@@ -173,7 +173,7 @@ export class DiskListComponent implements EntityTableConfig<Disk> {
       }
     }
 
-    const devMatch = this.unused.filter((dev) => dev.name == parentRow.name);
+    const devMatch = this.unused.filter((dev) => dev.name === parentRow.name);
     if (devMatch.length > 0) {
       actions.push({
         id: parentRow.name,

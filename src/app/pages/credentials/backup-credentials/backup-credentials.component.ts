@@ -140,7 +140,7 @@ export class BackupCredentialsComponent implements OnInit {
   cloudCredentialsDataSourceHelper(res: CloudsyncCredential[]): CloudsyncCredential[] {
     return res.map((item) => {
       if (this.providers) {
-        const credentialProvider = this.providers.find((provider) => provider.name == item.provider);
+        const credentialProvider = this.providers.find((provider) => provider.name === item.provider);
         if (credentialProvider) {
           item.provider = credentialProvider.title;
         }

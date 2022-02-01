@@ -166,7 +166,7 @@ export class VolumeStatusComponent implements OnInit, OnDestroy {
   getZfsPoolScan(poolName: string): void {
     this.ws.subscribe('zfs.pool.scan').pipe(untilDestroyed(this)).subscribe(
       (res) => {
-        if (res.fields && res.fields.name == poolName) {
+        if (res.fields && res.fields.name === poolName) {
           this.poolScan = res.fields.scan;
           const seconds = this.poolScan.total_secs_left;
           this.timeRemaining = {
@@ -189,7 +189,7 @@ export class VolumeStatusComponent implements OnInit, OnDestroy {
 
       this.poolScan = pools[0].scan;
       // subscribe zfs.pool.scan to get scrub job info
-      if (this.poolScan.state == PoolScanState.Scanning) {
+      if (this.poolScan.state === PoolScanState.Scanning) {
         this.getZfsPoolScan(pools[0].name);
       }
       this.dataHandler(pools[0]);
@@ -578,7 +578,7 @@ export class VolumeStatusComponent implements OnInit, OnDestroy {
 
     // add actions
     if (category && 'type' in data) {
-      if (data.type == VDevType.Disk) {
+      if (data.type === VDevType.Disk) {
         item.actions = [{ title: 'Disk Actions', actions: this.getAction(data, category, vdevType) }];
       } else if (data.type === VDevType.Mirror) {
         item.actions = [{ title: 'Mirror Actions', actions: this.extendAction() }];
@@ -623,13 +623,13 @@ export class VolumeStatusComponent implements OnInit, OnDestroy {
       topoNode.children = [];
 
       pool.topology[category].forEach((vdev) => {
-        if (category != 'data') {
+        if (category !== 'data') {
           topoNode.children.push(this.parseTopolgy(vdev, category));
         } else {
           node.children.push(this.parseTopolgy(vdev, category));
         }
       });
-      if (category != 'data' && pool.topology[category].length > 0) {
+      if (category !== 'data' && pool.topology[category].length > 0) {
         node.children.push(topoNode);
       }
     }

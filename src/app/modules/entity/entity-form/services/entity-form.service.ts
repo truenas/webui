@@ -84,7 +84,7 @@ export class EntityFormService {
         });
       } else if (dictConfig.subFields) {
         formControl = this.createFormGroup(dictConfig.subFields);
-      } else if (fieldConfig.type != 'label') {
+      } else if (fieldConfig.type !== 'label') {
         formControl = new FormControl(
           { value: fieldConfig.value, disabled: fieldConfig.disabled },
           fieldConfig.type === 'input-list' as FieldType ? [] : fieldConfig.validation,

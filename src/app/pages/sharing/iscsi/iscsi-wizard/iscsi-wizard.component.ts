@@ -565,7 +565,7 @@ export class IscsiWizardComponent implements WizardConfiguration {
     });
 
     this.entityWizard.formArray.get([0]).get('disk').valueChanges.pipe(untilDestroyed(this)).subscribe((value: string) => {
-      const disableZvolGroup = !(value === 'NEW' && this.entityWizard.formArray.get([0]).get('type').value == IscsiExtentType.Disk);
+      const disableZvolGroup = !(value === 'NEW' && this.entityWizard.formArray.get([0]).get('type').value === IscsiExtentType.Disk);
       this.disablefieldGroup(this.zvolFieldGroup, disableZvolGroup, 0);
     });
 
@@ -626,7 +626,7 @@ export class IscsiWizardComponent implements WizardConfiguration {
 
     this.iscsiService.getAuth().pipe(untilDestroyed(this)).subscribe((accessRecords) => {
       accessRecords.forEach((record) => {
-        if (_.find(authGroupField.options, { value: record.tag }) == undefined) {
+        if (_.find(authGroupField.options, { value: record.tag }) === undefined) {
           authGroupField.options.push({ label: String(record.tag), value: record.tag });
         }
       });
@@ -672,7 +672,7 @@ export class IscsiWizardComponent implements WizardConfiguration {
       Object.entries((this.entityWizard.formArray.get([step]) as FormGroup).controls).forEach(([name, control]) => {
         if (name in this.summaryObj) {
           (control as FormControl).valueChanges.pipe(untilDestroyed(this)).subscribe(((value) => {
-            if (value == undefined) {
+            if (value === undefined) {
               this.summaryObj[name] = null;
             } else {
               this.summaryObj[name] = value;

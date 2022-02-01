@@ -87,6 +87,7 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
         this.sideNav.close();
       }
     });
+
     // Watches screen size and open/close sidenav
     this.media.media$.pipe(untilDestroyed(this)).subscribe((change: MediaChange) => {
       this.isMobile = this.layoutService.isMobile;

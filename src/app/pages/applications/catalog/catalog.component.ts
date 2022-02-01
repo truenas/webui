@@ -110,10 +110,10 @@ export class CatalogComponent implements OnInit {
       const catalogSyncJob = this.catalogSyncJobs.find((job) => job.id == event.fields.id);
       if (catalogSyncJob) {
         catalogSyncJob.progress = event.fields.progress.percent;
-        if (event.fields.state == JobState.Success) {
+        if (event.fields.state === JobState.Success) {
           this.catalogSyncJobs = this.catalogSyncJobs.filter((job) => job.id !== catalogSyncJob.id);
           this.loadCatalogs();
-        } else if (event.fields.state == JobState.Failed) {
+        } else if (event.fields.state === JobState.Failed) {
           this.catalogSyncJobs = this.catalogSyncJobs.filter((job) => job.id !== catalogSyncJob.id);
         }
       }
