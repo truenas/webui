@@ -26,18 +26,6 @@ export default class IxValidatorsService {
     };
   }
 
-  readonly validateOnCondition = (
-    condition: (control: AbstractControl) => boolean,
-    validator: ValidatorFn,
-  ): ValidatorFn => {
-    return (control: AbstractControl): ValidationErrors => {
-      if (condition(control)) {
-        return validator(control);
-      }
-      return null;
-    };
-  };
-
   /**
    * This function returns a validator
    * @param errMessage The error message applied if the validator fails

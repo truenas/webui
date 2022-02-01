@@ -1,6 +1,6 @@
 <div *ngIf="label" class="label-container">
   <label class="label">
-    <span [innerHTML]="label"></span>
+    {{label}}
     <span *ngIf="required" class="required">*</span>
   </label>
   <tooltip *ngIf="tooltip" [header]="label" class="tooltip" [message]="tooltip"></tooltip>
