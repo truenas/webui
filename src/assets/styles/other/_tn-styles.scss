@@ -1466,9 +1466,16 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     }
   }
 
-  .native-link {
+  app-support .links-wrapper {
+    margin-bottom: 1rem;
+  }
+
+  app-support .links {
+    margin-bottom: 5px;
+  }
+
+  a[href*='//'] {
     color: var(--primary);
-    text-decoration: underline;
   }
 
   // Special class added for certificate display forms for long SANs and DNs

@@ -34,6 +34,7 @@
   line-height: 1.3;
 
   ::ng-deep a {
+    color: inherit !important;
     text-decoration: underline;
   }
 }
