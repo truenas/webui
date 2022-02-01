@@ -8,7 +8,7 @@ import { untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 import { TreeNode } from 'primeng/api';
-import { combineLatest, Observable } from 'rxjs';
+import { Observable } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
 import { DatasetEncryptionType } from 'app/enums/dataset-encryption-type.enum';
 import { DatasetType } from 'app/enums/dataset-type.enum';
@@ -24,8 +24,8 @@ import helptext from 'app/helptext/storage/volumes/volume-list';
 import { DatasetLockParams } from 'app/interfaces/dataset-lock.interface';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { Job } from 'app/interfaces/job.interface';
-import { PoolProcess } from 'app/interfaces/pool-process.interface';
 import { Pool, PoolExpandParams, UpdatePool } from 'app/interfaces/pool.interface';
+import { Process } from 'app/interfaces/process.interface';
 import { Subs } from 'app/interfaces/subs.interface';
 import { DialogFormConfiguration } from 'app/modules/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/modules/entity/entity-dialog/entity-dialog.component';
@@ -38,6 +38,9 @@ import { EntityUtils } from 'app/modules/entity/utils';
 import {
   CreateSnapshotDialogComponent,
 } from 'app/pages/storage/volumes/create-snapshot-dialog/create-snapshot-dialog.component';
+import {
+  DeleteDatasetDialogComponent,
+} from 'app/pages/storage/volumes/delete-dataset-dialog/delete-dataset-dialog.component';
 import {
   EncryptionOptionsDialogComponent,
 } from 'app/pages/storage/volumes/encyption-options-dialog/encryption-options-dialog.component';
@@ -411,8 +414,8 @@ export class VolumesListTableConfig implements EntityTableConfig {
                 p1 += '<br /><br />';
               }
               this.ws.call('pool.processes', [row1.id]).pipe(untilDestroyed(this, 'destroy')).subscribe((res) => {
-                const runningProcesses: PoolProcess[] = [];
-                const runningUnknownProcesses: PoolProcess[] = [];
+                const runningProcesses: Process[] = [];
+                const runningUnknownProcesses: Process[] = [];
                 if (res.length > 0) {
                   res.forEach((item) => {
                     if (!item.service) {
@@ -729,136 +732,15 @@ export class VolumesListTableConfig implements EntityTableConfig {
           id: rowData.name,
           name: T('Delete Dataset'),
           label: T('Delete Dataset'),
-          onClick: (row1: VolumesListDataset) => {
-            const datasetName = row1.name;
-
-            this.loader.open();
-            combineLatest([
-              this.ws.call('pool.dataset.attachments', [row1.id]),
-              this.ws.call('pool.dataset.processes', [row1.id]),
-            ]).pipe(untilDestroyed(this, 'destroy')).subscribe(
-              ([attachments, processes]) => {
-                if (attachments.length > 0) {
-                  p1 = this.translate.instant(helptext.datasetDeleteMsg, { name: datasetName });
-                  attachments.forEach((item) => {
-                    p1 += `<br><b>${item.type}:</b>`;
-                    item.attachments.forEach((i) => {
-                      const tempArr = i.split(',');
-                      tempArr.forEach((i) => {
-                        p1 += `<br> - ${i}`;
-                      });
-                    });
-                  });
-                  p1 += '<br /><br />';
+          onClick: (row: VolumesListDataset) => {
+            this.mdDialog.open(DeleteDatasetDialogComponent, { data: row })
+              .afterClosed()
+              .pipe(untilDestroyed(this, 'destroy'))
+              .subscribe((shouldRefresh) => {
+                if (shouldRefresh) {
+                  this.parentVolumesListComponent.repaintMe();
                 }
-
-                const runningProcesses: PoolProcess[] = [];
-                const runningUnknownProcesses: PoolProcess[] = [];
-                if (processes.length > 0) {
-                  processes.forEach((item) => {
-                    if (!item.service) {
-                      if (item.name && item.name !== '') {
-                        runningProcesses.push(item);
-                      } else {
-                        runningUnknownProcesses.push(item);
-                      }
-                    }
-                  });
-                  if (runningProcesses.length > 0) {
-                    const runningMsg = this.translate.instant(helptext.exportMessages.running);
-                    p1 += runningMsg + `<b>${datasetName}</b>:`;
-                    runningProcesses.forEach((process) => {
-                      if (process.name) {
-                        p1 += `<br> - ${process.name}`;
-                      }
-                    });
-                  }
-                  if (runningUnknownProcesses.length > 0) {
-                    p1 += '<br><br>' + this.translate.instant(helptext.exportMessages.unknown);
-                    runningUnknownProcesses.forEach((process) => {
-                      if (process.pid) {
-                        p1 += `<br> - ${process.pid} - ${process.cmdline.substring(0, 40)}`;
-                      }
-                    });
-                    p1 += '<br><br>' + this.translate.instant(helptext.exportMessages.terminated);
-                  }
-                }
-
-                // eslint-disable-next-line @typescript-eslint/no-use-before-define
-                doDelete();
-              },
-              (err) => {
-                this.loader.close();
-                new EntityUtils().handleWsError(this, err, this.dialogService);
-              },
-            );
-
-            const doDelete = (): void => {
-              this.loader.close();
-              this.dialogService.doubleConfirm(
-                this.translate.instant('Delete Dataset <i><b>{datasetName}</b></i>', { datasetName }),
-                this.translate.instant(
-                  'The <i><b>{datasetName}</b></i> dataset and all snapshots stored with it <b>will be permanently deleted</b>.',
-                  { datasetName },
-                ) + '<br><br>' + p1,
-                datasetName,
-                true,
-                this.translate.instant('DELETE DATASET'),
-              ).pipe(
-                filter(Boolean),
-                untilDestroyed(this, 'destroy'),
-              ).subscribe(() => {
-                this.loader.open();
-                this.ws.call('pool.dataset.delete', [rowData.id, { recursive: true }]).pipe(untilDestroyed(this, 'destroy')).subscribe(
-                  () => {
-                    this.loader.close();
-                    this.parentVolumesListComponent.repaintMe();
-                  },
-                  (error) => {
-                    this.loader.close();
-                    if (error.reason.indexOf('Device busy') > -1) {
-                      this.dialogService.confirm({
-                        title: this.translate.instant('Device Busy'),
-                        message: this.translate.instant('Force deletion of dataset <i>{datasetName}</i>?', { datasetName }),
-                        buttonMsg: this.translate.instant('Force Delete'),
-                      }).pipe(
-                        filter(Boolean),
-                        untilDestroyed(this, 'destroy'),
-                      ).subscribe(() => {
-                        this.loader.open();
-                        this.ws.call('pool.dataset.delete', [rowData.id, {
-                          recursive: true,
-                          force: true,
-                        }]).pipe(untilDestroyed(this, 'destroy')).subscribe(
-                          () => {
-                            this.loader.close();
-                            this.parentVolumesListComponent.repaintMe();
-                          },
-                          (err) => {
-                            this.loader.close();
-                            this.dialogService.errorReport(
-                              this.translate.instant(
-                                'Error deleting dataset {datasetName}.', { datasetName },
-                              ),
-                              err.reason,
-                              err.stack,
-                            );
-                          },
-                        );
-                      });
-                    } else {
-                      this.dialogService.errorReport(
-                        this.translate.instant(
-                          'Error deleting dataset {datasetName}.', { datasetName },
-                        ),
-                        error.reason,
-                        error.stack,
-                      );
-                    }
-                  },
-                );
               });
-            };
           },
         });
       }
