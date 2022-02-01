@@ -61,8 +61,8 @@ def when_the_apps_page_loads_open_manage_catalogs(driver):
 def click_three_dots_icon_for_truecharts_and_select_delete(driver):
     """click three dots icon for Truecharts and select delete."""
     time.sleep(5)  # we have to wait for the page to settle down and the card to fully load
-    assert wait_on_element(driver, 10, '//mat-icon[contains(.," more_vert ")]', 'clickable')
-    driver.find_element_by_xpath('//mat-icon[contains(.," more_vert ")]').click()
+    assert wait_on_element(driver, 10, '//tr[contains(.,"TRUECHARTS")]//mat-icon[contains(.," more_vert ")]', 'clickable')
+    driver.find_element_by_xpath('//tr[contains(.,"TRUECHARTS")]//mat-icon[contains(.," more_vert ")]').click()
     assert wait_on_element(driver, 10, '//button[@ix-auto="action__TRUECHARTS_Delete"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="action__TRUECHARTS_Delete"]').click()
 
@@ -76,17 +76,14 @@ def confirm_the_confirmation(driver):
     driver.find_element_by_xpath('//button[@ix-auto="button__DELETE"]').click()
 
 
-@then('close confirmation dialog')
-def close_confirmation_dialog(driver):
-    """close confirmation dialog."""
-    assert wait_on_element(driver, 7, '//span[contains(.,"Success")]')
-    assert wait_on_element(driver, 10, '//span[contains(.,"Close")]', 'clickable')
-    driver.find_element_by_xpath('//span[contains(.,"Close")]').click()
-
-
 @then('confirm deletion is successful')
 def confirm_deletion_is_successful(driver):
     """confirm deletion is successful."""
     time.sleep(2) # Because of slow ui update times
-    assert wait_on_element(driver, 30, '//h6[contains(.,"Please wait")]')
-    assert wait_on_element(driver, 600, '//div[contains(.,"TRUECHARTS")]') is False
+    assert wait_on_element(driver, 10, '//h6[contains(.,"Please wait")]')
+    assert wait_on_element_disappear(driver, 30, '//h6[contains(.,"Please wait")]')
+    assert wait_on_element(driver, 10, '//div[contains(text(),"Installed Applications")]', 'clickable')
+    driver.find_element_by_xpath('//div[contains(text(),"Installed Applications")]').click()
+    assert wait_on_element(driver, 10, '//div[contains(text(),"Manage Catalogs")]', 'clickable')
+    driver.find_element_by_xpath('//div[contains(text(),"Manage Catalogs")]').click()
+    assert wait_on_element(driver, 10, '//tr[contains(.,"TRUECHARTS")]') is False
