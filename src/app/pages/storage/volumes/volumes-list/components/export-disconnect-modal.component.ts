@@ -237,7 +237,6 @@ export class ExportDisconnectModalComponent implements OnInit {
       cascade: value.cascade,
       restart_services: this.restartServices,
     }]);
-    entityJobRef.componentInstance.submit();
     entityJobRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
       this.isFormLoading = false;
       this.dialogRef.close(true);
@@ -309,5 +308,6 @@ export class ExportDisconnectModalComponent implements OnInit {
         this.dialogService.errorReport(helptext.exportError, res.error, res.exception);
       }
     });
+    entityJobRef.componentInstance.submit();
   }
 }

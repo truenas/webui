@@ -289,7 +289,6 @@ export class VolumesListTableConfig implements EntityTableConfig {
     if ('mountpoint' in rowData && rowData.mountpoint) {
       rowDataPathSplit = rowData.mountpoint.split('/');
     }
-    let p1 = '';
     const actions = [];
     // workaround to make deleting volumes work again,  was if (row.vol_fstype == "ZFS")
     if (rowData.type === 'zpool') {
@@ -822,25 +821,6 @@ export class VolumesListTableConfig implements EntityTableConfig {
     return actions as EntityTableAction[];
   }
 
-  private getStorageFlattenedAttachments(attachments: PoolAttachment[]): string {
-    function formatPoolAttachment(obj: PoolAttachment): string {
-      return obj.attachments
-        .map((a) => formatAttachments(a.split(',')))
-        .join();
-    }
-
-    function formatAttachments(arr: string[]): string {
-      return arr
-        .map((str) => formatAttachment(str))
-        .join();
-    }
-
-    function formatAttachment(str: string): string {
-      return `<br> - ${str}`;
-    }
-
-    return attachments.map((item) => `<br><b>${item.type}:</b>${formatPoolAttachment(item)}`).join();
-  }
   private openDetachModal(
     pool: VolumesListPool,
     attachments?: PoolAttachment[],
@@ -859,6 +839,26 @@ export class VolumesListTableConfig implements EntityTableConfig {
         } as ExportDisconnectModalState,
       })
       .afterClosed();
+  }
+
+  private getStorageFlattenedAttachments(attachments: PoolAttachment[]): string {
+    function formatPoolAttachment(obj: PoolAttachment): string {
+      return obj.attachments
+        .map((a) => formatAttachments(a.split(',')))
+        .join();
+    }
+
+    function formatAttachments(arr: string[]): string {
+      return arr
+        .map((str) => formatAttachment(str))
+        .join();
+    }
+
+    function formatAttachment(str: string): string {
+      return `<br> - ${str}`;
+    }
+
+    return attachments.map((item) => `<br><b>${item.type}:</b>${formatPoolAttachment(item)}`).join();
   }
 
   private getStorageFlattenedProcesses(processes: PoolProcess[]): string {
