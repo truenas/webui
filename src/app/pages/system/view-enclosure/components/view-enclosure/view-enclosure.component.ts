@@ -223,7 +223,7 @@ export class ViewEnclosureComponent implements OnDestroy {
           break;
       }
 
-      if (view.alias == this.currentView.alias) { matchIndex = view.id; }
+      if (view.alias === this.currentView.alias) { matchIndex = view.id; }
     });
 
     this.views = views;

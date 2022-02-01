@@ -219,7 +219,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
     });
 
     core.register({ observerClass: this, eventName: 'ThemeChanged' }).pipe(untilDestroyed(this)).subscribe((evt: ThemeChangedEvent) => {
-      if (this.theme == evt.data) { return; }
+      if (this.theme === evt.data) { return; }
       this.theme = evt.data;
       this.setCurrentView(this.currentView);
       if (this.labels && this.labels.events$) {
@@ -510,7 +510,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
           }
 
           const disk = this.findDiskBySlotNumber(parseInt(evt.data.id));
-          if (disk == this.selectedDisk) { break; } // Don't trigger any changes if the same disk is selected
+          if (disk === this.selectedDisk) { break; } // Don't trigger any changes if the same disk is selected
 
           if (evt.data.enabled) {
             this.selectedDisk = disk;
@@ -844,13 +844,13 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
     let index = -1;
 
     enclosure.driveTrayObjects.forEach((dto: DriveTray, i: number) => {
-      const result = (dto.id == disk.enclosure.slot.toString());
+      const result = (dto.id === disk.enclosure.slot.toString());
       if (result) {
         index = i;
       }
     });
 
-    if (index == -1) {
+    if (index === -1) {
       return;
     }
 
@@ -877,10 +877,10 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
     }
 
     // Also check slot status
-    const elements: EnclosureElement[] = this.system.rearIndex && disk.enclosure.number == this.system.rearIndex
+    const elements: EnclosureElement[] = this.system.rearIndex && disk.enclosure.number === this.system.rearIndex
       ? this.system.enclosures[disk.enclosure.number].elements as any[]
       : this.system.enclosures[disk.enclosure.number].elements[0].elements;
-    const slot = elements.find((s) => s.slot == disk.enclosure.slot);
+    const slot = elements.find((s) => s.slot === disk.enclosure.slot);
 
     if (!failed && slot.fault) {
       failed = true;
@@ -895,7 +895,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
     const sickPools: Pool[] = [];
     this.system.pools.forEach((pool: Pool, index: number) => {
       const healthy = pool.healthy;
-      const inCurrentEnclosure = index == this.selectedEnclosure.poolKeys[pool.name];
+      const inCurrentEnclosure = index === this.selectedEnclosure.poolKeys[pool.name];
       if (!healthy && inCurrentEnclosure) {
         sickPools.push(pool);
       }
@@ -918,17 +918,17 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
       }
 
       // Also check slot status
-      const elements: EnclosureElement[] = this.system.rearIndex && disk.enclosure.number == this.system.rearIndex
+      const elements: EnclosureElement[] = this.system.rearIndex && disk.enclosure.number === this.system.rearIndex
         ? this.system.enclosures[disk.enclosure.number].elements as any[]
         : this.system.enclosures[disk.enclosure.number].elements[0].elements;
-      const slot = elements.find((s) => s.slot == disk.enclosure.slot);
+      const slot = elements.find((s) => s.slot === disk.enclosure.slot);
 
       if (!failed && slot.fault) {
         failed = true;
       }
 
       if (failed) {
-        const location = this.subenclosure && disk.enclosure.number == this.system.rearIndex
+        const location = this.subenclosure && disk.enclosure.number === this.system.rearIndex
           ? EnclosureLocation.Rear
           : EnclosureLocation.Front;
         const failure: DiskFailure = {
@@ -1000,7 +1000,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
   findDiskBySlotNumber(slot: number): EnclosureDisk {
     const selectedEnclosure = this.getSelectedEnclosure();
     return selectedEnclosure.disks.find((disk) => {
-      return disk.enclosure.slot == slot;
+      return disk.enclosure.slot === slot;
     });
   }
 

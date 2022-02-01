@@ -118,7 +118,7 @@ export class ApplicationsComponent implements OnInit, AfterViewInit {
           bulk.options[0].label = helptext.bulkActions.selectAll;
         }
         bulk.options.forEach((option) => {
-          if (option.value != 'select_all') {
+          if (option.value !== 'select_all') {
             option.disabled = !this.isSelectedOneMore;
           }
         });

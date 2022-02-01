@@ -53,7 +53,7 @@ export class ChartWizardComponent implements OnDestroy, WizardConfiguration {
     try {
       this.title = this.catalogApp.name;
       let hideVersion = false;
-      if (this.catalogApp.name == ixChartApp) {
+      if (this.catalogApp.name === ixChartApp) {
         this.title = helptext.launch;
         hideVersion = true;
       }
@@ -104,7 +104,7 @@ export class ChartWizardComponent implements OnDestroy, WizardConfiguration {
       });
 
       selectedVersion.schema.questions.forEach((question) => {
-        const wizard = this.wizardConfig.find((wizard) => wizard.label == question.group);
+        const wizard = this.wizardConfig.find((wizard) => wizard.label === question.group);
         if (wizard) {
           const wizardFieldConfigs = new EntityUtils().parseSchemaFieldConfig(question);
           wizard.fieldConfig = wizard.fieldConfig.concat(wizardFieldConfigs);

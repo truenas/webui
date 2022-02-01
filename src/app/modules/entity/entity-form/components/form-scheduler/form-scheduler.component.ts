@@ -295,7 +295,7 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, Aft
     this.control.valueChanges.pipe(untilDestroyed(this)).subscribe((evt: string) => {
       this.crontab = evt;
 
-      const isPreset: boolean = this.presets.filter((preset) => evt == preset.value).length != 0;
+      const isPreset: boolean = this.presets.filter((preset) => evt === preset.value).length !== 0;
       if (!isPreset) {
         this.customOption.value = evt;
         this.selectedOption = this.customOption;
@@ -382,7 +382,7 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, Aft
 
   onScroll(): void {
     const el = this.schedulePreview.nativeElement;
-    if ((el.scrollHeight - el.scrollTop) == el.offsetHeight) {
+    if ((el.scrollHeight - el.scrollTop) === el.offsetHeight) {
       this.generateSchedule(true);
     }
   }
@@ -412,7 +412,7 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, Aft
     const thisYear = dateFns.getYear(now);
     const dateMonth = dateFns.getMonth(dt);
     const dateYear = dateFns.getYear(dt);
-    if (thisMonth == dateMonth && thisYear == dateYear) {
+    if (thisMonth === dateMonth && thisYear === dateYear) {
       this.disablePrevious = true;
       return this.zonedTime;
     }
@@ -506,7 +506,7 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, Aft
     // eslint-disable-next-line no-constant-condition
     while (true) {
       try {
-        if (parseCounter == subsetEnd) {
+        if (parseCounter === subsetEnd) {
           this.generatedScheduleSubset = parseCounter;
           break;
         }
@@ -618,7 +618,7 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, Aft
     }
     for (const s of sched) {
       const schedule = s.toString().split(' ');
-      if (schedule[1] == calMonth && schedule[2] == calDay && schedule[3] == calYear) {
+      if (schedule[1] === calMonth && schedule[2] === calDay && schedule[3] === calYear) {
         return true;
       }
     }

@@ -256,7 +256,7 @@ export class WidgetNetworkComponent extends WidgetComponent implements AfterView
 
     if (nicsCount <= 3) {
       this.rows = nicsCount;
-      if (nicsCount == 3) {
+      if (nicsCount === 3) {
         this.gap = 4;
         this.aspectRatio = 304 / 100;
         maxTicksLimit = 3;
@@ -264,7 +264,7 @@ export class WidgetNetworkComponent extends WidgetComponent implements AfterView
         this.gap = 8;
         this.aspectRatio = 474 / 188;
 
-        if (nicsCount == 2) {
+        if (nicsCount === 2) {
           this.gap = 16;
           this.aspectRatio = 304 / 148;
           maxTicksLimit = 3;
@@ -273,7 +273,7 @@ export class WidgetNetworkComponent extends WidgetComponent implements AfterView
     } else {
       this.rows = 2;
       this.gap = 8;
-      if (nicsCount == 4) {
+      if (nicsCount === 4) {
         this.gap = 16;
       }
       if (nicsCount >= 5) {

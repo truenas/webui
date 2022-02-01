@@ -100,7 +100,7 @@ export class AssociatedTargetListComponent implements EntityTableConfig {
           (sessions) => {
             let warningMsg = '';
             sessions.forEach((session) => {
-              if (session.target.split(':')[1] == rowinner.target) {
+              if (session.target.split(':')[1] === rowinner.target) {
                 warningMsg = `<font color="red">${this.translate.instant('Warning: iSCSI Target is already in use.</font><br>')}`;
               }
             });

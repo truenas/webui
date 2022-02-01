@@ -630,7 +630,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
                   this.dialogRef.componentInstance.submit();
                   this.dialogRef.componentInstance.success.pipe(untilDestroyed(this, 'destroy')).subscribe((jobres) => {
                     this.dialogRef.close(false);
-                    if (jobres.progress.percent == 100 && jobres.progress.description === 'Scrub finished') {
+                    if (jobres.progress.percent === 100 && jobres.progress.description === 'Scrub finished') {
                       this.dialogService.info(
                         this.translate.instant('Scrub Complete'),
                         this.translate.instant('Scrub complete on pool <i>{poolName}</i>.', { poolName: row1.name }),

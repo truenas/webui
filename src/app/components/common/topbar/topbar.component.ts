@@ -216,7 +216,7 @@ export class TopbarComponent implements OnInit, OnDestroy {
       observerClass: this,
       eventName: 'Resilvering',
     }).pipe(untilDestroyed(this)).subscribe((evt: ResilveringEvent) => {
-      if (evt.data.scan.state == PoolScanState.Finished) {
+      if (evt.data.scan.state === PoolScanState.Finished) {
         this.showResilvering = false;
         this.resilveringDetails = null;
       } else {

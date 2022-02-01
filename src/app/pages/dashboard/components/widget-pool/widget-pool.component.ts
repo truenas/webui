@@ -271,7 +271,7 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
       const currentPath = this.path[this.currentSlideIndex];
       const currentName = currentPath?.dataSource?.disk || 'unknown';
 
-      if ((!currentName || currentName === 'unknown') && disks.length == 0) {
+      if ((!currentName || currentName === 'unknown') && disks.length === 0) {
         this.currentDiskDetails = null;
       } else if (currentName && disks.length > 0 && currentName === disks[0].name) {
         delete disks[0].enclosure;

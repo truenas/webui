@@ -326,7 +326,7 @@ export class ExtentFormComponent implements FormConfiguration {
   }
 
   formUpdate(type: string): void {
-    const isDevice = type != 'FILE';
+    const isDevice = type !== 'FILE';
 
     this.fileFieldGroup.forEach((field) => {
       const control = _.find(this.fieldConfig, { name: field });

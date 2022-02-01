@@ -935,11 +935,11 @@ export class CloudsyncFormComponent implements FormConfiguration {
           sublimitArr.unshift('00:00');
         }
       }
-      if (sublimitArr[1] && sublimitArr[1] != 'off') {
+      if (sublimitArr[1] && sublimitArr[1] !== 'off') {
         if (sublimitArr[1].endsWith('/s') || sublimitArr[1].endsWith('/S')) {
           sublimitArr[1] = sublimitArr[1].substring(0, sublimitArr[1].length - 2);
         }
-        if (this.cloudcredentialService.getByte(sublimitArr[1]) == -1) {
+        if (this.cloudcredentialService.getByte(sublimitArr[1]) === -1) {
           _.find(this.fieldConfig, { name: 'bwlimit' }).hasErrors = true;
           _.find(this.fieldConfig, { name: 'bwlimit' }).errors = 'Invalid bandwidth ' + sublimitArr[1];
           (this.formGroup.controls['bwlimit'] as any).setErrors('Invalid bandwidth ' + sublimitArr[1]);

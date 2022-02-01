@@ -183,11 +183,11 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
     this.usageMinThreads = [];
     this.usageMaxThreads = [];
     for (let u = 0; u < usage.length; u++) {
-      if (usage[u] == this.usageMin) {
+      if (usage[u] === this.usageMin) {
         this.usageMinThreads.push(Number(u.toFixed(0)));
       }
 
-      if (usage[u] == this.usageMax) {
+      if (usage[u] === this.usageMax) {
         this.usageMaxThreads.push(Number(u.toFixed(0)));
       }
     }
@@ -203,7 +203,7 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
         this.tempMinThreads.push(Number(t.toFixed(0)));
       }
 
-      if (temps[t] == this.tempMax) {
+      if (temps[t] === this.tempMax) {
         this.tempMaxThreads.push(Number(t.toFixed(0)));
       }
     }

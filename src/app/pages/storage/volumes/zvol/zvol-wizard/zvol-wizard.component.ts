@@ -264,7 +264,7 @@ export class ZvolWizardComponent implements WizardConfiguration {
   ];
 
   isCustActionVisible(actionId: string, stepperIndex: number): boolean {
-    if (!(stepperIndex == 1)) {
+    if (!(stepperIndex === 1)) {
       return false;
     }
     if (actionId === 'advanced_mode' && !this.isBasicMode) {
@@ -538,7 +538,7 @@ export class ZvolWizardComponent implements WizardConfiguration {
   }
 
   async customNext(stepper: MatStepper): Promise<void> {
-    if (stepper.selectedIndex == 0) {
+    if (stepper.selectedIndex === 0) {
       if (!this.parent) {
         this.wizardConfig[0].fieldConfig.find((c) => c.name === 'path').warnings = 'Please select a ZFS Volume';
         return;
