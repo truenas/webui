@@ -24,7 +24,6 @@ import { LanguageService } from 'app/services/language.service';
 import { LocaleService } from 'app/services/locale.service';
 import { ThemeService } from 'app/services/theme/theme.service';
 import { BreadcrumbComponent } from './breadcrumb/breadcrumb.component';
-import { CustomizerComponent } from './customizer/customizer.component';
 import { AdminLayoutComponent } from './layouts/admin-layout/admin-layout.component';
 import { AuthLayoutComponent } from './layouts/auth-layout/auth-layout.component';
 import { ModalComponent } from './modal/modal.component';
@@ -57,7 +56,6 @@ import { TopbarComponent } from './topbar/topbar.component';
     TopbarComponent,
     NavigationComponent,
     ModalComponent,
-    CustomizerComponent,
     BreadcrumbComponent,
     PageTitleComponent,
     SecondaryMenuComponent,
