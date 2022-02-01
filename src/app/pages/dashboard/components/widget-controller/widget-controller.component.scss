@@ -27,14 +27,6 @@
 
 }
 
-#cpu-load-cores {
-  /*opacity:0.5;*/
-}
-
-#cpu-load-cores-legend {
-  /*margin-top:36px;*/
-}
-
 #cpu-load-cores-legend .legend-item.chart-label {
   text-align: center;
 }
@@ -78,8 +70,6 @@
 }
 
 .title-wrapper {
-  /*background-color:var(--blue);
-  color:#fff;*/
   height: 45%;
   padding: 16px;
   text-align: left;
@@ -105,8 +95,6 @@
   color: var(--fg2);
   position: absolute;
   right: 16px;
-  /*font-weight:500;
-  text-transform:capitalize;*/
 }
 
 .controls button {
@@ -119,7 +107,7 @@
 }
 
 .x-axis .start-time,
- 
+
 .x-axis .end-time {
   bottom: 0;
   font-family: Roboto;
@@ -137,10 +125,6 @@
   right: 8px;
 }
 
-/*:host ::ng-deep .c3-axis-y g:nth-child(2n){
-  visibility:hidden;
-}*/
-
 /* MARKER */
 :host ::ng-deep .c3-chart-line .c3-circles circle._expanded_ {
   stroke: var(--primary) !important;
@@ -149,12 +133,6 @@
 :host ::ng-deep .c3-chart-line circle.c3-circle {
   fill: var(--bg2) !important;
 }
-
-/*.widget .bar-chart-wrapper{
-  position: static;
-  opacity: 1;
-  z-index:1
-}*/
 
 .clickable {
   cursor: pointer;
@@ -174,8 +152,6 @@
   height: 100vh;
   position: absolute;
   width: 100vw;
-  /*top: 88px;
-  z-index: 2;*/
 }
 
 .xs.widget .mat-card {
@@ -203,9 +179,7 @@
   margin: 16px 0;
 }
 
-.xs.widget .mobile .top { 
-  /*border-bottom:solid 1px var(--fg1);*/
-  
+.xs.widget .mobile .top {
   padding-bottom: 24px;
 }
 

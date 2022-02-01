@@ -1,7 +1,7 @@
 <section fxLayoutAlign="start center" fxLayoutGap="48px" [style.padding]="'10px 24px'">
-  <div  *ngFor="let detail of conf.details">
+  <div *ngFor="let detail of conf.details">
     <p>{{ detail.label | uppercase | translate }}</p>
-    <h4 class="mb-0">{{ detail.value }}</h4>
+    <h4 class="value">{{ detail.value }}</h4>
   </div>
 </section>
 
