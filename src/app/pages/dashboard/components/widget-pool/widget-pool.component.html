@@ -72,7 +72,7 @@
 
           <!--<ng-container *ngTemplateOutlet="path[0].template"></ng-container>-->
           <div *ngFor="let slide of path;" fxFlex="100" class="slide {{slide.name}}" >
-            <ng-content *ngTemplateOutlet="slide.template"></ng-content>
+            <ng-container *ngTemplateOutlet="slide.template"></ng-container>
           </div>
 
           <!-- FRONT -->
