@@ -57,12 +57,14 @@
   }
 
   .jobs-container {
+    background-color: var(--bg2);
     display: flex;
     padding: 0;
     position: relative;
 
     .ix-table {
       flex-grow: 1;
+      height: 100%;
       overflow-x: hidden;
     }
 
@@ -70,5 +72,9 @@
       flex-grow: 0;
       width: 320px;
     }
+  }
+
+  ix-table-paginator {
+    border-top: 1px solid var(--lines);
   }
 }

@@ -1,6 +1,6 @@
 :host {
   .card {
-    border-bottom: 1px solid var(--lines);
+    border-bottom: 0;
     border-left: 1px solid var(--lines);
     border-radius: 0;
     border-right: 0;
@@ -33,7 +33,6 @@
 
   .logs-information {
     .list-item {
-      border-bottom: 1px solid var(--lines);
       display: flex;
       flex-direction: column;
       min-height: 48px;
@@ -41,6 +40,10 @@
 
       h4 {
         margin-bottom: 8px;
+      }
+
+      &:not(:first-of-type) {
+        border-top: 1px solid var(--lines);
       }
     }
   }
