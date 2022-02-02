@@ -2,7 +2,7 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { createRoutingFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { SnmpConfig } from 'app/interfaces/snmp-config.interface';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
@@ -14,12 +14,13 @@ describe('ServiceSnmpComponent', () => {
   let spectator: Spectator<ServiceSnmpComponent>;
   let websocket: WebSocketService;
   let loader: HarnessLoader;
-  const createComponent = createComponentFactory({
+  const createComponent = createRoutingFactory({
     component: ServiceSnmpComponent,
     imports: [
       ReactiveFormsModule,
       IxFormsModule,
     ],
+    routes: [],
     providers: [
       mockProvider(DialogService),
       mockWebsocket([

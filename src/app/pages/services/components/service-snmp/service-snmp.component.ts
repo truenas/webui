@@ -29,7 +29,13 @@ export class ServiceSnmpComponent implements OnInit {
     v3: [false],
     v3_username: [''],
     v3_authtype: [''],
-    v3_password: ['', [Validators.minLength(8)]],
+    v3_password: ['', [
+      Validators.minLength(8),
+      this.validation.validateOnCondition(
+        () => this.isV3SupportEnabled,
+        Validators.required,
+      ),
+    ]],
     v3_privproto: [''],
     v3_privpassphrase: ['', Validators.minLength(8)],
 
@@ -60,7 +66,7 @@ export class ServiceSnmpComponent implements OnInit {
   readonly logLevelOptions$ = of(helptext.loglevel_options);
 
   get isV3SupportEnabled(): boolean {
-    return this.form.value['v3'];
+    return this.form?.value?.['v3'];
   }
 
   constructor(
