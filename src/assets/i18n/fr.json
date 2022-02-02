@@ -607,6 +607,7 @@
   "Removes the ACL and permissions recursively  from all child datasets of the current dataset, including all directories and files contained within those child datasets. This can make data inaccessible until new permissions are created.": "",
   "Rename Boot Environment": "",
   "Rename this Boot Environment": "",
+  "Reorder": "",
   "Replace existing dataset properties with these new defined properties in the replicated files.": "",
   "Replication <i>{name}</i> has started.": "",
   "Replication Summary": "",

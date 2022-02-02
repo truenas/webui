@@ -371,3 +371,45 @@ body.collapsed-menu mat-sidenav-container.mat-drawer-opened mat-sidenav-content.
   top: -10px;
   width: 100vw !important;
 }
+
+.drag-handle {
+  cursor: move;
+}
+
+.drag-handle .grip {
+  color: #ccc;
+  content: '....';
+  cursor: move;
+  display: inline-block;
+  font-family: sans-serif;
+  font-size: 12px;
+  height: 20px;
+  letter-spacing: 2px;
+  line-height: 5px;
+  margin-right: 0.3em;
+  margin-top: -0.7em;
+  overflow: hidden;
+  padding: 3px 4px;
+  pointer-events: none;
+  text-shadow: 1px 0 1px black;
+  vertical-align: middle;
+  white-space: normal;
+  width: 10px;
+}
+
+.drag-handle .grip::after {
+  content: '.. .. .. ..';
+}
+
+.drag-handle {
+  position: relative;
+
+  > .cdk-drag-handle {
+    height: 100%;
+    left: 0;
+    position: absolute;
+    top: 0;
+    width: 100%;
+    z-index: 100;
+  }
+}
