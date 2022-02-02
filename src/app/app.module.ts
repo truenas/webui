@@ -30,7 +30,6 @@ import { CoreComponents } from 'app/core/components/core-components.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { TerminalModule } from 'app/modules/terminal/terminal.module';
 import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
-import { ErdService } from 'app/services/erd.service';
 import { IxFileUploadService } from 'app/services/ix-file-upload.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { rootEffects, rootReducers } from 'app/store';
@@ -139,7 +138,6 @@ import { WebSocketService } from './services/ws.service';
     AuthService,
     WebSocketService,
     AppLoaderService,
-    ErdService,
     JobsManagerStore,
     IxSlideInService,
     IxFileUploadService,

@@ -25,9 +25,9 @@ export interface CreateZfsSnapshot {
 }
 
 export interface CloneZfsSnapshot {
-  snapshot: boolean;
+  snapshot: string;
   dataset_dst: string;
-  dataset_properties: Record<string, unknown>;
+  dataset_properties?: Record<string, unknown>;
 }
 
 export type ZfsRollbackParams = [

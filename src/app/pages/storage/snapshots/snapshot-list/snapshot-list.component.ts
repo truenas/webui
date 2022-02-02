@@ -1,7 +1,6 @@
 import { Component, Type } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { TooltipPosition } from '@angular/material/tooltip';
-import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { filter } from 'rxjs/operators';
@@ -22,6 +21,9 @@ import {
   EntityTableConfigConfig,
 } from 'app/modules/entity/entity-table/entity-table.interface';
 import { EntityUtils } from 'app/modules/entity/utils';
+import {
+  SnapshotCloneDialogComponent,
+} from 'app/pages/storage/snapshots/snapshot-clone-dialog/snapshot-clone-dialog.component';
 import { SnapshotListRow } from 'app/pages/storage/snapshots/snapshot-list/snapshot-list-row.interface';
 import { WebSocketService, StorageService, DialogService } from 'app/services';
 import { LocaleService } from 'app/services/locale.service';
@@ -158,12 +160,11 @@ export class SnapshotListComponent implements EntityTableConfig {
   };
 
   constructor(
-    private router: Router,
     protected ws: WebSocketService,
     protected localeService: LocaleService,
     protected storageService: StorageService,
     protected dialogService: DialogService,
-    protected dialog: MatDialog,
+    protected matDialog: MatDialog,
     protected translate: TranslateService,
   ) {
     this.setExtraColumns(window.localStorage.getItem('snapshotXtraCols') === 'true');
@@ -224,7 +225,9 @@ export class SnapshotListComponent implements EntityTableConfig {
         name: this.config.name,
         label: helptext.label_clone,
         onClick: (snapshot: SnapshotListRow) => {
-          this.router.navigate(['/', 'storage', 'snapshots', 'clone', snapshot.name]);
+          this.matDialog.open(SnapshotCloneDialogComponent, {
+            data: snapshot.id,
+          });
         },
       },
       {
@@ -352,7 +355,7 @@ export class SnapshotListComponent implements EntityTableConfig {
 
   startMultiDeleteProgress(selected: SnapshotListRow[]): void {
     const params = this.wsMultiDeleteParams(selected);
-    const dialogRef = this.dialog.open(EntityJobComponent, { data: { title: this.translate.instant('Deleting Snapshots') }, disableClose: true });
+    const dialogRef = this.matDialog.open(EntityJobComponent, { data: { title: this.translate.instant('Deleting Snapshots') }, disableClose: true });
     dialogRef.componentInstance.setCall(this.wsMultiDelete, params as CoreBulkQuery);
     dialogRef.componentInstance.submit();
 
