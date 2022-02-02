@@ -123,7 +123,7 @@ def click_agree(driver):
 @then('We should be returned to license information')
 def we_should_be_returned_to_license_information(driver):
     """We should be returned to license information."""
-    if is_element_present(driver, '//li[contains(.,"Dashboard")]'):
+    if not is_element_present(driver, '//li[contains(.,"Dashboard")]'):
         assert wait_on_element(driver, 7, '//mat-list-item[@ix-auto="option__System"]', 'clickable')
         driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__System"]').click()
         assert wait_on_element(driver, 7, '//mat-list-item[@ix-auto="option__Reporting"]', 'clickable')
