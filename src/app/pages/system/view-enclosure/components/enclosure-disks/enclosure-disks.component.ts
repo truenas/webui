@@ -102,12 +102,10 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
 
   chassis: Chassis;
   view: string = EnclosureLocation.Front;
-  protected _enclosure: ChassisView; // Visualization
   get enclosure(): ChassisView {
     if (!this.chassis) return null;
 
-    const chassisView: ChassisView = this.view === 'rear' ? this.chassis.rear : this.chassis.front;
-    return chassisView;
+    return this.view === 'rear' ? this.chassis.rear : this.chassis.front;
   }
 
   private _expanders: EnclosureElement[] | EnclosureElementsGroup[] = [];
@@ -119,7 +117,6 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
     return this._expanders;
   }
 
-  private _unhealthyPools: Pool[] = [];
   get unhealthyPools(): Pool[] {
     const sickPools = this.getUnhealthyPools();
     return sickPools;

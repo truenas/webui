@@ -1,177 +1,114 @@
-import { Component } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import { Observable } from 'rxjs';
-import helptext from 'app/helptext/services/components/service-snmp';
-import { FormConfiguration } from 'app/interfaces/entity-form.interface';
-import { SnmpConfig, SnmpConfigUpdate } from 'app/interfaces/snmp-config.interface';
-import { EntityFormComponent } from 'app/modules/entity/entity-form/entity-form.component';
-import { FieldConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
-import { FieldSet } from 'app/modules/entity/entity-form/models/fieldset.interface';
 import {
-  IdmapService, IscsiService, WebSocketService,
-} from 'app/services';
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
+} from '@angular/core';
+import { Validators } from '@angular/forms';
+import { Router } from '@angular/router';
+import { FormBuilder } from '@ngneat/reactive-forms';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { of } from 'rxjs';
+import helptext from 'app/helptext/services/components/service-snmp';
+import { EntityUtils } from 'app/modules/entity/utils';
+import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
+import IxValidatorsService from 'app/modules/ix-forms/services/ix-validators.service';
+import { DialogService, WebSocketService } from 'app/services';
 
+@UntilDestroy()
 @Component({
-  selector: 'snmp-edit',
-  template: ' <entity-form [conf]="this"></entity-form>',
-  providers: [IscsiService, IdmapService],
+  templateUrl: './service-snmp.component.html',
+  styleUrls: ['./service-snmp.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ServiceSnmpComponent implements FormConfiguration {
-  updateCall = 'snmp.update' as const;
-  queryCall = 'snmp.config' as const;
-  routeSuccess: string[] = ['services'];
-  title = helptext.formTitle;
-  fieldConfig: FieldConfig[] = [];
-  fieldSets: FieldSet[] = [
-    {
-      name: helptext.general_title,
-      width: '100%',
-      label: true,
-      config: [
-        {
-          type: 'input',
-          name: 'location',
-          placeholder: helptext.location_placeholder,
-          tooltip: helptext.location_tooltip,
-          label: helptext.location_label,
-          validation: helptext.location_validation,
-        },
-        {
-          type: 'input',
-          name: 'contact',
-          placeholder: helptext.contact_placeholder,
-          tooltip: helptext.contact_tooltip,
-          validation: helptext.contact_validation,
-        },
-        {
-          type: 'input',
-          name: 'community',
-          placeholder: helptext.community_placeholder,
-          tooltip: helptext.community_tooltip,
-          validation: helptext.community_validation,
-        }],
-    },
-    {
-      name: helptext.v3_title,
-      width: '100%',
-      label: true,
-      config: [
-        {
-          type: 'checkbox',
-          name: 'v3',
-          placeholder: helptext.v3_placeholder,
-          tooltip: helptext.v3_tooltip,
-        },
-        {
-          type: 'input',
-          name: 'v3_username',
-          placeholder: helptext.v3_username_placeholder,
-          tooltip: helptext.v3_username_tooltip,
-          relation: helptext.v3_username_relation,
-        },
-        {
-          type: 'select',
-          name: 'v3_authtype',
-          placeholder: helptext.v3_authtype_placeholder,
-          tooltip: helptext.v3_authtype_tooltip,
-          options: helptext.v3_authtype_options,
-          relation: helptext.v3_authtype_relation,
-        },
-        {
-          type: 'input',
-          name: 'v3_password',
-          inputType: 'password',
-          placeholder: helptext.v3_password_placeholder,
-          togglePw: true,
-          tooltip: helptext.v3_password_tooltip,
-          validation: helptext.v3_password_validation,
-          relation: helptext.v3_password_relation,
-        },
-        {
-          type: 'select',
-          name: 'v3_privproto',
-          placeholder: helptext.v3_privproto_placeholder,
-          tooltip: helptext.v3_privproto_tooltip,
-          options: helptext.v3_privproto_options,
-          relation: helptext.v3_privproto_relation,
-        },
-        {
-          type: 'input',
-          name: 'v3_privpassphrase',
-          inputType: 'password',
-          togglePw: true,
-          placeholder: helptext.v3_privpassphrase_placeholder,
-          tooltip: helptext.v3_privpassphrase_tooltip,
-          validation: helptext.v3_privpassphrase_validation,
-          relation: helptext.v3_privpassphrase_relation,
-        }],
-    },
-    {
-      name: helptext.other_title,
-      width: '100%',
-      label: true,
-      config: [
-        {
-          type: 'textarea',
-          name: 'options',
-          placeholder: helptext.options_placeholder,
-          tooltip: helptext.options_tooltip,
-        },
-        {
-          type: 'checkbox',
-          name: 'zilstat',
-          placeholder: helptext.zilstat_placeholder,
-          tooltip: helptext.zilstat_tooltip,
-        },
-        {
-          type: 'select',
-          name: 'loglevel',
-          placeholder: helptext.loglevel_placeholder,
-          tooltip: helptext.loglevel_tooltip,
-          options: helptext.loglevel_options,
-        },
-        {
-          type: 'checkbox',
-          name: 'iftop',
-          placeholder: helptext.iftop.placeholder,
-          tooltip: helptext.iftop.tooltip,
-          value: false,
-        },
-      ],
-    },
-    { name: 'divider', divider: true },
-  ];
+export class ServiceSnmpComponent implements OnInit {
+  isFormLoading = false;
+
+  form = this.fb.group({
+    location: [''],
+    contact: ['', Validators.email],
+    community: ['', Validators.pattern(/^[\w\_\-\.\s]*$/)],
+
+    v3: [false],
+    v3_username: [''],
+    v3_authtype: [''],
+    v3_password: ['', [Validators.minLength(8)]],
+    v3_privproto: [''],
+    v3_privpassphrase: ['', Validators.minLength(8)],
+
+    options: [''],
+    zilstat: [false],
+    loglevel: [null as number],
+    iftop: [false],
+  });
+
+  readonly tooltips = {
+    location: helptext.location_tooltip,
+    contact: helptext.contact_tooltip,
+    community: helptext.community_tooltip,
+    v3: helptext.v3_tooltip,
+    v3_username: helptext.v3_username_tooltip,
+    v3_authtype: helptext.v3_authtype_tooltip,
+    v3_password: helptext.v3_password_tooltip,
+    v3_privproto: helptext.v3_privproto_tooltip,
+    v3_privpassphrase: helptext.v3_privpassphrase_tooltip,
+    options: helptext.options_tooltip,
+    zilstat: helptext.zilstat_tooltip,
+    loglevel: helptext.loglevel_tooltip,
+    iftop: helptext.iftop.tooltip,
+  };
+
+  readonly authtypeOptions$ = of(helptext.v3_authtype_options);
+  readonly privprotoOptions$ = of(helptext.v3_privproto_options);
+  readonly logLevelOptions$ = of(helptext.loglevel_options);
+
+  get isV3SupportEnabled(): boolean {
+    return this.form.value['v3'];
+  }
 
   constructor(
-    protected router: Router,
-    protected route: ActivatedRoute,
-    protected ws: WebSocketService,
-    protected iscsiService: IscsiService,
-    protected idmapService: IdmapService,
+    private fb: FormBuilder,
+    private ws: WebSocketService,
+    private dialogService: DialogService,
+    private cdr: ChangeDetectorRef,
+    private router: Router,
+    private errorHandler: FormErrorHandlerService,
+    private validation: IxValidatorsService,
   ) {}
 
-  afterInit(entityForm: EntityFormComponent): void {
-    entityForm.submitFunction = this.submitFunction;
+  ngOnInit(): void {
+    this.loadCurrentSettings();
   }
 
-  resourceTransformIncomingRestData(data: SnmpConfig): any {
-    delete data['v3_privpassphrase'];
-    delete data['v3_password'];
-    return data;
-  }
-
-  clean(value: any): any {
-    if (!value['v3']) {
-      value['v3_password'] = '';
-      value['v3_privpassphrase'] = '';
-      value['v3_privproto'] = null;
-      value['v3_authtype'] = '';
+  onSubmit(): void {
+    this.isFormLoading = true;
+    const values = this.form.value;
+    if (!values.v3) {
+      values.v3_username = '';
+      values.v3_password = '';
+      values.v3_authtype = '';
+      values.v3_privproto = null;
+      values.v3_privpassphrase = '';
     }
 
-    return value;
+    this.ws.call('snmp.update', [values]).pipe(untilDestroyed(this)).subscribe(() => {
+      this.isFormLoading = false;
+      this.cdr.markForCheck();
+      this.router.navigate(['/services']);
+    }, (error) => {
+      this.isFormLoading = false;
+      this.errorHandler.handleWsFormError(error, this.form);
+      this.cdr.markForCheck();
+    });
   }
 
-  submitFunction(entityForm: SnmpConfigUpdate): Observable<SnmpConfig> {
-    return this.ws.call('snmp.update', [entityForm]);
+  private loadCurrentSettings(): void {
+    this.isFormLoading = true;
+    this.ws.call('snmp.config').pipe(untilDestroyed(this)).subscribe((config) => {
+      this.isFormLoading = false;
+      this.form.patchValue(config);
+      this.cdr.markForCheck();
+    }, (error) => {
+      new EntityUtils().handleWsError(null, error, this.dialogService);
+      this.isFormLoading = false;
+      this.cdr.markForCheck();
+    });
   }
 }

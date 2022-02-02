@@ -412,8 +412,4 @@ export class CatalogComponent implements OnInit {
       this.loadCatalogs();
     });
   }
-
-  trackByApp(_: number, app: CatalogApp): string {
-    return `${app.name} - ${app.catalog.id}`;
-  }
 }

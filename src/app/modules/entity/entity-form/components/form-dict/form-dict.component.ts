@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { FormDictConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
 import { Field } from 'app/modules/entity/entity-form/models/field.interface';
-import { EntityFormService } from 'app/modules/entity/entity-form/services/entity-form.service';
 import { FieldRelationService } from 'app/modules/entity/entity-form/services/field-relation.service';
 
 @Component({
@@ -17,7 +16,7 @@ export class FormDictComponent implements Field, OnInit {
 
   dictFormGroup: FormGroup;
 
-  constructor(private entityFormService: EntityFormService, protected fieldRelationService: FieldRelationService) {}
+  constructor(protected fieldRelationService: FieldRelationService) {}
 
   ngOnInit(): void {
     this.dictFormGroup = this.group.controls[this.config.name] as FormGroup;

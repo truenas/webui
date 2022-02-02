@@ -21,7 +21,7 @@ import { EntityUtils } from 'app/modules/entity/utils';
 import { ZvolWizardComponent } from 'app/pages/storage/volumes/zvol/zvol-wizard/zvol-wizard.component';
 import { VmDeviceFieldSet } from 'app/pages/vm/vm-device-field-set.interface';
 import {
-  WebSocketService, NetworkService, VmService, StorageService,
+  WebSocketService, NetworkService, VmService,
 } from 'app/services';
 import { CoreService } from 'app/services/core-service/core.service';
 import { DialogService } from 'app/services/dialog.service';
@@ -347,7 +347,6 @@ export class DeviceAddComponent implements OnInit, OnDestroy {
     protected networkService: NetworkService,
     protected vmService: VmService,
     private modalService: ModalService,
-    private storageService: StorageService,
   ) {}
 
   preInit(): void {

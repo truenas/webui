@@ -1,4 +1,4 @@
-import { ComponentHarness } from '@angular/cdk/testing';
+import { ComponentHarness, parallel } from '@angular/cdk/testing';
 import { IxCheckboxHarness } from 'app/modules/ix-forms/components/ix-checkbox/ix-checkbox.harness';
 import { IxChipsHarness } from 'app/modules/ix-forms/components/ix-chips/ix-chips.harness';
 import { IxComboboxHarness } from 'app/modules/ix-forms/components/ix-combobox/ix-combobox.harness';
@@ -62,6 +62,12 @@ export class IxFormHarness extends ComponentHarness {
     }
 
     return result;
+  }
+
+  async getLabels(): Promise<string[]> {
+    const controls = await this.getControlHarnesses();
+
+    return parallel(() => controls.map((control) => control.getLabelText()));
   }
 
   /**

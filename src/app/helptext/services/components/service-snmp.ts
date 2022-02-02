@@ -6,7 +6,6 @@ export default {
   location_placeholder: T('Location'),
   location_tooltip: T('Enter the location of the system.'),
   location_label: 'Location',
-  location_validation: [],
 
   contact_placeholder: T('Contact'),
   contact_tooltip: T('E-mail address that will receive SNMP service messages.'),

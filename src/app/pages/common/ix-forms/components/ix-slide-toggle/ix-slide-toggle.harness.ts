@@ -1,6 +1,6 @@
 import { BaseHarnessFilters, ComponentHarness, HarnessPredicate } from '@angular/cdk/testing';
 import { MatSlideToggleHarness } from '@angular/material/slide-toggle/testing';
-import { IxFormControlHarness } from 'app/pages/common/ix-forms/interfaces/ix-form-control-harness.interface';
+import { IxFormControlHarness } from 'app/modules/ix-forms/interfaces/ix-form-control-harness.interface';
 
 export interface IxSlideToggleHarnessFilters extends BaseHarnessFilters {
   label: string;

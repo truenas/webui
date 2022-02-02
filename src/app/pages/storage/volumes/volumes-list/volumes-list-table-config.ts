@@ -82,17 +82,12 @@ export class VolumesListTableConfig implements EntityTableConfig {
   protected dialogRef: MatDialogRef<EntityJobComponent>;
   routeAdd = ['storage', 'import'];
   routeAddTooltip = T('Create or Import Pool');
-  showDefaults = false;
   showSpinner: boolean;
   // TODO: Unused?
   encryptedStatus: number;
-  private datasetHasVms: boolean;
-  dialogConf: DialogFormConfiguration;
   restartServices = false;
   subs: Subs;
   productType = window.localStorage.getItem('product_type') as ProductType;
-
-  private recursiveIsChecked = false;
 
   constructor(
     private parentVolumesListComponent: VolumesListComponent,
@@ -188,7 +183,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
           name: T('Pool Options'),
           label: T('Pool Options'),
           onClick: (row: VolumesListPool) => {
-            this.dialogConf = {
+            const dialogConf: DialogFormConfiguration = {
               title: this.translate.instant('Edit Pool Options for {name}', { name: row.name }),
               confirmCheckbox: true,
               fieldConfig: [
@@ -235,7 +230,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
                 });
               },
             };
-            this.dialogService.dialogForm(this.dialogConf).pipe(untilDestroyed(this, 'destroy')).subscribe(() => {
+            this.dialogService.dialogForm(dialogConf).pipe(untilDestroyed(this, 'destroy')).subscribe(() => {
             });
           },
         });

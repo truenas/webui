@@ -15,9 +15,7 @@ import { DialogService } from 'app/services';
 })
 export class UnlockDialogComponent {
   title: string = helptext.unlock_dataset_dialog.title;
-  errors_title: string = helptext.unlock_dataset_dialog.errors;
   errors_message: string = helptext.unlock_dataset_dialog.errors_message;
-  unlock_title: string = helptext.unlock_dataset_dialog.unlock;
   unlock_message: string = helptext.unlock_dataset_dialog.unlock_message;
   buttonMsg: string = helptext.unlock_dataset_dialog.ok_button;
   cancelMsg: string = helptext.unlock_dataset_dialog.cancel_button;
