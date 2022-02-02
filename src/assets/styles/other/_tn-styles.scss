@@ -1029,7 +1029,6 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
   app-entity-dialog .has-pwtoggle {
     background: rgba(0, 0, 0, 0) !important;
     padding: 0 0 10px !important;
-    width: 385px !important;
 
     mat-form-field {
       width: 79% !important;
@@ -1201,6 +1200,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
   // Scrollbars need separate rules for firefox and webkit
 
   app-entity-dialog #pool_processes p,
+  export-disconnect-modal .pool-summary,
   confirm-dialog .warning-box {
     background-color: rgb(223, 223, 223);
     color: rgb(19, 19, 19);
@@ -1465,9 +1465,16 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     }
   }
 
-  .native-link {
+  app-support .links-wrapper {
+    margin-bottom: 1rem;
+  }
+
+  app-support .links {
+    margin-bottom: 5px;
+  }
+
+  a[href*='//'] {
     color: var(--primary);
-    text-decoration: underline;
   }
 
   // Special class added for certificate display forms for long SANs and DNs

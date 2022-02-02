@@ -15,7 +15,6 @@ import { DiskListComponent } from './disks/disk-list/disk-list.component';
 import { SmartResultsComponent } from './disks/smart-results/smart-results.component';
 import { ImportDiskComponent } from './import-disk/import-disk.component';
 import { SnapshotAddComponent } from './snapshots/snapshot-add/snapshot-add.component';
-import { SnapshotCloneComponent } from './snapshots/snapshot-clone/snapshot-clone.component';
 import { SnapshotListComponent } from './snapshots/snapshot-list/snapshot-list.component';
 import { VmwareSnapshotListComponent } from './vmware-snapshot/vmware-snapshot-list/vmware-snapshot-list.component';
 import { VmwareSnapshotFormComponent } from './vmware-snapshot/vmware-snapshot/vmware-snapshot-form.component';
@@ -153,11 +152,6 @@ export const routes: Routes = [
             path: '',
             component: SnapshotListComponent,
             data: { title: 'Snapshots', breadcrumb: 'Snapshots' },
-          },
-          {
-            path: 'clone/:pk',
-            component: SnapshotCloneComponent,
-            data: { title: 'Clone', breadcrumb: 'Clone' },
           },
           {
             path: 'add',

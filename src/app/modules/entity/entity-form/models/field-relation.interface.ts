@@ -4,13 +4,13 @@ import { RelationConnection } from 'app/modules/entity/entity-form/models/relati
 export interface Relation {
   fieldName: string;
   operatorName: string;
-  operatorValue: any;
+  operatorValue: unknown;
 }
 
 export interface FieldRelation {
   name: string;
   status?: string;
-  value?: any;
+  value?: unknown;
   operator?: string;
 }
 
