@@ -376,7 +376,7 @@ export class CatalogComponent implements OnInit {
        * Below is a special check to remove 'ix-chart' from the list of apps shown. 'ix-chart' is the same thing
        * as the button 'Launch Docker Image' in UI. Middleware advised UI to hide this option
        */
-      if (app.name === 'ix-chart') {
+      if (app.name === ixChartApp) {
         return false;
       }
 
