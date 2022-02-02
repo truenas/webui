@@ -3,6 +3,7 @@ import {
 } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Store } from '@ngrx/store';
 import _ from 'lodash';
 import { Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -13,6 +14,8 @@ import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-erro
 import { LanguageService, SystemGeneralService, WebSocketService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LocaleService } from 'app/services/locale.service';
+import { AppState } from 'app/store';
+import { generalConfigUpdated } from 'app/store/system-config/system-config.actions';
 
 @UntilDestroy()
 @Component({
@@ -105,6 +108,7 @@ export class LocalizationFormComponent {
     private slideInService: IxSlideInService,
     private errorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,
+    private store$: Store<AppState>,
   ) { }
 
   setTimeOptions(tz: string): void {
@@ -132,7 +136,7 @@ export class LocalizationFormComponent {
     delete body.date_format;
     delete body.time_format;
     this.ws.call('system.general.update', [body]).pipe(untilDestroyed(this)).subscribe(() => {
-      this.sysGeneralService.refreshSysGeneral();
+      this.store$.dispatch(generalConfigUpdated());
       this.isFormLoading = false;
       this.cdr.markForCheck();
       this.slideInService.close();

@@ -4,6 +4,7 @@ import {
 import { TooltipPosition } from '@angular/material/tooltip';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { filter } from 'rxjs/operators';
 import { BootEnvironmentActions } from 'app/enums/bootenv-actions.enum';
@@ -18,10 +19,12 @@ import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-tab
 import { EntityTableAction, EntityTableConfig } from 'app/modules/entity/entity-table/entity-table.interface';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { BootEnvironmentFormComponent } from 'app/pages/system/bootenv/bootenv-form/bootenv-form.component';
-import { DialogService, WebSocketService, SystemGeneralService } from 'app/services';
+import { DialogService, WebSocketService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LocaleService } from 'app/services/locale.service';
 import { StorageService } from 'app/services/storage.service';
+import { AppState } from 'app/store';
+import { waitForAdvancedConfig } from 'app/store/system-config/system-config.selectors';
 import { BootenvRow } from './bootenv-row.interface';
 
 @UntilDestroy()
@@ -57,7 +60,7 @@ export class BootEnvironmentListComponent implements EntityTableConfig {
     protected loader: AppLoaderService,
     private storage: StorageService,
     protected localeService: LocaleService,
-    private sysGeneralService: SystemGeneralService,
+    private store$: Store<AppState>,
     protected translate: TranslateService,
     private slideInService: IxSlideInService,
   ) {}
@@ -80,8 +83,8 @@ export class BootEnvironmentListComponent implements EntityTableConfig {
   };
 
   preInit(): void {
-    this.sysGeneralService.getAdvancedConfig$.pipe(untilDestroyed(this)).subscribe((res) => {
-      this.scrubInterval = res.boot_scrub;
+    this.store$.pipe(waitForAdvancedConfig, untilDestroyed(this)).subscribe((config) => {
+      this.scrubInterval = config.boot_scrub;
       this.updateBootState();
     });
   }
@@ -329,8 +332,8 @@ export class BootEnvironmentListComponent implements EntityTableConfig {
     }, {
       label: this.translate.instant('Stats/Settings'),
       onClick: () => {
-        this.sysGeneralService.getAdvancedConfig$.pipe(untilDestroyed(this)).subscribe((res) => {
-          this.scrubInterval = res.boot_scrub;
+        this.store$.pipe(waitForAdvancedConfig, untilDestroyed(this)).subscribe((config) => {
+          this.scrubInterval = config.boot_scrub;
           const localWs = this.ws;
           const localDialog = this.dialog;
           const statusConfigFieldConf: FieldConfig[] = [

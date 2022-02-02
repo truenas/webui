@@ -156,15 +156,15 @@ import { OpenvpnClientConfig, OpenvpnClientConfigUpdate } from 'app/interfaces/o
 import { OpenvpnServerConfig, OpenvpnServerConfigUpdate } from 'app/interfaces/openvpn-server-config.interface';
 import { MapOption } from 'app/interfaces/option.interface';
 import { PeriodicSnapshotTask, PeriodSnapshotTaskUpdate } from 'app/interfaces/periodic-snapshot-task.interface';
-import { PoolAttachment } from 'app/interfaces/pool-attachment.interface';
+import { DatasetAttachment, PoolAttachment } from 'app/interfaces/pool-attachment.interface';
 import { PoolExportParams } from 'app/interfaces/pool-export.interface';
 import { ImportDiskParams, PoolFindResult, PoolImportParams } from 'app/interfaces/pool-import.interface';
-import { PoolProcess } from 'app/interfaces/pool-process.interface';
 import { CreatePoolScrub, PoolScrub, PoolScrubParams } from 'app/interfaces/pool-scrub.interface';
 import { PoolUnlockQuery, PoolUnlockResult } from 'app/interfaces/pool-unlock-query.interface';
 import {
   CreatePool, Pool, PoolAttachParams, PoolExpandParams, PoolReplaceParams, UpdatePool,
 } from 'app/interfaces/pool.interface';
+import { Process } from 'app/interfaces/process.interface';
 import { QueryParams } from 'app/interfaces/query-api.interface';
 import { ReplicationConfigUpdate } from 'app/interfaces/replication-config-update.interface';
 import { ReplicationConfig } from 'app/interfaces/replication-config.interface';
@@ -644,8 +644,8 @@ export type ApiDirectory = {
   'pool.attach': { params: [id: number, params: PoolAttachParams]; response: void };
   'pool.attachments': { params: [id: number]; response: PoolAttachment[] };
   'pool.create': { params: [CreatePool]; response: Pool };
-  'pool.dataset.attachments': { params: [datasetId: string]; response: PoolAttachment[] };
-  'pool.dataset.change_key': { params: [id: number, params: DatasetChangeKeyParams]; response: void };
+  'pool.dataset.attachments': { params: [datasetId: string]; response: DatasetAttachment[] };
+  'pool.dataset.change_key': { params: [id: string, params: DatasetChangeKeyParams]; response: void };
   'pool.dataset.compression_choices': { params: void; response: Choices };
   'pool.dataset.create': { params: any; response: Dataset };
   'pool.dataset.delete': { params: [path: string, params: { recursive: boolean; force?: boolean }]; response: boolean };
@@ -660,7 +660,7 @@ export type ApiDirectory = {
   'pool.dataset.lock': { params: DatasetLockParams; response: boolean };
   'pool.dataset.path_in_locked_datasets': { params: [path: string]; response: boolean };
   'pool.dataset.permission': { params: DatasetPermissionsUpdate; response: number };
-  'pool.dataset.processes': { params: [datasetId: string]; response: PoolProcess[] };
+  'pool.dataset.processes': { params: [datasetId: string]; response: Process[] };
   'pool.dataset.promote': { params: [id: string]; response: void };
   'pool.dataset.query': { params: QueryParams<Dataset, ExtraDatasetQueryOptions>; response: Dataset[] };
   'pool.dataset.query_encrypted_roots_keys': { params: void; response: DatasetEncryptedRootKeys };
@@ -684,7 +684,7 @@ export type ApiDirectory = {
   'pool.offline': { params: [id: number, params: { label: string }]; response: boolean };
   'pool.online': { params: [id: number, params: { label: string }]; response: boolean };
   'pool.passphrase': { params: [number, { passphrase: string; admin_password: string }]; response: void };
-  'pool.processes': { params: [id: number]; response: PoolProcess[] };
+  'pool.processes': { params: [id: number]; response: Process[] };
   'pool.query': { params: QueryParams<Pool>; response: Pool[] };
   'pool.recoverykey_rm': { params: [number, { admin_password: string }]; response: void };
   'pool.rekey': { params: [number, { admin_password: string }]; response: void };

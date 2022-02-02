@@ -11,11 +11,21 @@ import { TreeTableModule } from 'primeng/treetable';
 import { MaterialModule } from 'app/app-material.module';
 import { CoreComponents } from 'app/core/components/core-components.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
+import { AppLoaderModule } from 'app/modules/app-loader/app-loader.module';
 import { CastModule } from 'app/modules/cast/cast.module';
 import { MessageService } from 'app/modules/entity/entity-form/services/message.service';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
+import {
+  CreateSnapshotDialogComponent,
+} from 'app/pages/storage/volumes/create-snapshot-dialog/create-snapshot-dialog.component';
 import { DatasetFormComponent } from 'app/pages/storage/volumes/datasets/dataset-form/dataset-form.component';
+import {
+  DeleteDatasetDialogComponent,
+} from 'app/pages/storage/volumes/delete-dataset-dialog/delete-dataset-dialog.component';
+import {
+  EncryptionOptionsDialogComponent,
+} from 'app/pages/storage/volumes/encyption-options-dialog/encryption-options-dialog.component';
 import { AclEditorListComponent } from 'app/pages/storage/volumes/permissions/components/acl-editor-list/acl-editor-list.component';
 import { EditNfsAceComponent } from 'app/pages/storage/volumes/permissions/components/edit-nfs-ace/edit-nfs-ace.component';
 import { EditPosixAceComponent } from 'app/pages/storage/volumes/permissions/components/edit-posix-ace/edit-posix-ace.component';
@@ -34,6 +44,7 @@ import { VolumeChangekeyFormComponent } from 'app/pages/storage/volumes/volume-c
 import { VolumeCreatekeyFormComponent } from 'app/pages/storage/volumes/volume-createkey-form/volume-createkey-form.component';
 import { VolumesListControlsComponent } from 'app/pages/storage/volumes/volume-list-controls/volumes-list-controls.component';
 import { VolumeRekeyFormComponent } from 'app/pages/storage/volumes/volume-rekey-form/volume-rekey-form.component';
+import { ExportDisconnectModalComponent } from 'app/pages/storage/volumes/volumes-list/components/export-disconnect-modal.component';
 import { JobService } from 'app/services';
 import { StorageService } from 'app/services/storage.service';
 import { UserService } from 'app/services/user.service';
@@ -71,6 +82,7 @@ import { ZvolWizardComponent } from './volumes/zvol/zvol-wizard/zvol-wizard.comp
     NgxDatatableModule, TranslateModule, FlexLayoutModule,
     NgxFilesizeModule, CommonDirectivesModule, CdkAccordionModule,
     TooltipModule, CoreComponents, CastModule, IxFormsModule,
+    AppLoaderModule,
   ],
   declarations: [
     VolumesListComponent,
@@ -114,6 +126,10 @@ import { ZvolWizardComponent } from './volumes/zvol/zvol-wizard/zvol-wizard.comp
     EditNfsAceComponent,
     EditPosixAceComponent,
     SelectPresetModalComponent,
+    EncryptionOptionsDialogComponent,
+    ExportDisconnectModalComponent,
+    CreateSnapshotDialogComponent,
+    DeleteDatasetDialogComponent,
   ],
   exports: [VolumesListControlsComponent],
   entryComponents: [SnapshotDetailsComponent, UnlockDialogComponent],

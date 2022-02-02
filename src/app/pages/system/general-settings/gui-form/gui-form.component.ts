@@ -7,6 +7,7 @@ import {
 } from '@angular/forms';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { filter } from 'rxjs/operators';
 import { ServiceName } from 'app/enums/service-name.enum';
@@ -16,11 +17,15 @@ import { SystemGeneralConfig, SystemGeneralConfigUpdate } from 'app/interfaces/s
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { AppLoaderService } from 'app/modules/app-loader/app-loader.service';
 import { ipValidator } from 'app/modules/entity/entity-form/validators/ip-validation';
+import { numberValidator } from 'app/modules/entity/entity-form/validators/number-validation';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import {
   DialogService, SystemGeneralService, WebSocketService,
 } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { AppState } from 'app/store';
+import { generalConfigUpdated } from 'app/store/system-config/system-config.actions';
+import { waitForGeneralConfig } from 'app/store/system-config/system-config.selectors';
 
 @UntilDestroy()
 @Component({
@@ -36,8 +41,8 @@ export class GuiFormComponent {
     ui_certificate: ['', [Validators.required]],
     ui_address: [[] as string[], [ipValidator('ipv4')]],
     ui_v6address: [[] as string[], [ipValidator('ipv6')]],
-    ui_port: [null as number, [Validators.required, Validators.min(1), Validators.max(65535)]],
-    ui_httpsport: [null as number, [Validators.required, Validators.min(1), Validators.max(65535)]],
+    ui_port: [null as number, [numberValidator(), Validators.required, Validators.min(1), Validators.max(65535)]],
+    ui_httpsport: [null as number, [numberValidator(), Validators.required, Validators.min(1), Validators.max(65535)]],
     ui_httpsprotocols: [[] as string[], [Validators.required]],
     ui_httpsredirect: [false],
     crash_reporting: [false, [Validators.required]],
@@ -64,8 +69,10 @@ export class GuiFormComponent {
     private loader: AppLoaderService,
     private translate: TranslateService,
     private errorHandler: FormErrorHandlerService,
+    private store$: Store<AppState>,
   ) {
-    this.sysGeneralService.getGeneralConfig$.pipe(
+    this.store$.pipe(
+      waitForGeneralConfig,
       untilDestroyed(this),
     ).subscribe((config) => {
       this.configData = config;
@@ -154,7 +161,7 @@ export class GuiFormComponent {
     const httpsPortChanged = current.ui_httpsport !== changed.ui_httpsport;
     const isServiceRestartRequired = this.getIsServiceRestartRequired(current, changed);
 
-    this.sysGeneralService.refreshSysGeneral();
+    this.store$.dispatch(generalConfigUpdated());
 
     if (isServiceRestartRequired) {
       this.dialog.confirm({

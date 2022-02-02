@@ -19,12 +19,12 @@ import { CastModule } from 'app/modules/cast/cast.module';
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { JobsModule } from 'app/modules/jobs/jobs.module';
+import { LayoutModule } from 'app/modules/layout/layout.module';
 import { DialogService } from 'app/services/dialog.service';
 import { LanguageService } from 'app/services/language.service';
 import { LocaleService } from 'app/services/locale.service';
 import { ThemeService } from 'app/services/theme/theme.service';
 import { BreadcrumbComponent } from './breadcrumb/breadcrumb.component';
-import { CustomizerComponent } from './customizer/customizer.component';
 import { AdminLayoutComponent } from './layouts/admin-layout/admin-layout.component';
 import { AuthLayoutComponent } from './layouts/auth-layout/auth-layout.component';
 import { ModalComponent } from './modal/modal.component';
@@ -50,6 +50,7 @@ import { TopbarComponent } from './topbar/topbar.component';
     CastModule,
     AlertsModule,
     JobsModule,
+    LayoutModule,
   ],
   declarations: [
     AdminLayoutComponent,
@@ -57,7 +58,6 @@ import { TopbarComponent } from './topbar/topbar.component';
     TopbarComponent,
     NavigationComponent,
     ModalComponent,
-    CustomizerComponent,
     BreadcrumbComponent,
     PageTitleComponent,
     SecondaryMenuComponent,

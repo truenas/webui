@@ -3,7 +3,7 @@ export class ThemeUtils {
     let txtColor = '';
     // Convert hex value to RGB
     const cssVarType = this.getValueType(cssVar);
-    const props = cssVarType == 'hex' ? this.hexToRgb(cssVar) : { rgb: this.rgbToArray(cssVar) };
+    const props = cssVarType === 'hex' ? this.hexToRgb(cssVar) : { rgb: this.rgbToArray(cssVar) };
 
     // Find the average value to determine brightness
     const brightest = (props.rgb[0] + props.rgb[1] + props.rgb[2]) / 3;
@@ -60,11 +60,11 @@ export class ThemeUtils {
 
   hexToRgb(str: string): { hex: string; rgb: number[] } {
     const valueType = this.getValueType(str); // cssVar || hex || rgb || rgba
-    if (valueType != 'hex') console.error('This method takes a hex value as a parameter but was given a value of type ' + valueType);
+    if (valueType !== 'hex') console.error('This method takes a hex value as a parameter but was given a value of type ' + valueType);
 
     const spl = str.split('#');
     let hex = spl[1];
-    if (hex.length == 3) {
+    if (hex.length === 3) {
       hex = hex[0] + hex[0] + hex[1] + hex[1] + hex[2] + hex[2];
     }
 
@@ -175,7 +175,7 @@ export class ThemeUtils {
 
     // Calculate saturation and lightness
     l = (cmax + cmin) / 2;
-    s = delta == 0 ? 0 : delta / (1 - Math.abs(2 * l - 1));
+    s = delta === 0 ? 0 : delta / (1 - Math.abs(2 * l - 1));
 
     l = +(l * 100).toFixed(1);
     s = +(s * 100).toFixed(1);

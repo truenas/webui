@@ -1,12 +1,14 @@
+import { HarnessLoader } from '@angular/cdk/testing';
+import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
-import { mockProvider, Spectator, createRoutingFactory } from '@ngneat/spectator/jest';
+import { Spectator, createRoutingFactory, mockProvider } from '@ngneat/spectator';
 import { EffectsModule } from '@ngrx/effects';
-import { Store, StoreModule } from '@ngrx/store';
+import { StoreModule, Store } from '@ngrx/store';
+import { provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
 import { CoreComponents } from 'app/core/components/core-components.module';
-import { FormatDateTimePipe } from 'app/core/components/pipes/format-datetime.pipe';
-import { byButton } from 'app/core/testing/utils/by-button.utils';
 import { mockWebsocket, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
 import { JobState } from 'app/enums/job-state.enum';
 import { Job } from 'app/interfaces/job.interface';
@@ -16,8 +18,9 @@ import { JobsPanelComponent } from 'app/modules/jobs/components/jobs-panel/jobs-
 import { JobEffects } from 'app/modules/jobs/store/job.effects';
 import { adapter, jobReducer, jobsInitialState } from 'app/modules/jobs/store/job.reducer';
 import { jobStateKey } from 'app/modules/jobs/store/job.selectors';
-import { DialogService, SystemGeneralService, WebSocketService } from 'app/services';
-import { adminUiInitialized } from 'app/store/actions/admin.actions';
+import { DialogService, WebSocketService } from 'app/services';
+import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
+import { selectGeneralConfig } from 'app/store/system-config/system-config.selectors';
 
 const runningJob = {
   id: 1,
@@ -55,6 +58,7 @@ const failedJob = {
 describe('JobsPanelComponent', () => {
   let spectator: Spectator<JobsPanelComponent>;
   let websocket: WebSocketService;
+  let loader: HarnessLoader;
 
   const createComponent = createRoutingFactory({
     component: JobsPanelComponent,
@@ -80,8 +84,10 @@ describe('JobsPanelComponent', () => {
         mockCall('core.job_abort'),
       ]),
       mockProvider(MatDialogRef),
-      mockProvider(SystemGeneralService, {
-        getGeneralConfig$: of({ timezone: 'UTC' }),
+      provideMockStore({
+        selectors: [
+          { selector: selectGeneralConfig, value: { timezone: 'UTC' } },
+        ],
       }),
     ],
   });
@@ -89,6 +95,7 @@ describe('JobsPanelComponent', () => {
   beforeEach(() => {
     spectator = createComponent();
     websocket = spectator.inject(WebSocketService);
+    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     spectator.inject(Store).dispatch(adminUiInitialized());
   });
 
@@ -109,7 +116,6 @@ describe('JobsPanelComponent', () => {
 
   it('checks component body is present', () => {
     const jobs = spectator.queryAll('app-job-item');
-    const dateTimePipe = new FormatDateTimePipe(spectator.inject(SystemGeneralService));
 
     expect(jobs).toHaveLength(3);
 
@@ -120,13 +126,13 @@ describe('JobsPanelComponent', () => {
     expect(jobs[0].querySelector('.job-icon-abort')).toBeTruthy();
 
     expect(jobs[1].querySelector('.job-description')).toHaveExactText('cloudsync.sync');
-    expect(jobs[1].querySelector('.job-time')).toHaveText(`Waiting: ${dateTimePipe.transform(waitingJob.time_started.$date)}`);
+    expect(jobs[1].querySelector('.job-time')).toHaveText('Waiting: 2021-09-23 15:37:19');
     expect(jobs[1].querySelector('.job-icon-failed')).toBeFalsy();
     expect(jobs[1].querySelector('.job-icon-waiting')).toBeTruthy();
     expect(jobs[1].querySelector('.job-icon-abort')).toBeFalsy();
 
     expect(jobs[2].querySelector('.job-description')).toHaveExactText('cloudsync.sync');
-    expect(jobs[2].querySelector('.job-time')).toHaveText(`Stopped: ${dateTimePipe.transform(failedJob.time_finished.$date)}`);
+    expect(jobs[2].querySelector('.job-time')).toHaveText('Stopped: 2021-09-23 15:37:19');
     expect(jobs[2].querySelector('.job-icon-failed')).toBeTruthy();
     expect(jobs[2].querySelector('.job-icon-waiting')).toBeFalsy();
     expect(jobs[2].querySelector('.job-icon-abort')).toBeFalsy();
@@ -138,8 +144,10 @@ describe('JobsPanelComponent', () => {
     expect(websocket.call).toHaveBeenCalledWith('core.job_abort', [1]);
   });
 
-  it('checks redirect when "History" button is pressed', () => {
-    spectator.click(byButton('History'));
+  it('checks redirect when "History" button is pressed', async () => {
+    const historyButton = await loader.getHarness(MatButtonHarness.with({ text: 'History' }));
+    await historyButton.click();
+
     expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/jobs']);
   });
 });

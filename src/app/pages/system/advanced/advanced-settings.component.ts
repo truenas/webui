@@ -4,6 +4,7 @@ import { Component, OnInit, Type } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import * as cronParser from 'cron-parser';
 import { formatDistanceToNowStrict } from 'date-fns';
@@ -40,13 +41,14 @@ import {
   DialogService,
   LanguageService,
   StorageService,
-  SystemGeneralService,
   UserService,
   WebSocketService,
 } from 'app/services';
 import { CoreService } from 'app/services/core-service/core.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { ModalService } from 'app/services/modal.service';
+import { AppState } from 'app/store';
+import { waitForAdvancedConfig } from 'app/store/system-config/system-config.selectors';
 import { TunableFormComponent } from '../tunable/tunable-form/tunable-form.component';
 import { ConsoleFormComponent } from './console-form/console-form.component';
 import { IsolatedGpuPcisFormComponent } from './isolated-gpu-pcis/isolated-gpu-pcis-form.component';
@@ -208,7 +210,6 @@ export class AdvancedSettingsComponent implements OnInit {
 
   constructor(
     private ws: WebSocketService,
-    private sysGeneralService: SystemGeneralService,
     private modalService: ModalService,
     private language: LanguageService,
     private dialog: DialogService,
@@ -222,11 +223,12 @@ export class AdvancedSettingsComponent implements OnInit {
     protected userService: UserService,
     private translate: TranslateService,
     private ixModal: IxSlideInService,
+    private store$: Store<AppState>,
   ) {}
 
   ngOnInit(): void {
     this.getDatasetData();
-    this.sysGeneralService.refreshSysGeneral$.pipe(untilDestroyed(this)).subscribe(() => {
+    this.store$.pipe(waitForAdvancedConfig, untilDestroyed(this)).subscribe(() => {
       this.getDatasetData();
     });
 
@@ -426,7 +428,7 @@ export class AdvancedSettingsComponent implements OnInit {
           items: [{ label: this.translate.instant('Isolated GPU Device(s)'), value: isolatedGpus }],
         } as DataCard<AdvancedCardId>;
 
-        if (isolatedGpus.length == 0) {
+        if (isolatedGpus.length === 0) {
           gpuCard.emptyConf = {
             type: EmptyType.NoPageData,
             title: this.translate.instant('No Isolated GPU Device(s) configured'),
@@ -481,7 +483,8 @@ export class AdvancedSettingsComponent implements OnInit {
 
     await this.showFirstTimeWarningIfNeeded();
     if ([AdvancedCardId.Console, AdvancedCardId.Kernel].includes(name)) {
-      this.sysGeneralService.sendConfigData(this.configData as any);
+      // TODO: Why?
+      // this.sysGeneralService.sendConfigData(this.configData as any);
     }
 
     if ([AdvancedCardId.Kernel].includes(name)) {

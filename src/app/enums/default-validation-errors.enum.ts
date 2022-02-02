@@ -8,4 +8,5 @@ export enum DefaultValidationErrors {
   MinLength = 'minlength',
   Pattern = 'pattern',
   Forbidden = 'forbidden',
+  Number = 'number',
 }

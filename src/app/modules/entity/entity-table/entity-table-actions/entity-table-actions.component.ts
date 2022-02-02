@@ -26,9 +26,9 @@ export class EntityTableActionsComponent implements OnInit, OnChanges {
     const hasGroups = Boolean(this.actions && this.actions[0].actionName);
 
     if (hasGroups) {
-      return (this.actions[0].actions?.length == 1);
+      return (this.actions[0].actions?.length === 1);
     }
-    return (this.actions.length == 1);
+    return (this.actions.length === 1);
   }
 
   get inlineActions(): boolean {
@@ -59,7 +59,7 @@ export class EntityTableActionsComponent implements OnInit, OnChanges {
   }
 
   get singleAction(): EntityTableAction {
-    if (this.actions[0].actions == undefined) {
+    if (this.actions[0].actions === undefined) {
       return null;
     }
     const hasGroups = (this.actions);

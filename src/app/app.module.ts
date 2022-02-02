@@ -32,9 +32,8 @@ import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
 import { ErdService } from 'app/services/erd.service';
 import { IxFileUploadService } from 'app/services/ix-file-upload.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { RouterEffects } from 'app/store/effects/router.effects';
-import { reducers } from 'app/store/reducers';
-import { CustomRouterStateSerializer } from 'app/store/serializers/custom-router-serializer';
+import { rootEffects, rootReducers } from 'app/store';
+import { CustomRouterStateSerializer } from 'app/store/router/custom-router-serializer';
 import { AppComponent } from './app.component';
 import { rootRouterConfig } from './app.routes';
 import { AppCommonModule } from './components/common/app-common.module';
@@ -98,15 +97,24 @@ import { WebSocketService } from './services/ws.service';
     TerminalModule,
     CommonDirectivesModule,
     NgxWebstorageModule.forRoot(),
-    StoreModule.forRoot(reducers),
-    StoreRouterConnectingModule.forRoot({
-      serializer: CustomRouterStateSerializer,
+    StoreModule.forRoot(rootReducers, {
+      runtimeChecks: {
+        strictStateImmutability: true,
+        strictActionImmutability: true,
+        strictStateSerializability: true,
+        strictActionSerializability: true,
+        strictActionWithinNgZone: true,
+        strictActionTypeUniqueness: true,
+      },
     }),
     StoreDevtoolsModule.instrument({
       maxAge: 25,
       logOnly: environment.production,
     }),
-    EffectsModule.forRoot([RouterEffects]),
+    StoreRouterConnectingModule.forRoot({
+      serializer: CustomRouterStateSerializer,
+    }),
+    EffectsModule.forRoot(rootEffects),
   ],
   declarations: [
     AppComponent,

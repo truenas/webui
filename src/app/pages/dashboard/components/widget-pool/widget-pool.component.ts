@@ -93,7 +93,7 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
     if (this.poolState && this.poolState.topology) {
       let total = 0;
       this.poolState.topology.data.forEach((item) => {
-        if (item.type == VDevType.Disk) {
+        if (item.type === VDevType.Disk) {
           total++;
         } else {
           total += item.children.length;
@@ -109,7 +109,7 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
       const unhealthy: string[] = []; // Disks with errors
       // TODO: Check if this `item.read_errors` and related should read from `stats`
       this.poolState.topology.data.forEach((item: any) => {
-        if (item.type == VDevType.Disk) {
+        if (item.type === VDevType.Disk) {
           const diskErrors = item.read_errors + item.write_errors + item.checksum_errors;
 
           if (diskErrors > 0) {
@@ -336,7 +336,7 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
   }
 
   updateSlidePosition(value: number): void {
-    if (value.toString() == this.currentSlide) { return; }
+    if (value.toString() === this.currentSlide) { return; }
 
     const carousel = this.carouselParent.nativeElement.querySelector('.carousel');
     const slide = this.carouselParent.nativeElement.querySelector('.slide');

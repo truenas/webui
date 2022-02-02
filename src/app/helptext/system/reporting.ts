@@ -1,38 +1,24 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
-import { rangeValidator } from 'app/modules/entity/entity-form/validators/range-validation';
-import { regexValidator } from 'app/modules/entity/entity-form/validators/regex-validation';
 
 export const helptext = {
-  fieldset_general: T('General Options'),
-  cpu_in_percentage_placeholder: T('Report CPU usage in percent'),
   cpu_in_percentage_tooltip: T('When set, report CPU usage in percent \
  instead of units of kernel time.'),
-
-  graphite_placeholder: T('Remote Graphite Server Hostname'),
   graphite_tooltip: T('Hostname or IP address of a remote  \
  <a href="http://graphiteapp.org/" target="_blank">Graphite</a> server.'),
-
-  graph_age_placeholder: T('Graph Age in Months'),
   graph_age_tooltip: T('Maximum time a graph is stored in months (allowed values are 1-60). \
  Changing this value causes the <i>Confirm RRD Destroy</i> \
  dialog to appear. Changes do not take effect until the existing \
  reporting database is destroyed.'),
-  graph_age_validation: [regexValidator(/^\d+$/), rangeValidator(1, 60)],
-
-  graph_points_placeholder: T('Number of Graph Points'),
   graph_points_tooltip: T('Number of points for each hourly, daily, \
  weekly, monthly, or yearly graph (allowed values are 1-4096). Changing this value causes the \
  <i>Confirm RRD Destroy</i> dialog to appear. Changes do not take \
  effect until the existing reporting database is destroyed.'),
-  graph_points_validation: [regexValidator(/^\d+$/), rangeValidator(1, 4096)],
 
-  reset_button: T('Reset to Defaults'),
   dialog: {
     title: T('Change Settings and Clear Report History?'),
     message: T('Report history is cleared when <i>Graph Age</i>, or <i>Graph Points</i> are changed.'),
     action: T('Continue'),
   },
-  graphite_separateinstances_placeholder: T('Graphite Separate Instances'),
   graphite_separateinstances_tooltip: T('Enabling sends the \
  <i>plugin instance</i> and <i>type instance</i> to Graphite as separate \
  path components: <i>host.cpu.0.cpu.idle</i>.<br><br> Disabling sends \

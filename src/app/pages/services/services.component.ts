@@ -123,7 +123,7 @@ export class ServicesComponent implements OnInit {
 
     const serviceName = this.serviceNames.get(service.service);
     if (rpc === 'service.stop') {
-      if (service.service == ServiceName.Iscsi) {
+      if (service.service === ServiceName.Iscsi) {
         this.iscsiService.getGlobalSessions().pipe(
           switchMap((sessions) => {
             let message = this.translate.instant('Stop {serviceName}?', { serviceName });

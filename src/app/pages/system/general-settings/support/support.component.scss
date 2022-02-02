@@ -3,3 +3,16 @@
   background-repeat: no-repeat;
   background-size: contain;
 }
+
+.links-wrapper {
+  margin-bottom: 1rem;
+
+  .links {
+    margin-bottom: 5px;
+
+    ::ng-deep a {
+      color: var(--primary);
+      text-decoration: underline;
+    }
+  }
+}

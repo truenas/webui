@@ -1,5 +1,5 @@
-import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { of } from 'rxjs';
+import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
+import { provideMockStore } from '@ngrx/store/testing';
 import { CoreComponents } from 'app/core/components/core-components.module';
 import { FormatDateTimePipe } from 'app/core/components/pipes/format-datetime.pipe';
 import { mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
@@ -7,7 +7,7 @@ import { JobState } from 'app/enums/job-state.enum';
 import { Job } from 'app/interfaces/job.interface';
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { JobItemComponent } from 'app/modules/jobs/components/job-item/job-item.component';
-import { SystemGeneralService } from 'app/services';
+import { selectGeneralConfig } from 'app/store/system-config/system-config.selectors';
 
 describe('JobItemComponent', () => {
   let spectator: Spectator<JobItemComponent>;
@@ -21,8 +21,10 @@ describe('JobItemComponent', () => {
     providers: [
       FormatDateTimePipe,
       mockWebsocket(),
-      mockProvider(SystemGeneralService, {
-        getGeneralConfig$: of({ timezone: 'UTC' }),
+      provideMockStore({
+        selectors: [
+          { selector: selectGeneralConfig, value: { timezone: 'UTC' } },
+        ],
       }),
     ],
   });
@@ -65,10 +67,9 @@ describe('JobItemComponent', () => {
         clickable: true,
       },
     });
-    const dateTimePipe = new FormatDateTimePipe(spectator.inject(SystemGeneralService));
 
     expect(spectator.query('.job-description')).toHaveExactText('cloudsync.sync');
-    expect(spectator.query('.job-time')).toHaveText(`Stopped: ${dateTimePipe.transform(spectator.component.job.time_finished.$date)}`);
+    expect(spectator.query('.job-time')).toHaveText('Stopped: 2021-09-23 15:37:19');
     expect(spectator.query('.job-icon-failed')).toBeTruthy();
   });
 

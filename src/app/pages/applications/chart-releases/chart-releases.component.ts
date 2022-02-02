@@ -27,8 +27,7 @@ import { ApplicationTab } from 'app/pages/applications/application-tab.enum';
 import { ApplicationToolbarControl } from 'app/pages/applications/application-toolbar-control.enum';
 import { ChartUpgradeDialogComponent } from 'app/pages/applications/dialogs/chart-upgrade/chart-upgrade-dialog.component';
 import { ChartUpgradeDialogConfig } from 'app/pages/applications/interfaces/chart-upgrade-dialog-config.interface';
-import { CoreService } from 'app/services/core-service/core.service';
-import { DialogService, SystemGeneralService, WebSocketService } from 'app/services/index';
+import { DialogService, WebSocketService } from 'app/services/index';
 import { ModalService } from 'app/services/modal.service';
 import { ApplicationsService } from '../applications.service';
 import { ChartEventsDialogComponent } from '../dialogs/chart-events/chart-events-dialog.component';
@@ -139,11 +138,16 @@ export class ChartReleasesComponent implements OnInit {
   readonly ChartReleaseStatus = ChartReleaseStatus;
   readonly isEmpty = _.isEmpty;
 
-  constructor(private mdDialog: MatDialog, private appLoaderService: AppLoaderService,
-    private dialogService: DialogService, private translate: TranslateService,
-    public appService: ApplicationsService, private modalService: ModalService,
-    private sysGeneralService: SystemGeneralService, private router: Router,
-    private core: CoreService, protected ws: WebSocketService) { }
+  constructor(
+    private mdDialog: MatDialog,
+    private appLoaderService: AppLoaderService,
+    private dialogService: DialogService,
+    private translate: TranslateService,
+    public appService: ApplicationsService,
+    private modalService: ModalService,
+    private router: Router,
+    protected ws: WebSocketService,
+  ) { }
 
   ngOnInit(): void {
     this.addChartReleaseChangedEventListner();
@@ -362,7 +366,7 @@ export class ChartReleasesComponent implements OnInit {
   edit(name: string): void {
     const catalogApp = this.chartItems[name];
     const chartFormComponent = this.modalService.openInSlideIn(ChartFormComponent, name);
-    if (catalogApp.chart_metadata.name == ixChartApp) {
+    if (catalogApp.chart_metadata.name === ixChartApp) {
       chartFormComponent.setTitle(helptext.launch);
     } else {
       chartFormComponent.setTitle(catalogApp.chart_metadata.name);
@@ -381,7 +385,7 @@ export class ChartReleasesComponent implements OnInit {
 
   checkAll(checkedItems: string[]): void {
     let selectAll = true;
-    if (checkedItems.length == this.filteredChartItems.length) {
+    if (checkedItems.length === this.filteredChartItems.length) {
       selectAll = false;
     }
 
@@ -488,7 +492,7 @@ export class ChartReleasesComponent implements OnInit {
       this.filteredChartItems = this.getChartItems();
     }
 
-    if (this.filteredChartItems.length == 0) {
+    if (this.filteredChartItems.length === 0) {
       if (this.filterString) {
         this.showLoadStatus(EmptyType.NoSearchResults);
       } else {
@@ -508,7 +512,7 @@ export class ChartReleasesComponent implements OnInit {
       this.appLoaderService.close();
       this.podDetails = { ...res };
       this.podList = Object.keys(this.podDetails);
-      if (this.podList.length == 0) {
+      if (this.podList.length === 0) {
         this.dialogService.confirm({
           title: helptext.podConsole.nopod.title,
           message: helptext.podConsole.nopod.message,
@@ -547,7 +551,7 @@ export class ChartReleasesComponent implements OnInit {
       this.appLoaderService.close();
       this.podDetails = { ...res };
       this.podList = Object.keys(this.podDetails);
-      if (this.podList.length == 0) {
+      if (this.podList.length === 0) {
         this.dialogService.confirm({
           title: helptext.podConsole.nopod.title,
           message: helptext.podConsole.nopod.message,

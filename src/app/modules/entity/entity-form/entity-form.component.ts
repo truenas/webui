@@ -31,7 +31,7 @@ import { EntityFormService } from 'app/modules/entity/entity-form/services/entit
 import { FieldRelationService } from 'app/modules/entity/entity-form/services/field-relation.service';
 import { EntityTemplateDirective } from 'app/modules/entity/entity-template.directive';
 import { EntityUtils } from 'app/modules/entity/utils';
-import { WebSocketService, SystemGeneralService, DialogService } from 'app/services';
+import { WebSocketService, DialogService } from 'app/services';
 import { ModalService } from 'app/services/modal.service';
 
 @UntilDestroy()
@@ -88,6 +88,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
   data: any = {};
   showSpinner = false;
   isFromPending = false;
+
   constructor(
     protected router: Router,
     protected route: ActivatedRoute,
@@ -100,7 +101,6 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
     public translate: TranslateService,
     private modalService: ModalService,
     private cdr: ChangeDetectorRef,
-    private sysGeneralService: SystemGeneralService,
   ) {
     this.loader.callStarted.pipe(untilDestroyed(this)).subscribe(() => this.showSpinner = true);
     this.loader.callDone.pipe(untilDestroyed(this)).subscribe(() => this.showSpinner = false);
@@ -194,19 +194,6 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
   }
 
   async ngOnInit(): Promise<void> {
-    // get system general setting
-    this.sysGeneralService.getAdvancedConfig$.pipe(untilDestroyed(this)).subscribe((res) => {
-      if (res) {
-        if (this.conf.isBasicMode) {
-          if (res.advancedmode) {
-            this.conf.isBasicMode = false;
-          } else {
-            this.conf.isBasicMode = true;
-          }
-        }
-      }
-    });
-
     if (this.conf.saveButtonEnabled == undefined) {
       this.conf.saveButtonEnabled = true;
     }
@@ -318,7 +305,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
                       this.data[key] = _.split(this.data[key], ',');
                     }
                   }
-                  if (!(selectField.type === 'select' && selectField.options.length == 0)) {
+                  if (!(selectField.type === 'select' && selectField.options.length === 0)) {
                     fg.setValue(this.data[key]);
                   }
                 }
@@ -354,7 +341,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
                     this.setArrayValue(this.wsResponse[key], this.wsfg as FormArray, key);
                   } else if (currentField.type === 'list' || currentField.type === 'dict') {
                     this.setObjectListValue(this.wsResponse[key], this.wsfg, currentField);
-                  } else if (!(selectField.type === 'select' && selectField.options.length == 0)) {
+                  } else if (!(selectField.type === 'select' && selectField.options.length === 0)) {
                     this.wsfg.setValue(this.wsResponse[key]);
                   }
                 } else if (this.conf.dataAttributeHandler) {

@@ -1,18 +1,25 @@
 import { createPipeFactory, mockProvider, SpectatorPipe } from '@ngneat/spectator/jest';
+import { Store } from '@ngrx/store';
 import { of } from 'rxjs';
-import { SystemGeneralService } from 'app/services';
 import { FormatDateTimePipe } from './format-datetime.pipe';
 
 describe('FormatDateTimePipe', () => {
   let spectator: SpectatorPipe<FormatDateTimePipe>;
   const inputValue = 1632831778445;
-  const createPipe = createPipeFactory(FormatDateTimePipe);
+  const createPipe = createPipeFactory({
+    pipe: FormatDateTimePipe,
+    providers: [
+      mockProvider(Store, {
+        select: () => of(),
+      }),
+    ],
+  });
 
   it('converts timestamp to date', () => {
-    spectator = createPipe('{{ 1632831778445 | formatDateTime:"America/Los_Angeles" }}', {
-      providers: [mockProvider(SystemGeneralService, {
-        getGeneralConfig$: of(),
-      })],
+    spectator = createPipe('{{ inputValue | formatDateTime:"America/Los_Angeles" }}', {
+      hostProps: {
+        inputValue,
+      },
     });
     expect(spectator.element).toHaveExactText('2021-09-28 05:22:58');
   });
@@ -22,9 +29,6 @@ describe('FormatDateTimePipe', () => {
       hostProps: {
         inputValue,
       },
-      providers: [mockProvider(SystemGeneralService, {
-        getGeneralConfig$: of(),
-      })],
     });
     expect(spectator.element).toHaveExactText('2021-09-28 05:22:58');
   });
@@ -34,9 +38,11 @@ describe('FormatDateTimePipe', () => {
       hostProps: {
         inputValue,
       },
-      providers: [mockProvider(SystemGeneralService, {
-        getGeneralConfig$: of({ timezone: 'UTC' }),
-      })],
+      providers: [
+        mockProvider(Store, {
+          select: () => of('UTC'),
+        }),
+      ],
     });
     expect(spectator.element).toHaveExactText('2021-09-28 12:22:58');
   });
@@ -46,9 +52,11 @@ describe('FormatDateTimePipe', () => {
       hostProps: {
         inputValue,
       },
-      providers: [mockProvider(SystemGeneralService, {
-        getGeneralConfig$: of({ timezone: 'Europe/Kiev' }),
-      })],
+      providers: [
+        mockProvider(Store, {
+          select: () => of('Europe/Kiev'),
+        }),
+      ],
     });
     expect(spectator.element).toHaveExactText('2021-09-28 15:22:58');
   });
@@ -58,9 +66,6 @@ describe('FormatDateTimePipe', () => {
       hostProps: {
         inputDateValue: new Date(inputValue),
       },
-      providers: [mockProvider(SystemGeneralService, {
-        getGeneralConfig$: of(),
-      })],
     });
     expect(spectator.element).toHaveExactText('2021-09-28 15:22:58');
   });
@@ -70,9 +75,6 @@ describe('FormatDateTimePipe', () => {
       hostProps: {
         inputDateValue: new Date(inputValue),
       },
-      providers: [mockProvider(SystemGeneralService, {
-        getGeneralConfig$: of(),
-      })],
     });
     expect(spectator.element).toHaveExactText('28/09/2021 15:22:58');
   });
@@ -82,9 +84,6 @@ describe('FormatDateTimePipe', () => {
       hostProps: {
         inputDateValue: new Date(inputValue),
       },
-      providers: [mockProvider(SystemGeneralService, {
-        getGeneralConfig$: of(),
-      })],
     });
     expect(spectator.element).toHaveExactText('2021-09-28 15:22');
   });

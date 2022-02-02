@@ -6,6 +6,7 @@ import {
 import { FormGroup, FormControl, AbstractControl } from '@angular/forms';
 import { MatMonthView } from '@angular/material/datepicker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { CronDate } from 'cron-parser';
 import * as parser from 'cron-parser';
@@ -16,9 +17,10 @@ import globalHelptext from 'app/helptext/global-helptext';
 import { FormSchedulerConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
 import { Field } from 'app/modules/entity/entity-form/models/field.interface';
 import { EntityUtils } from 'app/modules/entity/utils';
-import { SystemGeneralService } from 'app/services';
 import { LocaleService } from 'app/services/locale.service';
 import { WebSocketService } from 'app/services/ws.service';
+import { AppState } from 'app/store';
+import { selectTimezone } from 'app/store/system-config/system-config.selectors';
 
 interface CronPreset {
   label: string;
@@ -264,15 +266,20 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, Aft
     }
   }
 
-  constructor(public translate: TranslateService, private renderer: Renderer2,
-    private cd: ChangeDetectorRef, public overlay: Overlay,
-    protected localeService: LocaleService, protected ws: WebSocketService,
-    private sysGeneralService: SystemGeneralService) {
+  constructor(
+    public translate: TranslateService,
+    private renderer: Renderer2,
+    private cd: ChangeDetectorRef,
+    public overlay: Overlay,
+    protected localeService: LocaleService,
+    protected ws: WebSocketService,
+    private store$: Store<AppState>,
+  ) {
     // Set default value
     this._months = '*';
 
-    this.sysGeneralService.getGeneralConfig$.pipe(untilDestroyed(this)).subscribe((res) => {
-      this.timezone = res.timezone;
+    this.store$.select(selectTimezone).pipe(untilDestroyed(this)).subscribe((timezone) => {
+      this.timezone = timezone;
       this.minDate = this.zonedTime;
       this.maxDate = dateFns.endOfMonth(this.minDate);
       this.currentDate = this.minDate;
@@ -288,7 +295,7 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, Aft
     this.control.valueChanges.pipe(untilDestroyed(this)).subscribe((evt: string) => {
       this.crontab = evt;
 
-      const isPreset: boolean = this.presets.filter((preset) => evt == preset.value).length != 0;
+      const isPreset: boolean = this.presets.filter((preset) => evt === preset.value).length !== 0;
       if (!isPreset) {
         this.customOption.value = evt;
         this.selectedOption = this.customOption;
@@ -375,7 +382,7 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, Aft
 
   onScroll(): void {
     const el = this.schedulePreview.nativeElement;
-    if ((el.scrollHeight - el.scrollTop) == el.offsetHeight) {
+    if ((el.scrollHeight - el.scrollTop) === el.offsetHeight) {
       this.generateSchedule(true);
     }
   }
@@ -604,7 +611,7 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, Aft
     const calMonth = cal[0][0] + cal[0][1] + cal[0][2]; // limit month to 3 letters
     const calYear = cal[2];
     let calDay;
-    if (cd[0].length == 1) {
+    if (cd[0].length === 1) {
       calDay = '0' + cd[0];
     } else {
       calDay = cd[0];
@@ -632,7 +639,7 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, Aft
         rule += monthStrings[i];
       }
     }
-    if (rule.length == 0) {
+    if (rule.length === 0) {
       rule = '*';
     }
     this._months = rule;
@@ -649,7 +656,7 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, Aft
         rule += dowStrings[i];
       }
     }
-    if (rule.length == 0) {
+    if (rule.length === 0) {
       rule = '*';
     }
     this._daysOfWeek = rule;

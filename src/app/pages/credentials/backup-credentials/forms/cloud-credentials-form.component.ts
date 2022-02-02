@@ -1247,7 +1247,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
         const value = _.cloneDeep(this.entityForm.formGroup.value);
         this.beforeSubmit(value);
         for (const item in value) {
-          if (item != 'name' && item != 'provider') {
+          if (item !== 'name' && item !== 'provider') {
             if (!this.entityForm.formGroup.controls[item].valid) {
               this.entityForm.formGroup.controls[item].markAsTouched();
             }
@@ -1461,7 +1461,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
         } else {
           for (const prop in message.data.result) {
             let targetProp = prop;
-            if (prop != 'client_id' && prop != 'client_secret') {
+            if (prop !== 'client_id' && prop !== 'client_secret') {
               targetProp += '-' + selectedProvider;
             }
             if (controls[targetProp]) {
@@ -1560,7 +1560,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
 
     for (const i in entityForm.wsResponseIdx) {
       let fieldName = i;
-      if (fieldName != 'client_id' && fieldName != 'client_secret') {
+      if (fieldName !== 'client_id' && fieldName !== 'client_secret') {
         fieldName += '-' + provider;
       }
       if (entityForm.formGroup.controls[fieldName]) {

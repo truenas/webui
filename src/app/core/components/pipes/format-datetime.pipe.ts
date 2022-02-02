@@ -1,7 +1,9 @@
 import { Pipe, PipeTransform } from '@angular/core';
 import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
+import { Store } from '@ngrx/store';
 import { format, utcToZonedTime } from 'date-fns-tz';
-import { SystemGeneralService } from 'app/services/system-general.service';
+import { AppState } from 'app/store';
+import { selectTimezone } from 'app/store/system-config/system-config.selectors';
 
 @UntilDestroy()
 @Pipe({
@@ -9,13 +11,13 @@ import { SystemGeneralService } from 'app/services/system-general.service';
   pure: false,
 })
 export class FormatDateTimePipe implements PipeTransform {
-  timeZone: string;
+  timezone: string;
   dateFormat = 'yyyy-MM-dd';
   timeFormat = 'HH:mm:ss';
 
-  constructor(private sysGeneralService: SystemGeneralService) {
-    this.sysGeneralService.getGeneralConfig$.pipe(untilDestroyed(this)).subscribe((res) => {
-      this.timeZone = res.timezone;
+  constructor(private store$: Store<AppState>) {
+    this.store$.select(selectTimezone).pipe(untilDestroyed(this)).subscribe((timezone) => {
+      this.timezone = timezone;
     });
     if (window.localStorage.dateFormat) {
       this.dateFormat = window.localStorage.getItem('dateFormat');
@@ -39,8 +41,8 @@ export class FormatDateTimePipe implements PipeTransform {
   formatDateTime(date: Date | number, tz?: string): string {
     if (tz) {
       date = utcToZonedTime(date.valueOf(), tz);
-    } else if (this.timeZone) {
-      date = utcToZonedTime(date.valueOf(), this.timeZone);
+    } else if (this.timezone) {
+      date = utcToZonedTime(date.valueOf(), this.timezone);
     }
 
     return format(date, `${this.dateFormat} ${this.timeFormat}`);
