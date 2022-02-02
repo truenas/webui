@@ -17,6 +17,9 @@ import { MessageService } from 'app/modules/entity/entity-form/services/message.
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
 import {
+  SnapshotCloneDialogComponent,
+} from 'app/pages/storage/snapshots/snapshot-clone-dialog/snapshot-clone-dialog.component';
+import {
   CreateSnapshotDialogComponent,
 } from 'app/pages/storage/volumes/create-snapshot-dialog/create-snapshot-dialog.component';
 import { DatasetFormComponent } from 'app/pages/storage/volumes/datasets/dataset-form/dataset-form.component';
@@ -55,7 +58,6 @@ import { DiskListComponent } from './disks/disk-list/disk-list.component';
 import { SmartResultsComponent } from './disks/smart-results/smart-results.component';
 import { ImportDiskComponent } from './import-disk/import-disk.component';
 import { SnapshotAddComponent } from './snapshots/snapshot-add/snapshot-add.component';
-import { SnapshotCloneComponent } from './snapshots/snapshot-clone/snapshot-clone.component';
 import { SnapshotDetailsComponent } from './snapshots/snapshot-list/components/snapshot-details.component';
 import { SnapshotListComponent } from './snapshots/snapshot-list/snapshot-list.component';
 import { routing } from './storage.routing';
@@ -99,7 +101,6 @@ import { ZvolWizardComponent } from './volumes/zvol/zvol-wizard/zvol-wizard.comp
     VolumeImportWizardComponent,
     SnapshotListComponent,
     SnapshotDetailsComponent,
-    SnapshotCloneComponent,
     SnapshotAddComponent,
     ImportDiskComponent,
     DatasetTrivialPermissionsComponent,
@@ -130,6 +131,7 @@ import { ZvolWizardComponent } from './volumes/zvol/zvol-wizard/zvol-wizard.comp
     ExportDisconnectModalComponent,
     CreateSnapshotDialogComponent,
     DeleteDatasetDialogComponent,
+    SnapshotCloneDialogComponent,
   ],
   exports: [VolumesListControlsComponent],
   entryComponents: [SnapshotDetailsComponent, UnlockDialogComponent],

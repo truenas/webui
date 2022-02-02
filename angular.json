@@ -47,7 +47,6 @@
               "src/assets/styles/index.scss"
             ],
             "scripts": [
-              "node_modules/element-resize-detector/dist/element-resize-detector.min.js",
               "node_modules/pixi.js/dist/pixi.min.js",
               "node_modules/pixi-filters/dist/pixi-filters.js"
             ],

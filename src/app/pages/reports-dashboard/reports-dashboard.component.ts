@@ -24,7 +24,6 @@ import {
   WebSocketService,
 } from 'app/services';
 import { CoreService } from 'app/services/core-service/core.service';
-import { ErdService } from 'app/services/erd.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { ModalService } from 'app/services/modal.service';
 import { Report } from './components/report/report.component';
@@ -82,7 +81,6 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /* HandleCh
   actionsConfig: any;
 
   constructor(
-    private erdService: ErdService,
     public modalService: ModalService,
     private router: Router,
     private core: CoreService,
@@ -143,8 +141,6 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /* HandleCh
   }
 
   ngAfterViewInit(): void {
-    this.erdService.attachResizeEventToElement('dashboardcontainerdiv');
-
     this.setupSubscriptions();
 
     this.actionsConfig = { actionType: ReportsGlobalControlsComponent, actionConfig: this };

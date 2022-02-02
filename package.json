@@ -93,7 +93,6 @@
     "date-fns": "~2.28.0",
     "date-fns-tz": "^1.1.4",
     "dygraphs": "~2.1.0",
-    "element-resize-detector": "~1.2.1",
     "eslint-plugin-rxjs": "^3.3.3",
     "eslint-plugin-rxjs-angular": "^1.0.6",
     "eslint-plugin-unicorn": "^34.0.1",
