@@ -1,7 +1,6 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
 export default {
-  tagline: T('Welcome to your new NAS'),
   help: T('Looking for help?'),
 
   docsA: T('The'),
@@ -13,6 +12,10 @@ export default {
   forumsB: T('TrueNAS Community Forums'),
   forumsC: T('are the best place to ask questions and interact with fellow TrueNAS'),
   forumsD: T('users'),
+
+  newsLetterA: T('You can join the '),
+  newsLetterB: T('TrueNAS Newsletter'),
+  newsLetterC: T(' for monthly updates and latest developments.'),
 
   contactA: T('Does your business need'),
   contactB: T('Enterprise level'),

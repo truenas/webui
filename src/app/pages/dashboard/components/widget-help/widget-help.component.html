@@ -1,0 +1,61 @@
+<div *ngIf="rendered" class="widget stats-widget" ngClass.xs="double-height xs">
+  <div class="card-container front">
+    <mat-card class="front" fxLayout="row" fxLayoutWrap fxLayoutAlign="space-between stretch">
+      <mat-card-content>
+        <mat-toolbar-row [class.drag-handle]="showReorderHandle">
+          <ng-content [select]="[cdkDragHandle]"></ng-content>
+          
+          <!-- Mobile Only: Exit widget -->
+          <button
+            *ngIf="screenType == 'Mobile'"
+            class="mat-card-title-text"
+            mat-icon-button color="default"
+            ix-auto ix-auto-type="button" ix-auto-identifier="goBack"
+          >
+            <mat-icon (click)="goBack()" class="back-arrow">chevron_left</mat-icon>
+          </button>&nbsp;&nbsp;
+          <h3 class="mat-card-title-text">
+            <div class="card-title-text" [class.drag-handle]="showReorderHandle">
+              <span class="grip" *ngIf="showReorderHandle"></span>
+              {{'TrueNAS Help' | translate}}
+            </div>
+          </h3>
+        </mat-toolbar-row>
+
+        <div class="content-wrapper container">
+          <div class="line-item">
+            <div fxFlex="10%"><mat-icon class="bullet-icon">assignment</mat-icon></div>
+            <div fxFlex="90%" class="medium-font">{{ helptext.docsA | translate }}
+              <a href="https://www.truenas.com/docs/" target="_blank" class="external-link">
+                {{ helptext.docsB | translate }}</a> {{ helptext.docsC | translate }}
+            </div>
+          </div>
+          <div class="line-item">
+            <div fxFlex="10%"><mat-icon class="bullet-icon">group</mat-icon></div>
+            <div fxFlex="90%" class="medium-font">{{ helptext.forumsA | translate}} <a href="https://www.ixsystems.com/community/"
+              target="_blank" class="external-link">
+              {{ helptext.forumsB | translate }}</a> {{ helptext.forumsC | translate }} {{systemType}} {{ helptext.forumsD }}.
+            </div>
+          </div>
+          <div class="line-item">
+            <div fxFlex="10%"><mat-icon class="bullet-icon">mail</mat-icon></div>
+            <div fxFlex="90%" class="medium-font">{{ helptext.newsLetterA | translate}} <a href="https://www.truenas.com/newsletter/"
+              target="_blank" class="external-link">
+              {{ helptext.newsLetterB | translate }}</a> {{ helptext.newsLetterC | translate }}
+            </div>
+          </div>
+          <div id="open-source">TrueNAS {{systemType}} {{ helptext.opensourceA | translate }} <a href="https://github.com/truenas/" target="_blank"
+            class="external-link">{{ helptext.opensourceB | translate }}</a> {{ helptext.opensourceC | translate }}
+          </div>
+        </div>
+        <div id="footer">
+          <div fxFlex="45%" fxFlex.xs="100" class="copyright-txt">TrueNAS {{ systemType }}® © {{copyrightYear}} -
+            <a href="http://www.ixsystems.com" target="_blank" title="iXsystems, Inc." class="external-link">
+              iXsystems, Inc</a>.
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+  </div>
+</div>

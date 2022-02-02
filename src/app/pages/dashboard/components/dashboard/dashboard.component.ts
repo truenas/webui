@@ -490,6 +490,8 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       });
     }
 
+    conf.push({ name: 'Help', rendered: true });
+
     conf.push({ name: 'CPU', rendered: true, id: conf.length.toString() });
     conf.push({ name: 'Memory', rendered: true, id: conf.length.toString() });
 
