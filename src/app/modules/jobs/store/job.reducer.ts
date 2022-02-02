@@ -4,8 +4,8 @@ import { Job } from 'app/interfaces/job.interface';
 import {
   jobsLoaded, jobChanged, jobRemoved, jobAdded, jobPanelClosed, jobsNotLoaded, jobAborted, abortJobPressed,
 } from 'app/modules/jobs/store/job.actions';
-import { adminUiInitialized } from 'app/store/actions/admin.actions';
-import { jobIndicatorPressed } from 'app/store/actions/topbar.actions';
+import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
+import { jobIndicatorPressed } from 'app/store/topbar/topbar.actions';
 
 export interface JobsState extends EntityState<Job> {
   isLoading: boolean;

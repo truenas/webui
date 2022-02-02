@@ -10,7 +10,7 @@ import {
   abortJobPressed, jobAdded, jobChanged, jobRemoved, jobsLoaded, jobsNotLoaded,
 } from 'app/modules/jobs/store/job.actions';
 import { WebSocketService } from 'app/services';
-import { adminUiInitialized } from 'app/store/actions/admin.actions';
+import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
 import { jobAborted } from './job.actions';
 
 @Injectable()
