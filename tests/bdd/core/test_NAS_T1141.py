@@ -168,12 +168,16 @@ def expand_the_task_on_the_nas_ui_and_click_run_now(driver):
     assert wait_on_element_disappear(driver, 30, '//h1[contains(text(),"Task Started")]')
     time.sleep(1)
     assert wait_on_element(driver, 120, '//button[@id="My Google Drive task_Status-button" and contains(.,"SUCCESS")]')
-    time.sleep(7)
 
 
 @then('verify all files are copied from Google Drive are into the dataset')
 def verify_all_files_are_copied_from_google_drive_are_into_the_dataset(driver, nas_ip):
     """verify all files are copied from Google Drive are into the dataset."""
+    cmd = 'test -f /mnt/system/google_drive/music/Mr_Smith_Pequeñas_Guitarras.mp3'
+    timeout = time.time() + 30
+    while timeout > time.time():
+        if ssh_cmd(cmd, 'root', 'testing', nas_ip)['result']:
+            break
     cmd = 'test -f /mnt/system/google_drive/Gloomy_Forest_wallpaper_ForWallpapercom.jpg'
     results = ssh_cmd(cmd, 'root', 'testing', nas_ip)
     assert results['result'] is True, results['output']
@@ -199,7 +203,6 @@ def on_the_nas_cloud_sync_task_tab_click_edit(driver):
     assert wait_on_element(driver, 5, '//button[@ix-auto="button___edit"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button___edit"]').click()
     assert wait_on_element(driver, 5, '//h4[contains(.,"Transfer")]')
-    # give time to the system to be ready.
     time.sleep(1)
 
 
@@ -330,6 +333,11 @@ def click_save_the_google_drive_tasks_should_save_without_error(driver):
 @then('verify all files are moved from the Google Drive test folder to the dataset')
 def verify_all_files_are_moved_from_the_google_drive_test_folder_to_the_dataset(driver, nas_ip):
     """verify all files are moved from the Google Drive test folder to the dataset."""
+    cmd = 'test -f /mnt/system/google_drive/music/Mr_Smith_Pequeñas_Guitarras.mp3'
+    timeout = time.time() + 30
+    while timeout > time.time():
+        if ssh_cmd(cmd, 'root', 'testing', nas_ip)['result']:
+            break
     cmd = 'test -f /mnt/system/google_drive/Gloomy_Forest_wallpaper_ForWallpapercom.jpg'
     results = ssh_cmd(cmd, 'root', 'testing', nas_ip)
     assert results['result'] is True, results['output']
@@ -380,6 +388,21 @@ def select_push_as_the_direction_then_under_transfer_mode_select_move(driver):
 @then('verify all files are moved from the dataset to the Google Drive test folder')
 def verify_all_files_are_moved_from_the_dataset_to_the_google_drive_test_folder(driver, nas_ip):
     """verify all files are moved from the dataset to the Google Drive test folder."""
+    cmd = 'test -f /mnt/system/google_drive/music/Mr_Smith_Pequeñas_Guitarras.mp3'
+    timeout = time.time() + 30
+    while timeout > time.time():
+        if not ssh_cmd(cmd, 'root', 'testing', nas_ip)['result']:
+            break
+    cmd = 'test -f /mnt/system/google_drive/Gloomy_Forest_wallpaper_ForWallpapercom.jpg'
+    results = ssh_cmd(cmd, 'root', 'testing', nas_ip)
+    assert results['result'] is False, results['output']
+    cmd = 'test -f /mnt/system/google_drive/Explaining_BSD.pdf'
+    results = ssh_cmd(cmd, 'root', 'testing', nas_ip)
+    assert results['result'] is False, results['output']
+    cmd = 'test -f /mnt/system/google_drive/music/Mr_Smith_Pequeñas_Guitarras.mp3'
+    results = ssh_cmd(cmd, 'root', 'testing', nas_ip)
+    assert results['result'] is False, results['output']
+
     driver.switch_to.window(driver.window_handles[2])
     time.sleep(1)
     driver.refresh()
@@ -394,15 +417,6 @@ def verify_all_files_are_moved_from_the_dataset_to_the_google_drive_test_folder(
     assert wait_on_element(driver, 5, '//div[text()="Mr_Smith_Pequeñas_Guitarras.mp3"]', 'clickable')
     assert wait_on_element(driver, 5, '//div[text()="test"]', 'clickable')
     driver.find_element_by_xpath('//div[text()="test"]').click()
-    cmd = 'test -f /mnt/system/google_drive/Gloomy_Forest_wallpaper_ForWallpapercom.jpg'
-    results = ssh_cmd(cmd, 'root', 'testing', nas_ip)
-    assert results['result'] is False, results['output']
-    cmd = 'test -f /mnt/system/google_drive/Explaining_BSD.pdf'
-    results = ssh_cmd(cmd, 'root', 'testing', nas_ip)
-    assert results['result'] is False, results['output']
-    cmd = 'test -f /mnt/system/google_drive/music/Mr_Smith_Pequeñas_Guitarras.mp3'
-    results = ssh_cmd(cmd, 'root', 'testing', nas_ip)
-    assert results['result'] is False, results['output']
 
 
 @then('select PULL as the Direction then under Transfer Mode, select SYNC')
@@ -429,6 +443,12 @@ def select_pull_as_the_direction_then_under_transfer_mode_select_sync(driver):
 @then('verify all files are sync to the dataset folder')
 def verify_all_files_are_sync_to_the_dataset_folder(driver, nas_ip):
     """verify all files are sync to the dataset folder."""
+
+    cmd = 'test -f /mnt/system/google_drive/music/Mr_Smith_Pequeñas_Guitarras.mp3'
+    timeout = time.time() + 30
+    while timeout > time.time():
+        if ssh_cmd(cmd, 'root', 'testing', nas_ip)['result']:
+            break
     cmd = 'test -f /mnt/system/google_drive/Gloomy_Forest_wallpaper_ForWallpapercom.jpg'
     results = ssh_cmd(cmd, 'root', 'testing', nas_ip)
     assert results['result'] is True, results['output']
@@ -472,13 +492,16 @@ def on_the_nas_cloud_sync_task_tab_click_run_now(driver):
     assert wait_on_element_disappear(driver, 30, '//h1[contains(text(),"Task Started")]')
     time.sleep(1)
     assert wait_on_element(driver, 120, '//button[@id="My Google Drive task_Status-button" and contains(.,"SUCCESS")]')
-    # give time to the system to be ready.
-    time.sleep(7)
 
 
 @then('verify the file is removed from the dataset folder')
 def verify_the_file_is_removed_from_the_dataset_folder(driver, nas_ip):
     """verify the file is removed from the dataset folder."""
+    cmd = 'test -f /mnt/system/google_drive/Gloomy_Forest_wallpaper_ForWallpapercom.jpg'
+    timeout = time.time() + 30
+    while timeout > time.time():
+        if not ssh_cmd(cmd, 'root', 'testing', nas_ip)['result']:
+            break
     cmd = 'test -f /mnt/system/google_drive/Gloomy_Forest_wallpaper_ForWallpapercom.jpg'
     results = ssh_cmd(cmd, 'root', 'testing', nas_ip)
     assert results['result'] is False, results['output']
@@ -564,14 +587,20 @@ def on_the_dataset_folder_delete_a_file(driver, nas_ip):
 def verify_the_file_is_removed_from_the_google_drive_test_folder_tab(driver):
     """verify the file is removed from the Google Drive test folder tab."""
     driver.switch_to.window(driver.window_handles[2])
-    time.sleep(1)
     driver.refresh()
     time.sleep(1)
     assert wait_on_element(driver, 5, '//div[text()="test"]')
-    assert wait_on_element(driver, 5, '//div[text()="Explaining_BSD.pdf"]', 'clickable')
-    assert not is_element_present(driver, '//div[text()="music"]')
+    assert wait_on_element(driver, 7, '//div[text()="Explaining_BSD.pdf"]', 'clickable')
+    # loop for 15 second or until music disappear
+    timeout = time.time() + 15
+    while timeout > time.time():
+        if not is_element_present(driver, '//div[text()="music"]'):
+            assert not is_element_present(driver, '//div[text()="music"]')
+            break
+        else:
+            assert not is_element_present(driver, '//div[text()="music"]')
     # clean the test folder on box tab before closing the tab.
-    assert wait_on_element(driver, 5, '//div[text()="Explaining_BSD.pdf"]')
+    assert wait_on_element(driver, 5, '//div[text()="Explaining_BSD.pdf"]', 'clickable')
     driver.find_element_by_xpath('//div[text()="Explaining_BSD.pdf"]').click()
     action = ActionChains(driver)
     action.send_keys(Keys.DELETE).perform()
