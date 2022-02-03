@@ -10,6 +10,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { map } from 'rxjs/operators';
 import { choicesToOptions } from 'app/helpers/options.helper';
 import helptext from 'app/helptext/services/components/service-s3';
+import { numberValidator } from 'app/modules/entity/entity-form/validators/number-validation';
 import { regexValidator } from 'app/modules/entity/entity-form/validators/regex-validation';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
@@ -46,7 +47,7 @@ export class ServiceS3Component implements OnInit {
     bindip: [''],
     bindport: [
       null as number,
-      [Validators.min(1), Validators.max(65535), Validators.required, Validators.pattern(/^[1-9]\d*$/)],
+      [numberValidator(), Validators.min(1), Validators.max(65535), Validators.required],
     ],
     access_key: [
       '',
@@ -61,7 +62,7 @@ export class ServiceS3Component implements OnInit {
     certificate: [null as number],
     console_bindport: [
       9001 as number,
-      [Validators.min(1), Validators.max(65535), Validators.required, Validators.pattern(/^[1-9]\d*$/)]],
+      [numberValidator(), Validators.min(1), Validators.max(65535), Validators.required]],
     tls_server_uri: [''],
   });
 

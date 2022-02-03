@@ -1,4 +1,6 @@
-import { Container, ObservablePoint, Transform } from 'pixi.js';
+import {
+  Container, ObservablePoint, Sprite, Transform,
+} from 'pixi.js';
 import { ChassisView } from 'app/pages/system/view-enclosure/classes/chassis-view';
 import { Chassis } from 'app/pages/system/view-enclosure/classes/hardware/chassis';
 
@@ -90,9 +92,9 @@ export class R50 extends Chassis {
         nextPositionY += altOffset;
 
         if (odd) {
-          displayObject.children.forEach((child) => {
+          displayObject.children.forEach((child: Sprite) => {
             child.rotation = this.front.degreesToRadians(180);
-            (child as any).anchor.set(1, 1);
+            child.anchor.set(1, 1);
           });
         } else {
           nextPositionY += 12;

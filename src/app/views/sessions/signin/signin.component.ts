@@ -211,7 +211,7 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
           this.loginCallback(result);
         });
     }
-    if (this.ws.token && this.ws.redirectUrl != undefined) {
+    if (this.ws.token && this.ws.redirectUrl !== undefined) {
       if (this.submitButton) {
         this.submitButton.disabled = true;
       }
@@ -219,7 +219,7 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
         this.progressBar.mode = 'indeterminate';
       }
 
-      if (sessionStorage.currentUrl != undefined) {
+      if (sessionStorage.currentUrl !== undefined) {
         this.ws.redirectUrl = sessionStorage.currentUrl;
       }
 

@@ -1,11 +1,10 @@
 import { Injectable } from '@angular/core';
 import * as _ from 'lodash';
-import { reject } from 'q';
-import { Observable } from 'rxjs';
+import { Observable, throwError } from 'rxjs';
+import { catchError, map } from 'rxjs/operators';
 import { TransportMode } from 'app/enums/transport-mode.enum';
 import { SshKeyPair } from 'app/interfaces/keychain-credential.interface';
 import { ListdirChild } from 'app/interfaces/listdir-child.interface';
-import { PeriodicSnapshotTask } from 'app/interfaces/periodic-snapshot-task.interface';
 import { ReplicationTask } from 'app/interfaces/replication-task.interface';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { ReplicationFormComponent } from 'app/pages/data-protection/replication/replication-form/replication-form.component';
@@ -20,10 +19,6 @@ export class ReplicationService {
     private dialogService: DialogService,
   ) { }
 
-  getSnapshotTasks(): Observable<PeriodicSnapshotTask[]> {
-    return this.ws.call('pool.snapshottask.query');
-  }
-
   genSshKeypair(): Promise<SshKeyPair> {
     return this.ws.call('keychaincredential.generate_ssh_key_pair').toPromise();
   }
@@ -37,8 +32,8 @@ export class ReplicationService {
     if (transport !== TransportMode.Local) {
       queryParams.push(sshCredentials);
     }
-    return this.ws.call('replication.list_datasets', queryParams).toPromise().then(
-      (res) => {
+    return this.ws.call('replication.list_datasets', queryParams).pipe(
+      map((res) => {
         const nodes: ListdirChild[] = [];
         res.forEach((dataset) => {
           const pathArr = dataset.split('/');
@@ -67,12 +62,12 @@ export class ReplicationService {
           }
         });
         return nodes;
-      },
-      (err) => {
+      }),
+      catchError((err) => {
         new EntityUtils().handleWsError(parentComponent, err, this.dialogService);
-        return reject(err);
-      },
-    );
+        return throwError(err);
+      }),
+    ).toPromise();
   }
 
   getReplicationTasks(): Observable<ReplicationTask[]> {

@@ -1,5 +1,5 @@
 @use '~@angular/material' as mat;
-@import '../../../../node_modules/@angular/material/theming';
+@import '~@angular/material/theming';
 @include mat.core();
 @import '../scss-imports/cssvars';
 
@@ -67,8 +67,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
   .ngx-datatable .datatable-footer .datatable-pager .pager .pages.active a,
   .fileupload-drop-zone.dz-file-over,
   .toolbar-avatar.online > .status-dot,
-  .cal-open-day-events,
-  div.hopscotch-bubble {
+  .cal-open-day-events {
     background: map-get($md-primary, 500) !important;
     color: #fff !important;
   }
@@ -87,57 +86,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
   }
 
   .breadcrumb-bar {
-    /*@include variable(background, --bg2, $bg2, !important);*/
     @include variable(color, --fg1, $fg1, !important);
-  }
-  /* Hopscotch Tour */
-  div.hopscotch-bubble {
-    @include variable(border-color, --primary, $primary);
-    border-color: $primary-dark;
-  }
-  /* up arrow  */
-  div.hopscotch-bubble .hopscotch-bubble-arrow-container.up .hopscotch-bubble-arrow-border {
-    @include variable(border-bottom-color, --primary, $primary);
-    border-bottom: 17px solid $primary-dark;
-  }
-
-  div.hopscotch-bubble .hopscotch-bubble-arrow-container.up .hopscotch-bubble-arrow {
-    @include variable(border-bottom-color, --primary, $primary);
-    border-bottom: 17px solid map-get($md-primary, 500);
-    top: -16px;
-  }
-  /* right arrow */
-  div.hopscotch-bubble .hopscotch-bubble-arrow-container.right .hopscotch-bubble-arrow-border {
-    @include variable(border-left-color, --primary, $primary);
-    border-left: 17px solid $primary-dark;
-  }
-
-  div.hopscotch-bubble .hopscotch-bubble-arrow-container.right .hopscotch-bubble-arrow {
-    @include variable(border-left-color, --primary, $primary);
-    border-left: 17px solid map-get($md-primary, 500);
-    left: -1px;
-  }
-  /* bottom arrow */
-  div.hopscotch-bubble .hopscotch-bubble-arrow-container.down .hopscotch-bubble-arrow-border {
-    @include variable(border-top-color, --primary, $primary);
-    border-top: 17px solid $primary-dark;
-  }
-
-  div.hopscotch-bubble .hopscotch-bubble-arrow-container.down .hopscotch-bubble-arrow {
-    @include variable(border-top-color, --primary, $primary);
-    border-top: 17px solid map-get($md-primary, 500);
-    top: -18px;
-  }
-  /* Left Arrow */
-  div.hopscotch-bubble .hopscotch-bubble-arrow-container.left .hopscotch-bubble-arrow-border {
-    @include variable(border-right-color, --primary, $primary);
-    border-right: 17px solid $primary-dark;
-  }
-
-  div.hopscotch-bubble .hopscotch-bubble-arrow-container.left .hopscotch-bubble-arrow {
-    @include variable(border-right-color, --primary, $primary);
-    border-right: 17px solid map-get($md-primary, 500);
-    left: 1px;
   }
 
   .mat-slide-toggle.mat-checked:not(.mat-disabled) .mat-slide-toggle-thumb {
@@ -148,10 +97,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     background-color: var(--primary);
   }
 
-  .mat-bg-accent,
-  div.hopscotch-bubble .hopscotch-bubble-number,
-  div.hopscotch-bubble .hopscotch-nav-button.next:hover,
-  div.hopscotch-bubble .hopscotch-nav-button.next {
+  .mat-bg-accent {
     background-color: map-get($md-accent, 500);
     color: black;
   }
@@ -223,8 +169,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
   .fileupload-drop-zone.dz-file-over,
   .toolbar-avatar.online > .status-dot,
   .cal-open-day-events,
-  .mat-step-header .mat-step-icon,
-  div.hopscotch-bubble {
+  .mat-step-header .mat-step-icon {
     @include variable(background, --primary, $primary, !important);
     @include variable(color, --primary-txt, $primary-txt, !important);
 
@@ -252,9 +197,6 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
   .mat-raised-button.mat-accent,
   .mat-fab.mat-accent,
   .mat-mini-fab.mat-accent,
-  div.hopscotch-bubble .hopscotch-bubble-number,
-  div.hopscotch-bubble .hopscotch-nav-button.next:hover,
-  div.hopscotch-bubble .hopscotch-nav-button.next,
   .ngx-datatable .datatable-footer .datatable-pager .pager .pages.active a,
   .mat-checkbox-indeterminate.mat-accent .mat-checkbox-background,
   .mat-checkbox-checked.mat-accent .mat-checkbox-background {
@@ -428,7 +370,6 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
   .mat-checkbox-frame,
   .mat-radio-outer-circle {
     @include variable(border-color, --primary, $primary);
-    // border-color: gray;
   }
 
   .headerCheckBox .mat-checkbox-frame,
@@ -484,10 +425,6 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
   }
 
   // Treelists in storage/volumes
-  .mat-expansion-panel-header {
-    //background-color:rgba(0,0,0,0.1);
-  }
-
   .mat-expansion-panel-body {
     position: relative;
   }
@@ -622,37 +559,6 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
         padding: 1rem;
       }
     }
-
-    .backtrace-panel {
-      border: 0;
-      max-height: 0;
-      overflow: hidden;
-      padding: 0;
-      transition: max-height 0.25s linear;
-
-      &.open {
-        margin-bottom: 24px;
-        max-height: calc(80vh - 48px - 240px); // Viewport - topbar - sum of sibling elements
-        padding: 2px;
-      }
-
-      .textarea {
-        background: var(--contrast-darker);
-        border: 1px solid var(--lines);
-        color: var(--fg2);
-        font-family: 'Droid Sans Mono', 'Courier New', Courier, monospace;
-        height: 100%;
-        min-height: 100px;
-        overflow: auto;
-        padding: 1rem;
-        white-space: pre-wrap;
-      }
-    }
-  }
-
-  // To move tooltips up when they appear too low on viewport
-  #raised-tooltip {
-    top: -90px;
   }
 
   // To fix alignment issues w/checkboxes on Create Pool page
@@ -673,9 +579,6 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     top: -4px;
   }
 
-  downloadkey-dialog .red-warning-button {
-    margin-right: 7px;
-  }
   // ------------------------
 
   // For some items on VM Wizard Hard Disks page
@@ -848,8 +751,6 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
   .form-ex-flex-container {
     @include variable(background, --bg1, $bg1);
   }
-
-
 
   // Align buttons on UI Prefs form
   .prefs-form .mat-card-actions {
@@ -1107,12 +1008,6 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     margin-left: 15px;
   }
 
-
-  .red-warning-button {
-    @include variable(background-color, --red, $red !important);
-    color: white;
-  }
-
   .mat-progress-bar-fill::after {
     @include variable(background-color, --primary, $primary);
   }
@@ -1123,7 +1018,6 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
   }
 
   .mat-progress-bar .mat-progress-bar-background {
-    //opacity:0.1;
     display: none;
   }
 
@@ -1135,15 +1029,10 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
   app-entity-dialog .has-pwtoggle {
     background: rgba(0, 0, 0, 0) !important;
     padding: 0 0 10px !important;
-    width: 385px !important;
 
     mat-form-field {
       width: 79% !important;
     }
-  }
-
-  #secret_key2 {
-    margin-bottom: 5px;
   }
 
   .toggle_pw {
@@ -1152,10 +1041,6 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
 
   datatable-selection > .empty-row {
     color: var(--alt-fg1);
-  }
-
-  #show_Warning {
-    @include variable(display, --enableWarning, $enable-warning);
   }
 
   #update-info {
@@ -1185,15 +1070,6 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
 
   .mat-autocomplete-panel .mat-option-text {
     color: var(--fg2) !important;
-  }
-
-  .ui-treetable tr:nth-child(even) {
-    //background-color:rgba(23,23,23,0.1);
-  }
-
-  .ui-treetable tr:hover {
-    //@include variable(background, --primary, $primary, !important);
-    //@include variable(color, --primary-txt, $primary-txt);
   }
 
   .ui-treetable-thead {
@@ -1245,14 +1121,6 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     @include variable(color, --fg2, $fg2);
   }
 
-  .xterm-viewport {
-    overflow-y: auto;
-  }
-
-  .xterm-rows > div {
-    height: 15px !important;
-  }
-
   app-select-dialog .mat-select-placeholder,
   app-ipmi .mat-select-placeholder {
     @include variable(color, --fg2, $fg2);
@@ -1300,12 +1168,6 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     width: 50%;
   }
 
-  app-service-netdata form-paragraph {
-    font-size: larger;
-    font-weight: 700;
-    margin-bottom: 7px;
-  }
-
   mat-radio-group .radio-option-tooltip {
     left: 5px;
     position: relative;
@@ -1338,6 +1200,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
   // Scrollbars need separate rules for firefox and webkit
 
   app-entity-dialog #pool_processes p,
+  export-disconnect-modal .pool-summary,
   confirm-dialog .warning-box {
     background-color: rgb(223, 223, 223);
     color: rgb(19, 19, 19);
@@ -1410,15 +1273,6 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     flex-wrap: wrap;
   }
 
-  general-preferences-form #enableWarning tooltip {
-    left: 370px;
-    position: absolute;
-  }
-
-  general-preferences-form #userTheme {
-    width: 400px;
-  }
-
   app-interfaces-list #timeout-field {
     text-align: center;
     width: 50px;
@@ -1457,24 +1311,6 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     margin-bottom: 15px;
   }
 
-  app-dataset-acl {
-    #apply_user,
-    #apply_group {
-      margin-bottom: 20px;
-      margin-top: -13px;
-    }
-
-    .error-div {
-      margin-top: -12px;
-      min-height: 24px;
-    }
-  }
-
-  .styled-list-for-dialogs {
-    list-style: disc inside;
-    padding-left: 15px;
-  }
-
   app-general {
     #language_sort,
     #language_sort_radiogroup {
@@ -1504,12 +1340,6 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     overflow: auto;
   }
 
-  app-general .form-select-spinner {
-    position: absolute;
-    right: 45%;
-    top: -20px;
-  }
-
   app-two-factor {
     #instructions,
     #enabled_status {
@@ -1530,23 +1360,6 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
 
     #qr-dialog-buttons {
       flex-direction: row-reverse;
-    }
-  }
-
-  custom-theme {
-    .mat-card-actions {
-      margin-left: 7px;
-      margin-top: 48px;
-    }
-
-    #preview-card {
-      min-width: 400px;
-    }
-
-    .mat-card-content {
-      max-height: 600px !important;
-      overflow-x: hidden;
-      overflow-y: auto;
     }
   }
 
@@ -1571,11 +1384,6 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
 
   #cust_button_continue_with_afp {
     background: var(--bg1);
-  }
-
-  openvpn-client-edit .buttons,
-  openvpn-server-edit .buttons {
-    margin-top: 1rem;
   }
 
   /// Slide-in menu ///////////////////////////////
@@ -1649,16 +1457,6 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
 
   // End slide-in menu ////////////////
 
-  app-dataset-acl {
-    @media screen and (max-width: 599px) {
-      button[id='cust_button_Select an ACL Preset'] {
-        left: unset;
-        right: 30px;
-        top: 250px;
-      }
-    }
-  }
-
   // Remove indentation for form elements on vertical stepper
   .jw-modal-body entity-wizard {
     mat-card {
@@ -1673,30 +1471,11 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
 
   app-support .links {
     margin-bottom: 5px;
-
-    a {
-      color: var(--primary);
-      text-decoration: underline;
-    }
   }
 
-  .native-link {
+  a[href*='//'] {
     color: var(--primary);
-    text-decoration: underline;
   }
-
-  /*.sys-image {
-      display: flex;
-      justify-content: center;
-      align-items: flex-start;
-      margin-bottom: 1rem;
-
-      div {
-      display: flex;
-      justify-content: center;
-      }
-    }*/
-
 
   // Special class added for certificate display forms for long SANs and DNs
   .break-all {

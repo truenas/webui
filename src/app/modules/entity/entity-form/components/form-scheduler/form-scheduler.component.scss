@@ -52,7 +52,6 @@ button.close-btn {
 ul.schedule-list {
   list-style-type: none;
   margin-top: 16px;
-  /*max-height: 231px;*/
   max-height: calc(100% - 346px - 16px);
   overflow-y: auto;
 }

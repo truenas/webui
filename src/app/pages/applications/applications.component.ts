@@ -67,7 +67,7 @@ export class ApplicationsComponent implements OnInit, AfterViewInit {
   setupToolbar(): void {
     this.settingsEvent$ = new Subject();
     this.settingsEvent$.pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
-      if (evt.data.event_control == ApplicationToolbarControl.Filter) {
+      if (evt.data.event_control === ApplicationToolbarControl.Filter) {
         this.filterString = evt.data.filter;
       }
 
@@ -210,13 +210,13 @@ export class ApplicationsComponent implements OnInit, AfterViewInit {
   }
 
   updateTab(evt: ApplicationUserEvent): void {
-    if (evt.name == ApplicationUserEventName.SwitchTab) {
+    if (evt.name === ApplicationUserEventName.SwitchTab) {
       this.selectedTab = evt.value as ApplicationTab;
-    } else if (evt.name == ApplicationUserEventName.UpdateToolbar) {
+    } else if (evt.name === ApplicationUserEventName.UpdateToolbar) {
       this.isSelectedOneMore = evt.value as boolean;
       this.isSelectedAll = evt.isSelectedAll;
       this.updateToolbar();
-    } else if (evt.name == ApplicationUserEventName.CatalogToolbarChanged) {
+    } else if (evt.name === ApplicationUserEventName.CatalogToolbarChanged) {
       this.isSelectedPool = evt.value as boolean;
       this.catalogOptions = evt.catalogNames.map((catalogName: string) => ({
         label: capitalizeFirstLetter(catalogName),

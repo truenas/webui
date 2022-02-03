@@ -1,0 +1,7 @@
+.form-actions {
+  margin: 8px 10px;
+
+  button:not(:first-of-type) {
+    margin-left: 0.5rem;
+  }
+}

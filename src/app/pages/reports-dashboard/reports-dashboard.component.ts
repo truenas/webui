@@ -24,10 +24,10 @@ import {
   WebSocketService,
 } from 'app/services';
 import { CoreService } from 'app/services/core-service/core.service';
-import { ErdService } from 'app/services/erd.service';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { ModalService } from 'app/services/modal.service';
 import { Report } from './components/report/report.component';
-import { ReportsConfigComponent } from './components/reports-config/reports-config.component';
+import { ReportsConfigFormComponent } from './components/reports-config-form/reports-config-form.component';
 import { ReportsGlobalControlsComponent } from './components/reports-global-controls/reports-global-controls.component';
 
 interface Tab {
@@ -81,13 +81,13 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /* HandleCh
   actionsConfig: any;
 
   constructor(
-    private erdService: ErdService,
     public modalService: ModalService,
     private router: Router,
     private core: CoreService,
     private route: ActivatedRoute,
     protected ws: WebSocketService,
     protected translate: TranslateService,
+    private slideIn: IxSlideInService,
   ) {}
 
   ngOnInit(): void {
@@ -141,8 +141,6 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /* HandleCh
   }
 
   ngAfterViewInit(): void {
-    this.erdService.attachResizeEventToElement('dashboardcontainerdiv');
-
     this.setupSubscriptions();
 
     this.actionsConfig = { actionType: ReportsGlobalControlsComponent, actionConfig: this };
@@ -457,11 +455,6 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /* HandleCh
   }
 
   showConfigForm(): void {
-    const formComponent = this.modalService.openInSlideIn(ReportsConfigComponent);
-    formComponent.title = this.translate.instant('Reports Configuration');
-    formComponent.isOneColumnForm = true;
-    formComponent.afterModalFormSaved = () => {
-      this.modalService.closeSlideIn();
-    };
+    this.slideIn.open(ReportsConfigFormComponent);
   }
 }

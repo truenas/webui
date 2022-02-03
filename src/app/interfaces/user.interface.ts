@@ -20,7 +20,7 @@ export interface User {
   attributes: { preferences: Preferences };
   email: string;
   group: UserGroup;
-  groups: { [property: string]: any }[];
+  groups: number[];
   sshpubkey: string;
   local: boolean;
   id_type_both: boolean;

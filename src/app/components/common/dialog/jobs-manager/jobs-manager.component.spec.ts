@@ -1,3 +1,6 @@
+import { HarnessLoader } from '@angular/cdk/testing';
+import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import {
@@ -6,7 +9,6 @@ import {
 import { provideMockStore } from '@ngrx/store/testing';
 import { JobItemComponent } from 'app/components/common/dialog/jobs-manager/components/job-item/job-item.component';
 import { CoreComponents } from 'app/core/components/core-components.module';
-import { byButton } from 'app/core/testing/utils/by-button.utils';
 import { mockWebsocket, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
 import { JobState } from 'app/enums/job-state.enum';
 import { Job } from 'app/interfaces/job.interface';
@@ -21,6 +23,7 @@ import { JobsManagerStore } from './jobs-manager.store';
 describe('JobsManagerComponent', () => {
   let spectator: Spectator<JobsManagerComponent>;
   let matDialog: MatDialog;
+  let loader: HarnessLoader;
   const runningJob = {
     method: 'cloudsync.sync',
     progress: {
@@ -80,6 +83,7 @@ describe('JobsManagerComponent', () => {
     spectator = createComponent();
     matDialog = spectator.inject(MatDialog);
     jest.spyOn(matDialog, 'open').mockImplementation();
+    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
   afterEach(() => {
@@ -149,8 +153,9 @@ describe('JobsManagerComponent', () => {
     );
   });
 
-  it('checks redirect when "History" button is pressed', () => {
-    spectator.click(byButton('History'));
+  it('checks redirect when "History" button is pressed', async () => {
+    const historyButton = await loader.getHarness(MatButtonHarness.with({ text: 'History' }));
+    await historyButton.click();
     expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/jobs']);
   });
 });

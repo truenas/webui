@@ -198,7 +198,7 @@ export class WidgetStorageComponent extends WidgetComponent implements AfterView
     if (pool && pool.topology) {
       const unhealthy: string[] = []; // Disks with errors
       pool.topology.data.forEach((item: VDev) => {
-        if (item.type == VDevType.Disk) {
+        if (item.type === VDevType.Disk) {
           const diskErrors = item.stats.read_errors + item.stats.write_errors + item.stats.checksum_errors;
 
           if (diskErrors > 0) {
@@ -240,7 +240,7 @@ export class WidgetStorageComponent extends WidgetComponent implements AfterView
     if (pool && pool.topology) {
       let total = 0;
       pool.topology.data.forEach((item) => {
-        if (item.type == VDevType.Disk) {
+        if (item.type === VDevType.Disk) {
           total++;
         } else {
           total += item.children.length;
@@ -258,7 +258,7 @@ export class WidgetStorageComponent extends WidgetComponent implements AfterView
       if (Number.isNaN(volume.used) ? volume.used : filesize(volume.used, { exponent: 3 }) !== 'Locked') {
         return this.getSizeString(volume.avail);
       }
-    } else if (!volume || typeof volume.avail == undefined) {
+    } else if (!volume || typeof volume.avail === undefined) {
       return this.translate.instant('Unknown');
     } else {
       return this.translate.instant('Gathering data...');

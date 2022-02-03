@@ -21,7 +21,7 @@ import { ExtentFormComponent } from './iscsi/extent/extent-form/extent-form.comp
 import { ExtentListComponent } from './iscsi/extent/extent-list/extent-list.component';
 import { FibreChannelPortComponent } from './iscsi/fibre-channel-ports/fibre-channel-port/fibre-channel-port.component';
 import { FibreChannelPortsComponent } from './iscsi/fibre-channel-ports/fibre-channel-ports.component';
-import { DynamicListComponent } from './iscsi/initiator/initiator-form/dynamic-list/dynamic-list-component';
+import { DynamicListComponent } from './iscsi/initiator/initiator-form/dynamic-list/dynamic-list.component';
 import { InitiatorFormComponent } from './iscsi/initiator/initiator-form/initiator-form.component';
 import { InitiatorListComponent } from './iscsi/initiator/initiator-list/initiator-list.component';
 import { IscsiWizardComponent } from './iscsi/iscsi-wizard/iscsi-wizard.component';

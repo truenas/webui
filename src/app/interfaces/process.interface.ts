@@ -1,4 +1,4 @@
-export interface PoolProcess {
+export interface Process {
   cmdline: string;
   name: string;
   pid: number;

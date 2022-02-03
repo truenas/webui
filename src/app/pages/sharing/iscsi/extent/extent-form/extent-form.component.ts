@@ -314,7 +314,7 @@ export class ExtentFormComponent implements FormConfiguration {
         this.availableThresholdField.isHidden = false;
       } else {
         this.availableThresholdField.isHidden = true;
-        if (this.pk && value != undefined && _.find(extentDiskField.options, { value }) === undefined) {
+        if (this.pk && value !== undefined && _.find(extentDiskField.options, { value }) === undefined) {
           extentDiskField.options.push({ label: value, value });
         }
       }
@@ -354,7 +354,7 @@ export class ExtentFormComponent implements FormConfiguration {
   resourceTransformIncomingRestData(data: IscsiExtent): any {
     this.originalFilesize = parseInt(data.filesize, 10);
     const transformed: any = { ...data };
-    if (data.type == IscsiExtentType.Disk) {
+    if (data.type === IscsiExtentType.Disk) {
       if (_.startsWith(data.path, 'zvol')) {
         transformed['disk'] = data.path;
       }

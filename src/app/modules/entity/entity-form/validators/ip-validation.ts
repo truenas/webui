@@ -17,7 +17,7 @@ export function ipv4or6Validator(): ValidatorFn {
       thisControl = control;
     }
 
-    if (thisControl.value == '' || thisControl.value == undefined) {
+    if (thisControl.value == '' || thisControl.value === undefined) {
       return null;
     }
 
@@ -42,7 +42,7 @@ export function ipv4or6cidrValidator(): ValidatorFn {
     if (!thisControl) {
       thisControl = control;
     }
-    if (thisControl.value == '' || thisControl.value == undefined) {
+    if (thisControl.value == '' || thisControl.value === undefined) {
       return null;
     }
 
@@ -67,7 +67,7 @@ export function ipv4or6OptionalCidrValidator(): ValidatorFn {
     if (!thisControl) {
       thisControl = control;
     }
-    if (thisControl.value == '' || thisControl.value == undefined) {
+    if (thisControl.value == '' || thisControl.value === undefined) {
       return null;
     }
 
@@ -94,7 +94,7 @@ export function ipv4Validator(): ValidatorFn {
       thisControl = control;
     }
 
-    if (thisControl.value == '' || thisControl.value == undefined) {
+    if (thisControl.value == '' || thisControl.value === undefined) {
       return null;
     }
 
@@ -119,7 +119,7 @@ export function ipv6Validator(): ValidatorFn {
     if (!thisControl) {
       thisControl = control;
     }
-    if (thisControl.value == '' || thisControl.value == undefined) {
+    if (thisControl.value == '' || thisControl.value === undefined) {
       return null;
     }
 
@@ -146,7 +146,7 @@ export function ipValidator(type: string = 'ipv4' || 'ipv6' || 'all'): Validator
 
     thisControl = control;
 
-    if (thisControl.value == '' || thisControl.value == undefined) {
+    if (thisControl.value == '' || thisControl.value === undefined) {
       return null;
     }
 

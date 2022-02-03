@@ -21,13 +21,13 @@ export interface CreateZfsSnapshot {
   naming_schema?: string;
   recursive?: boolean;
   vmware_sync?: boolean;
-  properties: Record<string, unknown>;
+  properties?: Record<string, unknown>;
 }
 
 export interface CloneZfsSnapshot {
-  snapshot: boolean;
+  snapshot: string;
   dataset_dst: string;
-  dataset_properties: Record<string, unknown>;
+  dataset_properties?: Record<string, unknown>;
 }
 
 export type ZfsRollbackParams = [

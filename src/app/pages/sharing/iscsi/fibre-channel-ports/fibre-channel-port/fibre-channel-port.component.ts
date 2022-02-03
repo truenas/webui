@@ -114,8 +114,8 @@ export class FibreChannelPortComponent implements OnInit {
 
     const targetField = _.find(this.fieldConfig, { name: 'target' });
     this.formGroup.controls['mode'].valueChanges.pipe(untilDestroyed(this)).subscribe((res) => {
-      targetField.required = res == FibreChannelPortMode.Target;
-      if (res == FibreChannelPortMode.Target) {
+      targetField.required = res === FibreChannelPortMode.Target;
+      if (res === FibreChannelPortMode.Target) {
         this.formGroup.controls['target'].setValidators([Validators.required]);
         this.formGroup.controls['target'].updateValueAndValidity();
       } else {
@@ -141,7 +141,7 @@ export class FibreChannelPortComponent implements OnInit {
     const value = _.cloneDeep(this.formGroup.value);
     delete value['initiators'];
 
-    if (value['mode'] != FibreChannelPortMode.Target) {
+    if (value['mode'] !== FibreChannelPortMode.Target) {
       value['target'] = null;
     }
     this.loader.open();

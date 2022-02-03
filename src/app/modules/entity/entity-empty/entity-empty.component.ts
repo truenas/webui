@@ -47,7 +47,7 @@ export class EntityEmptyComponent {
   }
 
   isLoading(): boolean {
-    return this.conf.type == EmptyType.Loading;
+    return this.conf.type === EmptyType.Loading;
   }
 
   getIcon(): string {

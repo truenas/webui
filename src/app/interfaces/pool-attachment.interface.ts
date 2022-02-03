@@ -3,3 +3,5 @@ export interface PoolAttachment {
   service: string;
   type: string;
 }
+
+export type DatasetAttachment = PoolAttachment;

@@ -26,7 +26,8 @@ module.exports = {
       "plugins": [
         "rxjs",
         "rxjs-angular",
-        "unicorn"
+        "unicorn",
+        "angular-file-naming"
       ],
       "rules": {
         // TODO: Conflicts with ngx-translate-extract
@@ -203,6 +204,15 @@ module.exports = {
           "variables": true,
           "functions": false,
           "methods": false,
+        }],
+
+        // File Naming
+        "angular-file-naming/component-filename-suffix": "error",
+        "angular-file-naming/directive-filename-suffix": "error",
+        "angular-file-naming/module-filename-suffix": "error",
+        "angular-file-naming/pipe-filename-suffix": "error",
+        "angular-file-naming/service-filename-suffix": ["error", {
+          "suffixes": ["service", "effects", "store", "guard"]
         }],
       }
     },

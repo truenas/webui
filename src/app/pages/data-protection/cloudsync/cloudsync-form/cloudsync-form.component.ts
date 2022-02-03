@@ -517,7 +517,7 @@ export class CloudsyncFormComponent implements FormConfiguration {
       },
       args: '',
     };
-    if (bucket == '') {
+    if (bucket === '') {
       delete data.attributes.bucket;
     }
     return this.ws.call('cloudsync.list_directory', [data]).toPromise().then(
@@ -1051,7 +1051,7 @@ export class CloudsyncFormComponent implements FormConfiguration {
       return;
     }
 
-    if (value['direction'] == Direction.Pull) {
+    if (value['direction'] === Direction.Pull) {
       value['snapshot'] = false;
     }
     return value;
