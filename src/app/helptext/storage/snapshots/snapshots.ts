@@ -54,13 +54,6 @@ export default {
  related intermediate, child dataset, and cloned snapshots that are \
  newer than the rollback snapshot.'),
 
-  rollback_warning: T('<b>WARNING:</b> Rolling the dataset back \
- destroys data on the dataset <i>and</i> can destroy additional snapshots \
- that are related to the dataset. <b>This can result in permanent data \
- loss!</b> Do not roll back until all desired data and snapshots are \
- backed up.'),
-
-  rollback_title: ('Dataset Rollback From Snapshot'),
   rollback_confirm: T('Confirm'),
 
   extra_cols: {

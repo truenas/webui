@@ -10,6 +10,7 @@ import { MaterialModule } from 'app/app-material.module';
 import { CopyButtonComponent } from 'app/core/components/copy-btn/copy-btn.component';
 import { HtmlTooltipComponent } from 'app/core/components/directives/html-tooltip/html-tooltip.component';
 import { DisplayComponent } from 'app/core/components/display/display.component';
+import { ConvertBytesToHumanReadablePipe } from 'app/core/components/pipes/convert-bytes-to-human-readable.pipe';
 import { FormatDateTimePipe } from 'app/core/components/pipes/format-datetime.pipe';
 import { ViewControllerComponent } from 'app/core/components/view-controller/view-controller.component';
 import { ViewComponent } from 'app/core/components/view/view.component';
@@ -34,36 +35,38 @@ import { TextLimiterDirective } from './directives/text-limiter/text-limiter.dir
     EntityModule,
   ],
   declarations: [
+    ConvertBytesToHumanReadablePipe,
+    CopyButtonComponent,
+    DisplayComponent,
+    FormatDateTimePipe,
+    HtmlTooltipComponent,
+    HtmlTooltipDirective,
+    TextLimiterDirective,
+    TextLimiterTooltipComponent,
     ViewComponent,
     ViewControllerComponent,
-    DisplayComponent,
-    TextLimiterDirective,
-    HtmlTooltipDirective,
-    HtmlTooltipComponent,
-    TextLimiterTooltipComponent,
-    FormatDateTimePipe,
-    CopyButtonComponent,
   ],
   exports: [
     CommonModule,
+    ConvertBytesToHumanReadablePipe,
+    CopyButtonComponent,
+    DisplayComponent,
+    FlexLayoutModule,
+    FormatDateTimePipe,
+    HtmlTooltipDirective,
     MaterialModule,
     OverlayModule,
     PortalModule,
-    FlexLayoutModule,
-    DisplayComponent,
+    TextLimiterDirective,
+    TextLimiterTooltipComponent,
     ViewComponent,
     ViewControllerComponent,
-    TextLimiterDirective,
-    HtmlTooltipDirective,
-    TextLimiterTooltipComponent,
-    CopyButtonComponent,
-    FormatDateTimePipe,
   ],
   entryComponents: [
+    CopyButtonComponent,
+    TextLimiterTooltipComponent,
     ViewComponent,
     ViewControllerComponent,
-    TextLimiterTooltipComponent,
-    CopyButtonComponent,
   ],
   providers: [
     StorageService,

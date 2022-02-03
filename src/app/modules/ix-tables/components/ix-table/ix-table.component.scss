@@ -55,6 +55,12 @@
 
   .no-data-row td {
     padding: 16px;
+
+    entity-empty {
+      align-items: center;
+      display: flex;
+      justify-content: center;
+    }
   }
 
   .clickable-row {

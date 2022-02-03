@@ -1,0 +1,18 @@
+<ng-container matColumnDef="select">
+  <th mat-header-cell *matHeaderCellDef [style.width.px]="40">
+    <mat-checkbox
+      color="primary"
+      (change)="$event ? masterToggle() : null"
+      [checked]="selection.hasValue() && isAllSelected()"
+      [indeterminate]="selection.hasValue() && !isAllSelected()"
+    ></mat-checkbox>
+  </th>
+  <td mat-cell *matCellDef="let item; dataSource: dataSource" [style.width.px]="40">
+    <mat-checkbox
+      color="primary"
+      (click)="$event.stopPropagation()"
+      (change)="$event ? selection.toggle(item) : null"
+      [checked]="selection.isSelected(item)"
+    ></mat-checkbox>
+  </td>
+</ng-container>

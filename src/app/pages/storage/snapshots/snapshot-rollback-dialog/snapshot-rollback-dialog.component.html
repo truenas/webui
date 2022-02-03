@@ -1,0 +1,59 @@
+<h1 matDialogTitle>{{ 'Dataset Rollback From Snapshot' | translate }}</h1>
+<form
+  *ngIf="!wasDatasetRolledBack; else successMessage"
+  [formGroup]="form"
+  class="ix-form-container"
+  (submit)="onSubmit()"
+>
+  <p [innerHTML]="'Use snapshot <i>{snapshot}</i> to roll <b>{dataset}</b> back to {datetime}?' | translate: { snapshot: params.snapshot, dataset: params.dataset, datetime: params.datetime | formatDateTime }"></p>
+
+  <ix-fieldset>
+    <ix-radio-group
+      class="mt-field"
+      [formControlName]="recursive.fcName"
+      [label]="recursive.label | translate"
+      [tooltip]="recursive.tooltip| translate"
+      [options]="recursive.options"
+    ></ix-radio-group>
+
+    <ix-checkbox
+      [formControlName]="force.fcName"
+      [label]="force.label"
+      [required]="force.required"
+    ></ix-checkbox>
+  </ix-fieldset>
+
+  <p [innerHTML]="'<b>WARNING:</b> Rolling the dataset back destroys data on the dataset <i>and</i> can destroy additional snapshots that are related to the dataset. <b>This can result in permanent data loss!</b> Do not roll back until all desired data and snapshots are backed up.' | translate"></p>
+
+  <div class="form-actions">
+    <button
+      mat-button
+      type="submit"
+      [disabled]="form.invalid"
+      color="primary"
+    >{{ 'Rollback' | translate }}</button>
+    <button
+      mat-button
+      type="button"
+      matDialogClose
+    >{{ 'Cancel' | translate }}</button>
+  </div>
+</form>
+<ng-template #successMessage>
+  <p>{{ 'Dataset rolled back to snapshot {name}.' | translate: { name: params.snapshot } }}</p>
+
+  <div class="form-actions">
+    <a
+      mat-button
+      type="submit"
+      color="primary"
+      matDialogClose
+      [routerLink]="['/storage/snapshots']"
+    >{{ 'Go to Storage' | translate }}</a>
+    <button
+      mat-button
+      type="button"
+      matDialogClose
+    >{{ 'Close' | translate }}</button>
+  </div>
+</ng-template>
