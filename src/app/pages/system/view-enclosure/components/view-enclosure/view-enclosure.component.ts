@@ -125,7 +125,7 @@ export class ViewEnclosureComponent implements OnDestroy {
     });
 
     core.register({ observerClass: this, eventName: 'Resilvering' }).pipe(untilDestroyed(this)).subscribe((evt: ResilveringEvent) => {
-      if (evt.data.scan.state == PoolScanState.Finished) this.fetchData();
+      if (evt.data.scan.state === PoolScanState.Finished) this.fetchData();
     });
 
     core.register({ observerClass: this, eventName: 'DisksChanged' }).pipe(untilDestroyed(this)).subscribe(() => {
@@ -159,7 +159,7 @@ export class ViewEnclosureComponent implements OnDestroy {
   extractVisualizations(): void {
     if (this.showEnclosureSelector) {
       this.system.profile.forEach((item, index) => {
-        if (this.system.rearIndex && item.enclosureKey == this.system.rearIndex) { return; }
+        if (this.system.rearIndex && item.enclosureKey === this.system.rearIndex) { return; }
         if (this.system.profile) {
           this.events.next({ name: 'CanvasExtract', data: this.system.profile[index], sender: this });
         }

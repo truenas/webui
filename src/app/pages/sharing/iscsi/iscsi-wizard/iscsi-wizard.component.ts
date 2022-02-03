@@ -565,7 +565,7 @@ export class IscsiWizardComponent implements WizardConfiguration {
     });
 
     this.entityWizard.formArray.get([0]).get('disk').valueChanges.pipe(untilDestroyed(this)).subscribe((value: string) => {
-      const disableZvolGroup = !(value === 'NEW' && this.entityWizard.formArray.get([0]).get('type').value == IscsiExtentType.Disk);
+      const disableZvolGroup = !(value === 'NEW' && this.entityWizard.formArray.get([0]).get('type').value === IscsiExtentType.Disk);
       this.disablefieldGroup(this.zvolFieldGroup, disableZvolGroup, 0);
     });
 
@@ -778,7 +778,7 @@ export class IscsiWizardComponent implements WizardConfiguration {
   }
 
   formTypeUpdate(type: IscsiExtentType): void {
-    const isDevice = type != IscsiExtentType.File;
+    const isDevice = type !== IscsiExtentType.File;
 
     this.disablefieldGroup(this.fileFieldGroup, isDevice, 0);
     this.disablefieldGroup(this.deviceFieldGroup, !isDevice, 0);

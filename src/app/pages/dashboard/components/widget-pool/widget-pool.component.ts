@@ -336,7 +336,7 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
   }
 
   updateSlidePosition(value: number): void {
-    if (value.toString() == this.currentSlide) { return; }
+    if (value.toString() === this.currentSlide) { return; }
 
     const carousel = this.carouselParent.nativeElement.querySelector('.carousel');
     const slide = this.carouselParent.nativeElement.querySelector('.slide');

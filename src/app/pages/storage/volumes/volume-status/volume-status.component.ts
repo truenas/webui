@@ -558,7 +558,7 @@ export class VolumeStatusComponent implements OnInit, OnDestroy {
     if ('stats' in data) {
       stats = data.stats;
     }
-    if ('type' in data && data.type != VDevType.Disk) {
+    if ('type' in data && data.type !== VDevType.Disk) {
       (data as any).name = data.type;
     }
     // use path as the device name if the device name is null

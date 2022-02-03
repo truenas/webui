@@ -107,7 +107,7 @@ export class CatalogComponent implements OnInit {
     this.checkForConfiguredPool();
 
     this.ws.subscribe('core.get_jobs').pipe(untilDestroyed(this)).subscribe((event) => {
-      const catalogSyncJob = this.catalogSyncJobs.find((job) => job.id == event.fields.id);
+      const catalogSyncJob = this.catalogSyncJobs.find((job) => job.id === event.fields.id);
       if (catalogSyncJob) {
         catalogSyncJob.progress = event.fields.progress.percent;
         if (event.fields.state == JobState.Success) {
