@@ -187,6 +187,13 @@ module.exports = {
         "@angular-eslint/component-max-inline-declarations": ["error"],
         "@angular-eslint/contextual-decorator": ["error"],
         "@angular-eslint/contextual-lifecycle": ["error"],
+        "no-restricted-imports": ["error", {
+          "paths": [{
+            "name": "@ngneat/spectator",
+            "importNames": ["createComponentFactory", "createHostFactory", "createRoutingFactory", "mockProvider"],
+            "message": "Use imports from @ngneat/spectator/jest instead."
+          }]
+        }],
 
         // RxJS rules
         "rxjs/no-unsafe-takeuntil": ["error", {
