@@ -137,7 +137,7 @@ export class ViewChartComponent extends ViewComponent implements OnChanges, Afte
 
         // Don't duplicate legend items when new data comes in
         const legendIndex = this.findLegendItem(legendHtmlItem);
-        if (legendIndex == -1) {
+        if (legendIndex === -1) {
           this.legend.push(legendHtmlItem);
         } else {
           const dupe = this.legend[legendIndex];

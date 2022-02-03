@@ -278,7 +278,7 @@ export class FieldRelationService {
   }
 
   isDeepEqual(data1: unknown, data2: unknown): boolean {
-    if (this.getDataType(data1) != this.getDataType(data2)) {
+    if (this.getDataType(data1) !== this.getDataType(data2)) {
       return false;
     }
 

@@ -76,13 +76,13 @@ export class ManageCatalogSummaryDialogComponent implements OnInit {
   onOptionChanged(): void {
     this.filteredItems = this.catalogItems.filter((item) => {
       let isSeletectedTrain = false;
-      if (this.selectedTrain == this.trainOptions[0]
-        || this.selectedTrain == item.train) {
+      if (this.selectedTrain === this.trainOptions[0]
+        || this.selectedTrain === item.train) {
         isSeletectedTrain = true;
       }
 
       let isSeletectedStatus = false;
-      if (this.selectedStatus == this.statusOptions[0]
+      if (this.selectedStatus === this.statusOptions[0]
         || this.selectedStatus == this.statusOptions[1] && item.healthy
         || this.selectedStatus == this.statusOptions[2] && !item.healthy) {
         isSeletectedStatus = true;
@@ -94,7 +94,7 @@ export class ManageCatalogSummaryDialogComponent implements OnInit {
 
   versionStatusLabel(item: CatalogAppVersion): string {
     let label = '';
-    if (this.selectedStatus == this.statusOptions[0]) {
+    if (this.selectedStatus === this.statusOptions[0]) {
       if (item.healthy) {
         label += '(Healthy)';
       } else {

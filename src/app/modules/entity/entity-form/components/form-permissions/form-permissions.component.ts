@@ -147,7 +147,7 @@ export class FormPermissionsComponent implements Field, OnInit {
   ngOnInit(): void {
     this.control = this.group.controls[this.config.name];
     this.control.valueChanges.pipe(untilDestroyed(this)).subscribe((data: string) => {
-      if (this.value != data) {
+      if (this.value !== data) {
         this.setValue(data);
         this.refreshPermissions();
       }

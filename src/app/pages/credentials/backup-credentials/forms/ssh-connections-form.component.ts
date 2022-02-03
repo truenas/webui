@@ -255,7 +255,7 @@ export class SshConnectionsFormComponent implements FormConfiguration {
     }
     this.keychainCredentialService.getSshConnections().toPromise().then((connections) => {
       const sshConnections = connections
-        .filter((connection) => connection.id != this.rowNum)
+        .filter((connection) => connection.id !== this.rowNum)
         .map((connection) => connection.name);
       this.namesInUse.push(...sshConnections);
       this.namesInUseConnection.push(...sshConnections);

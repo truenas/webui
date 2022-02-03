@@ -159,11 +159,11 @@ export class ThemeUtils {
     let l = 0;
 
     // Calculate Hue
-    if (delta == 0) {
+    if (delta === 0) {
       h = 0;
-    } else if (cmax == r) {
+    } else if (cmax === r) {
       h = ((g - b) / delta) % 6;
-    } else if (cmax == g) {
+    } else if (cmax === g) {
       h = (b - r) / delta + 2;
     } else {
       h = (r - g) / delta + 4;

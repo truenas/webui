@@ -203,7 +203,7 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
         this.tempMinThreads.push(Number(t.toFixed(0)));
       }
 
-      if (temps[t] == this.tempMax) {
+      if (temps[t] === this.tempMax) {
         this.tempMaxThreads.push(Number(t.toFixed(0)));
       }
     }

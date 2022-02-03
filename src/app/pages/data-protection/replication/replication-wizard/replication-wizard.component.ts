@@ -807,7 +807,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
   }
 
   isCustActionVisible(actionId: string, stepperIndex: number): boolean {
-    if (stepperIndex == 0) {
+    if (stepperIndex === 0) {
       return true;
     }
     return false;
