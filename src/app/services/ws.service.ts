@@ -4,9 +4,9 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { UUID } from 'angular2-uuid';
 import { LocalStorage } from 'ngx-webstorage';
 import {
-  ConnectableObservable, Observable, Observer, Subject, Subscriber,
+  Observable, Observer, Subject, Subscriber,
 } from 'rxjs';
-import { multicast } from 'rxjs/operators';
+import { share } from 'rxjs/operators';
 import { ApiEventMessage } from 'app/enums/api-event-message.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { ApiDirectory, ApiMethod } from 'app/interfaces/api-directory.interface';
@@ -203,7 +203,7 @@ export class WebSocketService {
     };
 
     // Create the observable
-    const observable$ = new Observable((observer: Subscriber<ApiDirectory[K]['response']>) => {
+    return new Observable((observer: Subscriber<ApiDirectory[K]['response']>) => {
       this.pendingCalls.set(uuid, {
         method,
         args: params,
@@ -211,10 +211,7 @@ export class WebSocketService {
       });
 
       this.send(payload);
-    });
-    const multi$ = observable$.pipe(multicast(() => new Subject())) as ConnectableObservable<number>;
-    multi$.connect();
-    return multi$;
+    }).pipe(share());
   }
 
   /**
