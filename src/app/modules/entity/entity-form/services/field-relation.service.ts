@@ -314,7 +314,7 @@ export class FieldRelationService {
         break;
       case 'basic':
       default:
-        if (data1 != data2) {
+        if (data1 !== data2) {
           return false;
         }
     }

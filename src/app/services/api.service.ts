@@ -47,7 +47,7 @@ export class ApiService {
       },
       postProcessor(res: any, callArgs: any, core: CoreService) {
         const cloneRes = { ...res };
-        if (res == 1) {
+        if (res === 1) {
           core.emit({ name: 'UserDataRequest', data: [[['id', '=', 1]]] });
         }
         return cloneRes;

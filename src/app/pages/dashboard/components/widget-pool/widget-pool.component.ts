@@ -229,7 +229,7 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
   }
 
   getAvailableSpace(): number {
-    if (!this.volumeData || typeof this.volumeData.avail == undefined) {
+    if (!this.volumeData || typeof this.volumeData.avail === undefined) {
       this.displayValue = 'Unknown';
       return;
     }

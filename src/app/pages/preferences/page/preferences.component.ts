@@ -102,7 +102,7 @@ export class PreferencesPageComponent implements EmbeddedFormConfig, OnInit, OnD
       untilDestroyed(this),
     ).subscribe((evt: CoreEvent) => {
       const prefs = Object.assign(evt.data, {});
-      if (prefs.reset == true) {
+      if (prefs.reset === true) {
         this.core.emit({ name: 'ResetPreferences', sender: this });
         this.target.next({ name: 'SubmitStart', sender: this });
         this.isWaiting = true;

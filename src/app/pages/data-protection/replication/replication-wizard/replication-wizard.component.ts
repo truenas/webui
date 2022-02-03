@@ -1376,7 +1376,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
       }
     }
 
-    if (value['schedule_method'] === ScheduleMethod.Once && createdItems['replication'] != undefined) {
+    if (value['schedule_method'] === ScheduleMethod.Once && createdItems['replication'] !== undefined) {
       await this.ws.call('replication.run', [createdItems['replication']]).toPromise().then(
         () => {
           this.dialogService.info(

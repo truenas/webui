@@ -40,10 +40,10 @@ export class CloudCredentialService {
       }
     }
     const restUnit = data.slice(index + 1, data.length).toUpperCase();
-    if (index == -1 && Number(data)) {
+    if (index === -1 && Number(data)) {
       return Number(data) * this.byteMap[unit];
     } if (restUnit === 'IB' || restUnit === 'B' || restUnit === '') {
-      if (unit === 'B' && restUnit != '') {
+      if (unit === 'B' && restUnit !== '') {
         return -1;
       }
       return Number(data.slice(0, index)) * this.byteMap[unit];

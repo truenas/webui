@@ -55,7 +55,7 @@ export class CatalogSummaryDialogComponent implements OnInit {
 
   versionStatusLabel(version: { value: CatalogAppVersion }): string {
     let label = '';
-    if (this.selectedStatus == this.statusOptions[0]) {
+    if (this.selectedStatus === this.statusOptions[0]) {
       if (version.value.healthy) {
         label += '(Healthy)';
       } else {

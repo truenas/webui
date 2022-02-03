@@ -50,7 +50,7 @@ export class WizardSummaryComponent {
       result = fieldValue.length;
     } else if (fieldConfig.type === 'select') {
       const selectedOption = fieldConfig.options.find((option) => {
-        return option.value == new EntityUtils().changeNull2String(fieldValue);
+        return option.value === new EntityUtils().changeNull2String(fieldValue);
       });
       if (selectedOption) {
         result = selectedOption.label;

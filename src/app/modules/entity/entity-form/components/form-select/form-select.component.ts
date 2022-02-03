@@ -223,6 +223,6 @@ export class FormSelectComponent implements Field, AfterViewInit, AfterViewCheck
   }
 
   shouldAlertOnOption(option: FormSelectOption): boolean {
-    return this.config.alert ? this.config.alert.forValues.findIndex((v) => v == option.value) >= 0 : false;
+    return this.config.alert ? this.config.alert.forValues.findIndex((v) => v === option.value) >= 0 : false;
   }
 }

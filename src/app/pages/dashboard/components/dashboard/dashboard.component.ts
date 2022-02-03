@@ -346,7 +346,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     const vd: VolumesData = {};
 
     data.forEach((dataset) => {
-      if (typeof dataset == undefined || !dataset) { return; }
+      if (typeof dataset === undefined || !dataset) { return; }
       const usedPercent = dataset.used.parsed / (dataset.used.parsed + dataset.available.parsed);
       const zvol = {
         avail: dataset.available.parsed,
@@ -508,7 +508,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
         break;
       case 'pool':
         if (spl) {
-          const pools = this.pools.filter((pool) => pool[key as keyof Pool] == value);
+          const pools = this.pools.filter((pool) => pool[key as keyof Pool] === value);
           if (pools) { data = pools[0]; }
         } else {
           console.warn('DashConfigItem has no identifier!');
@@ -516,7 +516,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
         break;
       case 'interface':
         if (spl) {
-          const nics = this.nics.filter((nic) => nic[key as keyof DashboardNetworkInterface] == value);
+          const nics = this.nics.filter((nic) => nic[key as keyof DashboardNetworkInterface] === value);
           if (nics) { data = nics[0].state; }
         } else {
           console.warn('DashConfigItem has no identifier!');
@@ -560,7 +560,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       const matches = state.filter((w) => {
         const key = widget.identifier ? 'identifier' : 'name';
 
-        return widget[key] == w[key];
+        return widget[key] === w[key];
       });
 
       if (matches.length === 1) {

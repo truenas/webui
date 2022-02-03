@@ -386,7 +386,7 @@ export class ExtentFormComponent implements FormConfiguration {
   beforeSubmit(data: any): void {
     data.filesize = this.storageService.convertHumanStringToNum(data.filesize, true);
     if (this.pk === undefined || this.originalFilesize !== data.filesize) {
-      data.filesize = data.filesize == 0
+      data.filesize = data.filesize === 0
         ? data.filesize
         : (data.filesize + (data.blocksize - data.filesize % data.blocksize));
     }
