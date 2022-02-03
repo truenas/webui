@@ -57,7 +57,7 @@ def you_should_be_on_the_dashboard_click_on_directory_services_and_then_kerberos
 @then('click on Add on the Kerberos Keytab page')
 def click_on_add_on_the_kerberos_keytab_page(driver):
     """click on Add on the Kerberos Keytab page."""
-    assert wait_on_element(driver, 7, '//div[contains(text(),"Kerberos Keytabs")]')
+    assert wait_on_element(driver, 7, '//div[contains(text(),"Kerberos Keytabs")]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__Kerberos Keytabs_ADD"]').click()
 
 
@@ -95,7 +95,7 @@ def name_the_keytab_and_upload_the_file_and_click_save(driver):
     keytab_file = sorted(glob.glob(keytab_file_path))[-1]
     assert wait_on_element(driver, 7, '//input[@type="file"]', 'clickable')
     driver.find_element_by_xpath('//input[@type="file"]').send_keys(keytab_file)
-    time.sleep(1)
+    time.sleep(3)
     assert wait_on_element(driver, 7, '//button[@ix-auto="button__SUBMIT"', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__SUBMIT"]').click()
 
