@@ -101,7 +101,7 @@ def change_disable_password_to_no_and_click_save(driver):
 @then('change should be saved')
 def change_should_be_saved(driver):
     """change should be saved."""
-    assert wait_on_element_disappear(driver, 7, '//h6[contains(.,"Please wait")]')
+    assert wait_on_element_disappear(driver, 15, '//h6[contains(.,"Please wait")]')
     assert wait_on_element(driver, 7, '//div[contains(.,"Users")]')
 
 

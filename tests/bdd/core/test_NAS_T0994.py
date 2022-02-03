@@ -101,7 +101,7 @@ def change_the_password_in_both_fields_and_click_save(driver):
 @then('changes should be saved without an error')
 def changes_should_be_saved_without_an_error(driver):
     """changes should be saved without an error."""
-    assert wait_on_element_disappear(driver, 7, '//h6[contains(.,"Please wait")]')
+    assert wait_on_element_disappear(driver, 15, '//h6[contains(.,"Please wait")]')
     assert wait_on_element(driver, 7, '//div[contains(.,"Users")]')
 
 

@@ -108,7 +108,7 @@ def change_some_permissions_for_the_home_directory_and_click_save(driver):
 @then('changes should be saved without an error')
 def changes_should_be_saved_without_an_error(driver):
     """changes should be saved without an error."""
-    assert wait_on_element_disappear(driver, 7, '//h6[contains(.,"Please wait")]')
+    assert wait_on_element_disappear(driver, 15, '//h6[contains(.,"Please wait")]')
     assert wait_on_element(driver, 10, '//div[@ix-auto="value__ericbsd_Username"]')
 
 

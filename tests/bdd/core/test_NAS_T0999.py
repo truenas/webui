@@ -121,7 +121,7 @@ def input_the_public_key_in_the_ssh_public_key_field_then_click_save(driver, ssh
 @then('changes should be saved without an error')
 def changes_should_be_saved_without_an_error(driver):
     """changes should be saved without an error."""
-    assert wait_on_element_disappear(driver, 7, '//h6[contains(.,"Please wait")]')
+    assert wait_on_element_disappear(driver, 15, '//h6[contains(.,"Please wait")]')
     assert wait_on_element(driver, 10, '//div[@ix-auto="value__root_Username"]')
 
 
