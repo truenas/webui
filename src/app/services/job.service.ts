@@ -16,8 +16,6 @@ import { WebSocketService } from './ws.service';
 @Injectable()
 export class JobService {
   protected accountUserResource = 'account/users/';
-  protected accountGroupResource = 'account/groups/';
-  protected accountAllUsersResource = 'account/all_users/';
   protected accountAllGroupsResource = 'account/all_groups/';
 
   constructor(

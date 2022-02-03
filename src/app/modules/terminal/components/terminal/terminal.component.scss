@@ -1,5 +1,5 @@
 :host ::ng-deep {
-  @import '~xterm/css/xterm';
+  @import '../../../../../../node_modules/xterm/css/xterm.css';
 }
 
 .terminal-wrapper {

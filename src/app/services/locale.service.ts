@@ -165,22 +165,6 @@ export class LocaleService {
     return [format(date, `${this.dateFormat}`), format(date, `${this.timeFormat}`)];
   }
 
-  // Translates moment.js format to angular template format for use in special cases such as form-scheduler
-  getAngularFormat(): string {
-    // Renders lowercase am and pm
-    const ngTimeFormat = this.timeFormat === 'hh:mm:ss a' ? 'hh:mm:ss aaaaa\'m\'' : this.timeFormat;
-    const tempStr = `${this.dateFormat} ${ngTimeFormat}`;
-    let dateStr = '';
-    for (const char of tempStr) {
-      if (char === 'M' || char === 'Z' || char === 'H') {
-        dateStr += char;
-      } else {
-        dateStr += char.toLowerCase();
-      }
-    }
-    return dateStr;
-  }
-
   getCopyrightYearFromBuildTime(): string {
     const buildTime = localStorage.getItem('buildtime')?.trim();
     if (!buildTime) {
