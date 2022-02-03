@@ -60,15 +60,6 @@ export class LineChartComponent extends ViewComponent implements AfterViewInit, 
   yLabelPrefix: string;
   showLegendValues = false;
 
-  _colorPattern: string[] = ['#2196f3', '#009688', '#ffc107', '#9c27b0', '#607d8b', '#00bcd4', '#8bc34a', '#ffeb3b', '#e91e63', '#3f51b5'];
-  get colorPattern(): string[] {
-    return this.chartColors;
-  }
-
-  set colorPattern(value) {
-    this._colorPattern = value;
-  }
-
   theme: Theme;
   timeFormat = '%H:%M';
   culling = 6;
@@ -112,7 +103,7 @@ export class LineChartComponent extends ViewComponent implements AfterViewInit, 
       includeZero: true,
       highlightCircleSize: 4,
       strokeWidth: 1,
-      colors: this.colorPattern,
+      colors: this.chartColors,
       labels, // time axis
       ylabel: this.yLabelPrefix + yLabelSuffix,
       gridLineColor,
@@ -187,17 +178,6 @@ export class LineChartComponent extends ViewComponent implements AfterViewInit, 
     }
   }
 
-  makeColumn(data: ReportingData, legendKey: number): number[] {
-    const result: any = [];
-
-    data.data.forEach((report) => {
-      const value = report[legendKey];
-      result.push(value);
-    });
-
-    return result;
-  }
-
   protected makeTimeAxis(rd: ReportingData): any[] {
     const structure = this.library === 'chart.js' ? 'columns' : 'rows';
     if (structure === 'rows') {
@@ -233,19 +213,6 @@ export class LineChartComponent extends ViewComponent implements AfterViewInit, 
 
       return columns;
     }
-  }
-
-  private processThemeColors(theme: Theme): string[] {
-    this.theme = theme;
-    return theme.accentColors.map((color) => theme[color]);
-  }
-
-  private createColorObject(): Record<string, string> {
-    const obj: Record<string, string> = {};
-    this.legends.forEach((item, index) => {
-      obj[item] = this.colorPattern[index];
-    });
-    return obj;
   }
 
   fetchData(rrdOptions: { start: number; end: number }, timeformat?: string, culling?: number): void {

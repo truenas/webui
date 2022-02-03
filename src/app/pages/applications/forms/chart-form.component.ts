@@ -15,7 +15,6 @@ import { EntityUtils } from 'app/modules/entity/utils';
 import { remapAppSubmitData } from 'app/pages/applications/utils/remap-app-submit-data.utils';
 import { DialogService } from 'app/services/index';
 import { ModalService } from 'app/services/modal.service';
-import { ApplicationsService } from '../applications.service';
 import { remapAppConfigData } from '../utils/remap-app-config-data.utils';
 
 @UntilDestroy()
@@ -58,7 +57,7 @@ export class ChartFormComponent implements FormConfiguration {
   private entityUtils = new EntityUtils();
 
   constructor(private mdDialog: MatDialog, private dialogService: DialogService,
-    private modalService: ModalService, private appService: ApplicationsService) {
+    private modalService: ModalService) {
     this.getRow = this.modalService.getRow$.pipe(untilDestroyed(this)).subscribe((rowName: string) => {
       this.rowName = rowName;
       this.customFilter = [[['id', '=', rowName]], { extra: { include_chart_schema: true } }];

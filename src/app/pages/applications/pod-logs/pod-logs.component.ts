@@ -2,7 +2,6 @@ import { HttpClient } from '@angular/common/http';
 import {
   Component, ElementRef, OnDestroy, OnInit, ViewChild, ViewEncapsulation,
 } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
@@ -66,9 +65,7 @@ export class PodLogsComponent implements OnInit, OnDestroy {
     protected loader: AppLoaderService,
     protected storageService: StorageService,
     protected http: HttpClient,
-    protected router: Router,
-    private dialog: MatDialog) {
-  }
+    protected router: Router) {}
 
   ngOnInit(): void {
     this.aroute.params.pipe(untilDestroyed(this)).subscribe((params) => {
