@@ -1,5 +1,5 @@
 import {
-  Component, ChangeDetectionStrategy, ChangeDetectorRef, TrackByFunction,
+  Component, ChangeDetectionStrategy, TrackByFunction,
 } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
@@ -36,7 +36,6 @@ export class JobsPanelComponent {
   constructor(
     private router: Router,
     private store$: Store<JobSlice>,
-    private cdr: ChangeDetectorRef,
     private dialogRef: MatDialogRef<JobsPanelComponent>,
     private translate: TranslateService,
     private dialog: DialogService,

@@ -9,5 +9,5 @@ export const jobsNotLoaded = createAction('[Jobs API] Not Loaded', props<{ error
 
 export const jobAdded = createAction('[Jobs API] Job Added', props<{ job: Job }>());
 export const jobChanged = createAction('[Jobs API] Job Changed', props<{ job: Job }>());
+export const jobAborted = createAction('[Jobs API] Job Aborted', props<{ job: Job }>());
 export const jobRemoved = createAction('[Jobs API] Job Removed', props<{ id: number }>());
-export const jobAborted = createAction('[Jobs API] Job Aborted', props<{ id: number }>());

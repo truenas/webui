@@ -34,7 +34,7 @@ import { jobStateKey } from 'app/modules/jobs/store/job.selectors';
     MatDialogModule,
     MatProgressSpinnerModule,
   ],
-  exports: [JobItemComponent, JobsPanelComponent],
   declarations: [JobItemComponent, JobsPanelComponent],
+  exports: [JobItemComponent, JobsPanelComponent],
 })
 export class JobsModule {}

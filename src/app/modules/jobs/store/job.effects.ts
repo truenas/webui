@@ -63,7 +63,7 @@ export class JobEffects {
     ofType(abortJobPressed),
     switchMap(({ job }) => {
       return this.ws.call('core.job_abort', [job.id]).pipe(
-        map(() => jobAborted({ id: job.id })),
+        map(() => jobAborted({ job })),
       );
     }),
   ));

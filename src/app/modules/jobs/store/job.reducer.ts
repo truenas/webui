@@ -1,8 +1,9 @@
 import { createEntityAdapter, EntityState } from '@ngrx/entity';
 import { createReducer, on } from '@ngrx/store';
+import { JobState } from 'app/enums/job-state.enum';
 import { Job } from 'app/interfaces/job.interface';
 import {
-  jobsLoaded, jobChanged, jobRemoved, jobAdded, jobPanelClosed, jobsNotLoaded, jobAborted, abortJobPressed,
+  jobsLoaded, jobChanged, jobRemoved, jobAdded, jobPanelClosed, jobsNotLoaded, jobAborted,
 } from 'app/modules/jobs/store/job.actions';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
 import { jobIndicatorPressed } from 'app/store/topbar/topbar.actions';
@@ -40,10 +41,15 @@ export const jobReducer = createReducer(
     changes: job,
   }, state)),
   on(jobRemoved, (state, { id }) => adapter.removeOne(id, state)),
-  on(jobAborted, (state, { id }) => adapter.removeOne(id, state)),
-
-  on(abortJobPressed, (state, { job }) => adapter.updateOne({
+  on(jobAborted, (state, { job }) => adapter.updateOne({
     id: job.id,
-    changes: job,
+    changes: {
+      state: JobState.Aborted,
+      abortable: false,
+      progress: null,
+      time_finished: {
+        $date: Date.now(),
+      },
+    },
   }, state)),
 );

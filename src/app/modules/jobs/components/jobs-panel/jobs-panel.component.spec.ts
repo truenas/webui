@@ -3,24 +3,23 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
-import { Spectator, createRoutingFactory, mockProvider } from '@ngneat/spectator';
+import { mockProvider, createRoutingFactory, Spectator } from '@ngneat/spectator/jest';
 import { EffectsModule } from '@ngrx/effects';
-import { StoreModule, Store } from '@ngrx/store';
-import { provideMockStore } from '@ngrx/store/testing';
+import { Store, StoreModule } from '@ngrx/store';
+import { MockPipe } from 'ng-mocks';
 import { of } from 'rxjs';
-import { CoreComponents } from 'app/core/components/core-components.module';
+import { FormatDateTimePipe } from 'app/core/components/pipes/format-datetime.pipe';
 import { mockWebsocket, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
 import { JobState } from 'app/enums/job-state.enum';
 import { Job } from 'app/interfaces/job.interface';
-import { EntityModule } from 'app/modules/entity/entity.module';
 import { JobItemComponent } from 'app/modules/jobs/components/job-item/job-item.component';
 import { JobsPanelComponent } from 'app/modules/jobs/components/jobs-panel/jobs-panel.component';
+import { JobsPanelPageObject } from 'app/modules/jobs/components/jobs-panel/jobs-panel.page-object';
 import { JobEffects } from 'app/modules/jobs/store/job.effects';
-import { adapter, jobReducer, jobsInitialState } from 'app/modules/jobs/store/job.reducer';
+import { jobReducer, adapter, jobsInitialState } from 'app/modules/jobs/store/job.reducer';
 import { jobStateKey } from 'app/modules/jobs/store/job.selectors';
 import { DialogService, WebSocketService } from 'app/services';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
-import { selectGeneralConfig } from 'app/store/system-config/system-config.selectors';
 
 const runningJob = {
   id: 1,
@@ -59,12 +58,11 @@ describe('JobsPanelComponent', () => {
   let spectator: Spectator<JobsPanelComponent>;
   let websocket: WebSocketService;
   let loader: HarnessLoader;
+  let jobPanel: JobsPanelPageObject;
 
   const createComponent = createRoutingFactory({
     component: JobsPanelComponent,
     imports: [
-      EntityModule,
-      CoreComponents,
       StoreModule.forRoot({ [jobStateKey]: jobReducer }, {
         initialState: {
           [jobStateKey]: adapter.setAll([runningJob, waitingJob, failedJob], jobsInitialState),
@@ -74,6 +72,7 @@ describe('JobsPanelComponent', () => {
     ],
     declarations: [
       JobItemComponent,
+      MockPipe(FormatDateTimePipe, jest.fn(() => 'Jan 10 2022 10:36')),
     ],
     providers: [
       mockProvider(DialogService, {
@@ -84,11 +83,6 @@ describe('JobsPanelComponent', () => {
         mockCall('core.job_abort'),
       ]),
       mockProvider(MatDialogRef),
-      provideMockStore({
-        selectors: [
-          { selector: selectGeneralConfig, value: { timezone: 'UTC' } },
-        ],
-      }),
     ],
   });
 
@@ -96,50 +90,38 @@ describe('JobsPanelComponent', () => {
     spectator = createComponent();
     websocket = spectator.inject(WebSocketService);
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    spectator.inject(Store).dispatch(adminUiInitialized());
+    jobPanel = new JobsPanelPageObject(spectator);
   });
 
-  afterEach(() => {
-    jest.restoreAllMocks();
+  it('loads jobs when adminUiInitialized is dispatched', () => {
+    spectator.inject(Store).dispatch(adminUiInitialized());
+
+    expect(websocket.call).toHaveBeenCalledWith('core.get_jobs');
   });
 
   it('checks component header is present', () => {
-    expect(spectator.query('.jobs-header h3')).toHaveExactText('Task Manager');
-    expect(spectator.query('.job-badge.running .job-badge-count')).toHaveText('1');
-    expect(spectator.query('.job-badge.waiting .job-badge-count')).toHaveText('1');
-    expect(spectator.query('.job-badge.failed .job-badge-count')).toHaveText('1');
-  });
-
-  it('checks component footer is present', () => {
-    expect(spectator.query('mat-dialog-actions button')).toHaveExactText('History');
+    expect(jobPanel.title).toHaveExactText('Task Manager');
+    expect(jobPanel.runningBadgeCount).toHaveText('1');
+    expect(jobPanel.waitingBadgeCount).toHaveText('1');
+    expect(jobPanel.failedBadgeCount).toHaveText('1');
   });
 
   it('checks component body is present', () => {
-    const jobs = spectator.queryAll('app-job-item');
+    spectator.inject(Store).dispatch(adminUiInitialized());
+
+    const jobs = jobPanel.getJobItemComponents;
 
     expect(jobs).toHaveLength(3);
-
-    expect(jobs[0].querySelector('.job-description')).toHaveExactText('cloudsync.sync');
-    expect(jobs[0].querySelector('.job-progress-description')).toHaveText('progress description');
-    expect(jobs[0].querySelector('.job-icon-failed')).toBeFalsy();
-    expect(jobs[0].querySelector('.job-icon-waiting')).toBeFalsy();
-    expect(jobs[0].querySelector('.job-icon-abort')).toBeTruthy();
-
-    expect(jobs[1].querySelector('.job-description')).toHaveExactText('cloudsync.sync');
-    expect(jobs[1].querySelector('.job-time')).toHaveText('Waiting: 2021-09-23 15:37:19');
-    expect(jobs[1].querySelector('.job-icon-failed')).toBeFalsy();
-    expect(jobs[1].querySelector('.job-icon-waiting')).toBeTruthy();
-    expect(jobs[1].querySelector('.job-icon-abort')).toBeFalsy();
-
-    expect(jobs[2].querySelector('.job-description')).toHaveExactText('cloudsync.sync');
-    expect(jobs[2].querySelector('.job-time')).toHaveText('Stopped: 2021-09-23 15:37:19');
-    expect(jobs[2].querySelector('.job-icon-failed')).toBeTruthy();
-    expect(jobs[2].querySelector('.job-icon-waiting')).toBeFalsy();
-    expect(jobs[2].querySelector('.job-icon-abort')).toBeFalsy();
+    expect(jobs[0].job).toEqual(runningJob);
+    expect(jobs[1].job).toEqual(waitingJob);
+    expect(jobs[2].job).toEqual(failedJob);
   });
 
-  it('shows confirm dialog if user clicks on the abort button', () => {
-    spectator.click(spectator.query('.job-button-abort'));
+  it('shows confirm dialog if user clicks on the abort button', async () => {
+    spectator.inject(Store).dispatch(adminUiInitialized());
+
+    const abortButton = await loader.getHarness(MatButtonHarness.with({ selector: '.job-button-abort' }));
+    await abortButton.click();
 
     expect(websocket.call).toHaveBeenCalledWith('core.job_abort', [1]);
   });

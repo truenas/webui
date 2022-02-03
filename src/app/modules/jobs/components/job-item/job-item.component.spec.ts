@@ -1,11 +1,11 @@
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
+import { MockPipe } from 'ng-mocks';
 import { CoreComponents } from 'app/core/components/core-components.module';
 import { FormatDateTimePipe } from 'app/core/components/pipes/format-datetime.pipe';
 import { mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { JobState } from 'app/enums/job-state.enum';
 import { Job } from 'app/interfaces/job.interface';
-import { EntityModule } from 'app/modules/entity/entity.module';
 import { JobItemComponent } from 'app/modules/jobs/components/job-item/job-item.component';
 import { selectGeneralConfig } from 'app/store/system-config/system-config.selectors';
 
@@ -15,11 +15,12 @@ describe('JobItemComponent', () => {
   const createComponent = createComponentFactory({
     component: JobItemComponent,
     imports: [
-      EntityModule,
       CoreComponents,
     ],
+    declarations: [
+      MockPipe(FormatDateTimePipe, jest.fn(() => 'Jan 10 2022 10:36')),
+    ],
     providers: [
-      FormatDateTimePipe,
       mockWebsocket(),
       provideMockStore({
         selectors: [
@@ -60,7 +61,7 @@ describe('JobItemComponent', () => {
           },
           state: JobState.Failed,
           time_finished: {
-            $date: 1632411439082,
+            $date: 1641811015,
           },
           error: 'Broken pipe',
         } as Job,
@@ -69,7 +70,7 @@ describe('JobItemComponent', () => {
     });
 
     expect(spectator.query('.job-description')).toHaveExactText('cloudsync.sync');
-    expect(spectator.query('.job-time')).toHaveText('Stopped: 2021-09-23 15:37:19');
+    expect(spectator.query('.job-time')).toHaveText('Stopped: Jan 10 2022 10:36');
     expect(spectator.query('.job-icon-failed')).toBeTruthy();
   });
 
