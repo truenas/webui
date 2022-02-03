@@ -67,7 +67,7 @@ def click_launch_docker_image(driver):
 @then('set Application Name')
 def set_application_name(driver):
     """set Application Names."""
-    assert wait_on_element(driver, 7, '//h3[contains(.,"Launch Docker Image")]')
+    assert wait_on_element(driver, 30, '//h3[contains(.,"Launch Docker Image")]')
     assert wait_on_element(driver, 7, '//input[@ix-auto="input__Application Name"]')
     driver.find_element_by_xpath('//input[@ix-auto="input__Application Name"]').clear()
     driver.find_element_by_xpath('//input[@ix-auto="input__Application Name"]').send_keys('truecommand-test')
@@ -205,7 +205,7 @@ def confirm_installation_is_successful(driver):
         else:
             assert wait_on_element(driver, 10, '//span[contains(.,"Close")]', 'clickable')
             driver.find_element_by_xpath('//span[contains(.,"Close")]').click()
-            time.sleep(30) # Because of slow start up times
+            time.sleep(15) # Because of slow start up times
             assert wait_on_element(driver, 10, '//div[contains(text(),"Available Applications")]', 'clickable')
             driver.find_element_by_xpath('//div[contains(text(),"Available Applications")]').click()
             assert wait_on_element(driver, 10, '//div[contains(text(),"Installed Applications")]', 'clickable')
