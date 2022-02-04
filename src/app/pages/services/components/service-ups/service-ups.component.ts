@@ -1,287 +1,171 @@
-import { Component } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import {
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
+} from '@angular/core';
+import { Validators } from '@angular/forms';
+import { Router } from '@angular/router';
+import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { of } from 'rxjs';
 import { UpsMode } from 'app/enums/ups-mode.enum';
+import { choicesToOptions, singleArrayToOptions } from 'app/helpers/options.helper';
 import helptext from 'app/helptext/services/components/service-ups';
-import { Choices } from 'app/interfaces/choices.interface';
-import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { UpsConfigUpdate } from 'app/interfaces/ups-config.interface';
-import { EntityFormComponent } from 'app/modules/entity/entity-form/entity-form.component';
-import { FormComboboxConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
-import { FieldSet } from 'app/modules/entity/entity-form/models/fieldset.interface';
-import { RelationAction } from 'app/modules/entity/entity-form/models/relation-action.enum';
-import { WebSocketService } from 'app/services';
+import { numberValidator } from 'app/modules/entity/entity-form/validators/number-validation';
+import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
+import { DialogService, WebSocketService } from 'app/services';
+import { EntityUtils } from '../../../../modules/entity/utils';
 
 @UntilDestroy()
 @Component({
-  selector: 'ups-edit',
-  template: '<entity-form [conf]="this"></entity-form>',
+  templateUrl: './service-ups.component.html',
+  styleUrls: ['./service-ups.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ServiceUpsComponent implements FormConfiguration {
-  protected upsDriverField: FormComboboxConfig;
-  private upsDrivers: Choices = {};
-  private upsDriverKey: string;
-  protected upsPortField: FormComboboxConfig;
-  protected entityForm: EntityFormComponent;
+export class ServiceUpsComponent implements OnInit {
+  isFormLoading = false;
+  isMasterMode = true;
 
-  queryCall = 'ups.config' as const;
-  routeSuccess: string[] = ['services'];
-  title = helptext.formTitle;
+  form = this.fb.group({
+    identifier: [null as string, [Validators.required, Validators.pattern(/^[\w|,|\.|\-|_]+$/)]],
+    mode: [null as string],
+    remotehost: [null as string, Validators.required],
+    remoteport: [null as number, [Validators.required, numberValidator()]],
+    driver: [null as string, Validators.required],
+    port: [null as string, Validators.required],
+    monuser: [null as string, Validators.required],
+    monpwd: [null as string, Validators.pattern(/^((?![\#|\s]).)*$/)],
+    extrausers: [null as string],
+    rmonitor: [false],
+    shutdown: [null as string],
+    shutdowntimer: [null as number, numberValidator()],
+    shutdowncmd: [null as unknown],
+    powerdown: [false],
+    nocommwarntime: [300 as unknown, numberValidator()],
+    hostsync: [15, numberValidator()],
+    description: [null as string],
+    options: [null as string],
+    optionsupsd: [null as string],
+  });
 
-  fieldSets: FieldSet[] = [
-    {
-      name: helptext.ups_fieldset_general,
-      label: true,
-      width: '50%',
-      config: [
-        {
-          type: 'input',
-          name: 'identifier',
-          placeholder: helptext.ups_identifier_placeholder,
-          tooltip: helptext.ups_identifier_tooltip,
-          required: true,
-          validation: helptext.ups_identifier_validation,
-        },
-        {
-          type: 'select',
-          name: 'mode',
-          placeholder: helptext.ups_mode_placeholder,
-          tooltip: helptext.ups_mode_tooltip,
-          options: helptext.ups_mode_options,
-        },
-        {
-          type: 'input',
-          name: 'remotehost',
-          placeholder: helptext.ups_remotehost_placeholder,
-          tooltip: helptext.ups_remotehost_tooltip,
-          required: true,
-          isHidden: true,
-          disabled: true,
-          validation: helptext.ups_remotehost_validation,
-          relation: [
-            {
-              action: RelationAction.Enable,
-              when: [{
-                name: 'mode',
-                value: 'SLAVE',
-              }],
-            },
-          ],
-        },
-        {
-          type: 'input',
-          name: 'remoteport',
-          placeholder: helptext.ups_remoteport_placeholder,
-          tooltip: helptext.ups_remoteport_tooltip,
-          value: helptext.ups_remoteport_value,
-          required: true,
-          isHidden: true,
-          disabled: true,
-          validation: helptext.ups_remoteport_validation,
-          relation: [
-            {
-              action: RelationAction.Enable,
-              when: [{
-                name: 'mode',
-                value: 'SLAVE',
-              }],
-            },
-          ],
-        },
-        {
-          type: 'combobox',
-          name: 'driver',
-          placeholder: helptext.ups_driver_placeholder,
-          tooltip: helptext.ups_driver_tooltip,
-          required: true,
-          options: [],
-          validation: helptext.ups_driver_validation,
-          isHidden: false,
-          enableTextWrapForOptions: true,
-          relation: [
-            {
-              action: RelationAction.Disable,
-              when: [{
-                name: 'mode',
-                value: 'SLAVE',
-              }],
-            },
-          ],
-        },
-        {
-          type: 'combobox',
-          name: 'port',
-          placeholder: helptext.ups_port_placeholder,
-          options: [],
-          tooltip: helptext.ups_port_tooltip,
-          required: true,
-          validation: helptext.ups_port_validation,
-          isHidden: false,
-        },
-      ],
-    },
-    {
-      name: helptext.ups_fieldset_monitor,
-      label: true,
-      width: '50%',
-      config: [
-        {
-          type: 'input',
-          name: 'monuser',
-          placeholder: helptext.ups_monuser_placeholder,
-          tooltip: helptext.ups_monuser_tooltip,
-          required: true,
-          validation: helptext.ups_monuser_validation,
-        },
-        {
-          type: 'input',
-          name: 'monpwd',
-          inputType: 'password',
-          togglePw: true,
-          placeholder: helptext.ups_monpwd_placeholder,
-          tooltip: helptext.ups_monpwd_tooltip,
-          validation: helptext.ups_monpwd_validation,
-          required: true,
-        },
-        {
-          type: 'textarea',
-          name: 'extrausers',
-          placeholder: helptext.ups_extrausers_placeholder,
-          tooltip: helptext.ups_extrausers_tooltip,
-        },
-        {
-          type: 'checkbox',
-          name: 'rmonitor',
-          placeholder: helptext.ups_rmonitor_placeholder,
-          tooltip: helptext.ups_rmonitor_tooltip,
-        },
-      ],
-    },
-    { name: 'divier', divider: true },
-    {
-      name: helptext.ups_fieldset_shutdown,
-      label: true,
-      width: '50%',
-      config: [
-        {
-          type: 'select',
-          name: 'shutdown',
-          placeholder: helptext.ups_shutdown_placeholder,
-          tooltip: helptext.ups_shutdown_tooltip,
-          options: helptext.ups_shutdown_options,
-        },
-        {
-          type: 'input',
-          inputType: 'number',
-          name: 'shutdowntimer',
-          placeholder: helptext.ups_shutdowntimer_placeholder,
-          tooltip: helptext.ups_shutdowntimer_tooltip,
-        },
-        {
-          type: 'input',
-          name: 'shutdowncmd',
-          placeholder: helptext.ups_shutdowncmd_placeholder,
-          tooltip: helptext.ups_shutdowncmd_tooltip,
-        },
-        {
-          type: 'checkbox',
-          name: 'powerdown',
-          placeholder: helptext.ups_powerdown_placeholder,
-          tooltip: helptext.ups_powerdown_tooltip,
-        },
-      ],
-    },
-    { name: 'divier', divider: true },
-    {
-      name: helptext.ups_fieldset_other,
-      label: true,
-      config: [
-        {
-          type: 'input',
-          inputType: 'number',
-          name: 'nocommwarntime',
-          placeholder: helptext.ups_nocommwarntime_placeholder,
-          tooltip: helptext.ups_nocommwarntime_tooltip,
-          value: '300',
-        },
-        {
-          type: 'input',
-          inputType: 'number',
-          name: 'hostsync',
-          placeholder: helptext.ups_hostsync_placeholder,
-          tooltip: helptext.ups_hostsync_tooltip,
-          value: 15,
-        },
-        {
-          type: 'input',
-          name: 'description',
-          placeholder: helptext.ups_description_placeholder,
-          tooltip: helptext.ups_description_tooltip,
-        },
-        {
-          type: 'textarea',
-          name: 'options',
-          placeholder: helptext.ups_options_placeholder,
-          tooltip: helptext.ups_options_tooltip,
-          isHidden: false,
-        },
-        {
-          type: 'textarea',
-          name: 'optionsupsd',
-          placeholder: helptext.ups_optionsupsd_placeholder,
-          tooltip: helptext.ups_optionsupsd_tooltip,
-        },
-      ],
-    },
-    { name: 'divider', divider: true },
-  ];
+  readonly helptext = helptext;
+  readonly labels = {
+    identifier: helptext.ups_identifier_placeholder,
+    mode: helptext.ups_mode_placeholder,
+    remotehost: helptext.ups_remotehost_placeholder,
+    remoteport: helptext.ups_remoteport_placeholder,
+    driver: helptext.ups_driver_placeholder,
+    port: helptext.ups_port_placeholder,
+    monuser: helptext.ups_monuser_placeholder,
+    monpwd: helptext.ups_monpwd_placeholder,
+    extrausers: helptext.ups_extrausers_placeholder,
+    rmonitor: helptext.ups_rmonitor_placeholder,
+    shutdown: helptext.ups_shutdown_placeholder,
+    shutdowntimer: helptext.ups_shutdowntimer_placeholder,
+    shutdowncmd: helptext.ups_shutdowncmd_placeholder,
+    powerdown: helptext.ups_powerdown_placeholder,
+    nocommwarntime: helptext.ups_nocommwarntime_placeholder,
+    hostsync: helptext.ups_hostsync_placeholder,
+    description: helptext.ups_description_placeholder,
+    options: helptext.ups_options_placeholder,
+    optionsupsd: helptext.ups_optionsupsd_placeholder,
+  };
+
+  readonly tooltips = {
+    identifier: helptext.ups_identifier_tooltip,
+    mode: helptext.ups_mode_tooltip,
+    remotehost: helptext.ups_remotehost_tooltip,
+    remoteport: helptext.ups_remoteport_tooltip,
+    driver: helptext.ups_driver_tooltip,
+    port: helptext.ups_port_tooltip,
+    monuser: helptext.ups_monuser_tooltip,
+    monpwd: helptext.ups_monpwd_tooltip,
+    extrausers: helptext.ups_extrausers_tooltip,
+    rmonitor: helptext.ups_rmonitor_tooltip,
+    shutdown: helptext.ups_shutdown_tooltip,
+    shutdowntimer: helptext.ups_shutdowntimer_tooltip,
+    shutdowncmd: helptext.ups_shutdowncmd_tooltip,
+    powerdown: helptext.ups_powerdown_tooltip,
+    nocommwarntime: helptext.ups_nocommwarntime_tooltip,
+    hostsync: helptext.ups_hostsync_tooltip,
+    description: helptext.ups_description_tooltip,
+    options: helptext.ups_options_tooltip,
+    optionsupsd: helptext.ups_optionsupsd_tooltip,
+  };
+
+  readonly modeOptions$ = of(helptext.ups_mode_options);
+  readonly driverOptions$ = this.ws.call('ups.driver_choices').pipe(choicesToOptions());
+  readonly portOptions$ = this.ws.call('ups.port_choices').pipe(singleArrayToOptions());
+  readonly shutdownOptions$ = of(helptext.ups_shutdown_options);
 
   constructor(
-    protected router: Router,
-    protected route: ActivatedRoute,
-    protected ws: WebSocketService,
+    private ws: WebSocketService,
+    private errorHandler: FormErrorHandlerService,
+    private cdr: ChangeDetectorRef,
+    private fb: FormBuilder,
+    private dialogService: DialogService,
+    private router: Router,
   ) {}
 
-  afterInit(entityForm: EntityFormComponent): void {
-    entityForm.submitFunction = (body) => this.ws.call('ups.update', [body]);
-    this.entityForm = entityForm;
-
-    const generalSet = this.fieldSets.find((set) => set.name === helptext.ups_fieldset_general);
-    this.upsDriverField = generalSet.config.find((config) => config.name === 'driver') as FormComboboxConfig;
-    this.upsPortField = generalSet.config.find((config) => config.name === 'port') as FormComboboxConfig;
-
-    this.ws.call('ups.driver_choices').pipe(untilDestroyed(this)).subscribe((res) => {
-      this.upsDrivers = res;
-      for (const item in res) {
-        this.upsDriverField.options.push({ label: res[item], value: res[item] });
-      }
-    });
-
-    this.ws.call('ups.port_choices').pipe(untilDestroyed(this)).subscribe((res) => {
-      res.forEach((port) => {
-        this.upsPortField.options.push({ label: port, value: port });
-      });
-    });
-
-    entityForm.formGroup.controls['driver'].valueChanges.pipe(untilDestroyed(this)).subscribe((res) => {
-      this.upsDriverKey = this.getKeyByValue(this.upsDrivers, res);
-      if (this.upsDrivers[res]) {
-        entityForm.formGroup.controls['driver'].setValue(this.upsDrivers[res]);
-      }
-    });
-
-    entityForm.formGroup.controls['mode'].valueChanges.pipe(untilDestroyed(this)).subscribe((res: UpsMode) => {
-      generalSet.config.find((conf) => conf.name === 'remotehost').isHidden = res === UpsMode.Master;
-      generalSet.config.find((conf) => conf.name === 'remoteport').isHidden = res === UpsMode.Master;
-      generalSet.config.find((conf) => conf.name === 'driver').isHidden = res === UpsMode.Slave;
+  ngOnInit(): void {
+    this.isFormLoading = true;
+    this.loadConfig();
+    this.form.controls['mode'].valueChanges.pipe(untilDestroyed(this)).subscribe((res) => {
+      this.isMasterMode = res === UpsMode.Master;
     });
   }
 
-  getKeyByValue(object: { [key: string]: unknown }, value: unknown): string {
-    return Object.keys(object).find((key) => object[key] === value);
+  private loadConfig(): void {
+    this.ws.call('ups.config')
+      .pipe(untilDestroyed(this))
+      .subscribe(
+        (config) => {
+          this.form.patchValue(config);
+          this.isFormLoading = false;
+          this.cdr.markForCheck();
+        },
+        (error) => {
+          new EntityUtils().handleWsError(null, error, this.dialogService);
+          this.isFormLoading = false;
+          this.cdr.markForCheck();
+        },
+      );
   }
 
-  beforeSubmit(data: UpsConfigUpdate): void {
-    data.driver = this.upsDriverKey;
+  onSubmit(): void {
+    const values = this.form.value;
+    const params = {
+      ...values,
+      remoteport: Number(values.remoteport),
+      nocommwarntime: values.nocommwarntime ? Number(values.nocommwarntime) : null,
+      shutdowntimer: values.shutdowntimer ? Number(values.shutdowntimer) : null,
+      hostsync: values.hostsync ? Number(values.hostsync) : null,
+    } as UpsConfigUpdate;
+
+    if (this.isMasterMode) {
+      delete params.remoteport;
+      delete params.remotehost;
+    } else {
+      delete params.driver;
+    }
+
+    this.isFormLoading = true;
+    this.ws.call('ups.update', [params])
+      .pipe(untilDestroyed(this))
+      .subscribe(
+        () => {
+          this.isFormLoading = false;
+          this.cdr.markForCheck();
+          this.router.navigate(['/services']);
+        },
+        (error) => {
+          this.isFormLoading = false;
+          this.errorHandler.handleWsFormError(error, this.form);
+          this.cdr.markForCheck();
+        },
+      );
+  }
+
+  onCancel(): void {
+    this.router.navigate(['/services']);
   }
 }
