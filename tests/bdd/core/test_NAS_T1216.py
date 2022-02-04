@@ -96,7 +96,7 @@ def name_the_keytab_and_upload_the_file_and_click_save(driver):
     assert wait_on_element(driver, 7, '//input[@type="file"]', 'clickable')
     driver.find_element_by_xpath('//input[@type="file"]').send_keys(keytab_file)
     time.sleep(3)
-    assert wait_on_element(driver, 7, '//button[@ix-auto="button__SUBMIT"')
+    assert wait_on_element(driver, 7, '//button[@ix-auto="button__SUBMIT"', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__SUBMIT"]').click()
 
 
