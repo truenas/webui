@@ -786,6 +786,7 @@ export type ApiDirectory = {
   'system.general.ui_v6address_choices': { params: void; response: Choices };
   'system.general.ui_certificate_choices': { params: void; response: Record<number, string> };
   'system.general.ui_httpsprotocols_choices': { params: void; response: Choices };
+  'system.general.ui_restart': { params: void; response: void };
   'system.build_time': { params: void; response: ApiTimestamp };
   'system.product_type': { params: void; response: ProductType };
   'system.advanced.syslog_certificate_choices': { params: void; response: Choices };

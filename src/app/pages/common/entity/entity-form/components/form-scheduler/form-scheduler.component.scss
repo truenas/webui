@@ -1,6 +1,6 @@
 button.close-btn {
+  left: 598px;
   position: absolute;
-  right: 2px;
   top: 4px;
 }
 
@@ -12,10 +12,12 @@ button.close-btn {
   border-radius: 2px;
   box-shadow: 0 5px 5px -3px rgba(0, 0, 0, 0.2),0 8px 10px 1px rgba(0, 0, 0, 0.14),0 3px 14px 2px rgba(0, 0, 0, 0.12);
   display: block;
-  left: calc(50% - 310px);
-  padding: 0 0 0 300px;
+  left: 50%;
+  max-height: calc(100vh - 100px);
+  overflow: hidden;
   position: fixed;
-  top: 10%;
+  top: 50%;
+  transform: translate(-50%, -50%);
   width: 640px;
   z-index: 2;
 }
@@ -36,9 +38,8 @@ button.close-btn {
 
 .mat-calendar-content {
   background-color: var(--contrast-lighter);
-  height: 100%;
+  height: 778px;
   left: 0;
-  max-height: 100%;
   position: absolute;
   top: 0;
   width: 300px; /* Width of calendar preview*/
@@ -53,7 +54,7 @@ ul.schedule-list {
   list-style-type: none;
   margin-top: 16px;
   /*max-height: 231px;*/
-  max-height: calc(100% - 346px - 16px);
+  max-height: 416px;
   overflow-y: auto;
 }
 
@@ -72,7 +73,7 @@ ul.schedule-list li:nth-child(odd) {
 
 .cron-fields {
   background-color: var(--bg2);
-  margin-left: 50%;
+  margin-left: 310px;
   min-height: 100%;
   padding: 0;
   text-align: center;
@@ -217,9 +218,24 @@ mat-form-field.cron-presets {
   font-size: 85%;
   margin-bottom: 8px;
 }
-@media screen and (max-height:700px) {
+
+@media screen and (max-height:900px) {
   .advanced-date-picker.mat-card {
-    top: -20px;
+    overflow-y: auto;
+  }
+
+  .cron-fields {
+    margin-left: 300px;
+  }
+
+  button.close-btn {
+    left: 590px;
+  }
+}
+@media screen and (max-width:700px) {
+  .advanced-date-picker.mat-card {
+    max-width: calc(100% - 30px);
+    overflow-x: auto;
   }
 }
 
