@@ -3,7 +3,6 @@ import { FormGroup } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
 import { FormReadFileConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
 import { Field } from 'app/modules/entity/entity-form/models/field.interface';
-import { EntityFormService } from 'app/modules/entity/entity-form/services/entity-form.service';
 
 @Component({
   selector: 'form-readfile',
@@ -16,8 +15,7 @@ export class FormReadFileComponent implements Field {
   fieldShow: string;
   fileString: string | ArrayBuffer;
 
-  constructor(private entityFormService: EntityFormService,
-    public translate: TranslateService) {}
+  constructor(public translate: TranslateService) {}
 
   changeListener($event: Event): void {
     this.readFile($event.target as HTMLInputElement);

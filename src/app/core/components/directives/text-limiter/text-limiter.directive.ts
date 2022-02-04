@@ -13,10 +13,8 @@ export class TextLimiterDirective implements AfterViewInit, OnChanges {
   @Input() threshold: number | string;
   @Input() content = '';
 
-  private defaultThreshold = 10;
   private overlayRef: OverlayRef;
 
-  private rawText = '';
   private text = '';
 
   @HostListener('mouseenter')

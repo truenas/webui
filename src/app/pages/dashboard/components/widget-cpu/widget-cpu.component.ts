@@ -368,10 +368,6 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
     return datasets;
   }
 
-  private processThemeColors(theme: Theme): string[] {
-    return theme.accentColors.map((color) => theme[color]);
-  }
-
   rgbToString(rgb: string[], alpha?: number): string {
     const a = alpha ? alpha.toString() : '1';
     return 'rgba(' + rgb.join(',') + ',' + a + ')';
