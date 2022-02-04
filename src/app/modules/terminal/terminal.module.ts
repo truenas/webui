@@ -6,8 +6,8 @@ import { MaterialModule } from 'app/app-material.module';
 import { CoreComponents } from 'app/core/components/core-components.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { EntityModule } from 'app/modules/entity/entity.module';
-import { CopyPasteMessageComponent } from 'app/modules/terminal/copy-paste-message.component';
-import { TerminalComponent } from 'app/modules/terminal/terminal.component';
+import { CopyPasteMessageComponent } from 'app/modules/terminal/components/copy-paste-message/copy-paste-message.component';
+import { TerminalComponent } from 'app/modules/terminal/components/terminal/terminal.component';
 
 @NgModule({
   imports: [

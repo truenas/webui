@@ -47,7 +47,6 @@ import { OpenvpnServerComponent } from './forms/service-openvpn-server.component
 })
 export class NetworkComponent implements OnInit, OnDestroy {
   protected summaryCall = 'network.general.summary' as const;
-  protected configCall = 'network.configuration.config' as const;
   formEvent$: Subject<CoreEvent>;
 
   isHaEnabled = false;
