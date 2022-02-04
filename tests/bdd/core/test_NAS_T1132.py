@@ -108,6 +108,7 @@ def on_the_cloud_sync_tasks_click_add(driver):
 @then('input a description and ensure PULL is selected as the Direction')
 def input_a_description_and_ensure_pull_is_selected_as_the_direction(driver):
     """input a description and ensure PULL is selected as the Direction."""
+    assert wait_on_element(driver, 7, '//mat-checkbox[@ix-auto="checkbox__Follow Symlinks"]', 'clickable')
     assert wait_on_element(driver, 5, '//input[@placeholder="Description"]', 'inputable')
     driver.find_element_by_xpath('//input[@placeholder="Description"]').clear()
     driver.find_element_by_xpath('//input[@placeholder="Description"]').send_keys('My BOX Cloud task')
@@ -167,12 +168,16 @@ def expand_the_task_on_the_nas_ui_and_click_run_now(driver):
     assert wait_on_element_disappear(driver, 30, '//h1[contains(text(),"Task Started")]')
     time.sleep(1)
     assert wait_on_element(driver, 120, '//button[@id="My BOX Cloud task_Status-button" and contains(.,"SUCCESS")]')
-    time.sleep(7)
 
 
 @then('verify all files are copied from Box are into the dataset')
 def verify_all_files_are_copied_from_box_are_into_the_dataset(driver, nas_ip):
     """verify all files are copied from Box are into the dataset."""
+    cmd = 'test -f /mnt/system/box_cloud/music/Mr_Smith_Pequeñas_Guitarras.mp3'
+    timeout = time.time() + 30
+    while timeout > time.time():
+        if ssh_cmd(cmd, 'root', 'testing', nas_ip)['result']:
+            break
     cmd = 'test -f /mnt/system/box_cloud/Gloomy_Forest_wallpaper_ForWallpapercom.jpg'
     results = ssh_cmd(cmd, 'root', 'testing', nas_ip)
     assert results['result'] is True, results['output']
@@ -205,6 +210,7 @@ def on_the_nas_cloud_sync_task_tab_click_edit(driver):
 @then('select PUSH as the Direction then under Transfer Mode, select COPY')
 def select_push_as_the_direction_then_under_transfer_mode_select_copy(driver):
     """select PUSH as the Direction then under Transfer Mode, select COPY."""
+    assert wait_on_element(driver, 7, '//mat-checkbox[@ix-auto="checkbox__Follow Symlinks"]', 'clickable')
     assert wait_on_element(driver, 5, '//mat-select[contains(.,"PULL")]')
     assert wait_on_element(driver, 5, '//mat-select[@ix-auto="select__Direction"]', 'clickable')
     driver.find_element_by_xpath('//mat-select[@ix-auto="select__Direction"]').click()
@@ -290,6 +296,7 @@ def remove_all_files_from_the_dataset(driver, nas_ip):
 @then('select PULL as the Direction then under Transfer Mode, select MOVE')
 def select_pull_as_the_direction_then_under_transfer_mode_select_move(driver):
     """select PULL as the Direction then under Transfer Mode, select MOVE."""
+    assert wait_on_element(driver, 7, '//mat-checkbox[@ix-auto="checkbox__Follow Symlinks"]', 'clickable')
     assert wait_on_element(driver, 5, '//mat-select[contains(.,"PUSH")]')
     assert wait_on_element(driver, 5, '//mat-select[contains(.,"COPY")]')
     assert wait_on_element(driver, 5, '//mat-select[@ix-auto="select__Direction"]', 'clickable')
@@ -297,7 +304,6 @@ def select_pull_as_the_direction_then_under_transfer_mode_select_move(driver):
     assert wait_on_element(driver, 5, '//mat-option[@ix-auto="option__Direction_PULL"]', 'clickable')
     driver.find_element_by_xpath('//mat-option[@ix-auto="option__Direction_PULL"]').click()
     assert wait_on_element(driver, 5, '//mat-select[contains(.,"PULL")]')
-    assert wait_on_element(driver, 5, '//mat-select[@ix-auto="select__Transfer Mode"]', 'clickable')
     driver.find_element_by_xpath('//mat-select[@ix-auto="select__Transfer Mode"]').click()
     assert wait_on_element(driver, 5, '//mat-option[@ix-auto="option__Transfer Mode_MOVE"]', 'clickable')
     driver.find_element_by_xpath('//mat-option[@ix-auto="option__Transfer Mode_MOVE"]').click()
@@ -317,6 +323,20 @@ def click_save_the_box_tasks_should_save_without_error(driver):
 @then('verify all files are moved from the Box test folder to the dataset')
 def verify_all_files_are_moved_from_the_box_test_folder_to_the_dataset(driver, nas_ip):
     """verify all files are moved from the Box test folder to the dataset."""
+    cmd = 'test -f /mnt/system/box_cloud/music/Mr_Smith_Pequeñas_Guitarras.mp3'
+    timeout = time.time() + 30
+    while timeout > time.time():
+        if ssh_cmd(cmd, 'root', 'testing', nas_ip)['result']:
+            break
+    cmd = 'test -f /mnt/system/box_cloud/Gloomy_Forest_wallpaper_ForWallpapercom.jpg'
+    results = ssh_cmd(cmd, 'root', 'testing', nas_ip)
+    assert results['result'] is True, results['output']
+    cmd = 'test -f /mnt/system/box_cloud/Explaining_BSD.pdf'
+    results = ssh_cmd(cmd, 'root', 'testing', nas_ip)
+    assert results['result'] is True, results['output']
+    cmd = 'test -f /mnt/system/box_cloud/music/Mr_Smith_Pequeñas_Guitarras.mp3'
+    results = ssh_cmd(cmd, 'root', 'testing', nas_ip)
+    assert results['result'] is True, results['output']
     driver.switch_to.window(driver.window_handles[1])
     time.sleep(1)
     driver.refresh()
@@ -330,20 +350,12 @@ def verify_all_files_are_moved_from_the_box_test_folder_to_the_dataset(driver, n
     assert wait_on_element(driver, 5, '//h1[text()="music"]')
     assert not is_element_present(driver, '//a[text()="Mr_Smith_Pequeñas_Guitarras.mp3"]')
     driver.find_element_by_xpath('//a[text()="test"]').click()
-    cmd = 'test -f /mnt/system/box_cloud/Gloomy_Forest_wallpaper_ForWallpapercom.jpg'
-    results = ssh_cmd(cmd, 'root', 'testing', nas_ip)
-    assert results['result'] is True, results['output']
-    cmd = 'test -f /mnt/system/box_cloud/Explaining_BSD.pdf'
-    results = ssh_cmd(cmd, 'root', 'testing', nas_ip)
-    assert results['result'] is True, results['output']
-    cmd = 'test -f /mnt/system/box_cloud/music/Mr_Smith_Pequeñas_Guitarras.mp3'
-    results = ssh_cmd(cmd, 'root', 'testing', nas_ip)
-    assert results['result'] is True, results['output']
 
 
 @then('select PUSH as the Direction then under Transfer Mode, select MOVE')
 def select_push_as_the_direction_then_under_transfer_mode_select_move(driver):
     """select PUSH as the Direction then under Transfer Mode, select MOVE."""
+    assert wait_on_element(driver, 7, '//mat-checkbox[@ix-auto="checkbox__Follow Symlinks"]', 'clickable')
     assert wait_on_element(driver, 5, '//mat-select[contains(.,"PULL")]')
     assert wait_on_element(driver, 5, '//mat-select[contains(.,"MOVE")]')
     assert wait_on_element(driver, 5, '//mat-select[@ix-auto="select__Direction"]', 'clickable')
@@ -365,6 +377,20 @@ def select_push_as_the_direction_then_under_transfer_mode_select_move(driver):
 @then('verify all files are moved from the dataset to the Box test folder')
 def verify_all_files_are_moved_from_the_dataset_to_the_box_test_folder(driver, nas_ip):
     """verify all files are moved from the dataset to the Box test folder."""
+    cmd = 'test -f /mnt/system/box_cloud/music/Mr_Smith_Pequeñas_Guitarras.mp3'
+    timeout = time.time() + 30
+    while timeout > time.time():
+        if not ssh_cmd(cmd, 'root', 'testing', nas_ip)['result']:
+            break
+    cmd = 'test -f /mnt/system/box_cloud/Gloomy_Forest_wallpaper_ForWallpapercom.jpg'
+    results = ssh_cmd(cmd, 'root', 'testing', nas_ip)
+    assert results['result'] is False, results['output']
+    cmd = 'test -f /mnt/system/box_cloud/Explaining_BSD.pdf'
+    results = ssh_cmd(cmd, 'root', 'testing', nas_ip)
+    assert results['result'] is False, results['output']
+    cmd = 'test -f /mnt/system/box_cloud/music/Mr_Smith_Pequeñas_Guitarras.mp3'
+    results = ssh_cmd(cmd, 'root', 'testing', nas_ip)
+    assert results['result'] is False, results['output']
     driver.switch_to.window(driver.window_handles[1])
     time.sleep(1)
     driver.refresh()
@@ -376,20 +402,12 @@ def verify_all_files_are_moved_from_the_dataset_to_the_box_test_folder(driver, n
     assert wait_on_element(driver, 5, '//h1[text()="music"]')
     assert wait_on_element(driver, 5, '//a[text()="Mr_Smith_Pequeñas_Guitarras.mp3"]', 'clickable')
     driver.find_element_by_xpath('//a[text()="test"]').click()
-    cmd = 'test -f /mnt/system/box_cloud/Gloomy_Forest_wallpaper_ForWallpapercom.jpg'
-    results = ssh_cmd(cmd, 'root', 'testing', nas_ip)
-    assert results['result'] is False, results['output']
-    cmd = 'test -f /mnt/system/box_cloud/Explaining_BSD.pdf'
-    results = ssh_cmd(cmd, 'root', 'testing', nas_ip)
-    assert results['result'] is False, results['output']
-    cmd = 'test -f /mnt/system/box_cloud/music/Mr_Smith_Pequeñas_Guitarras.mp3'
-    results = ssh_cmd(cmd, 'root', 'testing', nas_ip)
-    assert results['result'] is False, results['output']
 
 
 @then('select PULL as the Direction then under Transfer Mode, select SYNC')
 def select_pull_as_the_direction_then_under_transfer_mode_select_sync(driver):
     """select PULL as the Direction then under Transfer Mode, select SYNC."""
+    assert wait_on_element(driver, 7, '//mat-checkbox[@ix-auto="checkbox__Follow Symlinks"]', 'clickable')
     assert wait_on_element(driver, 5, '//mat-select[contains(.,"PUSH")]')
     assert wait_on_element(driver, 5, '//mat-select[contains(.,"MOVE")]')
     assert wait_on_element(driver, 5, '//mat-select[@ix-auto="select__Direction"]', 'clickable')
@@ -411,6 +429,11 @@ def select_pull_as_the_direction_then_under_transfer_mode_select_sync(driver):
 @then('verify all files are sync to the dataset folder')
 def verify_all_files_are_sync_to_the_dataset_folder(driver, nas_ip):
     """verify all files are sync to the dataset folder."""
+    cmd = 'test -f /mnt/system/box_cloud/music/Mr_Smith_Pequeñas_Guitarras.mp3'
+    timeout = time.time() + 30
+    while timeout > time.time():
+        if ssh_cmd(cmd, 'root', 'testing', nas_ip)['result']:
+            break
     cmd = 'test -f /mnt/system/box_cloud/Gloomy_Forest_wallpaper_ForWallpapercom.jpg'
     results = ssh_cmd(cmd, 'root', 'testing', nas_ip)
     assert results['result'] is True, results['output']
@@ -461,12 +484,16 @@ def on_the_nas_cloud_sync_task_tab_click_run_now(driver):
     time.sleep(1)
     assert wait_on_element(driver, 120, '//button[@id="My BOX Cloud task_Status-button" and contains(.,"SUCCESS")]')
     # give time to the system to be ready.
-    time.sleep(7)
 
 
 @then('verify the file is removed from the dataset folder')
 def verify_the_file_is_removed_from_the_dataset_folder(driver, nas_ip):
     """verify the file is removed from the dataset folder."""
+    cmd = 'test -f /mnt/system/box_cloud/Gloomy_Forest_wallpaper_ForWallpapercom.jpg'
+    timeout = time.time() + 30
+    while timeout > time.time():
+        if not ssh_cmd(cmd, 'root', 'testing', nas_ip)['result']:
+            break
     cmd = 'test -f /mnt/system/box_cloud/Gloomy_Forest_wallpaper_ForWallpapercom.jpg'
     results = ssh_cmd(cmd, 'root', 'testing', nas_ip)
     assert results['result'] is False, results['output']
@@ -509,6 +536,7 @@ def on_the_box_test_folder_tab_delete_all_file(driver):
 @then('select PUSH as the Direction then under Transfer Mode, select SYNC')
 def select_push_as_the_direction_then_under_transfer_mode_select_sync(driver):
     """select PUSH as the Direction then under Transfer Mode, select SYNC."""
+    assert wait_on_element(driver, 7, '//mat-checkbox[@ix-auto="checkbox__Follow Symlinks"]', 'clickable')
     assert wait_on_element(driver, 5, '//mat-select[contains(.,"PULL")]')
     assert wait_on_element(driver, 5, '//mat-select[contains(.,"SYNC")]')
     assert wait_on_element(driver, 5, '//mat-select[@ix-auto="select__Direction"]', 'clickable')
@@ -558,7 +586,14 @@ def verify_the_file_is_removed_from_the_box_test_folder_tab(driver):
     driver.refresh()
     assert wait_on_element(driver, 5, '//h1[text()="test"]')
     assert wait_on_element(driver, 5, '//a[text()="Explaining_BSD.pdf"]', 'clickable')
-    assert not is_element_present(driver, '//a[text()="music"]')
+    # loop for 15 second or until music disappear
+    timeout = time.time() + 15
+    while timeout > time.time():
+        if not is_element_present(driver, '//a[text()="music"]'):
+            assert not is_element_present(driver, '//a[text()="music"]')
+            break
+        else:
+            assert not is_element_present(driver, '//a[text()="music"]')
     # clean the test folder on box tab before closing the tab.
     action = ActionChains(driver)
     assert wait_on_element(driver, 5, '//a[text()="Explaining_BSD.pdf"]')

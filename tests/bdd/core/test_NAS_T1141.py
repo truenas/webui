@@ -272,6 +272,7 @@ def click_on_folder1_then_click_on_the_test_folder(driver, folder1):
     action = ActionChains(driver)
     action.double_click(driver.find_element_by_xpath('//div[text()="test"]')).perform()
     # driver.find_element_by_xpath('//div[text()="test"]').click()
+    time.sleep(1)
 
 
 @then('verify all files are in the test folder')
@@ -443,7 +444,6 @@ def select_pull_as_the_direction_then_under_transfer_mode_select_sync(driver):
 @then('verify all files are sync to the dataset folder')
 def verify_all_files_are_sync_to_the_dataset_folder(driver, nas_ip):
     """verify all files are sync to the dataset folder."""
-
     cmd = 'test -f /mnt/system/google_drive/music/Mr_Smith_Pequeñas_Guitarras.mp3'
     timeout = time.time() + 30
     while timeout > time.time():
