@@ -2695,6 +2695,7 @@
   "Select a valid SSL certificate created or imported  in <b>System > Certificates</b> to use for encrypted connections.": "",
   "Select an ACL Preset": "",
   "Select an IP address to use for VNC sessions.": "",
+  "Select an existing CSR.": "",
   "Select an existing SSH connection  to a remote system or choose <i>Create New</i> to create a new SSH  connection.": "",
   "Select an existing extent.": "",
   "Select an existing portal or choose <i>Create New</i> to configure a new portal.": "",

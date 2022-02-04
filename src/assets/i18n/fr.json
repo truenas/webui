@@ -691,6 +691,7 @@
   "Select Disks": "",
   "Select IP addresses to listen to for NFS requests. Leave empty for NFS to listen to all available addresses.  Static IPs need to be configured on the interface to appear on the list.": "",
   "Select Pool": "",
+  "Select an existing CSR.": "",
   "Select the <a href=\"https://man7.org/linux/man-pages/man3/syslog.3.html\" target=\"_blank\">syslog(3)</a> facility of the SFTP server.": "",
   "Select the <a href=\"https://man7.org/linux/man-pages/man3/syslog.3.html\" target=\"_blank\">syslog(3)</a> level of the SFTP server.": "",
   "Select the interfaces to use in the aggregation.<br>  Warning: Link Aggregation creation fails if any of the selected interfaces have been manually configured.<br>The order is important because the FAILOVER lagg protocol will mark the first interface as the \"primary\" interface.": "",

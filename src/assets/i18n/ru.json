@@ -1069,6 +1069,7 @@
   "Select a sector size in bytes. <i>Default</i> leaves the sector size unset and uses the ZFS volume values. Setting a sector size changes both the logical and physical sector size.": "",
   "Select a valid SSL certificate created or imported  in <b>System > Certificates</b> to use for encrypted connections.": "",
   "Select an ACL Preset": "",
+  "Select an existing CSR.": "",
   "Select an existing realm that was added  in <b>Directory Services > Kerberos Realms</b>.": "",
   "Select an unused disk to add to this vdev. <br>WARNING: any data stored on the unused disk will be erased!": "",
   "Select permissions to apply to the chosen <i>Who</i>. Choices change depending on the <i>Permissions Type</i>.": "",
