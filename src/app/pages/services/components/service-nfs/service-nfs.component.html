@@ -10,6 +10,12 @@
           [multiple]="true"
           [tooltip]="tooltips.bindip"
         ></ix-select>
+        <ix-input
+          formControlName="servers"
+          [label]="'Number of threads' | translate"
+          type="number"
+          [tooltip]="tooltips.servers"
+        ></ix-input>
       </ix-fieldset>
 
       <div class="two-columns">
