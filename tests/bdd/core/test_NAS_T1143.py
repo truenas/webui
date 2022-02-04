@@ -229,12 +229,16 @@ def expand_the_task_on_the_nas_ui_and_click_run_now(driver):
     assert wait_on_element_disappear(driver, 30, '//h1[contains(text(),"Task Started")]')
     time.sleep(1)
     assert wait_on_element(driver, 120, '//button[@id="My Backblaze B2 task_Status-button" and contains(.,"SUCCESS")]')
-    time.sleep(7)
 
 
 @then('verify all files are copied from Backblaze B2 are into the dataset')
 def verify_all_files_are_copied_from_backblaze_b2_are_into_the_dataset(driver, nas_ip):
     """verify all files are copied from Backblaze B2 are into the dataset."""
+    cmd = 'test -f /mnt/system/backblaze_b2/music/Mr_Smith_Pequeñas_Guitarras.mp3'
+    timeout = time.time() + 30
+    while timeout > time.time():
+        if ssh_cmd(cmd, 'root', 'testing', nas_ip)['result']:
+            break
     cmd = 'test -f /mnt/system/backblaze_b2/Gloomy_Forest_wallpaper_ForWallpapercom.jpg'
     results = ssh_cmd(cmd, 'root', 'testing', nas_ip)
     assert results['result'] is True, results['output']
@@ -260,8 +264,6 @@ def on_the_nas_cloud_sync_task_tab_click_edit(driver):
     assert wait_on_element(driver, 5, '//button[@ix-auto="button___edit"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button___edit"]').click()
     assert wait_on_element(driver, 5, '//h4[contains(.,"Transfer")]')
-    # give time to the system to be ready.
-    time.sleep(1)
 
 
 @then('select PUSH as the Direction then under Transfer Mode, select COPY')
@@ -353,6 +355,20 @@ def click_save_the_backblaze_b2_tasks_should_save_without_error(driver):
 @then('verify all files are moved from the Backblaze B2 bucket to the dataset')
 def verify_all_files_are_moved_from_the_backblaze_b2_test_folder_to_the_dataset(driver, nas_ip):
     """verify all files are moved from the Backblaze B2 bucket to the dataset."""
+    cmd = 'test -f /mnt/system/backblaze_b2/music/Mr_Smith_Pequeñas_Guitarras.mp3'
+    timeout = time.time() + 30
+    while timeout > time.time():
+        if ssh_cmd(cmd, 'root', 'testing', nas_ip)['result']:
+            break
+    cmd = 'test -f /mnt/system/backblaze_b2/Gloomy_Forest_wallpaper_ForWallpapercom.jpg'
+    results = ssh_cmd(cmd, 'root', 'testing', nas_ip)
+    assert results['result'] is True, results['output']
+    cmd = 'test -f /mnt/system/backblaze_b2/Explaining_BSD.pdf'
+    results = ssh_cmd(cmd, 'root', 'testing', nas_ip)
+    assert results['result'] is True, results['output']
+    cmd = 'test -f /mnt/system/backblaze_b2/music/Mr_Smith_Pequeñas_Guitarras.mp3'
+    results = ssh_cmd(cmd, 'root', 'testing', nas_ip)
+    assert results['result'] is True, results['output']
     driver.switch_to.window(driver.window_handles[1])
     assert wait_on_element(driver, 5, '//a[@id="refreshButtonId"]', 'clickable')
     driver.find_element_by_xpath('//a[@id="refreshButtonId"]').click()
@@ -365,15 +381,6 @@ def verify_all_files_are_moved_from_the_backblaze_b2_test_folder_to_the_dataset(
     assert wait_on_element(driver, 5, '//div[@class="b2-browse-name" and contains(.,"Mr_Smith_Pequeñas_Guitarras.mp3 (2) *")]')
     assert wait_on_element(driver, 5, f'//a[text()="{my_bucket}"]', 'clickable')
     driver.find_element_by_xpath(f'//a[text()="{my_bucket}"]').click()
-    cmd = 'test -f /mnt/system/backblaze_b2/Gloomy_Forest_wallpaper_ForWallpapercom.jpg'
-    results = ssh_cmd(cmd, 'root', 'testing', nas_ip)
-    assert results['result'] is True, results['output']
-    cmd = 'test -f /mnt/system/backblaze_b2/Explaining_BSD.pdf'
-    results = ssh_cmd(cmd, 'root', 'testing', nas_ip)
-    assert results['result'] is True, results['output']
-    cmd = 'test -f /mnt/system/backblaze_b2/music/Mr_Smith_Pequeñas_Guitarras.mp3'
-    results = ssh_cmd(cmd, 'root', 'testing', nas_ip)
-    assert results['result'] is True, results['output']
 
 
 @then('delete all file from the Backblaze B2 bucket')
@@ -414,6 +421,11 @@ def select_push_as_the_direction_then_under_transfer_mode_select_move(driver):
 @then('verify all files are moved from the dataset to the Backblaze B2 bucket')
 def verify_all_files_are_moved_from_the_dataset_to_the_backblaze_b2_test_folder(driver, nas_ip):
     """verify all files are moved from the dataset to the Backblaze B2 bucket."""
+    cmd = 'test -f /mnt/system/backblaze_b2/music/Mr_Smith_Pequeñas_Guitarras.mp3'
+    timeout = time.time() + 30
+    while timeout > time.time():
+        if not ssh_cmd(cmd, 'root', 'testing', nas_ip)['result']:
+            break
     cmd = 'test -f /mnt/system/backblaze_b2/Gloomy_Forest_wallpaper_ForWallpapercom.jpg'
     results = ssh_cmd(cmd, 'root', 'testing', nas_ip)
     assert results['result'] is False, results['output']
@@ -463,6 +475,11 @@ def select_pull_as_the_direction_then_under_transfer_mode_select_sync(driver):
 @then('verify all files are sync to the dataset folder')
 def verify_all_files_are_sync_to_the_dataset_folder(driver, nas_ip):
     """verify all files are sync to the dataset folder."""
+    cmd = 'test -f /mnt/system/backblaze_b2/music/Mr_Smith_Pequeñas_Guitarras.mp3'
+    timeout = time.time() + 30
+    while timeout > time.time():
+        if ssh_cmd(cmd, 'root', 'testing', nas_ip)['result']:
+            break
     cmd = 'test -f /mnt/system/backblaze_b2/Gloomy_Forest_wallpaper_ForWallpapercom.jpg'
     results = ssh_cmd(cmd, 'root', 'testing', nas_ip)
     assert results['result'] is True, results['output']
@@ -507,13 +524,16 @@ def on_the_nas_cloud_sync_task_tab_click_run_now(driver):
     assert wait_on_element_disappear(driver, 30, '//h1[contains(text(),"Task Started")]')
     time.sleep(1)
     assert wait_on_element(driver, 120, '//button[@id="My Backblaze B2 task_Status-button" and contains(.,"SUCCESS")]')
-    # give time to the system to be ready.
-    time.sleep(7)
 
 
 @then('verify the file is removed from the dataset folder')
 def verify_the_file_is_removed_from_the_dataset_folder(driver, nas_ip):
     """verify the file is removed from the dataset folder."""
+    cmd = 'test -f /mnt/system/backblaze_b2/Gloomy_Forest_wallpaper_ForWallpapercom.jpg'
+    timeout = time.time() + 30
+    while timeout > time.time():
+        if not ssh_cmd(cmd, 'root', 'testing', nas_ip)['result']:
+            break
     cmd = 'test -f /mnt/system/backblaze_b2/Gloomy_Forest_wallpaper_ForWallpapercom.jpg'
     results = ssh_cmd(cmd, 'root', 'testing', nas_ip)
     assert results['result'] is False, results['output']
