@@ -61,7 +61,7 @@ def click_on_the_system_on_the_side_menu_click_on_general(driver):
     """click on the System on the side menu, click on General."""
     assert wait_on_element(driver, 7, '//mat-list-item[@ix-auto="option__System"]', 'clickable')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__System"]').click()
-    assert wait_on_element(driver, 7, '//mat-list-item[@ix-auto="option__General"]')
+    assert wait_on_element(driver, 7, '//mat-list-item[@ix-auto="option__General"]', 'clickable')
     element = driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__System"]')
     class_attribute = element.get_attribute('class')
     assert 'open' in class_attribute, class_attribute
