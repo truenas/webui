@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Navigation, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { KeychainCredentialType } from 'app/enums/keychain-credential-type.enum';
@@ -28,15 +29,19 @@ import { SshConnectionsFormComponent } from './forms/ssh-connections-form.compon
 export class BackupCredentialsComponent implements OnInit {
   cards: { name: string; tableConf: AppTableConfig }[];
 
+  private navigation: Navigation;
   protected providers: CloudsyncProvider[];
 
   constructor(
+    private router: Router,
     private storage: StorageService,
     private cloudCredentialsService: CloudCredentialService,
     private modalService: ModalService,
     private slideInService: IxSlideInService,
     private translate: TranslateService,
-  ) {}
+  ) {
+    this.navigation = this.router.getCurrentNavigation();
+  }
 
   ngOnInit(): void {
     this.modalService.refreshTable$.pipe(untilDestroyed(this)).subscribe(() => {
@@ -77,6 +82,14 @@ export class BackupCredentialsComponent implements OnInit {
             this.modalService.openInSlideIn(CloudCredentialsFormComponent, row.id);
           },
           dataSourceHelper: this.cloudCredentialsDataSourceHelper.bind(this),
+          afterGetData: () => {
+            const state = this.navigation.extras.state as { editCredential: string; id: string };
+            if (state && state.editCredential) {
+              if (state.editCredential === 'cloudcredentials') {
+                this.modalService.openInSlideIn(CloudCredentialsFormComponent, state.id);
+              }
+            }
+          },
         },
       }, {
         name: 'sshConnections',

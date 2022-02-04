@@ -1,11 +1,11 @@
 import { ModuleWithProviders } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { RYSNCConfigurationFormComponent } from 'app/pages/services/components/service-rsync/rsync-configuration/rsyncmodule/rsync-configuration-form.component';
+import { ServiceDynamicDnsComponent } from 'app/pages/services/components/service-dynamic-dns/service-dynamic-dns.component';
+import { ServiceNfsComponent } from 'app/pages/services/components/service-nfs/service-nfs.component';
+import { RsyncModuleFormComponent } from 'app/pages/services/components/service-rsync/rsync-module-form/rsync-module-form.component';
 import { ServiceSshComponent } from 'app/pages/services/components/service-ssh/service-ssh.component';
-import { ServiceDDNSComponent } from './components/service-dynamicdns/service-dynamicdns.component';
 import { ServiceFTPComponent } from './components/service-ftp/service-ftp.component';
-import { ServiceLLDPComponent } from './components/service-lldp/service-lldp.component';
-import { ServiceNFSComponent } from './components/service-nfs/service-nfs.component';
+import { ServiceLldpComponent } from './components/service-lldp/service-lldp.component';
 import { ServiceRSYNCComponent } from './components/service-rsync/service-rsync.component';
 import { ServiceS3Component } from './components/service-s3/service-s3.component';
 import { ServiceSmartComponent } from './components/service-smart/service-smart.component';
@@ -35,7 +35,7 @@ export const routes: Routes = [
   {
     data: { title: 'LLDP', breadcrumb: 'LLDP' },
     path: 'lldp',
-    component: ServiceLLDPComponent,
+    component: ServiceLldpComponent,
   },
   {
     data: { title: 'Rsync', breadcrumb: 'Rsync' },
@@ -52,18 +52,18 @@ export const routes: Routes = [
           {
             path: ':pk',
             component: ServiceRSYNCComponent,
-            data: { title: '', breadcrumb: '' },
+            data: { title: 'Rsync', breadcrumb: 'Rsync' },
           },
           {
             path: 'rsync-module',
             data: { title: 'Rsync Module', breadcrumb: 'Rsync Module' },
             children: [{
               path: 'add',
-              component: RYSNCConfigurationFormComponent,
+              component: RsyncModuleFormComponent,
               data: { title: 'Add', breadcrumb: 'Add' },
             }, {
               path: 'edit/:pk',
-              component: RYSNCConfigurationFormComponent,
+              component: RsyncModuleFormComponent,
               data: { title: 'Edit', breadcrumb: 'Edit' },
             }],
           },
@@ -79,7 +79,7 @@ export const routes: Routes = [
   {
     data: { title: 'NFS', breadcrumb: 'NFS' },
     path: 'nfs',
-    component: ServiceNFSComponent,
+    component: ServiceNfsComponent,
   },
   {
     data: { title: 'TFTP', breadcrumb: 'TFTP' },
@@ -94,7 +94,7 @@ export const routes: Routes = [
   {
     data: { title: 'DynamicDNS', breadcrumb: 'DynamicDNS' },
     path: 'dynamicdns',
-    component: ServiceDDNSComponent,
+    component: ServiceDynamicDnsComponent,
   },
   {
     data: { title: 'SMB', breadcrumb: 'SMB' },

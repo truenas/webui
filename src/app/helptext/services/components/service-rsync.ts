@@ -10,7 +10,6 @@ export default {
   // configure_rsync service
   rsyncd_port_placeholder: T('TCP Port'),
   rsyncd_port_tooltip: T('<b>rsyncd</b> listens on this port.'),
-  rsyncd_port_value: '873',
 
   rsyncd_auxiliary_placeholder: T('Auxiliary Parameters'),
   rsyncd_auxiliary_tooltip: T('Enter any additional parameters from <a\

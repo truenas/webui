@@ -1,214 +1,127 @@
-import { Component } from '@angular/core';
-import { Router } from '@angular/router';
+import {
+  Component, OnInit, AfterViewInit, ChangeDetectorRef, ViewChild, ChangeDetectionStrategy,
+} from '@angular/core';
+import { MatSort, Sort } from '@angular/material/sort';
+import { MatTableDataSource } from '@angular/material/table';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import * as _ from 'lodash';
-import { filter } from 'rxjs/operators';
+import { Subject } from 'rxjs';
+import { filter, map } from 'rxjs/operators';
+import { CoreService } from 'app/core/services/core-service/core.service';
 import { PreferencesService } from 'app/core/services/preferences.service';
-import helptext from 'app/helptext/account/user-list';
 import { ConfirmOptions } from 'app/interfaces/dialog.interface';
-import { Group } from 'app/interfaces/group.interface';
+import { CoreEvent } from 'app/interfaces/events';
 import { User } from 'app/interfaces/user.interface';
-import { UserListRow } from 'app/pages/account/users/user-list/user-list-row.interface';
-import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
-import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
-import { EntityTableComponent } from 'app/pages/common/entity/entity-table/entity-table.component';
-import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
-import { EntityUtils } from 'app/pages/common/entity/utils';
-import {
-  DialogService, UserService,
-} from 'app/services';
-import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
+import { EmptyConfig, EmptyType } from 'app/pages/common/entity/entity-empty/entity-empty.component';
+import { EntityToolbarComponent } from 'app/pages/common/entity/entity-toolbar/entity-toolbar.component';
+import { ControlConfig, ToolbarConfig } from 'app/pages/common/entity/entity-toolbar/models/control-config.interface';
+import { DialogService } from 'app/services';
 import { ModalService } from 'app/services/modal.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { UserFormComponent } from '../user-form/user-form.component';
 
 @UntilDestroy()
 @Component({
-  selector: 'app-user-list',
-  template: '<entity-table [title]="title" [conf]="this"></entity-table>',
-  providers: [UserService],
+  templateUrl: './user-list.component.html',
+  styleUrls: ['./user-list.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class UserListComponent implements EntityTableConfig<UserListRow> {
-  title = 'Users';
-  routeAdd: string[] = ['account', 'users', 'add'];
-  routeAddTooltip = this.translate.instant('Add User');
-  routeEdit: string[] = ['account', 'users', 'edit'];
+export class UserListComponent implements OnInit, AfterViewInit {
+  @ViewChild(MatSort, { static: false }) sort: MatSort;
 
-  protected entityList: EntityTableComponent;
-  protected loaderOpen = false;
-  protected users: [User[]?] = [];
-  protected groups: [Group[]?] = [];
-  hasDetails = true;
-  queryCall = 'user.query' as const;
-  wsDelete = 'user.delete' as const;
-  globalConfig = {
-    id: 'config',
-    tooltip: helptext.globalConfigTooltip,
-    onClick: () => {
-      this.toggleBuiltins();
-    },
+  displayedColumns: string[] = ['username', 'uid', 'builtin', 'full_name', 'actions'];
+  toolbarConfig: ToolbarConfig;
+  settingsEvent$: Subject<CoreEvent> = new Subject();
+  filterString = '';
+  dataSource: MatTableDataSource<User> = new MatTableDataSource([]);
+  loading = false;
+  error = false;
+  defaultSort: Sort = { active: 'uid', direction: 'asc' };
+  emptyConf: EmptyConfig = {
+    type: EmptyType.NoPageData,
+    title: this.translate.instant('No Users'),
+    large: true,
   };
-
-  columns = [
-    {
-      name: 'Username', prop: 'username', always_display: true, minWidth: 150,
-    },
-    {
-      name: 'UID', prop: 'uid', hidden: false, maxWidth: 100,
-    },
-    {
-      name: 'GID', prop: 'gid', hidden: true, maxWidth: 100,
-    },
-    { name: 'Home directory', prop: 'home', hidden: true },
-    {
-      name: 'Shell', prop: 'shell', hidden: true, minWidth: 150,
-    },
-    { name: 'Builtin', prop: 'builtin', hidden: false },
-    {
-      name: 'Full Name', prop: 'full_name', hidden: false, minWidth: 250,
-    },
-    {
-      name: 'Email', prop: 'email', hidden: true, maxWidth: 250,
-    },
-    {
-      name: 'Password Disabled', prop: 'password_disabled', hidden: true, minWidth: 200,
-    },
-    { name: 'Lock User', prop: 'locked', hidden: true },
-    { name: 'Permit Sudo', prop: 'sudo', hidden: true },
-    {
-      name: 'Microsoft Account', prop: 'microsoft_account', hidden: true, minWidth: 170,
-    },
-    { name: 'Samba Authentication', prop: 'smb', hidden: true },
-  ];
-  rowIdentifier = 'username';
-  config = {
-    paging: true,
-    sorting: { columns: this.columns },
-    deleteMsg: {
-      title: 'User',
-      key_props: ['username'],
-    },
+  loadingConf: EmptyConfig = {
+    type: EmptyType.Loading,
+    large: false,
+    title: this.translate.instant('Loading...'),
   };
+  errorConf: EmptyConfig = {
+    type: EmptyType.Errors,
+    large: true,
+    title: this.translate.instant('Can not retrieve response'),
+  };
+  expandedRow: User;
 
-  isActionVisible(actionId: string, row: UserListRow): boolean {
-    if (actionId === 'delete' && row.builtin) {
-      return false;
+  get currentEmptyConf(): EmptyConfig {
+    if (this.loading) {
+      return this.loadingConf;
     }
-    return true;
+    if (this.error) {
+      return this.errorConf;
+    }
+    return this.emptyConf;
   }
 
-  constructor(private router: Router,
-    protected dialogService: DialogService, protected loader: AppLoaderService,
-    protected ws: WebSocketService, protected prefService: PreferencesService,
-    private translate: TranslateService, private modalService: ModalService) {
+  constructor(
+    private dialogService: DialogService,
+    private ws: WebSocketService,
+    private prefService: PreferencesService,
+    private translate: TranslateService,
+    private modalService: ModalService,
+    private cdr: ChangeDetectorRef,
+    private core: CoreService,
+  ) { }
+
+  ngOnInit(): void {
+    this.setupToolbar();
+    this.getUsers();
   }
 
-  afterInit(entityList: EntityTableComponent): void {
-    this.entityList = entityList;
-    setTimeout(() => {
-      if (this.prefService.preferences.showUserListMessage) {
+  ngAfterViewInit(): void {
+    this.modalService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
+      this.getUsers();
+    });
+
+    if (this.prefService.preferences.showUserListMessage) {
+      setTimeout(() => {
         this.showOneTimeBuiltinMsg();
-      }
-    }, 2000);
-
-    this.modalService.refreshTable$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.entityList.getData();
-    });
-  }
-
-  getActions(row: UserListRow): EntityTableAction<UserListRow>[] {
-    const actions: EntityTableAction<UserListRow>[] = [];
-    actions.push({
-      id: row.username,
-      icon: 'edit',
-      label: helptext.user_list_actions_edit_label,
-      name: helptext.user_list_actions_edit_id,
-      onClick: (user) => {
-        this.modalService.openInSlideIn(UserFormComponent, user.id);
-      },
-    });
-    if (!row.builtin) {
-      actions.push({
-        id: row.username,
-        icon: 'delete',
-        name: 'delete',
-        label: helptext.user_list_actions_delete_label,
-        onClick: (user) => {
-          const conf: DialogFormConfiguration = {
-            title: helptext.deleteDialog.title,
-            message: this.translate.instant('Delete user "{name}"?', { name: user.username }),
-            fieldConfig: [],
-            confirmCheckbox: true,
-            saveButtonText: helptext.deleteDialog.saveButtonText,
-            preInit: () => {
-              if (this.ableToDeleteGroup(user.id)) {
-                conf.fieldConfig.push({
-                  type: 'checkbox',
-                  name: 'delete_group',
-                  placeholder: helptext.deleteDialog.deleteGroup_placeholder + user.group.bsdgrp_group,
-                  value: false,
-                });
-              }
-            },
-            customSubmit: (entityDialog: EntityDialogComponent) => {
-              entityDialog.dialogRef.close(true);
-              this.loader.open();
-              this.ws.call(this.wsDelete, [user.id, entityDialog.formValue])
-                .pipe(untilDestroyed(this))
-                .subscribe(() => {
-                  this.entityList.getData();
-                  this.loader.close();
-                },
-                (err) => {
-                  new EntityUtils().handleWsError(this, err, this.dialogService);
-                  this.loader.close();
-                });
-            },
-          };
-          this.dialogService.dialogForm(conf);
-        },
-      });
+      }, 2000);
     }
-    return actions;
   }
 
-  ableToDeleteGroup(id: number): boolean {
-    const user = _.find(this.users[0], { id });
-    const groupUsers = _.find(this.groups[0], { id: user.group.id }).users;
-    // Show checkbox if deleting the last member of a group
-    return groupUsers.length === 1;
-  }
-
-  resourceTransformIncomingRestData(rawUsers: User[]): UserListRow[] {
-    let users = [...rawUsers] as UserListRow[];
-    this.users = [];
-    this.groups = [];
-    this.users.push(users);
-    this.ws.call('group.query').pipe(untilDestroyed(this)).subscribe((res) => {
-      this.groups.push(res);
-      users.forEach((user) => {
-        const group = _.find(res, { gid: user.group.bsdgrp_gid });
-        user.gid = group['gid'];
-      });
-      users.forEach((user) => {
-        user.details = [];
-        user.details.push({ label: this.translate.instant('GID'), value: user.group['bsdgrp_gid'] },
-          { label: this.translate.instant('Home Directory'), value: user.home },
-          { label: this.translate.instant('Shell'), value: user.shell },
-          { label: this.translate.instant('Email'), value: user.email });
-      });
-    });
-    if (this.prefService.preferences.hide_builtin_users) {
-      const newData: UserListRow[] = [];
-      users.forEach((user) => {
-        if (!user.builtin || user.username === 'root') {
-          newData.push(user);
+  getUsers(): void {
+    this.loading = true;
+    this.ws.call('user.query').pipe(
+      map((users) => {
+        if (this.prefService.preferences.hide_builtin_users) {
+          // TODO: Use QueryParams and QueryFilter when it is possible
+          // [['OR', [['builtin', '=', false], ['username', '=', 'root']]]]
+          return users.filter((user) => !user.builtin || user.username === 'root');
         }
-      });
-      return users = newData;
-    }
-    return users;
+        return users;
+      }),
+      untilDestroyed(this),
+    ).subscribe(
+      (users) => {
+        this.createDataSource(users);
+        this.loading = false;
+        this.error = false;
+        this.cdr.markForCheck();
+      },
+      () => {
+        this.createDataSource();
+        this.loading = false;
+        this.error = true;
+        this.cdr.markForCheck();
+      },
+    );
+  }
+
+  createDataSource(users: User[] = []): void {
+    this.dataSource = new MatTableDataSource(users);
+    this.dataSource.sort = this.sort;
   }
 
   toggleBuiltins(): void {
@@ -229,10 +142,13 @@ export class UserListComponent implements EntityTableConfig<UserListRow> {
       };
     }
 
-    this.dialogService.confirm(dialogOptions).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
+    this.dialogService.confirm(dialogOptions).pipe(
+      filter(Boolean),
+      untilDestroyed(this),
+    ).subscribe(() => {
       this.prefService.preferences.hide_builtin_users = !this.prefService.preferences.hide_builtin_users;
       this.prefService.savePreferences();
-      this.entityList.getData();
+      this.getUsers();
     });
   }
 
@@ -240,15 +156,75 @@ export class UserListComponent implements EntityTableConfig<UserListRow> {
     this.prefService.preferences.showUserListMessage = false;
     this.prefService.savePreferences();
     this.dialogService.confirm({
-      title: helptext.builtinMessageDialog.title,
-      message: helptext.builtinMessageDialog.message,
+      title: this.translate.instant('Display Note'),
+      message: this.translate.instant('All built-in users except <i>root</i> are hidden by default. Use the gear icon (top-right) to toggle the display of built-in users.'),
       hideCheckBox: true,
       hideCancel: true,
-      buttonMsg: helptext.builtinMessageDialog.button,
+      buttonMsg: this.translate.instant('Close'),
     });
   }
 
   doAdd(): void {
     this.modalService.openInSlideIn(UserFormComponent);
+  }
+
+  expandRow(row: User): void {
+    this.expandedRow = this.expandedRow === row ? null : row;
+    this.cdr.markForCheck();
+  }
+
+  setupToolbar(): void {
+    this.settingsEvent$ = new Subject();
+    this.settingsEvent$.pipe(
+      untilDestroyed(this),
+    ).subscribe((event: CoreEvent) => {
+      switch (event.data.event_control) {
+        case 'filter':
+          this.filterString = event.data.filter;
+          this.dataSource.filter = event.data.filter;
+          break;
+        case 'add':
+          this.doAdd();
+          break;
+        case 'config':
+          this.toggleBuiltins();
+          break;
+        default:
+          break;
+      }
+    });
+
+    const controls: ControlConfig[] = [
+      {
+        name: 'filter',
+        type: 'input',
+        value: this.filterString,
+        placeholder: this.translate.instant('Search'),
+      },
+      {
+        name: 'config',
+        type: 'button',
+        label: this.translate.instant('Toggle built-in users'),
+      },
+      {
+        name: 'add',
+        type: 'button',
+        label: this.translate.instant('Add'),
+        color: 'primary',
+        ixAutoIdentifier: 'Users_ADD',
+      },
+    ];
+
+    const toolbarConfig: ToolbarConfig = {
+      target: this.settingsEvent$,
+      controls,
+    };
+    const settingsConfig = {
+      actionType: EntityToolbarComponent,
+      actionConfig: toolbarConfig,
+    };
+
+    this.toolbarConfig = toolbarConfig;
+    this.core.emit({ name: 'GlobalActions', data: settingsConfig, sender: this });
   }
 }

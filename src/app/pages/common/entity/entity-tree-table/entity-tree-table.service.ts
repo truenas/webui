@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { WebSocketService } from 'app/services';
 
 export interface TreeNode {
   children?: TreeNode[];
@@ -10,8 +9,6 @@ export interface TreeNode {
 
 @Injectable()
 export class EntityTreeTableService {
-  constructor(private ws: WebSocketService) {}
-
   // Do we still need this?
   buildTree(data: any[]): TreeNode[] {
     const tree: TreeNode[] = [];

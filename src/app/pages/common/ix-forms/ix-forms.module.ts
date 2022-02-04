@@ -11,15 +11,19 @@ import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
 import { IxCheckboxComponent } from 'app/pages/common/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxChipsComponent } from 'app/pages/common/ix-forms/components/ix-chips/ix-chips.component';
 import { IxComboboxComponent } from 'app/pages/common/ix-forms/components/ix-combobox/ix-combobox.component';
+import { IxCombobox2Component } from 'app/pages/common/ix-forms/components/ix-combobox2/ix-combobox2.component';
 import { IxErrorsComponent } from 'app/pages/common/ix-forms/components/ix-errors/ix-errors.component';
 import { IxExplorerComponent } from 'app/pages/common/ix-forms/components/ix-explorer/ix-explorer.component';
 import { IxFieldsetComponent } from 'app/pages/common/ix-forms/components/ix-fieldset/ix-fieldset.component';
+import { IxFileInputComponent } from 'app/pages/common/ix-forms/components/ix-file-input/ix-file-input.component';
 import { IxInputComponent } from 'app/pages/common/ix-forms/components/ix-input/ix-input.component';
 import { IxSelectComponent } from 'app/pages/common/ix-forms/components/ix-select/ix-select.component';
 import { IxSlideInComponent } from 'app/pages/common/ix-forms/components/ix-slide-in/ix-slide-in.component';
+import { IxSlideToggleComponent } from 'app/pages/common/ix-forms/components/ix-slide-toggle/ix-slide-toggle.component';
 import { IxTextareaComponent } from 'app/pages/common/ix-forms/components/ix-textarea/ix-textarea.component';
 import { IxUserComboboxComponent } from 'app/pages/common/ix-forms/components/ix-user-combobox/ix-user-combobox.component';
 import { IxFormatterService } from 'app/pages/common/ix-forms/services/ix-formatter.service';
+import { IxUserComboboxService } from 'app/pages/common/ix-forms/services/ix-user-combobox.service';
 import IxValidatorsService from 'app/pages/common/ix-forms/services/ix-validators.service';
 import { EnclosureModule } from 'app/pages/system/view-enclosure/enclosure.module';
 import { IxModalHeaderComponent } from './components/ix-slide-in/components/ix-modal-header/ix-modal-header.component';
@@ -50,7 +54,10 @@ import { IxModalHeaderComponent } from './components/ix-slide-in/components/ix-m
     IxUserComboboxComponent,
     IxTextareaComponent,
     IxChipsComponent,
+    IxCombobox2Component,
     IxExplorerComponent,
+    IxFileInputComponent,
+    IxSlideToggleComponent,
   ],
   exports: [
     IxErrorsComponent,
@@ -62,13 +69,17 @@ import { IxModalHeaderComponent } from './components/ix-slide-in/components/ix-m
     IxFieldsetComponent,
     IxUserComboboxComponent,
     IxCheckboxComponent,
+    IxCombobox2Component,
     IxTextareaComponent,
     IxChipsComponent,
     IxExplorerComponent,
+    IxFileInputComponent,
+    IxSlideToggleComponent,
   ],
   providers: [
     IxFormatterService,
     IxValidatorsService,
+    IxUserComboboxService,
   ],
 })
 export class IxFormsModule {}

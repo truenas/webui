@@ -9,6 +9,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { Subject, BehaviorSubject } from 'rxjs';
 import { CoreService } from 'app/core/services/core-service/core.service';
+import { ReportTab } from 'app/enums/report-tab.enum';
 import { CoreEvent } from 'app/interfaces/events';
 import { ReportingGraphsEvent } from 'app/interfaces/events/reporting-graphs-event.interface';
 import {
@@ -32,7 +33,7 @@ import { ReportsGlobalControlsComponent } from './components/reports-global-cont
 
 interface Tab {
   label: string;
-  value: string;
+  value: ReportTab;
 }
 
 @UntilDestroy()
@@ -54,7 +55,7 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /* HandleCh
   otherReports: Report[];
   activeReports: Report[] = [];
 
-  activeTab = 'CPU'; // Tabs (lower case only): CPU, Disk, Memory, Network, NFS, Partition?, System, Target, UPS, ZFS
+  activeTab = { label: this.translate.instant('CPU'), value: ReportTab.Cpu } as Tab;
   activeTabVerified = false;
   allTabs: Tab[] = [];
   loadingReports = false;
@@ -127,7 +128,7 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /* HandleCh
 
         this.otherReports = allReports.filter((report) => !report.name.startsWith('disk'));
 
-        this.generateTabs();
+        this.allTabs = this.getAllTabs();
 
         this.activateTabFromUrl();
       }
@@ -170,43 +171,26 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /* HandleCh
     this.scrolledIndex = evt;
   }
 
-  generateTabs(): void {
-    const labels: string[] = [
-      this.translate.instant('CPU'),
-      this.translate.instant('Disk'),
-      this.translate.instant('Memory'),
-      this.translate.instant('Network'),
-      this.translate.instant('NFS'),
-      this.translate.instant('Partition'),
-      this.translate.instant('System'),
-      this.translate.instant('Target'),
-      this.translate.instant('ZFS'),
-    ];
-    const ups = this.otherReports.find((report) => report.title.startsWith('UPS'));
-
-    if (ups) {
-      labels.splice(8, 0, 'UPS');
-    }
-
-    labels.forEach((item) => {
-      this.allTabs.push({ label: item, value: item.toLowerCase() });
-    });
+  getAllTabs(): Tab[] {
+    const hasUps = this.otherReports.find((report) => report.title.startsWith('UPS'));
+    return [
+      { label: this.translate.instant('CPU'), value: ReportTab.Cpu },
+      { label: this.translate.instant('Disk'), value: ReportTab.Disk },
+      { label: this.translate.instant('Memory'), value: ReportTab.Memory },
+      { label: this.translate.instant('Network'), value: ReportTab.Network },
+      { label: this.translate.instant('NFS'), value: ReportTab.Nfs },
+      { label: this.translate.instant('Partition'), value: ReportTab.Partition },
+      { label: this.translate.instant('System'), value: ReportTab.System },
+      ...(hasUps ? [{ label: this.translate.instant('UPS'), value: ReportTab.Ups }] : []),
+      { label: this.translate.instant('Target'), value: ReportTab.Target },
+      { label: this.translate.instant('ZFS'), value: ReportTab.Zfs },
+    ] as Tab[];
   }
 
   activateTabFromUrl(): void {
     const subpath = this.route.snapshot.url[0] && this.route.snapshot.url[0].path;
     const tabFound = this.allTabs.find((tab) => tab.value === subpath);
     this.updateActiveTab(tabFound || this.allTabs[0]);
-  }
-
-  isActiveTab(str: string): boolean {
-    let test: boolean;
-    if (!this.activeTab) {
-      test = ('/reportsdashboard/' + str.toLowerCase()) == this.router.url;
-    } else {
-      test = (this.activeTab == str.toLowerCase());
-    }
-    return test;
   }
 
   updateActiveTab(tab: Tab): void {
@@ -231,72 +215,73 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /* HandleCh
 
     this.core.emit({ name: 'PseudoRouteChange', data: pseudoRouteEvent });
 
-    this.activateTab(tab.label);
+    this.activateTab(tab);
 
-    if (tab.label == 'Disk') {
+    if (tab.value === ReportTab.Disk) {
       const selectedDisks = this.route.snapshot.queryParams.disks;
       this.diskReportBuilderSetup(selectedDisks);
     }
   }
 
-  navigateToTab(tabName: string): void {
-    const link = '/reportsdashboard/' + tabName.toLowerCase();
+  navigateToTab(tab: Tab): void {
+    const link = '/reportsdashboard/' + tab.value;
     this.router.navigate([link]);
   }
 
-  activateTab(name: string): void {
-    this.activeTab = name;
+  activateTab(activeTab: Tab): void {
+    this.activeTab = activeTab;
     this.activeTabVerified = true;
 
-    const reportCategories = name == 'Disk' ? this.diskReports : this.otherReports.filter((report) => {
-      // Tabs: CPU, Disk, Memory, Network, NFS, Partition, System, Target, UPS, ZFS
-      let condition;
-      switch (name) {
-        case 'CPU':
-          condition = (report.name == 'cpu' || report.name == 'load' || report.name == 'cputemp');
-          break;
-        case 'Memory':
-          condition = (report.name == 'memory' || report.name == 'swap');
-          break;
-        case 'Network':
-          condition = (report.name == 'interface');
-          break;
-        case 'NFS':
-          condition = (report.name == 'nfsstat' || report.name == 'nfsstatbytes');
-          break;
-        case 'Partition':
-          condition = (report.name == 'df');
-          break;
-        case 'System':
-          condition = (report.name == 'processes' || report.name == 'uptime');
-          break;
-        case 'Target':
-          condition = (report.name == 'ctl');
-          break;
-        case 'UPS':
-          condition = report.name.startsWith('ups');
-          break;
-        case 'ZFS':
-          condition = report.name.startsWith('arc');
-          break;
-        default:
-          condition = true;
-      }
+    const reportCategories = activeTab.value === ReportTab.Disk ? this.diskReports : this.otherReports.filter(
+      (report) => {
+        let condition;
+        switch (activeTab.value) {
+          case ReportTab.Cpu:
+            condition = (report.name == 'cpu' || report.name == 'load' || report.name == 'cputemp');
+            break;
+          case ReportTab.Memory:
+            condition = (report.name == 'memory' || report.name == 'swap');
+            break;
+          case ReportTab.Network:
+            condition = (report.name == 'interface');
+            break;
+          case ReportTab.Nfs:
+            condition = (report.name == 'nfsstat' || report.name == 'nfsstatbytes');
+            break;
+          case ReportTab.Partition:
+            condition = (report.name == 'df');
+            break;
+          case ReportTab.System:
+            condition = (report.name == 'processes' || report.name == 'uptime');
+            break;
+          case ReportTab.Target:
+            condition = (report.name == 'ctl');
+            break;
+          case ReportTab.Ups:
+            condition = report.name.startsWith('ups');
+            break;
+          case ReportTab.Zfs:
+            condition = report.name.startsWith('arc');
+            break;
+          default:
+            condition = true;
+        }
 
-      return condition;
-    });
+        return condition;
+      },
+    );
 
     this.activeReports = this.flattenReports(reportCategories);
 
-    if (name !== 'Disk') {
+    if (activeTab.value !== ReportTab.Disk) {
       const keys = Object.keys(this.activeReports);
       this.visibleReports = keys.map((v) => parseInt(v));
     }
   }
 
-  flattenReports(list: Report[]): any[] {
+  flattenReports(list: Report[]): Report[] {
     // Based on identifiers, create a single dimensional array of reports to render
-    const result: any[] = [];
+    const result: Report[] = [];
     list.forEach((report) => {
       // Without identifiers
 
@@ -340,7 +325,7 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /* HandleCh
           disabled: false,
           multiple: true,
           options: this.diskDevices, // eg. [{label:'ada0',value:'ada0'},{label:'ada1', value:'ada1'}],
-          customTriggerValue: 'Select Disks',
+          customTriggerValue: this.translate.instant('Select Disks'),
           value: this.diskDevices?.length && selectedDisks
             ? this.diskDevices.filter((device) => selectedDisks.includes(device.value as string))
             : null,
@@ -474,6 +459,10 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /* HandleCh
       const spl = devname.split(' ');
       return { label: devname, value: spl[0] };
     });
+  }
+
+  isReportReversed(report: Report): boolean {
+    return report.name == 'cpu';
   }
 
   showConfigForm(): void {

@@ -40,11 +40,15 @@ export class PreferencesService {
     hide_builtin_groups: true,
     dateFormat: 'YYYY-MM-DD',
     timeFormat: 'HH:mm:ss',
-    showWelcomeDialog: true,
     showUserListMessage: true,
     showGroupListMessage: true,
     expandAvailablePlugins: true,
     storedValues: {}, // For key/value pairs to save most recent values in form fields, etc
+    sidenavStatus: {
+      isCollapsed: false,
+      isOpen: true,
+      mode: 'over',
+    },
   };
 
   preferences: Preferences;

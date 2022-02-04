@@ -28,6 +28,7 @@ import { DatasetChangeKeyParams } from 'app/interfaces/dataset-change-key.interf
 import { DatasetLockParams } from 'app/interfaces/dataset-lock.interface';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { Job } from 'app/interfaces/job.interface';
+import { PoolAttachment } from 'app/interfaces/pool-attachment.interface';
 import { PoolProcess } from 'app/interfaces/pool-process.interface';
 import { PoolUnlockQuery } from 'app/interfaces/pool-unlock-query.interface';
 import { Pool, PoolExpandParams, UpdatePool } from 'app/interfaces/pool.interface';
@@ -134,29 +135,22 @@ export class VolumesListTableConfig implements EntityTableConfig {
       actions.push({
         label: T('Export Dataset Keys'),
         onClick: (row1: VolumesListPool) => {
-          const message = helptext.export_keys_message + row1.name;
+          this.loader.open();
           const fileName = 'dataset_' + row1.name + '_keys.json';
-          this.dialogService.passwordConfirm(message).pipe(untilDestroyed(this, 'destroy')).subscribe((exportKeys) => {
-            if (!exportKeys) {
-              return;
-            }
-
-            this.loader.open();
-            const mimetype = 'application/json';
-            this.ws.call('core.download', ['pool.dataset.export_keys', [row1.name], fileName]).pipe(untilDestroyed(this, 'destroy')).subscribe((res) => {
-              this.loader.close();
-              const url = res[1];
-              this.storageService.streamDownloadFile(this.http, url, fileName, mimetype)
-                .pipe(untilDestroyed(this, 'destroy'))
-                .subscribe((file) => {
-                  if (res !== null && (res as any) !== '') {
-                    this.storageService.downloadBlob(file, fileName);
-                  }
-                });
-            }, (e) => {
-              this.loader.close();
-              new EntityUtils().handleWsError(this, e, this.dialogService);
-            });
+          const mimetype = 'application/json';
+          this.ws.call('core.download', ['pool.dataset.export_keys', [row1.name], fileName]).pipe(untilDestroyed(this, 'destroy')).subscribe((res) => {
+            this.loader.close();
+            const url = res[1];
+            this.storageService.streamDownloadFile(this.http, url, fileName, mimetype)
+              .pipe(untilDestroyed(this, 'destroy'))
+              .subscribe((file) => {
+                if (res !== null && (res as any) !== '') {
+                  this.storageService.downloadBlob(file, fileName);
+                }
+              });
+          }, (e) => {
+            this.loader.close();
+            new EntityUtils().handleWsError(this, e, this.dialogService);
           });
         },
       });
@@ -855,126 +849,21 @@ export class VolumesListTableConfig implements EntityTableConfig {
               this.ws.call('pool.dataset.processes', [row1.id]),
             ]).pipe(untilDestroyed(this, 'destroy')).subscribe(
               ([attachments, processes]) => {
-                if (attachments.length > 0) {
-                  p1 = this.translate.instant(helptext.datasetDeleteMsg, { name: datasetName });
-                  attachments.forEach((item) => {
-                    p1 += `<br><b>${item.type}:</b>`;
-                    item.attachments.forEach((i) => {
-                      const tempArr = i.split(',');
-                      tempArr.forEach((i) => {
-                        p1 += `<br> - ${i}`;
-                      });
-                    });
-                  });
-                  p1 += '<br /><br />';
-                }
-
-                const runningProcesses: PoolProcess[] = [];
-                const runningUnknownProcesses: PoolProcess[] = [];
-                if (processes.length > 0) {
-                  processes.forEach((item) => {
-                    if (!item.service) {
-                      if (item.name && item.name !== '') {
-                        runningProcesses.push(item);
-                      } else {
-                        runningUnknownProcesses.push(item);
-                      }
-                    }
-                  });
-                  if (runningProcesses.length > 0) {
-                    const runningMsg = this.translate.instant(helptext.exportMessages.running);
-                    p1 += runningMsg + `<b>${datasetName}</b>:`;
-                    runningProcesses.forEach((process) => {
-                      if (process.name) {
-                        p1 += `<br> - ${process.name}`;
-                      }
-                    });
-                  }
-                  if (runningUnknownProcesses.length > 0) {
-                    p1 += '<br><br>' + this.translate.instant(helptext.exportMessages.unknown);
-                    runningUnknownProcesses.forEach((process) => {
-                      if (process.pid) {
-                        p1 += `<br> - ${process.pid} - ${process.cmdline.substring(0, 40)}`;
-                      }
-                    });
-                    p1 += '<br><br>' + this.translate.instant(helptext.exportMessages.terminated);
-                  }
-                }
-
-                doDelete();
+                this.deleteDataset(
+                  rowData.id,
+                  datasetName,
+                  this.getDatasetRelatedSummary(
+                    datasetName,
+                    attachments,
+                    processes,
+                  ),
+                );
               },
               (err) => {
                 this.loader.close();
                 new EntityUtils().handleWsError(this, err, this.dialogService);
               },
             );
-
-            const doDelete = (): void => {
-              this.loader.close();
-              this.dialogService.doubleConfirm(
-                this.translate.instant('Delete Dataset <i><b>{datasetName}</b></i>', { datasetName }),
-                this.translate.instant(
-                  'The <i><b>{datasetName}</b></i> dataset and all snapshots stored with it <b>will be permanently deleted</b>.',
-                  { datasetName },
-                ) + '<br><br>' + p1,
-                datasetName,
-                true,
-                this.translate.instant('DELETE DATASET'),
-              ).pipe(
-                filter(Boolean),
-                untilDestroyed(this, 'destroy'),
-              ).subscribe(() => {
-                this.loader.open();
-                this.ws.call('pool.dataset.delete', [rowData.id, { recursive: true }]).pipe(untilDestroyed(this, 'destroy')).subscribe(
-                  () => {
-                    this.loader.close();
-                    this.parentVolumesListComponent.repaintMe();
-                  },
-                  (error) => {
-                    this.loader.close();
-                    if (error.reason.indexOf('Device busy') > -1) {
-                      this.dialogService.confirm({
-                        title: this.translate.instant('Device Busy'),
-                        message: this.translate.instant('Force deletion of dataset <i>{datasetName}</i>?', { datasetName }),
-                        buttonMsg: this.translate.instant('Force Delete'),
-                      }).pipe(
-                        filter(Boolean),
-                        untilDestroyed(this, 'destroy'),
-                      ).subscribe(() => {
-                        this.loader.open();
-                        this.ws.call('pool.dataset.delete', [rowData.id, {
-                          recursive: true,
-                          force: true,
-                        }]).pipe(untilDestroyed(this, 'destroy')).subscribe(
-                          () => {
-                            this.loader.close();
-                            this.parentVolumesListComponent.repaintMe();
-                          },
-                          (err) => {
-                            this.loader.close();
-                            this.dialogService.errorReport(
-                              this.translate.instant(
-                                'Error deleting dataset {datasetName}.', { datasetName },
-                              ),
-                              err.reason,
-                              err.stack,
-                            );
-                          },
-                        );
-                      });
-                    } else {
-                      this.dialogService.errorReport(
-                        this.translate.instant(
-                          'Error deleting dataset {datasetName}.', { datasetName },
-                        ),
-                        error.reason,
-                        error.stack,
-                      );
-                    }
-                  },
-                );
-              });
-            };
           },
         });
       }
@@ -986,32 +875,28 @@ export class VolumesListTableConfig implements EntityTableConfig {
         label: T('Delete Zvol'),
         onClick: (row1: VolumesListDataset) => {
           const zvolName = row1.name;
-          this.dialogService.doubleConfirm(
-            this.translate.instant('Delete'),
-            this.translate.instant('Delete the zvol {zvolName} and all snapshots of it?', { zvolName }),
-            zvolName,
-            true,
-            this.translate.instant('Delete Zvol'),
-          ).pipe(
-            filter(Boolean),
-            untilDestroyed(this, 'destroy'),
-          ).subscribe(() => {
-            this.loader.open();
 
-            this.ws.call('pool.dataset.delete', [rowData.id, { recursive: true }]).pipe(untilDestroyed(this, 'destroy')).subscribe(() => {
-              this.loader.close();
-              this.parentVolumesListComponent.repaintMe();
-            }, (res) => {
-              this.loader.close();
-              this.dialogService.errorReport(
-                this.translate.instant(
-                  'Error deleting zvol {zvolName}.', { zvolName },
+          this.loader.open();
+          combineLatest([
+            this.ws.call('pool.dataset.attachments', [row1.id]),
+            this.ws.call('pool.dataset.processes', [row1.id]),
+          ]).pipe(untilDestroyed(this, 'destroy')).subscribe(
+            ([attachments, processes]) => {
+              this.deleteZvol(
+                rowData.id,
+                zvolName,
+                this.getZvolRelatedSummary(
+                  zvolName,
+                  attachments,
+                  processes,
                 ),
-                res.reason,
-                res.stack,
               );
-            });
-          });
+            },
+            (err) => {
+              this.loader.close();
+              new EntityUtils().handleWsError(this, err, this.dialogService);
+            },
+          );
         },
       });
       actions.push({
@@ -1110,6 +995,200 @@ export class VolumesListTableConfig implements EntityTableConfig {
       }
     }
     return actions as EntityTableAction[];
+  }
+
+  private getStorageFlattenedAttachments(attachments: PoolAttachment[]): string {
+    function formatPoolAttachment(obj: PoolAttachment): string {
+      return obj.attachments
+        .map((a) => formatAttachments(a.split(',')))
+        .join();
+    }
+
+    function formatAttachments(arr: string[]): string {
+      return arr
+        .map((str) => formatAttachment(str))
+        .join();
+    }
+
+    function formatAttachment(str: string): string {
+      return `<br> - ${str}`;
+    }
+
+    return attachments.map((item) => `<br><b>${item.type}:</b>${formatPoolAttachment(item)}`).join();
+  }
+
+  private getStorageFlattenedProcesses(processes: PoolProcess[]): string {
+    return processes.map((process) => {
+      if (process.name) {
+        return `<br> - ${process.name}`;
+      }
+      if (process.pid) {
+        return `<br> - ${process.pid} - ${process.cmdline.substring(0, 40)}`;
+      }
+      return '';
+    }).join();
+  }
+
+  private getZvolRelatedSummary(
+    zvolName: string,
+    attachments: PoolAttachment[],
+    processes: PoolProcess[],
+  ): string {
+    let summary = '';
+
+    if (attachments.length) {
+      summary += this.translate.instant(helptext.zvolDeleteMsg, { name: zvolName });
+      summary += this.getStorageFlattenedAttachments(attachments);
+      summary += '<br /><br />';
+    }
+
+    const runningProcesses = processes.filter((p) => !p.service && p.name);
+    if (runningProcesses.length) {
+      summary += this.translate.instant(helptext.exportMessages.running);
+      summary += `<b>${zvolName}</b>:`;
+      summary += this.getStorageFlattenedProcesses(runningProcesses);
+    }
+
+    const runningUnknownProcesses = processes.filter((p) => !p.service && !p.name);
+    if (runningUnknownProcesses.length) {
+      summary += '<br><br>' + this.translate.instant(helptext.exportMessages.unknown);
+      summary += this.getStorageFlattenedProcesses(runningUnknownProcesses);
+      summary += '<br><br>' + this.translate.instant(helptext.exportMessages.terminated);
+    }
+
+    return summary;
+  }
+
+  private getDatasetRelatedSummary(
+    datasetName: string,
+    attachments: PoolAttachment[],
+    processes: PoolProcess[],
+  ): string {
+    let summary = '';
+
+    if (attachments.length) {
+      summary += this.translate.instant(helptext.datasetDeleteMsg, { name: datasetName });
+      summary += this.getStorageFlattenedAttachments(attachments);
+      summary += '<br /><br />';
+    }
+
+    const runningProcesses = processes.filter((p) => !p.service && p.name);
+    if (runningProcesses.length) {
+      summary += this.translate.instant(helptext.exportMessages.running);
+      summary += `<b>${datasetName}</b>:`;
+      summary += this.getStorageFlattenedProcesses(runningProcesses);
+    }
+
+    const runningUnknownProcesses = processes.filter((p) => !p.service && !p.name);
+    if (runningUnknownProcesses.length) {
+      summary += '<br><br>' + this.translate.instant(helptext.exportMessages.unknown);
+      summary += this.getStorageFlattenedProcesses(runningUnknownProcesses);
+      summary += '<br><br>' + this.translate.instant(helptext.exportMessages.terminated);
+    }
+
+    return summary;
+  }
+
+  private deleteDataset(datasetId: string, datasetName: string, relatedSummary: string): void {
+    this.loader.close();
+    this.dialogService.doubleConfirm(
+      this.translate.instant('Delete Dataset <i><b>{datasetName}</b></i>', { datasetName }),
+      this.translate.instant(
+        'The <i><b>{datasetName}</b></i> dataset and all snapshots stored with it <b>will be permanently deleted</b>.',
+        { datasetName },
+      )
+      + `<br><br>${relatedSummary}`,
+      datasetName,
+      true,
+      this.translate.instant('DELETE DATASET'),
+    ).pipe(
+      filter(Boolean),
+      untilDestroyed(this, 'destroy'),
+    ).subscribe(() => {
+      this.loader.open();
+      this.ws.call('pool.dataset.delete', [datasetId, { recursive: true }]).pipe(untilDestroyed(this, 'destroy')).subscribe(
+        () => {
+          this.loader.close();
+          this.parentVolumesListComponent.repaintMe();
+        },
+        (error) => {
+          this.loader.close();
+          if (error.reason.indexOf('Device busy') > -1) {
+            this.dialogService.confirm({
+              title: this.translate.instant('Device Busy'),
+              message: this.translate.instant('Force deletion of dataset <i>{datasetName}</i>?', { datasetName }),
+              buttonMsg: this.translate.instant('Force Delete'),
+            }).pipe(
+              filter(Boolean),
+              untilDestroyed(this, 'destroy'),
+            ).subscribe(() => {
+              this.loader.open();
+              this.ws.call('pool.dataset.delete', [datasetId, {
+                recursive: true,
+                force: true,
+              }]).pipe(untilDestroyed(this, 'destroy')).subscribe(
+                () => {
+                  this.loader.close();
+                  this.parentVolumesListComponent.repaintMe();
+                },
+                (err) => {
+                  this.loader.close();
+                  this.dialogService.errorReport(
+                    this.translate.instant(
+                      'Error deleting dataset {datasetName}.', { datasetName },
+                    ),
+                    err.reason,
+                    err.stack,
+                  );
+                },
+              );
+            });
+          } else {
+            this.dialogService.errorReport(
+              this.translate.instant(
+                'Error deleting dataset {datasetName}.', { datasetName },
+              ),
+              error.reason,
+              error.stack,
+            );
+          }
+        },
+      );
+    });
+  }
+
+  private deleteZvol(zvolId: string, zvolName: string, relatedSummary: string): void {
+    this.loader.close();
+    this.dialogService.doubleConfirm(
+      this.translate.instant('Delete'),
+      this.translate.instant(
+        'ZVol {zvolName} and all snapshots stored with it <b>will be permanently deleted</b>.',
+        { zvolName },
+      )
+      + `<br><br>${relatedSummary}`,
+      zvolName,
+      true,
+      this.translate.instant('Delete Zvol'),
+    ).pipe(
+      filter(Boolean),
+      untilDestroyed(this, 'destroy'),
+    ).subscribe(() => {
+      this.loader.open();
+
+      this.ws.call('pool.dataset.delete', [zvolId, { recursive: true }]).pipe(untilDestroyed(this, 'destroy')).subscribe(() => {
+        this.loader.close();
+        this.parentVolumesListComponent.repaintMe();
+      }, (res) => {
+        this.loader.close();
+        this.dialogService.errorReport(
+          this.translate.instant(
+            'Error deleting zvol {zvolName}.', { zvolName },
+          ),
+          res.reason,
+          res.stack,
+        );
+      });
+    });
   }
 
   getEncryptedDatasetActions(rowData: VolumesListDataset): EntityTableAction[] {
@@ -1434,51 +1513,45 @@ export class VolumesListTableConfig implements EntityTableConfig {
           && rowData.encryption_root === rowData.id
           && !rowData.is_passphrase
         ) {
-          const fileName = 'dataset_' + rowData.name + '_key.txt';
-          const mimetype = 'text/plain';
-          const message = helptext.export_keys_message + rowData.id;
+          const fileName = 'dataset_' + rowData.name + '_key.json';
+          const mimetype = 'application/json';
           encryptionActions.push({
             id: rowData.id,
             name: T('Export Key'),
             label: T('Export Key'),
             onClick: () => {
-              this.dialogService.passwordConfirm(message).pipe(
-                filter(Boolean),
-                untilDestroyed(this, 'destroy'),
-              ).subscribe(() => {
-                const dialogRef = this.mdDialog.open(EntityJobComponent, {
-                  data: { title: T('Retrieving Key') },
-                  disableClose: true,
-                });
-                dialogRef.componentInstance.setCall('pool.dataset.export_key', [rowData.id]);
-                dialogRef.componentInstance.submit();
-                dialogRef.componentInstance.success.pipe(untilDestroyed(this, 'destroy')).subscribe((res: Job<string>) => {
-                  dialogRef.close();
-                  this.dialogService.confirm({
-                    title: this.translate.instant('Key for {id}', { id: rowData.id }),
-                    message: res.result,
-                    hideCheckBox: true,
-                    buttonMsg: this.translate.instant('Download Key'),
-                    cancelMsg: this.translate.instant('Close'),
-                  }).pipe(
-                    filter(Boolean),
-                    untilDestroyed(this, 'destroy'),
-                  ).subscribe(() => {
-                    this.loader.open();
-                    this.ws.call('core.download', ['pool.dataset.export_key', [rowData.id, true], fileName]).pipe(untilDestroyed(this, 'destroy')).subscribe((res) => {
-                      this.loader.close();
-                      const url = res[1];
-                      this.storageService.streamDownloadFile(this.http, url, fileName, mimetype)
-                        .pipe(untilDestroyed(this, 'destroy'))
-                        .subscribe((file) => {
-                          if (res !== null) {
-                            this.storageService.downloadBlob(file, fileName);
-                          }
-                        });
-                    }, (e) => {
-                      this.loader.close();
-                      new EntityUtils().handleWsError(this, e, this.dialogService);
-                    });
+              const dialogRef = this.mdDialog.open(EntityJobComponent, {
+                data: { title: T('Retrieving Key') },
+                disableClose: true,
+              });
+              dialogRef.componentInstance.setCall('pool.dataset.export_key', [rowData.id]);
+              dialogRef.componentInstance.submit();
+              dialogRef.componentInstance.success.pipe(untilDestroyed(this, 'destroy')).subscribe((res: Job<string>) => {
+                dialogRef.close();
+                this.dialogService.confirm({
+                  title: this.translate.instant('Key for {id}', { id: rowData.id }),
+                  message: res.result + '<br/><br/>' + this.translate.instant('WARNING: Only the key for the dataset in question will be downloaded.'),
+                  hideCheckBox: true,
+                  buttonMsg: this.translate.instant('Download Key'),
+                  cancelMsg: this.translate.instant('Close'),
+                }).pipe(
+                  filter(Boolean),
+                  untilDestroyed(this, 'destroy'),
+                ).subscribe(() => {
+                  this.loader.open();
+                  this.ws.call('core.download', ['pool.dataset.export_key', [rowData.id, true], fileName]).pipe(untilDestroyed(this, 'destroy')).subscribe((res) => {
+                    this.loader.close();
+                    const url = res[1];
+                    this.storageService.streamDownloadFile(this.http, url, fileName, mimetype)
+                      .pipe(untilDestroyed(this, 'destroy'))
+                      .subscribe((file) => {
+                        if (res !== null) {
+                          this.storageService.downloadBlob(file, fileName);
+                        }
+                      });
+                  }, (e) => {
+                    this.loader.close();
+                    new EntityUtils().handleWsError(this, e, this.dialogService);
                   });
                 });
               });

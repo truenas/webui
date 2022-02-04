@@ -1,3 +1,4 @@
+import { ScrollingModule } from '@angular/cdk/scrolling';
 import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
@@ -13,6 +14,7 @@ import { SecondaryMenuComponent } from 'app/components/common/secondary-menu/sec
 import { ViewControllerComponent } from 'app/core/components/view-controller/view-controller.component';
 import { CoreComponents } from 'app/core/core-components.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
+import { CastModule } from 'app/modules/cast/cast.module';
 import { EntityModule } from 'app/pages/common/entity/entity.module';
 import { IxFormsModule } from 'app/pages/common/ix-forms/ix-forms.module';
 import { DialogService } from 'app/services/dialog.service';
@@ -42,7 +44,9 @@ import { TopbarComponent } from './topbar/topbar.component';
     HttpClientModule,
     EntityModule,
     CoreComponents,
+    ScrollingModule,
     AngularSvgIconModule.forRoot(),
+    CastModule,
   ],
   declarations: [
     AdminLayoutComponent,

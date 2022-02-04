@@ -198,7 +198,7 @@ export class AnimationService {
       return;
     }
 
-    const startY = animationTarget.target.get('y');
+    const startY: number = animationTarget.target.get('y');
     value(startY, animationTarget.target.set('y') as any);
 
     const gravity = (start: number): ColdSubscription => {
@@ -249,7 +249,7 @@ export class AnimationService {
       }),
     );
 
-    const radiation = (start: any, elementBorder: ValueReaction): void => {
+    const radiation = (_: unknown, elementBorder: ValueReaction): void => {
       keyframes({
         values: [
           { borderWidth: 0, borderColor: 'rgb(204, 0, 0, 1)' },

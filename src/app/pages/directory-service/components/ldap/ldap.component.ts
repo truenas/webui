@@ -17,6 +17,7 @@ import {
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
 import { EntityUtils } from 'app/pages/common/entity/utils';
+import { LdapTransformedConfig } from 'app/pages/directory-service/components/ldap/ldap-transformed-config.interface';
 import {
   SystemGeneralService,
   WebSocketService,
@@ -228,7 +229,7 @@ export class LdapComponent implements FormConfiguration {
     private translate: TranslateService,
   ) { }
 
-  resourceTransformIncomingRestData(data: LdapConfig): any {
+  resourceTransformIncomingRestData(data: LdapConfig): LdapTransformedConfig {
     const transformed = {
       ...data,
       hostname_noreq: data['hostname'],

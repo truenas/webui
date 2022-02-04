@@ -6,7 +6,6 @@ import { LocalStorage } from 'ngx-webstorage';
 import {
   Observable, Observer, Subject, Subscriber,
 } from 'rxjs';
-import { filter, map } from 'rxjs/operators';
 import { ApiEventMessage } from 'app/enums/api-event-message.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { ApiDirectory, ApiMethod } from 'app/interfaces/api-directory.interface';
@@ -44,7 +43,6 @@ export class WebSocketService {
 
   protocol: string;
   remote: string;
-  private consoleSub$: Observable<string>;
 
   subscriptions = new Map<string, Observer<unknown>[]>();
 
@@ -60,16 +58,6 @@ export class WebSocketService {
 
   get authStatus(): Observable<boolean> {
     return this.authStatus$.asObservable();
-  }
-
-  get consoleMessages(): Observable<string> {
-    if (!this.consoleSub$) {
-      this.consoleSub$ = this.sub('filesystem.file_tail_follow:/var/log/messages:499').pipe(
-        filter((res) => res && res.data && typeof res.data === 'string'),
-        map((res) => res.data),
-      );
-    }
-    return this.consoleSub$;
   }
 
   reconnect(protocol = window.location.protocol, remote = environment.remote): void {
@@ -90,7 +78,7 @@ export class WebSocketService {
 
   onopen(): void {
     this.onOpenSubject$.next(true);
-    this.send({ msg: 'connect', version: '1', support: ['1'] });
+    this.send({ msg: ApiEventMessage.Connect, version: '1', support: ['1'] });
   }
 
   onconnect(): void {
@@ -112,7 +100,7 @@ export class WebSocketService {
 
   ping(): void {
     if (this.connected) {
-      this.socket.send(JSON.stringify({ msg: 'ping', id: UUID.UUID() }));
+      this.socket.send(JSON.stringify({ msg: ApiEventMessage.Ping, id: UUID.UUID() }));
       setTimeout(() => this.ping(), 20000);
     }
   }
@@ -124,6 +112,10 @@ export class WebSocketService {
     } catch (e: unknown) {
       console.warn(`Malformed response: "${msg.data}"`);
       return;
+    }
+
+    if (data.error && data.error == 13 /** Not Authenticated */) {
+      return this.socket.close(); // will trigger onClose which handles redirection
     }
 
     if (data.msg == ApiEventMessage.Result) {
@@ -138,40 +130,38 @@ export class WebSocketService {
         call.observer.next(data.result);
         call.observer.complete();
       }
-    } else if (data.msg == 'connected') {
+    } else if (data.msg == ApiEventMessage.Connected) {
       this.connected = true;
       setTimeout(() => this.ping(), 20000);
       this.onconnect();
-    } else if (data.msg == 'nosub') {
-      console.warn(data);
-    } else if (data.collection == 'disk.query' || data.collection == 'reporting.realtime') {
-      const nom = data.collection.replace('.', '_');
-      if (this.pendingSubs[nom] && this.pendingSubs[nom].observers) {
-        for (const uuid in this.pendingSubs[nom].observers) {
-          const subObserver = this.pendingSubs[nom].observers[uuid];
-          if (data.error) {
-            console.error('Error: ', data.error);
-            subObserver.error(data.error);
-          }
-          if (subObserver && data.fields) {
-            subObserver.next(data.fields);
-          } else if (subObserver && !data.fields) {
-            subObserver.next(data);
-          }
-        }
-      }
     } else if (data.msg == ApiEventMessage.Changed || data.msg == ApiEventMessage.Added) {
       this.subscriptions.forEach((v, k) => {
         if (k == '*' || k == data.collection) {
           v.forEach((item) => { item.next(data); });
         }
       });
-    } else if (data.msg == 'pong') {
-      // pass
-    } else if (data.msg == 'sub') {
-      // pass
+    } else
+    // do nothing for pong or sub, otherwise console warn
+    if (data.msg && (data.msg !== ApiEventMessage.Pong || data.msg !== ApiEventMessage.Sub)) {
+      console.warn('Msg Received', data);
     } else {
       console.warn('Unknown message: ', data);
+    }
+
+    const collectionName = data.collection?.replace('.', '_');
+    if (collectionName && this.pendingSubs[collectionName]?.observers) {
+      for (const uuid in this.pendingSubs[collectionName].observers) {
+        const subObserver = this.pendingSubs[collectionName].observers[uuid];
+        if (data.error) {
+          console.error('Error: ', data.error);
+          subObserver.error(data.error);
+        }
+        if (subObserver && data.fields) {
+          subObserver.next(data.fields);
+        } else if (subObserver && !data.fields) {
+          subObserver.next(data);
+        }
+      }
     }
   }
 
@@ -208,7 +198,7 @@ export class WebSocketService {
   call<K extends ApiMethod>(method: K, params?: ApiDirectory[K]['params']): Observable<ApiDirectory[K]['response']> {
     const uuid = UUID.UUID();
     const payload = {
-      id: uuid, msg: 'method', method, params,
+      id: uuid, msg: ApiEventMessage.Method, method, params,
     };
 
     // Create the observable
@@ -223,32 +213,54 @@ export class WebSocketService {
     });
   }
 
-  sub<T = any>(name: string): Observable<T> {
-    const nom = name.replace('.', '_'); // Avoid weird behavior
+  /**
+   * This method subscribes to the provided api end point for real time updates
+   * @param api The api end point to subscribe to
+   * @param subscriptionId The unique id that will be used as request id and can be
+   * used to unsubscribe from the websocket subscription with the `unsub(api, subscriptionId)`
+   * method
+   * @returns
+   */
+  sub<T = any>(api: string, subscriptionId?: string): Observable<T> {
+    const nom = api.replace('.', '_'); // Avoid weird behavior
     if (!this.pendingSubs[nom]) {
       this.pendingSubs[nom] = {
         observers: {},
       };
     }
 
-    const uuid = UUID.UUID();
-    const payload = { id: uuid, name, msg: 'sub' };
-
-    const obs = Observable.create((observer: Subscriber<T>) => {
+    const uuid = subscriptionId || UUID.UUID();
+    const payload = { id: uuid, name: api, msg: ApiEventMessage.Sub };
+    return new Observable((observer: Subscriber<T>) => {
       this.pendingSubs[nom].observers[uuid] = observer;
       this.send(payload);
 
       // cleanup routine
       observer.complete = () => {
-        this.send({ id: uuid, msg: 'unsub' });
+        this.send({ id: uuid, msg: ApiEventMessage.UnSub });
         this.pendingSubs[nom].observers[uuid].unsubscribe();
         delete this.pendingSubs[nom].observers[uuid];
         if (!this.pendingSubs[nom].observers) { delete this.pendingSubs[nom]; }
       };
-
       return observer;
     });
-    return obs;
+  }
+
+  /**
+   * This method unsubscribes from real time websocket updates to the given api end point
+   * @param api The api end point to unsubscribe from
+   * @param subscriptionId The subscription Id used to setup the subscription in the `sub(api, subscriptionId)` method
+   */
+  unsub(api: string, subscriptionId: string): void {
+    const nom = api.replace('.', '_');
+    if (this.pendingSubs[nom].observers[subscriptionId]) {
+      this.send({ id: subscriptionId, msg: ApiEventMessage.UnSub });
+      this.pendingSubs[nom].observers[subscriptionId].unsubscribe();
+      delete this.pendingSubs[nom].observers[subscriptionId];
+      if (!this.pendingSubs[nom].observers) {
+        delete this.pendingSubs[nom];
+      }
+    }
   }
 
   job<K extends ApiMethod>(method: K, params?: ApiDirectory[K]['params']): Observable<Job<ApiDirectory[K]['response']>> {
@@ -289,7 +301,7 @@ export class WebSocketService {
       this.send({
         id: UUID.UUID(),
         name: '*',
-        msg: 'sub',
+        msg: ApiEventMessage.Sub,
       });
     } else {
       this.loggedIn = false;

@@ -5,7 +5,13 @@
       <mat-card-content>
         <div [hidden]="!(connected() && logo_ready)">
           <div class="text-center logo-wrapper">
-            <img class="logo-bg" alt="Welcome splash image" src="assets/images/splashes/21-angelfish.png">
+            <img
+              class="logo-bg"
+              alt="Logo image background of stars and sky at night"
+              src="assets/images/stars-sky-1200w.jpg"
+              srcset="assets/images/stars-sky-400w.jpg, assets/images/stars-sky-800w.jpg 2x, assets/images/stars-sky-1200w.jpg 3x"
+            >
+            <mat-icon class="logo" svgIcon="truenas_scale_logo_full" alt="TrueNAS SCALE logo"></mat-icon>
           </div>
 
           <div class="card-bottom">

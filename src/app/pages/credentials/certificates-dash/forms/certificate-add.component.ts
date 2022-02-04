@@ -103,15 +103,15 @@ export class CertificateAddComponent implements WizardConfiguration {
         {
           type: 'select',
           name: 'csrlist',
-          placeholder: helptextSystemCertificates.add.signedby.placeholder,
-          tooltip: helptextSystemCertificates.add.signedby.tooltip,
+          placeholder: helptextSystemCertificates.add.csrlist.placeholder,
+          tooltip: helptextSystemCertificates.add.csrlist.tooltip,
           options: [
             { label: '---', value: null },
           ],
           isHidden: true,
           disabled: true,
           required: true,
-          validation: helptextSystemCertificates.add.signedby.validation,
+          validation: helptextSystemCertificates.add.csrlist.validation,
           relation: [
             {
               action: RelationAction.Enable,
@@ -786,6 +786,9 @@ export class CertificateAddComponent implements WizardConfiguration {
         this.csrFields.forEach((field) => this.hideField(field, false));
         this.extensionFields.forEach((field) => this.hideField(field, false));
 
+        this.hideField('AuthorityKeyIdentifier-enabled', true);
+        this.hideField('AuthorityKeyIdentifier', true);
+
         // This block makes the form reset its 'disabled/hidden' settings on switch of type
         if (this.getField('key_type').value === 'RSA') {
           this.setDisabled('ec_curve', true);
@@ -1012,6 +1015,9 @@ export class CertificateAddComponent implements WizardConfiguration {
           delete data[key];
         }
       });
+      if (data.create_type === 'CERTIFICATE_CREATE_CSR') {
+        delete certExtensions['AuthorityKeyIdentifier'];
+      }
       data['cert_extensions'] = certExtensions;
 
       delete data['profiles'];

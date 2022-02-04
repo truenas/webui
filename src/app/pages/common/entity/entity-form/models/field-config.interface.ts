@@ -81,8 +81,9 @@ export interface FormChipConfig<P = any> extends BaseFieldConfig<P> {
   searchOptions?: Option[];
   type: 'chip';
   updateLocal?: boolean;
-  updater?: (value: string, parent: P, config?: FormChipConfig) => void;
+  updater?: (value: string, values: string[], parent: P, config?: FormChipConfig) => void;
   togglePw?: boolean;
+  selectOnly?: boolean;
 }
 
 export interface FormComboboxConfig<P = any> extends BaseFieldConfig<P> {

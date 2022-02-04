@@ -6,7 +6,6 @@ import helptext from 'app/helptext/about';
 import { LocaleService } from 'app/services/locale.service';
 
 export interface DialogData {
-  extraMsg: boolean;
   systemType: ProductType;
 }
 
@@ -17,7 +16,6 @@ export interface DialogData {
 })
 export class AboutDialogComponent {
   copyrightYear = this.localeService.getCopyrightYearFromBuildTime();
-  extraMsg: boolean;
   systemType: ProductType;
   helptext = helptext;
 
@@ -29,12 +27,6 @@ export class AboutDialogComponent {
     private core: CoreService,
     private localeService: LocaleService,
   ) {
-    this.extraMsg = data.extraMsg;
     this.systemType = data.systemType;
-  }
-
-  turnOffWelcomeDialog(): void {
-    localStorage.setItem('turnOffWelcomeDialog', 'true');
-    this.core.emit({ name: 'ChangePreference', data: { key: 'showWelcomeDialog', value: false }, sender: this });
   }
 }

@@ -26,13 +26,20 @@ export class IxErrorsComponent implements OnChanges {
     max: (max: number) => this.translate.instant('Maximum value is {max}', { max }),
     required: () => this.translate.instant('{field} is required', { field: this.label }),
     email: () => this.translate.instant('Value must be a valid email address'),
-    minlength: (minLength: number) => this.translate.instant('The length of {field} should be at least {minLength}', { field: this.label, minLength }),
+    minlength: (minLength: number) => this.translate.instant(
+      'The length of {field} should be at least {minLength}',
+      { field: this.label, minLength },
+    ),
     maxlength: (maxLength: number) => this.translate.instant(
       'The length of {field} should be no more than {maxLength}',
       { field: this.label, maxLength },
     ),
     pattern: () => this.translate.instant('Invalid format or character'),
     forbidden: (value: string) => this.translate.instant('The name "{value}" is already in use.', { value }),
+    range: (min: number, max: number) => this.translate.instant(
+      'The value is out of range. Enter a value between {min} and {max}.',
+      { min, max },
+    ),
   };
 
   constructor(
@@ -81,6 +88,8 @@ export class IxErrorsComponent implements OnChanges {
         return this.defaultErrMessages.minlength(this.control.errors.minlength.requiredLength);
       case DefaultValidationErrors.MaxLength:
         return this.defaultErrMessages.maxlength(this.control.errors.maxlength.requiredLength);
+      case DefaultValidationErrors.Range:
+        return this.defaultErrMessages.range(this.control.errors.rangeValue.min, this.control.errors.rangeValue.max);
       case DefaultValidationErrors.Pattern:
         return this.defaultErrMessages.pattern();
       case DefaultValidationErrors.Forbidden:

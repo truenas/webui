@@ -112,11 +112,10 @@ export class PodShellComponent implements TerminalConfiguration {
       saveButtonText: helptext.podConsole.choosePod.action,
       customSubmit: (entityDialog) => this.onChooseShell(entityDialog),
       afterInit: (entityDialog) => this.afterShellDialogInit(entityDialog),
-      parent: this,
     };
   }
 
-  onChooseShell(entityDialog: EntityDialogComponent<PodShellComponent>): void {
+  onChooseShell(entityDialog: EntityDialogComponent): void {
     this.podName = entityDialog.formGroup.controls['pods'].value;
     this.containerName = entityDialog.formGroup.controls['containers'].value;
     this.command = entityDialog.formGroup.controls['command'].value;
@@ -125,7 +124,7 @@ export class PodShellComponent implements TerminalConfiguration {
     this.dialogService.closeAllDialogs();
   }
 
-  afterShellDialogInit(entityDialog: EntityDialogComponent<PodShellComponent>): void {
+  afterShellDialogInit(entityDialog: EntityDialogComponent): void {
     entityDialog.formGroup.controls['pods'].valueChanges.pipe(untilDestroyed(this)).subscribe((value) => {
       const containers = this.podDetails[value];
       const containerFc = _.find(entityDialog.fieldConfig, { name: 'containers' }) as FormSelectConfig;

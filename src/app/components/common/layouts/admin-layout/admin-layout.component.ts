@@ -6,9 +6,11 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatDrawerMode, MatSidenav } from '@angular/material/sidenav';
 import { NavigationEnd, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { UUID } from 'angular2-uuid';
 import { ConsolePanelDialogComponent } from 'app/components/common/dialog/console-panel/console-panel-dialog.component';
 import { CoreService } from 'app/core/services/core-service/core.service';
 import { LayoutService } from 'app/core/services/layout.service';
+import { PreferencesService } from 'app/core/services/preferences.service';
 import { ProductType } from 'app/enums/product-type.enum';
 import { ForceSidenavEvent } from 'app/interfaces/events/force-sidenav-event.interface';
 import { SidenavStatusEvent } from 'app/interfaces/events/sidenav-status-event.interface';
@@ -43,6 +45,8 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
   isOpen = false;
   notificPanelClosed = false;
   menuName: string;
+  readonly consoleMsgsSubName = 'filesystem.file_tail_follow:/var/log/messages:500';
+  consoleMsgsSubscriptionId: string = null;
   subs: SubMenuItem[];
   copyrightYear = this.localeService.getCopyrightYearFromBuildTime();
 
@@ -63,27 +67,28 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
     private sysGeneralService: SystemGeneralService,
     private localeService: LocaleService,
     private layoutService: LayoutService,
+    private prefService: PreferencesService,
   ) {
     // detect server type
-    sysGeneralService.getProductType$.pipe(untilDestroyed(this)).subscribe((res) => {
+    this.sysGeneralService.getProductType$.pipe(untilDestroyed(this)).subscribe((res) => {
       this.productType = res as ProductType;
     });
 
     // Close sidenav after route change in mobile
-    router.events.pipe(untilDestroyed(this)).subscribe((routeChange) => {
+    this.router.events.pipe(untilDestroyed(this)).subscribe((routeChange) => {
       if (routeChange instanceof NavigationEnd && this.isMobile) {
         this.sideNav.close();
       }
     });
     // Watches screen size and open/close sidenav
-    media.media$.pipe(untilDestroyed(this)).subscribe((change: MediaChange) => {
+    this.media.media$.pipe(untilDestroyed(this)).subscribe((change: MediaChange) => {
       this.isMobile = this.layoutService.isMobile;
       this.updateSidenav();
       core.emit({ name: 'MediaChange', data: change, sender: this });
     });
 
     // Subscribe to Preference Changes
-    core.register({
+    this.core.register({
       observerClass: this,
       eventName: 'UserPreferencesChanged',
     }).pipe(untilDestroyed(this)).subscribe((evt: UserPreferencesChangedEvent) => {
@@ -91,21 +96,21 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
     });
 
     // Listen for system information changes
-    core.register({
+    this.core.register({
       observerClass: this,
       eventName: 'SysInfo',
     }).pipe(untilDestroyed(this)).subscribe((evt: SysInfoEvent) => {
       this.hostname = evt.data.hostname;
     });
 
-    core.register({
+    this.core.register({
       observerClass: this,
       eventName: 'ForceSidenav',
     }).pipe(untilDestroyed(this)).subscribe((evt: ForceSidenavEvent) => {
       this.updateSidenav(evt.data);
     });
 
-    core.register({
+    this.core.register({
       observerClass: this,
       eventName: 'SidenavStatus',
     }).pipe(untilDestroyed(this)).subscribe((evt: SidenavStatusEvent) => {
@@ -133,8 +138,11 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
     if (this.media.isActive('xs') || this.media.isActive('sm')) {
       this.isSidenavOpen = false;
     }
+    this.sysGeneralService.toggleSentryInit();
+
     this.checkIfConsoleMsgShows();
     this.sysGeneralService.refreshSysGeneral$.pipe(untilDestroyed(this)).subscribe(() => {
+      this.sysGeneralService.toggleSentryInit();
       this.checkIfConsoleMsgShows();
     });
 
@@ -165,9 +173,11 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
       setTimeout(() => {
         this.sideNav.open();
       });
+      this.layoutService.isMenuCollapsed = this.prefService.preferences.sidenavStatus.isCollapsed;
+      this.isSidenavCollapsed = this.prefService.preferences.sidenavStatus.isCollapsed;
+    } else {
+      this.layoutService.isMenuCollapsed = false;
     }
-
-    this.layoutService.isMenuCollapsed = false;
     this.cd.detectChanges();
   }
 
@@ -194,9 +204,8 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
   }
 
   getLogConsoleMsg(): void {
-    const subName = 'filesystem.file_tail_follow:/var/log/messages:500';
-
-    this.ws.sub(subName).pipe(untilDestroyed(this)).subscribe((res) => {
+    this.consoleMsgsSubscriptionId = UUID.UUID();
+    this.ws.sub(this.consoleMsgsSubName, this.consoleMsgsSubscriptionId).pipe(untilDestroyed(this)).subscribe((res) => {
       if (res && res.data && typeof res.data === 'string') {
         this.consoleMsg = this.accumulateConsoleMsg(res.data, 3);
       }
@@ -232,6 +241,8 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
   onShowConsoleFooterBar(data: boolean): void {
     if (data && this.consoleMsg == '') {
       this.getLogConsoleMsg();
+    } else if (!data) {
+      this.ws.unsub(this.consoleMsgsSubName, this.consoleMsgsSubscriptionId);
     }
 
     this.isShowFooterConsole = data;
@@ -243,7 +254,7 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
       dialogRef.componentInstance.consoleMsg = this.accumulateConsoleMsg('', 500);
     });
 
-    dialogRef.afterClosed().pipe(untilDestroyed(this)).subscribe(() => {
+    dialogRef.beforeClosed().pipe(untilDestroyed(this)).subscribe(() => {
       clearInterval(dialogRef.componentInstance.intervalPing);
       sub.unsubscribe();
     });

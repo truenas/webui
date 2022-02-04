@@ -76,6 +76,9 @@ export class UpdateComponent implements OnInit {
                                   the downloaded update.');
   train_version: string = null;
   updateTitle = this.translate.instant('Update');
+  private savedConfiguration = false;
+
+  readonly clickForInformationLink = helptext.clickForInformationLink;
 
   protected saveConfigFieldConf: FieldConfig[] = [
     {
@@ -96,7 +99,6 @@ export class UpdateComponent implements OnInit {
     saveButtonText: this.translate.instant('SAVE CONFIGURATION'),
     cancelButtonText: this.translate.instant('NO'),
     customSubmit: (entityDialog) => this.saveConfigSubmit(entityDialog),
-    parent: this,
   };
 
   protected dialogRef: MatDialogRef<EntityJobComponent>;
@@ -326,6 +328,7 @@ export class UpdateComponent implements OnInit {
     this.showSpinner = true;
     this.pendingupdates();
     this.error = null;
+    sessionStorage.updateLastChecked = Date.now();
     this.ws.call('update.check_available').pipe(untilDestroyed(this)).subscribe(
       (update) => {
         if (update.version) {
@@ -333,6 +336,7 @@ export class UpdateComponent implements OnInit {
         }
         this.status = update.status;
         if (update.status === SystemUpdateStatus.Available) {
+          sessionStorage.updateAvailable = 'true';
           this.updates_available = true;
           this.packages = [];
           update.changes.forEach((change) => {
@@ -433,22 +437,30 @@ export class UpdateComponent implements OnInit {
 
   applyPendingUpdate(): void {
     this.updateType = 'applyPending';
-    // Calls the 'Save Config' dialog - Returns here if user declines
-    this.dialogService.dialogForm(this.saveConfigFormConf).pipe(untilDestroyed(this)).subscribe((res) => {
-      if (!res) {
-        this.continueUpdate();
-      }
-    });
+    if (this.savedConfiguration) {
+      this.continueUpdate();
+    } else {
+      // Calls the 'Save Config' dialog - Returns here if user declines
+      this.dialogService.dialogForm(this.saveConfigFormConf).pipe(untilDestroyed(this)).subscribe((res) => {
+        if (!res) {
+          this.continueUpdate();
+        }
+      });
+    }
   }
 
   manualUpdate(): void {
     this.updateType = 'manual';
-    // Calls the 'Save Config' dialog - Returns here if user declines
-    this.dialogService.dialogForm(this.saveConfigFormConf).pipe(untilDestroyed(this)).subscribe((res) => {
-      if (!res) {
-        this.continueUpdate();
-      }
-    });
+    if (this.savedConfiguration) {
+      this.continueUpdate();
+    } else {
+      // Calls the 'Save Config' dialog - Returns here if user declines
+      this.dialogService.dialogForm(this.saveConfigFormConf).pipe(untilDestroyed(this)).subscribe((res) => {
+        if (!res) {
+          this.continueUpdate();
+        }
+      });
+    }
   }
 
   startUpdate(): void {
@@ -497,12 +509,16 @@ export class UpdateComponent implements OnInit {
             this.releaseNotes = update.notes.ReleaseNotes;
           }
           this.updateType = 'standard';
-          // Calls the 'Save Config' dialog - Returns here if user declines
-          this.dialogService.dialogForm(this.saveConfigFormConf).pipe(untilDestroyed(this)).subscribe((res) => {
-            if (!res) {
-              this.confirmAndUpdate();
-            }
-          });
+          if (this.savedConfiguration) {
+            this.confirmAndUpdate();
+          } else {
+            // Calls the 'Save Config' dialog - Returns here if user declines
+            this.dialogService.dialogForm(this.saveConfigFormConf).pipe(untilDestroyed(this)).subscribe((res) => {
+              if (!res) {
+                this.confirmAndUpdate();
+              }
+            });
+          }
         } else if (update.status === SystemUpdateStatus.Unavailable) {
           this.dialogService.info(this.translate.instant('Check Now'), this.translate.instant('No updates available.'));
         }
@@ -565,6 +581,8 @@ export class UpdateComponent implements OnInit {
   }
 
   update(): void {
+    window.sessionStorage.removeItem('updateLastChecked');
+    window.sessionStorage.removeItem('updateAvailable');
     this.sysGenService.updateRunningNoticeSent.emit();
     this.dialogRef = this.dialog.open(EntityJobComponent, { data: { title: this.updateTitle } });
     if (!this.is_ha) {
@@ -600,7 +618,7 @@ export class UpdateComponent implements OnInit {
   }
 
   // Save Config dialog
-  saveConfigSubmit(entityDialog: EntityDialogComponent<this>): void {
+  saveConfigSubmit(entityDialog: EntityDialogComponent): void {
     let fileName = '';
     let mimetype: string;
     if (this.sysInfo) {
@@ -625,6 +643,7 @@ export class UpdateComponent implements OnInit {
         return this.storage.streamDownloadFile(this.http, url, fileName, mimetype).pipe(
           tap((file: Blob) => {
             this.storage.downloadBlob(file, fileName);
+            this.savedConfiguration = true;
           }),
         );
       }),

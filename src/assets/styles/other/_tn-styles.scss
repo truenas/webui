@@ -574,6 +574,11 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     max-width: 800px;
   }
 
+  .overflow-dialog .mat-dialog-container {
+    max-height: calc(100vh - 100px);
+    overflow: auto !important;
+  }
+
   .mat-dialog-title {
     .warning-icon {
       color: #ffc107;
@@ -1162,10 +1167,6 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     color: var(--accent);
   }
 
-  .services-table .service-toggle-running {
-    @include variable(fill, --accent, $accent);
-  }
-
   .mat-simple-snackbar-action {
     color: var(--accent);
   }
@@ -1182,6 +1183,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     background: var(--bg2) !important;
   }
 
+  .mat-autocomplete-panel .mat-option.mat-selected:not(.mat-active):not(:hover),
   .mat-autocomplete-panel .mat-option:hover {
     background-color: var(--primary) !important;
   }
@@ -1499,7 +1501,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
   }
 
   .mat-select-panel {
-    max-height: 60vh !important;
+    max-height: 50vh !important; // values over 50vh will push last visible element out the screen
   }
 
   tree-viewport {
@@ -1590,7 +1592,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
   }
 
   .sidebar-panel.mat-sidenav .sidebar-list-item:hover {
-    border-left: 6px solid rgba(0, 0, 0, 0.045);
+    border-left: 6px solid var(--hover-bg);
   }
 
   .sidenav-link:hover,

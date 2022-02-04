@@ -1,3 +1,4 @@
+import { Location } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -29,6 +30,7 @@ export class ShutdownComponent implements OnInit {
     protected dialogService: DialogService,
     private sysGeneralService: SystemGeneralService,
     private localeService: LocaleService,
+    private location: Location,
   ) {
     this.sysGeneralService.getProductType$.pipe(untilDestroyed(this)).subscribe((res) => {
       this.productType = res as ProductType;
@@ -36,6 +38,9 @@ export class ShutdownComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    // Replace URL so that we don't shutdown again if page is refreshed.
+    this.location.replaceState('/session/signin');
+
     this.ws.call('system.shutdown', {}).pipe(untilDestroyed(this)).subscribe(
       () => {
       },

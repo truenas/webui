@@ -1,3 +1,5 @@
+import { SidenavStatusData } from 'app/interfaces/events/sidenav-status-event.interface';
+
 interface Column {
   name: string;
   prop: string;
@@ -17,6 +19,7 @@ export interface Preferences {
   timestamp: string;
   userTheme: string;
   customThemes: { [theme: string]: any }[];
+  sidenavStatus: SidenavStatusData;
 
   /**
    * @deprecated
@@ -33,7 +36,6 @@ export interface Preferences {
   hide_builtin_groups: boolean;
   dateFormat: string;
   timeFormat: string;
-  showWelcomeDialog: boolean;
   showUserListMessage: boolean;
   showGroupListMessage: boolean;
   expandAvailablePlugins: boolean;

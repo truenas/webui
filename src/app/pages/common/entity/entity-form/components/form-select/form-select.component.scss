@@ -19,11 +19,6 @@
   padding: 8px;
 }
 
-mat-selection-list {
-  max-height: 400px;
-  overflow: auto;
-}
-
 :host-context(app-system-alert) {
   .inline-label label.label.input-select {
     padding: 8px !important;

@@ -1,6 +1,6 @@
 import { Validators } from '@angular/forms';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
-import { rangeValidator } from 'app/pages/common/entity/entity-form/validators/range-validation';
+import { portRangeValidator } from 'app/pages/common/entity/entity-form/validators/range-validation';
 
 export default {
   fieldset_source: T('Source'),
@@ -9,9 +9,9 @@ export default {
   fieldset_options: T('More Options'),
 
   rsync_path_placeholder: T('Path'),
-  rsync_path_tooltip: T('Browse to the path to be copied. FreeBSD \
- file path limits apply. Other operating systems can have different \
- limits which might affect how they can be used as sources or \
+  rsync_path_tooltip: T('Browse to the path to be copied. Linux\
+ file path limits apply. Other operating systems can have different\
+ limits which might affect how they can be used as sources or\
  destinations.'),
   rsync_path_validation: [Validators.required],
 
@@ -30,7 +30,7 @@ export default {
 
   rsync_remoteport_placeholder: T('Remote SSH Port'),
   rsync_remoteport_tooltip: T('Enter the SSH Port of the remote system.'),
-  rsync_remoteport_validation: [rangeValidator(1, 65535), Validators.required],
+  rsync_remoteport_validation: [portRangeValidator(), Validators.required],
 
   rsync_mode_placeholder: T('Rsync Mode'),
   rsync_mode_tooltip: T('Choose to either use a custom-defined remote module \

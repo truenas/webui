@@ -18,6 +18,8 @@ import { CoreEvent } from 'app/interfaces/events';
 import { Job } from 'app/interfaces/job.interface';
 import { KubernetesConfig } from 'app/interfaces/kubernetes-config.interface';
 import { Option } from 'app/interfaces/option.interface';
+import { ApplicationTab } from 'app/pages/applications/application-tab.enum';
+import { ApplicationToolbarControl } from 'app/pages/applications/application-toolbar-control.enum';
 import { KubernetesSettingsComponent } from 'app/pages/applications/kubernetes-settings/kubernetes-settings.component';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
@@ -87,7 +89,6 @@ export class CatalogComponent implements OnInit {
     method_ws: 'kubernetes.update',
     saveButtonText: helptext.choosePool.action,
     customSubmit: (entityForm) => this.doPoolSelect(entityForm),
-    parent: this,
   };
 
   constructor(
@@ -200,7 +201,7 @@ export class CatalogComponent implements OnInit {
   }
 
   onToolbarAction(evt: CoreEvent): void {
-    if (evt.data.event_control == 'settings' && evt.data.settings) {
+    if (evt.data.event_control === ApplicationToolbarControl.Settings && evt.data.settings) {
       switch (evt.data.settings.value) {
         case 'select_pool':
           this.selectPool();
@@ -212,14 +213,14 @@ export class CatalogComponent implements OnInit {
           this.doUnsetPool();
           break;
       }
-    } else if (evt.data.event_control == 'launch') {
+    } else if (evt.data.event_control === ApplicationToolbarControl.Launch) {
       this.doInstall(ixChartApp);
-    } else if (evt.data.event_control == 'filter') {
+    } else if (evt.data.event_control === ApplicationToolbarControl.Filter) {
       this.filterString = evt.data.filter;
       this.filterApps();
-    } else if (evt.data.event_control == 'refresh_all') {
+    } else if (evt.data.event_control === ApplicationToolbarControl.RefreshAll) {
       this.syncAll();
-    } else if (evt.data.event_control == 'catalogs') {
+    } else if (evt.data.event_control === ApplicationToolbarControl.Catalogs) {
       this.filteredCatalogNames = evt.data.catalogs.map((catalog: Option) => catalog.value);
 
       this.filterApps();
@@ -238,7 +239,7 @@ export class CatalogComponent implements OnInit {
     this.appService.getKubernetesConfig().pipe(untilDestroyed(this)).subscribe((config) => {
       if (!config.pool) {
         this.selectPool();
-        this.updateTab.emit({ name: ApplicationUserEventName.SwitchTab, value: 1 });
+        this.updateTab.emit({ name: ApplicationUserEventName.SwitchTab, value: ApplicationTab.AvailableApps });
       } else {
         this.selectedPool = config.pool;
       }
@@ -318,7 +319,7 @@ export class CatalogComponent implements OnInit {
     });
   }
 
-  doPoolSelect(entityDialog: EntityDialogComponent<this>): void {
+  doPoolSelect(entityDialog: EntityDialogComponent): void {
     const pool = entityDialog.formGroup.controls['pools'].value;
     const migrateApplications = entityDialog.formGroup.controls['migrateApplications'].value;
     this.dialogService.closeAllDialogs();
@@ -366,19 +367,23 @@ export class CatalogComponent implements OnInit {
   }
 
   filterApps(): void {
-    if (this.filterString) {
-      this.filteredCatalogApps = this.catalogApps.filter((app) => {
-        return app.name.toLowerCase().includes(this.filterString.toLocaleLowerCase());
-      });
-    } else {
-      this.filteredCatalogApps = this.catalogApps;
-    }
+    this.filteredCatalogApps = this.catalogApps.filter((app) => {
+      if (this.filterString && !app.name.toLowerCase().includes(this.filterString.toLocaleLowerCase())) {
+        return false;
+      }
 
-    this.filteredCatalogApps = this.filteredCatalogApps.filter(
-      (app) => this.filteredCatalogNames.includes(app.catalog.label) && app.name !== ixChartApp,
-    );
+      /**
+       * Below is a special check to remove 'ix-chart' from the list of apps shown. 'ix-chart' is the same thing
+       * as the button 'Launch Docker Image' in UI. Middleware advised UI to hide this option
+       */
+      if (app.name === ixChartApp) {
+        return false;
+      }
 
-    if (this.filteredCatalogApps.length == 0) {
+      return this.filteredCatalogNames.includes(app.catalog.label);
+    });
+
+    if (this.filteredCatalogApps.length === 0) {
       if (this.filterString) {
         this.showLoadStatus(EmptyType.NoSearchResults);
       } else {
@@ -418,5 +423,9 @@ export class CatalogComponent implements OnInit {
       this.dialogService.closeAllDialogs();
       this.loadCatalogs();
     });
+  }
+
+  trackByApp(_: number, app: CatalogApp): string {
+    return `${app.name} - ${app.catalog.id}`;
   }
 }

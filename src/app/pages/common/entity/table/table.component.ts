@@ -29,6 +29,7 @@ export interface AppTableColumn {
   prop1?: string;
   prop2?: string;
   checkbox?: boolean;
+  slideToggle?: boolean;
   onChange?(data: any): void;
   width?: string;
   state?: any;
@@ -80,7 +81,7 @@ export interface AppTableConfig<P = any> {
   confirmDeleteDialog?: AppTableConfirmDeleteDialog;
 
   add?(): void; // add action function
-  afterGetData?(data: any): void;
+  afterGetData?(data: unknown): void;
   afterDelete?(): void;
   edit?(any: any): void; // edit row
   delete?(item: any, table: TableComponent): void; // customize delete row method
@@ -327,6 +328,10 @@ export class TableComponent implements OnInit, AfterViewInit, AfterViewChecked {
 
     if (column.checkbox) {
       return 'checkbox';
+    }
+
+    if (column.slideToggle) {
+      return 'slide-toggle';
     }
 
     if (column.state && column.state.prop && this._tableConf.getInOutInfo) {

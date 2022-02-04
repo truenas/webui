@@ -23,7 +23,7 @@ export default {
  created connection in <b>System > SSH Connections</b>.</li> \
  <li><i>SSH+NETCAT</i> uses SSH to establish a connection to the \
  destination system, then uses \
- <a href="https://github.com/freenas/py-libzfs" \
+ <a href="https://github.com/truenas/py-libzfs" \
  target="_blank">py-libzfs</a> to send an unencrypted data stream for \
  higher transfer speeds. This only works when replicating to a FreeNAS, \
  TrueNAS, or other system with <i>py-libzfs</i> installed.</li> \
@@ -41,7 +41,7 @@ export default {
   naming_schema_placeholder: T('Matching naming schema'),
   naming_schema_tooltip: T('Pattern of naming custom snapshots to be \
  replicated. Enter the name and \
- <a href="https://www.freebsd.org/cgi/man.cgi?query=strftime" target="_blank">strftime(3)</a> \
+ <a href="https://man7.org/linux/man-pages/man3/strftime.3.html" target="_blank">strftime(3)</a> \
  <i>&percnt;Y</i>, <i>&percnt;m</i>, <i>&percnt;d</i>, <i>&percnt;H</i>, and <i>&percnt;M</i> strings that \
  match the snapshots to include in the replication. Separate entries by \
  pressing <code>Enter</code>. The number of snapshots matching the \
@@ -140,7 +140,7 @@ to determine snapshots creation order.'),
   also_include_naming_schema_tooltip: T('Pattern of naming custom \
  snapshots to include in the replication with the periodic snapshot \
  schedule. Enter the \
- <a href="https://www.freebsd.org/cgi/man.cgi?query=strftime" \
+ <a href="https://man7.org/linux/man-pages/man3/strftime.3.html" \
  target="_blank">strftime(3)</a> strings that match the snapshots to \
  include in the replication.<br><br> \
  When a periodic snapshot is not linked to the replication, enter the \
@@ -264,14 +264,14 @@ to determine snapshots creation order.'),
   large_block_tooltip: T('Allow this replication to send large data blocks. The \
  destination system must also support large blocks. This setting cannot be changed \
  after it has been enabled and the replication task is created. For more details, see \
- <a href="https://www.freebsd.org/cgi/man.cgi?query=zfs" \
+ <a href="https://linux.die.net/man/8/zfs" \
  target="_blank">zfs(8)</a>.'),
 
   compressed_placeholder: T('Allow Compressed WRITE Records'),
   compressed_tooltip: T('Use compressed WRITE records to make the \
  stream more efficient. The destination system must also support \
  compressed WRITE records. See \
- <a href="https://www.freebsd.org/cgi/man.cgi?query=zfs" \
+ <a href="https://linux.die.net/man/8/zfs" \
  target="_blank">zfs(8)</a>.'),
 
   retries_placeholder: T('Number of retries for failed replications'),

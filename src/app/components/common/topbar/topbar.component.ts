@@ -13,6 +13,7 @@ import { JobsManagerComponent } from 'app/components/common/dialog/jobs-manager/
 import { JobsManagerStore } from 'app/components/common/dialog/jobs-manager/jobs-manager.store';
 import { ViewControllerComponent } from 'app/core/components/view-controller/view-controller.component';
 import { LayoutService } from 'app/core/services/layout.service';
+import { PreferencesService } from 'app/core/services/preferences.service';
 import { AlertLevel } from 'app/enums/alert-level.enum';
 import { DirectoryServiceState } from 'app/enums/directory-service-state.enum';
 import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
@@ -26,11 +27,8 @@ import { CoreEvent } from 'app/interfaces/events';
 import { HaStatus, HaStatusEvent } from 'app/interfaces/events/ha-status-event.interface';
 import { NetworkInterfacesChangedEvent } from 'app/interfaces/events/network-interfaces-changed-event.interface';
 import { ResilveringEvent } from 'app/interfaces/events/resilvering-event.interface';
+import { SidenavStatusData } from 'app/interfaces/events/sidenav-status-event.interface';
 import { SysInfoEvent } from 'app/interfaces/events/sys-info-event.interface';
-import {
-  UserPreferencesEvent,
-  UserPreferencesReadyEvent,
-} from 'app/interfaces/events/user-preferences-event.interface';
 import { ResilverData } from 'app/interfaces/resilver-job.interface';
 import { Interval } from 'app/interfaces/timeout.interface';
 import { TrueCommandConfig } from 'app/interfaces/true-command-config.interface';
@@ -85,7 +83,6 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
   pendingUpgradeChecked = false;
   sysName = 'TrueNAS CORE';
   hostname: string;
-  showWelcome: boolean;
   checkin_remaining: number;
   checkin_interval: Interval;
   updateIsRunning = false;
@@ -123,13 +120,14 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
     private mediaObserver: MediaObserver,
     private layoutService: LayoutService,
     private jobsManagerStore: JobsManagerStore,
+    private prefService: PreferencesService,
   ) {
     super();
     this.sysGenService.updateRunningNoticeSent.pipe(untilDestroyed(this)).subscribe(() => {
       this.updateNotificationSent = true;
     });
 
-    mediaObserver.media$.pipe(untilDestroyed(this)).subscribe((evt) => {
+    this.mediaObserver.media$.pipe(untilDestroyed(this)).subscribe((evt) => {
       this.screenSize = evt.mqAlias;
     });
   }
@@ -257,11 +255,11 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
 
     this.core.emit({ name: 'SysInfoRequest', sender: this });
 
-    this.core.register({ observerClass: this, eventName: 'UserPreferences' }).pipe(untilDestroyed(this)).subscribe((evt: UserPreferencesEvent) => {
-      this.preferencesHandler(evt);
+    this.core.register({ observerClass: this, eventName: 'UserPreferences' }).pipe(untilDestroyed(this)).subscribe(() => {
+      this.preferencesHandler();
     });
-    this.core.register({ observerClass: this, eventName: 'UserPreferencesReady' }).pipe(untilDestroyed(this)).subscribe((evt: UserPreferencesReadyEvent) => {
-      this.preferencesHandler(evt);
+    this.core.register({ observerClass: this, eventName: 'UserPreferencesReady' }).pipe(untilDestroyed(this)).subscribe(() => {
+      this.preferencesHandler();
     });
     this.core.emit({ name: 'UserPreferencesRequest', sender: this });
 
@@ -270,14 +268,10 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
     });
   }
 
-  preferencesHandler(evt: UserPreferencesEvent | UserPreferencesReadyEvent): void {
+  preferencesHandler(): void {
     if (this.isWaiting) {
       this.target.next({ name: 'SubmitComplete', sender: this });
       this.isWaiting = false;
-    }
-    this.showWelcome = evt.data.showWelcomeDialog && !(localStorage.getItem('turnOffWelcomeDialog') as unknown as boolean);
-    if (this.showWelcome) {
-      this.onShowAbout();
     }
   }
 
@@ -303,13 +297,20 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
       this.layoutService.isMenuCollapsed = !this.layoutService.isMenuCollapsed;
     }
 
+    const data: SidenavStatusData = {
+      isOpen: this.sidenav.opened,
+      mode: this.sidenav.mode,
+      isCollapsed: this.layoutService.isMenuCollapsed,
+    };
+
+    if (!this.layoutService.isMobile) {
+      this.prefService.preferences.sidenavStatus = data;
+      this.prefService.savePreferences();
+    }
+
     this.core.emit({
       name: 'SidenavStatus',
-      data: {
-        isOpen: this.sidenav.opened,
-        mode: this.sidenav.mode,
-        isCollapsed: this.layoutService.isMenuCollapsed,
-      },
+      data,
       sender: this,
     });
   }
@@ -318,7 +319,6 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
     this.dialog.open(AboutDialogComponent, {
       maxWidth: '600px',
       data: {
-        extraMsg: this.showWelcome,
         systemType: this.systemType,
       },
       disableClose: true,
@@ -646,7 +646,6 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
           },
         },
       ],
-      parent: this,
       customSubmit: (entityDialog: EntityDialogComponent) => {
         entityDialog.dialogRef.close();
         this.updateTrueCommand();
@@ -714,7 +713,6 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
         return !(actionId === 'deregister' && !this.tcConnected);
       },
       saveButtonText: this.tcConnected ? helptext.updateDialog.save_btn : helptext.updateDialog.connect_btn,
-      parent: this,
       afterInit: (entityDialog: EntityDialogComponent) => {
         updateDialog = entityDialog;
         // load settings
@@ -829,7 +827,6 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
       ],
       saveButtonText: this.translate.instant('Save'),
       custActions: [],
-      parent: this,
       customSubmit: (entityDialog: EntityDialogComponent) => {
         this.loader.open();
         const pwChange = entityDialog.formValue;

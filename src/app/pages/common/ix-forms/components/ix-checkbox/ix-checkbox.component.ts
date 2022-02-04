@@ -52,6 +52,7 @@ export class IxCheckboxComponent implements ControlValueAccessor {
   }
 
   onCheckboxChanged(event: MatCheckboxChange): void {
+    this.value = event.checked;
     this.onChange(event.checked);
   }
 }

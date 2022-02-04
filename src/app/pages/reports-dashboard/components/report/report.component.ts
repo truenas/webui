@@ -65,6 +65,7 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
   @Input() identifier?: string;
   // TODO: Make boolean
   @Input() retroLogo?: string | number;
+  @Input() isReversed?: boolean;
   @ViewChild(LineChartComponent, { static: false }) lineChart: LineChartComponent;
 
   data: ReportingData;
@@ -86,8 +87,6 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
   legendData: any = {};
   subtitle: string = this.translate.instant('% of all cores');
   altTitle = '';
-  altSubtitle = '';
-  widgetColorCssVar = 'var(--primary)';
   isActive = true;
 
   currentStartDate: number;// as seconds from Unix Epoch
@@ -274,7 +273,7 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
     let durationUnit: keyof Duration;
     let value: number;
 
-    const now = await this.reportsService.getServerTime();
+    const now = await this.reportsService.getServerTime().pipe(untilDestroyed(this)).toPromise();
 
     let startDate: Date;
     let endDate: Date;

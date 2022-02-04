@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { FormGroup, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, NavigationExtras, Router } from '@angular/router';
 import { TreeNode } from '@circlon/angular-tree-component';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
@@ -20,6 +20,7 @@ import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { ListdirChild } from 'app/interfaces/listdir-child.interface';
 import { QueryParams } from 'app/interfaces/query-api.interface';
 import { Schedule } from 'app/interfaces/schedule.interface';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
 import {
@@ -33,6 +34,7 @@ import { RelationAction } from 'app/pages/common/entity/entity-form/models/relat
 import { RelationConnection } from 'app/pages/common/entity/entity-form/models/relation-connection.enum';
 import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
 import { EntityUtils, NULL_VALUE } from 'app/pages/common/entity/utils';
+import { CloudCredentialsFormComponent } from 'app/pages/credentials/backup-credentials/forms/cloud-credentials-form.component';
 import {
   AppLoaderService, CloudCredentialService, DialogService, JobService, WebSocketService,
 } from 'app/services';
@@ -139,7 +141,7 @@ export class CloudsyncFormComponent implements FormConfiguration {
           placeholder: helptext.credentials_placeholder,
           tooltip: helptext.credentials_tooltip,
           options: [{
-            label: '----------', value: null,
+            label: helptext.credentials_add_option, value: '',
           }],
           value: null,
           required: true,
@@ -577,15 +579,19 @@ export class CloudsyncFormComponent implements FormConfiguration {
     if (data.direction === Direction.Pull) {
       data.path_destination = data.path;
 
-      if (data.attributes.include) {
+      if (data.attributes.include?.length) {
         data.attributes.folder_source = data.attributes.include.map((p: string) => {
           return data.attributes.folder + '/' + p.split('/')[1];
         });
+      } else {
+        data.attributes.folder_source = data.attributes.folder;
       }
     } else {
       data.attributes.folder_destination = data.attributes.folder;
-      if (data.include) {
+      if (data.include?.length) {
         data.path_source = data.include.map((p: string) => data.path + '/' + p.split('/')[1]);
+      } else {
+        data.path_source = data.path;
       }
     }
 
@@ -718,7 +724,46 @@ export class CloudsyncFormComponent implements FormConfiguration {
 
     this.folderDestinationField = this.fieldSets.config('folder_destination') as FormExplorerConfig;
     this.folderSourceField = this.fieldSets.config('folder_source') as FormExplorerConfig;
-    this.formGroup.controls['credentials'].valueChanges.pipe(untilDestroyed(this)).subscribe((res: number | typeof NULL_VALUE) => {
+    this.formGroup.controls['credentials'].valueChanges.pipe(untilDestroyed(this)).subscribe((res: number | typeof NULL_VALUE | '') => {
+      if (res === '') {
+        const dialogRef = this.matDialog.open(CloudCredentialsFormComponent, {
+          width: '600px',
+          panelClass: 'overflow-dialog',
+        });
+        dialogRef.componentInstance.finishSubmit = (value) => {
+          dialogRef.componentInstance.prepareAttributes(value);
+          dialogRef.componentInstance.entityForm.submitFunction(value).pipe(untilDestroyed(this)).subscribe(
+            () => {
+              dialogRef.close();
+              this.cloudcredentialService.getCloudsyncCredentials().then((credentials) => {
+                const newCredential = credentials.find((item) => !this.credentials.find((e) => e.id === item.id));
+                if (newCredential) {
+                  this.credentialsField.options.push({ label: newCredential.name + ' (' + newCredential.provider + ')', value: newCredential.id });
+                  this.credentials.push(newCredential);
+                  this.formGroup.controls['credentials'].setValue(newCredential.id);
+                } else {
+                  this.formGroup.controls['credentials'].setValue(null);
+                }
+              });
+            },
+            (err: WebsocketError) => {
+              dialogRef.close();
+              if (err.hasOwnProperty('reason') && (err.hasOwnProperty('trace'))) {
+                new EntityUtils().handleWsError(this, err, this.dialog);
+              } else {
+                new EntityUtils().handleError(this, err);
+              }
+              this.formGroup.controls['credentials'].setValue(null);
+            },
+          );
+        };
+        dialogRef.afterClosed().pipe(untilDestroyed(this)).subscribe(() => {
+          if (!this.formGroup.controls['credentials'].value) {
+            this.formGroup.controls['credentials'].setValue(null);
+          }
+        });
+        return;
+      }
       this.setDisabled('bucket', true, true);
       this.setDisabled('bucket_input', true, true);
       // reset folder tree view
@@ -803,7 +848,9 @@ export class CloudsyncFormComponent implements FormConfiguration {
                   hideCheckBox: true,
                   buttonMsg: this.translate.instant('Fix Credential'),
                 }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
-                  this.router.navigate(['/', 'system', 'cloudcredentials', 'edit', String(item.id)]);
+                  this.modalService.closeSlideIn();
+                  const navigationExtras: NavigationExtras = { state: { editCredential: 'cloudcredentials', id: item.id } };
+                  this.router.navigate(['/', 'credentials', 'backup-credentials'], navigationExtras);
                 });
               });
             } else {
@@ -962,20 +1009,44 @@ export class CloudsyncFormComponent implements FormConfiguration {
     const attributes: any = {};
     const schedule: Schedule = {};
 
-    value.path = value.direction === Direction.Pull ? value.path_destination : value.path_source;
-
-    if (Array.isArray(value.path)) {
-      value.include = [];
-      for (const dir of value.path) {
-        const directory = dir.split('/');
-        value.include.push('/' + directory[directory.length - 1] + '/**');
+    if (value.direction === Direction.Pull) {
+      value.path = value.path_destination;
+      attributes.folder = value.folder_source;
+      if (Array.isArray(attributes.folder) && attributes.folder.length) {
+        if (attributes.folder.length === 1) {
+          attributes.folder = attributes.folder[0];
+        } else {
+          value.include = [];
+          for (const dir of attributes.folder) {
+            const directory = dir.split('/');
+            value.include.push('/' + directory[directory.length - 1] + '/**');
+          }
+          const directory = attributes.folder[0].split('/');
+          attributes.folder = directory.slice(0, directory.length - 1).join('/');
+        }
       }
-      const directory = value.path[0].split('/');
-      value.path = directory.slice(0, directory.length - 1).join('/');
+    } else {
+      value.path = value.path_source;
+      if (Array.isArray(value.path) && value.path.length) {
+        if (value.path.length === 1) {
+          value.path = value.path[0];
+        } else {
+          value.include = [];
+          for (const dir of value.path) {
+            const directory = dir.split('/');
+            value.include.push('/' + directory[directory.length - 1] + '/**');
+          }
+          const directory = value.path[0].split('/');
+          value.path = directory.slice(0, directory.length - 1).join('/');
+        }
+      }
+      attributes.folder = value.folder_destination;
     }
 
     delete value.path_source;
     delete value.path_destination;
+    delete value.folder_source;
+    delete value.folder_destination;
 
     value['credentials'] = parseInt(value.credentials, 10);
 
@@ -986,19 +1057,6 @@ export class CloudsyncFormComponent implements FormConfiguration {
     if (value.bucket_input != undefined) {
       attributes['bucket'] = value.bucket_input;
       delete value.bucket_input;
-    }
-    attributes['folder'] = value.direction === Direction.Pull ? value.folder_source : value.folder_destination;
-    delete value.folder_source;
-    delete value.folder_destination;
-
-    if (Array.isArray(attributes['folder'])) {
-      attributes.include = [];
-      for (const dir of attributes.folder) {
-        const directory = dir.split('/');
-        attributes.include.push('/' + directory[directory.length - 1] + '/**');
-      }
-      const directory = attributes.folder[0].split('/');
-      attributes.folder = directory.slice(0, directory.length - 1).join('/');
     }
 
     if (value.task_encryption != undefined) {

@@ -20,6 +20,7 @@ import { Device } from 'app/interfaces/device.interface';
 import { CoreEvent } from 'app/interfaces/events';
 import { GlobalActionConfig } from 'app/interfaces/global-action.interface';
 import { InitShutdownScript } from 'app/interfaces/init-shutdown-script.interface';
+import { ReplicationConfig } from 'app/interfaces/replication-config.interface';
 import { Tunable } from 'app/interfaces/tunable.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EmptyType } from 'app/pages/common/entity/entity-empty/entity-empty.component';
@@ -31,6 +32,7 @@ import { EntityUtils } from 'app/pages/common/entity/utils';
 import { CronFormComponent } from 'app/pages/system/advanced/cron/cron-form/cron-form.component';
 import { CronjobRow } from 'app/pages/system/advanced/cron/cron-list/cronjob-row.interface';
 import { InitShutdownFormComponent } from 'app/pages/system/advanced/initshutdown/init-shutdown-form/init-shutdown-form.component';
+import { ReplicationFormComponent } from 'app/pages/system/advanced/replication-form/replication-form.component';
 import { SystemDatasetPoolComponent } from 'app/pages/system/advanced/system-dataset-pool/system-dataset-pool.component';
 import { DataCard } from 'app/pages/system/interfaces/data-card.interface';
 import {
@@ -54,6 +56,7 @@ enum AdvancedCardId {
   Console = 'console',
   Syslog = 'syslog',
   Kernel = 'kernel',
+  Replication = 'replication',
   Cron = 'cron',
   InitShutdown = 'initshutdown',
   Sysctl = 'sysctl',
@@ -70,6 +73,7 @@ enum AdvancedCardId {
 export class AdvancedSettingsComponent implements OnInit {
   dataCards: DataCard<AdvancedCardId>[] = [];
   configData: AdvancedConfig;
+  replicationConfig: ReplicationConfig;
   syslog: boolean;
   systemDatasetPool: string;
   entityForm: EntityFormComponent;
@@ -221,10 +225,8 @@ export class AdvancedSettingsComponent implements OnInit {
 
   ngOnInit(): void {
     this.getDatasetData();
-    this.getDataCardData();
     this.sysGeneralService.refreshSysGeneral$.pipe(untilDestroyed(this)).subscribe(() => {
       this.getDatasetData();
-      this.getDataCardData();
     });
 
     merge(
@@ -288,13 +290,18 @@ export class AdvancedSettingsComponent implements OnInit {
   }
 
   getDatasetData(): void {
-    this.ws.call('systemdataset.config').pipe(untilDestroyed(this)).subscribe((config) => {
-      if (!config) {
-        return;
-      }
+    this.ws.call('systemdataset.config').pipe(
+      tap((config) => {
+        if (config) {
+          this.syslog = config.syslog;
+          this.systemDatasetPool = config.pool;
+        }
+      }),
+      switchMap(() => this.ws.call('replication.config.config')),
+      untilDestroyed(this),
+    ).subscribe((replicationConfig) => {
+      this.replicationConfig = replicationConfig;
 
-      this.syslog = config.syslog;
-      this.systemDatasetPool = config.pool;
       this.modalService.refreshTable();
       this.getDataCardData();
     });
@@ -396,6 +403,16 @@ export class AdvancedSettingsComponent implements OnInit {
             },
           ],
         },
+        {
+          title: helptextSystemAdvanced.fieldset_replication,
+          id: AdvancedCardId.Replication,
+          items: [
+            {
+              label: helptextSystemAdvanced.max_parallel_replication_tasks_placeholder,
+              value: this.replicationConfig.max_parallel_replication_tasks || '-',
+            },
+          ],
+        },
       ];
 
       this.ws.call('device.get_info', [DeviceType.Gpu]).pipe(untilDestroyed(this)).subscribe((gpus) => {
@@ -424,6 +441,7 @@ export class AdvancedSettingsComponent implements OnInit {
   async onSettingsPressed(name: AdvancedCardId, id?: number): Promise<void> {
     let addComponent: Type<ConsoleFormComponent
     | KernelFormComponent
+    | ReplicationFormComponent
     | SyslogFormComponent
     | TunableFormComponent
     | CronFormComponent
@@ -437,6 +455,9 @@ export class AdvancedSettingsComponent implements OnInit {
         break;
       case AdvancedCardId.Kernel:
         addComponent = KernelFormComponent;
+        break;
+      case AdvancedCardId.Replication:
+        addComponent = ReplicationFormComponent;
         break;
       case AdvancedCardId.Syslog:
         addComponent = SyslogFormComponent;
@@ -468,6 +489,7 @@ export class AdvancedSettingsComponent implements OnInit {
     } else if (
       [
         AdvancedCardId.Console,
+        AdvancedCardId.Replication,
         AdvancedCardId.Syslog,
         AdvancedCardId.Gpus,
         AdvancedCardId.SystemDatasetPool,

@@ -2,7 +2,6 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/
 import { Validators } from '@angular/forms';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { chartsTrain } from 'app/constants/catalog.constants';
 import helptext from 'app/helptext/apps/apps';
 import { FormErrorHandlerService } from 'app/pages/common/ix-forms/services/form-error-handler.service';
 import { DialogService, WebSocketService } from 'app/services';
@@ -21,7 +20,7 @@ export class CatalogAddFormComponent {
     label: ['', Validators.required],
     force: [false],
     repository: ['', Validators.required],
-    preferred_trains: [[chartsTrain]],
+    preferred_trains: [['stable']],
     branch: ['main'],
   });
 

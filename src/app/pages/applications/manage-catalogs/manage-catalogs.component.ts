@@ -6,6 +6,7 @@ import { JobState } from 'app/enums/job-state.enum';
 import helptext from 'app/helptext/apps/apps';
 import { Catalog, CatalogQueryParams } from 'app/interfaces/catalog.interface';
 import { CoreEvent } from 'app/interfaces/events';
+import { ApplicationToolbarControl } from 'app/pages/applications/application-toolbar-control.enum';
 import { CatalogAddFormComponent } from 'app/pages/applications/forms/catalog-add-form/catalog-add-form.component';
 import { CatalogEditFormComponent } from 'app/pages/applications/forms/catalog-edit-form/catalog-edit-form.component';
 import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
@@ -163,12 +164,12 @@ export class ManageCatalogsComponent implements EntityTableConfig<Catalog>, OnIn
   }
 
   onToolbarAction(evt: CoreEvent): void {
-    if (evt.data.event_control == 'filter') {
+    if (evt.data.event_control === ApplicationToolbarControl.Filter) {
       this.filterString = evt.data.filter;
       this.entityList.filter(this.filterString);
-    } else if (evt.data.event_control == 'refresh_catalogs') {
+    } else if (evt.data.event_control === ApplicationToolbarControl.RefreshCatalogs) {
       this.syncAll();
-    } else if (evt.data.event_control == 'add_catalog') {
+    } else if (evt.data.event_control === ApplicationToolbarControl.AddCatalog) {
       this.doAdd();
     }
   }

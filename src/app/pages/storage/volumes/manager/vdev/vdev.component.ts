@@ -36,7 +36,7 @@ export class VdevComponent implements OnInit {
   diskSizeErrorMsg = helptext.vdev_diskSizeErrorMsg;
   vdev_type_tooltip = helptext.vdev_type_tooltip;
   vdev_disks_error: boolean;
-  vdev_disks_size_error: boolean;
+  showDiskSizeError: boolean;
   vdev_type_disabled = false;
   private ten_mib = 10 * 1024 * 1024;
   protected mindisks: any = {
@@ -132,7 +132,7 @@ export class VdevComponent implements OnInit {
     let smallestdisk = 0;
     let estimate = 0;
     const swapsize = this.manager.swapondrive * 1024 * 1024 * 1024;
-    this.vdev_disks_size_error = false;
+    this.showDiskSizeError = false;
     for (let i = 0; i < this.disks.length; i++) {
       const size = this.disks[i].real_capacity - swapsize;
       stripeSize += size;
@@ -141,8 +141,7 @@ export class VdevComponent implements OnInit {
         this.firstdisksize = size;
       }
       if (size > smallestdisk + this.ten_mib || size < smallestdisk - this.ten_mib) {
-        this.vdev_disks_size_error = true;
-        this.error = this.diskSizeErrorMsg;
+        this.showDiskSizeError = true;
       }
       if (this.disks[i].real_capacity < smallestdisk) {
         smallestdisk = size;
@@ -180,7 +179,7 @@ export class VdevComponent implements OnInit {
     this.size = filesize(estimate, { standard: 'iec' });
   }
 
-  onSelect({ selected }: any): void {
+  onSelect({ selected }: { selected: ManagerDisk[] }): void {
     this.selected.splice(0, this.selected.length);
     this.selected.push(...selected);
   }

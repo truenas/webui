@@ -55,7 +55,7 @@ export class DynamicListComponent implements OnInit {
     }
   }
 
-  remove(item: any): void {
+  remove(item: unknown): void {
     this.listControl.value.delete(item);
   }
 

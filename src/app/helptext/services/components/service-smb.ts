@@ -96,7 +96,7 @@ export default {
 
   cifs_srv_ntlmv1_auth_placeholder: T('NTLMv1 Auth'),
   cifs_srv_ntlmv1_auth_tooltip: T('Off by default. When set,\
- <a href="https://www.freebsd.org/cgi/man.cgi?query=smbd" target="_blank">smbd(8)</a>\
+ <a href="https://www.samba.org/samba/docs/current/man-html/smbd.8.html" target="_blank">smbd(8)</a>\
  attempts to authenticate users with the insecure\
  and vulnerable NTLMv1 encryption. This setting allows\
  backward compatibility with older versions of Windows,\

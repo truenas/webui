@@ -18,7 +18,7 @@ export default {
 
   bsdgrp_sudo_placeholder: T('Permit Sudo'),
   bsdgrp_sudo_tooltip: T('Allow group members to use <a\
- href="https://www.freebsd.org/cgi/man.cgi?query=sudo&manpath=FreeBSD+11.1-RELEASE+and+Ports"\
+ href="https://man7.org/linux/man-pages/man8/sudo.8.html"\
  target="_blank">sudo</a>. Group members are prompted\
  for their password when using <b>sudo</b>.'),
 

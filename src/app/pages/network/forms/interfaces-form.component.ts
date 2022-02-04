@@ -4,7 +4,6 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as ipRegex from 'ip-regex';
-import isCidr from 'is-cidr';
 import * as _ from 'lodash';
 import { ViewControllerComponent } from 'app/core/components/view-controller/view-controller.component';
 import {
@@ -14,9 +13,10 @@ import { ProductType } from 'app/enums/product-type.enum';
 import helptext from 'app/helptext/network/interfaces/interfaces-form';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { NetworkInterface, NetworkInterfaceAlias } from 'app/interfaces/network-interface.interface';
+import { Option } from 'app/interfaces/option.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
 import {
-  FieldConfig, FormListConfig, FormSelectConfig, FormInputConfig,
+  FieldConfig, FormListConfig, FormSelectConfig, FormInputConfig, FormChipConfig,
 } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { ipv4or6cidrValidator, ipv4or6Validator } from 'app/pages/common/entity/entity-form/validators/ip-validation';
@@ -39,6 +39,7 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
   saveSubmitText = helptext.int_save_button;
   protected warnedAboutOffloading = false;
   protected isOneColumnForm = true;
+  private lagPortsOption: Option[] = [];
 
   fieldConfig: FieldConfig[] = [];
   fieldSets: FieldSet[] = [
@@ -137,16 +138,19 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
           disabled: true,
         },
         {
-          type: 'select',
+          type: 'chip',
           name: 'lag_ports',
           placeholder: helptext.lagg_interfaces_placeholder,
           tooltip: helptext.lagg_interfaces_tooltip,
-          options: [],
-          multiple: true,
           required: true,
           isHidden: true,
           disabled: true,
           validation: helptext.lagg_interfaces_validation,
+          autocomplete: true,
+          selectOnly: true,
+          searchOptions: [],
+          parent: this,
+          updater: (value: string, values?: string[]) => this.updateSearchOptions(value, values),
         },
       ],
       colspan: 2,
@@ -304,7 +308,7 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
   private bridgeFieldset: FieldSet;
   private failoverFieldset: FieldSet;
   private vlanParentInterfaceField: FormSelectConfig | FormInputConfig;
-  private lagPortsField: FormSelectConfig;
+  private lagPortsField: FormChipConfig;
   private lagProtocolField: FormSelectConfig;
   private bridgeMembersField: FormSelectConfig;
   private type: FieldConfig;
@@ -349,6 +353,7 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
       this.entityForm.setDisabled(field, !isLagg, !isLagg);
     });
     const lagProtocol = this.entityForm.formGroup.get('lag_protocol')?.value;
+    this.lagPortsField.tooltip = helptext.lagg_interfaces_tooltip;
     if (lagProtocol) {
       if (lagProtocol === LinkAggregationProtocol.Lacp) {
         this.entityForm.setDisabled('xmit_hash_policy', !isLagg, !isLagg);
@@ -359,6 +364,9 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
       } else {
         this.entityForm.setDisabled('lacpdu_rate', true, true);
         this.entityForm.setDisabled('xmit_hash_policy', true, true);
+      }
+      if (lagProtocol === LinkAggregationProtocol.Failover) {
+        this.lagPortsField.tooltip = helptext.lagg_interfaces_tooltip + ' ' + helptext.lagg_interfaces_failover_tooltip;
       }
     } else {
       this.entityForm.setDisabled('lacpdu_rate', true, true);
@@ -413,7 +421,7 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
     }
 
     this.bridgeMembersField = _.find(this.fieldConfig, { name: 'bridge_members' }) as FormSelectConfig;
-    this.lagPortsField = _.find(this.fieldConfig, { name: 'lag_ports' }) as FormSelectConfig;
+    this.lagPortsField = _.find(this.fieldConfig, { name: 'lag_ports' }) as FormChipConfig;
     this.lagProtocolField = _.find(this.fieldConfig, { name: 'lag_protocol' }) as FormSelectConfig;
     this.type = _.find(this.fieldConfig, { name: 'type' });
     this.ipListControl = _.find(this.fieldConfig, { name: 'aliases' }) as FormListConfig;
@@ -480,7 +488,6 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
         });
         if (isHa) {
           this.entityForm.formGroup.controls['aliases'].valueChanges.pipe(untilDestroyed(this)).subscribe((res: any[]) => {
-            let v6Found = false;
             let mismatchFound = false;
             res.forEach((alias) => {
               const address = alias['address'];
@@ -492,17 +499,8 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
               ) {
                 mismatchFound = true;
               }
-              if (isCidr.v6(address)
-                  || isCidr.v6(failoverAddress)
-                  || isCidr.v6(virtualAddress)) {
-                v6Found = true;
-              }
             });
-            if (v6Found) {
-              this.aliasesField.hasErrors = true;
-              this.aliasesField.errors = helptext.failover_alias_v6_error;
-              this.saveButtonEnabled = false;
-            } else if (mismatchFound) {
+            if (mismatchFound) {
               this.aliasesField.hasErrors = true;
               this.aliasesField.errors = helptext.failover_alias_set_error;
               this.saveButtonEnabled = false;
@@ -532,8 +530,9 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
 
       this.networkService.getLaggPortsChoices().pipe(untilDestroyed(this)).subscribe((choices) => {
         for (const key in choices) {
-          this.lagPortsField.options.push({ label: choices[key], value: key });
+          this.lagPortsOption.push({ label: choices[key], value: key });
         }
+        this.lagPortsField.searchOptions = this.lagPortsOption;
       });
       this.networkService.getLaggProtocolChoices().pipe(untilDestroyed(this)).subscribe((res) => {
         res.forEach((protocol) => {
@@ -561,6 +560,25 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
         this.entityForm.setDisabled('lacpdu_rate', true, true);
         this.entityForm.setDisabled('xmit_hash_policy', true, true);
       }
+      if (value === LinkAggregationProtocol.Failover) {
+        this.lagPortsField.tooltip = helptext.lagg_interfaces_failover_tooltip;
+      } else {
+        this.lagPortsField.tooltip = helptext.lagg_interfaces_tooltip;
+      }
+    });
+  }
+
+  updateSearchOptions(value = '', values?: string[]): void {
+    this.lagPortsField.searchOptions = this.lagPortsOption.filter((option) => {
+      /** Not display the options already selected (for selectOnly) */
+      if (values && values.includes(option.value as string)) {
+        return false;
+      }
+      /** Not display the options no match with the search */
+      if (value && !(option.value as string).toLowerCase().includes(value.toLowerCase())) {
+        return false;
+      }
+      return true;
     });
   }
 
@@ -572,8 +590,7 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
     const failoverAliases: { address: string }[] = [];
     const failoverVirtualAliases: { address: string }[] = [];
     data.aliases.forEach((alias: any) => {
-      if (!alias['delete']
-        && !!alias['address']) {
+      if (!alias['delete'] && !!alias['address']) {
         const strings = alias['address'].split('/');
         if (strings[0]) {
           aliases.push({
@@ -632,7 +649,7 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
     if (type === NetworkInterfaceType.LinkAggregation) {
       this.networkService.getLaggPortsChoices(id).pipe(untilDestroyed(this)).subscribe((choices) => {
         for (const key in choices) {
-          this.lagPortsField.options.push({ label: choices[key], value: key });
+          this.lagPortsOption.push({ label: choices[key], value: key });
         }
       });
 

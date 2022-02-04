@@ -256,7 +256,7 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
         this.globalSettingsWidget.data.ipv4 = summary.default_routes.filter((item) => ipRegex.v4().test(item));
         this.globalSettingsWidget.data.ipv6 = summary.default_routes.filter((item) => ipRegex.v6().test(item));
 
-        this.globalSettingsWidget.data.hostname = networkConfig.hostname;
+        this.globalSettingsWidget.data.hostname = networkConfig.hostname_local;
         this.globalSettingsWidget.data.domain = networkConfig.domain;
         this.globalSettingsWidget.data.netwait = networkConfig.netwait_enabled ? this.translate.instant('ENABLED') : this.translate.instant('DISABLED');
         const tempArr: string[] = [];
@@ -732,7 +732,7 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
     }];
   }
 
-  isOpenVpnActionVisible(name: string, row: any): boolean {
+  isOpenVpnActionVisible(name: string, row: Service): boolean {
     if (
       (name === 'start' && row.state === ServiceStatus.Running)
       || (name === 'stop' && row.state === ServiceStatus.Stopped)

@@ -65,7 +65,7 @@
           <span>{{'Upgrade' | translate}}</span>
         </button>
         <button name="roll-back" mat-menu-item (click)="rollback(item.name)"
-              [disabled]="!item.history"
+              [disabled]="!item.history || isEmpty(item.history)"
               ix-auto ix-auto-type="option" ix-auto-identifier="rollback">
           <mat-icon>replay</mat-icon>
           <span>{{'Roll Back' | translate}}</span>

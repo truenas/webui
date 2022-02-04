@@ -27,6 +27,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnDestroy
   @Input() isHA = false;
   @Input() isPassive = false;
   @Input() enclosureSupport = false;
+  @Input() showReorderHandle = false;
 
   title: string = this.translate.instant('System Info');
   data: SystemInfo;
@@ -86,6 +87,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnDestroy
       this.core.register({ observerClass: this, eventName: 'UpdateChecked' }).pipe(untilDestroyed(this)).subscribe((evt: UpdateCheckedEvent) => {
         if (evt.data.status == SystemUpdateStatus.Available) {
           this.updateAvailable = true;
+          sessionStorage.updateAvailable = 'true';
         }
       });
     });
@@ -104,7 +106,22 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnDestroy
         this.processSysInfo(systemInfo);
       });
 
-      this.core.emit({ name: 'UpdateCheck' });
+      /**
+       * limit the check to once a day
+       */
+      if (
+        sessionStorage.updateLastChecked
+        && Number(sessionStorage.updateLastChecked) + 24 * 60 * 60 * 1000 > Date.now()
+      ) {
+        if (sessionStorage.updateAvailable == 'true') {
+          this.updateAvailable = true;
+        }
+      } else {
+        sessionStorage.updateLastChecked = Date.now();
+        sessionStorage.updateAvailable = 'false';
+        this.core.emit({ name: 'UpdateCheck' });
+      }
+
       this.core.emit({ name: 'UserPreferencesRequest' });
       this.core.emit({ name: 'HAStatusRequest' });
     }

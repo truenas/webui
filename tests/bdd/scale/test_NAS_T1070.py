@@ -2,11 +2,10 @@
 """SCALE UI feature tests."""
 
 import time
-from function import(
+from function import (
     wait_on_element,
     is_element_present,
     attribute_value_exist,
-    wait_for_attribute_value,
     ssh_sudo,
     wait_on_element_disappear,
 )
@@ -61,16 +60,17 @@ def click_on_the_credentials_on_the_side_menu_click_on_local_users(driver):
 def click_the_down_caret_right_of_the_users(driver):
     """click the down caret right of the users, then click the Edit button."""
     assert wait_on_element(driver, 7, '//div[contains(.,"Users")]')
-    assert wait_on_element(driver, 10, '//tr[@ix-auto="expander__ericbsd"]/td', 'clickable')
-    driver.find_element_by_xpath('//tr[@ix-auto="expander__ericbsd"]/td').click()
-    assert wait_on_element(driver, 10, '//button[@ix-auto="button__EDIT_ericbsd"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__EDIT_ericbsd"]').click()
+    assert wait_on_element(driver, 10, '//tr[contains(.,"ericbsd")]//mat-icon', 'clickable')
+    driver.find_element_by_xpath('//tr[contains(.,"ericbsd")]//mat-icon').click()
+    assert wait_on_element(driver, 10, '(//tr[contains(.,"ericbsd")]/following-sibling::tr)[1]//button[contains(.,"Edit")]', 'clickable')
+    driver.find_element_by_xpath('(//tr[contains(.,"ericbsd")]/following-sibling::tr)[1]//button[contains(.,"Edit")]').click()
 
 
 @then('click Enable Permit Sudo checkbox and click save')
 def click_enable_permit_sudo_checkbox_and_click_save(driver):
     """click Enable Permit Sudo checkbox and click save."""
     assert wait_on_element(driver, 10, '//h3[contains(.,"Edit User")]')
+    assert wait_on_element_disappear(driver, 10, '//h6[contains(.,"Please wait")]')
     element = driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]')
     driver.execute_script("arguments[0].scrollIntoView();", element)
     time.sleep(5)
@@ -79,6 +79,7 @@ def click_enable_permit_sudo_checkbox_and_click_save(driver):
         driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__Permit Sudo"]').click()
     wait_on_element(driver, 10, '//button[@ix-auto="button__SAVE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
+
 
 @then('the changes should be saved')
 def the_changes_should_be_saved(driver):
@@ -95,24 +96,25 @@ def the_changes_should_be_saved(driver):
 def open_the_user_dropdown(driver):
     """open the user dropdown."""
     assert wait_on_element(driver, 7, '//div[contains(.,"Users")]', 'clickable')
-    assert wait_on_element(driver, 10, '//tr[@ix-auto="expander__ericbsd"]/td', 'clickable')
-    driver.find_element_by_xpath('//tr[@ix-auto="expander__ericbsd"]/td').click()
-    assert wait_on_element(driver, 7, '//button[@ix-auto="button__EDIT_ericbsd"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__EDIT_ericbsd"]').click()
+    assert wait_on_element(driver, 10, '//tr[contains(.,"ericbsd")]', 'clickable')
+    driver.find_element_by_xpath('//tr[contains(.,"ericbsd")]//mat-icon').click()
+    assert wait_on_element(driver, 10, '(//tr[contains(.,"ericbsd")]/following-sibling::tr)[1]//button[contains(.,"Edit")]', 'clickable')
+    driver.find_element_by_xpath('(//tr[contains(.,"ericbsd")]/following-sibling::tr)[1]//button[contains(.,"Edit")]').click()
+
 
 @then('updated value should be visible')
 def updated_value_should_be_visible(driver):
     """updated value should be visible."""
     assert wait_on_element(driver, 10, '//h3[contains(.,"Edit User")]')
+    assert wait_on_element_disappear(driver, 10, '//h6[contains(.,"Please wait")]')
     element = driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]')
     driver.execute_script("arguments[0].scrollIntoView();", element)
     time.sleep(0.5)
-    value_exist = attribute_value_exist(driver, '//mat-checkbox[@ix-auto="checkbox__Permit Sudo"]', 'class', 'mat-checkbox-checked')
+    assert attribute_value_exist(driver, '//mat-checkbox[@ix-auto="checkbox__Permit Sudo"]', 'class', 'mat-checkbox-checked')
     assert wait_on_element(driver, 10, '//*[@id="close-icon"]', 'clickable')
     driver.find_element_by_xpath('//*[@id="close-icon"]').click()
-    assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Dashboard"]', 'clickable')
-    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
-    time.sleep(1)
+    time.sleep(0.5)
+
 
 @then('open a shell and run su user to become that user')
 def open_a_shell_and_run_su_user_to_become_that_user(driver, nas_ip):

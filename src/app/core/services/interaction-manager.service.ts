@@ -149,26 +149,4 @@ export class InteractionManagerService {
     });
     return registration.layout;
   }
-
-  private startCollisionDetection(dragTarget: DisplayObject, targets: any[]): void {
-    dragTarget.updateStream$.pipe(untilDestroyed(this)).subscribe(() => {
-      targets.forEach((target) => {
-        const found = this.detectCollision(target, dragTarget);
-        if (found) {
-          const index = targets.indexOf(target);
-          console.info('item index is ' + index);
-        }
-      });
-    });
-  }
-
-  // Collision Detection Goes Here...
-  private detectCollision(a: any, b: DisplayObject): boolean {
-    return !(
-      ((a.y + a.height) < (b.y))
-          || (a.y > (b.y + b.height))
-          || ((a.x + a.width) < b.x)
-          || (a.x > (b.x + b.width))
-    );
-  }
 }

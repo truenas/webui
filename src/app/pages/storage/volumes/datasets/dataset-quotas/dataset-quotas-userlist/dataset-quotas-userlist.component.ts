@@ -81,7 +81,7 @@ export class DatasetQuotasUserlistComponent implements EntityTableConfig, OnDest
         const params = [['id', '=', row.id] as QueryFilter<DatasetQuota>] as QueryParams<DatasetQuota>;
         this.ws.call('pool.dataset.get_quota', [this.pk, DatasetQuotaType.User, params]).pipe(untilDestroyed(this)).subscribe((res) => {
           this.loader.close();
-          const conf: DialogFormConfiguration<this> = {
+          const conf: DialogFormConfiguration = {
             title: helptext.users.dialog.title,
             fieldConfig: [
               {

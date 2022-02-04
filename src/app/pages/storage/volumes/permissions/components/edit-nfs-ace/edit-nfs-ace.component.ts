@@ -53,7 +53,7 @@ export class EditNfsAceComponent implements FormConfiguration, OnChanges {
     private store: DatasetAclEditorStore,
     private relationService: FieldRelationService,
   ) {
-    this.fieldSets = getEditNfsAceFieldSet(userService);
+    this.fieldSets = (getEditNfsAceFieldSet.bind(this))(userService);
   }
 
   ngOnChanges(): void {

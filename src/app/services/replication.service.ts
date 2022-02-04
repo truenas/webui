@@ -8,11 +8,17 @@ import { ListdirChild } from 'app/interfaces/listdir-child.interface';
 import { PeriodicSnapshotTask } from 'app/interfaces/periodic-snapshot-task.interface';
 import { ReplicationTask } from 'app/interfaces/replication-task.interface';
 import { EntityUtils } from 'app/pages/common/entity/utils';
+import { ReplicationFormComponent } from 'app/pages/data-protection/replication/replication-form/replication-form.component';
+import { ReplicationWizardComponent } from 'app/pages/data-protection/replication/replication-wizard/replication-wizard.component';
+import { DialogService } from 'app/services/dialog.service';
 import { WebSocketService } from './ws.service';
 
 @Injectable()
 export class ReplicationService {
-  constructor(protected ws: WebSocketService) { }
+  constructor(
+    protected ws: WebSocketService,
+    private dialogService: DialogService,
+  ) { }
 
   getSnapshotTasks(): Observable<PeriodicSnapshotTask[]> {
     return this.ws.call('pool.snapshottask.query');
@@ -22,7 +28,11 @@ export class ReplicationService {
     return this.ws.call('keychaincredential.generate_ssh_key_pair').toPromise();
   }
 
-  getRemoteDataset(transport: TransportMode, sshCredentials: number, parentComponent: any): Promise<ListdirChild[]> {
+  getRemoteDataset(
+    transport: TransportMode,
+    sshCredentials: number,
+    parentComponent: ReplicationFormComponent | ReplicationWizardComponent,
+  ): Promise<ListdirChild[]> {
     const queryParams: [transport: TransportMode, credentials?: number] = [transport];
     if (transport !== TransportMode.Local) {
       queryParams.push(sshCredentials);
@@ -59,7 +69,7 @@ export class ReplicationService {
         return nodes;
       },
       (err) => {
-        new EntityUtils().handleWsError(parentComponent, err, parentComponent.dialogService);
+        new EntityUtils().handleWsError(parentComponent, err, this.dialogService);
         return reject(err);
       },
     );

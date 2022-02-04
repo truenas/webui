@@ -7,7 +7,11 @@ import * as _ from 'lodash';
 import { take } from 'rxjs/operators';
 import { KeychainCredentialType } from 'app/enums/keychain-credential-type.enum';
 import { helptextSystemCloudcredentials as helptext } from 'app/helptext/system/cloud-credentials';
-import { CloudsyncCredential } from 'app/interfaces/cloudsync-credential.interface';
+import {
+  CloudsyncCredential,
+  CloudsyncCredentialVerify,
+  CloudsyncOneDriveDrive,
+} from 'app/interfaces/cloudsync-credential.interface';
 import { CloudsyncProvider } from 'app/interfaces/cloudsync-provider.interface';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { OauthMessage } from 'app/interfaces/oauth-message.interface';
@@ -304,10 +308,10 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
           name: 'pass-FTP',
           placeholder: helptext.pass_ftp.placeholder,
           tooltip: helptext.pass_ftp.tooltip,
-          required: true,
           isHidden: true,
           inputType: 'password',
           togglePw: true,
+          value: '',
           relation: [
             {
               action: RelationAction.Show,
@@ -1230,7 +1234,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
 
   protected providers: CloudsyncProvider[];
   protected providerField: FormSelectConfig;
-  protected entityForm: EntityFormComponent;
+  entityForm: EntityFormComponent;
 
   custActions = [
     {
@@ -1240,26 +1244,16 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
       function: () => {
         this.entityForm.loader.open();
         this.entityForm.error = '';
-        const attributes: any = {};
         const value = _.cloneDeep(this.entityForm.formGroup.value);
         this.beforeSubmit(value);
-        let attrName: string;
-
         for (const item in value) {
           if (item != 'name' && item != 'provider') {
             if (!this.entityForm.formGroup.controls[item].valid) {
               this.entityForm.formGroup.controls[item].markAsTouched();
             }
-            if (item !== 'preview-GOOGLE_CLOUD_STORAGE' && item !== 'advanced-S3' && item !== 'drives-ONEDRIVE') {
-              attrName = item.split('-')[0];
-              if (value[item] != '' && value[item] != undefined) {
-                attributes[attrName] = value[item];
-              }
-            }
-            delete value[item];
           }
         }
-        value['attributes'] = attributes;
+        this.prepareAttributes(value);
 
         if (value.attributes.private_key && value.attributes.private_key === 'NEW') {
           this.makeNewKeyPair(value);
@@ -1273,7 +1267,6 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
       buttonType: 'submit',
       buttonColor: 'primary',
     },
-
   ];
 
   constructor(
@@ -1390,7 +1383,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
 
     const driveTypeCtrl = entityForm.formGroup.controls['drive_type-ONEDRIVE'];
     const driveIdCtrl = entityForm.formGroup.controls['drive_id-ONEDRIVE'];
-    entityForm.formGroup.controls['drives-ONEDRIVE'].valueChanges.pipe(untilDestroyed(this)).subscribe((res: any) => {
+    entityForm.formGroup.controls['drives-ONEDRIVE'].valueChanges.pipe(untilDestroyed(this)).subscribe((res: CloudsyncOneDriveDrive) => {
       if (res) {
         driveTypeCtrl.setValue(res.drive_type);
         driveIdCtrl.setValue(res.drive_id);
@@ -1432,7 +1425,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
     );
   }
 
-  verifyCredentials(value: any): void {
+  verifyCredentials(value: CloudsyncCredentialVerify & { name: string }): void {
     delete value['name'];
     this.ws.call('cloudsync.credentials.verify', [value]).pipe(untilDestroyed(this)).subscribe(
       (res) => {
@@ -1522,18 +1515,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
 
   finishSubmit(value: any): void {
     this.entityForm.loader.open();
-    const attributes: any = {};
-    let attrName: string;
-    for (const item in value) {
-      if (item != 'name' && item != 'provider') {
-        if (item != 'preview-GOOGLE_CLOUD_STORAGE' && item != 'advanced-S3' && item !== 'drives-ONEDRIVE' && value[item] != '') {
-          attrName = item.split('-')[0];
-          attributes[attrName] = attrName === 'auth_version' ? parseInt(value[item], 10) : value[item];
-        }
-        delete value[item];
-      }
-    }
-    value['attributes'] = attributes;
+    this.prepareAttributes(value);
 
     this.entityForm.submitFunction(value).pipe(untilDestroyed(this)).subscribe(
       () => {
@@ -1585,6 +1567,34 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
         entityForm.formGroup.controls[fieldName].setValue(entityForm.wsResponseIdx[i]);
       }
     }
+  }
+
+  /**
+   * Mutates input.
+   * TODO: Rewrite.
+   */
+  prepareAttributes(value: any): void {
+    const allowEmptyStrings = ['pass-FTP'];
+    const removedAttributes = [
+      'preview-GOOGLE_CLOUD_STORAGE',
+      'advanced-S3',
+      'drives-ONEDRIVE',
+    ];
+    const attributes: any = {};
+    let attrName: string;
+    for (const item in value) {
+      if (item === 'name' || item === 'provider') {
+        continue;
+      }
+
+      if ((!removedAttributes.includes(item) && value[item] != '') || allowEmptyStrings.includes(item)) {
+        attrName = item.split('-')[0];
+        attributes[attrName] = attrName === 'auth_version' ? parseInt(value[item], 10) : value[item];
+      }
+      delete value[item];
+    }
+
+    value['attributes'] = attributes;
   }
 
   getOnedriveList(data: any): void {

@@ -100,14 +100,13 @@ export class DeviceListComponent implements EntityTableConfig {
         const conf: DialogFormConfiguration = {
           title: this.translate.instant('Change Device Order'),
           message: this.translate.instant('Change order for <b>{vmDevice}</b>', { vmDevice: `${row1.dtype} ${row1.id}` }),
-          parent: this,
           fieldConfig: [{
             type: 'input',
             name: 'order',
           },
           ],
           saveButtonText: this.translate.instant('Save'),
-          preInit(entityDialog: EntityDialogComponent) {
+          preInit: (entityDialog: EntityDialogComponent) => {
             _.find(entityDialog.fieldConfig, { name: 'order' })['value'] = row1.order;
           },
           customSubmit: (entityDialog: EntityDialogComponent) => {
@@ -161,12 +160,12 @@ export class DeviceListComponent implements EntityTableConfig {
       this.loaderOpen = true;
       this.ws.call(this.wsDelete, [row.id]).pipe(untilDestroyed(this)).subscribe(
         () => {
+          this.loader.close();
           this.entityList.getData();
-          this.loader.close();
         },
-        (resinner) => {
-          new EntityUtils().handleError(this, resinner);
+        (err) => {
           this.loader.close();
+          new EntityUtils().handleWsError(this, err, this.dialogService);
         },
       );
     });

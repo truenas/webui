@@ -3,12 +3,16 @@ import { FormGroup, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
+import { FibreChannelPortMode } from 'app/enums/fibre-channel-port-mode.enum';
 import { helptextSharingIscsi } from 'app/helptext/sharing';
+import { FibreChannelPortUpdate } from 'app/interfaces/fibre-channel-port.interface';
 import { FieldConfig, FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { EntityFormService } from 'app/pages/common/entity/entity-form/services/entity-form.service';
 import { EntityUtils } from 'app/pages/common/entity/utils';
-import { WebSocketService, IscsiService } from 'app/services';
+import {
+  WebSocketService, IscsiService, AppLoaderService, DialogService,
+} from 'app/services';
 
 @UntilDestroy()
 @Component({
@@ -18,8 +22,7 @@ import { WebSocketService, IscsiService } from 'app/services';
   providers: [IscsiService],
 })
 export class FibreChannelPortComponent implements OnInit {
-  @Input() config: any;
-  @Input() parent: any;
+  @Input() config: Partial<FibreChannelPortUpdate> & { id: string; name: string };
 
   fieldSets: FieldSet[] = [
     {
@@ -36,15 +39,15 @@ export class FibreChannelPortComponent implements OnInit {
           options: [
             {
               label: 'Initiator',
-              value: 'INITIATOR',
+              value: FibreChannelPortMode.Initiator,
             },
             {
               label: 'Target',
-              value: 'TARGET',
+              value: FibreChannelPortMode.Target,
             },
             {
               label: 'Disabled',
-              value: 'DISABLED',
+              value: FibreChannelPortMode.Disabled,
             },
           ],
         },
@@ -84,6 +87,8 @@ export class FibreChannelPortComponent implements OnInit {
     private entityFormService: EntityFormService,
     private iscsiService: IscsiService,
     private translate: TranslateService,
+    private loader: AppLoaderService,
+    private dialogService: DialogService,
   ) {
     const targetField = _.find(this.fieldSets[1].config, { name: 'target' }) as FormSelectConfig;
     this.iscsiService.getTargets().pipe(untilDestroyed(this)).subscribe((targets) => {
@@ -95,7 +100,7 @@ export class FibreChannelPortComponent implements OnInit {
       });
     },
     (err) => {
-      new EntityUtils().handleWsError(this, err, this.parent.dialogService);
+      new EntityUtils().handleWsError(this, err, this.dialogService);
     });
   }
 
@@ -109,8 +114,8 @@ export class FibreChannelPortComponent implements OnInit {
 
     const targetField = _.find(this.fieldConfig, { name: 'target' });
     this.formGroup.controls['mode'].valueChanges.pipe(untilDestroyed(this)).subscribe((res) => {
-      targetField.required = res == 'TARGET';
-      if (res == 'TARGET') {
+      targetField.required = res == FibreChannelPortMode.Target;
+      if (res == FibreChannelPortMode.Target) {
         this.formGroup.controls['target'].setValidators([Validators.required]);
         this.formGroup.controls['target'].updateValueAndValidity();
       } else {
@@ -120,14 +125,14 @@ export class FibreChannelPortComponent implements OnInit {
     });
     for (const i in this.config) {
       if (this.formGroup.controls[i]) {
-        this.formGroup.controls[i].setValue(this.config[i]);
+        this.formGroup.controls[i].setValue(this.config[i as keyof FibreChannelPortUpdate]);
       }
     }
   }
 
   isShow(field: string): boolean {
     if (field === 'target' || field == 'initiators') {
-      return this.formGroup.controls['mode'].value == 'TARGET';
+      return this.formGroup.controls['mode'].value == FibreChannelPortMode.Target;
     }
     return true;
   }
@@ -136,18 +141,23 @@ export class FibreChannelPortComponent implements OnInit {
     const value = _.cloneDeep(this.formGroup.value);
     delete value['initiators'];
 
-    if (value['mode'] != 'TARGET') {
+    if (value['mode'] != FibreChannelPortMode.Target) {
       value['target'] = null;
     }
-    this.parent.loader.open();
+    this.loader.open();
     this.ws.call('fcport.update', [this.config.id, value]).pipe(untilDestroyed(this)).subscribe(
       () => {
-        this.parent.loader.close();
-        this.parent.dialogService.info(this.translate.instant('Updated'), this.translate.instant('Fibre Channel Port {name} update successful.', { name: this.config.name }), '500px', 'info');
+        this.loader.close();
+        this.dialogService.info(
+          this.translate.instant('Updated'),
+          this.translate.instant('Fibre Channel Port {name} update successful.', { name: this.config.name }),
+          '500px',
+          'info',
+        );
       },
       (err) => {
-        this.parent.loader.close();
-        this.parent.dialogService.errorReport(err.trace.class, err.reason, err.trace.formatted);
+        this.loader.close();
+        this.dialogService.errorReport(err.trace.class, err.reason, err.trace.formatted);
       },
     );
   }
