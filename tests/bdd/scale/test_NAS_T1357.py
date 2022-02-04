@@ -49,6 +49,33 @@ def on_the_dashboard_click_on_apps(driver):
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Apps"]').click()
 
 
+@then('Stop machinaris from running')
+def stop_chia_from_running(driver):
+    """Stop Chia from running."""
+    if is_element_present(driver, '//mat-ink-bar[@style="visibility: visible; left: 0px; width: 183px;"]') is False:
+        assert wait_on_element(driver, 10, '//div[contains(text(),"Installed Applications")]', 'clickable')
+        driver.find_element_by_xpath('//div[contains(text(),"Installed Applications")]').click()
+        assert wait_on_element(driver, 7, '//h3[contains(.,"No Applications Installed")]')
+    assert wait_on_element(driver, 20, '//mat-card[contains(.,"machinaris")]//span[contains(.,"Stop")]', 'clickable')
+    driver.find_element_by_xpath('//mat-card[contains(.,"machinaris")]//span[contains(.,"Stop")]').click()
+
+
+@then('Verify the application has stopped')
+def verify_the_application_has_stopped(driver):
+    """Verify the application has stopped."""
+    assert wait_on_element(driver, 5, '//h1[contains(.,"Stopping")]')
+    assert wait_on_element_disappear(driver, 60, '//h1[contains(.,"Stopping")]')
+    assert wait_on_element(driver, 15, '//mat-card[contains(.,"machinaris-test")]//span[contains(.,"STOPPED ")]')
+
+
+@then('open available applications')
+def open_available_applications(driver):
+    """open available applications."""
+    assert wait_on_element(driver, 10, '//div[contains(text(),"Available Applications")]', 'clickable')
+    driver.find_element_by_xpath('//div[contains(text(),"Available Applications")]').click()
+    assert wait_on_element(driver, 7, '//div[contains(.,"Available Applications")]')
+
+
 @then('when the Apps page loads, open Manager Docker Images')
 def when_the_apps_page_loads_open_manager_docker_images(driver):
     """when the Apps page loads, open Manager Docker Images."""
