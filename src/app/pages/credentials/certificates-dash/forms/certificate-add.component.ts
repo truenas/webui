@@ -103,15 +103,15 @@ export class CertificateAddComponent implements WizardConfiguration {
         {
           type: 'select',
           name: 'csrlist',
-          placeholder: helptextSystemCertificates.add.signedby.placeholder,
-          tooltip: helptextSystemCertificates.add.signedby.tooltip,
+          placeholder: helptextSystemCertificates.add.csrlist.placeholder,
+          tooltip: helptextSystemCertificates.add.csrlist.tooltip,
           options: [
             { label: '---', value: null },
           ],
           isHidden: true,
           disabled: true,
           required: true,
-          validation: helptextSystemCertificates.add.signedby.validation,
+          validation: helptextSystemCertificates.add.csrlist.validation,
           relation: [
             {
               action: RelationAction.Enable,
