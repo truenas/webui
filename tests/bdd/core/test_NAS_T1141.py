@@ -109,6 +109,7 @@ def on_the_cloud_sync_tasks_click_add(driver):
 @then('input a description and ensure PULL is selected as the Direction')
 def input_a_description_and_ensure_pull_is_selected_as_the_direction(driver):
     """input a description and ensure PULL is selected as the Direction."""
+    assert wait_on_element(driver, 7, '//mat-checkbox[@ix-auto="checkbox__Follow Symlinks"]', 'clickable')
     assert wait_on_element(driver, 5, '//input[@placeholder="Description"]', 'inputable')
     driver.find_element_by_xpath('//input[@placeholder="Description"]').clear()
     driver.find_element_by_xpath('//input[@placeholder="Description"]').send_keys('My Google Drive task')
@@ -209,6 +210,7 @@ def on_the_nas_cloud_sync_task_tab_click_edit(driver):
 @then('select PUSH as the Direction then under Transfer Mode, select COPY')
 def select_push_as_the_direction_then_under_transfer_mode_select_copy(driver):
     """select PUSH as the Direction then under Transfer Mode, select COPY."""
+    assert wait_on_element(driver, 7, '//mat-checkbox[@ix-auto="checkbox__Follow Symlinks"]', 'clickable')
     assert wait_on_element(driver, 5, '//mat-select[contains(.,"PULL")]')
     assert wait_on_element(driver, 5, '//mat-select[@ix-auto="select__Direction"]', 'clickable')
     driver.find_element_by_xpath('//mat-select[@ix-auto="select__Direction"]').click()
@@ -307,6 +309,7 @@ def remove_all_files_from_the_dataset(driver, nas_ip):
 @then('select PULL as the Direction then under Transfer Mode, select MOVE')
 def select_pull_as_the_direction_then_under_transfer_mode_select_move(driver):
     """select PULL as the Direction then under Transfer Mode, select MOVE."""
+    assert wait_on_element(driver, 7, '//mat-checkbox[@ix-auto="checkbox__Follow Symlinks"]', 'clickable')
     assert wait_on_element(driver, 5, '//mat-select[contains(.,"PUSH")]')
     assert wait_on_element(driver, 5, '//mat-select[contains(.,"COPY")]')
     assert wait_on_element(driver, 5, '//mat-select[@ix-auto="select__Direction"]', 'clickable')
@@ -368,6 +371,7 @@ def verify_all_files_are_moved_from_the_google_drive_test_folder_to_the_dataset(
 @then('select PUSH as the Direction then under Transfer Mode, select MOVE')
 def select_push_as_the_direction_then_under_transfer_mode_select_move(driver):
     """select PUSH as the Direction then under Transfer Mode, select MOVE."""
+    assert wait_on_element(driver, 7, '//mat-checkbox[@ix-auto="checkbox__Follow Symlinks"]', 'clickable')
     assert wait_on_element(driver, 5, '//mat-select[contains(.,"PULL")]')
     assert wait_on_element(driver, 5, '//mat-select[contains(.,"MOVE")]')
     assert wait_on_element(driver, 5, '//mat-select[@ix-auto="select__Direction"]', 'clickable')
@@ -423,6 +427,7 @@ def verify_all_files_are_moved_from_the_dataset_to_the_google_drive_test_folder(
 @then('select PULL as the Direction then under Transfer Mode, select SYNC')
 def select_pull_as_the_direction_then_under_transfer_mode_select_sync(driver):
     """select PULL as the Direction then under Transfer Mode, select SYNC."""
+    assert wait_on_element(driver, 7, '//mat-checkbox[@ix-auto="checkbox__Follow Symlinks"]', 'clickable')
     assert wait_on_element(driver, 5, '//mat-select[contains(.,"PUSH")]')
     assert wait_on_element(driver, 5, '//mat-select[contains(.,"MOVE")]')
     assert wait_on_element(driver, 5, '//mat-select[@ix-auto="select__Direction"]', 'clickable')
@@ -539,6 +544,7 @@ def on_the_google_drive_test_folder_tab_delete_all_file(driver):
 @then('select PUSH as the Direction then under Transfer Mode, select SYNC')
 def select_push_as_the_direction_then_under_transfer_mode_select_sync(driver):
     """select PUSH as the Direction then under Transfer Mode, select SYNC."""
+    assert wait_on_element(driver, 7, '//mat-checkbox[@ix-auto="checkbox__Follow Symlinks"]', 'clickable')
     assert wait_on_element(driver, 5, '//mat-select[contains(.,"PULL")]')
     assert wait_on_element(driver, 5, '//mat-select[contains(.,"SYNC")]')
     assert wait_on_element(driver, 5, '//mat-select[@ix-auto="select__Direction"]', 'clickable')
