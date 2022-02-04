@@ -100,7 +100,7 @@ describe('JobsPanelComponent', () => {
   });
 
   it('checks component header is present', () => {
-    expect(jobPanel.title).toHaveExactText('Task Manager');
+    expect(jobPanel.title).toHaveExactText('Jobs');
     expect(jobPanel.runningBadgeCount).toHaveText('1');
     expect(jobPanel.waitingBadgeCount).toHaveText('1');
     expect(jobPanel.failedBadgeCount).toHaveText('1');
