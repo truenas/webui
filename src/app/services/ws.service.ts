@@ -6,6 +6,7 @@ import { LocalStorage } from 'ngx-webstorage';
 import {
   Observable, Observer, Subject, Subscriber,
 } from 'rxjs';
+import { share } from 'rxjs/operators';
 import { ApiEventMessage } from 'app/enums/api-event-message.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { ApiDirectory, ApiMethod } from 'app/interfaces/api-directory.interface';
@@ -210,7 +211,7 @@ export class WebSocketService {
       });
 
       this.send(payload);
-    });
+    }).pipe(share());
   }
 
   /**
