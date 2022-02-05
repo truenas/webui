@@ -42,7 +42,6 @@ export class ServiceSnmpComponent implements OnInit {
     options: [''],
     zilstat: [false],
     loglevel: [null as number],
-    iftop: [false],
   });
 
   readonly tooltips = {
@@ -58,7 +57,6 @@ export class ServiceSnmpComponent implements OnInit {
     options: helptext.options_tooltip,
     zilstat: helptext.zilstat_tooltip,
     loglevel: helptext.loglevel_tooltip,
-    iftop: helptext.iftop.tooltip,
   };
 
   readonly authtypeOptions$ = of(helptext.v3_authtype_options);

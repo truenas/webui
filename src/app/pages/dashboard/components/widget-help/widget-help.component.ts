@@ -29,7 +29,7 @@ export default class WidgetHelpComponent extends WidgetComponent implements OnIn
   ) {
     super(translate);
     mediaObserver.media$.pipe(untilDestroyed(this)).subscribe((evt) => {
-      const st = evt.mqAlias === 'xs' ? 'Mobile' : 'Desktop';
+      const st = evt.mqAlias == 'xs' ? 'Mobile' : 'Desktop';
       this.screenType = st;
     });
   }

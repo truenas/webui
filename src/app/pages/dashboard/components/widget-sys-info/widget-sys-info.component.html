@@ -3,9 +3,11 @@
     <mat-card class="front" fxLayout="row" fxLayoutWrap fxLayoutAlign="space-between stretch">
       <mat-card-content fxLayout="row wrap" fxLayout.gt-xs="row wrap" fxLayoutAlign="space-between start" fxFlex="100">
 
-        <mat-toolbar-row fxHide.xs class="view-overview">
+        <mat-toolbar-row fxHide.xs class="view-overview" [class.drag-handle]="showReorderHandle">
+          <ng-content [select]="[cdkDragHandle]"></ng-content>
+          <span class="grip" *ngIf="showReorderHandle"></span>
           <span fxHide.xs class="mat-card-title-text">
-            <span class="card-title-text">
+            <span class="card-title-text" [class.drag-handle]="showReorderHandle">
               &nbsp;{{"System Information" | translate}}&nbsp;<span *ngIf="isPassive" class="passive">({{"Standby" | translate}})</span>
             </span>
           </span>

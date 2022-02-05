@@ -117,7 +117,7 @@
       <tr mat-header-row *matHeaderRowDef="displayedColumns" [attr.hidden]="hideHeader || _tableConf.complex"></tr>
       <tr mat-row *matRowDef="let row; columns: displayedColumns;" (click)="editRow(row)"></tr>
     </table>
-    <entity-empty *ngIf="!_tableConf.hideEntityEmpty && (!dataSource || (dataSource && dataSource.length === 0))" [conf]="emptyConf" fxFlex fxLayoutAlign="center"></entity-empty>
+    <entity-empty *ngIf="!_tableConf.hideEntityEmpty && (!dataSource || (dataSource && dataSource.length === 0))" [conf]="emptyConf"></entity-empty>
   </div>
   <div class="view-more-row" *ngIf="showViewMore && !_tableConf.alwaysHideViewMore" (click)="openViewMore()">{{ 'View More' | translate }}</div>
   <div class="view-more-row" *ngIf="showCollapse && !_tableConf.alwaysHideViewMore" (click)="collapse()">{{ 'Collapse' | translate }}</div>
