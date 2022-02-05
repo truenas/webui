@@ -516,11 +516,6 @@ export class CertificateAuthorityAddComponent implements WizardConfiguration {
   ];
   private intermediatecaFields = [
     'signedby',
-    'key_type',
-    'ec_curve',
-    'key_length',
-    'digest_algorithm',
-    'lifetime',
     'country',
     'state',
     'city',
@@ -686,9 +681,9 @@ export class CertificateAuthorityAddComponent implements WizardConfiguration {
           this.hideField('key_length', true);
         }
       } else if (res == 'CA_CREATE_INTERMEDIATE') {
-        this.intermediatecaFields.forEach((field) => this.hideField(field, false));
         this.importcaFields.forEach((field) => this.hideField(field, true));
         this.internalcaFields.forEach((field) => this.hideField(field, true));
+        this.intermediatecaFields.forEach((field) => this.hideField(field, false));
         this.extensionFields.forEach((field) => this.hideField(field, false));
         if (this.getField('key_type').value === 'RSA') {
           this.hideField('ec_curve', true);
@@ -820,9 +815,9 @@ export class CertificateAuthorityAddComponent implements WizardConfiguration {
     return null;
   }
 
-  hideField(fieldName: string, show: boolean): void {
-    this.getTarget(fieldName).isHidden = show;
-    this.setDisabled(fieldName, show);
+  hideField(fieldName: string, isHidden: boolean): void {
+    this.getTarget(fieldName).isHidden = isHidden;
+    this.setDisabled(fieldName, isHidden);
   }
 
   setDisabled(fieldName: string, disable: boolean): void {
