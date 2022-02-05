@@ -1,7 +1,7 @@
 import { createPipeFactory, mockProvider, SpectatorPipe } from '@ngneat/spectator/jest';
 import { Store } from '@ngrx/store';
 import { of } from 'rxjs';
-import { FormatDateTimePipe } from './format-datetime.pipe';
+import { FormatDateTimePipe } from 'app/core/pipes/format-datetime.pipe';
 
 describe('FormatDateTimePipe', () => {
   let spectator: SpectatorPipe<FormatDateTimePipe>;
