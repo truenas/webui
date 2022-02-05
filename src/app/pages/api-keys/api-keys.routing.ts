@@ -1,6 +1,6 @@
 import { ModuleWithProviders } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-import { ApiKeysComponent } from './api-keys.component';
+import { ApiKeysComponent } from 'app/pages/api-keys/components/api-keys/api-keys.component';
 
 export const routes: Routes = [{
   path: '',

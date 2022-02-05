@@ -28,6 +28,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnDestroy
   @Input() isHA = false;
   @Input() isPassive = false;
   @Input() enclosureSupport = false;
+  @Input() showReorderHandle = false;
 
   title: string = this.translate.instant('System Info');
   data: SystemInfo;

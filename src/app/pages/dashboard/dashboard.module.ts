@@ -9,6 +9,7 @@ import { CommonDirectivesModule } from 'app/directives/common/common-directives.
 import { CastModule } from 'app/modules/cast/cast.module';
 import { ChartsModule } from 'app/modules/charts/charts.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
+import { IxDropGridModule } from 'app/pages/common/ix-drop-grid/ix-drop-grid.module';
 import { DashboardFormComponent } from 'app/pages/dashboard/components/dashboard-form/dashboard-form.component';
 import { DashboardComponent } from 'app/pages/dashboard/components/dashboard/dashboard.component';
 import { WidgetControllerComponent } from 'app/pages/dashboard/components/widget-controller/widget-controller.component';
@@ -42,6 +43,7 @@ import { routing } from './dashboard.routing';
     EntityModule,
     TranslateModule,
     CastModule,
+    IxDropGridModule,
     ChartsModule,
   ],
   declarations: [

@@ -1,0 +1,43 @@
+<div class="full-width container has-tooltip">
+
+  <div *ngIf="label" class="label-container">
+    <label class="label">
+      {{label}}
+      <span *ngIf="required">*</span>
+    </label>
+    <tooltip *ngIf="tooltip" [header]="label" class="tooltip" [message]="tooltip"></tooltip>
+  </div>
+
+
+  <div class="input-container" [class.disabled]="isDisabled">
+    <input
+      #ixInput
+      matInput
+      [value]="selectedOption?.label"
+      [placeholder]="placeholder"
+      [disabled]="isDisabled"
+      (input)="onChanged(ixInput.value)"
+      (blur)="onTouch()"
+      [matAutocomplete]="auto"
+    >
+    <span *ngIf="shouldShowResetInput() || loading" class="reset-input">
+      <mat-progress-spinner *ngIf="loading" class="loader" mode="indeterminate" [diameter]="15"></mat-progress-spinner>
+      <mat-icon (click)="resetInput()" *ngIf="shouldShowResetInput()" role="img" fontSet="mdi-set" fontIcon="mdi-close-circle"></mat-icon>
+    </span>
+    <mat-autocomplete #auto="matAutocomplete" [displayWith]="getDisplayWith"
+      (optionSelected)="optionSelected($event.option.value)" (opened)="onOpenDropdown()">
+      <mat-option
+        *ngFor="let option of options"
+        [value]="option"
+        [class.ix-selected]="option.value === selectedOption?.value"
+        [class.ix-unselected]="option.value !== selectedOption?.value"
+      >
+        {{option.label}}
+      </mat-option>
+    </mat-autocomplete>
+  </div>
+  <ix-errors [control]="controlDirective.control" [label]="label"></ix-errors>
+  
+  <mat-hint *ngIf="hint">{{hint}}</mat-hint>
+
+</div>
