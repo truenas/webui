@@ -516,6 +516,11 @@ export class CertificateAuthorityAddComponent implements WizardConfiguration {
   ];
   private intermediatecaFields = [
     'signedby',
+    'key_type',
+    'ec_curve',
+    'key_length',
+    'digest_algorithm',
+    'lifetime',
     'country',
     'state',
     'city',
