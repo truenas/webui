@@ -1587,7 +1587,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
         continue;
       }
 
-      if ((!removedAttributes.includes(item) && value[item] != '') || allowEmptyStrings.includes(item)) {
+      if ((!removedAttributes.includes(item) && value[item] !== '') || allowEmptyStrings.includes(item)) {
         attrName = item.split('-')[0];
         attributes[attrName] = attrName === 'auth_version' ? parseInt(value[item], 10) : value[item];
       }

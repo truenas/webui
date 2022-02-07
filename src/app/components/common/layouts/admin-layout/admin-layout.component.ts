@@ -238,7 +238,7 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
   }
 
   onShowConsoleFooterBar(isConsoleFooterEnabled: boolean): void {
-    if (isConsoleFooterEnabled && this.consoleMsg == '') {
+    if (isConsoleFooterEnabled && this.consoleMsg === '') {
       this.getLogConsoleMsg();
     } else if (!isConsoleFooterEnabled && this.consoleMsgsSubscriptionId) {
       this.ws.unsub(this.consoleMsgsSubName, this.consoleMsgsSubscriptionId);

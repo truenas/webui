@@ -2,7 +2,7 @@ import { ValidatorFn, FormControl, ValidationErrors } from '@angular/forms';
 
 export function numberValidator(): ValidatorFn {
   return (control: FormControl): ValidationErrors => {
-    if (control.value == '' || control.value == undefined) {
+    if (control.value === '' || control.value === undefined) {
       return null;
     }
 

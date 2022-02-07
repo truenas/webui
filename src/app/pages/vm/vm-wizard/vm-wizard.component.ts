@@ -1051,7 +1051,7 @@ export class VmWizardComponent implements WizardConfiguration {
 
     if (value.gpus) {
       for (const gpuPciSlot of value.gpus) {
-        const gpuIndex = this.gpus.findIndex((gpu) => gpu.addr.pci_slot == gpuPciSlot);
+        const gpuIndex = this.gpus.findIndex((gpu) => gpu.addr.pci_slot === gpuPciSlot);
         vmPayload['devices'].push(...this.gpus[gpuIndex].devices.map((gpuDevice) => ({
           dtype: VmDeviceType.Pci,
           attributes: {

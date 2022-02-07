@@ -912,7 +912,7 @@ export class IscsiWizardComponent implements WizardConfiguration {
         this.fileFieldGroup.forEach((field) => {
           if (field === 'filesize') {
             value[field] = this.storageService.convertHumanStringToNum(value[field], true);
-            payload[field] = value[field] == 0 ? value[field] : (value[field] + (512 - value[field] % 512));
+            payload[field] = value[field] === 0 ? value[field] : (value[field] + (512 - value[field] % 512));
           } else {
             payload[field] = value[field];
           }

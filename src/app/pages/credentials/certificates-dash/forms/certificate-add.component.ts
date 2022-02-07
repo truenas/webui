@@ -713,7 +713,7 @@ export class CertificateAddComponent implements WizardConfiguration {
 
   getSummaryValueLabel(fieldConfig: FieldConfig, value: any): any {
     if (fieldConfig.type === 'select') {
-      const option = fieldConfig.options.find((option) => option.value == value);
+      const option = fieldConfig.options.find((option) => option.value === value);
       if (option) {
         value = option.label;
       }
@@ -977,7 +977,7 @@ export class CertificateAddComponent implements WizardConfiguration {
     delete data.csrlist;
 
     // Addresses non-pristine field being mistaken for a passphrase of ''
-    if (data.passphrase == '') {
+    if (data.passphrase === '') {
       data.passphrase = undefined;
     }
 

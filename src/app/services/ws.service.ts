@@ -115,7 +115,7 @@ export class WebSocketService {
       return;
     }
 
-    if (data.error && data.error == 13 /** Not Authenticated */) {
+    if (data.error && data.error === 13 /** Not Authenticated */) {
       return this.socket.close(); // will trigger onClose which handles redirection
     }
 
@@ -137,7 +137,7 @@ export class WebSocketService {
       this.onconnect();
     } else if (data.msg === ApiEventMessage.Changed || data.msg === ApiEventMessage.Added) {
       this.subscriptions.forEach((v, k) => {
-        if (k === '*' || k == data.collection) {
+        if (k === '*' || k === data.collection) {
           v.forEach((item) => { item.next(data); });
         }
       });
@@ -268,7 +268,7 @@ export class WebSocketService {
     const source = Observable.create((observer: Subscriber<Job<ApiDirectory[K]['response']>>) => {
       this.call(method, params).pipe(untilDestroyed(this)).subscribe((jobId) => {
         this.subscribe('core.get_jobs').pipe(untilDestroyed(this)).subscribe((event) => {
-          if (event.id == jobId) {
+          if (event.id === jobId) {
             observer.next(event.fields);
             if (event.fields.state === JobState.Success) observer.complete();
             if (event.fields.state === JobState.Failed) observer.error(event.fields);
