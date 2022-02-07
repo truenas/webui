@@ -55,7 +55,6 @@ def stop_machinaris_from_running(driver):
     if is_element_present(driver, '//mat-ink-bar[@style="visibility: visible; left: 0px; width: 183px;"]') is False:
         assert wait_on_element(driver, 10, '//div[contains(text(),"Installed Applications")]', 'clickable')
         driver.find_element_by_xpath('//div[contains(text(),"Installed Applications")]').click()
-        assert wait_on_element(driver, 7, '//h3[contains(.,"No Applications Installed")]')
     assert wait_on_element(driver, 45, '//mat-card[contains(.,"machinaris")]//span[contains(.,"Stop")]', 'clickable')
     driver.find_element_by_xpath('//mat-card[contains(.,"machinaris")]//span[contains(.,"Stop")]').click()
 
