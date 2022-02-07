@@ -5,7 +5,7 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
-import { UpsConfig } from 'app/interfaces/ups-config.interface';
+import { UpsConfig, UpsConfigUpdate } from 'app/interfaces/ups-config.interface';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
@@ -24,7 +24,6 @@ describe('ServiceUpsComponent', () => {
     ],
     providers: [
       mockWebsocket([
-        mockCall('ups.update'),
         mockCall('ups.config', {
           complete_identifier: 'ups@localhost:3',
           description: '',
@@ -58,6 +57,7 @@ describe('ServiceUpsComponent', () => {
           'bcmxcp$T750 G2': 'HP ups 3 T750 G2 Serial port (bcmxcp)',
         }),
         mockCall('ups.port_choices', ['/dev/uhid', 'auto']),
+        mockCall('ups.update'),
       ]),
       mockProvider(FormErrorHandlerService),
       mockProvider(DialogService),
@@ -140,6 +140,6 @@ describe('ServiceUpsComponent', () => {
       shutdown: 'BATT',
       shutdowncmd: '',
       shutdowntimer: 30,
-    }]);
+    } as UpsConfigUpdate]);
   });
 });

@@ -1,9 +1,8 @@
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
-import { Validators } from '@angular/forms';
+import { FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { of } from 'rxjs';
 import { UpsMode } from 'app/enums/ups-mode.enum';
@@ -11,9 +10,9 @@ import { choicesToOptions, singleArrayToOptions } from 'app/helpers/options.help
 import helptext from 'app/helptext/services/components/service-ups';
 import { UpsConfigUpdate } from 'app/interfaces/ups-config.interface';
 import { numberValidator } from 'app/modules/entity/entity-form/validators/number-validation';
+import { EntityUtils } from 'app/modules/entity/utils';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { DialogService, WebSocketService } from 'app/services';
-import { EntityUtils } from '../../../../modules/entity/utils';
 
 @UntilDestroy()
 @Component({
@@ -124,8 +123,8 @@ export class ServiceUpsComponent implements OnInit {
           this.cdr.markForCheck();
         },
         (error) => {
-          new EntityUtils().handleWsError(null, error, this.dialogService);
           this.isFormLoading = false;
+          new EntityUtils().handleWsError(null, error, this.dialogService);
           this.cdr.markForCheck();
         },
       );
@@ -139,7 +138,7 @@ export class ServiceUpsComponent implements OnInit {
       nocommwarntime: values.nocommwarntime ? Number(values.nocommwarntime) : null,
       shutdowntimer: values.shutdowntimer ? Number(values.shutdowntimer) : null,
       hostsync: values.hostsync ? Number(values.hostsync) : null,
-    } as UpsConfigUpdate;
+    };
 
     if (this.isMasterMode) {
       delete params.remoteport;
@@ -149,7 +148,7 @@ export class ServiceUpsComponent implements OnInit {
     }
 
     this.isFormLoading = true;
-    this.ws.call('ups.update', [params])
+    this.ws.call('ups.update', [params as UpsConfigUpdate])
       .pipe(untilDestroyed(this))
       .subscribe(
         () => {
