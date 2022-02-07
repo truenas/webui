@@ -1,0 +1,17 @@
+:host {
+  display: block;
+  width: 500px;
+}
+
+.form-actions {
+  display: flex;
+  flex-direction: row-reverse;
+
+  > button {
+    margin-left: 10px;
+  }
+}
+
+.key-section {
+  margin-bottom: 15px;
+}

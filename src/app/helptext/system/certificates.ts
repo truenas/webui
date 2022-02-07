@@ -59,6 +59,14 @@ matches your certificate usage scenario.'),
       ),
     },
 
+    csrlist: {
+      placeholder: T('Certificate Signing Request'),
+      tooltip: T(
+        'Select an existing CSR.',
+      ),
+      validation: [Validators.required],
+    },
+
     signedby: {
       placeholder: T('Signing Certificate Authority'),
       tooltip: T(

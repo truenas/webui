@@ -54,8 +54,4 @@ export default {
     { label: 'Debug', value: 7 },
   ],
 
-  iftop: {
-    placeholder: T('Enable Network Performance Statistics'),
-    tooltip: T('Include iftop network performance statistics in SNMP messages.'),
-  },
 };

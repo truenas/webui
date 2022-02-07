@@ -50,7 +50,6 @@ import { FormTextareaButtonComponent } from 'app/modules/entity/entity-form/comp
 import { FormTextareaComponent } from 'app/modules/entity/entity-form/components/form-textarea/form-textarea.component';
 import { FormToggleButtonComponent } from 'app/modules/entity/entity-form/components/form-toggle-button/form-toggle-button.component';
 import { FormUploadComponent } from 'app/modules/entity/entity-form/components/form-upload/form-upload.component';
-import { EntityFormConfigurationComponent } from 'app/modules/entity/entity-form/entity-form-configuration.component';
 import { EntityFormEmbeddedComponent } from 'app/modules/entity/entity-form/entity-form-embedded.component';
 import { EntityFormComponent } from 'app/modules/entity/entity-form/entity-form.component';
 import { EntityFormService } from 'app/modules/entity/entity-form/services/entity-form.service';
@@ -118,7 +117,6 @@ import { DocsService } from 'app/services/docs.service';
     DynamicFieldDirective,
     EntityFormComponent,
     EntityFormEmbeddedComponent,
-    EntityFormConfigurationComponent,
     FormButtonComponent,
     FormInputComponent,
     FormLabelComponent,
@@ -169,7 +167,6 @@ import { DocsService } from 'app/services/docs.service';
     EntityTemplateDirective,
     EntityFormComponent,
     EntityFormEmbeddedComponent,
-    EntityFormConfigurationComponent,
     EntityTableComponent,
     EntityRowDetailsComponent,
     EntityTreeTableComponent,
