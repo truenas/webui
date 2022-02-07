@@ -203,6 +203,10 @@ export const helptextSystemSupport = {
   updateTxt: T('Update License'),
   enterTxt: T('Add License'),
   ticket: T('File Ticket'),
+  debugSizeLimitWarning: T('The ticket was created successfully (see link below), but the debug file\
+   failed to attach. Please download the debug manually \
+   (System → Advanced → Save Debug), upload it to a third-party storage service and provide\
+    a link in the JIRA issue comment.'),
 
   updateProd: {
     title: T('Update Production Status'),
