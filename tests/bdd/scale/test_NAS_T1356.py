@@ -63,7 +63,7 @@ def click_launch_docker_image(driver):
     time.sleep(2) #becuase of course we have to wait for the UI to actually load properly
     assert wait_on_element(driver, 10, '//span[contains(.,"Launch Docker Image")]', 'clickable')
     driver.find_element_by_xpath('//span[contains(.,"Launch Docker Image")]').click()
-    if is_element_present((driver, '//*[contains(.,"Please wait")]'):
+    if is_element_present(driver, '//*[contains(.,"Please wait")]'):
         assert wait_on_element_disappear(driver, 10, '//*[contains(.,"Please wait")]')
 
 
