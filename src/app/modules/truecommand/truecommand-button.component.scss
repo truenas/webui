@@ -1,3 +1,7 @@
+.truecommand-button-connecting-animation {
+  animation: nudge 3s infinite linear;
+}
+
 ::ng-deep mat-icon.truecommand-icon > span.mat-badge-content {
   font-family: 'Material Icons';
 }
