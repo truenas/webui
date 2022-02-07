@@ -25,6 +25,10 @@ from pytest_bdd import (
     parsers
 )
 
+import pytest
+
+pytestmark = [pytest.mark.debug_test]
+
 
 @scenario('features/NAS-T1121.feature', 'Verify Amazon S3 Cloud Sync task works')
 def test_verify_amazon_s3_cloud_sync_task_works(driver):

@@ -14,6 +14,10 @@ from pytest_bdd import (
     parsers
 )
 
+import pytest
+
+pytestmark = [pytest.mark.debug_test]
+
 
 @scenario('features/NAS-T1128.feature', 'Verify Box credentials can be added')
 def test_verify_box_credentials_can_be_added(driver):

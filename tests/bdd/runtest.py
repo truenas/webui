@@ -146,6 +146,8 @@ def run_testing():
     pytest_cmd = [
         f"pytest-{version}",
         "-v",
+        "-k",
+        "debug_test",
         test_suite,
         "--junitxml=results/junit/webui_test.xml",
         "--cucumber-json=results/cucumber/webui_test.json"

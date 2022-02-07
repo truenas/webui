@@ -15,6 +15,9 @@ from pytest_bdd import (
     when,
     parsers
 )
+import pytest
+
+pytestmark = [pytest.mark.debug_test]
 
 
 @scenario('features/NAS-T984.feature', 'Setting interface from dhcp to a static ip')
