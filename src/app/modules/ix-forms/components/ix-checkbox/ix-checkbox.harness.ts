@@ -1,6 +1,7 @@
 import { BaseHarnessFilters, ComponentHarness, HarnessPredicate } from '@angular/cdk/testing';
 import { MatCheckboxHarness } from '@angular/material/checkbox/testing';
 import { IxFormControlHarness } from 'app/modules/ix-forms/interfaces/ix-form-control-harness.interface';
+import { getErrorText } from 'app/modules/ix-forms/utils/harness.utils';
 
 export interface IxCheckboxHarnessFilters extends BaseHarnessFilters {
   label: string;
@@ -16,15 +17,11 @@ export class IxCheckboxHarness extends ComponentHarness implements IxFormControl
   }
 
   getMatCheckboxHarness = this.locatorFor(MatCheckboxHarness);
+  getErrorText = getErrorText;
 
   async getLabelText(): Promise<string> {
     const label = await this.locatorFor('label')();
     return label.text({ exclude: '.required' });
-  }
-
-  async getErrorText(): Promise<string> {
-    const label = await this.locatorForOptional('ix-errors')();
-    return label?.text() || '';
   }
 
   async getValue(): Promise<boolean> {
