@@ -18,7 +18,7 @@
   </div>
   <div class="status-item">
     <span class="status-name">
-      {{ 'Size:' }}
+      {{ 'Size:' | translate }}
     </span>
     <span class="status-value">
       {{ state?.properties?.size?.parsed | filesize: { standard: 'iec' } }}
@@ -26,7 +26,7 @@
   </div>
   <div class="status-item">
     <span class="status-name">
-      {{ 'Used:' }}
+      {{ 'Used:' | translate }}
     </span>
     <span class="status-value">
       {{ state?.properties?.allocated?.parsed | filesize: { standard: 'iec' } }}
@@ -34,7 +34,7 @@
   </div>
   <div class="status-item">
     <span class="status-name">
-      {{ 'Last Scrub Run:' }}
+      {{ 'Last Scrub Run:' | translate }}
     </span>
     <span class="status-value">
       <ng-container *ngIf="state.scan?.end_time; else noScanTime">
