@@ -3,13 +3,12 @@ import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { format, utcToZonedTime } from 'date-fns-tz';
-import { Subject } from 'rxjs';
+import { Subject, combineLatest } from 'rxjs';
 import { CoreEvent } from 'app/interfaces/events';
-import { UserPreferencesReadyEvent } from 'app/interfaces/events/user-preferences-event.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { CoreService } from 'app/services/core-service/core.service';
-import { PreferencesService } from 'app/services/preferences.service';
 import { AppState } from 'app/store';
+import { waitForPreferences } from 'app/store/preferences/preferences.selectors';
 import { selectTimezone } from 'app/store/system-config/system-config.selectors';
 import { SystemGeneralService } from '.';
 
@@ -17,44 +16,27 @@ import { SystemGeneralService } from '.';
 @Injectable()
 export class LocaleService {
   t24 = T('(24 Hours)');
-  timeZone: string;
-  isWaiting = false;
+  timezone: string;
   dateFormat = 'yyyy-MM-dd';
   timeFormat = 'HH:mm:ss';
-  dateTimeFormatChange$ = new Subject();
   target: Subject<CoreEvent> = new Subject();
 
   constructor(
-    public prefService: PreferencesService,
     public sysGeneralService: SystemGeneralService,
     private core: CoreService,
     private store$: Store<AppState>,
   ) {
-    this.store$.select(selectTimezone).pipe(untilDestroyed(this)).subscribe((timezone) => {
-      this.timeZone = timezone;
-    });
-    if (window.localStorage.dateFormat) {
-      this.dateFormat = this.formatDateTimeToDateFns(window.localStorage.getItem('dateFormat'));
-    }
-    if (window.localStorage.timeFormat) {
-      this.timeFormat = this.formatDateTimeToDateFns(window.localStorage.getItem('timeFormat'));
-    }
-    this.getPrefs();
-  }
+    combineLatest([
+      this.store$.select(selectTimezone),
+      this.store$.pipe(waitForPreferences),
+    ]).pipe(untilDestroyed(this)).subscribe(([timezone, preferences]) => {
+      this.timezone = timezone;
 
-  getPrefs(): void {
-    this.core.emit({ name: 'UserPreferencesRequest', sender: this });
-    this.core.register({ observerClass: this, eventName: 'UserPreferencesReady' })
-      .pipe(untilDestroyed(this)).subscribe((evt: UserPreferencesReadyEvent) => {
-        if (this.isWaiting) {
-          this.target.next({ name: 'SubmitComplete', sender: this });
-          this.isWaiting = false;
-        }
-        this.dateFormat = this.formatDateTimeToDateFns(evt.data.dateFormat);
-        this.timeFormat = this.formatDateTimeToDateFns(evt.data.timeFormat);
-        this.storeDateTimeFormat(this.dateFormat, this.timeFormat);
-        this.dateTimeFormatChange$.next();
-      });
+      if (preferences) {
+        this.dateFormat = this.formatDateTimeToDateFns(preferences.dateFormat);
+        this.timeFormat = this.formatDateTimeToDateFns(preferences.timeFormat);
+      }
+    });
   }
 
   getDateFormatOptions(tz?: string): Option[] {
@@ -90,8 +72,8 @@ export class LocaleService {
   formatDateTime(date: Date | number, tz?: string): string {
     if (tz) {
       date = utcToZonedTime(date.valueOf(), tz);
-    } else if (this.timeZone) {
-      date = utcToZonedTime(date.valueOf(), this.timeZone);
+    } else if (this.timezone) {
+      date = utcToZonedTime(date.valueOf(), this.timezone);
     }
 
     return format(date, `${this.dateFormat} ${this.timeFormat}`);
@@ -108,8 +90,8 @@ export class LocaleService {
   getTimeOnly(date: Date | number, seconds = true, tz?: string): string {
     if (tz) {
       date = utcToZonedTime(date.valueOf(), tz);
-    } else if (this.timeZone) {
-      date = utcToZonedTime(date.valueOf(), this.timeZone);
+    } else if (this.timezone) {
+      date = utcToZonedTime(date.valueOf(), this.timezone);
     }
     let formatStr: string;
     formatStr = this.timeFormat;
@@ -118,33 +100,6 @@ export class LocaleService {
     }
 
     return format(date, formatStr);
-  }
-
-  saveDateTimeFormat(dateFormat: string, timeFormat: string): void {
-    this.dateFormat = this.formatDateTimeToDateFns(dateFormat);
-    this.timeFormat = this.formatDateTimeToDateFns(timeFormat);
-    this.storeDateTimeFormat(this.dateFormat, this.timeFormat);
-    this.dateTimeFormatChange$.next();
-
-    this.core.emit({
-      name: 'ChangePreference',
-      data: {
-        key: 'dateFormat', value: dateFormat,
-      },
-      sender: this,
-    });
-    this.core.emit({
-      name: 'ChangePreference',
-      data: {
-        key: 'timeFormat', value: timeFormat,
-      },
-      sender: this,
-    });
-  }
-
-  storeDateTimeFormat(dateFormat: string, timeFormat: string): void {
-    window.localStorage.setItem('dateFormat', dateFormat);
-    window.localStorage.setItem('timeFormat', timeFormat);
   }
 
   getPreferredDateFormat(): string {
@@ -159,8 +114,8 @@ export class LocaleService {
     let date = new Date();
     if (tz) {
       date = utcToZonedTime(new Date().valueOf(), tz);
-    } else if (this.timeZone) {
-      date = utcToZonedTime(new Date().valueOf(), this.timeZone);
+    } else if (this.timezone) {
+      date = utcToZonedTime(new Date().valueOf(), this.timezone);
     }
     return [format(date, `${this.dateFormat}`), format(date, `${this.timeFormat}`)];
   }

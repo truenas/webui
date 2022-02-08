@@ -9,8 +9,9 @@ import smoothPlotter from 'dygraphs/src/extras/smooth-plotter.js';
 import { ThemeUtils } from 'app/core/classes/theme-utils/theme-utils';
 import { ViewComponent } from 'app/core/components/view/view.component';
 import { ReportingData } from 'app/interfaces/reporting.interface';
+import { Theme } from 'app/interfaces/theme.interface';
 import { CoreService } from 'app/services/core-service/core.service';
-import { ThemeService, Theme } from 'app/services/theme/theme.service';
+import { ThemeService } from 'app/services/theme/theme.service';
 import { Report } from '../report/report.component';
 
 interface Conversion {

@@ -744,8 +744,8 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private loadUserAttributes(): void {
     this.ws.call('user.query', [[['id', '=', 1]]]).pipe(untilDestroyed(this)).subscribe((user) => {
-      if (user[0].attributes.preferences.dashState) {
-        this.applyState(user[0].attributes.preferences.dashState);
+      if (user[0].attributes.dashState) {
+        this.applyState(user[0].attributes.dashState);
       }
       this.dashStateReady = true;
     });

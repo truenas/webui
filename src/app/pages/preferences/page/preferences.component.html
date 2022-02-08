@@ -1,8 +1,7 @@
 <mat-card class="prefs-card">
   <mat-card-content>
     <div class="prefs-form">
-      <entity-form-embedded *ngIf="preferences" #embeddedForm fxFlex="100" [target]="target" [data]="values" [conf]="this"></entity-form-embedded>
+      <entity-form-embedded *ngIf="isReady" #embeddedForm fxFlex="100" [target]="target" [data]="values" [conf]="this"></entity-form-embedded>
     </div>
   </mat-card-content>
-  <mat-divider></mat-divider>
 </mat-card>

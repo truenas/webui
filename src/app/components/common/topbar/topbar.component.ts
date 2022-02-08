@@ -42,11 +42,10 @@ import { CoreService } from 'app/services/core-service/core.service';
 import { DialogService } from 'app/services/dialog.service';
 import { LayoutService } from 'app/services/layout.service';
 import { ModalService } from 'app/services/modal.service';
-import { PreferencesService } from 'app/services/preferences.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { ThemeService } from 'app/services/theme/theme.service';
 import { WebSocketService } from 'app/services/ws.service';
-import { alertIndicatorPressed } from 'app/store/topbar/topbar.actions';
+import { alertIndicatorPressed, sidenavUpdated } from 'app/store/topbar/topbar.actions';
 import { AboutDialogComponent } from '../dialog/about/about-dialog.component';
 import { DirectoryServicesMonitorComponent } from '../dialog/directory-services-monitor/directory-services-monitor.component';
 import { ResilverProgressDialogComponent } from '../dialog/resilver-progress/resilver-progress.component';
@@ -120,7 +119,6 @@ export class TopbarComponent implements OnInit, OnDestroy {
     private mediaObserver: MediaObserver,
     private layoutService: LayoutService,
     private jobsManagerStore: JobsManagerStore,
-    private prefService: PreferencesService,
     private store$: Store<AlertSlice>,
     private core: CoreService,
   ) {
@@ -287,8 +285,7 @@ export class TopbarComponent implements OnInit, OnDestroy {
     };
 
     if (!this.layoutService.isMobile) {
-      this.prefService.preferences.sidenavStatus = data;
-      this.prefService.savePreferences();
+      this.store$.dispatch(sidenavUpdated(data));
     }
 
     this.core.emit({
