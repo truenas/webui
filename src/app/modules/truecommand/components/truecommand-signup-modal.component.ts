@@ -1,7 +1,7 @@
 import {
   ChangeDetectorRef, Component, Inject, OnInit,
 } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import { FormBuilder } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import helptext from 'app/helptext/topbar';
@@ -27,7 +27,7 @@ export class TruecommandSignupModalComponent implements OnInit {
   saveButtonText: string;
 
   form = this.fb.group({
-    api_key: ['', [Validators.required]],
+    api_key: [''],
     enabled: [true],
   });
 
