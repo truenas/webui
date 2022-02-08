@@ -39,12 +39,13 @@ export class FormatDateTimePipe implements PipeTransform {
   }
 
   formatDateTime(date: Date | number, tz?: string): string {
+    let localDate = date;
     if (tz) {
-      date = utcToZonedTime(date.valueOf(), tz);
+      localDate = utcToZonedTime(date.valueOf(), tz);
     } else if (this.timezone) {
-      date = utcToZonedTime(date.valueOf(), this.timezone);
+      localDate = utcToZonedTime(date.valueOf(), this.timezone);
     }
 
-    return format(date, `${this.dateFormat} ${this.timeFormat}`);
+    return format(localDate, `${this.dateFormat} ${this.timeFormat}`);
   }
 }

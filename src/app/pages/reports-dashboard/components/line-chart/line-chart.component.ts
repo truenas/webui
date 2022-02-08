@@ -314,7 +314,7 @@ export class LineChartComponent extends ViewComponent implements AfterViewInit, 
       prefix = 'Mega';
       shortName = 'MiB';
       output = value / mega;
-    } else if ((value < mega && value > kilo || (prefixRules && this.yLabelPrefix === 'Kilo'))) {
+    } else if ((value < mega && value > kilo) || (prefixRules && this.yLabelPrefix === 'Kilo')) {
       prefix = 'Kilo';
       shortName = 'KB';
       output = value / kilo;
