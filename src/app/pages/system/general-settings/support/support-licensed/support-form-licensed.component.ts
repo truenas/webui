@@ -3,6 +3,7 @@ import { FormControl, ValidatorFn } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 import { helptextSystemSupport as helptext } from 'app/helptext/system/support';
 import { FormCustomAction, FormConfiguration } from 'app/interfaces/entity-form.interface';
@@ -14,6 +15,7 @@ import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
+import { EntityUtils } from 'app/pages/common/entity/utils';
 import { WebSocketService } from 'app/services/';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { DialogService } from 'app/services/dialog.service';
@@ -31,6 +33,7 @@ export class SupportFormLicensedComponent implements FormConfiguration {
   saveSubmitText = helptext.submitBtn;
   title = helptext.ticket;
   custActions: FormCustomAction[] = [];
+  maxUploadSizeMibs: number;
   fieldConfig: FieldConfig[] = [];
   fieldSets: FieldSet[] = [
     {
@@ -157,7 +160,7 @@ export class SupportFormLicensedComponent implements FormConfiguration {
 
   constructor(public dialog: MatDialog, public loader: AppLoaderService,
     public ws: WebSocketService, public dialogService: DialogService, public router: Router,
-    private modalService: ModalService) { }
+    private translate: TranslateService, private modalService: ModalService) { }
 
   afterInit(entityEdit: EntityFormComponent): void {
     this.entityEdit = entityEdit;
@@ -179,6 +182,20 @@ export class SupportFormLicensedComponent implements FormConfiguration {
         },
       },
     ];
+
+    this.loader.open();
+    this.ws.call('support.attach_ticket_max_size').pipe(untilDestroyed(this)).subscribe(
+      (sizeMibs: number) => {
+        this.loader.close();
+        this.maxUploadSizeMibs = sizeMibs;
+      },
+      (err: any) => {
+        new EntityUtils().handleError(this, err);
+        // This request is a prereq for this form to function successfully.
+        // Which means if it errors out, the form should be closed or navigated away
+        this.resetForm();
+      },
+    );
   }
 
   emailListValidator(name: string): ValidatorFn {
@@ -273,9 +290,9 @@ export class SupportFormLicensedComponent implements FormConfiguration {
     this.screenshot['hasErrors'] = false;
     if (fileBrowser.files && fileBrowser.files[0]) {
       for (const browserFile of fileBrowser.files) {
-        if (browserFile.size >= 52428800) {
+        if (browserFile.size >= (this.maxUploadSizeMibs * 1024 * 1024)) {
           this.screenshot['hasErrors'] = true;
-          this.screenshot['errors'] = 'File size is limited to 50 MiB.';
+          this.screenshot['errors'] = this.translate.instant('File size is limited to ' + this.maxUploadSizeMibs + ' MiB.');
         } else {
           this.subs.push({ apiEndPoint: file.apiEndPoint, file: browserFile });
         }

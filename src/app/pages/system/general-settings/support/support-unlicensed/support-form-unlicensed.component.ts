@@ -3,6 +3,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
+import { delay } from 'rxjs/operators';
 import { NewTicketType } from 'app/enums/new-ticket-type.enum';
 import { helptextSystemSupport as helptext } from 'app/helptext/system/support';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
@@ -16,7 +17,8 @@ import {
   FieldConfig, FormButtonConfig, FormSelectConfig,
 } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
-import { DialogService, WebSocketService } from 'app/services/';
+import { EntityUtils } from 'app/pages/common/entity/utils';
+import { AppLoaderService, DialogService, WebSocketService } from 'app/services/';
 import { ModalService } from 'app/services/modal.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 
@@ -35,6 +37,7 @@ export class SupportFormUnlicensedComponent implements FormConfiguration {
   title = helptext.ticket;
   protected isOneColumnForm = true;
   private token: string;
+  maxUploadSizeBytes = 0;
 
   fieldConfig: FieldConfig[] = [];
   fieldSets: FieldSet<this>[] = [
@@ -132,6 +135,7 @@ export class SupportFormUnlicensedComponent implements FormConfiguration {
     protected dialog: DialogService,
     private modalService: ModalService,
     private translate: TranslateService,
+    public loader: AppLoaderService,
     private sysGeneralService: SystemGeneralService,
   ) { }
 
@@ -141,6 +145,21 @@ export class SupportFormUnlicensedComponent implements FormConfiguration {
     if (oauthToken) {
       this.applyToken(oauthToken);
     }
+
+    this.loader.open();
+    this.ws.call('support.attach_ticket_max_size').pipe(delay(3000), untilDestroyed(this)).subscribe(
+      (sizeMibs: number) => {
+        this.loader.close();
+        this.maxUploadSizeBytes = +sizeMibs * 1024 * 1024;
+      },
+      (err: any) => {
+        this.loader.close();
+        new EntityUtils().handleError(this, err);
+        // This request is a prereq for this form to function successfully.
+        // Which means if it errors out, the form should be closed or navigated away
+        this.resetForm();
+      },
+    );
   }
 
   customSubmit(entityEdit: any): void {
