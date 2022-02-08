@@ -1,6 +1,7 @@
 import { ComponentHarness, HarnessPredicate } from '@angular/cdk/testing';
 import { MatAutocompleteHarness, AutocompleteHarnessFilters } from '@angular/material/autocomplete/testing';
 import { IxFormControlHarness } from 'app/modules/ix-forms/interfaces/ix-form-control-harness.interface';
+import { getErrorText } from '../../utils/harness.utils';
 
 export interface IxComboboxHarnessFilters extends AutocompleteHarnessFilters {
   label: string;
@@ -16,15 +17,11 @@ export class IxComboboxHarness extends ComponentHarness implements IxFormControl
   }
 
   getAutoCompleteHarness = this.locatorFor(MatAutocompleteHarness);
+  getErrorText = getErrorText;
 
   async getLabelText(): Promise<string> {
     const label = await this.locatorFor('label')();
     return label.text({ exclude: '.required' });
-  }
-
-  async getErrorText(): Promise<string> {
-    const label = await this.locatorForOptional('ix-errors')();
-    return label?.text() || '';
   }
 
   async getValue(): Promise<string> {

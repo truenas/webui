@@ -1367,6 +1367,7 @@ export class ReplicationFormComponent implements FormConfiguration {
     if (wsResponse.properties_override) {
       const propertiesExcludeList = [];
       for (const [key, value] of Object.entries(wsResponse['properties_override'])) {
+        // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
         propertiesExcludeList.push(`${key}=${value}`);
       }
       wsResponse['properties_override'] = propertiesExcludeList;

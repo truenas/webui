@@ -151,7 +151,7 @@ export class TopbarComponent implements OnInit, OnDestroy {
       window.localStorage.setItem('alias_ips', '0');
     }
     this.ws.subscribe('core.get_jobs').pipe(untilDestroyed(this)).subscribe((event) => {
-      if (event && event.fields.method === 'update.update' || event.fields.method === 'failover.upgrade') {
+      if (event && (event.fields.method === 'update.update' || event.fields.method === 'failover.upgrade')) {
         this.updateIsRunning = true;
         if (event.fields.state === JobState.Failed || event.fields.state === JobState.Aborted) {
           this.updateIsRunning = false;

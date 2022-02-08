@@ -153,8 +153,8 @@ export class SmbAclComponent implements FormConfiguration {
             this.updateRequiredValidator('ae_who_name_domain', i, false);
             this.updateRequiredValidator('ae_who_name_name', i, false);
           }
-        } else if (res[i].ae_who_name_domain !== undefined && res[i].ae_who_name_domain !== ''
-                || res[i].ae_who_name_name !== undefined && res[i].ae_who_name_name !== '') {
+        } else if ((res[i].ae_who_name_domain !== undefined && res[i].ae_who_name_domain !== '')
+          || (res[i].ae_who_name_name !== undefined && res[i].ae_who_name_name !== '')) {
           const domainField = _.find(this.shareAclField['listFields'][i], { name: 'ae_who_name_domain' });
           const nameField = _.find(this.shareAclField['listFields'][i], { name: 'ae_who_name_name' });
           if (!domainField.required || !nameField.required) {

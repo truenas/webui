@@ -34,6 +34,7 @@ describe('ServiceNfsComponent', () => {
           mountd_port: 123,
           rpcstatd_port: 124,
           rpclockd_port: 124,
+          servers: 3,
           udp: true,
           userd_manage_gids: false,
         } as NfsConfig),
@@ -64,6 +65,7 @@ describe('ServiceNfsComponent', () => {
     expect(ws.call).toHaveBeenCalledWith('nfs.config');
     expect(values).toEqual({
       'Bind IP Addresses': ['192.168.1.117', '192.168.1.118'],
+      'Number of threads': '3',
       'Enable NFSv4': true,
       'NFSv3 ownership model for NFSv4': false,
       'Require Kerberos for NFSv4': true,
@@ -79,6 +81,7 @@ describe('ServiceNfsComponent', () => {
     const form = await loader.getHarness(IxFormHarness);
     await form.fillForm({
       'Bind IP Addresses': ['192.168.1.119'],
+      'Number of threads': '4',
       'NFSv3 ownership model for NFSv4': false,
       'Serve UDP NFS clients': false,
       'Support >16 groups': true,
@@ -98,6 +101,7 @@ describe('ServiceNfsComponent', () => {
       mountd_port: 554,
       rpclockd_port: 510,
       rpcstatd_port: 562,
+      servers: 4,
       udp: false,
       userd_manage_gids: true,
     }]);

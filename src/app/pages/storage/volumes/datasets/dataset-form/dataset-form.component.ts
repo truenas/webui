@@ -839,12 +839,14 @@ export class DatasetFormComponent implements FormConfiguration {
 
     // get optional unit
     unit = hstr.replace(num, '');
-    if ((unit) && !(unit = this.storageService.normalizeUnit(unit))) {
+    const normalizedUnit = this.storageService.normalizeUnit(unit);
+    if (unit && !normalizedUnit) {
       // error when unit is present but not recognized
       this.humanReadable[field] = '';
       return NaN;
     }
 
+    unit = normalizedUnit;
     const spacer = (unit) ? ' ' : '';
 
     this.humanReadable[field] = num.toString() + spacer + unit;

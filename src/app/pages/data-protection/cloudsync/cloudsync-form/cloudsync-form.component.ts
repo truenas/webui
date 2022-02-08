@@ -534,6 +534,7 @@ export class CloudsyncFormComponent implements FormConfiguration {
             } else {
               child['name'] = data.attributes.folder + '/' + file.Name;
             }
+            // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
             child['subTitle'] = file.Decrypted ? `${file.Decrypted} (${file.Name})` : file.Name;
             child['hasChildren'] = true;
             children.push(child);
