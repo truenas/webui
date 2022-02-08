@@ -325,7 +325,7 @@ export class FieldRelationService {
   getDataType(data: unknown): string {
     if (Array.isArray(data)) {
       return 'array';
-    } if (data != null && typeof data === 'object') {
+    } if (data !== null && typeof data === 'object') {
       return 'object';
     }
     return 'basic';

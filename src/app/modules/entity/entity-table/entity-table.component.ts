@@ -1053,7 +1053,7 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, A
                   const selectedName = this.conf.wsMultiDeleteParams(selected)[1];
                   let message = '';
                   for (let i = 0; i < res1.result.length; i++) {
-                    if (res1.result[i].error != null) {
+                    if (res1.result[i].error !== null) {
                       message = message + '<li>' + selectedName[i] + ': ' + res1.result[i].error + '</li>';
                     }
                   }

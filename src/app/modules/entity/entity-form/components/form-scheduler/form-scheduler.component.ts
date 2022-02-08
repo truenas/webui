@@ -326,7 +326,7 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, Aft
   }
 
   onChangeOption($event: Event): void {
-    if (this.config.onChangeOption !== undefined && this.config.onChangeOption != null) {
+    if (this.config.onChangeOption !== undefined && this.config.onChangeOption !== null) {
       this.config.onChangeOption({ event: $event });
     }
   }

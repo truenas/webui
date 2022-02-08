@@ -953,7 +953,7 @@ export class IscsiWizardComponent implements WizardConfiguration {
 
   rollBack(items: any[]): void {
     items.forEach((item, i) => {
-      if (item != null) {
+      if (item !== null) {
         this.ws.call((this.deleteCalls as any)[i], [item]).pipe(untilDestroyed(this)).subscribe(
           (res) => {
             console.info('rollback ' + i, res);

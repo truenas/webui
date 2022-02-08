@@ -125,7 +125,7 @@ export class FormSelectComponent implements Field, AfterViewInit, AfterViewCheck
   }
 
   onChangeOption($event: MatSelectChange): void {
-    if (this.config.onChangeOption !== undefined && this.config.onChangeOption != null) {
+    if (this.config.onChangeOption !== undefined && this.config.onChangeOption !== null) {
       this.config.onChangeOption({ event: $event });
     }
   }

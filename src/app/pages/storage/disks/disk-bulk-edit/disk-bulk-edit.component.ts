@@ -130,7 +130,7 @@ export class DiskBulkEditComponent implements FormConfiguration {
             this.loader.close();
             let isSuccessful = true;
             for (const result of res.result) {
-              if (result.error != null) {
+              if (result.error !== null) {
                 this.dialogService.errorReport(helptext.dialog_error, result.error);
                 isSuccessful = false;
                 break;

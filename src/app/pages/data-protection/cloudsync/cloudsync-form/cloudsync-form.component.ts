@@ -607,7 +607,7 @@ export class CloudsyncFormComponent implements FormConfiguration {
         attr = attr === 'encryption' ? 'task_encryption' : attr;
         if (entityForm.formGroup.controls[attr]) {
           if (attr === 'task_encryption') {
-            entityForm.formGroup.controls[attr].setValue(data.attributes['encryption'] == null ? '' : data.attributes['encryption']);
+            entityForm.formGroup.controls[attr].setValue(data.attributes['encryption'] === null ? '' : data.attributes['encryption']);
           } else {
             entityForm.formGroup.controls[attr].setValue(data.attributes[attr]);
           }
@@ -789,7 +789,7 @@ export class CloudsyncFormComponent implements FormConfiguration {
         this.setDisabled('folder_destination', true, true);
       }
 
-      if (res != null) {
+      if (res !== null) {
         this.credentials.forEach((item) => {
           if (item.id === res) {
             const targetProvider = _.find(this.providers, { name: item.provider });
@@ -958,7 +958,7 @@ export class CloudsyncFormComponent implements FormConfiguration {
     if (data.bwlimit) {
       transformed.bwlimit = data.bwlimit.map((bwlimit) => {
         let subBwLimit = bwlimit.time + ',off';
-        if (bwlimit.bandwidth != null) {
+        if (bwlimit.bandwidth !== null) {
           const bandwidth = filesize(bwlimit.bandwidth);
           subBwLimit = `${bwlimit.time}, ${bandwidth}`;
         }

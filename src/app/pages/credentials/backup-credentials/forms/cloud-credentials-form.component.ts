@@ -1358,7 +1358,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
       this.selectedProvider = res;
 
       this.oauthUrl = _.find(this.providers, { name: res }).credentials_oauth;
-      this.credentialsOauth = this.oauthUrl != null;
+      this.credentialsOauth = this.oauthUrl !== null;
       entityForm.setDisabled('client_id', !this.credentialsOauth, !this.credentialsOauth);
       entityForm.setDisabled('client_secret', !this.credentialsOauth, !this.credentialsOauth);
       entityForm.setDisabled('oauth_signin_button', !this.credentialsOauth, !this.credentialsOauth);
