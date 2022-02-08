@@ -586,17 +586,18 @@ def verify_the_file_is_removed_from_the_box_test_folder_tab(driver):
     """verify the file is removed from the Box test folder tab."""
     driver.switch_to.window(driver.window_handles[1])
     time.sleep(1)
-    driver.refresh()
-    assert wait_on_element(driver, 5, '//h1[text()="test"]')
-    assert wait_on_element(driver, 5, '//a[text()="Explaining_BSD.pdf"]', 'clickable')
     # loop for 15 second or until music disappear
     timeout = time.time() + 15
     while timeout > time.time():
+        driver.refresh()
+        time.sleep(1)
+        assert wait_on_element(driver, 5, '//h1[text()="test"]')
+        assert wait_on_element(driver, 5, '//a[text()="Explaining_BSD.pdf"]', 'clickable')
         if not is_element_present(driver, '//a[text()="music"]'):
             assert not is_element_present(driver, '//a[text()="music"]')
             break
-        else:
-            assert not is_element_present(driver, '//a[text()="music"]')
+    else:
+        assert not is_element_present(driver, '//a[text()="music"]')
     # clean the test folder on box tab before closing the tab.
     action = ActionChains(driver)
     assert wait_on_element(driver, 5, '//a[text()="Explaining_BSD.pdf"]')

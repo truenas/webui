@@ -614,18 +614,18 @@ def verify_the_file_is_removed_from_the_dropbox_test_folder_tab(driver):
     """verify the file is removed from the Dropbox test folder tab."""
     driver.switch_to.window(driver.window_handles[1])
     time.sleep(1)
-    driver.refresh()
-    time.sleep(2)
-    assert wait_on_element(driver, 5, '//nav[contains(.,"test")]//span[text()="test"]')
-    assert wait_on_element(driver, 7, '//span[text()="Explaining_BSD.pdf"]')
     # loop for 15 second or until music disappear
     timeout = time.time() + 15
     while timeout > time.time():
+        driver.refresh()
+        time.sleep(1)
+        assert wait_on_element(driver, 5, '//nav[contains(.,"test")]//span[text()="test"]')
+        assert wait_on_element(driver, 7, '//span[text()="Explaining_BSD.pdf"]')
         if not is_element_present(driver, '//span[text()="music"]'):
             assert not is_element_present(driver, '//span[text()="music"]')
             break
-        else:
-            assert not is_element_present(driver, '//span[text()="music"]')
+    else:
+        assert not is_element_present(driver, '//span[text()="music"]')
     # clean the test folder on box tab before closing the tab.
     assert wait_on_element(driver, 5, '//span[text()="Explaining_BSD.pdf"]', 'clickable')
     time.sleep(0.5)

@@ -597,18 +597,18 @@ def on_the_dataset_folder_delete_a_file(driver, nas_ip):
 def verify_the_file_is_removed_from_the_google_drive_test_folder_tab(driver):
     """verify the file is removed from the Google Drive test folder tab."""
     driver.switch_to.window(driver.window_handles[2])
-    driver.refresh()
-    time.sleep(1)
-    assert wait_on_element(driver, 5, '//div[text()="test"]')
-    assert wait_on_element(driver, 7, '//div[text()="Explaining_BSD.pdf"]', 'clickable')
     # loop for 15 second or until music disappear
     timeout = time.time() + 15
     while timeout > time.time():
+        driver.refresh()
+        time.sleep(1)
+        assert wait_on_element(driver, 5, '//div[text()="test"]')
+        assert wait_on_element(driver, 7, '//div[text()="Explaining_BSD.pdf"]', 'clickable')
         if not is_element_present(driver, '//div[text()="music"]'):
             assert not is_element_present(driver, '//div[text()="music"]')
             break
-        else:
-            assert not is_element_present(driver, '//div[text()="music"]')
+    else:
+        assert not is_element_present(driver, '//div[text()="music"]')
     # clean the test folder on box tab before closing the tab.
     assert wait_on_element(driver, 5, '//div[text()="Explaining_BSD.pdf"]', 'clickable')
     driver.find_element_by_xpath('//div[text()="Explaining_BSD.pdf"]').click()
