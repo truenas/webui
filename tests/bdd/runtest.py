@@ -23,7 +23,7 @@ Options:
 --test-suite                     - To specify the test suite to run ha-bhyve02
                                    is use by default. test-suite options:
                                    ha-bhyve02, ha-tn09, scale, scale-validation
-
+--marker      <marker>           - Pytest markers to use like debug_test
 """
 
 
@@ -42,6 +42,10 @@ test_suite_list = [
     'ha-tn09',
     'scale',
     'scale-validation'
+]
+
+markers_list = [
+    'debug_test'
 ]
 
 
@@ -86,6 +90,7 @@ except getopt.GetoptError as e:
 global ip, password
 test_suite = 'scale'
 run_convert = False
+marker = ''
 
 for output, arg in myopts:
     if output == '--ip':
@@ -107,6 +112,14 @@ for output, arg in myopts:
     elif output == "--help":
         print(UsageMSG)
         exit(0)
+    elif output == '--marker':
+        if arg in markers_list:
+            marker = arg
+        else:
+            print(f'"{arg}" is not a supported marker')
+            print('Here is the list supported markers:\n',
+                  markers_list)
+            exit(1)
 
 
 def run_testing():
@@ -159,6 +172,9 @@ def run_testing():
         "--junitxml=results/junit/webui_test.xml",
         "--cucumber-json=results/cucumber/webui_test.json"
     ]
+    if marker:
+        pytest_cmd.append("-k")
+        pytest_cmd.append(marker)
     run(pytest_cmd)
 
 
