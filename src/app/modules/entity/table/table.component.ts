@@ -256,30 +256,6 @@ export class TableComponent implements OnInit, AfterViewInit, AfterViewChecked {
     }
   }
 
-  // TODO: Enum
-  unifyState(state: string): string {
-    return this.tableService.unifyState(state);
-  }
-
-  showInOutInfo(element: any): string {
-    if (element.oldSent === undefined) {
-      element.oldSent = element.sent_bytes;
-    }
-    if (element.oldReceived === undefined) {
-      element.oldReceived = element.received_bytes;
-    }
-    if (element.sent_bytes - element.oldSent > 1024) {
-      element.oldSent = element.sent_bytes;
-      this.tableService.updateStateInfoIcon(element[this.idProp], 'sent');
-    }
-    if (element.received_bytes - element.oldReceived > 1024) {
-      element.oldReceived = element.received_bytes;
-      this.tableService.updateStateInfoIcon(element[this.idProp], 'received');
-    }
-
-    return `Sent: ${element.sent} Received: ${element.received}`;
-  }
-
   openViewMore(): void {
     this.enableViewMore = true;
     this.displayedDataSource = this.dataSource;
@@ -332,13 +308,6 @@ export class TableComponent implements OnInit, AfterViewInit, AfterViewChecked {
 
     if (column.slideToggle) {
       return 'slide-toggle';
-    }
-
-    if (column.state && column.state.prop && this._tableConf.getInOutInfo) {
-      return 'state-info';
-    }
-    if (column.state && column.state.icon) {
-      return 'state-icon';
     }
 
     if (column.prop === 'state' && column.button) {

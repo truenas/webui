@@ -13,11 +13,6 @@ import { EntityUtils } from 'app/modules/entity/utils';
 import { DialogService, AppLoaderService } from 'app/services';
 import { WebSocketService } from 'app/services/ws.service';
 
-const stateClass = {
-  UP: 'STATE_UP',
-  DOWN: 'STATE_DOWN',
-};
-
 @UntilDestroy()
 @Injectable()
 export class TableService {
@@ -41,9 +36,6 @@ export class TableService {
         }
         if (table.tableConf.afterGetDataExpandable) {
           res = table.tableConf.afterGetDataExpandable(res);
-        }
-        if (table.tableConf.getInOutInfo) {
-          table.tableConf.getInOutInfo(res);
         }
         table.dataSource = res;
         if (!(table.dataSource?.length > 0)) {
@@ -173,15 +165,6 @@ export class TableService {
         table.loaderOpen = false;
         new EntityUtils().handleWsError(this, err, this.dialog);
       });
-    }
-  }
-
-  unifyState(state: string): string {
-    switch (state.toUpperCase()) {
-      case 'UP':
-        return stateClass.UP;
-      case 'DOWN':
-        return stateClass.DOWN;
     }
   }
 
