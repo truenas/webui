@@ -108,8 +108,21 @@ export class ServiceUpsComponent implements OnInit {
   ngOnInit(): void {
     this.isFormLoading = true;
     this.loadConfig();
+    this.form.controls.remotehost.disable();
+    this.form.controls.remoteport.disable();
+
     this.form.controls['mode'].valueChanges.pipe(untilDestroyed(this)).subscribe((res) => {
-      this.isMasterMode = res === UpsMode.Master;
+      if (res === UpsMode.Master) {
+        this.form.controls.remotehost.disable();
+        this.form.controls.remoteport.disable();
+        this.form.controls.driver.enable();
+        this.isMasterMode = true;
+      } else {
+        this.form.controls.remotehost.enable();
+        this.form.controls.remoteport.enable();
+        this.form.controls.driver.disable();
+        this.isMasterMode = false;
+      }
     });
   }
 
