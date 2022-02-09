@@ -170,7 +170,7 @@ export class ManualUpdateComponent implements FormConfiguration {
       }
       this.dialogRef.componentInstance.changeAltMessage(helptext.manual_update_description);
 
-      this.loader.open(this.translate.instant(helptext.manual_update_description), true);
+      this.loader.open(this.translate.instant(helptext.manual_update_description), true, true);
       this.dialogRef.componentInstance.wspostWithProgressUpdates(this.subs.apiEndPoint, this.subs.formData)
         .pipe(untilDestroyed(this)).subscribe(
           (uploadProgress: UploadProgressUpdate) => {
@@ -181,6 +181,10 @@ export class ManualUpdateComponent implements FormConfiguration {
           () => this.loader.close(),
           () => this.loader.close(),
         );
+
+      this.loader.dialogRef.componentInstance.actionCancelled.pipe(untilDestroyed(this)).subscribe(() => {
+        this.dialogRef.componentInstance.stopUploadWithProgress.next();
+      });
 
       this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
         this.dialogRef.close(false);

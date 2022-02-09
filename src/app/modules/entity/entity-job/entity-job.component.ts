@@ -10,8 +10,8 @@ import {
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { UUID } from 'angular2-uuid';
 import * as _ from 'lodash';
-import { Observable, Subscriber } from 'rxjs';
-import { filter, map } from 'rxjs/operators';
+import { Observable, Subject, Subscriber } from 'rxjs';
+import { filter, map, takeUntil } from 'rxjs/operators';
 import { JobState } from 'app/enums/job-state.enum';
 import { ApiDirectory, ApiMethod } from 'app/interfaces/api-directory.interface';
 import { UploadProgressUpdate } from 'app/interfaces/http-progress.interface';
@@ -44,6 +44,7 @@ export class EntityJobComponent implements OnInit {
   autoCloseOnSuccess = false;
   openJobsManagerOnClose = false;
   readonly JobState = JobState;
+  readonly stopUploadWithProgress: Subject<void> = new Subject<void>();
 
   private realtimeLogsSubscribed = false;
   realtimeLogs = '';
@@ -224,6 +225,7 @@ export class EntityJobComponent implements OnInit {
   wspostWithProgressUpdates(path: string, options: unknown): Observable<UploadProgressUpdate> {
     return new Observable((subscriber: Subscriber<UploadProgressUpdate>) => {
       this.http.post(path, options, { reportProgress: true, observe: 'events' }).pipe(
+        takeUntil(this.stopUploadWithProgress),
         untilDestroyed(this),
       ).subscribe((event: HttpEvent<any>) => {
         switch (event.type) {

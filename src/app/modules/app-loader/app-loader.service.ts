@@ -1,9 +1,11 @@
 import { EventEmitter, Injectable } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Observable } from 'rxjs';
 import { AppLoaderComponent } from 'app/modules/app-loader/app-loader.component';
 
+@UntilDestroy()
 @Injectable({ providedIn: 'root' })
 export class AppLoaderService {
   dialogRef: MatDialogRef<AppLoaderComponent>;
@@ -18,17 +20,25 @@ export class AppLoaderService {
    * by emitting a new value through dialogRef.componentInstance.progressUpdater oberver
    * @returns An obervable to subscribe to for when the loader closes
    */
-  open(title: string = T('Please wait'), withProgress: boolean = false): Observable<boolean> {
+  open(
+    title: string = T('Please wait'),
+    withProgress: boolean = false,
+    cancellable: boolean = false,
+  ): Observable<boolean> {
     if (this.dialogRef === undefined) {
       this.dialogRef = this.dialog.open(AppLoaderComponent, { disableClose: true });
     }
     this.dialogRef.componentInstance.title = title;
+    this.dialogRef.componentInstance.cancellable = cancellable;
     if (withProgress) {
       this.dialogRef.updateSize('350px', '100px');
       this.dialogRef.componentInstance.withProgress();
     } else {
       this.dialogRef.updateSize('200px', '200px');
     }
+    this.dialogRef.componentInstance.actionCancelled.pipe(untilDestroyed(this)).subscribe(() => {
+      this.close();
+    });
     return this.dialogRef.afterClosed();
   }
 

@@ -1,15 +1,17 @@
 <div class="text-center pb-2">
   <h6 class="m-0 pb-1">{{ title | translate }}</h6>
   <div mat-dialog-content class="spinner-container">
-    <mat-spinner *ngIf="percent <= 0" mode="indeterminate"></mat-spinner>
+    <mat-spinner *ngIf="!shouldShowProgress" mode="indeterminate"></mat-spinner>
+    
     <mat-progress-bar
-      *ngIf="percent > 0"
+      *ngIf="shouldShowProgress"
       color="primary"
       [value]="percent"
-      [mode]="'determinate'"
+      [mode]="percent > 1 ? 'determinate' : 'indeterminate'"
       class="entity-job-progress"
     >
     </mat-progress-bar>
+    <button mat-button *ngIf="cancellable" (click)="actionCancelled.next()">{{ 'Cancel' | translate }}</button>
     <!-- <mat-spinner *ngIf="percent > 0" mode="determinate" [value]="percent"></mat-spinner> -->
   </div>
 </div>
