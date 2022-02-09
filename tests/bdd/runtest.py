@@ -34,7 +34,8 @@ option_list = [
     'root-password=',
     'convert-feature',
     'test-suite=',
-    'iso-version='
+    'iso-version=',
+    'marker='
 ]
 
 test_suite_list = [
