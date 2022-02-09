@@ -62,8 +62,15 @@ div.table-row-action {
   margin-right: -20px;
 }
 
+mat-icon.state-icon,
+mat-icon.state-info-icon,
 mat-icon.table-action-button {
   position: inherit;
+}
+
+div.state-info {
+  align-items: center;
+  display: flex;
 }
 
 div.view-more-row {
