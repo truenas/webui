@@ -167,7 +167,7 @@ export class ManualUpdateComponent implements FormConfiguration {
         this.dialogRef.componentInstance.disableProgressValue(true);
       }
       this.dialogRef.componentInstance.changeAltMessage(helptext.manual_update_description);
-      this.dialogRef.componentInstance.wspost(this.subs.apiEndPoint, this.subs.formData);
+      this.dialogRef.componentInstance.wspost(this.subs.apiEndPoint, this.subs.formData, true);
       this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
         this.dialogRef.close(false);
         if (!this.isHa) {

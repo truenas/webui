@@ -208,8 +208,8 @@ export class EntityJobComponent implements OnInit {
       );
   }
 
-  wspost(path: string, options: unknown): void {
-    this.httpPosting = true;
+  wspost(path: string, options: unknown, withProgress: boolean = false): void {
+    this.httpPosting = withProgress;
     this.http.post(path, options, { reportProgress: true, observe: 'events' })
       .pipe(untilDestroyed(this))
       .subscribe((event: HttpEvent<Job>) => {
