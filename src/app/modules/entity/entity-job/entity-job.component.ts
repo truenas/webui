@@ -1,4 +1,6 @@
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import {
+  HttpClient, HttpErrorResponse, HttpEvent, HttpEventType,
+} from '@angular/common/http';
 import {
   OnInit, Component, EventEmitter, Output, Inject,
 } from '@angular/core';
@@ -30,6 +32,8 @@ export class EntityJobComponent implements OnInit {
   args: any[] = [];
 
   title = '';
+  httpPosting = false;
+  uploadPercentage: number = null;
   showCloseButton = true;
   showAbortButton = false; // enable to abort job
   jobId: number;
@@ -205,16 +209,30 @@ export class EntityJobComponent implements OnInit {
   }
 
   wspost(path: string, options: unknown): void {
-    this.http.post(path, options).pipe(untilDestroyed(this)).subscribe((res: Job) => {
-      this.job = res;
-      if (this.job && (this.job as any).job_id) {
-        this.jobId = (this.job as any).job_id;
-      }
-      this.wsshow();
-    },
-    (err: HttpErrorResponse) => {
-      this.prefailure.emit(err);
-    });
+    this.httpPosting = true;
+    this.http.post(path, options, { reportProgress: true, observe: 'events' })
+      .pipe(untilDestroyed(this))
+      .subscribe((event: HttpEvent<Job>) => {
+        if (event.type === HttpEventType.UploadProgress) {
+          const eventTotal = event.total ? event.total : 0;
+          let progress = 0;
+          if (eventTotal !== 0) {
+            progress = Math.round(event.loaded / eventTotal * 100);
+          }
+          this.uploadPercentage = progress;
+        } else if (event.type === HttpEventType.Response) {
+          this.httpPosting = false;
+          this.job = event.body;
+          if (this.job && (this.job as any).job_id) {
+            this.jobId = (this.job as any).job_id;
+          }
+          this.wsshow();
+        }
+      },
+      (err: HttpErrorResponse) => {
+        this.httpPosting = false;
+        this.prefailure.emit(err);
+      });
   }
 
   wsshow(): void {
