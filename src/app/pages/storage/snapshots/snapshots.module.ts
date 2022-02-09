@@ -25,6 +25,7 @@ import { routing } from 'app/pages/storage/snapshots/snapshots.routing';
 import { SnapshotEffects } from 'app/pages/storage/snapshots/store/snapshot.effects';
 import { snapshotReducer } from 'app/pages/storage/snapshots/store/snapshot.reducer';
 import { snapshotStateKey } from 'app/pages/storage/snapshots/store/snapshot.selectors';
+import { SnapshotBatchDeleteDialogComponent } from './snapshot-table/components/snapshot-batch-delete-dialog/snapshot-batch-delete-dialog.component';
 
 @NgModule({
   providers: [],
@@ -55,6 +56,7 @@ import { snapshotStateKey } from 'app/pages/storage/snapshots/store/snapshot.sel
     SnapshotCloneDialogComponent,
     SnapshotDetailsComponent,
     SnapshotRollbackDialogComponent,
+    SnapshotBatchDeleteDialogComponent,
   ],
   exports: [
     SnapshotTableComponent,
@@ -62,6 +64,7 @@ import { snapshotStateKey } from 'app/pages/storage/snapshots/store/snapshot.sel
     SnapshotCloneDialogComponent,
     SnapshotDetailsComponent,
     SnapshotRollbackDialogComponent,
+    SnapshotBatchDeleteDialogComponent,
   ],
 })
 export class SnapshotsModule { }

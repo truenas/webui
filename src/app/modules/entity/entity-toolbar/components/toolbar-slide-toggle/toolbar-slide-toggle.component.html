@@ -4,7 +4,8 @@
     [checked]="config.value"
     [required]="config.required"
     [disabled]="config.disabled"
-    (change)="onChanged($event)"
+    (click)="onClick($event)"
+    (keyup.Space)="onClick($event)"
   >
     {{ config.label }}
     <span *ngIf="config.required" class="required">*</span>

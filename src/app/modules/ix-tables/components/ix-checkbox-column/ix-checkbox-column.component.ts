@@ -11,7 +11,7 @@ import { IxTableComponent } from 'app/modules/ix-tables/components/ix-table/ix-t
   styleUrls: ['./ix-checkbox-column.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class IxCheckboxColumnComponent<T> implements OnInit, OnDestroy {
+export class IxCheckboxColumnComponent<T = unknown> implements OnInit, OnDestroy {
   @Input() dataSource: MatTableDataSource<T>;
   @Input() selection: SelectionModel<T>;
   @ViewChild(MatColumnDef, { static: false }) columnDef: MatColumnDef;
@@ -47,7 +47,8 @@ export class IxCheckboxColumnComponent<T> implements OnInit, OnDestroy {
   }
 
   masterToggle(): void {
-    if (this.isAllSelected() || this.isPageSelected() && !this.isAllSelected()) {
+    // TODO: Check this again
+    if (this.isAllSelected() || (this.isPageSelected() && !this.isAllSelected())) {
       this.selection.clear();
       return;
     }

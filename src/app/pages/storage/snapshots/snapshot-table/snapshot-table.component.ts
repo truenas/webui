@@ -14,22 +14,19 @@ import {
 } from 'rxjs/operators';
 import { FormatDateTimePipe } from 'app/core/components/pipes/format-datetime.pipe';
 import helptext from 'app/helptext/storage/snapshots/snapshots';
-import { CoreBulkQuery, CoreBulkResponse } from 'app/interfaces/core-bulk.interface';
 import { ConfirmOptions } from 'app/interfaces/dialog.interface';
 import { CoreEvent } from 'app/interfaces/events';
-import { Job } from 'app/interfaces/job.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { ZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
 import { EmptyConfig, EmptyType } from 'app/modules/entity/entity-empty/entity-empty.component';
-import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { EntityToolbarComponent } from 'app/modules/entity/entity-toolbar/entity-toolbar.component';
 import { ToolbarConfig, ControlConfig } from 'app/modules/entity/entity-toolbar/models/control-config.interface';
 import { EntityUtils } from 'app/modules/entity/utils';
-import { SnapshotDialogData } from 'app/pages/storage/snapshots/interfaces/snapshot-dialog-data.interface';
 import { SnapshotListRow } from 'app/pages/storage/snapshots/interfaces/snapshot-list-row.interface';
 import { SnapshotAddComponent } from 'app/pages/storage/snapshots/snapshot-add/snapshot-add.component';
 import { SnapshotCloneDialogComponent } from 'app/pages/storage/snapshots/snapshot-clone-dialog/snapshot-clone-dialog.component';
 import { SnapshotRollbackDialogComponent } from 'app/pages/storage/snapshots/snapshot-rollback-dialog/snapshot-rollback-dialog.component';
+import { SnapshotBatchDeleteDialogComponent } from 'app/pages/storage/snapshots/snapshot-table/components/snapshot-batch-delete-dialog/snapshot-batch-delete-dialog.component';
 import { loadSnapshots } from 'app/pages/storage/snapshots/store/snapshot.actions';
 import { selectSnapshotsTotal, SnapshotSlice } from 'app/pages/storage/snapshots/store/snapshot.selectors';
 import {
@@ -152,6 +149,24 @@ export class SnapshotTableComponent implements OnInit, AfterViewInit {
     });
   }
 
+  getConfirmOptions(): ConfirmOptions {
+    if (this.showExtraColumns$.value) {
+      return {
+        title: this.translate.instant(helptext.extra_cols.title_hide),
+        message: this.translate.instant(helptext.extra_cols.message_hide),
+        buttonMsg: this.translate.instant(helptext.extra_cols.button_hide),
+        hideCheckBox: true,
+      };
+    }
+
+    return {
+      title: this.translate.instant(helptext.extra_cols.title_show),
+      message: this.translate.instant(helptext.extra_cols.message_show),
+      buttonMsg: this.translate.instant(helptext.extra_cols.button_show),
+      hideCheckBox: true,
+    };
+  }
+
   createDataSource(snapshots: SnapshotListRow[] = []): void {
     this.dataSource = new MatTableDataSource(snapshots);
     this.dataSource.sort = this.sort;
@@ -163,39 +178,30 @@ export class SnapshotTableComponent implements OnInit, AfterViewInit {
   }
 
   toggleExtraColumnsDialog(): void {
-    let dialogOptions: ConfirmOptions;
+    this.showExtraColumns$.next(!this.showExtraColumns$.value);
+    window.localStorage.setItem('snapshotXtraCols', this.showExtraColumns$.value.toString());
     if (this.showExtraColumns$.value) {
-      dialogOptions = {
-        title: this.translate.instant(helptext.extra_cols.title_hide),
-        message: this.translate.instant(helptext.extra_cols.message_hide),
-        buttonMsg: this.translate.instant(helptext.extra_cols.button_hide),
-        hideCheckBox: true,
-      };
-    } else {
-      dialogOptions = {
-        title: this.translate.instant(helptext.extra_cols.title_show),
-        message: this.translate.instant(helptext.extra_cols.message_show),
-        buttonMsg: this.translate.instant(helptext.extra_cols.button_show),
-        hideCheckBox: true,
-      };
+      this.store$.dispatch(loadSnapshots({ extra: true }));
     }
-
-    this.dialogService.confirm(dialogOptions).pipe(
-      filter(Boolean),
-      untilDestroyed(this),
-    ).subscribe(() => {
-      this.showExtraColumns$.next(!this.showExtraColumns$.value);
-      window.localStorage.setItem('snapshotXtraCols', this.showExtraColumns$.value.toString());
-      if (this.showExtraColumns$.value) {
-        this.store$.dispatch(loadSnapshots({ extra: true }));
-      }
-      this.getSnapshots();
-      this.selection.clear();
-    });
+    this.getSnapshots();
+    this.selection.clear();
+    const slideToggleControl = this.toolbarConfig.controls.find((control) => control.name === 'extra-columns');
+    slideToggleControl.confirmOptions = this.getConfirmOptions();
+    this.cdr.markForCheck();
   }
 
-  doAdd(): void {
-    this.modalService.openInSlideIn(SnapshotAddComponent);
+  onAction(event: SnapshotListEvent): void {
+    switch (event.action) {
+      case 'rollback':
+        this.doRollback(event.row);
+        break;
+      case 'clone':
+        this.doClone(event.row);
+        break;
+      case 'delete':
+        this.doDelete(event.row);
+        break;
+    }
   }
 
   setupToolbar(): void {
@@ -224,6 +230,7 @@ export class SnapshotTableComponent implements OnInit, AfterViewInit {
         type: 'slide-toggle',
         label: this.translate.instant('Show extra columns'),
         value: this.showExtraColumns$.value,
+        confirmOptions: this.getConfirmOptions(),
       },
       {
         name: 'filter',
@@ -253,9 +260,37 @@ export class SnapshotTableComponent implements OnInit, AfterViewInit {
     this.core.emit({ name: 'GlobalActions', data: settingsConfig, sender: this });
   }
 
-  wsMultiDeleteParams(selected: SnapshotListRow[]): (string | string[][])[] {
-    const snapshots = selected.map((item) => [item.dataset + '@' + item.snapshot]);
-    return ['zfs.snapshot.delete', snapshots, '{0}'];
+  selectAll(): void {
+    this.dataSource.data.forEach((snapshot) => this.selection.select(snapshot));
+    this.cdr.markForCheck();
+  }
+
+  doAdd(): void {
+    this.modalService.openInSlideIn(SnapshotAddComponent);
+  }
+
+  doClone(snapshot: SnapshotListRow): void {
+    this.matDialog.open(SnapshotCloneDialogComponent, {
+      data: snapshot.id,
+    });
+  }
+
+  doRollback(row: SnapshotListRow): void {
+    this.loader.open();
+    this.ws.call('zfs.snapshot.query', [[['id', '=', row.name]]]).pipe(
+      map((snapshots) => snapshots[0]),
+      tap((snapshot) => {
+        snapshotChanged({ snapshot });
+        this.loader.close();
+      }),
+      switchMap((snapshot) => this.matDialog.open(SnapshotRollbackDialogComponent, { data: snapshot }).afterClosed()),
+      untilDestroyed(this),
+    ).subscribe({
+      error: (error) => {
+        this.loader.close();
+        new EntityUtils().handleWsError(this, error, this.dialogService);
+      },
+    });
   }
 
   doDelete(snapshot: SnapshotListRow): void {
@@ -279,164 +314,9 @@ export class SnapshotTableComponent implements OnInit, AfterViewInit {
     );
   }
 
-  restructureData(selected: SnapshotListRow[]): SnapshotDialogData {
-    const datasets: string[] = [];
-    const snapshots: { [index: string]: string[] } = {};
-    selected.forEach((item) => {
-      if (!snapshots[item.dataset]) {
-        datasets.push(item.dataset);
-        snapshots[item.dataset] = [];
-      }
-
-      snapshots[item.dataset].push(item.snapshot);
+  doBatchDelete(snapshots: SnapshotListRow[]): void {
+    this.matDialog.open(SnapshotBatchDeleteDialogComponent, {
+      data: snapshots,
     });
-
-    return { datasets, snapshots };
-  }
-
-  getMultiDeleteMessage(selected: SnapshotListRow[]): string {
-    let message = this.translate.instant(
-      '<strong>The following { n, plural, one {snapshot} other {# snapshots} } will be deleted. Are you sure you want to proceed?</strong>',
-      { n: selected.length },
-    );
-
-    message += '<br>';
-    const info: SnapshotDialogData = this.restructureData(selected);
-
-    const datasetStart = "<div class='mat-list-item'>";
-    const datasetEnd = '</div>';
-    const listStart = '<ul>';
-    const listEnd = '</ul>';
-    const breakTag = '<br>';
-
-    info.datasets.forEach((dataset) => {
-      const totalSnapshots: number = info.snapshots[dataset].length;
-      const snapshotText = this.translate.instant(
-        '{ n, plural, one {# snapshot} other {# snapshots} }',
-        { n: totalSnapshots },
-      );
-      const header = `<br/> <div><strong>${dataset}</strong> (${snapshotText}) </div>`;
-      const listContent: string[] = [];
-
-      info.snapshots[dataset].forEach((snapshot) => {
-        listContent.push('<li>&nbsp;&nbsp;&nbsp;&nbsp;' + snapshot + '</li>');
-      });
-
-      const listContentString: string = listContent.toString();
-      message += datasetStart + header + listStart + listContentString.replace(/\,/g, '') + listEnd + breakTag + datasetEnd;
-    });
-
-    return message;
-  }
-
-  doMultiDelete(selected: SnapshotListRow[]): void {
-    const multiDeleteMsg = this.getMultiDeleteMessage(selected);
-    this.dialogService.confirm({
-      title: this.translate.instant('Delete'),
-      message: multiDeleteMsg,
-      buttonMsg: this.translate.instant('Delete'),
-    }).pipe(
-      filter(Boolean),
-      untilDestroyed(this),
-    ).subscribe(() => this.startMultiDeleteProgress(selected));
-  }
-
-  startMultiDeleteProgress(selected: SnapshotListRow[]): void {
-    const params = this.wsMultiDeleteParams(selected);
-    const dialogRef = this.matDialog.open(EntityJobComponent, {
-      data: {
-        title: this.translate.instant('Deleting Snapshots'),
-      },
-      disableClose: true,
-    });
-    dialogRef.componentInstance.setCall('core.bulk', params as CoreBulkQuery);
-    dialogRef.componentInstance.submit();
-
-    dialogRef.componentInstance.success
-      .pipe(untilDestroyed(this))
-      .subscribe((job: Job<CoreBulkResponse<boolean>[]>) => {
-        const jobErrors: string[] = [];
-        const jobSuccess: boolean[] = [];
-
-        job.result.forEach((item) => {
-          if (item.error) {
-            jobErrors.push(item.error);
-          } else {
-            jobSuccess.push(item.result);
-          }
-        });
-
-        dialogRef.close();
-        // this.entityList.getData();
-
-        if (jobErrors.length > 0) {
-          const errorTitle = this.translate.instant('Warning: {n} of {total} snapshots could not be deleted.', { n: jobErrors.length, total: params[1].length });
-
-          let errorMessage = jobErrors.map((err) => err + '\n').toString();
-          errorMessage = errorMessage.split(',').join('');
-          errorMessage = errorMessage.split('[').join('\n *** [');
-          errorMessage = errorMessage.split(']').join(']\n');
-
-          this.dialogService.errorReport(errorTitle, '', errorMessage);
-        } else {
-          this.dialogService.info(
-            this.translate.instant('Deleted {n, plural, one {# snapshot} other {# snapshots}}', { n: jobSuccess.length }),
-            '',
-            '320px',
-            'info',
-            true,
-          );
-        }
-      });
-
-    dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe(() => {
-      // new EntityUtils().handleWsError(this.entityList, err, this.dialogService);
-      dialogRef.close();
-    });
-  }
-
-  selectAll(): void {
-    this.dataSource.data.forEach((snapshot) => this.selection.select(snapshot));
-    this.cdr.markForCheck();
-  }
-
-  doClone(snapshot: SnapshotListRow): void {
-    console.info('doClone', snapshot);
-    this.matDialog.open(SnapshotCloneDialogComponent, {
-      data: snapshot.id,
-    });
-  }
-
-  doRollback(row: SnapshotListRow): void {
-    console.info('doRollback', row);
-    this.loader.open();
-    this.ws.call('zfs.snapshot.query', [[['id', '=', row.name]]]).pipe(
-      map((snapshots) => snapshots[0]),
-      tap((snapshot) => {
-        snapshotChanged({ snapshot });
-        this.loader.close();
-      }),
-      switchMap((snapshot) => this.matDialog.open(SnapshotRollbackDialogComponent, { data: snapshot }).afterClosed()),
-      untilDestroyed(this),
-    ).subscribe({
-      error: (error) => {
-        this.loader.close();
-        new EntityUtils().handleWsError(this, error, this.dialogService);
-      },
-    });
-  }
-
-  onAction(event: SnapshotListEvent): void {
-    switch (event.action) {
-      case 'rollback':
-        this.doRollback(event.row);
-        break;
-      case 'clone':
-        this.doClone(event.row);
-        break;
-      case 'delete':
-        this.doDelete(event.row);
-        break;
-    }
   }
 }

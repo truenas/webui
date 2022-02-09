@@ -1,7 +1,6 @@
 :host {
   align-items: center;
-  display: flex;
-  height: 100%;
+  display: flex !important;
 
   .toolbar-slide-toggle {
     tooltip {

@@ -32,7 +32,7 @@ export class SnapshotDetailsComponent implements OnInit, OnDestroy {
     private translate: TranslateService,
     private cdr: ChangeDetectorRef,
     private formatDateTimePipe: FormatDateTimePipe,
-    private convertBytestoHumanReadable: ConvertBytesToHumanReadablePipe,
+    private convertBytesToHumanReadable: ConvertBytesToHumanReadablePipe,
   ) { }
 
   ngOnInit(): void {
@@ -52,9 +52,9 @@ export class SnapshotDetailsComponent implements OnInit, OnDestroy {
 
   getDetails(snapshot: SnapshotListRow): Option[] {
     return [
-      { label: this.translate.instant('Used'), value: snapshot?.used ? this.convertBytestoHumanReadable.transform(snapshot.used) : 'N/A' },
+      { label: this.translate.instant('Used'), value: snapshot?.used ? this.convertBytesToHumanReadable.transform(snapshot.used) : 'N/A' },
       { label: this.translate.instant('Date Created'), value: snapshot?.created ? this.formatDateTimePipe.transform(snapshot.created) : 'N/A' },
-      { label: this.translate.instant('Referenced'), value: snapshot?.referenced ? this.convertBytestoHumanReadable.transform(snapshot.referenced) : 'N/A' },
+      { label: this.translate.instant('Referenced'), value: snapshot?.referenced ? this.convertBytesToHumanReadable.transform(snapshot.referenced) : 'N/A' },
     ];
   }
 
