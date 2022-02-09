@@ -17,7 +17,7 @@ import {
   debounceTime, distinctUntilChanged, map, takeUntil,
 } from 'rxjs/operators';
 import { Option } from 'app/interfaces/option.interface';
-import { IxComboboxProvider } from 'app/pages/common/ix-forms/components/ix-combobox2/ix-combobox-provider';
+import { IxComboboxProvider } from 'app/modules/ix-forms/components/ix-combobox2/ix-combobox-provider';
 
 @UntilDestroy()
 @Component({

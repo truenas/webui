@@ -131,15 +131,19 @@ export class IxFormatterService {
       unit = allowedUnits[0];
     }
 
-    // error when unit is present and...
-    if ((unit)
-          // ...allowedUnits are passed in but unit is not in allowed Units
-          && (allowedUnits && !allowedUnits.toLowerCase().includes(unit[0].toLowerCase())
-          // ...when allowedUnits are not passed in and unit is not recognized
-          || !(unit = this.normalizeUnit(unit)))) {
+    const normalizedUnit = this.normalizeUnit(unit);
+    if (
+      // error when unit is present and...
+      (unit) && (
+        // ...allowedUnits are passed in but unit is not in allowed Units
+        (allowedUnits && !allowedUnits.toLowerCase().includes(unit[0].toLowerCase()))
+        // ...when allowedUnits are not passed in and unit is not recognized
+        || !normalizedUnit
+      )
+    ) {
       return { number: null, unit: null };
     }
-    return { number: num, unit };
+    return { number: num, unit: normalizedUnit };
   }
 
   /**

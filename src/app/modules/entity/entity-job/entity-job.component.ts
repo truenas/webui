@@ -9,11 +9,11 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { UUID } from 'angular2-uuid';
 import * as _ from 'lodash';
 import { filter, map } from 'rxjs/operators';
-import { JobsManagerComponent } from 'app/components/common/dialog/jobs-manager/jobs-manager.component';
 import { JobState } from 'app/enums/job-state.enum';
 import { ApiDirectory, ApiMethod } from 'app/interfaces/api-directory.interface';
 import { Job, JobProgress } from 'app/interfaces/job.interface';
 import { EntityJobConfig } from 'app/modules/entity/entity-job/entity-job-config.interface';
+import { JobsPanelComponent } from 'app/modules/jobs/components/jobs-panel/jobs-panel.component';
 import { WebSocketService } from 'app/services';
 
 @UntilDestroy()
@@ -95,7 +95,7 @@ export class EntityJobComponent implements OnInit {
       this.dialogRef.beforeClosed()
         .pipe(untilDestroyed(this))
         .subscribe(() => {
-          this.matDialog.open(JobsManagerComponent, {
+          this.matDialog.open(JobsPanelComponent, {
             width: '400px',
             hasBackdrop: true,
             panelClass: 'topbar-panel',

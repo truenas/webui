@@ -1,6 +1,6 @@
 import { Observable, of } from 'rxjs';
-import { Option } from '../../../../../interfaces/option.interface';
-import { IxComboboxProvider } from '../ix-combobox2/ix-combobox-provider';
+import { Option } from 'app/interfaces/option.interface';
+import { IxComboboxProvider } from 'app/modules/ix-forms/components/ix-combobox2/ix-combobox-provider';
 
 export class SimpleComboboxProvider implements IxComboboxProvider {
   filter(options: Option[], filterValue: string): Observable<Option[]> {

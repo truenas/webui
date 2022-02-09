@@ -141,10 +141,11 @@ export class GroupQuotaFormComponent implements FormConfiguration, DoCheck {
   }
 
   allowSubmit(): void {
-    if ((this.dq || this.oq)
-        && (this.selectedEntriesValue.value && this.selectedEntriesValue.value.length > 0
-        || this.searchedEntries && this.searchedEntries.length > 0)
-        && !this.entryErrBool) {
+    if (
+      (this.dq || this.oq)
+      && (this.selectedEntriesValue.value?.length > 0 || this.searchedEntries?.length > 0)
+      && !this.entryErrBool
+    ) {
       this.saveButtonEnabled = true;
     } else {
       this.saveButtonEnabled = false;
