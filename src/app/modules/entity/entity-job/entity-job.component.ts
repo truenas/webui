@@ -1,4 +1,6 @@
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import {
+  HttpClient, HttpErrorResponse, HttpEvent, HttpEventType,
+} from '@angular/common/http';
 import {
   OnInit, Component, EventEmitter, Output, Inject,
 } from '@angular/core';
@@ -8,6 +10,7 @@ import {
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { UUID } from 'angular2-uuid';
 import * as _ from 'lodash';
+import { Observable, Subscriber } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
 import { JobState } from 'app/enums/job-state.enum';
 import { ApiDirectory, ApiMethod } from 'app/interfaces/api-directory.interface';
@@ -214,6 +217,44 @@ export class EntityJobComponent implements OnInit {
     },
     (err: HttpErrorResponse) => {
       this.prefailure.emit(err);
+    });
+  }
+
+  wspostWithProgressUpdates(path: string, options: unknown): Observable<{ progress: number; status: HttpEventType }> {
+    return new Observable((subscriber: Subscriber<{ progress: number; status: HttpEventType }>) => {
+      this.http.post(path, options, { reportProgress: true, observe: 'events' }).pipe(
+        untilDestroyed(this),
+      ).subscribe((event: HttpEvent<any>) => {
+        switch (event.type) {
+          case HttpEventType.Sent:
+          case HttpEventType.ResponseHeader:
+            subscriber.next({ progress: null, status: event.type });
+            break;
+          case HttpEventType.UploadProgress:
+            // if we don't know the total, we can't show comprehensible progress
+            // so we just emit 0
+            const eventTotal = event.total ? event.total : 0;
+            let progress = 0;
+            if (eventTotal !== 0) {
+              progress = Math.round(event.loaded / eventTotal * 100);
+            }
+            subscriber.next({ progress, status: event.type });
+            break;
+          case HttpEventType.Response:
+            this.job = event.body;
+            if (this.job && (this.job as any).job_id) {
+              this.jobId = (this.job as any).job_id;
+            }
+            subscriber.next({ progress: 100, status: HttpEventType.Response });
+            subscriber.complete();
+            this.wsshow();
+            break;
+        }
+      },
+      (err: HttpErrorResponse) => {
+        subscriber.error(err);
+        this.prefailure.emit(err);
+      });
     });
   }
 

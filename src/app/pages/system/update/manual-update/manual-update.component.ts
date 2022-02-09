@@ -1,4 +1,4 @@
-import { HttpErrorResponse } from '@angular/common/http';
+import { HttpErrorResponse, HttpEventType } from '@angular/common/http';
 import { Component } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
@@ -19,7 +19,7 @@ import { FieldConfig, FormSelectConfig, FormParagraphConfig } from 'app/modules/
 import { MessageService } from 'app/modules/entity/entity-form/services/message.service';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { EntityUtils } from 'app/modules/entity/utils';
-import { WebSocketService, SystemGeneralService } from 'app/services';
+import { WebSocketService, SystemGeneralService, AppLoaderService } from 'app/services';
 import { CoreService } from 'app/services/core-service/core.service';
 import { DialogService } from 'app/services/dialog.service';
 
@@ -88,6 +88,7 @@ export class ManualUpdateComponent implements FormConfiguration {
     private dialogService: DialogService,
     private systemService: SystemGeneralService,
     private core: CoreService,
+    private loader: AppLoaderService,
   ) {
     this.core.register({
       observerClass: this,
@@ -167,7 +168,20 @@ export class ManualUpdateComponent implements FormConfiguration {
         this.dialogRef.componentInstance.disableProgressValue(true);
       }
       this.dialogRef.componentInstance.changeAltMessage(helptext.manual_update_description);
-      this.dialogRef.componentInstance.wspost(this.subs.apiEndPoint, this.subs.formData);
+
+      this.loader.open(this.translate.instant('Uploading'), true);
+      this.dialogRef.componentInstance.wspostWithProgressUpdates(this.subs.apiEndPoint, this.subs.formData)
+        .pipe(untilDestroyed(this)).subscribe(
+          (uploadProgress: { progress: number; status: HttpEventType }) => {
+            if (uploadProgress.status === HttpEventType.UploadProgress && uploadProgress.progress !== null) {
+              this.loader.dialogRef.componentInstance.progressUpdater.next(uploadProgress.progress);
+            } else if (uploadProgress.status === HttpEventType.Response) {
+              this.loader.close();
+            }
+          },
+          () => this.loader.close(),
+        );
+
       this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
         this.dialogRef.close(false);
         if (!this.isHa) {

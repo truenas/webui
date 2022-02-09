@@ -10,13 +10,24 @@ export class AppLoaderService {
 
   constructor(private dialog: MatDialog) { }
 
-  open(title: string = T('Please wait')): Observable<boolean> {
+  /**
+   *
+   * @param title The title for the loading indicator
+   * @param withProgress Set this to true if you intend to show a percentage
+   * progress indicator while loading. You can update the progress percentage value
+   * by emitting a new value through dialogRef.componentInstance.progressUpdater oberver
+   * @returns An obervable to subscribe to for when the loader closes
+   */
+  open(title: string = T('Please wait'), withProgress: boolean = false): Observable<boolean> {
     if (this.dialogRef === undefined) {
       this.dialogRef = this.dialog.open(AppLoaderComponent, { disableClose: true });
       this.dialogRef.updateSize('200px', '200px');
-      this.dialogRef.componentInstance.title = title;
-      return this.dialogRef.afterClosed();
     }
+    this.dialogRef.componentInstance.title = title;
+    if (withProgress) {
+      this.dialogRef.componentInstance.withProgress();
+    }
+    return this.dialogRef.afterClosed();
   }
 
   close(): void {

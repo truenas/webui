@@ -2849,6 +2849,7 @@
   "Upgrades both controllers. Files are downloaded to the Active Controller and then transferred to the Standby Controller. The upgrade process starts concurrently on both TrueNAS Controllers.": "",
   "Upgrades both controllers. Files are downloaded to the Active Controller and then transferred to the Standby Controller. The upgrade process starts concurrently on both TrueNAS Controllers. Continue with download?": "",
   "Upload Chunk Size (MiB)": "",
+  "Uploading": "",
   "Upsmon will wait up to this many seconds in master mode for the slaves to disconnect during a shutdown situation.": "",
   "Usages": "",
   "Use <i>ENTER</i> after each entry.": "",

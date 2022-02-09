@@ -1,6 +1,7 @@
 <div class="text-center pb-2">
   <h6 class="m-0 pb-1">{{ title | translate }}</h6>
   <div mat-dialog-content class="spinner-container">
-    <mat-spinner></mat-spinner>
+    <mat-spinner *ngIf="percent <= 0" mode="indeterminate"></mat-spinner>
+    <mat-spinner *ngIf="percent > 0" mode="determinate" [value]="percent"></mat-spinner>
   </div>
 </div>
