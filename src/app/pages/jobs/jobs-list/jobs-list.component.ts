@@ -1,75 +1,72 @@
 import {
-  AfterViewInit, Component, OnInit, ViewChild,
+  AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, TrackByFunction, ViewChild,
 } from '@angular/core';
-import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
-import { MatTable, MatTableDataSource } from '@angular/material/table';
+import { MatTableDataSource } from '@angular/material/table';
 import { MatTabChangeEvent } from '@angular/material/tabs';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
-import { Subject } from 'rxjs';
-import { filter } from 'rxjs/operators';
+import { Subject, BehaviorSubject } from 'rxjs';
+import {
+  filter, map, switchMap,
+} from 'rxjs/operators';
 import { JobState } from 'app/enums/job-state.enum';
 import { JobViewLogState } from 'app/enums/job-view-log-state.enum';
 import { CoreEvent } from 'app/interfaces/events';
 import { Job } from 'app/interfaces/job.interface';
-import { QueryParams } from 'app/interfaces/query-api.interface';
 import { EmptyConfig, EmptyType } from 'app/modules/entity/entity-empty/entity-empty.component';
 import { EntityToolbarComponent } from 'app/modules/entity/entity-toolbar/entity-toolbar.component';
 import { ToolbarConfig } from 'app/modules/entity/entity-toolbar/models/control-config.interface';
-import { JobsListStore } from 'app/pages/jobs/jobs-list/jobs-list.store';
+import { abortJobPressed } from 'app/modules/jobs/store/job.actions';
+import {
+  JobSlice, selectJobState, selectJobs, selectFailedJobs, selectRunningJobs,
+} from 'app/modules/jobs/store/job.selectors';
 import { DialogService } from 'app/services';
 import { CoreService } from 'app/services/core-service/core.service';
-import { JobTab } from './jobs-list.store';
+import { JobTab } from './job-tab.enum';
 
 @UntilDestroy()
 @Component({
   templateUrl: './jobs-list.component.html',
   styleUrls: ['./jobs-list.component.scss'],
-  providers: [JobsListStore],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class JobsListComponent implements OnInit, AfterViewInit {
-  paginationPageIndex = 0;
-  paginationPageSize = 10;
-  paginationPageSizeOptions: number[] = [10, 50, 100];
-  paginationShowFirstLastButtons = true;
-  queryCall = 'core.get_jobs' as const;
-  queryCallOption: QueryParams<Job> = [[], { limit: this.paginationPageSize, order_by: ['-id'] }];
-  @ViewChild('taskTable', { static: false }) taskTable: MatTable<Job[]>;
+  isLoading$ = this.store$.select(selectJobState).pipe(map((state) => state.isLoading));
+  error$ = this.store$.select(selectJobState).pipe(map((state) => state.error));
   @ViewChild(MatSort, { static: false }) sort: MatSort;
-  @ViewChild(MatPaginator) set matPaginator(mp: MatPaginator) {
-    this.paginator = mp;
-    this.dataSource.paginator = this.paginator;
-  }
-  dataSource: MatTableDataSource<Job> = new MatTableDataSource<Job>([]);
+  dataSource: MatTableDataSource<Job> = new MatTableDataSource([]);
   displayedColumns = ['name', 'state', 'id', 'time_started', 'time_finished', 'arguments', 'logs_excerpt'];
   viewingLogsForJob: Job;
   viewType: JobViewLogState;
-  isLoading: boolean;
   toolbarConfig: ToolbarConfig;
   settingsEvent$: Subject<CoreEvent> = new Subject();
   filterString = '';
-  jobTableIndexes = [JobTab.All, JobTab.Active, JobTab.Failed];
+  jobTableIndexes = [JobTab.All, JobTab.Running, JobTab.Failed];
   selectedIndex: JobTab = 0;
   emptyConfig: EmptyConfig = {
     type: EmptyType.NoPageData,
     large: true,
-    title: this.translate.instant('There are no jobs.'),
+    title: this.translate.instant('There are no tasks.'),
   };
   loadingConfig: EmptyConfig = {
     type: EmptyType.Loading,
     large: false,
     title: this.translate.instant('Loading...'),
   };
+  selector$ = new BehaviorSubject(selectJobs);
+
   readonly JobState = JobState;
   readonly JobViewLogState = JobViewLogState;
-  private paginator: MatPaginator;
+  readonly trackByJobId: TrackByFunction<Job> = (_, job) => job.id;
 
   constructor(
     private core: CoreService,
     private translate: TranslateService,
-    private store: JobsListStore,
     private dialogService: DialogService,
+    private store$: Store<JobSlice>,
+    private cdr: ChangeDetectorRef,
   ) {}
 
   onAborted(job: Job): void {
@@ -84,24 +81,25 @@ export class JobsListComponent implements OnInit, AfterViewInit {
       })
       .pipe(filter(Boolean), untilDestroyed(this))
       .subscribe(() => {
-        this.store.remove(job);
+        this.store$.dispatch(abortJobPressed({ job }));
       });
   }
 
   ngOnInit(): void {
     this.setupToolbar();
 
-    this.store.state$.pipe(untilDestroyed(this)).subscribe((state) => {
-      this.dataSource.data = state.jobs;
-      this.isLoading = state.isLoading;
+    this.selector$.pipe(
+      switchMap((selector) => this.store$.select(selector)),
+      untilDestroyed(this),
+    ).subscribe((jobs) => {
+      this.dataSource.data = jobs;
       this.dataSource.sort = this.sort;
-      this.dataSource.paginator = this.paginator;
+      this.cdr.markForCheck();
     });
   }
 
   ngAfterViewInit(): void {
     this.dataSource.sort = this.sort;
-    this.dataSource.paginator = this.paginator;
   }
 
   setupToolbar(): void {
@@ -145,31 +143,24 @@ export class JobsListComponent implements OnInit, AfterViewInit {
   }
 
   onTabChange(tab: MatTabChangeEvent): void {
-    this.paginationPageIndex = 0;
-    this.paginationPageSize = 10;
     this.selectedIndex = tab.index;
     switch (this.selectedIndex) {
       case JobTab.Failed:
-        this.store.selectFailedJobs();
+        this.selector$.next(selectFailedJobs);
         this.onLogsSidebarClosed();
-        this.emptyConfig.title = this.translate.instant('There are no failed jobs.');
+        this.emptyConfig.title = this.translate.instant('There are no failed tasks.');
         break;
-      case JobTab.Active:
-        this.store.selectRunningJobs();
+      case JobTab.Running:
+        this.selector$.next(selectRunningJobs);
         this.onLogsSidebarClosed();
-        this.emptyConfig.title = this.translate.instant('There are no active jobs.');
+        this.emptyConfig.title = this.translate.instant('There are no active tasks.');
         break;
       case JobTab.All:
       default:
-        this.store.selectAllJobs();
+        this.selector$.next(selectJobs);
         this.onLogsSidebarClosed();
-        this.emptyConfig.title = this.translate.instant('There are no jobs.');
+        this.emptyConfig.title = this.translate.instant('There are no tasks.');
         break;
     }
-  }
-
-  onPageChange(e: { pageIndex: number; pageSize: number }): void {
-    this.paginationPageIndex = e.pageIndex;
-    this.paginationPageSize = e.pageSize;
   }
 }

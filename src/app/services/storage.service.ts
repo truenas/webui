@@ -357,15 +357,22 @@ export class StorageService {
     if (!unit && allowedUnits) {
       unit = allowedUnits[0];
     }
-    // error when unit is present and...
-    if ((unit)
-          // ...allowedUnits are passed in but unit is not in allowed Units
-          && (allowedUnits && !allowedUnits.toLowerCase().includes(unit[0].toLowerCase())
-          // ...when allowedUnits are not passed in and unit is not recognized
-          || !(unit = this.normalizeUnit(unit)))) {
+
+    const normalizedUnit = this.normalizeUnit(unit);
+    if (
+      // error when unit is present and...
+      (unit) && (
+        // ...allowedUnits are passed in but unit is not in allowed Units
+        (allowedUnits && !allowedUnits.toLowerCase().includes(unit[0].toLowerCase()))
+        // ...when allowedUnits are not passed in and unit is not recognized
+        || !normalizedUnit
+      )
+    ) {
       this.humanReadable = '';
       return NaN;
     }
+
+    unit = normalizedUnit;
 
     const spacer = (unit) ? ' ' : '';
 

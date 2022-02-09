@@ -34,7 +34,7 @@ export default {
     directory_services_monitor: T('Directory Services Monitor'),
     resilvering: T('Resilvering'),
     replication: T('Replication'),
-    task_manager: T('Task Manager'),
+    task_manager: T('Jobs'),
     alerts: T('Alerts'),
     settings: T('Settings'),
     power: T('Power'),
