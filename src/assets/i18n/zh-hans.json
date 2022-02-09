@@ -28,6 +28,7 @@
   "Enter a value to use for the <a href=\"https://man7.org/linux/man-pages/man8/sysctl.8.html\" target=\"_blank\">sysctl</a> variable.": "",
   "Enter accounts that have administrative access. See <a href=\"https://linux.die.net/man/5/upsd.users\" target=\"_blank\">upsd.users(5)</a> for examples.": "",
   "Enter the device name of the interface. This cannot be changed after the interface is created.": "",
+  "File size is limited to {maxUploadSizeMibs} MiB.": "",
   "Maximum number of replication tasks being executed simultaneously.": "",
   "Off by default. When set, <a href=\"https://www.samba.org/samba/docs/current/man-html/smbd.8.html\" target=\"_blank\">smbd(8)</a> attempts to authenticate users with the insecure and vulnerable NTLMv1 encryption. This setting allows backward compatibility with older versions of Windows, but is not recommended and should not be used on untrusted networks.": "",
   "Parent dataset path (read-only).": "",

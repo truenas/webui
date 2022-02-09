@@ -292,7 +292,10 @@ export class SupportFormLicensedComponent implements FormConfiguration {
       for (const browserFile of fileBrowser.files) {
         if (browserFile.size >= (this.maxUploadSizeMibs * 1024 * 1024)) {
           this.screenshot['hasErrors'] = true;
-          this.screenshot['errors'] = this.translate.instant('File size is limited to ' + this.maxUploadSizeMibs + ' MiB.');
+          this.screenshot['errors'] = this.translate.instant(
+            'File size is limited to {maxUploadSizeMibs} MiB.',
+            { maxUploadSizeMibs: this.maxUploadSizeMibs },
+          );
         } else {
           this.subs.push({ apiEndPoint: file.apiEndPoint, file: browserFile });
         }
