@@ -1,4 +1,4 @@
-import { HttpErrorResponse } from '@angular/common/http';
+import { HttpErrorResponse, HttpEventType } from '@angular/common/http';
 import { ApplicationRef, Component, Injector } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
@@ -20,7 +20,7 @@ import { FieldConfig, FormSelectConfig, FormParagraphConfig } from 'app/pages/co
 import { MessageService } from 'app/pages/common/entity/entity-form/services/message.service';
 import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
 import { EntityUtils } from 'app/pages/common/entity/utils';
-import { WebSocketService, SystemGeneralService } from 'app/services';
+import { WebSocketService, SystemGeneralService, AppLoaderService } from 'app/services';
 import { DialogService } from 'app/services/dialog.service';
 
 @UntilDestroy()
@@ -89,6 +89,7 @@ export class ManualUpdateComponent extends ViewControllerComponent implements Fo
     public translate: TranslateService,
     private dialogService: DialogService,
     private systemService: SystemGeneralService,
+    private loader: AppLoaderService,
   ) {
     super();
 
@@ -170,7 +171,21 @@ export class ManualUpdateComponent extends ViewControllerComponent implements Fo
         this.dialogRef.componentInstance.disableProgressValue(true);
       }
       this.dialogRef.componentInstance.changeAltMessage(helptext.manual_update_description);
-      this.dialogRef.componentInstance.wspost(this.subs.apiEndPoint, this.subs.formData);
+      this.loader.open('Uploading', true);
+      this.dialogRef.componentInstance.wspostWithProgressReports(this.subs.apiEndPoint, this.subs.formData)
+        .pipe(untilDestroyed(this)).subscribe(
+          (uploadProgress: { progress: number; status: HttpEventType }) => {
+            if (uploadProgress.status === HttpEventType.UploadProgress && uploadProgress.progress !== null) {
+              this.loader.dialogRef.componentInstance.progressUpdater.next(uploadProgress.progress);
+            } else if (uploadProgress.status === HttpEventType.Response) {
+              this.loader.close();
+            }
+          },
+          () => {
+            this.loader.close();
+          },
+        );
+      // this.dialogRef.componentInstance.wspost(this.subs.apiEndPoint, this.subs.formData);
       this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
         this.dialogRef.close(false);
         if (!this.isHa) {
