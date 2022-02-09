@@ -7,19 +7,24 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterModule } from '@angular/router';
+import { EffectsModule } from '@ngrx/effects';
+import { StoreModule } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
-import { JobItemComponent } from 'app/components/common/dialog/jobs-manager/components/job-item/job-item.component';
-import { JobsManagerComponent } from 'app/components/common/dialog/jobs-manager/jobs-manager.component';
 import { CoreComponents } from 'app/core/components/core-components.module';
-import { EntityModule } from 'app/modules/entity/entity.module';
+import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
+import { JobItemComponent } from 'app/modules/jobs/components/job-item/job-item.component';
+import { JobsPanelComponent } from 'app/modules/jobs/components/jobs-panel/jobs-panel.component';
+import { JobEffects } from 'app/modules/jobs/store/job.effects';
+import { jobReducer } from 'app/modules/jobs/store/job.reducer';
+import { jobStateKey } from 'app/modules/jobs/store/job.selectors';
 
 @NgModule({
-  exports: [JobsManagerComponent, JobItemComponent],
-  declarations: [JobsManagerComponent, JobItemComponent],
   imports: [
-    CoreComponents,
     CommonModule,
-    EntityModule,
+    CoreComponents,
+    StoreModule.forFeature(jobStateKey, jobReducer),
+    EffectsModule.forFeature([JobEffects]),
+    CommonDirectivesModule,
     RouterModule,
     TranslateModule,
     MatProgressBarModule,
@@ -29,5 +34,7 @@ import { EntityModule } from 'app/modules/entity/entity.module';
     MatDialogModule,
     MatProgressSpinnerModule,
   ],
+  declarations: [JobItemComponent, JobsPanelComponent],
+  exports: [JobItemComponent, JobsPanelComponent],
 })
-export class JobsManagerModule {}
+export class JobsModule {}

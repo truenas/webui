@@ -1,0 +1,87 @@
+$component-header: 42px;
+
+:host {
+  .mat-dialog-actions {
+    button {
+      display: block;
+      width: 100%;
+    }
+  }
+}
+
+.jobs-header {
+  background: var(--bg2);
+  border-bottom: 1px solid var(--lines);
+  height: $component-header;
+  margin-left: -24px;
+  margin-right: -24px;
+  padding: 4px 24px 12px;
+}
+
+.job-badge {
+  background-color: var(--bg1);
+  border-radius: 16px;
+  min-width: 48px;
+  padding: 0 8px;
+  user-select: none;
+
+  .job-badge-count {
+    font-size: 16px;
+    font-weight: 500;
+  }
+
+  mat-icon {
+    font-size: 20px;
+    height: 20px;
+    opacity: 0.65;
+    width: 20px;
+  }
+
+  .job-icon-failed {
+    color: var(--red);
+  }
+
+  .job-icon-waiting {
+    color: var(--accent);
+  }
+
+  .job-icon-running {
+    color: var(--primary);
+  }
+}
+
+.jobs-list {
+  height: calc(100% - #{$component-header});
+  margin-left: -24px;
+  margin-right: -24px;
+  overflow-y: auto;
+  padding: 0;
+}
+
+.no-jobs {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 24px 0 0;
+
+  .icon {
+    color: var(--fg2);
+    font-size: 36px;
+    height: 36px;
+    margin-bottom: 12px;
+    user-select: none;
+    width: 36px;
+  }
+
+  .message {
+    font-size: 1.25rem;
+    font-weight: normal;
+    opacity: 0.65;
+  }
+}
+
+.loading-indicator {
+  margin: 48px 0 24px;
+  padding: 0;
+}

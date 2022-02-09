@@ -14,6 +14,10 @@
     max-width: calc(100% - 48px);
   }
 
+  .job-item-body {
+    flex: 1;
+  }
+
   &.interactive {
     &:hover {
       background: var(--hover-bg);

@@ -3,13 +3,14 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { MockComponent } from 'ng-mocks';
 import { of, Subject } from 'rxjs';
-import { JobsManagerModule } from 'app/components/common/dialog/jobs-manager/jobs-manager.module';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { JobState } from 'app/enums/job-state.enum';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
+import { JobItemComponent } from 'app/modules/jobs/components/job-item/job-item.component';
 import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
 import { FileTicketFormComponent } from 'app/pages/system/general-settings/support/file-ticket-form/file-ticket-form.component';
 import { WebSocketService, DialogService, SystemGeneralService } from 'app/services';
@@ -32,10 +33,12 @@ describe('FileTicketFormComponent', () => {
     imports: [
       IxFormsModule,
       ReactiveFormsModule,
-      JobsManagerModule,
       TooltipModule,
     ],
-    declarations: [JiraOauthComponent],
+    declarations: [
+      JiraOauthComponent,
+      MockComponent(JobItemComponent),
+    ],
     providers: [
       mockProvider(DialogService),
       mockProvider(WebSocketService, {
