@@ -278,7 +278,7 @@ export class FieldRelationService {
   }
 
   isDeepEqual(data1: unknown, data2: unknown): boolean {
-    if (this.getDataType(data1) != this.getDataType(data2)) {
+    if (this.getDataType(data1) !== this.getDataType(data2)) {
       return false;
     }
 
@@ -568,6 +568,7 @@ export class FieldRelationService {
               break;
             case 'basic':
             default:
+              // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
               result = `${y}`.includes(`${x}`);
               break;
           }

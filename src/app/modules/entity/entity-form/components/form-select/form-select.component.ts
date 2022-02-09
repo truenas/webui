@@ -164,28 +164,6 @@ export class FormSelectComponent implements Field, AfterViewInit, AfterViewCheck
     this.formValue = this.selected;
   }
 
-  onToggleSelectAll(): void {
-    if (!this.allSelected) {
-      // Cache all the things...
-      this.selectAllStateCache = Object.assign([], this.selectStates);// cache the checkmark states
-      this.selectAllValueCache = Object.assign([], this.selectedValues);// cache the values
-
-      // Deal with the values...
-      const newValues = this.config.options.map((item) => item.value);
-      this.selectedValues = newValues;
-
-      // Deal with checkmark states...
-      this.selectStates.fill(true);
-
-      // ensure all template elements that care, know that everything is selected
-      this.allSelected = true;
-    } else {
-      this.selectStates = this.selectAllStateCache;
-      this.selectedValues = this.selectAllValueCache;
-      this.allSelected = false;
-    }
-  }
-
   isDisabled(index: number): boolean {
     const option = this.config.options[index];
     return option.disabled ? option.disabled : false;

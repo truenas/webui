@@ -38,11 +38,9 @@ export class CatalogSummaryDialogComponent implements OnInit {
     Object.keys(this.catalogApp.versions).forEach((key) => {
       const version = this.catalogApp.versions[key];
       if (
-        this.selectedStatus == this.statusOptions[0]
-        || this.selectedStatus == this.statusOptions[1]
-        && version.healthy
-        || this.selectedStatus == this.statusOptions[2]
-        && !version.healthy
+        this.selectedStatus === this.statusOptions[0]
+        || (this.selectedStatus === this.statusOptions[1] && version.healthy)
+        || (this.selectedStatus === this.statusOptions[2] && !version.healthy)
       ) {
         this.filteredVersions[key] = version;
       }

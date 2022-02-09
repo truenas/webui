@@ -412,7 +412,7 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, Aft
     const thisYear = dateFns.getYear(now);
     const dateMonth = dateFns.getMonth(dt);
     const dateYear = dateFns.getYear(dt);
-    if (thisMonth == dateMonth && thisYear == dateYear) {
+    if (thisMonth === dateMonth && thisYear === dateYear) {
       this.disablePrevious = true;
       return this.zonedTime;
     }
@@ -506,7 +506,7 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, Aft
     // eslint-disable-next-line no-constant-condition
     while (true) {
       try {
-        if (parseCounter == subsetEnd) {
+        if (parseCounter === subsetEnd) {
           this.generatedScheduleSubset = parseCounter;
           break;
         }
@@ -618,7 +618,7 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, Aft
     }
     for (const s of sched) {
       const schedule = s.toString().split(' ');
-      if (schedule[1] == calMonth && schedule[2] == calDay && schedule[3] == calYear) {
+      if (schedule[1] === calMonth && schedule[2] === calDay && schedule[3] === calYear) {
         return true;
       }
     }

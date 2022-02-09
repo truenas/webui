@@ -224,13 +224,9 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
     while (this.consoleMessages.length > 500) {
       this.consoleMessages.shift();
     }
-    if (num > 500) {
-      num = 500;
-    }
-    if (num > this.consoleMessages.length) {
-      num = this.consoleMessages.length;
-    }
-    for (let i = this.consoleMessages.length - 1; i >= this.consoleMessages.length - num; --i) {
+
+    const limit = Math.min(num, 500, this.consoleMessages.length);
+    for (let i = this.consoleMessages.length - 1; i >= this.consoleMessages.length - limit; --i) {
       msgs = this.consoleMessages[i] + '\n' + msgs;
     }
 
@@ -261,7 +257,7 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
 
   // For the slide-in menu
   toggleMenu(menuInfo?: [string, SubMenuItem[]]): void {
-    if (this.isOpen && !menuInfo || this.isOpen && menuInfo[0] === this.menuName) {
+    if ((this.isOpen && !menuInfo) || (this.isOpen && menuInfo[0] === this.menuName)) {
       this.isOpen = false;
       this.subs = [];
     } else if (menuInfo) {

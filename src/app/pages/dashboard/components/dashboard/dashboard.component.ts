@@ -22,6 +22,7 @@ import { Interval } from 'app/interfaces/timeout.interface';
 import { VolumesData, VolumeData } from 'app/interfaces/volume-data.interface';
 import { EmptyConfig, EmptyType } from 'app/modules/entity/entity-empty/entity-empty.component';
 import { EntityToolbarComponent } from 'app/modules/entity/entity-toolbar/entity-toolbar.component';
+import { ControlConfig } from 'app/modules/entity/entity-toolbar/models/control-config.interface';
 import { DashboardFormComponent } from 'app/pages/dashboard/components/dashboard-form/dashboard-form.component';
 import { DashConfigItem } from 'app/pages/dashboard/components/widget-controller/widget-controller.component';
 import { WebSocketService } from 'app/services';
@@ -49,18 +50,42 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   formEvents$: Subject<CoreEvent> = new Subject();
   actionsConfig: EntityToolbarActionConfig;
 
+  reorderButtonConfig = {
+    name: 'dashReorder',
+    label: this.translate.instant('Reorder'),
+    type: 'button',
+    value: undefined,
+    color: 'primary',
+  } as ControlConfig;
+
+  confirmButtonConfig = {
+    name: 'dashConfirm',
+    label: this.translate.instant('Confirm'),
+    type: 'hidden',
+    value: undefined,
+    color: 'primary',
+  } as ControlConfig;
+
+  cancelButtonConfig = {
+    name: 'dashCancel',
+    label: this.translate.instant('Cancel'),
+    type: 'hidden',
+    value: undefined,
+    color: 'secondary',
+  } as ControlConfig;
+
+  reorderMode = false;
+
   screenType = 'Desktop'; // Desktop || Mobile
   optimalDesktopWidth = '100%';
   widgetWidth = 540; // in pixels (Desktop only)
 
   dashStateReady = false;
   dashState: DashConfigItem[]; // Saved State
+  previousState: DashConfigItem[];
   activeMobileWidget: DashConfigItem[] = [];
   availableWidgets: DashConfigItem[] = [];
-
-  get renderedWidgets(): DashConfigItem[] {
-    return this.dashState.filter((widget) => widget.rendered);
-  }
+  renderedWidgets: DashConfigItem[];
 
   large = 'lg';
   medium = 'md';
@@ -72,8 +97,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   // For empty state
   get empty(): boolean {
-    const rendered = this.dashState.filter((widget) => widget.rendered);
-    return rendered.length === 0;
+    return this.dashState.every((widget) => !widget.rendered);
   }
 
   emptyDashConf: EmptyConfig = {
@@ -130,8 +154,16 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     };
   }
 
+  onWidgetReorder(newState: unknown[]): void {
+    this.applyState(this.sanitizeState(newState as DashConfigItem[]));
+  }
+
   ngAfterViewInit(): void {
     this.checkScreenSize();
+  }
+
+  getWidgetId(index: number, widget: DashConfigItem): string {
+    return widget.id;
   }
 
   checkScreenSize(): void {
@@ -142,9 +174,12 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       this.onMobileBack();
     }
 
+    if (this.screenType !== st) {
+      this.onScreenSizeChange(st, this.screenType);
+    }
+
     this.screenType = st;
 
-    // Eliminate top level scrolling
     const wrapper = document.querySelector<HTMLElement>('.fn-maincontent');
     wrapper.style.overflow = this.screenType === 'Mobile' ? 'hidden' : 'auto';
     this.optimizeWidgetContainer();
@@ -311,6 +346,13 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   startListeners(): void {
+    this.core.register({ observerClass: this, eventName: 'UserAttributes' }).pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
+      if (evt.data.dashState) {
+        this.applyState(this.sanitizeState(evt.data.dashState));
+      }
+      this.dashStateReady = true;
+    });
+
     this.ws.sub<ReportingRealtimeUpdate>('reporting.realtime').pipe(untilDestroyed(this)).subscribe((update) => {
       if (update.cpu) {
         this.statsDataEvent$.next({ name: 'CpuStats', data: update.cpu });
@@ -394,40 +436,23 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.availableWidgets = this.generateDefaultConfig();
     if (!this.dashState) {
-      this.dashState = this.availableWidgets;
+      this.setDashState(this.availableWidgets);
     }
 
     this.formEvents$.pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
       switch (evt.name) {
         case 'FormSubmit':
-          this.dashState = evt.data;
+          this.setDashState(evt.data);
           break;
         case 'ToolbarChanged':
-          this.showConfigForm();
+          this.handleToolbarChanged(evt);
           break;
       }
     });
 
-    // Setup Global Actions
-    const actionsConfig = {
-      actionType: EntityToolbarComponent,
-      actionConfig: {
-        target: this.formEvents$,
-        controls: [
-          {
-            name: 'dashConfig',
-            label: 'Configure',
-            type: 'button',
-            value: 'click',
-            color: 'primary',
-          },
-        ],
-      },
-    };
+    this.actionsConfig = this.getActionsConfig(this.formEvents$);
 
-    this.actionsConfig = actionsConfig;
-
-    this.core.emit({ name: 'GlobalActions', data: actionsConfig, sender: this });
+    this.core.emit({ name: 'GlobalActions', data: this.actionsConfig, sender: this });
     this.loadUserAttributes();
   }
 
@@ -481,7 +506,11 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
         return this.volumeData;
       default:
         const pool = this.pools.find((pool) => pool[key as keyof Pool] === value);
-        return this.volumeData && this.volumeData[pool.name] ? this.volumeData[pool.name] : null;
+        if (!pool) {
+          console.warn(`Pool for ${item.name} [${item.identifier}] widget is not available!`);
+          return;
+        }
+        return this.volumeData && this.volumeData[pool.name];
     }
   }
 
@@ -528,7 +557,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     if (!data) {
-      console.warn('Data for this widget is not available!');
+      console.warn(`Data for ${item.name} [${item.identifier}] widget is not available!`);
     }
 
     return data;
@@ -547,7 +576,19 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     modal.setupForm(this.dashState, this.formEvents$);
   }
 
-  applyState(state: DashConfigItem[]): void {
+  private sanitizeState(state: DashConfigItem[]): DashConfigItem[] {
+    return state.filter((widget) => {
+      if (
+        ['pool', 'storage'].includes(widget.name.toLowerCase())
+       && (!this.volumeDataFromConfig(widget) || !this.dataFromConfig(widget))
+      ) {
+        return false;
+      }
+      return true;
+    });
+  }
+
+  private applyState(state: DashConfigItem[]): void {
     // This reconciles current state with saved dashState
 
     if (!this.dashState) {
@@ -555,20 +596,124 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       return;
     }
 
-    const clone = Object.assign([], this.dashState);
-    clone.forEach((widget, index) => {
-      const matches = state.filter((w) => {
-        const key = widget.identifier ? 'identifier' : 'name';
+    const hidden = this.dashState
+      .filter((w) => state.every((s) => !(w?.identifier == s.identifier || w?.name == s.name)))
+      .map((widget) => ({ ...widget, rendered: false }));
 
-        return widget[key] == w[key];
+    this.setDashState([...state, ...hidden]);
+  }
+
+  private setDashState(dashState: DashConfigItem[]): void {
+    this.dashState = dashState;
+    this.renderedWidgets = dashState.filter((x) => x.rendered);
+  }
+
+  private getActionsConfig(target$: Subject<CoreEvent>): EntityToolbarActionConfig {
+    const controls = [
+      this.cancelButtonConfig,
+      this.confirmButtonConfig,
+      this.reorderButtonConfig,
+      {
+        name: 'dashConfig',
+        label: this.translate.instant('Configure'),
+        type: 'button',
+        value: 'click',
+        color: 'primary',
+      } as ControlConfig,
+    ];
+
+    const actionsConfig = {
+      actionType: EntityToolbarComponent,
+      actionConfig: {
+        target: target$,
+        controls,
+      },
+    };
+    return actionsConfig;
+  }
+
+  private onScreenSizeChange(newScreenType: string, oldScreenType: string): void {
+    if (newScreenType === 'Desktop' && oldScreenType === 'Mobile') {
+      this.enableReorderMode();
+    }
+
+    if (newScreenType === 'Mobile' && oldScreenType === 'Desktop') {
+      this.disableReorderMode();
+    }
+  }
+
+  private handleToolbarChanged(evt: CoreEvent): void {
+    switch (evt.data?.event_control) {
+      case 'dashReorder':
+        this.previousState = this.dashState.map((x) => ({ ...x }));
+
+        this.enterReorderMode();
+        break;
+
+      case 'dashConfirm':
+        this.saveState(this.dashState);
+        delete this.previousState;
+
+        this.exitReorderMode();
+        break;
+
+      case 'dashCancel':
+        this.exitReorderMode();
+        break;
+
+      default:
+        this.showConfigForm();
+    }
+  }
+
+  private enterReorderMode(): void {
+    this.reorderMode = true;
+
+    this.reorderButtonConfig.type = 'hidden';
+
+    this.confirmButtonConfig.type = 'button';
+    this.cancelButtonConfig.type = 'button';
+  }
+
+  private exitReorderMode(): void {
+    if (this.previousState) {
+      this.setDashState(this.previousState);
+      delete this.previousState;
+    }
+
+    this.reorderMode = false;
+
+    this.reorderButtonConfig.type = 'button';
+
+    this.confirmButtonConfig.type = 'hidden';
+    this.cancelButtonConfig.type = 'hidden';
+  }
+
+  private enableReorderMode(): void {
+    this.reorderMode = false;
+
+    this.reorderButtonConfig.type = 'button';
+
+    this.confirmButtonConfig.type = 'hidden';
+    this.cancelButtonConfig.type = 'hidden';
+  }
+
+  private disableReorderMode(): void {
+    if (this.reorderMode) {
+      this.exitReorderMode();
+    }
+
+    this.reorderButtonConfig.type = 'hidden';
+  }
+
+  private saveState(state: DashConfigItem[]): void {
+    this.ws.call('user.set_attribute', [1, 'dashState', state])
+      .pipe(untilDestroyed(this))
+      .subscribe((res) => {
+        if (!res) {
+          throw new Error('Unable to save Dashboard State');
+        }
       });
-
-      if (matches.length === 1) {
-        clone[index] = matches[0];
-      }
-    });
-
-    this.dashState = clone;
   }
 
   private loadPoolData(): void {

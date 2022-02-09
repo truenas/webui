@@ -339,7 +339,7 @@ export class ThemeService {
   }
 
   get isDefaultTheme(): boolean {
-    return this.activeTheme == this.defaultTheme;
+    return this.activeTheme === this.defaultTheme;
   }
 
   currentTheme(): Theme {

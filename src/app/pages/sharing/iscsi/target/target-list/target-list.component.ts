@@ -99,7 +99,7 @@ export class TargetListComponent implements EntityTableConfig, OnInit {
             const payload: [id: number, force?: boolean] = [rowinner.id];
             let warningMsg = '';
             for (const session of res) {
-              if (session.target.split(':')[1] == rowinner.name) {
+              if (session.target.split(':')[1] === rowinner.name) {
                 warningMsg = `<font color="red">${this.translate.instant('Warning: iSCSI Target is already in use.</font><br>')}`;
                 payload.push(true); // enable force delele
                 break;

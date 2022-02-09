@@ -1,5 +1,5 @@
 <div *ngIf="config" class="control-group">
-  <div *ngFor="let control of config.controls">
+  <ng-container *ngFor="let control of config.controls">
     <toolbar-button *ngIf="control.type == 'button'" [config]="control" [controller]="controller$" ></toolbar-button>
     <toolbar-slider *ngIf="control.type == 'slider'" [config]="control" [controller]="controller$ | cast"></toolbar-slider>
     <toolbar-input *ngIf="control.type == 'input'" [config]="control" [controller]="controller$" ></toolbar-input>
@@ -7,6 +7,5 @@
     <toolbar-menu *ngIf="control.type == 'menu'" [config]="control" [controller]="controller$"></toolbar-menu>
     <toolbar-multimenu *ngIf="control.type == 'multimenu'" [config]="control" [controller]="controller$"></toolbar-multimenu>
     <toolbar-multiselect *ngIf="control.type == 'multiselect'" [config]="control" [controller]="controller$"></toolbar-multiselect>
-    <toolbar-slide-toggle *ngIf="control.type == 'slide-toggle'" [config]="control" [controller]="controller$"></toolbar-slide-toggle>
-  </div>
+    <toolbar-slide-toggle *ngIf="control.type == 'slide-toggle'" [config]="control" [controller]="controller$"></toolbar-slide-toggle>  </ng-container>
 </div>

@@ -154,7 +154,7 @@ export class SystemProfiler {
     const powerStatus = obj.filter((v) => v.name.startsWith('PS'));
     if (this.enclosures[this.headIndex] && this.enclosures[this.headIndex].model === 'M Series') {
       const elements = powerStatus.map((item) => {
-        const status = item.value == 1 ? 'OK' : 'FAILED';
+        const status = item.value === 1 ? 'OK' : 'FAILED';
         return {
           descriptor: item.name,
           status,
@@ -306,7 +306,7 @@ export class SystemProfiler {
   }
 
   getEnclosureExpanders(index: number): EnclosureElement[] | EnclosureElementsGroup[] {
-    if (this.rearIndex && index == this.rearIndex) { index = this.headIndex; }
+    if (this.rearIndex && index === this.rearIndex) { index = this.headIndex; }
     const raw = this.enclosures[index].elements.filter((item) => item.name === 'SAS Expander');
 
     if (raw.length > 0) {
@@ -327,6 +327,6 @@ export class SystemProfiler {
   }
 
   getDiskById(id: string): Disk {
-    return this.diskData ? this.diskData.find((disk) => disk.identifier == id) : null;
+    return this.diskData ? this.diskData.find((disk) => disk.identifier === id) : null;
   }
 }

@@ -1367,6 +1367,7 @@ export class ReplicationFormComponent implements FormConfiguration {
     if (wsResponse.properties_override) {
       const propertiesExcludeList = [];
       for (const [key, value] of Object.entries(wsResponse['properties_override'])) {
+        // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
         propertiesExcludeList.push(`${key}=${value}`);
       }
       wsResponse['properties_override'] = propertiesExcludeList;
@@ -1423,15 +1424,14 @@ export class ReplicationFormComponent implements FormConfiguration {
       data['properties'] = true;
       data['exclude'] = [];
     }
+    const propertiesExcludeObj: any = {};
     if (data['properties_override']) {
-      const propertiesExcludeObj: any = {};
       for (let item of data['properties_override']) {
         item = item.split('=');
         propertiesExcludeObj[item[0]] = item[1];
       }
-      data['properties_override'] = propertiesExcludeObj;
     }
-
+    data['properties_override'] = propertiesExcludeObj;
     if (data['speed_limit'] !== undefined && data['speed_limit'] !== null) {
       data['speed_limit'] = this.storageService.convertHumanStringToNum(data['speed_limit']);
     }

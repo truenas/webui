@@ -54,7 +54,7 @@ export class GroupFormComponent {
     private cdr: ChangeDetectorRef,
     private errorHandler: FormErrorHandlerService,
     private translate: TranslateService,
-  ) {}
+  ) { }
 
   /**
    * @param group Skip argument to add new group.

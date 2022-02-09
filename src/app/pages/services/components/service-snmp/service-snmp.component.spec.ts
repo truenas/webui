@@ -38,7 +38,6 @@ describe('ServiceSnmpComponent', () => {
           options: 'leave_pidfile=true',
           zilstat: true,
           loglevel: 4,
-          iftop: false,
         } as SnmpConfig),
       ]),
     ],
@@ -70,7 +69,6 @@ describe('ServiceSnmpComponent', () => {
       'Auxiliary Parameters': 'leave_pidfile=true',
       'Expose zilstat via SNMP': true,
       'Log Level': 'Warning',
-      'Enable Network Performance Statistics': false,
     });
   });
 
@@ -91,7 +89,6 @@ describe('ServiceSnmpComponent', () => {
       'Auxiliary Parameters': 'leave_pidfile=false',
       'Expose zilstat via SNMP': false,
       'Log Level': 'Error',
-      'Enable Network Performance Statistics': false,
     });
 
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
@@ -112,7 +109,6 @@ describe('ServiceSnmpComponent', () => {
       options: 'leave_pidfile=false',
       zilstat: false,
       loglevel: 3,
-      iftop: false,
     }]);
   });
 

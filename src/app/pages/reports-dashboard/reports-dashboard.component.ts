@@ -149,7 +149,7 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /* HandleCh
 
   getVisibility(key: number): boolean {
     const test = this.visibleReports.indexOf(key);
-    return test != -1;
+    return test !== -1;
   }
 
   getBatch(): number[] {

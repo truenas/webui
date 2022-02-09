@@ -52,7 +52,7 @@ export class EntityTreeTableService {
   findNode(indexPath: number[], treeData: TreeNode[]): TreeNode {
     let currentNode: TreeNode;
     indexPath.forEach((tier, index) => {
-      currentNode = index == 0 ? treeData[0] : currentNode.children[tier];
+      currentNode = index === 0 ? treeData[0] : currentNode.children[tier];
     });
 
     return currentNode;

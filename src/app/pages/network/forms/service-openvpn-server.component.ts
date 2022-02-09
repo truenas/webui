@@ -154,6 +154,7 @@ export class OpenvpnServerComponent implements FormConfiguration {
         this.services.renewStaticKey().pipe(untilDestroyed(this)).subscribe((res) => {
           let msg = '';
           for (const item in res) {
+            // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
             msg += `${item}: ${res[item as keyof OpenvpnServerConfig]} \n`;
           }
           this.loader.close();
