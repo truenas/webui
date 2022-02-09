@@ -2,6 +2,14 @@
   <h6 class="m-0 pb-1">{{ title | translate }}</h6>
   <div mat-dialog-content class="spinner-container">
     <mat-spinner *ngIf="percent <= 0" mode="indeterminate"></mat-spinner>
-    <mat-spinner *ngIf="percent > 0" mode="determinate" [value]="percent"></mat-spinner>
+    <mat-progress-bar
+      *ngIf="percent > 0"
+      color="primary"
+      [value]="percent"
+      [mode]="'determinate'"
+      class="entity-job-progress"
+    >
+    </mat-progress-bar>
+    <!-- <mat-spinner *ngIf="percent > 0" mode="determinate" [value]="percent"></mat-spinner> -->
   </div>
 </div>

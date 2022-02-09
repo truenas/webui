@@ -13,6 +13,7 @@ import { ProductType } from 'app/enums/product-type.enum';
 import { helptextSystemUpdate as helptext } from 'app/helptext/system/update';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { SysInfoEvent } from 'app/interfaces/events/sys-info-event.interface';
+import { UploadProgressUpdate } from 'app/interfaces/http-progress.interface';
 import { FormUploadComponent } from 'app/modules/entity/entity-form/components/form-upload/form-upload.component';
 import { EntityFormComponent } from 'app/modules/entity/entity-form/entity-form.component';
 import { FieldConfig, FormSelectConfig, FormParagraphConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
@@ -169,16 +170,15 @@ export class ManualUpdateComponent implements FormConfiguration {
       }
       this.dialogRef.componentInstance.changeAltMessage(helptext.manual_update_description);
 
-      this.loader.open(this.translate.instant('Uploading'), true);
+      this.loader.open(this.translate.instant(helptext.manual_update_description), true);
       this.dialogRef.componentInstance.wspostWithProgressUpdates(this.subs.apiEndPoint, this.subs.formData)
         .pipe(untilDestroyed(this)).subscribe(
-          (uploadProgress: { progress: number; status: HttpEventType }) => {
+          (uploadProgress: UploadProgressUpdate) => {
             if (uploadProgress.status === HttpEventType.UploadProgress && uploadProgress.progress !== null) {
               this.loader.dialogRef.componentInstance.progressUpdater.next(uploadProgress.progress);
-            } else if (uploadProgress.status === HttpEventType.Response) {
-              this.loader.close();
             }
           },
+          () => this.loader.close(),
           () => this.loader.close(),
         );
 

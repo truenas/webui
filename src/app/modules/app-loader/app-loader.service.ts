@@ -21,11 +21,13 @@ export class AppLoaderService {
   open(title: string = T('Please wait'), withProgress: boolean = false): Observable<boolean> {
     if (this.dialogRef === undefined) {
       this.dialogRef = this.dialog.open(AppLoaderComponent, { disableClose: true });
-      this.dialogRef.updateSize('200px', '200px');
     }
     this.dialogRef.componentInstance.title = title;
     if (withProgress) {
+      this.dialogRef.updateSize('350px', '100px');
       this.dialogRef.componentInstance.withProgress();
+    } else {
+      this.dialogRef.updateSize('200px', '200px');
     }
     return this.dialogRef.afterClosed();
   }

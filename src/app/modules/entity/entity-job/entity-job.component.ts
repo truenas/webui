@@ -14,6 +14,7 @@ import { Observable, Subscriber } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
 import { JobState } from 'app/enums/job-state.enum';
 import { ApiDirectory, ApiMethod } from 'app/interfaces/api-directory.interface';
+import { UploadProgressUpdate } from 'app/interfaces/http-progress.interface';
 import { Job, JobProgress } from 'app/interfaces/job.interface';
 import { EntityJobConfig } from 'app/modules/entity/entity-job/entity-job-config.interface';
 import { JobsPanelComponent } from 'app/modules/jobs/components/jobs-panel/jobs-panel.component';
@@ -220,8 +221,8 @@ export class EntityJobComponent implements OnInit {
     });
   }
 
-  wspostWithProgressUpdates(path: string, options: unknown): Observable<{ progress: number; status: HttpEventType }> {
-    return new Observable((subscriber: Subscriber<{ progress: number; status: HttpEventType }>) => {
+  wspostWithProgressUpdates(path: string, options: unknown): Observable<UploadProgressUpdate> {
+    return new Observable((subscriber: Subscriber<UploadProgressUpdate>) => {
       this.http.post(path, options, { reportProgress: true, observe: 'events' }).pipe(
         untilDestroyed(this),
       ).subscribe((event: HttpEvent<any>) => {
