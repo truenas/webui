@@ -1,0 +1,43 @@
+<h1 matDialogTitle>{{ 'Delete' | translate }}</h1>
+<form
+  [formGroup]="form"
+  class="ix-form-container"
+  (submit)="onSubmit()"
+>
+  <p><strong>{{ 'The following { n, plural, one {snapshot} other {# snapshots} } will be deleted. Are you sure you want to proceed?' | translate: { n: total } }}</strong></p>
+
+  <div class="mat-list">
+    <div class="mat-list-item" *ngFor="let dataset of data.datasets">
+      <br>
+      <div>
+        <strong>{{ dataset }}</strong>
+        <span>&nbsp;({{ '{ n, plural, one {# snapshot} other {# snapshots} }' | translate: { n: data.snapshots[dataset].length } }})</span>
+      </div>
+      <ul>
+        <li *ngFor="let snapshot of data.snapshots[dataset]">&nbsp;&nbsp;&nbsp;&nbsp;{{ snapshot }}</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="form-actions">
+    <ix-checkbox
+      formControlName="confirm"
+      [label]="'Confirm' | translate"
+      [required]="true"
+    ></ix-checkbox>
+
+    <div fxLayout="row" fxLayoutAlign="start center">
+      <button
+        mat-button
+        type="button"
+        [matDialogClose]="true"
+      >{{ 'Cancel' | translate }}</button>
+      <button
+        mat-button
+        type="submit"
+        [disabled]="form.invalid"
+        color="primary"
+      >{{ 'Delete' | translate }}</button>
+    </div>
+  </div>
+</form>

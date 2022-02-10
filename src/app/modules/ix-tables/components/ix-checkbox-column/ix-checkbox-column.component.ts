@@ -47,7 +47,6 @@ export class IxCheckboxColumnComponent<T = unknown> implements OnInit, OnDestroy
   }
 
   masterToggle(): void {
-    // TODO: Check this again
     if (this.isAllSelected() || (this.isPageSelected() && !this.isAllSelected())) {
       this.selection.clear();
       return;

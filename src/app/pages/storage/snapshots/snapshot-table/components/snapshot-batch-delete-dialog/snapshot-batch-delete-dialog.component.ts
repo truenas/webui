@@ -1,50 +1,32 @@
 import {
-  Component, ChangeDetectionStrategy, Inject, OnInit,
+  Component, ChangeDetectionStrategy, Inject,
 } from '@angular/core';
-import { MatDialog, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { Validators } from '@angular/forms';
+import { MatDialog, MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { FormBuilder } from '@ngneat/reactive-forms';
 import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { filter } from 'rxjs/operators';
 import { CoreBulkQuery, CoreBulkResponse } from 'app/interfaces/core-bulk.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
+import { EntityUtils } from 'app/modules/entity/utils';
 import { SnapshotDialogData } from 'app/pages/storage/snapshots/interfaces/snapshot-dialog-data.interface';
 import { SnapshotListRow } from 'app/pages/storage/snapshots/interfaces/snapshot-list-row.interface';
 import { DialogService } from 'app/services';
 
 @UntilDestroy()
 @Component({
-  selector: 'app-snapshot-batch-delete-dialog',
   templateUrl: './snapshot-batch-delete-dialog.component.html',
   styleUrls: ['./snapshot-batch-delete-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class SnapshotBatchDeleteDialogComponent implements OnInit {
-  constructor(
-    private dialogService: DialogService,
-    private translate: TranslateService,
-    private matDialog: MatDialog,
-    @Inject(MAT_DIALOG_DATA) private snapshots: SnapshotListRow[],
-  ) { }
+export class SnapshotBatchDeleteDialogComponent {
+  form = this.fb.group({
+    confirm: [false, [Validators.requiredTrue]],
+  });
+  total = this.snapshots.length;
 
-  ngOnInit(): void {
-    const batchDeleteMsg = this.getBatchDeleteMessage();
-    this.dialogService.confirm({
-      title: this.translate.instant('Delete'),
-      message: batchDeleteMsg,
-      buttonMsg: this.translate.instant('Delete'),
-    }).pipe(
-      filter(Boolean),
-      untilDestroyed(this),
-    ).subscribe(() => this.startBatchDeleteProgress());
-  }
-
-  wsBatchDeleteParams(): (string | string[][])[] {
-    const snapshots = this.snapshots.map((item) => [item.dataset + '@' + item.snapshot]);
-    return ['zfs.snapshot.delete', snapshots, '{0}'];
-  }
-
-  restructureData(): SnapshotDialogData {
+  get data(): SnapshotDialogData {
     const datasets: string[] = [];
     const snapshots: { [index: string]: string[] } = {};
     this.snapshots.forEach((item) => {
@@ -59,39 +41,22 @@ export class SnapshotBatchDeleteDialogComponent implements OnInit {
     return { datasets, snapshots };
   }
 
-  getBatchDeleteMessage(): string {
-    let message = this.translate.instant(
-      '<strong>The following { n, plural, one {snapshot} other {# snapshots} } will be deleted. Are you sure you want to proceed?</strong>',
-      { n: this.snapshots.length },
-    );
+  constructor(
+    private fb: FormBuilder,
+    private dialogRef: MatDialogRef<SnapshotBatchDeleteDialogComponent>,
+    private dialogService: DialogService,
+    private translate: TranslateService,
+    private matDialog: MatDialog,
+    @Inject(MAT_DIALOG_DATA) private snapshots: SnapshotListRow[],
+  ) { }
 
-    message += '<br>';
-    const info: SnapshotDialogData = this.restructureData();
+  onSubmit(): void {
+    this.startBatchDeleteProgress();
+  }
 
-    const datasetStart = "<div class='mat-list-item'>";
-    const datasetEnd = '</div>';
-    const listStart = '<ul>';
-    const listEnd = '</ul>';
-    const breakTag = '<br>';
-
-    info.datasets.forEach((dataset) => {
-      const totalSnapshots: number = info.snapshots[dataset].length;
-      const snapshotText = this.translate.instant(
-        '{ n, plural, one {# snapshot} other {# snapshots} }',
-        { n: totalSnapshots },
-      );
-      const header = `<br/> <div><strong>${dataset}</strong> (${snapshotText}) </div>`;
-      const listContent: string[] = [];
-
-      info.snapshots[dataset].forEach((snapshot) => {
-        listContent.push('<li>&nbsp;&nbsp;&nbsp;&nbsp;' + snapshot + '</li>');
-      });
-
-      const listContentString: string = listContent.toString();
-      message += datasetStart + header + listStart + listContentString.replace(/\,/g, '') + listEnd + breakTag + datasetEnd;
-    });
-
-    return message;
+  wsBatchDeleteParams(): (string | string[][])[] {
+    const snapshots = this.snapshots.map((item) => [item.dataset + '@' + item.snapshot]);
+    return ['zfs.snapshot.delete', snapshots, '{0}'];
   }
 
   startBatchDeleteProgress(): void {
@@ -119,8 +84,8 @@ export class SnapshotBatchDeleteDialogComponent implements OnInit {
           }
         });
 
+        this.dialogRef.close();
         dialogRef.close();
-        // this.entityList.getData();
 
         if (jobErrors.length > 0) {
           const errorTitle = this.translate.instant('Warning: {n} of {total} snapshots could not be deleted.', { n: jobErrors.length, total: params[1].length });
@@ -142,8 +107,8 @@ export class SnapshotBatchDeleteDialogComponent implements OnInit {
         }
       });
 
-    dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe(() => {
-      // new EntityUtils().handleWsError(this.entityList, err, this.dialogService);
+    dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((error) => {
+      new EntityUtils().handleWsError(this, error, this.dialogService);
       dialogRef.close();
     });
   }

@@ -316,6 +316,12 @@ export class SnapshotListComponent implements OnInit, AfterViewInit {
   doBatchDelete(snapshots: SnapshotListRow[]): void {
     this.matDialog.open(SnapshotBatchDeleteDialogComponent, {
       data: snapshots,
+    }).beforeClosed().pipe(
+      filter((isCancelled) => !isCancelled),
+      untilDestroyed(this),
+    ).subscribe(() => {
+      this.selection.clear();
+      this.cdr.markForCheck();
     });
   }
 }
