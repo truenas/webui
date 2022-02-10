@@ -39,13 +39,12 @@ import { selectSnapshots, selectSnapshotState } from '../store/snapshot.selector
 
 @UntilDestroy()
 @Component({
-  selector: 'app-snapshot-table',
-  templateUrl: './snapshot-table.component.html',
-  styleUrls: ['./snapshot-table.component.scss'],
+  templateUrl: './snapshot-list.component.html',
+  styleUrls: ['./snapshot-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [FormatDateTimePipe],
 })
-export class SnapshotTableComponent implements OnInit, AfterViewInit {
+export class SnapshotListComponent implements OnInit, AfterViewInit {
   error$ = this.store$.select(selectSnapshotState).pipe(map((state) => state.error));
   isLoading$ = this.store$.select(selectSnapshotState).pipe(map((state) => state.isLoading));
   isEmpty$ = this.store$.select(selectSnapshotsTotal).pipe(map((total) => total === 0));

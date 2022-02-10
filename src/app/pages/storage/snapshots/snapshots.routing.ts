@@ -1,6 +1,6 @@
 import { ModuleWithProviders } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { SnapshotTableComponent } from 'app/pages/storage/snapshots/snapshot-table/snapshot-table.component';
+import { SnapshotListComponent } from 'app/pages/storage/snapshots/snapshot-table/snapshot-list.component';
 
 export const routes: Routes = [
   {
@@ -9,7 +9,7 @@ export const routes: Routes = [
     children: [
       {
         path: '',
-        component: SnapshotTableComponent,
+        component: SnapshotListComponent,
         data: { title: 'Snapshots', breadcrumb: 'Snapshots' },
       },
     ],

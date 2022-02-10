@@ -20,7 +20,7 @@ import { SnapshotAddComponent } from 'app/pages/storage/snapshots/snapshot-add/s
 import { SnapshotCloneDialogComponent } from 'app/pages/storage/snapshots/snapshot-clone-dialog/snapshot-clone-dialog.component';
 import { SnapshotRollbackDialogComponent } from 'app/pages/storage/snapshots/snapshot-rollback-dialog/snapshot-rollback-dialog.component';
 import { SnapshotDetailsComponent } from 'app/pages/storage/snapshots/snapshot-table/components/snapshot-details/snapshot-details.component';
-import { SnapshotTableComponent } from 'app/pages/storage/snapshots/snapshot-table/snapshot-table.component';
+import { SnapshotListComponent } from 'app/pages/storage/snapshots/snapshot-table/snapshot-list.component';
 import { routing } from 'app/pages/storage/snapshots/snapshots.routing';
 import { SnapshotEffects } from 'app/pages/storage/snapshots/store/snapshot.effects';
 import { snapshotReducer } from 'app/pages/storage/snapshots/store/snapshot.reducer';
@@ -51,7 +51,7 @@ import { SnapshotBatchDeleteDialogComponent } from './snapshot-table/components/
     TranslateModule,
   ],
   declarations: [
-    SnapshotTableComponent,
+    SnapshotListComponent,
     SnapshotAddComponent,
     SnapshotCloneDialogComponent,
     SnapshotDetailsComponent,
@@ -59,7 +59,7 @@ import { SnapshotBatchDeleteDialogComponent } from './snapshot-table/components/
     SnapshotBatchDeleteDialogComponent,
   ],
   exports: [
-    SnapshotTableComponent,
+    SnapshotListComponent,
     SnapshotAddComponent,
     SnapshotCloneDialogComponent,
     SnapshotDetailsComponent,

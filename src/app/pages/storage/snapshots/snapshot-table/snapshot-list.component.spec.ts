@@ -19,7 +19,7 @@ import { DialogService, ModalService, WebSocketService } from 'app/services';
 import { snapshotsNotLoaded } from '../store/snapshot.actions';
 import { snapshotsInitialState } from '../store/snapshot.reducer';
 import { snapshotStateKey } from '../store/snapshot.selectors';
-import { SnapshotTableComponent } from './snapshot-table.component';
+import { SnapshotListComponent } from './snapshot-list.component';
 
 export const fakeDataSource: ZfsSnapshot[] = [{
   id: 'snapshot-id',
@@ -36,12 +36,12 @@ export const fakeDataSource: ZfsSnapshot[] = [{
 }] as ZfsSnapshot[];
 
 describe('SnapshotTableComponent', () => {
-  let spectator: Spectator<SnapshotTableComponent>;
+  let spectator: Spectator<SnapshotListComponent>;
   let loader: HarnessLoader;
   let ws: WebSocketService;
 
   const createComponent = createComponentFactory({
-    component: SnapshotTableComponent,
+    component: SnapshotListComponent,
     imports: [
       CoreComponents,
       EntityModule,
