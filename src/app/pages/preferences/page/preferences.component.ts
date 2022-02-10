@@ -58,18 +58,15 @@ export class PreferencesPageComponent implements EmbeddedFormConfig, OnInit, OnD
     this.store$.pipe(waitForPreferences, untilDestroyed(this)).subscribe((preferences) => {
       this.isReady = true;
       this.onPreferences(preferences);
-      this.init();
+      this.generateFieldConfig();
     });
+
+    this.setThemeOptions();
+    this.startSubscriptions();
   }
 
   ngOnDestroy(): void {
     this.core.unregister({ observerClass: this });
-  }
-
-  init(): void {
-    this.setThemeOptions();
-    this.startSubscriptions();
-    this.generateFieldConfig();
   }
 
   startSubscriptions(): void {
@@ -89,6 +86,7 @@ export class PreferencesPageComponent implements EmbeddedFormConfig, OnInit, OnD
 
       this.store$.dispatch(preferencesFormSubmitted({ formValues: prefs }));
       this.target.next({ name: 'SubmitStart', sender: this });
+      this.target.next({ name: 'SubmitComplete', sender: this });
     });
   }
 
