@@ -81,6 +81,7 @@ def when_the_apps_page_loads_open_manager_docker_images(driver):
     assert wait_on_element(driver, 10, '//div[contains(text(),"Manage Docker Images")]', 'clickable')
     driver.find_element_by_xpath('//div[contains(text(),"Manage Docker Images")]').click()
 
+
 @then('click the three dots icon for machinaris')
 def click_the_three_dots_icon_for_machinaris(driver):
     """click the three dots icon for machinaris."""
@@ -110,6 +111,7 @@ def confirm_image_is_deleted(driver):
     assert wait_on_element_disappear(driver, 30, '//*[contains(.,"Please wait")]')
 
     assert wait_on_element(driver, 20, '//tr[contains(.,"machinaris")]') is False
+
 
 
 
