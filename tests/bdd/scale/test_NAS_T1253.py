@@ -72,7 +72,7 @@ def create_new_qetestuser_user_add_to_qatest_group(driver):
     element = driver.find_element_by_xpath('//span[contains(.,"qatest")]')
     # Scroll to qatest
     driver.execute_script("arguments[0].scrollIntoView();", element)
-    assert wait_on_element(driver, 7, '//mat-option[@ix-auto="option__Auxiliary Groups_qatest"]', 'clickable')
+    assert wait_on_element(driver, 15, '//mat-option[@ix-auto="option__Auxiliary Groups_qatest"]', 'clickable')
     driver.find_element_by_xpath('//mat-option[@ix-auto="option__Auxiliary Groups_qatest"]').click()
     #time.sleep(2)
     driver.find_element_by_xpath('//mat-option[@ix-auto="option__Auxiliary Groups_qatest"]').send_keys(Keys.TAB)
