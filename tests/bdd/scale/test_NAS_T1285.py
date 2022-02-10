@@ -16,6 +16,9 @@ from pytest_bdd import (
     parsers
 )
 
+import pytest
+pytestmark = [pytest.mark.debug_test]
+
 @scenario('features/NAS-T1285.feature', 'Apps Page Validation')
 def test_apps_page_validation():
     """Apps Page Validation."""
