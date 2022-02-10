@@ -87,7 +87,7 @@ def fill_out_the_form(driver):
 @then('close confirmation dialog')
 def close_confirmation_dialog(driver):
     """close confirmation dialog."""
-    assert wait_on_element(driver, 7, '//span[contains(.,"Success")]')
+    assert wait_on_element(driver, 30, '//span[contains(.,"Success")]')
     assert wait_on_element(driver, 10, '//span[contains(.,"Close")]', 'clickable')
     driver.find_element_by_xpath('//span[contains(.,"Close")]').click()
 
