@@ -745,6 +745,7 @@
   "Shell Commands": "",
   "Show Built-in Groups": "",
   "Show Built-in Users": "",
+  "Show QR": "",
   "Show all available groups, including those that do not have quotas set.": "",
   "Show all available users, including those that do not have quotas set.": "",
   "Show built-in groups (default setting is <i>hidden</i>).": "",

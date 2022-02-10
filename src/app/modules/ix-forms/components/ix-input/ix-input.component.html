@@ -16,6 +16,7 @@
     [class.prefix-padding]="prefixIcon"
     [class.password-field]="isPasswordField()"
     [required]="required"
+    [readonly]="readonly"
     [disabled]="isDisabled"
     [type]="getType()"
     [value]="formatted"
@@ -44,3 +45,4 @@
 </div>
 <ix-errors [control]="controlDirective.control" [label]="label"></ix-errors>
 
+<mat-hint *ngIf="hint">{{hint}}</mat-hint>

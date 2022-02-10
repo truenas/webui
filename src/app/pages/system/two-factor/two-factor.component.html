@@ -1,0 +1,94 @@
+<mat-card class="form-card">
+  <mat-progress-bar *ngIf="isFormLoading" mode="indeterminate"></mat-progress-bar>
+  <mat-card-content>
+    <form [formGroup]="form" class="ix-form-container" (submit)="onSubmit()">
+      <div class="fieldset-content">
+        <ix-fieldset [title]="helptext.two_factor.title">
+          <p class="help-text">
+            {{helptext.two_factor.message}}
+          </p>
+        </ix-fieldset>
+      </div>
+      <div class="fieldset-content">
+        <ix-fieldset>
+          <ix-select
+            formControlName="otp_digits"
+            [label]="labels.otp_digits"
+            [tooltip]="tooltips.otp_digits"
+            [options]="otpDigitOptions$"
+            [required]="true"
+          ></ix-select>
+          <ix-input
+            formControlName="interval"
+            [label]="labels.interval"
+            [tooltip]="tooltips.interval"
+            [hint]="intervalHint"
+            type="number"
+          ></ix-input>
+          <ix-input
+            formControlName="window"
+            [label]="labels.window"
+            [tooltip]="tooltips.window"
+            type="number"
+          ></ix-input>
+          <ix-checkbox
+            formControlName="ssh"
+            [label]="labels.ssh"
+            [tooltip]="tooltips.ssh"
+          ></ix-checkbox>
+        </ix-fieldset>
+      </div>
+
+      <ix-fieldset [title]="helptext.two_factor.sys">
+        <ix-input
+          formControlName="secret"
+          [label]="labels.secret"
+          [tooltip]="tooltips.secret"
+          [readonly]="true"
+          type="password"
+        ></ix-input>
+        <ix-input
+          formControlName="uri"
+          [label]="labels.uri"
+          [tooltip]="tooltips.uri"
+          [readonly]="true"
+          type="password"
+        ></ix-input>
+        <p class="help-text">
+          {{twoFactorEnabled
+            ? helptext.two_factor.enabled_status_true
+            : helptext.two_factor.enabled_status_false}}
+        </p>
+      </ix-fieldset>
+
+      <div class="form-actions">
+        <button
+          mat-button
+          type="submit"
+          [disabled]="form.invalid || isFormLoading"
+          color="primary"
+        >{{ 'Save' | translate }}</button>
+        <button
+          mat-button
+          [disabled]="isFormLoading"
+          color="accent"
+          (click)="toggleTwoFactor()"
+        >{{twoFactorEnabled
+            ? helptext.two_factor.disable_button
+            : helptext.two_factor.enable_button}}</button>
+        <button
+          mat-button
+          [disabled]="isFormLoading || !secret"
+          color="accent"
+          (click)="openQrDialog()"
+        >{{ 'Show QR' | translate }}</button>
+        <button
+          mat-button
+          color="accent"
+          (click)="renewSecret()"
+          [disabled]="isFormLoading || !twoFactorEnabled"
+        >{{ 'Renew Secret' | translate }}</button>
+      </div>
+    </form>
+  </mat-card-content>
+</mat-card>

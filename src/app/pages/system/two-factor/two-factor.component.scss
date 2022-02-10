@@ -1,0 +1,21 @@
+.fieldset-content {
+  border-bottom: 1px solid var(--lines);
+}
+
+.form-actions {
+  margin: 8px 10px;
+
+  button {
+    margin-right: 5px;
+  }
+}
+
+.help-text {
+  font-size: 13px;
+}
+
+.card {
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 960px;
+}

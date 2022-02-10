@@ -19,6 +19,7 @@ export class IxInputComponent implements ControlValueAccessor {
   @Input() hint: string;
   @Input() tooltip: string;
   @Input() required: boolean;
+  @Input() readonly: boolean;
   @Input() type: string;
   @Input() autocomplete = 'off';
   @Input() autocapitalize = 'off';

@@ -1154,6 +1154,7 @@
   "Show Built-in Groups": "",
   "Show Built-in Users": "",
   "Show Extra Columns": "",
+  "Show QR": "",
   "Show Tracebacks in Case of Fatal Error": "",
   "Show all available groups, including those that do not have quotas set.": "",
   "Show all available users, including those that do not have quotas set.": "",
