@@ -236,18 +236,16 @@ export class EntityJobComponent implements OnInit {
   }
 
   wspost(path: string, options: unknown): void {
-    this.http.post(path, options)
-      .pipe(untilDestroyed(this))
-      .subscribe((res: Job) => {
-        this.job = res;
-        if (this.job && (this.job as any).job_id) {
-          this.jobId = (this.job as any).job_id;
-        }
-        this.wsshow();
-      },
-      (err: HttpErrorResponse) => {
-        this.prefailure.emit(err);
-      });
+    this.http.post(path, options).pipe(untilDestroyed(this)).subscribe((res: Job) => {
+      this.job = res;
+      if (this.job && (this.job as any).job_id) {
+        this.jobId = (this.job as any).job_id;
+      }
+      this.wsshow();
+    },
+    (err: HttpErrorResponse) => {
+      this.prefailure.emit(err);
+    });
   }
 
   wsshow(): void {
