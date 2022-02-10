@@ -125,6 +125,3 @@ def click_on_credentialsdirectoryservices_then_ldap_settings_then_disable_and_cl
     wait_on_element(driver, 10, '//span[contains(text(),"Save")]', 'clickable')
     driver.find_element_by_xpath('//span[contains(text(),"Save")]').click()
     assert wait_on_element_disappear(driver, 60, '//h6[contains(.,"Please wait")]')
-    # return to dashboard in case the server is slow, so the next test doesn't fail.
-    assert wait_on_element(driver, 5, '//mat-list-item[@ix-auto="option__Dashboard"]', 'clickable')
-    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()    
