@@ -5,7 +5,7 @@ import { EffectsModule } from '@ngrx/effects';
 import { Store, StoreModule } from '@ngrx/store';
 import { MockPipe, ngMocks } from 'ng-mocks';
 import { first, map } from 'rxjs/operators';
-import { FormatDateTimePipe } from 'app/core/components/pipes/format-datetime.pipe';
+import { FormatDateTimePipe } from 'app/core/pipes/format-datetime.pipe';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { AlertLevel } from 'app/enums/alert-level.enum';
 import { Alert } from 'app/interfaces/alert.interface';

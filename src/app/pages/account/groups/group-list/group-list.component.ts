@@ -2,7 +2,9 @@ import { Component } from '@angular/core';
 import { MatCheckboxChange } from '@angular/material/checkbox';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
+import { combineLatest } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import helptext from 'app/helptext/account/group-list';
 import { ConfirmOptions } from 'app/interfaces/dialog.interface';
@@ -17,8 +19,13 @@ import { EntityUtils } from 'app/modules/entity/utils';
 import { GroupFormComponent } from 'app/pages/account/groups/group-form/group-form.component';
 import { DialogService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { PreferencesService } from 'app/services/preferences.service';
 import { WebSocketService } from 'app/services/ws.service';
+import { AppState } from 'app/store';
+import {
+  builtinGroupsToggled,
+  oneTimeBuiltinGroupsMessageShown,
+} from 'app/store/preferences/preferences.actions';
+import { waitForPreferences } from 'app/store/preferences/preferences.selectors';
 
 @UntilDestroy()
 @Component({
@@ -59,25 +66,33 @@ export class GroupListComponent implements EntityTableConfig<MembershipGroup> {
     },
   };
 
+  private showGroupListMessage = false;
+  private hideBuiltinGroups = true;
+
   constructor(
     private router: Router,
     protected dialogService: DialogService,
     protected loader: AppLoaderService,
     protected ws: WebSocketService,
-    protected prefService: PreferencesService,
     private translate: TranslateService,
     private slideInService: IxSlideInService,
+    private store$: Store<AppState>,
   ) {}
 
   preInit(): void {
-    this.ws.call('user.query').pipe(untilDestroyed(this)).subscribe((users) => {
+    combineLatest([
+      this.ws.call('user.query'),
+      this.store$.pipe(waitForPreferences),
+    ]).pipe(untilDestroyed(this)).subscribe(([users, preferences]) => {
       this.users = users;
+      this.showGroupListMessage = preferences.showGroupListMessage;
+      this.hideBuiltinGroups = preferences.hideBuiltinGroups;
     });
   }
 
   resourceTransformIncomingRestData(data: Group[]): MembershipGroup[] {
     // Default setting is to hide builtin groups
-    if (this.prefService.preferences.hide_builtin_groups) {
+    if (this.hideBuiltinGroups) {
       const newData: MembershipGroup[] = [];
       data.forEach((item) => {
         if (!item.builtin) {
@@ -96,7 +111,7 @@ export class GroupListComponent implements EntityTableConfig<MembershipGroup> {
   afterInit(entityList: EntityTableComponent): void {
     this.entityList = entityList;
     setTimeout(() => {
-      if (this.prefService.preferences.showGroupListMessage) {
+      if (this.showGroupListMessage) {
         this.showOneTimeBuiltinMsg();
       }
     }, 2000);
@@ -196,7 +211,7 @@ export class GroupListComponent implements EntityTableConfig<MembershipGroup> {
 
   toggleBuiltins(): void {
     let dialogOptions: ConfirmOptions;
-    if (this.prefService.preferences.hide_builtin_groups) {
+    if (this.hideBuiltinGroups) {
       dialogOptions = {
         title: this.translate.instant('Show Built-in Groups'),
         message: this.translate.instant('Show built-in groups (default setting is <i>hidden</i>).'),
@@ -213,15 +228,13 @@ export class GroupListComponent implements EntityTableConfig<MembershipGroup> {
     }
 
     this.dialogService.confirm(dialogOptions).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
-      this.prefService.preferences.hide_builtin_groups = !this.prefService.preferences.hide_builtin_groups;
-      this.prefService.savePreferences();
+      this.store$.dispatch(builtinGroupsToggled());
       this.entityList.getData();
     });
   }
 
   showOneTimeBuiltinMsg(): void {
-    this.prefService.preferences.showGroupListMessage = false;
-    this.prefService.savePreferences();
+    this.store$.dispatch(oneTimeBuiltinGroupsMessageShown());
     this.dialogService.confirm({
       title: helptext.builtinMessageDialog.title,
       message: helptext.builtinMessageDialog.message,

@@ -15,6 +15,7 @@
     matInput
     [class.prefix-padding]="prefixIcon"
     [class.password-field]="isPasswordField()"
+    [class.has-reset-input-icon]="shouldShowResetInput()"
     [required]="required"
     [disabled]="isDisabled"
     [type]="getType()"

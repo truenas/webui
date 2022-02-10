@@ -18,12 +18,13 @@ import { CoreEvent } from 'app/interfaces/events';
 import { CpuStatsEvent } from 'app/interfaces/events/cpu-stats-event.interface';
 import { SysInfoEvent } from 'app/interfaces/events/sys-info-event.interface';
 import { AllCpusUpdate } from 'app/interfaces/reporting.interface';
+import { Theme } from 'app/interfaces/theme.interface';
 import { ViewChartBarComponent } from 'app/modules/charts/components/view-chart-bar/view-chart-bar.component';
 import { GaugeConfig, ViewChartGaugeComponent } from 'app/modules/charts/components/view-chart-gauge/view-chart-gauge.component';
 import { WidgetComponent } from 'app/pages/dashboard/components/widget/widget.component';
 import { WidgetCpuData } from 'app/pages/dashboard/interfaces/widget-data.interface';
 import { CoreService } from 'app/services/core-service/core.service';
-import { Theme, ThemeService } from 'app/services/theme/theme.service';
+import { ThemeService } from 'app/services/theme/theme.service';
 
 @UntilDestroy()
 @Component({

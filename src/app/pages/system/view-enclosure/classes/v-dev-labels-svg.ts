@@ -4,9 +4,9 @@ import * as d3 from 'd3';
 import { Application, Container } from 'pixi.js';
 import { Subject } from 'rxjs';
 import { CoreEvent } from 'app/interfaces/events';
+import { Theme } from 'app/interfaces/theme.interface';
 import { ChassisView } from 'app/pages/system/view-enclosure/classes/chassis-view';
 import { EnclosureDisk, VDevMetadata } from 'app/pages/system/view-enclosure/classes/system-profiler';
-import { Theme } from 'app/services/theme/theme.service';
 
 export class VDevLabelsSvg {
   /*
