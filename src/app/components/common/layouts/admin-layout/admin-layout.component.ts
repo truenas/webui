@@ -8,6 +8,7 @@ import { NavigationEnd, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { UUID } from 'angular2-uuid';
+import { filter, take } from 'rxjs/operators';
 import { ConsolePanelDialogComponent } from 'app/components/common/dialog/console-panel/console-panel-dialog.component';
 import { ProductType } from 'app/enums/product-type.enum';
 import { ForceSidenavEvent } from 'app/interfaces/events/force-sidenav-event.interface';
@@ -15,16 +16,17 @@ import { SidenavStatusEvent } from 'app/interfaces/events/sidenav-status-event.i
 import { SysInfoEvent } from 'app/interfaces/events/sys-info-event.interface';
 import { UserPreferencesChangedEvent } from 'app/interfaces/events/user-preferences-event.interface';
 import { SubMenuItem } from 'app/interfaces/menu-item.interface';
+import { Theme } from 'app/interfaces/theme.interface';
 import { alertPanelClosed } from 'app/modules/alerts/store/alert.actions';
 import { selectIsAlertPanelOpen } from 'app/modules/alerts/store/alert.selectors';
 import { WebSocketService, SystemGeneralService } from 'app/services';
 import { CoreService } from 'app/services/core-service/core.service';
 import { LayoutService } from 'app/services/layout.service';
 import { LocaleService } from 'app/services/locale.service';
-import { PreferencesService } from 'app/services/preferences.service';
-import { Theme, ThemeService } from 'app/services/theme/theme.service';
+import { ThemeService } from 'app/services/theme/theme.service';
 import { AppState } from 'app/store';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
+import { waitForPreferences } from 'app/store/preferences/preferences.selectors';
 import { waitForGeneralConfig } from 'app/store/system-config/system-config.selectors';
 
 @UntilDestroy()
@@ -73,7 +75,6 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
     private sysGeneralService: SystemGeneralService,
     private localeService: LocaleService,
     private layoutService: LayoutService,
-    private prefService: PreferencesService,
     private store$: Store<AppState>,
   ) {
     // detect server type
@@ -178,8 +179,15 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
       setTimeout(() => {
         this.sideNav.open();
       });
-      this.layoutService.isMenuCollapsed = this.prefService.preferences.sidenavStatus.isCollapsed;
-      this.isSidenavCollapsed = this.prefService.preferences.sidenavStatus.isCollapsed;
+      this.store$.pipe(
+        waitForPreferences,
+        take(1),
+        filter((preferences) => Boolean(preferences.sidenavStatus)),
+        untilDestroyed(this),
+      ).subscribe(({ sidenavStatus }) => {
+        this.layoutService.isMenuCollapsed = sidenavStatus.isCollapsed;
+        this.isSidenavCollapsed = sidenavStatus.isCollapsed;
+      });
     } else {
       this.layoutService.isMenuCollapsed = false;
     }

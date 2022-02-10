@@ -1,6 +1,7 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { provideMockStore } from '@ngrx/store/testing';
 import { MockComponent } from 'ng-mocks';
 import { of, Subject } from 'rxjs';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
@@ -10,7 +11,7 @@ import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxTableModule } from 'app/modules/ix-tables/ix-table.module';
 import { IxTableHarness } from 'app/modules/ix-tables/testing/ix-table.harness';
 import { DialogService, ModalService, WebSocketService } from 'app/services';
-import { PreferencesService } from 'app/services/preferences.service';
+import { selectPreferences } from 'app/store/preferences/preferences.selectors';
 import { CoreService } from '../../../../services/core-service/core.service';
 import { UserListDetailsComponent } from '../user-list-details/user-list-details.component';
 import { UserListComponent } from './user-list.component';
@@ -91,12 +92,16 @@ describe('UserListComponent', () => {
         openInSlideIn: jest.fn(() => of(true)),
         onClose$: new Subject<unknown>(),
       }),
-      mockProvider(PreferencesService, {
-        preferences: {
-          showUserListMessage: false,
-          hide_builtin_users: false,
-        } as Preferences,
-        savePreferences: jest.fn(),
+      provideMockStore({
+        selectors: [
+          {
+            selector: selectPreferences,
+            value: {
+              showUserListMessage: false,
+              hideBuiltinUsers: false,
+            } as Preferences,
+          },
+        ],
       }),
       mockProvider(CoreService),
     ],

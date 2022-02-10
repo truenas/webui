@@ -3,6 +3,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { Store } from '@ngrx/store';
 import { provideMockStore } from '@ngrx/store/testing';
 import { Observable, of } from 'rxjs';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
@@ -15,6 +16,8 @@ import { LocalizationFormComponent } from 'app/pages/system/general-settings/loc
 import { LanguageService, SystemGeneralService, WebSocketService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LocaleService } from 'app/services/locale.service';
+import { localizationFormSubmitted } from 'app/store/preferences/preferences.actions';
+import { selectPreferences } from 'app/store/preferences/preferences.selectors';
 
 describe('LocalizationFormComponent', () => {
   let spectator: Spectator<LocalizationFormComponent>;
@@ -70,7 +73,17 @@ describe('LocalizationFormComponent', () => {
       mockProvider(IxSlideInService),
       mockProvider(LanguageService),
       mockProvider(FormErrorHandlerService),
-      provideMockStore(),
+      provideMockStore({
+        selectors: [
+          {
+            selector: selectPreferences,
+            value: {
+              dateFormat: '2021-10-16',
+              timeFormat: '16:22:14 (24 Hours)',
+            },
+          },
+        ],
+      }),
     ],
   });
 
@@ -105,10 +118,12 @@ describe('LocalizationFormComponent', () => {
     });
 
     it('sends an update payload to websocket and closes modal when save is pressed', async () => {
+      const store$ = spectator.inject(Store);
+      jest.spyOn(store$, 'dispatch');
       const form = await loader.getHarness(IxFormHarness);
       await form.fillForm({
-        'Date Format': '2021-10-16',
-        'Time Format': '16:22:14 (24 Hours)',
+        'Date Format': 'October 16, 2021',
+        'Time Format': '04:22:14 PM',
         'Console Keyboard Map': 'English (US) (us)',
         Language: 'English (en)',
         Timezone: 'America/Los_Angeles',
@@ -116,8 +131,15 @@ describe('LocalizationFormComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(spectator.inject(LocaleService).saveDateTimeFormat).toHaveBeenCalledWith('yyyy-MM-dd', 'HH:mm:ss');
-      expect(ws.call).toHaveBeenCalledWith('system.general.update', [{ language: 'en', kbdmap: 'us', timezone: 'America/Los_Angeles' }]);
+      expect(store$.dispatch).toHaveBeenCalledWith(localizationFormSubmitted({
+        dateFormat: 'MMMM d, yyyy',
+        timeFormat: 'hh:mm:ss aa',
+      }));
+      expect(ws.call).toHaveBeenCalledWith('system.general.update', [{
+        language: 'en',
+        kbdmap: 'us',
+        timezone: 'America/Los_Angeles',
+      }]);
       expect(spectator.inject(IxSlideInService).close).toHaveBeenCalled();
       expect(spectator.inject(LanguageService).setLanguage).toHaveBeenCalledWith('en');
     });

@@ -22,6 +22,7 @@ import { LabelDrivesEvent } from 'app/interfaces/events/label-drives-event.inter
 import { MediaChangeEvent } from 'app/interfaces/events/media-change-event.interface';
 import { ThemeChangedEvent, ThemeDataEvent } from 'app/interfaces/events/theme-events.interface';
 import { Pool } from 'app/interfaces/pool.interface';
+import { Theme } from 'app/interfaces/theme.interface';
 import { DialogFormConfiguration } from 'app/modules/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/modules/entity/entity-dialog/entity-dialog.component';
 import { RelationAction } from 'app/modules/entity/entity-form/models/relation-action.enum';
@@ -53,7 +54,6 @@ import { WebSocketService } from 'app/services';
 import { CoreService } from 'app/services/core-service/core.service';
 import { DialogService } from 'app/services/dialog.service';
 import { Temperature } from 'app/services/disk-temperature.service';
-import { Theme } from 'app/services/theme/theme.service';
 
 export enum EnclosureLocation {
   Front = 'front',

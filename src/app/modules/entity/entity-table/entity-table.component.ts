@@ -21,6 +21,7 @@ import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { NavigationStart, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { select, Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 import {
@@ -32,6 +33,7 @@ import {
 import { JobState } from 'app/enums/job-state.enum';
 import { UserPreferencesChangedEvent } from 'app/interfaces/events/user-preferences-event.interface';
 import { GlobalActionConfig } from 'app/interfaces/global-action.interface';
+import { TableDisplayedColumns } from 'app/interfaces/preferences.interface';
 import { Interval } from 'app/interfaces/timeout.interface';
 import { AppLoaderService } from 'app/modules/app-loader/app-loader.service';
 import { EmptyConfig, EmptyType } from 'app/modules/entity/entity-empty/entity-empty.component';
@@ -46,9 +48,14 @@ import { EntityUtils } from 'app/modules/entity/utils';
 import { DialogService, JobService } from 'app/services';
 import { CoreService } from 'app/services/core-service/core.service';
 import { ModalService } from 'app/services/modal.service';
-import { PreferencesService } from 'app/services/preferences.service';
 import { StorageService } from 'app/services/storage.service';
 import { WebSocketService } from 'app/services/ws.service';
+import { AppState } from 'app/store';
+import { preferredColumnsUpdated } from 'app/store/preferences/preferences.actions';
+import {
+  selectPreferencesState,
+  waitForPreferences,
+} from 'app/store/preferences/preferences.selectors';
 
 @UntilDestroy()
 @Component({
@@ -193,7 +200,7 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, A
     protected translate: TranslateService,
     public storageService: StorageService,
     protected job: JobService,
-    protected prefService: PreferencesService,
+    protected store$: Store<AppState>,
     protected matDialog: MatDialog,
     public modalService: ModalService,
     public changeDetectorRef: ChangeDetectorRef,
@@ -327,41 +334,7 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, A
     }
     this.conf.columns = this.originalConfColumns;
 
-    const preferredCols = this.prefService.preferences.tableDisplayedColumns;
-    // Turn off preferred cols for snapshots to allow for two diffferent column sets to be displayed
-    if (preferredCols.length > 0 && this.title !== 'Snapshots') {
-      preferredCols.forEach((column) => {
-        // If preferred columns have been set for THIS table...
-        if (column.title === this.title) {
-          this.firstUse = false;
-          this.conf.columns = column.cols.filter((col) => {
-            // Remove columns if they are already present in always displayed columns
-            return !this.alwaysDisplayedCols.find((item) => item.prop === col.prop);
-          });
-
-          // Remove columns from display and preferred cols if they don't exist in the table
-          const notFound: EntityTableColumnProp[] = [];
-          this.conf.columns.forEach((col) => {
-            const found = this.filterColumns.find((o) => o.prop === col.prop);
-            if (!found) {
-              notFound.push(col.prop);
-            }
-          });
-          this.conf.columns = this.conf.columns.filter((col) => !notFound.includes(col.prop));
-          this.selectColumnsToShowOrHide();
-        }
-      });
-      if (this.title === 'Users') {
-        // Makes a list of the table's column maxWidths
-        this.filterColumns.forEach((column) => {
-          const tempObj: any = {};
-          tempObj['name'] = column.name;
-          tempObj['maxWidth'] = column.maxWidth;
-          this.colMaxWidths.push(tempObj);
-        });
-        this.conf.columns = this.dropLastMaxWidth();
-      }
-    }
+    this.loadPreferredColumns();
     if (this.firstUse) {
       this.selectColumnsToShowOrHide();
     }
@@ -1089,24 +1062,30 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, A
       this.conf.columns = [...this.conf.columns, col];
     }
     this.selectColumnsToShowOrHide();
+    this.changeDetectorRef.detectChanges();
   }
 
   // Stores currently selected columns in preference service
   selectColumnsToShowOrHide(): void {
-    const obj: any = {};
-    obj['title'] = this.title;
-    obj['cols'] = this.conf.columns;
+    const newColumnPreferences: TableDisplayedColumns = {
+      title: this.title,
+      cols: this.conf.columns as any,
+    };
 
-    const preferredCols = this.prefService.preferences.tableDisplayedColumns;
-    if (preferredCols.length > 0) {
-      preferredCols.forEach((column) => {
-        if (column.title === this.title) {
-          preferredCols.splice(preferredCols.indexOf(column), 1);
-        }
+    this.store$.pipe(select(selectPreferencesState), take(1), untilDestroyed(this)).subscribe((state) => {
+      if (!state.areLoaded) {
+        return;
+      }
+
+      const existingPreferredColumns = state.preferences.tableDisplayedColumns || [];
+      const preferredColumns = existingPreferredColumns.filter((column) => {
+        return column.title !== this.title;
       });
-    }
-    preferredCols.push(obj);
-    this.prefService.savePreferences(this.prefService.preferences);
+      preferredColumns.push(newColumnPreferences);
+
+      this.store$.dispatch(preferredColumnsUpdated({ columns: preferredColumns }));
+    });
+
     if (this.title === 'Users') {
       this.conf.columns = this.dropLastMaxWidth();
     }
@@ -1247,5 +1226,49 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, A
 
   isBasicColumnTemplate(column: string): boolean {
     return !['expandedDetail', 'action', 'multiselect', 'expansion-chevrons'].includes(column) && !this.isInteractive(column);
+  }
+
+  private loadPreferredColumns(): void {
+    this.store$.pipe(waitForPreferences, take(1), untilDestroyed(this)).subscribe((preferences) => {
+      const preferredCols = preferences.tableDisplayedColumns || [];
+      // Turn off preferred cols for snapshots to allow for two different column sets to be displayed
+      if (preferredCols.length < 0 && this.title === 'Snapshots') {
+        return;
+      }
+
+      preferredCols.forEach((column) => {
+        // If preferred columns have been set for THIS table...
+        if (column.title === this.title) {
+          this.firstUse = false;
+          this.conf.columns = column.cols.filter((col) => {
+            // Remove columns if they are already present in always displayed columns
+            return !this.alwaysDisplayedCols.find((item) => item.prop === col.prop);
+          });
+
+          // Remove columns from display and preferred cols if they don't exist in the table
+          const notFound: EntityTableColumnProp[] = [];
+          this.conf.columns.forEach((col) => {
+            const found = this.filterColumns.find((o) => o.prop === col.prop);
+            if (!found) {
+              notFound.push(col.prop);
+            }
+          });
+          this.conf.columns = this.conf.columns.filter((col) => !notFound.includes(col.prop));
+          this.selectColumnsToShowOrHide();
+        }
+      });
+      if (this.title === 'Users') {
+        // Makes a list of the table's column maxWidths
+        this.filterColumns.forEach((column) => {
+          const tempObj: any = {};
+          tempObj['name'] = column.name;
+          tempObj['maxWidth'] = column.maxWidth;
+          this.colMaxWidths.push(tempObj);
+        });
+        this.conf.columns = this.dropLastMaxWidth();
+      }
+
+      this.changeDetectorRef.markForCheck();
+    });
   }
 }

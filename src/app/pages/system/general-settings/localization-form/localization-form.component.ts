@@ -15,6 +15,7 @@ import { LanguageService, SystemGeneralService, WebSocketService } from 'app/ser
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LocaleService } from 'app/services/locale.service';
 import { AppState } from 'app/store';
+import { localizationFormSubmitted } from 'app/store/preferences/preferences.actions';
 import { generalConfigUpdated } from 'app/store/system-config/system-config.actions';
 
 @UntilDestroy()
@@ -132,7 +133,10 @@ export class LocalizationFormComponent {
   submit(): void {
     const body = this.formGroup.value;
     this.isFormLoading = true;
-    this.localeService.saveDateTimeFormat(body.date_format, body.time_format);
+    this.store$.dispatch(localizationFormSubmitted({
+      dateFormat: body.date_format,
+      timeFormat: body.time_format,
+    }));
     delete body.date_format;
     delete body.time_format;
     this.ws.call('system.general.update', [body]).pipe(untilDestroyed(this)).subscribe(() => {
