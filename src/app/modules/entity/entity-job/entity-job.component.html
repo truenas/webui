@@ -21,7 +21,7 @@
     </mat-progress-bar>
   </div>
 
-  <div *ngIf="httpPosting">
+  <div *ngIf="showHttpProgress">
     <div fxLayout="row-reverse" fxLayoutAlign="space-between baseline" fxLayoutGap="8px">
       <small>{{ uploadPercentage || 0 | number: '1.2-2' }}%</small>
     </div>

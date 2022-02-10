@@ -32,7 +32,7 @@ export class EntityJobComponent implements OnInit {
   args: any[] = [];
 
   title = '';
-  httpPosting = false;
+  showHttpProgress = false;
   uploadPercentage: number = null;
   showCloseButton = true;
   showAbortButton = false; // enable to abort job
@@ -208,8 +208,8 @@ export class EntityJobComponent implements OnInit {
       );
   }
 
-  wspost(path: string, options: unknown, withProgress: boolean = false): void {
-    this.httpPosting = withProgress;
+  wspostWithProgressUpdates(path: string, options: unknown): void {
+    this.showHttpProgress = true;
     this.http.post(path, options, { reportProgress: true, observe: 'events' })
       .pipe(untilDestroyed(this))
       .subscribe((event: HttpEvent<Job>) => {
@@ -221,7 +221,7 @@ export class EntityJobComponent implements OnInit {
           }
           this.uploadPercentage = progress;
         } else if (event.type === HttpEventType.Response) {
-          this.httpPosting = false;
+          this.showHttpProgress = false;
           this.job = event.body;
           if (this.job && (this.job as any).job_id) {
             this.jobId = (this.job as any).job_id;
@@ -230,7 +230,22 @@ export class EntityJobComponent implements OnInit {
         }
       },
       (err: HttpErrorResponse) => {
-        this.httpPosting = false;
+        this.showHttpProgress = false;
+        this.prefailure.emit(err);
+      });
+  }
+
+  wspost(path: string, options: unknown): void {
+    this.http.post(path, options)
+      .pipe(untilDestroyed(this))
+      .subscribe((res: Job) => {
+        this.job = res;
+        if (this.job && (this.job as any).job_id) {
+          this.jobId = (this.job as any).job_id;
+        }
+        this.wsshow();
+      },
+      (err: HttpErrorResponse) => {
         this.prefailure.emit(err);
       });
   }
