@@ -16,6 +16,7 @@ from pytest_bdd import (
     parsers
 )
 
+pytestmark = [pytest.mark.debug_test]
 
 @scenario('features/NAS-T1357.feature', 'Apps Page - Validate deleting a container image')
 def test_apps_page__validate_deleting_a_container_image():

@@ -16,6 +16,7 @@ from pytest_bdd import (
     parsers
 )
 
+pytestmark = [pytest.mark.debug_test]
 
 @scenario('features/NAS-T1346.feature', 'Apps Page - Validate machinaris')
 def test_apps_page__validate_machinaris():

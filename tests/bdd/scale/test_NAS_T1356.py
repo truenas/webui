@@ -16,6 +16,7 @@ from pytest_bdd import (
     parsers
 )
 
+pytestmark = [pytest.mark.debug_test]
 
 @scenario('features/NAS-T1356.feature', 'Apps Page - Validate adding TrueCommand as a custom app')
 def test_apps_page__validate_adding_truecommand_as_a_custom_app():
