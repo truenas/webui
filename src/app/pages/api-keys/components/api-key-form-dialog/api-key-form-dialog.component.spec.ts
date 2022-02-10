@@ -41,9 +41,6 @@ describe('ApiKeyFormDialogComponent', () => {
         useValue: undefined,
       },
     ],
-    entryComponents: [
-      KeyCreatedDialogComponent,
-    ],
   });
 
   async function setupTest(apiKey?: Partial<ApiKey>): Promise<void> {
