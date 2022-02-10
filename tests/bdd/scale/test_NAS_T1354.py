@@ -15,7 +15,7 @@ from pytest_bdd import (
     when,
     parsers
 )
-
+import pytest
 pytestmark = [pytest.mark.debug_test]
 
 @scenario('features/NAS-T1354.feature', 'Apps Page - Validate removing a Catalog')
