@@ -1,0 +1,59 @@
+:host {
+  display: block;
+
+  &:not(:last-child) {
+    border-bottom: 1px solid var(--lines);
+  }
+}
+
+.job-item {
+  display: block;
+  padding: 8px 12px 8px 24px;
+
+  &.abortable .job-item-body {
+    max-width: calc(100% - 48px);
+  }
+
+  .job-item-body {
+    flex: 1;
+  }
+
+  &.interactive {
+    &:hover {
+      background: var(--hover-bg);
+      cursor: pointer;
+    }
+
+    &:focus,
+    &:active {
+      background: var(--hover-bg);
+    }
+  }
+}
+
+.job-progress {
+  margin: 3px 0;
+}
+
+.job-progress-description {
+  opacity: 0.75;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.job-time {
+  opacity: 0.5;
+}
+
+.job-icon-failed {
+  color: var(--red);
+}
+
+.job-icon-waiting {
+  color: var(--accent);
+}
+
+.job-icon-success {
+  color: var(--green);
+}

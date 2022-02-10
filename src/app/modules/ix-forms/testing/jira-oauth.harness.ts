@@ -2,6 +2,7 @@ import { BaseHarnessFilters, ComponentHarness, HarnessPredicate } from '@angular
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatInputHarness } from '@angular/material/input/testing';
 import { IxFormControlHarness } from 'app/modules/ix-forms/interfaces/ix-form-control-harness.interface';
+import { getErrorText } from '../utils/harness.utils';
 
 export interface JiraOauthHarnessFilters extends BaseHarnessFilters {
   label: string;
@@ -17,15 +18,11 @@ export class JiraOauthHarness extends ComponentHarness implements IxFormControlH
   }
 
   getMatInputHarness = this.locatorFor(MatInputHarness);
+  getErrorText = getErrorText;
 
   async getLabelText(): Promise<string> {
     const label = await this.locatorFor('label')();
     return label.text({ exclude: '.required' });
-  }
-
-  async getErrorText(): Promise<string> {
-    const label = await this.locatorForOptional('ix-errors')();
-    return label?.text() || '';
   }
 
   async getValue(): Promise<string> {

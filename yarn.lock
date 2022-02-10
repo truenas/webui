@@ -6515,12 +6515,7 @@ filelist@^1.0.1:
   dependencies:
     minimatch "^3.0.4"
 
-"filesize@>= 4.0.0":
-  version "8.0.3"
-  resolved "https://registry.yarnpkg.com/filesize/-/filesize-8.0.3.tgz#b53541cc42418ec716b41cd74831793964ff90ac"
-  integrity sha512-UrhwVdUWmP0Jo9uLhVro8U36D4Yp3uT6pfXeNJHVRwyQrZjsqfnypOLthfnuB/bk1glUu7aIY947kyfoOfXuog==
-
-filesize@~6.3.0:
+"filesize@>= 4.0.0", filesize@~6.3.0:
   version "6.3.0"
   resolved "https://registry.yarnpkg.com/filesize/-/filesize-6.3.0.tgz#dff53cfb3f104c9e422f346d53be8dbcc971bf11"
   integrity sha512-ytx0ruGpDHKWVoiui6+BY/QMNngtDQ/pJaFwfBpQif0J63+E8DLdFyqS3NkKQn7vIruUEpoGD9JUJSg7Kp+I0g==
@@ -9563,7 +9558,7 @@ ngx-color-picker@~11.0.0:
   dependencies:
     tslib "^2.0.0"
 
-ngx-filesize@~2.0.2:
+ngx-filesize@~2.0.16:
   version "2.0.16"
   resolved "https://registry.yarnpkg.com/ngx-filesize/-/ngx-filesize-2.0.16.tgz#fdaba04170edb6cfcdf7be932783cf913b03f016"
   integrity sha512-VdaCirE7hSyfQh8ZEmhzNEhbddiTYUHF4V6OX+KyTmnQSVx4hp9kmzDX5YlkIlmClI6wI+LZmH9/q7XS3fsMPA==

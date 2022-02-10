@@ -22,3 +22,9 @@ export function arrayToOptions(): OperatorFunction<MapOption[], Option[]> {
     return choices.map(([value, label]) => ({ label, value }));
   });
 }
+
+export function singleArrayToOptions(): OperatorFunction<string[], Option[]> {
+  return map((choices) => {
+    return choices.map((choice) => ({ label: choice, value: choice }));
+  });
+}
