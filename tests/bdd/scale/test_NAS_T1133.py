@@ -62,7 +62,7 @@ def add_the_user_to_group_root_for_later_tests(driver):
     assert wait_on_element(driver, 10, '//h3[contains(.,"Edit User")]')
     element = driver.find_element_by_xpath('//label[contains(text(),"Auxiliary Groups")]')
     driver.execute_script("arguments[0].scrollIntoView();", element)
-    assert wait_on_element(driver, 10, '//mat-select[@ix-auto="select__Auxiliary Groups"]')
+    assert wait_on_element(driver, 10, '//mat-select[@ix-auto="select__Auxiliary Groups"]', 'clickable')
     driver.find_element_by_xpath('//mat-select[@ix-auto="select__Auxiliary Groups"]').click()
     assert wait_on_element(driver, 10, '//span[contains(.,"root")]')
     driver.find_element_by_xpath('//mat-option[@ix-auto="option__Auxiliary Groups_root"]').click()
