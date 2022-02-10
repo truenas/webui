@@ -134,7 +134,6 @@ import { ZvolWizardComponent } from './volumes/zvol/zvol-wizard/zvol-wizard.comp
     SnapshotCloneDialogComponent,
   ],
   exports: [VolumesListControlsComponent],
-  entryComponents: [SnapshotDetailsComponent, UnlockDialogComponent],
   providers: [
     UserService,
     StorageService,

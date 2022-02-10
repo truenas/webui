@@ -25,7 +25,6 @@ describe('DiskStateService', () => {
   const createService = createServiceFactory({
     service: DiskStateService,
     providers: [coreService, websocketService],
-    entryComponents: [],
   });
 
   /*
