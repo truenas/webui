@@ -5,7 +5,7 @@ import { FormBuilder } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import helptext from 'app/helptext/topbar';
-import { TrueCommandConfig } from 'app/interfaces/true-command-config.interface';
+import { TrueCommandConfig, UpdateTrueCommand } from 'app/interfaces/true-command-config.interface';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { AppLoaderService, DialogService, WebSocketService } from 'app/services';
 
@@ -59,7 +59,15 @@ export class TruecommandSignupModalComponent implements OnInit {
 
   onSubmit(): void {
     this.loader.open();
-    this.ws.call('truecommand.update', [{ ...this.form.value }]).pipe(untilDestroyed(this)).subscribe(
+
+    const params = {} as UpdateTrueCommand;
+
+    params.enabled = this.form.value.enabled;
+    if (this.form.value.api_key) {
+      params.api_key = this.form.value.api_key;
+    }
+
+    this.ws.call('truecommand.update', [params]).pipe(untilDestroyed(this)).subscribe(
       () => {
         this.loader.close();
         this.dialogRef.close();
