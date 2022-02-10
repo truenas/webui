@@ -1,12 +1,11 @@
-import { createServiceFactory, SpectatorService, mockProvider } from '@ngneat/spectator/jest';
-import { Subject } from 'rxjs';
+import { createServiceFactory, mockProvider } from '@ngneat/spectator/jest';
+import { of, Subject } from 'rxjs';
 import { CoreEvent } from 'app/interfaces/events';
 import { CoreService } from 'app/services/core-service/core.service';
 import { DiskStateService } from 'app/services/disk-state/disk-state.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 describe('DiskStateService', () => {
-  let spectator: SpectatorService<DiskStateService>;
   const messageBus$ = new Subject();
   const fakeSocket$ = new Subject();
 
@@ -20,24 +19,16 @@ describe('DiskStateService', () => {
 
   const websocketService = mockProvider(WebSocketService, {
     sub: () => fakeSocket$,
+    authStatus: of(),
   });
 
   const createService = createServiceFactory({
     service: DiskStateService,
     providers: [coreService, websocketService],
-    entryComponents: [],
   });
-
-  /*
-   * Test Methods
-   * */
 
   beforeEach(() => {
-    spectator = createService();
-  });
-
-  it('should instantiate', () => {
-    expect(spectator).toBeTruthy();
+    createService();
   });
 
   test('should forward DisksChanged notifications', (done) => {

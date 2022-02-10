@@ -44,10 +44,14 @@ export class ThemeService {
   }
 
   onThemeChanged(theme: string): void {
-    this.activeTheme = theme === 'default' ? this.defaultTheme : theme;
+    this.activeTheme = this.getNormalizedThemeName(theme);
     this.setCssVars(this.findTheme(this.activeTheme, true));
     this.userThemeLoaded = true;
     this.core.emit({ name: 'ThemeChanged', data: this.findTheme(this.activeTheme), sender: this });
+  }
+
+  getNormalizedThemeName(theme: string): string {
+    return theme === 'default' ? this.defaultTheme : theme;
   }
 
   resetToDefaultTheme(): void {
@@ -63,9 +67,7 @@ export class ThemeService {
   }
 
   findTheme(name: string, reset?: boolean): Theme {
-    if (name === 'default') {
-      name = this.defaultTheme;
-    }
+    name = this.getNormalizedThemeName(name);
 
     const theme = this.allThemes.find((theme) => theme.name === name);
     if (theme) {

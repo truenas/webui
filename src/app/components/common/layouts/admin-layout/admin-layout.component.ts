@@ -14,7 +14,6 @@ import { ProductType } from 'app/enums/product-type.enum';
 import { ForceSidenavEvent } from 'app/interfaces/events/force-sidenav-event.interface';
 import { SidenavStatusEvent } from 'app/interfaces/events/sidenav-status-event.interface';
 import { SysInfoEvent } from 'app/interfaces/events/sys-info-event.interface';
-import { UserPreferencesChangedEvent } from 'app/interfaces/events/user-preferences-event.interface';
 import { SubMenuItem } from 'app/interfaces/menu-item.interface';
 import { Theme } from 'app/interfaces/theme.interface';
 import { alertPanelClosed } from 'app/modules/alerts/store/alert.actions';
@@ -48,7 +47,6 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
   logoPath = 'assets/images/light-logo.svg';
   logoTextPath = 'assets/images/light-logo-text.svg';
   currentTheme = '';
-  retroLogo = false;
   isOpen = false;
   menuName: string;
   readonly consoleMsgsSubName = 'filesystem.file_tail_follow:/var/log/messages:500';
@@ -94,14 +92,6 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
       this.isMobile = this.layoutService.isMobile;
       this.updateSidenav();
       core.emit({ name: 'MediaChange', data: change, sender: this });
-    });
-
-    // Subscribe to Preference Changes
-    this.core.register({
-      observerClass: this,
-      eventName: 'UserPreferencesChanged',
-    }).pipe(untilDestroyed(this)).subscribe((evt: UserPreferencesChangedEvent) => {
-      this.retroLogo = evt.data.retroLogo ? evt.data.retroLogo : false;
     });
 
     // Listen for system information changes

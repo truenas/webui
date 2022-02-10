@@ -6,14 +6,6 @@ export const noPreferencesFound = createAction('[Preferences API] No Preferences
 
 // TODO: These actions will be moved elsewhere in the future
 export const themeNotFound = createAction('[Preferences] Theme Not Found');
-export const preferencesFormSubmitted = createAction('[Preferences] Form Submitted', props<{ formValues: {
-  userTheme: string;
-  preferIconsOnly: boolean;
-  allowPwToggle: boolean;
-  retroLogo: boolean;
-  tableDisplayedColumns?: TableDisplayedColumns[];
-}; }>());
-export const preferencesReset = createAction('[Preferences] Reset');
 export const preferredColumnsUpdated = createAction(
   '[Preferences] Preferred Columns Updated',
   props<{ columns: TableDisplayedColumns[] }>(),
@@ -27,3 +19,7 @@ export const oneTimeBuiltinUsersMessageShown = createAction('[Preferences] One T
 export const oneTimeBuiltinGroupsMessageShown = createAction('[Preferences] One Time Builtin Groups Message Shown');
 export const builtinUsersToggled = createAction('[Preferences] Builtin Users Toggled');
 export const builtinGroupsToggled = createAction('[Preferences] Builtin Groups Toggled');
+
+export const themeChangedInGuiForm = createAction('[Preferences] Theme Changed In GUI Form', props<{ theme: string }>());
+export const guiFormSubmitted = createAction('[Preferences] GUI Form Submitted', props<{ theme: string }>());
+export const guiFormClosedWithoutSaving = createAction('[Preferences] GUI Form Closed Without Saving');
