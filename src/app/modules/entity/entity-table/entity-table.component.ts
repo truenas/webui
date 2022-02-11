@@ -186,6 +186,21 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, A
       || (this.allColumns.length > 0 && this.conf.columns.length !== this.allColumns.length);
   };
 
+  setupColumns(): void {
+    this.conf.columns.forEach((column) => {
+      if (!this.displayedColumns.find((col) => col === column.prop)) {
+        this.displayedColumns.push(column.prop);
+      }
+      if (!column.always_display) {
+        if (!this.allColumns.find((col) => col.prop === column.prop)) {
+          this.allColumns.push(column); // Make array of optionally-displayed cols
+        }
+      } else if (!this.alwaysDisplayedCols.find((col) => col.prop === column.prop)) {
+        this.alwaysDisplayedCols.push(column); // Make an array of required cols
+      }
+    });
+  }
+
   isAllSelected = false;
   globalActionsInit = false;
 
@@ -542,6 +557,11 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, A
 
   getData(): void {
     const sort: string[] = [];
+
+    // Special case for Snapshots as the columns change on the go without updating the config properly
+    if (this.title === 'Snapshots' && this.displayedColumns.length > 0) {
+      this.setupColumns();
+    }
 
     this.config.sorting.columns.forEach((col) => {
       if (col.sort === 'asc') {
@@ -1222,7 +1242,7 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, A
     this.store$.pipe(waitForPreferences, take(1), untilDestroyed(this)).subscribe((preferences) => {
       const preferredCols = preferences.tableDisplayedColumns || [];
       // Turn off preferred cols for snapshots to allow for two different column sets to be displayed
-      if (preferredCols.length < 0 && this.title === 'Snapshots') {
+      if (preferredCols.length < 0 || this.title === 'Snapshots') {
         return;
       }
 
