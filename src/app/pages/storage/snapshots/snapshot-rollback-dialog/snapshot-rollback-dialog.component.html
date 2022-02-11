@@ -9,34 +9,37 @@
 
   <ix-fieldset>
     <ix-radio-group
+      id="recursive"
       class="mt-field"
       [formControlName]="recursive.fcName"
       [label]="recursive.label | translate"
-      [tooltip]="recursive.tooltip| translate"
+      [tooltip]="recursive.tooltip | translate"
       [options]="recursive.options"
     ></ix-radio-group>
-
-    <ix-checkbox
-      [formControlName]="force.fcName"
-      [label]="force.label"
-      [required]="force.required"
-    ></ix-checkbox>
   </ix-fieldset>
 
   <p [innerHTML]="'<b>WARNING:</b> Rolling the dataset back destroys data on the dataset <i>and</i> can destroy additional snapshots that are related to the dataset. <b>This can result in permanent data loss!</b> Do not roll back until all desired data and snapshots are backed up.' | translate"></p>
 
   <div class="form-actions">
-    <button
-      mat-button
-      type="submit"
-      [disabled]="form.invalid"
-      color="primary"
-    >{{ 'Rollback' | translate }}</button>
-    <button
-      mat-button
-      type="button"
-      matDialogClose
-    >{{ 'Cancel' | translate }}</button>
+    <ix-checkbox
+      [formControlName]="force.fcName"
+      [label]="force.label"
+      [required]="force.required"
+    ></ix-checkbox>
+
+    <div class="form-buttons">
+      <button
+        mat-button
+        type="submit"
+        [disabled]="form.invalid"
+        color="primary"
+      >{{ 'Rollback' | translate }}</button>
+      <button
+        mat-button
+        type="button"
+        matDialogClose
+      >{{ 'Cancel' | translate }}</button>
+    </div>
   </div>
 </form>
 <ng-template #successMessage>

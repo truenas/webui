@@ -5,6 +5,7 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { untilDestroyed } from '@ngneat/until-destroy';
 import { of } from 'rxjs';
+import { tap } from 'rxjs/operators';
 import { RollbackRecursiveType } from 'app/enums/rollback-recursive-type.enum';
 import helptext from 'app/helptext/storage/snapshots/snapshots';
 import { ZfsRollbackParams, ZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
@@ -20,7 +21,7 @@ import { AppLoaderService, WebSocketService } from 'app/services';
 export class SnapshotRollbackDialogComponent {
   wasDatasetRolledBack = false;
   form = this.fb.group({
-    recursive: [null],
+    recursive: ['' as RollbackRecursiveType],
     force: [false, [Validators.requiredTrue]],
   });
   params: {
@@ -35,7 +36,7 @@ export class SnapshotRollbackDialogComponent {
     label: helptext.rollback_recursive_radio_placeholder,
     options: of([
       {
-        value: null,
+        value: '',
         label: helptext.rollback_dataset_placeholder,
         tooltip: helptext.rollback_dataset_tooltip,
       },
@@ -80,10 +81,9 @@ export class SnapshotRollbackDialogComponent {
     if (this.form.value.recursive) {
       body.recursive = true;
     }
-    this.loader.open();
-    console.info('onSubmit', [this.snapshot.name, body]);
 
     this.ws.call('zfs.snapshot.rollback', [this.snapshot.name, body]).pipe(
+      tap(() => this.loader.open()),
       untilDestroyed(this),
     ).subscribe(() => {
       this.loader.close();

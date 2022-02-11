@@ -70,7 +70,7 @@ export class SnapshotListComponent implements OnInit, AfterViewInit {
   errorConfig: EmptyConfig = {
     type: EmptyType.Errors,
     large: true,
-    title: this.translate.instant('Can not retrieve response'),
+    title: this.translate.instant('Snapshots could not be loaded'),
   };
 
   get displayedColumns(): string[] {
@@ -97,12 +97,12 @@ export class SnapshotListComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit(): void {
+    this.store$.dispatch(loadSnapshots({ extra: this.showExtraColumns$.value }));
     this.setupToolbar();
     this.getSnapshots();
   }
 
   ngAfterViewInit(): void {
-    this.store$.dispatch(loadSnapshots({ extra: this.showExtraColumns$.value }));
     this.modalService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
       this.getSnapshots();
     });

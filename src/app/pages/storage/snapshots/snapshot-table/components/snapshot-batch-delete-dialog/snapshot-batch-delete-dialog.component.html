@@ -26,18 +26,18 @@
       [required]="true"
     ></ix-checkbox>
 
-    <div fxLayout="row" fxLayoutAlign="start center">
-      <button
-        mat-button
-        type="button"
-        [matDialogClose]="true"
-      >{{ 'Cancel' | translate }}</button>
+    <div class="form-buttons">
       <button
         mat-button
         type="submit"
         [disabled]="form.invalid"
         color="primary"
       >{{ 'Delete' | translate }}</button>
+      <button
+        mat-button
+        type="button"
+        [matDialogClose]="true"
+      >{{ 'Cancel' | translate }}</button>
     </div>
   </div>
 </form>

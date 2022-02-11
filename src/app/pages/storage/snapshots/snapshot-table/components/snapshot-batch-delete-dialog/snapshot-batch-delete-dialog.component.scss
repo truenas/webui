@@ -6,6 +6,11 @@
     overflow-y: auto;
   }
 
+  .form-buttons {
+    display: flex;
+    flex-direction: row-reverse;
+  }
+
   .form-actions {
     align-items: center;
     border-top: 1px solid var(--lines);

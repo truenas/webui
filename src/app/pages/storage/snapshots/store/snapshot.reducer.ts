@@ -1,7 +1,6 @@
 import { createEntityAdapter, EntityState } from '@ngrx/entity';
 import { createReducer, on } from '@ngrx/store';
 import { ZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
-import { dismissAlertPressed } from 'app/modules/alerts/store/alert.actions';
 import {
   loadSnapshots, snapshotAdded, snapshotChanged, snapshotRemoved, snapshotsLoaded, snapshotsNotLoaded,
 } from 'app/pages/storage/snapshots/store/snapshot.actions';
@@ -26,7 +25,7 @@ export const snapshotReducer = createReducer(
 
   on(loadSnapshots, (state) => ({ ...state, isLoading: true, error: null })),
   on(snapshotsLoaded, (state, { snapshots }) => adapter.setAll(snapshots, { ...state, isLoading: false })),
-  on(snapshotsNotLoaded, (state, { error }) => ({ ...state, error, isLoading: true })),
+  on(snapshotsNotLoaded, (state, { error }) => ({ ...state, error, isLoading: false })),
 
   on(snapshotAdded, (state, { snapshot }) => adapter.addOne(snapshot, state)),
   on(snapshotChanged, (state, { snapshot }) => adapter.updateOne({
@@ -34,9 +33,4 @@ export const snapshotReducer = createReducer(
     changes: snapshot,
   }, state)),
   on(snapshotRemoved, (state, { id }) => adapter.removeOne(id, state)),
-
-  on(dismissAlertPressed, (state, { id }) => adapter.updateOne({
-    id,
-    changes: {},
-  }, state)),
 );

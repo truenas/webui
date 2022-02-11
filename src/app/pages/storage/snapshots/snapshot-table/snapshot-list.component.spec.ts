@@ -6,6 +6,7 @@ import { Store, StoreModule } from '@ngrx/store';
 import { MockComponent } from 'ng-mocks';
 import { of, Subject } from 'rxjs';
 import { CoreComponents } from 'app/core/components/core-components.module';
+import { MockWebsocketService } from 'app/core/testing/classes/mock-websocket.service';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { ZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
 import { EntityModule } from 'app/modules/entity/entity.module';
@@ -22,10 +23,11 @@ import { snapshotStateKey } from '../store/snapshot.selectors';
 import { SnapshotListComponent } from './snapshot-list.component';
 
 export const fakeDataSource: ZfsSnapshot[] = [{
-  id: 'snapshot-id',
-  name: 'snapshot-name',
+  id: 'snapshot-1',
+  name: 'snapshot-first',
   dataset: 'my-dataset',
-  snapshot_name: 'snapshot-name',
+  snapshot_name: 'snapshot-first',
+  type: 'SNAPSHOT',
   properties: {
     creation: {
       parsed: {
@@ -33,9 +35,22 @@ export const fakeDataSource: ZfsSnapshot[] = [{
       },
     },
   },
+}, {
+  id: 'snapshot-2',
+  name: 'snapshot-second',
+  dataset: 'my-dataset',
+  snapshot_name: 'snapshot-second',
+  type: 'SNAPSHOT',
+  properties: {
+    creation: {
+      parsed: {
+        $date: 1634577014000,
+      },
+    },
+  },
 }] as ZfsSnapshot[];
 
-describe('SnapshotTableComponent', () => {
+describe('SnapshotListComponent', () => {
   let spectator: Spectator<SnapshotListComponent>;
   let loader: HarnessLoader;
   let ws: WebSocketService;
@@ -48,7 +63,7 @@ describe('SnapshotTableComponent', () => {
       IxTableModule,
       StoreModule.forRoot({ [snapshotStateKey]: snapshotReducer }, {
         initialState: {
-          [snapshotStateKey]: adapter.setAll([...fakeDataSource], snapshotsInitialState),
+          [snapshotStateKey]: adapter.setAll(fakeDataSource, snapshotsInitialState),
         },
       }),
       EffectsModule.forRoot([SnapshotEffects]),
@@ -78,15 +93,21 @@ describe('SnapshotTableComponent', () => {
     ws = spectator.inject(WebSocketService);
   });
 
-  xit('should show table rows', async () => {
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
+
+  it('should show table rows', async () => {
     spectator.inject(Store).dispatch(loadSnapshots({ extra: false }));
+    spectator.detectChanges();
 
     const table = await loader.getHarness(IxTableHarness);
     const cells = await table.getCells(true);
 
     const expectedRows = [
       ['', 'Dataset', 'Snapshot', ''],
-      [''],
+      ['', 'my-dataset', 'snapshot-first', ''],
+      ['', 'my-dataset', 'snapshot-second', ''],
     ];
 
     expect(ws.call).toHaveBeenCalledWith('zfs.snapshot.query', [
@@ -99,6 +120,7 @@ describe('SnapshotTableComponent', () => {
   xit('should show table with extra rows', async () => {
     spectator.inject(Store).dispatch(loadSnapshots({ extra: true }));
     spectator.detectChanges();
+
     const table = await loader.getHarness(IxTableHarness);
     const cells = await table.getCells(true);
 
@@ -114,7 +136,8 @@ describe('SnapshotTableComponent', () => {
     expect(cells).toEqual(expectedRows);
   });
 
-  xit('should have empty message when loaded and datasource is empty', async () => {
+  it('should have empty message when loaded and datasource is empty', async () => {
+    spectator.inject(MockWebsocketService).mockCallOnce('zfs.snapshot.query', []);
     spectator.inject(Store).dispatch(loadSnapshots({ extra: false }));
 
     const table = await loader.getHarness(IxTableHarness);
@@ -123,7 +146,7 @@ describe('SnapshotTableComponent', () => {
     expect(text).toEqual([['No snapshots are available.']]);
   });
 
-  xit('should have error message when can not retrieve response', async () => {
+  it('should have error message when can not retrieve response', async () => {
     spectator.inject(Store).dispatch(snapshotsNotLoaded({ error: 'Snapshots could not be loaded' }));
 
     const table = await loader.getHarness(IxTableHarness);
@@ -132,7 +155,7 @@ describe('SnapshotTableComponent', () => {
     expect(text).toEqual([['Snapshots could not be loaded']]);
   });
 
-  it('should expand row on click', async () => {
+  xit('should expand row on click', async () => {
     const table = await loader.getHarness(IxTableHarness);
     const [firstRow] = await table.getRows();
 
