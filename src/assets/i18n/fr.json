@@ -803,7 +803,7 @@
   "TLS": "",
   "TLS (STARTTLS)": "",
   "TLS Crypt Auth": "",
-  "TLS Server Uri": "",
+  "TLS Server Hostname": "",
   "Tags": "",
   "Target Dataset": "",
   "Tasks could not be loaded": "",

@@ -891,7 +891,7 @@
   "TFTP": "",
   "TLS": "",
   "TLS (STARTTLS)": "",
-  "TLS Server Uri": "",
+  "TLS Server Hostname": "",
   "Tag to use for the specified image": "",
   "Tags": "",
   "Tail Lines": "",
