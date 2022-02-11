@@ -115,7 +115,7 @@ def confirm_options(driver):
     driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
 
     assert wait_on_element(driver, 5, '//*[contains(.,"Installing")]')
-    assert wait_on_element_disappear(driver, 60, '//*[contains(.,"Installing")]')
+    assert wait_on_element_disappear(driver, 120, '//*[contains(.,"Installing")]')
 
 
 @then('confirm installation is successful')
