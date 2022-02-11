@@ -61,6 +61,7 @@
   "Off by default. When set, <a href=\"https://www.samba.org/samba/docs/current/man-html/smbd.8.html\" target=\"_blank\">smbd(8)</a> attempts to authenticate users with the insecure and vulnerable NTLMv1 encryption. This setting allows backward compatibility with older versions of Windows, but is not recommended and should not be used on untrusted networks.": "",
   "One time snapshot of {dataset}": "",
   "Open Ticket": "",
+  "Options cannot be loaded": "",
   "Parent dataset path (read-only).": "",
   "Parent path": "",
   "Pattern of naming custom  snapshots to include in the replication with the periodic snapshot  schedule. Enter the  <a href=\"https://man7.org/linux/man-pages/man3/strftime.3.html\"  target=\"_blank\">strftime(3)</a> strings that match the snapshots to  include in the replication.<br><br>  When a periodic snapshot is not linked to the replication, enter the  naming schema for manually created snapshots. Has the same <i>&percnt;Y</i>,  <i>&percnt;m</i>, <i>&percnt;d</i>, <i>&percnt;H</i>, and <i>&percnt;M</i> string requirements as  the <b>Naming Schema</b> in a <b>Periodic Snapshot Task</b>. Separate  entries by pressing <code>Enter</code>.": "",
