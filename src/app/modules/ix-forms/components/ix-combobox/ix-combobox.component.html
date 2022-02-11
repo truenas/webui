@@ -25,14 +25,24 @@
     </span>
     <mat-autocomplete #auto="matAutocomplete" [displayWith]="getDisplayWith"
       (optionSelected)="optionSelected($event.option.value)" (opened)="onOpenDropdown()">
-      <mat-option
-        *ngFor="let option of filteredOptions | async"
-        [value]="option"
-        [class.ix-selected]="option.value === selectedOption?.value"
-        [class.ix-unselected]="option.value !== selectedOption?.value"
-      >
-        {{option.label}}
-      </mat-option>
+
+      <ng-container *ngIf="filteredOptions | async as opts; else loadingOrError">
+        <mat-option
+          *ngFor="let option of filteredOptions | async"
+          [value]="option"
+          [class.ix-selected]="option.value === selectedOption?.value"
+          [class.ix-unselected]="option.value !== selectedOption?.value"
+        >
+          {{option.label}}
+        </mat-option>
+      </ng-container>
+
+      <ng-template #loadingOrError>
+        <ng-container *ngIf="errorObject">
+          <mat-option [disabled]="true">{{'Options cannot be loaded' | translate}}</mat-option>
+        </ng-container>
+      </ng-template>
+
     </mat-autocomplete>
   </div>
   <ix-errors [control]="controlDirective.control" [label]="label"></ix-errors>

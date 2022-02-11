@@ -1,6 +1,6 @@
 import {
   ChangeDetectionStrategy, ChangeDetectorRef,
-  Component, Input, OnInit,
+  Component, Input, OnChanges,
 } from '@angular/core';
 import {
   ControlValueAccessor, FormControl, NgControl,
@@ -19,7 +19,7 @@ type IxSelectValue = string | number | string[] | number[];
   templateUrl: './ix-select.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class IxSelectComponent implements ControlValueAccessor, OnInit {
+export class IxSelectComponent implements ControlValueAccessor, OnChanges {
   @Input() label: string;
   @Input() value: IxSelectValue;
   @Input() hint: string;
@@ -35,13 +35,15 @@ export class IxSelectComponent implements ControlValueAccessor, OnInit {
     this.controlDirective.valueAccessor = this;
   }
 
-  ngOnInit(): void {
-    this.opts$ = this.options.pipe(
-      catchError((error) => {
-        this.errorObject = error;
-        return EMPTY;
-      }),
-    );
+  ngOnChanges(): void {
+    if (this.options) {
+      this.opts$ = this.options.pipe(
+        catchError((error) => {
+          this.errorObject = error;
+          return EMPTY;
+        }),
+      );
+    }
   }
 
   formControl = new FormControl(this).value as FormControl;
