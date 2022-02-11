@@ -95,8 +95,8 @@ def sharename_should_be_added_start_service_if_its_not_running(driver, sharename
     if not is_element_present(driver, '//mat-card[contains(.,"Windows (SMB) Shares")]//span[contains(.,"RUNNING")]'):
         assert wait_on_element(driver, 10, '//mat-icon[text()="more_vert"]', 'clickable')
         driver.find_element_by_xpath('//mat-icon[text()="more_vert"]').click()        
-        assert wait_on_element(driver, 10, 'button[normalize-space(text())=" Turn On Service "]', 'clickable')
-        driver.find_element_by_xpath('button[normalize-space(text())=" Turn On Service "]').click()
+        assert wait_on_element(driver, 10, '//mat-card[contains(.,"Windows (SMB) Shares")]button[normalize-space(text())=" Turn On Service "]', 'clickable')
+        driver.find_element_by_xpath('//mat-card[contains(.,"Windows (SMB) Shares")]button[normalize-space(text())=" Turn On Service "]').click()
         assert wait_on_element(driver, 20, '//mat-card[contains(.,"Windows (SMB) Shares")]//span[contains(.,"RUNNING")]')        
 
 @then(parsers.parse('Send a file to the share with nas_IP/"{smbname}" and "{user}" and "{password}"'))
