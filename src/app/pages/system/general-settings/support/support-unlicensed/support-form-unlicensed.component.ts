@@ -180,12 +180,17 @@ export class SupportFormUnlicensedComponent implements FormConfiguration {
 
   openDialog(payload: CreateNewTicket): void {
     const dialogRef = this.matDialog.open(EntityJobComponent, { data: { title: this.translate.instant('Ticket'), closeOnClickOutside: true } });
-    let url: string;
+    let description: string;
     dialogRef.componentInstance.setCall('support.new_ticket', [payload]);
     dialogRef.componentInstance.submit();
     dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe((res: Job<NewTicketResponse>) => {
       if (res.result) {
-        url = `<a href="${res.result.url}" target="_blank" style="text-decoration:underline;">${res.result.url}</a>`;
+        const url = `<a href="${res.result.url}" target="_blank" style="text-decoration:underline;">${res.result.url}</a>`;
+        if (!res.result.has_debug && payload.attach_debug) {
+          description = this.translate.instant(helptext.debugSizeLimitWarning + '\n' + url);
+        } else {
+          description = url;
+        }
       }
       if (res.method === 'support.new_ticket' && this.subs && this.subs.length > 0) {
         this.subs.forEach((item) => {
@@ -207,9 +212,9 @@ export class SupportFormUnlicensedComponent implements FormConfiguration {
             dialogRef.componentInstance.setDescription(res.error);
           });
         });
-        dialogRef.componentInstance.setDescription(url);
+        dialogRef.componentInstance.setDescription(description);
       } else {
-        dialogRef.componentInstance.setDescription(url);
+        dialogRef.componentInstance.setDescription(description);
         this.resetForm();
       }
     });

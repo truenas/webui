@@ -3558,6 +3558,7 @@
   "The system returned the following error - ": "",
   "The system uses a self-signed certificate  to enable encrypted web interface connections. To change  the default certificate, select a different certificate  that was created or imported in the <b>Certificates</b> menu.": "",
   "The system will reboot and be briefly unavailable while applying updates. Apply updates and reboot?": "",
+  "The ticket was created successfully (see link below), but the debug file   failed to attach. Please download the debug manually    (System → Advanced → Save Debug), upload it to a third-party storage service and provide    a link in the JIRA issue comment.": "",
   "The time in seconds the system waits for the VM to cleanly shut down.  During system shutdown, the system initiates poweroff for the VM after the shutdown  timeout has expired.": "",
   "The time values when the task will run. Accepts standard <a href=\"https://man7.org/linux/man-pages/man5/crontab.5.html\" target=\"_blank\">crontab(5)</a> values. </br></br>Symbols:</br> A comma (,) separates individual values.</br> An asterisk (*) means  \"match all values\".</br> Hyphenated numbers (1-5) sets a range of time.</br> A slash (/) designates a step in the value: */2 means every other minute.</br></br> Example: 30-35 in Minutes, 1,14 in Hours, and */2 in Days means the task will run on 1:30 - 1:35 AM and 2:30 - 2:35 PM every other day.": "",
   "The update file is temporarily stored here before being applied.": "",

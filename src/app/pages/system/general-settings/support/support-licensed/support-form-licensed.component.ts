@@ -159,8 +159,9 @@ export class SupportFormLicensedComponent implements FormConfiguration {
   ];
 
   constructor(public dialog: MatDialog, public loader: AppLoaderService,
-    public ws: WebSocketService, public dialogService: DialogService, public router: Router,
-    private translate: TranslateService, private modalService: ModalService) { }
+    private translate: TranslateService, public ws: WebSocketService,
+    public dialogService: DialogService, public router: Router,
+    private modalService: ModalService) { }
 
   afterInit(entityEdit: EntityFormComponent): void {
     this.entityEdit = entityEdit;
@@ -249,12 +250,17 @@ export class SupportFormLicensedComponent implements FormConfiguration {
 
   openDialog(payload: any): void {
     const dialogRef = this.dialog.open(EntityJobComponent, { data: { title: 'Ticket', closeOnClickOutside: true } });
-    let url: string;
+    let description: string;
     dialogRef.componentInstance.setCall('support.new_ticket', [payload]);
     dialogRef.componentInstance.submit();
     dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe((res: Job<NewTicketResponse>) => {
       if (res.result) {
-        url = `<a href="${res.result.url}" target="_blank" style="text-decoration:underline;">${res.result.url}</a>`;
+        const url = `<a href="${res.result.url}" target="_blank" style="text-decoration:underline;">${res.result.url}</a>`;
+        if (!res.result.has_debug && payload.attach_debug) {
+          description = this.translate.instant(helptext.debugSizeLimitWarning + '\n' + url);
+        } else {
+          description = url;
+        }
       }
       if (res.method === 'support.new_ticket' && this.subs && this.subs.length > 0) {
         this.subs.forEach((item) => {
@@ -272,9 +278,9 @@ export class SupportFormLicensedComponent implements FormConfiguration {
             dialogRef.componentInstance.setDescription(res.error);
           });
         });
-        dialogRef.componentInstance.setDescription(url);
+        dialogRef.componentInstance.setDescription(description);
       } else {
-        dialogRef.componentInstance.setDescription(url);
+        dialogRef.componentInstance.setDescription(description);
         this.resetForm();
       }
     });
