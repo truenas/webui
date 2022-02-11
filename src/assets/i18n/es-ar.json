@@ -350,6 +350,7 @@
   "Fibre Channel Port {name} update successful.": "",
   "File Inherit": "",
   "File size is limited to 50 MiB.": "",
+  "File size is limited to {maxUploadSizeMibs} MiB.": "",
   "Fix database": "",
   "Flags Advanced": "",
   "Flags Basic": "",

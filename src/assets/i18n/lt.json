@@ -1531,6 +1531,7 @@
   "File Permissions": "",
   "File Ticket": "",
   "File size is limited to 50 MiB.": "",
+  "File size is limited to {maxUploadSizeMibs} MiB.": "",
   "File upload complete": "",
   "Filename Encryption": "",
   "Files are split into chunks of this size  before upload. The number of chunks that can be simultaneously  transferred is set by the <b>Transfers</b> number. The single  largest file being transferred must fit into no more than 10,000  chunks.": "",

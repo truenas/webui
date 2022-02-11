@@ -252,6 +252,7 @@
   "File Inherit": "",
   "File Ticket": "",
   "File size is limited to 50 MiB.": "",
+  "File size is limited to {maxUploadSizeMibs} MiB.": "",
   "Fix database": "",
   "Flags": "",
   "Flags Advanced": "",
