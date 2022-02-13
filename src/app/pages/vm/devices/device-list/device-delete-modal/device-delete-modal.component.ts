@@ -1,4 +1,4 @@
-import { Component, Inject } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { AbstractControl, FormBuilder, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -19,7 +19,7 @@ export interface DeviceDeleteModalState {
   styleUrls: ['./device-delete-modal.component.scss'],
   templateUrl: './device-delete-modal.component.html',
 })
-export class DeviceDeleteModalComponent {
+export class DeviceDeleteModalComponent implements OnInit {
   readonly VmDeviceType = VmDeviceType;
 
   zvolConfirmLabelText: string;
@@ -72,10 +72,14 @@ export class DeviceDeleteModalComponent {
 
       this.form.updateValueAndValidity();
 
-      this.zvolConfirmLabelText = this.translate.instant('Enter ')
-        + `<strong>${zvolName}</strong> `
-        + this.translate.instant('below to confirm.');
+      this.zvolConfirmLabelText = this.translate.instant('Enter <strong>{zvolName}</strong> below to confirm.', { zvolName });
     }
+  }
+
+  ngOnInit(): void {
+    this.form.controls['zvol'].valueChanges.pipe(untilDestroyed(this)).subscribe(
+      ($event) => this.onDestroyCheckedStateChanged($event),
+    );
   }
 
   cancel(): void {

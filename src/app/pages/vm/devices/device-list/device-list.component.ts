@@ -155,6 +155,7 @@ export class DeviceListComponent implements EntityTableConfig {
         DeviceDeleteModalComponent,
         {
           disableClose: false,
+          width: '400px',
           data: { row },
         },
       )

@@ -1298,6 +1298,7 @@
   "Enter": "",
   "Enter ": "",
   "Enter <strong>{name}</strong> below to confirm.": "",
+  "Enter <strong>{zvolName}</strong> below to confirm.": "",
   "Enter a Name (optional)": "",
   "Enter a VNC password to automatically pass to the VNC session. Passwords cannot be longer than 8 characters.": "",
   "Enter a command to shut down the system when either battery power is low or the shutdown timer ends.": "",
