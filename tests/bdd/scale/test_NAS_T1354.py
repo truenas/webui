@@ -85,4 +85,4 @@ def confirm_deletion_is_successful(driver):
     driver.find_element_by_xpath('//div[contains(text(),"Installed Applications")]').click()
     assert wait_on_element(driver, 10, '//div[contains(text(),"Manage Catalogs")]', 'clickable')
     driver.find_element_by_xpath('//div[contains(text(),"Manage Catalogs")]').click()
-    assert wait_on_element(driver, 10, '//tr[contains(.,"TRUECHARTS")]') is False
+    assert is_element_present(driver, '//tr[contains(.,"TRUECHARTS")]') is False
