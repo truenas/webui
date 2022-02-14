@@ -73,7 +73,7 @@ export class EntityFormService {
 
     if (fieldConfig) {
       if (arrayConfig.formarray) {
-        if (arrayConfig.initialCount == null) {
+        if (arrayConfig.initialCount === undefined) {
           arrayConfig.initialCount = 1;
         }
         formControl = this.createFormArray(arrayConfig.formarray, arrayConfig.initialCount);

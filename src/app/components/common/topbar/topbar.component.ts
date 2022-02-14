@@ -377,9 +377,9 @@ export class TopbarComponent implements OnInit, OnDestroy {
 
   checkNetworkCheckinWaiting(): void {
     this.ws.call('interface.checkin_waiting').pipe(untilDestroyed(this)).subscribe((res) => {
-      if (res != null) {
+      if (res !== null) {
         const seconds = res;
-        if (seconds > 0 && this.checkin_remaining == null) {
+        if (seconds > 0 && this.checkin_remaining === null) {
           this.checkin_remaining = seconds;
           this.checkin_interval = setInterval(() => {
             if (this.checkin_remaining > 0) {

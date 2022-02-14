@@ -519,7 +519,7 @@ export class CloudsyncFormComponent implements FormConfiguration {
       },
       args: '',
     };
-    if (bucket == '') {
+    if (bucket === '') {
       delete data.attributes.bucket;
     }
     return this.ws.call('cloudsync.list_directory', [data]).toPromise().then(
@@ -608,7 +608,7 @@ export class CloudsyncFormComponent implements FormConfiguration {
         attr = attr === 'encryption' ? 'task_encryption' : attr;
         if (entityForm.formGroup.controls[attr]) {
           if (attr === 'task_encryption') {
-            entityForm.formGroup.controls[attr].setValue(data.attributes['encryption'] == null ? '' : data.attributes['encryption']);
+            entityForm.formGroup.controls[attr].setValue(data.attributes['encryption'] === null ? '' : data.attributes['encryption']);
           } else {
             entityForm.formGroup.controls[attr].setValue(data.attributes[attr]);
           }
@@ -790,9 +790,9 @@ export class CloudsyncFormComponent implements FormConfiguration {
         this.setDisabled('folder_destination', true, true);
       }
 
-      if (res != null) {
+      if (res !== null) {
         this.credentials.forEach((item) => {
-          if (item.id == res) {
+          if (item.id === res) {
             const targetProvider = _.find(this.providers, { name: item.provider });
             if (targetProvider && targetProvider['buckets']) {
               if (!entityForm.loaderOpen) {
@@ -959,7 +959,7 @@ export class CloudsyncFormComponent implements FormConfiguration {
     if (data.bwlimit) {
       transformed.bwlimit = data.bwlimit.map((bwlimit) => {
         let subBwLimit = bwlimit.time + ',off';
-        if (bwlimit.bandwidth != null) {
+        if (bwlimit.bandwidth !== null) {
           const bandwidth = filesize(bwlimit.bandwidth);
           subBwLimit = `${bwlimit.time}, ${bandwidth}`;
         }
@@ -1049,28 +1049,28 @@ export class CloudsyncFormComponent implements FormConfiguration {
 
     value['credentials'] = parseInt(value.credentials, 10);
 
-    if (value.bucket != undefined) {
+    if (value.bucket !== undefined) {
       attributes['bucket'] = value.bucket;
       delete value.bucket;
     }
-    if (value.bucket_input != undefined) {
+    if (value.bucket_input !== undefined) {
       attributes['bucket'] = value.bucket_input;
       delete value.bucket_input;
     }
 
-    if (value.task_encryption != undefined) {
+    if (value.task_encryption !== undefined) {
       attributes['encryption'] = value.task_encryption === '' ? null : value.task_encryption;
       delete value.task_encryption;
     }
-    if (value['storage_class'] != undefined) {
+    if (value['storage_class'] !== undefined) {
       attributes['storage_class'] = value['storage_class'];
       delete value['storage_class'];
     }
-    if (value.fast_list != undefined) {
+    if (value.fast_list !== undefined) {
       attributes['fast_list'] = value.fast_list;
       delete value.fast_list;
     }
-    if (value['chunk_size'] != undefined) {
+    if (value['chunk_size'] !== undefined) {
       attributes['chunk_size'] = value['chunk_size'];
       delete value['chunk_size'];
     }

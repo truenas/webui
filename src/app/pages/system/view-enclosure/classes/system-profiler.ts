@@ -101,7 +101,7 @@ export class SystemProfiler {
 
       const series = this.getSeriesFromModel(this.platform);
       const enclosure: EnclosureMetadata = {
-        model: this.headIndex == i ? series : this.enclosures[i].model,
+        model: this.headIndex === i ? series : this.enclosures[i].model,
         disks: [],
         diskKeys: {},
         poolKeys: {},
@@ -246,7 +246,7 @@ export class SystemProfiler {
     }
 
     let poolDisk;
-    if (vdev.disks[diskName] == -1) {
+    if (vdev.disks[diskName] === -1) {
       poolDisk = this.pools[vdev.poolIndex].topology[vdev.topology][vdev.vdevIndex];
     } else {
       poolDisk = this.pools[vdev.poolIndex].topology[vdev.topology][vdev.vdevIndex].children[vdev.disks[diskName]];

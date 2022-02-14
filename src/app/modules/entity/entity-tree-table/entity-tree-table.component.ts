@@ -105,13 +105,13 @@ export class EntityTreeTableComponent implements OnInit, AfterViewInit {
       let result: number;
 
       switch (true) {
-        case value1 == null && value2 != null:
+        case value1 === null && value2 !== null:
           result = -1;
           break;
-        case value1 != null && value2 == null:
+        case value1 !== null && value2 === null:
           result = 1;
           break;
-        case value1 == null && value2 == null:
+        case value1 === null && value2 === null:
           result = 0;
           break;
         case typeof value1 === 'string' && typeof value2 === 'string':

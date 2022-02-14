@@ -194,7 +194,7 @@ export class DatasetFormComponent implements FormConfiguration {
                 config.hasErrors = true;
                 config.errors = globalHelptext.human_readable.input_error;
               } else {
-                const sizeError = control.value && (size != 0) && (size < this.minrefquota)
+                const sizeError = control.value && (size !== 0) && (size < this.minrefquota)
                   ? { invalid_size: true }
                   : null;
 
@@ -329,7 +329,7 @@ export class DatasetFormComponent implements FormConfiguration {
                 config.hasErrors = true;
                 config.errors = globalHelptext.human_readable.input_error;
               } else {
-                const sizeError = control.value && (size != 0) && (size < this.minquota)
+                const sizeError = control.value && (size !== 0) && (size < this.minquota)
                   ? { invalid_size: true }
                   : null;
 

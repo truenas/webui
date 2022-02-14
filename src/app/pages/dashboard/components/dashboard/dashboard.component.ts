@@ -351,7 +351,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       if (update.virtual_memory) {
         const memStats: MemoryStatsEventData = { ...update.virtual_memory };
 
-        if (update.zfs && update.zfs.arc_size != null) {
+        if (update.zfs && update.zfs.arc_size !== null) {
           memStats.arc_size = update.zfs.arc_size;
         }
         this.statsDataEvent$.next({ name: 'MemoryStats', data: memStats });
@@ -378,7 +378,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     const vd: VolumesData = {};
 
     data.forEach((dataset) => {
-      if (typeof dataset == undefined || !dataset) { return; }
+      if (typeof dataset === undefined || !dataset) { return; }
       const usedPercent = dataset.used.parsed / (dataset.used.parsed + dataset.available.parsed);
       const zvol = {
         avail: dataset.available.parsed,
@@ -527,7 +527,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
         break;
       case 'pool':
         if (spl) {
-          const pools = this.pools.filter((pool) => pool[key as keyof Pool] == value);
+          const pools = this.pools.filter((pool) => pool[key as keyof Pool] === value);
           if (pools) { data = pools[0]; }
         } else {
           console.warn('DashConfigItem has no identifier!');
@@ -535,7 +535,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
         break;
       case 'interface':
         if (spl) {
-          const nics = this.nics.filter((nic) => nic[key as keyof DashboardNetworkInterface] == value);
+          const nics = this.nics.filter((nic) => nic[key as keyof DashboardNetworkInterface] === value);
           if (nics) { data = nics[0].state; }
         } else {
           console.warn('DashConfigItem has no identifier!');
@@ -579,7 +579,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     const hidden = this.dashState
-      .filter((w) => state.every((s) => !(w?.identifier == s.identifier || w?.name == s.name)))
+      .filter((w) => state.every((s) => !(w?.identifier === s.identifier || w?.name === s.name)))
       .map((widget) => ({ ...widget, rendered: false }));
 
     this.setDashState([...state, ...hidden]);
