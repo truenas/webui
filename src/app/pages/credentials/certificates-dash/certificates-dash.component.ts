@@ -9,11 +9,10 @@ import { helptextSystemCa } from 'app/helptext/system/ca';
 import { helptextSystemCertificates } from 'app/helptext/system/certificates';
 import { CertificateAuthority } from 'app/interfaces/certificate-authority.interface';
 import { Certificate } from 'app/interfaces/certificate.interface';
-import { Option } from 'app/interfaces/option.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { DialogFormConfiguration } from 'app/modules/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/modules/entity/entity-dialog/entity-dialog.component';
-import { FieldConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
+import { FieldConfig, FormSelectConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
 import { EntityFormService } from 'app/modules/entity/entity-form/services/entity-form.service';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { AppTableAction, AppTableConfig, TableComponent } from 'app/modules/entity/table/table.component';
@@ -40,7 +39,6 @@ export class CertificatesDashComponent implements OnInit {
   cards: { name: string; tableConf: AppTableConfig<CertificatesDashComponent> }[];
   protected dialogRef: MatDialogRef<EntityJobComponent>;
   private downloadActions: AppTableAction[];
-  private unsignedCertificateAuthorities: Option[] = [];
   private caId: number;
 
   constructor(
@@ -67,7 +65,7 @@ export class CertificatesDashComponent implements OnInit {
     });
     this.systemGeneralService.getUnsignedCertificates().pipe(untilDestroyed(this)).subscribe((res) => {
       res.forEach((item) => {
-        this.unsignedCertificateAuthorities.push(
+        this.signCsrFieldConfSelect.options.push(
           { label: item.name, value: item.id },
         );
       });
@@ -348,8 +346,16 @@ export class CertificatesDashComponent implements OnInit {
       name: 'sign_CSR',
       matTooltip: helptextSystemCa.list.action_sign,
       onClick: (rowinner: CertificateAuthority) => {
-        this.dialogService.dialogForm(this.signCsrFormConf);
-        this.caId = rowinner.id;
+        this.systemGeneralService.getUnsignedCertificates().pipe(untilDestroyed(this)).subscribe((res) => {
+          this.signCsrFieldConfSelect.options = [];
+          res.forEach((item) => {
+            this.signCsrFieldConfSelect.options.push(
+              { label: item.name, value: item.id },
+            );
+          });
+          this.dialogService.dialogForm(this.signCsrFormConf);
+          this.caId = rowinner.id;
+        });
       },
     };
 
@@ -390,15 +396,17 @@ export class CertificatesDashComponent implements OnInit {
     }, 200);
   }
 
+  private signCsrFieldConfSelect: FormSelectConfig = {
+    type: 'select',
+    name: 'csr_cert_id',
+    placeholder: helptextSystemCa.sign.csr_cert_id.placeholder,
+    tooltip: helptextSystemCa.sign.csr_cert_id.tooltip,
+    required: true,
+    options: [],
+  };
+
   protected signCsrFieldConf: FieldConfig[] = [
-    {
-      type: 'select',
-      name: 'csr_cert_id',
-      placeholder: helptextSystemCa.sign.csr_cert_id.placeholder,
-      tooltip: helptextSystemCa.sign.csr_cert_id.tooltip,
-      required: true,
-      options: this.unsignedCertificateAuthorities,
-    },
+    this.signCsrFieldConfSelect,
     {
       type: 'input',
       name: 'name',
