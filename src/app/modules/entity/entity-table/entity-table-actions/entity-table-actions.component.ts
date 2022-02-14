@@ -19,6 +19,9 @@ export class EntityTableActionsComponent implements OnInit, OnChanges {
 
   actions: EntityTableAction[];
   showMenu = true;
+
+  readonly translateInstance = this.translate;
+
   key_prop: string;
 
   get isSingleAction(): boolean {

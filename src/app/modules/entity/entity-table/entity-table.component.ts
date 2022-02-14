@@ -203,6 +203,7 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, A
 
   isAllSelected = false;
   globalActionsInit = false;
+  readonly translateInstance = this.translate;
 
   constructor(
     protected core: CoreService,
