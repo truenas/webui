@@ -8,10 +8,8 @@ from function import (
     is_element_present,
     attribute_value_exist,
     wait_on_element_disappear,
-    wait_for_attribute_value,
     run_cmd,
-    ssh_cmd,
-    post
+    ssh_cmd
 )
 from pytest_bdd import (
     given,
@@ -62,6 +60,7 @@ def add_the_user_to_group_root_for_later_tests(driver):
     assert wait_on_element(driver, 10, '//h3[contains(.,"Edit User")]')
     element = driver.find_element_by_xpath('//label[contains(text(),"Auxiliary Groups")]')
     driver.execute_script("arguments[0].scrollIntoView();", element)
+    time.sleep(0.5)
     assert wait_on_element(driver, 10, '//mat-select[@ix-auto="select__Auxiliary Groups"]', 'clickable')
     driver.find_element_by_xpath('//mat-select[@ix-auto="select__Auxiliary Groups"]').click()
     assert wait_on_element(driver, 10, '//span[contains(.,"root")]')
@@ -75,7 +74,7 @@ def add_the_user_to_group_root_for_later_tests(driver):
     driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
     assert wait_on_element(driver, 5, '//h6[contains(.,"Please wait")]')
     assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
-       
+
 
 @then('The Windows Shares(SMB) page should open, Click Add')
 def the_windows_sharessmb_page_should_open_click_add(driver):
@@ -124,7 +123,7 @@ def smb_should_be_added(driver):
     """"smbname should be added."""
     assert wait_on_element(driver, 5, '//mat-panel-title//h5//a[contains(.,"(SMB)")]')
     assert wait_on_element(driver, 5, '//div[contains(.,"wheelsmbshare")]')
-    ## Make sure SMB is started
+    # Make sure SMB is started
     assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__System Settings"]', 'clickable')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__System Settings"]').click()
     time.sleep(1)
@@ -136,15 +135,15 @@ def smb_should_be_added(driver):
     element = driver.find_element_by_xpath('//td[contains(text(),"Dynamic DNS")]')
     driver.execute_script("arguments[0].scrollIntoView();", element)
     time.sleep(0.5)
-    #value_exist = attribute_value_exist(driver, '//mat-checkbox[@ix-auto="checkbox__enable__SMB"]', 'class', 'mat-checkbox-checked')
-    #if not value_exist:
-    #    driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__enable__SMB"]').click()
-    #time.sleep(2)
-    #value_exist = attribute_value_exist(driver, '//mat-slide-toggle[@ix-auto="slider__state__SMB"]', 'class', 'mat-checked')
-    #if not value_exist:
-    #    driver.find_element_by_xpath('//div[@ix-auto="overlay__stateSMB"]').click()
-    #time.sleep(2)
-    #assert wait_for_attribute_value(driver, 20, '//mat-slide-toggle[@ix-auto="slider__state__SMB"]', 'class', 'mat-checked')
+    # value_exist = attribute_value_exist(driver, '//mat-checkbox[@ix-auto="checkbox__enable__SMB"]', 'class', 'mat-checkbox-checked')
+    # if not value_exist:
+    #     driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__enable__SMB"]').click()
+    # time.sleep(2)
+    # value_exist = attribute_value_exist(driver, '//mat-slide-toggle[@ix-auto="slider__state__SMB"]', 'class', 'mat-checked')
+    # if not value_exist:
+    #     driver.find_element_by_xpath('//div[@ix-auto="overlay__stateSMB"]').click()
+    # time.sleep(2)
+    # assert wait_for_attribute_value(driver, 20, '//mat-slide-toggle[@ix-auto="slider__state__SMB"]', 'class', 'mat-checked')
     assert wait_on_element(driver, 5, '//tr[contains(.,"SMB")]//mat-checkbox')
     value_exist = attribute_value_exist(driver, '//tr[contains(.,"SMB")]//mat-checkbox', 'class', 'mat-checkbox-checked')
     if not value_exist:

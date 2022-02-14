@@ -38,6 +38,7 @@ def the_browser_is_open_navigate_to_the_scale_url_and_login(driver, nas_ip, root
         assert wait_on_element(driver, 5, '//button[@name="signin_button"]')
         driver.find_element_by_xpath('//button[@name="signin_button"]').click()
     else:
+        assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Dashboard"]', 'clickable')
         driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
 
 
@@ -49,6 +50,10 @@ def on_the_dashboard_get_the_ssh_host_key(driver, root_password, nas_ip):
     results = ssh_cmd('ssh-keyscan 127.0.0.1', 'root', root_password, nas_ip)
     assert results['result'], results['output']
     hostkey_before = results['output']
+    # refresh the page
+    driver.refresh()
+    assert wait_on_element(driver, 10, '//h1[text()="Dashboard"]')
+    assert wait_on_element(driver, 5, '//span[contains(.,"System Information")]')
 
 
 @then('click on the power button then Restart')
