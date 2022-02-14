@@ -76,13 +76,13 @@ export class ViewChartGaugeComponent /* extends DisplayObject */ implements Afte
       .attr('height', height);
 
     // Arc Group
-    const g = svg.append('g').attr('transform', 'translate(' + width / 2 + ',' + height / 2 + ')');
+    const arcGroup = svg.append('g').attr('transform', 'translate(' + width / 2 + ',' + height / 2 + ')');
 
     // Text Group
-    const gt = svg.append('g').attr('class', 'text-group');
+    const textGroup = svg.append('g').attr('class', 'text-group');
 
     // Setup value text element
-    const text = gt.append('text').attr('id', 'text-value');
+    const text = textGroup.append('text').attr('id', 'text-value');
     if (!text.node()) {
       // Avoid console errors if text.node isn't available yet.
       return;
@@ -96,7 +96,7 @@ export class ViewChartGaugeComponent /* extends DisplayObject */ implements Afte
       .attr('alignment-baseline', 'central');
 
     // Setup subtitle text element
-    const subtext = gt.append('text').attr('id', 'text-subtitle');
+    const subtext = textGroup.append('text').attr('id', 'text-subtitle');
     if (!subtext.node()) {
       // Avoid console errors if text.node isn't available yet.
       return;
@@ -115,7 +115,7 @@ export class ViewChartGaugeComponent /* extends DisplayObject */ implements Afte
     // Adjust group to compensate
     const isFirefox: boolean = navigator.userAgent.toLowerCase().includes('firefox');
     const offsetY = isFirefox ? 10 : 0;
-    const bbox = gt.node().getBBox();
+    const bbox = textGroup.node().getBBox();
     const top = (height / 2) - (bbox.height / 2);
     text.attr('x', width / 2)
       .attr('y', top + offsetY);
@@ -124,13 +124,13 @@ export class ViewChartGaugeComponent /* extends DisplayObject */ implements Afte
       .attr('y', top + 24 + offsetY);
 
     // Arc background
-    g.append('path')
+    arcGroup.append('path')
       .datum({ endAngle: this.doublePi })
       .style('fill', 'var(--bg1)')
       .attr('d', this.arc);
 
     // Arc foreground
-    g.append('path')
+    arcGroup.append('path')
       .datum({ endAngle: 0.127 * this.doublePi })
       .style('fill', 'var(--primary)')
       .attr('class', 'value')

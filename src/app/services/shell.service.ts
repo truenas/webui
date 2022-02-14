@@ -89,7 +89,7 @@ export class ShellService {
 
     try {
       data = JSON.parse(msg.data);
-    } catch (e: unknown) {
+    } catch (error: unknown) {
       data = { msg: 'please discard this' };
     }
 

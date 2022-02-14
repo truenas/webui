@@ -205,7 +205,7 @@ export class GeneralSettingsComponent implements OnInit {
 
       this.sysGeneralService.languageChoices().pipe(untilDestroyed(this)).subscribe((languages) => {
         this.sysGeneralService.kbdMapChoices().pipe(untilDestroyed(this)).subscribe((mapchoices) => {
-          const keyboardMap = mapchoices.find((x) => x.value === this.configData.kbdmap);
+          const keyboardMap = mapchoices.find((option) => option.value === this.configData.kbdmap);
           const dateTime = this.localeService.getDateAndTime(config.timezone);
           this.localeData = {
             title: helptext.localeTitle,

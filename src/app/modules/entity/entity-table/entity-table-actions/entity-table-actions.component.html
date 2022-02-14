@@ -27,7 +27,7 @@
       [matMenuTriggerFor]="appMenu"
       [style.cursor]="'pointer'"
       [style.font-size]="'24px'"
-      (click)="noPropogate($event)">
+      (click)="noPropagate($event)">
     </mat-icon>
 
     <!-- Standard Material Icon Set -->
@@ -39,7 +39,7 @@
       id="{{row[entity?.conf?.rowIdentifier || 'name']}}_{{action}}_button"
       [matMenuTriggerFor]="appMenu"
       [style.cursor]="'pointer'"
-      (click)="noPropogate($event)">
+      (click)="noPropagate($event)">
       {{icon_name}}
     </mat-icon>
 
