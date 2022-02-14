@@ -143,9 +143,7 @@ export class WebSocketService {
       });
     } else
     // do nothing for pong or sub, otherwise console warn
-    if (data.msg && (data.msg !== ApiEventMessage.Pong || data.msg !== ApiEventMessage.Sub)) {
-      console.warn('Msg Received', data);
-    } else {
+    if (!Object.values(ApiEventMessage).includes(data.msg)) {
       console.warn('Unknown message: ', data);
     }
 
