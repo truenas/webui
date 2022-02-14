@@ -886,20 +886,6 @@ mat-card.mat-card .mat-list-base {
   padding-left: 40px;
 }
 
-/* only affect the bage of truecommand icon on the top bar*/
-mat-icon.truecommand-icon > span.mat-badge-content {
-  font-family: 'Material Icons';
-}
-
-mat-icon.truecommand-icon.CONNECTED > span.mat-badge-content {
-  background: var(--green);
-}
-
-mat-icon.truecommand-icon.FAILED > span.mat-badge-content {
-  background: var(--warn);
-}
-
-
 input::-ms-reveal,
 input::-ms-clear {
   display: none;

@@ -20,6 +20,7 @@ import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { JobsModule } from 'app/modules/jobs/jobs.module';
 import { LayoutModule } from 'app/modules/layout/layout.module';
+import { TruecommandModule } from 'app/modules/truecommand/truecommand.module';
 import { DialogService } from 'app/services/dialog.service';
 import { LanguageService } from 'app/services/language.service';
 import { LocaleService } from 'app/services/locale.service';
@@ -49,6 +50,7 @@ import { TopbarComponent } from './topbar/topbar.component';
     AngularSvgIconModule.forRoot(),
     CastModule,
     AlertsModule,
+    TruecommandModule,
     JobsModule,
     LayoutModule,
   ],

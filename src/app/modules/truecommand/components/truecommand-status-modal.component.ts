@@ -2,27 +2,27 @@ import { Component, Inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { TopbarComponent } from 'app/components/common/topbar/topbar.component';
 import { TrueCommandStatus } from 'app/enums/true-command-status.enum';
 import helptext from 'app/helptext/topbar';
 import { TrueCommandConfig } from 'app/interfaces/true-command-config.interface';
+import { TruecommandButtonComponent } from 'app/modules/truecommand/truecommand-button.component';
 import { DialogService } from 'app/services/dialog.service';
 
 @UntilDestroy()
 @Component({
-  selector: 'truecommand-status',
-  templateUrl: './truecommand.component.html',
-  styleUrls: ['./truecommand.component.scss'],
+  selector: 'truecommand-status-modal',
+  templateUrl: './truecommand-status-modal.component.html',
+  styleUrls: ['./truecommand-status-modal.component.scss'],
 })
-export class TruecommandComponent {
+export class TruecommandStatusModalComponent {
   parent = this.data.parent;
   tc = this.data.data;
 
   readonly TrueCommandStatus = TrueCommandStatus;
 
   constructor(
-    public dialogRef: MatDialogRef<TruecommandComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: { parent: TopbarComponent; data: TrueCommandConfig },
+    public dialogRef: MatDialogRef<TruecommandStatusModalComponent>,
+    @Inject(MAT_DIALOG_DATA) public data: { parent: TruecommandButtonComponent; data: TrueCommandConfig },
     public translate: TranslateService,
     private dialogService: DialogService,
   ) {}
