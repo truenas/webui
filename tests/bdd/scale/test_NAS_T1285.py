@@ -61,7 +61,7 @@ def the_apps_page_load_select_pool(driver):
     driver.find_element_by_xpath('//mat-option[@ix-auto="option__Pools_tank"]').click()
     assert wait_on_element(driver, 7, '//button[@name="Choose_button"]', 'clickable')
     driver.find_element_by_xpath('//button[@name="Choose_button"]').click()
-    assert wait_on_element_disappear(driver, 30, '//h1[contains(.,"Configuring...")]')
+    assert wait_on_element_disappear(driver, 60, '//h1[contains(.,"Configuring...")]')
     assert wait_on_element(driver, 7, '//button[@ix-auto="button__CLOSE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
 
