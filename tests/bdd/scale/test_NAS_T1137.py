@@ -51,7 +51,7 @@ def you_should_be_on_the_dashboard_click_on_sharing_then_windows_sharessmb(drive
     assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Shares"]', 'clickable')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Shares"]').click()
     assert wait_on_element(driver, 5, '//div[contains(.,"Shares")]')
-    
+
 
 @then('The Windows Shares(SMB) page should open, Click Add')
 def the_windows_sharessmb_page_should_open_click_add(driver):
@@ -84,8 +84,8 @@ def set_path_to_the_ldap_dataset_mnttankericbsd_dataset_input_eric_share_as_name
     assert wait_on_element(driver, 5, '//button[@ix-auto="button__SAVE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
     assert wait_on_element_disappear(driver, 15, '//h6[contains(.,"Please wait")]')
-    
-    
+
+
 @then(parsers.parse('{sharename} should be added, start service if its not running'))
 def sharename_should_be_added_start_service_if_its_not_running(driver, sharename):
     """{sharename} should be added, start service if its not running."""
