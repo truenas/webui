@@ -15,11 +15,6 @@ import {
   ThemeDataEvent, ThemeDataRequestEvent,
 } from 'app/interfaces/events/theme-events.interface';
 import { TreeTableGlobalFilterEvent } from 'app/interfaces/events/tree-table-global-filter-event.interface';
-import { UserDataEvent } from 'app/interfaces/events/user-data-event.interface';
-import {
-  UserPreferencesChangedEvent, UserPreferencesEvent,
-  UserPreferencesReadyEvent,
-} from 'app/interfaces/events/user-preferences-event.interface';
 
 export interface UntypedEvent {
   name: string;
@@ -31,11 +26,8 @@ export type CoreEvent =
   | SysInfoEvent
   | UntypedEvent
   | CpuStatsEvent
-  | UserDataEvent
   | ResilveringEvent
   | ForceSidenavEvent
-  | UserPreferencesChangedEvent
-  | UserPreferencesReadyEvent
   | SidenavStatusEvent
   | PseudoRouteChangeEvent
   | ThemeChangedEvent
@@ -45,7 +37,6 @@ export type CoreEvent =
   | MediaChangeEvent
   | NetworkInterfacesChangedEvent
   | AuthenticatedEvent
-  | UserPreferencesEvent
   | LabelDrivesEvent
   | MemoryStatsEvent
   | EnclosureLabelChangedEvent;

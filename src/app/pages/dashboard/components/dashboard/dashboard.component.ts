@@ -126,9 +126,6 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   nics: DashboardNetworkInterface[];
 
-  animation = 'stop';
-  shake = false;
-
   showSpinner = true;
   initialLoading = true;
 
@@ -346,13 +343,6 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   startListeners(): void {
-    this.core.register({ observerClass: this, eventName: 'UserAttributes' }).pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
-      if (evt.data.dashState) {
-        this.applyState(this.sanitizeState(evt.data.dashState));
-      }
-      this.dashStateReady = true;
-    });
-
     this.ws.sub<ReportingRealtimeUpdate>('reporting.realtime').pipe(untilDestroyed(this)).subscribe((update) => {
       if (update.cpu) {
         this.statsDataEvent$.next({ name: 'CpuStats', data: update.cpu });
@@ -561,14 +551,6 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     return data;
-  }
-
-  toggleShake(): void {
-    if (this.shake) {
-      this.shake = false;
-    } else if (!this.shake) {
-      this.shake = true;
-    }
   }
 
   showConfigForm(): void {

@@ -62,12 +62,6 @@ import { StorageService } from 'app/services/storage.service';
     FormatDateTimePipe,
     MapValuePipe,
   ],
-  entryComponents: [
-    ViewComponent,
-    ViewControllerComponent,
-    TextLimiterTooltipComponent,
-    CopyButtonComponent,
-  ],
   providers: [
     StorageService,
   ],

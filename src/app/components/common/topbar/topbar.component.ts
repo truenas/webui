@@ -8,7 +8,7 @@ import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
-import { Subject, Subscription } from 'rxjs';
+import { Subscription } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { DirectoryServiceState } from 'app/enums/directory-service-state.enum';
 import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
@@ -18,7 +18,6 @@ import { ProductType } from 'app/enums/product-type.enum';
 import { TrueCommandStatus } from 'app/enums/true-command-status.enum';
 import network_interfaces_helptext from 'app/helptext/network/interfaces/interfaces-list';
 import helptext from 'app/helptext/topbar';
-import { CoreEvent } from 'app/interfaces/events';
 import { HaStatus, HaStatusEvent } from 'app/interfaces/events/ha-status-event.interface';
 import { NetworkInterfacesChangedEvent } from 'app/interfaces/events/network-interfaces-changed-event.interface';
 import { ResilveringEvent } from 'app/interfaces/events/resilvering-event.interface';
@@ -90,8 +89,6 @@ export class TopbarComponent implements OnInit, OnDestroy {
   private user_check_in_prompted = false;
   mat_tooltips = helptext.mat_tooltips;
   systemType: string;
-  isWaiting = false;
-  target: Subject<CoreEvent> = new Subject();
   screenSize = 'waiting';
 
   jobBadgeCount$ = this.store$.select(selectRunningJobsCount);
@@ -238,14 +235,6 @@ export class TopbarComponent implements OnInit, OnDestroy {
 
     this.core.emit({ name: 'SysInfoRequest', sender: this });
 
-    this.core.register({ observerClass: this, eventName: 'UserPreferences' }).pipe(untilDestroyed(this)).subscribe(() => {
-      this.preferencesHandler();
-    });
-    this.core.register({ observerClass: this, eventName: 'UserPreferencesReady' }).pipe(untilDestroyed(this)).subscribe(() => {
-      this.preferencesHandler();
-    });
-    this.core.emit({ name: 'UserPreferencesRequest', sender: this });
-
     this.ws.onCloseSubject$.pipe(untilDestroyed(this)).subscribe(() => {
       this.modalService.closeSlideIn();
     });
@@ -270,13 +259,6 @@ export class TopbarComponent implements OnInit, OnDestroy {
         this.onJobPanelClosed();
       });
     });
-  }
-
-  preferencesHandler(): void {
-    if (this.isWaiting) {
-      this.target.next({ name: 'SubmitComplete', sender: this });
-      this.isWaiting = false;
-    }
   }
 
   ngOnDestroy(): void {

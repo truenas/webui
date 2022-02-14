@@ -13,8 +13,7 @@ import {
   builtinGroupsToggled,
   builtinUsersToggled, localizationFormSubmitted,
   noPreferencesFound, oneTimeBuiltinGroupsMessageShown, oneTimeBuiltinUsersMessageShown,
-  preferencesFormSubmitted,
-  preferencesLoaded, preferencesReset, preferredColumnsUpdated,
+  preferencesLoaded, preferredColumnsUpdated,
   themeNotFound,
 } from 'app/store/preferences/preferences.actions';
 import { selectPreferencesState } from 'app/store/preferences/preferences.selectors';
@@ -47,8 +46,6 @@ export class PreferencesEffects {
     ofType(
       sidenavUpdated,
       themeNotFound,
-      preferencesFormSubmitted,
-      preferencesReset,
       preferredColumnsUpdated,
       oneTimeBuiltinUsersMessageShown,
       builtinUsersToggled,

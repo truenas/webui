@@ -62,18 +62,6 @@ import { routing } from './dashboard.routing';
     SimpleFailoverBtnComponent,
     SimpleFailoverBtnDialogComponent,
   ],
-  entryComponents: [
-    WidgetComponent,
-    WidgetSysInfoComponent,
-    WidgetHelpComponent,
-    WidgetNicComponent,
-    WidgetCpuComponent,
-    WidgetMemoryComponent,
-    WidgetPoolComponent,
-    WidgetControllerComponent,
-    WidgetNetworkComponent,
-    WidgetStorageComponent,
-  ],
 })
 export class DashboardModule {
 }
