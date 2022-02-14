@@ -32,7 +32,7 @@ export function getFormUserGroupLoaders(userService: UserService): FormUserGroup
         .subscribe((users) => {
           const userOptions = users.map((user) => ({ label: user.username, value: user.username }));
 
-          if (searchText == '') {
+          if (searchText === '') {
             config.options = config.options.concat(userOptions);
           } else {
             config.searchOptions = config.searchOptions.concat(userOptions);
@@ -45,7 +45,7 @@ export function getFormUserGroupLoaders(userService: UserService): FormUserGroup
         .subscribe((groups: Group[]) => {
           const groupOptions = groups.map((group) => ({ label: group.group, value: group.group }));
 
-          if (searchText == '') {
+          if (searchText === '') {
             config.options = config.options.concat(groupOptions);
           } else {
             config.searchOptions = config.searchOptions.concat(groupOptions);

@@ -28,19 +28,4 @@ export interface Preferences {
   hideBuiltinGroups: boolean;
 
   rebootAfterManualUpdate: boolean;
-
-  /**
-   * @deprecated
-   */
-  preferIconsOnly: boolean;
-
-  /**
-   * @deprecated
-   */
-  allowPwToggle: boolean;
-
-  /**
-   * @deprecated
-   */
-  retroLogo: boolean;
 }

@@ -30,7 +30,9 @@ import { waitForPreferences } from 'app/store/preferences/preferences.selectors'
 export class PreferencesPageComponent implements EmbeddedFormConfig, OnInit, OnDestroy {
   @ViewChild('embeddedForm', { static: false }) embeddedForm: EntityFormEmbeddedComponent;
   target: Subject<CoreEvent> = new Subject();
+  isWaiting = false;
   values: any[] = [];
+  preferences: Preferences;
   saveSubmitText = this.translate.instant('Update Preferences');
   multiStateSubmit = true;
   isEntity = true;

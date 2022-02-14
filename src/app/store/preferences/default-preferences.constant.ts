@@ -11,10 +11,6 @@ export const defaultPreferences: Preferences = {
   },
   tableDisplayedColumns: [],
 
-  preferIconsOnly: false,
-  retroLogo: false,
-  allowPwToggle: true,
-
   hideBuiltinUsers: true,
   hideBuiltinGroups: true,
   showUserListMessage: true,

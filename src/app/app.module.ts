@@ -39,15 +39,8 @@ import { AppCommonModule } from './components/common/app-common.module';
 import { AboutDialogComponent } from './components/common/dialog/about/about-dialog.component';
 import { DirectoryServicesMonitorComponent } from './components/common/dialog/directory-services-monitor/directory-services-monitor.component';
 import { ResilverProgressDialogComponent } from './components/common/dialog/resilver-progress/resilver-progress.component';
-import { TruecommandComponent } from './components/common/dialog/truecommand/truecommand.component';
-import { AppLoaderComponent } from './modules/app-loader/app-loader.component';
 import { AppLoaderModule } from './modules/app-loader/app-loader.module';
 import { AppLoaderService } from './modules/app-loader/app-loader.service';
-import { EntityDialogComponent } from './modules/entity/entity-dialog/entity-dialog.component';
-import { FormCheckboxComponent } from './modules/entity/entity-form/components/form-checkbox/form-checkbox.component';
-import { FormInputComponent } from './modules/entity/entity-form/components/form-input/form-input.component';
-import { FormParagraphComponent } from './modules/entity/entity-form/components/form-paragraph/form-paragraph.component';
-import { FormSelectComponent } from './modules/entity/entity-form/components/form-select/form-select.component';
 import { EntityModule } from './modules/entity/entity.module';
 import { ConfirmDialogComponent } from './pages/common/confirm-dialog/confirm-dialog.component';
 import { ErrorDialogComponent } from './pages/common/error-dialog/error-dialog.component';
@@ -122,7 +115,6 @@ import { WebSocketService } from './services/ws.service';
     InfoDialogComponent,
     GeneralDialogComponent,
     AboutDialogComponent,
-    TruecommandComponent,
     DirectoryServicesMonitorComponent,
     ConsolePanelDialogComponent,
     DownloadKeyDialogComponent,
@@ -146,25 +138,6 @@ import { WebSocketService } from './services/ws.service';
   ],
   bootstrap: [
     AppComponent,
-  ],
-  entryComponents: [
-    AppLoaderComponent,
-    ConfirmDialogComponent,
-    ErrorDialogComponent,
-    InfoDialogComponent,
-    GeneralDialogComponent,
-    AboutDialogComponent,
-    TruecommandComponent,
-    DirectoryServicesMonitorComponent,
-    ConsolePanelDialogComponent,
-    DownloadKeyDialogComponent,
-    ResilverProgressDialogComponent,
-    SelectDialogComponent,
-    EntityDialogComponent,
-    FormCheckboxComponent,
-    FormInputComponent,
-    FormSelectComponent,
-    FormParagraphComponent,
   ],
 })
 export class AppModule {}

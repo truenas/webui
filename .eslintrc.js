@@ -121,7 +121,6 @@ module.exports = {
 
         // TODO: Aibnb rules that are disabled for now as they cannot be fixed automatically
         "no-underscore-dangle": "off",
-        "eqeqeq": "off",
         "consistent-return": "off",
         "no-plusplus": "off",
         "no-restricted-syntax": "off",

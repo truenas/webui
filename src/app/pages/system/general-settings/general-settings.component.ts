@@ -4,7 +4,9 @@ import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
-import { Subject } from 'rxjs';
+import { TranslateService } from '@ngx-translate/core';
+import { Subject, combineLatest } from 'rxjs';
+import { take } from 'rxjs/operators';
 import { helptextSystemGeneral as helptext } from 'app/helptext/system/general';
 import { CoreEvent } from 'app/interfaces/events';
 import { LocalizationSettings } from 'app/interfaces/localization-settings.interface';
@@ -24,7 +26,10 @@ import { SystemGeneralService, DialogService, StorageService } from 'app/service
 import { CoreService } from 'app/services/core-service/core.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LocaleService } from 'app/services/locale.service';
+import { ThemeService } from 'app/services/theme/theme.service';
 import { AppState } from 'app/store';
+import { guiFormClosedWithoutSaving } from 'app/store/preferences/preferences.actions';
+import { waitForPreferences } from 'app/store/preferences/preferences.selectors';
 import { waitForGeneralConfig } from 'app/store/system-config/system-config.selectors';
 import { GuiFormComponent } from './gui-form/gui-form.component';
 
@@ -119,6 +124,8 @@ export class GeneralSettingsComponent implements OnInit {
     private storage: StorageService,
     private http: HttpClient,
     private store$: Store<AppState>,
+    private translate: TranslateService,
+    private themeService: ThemeService,
   ) { }
 
   ngOnInit(): void {
@@ -165,13 +172,20 @@ export class GeneralSettingsComponent implements OnInit {
   }
 
   getDataCardData(): void {
-    this.store$.pipe(waitForGeneralConfig, untilDestroyed(this)).subscribe((config) => {
+    combineLatest([
+      this.store$.pipe(waitForGeneralConfig),
+      this.store$.pipe(waitForPreferences),
+    ]).pipe(untilDestroyed(this)).subscribe(([config, preferences]) => {
       this.configData = config;
       this.dataCards = [
         {
           title: helptext.guiTitle,
           id: GeneralCardId.Gui,
           items: [
+            {
+              label: this.translate.instant('Theme'),
+              value: this.themeService.getNormalizedThemeName(preferences.userTheme),
+            },
             { label: helptext.ui_certificate.label, value: config.ui_certificate.name },
             { label: helptext.ui_address.label, value: config.ui_address.join(', ') },
             { label: helptext.ui_v6address.label, value: config.ui_v6address.join(', ') },
@@ -235,6 +249,14 @@ export class GeneralSettingsComponent implements OnInit {
     switch (name) {
       case GeneralCardId.Gui:
         this.slideInService.open(GuiFormComponent);
+        this.slideInService.onClose$.pipe(take(1), untilDestroyed(this)).subscribe((wasSaved) => {
+          // TODO: Do not simplify. Refactor slideInService to be more like MatDialog.
+          if (wasSaved === true) {
+            return;
+          }
+
+          this.store$.dispatch(guiFormClosedWithoutSaving());
+        });
         break;
       default:
         const localizationFormModal = this.slideInService.open(LocalizationFormComponent);

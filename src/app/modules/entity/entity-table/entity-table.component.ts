@@ -31,7 +31,6 @@ import {
   catchError, filter, switchMap, take, tap,
 } from 'rxjs/operators';
 import { JobState } from 'app/enums/job-state.enum';
-import { UserPreferencesChangedEvent } from 'app/interfaces/events/user-preferences-event.interface';
 import { GlobalActionConfig } from 'app/interfaces/global-action.interface';
 import { TableDisplayedColumns } from 'app/interfaces/preferences.interface';
 import { Interval } from 'app/interfaces/timeout.interface';
@@ -161,7 +160,6 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, A
   excuteDeletion = false;
   needRefreshTable = false;
   private routeSub: Subscription;
-  multiActionsIconsOnly = false;
 
   get currentColumns(): EntityTableColumn[] {
     const result = this.alwaysDisplayedCols.concat(this.conf.columns) as any;
@@ -205,10 +203,6 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, A
     public modalService: ModalService,
     public changeDetectorRef: ChangeDetectorRef,
   ) {
-    this.core.register({ observerClass: this, eventName: 'UserPreferencesChanged' }).pipe(untilDestroyed(this)).subscribe((evt: UserPreferencesChangedEvent) => {
-      this.multiActionsIconsOnly = evt.data.preferIconsOnly;
-    });
-    this.core.emit({ name: 'UserPreferencesRequest', sender: this });
     // watch for navigation events as ngOnDestroy doesn't always trigger on these
     this.routeSub = this.router.events.pipe(untilDestroyed(this)).subscribe((event) => {
       if (event instanceof NavigationStart) {
@@ -975,7 +969,7 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, A
           subMessage += '<ul class="nested-list">';
 
           for (let i = 1; i < this.conf.config.deleteMsg.key_props.length; i++) {
-            if (item[this.conf.config.deleteMsg.key_props[i]] != '') {
+            if (item[this.conf.config.deleteMsg.key_props[i]] !== '') {
               subMessage += '<li>' + item[this.conf.config.deleteMsg.key_props[i]] + '</li>';
             }
           }
@@ -1026,7 +1020,7 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, A
                   const selectedName = this.conf.wsMultiDeleteParams(selected)[1];
                   let message = '';
                   for (let i = 0; i < res1.result.length; i++) {
-                    if (res1.result[i].error != null) {
+                    if (res1.result[i].error !== null) {
                       message = message + '<li>' + selectedName[i] + ': ' + res1.result[i].error + '</li>';
                     }
                   }
@@ -1124,10 +1118,6 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, A
     if (this.allColumns && this.conf.columns) {
       return this.conf.columns.length === this.allColumns.length;
     }
-  }
-
-  toggleLabels(): void {
-    this.multiActionsIconsOnly = !this.multiActionsIconsOnly;
   }
 
   getButtonClass(row: any): string {

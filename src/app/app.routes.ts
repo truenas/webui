@@ -99,11 +99,6 @@ export const rootRouterConfig: Routes = [{
     data: { title: 'Shell', breadcrumb: 'Shell' },
   },
   {
-    path: 'ui-preferences',
-    loadChildren: () => import('./pages/preferences/preferences.module').then((module) => module.PreferencesModule),
-    data: { title: 'Web Interface Preferences', breadcrumb: 'Preferences' },
-  },
-  {
     path: 'apikeys',
     loadChildren: () => import('./pages/api-keys/api-keys.module').then((module) => module.ApiKeysModule),
     data: { title: 'API Keys', breadcrumb: 'API Keys' },

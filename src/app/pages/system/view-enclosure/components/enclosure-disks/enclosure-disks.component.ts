@@ -954,7 +954,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
   }
 
   getSelectedEnclosure(): EnclosureMetadata {
-    return this.view == EnclosureLocation.Rear && this.system.rearIndex
+    return this.view === EnclosureLocation.Rear && this.system.rearIndex
       ? this.system.profile[this.system.rearIndex]
       : this.selectedEnclosure;
   }

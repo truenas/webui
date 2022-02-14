@@ -2,7 +2,6 @@ import {
   Component, ElementRef, Input, OnInit, OnDestroy, HostListener,
 } from '@angular/core';
 import {
-  EmbeddedFormConfiguration,
   FormModalConfiguration,
   ModalConfiguration, WizardModalConfiguration,
 } from 'app/components/common/modal/modal-configuration.interface';
@@ -119,10 +118,6 @@ export class ModalComponent implements OnInit, OnDestroy {
   // TODO: Pretty bad, remove at some point.
   asFormConfig(modalConfig: ModalConfiguration): FormModalConfiguration {
     return modalConfig as FormModalConfiguration;
-  }
-
-  asEmbeddedConfig(modalConfig: ModalConfiguration): EmbeddedFormConfiguration {
-    return modalConfig as EmbeddedFormConfiguration;
   }
 
   asWizardConfig(modalConfig: ModalConfiguration): WizardModalConfiguration {

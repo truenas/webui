@@ -33,7 +33,7 @@ export class DiskTemperatureService extends BaseService {
 
     this.core.register({ observerClass: this, eventName: 'DiskTemperaturesUnsubscribe' }).subscribe(() => {
       this.subscribers--;
-      if (this.subscribers == 0) {
+      if (this.subscribers === 0) {
         this.stop();
       }
     });
