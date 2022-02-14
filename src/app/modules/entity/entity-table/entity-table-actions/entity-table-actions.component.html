@@ -33,7 +33,8 @@
         [style.cursor]="'pointer'"
         [style.font-size]="'24px'"
         (click)="noPropogate($event)">
-      </mat-icon></button>
+      </mat-icon>
+    </button>
 
     <!-- Standard Material Icon Set -->
     <button
@@ -51,7 +52,8 @@
       id="{{row[entity?.conf?.rowIdentifier || 'name']}}_{{action}}_button"
       [style.cursor]="'pointer'">
         {{icon_name}}
-      </mat-icon></button>
+      </mat-icon>
+    </button>
 
     <mat-menu #appMenu="matMenu">
       <span *ngIf="!groups;else groupMenu">
