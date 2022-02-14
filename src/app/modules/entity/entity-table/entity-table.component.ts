@@ -186,6 +186,10 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, A
       || (this.allColumns.length > 0 && this.conf.columns.length !== this.allColumns.length);
   };
 
+  translateLabels(label: string): string {
+    return this.translate.instant(label);
+  }
+
   setupColumns(): void {
     this.conf.columns.forEach((column) => {
       if (!this.displayedColumns.find((col) => col === column.prop)) {
@@ -204,7 +208,6 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, A
 
   isAllSelected = false;
   globalActionsInit = false;
-  readonly translateInstance = this.translate;
 
   constructor(
     protected core: CoreService,

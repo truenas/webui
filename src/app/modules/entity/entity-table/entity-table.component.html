@@ -77,7 +77,7 @@
               <ng-container *ngIf="hasDetails() === true">
                 <ng-container *ngIf="element === expandedElement">
                   <button
-                    [attr.aria-label]="translateInstance.instant('Close expanded row')" 
+                    [attr.aria-label]="translateLabels('Close expanded row')" 
                     class="transparent-btn"
                   >
                     <mat-icon 
@@ -91,7 +91,7 @@
                 </ng-container>
                 <ng-container *ngIf="element !== expandedElement">
                   <button
-                    [attr.aria-label]="translateInstance.instant('Expand row')"
+                    [attr.aria-label]="translateLabels('Expand row')"
                     class="transparent-btn"
                   >
                     <mat-icon

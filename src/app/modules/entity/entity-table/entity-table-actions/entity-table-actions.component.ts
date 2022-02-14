@@ -20,8 +20,6 @@ export class EntityTableActionsComponent implements OnInit, OnChanges {
   actions: EntityTableAction[];
   showMenu = true;
 
-  readonly translateInstance = this.translate;
-
   key_prop: string;
 
   get isSingleAction(): boolean {
@@ -51,6 +49,10 @@ export class EntityTableActionsComponent implements OnInit, OnChanges {
 
   ngOnChanges(): void {
     this.getActions();
+  }
+
+  translateLabels(label: string): string {
+    return this.translate.instant(label);
   }
 
   getActions(): void {
