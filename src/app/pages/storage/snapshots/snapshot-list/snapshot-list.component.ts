@@ -17,6 +17,7 @@ import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.com
 import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-table.component';
 import {
   EntityTableAction,
+  EntityTableColumn,
   EntityTableConfig,
   EntityTableConfigConfig,
 } from 'app/modules/entity/entity-table/entity-table.interface';
@@ -70,7 +71,7 @@ export class SnapshotListComponent implements EntityTableConfig {
   rowDetailComponent: Type<SnapshotDetailsComponent>;
   snapshotXtraCols = false;
 
-  columns = [
+  columns: EntityTableColumn[] = [
     { name: 'Dataset', prop: 'dataset' },
     { name: 'Snapshot', prop: 'snapshot' },
     { name: 'Used', prop: 'used' },
@@ -78,12 +79,12 @@ export class SnapshotListComponent implements EntityTableConfig {
     { name: 'Referenced', prop: 'referenced' },
   ];
 
-  columnsHide = [
+  columnsHide: EntityTableColumn[] = [
     { name: 'Dataset', prop: 'dataset' },
     { name: 'Snapshot', prop: 'snapshot' },
   ];
 
-  columnsShow = [
+  columnsShow: EntityTableColumn[] = [
     { name: 'Dataset', prop: 'dataset' },
     { name: 'Snapshot', prop: 'snapshot' },
     { name: 'Used', prop: 'used' },

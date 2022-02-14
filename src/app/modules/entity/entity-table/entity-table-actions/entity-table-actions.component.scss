@@ -34,3 +34,11 @@
   position: relative;
   right: -16px;
 }
+
+.transparent-btn {
+  background-color: transparent;
+  border: none;
+  box-shadow: none;
+  color: inherit;
+  cursor: pointer;
+}
