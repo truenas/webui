@@ -1369,9 +1369,6 @@ export class DatasetFormComponent implements Formconfiguration {
   }
 
   resourceTransformIncomingRestData(wsResponse): any {
-    if (wsResponse.special_small_block_size && wsResponse.special_small_block_size.rawvalue === '0') {
-      delete wsResponse.special_small_block_size;
-    }
     const quota_warning = this.getFieldValueOrNone(wsResponse.quota_warning) ? this.getFieldValueOrNone(wsResponse.quota_warning) : this.warning;
     const quota_warning_inherit = this.isInherited(wsResponse.quota_warning, quota_warning);
     const quota_critical = this.getFieldValueOrNone(wsResponse.quota_critical) ? this.getFieldValueOrNone(wsResponse.quota_critical) : this.critical;
@@ -1442,9 +1439,6 @@ export class DatasetFormComponent implements Formconfiguration {
 
   editSubmit(body: any) {
     const data: any = this.sendAsBasicOrAdvanced(body);
-    if (data['special_small_block_size'] === 0) {
-      delete data.special_small_block_size;
-    }
 
     if (data.quota_warning_inherit) {
       data.quota_warning = 'INHERIT';
@@ -1483,9 +1477,6 @@ export class DatasetFormComponent implements Formconfiguration {
 
   addSubmit(body: any) {
     const data: any = this.sendAsBasicOrAdvanced(body);
-    if (data['special_small_block_size'] === 0) {
-      delete data.special_small_block_size;
-    }
 
     if (data.quota_warning_inherit) {
       delete (data.quota_warning);
