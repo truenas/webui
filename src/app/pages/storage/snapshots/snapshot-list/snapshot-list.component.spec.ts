@@ -3,16 +3,18 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { EffectsModule } from '@ngrx/effects';
 import { Store, StoreModule } from '@ngrx/store';
-import { MockComponent } from 'ng-mocks';
+import { MockPipe } from 'ng-mocks';
 import { of, Subject } from 'rxjs';
 import { CoreComponents } from 'app/core/components/core-components.module';
+import { ConvertBytesToHumanReadablePipe } from 'app/core/components/pipes/convert-bytes-to-human-readable.pipe';
+import { FormatDateTimePipe } from 'app/core/components/pipes/format-datetime.pipe';
 import { MockWebsocketService } from 'app/core/testing/classes/mock-websocket.service';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { ZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxTableModule } from 'app/modules/ix-tables/ix-table.module';
 import { IxTableHarness } from 'app/modules/ix-tables/testing/ix-table.harness';
-import { SnapshotDetailsComponent } from 'app/pages/storage/snapshots/snapshot-table/components/snapshot-details/snapshot-details.component';
+import { SnapshotDetailsComponent } from 'app/pages/storage/snapshots/snapshot-details/snapshot-details.component';
 import { loadSnapshots } from 'app/pages/storage/snapshots/store/snapshot.actions';
 import { SnapshotEffects } from 'app/pages/storage/snapshots/store/snapshot.effects';
 import { adapter, snapshotReducer } from 'app/pages/storage/snapshots/store/snapshot.reducer';
@@ -69,7 +71,9 @@ describe('SnapshotListComponent', () => {
       EffectsModule.forRoot([SnapshotEffects]),
     ],
     declarations: [
-      MockComponent(SnapshotDetailsComponent),
+      SnapshotDetailsComponent,
+      MockPipe(FormatDateTimePipe, jest.fn(() => 'Jan 10 2022 10:36')),
+      MockPipe(ConvertBytesToHumanReadablePipe, jest.fn(() => 'Jan 10 2022 10:36')),
     ],
     providers: [
       mockWebsocket([

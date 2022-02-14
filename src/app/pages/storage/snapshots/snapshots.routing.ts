@@ -1,6 +1,6 @@
 import { ModuleWithProviders } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { SnapshotListComponent } from 'app/pages/storage/snapshots/snapshot-table/snapshot-list.component';
+import { SnapshotListComponent } from 'app/pages/storage/snapshots/snapshot-list/snapshot-list.component';
 
 export const routes: Routes = [
   {

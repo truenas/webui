@@ -24,9 +24,9 @@ import { ToolbarConfig, ControlConfig } from 'app/modules/entity/entity-toolbar/
 import { EntityUtils } from 'app/modules/entity/utils';
 import { SnapshotListRow } from 'app/pages/storage/snapshots/interfaces/snapshot-list-row.interface';
 import { SnapshotAddComponent } from 'app/pages/storage/snapshots/snapshot-add/snapshot-add.component';
+import { SnapshotBatchDeleteDialogComponent } from 'app/pages/storage/snapshots/snapshot-batch-delete-dialog/snapshot-batch-delete-dialog.component';
 import { SnapshotCloneDialogComponent } from 'app/pages/storage/snapshots/snapshot-clone-dialog/snapshot-clone-dialog.component';
 import { SnapshotRollbackDialogComponent } from 'app/pages/storage/snapshots/snapshot-rollback-dialog/snapshot-rollback-dialog.component';
-import { SnapshotBatchDeleteDialogComponent } from 'app/pages/storage/snapshots/snapshot-table/components/snapshot-batch-delete-dialog/snapshot-batch-delete-dialog.component';
 import { loadSnapshots } from 'app/pages/storage/snapshots/store/snapshot.actions';
 import { selectSnapshotsTotal, SnapshotSlice } from 'app/pages/storage/snapshots/store/snapshot.selectors';
 import {
