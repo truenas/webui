@@ -60,8 +60,7 @@ def make_sure_the_installed_tab_is_open(driver):
 @then('click three dots icon for Chia and select delete')
 def click_three_dots_icon_for_chia_and_select_delete(driver):
     """click three dots icon for Chia and select delete."""
-    time.sleep(2)  # we have to wait for the page to settle down and the card to fully load
-    assert wait_on_element(driver, 30, '//mat-card[contains(.,"chia-test")]//mat-icon[contains(.,"more_vert")]', 'clickable')
+    assert wait_on_element(driver, 60, '//mat-card[contains(.,"chia-test")]//mat-icon[contains(.,"more_vert")]', 'clickable')
     driver.find_element_by_xpath('//mat-card[contains(.,"chia-test")]//mat-icon[contains(.,"more_vert")]').click()
     assert wait_on_element(driver, 10, '//span[contains(.,"Delete")]', 'clickable')
     driver.find_element_by_xpath('//span[contains(.,"Delete")]').click()
