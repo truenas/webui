@@ -8,7 +8,6 @@ import { IxTableComponent } from 'app/modules/ix-tables/components/ix-table/ix-t
 @Component({
   selector: 'ix-checkbox-column',
   templateUrl: './ix-checkbox-column.component.html',
-  styleUrls: ['./ix-checkbox-column.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class IxCheckboxColumnComponent<T = unknown> implements OnInit, OnDestroy {

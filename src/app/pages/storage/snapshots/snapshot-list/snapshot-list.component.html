@@ -17,11 +17,6 @@
         {{ 'Delete' | translate }}
       </button>
     </div>
-
-    <div *ngIf="selection.selected.length !== dataSource.data.length" class="select-all" fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="8px">
-      <span>{{ 'All {n} snapshots on this page are selected.' | translate: { n: selection.selected.length } }}</span>
-      <button mat-stroked-button (click)="selectAll()">{{ 'Select all {n} snapshots' | translate: { n: dataSource.data.length } }} </button>
-    </div>
   </div>
 
   <table
@@ -49,7 +44,7 @@
     <ng-container matColumnDef="used">
       <th mat-header-cell *matHeaderCellDef mat-sort-header> {{ 'Used' | translate }} </th>
       <td mat-cell *matCellDef="let snapshot; dataSource: dataSource">{{
-        snapshot?.used ? (snapshot.used | convertBytestoHumanReadable) : ('N/A' | translate)
+        snapshot?.used ? (snapshot.used | filesize: { standard: "iec" }) : ('N/A' | translate)
       }}</td>
     </ng-container>
 
@@ -63,7 +58,7 @@
     <ng-container matColumnDef="referenced">
       <th mat-header-cell *matHeaderCellDef mat-sort-header> {{ 'Referenced' | translate }} </th>
       <td mat-cell *matCellDef="let snapshot; dataSource: dataSource">{{
-        snapshot?.referenced ? (snapshot?.referenced | convertBytestoHumanReadable) : ('N/A' | translate)
+        snapshot?.referenced ? (snapshot?.referenced | filesize: { standard: "iec" }) : ('N/A' | translate)
       }}</td>
     </ng-container>
 
@@ -98,8 +93,7 @@
 
     <tr class="mat-row mat-no-data-row" *matNoDataRow>
       <td class="mat-cell" [attr.colspan]="displayedColumns.length">
-        <entity-empty *ngIf="isEmpty$ | async" [conf]="emptyConfig"></entity-empty>
-        <entity-empty *ngIf="error$ | async" [conf]="errorConfig"></entity-empty>
+        <entity-empty [conf]="emptyOrErrorConfig$ | async"></entity-empty>
       </td>
     </tr>
 

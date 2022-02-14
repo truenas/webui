@@ -2,7 +2,7 @@ import { createEntityAdapter, EntityState } from '@ngrx/entity';
 import { createReducer, on } from '@ngrx/store';
 import { ZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
 import {
-  loadSnapshots, snapshotAdded, snapshotChanged, snapshotRemoved, snapshotsLoaded, snapshotsNotLoaded,
+  snapshotPageEntered, snapshotAdded, snapshotChanged, snapshotRemoved, snapshotsLoaded, snapshotsNotLoaded,
 } from 'app/pages/storage/snapshots/store/snapshot.actions';
 
 export interface SnapshotsState extends EntityState<ZfsSnapshot> {
@@ -23,7 +23,7 @@ export const snapshotsInitialState = adapter.getInitialState({
 export const snapshotReducer = createReducer(
   snapshotsInitialState,
 
-  on(loadSnapshots, (state) => ({ ...state, isLoading: true, error: null })),
+  on(snapshotPageEntered, (state) => ({ ...state, isLoading: true, error: null })),
   on(snapshotsLoaded, (state, { snapshots }) => adapter.setAll(snapshots, { ...state, isLoading: false })),
   on(snapshotsNotLoaded, (state, { error }) => ({ ...state, error, isLoading: false })),
 

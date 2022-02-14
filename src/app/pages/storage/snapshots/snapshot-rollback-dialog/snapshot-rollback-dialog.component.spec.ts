@@ -9,25 +9,27 @@ import { FormatDateTimePipe } from 'app/core/components/pipes/format-datetime.pi
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { ZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
 import { AppLoaderModule } from 'app/modules/app-loader/app-loader.module';
-import { IxCheckboxHarness } from 'app/modules/ix-forms/components/ix-checkbox/ix-checkbox.harness';
-import { IxRadioGroupHarness } from 'app/modules/ix-forms/components/ix-radio-group/ix-radio-group.harness';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
+import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { SnapshotRollbackDialogComponent } from 'app/pages/storage/snapshots/snapshot-rollback-dialog/snapshot-rollback-dialog.component';
 import { AppLoaderService, DialogService, WebSocketService } from 'app/services';
 
-const snapshot = {
-  id: 'snapshot-1',
-  dataset: 'dataset-name',
-  name: 'snapshot-name',
-  snapshot_name: 'snapshot-name',
+const zfsSnapshot = {
+  name: 'test-dataset@latest-snapshot-name',
   properties: {
     creation: {
       parsed: {
         $date: 1634575914000,
       },
     },
+    used: {
+      parsed: 1634575914000,
+    },
+    referenced: {
+      parsed: 1634575914000,
+    },
   },
-} as ZfsSnapshot;
+} as unknown as ZfsSnapshot;
 
 describe('SnapshotRollbackDialogComponent', () => {
   let spectator: Spectator<SnapshotRollbackDialogComponent>;
@@ -41,17 +43,18 @@ describe('SnapshotRollbackDialogComponent', () => {
       IxFormsModule,
     ],
     declarations: [
-      MockPipe(FormatDateTimePipe, jest.fn(() => 'Jan 10 2022 10:36')),
+      MockPipe(FormatDateTimePipe, jest.fn(() => '2021-11-05 10:52:06')),
     ],
     providers: [
       {
         provide: MAT_DIALOG_DATA,
-        useValue: snapshot,
+        useValue: 'test-dataset@latest-snapshot-name',
       },
       mockProvider(AppLoaderService),
       mockProvider(MatDialogRef),
       mockProvider(DialogService),
       mockWebsocket([
+        mockCall('zfs.snapshot.query', [zfsSnapshot]),
         mockCall('zfs.snapshot.rollback'),
       ]),
     ],
@@ -62,29 +65,31 @@ describe('SnapshotRollbackDialogComponent', () => {
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
-  it('checks default value in recursive type radio group', () => {
-    expect(spectator.fixture.nativeElement).toHaveText('Use snapshot snapshot-name to roll dataset-name back to Jan 10 2022 10:36?');
+  it('checks default messages', () => {
+    expect(spectator.fixture.nativeElement).toHaveText('Use snapshot latest-snapshot-name to roll test-dataset back to 2021-11-05 10:52:06?');
     expect(spectator.fixture.nativeElement).toHaveText('Rolling the dataset back destroys data on the dataset');
   });
 
-  xit('rollback dataset to selected snapshot when form is submitted and shows a success message', async () => {
-    // TODO: Check when NAS-114799 is done
-    const radioGroup = await loader.getHarness(IxRadioGroupHarness);
-    radioGroup.setValue('recursive');
+  it('checks getting additional properties query is called', () => {
+    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('zfs.snapshot.query', [[['id', '=', 'test-dataset@latest-snapshot-name']]]);
+  });
 
-    const confirm = await loader.getHarness(IxCheckboxHarness);
-    confirm.setValue(true);
+  it('rollback dataset to selected snapshot when form is submitted and shows a success message', async () => {
+    // TODO: Check when NAS-114799 is done
+    // Add test for different recursive values
+
+    const form = await loader.getHarness(IxFormHarness);
+    await form.fillForm({
+      Confirm: true,
+    });
 
     const rollbackButton = await loader.getHarness(MatButtonHarness.with({ text: 'Rollback' }));
     await rollbackButton.click();
 
-    expect(spectator.fixture.nativeElement).toHaveText('Dataset rolled back to snapshot snapshot-name.');
     expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('zfs.snapshot.rollback', [
-      snapshot.name,
-      {
-        recursive: true,
-        force: true,
-      },
+      'test-dataset@latest-snapshot-name',
+      { force: true },
     ]);
+    expect(spectator.fixture.nativeElement).toHaveText('Dataset rolled back to snapshot latest-snapshot-name.');
   });
 });

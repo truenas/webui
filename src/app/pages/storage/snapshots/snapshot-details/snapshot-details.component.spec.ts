@@ -5,8 +5,8 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { Spectator, createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { Store } from '@ngrx/store';
 import { MockComponent, MockPipe } from 'ng-mocks';
+import { FileSizePipe } from 'ngx-filesize';
 import { of } from 'rxjs';
-import { ConvertBytesToHumanReadablePipe } from 'app/core/components/pipes/convert-bytes-to-human-readable.pipe';
 import { FormatDateTimePipe } from 'app/core/components/pipes/format-datetime.pipe';
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
@@ -44,7 +44,7 @@ describe('SnapshotDetailsComponent', () => {
     declarations: [
       MockComponent(IxTableComponent),
       MockPipe(FormatDateTimePipe, jest.fn(() => 'Jan 10 2022 10:36')),
-      MockPipe(ConvertBytesToHumanReadablePipe, jest.fn(() => 'Jan 10 2022 10:36')),
+      MockPipe(FileSizePipe, jest.fn(() => '1.49 TiB')),
     ],
     providers: [
       mockProvider(IxFormatterService),

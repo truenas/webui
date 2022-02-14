@@ -4,7 +4,7 @@ import {
 import { MatColumnDef, MatRowDef, MatTableDataSource } from '@angular/material/table';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { ConvertBytesToHumanReadablePipe } from 'app/core/components/pipes/convert-bytes-to-human-readable.pipe';
+import { FileSizePipe } from 'ngx-filesize';
 import { FormatDateTimePipe } from 'app/core/components/pipes/format-datetime.pipe';
 import { Option } from 'app/interfaces/option.interface';
 import { IxTableComponent } from 'app/modules/ix-tables/components/ix-table/ix-table.component';
@@ -17,7 +17,7 @@ import { SnapshotListRow } from 'app/pages/storage/snapshots/interfaces/snapshot
   templateUrl: './snapshot-details.component.html',
   styleUrls: ['./snapshot-details.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [FormatDateTimePipe, ConvertBytesToHumanReadablePipe],
+  providers: [FormatDateTimePipe, FileSizePipe],
 })
 export class SnapshotDetailsComponent implements OnInit, OnDestroy {
   @Input() expandedRow: SnapshotListRow;
@@ -32,7 +32,7 @@ export class SnapshotDetailsComponent implements OnInit, OnDestroy {
     private translate: TranslateService,
     private cdr: ChangeDetectorRef,
     private formatDateTimePipe: FormatDateTimePipe,
-    private convertBytesToHumanReadable: ConvertBytesToHumanReadablePipe,
+    private fileSizePipe: FileSizePipe,
   ) { }
 
   ngOnInit(): void {
@@ -50,11 +50,15 @@ export class SnapshotDetailsComponent implements OnInit, OnDestroy {
     }
   }
 
+  getFileSize(size: number): string {
+    return this.fileSizePipe.transform(size, { standart: 'iec' }).toString();
+  }
+
   getDetails(snapshot: SnapshotListRow): Option[] {
     return [
-      { label: this.translate.instant('Used'), value: snapshot?.used ? this.convertBytesToHumanReadable.transform(snapshot.used) : 'N/A' },
+      { label: this.translate.instant('Used'), value: snapshot?.used ? this.getFileSize(snapshot.used) : 'N/A' },
       { label: this.translate.instant('Date Created'), value: snapshot?.created ? this.formatDateTimePipe.transform(snapshot.created) : 'N/A' },
-      { label: this.translate.instant('Referenced'), value: snapshot?.referenced ? this.convertBytesToHumanReadable.transform(snapshot.referenced) : 'N/A' },
+      { label: this.translate.instant('Referenced'), value: snapshot?.referenced ? this.getFileSize(snapshot.referenced) : 'N/A' },
     ];
   }
 

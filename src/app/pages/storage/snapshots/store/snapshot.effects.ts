@@ -8,7 +8,7 @@ import {
 } from 'rxjs/operators';
 import { ApiEventMessage } from 'app/enums/api-event-message.enum';
 import {
-  loadSnapshots, snapshotAdded, snapshotChanged, snapshotRemoved, snapshotsLoaded, snapshotsNotLoaded,
+  snapshotPageEntered, snapshotAdded, snapshotChanged, snapshotRemoved, snapshotsLoaded, snapshotsNotLoaded,
 } from 'app/pages/storage/snapshots/store/snapshot.actions';
 import { SnapshotSlice } from 'app/pages/storage/snapshots/store/snapshot.selectors';
 import { WebSocketService } from 'app/services';
@@ -16,7 +16,7 @@ import { WebSocketService } from 'app/services';
 @Injectable()
 export class SnapshotEffects {
   loadSnapshots$ = createEffect(() => this.actions$.pipe(
-    ofType(loadSnapshots),
+    ofType(snapshotPageEntered),
     switchMap(({ extra }) => {
       return this.ws.call('zfs.snapshot.query', [
         [['pool', '!=', 'freenas-boot'], ['pool', '!=', 'boot-pool']],

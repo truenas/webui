@@ -8,7 +8,9 @@ import { MatTableDataSource } from '@angular/material/table';
 import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
-import { Subject, BehaviorSubject } from 'rxjs';
+import {
+  Subject, BehaviorSubject, combineLatest, of, EMPTY, Observable,
+} from 'rxjs';
 import {
   filter, map, switchMap, tap,
 } from 'rxjs/operators';
@@ -21,20 +23,18 @@ import { ZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
 import { EmptyConfig, EmptyType } from 'app/modules/entity/entity-empty/entity-empty.component';
 import { EntityToolbarComponent } from 'app/modules/entity/entity-toolbar/entity-toolbar.component';
 import { ToolbarConfig, ControlConfig } from 'app/modules/entity/entity-toolbar/models/control-config.interface';
-import { EntityUtils } from 'app/modules/entity/utils';
 import { SnapshotListRow } from 'app/pages/storage/snapshots/interfaces/snapshot-list-row.interface';
 import { SnapshotAddComponent } from 'app/pages/storage/snapshots/snapshot-add/snapshot-add.component';
 import { SnapshotBatchDeleteDialogComponent } from 'app/pages/storage/snapshots/snapshot-batch-delete-dialog/snapshot-batch-delete-dialog.component';
 import { SnapshotCloneDialogComponent } from 'app/pages/storage/snapshots/snapshot-clone-dialog/snapshot-clone-dialog.component';
 import { SnapshotRollbackDialogComponent } from 'app/pages/storage/snapshots/snapshot-rollback-dialog/snapshot-rollback-dialog.component';
-import { loadSnapshots } from 'app/pages/storage/snapshots/store/snapshot.actions';
+import { snapshotPageEntered } from 'app/pages/storage/snapshots/store/snapshot.actions';
 import { selectSnapshotsTotal, SnapshotSlice } from 'app/pages/storage/snapshots/store/snapshot.selectors';
 import {
   DialogService, ModalService, WebSocketService, AppLoaderService,
 } from 'app/services';
 import { CoreService } from 'app/services/core-service/core.service';
 import { SnapshotListEvent } from '../interfaces/snapshot-list-event.interface';
-import { snapshotChanged } from '../store/snapshot.actions';
 import { selectSnapshots, selectSnapshotState } from '../store/snapshot.selectors';
 
 @UntilDestroy()
@@ -73,6 +73,18 @@ export class SnapshotListComponent implements OnInit, AfterViewInit {
     title: this.translate.instant('Snapshots could not be loaded'),
   };
 
+  emptyOrErrorConfig$: Observable<EmptyConfig> = combineLatest([this.isEmpty$, this.error$]).pipe(
+    switchMap(([isEmpty, isError]) => {
+      if (isError) {
+        return of(this.errorConfig);
+      }
+      if (isEmpty) {
+        return of(this.emptyConfig);
+      }
+      return EMPTY;
+    }),
+  );
+
   get displayedColumns(): string[] {
     if (this.showExtraColumns$.value) {
       return ['select', 'dataset', 'snapshot', 'used', 'created', 'referenced', 'actions'];
@@ -82,7 +94,7 @@ export class SnapshotListComponent implements OnInit, AfterViewInit {
 
   constructor(
     private dialogService: DialogService,
-    private ws: WebSocketService,
+    private websocket: WebSocketService,
     private translate: TranslateService,
     private modalService: ModalService,
     private cdr: ChangeDetectorRef,
@@ -97,7 +109,7 @@ export class SnapshotListComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit(): void {
-    this.store$.dispatch(loadSnapshots({ extra: this.showExtraColumns$.value }));
+    this.store$.dispatch(snapshotPageEntered({ extra: this.showExtraColumns$.value }));
     this.setupToolbar();
     this.getSnapshots();
   }
@@ -111,7 +123,7 @@ export class SnapshotListComponent implements OnInit, AfterViewInit {
   getSnapshots(): void {
     this.store$.select(selectSnapshots).pipe(
       map((snapshots: ZfsSnapshot[]) => {
-        const snapshotListRows = [];
+        const snapshotListRows: SnapshotListRow[] = [];
 
         for (const row of snapshots) {
           const [datasetName, snapshotName] = row.name.split('@');
@@ -127,9 +139,9 @@ export class SnapshotListComponent implements OnInit, AfterViewInit {
           if (row.properties) {
             snapshotListRows.push({
               ...transformedRow,
-              used: parseInt(row.properties.used.rawvalue),
               created: row.properties.creation.parsed.$date,
-              referenced: parseInt(row.properties.referenced.rawvalue),
+              used: row.properties.used.parsed as number,
+              referenced: row.properties.referenced.parsed as number,
             });
           } else {
             snapshotListRows.push(transformedRow);
@@ -180,7 +192,7 @@ export class SnapshotListComponent implements OnInit, AfterViewInit {
     this.showExtraColumns$.next(!this.showExtraColumns$.value);
     window.localStorage.setItem('snapshotXtraCols', this.showExtraColumns$.value.toString());
     if (this.showExtraColumns$.value) {
-      this.store$.dispatch(loadSnapshots({ extra: true }));
+      this.store$.dispatch(snapshotPageEntered({ extra: true }));
     }
     this.getSnapshots();
     this.selection.clear();
@@ -274,22 +286,8 @@ export class SnapshotListComponent implements OnInit, AfterViewInit {
     });
   }
 
-  doRollback(row: SnapshotListRow): void {
-    this.loader.open();
-    this.ws.call('zfs.snapshot.query', [[['id', '=', row.name]]]).pipe(
-      map((snapshots) => snapshots[0]),
-      tap((snapshot) => {
-        snapshotChanged({ snapshot });
-        this.loader.close();
-      }),
-      switchMap((snapshot) => this.matDialog.open(SnapshotRollbackDialogComponent, { data: snapshot }).afterClosed()),
-      untilDestroyed(this),
-    ).subscribe({
-      error: (error) => {
-        this.loader.close();
-        new EntityUtils().handleWsError(this, error, this.dialogService);
-      },
-    });
+  doRollback(snapshot: SnapshotListRow): void {
+    this.matDialog.open(SnapshotRollbackDialogComponent, { data: snapshot.name });
   }
 
   doDelete(snapshot: SnapshotListRow): void {
@@ -300,7 +298,7 @@ export class SnapshotListComponent implements OnInit, AfterViewInit {
     }).pipe(
       filter(Boolean),
       tap(() => this.loader.open()),
-      switchMap(() => this.ws.call('zfs.snapshot.delete', [snapshot.name])),
+      switchMap(() => this.websocket.call('zfs.snapshot.delete', [snapshot.name])),
       untilDestroyed(this),
     ).subscribe(
       () => {
