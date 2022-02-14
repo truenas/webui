@@ -6,6 +6,7 @@ import { MatRippleModule } from '@angular/material/core';
 import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
 import { MatMenuModule } from '@angular/material/menu';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterModule } from '@angular/router';
 import { EffectsModule } from '@ngrx/effects';
@@ -44,6 +45,7 @@ import { SnapshotBatchDeleteDialogComponent } from './snapshot-batch-delete-dial
     MatMenuModule,
     MatRippleModule,
     MatTooltipModule,
+    MatProgressSpinnerModule,
     RouterModule,
     ReactiveFormsModule,
     routing,

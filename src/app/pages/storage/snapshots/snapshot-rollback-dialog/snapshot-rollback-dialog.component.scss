@@ -1,6 +1,12 @@
 :host {
   display: block;
   width: 400px;
+
+  .loading {
+    align-items: center;
+    display: flex;
+    justify-content: center;
+  }
 }
 
 .form-buttons {

@@ -22,6 +22,7 @@ import { AppLoaderService, WebSocketService, DialogService } from 'app/services'
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SnapshotRollbackDialogComponent implements OnInit {
+  isLoading = true;
   wasDatasetRolledBack = false;
   form = this.fb.group({
     recursive: ['' as RollbackRecursiveType],
@@ -74,13 +75,13 @@ export class SnapshotRollbackDialogComponent implements OnInit {
 
   /**
    * Gets snapshot creation info
-   * Needed only for 'snapshot.created'
+   * Needed only for 'snapshot.created' to use in text
    * Possibly can be removed
    */
   getSnapshotCreationInfo(): void {
-    this.loader.open();
     this.websocket.call('zfs.snapshot.query', [[['id', '=', this.snapshotName]]]).pipe(
       map((snapshots) => {
+        // TODO: Optimize to avoid ZfsSnapshot -> SnapshotListRow transformation in multiple places
         const snapshot = snapshots[0];
         const [datasetName, snapshotName] = snapshot.name.split('@');
 
@@ -107,11 +108,12 @@ export class SnapshotRollbackDialogComponent implements OnInit {
     ).subscribe(
       (snapshot) => {
         this.publicSnapshot = snapshot;
+        this.isLoading = false;
         this.cdr.markForCheck();
-        this.loader.close();
       },
       (error) => {
-        this.loader.close();
+        this.isLoading = false;
+        this.cdr.markForCheck();
         new EntityUtils().handleWsError(this, error, this.dialogService);
       },
     );
