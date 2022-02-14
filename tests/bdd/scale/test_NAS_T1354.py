@@ -79,7 +79,7 @@ def confirm_the_confirmation(driver):
 @then('confirm deletion is successful')
 def confirm_deletion_is_successful(driver):
     """confirm deletion is successful."""
-    time.sleep(2) # Because of slow ui update times
+    time.sleep(4) # Because of slow ui update times
     assert wait_on_element(driver, 10, '//div[contains(text(),"Installed Applications")]', 'clickable')
     driver.find_element_by_xpath('//div[contains(text(),"Installed Applications")]').click()
     assert wait_on_element(driver, 10, '//div[contains(text(),"Manage Catalogs")]', 'clickable')
