@@ -199,6 +199,7 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, A
         this.alwaysDisplayedCols.push(column); // Make an array of required cols
       }
     });
+    this.columnFilter = this.conf.columnFilter === undefined ? true : this.conf.columnFilter;
   }
 
   isAllSelected = false;
