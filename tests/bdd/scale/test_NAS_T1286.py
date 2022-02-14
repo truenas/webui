@@ -54,10 +54,10 @@ def on_the_dashboard_click_on_apps(driver):
 @then('the Apps page load, click settings, unset pool')
 def the_apps_page_load_click_settings_unset_pool(driver):
     """the Apps page load, click settings, unset pool."""
-    time.sleep(1)  # we have to wait for the page to settle for the button to function as a dropdown
+    time.sleep(3)  # we have to wait for the page to settle for the button to function as a dropdown
     assert wait_on_element(driver, 10, '//button[@ix-auto-type="button"]//span[contains(text(),"Settings")]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto-type="button"]//span[contains(text(),"Settings")]').click()
-    assert wait_on_element(driver, 10, '//span[contains(text(),"Unset Pool")]', 'clickable')
+    assert wait_on_element(driver, 20, '//span[contains(text(),"Unset Pool")]', 'clickable')
     driver.find_element_by_xpath('//span[contains(text(),"Unset Pool")]').click()
     assert wait_on_element(driver, 7, '//h1[contains(.,"Unset Pool")]')
 

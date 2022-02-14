@@ -81,4 +81,4 @@ def confirm_the_delete_confirmation(driver):
 @then('confirm deletion is successful')
 def confirm_deletion_is_successful(driver):
     """confirm deletion is successful."""
-    assert wait_on_element(driver, 20, '//mat-card[contains(.,"chia-test")]') is False
+    assert is_element_present(driver, '//mat-card[contains(.,"chia-test")]') is False
