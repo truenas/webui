@@ -110,7 +110,7 @@ export class WebSocketService {
     let data: any;
     try {
       data = JSON.parse(msg.data);
-    } catch (e: unknown) {
+    } catch (error: unknown) {
       console.warn(`Malformed response: "${msg.data}"`);
       return;
     }

@@ -150,8 +150,8 @@ export class SystemProfiler {
     });
   }
 
-  private parseSensorData(obj: Sensor[]): void {
-    const powerStatus = obj.filter((v) => v.name.startsWith('PS'));
+  private parseSensorData(sensors: Sensor[]): void {
+    const powerStatus = sensors.filter((sensor) => sensor.name.startsWith('PS'));
     if (this.enclosures[this.headIndex] && this.enclosures[this.headIndex].model === 'M Series') {
       const elements = powerStatus.map((item) => {
         const status = item.value === 1 ? 'OK' : 'FAILED';
@@ -185,7 +185,7 @@ export class SystemProfiler {
 
   private parseByTopology(role: PoolTopologyCategory, pool: Pool, pIndex: number): void {
     pool.topology[role].forEach((vdev, vIndex) => {
-      const v: VDevMetadata = {
+      const metadata: VDevMetadata = {
         pool: pool.name,
         type: vdev.type,
         topology: role,
@@ -198,17 +198,17 @@ export class SystemProfiler {
 
       if (vdev.children.length === 0 && vdev.device) {
         const name = vdev.disk;
-        v.disks[name] = -1; // no children so we use this as placeholder
+        metadata.disks[name] = -1; // no children so we use this as placeholder
       } else if (vdev.children.length > 0) {
         vdev.children.forEach((disk, dIndex) => {
           if (disk.device && disk.status !== 'REMOVED') {
             const name = disk.disk;
-            v.disks[name] = dIndex;
+            metadata.disks[name] = dIndex;
             stats[name] = disk.stats;
           }
         });
       }
-      this.storeVdevInfo(v, stats);
+      this.storeVdevInfo(metadata, stats);
     });
   }
 
@@ -275,18 +275,17 @@ export class SystemProfiler {
     const vdev = { ...disk.vdev };
     vdev.diskEnclosures = {};
     const keys = Object.keys(slots);
-    keys.forEach((d) => {
-      const e = this.getEnclosureNumber(d);
+    keys.forEach((disk) => {
+      const enclosureNumber = this.getEnclosureNumber(disk);
 
       // is the disk on the current enclosure?
-      const diskObj = enclosure.disks[enclosure.diskKeys[d]];
+      const diskObj = enclosure.disks[enclosure.diskKeys[disk]];
       if (!diskObj) {
-        delete slots[d];
+        delete slots[disk];
       } else {
-        const s = diskObj.enclosure.slot;
-        slots[d] = s;
+        slots[disk] = diskObj.enclosure.slot;
       }
-      vdev.diskEnclosures[d] = e;
+      vdev.diskEnclosures[disk] = enclosureNumber;
     });
 
     vdev.selectedDisk = diskName;

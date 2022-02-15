@@ -183,7 +183,7 @@ export class DatasetFormComponent implements FormConfiguration {
           parent: this,
           validation: [
             (control: FormControl): ValidationErrors => {
-              const config = this.fieldConfig.find((c) => c.name === 'refquota');
+              const config = this.fieldConfig.find((config) => config.name === 'refquota');
 
               const size = this.convertHumanStringToNum(control.value, 'refquota');
               const errors = control.value && Number.isNaN(size)
@@ -281,7 +281,7 @@ export class DatasetFormComponent implements FormConfiguration {
           parent: this,
           validation: [
             (control: FormControl): ValidationErrors => {
-              const config = this.fieldConfig.find((c) => c.name === 'refreservation');
+              const config = this.fieldConfig.find((config) => config.name === 'refreservation');
 
               const errors = control.value && Number.isNaN(this.convertHumanStringToNum(control.value, 'refreservation'))
                 ? { invalid_byte_string: true }
@@ -318,7 +318,7 @@ export class DatasetFormComponent implements FormConfiguration {
           parent: this,
           validation: [
             (control: FormControl): ValidationErrors => {
-              const config = this.fieldConfig.find((c) => c.name === 'quota');
+              const config = this.fieldConfig.find((config) => config.name === 'quota');
 
               const size = this.convertHumanStringToNum(control.value, 'quota');
               const errors = control.value && Number.isNaN(size)
@@ -416,7 +416,7 @@ export class DatasetFormComponent implements FormConfiguration {
           parent: this,
           validation: [
             (control: FormControl): ValidationErrors => {
-              const config = this.fieldConfig.find((c) => c.name === 'reservation');
+              const config = this.fieldConfig.find((config) => config.name === 'reservation');
 
               const errors = control.value && Number.isNaN(this.convertHumanStringToNum(control.value, 'reservation'))
                 ? { invalid_byte_string: true }
@@ -690,7 +690,7 @@ export class DatasetFormComponent implements FormConfiguration {
           parent: this,
           validation: [
             (control: FormControl): ValidationErrors => {
-              const config = this.fieldConfig.find((c) => c.name === 'special_small_block_size');
+              const config = this.fieldConfig.find((config) => config.name === 'special_small_block_size');
 
               const size = this.convertHumanStringToNum(control.value, 'special_small_block_size');
               const errors = control.value && Number.isNaN(size)

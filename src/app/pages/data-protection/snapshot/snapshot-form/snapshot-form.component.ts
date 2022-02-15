@@ -164,7 +164,7 @@ export class SnapshotFormComponent implements FormConfiguration {
           datasetField.warnings = helptext.dataset_warning;
           this.saveButtonEnabled = false;
         }
-        datasetField.options = _.sortBy(options, [(o) => o.label]);
+        datasetField.options = _.sortBy(options, [(option) => option.label]);
       },
       (error) => new EntityUtils().handleWsError(this, error, this.dialog),
     );

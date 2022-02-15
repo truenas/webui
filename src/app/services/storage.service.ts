@@ -90,7 +90,7 @@ export class StorageService {
     });
 
     // If all values are the same, just return the array without sorting or flipping it
-    if (!tempArr.some((val, i, arr) => val !== arr[0])) {
+    if (!tempArr.some((val, _, arr) => val !== arr[0])) {
       return arr;
     }
 
@@ -184,8 +184,8 @@ export class StorageService {
       for (const elem of timeArr) {
         try {
           sorter.push(format(elem, 'yyyy-MM-dd HH:mm:ss')); // formate should matched locale service
-        } catch (e: unknown) {
-          console.error(e);
+        } catch (error: unknown) {
+          console.error(error);
         }
       }
     } else {

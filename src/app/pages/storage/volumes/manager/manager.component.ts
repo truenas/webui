@@ -644,13 +644,13 @@ export class ManagerComponent implements OnInit, AfterViewInit {
         }
         dialogRef.componentInstance.success
           .pipe(
-            switchMap((r: Job<Pool>) => {
+            switchMap((job: Job<Pool>) => {
               if (this.isEncrypted) {
                 const downloadDialogRef = this.mdDialog.open(DownloadKeyDialogComponent, { disableClose: true });
                 downloadDialogRef.componentInstance.new = true;
-                downloadDialogRef.componentInstance.volumeId = r.result.id;
-                downloadDialogRef.componentInstance.volumeName = r.result.name;
-                downloadDialogRef.componentInstance.fileName = 'dataset_' + r.result.name + '_keys.json';
+                downloadDialogRef.componentInstance.volumeId = job.result.id;
+                downloadDialogRef.componentInstance.volumeName = job.result.name;
+                downloadDialogRef.componentInstance.fileName = 'dataset_' + job.result.name + '_keys.json';
 
                 return downloadDialogRef.afterClosed();
               }
@@ -661,7 +661,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
           )
           .pipe(untilDestroyed(this)).subscribe(
             () => {},
-            (e) => new EntityUtils().handleWsError(this, e, this.dialog),
+            (error) => new EntityUtils().handleWsError(this, error, this.dialog),
             () => {
               dialogRef.close(false);
               this.goBack();
@@ -730,7 +730,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
     let re;
     try {
       re = new RegExp(val);
-    } catch (e: unknown) {
+    } catch (error: unknown) {
       this.regExpHasErrors = true;
     }
 
@@ -745,8 +745,9 @@ export class ManagerComponent implements OnInit, AfterViewInit {
       this.regExpHasErrors = false;
 
       // update the rows
-      this.disks = this.temp.filter((d) => {
-        return this.nameFilter.test(d.devname.toLowerCase()) && this.capacityFilter.test(d.capacity.toLowerCase());
+      this.disks = this.temp.filter((disk) => {
+        return this.nameFilter.test(disk.devname.toLowerCase())
+          && this.capacityFilter.test(disk.capacity.toLowerCase());
       });
 
       // Whenever the filter changes, always go back to the first page

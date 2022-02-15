@@ -19,9 +19,9 @@ export class SimpleFailoverBtnDialogComponent {
     return this._confirmed;
   }
 
-  set confirmed(v) {
-    this._confirmed = v;
-    this.isDisabled = !v;
+  set confirmed(isConfirmed) {
+    this._confirmed = isConfirmed;
+    this.isDisabled = !isConfirmed;
   }
 
   isDisabled = true;

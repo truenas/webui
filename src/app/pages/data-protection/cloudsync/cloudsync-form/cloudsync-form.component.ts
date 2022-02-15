@@ -579,8 +579,8 @@ export class CloudsyncFormComponent implements FormConfiguration {
       data.path_destination = data.path;
 
       if (data.attributes.include?.length) {
-        data.attributes.folder_source = data.attributes.include.map((p: string) => {
-          return data.attributes.folder + '/' + p.split('/')[1];
+        data.attributes.folder_source = data.attributes.include.map((path: string) => {
+          return data.attributes.folder + '/' + path.split('/')[1];
         });
       } else {
         data.attributes.folder_source = data.attributes.folder;
@@ -588,7 +588,7 @@ export class CloudsyncFormComponent implements FormConfiguration {
     } else {
       data.attributes.folder_destination = data.attributes.folder;
       if (data.include?.length) {
-        data.path_source = data.include.map((p: string) => data.path + '/' + p.split('/')[1]);
+        data.path_source = data.include.map((path: string) => data.path + '/' + path.split('/')[1]);
       } else {
         data.path_source = data.path;
       }
@@ -654,7 +654,7 @@ export class CloudsyncFormComponent implements FormConfiguration {
         const joined = sliced.join('/');
         return joined;
       });
-      const allMatch = parentDirectories.every((v: string) => v === parentDirectories[0]);
+      const allMatch = parentDirectories.every((directory: string) => directory === parentDirectories[0]);
 
       const folderSourceConfig = this.fieldSets.config('folder_source');
       const folderSourceControl = this.formGroup.get('folder_source');
@@ -696,7 +696,7 @@ export class CloudsyncFormComponent implements FormConfiguration {
         const joined = sliced.join('/');
         return joined;
       });
-      const allMatch = parentDirectories.every((v: string) => v === parentDirectories[0]);
+      const allMatch = parentDirectories.every((directory: string) => directory === parentDirectories[0]);
 
       const pathSourceConfig = this.fieldSets.config('path_source');
       const pathSourceControl = this.formGroup.get('path_source');

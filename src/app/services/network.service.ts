@@ -46,7 +46,7 @@ export class NetworkService {
 
   getV4Netmasks(): Option[] {
     return Array(34).fill(0).map(
-      (x, i) => {
+      (_, i) => {
         if (i === 0) {
           return { label: '---------', value: '' };
         }
@@ -57,7 +57,7 @@ export class NetworkService {
 
   getV6PrefixLength(): Option[] {
     return Array(34).fill(0).map(
-      (x, i) => {
+      (_, i) => {
         if (i === 0) {
           return { label: '---------', value: '' };
         }

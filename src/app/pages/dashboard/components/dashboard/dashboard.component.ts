@@ -195,10 +195,10 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     this.activeMobileWidget = [evt];
 
     // Transition
-    const vp = this.el.nativeElement.querySelector('.mobile-viewport');
-    const viewport = styler(vp);
-    const c = this.el.nativeElement.querySelector('.mobile-viewport .carousel');
-    const carousel = styler(c);
+    const viewportElement = this.el.nativeElement.querySelector('.mobile-viewport');
+    const viewport = styler(viewportElement);
+    const carouselElement = this.el.nativeElement.querySelector('.mobile-viewport .carousel');
+    const carousel = styler(carouselElement);
     const vpw = viewport.get('width'); // 600;
 
     const startX = 0;
@@ -213,10 +213,10 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   onMobileBack(): void {
     // Transition
-    const vp = this.el.nativeElement.querySelector('.mobile-viewport');
-    const viewport = styler(vp);
-    const c = this.el.nativeElement.querySelector('.mobile-viewport .carousel');
-    const carousel = styler(c);
+    const viewportElement = this.el.nativeElement.querySelector('.mobile-viewport');
+    const viewport = styler(viewportElement);
+    const carouselElement = this.el.nativeElement.querySelector('.mobile-viewport .carousel');
+    const carousel = styler(carouselElement);
     const vpw = viewport.get('width'); // 600;
 
     const startX = vpw * -1;
@@ -238,10 +238,10 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   onMobileResize(evt: Event): void {
     if (this.screenType === 'Desktop') { return; }
-    const vp = this.el.nativeElement.querySelector('.mobile-viewport');
-    const viewport = styler(vp);
-    const c = this.el.nativeElement.querySelector('.mobile-viewport .carousel');
-    const carousel = styler(c);
+    const viewportElement = this.el.nativeElement.querySelector('.mobile-viewport');
+    const viewport = styler(viewportElement);
+    const carouselElement = this.el.nativeElement.querySelector('.mobile-viewport .carousel');
+    const carousel = styler(carouselElement);
 
     const startX = viewport.get('x');
     const endX = this.activeMobileWidget.length > 0 ? (evt.target as Window).innerWidth * -1 : 0;
@@ -587,7 +587,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private setDashState(dashState: DashConfigItem[]): void {
     this.dashState = dashState;
-    this.renderedWidgets = dashState.filter((x) => x.rendered);
+    this.renderedWidgets = dashState.filter((widget) => widget.rendered);
   }
 
   private getActionsConfig(target$: Subject<CoreEvent>): EntityToolbarActionConfig {
@@ -627,7 +627,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   private handleToolbarChanged(evt: CoreEvent): void {
     switch (evt.data?.event_control) {
       case 'dashReorder':
-        this.previousState = this.dashState.map((x) => ({ ...x }));
+        this.previousState = this.dashState.map((widget) => ({ ...widget }));
 
         this.enterReorderMode();
         break;

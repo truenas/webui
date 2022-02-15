@@ -881,9 +881,9 @@ export class ReplicationWizardComponent implements WizardConfiguration {
       this.genTaskName();
     });
 
-    for (const i of ['source', 'target']) {
-      const credentialName = 'ssh_credentials_' + i;
-      const datasetName = i === 'source' ? 'source_datasets' : 'target_dataset';
+    for (const destination of ['source', 'target']) {
+      const credentialName = 'ssh_credentials_' + destination;
+      const datasetName = destination === 'source' ? 'source_datasets' : 'target_dataset';
       const datasetFrom = datasetName + '_from';
       this.entityWizard.formArray.get([0]).get(datasetFrom).valueChanges
         .pipe(untilDestroyed(this))
@@ -915,7 +915,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
             this.createSshConnection(credentialName);
             this.setDisable(datasetName, false, false, 0);
           } else {
-            const fieldConfig = i === 'source' ? this.source_fieldSet.config : this.target_fieldSet.config;
+            const fieldConfig = destination === 'source' ? this.source_fieldSet.config : this.target_fieldSet.config;
             const explorerConfig = _.find(
               fieldConfig,
               { name: datasetName },
@@ -1115,10 +1115,10 @@ export class ReplicationWizardComponent implements WizardConfiguration {
       'source_datasets',
       'target_dataset',
     ];
-    for (const i of controls) {
-      const ctrl = this.entityWizard.formArray.get([0]).get(i);
+    for (const controlName of controls) {
+      const ctrl = this.entityWizard.formArray.get([0]).get(controlName);
       if (ctrl && !ctrl.disabled) {
-        ctrl.setValue(task[i]);
+        ctrl.setValue(task[controlName]);
       }
     }
 

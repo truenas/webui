@@ -802,7 +802,7 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, A
     if (this.conf.rowValue) {
       try {
         return this.conf.rowValue(row, attr);
-      } catch (e: unknown) {
+      } catch (error: unknown) {
         return row[attr];
       }
     }
@@ -1046,14 +1046,14 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, A
   }
 
   // Next section operates the checkboxes to show/hide columns
-  toggle(col: EntityTableColumn): void {
-    const isChecked = this.isChecked(col);
+  toggle(columnToToggle: EntityTableColumn): void {
+    const isChecked = this.isChecked(columnToToggle);
     this.anythingClicked = true;
 
     if (isChecked) {
-      this.conf.columns = this.conf.columns.filter((c) => c.name !== col.name);
+      this.conf.columns = this.conf.columns.filter((column) => column.name !== columnToToggle.name);
     } else {
-      this.conf.columns = [...this.conf.columns, col];
+      this.conf.columns = [...this.conf.columns, columnToToggle];
     }
     this.selectColumnsToShowOrHide();
     this.changeDetectorRef.detectChanges();
@@ -1095,8 +1095,8 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, A
     }
   }
 
-  isChecked(col: EntityTableColumn): boolean {
-    return this.conf.columns.find((c) => c.name === col.name) !== undefined;
+  isChecked(columnToTest: EntityTableColumn): boolean {
+    return this.conf.columns.find((column) => column.name === columnToTest.name) !== undefined;
   }
 
   // Toggle between all/none cols selected
