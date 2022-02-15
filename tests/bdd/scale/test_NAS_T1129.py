@@ -120,6 +120,8 @@ def click_on_credentialsdirectoryservices_then_ldap_settings_then_disable_and_cl
     driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__Enable"]').click()
     wait_on_element(driver, 10, '//span[contains(text(),"Save")]', 'clickable')
     driver.find_element_by_xpath('//span[contains(text(),"Save")]').click()
+    assert wait_on_element(driver, 10, '//h6[contains(.,"Please wait")]')
     assert wait_on_element_disappear(driver, 60, '//h6[contains(.,"Please wait")]')
+    assert wait_on_element(driver, 10, '//h1[text()="Directory Services"]')
     # Make sure Active Directory and LDAP are both disabled
     assert wait_on_element(driver, 10, '//h3[text()="Active Directory and LDAP are disabled."]')
