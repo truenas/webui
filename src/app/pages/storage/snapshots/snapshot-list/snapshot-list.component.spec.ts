@@ -10,7 +10,6 @@ import { CoreComponents } from 'app/core/components/core-components.module';
 import { FormatDateTimePipe } from 'app/core/components/pipes/format-datetime.pipe';
 import { MockWebsocketService } from 'app/core/testing/classes/mock-websocket.service';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
-import { ZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxTableModule } from 'app/modules/ix-tables/ix-table.module';
 import { IxTableHarness } from 'app/modules/ix-tables/testing/ix-table.harness';
@@ -18,6 +17,7 @@ import { SnapshotDetailsComponent } from 'app/pages/storage/snapshots/snapshot-d
 import { snapshotPageEntered } from 'app/pages/storage/snapshots/store/snapshot.actions';
 import { SnapshotEffects } from 'app/pages/storage/snapshots/store/snapshot.effects';
 import { adapter, snapshotReducer } from 'app/pages/storage/snapshots/store/snapshot.reducer';
+import { fakeZfsSnapshotDataSource } from 'app/pages/storage/snapshots/testing/snapshot-fake-datasource';
 import { DialogService, ModalService } from 'app/services';
 import { systemConfigReducer, SystemConfigState } from 'app/store/system-config/system-config.reducer';
 import { systemConfigStateKey } from 'app/store/system-config/system-config.selectors';
@@ -25,38 +25,6 @@ import { snapshotsNotLoaded } from '../store/snapshot.actions';
 import { snapshotsInitialState } from '../store/snapshot.reducer';
 import { snapshotStateKey } from '../store/snapshot.selectors';
 import { SnapshotListComponent } from './snapshot-list.component';
-
-export const fakeDataSource: ZfsSnapshot[] = [{
-  name: 'test-dataset@snapshot-first',
-  properties: {
-    creation: {
-      parsed: {
-        $date: 1634575914000,
-      },
-    },
-    used: {
-      parsed: 1634575914000,
-    },
-    referenced: {
-      parsed: 1634575914000,
-    },
-  },
-}, {
-  name: 'test-dataset@snapshot-second',
-  properties: {
-    creation: {
-      parsed: {
-        $date: 1634575903000,
-      },
-    },
-    used: {
-      parsed: 1634575903000,
-    },
-    referenced: {
-      parsed: 1634575903000,
-    },
-  },
-}] as unknown as ZfsSnapshot[];
 
 describe('SnapshotListComponent', () => {
   let spectator: Spectator<SnapshotListComponent>;
@@ -74,7 +42,7 @@ describe('SnapshotListComponent', () => {
         [systemConfigStateKey]: systemConfigReducer,
       }, {
         initialState: {
-          [snapshotStateKey]: adapter.setAll([...fakeDataSource], snapshotsInitialState),
+          [snapshotStateKey]: adapter.setAll([...fakeZfsSnapshotDataSource], snapshotsInitialState),
           [systemConfigStateKey]: {
             generalConfig: {
               timezone: 'America/Alaska',
@@ -116,7 +84,7 @@ describe('SnapshotListComponent', () => {
   });
 
   it('should show table rows', async () => {
-    spectator.inject(MockWebsocketService).mockCallOnce('zfs.snapshot.query', fakeDataSource);
+    spectator.inject(MockWebsocketService).mockCallOnce('zfs.snapshot.query', fakeZfsSnapshotDataSource);
     spectator.inject(Store).dispatch(snapshotPageEntered({ extra: false }));
 
     const table = await loader.getHarness(IxTableHarness);
@@ -128,8 +96,8 @@ describe('SnapshotListComponent', () => {
 
     // sorted by snapshot.name
     const expectedRows = [
-      ['', 'test-dataset', 'snapshot-second', 'expand_more'],
-      ['', 'test-dataset', 'snapshot-first', 'expand_more'],
+      ['', 'test-dataset', 'second-snapshot', 'expand_more'],
+      ['', 'test-dataset', 'first-snapshot', 'expand_more'],
     ];
     const cells = await table.getCellsWithoutExpandedRows();
     expect(cells).toEqual(expectedRows);
@@ -141,7 +109,7 @@ describe('SnapshotListComponent', () => {
   });
 
   it('should show table with extra rows', async () => {
-    spectator.inject(MockWebsocketService).mockCallOnce('zfs.snapshot.query', fakeDataSource);
+    spectator.inject(MockWebsocketService).mockCallOnce('zfs.snapshot.query', fakeZfsSnapshotDataSource);
     spectator.inject(Store).dispatch(snapshotPageEntered({ extra: true }));
     spectator.fixture.componentInstance.showExtraColumns$.next(true);
 
@@ -154,8 +122,8 @@ describe('SnapshotListComponent', () => {
 
     const rows = await table.getCells();
     const expectedRows = [
-      ['', 'test-dataset', 'snapshot-second', '1.49 TiB', '2021-11-05 10:52:06', '1.49 TiB', 'more_vert'],
-      ['', 'test-dataset', 'snapshot-first', '1.49 TiB', '2021-11-05 10:52:06', '1.49 TiB', 'more_vert'],
+      ['', 'test-dataset', 'second-snapshot', '1.49 TiB', '2021-11-05 10:52:06', '1.49 TiB', 'more_vert'],
+      ['', 'test-dataset', 'first-snapshot', '1.49 TiB', '2021-11-05 10:52:06', '1.49 TiB', 'more_vert'],
     ];
     expect(rows).toEqual(expectedRows);
 

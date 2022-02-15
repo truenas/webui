@@ -12,24 +12,9 @@ import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
 import { IxTableComponent } from 'app/modules/ix-tables/components/ix-table/ix-table.component';
 import { IxTableModule } from 'app/modules/ix-tables/ix-table.module';
-import { SnapshotListRow } from 'app/pages/storage/snapshots/interfaces/snapshot-list-row.interface';
 import { SnapshotDetailsComponent } from 'app/pages/storage/snapshots/snapshot-details/snapshot-details.component';
 import { DialogService, ModalService } from 'app/services';
-
-const testSnapshot = {
-  id: 'snapshot-1',
-  name: 'snapshot-first',
-  dataset: 'my-dataset',
-  snapshot_name: 'snapshot-first',
-  type: 'SNAPSHOT',
-  properties: {
-    creation: {
-      parsed: {
-        $date: 1634575914000,
-      },
-    },
-  },
-} as unknown as SnapshotListRow;
+import { fakeSnapshotListRow } from '../testing/snapshot-fake-datasource';
 
 describe('SnapshotDetailsComponent', () => {
   let spectator: Spectator<SnapshotDetailsComponent>;
@@ -64,17 +49,19 @@ describe('SnapshotDetailsComponent', () => {
 
   beforeEach(() => {
     spectator = createComponent();
-    spectator.fixture.componentInstance.expandedRow = testSnapshot;
+    spectator.fixture.componentInstance.expandedRow = fakeSnapshotListRow;
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
-  xit('should emit delete event to parent component', async () => {
+  it('should emit delete event to parent component', async () => {
+    // const table = await loader.getHarness();
+    // expect(await table.getCells()).toEqual({});
     // TODO: Fix this
     jest.spyOn(spectator.component.actionPressed, 'emit').mockImplementation();
 
     const deleteButton = await loader.getHarness(MatButtonHarness.with({ text: 'deleteDelete' }));
     await deleteButton.click();
 
-    expect(spectator.component.actionPressed.emit).toHaveBeenCalledWith({ action: 'Delete', row: testSnapshot });
+    expect(spectator.component.actionPressed.emit).toHaveBeenCalledWith({ action: 'Delete', row: fakeSnapshotListRow });
   });
 });

@@ -15,7 +15,7 @@ import { CoreService } from '../../../../services/core-service/core.service';
 import { UserListDetailsComponent } from '../user-list-details/user-list-details.component';
 import { UserListComponent } from './user-list.component';
 
-export const fakeDataSource: User[] = [{
+export const fakeUserDataSource: User[] = [{
   id: 1,
   uid: 0,
   username: 'root',
@@ -80,7 +80,7 @@ describe('UserListComponent', () => {
     ],
     providers: [
       mockWebsocket([
-        mockCall('user.query', fakeDataSource),
+        mockCall('user.query', fakeUserDataSource),
         mockCall('user.update'),
         mockCall('user.create'),
         mockCall('user.delete'),

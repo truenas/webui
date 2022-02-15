@@ -7,29 +7,12 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { MockPipe } from 'ng-mocks';
 import { FormatDateTimePipe } from 'app/core/components/pipes/format-datetime.pipe';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
-import { ZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
 import { AppLoaderModule } from 'app/modules/app-loader/app-loader.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { SnapshotRollbackDialogComponent } from 'app/pages/storage/snapshots/snapshot-rollback-dialog/snapshot-rollback-dialog.component';
 import { AppLoaderService, DialogService, WebSocketService } from 'app/services';
-
-const zfsSnapshot = {
-  name: 'test-dataset@latest-snapshot-name',
-  properties: {
-    creation: {
-      parsed: {
-        $date: 1634575914000,
-      },
-    },
-    used: {
-      parsed: 1634575914000,
-    },
-    referenced: {
-      parsed: 1634575914000,
-    },
-  },
-} as unknown as ZfsSnapshot;
+import { fakeZfsSnapshot } from '../testing/snapshot-fake-datasource';
 
 describe('SnapshotRollbackDialogComponent', () => {
   let spectator: Spectator<SnapshotRollbackDialogComponent>;
@@ -48,13 +31,13 @@ describe('SnapshotRollbackDialogComponent', () => {
     providers: [
       {
         provide: MAT_DIALOG_DATA,
-        useValue: 'test-dataset@latest-snapshot-name',
+        useValue: fakeZfsSnapshot.name,
       },
       mockProvider(AppLoaderService),
       mockProvider(MatDialogRef),
       mockProvider(DialogService),
       mockWebsocket([
-        mockCall('zfs.snapshot.query', [zfsSnapshot]),
+        mockCall('zfs.snapshot.query', [fakeZfsSnapshot]),
         mockCall('zfs.snapshot.rollback'),
       ]),
     ],
@@ -66,12 +49,12 @@ describe('SnapshotRollbackDialogComponent', () => {
   });
 
   it('checks default messages', () => {
-    expect(spectator.fixture.nativeElement).toHaveText('Use snapshot latest-snapshot-name to roll test-dataset back to 2021-11-05 10:52:06?');
+    expect(spectator.fixture.nativeElement).toHaveText('Use snapshot first-snapshot to roll test-dataset back to 2021-11-05 10:52:06?');
     expect(spectator.fixture.nativeElement).toHaveText('Rolling the dataset back destroys data on the dataset');
   });
 
   it('checks getting additional properties query is called', () => {
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('zfs.snapshot.query', [[['id', '=', 'test-dataset@latest-snapshot-name']]]);
+    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('zfs.snapshot.query', [[['id', '=', 'test-dataset@first-snapshot']]]);
   });
 
   it('rollback dataset to selected snapshot when form is submitted and shows a success message', async () => {
@@ -87,9 +70,9 @@ describe('SnapshotRollbackDialogComponent', () => {
     await rollbackButton.click();
 
     expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('zfs.snapshot.rollback', [
-      'test-dataset@latest-snapshot-name',
+      'test-dataset@first-snapshot',
       { force: true },
     ]);
-    expect(spectator.fixture.nativeElement).toHaveText('Dataset rolled back to snapshot latest-snapshot-name.');
+    expect(spectator.fixture.nativeElement).toHaveText('Dataset rolled back to snapshot first-snapshot.');
   });
 });

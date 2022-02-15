@@ -15,7 +15,6 @@ import { SnapshotListRow } from 'app/pages/storage/snapshots/interfaces/snapshot
 @Component({
   selector: 'app-snapshot-details',
   templateUrl: './snapshot-details.component.html',
-  styleUrls: ['./snapshot-details.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [FormatDateTimePipe, FileSizePipe],
 })

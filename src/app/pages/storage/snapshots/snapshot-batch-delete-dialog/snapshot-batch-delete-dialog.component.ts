@@ -1,5 +1,5 @@
 import {
-  Component, ChangeDetectionStrategy, Inject,
+  Component, ChangeDetectionStrategy, Inject, OnInit,
 } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { MatDialog, MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
@@ -20,13 +20,26 @@ import { DialogService } from 'app/services';
   styleUrls: ['./snapshot-batch-delete-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class SnapshotBatchDeleteDialogComponent {
+export class SnapshotBatchDeleteDialogComponent implements OnInit {
   form = this.fb.group({
     confirm: [false, [Validators.requiredTrue]],
   });
   total = this.snapshots.length;
 
-  get data(): SnapshotDialogData {
+  constructor(
+    private fb: FormBuilder,
+    private dialogRef: MatDialogRef<SnapshotBatchDeleteDialogComponent>,
+    private dialogService: DialogService,
+    private translate: TranslateService,
+    private matDialog: MatDialog,
+    @Inject(MAT_DIALOG_DATA) private snapshots: SnapshotListRow[],
+  ) { }
+
+  ngOnInit(): void {
+    this.prepareDialogData();
+  }
+
+  prepareDialogData(): SnapshotDialogData {
     const datasets: string[] = [];
     const snapshots: { [index: string]: string[] } = {};
     this.snapshots.forEach((item) => {
@@ -40,15 +53,6 @@ export class SnapshotBatchDeleteDialogComponent {
 
     return { datasets, snapshots };
   }
-
-  constructor(
-    private fb: FormBuilder,
-    private dialogRef: MatDialogRef<SnapshotBatchDeleteDialogComponent>,
-    private dialogService: DialogService,
-    private translate: TranslateService,
-    private matDialog: MatDialog,
-    @Inject(MAT_DIALOG_DATA) private snapshots: SnapshotListRow[],
-  ) { }
 
   onSubmit(): void {
     this.startBatchDeleteProgress();

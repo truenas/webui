@@ -1,6 +1,6 @@
 import { SelectionModel } from '@angular/cdk/collections';
 import {
-  Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, ViewChild, AfterViewInit,
+  Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, ViewChild,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSort, Sort } from '@angular/material/sort';
@@ -44,7 +44,7 @@ import { selectSnapshots, selectSnapshotState } from '../store/snapshot.selector
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [FormatDateTimePipe],
 })
-export class SnapshotListComponent implements OnInit, AfterViewInit {
+export class SnapshotListComponent implements OnInit {
   error$ = this.store$.select(selectSnapshotState).pipe(map((state) => state.error));
   isLoading$ = this.store$.select(selectSnapshotState).pipe(map((state) => state.isLoading));
   isEmpty$ = this.store$.select(selectSnapshotsTotal).pipe(map((total) => total === 0));
@@ -112,12 +112,6 @@ export class SnapshotListComponent implements OnInit, AfterViewInit {
     this.store$.dispatch(snapshotPageEntered({ extra: this.showExtraColumns$.value }));
     this.setupToolbar();
     this.getSnapshots();
-  }
-
-  ngAfterViewInit(): void {
-    this.modalService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.getSnapshots();
-    });
   }
 
   getSnapshots(): void {
