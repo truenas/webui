@@ -154,7 +154,7 @@ export class ZvolWizardComponent implements WizardConfiguration {
           parent: this,
           validation: [
             (control: FormControl): ValidationErrors => {
-              const config = this.wizardConfig[1].fieldConfig.find((c) => c.name === 'volsize');
+              const volsizeConfig = this.wizardConfig[1].fieldConfig.find((config) => config.name === 'volsize');
 
               const size = control.value && typeof control.value === 'string' ? this.storageService.convertHumanStringToNum(control.value, true) : null;
               const humanSize = control.value;
@@ -164,21 +164,21 @@ export class ZvolWizardComponent implements WizardConfiguration {
                 : null;
 
               if (errors) {
-                config.hasErrors = true;
-                config.errors = globalHelptext.human_readable.input_error;
+                volsizeConfig.hasErrors = true;
+                volsizeConfig.errors = globalHelptext.human_readable.input_error;
               } else if (size === 0) {
-                config.hasErrors = true;
-                config.errors = helptext.zvol_volsize_zero_error;
+                volsizeConfig.hasErrors = true;
+                volsizeConfig.errors = helptext.zvol_volsize_zero_error;
                 errors = { invalid_byte_string: true };
               } else if ((this.origHuman && humanSize)
                                 && (humanSize !== this.origHuman)
                                 && (size < this.origVolSize)) {
-                config.hasErrors = true;
-                config.errors = helptext.zvol_volsize_shrink_error;
+                volsizeConfig.hasErrors = true;
+                volsizeConfig.errors = helptext.zvol_volsize_shrink_error;
                 errors = { invalid_byte_string: true };
               } else {
-                config.hasErrors = false;
-                config.errors = '';
+                volsizeConfig.hasErrors = false;
+                volsizeConfig.errors = '';
               }
 
               return errors;

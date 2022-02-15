@@ -563,8 +563,8 @@ export class SmbFormComponent implements FormConfiguration {
     entityForm.formGroup.controls['path'].valueChanges.pipe(untilDestroyed(this)).subscribe((path) => {
       const nameControl = entityForm.formGroup.controls['name'];
       if (path && !nameControl.value) {
-        const v = path.split('/').pop();
-        nameControl.setValue(v);
+        const name = path.split('/').pop();
+        nameControl.setValue(name);
       }
 
       if (!this.stripACLWarningSent) {

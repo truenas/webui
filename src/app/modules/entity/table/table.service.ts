@@ -116,7 +116,7 @@ export class TableService {
       let message = ' <b>' + item[table.tableConf.deleteMsg.key_props[0]];
       if (table.tableConf.deleteMsg.key_props.length > 1) {
         for (let i = 1; i < table.tableConf.deleteMsg.key_props.length; i++) {
-          if (item[table.tableConf.deleteMsg.key_props[i]] != '') {
+          if (item[table.tableConf.deleteMsg.key_props[i]] !== '') {
             message = message + ' - ' + item[table.tableConf.deleteMsg.key_props[i]];
           }
         }

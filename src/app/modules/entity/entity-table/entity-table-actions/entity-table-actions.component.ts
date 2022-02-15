@@ -59,8 +59,8 @@ export class EntityTableActionsComponent implements OnInit, OnChanges {
     this.actions = this.entity.getActions(this.row);
   }
 
-  noPropogate(e: MouseEvent): void {
-    e.stopPropagation();
+  noPropagate(event: MouseEvent): void {
+    event.stopPropagation();
   }
 
   get singleAction(): EntityTableAction {

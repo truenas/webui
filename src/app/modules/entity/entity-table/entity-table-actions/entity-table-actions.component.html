@@ -28,8 +28,8 @@
         role="image" fontSet="mdi-set" [fontIcon]="icon_name"
         id="{{row[entity?.conf?.rowIdentifier || 'name']}}_{{action}}_button"
         [style.cursor]="'pointer'"
-        [style.font-size]="'24px'">
-      </mat-icon>
+        [style.font-size]="'24px'"
+      ></mat-icon>
     </button>
 
     <!-- Standard Material Icon Set -->
@@ -42,7 +42,8 @@
     >
       <mat-icon
         id="{{row[entity?.conf?.rowIdentifier || 'name']}}_{{action}}_button"
-        [style.cursor]="'pointer'">
+        [style.cursor]="'pointer'"
+      >
         {{icon_name}}
       </mat-icon>
     </button>

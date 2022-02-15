@@ -74,7 +74,7 @@ export class LocalizationFormComponent {
     label: helptext.stg_timezone.placeholder,
     tooltip: helptext.stg_timezone.tooltip,
     options: this.sysGeneralService.timezoneChoices().pipe(
-      map((tzChoices) => _.sortBy(tzChoices, [(o) => o.label.toLowerCase()])),
+      map((tzChoices) => _.sortBy(tzChoices, [(option) => option.label.toLowerCase()])),
     ),
   };
 

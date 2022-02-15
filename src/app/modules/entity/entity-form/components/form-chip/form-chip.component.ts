@@ -71,7 +71,7 @@ export class FormChipComponent implements Field, OnInit {
   selected(event: MatAutocompleteSelectedEvent): void {
     if (this.config.selectOnly) {
       if (this.chipLists.includes(event.option.viewValue)) {
-        this.chipLists = this.chipLists.filter((e) => e !== event.option.viewValue);
+        this.chipLists = this.chipLists.filter((chip) => chip !== event.option.viewValue);
       } else {
         this.chipLists = [...new Set([...this.chipLists, event.option.viewValue])];
       }

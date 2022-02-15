@@ -37,7 +37,7 @@ export class FieldSets {
   configs(): FieldConfig[] {
     return this.list()
       .reduce((configList, set) => configList.concat(set.config), [])
-      .filter((c) => !!c);
+      .filter((config) => !!config);
   }
 
   list(): FieldSet[] {
@@ -51,7 +51,7 @@ export class FieldSets {
 
   toggleSets(setClasses: string[] = this.advancedSets): this {
     this._fieldSets
-      .filter((set) => setClasses.some((c) => c === set.class))
+      .filter((set) => setClasses.some((className) => className === set.class))
       .forEach((set) => (set.label = !set.label));
     return this;
   }

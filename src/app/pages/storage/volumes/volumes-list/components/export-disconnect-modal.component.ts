@@ -72,7 +72,7 @@ export class ExportDisconnectModalComponent implements OnInit {
     nameInput: ['', [
       this.nameInputRequired,
       this.validatorsService.validateOnCondition(
-        (c: AbstractControl) => c.parent?.get('destroy').value,
+        (control: AbstractControl) => control.parent?.get('destroy').value,
         this.nameInputMustMatch,
       ),
     ]],

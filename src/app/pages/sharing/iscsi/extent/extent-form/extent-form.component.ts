@@ -126,17 +126,17 @@ export class ExtentFormComponent implements FormConfiguration {
           parent: this,
           validation: [Validators.required,
             (control: FormControl): ValidationErrors => {
-              const config = this.fieldConfig.find((c) => c.name === 'filesize');
+              const filesizeConfig = this.fieldConfig.find((config) => config.name === 'filesize');
               const size = this.storageService.convertHumanStringToNum(control.value, true);
               const errors = control.value && Number.isNaN(size)
                 ? { invalid_byte_string: true }
                 : null;
               if (errors) {
-                config.hasErrors = true;
-                config.errors = globalHelptext.human_readable.input_error;
+                filesizeConfig.hasErrors = true;
+                filesizeConfig.errors = globalHelptext.human_readable.input_error;
               } else {
-                config.hasErrors = false;
-                config.errors = '';
+                filesizeConfig.hasErrors = false;
+                filesizeConfig.errors = '';
               }
 
               return errors;
@@ -314,7 +314,7 @@ export class ExtentFormComponent implements FormConfiguration {
         this.availableThresholdField.isHidden = false;
       } else {
         this.availableThresholdField.isHidden = true;
-        if (this.pk && value != undefined && _.find(extentDiskField.options, { value }) === undefined) {
+        if (this.pk && value !== undefined && _.find(extentDiskField.options, { value }) === undefined) {
           extentDiskField.options.push({ label: value, value });
         }
       }
@@ -386,7 +386,7 @@ export class ExtentFormComponent implements FormConfiguration {
   beforeSubmit(data: any): void {
     data.filesize = this.storageService.convertHumanStringToNum(data.filesize, true);
     if (this.pk === undefined || this.originalFilesize !== data.filesize) {
-      data.filesize = data.filesize == 0
+      data.filesize = data.filesize === 0
         ? data.filesize
         : (data.filesize + (data.blocksize - data.filesize % data.blocksize));
     }

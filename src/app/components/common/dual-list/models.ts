@@ -52,16 +52,16 @@ export class ListSelectionImpl<T> implements ListSelection<T> {
     this._selectedItems = this.totalItems;
   }
 
-  unselect(item: T): void {
-    if (!this.isSelected(item)) {
+  unselect(itemToUnselect: T): void {
+    if (!this.isSelected(itemToUnselect)) {
       throw new Error('Cannot unselect an item that is not selected');
     }
 
-    this._selectedItems = this._selectedItems.filter((e) => e !== item);
+    this._selectedItems = this._selectedItems.filter((item) => item !== itemToUnselect);
   }
 
-  isSelected(item: T): boolean {
-    return !!this._selectedItems.find((e) => e === item);
+  isSelected(itemToCheck: T): boolean {
+    return !!this._selectedItems.find((item) => item === itemToCheck);
   }
 
   get selectedItems(): T[] {

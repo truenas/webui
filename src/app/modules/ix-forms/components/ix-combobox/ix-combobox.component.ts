@@ -15,10 +15,10 @@ import { MatAutocomplete, MatAutocompleteTrigger } from '@angular/material/autoc
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import {
-  fromEvent, Observable, of, Subject,
+  EMPTY, fromEvent, Observable, of, Subject,
 } from 'rxjs';
 import {
-  debounceTime, distinctUntilChanged, map, takeUntil,
+  catchError, debounceTime, distinctUntilChanged, map, takeUntil,
 } from 'rxjs/operators';
 import { Option } from 'app/interfaces/option.interface';
 
@@ -59,6 +59,7 @@ export class IxComboboxComponent implements ControlValueAccessor, OnChanges, OnI
   filterValue = '';
   selectedOption: Option = null;
   syncOptions: Option[];
+  errorObject: any = null;
 
   onChange: (value: string | number) => void = (): void => {};
   onTouch: () => void = (): void => {};
@@ -159,15 +160,21 @@ export class IxComboboxComponent implements ControlValueAccessor, OnChanges, OnI
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.options) {
       if (changes.options.currentValue) {
-        changes.options.currentValue.pipe(untilDestroyed(this)).subscribe((options: Option[]) => {
-          this.syncOptions = options;
-          this.filteredOptions = of(options);
-          const setOption = this.syncOptions.find((option: Option) => option.value === this.value);
-          this.selectedOption = setOption ? { ...setOption } : null;
-          if (this.selectedOption) {
-            this.filterChanged$.next('');
-          }
-        });
+        changes.options.currentValue
+          .pipe(untilDestroyed(this),
+            catchError((error) => {
+              this.errorObject = error;
+              return EMPTY;
+            }))
+          .subscribe((options: Option[]) => {
+            this.syncOptions = options;
+            this.filteredOptions = of(options);
+            const setOption = this.syncOptions.find((option: Option) => option.value === this.value);
+            this.selectedOption = setOption ? { ...setOption } : null;
+            if (this.selectedOption) {
+              this.filterChanged$.next('');
+            }
+          });
       }
     }
   }
