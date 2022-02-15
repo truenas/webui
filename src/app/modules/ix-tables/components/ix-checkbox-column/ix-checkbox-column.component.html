@@ -5,6 +5,7 @@
       (change)="$event ? masterToggle() : null"
       [checked]="selection.hasValue() && isAllSelected()"
       [indeterminate]="selection.hasValue() && !isAllSelected()"
+      [aria-label]="checkboxLabel()"
     ></mat-checkbox>
   </th>
   <td mat-cell *matCellDef="let item; dataSource: dataSource" [style.width.px]="40">
@@ -13,6 +14,7 @@
       (click)="$event.stopPropagation()"
       (change)="$event ? selection.toggle(item) : null"
       [checked]="selection.isSelected(item)"
+      [aria-label]="checkboxLabel(item)"
     ></mat-checkbox>
   </td>
 </ng-container>

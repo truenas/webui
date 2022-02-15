@@ -34,7 +34,7 @@ export class IxCheckboxColumnComponent<T = unknown> implements OnInit, OnDestroy
   }
 
   getPageData(): T[] {
-    return this.dataSource._pageData(this.dataSource._orderData(this.dataSource.filteredData));
+    return this.dataSource.connect().getValue();
   }
 
   isPageSelected(): boolean {
@@ -51,6 +51,15 @@ export class IxCheckboxColumnComponent<T = unknown> implements OnInit, OnDestroy
       return;
     }
 
+    console.info('getPaged', this.getPageData());
+
     this.selection.select(...this.getPageData());
+  }
+
+  checkboxLabel(item?: T): string {
+    if (!item) {
+      return `${this.isAllSelected() ? 'deselect' : 'select'} all`;
+    }
+    return `${this.selection.isSelected(item) ? 'deselect' : 'select'} row ${this.dataSource.filteredData.indexOf(item) + 1}`;
   }
 }
