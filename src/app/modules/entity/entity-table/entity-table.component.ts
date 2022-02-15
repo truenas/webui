@@ -191,19 +191,20 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, A
   }
 
   setupColumns(): void {
+    this.displayedColumns = [];
+    this.allColumns = [];
+    this.alwaysDisplayedCols = [];
     this.conf.columns.forEach((column) => {
-      if (!this.displayedColumns.find((col) => col === column.prop)) {
-        this.displayedColumns.push(column.prop);
-      }
+      this.displayedColumns.push(column.prop);
       if (!column.always_display) {
-        if (!this.allColumns.find((col) => col.prop === column.prop)) {
-          this.allColumns.push(column); // Make array of optionally-displayed cols
-        }
-      } else if (!this.alwaysDisplayedCols.find((col) => col.prop === column.prop)) {
+        this.allColumns.push(column); // Make array of optionally-displayed cols
+      } else {
         this.alwaysDisplayedCols.push(column); // Make an array of required cols
       }
     });
     this.columnFilter = this.conf.columnFilter === undefined ? true : this.conf.columnFilter;
+    // Remove any alwaysDisplayed cols from the official list
+    this.conf.columns = this.conf.columns.filter((column) => !column.always_display);
   }
 
   isAllSelected = false;
