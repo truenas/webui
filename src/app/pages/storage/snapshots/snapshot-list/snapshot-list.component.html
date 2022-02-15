@@ -62,7 +62,7 @@
       }}</td>
     </ng-container>
 
-    <ng-container *ngIf="showExtraColumns$ | async; else expandRowButton" matColumnDef="actions">
+    <ng-container matColumnDef="actions">
       <th mat-header-cell *matHeaderCellDef></th>
       <td mat-cell *matCellDef="let snapshot; dataSource: dataSource">
         <button
@@ -79,17 +79,6 @@
         </mat-menu>
       </td>
     </ng-container>
-
-    <ng-template #expandRowButton>
-      <ix-expand-toggle-column [expandedRow]="expandedRow" (toggle)="expandRow($event)"></ix-expand-toggle-column>
-
-      <app-snapshot-details
-        [expandedRow]="expandedRow"
-        [dataSource]="dataSource"
-        [colspan]="displayedColumns.length"
-        (actionPressed)="onAction($event)"
-      ></app-snapshot-details>
-    </ng-template>
 
     <tr class="mat-row mat-no-data-row" *matNoDataRow>
       <td class="mat-cell" [attr.colspan]="displayedColumns.length">

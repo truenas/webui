@@ -13,7 +13,6 @@ import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.u
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxTableModule } from 'app/modules/ix-tables/ix-table.module';
 import { IxTableHarness } from 'app/modules/ix-tables/testing/ix-table.harness';
-import { SnapshotDetailsComponent } from 'app/pages/storage/snapshots/snapshot-details/snapshot-details.component';
 import { snapshotPageEntered } from 'app/pages/storage/snapshots/store/snapshot.actions';
 import { SnapshotEffects } from 'app/pages/storage/snapshots/store/snapshot.effects';
 import { adapter, snapshotReducer } from 'app/pages/storage/snapshots/store/snapshot.reducer';
@@ -53,7 +52,6 @@ describe('SnapshotListComponent', () => {
       EffectsModule.forRoot([SnapshotEffects]),
     ],
     declarations: [
-      SnapshotDetailsComponent,
       MockPipe(FormatDateTimePipe, jest.fn(() => '2021-11-05 10:52:06')),
       MockPipe(FileSizePipe, jest.fn(() => '1.49 TiB')),
     ],

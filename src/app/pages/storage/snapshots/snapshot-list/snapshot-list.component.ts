@@ -52,7 +52,6 @@ export class SnapshotListComponent implements OnInit {
   dataSource: MatTableDataSource<SnapshotListRow> = new MatTableDataSource([]);
   defaultSort: Sort = { active: 'snapshot', direction: 'desc' };
   filterString = '';
-  expandedRow: SnapshotListRow;
   selection = new SelectionModel(true, []);
   settingsEvent$: Subject<CoreEvent> = new Subject();
   showExtraColumns$ = new BehaviorSubject(false);
@@ -175,11 +174,6 @@ export class SnapshotListComponent implements OnInit {
   createDataSource(snapshots: SnapshotListRow[] = []): void {
     this.dataSource = new MatTableDataSource(snapshots);
     this.dataSource.sort = this.sort;
-  }
-
-  expandRow(row: SnapshotListRow): void {
-    this.expandedRow = this.expandedRow === row ? null : row;
-    this.cdr.markForCheck();
   }
 
   toggleExtraColumnsDialog(): void {

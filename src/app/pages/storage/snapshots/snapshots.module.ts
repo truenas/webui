@@ -20,7 +20,6 @@ import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxTableModule } from 'app/modules/ix-tables/ix-table.module';
 import { SnapshotAddComponent } from 'app/pages/storage/snapshots/snapshot-add/snapshot-add.component';
 import { SnapshotCloneDialogComponent } from 'app/pages/storage/snapshots/snapshot-clone-dialog/snapshot-clone-dialog.component';
-import { SnapshotDetailsComponent } from 'app/pages/storage/snapshots/snapshot-details/snapshot-details.component';
 import { SnapshotListComponent } from 'app/pages/storage/snapshots/snapshot-list/snapshot-list.component';
 import { SnapshotRollbackDialogComponent } from 'app/pages/storage/snapshots/snapshot-rollback-dialog/snapshot-rollback-dialog.component';
 import { routing } from 'app/pages/storage/snapshots/snapshots.routing';
@@ -58,7 +57,6 @@ import { SnapshotBatchDeleteDialogComponent } from './snapshot-batch-delete-dial
     SnapshotListComponent,
     SnapshotAddComponent,
     SnapshotCloneDialogComponent,
-    SnapshotDetailsComponent,
     SnapshotRollbackDialogComponent,
     SnapshotBatchDeleteDialogComponent,
   ],
@@ -66,7 +64,6 @@ import { SnapshotBatchDeleteDialogComponent } from './snapshot-batch-delete-dial
     SnapshotListComponent,
     SnapshotAddComponent,
     SnapshotCloneDialogComponent,
-    SnapshotDetailsComponent,
     SnapshotRollbackDialogComponent,
     SnapshotBatchDeleteDialogComponent,
   ],

@@ -32,7 +32,6 @@
   "Dataset name (read-only).": "",
   "Dataset rolled back to snapshot {name}.": "",
   "Dataset {name} was created.": "",
-  "Date Created": "",
   "Date created": "",
   "Define a number of minutes for <a href=\"https://linux.die.net/man/8/smartd\" target=\"_blank\">smartd</a> to wake up and check if any tests are configured to run.": "",
   "Delete dataset {name}": "",
