@@ -65,7 +65,8 @@ def the_apps_page_load_click_settings_unset_pool(driver):
 @then('confirm unset pool and wait')
 def confirm_unset_pool_and_wait(driver):
     """confirm unset pool and wait."""
-
+    assert wait_on_element(driver, 10, '//span[contains(text(),"UNSET")]', 'clickable')
+    driver.find_element_by_xpath('//span[contains(text(),"UNSET")]').click()
     assert wait_on_element_disappear(driver, 60, '//h1[contains(.,"Configuring...")]')
     assert wait_on_element(driver, 7, '//button[@ix-auto="button__CLOSE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
