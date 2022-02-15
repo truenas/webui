@@ -79,6 +79,7 @@ def input_fullname_username_password_confirmpassword_and_click_save(driver):
     assert wait_on_element(driver, 7, '//button[@ix-auto="button__SAVE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
 
+
 @then('the new user should be created and added to the user list.')
 def the_new_user_should_be_created_and_added_to_the_user_list(driver):
     """the new user should be created and added to the user list.."""
@@ -86,6 +87,6 @@ def the_new_user_should_be_created_and_added_to_the_user_list(driver):
     assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
     assert wait_on_element(driver, 10, '//div[contains(.,"Users")]')
     assert wait_on_element(driver, 10, '//div[contains(.,"foo")]')
-    ## return to dashboard
+    # return to dashboard
     time.sleep(2)
     assert wait_on_element(driver, 7, '//div[contains(.,"Users")]')

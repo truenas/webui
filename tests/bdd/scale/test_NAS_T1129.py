@@ -1,17 +1,13 @@
 # coding=utf-8
 """SCALE UI: feature tests."""
 
-import time
-from selenium.webdriver import ActionChains
-from selenium.webdriver.common.keys import Keys
 from function import (
     wait_on_element,
     is_element_present,
     attribute_value_exist,
     wait_on_element_disappear,
     run_cmd,
-    ssh_cmd,
-    post
+    ssh_cmd
 )
 from pytest_bdd import (
     given,
@@ -89,7 +85,7 @@ def input_my_ldap_smb_test_share_as_the_description_and_click_summit(driver, des
 @then('the ldapsmbshare should be added to the Shares list')
 def the_ldapsmbshare_should_be_added_to_the_shares_list(driver):
     """the ldapsmbshare should be added to the Shares list."""
-    assert wait_on_element(driver, 5, f'//div[contains(.,"ldapsmbshare")]')
+    assert wait_on_element(driver, 5, '//div[contains(.,"ldapsmbshare")]')
 
 
 @then(parsers.parse('send a file to the share with ip/"{ldapsmbshare}" and "{ldap_user}" and "{ldap_password}"'))
@@ -125,3 +121,5 @@ def click_on_credentialsdirectoryservices_then_ldap_settings_then_disable_and_cl
     wait_on_element(driver, 10, '//span[contains(text(),"Save")]', 'clickable')
     driver.find_element_by_xpath('//span[contains(text(),"Save")]').click()
     assert wait_on_element_disappear(driver, 60, '//h6[contains(.,"Please wait")]')
+    # Make sure Active Directory and LDAP are both disabled
+    assert wait_on_element(driver, 10, '//h3[text()="Active Directory and LDAP are disabled."]')
