@@ -29,6 +29,11 @@ def the_browser_is_open_navigate_to_the_scale_url_and_login(driver, nas_ip, root
     if nas_ip not in driver.current_url:
         driver.get(f"http://{nas_ip}")
         assert wait_on_element(driver, 10, '//input[@data-placeholder="Username"]')
+    elif not wait_on_element(driver, 3, '//button[@name="Power"]', 'clickable'):
+        assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Dashboard"]', 'clickable')
+        driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
+        driver.refresh()
+        wait_on_element(driver, 3, '//input[@data-placeholder="Username"]', 'inputable')
     if not is_element_present(driver, '//mat-list-item[@ix-auto="option__Dashboard"]'):
         assert wait_on_element(driver, 10, '//input[@data-placeholder="Username"]')
         driver.find_element_by_xpath('//input[@data-placeholder="Username"]').clear()
