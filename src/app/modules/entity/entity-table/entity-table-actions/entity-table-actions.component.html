@@ -22,7 +22,7 @@
       [attr.aria-label]="translateLabels('Actionable Options')"
       *ngIf="icon_name.startsWith('mdi-')"
       [matMenuTriggerFor]="appMenu"
-      (click)="noPropogate($event)"
+      (click)="noPropagate($event)"
     >
       <mat-icon
         role="image" fontSet="mdi-set" [fontIcon]="icon_name"
@@ -37,7 +37,7 @@
       *ngIf="!icon_name.startsWith('mdi-')"
       class="transparent-btn"
       [attr.aria-label]="translateLabels('Actionable Options')"
-      (click)="noPropogate($event)"
+      (click)="noPropagate($event)"
       [matMenuTriggerFor]="appMenu"
     >
       <mat-icon
