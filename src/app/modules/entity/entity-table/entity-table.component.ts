@@ -186,10 +186,6 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, A
       || (this.allColumns.length > 0 && this.conf.columns.length !== this.allColumns.length);
   };
 
-  translateLabels(label: string): string {
-    return this.translate.instant(label);
-  }
-
   resetColumns(): void {
     this.displayedColumns = [];
     this.allColumns = [];

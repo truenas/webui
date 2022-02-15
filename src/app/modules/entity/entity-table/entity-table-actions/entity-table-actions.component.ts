@@ -51,10 +51,6 @@ export class EntityTableActionsComponent implements OnInit, OnChanges {
     this.getActions();
   }
 
-  translateLabels(label: string): string {
-    return this.translate.instant(label);
-  }
-
   getActions(): void {
     this.actions = this.entity.getActions(this.row);
   }

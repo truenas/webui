@@ -19,7 +19,7 @@
     <!-- Material Design Icon Set -->
     <button
       class="transparent-btn"
-      [attr.aria-label]="translateLabels('Actionable Options')"
+      [attr.aria-label]="'Actionable Options' | translate"
       *ngIf="icon_name.startsWith('mdi-')"
       [matMenuTriggerFor]="appMenu"
       (click)="noPropagate($event)"
@@ -36,7 +36,7 @@
     <button
       *ngIf="!icon_name.startsWith('mdi-')"
       class="transparent-btn"
-      [attr.aria-label]="translateLabels('Actionable Options')"
+      [attr.aria-label]="'Actionable Options' | translate"
       (click)="noPropagate($event)"
       [matMenuTriggerFor]="appMenu"
     >
