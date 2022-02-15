@@ -6,13 +6,21 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockPipe } from 'ng-mocks';
 import { FormatDateTimePipe } from 'app/core/components/pipes/format-datetime.pipe';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
+import { mockCall, mockWebsocket, mockJob } from 'app/core/testing/utils/mock-websocket.utils';
+import { CoreBulkResponse } from 'app/interfaces/core-bulk.interface';
 import { AppLoaderModule } from 'app/modules/app-loader/app-loader.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { SnapshotBatchDeleteDialogComponent } from 'app/pages/storage/snapshots/snapshot-batch-delete-dialog/snapshot-batch-delete-dialog.component';
 import { fakeZfsSnapshotDataSource } from 'app/pages/storage/snapshots/testing/snapshot-fake-datasource';
 import { AppLoaderService, DialogService, WebSocketService } from 'app/services';
+
+const mockJobSuccessResponse = [{
+  result: true,
+}, {
+  result: true,
+}] as CoreBulkResponse[];
 
 describe('SnapshotBatchDeleteDialogComponent', () => {
   let spectator: Spectator<SnapshotBatchDeleteDialogComponent>;
@@ -37,7 +45,7 @@ describe('SnapshotBatchDeleteDialogComponent', () => {
       mockProvider(MatDialogRef),
       mockProvider(DialogService),
       mockWebsocket([
-        mockCall('core.bulk'),
+        mockJob('core.bulk', fakeSuccessfulJob(mockJobSuccessResponse)),
         mockCall('zfs.snapshot.delete'),
       ]),
     ],
@@ -48,31 +56,26 @@ describe('SnapshotBatchDeleteDialogComponent', () => {
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
-  xit('checks default messages', () => {
-    expect(spectator.fixture.nativeElement).toHaveText('Use snapshot latest-snapshot-name to roll test-dataset back to 2021-11-05 10:52:06?');
-    expect(spectator.fixture.nativeElement).toHaveText('Rolling the dataset back destroys data on the dataset');
+  it('checks default messages', () => {
+    expect(spectator.fixture.nativeElement).toHaveText('The following 2 snapshots will be deleted. Are you sure you want to proceed?');
   });
 
-  xit('checks getting additional properties query is called', () => {
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('zfs.snapshot.query', [[['id', '=', 'test-dataset@latest-snapshot-name']]]);
-  });
-
-  xit('rollback dataset to selected snapshot when form is submitted and shows a success message', async () => {
-    // TODO: Check when NAS-114799 is done
-    // Add test for different recursive values
-
+  it('deletes selected snapshots when form is submitted', async () => {
     const form = await loader.getHarness(IxFormHarness);
     await form.fillForm({
       Confirm: true,
     });
 
-    const rollbackButton = await loader.getHarness(MatButtonHarness.with({ text: 'Rollback' }));
-    await rollbackButton.click();
+    const deleteButton = await loader.getHarness(MatButtonHarness.with({ text: 'Delete' }));
+    await deleteButton.click();
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('zfs.snapshot.rollback', [
-      'test-dataset@latest-snapshot-name',
-      { force: true },
+    expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('core.bulk', [
+      'zfs.snapshot.delete',
+      [
+        ['test-dataset@first-snapshot'],
+        ['test-dataset@second-snapshot'],
+      ],
     ]);
-    expect(spectator.fixture.nativeElement).toHaveText('Dataset rolled back to snapshot latest-snapshot-name.');
+    expect(spectator.fixture.nativeElement).toHaveText('Deleted 2 snapshots');
   });
 });

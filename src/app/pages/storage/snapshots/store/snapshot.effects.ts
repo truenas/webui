@@ -43,10 +43,8 @@ export class SnapshotEffects {
         map((event) => {
           switch (event.msg) {
             case ApiEventMessage.Added:
-              console.info('Added', event.fields);
               return snapshotAdded({ snapshot: event.fields });
             case ApiEventMessage.Changed:
-              console.info('Changed', event.fields);
               return snapshotChanged({ snapshot: event.fields });
           }
         }),

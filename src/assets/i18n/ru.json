@@ -291,7 +291,6 @@
   "Delete user primary group \"{name}\"": "",
   "Delete {n, plural, one {# user} other {# users}} with this primary group?": "",
   "Delete {name}?": "",
-  "Deleting Snapshots": "",
   "Deleting...": "",
   "Deny": "",
   "Deny All": "",

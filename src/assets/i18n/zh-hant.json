@@ -697,7 +697,6 @@
   "Delete {n, plural, one {# user} other {# users}} with this primary group?": "",
   "Delete {name}?": "",
   "Deleted {n, plural, one {# snapshot} other {# snapshots}}": "",
-  "Deleting Snapshots": "",
   "Deleting interfaces while HA is enabled is not allowed.": "",
   "Deployments": "",
   "Deregister": "",

@@ -1823,7 +1823,6 @@
   "Delete the selected item?": "Supprimer l'élément sélectionné ?",
   "Delete this path.": "Supprimer ce chemin.",
   "Deleted {n, plural, one {# snapshot} other {# snapshots}}": "Supprimer {n, plural, one {# instantané} other {# instantanés}}",
-  "Deleting Snapshots": "Suppression des instantanés",
   "Deleting interfaces while HA is enabled is not allowed.": "La suppression d'interfaces lorsque HA est activé n'est pas autorisée.",
   "Deleting...": "Suppression...",
   "Deny": "Refuser",
