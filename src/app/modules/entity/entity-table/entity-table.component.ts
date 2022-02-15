@@ -190,7 +190,7 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, A
     return this.translate.instant(label);
   }
 
-  setupColumns(): void {
+  resetColumns(): void {
     this.displayedColumns = [];
     this.allColumns = [];
     this.alwaysDisplayedCols = [];
@@ -563,11 +563,6 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, A
 
   getData(): void {
     const sort: string[] = [];
-
-    // Special case for Snapshots as the columns change on the go without updating the config properly
-    if (this.title === 'Snapshots' && this.displayedColumns.length > 0) {
-      this.setupColumns();
-    }
 
     this.config.sorting.columns.forEach((col) => {
       if (col.sort === 'asc') {

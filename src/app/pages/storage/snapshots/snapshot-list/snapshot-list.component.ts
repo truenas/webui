@@ -187,6 +187,7 @@ export class SnapshotListComponent implements EntityTableConfig {
       this.columns = this.columnsHide.slice(0);
       this.snapshotXtraCols = false;
     }
+    this.entityList?.resetColumns();
   }
 
   resourceTransformIncomingRestData(rows: ZfsSnapshot[]): SnapshotListRow[] {
