@@ -1248,7 +1248,7 @@
   "TLS Allow Per User": "",
   "TLS Crypt Auth": "",
   "TLS Crypt Auth Enabled": "",
-  "TLS Server Uri": "",
+  "TLS Server Hostname": "",
   "Tag": "",
   "Tag to use for the specified image": "",
   "Tags": "",

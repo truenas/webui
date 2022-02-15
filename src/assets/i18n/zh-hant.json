@@ -2527,7 +2527,7 @@
   "TLS No Certificate Request": "",
   "TLS No Empty Fragments": "",
   "TLS No Session Reuse Required": "",
-  "TLS Server Uri": "",
+  "TLS Server Hostname": "",
   "Tag": "",
   "Tag to use for the specified image": "",
   "Tags": "",
