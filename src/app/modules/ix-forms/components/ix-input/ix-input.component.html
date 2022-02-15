@@ -6,7 +6,7 @@
   <tooltip *ngIf="tooltip" [header]="label" class="tooltip" [message]="tooltip"></tooltip>
 </div>
 
-<div class="input-container" [class.disabled]="isDisabled">
+<div class="input-container" [class.disabled]="isDisabled" [class.readonly]="readonly">
   <span *ngIf="prefixIcon" class="prefix-icon">
     <mat-icon>{{prefixIcon}}</mat-icon>
   </span>
@@ -21,6 +21,7 @@
     [type]="getType()"
     [value]="formatted"
     (input)="input(ixInput)"
+    (focus)="focus(ixInput)"
     (blur)="blur()"
     [autocomplete]="autocomplete"
     [autocapitalize]="autocapitalize"

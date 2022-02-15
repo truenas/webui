@@ -85,7 +85,7 @@ export class IxInputComponent implements ControlValueAccessor {
   }
 
   shouldShowResetInput(): boolean {
-    return !this.isDisabled && this.hasValue() && this.type !== 'password';
+    return !this.isDisabled && this.hasValue() && this.type !== 'password' && !this.readonly;
   }
 
   getType(): string {
@@ -111,6 +111,13 @@ export class IxInputComponent implements ControlValueAccessor {
   setDisabledState?(isDisabled: boolean): void {
     this.isDisabled = isDisabled;
     this.cdr.markForCheck();
+  }
+
+  focus(ixInput: HTMLInputElement): void {
+    this.onTouch();
+    if (this.readonly) {
+      ixInput.select();
+    }
   }
 
   blur(): void {

@@ -37,6 +37,14 @@
       opacity: 1;
     }
   }
+
+  &.readonly {
+    background: var(--bg2);
+
+    input {
+      cursor: copy;
+    }
+  }
 }
 
 .label-container {

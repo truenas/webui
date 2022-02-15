@@ -19,7 +19,6 @@ import { WebSocketService, DialogService } from 'app/services';
 
 @UntilDestroy()
 @Component({
-  selector: 'two-factor',
   templateUrl: './two-factor.component.html',
   styleUrls: ['./two-factor.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -154,8 +153,21 @@ export class TwoFactorComponent implements OnInit {
     });
   }
 
+  twoFactorStatusTxt(): string {
+    return this.twoFactorEnabled
+      ? helptext.two_factor.enabled_status_true
+      : helptext.two_factor.enabled_status_false;
+  }
+
+  twoFactorButtonTxt(): string {
+    return this.twoFactorEnabled
+      ? helptext.two_factor.disable_button
+      : helptext.two_factor.enable_button;
+  }
+
   toggleTwoFactor(): void {
     if (this.twoFactorEnabled) {
+      this.twoFactorEnabled = false;
       this.ws.call('auth.twofactor.update', [{ enabled: false }])
         .pipe(untilDestroyed(this)).subscribe(() => {
           this.isFormLoading = false;

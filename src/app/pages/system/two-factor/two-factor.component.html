@@ -5,7 +5,7 @@
       <div class="fieldset-content">
         <ix-fieldset [title]="helptext.two_factor.title">
           <p class="help-text">
-            {{helptext.two_factor.message}}
+            {{ helptext.two_factor.message | translate }}
           </p>
         </ix-fieldset>
       </div>
@@ -55,9 +55,7 @@
           type="password"
         ></ix-input>
         <p class="help-text">
-          {{twoFactorEnabled
-            ? helptext.two_factor.enabled_status_true
-            : helptext.two_factor.enabled_status_false}}
+          {{ twoFactorStatusTxt() | translate }}
         </p>
       </ix-fieldset>
 
@@ -72,19 +70,20 @@
           mat-button
           [disabled]="isFormLoading"
           color="accent"
+          type="button"
           (click)="toggleTwoFactor()"
-        >{{twoFactorEnabled
-            ? helptext.two_factor.disable_button
-            : helptext.two_factor.enable_button}}</button>
+        >{{ twoFactorButtonTxt() | translate }}</button>
         <button
           mat-button
           [disabled]="isFormLoading || !secret"
           color="accent"
+          type="button"
           (click)="openQrDialog()"
         >{{ 'Show QR' | translate }}</button>
         <button
           mat-button
           color="accent"
+          type="button"
           (click)="renewSecret()"
           [disabled]="isFormLoading || !twoFactorEnabled"
         >{{ 'Renew Secret' | translate }}</button>
