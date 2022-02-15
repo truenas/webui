@@ -72,21 +72,21 @@ export class SnapshotListComponent implements EntityTableConfig {
   snapshotXtraCols = false;
 
   columns: EntityTableColumn[] = [
-    { name: 'Dataset', prop: 'dataset' },
-    { name: 'Snapshot', prop: 'snapshot' },
+    { name: 'Dataset', prop: 'dataset', always_display: true },
+    { name: 'Snapshot', prop: 'snapshot', always_display: true },
     { name: 'Used', prop: 'used' },
     { name: 'Date Created', prop: 'created' },
     { name: 'Referenced', prop: 'referenced' },
   ];
 
   columnsHide: EntityTableColumn[] = [
-    { name: 'Dataset', prop: 'dataset' },
-    { name: 'Snapshot', prop: 'snapshot' },
+    { name: 'Dataset', prop: 'dataset', always_display: true },
+    { name: 'Snapshot', prop: 'snapshot', always_display: true },
   ];
 
   columnsShow: EntityTableColumn[] = [
-    { name: 'Dataset', prop: 'dataset' },
-    { name: 'Snapshot', prop: 'snapshot' },
+    { name: 'Dataset', prop: 'dataset', always_display: true },
+    { name: 'Snapshot', prop: 'snapshot', always_display: true },
     { name: 'Used', prop: 'used' },
     { name: 'Date Created', prop: 'created' },
     { name: 'Referenced', prop: 'referenced' },

@@ -26,13 +26,9 @@
     >
       <mat-icon
         role="image" fontSet="mdi-set" [fontIcon]="icon_name"
-        [ix-auto]=""
-        ix-auto-type="options"
-        ix-auto-identifier="{{row[key_prop]}}"
         id="{{row[entity?.conf?.rowIdentifier || 'name']}}_{{action}}_button"
         [style.cursor]="'pointer'"
-        [style.font-size]="'24px'"
-        (click)="noPropogate($event)">
+        [style.font-size]="'24px'">
       </mat-icon>
     </button>
 
@@ -45,12 +41,8 @@
       [matMenuTriggerFor]="appMenu"
     >
       <mat-icon
-      [ix-auto]=""
-      ix-auto-type="options"
-      (click)="noPropogate($event)"
-      ix-auto-identifier="{{row[key_prop]}}"
-      id="{{row[entity?.conf?.rowIdentifier || 'name']}}_{{action}}_button"
-      [style.cursor]="'pointer'">
+        id="{{row[entity?.conf?.rowIdentifier || 'name']}}_{{action}}_button"
+        [style.cursor]="'pointer'">
         {{icon_name}}
       </mat-icon>
     </button>

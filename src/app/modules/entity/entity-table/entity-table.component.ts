@@ -1081,7 +1081,6 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, A
       this.conf.columns = [...this.conf.columns, col];
     }
     this.selectColumnsToShowOrHide();
-    this.changeDetectorRef.detectChanges();
   }
 
   // Stores currently selected columns in preference service
@@ -1090,6 +1089,10 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, A
       title: this.title,
       cols: this.conf.columns as any,
     };
+
+    if (this.title === 'Users') {
+      this.conf.columns = this.dropLastMaxWidth();
+    }
 
     this.store$.pipe(select(selectPreferencesState), take(1), untilDestroyed(this)).subscribe((state) => {
       if (!state.areLoaded) {
@@ -1103,11 +1106,8 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, A
       preferredColumns.push(newColumnPreferences);
 
       this.store$.dispatch(preferredColumnsUpdated({ columns: preferredColumns }));
+      this.changeDetectorRef.detectChanges();
     });
-
-    if (this.title === 'Users') {
-      this.conf.columns = this.dropLastMaxWidth();
-    }
   }
 
   // resets col view to the default set in the table's component
