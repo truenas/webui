@@ -65,7 +65,7 @@ export class CertificatesDashComponent implements OnInit {
     });
     this.systemGeneralService.getUnsignedCertificates().pipe(untilDestroyed(this)).subscribe((res) => {
       res.forEach((item) => {
-        this.signCsrFieldConfSelect.options.push(
+        this.unsignedCsrSelectField.options.push(
           { label: item.name, value: item.id },
         );
       });
@@ -347,9 +347,9 @@ export class CertificatesDashComponent implements OnInit {
       matTooltip: helptextSystemCa.list.action_sign,
       onClick: (rowinner: CertificateAuthority) => {
         this.systemGeneralService.getUnsignedCertificates().pipe(untilDestroyed(this)).subscribe((res) => {
-          this.signCsrFieldConfSelect.options = [];
+          this.unsignedCsrSelectField.options = [];
           res.forEach((item) => {
-            this.signCsrFieldConfSelect.options.push(
+            this.unsignedCsrSelectField.options.push(
               { label: item.name, value: item.id },
             );
           });
@@ -396,7 +396,7 @@ export class CertificatesDashComponent implements OnInit {
     }, 200);
   }
 
-  private signCsrFieldConfSelect: FormSelectConfig = {
+  private unsignedCsrSelectField: FormSelectConfig = {
     type: 'select',
     name: 'csr_cert_id',
     placeholder: helptextSystemCa.sign.csr_cert_id.placeholder,
@@ -406,7 +406,7 @@ export class CertificatesDashComponent implements OnInit {
   };
 
   protected signCsrFieldConf: FieldConfig[] = [
-    this.signCsrFieldConfSelect,
+    this.unsignedCsrSelectField,
     {
       type: 'input',
       name: 'name',
