@@ -55,18 +55,17 @@ def on_the_dashboard_click_on_apps(driver):
 def the_apps_page_load_click_settings_unset_pool(driver):
     """the Apps page load, click settings, unset pool."""
     time.sleep(3)  # we have to wait for the page to settle for the button to function as a dropdown
-    assert wait_on_element(driver, 10, '//button[@ix-auto-type="button"]//span[contains(text(),"Settings")]', 'clickable')
+    assert wait_on_element(driver, 20, '//button[@ix-auto-type="button"]//span[contains(text(),"Settings")]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto-type="button"]//span[contains(text(),"Settings")]').click()
-    assert wait_on_element(driver, 20, '//span[contains(text(),"Unset Pool")]', 'clickable')
+    assert wait_on_element(driver, 30, '//span[contains(text(),"Unset Pool")]', 'clickable')
     driver.find_element_by_xpath('//span[contains(text(),"Unset Pool")]').click()
-    assert wait_on_element(driver, 7, '//h1[contains(.,"Unset Pool")]')
+    assert wait_on_element(driver, 20, '//h1[contains(.,"Unset Pool")]')
 
 
 @then('confirm unset pool and wait')
 def confirm_unset_pool_and_wait(driver):
     """confirm unset pool and wait."""
-    assert wait_on_element(driver, 10, '//span[contains(text(),"UNSET")]', 'clickable')
-    driver.find_element_by_xpath('//span[contains(text(),"UNSET")]').click()
+
     assert wait_on_element_disappear(driver, 60, '//h1[contains(.,"Configuring...")]')
     assert wait_on_element(driver, 7, '//button[@ix-auto="button__CLOSE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
