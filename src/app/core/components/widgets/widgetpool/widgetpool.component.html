@@ -91,8 +91,17 @@
                     <div class="td">
                       <span class="capitalize">{{poolState.status}}</span>
                       <ng-container *ngIf="isErrorStatus(poolState.status); else noerrors">
-                        <span class="error icon">
-                          <mat-icon class="{{poolHealth.level}}" role="img" fontSet="mdi-set" fontIcon="mdi-close-circle"></mat-icon>
+                        <span class="error icon" *ngIf="poolState.status === 'DEGRADED'">
+                          <mat-icon class="orange-icon">warning</mat-icon>
+                        </span>
+                        <span class="error icon" *ngIf="poolState.status === 'LOCKED'">
+                          <mat-icon class="yellow-icon">lock</mat-icon>
+                        </span>
+                        <span class="error icon" *ngIf="poolState.status === 'FAULTED'">
+                          <mat-icon class="blue-icon">help</mat-icon>
+                        </span>
+                        <span class="error icon" *ngIf="poolState.status!=='DEGRADED' && poolState.status!=='LOCKED' && poolState.status!=='FAULTED'">
+                          <mat-icon class="red-icon" role="img" fontSet="mdi-set" fontIcon="mdi-close-circle"></mat-icon>
                         </span>
                       </ng-container>
   

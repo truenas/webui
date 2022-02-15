@@ -323,6 +323,22 @@ span.capitalize{
   text-transform:capitalize;
 }
 
+.orange-icon {
+  color: var(--orange);
+}
+
+.yellow-icon {
+  color: var(--yellow);
+}
+
+.blue-icon {
+  color: var(--blue);
+}
+
+.red-icon {
+  color: var(--red);
+}
+
 .healthy {
   color:var(--green);
 }
