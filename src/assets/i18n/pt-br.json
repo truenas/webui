@@ -2291,6 +2291,7 @@
   "Optional: Add passphrase and recovery key": "",
   "Optional: Choose installation media image": "",
   "Options": "",
+  "Options cannot be loaded": "",
   "Options for encrypting the LDAP connection:  <ul>  <li><i>OFF:</i> do not encrypt the LDAP connection.</li>  <li><i>ON:</i> encrypt the LDAP connection with <i>SSL</i> on port  <i>636</i>.</li>  <li><i>START_TLS:</i> encrypt the LDAP connection with <i>STARTTLS</i>  on the default LDAP port <i>389</i>.</li>  </ul>": "",
   "Order": "",
   "Organization": "",
