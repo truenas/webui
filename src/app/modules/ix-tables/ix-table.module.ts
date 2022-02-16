@@ -7,7 +7,7 @@ import { MaterialModule } from 'app/app-material.module';
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxExpandToggleColumnComponent } from 'app/modules/ix-tables/components/ix-expand-toggle-column/ix-expand-toggle-column.component';
 import { IxTableExpandableRowComponent } from 'app/modules/ix-tables/components/ix-table-expandable-row/ix-table-expandable-row.component';
-import { IxTableExtended } from 'app/modules/ix-tables/components/ix-table-extended/ix-table-extended.component';
+import { IxTableExtendedComponent } from 'app/modules/ix-tables/components/ix-table-extended/ix-table-extended.component';
 import { IxTablePaginatorComponent } from 'app/modules/ix-tables/components/ix-table-paginator/ix-table-paginator.component';
 import { IxTableComponent } from 'app/modules/ix-tables/components/ix-table/ix-table.component';
 import { IxCellDefDirective } from 'app/modules/ix-tables/directives/ix-cell-def.directive';
@@ -19,7 +19,7 @@ import { IxRowDefDirective } from 'app/modules/ix-tables/directives/ix-row-def.d
     IxRowDefDirective,
     IxCellDefDirective,
     IxTablePaginatorComponent,
-    IxTableExtended,
+    IxTableExtendedComponent,
     IxTableExpandableRowComponent,
     IxExpandToggleColumnComponent,
   ],
@@ -35,7 +35,7 @@ import { IxRowDefDirective } from 'app/modules/ix-tables/directives/ix-row-def.d
     IxTableComponent,
     IxRowDefDirective,
     IxCellDefDirective,
-    IxTableExtended,
+    IxTableExtendedComponent,
     IxTablePaginatorComponent,
     IxTableExpandableRowComponent,
     IxExpandToggleColumnComponent,
