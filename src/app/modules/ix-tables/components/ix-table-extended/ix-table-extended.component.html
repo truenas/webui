@@ -1,0 +1,26 @@
+<mat-card>
+  <mat-toolbar-row>
+    <h3>{{ 'NTP Servers' | translate }}</h3>
+    <div class="actions action-icon">
+      <ng-content select="[actions]"></ng-content>
+    </div>
+  </mat-toolbar-row>
+  <mat-card-content>
+    <table ix-table [dataSource]="dataSource" class="mat-elevation-z0">
+
+      <ng-content></ng-content>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row
+        *matRowDef="let server; columns: displayedColumns; dataSource: dataSource"
+        class="clickable-row"
+      ></tr>
+
+      <tr class="mat-row no-data-row" *matNoDataRow>
+        <td class="mat-cell" [attr.colspan]="displayedColumns.length">
+          <entity-empty [conf]="currentEmptyConf"></entity-empty>
+        </td>
+      </tr>
+    </table>
+  </mat-card-content>
+</mat-card>

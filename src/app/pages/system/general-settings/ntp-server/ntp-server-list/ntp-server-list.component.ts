@@ -7,6 +7,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { filter, switchMap } from 'rxjs/operators';
 import { NtpServer } from 'app/interfaces/ntp-server.interface';
 import { EmptyConfig, EmptyType } from 'app/modules/entity/entity-empty/entity-empty.component';
+import { IxTableStatus } from 'app/modules/ix-tables/enums/ix-table-status.enum';
 import { NtpServerFormComponent } from 'app/pages/system/general-settings/ntp-server/ntp-server-form/ntp-server-form.component';
 import { WebSocketService, DialogService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
@@ -47,6 +48,8 @@ export class NtpServerListComponent implements OnInit {
   };
   error = false;
 
+  status: IxTableStatus = IxTableStatus.Loading;
+
   get currentEmptyConf(): EmptyConfig {
     if (this.loading) {
       return this.loadingConf;
@@ -86,12 +89,14 @@ export class NtpServerListComponent implements OnInit {
       untilDestroyed(this),
     ).subscribe((servers) => {
       this.loading = false;
+      this.status = IxTableStatus.Ready;
       this.error = false;
       this.createDataSource(servers);
       this.cdr.markForCheck();
     }, () => {
       this.loading = false;
       this.error = true;
+      this.status = IxTableStatus.Error;
       this.createDataSource();
       this.cdr.markForCheck();
     });
