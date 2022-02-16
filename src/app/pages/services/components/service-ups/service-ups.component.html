@@ -44,7 +44,7 @@
             [label]="labels.port"
             [tooltip]="tooltips.port"
             [options]="portOptions$"
-            [required]="true"
+            [required]="isMasterMode"
           ></ix-combobox>
         </ix-fieldset>
         <ix-fieldset [title]="helptext.ups_fieldset_monitor">
