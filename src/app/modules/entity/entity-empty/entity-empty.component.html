@@ -1,12 +1,12 @@
-<div fxLayout="column" fxLayoutAlign="center center" fxFlex class="empty-page {{conf.type}}" 
-  [class.large]="conf.large" 
+<div fxLayout="column" fxLayoutAlign="center center" fxFlex class="empty-page {{conf.type}}"
+  [class.large]="conf.large"
   [class.compact]="conf.compact">
-  
+
   <div *ngIf="!isLoading()" fxLayout="column" fxLayoutAlign="center center" fxFlex class="icon-div">
     <mat-icon fontSet="mdi-set" fontIcon="mdi-{{getIcon()}}"></mat-icon>
   </div>
   <div *ngIf="isLoading()" fxLayout="column" fxLayoutAlign="center center" fxFlex>
-    <mat-spinner [diameter]="conf.large ? 80 : 40"></mat-spinner> 
+    <mat-spinner [diameter]="conf.large ? 80 : 40"></mat-spinner>
   </div>
   <div *ngIf="!isLoading()">
     <h3 class="empty-title">{{ conf.title }}</h3>
