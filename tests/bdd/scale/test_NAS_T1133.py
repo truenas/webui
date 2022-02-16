@@ -135,15 +135,6 @@ def smb_should_be_added(driver):
     element = driver.find_element_by_xpath('//td[contains(text(),"Dynamic DNS")]')
     driver.execute_script("arguments[0].scrollIntoView();", element)
     time.sleep(0.5)
-    # value_exist = attribute_value_exist(driver, '//mat-checkbox[@ix-auto="checkbox__enable__SMB"]', 'class', 'mat-checkbox-checked')
-    # if not value_exist:
-    #     driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__enable__SMB"]').click()
-    # time.sleep(2)
-    # value_exist = attribute_value_exist(driver, '//mat-slide-toggle[@ix-auto="slider__state__SMB"]', 'class', 'mat-checked')
-    # if not value_exist:
-    #     driver.find_element_by_xpath('//div[@ix-auto="overlay__stateSMB"]').click()
-    # time.sleep(2)
-    # assert wait_for_attribute_value(driver, 20, '//mat-slide-toggle[@ix-auto="slider__state__SMB"]', 'class', 'mat-checked')
     assert wait_on_element(driver, 5, '//tr[contains(.,"SMB")]//mat-checkbox')
     value_exist = attribute_value_exist(driver, '//tr[contains(.,"SMB")]//mat-checkbox', 'class', 'mat-checkbox-checked')
     if not value_exist:
@@ -182,7 +173,7 @@ def send_a_file_to_the_share_should_fail_with_nas_ipwheelshare_and_footesting(dr
     results = run_cmd(f'smbclient //{nas_ip}/{wheelshare} -U {user}%{password} -c "put testfile2.txt testfile2.txt"')
     time.sleep(1)
     run_cmd('rm testfile2.txt')
-    assert results['result'], results['output']
+    assert not results['result'], results['output']
 
 
 @then('verify that the file is not on the NAS')
