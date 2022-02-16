@@ -9,7 +9,6 @@ import { UpsMode } from 'app/enums/ups-mode.enum';
 import { choicesToOptions, singleArrayToOptions } from 'app/helpers/options.helper';
 import helptext from 'app/helptext/services/components/service-ups';
 import { UpsConfigUpdate } from 'app/interfaces/ups-config.interface';
-import { numberValidator } from 'app/modules/entity/entity-form/validators/number-validation';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { DialogService, WebSocketService } from 'app/services';
@@ -28,7 +27,7 @@ export class ServiceUpsComponent implements OnInit {
     identifier: [null as string, [Validators.required, Validators.pattern(/^[\w|,|\.|\-|_]+$/)]],
     mode: [null as string],
     remotehost: [null as string, Validators.required],
-    remoteport: [null as number, [Validators.required, numberValidator()]],
+    remoteport: [null as number, Validators.required],
     driver: [null as string, Validators.required],
     port: [null as string, Validators.required],
     monuser: [null as string, Validators.required],
@@ -36,11 +35,11 @@ export class ServiceUpsComponent implements OnInit {
     extrausers: [null as string],
     rmonitor: [false],
     shutdown: [null as string],
-    shutdowntimer: [null as number, numberValidator()],
+    shutdowntimer: [null as number],
     shutdowncmd: [null as unknown],
     powerdown: [false],
-    nocommwarntime: [300 as unknown, numberValidator()],
-    hostsync: [15, numberValidator()],
+    nocommwarntime: [300 as unknown],
+    hostsync: [15],
     description: [null as string],
     options: [null as string],
     optionsupsd: [null as string],
@@ -115,11 +114,13 @@ export class ServiceUpsComponent implements OnInit {
       if (res === UpsMode.Master) {
         this.form.controls.remotehost.disable();
         this.form.controls.remoteport.disable();
+        this.form.controls.port.setValidators(Validators.required);
         this.form.controls.driver.enable();
         this.isMasterMode = true;
       } else {
         this.form.controls.remotehost.enable();
         this.form.controls.remoteport.enable();
+        this.form.controls.port.clearValidators();
         this.form.controls.driver.disable();
         this.isMasterMode = false;
       }
