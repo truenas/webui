@@ -10,7 +10,7 @@
     class="ix-form-container"
     (submit)="onSubmit()"
   >
-    <p [innerHTML]="'Use snapshot <i>{snapshot}</i> to roll <b>{dataset}</b> back to {datetime}?' | translate: { snapshot: publicSnapshot?.snapshot, dataset: publicSnapshot.dataset, datetime: publicSnapshot.created | formatDateTime }"></p>
+    <p [innerHTML]="'Use snapshot <i>{snapshot}</i> to roll <b>{dataset}</b> back to {datetime}?' | translate: { snapshot: publicSnapshot.snapshot_name, dataset: publicSnapshot.dataset, datetime: publicSnapshot.properties.creation.parsed.$date | formatDateTime }"></p>
 
     <ix-fieldset>
       <ix-radio-group
@@ -49,7 +49,7 @@
   </form>
 </ng-template>
 <ng-template #successMessage>
-  <p>{{ 'Dataset rolled back to snapshot {name}.' | translate: { name: publicSnapshot.snapshot } }}</p>
+  <p>{{ 'Dataset rolled back to snapshot {name}.' | translate: { name: publicSnapshot.snapshot_name } }}</p>
 
   <div class="form-actions">
     <a

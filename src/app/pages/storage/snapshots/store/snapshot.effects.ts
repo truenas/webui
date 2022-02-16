@@ -7,6 +7,7 @@ import {
   catchError, filter, map, switchMap,
 } from 'rxjs/operators';
 import { ApiEventMessage } from 'app/enums/api-event-message.enum';
+import { ZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
 import {
   snapshotPageEntered, snapshotAdded, snapshotChanged, snapshotRemoved, snapshotsLoaded, snapshotsNotLoaded,
 } from 'app/pages/storage/snapshots/store/snapshot.actions';
@@ -20,7 +21,10 @@ export class SnapshotEffects {
     switchMap(({ extra }) => {
       return this.ws.call('zfs.snapshot.query', [
         [['pool', '!=', 'freenas-boot'], ['pool', '!=', 'boot-pool']],
-        { select: extra ? ['name', 'properties'] : ['name'], order_by: ['name'] },
+        {
+          select: ['snapshot_name', 'dataset', 'name', ...(extra ? ['properties' as keyof ZfsSnapshot] : [])],
+          order_by: ['name'],
+        },
       ]).pipe(
         map((snapshots) => snapshotsLoaded({ snapshots })),
         catchError((error) => {

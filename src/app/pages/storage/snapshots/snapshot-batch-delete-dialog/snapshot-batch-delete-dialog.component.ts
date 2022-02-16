@@ -7,8 +7,8 @@ import { FormBuilder } from '@ngneat/reactive-forms';
 import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
 import { CoreBulkQuery, CoreBulkResponse } from 'app/interfaces/core-bulk.interface';
 import { Job } from 'app/interfaces/job.interface';
+import { ZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
 import { SnapshotDialogData } from 'app/pages/storage/snapshots/interfaces/snapshot-dialog-data.interface';
-import { SnapshotListRow } from 'app/pages/storage/snapshots/interfaces/snapshot-list-row.interface';
 import { WebSocketService } from 'app/services';
 
 @UntilDestroy()
@@ -31,7 +31,7 @@ export class SnapshotBatchDeleteDialogComponent implements OnInit {
     private fb: FormBuilder,
     private websocket: WebSocketService,
     private cdr: ChangeDetectorRef,
-    @Inject(MAT_DIALOG_DATA) private snapshots: SnapshotListRow[],
+    @Inject(MAT_DIALOG_DATA) private snapshots: ZfsSnapshot[],
   ) { }
 
   ngOnInit(): void {
@@ -47,7 +47,7 @@ export class SnapshotBatchDeleteDialogComponent implements OnInit {
         snapshots[item.dataset] = [];
       }
 
-      snapshots[item.dataset].push(item.snapshot);
+      snapshots[item.dataset].push(item.snapshot_name);
     });
 
     return { datasets, snapshots };

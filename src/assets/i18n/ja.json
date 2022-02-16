@@ -2733,7 +2733,7 @@
   "Show disks with non-unique serial numbers": "",
   "Show extra columns": "",
   "Show only those users who have quotas. This is the default view.": "",
-  "Showing extra columns in the table is useful for data filtering,  but can cause performance issues. NOTE: This window will reload automatically so that the new view can take effect.": "",
+  "Showing extra columns in the table is useful for data filtering, but can cause performance issues.": "",
   "Shows only the groups that have quotas. This is the default view.": "",
   "Shrinking a ZVOL is not allowed in the User Interface. This can lead to data loss.": "",
   "Shut down": "",

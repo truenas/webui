@@ -8,10 +8,9 @@ import { of } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
 import { RollbackRecursiveType } from 'app/enums/rollback-recursive-type.enum';
 import helptext from 'app/helptext/storage/snapshots/snapshots';
-import { ZfsRollbackParams } from 'app/interfaces/zfs-snapshot.interface';
+import { ZfsRollbackParams, ZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
-import { SnapshotListRow } from 'app/pages/storage/snapshots/interfaces/snapshot-list-row.interface';
 import { AppLoaderService, WebSocketService, DialogService } from 'app/services';
 
 @UntilDestroy()
@@ -28,7 +27,7 @@ export class SnapshotRollbackDialogComponent implements OnInit {
     recursive: ['' as RollbackRecursiveType],
     force: [false, [Validators.requiredTrue]],
   });
-  publicSnapshot: SnapshotListRow;
+  publicSnapshot: ZfsSnapshot;
 
   readonly recursive = {
     fcName: 'recursive',
@@ -80,30 +79,7 @@ export class SnapshotRollbackDialogComponent implements OnInit {
    */
   getSnapshotCreationInfo(): void {
     this.websocket.call('zfs.snapshot.query', [[['id', '=', this.snapshotName]]]).pipe(
-      map((snapshots) => {
-        // TODO: Optimize to avoid ZfsSnapshot -> SnapshotListRow transformation in multiple places
-        const snapshot = snapshots[0];
-        const [datasetName, snapshotName] = snapshot.name.split('@');
-
-        const transformedRow = {
-          id: snapshot.name,
-          dataset: datasetName,
-          snapshot: snapshotName,
-          properties: snapshot.properties,
-          name: snapshot.name,
-        } as SnapshotListRow;
-
-        if (snapshot.properties) {
-          return {
-            ...transformedRow,
-            created: snapshot.properties.creation.parsed.$date,
-            used: snapshot.properties.used.parsed as number,
-            referenced: snapshot.properties.referenced.parsed as number,
-          };
-        }
-
-        return transformedRow;
-      }),
+      map((snapshots) => snapshots[0]),
       untilDestroyed(this),
     ).subscribe(
       (snapshot) => {

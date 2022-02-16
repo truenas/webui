@@ -23,7 +23,6 @@ import { ZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
 import { EmptyConfig, EmptyType } from 'app/modules/entity/entity-empty/entity-empty.component';
 import { EntityToolbarComponent } from 'app/modules/entity/entity-toolbar/entity-toolbar.component';
 import { ToolbarConfig, ControlConfig } from 'app/modules/entity/entity-toolbar/models/control-config.interface';
-import { SnapshotListRow } from 'app/pages/storage/snapshots/interfaces/snapshot-list-row.interface';
 import { SnapshotAddComponent } from 'app/pages/storage/snapshots/snapshot-add/snapshot-add.component';
 import { SnapshotBatchDeleteDialogComponent } from 'app/pages/storage/snapshots/snapshot-batch-delete-dialog/snapshot-batch-delete-dialog.component';
 import { SnapshotCloneDialogComponent } from 'app/pages/storage/snapshots/snapshot-clone-dialog/snapshot-clone-dialog.component';
@@ -34,7 +33,6 @@ import {
   DialogService, ModalService, WebSocketService, AppLoaderService,
 } from 'app/services';
 import { CoreService } from 'app/services/core-service/core.service';
-import { SnapshotListEvent } from '../interfaces/snapshot-list-event.interface';
 import { selectSnapshots, selectSnapshotState } from '../store/snapshot.selectors';
 
 @UntilDestroy()
@@ -49,7 +47,7 @@ export class SnapshotListComponent implements OnInit {
   isLoading$ = this.store$.select(selectSnapshotState).pipe(map((state) => state.isLoading));
   isEmpty$ = this.store$.select(selectSnapshotsTotal).pipe(map((total) => total === 0));
   @ViewChild(MatSort, { static: false }) sort: MatSort;
-  dataSource: MatTableDataSource<SnapshotListRow> = new MatTableDataSource([]);
+  dataSource: MatTableDataSource<ZfsSnapshot> = new MatTableDataSource([]);
   defaultSort: Sort = { active: 'snapshot', direction: 'desc' };
   filterString = '';
   selection = new SelectionModel(true, []);
@@ -115,37 +113,9 @@ export class SnapshotListComponent implements OnInit {
 
   getSnapshots(): void {
     this.store$.select(selectSnapshots).pipe(
-      map((snapshots: ZfsSnapshot[]) => {
-        const snapshotListRows: SnapshotListRow[] = [];
-
-        for (const row of snapshots) {
-          const [datasetName, snapshotName] = row.name.split('@');
-
-          const transformedRow = {
-            id: row.name,
-            dataset: datasetName,
-            snapshot: snapshotName,
-            properties: row.properties,
-            name: row.name,
-          } as SnapshotListRow;
-
-          if (row.properties) {
-            snapshotListRows.push({
-              ...transformedRow,
-              created: row.properties.creation.parsed.$date,
-              used: row.properties.used.parsed as number,
-              referenced: row.properties.referenced.parsed as number,
-            });
-          } else {
-            snapshotListRows.push(transformedRow);
-          }
-        }
-
-        return snapshotListRows;
-      }),
       untilDestroyed(this),
-    ).subscribe((snapshotListRows) => {
-      this.createDataSource(snapshotListRows);
+    ).subscribe((snapshots) => {
+      this.createDataSource(snapshots);
       this.cdr.markForCheck();
     }, () => {
       this.createDataSource();
@@ -171,7 +141,7 @@ export class SnapshotListComponent implements OnInit {
     };
   }
 
-  createDataSource(snapshots: SnapshotListRow[] = []): void {
+  createDataSource(snapshots: ZfsSnapshot[] = []): void {
     this.dataSource = new MatTableDataSource(snapshots);
     this.dataSource.sort = this.sort;
   }
@@ -187,20 +157,6 @@ export class SnapshotListComponent implements OnInit {
     const slideToggleControl = this.toolbarConfig.controls.find((control) => control.name === 'extra-columns');
     slideToggleControl.confirmOptions = this.getConfirmOptions();
     this.cdr.markForCheck();
-  }
-
-  onAction(event: SnapshotListEvent): void {
-    switch (event.action) {
-      case 'rollback':
-        this.doRollback(event.row);
-        break;
-      case 'clone':
-        this.doClone(event.row);
-        break;
-      case 'delete':
-        this.doDelete(event.row);
-        break;
-    }
   }
 
   setupToolbar(): void {
@@ -268,17 +224,17 @@ export class SnapshotListComponent implements OnInit {
     this.modalService.openInSlideIn(SnapshotAddComponent);
   }
 
-  doClone(snapshot: SnapshotListRow): void {
+  doClone(snapshot: ZfsSnapshot): void {
     this.matDialog.open(SnapshotCloneDialogComponent, {
-      data: snapshot.id,
+      data: snapshot.name,
     });
   }
 
-  doRollback(snapshot: SnapshotListRow): void {
+  doRollback(snapshot: ZfsSnapshot): void {
     this.matDialog.open(SnapshotRollbackDialogComponent, { data: snapshot.name });
   }
 
-  doDelete(snapshot: SnapshotListRow): void {
+  doDelete(snapshot: ZfsSnapshot): void {
     this.dialogService.confirm({
       title: this.translate.instant('Delete'),
       message: this.translate.instant('Delete snapshot {name}?', { name: snapshot.name }),
@@ -299,7 +255,7 @@ export class SnapshotListComponent implements OnInit {
     );
   }
 
-  doBatchDelete(snapshots: SnapshotListRow[]): void {
+  doBatchDelete(snapshots: ZfsSnapshot[]): void {
     this.matDialog.open(SnapshotBatchDeleteDialogComponent, {
       data: snapshots,
     }).beforeClosed().pipe(

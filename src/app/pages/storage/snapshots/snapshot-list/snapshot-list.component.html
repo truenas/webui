@@ -33,33 +33,39 @@
 
     <ng-container matColumnDef="dataset">
       <th mat-header-cell *matHeaderCellDef mat-sort-header> {{ 'Dataset' | translate }} </th>
-      <td mat-cell *matCellDef="let snapshot; dataSource: dataSource" [matTooltip]="snapshot.dataset">{{ snapshot.dataset }}</td>
+      <td mat-cell *matCellDef="let snapshot; dataSource: dataSource">{{ snapshot.dataset }}</td>
     </ng-container>
 
     <ng-container matColumnDef="snapshot">
       <th mat-header-cell *matHeaderCellDef mat-sort-header> {{ 'Snapshot' | translate }} </th>
-      <td mat-cell *matCellDef="let snapshot; dataSource: dataSource" [matTooltip]="snapshot.snapshot">{{ snapshot.snapshot }}</td>
+      <td mat-cell *matCellDef="let snapshot; dataSource: dataSource">{{ snapshot.snapshot_name }}</td>
     </ng-container>
 
     <ng-container matColumnDef="used">
       <th mat-header-cell *matHeaderCellDef mat-sort-header> {{ 'Used' | translate }} </th>
-      <td mat-cell *matCellDef="let snapshot; dataSource: dataSource">{{
-        snapshot?.used ? (snapshot.used | filesize: { standard: "iec" }) : ('N/A' | translate)
-      }}</td>
+      <td mat-cell *matCellDef="let snapshot; dataSource: dataSource">
+        <span *appLet="snapshot?.properties?.used?.parsed as used">
+          {{ used ? (used | filesize: { standard: "iec" }) : ('N/A' | translate) }}
+        </span>
+      </td>
     </ng-container>
 
     <ng-container matColumnDef="created">
       <th mat-header-cell *matHeaderCellDef mat-sort-header> {{ 'Date created' | translate }} </th>
       <td mat-cell *matCellDef="let snapshot; dataSource: dataSource">{{
-        snapshot?.created ? (snapshot.created | formatDateTime) : ('N/A' | translate)
+        snapshot?.properties?.creation?.parsed?.$date ?
+        (snapshot.properties.creation.parsed.$date | formatDateTime) :
+        ('N/A' | translate)
       }}</td>
     </ng-container>
 
     <ng-container matColumnDef="referenced">
       <th mat-header-cell *matHeaderCellDef mat-sort-header> {{ 'Referenced' | translate }} </th>
-      <td mat-cell *matCellDef="let snapshot; dataSource: dataSource">{{
-        snapshot?.referenced ? (snapshot?.referenced | filesize: { standard: "iec" }) : ('N/A' | translate)
-      }}</td>
+      <td mat-cell *matCellDef="let snapshot; dataSource: dataSource">
+        <span *appLet="snapshot?.properties?.referenced?.parsed as referenced">{{
+          referenced ? (referenced | filesize: { standard: "iec" }) : ('N/A' | translate)
+        }}</span>
+      </td>
     </ng-container>
 
     <ng-container matColumnDef="actions">
