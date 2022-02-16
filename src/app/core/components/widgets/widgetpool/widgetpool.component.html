@@ -91,13 +91,13 @@
                     <div class="td">
                       <span class="capitalize">{{poolState.status}}</span>
                       <ng-container *ngIf="isErrorStatus(poolState.status); else noerrors">
-                        <span class="error icon" *ngIf="poolState.status === 'DEGRADED'">
+                        <span class="error icon" *ngIf="poolState.status==='DEGRADED'">
                           <mat-icon class="orange-icon">warning</mat-icon>
                         </span>
-                        <span class="error icon" *ngIf="poolState.status === 'LOCKED'">
+                        <span class="error icon" *ngIf="poolState.status==='LOCKED' || !poolState.is_decrypted">
                           <mat-icon class="yellow-icon">lock</mat-icon>
                         </span>
-                        <span class="error icon" *ngIf="poolState.status === 'FAULTED'">
+                        <span class="error icon" *ngIf="poolState.status==='FAULTED'">
                           <mat-icon class="blue-icon">help</mat-icon>
                         </span>
                         <span class="error icon" *ngIf="poolState.status!=='DEGRADED' && poolState.status!=='LOCKED' && poolState.status!=='FAULTED'">
@@ -106,11 +106,13 @@
                       </ng-container>
   
                       <ng-template #noerrors>
-                        <span *ngIf="poolState.status == 'LOCKED' || !poolState.is_decrypted" 
-                          class="lock-icon-wrapper icon">
-                          <mat-icon>lock</mat-icon>
+                        <span class="error icon" *ngIf="!poolState.healthy">
+                          <mat-icon class="orange-icon">warning</mat-icon>
                         </span>
-                        <span *ngIf="poolState.is_decrypted && ( poolState.status == 'ONLINE' || poolState.status == 'HEALTHY')" 
+                        <span class="error icon" *ngIf="!poolState.is_decrypted">
+                          <mat-icon class="yellow-icon">lock</mat-icon>
+                        </span>
+                        <span *ngIf="poolState.is_decrypted && poolState.healthy && ( poolState.status == 'ONLINE' || poolState.status == 'HEALTHY')" 
                           class="{{poolHealth.level}} icon">
                           <mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-check-circle"></mat-icon>
                         </span>
