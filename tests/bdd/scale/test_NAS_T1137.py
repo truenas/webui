@@ -128,7 +128,7 @@ def send_a_file_to_the_share_should_fail_with_nas_iperic_share_and_footesting(dr
     results = run_cmd(f'smbclient //{nas_ip}/{smbname} -U {user2}%{password2} -c "put testfile2.txt testfile2.txt"')
     time.sleep(1)
     run_cmd('rm testfile2.txt')
-    assert results['result'], results['output']
+    assert not results['result'], results['output']
 
 
 @then(parsers.parse('verify that the file is not on the NAS'))
