@@ -103,7 +103,7 @@ export class SnapshotRollbackDialogComponent implements OnInit {
       body.recursive = true;
     }
 
-    this.websocket.call('zfs.snapshot.rollback', [this.publicSnapshot.name, body]).pipe(
+    this.websocket.call('zfs.snapshot.rollback', [this.snapshotName, body]).pipe(
       tap(() => this.loader.open()),
       untilDestroyed(this),
     ).subscribe(() => {

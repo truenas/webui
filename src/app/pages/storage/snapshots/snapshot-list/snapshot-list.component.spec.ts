@@ -102,7 +102,7 @@ describe('SnapshotListComponent', () => {
 
     expect(websocket.call).toHaveBeenCalledWith('zfs.snapshot.query', [
       [['pool', '!=', 'freenas-boot'], ['pool', '!=', 'boot-pool']],
-      { order_by: ['name'], select: ['name'] },
+      { select: ['name', 'snapshot_name', 'dataset'], order_by: ['name'] },
     ]);
   });
 
@@ -127,7 +127,7 @@ describe('SnapshotListComponent', () => {
 
     expect(websocket.call).toHaveBeenCalledWith('zfs.snapshot.query', [
       [['pool', '!=', 'freenas-boot'], ['pool', '!=', 'boot-pool']],
-      { order_by: ['name'], select: ['name', 'properties'] },
+      { select: ['name', 'snapshot_name', 'dataset', 'properties'], order_by: ['name'] },
     ]);
   });
 

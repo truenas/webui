@@ -33,6 +33,7 @@ import {
   DialogService, ModalService, WebSocketService, AppLoaderService,
 } from 'app/services';
 import { CoreService } from 'app/services/core-service/core.service';
+import { showExtraColumnsPressed } from '../store/snapshot.actions';
 import { selectSnapshots, selectSnapshotState } from '../store/snapshot.selectors';
 
 @UntilDestroy()
@@ -172,6 +173,7 @@ export class SnapshotListComponent implements OnInit {
           this.doAdd();
           break;
         case 'extra-columns':
+          this.store$.dispatch(showExtraColumnsPressed());
           this.toggleExtraColumnsDialog();
           break;
         default:
@@ -213,11 +215,6 @@ export class SnapshotListComponent implements OnInit {
 
     this.toolbarConfig = toolbarConfig;
     this.core.emit({ name: 'GlobalActions', data: settingsConfig, sender: this });
-  }
-
-  selectAll(): void {
-    this.dataSource.data.forEach((snapshot) => this.selection.select(snapshot));
-    this.cdr.markForCheck();
   }
 
   doAdd(): void {

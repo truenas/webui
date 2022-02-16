@@ -2,6 +2,8 @@ import { ZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
 
 export const fakeZfsSnapshot: ZfsSnapshot = {
   name: 'test-dataset@first-snapshot',
+  dataset: 'test-dataset',
+  snapshot_name: 'first-snapshot',
   properties: {
     creation: {
       parsed: {
@@ -21,6 +23,8 @@ export const fakeZfsSnapshotDataSource: ZfsSnapshot[] = [
   fakeZfsSnapshot,
   {
     name: 'test-dataset@second-snapshot',
+    dataset: 'test-dataset',
+    snapshot_name: 'second-snapshot',
     properties: {
       creation: {
         parsed: {
