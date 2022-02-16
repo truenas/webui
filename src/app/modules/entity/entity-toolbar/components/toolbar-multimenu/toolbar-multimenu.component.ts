@@ -30,7 +30,7 @@ export class ToolbarMultimenuComponent extends IxAbstractObject implements OnIni
         if (value) {
           this.values.push(value);
           for (let j = 0; j < this.selectStates.length; j++) {
-            if (this.config.options[j].value == value.value) {
+            if (this.config.options[j].value === value.value) {
               this.selectStates[j] = true;
               break;
             }

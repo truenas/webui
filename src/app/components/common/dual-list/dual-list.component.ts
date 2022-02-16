@@ -8,7 +8,7 @@ const transfer = <T>(from: ListSelection<T>, to: ListSelection<T>): {
   from: ListSelection<T>; to: ListSelection<T>;
 } => ({
     from: new ListSelectionImpl(
-      from.totalItems.filter((x) => !from.isSelected(x)),
+      from.totalItems.filter((item) => !from.isSelected(item)),
     ),
     to: new ListSelectionImpl([...from.selectedItems, ...to.totalItems]),
   });

@@ -155,7 +155,7 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
 
     // Filter out stats per thread
     const keys = Object.keys(cpuData);
-    const threads = keys.filter((n) => !Number.isNaN(parseFloat(n)));
+    const threads = keys.filter((cpuUpdateAttribute) => !Number.isNaN(parseFloat(cpuUpdateAttribute)));
 
     for (let i = 0; i < this.threadCount; i++) {
       usageColumn.push(parseInt(cpuData[i].usage.toFixed(1)));
@@ -200,7 +200,7 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
     this.tempMinThreads = [];
     this.tempMaxThreads = [];
     for (let t = 0; t < temps.length; t++) {
-      if (temps[t] == this.tempMin) {
+      if (temps[t] === this.tempMin) {
         this.tempMinThreads.push(Number(t.toFixed(0)));
       }
 
@@ -258,8 +258,8 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
 
       const options: ChartOptions = {
         events: ['mousemove', 'mouseout'],
-        onHover: (e: MouseEvent) => {
-          if (e.type === 'mouseout') {
+        onHover: (event: MouseEvent) => {
+          if (event.type === 'mouseout') {
             this.legendData = null;
             this.legendIndex = null;
           }

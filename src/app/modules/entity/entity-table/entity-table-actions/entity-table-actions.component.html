@@ -17,31 +17,36 @@
 
   <ng-container *ngIf="!isSingleAction && !inlineActions; else inlineActionsTemplate">
     <!-- Material Design Icon Set -->
-    <mat-icon
+    <button
+      class="transparent-btn"
+      [attr.aria-label]="'Actionable Options' | translate"
       *ngIf="icon_name.startsWith('mdi-')"
-      role="image" fontSet="mdi-set" [fontIcon]="icon_name"
-      [ix-auto]=""
-      ix-auto-type="options"
-      ix-auto-identifier="{{row[key_prop]}}"
-      id="{{row[entity?.conf?.rowIdentifier || 'name']}}_{{action}}_button"
       [matMenuTriggerFor]="appMenu"
-      [style.cursor]="'pointer'"
-      [style.font-size]="'24px'"
-      (click)="noPropogate($event)">
-    </mat-icon>
+      (click)="noPropagate($event)"
+    >
+      <mat-icon
+        role="image" fontSet="mdi-set" [fontIcon]="icon_name"
+        id="{{row[entity?.conf?.rowIdentifier || 'name']}}_{{action}}_button"
+        [style.cursor]="'pointer'"
+        [style.font-size]="'24px'"
+      ></mat-icon>
+    </button>
 
     <!-- Standard Material Icon Set -->
-    <mat-icon
+    <button
       *ngIf="!icon_name.startsWith('mdi-')"
-      [ix-auto]=""
-      ix-auto-type="options"
-      ix-auto-identifier="{{row[key_prop]}}"
-      id="{{row[entity?.conf?.rowIdentifier || 'name']}}_{{action}}_button"
+      class="transparent-btn"
+      [attr.aria-label]="'Actionable Options' | translate"
+      (click)="noPropagate($event)"
       [matMenuTriggerFor]="appMenu"
-      [style.cursor]="'pointer'"
-      (click)="noPropogate($event)">
-      {{icon_name}}
-    </mat-icon>
+    >
+      <mat-icon
+        id="{{row[entity?.conf?.rowIdentifier || 'name']}}_{{action}}_button"
+        [style.cursor]="'pointer'"
+      >
+        {{icon_name}}
+      </mat-icon>
+    </button>
 
     <mat-menu #appMenu="matMenu">
       <span *ngIf="!groups;else groupMenu">

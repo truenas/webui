@@ -76,10 +76,32 @@
             <td class="expansion-chevrons-column" (mouseover)="onHover($event, true)" (mouseout)="onHover($event, false)" [ngClass]="{'sticky-border-left': isTableOverflow()}" mat-cell *matCellDef="let element">
               <ng-container *ngIf="hasDetails() === true">
                 <ng-container *ngIf="element === expandedElement">
-                  <mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-chevron-up" (mouseover)="onHover($event,true)" (mouseout)="onHover($event,false)"></mat-icon>
+                  <button
+                    [attr.aria-label]="'Close expanded row' | translate" 
+                    class="transparent-btn"
+                  >
+                    <mat-icon 
+                      role="img" 
+                      fontSet="mdi-set" 
+                      fontIcon="mdi-chevron-up" 
+                      (mouseover)="onHover($event,true)" 
+                      (mouseout)="onHover($event,false)"
+                    ></mat-icon>
+                  </button>
                 </ng-container>
                 <ng-container *ngIf="element !== expandedElement">
-                  <mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-chevron-down" (mouseover)="onHover($event, true)" (mouseout)="onHover($event, false)"></mat-icon>
+                  <button
+                    [attr.aria-label]="'Expand row' | translate"
+                    class="transparent-btn"
+                  >
+                    <mat-icon
+                      role="img"
+                      fontSet="mdi-set"
+                      fontIcon="mdi-chevron-down" 
+                      (mouseover)="onHover($event, true)" 
+                      (mouseout)="onHover($event, false)"
+                    ></mat-icon>
+                  </button>
                 </ng-container>
               </ng-container>
             </td>

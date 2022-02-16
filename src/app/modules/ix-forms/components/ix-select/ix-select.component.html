@@ -17,7 +17,15 @@
       (blur)="onTouch()"
       (ngModelChange)="onChange($event)"
     >
-      <mat-option *ngFor="let option of options | async" [value]="option.value">{{option.label}}</mat-option>
+      <ng-container *ngIf="opts$ | async as opts; else loadingOrError">
+        <mat-option *ngFor="let option of opts$ | async" [value]="option.value">{{option.label}}</mat-option>
+      </ng-container>
+
+      <ng-template #loadingOrError>
+        <ng-container *ngIf="errorObject">
+          <mat-option [disabled]="true">{{'Options cannot be loaded' | translate}}</mat-option>
+        </ng-container>
+      </ng-template>
     </mat-select>
   </div>
   <ix-errors [control]="controlDirective.control" [label]="label"></ix-errors>

@@ -157,8 +157,8 @@ export class SupportComponent implements OnInit {
     this.modalService.openInSlideIn(ProactiveComponent);
   }
 
-  updateProductionStatus(e: MatCheckboxChange): void {
-    if (e.checked) {
+  updateProductionStatus(event: MatCheckboxChange): void {
+    if (event.checked) {
       this.dialog.dialogForm(this.updateProdStatusConf);
     } else {
       this.ws.call('truenas.set_production', [false, false]).pipe(untilDestroyed(this)).subscribe(() => {
