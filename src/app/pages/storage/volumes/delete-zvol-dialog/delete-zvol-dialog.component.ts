@@ -138,17 +138,11 @@ export class DeleteZvolDialogComponent implements OnInit {
     });
   }
 
-  // TODO: Consider extracting into a separate validator later.
   private setConfirmValidator(): void {
-    const validationMessage = this.translate.instant('Enter zvol name to continue.');
     this.form.controls['confirmZvolName'].setValidators([
-      this.validators.withMessage(
-        Validators.pattern(this.zvol.name),
-        { message: validationMessage, forProperty: 'pattern' },
-      ),
-      this.validators.withMessage(
-        Validators.required,
-        { message: validationMessage, forProperty: 'required' },
+      this.validators.confirmValidator(
+        this.zvol.name,
+        this.translate.instant('Enter zvol name to continue.'),
       ),
     ]);
   }
