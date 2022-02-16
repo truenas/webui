@@ -1,3 +1,8 @@
+.dialog-content {
+  max-height: 50vh;
+  overflow: auto !important;
+}
+
 :host {
   display: block;
   width: 400px;
