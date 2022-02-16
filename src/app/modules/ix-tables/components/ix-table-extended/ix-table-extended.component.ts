@@ -10,6 +10,7 @@ import { IxTableStatus } from 'app/modules/ix-tables/enums/ix-table-status.enum'
 @Component({
   selector: 'ix-table-extended',
   templateUrl: 'ix-table-extended.component.html',
+  styleUrls: ['ix-table-extended.component.scss'],
 })
 export class IxTableExtendedComponent implements AfterContentInit {
   @Input() dataSource: MatTableDataSource<unknown> = new MatTableDataSource([]);
