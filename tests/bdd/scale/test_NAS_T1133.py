@@ -2,7 +2,7 @@
 """SCALE UI: feature tests."""
 
 import time
-from selenium.webdriver.common.keys import Keys
+# from selenium.webdriver.common.keys import Keys
 from function import (
     wait_on_element,
     is_element_present,
@@ -23,6 +23,7 @@ from pytest_bdd import (
 @scenario('features/NAS-T1133.feature', 'Create a wheel group smb share and verify only wheel group can send file')
 def test_create_a_wheel_group_smb_share_and_verify_only_wheel_group_can_send_file():
     """Create a wheel group smb share and verify only wheel group can send file."""
+    pass
 
 
 @given('the browser is open, the FreeNAS URL and logged in')
@@ -47,38 +48,40 @@ def the_browser_is_open_the_freenas_url_and_logged_in(driver, nas_ip, root_passw
 @when('add the user to group root for later tests')
 def add_the_user_to_group_root_for_later_tests(driver):
     """add the user to group root for later tests."""
-    assert wait_on_element(driver, 10, '//span[contains(.,"Dashboard")]')
-    assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Credentials"]', 'clickable')
-    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Credentials"]').click()
-    assert wait_on_element(driver, 10, '//*[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Local Users"]', 'clickable')
-    driver.find_element_by_xpath('//*[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Local Users"]').click()
-    assert wait_on_element(driver, 10, '//div[contains(.,"Users")]')
-    assert wait_on_element(driver, 10, '//tr[contains(.,"ericbsd")]', 'clickable')
-    driver.find_element_by_xpath('//tr[contains(.,"ericbsd")]//mat-icon').click()
-    assert wait_on_element(driver, 10, '(//tr[contains(.,"ericbsd")]/following-sibling::tr)[1]//button[contains(.,"Edit")]', 'clickable')
-    driver.find_element_by_xpath('(//tr[contains(.,"ericbsd")]/following-sibling::tr)[1]//button[contains(.,"Edit")]').click()
-    assert wait_on_element(driver, 10, '//h3[contains(.,"Edit User")]')
-    element = driver.find_element_by_xpath('//label[contains(text(),"Auxiliary Groups")]')
-    driver.execute_script("arguments[0].scrollIntoView();", element)
-    time.sleep(0.5)
-    assert wait_on_element(driver, 10, '//mat-select[@ix-auto="select__Auxiliary Groups"]', 'clickable')
-    driver.find_element_by_xpath('//mat-select[@ix-auto="select__Auxiliary Groups"]').click()
-    assert wait_on_element(driver, 10, '//span[contains(.,"root")]')
-    element = driver.find_element_by_xpath('//span[contains(text(),"root")]')
-    driver.execute_script("arguments[0].scrollIntoView();", element)
-    driver.find_element_by_xpath('//mat-option[@ix-auto="option__Auxiliary Groups_root"]').click()
-    driver.find_element_by_xpath('//mat-option[@ix-auto="option__Auxiliary Groups_root"]').send_keys(Keys.TAB)
-    element = driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]')
-    driver.execute_script("arguments[0].scrollIntoView();", element)
-    assert wait_on_element(driver, 7, '//button[@ix-auto="button__SAVE"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
-    assert wait_on_element(driver, 5, '//h6[contains(.,"Please wait")]')
-    assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
+    # assert wait_on_element(driver, 10, '//span[contains(.,"Dashboard")]')
+    # assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Credentials"]', 'clickable')
+    # driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Credentials"]').click()
+    # assert wait_on_element(driver, 10, '//*[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Local Users"]', 'clickable')
+    # driver.find_element_by_xpath('//*[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Local Users"]').click()
+    # assert wait_on_element(driver, 10, '//div[contains(.,"Users")]')
+    # assert wait_on_element(driver, 10, '//tr[contains(.,"ericbsd")]', 'clickable')
+    # driver.find_element_by_xpath('//tr[contains(.,"ericbsd")]//mat-icon').click()
+    # assert wait_on_element(driver, 10, '(//tr[contains(.,"ericbsd")]/following-sibling::tr)[1]//button[contains(.,"Edit")]', 'clickable')
+    # driver.find_element_by_xpath('(//tr[contains(.,"ericbsd")]/following-sibling::tr)[1]//button[contains(.,"Edit")]').click()
+    # assert wait_on_element(driver, 10, '//h3[contains(.,"Edit User")]')
+    # element = driver.find_element_by_xpath('//label[contains(text(),"Auxiliary Groups")]')
+    # driver.execute_script("arguments[0].scrollIntoView();", element)
+    # time.sleep(0.5)
+    # assert wait_on_element(driver, 10, '//mat-select[@ix-auto="select__Auxiliary Groups"]', 'clickable')
+    # driver.find_element_by_xpath('//mat-select[@ix-auto="select__Auxiliary Groups"]').click()
+    # assert wait_on_element(driver, 10, '//span[contains(.,"root")]')
+    # element = driver.find_element_by_xpath('//span[contains(text(),"root")]')
+    # driver.execute_script("arguments[0].scrollIntoView();", element)
+    # driver.find_element_by_xpath('//mat-option[@ix-auto="option__Auxiliary Groups_root"]').click()
+    # driver.find_element_by_xpath('//mat-option[@ix-auto="option__Auxiliary Groups_root"]').send_keys(Keys.TAB)
+    # element = driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]')
+    # driver.execute_script("arguments[0].scrollIntoView();", element)
+    # assert wait_on_element(driver, 7, '//button[@ix-auto="button__SAVE"]', 'clickable')
+    # driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
+    # assert wait_on_element(driver, 5, '//h6[contains(.,"Please wait")]')
+    # assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
+    pass
 
 
 @then('The Windows Shares(SMB) page should open, Click Add')
 def the_windows_sharessmb_page_should_open_click_add(driver):
     """The Windows Shares(SMB) page should open, Click Add."""
+    assert wait_on_element(driver, 10, '//span[contains(.,"Dashboard")]')
     assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Shares"]', 'clickable')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Shares"]').click()
     assert wait_on_element(driver, 5, '//div[contains(.,"Shares")]')
