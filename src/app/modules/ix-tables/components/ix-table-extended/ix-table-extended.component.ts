@@ -17,19 +17,15 @@ export class IxTableExtendedComponent implements AfterContentInit {
   @Input() status: IxTableStatus;
   @Input() title = '';
 
-  loadingConf: EmptyConfig = {
+  @Input() loadingConf: EmptyConfig = {
     type: EmptyType.Loading,
     large: false,
     title: this.translate.instant('Loading...'),
   };
 
-  emptyConf: EmptyConfig = {
-    type: EmptyType.NoPageData,
-    large: true,
-    title: this.translate.instant('No {title} have been added yet', { title: this.title ? this.title : 'items' }),
-  };
+  @Input() emptyConf: EmptyConfig;
 
-  errorConf: EmptyConfig = {
+  @Input() errorConf: EmptyConfig = {
     type: EmptyType.Errors,
     large: true,
     title: this.translate.instant('Can not retrieve response'),
@@ -39,6 +35,13 @@ export class IxTableExtendedComponent implements AfterContentInit {
   @ContentChildren(MatColumnDef) columnDefs: QueryList<MatColumnDef>;
 
   ngAfterContentInit(): void {
+    if (!this.emptyConf) {
+      this.emptyConf = {
+        type: EmptyType.NoPageData,
+        large: true,
+        title: this.translate.instant('No {title} have been added yet', { title: this.title ? this.title : 'items' }),
+      };
+    }
     this.columnDefs.forEach((columnDef) => this.table.addColumnDef(columnDef));
   }
 

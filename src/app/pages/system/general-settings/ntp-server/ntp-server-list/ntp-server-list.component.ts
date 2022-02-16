@@ -6,7 +6,6 @@ import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { filter, switchMap } from 'rxjs/operators';
 import { NtpServer } from 'app/interfaces/ntp-server.interface';
-import { EmptyConfig, EmptyType } from 'app/modules/entity/entity-empty/entity-empty.component';
 import { IxTableStatus } from 'app/modules/ix-tables/enums/ix-table-status.enum';
 import { NtpServerFormComponent } from 'app/pages/system/general-settings/ntp-server/ntp-server-form/ntp-server-form.component';
 import { WebSocketService, DialogService } from 'app/services';
@@ -30,35 +29,8 @@ export class NtpServerListComponent implements OnInit {
     'maxpoll',
     'actions',
   ];
-  loading = false;
-  loadingConf: EmptyConfig = {
-    type: EmptyType.Loading,
-    large: false,
-    title: this.translate.instant('Loading...'),
-  };
-  emptyConf: EmptyConfig = {
-    type: EmptyType.NoPageData,
-    large: true,
-    title: this.translate.instant('No servers have been added yet'),
-  };
-  errorConf: EmptyConfig = {
-    type: EmptyType.Errors,
-    large: true,
-    title: this.translate.instant('Can not retrieve response'),
-  };
-  error = false;
 
   status: IxTableStatus = IxTableStatus.Loading;
-
-  get currentEmptyConf(): EmptyConfig {
-    if (this.loading) {
-      return this.loadingConf;
-    }
-    if (this.error) {
-      return this.errorConf;
-    }
-    return this.emptyConf;
-  }
 
   constructor(
     private ws: WebSocketService,
@@ -83,19 +55,15 @@ export class NtpServerListComponent implements OnInit {
   }
 
   getData(): void {
-    this.loading = true;
+    this.status = IxTableStatus.Loading;
 
     this.ws.call('system.ntpserver.query').pipe(
       untilDestroyed(this),
     ).subscribe((servers) => {
-      this.loading = false;
       this.status = IxTableStatus.Ready;
-      this.error = false;
       this.createDataSource(servers);
       this.cdr.markForCheck();
     }, () => {
-      this.loading = false;
-      this.error = true;
       this.status = IxTableStatus.Error;
       this.createDataSource();
       this.cdr.markForCheck();
