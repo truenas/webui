@@ -97,12 +97,15 @@ def sharename_should_be_added_start_service_if_its_not_running(driver, sharename
         assert wait_on_element(driver, 10, '//button[normalize-space(text())="Turn On Service"]', 'clickable')
         driver.find_element_by_xpath('//button[normalize-space(text())="Turn On Service"]').click()
         assert wait_on_element(driver, 20, '//mat-card[contains(.,"Windows (SMB) Shares")]//span[contains(.,"RUNNING")]')
+    # This sleep is to make sure that the NAS VM is ready for the step
+    time.sleep(2)
+
 
 @then(parsers.parse('Send a file to the share with nas_IP/"{smbname}" and "{user}" and "{password}"'))
 def send_a_file_to_the_share_with_nas_iperic_share_and_ericbsd_and_testing1234(driver, nas_ip, smbname, user, password):
     """Send a file to the share with nas_IP/"{smbname}" and "{user}" and "testing1234"."""
     run_cmd('touch testfile.txt')
-    results = run_cmd(f'smbclient //{nas_ip}/{smbname} -W AD01 -U {user}%{password} -c "put testfile.txt testfile.txt"')
+    results = run_cmd(f'smbclient //{nas_ip}/{smbname} -U {user}%{password} -c "put testfile.txt testfile.txt"')
     time.sleep(1)
     run_cmd('rm testfile.txt')
     assert results['result'], results['output']
@@ -122,7 +125,7 @@ def verify_that_the_is_on_nas_ip_with_root_and_password(driver, root_password, n
 def send_a_file_to_the_share_should_fail_with_nas_iperic_share_and_footesting(driver, smbname, user2, password2, nas_ip):
     """send a file to the share should fail with NAS IP/"{smbname}" and {user2}{password2}."""
     run_cmd('touch testfile2.txt')
-    results = run_cmd(f'smbclient //{nas_ip}/{smbname} -W AD01 -U {user2}%{password2} -c "put testfile2.txt testfile2.txt"')
+    results = run_cmd(f'smbclient //{nas_ip}/{smbname} -U {user2}%{password2} -c "put testfile2.txt testfile2.txt"')
     time.sleep(1)
     run_cmd('rm testfile2.txt')
     assert results['result'], results['output']
@@ -135,4 +138,4 @@ def verify_that_the_file_is_not_on_the_nas(driver, nas_ip, root_password):
     cmd = 'ls -la /mnt/tank/wheel_dataset/'
     results = ssh_cmd(cmd, 'root', root_password, nas_ip)
     assert results['result'], results['output']
-    assert 'testfile' in results['output'], results['output'] is False
+    assert 'testfile2' not in results['output'], results['output']
