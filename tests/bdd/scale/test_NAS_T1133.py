@@ -152,6 +152,8 @@ def smb_should_be_added(driver):
     value_exist = attribute_value_exist(driver, '//tr[contains(.,"SMB")]//mat-slide-toggle', 'class', 'mat-checked')
     if not value_exist:
         driver.find_element_by_xpath('//tr[contains(.,"SMB")]//mat-slide-toggle/label').click()
+    # This sleep is to make sure that the NAS VM is ready for the step
+    time.sleep(2)
 
 
 @then(parsers.parse('Send a file to the share with nas_ip/"{wheelshare}" and "{user}" and "{password}"'))
@@ -190,4 +192,4 @@ def verify_that_the_file_is_not_on_the_nas(driver, root_password, nas_ip):
     cmd = 'ls -la /mnt/tank/wheel_dataset/'
     results = ssh_cmd(cmd, 'root', root_password, nas_ip)
     assert results['result'], results['output']
-    assert 'testfile' in results['output'], results['output'] is False
+    assert 'testfile2' not in results['output'], results['output']
