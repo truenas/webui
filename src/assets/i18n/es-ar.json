@@ -2794,7 +2794,6 @@
   "Name of the room.": "Nombre de la habitación.",
   "Name of this SSH connection. SSH connection names  must be unique.": "Nombre de esta conexión SSH. Los nombres de conexión SSH deben ser únicos.",
   "Name of this replication configuration.": "Nombre de esta configuración de replicación.",
-  "Name or Naming Schema is required. Only one field can be used at a time.": "Se requiere nombre o esquema de nombres. Solo se puede usar un campo a la vez.",
   "Name or Naming Schema must be provided.": "Se debe proporcionar el nombre o el esquema de nombres.",
   "Name that was created with the SMB share.": "Nombre que se creó con el recurso compartido SMB.",
   "Nameserver 1": "Nombre de servidor 1",

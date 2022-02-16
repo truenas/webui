@@ -2186,7 +2186,6 @@
   "Name of the room.": "",
   "Name of this SSH connection. SSH connection names  must be unique.": "",
   "Name of this replication configuration.": "",
-  "Name or Naming Schema is required. Only one field can be used at a time.": "",
   "Name or Naming Schema must be provided.": "",
   "Name that was created with the SMB share.": "",
   "Nameserver (DHCP)": "",

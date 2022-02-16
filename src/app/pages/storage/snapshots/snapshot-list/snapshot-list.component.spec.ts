@@ -94,8 +94,8 @@ describe('SnapshotListComponent', () => {
 
     // sorted by snapshot.name
     const expectedRows = [
-      ['', 'test-dataset', 'second-snapshot', 'expand_more'],
-      ['', 'test-dataset', 'first-snapshot', 'expand_more'],
+      ['', 'test-dataset', 'second-snapshot', 'more_vert'],
+      ['', 'test-dataset', 'first-snapshot', 'more_vert'],
     ];
     const cells = await table.getCellsWithoutExpandedRows();
     expect(cells).toEqual(expectedRows);

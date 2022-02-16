@@ -3227,7 +3227,6 @@
   "Name of the room.": "Название комнаты.",
   "Name of this SSH connection. SSH connection names  must be unique.": "Имя этого соединения SSH. Имена соединений SSH должны быть уникальными.",
   "Name of this replication configuration.": "Имя этой конфигурации репликации.",
-  "Name or Naming Schema is required. Only one field can be used at a time.": "Требуется имя или схема именования. Только одно поле может быть использовано одновременно.",
   "Name or Naming Schema must be provided.": "Необходимо указать имя или схему именования.",
   "Nameserver 1": "Сервер имен 1",
   "Nameserver 2": "Сервер имен 2",

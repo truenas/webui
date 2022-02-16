@@ -26,7 +26,6 @@
     matSortDisableClear="true"
     [matSortActive]="defaultSort.active"
     [matSortDirection]="defaultSort.direction"
-    [multiTemplateDataRows]="true"
     [fixedLayout]="true"
   >
     <ix-checkbox-column [selection]="selection" [dataSource]="dataSource"></ix-checkbox-column>
@@ -43,11 +42,11 @@
 
     <ng-container matColumnDef="used">
       <th mat-header-cell *matHeaderCellDef mat-sort-header> {{ 'Used' | translate }} </th>
-      <td mat-cell *matCellDef="let snapshot; dataSource: dataSource">
-        <span *appLet="snapshot?.properties?.used?.parsed as used">
-          {{ used ? (used | filesize: { standard: "iec" }) : ('N/A' | translate) }}
-        </span>
-      </td>
+      <td mat-cell *matCellDef="let snapshot; dataSource: dataSource">{{
+        snapshot?.properties?.used?.parsed ?
+        (+snapshot.properties.used.parsed | filesize: { standard: "iec" }) :
+        ('N/A' | translate)
+      }}</td>
     </ng-container>
 
     <ng-container matColumnDef="created">
@@ -61,11 +60,11 @@
 
     <ng-container matColumnDef="referenced">
       <th mat-header-cell *matHeaderCellDef mat-sort-header> {{ 'Referenced' | translate }} </th>
-      <td mat-cell *matCellDef="let snapshot; dataSource: dataSource">
-        <span *appLet="snapshot?.properties?.referenced?.parsed as referenced">{{
-          referenced ? (referenced | filesize: { standard: "iec" }) : ('N/A' | translate)
-        }}</span>
-      </td>
+      <td mat-cell *matCellDef="let snapshot; dataSource: dataSource">{{
+        snapshot?.properties?.referenced?.parsed ?
+        (+snapshot.properties.referenced.parsed | filesize: { standard: "iec" }) :
+        ('N/A' | translate)
+      }}</td>
     </ng-container>
 
     <ng-container matColumnDef="actions">

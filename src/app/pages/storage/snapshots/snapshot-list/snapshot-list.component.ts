@@ -23,7 +23,6 @@ import { ZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
 import { EmptyConfig, EmptyType } from 'app/modules/entity/entity-empty/entity-empty.component';
 import { EntityToolbarComponent } from 'app/modules/entity/entity-toolbar/entity-toolbar.component';
 import { ToolbarConfig, ControlConfig } from 'app/modules/entity/entity-toolbar/models/control-config.interface';
-import { SnapshotAddComponent } from 'app/pages/storage/snapshots/snapshot-add/snapshot-add.component';
 import { SnapshotBatchDeleteDialogComponent } from 'app/pages/storage/snapshots/snapshot-batch-delete-dialog/snapshot-batch-delete-dialog.component';
 import { SnapshotCloneDialogComponent } from 'app/pages/storage/snapshots/snapshot-clone-dialog/snapshot-clone-dialog.component';
 import { SnapshotRollbackDialogComponent } from 'app/pages/storage/snapshots/snapshot-rollback-dialog/snapshot-rollback-dialog.component';
@@ -33,6 +32,8 @@ import {
   DialogService, ModalService, WebSocketService, AppLoaderService,
 } from 'app/services';
 import { CoreService } from 'app/services/core-service/core.service';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { SnapshotAddFormComponent } from '../snapshot-add-form/snapshot-add-form.component';
 import { showExtraColumnsPressed } from '../store/snapshot.actions';
 import { selectSnapshots, selectSnapshotState } from '../store/snapshot.selectors';
 
@@ -100,6 +101,7 @@ export class SnapshotListComponent implements OnInit {
     private loader: AppLoaderService,
     private matDialog: MatDialog,
     private store$: Store<SnapshotSlice>,
+    private slideIn: IxSlideInService,
   ) {
     if (window.localStorage.getItem('snapshotXtraCols') === 'true') {
       this.showExtraColumns$.next(true);
@@ -218,7 +220,7 @@ export class SnapshotListComponent implements OnInit {
   }
 
   doAdd(): void {
-    this.modalService.openInSlideIn(SnapshotAddComponent);
+    this.slideIn.open(SnapshotAddFormComponent);
   }
 
   doClone(snapshot: ZfsSnapshot): void {

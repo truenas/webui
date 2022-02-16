@@ -2294,7 +2294,6 @@
   "Name of the room.": "room名称。",
   "Name of this SSH connection. SSH connection names  must be unique.": "此SSH连接的名称。SSH连接名称必须唯一。",
   "Name of this replication configuration.": "此复制配置的名称。",
-  "Name or Naming Schema is required. Only one field can be used at a time.": "名称或命名惯例是必需的。一次只能使用一个字段。",
   "Name or Naming Schema must be provided.": "必须提供名称或命名惯例。",
   "Name that was created with the SMB share.": "用SMB共享创建的名称。",
   "Nameserver (DHCP)": "名称服务器 (DHCP)",
