@@ -1,6 +1,6 @@
 <div class="form-error" *ngIf="control.dirty || control.touched">
     <mat-error *ngIf="control.hasError('required') && !config.hideErrMsg">
-        {{config.placeholder}} {{" is required." | translate}}
+        {{config.label || config.placeholder}} {{" is required." | translate}}
     </mat-error>
     <mat-error *ngIf="control.hasError('minlength')">
         {{"The length of " | translate}} {{config.placeholder}} {{" should be at least " | translate}} {{control.errors.minlength.requiredLength}}
