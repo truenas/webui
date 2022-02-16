@@ -1253,6 +1253,7 @@
   "Must be part of a pool to check errors": "",
   "Must match Windows workgroup name.  When this is unconfigured and Active Directory or LDAP are active,  TrueNAS will detect and set the correct workgroup from these services.": "",
   "Mutual secret password. Required when Peer User is set. Must be different than the <i>Secret</i>.": "",
+  "N/A": "",
   "NAA": "",
   "NETBIOS-NS": "",
   "NFS": "",
