@@ -5,15 +5,13 @@ import time
 from function import (
     wait_on_element,
     is_element_present,
-    attribute_value_exist,
-    wait_on_element_disappear,
+    wait_on_element_disappear
 )
 from pytest_bdd import (
     given,
     scenario,
     then,
-    when,
-    parsers
+    when
 )
 import pytest
 pytestmark = [pytest.mark.debug_test]
@@ -75,12 +73,13 @@ def confirm_the_confirmation(driver):
     driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__CONFIRM"]').click()
     assert wait_on_element(driver, 10, '//button[@ix-auto="button__DELETE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__DELETE"]').click()
+    time.sleep(0.5)
+    assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
 
 
 @then('confirm deletion is successful')
 def confirm_deletion_is_successful(driver):
     """confirm deletion is successful."""
-    time.sleep(4) # Because of slow ui update times
     assert wait_on_element(driver, 10, '//div[contains(text(),"Installed Applications")]', 'clickable')
     driver.find_element_by_xpath('//div[contains(text(),"Installed Applications")]').click()
     assert wait_on_element(driver, 10, '//div[contains(text(),"Manage Catalogs")]', 'clickable')
