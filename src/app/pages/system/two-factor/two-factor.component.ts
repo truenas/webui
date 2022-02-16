@@ -129,7 +129,10 @@ export class TwoFactorComponent implements OnInit {
         message: helptext.two_factor.submitDialog.message,
         hideCheckBox: true,
         buttonMsg: helptext.two_factor.submitDialog.btn,
-      }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
+      }).pipe(untilDestroyed(this)).subscribe((res) => {
+        if (!res) {
+          return;
+        }
         this.intervalOnLoad = params.interval;
         this.digitsOnLoad = params.otp_digits;
         this.doSubmit(params, true);
@@ -183,7 +186,10 @@ export class TwoFactorComponent implements OnInit {
         message: helptext.two_factor.confirm_dialog.message,
         hideCheckBox: true,
         buttonMsg: helptext.two_factor.confirm_dialog.btn,
-      }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
+      }).pipe(untilDestroyed(this)).subscribe((res) => {
+        if (!res) {
+          return;
+        }
         this.isFormLoading = true;
 
         this.ws.call('auth.twofactor.update', [{ enabled: true }])
@@ -235,6 +241,7 @@ export class TwoFactorComponent implements OnInit {
         this.isFormLoading = false;
 
         this.form.controls.secret.setValue(config.secret);
+        this.cdr.markForCheck();
         this.secret = config.secret;
         this.getUri();
       }, (err) => {
@@ -252,6 +259,10 @@ export class TwoFactorComponent implements OnInit {
         this.isFormLoading = false;
 
         this.form.controls.uri.setValue(provisioningUri);
+        this.cdr.markForCheck();
+        if (this.secret) {
+          this.openQrDialog();
+        }
       }, (err) => {
         this.isFormLoading = false;
         this.dialogService.errorReport(helptext.two_factor.error,
