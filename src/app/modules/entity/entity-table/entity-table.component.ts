@@ -186,6 +186,23 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, A
       || (this.allColumns.length > 0 && this.conf.columns.length !== this.allColumns.length);
   };
 
+  resetColumns(): void {
+    this.displayedColumns = [];
+    this.allColumns = [];
+    this.alwaysDisplayedCols = [];
+    this.conf.columns.forEach((column) => {
+      this.displayedColumns.push(column.prop);
+      if (!column.always_display) {
+        this.allColumns.push(column); // Make array of optionally-displayed cols
+      } else {
+        this.alwaysDisplayedCols.push(column); // Make an array of required cols
+      }
+    });
+    this.columnFilter = this.conf.columnFilter === undefined ? true : this.conf.columnFilter;
+    // Remove any alwaysDisplayed cols from the official list
+    this.conf.columns = this.conf.columns.filter((column) => !column.always_display);
+  }
+
   isAllSelected = false;
   globalActionsInit = false;
 
@@ -1056,7 +1073,6 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, A
       this.conf.columns = [...this.conf.columns, columnToToggle];
     }
     this.selectColumnsToShowOrHide();
-    this.changeDetectorRef.detectChanges();
   }
 
   // Stores currently selected columns in preference service
@@ -1065,6 +1081,10 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, A
       title: this.title,
       cols: this.conf.columns as any,
     };
+
+    if (this.title === 'Users') {
+      this.conf.columns = this.dropLastMaxWidth();
+    }
 
     this.store$.pipe(select(selectPreferencesState), take(1), untilDestroyed(this)).subscribe((state) => {
       if (!state.areLoaded) {
@@ -1078,11 +1098,8 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, A
       preferredColumns.push(newColumnPreferences);
 
       this.store$.dispatch(preferredColumnsUpdated({ columns: preferredColumns }));
+      this.changeDetectorRef.detectChanges();
     });
-
-    if (this.title === 'Users') {
-      this.conf.columns = this.dropLastMaxWidth();
-    }
   }
 
   // resets col view to the default set in the table's component
@@ -1222,7 +1239,7 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, A
     this.store$.pipe(waitForPreferences, take(1), untilDestroyed(this)).subscribe((preferences) => {
       const preferredCols = preferences.tableDisplayedColumns || [];
       // Turn off preferred cols for snapshots to allow for two different column sets to be displayed
-      if (preferredCols.length < 0 && this.title === 'Snapshots') {
+      if (preferredCols.length < 0 || this.title === 'Snapshots') {
         return;
       }
 

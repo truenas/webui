@@ -17,6 +17,7 @@ import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.com
 import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-table.component';
 import {
   EntityTableAction,
+  EntityTableColumn,
   EntityTableConfig,
   EntityTableConfigConfig,
 } from 'app/modules/entity/entity-table/entity-table.interface';
@@ -70,22 +71,22 @@ export class SnapshotListComponent implements EntityTableConfig {
   rowDetailComponent: Type<SnapshotDetailsComponent>;
   snapshotXtraCols = false;
 
-  columns = [
-    { name: 'Dataset', prop: 'dataset' },
-    { name: 'Snapshot', prop: 'snapshot' },
+  columns: EntityTableColumn[] = [
+    { name: 'Dataset', prop: 'dataset', always_display: true },
+    { name: 'Snapshot', prop: 'snapshot', always_display: true },
     { name: 'Used', prop: 'used' },
     { name: 'Date Created', prop: 'created' },
     { name: 'Referenced', prop: 'referenced' },
   ];
 
-  columnsHide = [
-    { name: 'Dataset', prop: 'dataset' },
-    { name: 'Snapshot', prop: 'snapshot' },
+  columnsHide: EntityTableColumn[] = [
+    { name: 'Dataset', prop: 'dataset', always_display: true },
+    { name: 'Snapshot', prop: 'snapshot', always_display: true },
   ];
 
-  columnsShow = [
-    { name: 'Dataset', prop: 'dataset' },
-    { name: 'Snapshot', prop: 'snapshot' },
+  columnsShow: EntityTableColumn[] = [
+    { name: 'Dataset', prop: 'dataset', always_display: true },
+    { name: 'Snapshot', prop: 'snapshot', always_display: true },
     { name: 'Used', prop: 'used' },
     { name: 'Date Created', prop: 'created' },
     { name: 'Referenced', prop: 'referenced' },
@@ -186,6 +187,7 @@ export class SnapshotListComponent implements EntityTableConfig {
       this.columns = this.columnsHide.slice(0);
       this.snapshotXtraCols = false;
     }
+    this.entityList?.resetColumns();
   }
 
   resourceTransformIncomingRestData(rows: ZfsSnapshot[]): SnapshotListRow[] {

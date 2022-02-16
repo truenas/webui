@@ -19,6 +19,7 @@ export class EntityTableActionsComponent implements OnInit, OnChanges {
 
   actions: EntityTableAction[];
   showMenu = true;
+
   key_prop: string;
 
   get isSingleAction(): boolean {
