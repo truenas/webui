@@ -6,6 +6,7 @@ import { of, Subject } from 'rxjs';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { NtpServer } from 'app/interfaces/ntp-server.interface';
 import { EntityModule } from 'app/modules/entity/entity.module';
+import { IxTableStatus } from 'app/modules/ix-tables/enums/ix-table-status.enum';
 import { IxTableModule } from 'app/modules/ix-tables/ix-table.module';
 import { IxTableHarness } from 'app/modules/ix-tables/testing/ix-table.harness';
 import { NtpServerFormComponent } from 'app/pages/system/general-settings/ntp-server/ntp-server-form/ntp-server-form.component';
@@ -113,20 +114,18 @@ describe('NtpServerListComponent', () => {
   });
 
   it('should show empty message when loaded and datasource is empty', async () => {
-    spectator.fixture.componentInstance.loading = false;
-    spectator.fixture.componentInstance.error = false;
+    spectator.fixture.componentInstance.status = IxTableStatus.Empty;
     spectator.fixture.componentInstance.createDataSource();
     spectator.detectComponentChanges();
 
     const table = await loader.getHarness<IxTableHarness>(IxTableHarness);
     const text = await table.getCellTextByIndex();
 
-    expect(text).toEqual([['No servers have been added yet']]);
+    expect(text).toEqual([['No NTP Servers have been added yet']]);
   });
 
   it('should show error message when can not retrieve response', async () => {
-    spectator.fixture.componentInstance.loading = false;
-    spectator.fixture.componentInstance.error = true;
+    spectator.fixture.componentInstance.status = IxTableStatus.Error;
     spectator.fixture.componentInstance.createDataSource();
     spectator.detectComponentChanges();
 
