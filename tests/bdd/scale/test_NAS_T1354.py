@@ -74,14 +74,11 @@ def confirm_the_confirmation(driver):
     assert wait_on_element(driver, 10, '//button[@ix-auto="button__DELETE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__DELETE"]').click()
     time.sleep(0.5)
-    assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
+    assert wait_on_element_disappear(driver, 25, '//h6[contains(.,"Please wait")]')
 
 
 @then('confirm deletion is successful')
 def confirm_deletion_is_successful(driver):
     """confirm deletion is successful."""
-    assert wait_on_element(driver, 10, '//div[contains(text(),"Installed Applications")]', 'clickable')
-    driver.find_element_by_xpath('//div[contains(text(),"Installed Applications")]').click()
-    assert wait_on_element(driver, 10, '//div[contains(text(),"Manage Catalogs")]', 'clickable')
-    driver.find_element_by_xpath('//div[contains(text(),"Manage Catalogs")]').click()
-    assert is_element_present(driver, '//tr[contains(.,"TRUECHARTS")]') is False
+    assert wait_on_element_disappear(driver, 10, '//div[text()="TRUECHARTS"]')
+    assert is_element_present(driver, '//div[text()="TRUECHARTS"]') is False
