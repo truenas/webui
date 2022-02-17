@@ -84,6 +84,7 @@ describe('SnapshotAddFormComponent', () => {
     const form = await loader.getHarness(IxFormHarness);
     await form.fillForm({
       Dataset: 'APPS',
+      Name: null,
       'Naming Schema': '%Y %H %d %M %m',
     });
 

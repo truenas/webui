@@ -2,7 +2,10 @@ import { createEntityAdapter, EntityState } from '@ngrx/entity';
 import { createReducer, on } from '@ngrx/store';
 import { ZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
 import {
-  snapshotPageEntered, snapshotAdded, snapshotChanged, snapshotRemoved, snapshotsLoaded, snapshotsNotLoaded,
+  snapshotPageEntered,
+  snapshotAdded,
+  snapshotChanged, snapshotRemoved, snapshotsLoaded,
+  snapshotsNotLoaded,
 } from 'app/pages/storage/snapshots/store/snapshot.actions';
 
 export interface SnapshotsState extends EntityState<ZfsSnapshot> {

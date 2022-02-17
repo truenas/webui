@@ -27,5 +27,7 @@ export interface Preferences {
   hideBuiltinUsers: boolean;
   hideBuiltinGroups: boolean;
 
+  showSnapshotExtraColumns: boolean;
+
   rebootAfterManualUpdate: boolean;
 }

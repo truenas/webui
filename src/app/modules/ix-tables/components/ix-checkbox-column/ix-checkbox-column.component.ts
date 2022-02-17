@@ -51,8 +51,6 @@ export class IxCheckboxColumnComponent<T = unknown> implements OnInit, OnDestroy
       return;
     }
 
-    console.info('getPaged', this.getPageData());
-
     this.selection.select(...this.getPageData());
   }
 

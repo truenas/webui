@@ -10,17 +10,19 @@ import { CoreComponents } from 'app/core/core-components.module';
 import { FormatDateTimePipe } from 'app/core/pipes/format-datetime.pipe';
 import { MockWebsocketService } from 'app/core/testing/classes/mock-websocket.service';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { Preferences } from 'app/interfaces/preferences.interface';
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxTableModule } from 'app/modules/ix-tables/ix-table.module';
 import { IxTableHarness } from 'app/modules/ix-tables/testing/ix-table.harness';
-import { snapshotPageEntered } from 'app/pages/storage/snapshots/store/snapshot.actions';
 import { SnapshotEffects } from 'app/pages/storage/snapshots/store/snapshot.effects';
 import { adapter, snapshotReducer } from 'app/pages/storage/snapshots/store/snapshot.reducer';
 import { fakeZfsSnapshotDataSource } from 'app/pages/storage/snapshots/testing/snapshot-fake-datasource';
 import { DialogService, ModalService } from 'app/services';
+import { preferencesReducer, PreferencesState } from 'app/store/preferences/preferences.reducer';
+import { preferencesStateKey } from 'app/store/preferences/preferences.selectors';
 import { systemConfigReducer, SystemConfigState } from 'app/store/system-config/system-config.reducer';
 import { systemConfigStateKey } from 'app/store/system-config/system-config.selectors';
-import { snapshotsNotLoaded } from '../store/snapshot.actions';
+import { snapshotsNotLoaded, snapshotExtraColumnsPreferenceLoaded } from '../store/snapshot.actions';
 import { snapshotsInitialState } from '../store/snapshot.reducer';
 import { snapshotStateKey } from '../store/snapshot.selectors';
 import { SnapshotListComponent } from './snapshot-list.component';
@@ -39,6 +41,7 @@ describe('SnapshotListComponent', () => {
       StoreModule.forRoot({
         [snapshotStateKey]: snapshotReducer,
         [systemConfigStateKey]: systemConfigReducer,
+        [preferencesStateKey]: preferencesReducer,
       }, {
         initialState: {
           [snapshotStateKey]: adapter.setAll([...fakeZfsSnapshotDataSource], snapshotsInitialState),
@@ -47,6 +50,13 @@ describe('SnapshotListComponent', () => {
               timezone: 'America/Alaska',
             },
           } as SystemConfigState,
+          [preferencesStateKey]: {
+            areLoaded: true,
+            preferences: {
+              showSnapshotExtraColumns: false,
+              tableDisplayedColumns: [],
+            } as Preferences,
+          } as PreferencesState,
         },
       }),
       EffectsModule.forRoot([SnapshotEffects]),
@@ -83,7 +93,7 @@ describe('SnapshotListComponent', () => {
 
   it('should show table rows', async () => {
     spectator.inject(MockWebsocketService).mockCallOnce('zfs.snapshot.query', fakeZfsSnapshotDataSource);
-    spectator.inject(Store).dispatch(snapshotPageEntered({ extra: false }));
+    spectator.inject(Store).dispatch(snapshotExtraColumnsPreferenceLoaded({ extra: false }));
 
     const table = await loader.getHarness(IxTableHarness);
 
@@ -108,8 +118,7 @@ describe('SnapshotListComponent', () => {
 
   it('should show table with extra rows', async () => {
     spectator.inject(MockWebsocketService).mockCallOnce('zfs.snapshot.query', fakeZfsSnapshotDataSource);
-    spectator.inject(Store).dispatch(snapshotPageEntered({ extra: true }));
-    spectator.fixture.componentInstance.showExtraColumns$.next(true);
+    spectator.inject(Store).dispatch(snapshotExtraColumnsPreferenceLoaded({ extra: true }));
 
     const table = await loader.getHarness(IxTableHarness);
 
@@ -133,7 +142,7 @@ describe('SnapshotListComponent', () => {
 
   it('should have empty message when loaded and datasource is empty', async () => {
     spectator.inject(MockWebsocketService).mockCallOnce('zfs.snapshot.query', []);
-    spectator.inject(Store).dispatch(snapshotPageEntered({ extra: false }));
+    spectator.inject(Store).dispatch(snapshotExtraColumnsPreferenceLoaded({ extra: false }));
 
     const table = await loader.getHarness(IxTableHarness);
     const text = await table.getCellTextByIndex();

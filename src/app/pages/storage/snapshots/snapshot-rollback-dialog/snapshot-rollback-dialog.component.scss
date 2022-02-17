@@ -11,7 +11,13 @@
 
 .form-buttons {
   display: flex;
+  flex: 1;
   flex-direction: row-reverse;
+
+  a,
+  button {
+    margin-left: 10px;
+  }
 }
 
 .form-actions {
@@ -20,8 +26,4 @@
   display: flex;
   justify-content: space-between;
   padding-top: 16px;
-
-  button {
-    margin-left: 10px;
-  }
 }

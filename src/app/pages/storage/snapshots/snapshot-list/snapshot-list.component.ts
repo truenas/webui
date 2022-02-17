@@ -6,18 +6,19 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatSort, Sort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
-import { Store } from '@ngrx/store';
+import { select, Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import {
-  Subject, BehaviorSubject, combineLatest, of, EMPTY, Observable,
+  Subject, combineLatest, of, Observable,
 } from 'rxjs';
 import {
-  filter, map, switchMap, tap,
+  filter, map, switchMap, take, tap,
 } from 'rxjs/operators';
 import { FormatDateTimePipe } from 'app/core/pipes/format-datetime.pipe';
 import helptext from 'app/helptext/storage/snapshots/snapshots';
 import { ConfirmOptions } from 'app/interfaces/dialog.interface';
 import { CoreEvent } from 'app/interfaces/events';
+import { TableDisplayedColumns } from 'app/interfaces/preferences.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { ZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
 import { EmptyConfig, EmptyType } from 'app/modules/entity/entity-empty/entity-empty.component';
@@ -26,15 +27,17 @@ import { ToolbarConfig, ControlConfig } from 'app/modules/entity/entity-toolbar/
 import { SnapshotBatchDeleteDialogComponent } from 'app/pages/storage/snapshots/snapshot-batch-delete-dialog/snapshot-batch-delete-dialog.component';
 import { SnapshotCloneDialogComponent } from 'app/pages/storage/snapshots/snapshot-clone-dialog/snapshot-clone-dialog.component';
 import { SnapshotRollbackDialogComponent } from 'app/pages/storage/snapshots/snapshot-rollback-dialog/snapshot-rollback-dialog.component';
-import { snapshotPageEntered } from 'app/pages/storage/snapshots/store/snapshot.actions';
-import { selectSnapshotsTotal, SnapshotSlice } from 'app/pages/storage/snapshots/store/snapshot.selectors';
+import { snapshotExtraColumnsPreferenceLoaded, snapshotPageEntered } from 'app/pages/storage/snapshots/store/snapshot.actions';
+import { selectSnapshotsTotal } from 'app/pages/storage/snapshots/store/snapshot.selectors';
 import {
   DialogService, ModalService, WebSocketService, AppLoaderService,
 } from 'app/services';
 import { CoreService } from 'app/services/core-service/core.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { AppState } from 'app/store';
+import { preferredColumnsUpdated, snapshotExtraColumnsToggled } from 'app/store/preferences/preferences.actions';
+import { selectPreferencesState, waitForPreferences } from 'app/store/preferences/preferences.selectors';
 import { SnapshotAddFormComponent } from '../snapshot-add-form/snapshot-add-form.component';
-import { showExtraColumnsPressed } from '../store/snapshot.actions';
 import { selectSnapshots, selectSnapshotState } from '../store/snapshot.selectors';
 
 @UntilDestroy()
@@ -48,13 +51,13 @@ export class SnapshotListComponent implements OnInit {
   error$ = this.store$.select(selectSnapshotState).pipe(map((state) => state.error));
   isLoading$ = this.store$.select(selectSnapshotState).pipe(map((state) => state.isLoading));
   isEmpty$ = this.store$.select(selectSnapshotsTotal).pipe(map((total) => total === 0));
+  showExtraColumns: boolean;
   @ViewChild(MatSort, { static: false }) sort: MatSort;
   dataSource: MatTableDataSource<ZfsSnapshot> = new MatTableDataSource([]);
   defaultSort: Sort = { active: 'snapshot', direction: 'desc' };
   filterString = '';
   selection = new SelectionModel(true, []);
-  settingsEvent$: Subject<CoreEvent> = new Subject();
-  showExtraColumns$ = new BehaviorSubject(false);
+  toolbarEvent$: Subject<CoreEvent> = new Subject();
   toolbarConfig: ToolbarConfig;
   emptyConfig: EmptyConfig = {
     type: EmptyType.NoPageData,
@@ -71,25 +74,20 @@ export class SnapshotListComponent implements OnInit {
     large: true,
     title: this.translate.instant('Snapshots could not be loaded'),
   };
-
   emptyOrErrorConfig$: Observable<EmptyConfig> = combineLatest([this.isEmpty$, this.error$]).pipe(
-    switchMap(([isEmpty, isError]) => {
+    switchMap(([isError]) => {
       if (isError) {
         return of(this.errorConfig);
       }
-      if (isEmpty) {
-        return of(this.emptyConfig);
-      }
-      return EMPTY;
+
+      return of(this.emptyConfig);
     }),
   );
-
-  get displayedColumns(): string[] {
-    if (this.showExtraColumns$.value) {
-      return ['select', 'dataset', 'snapshot', 'used', 'created', 'referenced', 'actions'];
-    }
-    return ['select', 'dataset', 'snapshot', 'actions'];
-  }
+  snapshotPreferredColumnsKey = 'snapshot-list';
+  readonly defaultColumns: string[] = ['select', 'dataset', 'snapshot', 'actions'];
+  readonly defaultExtraColumns: string[] = ['select', 'dataset', 'snapshot', 'used', 'created', 'referenced', 'actions'];
+  displayedColumns: string[];
+  firstUse = true;
 
   constructor(
     private dialogService: DialogService,
@@ -100,18 +98,44 @@ export class SnapshotListComponent implements OnInit {
     private core: CoreService,
     private loader: AppLoaderService,
     private matDialog: MatDialog,
-    private store$: Store<SnapshotSlice>,
+    private store$: Store<AppState>,
     private slideIn: IxSlideInService,
-  ) {
-    if (window.localStorage.getItem('snapshotXtraCols') === 'true') {
-      this.showExtraColumns$.next(true);
-    }
-  }
+  ) {}
 
   ngOnInit(): void {
-    this.store$.dispatch(snapshotPageEntered({ extra: this.showExtraColumns$.value }));
-    this.setupToolbar();
+    this.store$.dispatch(snapshotPageEntered());
+    this.loadPreferredColumns();
     this.getSnapshots();
+  }
+
+  selectColumnsToShow(): void {
+    this.store$.pipe(
+      select(selectPreferencesState),
+      take(1),
+      untilDestroyed(this),
+    ).subscribe((state) => {
+      if (!state.areLoaded) {
+        return;
+      }
+      this.store$.dispatch(snapshotPageEntered());
+      this.showExtraColumns = state.preferences.showSnapshotExtraColumns;
+      this.displayedColumns = this.showExtraColumns ? this.defaultExtraColumns : this.defaultColumns;
+
+      const newColumnPreferences: TableDisplayedColumns = {
+        title: this.snapshotPreferredColumnsKey,
+        cols: this.displayedColumns.map((name) => ({ name })),
+      } as TableDisplayedColumns;
+      const existingPreferredColumns = state.preferences.tableDisplayedColumns || [];
+      const preferredColumns = existingPreferredColumns.filter((column) => {
+        return this.snapshotPreferredColumnsKey !== column.title;
+      });
+      preferredColumns.push(newColumnPreferences);
+
+      this.setupToolbar();
+      this.store$.dispatch(preferredColumnsUpdated({ columns: preferredColumns }));
+      this.store$.dispatch(snapshotExtraColumnsPreferenceLoaded({ extra: this.showExtraColumns }));
+      this.cdr.markForCheck();
+    });
   }
 
   getSnapshots(): void {
@@ -127,7 +151,7 @@ export class SnapshotListComponent implements OnInit {
   }
 
   getConfirmOptions(): ConfirmOptions {
-    if (this.showExtraColumns$.value) {
+    if (this.showExtraColumns) {
       return {
         title: this.translate.instant(helptext.extra_cols.title_hide),
         message: this.translate.instant(helptext.extra_cols.message_hide),
@@ -147,23 +171,21 @@ export class SnapshotListComponent implements OnInit {
   createDataSource(snapshots: ZfsSnapshot[] = []): void {
     this.dataSource = new MatTableDataSource(snapshots);
     this.dataSource.sort = this.sort;
+    if (this.filterString) {
+      this.dataSource.filter = this.filterString;
+    }
+    this.selection.clear();
   }
 
-  toggleExtraColumnsDialog(): void {
-    this.showExtraColumns$.next(!this.showExtraColumns$.value);
-    window.localStorage.setItem('snapshotXtraCols', this.showExtraColumns$.value.toString());
-    if (this.showExtraColumns$.value) {
-      this.store$.dispatch(snapshotPageEntered({ extra: true }));
-    }
-    this.getSnapshots();
-    this.selection.clear();
-    const slideToggleControl = this.toolbarConfig.controls.find((control) => control.name === 'extra-columns');
-    slideToggleControl.confirmOptions = this.getConfirmOptions();
+  toggleExtraColumns(): void {
+    this.store$.dispatch(snapshotExtraColumnsToggled());
+    this.selectColumnsToShow();
     this.cdr.markForCheck();
   }
 
-  setupToolbar(): void {
-    this.settingsEvent$.pipe(
+  getToolbarEvents(): void {
+    this.toolbarEvent$ = new Subject();
+    this.toolbarEvent$.pipe(
       untilDestroyed(this),
     ).subscribe((event: CoreEvent) => {
       switch (event.data.event_control) {
@@ -175,20 +197,21 @@ export class SnapshotListComponent implements OnInit {
           this.doAdd();
           break;
         case 'extra-columns':
-          this.store$.dispatch(showExtraColumnsPressed());
-          this.toggleExtraColumnsDialog();
+          this.toggleExtraColumns();
           break;
         default:
           break;
       }
     });
-
+  }
+  setupToolbar(): void {
+    this.getToolbarEvents();
     const controls: ControlConfig[] = [
       {
         name: 'extra-columns',
         type: 'slide-toggle',
         label: this.translate.instant('Show extra columns'),
-        value: this.showExtraColumns$.value,
+        value: this.showExtraColumns,
         confirmOptions: this.getConfirmOptions(),
       },
       {
@@ -207,7 +230,7 @@ export class SnapshotListComponent implements OnInit {
     ];
 
     const toolbarConfig: ToolbarConfig = {
-      target: this.settingsEvent$,
+      target: this.toolbarEvent$,
       controls,
     };
     const settingsConfig = {
@@ -263,6 +286,21 @@ export class SnapshotListComponent implements OnInit {
     ).subscribe(() => {
       this.selection.clear();
       this.cdr.markForCheck();
+    });
+  }
+
+  private loadPreferredColumns(): void {
+    this.store$.pipe(waitForPreferences, take(1), untilDestroyed(this)).subscribe((preferences) => {
+      const preferredCols = preferences.tableDisplayedColumns || [];
+
+      preferredCols.forEach((column) => {
+        if (column.title === this.snapshotPreferredColumnsKey) {
+          this.firstUse = false;
+          this.displayedColumns = column.cols.map((item) => item.name);
+        }
+      });
+
+      this.selectColumnsToShow();
     });
   }
 }
