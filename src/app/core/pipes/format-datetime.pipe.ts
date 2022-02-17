@@ -46,6 +46,8 @@ export class FormatDateTimePipe implements PipeTransform {
       localDate = utcToZonedTime(date.valueOf(), this.timezone);
     }
 
+    // Reason for below repalcements: https://github.com/date-fns/date-fns/blob/master/docs/unicodeTokens.md
+    this.dateFormat = this.dateFormat.replace('YYYY', 'yyyy').replace('DD', 'dd');
     return format(localDate, `${this.dateFormat} ${this.timeFormat}`);
   }
 }
