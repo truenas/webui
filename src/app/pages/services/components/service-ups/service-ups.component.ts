@@ -291,6 +291,13 @@ export class ServiceUPSComponent {
       generalSet.config.find((conf) => conf.name === 'remotehost').isHidden = res === 'MASTER';
       generalSet.config.find((conf) => conf.name === 'remoteport').isHidden = res === 'MASTER';
       generalSet.config.find((conf) => conf.name === 'driver').isHidden = res === 'SLAVE';
+      if (res === 'MASTER') {
+        entityForm.formGroup.controls['port'].setValidators(helptext.ups_port_validation);
+        generalSet.config.find((conf) => conf.name === 'port').required = true;
+      } else {
+        entityForm.formGroup.controls['port'].clearValidators();
+        generalSet.config.find((conf) => conf.name === 'port').required = false;
+      }
     });
   }
 
