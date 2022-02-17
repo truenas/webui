@@ -46,25 +46,25 @@ export class LocalizationFormComponent {
     label: string;
     tooltip: string;
     provider: IxComboboxProvider;
-    languageOptions: Option[];
+    options: Option[];
   } = {
     fcName: 'language',
     label: helptext.stg_language.placeholder,
     tooltip: helptext.stg_language.tooltip,
-    languageOptions: null,
+    options: null,
     provider: {
       fetch: (search: string): Observable<Option[]> => {
-        if (this.language.languageOptions && this.language.languageOptions.length) {
+        if (this.language.options && this.language.options.length) {
           if (search) {
-            return of(this.language.languageOptions.filter((option: Option) => {
+            return of(this.language.options.filter((option: Option) => {
               return option.label.toLowerCase().includes(search.toLowerCase())
                   || option.value.toString().toLowerCase().includes(search.toLowerCase());
             }));
           }
-          return of([...this.language.languageOptions]);
+          return of([...this.language.options]);
         }
         return this.sysGeneralService.languageOptions(this.sortLanguagesByName).pipe(tap((options: Option[]) => {
-          this.language.languageOptions = options;
+          this.language.options = options;
         }));
       },
       nextPage: (): Observable<Option[]> => {
@@ -89,14 +89,32 @@ export class LocalizationFormComponent {
     readonly fcName: 'timezone';
     label: string;
     tooltip: string;
-    options: Observable<Option[]>;
+    options: Option[];
+    provider: IxComboboxProvider;
   } = {
     fcName: 'timezone',
     label: helptext.stg_timezone.placeholder,
     tooltip: helptext.stg_timezone.tooltip,
-    options: this.sysGeneralService.timezoneChoices().pipe(
-      map((tzChoices) => _.sortBy(tzChoices, [(option) => option.label.toLowerCase()])),
-    ),
+    options: null,
+    provider: {
+      fetch: (search: string): Observable<Option[]> => {
+        if (this.timezone.options && this.timezone.options.length) {
+          if (search) {
+            return of(this.timezone.options.filter((option: Option) => {
+              return option.label.toLowerCase().includes(search.toLowerCase())
+                  || option.value.toString().toLowerCase().includes(search.toLowerCase());
+            }));
+          }
+          return of([...this.timezone.options]);
+        }
+        return this.sysGeneralService.timezoneChoices().pipe(
+          map((tzChoices) => _.sortBy(tzChoices, [(option) => option.label.toLowerCase()])),
+        );
+      },
+      nextPage: (): Observable<Option[]> => {
+        return of([]);
+      },
+    },
   };
 
   dateFormat: {

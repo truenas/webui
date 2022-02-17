@@ -18,12 +18,12 @@
           [options]="kbdMap.options"
           [formControlName]="kbdMap.fcName"
         ></ix-select>
-        <ix-combobox
+        <ix-combobox2
           [formControlName]="timezone.fcName"
           [label]="timezone.label"
           [tooltip]="timezone.tooltip"
-          [options]="timezone.options"
-        ></ix-combobox>
+          [provider]="timezone.provider"
+        ></ix-combobox2>
         <ix-select
           [label]="dateFormat.label"
           [tooltip]="dateFormat.tooltip"
