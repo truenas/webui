@@ -10,6 +10,7 @@ import { CommonDirectivesModule } from 'app/directives/common/common-directives.
 import { IxCheckboxComponent } from 'app/modules/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxChipsComponent } from 'app/modules/ix-forms/components/ix-chips/ix-chips.component';
 import { IxComboboxComponent } from 'app/modules/ix-forms/components/ix-combobox/ix-combobox.component';
+import { IxCombobox2Component } from 'app/modules/ix-forms/components/ix-combobox2/ix-combobox2.component';
 import { IxErrorsComponent } from 'app/modules/ix-forms/components/ix-errors/ix-errors.component';
 import { IxExplorerComponent } from 'app/modules/ix-forms/components/ix-explorer/ix-explorer.component';
 import { IxFieldsetComponent } from 'app/modules/ix-forms/components/ix-fieldset/ix-fieldset.component';
@@ -52,6 +53,7 @@ import { EnclosureModule } from 'app/pages/system/view-enclosure/enclosure.modul
     IxCheckboxComponent,
     IxUserComboboxComponent,
     IxTextareaComponent,
+    IxCombobox2Component,
     IxChipsComponent,
     IxExplorerComponent,
     IxFileInputComponent,
@@ -70,6 +72,7 @@ import { EnclosureModule } from 'app/pages/system/view-enclosure/enclosure.modul
     IxCheckboxComponent,
     IxTextareaComponent,
     IxChipsComponent,
+    IxCombobox2Component,
     IxExplorerComponent,
     IxFileInputComponent,
     IxSlideToggleComponent,

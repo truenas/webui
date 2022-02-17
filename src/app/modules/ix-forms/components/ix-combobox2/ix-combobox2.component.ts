@@ -48,7 +48,6 @@ export class IxCombobox2Component implements ControlValueAccessor, OnInit {
   isDisabled = false;
   filterValue: string;
   selectedOption: Option = null;
-  syncOptions: Option[];
 
   onChange: (value: string | number) => void = (): void => {};
   onTouch: () => void = (): void => {};
@@ -63,8 +62,8 @@ export class IxCombobox2Component implements ControlValueAccessor, OnInit {
 
   writeValue(value: string | number): void {
     this.value = value;
-    if (this.value && this.syncOptions) {
-      this.selectedOption = { ...(this.syncOptions.find((option: Option) => option.value === this.value)) };
+    if (this.value && this.options && this.options.length) {
+      this.selectedOption = { ...(this.options.find((option: Option) => option.value === this.value)) };
     }
     if (this.selectedOption) {
       this.filterChanged$.next('');
@@ -91,11 +90,11 @@ export class IxCombobox2Component implements ControlValueAccessor, OnInit {
   filterOptions(filterValue: string): void {
     this.loading = this.filterValue !== '';
     this.cdr.markForCheck();
-    this.provider.fetch(filterValue).pipe(untilDestroyed(this)).subscribe((options: Option[]) => {
+    this.provider?.fetch(filterValue).pipe(untilDestroyed(this)).subscribe((options: Option[]) => {
       this.loading = false;
       this.options = options;
       if (!this.selectedOption && this.value !== null && this.value !== '') {
-        const setOption = this.syncOptions.find((option: Option) => option.value === this.value);
+        const setOption = this.options.find((option: Option) => option.value === this.value);
         if (setOption) {
           this.selectedOption = setOption ? { ...setOption } : null;
           if (this.selectedOption) {
@@ -126,7 +125,7 @@ export class IxCombobox2Component implements ControlValueAccessor, OnInit {
             if (atBottom) {
               this.loading = true;
               this.cdr.markForCheck();
-              this.provider.nextPage(this.filterValue !== null || this.filterValue !== undefined ? this.filterValue : '')
+              this.provider?.nextPage(this.filterValue !== null || this.filterValue !== undefined ? this.filterValue : '')
                 .pipe(untilDestroyed(this)).subscribe((options: Option[]) => {
                   this.loading = false;
                   this.options.push(...options);

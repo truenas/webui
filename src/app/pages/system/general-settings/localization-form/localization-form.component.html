@@ -5,13 +5,13 @@
       <ix-fieldset
         [title]="fieldsetTitle"
       >
-        <ix-combobox
+        <ix-combobox2
           [formControlName]="language.fcName"
           [label]="language.label"
           [tooltip]="language.tooltip"
-          [options]="language.options"
+          [provider]="language.provider"
         >
-        </ix-combobox>
+        </ix-combobox2>
         <ix-select
           [label]="kbdMap.label"
           [tooltip]="kbdMap.tooltip"

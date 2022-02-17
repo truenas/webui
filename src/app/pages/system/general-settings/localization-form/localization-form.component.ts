@@ -6,10 +6,11 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import _ from 'lodash';
 import { Observable, of } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { map, tap } from 'rxjs/operators';
 import { helptextSystemGeneral as helptext } from 'app/helptext/system/general';
 import { LocalizationSettings } from 'app/interfaces/localization-settings.interface';
 import { Option } from 'app/interfaces/option.interface';
+import { IxComboboxProvider } from 'app/modules/ix-forms/components/ix-combobox2/ix-combobox-provider';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { LanguageService, SystemGeneralService, WebSocketService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
@@ -44,12 +45,32 @@ export class LocalizationFormComponent {
     readonly fcName: 'language';
     label: string;
     tooltip: string;
-    options: Observable<Option[]>;
+    provider: IxComboboxProvider;
+    languageOptions: Option[];
   } = {
     fcName: 'language',
     label: helptext.stg_language.placeholder,
     tooltip: helptext.stg_language.tooltip,
-    options: this.sysGeneralService.languageOptions(this.sortLanguagesByName),
+    languageOptions: null,
+    provider: {
+      fetch: (search: string): Observable<Option[]> => {
+        if (this.language.languageOptions && this.language.languageOptions.length) {
+          if (search) {
+            return of(this.language.languageOptions.filter((option: Option) => {
+              return option.label.toLowerCase().includes(search.toLowerCase())
+                  || option.value.toString().toLowerCase().includes(search.toLowerCase());
+            }));
+          }
+          return of([...this.language.languageOptions]);
+        }
+        return this.sysGeneralService.languageOptions(this.sortLanguagesByName).pipe(tap((options: Option[]) => {
+          this.language.languageOptions = options;
+        }));
+      },
+      nextPage: (): Observable<Option[]> => {
+        return of([]);
+      },
+    },
   };
 
   kbdMap: {
