@@ -55,17 +55,16 @@ export class LocalizationFormComponent {
     provider: {
       fetch: (search: string): Observable<Option[]> => {
         if (this.language.options && this.language.options.length) {
-          if (search) {
-            return of(this.language.options.filter((option: Option) => {
-              return option.label.toLowerCase().includes(search.toLowerCase())
-                  || option.value.toString().toLowerCase().includes(search.toLowerCase());
-            }));
-          }
-          return of([...this.language.options]);
+          return of(this.filter(this.language.options, search));
         }
-        return this.sysGeneralService.languageOptions(this.sortLanguagesByName).pipe(tap((options: Option[]) => {
-          this.language.options = options;
-        }));
+        return this.sysGeneralService.languageOptions(this.sortLanguagesByName).pipe(
+          tap((options: Option[]) => {
+            this.language.options = options;
+          }),
+          map((options: Option[]) => {
+            return this.filter(options, search);
+          }),
+        );
       },
       nextPage: (): Observable<Option[]> => {
         return of([]);
@@ -99,16 +98,12 @@ export class LocalizationFormComponent {
     provider: {
       fetch: (search: string): Observable<Option[]> => {
         if (this.timezone.options && this.timezone.options.length) {
-          if (search) {
-            return of(this.timezone.options.filter((option: Option) => {
-              return option.label.toLowerCase().includes(search.toLowerCase())
-                  || option.value.toString().toLowerCase().includes(search.toLowerCase());
-            }));
-          }
-          return of([...this.timezone.options]);
+          return of(this.filter(this.timezone.options, search));
         }
         return this.sysGeneralService.timezoneChoices().pipe(
           map((tzChoices) => _.sortBy(tzChoices, [(option) => option.label.toLowerCase()])),
+          tap((options: Option[]) => this.timezone.options = options),
+          map((options: Option[]) => this.filter(options, search)),
         );
       },
       nextPage: (): Observable<Option[]> => {
@@ -116,6 +111,19 @@ export class LocalizationFormComponent {
       },
     },
   };
+
+  filter(options: Option[], search: string): Option[] {
+    if (options && options.length) {
+      if (search) {
+        return options.filter((option: Option) => {
+          return option.label.toLowerCase().includes(search.toLowerCase())
+              || option.value.toString().toLowerCase().includes(search.toLowerCase());
+        });
+      }
+      return [...options];
+    }
+    return [];
+  }
 
   dateFormat: {
     readonly fcName: 'date_format';
