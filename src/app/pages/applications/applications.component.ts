@@ -236,7 +236,7 @@ export class ApplicationsComponent implements OnInit, AfterViewInit {
       this.catalogTab.loadCatalogs();
     } else if (this.selectedTab === ApplicationTab.Catalogs) {
       this.manageCatalogTab.refresh();
-    } else if (this.selectedTab == ApplicationTab.DockerImages) {
+    } else if (this.selectedTab === ApplicationTab.DockerImages) {
       this.dockerImagesTab.refresh();
     }
   }

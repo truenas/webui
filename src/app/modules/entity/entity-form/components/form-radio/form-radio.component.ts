@@ -46,7 +46,7 @@ export class FormRadioComponent implements Field, OnInit, OnDestroy {
   }
 
   onChangeRadio($event: MatRadioChange): void {
-    if (this.config.onChange !== undefined && this.config.onChange != null) {
+    if (this.config.onChange !== undefined && this.config.onChange !== null) {
       this.config.onChange({ event: $event });
     }
   }

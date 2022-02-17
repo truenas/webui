@@ -37,7 +37,6 @@ describe('IxDropGridDirective', () => {
         resolveComponentFactory: jest.fn(),
       }),
     ],
-    entryComponents: [IxDropGridPlaceholderComponent],
   });
 
   function setupMocks(spectator: SpectatorDirective<IxDropGridDirective>): void {

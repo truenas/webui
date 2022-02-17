@@ -1,3 +1,4 @@
+import { DashConfigItem } from 'app/pages/dashboard/components/widget-controller/widget-controller.component';
 import { Preferences } from './preferences.interface';
 
 export interface User {
@@ -17,7 +18,10 @@ export interface User {
   sudo_nopasswd: boolean;
   sudo_commands: string[];
   microsoft_account: boolean;
-  attributes: { preferences: Preferences };
+  attributes: {
+    preferences: Preferences;
+    dashState: DashConfigItem[];
+  };
   email: string;
   group: UserGroup;
   groups: number[];

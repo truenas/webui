@@ -280,9 +280,9 @@ export class PodLogsComponent implements OnInit, OnDestroy {
             this.storageService.downloadBlob(file, fileName);
           }
         });
-    }, (e) => {
+    }, (error) => {
       this.loader.close();
-      new EntityUtils().handleWsError(this, e, this.dialogService);
+      new EntityUtils().handleWsError(this, error, this.dialogService);
     });
   }
 

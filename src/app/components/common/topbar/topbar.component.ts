@@ -8,17 +8,15 @@ import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
-import { Subject, Subscription } from 'rxjs';
+import { Subscription } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { DirectoryServiceState } from 'app/enums/directory-service-state.enum';
 import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { PoolScanState } from 'app/enums/pool-scan-state.enum';
 import { ProductType } from 'app/enums/product-type.enum';
-import { TrueCommandStatus } from 'app/enums/true-command-status.enum';
 import network_interfaces_helptext from 'app/helptext/network/interfaces/interfaces-list';
 import helptext from 'app/helptext/topbar';
-import { CoreEvent } from 'app/interfaces/events';
 import { HaStatus, HaStatusEvent } from 'app/interfaces/events/ha-status-event.interface';
 import { NetworkInterfacesChangedEvent } from 'app/interfaces/events/network-interfaces-changed-event.interface';
 import { ResilveringEvent } from 'app/interfaces/events/resilvering-event.interface';
@@ -26,11 +24,8 @@ import { SidenavStatusData } from 'app/interfaces/events/sidenav-status-event.in
 import { SysInfoEvent } from 'app/interfaces/events/sys-info-event.interface';
 import { ResilverData } from 'app/interfaces/resilver-job.interface';
 import { Interval } from 'app/interfaces/timeout.interface';
-import { TrueCommandConfig } from 'app/interfaces/true-command-config.interface';
 import { AlertSlice, selectImportantUnreadAlertsCount } from 'app/modules/alerts/store/alert.selectors';
 import { AppLoaderService } from 'app/modules/app-loader/app-loader.service';
-import { DialogFormConfiguration } from 'app/modules/entity/entity-dialog/dialog-form-configuration.interface';
-import { EntityDialogComponent } from 'app/modules/entity/entity-dialog/entity-dialog.component';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { JobsPanelComponent } from 'app/modules/jobs/components/jobs-panel/jobs-panel.component';
@@ -43,15 +38,13 @@ import { CoreService } from 'app/services/core-service/core.service';
 import { DialogService } from 'app/services/dialog.service';
 import { LayoutService } from 'app/services/layout.service';
 import { ModalService } from 'app/services/modal.service';
-import { PreferencesService } from 'app/services/preferences.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { ThemeService } from 'app/services/theme/theme.service';
 import { WebSocketService } from 'app/services/ws.service';
-import { alertIndicatorPressed, jobIndicatorPressed } from 'app/store/topbar/topbar.actions';
+import { alertIndicatorPressed, sidenavUpdated, jobIndicatorPressed } from 'app/store/topbar/topbar.actions';
 import { AboutDialogComponent } from '../dialog/about/about-dialog.component';
 import { DirectoryServicesMonitorComponent } from '../dialog/directory-services-monitor/directory-services-monitor.component';
 import { ResilverProgressDialogComponent } from '../dialog/resilver-progress/resilver-progress.component';
-import { TruecommandComponent } from '../dialog/truecommand/truecommand.component';
 
 @UntilDestroy()
 @Component({
@@ -91,8 +84,6 @@ export class TopbarComponent implements OnInit, OnDestroy {
   private user_check_in_prompted = false;
   mat_tooltips = helptext.mat_tooltips;
   systemType: string;
-  isWaiting = false;
-  target: Subject<CoreEvent> = new Subject();
   screenSize = 'waiting';
 
   jobBadgeCount$ = this.store$.select(selectRunningJobsCount);
@@ -100,15 +91,7 @@ export class TopbarComponent implements OnInit, OnDestroy {
 
   isJobPanelOpen$ = this.store$.select(selectIsJobPanelOpen);
 
-  protected tcConnected = false;
-  protected tc_queryCall = 'truecommand.config' as const;
-  protected tc_updateCall = 'truecommand.update' as const;
-  protected isTcStatusOpened = false;
-  protected tcStatusDialogRef: MatDialogRef<TruecommandComponent>;
-  tcStatus: TrueCommandConfig;
-
   readonly FailoverDisabledReason = FailoverDisabledReason;
-  readonly TrueCommandStatus = TrueCommandStatus;
 
   constructor(
     private themeService: ThemeService,
@@ -122,7 +105,6 @@ export class TopbarComponent implements OnInit, OnDestroy {
     private loader: AppLoaderService,
     private mediaObserver: MediaObserver,
     private layoutService: LayoutService,
-    private prefService: PreferencesService,
     private store$: Store<AlertSlice>,
     private core: CoreService,
   ) {
@@ -185,18 +167,6 @@ export class TopbarComponent implements OnInit, OnDestroy {
     const theme = this.themeService.currentTheme();
     this.currentTheme = theme.name;
 
-    this.ws.call(this.tc_queryCall).pipe(untilDestroyed(this)).subscribe((config) => {
-      this.tcStatus = config;
-      this.tcConnected = !!config.api_key;
-    });
-    this.ws.subscribe(this.tc_queryCall).pipe(untilDestroyed(this)).subscribe((event) => {
-      this.tcStatus = event.fields;
-      this.tcConnected = !!event.fields.api_key;
-      if (this.isTcStatusOpened && this.tcStatusDialogRef) {
-        this.tcStatusDialogRef.componentInstance.update(this.tcStatus);
-      }
-    });
-
     this.checkNetworkChangesPending();
     this.checkNetworkCheckinWaiting();
     this.getDirServicesStatus();
@@ -240,14 +210,6 @@ export class TopbarComponent implements OnInit, OnDestroy {
 
     this.core.emit({ name: 'SysInfoRequest', sender: this });
 
-    this.core.register({ observerClass: this, eventName: 'UserPreferences' }).pipe(untilDestroyed(this)).subscribe(() => {
-      this.preferencesHandler();
-    });
-    this.core.register({ observerClass: this, eventName: 'UserPreferencesReady' }).pipe(untilDestroyed(this)).subscribe(() => {
-      this.preferencesHandler();
-    });
-    this.core.emit({ name: 'UserPreferencesRequest', sender: this });
-
     this.ws.onCloseSubject$.pipe(untilDestroyed(this)).subscribe(() => {
       this.modalService.closeSlideIn();
     });
@@ -272,13 +234,6 @@ export class TopbarComponent implements OnInit, OnDestroy {
         this.onJobPanelClosed();
       });
     });
-  }
-
-  preferencesHandler(): void {
-    if (this.isWaiting) {
-      this.target.next({ name: 'SubmitComplete', sender: this });
-      this.isWaiting = false;
-    }
   }
 
   ngOnDestroy(): void {
@@ -318,8 +273,7 @@ export class TopbarComponent implements OnInit, OnDestroy {
     };
 
     if (!this.layoutService.isMobile) {
-      this.prefService.preferences.sidenavStatus = data;
-      this.prefService.savePreferences();
+      this.store$.dispatch(sidenavUpdated(data));
     }
 
     this.core.emit({
@@ -398,9 +352,9 @@ export class TopbarComponent implements OnInit, OnDestroy {
 
   checkNetworkCheckinWaiting(): void {
     this.ws.call('interface.checkin_waiting').pipe(untilDestroyed(this)).subscribe((res) => {
-      if (res != null) {
+      if (res !== null) {
         const seconds = res;
-        if (seconds > 0 && this.checkin_remaining == null) {
+        if (seconds > 0 && this.checkin_remaining === null) {
           this.checkin_remaining = seconds;
           this.checkin_interval = setInterval(() => {
             if (this.checkin_remaining > 0) {
@@ -611,179 +565,6 @@ export class TopbarComponent implements OnInit, OnDestroy {
 
   openIx(): void {
     window.open('https://www.ixsystems.com/', '_blank');
-  }
-
-  showTrueCommandStatus(): void {
-    if (this.tcConnected) {
-      this.openStatusDialog();
-    } else {
-      this.openSignupDialog();
-    }
-  }
-
-  openSignupDialog(): void {
-    const conf: DialogFormConfiguration = {
-      title: helptext.signupDialog.title,
-      message: helptext.signupDialog.content,
-      fieldConfig: [],
-      saveButtonText: helptext.signupDialog.connect_btn,
-      custActions: [
-        {
-          id: 'signup',
-          name: helptext.signupDialog.singup_btn,
-          function: () => {
-            window.open('https://portal.ixsystems.com');
-            this.dialogService.closeAllDialogs();
-          },
-        },
-      ],
-      customSubmit: (entityDialog: EntityDialogComponent) => {
-        entityDialog.dialogRef.close();
-        this.updateTrueCommand();
-      },
-    };
-    this.dialogService.dialogForm(conf);
-  }
-
-  updateTrueCommand(): void {
-    let updateDialog: EntityDialogComponent;
-    const conf: DialogFormConfiguration = {
-      title: this.tcConnected ? helptext.updateDialog.title_update : helptext.updateDialog.title_connect,
-      fieldConfig: [
-        {
-          type: 'input',
-          name: 'api_key',
-          placeholder: helptext.updateDialog.api_placeholder,
-          tooltip: helptext.updateDialog.api_tooltip,
-        },
-        {
-          type: 'checkbox',
-          name: 'enabled',
-          placeholder: helptext.updateDialog.enabled_placeholder,
-          tooltip: helptext.updateDialog.enabled_tooltip,
-          value: true,
-        },
-      ],
-      custActions: [{
-        id: 'deregister',
-        name: helptext.tcDeregisterBtn,
-        function: () => {
-          this.dialogService.generalDialog({
-            title: helptext.tcDeregisterDialog.title,
-            icon: helptext.tcDeregisterDialog.icon,
-            message: helptext.tcDeregisterDialog.message,
-            confirmBtnMsg: helptext.tcDeregisterDialog.confirmBtnMsg,
-          }).pipe(untilDestroyed(this)).subscribe((res) => {
-            if (!res) {
-              return;
-            }
-
-            this.loader.open();
-            this.ws.call(this.tc_updateCall, [{ api_key: null, enabled: false }])
-              .pipe(untilDestroyed(this))
-              .subscribe(
-                () => {
-                  this.loader.close();
-                  updateDialog.dialogRef.close();
-                  this.tcStatusDialogRef.close(true);
-                  this.dialogService.generalDialog({
-                    title: helptext.deregisterInfoDialog.title,
-                    message: helptext.deregisterInfoDialog.message,
-                    hideCancel: true,
-                  });
-                },
-                (err) => {
-                  this.loader.close();
-                  new EntityUtils().handleWsError(this, err, this.dialogService);
-                },
-              );
-          });
-        },
-      }],
-      isCustActionVisible: (actionId: string) => {
-        return !(actionId === 'deregister' && !this.tcConnected);
-      },
-      saveButtonText: this.tcConnected ? helptext.updateDialog.save_btn : helptext.updateDialog.connect_btn,
-      afterInit: (entityDialog: EntityDialogComponent) => {
-        updateDialog = entityDialog;
-        // load settings
-        if (this.tcConnected) {
-          Object.keys(this.tcStatus).forEach((key) => {
-            const ctrl = entityDialog.formGroup.controls[key];
-            if (ctrl) {
-              ctrl.setValue(this.tcStatus[key as keyof TrueCommandConfig]);
-            }
-          });
-        }
-      },
-      customSubmit: (entityDialog: EntityDialogComponent) => {
-        this.loader.open();
-        this.ws.call(this.tc_updateCall, [entityDialog.formValue]).pipe(untilDestroyed(this)).subscribe(
-          () => {
-            this.loader.close();
-            entityDialog.dialogRef.close();
-            // only show this for connecting TC
-            if (!this.tcConnected) {
-              this.dialogService.info(helptext.checkEmailInfoDialog.title, helptext.checkEmailInfoDialog.message, '500px', 'info');
-            }
-          },
-          (err) => {
-            this.loader.close();
-            new EntityUtils().handleWsError(this, err, this.dialogService);
-          },
-        );
-      },
-    };
-    this.dialogService.dialogForm(conf);
-  }
-
-  openStatusDialog(): void {
-    const injectData = {
-      parent: this,
-      data: this.tcStatus,
-    };
-    if (this.isTcStatusOpened) {
-      this.tcStatusDialogRef.close(true);
-    } else {
-      this.isTcStatusOpened = true;
-      this.tcStatusDialogRef = this.dialog.open(TruecommandComponent, {
-        width: '400px',
-        hasBackdrop: true,
-        position: {
-          top: '48px',
-          right: '0px',
-        },
-        data: injectData,
-      });
-    }
-
-    this.tcStatusDialogRef.afterClosed().pipe(untilDestroyed(this)).subscribe(
-      () => {
-        this.isTcStatusOpened = false;
-      },
-    );
-  }
-
-  stopTrueCommandConnecting(): void {
-    this.dialogService.generalDialog({
-      title: helptext.stopTCConnectingDialog.title,
-      icon: helptext.stopTCConnectingDialog.icon,
-      message: helptext.stopTCConnectingDialog.message,
-      confirmBtnMsg: helptext.stopTCConnectingDialog.confirmBtnMsg,
-    }).pipe(untilDestroyed(this)).subscribe((res) => {
-      if (res) {
-        this.loader.open();
-        this.ws.call(this.tc_updateCall, [{ enabled: false }]).pipe(untilDestroyed(this)).subscribe(
-          () => {
-            this.loader.close();
-          },
-          (err) => {
-            this.loader.close();
-            new EntityUtils().handleWsError(this, err, this.dialogService);
-          },
-        );
-      }
-    });
   }
 
   openChangePasswordDialog(): void {

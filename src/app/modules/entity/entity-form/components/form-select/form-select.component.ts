@@ -125,7 +125,7 @@ export class FormSelectComponent implements Field, AfterViewInit, AfterViewCheck
   }
 
   onChangeOption($event: MatSelectChange): void {
-    if (this.config.onChangeOption !== undefined && this.config.onChangeOption != null) {
+    if (this.config.onChangeOption !== undefined && this.config.onChangeOption !== null) {
       this.config.onChangeOption({ event: $event });
     }
   }
@@ -201,6 +201,6 @@ export class FormSelectComponent implements Field, AfterViewInit, AfterViewCheck
   }
 
   shouldAlertOnOption(option: FormSelectOption): boolean {
-    return this.config.alert ? this.config.alert.forValues.findIndex((v) => v == option.value) >= 0 : false;
+    return this.config.alert ? this.config.alert.forValues.findIndex((v) => v === option.value) >= 0 : false;
   }
 }

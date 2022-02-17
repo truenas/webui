@@ -139,7 +139,7 @@ export class AuthorizedAccessFormComponent implements FormConfiguration {
     const peersecretConfig = _.find(peeruserFieldset.config, { name: 'peersecret' });
 
     entityForm.formGroup.controls['peeruser'].valueChanges.pipe(untilDestroyed(this)).subscribe((res) => {
-      if (res != '') {
+      if (res !== '') {
         peersecretControl.setValidators([
           Validators.required,
           Validators.minLength(12),

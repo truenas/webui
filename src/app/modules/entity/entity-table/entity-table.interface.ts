@@ -23,7 +23,6 @@ export interface EntityTableConfig<Row = any> {
   isActionVisible?: (actionId: string, row: Row) => boolean;
   custActions?: any[];
   multiActions?: EntityTableMultiAction<Row>[];
-  multiActionsIconsOnly?: boolean;
   noActions?: boolean;
   config: EntityTableConfigConfig;
   confirmDeleteDialog?: EntityTableConfirmDialog<Row>;

@@ -52,7 +52,7 @@ export default class IxValidatorsService {
           return null;
         }
 
-        if (control.value == '' || control.value === undefined) {
+        if (control.value === '' || control.value === undefined) {
           return null;
         }
 

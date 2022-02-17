@@ -9,16 +9,17 @@ import { TranslateModule } from '@ngx-translate/core';
 import { MaterialModule } from 'app/app-material.module';
 import { CopyButtonComponent } from 'app/core/components/copy-btn/copy-btn.component';
 import { HtmlTooltipComponent } from 'app/core/components/directives/html-tooltip/html-tooltip.component';
+import { HtmlTooltipDirective } from 'app/core/components/directives/html-tooltip/html-tooltip.directive';
+import { TextLimiterTooltipComponent } from 'app/core/components/directives/text-limiter/text-limiter-tooltip/text-limiter-tooltip.component';
+import { TextLimiterDirective } from 'app/core/components/directives/text-limiter/text-limiter.directive';
 import { DisplayComponent } from 'app/core/components/display/display.component';
-import { FormatDateTimePipe } from 'app/core/components/pipes/format-datetime.pipe';
 import { ViewControllerComponent } from 'app/core/components/view-controller/view-controller.component';
 import { ViewComponent } from 'app/core/components/view/view.component';
+import { FormatDateTimePipe } from 'app/core/pipes/format-datetime.pipe';
+import { MapValuePipe } from 'app/core/pipes/map-value.pipe';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { StorageService } from 'app/services/storage.service';
-import { HtmlTooltipDirective } from './directives/html-tooltip/html-tooltip.directive';
-import { TextLimiterTooltipComponent } from './directives/text-limiter/text-limiter-tooltip/text-limiter-tooltip.component';
-import { TextLimiterDirective } from './directives/text-limiter/text-limiter.directive';
 
 @NgModule({
   imports: [
@@ -34,36 +35,32 @@ import { TextLimiterDirective } from './directives/text-limiter/text-limiter.dir
     EntityModule,
   ],
   declarations: [
-    CopyButtonComponent,
-    DisplayComponent,
-    FormatDateTimePipe,
-    HtmlTooltipComponent,
-    HtmlTooltipDirective,
-    TextLimiterDirective,
-    TextLimiterTooltipComponent,
     ViewComponent,
     ViewControllerComponent,
+    DisplayComponent,
+    TextLimiterDirective,
+    HtmlTooltipDirective,
+    HtmlTooltipComponent,
+    TextLimiterTooltipComponent,
+    FormatDateTimePipe,
+    CopyButtonComponent,
+    MapValuePipe,
   ],
   exports: [
     CommonModule,
-    CopyButtonComponent,
-    DisplayComponent,
-    FlexLayoutModule,
-    FormatDateTimePipe,
-    HtmlTooltipDirective,
     MaterialModule,
     OverlayModule,
     PortalModule,
+    FlexLayoutModule,
+    DisplayComponent,
+    ViewComponent,
+    ViewControllerComponent,
     TextLimiterDirective,
+    HtmlTooltipDirective,
     TextLimiterTooltipComponent,
-    ViewComponent,
-    ViewControllerComponent,
-  ],
-  entryComponents: [
     CopyButtonComponent,
-    TextLimiterTooltipComponent,
-    ViewComponent,
-    ViewControllerComponent,
+    FormatDateTimePipe,
+    MapValuePipe,
   ],
   providers: [
     StorageService,

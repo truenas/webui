@@ -6,7 +6,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { filter } from 'rxjs/operators';
 import { PoolStatus } from 'app/enums/pool-status.enum';
 import helptext from 'app/helptext/storage/volumes/volume-list';
-import { DatasetAttachment, PoolAttachment } from 'app/interfaces/pool-attachment.interface';
+import { DatasetAttachment } from 'app/interfaces/pool-attachment.interface';
 import { Process } from 'app/interfaces/process.interface';
 import { SystemDatasetConfig } from 'app/interfaces/system-dataset-config.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
@@ -19,6 +19,11 @@ export interface ExportDisconnectModalState {
   attachments: DatasetAttachment[];
   processes: Process[];
   systemConfig: SystemDatasetConfig;
+}
+
+export interface ExportDisconnectModalProcess {
+  knownProcesses: Process[];
+  unknownProcesses: Process[];
 }
 
 interface ExportDisconnectFormValue {
@@ -60,9 +65,12 @@ export class ExportDisconnectModalComponent implements OnInit {
   title: string;
   poolDetachWarning: string;
   unknownStatusDetachWarning: string;
-  poolSummary: string;
   confirmLabelText: string;
   nameInputLabelText: string;
+  process: ExportDisconnectModalProcess = {
+    knownProcesses: [],
+    unknownProcesses: [],
+  };
 
   isFormLoading = false;
   form = this.fb.group({
@@ -72,7 +80,7 @@ export class ExportDisconnectModalComponent implements OnInit {
     nameInput: ['', [
       this.nameInputRequired,
       this.validatorsService.validateOnCondition(
-        (c: AbstractControl) => c.parent?.get('destroy').value,
+        (control: AbstractControl) => control.parent?.get('destroy').value,
         this.nameInputMustMatch,
       ),
     ]],
@@ -107,12 +115,6 @@ export class ExportDisconnectModalComponent implements OnInit {
       + ` ${this.data.pool.name} `
       + this.translate.instant(helptext.exportDialog.unknownStateB);
 
-    this.poolSummary = this.getPoolSummary(
-      this.data.pool,
-      this.data.attachments,
-      this.data.processes,
-    );
-
     this.confirmLabelText = this.data.pool.status === PoolStatus.Unknown
       ? this.translate.instant(helptext.exportDialog.confirm)
         + ' ' + this.translate.instant(helptext.exportDialog.unknown_status_alt_text)
@@ -121,6 +123,18 @@ export class ExportDisconnectModalComponent implements OnInit {
     this.nameInputLabelText = this.translate.instant('Enter ')
       + `<strong>${this.data.pool.name}</strong> `
       + this.translate.instant('below to confirm.');
+
+    this.data.processes.forEach((process) => {
+      if (process.service) {
+        return;
+      }
+
+      if (process.name && process.name !== '') {
+        this.process.knownProcesses.push(process);
+      } else {
+        this.process.unknownProcesses.push(process);
+      }
+    });
   }
 
   cancel(): void {
@@ -150,79 +164,6 @@ export class ExportDisconnectModalComponent implements OnInit {
   private resetNameInputValidState(): void {
     this.form.get('nameInput').reset();
     this.form.get('nameInput').setErrors(null);
-  }
-
-  private getPoolSummary(
-    pool: VolumesListPool,
-    attachments: DatasetAttachment[],
-    processes: Process[],
-  ): string {
-    let summary = '';
-
-    if (attachments.length) {
-      summary += this.translate.instant(helptext.exportMessages.services, { name: pool.name });
-      summary += this.getSummaryAttachments(attachments);
-    }
-
-    if (processes.length) {
-      summary += this.getSummaryProcesses(processes, pool);
-    }
-
-    return summary;
-  }
-
-  private getSummaryAttachments(attachments: PoolAttachment[]): string {
-    function formatAttachmentLine(line: string): string {
-      return `<br> - ${line}`;
-    }
-    function formatAttachmentPart(part: string): string {
-      return part.split(',').map((line) => formatAttachmentLine(line)).join('');
-    }
-    function formatAttachment(a: PoolAttachment): string {
-      return `<br><b>${a.type}:</b>` + a.attachments.map((x) => formatAttachmentPart(x)).join('');
-    }
-
-    const summary = attachments.map((a) => formatAttachment(a)).join('');
-    return summary + '<br /><br />';
-  }
-
-  private getSummaryProcesses(processes: Process[], pool: VolumesListPool): string {
-    const running: Process[] = [];
-    const unknown: Process[] = [];
-    processes.forEach((p) => {
-      if (!p.service && p.name) {
-        running.push(p);
-      } else {
-        unknown.push(p);
-      }
-    });
-
-    function formatProcessLine(p: Process): string {
-      if (!p.service && p.name) {
-        return `<br> - ${p.name}`;
-      }
-      return `<br> - ${p.pid} - ${p.cmdline.substring(0, 40)}`;
-    }
-
-    let summary = '';
-
-    if (running.length) {
-      let runningSummary = this.translate.instant(helptext.exportMessages.running);
-      runningSummary += `<b>${pool.name}</b>:`;
-      runningSummary += running.map((x) => formatProcessLine(x)).join('');
-
-      summary += runningSummary;
-    }
-
-    if (unknown.length) {
-      let unknownSummary = '<br><br>' + this.translate.instant(helptext.exportMessages.unknown);
-      unknownSummary += unknown.filter((p) => p.pid).map((p) => formatProcessLine(p)).join('');
-      unknownSummary += '<br><br>' + this.translate.instant(helptext.exportMessages.terminated);
-
-      summary += unknownSummary;
-    }
-
-    return summary;
   }
 
   private startExportDisconnectJob(pool: VolumesListPool, value: ExportDisconnectFormValue): void {

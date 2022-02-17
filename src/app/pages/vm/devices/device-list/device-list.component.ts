@@ -1,4 +1,5 @@
 import { Component, ChangeDetectorRef } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
@@ -13,7 +14,7 @@ import {
   EntityTableComponent,
 } from 'app/modules/entity/entity-table/entity-table.component';
 import { EntityTableAction, EntityTableConfig } from 'app/modules/entity/entity-table/entity-table.interface';
-import { EntityUtils } from 'app/modules/entity/utils';
+import { DeviceDeleteModalComponent } from 'app/pages/vm/devices/device-list/device-delete-modal/device-delete-modal.component';
 import { WebSocketService } from 'app/services';
 import { DialogService } from 'app/services/dialog.service';
 
@@ -32,10 +33,8 @@ export class DeviceListComponent implements EntityTableConfig {
   protected pk: string;
   vm: string;
   private entityList: EntityTableComponent;
-  wsDelete = 'vm.device.delete' as const;
   queryCall = 'vm.device.query' as const;
   queryCallOption: [[Partial<QueryFilter<VmDevice>>]] = [[['vm', '=']]];
-  protected loaderOpen = false;
   columns = [
     { name: this.translate.instant('Device ID'), prop: 'id', always_display: true },
     { name: this.translate.instant('Device'), prop: 'dtype' },
@@ -63,6 +62,7 @@ export class DeviceListComponent implements EntityTableConfig {
     protected ws: WebSocketService,
     protected loader: AppLoaderService,
     public dialogService: DialogService,
+    private matDialog: MatDialog,
     private cdRef: ChangeDetectorRef,
     private translate: TranslateService,
   ) {}
@@ -150,25 +150,20 @@ export class DeviceListComponent implements EntityTableConfig {
   }
 
   deviceDelete(row: VmDevice): void {
-    this.dialogService.confirm({
-      title: this.translate.instant('Delete'),
-      message: this.translate.instant('Delete <b>{vmDevice}</b>', { vmDevice: `${row.dtype} ${row.id}` }),
-      hideCheckBox: true,
-      buttonMsg: this.translate.instant('Delete Device'),
-    }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
-      this.loader.open();
-      this.loaderOpen = true;
-      this.ws.call(this.wsDelete, [row.id]).pipe(untilDestroyed(this)).subscribe(
-        () => {
-          this.loader.close();
-          this.entityList.getData();
+    this.matDialog
+      .open(
+        DeviceDeleteModalComponent,
+        {
+          disableClose: false,
+          width: '400px',
+          data: { row },
         },
-        (err) => {
-          this.loader.close();
-          new EntityUtils().handleWsError(this, err, this.dialogService);
-        },
+      )
+      .afterClosed()
+      .pipe(filter(Boolean), untilDestroyed(this))
+      .subscribe(
+        () => this.entityList.getData(),
       );
-    });
   }
 
   preInit(entityList: EntityTableComponent): void {

@@ -8,23 +8,24 @@ import { NavigationEnd, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { UUID } from 'angular2-uuid';
+import { filter, take } from 'rxjs/operators';
 import { ConsolePanelDialogComponent } from 'app/components/common/dialog/console-panel/console-panel-dialog.component';
 import { ProductType } from 'app/enums/product-type.enum';
 import { ForceSidenavEvent } from 'app/interfaces/events/force-sidenav-event.interface';
 import { SidenavStatusEvent } from 'app/interfaces/events/sidenav-status-event.interface';
 import { SysInfoEvent } from 'app/interfaces/events/sys-info-event.interface';
-import { UserPreferencesChangedEvent } from 'app/interfaces/events/user-preferences-event.interface';
 import { SubMenuItem } from 'app/interfaces/menu-item.interface';
+import { Theme } from 'app/interfaces/theme.interface';
 import { alertPanelClosed } from 'app/modules/alerts/store/alert.actions';
 import { selectIsAlertPanelOpen } from 'app/modules/alerts/store/alert.selectors';
 import { WebSocketService, SystemGeneralService } from 'app/services';
 import { CoreService } from 'app/services/core-service/core.service';
 import { LayoutService } from 'app/services/layout.service';
 import { LocaleService } from 'app/services/locale.service';
-import { PreferencesService } from 'app/services/preferences.service';
-import { Theme, ThemeService } from 'app/services/theme/theme.service';
+import { ThemeService } from 'app/services/theme/theme.service';
 import { AppState } from 'app/store';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
+import { waitForPreferences } from 'app/store/preferences/preferences.selectors';
 import { waitForGeneralConfig } from 'app/store/system-config/system-config.selectors';
 
 @UntilDestroy()
@@ -46,7 +47,6 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
   logoPath = 'assets/images/light-logo.svg';
   logoTextPath = 'assets/images/light-logo-text.svg';
   currentTheme = '';
-  retroLogo = false;
   isOpen = false;
   menuName: string;
   readonly consoleMsgsSubName = 'filesystem.file_tail_follow:/var/log/messages:500';
@@ -73,7 +73,6 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
     private sysGeneralService: SystemGeneralService,
     private localeService: LocaleService,
     private layoutService: LayoutService,
-    private prefService: PreferencesService,
     private store$: Store<AppState>,
   ) {
     // detect server type
@@ -93,14 +92,6 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
       this.isMobile = this.layoutService.isMobile;
       this.updateSidenav();
       core.emit({ name: 'MediaChange', data: change, sender: this });
-    });
-
-    // Subscribe to Preference Changes
-    this.core.register({
-      observerClass: this,
-      eventName: 'UserPreferencesChanged',
-    }).pipe(untilDestroyed(this)).subscribe((evt: UserPreferencesChangedEvent) => {
-      this.retroLogo = evt.data.retroLogo ? evt.data.retroLogo : false;
     });
 
     // Listen for system information changes
@@ -135,10 +126,10 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
 
     // Allows for one-page-at-a-time scrolling in sidenav on Windows
     if (window.navigator.platform.toLowerCase() === 'win32') {
-      navigationHold.addEventListener('wheel', (e) => {
+      navigationHold.addEventListener('wheel', (event) => {
         // deltaY is 1 for page scrolling and 33.3 per line for regular scrolling; default is 100, or 3 lines at a time
-        if (e.deltaY === 1 || e.deltaY === -1) {
-          navigationHold.scrollBy(0, e.deltaY * window.innerHeight);
+        if (event.deltaY === 1 || event.deltaY === -1) {
+          navigationHold.scrollBy(0, event.deltaY * window.innerHeight);
         }
       });
     }
@@ -178,8 +169,15 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
       setTimeout(() => {
         this.sideNav.open();
       });
-      this.layoutService.isMenuCollapsed = this.prefService.preferences.sidenavStatus.isCollapsed;
-      this.isSidenavCollapsed = this.prefService.preferences.sidenavStatus.isCollapsed;
+      this.store$.pipe(
+        waitForPreferences,
+        take(1),
+        filter((preferences) => Boolean(preferences.sidenavStatus)),
+        untilDestroyed(this),
+      ).subscribe(({ sidenavStatus }) => {
+        this.layoutService.isMenuCollapsed = sidenavStatus.isCollapsed;
+        this.isSidenavCollapsed = sidenavStatus.isCollapsed;
+      });
     } else {
       this.layoutService.isMenuCollapsed = false;
     }
@@ -234,7 +232,7 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
   }
 
   onShowConsoleFooterBar(isConsoleFooterEnabled: boolean): void {
-    if (isConsoleFooterEnabled && this.consoleMsg == '') {
+    if (isConsoleFooterEnabled && this.consoleMsg === '') {
       this.getLogConsoleMsg();
     } else if (!isConsoleFooterEnabled && this.consoleMsgsSubscriptionId) {
       this.ws.unsub(this.consoleMsgsSubName, this.consoleMsgsSubscriptionId);

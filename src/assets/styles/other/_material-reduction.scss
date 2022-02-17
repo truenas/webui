@@ -149,10 +149,6 @@ entity-table .mat-card > * {
   background: var(--alt-bg1);
 }
 
-.fn-toolbar.icons-only {
-  padding: 8px !important;
-}
-
 /* Special Override Classes */
 
 /* FreeNAS Specific */
@@ -491,6 +487,8 @@ tooltip button i {
 
 .mat-form-field-appearance-legacy .mat-form-field-infix {
   border: 0;
+  height: 20px;
+  overflow: hidden;
   padding: 0;
 }
 
@@ -889,20 +887,6 @@ mat-card.mat-card .mat-list-base {
 .ix-tree-node .ix-tree-node {
   padding-left: 40px;
 }
-
-/* only affect the bage of truecommand icon on the top bar*/
-mat-icon.truecommand-icon > span.mat-badge-content {
-  font-family: 'Material Icons';
-}
-
-mat-icon.truecommand-icon.CONNECTED > span.mat-badge-content {
-  background: var(--green);
-}
-
-mat-icon.truecommand-icon.FAILED > span.mat-badge-content {
-  background: var(--warn);
-}
-
 
 input::-ms-reveal,
 input::-ms-clear {

@@ -5,6 +5,7 @@ import { MediaObserver } from '@angular/flex-layout';
 import { DomSanitizer } from '@angular/platform-browser';
 import { TranslateService } from '@ngx-translate/core';
 import { Point } from 'pixi.js';
+import { Theme } from 'app/interfaces/theme.interface';
 import { Mini } from 'app/pages/system/view-enclosure/classes/hardware/mini';
 import { MiniX } from 'app/pages/system/view-enclosure/classes/hardware/mini-x';
 import { MiniXlPlus } from 'app/pages/system/view-enclosure/classes/hardware/mini-xl-plus';
@@ -13,7 +14,6 @@ import { EnclosureDisksComponent } from 'app/pages/system/view-enclosure/compone
 import { WebSocketService } from 'app/services';
 import { CoreService } from 'app/services/core-service/core.service';
 import { DialogService } from 'app/services/dialog.service';
-import { Theme } from 'app/services/theme/theme.service';
 
 @Component({
   selector: 'enclosure-disks-mini',

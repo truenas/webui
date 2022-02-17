@@ -481,7 +481,7 @@ export class NfsFormComponent implements FormConfiguration {
 
         const config = fieldConfig as FormComboboxConfig;
 
-        if (searchText == '') {
+        if (searchText === '') {
           config.options = config.options.concat(users);
         } else {
           config.searchOptions = config.searchOptions.concat(users);
@@ -498,7 +498,7 @@ export class NfsFormComponent implements FormConfiguration {
 
         const config = fieldConfig as FormComboboxConfig;
 
-        if (searchText == '') {
+        if (searchText === '') {
           config.options = config.options.concat(groups);
         } else {
           config.searchOptions = config.searchOptions.concat(groups);

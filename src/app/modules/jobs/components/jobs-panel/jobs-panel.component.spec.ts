@@ -8,7 +8,7 @@ import { EffectsModule } from '@ngrx/effects';
 import { Store, StoreModule } from '@ngrx/store';
 import { MockPipe } from 'ng-mocks';
 import { of } from 'rxjs';
-import { FormatDateTimePipe } from 'app/core/components/pipes/format-datetime.pipe';
+import { FormatDateTimePipe } from 'app/core/pipes/format-datetime.pipe';
 import { mockWebsocket, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
 import { JobState } from 'app/enums/job-state.enum';
 import { Job } from 'app/interfaces/job.interface';

@@ -28,7 +28,7 @@ export class JobService {
   getJobStatus(jobId: number): Observable<Job> {
     const source = Observable.create((observer: Observer<Job>) => {
       this.ws.subscribe('core.get_jobs').pipe(untilDestroyed(this)).subscribe((event) => {
-        if (event.id == jobId) {
+        if (event.id === jobId) {
           observer.next(event.fields);
           if (event.fields.state === JobState.Success || event.fields.state === JobState.Failed) {
             observer.complete();

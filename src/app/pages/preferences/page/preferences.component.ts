@@ -2,11 +2,11 @@ import {
   Component, OnDestroy, OnInit, ViewChild,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { Subject } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { CoreEvent } from 'app/interfaces/events';
-import { UserPreferencesChangedEvent } from 'app/interfaces/events/user-preferences-event.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { Preferences } from 'app/interfaces/preferences.interface';
 import {
@@ -16,7 +16,11 @@ import {
 import { FieldConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/modules/entity/entity-form/models/fieldset.interface';
 import { CoreService } from 'app/services/core-service/core.service';
-import { defaultTheme, ThemeService } from 'app/services/theme/theme.service';
+import { defaultTheme } from 'app/services/theme/theme.constants';
+import { ThemeService } from 'app/services/theme/theme.service';
+import { AppState } from 'app/store';
+import { preferencesFormSubmitted, preferencesReset } from 'app/store/preferences/preferences.actions';
+import { waitForPreferences } from 'app/store/preferences/preferences.selectors';
 
 @UntilDestroy()
 @Component({
@@ -32,6 +36,7 @@ export class PreferencesPageComponent implements EmbeddedFormConfig, OnInit, OnD
   saveSubmitText = this.translate.instant('Update Preferences');
   multiStateSubmit = true;
   isEntity = true;
+  isReady = false;
   private themeOptions: Option[] = [];
   fieldConfig: FieldConfig[] = [];
   fieldSetDisplay = 'no-margins';// default | carousel | stepper
@@ -48,73 +53,42 @@ export class PreferencesPageComponent implements EmbeddedFormConfig, OnInit, OnD
     private themeService: ThemeService,
     private core: CoreService,
     private translate: TranslateService,
+    private store$: Store<AppState>,
   ) {}
 
   ngOnInit(): void {
-    this.core.emit({ name: 'UserPreferencesRequest', sender: this });
-    this.core.register({ observerClass: this, eventName: 'UserPreferencesChanged' }).pipe(untilDestroyed(this)).subscribe((evt: UserPreferencesChangedEvent) => {
-      if (this.isWaiting) {
-        this.target.next({ name: 'SubmitComplete', sender: this });
-        this.isWaiting = false;
-      }
-
-      this.preferences = evt.data;
-      this.onPreferences(evt.data);
-      this.init(true);
+    this.store$.pipe(waitForPreferences, untilDestroyed(this)).subscribe((preferences) => {
+      this.isReady = true;
+      this.onPreferences(preferences);
+      this.generateFieldConfig();
     });
 
-    this.core.register({ observerClass: this, eventName: 'UserPreferencesReady' }).pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
-      if (this.isWaiting) {
-        this.target.next({ name: 'SubmitComplete', sender: this });
-        this.isWaiting = false;
-      }
-      this.preferences = evt.data;
-      this.onPreferences(evt.data);
-      this.init(true);
-    });
-
-    this.init();
+    this.setThemeOptions();
+    this.startSubscriptions();
   }
 
   ngOnDestroy(): void {
     this.core.unregister({ observerClass: this });
   }
 
-  init(updating?: boolean): void {
-    this.setThemeOptions();
-    if (!updating) {
-      this.startSubscriptions();
-    }
-    this.generateFieldConfig();
-  }
-
   startSubscriptions(): void {
-    this.core.register({ observerClass: this, eventName: 'ThemeListsChanged' }).pipe(untilDestroyed(this)).subscribe(() => {
-      this.setThemeOptions();
-      if (!this.embeddedForm) { return; }
-
-      const theme = this.preferences.userTheme;
-      this.embeddedForm.setValue('userTheme', theme);
-    });
-
     this.target.pipe(
       filter((event) => event.name === 'FormSubmitted'),
       untilDestroyed(this),
     ).subscribe((evt: CoreEvent) => {
       const prefs = Object.assign(evt.data, {});
-      if (prefs.reset == true) {
-        this.core.emit({ name: 'ResetPreferences', sender: this });
+      if (prefs.reset === true) {
+        this.store$.dispatch(preferencesReset());
         this.target.next({ name: 'SubmitStart', sender: this });
-        this.isWaiting = true;
         return;
       }
 
       // We don't store this in the backend
       delete prefs.reset;
 
-      this.core.emit({ name: 'ChangePreferences', data: prefs });
+      this.store$.dispatch(preferencesFormSubmitted({ formValues: prefs }));
       this.target.next({ name: 'SubmitStart', sender: this });
-      this.isWaiting = true;
+      this.target.next({ name: 'SubmitComplete', sender: this });
     });
   }
 
@@ -177,10 +151,6 @@ export class PreferencesPageComponent implements EmbeddedFormConfig, OnInit, OnD
         class: 'inline',
       },
     ];
-
-    if (this.embeddedForm) {
-      this.updateValues(prefs);
-    }
   }
 
   generateFieldConfig(): void {
@@ -197,21 +167,5 @@ export class PreferencesPageComponent implements EmbeddedFormConfig, OnInit, OnD
     } else {
       delete (data.tableDisplayedColumns);
     }
-  }
-
-  updateValues(prefs: Preferences): void {
-    const keys = Object.keys(this.embeddedForm.formGroup.controls);
-    keys.forEach((key) => {
-      if (key !== 'reset') {
-        if (key === 'userTheme' && prefs[key] === 'default') {
-          this.embeddedForm.formGroup.controls[key].setValue(defaultTheme.name);
-        } else {
-          this.embeddedForm.formGroup.controls[key].setValue(prefs[key]);
-        }
-      }
-    });
-
-    // We don't store this value in middleware so we set it manually
-    this.embeddedForm.formGroup.controls['reset'].setValue(false);
   }
 }

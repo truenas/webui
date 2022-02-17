@@ -516,7 +516,7 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow>, On
               fieldConfig: [{
                 type: 'radio',
                 name: 'display_device',
-                options: displayDevices.map((d) => ({ label: d.attributes.type, value: d.id })),
+                options: displayDevices.map((device) => ({ label: device.attributes.type, value: device.id })),
                 validation: [Validators.required],
               }],
               saveButtonText: this.translate.instant('Open'),

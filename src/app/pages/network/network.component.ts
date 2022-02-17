@@ -273,8 +273,8 @@ export class NetworkComponent implements OnInit, OnDestroy {
       .call('interface.checkin_waiting')
       .pipe(untilDestroyed(this))
       .subscribe((seconds) => {
-        if (seconds != null) {
-          if (seconds > 0 && this.checkinRemaining == null) {
+        if (seconds !== null) {
+          if (seconds > 0 && this.checkinRemaining === null) {
             this.checkinRemaining = Math.round(seconds);
             this.checkinInterval = setInterval(() => {
               if (this.checkinRemaining > 0) {

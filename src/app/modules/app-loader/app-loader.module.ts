@@ -4,7 +4,7 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { TranslateModule } from '@ngx-translate/core';
-import { CoreComponents } from 'app/core/components/core-components.module';
+import { CoreComponents } from 'app/core/core-components.module';
 import { AppLoaderComponent } from 'app/modules/app-loader/app-loader.component';
 import { AppLoaderService } from 'app/modules/app-loader/app-loader.service';
 
@@ -20,6 +20,5 @@ import { AppLoaderService } from 'app/modules/app-loader/app-loader.service';
   providers: [AppLoaderService],
   declarations: [AppLoaderComponent],
   exports: [AppLoaderComponent],
-  entryComponents: [AppLoaderComponent],
 })
 export class AppLoaderModule { }
