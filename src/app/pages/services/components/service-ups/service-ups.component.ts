@@ -84,9 +84,7 @@ export class ServiceUpsComponent implements OnInit {
             map((options: Option[]) => this.filter(options, search)),
           );
       },
-      nextPage: (): Observable<Option[]> => {
-        return of([]);
-      },
+      nextPage: (): Observable<Option[]> => of([]),
     },
     port: {
       fetch: (search: string): Observable<Option[]> => {
@@ -100,9 +98,7 @@ export class ServiceUpsComponent implements OnInit {
             map((options: Option[]) => this.filter(options, search)),
           );
       },
-      nextPage: (): Observable<Option[]> => {
-        return of([]);
-      },
+      nextPage: (): Observable<Option[]> => of([]),
     },
   };
 

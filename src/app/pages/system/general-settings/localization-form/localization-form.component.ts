@@ -66,9 +66,7 @@ export class LocalizationFormComponent {
           }),
         );
       },
-      nextPage: (): Observable<Option[]> => {
-        return of([]);
-      },
+      nextPage: (): Observable<Option[]> => of([]),
     },
   };
 
@@ -106,9 +104,7 @@ export class LocalizationFormComponent {
           map((options: Option[]) => this.filter(options, search)),
         );
       },
-      nextPage: (): Observable<Option[]> => {
-        return of([]);
-      },
+      nextPage: (): Observable<Option[]> => of([]),
     },
   };
 
