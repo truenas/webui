@@ -31,21 +31,21 @@
             [required]="true"
             type="number"
           ></ix-input>
-          <ix-combobox
+          <ix-combobox2
             *ngIf="isMasterMode"
             formControlName="driver"
             [label]="labels.driver"
             [tooltip]="tooltips.driver"
-            [options]="driverOptions$"
+            [provider]="providers.driver"
             [required]="true"
-          ></ix-combobox>
-          <ix-combobox
+          ></ix-combobox2>
+          <ix-combobox2
             formControlName="port"
             [label]="labels.port"
             [tooltip]="tooltips.port"
-            [options]="portOptions$"
+            [provider]="providers.port"
             [required]="isMasterMode"
-          ></ix-combobox>
+          ></ix-combobox2>
         </ix-fieldset>
         <ix-fieldset [title]="helptext.ups_fieldset_monitor">
           <ix-input
