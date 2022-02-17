@@ -76,6 +76,19 @@ h4 {
 	margin-bottom: 0;
 }
 
+.footer-div {
+	width: 100%;
+}
+
+.footer-main {
+	align-items: baseline;
+	display: flex;
+}  
+
+.footer-pager {
+	flex: none !important;
+}
+
 .data-div {
 	display: flex;
 	padding:0;
