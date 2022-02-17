@@ -5,16 +5,15 @@ import time
 from function import (
     wait_on_element,
     is_element_present,
-    attribute_value_exist,
-    wait_on_element_disappear,
+    wait_on_element_disappear
 )
 from pytest_bdd import (
     given,
     scenario,
     then,
-    when,
-    parsers
+    when
 )
+
 
 @scenario('features/NAS-T1286.feature', 'Apps Page remove and readd pool')
 def test_apps_page_remove_and_readd_pool():
@@ -46,15 +45,18 @@ def on_the_dashboard_click_on_apps(driver):
     assert wait_on_element(driver, 10, '//span[contains(.,"Dashboard")]')
     assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Apps"]', 'clickable')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Apps"]').click()
+    assert wait_on_element(driver, 10, '//h1[text()="Applications"]')
     assert wait_on_element(driver, 10, '//div[contains(text(),"Available Applications")]', 'clickable')
     driver.find_element_by_xpath('//div[contains(text(),"Available Applications")]').click()
-    assert wait_on_element(driver, 7, '//div[contains(.,"Available Applications")]')
+    # Wait for Available Applications UI to load
+    assert wait_on_element(driver, 10, '//h3[text()="plex"]')
+    assert wait_on_element(driver, 10, '//div[contains(.,"plex") and @class="content"]//button', 'clickable')
+    time.sleep(0.5)
 
 
 @then('the Apps page load, click settings, unset pool')
 def the_apps_page_load_click_settings_unset_pool(driver):
     """the Apps page load, click settings, unset pool."""
-    time.sleep(3)  # we have to wait for the page to settle for the button to function as a dropdown
     assert wait_on_element(driver, 20, '//button[@ix-auto-type="button"]//span[contains(text(),"Settings")]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto-type="button"]//span[contains(text(),"Settings")]').click()
     assert wait_on_element(driver, 30, '//span[contains(text(),"Unset Pool")]', 'clickable')
