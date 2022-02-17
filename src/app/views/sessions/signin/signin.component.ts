@@ -93,6 +93,7 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
       this.ha_status = true;
     }
     this.checkSystemType();
+    this.checkTwoFactor();
     this.ws.call('truecommand.connected').subscribe((res) => {
       if (res.connected) {
         this.tc_ip = res.truecommand_ip;
@@ -164,10 +165,6 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
       password: new FormControl('', [Validators.required]),
       password2: new FormControl('', [Validators.required, matchOtherValidator('password')]),
     });
-
-    this.ws.call('auth.two_factor_auth').subscribe((res) => {
-      this.isTwoFactor = res;
-    });
   }
 
   ngOnDestroy() {
@@ -181,6 +178,12 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
     if (this.tokenObservable) {
       this.tokenObservable.unsubscribe();
     }
+  }
+
+  checkTwoFactor() {
+    this.ws.call('auth.two_factor_auth').subscribe((res) => {
+      this.isTwoFactor = res;
+    });
   }
 
   loginToken() {
@@ -337,6 +340,7 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
     if (result === true) {
       this.successLogin();
     } else {
+      this.checkTwoFactor();
       this.errorLogin();
     }
   }
