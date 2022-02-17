@@ -14,7 +14,7 @@ import {
 import {
   filter, map, switchMap, tap,
 } from 'rxjs/operators';
-import { FormatDateTimePipe } from 'app/core/components/pipes/format-datetime.pipe';
+import { FormatDateTimePipe } from 'app/core/pipes/format-datetime.pipe';
 import helptext from 'app/helptext/storage/snapshots/snapshots';
 import { ConfirmOptions } from 'app/interfaces/dialog.interface';
 import { CoreEvent } from 'app/interfaces/events';

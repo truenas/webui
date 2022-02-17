@@ -5,7 +5,6 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockPipe } from 'ng-mocks';
-import { FormatDateTimePipe } from 'app/core/components/pipes/format-datetime.pipe';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockCall, mockWebsocket, mockJob } from 'app/core/testing/utils/mock-websocket.utils';
 import { CoreBulkResponse } from 'app/interfaces/core-bulk.interface';

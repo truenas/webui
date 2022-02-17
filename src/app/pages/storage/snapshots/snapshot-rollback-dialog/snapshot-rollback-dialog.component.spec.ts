@@ -5,7 +5,7 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockPipe } from 'ng-mocks';
-import { FormatDateTimePipe } from 'app/core/components/pipes/format-datetime.pipe';
+import { FormatDateTimePipe } from 'app/core/pipes/format-datetime.pipe';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { AppLoaderModule } from 'app/modules/app-loader/app-loader.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
