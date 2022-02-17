@@ -91,7 +91,7 @@ export class IxCombobox2Component implements ControlValueAccessor, OnInit {
   filterOptions(filterValue: string): void {
     this.loading = this.filterValue !== '';
     this.cdr.markForCheck();
-    this.provider.filter(this.options, filterValue).pipe(untilDestroyed(this)).subscribe((options: Option[]) => {
+    this.provider.fetch(filterValue).pipe(untilDestroyed(this)).subscribe((options: Option[]) => {
       this.loading = false;
       this.options = options;
       if (!this.selectedOption && this.value !== null && this.value !== '') {

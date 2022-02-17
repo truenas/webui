@@ -9,7 +9,7 @@ export class UserComboboxProvider implements IxComboboxProvider {
   private page = 1;
   readonly pageSize = 50;
 
-  filter(options: Option[], filterValue: string): Observable<Option[]> {
+  fetch(filterValue: string): Observable<Option[]> {
     this.page = 0;
     const offset = this.page * this.pageSize;
 
