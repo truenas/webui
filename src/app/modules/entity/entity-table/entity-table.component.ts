@@ -1082,10 +1082,6 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, A
       cols: this.conf.columns as any,
     };
 
-    if (this.title === 'Users') {
-      this.conf.columns = this.dropLastMaxWidth();
-    }
-
     this.store$.pipe(select(selectPreferencesState), take(1), untilDestroyed(this)).subscribe((state) => {
       if (!state.areLoaded) {
         return;
@@ -1239,7 +1235,7 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, A
     this.store$.pipe(waitForPreferences, take(1), untilDestroyed(this)).subscribe((preferences) => {
       const preferredCols = preferences.tableDisplayedColumns || [];
       // Turn off preferred cols for snapshots to allow for two different column sets to be displayed
-      if (preferredCols.length < 0 || this.title === 'Snapshots') {
+      if (preferredCols.length < 0) {
         return;
       }
 
@@ -1264,16 +1260,6 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, A
           this.selectColumnsToShowOrHide();
         }
       });
-      if (this.title === 'Users') {
-        // Makes a list of the table's column maxWidths
-        this.filterColumns.forEach((column) => {
-          const tempObj: any = {};
-          tempObj['name'] = column.name;
-          tempObj['maxWidth'] = column.maxWidth;
-          this.colMaxWidths.push(tempObj);
-        });
-        this.conf.columns = this.dropLastMaxWidth();
-      }
 
       this.changeDetectorRef.markForCheck();
     });
