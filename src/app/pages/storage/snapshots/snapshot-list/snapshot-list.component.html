@@ -35,7 +35,7 @@
       <td mat-cell *matCellDef="let snapshot; dataSource: dataSource">{{ snapshot.dataset }}</td>
     </ng-container>
 
-    <ng-container matColumnDef="snapshot">
+    <ng-container matColumnDef="snapshot_name">
       <th mat-header-cell *matHeaderCellDef mat-sort-header> {{ 'Snapshot' | translate }} </th>
       <td mat-cell *matCellDef="let snapshot; dataSource: dataSource">{{ snapshot.snapshot_name }}</td>
     </ng-container>

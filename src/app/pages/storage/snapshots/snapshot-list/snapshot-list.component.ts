@@ -1,6 +1,6 @@
 import { SelectionModel } from '@angular/cdk/collections';
 import {
-  Component, ChangeDetectionStrategy, ChangeDetectorRef, ViewChild,
+  Component, ChangeDetectionStrategy, ChangeDetectorRef, ViewChild, OnInit,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSort, Sort } from '@angular/material/sort';
@@ -46,7 +46,7 @@ import { selectSnapshots, selectSnapshotState } from '../store/snapshot.selector
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [FormatDateTimePipe],
 })
-export class SnapshotListComponent {
+export class SnapshotListComponent implements OnInit {
   error$ = this.store$.select(selectSnapshotState).pipe(map((state) => state.error));
   isLoading$ = this.store$.select(selectSnapshotState).pipe(map((state) => state.isLoading));
   isEmpty$ = this.store$.select(selectSnapshotsTotal).pipe(map((total) => total === 0));
@@ -62,7 +62,7 @@ export class SnapshotListComponent {
   showExtraColumns: boolean;
   @ViewChild(MatSort, { static: false }) sort: MatSort;
   dataSource: MatTableDataSource<ZfsSnapshot> = new MatTableDataSource([]);
-  defaultSort: Sort = { active: 'snapshot', direction: 'desc' };
+  defaultSort: Sort = { active: 'snapshot_name', direction: 'desc' };
   filterString = '';
   selection = new SelectionModel(true, []);
   toolbarEvent$: Subject<CoreEvent> = new Subject();
@@ -82,8 +82,8 @@ export class SnapshotListComponent {
     large: true,
     title: this.translate.instant('Snapshots could not be loaded'),
   };
-  readonly defaultColumns: string[] = ['select', 'dataset', 'snapshot', 'actions'];
-  readonly defaultExtraColumns: string[] = ['select', 'dataset', 'snapshot', 'used', 'created', 'referenced', 'actions'];
+  readonly defaultColumns: string[] = ['select', 'dataset', 'snapshot_name', 'actions'];
+  readonly defaultExtraColumns: string[] = ['select', 'dataset', 'snapshot_name', 'used', 'created', 'referenced', 'actions'];
   displayedColumns: string[] = this.defaultColumns;
 
   constructor(
@@ -96,13 +96,16 @@ export class SnapshotListComponent {
     private matDialog: MatDialog,
     private store$: Store<AppState>,
     private slideIn: IxSlideInService,
-  ) {
+  ) {}
+
+  ngOnInit(): void {
+    this.store$.dispatch(snapshotPageEntered());
+    this.setupToolbar();
     this.getPreferences();
     this.getSnapshots();
   }
 
   getPreferences(): void {
-    this.store$.dispatch(snapshotPageEntered());
     this.store$.pipe(
       waitForPreferences,
       map((preferences) => preferences.showSnapshotExtraColumns),
@@ -111,8 +114,8 @@ export class SnapshotListComponent {
       this.store$.dispatch(snapshotPageEntered());
       this.showExtraColumns = showExtraColumns;
       this.displayedColumns = this.showExtraColumns ? this.defaultExtraColumns : this.defaultColumns;
-      this.store$.dispatch(snapshotPageReady({ extra: this.showExtraColumns }));
       this.setupToolbar();
+      this.store$.dispatch(snapshotPageReady({ extra: this.showExtraColumns }));
       this.cdr.markForCheck();
     });
   }
@@ -150,7 +153,24 @@ export class SnapshotListComponent {
 
   createDataSource(snapshots: ZfsSnapshot[] = []): void {
     this.dataSource = new MatTableDataSource(snapshots);
-    this.dataSource.sort = this.sort;
+    this.dataSource.sortingDataAccessor = (item, property) => {
+      switch (property) {
+        case 'snapshot_name':
+          return item.snapshot_name;
+        case 'dataset':
+          return item.dataset;
+        case 'used':
+          return item.properties ? item.properties.used.parsed.toString() : '';
+        case 'created':
+          return item.properties ? item.properties.creation.parsed.$date.toString() : '';
+        case 'referenced':
+          return item.properties ? item.properties.referenced.parsed.toString() : '';
+      }
+    };
+    setTimeout(() => {
+      // TODO: Figure out how to avoid setTimeout to make it work on first loading
+      this.dataSource.sort = this.sort;
+    }, 1);
     if (this.filterString) {
       this.dataSource.filter = this.filterString;
     }
