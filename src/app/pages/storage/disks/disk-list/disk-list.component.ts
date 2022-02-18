@@ -5,7 +5,8 @@ import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as filesize from 'filesize';
-import { filter } from 'rxjs/operators';
+import { forkJoin, of } from 'rxjs';
+import { catchError, filter, map } from 'rxjs/operators';
 import { CoreService } from 'app/core/services/core-service/core.service';
 import { DiskPowerLevel } from 'app/enums/disk-power-level.enum';
 import { DiskStandby } from 'app/enums/disk-standby.enum';
@@ -271,6 +272,24 @@ export class DiskListComponent implements EntityTableConfig<Disk> {
     }
   }
 
+  prerequisite(): Promise<boolean> {
+    return forkJoin([
+      this.ws.call('disk.get_unused'),
+      this.ws.call('smart.test.disk_choices'),
+    ]).pipe(
+      map(([unusedDisks, disksThatSupportSmart]) => {
+        this.unused = unusedDisks;
+        this.SMARTdiskChoices = disksThatSupportSmart;
+        return true;
+      }),
+      catchError((error) => {
+        new EntityUtils().handleWsError(this, error);
+        return of(false);
+      }),
+      untilDestroyed(this),
+    ).toPromise();
+  }
+
   afterInit(entityList: EntityTableComponent): void {
     this.core.register({
       observerClass: this,
@@ -280,24 +299,13 @@ export class DiskListComponent implements EntityTableConfig<Disk> {
         entityList.getData();
       }
     });
-
-    this.ws.call('disk.get_unused', []).pipe(untilDestroyed(this)).subscribe((unused) => {
-      this.unused = unused;
-      entityList.getData();
-    }, (err) => new EntityUtils().handleWsError(this, err));
-
-    this.ws.call('smart.test.disk_choices').pipe(untilDestroyed(this)).subscribe(
-      (res) => {
-        this.SMARTdiskChoices = res;
-        entityList.getData();
-      },
-      (err) => new EntityUtils().handleWsError(this, err),
-    );
   }
 
-  resourceTransformIncomingRestData(data: Disk[]): Disk[] {
-    data.forEach((i) => i.pool = i.pool ? i.pool : 'N/A');
-    return data;
+  resourceTransformIncomingRestData(disks: Disk[]): Disk[] {
+    return disks.map((disk) => ({
+      ...disk,
+      pool: disk.pool || this.translate.instant('N/A'),
+    }));
   }
 
   manualTest(selected: Disk | Disk[]): void {
