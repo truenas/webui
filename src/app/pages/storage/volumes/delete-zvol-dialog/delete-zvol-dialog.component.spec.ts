@@ -86,7 +86,7 @@ describe('DeleteZvolDialogComponent', () => {
 
     const attachmentsSection = spectator.query('.attachments');
     expect(attachmentsSection).toHaveText(
-      'Zvol Lab 1 and all snapshots stored with it will be permanently deleted:',
+      'These services depend on ZVol Lab 1 and will be destroyed if the ZVol is deleted:',
     );
 
     const services = attachmentsSection.querySelectorAll('.services > li');
