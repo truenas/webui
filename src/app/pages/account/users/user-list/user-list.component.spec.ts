@@ -152,10 +152,12 @@ describe('UserListComponent', () => {
   it('should expand row on click', async () => {
     const table = await loader.getHarness(IxTableHarness);
     const [firstRow] = await table.getRows();
-
     const element = await firstRow.host();
+
+    expect(await element.hasClass('expanded-row')).toBeFalsy();
+
     await element.click();
 
-    expect(element.hasClass('expanded-row')).toBeTruthy();
+    expect(await element.hasClass('expanded-row')).toBeTruthy();
   });
 });
