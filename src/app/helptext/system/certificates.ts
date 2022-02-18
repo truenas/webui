@@ -302,7 +302,14 @@ certificate still approved.'),
     key_usage: {
       config: {
         placeholder: T('Key Usage Config'),
-        tooltip: T('The key usage extension defines the purpose \
+        tooltip: T('Specify the valid key usages for this certificate.\
+Web certificates will typically need at least Digital Signature and possibly Key Encipherment or Key Agreement,\
+while other applications may need additional key usages.'),
+      },
+      enabled: {
+        placeholder: T('Key Usage'),
+        tooltip: T('Activate this certificate extension.\
+  The key usage extension defines the purpose \
  (e.g., encipherment, signature, certificate signing) of the key contained in \
  the certificate. The usage restriction might be employed when a key that \
  could be used for more than one operation is to be restricted. For \
@@ -312,10 +319,6 @@ certificate still approved.'),
  management, the <i>Key Encipherment</i> bit would be asserted. <br> \
  See <a href="https://www.ietf.org/rfc/rfc3280.txt">RFC 3280, section 4.2.1.3</a> \
  for more information.'),
-      },
-      enabled: {
-        placeholder: T('Key Usage'),
-        tooltip: T('Activate this certificate extension.'),
       },
       digital_signature: {
         placeholder: T('Digital Signature'),
