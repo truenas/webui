@@ -285,7 +285,10 @@ for more details.'),
       },
       enabled: {
         placeholder: T('Extended Key Usage'),
-        tooltip: T('Activate this certificate extension.'),
+        tooltip: T('Activate this certificate extension.\
+The Extended Key Usage extension identifies and limits valid uses for this certificate, such as client authentication or server authentication.\
+See <a href="https://www.ietf.org/rfc/rfc3280.txt" target="_blank">RFC 3280, section 4.2.1.13</a> \
+for more details.'),'),
       },
       extension_critical: {
         placeholder: T('Critical Extension'),
