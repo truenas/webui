@@ -84,7 +84,7 @@ export class EntityTreeTableComponent implements OnInit, AfterViewInit {
     if (!sort.active || sort.direction === '') {
       return;
     }
-    const col = this._conf.columns[this._conf.columns.findIndex((c) => c.prop === sort.active)];
+    const col = this._conf.columns[this._conf.columns.findIndex((column) => column.prop === sort.active)];
     this._conf.tableData = this.sortData({ ...sort, sortBy: col.sortBy ? col.sortBy : col.prop }, this._conf.tableData);
     this.fillTable();
   }

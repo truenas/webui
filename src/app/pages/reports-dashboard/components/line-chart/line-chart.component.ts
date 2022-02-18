@@ -149,12 +149,12 @@ export class LineChartComponent extends ViewComponent implements AfterViewInit, 
         return '';
       },
       series: () => {
-        const s: any = {};
+        const series: any = {};
         this.data.legend.forEach((item) => {
-          s[item] = { plotter: smoothPlotter };
+          series[item] = { plotter: smoothPlotter };
         });
 
-        return s;
+        return series;
       },
       drawCallback: (dygraph: any) => {
         if (dygraph.axes_) {

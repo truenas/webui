@@ -1255,7 +1255,7 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, A
           // Remove columns from display and preferred cols if they don't exist in the table
           const notFound: EntityTableColumnProp[] = [];
           this.conf.columns.forEach((col) => {
-            const found = this.filterColumns.find((o) => o.prop === col.prop);
+            const found = this.filterColumns.find((filterColumn) => filterColumn.prop === col.prop);
             if (!found) {
               notFound.push(col.prop);
             }

@@ -735,7 +735,9 @@ export class CloudsyncFormComponent implements FormConfiguration {
             () => {
               dialogRef.close();
               this.cloudcredentialService.getCloudsyncCredentials().then((credentials) => {
-                const newCredential = credentials.find((item) => !this.credentials.find((e) => e.id === item.id));
+                const newCredential = credentials.find((credential) => {
+                  return !this.credentials.find((existingCredential) => existingCredential.id === credential.id);
+                });
                 if (newCredential) {
                   this.credentialsField.options.push({ label: newCredential.name + ' (' + newCredential.provider + ')', value: newCredential.id });
                   this.credentials.push(newCredential);
