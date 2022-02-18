@@ -208,7 +208,7 @@ matches your certificate usage scenario.'),
       config: {
         placeholder: T('Basic Constraints Config'),
         tooltip: T('Specify whether the certificate may be used for a Certificate Authority,\
-          and whether this extension is critical\
+          and whether this extension is critical. Critical extensions must be recognized by the client or be rejected.\
           Basic web certificates typically require CA disabled, and critical marked.'),
       },
       ca: {
@@ -222,8 +222,7 @@ matches your certificate usage scenario.'),
  subject of the certificate is a CA, and the maximum depth of valid \
  certification paths that include this certificate. <br> \
  See <a href="https://www.ietf.org/rfc/rfc3280.txt">RFC 3280, section 4.2.1.10</a> \
- for more information.'
-          '),
+ for more information.'),
       },
       path_length: {
         placeholder: T('Path Length'),
@@ -243,15 +242,8 @@ certificate still approved.'),
     authority_key_identifier: {
       config: {
         placeholder: T('Authority Key Config'),
-        tooltip: T('The authority key identifier extension provides a means of \
- identifying the public key corresponding to the private key used to \
- sign a certificate. This extension is used where an issuer has \
- multiple signing keys (either due to multiple concurrent key pairs or \
- due to changeover). The identification MAY be based on either the \
- key identifier (the subject key identifier in the issuer\'s \
- certificate) or on the issuer name and serial number.<br> \
- See <a href="https://www.ietf.org/rfc/rfc3280.txt">RFC 3280, section 4.2.1.1</a> \
- for more information.'),
+        tooltip: T('Specify whether the issued certificate should include Authority Key Identifier information,\
+          and whether the extension is critical. Critical extensions must be recognized by the client or be rejected.'),
       },
       authority_cert_issuer: {
         placeholder: T('Authority Cert Issuer'),
@@ -260,7 +252,16 @@ key used to sign this certificate.'),
       },
       enabled: {
         placeholder: T('Authority Key Identifier'),
-        tooltip: T('Activate this certificate extension.'),
+        tooltip: T('Activate this extension.\
+ The authority key identifier extension provides a means of \
+ identifying the public key corresponding to the private key used to \
+ sign a certificate. This extension is used where an issuer has \
+ multiple signing keys (either due to multiple concurrent key pairs or \
+ due to changeover). The identification MAY be based on either the \
+ key identifier (the subject key identifier in the issuer\'s \
+ certificate) or on the issuer name and serial number.<br> \
+ See <a href="https://www.ietf.org/rfc/rfc3280.txt">RFC 3280, section 4.2.1.1</a> \
+ for more information.'),
       },
       extension_critical: {
         placeholder: T('Critical Extension'),
