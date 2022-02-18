@@ -507,7 +507,6 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
     switch (status) {
       case 'ONLINE':
       case 'HEALTHY':
-      case 'LOCKED':
         return false;
       default:
         return true;
