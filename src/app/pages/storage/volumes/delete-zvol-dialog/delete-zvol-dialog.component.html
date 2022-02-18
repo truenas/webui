@@ -4,7 +4,7 @@
 
   <div mat-dialog-content ix-auto ix-auto-type="dialog" ix-auto-identifier="title" class="dialog-content">
     <div *ngIf="attachments.length" class="attachments">
-      {{ 'Zvol {name} and all snapshots stored with it will be permanently deleted:' | translate: { name: zvol.name } }}
+      {{ 'These services depend on ZVol {name} and will be destroyed if the ZVol is deleted:' | translate: { name: zvol.name } }}
 
       <ul class="services">
         <li *ngFor="let service of attachments">
