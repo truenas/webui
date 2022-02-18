@@ -100,7 +100,7 @@ export class TwoFactorComponent implements OnInit {
       },
     );
 
-    this.getUri();
+    this.getUri(false);
 
     this.form.controls.interval.valueChanges.pipe(untilDestroyed(this)).subscribe((val: number | string) => {
       if (this.form.controls.interval.valid && Number(val) !== 30) {
@@ -129,10 +129,7 @@ export class TwoFactorComponent implements OnInit {
         message: helptext.two_factor.submitDialog.message,
         hideCheckBox: true,
         buttonMsg: helptext.two_factor.submitDialog.btn,
-      }).pipe(untilDestroyed(this)).subscribe((res) => {
-        if (!res) {
-          return;
-        }
+      }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
         this.intervalOnLoad = params.interval;
         this.digitsOnLoad = params.otp_digits;
         this.doSubmit(params, true);
@@ -156,13 +153,13 @@ export class TwoFactorComponent implements OnInit {
     });
   }
 
-  twoFactorStatusTxt(): string {
+  get twoFactorStatusText(): string {
     return this.twoFactorEnabled
       ? helptext.two_factor.enabled_status_true
       : helptext.two_factor.enabled_status_false;
   }
 
-  twoFactorButtonTxt(): string {
+  get twoFactorButtonText(): string {
     return this.twoFactorEnabled
       ? helptext.two_factor.disable_button
       : helptext.two_factor.enable_button;
@@ -174,9 +171,9 @@ export class TwoFactorComponent implements OnInit {
       this.ws.call('auth.twofactor.update', [{ enabled: false }])
         .pipe(untilDestroyed(this)).subscribe(() => {
           this.isFormLoading = false;
-          this.twoFactorEnabled = false;
         }, (err) => {
           this.isFormLoading = false;
+          this.twoFactorEnabled = true;
           this.dialogService.errorReport(helptext.two_factor.error,
             err.reason, err.trace.formatted);
         });
@@ -186,10 +183,7 @@ export class TwoFactorComponent implements OnInit {
         message: helptext.two_factor.confirm_dialog.message,
         hideCheckBox: true,
         buttonMsg: helptext.two_factor.confirm_dialog.btn,
-      }).pipe(untilDestroyed(this)).subscribe((res) => {
-        if (!res) {
-          return;
-        }
+      }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
         this.isFormLoading = true;
 
         this.ws.call('auth.twofactor.update', [{ enabled: true }])
@@ -252,7 +246,7 @@ export class TwoFactorComponent implements OnInit {
     );
   }
 
-  getUri(): void {
+  getUri(openQr = true): void {
     this.isFormLoading = true;
     this.ws.call('auth.twofactor.provisioning_uri').pipe(untilDestroyed(this)).subscribe(
       (provisioningUri: string) => {
@@ -260,7 +254,7 @@ export class TwoFactorComponent implements OnInit {
 
         this.form.controls.uri.setValue(provisioningUri);
         this.cdr.markForCheck();
-        if (this.secret) {
+        if (this.secret && openQr) {
           this.openQrDialog();
         }
       }, (err) => {
