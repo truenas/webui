@@ -207,11 +207,9 @@ matches your certificate usage scenario.'),
     basic_constraints: {
       config: {
         placeholder: T('Basic Constraints Config'),
-        tooltip: T('The basic constraints extension identifies whether the \
- subject of the certificate is a CA and the maximum depth of valid \
- certification paths that include this certificate. <br> \
- See <a href="https://www.ietf.org/rfc/rfc3280.txt">RFC 3280, section 4.2.1.10</a> \
- for more information.'),
+        tooltip: T('Specify whether the certificate may be used for a Certificate Authority,\
+          and whether this extension is critical\
+          Basic web certificates typically require CA disabled, and critical marked.'),
       },
       ca: {
         placeholder: T('CA'),
@@ -219,7 +217,13 @@ matches your certificate usage scenario.'),
       },
       enabled: {
         placeholder: T('Basic Constraints'),
-        tooltip: T('Activate this certificate extension.'),
+        tooltip: T('Activate the basic contstraints extension.\
+ This extension identifies whether the \
+ subject of the certificate is a CA, and the maximum depth of valid \
+ certification paths that include this certificate. <br> \
+ See <a href="https://www.ietf.org/rfc/rfc3280.txt">RFC 3280, section 4.2.1.10</a> \
+ for more information.'
+          '),
       },
       path_length: {
         placeholder: T('Path Length'),
