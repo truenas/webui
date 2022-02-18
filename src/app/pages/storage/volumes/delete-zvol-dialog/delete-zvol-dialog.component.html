@@ -1,10 +1,10 @@
-<h1 matDialogTitle>{{ 'Delete dataset {name}' | translate: { name: dataset.name } }}</h1>
+<h1 matDialogTitle>{{ 'Delete Zvol {name}' | translate: { name: zvol.name } }}</h1>
 <form [formGroup]="form" class="ix-form-container" (submit)="onDelete()">
   <p [innerHTML]="deleteMessage"></p>
 
   <div mat-dialog-content ix-auto ix-auto-type="dialog" ix-auto-identifier="title" class="dialog-content">
     <div *ngIf="attachments.length" class="attachments">
-      {{ 'These services depend on dataset {name} and will be destroyed if the dataset is deleted:' | translate: { name: dataset.name } }}
+      {{ 'These services depend on ZVol {name} and will be destroyed if the ZVol is deleted:' | translate: { name: zvol.name } }}
 
       <ul class="services">
         <li *ngFor="let service of attachments">
@@ -21,7 +21,7 @@
     </div>
 
     <div *ngIf="knownProcesses.length" class="known-processes">
-      {{ 'These running processes are using {datasetName}:' | translate: { datasetName: dataset.name } }}
+      {{ 'These running processes are using {name}:' | translate: { name: zvol.name } }}
       <ul>
         <li *ngFor="let process of knownProcesses">
           {{ process.name }}
@@ -30,7 +30,7 @@
     </div>
 
     <div *ngIf="unknownProcesses.length" class="unknown-processes">
-      {{ 'These unknown processes are using the dataset:' }}
+      {{ 'These unknown processes are using the zvol:' }}
       <ul>
         <li *ngFor="let process of unknownProcesses">
           {{ process.pid || ('Unknown PID' | translate) }} - {{ process.cmdline?.substring(0, 40) }}
@@ -44,10 +44,10 @@
   </div>
 
   <p>
-    {{ 'Enter {value} below to confirm.' | translate: { value: dataset.name } }}
+    {{ 'Enter {value} below to confirm.' | translate: { value: zvol.name } }}
   </p>
   <ix-input
-    formControlName="confirmDatasetName"
+    formControlName="confirmZvolName"
   ></ix-input>
   <ix-checkbox
     formControlName="confirm"
@@ -61,7 +61,7 @@
       type="submit"
       [disabled]="form.invalid"
       color="primary"
-    >{{ 'Delete Dataset' | translate }}</button>
+    >{{ 'Delete Zvol' | translate }}</button>
     <button
       mat-button
       type="button"

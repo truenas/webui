@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import {
-  AbstractControl, ValidationErrors, ValidatorFn,
+  AbstractControl, ValidationErrors, ValidatorFn, Validators,
 } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
 import isCidr from 'is-cidr';
@@ -64,4 +64,17 @@ export default class IxValidatorsService {
       };
     },
   };
+
+  confirmValidator(name: string, validationMessage: string): ValidatorFn {
+    return Validators.compose([
+      this.withMessage(
+        Validators.pattern(new RegExp(`^${name}$`)),
+        { message: validationMessage, forProperty: 'pattern' },
+      ),
+      this.withMessage(
+        Validators.required,
+        { message: validationMessage, forProperty: 'required' },
+      ),
+    ]);
+  }
 }

@@ -26,6 +26,7 @@ import { DatasetFormComponent } from 'app/pages/storage/volumes/datasets/dataset
 import {
   DeleteDatasetDialogComponent,
 } from 'app/pages/storage/volumes/delete-dataset-dialog/delete-dataset-dialog.component';
+import { DeleteZvolDialogComponent } from 'app/pages/storage/volumes/delete-zvol-dialog/delete-zvol-dialog.component';
 import {
   EncryptionOptionsDialogComponent,
 } from 'app/pages/storage/volumes/encyption-options-dialog/encryption-options-dialog.component';
@@ -131,6 +132,7 @@ import { ZvolWizardComponent } from './volumes/zvol/zvol-wizard/zvol-wizard.comp
     ExportDisconnectModalComponent,
     CreateSnapshotDialogComponent,
     DeleteDatasetDialogComponent,
+    DeleteZvolDialogComponent,
     SnapshotCloneDialogComponent,
   ],
   exports: [VolumesListControlsComponent],
