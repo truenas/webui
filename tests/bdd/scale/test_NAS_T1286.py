@@ -51,7 +51,8 @@ def on_the_dashboard_click_on_apps(driver):
     # Wait for Available Applications UI to load
     assert wait_on_element(driver, 10, '//h3[text()="plex"]')
     assert wait_on_element(driver, 10, '//div[contains(.,"plex") and @class="content"]//button', 'clickable')
-    time.sleep(0.5)
+    # Sleep to make sure that the drop does not disappear
+    time.sleep(2)
 
 
 @then('the Apps page load, click settings, unset pool')
@@ -59,7 +60,7 @@ def the_apps_page_load_click_settings_unset_pool(driver):
     """the Apps page load, click settings, unset pool."""
     assert wait_on_element(driver, 20, '//button[@ix-auto-type="button"]//span[contains(text(),"Settings")]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto-type="button"]//span[contains(text(),"Settings")]').click()
-    assert wait_on_element(driver, 30, '//span[contains(text(),"Unset Pool")]', 'clickable')
+    assert wait_on_element(driver, 5, '//span[contains(text(),"Unset Pool")]', 'clickable')
     driver.find_element_by_xpath('//span[contains(text(),"Unset Pool")]').click()
     assert wait_on_element(driver, 20, '//h1[contains(.,"Unset Pool")]')
 
