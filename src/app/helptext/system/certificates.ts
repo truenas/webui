@@ -24,8 +24,8 @@ export const helptextSystemCertificates = {
 
     cert_create_type: {
       placeholder: T('Type'),
-      tooltip: T('<i>Internal Certificate</i> is used for internal or local \
- systems. <i>Import Certificate</i> allows an existing certificate to be imported onto \
+      tooltip: T('<i>Internal Certificate</i> uses a system-managed CA for certificate issuance. \
+ <i>Import Certificate</i> allows an existing certificate to be imported onto \
  the system.'),
       options: [
         { label: T('Internal Certificate'), value: 'CERTIFICATE_CREATE_INTERNAL' },
@@ -36,9 +36,10 @@ export const helptextSystemCertificates = {
 
     csr_create_type: {
       placeholder: T('Type'),
-      tooltip: T('<i>Certificate Signing Request</i> is used to get a CA signature. \
+      tooltip: T('<i>Certificate Signing Request</i>: when an external CA will issue (sign) the certificate. \
+        Typically used with ACME, or when default browser trust is needed.\
  <i>Import Certificate Signing Request</i> allows an existing CSR \
- to be imported onto the system.'),
+ to be imported onto the system, typically for use with ACME or an internal CA.'),
       options: [
         { label: T('Certificate Signing Request'), value: 'CERTIFICATE_CREATE_CSR' },
         { label: T('Import Certificate Signing Request'), value: 'CERTIFICATE_CREATE_IMPORTED_CSR' },
