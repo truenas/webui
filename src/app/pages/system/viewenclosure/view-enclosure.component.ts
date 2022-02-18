@@ -116,6 +116,8 @@ export class ViewEnclosureComponent implements AfterContentInit, OnChanges, OnDe
     });
 
     core.register({ observerClass: this, eventName: 'EnclosureData' }).subscribe((evt: CoreEvent) => {
+      evt.data = this._parseEnclosureData(evt.data);
+
       this.system = new SystemProfiler(this.system_product, evt.data);
       this.selectedEnclosure = this.system.profile[this.system.headIndex];
       core.emit({ name: 'DisksRequest', sender: this });
@@ -269,5 +271,32 @@ export class ViewEnclosureComponent implements AfterContentInit, OnChanges, OnDe
     } else {
       this.currentView = disks;
     }
+  }
+
+  private _parseEnclosureData(enclosure) {
+    const parsedEnclosure = [];
+
+    enclosure.forEach((e, idx) => {
+      parsedEnclosure.push({
+        id: e.id,
+        number: e.number,
+        name: e.name,
+        model: e.model,
+        controller: e.controller,
+        label: e.label,
+        elements: [],
+      });
+      for (const [keyElem, valElem] of Object.entries(e.elements)) {
+        const newElem = {
+          name: keyElem,
+          elements: [],
+        };
+        for (const [keySlot, valSlot] of Object.entries(valElem)) {
+          newElem.elements.push(Object.assign(valSlot, { slot: parseInt(keySlot) }));
+        }
+        parsedEnclosure[idx].elements.push(newElem);
+      }
+    });
+    return parsedEnclosure;
   }
 }
