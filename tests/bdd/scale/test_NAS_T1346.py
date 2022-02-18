@@ -148,7 +148,7 @@ def confirm_options(driver):
     driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
 
     assert wait_on_element(driver, 5, '//*[contains(.,"Installing")]')
-    assert wait_on_element_disappear(driver, 30, '//*[contains(.,"Installing")]')
+    assert wait_on_element_disappear(driver, 45, '//*[contains(.,"Installing")]')
 
 
 @then('confirm installation is successful')
@@ -176,7 +176,7 @@ def confirm_installation_is_successful(driver):
         else:
             assert wait_on_element(driver, 10, '//span[contains(.,"Close")]', 'clickable')
             driver.find_element_by_xpath('//span[contains(.,"Close")]').click()
-            time.sleep(30) # Because of slow start up times, this takes another 10-20 second to switch from "Deploying to Active"  So we can either flip the page constantly or just wait and give it time.
+            time.sleep(45) # Because of slow start up times, this takes another 10-20 second to switch from "Deploying to Active"  So we can either flip the page constantly or just wait and give it time.
             assert wait_on_element(driver, 10, '//div[contains(text(),"Available Applications")]', 'clickable')
             driver.find_element_by_xpath('//div[contains(text(),"Available Applications")]').click()
             assert wait_on_element(driver, 10, '//div[contains(text(),"Installed Applications")]', 'clickable')
