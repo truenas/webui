@@ -1,6 +1,7 @@
 # coding=utf-8
 """SCALE UI: feature tests."""
 
+import time
 from function import (
     wait_on_element,
     is_element_present,
@@ -78,8 +79,11 @@ def input_my_ldap_smb_test_share_as_the_description_and_click_summit(driver, des
     checkbox_checked = attribute_value_exist(driver, '//mat-checkbox[@ix-auto="checkbox__Enabled"]', 'class', 'mat-checkbox-checked')
     if not checkbox_checked:
         driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__Enabled"]').click()
+    time.sleep(0.5)
     assert wait_on_element(driver, 5, '//button[@ix-auto="button__SAVE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
+    time.sleep(0.5)
+    assert wait_on_element_disappear(driver, 30, '//h6[contains(.,"Please wait")]')
 
 
 @then('the ldapsmbshare should be added to the Shares list')
