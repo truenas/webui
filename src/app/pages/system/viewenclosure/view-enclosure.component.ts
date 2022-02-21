@@ -20,6 +20,16 @@ interface ViewConfig {
   showInNavbar: boolean;
 }
 
+interface EnclosureResponse {
+  id: string;
+  number: string;
+  name: string;
+  model: string;
+  controller: string;
+  label: string;
+  elements: unknown[];
+}
+
 @Component({
   selector: 'view-enclosure',
   templateUrl: './view-enclosure.component.html',
@@ -116,7 +126,7 @@ export class ViewEnclosureComponent implements AfterContentInit, OnChanges, OnDe
     });
 
     core.register({ observerClass: this, eventName: 'EnclosureData' }).subscribe((evt: CoreEvent) => {
-      evt.data = this._parseEnclosureData(evt.data);
+      evt.data = this.parseEnclosureData(evt.data);
 
       this.system = new SystemProfiler(this.system_product, evt.data);
       this.selectedEnclosure = this.system.profile[this.system.headIndex];
@@ -273,20 +283,20 @@ export class ViewEnclosureComponent implements AfterContentInit, OnChanges, OnDe
     }
   }
 
-  private _parseEnclosureData(enclosure) {
-    const parsedEnclosure = [];
+  private parseEnclosureData(enclosures: EnclosureResponse[]): EnclosureResponse[] {
+    const parsedEnclosure: EnclosureResponse[] = [];
 
-    enclosure.forEach((e, idx) => {
+    enclosures.forEach((enclosure, idx) => {
       parsedEnclosure.push({
-        id: e.id,
-        number: e.number,
-        name: e.name,
-        model: e.model,
-        controller: e.controller,
-        label: e.label,
+        id: enclosure.id,
+        number: enclosure.number,
+        name: enclosure.name,
+        model: enclosure.model,
+        controller: enclosure.controller,
+        label: enclosure.label,
         elements: [],
       });
-      for (const [keyElem, valElem] of Object.entries(e.elements)) {
+      for (const [keyElem, valElem] of Object.entries(enclosure.elements)) {
         const newElem = {
           name: keyElem,
           elements: [],
