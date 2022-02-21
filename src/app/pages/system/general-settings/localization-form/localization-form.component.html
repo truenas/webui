@@ -5,25 +5,25 @@
       <ix-fieldset
         [title]="fieldsetTitle"
       >
-        <ix-combobox2
+        <ix-combobox
           [formControlName]="language.fcName"
           [label]="language.label"
           [tooltip]="language.tooltip"
           [provider]="language.provider"
         >
-        </ix-combobox2>
+        </ix-combobox>
         <ix-select
           [label]="kbdMap.label"
           [tooltip]="kbdMap.tooltip"
           [options]="kbdMap.options"
           [formControlName]="kbdMap.fcName"
         ></ix-select>
-        <ix-combobox2
+        <ix-combobox
           [formControlName]="timezone.fcName"
           [label]="timezone.label"
           [tooltip]="timezone.tooltip"
           [provider]="timezone.provider"
-        ></ix-combobox2>
+        ></ix-combobox>
         <ix-select
           [label]="dateFormat.label"
           [tooltip]="dateFormat.tooltip"

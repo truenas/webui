@@ -21,9 +21,9 @@ import { IxComboboxProvider } from 'app/modules/ix-forms/components/ix-combobox/
 
 @UntilDestroy()
 @Component({
-  selector: 'ix-combobox2',
-  templateUrl: './ix-combobox2.component.html',
-  styleUrls: ['./ix-combobox2.component.scss'],
+  selector: 'ix-combobox',
+  templateUrl: './ix-combobox.component.html',
+  styleUrls: ['./ix-combobox.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class IxComboboxComponent implements ControlValueAccessor, OnInit {
