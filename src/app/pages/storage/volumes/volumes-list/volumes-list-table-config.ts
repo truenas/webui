@@ -7,7 +7,7 @@ import { untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 import { TreeNode } from 'primeng/api';
-import { combineLatest, forkJoin, Observable } from 'rxjs';
+import { forkJoin, Observable } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { DatasetEncryptionType } from 'app/enums/dataset-encryption-type.enum';
 import { DatasetType } from 'app/enums/dataset-type.enum';
@@ -23,7 +23,7 @@ import helptext from 'app/helptext/storage/volumes/volume-list';
 import { DatasetLockParams } from 'app/interfaces/dataset-lock.interface';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { Job } from 'app/interfaces/job.interface';
-import { PoolAttachment, DatasetAttachment } from 'app/interfaces/pool-attachment.interface';
+import { DatasetAttachment } from 'app/interfaces/pool-attachment.interface';
 import { Pool, PoolExpandParams, UpdatePool } from 'app/interfaces/pool.interface';
 import { Process } from 'app/interfaces/process.interface';
 import { Subs } from 'app/interfaces/subs.interface';
@@ -41,6 +41,7 @@ import {
 import {
   DeleteDatasetDialogComponent,
 } from 'app/pages/storage/volumes/delete-dataset-dialog/delete-dataset-dialog.component';
+import { DeleteZvolDialogComponent } from 'app/pages/storage/volumes/delete-zvol-dialog/delete-zvol-dialog.component';
 import {
   EncryptionOptionsDialogComponent,
 } from 'app/pages/storage/volumes/encyption-options-dialog/encryption-options-dialog.component';
@@ -565,30 +566,15 @@ export class VolumesListTableConfig implements EntityTableConfig {
         id: rowData.name,
         name: T('Delete Zvol'),
         label: T('Delete Zvol'),
-        onClick: (row1: VolumesListDataset) => {
-          const zvolName = row1.name;
-
-          this.loader.open();
-          combineLatest([
-            this.ws.call('pool.dataset.attachments', [row1.id]),
-            this.ws.call('pool.dataset.processes', [row1.id]),
-          ]).pipe(untilDestroyed(this, 'destroy')).subscribe(
-            ([attachments, processes]) => {
-              this.deleteZvol(
-                rowData.id,
-                zvolName,
-                this.getZvolRelatedSummary(
-                  zvolName,
-                  attachments,
-                  processes,
-                ),
-              );
-            },
-            (err) => {
-              this.loader.close();
-              new EntityUtils().handleWsError(this, err, this.dialogService);
-            },
-          );
+        onClick: (row: VolumesListDataset) => {
+          this.mdDialog.open(DeleteZvolDialogComponent, { data: row })
+            .afterClosed()
+            .pipe(untilDestroyed(this, 'destroy'))
+            .subscribe((shouldRefresh) => {
+              if (shouldRefresh) {
+                this.parentVolumesListComponent.repaintMe();
+              }
+            });
         },
       });
       actions.push({
@@ -660,102 +646,6 @@ export class VolumesListTableConfig implements EntityTableConfig {
         } as ExportDisconnectModalState,
       })
       .afterClosed();
-  }
-
-  private getStorageFlattenedAttachments(attachments: PoolAttachment[]): string {
-    function formatPoolAttachment(obj: PoolAttachment): string {
-      return obj.attachments
-        .map((a) => formatAttachments(a.split(',')))
-        .join();
-    }
-
-    function formatAttachments(arr: string[]): string {
-      return arr
-        .map((str) => formatAttachment(str))
-        .join();
-    }
-
-    function formatAttachment(str: string): string {
-      return `<br> - ${str}`;
-    }
-
-    return attachments.map((item) => `<br><b>${item.type}:</b>${formatPoolAttachment(item)}`).join();
-  }
-
-  private getStorageFlattenedProcesses(processes: Process[]): string {
-    return processes.map((process) => {
-      if (process.name) {
-        return `<br> - ${process.name}`;
-      }
-      if (process.pid) {
-        return `<br> - ${process.pid} - ${process.cmdline.substring(0, 40)}`;
-      }
-      return '';
-    }).join();
-  }
-
-  private getZvolRelatedSummary(
-    zvolName: string,
-    attachments: PoolAttachment[],
-    processes: Process[],
-  ): string {
-    let summary = '';
-
-    if (attachments.length) {
-      summary += this.translate.instant(helptext.zvolDeleteMsg, { name: zvolName });
-      summary += this.getStorageFlattenedAttachments(attachments);
-      summary += '<br /><br />';
-    }
-
-    const runningProcesses = processes.filter((p) => !p.service && p.name);
-    if (runningProcesses.length) {
-      summary += this.translate.instant(helptext.exportMessages.running);
-      summary += `<b>${zvolName}</b>:`;
-      summary += this.getStorageFlattenedProcesses(runningProcesses);
-    }
-
-    const runningUnknownProcesses = processes.filter((p) => !p.service && !p.name);
-    if (runningUnknownProcesses.length) {
-      summary += '<br><br>' + this.translate.instant(helptext.exportMessages.unknown);
-      summary += this.getStorageFlattenedProcesses(runningUnknownProcesses);
-      summary += '<br><br>' + this.translate.instant(helptext.exportMessages.terminated);
-    }
-
-    return summary;
-  }
-
-  private deleteZvol(zvolId: string, zvolName: string, relatedSummary: string): void {
-    this.loader.close();
-    this.dialogService.doubleConfirm(
-      this.translate.instant('Delete'),
-      this.translate.instant(
-        'ZVol {zvolName} and all snapshots stored with it <b>will be permanently deleted</b>.',
-        { zvolName },
-      )
-      + `<br><br>${relatedSummary}`,
-      zvolName,
-      true,
-      this.translate.instant('Delete Zvol'),
-    ).pipe(
-      filter(Boolean),
-      untilDestroyed(this, 'destroy'),
-    ).subscribe(() => {
-      this.loader.open();
-
-      this.ws.call('pool.dataset.delete', [zvolId, { recursive: true }]).pipe(untilDestroyed(this, 'destroy')).subscribe(() => {
-        this.loader.close();
-        this.parentVolumesListComponent.repaintMe();
-      }, (res) => {
-        this.loader.close();
-        this.dialogService.errorReport(
-          this.translate.instant(
-            'Error deleting zvol {zvolName}.', { zvolName },
-          ),
-          res.reason,
-          res.stack,
-        );
-      });
-    });
   }
 
   getEncryptedDatasetActions(rowData: VolumesListDataset): EntityTableAction[] {

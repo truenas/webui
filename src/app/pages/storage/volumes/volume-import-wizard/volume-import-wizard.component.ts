@@ -102,9 +102,9 @@ export class VolumeImportWizardComponent implements WizardConfiguration {
     const guidFc = _.find(this.wizardConfig[0].fieldConfig, { name: 'guid' }) as FormSelectConfig;
     const guidFg = entityWizard.formArray.get([0]).get('guid') as FormGroup;
     guidFg.valueChanges.pipe(untilDestroyed(this)).subscribe((res) => {
-      const pool = _.find(guidFc.options, { value: res });
-      this.summary[this.translate.instant('Pool to import')] = pool['label'];
-      const selectedPoolIndex = this.importablePools.findIndex((p) => p.guid === pool.value);
+      const poolToImport = _.find(guidFc.options, { value: res });
+      this.summary[this.translate.instant('Pool to import')] = poolToImport['label'];
+      const selectedPoolIndex = this.importablePools.findIndex((pool) => pool.guid === poolToImport.value);
       this.pool = this.importablePools[selectedPoolIndex].name;
     });
   }

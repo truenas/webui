@@ -227,8 +227,8 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       to: { x: endX },
       duration: 250,
     }).start({
-      update: (v: { x: number }) => {
-        carousel.set(v);
+      update: (valuesUpdate: { x: number }) => {
+        carousel.set(valuesUpdate);
       },
       complete: () => {
         this.activeMobileWidget = [];
@@ -570,7 +570,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
-  private applyState(state: DashConfigItem[]): void {
+  private applyState(newState: DashConfigItem[]): void {
     // This reconciles current state with saved dashState
 
     if (!this.dashState) {
@@ -579,10 +579,14 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     const hidden = this.dashState
-      .filter((w) => state.every((s) => !(w?.identifier === s.identifier || w?.name === s.name)))
+      .filter((widget) => {
+        return newState.every((updatedWidget) => {
+          return !(widget?.identifier === updatedWidget.identifier || widget?.name === updatedWidget.name);
+        });
+      })
       .map((widget) => ({ ...widget, rendered: false }));
 
-    this.setDashState([...state, ...hidden]);
+    this.setDashState([...newState, ...hidden]);
   }
 
   private setDashState(dashState: DashConfigItem[]): void {

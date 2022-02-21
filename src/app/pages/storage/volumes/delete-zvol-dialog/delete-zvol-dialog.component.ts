@@ -10,7 +10,7 @@ import {
   combineLatest, Observable, of, throwError,
 } from 'rxjs';
 import { catchError, switchMap } from 'rxjs/operators';
-import { DatasetAttachment } from 'app/interfaces/pool-attachment.interface';
+import { ZvolAttachment } from 'app/interfaces/pool-attachment.interface';
 import { Process } from 'app/interfaces/process.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { AppLoaderService } from 'app/modules/app-loader/app-loader.service';
@@ -21,17 +21,17 @@ import { DialogService, WebSocketService } from 'app/services';
 
 @UntilDestroy()
 @Component({
-  templateUrl: './delete-dataset-dialog.component.html',
-  styleUrls: ['./delete-dataset-dialog.component.scss'],
+  templateUrl: './delete-zvol-dialog.component.html',
+  styleUrls: ['./delete-zvol-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class DeleteDatasetDialogComponent implements OnInit {
-  attachments: DatasetAttachment[] = [];
+export class DeleteZvolDialogComponent implements OnInit {
+  attachments: ZvolAttachment[] = [];
   knownProcesses: Process[] = [];
   unknownProcesses: Process[] = [];
 
   form = this.fb.group({
-    confirmDatasetName: ['', [Validators.required]],
+    confirmZvolName: ['', [Validators.required]],
     confirm: [false, Validators.requiredTrue],
   });
 
@@ -42,22 +42,22 @@ export class DeleteDatasetDialogComponent implements OnInit {
     private fb: FormBuilder,
     private ws: WebSocketService,
     private dialog: DialogService,
-    private dialogRef: MatDialogRef<DeleteDatasetDialogComponent>,
+    private dialogRef: MatDialogRef<DeleteZvolDialogComponent>,
     private translate: TranslateService,
     private cdr: ChangeDetectorRef,
     private validators: IxValidatorsService,
-    @Inject(MAT_DIALOG_DATA) public dataset: VolumesListDataset,
+    @Inject(MAT_DIALOG_DATA) public zvol: VolumesListDataset,
   ) {}
 
   ngOnInit(): void {
     this.setDeleteMessage();
     this.setConfirmValidator();
-    this.loadDatasetRelatedEntities();
+    this.loadZvolRelatedEntities();
   }
 
   onDelete(): void {
     this.loader.open();
-    this.ws.call('pool.dataset.delete', [this.dataset.id, { recursive: true }])
+    this.ws.call('pool.dataset.delete', [this.zvol.id, { recursive: true }])
       .pipe(
         catchError((error: WebsocketError) => {
           if (error.reason.includes('Device busy')) {
@@ -74,7 +74,7 @@ export class DeleteDatasetDialogComponent implements OnInit {
       }, (error) => {
         this.dialog.errorReport(
           this.translate.instant(
-            'Error deleting dataset {datasetName}.', { datasetName: this.dataset.name },
+            'Error deleting zvol {name}.', { name: this.zvol.name },
           ),
           error.reason,
           error.stack,
@@ -87,27 +87,29 @@ export class DeleteDatasetDialogComponent implements OnInit {
   private askToForceDelete(): Observable<unknown> {
     return this.dialog.confirm({
       title: this.translate.instant('Device Busy'),
-      message: this.translate.instant('Force deletion of dataset <i>{datasetName}</i>?', { datasetName: this.dataset.name }),
+      message: this.translate.instant('Force deletion of zvol <i>{name}</i>?', { name: this.zvol.name }),
       buttonMsg: this.translate.instant('Force Delete'),
     }).pipe(
       switchMap((shouldForceDelete) => {
         if (shouldForceDelete) {
-          this.ws.call('pool.dataset.delete', [this.dataset.id, {
+          this.ws.call('pool.dataset.delete', [this.zvol.id, {
             recursive: true,
             force: true,
           }]);
+          this.loader.close();
         } else {
+          this.loader.close();
           return of();
         }
       }),
     );
   }
 
-  private loadDatasetRelatedEntities(): void {
+  private loadZvolRelatedEntities(): void {
     this.loader.open();
     combineLatest([
-      this.ws.call('pool.dataset.attachments', [this.dataset.id]),
-      this.ws.call('pool.dataset.processes', [this.dataset.id]),
+      this.ws.call('pool.dataset.attachments', [this.zvol.id]),
+      this.ws.call('pool.dataset.processes', [this.zvol.id]),
     ]).pipe(untilDestroyed(this))
       .subscribe(([attachments, processes]) => {
         this.attachments = attachments;
@@ -137,18 +139,18 @@ export class DeleteDatasetDialogComponent implements OnInit {
   }
 
   private setConfirmValidator(): void {
-    this.form.controls['confirmDatasetName'].setValidators(
+    this.form.controls['confirmZvolName'].setValidators([
       this.validators.confirmValidator(
-        this.dataset.name,
-        this.translate.instant('Enter dataset name to continue.'),
+        this.zvol.name,
+        this.translate.instant('Enter zvol name to continue.'),
       ),
-    );
+    ]);
   }
 
   private setDeleteMessage(): void {
     this.deleteMessage = this.translate.instant(
-      'The <i><b>{name}</b></i> dataset and all snapshots stored with it <b>will be permanently deleted</b>.',
-      { name: this.dataset.name },
+      'The <i><b>{name}</b></i> zvol and all snapshots stored with it <b>will be permanently deleted</b>.',
+      { name: this.zvol.name },
     );
   }
 }

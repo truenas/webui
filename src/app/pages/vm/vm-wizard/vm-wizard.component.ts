@@ -252,17 +252,18 @@ export class VmWizardComponent implements WizardConfiguration {
             ...helptext.memory_validation,
             this.memoryValidator('memory'),
             (control: FormControl): ValidationErrors => {
-              const config = this.wizardConfig.find((c) => c.label === helptext.vcpus_label).fieldConfig.find((c) => c.name === 'memory');
+              const memoryConfig = this.wizardConfig.find((wizardConfig) => wizardConfig.label === helptext.vcpus_label)
+                .fieldConfig.find((fieldConfig) => fieldConfig.name === 'memory');
               const errors = control.value && Number.isNaN(this.storageService.convertHumanStringToNum(control.value))
                 ? { invalid_byte_string: true }
                 : null;
 
               if (errors) {
-                config.hasErrors = true;
-                config.errors = globalHelptext.human_readable.input_error;
+                memoryConfig.hasErrors = true;
+                memoryConfig.errors = globalHelptext.human_readable.input_error;
               } else {
-                config.hasErrors = false;
-                config.errors = '';
+                memoryConfig.hasErrors = false;
+                memoryConfig.errors = '';
               }
 
               return errors;
@@ -333,17 +334,20 @@ export class VmWizardComponent implements WizardConfiguration {
             ...helptext.volsize_validation,
             this.volSizeValidator('volsize'),
             (control: FormControl): ValidationErrors => {
-              const config = this.wizardConfig.find((c) => c.label === helptext.disks_label).fieldConfig.find((c) => c.name === 'volsize');
+              const volsizeConfig = this.wizardConfig
+                .find((wizardConfig) => wizardConfig.label === helptext.disks_label)
+                .fieldConfig
+                .find((fieldConfig) => fieldConfig.name === 'volsize');
               const errors = control.value && Number.isNaN(this.storageService.convertHumanStringToNum(control.value, false, 'mgtp'))
                 ? { invalid_byte_string: true }
                 : null;
 
               if (errors) {
-                config.hasErrors = true;
-                config.errors = globalHelptext.human_readable.input_error;
+                volsizeConfig.hasErrors = true;
+                volsizeConfig.errors = globalHelptext.human_readable.input_error;
               } else {
-                config.hasErrors = false;
-                config.errors = '';
+                volsizeConfig.hasErrors = false;
+                volsizeConfig.errors = '';
               }
 
               return errors;

@@ -78,9 +78,9 @@ export class FormSelectComponent implements Field, AfterViewInit, AfterViewCheck
       this.selectedValues = this.control.value;
       // check if any value is invalid
       if (this.config.multiple && this.config.asyncValidation) {
-        for (const v of this.control.value) {
-          if (_.find(this.config.options, { value: v }) === undefined) {
-            this.config.options.push({ label: v + '(invalid)', value: v });
+        for (const value of this.control.value) {
+          if (_.find(this.config.options, { value }) === undefined) {
+            this.config.options.push({ label: value + '(invalid)', value });
           }
         }
       }
@@ -180,7 +180,7 @@ export class FormSelectComponent implements Field, AfterViewInit, AfterViewCheck
       return;
     }
 
-    if (this.selectedValues.findIndex((v) => v === option.value) >= 0 && this.config.alert) {
+    if (this.selectedValues.findIndex((selectedValue) => selectedValue === option.value) >= 0 && this.config.alert) {
       this.showAlert(option);
     }
     this.group.value[this.config.name] = this.selectedValues;
@@ -201,6 +201,8 @@ export class FormSelectComponent implements Field, AfterViewInit, AfterViewCheck
   }
 
   shouldAlertOnOption(option: FormSelectOption): boolean {
-    return this.config.alert ? this.config.alert.forValues.findIndex((v) => v === option.value) >= 0 : false;
+    return this.config.alert
+      ? this.config.alert.forValues.findIndex((alertForValue) => alertForValue === option.value) >= 0
+      : false;
   }
 }

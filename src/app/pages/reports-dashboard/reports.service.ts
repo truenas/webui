@@ -108,9 +108,9 @@ export class ReportsService implements OnDestroy {
     let index = data.length - 1;
     do {
       // True only when all the values are null
-      const isEmpty = !data[index].reduce((acc, v) => {
+      const isEmpty = !data[index].reduce((acc, i) => {
         // Treat zero as a value
-        const value = v !== null ? 1 : v;
+        const value = i !== null ? 1 : i;
         return acc + value;
       });
 

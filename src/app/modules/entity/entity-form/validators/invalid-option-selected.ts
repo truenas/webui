@@ -4,9 +4,9 @@ import { Option } from 'app/interfaces/option.interface';
 
 export function selectedOptionValidator(validOptions: Promise<Option[]>): AsyncValidatorFn {
   return (control: AbstractControl): Promise<ValidationErrors> => validOptions.then((options) => {
-    const selectedInvalidOptions = control.value.filter((v: unknown) => {
-      if (_.find(options, { value: v }) === undefined) {
-        return v;
+    const selectedInvalidOptions = control.value.filter((value: unknown) => {
+      if (_.find(options, { value }) === undefined) {
+        return value;
       }
 
       return undefined;

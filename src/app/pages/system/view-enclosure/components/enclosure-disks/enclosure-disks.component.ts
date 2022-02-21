@@ -752,7 +752,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
       to: { scale: 1, opacity: 1 },
       duration: 360,
     }).start({
-      update: (v: { scale: number; opacity: number }) => { el.set(v); },
+      update: (valuesUpdate: { scale: number; opacity: number }) => { el.set(valuesUpdate); },
       complete: () => {
         if (this.currentView === 'details') {
           this.labels.events$.next({ name: 'OverlayReady', data: { vdev: this.selectedVdev, overlay: this.domLabels }, sender: this });
@@ -767,9 +767,9 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
     let duration = 360;
 
     // x is the position relative to it's starting point.
-    const w = el.get('width');
+    const width = el.get('width');
     const startX = 0;
-    let endX = className === 'stage-left' ? w * -1 : w;
+    let endX = className === 'stage-left' ? width * -1 : width;
     if (className === 'full-stage') {
       endX = startX;
       duration = 10;
@@ -784,7 +784,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
       },
       duration,
     }).start({
-      update: (v: { opacity: number; x: number }) => { el.set(v); },
+      update: (valuesUpdate: { opacity: number; x: number }) => { el.set(valuesUpdate); },
       complete: () => {
         if (this.exitingView === 'details' && this.currentView !== 'details') {
           this.selectedDisk = null;
