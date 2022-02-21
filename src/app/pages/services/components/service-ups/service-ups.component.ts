@@ -8,7 +8,6 @@ import { of } from 'rxjs';
 import { UpsMode } from 'app/enums/ups-mode.enum';
 import { choicesToOptions, singleArrayToOptions } from 'app/helpers/options.helper';
 import helptext from 'app/helptext/services/components/service-ups';
-import { Option } from 'app/interfaces/option.interface';
 import { UpsConfigUpdate } from 'app/interfaces/ups-config.interface';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { SimpleAsyncComboboxProvider } from 'app/modules/ix-forms/classes/simple-async-combobox-provider';
@@ -99,8 +98,6 @@ export class ServiceUpsComponent implements OnInit {
   };
 
   readonly modeOptions$ = of(helptext.ups_mode_options);
-  driverOptions: Option[];
-  portOptions: Option[];
   readonly shutdownOptions$ = of(helptext.ups_shutdown_options);
 
   constructor(

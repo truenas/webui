@@ -47,12 +47,10 @@ export class LocalizationFormComponent {
     label: string;
     tooltip: string;
     provider: SimpleAsyncComboboxProvider;
-    options: Option[];
   } = {
     fcName: 'language',
     label: helptext.stg_language.placeholder,
     tooltip: helptext.stg_language.tooltip,
-    options: null,
     provider: new SimpleAsyncComboboxProvider(this.sysGeneralService.languageOptions(this.sortLanguagesByName)),
   };
 
@@ -72,13 +70,11 @@ export class LocalizationFormComponent {
     readonly fcName: 'timezone';
     label: string;
     tooltip: string;
-    options: Option[];
     provider: IxComboboxProvider;
   } = {
     fcName: 'timezone',
     label: helptext.stg_timezone.placeholder,
     tooltip: helptext.stg_timezone.tooltip,
-    options: null,
     provider: new SimpleAsyncComboboxProvider(this.sysGeneralService.timezoneChoices().pipe(map(
       (tzChoices) => _.sortBy(tzChoices, [(option) => option.label.toLowerCase()]),
     ))),
