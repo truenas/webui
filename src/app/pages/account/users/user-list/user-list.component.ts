@@ -1,5 +1,6 @@
 import {
   Component, OnInit, AfterViewInit, ChangeDetectorRef, ViewChild, ChangeDetectionStrategy,
+  Optional, ViewChildren, QueryList,
 } from '@angular/core';
 import { MatSort, Sort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
@@ -10,10 +11,15 @@ import { Subject } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
 import { ConfirmOptions } from 'app/interfaces/dialog.interface';
 import { CoreEvent } from 'app/interfaces/events';
+import { Option } from 'app/interfaces/option.interface';
 import { User } from 'app/interfaces/user.interface';
+import { AppLoaderService } from 'app/modules/app-loader/app-loader.service';
+import { DialogFormConfiguration } from 'app/modules/entity/entity-dialog/dialog-form-configuration.interface';
+import { EntityDialogComponent } from 'app/modules/entity/entity-dialog/entity-dialog.component';
 import { EmptyConfig, EmptyType } from 'app/modules/entity/entity-empty/entity-empty.component';
 import { EntityToolbarComponent } from 'app/modules/entity/entity-toolbar/entity-toolbar.component';
 import { ControlConfig, ToolbarConfig } from 'app/modules/entity/entity-toolbar/models/control-config.interface';
+import { EntityUtils } from 'app/modules/entity/utils';
 import { DialogService } from 'app/services';
 import { CoreService } from 'app/services/core-service/core.service';
 import { ModalService } from 'app/services/modal.service';
@@ -21,6 +27,7 @@ import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 import { builtinUsersToggled, oneTimeBuiltinUsersMessageShown } from 'app/store/preferences/preferences.actions';
 import { waitForPreferences } from 'app/store/preferences/preferences.selectors';
+import { IxDetailRowDirective } from '../../../../modules/ix-tables/directives/ix-detail-row.directive';
 import { UserFormComponent } from '../user-form/user-form.component';
 
 @UntilDestroy()
@@ -56,6 +63,7 @@ export class UserListComponent implements OnInit, AfterViewInit {
     title: this.translate.instant('Can not retrieve response'),
   };
   expandedRow: User;
+  @ViewChildren(IxDetailRowDirective) private detailRows: QueryList<IxDetailRowDirective>;
 
   private showUserListMessage = false;
   private hideBuiltinUsers = true;
@@ -71,6 +79,7 @@ export class UserListComponent implements OnInit, AfterViewInit {
   }
 
   constructor(
+    private loader: AppLoaderService,
     private dialogService: DialogService,
     private ws: WebSocketService,
     private translate: TranslateService,
@@ -78,6 +87,7 @@ export class UserListComponent implements OnInit, AfterViewInit {
     private cdr: ChangeDetectorRef,
     private core: CoreService,
     private store$: Store<AppState>,
+    @Optional() private ixDetailRowDirective: IxDetailRowDirective,
   ) { }
 
   ngOnInit(): void {
@@ -176,9 +186,20 @@ export class UserListComponent implements OnInit, AfterViewInit {
     this.modalService.openInSlideIn(UserFormComponent);
   }
 
-  expandRow(row: User): void {
+  onToggle(row: User): void {
     this.expandedRow = this.expandedRow === row ? null : row;
+    this.toggleDetailRows();
     this.cdr.markForCheck();
+  }
+
+  toggleDetailRows(): void {
+    this.detailRows.forEach((row) => {
+      if (row.expanded && row.ixDetailRow !== this.expandedRow) {
+        row.close();
+      } else if (!row.expanded && row.ixDetailRow === this.expandedRow) {
+        row.open();
+      }
+    });
   }
 
   setupToolbar(): void {
@@ -234,5 +255,64 @@ export class UserListComponent implements OnInit, AfterViewInit {
 
     this.toolbarConfig = toolbarConfig;
     this.core.emit({ name: 'GlobalActions', data: settingsConfig, sender: this });
+  }
+
+  getDetails(user: User): Option[] {
+    return [
+      { label: this.translate.instant('GID'), value: user?.group?.bsdgrp_gid },
+      { label: this.translate.instant('Home Directory'), value: user.home },
+      { label: this.translate.instant('Shell'), value: user.shell },
+      { label: this.translate.instant('Email'), value: user.email },
+      { label: this.translate.instant('Password Disabled'), value: user.password_disabled.toString() },
+      { label: this.translate.instant('Lock User'), value: user.locked.toString() },
+      { label: this.translate.instant('Permit Sudo'), value: user.sudo.toString() },
+      { label: this.translate.instant('Microsoft Account'), value: user.microsoft_account.toString() },
+      { label: this.translate.instant('Samba Authentication'), value: user.smb.toString() },
+    ];
+  }
+
+  doEdit(user: User): void {
+    this.modalService.openInSlideIn(UserFormComponent, user.id);
+  }
+
+  async doDelete(user: User): Promise<void> {
+    this.loader.open();
+    const showCheckboxIfLastMember = await this.ws.call('group.query', [[['id', '=', user.group.id]]]).pipe(
+      map((groups) => {
+        return groups.length ? groups[0].users.length === 1 : false;
+      }),
+    ).toPromise();
+
+    const confirmOptions: DialogFormConfiguration = {
+      title: this.translate.instant('Delete User'),
+      message: this.translate.instant('Are you sure you want to delete user <b>"{user}"</b>?', { user: user.username }),
+      saveButtonText: this.translate.instant('Confirm'),
+      fieldConfig: [{
+        type: 'checkbox',
+        name: 'delete_group',
+        placeholder: this.translate.instant('Delete user primary group "{name}"', { name: user.group.bsdgrp_group }),
+        value: false,
+        isHidden: true,
+      }],
+      preInit: () => {
+        confirmOptions.fieldConfig[0].isHidden = !showCheckboxIfLastMember;
+      },
+      afterInit: () => {
+        this.loader.close();
+      },
+      customSubmit: (entityDialog: EntityDialogComponent) => {
+        entityDialog.dialogRef.close(true);
+        this.ws.call('user.delete', [user.id, entityDialog.formValue]).pipe(untilDestroyed(this)).subscribe(
+          () => {
+            this.getUsers();
+          },
+          (err) => {
+            new EntityUtils().handleWsError(this, err, this.dialogService);
+          },
+        );
+      },
+    };
+
+    this.dialogService.dialogForm(confirmOptions);
   }
 }

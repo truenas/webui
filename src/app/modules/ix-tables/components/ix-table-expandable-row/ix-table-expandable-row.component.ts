@@ -22,4 +22,6 @@ import { Option } from 'app/interfaces/option.interface';
 export class IxTableExpandableRowComponent {
   @Input() data: Option[];
   @Input() isExpanded: boolean;
+  // TODO: Find a way to get colspan value automatically
+  @Input() colspan: number;
 }

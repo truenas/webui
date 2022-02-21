@@ -2,7 +2,6 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
-import { MockComponent } from 'ng-mocks';
 import { of, Subject } from 'rxjs';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { Preferences } from 'app/interfaces/preferences.interface';
@@ -13,7 +12,6 @@ import { IxTableHarness } from 'app/modules/ix-tables/testing/ix-table.harness';
 import { DialogService, ModalService, WebSocketService } from 'app/services';
 import { selectPreferences } from 'app/store/preferences/preferences.selectors';
 import { CoreService } from '../../../../services/core-service/core.service';
-import { UserListDetailsComponent } from '../user-list-details/user-list-details.component';
 import { UserListComponent } from './user-list.component';
 
 export const fakeDataSource: User[] = [{
@@ -77,7 +75,6 @@ describe('UserListComponent', () => {
       IxTableModule,
     ],
     declarations: [
-      MockComponent(UserListDetailsComponent),
     ],
     providers: [
       mockWebsocket([
@@ -156,6 +153,19 @@ describe('UserListComponent', () => {
     const element = await firstRow.host();
     await element.click();
 
-    expect(element.hasClass('expanded-row')).toBeTruthy();
+    expect(await element.hasClass('expanded')).toBeTruthy();
+  });
+
+  it('should expand only one row on click', async () => {
+    const table = await loader.getHarness(IxTableHarness);
+    const [firstRow, secondRow] = await table.getRows();
+
+    const firstRowElement = await firstRow.host();
+    await firstRowElement.click();
+
+    const secondRowElement = await secondRow.host();
+    await secondRowElement.click();
+
+    expect(spectator.queryAll('.expanded').length).toEqual(1);
   });
 });

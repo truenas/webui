@@ -35,22 +35,16 @@
         <td mat-cell *matCellDef="let user; dataSource: dataSource">{{ user.full_name }}</td>
       </ng-container>
 
-      <ix-expand-toggle-column [expandedRow]="expandedRow" (toggle)="expandRow($event)"></ix-expand-toggle-column>
-
-      <app-user-list-details
-        [expandedRow]="expandedRow"
-        [dataSource]="dataSource"
-        [colspan]="displayedColumns.length"
-        (update)="getUsers()"
-      ></app-user-list-details>
+      <ix-expand-toggle-column [expandedRow]="expandedRow" (toggle)="onToggle($event)"></ix-expand-toggle-column>
 
       <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
       <tr
         mat-row
-        *matRowDef="let user; columns: displayedColumns;"
-        (click)="expandRow(user)"
-        class="element-row clickable-row"
-        [ngClass]="{'expanded-row': expandedRow === user}"
+        *matRowDef="let user; columns: displayedColumns; dataSource: dataSource"
+        class="clickable-row"
+        [ixDetailRow]="user"
+        [ixDetailRowTpl]="expandedRowTemplate"
+        (toggle)="onToggle($event)"
       ></tr>
 
       <tr class="mat-row no-data-row" *matNoDataRow>
@@ -63,3 +57,21 @@
     <ix-table-paginator [dataSource]="dataSource"></ix-table-paginator>
   </mat-card-content>
 </mat-card>
+
+<ng-template #expandedRowTemplate let-user>
+  <ix-table-expandable-row
+    [data]="getDetails(user)"
+    [isExpanded]="expandedRow === user"
+    [colspan]="displayedColumns.length"
+  >
+    <button mat-button (click)="doEdit(user)">
+      <mat-icon>edit</mat-icon>
+      <span>{{ 'Edit' | translate }}</span>
+    </button>
+
+    <button *ngIf="!user.builtin" mat-button (click)="doDelete(user)">
+      <mat-icon>delete</mat-icon>
+      <span>{{ 'Delete' | translate }}</span>
+    </button>
+  </ix-table-expandable-row>
+</ng-template>
