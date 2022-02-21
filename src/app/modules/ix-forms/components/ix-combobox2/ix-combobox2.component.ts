@@ -147,7 +147,8 @@ export class IxCombobox2Component implements ControlValueAccessor, OnInit {
       this.inputElementRef.nativeElement.value = '';
     }
     this.selectedOption = null;
-    this.onChange('');
+    this.value = null;
+    this.onChange(null);
   }
 
   registerOnChange(onChange: (value: string | number) => void): void {
@@ -161,6 +162,7 @@ export class IxCombobox2Component implements ControlValueAccessor, OnInit {
   optionSelected(option: Option): void {
     this.selectedOption = { ...option };
     this.filterChanged$.next('');
+    this.value = this.selectedOption.value;
     this.onChange(this.selectedOption.value);
   }
 

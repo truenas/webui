@@ -6,10 +6,11 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import _ from 'lodash';
 import { Observable, of } from 'rxjs';
-import { map, tap } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 import { helptextSystemGeneral as helptext } from 'app/helptext/system/general';
 import { LocalizationSettings } from 'app/interfaces/localization-settings.interface';
 import { Option } from 'app/interfaces/option.interface';
+import { SimpleAsyncComboboxProvider } from 'app/modules/ix-forms/classes/simple-async-combobox-provider';
 import { IxComboboxProvider } from 'app/modules/ix-forms/components/ix-combobox2/ix-combobox-provider';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { LanguageService, SystemGeneralService, WebSocketService } from 'app/services';
@@ -45,29 +46,14 @@ export class LocalizationFormComponent {
     readonly fcName: 'language';
     label: string;
     tooltip: string;
-    provider: IxComboboxProvider;
+    provider: SimpleAsyncComboboxProvider;
     options: Option[];
   } = {
     fcName: 'language',
     label: helptext.stg_language.placeholder,
     tooltip: helptext.stg_language.tooltip,
     options: null,
-    provider: {
-      fetch: (search: string): Observable<Option[]> => {
-        if (this.language.options && this.language.options.length) {
-          return of(this.filter(this.language.options, search));
-        }
-        return this.sysGeneralService.languageOptions(this.sortLanguagesByName).pipe(
-          tap((options: Option[]) => {
-            this.language.options = options;
-          }),
-          map((options: Option[]) => {
-            return this.filter(options, search);
-          }),
-        );
-      },
-      nextPage: (): Observable<Option[]> => of([]),
-    },
+    provider: new SimpleAsyncComboboxProvider(this.sysGeneralService.languageOptions(this.sortLanguagesByName)),
   };
 
   kbdMap: {
@@ -93,33 +79,10 @@ export class LocalizationFormComponent {
     label: helptext.stg_timezone.placeholder,
     tooltip: helptext.stg_timezone.tooltip,
     options: null,
-    provider: {
-      fetch: (search: string): Observable<Option[]> => {
-        if (this.timezone.options && this.timezone.options.length) {
-          return of(this.filter(this.timezone.options, search));
-        }
-        return this.sysGeneralService.timezoneChoices().pipe(
-          map((tzChoices) => _.sortBy(tzChoices, [(option) => option.label.toLowerCase()])),
-          tap((options: Option[]) => this.timezone.options = options),
-          map((options: Option[]) => this.filter(options, search)),
-        );
-      },
-      nextPage: (): Observable<Option[]> => of([]),
-    },
+    provider: new SimpleAsyncComboboxProvider(this.sysGeneralService.timezoneChoices().pipe(map(
+      (tzChoices) => _.sortBy(tzChoices, [(option) => option.label.toLowerCase()]),
+    ))),
   };
-
-  filter(options: Option[], search: string): Option[] {
-    if (options && options.length) {
-      if (search) {
-        return options.filter((option: Option) => {
-          return option.label.toLowerCase().includes(search.toLowerCase())
-              || option.value.toString().toLowerCase().includes(search.toLowerCase());
-        });
-      }
-      return [...options];
-    }
-    return [];
-  }
 
   dateFormat: {
     readonly fcName: 'date_format';

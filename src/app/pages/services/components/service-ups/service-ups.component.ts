@@ -4,14 +4,14 @@ import {
 import { FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { Observable, of } from 'rxjs';
-import { map, tap } from 'rxjs/operators';
+import { of } from 'rxjs';
 import { UpsMode } from 'app/enums/ups-mode.enum';
 import { choicesToOptions, singleArrayToOptions } from 'app/helpers/options.helper';
 import helptext from 'app/helptext/services/components/service-ups';
 import { Option } from 'app/interfaces/option.interface';
 import { UpsConfigUpdate } from 'app/interfaces/ups-config.interface';
 import { EntityUtils } from 'app/modules/entity/utils';
+import { SimpleAsyncComboboxProvider } from 'app/modules/ix-forms/classes/simple-async-combobox-provider';
 import { IxComboboxProvider } from 'app/modules/ix-forms/components/ix-combobox2/ix-combobox-provider';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { DialogService, WebSocketService } from 'app/services';
@@ -72,48 +72,9 @@ export class ServiceUpsComponent implements OnInit {
   };
 
   readonly providers: { [key: string]: IxComboboxProvider } = {
-    driver: {
-      fetch: (search: string): Observable<Option[]> => {
-        if (this.driverOptions && this.driverOptions.length) {
-          return of(this.filter(this.driverOptions, search));
-        }
-        return this.ws.call('ups.driver_choices')
-          .pipe(
-            choicesToOptions(),
-            tap((options: Option[]) => this.driverOptions = options),
-            map((options: Option[]) => this.filter(options, search)),
-          );
-      },
-      nextPage: (): Observable<Option[]> => of([]),
-    },
-    port: {
-      fetch: (search: string): Observable<Option[]> => {
-        if (this.portOptions && this.portOptions.length) {
-          return of(this.filter(this.portOptions, search));
-        }
-        this.ws.call('ups.port_choices')
-          .pipe(
-            singleArrayToOptions(),
-            tap((options: Option[]) => this.portOptions = options),
-            map((options: Option[]) => this.filter(options, search)),
-          );
-      },
-      nextPage: (): Observable<Option[]> => of([]),
-    },
+    driver: new SimpleAsyncComboboxProvider(this.ws.call('ups.driver_choices').pipe(choicesToOptions())),
+    port: new SimpleAsyncComboboxProvider(this.ws.call('ups.port_choices').pipe(singleArrayToOptions())),
   };
-
-  filter(options: Option[], search: string): Option[] {
-    if (options && options.length) {
-      if (search) {
-        return options.filter((option: Option) => {
-          return option.label.toLowerCase().includes(search.toLowerCase())
-              || option.value.toString().toLowerCase().includes(search.toLowerCase());
-        });
-      }
-      return [...options];
-    }
-    return [];
-  }
 
   readonly tooltips = {
     identifier: helptext.ups_identifier_tooltip,

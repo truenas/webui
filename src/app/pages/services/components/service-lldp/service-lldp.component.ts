@@ -4,13 +4,10 @@ import {
 import { FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { Observable, of } from 'rxjs';
-import { map, tap } from 'rxjs/operators';
 import { choicesToOptions } from 'app/helpers/options.helper';
 import helptext from 'app/helptext/services/components/service-lldp';
-import { Option } from 'app/interfaces/option.interface';
 import { EntityUtils } from 'app/modules/entity/utils';
-import { IxComboboxProvider } from 'app/modules/ix-forms/components/ix-combobox2/ix-combobox-provider';
+import { SimpleAsyncComboboxProvider } from 'app/modules/ix-forms/classes/simple-async-combobox-provider';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { WebSocketService, ServicesService, DialogService } from 'app/services';
 
@@ -59,36 +56,7 @@ export class ServiceLldpComponent implements OnInit {
     tooltip: helptext.lldp_location_tooltip,
   };
 
-  readonly locationOptions$ = this.ws.call('lldp.country_choices').pipe(choicesToOptions());
-
-  locationOptions: Option[];
-  locationProvider: IxComboboxProvider = {
-    fetch: (search: string): Observable<Option[]> => {
-      if (this.locationOptions && this.locationOptions.length) {
-        return of(this.filter(this.locationOptions, search));
-      }
-      return this.ws.call('lldp.country_choices')
-        .pipe(
-          choicesToOptions(),
-          tap((options: Option[]) => this.locationOptions = options),
-          map((options: Option[]) => this.filter(options, search)),
-        );
-    },
-    nextPage: (): Observable<Option[]> => of([]),
-  };
-
-  filter(options: Option[], search: string): Option[] {
-    if (options && options.length) {
-      if (search) {
-        return options.filter((option: Option) => {
-          return option.label.toLowerCase().includes(search.toLowerCase())
-              || option.value.toString().toLowerCase().includes(search.toLowerCase());
-        });
-      }
-      return [...options];
-    }
-    return [];
-  }
+  locationProvider = new SimpleAsyncComboboxProvider(this.ws.call('lldp.country_choices').pipe(choicesToOptions()));
 
   constructor(
     protected router: Router,
