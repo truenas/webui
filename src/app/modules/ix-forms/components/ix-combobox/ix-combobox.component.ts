@@ -11,9 +11,11 @@ import { MatAutocomplete, MatAutocompleteTrigger } from '@angular/material/autoc
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import {
+  EMPTY,
   fromEvent, Subject,
 } from 'rxjs';
 import {
+  catchError,
   debounceTime, distinctUntilChanged, map, takeUntil,
 } from 'rxjs/operators';
 import { Option } from 'app/interfaces/option.interface';
@@ -37,6 +39,7 @@ export class IxComboboxComponent implements ControlValueAccessor, OnInit {
   @ViewChild(MatAutocompleteTrigger) autocompleteTrigger: MatAutocompleteTrigger;
   placeholder = this.translate.instant('Search');
   getDisplayWith = this.displayWith.bind(this);
+  errorObject: any = null;
 
   loading = false;
 
@@ -90,7 +93,13 @@ export class IxComboboxComponent implements ControlValueAccessor, OnInit {
   filterOptions(filterValue: string): void {
     this.loading = this.filterValue !== '';
     this.cdr.markForCheck();
-    this.provider?.fetch(filterValue).pipe(untilDestroyed(this)).subscribe((options: Option[]) => {
+    this.provider?.fetch(filterValue).pipe(
+      catchError((error) => {
+        this.errorObject = error;
+        return EMPTY;
+      }),
+      untilDestroyed(this),
+    ).subscribe((options: Option[]) => {
       this.loading = false;
       this.options = options;
       if (!this.selectedOption && this.value !== null && this.value !== '') {
