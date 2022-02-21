@@ -1,7 +1,7 @@
 import { Observable, of } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
 import { Option } from 'app/interfaces/option.interface';
-import { IxComboboxProvider } from 'app/modules/ix-forms/components/ix-combobox2/ix-combobox-provider';
+import { IxComboboxProvider } from 'app/modules/ix-forms/components/ix-combobox/ix-combobox-provider';
 
 export class SimpleAsyncComboboxProvider implements IxComboboxProvider {
   fetch(filterValue: string): Observable<Option[]> {
