@@ -6,9 +6,6 @@ export interface IxComboboxProvider {
   /**
    * Filter the options based on query string. Should handle <empty string> and return normal
    * list of options in that case.
-   * @param options Previous list of options (can be useful if
-   * options are not fetched asynchronously. Which means options
-   * can be filtered locally)
    * @param value The query string
    * @returns An observable of options that will replace the current list
    */
