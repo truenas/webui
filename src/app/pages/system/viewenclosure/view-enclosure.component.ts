@@ -20,6 +20,16 @@ interface ViewConfig {
   showInNavbar: boolean;
 }
 
+interface EnclosureResponse {
+  id: string;
+  number: string;
+  name: string;
+  model: string;
+  controller: string;
+  label: string;
+  elements: unknown[];
+}
+
 @Component({
   selector: 'view-enclosure',
   templateUrl: './view-enclosure.component.html',
@@ -116,6 +126,8 @@ export class ViewEnclosureComponent implements AfterContentInit, OnChanges, OnDe
     });
 
     core.register({ observerClass: this, eventName: 'EnclosureData' }).subscribe((evt: CoreEvent) => {
+      evt.data = this.parseEnclosureData(evt.data);
+
       this.system = new SystemProfiler(this.system_product, evt.data);
       this.selectedEnclosure = this.system.profile[this.system.headIndex];
       core.emit({ name: 'DisksRequest', sender: this });
@@ -269,5 +281,32 @@ export class ViewEnclosureComponent implements AfterContentInit, OnChanges, OnDe
     } else {
       this.currentView = disks;
     }
+  }
+
+  private parseEnclosureData(enclosures: EnclosureResponse[]): EnclosureResponse[] {
+    const parsedEnclosure: EnclosureResponse[] = [];
+
+    enclosures.forEach((enclosure, idx) => {
+      parsedEnclosure.push({
+        id: enclosure.id,
+        number: enclosure.number,
+        name: enclosure.name,
+        model: enclosure.model,
+        controller: enclosure.controller,
+        label: enclosure.label,
+        elements: [],
+      });
+      for (const [keyElem, valElem] of Object.entries(enclosure.elements)) {
+        const newElem = {
+          name: keyElem,
+          elements: [],
+        };
+        for (const [keySlot, valSlot] of Object.entries(valElem)) {
+          newElem.elements.push(Object.assign(valSlot, { slot: parseInt(keySlot) }));
+        }
+        parsedEnclosure[idx].elements.push(newElem);
+      }
+    });
+    return parsedEnclosure;
   }
 }
