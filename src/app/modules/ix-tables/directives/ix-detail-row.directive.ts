@@ -16,6 +16,7 @@ export class IxDetailRowDirective<T = unknown> {
     return this.opened;
   }
 
+  @HostBinding('class.clickable-row')
   @Input()
   set ixDetailRow(value: T) {
     if (value !== this.row) {

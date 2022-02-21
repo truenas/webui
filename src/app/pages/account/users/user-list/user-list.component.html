@@ -41,7 +41,6 @@
       <tr
         mat-row
         *matRowDef="let user; columns: displayedColumns; dataSource: dataSource"
-        class="clickable-row"
         [ixDetailRow]="user"
         [ixDetailRowTpl]="expandedRowTemplate"
         (toggle)="onToggle($event)"
@@ -59,11 +58,7 @@
 </mat-card>
 
 <ng-template #expandedRowTemplate let-user>
-  <ix-table-expandable-row
-    [data]="getDetails(user)"
-    [isExpanded]="expandedRow === user"
-    [colspan]="displayedColumns.length"
-  >
+  <ix-table-expandable-row [data]="getDetails(user)" [colspan]="displayedColumns.length">
     <button mat-button (click)="doEdit(user)">
       <mat-icon>edit</mat-icon>
       <span>{{ 'Edit' | translate }}</span>

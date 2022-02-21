@@ -1,6 +1,5 @@
 import {
-  Component, OnInit, AfterViewInit, ChangeDetectorRef, ViewChild, ChangeDetectionStrategy,
-  Optional, ViewChildren, QueryList,
+  Component, OnInit, AfterViewInit, ChangeDetectorRef, ViewChild, ChangeDetectionStrategy, ViewChildren, QueryList,
 } from '@angular/core';
 import { MatSort, Sort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
@@ -87,7 +86,6 @@ export class UserListComponent implements OnInit, AfterViewInit {
     private cdr: ChangeDetectorRef,
     private core: CoreService,
     private store$: Store<AppState>,
-    @Optional() private ixDetailRowDirective: IxDetailRowDirective,
   ) { }
 
   ngOnInit(): void {
