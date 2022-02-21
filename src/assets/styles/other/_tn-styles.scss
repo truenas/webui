@@ -400,6 +400,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
 
   // System wide hover effects
   .mat-select-panel .mat-option:focus,
+  .mat-select-panel .mat-option:focus-visible,
   .mat-select-panel .mat-option.mat-selected:not(.mat-option-multiple) {
     @include variable(background, --primary, $primary, !important);
     @include variable(color, --primary-txt, $primary-txt, !important);
@@ -1557,5 +1558,10 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
       pointer-events: none;
       visibility: hidden;
     }
+  }
+
+  // focus state styles for mat-form-field
+  .mat-form-field.mat-focused:focus-within {
+    outline: 1px solid var(--alt-fg2);
   }
 } // end of ix theme

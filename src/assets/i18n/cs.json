@@ -2189,6 +2189,7 @@
   "Range Low and Range High set the range of UID/GID numbers which this  IDMap backend translates. If an external credential like a Windows SID maps to a UID or GID  number outside this range, the external credential is ignored.": "",
   "Raw File": "",
   "Raw filesize": "",
+  "Re-Open": "",
   "Re-Open All Alerts": "",
   "Read": "",
   "Read ACL": "",

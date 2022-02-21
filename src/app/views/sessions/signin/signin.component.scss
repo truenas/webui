@@ -136,6 +136,10 @@ form button {
   top: 14px;
 }
 
+.mat-form-field.mat-focused:focus-within {
+  outline-width: 0;
+}
+
 @media (max-width:600px) {
   .page-wrap {
     bottom: 0;

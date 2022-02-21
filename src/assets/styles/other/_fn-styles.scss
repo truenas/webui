@@ -81,6 +81,15 @@ a:hover {
   text-decoration: none;
 }
 
+a:focus-visible,
+.ix-blue button:focus-visible,
+button:focus-visible {
+  background-color: var(--hover-bg) !important;
+  border-color: transparent !important;
+  box-shadow: 0 0 0 1px var(--alt-fg2) inset !important;
+  outline-width: 0;
+}
+
 a {
   color: inherit;
 }
