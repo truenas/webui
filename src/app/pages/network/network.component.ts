@@ -4,7 +4,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { Subject } from 'rxjs';
 import { filter } from 'rxjs/operators';
-import { NetworkInterfaceType } from 'app/enums/network-interface.enum';
+import { LinkState, NetworkInterfaceType } from 'app/enums/network-interface.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
@@ -468,12 +468,14 @@ export class NetworkComponent implements OnInit, OnDestroy {
         if (evt.interfaces) {
           tableSource.forEach((row) => {
             if (!evt.interfaces[row.id]) {
-              return;
+              row.link_state = null;
+            } else {
+              row.received = this.storageService.convertBytestoHumanReadable(evt.interfaces[row.id].received_bytes);
+              row.received_bytes = evt.interfaces[row.id].received_bytes;
+              row.sent = this.storageService.convertBytestoHumanReadable(evt.interfaces[row.id].sent_bytes);
+              row.sent_bytes = evt.interfaces[row.id].sent_bytes;
+              row.link_state = evt.interfaces[row.id].speed === null ? LinkState.Down : LinkState.Up;
             }
-            row.received = this.storageService.convertBytestoHumanReadable(evt.interfaces[row.id].received_bytes);
-            row.received_bytes = evt.interfaces[row.id].received_bytes;
-            row.sent = this.storageService.convertBytestoHumanReadable(evt.interfaces[row.id].sent_bytes);
-            row.sent_bytes = evt.interfaces[row.id].sent_bytes;
           });
         }
       });
@@ -482,8 +484,7 @@ export class NetworkComponent implements OnInit, OnDestroy {
   interfaceDataSourceHelper(res: NetworkInterface[]): NetworkInterfaceUi[] {
     return res.map((networkInterface) => {
       const transformed = { ...networkInterface } as NetworkInterfaceUi;
-      // TODO: Replace with probably enum for link_state.
-      transformed['link_state'] = networkInterface['state']['link_state'].replace('LINK_STATE_', '');
+      transformed['link_state'] = networkInterface['state']['link_state'];
       const addresses = new Set([]);
       transformed.aliases.forEach((alias) => {
         // TODO: See if checks can be removed or replace with enum.

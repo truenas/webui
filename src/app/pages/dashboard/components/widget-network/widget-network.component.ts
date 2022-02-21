@@ -425,7 +425,10 @@ export class WidgetNetworkComponent extends WidgetComponent implements AfterView
     const lastSent = this.storage.convertBytestoHumanReadable(this.nicInfoMap[nic.state.name].lastSent);
     const lastReceived = this.storage.convertBytestoHumanReadable(this.nicInfoMap[nic.state.name].lastReceived);
 
-    return `${this.translate.instant('Sent')}: ${lastSent} ${this.translate.instant('Received')}: ${lastReceived}`;
+    if (lastSent !== undefined && lastReceived !== undefined) {
+      return `${this.translate.instant('Sent')}: ${lastSent} ${this.translate.instant('Received')}: ${lastReceived}`;
+    }
+    return null;
   }
 
   getIpAddressTooltip(nic: BaseNetworkInterface): string {

@@ -38,12 +38,12 @@
                 </ul>
 
                 <div class="state-info" *ngSwitchCase="'state-info'">
-                  <mat-icon [id]="element[idProp]" class="state-info-icon" svgIcon="network-upload-download" *ngIf="unifyState(element[column.state.prop]) === 'STATE_UP'" [matTooltip]="showInOutInfo(element)" [class]="unifyState(element[column.state.prop])"></mat-icon>
-                  <mat-icon class="state-info-icon" svgIcon="network-upload-download-disabled" *ngIf="unifyState(element[column.state.prop]) === 'STATE_DOWN'" [class]="unifyState(element[column.state.prop])"></mat-icon>
+                  <mat-icon [id]="element[idProp]" class="state-info-icon" svgIcon="network-upload-download" *ngIf="element[column.state.prop] === LinkState.Up" [matTooltip]="showInOutInfo(element)"></mat-icon>
+                  <mat-icon class="state-info-icon" svgIcon="network-upload-download-disabled" *ngIf="element[column.state.prop] === LinkState.Down"></mat-icon>
                   &nbsp;&nbsp;<span>{{element[column.prop]}}</span>
                 </div>
 
-                <mat-icon *ngSwitchCase="'state-icon'" class="state-icon" [class]="unifyState(element[column.prop])">{{column.state.icon}}</mat-icon>
+                <mat-icon *ngSwitchCase="'state-icon'" class="state-icon">{{column.state.icon}}</mat-icon>
 
                 <mat-checkbox *ngSwitchCase="'checkbox'" ix-auto ix-auto-type="checkbox" ix-auto-identifier="{{element[column.prop]}}-checkbox" color="primary" [(ngModel)]="element[column.prop]" (change)="column.onChange(element)" (click)="$event.stopPropagation();" [disabled]="!column.onChange"></mat-checkbox>
 
