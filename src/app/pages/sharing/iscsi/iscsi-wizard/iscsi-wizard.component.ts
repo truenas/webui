@@ -116,7 +116,7 @@ export class IscsiWizardComponent implements WizardConfiguration {
           value: 0,
           validation: [Validators.required,
             (control: FormControl): ValidationErrors => {
-              const config = this.wizardConfig[0].fieldConfig.find((c) => c.name === 'filesize');
+              const filesizeConfig = this.wizardConfig[0].fieldConfig.find((config) => config.name === 'filesize');
               const size = this.storageService.convertHumanStringToNum(control.value, true);
 
               const errors = control.value && Number.isNaN(size)
@@ -124,11 +124,11 @@ export class IscsiWizardComponent implements WizardConfiguration {
                 : null;
 
               if (errors) {
-                config.hasErrors = true;
-                config.errors = globalHelptext.human_readable.input_error;
+                filesizeConfig.hasErrors = true;
+                filesizeConfig.errors = globalHelptext.human_readable.input_error;
               } else {
-                config.hasErrors = false;
-                config.errors = '';
+                filesizeConfig.hasErrors = false;
+                filesizeConfig.errors = '';
               }
 
               return errors;

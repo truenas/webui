@@ -183,13 +183,13 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
     this.usageMax = Number(Math.max(...usage).toFixed(0));
     this.usageMinThreads = [];
     this.usageMaxThreads = [];
-    for (let u = 0; u < usage.length; u++) {
-      if (usage[u] === this.usageMin) {
-        this.usageMinThreads.push(Number(u.toFixed(0)));
+    for (let i = 0; i < usage.length; i++) {
+      if (usage[i] === this.usageMin) {
+        this.usageMinThreads.push(Number(i.toFixed(0)));
       }
 
-      if (usage[u] === this.usageMax) {
-        this.usageMaxThreads.push(Number(u.toFixed(0)));
+      if (usage[i] === this.usageMax) {
+        this.usageMaxThreads.push(Number(i.toFixed(0)));
       }
     }
 
@@ -199,13 +199,13 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
     this.tempMax = Number(Math.max(...temps).toFixed(0));
     this.tempMinThreads = [];
     this.tempMaxThreads = [];
-    for (let t = 0; t < temps.length; t++) {
-      if (temps[t] === this.tempMin) {
-        this.tempMinThreads.push(Number(t.toFixed(0)));
+    for (let i = 0; i < temps.length; i++) {
+      if (temps[i] === this.tempMin) {
+        this.tempMinThreads.push(Number(i.toFixed(0)));
       }
 
-      if (temps[t] === this.tempMax) {
-        this.tempMaxThreads.push(Number(t.toFixed(0)));
+      if (temps[i] === this.tempMax) {
+        this.tempMaxThreads.push(Number(i.toFixed(0)));
       }
     }
   }

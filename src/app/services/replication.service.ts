@@ -47,13 +47,13 @@ export class ReplicationService {
             nodes.push(node);
           } else {
             let parent = _.find(nodes, { name: pathArr[0] });
-            let j = 1;
-            while (_.find(parent.children, { subTitle: pathArr[j] })) {
-              parent = _.find(parent.children, { subTitle: pathArr[j++] });
+            let i = 1;
+            while (_.find(parent.children, { subTitle: pathArr[i] })) {
+              parent = _.find(parent.children, { subTitle: pathArr[i++] });
             }
             const node: ListdirChild = {
               name: dataset,
-              subTitle: pathArr[j],
+              subTitle: pathArr[i],
               hasChildren: false,
               children: [],
             };

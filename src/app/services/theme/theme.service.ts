@@ -90,8 +90,8 @@ export class ThemeService {
     const keys = Object.keys(theme) as (keyof Theme)[];
 
     // Filter out deprecated properties and meta properties
-    const palette = keys.filter((v) => {
-      return !['label', 'logoPath', 'logoTextPath', 'favorite', 'labelSwatch', 'description', 'name'].includes(v);
+    const palette = keys.filter((attribute) => {
+      return !['label', 'logoPath', 'logoTextPath', 'favorite', 'labelSwatch', 'description', 'name'].includes(attribute);
     });
 
     palette.forEach((color) => {

@@ -62,7 +62,7 @@ export class DeviceDeleteModalComponent implements OnInit {
 
       this.form.controls['zvolConfirm'].setValidators([
         this.validatorsService.validateOnCondition(
-          (c: AbstractControl) => c.parent.get('zvol').value,
+          (control: AbstractControl) => control.parent.get('zvol').value,
           Validators.compose([
             zvolConfirmRequired,
             zvolConfirmMustMatch,
