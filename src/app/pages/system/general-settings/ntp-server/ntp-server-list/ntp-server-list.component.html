@@ -54,7 +54,7 @@
 
       <tr class="mat-row no-data-row" *matNoDataRow>
         <td class="mat-cell" [attr.colspan]="displayedColumns.length">
-          <entity-empty [conf]="currentEmptyConf"></entity-empty>
+          <entity-empty [conf]="ixEmptyService.defaultEmptyConfig(emptyType)"></entity-empty>
         </td>
       </tr>
     </table>

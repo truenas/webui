@@ -11,6 +11,7 @@ import { IxTablePaginatorComponent } from 'app/modules/ix-tables/components/ix-t
 import { IxTableComponent } from 'app/modules/ix-tables/components/ix-table/ix-table.component';
 import { IxCellDefDirective } from 'app/modules/ix-tables/directives/ix-cell-def.directive';
 import { IxRowDefDirective } from 'app/modules/ix-tables/directives/ix-row-def.directive';
+import { IxEmptyService } from 'app/modules/ix-tables/services/ix-empty.service';
 
 @NgModule({
   declarations: [
@@ -36,6 +37,9 @@ import { IxRowDefDirective } from 'app/modules/ix-tables/directives/ix-row-def.d
     IxTablePaginatorComponent,
     IxTableExpandableRowComponent,
     IxExpandToggleColumnComponent,
+  ],
+  providers: [
+    IxEmptyService,
   ],
 })
 export class IxTableModule { }
