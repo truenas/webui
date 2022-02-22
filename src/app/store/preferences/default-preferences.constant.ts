@@ -2,7 +2,7 @@ import { Preferences } from 'app/interfaces/preferences.interface';
 
 export const defaultPreferences: Preferences = {
   userTheme: 'default',
-  dateFormat: 'YYYY-MM-DD',
+  dateFormat: 'yyyy-MM-DD',
   timeFormat: 'HH:mm:ss',
   sidenavStatus: {
     isCollapsed: false,

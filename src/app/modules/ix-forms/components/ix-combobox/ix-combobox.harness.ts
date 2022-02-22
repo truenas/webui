@@ -1,7 +1,7 @@
 import { ComponentHarness, HarnessPredicate } from '@angular/cdk/testing';
 import { MatAutocompleteHarness, AutocompleteHarnessFilters } from '@angular/material/autocomplete/testing';
 import { IxFormControlHarness } from 'app/modules/ix-forms/interfaces/ix-form-control-harness.interface';
-import { getErrorText } from '../../utils/harness.utils';
+import { getErrorText } from 'app/modules/ix-forms/utils/harness.utils';
 
 export interface IxComboboxHarnessFilters extends AutocompleteHarnessFilters {
   label: string;

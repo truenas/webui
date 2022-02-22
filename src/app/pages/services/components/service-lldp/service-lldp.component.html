@@ -12,7 +12,7 @@
           [formControlName]="country.fcName | translate"
           [label]="country.label | translate"
           [tooltip]="country.tooltip | translate"
-          [options]="locationOptions$"
+          [provider]="locationProvider"
         ></ix-combobox>
         <ix-input
           [formControlName]="location.fcName | translate"

@@ -1,9 +1,9 @@
 import { Observable, of } from 'rxjs';
 import { Option } from 'app/interfaces/option.interface';
-import { IxComboboxProvider } from 'app/modules/ix-forms/components/ix-combobox2/ix-combobox-provider';
+import { IxComboboxProvider } from 'app/modules/ix-forms/components/ix-combobox/ix-combobox-provider';
 
 export class SimpleComboboxProvider implements IxComboboxProvider {
-  filter(options: Option[], filterValue: string): Observable<Option[]> {
+  fetch(filterValue: string): Observable<Option[]> {
     if (filterValue) {
       return of(this.options.filter((option: Option) => {
         return option.label.toLowerCase().includes(filterValue.toLowerCase())
