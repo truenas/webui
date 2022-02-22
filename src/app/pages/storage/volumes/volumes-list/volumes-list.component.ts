@@ -1496,6 +1496,12 @@ export class VolumesListTableConfig implements InputTableConf {
                   placeholder: helptext.encryption_options_dialog.confirm_checkbox,
                   required: true,
                 },
+                {
+                  type: 'paragraph',
+                  name: 'enc_datasets_warning',
+                  class: 'warning-text',
+                  paraText: helptext.encryption_options_dialog.edit_warning,
+                },
               ],
               saveButtonText: helptext.encryption_options_dialog.save_button,
               afterInit(entityDialog) {
@@ -1557,6 +1563,9 @@ export class VolumesListTableConfig implements InputTableConf {
               },
               customSubmit(entityDialog) {
                 const formValue = entityDialog.formValue;
+                if (formValue['enc_datasets_warning']) {
+                  delete formValue['enc_datasets_warning'];
+                }
                 let method = 'pool.dataset.change_key';
                 const body = {};
                 const payload = [row.id];

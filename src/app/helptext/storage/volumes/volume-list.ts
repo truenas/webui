@@ -125,6 +125,8 @@ the system dataset transfers back to the TrueNAS operating system device.'),
     saving_encryption_options: T('Saving Encryption Options...'),
     confirm_checkbox: T('Confirm'),
     save_button: T('Save'),
+    edit_warning: T('These options are only used for the first-time replication. Adding, removing\
+ or changing replication key or passphrase will be no-op if the target dataset already exists.'),
   },
   pool_options_dialog: {
     dialog_title: T('Edit Pool Options for '),

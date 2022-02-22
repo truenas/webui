@@ -1,4 +1,4 @@
-<div id="{{config.name}}" class="dynamic-field form-textarea" [formGroup]="group" [ngClass]="fieldShow" [class.has-tooltip]="config.tooltip" *ngIf="!config['isHidden']">
+<div id="{{config.name}}" class="{{ config.class? config.class : '' }} dynamic-field form-textarea" [formGroup]="group" [ngClass]="fieldShow" [class.has-tooltip]="config.tooltip" *ngIf="!config['isHidden']">
     <div fxLayoutAlign="start start" fxLayoutGap="8px">
         <mat-icon class="paragraph-icon" *ngIf="config.paragraphIcon" [style.width]="config.paragraphIconSize" [style.height]="config.paragraphIconSize" [style.fontSize]="config.paragraphIconSize">{{ config.paragraphIcon }}</mat-icon>
         <p [class.large]="config.isLargeText" [innerHTML]="config.paraText | translate | docreplace"></p>
