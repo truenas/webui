@@ -7,7 +7,8 @@ export default {
   fieldset_source: T('Source'),
   fieldset_destination: T('Destination'),
   fieldset_schedule: T('Replication Schedule'),
-
+  encryption_edit_warning: T('Encryption options are only used for first-time replication. Adding, removing\
+  or changing replication key or passphrase will be no-op if the target dataset already exists.'),
   name_placeholder: T('Name'),
   name_tooltip: T('Descriptive name for the replication.'),
 
