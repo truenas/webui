@@ -28,6 +28,7 @@ export const helptext_system_support = {
     dialog_title: T('Settings saved'),
     dialog_mesage: T('Successfully saved proactive support settings.'),
     dialog_err: T('Error Saving Proactive Support Settings'),
+    support_not_enabled: T('The Proactive Support Feature Is Not Enabled'),
   },
 
   username: {
