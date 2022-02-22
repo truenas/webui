@@ -849,3 +849,9 @@ body.safari-platform .mat-raised-button {
   font-family: Consolas,Monaco,Lucida Console,Liberation Mono,DejaVu Sans Mono,Bitstream Vera Sans Mono,Courier New, monospace !important;
   line-height: 1 !important;
 }
+
+/*---- widgets buttons alignment ----*/
+.widget .primary-nav .back-arrow {
+  line-height: 20px;
+  vertical-align: middle;
+}
