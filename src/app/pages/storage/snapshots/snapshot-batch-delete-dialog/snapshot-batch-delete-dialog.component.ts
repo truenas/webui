@@ -5,6 +5,7 @@ import { Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
+import { filter, map } from 'rxjs/operators';
 import { CoreBulkQuery, CoreBulkResponse } from 'app/interfaces/core-bulk.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { ZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
@@ -57,9 +58,11 @@ export class SnapshotBatchDeleteDialogComponent implements OnInit {
     const snapshots = this.snapshots.map((item) => [item.name]);
     const params: CoreBulkQuery = ['zfs.snapshot.delete', snapshots];
     this.websocket.job('core.bulk', params).pipe(
+      filter((job: Job<CoreBulkResponse<boolean>[]>) => !!job.result),
+      map((job: Job<CoreBulkResponse<boolean>[]>) => job.result),
       untilDestroyed(this),
-    ).subscribe((job: Job<CoreBulkResponse<boolean>[]>) => {
-      job.result.forEach((item) => {
+    ).subscribe((results: CoreBulkResponse<boolean>[]) => {
+      results.forEach((item) => {
         if (item.error) {
           this.jobErrors.push(item.error);
         } else {

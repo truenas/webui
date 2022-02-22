@@ -49,10 +49,6 @@ describe('SnapshotAddFormComponent', () => {
     ws = spectator.inject(MockWebsocketService);
   });
 
-  afterEach(() => {
-    jest.restoreAllMocks();
-  });
-
   it('presets name with current date and time', async () => {
     const nameInput = await loader.getHarness(IxInputHarness.with({ label: 'Name' }));
     const defaultName = await nameInput.getValue();

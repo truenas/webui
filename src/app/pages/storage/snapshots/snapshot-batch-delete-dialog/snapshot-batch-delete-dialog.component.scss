@@ -6,9 +6,30 @@
     overflow-y: auto;
   }
 
+  .mat-expansion-panel-header-title {
+    span {
+      margin-left: 8px;
+    }
+  }
+
+  .mat-expansion-panel {
+    ul {
+      margin: 0;
+    }
+  }
+
+  .mat-accordion {
+    display: block;
+    margin-left: -24px;
+    margin-right: -24px;
+    max-height: 62vh;
+    overflow: auto;
+  }
+
   .form-buttons {
     display: flex;
     flex-direction: row-reverse;
+    justify-content: flex-end;
   }
 
   .form-actions {

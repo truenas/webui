@@ -8,23 +8,26 @@ import {
 } from 'rxjs/operators';
 import { ApiEventMessage } from 'app/enums/api-event-message.enum';
 import { ZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
+import { snapshotExcludeBootQueryFilter } from 'app/pages/storage/snapshots/constants/snapshot-exclude-boot.constant';
 import {
   snapshotAdded, snapshotChanged,
-  snapshotPageReady,
+  snapshotPageEntered,
   snapshotRemoved, snapshotsLoaded, snapshotsNotLoaded,
 } from 'app/pages/storage/snapshots/store/snapshot.actions';
-import { SnapshotSlice } from 'app/pages/storage/snapshots/store/snapshot.selectors';
 import { WebSocketService } from 'app/services';
+import { AppState } from 'app/store';
+import { waitForPreferences } from 'app/store/preferences/preferences.selectors';
 
 @Injectable()
 export class SnapshotEffects {
   loadSnapshots$ = createEffect(() => this.actions$.pipe(
-    ofType(snapshotPageReady),
-    switchMap(({ extra }) => {
+    ofType(snapshotPageEntered),
+    switchMap(() => this.store$.pipe(waitForPreferences)),
+    switchMap((preferences) => {
       return this.ws.call('zfs.snapshot.query', [
-        [['pool', '!=', 'freenas-boot'], ['pool', '!=', 'boot-pool']],
+        snapshotExcludeBootQueryFilter,
         {
-          select: ['snapshot_name', 'dataset', 'name', ...(extra ? ['properties' as keyof ZfsSnapshot] : [])],
+          select: ['snapshot_name', 'dataset', 'name', ...(preferences.showSnapshotExtraColumns ? ['properties' as keyof ZfsSnapshot] : [])],
           order_by: ['name'],
         },
       ]).pipe(
@@ -71,7 +74,7 @@ export class SnapshotEffects {
   constructor(
     private actions$: Actions,
     private ws: WebSocketService,
-    private store$: Store<SnapshotSlice>,
+    private store$: Store<AppState>,
     private translate: TranslateService,
   ) {}
 }

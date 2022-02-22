@@ -7,18 +7,20 @@
 >
   <p><strong>{{ 'The following { n, plural, one {snapshot} other {# snapshots} } will be deleted. Are you sure you want to proceed?' | translate: { n: total } }}</strong></p>
 
-  <div class="mat-list">
-    <div class="mat-list-item" *ngFor="let dataset of dialogData.datasets">
-      <br>
-      <div>
-        <strong>{{ dataset }}</strong>
-        <span>&nbsp;({{ '{ n, plural, one {# snapshot} other {# snapshots} }' | translate: { n: dialogData.snapshots[dataset].length } }})</span>
-      </div>
+  <mat-accordion multi displayMode="flat">
+    <mat-expansion-panel *ngFor="let dataset of dialogData.datasets" expanded class="mat-elevation-z0">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          <strong>{{ dataset }}</strong>
+          <span>({{ '{ n, plural, one {# snapshot} other {# snapshots} }' | translate: { n: dialogData.snapshots[dataset].length } }})</span>
+        </mat-panel-title>
+      </mat-expansion-panel-header>
+
       <ul>
-        <li *ngFor="let snapshot of dialogData.snapshots[dataset]">&nbsp;&nbsp;&nbsp;&nbsp;{{ snapshot }}</li>
+        <li *ngFor="let snapshot of dialogData.snapshots[dataset]">{{ snapshot }}</li>
       </ul>
-    </div>
-  </div>
+    </mat-expansion-panel>
+  </mat-accordion>
 
   <div class="form-actions">
     <ix-checkbox
@@ -37,7 +39,7 @@
       <button
         mat-button
         type="button"
-        [matDialogClose]="true"
+        matDialogClose
       >{{ 'Cancel' | translate }}</button>
     </div>
   </div>
@@ -51,13 +53,13 @@
       mat-button
       type="submit"
       color="primary"
-      matDialogClose
+      [matDialogClose]="true"
       [routerLink]="['/storage']"
     >{{ 'Go to Storage' | translate }}</a>
     <button
       mat-button
       type="button"
-      matDialogClose
+      [matDialogClose]="true"
     >{{ 'Close' | translate }}</button>
   </div>
 </ng-template>

@@ -26,7 +26,7 @@ import { ToolbarConfig, ControlConfig } from 'app/modules/entity/entity-toolbar/
 import { SnapshotBatchDeleteDialogComponent } from 'app/pages/storage/snapshots/snapshot-batch-delete-dialog/snapshot-batch-delete-dialog.component';
 import { SnapshotCloneDialogComponent } from 'app/pages/storage/snapshots/snapshot-clone-dialog/snapshot-clone-dialog.component';
 import { SnapshotRollbackDialogComponent } from 'app/pages/storage/snapshots/snapshot-rollback-dialog/snapshot-rollback-dialog.component';
-import { snapshotPageEntered, snapshotPageReady } from 'app/pages/storage/snapshots/store/snapshot.actions';
+import { snapshotPageEntered } from 'app/pages/storage/snapshots/store/snapshot.actions';
 import { selectSnapshotsTotal } from 'app/pages/storage/snapshots/store/snapshot.selectors';
 import {
   DialogService, WebSocketService, AppLoaderService,
@@ -64,7 +64,7 @@ export class SnapshotListComponent implements OnInit {
   dataSource: MatTableDataSource<ZfsSnapshot> = new MatTableDataSource([]);
   defaultSort: Sort = { active: 'snapshot_name', direction: 'desc' };
   filterString = '';
-  selection = new SelectionModel(true, []);
+  selection: SelectionModel<ZfsSnapshot> = new SelectionModel<ZfsSnapshot>(true, [], true);
   toolbarEvent$: Subject<CoreEvent> = new Subject();
   toolbarConfig: ToolbarConfig;
   emptyConfig: EmptyConfig = {
@@ -115,7 +115,6 @@ export class SnapshotListComponent implements OnInit {
       this.showExtraColumns = showExtraColumns;
       this.displayedColumns = this.showExtraColumns ? this.defaultExtraColumns : this.defaultColumns;
       this.setupToolbar();
-      this.store$.dispatch(snapshotPageReady({ extra: this.showExtraColumns }));
       this.cdr.markForCheck();
     });
   }
@@ -169,12 +168,12 @@ export class SnapshotListComponent implements OnInit {
     };
     setTimeout(() => {
       // TODO: Figure out how to avoid setTimeout to make it work on first loading
+      if (this.filterString) {
+        this.dataSource.filter = this.filterString;
+      }
       this.dataSource.sort = this.sort;
-    }, 1);
-    if (this.filterString) {
-      this.dataSource.filter = this.filterString;
-    }
-    this.selection.clear();
+      this.cdr.markForCheck();
+    }, 0);
   }
 
   toggleExtraColumns(): void {
@@ -278,11 +277,11 @@ export class SnapshotListComponent implements OnInit {
   doBatchDelete(snapshots: ZfsSnapshot[]): void {
     this.matDialog.open(SnapshotBatchDeleteDialogComponent, {
       data: snapshots,
-    }).beforeClosed().pipe(
-      filter((isCancelled) => !isCancelled),
+    }).afterClosed().pipe(
+      filter(Boolean),
       untilDestroyed(this),
     ).subscribe(() => {
-      this.selection.clear();
+      snapshots.forEach((row) => this.selection.deselect(row));
       this.cdr.markForCheck();
     });
   }

@@ -17,6 +17,7 @@ import { hasTwoValuesValidator } from 'app/modules/entity/entity-form/validators
 import { EntityUtils } from 'app/modules/entity/utils';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import IxValidatorsService from 'app/modules/ix-forms/services/ix-validators.service';
+import { snapshotExcludeBootQueryFilter } from 'app/pages/storage/snapshots/constants/snapshot-exclude-boot.constant';
 import { WebSocketService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
@@ -96,17 +97,25 @@ export class SnapshotAddFormComponent implements OnInit {
     }
 
     this.isFormLoading = true;
-    this.ws.call('zfs.snapshot.create', [params]).pipe(
-      untilDestroyed(this),
-    ).subscribe(() => {
-      this.isFormLoading = false;
-      this.slideIn.close();
-      this.cdr.markForCheck();
-    }, (error) => {
-      this.isFormLoading = false;
-      this.errorHandler.handleWsFormError(error, this.form);
-      this.cdr.markForCheck();
-    });
+    const count = 20;
+    for (let i = 0; i < count; i++) {
+      params.name = values.name + i.toString();
+
+      this.ws.call('zfs.snapshot.create', [params]).pipe(
+        untilDestroyed(this),
+      ).subscribe(() => {});
+    }
+    // this.ws.call('zfs.snapshot.create', [params]).pipe(
+    //   untilDestroyed(this),
+    // ).subscribe(() => {
+    //   this.isFormLoading = false;
+    //   this.slideIn.close();
+    //   this.cdr.markForCheck();
+    // }, (error) => {
+    //   this.isFormLoading = false;
+    //   this.errorHandler.handleWsFormError(error, this.form);
+    //   this.cdr.markForCheck();
+    // });
   }
 
   private getDefaultSnapshotName(): string {
@@ -116,7 +125,7 @@ export class SnapshotAddFormComponent implements OnInit {
 
   private getDatasetOptions(): Observable<Option[]> {
     return this.ws.call('pool.dataset.query', [
-      [['pool', '!=', 'freenas-boot'], ['pool', '!=', 'boot-pool']],
+      snapshotExcludeBootQueryFilter,
       { extra: { flat: false } },
     ]).pipe(
       map((datasets) => datasets.map((dataset) => ({ label: dataset.name, value: dataset.name }))),

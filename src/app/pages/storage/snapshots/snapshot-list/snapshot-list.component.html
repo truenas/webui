@@ -42,29 +42,29 @@
 
     <ng-container matColumnDef="used">
       <th mat-header-cell *matHeaderCellDef mat-sort-header> {{ 'Used' | translate }} </th>
-      <td mat-cell *matCellDef="let snapshot; dataSource: dataSource">{{
-        snapshot?.properties?.used?.parsed ?
-        (+snapshot.properties.used.parsed | filesize: { standard: "iec" }) :
-        ('N/A' | translate)
-      }}</td>
+      <td mat-cell *matCellDef="let snapshot; dataSource: dataSource">
+        <ng-container *ngIf="snapshot?.properties?.used?.parsed; else notAvailable">
+          {{ +snapshot.properties.used.parsed | filesize: { standard: "iec" } }}
+        </ng-container>
+      </td>
     </ng-container>
 
     <ng-container matColumnDef="created">
       <th mat-header-cell *matHeaderCellDef mat-sort-header> {{ 'Date created' | translate }} </th>
-      <td mat-cell *matCellDef="let snapshot; dataSource: dataSource">{{
-        snapshot?.properties?.creation?.parsed?.$date ?
-        (snapshot.properties.creation.parsed.$date | formatDateTime) :
-        ('N/A' | translate)
-      }}</td>
+      <td mat-cell *matCellDef="let snapshot; dataSource: dataSource">
+        <ng-container *ngIf="snapshot?.properties?.creation?.parsed?.$date; else notAvailable">
+          {{ snapshot.properties.creation.parsed.$date | formatDateTime }}
+        </ng-container>
+      </td>
     </ng-container>
 
     <ng-container matColumnDef="referenced">
       <th mat-header-cell *matHeaderCellDef mat-sort-header> {{ 'Referenced' | translate }} </th>
-      <td mat-cell *matCellDef="let snapshot; dataSource: dataSource">{{
-        snapshot?.properties?.referenced?.parsed ?
-        (+snapshot.properties.referenced.parsed | filesize: { standard: "iec" }) :
-        ('N/A' | translate)
-      }}</td>
+      <td mat-cell *matCellDef="let snapshot; dataSource: dataSource">
+        <ng-container *ngIf="snapshot?.properties?.referenced?.parsed; else notAvailable">
+          {{ +snapshot.properties.referenced.parsed | filesize: { standard: "iec" } }}
+        </ng-container>
+      </td>
     </ng-container>
 
     <ng-container matColumnDef="actions">
@@ -96,4 +96,9 @@
   </table>
 
   <ix-table-paginator [dataSource]="dataSource" [pageSize]="10"></ix-table-paginator>
+</ng-template>
+
+
+<ng-template #notAvailable>
+  {{ 'N/A' | translate }}
 </ng-template>
