@@ -11,7 +11,7 @@
   <mat-toolbar id="Disks-toolbar">
     <div *ngIf="selectedEnclosure" class="mat-card-title-text">
       {{currentTab.alias}} on 
-      {{system.enclosures[selectedEnclosure.enclosureKey].label == system.enclosures[selectedEnclosure.enclosureKey].name ? selectedEnclosure.model : system.enclosures[selectedEnclosure.enclosureKey].label}} 
+      {{selectedEnclosure.label == selectedEnclosure.name ? selectedEnclosure.model : selectedEnclosure.label}} 
       ({{selectedEnclosure.enclosureKey}})
     </div>
 
@@ -29,7 +29,7 @@
   </mat-toolbar>
 
   <!-- Tabs other than Disks -->
-  <tab-content class="other-tab" *ngIf="currentTab.alias !== 'Disks'" [data]="system.enclosures[selectedEnclosure.enclosureKey].elements[currentTab.elementIndex]" ></tab-content>
+  <tab-content class="other-tab" *ngIf="currentTab.alias !== 'Disks'" [data]="selectedEnclosure.enclosure.elements[currentTab.elementIndex]" ></tab-content>
   
   <mat-card-content id="Disks-content" [class]="currentTab.alias">
 

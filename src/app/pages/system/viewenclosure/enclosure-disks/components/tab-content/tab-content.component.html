@@ -1,11 +1,10 @@
 <table id="tab-data" mat-table [dataSource]="data.elements">
   <!-- Column -->
-  <ng-container *ngFor="let header of data.header; let i = index" [matColumnDef]="data.header[i]">
+  <ng-container *ngFor="let header of headers; let i = index" [matColumnDef]="headers[i]">
     <th mat-header-cell *matHeaderCellDef> {{header}} </th>
-    <td mat-cell *matCellDef="let element"> {{element.data[header]}} </td>
+    <td mat-cell *matCellDef="let element"> {{element[header]}} </td>
   </ng-container>
 
-  <tr mat-header-row *matHeaderRowDef="data.header"></tr>
-  <tr mat-row *matRowDef="let row; columns: data.header;"></tr>
+  <tr mat-header-row *matHeaderRowDef="headers"></tr>
+  <tr mat-row *matRowDef="let row; columns: headers;"></tr>
 </table>
-

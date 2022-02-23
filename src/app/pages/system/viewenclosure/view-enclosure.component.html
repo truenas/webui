@@ -45,10 +45,10 @@
   
   <!-- Enclosure Selector -->
   <div fxFlex="240px" fxFlex.lt-lg="180px" #navigation  *ngIf="showEnclosureSelector" class="enclosure-selector" [ngClass.lt-lg]="'lt-lg'">
-    <ng-container *ngFor="let enclosure of system.profile; let i = index">
-      <div *ngIf="enclosure.enclosureKey != system.rearIndex" (click)="selectEnclosure(i)" class="enclosure enclosure-{{i}} {{selectedEnclosure.enclosureKey == i ? 'active' : '' }} ">
-        <div *ngIf="system.enclosures[enclosure.enclosureKey].label == system.enclosures[enclosure.enclosureKey].name">{{enclosure.model}} ({{i}})</div>
-        <div *ngIf="system.enclosures[enclosure.enclosureKey].label !== system.enclosures[enclosure.enclosureKey].name">{{system.enclosures[enclosure.enclosureKey].label}} ({{i}})</div>
+    <ng-container *ngFor="let profile of system.profile; let i = index">
+      <div *ngIf="profile.enclosureKey != system.rearIndex" (click)="selectEnclosure(i)" class="enclosure enclosure-{{i}} {{selectedEnclosure.enclosureKey == i ? 'active' : '' }} ">
+        <div *ngIf="profile.label == profile.name">{{profile.model}} ({{i}})</div>
+        <div *ngIf="profile.label !== profile.name">{{profile.label}} ({{i}})</div>
       </div>
     </ng-container>
   </div>
