@@ -18,7 +18,7 @@ from pytest_bdd import (
 )
 import pytest
 
-pytestmark = [pytest.mark.debug_test]
+# pytestmark = [pytest.mark.debug_test]
 
 
 @scenario('features/NAS-T1132.feature', 'Verify Box Cloud Sync task works')
