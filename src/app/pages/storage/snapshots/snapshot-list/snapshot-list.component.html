@@ -1,7 +1,7 @@
 <entity-empty *ngIf="isLoading$ | async; else loaded" [conf]="loadingConfig"></entity-empty>
 
 <ng-template #loaded>
-  <div *ngIf="selection.selected.length" class="batch-actions-toolbar">
+  <div *ngIf="checkboxColumn?.selection.selected.length" class="batch-actions-toolbar">
     <div class="title">
       <strong>{{ 'Batch Operations' | translate }}</strong>
     </div>
@@ -9,7 +9,7 @@
     <div class="actions">
       <button
         mat-button
-        (click)="doBatchDelete(this.selection.selected);"
+        (click)="doBatchDelete(checkboxColumn?.selection.selected);"
         [matTooltip]="'Delete selections' | translate"
         matTooltipPosition="below"
       >
@@ -28,7 +28,7 @@
     [matSortDirection]="defaultSort.direction"
     [fixedLayout]="true"
   >
-    <ix-checkbox-column [selection]="selection" [dataSource]="dataSource"></ix-checkbox-column>
+    <ix-checkbox-column></ix-checkbox-column>
 
     <ng-container matColumnDef="dataset">
       <th mat-header-cell *matHeaderCellDef mat-sort-header> {{ 'Dataset' | translate }} </th>

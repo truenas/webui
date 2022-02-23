@@ -1,4 +1,3 @@
-import { SelectionModel } from '@angular/cdk/collections';
 import {
   Component, ChangeDetectionStrategy, ChangeDetectorRef, ViewChild, OnInit,
 } from '@angular/core';
@@ -23,6 +22,7 @@ import { ZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
 import { EmptyConfig, EmptyType } from 'app/modules/entity/entity-empty/entity-empty.component';
 import { EntityToolbarComponent } from 'app/modules/entity/entity-toolbar/entity-toolbar.component';
 import { ToolbarConfig, ControlConfig } from 'app/modules/entity/entity-toolbar/models/control-config.interface';
+import { IxCheckboxColumnComponent } from 'app/modules/ix-tables/components/ix-checkbox-column/ix-checkbox-column.component';
 import { SnapshotBatchDeleteDialogComponent } from 'app/pages/storage/snapshots/snapshot-batch-delete-dialog/snapshot-batch-delete-dialog.component';
 import { SnapshotCloneDialogComponent } from 'app/pages/storage/snapshots/snapshot-clone-dialog/snapshot-clone-dialog.component';
 import { SnapshotRollbackDialogComponent } from 'app/pages/storage/snapshots/snapshot-rollback-dialog/snapshot-rollback-dialog.component';
@@ -61,10 +61,10 @@ export class SnapshotListComponent implements OnInit {
   );
   showExtraColumns: boolean;
   @ViewChild(MatSort, { static: false }) sort: MatSort;
+  @ViewChild(IxCheckboxColumnComponent, { static: false }) checkboxColumn: IxCheckboxColumnComponent<ZfsSnapshot>;
   dataSource: MatTableDataSource<ZfsSnapshot> = new MatTableDataSource([]);
   defaultSort: Sort = { active: 'snapshot_name', direction: 'desc' };
   filterString = '';
-  selection: SelectionModel<ZfsSnapshot> = new SelectionModel<ZfsSnapshot>(true, [], true);
   toolbarEvent$: Subject<CoreEvent> = new Subject();
   toolbarConfig: ToolbarConfig;
   emptyConfig: EmptyConfig = {
@@ -281,7 +281,7 @@ export class SnapshotListComponent implements OnInit {
       filter(Boolean),
       untilDestroyed(this),
     ).subscribe(() => {
-      snapshots.forEach((row) => this.selection.deselect(row));
+      this.checkboxColumn.clearSelection();
       this.cdr.markForCheck();
     });
   }
