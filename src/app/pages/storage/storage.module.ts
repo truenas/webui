@@ -20,9 +20,13 @@ import { IxTableModule } from 'app/modules/ix-tables/ix-table.module';
 import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
 import { CreateSnapshotDialogComponent } from 'app/pages/storage/volumes/create-snapshot-dialog/create-snapshot-dialog.component';
 import { DatasetFormComponent } from 'app/pages/storage/volumes/datasets/dataset-form/dataset-form.component';
-import { DatasetUnlockComponent } from 'app/pages/storage/volumes/datasets/dataset-unlock/dataset-unlock.component';
-import { DeleteDatasetDialogComponent } from 'app/pages/storage/volumes/delete-dataset-dialog/delete-dataset-dialog.component';
-import { EncryptionOptionsDialogComponent } from 'app/pages/storage/volumes/encyption-options-dialog/encryption-options-dialog.component';
+import {
+  DeleteDatasetDialogComponent,
+} from 'app/pages/storage/volumes/delete-dataset-dialog/delete-dataset-dialog.component';
+import { DeleteZvolDialogComponent } from 'app/pages/storage/volumes/delete-zvol-dialog/delete-zvol-dialog.component';
+import {
+  EncryptionOptionsDialogComponent,
+} from 'app/pages/storage/volumes/encyption-options-dialog/encryption-options-dialog.component';
 import { AclEditorListComponent } from 'app/pages/storage/volumes/permissions/components/acl-editor-list/acl-editor-list.component';
 import { EditNfsAceComponent } from 'app/pages/storage/volumes/permissions/components/edit-nfs-ace/edit-nfs-ace.component';
 import { EditPosixAceComponent } from 'app/pages/storage/volumes/permissions/components/edit-posix-ace/edit-posix-ace.component';
@@ -108,31 +112,10 @@ import { ZvolWizardComponent } from './volumes/zvol/zvol-wizard/zvol-wizard.comp
     EditPosixAceComponent,
     EncryptionOptionsDialogComponent,
     ExportDisconnectModalComponent,
-    GroupQuotaFormComponent,
-    ImportDiskComponent,
-    ManagerComponent,
-    NfsPermissionsComponent,
-    PermissionsItemComponent,
-    PermissionsSidebarComponent,
-    PosixPermissionsComponent,
-    SelectPresetModalComponent,
-    SmartResultsComponent,
-    TrivialPermissionsComponent,
-    UnlockDialogComponent,
-    UserQuotaFormComponent,
-    VdevComponent,
-    VmwareSnapshotFormComponent,
-    VmwareSnapshotListComponent,
-    VolumeAddkeyFormComponent,
-    VolumeChangekeyFormComponent,
-    VolumeCreatekeyFormComponent,
-    VolumeImportWizardComponent,
-    VolumeRekeyFormComponent,
-    VolumesListComponent,
-    VolumesListControlsComponent,
-    VolumeStatusComponent,
-    ZvolFormComponent,
-    ZvolWizardComponent,
+    CreateSnapshotDialogComponent,
+    DeleteDatasetDialogComponent,
+    DeleteZvolDialogComponent,
+    SnapshotCloneDialogComponent,
   ],
   exports: [VolumesListControlsComponent],
   providers: [

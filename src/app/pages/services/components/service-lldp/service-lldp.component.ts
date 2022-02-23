@@ -7,6 +7,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { choicesToOptions } from 'app/helpers/options.helper';
 import helptext from 'app/helptext/services/components/service-lldp';
 import { EntityUtils } from 'app/modules/entity/utils';
+import { SimpleAsyncComboboxProvider } from 'app/modules/ix-forms/classes/simple-async-combobox-provider';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { WebSocketService, ServicesService, DialogService } from 'app/services';
 
@@ -55,7 +56,7 @@ export class ServiceLldpComponent implements OnInit {
     tooltip: helptext.lldp_location_tooltip,
   };
 
-  readonly locationOptions$ = this.ws.call('lldp.country_choices').pipe(choicesToOptions());
+  locationProvider = new SimpleAsyncComboboxProvider(this.ws.call('lldp.country_choices').pipe(choicesToOptions()));
 
   constructor(
     protected router: Router,

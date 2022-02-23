@@ -846,10 +846,10 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, A
   }
 
   // generate delete msg
-  getDeleteMessage(item: any, action: string = this.translate.instant('Delete ')): string {
+  getDeleteMessage(item: any, action: string = this.translate.instant('Delete')): string {
     let deleteMsg: string = this.translate.instant('Delete the selected item?');
     if (this.conf.config.deleteMsg) {
-      deleteMsg = action + this.conf.config.deleteMsg.title;
+      deleteMsg = action + ' ' + this.conf.config.deleteMsg.title;
       let message = ' <b>' + item[this.conf.config.deleteMsg.key_props[0]];
       if (this.conf.config.deleteMsg.key_props.length > 1) {
         for (let i = 1; i < this.conf.config.deleteMsg.key_props.length; i++) {
@@ -1251,7 +1251,7 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, A
           // Remove columns from display and preferred cols if they don't exist in the table
           const notFound: EntityTableColumnProp[] = [];
           this.conf.columns.forEach((col) => {
-            const found = this.filterColumns.find((o) => o.prop === col.prop);
+            const found = this.filterColumns.find((filterColumn) => filterColumn.prop === col.prop);
             if (!found) {
               notFound.push(col.prop);
             }
