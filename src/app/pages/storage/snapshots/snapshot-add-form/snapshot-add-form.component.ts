@@ -101,25 +101,17 @@ export class SnapshotAddFormComponent implements OnInit {
     }
 
     this.isFormLoading = true;
-    const count = 20;
-    for (let i = 0; i < count; i++) {
-      params.name = values.name + i.toString();
-
-      this.ws.call('zfs.snapshot.create', [params]).pipe(
-        untilDestroyed(this),
-      ).subscribe(() => {});
-    }
-    // this.ws.call('zfs.snapshot.create', [params]).pipe(
-    //   untilDestroyed(this),
-    // ).subscribe(() => {
-    //   this.isFormLoading = false;
-    //   this.slideIn.close();
-    //   this.cdr.markForCheck();
-    // }, (error) => {
-    //   this.isFormLoading = false;
-    //   this.errorHandler.handleWsFormError(error, this.form);
-    //   this.cdr.markForCheck();
-    // });
+    this.ws.call('zfs.snapshot.create', [params]).pipe(
+      untilDestroyed(this),
+    ).subscribe(() => {
+      this.isFormLoading = false;
+      this.slideIn.close();
+      this.cdr.markForCheck();
+    }, (error) => {
+      this.isFormLoading = false;
+      this.errorHandler.handleWsFormError(error, this.form);
+      this.cdr.markForCheck();
+    });
   }
 
   private getDefaultSnapshotName(): string {
