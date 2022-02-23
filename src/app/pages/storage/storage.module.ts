@@ -18,8 +18,8 @@ import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxTableModule } from 'app/modules/ix-tables/ix-table.module';
 import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
-import { CreateSnapshotDialogComponent } from 'app/pages/storage/volumes/create-snapshot-dialog/create-snapshot-dialog.component';
 import { DatasetFormComponent } from 'app/pages/storage/volumes/datasets/dataset-form/dataset-form.component';
+import { DatasetUnlockComponent } from 'app/pages/storage/volumes/datasets/dataset-unlock/dataset-unlock.component';
 import {
   DeleteDatasetDialogComponent,
 } from 'app/pages/storage/volumes/delete-dataset-dialog/delete-dataset-dialog.component';
@@ -102,9 +102,9 @@ import { ZvolWizardComponent } from './volumes/zvol/zvol-wizard/zvol-wizard.comp
     DatasetQuotasGrouplistComponent,
     DatasetQuotasUserlistComponent,
     DatasetTrivialPermissionsComponent,
-    CreateSnapshotDialogComponent,
     DatasetUnlockComponent,
     DeleteDatasetDialogComponent,
+    DeleteZvolDialogComponent,
     DiskBulkEditComponent,
     DiskFormComponent,
     DiskListComponent,
@@ -112,10 +112,31 @@ import { ZvolWizardComponent } from './volumes/zvol/zvol-wizard/zvol-wizard.comp
     EditPosixAceComponent,
     EncryptionOptionsDialogComponent,
     ExportDisconnectModalComponent,
-    CreateSnapshotDialogComponent,
-    DeleteDatasetDialogComponent,
-    DeleteZvolDialogComponent,
-    SnapshotCloneDialogComponent,
+    GroupQuotaFormComponent,
+    ImportDiskComponent,
+    ManagerComponent,
+    NfsPermissionsComponent,
+    PermissionsItemComponent,
+    PermissionsSidebarComponent,
+    PosixPermissionsComponent,
+    SelectPresetModalComponent,
+    SmartResultsComponent,
+    TrivialPermissionsComponent,
+    UnlockDialogComponent,
+    UserQuotaFormComponent,
+    VdevComponent,
+    VmwareSnapshotFormComponent,
+    VmwareSnapshotListComponent,
+    VolumeAddkeyFormComponent,
+    VolumeChangekeyFormComponent,
+    VolumeCreatekeyFormComponent,
+    VolumeImportWizardComponent,
+    VolumeRekeyFormComponent,
+    VolumesListComponent,
+    VolumesListControlsComponent,
+    VolumeStatusComponent,
+    ZvolFormComponent,
+    ZvolWizardComponent,
   ],
   exports: [VolumesListControlsComponent],
   providers: [

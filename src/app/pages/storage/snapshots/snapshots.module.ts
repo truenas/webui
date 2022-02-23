@@ -25,6 +25,7 @@ import { routing } from 'app/pages/storage/snapshots/snapshots.routing';
 import { SnapshotEffects } from 'app/pages/storage/snapshots/store/snapshot.effects';
 import { snapshotReducer } from 'app/pages/storage/snapshots/store/snapshot.reducer';
 import { snapshotStateKey } from 'app/pages/storage/snapshots/store/snapshot.selectors';
+import { CreateSnapshotDialogComponent } from 'app/pages/storage/volumes/create-snapshot-dialog/create-snapshot-dialog.component';
 import { SnapshotAddFormComponent } from './snapshot-add-form/snapshot-add-form.component';
 import { SnapshotBatchDeleteDialogComponent } from './snapshot-batch-delete-dialog/snapshot-batch-delete-dialog.component';
 
@@ -59,6 +60,7 @@ import { SnapshotBatchDeleteDialogComponent } from './snapshot-batch-delete-dial
     SnapshotRollbackDialogComponent,
     SnapshotBatchDeleteDialogComponent,
     SnapshotAddFormComponent,
+    CreateSnapshotDialogComponent,
   ],
   exports: [
     SnapshotListComponent,
@@ -66,6 +68,7 @@ import { SnapshotBatchDeleteDialogComponent } from './snapshot-batch-delete-dial
     SnapshotRollbackDialogComponent,
     SnapshotBatchDeleteDialogComponent,
     SnapshotAddFormComponent,
+    CreateSnapshotDialogComponent,
   ],
 })
 export class SnapshotsModule { }
