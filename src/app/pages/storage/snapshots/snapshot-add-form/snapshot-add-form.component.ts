@@ -13,7 +13,7 @@ import helptext from 'app/helptext/storage/snapshots/snapshots';
 import { Option } from 'app/interfaces/option.interface';
 import { CreateZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
 import { atLeastOne } from 'app/modules/entity/entity-form/validators/at-least-one-validation';
-import { hasTwoValuesValidator } from 'app/modules/entity/entity-form/validators/has-two-values-validation';
+import { requiredEmpty } from 'app/modules/entity/entity-form/validators/required-empty-validation';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import IxValidatorsService from 'app/modules/ix-forms/services/ix-validators.service';
@@ -38,10 +38,11 @@ export class SnapshotAddFormComponent implements OnInit {
         forProperty: 'atLeastOne',
         message: this.translate.instant('Name or Naming Schema must be provided.'),
       },
-    ), this.validatorsService.withMessage(
-      hasTwoValuesValidator('name'),
+    ),
+    this.validatorsService.withMessage(
+      requiredEmpty('name'),
       {
-        forProperty: 'hasTwoValues',
+        forProperty: 'requiredEmpty',
         message: this.translate.instant('Name and Naming Schema cannot be provided at the same time.'),
       },
     )]],

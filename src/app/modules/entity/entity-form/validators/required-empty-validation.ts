@@ -1,6 +1,6 @@
 import { ValidatorFn, FormControl } from '@angular/forms';
 
-export function hasTwoValuesValidator(otherControlName: string): ValidatorFn {
+export function requiredEmpty(otherControlName: string): ValidatorFn {
   return (control: FormControl) => {
     if (!control.parent) {
       return null;
@@ -9,11 +9,11 @@ export function hasTwoValuesValidator(otherControlName: string): ValidatorFn {
     const otherControl = control.parent.get(otherControlName);
 
     if (!otherControl) {
-      throw new Error('hasTwoValues(): other control is not found in parent group');
+      throw new Error('requiredEmptyValidator(): other control is not found in parent group');
     }
 
     if (!!otherControl.value && !!control.value) {
-      return { hasTwoValues: true };
+      return { requiredEmpty: true };
     }
 
     return null;
