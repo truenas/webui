@@ -1,7 +1,7 @@
 import {
   Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef,
 } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, Validators } from '@angular/forms';
 import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { format } from 'date-fns-tz';
@@ -31,21 +31,23 @@ export class SnapshotAddFormComponent implements OnInit {
   isFormLoading = true;
   form = this.fb.group({
     dataset: ['', Validators.required],
-    name: [this.getDefaultSnapshotName()],
-    naming_schema: ['', [this.validatorsService.withMessage(
-      atLeastOne('name', [helptext.snapshot_add_name_placeholder, helptext.snapshot_add_naming_schema_placeholder]),
+    name: [this.getDefaultSnapshotName(), [this.validatorsService.withMessage(
+      atLeastOne('naming_schema', [helptext.snapshot_add_name_placeholder, helptext.snapshot_add_naming_schema_placeholder]),
       {
         forProperty: 'atLeastOne',
         message: this.translate.instant('Name or Naming Schema must be provided.'),
       },
-    ),
-    this.validatorsService.withMessage(
-      requiredEmpty('name'),
-      {
-        forProperty: 'requiredEmpty',
-        message: this.translate.instant('Name and Naming Schema cannot be provided at the same time.'),
-      },
+    ), this.validatorsService.validateOnCondition(
+      (control: AbstractControl) => control.value && control.parent?.get('naming_schema').value,
+      this.validatorsService.withMessage(
+        requiredEmpty(),
+        {
+          forProperty: 'requiredEmpty',
+          message: this.translate.instant('Name and Naming Schema cannot be provided at the same time.'),
+        },
+      ),
     )]],
+    naming_schema: [''],
     recursive: [false],
   });
 
@@ -75,6 +77,7 @@ export class SnapshotAddFormComponent implements OnInit {
         this.datasetOptions$ = of(datasetOptions);
         this.namingSchemaOptions$ = of(namingSchemaOptions);
         this.isFormLoading = false;
+        this.form.get('name').markAsTouched();
         this.cdr.markForCheck();
       },
       (error) => {
