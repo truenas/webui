@@ -1,0 +1,189 @@
+import { HarnessLoader, parallel } from '@angular/cdk/testing';
+import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { ReactiveFormsModule } from '@angular/forms';
+import { MatButtonHarness } from '@angular/material/button/testing';
+import { MatCheckboxHarness } from '@angular/material/checkbox/testing';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { provideMockStore } from '@ngrx/store/testing';
+import { MockComponent } from 'ng-mocks';
+import { IxInputHarness } from 'app/modules/ix-forms/components/ix-input/ix-input.harness';
+import { IxSelectHarness } from 'app/modules/ix-forms/components/ix-select/ix-select.harness';
+import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
+import {
+  SchedulerModalConfig,
+} from 'app/modules/scheduler/components/scheduler-modal/scheduler-modal-config.interface';
+import {
+  SchedulerPreviewColumnComponent,
+} from 'app/modules/scheduler/components/scheduler-modal/scheduler-preview-column/scheduler-preview-column.component';
+import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
+import { DocsService } from 'app/services/docs.service';
+import { selectTimezone } from 'app/store/system-config/system-config.selectors';
+import { SchedulerModalComponent } from './scheduler-modal.component';
+
+describe('SchedulerModalComponent', () => {
+  let spectator: Spectator<SchedulerModalComponent>;
+  let loader: HarnessLoader;
+  const createComponent = createComponentFactory({
+    component: SchedulerModalComponent,
+    imports: [
+      IxFormsModule,
+      ReactiveFormsModule,
+      TooltipModule,
+    ],
+    providers: [
+      mockProvider(MatDialogRef),
+      {
+        provide: MAT_DIALOG_DATA,
+        useValue: {
+          crontab: '0 2 * * mon',
+          hideMinutes: false,
+        } as SchedulerModalConfig,
+      },
+      provideMockStore({
+        selectors: [
+          {
+            selector: selectTimezone,
+            value: 'America/New_York',
+          },
+        ],
+      }),
+      mockProvider(DocsService), // TODO: Unclear why this is even needed.
+    ],
+    declarations: [
+      MockComponent(SchedulerPreviewColumnComponent),
+    ],
+  });
+
+  async function getFormValues(): Promise<{ [key: string]: unknown }> {
+    const preset = await loader.getHarness(IxSelectHarness.with({ selector: '.preset-select' }));
+    const minutes = await loader.getHarness(IxInputHarness.with({ label: 'Minutes' }));
+    const hours = await loader.getHarness(IxInputHarness.with({ label: 'Hours' }));
+    const days = await loader.getHarness(IxInputHarness.with({ label: 'Days' }));
+
+    const monthCheckboxes = await loader.getAllHarnesses(MatCheckboxHarness.with({ ancestor: '.months' }));
+    const months = await parallel(() => monthCheckboxes.map(async (month) => {
+      return await month.isChecked() ? month.getLabelText() : undefined;
+    }));
+
+    const daysOfWeekCheckboxes = await loader.getAllHarnesses(MatCheckboxHarness.with({ ancestor: '.weekdays' }));
+    const daysOfWeek = await parallel(() => daysOfWeekCheckboxes.map(async (month) => {
+      return await month.isChecked() ? month.getLabelText() : undefined;
+    }));
+
+    return {
+      Preset: await preset.getValue(),
+      Minutes: await minutes.getValue(),
+      Hours: await hours.getValue(),
+      Days: await days.getValue(),
+      Months: months.filter(Boolean),
+      'Days Of Week': daysOfWeek.filter(Boolean),
+    };
+  }
+
+  describe('base operations', () => {
+    beforeEach(() => {
+      spectator = createComponent();
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    });
+
+    it('sets form values based on the crontab provided', async () => {
+      const values = await getFormValues();
+      expect(values).toEqual({
+        Preset: '',
+        Minutes: '0',
+        Hours: '2',
+        Days: '*',
+        'Days Of Week': ['Mon'],
+        Months: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+      });
+    });
+
+    it('closes dialog with crontab value when Done is pressed', async () => {
+      const doneButton = await loader.getHarness(MatButtonHarness.with({ text: 'Done' }));
+      await doneButton.click();
+
+      expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith('0 2 * * mon');
+    });
+
+    it('shows preview column for the current crontab', () => {
+      const previewColumn = spectator.query(SchedulerPreviewColumnComponent);
+
+      expect(previewColumn.crontab).toEqual('0 2 * * mon');
+      expect(previewColumn.timezone).toEqual('America/New_York');
+    });
+
+    it('sets form values when preset is selected', async () => {
+      const presetSelect = await loader.getHarness(IxSelectHarness.with({ selector: '.preset-select' }));
+      await presetSelect.setValue('Weekly');
+
+      const values = await getFormValues();
+      expect(values).toEqual({
+        Preset: 'Weekly',
+        Minutes: '0',
+        Hours: '0',
+        Days: '*',
+        'Days Of Week': ['Sun'],
+        Months: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+      });
+    });
+
+    it('updates preview when minutes, hours, days, months or days of week are changed', async () => {
+      const minutes = await loader.getHarness(IxInputHarness.with({ label: 'Minutes' }));
+      await minutes.setValue('25');
+
+      const hours = await loader.getHarness(IxInputHarness.with({ label: 'Hours' }));
+      await hours.setValue('*/2');
+
+      const days = await loader.getHarness(IxInputHarness.with({ label: 'Days' }));
+      await days.setValue('2-5');
+
+      const months = await loader.getAllHarnesses(MatCheckboxHarness.with({ ancestor: '.months' }));
+      await months[0].uncheck();
+
+      const daysOfWeek = await loader.getAllHarnesses(MatCheckboxHarness.with({ ancestor: '.weekdays' }));
+      await daysOfWeek[0].check();
+
+      const previewColumn = spectator.query(SchedulerPreviewColumnComponent);
+      expect(previewColumn.crontab).toEqual('25 */2 2-5 2,3,4,5,6,7,8,9,10,11,12 mon,sun');
+    });
+
+    it('sets day of week portion of crontab to * when all days are selected', async () => {
+      const weekdays = await loader.getAllHarnesses(MatCheckboxHarness.with({ ancestor: '.weekdays' }));
+      await parallel(() => weekdays.map((weekday) => weekday.check()));
+
+      const previewColumn = spectator.query(SchedulerPreviewColumnComponent);
+      expect(previewColumn.crontab).toEqual('0 2 * * *');
+    });
+
+    it('sets month portion of crontab to * when all months are selected', async () => {
+      const months = await loader.getAllHarnesses(MatCheckboxHarness.with({ ancestor: '.months' }));
+      await parallel(() => months.map((month) => month.check()));
+
+      const previewColumn = spectator.query(SchedulerPreviewColumnComponent);
+      expect(previewColumn.crontab).toEqual('0 2 * * mon');
+    });
+  });
+
+  describe('hideMinutes', () => {
+    beforeEach(() => {
+      spectator = createComponent({
+        providers: [
+          {
+            provide: MAT_DIALOG_DATA,
+            useValue: {
+              crontab: '0 2 * * mon',
+              hideMinutes: true,
+            } as SchedulerModalConfig,
+          },
+        ],
+      });
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    });
+
+    it('does not show minutes input when hideMinutes is true', async () => {
+      const minutes = await loader.getAllHarnesses(IxInputHarness.with({ label: 'Minutes' }));
+      expect(minutes).toHaveLength(0);
+    });
+  });
+});

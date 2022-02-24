@@ -2,6 +2,7 @@ const { pathsToModuleNameMapper } = require('ts-jest/utils');
 const { compilerOptions } = require('./tsconfig');
 
 require('jest-preset-angular/ngcc-jest-processor');
+process.env.TZ = 'UTC';
 
 module.exports = {
   preset: 'jest-preset-angular',

@@ -1,0 +1,47 @@
+<div class="full-width container has-tooltip">
+
+  <div *ngIf="label || tooltip" class="label-container">
+    <label class="label">
+      {{label}}
+      <span *ngIf="required" class="required">*</span>
+    </label>
+    <tooltip *ngIf="tooltip" [header]="label" class="tooltip" [message]="tooltip"></tooltip>
+  </div>
+
+  <div class="input-container" [class.disabled]="isDisabled">
+    <mat-select
+      [(ngModel)]="crontab"
+      [required]="required"
+      [disabled]="isDisabled"
+      (blur)="onTouched()"
+      (ngModelChange)="onChange($event)"
+    >
+      <mat-option
+        *ngFor="let preset of defaultPresets"
+        [value]="preset.value"
+        class="schedule-option"
+      >
+        {{ preset.label }}
+        <span class="crontab">({{ preset.value }})</span>
+        <span class="preset-description">{{ preset.description }}</span>
+      </mat-option>
+      <mat-option
+        [value]="customCrontab"
+        (click)="onCustomOptionSelected()"
+        class="schedule-option"
+      >
+        {{ 'Custom' | translate }}
+        <span *ngIf="customCrontab" class="crontab">({{ customCrontab }})</span>
+        <span class="preset-description">
+          <ng-container *ngIf="customCrontab; else customPrompt">
+            {{ customCrontab | crontabExplanation }}
+          </ng-container>
+          <ng-template #customPrompt>
+            {{ 'Create custom schedule' | translate }}
+          </ng-template>
+        </span>
+      </mat-option>
+    </mat-select>
+  </div>
+  <ix-errors [control]="controlDirective.control" [label]="label"></ix-errors>
+</div>

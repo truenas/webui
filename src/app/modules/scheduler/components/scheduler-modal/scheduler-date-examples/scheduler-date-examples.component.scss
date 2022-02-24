@@ -1,0 +1,22 @@
+:host {
+  display: block;
+  margin-top: 5px;
+  overflow-y: auto;
+}
+
+.schedule-example {
+  padding-bottom: 4px;
+  padding-left: 15px;
+  padding-top: 4px;
+
+  &:nth-child(odd) {
+    background-color: rgba(0, 0, 0, 0.1);
+  }
+}
+
+.only-first-results-message {
+  font-size: 0.95em;
+  font-style: italic;
+  padding: 6px 0 7px;
+  text-align: center;
+}

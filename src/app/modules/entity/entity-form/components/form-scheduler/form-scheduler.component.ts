@@ -1,15 +1,21 @@
 import { Overlay } from '@angular/cdk/overlay';
 import {
-  Component, OnInit, ViewChild, ElementRef, Renderer2,
-  ChangeDetectorRef, AfterViewInit, AfterViewChecked,
+  AfterViewChecked,
+  AfterViewInit,
+  ChangeDetectorRef,
+  Component,
+  ElementRef,
+  OnInit,
+  Renderer2,
+  ViewChild,
 } from '@angular/core';
-import { FormGroup, FormControl, AbstractControl } from '@angular/forms';
+import { AbstractControl, FormControl, FormGroup } from '@angular/forms';
 import { MatMonthView } from '@angular/material/datepicker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
-import { CronDate } from 'cron-parser';
 import * as parser from 'cron-parser';
+import { CronDate } from 'cron-parser';
 import { CronExpression } from 'cron-parser/types';
 import * as dateFns from 'date-fns';
 import * as dateFnsTz from 'date-fns-tz';
@@ -17,16 +23,11 @@ import globalHelptext from 'app/helptext/global-helptext';
 import { FormSchedulerConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
 import { Field } from 'app/modules/entity/entity-form/models/field.interface';
 import { EntityUtils } from 'app/modules/entity/utils';
+import { CronPreset } from 'app/modules/scheduler/interfaces/cron-preset.interface';
 import { LocaleService } from 'app/services/locale.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 import { selectTimezone } from 'app/store/system-config/system-config.selectors';
-
-interface CronPreset {
-  label: string;
-  value: string;
-  description?: string;
-}
 
 @UntilDestroy()
 @Component({
@@ -227,22 +228,6 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, Aft
       description: this.translate.instant('on the first day of the month at 00:00 (12:00 AM)'),
     },
   ];
-
-  get textInput(): string {
-    return this._textInput;
-  }
-
-  set textInput(val: string) {
-    this._textInput = val;
-  }
-
-  get colorProxy(): string {
-    return this.group.value[this.config.name];
-  }
-
-  set colorProxy(val: string) {
-    this.group.controls[this.config.name].setValue(val);
-  }
 
   private _preset: CronPreset;
 
