@@ -24,13 +24,14 @@ export class IxEmptyService {
 
   constructor(private translate: TranslateService) { }
 
-  defaultEmptyConfig(type: EmptyType): EmptyConfig {
+  defaultEmptyConfig(type: EmptyType, title: string): EmptyConfig {
     switch (type) {
       case EmptyType.Loading:
         return this.loadingConfig;
       case EmptyType.Errors:
         return this.errorConfig;
       default:
+        this.emptyConfig.title = this.translate.instant('No {title} have been added yet', { title });
         return this.emptyConfig;
     }
   }
