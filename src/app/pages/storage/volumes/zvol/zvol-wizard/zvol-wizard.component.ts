@@ -154,7 +154,7 @@ export class ZvolWizardComponent implements WizardConfiguration {
           parent: this,
           validation: [
             (control: FormControl): ValidationErrors => {
-              const config = this.wizardConfig[1].fieldConfig.find((c) => c.name === 'volsize');
+              const volsizeConfig = this.wizardConfig[1].fieldConfig.find((config) => config.name === 'volsize');
 
               const size = control.value && typeof control.value === 'string' ? this.storageService.convertHumanStringToNum(control.value, true) : null;
               const humanSize = control.value;
@@ -164,21 +164,21 @@ export class ZvolWizardComponent implements WizardConfiguration {
                 : null;
 
               if (errors) {
-                config.hasErrors = true;
-                config.errors = globalHelptext.human_readable.input_error;
+                volsizeConfig.hasErrors = true;
+                volsizeConfig.errors = globalHelptext.human_readable.input_error;
               } else if (size === 0) {
-                config.hasErrors = true;
-                config.errors = helptext.zvol_volsize_zero_error;
+                volsizeConfig.hasErrors = true;
+                volsizeConfig.errors = helptext.zvol_volsize_zero_error;
                 errors = { invalid_byte_string: true };
               } else if ((this.origHuman && humanSize)
                                 && (humanSize !== this.origHuman)
                                 && (size < this.origVolSize)) {
-                config.hasErrors = true;
-                config.errors = helptext.zvol_volsize_shrink_error;
+                volsizeConfig.hasErrors = true;
+                volsizeConfig.errors = helptext.zvol_volsize_shrink_error;
                 errors = { invalid_byte_string: true };
               } else {
-                config.hasErrors = false;
-                config.errors = '';
+                volsizeConfig.hasErrors = false;
+                volsizeConfig.errors = '';
               }
 
               return errors;
@@ -316,11 +316,14 @@ export class ZvolWizardComponent implements WizardConfiguration {
     const zvolEntityForm = entityWizard.formArray.get([1]) as FormGroup;
     if (!this.parent) return;
 
-    const sparse = this.wizardConfig[1].fieldConfig.find((c) => c.name === 'sparse');
-    const sync = this.wizardConfig[1].fieldConfig.find((c) => c.name === 'sync') as FormSelectConfig;
-    const compression = this.wizardConfig[1].fieldConfig.find((c) => c.name === 'compression') as FormSelectConfig;
-    const deduplication = this.wizardConfig[1].fieldConfig.find((c) => c.name === 'deduplication') as FormSelectConfig;
-    const volblocksize = this.wizardConfig[1].fieldConfig.find((c) => c.name === 'volblocksize') as FormSelectConfig;
+    const sparse = this.wizardConfig[1].fieldConfig.find((config) => config.name === 'sparse');
+    const sync = this.wizardConfig[1].fieldConfig.find((config) => config.name === 'sync') as FormSelectConfig;
+    const compression = this.wizardConfig[1]
+      .fieldConfig.find((config) => config.name === 'compression') as FormSelectConfig;
+    const deduplication = this.wizardConfig[1]
+      .fieldConfig.find((config) => config.name === 'deduplication') as FormSelectConfig;
+    const volblocksize = this.wizardConfig[1]
+      .fieldConfig.find((config) => config.name === 'volblocksize') as FormSelectConfig;
 
     this.isNew = true;
 
@@ -366,7 +369,7 @@ export class ZvolWizardComponent implements WizardConfiguration {
           this.entityWizard.setDisabled('name', true, 1);
           sparse['isHidden'] = true;
           volblocksize['isHidden'] = true;
-          this.wizardConfig[1].fieldConfig.find((c) => c.name === 'sparse')['isHidden'] = true;
+          this.wizardConfig[1].fieldConfig.find((config) => config.name === 'sparse')['isHidden'] = true;
           this.customFilter = [[['id', '=', this.parent]]];
 
           const volumesize = pkDataset[0].volsize.parsed;
@@ -489,9 +492,10 @@ export class ZvolWizardComponent implements WizardConfiguration {
       if (this.minimumRecommendedZvolVolblocksize) {
         const recommendedSize = parseInt(this.reverseZvolBlockSizeMap[this.minimumRecommendedZvolVolblocksize], 0);
         if (resNumber < recommendedSize) {
-          this.wizardConfig[1].fieldConfig.find((c) => c.name === 'volblocksize').warnings = `${this.translate.instant(helptext.blocksize_warning.a)} ${this.minimumRecommendedZvolVolblocksize}. ${this.translate.instant(helptext.blocksize_warning.b)}`;
+          const warnings = `${this.translate.instant(helptext.blocksize_warning.a)} ${this.minimumRecommendedZvolVolblocksize}. ${this.translate.instant(helptext.blocksize_warning.b)}`;
+          this.wizardConfig[1].fieldConfig.find((config) => config.name === 'volblocksize').warnings = warnings;
         } else {
-          this.wizardConfig[1].fieldConfig.find((c) => c.name === 'volblocksize').warnings = null;
+          this.wizardConfig[1].fieldConfig.find((config) => config.name === 'volblocksize').warnings = null;
         }
       }
       this.summary[this.translate.instant('Block Size')] = res;
@@ -540,7 +544,7 @@ export class ZvolWizardComponent implements WizardConfiguration {
   async customNext(stepper: MatStepper): Promise<void> {
     if (stepper.selectedIndex === 0) {
       if (!this.parent) {
-        this.wizardConfig[0].fieldConfig.find((c) => c.name === 'path').warnings = 'Please select a ZFS Volume';
+        this.wizardConfig[0].fieldConfig.find((config) => config.name === 'path').warnings = 'Please select a ZFS Volume';
         return;
       }
       await this.preInitZvolForm(this.entityWizard);

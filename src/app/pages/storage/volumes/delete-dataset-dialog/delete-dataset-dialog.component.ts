@@ -136,19 +136,13 @@ export class DeleteDatasetDialogComponent implements OnInit {
     });
   }
 
-  // TODO: Consider extracting into a separate validator later.
   private setConfirmValidator(): void {
-    const validationMessage = this.translate.instant('Enter dataset name to continue.');
-    this.form.controls['confirmDatasetName'].setValidators([
-      this.validators.withMessage(
-        Validators.pattern(this.dataset.name),
-        { message: validationMessage, forProperty: 'pattern' },
+    this.form.controls['confirmDatasetName'].setValidators(
+      this.validators.confirmValidator(
+        this.dataset.name,
+        this.translate.instant('Enter dataset name to continue.'),
       ),
-      this.validators.withMessage(
-        Validators.required,
-        { message: validationMessage, forProperty: 'required' },
-      ),
-    ]);
+    );
   }
 
   private setDeleteMessage(): void {

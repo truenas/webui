@@ -122,8 +122,8 @@ export class VDevLabelsSvg {
   createVdevLabelTile(
     x: number,
     y: number,
-    w: number,
-    h: number,
+    width: number,
+    height: number,
     className: string,
     diskName: string,
   ): void {
@@ -135,8 +135,8 @@ export class VDevLabelsSvg {
       .attr('class', className)
       .attr('y', y)
       .attr('x', x)
-      .attr('width', w)
-      .attr('height', h)
+      .attr('width', width)
+      .attr('height', height)
       .attr('fill', color)
       .attr('stroke', color)
       .attr('stroke-opacity', 1)

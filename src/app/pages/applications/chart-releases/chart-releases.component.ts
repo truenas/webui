@@ -467,7 +467,7 @@ export class ChartReleasesComponent implements OnInit {
           this.dialogService.closeAllDialogs();
           let message = '';
           res.result.forEach((item) => {
-            if (item.error != null) {
+            if (item.error !== null) {
               message = message + '<li>' + item.error + '</li>';
             }
           });

@@ -14,6 +14,6 @@ export const selectPreferences = createSelector(
 export const waitForPreferences = selectNotNull(selectPreferences);
 
 export const selectTheme = createSelector(
-  selectPreferences,
-  (preferences) => preferences?.userTheme,
+  selectPreferencesState,
+  (state) => state.previewTheme || state.preferences?.userTheme,
 );

@@ -213,7 +213,7 @@ export class ChassisView {
     driveTray.background.alpha = 1;
 
     setTimeout(() => {
-      const glow = (v: number): number => driveTray.background.alpha = v;
+      const glow = (alpha: number): number => driveTray.background.alpha = alpha;
       tween({
         from: 1,
         to: startAlpha,
@@ -228,7 +228,7 @@ export class ChassisView {
     const duration = 50;
 
     setTimeout((): void => {
-      const fade = (v: number): number => this.chassis.alpha = v;
+      const fade = (alpha: number): number => this.chassis.alpha = alpha;
       tween({
         from: 0,
         to: this.chassisOpacity ? this.chassisOpacity : opacity,
@@ -239,7 +239,7 @@ export class ChassisView {
     this.driveTrayObjects.forEach((item, index) => {
       // Staggered handles fade in
       setTimeout((): void => {
-        const updateAlpha = (v: number): number => item.handle.alpha = v;
+        const updateAlpha = (alpha: number): number => item.handle.alpha = alpha;
 
         tween({
           from: item.handle.alpha,
@@ -247,7 +247,7 @@ export class ChassisView {
           duration /* + 1000 */,
           ease: easing.backOut,
         }).start({
-          update: (v: number) => updateAlpha(v),
+          update: (alpha: number) => updateAlpha(alpha),
           complete: () => {
             if (index === this.driveTrayObjects.length - 1) {
               this.events.next({ name: 'Ready' });
@@ -258,7 +258,7 @@ export class ChassisView {
 
       // Staggered tray backgrounds fade in
       setTimeout((): void => {
-        const updateAlpha = (v: number): number => item.background.alpha = v;
+        const updateAlpha = (alpha: number): number => item.background.alpha = alpha;
 
         tween({
           from: item.background.alpha,

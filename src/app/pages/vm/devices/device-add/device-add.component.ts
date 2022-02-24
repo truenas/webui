@@ -383,7 +383,8 @@ export class DeviceAddComponent implements OnInit, OnDestroy {
         label: evt.data.id, value: '/dev/zvol/' + evt.data.id,
       };
       const pathField = _.find(this.diskFieldConfig, { name: 'path' }) as FormSelectConfig;
-      pathField.options.splice(pathField.options.findIndex((o) => o.value === 'new'), 0, newZvol);
+      const newOption = pathField.options.findIndex((option) => option.value === 'new');
+      pathField.options.splice(newOption, 0, newZvol);
 
       this.diskFormGroup.controls['path'].setValue(newZvol.value);
     });

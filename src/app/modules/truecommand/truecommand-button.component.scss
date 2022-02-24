@@ -1,0 +1,15 @@
+.truecommand-button-connecting-animation {
+  animation: nudge 3s infinite linear;
+}
+
+::ng-deep mat-icon.truecommand-icon > span.mat-badge-content {
+  font-family: 'Material Icons';
+}
+
+::ng-deep mat-icon.truecommand-icon.CONNECTED > span.mat-badge-content {
+  background: var(--green);
+}
+
+::ng-deep mat-icon.truecommand-icon.FAILED > span.mat-badge-content {
+  background: var(--warn);
+}

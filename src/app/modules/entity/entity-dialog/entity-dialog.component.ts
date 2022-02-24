@@ -91,10 +91,10 @@ export class EntityDialogComponent implements OnInit {
       this.loader.open();
       this.ws.call(this.conf.method_ws, [this.formValue]).pipe(untilDestroyed(this)).subscribe(
         () => {},
-        (e) => {
+        (error) => {
           this.loader.close();
           this.dialogRef.close(false);
-          new EntityUtils().handleWsError(this, e);
+          new EntityUtils().handleWsError(this, error);
         },
         () => {
           this.loader.close();

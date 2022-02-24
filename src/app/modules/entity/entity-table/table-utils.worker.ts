@@ -130,8 +130,8 @@ const tableUtils = {
     const keys = Object.keys(output.aggregations);
 
     keys.forEach((key) => {
-      output.aggregations[key].forEach((v: number, index: number) => {
-        output.aggregations[key][index] = formatValue(v, units);
+      output.aggregations[key].forEach((value: number, index: number) => {
+        output.aggregations[key][index] = formatValue(value, units);
       });
     });
     return output;

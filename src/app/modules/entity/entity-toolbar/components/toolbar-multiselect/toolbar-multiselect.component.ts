@@ -32,7 +32,7 @@ export class ToolbarMultiSelectComponent extends IxAbstractObject implements Aft
     this.deselectAll();
     if (this.config.value?.length) {
       this.config.value
-        .map((option: Option) => this.config.options.findIndex((x) => x.value == option.value))
+        .map((option: Option) => this.config.options.findIndex((x) => x.value === option.value))
         .filter((index: number) => index !== -1)
         .forEach((index: number) => this.selectOption(index));
     } else {

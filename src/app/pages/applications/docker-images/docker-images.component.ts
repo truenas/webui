@@ -104,15 +104,15 @@ export class DockerImagesComponent implements EntityTableConfig {
     return actions as EntityTableAction[];
   }
 
-  resourceTransformIncomingRestData(d: ContainerImage[]): ContainerImage[] {
-    const data: ContainerImage[] = [];
-    d.forEach((row) => {
-      if (!row.system_image) {
-        row.state = row.update_available ? helptext.dockerImages.updateAvailable : '';
-        data.push(row);
+  resourceTransformIncomingRestData(images: ContainerImage[]): ContainerImage[] {
+    const transformedImage: ContainerImage[] = [];
+    images.forEach((image) => {
+      if (!image.system_image) {
+        image.state = image.update_available ? helptext.dockerImages.updateAvailable : '';
+        transformedImage.push(image);
       }
     });
-    return data;
+    return transformedImage;
   }
 
   doAdd(): void {

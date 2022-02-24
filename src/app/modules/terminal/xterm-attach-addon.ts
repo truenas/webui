@@ -32,8 +32,8 @@ export class XtermAttachAddon implements ITerminalAddon {
   }
 
   dispose(): void {
-    for (const d of this.disposables) {
-      d.dispose();
+    for (const disposable of this.disposables) {
+      disposable.dispose();
     }
   }
 

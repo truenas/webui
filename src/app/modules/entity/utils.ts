@@ -170,8 +170,8 @@ export class EntityUtils {
     }
   }
 
-  isObject = (a: unknown): a is Record<string, unknown> => {
-    return (!!a) && (a.constructor === Object);
+  isObject = (something: unknown): something is Record<string, unknown> => {
+    return (!!something) && (something.constructor === Object);
   };
 
   flattenData(data: DataBeforeFlattening, level = 0, parent?: { id: string | number }): FlattenedData[] {
