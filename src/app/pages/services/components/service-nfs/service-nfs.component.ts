@@ -22,18 +22,20 @@ export class ServiceNfsComponent implements OnInit {
   isFormLoading = false;
 
   form = this.fb.group({
+    allow_nonroot: [false],
     bindip: [[] as string[]],
     v4: [false],
     v4_v3owner: [false],
     v4_krb: [false],
-    mountd_port: [null as number, [portRangeValidator()]],
-    rpcstatd_port: [null as number, [portRangeValidator()]],
-    rpclockd_port: [null as number, [portRangeValidator()]],
+    mountd_port: [null as number, portRangeValidator()],
+    rpcstatd_port: [null as number, portRangeValidator()],
+    rpclockd_port: [null as number, portRangeValidator()],
     udp: [false],
     userd_manage_gids: [false],
   });
 
   readonly tooltips = {
+    allow_nonroot: helptext.nfs_srv_allow_nonroot_tooltip,
     bindip: helptext.nfs_srv_bindip_tooltip,
     v4: helptext.nfs_srv_v4_tooltip,
     v4_v3owner: helptext.nfs_srv_v4_v3owner_tooltip,
