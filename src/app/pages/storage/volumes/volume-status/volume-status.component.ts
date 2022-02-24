@@ -524,7 +524,7 @@ export class VolumeStatusComponent implements OnInit {
       stats = data.stats;
     }
     if (data.type && data.type != 'DISK') {
-      data.name = data.type;
+      data.disk = data.type;
     }
     // use path as the device name if the device name is null
     if (!data.device || data.device == null) {
@@ -532,7 +532,7 @@ export class VolumeStatusComponent implements OnInit {
     }
 
     const item: poolDiskInfo = {
-      name: data.name ? data.name : data.device,
+      name: data.disk ? data.disk : data.device,
       read: stats.read_errors ? stats.read_errors : 0,
       write: stats.write_errors ? stats.write_errors : 0,
       checksum: stats.checksum_errors ? stats.checksum_errors : 0,
@@ -563,7 +563,7 @@ export class VolumeStatusComponent implements OnInit {
         const extend_action = this.extendAction(data);
         node.data.actions.push(extend_action[0]);
       }
-      vdev_type = data.name;
+      vdev_type = data.disk;
       for (let i = 0; i < data.children.length; i++) {
         node.children.push(this.parseTopolgy(data.children[i], category, vdev_type));
       }
