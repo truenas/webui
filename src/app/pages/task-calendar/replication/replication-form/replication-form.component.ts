@@ -26,7 +26,7 @@ export class ReplicationFormComponent {
   protected editCall = 'replication.update';
   protected route_success: string[] = ['tasks', 'replication'];
   protected isEntity = true;
-  protected entityForm: any;
+  protected entityForm: EntityFormComponent;
   protected queryRes: any;
   speedLimitField: any;
   form_message = {
@@ -625,6 +625,12 @@ export class ReplicationFormComponent {
           value: false,
         },
         {
+          type: 'paragraph',
+          name: 'enc_edit_warning',
+          class: 'warning-text',
+          paraText: helptext.encryption_edit_warning,
+        },
+        {
           type: 'select',
           name: 'encryption_key_format',
           placeholder: helptext.encryption_key_format_placeholder,
@@ -951,6 +957,7 @@ export class ReplicationFormComponent {
 
   afterInit(entityForm) {
     this.entityForm = entityForm;
+    this.entityForm.setDisabled('enc_edit_warning', this.entityForm.isNew, this.entityForm.isNew);
     const isTruenasCore = window.localStorage.getItem('product_type') === 'CORE';
     const readonlyCtrl = this.entityForm.formGroup.controls['readonly'];
     if (entityForm.pk === undefined) {
@@ -1298,6 +1305,9 @@ export class ReplicationFormComponent {
     delete data['encryption_key_passphrase'];
     delete data['encryption_key_generate'];
     delete data['encryption_key_hex'];
+    if (data['enc_edit_warning']) {
+      delete data['enc_edit_warning'];
+    }
 
     // for edit replication task
     if (!this.entityForm.isNew) {
