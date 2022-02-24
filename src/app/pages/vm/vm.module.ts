@@ -4,8 +4,11 @@ import { FlexLayoutModule } from '@angular/flex-layout';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 import { MaterialModule } from 'app/app-material.module';
-import { CoreComponents } from 'app/core/components/core-components.module';
+import { CoreComponents } from 'app/core/core-components.module';
+import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
+import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { TerminalModule } from 'app/modules/terminal/terminal.module';
+import { DeviceDeleteModalComponent } from 'app/pages/vm/devices/device-list/device-delete-modal/device-delete-modal.component';
 import { VmSerialShellComponent } from 'app/pages/vm/vm-serial-shell/vm-serial-shell.component';
 import {
   VmService, NetworkService, SystemGeneralService,
@@ -24,9 +27,17 @@ import { routing } from './vm.routing';
 @NgModule({
   imports: [
     CoreComponents,
-    EntityModule, CommonModule, FormsModule, TranslateModule,
-    ReactiveFormsModule, routing, MaterialModule, FlexLayoutModule,
+    CommonDirectivesModule,
+    EntityModule,
+    CommonModule,
+    FormsModule,
+    TranslateModule,
+    ReactiveFormsModule,
+    routing,
+    MaterialModule,
+    FlexLayoutModule,
     TerminalModule,
+    IxFormsModule,
   ],
   declarations: [
     VmListComponent,
@@ -36,6 +47,7 @@ import { routing } from './vm.routing';
     VmWizardComponent,
     VmSerialShellComponent,
     DeviceAddComponent,
+    DeviceDeleteModalComponent,
   ],
   providers: [VmService, EntityFormService, NetworkService, SystemGeneralService, MessageService],
 })

@@ -194,7 +194,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
   }
 
   async ngOnInit(): Promise<void> {
-    if (this.conf.saveButtonEnabled == undefined) {
+    if (this.conf.saveButtonEnabled === undefined) {
       this.conf.saveButtonEnabled = true;
     }
     if (this.conf.saveSubmitText) {

@@ -33,7 +33,7 @@ export class WizardSummaryComponent {
       result = false;
       for (const key in fieldValue) {
         const subValue = fieldValue[key];
-        if (!Array.isArray(subValue) && subValue !== undefined || Array.isArray(subValue) && subValue.length > 0) {
+        if ((!Array.isArray(subValue) && subValue !== undefined) || (Array.isArray(subValue) && subValue.length > 0)) {
           result = true;
           break;
         }
@@ -50,7 +50,7 @@ export class WizardSummaryComponent {
       result = fieldValue.length;
     } else if (fieldConfig.type === 'select') {
       const selectedOption = fieldConfig.options.find((option) => {
-        return option.value == new EntityUtils().changeNull2String(fieldValue);
+        return option.value === new EntityUtils().changeNull2String(fieldValue);
       });
       if (selectedOption) {
         result = selectedOption.label;

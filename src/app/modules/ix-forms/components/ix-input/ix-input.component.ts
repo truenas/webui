@@ -97,11 +97,11 @@ export class IxInputComponent implements ControlValueAccessor {
   }
 
   hasValue(): boolean {
-    return this.invalid || this.value && this.value.toString().length > 0;
+    return this.invalid || (this.value && this.value.toString().length > 0);
   }
 
-  resetInput(e: HTMLInputElement): void {
-    e.value = '';
+  resetInput(input: HTMLInputElement): void {
+    input.value = '';
     this.invalid = false;
     this.value = '';
     this.formatted = '';

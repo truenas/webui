@@ -9,8 +9,9 @@ import smoothPlotter from 'dygraphs/src/extras/smooth-plotter.js';
 import { ThemeUtils } from 'app/core/classes/theme-utils/theme-utils';
 import { ViewComponent } from 'app/core/components/view/view.component';
 import { ReportingData } from 'app/interfaces/reporting.interface';
+import { Theme } from 'app/interfaces/theme.interface';
 import { CoreService } from 'app/services/core-service/core.service';
-import { ThemeService, Theme } from 'app/services/theme/theme.service';
+import { ThemeService } from 'app/services/theme/theme.service';
 import { Report } from '../report/report.component';
 
 interface Conversion {
@@ -148,12 +149,12 @@ export class LineChartComponent extends ViewComponent implements AfterViewInit, 
         return '';
       },
       series: () => {
-        const s: any = {};
+        const series: any = {};
         this.data.legend.forEach((item) => {
-          s[item] = { plotter: smoothPlotter };
+          series[item] = { plotter: smoothPlotter };
         });
 
-        return s;
+        return series;
       },
       drawCallback: (dygraph: any) => {
         if (dygraph.axes_) {
@@ -314,7 +315,7 @@ export class LineChartComponent extends ViewComponent implements AfterViewInit, 
       prefix = 'Mega';
       shortName = 'MiB';
       output = value / mega;
-    } else if ((value < mega && value > kilo || (prefixRules && this.yLabelPrefix === 'Kilo'))) {
+    } else if ((value < mega && value > kilo) || (prefixRules && this.yLabelPrefix === 'Kilo')) {
       prefix = 'Kilo';
       shortName = 'KB';
       output = value / kilo;

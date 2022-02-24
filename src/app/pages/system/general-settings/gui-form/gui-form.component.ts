@@ -9,7 +9,8 @@ import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
-import { filter, tap } from 'rxjs/operators';
+import { combineLatest, of } from 'rxjs';
+import { filter, takeUntil, tap } from 'rxjs/operators';
 import { choicesToOptions } from 'app/helpers/options.helper';
 import { helptextSystemGeneral as helptext } from 'app/helptext/system/general';
 import { SystemGeneralConfig, SystemGeneralConfigUpdate } from 'app/interfaces/system-config.interface';
@@ -22,7 +23,10 @@ import {
   DialogService, SystemGeneralService, WebSocketService,
 } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { ThemeService } from 'app/services/theme/theme.service';
 import { AppState } from 'app/store';
+import { guiFormSubmitted, themeChangedInGuiForm } from 'app/store/preferences/preferences.actions';
+import { waitForPreferences } from 'app/store/preferences/preferences.selectors';
 import { generalConfigUpdated } from 'app/store/system-config/system-config.actions';
 import { waitForGeneralConfig } from 'app/store/system-config/system-config.selectors';
 
@@ -37,6 +41,7 @@ export class GuiFormComponent {
   configData: SystemGeneralConfig;
 
   formGroup = this.fb.group({
+    theme: ['', [Validators.required]],
     ui_certificate: ['', [Validators.required]],
     ui_address: [[] as string[], [ipValidator('ipv4')]],
     ui_v6address: [[] as string[], [ipValidator('ipv6')]],
@@ -50,6 +55,7 @@ export class GuiFormComponent {
   });
 
   options = {
+    themes: of(this.themeService.allThemes.map((theme) => ({ label: theme.label, value: theme.name }))),
     ui_certificate: this.sysGeneralService.uiCertificateOptions().pipe(choicesToOptions()),
     ui_address: this.sysGeneralService.ipChoicesv4().pipe(choicesToOptions()),
     ui_v6address: this.sysGeneralService.ipChoicesv6().pipe(choicesToOptions()),
@@ -62,6 +68,7 @@ export class GuiFormComponent {
     private fb: FormBuilder,
     private sysGeneralService: SystemGeneralService,
     private slideInService: IxSlideInService,
+    private themeService: ThemeService,
     private cdr: ChangeDetectorRef,
     private ws: WebSocketService,
     private dialog: DialogService,
@@ -70,26 +77,8 @@ export class GuiFormComponent {
     private errorHandler: FormErrorHandlerService,
     private store$: Store<AppState>,
   ) {
-    this.store$.pipe(
-      waitForGeneralConfig,
-      untilDestroyed(this),
-    ).subscribe((config) => {
-      this.configData = config;
-      this.formGroup.patchValue({
-        ui_certificate: config.ui_certificate?.id.toString(),
-        ui_address: config.ui_address,
-        ui_v6address: config.ui_v6address,
-        ui_port: config.ui_port,
-        ui_httpsport: config.ui_httpsport,
-        ui_httpsprotocols: config.ui_httpsprotocols,
-        ui_httpsredirect: config.ui_httpsredirect,
-        crash_reporting: config.crash_reporting,
-        usage_collection: config.usage_collection,
-        ui_consolemsg: config.ui_consolemsg,
-      });
-      this.isFormLoading = false;
-      this.cdr.markForCheck();
-    });
+    this.loadCurrentValues();
+    this.setupThemePreview();
   }
 
   reconnect(href: string): void {
@@ -120,6 +109,7 @@ export class GuiFormComponent {
     };
 
     this.isFormLoading = true;
+    this.store$.dispatch(guiFormSubmitted({ theme: values.theme }));
     this.ws.call('system.general.update', [body]).pipe(
       untilDestroyed(this),
     ).subscribe(() => {
@@ -166,7 +156,7 @@ export class GuiFormComponent {
         title: this.translate.instant(helptext.dialog_confirm_title),
         message: this.translate.instant(helptext.dialog_confirm_message),
       }).pipe(
-        tap(() => this.slideInService.close()),
+        tap(() => this.slideInService.close(null, true)),
         filter(Boolean),
         untilDestroyed(this),
       ).subscribe(() => {
@@ -203,7 +193,42 @@ export class GuiFormComponent {
         );
       });
     } else {
-      this.slideInService.close();
+      this.slideInService.close(null, true);
     }
+  }
+
+  private loadCurrentValues(): void {
+    combineLatest([
+      this.store$.pipe(waitForGeneralConfig),
+      this.store$.pipe(waitForPreferences),
+    ]).pipe(
+      untilDestroyed(this),
+    ).subscribe(([config, preferences]) => {
+      this.configData = config;
+      this.formGroup.patchValue({
+        theme: this.themeService.getNormalizedThemeName(preferences.userTheme),
+        ui_certificate: config.ui_certificate?.id.toString(),
+        ui_address: config.ui_address,
+        ui_v6address: config.ui_v6address,
+        ui_port: config.ui_port,
+        ui_httpsport: config.ui_httpsport,
+        ui_httpsprotocols: config.ui_httpsprotocols,
+        ui_httpsredirect: config.ui_httpsredirect,
+        crash_reporting: config.crash_reporting,
+        usage_collection: config.usage_collection,
+        ui_consolemsg: config.ui_consolemsg,
+      });
+      this.isFormLoading = false;
+      this.cdr.markForCheck();
+    });
+  }
+
+  private setupThemePreview(): void {
+    this.formGroup.controls['theme'].valueChanges.pipe(
+      takeUntil(this.slideInService.onClose$),
+      untilDestroyed(this),
+    ).subscribe((theme) => {
+      this.store$.dispatch(themeChangedInGuiForm({ theme }));
+    });
   }
 }

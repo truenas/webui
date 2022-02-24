@@ -9,7 +9,7 @@ import { NgxDatatableModule } from '@swimlane/ngx-datatable';
 import { NgxFilesizeModule } from 'ngx-filesize';
 import { TreeTableModule } from 'primeng/treetable';
 import { MaterialModule } from 'app/app-material.module';
-import { CoreComponents } from 'app/core/components/core-components.module';
+import { CoreComponents } from 'app/core/core-components.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { AppLoaderModule } from 'app/modules/app-loader/app-loader.module';
 import { CastModule } from 'app/modules/cast/cast.module';
@@ -26,6 +26,7 @@ import { DatasetFormComponent } from 'app/pages/storage/volumes/datasets/dataset
 import {
   DeleteDatasetDialogComponent,
 } from 'app/pages/storage/volumes/delete-dataset-dialog/delete-dataset-dialog.component';
+import { DeleteZvolDialogComponent } from 'app/pages/storage/volumes/delete-zvol-dialog/delete-zvol-dialog.component';
 import {
   EncryptionOptionsDialogComponent,
 } from 'app/pages/storage/volumes/encyption-options-dialog/encryption-options-dialog.component';
@@ -131,10 +132,10 @@ import { ZvolWizardComponent } from './volumes/zvol/zvol-wizard/zvol-wizard.comp
     ExportDisconnectModalComponent,
     CreateSnapshotDialogComponent,
     DeleteDatasetDialogComponent,
+    DeleteZvolDialogComponent,
     SnapshotCloneDialogComponent,
   ],
   exports: [VolumesListControlsComponent],
-  entryComponents: [SnapshotDetailsComponent, UnlockDialogComponent],
   providers: [
     UserService,
     StorageService,

@@ -4,9 +4,9 @@ import * as d3 from 'd3';
 import { Application, Container } from 'pixi.js';
 import { Subject } from 'rxjs';
 import { CoreEvent } from 'app/interfaces/events';
+import { Theme } from 'app/interfaces/theme.interface';
 import { ChassisView } from 'app/pages/system/view-enclosure/classes/chassis-view';
 import { EnclosureDisk, VDevMetadata } from 'app/pages/system/view-enclosure/classes/system-profiler';
-import { Theme } from 'app/services/theme/theme.service';
 
 export class VDevLabelsSvg {
   /*
@@ -122,8 +122,8 @@ export class VDevLabelsSvg {
   createVdevLabelTile(
     x: number,
     y: number,
-    w: number,
-    h: number,
+    width: number,
+    height: number,
     className: string,
     diskName: string,
   ): void {
@@ -135,8 +135,8 @@ export class VDevLabelsSvg {
       .attr('class', className)
       .attr('y', y)
       .attr('x', x)
-      .attr('width', w)
-      .attr('height', h)
+      .attr('width', width)
+      .attr('height', height)
       .attr('fill', color)
       .attr('stroke', color)
       .attr('stroke-opacity', 1)

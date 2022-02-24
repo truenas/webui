@@ -11,4 +11,5 @@ export enum ApiEventMessage {
   Sub = 'sub',
   Ping = 'ping',
   Method = 'method',
+  Ready = 'ready',
 }

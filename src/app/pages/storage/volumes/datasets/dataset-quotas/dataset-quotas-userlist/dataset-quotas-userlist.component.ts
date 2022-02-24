@@ -106,7 +106,7 @@ export class DatasetQuotasUserlistComponent implements EntityTableConfig, OnDest
                 parent: this,
                 validation: [
                   (control: FormControl): ValidationErrors => {
-                    const config = conf.fieldConfig.find((c) => c.name === 'data_quota');
+                    const dataQuotaConfig = conf.fieldConfig.find((config) => config.name === 'data_quota');
                     this.quotaValue = control.value;
                     const size = this.storageService.convertHumanStringToNum(control.value);
                     const errors = control.value && Number.isNaN(size)
@@ -114,11 +114,11 @@ export class DatasetQuotasUserlistComponent implements EntityTableConfig, OnDest
                       : null;
 
                     if (errors) {
-                      config.hasErrors = true;
-                      config.errors = globalHelptext.human_readable.input_error;
+                      dataQuotaConfig.hasErrors = true;
+                      dataQuotaConfig.errors = globalHelptext.human_readable.input_error;
                     } else {
-                      config.hasErrors = false;
-                      config.errors = '';
+                      dataQuotaConfig.hasErrors = false;
+                      dataQuotaConfig.errors = '';
                     }
                     return errors;
                   },

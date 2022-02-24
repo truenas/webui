@@ -153,9 +153,9 @@ export class VmwareSnapshotFormComponent implements FormConfiguration {
     }
 
     this.entityForm.formGroup.controls['datastore'].valueChanges.pipe(untilDestroyed(this)).subscribe((res: string) => {
-      this.datastoreList.forEach((e) => {
-        if (res === e.name) {
-          this.entityForm.formGroup.controls['filesystem'].setValue(e.filesystems[0]);
+      this.datastoreList.forEach((datastore) => {
+        if (res === datastore.name) {
+          this.entityForm.formGroup.controls['filesystem'].setValue(datastore.filesystems[0]);
         }
       });
     });

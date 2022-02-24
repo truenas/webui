@@ -53,8 +53,8 @@ export class IxSlideInComponent implements OnInit, OnDestroy {
     document.body.appendChild(this.element);
 
     // close modal on background click
-    this.element.addEventListener('click', (e) => {
-      if ((e.target as HTMLElement).className === 'ix-slide-in') {
+    this.element.addEventListener('click', (event) => {
+      if ((event.target as HTMLElement).className === 'ix-slide-in') {
         this.close();
       }
     });

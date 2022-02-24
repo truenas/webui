@@ -18,12 +18,13 @@ import { CoreEvent } from 'app/interfaces/events';
 import { CpuStatsEvent } from 'app/interfaces/events/cpu-stats-event.interface';
 import { SysInfoEvent } from 'app/interfaces/events/sys-info-event.interface';
 import { AllCpusUpdate } from 'app/interfaces/reporting.interface';
+import { Theme } from 'app/interfaces/theme.interface';
 import { ViewChartBarComponent } from 'app/modules/charts/components/view-chart-bar/view-chart-bar.component';
 import { GaugeConfig, ViewChartGaugeComponent } from 'app/modules/charts/components/view-chart-gauge/view-chart-gauge.component';
 import { WidgetComponent } from 'app/pages/dashboard/components/widget/widget.component';
 import { WidgetCpuData } from 'app/pages/dashboard/interfaces/widget-data.interface';
 import { CoreService } from 'app/services/core-service/core.service';
-import { Theme, ThemeService } from 'app/services/theme/theme.service';
+import { ThemeService } from 'app/services/theme/theme.service';
 
 @UntilDestroy()
 @Component({
@@ -154,7 +155,7 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
 
     // Filter out stats per thread
     const keys = Object.keys(cpuData);
-    const threads = keys.filter((n) => !Number.isNaN(parseFloat(n)));
+    const threads = keys.filter((cpuUpdateAttribute) => !Number.isNaN(parseFloat(cpuUpdateAttribute)));
 
     for (let i = 0; i < this.threadCount; i++) {
       usageColumn.push(parseInt(cpuData[i].usage.toFixed(1)));
@@ -182,13 +183,13 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
     this.usageMax = Number(Math.max(...usage).toFixed(0));
     this.usageMinThreads = [];
     this.usageMaxThreads = [];
-    for (let u = 0; u < usage.length; u++) {
-      if (usage[u] === this.usageMin) {
-        this.usageMinThreads.push(Number(u.toFixed(0)));
+    for (let i = 0; i < usage.length; i++) {
+      if (usage[i] === this.usageMin) {
+        this.usageMinThreads.push(Number(i.toFixed(0)));
       }
 
-      if (usage[u] === this.usageMax) {
-        this.usageMaxThreads.push(Number(u.toFixed(0)));
+      if (usage[i] === this.usageMax) {
+        this.usageMaxThreads.push(Number(i.toFixed(0)));
       }
     }
 
@@ -198,13 +199,13 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
     this.tempMax = Number(Math.max(...temps).toFixed(0));
     this.tempMinThreads = [];
     this.tempMaxThreads = [];
-    for (let t = 0; t < temps.length; t++) {
-      if (temps[t] == this.tempMin) {
-        this.tempMinThreads.push(Number(t.toFixed(0)));
+    for (let i = 0; i < temps.length; i++) {
+      if (temps[i] === this.tempMin) {
+        this.tempMinThreads.push(Number(i.toFixed(0)));
       }
 
-      if (temps[t] === this.tempMax) {
-        this.tempMaxThreads.push(Number(t.toFixed(0)));
+      if (temps[i] === this.tempMax) {
+        this.tempMaxThreads.push(Number(i.toFixed(0)));
       }
     }
   }
@@ -257,8 +258,8 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
 
       const options: ChartOptions = {
         events: ['mousemove', 'mouseout'],
-        onHover: (e: MouseEvent) => {
-          if (e.type === 'mouseout') {
+        onHover: (event: MouseEvent) => {
+          if (event.type === 'mouseout') {
             this.legendData = null;
             this.legendIndex = null;
           }

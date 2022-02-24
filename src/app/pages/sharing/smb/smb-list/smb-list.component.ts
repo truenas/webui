@@ -30,11 +30,11 @@ export class SmbListComponent implements EntityTableConfig {
   productType = window.localStorage.getItem('product_type') as ProductType;
   emptyTableConfigMessages = {
     first_use: {
-      title: this.translate.instant('No SMB Shares'),
+      title: this.translate.instant('No SMB Shares have been configured yet'),
       message: this.translate.instant('It seems you haven\'t setup any SMB Shares yet. Please click the button below to add an SMB Share.'),
     },
     no_page_data: {
-      title: this.translate.instant('No SMB Shares'),
+      title: this.translate.instant('No SMB Shares have been configured yet'),
       message: this.translate.instant('The system could not retrieve any SMB Shares from the database. Please click the button below to add an SMB Share.'),
     },
     buttonText: this.translate.instant('Add SMB Share'),

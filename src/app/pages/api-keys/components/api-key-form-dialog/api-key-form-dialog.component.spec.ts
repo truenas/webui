@@ -7,7 +7,6 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { MockWebsocketService } from 'app/core/testing/classes/mock-websocket.service';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { ApiKey } from 'app/interfaces/api-key.interface';
-import { AppLoaderModule } from 'app/modules/app-loader/app-loader.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import {
@@ -16,7 +15,7 @@ import {
 import {
   KeyCreatedDialogComponent,
 } from 'app/pages/api-keys/components/key-created-dialog/key-created-dialog.component';
-import { DialogService, WebSocketService } from 'app/services';
+import { AppLoaderService, DialogService, WebSocketService } from 'app/services';
 
 describe('ApiKeyFormDialogComponent', () => {
   let spectator: Spectator<ApiKeyFormDialogComponent>;
@@ -27,7 +26,6 @@ describe('ApiKeyFormDialogComponent', () => {
     imports: [
       IxFormsModule,
       ReactiveFormsModule,
-      AppLoaderModule,
     ],
     providers: [
       mockWebsocket([
@@ -35,14 +33,12 @@ describe('ApiKeyFormDialogComponent', () => {
         mockCall('api_key.update', {} as ApiKey),
       ]),
       mockProvider(MatDialogRef),
+      mockProvider(AppLoaderService),
       mockProvider(DialogService),
       {
         provide: MAT_DIALOG_DATA,
         useValue: undefined,
       },
-    ],
-    entryComponents: [
-      KeyCreatedDialogComponent,
     ],
   });
 
@@ -58,11 +54,11 @@ describe('ApiKeyFormDialogComponent', () => {
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     form = await loader.getHarness(IxFormHarness);
 
-    jest.spyOn(spectator.inject(MatDialog), 'open');
+    jest.spyOn(spectator.inject(MatDialog), 'open').mockImplementation();
   }
 
   it('creates a new API key and shows it when dialog is opened with no data', async () => {
-    await setupTest();
+    await setupTest(null);
 
     await form.fillForm({
       Name: 'My key',

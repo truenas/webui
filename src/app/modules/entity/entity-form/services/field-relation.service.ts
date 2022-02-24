@@ -314,7 +314,7 @@ export class FieldRelationService {
         break;
       case 'basic':
       default:
-        if (data1 != data2) {
+        if (data1 !== data2) {
           return false;
         }
     }
@@ -325,7 +325,7 @@ export class FieldRelationService {
   getDataType(data: unknown): string {
     if (Array.isArray(data)) {
       return 'array';
-    } if (data != null && typeof data === 'object') {
+    } if (data !== null && typeof data === 'object') {
       return 'object';
     }
     return 'basic';
@@ -568,6 +568,7 @@ export class FieldRelationService {
               break;
             case 'basic':
             default:
+              // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
               result = `${y}`.includes(`${x}`);
               break;
           }

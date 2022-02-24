@@ -33,7 +33,7 @@ module.exports = {
         // TODO: Conflicts with ngx-translate-extract
         "prefer-template": "off",
 
-        // Consciously altered from Airbnb
+        // Consciously altered
         "class-methods-use-this": "off",
         "import/prefer-default-export": "off",
         "no-continue": "off",
@@ -75,8 +75,10 @@ module.exports = {
           "tsx": "never"
         }],
         "@typescript-eslint/no-use-before-define": ["error", "nofunc"],
-
-        // TODO: Partially implemented
+        "no-prototype-builtins": "off",
+        "@typescript-eslint/unbound-method": "off",
+        "@typescript-eslint/explicit-module-boundary-types": "off",
+        "@typescript-eslint/no-misused-promises": ["error", { checksVoidReturn: false }],
         '@typescript-eslint/naming-convention': [
           'error',
           {
@@ -115,10 +117,10 @@ module.exports = {
             format: ['strictCamelCase']
           },
         ],
+        "@typescript-eslint/restrict-template-expressions": ["error", { allowNumber: true, allowAny: true }],
 
         // TODO: Aibnb rules that are disabled for now as they cannot be fixed automatically
         "no-underscore-dangle": "off",
-        "eqeqeq": "off",
         "consistent-return": "off",
         "no-plusplus": "off",
         "no-restricted-syntax": "off",
@@ -131,10 +133,17 @@ module.exports = {
         "no-case-declarations": "off",
         "no-multi-str": "off",
         "no-useless-escape": "off",
-        "no-cond-assign": "off",
-        "no-mixed-operators": "off",
+        "no-mixed-operators": ["error", {
+          groups: [
+            // TODO: Some operators from default config not implemented.
+            ["&", "|", "^", "~", "<<", ">>", ">>>"],
+            ["==", "!=", "===", "!==", ">", ">=", "<", "<="],
+            ["&&", "||"],
+            ["in", "instanceof"]
+          ],
+          allowSamePrecedence: true
+        }],
         "default-case": "off",
-        "no-prototype-builtins": "off",
         "import/no-cycle": "off",
         "no-async-promise-executor": "off",
         "@typescript-eslint/member-ordering": "off",
@@ -144,21 +153,17 @@ module.exports = {
         "@typescript-eslint/no-unsafe-call": "off",
         "@typescript-eslint/no-unsafe-member-access": "off",
         "@typescript-eslint/restrict-plus-operands": "off",
-        "@typescript-eslint/unbound-method": "off",
-        "@typescript-eslint/restrict-template-expressions": "off",
         "@typescript-eslint/no-floating-promises": "off",
-        "@typescript-eslint/explicit-module-boundary-types": "off",
         "@typescript-eslint/prefer-regexp-exec": "off",
-        "@typescript-eslint/no-misused-promises": "off",
 
         // Other temporary disables
         "@typescript-eslint/dot-notation": ["off", { allowIndexSignaturePropertyAccess: true }],
 
         // Other overwrites
         "@typescript-eslint/lines-between-class-members": "off",
-        "@angular-eslint/use-lifecycle-interface": ["error"],
 
         // Extra rules
+        "@angular-eslint/use-lifecycle-interface": ["error"],
         "@typescript-eslint/array-type": "error",
         "@typescript-eslint/explicit-member-accessibility": ["error", { accessibility: "no-public" }],
         "@typescript-eslint/no-inferrable-types": "error",

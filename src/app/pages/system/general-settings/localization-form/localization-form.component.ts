@@ -1,7 +1,7 @@
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component,
 } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import _ from 'lodash';
@@ -10,11 +10,14 @@ import { map } from 'rxjs/operators';
 import { helptextSystemGeneral as helptext } from 'app/helptext/system/general';
 import { LocalizationSettings } from 'app/interfaces/localization-settings.interface';
 import { Option } from 'app/interfaces/option.interface';
+import { SimpleAsyncComboboxProvider } from 'app/modules/ix-forms/classes/simple-async-combobox-provider';
+import { IxComboboxProvider } from 'app/modules/ix-forms/components/ix-combobox/ix-combobox-provider';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { LanguageService, SystemGeneralService, WebSocketService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LocaleService } from 'app/services/locale.service';
 import { AppState } from 'app/store';
+import { localizationFormSubmitted } from 'app/store/preferences/preferences.actions';
 import { generalConfigUpdated } from 'app/store/system-config/system-config.actions';
 
 @UntilDestroy()
@@ -32,9 +35,9 @@ export class LocalizationFormComponent {
   sortLanguagesByName = true;
 
   formGroup: FormGroup = this.fb.group({
-    language: [''],
+    language: ['', [Validators.required]],
     kbdmap: [''],
-    timezone: [''],
+    timezone: ['', [Validators.required]],
     date_format: [''],
     time_format: [''],
   });
@@ -43,12 +46,12 @@ export class LocalizationFormComponent {
     readonly fcName: 'language';
     label: string;
     tooltip: string;
-    options: Observable<Option[]>;
+    provider: SimpleAsyncComboboxProvider;
   } = {
     fcName: 'language',
     label: helptext.stg_language.placeholder,
     tooltip: helptext.stg_language.tooltip,
-    options: this.sysGeneralService.languageOptions(this.sortLanguagesByName),
+    provider: new SimpleAsyncComboboxProvider(this.sysGeneralService.languageOptions(this.sortLanguagesByName)),
   };
 
   kbdMap: {
@@ -67,14 +70,14 @@ export class LocalizationFormComponent {
     readonly fcName: 'timezone';
     label: string;
     tooltip: string;
-    options: Observable<Option[]>;
+    provider: IxComboboxProvider;
   } = {
     fcName: 'timezone',
     label: helptext.stg_timezone.placeholder,
     tooltip: helptext.stg_timezone.tooltip,
-    options: this.sysGeneralService.timezoneChoices().pipe(
-      map((tzChoices) => _.sortBy(tzChoices, [(o) => o.label.toLowerCase()])),
-    ),
+    provider: new SimpleAsyncComboboxProvider(this.sysGeneralService.timezoneChoices().pipe(map(
+      (tzChoices) => _.sortBy(tzChoices, [(option) => option.label.toLowerCase()]),
+    ))),
   };
 
   dateFormat: {
@@ -132,7 +135,10 @@ export class LocalizationFormComponent {
   submit(): void {
     const body = this.formGroup.value;
     this.isFormLoading = true;
-    this.localeService.saveDateTimeFormat(body.date_format, body.time_format);
+    this.store$.dispatch(localizationFormSubmitted({
+      dateFormat: body.date_format,
+      timeFormat: body.time_format,
+    }));
     delete body.date_format;
     delete body.time_format;
     this.ws.call('system.general.update', [body]).pipe(untilDestroyed(this)).subscribe(() => {

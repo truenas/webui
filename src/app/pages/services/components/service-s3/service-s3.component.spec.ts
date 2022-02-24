@@ -86,7 +86,7 @@ describe('ServiceS3Component', () => {
       'Secret Key': '12345678',
       Certificate: 'Very Secure',
       'Console Port': '9001',
-      'TLS Server Uri': 'test',
+      'TLS Server Hostname': 'test',
     });
   });
 
@@ -115,7 +115,7 @@ describe('ServiceS3Component', () => {
       'Enable Browser': false,
       Certificate: 'Default',
       'Console Port': 9001,
-      'TLS Server Uri': 'test',
+      'TLS Server Hostname': 'test',
     });
 
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));

@@ -4,6 +4,7 @@ import {
 import { MatSort, Sort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { Subject } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
@@ -16,8 +17,10 @@ import { ControlConfig, ToolbarConfig } from 'app/modules/entity/entity-toolbar/
 import { DialogService } from 'app/services';
 import { CoreService } from 'app/services/core-service/core.service';
 import { ModalService } from 'app/services/modal.service';
-import { PreferencesService } from 'app/services/preferences.service';
 import { WebSocketService } from 'app/services/ws.service';
+import { AppState } from 'app/store';
+import { builtinUsersToggled, oneTimeBuiltinUsersMessageShown } from 'app/store/preferences/preferences.actions';
+import { waitForPreferences } from 'app/store/preferences/preferences.selectors';
 import { UserFormComponent } from '../user-form/user-form.component';
 
 @UntilDestroy()
@@ -54,6 +57,9 @@ export class UserListComponent implements OnInit, AfterViewInit {
   };
   expandedRow: User;
 
+  private showUserListMessage = false;
+  private hideBuiltinUsers = true;
+
   get currentEmptyConf(): EmptyConfig {
     if (this.loading) {
       return this.loadingConf;
@@ -67,24 +73,28 @@ export class UserListComponent implements OnInit, AfterViewInit {
   constructor(
     private dialogService: DialogService,
     private ws: WebSocketService,
-    private prefService: PreferencesService,
     private translate: TranslateService,
     private modalService: ModalService,
     private cdr: ChangeDetectorRef,
     private core: CoreService,
+    private store$: Store<AppState>,
   ) { }
 
   ngOnInit(): void {
+    this.loading = true;
     this.setupToolbar();
-    this.getUsers();
+    this.store$.pipe(waitForPreferences, untilDestroyed(this)).subscribe((preferences) => {
+      this.showUserListMessage = preferences.showUserListMessage;
+      this.hideBuiltinUsers = preferences.hideBuiltinUsers;
+      this.getUsers();
+      this.modalService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
+        this.getUsers();
+      });
+    });
   }
 
   ngAfterViewInit(): void {
-    this.modalService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.getUsers();
-    });
-
-    if (this.prefService.preferences.showUserListMessage) {
+    if (this.showUserListMessage) {
       setTimeout(() => {
         this.showOneTimeBuiltinMsg();
       }, 2000);
@@ -95,7 +105,7 @@ export class UserListComponent implements OnInit, AfterViewInit {
     this.loading = true;
     this.ws.call('user.query').pipe(
       map((users) => {
-        if (this.prefService.preferences.hide_builtin_users) {
+        if (this.hideBuiltinUsers) {
           // TODO: Use QueryParams and QueryFilter when it is possible
           // [['OR', [['builtin', '=', false], ['username', '=', 'root']]]]
           return users.filter((user) => !user.builtin || user.username === 'root');
@@ -126,7 +136,7 @@ export class UserListComponent implements OnInit, AfterViewInit {
 
   toggleBuiltins(): void {
     let dialogOptions: ConfirmOptions;
-    if (this.prefService.preferences.hide_builtin_users) {
+    if (this.hideBuiltinUsers) {
       dialogOptions = {
         title: this.translate.instant('Show Built-in Users'),
         message: this.translate.instant('Show built-in users (default setting is <i>hidden</i>).'),
@@ -146,15 +156,13 @@ export class UserListComponent implements OnInit, AfterViewInit {
       filter(Boolean),
       untilDestroyed(this),
     ).subscribe(() => {
-      this.prefService.preferences.hide_builtin_users = !this.prefService.preferences.hide_builtin_users;
-      this.prefService.savePreferences();
+      this.store$.dispatch(builtinUsersToggled());
       this.getUsers();
     });
   }
 
   showOneTimeBuiltinMsg(): void {
-    this.prefService.preferences.showUserListMessage = false;
-    this.prefService.savePreferences();
+    this.store$.dispatch(oneTimeBuiltinUsersMessageShown());
     this.dialogService.confirm({
       title: this.translate.instant('Display Note'),
       message: this.translate.instant('All built-in users except <i>root</i> are hidden by default. Use the gear icon (top-right) to toggle the display of built-in users.'),

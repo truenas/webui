@@ -116,7 +116,7 @@ export class IscsiWizardComponent implements WizardConfiguration {
           value: 0,
           validation: [Validators.required,
             (control: FormControl): ValidationErrors => {
-              const config = this.wizardConfig[0].fieldConfig.find((c) => c.name === 'filesize');
+              const filesizeConfig = this.wizardConfig[0].fieldConfig.find((config) => config.name === 'filesize');
               const size = this.storageService.convertHumanStringToNum(control.value, true);
 
               const errors = control.value && Number.isNaN(size)
@@ -124,11 +124,11 @@ export class IscsiWizardComponent implements WizardConfiguration {
                 : null;
 
               if (errors) {
-                config.hasErrors = true;
-                config.errors = globalHelptext.human_readable.input_error;
+                filesizeConfig.hasErrors = true;
+                filesizeConfig.errors = globalHelptext.human_readable.input_error;
               } else {
-                config.hasErrors = false;
-                config.errors = '';
+                filesizeConfig.hasErrors = false;
+                filesizeConfig.errors = '';
               }
 
               return errors;
@@ -778,7 +778,7 @@ export class IscsiWizardComponent implements WizardConfiguration {
   }
 
   formTypeUpdate(type: IscsiExtentType): void {
-    const isDevice = type != IscsiExtentType.File;
+    const isDevice = type !== IscsiExtentType.File;
 
     this.disablefieldGroup(this.fileFieldGroup, isDevice, 0);
     this.disablefieldGroup(this.deviceFieldGroup, !isDevice, 0);
@@ -912,7 +912,7 @@ export class IscsiWizardComponent implements WizardConfiguration {
         this.fileFieldGroup.forEach((field) => {
           if (field === 'filesize') {
             value[field] = this.storageService.convertHumanStringToNum(value[field], true);
-            payload[field] = value[field] == 0 ? value[field] : (value[field] + (512 - value[field] % 512));
+            payload[field] = value[field] === 0 ? value[field] : (value[field] + (512 - value[field] % 512));
           } else {
             payload[field] = value[field];
           }
@@ -953,7 +953,7 @@ export class IscsiWizardComponent implements WizardConfiguration {
 
   rollBack(items: any[]): void {
     items.forEach((item, i) => {
-      if (item != null) {
+      if (item !== null) {
         this.ws.call((this.deleteCalls as any)[i], [item]).pipe(untilDestroyed(this)).subscribe(
           (res) => {
             console.info('rollback ' + i, res);

@@ -11,14 +11,16 @@ import { ChartistModule } from 'ng-chartist';
 import { MaterialModule } from 'app/app-material.module';
 import { PageTitleComponent } from 'app/components/common/page-title/page-title.component';
 import { SecondaryMenuComponent } from 'app/components/common/secondary-menu/secondary-menu.component';
-import { CoreComponents } from 'app/core/components/core-components.module';
 import { ViewControllerComponent } from 'app/core/components/view-controller/view-controller.component';
+import { CoreComponents } from 'app/core/core-components.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { AlertsModule } from 'app/modules/alerts/alerts.module';
 import { CastModule } from 'app/modules/cast/cast.module';
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
+import { JobsModule } from 'app/modules/jobs/jobs.module';
 import { LayoutModule } from 'app/modules/layout/layout.module';
+import { TruecommandModule } from 'app/modules/truecommand/truecommand.module';
 import { DialogService } from 'app/services/dialog.service';
 import { LanguageService } from 'app/services/language.service';
 import { LocaleService } from 'app/services/locale.service';
@@ -48,6 +50,8 @@ import { TopbarComponent } from './topbar/topbar.component';
     AngularSvgIconModule.forRoot(),
     CastModule,
     AlertsModule,
+    TruecommandModule,
+    JobsModule,
     LayoutModule,
   ],
   declarations: [
