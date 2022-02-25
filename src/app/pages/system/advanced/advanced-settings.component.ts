@@ -33,6 +33,7 @@ import { CronFormComponent } from 'app/pages/system/advanced/cron/cron-form/cron
 import { CronjobRow } from 'app/pages/system/advanced/cron/cron-list/cronjob-row.interface';
 import { InitShutdownFormComponent } from 'app/pages/system/advanced/initshutdown/init-shutdown-form/init-shutdown-form.component';
 import { ReplicationFormComponent } from 'app/pages/system/advanced/replication-form/replication-form.component';
+import { SedFormComponent } from 'app/pages/system/advanced/sed-form/sed-form.component';
 import { SystemDatasetPoolComponent } from 'app/pages/system/advanced/system-dataset-pool/system-dataset-pool.component';
 import { DataCard } from 'app/pages/system/interfaces/data-card.interface';
 import {
@@ -62,6 +63,7 @@ enum AdvancedCardId {
   Sysctl = 'sysctl',
   SystemDatasetPool = 'systemdatasetpool',
   Gpus = 'gpus',
+  Sed = 'sed',
 }
 
 @UntilDestroy()
@@ -413,6 +415,16 @@ export class AdvancedSettingsComponent implements OnInit {
             },
           ],
         },
+        {
+          title: helptextSystemAdvanced.fieldset_sed,
+          id: AdvancedCardId.Sed,
+          items: [
+            {
+              label: helptextSystemAdvanced.sed_user_placeholder,
+              value: advancedConfig.sed_user,
+            },
+          ],
+        },
       ];
 
       this.ws.call('device.get_info', [DeviceType.Gpu]).pipe(untilDestroyed(this)).subscribe((gpus) => {
@@ -447,6 +459,7 @@ export class AdvancedSettingsComponent implements OnInit {
     | CronFormComponent
     | SystemDatasetPoolComponent
     | IsolatedGpuPcisFormComponent
+    | SedFormComponent
     >;
 
     switch (name) {
@@ -474,6 +487,9 @@ export class AdvancedSettingsComponent implements OnInit {
       case AdvancedCardId.Gpus:
         addComponent = IsolatedGpuPcisFormComponent;
         break;
+      case AdvancedCardId.Sed:
+        addComponent = SedFormComponent;
+        break;
       default:
         break;
     }
@@ -485,6 +501,9 @@ export class AdvancedSettingsComponent implements OnInit {
 
     if ([AdvancedCardId.Kernel].includes(name)) {
       const modal = this.ixModal.open(KernelFormComponent);
+      modal.setupForm(this.configData);
+    } else if ([AdvancedCardId.Sed].includes(name)) {
+      const modal = this.ixModal.open(SedFormComponent);
       modal.setupForm(this.configData);
     } else if (
       [
