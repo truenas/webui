@@ -48,33 +48,6 @@ def the_browser_is_open_the_freenas_url_and_logged_in(driver, nas_ip, root_passw
 @when('add the user to group root for later tests')
 def add_the_user_to_group_root_for_later_tests(driver):
     """add the user to group root for later tests."""
-    # assert wait_on_element(driver, 10, '//span[contains(.,"Dashboard")]')
-    # assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Credentials"]', 'clickable')
-    # driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Credentials"]').click()
-    # assert wait_on_element(driver, 10, '//*[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Local Users"]', 'clickable')
-    # driver.find_element_by_xpath('//*[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Local Users"]').click()
-    # assert wait_on_element(driver, 10, '//div[contains(.,"Users")]')
-    # assert wait_on_element(driver, 10, '//tr[contains(.,"ericbsd")]', 'clickable')
-    # driver.find_element_by_xpath('//tr[contains(.,"ericbsd")]//mat-icon').click()
-    # assert wait_on_element(driver, 10, '(//tr[contains(.,"ericbsd")]/following-sibling::tr)[1]//button[contains(.,"Edit")]', 'clickable')
-    # driver.find_element_by_xpath('(//tr[contains(.,"ericbsd")]/following-sibling::tr)[1]//button[contains(.,"Edit")]').click()
-    # assert wait_on_element(driver, 10, '//h3[contains(.,"Edit User")]')
-    # element = driver.find_element_by_xpath('//label[contains(text(),"Auxiliary Groups")]')
-    # driver.execute_script("arguments[0].scrollIntoView();", element)
-    # time.sleep(0.5)
-    # assert wait_on_element(driver, 10, '//mat-select[@ix-auto="select__Auxiliary Groups"]', 'clickable')
-    # driver.find_element_by_xpath('//mat-select[@ix-auto="select__Auxiliary Groups"]').click()
-    # assert wait_on_element(driver, 10, '//span[contains(.,"root")]')
-    # element = driver.find_element_by_xpath('//span[contains(text(),"root")]')
-    # driver.execute_script("arguments[0].scrollIntoView();", element)
-    # driver.find_element_by_xpath('//mat-option[@ix-auto="option__Auxiliary Groups_root"]').click()
-    # driver.find_element_by_xpath('//mat-option[@ix-auto="option__Auxiliary Groups_root"]').send_keys(Keys.TAB)
-    # element = driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]')
-    # driver.execute_script("arguments[0].scrollIntoView();", element)
-    # assert wait_on_element(driver, 7, '//button[@ix-auto="button__SAVE"]', 'clickable')
-    # driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
-    # assert wait_on_element(driver, 5, '//h6[contains(.,"Please wait")]')
-    # assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
     pass
 
 
@@ -138,15 +111,6 @@ def smb_should_be_added(driver):
     element = driver.find_element_by_xpath('//td[contains(text(),"Dynamic DNS")]')
     driver.execute_script("arguments[0].scrollIntoView();", element)
     time.sleep(0.5)
-    # value_exist = attribute_value_exist(driver, '//mat-checkbox[@ix-auto="checkbox__enable__SMB"]', 'class', 'mat-checkbox-checked')
-    # if not value_exist:
-    #     driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__enable__SMB"]').click()
-    # time.sleep(2)
-    # value_exist = attribute_value_exist(driver, '//mat-slide-toggle[@ix-auto="slider__state__SMB"]', 'class', 'mat-checked')
-    # if not value_exist:
-    #     driver.find_element_by_xpath('//div[@ix-auto="overlay__stateSMB"]').click()
-    # time.sleep(2)
-    # assert wait_for_attribute_value(driver, 20, '//mat-slide-toggle[@ix-auto="slider__state__SMB"]', 'class', 'mat-checked')
     assert wait_on_element(driver, 5, '//tr[contains(.,"SMB")]//mat-checkbox')
     value_exist = attribute_value_exist(driver, '//tr[contains(.,"SMB")]//mat-checkbox', 'class', 'mat-checkbox-checked')
     if not value_exist:
@@ -185,7 +149,7 @@ def send_a_file_to_the_share_should_fail_with_nas_ipwheelshare_and_footesting(dr
     results = run_cmd(f'smbclient //{nas_ip}/{wheelshare} -U {user}%{password} -c "put testfile2.txt testfile2.txt"')
     time.sleep(1)
     run_cmd('rm testfile2.txt')
-    assert results['result'], results['output']
+    assert not results['result'], results['output']
 
 
 @then('verify that the file is not on the NAS')
