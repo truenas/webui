@@ -217,6 +217,7 @@ def on_the_nas_tab_expand_the_task_on_the_nas_ui_and_click_run_now(driver):
     assert wait_on_element(driver, 5, '//div[contains(.,"My S3 AWS Share")]')
     assert wait_on_element(driver, 5, '//a[@title="Expand/Collapse Row"]', 'clickable')
     driver.find_element_by_xpath('//a[@title="Expand/Collapse Row"]').click()
+    time.sleep(0.5)
     assert wait_on_element(driver, 5, '//button[@id="action_button___run_now"]', 'clickable')
     driver.find_element_by_xpath('//button[@id="action_button___run_now"]').click()
     assert wait_on_element(driver, 5, '//h1[text()="Test Cloud Sync" or text()="Run Now"]')

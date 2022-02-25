@@ -17,7 +17,7 @@ from pytest_bdd import (
 )
 import pytest
 
-# pytestmark = [pytest.mark.debug_test]
+pytestmark = [pytest.mark.debug_test]
 
 
 @scenario('features/NAS-T1143.feature', 'Verify Backblaze B2 Cloud Sync task works')
@@ -221,6 +221,7 @@ def expand_the_task_on_the_nas_ui_and_click_run_now(driver):
     """expand the task on the NAS UI and click Run Now."""
     assert wait_on_element(driver, 5, '//a[@ix-auto="expander__My Backblaze B2 task"]', 'clickable')
     driver.find_element_by_xpath('//a[@ix-auto="expander__My Backblaze B2 task"]').click()
+    time.sleep(0.5)
     assert wait_on_element(driver, 5, '//button[@id="action_button___run_now"]', 'clickable')
     driver.find_element_by_xpath('//button[@id="action_button___run_now"]').click()
     assert wait_on_element(driver, 5, '//h1[text()="Run Now"]')
@@ -519,6 +520,7 @@ def on_the_nas_cloud_sync_task_tab_click_run_now(driver):
     assert wait_on_element(driver, 5, '//div[contains(.,"Cloud Sync Tasks")]')
     assert wait_on_element(driver, 5, '//div[contains(text(),"My Backblaze B2 task")]')
     assert wait_on_element(driver, 5, '//a[@ix-auto="expander__My Backblaze B2 task"]', 'clickable')
+    time.sleep(0.5)
     assert wait_on_element(driver, 5, '//button[@id="action_button___run_now"]', 'clickable')
     driver.find_element_by_xpath('//button[@id="action_button___run_now"]').click()
     assert wait_on_element(driver, 5, '//h1[text()="Run Now"]')
