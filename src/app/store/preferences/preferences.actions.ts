@@ -19,6 +19,7 @@ export const oneTimeBuiltinUsersMessageShown = createAction('[Preferences] One T
 export const oneTimeBuiltinGroupsMessageShown = createAction('[Preferences] One Time Builtin Groups Message Shown');
 export const builtinUsersToggled = createAction('[Preferences] Builtin Users Toggled');
 export const builtinGroupsToggled = createAction('[Preferences] Builtin Groups Toggled');
+export const snapshotExtraColumnsToggled = createAction('[Preferences] Snapshot Extra Columns Toggled');
 
 export const themeChangedInGuiForm = createAction('[Preferences] Theme Changed In GUI Form', props<{ theme: string }>());
 export const guiFormSubmitted = createAction('[Preferences] GUI Form Submitted', props<{ theme: string }>());
