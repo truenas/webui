@@ -1,22 +1,20 @@
 # coding=utf-8
 """SCALE UI: feature tests."""
 
-import time
 from function import (
     wait_on_element,
     is_element_present,
-    attribute_value_exist,
-    wait_on_element_disappear,
+    wait_on_element_disappear
 )
 from pytest_bdd import (
     given,
     scenario,
     then,
-    when,
-    parsers
+    when
 )
 import pytest
 pytestmark = [pytest.mark.debug_test]
+
 
 @scenario('features/NAS-T1357.feature', 'Apps Page - Validate deleting a container image')
 def test_apps_page__validate_deleting_a_container_image():
@@ -96,6 +94,7 @@ def click_delete(driver):
     assert wait_on_element(driver, 20, '//button//span[contains(.,"Delete")]', 'clickable')
     driver.find_element_by_xpath('//button//span[contains(.,"Delete")]').click()
 
+
 @then('confirm')
 def confirm(driver):
     """confirm."""
@@ -110,10 +109,4 @@ def confirm_image_is_deleted(driver):
     """confirm image is deleted."""
     assert wait_on_element(driver, 10, '//*[contains(.,"Please wait")]')
     assert wait_on_element_disappear(driver, 30, '//*[contains(.,"Please wait")]')
-
-    assert wait_on_element(driver, 20, '//tr[contains(.,"machinaris")]') is False
-
-
-
-
-
+    assert wait_on_element_disappear(driver, 30, '//tr[contains(.,"machinaris")]')
