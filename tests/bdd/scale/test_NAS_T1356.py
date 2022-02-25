@@ -5,7 +5,6 @@ import time
 from function import (
     wait_on_element,
     is_element_present,
-    attribute_value_exist,
     wait_on_element_disappear,
 )
 from pytest_bdd import (
@@ -13,10 +12,11 @@ from pytest_bdd import (
     scenario,
     then,
     when,
-    parsers
+
 )
 import pytest
 pytestmark = [pytest.mark.debug_test]
+
 
 @scenario('features/NAS-T1356.feature', 'Apps Page - Validate adding TrueCommand as a custom app')
 def test_apps_page__validate_adding_truecommand_as_a_custom_app():
@@ -61,11 +61,16 @@ def when_the_apps_page_loads_open_available_applications(driver):
 @then('click Launch Docker Image')
 def click_launch_docker_image(driver):
     """click Launch Docker Image."""
-    time.sleep(2) #becuase of course we have to wait for the UI to actually load properly
+    # Wait for Available Applications UI to load
+    assert wait_on_element(driver, 10, '//h3[text()="plex"]')
+    assert wait_on_element(driver, 10, '//div[contains(.,"plex") and @class="content"]//button', 'clickable')
+    # Sleep to make sure that the drop does not disappear
+    time.sleep(1)
+
     assert wait_on_element(driver, 10, '//span[contains(.,"Launch Docker Image")]', 'clickable')
     driver.find_element_by_xpath('//span[contains(.,"Launch Docker Image")]').click()
-    if is_element_present(driver, '//*[contains(.,"Please wait")]'):
-        assert wait_on_element_disappear(driver, 10, '//*[contains(.,"Please wait")]')
+    if wait_on_element(driver, 3, '//*[contains(.,"Please wait")]'):
+        assert wait_on_element_disappear(driver, 60, '//*[contains(.,"Please wait")]')
 
 
 @then('set Application Name')
@@ -79,7 +84,6 @@ def set_application_name(driver):
     driver.find_element_by_xpath('//button[@ix-auto="button__NEXT_Application Name"]').click()
 
 
-
 @then('set Container Images')
 def set_container_images(driver):
     """set Container Images."""
@@ -90,14 +94,11 @@ def set_container_images(driver):
     driver.find_element_by_xpath('//button[@ix-auto="button__NEXT_Container Images"]').click()
 
 
-
-
 @then('set Container Entrypoint')
 def set_container_entrypoint(driver):
     """set Container Entrypoint."""
     assert wait_on_element(driver, 7, '//button[@ix-auto="button__NEXT_Container Entrypoint"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__NEXT_Container Entrypoint"]').click()
-
 
 
 @then('set Container Environment Variables')
@@ -107,13 +108,11 @@ def set_container_environment_variables(driver):
     driver.find_element_by_xpath('//button[@ix-auto="button__NEXT_Container Environment Variables"]').click()
 
 
-
 @then('set Networking')
 def set_networking(driver):
     """set Networking."""
     assert wait_on_element(driver, 7, '//button[@ix-auto="button__NEXT_Networking"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__NEXT_Networking"]').click()
-
 
 
 @then('set Port Forwarding List')
@@ -141,13 +140,11 @@ def set_port_forwarding_list(driver):
     driver.find_element_by_xpath('//button[@ix-auto="button__NEXT_Port Forwarding"]').click()
 
 
-
 @then('set Storage')
 def set_storage(driver):
     """set Storage."""
     assert wait_on_element(driver, 7, '//button[@ix-auto="button__NEXT_Storage"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__NEXT_Storage"]').click()
-
 
 
 @then('set Workload Details')
@@ -157,7 +154,6 @@ def set_workload_details(driver):
     driver.find_element_by_xpath('//button[@ix-auto="button__NEXT_Workload Details"]').click()
 
 
-
 @then('set Scaling/Upgrade Policy')
 def set_scalingupgrade_policy(driver):
     """set Scaling/Upgrade Policy."""
@@ -165,13 +161,11 @@ def set_scalingupgrade_policy(driver):
     driver.find_element_by_xpath('//button[@ix-auto="button__NEXT_Scaling/Upgrade Policy"]').click()
 
 
-
 @then('set Resource Reservation')
 def set_resource_reservation(driver):
     """set Resource Reservation."""
     assert wait_on_element(driver, 7, '//button[@ix-auto="button__NEXT_Resource Reservation"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__NEXT_Resource Reservation"]').click()
-
 
 
 @then('Confirm Options')
@@ -182,6 +176,7 @@ def confirm_options(driver):
 
     assert wait_on_element(driver, 5, '//*[contains(.,"Installing")]')
     assert wait_on_element_disappear(driver, 60, '//*[contains(.,"Installing")]')
+
 
 @then('confirm installation is successful')
 def confirm_installation_is_successful(driver):
@@ -194,11 +189,8 @@ def confirm_installation_is_successful(driver):
         assert wait_on_element(driver, 20, '//strong[contains(.,"truecommand-test")]')
         assert wait_on_element(driver, 20, '//strong[contains(.,"truecommand-test")]', 'clickable')
         driver.find_element_by_xpath('//strong[contains(.,"truecommand-test")]').click()
-        assert wait_on_element(driver, 5, '//*[contains(.,"Please wait")]')
-        # sometimes the please wait window opens and closes so fast that the test fails here, other times it shows for about a second 
-        time.sleep(3)  # we have to wait for the page to settle down and the cards to fully load
-        #assert wait_on_element(driver, 5, '//*[contains(.,"Please wait")]')
-        #assert wait_on_element_disappear(driver, 10, '//*[contains(.,"Please wait")]')    
+        if wait_on_element(driver, 3, '//*[contains(.,"Please wait")]'):
+            assert wait_on_element_disappear(driver, 60, '//*[contains(.,"Please wait")]')
         # refresh loop
         assert wait_on_element(driver, 10, '//mat-panel-title[contains(.,"Application Events")]', 'clickable')
         driver.find_element_by_xpath('//mat-panel-title[contains(.,"Application Events")]').click()
@@ -209,11 +201,6 @@ def confirm_installation_is_successful(driver):
         else:
             assert wait_on_element(driver, 10, '//span[contains(.,"Close")]', 'clickable')
             driver.find_element_by_xpath('//span[contains(.,"Close")]').click()
-            time.sleep(15) # Because of slow start up times
-            assert wait_on_element(driver, 10, '//div[contains(text(),"Available Applications")]', 'clickable')
-            driver.find_element_by_xpath('//div[contains(text(),"Available Applications")]').click()
-            assert wait_on_element(driver, 10, '//div[contains(text(),"Installed Applications")]', 'clickable')
-            driver.find_element_by_xpath('//div[contains(text(),"Installed Applications")]').click()
-            assert wait_on_element(driver, 20, '//mat-card[contains(.,"truecommand-test")]//span[@class="status active"]')
+        assert wait_on_element(driver, 60, '//mat-card[contains(.,"truecommand-test")]//span[@class="status active"]')
     else:
-        assert wait_on_element(driver, 20, '//mat-card[contains(.,"truecommand-test")]//span[@class="status active"]')
+        assert wait_on_element(driver, 60, '//mat-card[contains(.,"truecommand-test")]//span[@class="status active"]')
