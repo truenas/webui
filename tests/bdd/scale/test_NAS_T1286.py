@@ -52,7 +52,7 @@ def on_the_dashboard_click_on_apps(driver):
     assert wait_on_element(driver, 10, '//h3[text()="plex"]')
     assert wait_on_element(driver, 10, '//div[contains(.,"plex") and @class="content"]//button', 'clickable')
     # Sleep to make sure that the drop does not disappear
-    time.sleep(2)
+    time.sleep(1)
 
 
 @then('the Apps page load, click settings, unset pool')
