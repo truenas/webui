@@ -5,8 +5,8 @@
       mat-icon-button
       type="button"
       (click)="onClick(row)"
-      [matTooltip]="(expandedRow === row ? 'Collapse' : 'Expand') | translate"
-      aria-label="Expand Row"
+      [matTooltip]="(expandedRow === row ? 'Collapse Row' : 'Expand Row') | translate"
+      [attr.aria-label]="(expandedRow === row ? 'Collapse Row' : 'Expand Row') | translate"
     >
       <mat-icon>
         {{ expandedRow === row ? 'expand_less' : 'expand_more' }}

@@ -9,6 +9,7 @@ import {
   themeNotFound,
 } from 'app/store/preferences/preferences.actions';
 import { sidenavUpdated } from 'app/store/topbar/topbar.actions';
+import { snapshotExtraColumnsToggled } from './preferences.actions';
 
 export interface PreferencesState {
   areLoaded: boolean;
@@ -46,6 +47,9 @@ export const preferencesReducer = createReducer(
   })),
   on(builtinGroupsToggled, (state) => updatePreferences(state, {
     hideBuiltinGroups: !state.preferences.hideBuiltinGroups,
+  })),
+  on(snapshotExtraColumnsToggled, (state) => updatePreferences(state, {
+    showSnapshotExtraColumns: !state.preferences.showSnapshotExtraColumns,
   })),
   on(guiFormSubmitted, (state, { theme }) => updatePreferences(state, {
     userTheme: theme,
