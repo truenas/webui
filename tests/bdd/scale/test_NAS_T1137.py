@@ -135,7 +135,7 @@ def send_a_file_to_the_share_should_fail_with_nas_iperic_share_and_footesting(dr
 def verify_that_the_file_is_not_on_the_nas(driver, nas_ip, root_password):
     """verify that the file is not on the NAS."""
     global results
-    cmd = 'ls -la /mnt/tank/wheel_dataset/'
+    cmd = 'ls -la /mnt/tank/ericbsd_dataset/'
     results = ssh_cmd(cmd, 'root', root_password, nas_ip)
     assert results['result'], results['output']
     assert 'testfile2' not in results['output'], results['output']
