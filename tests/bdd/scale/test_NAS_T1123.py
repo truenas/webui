@@ -8,7 +8,8 @@ from function import (
     attribute_value_exist,
     wait_on_element_disappear,
     run_cmd,
-    ssh_cmd
+    ssh_cmd,
+    post
 )
 from pytest_bdd import (
     given,
@@ -85,12 +86,17 @@ def set_path_to_the_acl_dataset_mntsystemkmy_acl_dataset_input_mysmbshare_as_nam
     assert wait_on_element(driver, 5, '//button[@ix-auto="button__SAVE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
     assert wait_on_element_disappear(driver, 15, '//h6[contains(.,"Please wait")]')
+    time.sleep(2)
 
 
 @then(parsers.parse('"{smbname}" should be added, Click on service and the Service page should open'))
 def mysmbshare_should_be_added_click_on_service_and_the_service_page_should_open(driver, smbname):
     """"{smbname}" should be added, Click on service and the Service page should open."""
-    assert wait_on_element(driver, 5, '//div[contains(.,"mysmbshare")]')
+    if is_element_present(driver, '//h1[contains(., 'Enable service')]'):
+        driver.find_element_by_xpath('//button[@ix-auto="button__ENABLE SERVICE"]').click()
+        assert wait_on_element(driver, 5, //h1[contains(., 'SMB Service')])
+        driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
+    assert wait_on_element(driver, 5, f'//div[contains(.,"mysmbshare")]')
     time.sleep(2)
 
 
