@@ -92,9 +92,9 @@ def set_path_to_the_acl_dataset_mntsystemkmy_acl_dataset_input_mysmbshare_as_nam
 @then(parsers.parse('"{smbname}" should be added, Click on service and the Service page should open'))
 def mysmbshare_should_be_added_click_on_service_and_the_service_page_should_open(driver, smbname):
     """"{smbname}" should be added, Click on service and the Service page should open."""
-    if is_element_present(driver, '//h1[contains(., 'Enable service')]'):
+    if is_element_present(driver, '//h1[contains(.,'Enable service')]'):
         driver.find_element_by_xpath('//button[@ix-auto="button__ENABLE SERVICE"]').click()
-        assert wait_on_element(driver, 5, //h1[contains(., 'SMB Service')])
+        assert wait_on_element(driver, 5, //h1[contains(.,'SMB Service')])
         driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
     assert wait_on_element(driver, 5, f'//div[contains(.,"mysmbshare")]')
     time.sleep(2)
