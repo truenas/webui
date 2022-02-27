@@ -4,19 +4,16 @@ import {
 import { Validators } from '@angular/forms';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { SedUser } from 'app/enums/sed-user.enum';
 import { helptextSystemAdvanced } from 'app/helptext/system/advanced';
 import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
-import { matchOtherValidator } from 'app/modules/entity/entity-form/validators/password-validation/password-validation';
-import { EntityUtils } from 'app/modules/entity/utils';
-import IxValidatorsService from 'app/modules/ix-forms/services/ix-validators.service';
-import { WebSocketService } from 'app/services';
+import { matchOtherValidator } from 'app/pages/common/entity/entity-form/validators/password-validation/password-validation';
+import { EntityUtils } from 'app/pages/common/entity/utils';
+import IxValidatorsService from 'app/pages/common/ix-forms/services/ix-validators.service';
+import { SystemGeneralService, WebSocketService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { AppState } from 'app/store';
-import { advancedConfigUpdated } from 'app/store/system-config/system-config.actions';
 
 @UntilDestroy()
 @Component({
@@ -65,7 +62,7 @@ export class SedFormComponent {
     private validatorsService: IxValidatorsService,
     private slideInService: IxSlideInService,
     private cdr: ChangeDetectorRef,
-    private store$: Store<AppState>,
+    private sysGeneralService: SystemGeneralService,
   ) {}
 
   setupForm(group: AdvancedConfig): void {
@@ -88,7 +85,7 @@ export class SedFormComponent {
       this.isFormLoading = false;
       this.cdr.markForCheck();
       this.slideInService.close();
-      this.store$.dispatch(advancedConfigUpdated());
+      this.sysGeneralService.refreshSysGeneral();
     }, (res) => {
       this.isFormLoading = false;
       new EntityUtils().handleWsError(this, res);
