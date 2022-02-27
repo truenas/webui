@@ -118,6 +118,7 @@
   "Set to inhibit some syslog diagnostics to avoid error messages. See <a href=\"https://man7.org/linux/man-pages/man5/exports.5.html\" target=\"_blank\">exports(5)</a> for examples.": "",
   "Set to log <a href=\"https://man7.org/linux/man-pages/man8/mountd.8.html\" target=\"_blank\">mountd(8)</a> syslog requests.": "",
   "Set to log <a href=\"https://man7.org/linux/man-pages/man8/statd.8.html\" target=\"_blank\">rpc.statd(8)</a> and <a href=\"https://linux.die.net/man/8/rpc.lockd\" target=\"_blank\">rpc.lockd(8)</a> syslog requests.": "",
+  "Show QR": "",
   "Show disks with non-unique serial numbers": "",
   "Show extra columns": "",
   "Showing extra columns in the table is useful for data filtering, but can cause performance issues.": "",
