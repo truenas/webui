@@ -7,7 +7,6 @@ export default {
   // storage/snapshots/snapshot-add
   snapshot_add_dataset_placeholder: T('Dataset'),
   snapshot_add_dataset_tooltip: T('Select a dataset or zvol.'),
-  snapshot_add_dataset_validation: [Validators.required],
 
   snapshot_add_name_placeholder: T('Name'),
   snapshot_add_name_tooltip: T('Unique snapshot name. Cannot be used with \
@@ -54,24 +53,14 @@ export default {
  related intermediate, child dataset, and cloned snapshots that are \
  newer than the rollback snapshot.'),
 
-  rollback_warning: T('<b>WARNING:</b> Rolling the dataset back \
- destroys data on the dataset <i>and</i> can destroy additional snapshots \
- that are related to the dataset. <b>This can result in permanent data \
- loss!</b> Do not roll back until all desired data and snapshots are \
- backed up.'),
-
-  rollback_title: ('Dataset Rollback From Snapshot'),
   rollback_confirm: T('Confirm'),
 
   extra_cols: {
     title_show: T('Show Extra Columns'),
     title_hide: T('Hide Extra Columns'),
 
-    message_show: T('Showing extra columns in the table is useful for data filtering, \
- but can cause performance issues. NOTE: This window will reload automatically so that the new view can take effect.'),
-    message_hide: T('Hidden columns are not available for sorting or filtering, but the values can be \
- viewed by expanding the row. Hiding columns improves performance. NOTE: This window will reload automatically so that \
- the new view can take effect.'),
+    message_show: T('Showing extra columns in the table is useful for data filtering, but can cause performance issues.'),
+    message_hide: T('Hidden columns are not available for sorting or filtering. Hiding columns improves performance.'),
     button_show: T('Show'),
     button_hide: T('Hide'),
   },
