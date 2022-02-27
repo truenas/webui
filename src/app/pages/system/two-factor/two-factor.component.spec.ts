@@ -6,6 +6,8 @@ import { MatDialog } from '@angular/material/dialog';
 import {
   createComponentFactory, mockProvider, Spectator,
 } from '@ngneat/spectator/jest';
+import { of } from 'rxjs';
+import { MockWebsocketService } from 'app/core/testing/classes/mock-websocket.service';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { TwoFactorConfig } from 'app/interfaces/two-factor-config.interface';
 import { IxInputHarness } from 'app/modules/ix-forms/components/ix-input/ix-input.harness';
@@ -44,7 +46,9 @@ describe('TwoFactorComponent', () => {
         mockCall('auth.twofactor.update'),
       ]),
       mockProvider(FormErrorHandlerService),
-      mockProvider(DialogService),
+      mockProvider(DialogService, {
+        confirm: jest.fn(() => of(true)),
+      }),
     ],
   });
 
@@ -99,7 +103,7 @@ describe('TwoFactorComponent', () => {
     }]);
   });
 
-  xit('enable 2FA when click `Enable Two-Factor Authentication` button', async () => {
+  it('enable 2FA when click `Enable Two-Factor Authentication` button', async () => {
     const enableButton = await loader.getHarness(MatButtonHarness.with({ text: 'Enable Two-Factor Authentication' }));
     await enableButton.click();
 
@@ -128,7 +132,7 @@ describe('TwoFactorComponent', () => {
     });
   });
 
-  xit('renew 2FA Secret when click `Renew Secret` button', async () => {
+  it('renew 2FA Secret when click `Renew Secret` button', async () => {
     const renewButton = await loader.getHarness(MatButtonHarness.with({ text: 'Renew Secret' }));
     await renewButton.click();
 
@@ -141,7 +145,12 @@ describe('TwoFactorComponent', () => {
     expect(ws.call).toHaveBeenCalledWith('auth.twofactor.renew_secret');
   });
 
-  xit('disable 2FA when click `Disable Two-Factor Authentication` button', async () => {
+  it('disable 2FA when click `Disable Two-Factor Authentication` button', async () => {
+    spectator.inject(MockWebsocketService).mockCall('auth.twofactor.config', {
+      enabled: true,
+    } as TwoFactorConfig);
+    spectator.component.ngOnInit();
+
     const disableButton = await loader.getHarness(MatButtonHarness.with({ text: 'Disable Two-Factor Authentication' }));
     await disableButton.click();
 
