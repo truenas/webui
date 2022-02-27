@@ -1,6 +1,6 @@
 import { DatePipe } from '@angular/common';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { Component, OnInit, Type } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -451,72 +451,39 @@ export class AdvancedSettingsComponent implements OnInit {
   }
 
   async onSettingsPressed(name: AdvancedCardId, id?: number): Promise<void> {
-    let addComponent: Type<ConsoleFormComponent
-    | KernelFormComponent
-    | ReplicationFormComponent
-    | SyslogFormComponent
-    | TunableFormComponent
-    | CronFormComponent
-    | SystemDatasetPoolComponent
-    | IsolatedGpuPcisFormComponent
-    | SedFormComponent
-    >;
-
+    await this.showFirstTimeWarningIfNeeded();
     switch (name) {
       case AdvancedCardId.Console:
-        addComponent = ConsoleFormComponent;
+        this.sysGeneralService.sendConfigData(this.configData as any);
+        this.ixModal.open(ConsoleFormComponent);
         break;
       case AdvancedCardId.Kernel:
-        addComponent = KernelFormComponent;
+        this.sysGeneralService.sendConfigData(this.configData as any);
+        this.ixModal.open(KernelFormComponent).setupForm(this.configData);
         break;
       case AdvancedCardId.Replication:
-        addComponent = ReplicationFormComponent;
+        this.ixModal.open(ReplicationFormComponent);
         break;
       case AdvancedCardId.Syslog:
-        addComponent = SyslogFormComponent;
+        this.ixModal.open(SyslogFormComponent);
         break;
       case AdvancedCardId.Sysctl:
-        addComponent = TunableFormComponent;
+        this.modalService.openInSlideIn(TunableFormComponent, id);
         break;
       case AdvancedCardId.Cron:
-        addComponent = CronFormComponent;
+        this.modalService.openInSlideIn(CronFormComponent, id);
         break;
       case AdvancedCardId.SystemDatasetPool:
-        addComponent = SystemDatasetPoolComponent;
+        this.ixModal.open(SystemDatasetPoolComponent);
         break;
       case AdvancedCardId.Gpus:
-        addComponent = IsolatedGpuPcisFormComponent;
+        this.ixModal.open(IsolatedGpuPcisFormComponent);
         break;
       case AdvancedCardId.Sed:
-        addComponent = SedFormComponent;
+        this.ixModal.open(SedFormComponent).setupForm(this.configData);
         break;
       default:
         break;
-    }
-
-    await this.showFirstTimeWarningIfNeeded();
-    if ([AdvancedCardId.Console, AdvancedCardId.Kernel].includes(name)) {
-      this.sysGeneralService.sendConfigData(this.configData as any);
-    }
-
-    if ([AdvancedCardId.Kernel].includes(name)) {
-      const modal = this.ixModal.open(KernelFormComponent);
-      modal.setupForm(this.configData);
-    } else if ([AdvancedCardId.Sed].includes(name)) {
-      const modal = this.ixModal.open(SedFormComponent);
-      modal.setupForm(this.configData);
-    } else if (
-      [
-        AdvancedCardId.Console,
-        AdvancedCardId.Replication,
-        AdvancedCardId.Syslog,
-        AdvancedCardId.Gpus,
-        AdvancedCardId.SystemDatasetPool,
-      ].includes(name)
-    ) {
-      this.ixModal.open(addComponent);
-    } else {
-      this.modalService.openInSlideIn(addComponent, id);
     }
   }
 
