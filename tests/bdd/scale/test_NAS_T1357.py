@@ -1,6 +1,7 @@
 # coding=utf-8
 """SCALE UI: feature tests."""
 
+import time
 from function import (
     wait_on_element,
     is_element_present,
@@ -54,6 +55,8 @@ def stop_machinaris_from_running(driver):
     if is_element_present(driver, '//mat-ink-bar[@style="visibility: visible; left: 0px; width: 183px;"]') is False:
         assert wait_on_element(driver, 10, '//div[contains(text(),"Installed Applications")]', 'clickable')
         driver.find_element_by_xpath('//div[contains(text(),"Installed Applications")]').click()
+    assert wait_on_element(driver, 120, '//h3[text()="plex"]')
+    time.sleep(1)
     assert wait_on_element(driver, 45, '//mat-card[contains(.,"machinaris")]//span[contains(.,"Stop")]', 'clickable')
     driver.find_element_by_xpath('//mat-card[contains(.,"machinaris")]//span[contains(.,"Stop")]').click()
 
