@@ -35,8 +35,9 @@ export class PreferencesEffects {
 
           return preferencesLoaded({ preferences });
         }),
-        catchError(() => {
+        catchError((error) => {
           // TODO: Basically a fatal error. Handle it.
+          console.error(error);
           return EMPTY;
         }),
       );

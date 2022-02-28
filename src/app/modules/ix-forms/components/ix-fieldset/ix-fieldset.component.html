@@ -3,6 +3,7 @@
     <legend class="title">
       {{title}}
     </legend>
+    <tooltip *ngIf="tooltip" [header]="title" class="tooltip" [message]="tooltip"></tooltip>
   </div>
   <ng-content></ng-content>
   <mat-divider *ngIf="divider" class="divider" inset></mat-divider>

@@ -47,15 +47,6 @@ export default {
   int_ipv6auto_placeholder: T('Autoconfigure IPv6'),
   int_ipv6auto_tooltip: T('Set to automatically configure the IPv6. Only one interface can be configured this way.'),
 
-  disable_offload_capabilities_placeholder: T('Disable Hardware Offloading'),
-  disable_offload_capabilities_tooltip: T('Turn off hardware offloading \
- for network traffic processing. WARNING: disabling hardware offloading \
- can reduce network performance.'),
-
-  disable_offload_capabilities_warning_title: T('Disable Hardware Offloading'),
-  disable_offload_capabilities_warning_msg: T('Disabling hardware offloading can severely reduce\
- network performance.'),
-
   alias_address_placeholder: T('IP Address'),
   alias_address_tooltip: T('Define an alias for the interface \
  on this TrueNAS controller. The alias can be an IPv4 or IPv6 \
