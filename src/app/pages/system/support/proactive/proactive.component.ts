@@ -228,8 +228,6 @@ export class ProactiveComponent {
             });
           }
           this.save_button_enabled = false;
-          this.dialogService.report(helptext.proactive.support_not_enabled,
-            '', '500px', 'info', true);
         } else {
           this.getContacts();
           this.save_button_enabled = true;
