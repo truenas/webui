@@ -578,8 +578,8 @@ export class CloudsyncFormComponent implements FormConfiguration {
     if (data.direction === Direction.Pull) {
       data.path_destination = data.path;
 
-      if (data.attributes.include?.length) {
-        data.attributes.folder_source = data.attributes.include.map((path: string) => {
+      if (data.include?.length) {
+        data.attributes.folder_source = data.include.map((path: string) => {
           return data.attributes.folder + '/' + path.split('/')[1];
         });
       } else {

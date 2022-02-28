@@ -65,6 +65,11 @@
           [tooltip]="tooltips.udp"
         ></ix-checkbox>
         <ix-checkbox
+          formControlName="allow_nonroot"
+          [label]="'Allow non-root mount' | translate"
+          [tooltip]="tooltips.allow_nonroot"
+        ></ix-checkbox>
+        <ix-checkbox
           formControlName="userd_manage_gids"
           [label]="'Support >16 groups' | translate"
           [tooltip]="tooltips.userd_manage_gids"
