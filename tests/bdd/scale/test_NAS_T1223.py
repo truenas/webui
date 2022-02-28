@@ -76,25 +76,25 @@ def wait_for_the_alert_and_verify_the_core_files_warning_alert(driver):
     assert wait_on_element(driver, 7, '//button[contains(.,"notifications")]', 'clickable')
     driver.find_element_by_xpath('//button[contains(.,"notifications")]').click()
     assert wait_on_element(driver, 7, '//h3[text()="Alerts"]')
-    assert wait_on_element(driver, 7, '//mat-list-item[contains(.,"Core files")]//h3[contains(.,"WARNING")]')
+    assert wait_on_element(driver, 7, '/div[contains(@class, "alert-body")]//h3[contains(.,"Warning")]')
     assert wait_on_element(driver, 7, '//h4[contains(.,"Core files for the following executables were found: /usr/bin/python")]')
-    assert wait_on_element(driver, 7, '//mat-list-item[contains(.,"Core files")]//mat-icon[text()="warning"]')
+    assert wait_on_element(driver, 7, '//ix-alert[contains(.,"Core files")]//mat-icon[text()="warning"]')
 
 
 @then('click on the core files warning Dismiss and verify it is dismissed')
 def click_on_the_core_files_warning_dismiss_and_verify_it_is_dismissed(driver):
     """click on the core files warning Dismiss and verify it is dismissed."""
-    assert wait_on_element(driver, 7, '//mat-list-item[contains(.,"Core files")]//a[text()="Dismiss"]', 'clickable')
-    driver.find_element_by_xpath('//mat-list-item[contains(.,"Core files")]//a[text()="Dismiss"]').click()
-    assert wait_on_element(driver, 7, '//mat-list-item[contains(.,"Core files")]//mat-icon[text()="check_circle"]')
+    assert wait_on_element(driver, 7, '//ix-alert[contains(.,"Core files")]//a[text()="Dismiss"]', 'clickable')
+    driver.find_element_by_xpath('//ix-alert[contains(.,"Core files")]//a[text()="Dismiss"]').click()
+    assert wait_on_element(driver, 7, '//ix-alert[contains(.,"Core files")]//mat-icon[text()="check_circle"]')
 
 
 @then('click on the core files warning Re-Open and verify the alert is back')
 def click_on_the_core_files_warning_reopen_and_verify_the_alert_is_back(driver):
     """click on the core files warning Re-Open and verify the alert is back."""
-    assert wait_on_element(driver, 7, '//mat-list-item[contains(.,"Core files")]//a[text()="Re-Open"]', 'clickable')
-    driver.find_element_by_xpath('//mat-list-item[contains(.,"Core files")]//a[text()="Re-Open"]').click()
-    assert wait_on_element(driver, 7, '//mat-icon[text()="warning"]')
+    assert wait_on_element(driver, 7, '//ix-alert[contains(.,"Core files")]//a[text()="Re-Open"]', 'clickable')
+    driver.find_element_by_xpath('//ix-alert[contains(.,"Core files")]//a[text()="Re-Open"]').click()
+    assert wait_on_element(driver, 7, '//ix-alert[contains(.,"Core files")]//mat-icon[text()="warning"]')
     assert wait_on_element(driver, 7, '//button[contains(.,"clear")]', 'clickable')
     driver.find_element_by_xpath('//button[contains(.,"clear")]').click()
 
