@@ -20,7 +20,7 @@ import { EntityFormComponent } from 'app/modules/entity/entity-form/entity-form.
 import { FieldConfig, FormSelectConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/modules/entity/entity-form/models/fieldset.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
-import { EntityUtils } from 'app/modules/entity/utils';
+import { EntityUtils, NULL_VALUE } from 'app/modules/entity/utils';
 import { ActiveDirectoryConfigUi } from 'app/pages/directory-service/components/active-directory/active-directory-config-ui.interface';
 import { DialogService, SystemGeneralService, WebSocketService } from 'app/services';
 import { ModalService } from 'app/services/modal.service';
@@ -376,7 +376,7 @@ export class ActiveDirectoryComponent implements FormConfiguration {
     });
 
     entityEdit.formGroup.controls['kerberos_principal'].valueChanges.pipe(untilDestroyed(this)).subscribe((res: string) => {
-      if (res) {
+      if (res && res !== NULL_VALUE) {
         entityEdit.setDisabled('bindname', true);
         entityEdit.setDisabled('bindpw', true);
         _.find(this.fieldConfig, { name: 'bindname' })['isHidden'] = true;
