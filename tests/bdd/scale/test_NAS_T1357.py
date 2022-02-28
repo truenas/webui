@@ -52,10 +52,11 @@ def on_the_dashboard_click_on_apps(driver):
 @then('Stop machinaris from running')
 def stop_machinaris_from_running(driver):
     """Stop machinaris from running."""
-    if is_element_present(driver, '//mat-ink-bar[@style="visibility: visible; left: 0px; width: 183px;"]') is False:
+    assert wait_on_element(driver, 10, '//h1[text()="Applications"]')
+    if wait_on_element(driver, 3, '//mat-ink-bar[@style="visibility: visible; left: 0px; width: 183px;"]') is False:
         assert wait_on_element(driver, 10, '//div[contains(text(),"Installed Applications")]', 'clickable')
         driver.find_element_by_xpath('//div[contains(text(),"Installed Applications")]').click()
-    assert wait_on_element(driver, 120, '//h3[text()="plex"]')
+    assert wait_on_element(driver, 120, '//strong[text()="plex-test"]')
     time.sleep(1)
     assert wait_on_element(driver, 45, '//mat-card[contains(.,"machinaris")]//span[contains(.,"Stop")]', 'clickable')
     driver.find_element_by_xpath('//mat-card[contains(.,"machinaris")]//span[contains(.,"Stop")]').click()
