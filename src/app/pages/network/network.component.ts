@@ -4,7 +4,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { Subject } from 'rxjs';
 import { filter } from 'rxjs/operators';
-import { LinkState, NetworkInterfaceType } from 'app/enums/network-interface.enum';
+import { NetworkInterfaceType } from 'app/enums/network-interface.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
@@ -470,11 +470,14 @@ export class NetworkComponent implements OnInit, OnDestroy {
             if (!evt.interfaces[row.id]) {
               row.link_state = null;
             } else {
-              row.received = this.storageService.convertBytestoHumanReadable(evt.interfaces[row.id].received_bytes);
-              row.received_bytes = evt.interfaces[row.id].received_bytes;
-              row.sent = this.storageService.convertBytestoHumanReadable(evt.interfaces[row.id].sent_bytes);
-              row.sent_bytes = evt.interfaces[row.id].sent_bytes;
-              row.link_state = evt.interfaces[row.id].speed === null ? LinkState.Down : LinkState.Up;
+              if (evt.interfaces[row.id].received_bytes !== undefined) {
+                row.received = this.storageService.convertBytestoHumanReadable(evt.interfaces[row.id].received_bytes);
+                row.received_bytes = evt.interfaces[row.id].received_bytes;
+              }
+              if (evt.interfaces[row.id].sent_bytes !== undefined) {
+                row.sent = this.storageService.convertBytestoHumanReadable(evt.interfaces[row.id].sent_bytes);
+                row.sent_bytes = evt.interfaces[row.id].sent_bytes;
+              }
             }
           });
         }

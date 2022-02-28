@@ -278,10 +278,7 @@ export class TableComponent implements OnInit, AfterViewInit, AfterViewChecked {
       this.tableService.updateStateInfoIcon(element[this.idProp], 'received');
     }
 
-    if (element.sent !== undefined && element.received !== undefined) {
-      return `${this.translate.instant('Sent')}: ${element.sent} ${this.translate.instant('Received')}: ${element.received}`;
-    }
-    return null;
+    return `${this.translate.instant('Sent')}: ${element.sent} ${this.translate.instant('Received')}: ${element.received}`;
   }
 
   openViewMore(): void {

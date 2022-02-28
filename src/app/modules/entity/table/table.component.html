@@ -39,7 +39,7 @@
 
                 <div class="state-info" *ngSwitchCase="'state-info'">
                   <mat-icon [id]="element[idProp]" class="state-info-icon" svgIcon="network-upload-download" *ngIf="element[column.state.prop] === LinkState.Up" [matTooltip]="showInOutInfo(element)"></mat-icon>
-                  <mat-icon class="state-info-icon" svgIcon="network-upload-download-disabled" *ngIf="element[column.state.prop] === LinkState.Down"></mat-icon>
+                  <mat-icon class="state-info-icon" svgIcon="network-upload-download-disabled" *ngIf="element[column.state.prop] !== LinkState.Up"></mat-icon>
                   &nbsp;&nbsp;<span>{{element[column.prop]}}</span>
                 </div>
 
