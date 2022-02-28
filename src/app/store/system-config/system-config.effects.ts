@@ -20,8 +20,9 @@ export class SystemConfigEffects {
         this.ws.call('system.advanced.config'),
       ]).pipe(
         map(([generalConfig, advancedConfig]) => systemConfigLoaded({ generalConfig, advancedConfig })),
-        catchError(() => {
+        catchError((error) => {
           // TODO: Basically a fatal error. Handle it.
+          console.error(error);
           return EMPTY;
         }),
       );
