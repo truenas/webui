@@ -64,7 +64,7 @@ export class CronSchedulePreview {
     let previousDate = toDate(startDate, { timeZone: 'UTC' });
     const startingMonth = getMonth(previousDate);
 
-    while (getMonth(previousDate) === startingMonth) {
+    do {
       const zonedPreviousDate = zonedTimeToUtc(previousDate, this.timezone);
       const zonedNextRun = this.cron.next(subMinutes(zonedPreviousDate, 1));
       const nextRun = utcToZonedTime(zonedNextRun, this.timezone);
@@ -82,7 +82,7 @@ export class CronSchedulePreview {
 
       const dayNumber = getDate(nextRun);
       monthDaysWithRuns.add(dayNumber);
-    }
+    } while (getMonth(previousDate) === startingMonth);
 
     return monthDaysWithRuns;
   }

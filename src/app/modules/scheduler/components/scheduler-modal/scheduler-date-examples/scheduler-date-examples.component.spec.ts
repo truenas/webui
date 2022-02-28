@@ -25,7 +25,7 @@ describe('SchedulerDateExamplesComponent', () => {
           crontab: '0 0 * * *',
           timezone: 'America/New_York',
         }),
-        zonedStartDate: new Date('2022-02-22 11:39:00'),
+        zonedStartDate: '2022-02-22 11:39:00',
       },
     });
 
@@ -47,7 +47,7 @@ describe('SchedulerDateExamplesComponent', () => {
           crontab: '* * * * *',
           timezone: 'America/New_York',
         }),
-        zonedStartDate: new Date('2022-02-22 11:39:00'),
+        zonedStartDate: '2022-02-22 11:39:00',
       },
     });
 

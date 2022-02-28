@@ -10,8 +10,8 @@ import { MatCalendar } from '@angular/material/datepicker';
 import { MatCalendarCellClassFunction } from '@angular/material/datepicker/calendar-body';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import {
-  isAfter, getDate, isBefore,
-  startOfMonth,
+  getDate, isBefore,
+  startOfMonth, differenceInCalendarMonths, format,
 } from 'date-fns';
 import { utcToZonedTime } from 'date-fns-tz';
 import { CronSchedulePreview } from 'app/modules/scheduler/classes/cron-schedule-preview/cron-schedule-preview';
@@ -41,13 +41,15 @@ export class SchedulerPreviewColumnComponent implements OnChanges, OnInit {
 
   @ViewChild('calendar', { static: true }) calendar: MatCalendar<Date>;
 
-  get zonedStartDate(): Date {
+  get zonedStartDate(): string {
+    const dateFormat = 'yyyy-MM-dd HH:mm:ss';
     const now = utcToZonedTime(new Date(), this.timezone);
-    if (!this.calendar.activeDate || isAfter(new Date(), this.calendar.activeDate)) {
-      return now;
+    if (!this.calendar.activeDate || differenceInCalendarMonths(this.calendar.activeDate, new Date()) < 1) {
+      return format(now, dateFormat);
     }
 
-    return startOfMonth(this.calendar.activeDate);
+    const startDate = startOfMonth(this.calendar.activeDate);
+    return format(startDate, dateFormat);
   }
 
   get isPastMonth(): boolean {
@@ -93,7 +95,7 @@ export class SchedulerPreviewColumnComponent implements OnChanges, OnInit {
         endTime: this.endTime,
       });
 
-      this.highlightedCalendarDays = this.cronPreview.getNextDaysInMonthWithRuns(this.zonedStartDate.toISOString());
+      this.highlightedCalendarDays = this.cronPreview.getNextDaysInMonthWithRuns(this.zonedStartDate);
     } catch (error: unknown) {
       console.error(error);
     }
