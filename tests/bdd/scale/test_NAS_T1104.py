@@ -58,18 +58,18 @@ def on_the_network_page_click_on_setting_on_the_global_configuration_card(driver
     """on the network page, click on setting on the Global Configuration card.."""
     time.sleep(2)
     assert wait_on_element(driver, 7, '//h1[contains(.,"Network")]')
-    assert wait_on_element(driver, 5, '//button[@ix-auto="button__globalSettings"]')
-    driver.find_element_by_xpath('//button[@ix-auto="button__globalSettings"]').click()
+    assert wait_on_element(driver, 10, '//button[contains(.,"Settings")]', 'clickable')
+    driver.find_element_by_xpath('//button[contains(.,"Settings")]').click()
 
 
 @then(parsers.parse('on the Network Global Configuration page, change the first nameserver to "{nameserver1}".'))
 def on_the_network_global_configuration_page_change_the_first_nameserver_to_nameserver1(driver, nameserver1):
     """on the Network Global Configuration page, change the first nameserver to "{nameserver1}".."""
     time.sleep(2)
-    assert wait_on_element(driver, 7, '//h4[contains(.,"Hostname and Domain")]')
-    assert wait_on_element(driver, 5, '//input[@ix-auto="input__Nameserver 1"]', 'inputable')
-    driver.find_element_by_xpath('//input[@ix-auto="input__Nameserver 1"]').clear()
-    driver.find_element_by_xpath('//input[@ix-auto="input__Nameserver 1"]').send_keys(nameserver1)
+    assert wait_on_element(driver, 10, '//h3[contains(.,"Global Configuration")]')
+    assert wait_on_element(driver, 7, '//ix-input[contains(.,"Nameserver 1")]//input', 'inputable')
+    driver.find_element_by_xpath('//ix-input[contains(.,"Nameserver 1")]//input').clear()
+    driver.find_element_by_xpath('//ix-input[contains(.,"Nameserver 1")]//input').send_keys(nameserver1)
 
 
 @then(parsers.parse('change the Domain for "{ad_domain}", and click Save.'))
@@ -78,19 +78,18 @@ def change_the_domain_for_ad_domain_and_click_save(driver, ad_domain):
     time.sleep(2)
     global domain
     domain = ad_domain
-    assert wait_on_element(driver, 5, '//input[@ix-auto="input__Domain"]')
-    driver.find_element_by_xpath('//input[@ix-auto="input__Domain"]').clear()
-    driver.find_element_by_xpath('//input[@ix-auto="input__Domain"]').send_keys(ad_domain)
-    assert wait_on_element(driver, 7, '//button[@ix-auto="button__SAVE"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
+    assert wait_on_element(driver, 5, '//ix-input[contains(.,"Domain")]')
+    driver.find_element_by_xpath('//ix-input[contains(.,"Domain")]//input').clear()
+    driver.find_element_by_xpath('//ix-input[contains(.,"Domain")]//input').send_keys(ad_domain)
+    assert wait_on_element(driver, 7, '//button[contains(.,"Save")]', 'clickable')
+    driver.find_element_by_xpath('//button[contains(.,"Save")]').click()
 
 
 @then('Please wait should appear while settings are being applied.')
 def please_wait_should_appear_while_settings_are_being_applied(driver):
     """Please wait should appear while settings are being applied.."""
-    assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
-    time.sleep(2)
-    assert wait_on_element(driver, 7, f'//li[contains(.,"{domain}")]')
+    assert wait_on_element_disappear(driver, 20, '//div[contains(@class,"mat-progress-bar-element")]')
+    assert wait_on_element(driver, 10, '//h1[contains(.,"Network")]')
 
 
 @then('after, click on Credentials on the left sidebar, then Directory Services.')
