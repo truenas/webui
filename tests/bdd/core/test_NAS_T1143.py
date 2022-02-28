@@ -15,6 +15,9 @@ from pytest_bdd import (
     when,
     parsers
 )
+import pytest
+
+pytestmark = [pytest.mark.debug_test]
 
 
 @scenario('features/NAS-T1143.feature', 'Verify Backblaze B2 Cloud Sync task works')
@@ -37,7 +40,8 @@ def the_browser_is_open_on_the_truenas_url_and_logged_in(driver, nas_ip, root_pa
         driver.find_element_by_xpath('//input[@placeholder="Password"]').send_keys(root_password)
         assert wait_on_element(driver, 5, '//button[@name="signin_button"]')
         driver.find_element_by_xpath('//button[@name="signin_button"]').click()
-    else:
+    if not is_element_present(driver, '//li[contains(.,"Dashboard")]'):
+        assert wait_on_element(driver, 10, '//span[contains(.,"root")]')
         element = driver.find_element_by_xpath('//span[contains(.,"root")]')
         driver.execute_script("arguments[0].scrollIntoView();", element)
         assert wait_on_element(driver, 5, '//mat-list-item[@ix-auto="option__Dashboard"]', 'clickable')
@@ -103,15 +107,16 @@ def enter_the_user_name_click_Next_and_enter_the_password_click_Next(driver, use
     assert wait_on_element(driver, 5, '//h3[text()="Sign in to your Backblaze account"]')
     assert wait_on_element(driver, 5, '//input[@placeholder="Email"]', 'inputable')
     driver.find_element_by_xpath('//input[@placeholder="Email"]').send_keys(user_name)
-    time.sleep(1)
+    time.sleep(0.5)
     assert wait_on_element(driver, 5, '//button[contains(text(),"Next")]', 'clickable')
     driver.find_element_by_xpath('//button[contains(text(),"Next")]').click()
-    assert wait_on_element(driver, 5, '//p[@class="user-email"]')
+    assert wait_on_element(driver, 10, '//p[@class="user-email"]')
     assert wait_on_element(driver, 5, '//input[@placeholder="Password"]', 'inputable')
     driver.find_element_by_xpath('//input[@placeholder="Password"]').send_keys(password)
-    time.sleep(1)
+    time.sleep(0.5)
     assert wait_on_element(driver, 5, '//button[contains(text(),"Sign in")]', 'clickable')
     driver.find_element_by_xpath('//button[contains(text(),"Sign in")]').click()
+    time.sleep(1)
 
 
 @then(parsers.parse('click on Browser Files, click on {bucket} bucket'))
@@ -165,6 +170,7 @@ def on_the_cloud_sync_tasks_click_add(driver):
 @then('input a description and ensure PULL is selected as the Direction')
 def input_a_description_and_ensure_pull_is_selected_as_the_direction(driver):
     """input a description and ensure PULL is selected as the Direction."""
+    assert wait_on_element(driver, 7, '//mat-checkbox[@ix-auto="checkbox__Follow Symlinks"]', 'clickable')
     assert wait_on_element(driver, 5, '//input[@placeholder="Description"]', 'inputable')
     driver.find_element_by_xpath('//input[@placeholder="Description"]').clear()
     driver.find_element_by_xpath('//input[@placeholder="Description"]').send_keys('My Backblaze B2 task')
@@ -178,6 +184,7 @@ def select_selection_under_the_credential_dropdown(driver, selection):
     driver.find_element_by_xpath('//mat-select[@ix-auto="select__Credential"]').click()
     assert wait_on_element(driver, 5, f'//mat-option[@ix-auto="option__Credential_{selection}"]', 'clickable')
     driver.find_element_by_xpath(f'//mat-option[@ix-auto="option__Credential_{selection}"]').click()
+    assert wait_on_element_disappear(driver, 5, f'//mat-option[@ix-auto="option__Credential_{selection}"]')
     time.sleep(1)
 
 
@@ -205,6 +212,7 @@ def under_directory_files_choose_backblaze_b2_and_under_transfer_mode_select_cop
 @then('the Backblaze B2 tasks should save without error')
 def the_backblaze_b2_tasks_should_save_without_error(driver):
     """the Backblaze B2 tasks should save without error."""
+    assert wait_on_element(driver, 5, '//div[contains(.,"Cloud Sync Tasks")]')
     assert wait_on_element(driver, 5, '//div[contains(text(),"My Backblaze B2 task")]')
 
 
@@ -213,20 +221,28 @@ def expand_the_task_on_the_nas_ui_and_click_run_now(driver):
     """expand the task on the NAS UI and click Run Now."""
     assert wait_on_element(driver, 5, '//a[@ix-auto="expander__My Backblaze B2 task"]', 'clickable')
     driver.find_element_by_xpath('//a[@ix-auto="expander__My Backblaze B2 task"]').click()
+    time.sleep(0.5)
     assert wait_on_element(driver, 5, '//button[@id="action_button___run_now"]', 'clickable')
     driver.find_element_by_xpath('//button[@id="action_button___run_now"]').click()
+    assert wait_on_element(driver, 5, '//h1[text()="Run Now"]')
     assert wait_on_element(driver, 5, '//button[@ix-auto="button__CONTINUE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__CONTINUE"]').click()
+    assert wait_on_element(driver, 5, '//h1[contains(text(),"Task Started")]')
     assert wait_on_element(driver, 5, '//button[@ix-auto="button__CLOSE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
+    assert wait_on_element_disappear(driver, 30, '//h1[contains(text(),"Task Started")]')
     time.sleep(1)
-    assert wait_on_element(driver, 60, '//button[@id="My Backblaze B2 task_Status-button" and contains(.,"SUCCESS")]')
-    time.sleep(5)
+    assert wait_on_element(driver, 120, '//button[@id="My Backblaze B2 task_Status-button" and contains(.,"SUCCESS")]')
 
 
 @then('verify all files are copied from Backblaze B2 are into the dataset')
 def verify_all_files_are_copied_from_backblaze_b2_are_into_the_dataset(driver, nas_ip):
     """verify all files are copied from Backblaze B2 are into the dataset."""
+    cmd = 'test -f /mnt/system/backblaze_b2/music/Mr_Smith_Pequeñas_Guitarras.mp3'
+    timeout = time.time() + 30
+    while timeout > time.time():
+        if ssh_cmd(cmd, 'root', 'testing', nas_ip)['result']:
+            break
     cmd = 'test -f /mnt/system/backblaze_b2/Gloomy_Forest_wallpaper_ForWallpapercom.jpg'
     results = ssh_cmd(cmd, 'root', 'testing', nas_ip)
     assert results['result'] is True, results['output']
@@ -242,23 +258,25 @@ def verify_all_files_are_copied_from_backblaze_b2_are_into_the_dataset(driver, n
 def on_the_nas_cloud_sync_task_tab_click_edit(driver):
     """on the NAS cloud sync task tab, click Edit."""
     driver.switch_to.window(driver.window_handles[0])
+    assert wait_on_element(driver, 5, '//div[contains(.,"Cloud Sync Tasks")]')
     assert wait_on_element(driver, 5, '//div[contains(text(),"My Backblaze B2 task")]')
+    assert wait_on_element(driver, 5, '//a[@ix-auto="expander__My Backblaze B2 task"]', 'clickable')
     if not wait_on_element(driver, 1, '//button[@ix-auto="button___edit"]', 'clickable'):
-        assert wait_on_element(driver, 5, '//a[@ix-auto="expander__My Backblaze B2 task"]', 'clickable')
         driver.find_element_by_xpath('//a[@ix-auto="expander__My Backblaze B2 task"]').click()
-    time.sleep(0.5)
+    time.sleep(1.5)
     assert wait_on_element(driver, 5, '//p[contains(text(),"backblazecreds")]')
     assert wait_on_element(driver, 5, '//button[@ix-auto="button___edit"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button___edit"]').click()
     assert wait_on_element(driver, 5, '//h4[contains(.,"Transfer")]')
-    # give time to the system to be ready.
     time.sleep(1)
 
 
 @then('select PUSH as the Direction then under Transfer Mode, select COPY')
 def select_push_as_the_direction_then_under_transfer_mode_select_copy(driver):
     """select PUSH as the Direction then under Transfer Mode, select COPY."""
+    assert wait_on_element(driver, 7, '//mat-checkbox[@ix-auto="checkbox__Follow Symlinks"]', 'clickable')
     assert wait_on_element(driver, 5, '//mat-select[contains(.,"PULL")]')
+    assert wait_on_element(driver, 5, '//mat-select[contains(.,"COPY")]')
     assert wait_on_element(driver, 5, '//mat-select[@ix-auto="select__Direction"]', 'clickable')
     driver.find_element_by_xpath('//mat-select[@ix-auto="select__Direction"]').click()
     assert wait_on_element(driver, 5, '//mat-option[@ix-auto="option__Direction_PUSH"]', 'clickable')
@@ -315,6 +333,7 @@ def remove_all_files_from_the_dataset(driver, nas_ip):
 @then('select PULL as the Direction then under Transfer Mode, select MOVE')
 def select_pull_as_the_direction_then_under_transfer_mode_select_move(driver):
     """select PULL as the Direction then under Transfer Mode, select MOVE."""
+    assert wait_on_element(driver, 7, '//mat-checkbox[@ix-auto="checkbox__Follow Symlinks"]', 'clickable')
     assert wait_on_element(driver, 5, '//mat-select[contains(.,"PUSH")]')
     assert wait_on_element(driver, 5, '//mat-select[contains(.,"COPY")]')
     assert wait_on_element(driver, 5, '//mat-select[@ix-auto="select__Direction"]', 'clickable')
@@ -335,12 +354,27 @@ def click_save_the_backblaze_b2_tasks_should_save_without_error(driver):
     assert wait_on_element(driver, 5, '//button[@id="save_button"]', 'clickable')
     driver.find_element_by_xpath('//button[@id="save_button"]').click()
     assert wait_on_element_disappear(driver, 30, '//h6[contains(.,"Please wait")]')
+    assert wait_on_element(driver, 5, '//div[contains(.,"Cloud Sync Tasks")]')
     assert wait_on_element(driver, 5, '//div[contains(text(),"My Backblaze B2 task")]')
 
 
 @then('verify all files are moved from the Backblaze B2 bucket to the dataset')
 def verify_all_files_are_moved_from_the_backblaze_b2_test_folder_to_the_dataset(driver, nas_ip):
     """verify all files are moved from the Backblaze B2 bucket to the dataset."""
+    cmd = 'test -f /mnt/system/backblaze_b2/music/Mr_Smith_Pequeñas_Guitarras.mp3'
+    timeout = time.time() + 30
+    while timeout > time.time():
+        if ssh_cmd(cmd, 'root', 'testing', nas_ip)['result']:
+            break
+    cmd = 'test -f /mnt/system/backblaze_b2/Gloomy_Forest_wallpaper_ForWallpapercom.jpg'
+    results = ssh_cmd(cmd, 'root', 'testing', nas_ip)
+    assert results['result'] is True, results['output']
+    cmd = 'test -f /mnt/system/backblaze_b2/Explaining_BSD.pdf'
+    results = ssh_cmd(cmd, 'root', 'testing', nas_ip)
+    assert results['result'] is True, results['output']
+    cmd = 'test -f /mnt/system/backblaze_b2/music/Mr_Smith_Pequeñas_Guitarras.mp3'
+    results = ssh_cmd(cmd, 'root', 'testing', nas_ip)
+    assert results['result'] is True, results['output']
     driver.switch_to.window(driver.window_handles[1])
     assert wait_on_element(driver, 5, '//a[@id="refreshButtonId"]', 'clickable')
     driver.find_element_by_xpath('//a[@id="refreshButtonId"]').click()
@@ -353,15 +387,6 @@ def verify_all_files_are_moved_from_the_backblaze_b2_test_folder_to_the_dataset(
     assert wait_on_element(driver, 5, '//div[@class="b2-browse-name" and contains(.,"Mr_Smith_Pequeñas_Guitarras.mp3 (2) *")]')
     assert wait_on_element(driver, 5, f'//a[text()="{my_bucket}"]', 'clickable')
     driver.find_element_by_xpath(f'//a[text()="{my_bucket}"]').click()
-    cmd = 'test -f /mnt/system/backblaze_b2/Gloomy_Forest_wallpaper_ForWallpapercom.jpg'
-    results = ssh_cmd(cmd, 'root', 'testing', nas_ip)
-    assert results['result'] is True, results['output']
-    cmd = 'test -f /mnt/system/backblaze_b2/Explaining_BSD.pdf'
-    results = ssh_cmd(cmd, 'root', 'testing', nas_ip)
-    assert results['result'] is True, results['output']
-    cmd = 'test -f /mnt/system/backblaze_b2/music/Mr_Smith_Pequeñas_Guitarras.mp3'
-    results = ssh_cmd(cmd, 'root', 'testing', nas_ip)
-    assert results['result'] is True, results['output']
 
 
 @then('delete all file from the Backblaze B2 bucket')
@@ -380,6 +405,7 @@ def delete_all_file_from_the_Backblaze_B2_bucket(driver):
 @then('select PUSH as the Direction then under Transfer Mode, select MOVE')
 def select_push_as_the_direction_then_under_transfer_mode_select_move(driver):
     """select PUSH as the Direction then under Transfer Mode, select MOVE."""
+    assert wait_on_element(driver, 7, '//mat-checkbox[@ix-auto="checkbox__Follow Symlinks"]', 'clickable')
     assert wait_on_element(driver, 5, '//mat-select[contains(.,"PULL")]')
     assert wait_on_element(driver, 5, '//mat-select[contains(.,"MOVE")]')
     assert wait_on_element(driver, 5, '//mat-select[@ix-auto="select__Direction"]', 'clickable')
@@ -401,6 +427,11 @@ def select_push_as_the_direction_then_under_transfer_mode_select_move(driver):
 @then('verify all files are moved from the dataset to the Backblaze B2 bucket')
 def verify_all_files_are_moved_from_the_dataset_to_the_backblaze_b2_test_folder(driver, nas_ip):
     """verify all files are moved from the dataset to the Backblaze B2 bucket."""
+    cmd = 'test -f /mnt/system/backblaze_b2/music/Mr_Smith_Pequeñas_Guitarras.mp3'
+    timeout = time.time() + 30
+    while timeout > time.time():
+        if not ssh_cmd(cmd, 'root', 'testing', nas_ip)['result']:
+            break
     cmd = 'test -f /mnt/system/backblaze_b2/Gloomy_Forest_wallpaper_ForWallpapercom.jpg'
     results = ssh_cmd(cmd, 'root', 'testing', nas_ip)
     assert results['result'] is False, results['output']
@@ -428,6 +459,7 @@ def verify_all_files_are_moved_from_the_dataset_to_the_backblaze_b2_test_folder(
 @then('select PULL as the Direction then under Transfer Mode, select SYNC')
 def select_pull_as_the_direction_then_under_transfer_mode_select_sync(driver):
     """select PULL as the Direction then under Transfer Mode, select SYNC."""
+    assert wait_on_element(driver, 7, '//mat-checkbox[@ix-auto="checkbox__Follow Symlinks"]', 'clickable')
     assert wait_on_element(driver, 5, '//mat-select[contains(.,"PUSH")]')
     assert wait_on_element(driver, 5, '//mat-select[contains(.,"MOVE")]')
     assert wait_on_element(driver, 5, '//mat-select[@ix-auto="select__Direction"]', 'clickable')
@@ -449,6 +481,11 @@ def select_pull_as_the_direction_then_under_transfer_mode_select_sync(driver):
 @then('verify all files are sync to the dataset folder')
 def verify_all_files_are_sync_to_the_dataset_folder(driver, nas_ip):
     """verify all files are sync to the dataset folder."""
+    cmd = 'test -f /mnt/system/backblaze_b2/music/Mr_Smith_Pequeñas_Guitarras.mp3'
+    timeout = time.time() + 30
+    while timeout > time.time():
+        if ssh_cmd(cmd, 'root', 'testing', nas_ip)['result']:
+            break
     cmd = 'test -f /mnt/system/backblaze_b2/Gloomy_Forest_wallpaper_ForWallpapercom.jpg'
     results = ssh_cmd(cmd, 'root', 'testing', nas_ip)
     assert results['result'] is True, results['output']
@@ -480,22 +517,31 @@ def on_the_backblaze_b2_test_folder_tab_delete_one_file(driver):
 def on_the_nas_cloud_sync_task_tab_click_run_now(driver):
     """on the NAS cloud sync task tab, click Run Now."""
     driver.switch_to.window(driver.window_handles[0])
+    assert wait_on_element(driver, 5, '//div[contains(.,"Cloud Sync Tasks")]')
     assert wait_on_element(driver, 5, '//div[contains(text(),"My Backblaze B2 task")]')
+    assert wait_on_element(driver, 5, '//a[@ix-auto="expander__My Backblaze B2 task"]', 'clickable')
+    time.sleep(0.5)
     assert wait_on_element(driver, 5, '//button[@id="action_button___run_now"]', 'clickable')
     driver.find_element_by_xpath('//button[@id="action_button___run_now"]').click()
+    assert wait_on_element(driver, 5, '//h1[text()="Run Now"]')
     assert wait_on_element(driver, 5, '//button[@ix-auto="button__CONTINUE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__CONTINUE"]').click()
+    assert wait_on_element(driver, 5, '//h1[contains(text(),"Task Started")]')
     assert wait_on_element(driver, 5, '//button[@ix-auto="button__CLOSE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
+    assert wait_on_element_disappear(driver, 30, '//h1[contains(text(),"Task Started")]')
     time.sleep(1)
-    assert wait_on_element(driver, 60, '//button[@id="My Backblaze B2 task_Status-button" and contains(.,"SUCCESS")]')
-    # give time to the system to be ready.
-    time.sleep(5)
+    assert wait_on_element(driver, 120, '//button[@id="My Backblaze B2 task_Status-button" and contains(.,"SUCCESS")]')
 
 
 @then('verify the file is removed from the dataset folder')
 def verify_the_file_is_removed_from_the_dataset_folder(driver, nas_ip):
     """verify the file is removed from the dataset folder."""
+    cmd = 'test -f /mnt/system/backblaze_b2/Gloomy_Forest_wallpaper_ForWallpapercom.jpg'
+    timeout = time.time() + 30
+    while timeout > time.time():
+        if not ssh_cmd(cmd, 'root', 'testing', nas_ip)['result']:
+            break
     cmd = 'test -f /mnt/system/backblaze_b2/Gloomy_Forest_wallpaper_ForWallpapercom.jpg'
     results = ssh_cmd(cmd, 'root', 'testing', nas_ip)
     assert results['result'] is False, results['output']
@@ -526,6 +572,7 @@ def on_the_backblaze_b2_test_folder_tab_delete_all_file(driver):
 @then('select PUSH as the Direction then under Transfer Mode, select SYNC')
 def select_push_as_the_direction_then_under_transfer_mode_select_sync(driver):
     """select PUSH as the Direction then under Transfer Mode, select SYNC."""
+    assert wait_on_element(driver, 7, '//mat-checkbox[@ix-auto="checkbox__Follow Symlinks"]', 'clickable')
     assert wait_on_element(driver, 5, '//mat-select[contains(.,"PULL")]')
     assert wait_on_element(driver, 5, '//mat-select[contains(.,"SYNC")]')
     assert wait_on_element(driver, 5, '//mat-select[@ix-auto="select__Direction"]', 'clickable')

@@ -37,10 +37,12 @@ def the_browser_is_open_the_freenas_url_and_logged_in(driver, nas_ip, root_passw
         driver.find_element_by_xpath('//input[@placeholder="Password"]').send_keys(root_password)
         assert wait_on_element(driver, 4, '//button[@name="signin_button"]')
         driver.find_element_by_xpath('//button[@name="signin_button"]').click()
-    else:
+    if not is_element_present(driver, '//li[contains(.,"Dashboard")]'):
+        assert wait_on_element(driver, 10, '//span[contains(.,"root")]')
         element = driver.find_element_by_xpath('//span[contains(.,"root")]')
         driver.execute_script("arguments[0].scrollIntoView();", element)
         time.sleep(0.5)
+        assert wait_on_element(driver, 7, '//mat-list-item[@ix-auto="option__Dashboard"]', 'clickable')
         driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
 
 
@@ -145,9 +147,9 @@ def active_directory_should_successfully_save_and_start_without_an_error(driver)
     """Active Directory should successfully save and start without an error."""
     assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
     assert wait_on_element(driver, 7, '//div[contains(.,"Settings saved.")]')
-    assert wait_on_element_disappear(driver, 20, '//h1[contains(text(),"Configuring Active Directory")]')
+    assert wait_on_element_disappear(driver, 35, '//h1[contains(text(),"Configuring Active Directory")]')
     # This 5 seconds of sleep is to let the system ketchup.
-    time.sleep(2)
+    time.sleep(5)
 
 
 @then(parsers.parse('run "{cmd}" on the NAS with ssh'))

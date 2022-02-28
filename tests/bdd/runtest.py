@@ -25,6 +25,7 @@ Options:
                                    test-suite options: ha-bhyve02, ha-tn09, core
 --iso-version <name-version>     - The iso name and version
                                    Example: TrueNAS-12.0-INTERNAL-168
+--marker      <marker>           - Pytest markers to use like debug_test
 """
 
 
@@ -35,13 +36,18 @@ option_list = [
     'nas-password=',
     'convert-feature',
     'test-suite=',
-    'iso-version='
+    'iso-version=',
+    'marker='
 ]
 
 test_suite_list = [
     'ha-bhyve02',
     'ha-tn09',
     'core'
+]
+
+markers_list = [
+    'debug_test'
 ]
 
 
@@ -84,8 +90,9 @@ except getopt.GetoptError as e:
     sys.exit(1)
 
 global ip, password
-test_suite = 'ha-bhyve02'
+test_suite = 'core'
 run_convert = False
+marker = ''
 
 for output, arg in myopts:
     if output == '--ip':
@@ -109,6 +116,14 @@ for output, arg in myopts:
     elif output == "--help":
         print(UsageMSG)
         exit(0)
+    elif output == '--marker':
+        if arg in markers_list:
+            marker = arg
+        else:
+            print(f'"{arg}" is not a supported marker')
+            print('Here is the list supported markers:\n',
+                  markers_list)
+            exit(1)
 
 
 def run_testing():
@@ -150,6 +165,9 @@ def run_testing():
         "--junitxml=results/junit/webui_test.xml",
         "--cucumber-json=results/cucumber/webui_test.json"
     ]
+    if marker:
+        pytest_cmd.append("-k")
+        pytest_cmd.append(marker)
     run(pytest_cmd)
 
 

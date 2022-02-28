@@ -37,10 +37,12 @@ def the_browser_is_open_on_the_truenas_url_and_logged_in(driver, nas_ip, root_pa
         driver.find_element_by_xpath('//input[@placeholder="Password"]').send_keys(root_password)
         assert wait_on_element(driver, 4, '//button[@name="signin_button"]')
         driver.find_element_by_xpath('//button[@name="signin_button"]').click()
-    else:
+    if not is_element_present(driver, '//li[contains(.,"Dashboard")]'):
+        assert wait_on_element(driver, 10, '//span[contains(.,"root")]')
         element = driver.find_element_by_xpath('//span[contains(.,"root")]')
         driver.execute_script("arguments[0].scrollIntoView();", element)
         time.sleep(0.5)
+        assert wait_on_element(driver, 7, '//mat-list-item[@ix-auto="option__Dashboard"]', 'clickable')
         driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
 
 
@@ -92,7 +94,7 @@ def click_the_submit_button_testzvol_zvol_should_be_created_and_in_the_tank_list
     """click the SUBMIT button, testzvol zvol should be created and in the Tank list."""
     assert wait_on_element(driver, 5, '//button[@ix-auto="button__SUBMIT"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__SUBMIT"]').click()
-    assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
+    assert wait_on_element_disappear(driver, 60, '//h6[contains(.,"Please wait")]')
     assert wait_on_element(driver, 5, f'//span[contains(.,"{zvol_name}")]')
 
 
@@ -114,7 +116,7 @@ def on_the_edit_zvol_page_change_the_zvol_size_to_4_gib_then_click_save(driver, 
     driver.find_element_by_xpath('//input[@ix-auto="input__Size for this zvol"]').send_keys(zvol_size)
     assert wait_on_element(driver, 5, '//button[@ix-auto="button__SAVE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
-    assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
+    assert wait_on_element_disappear(driver, 60, '//h6[contains(.,"Please wait")]')
 
 
 @then(parsers.parse('the {zvol_name} should be saved and show the new size'))

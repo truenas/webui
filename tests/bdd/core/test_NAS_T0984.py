@@ -15,6 +15,9 @@ from pytest_bdd import (
     when,
     parsers
 )
+import pytest
+
+pytestmark = [pytest.mark.debug_test]
 
 
 @scenario('features/NAS-T984.feature', 'Setting interface from dhcp to a static ip')
@@ -37,10 +40,12 @@ def the_browser_is_open_the_freenas_url_and_logged_in(driver, nas_ip, root_passw
         driver.find_element_by_xpath('//input[@placeholder="Password"]').send_keys(root_password)
         assert wait_on_element(driver, 4, '//button[@name="signin_button"]')
         driver.find_element_by_xpath('//button[@name="signin_button"]').click()
-    else:
+    if not is_element_present(driver, '//li[contains(.,"Dashboard")]'):
+        assert wait_on_element(driver, 10, '//span[contains(.,"root")]')
         element = driver.find_element_by_xpath('//span[contains(.,"root")]')
         driver.execute_script("arguments[0].scrollIntoView();", element)
         time.sleep(0.5)
+        assert wait_on_element(driver, 7, '//mat-list-item[@ix-auto="option__Dashboard"]', 'clickable')
         driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
 
 
@@ -141,7 +146,7 @@ def when_the_Interfaces_page_appears_verify_vnet0_DHCP_is_no(driver):
     """when the Interfaces page appears verify vnet0 DHCP is "no"."""
     assert wait_on_element(driver, 7, '//div[contains(.,"Interfaces")]')
     assert wait_on_element(driver, 7, '//div[@id="vtnet0_Name"]')
-    dhcp = driver.find_element_by_xpath('//div[@id="vtnet0_DHCP"]').text
+    dhcp = driver.find_element_by_xpath('//div[contains(@id,"vtnet0_DHCP")]').text
     assert dhcp == "no"
 
 
@@ -193,5 +198,5 @@ def on_the_interfaces_page_vnet0_dhcp_is_no(driver):
     """on the Interfaces page vnet0 DHCP is "no"."""
     assert wait_on_element(driver, 7, '//div[contains(.,"Interfaces")]')
     assert wait_on_element(driver, 7, '//div[@id="vtnet0_Name"]')
-    dhcp = driver.find_element_by_xpath('//div[@id="vtnet0_DHCP"]').text
+    dhcp = driver.find_element_by_xpath('//div[contains(@id,"vtnet0_DHCP")]').text
     assert dhcp == "no"

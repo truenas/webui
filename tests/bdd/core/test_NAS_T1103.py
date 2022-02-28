@@ -37,10 +37,12 @@ def the_browser_is_open_on_the_truenas_url_and_logged_in(driver, nas_ip, root_pa
         driver.find_element_by_xpath('//input[@placeholder="Password"]').send_keys(root_password)
         assert wait_on_element(driver, 4, '//button[@name="signin_button"]')
         driver.find_element_by_xpath('//button[@name="signin_button"]').click()
-    else:
+    if not is_element_present(driver, '//li[contains(.,"Dashboard")]'):
+        assert wait_on_element(driver, 10, '//span[contains(.,"root")]')
         element = driver.find_element_by_xpath('//span[contains(.,"root")]')
         driver.execute_script("arguments[0].scrollIntoView();", element)
         time.sleep(0.5)
+        assert wait_on_element(driver, 7, '//mat-list-item[@ix-auto="option__Dashboard"]', 'clickable')
         driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
 
 
@@ -128,9 +130,9 @@ def after_iconik_plugin_should_be_in_the_table(driver):
 @then('status should be "up", with the Boot option checked')
 def status_should_be_up_with_the_boot_option_checked(driver):
     """status should be "up", with the Boot option checked."""
-    assert wait_on_element(driver, 20, '//div[@id="iconiktest_Status"]//span[text()="up"]')
-    assert wait_on_element(driver, 5, '//mat-checkbox[@id="iconiktest_Boot-checkbox"]')
-    assert attribute_value_exist(driver, '//mat-checkbox[@id="iconiktest_Boot-checkbox"]', 'class', 'mat-checkbox-checked')
+    assert wait_on_element(driver, 20, '//div[contains(@id,"iconiktest_Status")]//span[text()="up"]')
+    assert wait_on_element(driver, 5, '//mat-checkbox[contains(@id,"iconiktest_Boot-checkbox")]')
+    assert attribute_value_exist(driver, '//mat-checkbox[contains(@id,"iconiktest_Boot-checkbox")]', 'class', 'mat-checkbox-checked')
 
 
 @then('at the right of the plugin table, click the ">"')

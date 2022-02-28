@@ -16,6 +16,9 @@ from pytest_bdd import (
     when,
     parsers
 )
+import pytest
+
+pytestmark = [pytest.mark.debug_test]
 
 
 @scenario('features/NAS-T1136.feature', 'Verify Dropbox Cloud Sync task works')
@@ -38,7 +41,8 @@ def the_browser_is_open_on_the_truenas_url_and_logged_in(driver, nas_ip, root_pa
         driver.find_element_by_xpath('//input[@placeholder="Password"]').send_keys(root_password)
         assert wait_on_element(driver, 5, '//button[@name="signin_button"]')
         driver.find_element_by_xpath('//button[@name="signin_button"]').click()
-    else:
+    if not is_element_present(driver, '//li[contains(.,"Dashboard")]'):
+        assert wait_on_element(driver, 10, '//span[contains(.,"root")]')
         element = driver.find_element_by_xpath('//span[contains(.,"root")]')
         driver.execute_script("arguments[0].scrollIntoView();", element)
         assert wait_on_element(driver, 5, '//mat-list-item[@ix-auto="option__Dashboard"]', 'clickable')
@@ -110,6 +114,7 @@ def on_the_cloud_sync_tasks_click_add(driver):
 @then('input a description and ensure PULL is selected as the Direction')
 def input_a_description_and_ensure_pull_is_selected_as_the_direction(driver):
     """input a description and ensure PULL is selected as the Direction."""
+    assert wait_on_element(driver, 7, '//mat-checkbox[@ix-auto="checkbox__Follow Symlinks"]', 'clickable')
     assert wait_on_element(driver, 5, '//input[@placeholder="Description"]', 'inputable')
     driver.find_element_by_xpath('//input[@placeholder="Description"]').clear()
     driver.find_element_by_xpath('//input[@placeholder="Description"]').send_keys('My Dropbox task')
@@ -149,6 +154,7 @@ def under_transfer_mode_select_copy_click_save(driver):
 @then('the Dropbox tasks should save without error')
 def the_dropbox_tasks_should_save_without_error(driver):
     """the Dropbox tasks should save without error."""
+    assert wait_on_element(driver, 5, '//div[contains(.,"Cloud Sync Tasks")]')
     assert wait_on_element(driver, 5, '//div[contains(text(),"My Dropbox task")]')
 
 
@@ -157,20 +163,28 @@ def expand_the_task_on_the_nas_ui_and_click_run_now(driver):
     """expand the task on the NAS UI and click Run Now."""
     assert wait_on_element(driver, 5, '//a[@ix-auto="expander__My Dropbox task"]', 'clickable')
     driver.find_element_by_xpath('//a[@ix-auto="expander__My Dropbox task"]').click()
+    time.sleep(0.5)
     assert wait_on_element(driver, 5, '//button[@id="action_button___run_now"]', 'clickable')
     driver.find_element_by_xpath('//button[@id="action_button___run_now"]').click()
+    assert wait_on_element(driver, 5, '//h1[text()="Run Now"]')
     assert wait_on_element(driver, 5, '//button[@ix-auto="button__CONTINUE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__CONTINUE"]').click()
+    assert wait_on_element(driver, 5, '//h1[contains(text(),"Task Started")]')
     assert wait_on_element(driver, 5, '//button[@ix-auto="button__CLOSE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
+    assert wait_on_element_disappear(driver, 30, '//h1[contains(text(),"Task Started")]')
     time.sleep(1)
-    assert wait_on_element(driver, 60, '//button[@id="My Dropbox task_Status-button" and contains(.,"SUCCESS")]')
-    time.sleep(5)
+    assert wait_on_element(driver, 120, '//button[@id="My Dropbox task_Status-button" and contains(.,"SUCCESS")]')
 
 
 @then('verify all files are copied from Dropbox are into the dataset')
 def verify_all_files_are_copied_from_dropbox_are_into_the_dataset(driver, nas_ip):
     """verify all files are copied from Dropbox are into the dataset."""
+    cmd = 'test -f /mnt/system/dropbox_cloud/music/Mr_Smith_Pequeñas_Guitarras.mp3'
+    timeout = time.time() + 30
+    while timeout > time.time():
+        if ssh_cmd(cmd, 'root', 'testing', nas_ip)['result']:
+            break
     cmd = 'test -f /mnt/system/dropbox_cloud/Gloomy_Forest_wallpaper_ForWallpapercom.jpg'
     results = ssh_cmd(cmd, 'root', 'testing', nas_ip)
     assert results['result'] is True, results['output']
@@ -187,22 +201,23 @@ def on_the_nas_cloud_sync_task_tab_click_edit(driver):
     """on the NAS cloud sync task tab, click Edit."""
     driver.switch_to.window(driver.window_handles[0])
     time.sleep(1)
+    assert wait_on_element(driver, 5, '//div[contains(.,"Cloud Sync Tasks")]')
     assert wait_on_element(driver, 5, '//div[contains(text(),"My Dropbox task")]')
+    assert wait_on_element(driver, 5, '//a[@ix-auto="expander__My Dropbox task"]', 'clickable')
     if not wait_on_element(driver, 2, '//button[@ix-auto="button___edit"]', 'clickable'):
-        assert wait_on_element(driver, 5, '//a[@ix-auto="expander__My Dropbox task"]', 'clickable')
         driver.find_element_by_xpath('//a[@ix-auto="expander__My Dropbox task"]').click()
-    time.sleep(0.5)
-    assert wait_on_element(driver, 5, '//button[@ix-auto="button___edit"]', 'clickable')
+    time.sleep(1)
+    assert wait_on_element(driver, 7, '//button[@ix-auto="button___edit"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button___edit"]').click()
     assert wait_on_element(driver, 5, '//h4[contains(.,"Transfer")]')
-    # give time to the system to be ready.
-    time.sleep(1)
 
 
 @then('select PUSH as the Direction then under Transfer Mode, select COPY')
 def select_push_as_the_direction_then_under_transfer_mode_select_copy(driver):
     """select PUSH as the Direction then under Transfer Mode, select COPY."""
+    assert wait_on_element(driver, 7, '//mat-checkbox[@ix-auto="checkbox__Follow Symlinks"]', 'clickable')
     assert wait_on_element(driver, 5, '//mat-select[contains(.,"PULL")]')
+    assert wait_on_element(driver, 5, '//mat-select[contains(.,"COPY")]')
     assert wait_on_element(driver, 5, '//mat-select[@ix-auto="select__Direction"]', 'clickable')
     driver.find_element_by_xpath('//mat-select[@ix-auto="select__Direction"]').click()
     assert wait_on_element(driver, 5, '//mat-option[@ix-auto="option__Direction_PUSH"]', 'clickable')
@@ -256,6 +271,7 @@ def input_user_name_and_password_click_sign_in(driver, user_name, password):
             time.sleep(1)
         driver.switch_to.window(driver.window_handles[1])
     assert wait_on_element(driver, 15, '//nav[contains(.,"Dropbox")]//span[text()="Dropbox"]')
+    time.sleep(1)
 
 
 @then(parsers.parse('click on {folder1} then click on the test folder'))
@@ -264,9 +280,10 @@ def click_on_folder1_then_click_on_the_test_folder(driver, folder1):
     assert wait_on_element(driver, 5, f'//span[text()="{folder1}"]', 'clickable')
     driver.find_element_by_xpath(f'//span[text()="{folder1}"]').click()
     time.sleep(1)
-    assert wait_on_element(driver, 7, f'//nav[contains(.,"{folder1}")]//span[text()="{folder1}"]')
-    assert wait_on_element(driver, 7, '//span[text()="initial"]', 'clickable')
-    assert wait_on_element(driver, 10, '//span[text()="test"]', 'clickable')
+    assert wait_on_element(driver, 10, '//nav[contains(.,"Dropbox")]//span[text()="Dropbox"]', 'clickable')
+    assert wait_on_element(driver, 10, f'//nav[contains(.,"{folder1}")]//span[text()="{folder1}"]')
+    assert wait_on_element(driver, 10, '//span[text()="initial"]', 'clickable')
+    assert wait_on_element(driver, 15, '//span[text()="test"]', 'clickable')
     time.sleep(1)
     driver.find_element_by_xpath('//span[text()="test"]').click()
     time.sleep(1)
@@ -303,6 +320,7 @@ def remove_all_files_from_the_dataset(driver, nas_ip):
 @then('select PULL as the Direction then under Transfer Mode, select MOVE')
 def select_pull_as_the_direction_then_under_transfer_mode_select_move(driver):
     """select PULL as the Direction then under Transfer Mode, select MOVE."""
+    assert wait_on_element(driver, 7, '//mat-checkbox[@ix-auto="checkbox__Follow Symlinks"]', 'clickable')
     assert wait_on_element(driver, 5, '//mat-select[contains(.,"PUSH")]')
     assert wait_on_element(driver, 5, '//mat-select[contains(.,"COPY")]')
     assert wait_on_element(driver, 5, '//mat-select[@ix-auto="select__Direction"]', 'clickable')
@@ -323,12 +341,26 @@ def click_save_the_dropbox_tasks_should_save_without_error(driver):
     assert wait_on_element(driver, 5, '//button[@id="save_button"]', 'clickable')
     driver.find_element_by_xpath('//button[@id="save_button"]').click()
     assert wait_on_element_disappear(driver, 30, '//h6[contains(.,"Please wait")]')
+    assert wait_on_element(driver, 5, '//div[contains(.,"Cloud Sync Tasks")]')
     assert wait_on_element(driver, 5, '//div[contains(text(),"My Dropbox task")]')
 
 
 @then('verify all files are moved from the Dropbox test folder to the dataset')
 def verify_all_files_are_moved_from_the_dropbox_test_folder_to_the_dataset(driver, nas_ip):
     """verify all files are moved from the Dropbox test folder to the dataset."""
+    cmd = 'test -f /mnt/system/dropbox_cloud/music/Mr_Smith_Pequeñas_Guitarras.mp3'
+    timeout = time.time() + 30
+    while timeout > time.time():
+        if ssh_cmd(cmd, 'root', 'testing', nas_ip)['result']:
+            break
+    results = ssh_cmd(cmd, 'root', 'testing', nas_ip)
+    assert results['result'] is True, results['output']
+    cmd = 'test -f /mnt/system/dropbox_cloud/Explaining_BSD.pdf'
+    results = ssh_cmd(cmd, 'root', 'testing', nas_ip)
+    assert results['result'] is True, results['output']
+    cmd = 'test -f /mnt/system/dropbox_cloud/music/Mr_Smith_Pequeñas_Guitarras.mp3'
+    results = ssh_cmd(cmd, 'root', 'testing', nas_ip)
+    assert results['result'] is True, results['output']
     driver.switch_to.window(driver.window_handles[1])
     time.sleep(0.5)
     driver.refresh()
@@ -343,19 +375,12 @@ def verify_all_files_are_moved_from_the_dropbox_test_folder_to_the_dataset(drive
     assert wait_on_element(driver, 5, '//nav[contains(.,"test")]//a[contains(.,"test")]', 'clickable')
     driver.find_element_by_xpath('//nav[contains(.,"test")]//a[contains(.,"test")]').click()
     cmd = 'test -f /mnt/system/dropbox_cloud/Gloomy_Forest_wallpaper_ForWallpapercom.jpg'
-    results = ssh_cmd(cmd, 'root', 'testing', nas_ip)
-    assert results['result'] is True, results['output']
-    cmd = 'test -f /mnt/system/dropbox_cloud/Explaining_BSD.pdf'
-    results = ssh_cmd(cmd, 'root', 'testing', nas_ip)
-    assert results['result'] is True, results['output']
-    cmd = 'test -f /mnt/system/dropbox_cloud/music/Mr_Smith_Pequeñas_Guitarras.mp3'
-    results = ssh_cmd(cmd, 'root', 'testing', nas_ip)
-    assert results['result'] is True, results['output']
 
 
 @then('select PUSH as the Direction then under Transfer Mode, select MOVE')
 def select_push_as_the_direction_then_under_transfer_mode_select_move(driver):
     """select PUSH as the Direction then under Transfer Mode, select MOVE."""
+    assert wait_on_element(driver, 7, '//mat-checkbox[@ix-auto="checkbox__Follow Symlinks"]', 'clickable')
     assert wait_on_element(driver, 5, '//mat-select[contains(.,"PULL")]')
     assert wait_on_element(driver, 5, '//mat-select[contains(.,"MOVE")]')
     assert wait_on_element(driver, 5, '//mat-select[@ix-auto="select__Direction"]', 'clickable')
@@ -377,6 +402,11 @@ def select_push_as_the_direction_then_under_transfer_mode_select_move(driver):
 @then('verify all files are moved from the dataset to the Dropbox test folder')
 def verify_all_files_are_moved_from_the_dataset_to_the_dropbox_test_folder(driver, nas_ip):
     """verify all files are moved from the dataset to the Dropbox test folder."""
+    cmd = 'test -f /mnt/system/dropbox_cloud/music/Mr_Smith_Pequeñas_Guitarras.mp3'
+    timeout = time.time() + 30
+    while timeout > time.time():
+        if not ssh_cmd(cmd, 'root', 'testing', nas_ip)['result']:
+            break
     cmd = 'test -f /mnt/system/dropbox_cloud/Gloomy_Forest_wallpaper_ForWallpapercom.jpg'
     results = ssh_cmd(cmd, 'root', 'testing', nas_ip)
     assert results['result'] is False, results['output']
@@ -404,6 +434,7 @@ def verify_all_files_are_moved_from_the_dataset_to_the_dropbox_test_folder(drive
 @then('select PULL as the Direction then under Transfer Mode, select SYNC')
 def select_pull_as_the_direction_then_under_transfer_mode_select_sync(driver):
     """select PULL as the Direction then under Transfer Mode, select SYNC."""
+    assert wait_on_element(driver, 7, '//mat-checkbox[@ix-auto="checkbox__Follow Symlinks"]', 'clickable')
     assert wait_on_element(driver, 5, '//mat-select[contains(.,"PUSH")]')
     assert wait_on_element(driver, 5, '//mat-select[contains(.,"MOVE")]')
     assert wait_on_element(driver, 5, '//mat-select[@ix-auto="select__Direction"]', 'clickable')
@@ -425,6 +456,11 @@ def select_pull_as_the_direction_then_under_transfer_mode_select_sync(driver):
 @then('verify all files are sync to the dataset folder')
 def verify_all_files_are_sync_to_the_dataset_folder(driver, nas_ip):
     """verify all files are sync to the dataset folder."""
+    cmd = 'test -f /mnt/system/dropbox_cloud/music/Mr_Smith_Pequeñas_Guitarras.mp3'
+    timeout = time.time() + 30
+    while timeout > time.time():
+        if ssh_cmd(cmd, 'root', 'testing', nas_ip)['result']:
+            break
     cmd = 'test -f /mnt/system/dropbox_cloud/Gloomy_Forest_wallpaper_ForWallpapercom.jpg'
     results = ssh_cmd(cmd, 'root', 'testing', nas_ip)
     assert results['result'] is True, results['output']
@@ -461,22 +497,31 @@ def on_the_dropbox_test_folder_tab_delete_one_file(driver):
 def on_the_nas_cloud_sync_task_tab_click_run_now(driver):
     """on the NAS cloud sync task tab, click Run Now."""
     driver.switch_to.window(driver.window_handles[0])
+    assert wait_on_element(driver, 5, '//div[contains(.,"Cloud Sync Tasks")]')
     assert wait_on_element(driver, 5, '//div[contains(text(),"My Dropbox task")]')
+    assert wait_on_element(driver, 5, '//a[@ix-auto="expander__My Dropbox task"]', 'clickable')
+    time.sleep(0.5)
     assert wait_on_element(driver, 5, '//button[@id="action_button___run_now"]', 'clickable')
     driver.find_element_by_xpath('//button[@id="action_button___run_now"]').click()
+    assert wait_on_element(driver, 5, '//h1[text()="Run Now"]')
     assert wait_on_element(driver, 5, '//button[@ix-auto="button__CONTINUE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__CONTINUE"]').click()
+    assert wait_on_element(driver, 5, '//h1[contains(text(),"Task Started")]')
     assert wait_on_element(driver, 5, '//button[@ix-auto="button__CLOSE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
+    assert wait_on_element_disappear(driver, 30, '//h1[contains(text(),"Task Started")]')
     time.sleep(1)
-    assert wait_on_element(driver, 60, '//button[@id="My Dropbox task_Status-button" and contains(.,"SUCCESS")]')
-    # give time to the system to be ready.
-    time.sleep(5)
+    assert wait_on_element(driver, 120, '//button[@id="My Dropbox task_Status-button" and contains(.,"SUCCESS")]')
 
 
 @then('verify the file is removed from the dataset folder')
 def verify_the_file_is_removed_from_the_dataset_folder(driver, nas_ip):
     """verify the file is removed from the dataset folder."""
+    cmd = 'test -f /mnt/system/dropbox_cloud/Gloomy_Forest_wallpaper_ForWallpapercom.jpg'
+    timeout = time.time() + 30
+    while timeout > time.time():
+        if not ssh_cmd(cmd, 'root', 'testing', nas_ip)['result']:
+            break
     cmd = 'test -f /mnt/system/dropbox_cloud/Gloomy_Forest_wallpaper_ForWallpapercom.jpg'
     results = ssh_cmd(cmd, 'root', 'testing', nas_ip)
     assert results['result'] is False, results['output']
@@ -521,6 +566,7 @@ def on_the_dropbox_test_folder_tab_delete_all_file(driver):
 @then('select PUSH as the Direction then under Transfer Mode, select SYNC')
 def select_push_as_the_direction_then_under_transfer_mode_select_sync(driver):
     """select PUSH as the Direction then under Transfer Mode, select SYNC."""
+    assert wait_on_element(driver, 7, '//mat-checkbox[@ix-auto="checkbox__Follow Symlinks"]', 'clickable')
     assert wait_on_element(driver, 5, '//mat-select[contains(.,"PULL")]')
     assert wait_on_element(driver, 5, '//mat-select[contains(.,"SYNC")]')
     assert wait_on_element(driver, 5, '//mat-select[@ix-auto="select__Direction"]', 'clickable')
@@ -550,8 +596,9 @@ def verify_all_files_are_sync_to_the_Dropbox_test_folder_tab(driver):
     assert wait_on_element(driver, 7, '//span[text()="Explaining_BSD.pdf"]', 'clickable')
     assert wait_on_element(driver, 5, '//span[text()="music"]', 'clickable')
     driver.find_element_by_xpath('//span[text()="music"]').click()
-    assert wait_on_element(driver, 5, '//nav[contains(.,"music")]//span[text()="music"]')
-    assert wait_on_element(driver, 5, '//span[text()="Mr_Smith_Pequeñas_Guitarras.mp3"]', 'clickable')
+    time.sleep(0.5)
+    assert wait_on_element(driver, 10, '//nav[contains(.,"music")]//span[text()="music"]')
+    assert wait_on_element(driver, 10, '//span[text()="Mr_Smith_Pequeñas_Guitarras.mp3"]', 'clickable')
     assert wait_on_element(driver, 5, '//nav[contains(.,"test")]//a[contains(.,"test")]', 'clickable')
     driver.find_element_by_xpath('//nav[contains(.,"test")]//a[contains(.,"test")]').click()
 
@@ -569,11 +616,18 @@ def verify_the_file_is_removed_from_the_dropbox_test_folder_tab(driver):
     """verify the file is removed from the Dropbox test folder tab."""
     driver.switch_to.window(driver.window_handles[1])
     time.sleep(1)
-    driver.refresh()
-    time.sleep(2)
-    assert wait_on_element(driver, 5, '//nav[contains(.,"test")]//span[text()="test"]')
-    assert wait_on_element(driver, 7, '//span[text()="Explaining_BSD.pdf"]')
-    assert not is_element_present(driver, '//span[text()="music"]')
+    # loop for 15 second or until music disappear
+    timeout = time.time() + 15
+    while timeout > time.time():
+        driver.refresh()
+        time.sleep(1)
+        assert wait_on_element(driver, 5, '//nav[contains(.,"test")]//span[text()="test"]')
+        assert wait_on_element(driver, 7, '//span[text()="Explaining_BSD.pdf"]')
+        if not is_element_present(driver, '//span[text()="music"]'):
+            assert not is_element_present(driver, '//span[text()="music"]')
+            break
+    else:
+        assert not is_element_present(driver, '//span[text()="music"]')
     # clean the test folder on box tab before closing the tab.
     assert wait_on_element(driver, 5, '//span[text()="Explaining_BSD.pdf"]', 'clickable')
     time.sleep(0.5)

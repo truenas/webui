@@ -40,10 +40,12 @@ def the_browser_is_open_on_the_truenas_url_and_logged_in(driver, nas_ip, root_pa
         driver.find_element_by_xpath('//input[@placeholder="Password"]').send_keys(root_password)
         assert wait_on_element(driver, 4, '//button[@name="signin_button"]')
         driver.find_element_by_xpath('//button[@name="signin_button"]').click()
-    else:
+    if not is_element_present(driver, '//li[contains(.,"Dashboard")]'):
+        assert wait_on_element(driver, 10, '//span[contains(.,"root")]')
         element = driver.find_element_by_xpath('//span[contains(.,"root")]')
         driver.execute_script("arguments[0].scrollIntoView();", element)
         time.sleep(0.5)
+        assert wait_on_element(driver, 7, '//mat-list-item[@ix-auto="option__Dashboard"]', 'clickable')
         driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
 
 
@@ -59,7 +61,7 @@ def click_on_the_system_on_the_side_menu_click_on_general(driver):
     """click on the System on the side menu, click on General."""
     assert wait_on_element(driver, 7, '//mat-list-item[@ix-auto="option__System"]', 'clickable')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__System"]').click()
-    assert wait_on_element(driver, 7, '//mat-list-item[@ix-auto="option__General"]')
+    assert wait_on_element(driver, 7, '//mat-list-item[@ix-auto="option__General"]', 'clickable')
     element = driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__System"]')
     class_attribute = element.get_attribute('class')
     assert 'open' in class_attribute, class_attribute

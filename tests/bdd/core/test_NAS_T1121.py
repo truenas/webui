@@ -25,6 +25,10 @@ from pytest_bdd import (
     parsers
 )
 
+import pytest
+
+# pytestmark = [pytest.mark.debug_test]
+
 
 @scenario('features/NAS-T1121.feature', 'Verify Amazon S3 Cloud Sync task works')
 def test_verify_amazon_s3_cloud_sync_task_works(driver):
@@ -46,7 +50,8 @@ def the_browser_is_open_on_the_truenas_url_and_logged_in(driver, nas_ip, root_pa
         driver.find_element_by_xpath('//input[@placeholder="Password"]').send_keys(root_password)
         assert wait_on_element(driver, 5, '//button[@name="signin_button"]')
         driver.find_element_by_xpath('//button[@name="signin_button"]').click()
-    else:
+    if not is_element_present(driver, '//li[contains(.,"Dashboard")]'):
+        assert wait_on_element(driver, 10, '//span[contains(.,"root")]')
         element = driver.find_element_by_xpath('//span[contains(.,"root")]')
         driver.execute_script("arguments[0].scrollIntoView();", element)
         assert wait_on_element(driver, 5, '//mat-list-item[@ix-auto="option__Dashboard"]', 'clickable')
@@ -115,6 +120,7 @@ def on_the_cloud_sync_tasks_click_add(driver):
 @then('input a description and ensure PULL is selected as the Direction')
 def input_a_description_and_ensure_pull_is_selected_as_the_direction(driver):
     """input a description and ensure PULL is selected as the Direction."""
+    assert wait_on_element(driver, 7, '//mat-checkbox[@ix-auto="checkbox__Follow Symlinks"]', 'clickable')
     assert wait_on_element(driver, 5, '//input[@placeholder="Description"]', 'inputable')
     driver.find_element_by_xpath('//input[@placeholder="Description"]').clear()
     driver.find_element_by_xpath('//input[@placeholder="Description"]').send_keys('My S3 AWS Share')
@@ -157,6 +163,7 @@ def under_transfer_mode_select_copy_click_save(driver):
 @then('the new Cloud Sync Tasks should save without error')
 def the_new_cloud_sync_tasks_should_save_without_error(driver):
     """the new Cloud Sync Tasks should save without error."""
+    assert wait_on_element(driver, 5, '//div[contains(.,"Cloud Sync Tasks")]')
     assert wait_on_element(driver, 5, '//div[contains(.,"My S3 AWS Share")]')
 
 
@@ -206,16 +213,21 @@ def click_on_the_bucket_being_used_and_then_upload_a_file(driver):
 def on_the_nas_tab_expand_the_task_on_the_nas_ui_and_click_run_now(driver):
     """on the NAS tab, expand the task on the NAS UI and click Run Now."""
     driver.switch_to.window(driver.window_handles[0])
+    assert wait_on_element(driver, 5, '//div[contains(.,"Cloud Sync Tasks")]')
     assert wait_on_element(driver, 5, '//div[contains(.,"My S3 AWS Share")]')
     assert wait_on_element(driver, 5, '//a[@title="Expand/Collapse Row"]', 'clickable')
     driver.find_element_by_xpath('//a[@title="Expand/Collapse Row"]').click()
+    time.sleep(0.5)
     assert wait_on_element(driver, 5, '//button[@id="action_button___run_now"]', 'clickable')
     driver.find_element_by_xpath('//button[@id="action_button___run_now"]').click()
+    assert wait_on_element(driver, 5, '//h1[text()="Test Cloud Sync" or text()="Run Now"]')
     assert wait_on_element(driver, 5, '//button[@ix-auto="button__CONTINUE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__CONTINUE"]').click()
+    assert wait_on_element(driver, 5, '//h1[contains(text(),"Task Started")]')
     assert wait_on_element(driver, 5, '//button[@ix-auto="button__CLOSE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
-    assert wait_on_element(driver, 60, '//button[@id="My S3 AWS Share_Status-button" and contains(.,"SUCCESS")]')
+    assert wait_on_element_disappear(driver, 30, '//h1[contains(text(),"Task Started")]')
+    assert wait_on_element(driver, 120, '//button[@id="My S3 AWS Share_Status-button" and contains(.,"SUCCESS")]')
     time.sleep(5)
 
 
@@ -254,6 +266,7 @@ def on_the_nas_tad_on_the_cloud_sync_task_click_run_now(driver):
     """on the NAS tad on the cloud sync task, click Run Now."""
     driver.switch_to.window(driver.window_handles[0])
     time.sleep(1)
+    assert wait_on_element(driver, 5, '//div[contains(.,"Cloud Sync Tasks")]')
     assert wait_on_element(driver, 5, '//div[contains(.,"My S3 AWS Share")]')
     if not wait_on_element(driver, 2, '//button[@id="action_button___run_now"]', 'clickable'):
         assert wait_on_element(driver, 5, '//a[@title="Expand/Collapse Row"]', 'clickable')
@@ -261,11 +274,14 @@ def on_the_nas_tad_on_the_cloud_sync_task_click_run_now(driver):
     time.sleep(1)
     assert wait_on_element(driver, 5, '//button[@id="action_button___run_now"]', 'clickable')
     driver.find_element_by_xpath('//button[@id="action_button___run_now"]').click()
+    assert wait_on_element(driver, 5, '//h1[text()="Run Now"]')
     assert wait_on_element(driver, 5, '//button[@ix-auto="button__CONTINUE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__CONTINUE"]').click()
+    assert wait_on_element(driver, 5, '//h1[contains(text(),"Task Started")]')
     assert wait_on_element(driver, 5, '//button[@ix-auto="button__CLOSE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
-    assert wait_on_element(driver, 60, '//button[@id="My S3 AWS Share_Status-button" and contains(.,"SUCCESS")]')
+    assert wait_on_element_disappear(driver, 30, '//h1[contains(text(),"Task Started")]')
+    assert wait_on_element(driver, 120, '//button[@id="My S3 AWS Share_Status-button" and contains(.,"SUCCESS")]')
     time.sleep(5)
 
 
@@ -293,6 +309,7 @@ def on_the_cloud_sync_task_and_click_edit(driver):
     """on the cloud sync task and click Edit."""
     driver.switch_to.window(driver.window_handles[0])
     time.sleep(1)
+    assert wait_on_element(driver, 5, '//div[contains(.,"Cloud Sync Tasks")]')
     assert wait_on_element(driver, 5, '//div[contains(.,"My S3 AWS Share")]')
     if not wait_on_element(driver, 2, '//button[@ix-auto="button___edit"]', 'clickable'):
         assert wait_on_element(driver, 5, '//a[@title="Expand/Collapse Row"]', 'clickable')
@@ -306,6 +323,7 @@ def on_the_cloud_sync_task_and_click_edit(driver):
 @then('under Transfer Mode, select MOVE, click Save')
 def under_transfer_mode_select_move_click_save(driver):
     """under Transfer Mode, select MOVE, click Save."""
+    assert wait_on_element(driver, 7, '//mat-checkbox[@ix-auto="checkbox__Follow Symlinks"]', 'clickable')
     assert wait_on_element(driver, 5, '//mat-select[contains(.,"COPY")]')
     assert wait_on_element(driver, 5, '//mat-select[@ix-auto="select__Transfer Mode"]', 'clickable')
     driver.find_element_by_xpath('//mat-select[@ix-auto="select__Transfer Mode"]').click()
@@ -359,6 +377,7 @@ def verify_all_files_are_moved_from_the_s3_bucket_to_the_dataset(driver, nas_ip)
 @then('under Transfer Mode, select SYNC, then click Save')
 def under_transfer_mode_select_sync_then_click_save(driver):
     """under Transfer Mode, select SYNC, then click Save."""
+    assert wait_on_element(driver, 7, '//mat-checkbox[@ix-auto="checkbox__Follow Symlinks"]', 'clickable')
     assert wait_on_element(driver, 5, '//mat-select[contains(.,"MOVE")]')
     assert wait_on_element(driver, 5, '//mat-select[@ix-auto="select__Transfer Mode"]', 'clickable')
     driver.find_element_by_xpath('//mat-select[@ix-auto="select__Transfer Mode"]').click()
@@ -498,6 +517,7 @@ def verify_that_the_folder_is_not_on_the_nas_dataset(driver, nas_ip):
 @then('select PUSH as the Direction then under Transfer Mode, select COPY')
 def select_push_as_the_direction_then_under_transfer_mode_select_copy(driver):
     """select PUSH as the Direction then under Transfer Mode, select COPY."""
+    assert wait_on_element(driver, 7, '//mat-checkbox[@ix-auto="checkbox__Follow Symlinks"]', 'clickable')
     assert wait_on_element(driver, 5, '//mat-select[contains(.,"PULL")]')
     assert wait_on_element(driver, 5, '//mat-select[@ix-auto="select__Direction"]', 'clickable')
     driver.find_element_by_xpath('//mat-select[@ix-auto="select__Direction"]').click()
@@ -534,17 +554,21 @@ def on_the_nas_tab_expand_the_task_and_click_run_now(driver):
     """on the NAS tab, expand the task and click Run Now."""
     driver.switch_to.window(driver.window_handles[0])
     time.sleep(1)
+    assert wait_on_element(driver, 5, '//div[contains(.,"Cloud Sync Tasks")]')
     assert wait_on_element(driver, 5, '//div[contains(.,"My S3 AWS Share")]')
     if not wait_on_element(driver, 2, '//button[@id="action_button___run_now"]', 'clickable'):
         assert wait_on_element(driver, 5, '//a[@title="Expand/Collapse Row"]', 'clickable')
         driver.find_element_by_xpath('//a[@title="Expand/Collapse Row"]').click()
     assert wait_on_element(driver, 5, '//button[@id="action_button___run_now"]', 'clickable')
     driver.find_element_by_xpath('//button[@id="action_button___run_now"]').click()
+    assert wait_on_element(driver, 5, '//h1[text()="Run Now"]')
     assert wait_on_element(driver, 5, '//button[@ix-auto="button__CONTINUE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__CONTINUE"]').click()
+    assert wait_on_element(driver, 5, '//h1[contains(text(),"Task Started")]')
     assert wait_on_element(driver, 5, '//button[@ix-auto="button__CLOSE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
-    assert wait_on_element(driver, 60, '//button[@id="My S3 AWS Share_Status-button" and contains(.,"SUCCESS")]')
+    assert wait_on_element_disappear(driver, 30, '//h1[contains(text(),"Task Started")]')
+    assert wait_on_element(driver, 120, '//button[@id="My S3 AWS Share_Status-button" and contains(.,"SUCCESS")]')
     time.sleep(5)
 
 
@@ -611,17 +635,21 @@ def delete_the_file_from_the_dataset_and_click_run_now(driver, nas_ip):
     assert results['result'] is True
     driver.switch_to.window(driver.window_handles[0])
     time.sleep(1)
+    assert wait_on_element(driver, 5, '//div[contains(.,"Cloud Sync Tasks")]')
     assert wait_on_element(driver, 5, '//div[contains(.,"My S3 AWS Share")]')
     if not wait_on_element(driver, 2, '//button[@id="action_button___run_now"]', 'clickable'):
         assert wait_on_element(driver, 5, '//a[@title="Expand/Collapse Row"]', 'clickable')
         driver.find_element_by_xpath('//a[@title="Expand/Collapse Row"]').click()
     assert wait_on_element(driver, 5, '//button[@id="action_button___run_now"]', 'clickable')
     driver.find_element_by_xpath('//button[@id="action_button___run_now"]').click()
+    assert wait_on_element(driver, 5, '//h1[text()="Run Now"]')
     assert wait_on_element(driver, 5, '//button[@ix-auto="button__CONTINUE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__CONTINUE"]').click()
+    assert wait_on_element(driver, 5, '//h1[contains(text(),"Task Started")]')
     assert wait_on_element(driver, 5, '//button[@ix-auto="button__CLOSE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
-    assert wait_on_element(driver, 60, '//button[@id="My S3 AWS Share_Status-button" and contains(.,"SUCCESS")]')
+    assert wait_on_element_disappear(driver, 30, '//h1[contains(text(),"Task Started")]')
+    assert wait_on_element(driver, 120, '//button[@id="My S3 AWS Share_Status-button" and contains(.,"SUCCESS")]')
     time.sleep(5)
 
 
@@ -642,17 +670,21 @@ def delete_the_folder_from_the_dataset_then_click_run_now(driver, nas_ip):
     assert results['result'] is True
     driver.switch_to.window(driver.window_handles[0])
     time.sleep(1)
+    assert wait_on_element(driver, 5, '//div[contains(.,"Cloud Sync Tasks")]')
     assert wait_on_element(driver, 5, '//div[contains(.,"My S3 AWS Share")]')
     if not wait_on_element(driver, 2, '//button[@id="action_button___run_now"]', 'clickable'):
         assert wait_on_element(driver, 5, '//a[@title="Expand/Collapse Row"]', 'clickable')
         driver.find_element_by_xpath('//a[@title="Expand/Collapse Row"]').click()
     assert wait_on_element(driver, 5, '//button[@id="action_button___run_now"]', 'clickable')
     driver.find_element_by_xpath('//button[@id="action_button___run_now"]').click()
+    assert wait_on_element(driver, 5, '//h1[text()="Run Now"]')
     assert wait_on_element(driver, 5, '//button[@ix-auto="button__CONTINUE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__CONTINUE"]').click()
+    assert wait_on_element(driver, 5, '//h1[contains(text(),"Task Started")]')
     assert wait_on_element(driver, 5, '//button[@ix-auto="button__CLOSE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
-    assert wait_on_element(driver, 60, '//button[@id="My S3 AWS Share_Status-button" and contains(.,"SUCCESS")]')
+    assert wait_on_element_disappear(driver, 30, '//h1[contains(text(),"Task Started")]')
+    assert wait_on_element(driver, 120, '//button[@id="My S3 AWS Share_Status-button" and contains(.,"SUCCESS")]')
     time.sleep(5)
 
 

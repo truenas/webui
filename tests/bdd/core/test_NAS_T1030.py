@@ -35,10 +35,12 @@ def the_browser_is_open_on_the_TrueNAS_URL_and_logged_in(driver, nas_ip, root_pa
         driver.find_element_by_xpath('//input[@placeholder="Password"]').send_keys(root_password)
         assert wait_on_element(driver, 4, '//button[@name="signin_button"]')
         driver.find_element_by_xpath('//button[@name="signin_button"]').click()
-    else:
+    if not is_element_present(driver, '//li[contains(.,"Dashboard")]'):
+        assert wait_on_element(driver, 10, '//span[contains(.,"root")]')
         element = driver.find_element_by_xpath('//span[contains(.,"root")]')
         driver.execute_script("arguments[0].scrollIntoView();", element)
         time.sleep(0.5)
+        assert wait_on_element(driver, 7, '//mat-list-item[@ix-auto="option__Dashboard"]', 'clickable')
         driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
 
 
@@ -50,9 +52,9 @@ def you_should_be_on_the_dashboard(driver):
 
 @then("click on Sharing on the side menu and click Block Shares")
 def click_on_Sharing_on_the_side_menu_and_click_Block_Shares(driver):
-    assert wait_on_element(driver, 7, '//mat-list-item[@ix-auto="option__Sharing"]')
+    assert wait_on_element(driver, 7, '//mat-list-item[@ix-auto="option__Sharing"]', 'clickable')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Sharing"]').click()
-    assert wait_on_element(driver, 7, '//mat-list-item[@ix-auto="option__Block Shares (iSCSI)"]')
+    assert wait_on_element(driver, 7, '//mat-list-item[@ix-auto="option__Block Shares (iSCSI)"]', 'clickable')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Block Shares (iSCSI)"]').click()
 
 
@@ -70,12 +72,14 @@ def click_on_the_Portals_tab_the_Portals_tab_should_appear(driver):
 
 @then("click on the portal three-dot button and click Delete")
 def click_on_the_portal_three_dot_button_and_click_Delete(driver):
-    assert wait_on_element(driver, 7, '//mat-icon[@ix-auto="options__1"]')
+    assert wait_on_element(driver, 7, '//mat-icon[@ix-auto="options__1"]', 'clickable')
     driver.find_element_by_xpath('//mat-icon[@ix-auto="options__1"]').click()
-    assert wait_on_element(driver, 7, '//button[@ix-auto="action__delete_Delete"]')
+    assert wait_on_element(driver, 7, '//button[@ix-auto="action__delete_Delete"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="action__delete_Delete"]').click()
     assert wait_on_element(driver, 7, '//h1[contains(.,"Delete")]')
+    assert wait_on_element(driver, 7, '//mat-checkbox[@ix-auto="checkbox__CONFIRM"]', 'clickable')
     driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__CONFIRM"]').click()
+    assert wait_on_element(driver, 7, '//button[@ix-auto="button__DELETE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__DELETE"]').click()
     assert wait_on_element_disappear(driver, 10, '//h6[contains(.,"Please wait")]')
 
@@ -93,12 +97,14 @@ def click_on_the_Initiators_Group_tab_the_Initiators_Group_tab_should_appear(dri
 
 @then("click on the Initiators Group three-dot button and click Delete")
 def click_on_the_Initiators_Group_three_dot_button_and_click_Delete(driver):
-    assert wait_on_element(driver, 7, '//mat-icon[@ix-auto="options__1"]')
+    assert wait_on_element(driver, 7, '//mat-icon[@ix-auto="options__1"]', 'clickable')
     driver.find_element_by_xpath('//mat-icon[@ix-auto="options__1"]').click()
-    assert wait_on_element(driver, 7, '//button[@ix-auto="action__delete_Delete"]')
+    assert wait_on_element(driver, 7, '//button[@ix-auto="action__delete_Delete"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="action__delete_Delete"]').click()
     assert wait_on_element(driver, 7, '//h1[contains(.,"Delete")]')
+    assert wait_on_element(driver, 7, '//mat-checkbox[@ix-auto="checkbox__CONFIRM"]', 'clickable')
     driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__CONFIRM"]').click()
+    assert wait_on_element(driver, 7, '//button[@ix-auto="button__DELETE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__DELETE"]').click()
     assert wait_on_element_disappear(driver, 10, '//h6[contains(.,"Please wait")]')
 
@@ -119,12 +125,14 @@ def for_all_targets_click_on_the_three_dot_button_and_click_Delete(driver):
     global targets_list
     targets_list = ['noauth2', 'noauth1', 'nopeer2', 'nopeer1']
     for target in targets_list:
-        assert wait_on_element(driver, 7, f'//mat-icon[@ix-auto="options__{target}"]')
+        assert wait_on_element(driver, 7, f'//mat-icon[@ix-auto="options__{target}"]', 'clickable')
         driver.find_element_by_xpath(f'//mat-icon[@ix-auto="options__{target}"]').click()
-        assert wait_on_element(driver, 7, f'//button[@ix-auto="action__{target}_Delete"]')
+        assert wait_on_element(driver, 7, f'//button[@ix-auto="action__{target}_Delete"]', 'clickable')
         driver.find_element_by_xpath(f'//button[@ix-auto="action__{target}_Delete"]').click()
         assert wait_on_element(driver, 7, '//h1[contains(.,"Delete")]')
+        assert wait_on_element(driver, 7, '//mat-checkbox[@ix-auto="checkbox__CONFIRM"]', 'clickable')
         driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__CONFIRM"]').click()
+        assert wait_on_element(driver, 7, '//button[@ix-auto="button__DELETE"]', 'clickable')
         driver.find_element_by_xpath('//button[@ix-auto="button__DELETE"]').click()
         assert wait_on_element_disappear(driver, 10, '//h6[contains(.,"Please wait")]')
 
@@ -144,12 +152,14 @@ def click_on_the_Extents_tab_the_Extents_tab_should_appear(driver):
 @then("for all extents, click on the three-dot button and click Delete")
 def for_all_extents_click_on_the_three_dot_button_and_click_Delete(driver):
     for target in targets_list:
-        assert wait_on_element(driver, 7, f'//mat-icon[@ix-auto="options__{target}"]')
+        assert wait_on_element(driver, 7, f'//mat-icon[@ix-auto="options__{target}"]', 'clickable')
         driver.find_element_by_xpath(f'//mat-icon[@ix-auto="options__{target}"]').click()
-        assert wait_on_element(driver, 7, '//button[@ix-auto="action__delete_Delete"]')
+        assert wait_on_element(driver, 7, '//button[@ix-auto="action__delete_Delete"]', 'clickable')
         driver.find_element_by_xpath('//button[@ix-auto="action__delete_Delete"]').click()
         assert wait_on_element(driver, 7, '//h1[contains(.,"Delete")]')
+        assert wait_on_element(driver, 7, '//mat-checkbox[@ix-auto="checkbox__Force"]', 'clickable')
         driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__Force"]').click()
+        assert wait_on_element(driver, 7, '//button[@ix-auto="button__DELETE"]', 'clickable')
         driver.find_element_by_xpath('//button[@ix-auto="button__DELETE"]').click()
         assert wait_on_element_disappear(driver, 10, '//h6[contains(.,"Please wait")]')
 
@@ -180,12 +190,14 @@ def click_on_the_Authorized_Access_tab_the_Authorized_Access_tab_should_appear(d
 
 @then("click on the Authorized Acces three-dot button and click Delete")
 def click_on_the_Authorized_Acces_three_dot_button_and_click_Delete(driver):
-    assert wait_on_element(driver, 7, '//mat-icon[@ix-auto="options__1"]')
+    assert wait_on_element(driver, 7, '//mat-icon[@ix-auto="options__1"]', 'clickable')
     driver.find_element_by_xpath('//mat-icon[@ix-auto="options__1"]').click()
-    assert wait_on_element(driver, 7, '//button[@ix-auto="action__delete_Delete"]')
+    assert wait_on_element(driver, 7, '//button[@ix-auto="action__delete_Delete"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="action__delete_Delete"]').click()
     assert wait_on_element(driver, 7, '//h1[contains(.,"Delete")]')
+    assert wait_on_element(driver, 7, '//mat-checkbox[@ix-auto="checkbox__CONFIRM"]', 'clickable')
     driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__CONFIRM"]').click()
+    assert wait_on_element(driver, 7, '//button[@ix-auto="button__DELETE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__DELETE"]').click()
     assert wait_on_element_disappear(driver, 10, '//h6[contains(.,"Please wait")]')
 

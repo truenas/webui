@@ -36,7 +36,8 @@ def the_browser_is_open_on_the_truenas_url_and_logged_in(driver, nas_ip, root_pa
         driver.find_element_by_xpath('//input[@placeholder="Password"]').send_keys(root_password)
         assert wait_on_element(driver, 4, '//button[@name="signin_button"]')
         driver.find_element_by_xpath('//button[@name="signin_button"]').click()
-    else:
+    if not is_element_present(driver, '//li[contains(.,"Dashboard")]'):
+        assert wait_on_element(driver, 10, '//span[contains(.,"root")]')
         element = driver.find_element_by_xpath('//span[contains(.,"root")]')
         driver.execute_script("arguments[0].scrollIntoView();", element)
         time.sleep(1)
@@ -112,7 +113,7 @@ def reboot_the_system_wait_for_login_and_login(driver):
     time.sleep(10)
     assert wait_on_element(driver, 300, '//input[@placeholder="Username"]', 'clickable')
     # this sleep give a little to get ready for more load
-    time.sleep(7)
+    time.sleep(10)
     assert wait_on_element(driver, 20, '//input[@placeholder="Password"]', 'clickable')
     driver.find_element_by_xpath('//input[@placeholder="Username"]').clear()
     driver.find_element_by_xpath('//input[@placeholder="Username"]').send_keys('root')
@@ -127,7 +128,7 @@ def on_the_dashboard_click_on_system_on_the_side_menu_click_on_boot(driver):
     """on the Dashboard, click on System on the side menu, click on Boot."""
     assert wait_on_element(driver, 30, '//li[contains(.,"Dashboard")]')
     # Gave more time for the UI to load.
-    assert wait_on_element(driver, 120, '//span[contains(.,"System Information")]')
+    assert wait_on_element(driver, 180, '//span[contains(.,"System Information")]')
     assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__System"]', 'clickable')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__System"]').click()
     assert wait_on_element(driver, 7, '//mat-list-item[@ix-auto="option__Boot"]')

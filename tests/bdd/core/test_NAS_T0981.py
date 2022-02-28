@@ -15,6 +15,9 @@ from pytest_bdd import (
     then,
     when
 )
+import pytest
+
+pytestmark = [pytest.mark.debug_test]
 
 
 @scenario('features/NAS-T981.feature', 'Verify SSH Access with root works')
