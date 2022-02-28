@@ -6,7 +6,9 @@ import {
   selector: '[ixDetailRow]',
 })
 export class IxDetailRowDirective<T = unknown> {
+  @HostBinding('class.clickable-row')
   private row: T;
+  private options: Record<string, unknown>;
   private templateRef: TemplateRef<unknown>;
   private opened: boolean;
   @Output() toggle = new EventEmitter<T>();
@@ -16,7 +18,6 @@ export class IxDetailRowDirective<T = unknown> {
     return this.opened;
   }
 
-  @HostBinding('class.clickable-row')
   @Input()
   set ixDetailRow(value: T) {
     if (value !== this.row) {
@@ -28,9 +29,15 @@ export class IxDetailRowDirective<T = unknown> {
     return this.row;
   }
 
-  // eslint-disable-next-line @angular-eslint/no-input-rename
-  @Input('ixDetailRowTpl')
-  set template(value: TemplateRef<T>) {
+  @Input()
+  set ixDetailRowOptions(value: Record<string, unknown>) {
+    if (value !== this.options) {
+      this.options = value;
+    }
+  }
+
+  @Input()
+  set ixDetailRowTemplate(value: TemplateRef<T>) {
     if (value !== this.templateRef) {
       this.templateRef = value;
     }
@@ -61,7 +68,7 @@ export class IxDetailRowDirective<T = unknown> {
   private render(): void {
     this.viewContainerRef.clear();
     if (this.templateRef && this.row) {
-      this.viewContainerRef.createEmbeddedView(this.templateRef, { $implicit: this.row });
+      this.viewContainerRef.createEmbeddedView(this.templateRef, { $implicit: this.row, ...this.options });
     }
   }
 }

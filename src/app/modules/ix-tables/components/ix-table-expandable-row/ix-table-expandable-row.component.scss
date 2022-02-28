@@ -1,10 +1,5 @@
 :host {
-  display: table-row;
-
-  .ix-table-expandable-row {
-    display: table-cell;
-    padding: 0 24px;
-  }
+  display: block;
 
   .mat-divider {
     left: 0;
@@ -26,7 +21,6 @@
       display: inline-block;
       margin: 0;
     }
-
   }
 
   .detail-label {

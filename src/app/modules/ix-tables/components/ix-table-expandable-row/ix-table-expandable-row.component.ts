@@ -11,5 +11,4 @@ import { Option } from 'app/interfaces/option.interface';
 })
 export class IxTableExpandableRowComponent {
   @Input() data: Option[];
-  @Input() colspan: number;
 }

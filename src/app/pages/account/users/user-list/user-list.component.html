@@ -42,7 +42,8 @@
         mat-row
         *matRowDef="let user; columns: displayedColumns; dataSource: dataSource"
         [ixDetailRow]="user"
-        [ixDetailRowTpl]="expandedRowTemplate"
+        [ixDetailRowOptions]="{ colspan: displayedColumns.length, updater: this.getUsers }"
+        [ixDetailRowTemplate]="expandedRowTemplate"
         (toggle)="onToggle($event)"
       ></tr>
 
@@ -57,16 +58,6 @@
   </mat-card-content>
 </mat-card>
 
-<ng-template #expandedRowTemplate let-user>
-  <ix-table-expandable-row [data]="getDetails(user)" [colspan]="displayedColumns.length">
-    <button mat-button (click)="doEdit(user)">
-      <mat-icon>edit</mat-icon>
-      <span>{{ 'Edit' | translate }}</span>
-    </button>
-
-    <button *ngIf="!user.builtin" mat-button (click)="doDelete(user)">
-      <mat-icon>delete</mat-icon>
-      <span>{{ 'Delete' | translate }}</span>
-    </button>
-  </ix-table-expandable-row>
+<ng-template #expandedRowTemplate let-user let-colspan="colspan" let-updater="updater">
+  <user-details-row [user]="user" [colspan]="colspan" (update)="updater()"></user-details-row>
 </ng-template>

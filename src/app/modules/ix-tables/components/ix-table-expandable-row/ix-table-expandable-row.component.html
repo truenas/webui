@@ -1,4 +1,4 @@
-<td class="ix-table-expandable-row" [attr.colspan]="colspan">
+<div class="ix-table-expandable-row">
   <dl class="details">
     <div *ngFor="let option of data">
       <dt>{{ option.label }}:</dt>
@@ -11,4 +11,4 @@
   <div class="actions" fxLayout="row" fxLayoutGap="8px">
     <ng-content></ng-content>
   </div>
-</td>
+</div>
