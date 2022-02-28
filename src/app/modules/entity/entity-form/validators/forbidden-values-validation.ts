@@ -13,7 +13,7 @@ export function forbiddenValues(arrayOfValues: unknown[], caseInsensitive?: bool
       thisControl = control;
     }
 
-    if (thisControl.value == '' || thisControl.value === undefined) {
+    if (thisControl.value === '' || thisControl.value === undefined) {
       return null;
     }
 

@@ -85,7 +85,7 @@ export class EntityJobComponent implements OnInit {
           this.progressTotalPercent = progress.percent;
         }
       }
-      this.disableProgressValue(progress.percent == null);
+      this.disableProgressValue(progress.percent === null);
     });
 
     this.failure.pipe(untilDestroyed(this)).subscribe((job) => {

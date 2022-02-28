@@ -316,10 +316,10 @@ export class IdmapFormComponent implements FormConfiguration {
     });
 
     this.idmapService.getCerts().pipe(untilDestroyed(this)).subscribe((certificates) => {
-      const config = this.fieldConfig.find((c) => c.name === 'certificate') as FormSelectConfig;
-      config.options.push({ label: '---', value: null });
+      const certificateConfig = this.fieldConfig.find((config) => config.name === 'certificate') as FormSelectConfig;
+      certificateConfig.options.push({ label: '---', value: null });
       certificates.forEach((certificate) => {
-        config.options.push({ label: certificate.name, value: certificate.id });
+        certificateConfig.options.push({ label: certificate.name, value: certificate.id });
       });
     });
 
@@ -356,9 +356,9 @@ export class IdmapFormComponent implements FormConfiguration {
 
     this.idmapService.getBackendChoices().pipe(untilDestroyed(this)).subscribe((backendChoices) => {
       this.backendChoices = backendChoices;
-      const config = this.fieldConfig.find((c) => c.name === 'idmap_backend') as FormSelectConfig;
+      const idmapBackendConfig = this.fieldConfig.find((config) => config.name === 'idmap_backend') as FormSelectConfig;
       for (const item in backendChoices) {
-        config.options.push({ label: item, value: item });
+        idmapBackendConfig.options.push({ label: item, value: item });
       }
       entityEdit.formGroup.controls['idmap_backend'].setValue('AD');
     });

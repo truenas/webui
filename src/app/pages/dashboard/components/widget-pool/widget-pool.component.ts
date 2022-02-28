@@ -229,7 +229,7 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
   }
 
   getAvailableSpace(): number {
-    if (!this.volumeData || typeof this.volumeData.avail == undefined) {
+    if (!this.volumeData || typeof this.volumeData.avail === undefined) {
       this.displayValue = 'Unknown';
       return;
     }
@@ -289,7 +289,7 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
    * @deprecated Multipath is not supported
    */
   trimMultipath(disk: string): { name: string; fullName?: string } {
-    if (!disk || disk == null) {
+    if (!disk) {
       return { name: disk };
     }
 

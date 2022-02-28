@@ -147,15 +147,16 @@ export class AlertConfigComponent implements OnInit {
         this.formGroup = this.entityFormService.createFormGroup(this.fieldConfig);
 
         this.ws.call(this.queryCall).pipe(untilDestroyed(this)).subscribe(
-          (res) => {
+          (alertConfig) => {
             this.loader.close();
-            for (const k in res.classes) {
-              for (const j in res.classes[k]) {
-                const prop = k + '_' + j;
-                if (this.formGroup.controls[prop]) {
-                  this.formGroup.controls[prop].setValue(res.classes[k][j as keyof AlertClassSettings]);
+            for (const alertClass in alertConfig.classes) {
+              for (const levelOrPolicy in alertConfig.classes[alertClass]) {
+                const controlName = alertClass + '_' + levelOrPolicy;
+                const controlValue = alertConfig.classes[alertClass][levelOrPolicy as keyof AlertClassSettings];
+                if (this.formGroup.controls[controlName]) {
+                  this.formGroup.controls[controlName].setValue(controlValue);
                 } else {
-                  console.error('Missing prop: ' + prop); // some properties don't exist between both calls?
+                  console.error('Missing control: ' + controlName); // some properties don't exist between both calls?
                 }
               }
             }

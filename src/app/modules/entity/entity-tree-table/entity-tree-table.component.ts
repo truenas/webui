@@ -84,7 +84,7 @@ export class EntityTreeTableComponent implements OnInit, AfterViewInit {
     if (!sort.active || sort.direction === '') {
       return;
     }
-    const col = this._conf.columns[this._conf.columns.findIndex((c) => c.prop === sort.active)];
+    const col = this._conf.columns[this._conf.columns.findIndex((column) => column.prop === sort.active)];
     this._conf.tableData = this.sortData({ ...sort, sortBy: col.sortBy ? col.sortBy : col.prop }, this._conf.tableData);
     this.fillTable();
   }
@@ -105,13 +105,13 @@ export class EntityTreeTableComponent implements OnInit, AfterViewInit {
       let result: number;
 
       switch (true) {
-        case value1 == null && value2 != null:
+        case value1 === null && value2 !== null:
           result = -1;
           break;
-        case value1 != null && value2 == null:
+        case value1 !== null && value2 === null:
           result = 1;
           break;
-        case value1 == null && value2 == null:
+        case value1 === null && value2 === null:
           result = 0;
           break;
         case typeof value1 === 'string' && typeof value2 === 'string':

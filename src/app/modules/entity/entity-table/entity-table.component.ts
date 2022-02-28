@@ -31,7 +31,6 @@ import {
   catchError, filter, switchMap, take, tap,
 } from 'rxjs/operators';
 import { JobState } from 'app/enums/job-state.enum';
-import { UserPreferencesChangedEvent } from 'app/interfaces/events/user-preferences-event.interface';
 import { GlobalActionConfig } from 'app/interfaces/global-action.interface';
 import { TableDisplayedColumns } from 'app/interfaces/preferences.interface';
 import { Interval } from 'app/interfaces/timeout.interface';
@@ -161,7 +160,6 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, A
   excuteDeletion = false;
   needRefreshTable = false;
   private routeSub: Subscription;
-  multiActionsIconsOnly = false;
 
   get currentColumns(): EntityTableColumn[] {
     const result = this.alwaysDisplayedCols.concat(this.conf.columns) as any;
@@ -188,6 +186,23 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, A
       || (this.allColumns.length > 0 && this.conf.columns.length !== this.allColumns.length);
   };
 
+  resetColumns(): void {
+    this.displayedColumns = [];
+    this.allColumns = [];
+    this.alwaysDisplayedCols = [];
+    this.conf.columns.forEach((column) => {
+      this.displayedColumns.push(column.prop);
+      if (!column.always_display) {
+        this.allColumns.push(column); // Make array of optionally-displayed cols
+      } else {
+        this.alwaysDisplayedCols.push(column); // Make an array of required cols
+      }
+    });
+    this.columnFilter = this.conf.columnFilter === undefined ? true : this.conf.columnFilter;
+    // Remove any alwaysDisplayed cols from the official list
+    this.conf.columns = this.conf.columns.filter((column) => !column.always_display);
+  }
+
   isAllSelected = false;
   globalActionsInit = false;
 
@@ -205,10 +220,6 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, A
     public modalService: ModalService,
     public changeDetectorRef: ChangeDetectorRef,
   ) {
-    this.core.register({ observerClass: this, eventName: 'UserPreferencesChanged' }).pipe(untilDestroyed(this)).subscribe((evt: UserPreferencesChangedEvent) => {
-      this.multiActionsIconsOnly = evt.data.preferIconsOnly;
-    });
-    this.core.emit({ name: 'UserPreferencesRequest', sender: this });
     // watch for navigation events as ngOnDestroy doesn't always trigger on these
     this.routeSub = this.router.events.pipe(untilDestroyed(this)).subscribe((event) => {
       if (event instanceof NavigationStart) {
@@ -808,7 +819,7 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, A
     if (this.conf.rowValue) {
       try {
         return this.conf.rowValue(row, attr);
-      } catch (e: unknown) {
+      } catch (error: unknown) {
         return row[attr];
       }
     }
@@ -835,10 +846,10 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, A
   }
 
   // generate delete msg
-  getDeleteMessage(item: any, action: string = this.translate.instant('Delete ')): string {
+  getDeleteMessage(item: any, action: string = this.translate.instant('Delete')): string {
     let deleteMsg: string = this.translate.instant('Delete the selected item?');
     if (this.conf.config.deleteMsg) {
-      deleteMsg = action + this.conf.config.deleteMsg.title;
+      deleteMsg = action + ' ' + this.conf.config.deleteMsg.title;
       let message = ' <b>' + item[this.conf.config.deleteMsg.key_props[0]];
       if (this.conf.config.deleteMsg.key_props.length > 1) {
         for (let i = 1; i < this.conf.config.deleteMsg.key_props.length; i++) {
@@ -975,7 +986,7 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, A
           subMessage += '<ul class="nested-list">';
 
           for (let i = 1; i < this.conf.config.deleteMsg.key_props.length; i++) {
-            if (item[this.conf.config.deleteMsg.key_props[i]] != '') {
+            if (item[this.conf.config.deleteMsg.key_props[i]] !== '') {
               subMessage += '<li>' + item[this.conf.config.deleteMsg.key_props[i]] + '</li>';
             }
           }
@@ -1026,7 +1037,7 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, A
                   const selectedName = this.conf.wsMultiDeleteParams(selected)[1];
                   let message = '';
                   for (let i = 0; i < res1.result.length; i++) {
-                    if (res1.result[i].error != null) {
+                    if (res1.result[i].error !== null) {
                       message = message + '<li>' + selectedName[i] + ': ' + res1.result[i].error + '</li>';
                     }
                   }
@@ -1052,17 +1063,16 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, A
   }
 
   // Next section operates the checkboxes to show/hide columns
-  toggle(col: EntityTableColumn): void {
-    const isChecked = this.isChecked(col);
+  toggle(columnToToggle: EntityTableColumn): void {
+    const isChecked = this.isChecked(columnToToggle);
     this.anythingClicked = true;
 
     if (isChecked) {
-      this.conf.columns = this.conf.columns.filter((c) => c.name !== col.name);
+      this.conf.columns = this.conf.columns.filter((column) => column.name !== columnToToggle.name);
     } else {
-      this.conf.columns = [...this.conf.columns, col];
+      this.conf.columns = [...this.conf.columns, columnToToggle];
     }
     this.selectColumnsToShowOrHide();
-    this.changeDetectorRef.detectChanges();
   }
 
   // Stores currently selected columns in preference service
@@ -1084,11 +1094,8 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, A
       preferredColumns.push(newColumnPreferences);
 
       this.store$.dispatch(preferredColumnsUpdated({ columns: preferredColumns }));
+      this.changeDetectorRef.detectChanges();
     });
-
-    if (this.title === 'Users') {
-      this.conf.columns = this.dropLastMaxWidth();
-    }
   }
 
   // resets col view to the default set in the table's component
@@ -1101,8 +1108,8 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, A
     }
   }
 
-  isChecked(col: EntityTableColumn): boolean {
-    return this.conf.columns.find((c) => c.name === col.name) !== undefined;
+  isChecked(columnToTest: EntityTableColumn): boolean {
+    return this.conf.columns.find((column) => column.name === columnToTest.name) !== undefined;
   }
 
   // Toggle between all/none cols selected
@@ -1124,10 +1131,6 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, A
     if (this.allColumns && this.conf.columns) {
       return this.conf.columns.length === this.allColumns.length;
     }
-  }
-
-  toggleLabels(): void {
-    this.multiActionsIconsOnly = !this.multiActionsIconsOnly;
   }
 
   getButtonClass(row: any): string {
@@ -1232,7 +1235,7 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, A
     this.store$.pipe(waitForPreferences, take(1), untilDestroyed(this)).subscribe((preferences) => {
       const preferredCols = preferences.tableDisplayedColumns || [];
       // Turn off preferred cols for snapshots to allow for two different column sets to be displayed
-      if (preferredCols.length < 0 && this.title === 'Snapshots') {
+      if (preferredCols.length < 0) {
         return;
       }
 
@@ -1248,7 +1251,7 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, A
           // Remove columns from display and preferred cols if they don't exist in the table
           const notFound: EntityTableColumnProp[] = [];
           this.conf.columns.forEach((col) => {
-            const found = this.filterColumns.find((o) => o.prop === col.prop);
+            const found = this.filterColumns.find((filterColumn) => filterColumn.prop === col.prop);
             if (!found) {
               notFound.push(col.prop);
             }
@@ -1257,16 +1260,6 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, A
           this.selectColumnsToShowOrHide();
         }
       });
-      if (this.title === 'Users') {
-        // Makes a list of the table's column maxWidths
-        this.filterColumns.forEach((column) => {
-          const tempObj: any = {};
-          tempObj['name'] = column.name;
-          tempObj['maxWidth'] = column.maxWidth;
-          this.colMaxWidths.push(tempObj);
-        });
-        this.conf.columns = this.dropLastMaxWidth();
-      }
 
       this.changeDetectorRef.markForCheck();
     });

@@ -8,7 +8,6 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { choicesToOptions } from 'app/helpers/options.helper';
 import helptext from 'app/helptext/services/components/service-nfs';
-import { numberValidator } from 'app/modules/entity/entity-form/validators/number-validation';
 import { rangeValidator, portRangeValidator } from 'app/modules/entity/entity-form/validators/range-validation';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { DialogService, WebSocketService } from 'app/services';
@@ -24,19 +23,21 @@ export class ServiceNfsComponent implements OnInit {
   isFormLoading = false;
 
   form = this.fb.group({
+    allow_nonroot: [false],
     bindip: [[] as string[]],
-    servers: [4, [Validators.required, numberValidator(), rangeValidator(1, 256)]],
+    servers: [4, [Validators.required, rangeValidator(1, 256)]],
     v4: [false],
     v4_v3owner: [false],
     v4_krb: [false],
-    mountd_port: [null as number, [numberValidator(), portRangeValidator()]],
-    rpcstatd_port: [null as number, [numberValidator(), portRangeValidator()]],
-    rpclockd_port: [null as number, [numberValidator(), portRangeValidator()]],
+    mountd_port: [null as number, portRangeValidator()],
+    rpcstatd_port: [null as number, portRangeValidator()],
+    rpclockd_port: [null as number, portRangeValidator()],
     udp: [false],
     userd_manage_gids: [false],
   });
 
   readonly tooltips = {
+    allow_nonroot: helptext.nfs_srv_allow_nonroot_tooltip,
     bindip: helptext.nfs_srv_bindip_tooltip,
     servers: helptext.nfs_srv_servers_tooltip,
     v4: helptext.nfs_srv_v4_tooltip,

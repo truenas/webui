@@ -231,32 +231,34 @@ export class OpenvpnServerComponent implements FormConfiguration {
     });
 
     this.services.getOpenVpnServerAuthAlgorithmChoices().pipe(untilDestroyed(this)).subscribe((res) => {
-      const config = this.fieldConfig.find((c) => c.name === 'authentication_algorithm') as FormSelectConfig;
+      const authAlgorithmConfig = this.fieldConfig.find((config) => config.name === 'authentication_algorithm') as FormSelectConfig;
       for (const item in res) {
-        config.options.push(
+        authAlgorithmConfig.options.push(
           { label: `${item} (${res[item]})`, value: item },
         );
       }
     });
     this.services.getOpenServerCipherChoices().pipe(untilDestroyed(this)).subscribe((res) => {
-      const config = this.fieldConfig.find((c) => c.name === 'cipher') as FormSelectConfig;
+      const cipherConfig = this.fieldConfig.find((config) => config.name === 'cipher') as FormSelectConfig;
       for (const item in res) {
-        config.options.push(
+        cipherConfig.options.push(
           { label: `${item} ${res[item]}`, value: item },
         );
       }
     });
     this.services.getCerts().pipe(untilDestroyed(this)).subscribe((certificates) => {
-      const config = this.fieldConfig.find((c) => c.name === 'server_certificate') as FormSelectConfig;
+      const serverCertificateConfig = this.fieldConfig.find((config) => {
+        return config.name === 'server_certificate';
+      }) as FormSelectConfig;
       certificates.forEach((certificate) => {
-        config.options.push({ label: certificate.name, value: certificate.id });
+        serverCertificateConfig.options.push({ label: certificate.name, value: certificate.id });
       });
-      this.certOptions = config.options;
+      this.certOptions = serverCertificateConfig.options;
     });
     this.services.getCertificateAuthorities().pipe(untilDestroyed(this)).subscribe((authorities) => {
-      const config = this.fieldConfig.find((c) => c.name === 'root_ca') as FormSelectConfig;
+      const rootCaConfig = this.fieldConfig.find((config) => config.name === 'root_ca') as FormSelectConfig;
       authorities.forEach((item) => {
-        config.options.push({ label: item.name, value: item.id });
+        rootCaConfig.options.push({ label: item.name, value: item.id });
       });
     });
     entityEdit.formGroup.controls['server'].valueChanges.pipe(untilDestroyed(this)).subscribe((res: string) => {

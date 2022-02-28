@@ -164,7 +164,7 @@ export class WidgetStorageComponent extends WidgetComponent implements AfterView
       level = 'warn';
       icon = 'mdi-alert-circle';
     } else {
-      if (this.cols == 1) {
+      if (this.cols === 1) {
         value = volume.used_pct;
       } else {
         value = this.translate.instant('{used} of {total} ({used_pct})', {

@@ -14,8 +14,6 @@ import { DiskFormComponent } from './disks/disk-form/disk-form.component';
 import { DiskListComponent } from './disks/disk-list/disk-list.component';
 import { SmartResultsComponent } from './disks/smart-results/smart-results.component';
 import { ImportDiskComponent } from './import-disk/import-disk.component';
-import { SnapshotAddComponent } from './snapshots/snapshot-add/snapshot-add.component';
-import { SnapshotListComponent } from './snapshots/snapshot-list/snapshot-list.component';
 import { VmwareSnapshotListComponent } from './vmware-snapshot/vmware-snapshot-list/vmware-snapshot-list.component';
 import { VmwareSnapshotFormComponent } from './vmware-snapshot/vmware-snapshot/vmware-snapshot-form.component';
 import { DatasetFormComponent } from './volumes/datasets/dataset-form/dataset-form.component';
@@ -146,19 +144,8 @@ export const routes: Routes = [
       },
       {
         path: 'snapshots',
+        loadChildren: () => import('app/pages/storage/snapshots/snapshots.module').then((module) => module.SnapshotsModule),
         data: { title: 'Snapshots', breadcrumb: 'Snapshots', icon: 'camera_alt' },
-        children: [
-          {
-            path: '',
-            component: SnapshotListComponent,
-            data: { title: 'Snapshots', breadcrumb: 'Snapshots' },
-          },
-          {
-            path: 'add',
-            component: SnapshotAddComponent,
-            data: { title: 'Add', breadcrumb: 'Add' },
-          },
-        ],
       },
       {
         path: 'vmware-snapshots',

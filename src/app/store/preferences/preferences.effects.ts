@@ -13,12 +13,12 @@ import {
   builtinGroupsToggled,
   builtinUsersToggled, localizationFormSubmitted,
   noPreferencesFound, oneTimeBuiltinGroupsMessageShown, oneTimeBuiltinUsersMessageShown,
-  preferencesFormSubmitted,
-  preferencesLoaded, preferencesReset, preferredColumnsUpdated,
+  preferencesLoaded, preferredColumnsUpdated,
   themeNotFound,
 } from 'app/store/preferences/preferences.actions';
 import { selectPreferencesState } from 'app/store/preferences/preferences.selectors';
 import { sidenavUpdated } from 'app/store/topbar/topbar.actions';
+import { snapshotExtraColumnsToggled } from './preferences.actions';
 
 @Injectable()
 export class PreferencesEffects {
@@ -48,11 +48,10 @@ export class PreferencesEffects {
     ofType(
       sidenavUpdated,
       themeNotFound,
-      preferencesFormSubmitted,
-      preferencesReset,
       preferredColumnsUpdated,
       oneTimeBuiltinUsersMessageShown,
       builtinUsersToggled,
+      snapshotExtraColumnsToggled,
       oneTimeBuiltinGroupsMessageShown,
       builtinGroupsToggled,
       localizationFormSubmitted,

@@ -9,7 +9,6 @@ import { JobState } from 'app/enums/job-state.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { SystemUpdateStatus } from 'app/enums/system-update.enum';
 import { HaStatusEvent } from 'app/interfaces/events/ha-status-event.interface';
-import { UserPreferencesChangedEvent } from 'app/interfaces/events/user-preferences-event.interface';
 import { SystemInfo } from 'app/interfaces/system-info.interface';
 import { WidgetComponent } from 'app/pages/dashboard/components/widget/widget.component';
 import { SystemGeneralService, WebSocketService } from 'app/services';
@@ -35,7 +34,6 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnDestroy
   memory: string;
   imagePath = 'assets/images/';
   ready = false;
-  retroLogo = -1;
   product_image = '';
   product_model = '';
   product_enclosure = ''; // rackmount || tower
@@ -82,10 +80,6 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnDestroy
   }
 
   ngAfterViewInit(): void {
-    this.core.register({ observerClass: this, eventName: 'UserPreferencesChanged' }).pipe(untilDestroyed(this)).subscribe((evt: UserPreferencesChangedEvent) => {
-      this.retroLogo = evt.data.retroLogo ? 1 : 0;
-    });
-
     if (this.isHA && this.isPassive) {
       this.core.register({ observerClass: this, eventName: 'HA_Status' }).pipe(untilDestroyed(this)).subscribe((evt: HaStatusEvent) => {
         if (evt.data.status === 'HA Enabled' && !this.data) {
@@ -101,7 +95,6 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnDestroy
       });
       this.checkForUpdate();
 
-      this.core.emit({ name: 'UserPreferencesRequest' });
       this.core.emit({ name: 'HAStatusRequest' });
     }
     if (window.localStorage.getItem('product_type').includes(ProductType.Enterprise)) {

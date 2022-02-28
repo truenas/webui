@@ -92,3 +92,9 @@ export type VmDevice =
 export type VmDeviceUpdate = Overwrite<Partial<Omit<VmDevice, 'id'>>, {
   attributes?: Partial<VmDevice['attributes']>;
 }>;
+
+export type VmDeviceDelete = {
+  zvol: boolean;
+  raw_file: boolean;
+  force: boolean;
+};

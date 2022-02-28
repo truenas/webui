@@ -1,4 +1,5 @@
 import { Subject } from 'rxjs';
+import { ConfirmOptions } from 'app/interfaces/dialog.interface';
 import { CoreEvent } from 'app/interfaces/events';
 
 export interface ControlConfig {
@@ -23,6 +24,7 @@ export interface ControlConfig {
   max?: number;
   step?: number;
   ixAutoIdentifier?: string;
+  confirmOptions?: ConfirmOptions;
 }
 
 export interface ToolbarConfig {

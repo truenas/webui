@@ -27,20 +27,7 @@ export interface Preferences {
   hideBuiltinUsers: boolean;
   hideBuiltinGroups: boolean;
 
+  showSnapshotExtraColumns: boolean;
+
   rebootAfterManualUpdate: boolean;
-
-  /**
-   * @deprecated
-   */
-  preferIconsOnly: boolean;
-
-  /**
-   * @deprecated
-   */
-  allowPwToggle: boolean;
-
-  /**
-   * @deprecated
-   */
-  retroLogo: boolean;
 }

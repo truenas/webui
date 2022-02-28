@@ -73,7 +73,7 @@ export class EntityFormService {
 
     if (fieldConfig) {
       if (arrayConfig.formarray) {
-        if (arrayConfig.initialCount == null) {
+        if (arrayConfig.initialCount === undefined) {
           arrayConfig.initialCount = 1;
         }
         formControl = this.createFormArray(arrayConfig.formarray, arrayConfig.initialCount);
@@ -129,11 +129,11 @@ export class EntityFormService {
     }
 
     return this.ws.call('filesystem.listdir', [node.data.name, typeFilter,
-      { order_by: ['name'], limit: 1000 }]).toPromise().then((res) => {
-      res = _.sortBy(res, (o) => o.name.toLowerCase());
+      { order_by: ['name'], limit: 1000 }]).toPromise().then((files) => {
+      files = _.sortBy(files, (file) => file.name.toLowerCase());
 
       const children: ListdirChild[] = [];
-      res.forEach((file) => {
+      files.forEach((file) => {
         if (file.type === FileType.Symlink || !file.hasOwnProperty('name')) {
           return;
         }

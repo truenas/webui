@@ -21,17 +21,6 @@
           <entity-form *ngIf="formConf.fieldSets" [conf]="formConf" class="slidein-entity-form"></entity-form>
         </ng-container>
       </ng-container>
-      <ng-container *appLet="asEmbeddedConfig(conf) as embeddedConf">
-        <ng-container *ngIf="formOpen && embeddedConf && embeddedConf.formType && embeddedConf.formType == 'EntityFormEmbeddedComponent'">
-          <entity-form-embedded
-            *ngIf="embeddedConf.fieldSets && embeddedConf.target"
-            [target]="embeddedConf.target"
-            [data]="embeddedConf.values"
-            [conf]="embeddedConf"
-            class="slidein-entity-form"
-          ></entity-form-embedded>
-        </ng-container>
-      </ng-container>
     </ng-container>
     <ng-template #wizardBlock>
       <entity-wizard [conf]="asWizardConfig(conf)" *ngIf="formOpen" class="slidein-entity-form"></entity-wizard>
