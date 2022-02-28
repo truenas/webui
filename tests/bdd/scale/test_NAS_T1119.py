@@ -107,7 +107,7 @@ def the_edit_acl_page_should_open_select_open_for_default_acl_option_select_grou
     driver.find_element_by_xpath('//div[contains(.,"Owner Group:") and @class="control"]//input').send_keys('AD01\\administrator')
     assert wait_on_element(driver, 5, '//span[contains(text(),"Save Access Control List")]', 'clickable')
     driver.find_element_by_xpath('//span[contains(text(),"Save Access Control List")]').click()
-    assert wait_on_element(driver, 7, '//h1[text()="Storage"]')
+    assert wait_on_element(driver, 7, '//h1[contains(.,"Storage")]')
     assert wait_on_element(driver, 5, '//tr[contains(.,"tank_acl_dataset")]//mat-icon[text()="more_vert"]', 'clickable')
     driver.find_element_by_xpath('//tr[contains(.,"tank_acl_dataset")]//mat-icon[text()="more_vert"]').click()
     assert wait_on_element(driver, 5, '//button[normalize-space(text())="View Permissions"]', 'clickable')
