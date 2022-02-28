@@ -27,6 +27,7 @@ describe('ServiceNfsComponent', () => {
     providers: [
       mockWebsocket([
         mockCall('nfs.config', {
+          allow_nonroot: false,
           bindip: ['192.168.1.117', '192.168.1.118'],
           v4: true,
           v4_v3owner: false,
@@ -71,6 +72,7 @@ describe('ServiceNfsComponent', () => {
       'rpc.lockd(8) bind port': '124',
       'rpc.statd(8) bind port': '124',
       'Serve UDP NFS clients': true,
+      'Allow non-root mount': false,
       'Support >16 groups': false,
     });
   });
@@ -81,6 +83,7 @@ describe('ServiceNfsComponent', () => {
       'Bind IP Addresses': ['192.168.1.119'],
       'NFSv3 ownership model for NFSv4': false,
       'Serve UDP NFS clients': false,
+      'Allow non-root mount': true,
       'Support >16 groups': true,
       'mountd(8) bind port': 554,
       'rpc.statd(8) bind port': 562,
@@ -91,6 +94,7 @@ describe('ServiceNfsComponent', () => {
     await saveButton.click();
 
     expect(ws.call).toHaveBeenCalledWith('nfs.update', [{
+      allow_nonroot: true,
       bindip: ['192.168.1.119'],
       v4: true,
       v4_v3owner: false,
