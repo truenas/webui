@@ -50,11 +50,11 @@ def on_the_dashboard_if_there_is_dismiss_all_notification(driver):
     assert wait_on_element(driver, 7, '//span[contains(text(),"System Information")]')
     assert wait_on_element(driver, 7, '//mat-icon[text()="notifications"]')
     if wait_on_element(driver, 5, '//span[contains(.,"notifications")]//span[not(contains(text(),"0"))]'):
-        assert wait_on_element(driver, 7, '//button[@ix-auto="button__notifications"]', 'clickable')
-        driver.find_element_by_xpath('//button[@ix-auto="button__notifications"]').click()
+        assert wait_on_element(driver, 7, '//button[contains(.,"notifications")]', 'clickable')
+        driver.find_element_by_xpath('//button[contains(.,"notifications")]').click()
         assert wait_on_element(driver, 7, '//h3[text()="Alerts"]')
-        assert wait_on_element(driver, 7, '//small[contains(text(),"Dismiss All Alerts")]', 'clickable')
-        driver.find_element_by_xpath('//small[contains(text(),"Dismiss All Alerts")]').click()
+        assert wait_on_element(driver, 7, '//button[contains(text(),"Dismiss All Alerts")]', 'clickable')
+        driver.find_element_by_xpath('//button[contains(text(),"Dismiss All Alerts")]').click()
         assert wait_on_element(driver, 7, '//mat-icon[contains(.,"clear")]', 'clickable')
         driver.find_element_by_xpath('//mat-icon[contains(.,"clear")]').click()
 
@@ -73,8 +73,8 @@ def wait_for_the_alert_and_verify_the_core_files_warning_alert(driver):
     """wait for the alert and verify the core files warning alert."""
     assert wait_on_element(driver, 7, '//mat-icon[text()="notifications"]')
     assert wait_on_element(driver, 180, '//span[contains(.,"notifications")]//span[contains(text(),"1")]')
-    assert wait_on_element(driver, 7, '//button[@ix-auto="button__notifications"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__notifications"]').click()
+    assert wait_on_element(driver, 7, '//button[contains(.,"notifications")]', 'clickable')
+    driver.find_element_by_xpath('//button[contains(.,"notifications")]').click()
     assert wait_on_element(driver, 7, '//h3[text()="Alerts"]')
     assert wait_on_element(driver, 7, '//mat-list-item[contains(.,"Core files")]//h3[contains(.,"WARNING")]')
     assert wait_on_element(driver, 7, '//h4[contains(.,"Core files for the following executables were found: /usr/bin/python")]')
@@ -111,7 +111,7 @@ def after_remove_the_core_files_in_vardbsystemcores(driver, nas_ip, root_passwor
 def verify_that_the_core_file_alert_disappear(driver):
     """verify that the core file alert disappear."""
     assert wait_on_element_disappear(driver, 180, '//span[contains(.,"notifications")]//span[contains(text(),"1")]')
-    driver.find_element_by_xpath('//button[@ix-auto="button__notifications"]').click()
+    driver.find_element_by_xpath('//mat-icon[text()="check_circle"').click()
     assert wait_on_element(driver, 7, '//h3[text()="Alerts"]')
     assert not is_element_present(driver, '//h4[contains(.,"Core files")]')
     assert wait_on_element(driver, 7, '//button[contains(.,"clear")]', 'clickable')
