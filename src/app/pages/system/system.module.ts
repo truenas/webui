@@ -130,6 +130,7 @@ import { EnclosureModule } from './view-enclosure/enclosure.module';
     TwoFactorComponent,
     UpdateComponent,
     BootenvStatsDialogComponent,
+    CronFormComponent,
   ],
   providers: [
     TranslateService,

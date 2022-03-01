@@ -140,10 +140,14 @@ export class AdvancedSettingsComponent implements OnInit {
       { name: this.translate.instant('Next Run'), prop: 'next_run' },
     ],
     add: async () => {
-      await this.onSettingsPressed(AdvancedCardId.Cron);
+      await this.showFirstTimeWarningIfNeeded();
+      this.ixModal.open(CronFormComponent);
     },
-    edit: async (row: CronjobRow) => {
-      await this.onSettingsPressed(AdvancedCardId.Cron, row.id);
+    edit: async (cron: CronjobRow) => {
+      await this.showFirstTimeWarningIfNeeded();
+
+      const modal = this.ixModal.open(CronFormComponent);
+      modal.setCronForEdit(cron);
     },
   };
 
@@ -447,7 +451,6 @@ export class AdvancedSettingsComponent implements OnInit {
     | ReplicationFormComponent
     | SyslogFormComponent
     | TunableFormComponent
-    | CronFormComponent
     | SystemDatasetPoolComponent
     | IsolatedGpuPcisFormComponent
     >;
@@ -468,9 +471,6 @@ export class AdvancedSettingsComponent implements OnInit {
       case AdvancedCardId.Sysctl:
         addComponent = TunableFormComponent;
         break;
-      case AdvancedCardId.Cron:
-        addComponent = CronFormComponent;
-        break;
       case AdvancedCardId.SystemDatasetPool:
         addComponent = SystemDatasetPoolComponent;
         break;
@@ -482,10 +482,6 @@ export class AdvancedSettingsComponent implements OnInit {
     }
 
     await this.showFirstTimeWarningIfNeeded();
-    if ([AdvancedCardId.Console, AdvancedCardId.Kernel].includes(name)) {
-      // TODO: Why?
-      // this.sysGeneralService.sendConfigData(this.configData as any);
-    }
 
     if ([AdvancedCardId.Kernel].includes(name)) {
       const modal = this.ixModal.open(KernelFormComponent);

@@ -1,157 +1,102 @@
-import { Component, ViewChild } from '@angular/core';
+import {
+  ChangeDetectionStrategy, ChangeDetectorRef, Component,
+} from '@angular/core';
+import { Validators } from '@angular/forms';
+import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import * as _ from 'lodash';
+import { TranslateService } from '@ngx-translate/core';
+import { Observable } from 'rxjs';
 import helptext from 'app/helptext/system/cron-form';
 import { Cronjob } from 'app/interfaces/cronjob.interface';
-import { FormConfiguration } from 'app/interfaces/entity-form.interface';
-import { Schedule } from 'app/interfaces/schedule.interface';
-import { EntityFormComponent } from 'app/modules/entity/entity-form/entity-form.component';
-import { FieldConfig, FormComboboxConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
-import { FieldSet } from 'app/modules/entity/entity-form/models/fieldset.interface';
-import { UserService } from 'app/services';
-import { ModalService } from 'app/services/modal.service';
+import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
+import { crontabToSchedule, scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
+import { WebSocketService } from 'app/services';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
 @Component({
-  selector: 'app-cron-job-add',
   templateUrl: './cron-form.component.html',
-  styleUrls: ['cron-form.component.scss'],
-  providers: [UserService],
+  styleUrls: ['./cron-form.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class CronFormComponent implements FormConfiguration {
-  title: string;
-  queryCall = 'cronjob.query' as const;
-  queryKey = 'id';
-  editCall = 'cronjob.update' as const;
-  addCall = 'cronjob.create' as const;
-  pk: number;
-  protected userField: FormComboboxConfig;
-  protected isOneColumnForm = true;
-  isEntity = true;
+export class CronFormComponent {
+  get isNew(): boolean {
+    return !this.editingCron;
+  }
 
-  isNew = false;
-  entityForm: EntityFormComponent;
-  error: string;
-  fieldConfig: FieldConfig[] = [];
-  fieldSetDisplay = 'no-margins';
+  get title(): string {
+    return this.isNew
+      ? this.translate.instant('Add Cron Job')
+      : this.translate.instant('Edit Cron Job');
+  }
 
-  fieldSets: FieldSet[] = [
-    {
-      name: helptext.cron_fieldsets[0],
-      class: 'add-cron',
-      label: true,
-      config: [
-        {
-          type: 'input',
-          name: 'description',
-          placeholder: helptext.cron_description_placeholder,
-          tooltip: helptext.cron_description_tooltip,
-        },
-        {
-          type: 'input',
-          name: 'command',
-          placeholder: helptext.cron_command_placeholder,
-          required: true,
-          validation: helptext.cron_command_validation,
-          tooltip: helptext.cron_command_tooltip,
-        },
-        {
-          type: 'combobox',
-          name: 'user',
-          placeholder: helptext.cron_user_placeholder,
-          tooltip: helptext.cron_user_tooltip,
-          options: [],
-          required: true,
-          validation: helptext.cron_user_validation,
-          searchOptions: [],
-          parent: this,
-          updater: (value: string) => this.updateUserSearchOptions(value),
-        },
-        {
-          type: 'scheduler',
-          name: 'cron_picker',
-          placeholder: helptext.cron_picker_placeholder,
-          tooltip: helptext.cron_picker_tooltip,
-          validation: helptext.cron_picker_validation,
-          required: true,
-          value: '0 0 * * *',
-        },
-        {
-          type: 'checkbox',
-          name: 'stdout',
-          placeholder: helptext.cron_stdout_placeholder,
-          tooltip: helptext.cron_stdout_tooltip,
-          value: true,
-        },
-        {
-          type: 'checkbox',
-          name: 'stderr',
-          placeholder: helptext.cron_stderr_placeholder,
-          tooltip: helptext.cron_stderr_tooltip,
-          value: false,
-        },
-        {
-          type: 'checkbox',
-          name: 'enabled',
-          placeholder: helptext.cron_enabled_placeholder,
-          tooltip: helptext.cron_enabled_tooltip,
-          value: true,
-        },
-      ],
-    },
-    {
-      name: 'divider',
-      divider: true,
-    },
-  ];
+  form = this.fb.group({
+    description: [''],
+    command: ['', Validators.required],
+    user: ['', Validators.required],
+    crontab: ['0 0 * * *', Validators.required],
+    stdout: [true],
+    stderr: [false],
+    enabled: [true],
+  });
 
-  @ViewChild('form', { static: true }) form: EntityFormComponent;
+  readonly tooltips = {
+    description: helptext.cron_description_tooltip,
+    command: helptext.cron_command_tooltip,
+    user: helptext.cron_user_tooltip,
+    crontab: helptext.crontab_tooltip,
+    stdout: helptext.cron_stdout_tooltip,
+    stderr: helptext.cron_stderr_tooltip,
+    enabled: helptext.cron_enabled_tooltip,
+  };
 
-  constructor(protected userService: UserService, protected modalService: ModalService) {}
+  isLoading = false;
 
-  updateUserSearchOptions(value = ''): void {
-    this.userService.userQueryDsCache(value).pipe(untilDestroyed(this)).subscribe((users) => {
-      this.userField.searchOptions = users.map((user) => {
-        return { label: user.username, value: user.username };
+  private editingCron: Cronjob;
+
+  constructor(
+    private fb: FormBuilder,
+    private ws: WebSocketService,
+    private translate: TranslateService,
+    private slideInService: IxSlideInService,
+    private errorHandler: FormErrorHandlerService,
+    private cdr: ChangeDetectorRef,
+  ) {}
+
+  setCronForEdit(cron: Cronjob): void {
+    this.editingCron = cron;
+    if (!this.isNew) {
+      this.form.patchValue({
+        ...cron,
+        crontab: scheduleToCrontab(cron.schedule),
       });
-    });
+    }
   }
 
-  afterInit(entityForm: EntityFormComponent): void {
-    this.entityForm = entityForm;
-    this.pk = entityForm.pk;
-    this.isNew = entityForm.isNew;
-    this.title = entityForm.isNew ? helptext.cron_job_add : helptext.cron_job_edit;
-
-    // Setup user field options
-    this.userField = _.find(this.fieldSets[0].config, { name: 'user' }) as FormComboboxConfig;
-    this.userService.userQueryDsCache().pipe(untilDestroyed(this)).subscribe((users) => {
-      for (const user of users) {
-        this.userField.options.push({
-          label: user.username,
-          value: user.username,
-        });
-      }
-    });
-  }
-
-  resourceTransformIncomingRestData(data: Cronjob): Cronjob & { cron_picker: string } {
-    const schedule = data['schedule'];
-    return {
-      ...data,
-      cron_picker: `${schedule.minute} ${schedule.hour} ${schedule.dom} ${schedule.month} ${schedule.dow}`,
+  onSubmit(): void {
+    const values = {
+      ...this.form.value,
+      schedule: crontabToSchedule(this.form.value.crontab),
     };
-  }
 
-  beforeSubmit(value: { cron_picker: string; schedule?: Schedule }): void {
-    const spl = value.cron_picker.split(' ');
-    delete value.cron_picker;
-    const schedule: Schedule = {};
-    schedule['minute'] = spl[0];
-    schedule['hour'] = spl[1];
-    schedule['dom'] = spl[2];
-    schedule['month'] = spl[3];
-    schedule['dow'] = spl[4];
-    value['schedule'] = schedule;
+    this.isLoading = true;
+    let request$: Observable<unknown>;
+    if (this.isNew) {
+      request$ = this.ws.call('cronjob.create', [values]);
+    } else {
+      request$ = this.ws.call('cronjob.update', [
+        this.editingCron.id,
+        values,
+      ]);
+    }
+
+    request$.pipe(untilDestroyed(this)).subscribe(() => {
+      this.isLoading = false;
+      this.slideInService.close();
+    }, (error) => {
+      this.isLoading = false;
+      this.errorHandler.handleWsFormError(error, this.form);
+      this.cdr.markForCheck();
+    });
   }
 }
