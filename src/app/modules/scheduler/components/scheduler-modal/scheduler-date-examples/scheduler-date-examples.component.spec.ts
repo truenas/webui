@@ -1,20 +1,28 @@
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
-import { utcToZonedTime } from 'date-fns-tz';
-import { MockPipe } from 'ng-mocks';
+import { provideMockStore } from '@ngrx/store/testing';
 import { FormatDateTimePipe } from 'app/core/pipes/format-datetime.pipe';
 import {
   CronSchedulePreview,
 } from 'app/modules/scheduler/classes/cron-schedule-preview/cron-schedule-preview';
+import { selectTimezone } from 'app/store/system-config/system-config.selectors';
 import { SchedulerDateExamplesComponent } from './scheduler-date-examples.component';
 
 describe('SchedulerDateExamplesComponent', () => {
   let spectator: Spectator<SchedulerDateExamplesComponent>;
   const createComponent = createComponentFactory({
     component: SchedulerDateExamplesComponent,
-    declarations: [
-      MockPipe(FormatDateTimePipe, (date: Date) => {
-        return utcToZonedTime(date, 'America/New_York').toISOString();
+    providers: [
+      provideMockStore({
+        selectors: [
+          {
+            selector: selectTimezone,
+            value: 'America/New_York',
+          },
+        ],
       }),
+    ],
+    declarations: [
+      FormatDateTimePipe,
     ],
   });
 
@@ -25,18 +33,18 @@ describe('SchedulerDateExamplesComponent', () => {
           crontab: '0 0 * * *',
           timezone: 'America/New_York',
         }),
-        zonedStartDate: new Date('2022-02-22 11:39:00'),
+        zonedStartDate: '2022-02-22 11:39:00',
       },
     });
 
     const examples = spectator.queryAll('.schedule-example').map((element) => element.textContent);
     expect(examples).toEqual([
-      '2022-02-23T00:00:00.000Z',
-      '2022-02-24T00:00:00.000Z',
-      '2022-02-25T00:00:00.000Z',
-      '2022-02-26T00:00:00.000Z',
-      '2022-02-27T00:00:00.000Z',
-      '2022-02-28T00:00:00.000Z',
+      '2022-02-23 00:00:00',
+      '2022-02-24 00:00:00',
+      '2022-02-25 00:00:00',
+      '2022-02-26 00:00:00',
+      '2022-02-27 00:00:00',
+      '2022-02-28 00:00:00',
     ]);
   });
 
@@ -47,7 +55,7 @@ describe('SchedulerDateExamplesComponent', () => {
           crontab: '* * * * *',
           timezone: 'America/New_York',
         }),
-        zonedStartDate: new Date('2022-02-22 11:39:00'),
+        zonedStartDate: '2022-02-22 11:39:00',
       },
     });
 

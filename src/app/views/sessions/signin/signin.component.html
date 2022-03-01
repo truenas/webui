@@ -30,7 +30,7 @@
                       #username="ngModel"
                       [placeholder]="'Username' | translate"
                       value=""
-                      autocorrect="off" autocapitalize="none" autocomplete="off"
+                      autocorrect="off" autocomplete="off"
                     >
                     <mat-error *ngIf="username.errors && (username.dirty || username.touched) && (username.errors.required)">
                       <span *ngIf="!failed">{{"Please enter your username" | translate}}</span>

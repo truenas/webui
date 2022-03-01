@@ -9,4 +9,5 @@ export class IxFieldsetComponent {
   @Input() disable: boolean;
   @Input() title: string;
   @Input() divider: boolean;
+  @Input() tooltip: string;
 }

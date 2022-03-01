@@ -16,5 +16,7 @@ export const defaultPreferences: Preferences = {
   showUserListMessage: true,
   showGroupListMessage: true,
 
+  showSnapshotExtraColumns: false,
+
   rebootAfterManualUpdate: false,
 };

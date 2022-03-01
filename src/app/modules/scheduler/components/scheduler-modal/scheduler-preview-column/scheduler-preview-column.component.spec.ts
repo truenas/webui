@@ -2,7 +2,6 @@ import { HarnessLoader, parallel } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatCalendarHarness } from '@angular/material/datepicker/testing';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
-import { utcToZonedTime } from 'date-fns-tz';
 import { MockComponent } from 'ng-mocks';
 import {
   SchedulerDateExamplesComponent,
@@ -57,7 +56,7 @@ describe('SchedulerPreviewColumnComponent', () => {
 
   it('shows calendar for current month with dates highlighted when task will be run', async () => {
     const highlightedDays = await getHighlightedCalendarDays();
-    expect(highlightedDays).toEqual(['21', '28']);
+    expect(highlightedDays).toEqual(['28']);
   });
 
   it('shows current system timezone', () => {
@@ -69,13 +68,7 @@ describe('SchedulerPreviewColumnComponent', () => {
   it('passes cron and time constraints to SchedulerDateExamplesComponent to show date examples', () => {
     const examplesComponent = spectator.query(SchedulerDateExamplesComponent);
 
-    expect(examplesComponent.zonedStartDate.toISOString()).toEqual('2022-02-22T11:28:00.000Z');
-
-    const exampleDates = examplesComponent.cronPreview.listNextRunsInMonth(
-      examplesComponent.zonedStartDate.toISOString(),
-      5,
-    ).map((date) => utcToZonedTime(date, 'America/New_York').toISOString());
-    expect(exampleDates).toEqual(['2022-02-28T02:00:00.000Z']);
+    expect(examplesComponent.zonedStartDate).toEqual('2022-02-22 09:28:00');
   });
 
   it('shows calendar for next month with dates highlighted when next arrow is pressed', async () => {
@@ -94,7 +87,7 @@ describe('SchedulerPreviewColumnComponent', () => {
     await calendar.next();
 
     const examplesComponent = spectator.query(SchedulerDateExamplesComponent);
-    expect(examplesComponent.zonedStartDate.toISOString()).toEqual('2022-03-01T00:00:00.000Z');
+    expect(examplesComponent.zonedStartDate).toEqual('2022-03-01 00:00:00');
   });
 
   it('does not show any dates when user goes in the past', async () => {

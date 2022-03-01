@@ -37,7 +37,7 @@ export class CronSchedulePreview {
   listNextRunsInMonth(startDate: string, limit: number): Date[] {
     const nextRuns: Date[] = [];
     let previousDate: Date = this.getZonedStartDate(startDate);
-    const zonedEndDate = this.getZoneEndDate(startDate);
+    const zonedEndDate = this.getZonedEndDate(startDate);
 
     for (let i = 0; i < limit;) {
       const exampleDate = this.cron.next(previousDate);
@@ -61,10 +61,10 @@ export class CronSchedulePreview {
   getNextDaysInMonthWithRuns(startDate: string): Set<number> {
     const monthDaysWithRuns = new Set<number>([]);
 
-    let previousDate = toDate(startDate, { timeZone: 'UTC' });
+    let previousDate = new Date(startDate);
     const startingMonth = getMonth(previousDate);
 
-    while (getMonth(previousDate) === startingMonth) {
+    do {
       const zonedPreviousDate = zonedTimeToUtc(previousDate, this.timezone);
       const zonedNextRun = this.cron.next(subMinutes(zonedPreviousDate, 1));
       const nextRun = utcToZonedTime(zonedNextRun, this.timezone);
@@ -82,7 +82,7 @@ export class CronSchedulePreview {
 
       const dayNumber = getDate(nextRun);
       monthDaysWithRuns.add(dayNumber);
-    }
+    } while (getMonth(previousDate) === startingMonth);
 
     return monthDaysWithRuns;
   }
@@ -92,9 +92,9 @@ export class CronSchedulePreview {
     return subMinutes(zonedForMonth, 1);
   }
 
-  private getZoneEndDate(forMonth: string): Date {
-    const zonedForMonth = toDate(forMonth, { timeZone: 'UTC' });
-    const endDate = endOfMonth(zonedForMonth);
+  private getZonedEndDate(forMonth: string): Date {
+    const forMonthDate = new Date(forMonth);
+    const endDate = endOfMonth(forMonthDate);
     return zonedTimeToUtc(endDate, this.timezone);
   }
 

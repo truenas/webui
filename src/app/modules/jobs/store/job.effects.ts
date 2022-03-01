@@ -1,11 +1,12 @@
 import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { TranslateService } from '@ngx-translate/core';
-import { of } from 'rxjs';
+import { forkJoin, of } from 'rxjs';
 import {
   catchError, filter, map, switchMap,
 } from 'rxjs/operators';
 import { ApiEventMessage } from 'app/enums/api-event-message.enum';
+import { JobState } from 'app/enums/job-state.enum';
 import {
   abortJobPressed, jobAdded, jobChanged, jobRemoved, jobsLoaded, jobsNotLoaded,
 } from 'app/modules/jobs/store/job.actions';
@@ -18,8 +19,16 @@ export class JobEffects {
   loadJobs$ = createEffect(() => this.actions$.pipe(
     ofType(adminUiInitialized),
     switchMap(() => {
-      return this.ws.call('core.get_jobs').pipe(
-        map((jobs) => jobsLoaded({ jobs })),
+      const getNotCompletedJobs$ = this.ws.call('core.get_jobs', [[['state', '!=', JobState.Success]]]);
+      const getCompletedJobs$ = this.ws.call('core.get_jobs', [[['state', '=', JobState.Success]], { order_by: ['-id'], limit: 30 }]);
+
+      return forkJoin([
+        getNotCompletedJobs$,
+        getCompletedJobs$,
+      ]).pipe(
+        map(([notCompletedJobs, recentlyCompletedJobs]) => {
+          return jobsLoaded({ jobs: [...notCompletedJobs, ...recentlyCompletedJobs] });
+        }),
         catchError((error) => {
           console.error(error);
           // TODO: See if it would make sense to parse middleware error.
