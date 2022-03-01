@@ -70,7 +70,7 @@ def click_launch_docker_image(driver):
     assert wait_on_element(driver, 10, '//span[contains(.,"Launch Docker Image")]', 'clickable')
     driver.find_element_by_xpath('//span[contains(.,"Launch Docker Image")]').click()
     if wait_on_element(driver, 3, '//*[contains(.,"Please wait")]'):
-        assert wait_on_element_disappear(driver, 60, '//*[contains(.,"Please wait")]')
+        assert wait_on_element_disappear(driver, 120, '//*[contains(.,"Please wait")]')
 
 
 @then('set Application Name')
