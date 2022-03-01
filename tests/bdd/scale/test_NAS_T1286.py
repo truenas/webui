@@ -49,8 +49,8 @@ def on_the_dashboard_click_on_apps(driver):
     assert wait_on_element(driver, 10, '//div[contains(text(),"Available Applications")]', 'clickable')
     driver.find_element_by_xpath('//div[contains(text(),"Available Applications")]').click()
     # Wait for Available Applications UI to load
-    assert wait_on_element(driver, 10, '//h3[text()="plex"]')
-    assert wait_on_element(driver, 10, '//div[contains(.,"plex") and @class="content"]//button', 'clickable')
+    assert wait_on_element(driver, 60, '//h3[text()="plex"]')
+    assert wait_on_element(driver, 15, '//div[contains(.,"plex") and @class="content"]//button', 'clickable')
     # Sleep to make sure that the drop does not disappear
     time.sleep(2)
 
