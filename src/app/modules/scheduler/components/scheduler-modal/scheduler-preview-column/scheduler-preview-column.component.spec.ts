@@ -2,7 +2,6 @@ import { HarnessLoader, parallel } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatCalendarHarness } from '@angular/material/datepicker/testing';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
-import { utcToZonedTime } from 'date-fns-tz';
 import { MockComponent } from 'ng-mocks';
 import {
   SchedulerDateExamplesComponent,
@@ -69,13 +68,7 @@ describe('SchedulerPreviewColumnComponent', () => {
   it('passes cron and time constraints to SchedulerDateExamplesComponent to show date examples', () => {
     const examplesComponent = spectator.query(SchedulerDateExamplesComponent);
 
-    expect(examplesComponent.zonedStartDate).toEqual('2022-02-22 11:28:00');
-
-    const exampleDates = examplesComponent.cronPreview.listNextRunsInMonth(
-      examplesComponent.zonedStartDate,
-      5,
-    ).map((date) => utcToZonedTime(date, 'America/New_York').toISOString());
-    expect(exampleDates).toEqual(['2022-02-28T02:00:00.000Z']);
+    expect(examplesComponent.zonedStartDate).toEqual('2022-02-22 09:28:00');
   });
 
   it('shows calendar for next month with dates highlighted when next arrow is pressed', async () => {
