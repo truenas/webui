@@ -64,21 +64,24 @@ def the_users_page_should_open_click_the_greaterthansign_the_user_field_should_e
 @then('the User Edit Page should open, change "Disable Password" to No and click save')
 def the_user_edit_page_should_open_change_disable_password_to_no_and_click_save(driver):
     """the User Edit Page should open, change "Disable Password" to No and click save."""
-    assert wait_on_element(driver, 10, '//h3[contains(.,"Edit User")]')
     assert wait_on_element_disappear(driver, 10, '//h6[contains(.,"Please wait")]')
+    assert wait_on_element(driver, 10, '//h3[contains(.,"Edit User")]')
     assert wait_on_element(driver, 3, '//mat-select[@ix-auto="select__Disable Password"]', 'clickable')
     driver.find_element_by_xpath('//mat-select[@ix-auto="select__Disable Password"]').click()
     assert wait_on_element(driver, 3, '//mat-option[@ix-auto="option__Disable Password_No"]', 'clickable')
     driver.find_element_by_xpath('//mat-option[@ix-auto="option__Disable Password_No"]').click()
     wait_on_element(driver, 10, '//button[@ix-auto="button__SAVE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
-
+    time.sleep(1)
 
 @then('change should be saved, open the user page and verify the user Disable Password is false')
 def change_should_be_saved_open_the_user_page_and_verify_the_user_disable_password_is_false(driver):
     """change should be saved, open the user page and verify the user Disable Password is false."""
     assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
-    assert wait_on_element(driver, 5, '//div[contains(.,"Users")]')
+    assert wait_on_element(driver, 5, '//h1[contains(.,"Users")]')
+    assert wait_on_element(driver, 5, '//tr[contains(.,"ericbsd")]')
+    element_text = driver.find_element_by_xpath('(//tr[contains(.,"ericbsd")]/following-sibling::tr)[1]//dt[contains(.,"Password Disabled:")]/../dd').text
+    assert element_text == 'false'
 
 
 @then('try login with ssh, the user should be able to login')
