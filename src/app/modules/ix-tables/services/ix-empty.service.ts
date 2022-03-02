@@ -3,7 +3,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { EmptyConfig, EmptyType } from 'app/modules/entity/entity-empty/entity-empty.component';
 
 @Injectable()
-export class IxEmptyService {
+export class EmptyService {
   private readonly loadingConfig: EmptyConfig = {
     type: EmptyType.Loading,
     large: false,
