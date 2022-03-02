@@ -154,6 +154,9 @@ export class TaskService {
     return schedule.next().value.toDate();
   }
 
+  /**
+   * @deprecated Use crontabDescription pipe.
+   */
   getTaskCronDescription(scheduleExpression: string, options: CronOptions = this.cronOptions): string {
     return cronstrue.toString(scheduleExpression, options);
   }
