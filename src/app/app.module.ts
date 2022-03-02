@@ -20,7 +20,6 @@ import {
   TranslateMessageFormatCompiler,
 } from 'ngx-translate-messageformat-compiler';
 import { NgxWebstorageModule } from 'ngx-webstorage';
-import { MaterialModule } from 'app/app-material.module';
 import { ConsolePanelDialogComponent } from 'app/components/common/dialog/console-panel/console-panel-dialog.component';
 import { DownloadKeyDialogComponent } from 'app/components/common/dialog/download-key/download-key-dialog.component';
 import { IcuMissingTranslationHandler } from 'app/core/classes/icu-missing-translation-handler';
@@ -78,7 +77,6 @@ import { WebSocketService } from './services/ws.service';
       },
       useDefaultLang: false,
     }),
-    MaterialModule,
     RouterModule.forRoot(rootRouterConfig, { useHash: false }),
     NgxPopperjsModule.forRoot({ appendTo: 'body' }),
     MarkdownModule.forRoot(),
