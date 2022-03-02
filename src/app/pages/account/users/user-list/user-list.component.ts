@@ -167,10 +167,9 @@ export class UserListComponent implements OnInit {
       },
       {
         name: 'config',
-        type: 'button',
-        label: this.hideBuiltinUsers
-          ? this.translate.instant('Show built-in users')
-          : this.translate.instant('Hide built-in users'),
+        type: 'slide-toggle',
+        value: !this.hideBuiltinUsers,
+        label: this.translate.instant('Show Built-In Users'),
       },
       {
         name: 'add',

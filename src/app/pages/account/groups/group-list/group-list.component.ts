@@ -4,7 +4,8 @@ import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
-import { combineLatest, Subject } from 'rxjs';
+import { Subject } from 'rxjs';
+import { map } from 'rxjs/operators';
 import helptext from 'app/helptext/account/group-list';
 import { CoreEvent } from 'app/interfaces/events';
 import { Group, MembershipGroup } from 'app/interfaces/group.interface';
@@ -75,15 +76,11 @@ export class GroupListComponent implements EntityTableConfig<MembershipGroup> {
     private core: CoreService,
   ) {}
 
-  preInit(): void {
-    combineLatest([
-      this.ws.call('user.query'),
-      this.store$.pipe(waitForPreferences),
-    ]).pipe(untilDestroyed(this)).subscribe(([users, preferences]) => {
+  prerequisite(): Promise<boolean> {
+    return this.ws.call('user.query').pipe(map((users) => {
       this.users = users;
-      this.hideBuiltinGroups = preferences.hideBuiltinGroups;
-      this.setupToolbar();
-    });
+      return true;
+    })).toPromise();
   }
 
   resourceTransformIncomingRestData(data: Group[]): MembershipGroup[] {
@@ -108,6 +105,12 @@ export class GroupListComponent implements EntityTableConfig<MembershipGroup> {
     this.entityList = entityList;
 
     this.slideInService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
+      this.entityList.getData();
+    });
+
+    this.store$.pipe(waitForPreferences).pipe(untilDestroyed(this)).subscribe((preferences) => {
+      this.hideBuiltinGroups = preferences.hideBuiltinGroups;
+      this.setupToolbar();
       this.entityList.getData();
     });
   }
@@ -240,10 +243,9 @@ export class GroupListComponent implements EntityTableConfig<MembershipGroup> {
       },
       {
         name: 'config',
-        type: 'button',
-        label: this.hideBuiltinGroups
-          ? this.translate.instant('Show built-in groups')
-          : this.translate.instant('Hide built-in groups'),
+        type: 'slide-toggle',
+        value: !this.hideBuiltinGroups,
+        label: this.translate.instant('Show Built-In Groups'),
       },
       {
         name: 'add',
