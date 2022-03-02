@@ -807,6 +807,7 @@ export type ApiDirectory = {
   'support.new_ticket': { params: [CreateNewTicket]; response: NewTicketResponse };
   'support.attach_ticket': { params: AttachTicketParams; response: Job };
   'support.fetch_categories': { params: FetchSupportParams; response: Choices };
+  'support.attach_ticket_max_size': { params: void; response: number };
 
   // SMART
   'smart.test.disk_choices': { params: void; response: Choices };

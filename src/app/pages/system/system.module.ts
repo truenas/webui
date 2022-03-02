@@ -14,8 +14,10 @@ import { CastModule } from 'app/modules/cast/cast.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxTableModule } from 'app/modules/ix-tables/ix-table.module';
 import { JobsModule } from 'app/modules/jobs/jobs.module';
+import { SchedulerModule } from 'app/modules/scheduler/scheduler.module';
 import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
 import { InitShutdownFormComponent } from 'app/pages/system/advanced/initshutdown/init-shutdown-form/init-shutdown-form.component';
+import { SedFormComponent } from 'app/pages/system/advanced/sed-form/sed-form.component';
 import { SystemDatasetPoolComponent } from 'app/pages/system/advanced/system-dataset-pool/system-dataset-pool.component';
 import { AlertServiceListComponent } from 'app/pages/system/alert-service/alert-service-list/alert-service-list.component';
 import {
@@ -74,6 +76,7 @@ import { EnclosureModule } from './view-enclosure/enclosure.module';
     FormsModule,
     IxFormsModule,
     IxTableModule,
+    SchedulerModule,
     JobsModule,
     MarkdownModule.forRoot(),
 
@@ -123,6 +126,7 @@ import { EnclosureModule } from './view-enclosure/enclosure.module';
     SysInfoComponent,
     SyslogFormComponent,
     SystemDatasetPoolComponent,
+    SedFormComponent,
     TunableFormComponent,
     TunableListComponent,
     TwoFactorComponent,

@@ -96,7 +96,14 @@ describe('JobsPanelComponent', () => {
   it('loads jobs when adminUiInitialized is dispatched', () => {
     spectator.inject(Store).dispatch(adminUiInitialized());
 
-    expect(websocket.call).toHaveBeenCalledWith('core.get_jobs');
+    expect(websocket.call).toHaveBeenCalledWith(
+      'core.get_jobs',
+      [[['state', '!=', JobState.Success]]],
+    );
+    expect(websocket.call).toHaveBeenCalledWith(
+      'core.get_jobs',
+      [[['state', '=', JobState.Success]], { limit: 30, order_by: ['-id'] }],
+    );
   });
 
   it('checks component header is present', () => {
