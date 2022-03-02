@@ -8,9 +8,10 @@ import { TranslateService } from '@ngx-translate/core';
 import { Observable } from 'rxjs';
 import helptext from 'app/helptext/system/cron-form';
 import { Cronjob } from 'app/interfaces/cronjob.interface';
+import { UserComboboxProvider } from 'app/modules/ix-forms/classes/user-combobox-provider';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { crontabToSchedule, scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
-import { WebSocketService } from 'app/services';
+import { UserService, WebSocketService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
@@ -34,23 +35,25 @@ export class CronFormComponent {
     description: [''],
     command: ['', Validators.required],
     user: ['', Validators.required],
-    crontab: ['0 0 * * *', Validators.required],
+    schedule: ['0 0 * * *', Validators.required],
     stdout: [true],
     stderr: [false],
     enabled: [true],
   });
 
+  isLoading = false;
+
   readonly tooltips = {
     description: helptext.cron_description_tooltip,
     command: helptext.cron_command_tooltip,
     user: helptext.cron_user_tooltip,
-    crontab: helptext.crontab_tooltip,
+    schedule: helptext.crontab_tooltip,
     stdout: helptext.cron_stdout_tooltip,
     stderr: helptext.cron_stderr_tooltip,
     enabled: helptext.cron_enabled_tooltip,
   };
 
-  isLoading = false;
+  readonly userProvider = new UserComboboxProvider(this.userService);
 
   private editingCron: Cronjob;
 
@@ -61,6 +64,7 @@ export class CronFormComponent {
     private slideInService: IxSlideInService,
     private errorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,
+    private userService: UserService,
   ) {}
 
   setCronForEdit(cron: Cronjob): void {
@@ -68,7 +72,7 @@ export class CronFormComponent {
     if (!this.isNew) {
       this.form.patchValue({
         ...cron,
-        crontab: scheduleToCrontab(cron.schedule),
+        schedule: scheduleToCrontab(cron.schedule),
       });
     }
   }
@@ -76,7 +80,7 @@ export class CronFormComponent {
   onSubmit(): void {
     const values = {
       ...this.form.value,
-      schedule: crontabToSchedule(this.form.value.crontab),
+      schedule: crontabToSchedule(this.form.value.schedule),
     };
 
     this.isLoading = true;

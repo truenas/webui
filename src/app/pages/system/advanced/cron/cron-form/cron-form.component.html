@@ -11,12 +11,21 @@
         <ix-input
           formControlName="command"
           [label]="'Command' | translate"
+          [required]="true"
           [tooltip]="tooltips.command | translate"
         ></ix-input>
+        <ix-combobox
+          formControlName="user"
+          [label]="'Run As User' | translate"
+          [required]="true"
+          [tooltip]="tooltips.user | translate"
+          [provider]="userProvider"
+        ></ix-combobox>
         <ix-scheduler
-          formControlName="crontab"
+          formControlName="schedule"
           [label]="'Schedule' | translate"
-          [tooltip]="tooltips.crontab | translate"
+          [required]="true"
+          [tooltip]="tooltips.schedule | translate"
         ></ix-scheduler>
         <ix-checkbox
           formControlName="stdout"

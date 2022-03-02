@@ -25,6 +25,7 @@ import { selectTimezone } from 'app/store/system-config/system-config.selectors'
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-scheduler-modal',
   templateUrl: './scheduler-modal.component.html',
   styleUrls: ['./scheduler-modal.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -68,6 +69,7 @@ export class SchedulerModalComponent implements OnInit {
 
   // TODO: This belongs elsewhere.
   // TODO: Not every locale uses Sun as first day of the week.
+  // TODO: Update in harness too.
   // TODO: Limit type.
   readonly weekdays: Option[] = [
     { label: this.translate.instant('Sun'), value: 'sun' },
