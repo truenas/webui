@@ -214,9 +214,9 @@ export class DatasetUnlockComponent implements FormConfiguration {
         for (let i = 0; i < res.result.length; i++) {
           if (this.datasets.controls[i] === undefined) {
             const templateListField = _.cloneDeep(this.datasetsField.templateListField);
-            const newfg = this.entityFormService.createFormGroup(templateListField);
-            newfg.setParent(this.datasets);
-            this.datasets.controls.push(newfg);
+            const newFormGroup = this.entityFormService.createFormGroup(templateListField);
+            newFormGroup.setParent(this.datasets);
+            this.datasets.controls.push(newFormGroup);
             this.datasetsField.listFields.push(templateListField);
           }
           const controls = listFields[i];

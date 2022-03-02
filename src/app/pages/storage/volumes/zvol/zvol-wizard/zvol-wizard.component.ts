@@ -69,7 +69,7 @@ export class ZvolWizardComponent implements WizardConfiguration {
   protected origVolSize: number;
   protected origHuman: string;
 
-  custActions: EntityWizardAction[] = [
+  customActions: EntityWizardAction[] = [
     {
       id: 'basic_mode',
       name: globalHelptext.basic_options,
@@ -263,7 +263,7 @@ export class ZvolWizardComponent implements WizardConfiguration {
     },
   ];
 
-  isCustActionVisible(actionId: string, stepperIndex: number): boolean {
+  isCustomActionVisible(actionId: string, stepperIndex: number): boolean {
     if (!(stepperIndex === 1)) {
       return false;
     }
@@ -365,7 +365,7 @@ export class ZvolWizardComponent implements WizardConfiguration {
         parentDataset = parentDataset.join('/');
 
         this.ws.call('pool.dataset.query', [[['id', '=', parentDataset]]]).pipe(untilDestroyed(this)).subscribe((parentDataset) => {
-          this.custActions = null;
+          this.customActions = null;
           this.entityWizard.setDisabled('name', true, 1);
           sparse['isHidden'] = true;
           volblocksize['isHidden'] = true;
@@ -381,7 +381,7 @@ export class ZvolWizardComponent implements WizardConfiguration {
           // decimal has to be truncated to three decimal places
           this.origVolSize = volumesize;
 
-          const humansize = this.storageService.convertBytestoHumanReadable(volumesize);
+          const humansize = this.storageService.convertBytesToHumanReadable(volumesize);
           this.origHuman = humansize;
 
           zvolEntityForm.controls['name'].setValue(pkDataset[0].name);

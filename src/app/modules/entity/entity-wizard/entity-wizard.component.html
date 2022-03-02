@@ -1,6 +1,5 @@
-<!-- <ng-template [ngTemplateOutlet]="templateTop" [ngTemplateOutletContext]="this"></ng-template> -->
 <mat-card>
-  <mat-spinner [diameter]='40' id="entity-spinner" *ngIf="showSpinner" #entityspinner></mat-spinner>
+  <mat-spinner [diameter]='40' id="entity-spinner" *ngIf="showSpinner"></mat-spinner>
   <form [formGroup]="formGroup" #entityForm="ngForm" (keydown.enter)="$event.preventDefault()">
     <mat-vertical-stepper [linear]="conf?.isLinear" formArrayName="formArray" (selectionChange)="selectionChange($event)" #stepper>
       <div *ngFor="let step of conf.wizardConfig; let i = index">
@@ -34,8 +33,8 @@
               ix-auto ix-auto-type="button" ix-auto-identifier="NEXT_{{step.label}}" [disabled]="showSpinner">{{"Next" | translate}}</button>
             <button id="custom_button_{{i}}" *ngIf="conf.customNext" (click)="handleNext(matStepInstance)" mat-button color="primary" type="button"
               ix-auto ix-auto-type="button" ix-auto-identifier="{{customNextText | uppercase}}">{{customNextText | translate}}</button>
-            <span *ngFor="let custBtn of conf.custActions">
-              <button id="cust_button_{{custBtn.name}}" mat-button color="primary" *ngIf="!conf.isCustActionVisible || conf.isCustActionVisible(custBtn.id, i)" type="button" (click)="custBtn['function']()"
+            <span *ngFor="let custBtn of conf.customActions">
+              <button id="cust_button_{{custBtn.name}}" mat-button color="primary" *ngIf="!conf.isCustomActionVisible || conf.isCustomActionVisible(custBtn.id, i)" type="button" (click)="custBtn['function']()"
                 ix-auto ix-auto-type="button" ix-auto-identifier="{{custBtn.name | uppercase}}">{{custBtn.name | translate}}</button>
             </span>
           </mat-card-actions>

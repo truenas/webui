@@ -6,7 +6,6 @@ import { format, utcToZonedTime } from 'date-fns-tz';
 import { Subject, combineLatest } from 'rxjs';
 import { CoreEvent } from 'app/interfaces/events';
 import { Option } from 'app/interfaces/option.interface';
-import { CoreService } from 'app/services/core-service/core.service';
 import { AppState } from 'app/store';
 import { waitForPreferences } from 'app/store/preferences/preferences.selectors';
 import { selectTimezone } from 'app/store/system-config/system-config.selectors';
@@ -23,7 +22,6 @@ export class LocaleService {
 
   constructor(
     public sysGeneralService: SystemGeneralService,
-    private core: CoreService,
     private store$: Store<AppState>,
   ) {
     combineLatest([

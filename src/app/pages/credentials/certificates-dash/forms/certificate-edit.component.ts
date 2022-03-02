@@ -225,7 +225,7 @@ export class CertificateEditComponent implements FormConfiguration {
     return data;
   }
 
-  custActions = [
+  customActions = [
     {
       id: 'create_ACME',
       name: helptextSystemCertificates.list.action_create_acme_certificate,
@@ -237,8 +237,8 @@ export class CertificateEditComponent implements FormConfiguration {
     },
   ];
 
-  isCustActionVisible(actionname: string): boolean {
-    if (actionname === 'create_ACME' && !this.isCsr) {
+  isCustomActionVisible(actionName: string): boolean {
+    if (actionName === 'create_ACME' && !this.isCsr) {
       return false;
     }
     return true;

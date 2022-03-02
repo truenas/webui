@@ -248,7 +248,7 @@ export class NfsFormComponent implements FormConfiguration {
   protected advanced_sets = ['access', 'networks', 'hosts'];
   protected advanced_dividers = ['divider_access'];
 
-  custActions = [
+  customActions = [
     {
       id: 'basic_mode',
       name: globalHelptext.basic_options,
@@ -344,7 +344,7 @@ export class NfsFormComponent implements FormConfiguration {
     }
   }
 
-  isCustActionVisible(actionId: string): boolean {
+  isCustomActionVisible(actionId: string): boolean {
     if (actionId === 'advanced_mode' && !this.isBasicMode) {
       return false;
     }
