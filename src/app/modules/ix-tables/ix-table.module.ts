@@ -12,7 +12,7 @@ import { IxTablePaginatorComponent } from 'app/modules/ix-tables/components/ix-t
 import { IxTableComponent } from 'app/modules/ix-tables/components/ix-table/ix-table.component';
 import { IxCellDefDirective } from 'app/modules/ix-tables/directives/ix-cell-def.directive';
 import { IxRowDefDirective } from 'app/modules/ix-tables/directives/ix-row-def.directive';
-import { EmptyService } from 'app/modules/ix-tables/services/ix-empty.service';
+import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
 
 @NgModule({
   declarations: [
