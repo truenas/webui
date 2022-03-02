@@ -8,7 +8,6 @@ import { RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { AngularSvgIconModule, SvgIconRegistryService } from 'angular-svg-icon';
 import { ChartistModule } from 'ng-chartist';
-import { MaterialModule } from 'app/app-material.module';
 import { PageTitleComponent } from 'app/components/common/page-title/page-title.component';
 import { SecondaryMenuComponent } from 'app/components/common/secondary-menu/secondary-menu.component';
 import { ViewControllerComponent } from 'app/core/components/view-controller/view-controller.component';
@@ -38,7 +37,6 @@ import { TopbarComponent } from './topbar/topbar.component';
     FormsModule,
     RouterModule,
     FlexLayoutModule,
-    MaterialModule,
     CommonDirectivesModule,
     TranslateModule,
     IxFormsModule,
