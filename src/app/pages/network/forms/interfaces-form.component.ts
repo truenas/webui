@@ -11,7 +11,7 @@ import {
 import { ProductType } from 'app/enums/product-type.enum';
 import helptext from 'app/helptext/network/interfaces/interfaces-form';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
-import { NetworkInterface, NetworkInterfaceAlias } from 'app/interfaces/network-interface.interface';
+import { BridgeNetworkInterface, NetworkInterface, NetworkInterfaceAlias } from 'app/interfaces/network-interface.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { EntityFormComponent } from 'app/modules/entity/entity-form/entity-form.component';
 import {
@@ -97,6 +97,15 @@ export class InterfacesFormComponent implements FormConfiguration {
           options: [],
           isHidden: true,
           disabled: true,
+        },
+        {
+          type: 'checkbox',
+          name: 'stp',
+          placeholder: helptext.bridge_stp_placeholder,
+          tooltip: helptext.bridge_stp_tooltip,
+          isHidden: true,
+          disabled: true,
+          value: true,
         },
       ],
       colspan: 2,
@@ -294,7 +303,7 @@ export class InterfacesFormComponent implements FormConfiguration {
 
   private vlanFields = ['vlan_tag', 'vlan_pcp', 'vlan_parent_interface'];
   private laggFields = ['lag_protocol', 'lag_ports'];
-  private bridgeFields = ['bridge_members'];
+  private bridgeFields = ['bridge_members', 'stp'];
   private failoverFields = ['failover_critical', 'failover_group', 'failover_vhid'];
   private vlanFieldset: FieldSet;
   private lagFieldset: FieldSet;
@@ -595,6 +604,9 @@ export class InterfacesFormComponent implements FormConfiguration {
     if (data.type === NetworkInterfaceType.Bridge && data.bridge_members === undefined) {
       data.bridge_members = [];
     }
+    if (data.stp) {
+      delete data.stp;
+    }
     if (failoverAliases.length > 0) {
       data.failover_aliases = failoverAliases;
     }
@@ -649,6 +661,7 @@ export class InterfacesFormComponent implements FormConfiguration {
       ...data,
       aliases: transformedAliases,
       mtu: data.mtu || data.state?.mtu,
+      stp: (data as BridgeNetworkInterface)?.stp || true,
     };
   }
 
