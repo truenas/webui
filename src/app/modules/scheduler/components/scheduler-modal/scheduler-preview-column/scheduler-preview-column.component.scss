@@ -1,0 +1,63 @@
+:host {
+  background-color: var(--contrast-lighter);
+  border-radius: 0 4px 4px 0;
+  display: flex;
+  flex-direction: column;
+  padding-top: 6px;
+  width: 300px;
+}
+
+.calendar {
+  width: 100%;
+
+  ::ng-deep .mat-calendar-table {
+    width: 100%;
+  }
+
+  ::ng-deep .highlighted-date {
+    background: var(--bg1);
+    border-radius: 50%;
+  }
+}
+
+.preview-header {
+  margin-bottom: -10px;
+  padding-left: 18px;
+  padding-right: 14px;
+
+  h4 {
+    margin-bottom: 4px;
+  }
+}
+
+.crontab-header {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+  margin-right: -5px;
+
+  button {
+    margin-bottom: 1px;
+  }
+}
+
+.crontab-explanation {
+  line-height: 18px;
+  margin-top: 6px;
+}
+
+.schedule-list {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  margin-top: 10px;
+
+  .timezone-message {
+    margin-left: 14px;
+  }
+
+  .schedule-example-section {
+    flex: 1;
+    flex-basis: 0;
+  }
+}
