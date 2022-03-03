@@ -8,37 +8,24 @@ interface Column {
   minWidth: number;
 }
 
-interface TableDisplayedColumns {
+export interface TableDisplayedColumns {
   title: string;
   cols: Column[];
 }
 
+/**
+ * @see defaultPreferences
+ */
 export interface Preferences {
-  platform: string;
-  retroLogo: boolean;
-  timestamp: string;
-  userTheme: string;
-  customThemes: { [theme: string]: any }[];
-  sidenavStatus: SidenavStatusData;
-
-  /**
-   * @deprecated
-   */
-  favoriteThemes: { [theme: string]: any }[];
-  showGuide: boolean;
-  showTooltips: boolean;
-  metaphor: string;
-  allowPwToggle: boolean;
-  preferIconsOnly: boolean;
-  rebootAfterManualUpdate: boolean;
-  tableDisplayedColumns: TableDisplayedColumns[];
-  hide_builtin_users: boolean;
-  hide_builtin_groups: boolean;
   dateFormat: string;
   timeFormat: string;
-  showUserListMessage: boolean;
-  showGroupListMessage: boolean;
-  expandAvailablePlugins: boolean;
-  storedValues: { [value: string]: any };
-  [preference: string]: any;
+  sidenavStatus: SidenavStatusData;
+  userTheme: string;
+  tableDisplayedColumns: TableDisplayedColumns[];
+  hideBuiltinUsers: boolean;
+  hideBuiltinGroups: boolean;
+
+  showSnapshotExtraColumns: boolean;
+
+  rebootAfterManualUpdate: boolean;
 }

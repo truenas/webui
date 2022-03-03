@@ -74,7 +74,7 @@ export class ReplicationFormComponent implements FormConfiguration {
       value: RetentionPolicy.None,
     },
   ];
-  custActions = [{
+  customActions = [{
     id: 'wizard_add',
     name: this.translate.instant('Switch to Wizard'),
     function: () => {
@@ -1357,7 +1357,7 @@ export class ReplicationFormComponent implements FormConfiguration {
       wsResponse['restrict_schedule'] = true;
     }
     wsResponse['speed_limit'] = wsResponse['speed_limit']
-      ? this.storageService.convertBytestoHumanReadable(wsResponse['speed_limit'], 0)
+      ? this.storageService.convertBytesToHumanReadable(wsResponse['speed_limit'], 0)
       : undefined;
     // block large_block changes if it is enabled
     if (this.entityForm.wsResponse.large_block) {
@@ -1367,6 +1367,7 @@ export class ReplicationFormComponent implements FormConfiguration {
     if (wsResponse.properties_override) {
       const propertiesExcludeList = [];
       for (const [key, value] of Object.entries(wsResponse['properties_override'])) {
+        // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
         propertiesExcludeList.push(`${key}=${value}`);
       }
       wsResponse['properties_override'] = propertiesExcludeList;
@@ -1584,7 +1585,7 @@ export class ReplicationFormComponent implements FormConfiguration {
     }
   }
 
-  isCustActionVisible(actionId: string): boolean {
+  isCustomActionVisible(actionId: string): boolean {
     return actionId === 'wizard_add' && this.pk === undefined;
   }
 

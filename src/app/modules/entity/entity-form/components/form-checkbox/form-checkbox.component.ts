@@ -25,7 +25,7 @@ export class FormCheckboxComponent implements Field {
   }
 
   onChangeCheckbox($event: MatCheckboxChange): void {
-    if (this.config.onChange !== undefined && this.config.onChange != null) {
+    if (this.config.onChange !== undefined && this.config.onChange !== null) {
       this.config.onChange({ event: $event });
     }
   }

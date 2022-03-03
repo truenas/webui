@@ -4,7 +4,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 import { MaterialModule } from 'app/app-material.module';
 import { AppCommonModule } from 'app/components/common/app-common.module';
-import { CoreComponents } from 'app/core/components/core-components.module';
+import { CoreComponents } from 'app/core/core-components.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { CastModule } from 'app/modules/cast/cast.module';
 import { ChartsModule } from 'app/modules/charts/charts.module';
@@ -61,18 +61,6 @@ import { routing } from './dashboard.routing';
     WidgetStorageComponent,
     SimpleFailoverBtnComponent,
     SimpleFailoverBtnDialogComponent,
-  ],
-  entryComponents: [
-    WidgetComponent,
-    WidgetSysInfoComponent,
-    WidgetHelpComponent,
-    WidgetNicComponent,
-    WidgetCpuComponent,
-    WidgetMemoryComponent,
-    WidgetPoolComponent,
-    WidgetControllerComponent,
-    WidgetNetworkComponent,
-    WidgetStorageComponent,
   ],
 })
 export class DashboardModule {

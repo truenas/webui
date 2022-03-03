@@ -159,7 +159,7 @@ export class ViewEnclosureComponent implements OnDestroy {
   extractVisualizations(): void {
     if (this.showEnclosureSelector) {
       this.system.profile.forEach((item, index) => {
-        if (this.system.rearIndex && item.enclosureKey == this.system.rearIndex) { return; }
+        if (this.system.rearIndex && item.enclosureKey === this.system.rearIndex) { return; }
         if (this.system.profile) {
           this.events.next({ name: 'CanvasExtract', data: this.system.profile[index], sender: this });
         }
@@ -240,7 +240,7 @@ export class ViewEnclosureComponent implements OnDestroy {
       this.formEvent$.pipe(
         untilDestroyed(this),
       ).subscribe((evt: CoreEvent) => {
-        const nextView = this.views.find((view) => view.alias == evt.data.configFiles.value);
+        const nextView = this.views.find((view) => view.alias === evt.data.configFiles.value);
         this.changeView(nextView.id);
       });
     }

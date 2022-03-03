@@ -1,13 +1,13 @@
 import {
-  Component, OnInit, AfterViewInit, ChangeDetectorRef, ViewChild, ChangeDetectionStrategy,
+  Component, OnInit, ChangeDetectorRef, ViewChild, ChangeDetectionStrategy,
 } from '@angular/core';
 import { MatSort, Sort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { Subject } from 'rxjs';
-import { filter, map } from 'rxjs/operators';
-import { ConfirmOptions } from 'app/interfaces/dialog.interface';
+import { map } from 'rxjs/operators';
 import { CoreEvent } from 'app/interfaces/events';
 import { User } from 'app/interfaces/user.interface';
 import { EmptyConfig, EmptyType } from 'app/modules/entity/entity-empty/entity-empty.component';
@@ -16,8 +16,10 @@ import { ControlConfig, ToolbarConfig } from 'app/modules/entity/entity-toolbar/
 import { DialogService } from 'app/services';
 import { CoreService } from 'app/services/core-service/core.service';
 import { ModalService } from 'app/services/modal.service';
-import { PreferencesService } from 'app/services/preferences.service';
 import { WebSocketService } from 'app/services/ws.service';
+import { AppState } from 'app/store';
+import { builtinUsersToggled } from 'app/store/preferences/preferences.actions';
+import { waitForPreferences } from 'app/store/preferences/preferences.selectors';
 import { UserFormComponent } from '../user-form/user-form.component';
 
 @UntilDestroy()
@@ -26,11 +28,10 @@ import { UserFormComponent } from '../user-form/user-form.component';
   styleUrls: ['./user-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class UserListComponent implements OnInit, AfterViewInit {
+export class UserListComponent implements OnInit {
   @ViewChild(MatSort, { static: false }) sort: MatSort;
 
   displayedColumns: string[] = ['username', 'uid', 'builtin', 'full_name', 'actions'];
-  toolbarConfig: ToolbarConfig;
   settingsEvent$: Subject<CoreEvent> = new Subject();
   filterString = '';
   dataSource: MatTableDataSource<User> = new MatTableDataSource([]);
@@ -54,6 +55,8 @@ export class UserListComponent implements OnInit, AfterViewInit {
   };
   expandedRow: User;
 
+  private hideBuiltinUsers = true;
+
   get currentEmptyConf(): EmptyConfig {
     if (this.loading) {
       return this.loadingConf;
@@ -67,35 +70,30 @@ export class UserListComponent implements OnInit, AfterViewInit {
   constructor(
     private dialogService: DialogService,
     private ws: WebSocketService,
-    private prefService: PreferencesService,
     private translate: TranslateService,
     private modalService: ModalService,
     private cdr: ChangeDetectorRef,
     private core: CoreService,
+    private store$: Store<AppState>,
   ) { }
 
   ngOnInit(): void {
-    this.setupToolbar();
-    this.getUsers();
-  }
-
-  ngAfterViewInit(): void {
-    this.modalService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
+    this.loading = true;
+    this.store$.pipe(waitForPreferences, untilDestroyed(this)).subscribe((preferences) => {
+      this.hideBuiltinUsers = preferences.hideBuiltinUsers;
+      this.setupToolbar();
       this.getUsers();
+      this.modalService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
+        this.getUsers();
+      });
     });
-
-    if (this.prefService.preferences.showUserListMessage) {
-      setTimeout(() => {
-        this.showOneTimeBuiltinMsg();
-      }, 2000);
-    }
   }
 
   getUsers(): void {
     this.loading = true;
     this.ws.call('user.query').pipe(
       map((users) => {
-        if (this.prefService.preferences.hide_builtin_users) {
+        if (this.hideBuiltinUsers) {
           // TODO: Use QueryParams and QueryFilter when it is possible
           // [['OR', [['builtin', '=', false], ['username', '=', 'root']]]]
           return users.filter((user) => !user.builtin || user.username === 'root');
@@ -122,46 +120,12 @@ export class UserListComponent implements OnInit, AfterViewInit {
   createDataSource(users: User[] = []): void {
     this.dataSource = new MatTableDataSource(users);
     this.dataSource.sort = this.sort;
+    this.dataSource.filter = this.filterString;
   }
 
   toggleBuiltins(): void {
-    let dialogOptions: ConfirmOptions;
-    if (this.prefService.preferences.hide_builtin_users) {
-      dialogOptions = {
-        title: this.translate.instant('Show Built-in Users'),
-        message: this.translate.instant('Show built-in users (default setting is <i>hidden</i>).'),
-        hideCheckBox: true,
-        buttonMsg: this.translate.instant('Show'),
-      };
-    } else {
-      dialogOptions = {
-        title: this.translate.instant('Hide Built-in Users'),
-        message: this.translate.instant('Hide built-in users (default setting is <i>hidden</i>).'),
-        hideCheckBox: true,
-        buttonMsg: this.translate.instant('Hide'),
-      };
-    }
-
-    this.dialogService.confirm(dialogOptions).pipe(
-      filter(Boolean),
-      untilDestroyed(this),
-    ).subscribe(() => {
-      this.prefService.preferences.hide_builtin_users = !this.prefService.preferences.hide_builtin_users;
-      this.prefService.savePreferences();
-      this.getUsers();
-    });
-  }
-
-  showOneTimeBuiltinMsg(): void {
-    this.prefService.preferences.showUserListMessage = false;
-    this.prefService.savePreferences();
-    this.dialogService.confirm({
-      title: this.translate.instant('Display Note'),
-      message: this.translate.instant('All built-in users except <i>root</i> are hidden by default. Use the gear icon (top-right) to toggle the display of built-in users.'),
-      hideCheckBox: true,
-      hideCancel: true,
-      buttonMsg: this.translate.instant('Close'),
-    });
+    this.store$.dispatch(builtinUsersToggled());
+    this.getUsers();
   }
 
   doAdd(): void {
@@ -203,8 +167,9 @@ export class UserListComponent implements OnInit, AfterViewInit {
       },
       {
         name: 'config',
-        type: 'button',
-        label: this.translate.instant('Toggle built-in users'),
+        type: 'slide-toggle',
+        value: !this.hideBuiltinUsers,
+        label: this.translate.instant('Show Built-In Users'),
       },
       {
         name: 'add',
@@ -224,7 +189,6 @@ export class UserListComponent implements OnInit, AfterViewInit {
       actionConfig: toolbarConfig,
     };
 
-    this.toolbarConfig = toolbarConfig;
     this.core.emit({ name: 'GlobalActions', data: settingsConfig, sender: this });
   }
 }

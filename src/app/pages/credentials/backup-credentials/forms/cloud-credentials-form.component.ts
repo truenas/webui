@@ -1236,7 +1236,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
   protected providerField: FormSelectConfig;
   entityForm: EntityFormComponent;
 
-  custActions = [
+  customActions = [
     {
       id: 'validCredential',
       name: this.translate.instant('Verify Credential'),
@@ -1310,14 +1310,14 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
     );
   }
 
-  isCustActionVisible(actionname: string): boolean {
-    if (actionname === 'authenticate' && !this.credentialsOauth) {
+  isCustomActionVisible(actionName: string): boolean {
+    if (actionName === 'authenticate' && !this.credentialsOauth) {
       return false;
     }
     return true;
   }
 
-  isCustActionDisabled(actionId: string): boolean {
+  isCustomActionDisabled(actionId: string): boolean {
     if (actionId === 'validCredential' || actionId === 'customSave') {
       return this.entityForm.formGroup.invalid;
     }
@@ -1358,7 +1358,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
       this.selectedProvider = res;
 
       this.oauthUrl = _.find(this.providers, { name: res }).credentials_oauth;
-      this.credentialsOauth = this.oauthUrl != null;
+      this.credentialsOauth = this.oauthUrl !== null;
       entityForm.setDisabled('client_id', !this.credentialsOauth, !this.credentialsOauth);
       entityForm.setDisabled('client_secret', !this.credentialsOauth, !this.credentialsOauth);
       entityForm.setDisabled('oauth_signin_button', !this.credentialsOauth, !this.credentialsOauth);
@@ -1587,7 +1587,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
         continue;
       }
 
-      if ((!removedAttributes.includes(item) && value[item] != '') || allowEmptyStrings.includes(item)) {
+      if ((!removedAttributes.includes(item) && value[item] !== '') || allowEmptyStrings.includes(item)) {
         attrName = item.split('-')[0];
         attributes[attrName] = attrName === 'auth_version' ? parseInt(value[item], 10) : value[item];
       }

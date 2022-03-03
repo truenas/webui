@@ -9,7 +9,7 @@ import { SpectatorRouting } from '@ngneat/spectator';
 import {
   createRoutingFactory, mockProvider,
 } from '@ngneat/spectator/jest';
-import { CoreComponents } from 'app/core/components/core-components.module';
+import { CoreComponents } from 'app/core/core-components.module';
 import { mockWebsocket, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
 import { ServiceName, serviceNames } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';

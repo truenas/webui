@@ -113,7 +113,7 @@ export class WidgetNetworkComponent extends WidgetComponent implements AfterView
           ticks: {
             maxTicksLimit: 8,
             callback: (value) => {
-              if (value == 0) {
+              if (value === 0) {
                 return 0;
               }
 
@@ -131,7 +131,7 @@ export class WidgetNetworkComponent extends WidgetComponent implements AfterView
           if (label) {
             label += ': ';
           }
-          if (tooltipItem.yLabel == 0) {
+          if (tooltipItem.yLabel === 0) {
             label += 0;
           } else {
             const converted = this.utils.convert(Number(tooltipItem.yLabel));
@@ -428,8 +428,8 @@ export class WidgetNetworkComponent extends WidgetComponent implements AfterView
   }
 
   showInOutInfo(nic: BaseNetworkInterface): string {
-    const lastSent = this.storage.convertBytestoHumanReadable(this.nicInfoMap[nic.state.name].lastSent);
-    const lastReceived = this.storage.convertBytestoHumanReadable(this.nicInfoMap[nic.state.name].lastReceived);
+    const lastSent = this.storage.convertBytesToHumanReadable(this.nicInfoMap[nic.state.name].lastSent);
+    const lastReceived = this.storage.convertBytesToHumanReadable(this.nicInfoMap[nic.state.name].lastReceived);
 
     return `${this.translate.instant('Sent')}: ${lastSent} ${this.translate.instant('Received')}: ${lastReceived}`;
   }

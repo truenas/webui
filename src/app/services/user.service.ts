@@ -57,21 +57,15 @@ export class UserService {
   }
 
   async getUserObject(userId: string | number): Promise<DsUncachedUser> {
-    let user;
-    await this.ws
+    return this.ws
       .call('user.get_user_obj', [typeof userId === 'string' ? { username: userId } : { uid: userId }])
-      .toPromise()
-      .then((u) => (user = u), console.error);
-    return user;
+      .toPromise();
   }
 
   async getGroupObject(groupId: string | number): Promise<DsUncachedGroup> {
-    let group;
-    await this.ws
+    return this.ws
       .call('group.get_group_obj', [typeof groupId === 'string' ? { groupname: groupId } : { gid: groupId }])
-      .toPromise()
-      .then((g) => (group = g), console.error);
-    return group;
+      .toPromise();
   }
 
   async shellChoices(userId?: number): Promise<Option[]> {

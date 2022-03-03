@@ -10,10 +10,6 @@ import { TranslateService } from '@ngx-translate/core';
 import { Subject, BehaviorSubject, forkJoin } from 'rxjs';
 import { ReportTab } from 'app/enums/report-tab.enum';
 import { CoreEvent } from 'app/interfaces/events';
-import {
-  UserPreferencesChangedEvent, UserPreferencesEvent,
-  UserPreferencesReadyEvent,
-} from 'app/interfaces/events/user-preferences-event.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { Disk } from 'app/interfaces/storage.interface';
 import { FieldConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
@@ -42,13 +38,11 @@ interface Tab {
   templateUrl: './reports-dashboard.component.html',
   providers: [SystemGeneralService],
 })
-export class ReportsDashboardComponent implements OnInit, OnDestroy, /* HandleChartConfigDataFunc, */ AfterViewInit {
+export class ReportsDashboardComponent implements OnInit, OnDestroy, AfterViewInit {
   @ViewChild(CdkVirtualScrollViewport, { static: false }) viewport: CdkVirtualScrollViewport;
   @ViewChild('container', { static: true }) container: ElementRef;
   scrollContainer: HTMLElement;
   scrolledIndex = 0;
-
-  retroLogo: string;
 
   diskReports: Report[];
   otherReports: Report[];
@@ -93,20 +87,6 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /* HandleCh
   ngOnInit(): void {
     this.scrollContainer = document.querySelector('.rightside-content-hold ');
     this.scrollContainer.style.overflow = 'hidden';
-
-    this.core.register({ observerClass: this, eventName: 'UserPreferencesReady' }).pipe(untilDestroyed(this)).subscribe((evt: UserPreferencesReadyEvent) => {
-      this.retroLogo = evt.data.retroLogo ? '1' : '0';
-    });
-
-    this.core.register({ observerClass: this, eventName: 'UserPreferencesChanged' }).pipe(untilDestroyed(this)).subscribe((evt: UserPreferencesChangedEvent) => {
-      this.retroLogo = evt.data.retroLogo ? '1' : '0';
-    });
-
-    this.core.register({ observerClass: this, eventName: 'UserPreferences' }).pipe(untilDestroyed(this)).subscribe((evt: UserPreferencesEvent) => {
-      this.retroLogo = evt.data.retroLogo ? '1' : '0';
-    });
-
-    this.core.emit({ name: 'UserPreferencesRequest' });
 
     forkJoin([
       this.ws.call('disk.query'),
@@ -264,7 +244,7 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /* HandleCh
 
     if (activeTab.value !== ReportTab.Disk) {
       const keys = Object.keys(this.activeReports);
-      this.visibleReports = keys.map((v) => parseInt(v));
+      this.visibleReports = keys.map((reportIndex) => parseInt(reportIndex));
     }
   }
 
@@ -276,20 +256,20 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /* HandleCh
 
       // With identifiers
       if (report.identifiers) {
-        report.identifiers.forEach((item, index) => {
-          const r = { ...report };
-          r.title = r.title.replace(/{identifier}/, item);
+        report.identifiers.forEach((identifier, index) => {
+          const flattenedReport = { ...report };
+          flattenedReport.title = flattenedReport.title.replace(/{identifier}/, identifier);
 
-          r.identifiers = [item];
+          flattenedReport.identifiers = [identifier];
           if (report.isRendered[index]) {
-            r.isRendered = [true];
-            result.push(r);
+            flattenedReport.isRendered = [true];
+            result.push(flattenedReport);
           }
         });
       } else if (!report.identifiers && report.isRendered[0]) {
-        const r = { ...report };
-        r.identifiers = [];
-        result.push(r);
+        const flattenedReport = { ...report };
+        flattenedReport.identifiers = [];
+        result.push(flattenedReport);
       }
     });
 
@@ -412,24 +392,24 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /* HandleCh
     this.target.next({ name: 'Refresh' });
   }
 
-  buildDiskReport(device: string | any[], metric: string | any[]): void {
+  buildDiskReport(devices: string | any[], metrics: string | any[]): void {
     // Convert strings to arrays
-    if (typeof device === 'string') {
-      device = [device];
+    if (typeof devices === 'string') {
+      devices = [devices];
     } else {
-      device = device.map((v) => v.value);
+      devices = devices.map((device) => device.value);
     }
 
-    if (typeof metric === 'string') {
-      metric = [metric];
+    if (typeof metrics === 'string') {
+      metrics = [metrics];
     } else {
-      metric = metric.map((v) => v.value);
+      metrics = metrics.map((metric) => metric.value);
     }
 
     const visible: number[] = [];
     this.activeReports.forEach((item, index) => {
-      const deviceMatch = device.includes(item.identifiers[0]);
-      const metricMatch = metric.includes(item.name);
+      const deviceMatch = devices.includes(item.identifiers[0]);
+      const metricMatch = metrics.includes(item.name);
       const condition = (deviceMatch && metricMatch);
       if (condition) {
         visible.push(index);

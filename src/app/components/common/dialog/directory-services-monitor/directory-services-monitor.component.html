@@ -23,7 +23,7 @@
   <div class="spinner-wrapper" *ngIf="isLoading">
     <mat-spinner [diameter]="40" id="dir-service-monitor-spinner"></mat-spinner>
   </div>
-  <mat-table *ngIf="!isLoading" #dirServiceTable [dataSource]="dataSource" class="mat-elevation-z8">
+  <mat-table *ngIf="!isLoading" [dataSource]="dataSource" class="mat-elevation-z8">
     <!-- Icon Column -->
     <ng-container matColumnDef="icon">
       <mat-header-cell *matHeaderCellDef fxFlex="74px"></mat-header-cell>

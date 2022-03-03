@@ -235,7 +235,9 @@ import {
   VmDisplayWebUriParams, VmPortWizardResult,
   VmStopParams,
 } from 'app/interfaces/virtual-machine.interface';
-import { VmDevice, VmDeviceUpdate, VmDisplayDevice } from 'app/interfaces/vm-device.interface';
+import {
+  VmDevice, VmDeviceDelete, VmDeviceUpdate, VmDisplayDevice,
+} from 'app/interfaces/vm-device.interface';
 import {
   MatchDatastoresWithDatasets,
   MatchDatastoresWithDatasetsParams,
@@ -805,6 +807,7 @@ export type ApiDirectory = {
   'support.new_ticket': { params: [CreateNewTicket]; response: NewTicketResponse };
   'support.attach_ticket': { params: AttachTicketParams; response: Job };
   'support.fetch_categories': { params: FetchSupportParams; response: Choices };
+  'support.attach_ticket_max_size': { params: void; response: number };
 
   // SMART
   'smart.test.disk_choices': { params: void; response: Choices };
@@ -894,7 +897,7 @@ export type ApiDirectory = {
   'vm.get_display_web_uri': { params: VmDisplayWebUriParams; response: { [id: number]: VmDisplayWebUri } };
   'vm.device.passthrough_device_choices': { params: void; response: Choices };
   'vm.device.create': { params: [VmDeviceUpdate]; response: VmDevice };
-  'vm.device.delete': { params: [id: number]; response: boolean };
+  'vm.device.delete': { params: [number, VmDeviceDelete]; response: boolean };
   'vm.random_mac': { params: void; response: string };
   'vm.device.query': { params: QueryParams<VmDevice>; response: VmDevice[] };
   'vm.stop': { params: VmStopParams; response: void };

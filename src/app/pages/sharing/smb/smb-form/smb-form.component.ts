@@ -271,7 +271,7 @@ export class SmbFormComponent implements FormConfiguration {
   protected accessFieldsets = _.find(this.fieldSets, { class: 'access' });
   protected otherFieldsets = _.find(this.fieldSets, { class: 'other' });
 
-  custActions = [
+  customActions = [
     {
       id: 'basic_mode',
       name: globalHelptext.basic_options,
@@ -316,7 +316,7 @@ export class SmbFormComponent implements FormConfiguration {
     return data;
   }
 
-  isCustActionVisible(actionId: string): boolean {
+  isCustomActionVisible(actionId: string): boolean {
     if (actionId === 'advanced_mode' && !this.isBasicMode) {
       return false;
     }
@@ -563,8 +563,8 @@ export class SmbFormComponent implements FormConfiguration {
     entityForm.formGroup.controls['path'].valueChanges.pipe(untilDestroyed(this)).subscribe((path) => {
       const nameControl = entityForm.formGroup.controls['name'];
       if (path && !nameControl.value) {
-        const v = path.split('/').pop();
-        nameControl.setValue(v);
+        const name = path.split('/').pop();
+        nameControl.setValue(name);
       }
 
       if (!this.stripACLWarningSent) {

@@ -356,7 +356,7 @@ export class VmFormComponent implements FormConfiguration {
 
   resourceTransformIncomingRestData(vmRes: VirtualMachine): any {
     this.rawVmData = vmRes;
-    (vmRes as any)['memory'] = this.storageService.convertBytestoHumanReadable(vmRes['memory'] * 1048576, 0);
+    (vmRes as any)['memory'] = this.storageService.convertBytesToHumanReadable(vmRes['memory'] * 1048576, 0);
     this.ws.call('device.get_info', [DeviceType.Gpu]).pipe(untilDestroyed(this)).subscribe((gpus) => {
       this.gpus = gpus;
       const vmPciSlots = (vmRes.devices
@@ -456,7 +456,7 @@ export class VmFormComponent implements FormConfiguration {
     }
 
     for (const deviceId of vmPciDeviceIdsToRemove) {
-      observables.push(this.ws.call('vm.device.delete', [deviceId]));
+      observables.push(this.ws.call('vm.device.delete', [deviceId, { zvol: false, raw_file: false, force: false }]));
     }
 
     for (const device of pciDevicesToCreate) {

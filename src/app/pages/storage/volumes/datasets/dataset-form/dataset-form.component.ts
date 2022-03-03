@@ -88,7 +88,7 @@ export class DatasetFormComponent implements FormConfiguration {
   protected warning = 80;
   protected critical = 95;
 
-  custActions = [
+  customActions = [
     {
       id: 'basic_mode',
       name: globalHelptext.basic_options,
@@ -183,7 +183,7 @@ export class DatasetFormComponent implements FormConfiguration {
           parent: this,
           validation: [
             (control: FormControl): ValidationErrors => {
-              const config = this.fieldConfig.find((c) => c.name === 'refquota');
+              const config = this.fieldConfig.find((config) => config.name === 'refquota');
 
               const size = this.convertHumanStringToNum(control.value, 'refquota');
               const errors = control.value && Number.isNaN(size)
@@ -194,7 +194,7 @@ export class DatasetFormComponent implements FormConfiguration {
                 config.hasErrors = true;
                 config.errors = globalHelptext.human_readable.input_error;
               } else {
-                const sizeError = control.value && (size != 0) && (size < this.minrefquota)
+                const sizeError = control.value && (size !== 0) && (size < this.minrefquota)
                   ? { invalid_size: true }
                   : null;
 
@@ -281,7 +281,7 @@ export class DatasetFormComponent implements FormConfiguration {
           parent: this,
           validation: [
             (control: FormControl): ValidationErrors => {
-              const config = this.fieldConfig.find((c) => c.name === 'refreservation');
+              const config = this.fieldConfig.find((config) => config.name === 'refreservation');
 
               const errors = control.value && Number.isNaN(this.convertHumanStringToNum(control.value, 'refreservation'))
                 ? { invalid_byte_string: true }
@@ -318,7 +318,7 @@ export class DatasetFormComponent implements FormConfiguration {
           parent: this,
           validation: [
             (control: FormControl): ValidationErrors => {
-              const config = this.fieldConfig.find((c) => c.name === 'quota');
+              const config = this.fieldConfig.find((config) => config.name === 'quota');
 
               const size = this.convertHumanStringToNum(control.value, 'quota');
               const errors = control.value && Number.isNaN(size)
@@ -329,7 +329,7 @@ export class DatasetFormComponent implements FormConfiguration {
                 config.hasErrors = true;
                 config.errors = globalHelptext.human_readable.input_error;
               } else {
-                const sizeError = control.value && (size != 0) && (size < this.minquota)
+                const sizeError = control.value && (size !== 0) && (size < this.minquota)
                   ? { invalid_size: true }
                   : null;
 
@@ -416,7 +416,7 @@ export class DatasetFormComponent implements FormConfiguration {
           parent: this,
           validation: [
             (control: FormControl): ValidationErrors => {
-              const config = this.fieldConfig.find((c) => c.name === 'reservation');
+              const config = this.fieldConfig.find((config) => config.name === 'reservation');
 
               const errors = control.value && Number.isNaN(this.convertHumanStringToNum(control.value, 'reservation'))
                 ? { invalid_byte_string: true }
@@ -690,7 +690,7 @@ export class DatasetFormComponent implements FormConfiguration {
           parent: this,
           validation: [
             (control: FormControl): ValidationErrors => {
-              const config = this.fieldConfig.find((c) => c.name === 'special_small_block_size');
+              const config = this.fieldConfig.find((config) => config.name === 'special_small_block_size');
 
               const size = this.convertHumanStringToNum(control.value, 'special_small_block_size');
               const errors = control.value && Number.isNaN(size)
@@ -839,12 +839,14 @@ export class DatasetFormComponent implements FormConfiguration {
 
     // get optional unit
     unit = hstr.replace(num, '');
-    if ((unit) && !(unit = this.storageService.normalizeUnit(unit))) {
+    const normalizedUnit = this.storageService.normalizeUnit(unit);
+    if (unit && !normalizedUnit) {
       // error when unit is present but not recognized
       this.humanReadable[field] = '';
       return NaN;
     }
 
+    unit = normalizedUnit;
     const spacer = (unit) ? ' ' : '';
 
     this.humanReadable[field] = num.toString() + spacer + unit;
@@ -910,7 +912,7 @@ export class DatasetFormComponent implements FormConfiguration {
     }
   }
 
-  isCustActionVisible(actionId: string): boolean {
+  isCustomActionVisible(actionId: string): boolean {
     if (actionId === 'advanced_mode' && !this.isBasicMode) {
       return false;
     } if (actionId === 'basic_mode' && this.isBasicMode) {

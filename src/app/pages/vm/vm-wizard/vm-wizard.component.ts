@@ -3,7 +3,6 @@ import {
   FormArray, FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators,
 } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
-import { MatStepper } from '@angular/material/stepper';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
@@ -41,7 +40,6 @@ import {
 } from 'app/services';
 import { DialogService } from 'app/services/dialog.service';
 import { ModalService } from 'app/services/modal.service';
-import { PreferencesService } from 'app/services/preferences.service';
 import { VmService } from 'app/services/vm.service';
 import { AppState } from 'app/store';
 import { waitForAdvancedConfig } from 'app/store/system-config/system-config.selectors';
@@ -254,17 +252,18 @@ export class VmWizardComponent implements WizardConfiguration {
             ...helptext.memory_validation,
             this.memoryValidator('memory'),
             (control: FormControl): ValidationErrors => {
-              const config = this.wizardConfig.find((c) => c.label === helptext.vcpus_label).fieldConfig.find((c) => c.name === 'memory');
+              const memoryConfig = this.wizardConfig.find((wizardConfig) => wizardConfig.label === helptext.vcpus_label)
+                .fieldConfig.find((fieldConfig) => fieldConfig.name === 'memory');
               const errors = control.value && Number.isNaN(this.storageService.convertHumanStringToNum(control.value))
                 ? { invalid_byte_string: true }
                 : null;
 
               if (errors) {
-                config.hasErrors = true;
-                config.errors = globalHelptext.human_readable.input_error;
+                memoryConfig.hasErrors = true;
+                memoryConfig.errors = globalHelptext.human_readable.input_error;
               } else {
-                config.hasErrors = false;
-                config.errors = '';
+                memoryConfig.hasErrors = false;
+                memoryConfig.errors = '';
               }
 
               return errors;
@@ -335,17 +334,20 @@ export class VmWizardComponent implements WizardConfiguration {
             ...helptext.volsize_validation,
             this.volSizeValidator('volsize'),
             (control: FormControl): ValidationErrors => {
-              const config = this.wizardConfig.find((c) => c.label === helptext.disks_label).fieldConfig.find((c) => c.name === 'volsize');
+              const volsizeConfig = this.wizardConfig
+                .find((wizardConfig) => wizardConfig.label === helptext.disks_label)
+                .fieldConfig
+                .find((fieldConfig) => fieldConfig.name === 'volsize');
               const errors = control.value && Number.isNaN(this.storageService.convertHumanStringToNum(control.value, false, 'mgtp'))
                 ? { invalid_byte_string: true }
                 : null;
 
               if (errors) {
-                config.hasErrors = true;
-                config.errors = globalHelptext.human_readable.input_error;
+                volsizeConfig.hasErrors = true;
+                volsizeConfig.errors = globalHelptext.human_readable.input_error;
               } else {
-                config.hasErrors = false;
-                config.errors = '';
+                volsizeConfig.hasErrors = false;
+                volsizeConfig.errors = '';
               }
 
               return errors;
@@ -483,7 +485,6 @@ export class VmWizardComponent implements WizardConfiguration {
     public messageService: MessageService,
     private dialogService: DialogService,
     private storageService: StorageService,
-    protected prefService: PreferencesService,
     private translate: TranslateService,
     protected modalService: ModalService,
     private store$: Store<AppState>,
@@ -507,34 +508,6 @@ export class VmWizardComponent implements WizardConfiguration {
     this.store$.pipe(waitForAdvancedConfig, untilDestroyed(this)).subscribe((config) => {
       this.isolatedGpuPciIds = config.isolated_gpu_pci_ids;
     });
-  }
-
-  customNext(stepper: MatStepper): void {
-    stepper.next();
-    this.currentStep = stepper.selectedIndex;
-    if (this.currentStep === 2) {
-      this.setValuesFromPref(2, 'datastore', 'vm_zvolLocation');
-    }
-    if (this.currentStep === 3) {
-      this.setValuesFromPref(3, 'NIC_type', 'vm_nicType', 0);
-      this.setValuesFromPref(3, 'nic_attach', 'vm_nicAttach', 0);
-    }
-  }
-
-  setValuesFromPref(stepNumber: number, fieldName: string, prefName: string, defaultIndex?: number): void {
-    const field = this.getFormControlFromFieldName(fieldName);
-    const config = _.find(this.wizardConfig[stepNumber].fieldConfig, { name: fieldName }) as FormSelectConfig;
-    const storedValue = this.prefService.preferences.storedValues[prefName];
-    if (storedValue) {
-      const valueToSet = config.options.find((o) => o.value === storedValue);
-      if (valueToSet) {
-        field.setValue(valueToSet.value);
-      } else if (defaultIndex) {
-        field.setValue(config.options[defaultIndex].value);
-      }
-    } else {
-      field.setValue(config.options[defaultIndex].value);
-    }
   }
 
   afterInit(entityWizard: EntityWizardComponent): void {
@@ -733,12 +706,12 @@ export class VmWizardComponent implements WizardConfiguration {
             } else if (stat.free_bytes > 40 * 1073741824) {
               const vmOs = this.getFormControlFromFieldName('os').value;
               if (vmOs === 'Windows') {
-                this.getFormControlFromFieldName('volsize').setValue(this.storageService.convertBytestoHumanReadable(volsize, 0));
+                this.getFormControlFromFieldName('volsize').setValue(this.storageService.convertBytesToHumanReadable(volsize, 0));
               } else {
-                this.getFormControlFromFieldName('volsize').setValue(this.storageService.convertBytestoHumanReadable(volsize, 0));
+                this.getFormControlFromFieldName('volsize').setValue(this.storageService.convertBytesToHumanReadable(volsize, 0));
               }
             } else if (stat.free_bytes > 10 * 1073741824) {
-              this.getFormControlFromFieldName('volsize').setValue((this.storageService.convertBytestoHumanReadable(volsize, 0)));
+              this.getFormControlFromFieldName('volsize').setValue((this.storageService.convertBytesToHumanReadable(volsize, 0)));
             }
           });
         } else {
@@ -753,13 +726,6 @@ export class VmWizardComponent implements WizardConfiguration {
             _.find(this.wizardConfig[2].fieldConfig, { name: 'datastore' }).errors = this.translate.instant('Please select a valid path');
           }
         }
-        this.getFormControlFromFieldName('NIC_type').valueChanges.pipe(untilDestroyed(this)).subscribe((res) => {
-          this.prefService.preferences.storedValues.vm_nicType = res;
-          this.prefService.savePreferences();
-        });
-
-        this.prefService.preferences.storedValues.vm_zvolLocation = this.getFormControlFromFieldName('datastore').value;
-        this.prefService.savePreferences();
       });
       this.getFormControlFromFieldName('iso_path').valueChanges.pipe(untilDestroyed(this)).subscribe((isoPath) => {
         if (isoPath) {
@@ -829,11 +795,6 @@ export class VmWizardComponent implements WizardConfiguration {
         value: nicId,
       }));
 
-      this.getFormControlFromFieldName('nic_attach').valueChanges.pipe(untilDestroyed(this)).subscribe((res) => {
-        this.prefService.preferences.storedValues.vm_nicAttach = res;
-        this.prefService.savePreferences();
-      });
-
       this.ws.call('vm.random_mac').pipe(untilDestroyed(this)).subscribe((mac) => {
         this.getFormControlFromFieldName('NIC_mac').setValue(mac);
       });
@@ -841,11 +802,6 @@ export class VmWizardComponent implements WizardConfiguration {
     this.nicType = _.find(this.wizardConfig[3].fieldConfig, { name: 'NIC_type' }) as FormSelectConfig;
     this.vmService.getNicTypes().forEach((item) => {
       this.nicType.options.push({ label: item[1], value: item[0] });
-    });
-
-    this.getFormControlFromFieldName('NIC_type').valueChanges.pipe(untilDestroyed(this)).subscribe((res) => {
-      this.prefService.preferences.storedValues.vm_nicType = res;
-      this.prefService.savePreferences();
     });
 
     this.bootloader = _.find(this.wizardConfig[0].fieldConfig, { name: 'bootloader' }) as FormSelectConfig;
@@ -954,7 +910,7 @@ export class VmWizardComponent implements WizardConfiguration {
       console.error(vmMemoryRequested); // leaves form in previous error state
     } else if (enteredVal.replace(/\s/g, '').match(/[^0-9]/g) === null) {
       this.entityWizard.formArray.get([1]).get('memory')
-        .setValue(this.storageService.convertBytestoHumanReadable(enteredVal.replace(/\s/g, ''), 0));
+        .setValue(this.storageService.convertBytesToHumanReadable(enteredVal.replace(/\s/g, ''), 0));
     } else {
       this.entityWizard.formArray.get([1]).get('memory').setValue(this.storageService.humanReadable);
       _.find(this.wizardConfig[1].fieldConfig, { name: 'memory' })['hasErrors'] = false;
@@ -1051,7 +1007,7 @@ export class VmWizardComponent implements WizardConfiguration {
 
     if (value.gpus) {
       for (const gpuPciSlot of value.gpus) {
-        const gpuIndex = this.gpus.findIndex((gpu) => gpu.addr.pci_slot == gpuPciSlot);
+        const gpuIndex = this.gpus.findIndex((gpu) => gpu.addr.pci_slot === gpuPciSlot);
         vmPayload['devices'].push(...this.gpus[gpuIndex].devices.map((gpuDevice) => ({
           dtype: VmDeviceType.Pci,
           attributes: {

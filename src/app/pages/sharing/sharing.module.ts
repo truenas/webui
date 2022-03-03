@@ -86,7 +86,6 @@ import { WebdavListComponent } from './webdav/webdav-list/webdav-list.component'
     EntityFormService,
     UserService,
   ],
-  entryComponents: [FibreChannelPortComponent],
 })
 export class SharingModule {
 }

@@ -126,9 +126,6 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   nics: DashboardNetworkInterface[];
 
-  animation = 'stop';
-  shake = false;
-
   showSpinner = true;
   initialLoading = true;
 
@@ -198,10 +195,10 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     this.activeMobileWidget = [evt];
 
     // Transition
-    const vp = this.el.nativeElement.querySelector('.mobile-viewport');
-    const viewport = styler(vp);
-    const c = this.el.nativeElement.querySelector('.mobile-viewport .carousel');
-    const carousel = styler(c);
+    const viewportElement = this.el.nativeElement.querySelector('.mobile-viewport');
+    const viewport = styler(viewportElement);
+    const carouselElement = this.el.nativeElement.querySelector('.mobile-viewport .carousel');
+    const carousel = styler(carouselElement);
     const vpw = viewport.get('width'); // 600;
 
     const startX = 0;
@@ -216,10 +213,10 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   onMobileBack(): void {
     // Transition
-    const vp = this.el.nativeElement.querySelector('.mobile-viewport');
-    const viewport = styler(vp);
-    const c = this.el.nativeElement.querySelector('.mobile-viewport .carousel');
-    const carousel = styler(c);
+    const viewportElement = this.el.nativeElement.querySelector('.mobile-viewport');
+    const viewport = styler(viewportElement);
+    const carouselElement = this.el.nativeElement.querySelector('.mobile-viewport .carousel');
+    const carousel = styler(carouselElement);
     const vpw = viewport.get('width'); // 600;
 
     const startX = vpw * -1;
@@ -230,8 +227,8 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       to: { x: endX },
       duration: 250,
     }).start({
-      update: (v: { x: number }) => {
-        carousel.set(v);
+      update: (valuesUpdate: { x: number }) => {
+        carousel.set(valuesUpdate);
       },
       complete: () => {
         this.activeMobileWidget = [];
@@ -241,10 +238,10 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   onMobileResize(evt: Event): void {
     if (this.screenType === 'Desktop') { return; }
-    const vp = this.el.nativeElement.querySelector('.mobile-viewport');
-    const viewport = styler(vp);
-    const c = this.el.nativeElement.querySelector('.mobile-viewport .carousel');
-    const carousel = styler(c);
+    const viewportElement = this.el.nativeElement.querySelector('.mobile-viewport');
+    const viewport = styler(viewportElement);
+    const carouselElement = this.el.nativeElement.querySelector('.mobile-viewport .carousel');
+    const carousel = styler(carouselElement);
 
     const startX = viewport.get('x');
     const endX = this.activeMobileWidget.length > 0 ? (evt.target as Window).innerWidth * -1 : 0;
@@ -346,13 +343,6 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   startListeners(): void {
-    this.core.register({ observerClass: this, eventName: 'UserAttributes' }).pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
-      if (evt.data.dashState) {
-        this.applyState(this.sanitizeState(evt.data.dashState));
-      }
-      this.dashStateReady = true;
-    });
-
     this.ws.sub<ReportingRealtimeUpdate>('reporting.realtime').pipe(untilDestroyed(this)).subscribe((update) => {
       if (update.cpu) {
         this.statsDataEvent$.next({ name: 'CpuStats', data: update.cpu });
@@ -361,7 +351,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       if (update.virtual_memory) {
         const memStats: MemoryStatsEventData = { ...update.virtual_memory };
 
-        if (update.zfs && update.zfs.arc_size != null) {
+        if (update.zfs && update.zfs.arc_size !== null) {
           memStats.arc_size = update.zfs.arc_size;
         }
         this.statsDataEvent$.next({ name: 'MemoryStats', data: memStats });
@@ -388,7 +378,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     const vd: VolumesData = {};
 
     data.forEach((dataset) => {
-      if (typeof dataset == undefined || !dataset) { return; }
+      if (typeof dataset === undefined || !dataset) { return; }
       const usedPercent = dataset.used.parsed / (dataset.used.parsed + dataset.available.parsed);
       const zvol = {
         avail: dataset.available.parsed,
@@ -537,7 +527,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
         break;
       case 'pool':
         if (spl) {
-          const pools = this.pools.filter((pool) => pool[key as keyof Pool] == value);
+          const pools = this.pools.filter((pool) => pool[key as keyof Pool] === value);
           if (pools) { data = pools[0]; }
         } else {
           console.warn('DashConfigItem has no identifier!');
@@ -545,7 +535,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
         break;
       case 'interface':
         if (spl) {
-          const nics = this.nics.filter((nic) => nic[key as keyof DashboardNetworkInterface] == value);
+          const nics = this.nics.filter((nic) => nic[key as keyof DashboardNetworkInterface] === value);
           if (nics) { data = nics[0].state; }
         } else {
           console.warn('DashConfigItem has no identifier!');
@@ -561,14 +551,6 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     return data;
-  }
-
-  toggleShake(): void {
-    if (this.shake) {
-      this.shake = false;
-    } else if (!this.shake) {
-      this.shake = true;
-    }
   }
 
   showConfigForm(): void {
@@ -588,7 +570,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
-  private applyState(state: DashConfigItem[]): void {
+  private applyState(newState: DashConfigItem[]): void {
     // This reconciles current state with saved dashState
 
     if (!this.dashState) {
@@ -597,15 +579,19 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     const hidden = this.dashState
-      .filter((w) => state.every((s) => !(w.identifier && w.identifier == s.identifier || w.name && w.name == s.name)))
+      .filter((widget) => {
+        return newState.every((updatedWidget) => {
+          return !(widget?.identifier === updatedWidget.identifier || widget?.name === updatedWidget.name);
+        });
+      })
       .map((widget) => ({ ...widget, rendered: false }));
 
-    this.setDashState([...state, ...hidden]);
+    this.setDashState([...newState, ...hidden]);
   }
 
   private setDashState(dashState: DashConfigItem[]): void {
     this.dashState = dashState;
-    this.renderedWidgets = dashState.filter((x) => x.rendered);
+    this.renderedWidgets = dashState.filter((widget) => widget.rendered);
   }
 
   private getActionsConfig(target$: Subject<CoreEvent>): EntityToolbarActionConfig {
@@ -645,7 +631,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   private handleToolbarChanged(evt: CoreEvent): void {
     switch (evt.data?.event_control) {
       case 'dashReorder':
-        this.previousState = this.dashState.map((x) => ({ ...x }));
+        this.previousState = this.dashState.map((widget) => ({ ...widget }));
 
         this.enterReorderMode();
         break;
@@ -744,8 +730,8 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private loadUserAttributes(): void {
     this.ws.call('user.query', [[['id', '=', 1]]]).pipe(untilDestroyed(this)).subscribe((user) => {
-      if (user[0].attributes.preferences.dashState) {
-        this.applyState(user[0].attributes.preferences.dashState);
+      if (user[0].attributes.dashState) {
+        this.applyState(user[0].attributes.dashState);
       }
       this.dashStateReady = true;
     });

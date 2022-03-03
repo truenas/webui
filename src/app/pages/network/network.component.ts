@@ -273,8 +273,8 @@ export class NetworkComponent implements OnInit, OnDestroy {
       .call('interface.checkin_waiting')
       .pipe(untilDestroyed(this))
       .subscribe((seconds) => {
-        if (seconds != null) {
-          if (seconds > 0 && this.checkinRemaining == null) {
+        if (seconds !== null) {
+          if (seconds > 0 && this.checkinRemaining === null) {
             this.checkinRemaining = Math.round(seconds);
             this.checkinInterval = setInterval(() => {
               if (this.checkinRemaining > 0) {
@@ -471,11 +471,11 @@ export class NetworkComponent implements OnInit, OnDestroy {
               row.link_state = null;
             } else {
               if (evt.interfaces[row.id].received_bytes !== undefined) {
-                row.received = this.storageService.convertBytestoHumanReadable(evt.interfaces[row.id].received_bytes);
+                row.received = this.storageService.convertBytesToHumanReadable(evt.interfaces[row.id].received_bytes);
                 row.received_bytes = evt.interfaces[row.id].received_bytes;
               }
               if (evt.interfaces[row.id].sent_bytes !== undefined) {
-                row.sent = this.storageService.convertBytestoHumanReadable(evt.interfaces[row.id].sent_bytes);
+                row.sent = this.storageService.convertBytesToHumanReadable(evt.interfaces[row.id].sent_bytes);
                 row.sent_bytes = evt.interfaces[row.id].sent_bytes;
               }
             }

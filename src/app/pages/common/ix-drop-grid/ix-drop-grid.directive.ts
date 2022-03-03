@@ -54,9 +54,9 @@ export class IxDropGridDirective extends CdkDropListGroup<IxDropGridItemDirectiv
     itemDirective.dropped.pipe(untilDestroyed(this)).subscribe(() => this.onItemDropped());
   }
 
-  onItemEntered(e: CdkDragEnter): void {
-    const drag = e.item;
-    const drop = e.container;
+  onItemEntered(event: CdkDragEnter): void {
+    const drag = event.item;
+    const drop = event.container;
 
     if (drop === this.placeholder.itemInstance) {
       return;

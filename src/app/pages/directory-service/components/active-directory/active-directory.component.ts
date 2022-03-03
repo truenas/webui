@@ -20,7 +20,7 @@ import { EntityFormComponent } from 'app/modules/entity/entity-form/entity-form.
 import { FieldConfig, FormSelectConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/modules/entity/entity-form/models/fieldset.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
-import { EntityUtils } from 'app/modules/entity/utils';
+import { EntityUtils, NULL_VALUE } from 'app/modules/entity/utils';
 import { ActiveDirectoryConfigUi } from 'app/pages/directory-service/components/active-directory/active-directory-config-ui.interface';
 import { DialogService, SystemGeneralService, WebSocketService } from 'app/services';
 import { ModalService } from 'app/services/modal.service';
@@ -41,7 +41,7 @@ export class ActiveDirectoryComponent implements FormConfiguration {
   protected nssInfoField: FormSelectConfig;
   adStatus = false;
   entityEdit: EntityFormComponent;
-  custActions = [
+  customActions = [
     {
       id: helptext.activedirectory_custactions_basic_id,
       name: global_helptext.basic_options,
@@ -109,7 +109,7 @@ export class ActiveDirectoryComponent implements FormConfiguration {
                   _.find(this.fieldConfig, { name: 'enable' })['value'] = false;
                   this.entityEdit.formGroup.controls['enable'].setValue(false);
                   this.adStatus = false;
-                  this.isCustActionVisible('leave_domain');
+                  this.isCustomActionVisible('leave_domain');
                   this.modalService.refreshTable();
                   this.modalService.closeSlideIn();
                   this.dialogservice.info(helptext.ad_leave_domain_dialog.success,
@@ -287,7 +287,7 @@ export class ActiveDirectoryComponent implements FormConfiguration {
 
   advancedFields = helptext.activedirectory_advanced_fields;
 
-  isCustActionVisible(actionname: string): boolean {
+  isCustomActionVisible(actionname: string): boolean {
     if (actionname === 'advanced_mode' && !this.isBasicMode) {
       return false;
     } if (actionname === 'basic_mode' && this.isBasicMode) {
@@ -376,7 +376,7 @@ export class ActiveDirectoryComponent implements FormConfiguration {
     });
 
     entityEdit.formGroup.controls['kerberos_principal'].valueChanges.pipe(untilDestroyed(this)).subscribe((res: string) => {
-      if (res) {
+      if (res && res !== NULL_VALUE) {
         entityEdit.setDisabled('bindname', true);
         entityEdit.setDisabled('bindpw', true);
         _.find(this.fieldConfig, { name: 'bindname' })['isHidden'] = true;

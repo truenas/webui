@@ -14,7 +14,7 @@ export class IxFormatterService {
       return '';
     }
     value = value.toString();
-    return !value || Number.isNaN(Number(value)) ? '' : this.convertBytestoHumanReadable(value, 0);
+    return !value || Number.isNaN(Number(value)) ? '' : this.convertBytesToHumanReadable(value, 0);
   };
 
   /**
@@ -40,7 +40,7 @@ export class IxFormatterService {
    * @param hideBytes If the value is in bytes, should the 'B' sign be added
    * @returns A human readable string with appropriate units
    */
-  convertBytestoHumanReadable = (
+  convertBytesToHumanReadable = (
     rawBytes: number | string,
     decimalPlaces?: number,
     minUnits?: string,
@@ -131,15 +131,19 @@ export class IxFormatterService {
       unit = allowedUnits[0];
     }
 
-    // error when unit is present and...
-    if ((unit)
-          // ...allowedUnits are passed in but unit is not in allowed Units
-          && (allowedUnits && !allowedUnits.toLowerCase().includes(unit[0].toLowerCase())
-          // ...when allowedUnits are not passed in and unit is not recognized
-          || !(unit = this.normalizeUnit(unit)))) {
+    const normalizedUnit = this.normalizeUnit(unit);
+    if (
+      // error when unit is present and...
+      (unit) && (
+        // ...allowedUnits are passed in but unit is not in allowed Units
+        (allowedUnits && !allowedUnits.toLowerCase().includes(unit[0].toLowerCase()))
+        // ...when allowedUnits are not passed in and unit is not recognized
+        || !normalizedUnit
+      )
+    ) {
       return { number: null, unit: null };
     }
-    return { number: num, unit };
+    return { number: num, unit: normalizedUnit };
   }
 
   /**

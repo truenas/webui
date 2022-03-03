@@ -37,6 +37,14 @@
       opacity: 1;
     }
   }
+
+  &.readonly {
+    background: var(--bg2);
+
+    input {
+      cursor: copy;
+    }
+  }
 }
 
 .label-container {
@@ -96,4 +104,8 @@
   display: block;
   font-size: 12px;
   margin-top: 3px;
+}
+
+.has-reset-input-icon {
+  padding-right: 20px;
 }

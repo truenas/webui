@@ -134,8 +134,8 @@ function convertAggregations(input: any, labelY?: string): any {
   const keys = Object.keys(output.aggregations);
 
   keys.forEach((key) => {
-    (output.aggregations[key] as any[]).forEach((v, index) => {
-      output.aggregations[key][index] = formatValue(v, units);
+    (output.aggregations[key] as any[]).forEach((value, index) => {
+      output.aggregations[key][index] = formatValue(value, units);
     });
   });
   return output;

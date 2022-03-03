@@ -248,7 +248,7 @@ export class NfsFormComponent implements FormConfiguration {
   protected advanced_sets = ['access', 'networks', 'hosts'];
   protected advanced_dividers = ['divider_access'];
 
-  custActions = [
+  customActions = [
     {
       id: 'basic_mode',
       name: globalHelptext.basic_options,
@@ -344,7 +344,7 @@ export class NfsFormComponent implements FormConfiguration {
     }
   }
 
-  isCustActionVisible(actionId: string): boolean {
+  isCustomActionVisible(actionId: string): boolean {
     if (actionId === 'advanced_mode' && !this.isBasicMode) {
       return false;
     }
@@ -374,10 +374,10 @@ export class NfsFormComponent implements FormConfiguration {
   clean(data: any): any {
     return {
       ...data,
-      paths: (data.paths as any[]).filter((p) => !!p.path).map((p) => p.path),
-      aliases: (data.paths as any[]).filter((p) => !!p.alias).map((p) => p.alias),
-      networks: (data.networks as any[]).filter((n) => !!n.network).map((n) => n.network),
-      hosts: (data.hosts as any[]).filter((h) => !!h.host).map((h) => h.host),
+      paths: (data.paths as any[]).filter((path) => !!path.path).map((path) => path.path),
+      aliases: (data.paths as any[]).filter((path) => !!path.alias).map((path) => path.alias),
+      networks: (data.networks as any[]).filter((network) => !!network.network).map((network) => network.network),
+      hosts: (data.hosts as any[]).filter((host) => !!host.host).map((host) => host.host),
     };
   }
 
@@ -481,7 +481,7 @@ export class NfsFormComponent implements FormConfiguration {
 
         const config = fieldConfig as FormComboboxConfig;
 
-        if (searchText == '') {
+        if (searchText === '') {
           config.options = config.options.concat(users);
         } else {
           config.searchOptions = config.searchOptions.concat(users);
@@ -498,7 +498,7 @@ export class NfsFormComponent implements FormConfiguration {
 
         const config = fieldConfig as FormComboboxConfig;
 
-        if (searchText == '') {
+        if (searchText === '') {
           config.options = config.options.concat(groups);
         } else {
           config.searchOptions = config.searchOptions.concat(groups);

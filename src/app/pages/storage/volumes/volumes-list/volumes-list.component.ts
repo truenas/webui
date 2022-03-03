@@ -5,6 +5,7 @@ import {
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
+import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import * as filesize from 'filesize';
 import { combineLatest, Subscription } from 'rxjs';
@@ -28,9 +29,9 @@ import { JobService, ValidationService } from 'app/services';
 import { CoreService } from 'app/services/core-service/core.service';
 import { DialogService } from 'app/services/dialog.service';
 import { ModalService } from 'app/services/modal.service';
-import { PreferencesService } from 'app/services/preferences.service';
 import { StorageService } from 'app/services/storage.service';
 import { WebSocketService } from 'app/services/ws.service';
+import { AppState } from 'app/store';
 import { DatasetFormComponent } from '../datasets/dataset-form/dataset-form.component';
 import { ZvolFormComponent } from '../zvol/zvol-form/zvol-form.component';
 
@@ -158,14 +159,14 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
     public sorter: StorageService,
     protected job: JobService,
     protected storage: StorageService,
-    protected pref: PreferencesService,
+    protected store$: Store<AppState>,
     protected messageService: MessageService,
     protected http: HttpClient,
     modalService: ModalService,
     protected validationService: ValidationService,
     public cdr: ChangeDetectorRef,
   ) {
-    super(core, router, ws, dialogService, loader, translate, sorter, job, pref, mdDialog, modalService, cdr);
+    super(core, router, ws, dialogService, loader, translate, sorter, job, store$, mdDialog, modalService, cdr);
 
     this.actionsConfig = { actionType: VolumesListControlsComponent, actionConfig: this };
     this.core.emit({ name: 'GlobalActions', data: this.actionsConfig, sender: this });
@@ -251,10 +252,10 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
             if (pool.children[0].is_encrypted_root) {
               this.hasEncryptedRoot[pool.name] = true;
             }
-            pool.children[0].available_parsed = this.storage.convertBytestoHumanReadable(
+            pool.children[0].available_parsed = this.storage.convertBytesToHumanReadable(
               pool.children[0].available.parsed || 0,
             );
-            pool.children[0].used_parsed = this.storage.convertBytestoHumanReadable(
+            pool.children[0].used_parsed = this.storage.convertBytesToHumanReadable(
               pool.children[0].used.parsed || 0,
             );
             pool.availStr = filesize(pool.children[0].available.parsed, { standard: 'iec' });

@@ -19,9 +19,9 @@ export class IxInputComponent implements ControlValueAccessor {
   @Input() hint: string;
   @Input() tooltip: string;
   @Input() required: boolean;
+  @Input() readonly: boolean;
   @Input() type: string;
   @Input() autocomplete = 'off';
-  @Input() autocapitalize = 'off';
 
   /** If formatted value returned by parseAndFormatInput has non-numeric letters
    * and input 'type' is a number, the input will stay empty on the form */
@@ -57,7 +57,6 @@ export class IxInputComponent implements ControlValueAccessor {
     }
     this.formatted = formatted;
     this.value = value;
-    this.cdr.markForCheck();
   }
 
   input(ixInput: HTMLInputElement): void {
@@ -84,7 +83,7 @@ export class IxInputComponent implements ControlValueAccessor {
   }
 
   shouldShowResetInput(): boolean {
-    return !this.isDisabled && this.hasValue() && this.type !== 'password';
+    return !this.isDisabled && this.hasValue() && this.type !== 'password' && !this.readonly;
   }
 
   getType(): string {
@@ -96,11 +95,11 @@ export class IxInputComponent implements ControlValueAccessor {
   }
 
   hasValue(): boolean {
-    return this.invalid || this.value && this.value.toString().length > 0;
+    return this.invalid || (this.value && this.value.toString().length > 0);
   }
 
-  resetInput(e: HTMLInputElement): void {
-    e.value = '';
+  resetInput(input: HTMLInputElement): void {
+    input.value = '';
     this.invalid = false;
     this.value = '';
     this.formatted = '';
@@ -110,6 +109,13 @@ export class IxInputComponent implements ControlValueAccessor {
   setDisabledState?(isDisabled: boolean): void {
     this.isDisabled = isDisabled;
     this.cdr.markForCheck();
+  }
+
+  focus(ixInput: HTMLInputElement): void {
+    this.onTouch();
+    if (this.readonly) {
+      ixInput.select();
+    }
   }
 
   blur(): void {

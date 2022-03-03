@@ -150,7 +150,7 @@ export class ChartReleasesComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.addChartReleaseChangedEventListner();
+    this.addChartReleaseChangedEventListener();
   }
 
   onToolbarAction(evt: CoreEvent): void {
@@ -198,7 +198,7 @@ export class ChartReleasesComponent implements OnInit {
     return Object.values(this.chartItems);
   }
 
-  addChartReleaseChangedEventListner(): void {
+  addChartReleaseChangedEventListener(): void {
     this.ws.subscribe('chart.release.query').pipe(untilDestroyed(this)).subscribe((evt) => {
       const app = this.chartItems[evt.id];
 
@@ -467,7 +467,7 @@ export class ChartReleasesComponent implements OnInit {
           this.dialogService.closeAllDialogs();
           let message = '';
           res.result.forEach((item) => {
-            if (item.error != null) {
+            if (item.error !== null) {
               message = message + '<li>' + item.error + '</li>';
             }
           });

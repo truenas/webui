@@ -21,6 +21,19 @@
     </mat-progress-bar>
   </div>
 
+  <div *ngIf="showHttpProgress">
+    <div fxLayout="row-reverse" fxLayoutAlign="space-between baseline" fxLayoutGap="8px">
+      <small>{{ uploadPercentage || 0 | number: '1.2-2' }}%</small>
+    </div>
+    <mat-progress-bar
+      color="primary"
+      [value]="uploadPercentage"
+      [mode]="uploadPercentage > 0 ? 'determinate' : 'indeterminate'"
+      class="entity-job-progress"
+    >
+    </mat-progress-bar>
+  </div>
+
   <div class="entity-job-description" *ngIf="description" [innerHTML]="description"></div>
 
   <div *ngIf="!description && !job">

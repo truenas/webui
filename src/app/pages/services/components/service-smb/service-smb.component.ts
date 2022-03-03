@@ -85,7 +85,7 @@ export class ServiceSmbComponent implements FormConfiguration {
           tooltip: helptext.cifs_srv_netbiosalias_tooltip,
           validation: [
             (control: FormControl): ValidationErrors => {
-              const config = this.fieldConfig.find((c) => c.name === 'netbiosalias');
+              const netbiosAliasConfig = this.fieldConfig.find((config) => config.name === 'netbiosalias');
               const aliasArr: string[] = control.value ? control.value : [];
               let counter = 0;
               aliasArr.forEach((alias) => {
@@ -98,11 +98,11 @@ export class ServiceSmbComponent implements FormConfiguration {
                 : null;
 
               if (errors) {
-                config.hasErrors = true;
-                config.errors = helptext.cifs_srv_netbiosalias_errmsg;
+                netbiosAliasConfig.hasErrors = true;
+                netbiosAliasConfig.errors = helptext.cifs_srv_netbiosalias_errmsg;
               } else {
-                config.hasErrors = false;
-                config.errors = '';
+                netbiosAliasConfig.hasErrors = false;
+                netbiosAliasConfig.errors = '';
               }
 
               return errors;
@@ -237,7 +237,7 @@ export class ServiceSmbComponent implements FormConfiguration {
     { name: 'divider', divider: true },
   ];
 
-  custActions = [
+  customActions = [
     {
       id: 'basic_mode',
       name: global_helptext.basic_options,
@@ -258,7 +258,7 @@ export class ServiceSmbComponent implements FormConfiguration {
     },
   ];
 
-  isCustActionVisible(actionId: string): boolean {
+  isCustomActionVisible(actionId: string): boolean {
     if (actionId === 'advanced_mode' && !this.isBasicMode) {
       return false;
     } if (actionId === 'basic_mode' && this.isBasicMode) {

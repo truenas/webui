@@ -286,7 +286,7 @@ export class UserFormComponent implements FormConfiguration {
     },
   ] as FieldSet<this>[]);
 
-  custActions = [
+  customActions = [
     {
       id: 'download_sshpubkey',
       name: helptext.user_form_download_key,

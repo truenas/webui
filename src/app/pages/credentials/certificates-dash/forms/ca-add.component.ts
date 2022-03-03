@@ -623,7 +623,7 @@ export class CertificateAuthorityAddComponent implements WizardConfiguration {
 
   getSummaryValueLabel(fieldConfig: FieldConfig, value: any): any {
     if (fieldConfig.type === 'select') {
-      const option = fieldConfig.options.find((option) => option.value == value);
+      const option = fieldConfig.options.find((option) => option.value === value);
       if (option) {
         value = option.label;
       }
@@ -680,9 +680,9 @@ export class CertificateAuthorityAddComponent implements WizardConfiguration {
           this.hideField('key_length', true);
         }
       } else if (res === 'CA_CREATE_INTERMEDIATE') {
-        this.intermediatecaFields.forEach((field) => this.hideField(field, false));
         this.importcaFields.forEach((field) => this.hideField(field, true));
         this.internalcaFields.forEach((field) => this.hideField(field, true));
+        this.intermediatecaFields.forEach((field) => this.hideField(field, false));
         this.extensionFields.forEach((field) => this.hideField(field, false));
         if (this.getField('key_type').value === 'RSA') {
           this.hideField('ec_curve', true);
@@ -814,9 +814,9 @@ export class CertificateAuthorityAddComponent implements WizardConfiguration {
     return null;
   }
 
-  hideField(fieldName: string, show: boolean): void {
-    this.getTarget(fieldName).isHidden = show;
-    this.setDisabled(fieldName, show);
+  hideField(fieldName: string, isHidden: boolean): void {
+    this.getTarget(fieldName).isHidden = isHidden;
+    this.setDisabled(fieldName, isHidden);
   }
 
   setDisabled(fieldName: string, disable: boolean): void {
@@ -830,7 +830,7 @@ export class CertificateAuthorityAddComponent implements WizardConfiguration {
 
   beforeSubmit(data: any): any {
     // Addresses non-pristine field being mistaken for a passphrase of ''
-    if (data.passphrase == '') {
+    if (data.passphrase === '') {
       data.passphrase = undefined;
     }
     if (data.passphrase2) {

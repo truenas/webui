@@ -3,7 +3,7 @@ import {
 } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { Subject } from 'rxjs';
-import { IxAbstractObject } from 'app/core/classes/ix-abstract-object';
+import { getUniqueId } from 'app/helpers/get-unique-id.helper';
 import { ControlConfig } from 'app/modules/entity/entity-toolbar/models/control-config.interface';
 import { Control } from 'app/modules/entity/entity-toolbar/models/control.interface';
 
@@ -12,15 +12,15 @@ import { Control } from 'app/modules/entity/entity-toolbar/models/control.interf
   styleUrls: ['toolbar-multimenu.component.scss'],
   templateUrl: 'toolbar-multimenu.component.html',
 })
-export class ToolbarMultimenuComponent extends IxAbstractObject implements OnInit {
+export class ToolbarMultimenuComponent implements OnInit {
   @Input() config?: ControlConfig;
   @Input() controller: Subject<Control>;
   allSelected = false;
   values: any[] = [];
   selectStates: boolean [] = [];
-  constructor(public translate: TranslateService) {
-    super();
-  }
+  id = getUniqueId();
+
+  constructor(public translate: TranslateService) {}
 
   ngOnInit(): void {
     this.selectStates.length = this.config.options.length;
@@ -29,9 +29,9 @@ export class ToolbarMultimenuComponent extends IxAbstractObject implements OnIni
       for (const value of this.config.value) {
         if (value) {
           this.values.push(value);
-          for (let j = 0; j < this.selectStates.length; j++) {
-            if (this.config.options[j].value == value.value) {
-              this.selectStates[j] = true;
+          for (let i = 0; i < this.selectStates.length; i++) {
+            if (this.config.options[i].value === value.value) {
+              this.selectStates[i] = true;
               break;
             }
           }

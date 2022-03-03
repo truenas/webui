@@ -33,9 +33,9 @@ export interface CloneZfsSnapshot {
 export type ZfsRollbackParams = [
   id: string,
   params: {
-    recursive: boolean;
-    recursive_clones: boolean;
-    force: boolean;
-    recursive_rollback: boolean;
+    recursive?: boolean;
+    recursive_clones?: boolean;
+    force?: boolean;
+    recursive_rollback?: boolean;
   },
 ];

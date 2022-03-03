@@ -83,8 +83,8 @@ export class ManageCatalogSummaryDialogComponent implements OnInit {
 
       let isSeletectedStatus = false;
       if (this.selectedStatus === this.statusOptions[0]
-        || this.selectedStatus == this.statusOptions[1] && item.healthy
-        || this.selectedStatus == this.statusOptions[2] && !item.healthy) {
+        || (this.selectedStatus === this.statusOptions[1] && item.healthy)
+        || (this.selectedStatus === this.statusOptions[2] && !item.healthy)) {
         isSeletectedStatus = true;
       }
 

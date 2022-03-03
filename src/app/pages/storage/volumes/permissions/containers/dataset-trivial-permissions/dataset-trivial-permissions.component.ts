@@ -136,7 +136,7 @@ export class DatasetTrivialPermissionsComponent implements FormConfiguration {
     },
   ];
 
-  custActions = [
+  customActions = [
     {
       id: 'cancel',
       name: helptext.acl_manager_button,
@@ -156,7 +156,7 @@ export class DatasetTrivialPermissionsComponent implements FormConfiguration {
     },
   ];
 
-  isCustActionVisible(action: string): boolean {
+  isCustomActionVisible(action: string): boolean {
     if (action !== 'cancel') {
       return true;
     }
@@ -298,7 +298,7 @@ export class DatasetTrivialPermissionsComponent implements FormConfiguration {
         const userOptions = users.map((user) => {
           return { label: user.username, value: user.username };
         });
-        if (searchText == '') {
+        if (searchText === '') {
           parent.userField.options = parent.userField.options.concat(userOptions);
         } else {
           parent.userField.searchOptions = parent.userField.searchOptions.concat(userOptions);
@@ -313,7 +313,7 @@ export class DatasetTrivialPermissionsComponent implements FormConfiguration {
         const groupOptions = groups.map((group) => {
           return { label: group.group, value: group.group };
         });
-        if (searchText == '') {
+        if (searchText === '') {
           parent.groupField.options = parent.groupField.options.concat(groupOptions);
         } else {
           parent.groupField.searchOptions = parent.groupField.searchOptions.concat(groupOptions);

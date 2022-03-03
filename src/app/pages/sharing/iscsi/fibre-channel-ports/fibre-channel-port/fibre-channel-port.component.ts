@@ -141,7 +141,7 @@ export class FibreChannelPortComponent implements OnInit {
     const value = _.cloneDeep(this.formGroup.value);
     delete value['initiators'];
 
-    if (value['mode'] != FibreChannelPortMode.Target) {
+    if (value['mode'] !== FibreChannelPortMode.Target) {
       value['target'] = null;
     }
     this.loader.open();

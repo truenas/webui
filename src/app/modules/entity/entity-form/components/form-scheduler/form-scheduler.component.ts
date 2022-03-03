@@ -1,15 +1,21 @@
 import { Overlay } from '@angular/cdk/overlay';
 import {
-  Component, OnInit, ViewChild, ElementRef, Renderer2,
-  ChangeDetectorRef, AfterViewInit, AfterViewChecked,
+  AfterViewChecked,
+  AfterViewInit,
+  ChangeDetectorRef,
+  Component,
+  ElementRef,
+  OnInit,
+  Renderer2,
+  ViewChild,
 } from '@angular/core';
-import { FormGroup, FormControl, AbstractControl } from '@angular/forms';
+import { AbstractControl, FormControl, FormGroup } from '@angular/forms';
 import { MatMonthView } from '@angular/material/datepicker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
-import { CronDate } from 'cron-parser';
 import * as parser from 'cron-parser';
+import { CronDate } from 'cron-parser';
 import { CronExpression } from 'cron-parser/types';
 import * as dateFns from 'date-fns';
 import * as dateFnsTz from 'date-fns-tz';
@@ -17,16 +23,11 @@ import globalHelptext from 'app/helptext/global-helptext';
 import { FormSchedulerConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
 import { Field } from 'app/modules/entity/entity-form/models/field.interface';
 import { EntityUtils } from 'app/modules/entity/utils';
+import { CronPreset } from 'app/modules/scheduler/interfaces/cron-preset.interface';
 import { LocaleService } from 'app/services/locale.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 import { selectTimezone } from 'app/store/system-config/system-config.selectors';
-
-interface CronPreset {
-  label: string;
-  value: string;
-  description?: string;
-}
 
 @UntilDestroy()
 @Component({
@@ -228,37 +229,21 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, Aft
     },
   ];
 
-  get textInput(): string {
-    return this._textInput;
-  }
-
-  set textInput(val: string) {
-    this._textInput = val;
-  }
-
-  get colorProxy(): string {
-    return this.group.value[this.config.name];
-  }
-
-  set colorProxy(val: string) {
-    this.group.controls[this.config.name].setValue(val);
-  }
-
   private _preset: CronPreset;
 
   get preset(): CronPreset {
     return this._preset;
   }
 
-  set preset(p: CronPreset) {
-    if (!p.value) {
+  set preset(preset: CronPreset) {
+    if (!preset.value) {
       this.crontab = '0 0 * * *';
       this.convertPreset('0 0 * * *');
       this._preset = this.customOption;
     } else {
-      this.crontab = p.value;
-      this.convertPreset(p.value);
-      this._preset = p;
+      this.crontab = preset.value;
+      this.convertPreset(preset.value);
+      this._preset = preset;
     }
 
     if (this.minDate && this.maxDate) {
@@ -326,7 +311,7 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, Aft
   }
 
   onChangeOption($event: Event): void {
-    if (this.config.onChangeOption !== undefined && this.config.onChangeOption != null) {
+    if (this.config.onChangeOption !== undefined && this.config.onChangeOption !== null) {
       this.config.onChangeOption({ event: $event });
     }
   }
@@ -405,8 +390,8 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, Aft
     this.generateSchedule();
   }
 
-  private getMinDate(d: Date): Date {
-    const dt = dateFns.addSeconds(d, 1);
+  private getMinDate(date: Date): Date {
+    const dt = dateFns.addSeconds(date, 1);
     const now = this.zonedTime;
     const thisMonth = dateFns.getMonth(now);
     const thisYear = dateFns.getYear(now);
@@ -517,8 +502,8 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, Aft
             parseCounter++;
           }
         }
-      } catch (e: unknown) {
-        console.warn(e);
+      } catch (error: unknown) {
+        console.warn(error);
         break;
       }
     }
@@ -541,8 +526,8 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, Aft
         try {
           const obj = intervalDays.next();
           daySchedule.push(obj.value);
-        } catch (e: unknown) {
-          console.error(e);
+        } catch (error: unknown) {
+          console.error(error);
           break;
         }
       }
@@ -588,23 +573,23 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, Aft
     return cells;
   }
 
-  getAttribute(attr: string, node: HTMLElement): string {
-    const a = node.attributes.getNamedItem(attr);
-    if (a) {
-      return a.value;
+  getAttribute(name: string, node: HTMLElement): string {
+    const attribute = node.attributes.getNamedItem(name);
+    if (attribute) {
+      return attribute.value;
     }
   }
 
-  setAttribute(attr: string, node: HTMLElement, value: string): void {
-    const a = document.createAttribute(attr);
-    a.value = value;
-    node.attributes.removeNamedItem(attr);
-    node.attributes.setNamedItem(a);
+  setAttribute(name: string, node: HTMLElement, value: string): void {
+    const attribute = document.createAttribute(name);
+    attribute.value = value;
+    node.attributes.removeNamedItem(name);
+    node.attributes.setNamedItem(attribute);
   }
 
-  private checkSchedule(aria?: string, sched?: CronDate[]): boolean {
+  private checkSchedule(aria?: string, schedule?: CronDate[]): boolean {
     if (!aria) { return; }
-    if (!sched) { sched = this.generatedSchedule; }
+    if (!schedule) { schedule = this.generatedSchedule; }
 
     const cal = aria.split(' '); // eg. May 06, 2018
     const cd = cal[1].split(',');
@@ -616,8 +601,8 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, Aft
     } else {
       calDay = cd[0];
     }
-    for (const s of sched) {
-      const schedule = s.toString().split(' ');
+    for (const date of schedule) {
+      const schedule = date.toString().split(' ');
       if (schedule[1] === calMonth && schedule[2] === calDay && schedule[3] === calYear) {
         return true;
       }

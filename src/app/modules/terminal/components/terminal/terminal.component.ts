@@ -182,8 +182,8 @@ export class TerminalComponent implements OnInit, OnDestroy {
     font.load().then(() => {
       this.xterm.open(this.container.nativeElement);
       this.fitAddon.fit();
-    }, (e) => {
-      console.error('Font is not available', e);
+    }, (error) => {
+      console.error('Font is not available', error);
     });
   }
 

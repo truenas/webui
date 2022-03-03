@@ -50,7 +50,6 @@ import { FormTextareaButtonComponent } from 'app/modules/entity/entity-form/comp
 import { FormTextareaComponent } from 'app/modules/entity/entity-form/components/form-textarea/form-textarea.component';
 import { FormToggleButtonComponent } from 'app/modules/entity/entity-form/components/form-toggle-button/form-toggle-button.component';
 import { FormUploadComponent } from 'app/modules/entity/entity-form/components/form-upload/form-upload.component';
-import { EntityFormEmbeddedComponent } from 'app/modules/entity/entity-form/entity-form-embedded.component';
 import { EntityFormComponent } from 'app/modules/entity/entity-form/entity-form.component';
 import { EntityFormService } from 'app/modules/entity/entity-form/services/entity-form.service';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
@@ -68,6 +67,7 @@ import { ToolbarMenuComponent } from 'app/modules/entity/entity-toolbar/componen
 import { ToolbarMultimenuComponent } from 'app/modules/entity/entity-toolbar/components/toolbar-multimenu/toolbar-multimenu.component';
 import { ToolbarMultiSelectComponent } from 'app/modules/entity/entity-toolbar/components/toolbar-multiselect/toolbar-multiselect.component';
 import { ToolbarSelectComponent } from 'app/modules/entity/entity-toolbar/components/toolbar-select/toolbar-select.component';
+import { ToolbarSlideToggleComponent } from 'app/modules/entity/entity-toolbar/components/toolbar-slide-toggle/toolbar-slide-toggle.component';
 import { ToolbarSliderComponent } from 'app/modules/entity/entity-toolbar/components/toolbar-slider/toolbar-slider.component';
 import { EntityToolbarComponent } from 'app/modules/entity/entity-toolbar/entity-toolbar.component';
 import { EntityTreeTableComponent } from 'app/modules/entity/entity-tree-table/entity-tree-table.component';
@@ -116,7 +116,6 @@ import { DocsService } from 'app/services/docs.service';
     EntityTemplateDirective,
     DynamicFieldDirective,
     EntityFormComponent,
-    EntityFormEmbeddedComponent,
     FormButtonComponent,
     FormInputComponent,
     FormLabelComponent,
@@ -149,13 +148,14 @@ import { DocsService } from 'app/services/docs.service';
     EntitySnackbarComponent,
     EntityToolbarComponent,
     ToolbarButtonComponent,
-    ToolbarSliderComponent,
-    ToolbarInputComponent,
     ToolbarCheckboxComponent,
-    ToolbarSelectComponent,
+    ToolbarInputComponent,
     ToolbarMenuComponent,
     ToolbarMultimenuComponent,
     ToolbarMultiSelectComponent,
+    ToolbarSelectComponent,
+    ToolbarSliderComponent,
+    ToolbarSlideToggleComponent,
     FormStatusComponent,
     TableComponent,
     ExpandableTableComponent,
@@ -166,7 +166,6 @@ import { DocsService } from 'app/services/docs.service';
   exports: [
     EntityTemplateDirective,
     EntityFormComponent,
-    EntityFormEmbeddedComponent,
     EntityTableComponent,
     EntityRowDetailsComponent,
     EntityTreeTableComponent,
@@ -181,6 +180,7 @@ import { DocsService } from 'app/services/docs.service';
     ToolbarSliderComponent,
     ToolbarInputComponent,
     ToolbarCheckboxComponent,
+    ToolbarSlideToggleComponent,
     ToolbarSelectComponent,
     ToolbarMenuComponent,
     ToolbarMultimenuComponent,
@@ -190,41 +190,6 @@ import { DocsService } from 'app/services/docs.service';
     CdkTreeModule,
     EntityEmptyComponent,
     WizardSummaryComponent,
-  ],
-  entryComponents: [
-    FormButtonComponent,
-    FormInputComponent,
-    FormLabelComponent,
-    FormSelectComponent,
-    FormCheckboxComponent,
-    FormComboboxComponent,
-    FormTextareaComponent,
-    FormTextareaButtonComponent,
-    FormDatepickerComponent,
-    FormSchedulerComponent,
-    FormListComponent,
-    FormChipComponent,
-    FormErrorsComponent,
-    FormColorpickerComponent,
-    FormPermissionsComponent,
-    FormArrayComponent,
-    FormSelectionListComponent,
-    FormRadioComponent,
-    FormUploadComponent,
-    FormReadFileComponent,
-    FormExplorerComponent,
-    FormIpWithNetmaskComponent,
-    EntityJobComponent,
-    FormSliderComponent,
-    FormToggleButtonComponent,
-    FormTaskComponent,
-    FormParagraphComponent,
-    EntityToolbarComponent,
-    EntitySnackbarComponent,
-    EntityTableRowDetailsComponent,
-    TaskScheduleListComponent,
-    FormDictComponent,
-    EntityDialogComponent,
   ],
   providers: [
     EntityFormService,

@@ -68,16 +68,16 @@ export class AppComponent {
       document.body.className += ' safari-platform';
     }
 
-    router.events.pipe(untilDestroyed(this)).subscribe((s) => {
+    router.events.pipe(untilDestroyed(this)).subscribe((event) => {
       // save currenturl
-      if (s instanceof NavigationEnd) {
-        if (this.ws.loggedIn && s.url !== '/sessions/signin') {
-          sessionStorage.currentUrl = s.url;
+      if (event instanceof NavigationEnd) {
+        if (this.ws.loggedIn && event.url !== '/sessions/signin') {
+          sessionStorage.currentUrl = event.url;
         }
       }
 
-      if (s instanceof NavigationCancel) {
-        const params = new URLSearchParams(s.url.split('#')[1]);
+      if (event instanceof NavigationCancel) {
+        const params = new URLSearchParams(event.url.split('#')[1]);
         const isEmbedded = params.get('embedded');
 
         if (isEmbedded) {
@@ -107,9 +107,11 @@ export class AppComponent {
   private detectBrowser(name: string): boolean {
     const appName = navigator.appName;
     const ua = navigator.userAgent;
-    let temp;
     const browserVersion = ua.match(/(opera|chrome|safari|firefox|msie)\/?\s*(\.?\d+(\.\d+)*)/i);
-    if (browserVersion && (temp = ua.match(/version\/([\.\d]+)/i)) != null) browserVersion[2] = temp[1];
+    const versionMatch = ua.match(/version\/([\.\d]+)/i);
+    if (browserVersion && versionMatch !== null) {
+      browserVersion[2] = versionMatch[1];
+    }
     const browserName = browserVersion ? browserVersion[1] : appName;
 
     return name === browserName;

@@ -36,7 +36,6 @@ export const customSvgIcons = {
   freenas_logomark: 'assets/customicons/logo.svg',
   freenas_certified: 'assets/customicons/logo_certified.svg',
   freenas_logotype: 'assets/customicons/logo-text.svg',
-  freenas_logo_full: 'assets/customicons/logo-full.svg',
   truecommand_logo_blue: 'assets/images/truecommand/truecommand-logo-mark-full-color-rgb.svg',
   truecommand_logo_white: 'assets/images/truecommand/truecommand-logo-mark-white-rgb.svg',
   'anti-lock': 'assets/customicons/anti-lock.svg',

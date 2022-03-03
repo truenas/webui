@@ -25,6 +25,17 @@ export class NfsListComponent implements EntityTableConfig<NfsShare> {
   routeEdit: string[] = ['sharing', 'nfs', 'edit'];
   protected routeDelete: string[] = ['sharing', 'nfs', 'delete'];
   entityList: EntityTableComponent;
+  emptyTableConfigMessages = {
+    first_use: {
+      title: this.translate.instant('No NFS Shares have been configured yet'),
+      message: this.translate.instant('It seems you haven\'t setup any NFS Shares yet. Please click the button below to add an NFS Share.'),
+    },
+    no_page_data: {
+      title: this.translate.instant('No NFS Shares have been configured yet'),
+      message: this.translate.instant('The system could not retrieve any NFS Shares from the database. Please click the button below to add an NFS Share.'),
+    },
+    buttonText: this.translate.instant('Add NFS Share'),
+  };
 
   columns = [
     {

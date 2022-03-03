@@ -6,7 +6,7 @@
   <tooltip *ngIf="tooltip" [header]="label" class="tooltip" [message]="tooltip"></tooltip>
 </div>
 
-<div class="input-container" [class.disabled]="isDisabled">
+<div class="input-container" [class.disabled]="isDisabled" [class.readonly]="readonly">
   <span *ngIf="prefixIcon" class="prefix-icon">
     <mat-icon>{{prefixIcon}}</mat-icon>
   </span>
@@ -15,14 +15,16 @@
     matInput
     [class.prefix-padding]="prefixIcon"
     [class.password-field]="isPasswordField()"
+    [class.has-reset-input-icon]="shouldShowResetInput()"
     [required]="required"
+    [readonly]="readonly"
     [disabled]="isDisabled"
     [type]="getType()"
     [value]="formatted"
     (input)="input(ixInput)"
+    (focus)="focus(ixInput)"
     (blur)="blur()"
     [autocomplete]="autocomplete"
-    [autocapitalize]="autocapitalize"
     [placeholder]="placeholder"
   >
   <span *ngIf="shouldShowResetInput()" class="reset-input">
@@ -44,3 +46,4 @@
 </div>
 <ix-errors [control]="controlDirective.control" [label]="label"></ix-errors>
 
+<mat-hint *ngIf="hint">{{hint}}</mat-hint>

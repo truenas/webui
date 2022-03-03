@@ -36,7 +36,7 @@ export class ApiKeyFormDialogComponent implements OnInit {
     private matDialog: MatDialog,
     private ws: WebSocketService,
     private loader: AppLoaderService,
-    private errorHander: FormErrorHandlerService,
+    private errorHandler: FormErrorHandlerService,
     @Inject(MAT_DIALOG_DATA) private editingRow: ApiKey,
   ) {}
 
@@ -70,11 +70,7 @@ export class ApiKeyFormDialogComponent implements OnInit {
         }
       }, (error) => {
         this.loader.close();
-        this.errorHander.handleWsFormError(error, this.form);
+        this.errorHandler.handleWsFormError(error, this.form);
       });
-  }
-
-  private showKeyDialog(): void {
-
   }
 }
