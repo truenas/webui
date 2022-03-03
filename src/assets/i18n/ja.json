@@ -1483,7 +1483,7 @@
   "Initiators currently connected to the system. Shown in IQN format with an IP address. Set initiators and click an <b>-></b> (arrow) to add the initiators to either the <i>Allowed Initiators</i> or <i>Authorized Networks</i> lists. Clicking <i>Refresh</i> updates the <i>Connected Initiators</i> list.": "",
   "Input the pre-defined S3 bucket to use.": "",
   "Input the pre-defined container to use.": "",
-  "Install": "",
+  "Install": "インストール",
   "Install Application": "",
   "Installation Media": "",
   "Installed Applications": "",
