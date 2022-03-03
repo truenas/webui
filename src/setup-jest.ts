@@ -1,6 +1,22 @@
 import 'jest-preset-angular/setup-jest';
 import { APP_BASE_HREF } from '@angular/common';
+import { HttpClientModule } from '@angular/common/http';
+import { MatBadgeModule } from '@angular/material/badge';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MATERIAL_SANITY_CHECKS } from '@angular/material/core';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatExpansionModule } from '@angular/material/expansion';
+import { MatIconModule } from '@angular/material/icon';
+import { MatListModule } from '@angular/material/list';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { MatSortModule } from '@angular/material/sort';
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterModule } from '@angular/router';
 import { defineGlobalsInjections } from '@ngneat/spectator';
 import {
@@ -8,7 +24,6 @@ import {
 } from '@ngx-translate/core';
 import { NgxFilesizeModule } from 'ngx-filesize';
 import { TranslateMessageFormatCompiler } from 'ngx-translate-messageformat-compiler';
-import { MaterialModule } from 'app/app-material.module';
 import { IcuMissingTranslationHandler } from 'app/core/classes/icu-missing-translation-handler';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { CastModule } from 'app/modules/cast/cast.module';
@@ -17,7 +32,22 @@ jest.setTimeout(30 * 1000);
 
 defineGlobalsInjections({
   imports: [
-    MaterialModule,
+    HttpClientModule,
+    MatCheckboxModule,
+    MatSlideToggleModule,
+    MatMenuModule,
+    MatIconModule,
+    MatDialogModule,
+    MatSortModule,
+    MatProgressBarModule,
+    MatTooltipModule,
+    MatCardModule,
+    MatListModule,
+    MatToolbarModule,
+    MatBadgeModule,
+    MatExpansionModule,
+    MatProgressSpinnerModule,
+    MatButtonModule,
     RouterModule.forRoot([]),
     CommonDirectivesModule,
     NgxFilesizeModule,
