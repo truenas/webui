@@ -519,8 +519,8 @@ button.mat-button.mat-default,
 button.mat-default,
 button.mat-button.mat-accent.btn-default,
 button.mat-button[type='button']:not(button.mat-primary) {
-  background: var(--btn-default-bg) !important;
-  background-color: var(--btn-default-bg) !important;
+  background: var(--btn-default-bg);
+  background-color: var(--btn-default-bg);
   color: var(--fg2) !important;
 }
 

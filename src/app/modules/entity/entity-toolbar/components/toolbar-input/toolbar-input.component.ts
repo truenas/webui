@@ -3,7 +3,6 @@ import {
 } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { Subject } from 'rxjs';
-import { IxAbstractObject } from 'app/core/classes/ix-abstract-object';
 import { ControlConfig } from 'app/modules/entity/entity-toolbar/models/control-config.interface';
 import { Control } from 'app/modules/entity/entity-toolbar/models/control.interface';
 
@@ -14,16 +13,14 @@ import { Control } from 'app/modules/entity/entity-toolbar/models/control.interf
   // eslint-disable-next-line @angular-eslint/use-component-view-encapsulation
   encapsulation: ViewEncapsulation.None,
 })
-export class ToolbarInputComponent extends IxAbstractObject {
+export class ToolbarInputComponent {
   @Input() config?: ControlConfig;
   @Input() controller: Subject<Control>;
 
   @ViewChild('filter', { static: false }) filter: ElementRef;
   filterValue = '';
   hasFocus = false;
-  constructor(public translate: TranslateService) {
-    super();
-  }
+  constructor(public translate: TranslateService) {}
 
   reset(): void {
     this.filterValue = '';

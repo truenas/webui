@@ -12,7 +12,7 @@ import { AppState } from 'app/store/index';
 import {
   builtinGroupsToggled,
   builtinUsersToggled, localizationFormSubmitted,
-  noPreferencesFound, oneTimeBuiltinGroupsMessageShown, oneTimeBuiltinUsersMessageShown,
+  noPreferencesFound,
   preferencesLoaded, preferredColumnsUpdated,
   themeNotFound,
 } from 'app/store/preferences/preferences.actions';
@@ -49,10 +49,8 @@ export class PreferencesEffects {
       sidenavUpdated,
       themeNotFound,
       preferredColumnsUpdated,
-      oneTimeBuiltinUsersMessageShown,
       builtinUsersToggled,
       snapshotExtraColumnsToggled,
-      oneTimeBuiltinGroupsMessageShown,
       builtinGroupsToggled,
       localizationFormSubmitted,
     ),

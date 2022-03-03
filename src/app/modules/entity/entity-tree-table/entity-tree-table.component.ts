@@ -51,12 +51,13 @@ export class EntityTreeTableComponent implements OnInit, AfterViewInit {
   treeDataSource: TreeNode[];
   tableDataSource: TreeNode[];
 
-  constructor(private ws: WebSocketService,
+  constructor(
+    private ws: WebSocketService,
     private treeTableService: EntityTreeTableService,
     private dialogService: DialogService,
-
     protected translate: TranslateService,
-    protected core: CoreService) { }
+    protected core: CoreService,
+  ) { }
 
   ngOnInit(): void {
     this.populateTable();

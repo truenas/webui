@@ -162,7 +162,7 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow>, On
         state: vm.status.state,
         com_port: `/dev/nmdm${vm.id}B`,
         shutdown_timeout: `${vm.shutdown_timeout} seconds`,
-        memory: this.storageService.convertBytestoHumanReadable(vm.memory * 1048576, 2),
+        memory: this.storageService.convertBytesToHumanReadable(vm.memory * 1048576, 2),
       } as VirtualMachineRow;
 
       if (this.checkDisplay(vm)) {
@@ -649,7 +649,7 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow>, On
 
   checkMemory(): void {
     this.ws.call(this.wsMethods.getAvailableMemory).pipe(untilDestroyed(this)).subscribe((res) => {
-      this.availMem = this.storageService.convertBytestoHumanReadable(res);
+      this.availMem = this.storageService.convertBytesToHumanReadable(res);
     });
   }
 

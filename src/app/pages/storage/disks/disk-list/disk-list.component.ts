@@ -286,7 +286,6 @@ export class DiskListComponent implements EntityTableConfig<Disk> {
         new EntityUtils().handleWsError(this, error);
         return of(false);
       }),
-      untilDestroyed(this),
     ).toPromise();
   }
 

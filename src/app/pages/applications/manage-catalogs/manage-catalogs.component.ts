@@ -179,7 +179,6 @@ export class ManageCatalogsComponent implements EntityTableConfig<Catalog>, OnIn
       data: {
         title: helptext.refreshing,
       },
-      disableClose: true,
     });
     this.dialogRef.componentInstance.setCall('catalog.sync_all');
     this.dialogRef.componentInstance.submit();
@@ -194,7 +193,6 @@ export class ManageCatalogsComponent implements EntityTableConfig<Catalog>, OnIn
       data: {
         title: helptext.refreshing,
       },
-      disableClose: true,
     });
     this.dialogRef.componentInstance.setCall('catalog.sync', [row.label]);
     this.dialogRef.componentInstance.submit();

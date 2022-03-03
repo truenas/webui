@@ -97,7 +97,6 @@ describe('UserListComponent', () => {
           {
             selector: selectPreferences,
             value: {
-              showUserListMessage: false,
               hideBuiltinUsers: false,
             } as Preferences,
           },
