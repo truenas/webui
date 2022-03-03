@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatExpansionModule } from '@angular/material/expansion';
@@ -54,6 +55,7 @@ import { PodShellComponent } from 'app/pages/applications/pod-shell/pod-shell.co
     MatFormFieldModule,
     MatExpansionModule,
     MatTooltipModule,
+    MatButtonModule,
     MatMenuModule,
     MatIconModule,
     MatCheckboxModule,
