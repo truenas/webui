@@ -22,7 +22,7 @@
           [options]="typeOptions$"
         ></ix-select>
         <ix-input
-          formControlName="description"
+          formControlName="desc"
           [label]="'Description' | translate"
           [tooltip]="tooltips.desc | translate"
         ></ix-input>
@@ -30,6 +30,7 @@
           formControlName="schedule"
           [label]="'Schedule' | translate"
           [tooltip]="tooltips.schedule | translate"
+          [hideMinutes]="true"
         ></ix-scheduler>
       </ix-fieldset>
 

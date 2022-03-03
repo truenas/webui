@@ -10,7 +10,8 @@ import helptext from 'app/helptext/system/cron-form';
 import { Cronjob } from 'app/interfaces/cronjob.interface';
 import { UserComboboxProvider } from 'app/modules/ix-forms/classes/user-combobox-provider';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
-import { crontabToSchedule, scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
+import { crontabToSchedule } from 'app/modules/scheduler/utils/crontab-to-schedule.utils';
+import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
 import { UserService, WebSocketService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 

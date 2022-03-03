@@ -1,5 +1,5 @@
 import { Routes } from '@angular/router';
-import { SmartListComponent } from 'app/pages/data-protection/smart-test/smart-list/smart-list.component';
+import { SmartTaskListComponent } from 'app/pages/data-protection/smart-task/smart-task-list/smart-task-list.component';
 import { CloudsyncFormComponent } from './cloudsync/cloudsync-form/cloudsync-form.component';
 import { CloudsyncListComponent } from './cloudsync/cloudsync-list/cloudsync-list.component';
 import { DataProtectionDashboardComponent } from './components/data-protection-dashboard/data-protection-dashboard.component';
@@ -96,7 +96,7 @@ export const dataProtectionRoutes: Routes = [{
       data: { title: 'S.M.A.R.T. Tests', breadcrumb: 'S.M.A.R.T. Tests', icon: 'event_note' },
       children: [{
         path: '',
-        component: SmartListComponent,
+        component: SmartTaskListComponent,
         data: { title: 'S.M.A.R.T. Tests', breadcrumb: 'S.M.A.R.T. Tests' },
       }],
     }, {

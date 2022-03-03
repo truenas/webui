@@ -1,25 +1,28 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { FormBuilder } from '@ngneat/reactive-forms';
-import { untilDestroyed } from '@ngneat/until-destroy';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+import { Observable, of } from 'rxjs';
 import { SmartTestType, smartTestTypeLabels } from 'app/enums/smart-test-type.enum';
 import { choicesToOptions, mapToOptions } from 'app/helpers/options.helper';
 import helptext from 'app/helptext/data-protection/smart/smart';
-import { Cronjob } from 'app/interfaces/cronjob.interface';
 import { SmartTest } from 'app/interfaces/smart-test.interface';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
-import { crontabToSchedule, scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
+import {
+  crontabToScheduleWithoutMinutes,
+} from 'app/modules/scheduler/utils/crontab-to-schedule.utils';
+import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
 import { WebSocketService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { Observable, of } from 'rxjs';
 
+@UntilDestroy()
 @Component({
-  templateUrl: './smart-test-form.component.html',
-  styleUrls: ['./smart-form.component.scss'],
+  templateUrl: './smart-task-form.component.html',
+  styleUrls: ['./smart-task-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class SmartTestFormComponent {
+export class SmartTaskFormComponent {
   get isNew(): boolean {
     return !this.editingTest;
   }
@@ -31,7 +34,7 @@ export class SmartTestFormComponent {
   }
 
   form = this.fb.group({
-    disks: [[] as string[], Validators.required],
+    disks: [[] as string[]],
     all_disks: [false],
     type: [null as SmartTestType],
     desc: [''],
@@ -66,7 +69,7 @@ export class SmartTestFormComponent {
   setTestForEdit(test: SmartTest): void {
     this.editingTest = test;
     this.form.patchValue({
-      ...this.form.value,
+      ...test,
       schedule: scheduleToCrontab(test.schedule),
     });
   }
@@ -74,7 +77,8 @@ export class SmartTestFormComponent {
   onSubmit(): void {
     const values = {
       ...this.form.value,
-      schedule: crontabToSchedule(this.form.value.schedule),
+      disks: this.form.value.all_disks ? [] : this.form.value.disks,
+      schedule: crontabToScheduleWithoutMinutes(this.form.value.schedule),
     };
 
     this.isLoading = true;

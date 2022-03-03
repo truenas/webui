@@ -39,10 +39,9 @@ export class SchedulerModalHarness extends ComponentHarness {
 
   async setDaysOfWeek(daysOfWeek: readonly DayOfTheWeekRange[]): Promise<void> {
     // TODO: Will break if Sunday is not the first day of the week.
-
     const checkboxes = await this.getDaysOfWeekCheckboxes();
     await parallel(() => checkboxes.map((checkbox, i) => {
-      return daysOfWeek.includes((i + 1) as DayOfTheWeekRange)
+      return daysOfWeek.includes(i as DayOfTheWeekRange)
         ? checkbox.check()
         : checkbox.uncheck();
     }));

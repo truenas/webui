@@ -52,7 +52,6 @@ export class GuiFormComponent {
     crash_reporting: [false, [Validators.required]],
     usage_collection: [false, [Validators.required]],
     ui_consolemsg: [false, [Validators.required]],
-    test: [''],
   });
 
   options = {
