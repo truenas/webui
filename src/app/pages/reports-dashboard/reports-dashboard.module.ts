@@ -3,8 +3,11 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MatCardModule } from '@angular/material/card';
+import { MatIconModule } from '@angular/material/icon';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslateModule } from '@ngx-translate/core';
-import { MaterialModule } from 'app/app-material.module';
 import { AppCommonModule } from 'app/components/common/app-common.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { EntityModule } from 'app/modules/entity/entity.module';
@@ -23,11 +26,14 @@ import { ReportsGlobalControlsComponent } from './components/reports-global-cont
     ReactiveFormsModule,
     IxFormsModule,
     routing,
-    MaterialModule,
     ScrollingModule,
     AppCommonModule,
     TranslateModule,
     EntityModule,
+    MatTooltipModule,
+    MatIconModule,
+    MatMenuModule,
+    MatCardModule,
     FlexLayoutModule,
     CommonDirectivesModule,
     EntityModule,

@@ -6,7 +6,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { Job } from 'app/interfaces/job.interface';
 import { StorageService } from 'app/services/storage.service';
 import { WebSocketService } from 'app/services/ws.service';
-import { EntityUtils } from '../../../modules/entity/utils';
+import { EntityUtils } from '../../../../modules/entity/utils';
 
 @UntilDestroy()
 @Component({

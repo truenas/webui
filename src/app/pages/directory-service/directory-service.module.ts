@@ -3,9 +3,11 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MatCardModule } from '@angular/material/card';
+import { MatListModule } from '@angular/material/list';
+import { MatToolbarModule } from '@angular/material/toolbar';
 import { TranslateModule } from '@ngx-translate/core';
 import { NgxUploaderModule } from 'ngx-uploader';
-import { MaterialModule } from 'app/app-material.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { ActiveDirectoryComponent } from 'app/pages/directory-service/components/active-directory/active-directory.component';
 import { KerberosKeytabsFormComponent } from 'app/pages/directory-service/components/kerberos-keytabs/kerberos-keytabs-form.component';
@@ -30,7 +32,9 @@ import { LdapComponent } from './components/ldap/ldap.component';
     FlexLayoutModule,
     NgxUploaderModule,
     routing,
-    MaterialModule,
+    MatListModule,
+    MatToolbarModule,
+    MatCardModule,
     TranslateModule,
     CdkAccordionModule,
     IxFormsModule,

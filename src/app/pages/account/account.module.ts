@@ -2,8 +2,12 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MatCardModule } from '@angular/material/card';
+import { MatIconModule } from '@angular/material/icon';
+import { MatListModule } from '@angular/material/list';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatSortModule } from '@angular/material/sort';
 import { TranslateModule } from '@ngx-translate/core';
-import { MaterialModule } from 'app/app-material.module';
 import { NgxDualListboxModule } from 'app/components/common/dual-list/dual-list.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxTableModule } from 'app/modules/ix-tables/ix-table.module';
@@ -22,11 +26,15 @@ import { UserListComponent } from './users/user-list/user-list.component';
     EntityModule,
     CommonModule,
     FormsModule,
-    MaterialModule,
     NgxDualListboxModule,
     ReactiveFormsModule,
     routing,
     TranslateModule,
+    MatSortModule,
+    MatCardModule,
+    MatIconModule,
+    MatListModule,
+    MatProgressSpinnerModule,
     IxFormsModule,
     IxTableModule,
     FlexLayoutModule,

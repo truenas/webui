@@ -2,9 +2,10 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MatCardModule } from '@angular/material/card';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
-import { MaterialModule } from 'app/app-material.module';
 import { EntityModule } from '../../modules/entity/entity.module';
 import { IxFormsModule } from '../../modules/ix-forms/ix-forms.module';
 import { CloudsyncFormComponent } from './cloudsync/cloudsync-form/cloudsync-form.component';
@@ -27,12 +28,13 @@ import { SnapshotListComponent } from './snapshot/snapshot-list/snapshot-list.co
 @NgModule({
   imports: [
     CommonModule,
-    MaterialModule,
     FlexLayoutModule,
     RouterModule.forChild(dataProtectionRoutes),
     EntityModule,
     FormsModule,
     ReactiveFormsModule,
+    MatProgressBarModule,
+    MatCardModule,
     TranslateModule,
     IxFormsModule,
   ],

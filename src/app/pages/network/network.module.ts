@@ -2,9 +2,13 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MatCardModule } from '@angular/material/card';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatListModule } from '@angular/material/list';
+import { MatToolbarModule } from '@angular/material/toolbar';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { NgxUploaderModule } from 'ngx-uploader';
-import { MaterialModule } from 'app/app-material.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { CastModule } from 'app/modules/cast/cast.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
@@ -32,7 +36,11 @@ import { routing } from './network.routing';
     ReactiveFormsModule,
     NgxUploaderModule,
     routing,
-    MaterialModule,
+    MatCardModule,
+    MatListModule,
+    MatIconModule,
+    MatFormFieldModule,
+    MatToolbarModule,
     FlexLayoutModule,
     TranslateModule,
     CommonDirectivesModule,

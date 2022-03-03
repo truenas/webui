@@ -2,7 +2,6 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
-import { MaterialModule } from 'app/app-material.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import {
   ChangePasswordDialogComponent,
@@ -12,7 +11,6 @@ import {
   imports: [
     CommonModule,
     TranslateModule,
-    MaterialModule,
     IxFormsModule,
     ReactiveFormsModule,
   ],

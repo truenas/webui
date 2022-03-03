@@ -8,6 +8,7 @@ import { TranslateService } from '@ngx-translate/core';
 import {
   catchError, filter, switchMap, tap,
 } from 'rxjs/operators';
+import { ConfirmDialogComponent } from 'app/components/common/dialog/confirm-dialog/confirm-dialog.component';
 import { JobState } from 'app/enums/job-state.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { SystemUpdateOperationType, SystemUpdateStatus } from 'app/enums/system-update.enum';
@@ -22,7 +23,6 @@ import { EntityDialogComponent } from 'app/modules/entity/entity-dialog/entity-d
 import { FieldConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { EntityUtils } from 'app/modules/entity/utils';
-import { ConfirmDialogComponent } from 'app/pages/common/confirm-dialog/confirm-dialog.component';
 import { StorageService, SystemGeneralService, WebSocketService } from 'app/services';
 import { CoreService } from 'app/services/core-service/core.service';
 import { DialogService } from 'app/services/dialog.service';
