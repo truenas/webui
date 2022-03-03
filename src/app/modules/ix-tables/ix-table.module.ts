@@ -2,10 +2,12 @@ import { CdkTableModule } from '@angular/cdk/table';
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FlexLayoutModule } from '@angular/flex-layout';
+import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
 import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatTableModule } from '@angular/material/table';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslateModule } from '@ngx-translate/core';
 import { EntityModule } from 'app/modules/entity/entity.module';
@@ -38,15 +40,19 @@ import { IxRowDefDirective } from 'app/modules/ix-tables/directives/ix-row-def.d
     MatCheckboxModule,
     TranslateModule,
     CdkTableModule,
+    MatTableModule,
+    MatButtonModule,
   ],
   exports: [
     IxTableComponent,
     IxRowDefDirective,
     IxCellDefDirective,
     IxTablePaginatorComponent,
+    MatTableModule,
     IxTableExpandableRowComponent,
     IxExpandToggleColumnComponent,
     IxCheckboxColumnComponent,
+    MatButtonModule,
   ],
 })
 export class IxTableModule { }
