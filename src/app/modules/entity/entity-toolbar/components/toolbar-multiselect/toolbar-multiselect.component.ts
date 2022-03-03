@@ -5,7 +5,7 @@ import { MatOption } from '@angular/material/core';
 import { MatSelect } from '@angular/material/select';
 import { TranslateService } from '@ngx-translate/core';
 import { Subject } from 'rxjs';
-import { IxAbstractObject } from 'app/core/classes/ix-abstract-object';
+import { getUniqueId } from 'app/helpers/get-unique-id.helper';
 import { Option } from 'app/interfaces/option.interface';
 import { ControlConfig } from 'app/modules/entity/entity-toolbar/models/control-config.interface';
 import { Control } from 'app/modules/entity/entity-toolbar/models/control.interface';
@@ -15,18 +15,17 @@ import { Control } from 'app/modules/entity/entity-toolbar/models/control.interf
   templateUrl: './toolbar-multiselect.component.html',
   styleUrls: ['./toolbar-multiselect.component.scss'],
 })
-export class ToolbarMultiSelectComponent extends IxAbstractObject implements AfterViewInit {
+export class ToolbarMultiSelectComponent implements AfterViewInit {
   @ViewChild('matSelectRef') matSelectRef: MatSelect;
   @Input() config?: ControlConfig;
   @Input() controller: Subject<Control>;
   values: Option[] = [];
+  id = getUniqueId();
 
   constructor(
     public translate: TranslateService,
     private changeDetectorRef: ChangeDetectorRef,
-  ) {
-    super();
-  }
+  ) {}
 
   ngAfterViewInit(): void {
     this.deselectAll();

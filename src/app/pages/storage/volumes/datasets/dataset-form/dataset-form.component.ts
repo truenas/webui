@@ -88,7 +88,7 @@ export class DatasetFormComponent implements FormConfiguration {
   protected warning = 80;
   protected critical = 95;
 
-  custActions = [
+  customActions = [
     {
       id: 'basic_mode',
       name: globalHelptext.basic_options,
@@ -912,7 +912,7 @@ export class DatasetFormComponent implements FormConfiguration {
     }
   }
 
-  isCustActionVisible(actionId: string): boolean {
+  isCustomActionVisible(actionId: string): boolean {
     if (actionId === 'advanced_mode' && !this.isBasicMode) {
       return false;
     } if (actionId === 'basic_mode' && this.isBasicMode) {

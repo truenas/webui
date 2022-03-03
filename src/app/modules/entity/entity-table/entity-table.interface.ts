@@ -21,7 +21,7 @@ export interface EntityTableConfig<Row = any> {
   queryRes?: any[];
   showActions?: boolean;
   isActionVisible?: (actionId: string, row: Row) => boolean;
-  custActions?: any[];
+  customActions?: any[];
   multiActions?: EntityTableMultiAction<Row>[];
   noActions?: boolean;
   config: EntityTableConfigConfig;

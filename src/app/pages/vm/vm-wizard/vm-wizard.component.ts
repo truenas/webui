@@ -706,12 +706,12 @@ export class VmWizardComponent implements WizardConfiguration {
             } else if (stat.free_bytes > 40 * 1073741824) {
               const vmOs = this.getFormControlFromFieldName('os').value;
               if (vmOs === 'Windows') {
-                this.getFormControlFromFieldName('volsize').setValue(this.storageService.convertBytestoHumanReadable(volsize, 0));
+                this.getFormControlFromFieldName('volsize').setValue(this.storageService.convertBytesToHumanReadable(volsize, 0));
               } else {
-                this.getFormControlFromFieldName('volsize').setValue(this.storageService.convertBytestoHumanReadable(volsize, 0));
+                this.getFormControlFromFieldName('volsize').setValue(this.storageService.convertBytesToHumanReadable(volsize, 0));
               }
             } else if (stat.free_bytes > 10 * 1073741824) {
-              this.getFormControlFromFieldName('volsize').setValue((this.storageService.convertBytestoHumanReadable(volsize, 0)));
+              this.getFormControlFromFieldName('volsize').setValue((this.storageService.convertBytesToHumanReadable(volsize, 0)));
             }
           });
         } else {
@@ -910,7 +910,7 @@ export class VmWizardComponent implements WizardConfiguration {
       console.error(vmMemoryRequested); // leaves form in previous error state
     } else if (enteredVal.replace(/\s/g, '').match(/[^0-9]/g) === null) {
       this.entityWizard.formArray.get([1]).get('memory')
-        .setValue(this.storageService.convertBytestoHumanReadable(enteredVal.replace(/\s/g, ''), 0));
+        .setValue(this.storageService.convertBytesToHumanReadable(enteredVal.replace(/\s/g, ''), 0));
     } else {
       this.entityWizard.formArray.get([1]).get('memory').setValue(this.storageService.humanReadable);
       _.find(this.wizardConfig[1].fieldConfig, { name: 'memory' })['hasErrors'] = false;

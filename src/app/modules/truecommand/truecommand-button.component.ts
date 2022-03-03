@@ -112,7 +112,7 @@ export class TruecommandButtonComponent extends ViewControllerComponent implemen
       message: helptext.signupDialog.content,
       fieldConfig: [],
       saveButtonText: helptext.signupDialog.connect_btn,
-      custActions: [
+      customActions: [
         {
           id: 'signup',
           name: helptext.signupDialog.singup_btn,
