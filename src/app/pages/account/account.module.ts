@@ -8,7 +8,7 @@ import { MatListModule } from '@angular/material/list';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSortModule } from '@angular/material/sort';
 import { TranslateModule } from '@ngx-translate/core';
-import { NgxDualListboxModule } from 'app/components/common/dual-list/dual-list.module';
+import { NgxDualListboxModule } from 'app/modules/common/dual-list/dual-list.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxTableModule } from 'app/modules/ix-tables/ix-table.module';
 import { GroupFormComponent } from 'app/pages/account/groups/group-form/group-form.component';

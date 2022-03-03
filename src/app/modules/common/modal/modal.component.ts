@@ -4,7 +4,7 @@ import {
 import {
   FormModalConfiguration,
   ModalConfiguration, WizardModalConfiguration,
-} from 'app/components/common/modal/modal-configuration.interface';
+} from 'app/modules/common/modal/modal-configuration.interface';
 import { ModalService } from 'app/services/modal.service';
 
 @Component({
