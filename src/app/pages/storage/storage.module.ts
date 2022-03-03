@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatDialogModule } from '@angular/material/dialog';
@@ -18,17 +19,16 @@ import { RouterModule } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { NgxDatatableModule } from '@swimlane/ngx-datatable';
 import { NgxFilesizeModule } from 'ngx-filesize';
-import { MessageService } from 'primeng/api';
 import { TreeTableModule } from 'primeng/treetable';
 import { CoreComponents } from 'app/core/core-components.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { AppLoaderModule } from 'app/modules/app-loader/app-loader.module';
 import { CastModule } from 'app/modules/cast/cast.module';
+import { MessageService } from 'app/modules/entity/entity-form/services/message.service';
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxTableModule } from 'app/modules/ix-tables/ix-table.module';
 import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
-import { routing } from 'app/pages/dashboard/dashboard.routing';
 import { DiskBulkEditComponent } from 'app/pages/storage/disks/disk-bulk-edit/disk-bulk-edit.component';
 import { DiskFormComponent } from 'app/pages/storage/disks/disk-form/disk-form.component';
 import { DiskListComponent } from 'app/pages/storage/disks/disk-list/disk-list.component';
@@ -74,6 +74,7 @@ import { VolumesListComponent } from 'app/pages/storage/volumes/volumes-list/vol
 import { ZvolFormComponent } from 'app/pages/storage/volumes/zvol/zvol-form/zvol-form.component';
 import { ZvolWizardComponent } from 'app/pages/storage/volumes/zvol/zvol-wizard/zvol-wizard.component';
 import { UserService, StorageService, JobService } from 'app/services';
+import { routing } from './storage.routing';
 
 @NgModule({
   imports: [
@@ -95,6 +96,7 @@ import { UserService, StorageService, JobService } from 'app/services';
     MatMenuModule,
     MatIconModule,
     MatTooltipModule,
+    MatButtonModule,
     MatSelectModule,
     MatCheckboxModule,
     MatDialogModule,

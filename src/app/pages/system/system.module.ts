@@ -27,7 +27,6 @@ import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxTableModule } from 'app/modules/ix-tables/ix-table.module';
 import { JobsModule } from 'app/modules/jobs/jobs.module';
 import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
-import { routing } from 'app/pages/dashboard/dashboard.routing';
 import { AdvancedSettingsComponent } from 'app/pages/system/advanced/advanced-settings.component';
 import { ConsoleFormComponent } from 'app/pages/system/advanced/console-form/console-form.component';
 import { CronFormComponent } from 'app/pages/system/advanced/cron/cron-form/cron-form.component';
@@ -72,6 +71,7 @@ import { UpdateComponent } from 'app/pages/system/update/update.component';
 import { EnclosureModule } from 'app/pages/system/view-enclosure/enclosure.module';
 import { ReplicationFormComponent } from './advanced/replication-form/replication-form.component';
 import { FailoverComponent } from './failover/failover.component';
+import { routing } from './system.routing';
 
 @NgModule({
   imports: [
