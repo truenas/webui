@@ -8,9 +8,9 @@ import { Disk } from 'app/interfaces/storage.interface';
 import { EntityFormService } from 'app/modules/entity/entity-form/services/entity-form.service';
 import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-table.component';
 import { EntityTableConfig } from 'app/modules/entity/entity-table/entity-table.interface';
-import { SmartFormComponent } from 'app/pages/data-protection/smart/smart-form/smart-form.component';
+import { SmartTestFormComponent } from 'app/pages/data-protection/smart-test/smart-test-form/smart-test-form.component';
 import { TaskService } from 'app/services';
-import { ModalService } from 'app/services/modal.service';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { StorageService } from 'app/services/storage.service';
 
 @UntilDestroy()
@@ -60,7 +60,7 @@ export class SmartListComponent implements EntityTableConfig {
 
   constructor(
     protected storageService: StorageService,
-    protected modalService: ModalService,
+    protected slideInService: IxSlideInService,
     protected router: Router,
     protected aroute: ActivatedRoute,
     protected taskService: TaskService,
@@ -74,7 +74,7 @@ export class SmartListComponent implements EntityTableConfig {
 
   afterInit(entityList: EntityTableComponent): void {
     this.entityList = entityList;
-    this.modalService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
+    this.slideInService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
       this.entityList.getData();
     });
   }
@@ -97,11 +97,12 @@ export class SmartListComponent implements EntityTableConfig {
     });
   }
 
-  doAdd(id?: number): void {
-    this.modalService.openInSlideIn(SmartFormComponent, id);
+  doAdd(): void {
+    this.slideInService.open(SmartTestFormComponent);
   }
 
-  doEdit(id: number): void {
-    this.doAdd(id);
+  doEdit(): void {
+    // TODO:
+    // this.doAdd(id);
   }
 }

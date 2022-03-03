@@ -69,12 +69,10 @@ export class CronFormComponent {
 
   setCronForEdit(cron: Cronjob): void {
     this.editingCron = cron;
-    if (!this.isNew) {
-      this.form.patchValue({
-        ...cron,
-        schedule: scheduleToCrontab(cron.schedule),
-      });
-    }
+    this.form.patchValue({
+      ...cron,
+      schedule: scheduleToCrontab(cron.schedule),
+    });
   }
 
   onSubmit(): void {
