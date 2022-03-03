@@ -96,6 +96,7 @@
           ></ix-radio-group>
           <ix-select
             *ngIf="!outbound_network_value.hidden"
+            class="outbound-network-value"
             [formControlName]="outbound_network_value.fcName"
             [label]="outbound_network_value.label"
             [tooltip]="outbound_network_value.tooltip"
