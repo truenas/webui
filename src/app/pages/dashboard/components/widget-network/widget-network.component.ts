@@ -201,12 +201,18 @@ export class WidgetNetworkComponent extends WidgetComponent implements AfterView
           nicInfo.in = `${received.value} ${received.units}/s`;
           nicInfo.out = `${sent.value} ${sent.units}/s`;
 
-          if (evt.data.sent_bytes - nicInfo.lastSent > this.minSizeToActiveTrafficArrowIcon) {
+          if (
+            evt.data.sent_bytes !== undefined
+            && evt.data.sent_bytes - nicInfo.lastSent > this.minSizeToActiveTrafficArrowIcon
+          ) {
             nicInfo.lastSent = evt.data.sent_bytes;
             this.tableService.updateStateInfoIcon(nicName, 'sent');
           }
 
-          if (evt.data.received_bytes - nicInfo.lastReceived > this.minSizeToActiveTrafficArrowIcon) {
+          if (
+            evt.data.received_bytes !== undefined
+            && evt.data.received_bytes - nicInfo.lastReceived > this.minSizeToActiveTrafficArrowIcon
+          ) {
             nicInfo.lastReceived = evt.data.received_bytes;
             this.tableService.updateStateInfoIcon(nicName, 'received');
           }

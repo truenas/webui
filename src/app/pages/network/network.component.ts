@@ -468,12 +468,17 @@ export class NetworkComponent implements OnInit, OnDestroy {
         if (evt.interfaces) {
           tableSource.forEach((row) => {
             if (!evt.interfaces[row.id]) {
-              return;
+              row.link_state = null;
+            } else {
+              if (evt.interfaces[row.id].received_bytes !== undefined) {
+                row.received = this.storageService.convertBytesToHumanReadable(evt.interfaces[row.id].received_bytes);
+                row.received_bytes = evt.interfaces[row.id].received_bytes;
+              }
+              if (evt.interfaces[row.id].sent_bytes !== undefined) {
+                row.sent = this.storageService.convertBytesToHumanReadable(evt.interfaces[row.id].sent_bytes);
+                row.sent_bytes = evt.interfaces[row.id].sent_bytes;
+              }
             }
-            row.received = this.storageService.convertBytesToHumanReadable(evt.interfaces[row.id].received_bytes);
-            row.received_bytes = evt.interfaces[row.id].received_bytes;
-            row.sent = this.storageService.convertBytesToHumanReadable(evt.interfaces[row.id].sent_bytes);
-            row.sent_bytes = evt.interfaces[row.id].sent_bytes;
           });
         }
       });
@@ -482,8 +487,7 @@ export class NetworkComponent implements OnInit, OnDestroy {
   interfaceDataSourceHelper(res: NetworkInterface[]): NetworkInterfaceUi[] {
     return res.map((networkInterface) => {
       const transformed = { ...networkInterface } as NetworkInterfaceUi;
-      // TODO: Replace with probably enum for link_state.
-      transformed['link_state'] = networkInterface['state']['link_state'].replace('LINK_STATE_', '');
+      transformed['link_state'] = networkInterface['state']['link_state'];
       const addresses = new Set([]);
       transformed.aliases.forEach((alias) => {
         // TODO: See if checks can be removed or replace with enum.
