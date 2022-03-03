@@ -2,7 +2,6 @@ import { Component, Input } from '@angular/core';
 import { MatSliderChange } from '@angular/material/slider/slider';
 import { TranslateService } from '@ngx-translate/core';
 import { Subject } from 'rxjs';
-import { IxAbstractObject } from 'app/core/classes/ix-abstract-object';
 
 export interface ToolbarSliderConfig {
   value?: number;
@@ -17,12 +16,11 @@ export interface ToolbarSliderConfig {
   selector: 'toolbar-slider',
   templateUrl: './toolbar-slider.component.html',
 })
-export class ToolbarSliderComponent extends IxAbstractObject {
+export class ToolbarSliderComponent {
   @Input() config?: ToolbarSliderConfig;
   @Input() controller: Subject<{ name: string; value: number }>;
-  constructor(public translate: TranslateService) {
-    super();
-  }
+
+  constructor(public translate: TranslateService) {}
 
   onChange(event: MatSliderChange): void {
     this.config.value = event.value;

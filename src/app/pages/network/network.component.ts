@@ -470,9 +470,9 @@ export class NetworkComponent implements OnInit, OnDestroy {
             if (!evt.interfaces[row.id]) {
               return;
             }
-            row.received = this.storageService.convertBytestoHumanReadable(evt.interfaces[row.id].received_bytes);
+            row.received = this.storageService.convertBytesToHumanReadable(evt.interfaces[row.id].received_bytes);
             row.received_bytes = evt.interfaces[row.id].received_bytes;
-            row.sent = this.storageService.convertBytestoHumanReadable(evt.interfaces[row.id].sent_bytes);
+            row.sent = this.storageService.convertBytesToHumanReadable(evt.interfaces[row.id].sent_bytes);
             row.sent_bytes = evt.interfaces[row.id].sent_bytes;
           });
         }

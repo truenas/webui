@@ -74,7 +74,7 @@ export class BootEnvironmentListComponent implements EntityTableConfig {
     entityList.rows = entityList.rows.map((row: Bootenv) => {
       return {
         ...row,
-        rawspace: this.storage.convertBytestoHumanReadable(row.rawspace),
+        rawspace: this.storage.convertBytesToHumanReadable(row.rawspace),
         hideCheckbox: row.active !== '-' && row.active !== '',
       } as BootenvRow;
     });

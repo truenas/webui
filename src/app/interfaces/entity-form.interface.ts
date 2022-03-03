@@ -29,7 +29,7 @@ export interface FormConfiguration {
   routeSuccess?: string[];
   // TODO: Broken
   routeDelete?: string[];
-  custActions?: FormCustomAction[];
+  customActions?: FormCustomAction[];
   compactCustomActions?: FormCompactCustomAction[];
   customFilter?: any[];
   confirmSubmit?: boolean;
@@ -73,8 +73,8 @@ export interface FormConfiguration {
   customSubmit?: (value: any) => void;
   closeModalForm?(): Promise<boolean>;
   afterModalFormClosed?(): void; // function will called once the modal form closed
-  isCustActionVisible?: (action: string) => boolean;
-  isCustActionDisabled?: (action: string) => boolean;
+  isCustomActionVisible?: (action: string) => boolean;
+  isCustomActionDisabled?: (action: string) => boolean;
 }
 
 export interface FormCustomAction {
