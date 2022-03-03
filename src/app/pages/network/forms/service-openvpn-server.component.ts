@@ -145,7 +145,7 @@ export class OpenvpnServerComponent implements FormConfiguration {
     },
   ];
 
-  custActions = [
+  customActions = [
     {
       id: 'renew_key',
       name: helptext.server.buttons.renew,

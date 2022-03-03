@@ -25,7 +25,6 @@ import { EntityUtils } from 'app/modules/entity/utils';
 import { ApplicationTab } from 'app/pages/applications/application-tab.enum';
 import { ApplicationToolbarControl } from 'app/pages/applications/application-toolbar-control.enum';
 import { KubernetesSettingsComponent } from 'app/pages/applications/kubernetes-settings/kubernetes-settings.component';
-import { CoreService } from 'app/services/core-service/core.service';
 import { DialogService, WebSocketService } from 'app/services/index';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { ModalService } from 'app/services/modal.service';
@@ -96,7 +95,6 @@ export class CatalogComponent implements OnInit {
     private translate: TranslateService,
     private ws: WebSocketService,
     private router: Router,
-    private core: CoreService,
     private modalService: ModalService,
     private appService: ApplicationsService,
     private slideInService: IxSlideInService,

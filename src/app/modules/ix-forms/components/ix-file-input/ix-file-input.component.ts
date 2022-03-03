@@ -68,7 +68,7 @@ export class IxFileInputComponent implements ControlValueAccessor {
   }
 
   formatSize(size: number): string {
-    return this.formatter.convertBytestoHumanReadable(size);
+    return this.formatter.convertBytesToHumanReadable(size);
   }
 
   /**

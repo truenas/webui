@@ -431,7 +431,7 @@ export class CloudsyncFormComponent implements FormConfiguration {
 
   protected providers: CloudsyncProvider[];
   protected taskSchemas = ['encryption', 'fast_list', 'chunk_size', 'storage_class'];
-  custActions = [
+  customActions = [
     {
       id: 'dry_run',
       name: helptext.action_button_dry_run,
@@ -1131,7 +1131,7 @@ export class CloudsyncFormComponent implements FormConfiguration {
     }
   }
 
-  isCustActionDisabled(): boolean {
+  isCustomActionDisabled(): boolean {
     return !this.entityForm.valid;
   }
 }

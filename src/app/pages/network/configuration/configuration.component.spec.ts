@@ -6,6 +6,7 @@ import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { NetworkConfiguration } from 'app/interfaces/network-configuration.interface';
+import { IxRadioGroupHarness } from 'app/modules/ix-forms/components/ix-radio-group/ix-radio-group.harness';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
@@ -99,6 +100,13 @@ describe('NetworkConfigurationComponent', () => {
       'Enable Netwait Feature': false,
       'Host Name Database': [],
     });
+  });
+
+  it('shows outbound_network_value select when outbound_network_activity is changed', async () => {
+    const radioGroup = await loader.getHarness(IxRadioGroupHarness);
+    await radioGroup.setValue('Allow Specific');
+
+    expect(spectator.query('.outbound-network-value')).toBeVisible();
   });
 
   it('saves network global configuration when saved is pressed', async () => {

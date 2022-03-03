@@ -17,10 +17,10 @@ export interface WizardConfiguration {
   isAutoSummary?: boolean;
   routeCancel?: string[];
   routeSuccess?: string[];
-  custActions?: EntityWizardAction[];
+  customActions?: EntityWizardAction[];
 
   customNext?: (stepper: MatStepper) => void;
-  isCustActionVisible?: (actionId: string, stepperIndex: number) => boolean;
+  isCustomActionVisible?: (actionId: string, stepperIndex: number) => boolean;
   preInit?: (entityWizard: EntityWizardComponent) => void;
   afterInit?: (entityWizard: EntityWizardComponent) => void;
   beforeSubmit?: (value: any) => any;
