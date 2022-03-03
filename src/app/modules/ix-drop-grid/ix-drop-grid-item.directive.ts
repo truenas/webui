@@ -6,11 +6,11 @@ import { ScrollDispatcher } from '@angular/cdk/overlay';
 import {
   AfterViewInit, ChangeDetectorRef, Directive, ElementRef, Inject, Optional, SkipSelf,
 } from '@angular/core';
-import { IxDropGridDirective } from 'app/pages/common/ix-drop-grid/ix-drop-grid.directive';
+import { IxDropGridDirective } from 'app/modules/ix-drop-grid/ix-drop-grid.directive';
 import {
   ixDropGridDirectiveToken,
   ixDropGridItemDirectiveToken,
-} from 'app/pages/common/ix-drop-grid/ix-drop-grid.tokens';
+} from 'app/modules/ix-drop-grid/ix-drop-grid.tokens';
 
 @Directive({
   selector: '[ixDropGridItem]',
