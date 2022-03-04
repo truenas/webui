@@ -4697,10 +4697,10 @@ cron-parser@~4.2.1:
   dependencies:
     luxon "^1.28.0"
 
-croner@~4.1.97:
-  version "4.1.97"
-  resolved "https://registry.yarnpkg.com/croner/-/croner-4.1.97.tgz#6e373dc7bb3026fab2deb0d82685feef20796766"
-  integrity sha512-/f6gpQuxDaqXu+1kwQYSckUglPaOrHdbIlBAu0YuW8/Cdb45XwXYNUBXg3r/9Mo6n540Kn/smKcZWko5x99KrQ==
+croner@~4.2.1:
+  version "4.2.1"
+  resolved "https://registry.yarnpkg.com/croner/-/croner-4.2.1.tgz#65cfe20ebf2d24bfed651fd5f81224b1ae951eea"
+  integrity sha512-BzMiaPCrzaEvuzUZDosjE7jRv1LllfVtYh8KhVU4s45StnnM/exs1WUqpEYxqxBhoN90y9a3T9JJlWRwggvQeg==
 
 cronstrue@~1.113.0:
   version "1.113.0"

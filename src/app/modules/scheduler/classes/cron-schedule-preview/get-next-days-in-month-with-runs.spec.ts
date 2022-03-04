@@ -13,19 +13,19 @@ describe('CronSchedulePreview - getNextDaysInMonthWithRuns', () => {
     });
 
     it('lists remaining days in current month', () => {
-      const nextRuns = cron.getNextDaysInMonthWithRuns('2022-02-19 10:45:02');
+      const nextRuns = cron.getNextDaysInMonthWithRuns(new Date('2022-02-19 10:45:02'));
 
       expect(Array.from(nextRuns.values())).toEqual(range(19, 28 + 1));
     });
 
     it('lists days in next month', () => {
-      const nextRuns = cron.getNextDaysInMonthWithRuns('2022-03-01 0:00:00');
+      const nextRuns = cron.getNextDaysInMonthWithRuns(new Date('2022-03-01 0:00:00'));
 
       expect(Array.from(nextRuns.values())).toEqual(range(1, 31 + 1));
     });
 
     it('lists last day in current month', () => {
-      const nextRuns = cron.getNextDaysInMonthWithRuns('2022-02-28 23:59:00');
+      const nextRuns = cron.getNextDaysInMonthWithRuns(new Date('2022-02-28 23:59:00'));
 
       expect(Array.from(nextRuns.values())).toEqual([28]);
     });
@@ -42,19 +42,19 @@ describe('CronSchedulePreview - getNextDaysInMonthWithRuns', () => {
     });
 
     it('lists remaining days in current month', () => {
-      const nextRuns = cron.getNextDaysInMonthWithRuns('2022-02-19 10:45:02');
+      const nextRuns = cron.getNextDaysInMonthWithRuns(new Date('2022-02-19 10:45:02'));
 
       expect(Array.from(nextRuns.values())).toEqual(range(19, 28 + 1));
     });
 
     it('lists days in next month', () => {
-      const nextRuns = cron.getNextDaysInMonthWithRuns('2022-03-01 0:00:00');
+      const nextRuns = cron.getNextDaysInMonthWithRuns(new Date('2022-03-01 0:00:00'));
 
       expect(Array.from(nextRuns.values())).toEqual(range(1, 31 + 1));
     });
 
     it('lists last day in current month', () => {
-      const nextRuns = cron.getNextDaysInMonthWithRuns('2022-02-28 0:00:00');
+      const nextRuns = cron.getNextDaysInMonthWithRuns(new Date('2022-02-28 0:00:00'));
 
       expect(Array.from(nextRuns.values())).toEqual([28]);
     });
@@ -71,19 +71,36 @@ describe('CronSchedulePreview - getNextDaysInMonthWithRuns', () => {
     });
 
     it('lists remaining days in current month', () => {
-      const nextRuns = cron.getNextDaysInMonthWithRuns('2022-02-19 10:45:02');
+      const nextRuns = cron.getNextDaysInMonthWithRuns(new Date('2022-02-19 10:45:02'));
 
       expect(Array.from(nextRuns.values())).toEqual(range(20, 28 + 1));
     });
 
     it('lists days in next month', () => {
-      const nextRuns = cron.getNextDaysInMonthWithRuns('2022-03-01 0:00:00');
+      const nextRuns = cron.getNextDaysInMonthWithRuns(new Date('2022-03-01 0:00:00'));
 
       expect(Array.from(nextRuns.values())).toEqual(range(1, 31 + 1));
     });
 
     it('lists last day in current month', () => {
-      const nextRuns = cron.getNextDaysInMonthWithRuns('2022-02-28 0:00:00');
+      const nextRuns = cron.getNextDaysInMonthWithRuns(new Date('2022-02-28 0:00:00'));
+
+      expect(Array.from(nextRuns.values())).toEqual([28]);
+    });
+  });
+
+  describe('Mixing day of month and day of week conditions', () => {
+    let cron: CronSchedulePreview;
+
+    beforeEach(() => {
+      cron = new CronSchedulePreview({
+        crontab: '0 0 1 * 0,1,2,4,5,6',
+        timezone: 'America/New_York',
+      });
+    });
+
+    it('lists next runs with OR condition when both day of month and day of week are set', () => {
+      const nextRuns = cron.getNextDaysInMonthWithRuns(new Date('2022-04-01 0:00:00'));
 
       expect(Array.from(nextRuns.values())).toEqual([28]);
     });
@@ -100,13 +117,13 @@ describe('CronSchedulePreview - getNextDaysInMonthWithRuns', () => {
     });
 
     it('lists remaining days in current month', () => {
-      const nextRuns = cron.getNextDaysInMonthWithRuns('2022-02-19 10:45:02');
+      const nextRuns = cron.getNextDaysInMonthWithRuns(new Date('2022-02-19 10:45:02'));
 
       expect(Array.from(nextRuns.values())).toEqual([21, 28]);
     });
 
     it('lists days in next month', () => {
-      const nextRuns = cron.getNextDaysInMonthWithRuns('2022-03-01 0:00:00');
+      const nextRuns = cron.getNextDaysInMonthWithRuns(new Date('2022-03-01 0:00:00'));
 
       expect(Array.from(nextRuns.values())).toEqual([7, 14, 21, 28]);
     });
@@ -123,13 +140,13 @@ describe('CronSchedulePreview - getNextDaysInMonthWithRuns', () => {
     });
 
     it('lists remaining days in current month', () => {
-      const nextRuns = cron.getNextDaysInMonthWithRuns('2022-02-19 0:0:0');
+      const nextRuns = cron.getNextDaysInMonthWithRuns(new Date('2022-02-19 0:0:0'));
 
       expect(Array.from(nextRuns.values())).toEqual([19]);
     });
 
     it('lists days in next month', () => {
-      const nextRuns = cron.getNextDaysInMonthWithRuns('2022-03-01 00:00:00');
+      const nextRuns = cron.getNextDaysInMonthWithRuns(new Date('2022-03-01 00:00:00'));
 
       expect(Array.from(nextRuns.values())).toEqual([19]);
     });
