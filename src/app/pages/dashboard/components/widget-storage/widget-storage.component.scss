@@ -142,7 +142,7 @@ mat-grid-tile {
     opacity: 0.7;
 
     &:focus-visible {
-      box-shadow: 0 0 0 1px var(--alt-fg2) inset;
+      box-shadow: 0 0 0 1px var(--fg2) inset;
     }
 
     .mat-icon.mdi-set {

@@ -24,8 +24,8 @@
     margin: 0 -24px;
   }
 
-  .sidenav-link:focus-visible {
-    box-shadow: 0 0 0 1px var(--alt-fg2) inset;
+  a.sidenav-link:focus-visible {
+    box-shadow: 0 0 0 1px var(--fg2) inset !important;
     outline-width: 0;
   }
 }

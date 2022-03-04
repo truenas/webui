@@ -36,3 +36,10 @@ input[name='DummyUsername'] {
 .form-element .has_toggle_pw input {
   padding-right: 35px;
 }
+
+.input-container input:focus-visible {
+  box-shadow: 0 0 0 1px var(--fg2) inset;
+  outline: 0 transparent;
+}
+
+

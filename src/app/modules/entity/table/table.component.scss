@@ -51,8 +51,14 @@ div.table-container {
   table-layout: fixed;
 }
 
+.table-cell mat-icon.table-action-button {
+  display: inline-block;
+  margin: 0;
+  text-align: center;
+}
+
 .table-action-button {
-  margin-right: 1px;
+  margin-right: 5px;
 }
 
 div.table-row-action {

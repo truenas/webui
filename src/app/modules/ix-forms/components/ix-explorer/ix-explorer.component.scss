@@ -24,7 +24,7 @@
   position: relative;
 
   &:focus-within {
-    border-color: var(--primary);
+    border-color: var(--fg2);
   }
 
   &.disabled {
