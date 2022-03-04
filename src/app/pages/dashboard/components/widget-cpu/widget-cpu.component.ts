@@ -122,28 +122,28 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
   }
 
   ngAfterViewInit(): void {
-    this.core.register({ observerClass: this, eventName: 'ThemeChanged' })
+    this.core.register({ observerClass: this })
       .pipe(
         switchMap(() => this.data),
         untilDestroyed(this),
       ).subscribe((evt: CoreEvent) => {
-        d3.select('#grad1 .begin')
-          .style('stop-color', this.getHighlightColor(0));
+        if (evt.name === 'CpuStats') {
+          const cpuData = (evt as CpuStatsEvent).data;
+          if (!cpuData.average) {
+            return;
+          }
 
-        d3.select('#grad1 .end')
-          .style('stop-color', this.getHighlightColor(0.15));
-
-        if (evt.name !== 'CpuStats') {
-          return;
+          this.setCpuLoadData(['Load', parseInt(cpuData.average.usage.toFixed(1))]);
+          this.setCpuData(cpuData);
         }
 
-        const cpuData = (evt as CpuStatsEvent).data;
-        if (!cpuData.average) {
-          return;
-        }
+        if (evt.name === 'ThemeChanged') {
+          d3.select('#grad1 .begin')
+            .style('stop-color', this.getHighlightColor(0));
 
-        this.setCpuLoadData(['Load', parseInt(cpuData.average.usage.toFixed(1))]);
-        this.setCpuData(cpuData);
+          d3.select('#grad1 .end')
+            .style('stop-color', this.getHighlightColor(0.15));
+        }
       });
   }
 
@@ -300,7 +300,6 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
         },
         scales: {
           xAxes: [{
-            maxBarThickness: 16,
             type: 'category',
             labels: this.labels,
           } as any],
@@ -348,6 +347,7 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
         backgroundColor: '',
         borderColor: '',
         borderWidth: 1,
+        maxBarThickness: 16,
       };
 
       const accent = this.themeService.isDefaultTheme ? 'orange' : 'accent';
