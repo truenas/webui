@@ -4,7 +4,7 @@ import { IxFormControlHarness } from 'app/modules/ix-forms/interfaces/ix-form-co
 import { getErrorText } from '../../utils/harness.utils';
 
 export interface IxSelectHarnessFilters extends SelectHarnessFilters {
-  label: string;
+  label?: string;
 }
 
 export class IxSelectHarness extends ComponentHarness implements IxFormControlHarness {

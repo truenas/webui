@@ -3,13 +3,12 @@ import {
 } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
-import { IxObject } from 'app/core/classes/ix-object';
 
 @Component({
   selector: 'widget',
   templateUrl: './widget.component.html',
 })
-export class WidgetComponent extends IxObject {
+export class WidgetComponent {
   @Input() widgetSize: string;
   @Input() rendered?: boolean = true;
   @Input() configurable = false;
@@ -18,16 +17,13 @@ export class WidgetComponent extends IxObject {
   title: string = this.translate.instant('Widget Base Class');
   chartSize: number;
 
-  // public configurable: boolean = true;
   flipAnimation = 'stop';
   flipDirection = 'vertical';
   isFlipped = false;
 
   constructor(
     public translate: TranslateService,
-  ) {
-    super();
-  }
+  ) {}
 
   toggleConfig(): void {
     if (this.isFlipped) {

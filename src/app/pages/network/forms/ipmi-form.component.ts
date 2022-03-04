@@ -34,7 +34,7 @@ export class IpmiFormComponent implements FormConfiguration {
   currentControllerLabel: string;
   failoverControllerLabel: string;
   managementIp: string;
-  custActions = [
+  customActions = [
     {
       id: 'ipmi_identify',
       name: this.translate.instant('Identify Light'),

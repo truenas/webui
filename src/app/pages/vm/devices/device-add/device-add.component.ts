@@ -39,7 +39,7 @@ export class DeviceAddComponent implements OnInit, OnDestroy {
   vmid: number;
   vmname: string;
   fieldSets: VmDeviceFieldSet[];
-  isCustActionVisible = false;
+  isCustomActionVisible = false;
   selectedType = VmDeviceType.Cdrom;
   formGroup: FormGroup;
   activeFormGroup: FormGroup;
@@ -51,7 +51,7 @@ export class DeviceAddComponent implements OnInit, OnDestroy {
   displayFormGroup: FormGroup;
   rootpwd: FieldConfig;
   boot: FieldConfig;
-  custActions: { id?: string; name: string; function: () => void }[];
+  customActions: { id?: string; name: string; function: () => void }[];
   error: string;
   private productType = window.localStorage.getItem('product_type') as ProductType;
 
@@ -467,28 +467,28 @@ export class DeviceAddComponent implements OnInit, OnDestroy {
       switch (deviceType) {
         case VmDeviceType.Cdrom:
           this.activeFormGroup = this.cdromFormGroup;
-          this.isCustActionVisible = false;
+          this.isCustomActionVisible = false;
           break;
         case VmDeviceType.Nic:
           this.activeFormGroup = this.nicFormGroup;
-          this.isCustActionVisible = true;
+          this.isCustomActionVisible = true;
           this.generateRandomMac();
           break;
         case VmDeviceType.Disk:
           this.activeFormGroup = this.diskFormGroup;
-          this.isCustActionVisible = false;
+          this.isCustomActionVisible = false;
           break;
         case VmDeviceType.Raw:
           this.activeFormGroup = this.rawfileFormGroup;
-          this.isCustActionVisible = false;
+          this.isCustomActionVisible = false;
           break;
         case VmDeviceType.Pci:
           this.activeFormGroup = this.pciFormGroup;
-          this.isCustActionVisible = false;
+          this.isCustomActionVisible = false;
           break;
         case VmDeviceType.Display:
           this.activeFormGroup = this.displayFormGroup;
-          this.isCustActionVisible = false;
+          this.isCustomActionVisible = false;
           break;
       }
     });
@@ -548,7 +548,7 @@ export class DeviceAddComponent implements OnInit, OnDestroy {
       }
     });
 
-    this.custActions = [
+    this.customActions = [
       {
         id: 'generate_mac_address',
         name: this.translate.instant('Generate MAC Address'),

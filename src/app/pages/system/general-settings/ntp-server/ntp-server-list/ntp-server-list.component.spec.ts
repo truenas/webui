@@ -121,7 +121,7 @@ describe('NtpServerListComponent', () => {
     const table = await loader.getHarness<IxTableHarness>(IxTableHarness);
     const text = await table.getCellTextByIndex();
 
-    expect(text).toEqual([['No servers have been added yet']]);
+    expect(text).toEqual([['No NTP Servers have been added yet']]);
   });
 
   it('should show error message when can not retrieve response', async () => {

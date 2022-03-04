@@ -3,6 +3,7 @@ import { FormControl, ValidatorFn } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 import { helptextSystemSupport as helptext } from 'app/helptext/system/support';
 import { FormCustomAction, FormConfiguration } from 'app/interfaces/entity-form.interface';
@@ -15,6 +16,7 @@ import { EntityFormComponent } from 'app/modules/entity/entity-form/entity-form.
 import { FieldConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/modules/entity/entity-form/models/fieldset.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
+import { EntityUtils } from 'app/modules/entity/utils';
 import { WebSocketService } from 'app/services/';
 import { DialogService } from 'app/services/dialog.service';
 import { ModalService } from 'app/services/modal.service';
@@ -30,7 +32,8 @@ export class SupportFormLicensedComponent implements FormConfiguration {
   subs: Subs[];
   saveSubmitText = helptext.submitBtn;
   title = helptext.ticket;
-  custActions: FormCustomAction[] = [];
+  customActions: FormCustomAction[] = [];
+  maxUploadSizeMibs: number;
   fieldConfig: FieldConfig[] = [];
   fieldSets: FieldSet[] = [
     {
@@ -156,12 +159,13 @@ export class SupportFormLicensedComponent implements FormConfiguration {
   ];
 
   constructor(public dialog: MatDialog, public loader: AppLoaderService,
-    public ws: WebSocketService, public dialogService: DialogService, public router: Router,
+    private translate: TranslateService, public ws: WebSocketService,
+    public dialogService: DialogService, public router: Router,
     private modalService: ModalService) { }
 
   afterInit(entityEdit: EntityFormComponent): void {
     this.entityEdit = entityEdit;
-    this.custActions = [
+    this.customActions = [
       {
         id: 'userguide',
         name: helptext.update_license.user_guide_button,
@@ -179,6 +183,20 @@ export class SupportFormLicensedComponent implements FormConfiguration {
         },
       },
     ];
+
+    this.loader.open();
+    this.ws.call('support.attach_ticket_max_size').pipe(untilDestroyed(this)).subscribe(
+      (sizeMibs: number) => {
+        this.loader.close();
+        this.maxUploadSizeMibs = sizeMibs;
+      },
+      (err: any) => {
+        new EntityUtils().handleError(this, err);
+        // This request is a prereq for this form to function successfully.
+        // Which means if it errors out, the form should be closed or navigated away
+        this.resetForm();
+      },
+    );
   }
 
   emailListValidator(name: string): ValidatorFn {
@@ -232,12 +250,17 @@ export class SupportFormLicensedComponent implements FormConfiguration {
 
   openDialog(payload: any): void {
     const dialogRef = this.dialog.open(EntityJobComponent, { data: { title: 'Ticket', closeOnClickOutside: true } });
-    let url: string;
+    let description: string;
     dialogRef.componentInstance.setCall('support.new_ticket', [payload]);
     dialogRef.componentInstance.submit();
     dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe((res: Job<NewTicketResponse>) => {
       if (res.result) {
-        url = `<a href="${res.result.url}" target="_blank" style="text-decoration:underline;">${res.result.url}</a>`;
+        const url = `<a href="${res.result.url}" target="_blank" style="text-decoration:underline;">${res.result.url}</a>`;
+        if (!res.result.has_debug && payload.attach_debug) {
+          description = this.translate.instant(helptext.debugSizeLimitWarning + '\n' + url);
+        } else {
+          description = url;
+        }
       }
       if (res.method === 'support.new_ticket' && this.subs && this.subs.length > 0) {
         this.subs.forEach((item) => {
@@ -255,9 +278,9 @@ export class SupportFormLicensedComponent implements FormConfiguration {
             dialogRef.componentInstance.setDescription(res.error);
           });
         });
-        dialogRef.componentInstance.setDescription(url);
+        dialogRef.componentInstance.setDescription(description);
       } else {
-        dialogRef.componentInstance.setDescription(url);
+        dialogRef.componentInstance.setDescription(description);
         this.resetForm();
       }
     });
@@ -273,9 +296,12 @@ export class SupportFormLicensedComponent implements FormConfiguration {
     this.screenshot['hasErrors'] = false;
     if (fileBrowser.files && fileBrowser.files[0]) {
       for (const browserFile of fileBrowser.files) {
-        if (browserFile.size >= 52428800) {
+        if (browserFile.size >= (this.maxUploadSizeMibs * 1024 * 1024)) {
           this.screenshot['hasErrors'] = true;
-          this.screenshot['errors'] = 'File size is limited to 50 MiB.';
+          this.screenshot['errors'] = this.translate.instant(
+            'File size is limited to {maxUploadSizeMibs} MiB.',
+            { maxUploadSizeMibs: this.maxUploadSizeMibs },
+          );
         } else {
           this.subs.push({ apiEndPoint: file.apiEndPoint, file: browserFile });
         }

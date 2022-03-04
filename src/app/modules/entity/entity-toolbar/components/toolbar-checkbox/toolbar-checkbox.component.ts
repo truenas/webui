@@ -4,7 +4,6 @@ import {
 import { MatCheckboxChange } from '@angular/material/checkbox/checkbox';
 import { TranslateService } from '@ngx-translate/core';
 import { Subject } from 'rxjs';
-import { IxAbstractObject } from 'app/core/classes/ix-abstract-object';
 import { ControlConfig } from 'app/modules/entity/entity-toolbar/models/control-config.interface';
 import { Control } from 'app/modules/entity/entity-toolbar/models/control.interface';
 
@@ -13,13 +12,11 @@ import { Control } from 'app/modules/entity/entity-toolbar/models/control.interf
   styleUrls: ['toolbar-checkbox.component.scss'],
   templateUrl: './toolbar-checkbox.component.html',
 })
-export class ToolbarCheckboxComponent extends IxAbstractObject {
+export class ToolbarCheckboxComponent {
   @Input() config?: ControlConfig;
   @Input() controller: Subject<Control>;
 
-  constructor(public translate: TranslateService) {
-    super();
-  }
+  constructor(public translate: TranslateService) {}
 
   onChange(event: MatCheckboxChange): void {
     this.controller.next({ name: this.config.name, value: event.checked });

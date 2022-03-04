@@ -36,14 +36,14 @@
             formControlName="driver"
             [label]="labels.driver"
             [tooltip]="tooltips.driver"
-            [options]="driverOptions$"
+            [provider]="providers.driver"
             [required]="true"
           ></ix-combobox>
           <ix-combobox
             formControlName="port"
             [label]="labels.port"
             [tooltip]="tooltips.port"
-            [options]="portOptions$"
+            [provider]="providers.port"
             [required]="isMasterMode"
           ></ix-combobox>
         </ix-fieldset>

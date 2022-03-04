@@ -12,6 +12,9 @@ from pytest_bdd import (
     then,
     when,
 )
+import pytest
+
+pytestmark = [pytest.mark.debug_test]
 
 
 @scenario('features/NAS-T1071.feature', 'Create pool with 1 disk')

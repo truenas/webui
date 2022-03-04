@@ -48,15 +48,13 @@
             ix-auto-type="button"
             ix-auto-identifier="CANCEL"
           >{{"Cancel" | translate}}</button>
-          <!-- </div> -->
-          <!-- <div class="btn-group btn-group-justified"> -->
-          <span *ngFor="let custBtn of conf.custActions">
+          <span *ngFor="let custBtn of conf.customActions">
             <button
-              *ngIf="!conf.isCustActionVisible || conf.isCustActionVisible(custBtn.id)"
+              *ngIf="!conf.isCustomActionVisible || conf.isCustomActionVisible(custBtn.id)"
               id="cust_button_{{custBtn.name}}"
               [color]="custBtn.buttonColor ? custBtn.buttonColor : 'default'"
               mat-button class="mat-basic"
-              [disabled]="conf.isCustActionDisabled !== undefined ? conf.isCustActionDisabled(custBtn.id) : custBtn.disabled"
+              [disabled]="conf.isCustomActionDisabled !== undefined ? conf.isCustomActionDisabled(custBtn.id) : custBtn.disabled"
               [type]="custBtn.buttonType ? custBtn.buttonType : 'button'"
               (click)="custBtn['function'] ? custBtn['function']() : null"
               [ix-auto]=""
@@ -76,12 +74,12 @@
             <mat-menu #keymenu="matMenu">
               <span *ngFor="let action of conf.compactCustomActions">
                 <button
-                  *ngIf="!conf.isCustActionVisible || conf.isCustActionVisible(action.id)"
+                  *ngIf="!conf.isCustomActionVisible || conf.isCustomActionVisible(action.id)"
                   name="action.id"
                   mat-menu-item
                   (click)="action['function']()"
                   ix-auto ix-auto-type="option" ix-auto-identifier="action.name"
-                  [disabled]="conf.isCustActionDisabled !== undefined ? conf.isCustActionDisabled(action.id) : action.disabled"
+                  [disabled]="conf.isCustomActionDisabled !== undefined ? conf.isCustomActionDisabled(action.id) : action.disabled"
                 >
                   {{ action.name | translate}}</button>
               </span>

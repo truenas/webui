@@ -1,6 +1,6 @@
 export interface EntityTableAddActionsConfig {
-  isCustActionVisible?: (action: string) => boolean;
-  custActions?: {
+  isCustomActionVisible?: (action: string) => boolean;
+  customActions?: {
     id: string;
     name: string;
     function: () => void;
