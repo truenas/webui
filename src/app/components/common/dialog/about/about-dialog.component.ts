@@ -2,7 +2,6 @@ import { Component, Inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { ProductType } from 'app/enums/product-type.enum';
 import helptext from 'app/helptext/about';
-import { CoreService } from 'app/services/core-service/core.service';
 import { LocaleService } from 'app/services/locale.service';
 
 export interface DialogData {
@@ -24,7 +23,6 @@ export class AboutDialogComponent {
   constructor(
     public dialogRef: MatDialogRef<AboutDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: DialogData,
-    private core: CoreService,
     private localeService: LocaleService,
   ) {
     this.systemType = data.systemType;

@@ -68,7 +68,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
   hideCancel = true;
 
   protected entityWizard: EntityWizardComponent;
-  custActions = [{
+  customActions = [{
     id: 'advanced_add',
     name: this.translate.instant('Advanced Replication Creation'),
     function: () => {
@@ -806,7 +806,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
     });
   }
 
-  isCustActionVisible(actionId: string, stepperIndex: number): boolean {
+  isCustomActionVisible(actionId: string, stepperIndex: number): boolean {
     if (stepperIndex === 0) {
       return true;
     }

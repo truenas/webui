@@ -13,8 +13,6 @@ export const defaultPreferences: Preferences = {
 
   hideBuiltinUsers: true,
   hideBuiltinGroups: true,
-  showUserListMessage: true,
-  showGroupListMessage: true,
 
   showSnapshotExtraColumns: false,
 
