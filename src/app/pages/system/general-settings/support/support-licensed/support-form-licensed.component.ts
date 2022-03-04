@@ -32,7 +32,7 @@ export class SupportFormLicensedComponent implements FormConfiguration {
   subs: Subs[];
   saveSubmitText = helptext.submitBtn;
   title = helptext.ticket;
-  custActions: FormCustomAction[] = [];
+  customActions: FormCustomAction[] = [];
   maxUploadSizeMibs: number;
   fieldConfig: FieldConfig[] = [];
   fieldSets: FieldSet[] = [
@@ -165,7 +165,7 @@ export class SupportFormLicensedComponent implements FormConfiguration {
 
   afterInit(entityEdit: EntityFormComponent): void {
     this.entityEdit = entityEdit;
-    this.custActions = [
+    this.customActions = [
       {
         id: 'userguide',
         name: helptext.update_license.user_guide_button,

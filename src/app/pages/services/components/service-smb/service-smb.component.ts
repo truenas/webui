@@ -237,7 +237,7 @@ export class ServiceSmbComponent implements FormConfiguration {
     { name: 'divider', divider: true },
   ];
 
-  custActions = [
+  customActions = [
     {
       id: 'basic_mode',
       name: global_helptext.basic_options,
@@ -258,7 +258,7 @@ export class ServiceSmbComponent implements FormConfiguration {
     },
   ];
 
-  isCustActionVisible(actionId: string): boolean {
+  isCustomActionVisible(actionId: string): boolean {
     if (actionId === 'advanced_mode' && !this.isBasicMode) {
       return false;
     } if (actionId === 'basic_mode' && this.isBasicMode) {

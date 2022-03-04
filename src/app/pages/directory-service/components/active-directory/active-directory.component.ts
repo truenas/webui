@@ -41,7 +41,7 @@ export class ActiveDirectoryComponent implements FormConfiguration {
   protected nssInfoField: FormSelectConfig;
   adStatus = false;
   entityEdit: EntityFormComponent;
-  custActions = [
+  customActions = [
     {
       id: helptext.activedirectory_custactions_basic_id,
       name: global_helptext.basic_options,
@@ -109,7 +109,7 @@ export class ActiveDirectoryComponent implements FormConfiguration {
                   _.find(this.fieldConfig, { name: 'enable' })['value'] = false;
                   this.entityEdit.formGroup.controls['enable'].setValue(false);
                   this.adStatus = false;
-                  this.isCustActionVisible('leave_domain');
+                  this.isCustomActionVisible('leave_domain');
                   this.modalService.refreshTable();
                   this.modalService.closeSlideIn();
                   this.dialogservice.info(helptext.ad_leave_domain_dialog.success,
@@ -287,7 +287,7 @@ export class ActiveDirectoryComponent implements FormConfiguration {
 
   advancedFields = helptext.activedirectory_advanced_fields;
 
-  isCustActionVisible(actionname: string): boolean {
+  isCustomActionVisible(actionname: string): boolean {
     if (actionname === 'advanced_mode' && !this.isBasicMode) {
       return false;
     } if (actionname === 'basic_mode' && this.isBasicMode) {

@@ -26,6 +26,7 @@ import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxTableModule } from 'app/modules/ix-tables/ix-table.module';
 import { JobsModule } from 'app/modules/jobs/jobs.module';
+import { SchedulerModule } from 'app/modules/scheduler/scheduler.module';
 import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
 import { AdvancedSettingsComponent } from 'app/pages/system/advanced/advanced-settings.component';
 import { ConsoleFormComponent } from 'app/pages/system/advanced/console-form/console-form.component';
@@ -84,6 +85,7 @@ import { routing } from './system.routing';
     FormsModule,
     IxFormsModule,
     IxTableModule,
+    SchedulerModule,
     JobsModule,
     MarkdownModule.forRoot(),
     MatCardModule,

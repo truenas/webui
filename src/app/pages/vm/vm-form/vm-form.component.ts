@@ -356,7 +356,7 @@ export class VmFormComponent implements FormConfiguration {
 
   resourceTransformIncomingRestData(vmRes: VirtualMachine): any {
     this.rawVmData = vmRes;
-    (vmRes as any)['memory'] = this.storageService.convertBytestoHumanReadable(vmRes['memory'] * 1048576, 0);
+    (vmRes as any)['memory'] = this.storageService.convertBytesToHumanReadable(vmRes['memory'] * 1048576, 0);
     this.ws.call('device.get_info', [DeviceType.Gpu]).pipe(untilDestroyed(this)).subscribe((gpus) => {
       this.gpus = gpus;
       const vmPciSlots = (vmRes.devices

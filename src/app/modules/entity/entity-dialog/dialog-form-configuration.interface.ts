@@ -9,9 +9,9 @@ export interface DialogFormConfiguration {
   method_ws?: ApiMethod;
   saveButtonText?: string;
   cancelButtonText?: string;
-  custActions?: DialogFormCustomAction[];
+  customActions?: DialogFormCustomAction[];
   customSubmit?: (entityDialog: EntityDialogComponent) => void;
-  isCustActionVisible?: (actionId: string) => boolean;
+  isCustomActionVisible?: (actionId: string) => boolean;
   hideButton?: boolean;
   message?: string;
   warning?: string;
