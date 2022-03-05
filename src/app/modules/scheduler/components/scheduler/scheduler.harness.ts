@@ -1,17 +1,19 @@
 import { ComponentHarness, HarnessPredicate } from '@angular/cdk/testing';
 import { MatSelectHarness, SelectHarnessFilters } from '@angular/material/select/testing';
+import * as cronParser from 'cron-parser';
 import { IxFormControlHarness } from 'app/modules/ix-forms/interfaces/ix-form-control-harness.interface';
 import { getErrorText } from 'app/modules/ix-forms/utils/harness.utils';
+import { SchedulerModalHarness } from 'app/modules/scheduler/components/scheduler-modal/scheduler-modal.harness';
 
-export interface IxSchedulerFilters extends SelectHarnessFilters {
+export interface SchedulerFilters extends SelectHarnessFilters {
   label?: string;
 }
 
-export class IxSchedulerHarness extends ComponentHarness implements IxFormControlHarness {
+export class SchedulerHarness extends ComponentHarness implements IxFormControlHarness {
   static hostSelector = 'ix-scheduler';
 
-  static with(options: IxSchedulerFilters): HarnessPredicate<IxSchedulerHarness> {
-    return new HarnessPredicate(IxSchedulerHarness, options)
+  static with(options: SchedulerFilters): HarnessPredicate<SchedulerHarness> {
+    return new HarnessPredicate(SchedulerHarness, options)
       .addOption('label', options.label,
         (harness, label) => HarnessPredicate.stringMatches(harness.getLabelText(), label));
   }
@@ -24,15 +26,31 @@ export class IxSchedulerHarness extends ComponentHarness implements IxFormContro
     return label.text({ exclude: '.required' });
   }
 
+  async openCustomModal(): Promise<void> {
+    const select = (await this.getSelectHarness());
+    await select.open();
+    await select.clickOptions({ text: /Custom/ });
+  }
+
   async getValue(): Promise<string> {
     return (await this.getSelectHarness()).getValueText();
   }
 
-  async setValue(newLabel: string): Promise<void> {
-    const select = (await this.getSelectHarness());
-    await select.open();
+  async setValue(crontab: string): Promise<void> {
+    await this.openCustomModal();
 
-    await select.clickOptions({ text: newLabel });
+    const locator = this.documentRootLocatorFactory();
+    const modal = await locator.locatorFor(SchedulerModalHarness)();
+
+    const [minutes, hours, days] = crontab.split(' ');
+    await modal.setMinutes(minutes);
+    await modal.setHours(hours);
+    await modal.setDays(days);
+
+    const parsed = cronParser.parseExpression(crontab);
+    await modal.setMonths(parsed.fields.month);
+    await modal.setDaysOfWeek(parsed.fields.dayOfWeek);
+    await modal.pressDone();
   }
 
   async isDisabled(): Promise<boolean> {
