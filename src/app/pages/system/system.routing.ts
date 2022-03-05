@@ -8,7 +8,6 @@ import { ViewEnclosureComponent } from 'app/pages/system/view-enclosure/componen
 import { ServicesComponent } from '../services/services.component';
 import { ShellComponent } from '../shell/shell.component';
 import { AdvancedSettingsComponent } from './advanced/advanced-settings.component';
-import { CronFormComponent } from './advanced/cron/cron-form/cron-form.component';
 import { CronListComponent } from './advanced/cron/cron-list/cron-list.component';
 import { InitshutdownListComponent } from './advanced/initshutdown/initshutdown-list/initshutdown-list.component';
 import { AlertServiceComponent } from './alert-service/alert-service/alert-service.component';
@@ -166,14 +165,6 @@ export const routes: Routes = [
         path: '',
         component: CronListComponent,
         data: { title: 'Cron Jobs', breadcrumb: 'Cron Jobs' },
-      }, {
-        path: 'add',
-        component: CronFormComponent,
-        data: { title: 'Add', breadcrumb: 'Add' },
-      }, {
-        path: 'edit/:pk',
-        component: CronFormComponent,
-        data: { title: 'Edit', breadcrumb: 'Edit' },
       }],
     }, {
       path: 'initshutdown',

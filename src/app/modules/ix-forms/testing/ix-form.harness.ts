@@ -10,6 +10,7 @@ import { IxSlideToggleHarness } from 'app/modules/ix-forms/components/ix-slide-t
 import { IxTextareaHarness } from 'app/modules/ix-forms/components/ix-textarea/ix-textarea.harness';
 import { IxFormControlHarness } from 'app/modules/ix-forms/interfaces/ix-form-control-harness.interface';
 import { JiraOauthHarness } from 'app/modules/ix-forms/testing/jira-oauth.harness';
+import { SchedulerHarness } from 'app/modules/scheduler/components/scheduler/scheduler.harness';
 
 const childSelectors = [
   IxInputHarness,
@@ -22,6 +23,7 @@ const childSelectors = [
   IxSlideToggleHarness,
   IxRadioGroupHarness,
   JiraOauthHarness,
+  SchedulerHarness,
 ] as const;
 
 type SupportedFormControlHarness = InstanceType<(typeof childSelectors)[number]>;
