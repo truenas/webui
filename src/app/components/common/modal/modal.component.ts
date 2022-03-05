@@ -2,7 +2,6 @@ import {
   Component, ElementRef, Input, OnInit, OnDestroy, HostListener,
 } from '@angular/core';
 import {
-  EmbeddedFormConfiguration,
   FormModalConfiguration,
   ModalConfiguration, WizardModalConfiguration,
 } from 'app/components/common/modal/modal-configuration.interface';
@@ -44,8 +43,8 @@ export class ModalComponent implements OnInit, OnDestroy {
     document.body.appendChild(this.element);
 
     // close modal on background click
-    this.element.addEventListener('click', (e) => {
-      if ((e.target as HTMLElement).className === 'jw-modal') {
+    this.element.addEventListener('click', (event) => {
+      if ((event.target as HTMLElement).className === 'jw-modal') {
         this.close();
       }
     });
@@ -95,10 +94,19 @@ export class ModalComponent implements OnInit, OnDestroy {
   // close modal
   close(): Promise<boolean> {
     return new Promise((resolve) => {
-      this.modal.classList.remove('open');
-      this.background.classList.remove('open');
+      this.modal = document.querySelector(`.${this.id}`);
+      if (this.modal) {
+        this.modal.classList.remove('open');
+      }
+      this.background = document.querySelector(`.${this.id}-background`);
+      if (this.background) {
+        this.background.classList.remove('open');
+      }
       document.body.classList.remove('jw-modal-open');
-      this.slideIn.classList.remove('wide');
+      this.slideIn = document.querySelector('.slide-in-form');
+      if (this.slideIn) {
+        this.slideIn.classList.remove('wide');
+      }
       this.formOpen = false;
       this.modalService.refreshForm();
       this.wizard = false;
@@ -110,10 +118,6 @@ export class ModalComponent implements OnInit, OnDestroy {
   // TODO: Pretty bad, remove at some point.
   asFormConfig(modalConfig: ModalConfiguration): FormModalConfiguration {
     return modalConfig as FormModalConfiguration;
-  }
-
-  asEmbeddedConfig(modalConfig: ModalConfiguration): EmbeddedFormConfiguration {
-    return modalConfig as EmbeddedFormConfiguration;
   }
 
   asWizardConfig(modalConfig: ModalConfiguration): WizardModalConfiguration {

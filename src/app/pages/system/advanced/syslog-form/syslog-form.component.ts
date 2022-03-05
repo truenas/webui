@@ -3,15 +3,18 @@ import {
 } from '@angular/core';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Store } from '@ngrx/store';
 import { forkJoin, of } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 import { SyslogLevel, SyslogTransport } from 'app/enums/syslog.enum';
 import { choicesToOptions } from 'app/helpers/options.helper';
 import { helptextSystemAdvanced, helptextSystemAdvanced as helptext } from 'app/helptext/system/advanced';
 import { AdvancedConfigUpdate } from 'app/interfaces/advanced-config.interface';
-import { EntityUtils } from 'app/pages/common/entity/utils';
-import { DialogService, SystemGeneralService, WebSocketService } from 'app/services';
+import { EntityUtils } from 'app/modules/entity/utils';
+import { DialogService, WebSocketService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { AppState } from 'app/store';
+import { advancedConfigUpdated } from 'app/store/system-config/system-config.actions';
 
 @UntilDestroy()
 @Component({
@@ -54,10 +57,10 @@ export class SyslogFormComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private ws: WebSocketService,
-    private sysGeneralService: SystemGeneralService,
     private slideInService: IxSlideInService,
     private dialogService: DialogService,
     private cdr: ChangeDetectorRef,
+    private store$: Store<AppState>,
   ) {}
 
   ngOnInit(): void {
@@ -91,7 +94,7 @@ export class SyslogFormComponent implements OnInit {
       this.isFormLoading = false;
       this.cdr.markForCheck();
       this.slideInService.close();
-      this.sysGeneralService.refreshSysGeneral();
+      this.store$.dispatch(advancedConfigUpdated());
     }, (res) => {
       this.isFormLoading = false;
       new EntityUtils().handleWsError(this, res);

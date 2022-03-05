@@ -4,18 +4,18 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
-import { CoreService } from 'app/core/services/core-service/core.service';
 import { DatasetType } from 'app/enums/dataset-type.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { VmDeviceType } from 'app/enums/vm.enum';
 import helptext from 'app/helptext/vm/devices/device-add-edit';
-import { FieldConfig, FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
-import { EntityFormService } from 'app/pages/common/entity/entity-form/services/entity-form.service';
-import { EntityUtils } from 'app/pages/common/entity/utils';
+import { AppLoaderService } from 'app/modules/app-loader/app-loader.service';
+import { FieldConfig, FormSelectConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
+import { EntityFormService } from 'app/modules/entity/entity-form/services/entity-form.service';
+import { EntityUtils } from 'app/modules/entity/utils';
 import { VmDeviceFieldSet } from 'app/pages/vm/vm-device-field-set.interface';
 import { WebSocketService, NetworkService, VmService } from 'app/services';
-import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
+import { CoreService } from 'app/services/core-service/core.service';
 import { DialogService } from 'app/services/dialog.service';
 
 @UntilDestroy()
@@ -30,7 +30,7 @@ export class DeviceEditComponent implements OnInit {
   deviceid: number;
   vmname: string;
   fieldSets: VmDeviceFieldSet[];
-  isCustActionVisible = false;
+  isCustomActionVisible = false;
   protected ipAddress: FormSelectConfig;
   selectedType = VmDeviceType.Cdrom;
   formGroup: FormGroup;
@@ -48,7 +48,7 @@ export class DeviceEditComponent implements OnInit {
   error: string;
   private productType = window.localStorage.getItem('product_type') as ProductType;
 
-  custActions: { id?: string; name: string; function: () => void }[];
+  customActions: { id?: string; name: string; function: () => void }[];
 
   fieldConfig: FieldConfig[] = [
     {
@@ -454,19 +454,19 @@ export class DeviceEditComponent implements OnInit {
         switch (deviceType) {
           case VmDeviceType.Cdrom:
             this.activeFormGroup = this.cdromFormGroup;
-            this.isCustActionVisible = false;
+            this.isCustomActionVisible = false;
             break;
           case VmDeviceType.Nic:
             this.activeFormGroup = this.nicFormGroup;
-            this.isCustActionVisible = true;
+            this.isCustomActionVisible = true;
             break;
           case VmDeviceType.Disk:
             this.activeFormGroup = this.diskFormGroup;
-            this.isCustActionVisible = false;
+            this.isCustomActionVisible = false;
             break;
           case VmDeviceType.Raw:
             this.activeFormGroup = this.rawfileFormGroup;
-            this.isCustActionVisible = false;
+            this.isCustomActionVisible = false;
             // special case where RAW file device is used as a BOOT device.
             if (this.vminfo.attributes.boot && this.vminfo.attributes.rootpwd) {
               this.rootpwd = _.find(this.rawfileFieldConfig, { name: 'rootpwd' });
@@ -477,11 +477,11 @@ export class DeviceEditComponent implements OnInit {
             break;
           case VmDeviceType.Pci:
             this.activeFormGroup = this.pciFormGroup;
-            this.isCustActionVisible = false;
+            this.isCustomActionVisible = false;
             break;
           case VmDeviceType.Display:
             this.activeFormGroup = this.displayFormGroup;
-            this.isCustActionVisible = false;
+            this.isCustomActionVisible = false;
             this.ws.call('vm.get_display_devices', [this.vmId]).pipe(untilDestroyed(this)).subscribe((devices) => {
               if (devices.length > 1) {
                 _.find(this.displayFieldConfig, { name: 'type' }).isHidden = true;
@@ -521,7 +521,7 @@ export class DeviceEditComponent implements OnInit {
       });
     });
 
-    this.custActions = [
+    this.customActions = [
       {
         id: 'generate_mac_address',
         name: this.translate.instant('Generate MAC Address'),

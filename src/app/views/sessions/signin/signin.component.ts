@@ -13,8 +13,6 @@ import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
-import { ApiService } from 'app/core/services/api.service';
-import { CoreService } from 'app/core/services/core-service/core.service';
 import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
 import { FailoverStatus } from 'app/enums/failover-status.enum';
 import { ProductType, productTypeReadableText } from 'app/enums/product-type.enum';
@@ -23,8 +21,9 @@ import productText from 'app/helptext/product';
 import helptext from 'app/helptext/topbar';
 import { ThemeChangedEvent } from 'app/interfaces/events/theme-events.interface';
 import { Interval } from 'app/interfaces/timeout.interface';
-import { matchOtherValidator } from 'app/pages/common/entity/entity-form/validators/password-validation/password-validation';
+import { matchOtherValidator } from 'app/modules/entity/entity-form/validators/password-validation/password-validation';
 import { SystemGeneralService } from 'app/services';
+import { CoreService } from 'app/services/core-service/core.service';
 import { DialogService } from 'app/services/dialog.service';
 import { LocaleService } from 'app/services/locale.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -95,7 +94,6 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
     private dialogService: DialogService,
     private fb: FormBuilder,
     private core: CoreService,
-    private api: ApiService,
     private autofill: AutofillMonitor,
     private http: HttpClient,
     private sysGeneralService: SystemGeneralService,
@@ -152,7 +150,7 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
 
   ngOnInit(): void {
     this.core.register({ observerClass: this, eventName: 'ThemeChanged' }).pipe(untilDestroyed(this)).subscribe((evt: ThemeChangedEvent) => {
-      if (this.router.url == '/sessions/signin' && evt.sender.userThemeLoaded) {
+      if (this.router.url === '/sessions/signin' && evt.sender.userThemeLoaded) {
         this.redirect();
       }
     });
@@ -211,7 +209,7 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
           this.loginCallback(result);
         });
     }
-    if (this.ws.token && this.ws.redirectUrl != undefined) {
+    if (this.ws.token && this.ws.redirectUrl !== undefined) {
       if (this.submitButton) {
         this.submitButton.disabled = true;
       }
@@ -219,7 +217,7 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
         this.progressBar.mode = 'indeterminate';
       }
 
-      if (sessionStorage.currentUrl != undefined) {
+      if (sessionStorage.currentUrl !== undefined) {
         this.ws.redirectUrl = sessionStorage.currentUrl;
       }
 
@@ -366,7 +364,6 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
       }
       if (this.ws.redirectUrl) {
         this.router.navigateByUrl(this.ws.redirectUrl);
-        this.ws.redirectUrl = '';
       } else {
         this.router.navigate(['/dashboard']);
       }

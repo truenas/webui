@@ -1,7 +1,7 @@
 import { Validators } from '@angular/forms';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { LinkAggregationProtocol, NetworkInterfaceType } from 'app/enums/network-interface.enum';
-import { rangeValidator } from 'app/pages/common/entity/entity-form/validators/range-validation';
+import { rangeValidator } from 'app/modules/entity/entity-form/validators/range-validation';
 
 export default {
   title_add: T('Add Interface'),
@@ -24,7 +24,7 @@ export default {
   ],
 
   int_interface_placeholder: T('NIC'),
-  int_interface_tooltip: T('Enter the FreeBSD device name of the\
+  int_interface_tooltip: T('Enter the device name of the\
  interface. This cannot be changed after the interface is created.'),
   int_interface_validation: [Validators.required],
 
@@ -45,19 +45,7 @@ export default {
  be configured for DHCP.'),
 
   int_ipv6auto_placeholder: T('Autoconfigure IPv6'),
-  int_ipv6auto_tooltip: T('Set to automatically configure the IPv6 address with\
- <a href="https://www.freebsd.org/cgi/man.cgi?query=rtsol"\
- target="_blank">rtsol(8)</a>. Only one interface can\
- be configured this way.'),
-
-  disable_offload_capabilities_placeholder: T('Disable Hardware Offloading'),
-  disable_offload_capabilities_tooltip: T('Turn off hardware offloading \
- for network traffic processing. WARNING: disabling hardware offloading \
- can reduce network performance.'),
-
-  disable_offload_capabilities_warning_title: T('Disable Hardware Offloading'),
-  disable_offload_capabilities_warning_msg: T('Disabling hardware offloading can severely reduce\
- network performance.'),
+  int_ipv6auto_tooltip: T('Set to automatically configure the IPv6. Only one interface can be configured this way.'),
 
   alias_address_placeholder: T('IP Address'),
   alias_address_tooltip: T('Define an alias for the interface \

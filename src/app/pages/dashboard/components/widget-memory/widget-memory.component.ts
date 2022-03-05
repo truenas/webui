@@ -11,14 +11,17 @@ import { TranslateService } from '@ngx-translate/core';
 import { UUID } from 'angular2-uuid';
 import { Chart, ChartColor, ChartDataSets } from 'chart.js';
 import { Subject } from 'rxjs';
+import { switchMap } from 'rxjs/operators';
 import { ThemeUtils } from 'app/core/classes/theme-utils/theme-utils';
-import { ViewChartBarComponent } from 'app/core/components/view-chart-bar/view-chart-bar.component';
-import { ViewChartGaugeComponent } from 'app/core/components/view-chart-gauge/view-chart-gauge.component';
 import { CoreEvent } from 'app/interfaces/events';
 import { MemoryStatsEventData } from 'app/interfaces/events/memory-stats-event.interface';
+import { Theme } from 'app/interfaces/theme.interface';
+import { ViewChartBarComponent } from 'app/modules/charts/components/view-chart-bar/view-chart-bar.component';
+import { ViewChartGaugeComponent } from 'app/modules/charts/components/view-chart-gauge/view-chart-gauge.component';
 import { WidgetComponent } from 'app/pages/dashboard/components/widget/widget.component';
 import { WidgetMemoryData } from 'app/pages/dashboard/interfaces/widget-data.interface';
-import { Theme } from 'app/services/theme/theme.service';
+import { CoreService } from 'app/services/core-service/core.service';
+import { ThemeService } from 'app/services/theme/theme.service';
 
 @UntilDestroy()
 @Component({
@@ -32,7 +35,6 @@ export class WidgetMemoryComponent extends WidgetComponent implements AfterViewI
   @Input() data: Subject<CoreEvent>;
   @Input() ecc = false;
   chart: Chart;// chart instance
-  ctx: CanvasRenderingContext2D; // canvas context for chart.js
   private _memData: WidgetMemoryData;
   get memData(): WidgetMemoryData { return this._memData; }
   set memData(value) {
@@ -69,13 +71,15 @@ export class WidgetMemoryComponent extends WidgetComponent implements AfterViewI
     private sanitizer: DomSanitizer,
     public mediaObserver: MediaObserver,
     private el: ElementRef<HTMLElement>,
+    private core: CoreService,
+    public themeService: ThemeService,
   ) {
     super(translate);
 
     this.utils = new ThemeUtils();
 
     mediaObserver.media$.pipe(untilDestroyed(this)).subscribe((evt) => {
-      const st = evt.mqAlias == 'xs' ? 'Mobile' : 'Desktop';
+      const st = evt.mqAlias === 'xs' ? 'Mobile' : 'Desktop';
       this.screenType = st;
     });
   }
@@ -85,17 +89,20 @@ export class WidgetMemoryComponent extends WidgetComponent implements AfterViewI
   }
 
   ngAfterViewInit(): void {
-    this.data.pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
-      if (evt.name == 'MemoryStats') {
-        if (evt.data.used) {
-          this.setMemData(evt.data);
-        }
-      }
-    });
+    this.core.register({ observerClass: this, eventName: 'ThemeChanged' })
+      .pipe(
+        switchMap(() => this.data),
+        untilDestroyed(this),
+      ).subscribe((evt: CoreEvent) => {
+        if (evt.name === 'MemoryStats') {
+          if (!evt.data.used) {
+            return;
+          }
 
-    if (this.chart) {
-      this.renderChart();
-    }
+          this.setMemData(evt.data);
+          this.renderChart();
+        }
+      });
   }
 
   bytesToGigabytes(value: number): number {
@@ -139,13 +146,8 @@ export class WidgetMemoryComponent extends WidgetComponent implements AfterViewI
       data: this.parseMemData(data),
     };
     this.memData = config;
-    this.memChartInit();
-  }
-
-  memChartInit(): void {
     this.currentTheme = this.themeService.currentTheme();
     this.colorPattern = this.processThemeColors(this.currentTheme);
-
     this.isReady = true;
     this.renderChart();
   }
@@ -156,50 +158,61 @@ export class WidgetMemoryComponent extends WidgetComponent implements AfterViewI
 
   // chart.js renderer
   renderChart(): void {
-    if (!this.ctx) {
-      const el: HTMLCanvasElement = this.el.nativeElement.querySelector('#memory-usage-chart canvas');
-      if (!el) { return; }
-
-      const ds = this.makeDatasets(this.memData.data);
-      this.ctx = el.getContext('2d');
-
-      const data = {
-        labels: this.labels,
-        datasets: ds,
-      };
-
-      const options = {
-        // cutoutPercentage:85,
-        tooltips: {
-          enabled: false,
-        },
-        responsive: true,
-        maintainAspectRatio: false,
-        legend: {
-          display: false,
-        },
-        responsiveAnimationDuration: 0,
-        animation: {
-          duration: 1000,
-          animateRotate: true,
-          animateScale: true,
-        },
-        hover: {
-          animationDuration: 0,
-        },
-      };
-
-      this.chart = new Chart(this.ctx, {
-        type: 'doughnut',
-        data,
-        options,
-      });
+    if (!this.chart) {
+      this.chart = this.initChart();
     } else {
-      const ds = this.makeDatasets(this.memData.data);
-
-      this.chart.data.datasets[0].data = ds[0].data;
-      this.chart.update();
+      this.updateChart(this.chart);
     }
+  }
+  initChart(): Chart {
+    const el: HTMLCanvasElement = this.el.nativeElement.querySelector('#memory-usage-chart canvas');
+    if (!el) {
+      return;
+    }
+
+    const ds = this.makeDatasets(this.memData.data);
+
+    const data = {
+      labels: this.labels,
+      datasets: ds,
+    };
+
+    const options = {
+      // cutoutPercentage:85,
+      tooltips: {
+        enabled: false,
+      },
+      responsive: true,
+      maintainAspectRatio: false,
+      legend: {
+        display: false,
+      },
+      responsiveAnimationDuration: 0,
+      animation: {
+        duration: 1000,
+        animateRotate: true,
+        animateScale: true,
+      },
+      hover: {
+        animationDuration: 0,
+      },
+    };
+
+    const chart = new Chart(el.getContext('2d'), {
+      type: 'doughnut',
+      data,
+      options,
+    });
+    return chart;
+  }
+
+  updateChart(chart: Chart): void {
+    const ds = this.makeDatasets(this.memData.data);
+
+    chart.data.datasets[0].data = ds[0].data;
+    chart.update();
+
+    this.chart = chart;
   }
 
   protected makeDatasets(data: string[][]): ChartDataSets[] {
@@ -218,7 +231,7 @@ export class WidgetMemoryComponent extends WidgetComponent implements AfterViewI
       const bgColor = this.colorPattern[index];
       const bgColorType = this.utils.getValueType(bgColor);
 
-      const bgRgb = bgColorType == 'hex' ? this.utils.hexToRgb(bgColor).rgb : this.utils.rgbToArray(bgColor);
+      const bgRgb = bgColorType === 'hex' ? this.utils.hexToRgb(bgColor).rgb : this.utils.rgbToArray(bgColor);
 
       (ds.backgroundColor as ChartColor[]).push(this.rgbToString(bgRgb, 0.85));
       (ds.borderColor as ChartColor[]).push(this.rgbToString(bgRgb));

@@ -1,16 +1,19 @@
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
-import { Validators } from '@angular/forms';
+import {
+  AbstractControl, ValidationErrors, ValidatorFn, Validators,
+} from '@angular/forms';
 import { Router } from '@angular/router';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { map } from 'rxjs/operators';
 import { choicesToOptions } from 'app/helpers/options.helper';
 import helptext from 'app/helptext/services/components/service-s3';
-import { regexValidator } from 'app/pages/common/entity/entity-form/validators/regex-validation';
-import { EntityUtils } from 'app/pages/common/entity/utils';
-import { FormErrorHandlerService } from 'app/pages/common/ix-forms/services/form-error-handler.service';
+import { numberValidator } from 'app/modules/entity/entity-form/validators/number-validation';
+import { regexValidator } from 'app/modules/entity/entity-form/validators/regex-validation';
+import { EntityUtils } from 'app/modules/entity/utils';
+import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { DialogService, SystemGeneralService, WebSocketService } from 'app/services';
 import { FilesystemService } from 'app/services/filesystem.service';
 
@@ -23,11 +26,28 @@ import { FilesystemService } from 'app/services/filesystem.service';
 export class ServiceS3Component implements OnInit {
   isFormLoading = false;
 
+  readonly tlsServerUriRequiredIfCertificateNotNull: { forProperty: 'required'; validatorFn: () => ValidatorFn } = {
+    forProperty: 'required',
+    validatorFn: (): ValidatorFn => {
+      return (control: AbstractControl): ValidationErrors => {
+        if (!control.parent) {
+          return null;
+        }
+
+        if (control.parent.get('certificate').value !== null && (control.value === '' || control.value === null)) {
+          return { required: true };
+        }
+
+        return null;
+      };
+    },
+  };
+
   form = this.fb.group({
     bindip: [''],
     bindport: [
       null as number,
-      [Validators.min(1), Validators.max(65535), Validators.required, Validators.pattern(/^[1-9]\d*$/)],
+      [numberValidator(), Validators.min(1), Validators.max(65535), Validators.required],
     ],
     access_key: [
       '',
@@ -40,6 +60,10 @@ export class ServiceS3Component implements OnInit {
     storage_path: ['', Validators.required],
     browser: [false],
     certificate: [null as number],
+    console_bindport: [
+      9001 as number,
+      [numberValidator(), Validators.min(1), Validators.max(65535), Validators.required]],
+    tls_server_uri: [''],
   });
 
   readonly tooltips = {
@@ -81,6 +105,7 @@ export class ServiceS3Component implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.isFormLoading = true;
     this.ws.call('s3.config').pipe(untilDestroyed(this)).subscribe(
       (config) => {
         this.form.patchValue(config, { emitEvent: false });
@@ -114,13 +139,26 @@ export class ServiceS3Component implements OnInit {
           this.warned = true;
         });
     });
+
+    this.form.get('certificate').value$.pipe(untilDestroyed(this)).subscribe((value) => {
+      if (value !== null) {
+        this.form.get('tls_server_uri').addValidators([this.tlsServerUriRequiredIfCertificateNotNull.validatorFn()]);
+      } else {
+        this.form.get('tls_server_uri').removeValidators(this.tlsServerUriRequiredIfCertificateNotNull.validatorFn());
+      }
+    });
   }
 
   onSubmit(): void {
     const values = {
       ...this.form.value,
       bindport: Number(this.form.value.bindport),
+      console_bindport: Number(this.form.value.console_bindport),
     };
+
+    if (values.certificate === null) {
+      delete values.tls_server_uri;
+    }
 
     this.isFormLoading = true;
     this.ws.call('s3.update', [values])

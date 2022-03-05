@@ -5,9 +5,9 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { of, Subject } from 'rxjs';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { NtpServer } from 'app/interfaces/ntp-server.interface';
-import { EntityModule } from 'app/pages/common/entity/entity.module';
-import { IxTableModule } from 'app/pages/common/ix-tables/ix-table.module';
-import { IxTableHarness } from 'app/pages/common/ix-tables/testing/ix-table.harness';
+import { EntityModule } from 'app/modules/entity/entity.module';
+import { IxTableModule } from 'app/modules/ix-tables/ix-table.module';
+import { IxTableHarness } from 'app/modules/ix-tables/testing/ix-table.harness';
 import { NtpServerFormComponent } from 'app/pages/system/general-settings/ntp-server/ntp-server-form/ntp-server-form.component';
 import { NtpServerListComponent } from 'app/pages/system/general-settings/ntp-server/ntp-server-list/ntp-server-list.component';
 import { DialogService } from 'app/services';
@@ -121,7 +121,7 @@ describe('NtpServerListComponent', () => {
     const table = await loader.getHarness<IxTableHarness>(IxTableHarness);
     const text = await table.getCellTextByIndex();
 
-    expect(text).toEqual([['No servers have been added yet']]);
+    expect(text).toEqual([['No NTP Servers have been added yet']]);
   });
 
   it('should show error message when can not retrieve response', async () => {

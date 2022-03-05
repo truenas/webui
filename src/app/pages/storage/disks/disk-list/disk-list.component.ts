@@ -5,8 +5,8 @@ import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as filesize from 'filesize';
-import { filter } from 'rxjs/operators';
-import { CoreService } from 'app/core/services/core-service/core.service';
+import { forkJoin, of } from 'rxjs';
+import { catchError, filter, map } from 'rxjs/operators';
 import { DiskPowerLevel } from 'app/enums/disk-power-level.enum';
 import { DiskStandby } from 'app/enums/disk-standby.enum';
 import { DiskWipeMethod } from 'app/enums/disk-wipe-method.enum';
@@ -17,13 +17,14 @@ import { CoreEvent } from 'app/interfaces/events';
 import { QueryParams } from 'app/interfaces/query-api.interface';
 import { ManualSmartTest, SmartManualTestParams } from 'app/interfaces/smart-test.interface';
 import { Disk } from 'app/interfaces/storage.interface';
-import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
-import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
-import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
-import { EntityTableComponent } from 'app/pages/common/entity/entity-table/entity-table.component';
-import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
-import { EntityUtils } from 'app/pages/common/entity/utils';
+import { DialogFormConfiguration } from 'app/modules/entity/entity-dialog/dialog-form-configuration.interface';
+import { EntityDialogComponent } from 'app/modules/entity/entity-dialog/entity-dialog.component';
+import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
+import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-table.component';
+import { EntityTableAction, EntityTableConfig } from 'app/modules/entity/entity-table/entity-table.interface';
+import { EntityUtils } from 'app/modules/entity/utils';
 import { DialogService, StorageService, WebSocketService } from 'app/services';
+import { CoreService } from 'app/services/core-service/core.service';
 import { LocaleService } from 'app/services/locale.service';
 
 @UntilDestroy()
@@ -173,7 +174,7 @@ export class DiskListComponent implements EntityTableConfig<Disk> {
       }
     }
 
-    const devMatch = this.unused.filter((dev) => dev.name == parentRow.name);
+    const devMatch = this.unused.filter((dev) => dev.name === parentRow.name);
     if (devMatch.length > 0) {
       actions.push({
         id: parentRow.name,
@@ -271,6 +272,23 @@ export class DiskListComponent implements EntityTableConfig<Disk> {
     }
   }
 
+  prerequisite(): Promise<boolean> {
+    return forkJoin([
+      this.ws.call('disk.get_unused'),
+      this.ws.call('smart.test.disk_choices'),
+    ]).pipe(
+      map(([unusedDisks, disksThatSupportSmart]) => {
+        this.unused = unusedDisks;
+        this.SMARTdiskChoices = disksThatSupportSmart;
+        return true;
+      }),
+      catchError((error) => {
+        new EntityUtils().handleWsError(this, error);
+        return of(false);
+      }),
+    ).toPromise();
+  }
+
   afterInit(entityList: EntityTableComponent): void {
     this.core.register({
       observerClass: this,
@@ -280,24 +298,13 @@ export class DiskListComponent implements EntityTableConfig<Disk> {
         entityList.getData();
       }
     });
-
-    this.ws.call('disk.get_unused', []).pipe(untilDestroyed(this)).subscribe((unused) => {
-      this.unused = unused;
-      entityList.getData();
-    }, (err) => new EntityUtils().handleWsError(this, err));
-
-    this.ws.call('smart.test.disk_choices').pipe(untilDestroyed(this)).subscribe(
-      (res) => {
-        this.SMARTdiskChoices = res;
-        entityList.getData();
-      },
-      (err) => new EntityUtils().handleWsError(this, err),
-    );
   }
 
-  resourceTransformIncomingRestData(data: Disk[]): Disk[] {
-    data.forEach((i) => i.pool = i.pool ? i.pool : 'N/A');
-    return data;
+  resourceTransformIncomingRestData(disks: Disk[]): Disk[] {
+    return disks.map((disk) => ({
+      ...disk,
+      pool: disk.pool || this.translate.instant('N/A'),
+    }));
   }
 
   manualTest(selected: Disk | Disk[]): void {

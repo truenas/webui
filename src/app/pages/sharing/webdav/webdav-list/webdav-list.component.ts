@@ -3,9 +3,9 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { helptextSharingWebdav } from 'app/helptext/sharing';
 import { WebDavShare, WebDavShareUpdate } from 'app/interfaces/web-dav-share.interface';
-import { EntityTableComponent } from 'app/pages/common/entity/entity-table/entity-table.component';
-import { EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
-import { EntityUtils } from 'app/pages/common/entity/utils';
+import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-table.component';
+import { EntityTableConfig } from 'app/modules/entity/entity-table/entity-table.interface';
+import { EntityUtils } from 'app/modules/entity/utils';
 import { WebdavFormComponent } from 'app/pages/sharing/webdav/webdav-form/webdav-form.component';
 import { ModalService } from 'app/services';
 import { DialogService } from 'app/services/dialog.service';
@@ -23,7 +23,17 @@ export class WebdavListComponent implements EntityTableConfig {
   wsDelete = 'sharing.webdav.delete' as const;
   routeDelete: string[] = ['sharing', 'webdav', 'delete'];
   rowIdentifier = helptextSharingWebdav.column_name;
-
+  emptyTableConfigMessages = {
+    first_use: {
+      title: this.translate.instant('No WebDAV Shares have been configured yet'),
+      message: this.translate.instant('It seems you haven\'t setup any WebDAV Shares yet. Please click the button below to add an WebDAV Share.'),
+    },
+    no_page_data: {
+      title: this.translate.instant('No WebDAV Shares have been configured yet'),
+      message: this.translate.instant('The system could not retrieve any WebDAV Shares from the database. Please click the button below to add an WebDAV Share.'),
+    },
+    buttonText: this.translate.instant('Add WebDAV Share'),
+  };
   columns = [
     { prop: 'name', name: helptextSharingWebdav.column_name, always_display: true },
     { prop: 'comment', name: helptextSharingWebdav.column_comment },

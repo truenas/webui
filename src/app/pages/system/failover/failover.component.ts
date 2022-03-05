@@ -8,13 +8,13 @@ import { filter } from 'rxjs/operators';
 import { helptextSystemFailover } from 'app/helptext/system/failover';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { FailoverConfig, FailoverUpdate } from 'app/interfaces/failover.interface';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
-import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
-import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
-import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
-import { EntityUtils } from 'app/pages/common/entity/utils';
+import { AppLoaderService } from 'app/modules/app-loader/app-loader.service';
+import { EntityFormComponent } from 'app/modules/entity/entity-form/entity-form.component';
+import { FieldConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
+import { FieldSet } from 'app/modules/entity/entity-form/models/fieldset.interface';
+import { RelationAction } from 'app/modules/entity/entity-form/models/relation-action.enum';
+import { EntityUtils } from 'app/modules/entity/utils';
 import { WebSocketService } from 'app/services';
-import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { DialogService } from 'app/services/dialog.service';
 
 @UntilDestroy()
@@ -39,7 +39,7 @@ export class FailoverComponent implements FormConfiguration {
   masterControl: FormControl;
   warned = false;
 
-  custActions = [
+  customActions = [
     {
       id: 'sync_to_peer',
       name: this.translate.instant('Sync to Peer'),

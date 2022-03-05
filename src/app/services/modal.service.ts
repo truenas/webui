@@ -45,7 +45,7 @@ export class ModalService {
 
   remove(id: string): void {
     // remove modal from array of active modals
-    this.modals = this.modals.filter((x) => x.id !== id);
+    this.modals = this.modals.filter((modal) => modal.id !== id);
   }
 
   openInSlideIn<T>(componentType: Type<T>, rowId?: string | number): T {
@@ -68,13 +68,13 @@ export class ModalService {
       this.getRow$.next(rowid);
     }
     // open modal specified by id
-    const modal = this.modals.find((x) => x.id === id);
+    const modal = this.modals.find((modal) => modal.id === id);
     modal.open(conf);
   }
 
   private close(id: string, error?: any, response?: any): Promise<boolean> {
     // close modal specified by id
-    const modal = this.modals.find((x) => x.id === id);
+    const modal = this.modals.find((modal) => modal.id === id);
     if (error) {
       this.onClose$.error(error);
     } else if (response) {

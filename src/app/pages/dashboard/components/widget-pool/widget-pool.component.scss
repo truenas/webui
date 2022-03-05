@@ -40,20 +40,12 @@
   height: 100%;
   position: absolute;
   width: 400%;
-  /*background:var(--alt-bg2);*/
 }
 
-/*.carousel.lagg{
-  width:400%;
-}*/
-
 .slide {
-  /*position:absolute;
-  top:48px;*/
   display: inline;
   height: calc(100% - 48px);
   width: 100%;
-  /*border-left:solid 1px var(--bg1);*/
 }
 
 .vdev.hidden,
@@ -82,11 +74,8 @@
 
 .slide.overview .left {
   background-image: url('../../../../../assets/images/backgrounds/hard_drive_1.jpg');
-  /*background-color:var(--alt-bg1);*/
   background-size: cover;
   color: #efefef;
-  /*background-position-y:center;
-  background-position-x:50%;*/
 }
 
 .slide .right {
@@ -196,8 +185,6 @@ span.safe {
   position: absolute;
   right: 16px;
   top: 0;
-  /*font-weight:500;
-  text-transform:capitalize;*/
 }
 
 .controls button {
@@ -286,7 +273,7 @@ span.capitalize {
 }
 
 .list-subheader:first-child {
-  padding: 8px 8px 0 16px;
+  padding: 2px 8px 0 16px;
 }
 
 .detail-key {
@@ -311,11 +298,13 @@ span.capitalize {
   font-size: 120%;
 }
 
-.disk-errors.mat-icon.healthy {
-  /*font-size: 18px;
-  margin-bottom: 2px;*/
+.mat-list-item .error,
+.mat-list-item .warning,
+.mat-list-item .healthy {
+  font-size: 120%;
+  margin-left: 5px;
+  margin-top: -5px;
 }
-
 
 /* NARROW SCREENS */
 .xs.widget {

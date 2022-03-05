@@ -12,11 +12,11 @@ import helptext from 'app/helptext/storage/volumes/volume-import-wizard';
 import { WizardConfiguration } from 'app/interfaces/entity-wizard.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { PoolFindResult } from 'app/interfaces/pool-import.interface';
-import { FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
-import { Wizard } from 'app/pages/common/entity/entity-form/models/wizard.interface';
-import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
-import { EntityWizardComponent } from 'app/pages/common/entity/entity-wizard/entity-wizard.component';
-import { EntityUtils } from 'app/pages/common/entity/utils';
+import { FormSelectConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
+import { Wizard } from 'app/modules/entity/entity-form/models/wizard.interface';
+import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
+import { EntityWizardComponent } from 'app/modules/entity/entity-wizard/entity-wizard.component';
+import { EntityUtils } from 'app/modules/entity/utils';
 import { WebSocketService, DialogService, AppLoaderService } from 'app/services';
 import { ModalService } from 'app/services/modal.service';
 
@@ -102,9 +102,9 @@ export class VolumeImportWizardComponent implements WizardConfiguration {
     const guidFc = _.find(this.wizardConfig[0].fieldConfig, { name: 'guid' }) as FormSelectConfig;
     const guidFg = entityWizard.formArray.get([0]).get('guid') as FormGroup;
     guidFg.valueChanges.pipe(untilDestroyed(this)).subscribe((res) => {
-      const pool = _.find(guidFc.options, { value: res });
-      this.summary[this.translate.instant('Pool to import')] = pool['label'];
-      const selectedPoolIndex = this.importablePools.findIndex((p) => p.guid === pool.value);
+      const poolToImport = _.find(guidFc.options, { value: res });
+      this.summary[this.translate.instant('Pool to import')] = poolToImport['label'];
+      const selectedPoolIndex = this.importablePools.findIndex((pool) => pool.guid === poolToImport.value);
       this.pool = this.importablePools[selectedPoolIndex].name;
     });
   }

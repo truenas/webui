@@ -5,14 +5,15 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
 import { helptextSharingIscsi } from 'app/helptext/sharing';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
-import { IscsiInterface, IscsiPortal } from 'app/interfaces/iscsi.interface';
+import { IscsiExtent, IscsiInterface, IscsiPortal } from 'app/interfaces/iscsi.interface';
 import { Option } from 'app/interfaces/option.interface';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
-import { FieldConfig, FormListConfig, FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
-import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
-import { selectedOptionValidator } from 'app/pages/common/entity/entity-form/validators/invalid-option-selected';
-import { ipValidator } from 'app/pages/common/entity/entity-form/validators/ip-validation';
-import { EntityUtils } from 'app/pages/common/entity/utils';
+import { QueryFilter } from 'app/interfaces/query-api.interface';
+import { EntityFormComponent } from 'app/modules/entity/entity-form/entity-form.component';
+import { FieldConfig, FormListConfig, FormSelectConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
+import { FieldSet } from 'app/modules/entity/entity-form/models/fieldset.interface';
+import { selectedOptionValidator } from 'app/modules/entity/entity-form/validators/invalid-option-selected';
+import { ipValidator } from 'app/modules/entity/entity-form/validators/ip-validation';
+import { EntityUtils } from 'app/modules/entity/utils';
 import { IscsiService, WebSocketService, AppLoaderService } from 'app/services';
 
 interface PortalListen {
@@ -36,7 +37,7 @@ export class PortalFormComponent implements FormConfiguration {
   queryCall = 'iscsi.portal.query' as const;
   editCall = 'iscsi.portal.update' as const;
   routeSuccess: string[] = ['sharing', 'iscsi', 'portals'];
-  customFilter: any[] = [[['id', '=']]];
+  customFilter: [[Partial<QueryFilter<IscsiExtent>>]] = [[['id', '=']]];
   isEntity = true;
 
   protected getValidOptions = this.iscsiService.getIpChoices().toPromise().then((ips) => {
@@ -183,7 +184,7 @@ export class PortalFormComponent implements FormConfiguration {
     this.authgroupField = _.find(authgroupFieldset.config, { name: 'discovery_authgroup' }) as FormSelectConfig;
     this.iscsiService.getAuth().pipe(untilDestroyed(this)).subscribe((accessRecords) => {
       accessRecords.forEach((record) => {
-        if (_.find(this.authgroupField.options, { value: record.tag }) == undefined) {
+        if (_.find(this.authgroupField.options, { value: record.tag }) === undefined) {
           this.authgroupField.options.push({ label: String(record.tag), value: record.tag });
         }
       });

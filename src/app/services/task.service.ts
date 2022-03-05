@@ -134,17 +134,16 @@ export class TaskService {
   getTaskNextRuns(scheduleExpression: string, count = 10): Date[] {
     const schedule = cronParser.parseExpression(scheduleExpression, { iterator: true });
 
-    /* Nasty type assertions due to type definition error in cron-parser lib */
     return new Array(count)
       .fill(null)
-      .map(() => ((schedule.next() as unknown) as { value: { _date: any } }).value._date.toDate());
+      .map(() => schedule.next().value.toDate());
   }
 
   getTaskNextRun(scheduleExpression: string): string {
     const schedule = cronParser.parseExpression(scheduleExpression, { iterator: true });
 
     return formatDistanceToNow(
-      ((schedule.next() as unknown) as { value: { _date: any } }).value._date.toDate(),
+      schedule.next().value.toDate(),
       { addSuffix: true },
     );
   }
@@ -152,9 +151,12 @@ export class TaskService {
   getTaskNextTime(scheduleExpression: string): Date {
     const schedule = cronParser.parseExpression(scheduleExpression, { iterator: true });
 
-    return ((schedule.next() as unknown) as { value: { _date: any } }).value._date.toDate();
+    return schedule.next().value.toDate();
   }
 
+  /**
+   * @deprecated Use crontabDescription pipe.
+   */
   getTaskCronDescription(scheduleExpression: string, options: CronOptions = this.cronOptions): string {
     return cronstrue.toString(scheduleExpression, options);
   }

@@ -1,6 +1,4 @@
-import {
-  ApplicationRef, Component, Injector, OnInit,
-} from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -12,11 +10,11 @@ import globalHelptext from 'app/helptext/global-helptext';
 import helptext from 'app/helptext/services/components/service-ftp';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { FtpConfig, FtpConfigUpdate } from 'app/interfaces/ftp-config.interface';
-import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
-import { FieldConfig, FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
-import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
-import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
+import { FieldSets } from 'app/modules/entity/entity-form/classes/field-sets';
+import { EntityFormComponent } from 'app/modules/entity/entity-form/entity-form.component';
+import { FieldConfig, FormSelectConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
+import { FieldSet } from 'app/modules/entity/entity-form/models/fieldset.interface';
+import { RelationAction } from 'app/modules/entity/entity-form/models/relation-action.enum';
 import {
   DialogService, SystemGeneralService, WebSocketService, StorageService,
 } from 'app/services';
@@ -27,7 +25,7 @@ import {
   template: '<entity-form [conf]="this"></entity-form>',
   providers: [SystemGeneralService],
 })
-export class ServiceFTPComponent implements FormConfiguration, OnInit {
+export class ServiceFtpComponent implements FormConfiguration, OnInit {
   editCall = 'ftp.update' as const;
   queryCall = 'ftp.config' as const;
   routeSuccess: string[] = ['services'];
@@ -396,7 +394,7 @@ export class ServiceFTPComponent implements FormConfiguration, OnInit {
 
   advancedFields = this.fieldSets.advancedFields;
 
-  custActions = [
+  customActions = [
     {
       id: 'basic_mode',
       name: globalHelptext.basic_options,
@@ -415,10 +413,10 @@ export class ServiceFTPComponent implements FormConfiguration, OnInit {
     },
   ];
 
-  isCustActionVisible(actionId: string): boolean {
-    if (actionId == 'advanced_mode' && !this.isBasicMode) {
+  isCustomActionVisible(actionId: string): boolean {
+    if (actionId === 'advanced_mode' && !this.isBasicMode) {
       return false;
-    } if (actionId == 'basic_mode' && this.isBasicMode) {
+    } if (actionId === 'basic_mode' && this.isBasicMode) {
       return false;
     }
     return true;
@@ -428,8 +426,6 @@ export class ServiceFTPComponent implements FormConfiguration, OnInit {
     protected router: Router,
     protected route: ActivatedRoute,
     protected ws: WebSocketService,
-    protected _injector: Injector,
-    protected _appRef: ApplicationRef,
     protected dialog: DialogService,
     protected storageService: StorageService,
     protected systemGeneralService: SystemGeneralService,
@@ -491,7 +487,7 @@ export class ServiceFTPComponent implements FormConfiguration, OnInit {
 
   resourceTransformIncomingRestData(data: any): any {
     this.bwFields.forEach((field) => {
-      data[field] = this.storageService.convertBytestoHumanReadable(data[field] * 1024, 0, 'KiB');
+      data[field] = this.storageService.convertBytesToHumanReadable(data[field] * 1024, 0, 'KiB');
     });
 
     this.rootlogin = data['rootlogin'];

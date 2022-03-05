@@ -1,0 +1,281 @@
+button.close-btn {
+  left: 598px;
+  position: absolute;
+  top: 4px;
+}
+
+.has-tooltip mat-form-field.full-width {
+  width: 100%;
+}
+
+.advanced-date-picker.mat-card {
+  border-radius: 2px;
+  box-shadow: 0 5px 5px -3px rgba(0, 0, 0, 0.2),0 8px 10px 1px rgba(0, 0, 0, 0.14),0 3px 14px 2px rgba(0, 0, 0, 0.12);
+  display: block;
+  left: 50%;
+  max-height: calc(100vh - 100px);
+  overflow: hidden;
+  position: fixed;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 640px;
+  z-index: 2;
+}
+
+.advanced-date-picker.mat-card h4.preview-label {
+  padding: 16px 16px 13px;
+  text-align: left;
+}
+
+.advanced-date-picker.mat-card .cron-fields h4.preview-label {
+  padding: 0;
+}
+
+.cron-fields,
+.mat-calendar-content {
+  width: 50%;
+}
+
+.mat-calendar-content {
+  background-color: var(--contrast-lighter);
+  height: 778px;
+  left: 0;
+  position: absolute;
+  top: 0;
+  width: 300px; /* Width of calendar preview*/
+}
+
+.mat-calendar-content code {
+  margin-left: 24px;
+  width: 252px;
+}
+
+ul.schedule-list {
+  list-style-type: none;
+  margin-top: 16px;
+  max-height: 416px;
+  overflow-y: auto;
+}
+
+ul.schedule-list li {
+  padding: 4px 12px 4px 20px;
+}
+
+ul.schedule-list li:nth-child(odd) {
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+::ng-deep .mat-calendar-body-label,
+::ng-deep .mat-calendar-body-cell-content {
+  color: var(--fg2);
+}
+
+.cron-fields {
+  background-color: var(--bg2);
+  margin-left: 310px;
+  min-height: 100%;
+  padding: 0;
+  text-align: center;
+  width: 320px;
+}
+
+::ng-deep mat-option .mat-option-text em.crontab {
+  opacity: 0.5;
+}
+
+::ng-deep .cron-fields .mat-checkbox-frame {
+  border-color: var(--primary-txt);
+}
+
+::ng-deep .cron-fields .mat-form-field-label,
+::ng-deep .cron-fields label.mat-form-field-placeholder,
+::ng-deep .cron-fields .mat-input-infix,
+.cron-fields .mat-form-field-should-float.mat-focused label {
+  color: var(--primary-txt) !important;
+}
+
+::ng-deep .mat-form-field-underline,
+::ng-deep .mat-focused .mat-form-field-underline,
+::ng-deep .mat-form-field-underline .mat-form-field-ripple {
+  background-color: var(--primary-txt) !important;
+}
+
+.cron-fields section {
+  padding: 16px;
+}
+
+.cron-fields section:first-child {
+  margin-bottom: 0;
+}
+
+.cron-fields section:last-child {
+  padding-bottom: 24px;
+}
+
+.cron-fields mat-divider {
+  position: relative;
+}
+
+.cron-fields table.months,
+.cron-fields table.days-of-week {
+  margin: 0 auto;
+}
+
+.cron-fields table td {
+  min-width: 24px;
+  padding: 4px 8px 0;
+  width: 40px;
+}
+
+.cron-fields table td .month,
+.cron-fields table td .weekday {
+  margin-top: 4px;
+}
+
+.cron-fields .invalid {
+  color: var(--red) !important;
+}
+
+.cron-fields .mat-input-element {
+  caret-color: var(--primary-txt) !important;
+}
+
+/*Button Toggle Group*/
+.cron-fields mat-button-toggle-group {
+  margin: 16px 0;
+}
+
+.cron-fields mat-button-toggle {
+  font-size: 12px;
+  padding: 7px;
+}
+
+mat-form-field.cron-presets {
+  display: block;
+  width: calc(240px + 24px);
+}
+
+.cron-fields section.m-h-d mat-form-field {
+  width: 100%;
+}
+
+/* Calendar View Settings*/
+.calendar-wrapper {
+  height: 300px;
+}
+
+.mat-calendar-content .controls {
+  display: inline-block;
+  position: absolute;
+  right: 8px;
+  top: 5px;
+}
+
+::ng-deep .cron-fields .mat-button-toggle-label-content {
+  line-height: unset;
+  padding: unset;
+}
+
+::ng-deep .mat-calendar-table {
+  width: 100%;
+}
+
+::ng-deep .mat-calendar-body-cell-content,
+::ng-deep .mat-calendar-body-label,
+::ng-deep .mat-calendar-table {
+  color: var(--fg2);
+}
+
+:host ::ng-deep thead.mat-calendar-table-header {
+  color: var(--fg2);
+  opacity: 0.5;
+}
+
+::ng-deep .mat-calendar-table-header tr {
+  padding: 4px;
+}
+
+::ng-deep .mat-calendar-table-header tr:nth-child(2) {
+  display: none;
+}
+
+::ng-deep .mat-calendar-table-header th {
+  padding: 8px 0;
+  text-align: center;
+}
+
+::ng-deep .mat-calendar-body td.mat-calendar-body-cell.mat-calendar-body-active .mat-calendar-body-cell-content {
+  background: var(--bg1);
+  border-radius: 50%;
+}
+
+::ng-deep .mat-calendar-body-today {
+  border-color: var(--green) !important;
+}
+
+#no-spaces {
+  font-size: 85%;
+  margin-bottom: 8px;
+}
+
+@media screen and (max-height:900px) {
+  .advanced-date-picker.mat-card {
+    overflow-y: auto;
+  }
+
+  .cron-fields {
+    margin-left: 300px;
+  }
+
+  button.close-btn {
+    left: 590px;
+  }
+}
+@media screen and (max-width:700px) {
+  .advanced-date-picker.mat-card {
+    max-width: calc(100% - 30px);
+    overflow-x: auto;
+  }
+}
+
+/* stylelint-disable-next-line function-url-quotes */
+@-moz-document url-prefix() {
+  .mat-calendar-content {
+    left: 10px !important;
+    width: 280px !important;
+  }
+
+  .mat-calendar-body-cell-content {
+    height: 36px;
+    max-height: 36px;
+    width: 36px;
+  }
+
+  #spacer {
+    visibility: hidden;
+  }
+}
+
+.time-zone-label {
+  margin: 0 0 10px;
+  padding-left: 20px;
+}
+
+.preset-description {
+  opacity: 0.6;
+}
+
+/* Material overrides */
+.cron-fields .label-container tooltip {
+  margin: 0 !important;
+  position: relative;
+  top: 4px;
+}
+
+.save-button {
+  margin: 9px;
+}
+
+.text-left {
+  text-align: left;
+}

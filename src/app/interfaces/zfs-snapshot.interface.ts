@@ -10,7 +10,7 @@ export interface ZfsSnapshot {
     [property: string]: ZfsProperty<string | number | boolean | ApiTimestamp>;
     creation: ZfsProperty<ApiTimestamp>;
   };
-  retention: any;
+  retention: unknown;
   snapshot_name: string;
   type: string; // "SNAPSHOT"
 }
@@ -21,21 +21,21 @@ export interface CreateZfsSnapshot {
   naming_schema?: string;
   recursive?: boolean;
   vmware_sync?: boolean;
-  properties: Record<string, unknown>;
+  properties?: Record<string, unknown>;
 }
 
 export interface CloneZfsSnapshot {
-  snapshot: boolean;
+  snapshot: string;
   dataset_dst: string;
-  dataset_properties: Record<string, unknown>;
+  dataset_properties?: Record<string, unknown>;
 }
 
 export type ZfsRollbackParams = [
   id: string,
   params: {
-    recursive: boolean;
-    recursive_clones: boolean;
-    force: boolean;
-    recursive_rollback: boolean;
+    recursive?: boolean;
+    recursive_clones?: boolean;
+    force?: boolean;
+    recursive_rollback?: boolean;
   },
 ];

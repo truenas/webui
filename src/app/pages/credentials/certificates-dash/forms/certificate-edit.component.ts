@@ -10,13 +10,13 @@ import { helptextSystemCertificates } from 'app/helptext/system/certificates';
 import { Certificate } from 'app/interfaces/certificate.interface';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { QueryFilter } from 'app/interfaces/query-api.interface';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
-import { FieldConfig, FormButtonConfig, FormParagraphConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
-import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
-import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
-import { EntityUtils } from 'app/pages/common/entity/utils';
+import { AppLoaderService } from 'app/modules/app-loader/app-loader.service';
+import { EntityFormComponent } from 'app/modules/entity/entity-form/entity-form.component';
+import { FieldConfig, FormButtonConfig, FormParagraphConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
+import { FieldSet } from 'app/modules/entity/entity-form/models/fieldset.interface';
+import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
+import { EntityUtils } from 'app/modules/entity/utils';
 import { DialogService, WebSocketService, StorageService } from 'app/services';
-import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { ModalService } from 'app/services/modal.service';
 
 @UntilDestroy()
@@ -225,7 +225,7 @@ export class CertificateEditComponent implements FormConfiguration {
     return data;
   }
 
-  custActions = [
+  customActions = [
     {
       id: 'create_ACME',
       name: helptextSystemCertificates.list.action_create_acme_certificate,
@@ -237,8 +237,8 @@ export class CertificateEditComponent implements FormConfiguration {
     },
   ];
 
-  isCustActionVisible(actionname: string): boolean {
-    if (actionname === 'create_ACME' && !this.isCsr) {
+  isCustomActionVisible(actionName: string): boolean {
+    if (actionName === 'create_ACME' && !this.isCsr) {
       return false;
     }
     return true;
@@ -254,22 +254,22 @@ export class CertificateEditComponent implements FormConfiguration {
       'root_path', 'digest_algorithm', 'key_length', 'key_type', 'until', 'revoked', 'lifetime',
     ];
     fields.forEach((field) => {
-      const paragraph: FormParagraphConfig = _.find(this.fieldConfig, { name: field });
+      const paragraph = _.find(this.fieldConfig, { name: field }) as FormParagraphConfig;
       if (this.incomingData[field] || this.incomingData[field] === false) {
         paragraph.paraText += this.incomingData[field];
       } else {
         paragraph.paraText += '---';
       }
     });
-    const sanConfig: FormParagraphConfig = _.find(this.fieldConfig, { name: 'san' });
+    const sanConfig = _.find(this.fieldConfig, { name: 'san' }) as FormParagraphConfig;
     sanConfig.paraText += this.incomingData.san.join(',');
 
-    const signedbyConfig: FormParagraphConfig = _.find(this.fieldConfig, { name: 'signedby' });
+    const signedbyConfig = _.find(this.fieldConfig, { name: 'signedby' }) as FormParagraphConfig;
     signedbyConfig.paraText += this.incomingData.signedby?.name || '---';
 
-    const issuer: FormParagraphConfig = _.find(this.fieldConfig, { name: 'issuer' });
+    const issuer = _.find(this.fieldConfig, { name: 'issuer' }) as FormParagraphConfig;
     if (_.isObject(this.incomingData.issuer)) {
-      issuer.paraText += (this.incomingData.issuer as any).name;
+      issuer.paraText += this.incomingData.issuer.name;
     } else if (this.incomingData.issuer) {
       issuer.paraText += this.incomingData.issuer;
     } else {

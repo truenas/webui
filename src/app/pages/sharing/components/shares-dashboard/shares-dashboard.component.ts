@@ -15,20 +15,20 @@ import { Service } from 'app/interfaces/service.interface';
 import { SmbShare } from 'app/interfaces/smb-share.interface';
 import { WebDavShare } from 'app/interfaces/web-dav-share.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
-import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
-import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
+import { DialogFormConfiguration } from 'app/modules/entity/entity-dialog/dialog-form-configuration.interface';
+import { EntityDialogComponent } from 'app/modules/entity/entity-dialog/entity-dialog.component';
 import {
   ExpandableTableState,
   InputExpandableTableConf,
-} from 'app/pages/common/entity/table/expandable-table/expandable-table.component';
+} from 'app/modules/entity/table/expandable-table/expandable-table.component';
 import {
   TableComponent,
   AppTableHeaderAction,
-} from 'app/pages/common/entity/table/table.component';
-import { EntityUtils } from 'app/pages/common/entity/utils';
+} from 'app/modules/entity/table/table.component';
+import { EntityUtils } from 'app/modules/entity/utils';
 import { TargetFormComponent } from 'app/pages/sharing/iscsi/target/target-form/target-form.component';
-import { NFSFormComponent } from 'app/pages/sharing/nfs/nfs-form/nfs-form.component';
-import { SMBFormComponent } from 'app/pages/sharing/smb/smb-form/smb-form.component';
+import { NfsFormComponent } from 'app/pages/sharing/nfs/nfs-form/nfs-form.component';
+import { SmbFormComponent } from 'app/pages/sharing/smb/smb-form/smb-form.component';
 import { WebdavFormComponent } from 'app/pages/sharing/webdav/webdav-form/webdav-form.component';
 import {
   DialogService,
@@ -38,10 +38,10 @@ import {
 } from 'app/services';
 
 enum ShareType {
-  SMB = 'smb',
-  NFS = 'nfs',
-  ISCSI = 'iscsi',
-  WebDAV = 'webdav',
+  Smb = 'smb',
+  Nfs = 'nfs',
+  Iscsi = 'iscsi',
+  WebDav = 'webdav',
 }
 
 type ShareTableRow = Partial<SmbShare> | Partial<WebDavShare> | Partial<NfsShare>;
@@ -54,10 +54,10 @@ type ShareTableRow = Partial<SmbShare> | Partial<WebDavShare> | Partial<NfsShare
   providers: [IscsiService],
 })
 export class SharesDashboardComponent implements AfterViewInit {
-  webdavTableConf: InputExpandableTableConf = this.getTableConfigForShareType(ShareType.WebDAV);
-  nfsTableConf: InputExpandableTableConf = this.getTableConfigForShareType(ShareType.NFS);
-  smbTableConf: InputExpandableTableConf = this.getTableConfigForShareType(ShareType.SMB);
-  iscsiTableConf: InputExpandableTableConf = this.getTableConfigForShareType(ShareType.ISCSI);
+  webdavTableConf: InputExpandableTableConf = this.getTableConfigForShareType(ShareType.WebDav);
+  nfsTableConf: InputExpandableTableConf = this.getTableConfigForShareType(ShareType.Nfs);
+  smbTableConf: InputExpandableTableConf = this.getTableConfigForShareType(ShareType.Smb);
+  iscsiTableConf: InputExpandableTableConf = this.getTableConfigForShareType(ShareType.Iscsi);
 
   webdavHasItems = 0;
   nfsHasItems = 0;
@@ -131,27 +131,27 @@ export class SharesDashboardComponent implements AfterViewInit {
 
   refreshDashboard(shareType: ShareType = null): void {
     switch (shareType) {
-      case ShareType.ISCSI: {
-        this.iscsiTableConf = this.getTableConfigForShareType(ShareType.ISCSI);
+      case ShareType.Iscsi: {
+        this.iscsiTableConf = this.getTableConfigForShareType(ShareType.Iscsi);
         break;
       }
-      case ShareType.NFS: {
-        this.nfsTableConf = this.getTableConfigForShareType(ShareType.NFS);
+      case ShareType.Nfs: {
+        this.nfsTableConf = this.getTableConfigForShareType(ShareType.Nfs);
         break;
       }
-      case ShareType.SMB: {
-        this.smbTableConf = this.getTableConfigForShareType(ShareType.SMB);
+      case ShareType.Smb: {
+        this.smbTableConf = this.getTableConfigForShareType(ShareType.Smb);
         break;
       }
-      case ShareType.WebDAV: {
-        this.webdavTableConf = this.getTableConfigForShareType(ShareType.WebDAV);
+      case ShareType.WebDav: {
+        this.webdavTableConf = this.getTableConfigForShareType(ShareType.WebDav);
         break;
       }
       default: {
-        this.webdavTableConf = this.getTableConfigForShareType(ShareType.WebDAV);
-        this.nfsTableConf = this.getTableConfigForShareType(ShareType.NFS);
-        this.smbTableConf = this.getTableConfigForShareType(ShareType.SMB);
-        this.iscsiTableConf = this.getTableConfigForShareType(ShareType.ISCSI);
+        this.webdavTableConf = this.getTableConfigForShareType(ShareType.WebDav);
+        this.nfsTableConf = this.getTableConfigForShareType(ShareType.Nfs);
+        this.smbTableConf = this.getTableConfigForShareType(ShareType.Smb);
+        this.iscsiTableConf = this.getTableConfigForShareType(ShareType.Iscsi);
         break;
       }
     }
@@ -159,7 +159,7 @@ export class SharesDashboardComponent implements AfterViewInit {
 
   getTableConfigForShareType(shareType: ShareType): InputExpandableTableConf {
     switch (shareType) {
-      case ShareType.NFS: {
+      case ShareType.Nfs: {
         return {
           title: this.translate.instant('UNIX (NFS) Shares'),
           titleHref: '/sharing/nfs',
@@ -180,16 +180,16 @@ export class SharesDashboardComponent implements AfterViewInit {
               name: helptextSharingNfs.column_enabled,
               prop: 'enabled',
               width: '60px',
-              checkbox: true,
-              onChange: (row: NfsShare) => this.onCheckboxToggle(ShareType.NFS, row, 'enabled'),
+              slideToggle: true,
+              onChange: (row: NfsShare) => this.onSlideToggle(ShareType.Nfs, row, 'enabled'),
             },
           ],
           detailsHref: '/sharing/nfs',
           add() {
-            this.parent.add(this.tableComponent, ShareType.NFS);
+            this.parent.add(this.tableComponent, ShareType.Nfs);
           },
           edit(row: NfsShare) {
-            this.parent.edit(this.tableComponent, ShareType.NFS, row.id);
+            this.parent.edit(this.tableComponent, ShareType.Nfs, row.id);
           },
           afterGetData: (data: NfsShare[]) => {
             this.nfsHasItems = 0;
@@ -202,7 +202,7 @@ export class SharesDashboardComponent implements AfterViewInit {
           limitRows: 5,
         };
       }
-      case ShareType.ISCSI: {
+      case ShareType.Iscsi: {
         return {
           title: this.translate.instant('Block (iSCSI) Shares Targets'),
           titleHref: '/sharing/iscsi/target',
@@ -228,10 +228,10 @@ export class SharesDashboardComponent implements AfterViewInit {
             },
           ],
           add() {
-            this.parent.add(this.tableComponent, ShareType.ISCSI);
+            this.parent.add(this.tableComponent, ShareType.Iscsi);
           },
           edit(row: IscsiTarget) {
-            this.parent.edit(this.tableComponent, ShareType.ISCSI, row.id);
+            this.parent.edit(this.tableComponent, ShareType.Iscsi, row.id);
           },
           afterGetData: (data: IscsiTarget[]) => {
             this.iscsiHasItems = 0;
@@ -247,7 +247,7 @@ export class SharesDashboardComponent implements AfterViewInit {
           },
         };
       }
-      case ShareType.WebDAV: {
+      case ShareType.WebDav: {
         return {
           title: this.translate.instant('WebDAV'),
           titleHref: '/sharing/webdav',
@@ -267,7 +267,7 @@ export class SharesDashboardComponent implements AfterViewInit {
             {
               prop: 'perm',
               name: helptextSharingWebdav.column_perm,
-              checkbox: true,
+              slideToggle: true,
               width: '70px',
               tooltip: helptextSharingWebdav.column_perm_tooltip,
             },
@@ -275,23 +275,23 @@ export class SharesDashboardComponent implements AfterViewInit {
               prop: 'ro',
               name: helptextSharingWebdav.column_ro,
               width: '60px',
-              checkbox: true,
-              onChange: (row: WebDavShare) => this.onCheckboxToggle(ShareType.WebDAV, row, 'ro'),
+              slideToggle: true,
+              onChange: (row: WebDavShare) => this.onSlideToggle(ShareType.WebDav, row, 'ro'),
             },
             {
               prop: 'enabled',
               name: helptextSharingWebdav.column_enabled,
               width: '60px',
-              checkbox: true,
-              onChange: (row: WebDavShare) => this.onCheckboxToggle(ShareType.WebDAV, row, 'enabled'),
+              slideToggle: true,
+              onChange: (row: WebDavShare) => this.onSlideToggle(ShareType.WebDav, row, 'enabled'),
             },
           ],
           add() {
-            this.parent.add(this.tableComponent, ShareType.WebDAV);
+            this.parent.add(this.tableComponent, ShareType.WebDav);
           },
           limitRowsByMaxHeight: true,
           edit(row: WebDavShare) {
-            this.parent.edit(this.tableComponent, ShareType.WebDAV, row.id);
+            this.parent.edit(this.tableComponent, ShareType.WebDav, row.id);
           },
           afterGetData: (data: WebDavShare[]) => {
             this.webdavHasItems = 0;
@@ -305,7 +305,7 @@ export class SharesDashboardComponent implements AfterViewInit {
           limitRows: 5,
         };
       }
-      case ShareType.SMB: {
+      case ShareType.Smb: {
         return {
           title: this.translate.instant('Windows (SMB) Shares'),
           titleHref: '/sharing/smb',
@@ -327,16 +327,16 @@ export class SharesDashboardComponent implements AfterViewInit {
               name: helptextSharingSmb.column_enabled,
               prop: 'enabled',
               width: '60px',
-              checkbox: true,
-              onChange: (row: SmbShare) => this.onCheckboxToggle(ShareType.SMB, row, 'enabled'),
+              slideToggle: true,
+              onChange: (row: SmbShare) => this.onSlideToggle(ShareType.Smb, row, 'enabled'),
             },
           ],
           limitRowsByMaxHeight: true,
           add() {
-            this.parent.add(this.tableComponent, ShareType.SMB);
+            this.parent.add(this.tableComponent, ShareType.Smb);
           },
           edit(row: SmbShare) {
-            this.parent.edit(this.tableComponent, ShareType.SMB, row.id);
+            this.parent.edit(this.tableComponent, ShareType.Smb, row.id);
           },
           afterGetData: (data: SmbShare[]) => {
             this.smbHasItems = 0;
@@ -353,18 +353,18 @@ export class SharesDashboardComponent implements AfterViewInit {
   }
 
   add(tableComponent: TableComponent, share: ShareType, id?: number): void {
-    let formComponent: Type<NFSFormComponent | SMBFormComponent | WebdavFormComponent | TargetFormComponent>;
+    let formComponent: Type<NfsFormComponent | SmbFormComponent | WebdavFormComponent | TargetFormComponent>;
     switch (share) {
-      case ShareType.NFS:
-        formComponent = NFSFormComponent;
+      case ShareType.Nfs:
+        formComponent = NfsFormComponent;
         break;
-      case ShareType.SMB:
-        formComponent = SMBFormComponent;
+      case ShareType.Smb:
+        formComponent = SmbFormComponent;
         break;
-      case ShareType.WebDAV:
+      case ShareType.WebDav:
         formComponent = WebdavFormComponent;
         break;
-      case ShareType.ISCSI:
+      case ShareType.Iscsi:
         formComponent = TargetFormComponent;
         break;
     }
@@ -385,23 +385,23 @@ export class SharesDashboardComponent implements AfterViewInit {
   }
 
   getTablesOrder(): string[] {
-    const order: string[] = [ShareType.SMB, ShareType.NFS, ShareType.ISCSI, ShareType.WebDAV];
+    const order: string[] = [ShareType.Smb, ShareType.Nfs, ShareType.Iscsi, ShareType.WebDav];
     // Note: The order of these IFs is important. One can't come before the other
     if (!this.smbHasItems) {
-      order.splice(order.findIndex((share) => share === ShareType.SMB), 1);
-      order.push(ShareType.SMB);
+      order.splice(order.findIndex((share) => share === ShareType.Smb), 1);
+      order.push(ShareType.Smb);
     }
     if (!this.nfsHasItems) {
-      order.splice(order.findIndex((share) => share === ShareType.NFS), 1);
-      order.push(ShareType.NFS);
+      order.splice(order.findIndex((share) => share === ShareType.Nfs), 1);
+      order.push(ShareType.Nfs);
     }
     if (!this.iscsiHasItems) {
-      order.splice(order.findIndex((share) => share === ShareType.ISCSI), 1);
-      order.push(ShareType.ISCSI);
+      order.splice(order.findIndex((share) => share === ShareType.Iscsi), 1);
+      order.push(ShareType.Iscsi);
     }
     if (!this.webdavHasItems) {
-      order.splice(order.findIndex((share) => share === ShareType.WebDAV), 1);
-      order.push(ShareType.WebDAV);
+      order.splice(order.findIndex((share) => share === ShareType.WebDav), 1);
+      order.push(ShareType.WebDav);
     }
     return order;
   }
@@ -425,22 +425,22 @@ export class SharesDashboardComponent implements AfterViewInit {
 
   getWebdavOrder(): string {
     const order = this.getTablesOrder();
-    return this.getOrderFromIndex(order.findIndex((share) => share === ShareType.WebDAV));
+    return this.getOrderFromIndex(order.findIndex((share) => share === ShareType.WebDav));
   }
 
   getNfsOrder(): string {
     const order = this.getTablesOrder();
-    return this.getOrderFromIndex(order.findIndex((share) => share === ShareType.NFS));
+    return this.getOrderFromIndex(order.findIndex((share) => share === ShareType.Nfs));
   }
 
   getIscsiOrder(): string {
     const order = this.getTablesOrder();
-    return this.getOrderFromIndex(order.findIndex((share) => share === ShareType.ISCSI));
+    return this.getOrderFromIndex(order.findIndex((share) => share === ShareType.Iscsi));
   }
 
   getSmbOrder(): string {
     const order = this.getTablesOrder();
-    return this.getOrderFromIndex(order.findIndex((share) => share === ShareType.SMB));
+    return this.getOrderFromIndex(order.findIndex((share) => share === ShareType.Smb));
   }
 
   getOrderFromIndex(index: number): string {
@@ -465,10 +465,10 @@ export class SharesDashboardComponent implements AfterViewInit {
         type: 'radio',
         name: 'share_type',
         options: [
-          { label: 'SMB', value: ShareType.SMB },
-          { label: 'NFS', value: ShareType.NFS },
-          { label: 'iSCSI Target', value: ShareType.ISCSI },
-          { label: 'WebDAV', value: ShareType.WebDAV },
+          { label: 'SMB', value: ShareType.Smb },
+          { label: 'NFS', value: ShareType.Nfs },
+          { label: 'iSCSI Target', value: ShareType.Iscsi },
+          { label: 'WebDAV', value: ShareType.WebDav },
         ],
         validation: [Validators.required],
       },
@@ -481,16 +481,16 @@ export class SharesDashboardComponent implements AfterViewInit {
     this.dialog.dialogForm(conf);
   }
 
-  onCheckboxToggle(card: ShareType, row: ShareTableRow, param: 'enabled' | 'ro'): void {
+  onSlideToggle(card: ShareType, row: ShareTableRow, param: 'enabled' | 'ro'): void {
     let updateCall: keyof ApiDirectory;
     switch (card) {
-      case ShareType.SMB:
+      case ShareType.Smb:
         updateCall = 'sharing.smb.update';
         break;
-      case ShareType.WebDAV:
+      case ShareType.WebDav:
         updateCall = 'sharing.webdav.update';
         break;
-      case ShareType.NFS:
+      case ShareType.Nfs:
         updateCall = 'sharing.nfs.update';
         break;
       default:

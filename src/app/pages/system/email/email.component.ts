@@ -14,11 +14,11 @@ import { helptextSystemEmail } from 'app/helptext/system/email';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { MailConfig } from 'app/interfaces/mail-config.interface';
 import { OauthMessage } from 'app/interfaces/oauth-message.interface';
-import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
-import { FormInputConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
-import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
-import { EntityUtils } from 'app/pages/common/entity/utils';
+import { FieldSets } from 'app/modules/entity/entity-form/classes/field-sets';
+import { EntityFormComponent } from 'app/modules/entity/entity-form/entity-form.component';
+import { FormInputConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
+import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
+import { EntityUtils } from 'app/modules/entity/utils';
 import {
   DialogService, WebSocketService, AppLoaderService,
 } from 'app/services';
@@ -41,7 +41,7 @@ export class EmailComponent implements FormConfiguration {
   rootEmail: string;
   private oauthCreds$: BehaviorSubject<OAuthData> = new BehaviorSubject({});
   customSubmit = this.saveConfigSubmit;
-  custActions = [{
+  customActions = [{
     id: 'send_mail',
     name: this.translate.instant('Send Test Mail'),
     function: () => {
@@ -99,13 +99,11 @@ export class EmailComponent implements FormConfiguration {
           options: [
             {
               label: helptextSystemEmail.send_mail_method.smtp.placeholder,
-              name: 'smtp',
               tooltip: helptextSystemEmail.send_mail_method.smtp.tooltip,
               value: true,
             },
             {
               label: helptextSystemEmail.send_mail_method.gmail.placeholder,
-              name: 'gmail',
               tooltip: helptextSystemEmail.send_mail_method.gmail.tooltip,
               value: false,
             },

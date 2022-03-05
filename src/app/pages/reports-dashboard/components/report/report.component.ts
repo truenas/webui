@@ -10,6 +10,7 @@ import {
 import { NgForm } from '@angular/forms';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { UUID } from 'angular2-uuid';
 import { add, sub } from 'date-fns';
@@ -19,14 +20,17 @@ import { CoreEvent } from 'app/interfaces/events';
 import { ThemeChangedEvent, ThemeDataEvent } from 'app/interfaces/events/theme-events.interface';
 import { ReportingGraph } from 'app/interfaces/reporting-graph.interface';
 import { ReportingData } from 'app/interfaces/reporting.interface';
-import { EmptyConfig, EmptyType } from 'app/pages/common/entity/entity-empty/entity-empty.component';
+import { Theme } from 'app/interfaces/theme.interface';
+import { EmptyConfig, EmptyType } from 'app/modules/entity/entity-empty/entity-empty.component';
 import { WidgetComponent } from 'app/pages/dashboard/components/widget/widget.component';
 import { LineChartComponent } from 'app/pages/reports-dashboard/components/line-chart/line-chart.component';
 import { ReportingDatabaseError, ReportsService } from 'app/pages/reports-dashboard/reports.service';
-import { WebSocketService, SystemGeneralService } from 'app/services/';
+import { WebSocketService } from 'app/services/';
+import { CoreService } from 'app/services/core-service/core.service';
 import { DialogService } from 'app/services/dialog.service';
 import { LocaleService } from 'app/services/locale.service';
-import { Theme } from 'app/services/theme/theme.service';
+import { AppState } from 'app/store';
+import { selectTimezone } from 'app/store/system-config/system-config.selectors';
 
 interface DateTime {
   dateFormat: string;
@@ -63,8 +67,7 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
   @Input() dateFormat?: DateTime;
   @Input() report: Report;
   @Input() identifier?: string;
-  // TODO: Make boolean
-  @Input() retroLogo?: string | number;
+  @Input() isReversed?: boolean;
   @ViewChild(LineChartComponent, { static: false }) lineChart: LineChartComponent;
 
   data: ReportingData;
@@ -138,8 +141,9 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
     private reportsService: ReportsService,
     private ws: WebSocketService,
     protected localeService: LocaleService,
-    private sysGeneralService: SystemGeneralService,
     private dialog: DialogService,
+    private core: CoreService,
+    private store$: Store<AppState>,
   ) {
     super(translate);
 
@@ -166,9 +170,9 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
 
     this.core.emit({ name: 'ThemeDataRequest', sender: this });
 
-    this.sysGeneralService.getGeneralConfig$.pipe(
-      untilDestroyed(this),
-    ).subscribe((res) => this.timezone = res.timezone);
+    this.store$.select(selectTimezone).pipe(untilDestroyed(this)).subscribe((timezone) => {
+      this.timezone = timezone;
+    });
   }
 
   ngOnDestroy(): void {
@@ -221,7 +225,7 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
   async timeZoomIn(): Promise<void> {
     // more detail
     const max = 4;
-    if (this.timeZoomIndex == max) { return; }
+    if (this.timeZoomIndex === max) { return; }
     this.timeZoomIndex += 1;
     const zoom = this.zoomLevels[this.timeZoomIndex];
     const rrdOptions = await this.convertTimespan(zoom.timespan);
@@ -235,7 +239,7 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
   async timeZoomOut(): Promise<void> {
     // less detail
     const min = Number(0);
-    if (this.timeZoomIndex == min) { return; }
+    if (this.timeZoomIndex === min) { return; }
     this.timeZoomIndex -= 1;
     const zoom = this.zoomLevels[this.timeZoomIndex];
     const rrdOptions = await this.convertTimespan(zoom.timespan);
@@ -272,15 +276,15 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
     let durationUnit: keyof Duration;
     let value: number;
 
-    const now = await this.reportsService.getServerTime();
+    const now = await this.reportsService.getServerTime().pipe(untilDestroyed(this)).toPromise();
 
     let startDate: Date;
     let endDate: Date;
-    if (direction == 'backward' && !currentDate) {
+    if (direction === 'backward' && !currentDate) {
       endDate = now;
-    } else if (direction == 'backward' && currentDate) {
+    } else if (direction === 'backward' && currentDate) {
       endDate = new Date(currentDate);
-    } else if (direction == 'forward' && currentDate) {
+    } else if (direction === 'forward' && currentDate) {
       startDate = new Date(currentDate);
     } else {
       throw new Error(
@@ -311,11 +315,11 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
         break;
     }
 
-    if (direction == 'backward') {
+    if (direction === 'backward') {
       const subOptions: Duration = {};
       subOptions[durationUnit] = value;
       startDate = sub(endDate, subOptions);
-    } else if (direction == 'forward') {
+    } else if (direction === 'forward') {
       const subOptions: Duration = {};
       subOptions[durationUnit] = value;
       endDate = add(startDate, subOptions);

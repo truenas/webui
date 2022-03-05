@@ -7,15 +7,14 @@ import { filter } from 'rxjs/operators';
 import { ConfirmOptions, ConfirmOptionsWithSecondaryCheckbox } from 'app/interfaces/dialog.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { Option } from 'app/interfaces/option.interface';
+import { DialogFormConfiguration } from 'app/modules/entity/entity-dialog/dialog-form-configuration.interface';
+import { EntityDialogComponent } from 'app/modules/entity/entity-dialog/entity-dialog.component';
 import { ConfirmDialogComponent } from 'app/pages/common/confirm-dialog/confirm-dialog.component';
-import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
-import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import { ErrorDialogComponent } from 'app/pages/common/error-dialog/error-dialog.component';
 import { GeneralDialogComponent, GeneralDialogConfig } from 'app/pages/common/general-dialog/general-dialog.component';
 import { InfoDialogComponent } from 'app/pages/common/info-dialog/info-dialog.component';
-import { PasswordDialogComponent } from 'app/pages/common/password-dialog/password-dialog.component';
 import { SelectDialogComponent } from 'app/pages/common/select-dialog/select-dialog.component';
-import { AppLoaderService } from './app-loader/app-loader.service';
+import { AppLoaderService } from '../modules/app-loader/app-loader.service';
 import { WebSocketService } from './ws.service';
 
 @UntilDestroy()
@@ -31,8 +30,8 @@ export class DialogService {
     ).subscribe(() => this.closeAllDialogs());
   }
 
-  confirm(confirmOptions: ConfirmOptions): Observable<boolean>
-  confirm(confirmOptions: ConfirmOptionsWithSecondaryCheckbox): MatDialogRef<ConfirmDialogComponent, unknown>
+  confirm(confirmOptions: ConfirmOptions): Observable<boolean>;
+  confirm(confirmOptions: ConfirmOptionsWithSecondaryCheckbox): MatDialogRef<ConfirmDialogComponent, unknown>;
   confirm(
     options: ConfirmOptions | ConfirmOptionsWithSecondaryCheckbox,
   ): Observable<boolean> | MatDialogRef<ConfirmDialogComponent, unknown> {
@@ -89,14 +88,6 @@ export class DialogService {
       });
       return dialogRef;
     }
-    return dialogRef.afterClosed();
-  }
-
-  passwordConfirm(message: string, disableClose = true): Observable<boolean> {
-    const dialogRef = this.dialog.open(PasswordDialogComponent, { disableClose });
-
-    dialogRef.componentInstance.message = message;
-
     return dialogRef.afterClosed();
   }
 

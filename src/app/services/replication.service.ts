@@ -1,13 +1,12 @@
 import { Injectable } from '@angular/core';
 import * as _ from 'lodash';
-import { reject } from 'q';
-import { Observable } from 'rxjs';
+import { Observable, throwError } from 'rxjs';
+import { catchError, map } from 'rxjs/operators';
 import { TransportMode } from 'app/enums/transport-mode.enum';
 import { SshKeyPair } from 'app/interfaces/keychain-credential.interface';
 import { ListdirChild } from 'app/interfaces/listdir-child.interface';
-import { PeriodicSnapshotTask } from 'app/interfaces/periodic-snapshot-task.interface';
 import { ReplicationTask } from 'app/interfaces/replication-task.interface';
-import { EntityUtils } from 'app/pages/common/entity/utils';
+import { EntityUtils } from 'app/modules/entity/utils';
 import { ReplicationFormComponent } from 'app/pages/data-protection/replication/replication-form/replication-form.component';
 import { ReplicationWizardComponent } from 'app/pages/data-protection/replication/replication-wizard/replication-wizard.component';
 import { DialogService } from 'app/services/dialog.service';
@@ -19,10 +18,6 @@ export class ReplicationService {
     protected ws: WebSocketService,
     private dialogService: DialogService,
   ) { }
-
-  getSnapshotTasks(): Observable<PeriodicSnapshotTask[]> {
-    return this.ws.call('pool.snapshottask.query');
-  }
 
   genSshKeypair(): Promise<SshKeyPair> {
     return this.ws.call('keychaincredential.generate_ssh_key_pair').toPromise();
@@ -37,8 +32,8 @@ export class ReplicationService {
     if (transport !== TransportMode.Local) {
       queryParams.push(sshCredentials);
     }
-    return this.ws.call('replication.list_datasets', queryParams).toPromise().then(
-      (res) => {
+    return this.ws.call('replication.list_datasets', queryParams).pipe(
+      map((res) => {
         const nodes: ListdirChild[] = [];
         res.forEach((dataset) => {
           const pathArr = dataset.split('/');
@@ -52,13 +47,13 @@ export class ReplicationService {
             nodes.push(node);
           } else {
             let parent = _.find(nodes, { name: pathArr[0] });
-            let j = 1;
-            while (_.find(parent.children, { subTitle: pathArr[j] })) {
-              parent = _.find(parent.children, { subTitle: pathArr[j++] });
+            let i = 1;
+            while (_.find(parent.children, { subTitle: pathArr[i] })) {
+              parent = _.find(parent.children, { subTitle: pathArr[i++] });
             }
             const node: ListdirChild = {
               name: dataset,
-              subTitle: pathArr[j],
+              subTitle: pathArr[i],
               hasChildren: false,
               children: [],
             };
@@ -67,12 +62,12 @@ export class ReplicationService {
           }
         });
         return nodes;
-      },
-      (err) => {
+      }),
+      catchError((err) => {
         new EntityUtils().handleWsError(parentComponent, err, this.dialogService);
-        return reject(err);
-      },
-    );
+        return throwError(err);
+      }),
+    ).toPromise();
   }
 
   getReplicationTasks(): Observable<ReplicationTask[]> {

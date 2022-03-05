@@ -1,7 +1,7 @@
 import { Validators } from '@angular/forms';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import globalHelptext from 'app/helptext/global-helptext';
-import { portRangeValidator, rangeValidator } from 'app/pages/common/entity/entity-form/validators/range-validation';
+import { portRangeValidator, rangeValidator } from 'app/modules/entity/entity-form/validators/range-validation';
 
 export default {
   fieldset_general: T('General Options'),

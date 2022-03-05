@@ -2,7 +2,7 @@ import {
   FieldConfig,
   FormDictConfig,
   FormListConfig,
-} from 'app/pages/common/entity/entity-form/models/field-config.interface';
+} from 'app/modules/entity/entity-form/models/field-config.interface';
 
 export function remapAppConfigData(data: any, fieldConfigs: FieldConfig[]): any {
   const result = {} as any;

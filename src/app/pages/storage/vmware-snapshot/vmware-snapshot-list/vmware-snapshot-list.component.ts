@@ -2,8 +2,8 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { VmwareSnapshot } from 'app/interfaces/vmware.interface';
-import { EntityTableComponent } from 'app/pages/common/entity/entity-table/entity-table.component';
-import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
+import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-table.component';
+import { EntityTableAction, EntityTableConfig } from 'app/modules/entity/entity-table/entity-table.interface';
 
 @Component({
   selector: 'vmware-snapshot-list',
@@ -39,7 +39,7 @@ export class VmwareSnapshotListComponent implements EntityTableConfig {
   ) {}
 
   isActionVisible(actionId: string): boolean {
-    if (actionId == 'edit' || actionId == 'add') {
+    if (actionId === 'edit' || actionId === 'add') {
       return false;
     }
     return true;

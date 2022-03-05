@@ -1,6 +1,6 @@
 import { Option } from 'app/interfaces/option.interface';
-import { EmptyConfig } from 'app/pages/common/entity/entity-empty/entity-empty.component';
-import { AppTableConfig } from 'app/pages/common/entity/table/table.component';
+import { EmptyConfig } from 'app/modules/entity/entity-empty/entity-empty.component';
+import { AppTableConfig } from 'app/modules/entity/table/table.component';
 
 export interface DataCard<T> {
   title: string;

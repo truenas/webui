@@ -1,8 +1,10 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, OnDestroy } from '@angular/core';
-import { CoreService } from 'app/core/services/core-service/core.service';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { CoreEvent } from 'app/interfaces/events';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
+import { CoreService } from 'app/services/core-service/core.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 /*
@@ -61,7 +63,7 @@ export class ReportsService implements OnDestroy {
 
         // We average out cputemps for v11.3.
         // Move this to backend for 12.
-        if (evt.data.report.name == 'cputemp') {
+        if (evt.data.report.name === 'cputemp') {
           // Do a complete replacement instead...
           const repl = [{
             command: 'avgCpuTempReport',
@@ -78,7 +80,7 @@ export class ReportsService implements OnDestroy {
     });
 
     this.reportsUtils.onmessage = ({ data }) => {
-      if (data.name == 'ReportData') {
+      if (data.name === 'ReportData') {
         this.core.emit({ name: 'ReportData-' + data.sender, data: data.data, sender: this });
       }
     };
@@ -106,9 +108,9 @@ export class ReportsService implements OnDestroy {
     let index = data.length - 1;
     do {
       // True only when all the values are null
-      const isEmpty = !data[index].reduce((acc, v) => {
+      const isEmpty = !data[index].reduce((acc, i) => {
         // Treat zero as a value
-        const value = v !== null ? 1 : v;
+        const value = i !== null ? 1 : i;
         return acc + value;
       });
 
@@ -123,20 +125,11 @@ export class ReportsService implements OnDestroy {
     return data;
   }
 
-  async getServerTime(): Promise<Date> {
-    let date;
-    const options = {
-      observe: 'response' as const,
-      responseType: 'text' as const,
-    };
-    await this.http.get(window.location.origin.toString(), options).toPromise().then((resp) => {
-      const serverTime = resp.headers.get('Date');
-      const seconds = new Date(serverTime).getTime();
-      const secondsToTrim = 60;
-      const trimmed = new Date(seconds - (secondsToTrim * 1000));
-      date = trimmed;
-    });
-
-    return date;
+  getServerTime(): Observable<Date> {
+    return this.ws.call('system.info')
+      .pipe(map((systemInfo) => {
+        const msToTrim = 60_000;
+        return new Date(systemInfo.datetime.$date - msToTrim);
+      }));
   }
 }

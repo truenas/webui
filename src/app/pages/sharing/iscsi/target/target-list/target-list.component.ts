@@ -4,9 +4,9 @@ import { TranslateService } from '@ngx-translate/core';
 import { filter } from 'rxjs/operators';
 import { IscsiTarget } from 'app/interfaces/iscsi.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
-import { EntityTableComponent } from 'app/pages/common/entity/entity-table/entity-table.component';
-import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
-import { EntityUtils } from 'app/pages/common/entity/utils';
+import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-table.component';
+import { EntityTableAction, EntityTableConfig } from 'app/modules/entity/entity-table/entity-table.interface';
+import { EntityUtils } from 'app/modules/entity/utils';
 import { TargetFormComponent } from 'app/pages/sharing/iscsi/target/target-form/target-form.component';
 import { ModalService } from 'app/services';
 import { IscsiService } from 'app/services/iscsi.service';
@@ -99,7 +99,7 @@ export class TargetListComponent implements EntityTableConfig, OnInit {
             const payload: [id: number, force?: boolean] = [rowinner.id];
             let warningMsg = '';
             for (const session of res) {
-              if (session.target.split(':')[1] == rowinner.name) {
+              if (session.target.split(':')[1] === rowinner.name) {
                 warningMsg = `<font color="red">${this.translate.instant('Warning: iSCSI Target is already in use.</font><br>')}`;
                 payload.push(true); // enable force delele
                 break;

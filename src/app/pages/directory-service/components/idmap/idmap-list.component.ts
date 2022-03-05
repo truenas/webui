@@ -9,9 +9,9 @@ import helptext from 'app/helptext/directory-service/idmap';
 import { Idmap } from 'app/interfaces/idmap.interface';
 import { QueryParams } from 'app/interfaces/query-api.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
-import { EntityTableComponent } from 'app/pages/common/entity/entity-table/entity-table.component';
-import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
-import { EntityUtils } from 'app/pages/common/entity/utils';
+import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-table.component';
+import { EntityTableAction, EntityTableConfig } from 'app/modules/entity/entity-table/entity-table.interface';
+import { EntityUtils } from 'app/modules/entity/utils';
 import { ActiveDirectoryComponent } from 'app/pages/directory-service/components/active-directory/active-directory.component';
 import { IdmapRow } from 'app/pages/directory-service/components/idmap/idmap-row.interface';
 import { requiredIdmapDomains } from 'app/pages/directory-service/utils/required-idmap-domains.utils';
@@ -65,20 +65,20 @@ export class IdmapListComponent implements EntityTableConfig {
     protected translate: TranslateService,
   ) { }
 
-  resourceTransformIncomingRestData(data: Idmap[]): IdmapRow[] {
-    const transformed = [...data] as IdmapRow[];
-    transformed.forEach((item) => {
-      if (item.certificate) {
-        item.cert_name = item.certificate.cert_name;
+  resourceTransformIncomingRestData(ipdmaps: Idmap[]): IdmapRow[] {
+    const transformed = [...ipdmaps] as IdmapRow[];
+    transformed.forEach((row) => {
+      if (row.certificate) {
+        row.cert_name = row.certificate.cert_name;
       }
-      if (item.name === IdmapName.DsTypeActiveDirectory && item.idmap_backend === 'AUTORID') {
-        const obj = transformed.find((o) => o.name === IdmapName.DsTypeDefaultDomain);
+      if (row.name === IdmapName.DsTypeActiveDirectory && row.idmap_backend === 'AUTORID') {
+        const obj = transformed.find((idmapRow) => idmapRow.name === IdmapName.DsTypeDefaultDomain);
         obj.disableEdit = true;
       }
-      item.label = item.name;
-      const index = helptext.idmap.name.options.findIndex((o) => o.value === item.name);
+      row.label = row.name;
+      const index = helptext.idmap.name.options.findIndex((option) => option.value === row.name);
       if (index >= 0) {
-        item.label = helptext.idmap.name.options[index].label;
+        row.label = helptext.idmap.name.options[index].label;
       }
     });
     return transformed;

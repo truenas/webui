@@ -1,4 +1,3 @@
-import { Validators } from '@angular/forms';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
 export default {
@@ -12,17 +11,8 @@ export default {
   unlockDialog_services_placeholder: T('Restart Services'),
   unlockDialog_services_tooltip: T('List of system services to restart when the pool is unlocked.'),
 
-  snapshotDialog_dataset_placeholder: T('Pool/Dataset'),
-
-  snapshotDialog_name_placeholder: T('Name'),
   snapshotDialog_name_tooltip: T('Add a name for the new snapshot.'),
-  snapshotDialog_name_validation: [Validators.required],
-
-  snapshotDialog_recursive_placeholder: T('Recursive'),
   snapshotDialog_recursive_tooltip: T('Set to include child datasets of the chosen dataset.'),
-
-  vmware_sync_placeholder: T('VMWare Sync'),
-  vmware_sync_tooltip: T(''),
 
   exportAction: T('Export/Disconnect'),
 
@@ -99,7 +89,6 @@ the system dataset transfers back to the TrueNAS operating system device.'),
   encryption_actions_title: T('Encryption Actions'),
 
   export_keys_title: T('Export Dataset Keys for '),
-  export_keys_message: T('Export dataset keys which can be used to unlock datasets for '),
   export_keys_button: T('Export'),
 
   dataset_actions: T('Dataset Actions'),
@@ -108,15 +97,9 @@ the system dataset transfers back to the TrueNAS operating system device.'),
   lock_action: T('Lock'),
   encryption_options: T('Encryption Options'),
   encryption_options_dialog: {
-    dialog_title: T('Edit Encryption Options for '),
     inherit_placeholder: T('Inherit encryption properties from parent'),
-    inherit_tooltip: T(''),
-    dialog_saved_title: T('Encryption Options Saved'),
-    dialog_saved_message1: T('Encryption options for '),
-    dialog_saved_message2: T(' successfully saved.'),
     save_encryption_options: T('Save Encryption Options'),
     saving_encryption_options: T('Saving Encryption Options...'),
-    confirm_checkbox: T('Confirm'),
     save_button: T('Save'),
   },
   pool_options_dialog: {
@@ -139,6 +122,7 @@ the system dataset transfers back to the TrueNAS operating system device.'),
   },
   encryptMsg: T('These services depend on pool <i>{name}</i> and will be disrupted if the pool is locked:'),
   datasetDeleteMsg: T('These services depend on dataset <i>{name}</i> and will be destroyed if the dataset is deleted:'),
+  zvolDeleteMsg: T('These services depend on ZVol <i>{name}</i> and will be destroyed if the ZVol is deleted:'),
   runningMsg: T('These running services are using'),
   unknownMsg: T('These unknown processes are using this pool:'),
   terminatedMsg: T('WARNING: These unknown processes will be terminated while locking the pool.'),

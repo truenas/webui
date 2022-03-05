@@ -10,11 +10,11 @@ import { AclType } from 'app/enums/acl-type.enum';
 import helptext from 'app/helptext/storage/volumes/datasets/dataset-permissions';
 import { DatasetPermissionsUpdate } from 'app/interfaces/dataset-permissions.interface';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
-import { FormComboboxConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
-import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
-import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
-import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
+import { EntityFormComponent } from 'app/modules/entity/entity-form/entity-form.component';
+import { FormComboboxConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
+import { FieldSet } from 'app/modules/entity/entity-form/models/fieldset.interface';
+import { RelationAction } from 'app/modules/entity/entity-form/models/relation-action.enum';
+import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import {
   DialogService, StorageService, UserService, WebSocketService,
 } from 'app/services';
@@ -136,7 +136,7 @@ export class DatasetTrivialPermissionsComponent implements FormConfiguration {
     },
   ];
 
-  custActions = [
+  customActions = [
     {
       id: 'cancel',
       name: helptext.acl_manager_button,
@@ -156,7 +156,7 @@ export class DatasetTrivialPermissionsComponent implements FormConfiguration {
     },
   ];
 
-  isCustActionVisible(action: string): boolean {
+  isCustomActionVisible(action: string): boolean {
     if (action !== 'cancel') {
       return true;
     }
@@ -298,7 +298,7 @@ export class DatasetTrivialPermissionsComponent implements FormConfiguration {
         const userOptions = users.map((user) => {
           return { label: user.username, value: user.username };
         });
-        if (searchText == '') {
+        if (searchText === '') {
           parent.userField.options = parent.userField.options.concat(userOptions);
         } else {
           parent.userField.searchOptions = parent.userField.searchOptions.concat(userOptions);
@@ -313,7 +313,7 @@ export class DatasetTrivialPermissionsComponent implements FormConfiguration {
         const groupOptions = groups.map((group) => {
           return { label: group.group, value: group.group };
         });
-        if (searchText == '') {
+        if (searchText === '') {
           parent.groupField.options = parent.groupField.options.concat(groupOptions);
         } else {
           parent.groupField.searchOptions = parent.groupField.searchOptions.concat(groupOptions);

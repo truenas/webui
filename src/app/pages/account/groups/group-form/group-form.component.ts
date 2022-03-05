@@ -9,9 +9,9 @@ import * as _ from 'lodash';
 import { Observable } from 'rxjs';
 import helptext from 'app/helptext/account/groups';
 import { Group } from 'app/interfaces/group.interface';
-import { forbiddenValues } from 'app/pages/common/entity/entity-form/validators/forbidden-values-validation';
-import { regexValidator } from 'app/pages/common/entity/entity-form/validators/regex-validation';
-import { FormErrorHandlerService } from 'app/pages/common/ix-forms/services/form-error-handler.service';
+import { forbiddenValues } from 'app/modules/entity/entity-form/validators/forbidden-values-validation';
+import { regexValidator } from 'app/modules/entity/entity-form/validators/regex-validation';
+import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { UserService, WebSocketService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
@@ -54,7 +54,7 @@ export class GroupFormComponent {
     private cdr: ChangeDetectorRef,
     private errorHandler: FormErrorHandlerService,
     private translate: TranslateService,
-  ) {}
+  ) { }
 
   /**
    * @param group Skip argument to add new group.

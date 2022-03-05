@@ -11,13 +11,13 @@ import globalHelptext from 'app/helptext/global-helptext';
 import helptext from 'app/helptext/storage/volumes/datasets/dataset-quotas';
 import { SetDatasetQuota } from 'app/interfaces/dataset-quota.interface';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
+import { EntityFormComponent } from 'app/modules/entity/entity-form/entity-form.component';
 import {
   FieldConfig,
   FormChipConfig,
   FormSelectConfig,
-} from 'app/pages/common/entity/entity-form/models/field-config.interface';
-import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
+} from 'app/modules/entity/entity-form/models/field-config.interface';
+import { FieldSet } from 'app/modules/entity/entity-form/models/fieldset.interface';
 import { QuotaFormValues } from 'app/pages/storage/volumes/datasets/dataset-quotas/quota-form-values.interface';
 import {
   AppLoaderService, DialogService, StorageService, UserService, WebSocketService,
@@ -141,10 +141,11 @@ export class UserQuotaFormComponent implements FormConfiguration, DoCheck {
   }
 
   allowSubmit(): void {
-    if ((this.dq || this.oq)
-        && (this.selectedEntriesValue.value && this.selectedEntriesValue.value.length > 0
-        || this.searchedEntries && this.searchedEntries.length > 0)
-        && !this.entryErrBool) {
+    if (
+      (this.dq || this.oq)
+      && (this.selectedEntriesValue.value?.length > 0 || this.searchedEntries?.length > 0)
+      && !this.entryErrBool
+    ) {
       this.saveButtonEnabled = true;
     } else {
       this.saveButtonEnabled = false;

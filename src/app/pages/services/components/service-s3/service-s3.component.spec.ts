@@ -9,9 +9,9 @@ import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.u
 import helptext from 'app/helptext/services/components/service-s3';
 import { Certificate } from 'app/interfaces/certificate.interface';
 import { S3Config } from 'app/interfaces/s3-config.interface';
-import { IxFormsModule } from 'app/pages/common/ix-forms/ix-forms.module';
-import { FormErrorHandlerService } from 'app/pages/common/ix-forms/services/form-error-handler.service';
-import { IxFormHarness } from 'app/pages/common/ix-forms/testing/ix-form.harness';
+import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
+import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
+import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { DialogService, SystemGeneralService, WebSocketService } from 'app/services';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
@@ -36,7 +36,9 @@ describe('ServiceS3Component', () => {
           secret_key: '12345678',
           storage_path: '/mnt/s3/',
           browser: true,
+          console_bindport: 9001,
           certificate: 2,
+          tls_server_uri: 'test',
         } as S3Config),
         mockCall('s3.bindip_choices', {
           '0.0.0.0': '0.0.0.0',
@@ -83,6 +85,8 @@ describe('ServiceS3Component', () => {
       Disk: '/mnt/s3/',
       'Secret Key': '12345678',
       Certificate: 'Very Secure',
+      'Console Port': '9001',
+      'TLS Server Hostname': 'test',
     });
   });
 
@@ -110,6 +114,8 @@ describe('ServiceS3Component', () => {
       Disk: '/mnt/new',
       'Enable Browser': false,
       Certificate: 'Default',
+      'Console Port': 9001,
+      'TLS Server Hostname': 'test',
     });
 
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
@@ -123,6 +129,8 @@ describe('ServiceS3Component', () => {
       certificate: 1,
       secret_key: '12345678',
       storage_path: '/mnt/new',
+      console_bindport: 9001,
+      tls_server_uri: 'test',
     }]);
   });
 });

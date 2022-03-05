@@ -1,0 +1,10 @@
+:host {
+  align-items: center;
+  display: flex !important;
+
+  .toolbar-slide-toggle {
+    tooltip {
+      margin-left: 10px;
+    }
+  }
+}

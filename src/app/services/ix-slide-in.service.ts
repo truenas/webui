@@ -1,6 +1,6 @@
 import { Injectable, Type } from '@angular/core';
 import { Subject } from 'rxjs';
-import { IxSlideInComponent } from 'app/pages/common/ix-forms/components/ix-slide-in/ix-slide-in.component';
+import { IxSlideInComponent } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.component';
 
 @Injectable({
   providedIn: 'root',
@@ -13,8 +13,8 @@ export class IxSlideInService {
     this.slideInComponent = modal;
   }
 
-  open<T>(modal: Type<T>): T {
-    return this.slideInComponent.openSlideIn(modal);
+  open<T>(modal: Type<T>, params?: { wide: boolean }): T {
+    return this.slideInComponent.openSlideIn(modal, params);
   }
 
   close(error?: Error, response?: unknown): void {

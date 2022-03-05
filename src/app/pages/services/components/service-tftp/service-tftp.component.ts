@@ -1,4 +1,4 @@
-import { ApplicationRef, Component, Injector } from '@angular/core';
+import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { ExplorerType } from 'app/enums/explorer-type.enum';
@@ -6,9 +6,9 @@ import { choicesToOptions } from 'app/helpers/options.helper';
 import helptext from 'app/helptext/services/components/service-tftp';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { TftpConfig } from 'app/interfaces/tftp-config.interface';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
-import { FormComboboxConfig, FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
-import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
+import { EntityFormComponent } from 'app/modules/entity/entity-form/entity-form.component';
+import { FormComboboxConfig, FormSelectConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
+import { FieldSet } from 'app/modules/entity/entity-form/models/fieldset.interface';
 import { UserService, WebSocketService } from 'app/services';
 
 @UntilDestroy()
@@ -16,7 +16,7 @@ import { UserService, WebSocketService } from 'app/services';
   selector: 'tftp-edit',
   template: '<entity-form [conf]="this"></entity-form>',
 })
-export class ServiceTFTPComponent implements FormConfiguration {
+export class ServiceTftpComponent implements FormConfiguration {
   queryCall = 'tftp.config' as const;
   routeSuccess: string[] = ['services'];
   title = helptext.formTitle;
@@ -107,8 +107,6 @@ export class ServiceTFTPComponent implements FormConfiguration {
     protected router: Router,
     protected route: ActivatedRoute,
     protected ws: WebSocketService,
-    protected _injector: Injector,
-    protected _appRef: ApplicationRef,
     protected userService: UserService,
   ) {}
 

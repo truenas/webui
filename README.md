@@ -35,11 +35,7 @@ NOTE: Pull requests are also generated as Docker images and can be used for test
 
 # Getting started
 
-Install the development requirements (FreeBSD 11 or later):
-
-```sh
-# pkg install yarn
-```
+Have a system with yarn.
 
 Checkout TrueNAS git repository:
 

@@ -10,7 +10,8 @@ import { InitShutdownScriptType } from 'app/enums/init-shutdown-script-type.enum
 import { InitShutdownScriptWhen } from 'app/enums/init-shutdown-script-when.enum';
 import helptext from 'app/helptext/system/init-shutdown';
 import { InitShutdownScript } from 'app/interfaces/init-shutdown-script.interface';
-import { FormErrorHandlerService } from 'app/pages/common/ix-forms/services/form-error-handler.service';
+import { numberValidator } from 'app/modules/entity/entity-form/validators/number-validation';
+import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { WebSocketService } from 'app/services';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
@@ -41,7 +42,7 @@ export class InitShutdownFormComponent implements OnInit {
     script: ['', [Validators.required]],
     when: [null as InitShutdownScriptWhen, [Validators.required]],
     enabled: [true],
-    timeout: [10],
+    timeout: [10, numberValidator()],
   });
 
   readonly isCommand$ = this.form.select((values) => values.type === InitShutdownScriptType.Command);

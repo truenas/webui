@@ -8,13 +8,13 @@ import { TranslateService } from '@ngx-translate/core';
 import _ from 'lodash';
 import { Observable, of } from 'rxjs';
 import { filter, switchMap } from 'rxjs/operators';
-import { FormErrorHandlerService } from 'app/pages/common/ix-forms/services/form-error-handler.service';
-import { DialogService, SystemGeneralService, WebSocketService } from 'app/services';
+import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
+import { DialogService, WebSocketService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { ServiceName } from '../../../../enums/service-name.enum';
 import { ServiceStatus } from '../../../../enums/service-status.enum';
 import { choicesToOptions } from '../../../../helpers/options.helper';
-import { EntityUtils } from '../../../common/entity/utils';
+import { EntityUtils } from '../../../../modules/entity/utils';
 
 @UntilDestroy()
 @Component({
@@ -39,7 +39,6 @@ export class SystemDatasetPoolComponent implements OnInit {
     private fb: FormBuilder,
     private dialogService: DialogService,
     private translate: TranslateService,
-    private sysGeneralService: SystemGeneralService,
   ) {}
 
   ngOnInit(): void {
@@ -72,7 +71,6 @@ export class SystemDatasetPoolComponent implements OnInit {
     ).subscribe(
       () => {
         this.isFormLoading = false;
-        this.sysGeneralService.refreshSysGeneral();
         this.cdr.markForCheck();
         this.slideInService.close();
       },

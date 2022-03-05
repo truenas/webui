@@ -5,10 +5,10 @@ import * as _ from 'lodash';
 import helptext from 'app/helptext/data-protection/snapshot/snapshot-form';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { PeriodicSnapshotTask } from 'app/interfaces/periodic-snapshot-task.interface';
-import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
-import { FormSelectConfig, UnitType } from 'app/pages/common/entity/entity-form/models/field-config.interface';
-import { EntityUtils } from 'app/pages/common/entity/utils';
+import { FieldSets } from 'app/modules/entity/entity-form/classes/field-sets';
+import { EntityFormComponent } from 'app/modules/entity/entity-form/entity-form.component';
+import { FormSelectConfig, UnitType } from 'app/modules/entity/entity-form/models/field-config.interface';
+import { EntityUtils } from 'app/modules/entity/utils';
 import { DialogService, StorageService, TaskService } from 'app/services';
 import { ModalService } from 'app/services/modal.service';
 
@@ -164,7 +164,7 @@ export class SnapshotFormComponent implements FormConfiguration {
           datasetField.warnings = helptext.dataset_warning;
           this.saveButtonEnabled = false;
         }
-        datasetField.options = _.sortBy(options, [(o) => o.label]);
+        datasetField.options = _.sortBy(options, [(option) => option.label]);
       },
       (error) => new EntityUtils().handleWsError(this, error, this.dialog),
     );
@@ -229,7 +229,7 @@ export class SnapshotFormComponent implements FormConfiguration {
     const formatted = schedule.minute + ' ' + schedule.hour + ' ' + schedule.dom + ' ' + schedule.month + ' ' + schedule.dow;
     const cronField = entity.formGroup.controls['cron_schedule'];
     cronField.setValue(formatted);
-    const cronEntity = entity.fieldConfig.find((field) => field.name == 'cron_schedule');
+    const cronEntity = entity.fieldConfig.find((field) => field.name === 'cron_schedule');
     cronEntity.value = formatted;
 
     // Setup all the other fields

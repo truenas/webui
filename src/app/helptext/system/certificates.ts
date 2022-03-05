@@ -1,6 +1,6 @@
 import { Validators } from '@angular/forms';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
-import { matchOtherValidator } from 'app/pages/common/entity/entity-form/validators/password-validation/password-validation';
+import { matchOtherValidator } from 'app/modules/entity/entity-form/validators/password-validation/password-validation';
 
 export const helptextSystemCertificates = {
   add: {
@@ -57,6 +57,14 @@ matches your certificate usage scenario.'),
       tooltip: T(
         'Check this box if importing a certificate for which a CSR exists on this system',
       ),
+    },
+
+    csrlist: {
+      placeholder: T('Certificate Signing Request'),
+      tooltip: T(
+        'Select an existing CSR.',
+      ),
+      validation: [Validators.required],
     },
 
     signedby: {

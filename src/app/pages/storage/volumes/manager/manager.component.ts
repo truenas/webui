@@ -4,6 +4,7 @@ import {
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { DatatableComponent } from '@swimlane/ngx-datatable';
 import * as filesize from 'filesize';
@@ -11,20 +12,24 @@ import * as _ from 'lodash';
 import { of } from 'rxjs';
 import { filter, switchMap, take } from 'rxjs/operators';
 import { DownloadKeyDialogComponent } from 'app/components/common/dialog/download-key/download-key-dialog.component';
+import { DiskBus } from 'app/enums/disk-bus.enum';
+import { DiskType } from 'app/enums/disk-type.enum';
 import helptext from 'app/helptext/storage/volumes/manager/manager';
 import { Job } from 'app/interfaces/job.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { CreatePool, Pool, UpdatePool } from 'app/interfaces/pool.interface';
 import { VDev } from 'app/interfaces/storage.interface';
-import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
-import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
-import { FormParagraphConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
-import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
-import { EntityUtils } from 'app/pages/common/entity/utils';
+import { AppLoaderService } from 'app/modules/app-loader/app-loader.service';
+import { DialogFormConfiguration } from 'app/modules/entity/entity-dialog/dialog-form-configuration.interface';
+import { EntityDialogComponent } from 'app/modules/entity/entity-dialog/entity-dialog.component';
+import { FormParagraphConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
+import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
+import { EntityUtils } from 'app/modules/entity/utils';
 import { ManagerDisk } from 'app/pages/storage/volumes/manager/manager-disk.interface';
-import { DialogService, WebSocketService, SystemGeneralService } from 'app/services';
-import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
+import { DialogService, WebSocketService } from 'app/services';
 import { StorageService } from 'app/services/storage.service';
+import { AppState } from 'app/store';
+import { waitForAdvancedConfig } from 'app/store/system-config/system-config.selectors';
 import { VdevComponent } from './vdev/vdev.component';
 
 @UntilDestroy()
@@ -41,11 +46,12 @@ export class ManagerComponent implements OnInit, AfterViewInit {
   vdevs: any = {
     data: [{}], cache: [], spares: [], log: [], special: [], dedup: [],
   };
-  originalDisks: ManagerDisk[];
-  originalSuggestableDisks: ManagerDisk[];
+  originalDisks: ManagerDisk[] = [];
+  originalSuggestableDisks: ManagerDisk[] = [];
   error: string;
   @ViewChildren(VdevComponent) vdevComponents: QueryList<VdevComponent> ;
   @ViewChild(DatatableComponent, { static: false }) table: DatatableComponent;
+  // TODO: Rename to something more readable
   temp: ManagerDisk[] = [];
 
   name: string;
@@ -103,7 +109,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
   firstDataVdevType: string;
   firstDataVdevDisknum = 0;
   firstDataVdevDisksize: number;
-  firstDataVdevDisktype: string;
+  firstDataVdevDisktype: DiskType;
 
   private duplicableDisks: ManagerDisk[] = [];
 
@@ -126,6 +132,26 @@ export class ManagerComponent implements OnInit, AfterViewInit {
     stripe: 1, mirror: 2, raidz: 3, raidz2: 4, raidz3: 5,
   };
 
+  includeNonUniqueSerialDisks = false;
+  nonUniqueSerialDisks: ManagerDisk[] = [];
+  get availableNonUniqueSerialDisksCount(): number {
+    if (this.originalDisks.length === this.temp.length) {
+      return this.nonUniqueSerialDisks.length;
+    }
+    return this.temp.filter((disk) => this.nonUniqueSerialDisks.includes(disk)).length;
+  }
+  get nonUniqueSerialDisksWarning(): string {
+    if (!this.nonUniqueSerialDisks.length) {
+      return null;
+    }
+
+    if (this.nonUniqueSerialDisks.every((disk) => disk.bus === DiskBus.Usb)) {
+      return this.translate.instant('Warning: There are {n} USB disks available that have non-unique serial numbers. USB controllers may report disk serial incorrectly, making such disks indistinguishable from each other. Adding such disks to a pool can result in lost data.', { n: this.availableNonUniqueSerialDisksCount });
+    }
+
+    return this.translate.instant('Warning: There are {n} disks available that have non-unique serial numbers. Non-unique serial numbers can be caused by a cabling issue and adding such disks to a pool can result in lost data.', { n: this.availableNonUniqueSerialDisksCount });
+  }
+
   constructor(
     private ws: WebSocketService,
     private router: Router,
@@ -135,7 +161,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
     public mdDialog: MatDialog,
     public translate: TranslateService,
     public sorter: StorageService,
-    private sysGeneralService: SystemGeneralService,
+    private store$: Store<AppState>,
   ) {}
 
   duplicate(): void {
@@ -146,7 +172,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
     }
     const vdevsOptions = [];
     for (let i = maxVdevs; i > 0; i--) {
-      vdevsOptions.push({ label: i, value: i });
+      vdevsOptions.push({ label: String(i), value: i });
     }
     const conf: DialogFormConfiguration = {
       title: helptext.manager_duplicate_title,
@@ -183,10 +209,10 @@ export class ManagerComponent implements OnInit, AfterViewInit {
         for (let i = 0; i < value.vdevs; i++) {
           const vdevValues = { disks: [] as ManagerDisk[], type: this.firstDataVdevType };
           for (let j = 0; j < this.firstDataVdevDisknum; j++) {
-            const disk = duplicableDisks.shift();
-            vdevValues.disks.push(disk);
+            const duplicateDisk = duplicableDisks.shift();
+            vdevValues.disks.push(duplicateDisk);
             // remove disk from selected
-            this.selected = _.remove(this.selected, (d) => d.devname !== disk.devname);
+            this.selected = _.remove(this.selected, (disk) => disk.devname !== duplicateDisk.devname);
           }
           this.addVdev('data', vdevValues);
         }
@@ -196,7 +222,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
         }, 500);
       },
       afterInit: (entityDialog: EntityDialogComponent) => {
-        const copyDesc: FormParagraphConfig = _.find(entityDialog.fieldConfig, { name: 'copy_desc' });
+        const copyDesc = _.find(entityDialog.fieldConfig, { name: 'copy_desc' }) as FormParagraphConfig;
         const setParatext = (vdevs: number): void => {
           const used = this.firstDataVdevDisknum * vdevs;
           const remaining = this.duplicableDisks.length - used;
@@ -283,8 +309,8 @@ export class ManagerComponent implements OnInit, AfterViewInit {
         }
       }
     });
-    this.sysGeneralService.getAdvancedConfig$.pipe(untilDestroyed(this)).subscribe((res) => {
-      this.swapondrive = res.swapondrive;
+    this.store$.pipe(waitForAdvancedConfig, untilDestroyed(this)).subscribe((config) => {
+      this.swapondrive = config.swapondrive;
     });
     this.route.params.pipe(untilDestroyed(this)).subscribe((params) => {
       if (params['pk']) {
@@ -349,6 +375,8 @@ export class ManagerComponent implements OnInit, AfterViewInit {
       this.originalSuggestableDisks = Array.from(this.suggestableDisks);
 
       this.temp = [...this.disks];
+      this.nonUniqueSerialDisks = this.disks.filter((disk) => disk.duplicate_serial.length);
+      this.disks = this.disks.filter((disk) => !disk.duplicate_serial.length);
       this.getDuplicableDisks();
     }, (err) => {
       this.loader.close();
@@ -553,6 +581,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
   doSubmit(): void {
     let confirmButton: string = this.translate.instant('Create Pool');
     let diskWarning: string = this.diskAddWarning;
+    let allowDuplicateSerials = false;
     if (!this.isNew) {
       confirmButton = this.translate.instant('Add Vdevs');
       diskWarning = this.diskExtendWarning;
@@ -571,6 +600,9 @@ export class ManagerComponent implements OnInit, AfterViewInit {
         this.vdevComponents.forEach((vdev) => {
           const disks: string[] = [];
           vdev.getDisks().forEach((disk) => {
+            if (disk.duplicate_serial?.length) {
+              allowDuplicateSerials = true;
+            }
             disks.push(disk.devname);
           });
           if (disks.length > 0) {
@@ -598,6 +630,10 @@ export class ManagerComponent implements OnInit, AfterViewInit {
           body = { topology: layout } as UpdatePool;
         }
 
+        if (allowDuplicateSerials) {
+          body['allow_duplicate_serials'] = true;
+        }
+
         const dialogRef = this.mdDialog.open(EntityJobComponent, {
           data: { title: confirmButton, disableClose: true },
         });
@@ -608,13 +644,13 @@ export class ManagerComponent implements OnInit, AfterViewInit {
         }
         dialogRef.componentInstance.success
           .pipe(
-            switchMap((r: Job<Pool>) => {
+            switchMap((job: Job<Pool>) => {
               if (this.isEncrypted) {
                 const downloadDialogRef = this.mdDialog.open(DownloadKeyDialogComponent, { disableClose: true });
                 downloadDialogRef.componentInstance.new = true;
-                downloadDialogRef.componentInstance.volumeId = r.result.id;
-                downloadDialogRef.componentInstance.volumeName = r.result.name;
-                downloadDialogRef.componentInstance.fileName = 'dataset_' + r.result.name + '_keys.json';
+                downloadDialogRef.componentInstance.volumeId = job.result.id;
+                downloadDialogRef.componentInstance.volumeName = job.result.name;
+                downloadDialogRef.componentInstance.fileName = 'dataset_' + job.result.name + '_keys.json';
 
                 return downloadDialogRef.afterClosed();
               }
@@ -625,7 +661,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
           )
           .pipe(untilDestroyed(this)).subscribe(
             () => {},
-            (e) => new EntityUtils().handleWsError(this, e, this.dialog),
+            (error) => new EntityUtils().handleWsError(this, error, this.dialog),
             () => {
               dialogRef.close(false);
               this.goBack();
@@ -694,7 +730,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
     let re;
     try {
       re = new RegExp(val);
-    } catch (e: unknown) {
+    } catch (error: unknown) {
       this.regExpHasErrors = true;
     }
 
@@ -709,8 +745,9 @@ export class ManagerComponent implements OnInit, AfterViewInit {
       this.regExpHasErrors = false;
 
       // update the rows
-      this.disks = this.temp.filter((d) => {
-        return this.nameFilter.test(d.devname.toLowerCase()) && this.capacityFilter.test(d.capacity.toLowerCase());
+      this.disks = this.temp.filter((disk) => {
+        return this.nameFilter.test(disk.devname.toLowerCase())
+          && this.capacityFilter.test(disk.capacity.toLowerCase());
       });
 
       // Whenever the filter changes, always go back to the first page
@@ -749,6 +786,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
   }
 
   suggestRedundancyLayout(): void {
+    this.selected = [];
     this.suggestableDisks.forEach((disk) => {
       this.vdevComponents.first.addDisk(disk);
     });
@@ -783,5 +821,14 @@ export class ManagerComponent implements OnInit, AfterViewInit {
       const heightStr = `height: ${newHeight}px`;
       document.getElementsByClassName('ngx-datatable')[0].setAttribute('style', heightStr);
     }, 100);
+  }
+
+  toggleNonUniqueSerialDisks(): void {
+    this.includeNonUniqueSerialDisks = !this.includeNonUniqueSerialDisks;
+    if (this.includeNonUniqueSerialDisks) {
+      this.disks = this.originalDisks.filter((disk) => this.temp.includes(disk));
+    } else {
+      this.disks = this.disks.filter((disk) => !this.nonUniqueSerialDisks.includes(disk));
+    }
   }
 }

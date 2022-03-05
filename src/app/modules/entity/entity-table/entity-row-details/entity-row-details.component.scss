@@ -1,0 +1,14 @@
+p,
+h4,
+mat-icon {
+  color: var(--fg2) !important;
+}
+
+.button-delete span,
+.button-delete mat-icon {
+  color: var(--red) !important;
+}
+
+.value {
+  margin-bottom: 0;
+}

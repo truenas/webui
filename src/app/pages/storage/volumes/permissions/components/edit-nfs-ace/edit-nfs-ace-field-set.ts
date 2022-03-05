@@ -2,8 +2,8 @@ import {
   NfsAclTag, NfsAclType, NfsBasicFlag,
 } from 'app/enums/nfs-acl.enum';
 import helptext from 'app/helptext/storage/volumes/datasets/dataset-acl';
-import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
-import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
+import { FieldSet } from 'app/modules/entity/entity-form/models/fieldset.interface';
+import { RelationAction } from 'app/modules/entity/entity-form/models/relation-action.enum';
 import {
   NfsFormFlagsType,
   NfsFormPermsType,

@@ -2,7 +2,6 @@ export interface SnmpConfig {
   community: string;
   contact: string;
   id: number;
-  iftop: boolean;
   location: string;
   loglevel: number;
   options: string;

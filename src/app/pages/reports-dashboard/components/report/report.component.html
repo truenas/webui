@@ -81,6 +81,7 @@
               [labelY]="report.vertical_label"
               type="line"
               [interactive]="false"
+              [isReversed]="isReversed"
             ></linechart>
           </div>
 
@@ -194,25 +195,13 @@
     </mat-card>
 
     <mat-card
-      *ngIf="!ready && retroLogo"
+      *ngIf="!ready"
       class="front zero-state"
       fxLayout="row wrap"
       fxlayoutGap="16px"
       fxLayoutAlign="center center"
     >
-      <mat-icon *ngIf="retroLogo == 1" class="generic" svgIcon="freenas_logo_full"></mat-icon>
       <mat-icon
-        *ngIf="retroLogo == 0 && productType == ProductType.Core"
-        class="generic"
-        svgIcon="truenas_core_logo_full"
-      ></mat-icon>
-      <mat-icon
-        *ngIf="retroLogo == 0 && productType == ProductType.Enterprise"
-        class="generic"
-        svgIcon="truenas_enterprise_logo_full"
-      ></mat-icon>
-      <mat-icon
-        *ngIf="(retroLogo == 0 && productType == ProductType.Scale) || productType == ProductType.ScaleEnterprise"
         class="generic"
         svgIcon="truenas_scale_logo_full"
       ></mat-icon>

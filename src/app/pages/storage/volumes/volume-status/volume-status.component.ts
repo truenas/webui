@@ -9,7 +9,6 @@ import * as _ from 'lodash';
 import { TreeNode } from 'primeng/api';
 import { Subject } from 'rxjs';
 import { filter } from 'rxjs/operators';
-import { CoreService } from 'app/core/services/core-service/core.service';
 import { PoolScanState } from 'app/enums/pool-scan-state.enum';
 import { VDevType } from 'app/enums/v-dev-type.enum';
 import helptext from 'app/helptext/storage/volumes/volume-status';
@@ -17,20 +16,21 @@ import { CoreEvent } from 'app/interfaces/events';
 import { Job } from 'app/interfaces/job.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { Pool, PoolScan, PoolTopologyCategory } from 'app/interfaces/pool.interface';
-import { VDev, VDevStats } from 'app/interfaces/storage.interface';
-import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
-import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
-import { FieldConfig, FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
-import { matchOtherValidator } from 'app/pages/common/entity/entity-form/validators/password-validation/password-validation';
-import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
-import { EntityToolbarComponent } from 'app/pages/common/entity/entity-toolbar/entity-toolbar.component';
-import { ToolbarConfig } from 'app/pages/common/entity/entity-toolbar/models/control-config.interface';
-import { EntityTreeTable } from 'app/pages/common/entity/entity-tree-table/entity-tree-table.model';
-import { EntityUtils } from 'app/pages/common/entity/utils';
+import { VDev, VDevStats, UnusedDisk } from 'app/interfaces/storage.interface';
+import { DialogFormConfiguration } from 'app/modules/entity/entity-dialog/dialog-form-configuration.interface';
+import { EntityDialogComponent } from 'app/modules/entity/entity-dialog/entity-dialog.component';
+import { FieldConfig, FormSelectConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
+import { matchOtherValidator } from 'app/modules/entity/entity-form/validators/password-validation/password-validation';
+import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
+import { EntityToolbarComponent } from 'app/modules/entity/entity-toolbar/entity-toolbar.component';
+import { ToolbarConfig } from 'app/modules/entity/entity-toolbar/models/control-config.interface';
+import { EntityTreeTable } from 'app/modules/entity/entity-tree-table/entity-tree-table.model';
+import { EntityUtils } from 'app/modules/entity/utils';
 import { DiskFormComponent } from 'app/pages/storage/disks/disk-form/disk-form.component';
 import {
   WebSocketService, AppLoaderService, DialogService,
 } from 'app/services';
+import { CoreService } from 'app/services/core-service/core.service';
 import { ModalService } from 'app/services/modal.service';
 
 interface PoolDiskInfo {
@@ -150,6 +150,8 @@ export class VolumeStatusComponent implements OnInit, OnDestroy {
 
   protected pool: Pool;
 
+  private duplicateSerialDisks: UnusedDisk[] = [];
+
   constructor(
     protected aroute: ActivatedRoute,
     protected core: CoreService,
@@ -164,7 +166,7 @@ export class VolumeStatusComponent implements OnInit, OnDestroy {
   getZfsPoolScan(poolName: string): void {
     this.ws.subscribe('zfs.pool.scan').pipe(untilDestroyed(this)).subscribe(
       (res) => {
-        if (res.fields && res.fields.name == poolName) {
+        if (res.fields && res.fields.name === poolName) {
           this.poolScan = res.fields.scan;
           const seconds = this.poolScan.total_secs_left;
           this.timeRemaining = {
@@ -187,7 +189,7 @@ export class VolumeStatusComponent implements OnInit, OnDestroy {
 
       this.poolScan = pools[0].scan;
       // subscribe zfs.pool.scan to get scrub job info
-      if (this.poolScan.state == PoolScanState.Scanning) {
+      if (this.poolScan.state === PoolScanState.Scanning) {
         this.getZfsPoolScan(pools[0].name);
       }
       this.dataHandler(pools[0]);
@@ -216,6 +218,8 @@ export class VolumeStatusComponent implements OnInit, OnDestroy {
 
       const newDiskConfig = _.find(this.extendVdevFormFields, { name: 'new_disk' }) as FormSelectConfig;
       newDiskConfig.options = availableDisksForExtend;
+
+      this.duplicateSerialDisks = disks.filter((disk) => disk.duplicate_serial.length);
     });
   }
 
@@ -308,7 +312,7 @@ export class VolumeStatusComponent implements OnInit, OnDestroy {
           );
         });
       },
-      isHidden: data.status == 'OFFLINE',
+      isHidden: data.status === 'OFFLINE',
     }, {
       id: 'online',
       label: helptext.actions_label.online,
@@ -338,7 +342,7 @@ export class VolumeStatusComponent implements OnInit, OnDestroy {
           );
         });
       },
-      isHidden: !!(data.status == 'ONLINE' || this.pool.encrypt !== 0),
+      isHidden: !!(data.status === 'ONLINE' || this.pool.encrypt !== 0),
     }, {
       id: 'replace',
       label: helptext.actions_label.replace,
@@ -446,13 +450,13 @@ export class VolumeStatusComponent implements OnInit, OnDestroy {
       isHidden: true,
     }];
 
-    if (category == 'data') {
+    if (category === 'data') {
       _.find(actions, { id: 'remove' }).isHidden = true;
-    } else if (category == 'spare') {
+    } else if (category === 'spare') {
       _.find(actions, { id: 'online' }).isHidden = true;
       _.find(actions, { id: 'offline' }).isHidden = true;
       _.find(actions, { id: 'replace' }).isHidden = true;
-    } else if (category == 'cache') {
+    } else if (category === 'cache') {
       _.find(actions, { id: 'online' }).isHidden = true;
       _.find(actions, { id: 'offline' }).isHidden = true;
     }
@@ -480,14 +484,18 @@ export class VolumeStatusComponent implements OnInit, OnDestroy {
           fieldConfig: this.extendVdevFormFields,
           saveButtonText: helptext.extend_disk.saveButtonText,
           customSubmit: (entityDialog: EntityDialogComponent) => {
-            delete entityDialog.formValue['passphrase2'];
+            const body = { ...entityDialog.formValue };
+            delete body['passphrase2'];
 
             const dialogRef = this.matDialog.open(EntityJobComponent, {
               data: { title: helptext.extend_disk.title },
               disableClose: true,
             });
+            if (this.duplicateSerialDisks.find((disk) => disk.name === entityDialog.formValue.new_disk)) {
+              body['allow_duplicate_serials'] = true;
+            }
             dialogRef.componentInstance.setDescription(helptext.extend_disk.description);
-            dialogRef.componentInstance.setCall('pool.attach', [pk, entityDialog.formValue]);
+            dialogRef.componentInstance.setCall('pool.attach', [pk, body]);
             dialogRef.componentInstance.submit();
             dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
               dialogRef.close(true);
@@ -550,11 +558,11 @@ export class VolumeStatusComponent implements OnInit, OnDestroy {
     if ('stats' in data) {
       stats = data.stats;
     }
-    if ('type' in data && data.type != VDevType.Disk) {
+    if ('type' in data && data.type !== VDevType.Disk) {
       (data as any).name = data.type;
     }
     // use path as the device name if the device name is null
-    if (!(data as VDev).disk || (data as VDev).disk == null) {
+    if (!(data as VDev).disk || (data as VDev).disk === null) {
       (data as any).disk = data.path;
     }
 
@@ -570,7 +578,7 @@ export class VolumeStatusComponent implements OnInit, OnDestroy {
 
     // add actions
     if (category && 'type' in data) {
-      if (data.type == VDevType.Disk) {
+      if (data.type === VDevType.Disk) {
         item.actions = [{ title: 'Disk Actions', actions: this.getAction(data, category, vdevType) }];
       } else if (data.type === VDevType.Mirror) {
         item.actions = [{ title: 'Mirror Actions', actions: this.extendAction() }];
@@ -615,13 +623,13 @@ export class VolumeStatusComponent implements OnInit, OnDestroy {
       topoNode.children = [];
 
       pool.topology[category].forEach((vdev) => {
-        if (category != 'data') {
+        if (category !== 'data') {
           topoNode.children.push(this.parseTopolgy(vdev, category));
         } else {
           node.children.push(this.parseTopolgy(vdev, category));
         }
       });
-      if (category != 'data' && pool.topology[category].length > 0) {
+      if (category !== 'data' && pool.topology[category].length > 0) {
         node.children.push(topoNode);
       }
     }

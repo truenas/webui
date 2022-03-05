@@ -1,0 +1,200 @@
+<mat-card
+  class="view-card {{chassis && chassis.front && chassis.front.totalDriveTrays > 7 ? 'mini mini-xl': 'mini'}}"
+  [ngClass]="{'multiple-enclosures': system && system.profile && system.profile.length > 1}"
+  id="{{currentTab.alias}}"
+  (window:resize)="onResize()"
+  ngClass.gt-md="gt-md"
+  ngClass.md="md"
+  ngClass.sm="sm"
+  ngClass.xs="xs">
+
+  <mat-toolbar id="Disks-toolbar">
+    <div *ngIf="selectedEnclosure.enclosureKey > 0" class="mat-card-title-text">{{currentTab.alias}} on {{selectedEnclosure ? selectedEnclosure.model + ' (' + selectedEnclosure.enclosureKey + ')' : '...'}}</div>
+    <div *ngIf="selectedEnclosure.enclosureKey < 1" class="mat-card-title-text">{{currentTab.alias}} on {{selectedEnclosure ? system.platform + ' (' + selectedEnclosure.enclosureKey + ')' : '...'}}</div>
+
+    <!-- ENCLOSURE MODEL -->
+    <div class="model dom-overlay">
+      <div class="model-inner">
+      </div>
+    </div>
+
+  </mat-toolbar>
+
+  <mat-card-content #cardcontent
+    fxLayout="row wrap">
+    <div id="chassis" fxFlex="640px" fxFlex.lt-lg="100%">
+      <!-- LEGEND -->
+      <div class="header-container" id="legend">
+        <h3 class="header">{{ 'Pools' | translate }}</h3>
+        <div *ngIf="enclosurePools.length > 0; else noPools" class="legend">
+          <div class="legend-item" *ngFor="let pool of enclosurePools; let i=index">
+            <div class="swatch" [style.background]="theme[themeKey(theme.accentColors[selectedEnclosure.poolKeys[pool]])]">
+            </div>{{pool}} <span *ngIf="!system.pools[selectedEnclosure.poolKeys[pool]].healthy"><mat-icon fontSet="mdi-set" role="img" fontIcon="mdi-alert"></mat-icon></span></div>
+        </div>
+
+        <ng-template #noPools>
+          <div id="legend-no-pools">
+            <div>{{ 'No pools on this enclosure.' | translate }}</div>
+          </div>
+        </ng-template>
+      </div>
+
+
+      <!-- VISUALIZER -->
+      <div fxLayout="row" id="disks-overview" [class]="currentView">
+
+        <!-- DISK NAMES -->
+        <div fxFlex class="disks-overlay names" *ngIf="enclosure && enclosure.driveTrayObjects">
+          <ng-container *ngFor="let dt of enclosure.driveTrayObjects; let i=index">
+            <div class="slot-label-wrapper" [style.top]="'calc(' + stackPositions()[i].y + 'px + 6px)'">
+              <div>
+                <div class="slot-label fn-theme-primary">
+                  <strong>{{i + 1}}</strong>
+                </div>
+              </div>
+              <div>
+                <div class="slot-value">
+                  {{findDiskBySlotNumber(i+1) ? findDiskBySlotNumber(i + 1).name : 'Empty'}}
+                </div>
+              </div>
+            </div>
+          </ng-container>
+        </div>
+
+        <div #visualizer class="visualizer dom-overlay" id="visualizer"></div>
+
+        <!-- DISK STATUS -->
+        <div fxFlex *ngIf="enclosure" class="disks-overlay status">
+          <ng-container *ngFor="let dt of enclosure.driveTrayObjects; let i=index">
+            <div *ngIf="findDiskBySlotNumber(i + 1)" [style.top]="'calc(' + stackPositions()[i].y + 'px + 8px)'">
+              <div class="status-icon">
+                <mat-icon
+                  [ngClass]="{'online': findDiskBySlotNumber(i + 1).status == 'ONLINE', 'alert':findDiskBySlotNumber(i + 1).status !== 'ONLINE' && findDiskBySlotNumber(i + 1).status !== 'AVAILABLE'}"
+                  role="img">
+                  check_circle
+                </mat-icon>
+              </div>
+              <div class="status-text">{{findDiskBySlotNumber(i + 1).status}}</div>
+            </div>
+          </ng-container>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- DETAILS/OVERVIEW -->
+    <div fxFlex id="disks-details" #diskDetails>
+
+      <ng-container *ngIf="selectedDisk && currentView == 'details'" #details>
+        <!-- DISK SELECTED -->
+        <div class="header-container"  #disksdetails id="details">
+          <button class="back-btn" mat-button (click)="clearDisk()"><mat-icon role="img">close</mat-icon></button>
+          <h3 class="header">{{ 'Drive Details' | translate }} {{selectedDisk.name}}</h3>
+          <div>
+            <ul>
+              <li><strong>{{ 'Pool' | translate }}:</strong>  &nbsp;&nbsp;&nbsp;{{selectedDisk.vdev ? selectedDisk.vdev.pool : ('Disk not attached to any pools.' | translate)}}</li>
+
+              <li><strong>{{ 'Vdev' | translate }}:</strong>  &nbsp;&nbsp;&nbsp;
+                <span *ngIf="selectedVdev.type == 'DISK'">{{ 'NONE' | translate }}</span>
+                <span *ngIf="selectedVdev.type !== 'DISK'">{{selectedVdev.type == 'None' ? 'UNASSIGNED' : selectedVdev.type}}</span>
+
+                <span *ngIf="selectedVdev.topology"> {{ $any(selectedVdev.topology) == 'None' ? '' : '(' + selectedVdev.topology.toUpperCase() + ')'}}</span>
+              </li>
+
+              <li><strong>{{ 'Model' | translate }}:</strong>  &nbsp;&nbsp;&nbsp;{{selectedDisk.model}}</li>
+              <li><strong>{{ 'Serial' | translate }}:</strong>  &nbsp;&nbsp;&nbsp;{{selectedDisk.serial}}</li>
+              <li><strong>{{ 'Status' | translate }}:</strong>  &nbsp;&nbsp;&nbsp;{{selectedDisk.status}}</li>
+              <li>
+                <strong>{{ 'Rotation Rate' | translate }}:</strong>  &nbsp;&nbsp;&nbsp;
+                <ng-container *ngIf="selectedDisk.rotationrate; else flash">{{selectedDisk.rotationrate}}{{'RPM' | translate}}</ng-container>
+                <ng-template #flash>{{'Not Available' | translate}}</ng-template>
+              </li>
+              <li><strong>{{ 'Advanced Power Management' | translate }}:</strong>  &nbsp;&nbsp;&nbsp;{{selectedDisk.advpowermgmt}}</li>
+              <li><strong>{{ 'S.M.A.R.T. Enabled' | translate }}:</strong>  &nbsp;&nbsp;&nbsp;{{selectedDisk.togglesmart ? 'Yes' : 'No'}}</li>
+              <li><strong>{{ 'S.M.A.R.T. Options' | translate }}:</strong>  &nbsp;&nbsp;&nbsp;{{selectedDisk.smartoptions ? selectedDisk.smartoptions : 'None'}}</li>
+              <li><strong>{{ 'Transfer Mode' | translate }}:</strong>  &nbsp;&nbsp;&nbsp;{{selectedDisk.transfermode}}</li>
+              <li><strong>{{ 'HDD Standby' | translate }}:</strong>  &nbsp;&nbsp;&nbsp;{{selectedDisk.hddstandby}}</li>
+            </ul>
+
+            <h3 class="header stats">{{ 'Stats' | translate }}</h3>
+            <div class="disk-basic-details" fxLayout="row wrap" fxLayoutAlign="center center">
+              <div>
+                <disk-ui [data]="selectedDisk"></disk-ui><!-- disk icon + labels -->
+                <div class="capacity">{{converter(selectedDisk.size)}}</div>
+              </div>
+              <div class="disk-stats-wrapper" fxFlex>
+                <ul class="disk-stats" *ngIf="selectedDisk.stats; else nostats">
+                  <li><strong>{{ 'Read Errors' | translate }}:</strong> &nbsp;&nbsp;{{selectedDisk.stats.read_errors}}</li>
+                  <li><strong>{{ 'Write Errors' | translate }}:</strong> &nbsp;&nbsp;{{selectedDisk.stats.write_errors}}</li>
+                  <li><strong>{{ 'Checksum Errors' | translate }}:</strong> &nbsp;&nbsp;{{selectedDisk.stats.checksum_errors}}</li>
+                </ul>
+                <ng-template #nostats>
+                  <div class="nostats">
+                    <mat-icon role="img">info_icon</mat-icon>
+                    <strong>{{ 'Must be part of a pool to check errors' | translate }}</strong>
+                  </div>
+                </ng-template>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </ng-container>
+
+      <ng-container *ngIf="currentView == 'pools' || currentView == 'status'" #overview>
+        <!-- DISK NOT SELECTED -->
+        <div class="header-container half-height"  id="general-overview">
+          <h3 class="header">{{ 'Disks Overview' | translate }}</h3>
+          <div>
+            <ul>
+              <li><strong>{{ 'Pools' | translate }}:</strong>  &nbsp;&nbsp;&nbsp;{{count(selectedEnclosure.poolKeys)}}</li>
+              <li><strong>{{ 'Total Disks' | translate }}:</strong>  &nbsp;&nbsp;&nbsp;{{count(selectedEnclosure.disks)}}</li>
+              <li><strong>{{ 'Estimated Raw Capacity' | translate }}:</strong>  &nbsp;&nbsp;&nbsp;{{converter(system.rawCapacity())}}</li>
+              <li><strong>{{ 'Failed Disks' | translate }}:</strong>  &nbsp;&nbsp;&nbsp;{{failedDisks.length}}</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="header-container half-height"  id="drive-temps">
+          <h3 class="header">{{ 'Drive Temperatures' | translate }}</h3>
+          <div fxLayout="row wrap" fxLayoutGap="10%">
+            <ng-container *ngIf="temperatures && temperatureScales">
+              <ng-container *ngFor="let diskName of temperatures.keys;">
+                <temperature-meter *ngIf="temperatures.values[diskName]; else notemps"
+                    [fxFlex]="temperatures && temperatures.keys.length >= 4 ? '40%' : '100%' "
+                    [source]="diskName"
+                    [value]="temperatures.values[diskName]"
+                    [unit]="temperatures.unit"
+                    [symbolText]="temperatures.symbolText"></temperature-meter>
+                <ng-template #notemps>
+                  <div class="no-temp" [fxFlex]="temperatures && temperatures.keys.length >= 4 ? '40%' : '100%' " >
+                    <strong>{{diskName}}:</strong> Unknown{{temperatures.symbolText}}
+                    <tooltip
+                        [header]="'Temperature data missing.' | translate"
+                        [message]="'No temperature data was reported by the system. There can be a number of reasons why this might occur. For troubleshooting tips please go here' | translate">
+                    </tooltip>
+                  </div>
+                </ng-template>
+              </ng-container>
+            </ng-container>
+
+            <ul *ngIf="temperatures && !temperatureScales">
+              <ng-container>
+                <li *ngFor="let diskName of temperatures.keys;">
+                  <strong>{{diskName}}:</strong> &nbsp;&nbsp;&nbsp;
+                  {{temperatures.values[diskName] ? temperatures.values[diskName] : 'Temperature not available.'}}
+                  {{temperatures.values[diskName] ? temperatures.symbolText + 'C' : ''}}
+                  <tooltip *ngIf="!temperatures.values[diskName]"
+                    [header]="'Temperature data missing.' | translate"
+                    [message]="'No temperature data was reported by the system. There can be a number of reasons why this might occur. For troubleshooting tips please go here' | translate">
+                  </tooltip>
+                </li>
+              </ng-container>
+            </ul>
+          </div>
+        </div>
+      </ng-container>
+
+    </div>
+  </mat-card-content>
+</mat-card>

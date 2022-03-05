@@ -9,13 +9,13 @@ import * as _ from 'lodash';
 import helptext from 'app/helptext/storage/volumes/volume-key';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { Pool } from 'app/interfaces/pool.interface';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
+import { AppLoaderService } from 'app/modules/app-loader/app-loader.service';
+import { EntityFormComponent } from 'app/modules/entity/entity-form/entity-form.component';
 import {
   FieldConfig, FormParagraphConfig,
-} from 'app/pages/common/entity/entity-form/models/field-config.interface';
+} from 'app/modules/entity/entity-form/models/field-config.interface';
 import { VolumeChangekeyFormValues } from 'app/pages/storage/volumes/volume-changekey-form/volume-changekey-form-values.interface';
 import { WebSocketService } from 'app/services';
-import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { DialogService } from 'app/services/dialog.service';
 import { EncryptionService } from 'app/services/encryption.service';
 
@@ -81,7 +81,7 @@ export class VolumeChangekeyFormComponent implements FormConfiguration {
     },
   ];
 
-  custActions = [
+  customActions = [
     {
       id: 'download_encrypt_key',
       name: this.translate.instant('Download Encryption Key'),
@@ -108,7 +108,7 @@ export class VolumeChangekeyFormComponent implements FormConfiguration {
 
   resourceTransformIncomingRestData(data: Pool): Pool {
     this.poolName = data.name;
-    const config: FormParagraphConfig = _.find(this.fieldConfig, { name: 'encrypt-headline' });
+    const config = _.find(this.fieldConfig, { name: 'encrypt-headline' }) as FormParagraphConfig;
     config.paraText += ` <em>${this.poolName}</em>`;
     return data;
   }

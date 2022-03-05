@@ -99,16 +99,6 @@ export const rootRouterConfig: Routes = [{
     data: { title: 'Shell', breadcrumb: 'Shell' },
   },
   {
-    path: 'guide',
-    loadChildren: () => import('./pages/guide/guide.module').then((module) => module.GuideModule),
-    data: { title: 'Guide', breadcrumb: 'Guide' },
-  },
-  {
-    path: 'ui-preferences',
-    loadChildren: () => import('./pages/preferences/preferences.module').then((module) => module.PreferencesModule),
-    data: { title: 'Web Interface Preferences', breadcrumb: 'Preferences' },
-  },
-  {
     path: 'apikeys',
     loadChildren: () => import('./pages/api-keys/api-keys.module').then((module) => module.ApiKeysModule),
     data: { title: 'API Keys', breadcrumb: 'API Keys' },
@@ -125,7 +115,7 @@ export const rootRouterConfig: Routes = [{
   },
   {
     path: 'jobs',
-    loadChildren: () => import('./pages/jobs/jobs.module').then((module) => module.JobsModule),
+    loadChildren: () => import('./pages/jobs/jobs-list.module').then((module) => module.JobsListModule),
     data: { title: 'Jobs', breadcrumb: 'Jobs' },
   },
   ],

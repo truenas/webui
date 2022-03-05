@@ -12,17 +12,10 @@
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
             "allowedCommonJsDependencies": [
-              "lodash",
               "is-cidr",
-              "cidr-regex",
               "dygraphs",
-              "angular-calendar",
               "chart.js",
               "cron-parser",
-              "chartist",
-              "moment-timezone",
-              "calendar-utils",
-              "what-is-my-ip-address",
               "cronstrue"
             ],
             "outputPath": "dist",
@@ -46,8 +39,6 @@
             },
             "styles": [
               "node_modules/dragula/dist/dragula.css",
-              "node_modules/angular-calendar/css/angular-calendar.css",
-              "node_modules/hopscotch/dist/css/hopscotch.min.css",
               "node_modules/chartist/dist/chartist.min.css",
               "node_modules/@swimlane/ngx-datatable/assets/icons.css",
               "node_modules/@circlon/angular-tree-component/css/angular-tree-component.css",
@@ -56,8 +47,6 @@
               "src/assets/styles/index.scss"
             ],
             "scripts": [
-              "node_modules/hopscotch/dist/js/hopscotch.min.js",
-              "node_modules/element-resize-detector/dist/element-resize-detector.min.js",
               "node_modules/pixi.js/dist/pixi.min.js",
               "node_modules/pixi-filters/dist/pixi-filters.js"
             ],

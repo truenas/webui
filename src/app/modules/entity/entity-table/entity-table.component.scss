@@ -1,0 +1,364 @@
+@import '../../../../assets/styles/other/tn-styles';
+
+div.mat-card {
+  overflow: hidden;
+}
+
+div.table-container,
+div.mat-card {
+  max-width: 100%;
+  width: 100%;
+}
+
+div.table-container {
+  overflow: auto;
+  padding: 0 !important;
+}
+
+table {
+  border-collapse: separate;
+  min-width: 800px;
+  width: 100%;
+}
+
+th.threedot-column,
+td.threedot-column,
+th.expansion-chevrons-column,
+td.expansion-chevrons-column {
+  padding-left: 12px !important;
+  padding-right: 12px !important;
+}
+
+th.sticky-border-left,
+td.sticky-border-left {
+  border-left: 1px solid var(--lines);
+}
+
+th.expansion-chevrons-column,
+td.expansion-chevrons-column {
+  cursor: pointer;
+  padding-right: 24px !important;
+  text-align: right;
+}
+
+td.mat-cell.data-column {
+  max-width: 150px !important;
+}
+
+.data-column {
+  padding: 0 12px !important;
+}
+
+tr.details-row {
+  background: var(--bg2);
+}
+
+tr.details-row:hover {
+  background: unset !important;
+}
+
+.details-row td {
+  overflow: hidden;
+}
+
+.padding_all {
+  padding: 20px;
+}
+
+.padding_top {
+  padding-top: 30px;
+}
+
+.custom_cell_styling {
+  height: 20px;
+  overflow: hidden;
+  padding-left: 5px;
+  width: 100%;
+}
+
+.multiActionsButton {
+  position: relative;
+  top: 1px;
+}
+
+#col-select-box {
+  margin-left: 20px;
+
+  li {
+    display: inline-block;
+    list-style: none;
+    margin: 2px;
+    padding: 0;
+    width: 220px;
+  }
+}
+
+#select-all-checkbox-and-label {
+  font-weight: 700;
+  margin-left: 2px;
+  max-width: 100px;
+}
+
+#footer {
+  padding: 15px;
+}
+
+#footer-text {
+  margin-left: 10px;
+}
+
+// Small page-loading spinner for entity tables
+#entity-spinner { bottom: 0;
+  left: 0;
+  margin: 0 auto;
+  position: absolute;
+  right: 0;
+  top: 10px;
+  z-index: 10;
+}
+
+.mat-card-footer {
+  padding: 0 !important;
+}
+
+.mat-card-title-text {
+  display: inline-block;
+  margin: 20px;
+}
+
+#filter {
+  margin-right: 16px;
+}
+
+#filter,
+.mat-toolbar {
+  display: inline-block;
+}
+
+#filter,
+.tooltiptext {
+  font-size: 14px;
+}
+
+#filter .mat-icon {
+  left: 25px;
+  position: relative;
+  top: 8px;
+}
+
+#filter .mat-form-field {
+  padding-left: 32px;
+}
+
+#action-button-wrapper {
+  height: 36px;
+}
+
+.legacy-warning {
+  color: var(--fg2);
+  font-weight: 500;
+  margin: 0 24px;
+}
+
+.legacy-warning-link {
+  border-bottom: 1px solid;
+  cursor: pointer;
+}
+
+.clickable {
+  background: rgba(0, 0, 0, 0);
+  height: 28px;
+  position: absolute;
+  width: 40px;
+  z-index: 10;
+
+  &:hover,
+  &:focus {
+    cursor: pointer;
+  }
+}
+
+:host {
+  ::ng-deep datatable-row-wrapper {
+    width: auto;
+  }
+
+  mat-icon.widget-icon {
+    cursor: pointer;
+    font-size: 24px;
+    line-height: 24px;
+  }
+}
+
+
+.entity-table-controls {
+  min-width: 460px;
+  width: 460px;
+}
+
+.datatable-icon-right:focus,
+.datatable-icon-down:focus {
+  outline: none;
+}
+
+@media (max-width: 600px) {
+  .entity-table-controls {
+    min-width: 300px;
+    width: 300px;
+
+    button,
+    #filter {
+      margin-bottom: 5px;
+    }
+  }
+}
+
+div#cardHeaderContainer {
+  padding: 0 !important;
+}
+
+/* The fake mat-checkbox */
+.fake-mat-checkbox {
+  cursor: pointer;
+  display: block;
+  font-size: 22px;
+  left: 24px;
+  margin-bottom: 12px;
+  min-height: 24px;
+  padding-left: 35px;
+  position: absolute;
+  user-select: none;
+}
+
+/* Hide the browser's default checkbox */
+.fake-mat-checkbox input {
+  border: solid black 3px;
+  cursor: pointer;
+  height: 0;
+  height: 6px;
+  left: 6px;
+  opacity: 0;
+  position: absolute;
+  top: 6px;
+  width: 0;
+  width: 6px;
+  z-index: 10;
+}
+
+/* Create a custom checkbox */
+.checkmark {
+  border: solid 1.85px var(--fg2);
+  border-radius: 10%;
+  display: block;
+  height: 1.06rem;
+  left: 9px;
+  position: absolute;
+  top: 9px;
+  width: 16px;
+}
+
+/* On mouse-over, add a grey background color */
+.fake-mat-checkbox:hover input ~ .checkmark {
+  cursor: pointer;
+}
+
+/* When the checkbox is checked, add a background */
+.fake-mat-checkbox input:checked ~ .checkmark {
+  background-color: var(--accent);
+  border-color: var(--accent);
+}
+
+/* Create the checkmark/indicator (hidden when not checked) */
+.checkmark::after {
+  content: '';
+  display: none;
+  position: absolute;
+}
+
+/* Show the checkmark when checked */
+.fake-mat-checkbox input:checked ~ .checkmark::after {
+  display: block;
+}
+
+/* Style the checkmark/indicator */
+.fake-mat-checkbox .checkmark::after {
+  border: solid white 0.05px;
+  border-width: 0 1px 1px 0;
+  height: 11px;
+  left: 4px;
+  top: 0;
+  transform: rotate(45deg);
+  width: 5px;
+}
+
+#entity-table-component {
+  margin-top: 15px;
+}
+
+.sticky-left-offset {
+  left: 48px !important;
+}
+
+.sticky-border-right {
+  border-right: 1px solid var(--lines);
+}
+
+button div.label-warning-icon {
+  display: inline;
+}
+
+button div.label-warning-icon .mat-icon {
+  font-size: 14px;
+  margin: 0;
+}
+
+.path-locked-status {
+  align-items: center;
+  display: flex;
+  justify-content: flex-start;
+  min-width: 0;
+
+  mat-icon {
+    cursor: help;
+    flex-shrink: 0;
+    font-size: 14px;
+    height: 14px;
+    top: auto;
+    vertical-align: middle;
+    width: 14px;
+
+    &.prepend {
+      margin-right: 4px;
+    }
+
+    &.append {
+      margin-left: 4px;
+    }
+  }
+}
+
+div.mat-card-table {
+  width: auto;
+}
+
+.mat-card-table {
+  &.is-empty {
+    .mat-card-footer,
+    .mat-header-row {
+      display: none !important;
+    }
+  }
+}
+
+.entity-empty-wrapper entity-empty {
+  margin: 32px 0;
+}
+
+
+.transparent-btn {
+  background-color: transparent;
+  border: none;
+  box-shadow: none;
+  color: inherit;
+  cursor: pointer;
+}

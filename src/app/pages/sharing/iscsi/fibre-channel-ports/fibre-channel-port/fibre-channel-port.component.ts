@@ -6,10 +6,10 @@ import * as _ from 'lodash';
 import { FibreChannelPortMode } from 'app/enums/fibre-channel-port-mode.enum';
 import { helptextSharingIscsi } from 'app/helptext/sharing';
 import { FibreChannelPortUpdate } from 'app/interfaces/fibre-channel-port.interface';
-import { FieldConfig, FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
-import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
-import { EntityFormService } from 'app/pages/common/entity/entity-form/services/entity-form.service';
-import { EntityUtils } from 'app/pages/common/entity/utils';
+import { FieldConfig, FormSelectConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
+import { FieldSet } from 'app/modules/entity/entity-form/models/fieldset.interface';
+import { EntityFormService } from 'app/modules/entity/entity-form/services/entity-form.service';
+import { EntityUtils } from 'app/modules/entity/utils';
 import {
   WebSocketService, IscsiService, AppLoaderService, DialogService,
 } from 'app/services';
@@ -18,7 +18,7 @@ import {
 @Component({
   selector: 'app-iscsi-fibre-channel-port',
   templateUrl: './fibre-channel-port.component.html',
-  styleUrls: ['./fibre-channel-port.component.scss', '../../../../common/entity/entity-form/entity-form.component.scss'],
+  styleUrls: ['./fibre-channel-port.component.scss', '../../../../../modules/entity/entity-form/entity-form.component.scss'],
   providers: [IscsiService],
 })
 export class FibreChannelPortComponent implements OnInit {
@@ -114,8 +114,8 @@ export class FibreChannelPortComponent implements OnInit {
 
     const targetField = _.find(this.fieldConfig, { name: 'target' });
     this.formGroup.controls['mode'].valueChanges.pipe(untilDestroyed(this)).subscribe((res) => {
-      targetField.required = res == FibreChannelPortMode.Target;
-      if (res == FibreChannelPortMode.Target) {
+      targetField.required = res === FibreChannelPortMode.Target;
+      if (res === FibreChannelPortMode.Target) {
         this.formGroup.controls['target'].setValidators([Validators.required]);
         this.formGroup.controls['target'].updateValueAndValidity();
       } else {
@@ -131,8 +131,8 @@ export class FibreChannelPortComponent implements OnInit {
   }
 
   isShow(field: string): boolean {
-    if (field === 'target' || field == 'initiators') {
-      return this.formGroup.controls['mode'].value == FibreChannelPortMode.Target;
+    if (field === 'target' || field === 'initiators') {
+      return this.formGroup.controls['mode'].value === FibreChannelPortMode.Target;
     }
     return true;
   }
@@ -141,7 +141,7 @@ export class FibreChannelPortComponent implements OnInit {
     const value = _.cloneDeep(this.formGroup.value);
     delete value['initiators'];
 
-    if (value['mode'] != FibreChannelPortMode.Target) {
+    if (value['mode'] !== FibreChannelPortMode.Target) {
       value['target'] = null;
     }
     this.loader.open();

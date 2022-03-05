@@ -10,15 +10,15 @@ import { helptextSystemCa } from 'app/helptext/system/ca';
 import { helptextSystemCertificates } from 'app/helptext/system/certificates';
 import { Certificate, CertificateProfile } from 'app/interfaces/certificate.interface';
 import { WizardConfiguration } from 'app/interfaces/entity-wizard.interface';
-import { FieldConfig, FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
-import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
-import { RelationConnection } from 'app/pages/common/entity/entity-form/models/relation-connection.enum';
-import { Wizard } from 'app/pages/common/entity/entity-form/models/wizard.interface';
-import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
-import { EntityWizardComponent } from 'app/pages/common/entity/entity-wizard/entity-wizard.component';
-import { EntityUtils } from 'app/pages/common/entity/utils';
+import { AppLoaderService } from 'app/modules/app-loader/app-loader.service';
+import { FieldConfig, FormSelectConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
+import { RelationAction } from 'app/modules/entity/entity-form/models/relation-action.enum';
+import { RelationConnection } from 'app/modules/entity/entity-form/models/relation-connection.enum';
+import { Wizard } from 'app/modules/entity/entity-form/models/wizard.interface';
+import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
+import { EntityWizardComponent } from 'app/modules/entity/entity-wizard/entity-wizard.component';
+import { EntityUtils } from 'app/modules/entity/utils';
 import { SystemGeneralService, WebSocketService } from 'app/services';
-import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { DialogService } from 'app/services/dialog.service';
 import { ModalService } from 'app/services/modal.service';
 
@@ -103,15 +103,15 @@ export class CertificateAddComponent implements WizardConfiguration {
         {
           type: 'select',
           name: 'csrlist',
-          placeholder: helptextSystemCertificates.add.signedby.placeholder,
-          tooltip: helptextSystemCertificates.add.signedby.tooltip,
+          placeholder: helptextSystemCertificates.add.csrlist.placeholder,
+          tooltip: helptextSystemCertificates.add.csrlist.tooltip,
           options: [
             { label: '---', value: null },
           ],
           isHidden: true,
           disabled: true,
           required: true,
-          validation: helptextSystemCertificates.add.signedby.validation,
+          validation: helptextSystemCertificates.add.csrlist.validation,
           relation: [
             {
               action: RelationAction.Enable,
@@ -712,9 +712,8 @@ export class CertificateAddComponent implements WizardConfiguration {
   }
 
   getSummaryValueLabel(fieldConfig: FieldConfig, value: any): any {
-    if (fieldConfig.type == 'select') {
-      const selectConfig: FormSelectConfig = fieldConfig as FormSelectConfig;
-      const option = selectConfig.options.find((option) => option.value == value);
+    if (fieldConfig.type === 'select') {
+      const option = fieldConfig.options.find((option) => option.value === value);
       if (option) {
         value = option.label;
       }
@@ -734,11 +733,6 @@ export class CertificateAddComponent implements WizardConfiguration {
         this.summary[fieldConfig.placeholder] = this.getSummaryValueLabel(fieldConfig, res);
       });
     }
-  }
-
-  removeFromSummary(fieldName: string): void {
-    const fieldConfig = this.getTarget(fieldName);
-    delete this.summary[fieldConfig.placeholder];
   }
 
   setSummary(): void {
@@ -764,7 +758,7 @@ export class CertificateAddComponent implements WizardConfiguration {
     this.getField('create_type').valueChanges.pipe(untilDestroyed(this)).subscribe((res) => {
       this.wizardConfig[2].skip = false;
 
-      if (res == 'CERTIFICATE_CREATE_INTERNAL') {
+      if (res === 'CERTIFICATE_CREATE_INTERNAL') {
         this.csrFields.forEach((field) => this.hideField(field, true));
         this.importFields.forEach((field) => this.hideField(field, true));
         this.importCsrFields.forEach((field) => this.hideField(field, true));
@@ -779,12 +773,15 @@ export class CertificateAddComponent implements WizardConfiguration {
           this.setDisabled('key_length', true);
           this.hideField('ec_curve', false);
         }
-      } else if (res == 'CERTIFICATE_CREATE_CSR') {
+      } else if (res === 'CERTIFICATE_CREATE_CSR') {
         this.importFields.forEach((field) => this.hideField(field, true));
         this.importCsrFields.forEach((field) => this.hideField(field, true));
         this.internalFields.forEach((field) => this.hideField(field, true));
         this.csrFields.forEach((field) => this.hideField(field, false));
         this.extensionFields.forEach((field) => this.hideField(field, false));
+
+        this.hideField('AuthorityKeyIdentifier-enabled', true);
+        this.hideField('AuthorityKeyIdentifier', true);
 
         // This block makes the form reset its 'disabled/hidden' settings on switch of type
         if (this.getField('key_type').value === 'RSA') {
@@ -794,7 +791,7 @@ export class CertificateAddComponent implements WizardConfiguration {
           this.setDisabled('key_length', true);
           this.hideField('ec_curve', false);
         }
-      } else if (res == 'CERTIFICATE_CREATE_IMPORTED') {
+      } else if (res === 'CERTIFICATE_CREATE_IMPORTED') {
         this.csrFields.forEach((field) => this.hideField(field, true));
         this.importCsrFields.forEach((field) => this.hideField(field, true));
         this.internalFields.forEach((field) => this.hideField(field, true));
@@ -811,7 +808,7 @@ export class CertificateAddComponent implements WizardConfiguration {
         }
 
         this.wizardConfig[2].skip = true;
-      } else if (res == 'CERTIFICATE_CREATE_IMPORTED_CSR') {
+      } else if (res === 'CERTIFICATE_CREATE_IMPORTED_CSR') {
         this.csrFields.forEach((field) => this.hideField(field, true));
         this.importFields.forEach((field) => this.hideField(field, true));
         this.internalFields.forEach((field) => this.hideField(field, true));
@@ -918,7 +915,7 @@ export class CertificateAddComponent implements WizardConfiguration {
 
   getStep(fieldName: string): number {
     const stepNumber = this.wizardConfig.findIndex((step) => {
-      const index = step.fieldConfig.findIndex((field) => fieldName == field.name);
+      const index = step.fieldConfig.findIndex((field) => fieldName === field.name);
       return index > -1;
     });
 
@@ -980,7 +977,7 @@ export class CertificateAddComponent implements WizardConfiguration {
     delete data.csrlist;
 
     // Addresses non-pristine field being mistaken for a passphrase of ''
-    if (data.passphrase == '') {
+    if (data.passphrase === '') {
       data.passphrase = undefined;
     }
 
@@ -1012,6 +1009,9 @@ export class CertificateAddComponent implements WizardConfiguration {
           delete data[key];
         }
       });
+      if (data.create_type === 'CERTIFICATE_CREATE_CSR') {
+        delete certExtensions['AuthorityKeyIdentifier'];
+      }
       data['cert_extensions'] = certExtensions;
 
       delete data['profiles'];

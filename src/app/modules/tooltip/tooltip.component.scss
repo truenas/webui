@@ -32,6 +32,11 @@
   font-family: Roboto, sans-serif;
   font-size: 12px;
   line-height: 1.3;
+
+  ::ng-deep a {
+    color: inherit !important;
+    text-decoration: underline;
+  }
 }
 
 .tooltip-title {

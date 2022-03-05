@@ -6,22 +6,22 @@ import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
-import { CoreService } from 'app/core/services/core-service/core.service';
 import { ExplorerType } from 'app/enums/explorer-type.enum';
 import helptext from 'app/helptext/storage/import-disk/import-disk';
 import { FormCustomAction, FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { Job } from 'app/interfaces/job.interface';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
+import { EntityFormComponent } from 'app/modules/entity/entity-form/entity-form.component';
 import {
   FieldConfig, FormRadioConfig, FormSelectConfig,
-} from 'app/pages/common/entity/entity-form/models/field-config.interface';
-import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
-import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
-import { EntityUtils } from 'app/pages/common/entity/utils';
+} from 'app/modules/entity/entity-form/models/field-config.interface';
+import { FieldSet } from 'app/modules/entity/entity-form/models/fieldset.interface';
+import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
+import { EntityUtils } from 'app/modules/entity/utils';
 import {
   WebSocketService,
   JobService,
 } from 'app/services';
+import { CoreService } from 'app/services/core-service/core.service';
 import { DialogService } from 'app/services/dialog.service';
 
 @UntilDestroy()
@@ -94,7 +94,7 @@ export class ImportDiskComponent implements OnDestroy, FormConfiguration {
   msdosfsLocaleField: FormSelectConfig;
   private entityForm: EntityFormComponent;
   protected dialogRef: MatDialogRef<EntityJobComponent>;
-  custActions: FormCustomAction[];
+  customActions: FormCustomAction[];
 
   constructor(
     protected router: Router,
@@ -177,7 +177,7 @@ export class ImportDiskComponent implements OnDestroy, FormConfiguration {
   }
 
   customSubmit(payload: any): void {
-    this.custActions = [];
+    this.customActions = [];
     const fsOptions: Record<string, unknown> = {};
     if (payload.fs_type === 'msdosfs' && payload.msdosfs_locale) {
       fsOptions['locale'] = payload.msdosfs_locale;
@@ -190,7 +190,7 @@ export class ImportDiskComponent implements OnDestroy, FormConfiguration {
       this.dialogRef.close();
       this.entityForm.success = true;
       this.job.showLogs(job, this.translate.instant('Disk Imported: Log Summary'), this.translate.instant('Close'));
-      this.custActions = [
+      this.customActions = [
         {
           id: 'view_import_log',
           name: 'View Import Log',
@@ -204,7 +204,7 @@ export class ImportDiskComponent implements OnDestroy, FormConfiguration {
       this.dialogRef.close();
       this.entityForm.success = false;
       this.job.showLogs(job, this.translate.instant('Disk Import Aborted: Log Summary'), this.translate.instant('Close'));
-      this.custActions = [
+      this.customActions = [
         {
           id: 'view_import_log',
           name: 'View Import Log',

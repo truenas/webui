@@ -1,21 +1,22 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { provideMockStore } from '@ngrx/store/testing';
 import { MockComponent } from 'ng-mocks';
 import { of, Subject } from 'rxjs';
-import { PreferencesService } from 'app/core/services/preferences.service';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { Preferences } from 'app/interfaces/preferences.interface';
 import { User } from 'app/interfaces/user.interface';
-import { EntityModule } from 'app/pages/common/entity/entity.module';
-import { IxTableModule } from 'app/pages/common/ix-tables/ix-table.module';
-import { IxTableHarness } from 'app/pages/common/ix-tables/testing/ix-table.harness';
+import { EntityModule } from 'app/modules/entity/entity.module';
+import { IxTableModule } from 'app/modules/ix-tables/ix-table.module';
+import { IxTableHarness } from 'app/modules/ix-tables/testing/ix-table.harness';
 import { DialogService, ModalService, WebSocketService } from 'app/services';
-import { CoreService } from '../../../../core/services/core-service/core.service';
+import { selectPreferences } from 'app/store/preferences/preferences.selectors';
+import { CoreService } from '../../../../services/core-service/core.service';
 import { UserListDetailsComponent } from '../user-list-details/user-list-details.component';
 import { UserListComponent } from './user-list.component';
 
-export const fakeDataSource: User[] = [{
+export const fakeUserDataSource: User[] = [{
   id: 1,
   uid: 0,
   username: 'root',
@@ -80,7 +81,7 @@ describe('UserListComponent', () => {
     ],
     providers: [
       mockWebsocket([
-        mockCall('user.query', fakeDataSource),
+        mockCall('user.query', fakeUserDataSource),
         mockCall('user.update'),
         mockCall('user.create'),
         mockCall('user.delete'),
@@ -91,12 +92,15 @@ describe('UserListComponent', () => {
         openInSlideIn: jest.fn(() => of(true)),
         onClose$: new Subject<unknown>(),
       }),
-      mockProvider(PreferencesService, {
-        preferences: {
-          showUserListMessage: false,
-          hide_builtin_users: false,
-        } as Preferences,
-        savePreferences: jest.fn(),
+      provideMockStore({
+        selectors: [
+          {
+            selector: selectPreferences,
+            value: {
+              hideBuiltinUsers: false,
+            } as Preferences,
+          },
+        ],
       }),
       mockProvider(CoreService),
     ],
@@ -147,10 +151,12 @@ describe('UserListComponent', () => {
   it('should expand row on click', async () => {
     const table = await loader.getHarness(IxTableHarness);
     const [firstRow] = await table.getRows();
-
     const element = await firstRow.host();
+
+    expect(await element.hasClass('expanded-row')).toBeFalsy();
+
     await element.click();
 
-    expect(element.hasClass('expanded-row')).toBeTruthy();
+    expect(await element.hasClass('expanded-row')).toBeTruthy();
   });
 });

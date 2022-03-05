@@ -6,13 +6,13 @@ import { latestVersion } from 'app/constants/catalog.constants';
 import helptext from 'app/helptext/apps/apps';
 import { ContainerImage, PullContainerImageParams } from 'app/interfaces/container-image.interface';
 import { CoreEvent } from 'app/interfaces/events';
+import { DialogFormConfiguration } from 'app/modules/entity/entity-dialog/dialog-form-configuration.interface';
+import { EntityDialogComponent } from 'app/modules/entity/entity-dialog/entity-dialog.component';
+import { FormSelectConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
+import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
+import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-table.component';
+import { EntityTableAction, EntityTableConfig } from 'app/modules/entity/entity-table/entity-table.interface';
 import { ApplicationToolbarControl } from 'app/pages/applications/application-toolbar-control.enum';
-import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
-import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
-import { FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
-import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
-import { EntityTableComponent } from 'app/pages/common/entity/entity-table/entity-table.component';
-import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
 import { DialogService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { PullImageFormComponent } from '../forms/pull-image-form/pull-image-form.component';
@@ -104,15 +104,15 @@ export class DockerImagesComponent implements EntityTableConfig {
     return actions as EntityTableAction[];
   }
 
-  resourceTransformIncomingRestData(d: ContainerImage[]): ContainerImage[] {
-    const data: ContainerImage[] = [];
-    d.forEach((row) => {
-      if (!row.system_image) {
-        row.state = row.update_available ? helptext.dockerImages.updateAvailable : '';
-        data.push(row);
+  resourceTransformIncomingRestData(images: ContainerImage[]): ContainerImage[] {
+    const transformedImage: ContainerImage[] = [];
+    images.forEach((image) => {
+      if (!image.system_image) {
+        image.state = image.update_available ? helptext.dockerImages.updateAvailable : '';
+        transformedImage.push(image);
       }
     });
-    return data;
+    return transformedImage;
   }
 
   doAdd(): void {

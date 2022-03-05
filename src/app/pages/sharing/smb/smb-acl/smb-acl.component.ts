@@ -7,16 +7,16 @@ import { helptextSharingSmb } from 'app/helptext/sharing/smb/smb';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { QueryParams } from 'app/interfaces/query-api.interface';
 import { SmbSharesec } from 'app/interfaces/smb-share.interface';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
-import { FormListConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
-import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
+import { EntityFormComponent } from 'app/modules/entity/entity-form/entity-form.component';
+import { FormListConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
+import { FieldSet } from 'app/modules/entity/entity-form/models/fieldset.interface';
 
 @UntilDestroy()
 @Component({
   selector: 'app-smb-acl',
   template: '<entity-form [conf]="this"></entity-form>',
 })
-export class SMBAclComponent implements FormConfiguration {
+export class SmbAclComponent implements FormConfiguration {
   queryCall = 'smb.sharesec.query' as const;
   editCall = 'smb.sharesec.update' as const;
 
@@ -153,8 +153,8 @@ export class SMBAclComponent implements FormConfiguration {
             this.updateRequiredValidator('ae_who_name_domain', i, false);
             this.updateRequiredValidator('ae_who_name_name', i, false);
           }
-        } else if (res[i].ae_who_name_domain !== undefined && res[i].ae_who_name_domain !== ''
-                || res[i].ae_who_name_name !== undefined && res[i].ae_who_name_name !== '') {
+        } else if ((res[i].ae_who_name_domain !== undefined && res[i].ae_who_name_domain !== '')
+          || (res[i].ae_who_name_name !== undefined && res[i].ae_who_name_name !== '')) {
           const domainField = _.find(this.shareAclField['listFields'][i], { name: 'ae_who_name_domain' });
           const nameField = _.find(this.shareAclField['listFields'][i], { name: 'ae_who_name_name' });
           if (!domainField.required || !nameField.required) {

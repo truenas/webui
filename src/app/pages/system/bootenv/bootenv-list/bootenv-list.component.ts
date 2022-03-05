@@ -1,6 +1,7 @@
 import {
-  Component, ElementRef, ViewChild,
+  Component,
 } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { TooltipPosition } from '@angular/material/tooltip';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -10,15 +11,15 @@ import { BootEnvironmentActions } from 'app/enums/bootenv-actions.enum';
 import { helptextSystemBootenv } from 'app/helptext/system/boot-env';
 import { Bootenv } from 'app/interfaces/bootenv.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
-import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
-import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
-import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
-import { EntityTableComponent } from 'app/pages/common/entity/entity-table/entity-table.component';
-import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
-import { EntityUtils } from 'app/pages/common/entity/utils';
+import { AppLoaderService } from 'app/modules/app-loader/app-loader.service';
+import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-table.component';
+import { EntityTableAction, EntityTableConfig } from 'app/modules/entity/entity-table/entity-table.interface';
+import { EntityUtils } from 'app/modules/entity/utils';
 import { BootEnvironmentFormComponent } from 'app/pages/system/bootenv/bootenv-form/bootenv-form.component';
-import { DialogService, WebSocketService, SystemGeneralService } from 'app/services';
-import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
+import {
+  BootenvStatsDialogComponent,
+} from 'app/pages/system/bootenv/bootenv-stats-dialog/bootenv-stats-dialog.component';
+import { DialogService, WebSocketService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LocaleService } from 'app/services/locale.service';
 import { StorageService } from 'app/services/storage.service';
@@ -30,8 +31,6 @@ import { BootenvRow } from './bootenv-row.interface';
   template: '<entity-table [title]="title" [conf]="this"></entity-table>',
 })
 export class BootEnvironmentListComponent implements EntityTableConfig {
-  @ViewChild('scrubIntervalEvent', { static: true }) scrubIntervalEvent: ElementRef;
-
   title = this.translate.instant('Boot Environments');
   resourceName = 'system/bootenv';
   queryCall = 'bootenv.query' as const;
@@ -41,23 +40,15 @@ export class BootEnvironmentListComponent implements EntityTableConfig {
   protected entityList: EntityTableComponent;
   protected wsActivate = 'bootenv.activate' as const;
   protected wsKeep = 'bootenv.set_attribute' as const;
-  protected loaderOpen = false;
-  sizeConsumed: string;
-  condition: string;
-  sizeBoot: string;
-  percentange: string;
-  header: string;
-  scrubMessage: string;
-  scrubInterval: number;
 
   constructor(
     private router: Router,
     public ws: WebSocketService,
     public dialog: DialogService,
+    private matDialog: MatDialog,
     protected loader: AppLoaderService,
     private storage: StorageService,
     protected localeService: LocaleService,
-    private sysGeneralService: SystemGeneralService,
     protected translate: TranslateService,
     private slideInService: IxSlideInService,
   ) {}
@@ -79,18 +70,11 @@ export class BootEnvironmentListComponent implements EntityTableConfig {
     },
   };
 
-  preInit(): void {
-    this.sysGeneralService.getAdvancedConfig$.pipe(untilDestroyed(this)).subscribe((res) => {
-      this.scrubInterval = res.boot_scrub;
-      this.updateBootState();
-    });
-  }
-
   dataHandler(entityList: EntityTableComponent): void {
     entityList.rows = entityList.rows.map((row: Bootenv) => {
       return {
         ...row,
-        rawspace: this.storage.convertBytestoHumanReadable(row.rawspace),
+        rawspace: this.storage.convertBytesToHumanReadable(row.rawspace),
         hideCheckbox: row.active !== '-' && row.active !== '',
       } as BootenvRow;
     });
@@ -122,7 +106,7 @@ export class BootEnvironmentListComponent implements EntityTableConfig {
   }
 
   isActionVisible(actionId: string): boolean {
-    if (actionId == 'edit' || actionId == 'add') {
+    if (actionId === 'edit' || actionId === 'add') {
       return false;
     }
     return true;
@@ -175,7 +159,6 @@ export class BootEnvironmentListComponent implements EntityTableConfig {
             console.error,
             () => {
               this.entityList.getData();
-              this.updateBootState();
               this.entityList.selection.clear();
             },
           );
@@ -243,7 +226,6 @@ export class BootEnvironmentListComponent implements EntityTableConfig {
       buttonMsg: helptextSystemBootenv.list_dialog_activate_action,
     }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
       this.loader.open();
-      this.loaderOpen = true;
       this.ws.call(this.wsActivate, [id]).pipe(untilDestroyed(this)).subscribe(
         () => {
           this.entityList.getData();
@@ -258,23 +240,6 @@ export class BootEnvironmentListComponent implements EntityTableConfig {
     });
   }
 
-  updateBootState(): void {
-    this.ws.call('boot.get_state').pipe(untilDestroyed(this)).subscribe((state) => {
-      if (state.scan.end_time) {
-        this.scrubMessage = this.localeService.formatDateTime(state.scan.end_time.$date);
-      } else {
-        this.scrubMessage = this.translate.instant('Never');
-      }
-      this.sizeConsumed = this.storage.convertBytestoHumanReadable(state.properties.allocated.parsed);
-      this.condition = state.properties.health.value;
-      if (this.condition === 'DEGRADED') {
-        this.condition = this.condition + this.translate.instant(' Check Notifications for more details.');
-      }
-      this.sizeBoot = this.storage.convertBytestoHumanReadable(state.properties.size.parsed);
-      this.percentange = state.properties.capacity.value;
-    });
-  }
-
   toggleKeep(id: string, status: boolean): void {
     if (!status) {
       this.dialog.confirm({
@@ -283,7 +248,6 @@ export class BootEnvironmentListComponent implements EntityTableConfig {
         buttonMsg: helptextSystemBootenv.list_dialog_keep_action,
       }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
         this.loader.open();
-        this.loaderOpen = true;
         this.ws.call(this.wsKeep, [id, { keep: true }]).pipe(untilDestroyed(this)).subscribe(
           () => {
             this.entityList.getData();
@@ -303,7 +267,6 @@ export class BootEnvironmentListComponent implements EntityTableConfig {
         buttonMsg: helptextSystemBootenv.list_dialog_unkeep_action,
       }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
         this.loader.open();
-        this.loaderOpen = true;
         this.ws.call(this.wsKeep, [id, { keep: false }]).pipe(untilDestroyed(this)).subscribe(
           () => {
             this.entityList.getData();
@@ -328,71 +291,7 @@ export class BootEnvironmentListComponent implements EntityTableConfig {
       },
     }, {
       label: this.translate.instant('Stats/Settings'),
-      onClick: () => {
-        this.sysGeneralService.getAdvancedConfig$.pipe(untilDestroyed(this)).subscribe((res) => {
-          this.scrubInterval = res.boot_scrub;
-          const localWs = this.ws;
-          const localDialog = this.dialog;
-          const statusConfigFieldConf: FieldConfig[] = [
-            {
-              type: 'paragraph',
-              name: 'condition',
-              paraText: this.translate.instant('<b>Boot Pool Condition:</b> {condition}', { condition: this.condition }),
-            },
-            {
-              type: 'paragraph',
-              name: 'size_boot',
-              paraText: this.translate.instant('<b>Size:</b> {sizeBoot}', { sizeBoot: this.sizeBoot }),
-            },
-            {
-              type: 'paragraph',
-              name: 'size_consumed',
-              paraText: this.translate.instant('<b>Used:</b> {sizeConsumed}', { sizeConsumed: this.sizeConsumed }),
-            },
-            {
-              type: 'paragraph',
-              name: 'scrub_msg',
-              paraText: this.translate.instant('<b>Last Scrub Run:</b> {scrubMessage}<br /><br />', { scrubMessage: this.scrubMessage }),
-            },
-            {
-              type: 'input',
-              name: 'new_scrub_interval',
-              placeholder: this.translate.instant('Scrub interval (in days)'),
-              inputType: 'number',
-              value: this.scrubInterval,
-              required: true,
-            },
-          ];
-
-          const statusSettings: DialogFormConfiguration = {
-            title: this.translate.instant('Stats/Settings'),
-            fieldConfig: statusConfigFieldConf,
-            saveButtonText: this.translate.instant('Update Interval'),
-            cancelButtonText: this.translate.instant('Close'),
-            customSubmit: (entityDialog: EntityDialogComponent) => {
-              const scrubIntervalValue = parseInt(entityDialog.formValue.new_scrub_interval);
-              if (scrubIntervalValue > 0) {
-                localWs.call('boot.set_scrub_interval', [scrubIntervalValue]).pipe(untilDestroyed(this)).subscribe(() => {
-                  localDialog.closeAllDialogs();
-                  localDialog.info(
-                    this.translate.instant('Scrub Interval Set'),
-                    this.translate.instant('Scrub interval set to {scrubIntervalValue} days', { scrubIntervalValue }),
-                    '300px',
-                    'info',
-                    true,
-                  );
-                });
-              } else {
-                localDialog.info(
-                  this.translate.instant('Enter valid value'),
-                  this.translate.instant('{scrubIntervalValue} is not a valid number of days.', { scrubIntervalValue }),
-                );
-              }
-            },
-          };
-          this.dialog.dialogForm(statusSettings);
-        });
-      },
+      onClick: () => this.matDialog.open(BootenvStatsDialogComponent),
     }, {
       label: this.translate.instant('Boot Pool Status'),
       onClick: () => {
@@ -419,7 +318,6 @@ export class BootEnvironmentListComponent implements EntityTableConfig {
       buttonMsg: helptextSystemBootenv.list_dialog_scrub_action,
     }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
       this.loader.open();
-      this.loaderOpen = true;
       this.ws.call('boot.scrub').pipe(untilDestroyed(this)).subscribe(() => {
         this.loader.close();
         this.dialog.info(this.translate.instant('Scrub Started'), '', '300px', 'info', true);

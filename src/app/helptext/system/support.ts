@@ -35,15 +35,11 @@ export const helptextSystemSupport = {
   token: {
     placeholder: T('OAuth Token'),
     tooltip: T('OAuth Token for current session'),
-    validation: [Validators.required],
   },
 
   type: {
     placeholder: T('Type'),
-    tooltip: T(
-      'Select <i>Bug</i> when reporting an issue or\
- <i>Feature</i> when requesting new functionality.',
-    ),
+    tooltip: T('Select <i>Bug</i> when reporting an issue or <i>Suggestion</i> when requesting new functionality.'),
   },
 
   name: {
@@ -203,6 +199,10 @@ export const helptextSystemSupport = {
   updateTxt: T('Update License'),
   enterTxt: T('Add License'),
   ticket: T('File Ticket'),
+  debugSizeLimitWarning: T('The ticket was created successfully (see link below), but the debug file\
+   failed to attach. Please download the debug manually \
+   (System → Advanced → Save Debug), upload it to a third-party storage service and provide\
+    a link in the JIRA issue comment.'),
 
   updateProd: {
     title: T('Update Production Status'),

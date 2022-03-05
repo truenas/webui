@@ -1,7 +1,8 @@
-import { ApplicationRef, Component, Injector } from '@angular/core';
+import { Component } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 import { combineLatest, Observable } from 'rxjs';
@@ -14,18 +15,19 @@ import { Device } from 'app/interfaces/device.interface';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { VirtualMachine } from 'app/interfaces/virtual-machine.interface';
 import { VmPciPassthroughDevice } from 'app/interfaces/vm-device.interface';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
-import { FieldConfig, FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
-import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
-import { EntityUtils } from 'app/pages/common/entity/utils';
+import { EntityFormComponent } from 'app/modules/entity/entity-form/entity-form.component';
+import { FieldConfig, FormSelectConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
+import { FieldSet } from 'app/modules/entity/entity-form/models/fieldset.interface';
+import { EntityUtils } from 'app/modules/entity/utils';
 import {
   AppLoaderService,
   DialogService,
   StorageService,
-  SystemGeneralService,
   VmService,
   WebSocketService,
 } from 'app/services';
+import { AppState } from 'app/store';
+import { waitForAdvancedConfig } from 'app/store/system-config/system-config.selectors';
 
 @UntilDestroy()
 @Component({
@@ -214,13 +216,11 @@ export class VmFormComponent implements FormConfiguration {
     private loader: AppLoaderService,
     protected ws: WebSocketService,
     protected storageService: StorageService,
-    protected _injector: Injector,
-    protected _appRef: ApplicationRef,
     protected vmService: VmService,
     protected route: ActivatedRoute,
     private translate: TranslateService,
     private dialogService: DialogService,
-    private systemGeneralService: SystemGeneralService,
+    private store$: Store<AppState>,
   ) {}
 
   preInit(entityForm: EntityFormComponent): void {
@@ -284,8 +284,8 @@ export class VmFormComponent implements FormConfiguration {
       });
     }
 
-    this.systemGeneralService.getAdvancedConfig$.pipe(untilDestroyed(this)).subscribe((res) => {
-      this.isolatedGpuPciIds = res.isolated_gpu_pci_ids;
+    this.store$.pipe(waitForAdvancedConfig, untilDestroyed(this)).subscribe((config) => {
+      this.isolatedGpuPciIds = config.isolated_gpu_pci_ids;
     });
 
     const gpusFormControl = this.entityForm.formGroup.controls['gpus'];
@@ -300,12 +300,19 @@ export class VmFormComponent implements FormConfiguration {
       if (finalIsolatedPciIds.length && finalIsolatedPciIds.length >= gpusConf.options.length) {
         const prevSelectedGpus = [];
         for (const gpu of this.gpus) {
-          if (this.isolatedGpuPciIds.findIndex((igpi) => igpi === gpu.addr.pci_slot) >= 0) {
+          if (this.isolatedGpuPciIds.find((igpi) => igpi === gpu.addr.pci_slot)) {
             prevSelectedGpus.push(gpu);
           }
         }
         const listItems = '<li>' + prevSelectedGpus.map((gpu, index) => (index + 1) + '. ' + gpu.description).join('</li><li>') + '</li>';
-        gpusConf.warnings = 'At least 1 GPU is required by the host for it’s functions.<p>Currently following GPU(s) have been isolated:<ol>' + listItems + '</ol></p><p>With your selection, no GPU is available for the host to consume.</p>';
+        gpusConf.warnings = this.translate.instant('At least 1 GPU is required by the host for it’s functions.');
+        if (prevSelectedGpus.length) {
+          gpusConf.warnings += this.translate.instant(
+            '<p>Currently following GPU(s) have been isolated:<ol>{gpus}</ol></p>',
+            { gpus: listItems },
+          );
+        }
+        gpusConf.warnings += `<p>${this.translate.instant('With your selection, no GPU is available for the host to consume.')}</p>`;
         gpusFormControl.setErrors({ maxPCIIds: true });
       } else {
         gpusConf.warnings = null;
@@ -349,7 +356,7 @@ export class VmFormComponent implements FormConfiguration {
 
   resourceTransformIncomingRestData(vmRes: VirtualMachine): any {
     this.rawVmData = vmRes;
-    (vmRes as any)['memory'] = this.storageService.convertBytestoHumanReadable(vmRes['memory'] * 1048576, 0);
+    (vmRes as any)['memory'] = this.storageService.convertBytesToHumanReadable(vmRes['memory'] * 1048576, 0);
     this.ws.call('device.get_info', [DeviceType.Gpu]).pipe(untilDestroyed(this)).subscribe((gpus) => {
       this.gpus = gpus;
       const vmPciSlots = (vmRes.devices
@@ -449,7 +456,7 @@ export class VmFormComponent implements FormConfiguration {
     }
 
     for (const deviceId of vmPciDeviceIdsToRemove) {
-      observables.push(this.ws.call('vm.device.delete', [deviceId]));
+      observables.push(this.ws.call('vm.device.delete', [deviceId, { zvol: false, raw_file: false, force: false }]));
     }
 
     for (const device of pciDevicesToCreate) {

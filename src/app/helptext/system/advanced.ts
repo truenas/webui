@@ -8,6 +8,7 @@ export const helptextSystemAdvanced = {
   fieldset_ui: T('GUI'),
   fieldset_sed: T('Self-Encrypting Drive'),
   fieldset_kernel: T('Kernel'),
+  fieldset_replication: T('Replication'),
   fieldset_syslog: T('Syslog'),
   fieldset_sysctl: T('Sysctl'),
   fieldset_cron: T('Cron Jobs'),
@@ -78,15 +79,16 @@ export const helptextSystemAdvanced = {
   debugkernel_tooltip: T('Set to boot a debug kernel after the next system\
   reboot.'),
 
+  max_parallel_replication_tasks_placeholder: T('Replication Tasks Limit'),
+  max_parallel_replication_tasks_tooltip: T('Maximum number of replication tasks being executed \
+simultaneously.'),
+
   motd_placeholder: T('MOTD Banner'),
   motd_tooltip: T('The message to show when a user logs in with SSH.'),
 
   traceback_placeholder: T('Show Tracebacks in Case of Fatal Error'),
   traceback_tooltip: T('Provides a pop-up window of diagnostic information if a\
  fatal error occurs.'),
-
-  advancedmode_placeholder: T('Show Advanced Fields by Default'),
-  advancedmode_tooltip: T('Set to always show advanced fields, when available.'),
 
   fqdn_placeholder: T('Use FQDN for Logging'),
   fqdn_tooltip: T('Set to include the Fully-Qualified Domain Name (FQDN)\

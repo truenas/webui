@@ -6,10 +6,10 @@ import { ProductType } from 'app/enums/product-type.enum';
 import { shared, helptextSharingSmb } from 'app/helptext/sharing';
 import vol_helptext from 'app/helptext/storage/volumes/volume-list';
 import { SmbShare } from 'app/interfaces/smb-share.interface';
-import { EntityTableComponent } from 'app/pages/common/entity/entity-table/entity-table.component';
-import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
-import { EntityUtils } from 'app/pages/common/entity/utils';
-import { SMBFormComponent } from 'app/pages/sharing/smb/smb-form/smb-form.component';
+import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-table.component';
+import { EntityTableAction, EntityTableConfig } from 'app/modules/entity/entity-table/entity-table.interface';
+import { EntityUtils } from 'app/modules/entity/utils';
+import { SmbFormComponent } from 'app/pages/sharing/smb/smb-form/smb-form.component';
 import { DialogService, WebSocketService } from 'app/services';
 import { ModalService } from 'app/services/modal.service';
 
@@ -18,7 +18,7 @@ import { ModalService } from 'app/services/modal.service';
   selector: 'app-smb-list',
   template: '<entity-table [title]="title" [conf]="this"></entity-table>',
 })
-export class SMBListComponent implements EntityTableConfig {
+export class SmbListComponent implements EntityTableConfig {
   title = 'Samba';
   queryCall = 'sharing.smb.query' as const;
   updateCall = 'sharing.smb.update' as const;
@@ -30,11 +30,11 @@ export class SMBListComponent implements EntityTableConfig {
   productType = window.localStorage.getItem('product_type') as ProductType;
   emptyTableConfigMessages = {
     first_use: {
-      title: this.translate.instant('No SMB Shares'),
+      title: this.translate.instant('No SMB Shares have been configured yet'),
       message: this.translate.instant('It seems you haven\'t setup any SMB Shares yet. Please click the button below to add an SMB Share.'),
     },
     no_page_data: {
-      title: this.translate.instant('No SMB Shares'),
+      title: this.translate.instant('No SMB Shares have been configured yet'),
       message: this.translate.instant('The system could not retrieve any SMB Shares from the database. Please click the button below to add an SMB Share.'),
     },
     buttonText: this.translate.instant('Add SMB Share'),
@@ -80,7 +80,7 @@ export class SMBListComponent implements EntityTableConfig {
   }
 
   doAdd(id?: number): void {
-    this.modalService.openInSlideIn(SMBFormComponent, id);
+    this.modalService.openInSlideIn(SmbFormComponent, id);
   }
 
   doEdit(id: number): void {

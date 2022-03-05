@@ -8,12 +8,12 @@ import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { QueryFilter } from 'app/interfaces/query-api.interface';
 import { User, UserUpdate } from 'app/interfaces/user.interface';
-import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
-import { FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
-import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
-import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
-import { forbiddenValues } from 'app/pages/common/entity/entity-form/validators/forbidden-values-validation';
+import { FieldSets } from 'app/modules/entity/entity-form/classes/field-sets';
+import { EntityFormComponent } from 'app/modules/entity/entity-form/entity-form.component';
+import { FormSelectConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
+import { FieldSet } from 'app/modules/entity/entity-form/models/fieldset.interface';
+import { RelationAction } from 'app/modules/entity/entity-form/models/relation-action.enum';
+import { forbiddenValues } from 'app/modules/entity/entity-form/validators/forbidden-values-validation';
 import {
   AppLoaderService, StorageService, UserService, WebSocketService, ValidationService,
 } from 'app/services';
@@ -150,15 +150,6 @@ export class UserFormComponent implements FormConfiguration {
           required: true,
           validation: helptext.user_form_uid_validation,
         },
-        {
-          type: 'checkbox',
-          name: helptext.user_form_group_create_name,
-          placeholder: helptext.user_form_group_create_placeholder,
-          tooltip: helptext.user_form_group_create_tooltip,
-          value: true,
-          isHidden: false,
-          expandedHeight: true,
-        },
       ],
     },
     {
@@ -168,6 +159,15 @@ export class UserFormComponent implements FormConfiguration {
       width: '50%',
       config: [
         {
+          type: 'checkbox',
+          name: helptext.user_form_group_create_name,
+          placeholder: helptext.user_form_group_create_placeholder,
+          tooltip: helptext.user_form_group_create_tooltip,
+          value: true,
+          isHidden: false,
+          expandedHeight: true,
+        },
+        {
           type: 'select',
           name: helptext.user_form_primary_group_name,
           placeholder: helptext.user_form_primary_group_placeholder,
@@ -175,7 +175,7 @@ export class UserFormComponent implements FormConfiguration {
           options: [],
           relation: [
             {
-              action: RelationAction.Disable,
+              action: RelationAction.Hide,
               when: [{
                 name: 'group_create',
                 value: true,
@@ -286,7 +286,7 @@ export class UserFormComponent implements FormConfiguration {
     },
   ] as FieldSet<this>[]);
 
-  custActions = [
+  customActions = [
     {
       id: 'download_sshpubkey',
       name: helptext.user_form_download_key,

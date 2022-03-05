@@ -3,7 +3,7 @@ export class ThemeUtils {
     let txtColor = '';
     // Convert hex value to RGB
     const cssVarType = this.getValueType(cssVar);
-    const props = cssVarType == 'hex' ? this.hexToRgb(cssVar) : { rgb: this.rgbToArray(cssVar) };
+    const props = cssVarType === 'hex' ? this.hexToRgb(cssVar) : { rgb: this.rgbToArray(cssVar) };
 
     // Find the average value to determine brightness
     const brightest = (props.rgb[0] + props.rgb[1] + props.rgb[2]) / 3;
@@ -16,7 +16,7 @@ export class ThemeUtils {
       // RGB averages between 144-197 are to be
       // matched to bg2 css variable.
       const bgPropType = this.getValueType(bgVar);
-      const bgProp = bgPropType == 'hex' ? this.hexToRgb(bgVar) : { rgb: this.rgbToArray(bgVar) };
+      const bgProp = bgPropType === 'hex' ? this.hexToRgb(bgVar) : { rgb: this.rgbToArray(bgVar) };
       const bgAvg = (bgProp.rgb[0] + bgProp.rgb[1] + bgProp.rgb[2]) / 3;
       if (bgAvg < 127) {
         txtColor = '#333333';
@@ -60,11 +60,11 @@ export class ThemeUtils {
 
   hexToRgb(str: string): { hex: string; rgb: number[] } {
     const valueType = this.getValueType(str); // cssVar || hex || rgb || rgba
-    if (valueType != 'hex') console.error('This method takes a hex value as a parameter but was given a value of type ' + valueType);
+    if (valueType !== 'hex') console.error('This method takes a hex value as a parameter but was given a value of type ' + valueType);
 
     const spl = str.split('#');
     let hex = spl[1];
-    if (hex.length == 3) {
+    if (hex.length === 3) {
       hex = hex[0] + hex[0] + hex[1] + hex[1] + hex[2] + hex[2];
     }
 
@@ -114,12 +114,12 @@ export class ThemeUtils {
   forceRgb(value: string): number[] {
     const valueType = this.getValueType(value);
     let rgb: number[];
-    if (valueType == 'cssVar') {
+    if (valueType === 'cssVar') {
       console.error('Cannot convert a variable. Please provide hex or rgb value');
-    } else if (valueType == 'hsl') {
+    } else if (valueType === 'hsl') {
       console.error('Cannot convert hsl. Please provide hex or rgb value');
     } else {
-      rgb = valueType == 'hex' ? this.hexToRgb(value).rgb : this.rgbToArray(value);
+      rgb = valueType === 'hex' ? this.hexToRgb(value).rgb : this.rgbToArray(value);
       return rgb;
     }
   }
@@ -135,7 +135,7 @@ export class ThemeUtils {
   adjustLightness(value: string, pc: number, method = 'darken'): string {
     const rgb: number[] = this.forceRgb(value);
     const hsl = this.rgbToHsl(rgb, false, false) as number[];
-    let lightness: number = method == 'lighten' ? hsl[2] + pc : hsl[2] - pc;
+    let lightness: number = method === 'lighten' ? hsl[2] + pc : hsl[2] - pc;
     lightness = lightness > 100 ? 100 : lightness;
 
     const adjusted = [hsl[0], hsl[1], lightness];
@@ -159,11 +159,11 @@ export class ThemeUtils {
     let l = 0;
 
     // Calculate Hue
-    if (delta == 0) {
+    if (delta === 0) {
       h = 0;
-    } else if (cmax == r) {
+    } else if (cmax === r) {
       h = ((g - b) / delta) % 6;
-    } else if (cmax == g) {
+    } else if (cmax === g) {
       h = (b - r) / delta + 2;
     } else {
       h = (r - g) / delta + 4;
@@ -175,7 +175,7 @@ export class ThemeUtils {
 
     // Calculate saturation and lightness
     l = (cmax + cmin) / 2;
-    s = delta == 0 ? 0 : delta / (1 - Math.abs(2 * l - 1));
+    s = delta === 0 ? 0 : delta / (1 - Math.abs(2 * l - 1));
 
     l = +(l * 100).toFixed(1);
     s = +(s * 100).toFixed(1);

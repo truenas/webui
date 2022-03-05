@@ -4,6 +4,15 @@ import {
 } from '@angular/core';
 import { difference, ListSelection, ListSelectionImpl } from './models';
 
+const transfer = <T>(from: ListSelection<T>, to: ListSelection<T>): {
+  from: ListSelection<T>; to: ListSelection<T>;
+} => ({
+    from: new ListSelectionImpl(
+      from.totalItems.filter((item) => !from.isSelected(item)),
+    ),
+    to: new ListSelectionImpl([...from.selectedItems, ...to.totalItems]),
+  });
+
 @Component({
   selector: 'app-dual-listbox',
   styleUrls: ['./dual-list.component.scss'],
@@ -86,12 +95,3 @@ export class DualListboxComponent<T extends { id: string | number; name?: string
     });
   }
 }
-
-const transfer = <T>(from: ListSelection<T>, to: ListSelection<T>): {
-  from: ListSelection<T>; to: ListSelection<T>;
-} => ({
-    from: new ListSelectionImpl(
-      from.totalItems.filter((x) => !from.isSelected(x)),
-    ),
-    to: new ListSelectionImpl([...from.selectedItems, ...to.totalItems]),
-  });

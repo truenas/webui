@@ -6,6 +6,7 @@ import { LocalStorage } from 'ngx-webstorage';
 import {
   Observable, Observer, Subject, Subscriber,
 } from 'rxjs';
+import { share } from 'rxjs/operators';
 import { ApiEventMessage } from 'app/enums/api-event-message.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { ApiDirectory, ApiMethod } from 'app/interfaces/api-directory.interface';
@@ -68,7 +69,7 @@ export class WebSocketService {
 
   connect(): void {
     this.socket = new WebSocket(
-      (this.protocol == 'https:' ? 'wss://' : 'ws://')
+      (this.protocol === 'https:' ? 'wss://' : 'ws://')
         + this.remote + '/websocket',
     );
     this.socket.onmessage = this.onmessage.bind(this);
@@ -109,12 +110,16 @@ export class WebSocketService {
     let data: any;
     try {
       data = JSON.parse(msg.data);
-    } catch (e: unknown) {
+    } catch (error: unknown) {
       console.warn(`Malformed response: "${msg.data}"`);
       return;
     }
 
-    if (data.msg == ApiEventMessage.Result) {
+    if (data.error && data.error === 13 /** Not Authenticated */) {
+      return this.socket.close(); // will trigger onClose which handles redirection
+    }
+
+    if (data.msg === ApiEventMessage.Result) {
       const call = this.pendingCalls.get(data.id);
 
       this.pendingCalls.delete(data.id);
@@ -126,21 +131,19 @@ export class WebSocketService {
         call.observer.next(data.result);
         call.observer.complete();
       }
-    } else if (data.msg == ApiEventMessage.Connected) {
+    } else if (data.msg === ApiEventMessage.Connected) {
       this.connected = true;
       setTimeout(() => this.ping(), 20000);
       this.onconnect();
-    } else if (data.msg == ApiEventMessage.Changed || data.msg == ApiEventMessage.Added) {
+    } else if (data.msg === ApiEventMessage.Changed || data.msg === ApiEventMessage.Added) {
       this.subscriptions.forEach((v, k) => {
-        if (k == '*' || k == data.collection) {
+        if (k === '*' || k === data.collection) {
           v.forEach((item) => { item.next(data); });
         }
       });
     } else
     // do nothing for pong or sub, otherwise console warn
-    if (data.msg && (data.msg !== ApiEventMessage.Pong || data.msg !== ApiEventMessage.Sub)) {
-      console.warn('Msg Received', data);
-    } else {
+    if (!Object.values(ApiEventMessage).includes(data.msg)) {
       console.warn('Unknown message: ', data);
     }
 
@@ -162,7 +165,7 @@ export class WebSocketService {
   }
 
   send(payload: unknown): void {
-    if (this.socket.readyState == WebSocket.OPEN) {
+    if (this.socket.readyState === WebSocket.OPEN) {
       this.socket.send(JSON.stringify(payload));
     } else {
       this.pendingMessages.push(payload);
@@ -206,7 +209,7 @@ export class WebSocketService {
       });
 
       this.send(payload);
-    });
+    }).pipe(share());
   }
 
   /**
@@ -263,7 +266,7 @@ export class WebSocketService {
     const source = Observable.create((observer: Subscriber<Job<ApiDirectory[K]['response']>>) => {
       this.call(method, params).pipe(untilDestroyed(this)).subscribe((jobId) => {
         this.subscribe('core.get_jobs').pipe(untilDestroyed(this)).subscribe((event) => {
-          if (event.id == jobId) {
+          if (event.id === jobId) {
             observer.next(event.fields);
             if (event.fields.state === JobState.Success) observer.complete();
             if (event.fields.state === JobState.Failed) observer.error(event.fields);

@@ -6,16 +6,16 @@ import { JobState } from 'app/enums/job-state.enum';
 import helptext from 'app/helptext/apps/apps';
 import { Catalog, CatalogQueryParams } from 'app/interfaces/catalog.interface';
 import { CoreEvent } from 'app/interfaces/events';
+import { AppLoaderService } from 'app/modules/app-loader/app-loader.service';
+import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
+import {
+  EntityTableComponent,
+} from 'app/modules/entity/entity-table/entity-table.component';
+import { EntityTableAction, EntityTableConfig } from 'app/modules/entity/entity-table/entity-table.interface';
 import { ApplicationToolbarControl } from 'app/pages/applications/application-toolbar-control.enum';
 import { CatalogAddFormComponent } from 'app/pages/applications/forms/catalog-add-form/catalog-add-form.component';
 import { CatalogEditFormComponent } from 'app/pages/applications/forms/catalog-edit-form/catalog-edit-form.component';
-import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
-import {
-  EntityTableComponent,
-} from 'app/pages/common/entity/entity-table/entity-table.component';
-import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
 import { DialogService } from 'app/services';
-import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { ManageCatalogSummaryDialogComponent } from '../dialogs/manage-catalog-summary/manage-catalog-summary-dialog.component';
@@ -74,14 +74,14 @@ export class ManageCatalogsComponent implements EntityTableConfig<Catalog>, OnIn
 
   ngOnInit(): void {
     this.ws.subscribe('core.get_jobs').pipe(untilDestroyed(this)).subscribe((event) => {
-      if (event.fields.method == 'catalog.sync') {
+      if (event.fields.method === 'catalog.sync') {
         const jobId = event.fields.id;
         if (!this.catalogSyncJobIds.includes(jobId) && event.fields.state === JobState.Running) {
           this.refresh();
           this.catalogSyncJobIds.push(jobId);
         }
 
-        if (event.fields.state == JobState.Success || event.fields.state == JobState.Failed) {
+        if (event.fields.state === JobState.Success || event.fields.state === JobState.Failed) {
           this.catalogSyncJobIds.splice(this.catalogSyncJobIds.indexOf(jobId));
         }
       }
@@ -179,7 +179,6 @@ export class ManageCatalogsComponent implements EntityTableConfig<Catalog>, OnIn
       data: {
         title: helptext.refreshing,
       },
-      disableClose: true,
     });
     this.dialogRef.componentInstance.setCall('catalog.sync_all');
     this.dialogRef.componentInstance.submit();
@@ -194,7 +193,6 @@ export class ManageCatalogsComponent implements EntityTableConfig<Catalog>, OnIn
       data: {
         title: helptext.refreshing,
       },
-      disableClose: true,
     });
     this.dialogRef.componentInstance.setCall('catalog.sync', [row.label]);
     this.dialogRef.componentInstance.submit();

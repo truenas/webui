@@ -10,13 +10,13 @@ import global_helptext from 'app/helptext/global-helptext';
 import { FormConfiguration, FormCustomAction } from 'app/interfaces/entity-form.interface';
 import { LdapConfig, LdapConfigUpdate, LdapConfigUpdateResult } from 'app/interfaces/ldap-config.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
+import { EntityFormComponent } from 'app/modules/entity/entity-form/entity-form.component';
 import {
   FieldConfig, FormSelectConfig,
-} from 'app/pages/common/entity/entity-form/models/field-config.interface';
-import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
-import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
-import { EntityUtils } from 'app/pages/common/entity/utils';
+} from 'app/modules/entity/entity-form/models/field-config.interface';
+import { FieldSet } from 'app/modules/entity/entity-form/models/fieldset.interface';
+import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
+import { EntityUtils } from 'app/modules/entity/utils';
 import { LdapTransformedConfig } from 'app/pages/directory-service/components/ldap/ldap-transformed-config.interface';
 import {
   SystemGeneralService,
@@ -43,7 +43,7 @@ export class LdapComponent implements FormConfiguration {
   protected ldapSchemaField: FormSelectConfig;
   protected hostnames: string[];
   protected entityForm: EntityFormComponent;
-  custActions: FormCustomAction[] = [
+  customActions: FormCustomAction[] = [
     {
       id: helptext.ldap_custactions_basic_id,
       name: global_helptext.basic_options,
@@ -208,7 +208,7 @@ export class LdapComponent implements FormConfiguration {
 
   advancedFields = helptext.ldap_advanced_fields;
 
-  isCustActionVisible(actionId: string): boolean {
+  isCustomActionVisible(actionId: string): boolean {
     if (actionId === 'advanced_mode' && !this.isBasicMode) {
       return false;
     } if (actionId === 'basic_mode' && this.isBasicMode) {
@@ -278,7 +278,7 @@ export class LdapComponent implements FormConfiguration {
       });
 
       // Handle case when there is no data
-      if (res.length == 0) {
+      if (res.length === 0) {
         this.ldapCertificateField.zeroStateMessage = 'No Certificates Found';
       }
     });

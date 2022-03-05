@@ -93,17 +93,7 @@
 }
 
 #dashboardcontainerdiv .c3-tooltip-container {
-  /*background-color: rgba(0,0,0,0.9) !important;*/
-  /*background:linear-gradient(0deg,rgba(0,0,0,0.49),rgba(33,33,33,0.79)) !important;*/
-  /*background:linear-gradient(0deg,rgba(0,0,0,0.7), rgba(33,33,33,1))!important;
-  color: #fff !important;
-  box-shadow: 0px 2px 4px rgba(0,0,0,0.85) !important;
-  margin: .333333rem;
-  overflow: hidden;
-  padding:16px;
-  border-radius:2px;*/
   display: none;
-  /*font-family:"Roboto Medium";*/
 }
 
 .c3-tooltip,
@@ -117,20 +107,13 @@
 
 .c3-tooltip tr {
   border: none;
-  /*background-color:rgba(0,0,0,0.25);*/
 }
-
-.c3-tooltip tr:nth-child(even) {
-  /*background-color:rgba(63,63,63,0.25);*/
-}
-
 
 .c3-tooltip tr:first-child {
   background-color: none;
 }
 
 .c3-tooltip td>span {
-  /*border:solid #fff 2px;*/
   border-radius: 8px;
 }
 
@@ -144,10 +127,6 @@
 .c3 .tick line {
   stroke: #ddd !important;
   stroke-opacity: 0.15 !important;
-}
-
-.c3-xgrid {
-  /*stroke-opacity:0 !important;*/
 }
 
 .c3-ygrid,
@@ -200,36 +179,12 @@ div.c3.area-spline .c3-chart-line .c3-lines path.c3-line {
   stroke-width: 0;
 }
 
-/* Event Rects (Can't decide if I like these. Will ask Kris) */
 .line .c3-event-rects,
 .spline .c3-event-rects,
 .area .c3-event-rects,
 .area-spline .c3-event-rects {
   cursor: crosshair !important;
 }
-
-/*.bar-chart .c3-event-rects:nth-child(odd){
-  fill: url(#grad1);
-}*/
-
-/*
-
-.c3.line g.c3-event-rects,
-.c3.spline g.c3-event-rects,
-.c3.area-line g.c3-event-rects,
-.c3.area-spline g.c3-event-rects{
-  fill: rgba(0,0,0,0);
-  fill-opacity:1 !important;
-  stroke: rgba(128,128,128,0.0325);
-}
-
-.c3.line g.c3-event-rects rect.c3-event-rect:nth-child(odd),
-.c3.spline g.c3-event-rects rect.c3-event-rect:nth-child(odd),
-.c3.area-line g.c3-event-rects rect.c3-event-rect:nth-child(odd),
-.c3.area-spline g.c3-event-rects rect.c3-event-rect:nth-child(odd){
-  fill: rgba(128,128,128,0.075) !important;
-}
-*/
 
 /* SUBCHARTS */
 g.c3-brush + g {

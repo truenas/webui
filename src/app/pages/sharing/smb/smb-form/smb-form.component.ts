@@ -15,13 +15,13 @@ import globalHelptext from 'app/helptext/global-helptext';
 import { helptextSharingSmb, shared } from 'app/helptext/sharing';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { SmbPresets, SmbShare } from 'app/interfaces/smb-share.interface';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
-import { FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
-import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
-import { forbiddenValues } from 'app/pages/common/entity/entity-form/validators/forbidden-values-validation';
-import { EntityUtils } from 'app/pages/common/entity/utils';
+import { EntityFormComponent } from 'app/modules/entity/entity-form/entity-form.component';
+import { FormSelectConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
+import { FieldSet } from 'app/modules/entity/entity-form/models/fieldset.interface';
+import { forbiddenValues } from 'app/modules/entity/entity-form/validators/forbidden-values-validation';
+import { EntityUtils } from 'app/modules/entity/utils';
 import {
-  AppLoaderService, DialogService, SystemGeneralService, WebSocketService,
+  AppLoaderService, DialogService, WebSocketService,
 } from 'app/services';
 import { ModalService } from 'app/services/modal.service';
 
@@ -30,7 +30,7 @@ import { ModalService } from 'app/services/modal.service';
   selector: 'app-smb-form',
   template: '<entity-form [conf]="this"></entity-form>',
 })
-export class SMBFormComponent implements FormConfiguration {
+export class SmbFormComponent implements FormConfiguration {
   queryCall = 'sharing.smb.query' as const;
   addCall = 'sharing.smb.create' as const;
   editCall = 'sharing.smb.update' as const;
@@ -271,7 +271,7 @@ export class SMBFormComponent implements FormConfiguration {
   protected accessFieldsets = _.find(this.fieldSets, { class: 'access' });
   protected otherFieldsets = _.find(this.fieldSets, { class: 'other' });
 
-  custActions = [
+  customActions = [
     {
       id: 'basic_mode',
       name: globalHelptext.basic_options,
@@ -299,7 +299,6 @@ export class SMBFormComponent implements FormConfiguration {
     protected ws: WebSocketService,
     private dialog: DialogService,
     protected loader: AppLoaderService,
-    private sysGeneralService: SystemGeneralService,
     private modalService: ModalService,
     private translate: TranslateService,
   ) {
@@ -317,7 +316,7 @@ export class SMBFormComponent implements FormConfiguration {
     return data;
   }
 
-  isCustActionVisible(actionId: string): boolean {
+  isCustomActionVisible(actionId: string): boolean {
     if (actionId === 'advanced_mode' && !this.isBasicMode) {
       return false;
     }
@@ -564,8 +563,8 @@ export class SMBFormComponent implements FormConfiguration {
     entityForm.formGroup.controls['path'].valueChanges.pipe(untilDestroyed(this)).subscribe((path) => {
       const nameControl = entityForm.formGroup.controls['name'];
       if (path && !nameControl.value) {
-        const v = path.split('/').pop();
-        nameControl.setValue(v);
+        const name = path.split('/').pop();
+        nameControl.setValue(name);
       }
 
       if (!this.stripACLWarningSent) {
@@ -595,11 +594,6 @@ export class SMBFormComponent implements FormConfiguration {
         this.isTimeMachineOn = true;
       }
     }, 700);
-
-    this.sysGeneralService.getAdvancedConfig$.pipe(untilDestroyed(this)).subscribe((config) => {
-      this.isBasicMode = !config.advancedmode;
-      this.updateForm();
-    });
 
     entityForm.formGroup.controls['purpose'].valueChanges.pipe(untilDestroyed(this)).subscribe((res) => {
       this.clearPresets();

@@ -11,11 +11,11 @@ import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { QueryFilter } from 'app/interfaces/query-api.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
-import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
-import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
-import { FieldConfig, FormParagraphConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
-import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
-import { EntityUtils } from 'app/pages/common/entity/utils';
+import { DialogFormConfiguration } from 'app/modules/entity/entity-dialog/dialog-form-configuration.interface';
+import { EntityDialogComponent } from 'app/modules/entity/entity-dialog/entity-dialog.component';
+import { FieldConfig, FormParagraphConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
+import { FieldSet } from 'app/modules/entity/entity-form/models/fieldset.interface';
+import { EntityUtils } from 'app/modules/entity/utils';
 import {
   WebSocketService, AppLoaderService, StorageService, DialogService, SystemGeneralService,
 } from 'app/services';
@@ -239,7 +239,7 @@ export class CertificateAuthorityEditComponent implements FormConfiguration {
     customSubmit: (entityDialog) => this.doSignCsr(entityDialog),
   };
 
-  custActions = [
+  customActions = [
     {
       id: 'sign_CSR',
       name: helptextSystemCertificates.edit.signCSR,
@@ -262,18 +262,18 @@ export class CertificateAuthorityEditComponent implements FormConfiguration {
       'root_path', 'digest_algorithm', 'key_length', 'key_type', 'until', 'revoked', 'signed_certificates', 'lifetime',
     ];
     fields.forEach((field) => {
-      const paragraph: FormParagraphConfig = _.find(this.fieldConfig, { name: field });
+      const paragraph = _.find(this.fieldConfig, { name: field }) as FormParagraphConfig;
       if (this.incomingData[field] || this.incomingData[field] === false) {
         paragraph.paraText += this.incomingData[field];
       } else {
         paragraph.paraText += '---';
       }
     });
-    const config: FormParagraphConfig = _.find(this.fieldConfig, { name: 'san' });
+    const config = _.find(this.fieldConfig, { name: 'san' }) as FormParagraphConfig;
     config.paraText += this.incomingData.san.join(',');
-    const issuer: FormParagraphConfig = _.find(this.fieldConfig, { name: 'issuer' });
+    const issuer = _.find(this.fieldConfig, { name: 'issuer' }) as FormParagraphConfig;
     if (_.isObject(this.incomingData.issuer)) {
-      issuer.paraText += (this.incomingData.issuer as any).name;
+      issuer.paraText += this.incomingData.issuer.name;
     } else if (this.incomingData.issuer) {
       issuer.paraText += this.incomingData.issuer;
     } else {

@@ -21,12 +21,13 @@ import { RsyncTaskUi } from 'app/interfaces/rsync-task.interface';
 import { ScrubTaskUi } from 'app/interfaces/scrub-task.interface';
 import { SmartTestUi } from 'app/interfaces/smart-test.interface';
 import { Disk } from 'app/interfaces/storage.interface';
-import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
-import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
-import { FormParagraphConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
-import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
-import { AppTableAction, AppTableConfig } from 'app/pages/common/entity/table/table.component';
-import { EntityUtils } from 'app/pages/common/entity/utils';
+import { AppLoaderService } from 'app/modules/app-loader/app-loader.service';
+import { DialogFormConfiguration } from 'app/modules/entity/entity-dialog/dialog-form-configuration.interface';
+import { EntityDialogComponent } from 'app/modules/entity/entity-dialog/entity-dialog.component';
+import { FormParagraphConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
+import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
+import { AppTableAction, AppTableConfig } from 'app/modules/entity/table/table.component';
+import { EntityUtils } from 'app/modules/entity/utils';
 import { CloudsyncFormComponent } from 'app/pages/data-protection/cloudsync/cloudsync-form/cloudsync-form.component';
 import { ReplicationFormComponent } from 'app/pages/data-protection/replication/replication-form/replication-form.component';
 import { ReplicationWizardComponent } from 'app/pages/data-protection/replication/replication-wizard/replication-wizard.component';
@@ -40,7 +41,6 @@ import {
   TaskService,
   WebSocketService,
 } from 'app/services';
-import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { JobService } from 'app/services/job.service';
 import { ModalService } from 'app/services/modal.service';
 
@@ -783,7 +783,9 @@ export class DataProtectionDashboardComponent implements OnInit {
                 .get('transfer_mode')
                 .valueChanges.pipe(untilDestroyed(entityDialog))
                 .subscribe((mode: TransferMode) => {
-                  const paragraph: FormParagraphConfig = conf.fieldConfig.find((config) => config.name === 'transfer_mode_warning');
+                  const paragraph = conf.fieldConfig.find((config) => {
+                    return config.name === 'transfer_mode_warning';
+                  }) as FormParagraphConfig;
                   switch (mode) {
                     case TransferMode.Sync:
                       paragraph.paraText = helptext_cloudsync.transfer_mode_warning_sync;

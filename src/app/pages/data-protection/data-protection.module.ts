@@ -4,11 +4,9 @@ import { FlexLayoutModule } from '@angular/flex-layout';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
-import { CalendarModule, DateAdapter } from 'angular-calendar';
-import { adapterFactory } from 'angular-calendar/date-adapters/date-fns';
 import { MaterialModule } from 'app/app-material.module';
-import { EntityModule } from '../common/entity/entity.module';
-import { IxFormsModule } from '../common/ix-forms/ix-forms.module';
+import { EntityModule } from '../../modules/entity/entity.module';
+import { IxFormsModule } from '../../modules/ix-forms/ix-forms.module';
 import { CloudsyncFormComponent } from './cloudsync/cloudsync-form/cloudsync-form.component';
 import { CloudsyncListComponent } from './cloudsync/cloudsync-list/cloudsync-list.component';
 import { DataProtectionDashboardComponent } from './components/data-protection-dashboard/data-protection-dashboard.component';
@@ -31,10 +29,6 @@ import { SnapshotListComponent } from './snapshot/snapshot-list/snapshot-list.co
     CommonModule,
     MaterialModule,
     FlexLayoutModule,
-    CalendarModule.forRoot({
-      provide: DateAdapter,
-      useFactory: adapterFactory,
-    }),
     RouterModule.forChild(dataProtectionRoutes),
     EntityModule,
     FormsModule,

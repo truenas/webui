@@ -13,16 +13,16 @@ import { KeychainCredential } from 'app/interfaces/keychain-credential.interface
 import { QueryFilter } from 'app/interfaces/query-api.interface';
 import { SshConnectionSetup } from 'app/interfaces/ssh-connection-setup.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
-import { FieldConfig, FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
-import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
-import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
-import { forbiddenValues } from 'app/pages/common/entity/entity-form/validators/forbidden-values-validation';
-import { EntityUtils } from 'app/pages/common/entity/utils';
+import { AppLoaderService } from 'app/modules/app-loader/app-loader.service';
+import { EntityFormComponent } from 'app/modules/entity/entity-form/entity-form.component';
+import { FieldConfig, FormSelectConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
+import { FieldSet } from 'app/modules/entity/entity-form/models/fieldset.interface';
+import { RelationAction } from 'app/modules/entity/entity-form/models/relation-action.enum';
+import { forbiddenValues } from 'app/modules/entity/entity-form/validators/forbidden-values-validation';
+import { EntityUtils } from 'app/modules/entity/utils';
 import {
   KeychainCredentialService, WebSocketService, DialogService, ReplicationService,
 } from 'app/services';
-import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { ModalService } from 'app/services/modal.service';
 
 @UntilDestroy()
@@ -255,7 +255,7 @@ export class SshConnectionsFormComponent implements FormConfiguration {
     }
     this.keychainCredentialService.getSshConnections().toPromise().then((connections) => {
       const sshConnections = connections
-        .filter((connection) => connection.id != this.rowNum)
+        .filter((connection) => connection.id !== this.rowNum)
         .map((connection) => connection.name);
       this.namesInUse.push(...sshConnections);
       this.namesInUseConnection.push(...sshConnections);

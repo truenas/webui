@@ -1,0 +1,105 @@
+<div class="alerts-header">
+  <h3 class="alerts-title">{{ 'Alerts' | translate }}</h3>
+
+  <div class="controls">
+    <button
+      [title]="'Settings' | translate"
+      mat-icon-button
+      [matMenuTriggerFor]="alertSettingsMenu"
+    >
+      <mat-icon>settings</mat-icon>
+    </button>
+    <mat-menu #alertSettingsMenu="matMenu">
+      <a
+        mat-menu-item
+        (click)="navigateTo(['/system', 'alertsettings'])"
+      >
+        {{ 'Alert Settings' | translate }}
+      </a>
+      <a
+        mat-menu-item
+        (click)="navigateTo(['/system', 'alertservice'])"
+      >
+        {{ 'Alert Services' | translate }}
+      </a>
+      <a
+        mat-menu-item
+        (click)="navigateTo(['/system', 'email'])"
+      >
+        {{ 'Email' | translate }}
+      </a>
+    </mat-menu>
+    <button
+      [title]="'Close panel' | translate"
+      mat-icon-button
+      (click)="onPanelClosed()"
+    >
+      <mat-icon>clear</mat-icon>
+    </button>
+  </div>
+</div>
+
+<div *ngIf="isLoading$ | async; else loaded">
+  <mat-progress-bar
+    class="loading-indicator"
+    color="primary"
+    mode="indeterminate"
+  ></mat-progress-bar>
+</div>
+<ng-template #loaded>
+  <!-- TODO: Consider extracting into its own component -->
+  <div *ngIf="error$ | async as error" class="error">
+    <mat-icon class="icon" color="accent">warning</mat-icon>
+    <h4 class="message">
+      <span class="error-word">{{'Error:' | translate}}</span>
+      {{ error }}
+    </h4>
+  </div>
+
+  <div *appLet="unreadAlerts$ | async as unreadAlerts">
+    <div *ngIf="!unreadAlerts.length; else hasUnreadAlerts" class="no-alerts">
+      <mat-icon class="icon">info</mat-icon>
+      <h4 class="message">{{ 'There are no alerts.' | translate }}</h4>
+    </div>
+
+    <ng-template #hasUnreadAlerts>
+      <div class="alert-list unread-alerts">
+        <div
+          *ngFor="let alert of unreadAlerts; last as last; trackBy: trackByAlertId"
+          class="alert"
+          [class.alert-last]="last"
+          role="listitem"
+        >
+          <ix-alert [alert]="alert"></ix-alert>
+        </div>
+      </div>
+
+      <button
+        matRipple
+        class="button-row"
+        (click)="onDismissAll()"
+      >
+        {{ 'Dismiss All Alerts' | translate }}
+      </button>
+    </ng-template>
+  </div>
+
+  <div *appLet="dismissedAlerts$ | async as dismissedAlerts">
+    <ng-container *ngIf="dismissedAlerts.length">
+      <div class="alert-list dismissed-alerts">
+        <div
+          *ngFor="let alert of dismissedAlerts; last as last; trackBy: trackByAlertId"
+          class="alert"
+          [class.alert-last]="last"
+          role="listitem"
+        >
+          <ix-alert [alert]="alert"></ix-alert>
+        </div>
+      </div>
+
+      <button class="button-row" matRipple (click)="onReopenAll()">
+        {{ 'Re-Open All Alerts' | translate }}
+      </button>
+    </ng-container>
+  </div>
+</ng-template>

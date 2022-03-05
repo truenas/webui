@@ -8,9 +8,9 @@ import * as _ from 'lodash';
 import { Observable, Subject, Subscriber } from 'rxjs';
 import helptext from 'app/helptext/shell/shell';
 import { TerminalConfiguration } from 'app/interfaces/terminal.interface';
-import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
-import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
-import { FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { DialogFormConfiguration } from 'app/modules/entity/entity-dialog/dialog-form-configuration.interface';
+import { EntityDialogComponent } from 'app/modules/entity/entity-dialog/entity-dialog.component';
+import { FormSelectConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
 import { DialogService, ShellService, WebSocketService } from 'app/services';
 
 @UntilDestroy()

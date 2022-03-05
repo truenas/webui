@@ -85,7 +85,7 @@ export default {
   naming_schema_placeholder: T('Naming Schema'),
   naming_schema_tooltip: T('Pattern of naming custom snapshots to be \
  replicated. Enter the name and \
- <a href="https://www.freebsd.org/cgi/man.cgi?query=strftime" target="_blank">strftime(3)</a> \
+ <a href="https://man7.org/linux/man-pages/man3/strftime.3.html" target="_blank">strftime(3)</a> \
  <i>&percnt;Y</i>, <i>&percnt;m</i>, <i>&percnt;d</i>, <i>&percnt;H</i>, and <i>&percnt;M</i> strings that \
  match the snapshots to include in the replication. Separate entries by \
  pressing <code>Enter</code>. The number of snapshots matching the \

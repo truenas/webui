@@ -11,14 +11,15 @@ import globalHelptext from 'app/helptext/global-helptext';
 import { helptextSharingIscsi } from 'app/helptext/sharing';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { IscsiExtent } from 'app/interfaces/iscsi.interface';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
-import { FieldConfig, FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
-import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
-import { EntityUtils } from 'app/pages/common/entity/utils';
+import { QueryFilter } from 'app/interfaces/query-api.interface';
+import { AppLoaderService } from 'app/modules/app-loader/app-loader.service';
+import { EntityFormComponent } from 'app/modules/entity/entity-form/entity-form.component';
+import { FieldConfig, FormSelectConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
+import { FieldSet } from 'app/modules/entity/entity-form/models/fieldset.interface';
+import { EntityUtils } from 'app/modules/entity/utils';
 import {
   IscsiService, WebSocketService, StorageService,
 } from 'app/services';
-import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 
 @UntilDestroy()
 @Component({
@@ -30,7 +31,7 @@ export class ExtentFormComponent implements FormConfiguration {
   addCall = 'iscsi.extent.create' as const;
   queryCall = 'iscsi.extent.query' as const;
   editCall = 'iscsi.extent.update' as const;
-  customFilter: any[] = [[['id', '=']]];
+  customFilter: [[Partial<QueryFilter<IscsiExtent>>]] = [[['id', '=']]];
   routeSuccess: string[] = ['sharing', 'iscsi', 'extent'];
   isEntity = true;
   protected entityForm: EntityFormComponent;
@@ -125,17 +126,17 @@ export class ExtentFormComponent implements FormConfiguration {
           parent: this,
           validation: [Validators.required,
             (control: FormControl): ValidationErrors => {
-              const config = this.fieldConfig.find((c) => c.name === 'filesize');
+              const filesizeConfig = this.fieldConfig.find((config) => config.name === 'filesize');
               const size = this.storageService.convertHumanStringToNum(control.value, true);
               const errors = control.value && Number.isNaN(size)
                 ? { invalid_byte_string: true }
                 : null;
               if (errors) {
-                config.hasErrors = true;
-                config.errors = globalHelptext.human_readable.input_error;
+                filesizeConfig.hasErrors = true;
+                filesizeConfig.errors = globalHelptext.human_readable.input_error;
               } else {
-                config.hasErrors = false;
-                config.errors = '';
+                filesizeConfig.hasErrors = false;
+                filesizeConfig.errors = '';
               }
 
               return errors;
@@ -313,7 +314,7 @@ export class ExtentFormComponent implements FormConfiguration {
         this.availableThresholdField.isHidden = false;
       } else {
         this.availableThresholdField.isHidden = true;
-        if (this.pk && value != undefined && _.find(extentDiskField.options, { value }) === undefined) {
+        if (this.pk && value !== undefined && _.find(extentDiskField.options, { value }) === undefined) {
           extentDiskField.options.push({ label: value, value });
         }
       }
@@ -325,7 +326,7 @@ export class ExtentFormComponent implements FormConfiguration {
   }
 
   formUpdate(type: string): void {
-    const isDevice = type != 'FILE';
+    const isDevice = type !== 'FILE';
 
     this.fileFieldGroup.forEach((field) => {
       const control = _.find(this.fieldConfig, { name: field });
@@ -353,21 +354,21 @@ export class ExtentFormComponent implements FormConfiguration {
   resourceTransformIncomingRestData(data: IscsiExtent): any {
     this.originalFilesize = parseInt(data.filesize, 10);
     const transformed: any = { ...data };
-    if (data.type == IscsiExtentType.Disk) {
+    if (data.type === IscsiExtentType.Disk) {
       if (_.startsWith(data.path, 'zvol')) {
         transformed['disk'] = data.path;
       }
       delete transformed['path'];
     }
     if (data.filesize && data.filesize !== '0') {
-      transformed.filesize = this.storageService.convertBytestoHumanReadable(this.originalFilesize);
+      transformed.filesize = this.storageService.convertBytesToHumanReadable(this.originalFilesize);
     }
     return transformed;
   }
 
   customEditCall(value: any): void {
     this.loader.open();
-    if (value['type'] == 'DISK') {
+    if (value['type'] === 'DISK') {
       value['path'] = value['disk'];
     }
     this.ws.call(this.editCall, [parseInt(this.pk, 10), value]).pipe(untilDestroyed(this)).subscribe(
@@ -385,7 +386,7 @@ export class ExtentFormComponent implements FormConfiguration {
   beforeSubmit(data: any): void {
     data.filesize = this.storageService.convertHumanStringToNum(data.filesize, true);
     if (this.pk === undefined || this.originalFilesize !== data.filesize) {
-      data.filesize = data.filesize == 0
+      data.filesize = data.filesize === 0
         ? data.filesize
         : (data.filesize + (data.blocksize - data.filesize % data.blocksize));
     }

@@ -2,47 +2,54 @@ import { Component } from '@angular/core';
 import { MatCheckboxChange } from '@angular/material/checkbox';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
-import { filter } from 'rxjs/operators';
-import { PreferencesService } from 'app/core/services/preferences.service';
+import { Subject } from 'rxjs';
+import { map } from 'rxjs/operators';
 import helptext from 'app/helptext/account/group-list';
-import { ConfirmOptions } from 'app/interfaces/dialog.interface';
-import { Group } from 'app/interfaces/group.interface';
+import { CoreEvent } from 'app/interfaces/events';
+import { Group, MembershipGroup } from 'app/interfaces/group.interface';
+import { User } from 'app/interfaces/user.interface';
+import { AppLoaderService } from 'app/modules/app-loader/app-loader.service';
+import { DialogFormConfiguration } from 'app/modules/entity/entity-dialog/dialog-form-configuration.interface';
+import { EntityDialogComponent } from 'app/modules/entity/entity-dialog/entity-dialog.component';
+import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-table.component';
+import { EntityTableAction, EntityTableConfig } from 'app/modules/entity/entity-table/entity-table.interface';
+import { EntityToolbarComponent } from 'app/modules/entity/entity-toolbar/entity-toolbar.component';
+import { ControlConfig, ToolbarConfig } from 'app/modules/entity/entity-toolbar/models/control-config.interface';
+import { EntityUtils } from 'app/modules/entity/utils';
 import { GroupFormComponent } from 'app/pages/account/groups/group-form/group-form.component';
-import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
-import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
-import { EntityTableComponent } from 'app/pages/common/entity/entity-table/entity-table.component';
-import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
-import { EntityUtils } from 'app/pages/common/entity/utils';
 import { DialogService } from 'app/services';
-import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
+import { CoreService } from 'app/services/core-service/core.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
+import { AppState } from 'app/store';
+import {
+  builtinGroupsToggled,
+} from 'app/store/preferences/preferences.actions';
+import { waitForPreferences } from 'app/store/preferences/preferences.selectors';
 
 @UntilDestroy()
 @Component({
   selector: 'app-group-list',
   template: '<entity-table [title]="title" [conf]="this"></entity-table>',
 })
-export class GroupListComponent implements EntityTableConfig<Group> {
+export class GroupListComponent implements EntityTableConfig<MembershipGroup> {
+  users: User[] = [];
+  members: User[] = [];
   title = 'Groups';
   queryCall = 'group.query' as const;
   wsDelete = 'group.delete' as const;
   protected entityList: EntityTableComponent;
   protected loaderOpen = false;
-  globalConfig = {
-    id: 'config',
-    tooltip: helptext.globalConfigTooltip,
-    onClick: () => {
-      this.toggleBuiltins();
-    },
-  };
+  settingsEvent$: Subject<CoreEvent> = new Subject();
 
   columns = [
     { name: 'Group', prop: 'group', always_display: true },
     { name: 'GID', prop: 'gid' },
     { name: 'Builtin', prop: 'builtin' },
     { name: 'Permit Sudo', prop: 'sudo' },
+    { name: 'Membership', prop: 'membership', hidden: false },
     { name: 'Samba Authentication', prop: 'smb', hidden: true },
   ];
   rowIdentifier = 'group';
@@ -54,24 +61,39 @@ export class GroupListComponent implements EntityTableConfig<Group> {
       key_props: ['group'],
     },
   };
+  filterString = '';
+
+  private hideBuiltinGroups = true;
 
   constructor(
     private router: Router,
     protected dialogService: DialogService,
     protected loader: AppLoaderService,
     protected ws: WebSocketService,
-    protected prefService: PreferencesService,
     private translate: TranslateService,
     private slideInService: IxSlideInService,
+    private store$: Store<AppState>,
+    private core: CoreService,
   ) {}
 
-  resourceTransformIncomingRestData(data: Group[]): Group[] {
+  prerequisite(): Promise<boolean> {
+    return this.ws.call('user.query').pipe(map((users) => {
+      this.users = users;
+      return true;
+    })).toPromise();
+  }
+
+  resourceTransformIncomingRestData(data: Group[]): MembershipGroup[] {
     // Default setting is to hide builtin groups
-    if (this.prefService.preferences.hide_builtin_groups) {
-      const newData: Group[] = [];
+    if (this.hideBuiltinGroups) {
+      const newData: MembershipGroup[] = [];
       data.forEach((item) => {
         if (!item.builtin) {
-          newData.push(item);
+          this.members = this.users.filter((user) => item.users.includes(user.id));
+          newData.push({
+            ...item,
+            membership: this.members.map((member) => member.username).join(', '),
+          });
         }
       });
       return data = newData;
@@ -81,13 +103,14 @@ export class GroupListComponent implements EntityTableConfig<Group> {
 
   afterInit(entityList: EntityTableComponent): void {
     this.entityList = entityList;
-    setTimeout(() => {
-      if (this.prefService.preferences.showGroupListMessage) {
-        this.showOneTimeBuiltinMsg();
-      }
-    }, 2000);
 
     this.slideInService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
+      this.entityList.getData();
+    });
+
+    this.store$.pipe(waitForPreferences).pipe(untilDestroyed(this)).subscribe((preferences) => {
+      this.hideBuiltinGroups = preferences.hideBuiltinGroups;
+      this.setupToolbar();
       this.entityList.getData();
     });
   }
@@ -127,62 +150,52 @@ export class GroupListComponent implements EntityTableConfig<Group> {
         name: 'delete',
         label: helptext.group_list_actions_label_delete,
         onClick: (group: Group) => {
-          this.loader.open();
-          this.ws.call('user.query', [[['group.id', '=', group.id]]]).pipe(untilDestroyed(this)).subscribe(
-            (usersInGroup) => {
-              this.loader.close();
-
-              const conf: DialogFormConfiguration = {
-                title: helptext.deleteDialog.title,
-                message: this.translate.instant('Delete group "{name}"?', { name: group.group }),
-                fieldConfig: [],
-                confirmCheckbox: true,
-                saveButtonText: helptext.deleteDialog.saveButtonText,
-                preInit: () => {
-                  if (!usersInGroup.length) {
-                    return;
-                  }
-                  conf.fieldConfig.push({
-                    type: 'checkbox',
-                    name: 'delete_users',
-                    placeholder: this.translate.instant(
-                      'Delete {n, plural, one {# user} other {# users}} with this primary group?',
-                      { n: usersInGroup.length },
-                    ),
-                    value: false,
-                    onChange: (valueChangeData: { event: MatCheckboxChange }) => {
-                      if (valueChangeData.event.checked) {
-                        this.dialogService.info('Following users will be deleted', usersInGroup.map((user, index) => {
-                          if (user.full_name && user.full_name.length) {
-                            return (index + 1) + '. ' + user.username + ' (' + user.full_name + ')';
-                          }
-                          return (index + 1) + '. ' + user.username;
-                        }).join('\n'));
+          const conf: DialogFormConfiguration = {
+            title: helptext.deleteDialog.title,
+            message: this.translate.instant('Delete group "{name}"?', { name: group.group }),
+            fieldConfig: [],
+            confirmCheckbox: true,
+            saveButtonText: helptext.deleteDialog.saveButtonText,
+            preInit: () => {
+              if (!this.members.length) {
+                return;
+              }
+              conf.fieldConfig.push({
+                type: 'checkbox',
+                name: 'delete_users',
+                placeholder: this.translate.instant(
+                  'Delete {n, plural, one {# user} other {# users}} with this primary group?',
+                  { n: this.members.length },
+                ),
+                value: false,
+                onChange: (valueChangeData: { event: MatCheckboxChange }) => {
+                  if (valueChangeData.event.checked) {
+                    this.dialogService.info('Following users will be deleted', this.members.map((user, index) => {
+                      if (user.full_name && user.full_name.length) {
+                        return (index + 1) + '. ' + user.username + ' (' + user.full_name + ')';
                       }
-                    },
-                  });
+                      return (index + 1) + '. ' + user.username;
+                    }).join('\n'));
+                  }
                 },
-                customSubmit: (entityDialog: EntityDialogComponent) => {
-                  entityDialog.dialogRef.close(true);
-                  this.loader.open();
-                  this.ws.call(this.wsDelete, [group.id, entityDialog.formValue])
-                    .pipe(untilDestroyed(this))
-                    .subscribe(() => {
-                      this.entityList.getData();
-                      this.loader.close();
-                    },
-                    (err) => {
-                      new EntityUtils().handleWsError(this, err, this.dialogService);
-                      this.loader.close();
-                    });
-                },
-              };
-              this.dialogService.dialogForm(conf);
-            }, (err) => {
-              this.loader.close();
-              new EntityUtils().handleWsError(this, err, this.dialogService);
+              });
             },
-          );
+            customSubmit: (entityDialog: EntityDialogComponent) => {
+              entityDialog.dialogRef.close(true);
+              this.loader.open();
+              this.ws.call(this.wsDelete, [group.id, entityDialog.formValue])
+                .pipe(untilDestroyed(this))
+                .subscribe(() => {
+                  this.entityList.getData();
+                  this.loader.close();
+                },
+                (err) => {
+                  new EntityUtils().handleWsError(this, err, this.dialogService);
+                  this.loader.close();
+                });
+            },
+          };
+          this.dialogService.dialogForm(conf);
         },
       });
     }
@@ -191,44 +204,67 @@ export class GroupListComponent implements EntityTableConfig<Group> {
   }
 
   toggleBuiltins(): void {
-    let dialogOptions: ConfirmOptions;
-    if (this.prefService.preferences.hide_builtin_groups) {
-      dialogOptions = {
-        title: this.translate.instant('Show Built-in Groups'),
-        message: this.translate.instant('Show built-in groups (default setting is <i>hidden</i>).'),
-        hideCheckBox: true,
-        buttonMsg: this.translate.instant('Show'),
-      };
-    } else {
-      dialogOptions = {
-        title: this.translate.instant('Hide Built-in Groups'),
-        message: this.translate.instant('Hide built-in groups (default setting is <i>hidden</i>).'),
-        hideCheckBox: true,
-        buttonMsg: this.translate.instant('Hide'),
-      };
-    }
-
-    this.dialogService.confirm(dialogOptions).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
-      this.prefService.preferences.hide_builtin_groups = !this.prefService.preferences.hide_builtin_groups;
-      this.prefService.savePreferences();
-      this.entityList.getData();
-    });
-  }
-
-  showOneTimeBuiltinMsg(): void {
-    this.prefService.preferences.showGroupListMessage = false;
-    this.prefService.savePreferences();
-    this.dialogService.confirm({
-      title: helptext.builtinMessageDialog.title,
-      message: helptext.builtinMessageDialog.message,
-      hideCheckBox: true,
-      buttonMsg: helptext.builtinMessageDialog.button,
-      hideCancel: true,
-    });
+    this.store$.dispatch(builtinGroupsToggled());
+    this.entityList.getData();
   }
 
   doAdd(): void {
     const modal = this.slideInService.open(GroupFormComponent);
     modal.setupForm();
+  }
+
+  setupToolbar(): void {
+    this.settingsEvent$ = new Subject();
+    this.settingsEvent$.pipe(
+      untilDestroyed(this),
+    ).subscribe((event: CoreEvent) => {
+      switch (event.data.event_control) {
+        case 'filter':
+          this.filterString = event.data.filter;
+          this.entityList.filter(this.filterString);
+          break;
+        case 'add':
+          this.doAdd();
+          break;
+        case 'config':
+          this.toggleBuiltins();
+          break;
+        default:
+          break;
+      }
+    });
+
+    const controls: ControlConfig[] = [
+      {
+        name: 'filter',
+        type: 'input',
+        value: this.filterString,
+        placeholder: this.translate.instant('Search'),
+      },
+      {
+        name: 'config',
+        type: 'slide-toggle',
+        value: !this.hideBuiltinGroups,
+        label: this.translate.instant('Show Built-In Groups'),
+      },
+      {
+        name: 'add',
+        type: 'button',
+        label: this.translate.instant('Add'),
+        color: 'primary',
+        ixAutoIdentifier: 'Groups_ADD',
+      },
+    ];
+
+    const toolbarConfig: ToolbarConfig = {
+      target: this.settingsEvent$,
+      controls,
+    };
+    const settingsConfig = {
+      actionType: EntityToolbarComponent,
+      actionConfig: toolbarConfig,
+    };
+
+    this.core.emit({ name: 'GlobalActions', data: settingsConfig, sender: this });
   }
 }

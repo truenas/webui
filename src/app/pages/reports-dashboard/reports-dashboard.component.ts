@@ -7,28 +7,23 @@ import {
 } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { Subject, BehaviorSubject } from 'rxjs';
-import { CoreService } from 'app/core/services/core-service/core.service';
+import { Subject, BehaviorSubject, forkJoin } from 'rxjs';
 import { ReportTab } from 'app/enums/report-tab.enum';
 import { CoreEvent } from 'app/interfaces/events';
-import { ReportingGraphsEvent } from 'app/interfaces/events/reporting-graphs-event.interface';
-import {
-  UserPreferencesChangedEvent, UserPreferencesEvent,
-  UserPreferencesReadyEvent,
-} from 'app/interfaces/events/user-preferences-event.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { Disk } from 'app/interfaces/storage.interface';
-import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
-import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
-import { ToolbarConfig } from 'app/pages/common/entity/entity-toolbar/models/control-config.interface';
+import { FieldConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
+import { FieldSet } from 'app/modules/entity/entity-form/models/fieldset.interface';
+import { ToolbarConfig } from 'app/modules/entity/entity-toolbar/models/control-config.interface';
 import {
   SystemGeneralService,
   WebSocketService,
 } from 'app/services';
-import { ErdService } from 'app/services/erd.service';
+import { CoreService } from 'app/services/core-service/core.service';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { ModalService } from 'app/services/modal.service';
 import { Report } from './components/report/report.component';
-import { ReportsConfigComponent } from './components/reports-config/reports-config.component';
+import { ReportsConfigFormComponent } from './components/reports-config-form/reports-config-form.component';
 import { ReportsGlobalControlsComponent } from './components/reports-global-controls/reports-global-controls.component';
 
 interface Tab {
@@ -43,13 +38,11 @@ interface Tab {
   templateUrl: './reports-dashboard.component.html',
   providers: [SystemGeneralService],
 })
-export class ReportsDashboardComponent implements OnInit, OnDestroy, /* HandleChartConfigDataFunc, */ AfterViewInit {
+export class ReportsDashboardComponent implements OnInit, OnDestroy, AfterViewInit {
   @ViewChild(CdkVirtualScrollViewport, { static: false }) viewport: CdkVirtualScrollViewport;
   @ViewChild('container', { static: true }) container: ElementRef;
   scrollContainer: HTMLElement;
   scrolledIndex = 0;
-
-  retroLogo: string;
 
   diskReports: Report[];
   otherReports: Report[];
@@ -82,65 +75,43 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /* HandleCh
   actionsConfig: any;
 
   constructor(
-    private erdService: ErdService,
     public modalService: ModalService,
     private router: Router,
     private core: CoreService,
     private route: ActivatedRoute,
     protected ws: WebSocketService,
     protected translate: TranslateService,
+    private slideIn: IxSlideInService,
   ) {}
 
   ngOnInit(): void {
-    this.scrollContainer = document.querySelector('.rightside-content-hold ');// this.container.nativeElement;
+    this.scrollContainer = document.querySelector('.rightside-content-hold ');
     this.scrollContainer.style.overflow = 'hidden';
 
-    this.core.register({ observerClass: this, eventName: 'UserPreferencesReady' }).pipe(untilDestroyed(this)).subscribe((evt: UserPreferencesReadyEvent) => {
-      this.retroLogo = evt.data.retroLogo ? '1' : '0';
-    });
+    forkJoin([
+      this.ws.call('disk.query'),
+      this.ws.call('reporting.graphs'),
+    ]).pipe(untilDestroyed(this)).subscribe(([disks, reports]) => {
+      this.parseDisks(disks);
+      const allReports = reports.map((report) => {
+        const list = [];
+        if (report.identifiers) {
+          report.identifiers.forEach(() => list.push(true));
+        } else {
+          list.push(true);
+        }
+        return {
+          ...report,
+          isRendered: list,
+        };
+      });
 
-    this.core.register({ observerClass: this, eventName: 'UserPreferencesChanged' }).pipe(untilDestroyed(this)).subscribe((evt: UserPreferencesChangedEvent) => {
-      this.retroLogo = evt.data.retroLogo ? '1' : '0';
-    });
+      this.diskReports = allReports.filter((report) => report.name.startsWith('disk'));
+      this.otherReports = allReports.filter((report) => !report.name.startsWith('disk'));
 
-    this.core.register({ observerClass: this, eventName: 'UserPreferences' }).pipe(untilDestroyed(this)).subscribe((evt: UserPreferencesEvent) => {
-      this.retroLogo = evt.data.retroLogo ? '1' : '0';
-    });
+      this.allTabs = this.getAllTabs();
 
-    this.core.emit({ name: 'UserPreferencesRequest' });
-
-    this.core.register({ observerClass: this, eventName: 'ReportingGraphs' }).pipe(untilDestroyed(this)).subscribe((evt: ReportingGraphsEvent) => {
-      if (evt.data) {
-        const allReports = evt.data.map((report) => {
-          const list = [];
-          if (report.identifiers) {
-            report.identifiers.forEach(() => list.push(true));
-          } else {
-            list.push(true);
-          }
-          return {
-            ...report,
-            isRendered: list,
-          };
-        });
-
-        this.diskReports = allReports.filter((report) => report.name.startsWith('disk'));
-
-        this.otherReports = allReports.filter((report) => !report.name.startsWith('disk'));
-
-        this.allTabs = this.getAllTabs();
-
-        this.activateTabFromUrl();
-      }
-    });
-
-    this.diskQuery();
-  }
-
-  diskQuery(): void {
-    this.ws.call('disk.query').pipe(untilDestroyed(this)).subscribe((res) => {
-      this.parseDisks(res);
-      this.core.emit({ name: 'ReportingGraphsRequest', sender: this });
+      this.activateTabFromUrl();
     });
   }
 
@@ -150,8 +121,6 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /* HandleCh
   }
 
   ngAfterViewInit(): void {
-    this.erdService.attachResizeEventToElement('dashboardcontainerdiv');
-
     this.setupSubscriptions();
 
     this.actionsConfig = { actionType: ReportsGlobalControlsComponent, actionConfig: this };
@@ -160,7 +129,7 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /* HandleCh
 
   getVisibility(key: number): boolean {
     const test = this.visibleReports.indexOf(key);
-    return test != -1;
+    return test !== -1;
   }
 
   getBatch(): number[] {
@@ -237,25 +206,25 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /* HandleCh
         let condition;
         switch (activeTab.value) {
           case ReportTab.Cpu:
-            condition = (report.name == 'cpu' || report.name == 'load' || report.name == 'cputemp');
+            condition = (report.name === 'cpu' || report.name === 'load' || report.name === 'cputemp');
             break;
           case ReportTab.Memory:
-            condition = (report.name == 'memory' || report.name == 'swap');
+            condition = (report.name === 'memory' || report.name === 'swap');
             break;
           case ReportTab.Network:
-            condition = (report.name == 'interface');
+            condition = (report.name === 'interface');
             break;
           case ReportTab.Nfs:
-            condition = (report.name == 'nfsstat' || report.name == 'nfsstatbytes');
+            condition = (report.name === 'nfsstat' || report.name === 'nfsstatbytes');
             break;
           case ReportTab.Partition:
-            condition = (report.name == 'df');
+            condition = (report.name === 'df');
             break;
           case ReportTab.System:
-            condition = (report.name == 'processes' || report.name == 'uptime');
+            condition = (report.name === 'processes' || report.name === 'uptime');
             break;
           case ReportTab.Target:
-            condition = (report.name == 'ctl');
+            condition = (report.name === 'ctl');
             break;
           case ReportTab.Ups:
             condition = report.name.startsWith('ups');
@@ -275,7 +244,7 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /* HandleCh
 
     if (activeTab.value !== ReportTab.Disk) {
       const keys = Object.keys(this.activeReports);
-      this.visibleReports = keys.map((v) => parseInt(v));
+      this.visibleReports = keys.map((reportIndex) => parseInt(reportIndex));
     }
   }
 
@@ -287,20 +256,20 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /* HandleCh
 
       // With identifiers
       if (report.identifiers) {
-        report.identifiers.forEach((item, index) => {
-          const r = { ...report };
-          r.title = r.title.replace(/{identifier}/, item);
+        report.identifiers.forEach((identifier, index) => {
+          const flattenedReport = { ...report };
+          flattenedReport.title = flattenedReport.title.replace(/{identifier}/, identifier);
 
-          r.identifiers = [item];
+          flattenedReport.identifiers = [identifier];
           if (report.isRendered[index]) {
-            r.isRendered = [true];
-            result.push(r);
+            flattenedReport.isRendered = [true];
+            result.push(flattenedReport);
           }
         });
       } else if (!report.identifiers && report.isRendered[0]) {
-        const r = { ...report };
-        r.identifiers = [];
-        result.push(r);
+        const flattenedReport = { ...report };
+        flattenedReport.identifiers = [];
+        result.push(flattenedReport);
       }
     });
 
@@ -423,24 +392,24 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /* HandleCh
     this.target.next({ name: 'Refresh' });
   }
 
-  buildDiskReport(device: string | any[], metric: string | any[]): void {
+  buildDiskReport(devices: string | any[], metrics: string | any[]): void {
     // Convert strings to arrays
-    if (typeof device == 'string') {
-      device = [device];
+    if (typeof devices === 'string') {
+      devices = [devices];
     } else {
-      device = device.map((v) => v.value);
+      devices = devices.map((device) => device.value);
     }
 
-    if (typeof metric == 'string') {
-      metric = [metric];
+    if (typeof metrics === 'string') {
+      metrics = [metrics];
     } else {
-      metric = metric.map((v) => v.value);
+      metrics = metrics.map((metric) => metric.value);
     }
 
     const visible: number[] = [];
     this.activeReports.forEach((item, index) => {
-      const deviceMatch = device.includes(item.identifiers[0]);
-      const metricMatch = metric.includes(item.name);
+      const deviceMatch = devices.includes(item.identifiers[0]);
+      const metricMatch = metrics.includes(item.name);
       const condition = (deviceMatch && metricMatch);
       if (condition) {
         visible.push(index);
@@ -461,12 +430,11 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /* HandleCh
     });
   }
 
+  isReportReversed(report: Report): boolean {
+    return report.name === 'cpu';
+  }
+
   showConfigForm(): void {
-    const formComponent = this.modalService.openInSlideIn(ReportsConfigComponent);
-    formComponent.title = this.translate.instant('Reports Configuration');
-    formComponent.isOneColumnForm = true;
-    formComponent.afterModalFormSaved = () => {
-      this.modalService.closeSlideIn();
-    };
+    this.slideIn.open(ReportsConfigFormComponent);
   }
 }

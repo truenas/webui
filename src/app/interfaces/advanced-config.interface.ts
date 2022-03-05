@@ -1,3 +1,4 @@
+import { SedUser } from 'app/enums/sed-user.enum';
 import { SyslogLevel, SyslogTransport } from 'app/enums/syslog.enum';
 
 export interface AdvancedConfig {
@@ -16,7 +17,7 @@ export interface AdvancedConfig {
   motd: string; // Enum? FREENAS_MOTD
   overprovision: number;
   powerdaemon: boolean;
-  sed_user: string; // Enum? "USER"
+  sed_user: SedUser;
   serialconsole: boolean;
   serialport: string;
   serialspeed: string;

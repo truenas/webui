@@ -2,24 +2,23 @@ import { HttpClient } from '@angular/common/http';
 import {
   Component, ElementRef, OnDestroy, OnInit, ViewChild, ViewEncapsulation,
 } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { UUID } from 'angular2-uuid';
 import * as _ from 'lodash';
 import { Subject, Subscription } from 'rxjs';
-import { CoreService } from 'app/core/services/core-service/core.service';
 import helptext from 'app/helptext/apps/apps';
 import { CoreEvent } from 'app/interfaces/events';
 import { Option } from 'app/interfaces/option.interface';
-import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
-import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
-import { FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
-import { EntityToolbarComponent } from 'app/pages/common/entity/entity-toolbar/entity-toolbar.component';
-import { EntityUtils } from 'app/pages/common/entity/utils';
+import { AppLoaderService } from 'app/modules/app-loader/app-loader.service';
+import { DialogFormConfiguration } from 'app/modules/entity/entity-dialog/dialog-form-configuration.interface';
+import { EntityDialogComponent } from 'app/modules/entity/entity-dialog/entity-dialog.component';
+import { FormSelectConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
+import { EntityToolbarComponent } from 'app/modules/entity/entity-toolbar/entity-toolbar.component';
+import { EntityUtils } from 'app/modules/entity/utils';
 import { DialogService, ShellService, WebSocketService } from 'app/services';
-import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
+import { CoreService } from 'app/services/core-service/core.service';
 import { StorageService } from 'app/services/storage.service';
 import { ApplicationsService } from '../applications.service';
 
@@ -66,9 +65,7 @@ export class PodLogsComponent implements OnInit, OnDestroy {
     protected loader: AppLoaderService,
     protected storageService: StorageService,
     protected http: HttpClient,
-    protected router: Router,
-    private dialog: MatDialog) {
-  }
+    protected router: Router) {}
 
   ngOnInit(): void {
     this.aroute.params.pipe(untilDestroyed(this)).subscribe((params) => {
@@ -145,11 +142,11 @@ export class PodLogsComponent implements OnInit, OnDestroy {
   setupToolbarButtons(): void {
     this.formEvent$ = new Subject();
     this.formEvent$.pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
-      if (evt.data.event_control == 'download') {
+      if (evt.data.event_control === 'download') {
         this.showChooseLogsDialog(true);
-      } else if (evt.data.event_control == 'reconnect') {
+      } else if (evt.data.event_control === 'reconnect') {
         this.showChooseLogsDialog(false);
-      } else if (evt.data.event_control == 'fontsize') {
+      } else if (evt.data.event_control === 'fontsize') {
         this.fontSize = evt.data.fontsize;
       }
     });
@@ -283,9 +280,9 @@ export class PodLogsComponent implements OnInit, OnDestroy {
             this.storageService.downloadBlob(file, fileName);
           }
         });
-    }, (e) => {
+    }, (error) => {
       this.loader.close();
-      new EntityUtils().handleWsError(this, e, this.dialogService);
+      new EntityUtils().handleWsError(this, error, this.dialogService);
     });
   }
 

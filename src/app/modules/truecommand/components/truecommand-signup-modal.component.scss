@@ -1,0 +1,17 @@
+button.action-btn {
+  margin-right: 5px;
+}
+
+div.truecommand-signup-modal-form-message {
+  margin: 0 0 13px;
+}
+
+.truecommand-signup-modal-form-title,
+.truecommand-signup-modal-form-message {
+  overflow-wrap: break-word;
+}
+
+.mat-dialog-content.truecommand-signup-modal-form-content {
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+}

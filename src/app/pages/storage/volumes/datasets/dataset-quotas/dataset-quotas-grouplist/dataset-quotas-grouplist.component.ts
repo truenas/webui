@@ -9,10 +9,10 @@ import globalHelptext from 'app/helptext/global-helptext';
 import helptext from 'app/helptext/storage/volumes/datasets/dataset-quotas';
 import { DatasetQuota } from 'app/interfaces/dataset-quota.interface';
 import { QueryFilter, QueryParams } from 'app/interfaces/query-api.interface';
-import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
-import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
-import { EntityTableComponent } from 'app/pages/common/entity/entity-table/entity-table.component';
-import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
+import { DialogFormConfiguration } from 'app/modules/entity/entity-dialog/dialog-form-configuration.interface';
+import { EntityDialogComponent } from 'app/modules/entity/entity-dialog/entity-dialog.component';
+import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-table.component';
+import { EntityTableAction, EntityTableConfig } from 'app/modules/entity/entity-table/entity-table.interface';
 import { DatasetQuotaRow } from 'app/pages/storage/volumes/datasets/dataset-quotas/dataset-quotas-grouplist/dataset-quota-row.interface';
 import {
   AppLoaderService, DialogService, StorageService, WebSocketService,
@@ -99,14 +99,14 @@ export class DatasetQuotasGrouplistComponent implements EntityTableConfig, OnDes
                 tooltip: this.translate.instant(helptext.groups.data_quota.tooltip)
                 + this.translate.instant(globalHelptext.human_readable.suggestion_tooltip)
                 + this.translate.instant(' bytes.'),
-                value: this.storageService.convertBytestoHumanReadable(res[0].quota, 0, null, true),
+                value: this.storageService.convertBytesToHumanReadable(res[0].quota, 0, null, true),
                 id: 'data-quota_input',
                 blurStatus: true,
                 blurEvent: () => this.blurEvent(),
                 parent: this,
                 validation: [
                   (control: FormControl): ValidationErrors => {
-                    const config = conf.fieldConfig.find((c) => c.name === 'data_quota');
+                    const dataQuotaConfig = conf.fieldConfig.find((config) => config.name === 'data_quota');
                     this.quotaValue = control.value;
                     const size = this.storageService.convertHumanStringToNum(control.value);
                     const errors = control.value && Number.isNaN(size)
@@ -114,11 +114,11 @@ export class DatasetQuotasGrouplistComponent implements EntityTableConfig, OnDes
                       : null;
 
                     if (errors) {
-                      config.hasErrors = true;
-                      config.errors = globalHelptext.human_readable.input_error;
+                      dataQuotaConfig.hasErrors = true;
+                      dataQuotaConfig.errors = globalHelptext.human_readable.input_error;
                     } else {
-                      config.hasErrors = false;
-                      config.errors = '';
+                      dataQuotaConfig.hasErrors = false;
+                      dataQuotaConfig.errors = '';
                     }
                     return errors;
                   },
@@ -191,7 +191,7 @@ export class DatasetQuotasGrouplistComponent implements EntityTableConfig, OnDes
         name: row.name
           ? row.name
           : `*ERR* (${this.translate.instant(helptext.shared.nameErr)}), ID: ${row.id}`,
-        quota: this.storageService.convertBytestoHumanReadable(row.quota, 0),
+        quota: this.storageService.convertBytesToHumanReadable(row.quota, 0),
         used_percent: `${Math.round((row.used_percent) * 100) / 100}%`,
         obj_used_percent: `${Math.round((row.obj_used_percent) * 100) / 100}%`,
       };

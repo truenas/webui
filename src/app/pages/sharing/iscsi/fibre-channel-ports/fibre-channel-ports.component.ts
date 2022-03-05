@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
+import { EntityTableConfig } from 'app/modules/entity/entity-table/entity-table.interface';
 import { FibreChannelPortComponent } from './fibre-channel-port/fibre-channel-port.component';
 
 @Component({

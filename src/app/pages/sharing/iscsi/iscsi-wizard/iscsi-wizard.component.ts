@@ -11,17 +11,17 @@ import globalHelptext from 'app/helptext/global-helptext';
 import { helptextSharingIscsi } from 'app/helptext/sharing/iscsi/iscsi';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { WizardConfiguration } from 'app/interfaces/entity-wizard.interface';
-import { FormListConfig, FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
-import { Wizard } from 'app/pages/common/entity/entity-form/models/wizard.interface';
-import { forbiddenValues } from 'app/pages/common/entity/entity-form/validators/forbidden-values-validation';
-import { ipv4or6cidrValidator } from 'app/pages/common/entity/entity-form/validators/ip-validation';
-import { matchOtherValidator } from 'app/pages/common/entity/entity-form/validators/password-validation/password-validation';
-import { EntityWizardComponent } from 'app/pages/common/entity/entity-wizard/entity-wizard.component';
-import { EntityUtils } from 'app/pages/common/entity/utils';
+import { AppLoaderService } from 'app/modules/app-loader/app-loader.service';
+import { FormListConfig, FormSelectConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
+import { Wizard } from 'app/modules/entity/entity-form/models/wizard.interface';
+import { forbiddenValues } from 'app/modules/entity/entity-form/validators/forbidden-values-validation';
+import { ipv4or6cidrValidator } from 'app/modules/entity/entity-form/validators/ip-validation';
+import { matchOtherValidator } from 'app/modules/entity/entity-form/validators/password-validation/password-validation';
+import { EntityWizardComponent } from 'app/modules/entity/entity-wizard/entity-wizard.component';
+import { EntityUtils } from 'app/modules/entity/utils';
 import {
   IscsiService, WebSocketService, NetworkService, StorageService, DialogService,
 } from 'app/services';
-import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { CloudCredentialService } from 'app/services/cloud-credential.service';
 
 @UntilDestroy()
@@ -116,7 +116,7 @@ export class IscsiWizardComponent implements WizardConfiguration {
           value: 0,
           validation: [Validators.required,
             (control: FormControl): ValidationErrors => {
-              const config = this.wizardConfig[0].fieldConfig.find((c) => c.name === 'filesize');
+              const filesizeConfig = this.wizardConfig[0].fieldConfig.find((config) => config.name === 'filesize');
               const size = this.storageService.convertHumanStringToNum(control.value, true);
 
               const errors = control.value && Number.isNaN(size)
@@ -124,11 +124,11 @@ export class IscsiWizardComponent implements WizardConfiguration {
                 : null;
 
               if (errors) {
-                config.hasErrors = true;
-                config.errors = globalHelptext.human_readable.input_error;
+                filesizeConfig.hasErrors = true;
+                filesizeConfig.errors = globalHelptext.human_readable.input_error;
               } else {
-                config.hasErrors = false;
-                config.errors = '';
+                filesizeConfig.hasErrors = false;
+                filesizeConfig.errors = '';
               }
 
               return errors;
@@ -565,7 +565,7 @@ export class IscsiWizardComponent implements WizardConfiguration {
     });
 
     this.entityWizard.formArray.get([0]).get('disk').valueChanges.pipe(untilDestroyed(this)).subscribe((value: string) => {
-      const disableZvolGroup = !(value == 'NEW' && this.entityWizard.formArray.get([0]).get('type').value == IscsiExtentType.Disk);
+      const disableZvolGroup = !(value === 'NEW' && this.entityWizard.formArray.get([0]).get('type').value === IscsiExtentType.Disk);
       this.disablefieldGroup(this.zvolFieldGroup, disableZvolGroup, 0);
     });
 
@@ -626,7 +626,7 @@ export class IscsiWizardComponent implements WizardConfiguration {
 
     this.iscsiService.getAuth().pipe(untilDestroyed(this)).subscribe((accessRecords) => {
       accessRecords.forEach((record) => {
-        if (_.find(authGroupField.options, { value: record.tag }) == undefined) {
+        if (_.find(authGroupField.options, { value: record.tag }) === undefined) {
           authGroupField.options.push({ label: String(record.tag), value: record.tag });
         }
       });
@@ -672,12 +672,12 @@ export class IscsiWizardComponent implements WizardConfiguration {
       Object.entries((this.entityWizard.formArray.get([step]) as FormGroup).controls).forEach(([name, control]) => {
         if (name in this.summaryObj) {
           (control as FormControl).valueChanges.pipe(untilDestroyed(this)).subscribe(((value) => {
-            if (value == undefined) {
+            if (value === undefined) {
               this.summaryObj[name] = null;
             } else {
               this.summaryObj[name] = value;
               // get label value
-              if (name == 'disk' || name == 'usefor' || name == 'portal' || name == 'target') {
+              if (name === 'disk' || name === 'usefor' || name === 'portal' || name === 'target') {
                 const field = _.find(this.wizardConfig[step].fieldConfig, { name }) as FormSelectConfig;
                 if (field) {
                   this.summaryObj[name] = _.find(field.options, { value }).label;
@@ -778,7 +778,7 @@ export class IscsiWizardComponent implements WizardConfiguration {
   }
 
   formTypeUpdate(type: IscsiExtentType): void {
-    const isDevice = type != IscsiExtentType.File;
+    const isDevice = type !== IscsiExtentType.File;
 
     this.disablefieldGroup(this.fileFieldGroup, isDevice, 0);
     this.disablefieldGroup(this.deviceFieldGroup, !isDevice, 0);
@@ -799,7 +799,7 @@ export class IscsiWizardComponent implements WizardConfiguration {
     const pool = dataset.split('/')[0];
     this.ws.call('pool.dataset.query', [[['id', '=', dataset]]]).pipe(untilDestroyed(this)).subscribe(
       (datasets) => {
-        if (datasets.length == 0) {
+        if (datasets.length === 0) {
           datasetField.hasErrors = true;
         } else {
           this.zvolFieldGroup.forEach((fieldName) => {
@@ -912,7 +912,7 @@ export class IscsiWizardComponent implements WizardConfiguration {
         this.fileFieldGroup.forEach((field) => {
           if (field === 'filesize') {
             value[field] = this.storageService.convertHumanStringToNum(value[field], true);
-            payload[field] = value[field] == 0 ? value[field] : (value[field] + (512 - value[field] % 512));
+            payload[field] = value[field] === 0 ? value[field] : (value[field] + (512 - value[field] % 512));
           } else {
             payload[field] = value[field];
           }
@@ -953,7 +953,7 @@ export class IscsiWizardComponent implements WizardConfiguration {
 
   rollBack(items: any[]): void {
     items.forEach((item, i) => {
-      if (item != null) {
+      if (item !== null) {
         this.ws.call((this.deleteCalls as any)[i], [item]).pipe(untilDestroyed(this)).subscribe(
           (res) => {
             console.info('rollback ' + i, res);

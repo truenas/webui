@@ -11,13 +11,13 @@ import { AlertService, AlertServiceCreate } from 'app/interfaces/alert-service.i
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { QueryFilter } from 'app/interfaces/query-api.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
-import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
-import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
-import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
-import { RelationConnection } from 'app/pages/common/entity/entity-form/models/relation-connection.enum';
-import { EntityFormService } from 'app/pages/common/entity/entity-form/services/entity-form.service';
-import { EntityUtils } from 'app/pages/common/entity/utils';
+import { EntityFormComponent } from 'app/modules/entity/entity-form/entity-form.component';
+import { FieldConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
+import { FieldSet } from 'app/modules/entity/entity-form/models/fieldset.interface';
+import { RelationAction } from 'app/modules/entity/entity-form/models/relation-action.enum';
+import { RelationConnection } from 'app/modules/entity/entity-form/models/relation-connection.enum';
+import { EntityFormService } from 'app/modules/entity/entity-form/services/entity-form.service';
+import { EntityUtils } from 'app/modules/entity/utils';
 import { WebSocketService, AppLoaderService, DialogService } from 'app/services/';
 
 @UntilDestroy()
@@ -674,7 +674,7 @@ export class AlertServiceComponent implements FormConfiguration {
     },
   ];
 
-  custActions = [
+  customActions = [
     {
       id: 'authenticate',
       name: this.translate.instant('SEND TEST ALERT'),
@@ -737,10 +737,10 @@ export class AlertServiceComponent implements FormConfiguration {
     }
   }
 
-  generateTelegramChatIdsPayload(data: any, i: string): number[] {
+  generateTelegramChatIdsPayload(telegramChatIds: string[]): number[] {
     const wrongChatIds: string[] = [];
     // Telegram chat IDs must be an array of integer
-    const arrayChatIds: number[] = data[i].map((strChatId: string) => {
+    const arrayChatIds: number[] = telegramChatIds.map((strChatId: string) => {
       const chatId = Number(strChatId);
       if (Number.isNaN(chatId)) {
         wrongChatIds.push(strChatId);
@@ -764,7 +764,7 @@ export class AlertServiceComponent implements FormConfiguration {
       type: data.type,
     };
     if (data['Telegram-chat_ids']) {
-      data['Telegram-chat_ids'] = this.generateTelegramChatIdsPayload(data, 'Telegram-chat_ids');
+      data['Telegram-chat_ids'] = this.generateTelegramChatIdsPayload(data['Telegram-chat_ids']);
     }
     data['SNMPTrap-v3_authprotocol'] = data['SNMPTrap-v3_authprotocol'] === '' ? null : data['SNMPTrap-v3_authprotocol'];
     data['SNMPTrap-v3_privprotocol'] = data['SNMPTrap-v3_privprotocol'] === '' ? null : data['SNMPTrap-v3_privprotocol'];

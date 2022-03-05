@@ -1,20 +1,20 @@
-import { Component, OnInit, Type } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { MatCheckboxChange } from '@angular/material/checkbox/checkbox';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { helptextSystemSupport as helptext } from 'app/helptext/system/support';
-import { EntityJobComponent } from 'app/pages//common/entity/entity-job/entity-job.component';
-import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
-import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
-import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { DialogFormConfiguration } from 'app/modules/entity/entity-dialog/dialog-form-configuration.interface';
+import { EntityDialogComponent } from 'app/modules/entity/entity-dialog/entity-dialog.component';
+import { FieldConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
+import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { LicenseInfoInSupport } from 'app/pages/system/general-settings/support/license-info-in-support.interface';
 import { SystemInfoInSupport } from 'app/pages/system/general-settings/support/system-info-in-support.interface';
 import { WebSocketService, AppLoaderService, DialogService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { ModalService } from 'app/services/modal.service';
+import { FileTicketFormComponent } from './file-ticket-form/file-ticket-form.component';
 import { LicenseComponent } from './license/license.component';
 import { ProactiveComponent } from './proactive/proactive.component';
 import { SupportFormLicensedComponent } from './support-licensed/support-form-licensed.component';
-import { SupportFormUnlicensedComponent } from './support-unlicensed/support-form-unlicensed.component';
 
 @UntilDestroy()
 @Component({
@@ -146,18 +146,19 @@ export class SupportComponent implements OnInit {
   }
 
   fileTicket(): void {
-    const component: Type<SupportFormLicensedComponent | SupportFormUnlicensedComponent> = this.hasLicense
-      ? SupportFormLicensedComponent
-      : SupportFormUnlicensedComponent;
-    this.modalService.openInSlideIn(component);
+    if (this.hasLicense) {
+      this.modalService.openInSlideIn(SupportFormLicensedComponent);
+    } else {
+      this.slideInService.open(FileTicketFormComponent);
+    }
   }
 
   openProactive(): void {
     this.modalService.openInSlideIn(ProactiveComponent);
   }
 
-  updateProductionStatus(e: MatCheckboxChange): void {
-    if (e.checked) {
+  updateProductionStatus(event: MatCheckboxChange): void {
+    if (event.checked) {
       this.dialog.dialogForm(this.updateProdStatusConf);
     } else {
       this.ws.call('truenas.set_production', [false, false]).pipe(untilDestroyed(this)).subscribe(() => {

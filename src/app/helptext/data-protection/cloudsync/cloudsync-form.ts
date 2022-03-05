@@ -21,6 +21,7 @@ export default {
   credentials_placeholder: T('Credential'),
   credentials_tooltip: T('Select the cloud storage provider credentials from the\
  list of available Cloud Credentials.'),
+  credentials_add_option: T('+ Add a backup credential'),
   credentials_validation: [Validators.required],
 
   bucket_placeholder: T('Bucket'),

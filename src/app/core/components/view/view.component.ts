@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 import { Subject } from 'rxjs';
 import { View } from 'app/core/classes/view';
-import { CoreServiceInjector } from 'app/core/services/core-service-injector';
 import { CoreEvent } from 'app/interfaces/events';
 import { ThemeService } from 'app/services/theme/theme.service';
 
@@ -10,14 +9,13 @@ import { ThemeService } from 'app/services/theme/theme.service';
   templateUrl: './view.component.html',
 })
 export class ViewComponent extends View {
-  readonly componentName = ViewComponent;
   protected _data: any;
   viewController: Subject<CoreEvent>;
-  protected themeService: ThemeService;
 
-  constructor() {
+  constructor(
+    protected themeService: ThemeService,
+  ) {
     super();
-    this.themeService = CoreServiceInjector.get(ThemeService);
   }
 
   set data(data: any) {

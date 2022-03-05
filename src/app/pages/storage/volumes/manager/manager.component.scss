@@ -111,7 +111,7 @@ h4 {
 }
 
 .fields {
-  margin: 0.75rem 3rem 3rem 1rem !important;
+  margin: 0.75rem 3rem 3rem 1rem;
   width: 600px;
 }
 
@@ -204,4 +204,14 @@ button.vdev-option p {
 
 .row-details {
   padding-left: 35px;
+}
+
+.non-unique-serial-disks-checkbox {
+  padding-left: 0.6rem;
+}
+
+.non-unique-serial-disks-warning {
+  color: var(--orange);
+  margin: 0;
+  padding: 1.2rem 1.2rem 0;
 }

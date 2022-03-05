@@ -35,7 +35,6 @@ body {
   font-family: var(--font-family-body), sans-serif;
   font-weight: 400;
   line-height: 1.65;
-  /*min-width: 320px;*/
 }
 
 p {margin-bottom: 1.15rem;}
@@ -83,12 +82,6 @@ span.code {
   font-family: 'Inconsolata';
   opacity: 0.75;
 }
-
-/*
- * Variables
- * height 36px
- *
- * */
 
 /* MENUS */
 .mat-menu-item {
@@ -156,10 +149,6 @@ entity-table .mat-card > * {
   background: var(--alt-bg1);
 }
 
-.fn-toolbar.icons-only {
-  padding: 8px !important;
-}
-
 /* Special Override Classes */
 
 /* FreeNAS Specific */
@@ -209,7 +198,8 @@ entity-table .mat-toolbar.mat-card-toolbar {
 }
 
 /* Bring back the native placeholder */
-input.mat-input-element::placeholder {
+input.mat-input-element::placeholder,
+textarea.mat-input-element::placeholder {
   color: var(--fg2) !important;
   opacity: 0.5;
   -webkit-text-fill-color: var(--fg2) !important;
@@ -277,7 +267,6 @@ input.mat-input-element::placeholder {
 .form-element select {
   line-height: normal !important;
   min-height: 33px;
-  /*width: calc(100% - 24px) !important;*/
   width: 100% !important;
 }
 
@@ -498,6 +487,8 @@ tooltip button i {
 
 .mat-form-field-appearance-legacy .mat-form-field-infix {
   border: 0;
+  height: 20px;
+  overflow: hidden;
   padding: 0;
 }
 
@@ -528,8 +519,8 @@ button.mat-button.mat-default,
 button.mat-default,
 button.mat-button.mat-accent.btn-default,
 button.mat-button[type='button']:not(button.mat-primary) {
-  background: var(--btn-default-bg) !important;
-  background-color: var(--btn-default-bg) !important;
+  background: var(--btn-default-bg);
+  background-color: var(--btn-default-bg);
   color: var(--fg2) !important;
 }
 
@@ -632,10 +623,6 @@ button.mat-menu-trigger.menu-toggle.mat-button {
   margin-right: 8px;
 }
 
-.mat-card-content {
-  /*padding-bottom: 80px;*/
-}
-
 .mat-card .mat-card-footer {
   margin-top: 8px;
   padding: 0 16px;
@@ -719,7 +706,6 @@ td.mat-cell.mat-table-sticky::before {
   top: 0;
   width: 1000px;
   z-index: -1;
-  /*background-color: red;*/
 }
 
 td.mat-cell.tree-cell {
@@ -901,20 +887,6 @@ mat-card.mat-card .mat-list-base {
 .ix-tree-node .ix-tree-node {
   padding-left: 40px;
 }
-
-/* only affect the bage of truecommand icon on the top bar*/
-mat-icon.truecommand-icon > span.mat-badge-content {
-  font-family: 'Material Icons';
-}
-
-mat-icon.truecommand-icon.CONNECTED > span.mat-badge-content {
-  background: var(--green);
-}
-
-mat-icon.truecommand-icon.FAILED > span.mat-badge-content {
-  background: var(--warn);
-}
-
 
 input::-ms-reveal,
 input::-ms-clear {

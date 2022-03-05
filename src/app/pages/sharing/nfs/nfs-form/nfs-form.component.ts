@@ -12,10 +12,10 @@ import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { Group } from 'app/interfaces/group.interface';
 import { NfsShare } from 'app/interfaces/nfs-share.interface';
 import { Option } from 'app/interfaces/option.interface';
-import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
-import { FieldConfig, FormComboboxConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
-import { ipv4or6cidrValidator } from 'app/pages/common/entity/entity-form/validators/ip-validation';
+import { FieldSets } from 'app/modules/entity/entity-form/classes/field-sets';
+import { EntityFormComponent } from 'app/modules/entity/entity-form/entity-form.component';
+import { FieldConfig, FormComboboxConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
+import { ipv4or6cidrValidator } from 'app/modules/entity/entity-form/validators/ip-validation';
 import {
   DialogService, NetworkService, WebSocketService, UserService, ModalService,
 } from 'app/services';
@@ -26,7 +26,7 @@ import {
   template: '<entity-form [conf]="this"></entity-form>',
   providers: [NetworkService],
 })
-export class NFSFormComponent implements FormConfiguration {
+export class NfsFormComponent implements FormConfiguration {
   queryCall = 'sharing.nfs.query' as const;
   editCall = 'sharing.nfs.update' as const;
   addCall = 'sharing.nfs.create' as const;
@@ -248,7 +248,7 @@ export class NFSFormComponent implements FormConfiguration {
   protected advanced_sets = ['access', 'networks', 'hosts'];
   protected advanced_dividers = ['divider_access'];
 
-  custActions = [
+  customActions = [
     {
       id: 'basic_mode',
       name: globalHelptext.basic_options,
@@ -344,7 +344,7 @@ export class NFSFormComponent implements FormConfiguration {
     }
   }
 
-  isCustActionVisible(actionId: string): boolean {
+  isCustomActionVisible(actionId: string): boolean {
     if (actionId === 'advanced_mode' && !this.isBasicMode) {
       return false;
     }
@@ -374,10 +374,10 @@ export class NFSFormComponent implements FormConfiguration {
   clean(data: any): any {
     return {
       ...data,
-      paths: (data.paths as any[]).filter((p) => !!p.path).map((p) => p.path),
-      aliases: (data.paths as any[]).filter((p) => !!p.alias).map((p) => p.alias),
-      networks: (data.networks as any[]).filter((n) => !!n.network).map((n) => n.network),
-      hosts: (data.hosts as any[]).filter((h) => !!h.host).map((h) => h.host),
+      paths: (data.paths as any[]).filter((path) => !!path.path).map((path) => path.path),
+      aliases: (data.paths as any[]).filter((path) => !!path.alias).map((path) => path.alias),
+      networks: (data.networks as any[]).filter((network) => !!network.network).map((network) => network.network),
+      hosts: (data.hosts as any[]).filter((host) => !!host.host).map((host) => host.host),
     };
   }
 
@@ -436,15 +436,15 @@ export class NFSFormComponent implements FormConfiguration {
       });
   }
 
-  updateMapAllGroupSearchOptions(value = '', parent: NFSFormComponent): void {
+  updateMapAllGroupSearchOptions(value = '', parent: NfsFormComponent): void {
     parent.updateGroupSearchOptions(value, parent, 'mapall_group');
   }
 
-  updateMapRootGroupSearchOptions(value = '', parent: NFSFormComponent): void {
+  updateMapRootGroupSearchOptions(value = '', parent: NfsFormComponent): void {
     parent.updateGroupSearchOptions(value, parent, 'maproot_group');
   }
 
-  updateGroupSearchOptions(value = '', parent: NFSFormComponent, field: string): void {
+  updateGroupSearchOptions(value = '', parent: NfsFormComponent, field: string): void {
     parent.userService
       .groupQueryDsCache(value)
       .pipe(untilDestroyed(parent))
@@ -454,15 +454,15 @@ export class NFSFormComponent implements FormConfiguration {
       });
   }
 
-  updateMapAllUserSearchOptions(value = '', parent: NFSFormComponent): void {
+  updateMapAllUserSearchOptions(value = '', parent: NfsFormComponent): void {
     parent.updateUserSearchOptions(value, parent, 'mapall_user');
   }
 
-  updateMapRootUserSearchOptions(value = '', parent: NFSFormComponent): void {
+  updateMapRootUserSearchOptions(value = '', parent: NfsFormComponent): void {
     parent.updateUserSearchOptions(value, parent, 'maproot_user');
   }
 
-  updateUserSearchOptions(value = '', parent: NFSFormComponent, field: string): void {
+  updateUserSearchOptions(value = '', parent: NfsFormComponent, field: string): void {
     parent.userService
       .userQueryDsCache(value)
       .pipe(untilDestroyed(parent))
@@ -472,7 +472,7 @@ export class NFSFormComponent implements FormConfiguration {
       });
   }
 
-  loadMoreUserOptions(length: number, parent: NFSFormComponent, searchText: string, fieldConfig: FieldConfig): void {
+  loadMoreUserOptions(length: number, parent: NfsFormComponent, searchText: string, fieldConfig: FieldConfig): void {
     parent.userService
       .userQueryDsCache(searchText, length)
       .pipe(untilDestroyed(parent))
@@ -481,7 +481,7 @@ export class NFSFormComponent implements FormConfiguration {
 
         const config = fieldConfig as FormComboboxConfig;
 
-        if (searchText == '') {
+        if (searchText === '') {
           config.options = config.options.concat(users);
         } else {
           config.searchOptions = config.searchOptions.concat(users);
@@ -489,7 +489,7 @@ export class NFSFormComponent implements FormConfiguration {
       });
   }
 
-  loadMoreGroupOptions(length: number, parent: NFSFormComponent, searchText: string, fieldConfig: FieldConfig): void {
+  loadMoreGroupOptions(length: number, parent: NfsFormComponent, searchText: string, fieldConfig: FieldConfig): void {
     parent.userService
       .groupQueryDsCache(searchText, false, length)
       .pipe(untilDestroyed(parent))
@@ -498,7 +498,7 @@ export class NFSFormComponent implements FormConfiguration {
 
         const config = fieldConfig as FormComboboxConfig;
 
-        if (searchText == '') {
+        if (searchText === '') {
           config.options = config.options.concat(groups);
         } else {
           config.searchOptions = config.searchOptions.concat(groups);

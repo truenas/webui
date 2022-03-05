@@ -1,33 +1,33 @@
-import { Component, OnDestroy } from '@angular/core';
+import { Component } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as ipRegex from 'ip-regex';
 import * as _ from 'lodash';
-import { ViewControllerComponent } from 'app/core/components/view-controller/view-controller.component';
 import {
-  LACPDURate, LinkAggregationProtocol, NetworkInterfaceAliasType, NetworkInterfaceType, XmitHashPolicy,
+  LacpduRate, LinkAggregationProtocol, NetworkInterfaceAliasType, NetworkInterfaceType, XmitHashPolicy,
 } from 'app/enums/network-interface.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import helptext from 'app/helptext/network/interfaces/interfaces-form';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { NetworkInterface, NetworkInterfaceAlias } from 'app/interfaces/network-interface.interface';
 import { Option } from 'app/interfaces/option.interface';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
+import { EntityFormComponent } from 'app/modules/entity/entity-form/entity-form.component';
 import {
   FieldConfig, FormListConfig, FormSelectConfig, FormInputConfig, FormChipConfig,
-} from 'app/pages/common/entity/entity-form/models/field-config.interface';
-import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
-import { ipv4or6cidrValidator, ipv4or6Validator } from 'app/pages/common/entity/entity-form/validators/ip-validation';
+} from 'app/modules/entity/entity-form/models/field-config.interface';
+import { FieldSet } from 'app/modules/entity/entity-form/models/fieldset.interface';
+import { ipv4or6cidrValidator, ipv4or6Validator } from 'app/modules/entity/entity-form/validators/ip-validation';
 import { NetworkService, DialogService, WebSocketService } from 'app/services';
+import { CoreService } from 'app/services/core-service/core.service';
 
 @UntilDestroy()
 @Component({
   selector: 'app-interfaces-form',
   template: '<entity-form [conf]="this"></entity-form>',
 })
-export class InterfacesFormComponent extends ViewControllerComponent implements FormConfiguration, OnDestroy {
+export class InterfacesFormComponent implements FormConfiguration {
   queryCall = 'interface.query' as const;
   addCall = 'interface.create' as const;
   editCall = 'interface.update' as const;
@@ -37,7 +37,6 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
   protected ipPlaceholder: string;
   protected failoverPlaceholder: string;
   saveSubmitText = helptext.int_save_button;
-  protected warnedAboutOffloading = false;
   protected isOneColumnForm = true;
   private lagPortsOption: Option[] = [];
 
@@ -233,12 +232,6 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
       class: 'other_settings',
       config: [
         {
-          type: 'checkbox',
-          name: 'disable_offload_capabilities',
-          placeholder: helptext.disable_offload_capabilities_placeholder,
-          tooltip: helptext.disable_offload_capabilities_tooltip,
-        },
-        {
           type: 'input',
           name: 'mtu',
           placeholder: helptext.mtu_placeholder,
@@ -338,9 +331,8 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
     protected dialog: DialogService,
     protected ws: WebSocketService,
     protected translate: TranslateService,
-  ) {
-    super();
-  }
+    private core: CoreService,
+  ) {}
 
   setType(type: NetworkInterfaceType): void {
     const isVlan = (type === NetworkInterfaceType.Vlan);
@@ -403,7 +395,7 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
       for (const key in choices) {
         lacpduRateFieldConfig.options.push({ label: key, value: key });
       }
-      this.entityForm.formGroup.get('lacpdu_rate').setValue(LACPDURate.Slow);
+      this.entityForm.formGroup.get('lacpdu_rate').setValue(LacpduRate.Slow);
     });
   }
 
@@ -461,21 +453,6 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
       failoverAddress['isHidden'] = false;
     }
     this.aliasesField = _.find(this.fieldConfig, { name: 'aliases' });
-
-    entityForm.formGroup.controls['disable_offload_capabilities'].valueChanges.pipe(untilDestroyed(this)).subscribe((res: boolean) => {
-      if (res && !this.warnedAboutOffloading) {
-        this.dialog.confirm({
-          title: helptext.disable_offload_capabilities_warning_title,
-          message: helptext.disable_offload_capabilities_warning_msg,
-        }).pipe(untilDestroyed(this)).subscribe((confirm: boolean) => {
-          if (confirm) {
-            this.warnedAboutOffloading = true;
-          } else {
-            entityForm.formGroup.controls['disable_offload_capabilities'].setValue(false);
-          }
-        });
-      }
-    });
 
     if (window.localStorage.getItem('product_type').includes(ProductType.Enterprise)) {
       this.ws.call('failover.licensed').pipe(untilDestroyed(this)).subscribe((isHa) => {

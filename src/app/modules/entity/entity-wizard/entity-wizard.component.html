@@ -1,0 +1,69 @@
+<mat-card>
+  <mat-spinner [diameter]='40' id="entity-spinner" *ngIf="showSpinner"></mat-spinner>
+  <form [formGroup]="formGroup" #entityForm="ngForm" (keydown.enter)="$event.preventDefault()">
+    <mat-vertical-stepper [linear]="conf?.isLinear" formArrayName="formArray" (selectionChange)="selectionChange($event)" #stepper>
+      <div *ngFor="let step of conf.wizardConfig; let i = index">
+        <mat-step formGroupName="{{i}}" [stepControl]="formArray?.get([i])" *ngIf="!step.skip" #matStepInstance>
+          <ng-template matStepLabel>{{step.label | translate}}</ng-template>
+          <div class="form-wrap">
+            <ng-container *ngFor="let fieldSet of step.fieldSets; let j = index">
+              <div [ngClass]="[fieldSet.class ? fieldSet.class : '', isFieldsetAvailabel(fieldSet) ? '' : 'empty-fieldset']" class="fieldset divider-{{fieldSet.divider}}"
+                  fxLayout="row wrap" fxLayoutAlign="start start" fxFlex="100%" fxFlex.gt-xs="calc({{fieldSet.width?fieldSet.width:'100%'}} - 16px)">
+                <mat-divider *ngIf="fieldSet.divider && i > 0"></mat-divider>
+                <h4 *ngIf="fieldSet.label && isFieldsetAvailabel(fieldSet)" class="fieldset-label">{{fieldSet.name | translate}}</h4>
+                <div *ngFor="let field of fieldSet.config; let k = index" fxFlex="100%" fxFlex.gt-xs="calc({{field.width?field.width:'100%'}} - 16px)"
+                    [ngClass]="field.class == 'inline' ? 'form-inline' : 'form-line'" id="{{k}}">
+                  <div
+                    id="dynamicField_{{field.name}}"
+                    dynamicField
+                    [config]="field"
+                    [group]="formArray?.get([i]) | cast"
+                    [fieldShow]="isShow(field.name) ? 'show' :'hide'">
+                  </div>
+                </div>
+              </div>
+            </ng-container>
+          </div>
+          <mat-card-actions class="wizard-action" *ngIf="conf.summary || i !== (conf.wizardConfig.length - 1); else lastStepAction">
+            <button id="cancel_button_{{i}}" class="btn btn-block btn-lg btn-primary" (click)="goBack()" mat-button color="accent" type="button"
+              ix-auto ix-auto-type="button" ix-auto-identifier="CANCEL_{{step.label}}" *ngIf="!conf.hideCancel">{{"Cancel" | translate}}</button>
+            <button id="goback_button_{{i}}" mat-button matStepperPrevious *ngIf="i == 0 ? false : true" color="accent" type="button"
+              ix-auto ix-auto-type="button" ix-auto-identifier="BACK_{{step.label}}">{{"Back" | translate}}</button>
+            <button id="goforward_button_{{i}}" *ngIf="!conf.customNext" mat-button matStepperNext color="primary" type="button" (click)="handleNext(matStepInstance)"
+              ix-auto ix-auto-type="button" ix-auto-identifier="NEXT_{{step.label}}" [disabled]="showSpinner">{{"Next" | translate}}</button>
+            <button id="custom_button_{{i}}" *ngIf="conf.customNext" (click)="handleNext(matStepInstance)" mat-button color="primary" type="button"
+              ix-auto ix-auto-type="button" ix-auto-identifier="{{customNextText | uppercase}}">{{customNextText | translate}}</button>
+            <span *ngFor="let custBtn of conf.customActions">
+              <button id="cust_button_{{custBtn.name}}" mat-button color="primary" *ngIf="!conf.isCustomActionVisible || conf.isCustomActionVisible(custBtn.id, i)" type="button" (click)="custBtn['function']()"
+                ix-auto ix-auto-type="button" ix-auto-identifier="{{custBtn.name | uppercase}}">{{custBtn.name | translate}}</button>
+            </span>
+          </mat-card-actions>
+          <ng-template #lastStepAction>
+            <mat-card-actions class="wizard-action">
+              <button id="secondary_cancel_button" color="accent" class="btn  btn-block btn-lg btn-primary" (click)="goBack()" mat-button color="accent"
+                ix-auto ix-auto-type="button" ix-auto-identifier="CANCEL_secondary" *ngIf="!conf.hideCancel">{{"Cancel" | translate}}</button>
+              <button id="noconfirm_button" mat-button matStepperPrevious color="accent"
+                ix-auto ix-auto-type="button" ix-auto-identifier="BACK_noconfirm">{{"Back" | translate}}</button>
+              <button id="confirm_button" mat-button color="primary" (click)="onSubmit()" [disabled]="!entityForm.form.valid"
+                ix-auto ix-auto-type="button" ix-auto-identifier="{{saveSubmitText | uppercase}}">{{saveSubmitText | translate}}</button>
+            </mat-card-actions>
+          </ng-template>
+        </mat-step>
+      </div>
+      <mat-step *ngIf="conf.summary">
+        <ng-template matStepLabel>{{"Confirm Options" | translate}}</ng-template>
+        <div> {{ conf.summaryTitle }}</div>
+        <wizard-summary [fieldConfigs]="summaryFieldConfigs" [value]="summaryValue" [isRoot]="true" [summary]="conf.summary"></wizard-summary>
+        {{"Confirm these settings." | translate}}
+        <mat-card-actions class="wizard-action">
+          <button id="secondary_cancel_button" color="accent" class="btn  btn-block btn-lg btn-primary" (click)="goBack()" mat-button color="accent"
+            ix-auto ix-auto-type="button" ix-auto-identifier="CANCEL_secondary" *ngIf="!conf.hideCancel">{{"Cancel" | translate}}</button>
+          <button id="noconfirm_button" mat-button matStepperPrevious color="accent"
+            ix-auto ix-auto-type="button" ix-auto-identifier="BACK_noconfirm">{{"Back" | translate}}</button>
+          <button id="confirm_button" mat-button color="primary" (click)="onSubmit()"  [disabled]="!entityForm.form.valid"
+            ix-auto ix-auto-type="button" ix-auto-identifier="{{saveSubmitText | uppercase}}">{{saveSubmitText | translate}}</button>
+        </mat-card-actions>
+      </mat-step>
+    </mat-vertical-stepper>
+  </form>
+</mat-card>

@@ -3,19 +3,19 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { shared, helptextSharingNfs } from 'app/helptext/sharing';
 import { NfsShare } from 'app/interfaces/nfs-share.interface';
-import { EntityTableComponent } from 'app/pages/common/entity/entity-table/entity-table.component';
-import { EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
-import { EntityUtils } from 'app/pages/common/entity/utils';
+import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-table.component';
+import { EntityTableConfig } from 'app/modules/entity/entity-table/entity-table.interface';
+import { EntityUtils } from 'app/modules/entity/utils';
 import { WebSocketService, ModalService } from 'app/services';
 import { DialogService } from 'app/services/dialog.service';
-import { NFSFormComponent } from '../nfs-form/nfs-form.component';
+import { NfsFormComponent } from '../nfs-form/nfs-form.component';
 
 @UntilDestroy()
 @Component({
   selector: 'app-nfs-list',
   template: '<entity-table [title]="title" [conf]="this"></entity-table>',
 })
-export class NFSListComponent implements EntityTableConfig<NfsShare> {
+export class NfsListComponent implements EntityTableConfig<NfsShare> {
   title = this.translate.instant('NFS');
   queryCall = 'sharing.nfs.query' as const;
   updateCall = 'sharing.nfs.update' as const;
@@ -25,6 +25,17 @@ export class NFSListComponent implements EntityTableConfig<NfsShare> {
   routeEdit: string[] = ['sharing', 'nfs', 'edit'];
   protected routeDelete: string[] = ['sharing', 'nfs', 'delete'];
   entityList: EntityTableComponent;
+  emptyTableConfigMessages = {
+    first_use: {
+      title: this.translate.instant('No NFS Shares have been configured yet'),
+      message: this.translate.instant('It seems you haven\'t setup any NFS Shares yet. Please click the button below to add an NFS Share.'),
+    },
+    no_page_data: {
+      title: this.translate.instant('No NFS Shares have been configured yet'),
+      message: this.translate.instant('The system could not retrieve any NFS Shares from the database. Please click the button below to add an NFS Share.'),
+    },
+    buttonText: this.translate.instant('Add NFS Share'),
+  };
 
   columns = [
     {
@@ -66,7 +77,7 @@ export class NFSListComponent implements EntityTableConfig<NfsShare> {
   };
 
   doAdd(id?: number): void {
-    this.modalService.openInSlideIn(NFSFormComponent, id);
+    this.modalService.openInSlideIn(NfsFormComponent, id);
   }
 
   doEdit(id: number): void {

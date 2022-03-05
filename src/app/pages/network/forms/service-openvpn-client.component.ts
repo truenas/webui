@@ -5,9 +5,9 @@ import * as _ from 'lodash';
 import helptext from 'app/helptext/services/components/service-openvpn';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { OpenvpnClientConfigUpdate } from 'app/interfaces/openvpn-client-config.interface';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
-import { FieldConfig, FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
-import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
+import { EntityFormComponent } from 'app/modules/entity/entity-form/entity-form.component';
+import { FieldConfig, FormSelectConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
+import { FieldSet } from 'app/modules/entity/entity-form/models/fieldset.interface';
 import { ServicesService } from 'app/services';
 
 @UntilDestroy()
@@ -135,31 +135,33 @@ export class OpenvpnClientComponent implements FormConfiguration {
     };
 
     this.services.getOpenVpnClientAuthAlgorithmChoices().pipe(untilDestroyed(this)).subscribe((res) => {
-      const config = this.fieldConfig.find((c) => c.name === 'authentication_algorithm') as FormSelectConfig;
+      const authAlgorithmConfig = this.fieldConfig.find((config) => config.name === 'authentication_algorithm') as FormSelectConfig;
       for (const item in res) {
-        config.options.push(
+        authAlgorithmConfig.options.push(
           { label: `${item} (${res[item]})`, value: item },
         );
       }
     });
     this.services.getOpenVpnClientCipherChoices().pipe(untilDestroyed(this)).subscribe((res) => {
-      const config = this.fieldConfig.find((c) => c.name === 'cipher') as FormSelectConfig;
+      const cipherConfig = this.fieldConfig.find((config) => config.name === 'cipher') as FormSelectConfig;
       for (const item in res) {
-        config.options.push(
+        cipherConfig.options.push(
           { label: `${item} ${res[item]}`, value: item },
         );
       }
     });
     this.services.getCerts().pipe(untilDestroyed(this)).subscribe((certificates) => {
-      const config = this.fieldConfig.find((c) => c.name === 'client_certificate') as FormSelectConfig;
+      const clientCertificateConfig = this.fieldConfig.find((config) => {
+        return config.name === 'client_certificate';
+      }) as FormSelectConfig;
       certificates.forEach((certificate) => {
-        config.options.push({ label: certificate.name, value: certificate.id });
+        clientCertificateConfig.options.push({ label: certificate.name, value: certificate.id });
       });
     });
     this.services.getCertificateAuthorities().pipe(untilDestroyed(this)).subscribe((authorities) => {
-      const config = this.fieldConfig.find((c) => c.name === 'root_ca') as FormSelectConfig;
+      const rootCatConfig = this.fieldConfig.find((config) => config.name === 'root_ca') as FormSelectConfig;
       authorities.forEach((item) => {
-        config.options.push({ label: item.name, value: item.id });
+        rootCatConfig.options.push({ label: item.name, value: item.id });
       });
     });
     const cert = _.find(entityEdit.fieldConfig, { name: 'client_certificate' });

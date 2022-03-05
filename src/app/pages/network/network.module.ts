@@ -2,19 +2,21 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { NgxUploaderModule } from 'ngx-uploader';
 import { MaterialModule } from 'app/app-material.module';
-import { CoreService } from 'app/core/services/core-service/core.service';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { CastModule } from 'app/modules/cast/cast.module';
-import { IxFormsModule } from 'app/pages/common/ix-forms/ix-forms.module';
+import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
+import { NetworkConfigurationComponent } from 'app/pages/network/configuration/configuration.component';
+import {
+  NetworkConfigurationCardComponent,
+} from 'app/pages/network/network-configuration-card/network-configuration-card.component';
 import { StaticRouteFormComponent } from 'app/pages/network/static-route-form/static-route-form.component';
 import { NetworkService } from 'app/services';
-import { EntityFormService } from '../common/entity/entity-form/services/entity-form.service';
-import { EntityModule } from '../common/entity/entity.module';
-import { CardWidgetComponent } from './card-widget/card-widget.component';
-import { ConfigurationComponent } from './forms/configuration.component';
+import { CoreService } from 'app/services/core-service/core.service';
+import { EntityFormService } from '../../modules/entity/entity-form/services/entity-form.service';
+import { EntityModule } from '../../modules/entity/entity.module';
 import { InterfacesFormComponent } from './forms/interfaces-form.component';
 import { IpmiFormComponent } from './forms/ipmi-form.component';
 import { OpenvpnClientComponent } from './forms/service-openvpn-client.component';
@@ -40,14 +42,14 @@ import { routing } from './network.routing';
   declarations: [
     StaticRouteFormComponent,
     InterfacesFormComponent,
-    ConfigurationComponent,
+    NetworkConfigurationComponent,
     IpmiFormComponent,
     NetworkComponent,
-    CardWidgetComponent,
     OpenvpnClientComponent,
     OpenvpnServerComponent,
+    NetworkConfigurationCardComponent,
   ],
-  providers: [NetworkService, EntityFormService, CoreService],
+  providers: [NetworkService, EntityFormService, CoreService, TranslateService],
 })
 export class NetworkModule {
 }

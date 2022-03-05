@@ -9,15 +9,15 @@ import { Subject } from 'rxjs';
 import {
   filter, map, switchMap,
 } from 'rxjs/operators';
-import { CoreService } from 'app/core/services/core-service/core.service';
 import { ServiceName, serviceNames } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { CoreEvent } from 'app/interfaces/events';
 import { Service, ServiceRow } from 'app/interfaces/service.interface';
-import { EmptyConfig, EmptyType } from 'app/pages/common/entity/entity-empty/entity-empty.component';
-import { EntityToolbarComponent } from 'app/pages/common/entity/entity-toolbar/entity-toolbar.component';
-import { ToolbarConfig } from 'app/pages/common/entity/entity-toolbar/models/control-config.interface';
+import { EmptyConfig, EmptyType } from 'app/modules/entity/entity-empty/entity-empty.component';
+import { EntityToolbarComponent } from 'app/modules/entity/entity-toolbar/entity-toolbar.component';
+import { ToolbarConfig } from 'app/modules/entity/entity-toolbar/models/control-config.interface';
 import { IscsiService } from 'app/services/';
+import { CoreService } from 'app/services/core-service/core.service';
 import { DialogService } from 'app/services/dialog.service';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -123,7 +123,7 @@ export class ServicesComponent implements OnInit {
 
     const serviceName = this.serviceNames.get(service.service);
     if (rpc === 'service.stop') {
-      if (service.service == ServiceName.Iscsi) {
+      if (service.service === ServiceName.Iscsi) {
         this.iscsiService.getGlobalSessions().pipe(
           switchMap((sessions) => {
             let message = this.translate.instant('Stop {serviceName}?', { serviceName });
@@ -232,7 +232,7 @@ export class ServicesComponent implements OnInit {
     this.settingsEvent$.pipe(
       untilDestroyed(this),
     ).subscribe((event: CoreEvent) => {
-      if (event.data.event_control == 'filter') {
+      if (event.data.event_control === 'filter') {
         this.filterString = event.data.filter;
         this.dataSource.filter = event.data.filter;
       }

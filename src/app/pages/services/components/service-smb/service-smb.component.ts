@@ -1,4 +1,4 @@
-import { ApplicationRef, Component, Injector } from '@angular/core';
+import { Component } from '@angular/core';
 import { ValidationErrors, FormControl } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -11,13 +11,13 @@ import { Choices } from 'app/interfaces/choices.interface';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { SmbConfig } from 'app/interfaces/smb-config.interface';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
-import { FieldConfig, FormComboboxConfig, FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
-import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
+import { AppLoaderService } from 'app/modules/app-loader/app-loader.service';
+import { EntityFormComponent } from 'app/modules/entity/entity-form/entity-form.component';
+import { FieldConfig, FormComboboxConfig, FormSelectConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
+import { FieldSet } from 'app/modules/entity/entity-form/models/fieldset.interface';
 import {
   IdmapService, ServicesService, UserService, WebSocketService,
 } from 'app/services';
-import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 
 @UntilDestroy()
 @Component({
@@ -25,8 +25,7 @@ import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
   template: ' <entity-form [conf]="this"></entity-form>',
   providers: [ServicesService, IdmapService],
 })
-
-export class ServiceSMBComponent implements FormConfiguration {
+export class ServiceSmbComponent implements FormConfiguration {
   queryCall = 'smb.config' as const;
   routeSuccess: string[] = ['services'];
   error: string;
@@ -86,7 +85,7 @@ export class ServiceSMBComponent implements FormConfiguration {
           tooltip: helptext.cifs_srv_netbiosalias_tooltip,
           validation: [
             (control: FormControl): ValidationErrors => {
-              const config = this.fieldConfig.find((c) => c.name === 'netbiosalias');
+              const netbiosAliasConfig = this.fieldConfig.find((config) => config.name === 'netbiosalias');
               const aliasArr: string[] = control.value ? control.value : [];
               let counter = 0;
               aliasArr.forEach((alias) => {
@@ -99,11 +98,11 @@ export class ServiceSMBComponent implements FormConfiguration {
                 : null;
 
               if (errors) {
-                config.hasErrors = true;
-                config.errors = helptext.cifs_srv_netbiosalias_errmsg;
+                netbiosAliasConfig.hasErrors = true;
+                netbiosAliasConfig.errors = helptext.cifs_srv_netbiosalias_errmsg;
               } else {
-                config.hasErrors = false;
-                config.errors = '';
+                netbiosAliasConfig.hasErrors = false;
+                netbiosAliasConfig.errors = '';
               }
 
               return errors;
@@ -238,7 +237,7 @@ export class ServiceSMBComponent implements FormConfiguration {
     { name: 'divider', divider: true },
   ];
 
-  custActions = [
+  customActions = [
     {
       id: 'basic_mode',
       name: global_helptext.basic_options,
@@ -259,7 +258,7 @@ export class ServiceSMBComponent implements FormConfiguration {
     },
   ];
 
-  isCustActionVisible(actionId: string): boolean {
+  isCustomActionVisible(actionId: string): boolean {
     if (actionId === 'advanced_mode' && !this.isBasicMode) {
       return false;
     } if (actionId === 'basic_mode' && this.isBasicMode) {
@@ -320,8 +319,6 @@ export class ServiceSMBComponent implements FormConfiguration {
     protected router: Router,
     protected route: ActivatedRoute,
     protected ws: WebSocketService,
-    protected _injector: Injector,
-    protected _appRef: ApplicationRef,
     protected servicesService: ServicesService,
     protected idmapService: IdmapService,
     protected userService: UserService,

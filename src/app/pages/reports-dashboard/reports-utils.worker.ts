@@ -45,7 +45,7 @@ function inferUnits(label: string): string {
     units = 'bits';
   }
 
-  if (typeof units == 'undefined') {
+  if (typeof units === 'undefined') {
     console.warn('Could not infer units from ' + label);
   }
 
@@ -80,7 +80,7 @@ function convertKmgt(input: number, units: string): { value: number; prefix: str
     output = input / kilo;
   }
 
-  if (units == 'bits') {
+  if (units === 'bits') {
     shortName = shortName.replace(/i/, '').trim();
     shortName = ` ${shortName.charAt(0).toUpperCase()}${shortName.substr(1).toLowerCase()}`;
   }
@@ -122,7 +122,7 @@ function formatValue(value: number, units: string): string | number {
     case '°':
     default:
       converted = convertByKilo(output);
-      return typeof output == 'number' ? maxDecimals(converted.value).toString() + converted.suffix : value;
+      return typeof output === 'number' ? maxDecimals(converted.value).toString() + converted.suffix : value;
   }
 
   return output;
@@ -134,8 +134,8 @@ function convertAggregations(input: any, labelY?: string): any {
   const keys = Object.keys(output.aggregations);
 
   keys.forEach((key) => {
-    (output.aggregations[key] as any[]).forEach((v, index) => {
-      output.aggregations[key][index] = formatValue(v, units);
+    (output.aggregations[key] as any[]).forEach((value, index) => {
+      output.aggregations[key][index] = formatValue(value, units);
     });
   });
   return output;
@@ -228,7 +228,7 @@ function optimizeLegend(input: any): any {
       output.legend = output.legend.map((label) => {
         const noPrefix = label.replace(/cache_result-/, '');
         const noSuffix = noPrefix.replace(/_value/, '');
-        if (noSuffix == 'total') {
+        if (noSuffix === 'total') {
           return noSuffix;
         }
         const spl = noSuffix.split('-');
@@ -310,7 +310,7 @@ const commands = {
 function processCommands(list: any[]): any {
   let output: any;
   list.forEach((item) => {
-    const input = item.input == '--pipe' || item.input == '|' ? output : item.input;
+    const input = item.input === '--pipe' || item.input === '|' ? output : item.input;
     output = item.options
       ? (commands as any)[item.command](input, item.options)
       : (commands as any)[item.command](input);

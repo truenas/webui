@@ -67,7 +67,7 @@ export default {
   activedirectory_dns_updates_tooltip: T('Set to enable Samba to do DNS updates when joining a domain.'),
 
   activedirectory_disable_fn_cache_name: 'disable_freenas_cache',
-  activedirectory_disable_fn_cache_placeholder: T('Disable FreeNAS Cache'),
+  activedirectory_disable_fn_cache_placeholder: T('Disable AD User / Group Cache'),
   activedirectory_disable_fn_cache_tooltip: T('Set to disable caching AD users and groups. This can\
  help when unable to bind to a domain with a large number of users or groups.'),
 
@@ -168,35 +168,4 @@ export default {
     'netbiosname_b',
     'netbiosalias',
   ],
-
-  activedirectory_idmap_change_dialog_title: T('Active Directory IDMAP change!'),
-  activedirectory_idmap_change_dialog_message: T('<font color="red">WARNING</font>: use <i>rid</i> or\
- <i>autorid</i> for networks with only Windows computers,\
- like most home networks. Mac computers joined to Active\
- Directory can also be used with <i>rid</i> and\
- <i>autorid</i>. Both of these backends have been\
- preconfigured to work with this NAS. Other idmap_backend\
- values are for use in larger or mixed networks with Windows\
- and other operating systems. DO NOT CHANGE THE idmap_backend\
- SETTING UNLESS REQUIRED TO WORK WITH A MIXED NETWORK AND THE\
- PROPER CONFIGURATION HAS ALREADY BEEN DETERMINED. For\
- reference, see <a\
- href="https://www.freebsd.org/cgi/man.cgi?query=idmap_rid"\
- target="_blank">idmap_rid(8)</a>, <a\
- href="https://www.freebsd.org/cgi/man.cgi?query=idmap_autorid"\
- target="_blank">idmap_autorid(8)</a>\, <a\
- href="https://www.freebsd.org/cgi/man.cgi?query=idmap_ad"\
- target="_blank">ad</a>\, <a\
- href="https://www.freebsd.org/cgi/man.cgi?query=idmap_ldap"\
- target="_blank">idmap_ldap(8)</a>\, <a\
- href="https://www.freebsd.org/cgi/man.cgi?query=idmap_nss"\
- target="_blank">idmap_nss(8)</a>\, <a\
- href="https://www.freebsd.org/cgi/man.cgi?query=idmap_rfc2307"\
- target="_blank">idmap_rfc2307(8)\, <a\
- href="https://www.freebsd.org/cgi/man.cgi?query=idmap_script"\
- target="_blank">idmap_script(8)</a>\, <a\
- href="https://www.freebsd.org/cgi/man.cgi?query=idmap_tdb"\
- target="_blank">tdb</a>\, and <a\
- href="https://www.freebsd.org/cgi/man.cgi?query=idmap_tdb2"\
- target="_blank">idmap_tdb2(8)</a>'),
 };

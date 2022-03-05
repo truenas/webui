@@ -10,8 +10,8 @@ export interface ReportingRealtimeUpdate {
 export interface AllCpusUpdate {
   [cpuNumber: number]: CpuUpdate;
   average: CpuUpdate;
-  temperature: any;
-  temperature_celsius: any;
+  temperature: number[];
+  temperature_celsius: number[];
 }
 
 export interface CpuUpdate {
@@ -93,6 +93,7 @@ export interface ZfsUpdate {
 }
 
 export interface ReportingConfig {
+  confirm_rrd_destroy?: boolean;
   cpu_in_percentage: boolean;
   graph_age: number;
   graph_points: number;

@@ -11,12 +11,16 @@
     <!-- Report Cards -->
     <div class="report-container" *cdkVirtualFor="let key of visibleReports; let i = index;">
       <report
-        *ngIf="retroLogo && activeReports[key] && activeReports[key].identifiers.length > 0"
-        [retroLogo]="retroLogo"
+        *ngIf="activeReports[key] && activeReports[key].identifiers.length > 0"
         [report]="activeReports[key]"
         [identifier]="activeReports[key].identifiers[0]"
+        [isReversed]="isReportReversed(activeReports[key])"
       ></report>
-      <report *ngIf="activeReports[key].identifiers.length == 0" [report]="activeReports[key]"></report>
+      <report
+        *ngIf="activeReports[key].identifiers.length == 0"
+        [report]="activeReports[key]"
+        [isReversed]="isReportReversed(activeReports[key])"
+      ></report>
     </div>
     <div class="bottom-spacer"></div>
   </cdk-virtual-scroll-viewport>

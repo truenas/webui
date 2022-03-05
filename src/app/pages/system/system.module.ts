@@ -4,24 +4,32 @@ import { FlexLayoutModule } from '@angular/flex-layout';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { QRCodeModule } from 'angular2-qrcode';
+import { NgxFilesizeModule } from 'ngx-filesize';
 import { MarkdownModule } from 'ngx-markdown';
 import { NgxUploaderModule } from 'ngx-uploader';
 import { MaterialModule } from 'app/app-material.module';
+import { CoreComponents } from 'app/core/core-components.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { CastModule } from 'app/modules/cast/cast.module';
+import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
+import { IxTableModule } from 'app/modules/ix-tables/ix-table.module';
+import { JobsModule } from 'app/modules/jobs/jobs.module';
+import { SchedulerModule } from 'app/modules/scheduler/scheduler.module';
 import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
-import { IxFormsModule } from 'app/pages/common/ix-forms/ix-forms.module';
-import { IxTableModule } from 'app/pages/common/ix-tables/ix-table.module';
 import { InitShutdownFormComponent } from 'app/pages/system/advanced/initshutdown/init-shutdown-form/init-shutdown-form.component';
+import { SedFormComponent } from 'app/pages/system/advanced/sed-form/sed-form.component';
 import { SystemDatasetPoolComponent } from 'app/pages/system/advanced/system-dataset-pool/system-dataset-pool.component';
 import { AlertServiceListComponent } from 'app/pages/system/alert-service/alert-service-list/alert-service-list.component';
+import {
+  BootenvStatsDialogComponent,
+} from 'app/pages/system/bootenv/bootenv-stats-dialog/bootenv-stats-dialog.component';
 import { LocalizationFormComponent } from 'app/pages/system/general-settings/localization-form/localization-form.component';
 import { NtpServerFormComponent } from 'app/pages/system/general-settings/ntp-server/ntp-server-form/ntp-server-form.component';
 import { NtpServerListComponent } from 'app/pages/system/general-settings/ntp-server/ntp-server-list/ntp-server-list.component';
+import { JiraOauthComponent } from 'app/pages/system/general-settings/support/file-ticket-form/components/jira-oauth/jira-oauth.component';
 import { QrDialogComponent } from 'app/pages/system/two-factor/qr-dialog/qr-dialog.component';
 import { ManualUpdateComponent } from 'app/pages/system/update/manual-update/manual-update.component';
-import { CoreComponents } from '../../core/components/core-components.module';
-import { EntityModule } from '../common/entity/entity.module';
+import { EntityModule } from '../../modules/entity/entity.module';
 import { AdvancedSettingsComponent } from './advanced/advanced-settings.component';
 import { ConsoleFormComponent } from './advanced/console-form/console-form.component';
 import { CronFormComponent } from './advanced/cron/cron-form/cron-form.component';
@@ -29,6 +37,7 @@ import { CronListComponent } from './advanced/cron/cron-list/cron-list.component
 import { InitshutdownListComponent } from './advanced/initshutdown/initshutdown-list/initshutdown-list.component';
 import { IsolatedGpuPcisFormComponent } from './advanced/isolated-gpu-pcis/isolated-gpu-pcis-form.component';
 import { KernelFormComponent } from './advanced/kernel-form/kernel-form.component';
+import { ReplicationFormComponent } from './advanced/replication-form/replication-form.component';
 import { SyslogFormComponent } from './advanced/syslog-form/syslog-form.component';
 import { AlertServiceComponent } from './alert-service/alert-service/alert-service.component';
 import { AlertConfigComponent } from './alert/alert.component';
@@ -42,10 +51,10 @@ import { FailoverComponent } from './failover/failover.component';
 import { GeneralSettingsComponent } from './general-settings/general-settings.component';
 import { GuiFormComponent } from './general-settings/gui-form/gui-form.component';
 import { EulaComponent } from './general-settings/support/eula/eula.component';
+import { FileTicketFormComponent } from './general-settings/support/file-ticket-form/file-ticket-form.component';
 import { LicenseComponent } from './general-settings/support/license/license.component';
 import { ProactiveComponent } from './general-settings/support/proactive/proactive.component';
 import { SupportFormLicensedComponent } from './general-settings/support/support-licensed/support-form-licensed.component';
-import { SupportFormUnlicensedComponent } from './general-settings/support/support-unlicensed/support-form-unlicensed.component';
 import { SupportComponent } from './general-settings/support/support.component';
 import { SysInfoComponent } from './general-settings/support/sys-info/sys-info.component';
 import { KmipComponent } from './kmip/kmip.component';
@@ -58,52 +67,72 @@ import { EnclosureModule } from './view-enclosure/enclosure.module';
 
 @NgModule({
   imports: [
-    EntityModule, CommonModule, FormsModule, IxFormsModule,
-    ReactiveFormsModule, NgxUploaderModule, routing,
-    MaterialModule, MarkdownModule.forRoot(), TranslateModule, FlexLayoutModule,
-    EnclosureModule, CommonDirectivesModule, QRCodeModule,
-    TooltipModule, CoreComponents, CastModule, IxTableModule,
+    CastModule,
+    CommonDirectivesModule,
+    CommonModule,
+    CoreComponents,
+    EnclosureModule, EntityModule,
+    FlexLayoutModule,
+    FormsModule,
+    IxFormsModule,
+    IxTableModule,
+    SchedulerModule,
+    JobsModule,
+    MarkdownModule.forRoot(),
+
+    MaterialModule,
+    NgxUploaderModule,
+    QRCodeModule,
+    ReactiveFormsModule,
+    routing, TooltipModule,
+    TranslateModule,
+    NgxFilesizeModule,
   ],
   declarations: [
     AdvancedSettingsComponent,
-    LocalizationFormComponent,
-    BootEnvironmentListComponent,
+    AlertConfigComponent,
+    AlertServiceComponent,
+    AlertServiceListComponent,
     BootEnvironmentFormComponent,
-    BootStatusListComponent,
+    BootEnvironmentListComponent,
     BootPoolAttachFormComponent,
     BootPoolReplaceFormComponent,
-    TunableListComponent,
-    TunableFormComponent,
-    UpdateComponent,
+    BootStatusListComponent,
+    ConsoleFormComponent,
+    CronFormComponent,
+    CronListComponent,
+    EmailComponent,
+    EulaComponent,
+    FailoverComponent,
+    FileTicketFormComponent,
+    GeneralSettingsComponent,
+    GuiFormComponent,
+    InitShutdownFormComponent,
+    InitshutdownListComponent,
+    IsolatedGpuPcisFormComponent,
+    JiraOauthComponent,
+    KernelFormComponent,
+    KmipComponent,
+    LicenseComponent,
+    LocalizationFormComponent,
     ManualUpdateComponent,
     NtpServerFormComponent,
     NtpServerListComponent,
-    AlertServiceListComponent,
-    SupportComponent,
-    EmailComponent,
-    AlertServiceComponent,
-    AlertConfigComponent,
-    FailoverComponent,
-    EulaComponent,
     ProactiveComponent,
-    SupportFormLicensedComponent,
-    SupportFormUnlicensedComponent,
-    SysInfoComponent,
-    KmipComponent,
-    TwoFactorComponent,
     QrDialogComponent,
-    GeneralSettingsComponent,
-    GuiFormComponent,
-    LicenseComponent,
-    ConsoleFormComponent,
-    IsolatedGpuPcisFormComponent,
-    KernelFormComponent,
+    ReplicationFormComponent,
+    SupportComponent,
+    SupportFormLicensedComponent,
+    SysInfoComponent,
     SyslogFormComponent,
-    InitShutdownFormComponent,
-    InitshutdownListComponent,
-    CronFormComponent,
-    CronListComponent,
     SystemDatasetPoolComponent,
+    SedFormComponent,
+    TunableFormComponent,
+    TunableListComponent,
+    TwoFactorComponent,
+    UpdateComponent,
+    BootenvStatsDialogComponent,
+    CronFormComponent,
   ],
   providers: [
     TranslateService,

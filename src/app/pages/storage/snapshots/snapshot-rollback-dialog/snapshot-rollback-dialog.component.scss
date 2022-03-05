@@ -1,0 +1,29 @@
+:host {
+  display: block;
+  width: 400px;
+
+  .loading {
+    align-items: center;
+    display: flex;
+    justify-content: center;
+  }
+}
+
+.form-buttons {
+  display: flex;
+  flex: 1;
+  flex-direction: row-reverse;
+
+  a,
+  button {
+    margin-left: 10px;
+  }
+}
+
+.form-actions {
+  align-items: center;
+  border-top: 1px solid var(--lines);
+  display: flex;
+  justify-content: space-between;
+  padding-top: 16px;
+}

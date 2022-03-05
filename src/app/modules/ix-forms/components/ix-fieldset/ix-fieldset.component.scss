@@ -1,0 +1,28 @@
+fieldset {
+  border: none;
+  margin: 0;
+}
+
+.title-container {
+  align-items: flex-end;
+  display: flex;
+  margin-bottom: 18px;
+  margin-top: 9px;
+}
+
+legend {
+  color: var(--fg1);
+  font-family: 'IBM Plex Sans', sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  padding: 0;
+}
+
+.tooltip {
+  margin-left: 8px;
+  vertical-align: -4px;
+}
+
+.divider {
+  margin: 16px 0 !important;
+}
