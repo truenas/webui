@@ -12,7 +12,6 @@ describe('CronSchedulePreview - listNextRunsInMonth', () => {
     beforeEach(() => {
       cron = new CronSchedulePreview({
         crontab: '* * * * *',
-        timezone: 'America/New_York',
       });
     });
 
@@ -52,7 +51,6 @@ describe('CronSchedulePreview - listNextRunsInMonth', () => {
     beforeEach(() => {
       cron = new CronSchedulePreview({
         crontab: '0 * * * *',
-        timezone: 'America/New_York',
       });
     });
 
@@ -92,7 +90,6 @@ describe('CronSchedulePreview - listNextRunsInMonth', () => {
     beforeEach(() => {
       cron = new CronSchedulePreview({
         crontab: '0 0 * * *',
-        timezone: 'America/New_York',
       });
     });
 
@@ -132,7 +129,6 @@ describe('CronSchedulePreview - listNextRunsInMonth', () => {
     beforeEach(() => {
       cron = new CronSchedulePreview({
         crontab: '15 9 * * sun',
-        timezone: 'America/New_York',
       });
     });
 
@@ -160,7 +156,6 @@ describe('CronSchedulePreview - listNextRunsInMonth', () => {
     beforeEach(() => {
       cron = new CronSchedulePreview({
         crontab: '59 23 27 * *',
-        timezone: 'America/New_York',
       });
     });
 
