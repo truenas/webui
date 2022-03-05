@@ -4,7 +4,7 @@ import {
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
-import { forkJoin, of } from 'rxjs';
+import { forkJoin, of, Subscription } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 import { SyslogLevel, SyslogTransport } from 'app/enums/syslog.enum';
 import { choicesToOptions } from 'app/helpers/options.helper';
@@ -24,6 +24,8 @@ import { advancedConfigUpdated } from 'app/store/system-config/system-config.act
 })
 export class SyslogFormComponent implements OnInit {
   isFormLoading = false;
+  subscriptions: Subscription[] = [];
+
   readonly form = this.fb.group({
     fqdn_syslog: [false],
     sysloglevel: [null as SyslogLevel],
@@ -64,7 +66,9 @@ export class SyslogFormComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.form.controls['syslog_tls_certificate'].enabledWhile(this.isTlsTransport$);
+    this.subscriptions.push(
+      this.form.controls['syslog_tls_certificate'].enabledWhile(this.isTlsTransport$),
+    );
 
     this.loadForm();
   }
