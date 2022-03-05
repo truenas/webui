@@ -153,13 +153,8 @@ export class ViewChartLineComponent extends ViewChartComponent {
       this.chartConfig.axis.x.tick.format = this.timeFormat;
       const xAxis = this.makeTimeAxis(this.timeData);
       this._data.unshift(xAxis);
-
-      // DEBUG: console.log("TIME SETUP");
-      // DEBUG: console.log(xAxis);
     }
 
-    // DEBUG: console.log(this.chartConfig);
-    // DEBUG: console.log(this._data);
     return this.chartConfig;
   }
 }

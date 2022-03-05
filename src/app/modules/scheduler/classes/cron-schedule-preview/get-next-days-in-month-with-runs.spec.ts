@@ -8,7 +8,6 @@ describe('CronSchedulePreview - getNextDaysInMonthWithRuns', () => {
     beforeEach(() => {
       cron = new CronSchedulePreview({
         crontab: '* * * * *',
-        timezone: 'America/New_York',
       });
     });
 
@@ -37,7 +36,6 @@ describe('CronSchedulePreview - getNextDaysInMonthWithRuns', () => {
     beforeEach(() => {
       cron = new CronSchedulePreview({
         crontab: '0 * * * *',
-        timezone: 'America/New_York',
       });
     });
 
@@ -66,7 +64,6 @@ describe('CronSchedulePreview - getNextDaysInMonthWithRuns', () => {
     beforeEach(() => {
       cron = new CronSchedulePreview({
         crontab: '0 0 * * *',
-        timezone: 'America/New_York',
       });
     });
 
@@ -94,15 +91,14 @@ describe('CronSchedulePreview - getNextDaysInMonthWithRuns', () => {
 
     beforeEach(() => {
       cron = new CronSchedulePreview({
-        crontab: '0 0 1 * 0,1,2,4,5,6',
-        timezone: 'America/New_York',
+        crontab: '0 0 1 * 6',
       });
     });
 
     it('lists next runs with OR condition when both day of month and day of week are set', () => {
       const nextRuns = cron.getNextDaysInMonthWithRuns(new Date('2022-04-01 0:00:00'));
 
-      expect(Array.from(nextRuns.values())).toEqual([28]);
+      expect(Array.from(nextRuns.values())).toEqual([1, 2, 9, 16, 23, 30]);
     });
   });
 
@@ -112,7 +108,6 @@ describe('CronSchedulePreview - getNextDaysInMonthWithRuns', () => {
     beforeEach(() => {
       cron = new CronSchedulePreview({
         crontab: '15 9 * * mon',
-        timezone: 'America/New_York',
       });
     });
 
@@ -135,7 +130,6 @@ describe('CronSchedulePreview - getNextDaysInMonthWithRuns', () => {
     beforeEach(() => {
       cron = new CronSchedulePreview({
         crontab: '0 0 19 * *',
-        timezone: 'America/New_York',
       });
     });
 

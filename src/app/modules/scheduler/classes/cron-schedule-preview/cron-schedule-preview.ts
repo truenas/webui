@@ -10,7 +10,6 @@ import {
 
 export interface CronSchedulerPreviewOptions {
   crontab: string;
-  timezone: string;
   startTime?: string;
   endTime?: string;
 }

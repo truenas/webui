@@ -88,7 +88,12 @@ export class SchedulerModalComponent implements OnInit {
     minutes: globalHelptext.scheduler.minutes.tooltip,
     hours: globalHelptext.scheduler.hours.tooltip,
     days: globalHelptext.scheduler.days.tooltip,
+    orTooltip: globalHelptext.scheduler.orTooltip,
   };
+
+  readonly hasOrConditionExplanation$ = this.form.select((values) => {
+    return !this.areAllWeekdaysSelected && values.days !== '*';
+  });
 
   constructor(
     private dialogRef: MatDialogRef<SchedulerModalComponent>,
@@ -187,7 +192,7 @@ export class SchedulerModalComponent implements OnInit {
 
   private getCrontabFromForm(): string {
     const {
-      minutes, hours, days, months, weekdays,
+      minutes, hours, days, months,
     } = this.form.value;
 
     const selectedMonths = Object.entries(months)
@@ -196,12 +201,18 @@ export class SchedulerModalComponent implements OnInit {
     const areAllMonthsSelected = selectedMonths.length === 0 || selectedMonths.length === 12;
     const monthsPart = areAllMonthsSelected ? '*' : selectedMonths.join(',');
 
-    const selectedWeekdays = Object.entries(weekdays)
-      .filter(([_, isSelected]) => isSelected)
-      .map(([weekday]) => weekday);
-    const areAllWeekdaysSelected = selectedWeekdays.length === 0 || selectedWeekdays.length === 7;
-    const weekdaysPart = areAllWeekdaysSelected ? '*' : selectedWeekdays.join(',');
+    const weekdaysPart = this.areAllWeekdaysSelected ? '*' : this.selectedWeekdays.join(',');
 
     return [minutes, hours, days, monthsPart, weekdaysPart].join(' ');
+  }
+
+  private get selectedWeekdays(): string[] {
+    return Object.entries(this.form.value.weekdays)
+      .filter(([_, isSelected]) => isSelected)
+      .map(([weekday]) => weekday);
+  }
+
+  private get areAllWeekdaysSelected(): boolean {
+    return this.selectedWeekdays.length === 0 || this.selectedWeekdays.length === 7;
   }
 }
