@@ -2,6 +2,7 @@ import {
   AfterViewInit, Component, OnInit, QueryList, ViewChild, ViewChildren,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { SortDirection } from '@angular/material/sort';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
@@ -208,7 +209,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
         }
         for (let i = 0; i < value.vdevs; i++) {
           const vdevValues = { disks: [] as ManagerDisk[], type: this.firstDataVdevType };
-          for (let j = 0; j < this.firstDataVdevDisknum; j++) {
+          for (let n = 0; n < this.firstDataVdevDisknum; n++) {
             const duplicateDisk = duplicableDisks.shift();
             vdevValues.disks.push(duplicateDisk);
             // remove disk from selected
@@ -804,7 +805,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
     }
   }
 
-  reorderEvent(event: any): void {
+  reorderEvent(event: { sorts: { prop: keyof ManagerDisk; dir: SortDirection }[] }): void {
     const sort = event.sorts[0];
     const rows = this.disks;
     this.sorter.tableSorter(rows, sort.prop, sort.dir);

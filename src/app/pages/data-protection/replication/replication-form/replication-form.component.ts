@@ -10,7 +10,6 @@ import { ExplorerType } from 'app/enums/explorer-type.enum';
 import { LifetimeUnit } from 'app/enums/lifetime-unit.enum';
 import { LoggingLevel } from 'app/enums/logging-level.enum';
 import { NetcatMode } from 'app/enums/netcat-mode.enum';
-import { ProductType } from 'app/enums/product-type.enum';
 import { ReadOnlyMode } from 'app/enums/readonly-mode.enum';
 import { ReplicationEncryptionKeyFormat } from 'app/enums/replication-encryption-key-format.enum';
 import { RetentionPolicy } from 'app/enums/retention-policy.enum';
@@ -1190,10 +1189,9 @@ export class ReplicationFormComponent implements FormConfiguration {
     this.isNew = entityForm.isNew;
     this.title = entityForm.isNew ? helptext.replication_task_add : helptext.replication_task_edit;
 
-    const isTruenasCore = window.localStorage.getItem('product_type') === ProductType.Core;
     const readonlyCtrl = this.entityForm.formGroup.controls['readonly'];
     if (this.pk === undefined) {
-      readonlyCtrl.setValue(isTruenasCore ? ReadOnlyMode.Set : ReadOnlyMode.Require);
+      readonlyCtrl.setValue(ReadOnlyMode.Require);
     }
 
     if (this.entityForm.formGroup.controls['speed_limit'].value) {
@@ -1395,9 +1393,9 @@ export class ReplicationFormComponent implements FormConfiguration {
   }
 
   parsePickerTime(
-    picker: any,
-    begin: any,
-    end: any,
+    picker: string,
+    begin: string,
+    end: string,
   ): Schedule {
     const spl = picker.split(' ');
     return {
