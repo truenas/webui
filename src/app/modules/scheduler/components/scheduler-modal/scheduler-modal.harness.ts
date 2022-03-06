@@ -9,7 +9,7 @@ export class SchedulerModalHarness extends ComponentHarness {
 
   getMinutesInput = this.locatorFor(IxInputHarness.with({ label: 'Minutes' }));
   getHoursInput = this.locatorFor(IxInputHarness.with({ label: 'Hours' }));
-  getDaysInput = this.locatorFor(IxInputHarness.with({ label: 'Days' }));
+  getDaysInput = this.locatorFor(IxInputHarness.with({ label: 'Days of Month' }));
   getMonthCheckboxes = this.locatorForAll(MatCheckboxHarness.with({ ancestor: '.months' }));
   getDaysOfWeekCheckboxes = this.locatorForAll(MatCheckboxHarness.with({ ancestor: '.weekdays' }));
 

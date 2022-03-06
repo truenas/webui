@@ -15,10 +15,8 @@ interface TimeData {
   template: viewChartMetadata.template,
 })
 export class ViewChartLineComponent extends ViewChartComponent {
-  // public chartType: string;
   timeSeries: boolean;
   timeFormat: string;
-  // public timeData: TimeData;
 
   protected _tooltipHeight: string;
   protected _chartType: string;
@@ -96,9 +94,6 @@ export class ViewChartLineComponent extends ViewChartComponent {
         },
         y: {
           inner: false,
-          /* tick:{
-            format: d3.format(this.units)
-          } */
         },
       },
       data: {
@@ -123,18 +118,7 @@ export class ViewChartLineComponent extends ViewChartComponent {
         show: false,
       },
       tooltip: {
-        // show:false,
         grouped: true,
-        /* position:(data, width, height, element) => {
-          let x = (parseInt(element.getAttribute('x')));
-          let y = 0;
-          let w = (parseInt(element.getAttribute('width')));
-          let h = (parseInt(element.getAttribute('height')));
-
-          let left = x + (w/2);
-          this.tooltipHeight = String((h*0.8));
-          return {top: y, left: left}
-        }, */
         contents: () => '<div style="display:none;">tooltips disabled</div>',
         format: {
           value: (value: any) => {
@@ -153,13 +137,8 @@ export class ViewChartLineComponent extends ViewChartComponent {
       this.chartConfig.axis.x.tick.format = this.timeFormat;
       const xAxis = this.makeTimeAxis(this.timeData);
       this._data.unshift(xAxis);
-
-      // DEBUG: console.log("TIME SETUP");
-      // DEBUG: console.log(xAxis);
     }
 
-    // DEBUG: console.log(this.chartConfig);
-    // DEBUG: console.log(this._data);
     return this.chartConfig;
   }
 }

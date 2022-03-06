@@ -31,9 +31,8 @@ describe('SchedulerDateExamplesComponent', () => {
       props: {
         cronPreview: new CronSchedulePreview({
           crontab: '0 0 * * *',
-          timezone: 'America/New_York',
         }),
-        zonedStartDate: '2022-02-22 11:39:00',
+        startDate: new Date('2022-02-22 11:39:00'),
       },
     });
 
@@ -53,9 +52,8 @@ describe('SchedulerDateExamplesComponent', () => {
       props: {
         cronPreview: new CronSchedulePreview({
           crontab: '* * * * *',
-          timezone: 'America/New_York',
         }),
-        zonedStartDate: '2022-02-22 11:39:00',
+        startDate: new Date('2022-02-22 11:39:00'),
       },
     });
 
