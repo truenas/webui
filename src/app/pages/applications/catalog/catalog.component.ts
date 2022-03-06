@@ -5,6 +5,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+import _ from 'lodash';
 import {
   chartsTrain, ixChartApp, officialCatalog, appImagePlaceholder,
 } from 'app/constants/catalog.constants';
@@ -25,7 +26,6 @@ import { EntityUtils } from 'app/modules/entity/utils';
 import { ApplicationTab } from 'app/pages/applications/application-tab.enum';
 import { ApplicationToolbarControl } from 'app/pages/applications/application-toolbar-control.enum';
 import { KubernetesSettingsComponent } from 'app/pages/applications/kubernetes-settings/kubernetes-settings.component';
-import { CoreService } from 'app/services/core-service/core.service';
 import { DialogService, WebSocketService } from 'app/services/index';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { ModalService } from 'app/services/modal.service';
@@ -96,7 +96,6 @@ export class CatalogComponent implements OnInit {
     private translate: TranslateService,
     private ws: WebSocketService,
     private router: Router,
-    private core: CoreService,
     private modalService: ModalService,
     private appService: ApplicationsService,
     private slideInService: IxSlideInService,
@@ -217,9 +216,11 @@ export class CatalogComponent implements OnInit {
     } else if (evt.data.event_control === ApplicationToolbarControl.RefreshAll) {
       this.syncAll();
     } else if (evt.data.event_control === ApplicationToolbarControl.Catalogs) {
-      this.filteredCatalogNames = evt.data.catalogs.map((catalog: Option) => catalog.value);
-
-      this.filterApps();
+      const catalogNames = evt.data.catalogs.map((catalog: Option) => catalog.value);
+      if (!_.isEqual(this.filteredCatalogNames.sort(), catalogNames.sort())) {
+        this.filteredCatalogNames = catalogNames;
+        this.filterApps();
+      }
     }
   }
 

@@ -22,10 +22,10 @@ export interface Preferences {
   sidenavStatus: SidenavStatusData;
   userTheme: string;
   tableDisplayedColumns: TableDisplayedColumns[];
-  showUserListMessage: boolean;
-  showGroupListMessage: boolean;
   hideBuiltinUsers: boolean;
   hideBuiltinGroups: boolean;
+
+  showSnapshotExtraColumns: boolean;
 
   rebootAfterManualUpdate: boolean;
 }

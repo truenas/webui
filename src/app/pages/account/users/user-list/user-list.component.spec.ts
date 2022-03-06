@@ -14,7 +14,7 @@ import { selectPreferences } from 'app/store/preferences/preferences.selectors';
 import { CoreService } from '../../../../services/core-service/core.service';
 import { UserListComponent } from './user-list.component';
 
-export const fakeDataSource: User[] = [{
+export const fakeUserDataSource: User[] = [{
   id: 1,
   uid: 0,
   username: 'root',
@@ -78,7 +78,7 @@ describe('UserListComponent', () => {
     ],
     providers: [
       mockWebsocket([
-        mockCall('user.query', fakeDataSource),
+        mockCall('user.query', fakeUserDataSource),
         mockCall('user.update'),
         mockCall('user.create'),
         mockCall('user.delete'),
@@ -94,7 +94,6 @@ describe('UserListComponent', () => {
           {
             selector: selectPreferences,
             value: {
-              showUserListMessage: false,
               hideBuiltinUsers: false,
             } as Preferences,
           },
@@ -149,8 +148,10 @@ describe('UserListComponent', () => {
   it('should expand row on click', async () => {
     const table = await loader.getHarness(IxTableHarness);
     const [firstRow] = await table.getRows();
-
     const element = await firstRow.host();
+
+    expect(await element.hasClass('expanded-row')).toBeFalsy();
+
     await element.click();
 
     expect(await element.hasClass('expanded')).toBeTruthy();

@@ -119,7 +119,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
     console.info(`The ${this.constructor.name} has been destroyed`);
   }
 
-  isCustActionVisible(actionname: string): boolean {
+  isCustomActionVisible(actionname: string): boolean {
     if (actionname === 'download_key' && this.encryptedStatus > 0) {
       return true;
     }
@@ -877,8 +877,8 @@ export class VolumesListTableConfig implements EntityTableConfig {
       }
       // add name, available and used into the data object
       dataObj.name = dataObj.name.split('/').pop();
-      dataObj.available_parsed = this.storageService.convertBytestoHumanReadable(dataObj.available.parsed || 0);
-      dataObj.used_parsed = this.storageService.convertBytestoHumanReadable(dataObj.used.parsed || 0);
+      dataObj.available_parsed = this.storageService.convertBytesToHumanReadable(dataObj.available.parsed || 0);
+      dataObj.used_parsed = this.storageService.convertBytesToHumanReadable(dataObj.used.parsed || 0);
       dataObj.is_encrypted_root = (dataObj.id === dataObj.encryption_root);
       if (dataObj.is_encrypted_root) {
         this.parentVolumesListComponent.hasEncryptedRoot[(parent as VolumesListDataset).pool] = true;

@@ -51,12 +51,13 @@ export class EntityTreeTableComponent implements OnInit, AfterViewInit {
   treeDataSource: TreeNode[];
   tableDataSource: TreeNode[];
 
-  constructor(private ws: WebSocketService,
+  constructor(
+    private ws: WebSocketService,
     private treeTableService: EntityTreeTableService,
     private dialogService: DialogService,
-
     protected translate: TranslateService,
-    protected core: CoreService) { }
+    protected core: CoreService,
+  ) { }
 
   ngOnInit(): void {
     this.populateTable();
@@ -84,7 +85,7 @@ export class EntityTreeTableComponent implements OnInit, AfterViewInit {
     if (!sort.active || sort.direction === '') {
       return;
     }
-    const col = this._conf.columns[this._conf.columns.findIndex((c) => c.prop === sort.active)];
+    const col = this._conf.columns[this._conf.columns.findIndex((column) => column.prop === sort.active)];
     this._conf.tableData = this.sortData({ ...sort, sortBy: col.sortBy ? col.sortBy : col.prop }, this._conf.tableData);
     this.fillTable();
   }

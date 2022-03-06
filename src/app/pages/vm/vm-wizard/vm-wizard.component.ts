@@ -252,17 +252,18 @@ export class VmWizardComponent implements WizardConfiguration {
             ...helptext.memory_validation,
             this.memoryValidator('memory'),
             (control: FormControl): ValidationErrors => {
-              const config = this.wizardConfig.find((c) => c.label === helptext.vcpus_label).fieldConfig.find((c) => c.name === 'memory');
+              const memoryConfig = this.wizardConfig.find((wizardConfig) => wizardConfig.label === helptext.vcpus_label)
+                .fieldConfig.find((fieldConfig) => fieldConfig.name === 'memory');
               const errors = control.value && Number.isNaN(this.storageService.convertHumanStringToNum(control.value))
                 ? { invalid_byte_string: true }
                 : null;
 
               if (errors) {
-                config.hasErrors = true;
-                config.errors = globalHelptext.human_readable.input_error;
+                memoryConfig.hasErrors = true;
+                memoryConfig.errors = globalHelptext.human_readable.input_error;
               } else {
-                config.hasErrors = false;
-                config.errors = '';
+                memoryConfig.hasErrors = false;
+                memoryConfig.errors = '';
               }
 
               return errors;
@@ -333,17 +334,20 @@ export class VmWizardComponent implements WizardConfiguration {
             ...helptext.volsize_validation,
             this.volSizeValidator('volsize'),
             (control: FormControl): ValidationErrors => {
-              const config = this.wizardConfig.find((c) => c.label === helptext.disks_label).fieldConfig.find((c) => c.name === 'volsize');
+              const volsizeConfig = this.wizardConfig
+                .find((wizardConfig) => wizardConfig.label === helptext.disks_label)
+                .fieldConfig
+                .find((fieldConfig) => fieldConfig.name === 'volsize');
               const errors = control.value && Number.isNaN(this.storageService.convertHumanStringToNum(control.value, false, 'mgtp'))
                 ? { invalid_byte_string: true }
                 : null;
 
               if (errors) {
-                config.hasErrors = true;
-                config.errors = globalHelptext.human_readable.input_error;
+                volsizeConfig.hasErrors = true;
+                volsizeConfig.errors = globalHelptext.human_readable.input_error;
               } else {
-                config.hasErrors = false;
-                config.errors = '';
+                volsizeConfig.hasErrors = false;
+                volsizeConfig.errors = '';
               }
 
               return errors;
@@ -702,12 +706,12 @@ export class VmWizardComponent implements WizardConfiguration {
             } else if (stat.free_bytes > 40 * 1073741824) {
               const vmOs = this.getFormControlFromFieldName('os').value;
               if (vmOs === 'Windows') {
-                this.getFormControlFromFieldName('volsize').setValue(this.storageService.convertBytestoHumanReadable(volsize, 0));
+                this.getFormControlFromFieldName('volsize').setValue(this.storageService.convertBytesToHumanReadable(volsize, 0));
               } else {
-                this.getFormControlFromFieldName('volsize').setValue(this.storageService.convertBytestoHumanReadable(volsize, 0));
+                this.getFormControlFromFieldName('volsize').setValue(this.storageService.convertBytesToHumanReadable(volsize, 0));
               }
             } else if (stat.free_bytes > 10 * 1073741824) {
-              this.getFormControlFromFieldName('volsize').setValue((this.storageService.convertBytestoHumanReadable(volsize, 0)));
+              this.getFormControlFromFieldName('volsize').setValue((this.storageService.convertBytesToHumanReadable(volsize, 0)));
             }
           });
         } else {
@@ -906,7 +910,7 @@ export class VmWizardComponent implements WizardConfiguration {
       console.error(vmMemoryRequested); // leaves form in previous error state
     } else if (enteredVal.replace(/\s/g, '').match(/[^0-9]/g) === null) {
       this.entityWizard.formArray.get([1]).get('memory')
-        .setValue(this.storageService.convertBytestoHumanReadable(enteredVal.replace(/\s/g, ''), 0));
+        .setValue(this.storageService.convertBytesToHumanReadable(enteredVal.replace(/\s/g, ''), 0));
     } else {
       this.entityWizard.formArray.get([1]).get('memory').setValue(this.storageService.humanReadable);
       _.find(this.wizardConfig[1].fieldConfig, { name: 'memory' })['hasErrors'] = false;

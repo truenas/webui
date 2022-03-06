@@ -431,7 +431,7 @@ export class CloudsyncFormComponent implements FormConfiguration {
 
   protected providers: CloudsyncProvider[];
   protected taskSchemas = ['encryption', 'fast_list', 'chunk_size', 'storage_class'];
-  custActions = [
+  customActions = [
     {
       id: 'dry_run',
       name: helptext.action_button_dry_run,
@@ -578,8 +578,8 @@ export class CloudsyncFormComponent implements FormConfiguration {
     if (data.direction === Direction.Pull) {
       data.path_destination = data.path;
 
-      if (data.attributes.include?.length) {
-        data.attributes.folder_source = data.attributes.include.map((path: string) => {
+      if (data.include?.length) {
+        data.attributes.folder_source = data.include.map((path: string) => {
           return data.attributes.folder + '/' + path.split('/')[1];
         });
       } else {
@@ -735,7 +735,9 @@ export class CloudsyncFormComponent implements FormConfiguration {
             () => {
               dialogRef.close();
               this.cloudcredentialService.getCloudsyncCredentials().then((credentials) => {
-                const newCredential = credentials.find((item) => !this.credentials.find((e) => e.id === item.id));
+                const newCredential = credentials.find((credential) => {
+                  return !this.credentials.find((existingCredential) => existingCredential.id === credential.id);
+                });
                 if (newCredential) {
                   this.credentialsField.options.push({ label: newCredential.name + ' (' + newCredential.provider + ')', value: newCredential.id });
                   this.credentials.push(newCredential);
@@ -1129,7 +1131,7 @@ export class CloudsyncFormComponent implements FormConfiguration {
     }
   }
 
-  isCustActionDisabled(): boolean {
+  isCustomActionDisabled(): boolean {
     return !this.entityForm.valid;
   }
 }

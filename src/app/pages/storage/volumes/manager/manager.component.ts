@@ -209,10 +209,10 @@ export class ManagerComponent implements OnInit, AfterViewInit {
         for (let i = 0; i < value.vdevs; i++) {
           const vdevValues = { disks: [] as ManagerDisk[], type: this.firstDataVdevType };
           for (let j = 0; j < this.firstDataVdevDisknum; j++) {
-            const disk = duplicableDisks.shift();
-            vdevValues.disks.push(disk);
+            const duplicateDisk = duplicableDisks.shift();
+            vdevValues.disks.push(duplicateDisk);
             // remove disk from selected
-            this.selected = _.remove(this.selected, (d) => d.devname !== disk.devname);
+            this.selected = _.remove(this.selected, (disk) => disk.devname !== duplicateDisk.devname);
           }
           this.addVdev('data', vdevValues);
         }

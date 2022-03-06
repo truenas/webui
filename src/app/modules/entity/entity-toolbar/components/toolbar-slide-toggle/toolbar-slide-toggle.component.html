@@ -1,0 +1,14 @@
+<div class="toolbar-button" [class.has-tooltip]="config.tooltip">
+  <mat-slide-toggle
+    color="primary"
+    [checked]="config.value"
+    [required]="config.required"
+    [disabled]="config.disabled"
+    (click)="onClick($event)"
+    (keyup.Space)="onClick($event)"
+  >
+    {{ config.label }}
+    <span *ngIf="config.required" class="required">*</span>
+  </mat-slide-toggle>
+  <tooltip *ngIf="config.tooltip" [header]="config.label" class="tooltip" [message]="config.tooltip"></tooltip>
+</div>

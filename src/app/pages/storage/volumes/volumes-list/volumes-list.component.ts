@@ -252,10 +252,10 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
             if (pool.children[0].is_encrypted_root) {
               this.hasEncryptedRoot[pool.name] = true;
             }
-            pool.children[0].available_parsed = this.storage.convertBytestoHumanReadable(
+            pool.children[0].available_parsed = this.storage.convertBytesToHumanReadable(
               pool.children[0].available.parsed || 0,
             );
-            pool.children[0].used_parsed = this.storage.convertBytestoHumanReadable(
+            pool.children[0].used_parsed = this.storage.convertBytesToHumanReadable(
               pool.children[0].used.parsed || 0,
             );
             pool.availStr = filesize(pool.children[0].available.parsed, { standard: 'iec' });

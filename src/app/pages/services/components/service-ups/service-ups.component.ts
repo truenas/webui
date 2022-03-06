@@ -10,6 +10,8 @@ import { choicesToOptions, singleArrayToOptions } from 'app/helpers/options.help
 import helptext from 'app/helptext/services/components/service-ups';
 import { UpsConfigUpdate } from 'app/interfaces/ups-config.interface';
 import { EntityUtils } from 'app/modules/entity/utils';
+import { SimpleAsyncComboboxProvider } from 'app/modules/ix-forms/classes/simple-async-combobox-provider';
+import { IxComboboxProvider } from 'app/modules/ix-forms/components/ix-combobox/ix-combobox-provider';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { DialogService, WebSocketService } from 'app/services';
 
@@ -68,6 +70,11 @@ export class ServiceUpsComponent implements OnInit {
     optionsupsd: helptext.ups_optionsupsd_placeholder,
   };
 
+  readonly providers: { [key: string]: IxComboboxProvider } = {
+    driver: new SimpleAsyncComboboxProvider(this.ws.call('ups.driver_choices').pipe(choicesToOptions())),
+    port: new SimpleAsyncComboboxProvider(this.ws.call('ups.port_choices').pipe(singleArrayToOptions())),
+  };
+
   readonly tooltips = {
     identifier: helptext.ups_identifier_tooltip,
     mode: helptext.ups_mode_tooltip,
@@ -91,8 +98,6 @@ export class ServiceUpsComponent implements OnInit {
   };
 
   readonly modeOptions$ = of(helptext.ups_mode_options);
-  readonly driverOptions$ = this.ws.call('ups.driver_choices').pipe(choicesToOptions());
-  readonly portOptions$ = this.ws.call('ups.port_choices').pipe(singleArrayToOptions());
   readonly shutdownOptions$ = of(helptext.ups_shutdown_options);
 
   constructor(

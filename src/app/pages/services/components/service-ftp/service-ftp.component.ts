@@ -394,7 +394,7 @@ export class ServiceFtpComponent implements FormConfiguration, OnInit {
 
   advancedFields = this.fieldSets.advancedFields;
 
-  custActions = [
+  customActions = [
     {
       id: 'basic_mode',
       name: globalHelptext.basic_options,
@@ -413,7 +413,7 @@ export class ServiceFtpComponent implements FormConfiguration, OnInit {
     },
   ];
 
-  isCustActionVisible(actionId: string): boolean {
+  isCustomActionVisible(actionId: string): boolean {
     if (actionId === 'advanced_mode' && !this.isBasicMode) {
       return false;
     } if (actionId === 'basic_mode' && this.isBasicMode) {
@@ -487,7 +487,7 @@ export class ServiceFtpComponent implements FormConfiguration, OnInit {
 
   resourceTransformIncomingRestData(data: any): any {
     this.bwFields.forEach((field) => {
-      data[field] = this.storageService.convertBytestoHumanReadable(data[field] * 1024, 0, 'KiB');
+      data[field] = this.storageService.convertBytesToHumanReadable(data[field] * 1024, 0, 'KiB');
     });
 
     this.rootlogin = data['rootlogin'];

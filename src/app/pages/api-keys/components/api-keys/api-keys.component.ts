@@ -40,7 +40,7 @@ export class ApiKeysComponent implements EntityTableConfig {
     },
   };
 
-  custActions = [
+  customActions = [
     {
       id: 'docs',
       name: helptext.action_docs,

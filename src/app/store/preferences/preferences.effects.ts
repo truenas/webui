@@ -12,12 +12,13 @@ import { AppState } from 'app/store/index';
 import {
   builtinGroupsToggled,
   builtinUsersToggled, localizationFormSubmitted,
-  noPreferencesFound, oneTimeBuiltinGroupsMessageShown, oneTimeBuiltinUsersMessageShown,
+  noPreferencesFound,
   preferencesLoaded, preferredColumnsUpdated,
   themeNotFound,
 } from 'app/store/preferences/preferences.actions';
 import { selectPreferencesState } from 'app/store/preferences/preferences.selectors';
 import { sidenavUpdated } from 'app/store/topbar/topbar.actions';
+import { snapshotExtraColumnsToggled } from './preferences.actions';
 
 @Injectable()
 export class PreferencesEffects {
@@ -34,8 +35,9 @@ export class PreferencesEffects {
 
           return preferencesLoaded({ preferences });
         }),
-        catchError(() => {
+        catchError((error) => {
           // TODO: Basically a fatal error. Handle it.
+          console.error(error);
           return EMPTY;
         }),
       );
@@ -47,9 +49,8 @@ export class PreferencesEffects {
       sidenavUpdated,
       themeNotFound,
       preferredColumnsUpdated,
-      oneTimeBuiltinUsersMessageShown,
       builtinUsersToggled,
-      oneTimeBuiltinGroupsMessageShown,
+      snapshotExtraColumnsToggled,
       builtinGroupsToggled,
       localizationFormSubmitted,
     ),

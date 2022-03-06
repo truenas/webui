@@ -101,7 +101,7 @@ export class StorageService {
     }
     // Select table columns labled with GiB, Mib, etc
     // Regex checks for ' XiB' with a leading space and X === K, M, G or T
-    // also include bytes unit, which will get from convertBytestoHumanReadable function
+    // also include bytes unit, which will get from convertBytesToHumanReadable function
     if (typeof (tempArr[n]) === 'string'
       && (tempArr[n].slice(-2) === ' B' || /\s[KMGT]iB$/.test(tempArr[n].slice(-4)) || tempArr[n].slice(-6) === ' bytes')) {
       let bytes = []; let kbytes = []; let mbytes = []; let gbytes = []; let
@@ -381,7 +381,7 @@ export class StorageService {
   }
 
   // Converts a number from bytes to the most natural human readable format
-  convertBytestoHumanReadable(
+  convertBytesToHumanReadable(
     rawBytes: number | string,
     decimalPlaces?: number,
     minUnits?: string,

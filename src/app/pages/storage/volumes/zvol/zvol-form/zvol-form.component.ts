@@ -77,7 +77,7 @@ export class ZvolFormComponent implements FormConfiguration {
   protected generate_key = true;
   protected encryption_algorithm: string;
 
-  custActions = [
+  customActions = [
     {
       id: 'basic_mode',
       name: globalHelptext.basic_options,
@@ -372,7 +372,7 @@ export class ZvolFormComponent implements FormConfiguration {
     'key',
   ];
 
-  isCustActionVisible(actionId: string): boolean {
+  isCustomActionVisible(actionId: string): boolean {
     if (actionId === 'advanced_mode' && !this.isBasicMode) {
       return false;
     } if (actionId === 'basic_mode' && this.isBasicMode) {
@@ -631,7 +631,7 @@ export class ZvolFormComponent implements FormConfiguration {
         parentDataset = parentDataset.join('/');
 
         this.ws.call('pool.dataset.query', [[['id', '=', parentDataset]]]).pipe(untilDestroyed(this)).subscribe((parentDataset) => {
-          this.custActions = null;
+          this.customActions = null;
 
           sparse.isHidden = true;
           volblocksize.isHidden = true;
@@ -647,7 +647,7 @@ export class ZvolFormComponent implements FormConfiguration {
           // decimal has to be truncated to three decimal places
           this.origVolSize = volumesize;
 
-          const humansize = this.storageService.convertBytestoHumanReadable(volumesize);
+          const humansize = this.storageService.convertBytesToHumanReadable(volumesize);
           this.origHuman = humansize;
 
           entityForm.formGroup.controls['name'].setValue(pkDatasets[0].name);

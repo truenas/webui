@@ -59,8 +59,11 @@
                           </span>
                           <span>{{ nicInfoMap[nic.state.name]?.state }}</span>
                         </li>
-                        <li fxLayout="row" fxLayoutAlign="start center"  class="line-state">
-                          <span class="icon state"><mat-icon [id]="nic.state.name" class="state-info-icon" svgIcon="network-upload-download" [matTooltip]="showInOutInfo(nic)"></mat-icon></span>
+                        <li fxLayout="row" fxLayoutAlign="start center" class="line-state">
+                          <span class="icon state">
+                            <mat-icon [id]="nic.state.name" class="state-info-icon" svgIcon="network-upload-download" *ngIf="nic.state.link_state === LinkState.Up" [matTooltip]="showInOutInfo(nic)"></mat-icon>
+                            <mat-icon class="state-info-icon" svgIcon="network-upload-download-disabled" *ngIf="nic.state.link_state !== LinkState.Up"></mat-icon>
+                          </span>
                           <ul *ngIf="nic.state.link_state === LinkState.Up">
                             <li><span class="label">{{ 'In' | translate }}:</span> {{ nicInfoMap[nic.state.name]?.in }}</li>
                             <li><span class="label">{{ 'Out' | translate }}:</span>{{ nicInfoMap[nic.state.name]?.out }}</li>

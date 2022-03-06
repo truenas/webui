@@ -1,6 +1,7 @@
 import { Validators } from '@angular/forms';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
+// TODO: Remove unused.
 export default {
   cron_fieldsets: [T('Cron Job')],
   cron_description_placeholder: T('Description'),
@@ -18,7 +19,7 @@ export default {
   cron_user_validation: [Validators.required],
 
   cron_picker_placeholder: T('Schedule'),
-  cron_picker_tooltip: T('Select a schedule preset or choose <i>Custom</i> \
+  crontab_tooltip: T('Select a schedule preset or choose <i>Custom</i> \
  to open the advanced scheduler. Note that an in-progress cron task postpones \
  any later scheduled instance of the same task until the running task is \
  complete.'),
