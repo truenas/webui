@@ -2,6 +2,7 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
+import { MockComponent } from 'ng-mocks';
 import { of, Subject } from 'rxjs';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { Preferences } from 'app/interfaces/preferences.interface';
@@ -12,6 +13,7 @@ import { IxTableHarness } from 'app/modules/ix-tables/testing/ix-table.harness';
 import { DialogService, ModalService, WebSocketService } from 'app/services';
 import { selectPreferences } from 'app/store/preferences/preferences.selectors';
 import { CoreService } from '../../../../services/core-service/core.service';
+import { UserDetailsRowComponent } from '../user-details-row/user-details-row.component';
 import { UserListComponent } from './user-list.component';
 
 export const fakeUserDataSource: User[] = [{
@@ -75,6 +77,7 @@ describe('UserListComponent', () => {
       IxTableModule,
     ],
     declarations: [
+      MockComponent(UserDetailsRowComponent),
     ],
     providers: [
       mockWebsocket([
