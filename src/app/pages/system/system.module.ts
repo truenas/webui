@@ -152,6 +152,7 @@ import { routing } from './system.routing';
     TwoFactorComponent,
     UpdateComponent,
     BootenvStatsDialogComponent,
+    CronFormComponent,
   ],
   providers: [
     TranslateService,

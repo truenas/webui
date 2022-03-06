@@ -142,10 +142,14 @@ export class AdvancedSettingsComponent implements OnInit {
       { name: this.translate.instant('Next Run'), prop: 'next_run' },
     ],
     add: async () => {
-      await this.onSettingsPressed(AdvancedCardId.Cron);
+      await this.showFirstTimeWarningIfNeeded();
+      this.ixModal.open(CronFormComponent);
     },
-    edit: async (row: CronjobRow) => {
-      await this.onSettingsPressed(AdvancedCardId.Cron, row.id);
+    edit: async (cron: CronjobRow) => {
+      await this.showFirstTimeWarningIfNeeded();
+
+      const modal = this.ixModal.open(CronFormComponent);
+      modal.setCronForEdit(cron);
     },
   };
 
@@ -470,9 +474,6 @@ export class AdvancedSettingsComponent implements OnInit {
         break;
       case AdvancedCardId.Sysctl:
         this.modalService.openInSlideIn(TunableFormComponent, id);
-        break;
-      case AdvancedCardId.Cron:
-        this.modalService.openInSlideIn(CronFormComponent, id);
         break;
       case AdvancedCardId.SystemDatasetPool:
         this.ixModal.open(SystemDatasetPoolComponent);
