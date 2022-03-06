@@ -1,8 +1,13 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatIconModule } from '@angular/material/icon';
+import { MatSelectModule } from '@angular/material/select';
 import { TranslateModule } from '@ngx-translate/core';
-import { MaterialModule } from 'app/app-material.module';
 import { CoreComponents } from 'app/core/core-components.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import {
@@ -21,12 +26,17 @@ import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
 @NgModule({
   imports: [
     CommonModule,
-    MaterialModule,
     TranslateModule,
     ReactiveFormsModule,
     TooltipModule,
     IxFormsModule,
     FormsModule,
+    MatSelectModule,
+    MatDatepickerModule,
+    MatIconModule,
+    MatDialogModule,
+    MatButtonModule,
+    MatCheckboxModule,
     CoreComponents,
   ],
   exports: [
@@ -38,7 +48,6 @@ import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
     SchedulerModalComponent,
     SchedulerPreviewColumnComponent,
     SchedulerDateExamplesComponent,
-
     CrontabExplanationPipe,
   ],
 })
