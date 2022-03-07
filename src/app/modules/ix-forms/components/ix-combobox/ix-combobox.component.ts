@@ -39,7 +39,7 @@ export class IxComboboxComponent implements ControlValueAccessor, OnInit {
   @ViewChild(MatAutocompleteTrigger) autocompleteTrigger: MatAutocompleteTrigger;
   placeholder = this.translate.instant('Search');
   getDisplayWith = this.displayWith.bind(this);
-  errorObject: any = null;
+  hasErrorInOptions = false;
 
   loading = false;
 
@@ -94,8 +94,8 @@ export class IxComboboxComponent implements ControlValueAccessor, OnInit {
     this.loading = this.filterValue !== '';
     this.cdr.markForCheck();
     this.provider?.fetch(filterValue).pipe(
-      catchError((error) => {
-        this.errorObject = error;
+      catchError(() => {
+        this.hasErrorInOptions = true;
         return EMPTY;
       }),
       untilDestroyed(this),

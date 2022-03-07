@@ -222,7 +222,7 @@ export class PodLogsComponent implements OnInit, OnDestroy {
       }, {
         type: 'select',
         name: 'containers',
-        placeholder: helptext.podLogs.chooseConatiner.placeholder,
+        placeholder: helptext.podLogs.chooseContainer.placeholder,
         required: true,
         value: this.containerName,
         options: containerOptions,

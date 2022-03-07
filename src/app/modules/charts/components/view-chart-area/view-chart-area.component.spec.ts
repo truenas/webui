@@ -2,7 +2,7 @@ import 'jest-canvas-mock';
 import {
   createComponentFactory, Spectator,
 } from '@ngneat/spectator/jest';
-import { ChartData } from 'chart.js';
+import { ChartData, ChartDataSets } from 'chart.js';
 import { ViewChartAreaComponent } from 'app/modules/charts/components/view-chart-area/view-chart-area.component';
 
 describe('ViewChartAreaComponent', () => {
@@ -21,7 +21,7 @@ describe('ViewChartAreaComponent', () => {
   * Generate Mock Data
   * */
 
-  const generateDatasets = (dataSources: number, dataPoints: number): any[] => {
+  const generateDatasets = (dataSources: number, dataPoints: number): ChartDataSets[] => {
     const datasets = [];
 
     for (let i = 0; i < dataSources; i++) {

@@ -2,6 +2,7 @@ import {
   AfterViewInit, Component, OnInit, QueryList, ViewChild, ViewChildren,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { SortDirection } from '@angular/material/sort';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
@@ -11,7 +12,6 @@ import * as filesize from 'filesize';
 import * as _ from 'lodash';
 import { of } from 'rxjs';
 import { filter, switchMap, take } from 'rxjs/operators';
-import { DownloadKeyDialogComponent } from 'app/components/common/dialog/download-key/download-key-dialog.component';
 import { DiskBus } from 'app/enums/disk-bus.enum';
 import { DiskType } from 'app/enums/disk-type.enum';
 import helptext from 'app/helptext/storage/volumes/manager/manager';
@@ -20,6 +20,7 @@ import { Option } from 'app/interfaces/option.interface';
 import { CreatePool, Pool, UpdatePool } from 'app/interfaces/pool.interface';
 import { VDev } from 'app/interfaces/storage.interface';
 import { AppLoaderService } from 'app/modules/app-loader/app-loader.service';
+import { DownloadKeyDialogComponent } from 'app/modules/common/dialog/download-key/download-key-dialog.component';
 import { DialogFormConfiguration } from 'app/modules/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/modules/entity/entity-dialog/entity-dialog.component';
 import { FormParagraphConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
@@ -208,7 +209,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
         }
         for (let i = 0; i < value.vdevs; i++) {
           const vdevValues = { disks: [] as ManagerDisk[], type: this.firstDataVdevType };
-          for (let j = 0; j < this.firstDataVdevDisknum; j++) {
+          for (let n = 0; n < this.firstDataVdevDisknum; n++) {
             const duplicateDisk = duplicableDisks.shift();
             vdevValues.disks.push(duplicateDisk);
             // remove disk from selected
@@ -804,7 +805,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
     }
   }
 
-  reorderEvent(event: any): void {
+  reorderEvent(event: { sorts: { prop: keyof ManagerDisk; dir: SortDirection }[] }): void {
     const sort = event.sorts[0];
     const rows = this.disks;
     this.sorter.tableSorter(rows, sort.prop, sort.dir);

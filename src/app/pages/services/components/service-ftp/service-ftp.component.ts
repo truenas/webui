@@ -467,7 +467,7 @@ export class ServiceFtpComponent implements FormConfiguration, OnInit {
     });
 
     this.bwFields.forEach((field) => {
-      entityEdit.formGroup.controls[field].valueChanges.pipe(untilDestroyed(this)).subscribe((value: any) => {
+      entityEdit.formGroup.controls[field].valueChanges.pipe(untilDestroyed(this)).subscribe((value: string) => {
         const formField = _.find(this.fieldConfig, { name: field });
         const filteredValue = value ? this.storageService.convertHumanStringToNum(value, false, 'kmgtp') : undefined;
         formField['hasErrors'] = false;

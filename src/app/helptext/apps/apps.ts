@@ -481,7 +481,7 @@ export default {
       placeholder: T('Pods'),
       action: T('Choose'),
     },
-    chooseConatiner: {
+    chooseContainer: {
       title: T('Choose container'),
       placeholder: T('Containers'),
     },
@@ -504,7 +504,7 @@ export default {
     choosePod: {
       placeholder: T('Pods'),
     },
-    chooseConatiner: {
+    chooseContainer: {
       placeholder: T('Containers'),
     },
     tailLines: {
