@@ -4,9 +4,10 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { FormsModule } from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 import { RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
-import { MaterialModule } from 'app/app-material.module';
 import { CopyButtonComponent } from 'app/core/components/copy-btn/copy-btn.component';
 import { HtmlTooltipComponent } from 'app/core/components/directives/html-tooltip/html-tooltip.component';
 import { HtmlTooltipDirective } from 'app/core/components/directives/html-tooltip/html-tooltip.directive';
@@ -23,12 +24,13 @@ import { StorageService } from 'app/services/storage.service';
 @NgModule({
   imports: [
     CommonModule,
-    MaterialModule,
     OverlayModule,
     PortalModule,
     FlexLayoutModule,
     FormsModule,
     TranslateModule,
+    MatIconModule,
+    MatButtonModule,
     RouterModule,
     CommonDirectivesModule,
     EntityModule,
@@ -46,7 +48,6 @@ import { StorageService } from 'app/services/storage.service';
   ],
   exports: [
     CommonModule,
-    MaterialModule,
     OverlayModule,
     PortalModule,
     FlexLayoutModule,

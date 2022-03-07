@@ -1,6 +1,6 @@
 import { CdkDragHandle } from '@angular/cdk/drag-drop';
 import { Directive } from '@angular/core';
-import { ixDragHandleDirectiveToken } from 'app/pages/common/ix-drop-grid/ix-drop-grid.tokens';
+import { ixDragHandleDirectiveToken } from 'app/modules/ix-drop-grid/ix-drop-grid.tokens';
 
 @Directive({
   selector: '[ixDragHandle]',

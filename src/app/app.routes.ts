@@ -1,8 +1,8 @@
 import { Routes } from '@angular/router';
 import { TranslationsLoadedGuard } from 'app/core/guards/translations-loaded.guard';
 import { ApplicationsComponent } from 'app/pages/applications//applications.component';
-import { AdminLayoutComponent } from './components/common/layouts/admin-layout/admin-layout.component';
-import { AuthLayoutComponent } from './components/common/layouts/auth-layout/auth-layout.component';
+import { AdminLayoutComponent } from './modules/common/layouts/admin-layout/admin-layout.component';
+import { AuthLayoutComponent } from './modules/common/layouts/auth-layout/auth-layout.component';
 import { AuthService } from './services/auth/auth.service';
 
 export const rootRouterConfig: Routes = [{

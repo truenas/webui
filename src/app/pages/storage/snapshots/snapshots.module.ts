@@ -2,11 +2,15 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
 import { MatRippleModule } from '@angular/material/core';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatExpansionModule } from '@angular/material/expansion';
 import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatSortModule } from '@angular/material/sort';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterModule } from '@angular/router';
 import { EffectsModule } from '@ngrx/effects';
@@ -44,6 +48,10 @@ import { SnapshotBatchDeleteDialogComponent } from './snapshot-batch-delete-dial
     MatListModule,
     MatMenuModule,
     MatRippleModule,
+    MatSortModule,
+    MatExpansionModule,
+    MatCardModule,
+    MatDialogModule,
     MatTooltipModule,
     MatProgressSpinnerModule,
     RouterModule,

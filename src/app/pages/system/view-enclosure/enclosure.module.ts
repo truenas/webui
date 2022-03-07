@@ -1,8 +1,13 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FlexLayoutModule } from '@angular/flex-layout';
+import { MatCardModule } from '@angular/material/card';
+import { MatIconModule } from '@angular/material/icon';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatTableModule } from '@angular/material/table';
+import { MatToolbarModule } from '@angular/material/toolbar';
 import { TranslateModule } from '@ngx-translate/core';
-import { MaterialModule } from 'app/app-material.module';
 import { CastModule } from 'app/modules/cast/cast.module';
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
@@ -15,7 +20,18 @@ import { TemperatureMeterComponent } from './components/temperature-meter/temper
 
 @NgModule({
   imports: [
-    CommonModule, MaterialModule, TranslateModule, FlexLayoutModule, EntityModule, TooltipModule, CastModule,
+    CommonModule,
+    TranslateModule,
+    FlexLayoutModule,
+    EntityModule,
+    TooltipModule,
+    CastModule,
+    MatIconModule,
+    MatProgressSpinnerModule,
+    MatProgressBarModule,
+    MatTableModule,
+    MatCardModule,
+    MatToolbarModule,
   ],
   declarations: [
     ViewEnclosureComponent,

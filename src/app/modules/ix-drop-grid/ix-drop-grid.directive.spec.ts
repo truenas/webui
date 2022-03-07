@@ -6,10 +6,10 @@ import {
 } from '@angular/core';
 import { createDirectiveFactory, mockProvider, SpectatorDirective } from '@ngneat/spectator/jest';
 import { of, Subject } from 'rxjs';
-import { IxDropGridItemDirective } from 'app/pages/common/ix-drop-grid/ix-drop-grid-item.directive';
-import { IxDropGridPlaceholderComponent } from 'app/pages/common/ix-drop-grid/ix-drop-grid-placeholder.component';
-import { IxDropGridDirective } from 'app/pages/common/ix-drop-grid/ix-drop-grid.directive';
-import { ixDropGridDirectiveToken } from 'app/pages/common/ix-drop-grid/ix-drop-grid.tokens';
+import { IxDropGridItemDirective } from 'app/modules/ix-drop-grid/ix-drop-grid-item.directive';
+import { IxDropGridPlaceholderComponent } from 'app/modules/ix-drop-grid/ix-drop-grid-placeholder.component';
+import { IxDropGridDirective } from 'app/modules/ix-drop-grid/ix-drop-grid.directive';
+import { ixDropGridDirectiveToken } from 'app/modules/ix-drop-grid/ix-drop-grid.tokens';
 
 const timeoutMs = 1;
 const animationTimeoutMs = 200;
