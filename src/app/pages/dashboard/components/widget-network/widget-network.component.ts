@@ -327,7 +327,7 @@ export class WidgetNetworkComponent extends WidgetComponent implements OnInit, A
     if (!nic.state.aliases) {
       return null;
     }
-    if (!this.nicInfoMap[nic.name]?.state) {
+    if (!this.nicInfoMap[nic.name]) {
       return nic.state.link_state;
     }
     return this.nicInfoMap[nic.name].state;
