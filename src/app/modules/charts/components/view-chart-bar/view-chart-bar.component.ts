@@ -61,8 +61,8 @@ export class ViewChartBarComponent implements AfterViewInit, OnChanges {
     return this._data;
   }
 
-  set data(d) {
-    this._data = d;
+  set data(data) {
+    this._data = data;
   }
 
   render(): void {

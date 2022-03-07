@@ -115,8 +115,8 @@ export class AssociatedTargetListComponent implements EntityTableConfig {
               this.entityList.loaderOpen = true;
               this.ws.call(this.wsDelete, [rowinner.id, true]).pipe(untilDestroyed(this)).subscribe(
                 () => { this.entityList.getData(); },
-                (resinner: WebsocketError) => {
-                  new EntityUtils().handleError(this, resinner);
+                (error: WebsocketError) => {
+                  new EntityUtils().handleError(this, error);
                   this.loader.close();
                 },
               );

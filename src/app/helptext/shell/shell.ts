@@ -33,7 +33,7 @@ export default {
       placeholder: T('Pods'),
       action: T('Choose'),
     },
-    chooseConatiner: {
+    chooseContainer: {
       title: T('Choose container'),
       placeholder: T('Containers'),
     },

@@ -23,8 +23,8 @@ export interface WizardConfiguration {
   isCustomActionVisible?: (actionId: string, stepperIndex: number) => boolean;
   preInit?: (entityWizard: EntityWizardComponent) => void;
   afterInit?: (entityWizard: EntityWizardComponent) => void;
-  beforeSubmit?: (value: any) => any;
-  customSubmit?: (value: any) => void;
+  beforeSubmit?: (value: unknown) => unknown;
+  customSubmit?: (value: unknown) => void;
   customCancel?: () => void;
 }
 

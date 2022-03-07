@@ -193,7 +193,7 @@ export class DialogService {
     }
   }
 
-  generalDialog(conf: GeneralDialogConfig, matConfig?: MatDialogConfig): Observable<any> {
+  generalDialog(conf: GeneralDialogConfig, matConfig?: MatDialogConfig): Observable<boolean> {
     const dialogRef = this.dialog.open(GeneralDialogComponent, matConfig);
     dialogRef.componentInstance.conf = conf;
 

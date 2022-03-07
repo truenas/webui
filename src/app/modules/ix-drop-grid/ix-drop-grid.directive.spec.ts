@@ -1,7 +1,8 @@
 import { CdkDragEnter, DragDropModule, DropListRef } from '@angular/cdk/drag-drop';
 import { DOCUMENT } from '@angular/common';
 import {
-  ComponentFactoryResolver, Injector, Provider, ReflectiveInjector, ViewContainerRef,
+  ComponentFactory,
+  ComponentFactoryResolver, ComponentRef, Injector, Provider, ReflectiveInjector, ViewContainerRef,
 } from '@angular/core';
 import { createDirectiveFactory, mockProvider, SpectatorDirective } from '@ngneat/spectator/jest';
 import { of, Subject } from 'rxjs';
@@ -44,11 +45,11 @@ describe('IxDropGridDirective', () => {
     ReflectiveInjector.resolveAndCreate = jest.fn().mockReturnValue(fakeInjector);
 
     viewContainerRefMock = spectator.inject(ViewContainerRef);
-    jest.spyOn(viewContainerRefMock, 'createComponent').mockReturnValue({ instance: undefined } as any);
+    jest.spyOn(viewContainerRefMock, 'createComponent').mockReturnValue({ instance: undefined } as ComponentRef<unknown>);
     spectator.directive['viewContainerRef'] = viewContainerRefMock;
 
     componentFactoryResolverMock = spectator.inject(ComponentFactoryResolver);
-    jest.spyOn(componentFactoryResolverMock, 'resolveComponentFactory').mockReturnValue(fakeFactory as any);
+    jest.spyOn(componentFactoryResolverMock, 'resolveComponentFactory').mockReturnValue(fakeFactory as ComponentFactory<unknown>);
     spectator.directive['resolver'] = componentFactoryResolverMock;
 
     spectator.detectChanges();

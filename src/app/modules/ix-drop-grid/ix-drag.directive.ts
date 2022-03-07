@@ -34,13 +34,13 @@ import {
     { provide: CDK_DRAG_PARENT, useExisting: IxDragDirective },
   ],
 })
-export class IxDragDirective extends CdkDrag<any> {
+export class IxDragDirective extends CdkDrag {
   @ContentChildren(ixDragHandleDirectiveToken, { descendants: true }) _ixHandles: QueryList<IxDragHandleDirective>;
 
   constructor(
     private ngZone: NgZone,
     element: ElementRef<HTMLElement>,
-    @Inject(DOCUMENT) document: any,
+    @Inject(DOCUMENT) document: Document,
     viewContainerRef: ViewContainerRef,
     @Optional() @Inject(CDK_DRAG_CONFIG) config: DragDropConfig,
     @Optional() dir: Directionality,
