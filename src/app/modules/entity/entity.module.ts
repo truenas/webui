@@ -76,6 +76,7 @@ import { EntityWizardComponent } from 'app/modules/entity/entity-wizard/entity-w
 import { ExpandableTableComponent } from 'app/modules/entity/table/expandable-table/expandable-table.component';
 import { TableComponent } from 'app/modules/entity/table/table.component';
 import { TableService } from 'app/modules/entity/table/table.service';
+import { SchedulerModule } from 'app/modules/scheduler/scheduler.module';
 import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
 import { TaskScheduleListComponent } from 'app/pages/data-protection/components/task-schedule-list/task-schedule-list.component';
 import { JobService } from 'app/services';
@@ -104,6 +105,7 @@ import { DocsService } from 'app/services/docs.service';
     CommonDirectivesModule,
     TooltipModule,
     CastModule,
+    SchedulerModule,
   ],
   declarations: [
     TaskScheduleListComponent,

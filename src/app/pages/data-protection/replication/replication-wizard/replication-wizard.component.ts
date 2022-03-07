@@ -43,6 +43,7 @@ import { EntityFormService } from 'app/modules/entity/entity-form/services/entit
 import { forbiddenValues } from 'app/modules/entity/entity-form/validators/forbidden-values-validation';
 import { EntityWizardComponent } from 'app/modules/entity/entity-wizard/entity-wizard.component';
 import { EntityUtils } from 'app/modules/entity/utils';
+import { CronPresetValue } from 'app/modules/scheduler/utils/get-default-crontab-presets.utils';
 import {
   AppLoaderService,
   DialogService,
@@ -523,7 +524,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
           name: 'schedule_picker',
           placeholder: helptext.schedule_placeholder,
           tooltip: helptext.schedule_tooltip,
-          value: '0 0 * * *',
+          value: CronPresetValue.Daily,
           class: 'inline',
           width: '50%',
           relation: [{
