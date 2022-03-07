@@ -86,12 +86,9 @@ export class ThemeUtils {
   }
 
   rgbToHex(value: string): string {
-    const arr = this.rgbToArray(value);
-    const r = arr[0];
-    const g = arr[1];
-    const b = arr[2];
+    const [red, green, blue] = this.rgbToArray(value);
 
-    const hex = '#' + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
+    const hex = '#' + ((1 << 24) + (red << 16) + (green << 8) + blue).toString(16).slice(1);
     return hex;
   }
 
@@ -146,44 +143,44 @@ export class ThemeUtils {
   rgbToHsl(param: string | number[], inputString = true, outputString = true): number[] | string {
     const value: number[] = inputString ? this.forceRgb(param as string) : param as number[];
 
-    const r = value[0] / 255;
-    const g = value[1] / 255;
-    const b = value[2] / 255;
+    const red = value[0] / 255;
+    const green = value[1] / 255;
+    const blue = value[2] / 255;
 
-    const cmin = Math.min(r, g, b);
-    const cmax = Math.max(r, g, b);
+    const cmin = Math.min(red, green, blue);
+    const cmax = Math.max(red, green, blue);
     const delta = cmax - cmin;
 
-    let h = 0;
-    let s = 0;
-    let l = 0;
+    let hue = 0;
+    let saturation = 0;
+    let lightness = 0;
 
     // Calculate Hue
     if (delta === 0) {
-      h = 0;
-    } else if (cmax === r) {
-      h = ((g - b) / delta) % 6;
-    } else if (cmax === g) {
-      h = (b - r) / delta + 2;
+      hue = 0;
+    } else if (cmax === red) {
+      hue = ((green - blue) / delta) % 6;
+    } else if (cmax === green) {
+      hue = (blue - red) / delta + 2;
     } else {
-      h = (r - g) / delta + 4;
+      hue = (red - green) / delta + 4;
     }
 
-    h = Math.round(h * 60);
+    hue = Math.round(hue * 60);
     // Make negative hues positive behind 360°
-    if (h < 0) h += 360;
+    if (hue < 0) hue += 360;
 
     // Calculate saturation and lightness
-    l = (cmax + cmin) / 2;
-    s = delta === 0 ? 0 : delta / (1 - Math.abs(2 * l - 1));
+    lightness = (cmax + cmin) / 2;
+    saturation = delta === 0 ? 0 : delta / (1 - Math.abs(2 * lightness - 1));
 
-    l = +(l * 100).toFixed(1);
-    s = +(s * 100).toFixed(1);
+    lightness = +(lightness * 100).toFixed(1);
+    saturation = +(saturation * 100).toFixed(1);
 
     if (outputString) {
-      return 'hsl(' + h + ', ' + s + '%, ' + l + '%)';
+      return 'hsl(' + hue + ', ' + saturation + '%, ' + lightness + '%)';
     }
-    return [h, s, l];
+    return [hue, saturation, lightness];
   }
 
   hslToArray(value: string): number[] {

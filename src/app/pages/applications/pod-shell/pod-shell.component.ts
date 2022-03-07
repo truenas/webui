@@ -96,7 +96,7 @@ export class PodShellComponent implements TerminalConfiguration {
       }, {
         type: 'select',
         name: 'containers',
-        placeholder: helptext.podConsole.chooseConatiner.placeholder,
+        placeholder: helptext.podConsole.chooseContainer.placeholder,
         required: true,
         value: this.containerName,
         options: this.podDetails[this.podName].map((item) => ({

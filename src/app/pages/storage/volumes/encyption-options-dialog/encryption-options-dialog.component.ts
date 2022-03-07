@@ -6,7 +6,7 @@ import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dial
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { of } from 'rxjs';
+import { of, Subscription } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { combineLatestIsAny } from 'app/helpers/combine-latest-is-any.helper';
 import dataset_helptext from 'app/helptext/storage/volumes/datasets/dataset-form';
@@ -25,7 +25,9 @@ enum EncryptionType {
   Passphrase = 'passphrase',
 }
 
-@UntilDestroy()
+@UntilDestroy({
+  arrayName: 'subscriptions',
+})
 @Component({
   selector: 'ix-encryption-options-dialog',
   templateUrl: './encryption-options-dialog.component.html',
@@ -44,6 +46,8 @@ export class EncryptionOptionsDialogComponent implements OnInit {
     algorithm: [''],
     confirm: [false, [Validators.requiredTrue]],
   });
+
+  subscriptions: Subscription[] = [];
 
   isInheriting$ = this.form.select((values) => values.inherit_encryption);
   isKey$ = this.form.select((values) => values.encryption_type === EncryptionType.Key);
@@ -174,15 +178,19 @@ export class EncryptionOptionsDialogComponent implements OnInit {
       this.form.controls['encryption_type'].disable();
     }
 
-    this.form.controls['key'].disabledWhile(combineLatestIsAny([
-      this.isSetToGenerateKey$,
-      this.isKey$.pipe(map((value) => !value)),
-      this.isInheriting$,
-    ]));
+    this.subscriptions.push(
+      this.form.controls['key'].disabledWhile(combineLatestIsAny([
+        this.isSetToGenerateKey$,
+        this.isKey$.pipe(map((value) => !value)),
+        this.isInheriting$,
+      ])),
+    );
 
     const arePassphraseFieldsDisabled$ = combineLatestIsAny([this.isKey$, this.isInheriting$]);
-    this.form.controls['passphrase'].disabledWhile(arePassphraseFieldsDisabled$);
-    this.form.controls['confirm_passphrase'].disabledWhile(arePassphraseFieldsDisabled$);
-    this.form.controls['pbkdf2iters'].disabledWhile(arePassphraseFieldsDisabled$);
+    this.subscriptions.push(
+      this.form.controls['passphrase'].disabledWhile(arePassphraseFieldsDisabled$),
+      this.form.controls['confirm_passphrase'].disabledWhile(arePassphraseFieldsDisabled$),
+      this.form.controls['pbkdf2iters'].disabledWhile(arePassphraseFieldsDisabled$),
+    );
   }
 }

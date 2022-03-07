@@ -2,11 +2,41 @@ import { A11yModule } from '@angular/cdk/a11y';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { OverlayModule } from '@angular/cdk/overlay';
 import { CdkTableModule } from '@angular/cdk/table';
+import { TextFieldModule } from '@angular/cdk/text-field';
 import { CdkTreeModule } from '@angular/cdk/tree';
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { MatButtonModule } from '@angular/material/button';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
+import { MatCardModule } from '@angular/material/card';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatChipsModule } from '@angular/material/chips';
+import { MatNativeDateModule } from '@angular/material/core';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatExpansionModule } from '@angular/material/expansion';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
+import { MatListModule } from '@angular/material/list';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatRadioModule } from '@angular/material/radio';
+import { MatSelectModule } from '@angular/material/select';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { MatSliderModule } from '@angular/material/slider';
+import { MatSortModule } from '@angular/material/sort';
+import { MatStepperModule } from '@angular/material/stepper';
+import { MatTableModule } from '@angular/material/table';
+import { MatTabsModule } from '@angular/material/tabs';
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterModule } from '@angular/router';
 import { TreeModule } from '@circlon/angular-tree-component';
 import { TranslateModule } from '@ngx-translate/core';
@@ -15,9 +45,7 @@ import { ColorPickerModule } from 'ngx-color-picker';
 import { NgxFilesizeModule } from 'ngx-filesize';
 import { NgxUploaderModule } from 'ngx-uploader';
 import { TreeTableModule } from 'primeng/treetable';
-import { MaterialModule } from 'app/app-material.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
-import { AppLoaderService } from 'app/modules/app-loader/app-loader.service';
 import { CastModule } from 'app/modules/cast/cast.module';
 import { EntityDialogComponent } from 'app/modules/entity/entity-dialog/entity-dialog.component';
 import { EntityEmptyComponent } from 'app/modules/entity/entity-empty/entity-empty.component';
@@ -79,8 +107,7 @@ import { TableService } from 'app/modules/entity/table/table.service';
 import { SchedulerModule } from 'app/modules/scheduler/scheduler.module';
 import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
 import { TaskScheduleListComponent } from 'app/pages/data-protection/components/task-schedule-list/task-schedule-list.component';
-import { JobService } from 'app/services';
-import { DocsService } from 'app/services/docs.service';
+import { AppLoaderService, DocsService, JobService } from 'app/services';
 
 @NgModule({
   imports: [
@@ -89,11 +116,39 @@ import { DocsService } from 'app/services/docs.service';
     ReactiveFormsModule,
     DragDropModule,
     RouterModule,
-    MaterialModule,
     ColorPickerModule,
     NgxDatatableModule,
     CdkTableModule,
     TreeModule,
+    MatListModule,
+    MatDividerModule,
+    MatIconModule,
+    MatTooltipModule,
+    MatProgressSpinnerModule,
+    MatTableModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatCardModule,
+    MatToolbarModule,
+    MatExpansionModule,
+    MatStepperModule,
+    MatMenuModule,
+    MatSortModule,
+    MatSliderModule,
+    MatSlideToggleModule,
+    MatSelectModule,
+    MatButtonModule,
+    MatPaginatorModule,
+    MatDialogModule,
+    MatProgressBarModule,
+    MatCheckboxModule,
+    MatButtonToggleModule,
+    MatRadioModule,
+    TextFieldModule,
+    MatAutocompleteModule,
+    MatTabsModule,
+    MatChipsModule,
+    MatDatepickerModule,
     NgxUploaderModule,
     FlexLayoutModule,
     TranslateModule,
@@ -105,6 +160,7 @@ import { DocsService } from 'app/services/docs.service';
     CommonDirectivesModule,
     TooltipModule,
     CastModule,
+    MatNativeDateModule,
     SchedulerModule,
   ],
   declarations: [

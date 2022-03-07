@@ -29,13 +29,11 @@
 
               <div class="platform-logo-wrapper {{product_type.toLowerCase()}}" fxFlex="20">
                 <ng-container *ngIf="product_image || isPassive; else textOnly">
-                  <mat-icon *ngIf="product_type == ProductType.Core" svgIcon="truenas_core_logo_full" id="{{product_model}}"></mat-icon>
                   <mat-icon *ngIf="product_type == ProductType.Enterprise" svgIcon="truenas_enterprise_logo_full" id="{{product_model}}"></mat-icon>
                   <mat-icon *ngIf="product_type == ProductType.Scale || product_type == ProductType.ScaleEnterprise" svgIcon="truenas_scale_logo_full" id="{{product_model}}"></mat-icon>
                 </ng-container>
 
                 <ng-template #textOnly>
-                  <mat-icon *ngIf="product_type == ProductType.Core" svgIcon="truenas_core_logotype" id="{{product_model}}"></mat-icon>
                   <mat-icon *ngIf="product_type == ProductType.Enterprise" svgIcon="truenas_enterprise_logotype" id="{{product_model}}"></mat-icon>
                   <mat-icon *ngIf="product_type == ProductType.Scale || product_type == ProductType.ScaleEnterprise" svgIcon="truenas_scale_logotype" id="{{product_model}}"></mat-icon>
                 </ng-template>
@@ -56,8 +54,6 @@
                   >
 
                   <ng-template #generic>
-                    <mat-icon *ngIf="product_type === ProductType.Core && !certified" class="generic" svgIcon="truenas_core_logomark"></mat-icon>
-                    <mat-icon *ngIf="product_type === ProductType.Core && certified" class="generic certified" svgIcon="freenas_certified"></mat-icon>
                     <mat-icon *ngIf="ready && !isPassive && product_type === ProductType.Enterprise && !certified" class="generic" svgIcon="truenas_enterprise_logomark"></mat-icon>
                     <mat-icon *ngIf="(product_type === ProductType.Scale || product_type == ProductType.ScaleEnterprise) && !certified && !isHA" class="generic" svgIcon="truenas_scale_logomark"></mat-icon>
                     <mat-icon *ngIf="(product_type === ProductType.Scale || product_type == ProductType.ScaleEnterprise) && certified && !isHA" class="generic" svgIcon="freenas_certified"></mat-icon>

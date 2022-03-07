@@ -18,13 +18,13 @@ import {
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { take } from 'rxjs/operators';
-import { IxDragHandleDirective } from 'app/pages/common/ix-drop-grid/ix-drag-handle.directive';
-import { IxDropGridItemDirective } from 'app/pages/common/ix-drop-grid/ix-drop-grid-item.directive';
+import { IxDragHandleDirective } from 'app/modules/ix-drop-grid/ix-drag-handle.directive';
+import { IxDropGridItemDirective } from 'app/modules/ix-drop-grid/ix-drop-grid-item.directive';
 import {
   ixDragHandleDirectiveToken,
   ixDragParentToken,
   ixDropGridItemDirectiveToken,
-} from 'app/pages/common/ix-drop-grid/ix-drop-grid.tokens';
+} from 'app/modules/ix-drop-grid/ix-drop-grid.tokens';
 
 @UntilDestroy()
 @Directive({
@@ -34,13 +34,13 @@ import {
     { provide: CDK_DRAG_PARENT, useExisting: IxDragDirective },
   ],
 })
-export class IxDragDirective extends CdkDrag<any> {
+export class IxDragDirective extends CdkDrag {
   @ContentChildren(ixDragHandleDirectiveToken, { descendants: true }) _ixHandles: QueryList<IxDragHandleDirective>;
 
   constructor(
     private ngZone: NgZone,
     element: ElementRef<HTMLElement>,
-    @Inject(DOCUMENT) document: any,
+    @Inject(DOCUMENT) document: Document,
     viewContainerRef: ViewContainerRef,
     @Optional() @Inject(CDK_DRAG_CONFIG) config: DragDropConfig,
     @Optional() dir: Directionality,

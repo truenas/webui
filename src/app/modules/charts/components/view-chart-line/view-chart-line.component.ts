@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 import { ViewChartComponent, viewChartMetadata } from 'app/modules/charts/components/view-chart/view-chart.component';
 import { ChartConfiguration } from 'app/modules/charts/components/view-chart/view-chart.component.types';
-import { ThemeService } from 'app/services/theme/theme.service';
 
 interface TimeData {
   start: number;
@@ -22,8 +21,8 @@ export class ViewChartLineComponent extends ViewChartComponent {
   protected _chartType: string;
   protected _timeData: TimeData;
 
-  constructor(themeService: ThemeService) {
-    super(themeService);
+  constructor() {
+    super();
     this.chartType = 'line';
     this.timeFormat = '%m/%d/%Y';
   }
