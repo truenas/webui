@@ -1,9 +1,9 @@
 import {
   AfterViewInit, Component, Inject, Optional, SkipSelf, ViewChild,
 } from '@angular/core';
-import { IxDropGridItemDirective } from 'app/pages/common/ix-drop-grid/ix-drop-grid-item.directive';
-import { IxDropGridDirective } from 'app/pages/common/ix-drop-grid/ix-drop-grid.directive';
-import { ixDropGridDirectiveToken } from 'app/pages/common/ix-drop-grid/ix-drop-grid.tokens';
+import { IxDropGridItemDirective } from 'app/modules/ix-drop-grid/ix-drop-grid-item.directive';
+import { IxDropGridDirective } from 'app/modules/ix-drop-grid/ix-drop-grid.directive';
+import { ixDropGridDirectiveToken } from 'app/modules/ix-drop-grid/ix-drop-grid.tokens';
 
 @Component({
   selector: 'ix-drop-grid-placeholder',

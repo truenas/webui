@@ -5,7 +5,7 @@ import { Validators } from '@angular/forms';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { Observable, of } from 'rxjs';
+import { Observable, of, Subscription } from 'rxjs';
 import { InitShutdownScriptType } from 'app/enums/init-shutdown-script-type.enum';
 import { InitShutdownScriptWhen } from 'app/enums/init-shutdown-script-when.enum';
 import helptext from 'app/helptext/system/init-shutdown';
@@ -16,7 +16,7 @@ import { WebSocketService } from 'app/services';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
-@UntilDestroy()
+@UntilDestroy({ arrayName: 'subscriptions' })
 @Component({
   templateUrl: './init-shutdown-form.component.html',
   styleUrls: ['./init-shutdown-form.component.scss'],
@@ -34,6 +34,8 @@ export class InitShutdownFormComponent implements OnInit {
   }
 
   isFormLoading = false;
+
+  subscriptions: Subscription[] = [];
 
   readonly form = this.fb.group({
     comment: [''],
@@ -81,8 +83,10 @@ export class InitShutdownFormComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.form.controls['command'].enabledWhile(this.isCommand$);
-    this.form.controls['script'].disabledWhile(this.isCommand$);
+    this.subscriptions.push(
+      this.form.controls['command'].enabledWhile(this.isCommand$),
+      this.form.controls['script'].disabledWhile(this.isCommand$),
+    );
   }
 
   setScriptForEdit(script: InitShutdownScript): void {

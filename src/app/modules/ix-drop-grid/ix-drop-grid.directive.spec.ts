@@ -1,14 +1,15 @@
 import { CdkDragEnter, DragDropModule, DropListRef } from '@angular/cdk/drag-drop';
 import { DOCUMENT } from '@angular/common';
 import {
-  ComponentFactoryResolver, Injector, Provider, ReflectiveInjector, ViewContainerRef,
+  ComponentFactory,
+  ComponentFactoryResolver, ComponentRef, Injector, Provider, ReflectiveInjector, ViewContainerRef,
 } from '@angular/core';
 import { createDirectiveFactory, mockProvider, SpectatorDirective } from '@ngneat/spectator/jest';
 import { of, Subject } from 'rxjs';
-import { IxDropGridItemDirective } from 'app/pages/common/ix-drop-grid/ix-drop-grid-item.directive';
-import { IxDropGridPlaceholderComponent } from 'app/pages/common/ix-drop-grid/ix-drop-grid-placeholder.component';
-import { IxDropGridDirective } from 'app/pages/common/ix-drop-grid/ix-drop-grid.directive';
-import { ixDropGridDirectiveToken } from 'app/pages/common/ix-drop-grid/ix-drop-grid.tokens';
+import { IxDropGridItemDirective } from 'app/modules/ix-drop-grid/ix-drop-grid-item.directive';
+import { IxDropGridPlaceholderComponent } from 'app/modules/ix-drop-grid/ix-drop-grid-placeholder.component';
+import { IxDropGridDirective } from 'app/modules/ix-drop-grid/ix-drop-grid.directive';
+import { ixDropGridDirectiveToken } from 'app/modules/ix-drop-grid/ix-drop-grid.tokens';
 
 const timeoutMs = 1;
 const animationTimeoutMs = 200;
@@ -44,11 +45,11 @@ describe('IxDropGridDirective', () => {
     ReflectiveInjector.resolveAndCreate = jest.fn().mockReturnValue(fakeInjector);
 
     viewContainerRefMock = spectator.inject(ViewContainerRef);
-    jest.spyOn(viewContainerRefMock, 'createComponent').mockReturnValue({ instance: undefined } as any);
+    jest.spyOn(viewContainerRefMock, 'createComponent').mockReturnValue({ instance: undefined } as ComponentRef<unknown>);
     spectator.directive['viewContainerRef'] = viewContainerRefMock;
 
     componentFactoryResolverMock = spectator.inject(ComponentFactoryResolver);
-    jest.spyOn(componentFactoryResolverMock, 'resolveComponentFactory').mockReturnValue(fakeFactory as any);
+    jest.spyOn(componentFactoryResolverMock, 'resolveComponentFactory').mockReturnValue(fakeFactory as ComponentFactory<unknown>);
     spectator.directive['resolver'] = componentFactoryResolverMock;
 
     spectator.detectChanges();

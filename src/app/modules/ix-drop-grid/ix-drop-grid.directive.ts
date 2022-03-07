@@ -12,9 +12,9 @@ import {
   ViewContainerRef,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { IxDropGridItemDirective } from 'app/pages/common/ix-drop-grid/ix-drop-grid-item.directive';
-import { IxDropGridPlaceholderComponent } from 'app/pages/common/ix-drop-grid/ix-drop-grid-placeholder.component';
-import { ixDropGridDirectiveToken } from 'app/pages/common/ix-drop-grid/ix-drop-grid.tokens';
+import { IxDropGridItemDirective } from 'app/modules/ix-drop-grid/ix-drop-grid-item.directive';
+import { IxDropGridPlaceholderComponent } from 'app/modules/ix-drop-grid/ix-drop-grid-placeholder.component';
+import { ixDropGridDirectiveToken } from 'app/modules/ix-drop-grid/ix-drop-grid.tokens';
 
 @UntilDestroy()
 @Directive({

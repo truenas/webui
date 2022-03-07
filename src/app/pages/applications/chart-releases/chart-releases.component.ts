@@ -98,7 +98,7 @@ export class ChartReleasesComponent implements OnInit {
     }, {
       type: 'select',
       name: 'containers',
-      placeholder: helptext.podConsole.chooseConatiner.placeholder,
+      placeholder: helptext.podConsole.chooseContainer.placeholder,
       required: true,
     }, {
       type: 'input',
@@ -121,7 +121,7 @@ export class ChartReleasesComponent implements OnInit {
     }, {
       type: 'select',
       name: 'containers',
-      placeholder: helptext.podLogs.chooseConatiner.placeholder,
+      placeholder: helptext.podLogs.chooseContainer.placeholder,
       required: true,
     }, {
       type: 'input',

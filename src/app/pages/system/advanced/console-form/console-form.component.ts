@@ -4,7 +4,7 @@ import {
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
-import { of } from 'rxjs';
+import { of, Subscription } from 'rxjs';
 import { choicesToOptions } from 'app/helpers/options.helper';
 import { helptextSystemAdvanced as helptext } from 'app/helptext/system/advanced';
 import { EntityUtils } from 'app/modules/entity/utils';
@@ -16,7 +16,7 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { AppState } from 'app/store';
 import { advancedConfigUpdated } from 'app/store/system-config/system-config.actions';
 
-@UntilDestroy()
+@UntilDestroy({ arrayName: 'subscriptions' })
 @Component({
   templateUrl: './console-form.component.html',
   styleUrls: ['./console-form.component.scss'],
@@ -32,6 +32,8 @@ export class ConsoleFormComponent implements OnInit {
     serialspeed: [''],
     motd: [''],
   });
+
+  subscriptions: Subscription[] = [];
 
   readonly tooltips = {
     consolemenu: helptext.consolemenu_tooltip,
@@ -80,8 +82,10 @@ export class ConsoleFormComponent implements OnInit {
         },
       );
 
-    this.form.controls.serialport.enabledWhile(this.form.controls.serialconsole.value$);
-    this.form.controls.serialspeed.enabledWhile(this.form.controls.serialconsole.value$);
+    this.subscriptions.push(
+      this.form.controls.serialport.enabledWhile(this.form.controls.serialconsole.value$),
+      this.form.controls.serialspeed.enabledWhile(this.form.controls.serialconsole.value$),
+    );
   }
 
   onSubmit(): void {

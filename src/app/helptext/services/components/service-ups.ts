@@ -84,8 +84,8 @@ export default {
  mode</b> is set to <i>UPS goes on battery</i>.'),
 
   ups_shutdowncmd_placeholder: T('Shutdown Command'),
-  ups_shutdowncmd_tooltip: T('Enter a command to shut down the system when either\
- battery power is low or the shutdown timer ends.'),
+  ups_shutdowncmd_tooltip: T('When battery power is low or the shutdown timer ends,\
+ enter the custom command to overrule the default shutdown command.'),
 
   ups_nocommwarntime_placeholder: T('No Communication Warning Time'),
   ups_nocommwarntime_tooltip: T('Enter a number of seconds to wait before alerting that\
