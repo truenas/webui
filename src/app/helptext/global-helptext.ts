@@ -59,6 +59,7 @@ export default {
       header: T('Days'),
       tooltip: T('Days when this task will run.'),
     },
+    orTooltip: T('When both days of month and days of week have restrictions, these restrictions work as an OR condition.'),
   },
 
   basic_options: T('Basic Options'),

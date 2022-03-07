@@ -55,12 +55,11 @@ export interface FormConfiguration {
   columnsOnForm?: number;
 
   prerequisite?(): Promise<boolean>;
-  customEditCall?: (value: any) => void;
-  preHandler?: (data: any[], formArray: any) => any[];
-  responseOnSubmit?: (value: any) => void;
-  clean?: (data: any) => any;
+  customEditCall?: (value: unknown) => void;
+  responseOnSubmit?: (value: unknown) => void;
+  clean?: (data: unknown) => unknown;
   errorReport?: (res: WebsocketError) => void;
-  resourceTransformIncomingRestData?: (data: any) => any;
+  resourceTransformIncomingRestData?: (data: unknown) => unknown;
   preInit?: (entityForm: EntityFormComponent) => void;
   afterInit?: (entityForm: EntityFormComponent) => void;
   initial?: (entityForm: EntityFormComponent) => void;
@@ -68,9 +67,9 @@ export interface FormConfiguration {
   dataAttributeHandler?: (entityForm: EntityFormComponent) => void;
   afterSave?: (entityForm: EntityFormComponent) => void;
   blurEvent?: (entityForm: EntityFormComponent) => void;
-  afterSubmit?: (value: any) => void;
-  beforeSubmit?: (value: any) => void;
-  customSubmit?: (value: any) => void;
+  afterSubmit?: (value: unknown) => void;
+  beforeSubmit?: (value: unknown) => void;
+  customSubmit?: (value: unknown) => void;
   closeModalForm?(): Promise<boolean>;
   afterModalFormClosed?(): void; // function will called once the modal form closed
   isCustomActionVisible?: (action: string) => boolean;

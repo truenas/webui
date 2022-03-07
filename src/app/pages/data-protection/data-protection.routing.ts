@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { SmartTaskListComponent } from 'app/pages/data-protection/smart-task/smart-task-list/smart-task-list.component';
 import { CloudsyncFormComponent } from './cloudsync/cloudsync-form/cloudsync-form.component';
 import { CloudsyncListComponent } from './cloudsync/cloudsync-list/cloudsync-list.component';
 import { DataProtectionDashboardComponent } from './components/data-protection-dashboard/data-protection-dashboard.component';
@@ -10,8 +11,6 @@ import { RsyncListComponent } from './rsync/rsync-list/rsync-list.component';
 import { ResilverConfigComponent } from './scrub/resilver-config/resilver-config.component';
 import { ScrubFormComponent } from './scrub/scrub-form/scrub-form.component';
 import { ScrubListComponent } from './scrub/scrub-list/scrub-list.component';
-import { SmartFormComponent } from './smart/smart-form/smart-form.component';
-import { SmartListComponent } from './smart/smart-list/smart-list.component';
 import { SnapshotFormComponent } from './snapshot/snapshot-form/snapshot-form.component';
 import { SnapshotListComponent } from './snapshot/snapshot-list/snapshot-list.component';
 
@@ -97,16 +96,8 @@ export const dataProtectionRoutes: Routes = [{
       data: { title: 'S.M.A.R.T. Tests', breadcrumb: 'S.M.A.R.T. Tests', icon: 'event_note' },
       children: [{
         path: '',
-        component: SmartListComponent,
+        component: SmartTaskListComponent,
         data: { title: 'S.M.A.R.T. Tests', breadcrumb: 'S.M.A.R.T. Tests' },
-      }, {
-        path: 'add',
-        component: SmartFormComponent,
-        data: { title: 'Add', breadcrumb: 'Add' },
-      }, {
-        path: 'edit/:pk',
-        component: SmartFormComponent,
-        data: { title: 'Edit', breadcrumb: 'Edit' },
       }],
     }, {
       path: 'scrub',

@@ -217,6 +217,10 @@ module.exports = {
           "functions": false,
           "methods": false,
         }],
+        "id-length": ["error", {
+          exceptions: ['a', 'b', 'x', 'y', '_', 'i', 'n'],
+          properties: 'never',
+        }],
 
         // File Naming
         "angular-file-naming/component-filename-suffix": "error",

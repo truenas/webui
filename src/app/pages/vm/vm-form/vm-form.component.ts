@@ -13,6 +13,7 @@ import globalHelptext from 'app/helptext/global-helptext';
 import helptext from 'app/helptext/vm/vm-wizard/vm-wizard';
 import { Device } from 'app/interfaces/device.interface';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { QueryFilter } from 'app/interfaces/query-api.interface';
 import { VirtualMachine } from 'app/interfaces/virtual-machine.interface';
 import { VmPciPassthroughDevice } from 'app/interfaces/vm-device.interface';
 import { EntityFormComponent } from 'app/modules/entity/entity-form/entity-form.component';
@@ -50,7 +51,7 @@ export class VmFormComponent implements FormConfiguration {
   private isolatedGpuPciIds: string[];
   private maxVcpus: number;
   private productType = window.localStorage.getItem('product_type') as ProductType;
-  queryCallOption: any[] = [];
+  queryCallOption: [Partial<QueryFilter<VirtualMachine>>?] = [];
 
   fieldConfig: FieldConfig[] = [];
   fieldSets: FieldSet<this>[] = [
@@ -227,7 +228,7 @@ export class VmFormComponent implements FormConfiguration {
     this.entityForm = entityForm;
     this.route.params.pipe(untilDestroyed(this)).subscribe((params) => {
       if (params['pk']) {
-        const opt = params.pk ? ['id', '=', parseInt(params.pk, 10)] : [];
+        const opt: Partial<QueryFilter<VirtualMachine>> = params.pk ? ['id', '=', parseInt(params.pk, 10)] : [];
         this.queryCallOption = [opt];
       }
     });
@@ -336,18 +337,18 @@ export class VmFormComponent implements FormConfiguration {
 
   cpuValidator(name: string): any {
     return () => {
-      const config = this.fieldConfig.find((c) => c.name === name);
+      const cpuConfig = this.fieldConfig.find((config) => config.name === name);
       setTimeout(() => {
         const errors = this.vcpus * this.cores * this.threads > this.maxVcpus
           ? { validCPU: true }
           : null;
 
         if (errors) {
-          config.hasErrors = true;
-          config.warnings = this.translate.instant(helptext.vcpus_warning, { maxVCPUs: this.maxVcpus });
+          cpuConfig.hasErrors = true;
+          cpuConfig.warnings = this.translate.instant(helptext.vcpus_warning, { maxVCPUs: this.maxVcpus });
         } else {
-          config.hasErrors = false;
-          config.warnings = '';
+          cpuConfig.hasErrors = false;
+          cpuConfig.warnings = '';
         }
         return errors;
       }, 100);

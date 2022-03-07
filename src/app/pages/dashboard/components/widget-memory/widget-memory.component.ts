@@ -89,7 +89,7 @@ export class WidgetMemoryComponent extends WidgetComponent implements AfterViewI
   }
 
   ngAfterViewInit(): void {
-    this.core.register({ observerClass: this, eventName: 'ThemeChanged' })
+    this.core.register({ observerClass: this })
       .pipe(
         switchMap(() => this.data),
         untilDestroyed(this),

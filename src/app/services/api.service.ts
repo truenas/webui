@@ -34,25 +34,6 @@ export class ApiService {
         responseEvent: 'UserData',
       },
     },
-    UserDataUpdate: {
-      apiCall: {
-        namespace: 'user.set_attribute',
-        args: [] as any[],
-      },
-      preProcessor(def: ApiCall) {
-        const uid = 1;
-        const redef = { ...def };
-        redef.args = [uid, 'preferences', def.args];
-        return redef;
-      },
-      postProcessor(res: any, callArgs: any, core: CoreService) {
-        const cloneRes = { ...res };
-        if (res) {
-          core.emit({ name: 'UserDataRequest', data: [[['id', '=', 1]]] });
-        }
-        return cloneRes;
-      },
-    },
   };
 
   constructor(
