@@ -33,7 +33,7 @@ import { CloudsyncFormComponent } from 'app/pages/data-protection/cloudsync/clou
 import { ReplicationFormComponent } from 'app/pages/data-protection/replication/replication-form/replication-form.component';
 import { ReplicationWizardComponent } from 'app/pages/data-protection/replication/replication-wizard/replication-wizard.component';
 import { RsyncFormComponent } from 'app/pages/data-protection/rsync/rsync-form/rsync-form.component';
-import { ScrubFormComponent } from 'app/pages/data-protection/scrub/scrub-form/scrub-form.component';
+import { ScrubTaskFormComponent } from 'app/pages/data-protection/scrub-task/scrub-task-form/scrub-task-form.component';
 import { SmartTaskFormComponent } from 'app/pages/data-protection/smart-task/smart-task-form/smart-task-form.component';
 import { SnapshotFormComponent } from 'app/pages/data-protection/snapshot/snapshot-form/snapshot-form.component';
 import {
@@ -159,10 +159,11 @@ export class DataProtectionDashboardComponent implements OnInit {
           },
           parent: this,
           add: () => {
-            this.modalService.openInSlideIn(ScrubFormComponent);
+            this.slideInService.open(ScrubTaskFormComponent);
           },
-          edit: (row: ScrubTaskUi) => {
-            this.modalService.openInSlideIn(ScrubFormComponent, row.id);
+          edit: (task: ScrubTaskUi) => {
+            const slideIn = this.slideInService.open(ScrubTaskFormComponent);
+            slideIn.setTaskForEdit(task);
           },
           tableActions: [
             {
