@@ -59,7 +59,7 @@ describe('SchedulerModalComponent', () => {
     const preset = await loader.getHarness(IxSelectHarness.with({ selector: '.preset-select' }));
     const minutes = await loader.getHarness(IxInputHarness.with({ label: 'Minutes' }));
     const hours = await loader.getHarness(IxInputHarness.with({ label: 'Hours' }));
-    const days = await loader.getHarness(IxInputHarness.with({ label: 'Days' }));
+    const days = await loader.getHarness(IxInputHarness.with({ label: 'Days of Month' }));
 
     const monthCheckboxes = await loader.getAllHarnesses(MatCheckboxHarness.with({ ancestor: '.months' }));
     const months = await parallel(() => monthCheckboxes.map(async (month) => {
@@ -75,9 +75,9 @@ describe('SchedulerModalComponent', () => {
       Preset: await preset.getValue(),
       Minutes: await minutes.getValue(),
       Hours: await hours.getValue(),
-      Days: await days.getValue(),
+      'Days of Month': await days.getValue(),
       Months: months.filter(Boolean),
-      'Days Of Week': daysOfWeek.filter(Boolean),
+      'Days of Week': daysOfWeek.filter(Boolean),
     };
   }
 
@@ -93,8 +93,8 @@ describe('SchedulerModalComponent', () => {
         Preset: '',
         Minutes: '0',
         Hours: '2',
-        Days: '*',
-        'Days Of Week': ['Mon'],
+        'Days of Month': '*',
+        'Days of Week': ['Mon'],
         Months: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
       });
     });
@@ -122,8 +122,8 @@ describe('SchedulerModalComponent', () => {
         Preset: 'Weekly',
         Minutes: '0',
         Hours: '0',
-        Days: '*',
-        'Days Of Week': ['Sun'],
+        'Days of Month': '*',
+        'Days of Week': ['Sun'],
         Months: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
       });
     });
@@ -135,7 +135,7 @@ describe('SchedulerModalComponent', () => {
       const hours = await loader.getHarness(IxInputHarness.with({ label: 'Hours' }));
       await hours.setValue('*/2');
 
-      const days = await loader.getHarness(IxInputHarness.with({ label: 'Days' }));
+      const days = await loader.getHarness(IxInputHarness.with({ label: 'Days of Month' }));
       await days.setValue('2-5');
 
       const months = await loader.getAllHarnesses(MatCheckboxHarness.with({ ancestor: '.months' }));
@@ -162,6 +162,18 @@ describe('SchedulerModalComponent', () => {
 
       const previewColumn = spectator.query(SchedulerPreviewColumnComponent);
       expect(previewColumn.crontab).toEqual('0 2 * * mon');
+    });
+
+    it('shows an explanation about how DOW and DOM conditions work when both of them are restricted', async () => {
+      const daysOfWeek = await loader.getAllHarnesses(MatCheckboxHarness.with({ ancestor: '.weekdays' }));
+      await daysOfWeek[0].check();
+
+      const days = await loader.getHarness(IxInputHarness.with({ label: 'Days of Month' }));
+      await days.setValue('2-5');
+
+      const explanationSection = spectator.query('.or-condition-explanation');
+      expect(explanationSection).toExist();
+      expect(explanationSection).toHaveText('or');
     });
   });
 

@@ -40,10 +40,12 @@ export class FormatDateTimePipe implements PipeTransform {
 
   formatDateTime(date: Date | number, tz?: string): string {
     let localDate = date;
-    if (tz) {
-      localDate = utcToZonedTime(date.valueOf(), tz);
-    } else if (this.timezone) {
-      localDate = utcToZonedTime(date.valueOf(), this.timezone);
+    if (tz !== null) {
+      if (tz) {
+        localDate = utcToZonedTime(date.valueOf(), tz);
+      } else if (this.timezone) {
+        localDate = utcToZonedTime(date.valueOf(), this.timezone);
+      }
     }
 
     // Reason for below repalcements: https://github.com/date-fns/date-fns/blob/master/docs/unicodeTokens.md

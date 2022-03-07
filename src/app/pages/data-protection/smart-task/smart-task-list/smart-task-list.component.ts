@@ -7,10 +7,11 @@ import { SmartTestUi } from 'app/interfaces/smart-test.interface';
 import { Disk } from 'app/interfaces/storage.interface';
 import { EntityFormService } from 'app/modules/entity/entity-form/services/entity-form.service';
 import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-table.component';
-import { EntityTableConfig } from 'app/modules/entity/entity-table/entity-table.interface';
-import { SmartFormComponent } from 'app/pages/data-protection/smart/smart-form/smart-form.component';
+import { EntityTableAction, EntityTableConfig } from 'app/modules/entity/entity-table/entity-table.interface';
+import { ApiKeysRow } from 'app/pages/api-keys/components/api-keys/api-keys-row.interface';
+import { SmartTaskFormComponent } from 'app/pages/data-protection/smart-task/smart-task-form/smart-task-form.component';
 import { TaskService } from 'app/services';
-import { ModalService } from 'app/services/modal.service';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { StorageService } from 'app/services/storage.service';
 
 @UntilDestroy()
@@ -19,7 +20,7 @@ import { StorageService } from 'app/services/storage.service';
   template: '<entity-table [title]="title" [conf]="this"></entity-table>',
   providers: [TaskService, EntityFormService],
 })
-export class SmartListComponent implements EntityTableConfig {
+export class SmartTaskListComponent implements EntityTableConfig {
   title = this.translate.instant('S.M.A.R.T. Tests');
   queryCall = 'smart.test.query' as const;
   routeAdd: string[] = ['tasks', 'smart', 'add'];
@@ -27,12 +28,12 @@ export class SmartListComponent implements EntityTableConfig {
   routeEdit: string[] = ['tasks', 'smart', 'edit'];
   wsDelete = 'smart.test.delete' as const;
   entityList: EntityTableComponent;
-  parent: SmartListComponent;
+  parent: SmartTaskListComponent;
 
   columns = [
     {
       name: helptext.smartlist_column_disks,
-      prop: 'disks',
+      prop: 'disksLabel',
       always_display: true,
     },
     {
@@ -60,7 +61,7 @@ export class SmartListComponent implements EntityTableConfig {
 
   constructor(
     protected storageService: StorageService,
-    protected modalService: ModalService,
+    protected slideInService: IxSlideInService,
     protected router: Router,
     protected aroute: ActivatedRoute,
     protected taskService: TaskService,
@@ -74,7 +75,7 @@ export class SmartListComponent implements EntityTableConfig {
 
   afterInit(entityList: EntityTableComponent): void {
     this.entityList = entityList;
-    this.modalService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
+    this.slideInService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
       this.entityList.getData();
     });
   }
@@ -86,22 +87,37 @@ export class SmartListComponent implements EntityTableConfig {
       test.frequency = this.taskService.getTaskCronDescription(test.cron_schedule);
 
       if (test.all_disks) {
-        test.disks = [this.translate.instant(helptext.smarttest_all_disks_placeholder)];
+        test.disksLabel = [this.translate.instant(helptext.smarttest_all_disks_placeholder)];
       } else if (test.disks.length) {
         const readableDisks = test.disks.map((disk) => {
           return this.listDisks.find((item) => item.identifier === disk).devname;
         });
-        test.disks = readableDisks;
+        test.disksLabel = readableDisks;
       }
       return test;
     });
   }
 
-  doAdd(id?: number): void {
-    this.modalService.openInSlideIn(SmartFormComponent, id);
+  doAdd(): void {
+    this.slideInService.open(SmartTaskFormComponent);
   }
 
-  doEdit(id: number): void {
-    this.doAdd(id);
+  getActions(): EntityTableAction<ApiKeysRow>[] {
+    return [{
+      id: 'edit',
+      icon: 'edit',
+      label: 'Edit',
+      onClick: (row: SmartTestUi) => {
+        const slideIn = this.slideInService.open(SmartTaskFormComponent);
+        slideIn.setTestForEdit(row);
+      },
+    }, {
+      id: 'delete',
+      icon: 'delete',
+      label: 'Delete',
+      onClick: (rowinner: SmartTestUi) => {
+        this.entityList.doDelete(rowinner);
+      },
+    }] as EntityTableAction[];
   }
 }
