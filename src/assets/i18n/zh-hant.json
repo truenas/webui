@@ -2733,6 +2733,7 @@
   "This type of VDEV requires at least {n, plural, one {# disk} other {# disks}}.": "",
   "This value represents the threshold block size for including small file blocks into the special allocation class. Blocks smaller than or equal to this value will be assigned to the special allocation class while greater blocks will be assigned to the regular class. Valid values are zero or a power of two from 512B  up to 1M. The default size is 0 which means no small file blocks will be allocated in the special class. Before setting this property, a special class vdev must be added to the pool. See <a href=\"https://zfsonlinux.org/manpages/0.7.13/man8/zpool.8.html\" target=\"_blank\">zpool(8)</a> for more details on the special allocation": "",
   "Thread:": "",
+  "Threshold Days": "",
   "Threshold temperature in Celsius. If the drive temperature is higher than this value, a LOG_CRIT level log entry is created and an email is sent. <i>0</i> disables this check.": "",
   "Thu": "",
   "Thursday": "",

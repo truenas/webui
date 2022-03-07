@@ -8,7 +8,6 @@ import { Disk } from 'app/interfaces/storage.interface';
 import { EntityFormService } from 'app/modules/entity/entity-form/services/entity-form.service';
 import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-table.component';
 import { EntityTableAction, EntityTableConfig } from 'app/modules/entity/entity-table/entity-table.interface';
-import { ApiKeysRow } from 'app/pages/api-keys/components/api-keys/api-keys-row.interface';
 import { SmartTaskFormComponent } from 'app/pages/data-protection/smart-task/smart-task-form/smart-task-form.component';
 import { TaskService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
@@ -102,7 +101,7 @@ export class SmartTaskListComponent implements EntityTableConfig {
     this.slideInService.open(SmartTaskFormComponent);
   }
 
-  getActions(): EntityTableAction<ApiKeysRow>[] {
+  getActions(): EntityTableAction<SmartTestUi>[] {
     return [{
       id: 'edit',
       icon: 'edit',

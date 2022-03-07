@@ -981,6 +981,7 @@
   "This root dataset is not encrypted itself, but has encrypted children.": "",
   "This type of VDEV requires at least {n, plural, one {# disk} other {# disks}}.": "",
   "Thread:": "",
+  "Threshold Days": "",
   "Thursday": "",
   "TiB": "",
   "Time": "",

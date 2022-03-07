@@ -3008,6 +3008,7 @@
   "Thread:": "",
   "Threads": "",
   "Threads:": "",
+  "Threshold Days": "",
   "Threshold days": "",
   "Threshold temperature in Celsius. If the drive temperature is higher than this value, a LOG_CRIT level log entry is created and an email is sent. <i>0</i> disables this check.": "",
   "Thu": "",
