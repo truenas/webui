@@ -1,5 +1,5 @@
 import {
-  Component, AfterViewInit, OnDestroy, Input,
+  Component, AfterViewInit, OnDestroy, Input, OnInit,
 } from '@angular/core';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -46,7 +46,7 @@ interface NicInfoMap {
   templateUrl: './widget-network.component.html',
   styleUrls: ['./widget-network.component.scss'],
 })
-export class WidgetNetworkComponent extends WidgetComponent implements AfterViewInit, OnDestroy {
+export class WidgetNetworkComponent extends WidgetComponent implements OnInit, AfterViewInit, OnDestroy {
   @Input() stats: Subject<CoreEvent>;
   @Input() nics: BaseNetworkInterface[];
 
@@ -175,7 +175,7 @@ export class WidgetNetworkComponent extends WidgetComponent implements AfterView
     }
   }
 
-  ngAfterViewInit(): void {
+  ngOnInit(): void {
     this.availableNics = this.nics.filter((nic) => nic.state.link_state === LinkState.Up);
 
     this.updateGridInfo();
@@ -185,7 +185,9 @@ export class WidgetNetworkComponent extends WidgetComponent implements AfterView
     if (this.interval) {
       clearInterval(this.interval);
     }
+  }
 
+  ngAfterViewInit(): void {
     this.interval = setInterval(() => {
       this.fetchReportData();
     }, 10000);
