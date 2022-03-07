@@ -16,7 +16,7 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { AppState } from 'app/store';
 import { advancedConfigUpdated } from 'app/store/system-config/system-config.actions';
 
-@UntilDestroy()
+@UntilDestroy({ arrayName: 'subscriptions' })
 @Component({
   templateUrl: 'syslog-form.component.html',
   styleUrls: ['./syslog-form.component.scss'],
