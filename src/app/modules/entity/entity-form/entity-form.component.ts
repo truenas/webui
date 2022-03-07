@@ -595,10 +595,6 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
       }
     });
 
-    if (this.conf.preHandler) {
-      data = this.conf.preHandler(data, formArray);
-    }
-
     data.forEach((value, index) => {
       this.conf.initialCount += 1;
       this.conf.initialCount_default += 1;

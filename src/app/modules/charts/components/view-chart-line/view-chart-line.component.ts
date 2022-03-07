@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 import { ViewChartComponent, viewChartMetadata } from 'app/modules/charts/components/view-chart/view-chart.component';
 import { ChartConfiguration } from 'app/modules/charts/components/view-chart/view-chart.component.types';
-import { ThemeService } from 'app/services/theme/theme.service';
 
 interface TimeData {
   start: number;
@@ -15,17 +14,15 @@ interface TimeData {
   template: viewChartMetadata.template,
 })
 export class ViewChartLineComponent extends ViewChartComponent {
-  // public chartType: string;
   timeSeries: boolean;
   timeFormat: string;
-  // public timeData: TimeData;
 
   protected _tooltipHeight: string;
   protected _chartType: string;
   protected _timeData: TimeData;
 
-  constructor(themeService: ThemeService) {
-    super(themeService);
+  constructor() {
+    super();
     this.chartType = 'line';
     this.timeFormat = '%m/%d/%Y';
   }

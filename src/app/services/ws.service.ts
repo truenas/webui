@@ -136,9 +136,9 @@ export class WebSocketService {
       setTimeout(() => this.ping(), 20000);
       this.onconnect();
     } else if (data.msg === ApiEventMessage.Changed || data.msg === ApiEventMessage.Added) {
-      this.subscriptions.forEach((v, k) => {
-        if (k === '*' || k === data.collection) {
-          v.forEach((item) => { item.next(data); });
+      this.subscriptions.forEach((observers, name) => {
+        if (name === '*' || name === data.collection) {
+          observers.forEach((item) => { item.next(data); });
         }
       });
     } else
@@ -185,10 +185,10 @@ export class WebSocketService {
 
   unsubscribe(observer: any): void {
     // FIXME: just does not have a good performance :)
-    this.subscriptions.forEach((v) => {
-      v.forEach((item) => {
+    this.subscriptions.forEach((observers) => {
+      observers.forEach((item) => {
         if (item === observer) {
-          v.splice(v.indexOf(item), 1);
+          observers.splice(observers.indexOf(item), 1);
         }
       });
     });

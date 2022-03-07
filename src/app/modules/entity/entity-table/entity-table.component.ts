@@ -926,8 +926,8 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, A
           this.conf.afterDelete();
         }
       },
-      (resinner) => {
-        new EntityUtils().handleWsError(this, resinner, this.dialogService);
+      (error) => {
+        new EntityUtils().handleWsError(this, error, this.dialogService);
         this.loader.close();
       },
     );

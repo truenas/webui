@@ -276,7 +276,7 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow>, On
     return hostname;
   }
 
-  doRowAction(row: VirtualMachineRow, method: ApiMethod, params: any[] = [row.id], updateTable = false): void {
+  doRowAction(row: VirtualMachineRow, method: ApiMethod, params: unknown[] = [row.id], updateTable = false): void {
     if (method === this.wsMethods.stop) {
       this.dialogRef = this.dialog.open(EntityJobComponent,
         { data: { title: this.translate.instant('Stopping {rowName}', { rowName: row.name }) } });

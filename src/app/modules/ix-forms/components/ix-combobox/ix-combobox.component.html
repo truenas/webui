@@ -36,7 +36,7 @@
         </mat-option>
       </ng-container>
       <ng-template #loadingOrError>
-        <ng-container *ngIf="errorObject">
+        <ng-container *ngIf="hasErrorInOptions">
           <mat-option [disabled]="true">{{'Options cannot be loaded' | translate}}</mat-option>
         </ng-container>
       </ng-template>
