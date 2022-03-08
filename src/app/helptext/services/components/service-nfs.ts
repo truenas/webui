@@ -46,30 +46,4 @@ export default {
  target="_blank">rpc.statd(8)</a> and <a\
  href="https://linux.die.net/man/8/rpc.lockd"\
  target="_blank">rpc.lockd(8)</a> syslog requests.'),
-
-  formTitle: T('NFS'),
-
-  add_principal_prompt: {
-    title: T('Add Kerberos SPN Entry'),
-    message: T('Would you like to add a Service Principal Name (SPN) now?'),
-    affirmative: T('Yes'),
-    negative: T('No'),
-  },
-  add_principal_form: {
-    username: T('Name'),
-    password: T('Password'),
-    action: T('Save'),
-    cancel: T('Cancel'),
-    error_title: T('Error'),
-    error: T('There was a problem submitting the SPN entry.'),
-  },
-
-  addSPN: {
-    btnTxt: T('Add NFS SPN'),
-    username: T('Username'),
-    pw: T('Password'),
-    error: T('Error'),
-    success: T('Success'),
-    success_msg: T('You have successfully added credentials.'),
-  },
 };

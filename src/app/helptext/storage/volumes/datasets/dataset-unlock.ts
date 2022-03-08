@@ -20,7 +20,6 @@ export default {
   fetching_encryption_summary_title: T('Fetching Encryption Summary'),
   fetching_encryption_summary_message: T('Fetching Encryption Summary for '),
   unlocking_datasets_title: T('Unlocking Datasets'),
-  unlocking_datasets_message: T('Unlocking datasets for '),
   unlock_dataset_dialog: {
     title: T('Unlock Datasets'),
     errors: T('Errors'),
@@ -36,7 +35,4 @@ export default {
     unlock_message: T('These datasets were successfully unlocked.'),
     skipped_message: T('These datasets were not unlocked because the parent datasets could not be unlocked.'),
   },
-  unlock_successful_title: T('Unlock Successful'),
-  unlock_successful_message: T('Datasets for '),
-  unlock_successful_message2: T(' successfully unlocked'),
 };
