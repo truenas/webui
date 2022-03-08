@@ -1,9 +1,9 @@
-import { format, utcToZonedTime } from 'date-fns-tz';
+import { format } from 'date-fns-tz';
 import { CronSchedulePreview } from 'app/modules/scheduler/classes/cron-schedule-preview/cron-schedule-preview';
 
 describe('CronSchedulePreview - listNextRunsInMonth', () => {
   function toNewYorkTime(date: Date): string {
-    return format(utcToZonedTime(date, 'America/New_York'), 'yyyy-MM-dd HH:mm:ss');
+    return format(date, 'yyyy-MM-dd HH:mm:ss');
   }
 
   describe('Every Minute - * * * * *', () => {
@@ -12,12 +12,11 @@ describe('CronSchedulePreview - listNextRunsInMonth', () => {
     beforeEach(() => {
       cron = new CronSchedulePreview({
         crontab: '* * * * *',
-        timezone: 'America/New_York',
       });
     });
 
     it('lists next runs for remaining days in current month', () => {
-      const nextRuns = cron.listNextRunsInMonth('2022-02-19 10:45:02', 3);
+      const nextRuns = cron.listNextRunsInMonth(new Date('2022-02-19 10:45:02'), 3);
 
       expect(nextRuns.map(toNewYorkTime)).toEqual([
         '2022-02-19 10:45:00',
@@ -27,7 +26,7 @@ describe('CronSchedulePreview - listNextRunsInMonth', () => {
     });
 
     it('lists runs from start of the month next month', () => {
-      const nextRuns = cron.listNextRunsInMonth('2022-03-01 00:00:00', 3);
+      const nextRuns = cron.listNextRunsInMonth(new Date('2022-03-01 00:00:00'), 3);
 
       expect(nextRuns.map(toNewYorkTime)).toEqual([
         '2022-03-01 00:00:00',
@@ -37,7 +36,7 @@ describe('CronSchedulePreview - listNextRunsInMonth', () => {
     });
 
     it('lists last runs in the month', () => {
-      const nextRuns = cron.listNextRunsInMonth('2022-02-28 23:58:00', 3);
+      const nextRuns = cron.listNextRunsInMonth(new Date('2022-02-28 23:58:00'), 3);
 
       expect(nextRuns.map(toNewYorkTime)).toEqual([
         '2022-02-28 23:58:00',
@@ -52,12 +51,11 @@ describe('CronSchedulePreview - listNextRunsInMonth', () => {
     beforeEach(() => {
       cron = new CronSchedulePreview({
         crontab: '0 * * * *',
-        timezone: 'America/New_York',
       });
     });
 
     it('lists next runs for remaining days in current month', () => {
-      const nextRuns = cron.listNextRunsInMonth('2022-02-19 10:45:02', 3);
+      const nextRuns = cron.listNextRunsInMonth(new Date('2022-02-19 10:45:02'), 3);
 
       expect(nextRuns.map(toNewYorkTime)).toEqual([
         '2022-02-19 11:00:00',
@@ -67,7 +65,7 @@ describe('CronSchedulePreview - listNextRunsInMonth', () => {
     });
 
     it('lists run from start of the month next month', () => {
-      const nextRuns = cron.listNextRunsInMonth('2022-03-01 0:00:00', 3);
+      const nextRuns = cron.listNextRunsInMonth(new Date('2022-03-01 0:00:00'), 3);
 
       expect(nextRuns.map(toNewYorkTime)).toEqual([
         '2022-03-01 00:00:00',
@@ -77,7 +75,7 @@ describe('CronSchedulePreview - listNextRunsInMonth', () => {
     });
 
     it('lists last runs in the month', () => {
-      const nextRuns = cron.listNextRunsInMonth('2022-02-28 22:00:00', 5);
+      const nextRuns = cron.listNextRunsInMonth(new Date('2022-02-28 22:00:00'), 5);
 
       expect(nextRuns.map(toNewYorkTime)).toEqual([
         '2022-02-28 22:00:00',
@@ -92,12 +90,11 @@ describe('CronSchedulePreview - listNextRunsInMonth', () => {
     beforeEach(() => {
       cron = new CronSchedulePreview({
         crontab: '0 0 * * *',
-        timezone: 'America/New_York',
       });
     });
 
     it('lists next runs for remaining days in current month', () => {
-      const nextRuns = cron.listNextRunsInMonth('2022-02-19 10:45:02', 3);
+      const nextRuns = cron.listNextRunsInMonth(new Date('2022-02-19 10:45:02'), 3);
 
       expect(nextRuns.map(toNewYorkTime)).toEqual([
         '2022-02-20 00:00:00',
@@ -107,7 +104,7 @@ describe('CronSchedulePreview - listNextRunsInMonth', () => {
     });
 
     it('lists run from start of the month next month', () => {
-      const nextRuns = cron.listNextRunsInMonth('2022-03-01 0:00:00', 3);
+      const nextRuns = cron.listNextRunsInMonth(new Date('2022-03-01 0:00:00'), 3);
 
       expect(nextRuns.map(toNewYorkTime)).toEqual([
         '2022-03-01 00:00:00',
@@ -117,7 +114,7 @@ describe('CronSchedulePreview - listNextRunsInMonth', () => {
     });
 
     it('lists last runs in a month', () => {
-      const nextRuns = cron.listNextRunsInMonth('2022-02-27 0:00:00', 3);
+      const nextRuns = cron.listNextRunsInMonth(new Date('2022-02-27 0:00:00'), 3);
 
       expect(nextRuns.map(toNewYorkTime)).toEqual([
         '2022-02-27 00:00:00',
@@ -132,12 +129,11 @@ describe('CronSchedulePreview - listNextRunsInMonth', () => {
     beforeEach(() => {
       cron = new CronSchedulePreview({
         crontab: '15 9 * * sun',
-        timezone: 'America/New_York',
       });
     });
 
     it('lists next runs for remaining days in current month', () => {
-      const nextRuns = cron.listNextRunsInMonth('2022-02-19 10:45:02', 3);
+      const nextRuns = cron.listNextRunsInMonth(new Date('2022-02-19 10:45:02'), 3);
 
       expect(nextRuns.map(toNewYorkTime)).toEqual([
         '2022-02-20 09:15:00',
@@ -146,7 +142,7 @@ describe('CronSchedulePreview - listNextRunsInMonth', () => {
     });
 
     it('lists last sunday in the month', () => {
-      const nextRuns = cron.listNextRunsInMonth('2022-02-27 9:15:00', 3);
+      const nextRuns = cron.listNextRunsInMonth(new Date('2022-02-27 9:15:00'), 3);
 
       expect(nextRuns.map(toNewYorkTime)).toEqual([
         '2022-02-27 09:15:00',
@@ -160,12 +156,11 @@ describe('CronSchedulePreview - listNextRunsInMonth', () => {
     beforeEach(() => {
       cron = new CronSchedulePreview({
         crontab: '59 23 27 * *',
-        timezone: 'America/New_York',
       });
     });
 
     it('lists next run for current month', () => {
-      const nextRuns = cron.listNextRunsInMonth('2022-02-19 10:45:02', 3);
+      const nextRuns = cron.listNextRunsInMonth(new Date('2022-02-19 10:45:02'), 3);
 
       expect(nextRuns.map(toNewYorkTime)).toEqual([
         '2022-02-27 23:59:00',
@@ -173,7 +168,7 @@ describe('CronSchedulePreview - listNextRunsInMonth', () => {
     });
 
     it('lists next run for next month', () => {
-      const nextRuns = cron.listNextRunsInMonth('2022-03-01 00:00:00', 3);
+      const nextRuns = cron.listNextRunsInMonth(new Date('2022-03-01 00:00:00'), 3);
 
       expect(nextRuns.map(toNewYorkTime)).toEqual([
         '2022-03-27 23:59:00',

@@ -9,7 +9,7 @@ export class SchedulerModalHarness extends ComponentHarness {
 
   getMinutesInput = this.locatorFor(IxInputHarness.with({ label: 'Minutes' }));
   getHoursInput = this.locatorFor(IxInputHarness.with({ label: 'Hours' }));
-  getDaysInput = this.locatorFor(IxInputHarness.with({ label: 'Days' }));
+  getDaysInput = this.locatorFor(IxInputHarness.with({ label: 'Days of Month' }));
   getMonthCheckboxes = this.locatorForAll(MatCheckboxHarness.with({ ancestor: '.months' }));
   getDaysOfWeekCheckboxes = this.locatorForAll(MatCheckboxHarness.with({ ancestor: '.weekdays' }));
 
@@ -39,10 +39,9 @@ export class SchedulerModalHarness extends ComponentHarness {
 
   async setDaysOfWeek(daysOfWeek: readonly DayOfTheWeekRange[]): Promise<void> {
     // TODO: Will break if Sunday is not the first day of the week.
-
     const checkboxes = await this.getDaysOfWeekCheckboxes();
     await parallel(() => checkboxes.map((checkbox, i) => {
-      return daysOfWeek.includes((i + 1) as DayOfTheWeekRange)
+      return daysOfWeek.includes(i as DayOfTheWeekRange)
         ? checkbox.check()
         : checkbox.uncheck();
     }));

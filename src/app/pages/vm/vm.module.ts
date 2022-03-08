@@ -2,8 +2,11 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MatCardModule } from '@angular/material/card';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { TranslateModule } from '@ngx-translate/core';
-import { MaterialModule } from 'app/app-material.module';
 import { CoreComponents } from 'app/core/core-components.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
@@ -33,8 +36,11 @@ import { routing } from './vm.routing';
     FormsModule,
     TranslateModule,
     ReactiveFormsModule,
+    MatFormFieldModule,
+    MatCardModule,
+    MatDividerModule,
+    MatProgressSpinnerModule,
     routing,
-    MaterialModule,
     FlexLayoutModule,
     TerminalModule,
     IxFormsModule,

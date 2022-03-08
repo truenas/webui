@@ -4,6 +4,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+import { merge } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { ExplorerType } from 'app/enums/explorer-type.enum';
 import { JobState } from 'app/enums/job-state.enum';
@@ -32,8 +33,8 @@ import { CloudsyncFormComponent } from 'app/pages/data-protection/cloudsync/clou
 import { ReplicationFormComponent } from 'app/pages/data-protection/replication/replication-form/replication-form.component';
 import { ReplicationWizardComponent } from 'app/pages/data-protection/replication/replication-wizard/replication-wizard.component';
 import { RsyncFormComponent } from 'app/pages/data-protection/rsync/rsync-form/rsync-form.component';
-import { ScrubFormComponent } from 'app/pages/data-protection/scrub/scrub-form/scrub-form.component';
-import { SmartFormComponent } from 'app/pages/data-protection/smart/smart-form/smart-form.component';
+import { ScrubTaskFormComponent } from 'app/pages/data-protection/scrub-task/scrub-task-form/scrub-task-form.component';
+import { SmartTaskFormComponent } from 'app/pages/data-protection/smart-task/smart-task-form/smart-task-form.component';
 import { SnapshotFormComponent } from 'app/pages/data-protection/snapshot/snapshot-form/snapshot-form.component';
 import {
   DialogService, ModalServiceMessage,
@@ -41,6 +42,7 @@ import {
   TaskService,
   WebSocketService,
 } from 'app/services';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { JobService } from 'app/services/job.service';
 import { ModalService } from 'app/services/modal.service';
 
@@ -83,6 +85,7 @@ export class DataProtectionDashboardComponent implements OnInit {
   constructor(
     private ws: WebSocketService,
     private modalService: ModalService,
+    private slideInService: IxSlideInService,
     private dialog: DialogService,
     private loader: AppLoaderService,
     private mdDialog: MatDialog,
@@ -106,12 +109,15 @@ export class DataProtectionDashboardComponent implements OnInit {
     this.getCardData();
 
     this.refreshTables();
-    this.modalService.refreshTable$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.refreshTables();
-    });
-    this.modalService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.refreshTables();
-    });
+    merge(
+      this.modalService.refreshTable$,
+      this.modalService.onClose$,
+      this.slideInService.onClose$,
+    )
+      .pipe(untilDestroyed(this))
+      .subscribe(() => {
+        this.refreshTables();
+      });
 
     this.modalService.message$.pipe(untilDestroyed(this)).subscribe((res: ModalServiceMessage) => {
       if (res['action'] === 'open' && res['component'] === 'replicationForm') {
@@ -153,10 +159,11 @@ export class DataProtectionDashboardComponent implements OnInit {
           },
           parent: this,
           add: () => {
-            this.modalService.openInSlideIn(ScrubFormComponent);
+            this.slideInService.open(ScrubTaskFormComponent);
           },
-          edit: (row: ScrubTaskUi) => {
-            this.modalService.openInSlideIn(ScrubFormComponent, row.id);
+          edit: (task: ScrubTaskUi) => {
+            const slideIn = this.slideInService.open(ScrubTaskFormComponent);
+            slideIn.setTaskForEdit(task);
           },
           tableActions: [
             {
@@ -364,7 +371,7 @@ export class DataProtectionDashboardComponent implements OnInit {
           columns: [
             {
               name: helptext_smart.smartlist_column_disks,
-              prop: 'disks',
+              prop: 'disksLabel',
             },
             {
               name: helptext_smart.smartlist_column_type,
@@ -382,10 +389,11 @@ export class DataProtectionDashboardComponent implements OnInit {
             },
           ],
           add: () => {
-            this.modalService.openInSlideIn(SmartFormComponent);
+            this.slideInService.open(SmartTaskFormComponent);
           },
           edit: (row: SmartTestUi) => {
-            this.modalService.openInSlideIn(SmartFormComponent, row.id);
+            const slideIn = this.slideInService.open(SmartTaskFormComponent);
+            slideIn.setTestForEdit(row);
           },
         },
       },
@@ -469,9 +477,9 @@ export class DataProtectionDashboardComponent implements OnInit {
       test.next_run = this.taskService.getTaskNextRun(test.cron_schedule);
 
       if (test.all_disks) {
-        test.disks = [this.translate.instant(helptext_smart.smarttest_all_disks_placeholder)];
+        test.disksLabel = [this.translate.instant(helptext_smart.smarttest_all_disks_placeholder)];
       } else if (test.disks.length) {
-        test.disks = [
+        test.disksLabel = [
           test.disks
             .map((identifier) => {
               const fullDisk = this.disks.find((item) => item.identifier === identifier);
