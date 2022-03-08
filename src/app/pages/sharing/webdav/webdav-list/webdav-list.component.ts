@@ -9,6 +9,7 @@ import { EntityUtils } from 'app/modules/entity/utils';
 import { WebdavFormComponent } from 'app/pages/sharing/webdav/webdav-form/webdav-form.component';
 import { ModalService } from 'app/services';
 import { DialogService } from 'app/services/dialog.service';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
@@ -57,18 +58,20 @@ export class WebdavListComponent implements EntityTableConfig {
     private modalService: ModalService,
     private dialog: DialogService,
     private translate: TranslateService,
+    public slideInService: IxSlideInService,
   ) {}
 
   doAdd(id: string, tableComponent: EntityTableComponent): void {
-    this.modalService.openInSlideIn(WebdavFormComponent);
-    this.modalService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
+    this.slideInService.open(WebdavFormComponent);
+    this.slideInService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
       tableComponent.getData();
     });
   }
 
   doEdit(rowId: string, tableComponent: EntityTableComponent): void {
-    this.modalService.openInSlideIn(WebdavFormComponent, rowId);
-    this.modalService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
+    const webdavForm = this.slideInService.open(WebdavFormComponent);
+    webdavForm.setWebdavForEdit(tableComponent.rows.find((row) => row.id === rowId));
+    this.slideInService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
       tableComponent.getData();
     });
   }

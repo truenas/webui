@@ -1,0 +1,51 @@
+<ix-modal-header [title]="title" [loading]="isFormLoading"></ix-modal-header>
+<mat-card>
+  <mat-card-content>
+    <form [formGroup]="form" class="ix-form-container" (submit)="onSubmit()">
+      <ix-fieldset [title]="'WebDAV Configuration' | translate">
+        <ix-input
+          formControlName="name"
+          [label]="labels.name"
+          [tooltip]="tooltips.name"
+          [required]="true"
+        ></ix-input>
+        <ix-input
+          formControlName="comment"
+          [label]="labels.comment"
+          [tooltip]="tooltips.comment"
+        ></ix-input>
+        <ix-explorer
+          formControlName="path"
+          [label]="labels.path"
+          [nodeProvider]="treeNodeProvider"
+          [tooltip]="tooltips.path"
+          [required]="true"
+        ></ix-explorer>
+        <ix-checkbox
+          formControlName="ro"
+          [label]="labels.ro"
+          [tooltip]="tooltips.ro"
+        ></ix-checkbox>
+        <ix-checkbox
+          formControlName="perm"
+          [label]="labels.perm"
+          [tooltip]="tooltips.perm"
+        ></ix-checkbox>
+        <ix-checkbox
+          formControlName="enabled"
+          [label]="labels.enabled"
+          [tooltip]="tooltips.enabled"
+        ></ix-checkbox>
+      </ix-fieldset>
+
+      <div class="form-actions">
+        <button
+          mat-button
+          type="submit"
+          [disabled]="form.invalid || isFormLoading"
+          color="primary"
+        >{{ 'Save' | translate }}</button>
+      </div>
+    </form>
+  </mat-card-content>
+</mat-card>

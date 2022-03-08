@@ -36,6 +36,7 @@ import {
   ModalService,
   WebSocketService,
 } from 'app/services';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 enum ShareType {
   Smb = 'smb',
@@ -85,6 +86,7 @@ export class SharesDashboardComponent implements AfterViewInit {
     private dialog: DialogService,
     private router: Router,
     private translate: TranslateService,
+    public slideInService: IxSlideInService,
   ) {
     this.getInitialServiceStatus();
   }
@@ -368,16 +370,32 @@ export class SharesDashboardComponent implements AfterViewInit {
         formComponent = TargetFormComponent;
         break;
     }
-    this.modalService.openInSlideIn(formComponent, id);
-    this.modalService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
-      if (!tableComponent) {
-        this.refreshDashboard();
-      } else {
-        tableComponent.getData();
+    if (share === ShareType.WebDav) {
+      const webdavForm = this.slideInService.open(WebdavFormComponent);
+      if (id) {
+        webdavForm.setWebdavForEdit(tableComponent.displayedDataSource.find((row) => row.id === id));
       }
-    }, (err) => {
-      new EntityUtils().handleWsError(this, err, this.dialog);
-    });
+      this.slideInService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
+        if (!tableComponent) {
+          this.refreshDashboard();
+        } else {
+          tableComponent.getData();
+        }
+      }, (err) => {
+        new EntityUtils().handleWsError(this, err, this.dialog);
+      });
+    } else {
+      this.modalService.openInSlideIn(formComponent, id);
+      this.modalService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
+        if (!tableComponent) {
+          this.refreshDashboard();
+        } else {
+          tableComponent.getData();
+        }
+      }, (err) => {
+        new EntityUtils().handleWsError(this, err, this.dialog);
+      });
+    }
   }
 
   edit(tableComponent: TableComponent, share: ShareType, id: number): void {

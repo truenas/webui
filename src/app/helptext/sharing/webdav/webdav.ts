@@ -1,17 +1,14 @@
-import { Validators } from '@angular/forms';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
 export const helptextSharingWebdav = {
   placeholder_name: T('Name'),
   tooltip_name: T('Enter a name for the share.'),
-  validator_name: [Validators.required],
 
   placeholder_comment: T('Description'),
   tooltip_comment: T('Optional.'),
 
   placeholder_path: T('Path'),
   tooltip_path: T('Browse to the pool or dataset to share.'),
-  validator_path: [Validators.required],
 
   placeholder_ro: T('Read Only'),
   tooltip_ro: T('Set to prohibit users from writing to this share.'),
@@ -43,5 +40,4 @@ export const helptextSharingWebdav = {
  cannot be undone! If unset, ownership of files to be accessed through \
  WebDAV must be manually set to the <samp>webdav</samp> or \
  <samp>www</samp> user/group.'),
-  fieldset_name: T('WebDAV Configuration'),
 };
