@@ -151,11 +151,10 @@ export class WebdavFormComponent {
               this.dialog.info(
                 this.translate.instant('{service} Service', { service: 'WebDAV' }),
                 this.translate.instant('The {service} service has been enabled.', { service: 'WebDAV' }),
-                '250px',
+                '300px',
                 'info',
-              ).pipe(untilDestroyed(this)).subscribe(() => {
-                this.slideInService.close();
-              });
+              );
+              this.slideInService.close();
             }, (err) => {
               this.loader.close();
               new EntityUtils().handleWsError(null, err, this.dialog);

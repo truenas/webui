@@ -110,7 +110,7 @@ describe('WebdavFormComponent', () => {
     }]);
   });
 
-  xit('adds a new webdav entry, and enable webdav service', async () => {
+  it('adds a new webdav entry, and enable webdav service', async () => {
     await form.fillForm({
       Name: 'test01',
       Description: 'This is test01',
@@ -146,7 +146,7 @@ describe('WebdavFormComponent', () => {
     expect(spectator.inject(DialogService).info).toHaveBeenCalledWith(
       'WebDAV Service',
       'The WebDAV service has been enabled.',
-      '250px',
+      '300px',
       'info',
     );
 
