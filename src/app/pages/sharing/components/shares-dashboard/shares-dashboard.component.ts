@@ -86,7 +86,7 @@ export class SharesDashboardComponent implements AfterViewInit {
     private dialog: DialogService,
     private router: Router,
     private translate: TranslateService,
-    public slideInService: IxSlideInService,
+    private slideInService: IxSlideInService,
   ) {
     this.getInitialServiceStatus();
   }

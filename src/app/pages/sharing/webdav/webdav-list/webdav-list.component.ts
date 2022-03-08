@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { helptextSharingWebdav } from 'app/helptext/sharing';
@@ -17,7 +17,7 @@ import { WebSocketService } from 'app/services/ws.service';
   selector: 'webdav-list',
   template: '<entity-table [title]="title" [conf]="this"></entity-table>',
 })
-export class WebdavListComponent implements EntityTableConfig {
+export class WebdavListComponent implements EntityTableConfig, OnInit {
   title = this.translate.instant('WebDAV');
   queryCall = 'sharing.webdav.query' as const;
   updateCall = 'sharing.webdav.update' as const;
@@ -53,27 +53,31 @@ export class WebdavListComponent implements EntityTableConfig {
     },
   };
 
+  private tableComponent: EntityTableComponent;
+
   constructor(
     private ws: WebSocketService,
     private modalService: ModalService,
     private dialog: DialogService,
     private translate: TranslateService,
-    public slideInService: IxSlideInService,
+    private slideInService: IxSlideInService,
   ) {}
 
-  doAdd(id: string, tableComponent: EntityTableComponent): void {
-    this.slideInService.open(WebdavFormComponent);
+  ngOnInit(): void {
     this.slideInService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
-      tableComponent.getData();
+      this.tableComponent.getData();
     });
   }
 
+  doAdd(id: string, tableComponent: EntityTableComponent): void {
+    this.tableComponent = tableComponent;
+    this.slideInService.open(WebdavFormComponent);
+  }
+
   doEdit(rowId: string, tableComponent: EntityTableComponent): void {
+    this.tableComponent = tableComponent;
     const webdavForm = this.slideInService.open(WebdavFormComponent);
     webdavForm.setWebdavForEdit(tableComponent.rows.find((row) => row.id === rowId));
-    this.slideInService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
-      tableComponent.getData();
-    });
   }
 
   onCheckboxChange(row: WebDavShare): void {

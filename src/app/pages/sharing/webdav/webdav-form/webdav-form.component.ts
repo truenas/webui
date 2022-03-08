@@ -7,12 +7,13 @@ import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import _ from 'lodash';
-import { Observable } from 'rxjs';
-import { filter } from 'rxjs/operators';
+import { EMPTY, forkJoin, Observable } from 'rxjs';
+import {
+  catchError, filter, switchMap, tap,
+} from 'rxjs/operators';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { helptextSharingWebdav, shared } from 'app/helptext/sharing';
 import { WebDavShare } from 'app/interfaces/web-dav-share.interface';
-import { EntityUtils } from 'app/modules/entity/utils';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { WebSocketService, DialogService, AppLoaderService } from 'app/services';
 import { FilesystemService } from 'app/services/filesystem.service';
@@ -82,9 +83,7 @@ export class WebdavFormComponent {
 
   setWebdavForEdit(webdav: WebDavShare): void {
     this.editingWebdav = webdav;
-    this.form.patchValue({
-      ...webdav,
-    });
+    this.form.patchValue(webdav);
   }
 
   onSubmit(): void {
@@ -102,9 +101,7 @@ export class WebdavFormComponent {
   }
 
   saveConfig(): void {
-    const values = {
-      ...this.form.value,
-    };
+    const values = this.form.value;
 
     this.isFormLoading = true;
     let request$: Observable<unknown>;
@@ -117,54 +114,59 @@ export class WebdavFormComponent {
       request$ = this.ws.call('sharing.webdav.create', [values]);
     }
 
-    request$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.isFormLoading = false;
-      this.confirmEnableService();
-    }, (error) => {
-      this.isFormLoading = false;
-      this.errorHandler.handleWsFormError(error, this.form);
-      this.cdr.markForCheck();
-    });
+    request$.pipe(
+      switchMap(() => this.confirmEnableService()),
+      untilDestroyed(this),
+    )
+      .subscribe({
+        complete: () => {
+          this.isFormLoading = false;
+          this.cdr.markForCheck();
+          this.slideInService.close();
+        },
+        error: (error) => {
+          this.isFormLoading = false;
+          this.errorHandler.handleWsFormError(error, this.form);
+          this.cdr.markForCheck();
+        },
+      });
   }
 
-  confirmEnableService(): void {
-    this.ws.call('service.query', [[]]).pipe(untilDestroyed(this)).subscribe((res) => {
-      const service = _.find(res, { service: ServiceName.WebDav });
-      if (service.enable) {
-        this.slideInService.close();
-        return;
-      }
-
-      this.dialog.confirm({
-        title: shared.dialog_title,
-        message: shared.dialog_message,
-        hideCheckBox: true,
-        buttonMsg: shared.dialog_button,
-      }).pipe(untilDestroyed(this)).subscribe((res) => {
-        if (!res) {
-          this.slideInService.close();
-        } else {
-          this.loader.open();
-          this.ws.call('service.update', [service.id, { enable: true }]).pipe(untilDestroyed(this)).subscribe(() => {
-            this.ws.call('service.start', [service.service]).pipe(untilDestroyed(this)).subscribe(() => {
-              this.loader.close();
-              this.dialog.info(
-                this.translate.instant('{service} Service', { service: 'WebDAV' }),
-                this.translate.instant('The {service} service has been enabled.', { service: 'WebDAV' }),
-                '300px',
-                'info',
-              );
-              this.slideInService.close();
-            }, (err) => {
-              this.loader.close();
-              new EntityUtils().handleWsError(null, err, this.dialog);
-            });
-          }, (err) => {
-            this.loader.close();
-            new EntityUtils().handleWsError(null, err, this.dialog);
-          });
+  private confirmEnableService(): Observable<unknown> {
+    return this.ws.call('service.query', [[]]).pipe(
+      switchMap((services) => {
+        const service = _.find(services, { service: ServiceName.WebDav });
+        if (service.enable) {
+          return EMPTY;
         }
-      });
-    });
+
+        return this.dialog.confirm({
+          title: shared.dialog_title,
+          message: shared.dialog_message,
+          hideCheckBox: true,
+          buttonMsg: shared.dialog_button,
+        }).pipe(
+          filter(Boolean),
+          tap(() => this.loader.open()),
+          switchMap(() => forkJoin([
+            this.ws.call('service.update', [service.id, { enable: true }]),
+            this.ws.call('service.start', [service.service]),
+          ])),
+          tap(() => {
+            this.loader.close();
+            this.dialog.info(
+              this.translate.instant('{service} Service', { service: 'WebDAV' }),
+              this.translate.instant('The {service} service has been enabled.', { service: 'WebDAV' }),
+              '300px',
+              'info',
+            );
+          }),
+          catchError((error) => {
+            this.dialog.errorReport(error.error, error.reason, error.trace.formatted);
+            return EMPTY;
+          }),
+        );
+      }),
+    );
   }
 }
