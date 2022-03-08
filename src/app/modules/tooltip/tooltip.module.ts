@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
+import { MatIconModule } from '@angular/material/icon';
 import { TranslateModule } from '@ngx-translate/core';
 import { NgxPopperjsModule } from 'ngx-popperjs';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
@@ -14,6 +15,7 @@ import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
     TranslateModule,
     CommonDirectivesModule,
     CastModule,
+    MatIconModule,
   ],
   declarations: [
     TooltipComponent,
