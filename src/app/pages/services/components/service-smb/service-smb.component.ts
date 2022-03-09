@@ -6,7 +6,7 @@ import { Router } from '@angular/router';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { of } from 'rxjs';
+import { of, Subscription } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
 import { LogLevel } from 'app/enums/log-level.enum';
 import { ProductType } from 'app/enums/product-type.enum';
@@ -20,7 +20,7 @@ import IxValidatorsService from 'app/modules/ix-forms/services/ix-validators.ser
 import { WebSocketService, DialogService } from 'app/services';
 import { UserService } from 'app/services/user.service';
 
-@UntilDestroy()
+@UntilDestroy({ arrayName: 'subscriptions' })
 @Component({
   selector: 'app-service-smb',
   templateUrl: './service-smb.component.html',
@@ -31,6 +31,7 @@ export class ServiceSmbComponent implements OnInit {
   isFormLoading = false;
   isBasicMode = true;
   hasSecondController = false;
+  subscriptions: Subscription[] = [];
 
   form = this.fb.group({
     netbiosname: ['', [Validators.required, Validators.maxLength(15)]],
@@ -119,10 +120,12 @@ export class ServiceSmbComponent implements OnInit {
   ngOnInit(): void {
     this.isFormLoading = true;
     if (window?.localStorage?.getItem('product_type')?.includes(ProductType.Enterprise)) {
-      this.form.get('netbiosname_b').disabledWhile(
-        this.ws.call('failover.licensed').pipe(
-          tap((isHa) => this.hasSecondController = isHa),
-          map((isHa) => !isHa),
+      this.subscriptions.push(
+        this.form.get('netbiosname_b').disabledWhile(
+          this.ws.call('failover.licensed').pipe(
+            tap((isHa) => this.hasSecondController = isHa),
+            map((isHa) => !isHa),
+          ),
         ),
       );
     }
