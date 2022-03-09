@@ -426,6 +426,16 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, A
     if (!emptyType) {
       return;
     }
+
+    let emptyConf = null;
+    if (this.conf?.getCustomEmptyConfig) {
+      emptyConf = this.conf.getCustomEmptyConfig(emptyType);
+      if (emptyConf) {
+        this.emptyTableConf = emptyConf;
+        return;
+      }
+    }
+
     let title = '';
     let message = '';
     let messagePreset = false;

@@ -4,10 +4,12 @@ import { TranslateService } from '@ngx-translate/core';
 import { ScrubTaskUi } from 'app/interfaces/scrub-task.interface';
 import { EntityFormService } from 'app/modules/entity/entity-form/services/entity-form.service';
 import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-table.component';
-import { EntityTableConfig } from 'app/modules/entity/entity-table/entity-table.interface';
-import { ScrubFormComponent } from 'app/pages/data-protection/scrub/scrub-form/scrub-form.component';
+import { EntityTableAction, EntityTableConfig } from 'app/modules/entity/entity-table/entity-table.interface';
+import {
+  ScrubTaskFormComponent,
+} from 'app/pages/data-protection/scrub-task/scrub-task-form/scrub-task-form.component';
 import { UserService, TaskService } from 'app/services';
-import { ModalService } from 'app/services/modal.service';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
 @Component({
@@ -53,13 +55,13 @@ export class ScrubListComponent implements EntityTableConfig {
 
   constructor(
     protected taskService: TaskService,
-    protected modalService: ModalService,
+    protected slideInService: IxSlideInService,
     protected translate: TranslateService,
   ) {}
 
   afterInit(entityList: EntityTableComponent): void {
     this.entityList = entityList;
-    this.modalService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
+    this.slideInService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
       this.entityList.getData();
     });
   }
@@ -74,11 +76,26 @@ export class ScrubListComponent implements EntityTableConfig {
     });
   }
 
-  doAdd(id?: number): void {
-    this.modalService.openInSlideIn(ScrubFormComponent, id);
+  doAdd(): void {
+    this.slideInService.open(ScrubTaskFormComponent);
   }
 
-  doEdit(id: number): void {
-    this.doAdd(id);
+  getActions(): EntityTableAction<ScrubTaskUi>[] {
+    return [{
+      id: 'edit',
+      icon: 'edit',
+      label: 'Edit',
+      onClick: (row: ScrubTaskUi) => {
+        const slideIn = this.slideInService.open(ScrubTaskFormComponent);
+        slideIn.setTaskForEdit(row);
+      },
+    }, {
+      id: 'delete',
+      icon: 'delete',
+      label: 'Delete',
+      onClick: (rowinner: ScrubTaskUi) => {
+        this.entityList.doDelete(rowinner);
+      },
+    }] as EntityTableAction[];
   }
 }

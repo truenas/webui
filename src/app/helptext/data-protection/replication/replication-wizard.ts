@@ -129,14 +129,8 @@ export default {
  <i>Custom</i>: set a how long a snapshot remains on the destination \
  system. Enter a number and choose a measure of time from the drop-down.'),
 
-  lifetime_value_placeholder: T(''),
-  lifetime_value_tooltip: T(''),
-
-  lifetime_unit_tooltip: T(''),
-
   // dialog
   cipher_placeholder: T('Cipher'),
-  cipher_tooltip: T(''),
 
   clearSnapshotDialog_title: T('Destination Snapshots Are Not Related to Replicated Snapshots'),
   clearSnapshotDialog_content: T('Destination dataset does not contain any snapshots that can be used as a basis for the incremental\

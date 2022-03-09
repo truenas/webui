@@ -11,7 +11,7 @@
 
     <section>
       <h4>
-        {{ config.hideMinutes ? ('Hours/Days' | translate) : ('Minutes/Hours/Days' | translate) }}
+        {{ config.hideMinutes ? ('Hours' | translate) : ('Minutes/Hours' | translate) }}
         <tooltip [message]="tooltips.general | translate"></tooltip>
       </h4>
       <div class="no-spaces-hint">({{ 'Separate values with commas, and without spaces.' | translate }})</div>
@@ -31,13 +31,37 @@
         [label]="'Hours' | translate"
         [tooltip]="tooltips.hours | translate"
       ></ix-input>
+    </section>
+
+    <section>
+      <h4>{{ 'Days' | translate }}</h4>
+
       <ix-input
-        class="input"
+        class="input days-of-month-input"
         formControlName="days"
         [required]="true"
-        [label]="'Days' | translate"
+        [label]="'Days of Month' | translate"
         [tooltip]="tooltips.days | translate"
       ></ix-input>
+
+      <div *ngIf="hasOrConditionExplanation$ | async" class="or-condition-explanation">
+        <div class="line"></div>
+        <div class="or-label">
+          {{ 'or' | translate }}
+          <tooltip [message]="tooltips.orTooltip | translate"></tooltip>
+        </div>
+        <div class="line"></div>
+      </div>
+      <h5 class="days-of-week-header">{{ 'Days of Week' | translate }}</h5>
+
+      <div class="weekdays" formGroupName="weekdays">
+        <mat-checkbox
+          *ngFor="let weekday of weekdays"
+          color="primary"
+          class="weekend"
+          [formControlName]="weekday.value"
+        >{{ weekday.label }}</mat-checkbox>
+      </div>
     </section>
 
     <section>
@@ -50,19 +74,6 @@
           class="month"
           [formControlName]="month.value"
         >{{ month.label }}</mat-checkbox>
-      </div>
-    </section>
-
-    <section>
-      <h4>{{ 'Days of Week' | translate }}</h4>
-
-      <div class="weekdays" formGroupName="weekdays">
-        <mat-checkbox
-          *ngFor="let weekday of weekdays"
-          color="primary"
-          class="weekend"
-          [formControlName]="weekday.value"
-        >{{ weekday.label }}</mat-checkbox>
       </div>
     </section>
 
@@ -79,5 +90,7 @@
 <ix-scheduler-preview-column
   [crontab]="crontab"
   [timezone]="timezone"
+  [startTime]="config.startTime"
+  [endTime]="config.endTime"
 ></ix-scheduler-preview-column>
 

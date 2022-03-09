@@ -29,6 +29,7 @@ import { FormExplorerConfig, FormSelectConfig } from 'app/modules/entity/entity-
 import { RelationAction } from 'app/modules/entity/entity-form/models/relation-action.enum';
 import { RelationConnection } from 'app/modules/entity/entity-form/models/relation-connection.enum';
 import { EntityUtils } from 'app/modules/entity/utils';
+import { CronPresetValue } from 'app/modules/scheduler/utils/get-default-crontab-presets.utils';
 import {
   WebSocketService,
   TaskService,
@@ -600,7 +601,7 @@ export class ReplicationFormComponent implements FormConfiguration {
           name: 'restrict_schedule_picker',
           tooltip: helptext.restrict_schedule_picker_tooltip,
           options: ['restrict_schedule_begin', 'restrict_schedule_end'],
-          value: '0 0 * * *',
+          value: CronPresetValue.Daily,
           relation: [
             {
               action: RelationAction.Show,
@@ -1018,7 +1019,7 @@ export class ReplicationFormComponent implements FormConfiguration {
           placeholder: helptext.schedule_picker_placeholder,
           tooltip: helptext.schedule_picker_tooltip,
           options: ['schedule_begin', 'schedule_end'],
-          value: '0 0 * * *',
+          value: CronPresetValue.Daily,
           relation: [
             {
               action: RelationAction.Show,
@@ -1258,7 +1259,7 @@ export class ReplicationFormComponent implements FormConfiguration {
     });
 
     entityForm.formGroup.controls['schedule_picker'].valueChanges.pipe(untilDestroyed(this)).subscribe((value) => {
-      if (value === '0 0 * * *' || value === '0 0 * * sun' || value === '0 0 1 * *') {
+      if (value === CronPresetValue.Daily || value === CronPresetValue.Weekly || value === CronPresetValue.Monthly) {
         entityForm.setDisabled('schedule_begin', true, true);
         entityForm.setDisabled('schedule_end', true, true);
       } else {
@@ -1268,7 +1269,7 @@ export class ReplicationFormComponent implements FormConfiguration {
     });
 
     entityForm.formGroup.controls['restrict_schedule_picker'].valueChanges.pipe(untilDestroyed(this)).subscribe((value) => {
-      if (value === '0 0 * * *' || value === '0 0 * * sun' || value === '0 0 1 * *') {
+      if (value === CronPresetValue.Daily || value === CronPresetValue.Weekly || value === CronPresetValue.Monthly) {
         entityForm.setDisabled('restrict_schedule_begin', true, true);
         entityForm.setDisabled('restrict_schedule_end', true, true);
       } else {

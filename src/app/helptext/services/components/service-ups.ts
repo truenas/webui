@@ -1,4 +1,3 @@
-import { Validators } from '@angular/forms';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UpsMode, UpsShutdownMode } from 'app/enums/ups-mode.enum';
 
@@ -24,37 +23,28 @@ export default {
   ups_identifier_placeholder: T('Identifier'),
   ups_identifier_tooltip: T('Describe the UPS device. It can contain alphanumeric,\
  period, comma, hyphen, and underscore characters.'),
-  ups_identifier_validation: [Validators.required, Validators.pattern(/^[\w|,|\.|\-|_]+$/)],
 
   ups_remotehost_placeholder: T('Remote Host'),
   ups_remotehost_tooltip: T('IP address of the remote system with <i>UPS Mode</i>\
  set as <i>Master</i>. Enter a valid IP address in\
  the format <i>192.168.0.1</i>.'),
-  ups_remotehost_validation: [Validators.required],
 
   ups_remoteport_placeholder: T('Remote Port'),
   ups_remoteport_tooltip: T(' When the <b>UPS Mode</b> is set to \
 <i>slave</i>. Enter the open network port number of the UPS \
 <i>Master</i> system. The default port is <i>3493</i>.'),
-  ups_remoteport_value: 3493,
-  ups_remoteport_validation: [Validators.required],
 
   ups_driver_placeholder: T('Driver'),
   ups_driver_tooltip: T('See the <a\
  href="http://networkupstools.org/stable-hcl.html"\
  target="_blank">Network UPS Tools compatibility\
  list</a> for a list of supported UPS devices.'),
-  ups_driver_validation: [Validators.required],
 
   ups_port_placeholder: T('Port or Hostname'),
   ups_port_tooltip: T('Serial or USB port connected to the UPS. To \
  automatically detect and manage the USB port settings, select \
  <i>auto</i>.<br><br> When an SNMP driver is selected, enter the IP \
  address or hostname of the SNMP UPS device.'),
-  ups_port_validation: [Validators.required],
-
-  ups_hostname_placeholder: T('Hostname'),
-  ups_hostname_tooltip: T('Enter the IP address or hostname for SNMP UPS.'),
 
   ups_options_placeholder: T('Auxiliary Parameters (ups.conf)'),
   ups_options_tooltip: T('Enter any extra options from <a\
@@ -91,18 +81,15 @@ export default {
   ups_nocommwarntime_tooltip: T('Enter a number of seconds to wait before alerting that\
  the service cannot reach any UPS. Warnings continue\
  until the situation is fixed.'),
-  ups_nocommwarntime_value: '300',
 
   ups_monuser_placeholder: T('Monitor User'),
   ups_monuser_tooltip: T('Enter a user to associate with this service. Keeping\
  the default is recommended.'),
-  ups_monuser_validation: [Validators.required],
 
   ups_monpwd_placeholder: T('Monitor Password'),
   ups_monpwd_tooltip: T('Change the default password to improve system\
  security. The new password cannot contain a\
  space or <b>#</b>.'),
-  ups_monpwd_validation: [Validators.pattern(/^((?![\#|\s]).)*$/)],
 
   ups_extrausers_placeholder: T('Extra Users'),
   ups_extrausers_tooltip: T('Enter accounts that have administrative access.\
@@ -132,6 +119,4 @@ export default {
   ups_hostsync_placeholder: T('Host Sync'),
   ups_hostsync_tooltip: T('Upsmon will wait up to this many seconds in master mode for\
  the slaves to disconnect during a shutdown situation.'),
-
-  formTitle: T('UPS'),
 };

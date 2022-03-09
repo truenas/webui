@@ -18,7 +18,7 @@ import { StorageService } from 'app/services/storage.service';
 import { EntityModule } from '../../modules/entity/entity.module';
 import { routing } from './account.routing';
 import { MembersComponent } from './groups/members/members.component';
-import { UserListDetailsComponent } from './users/user-list-details/user-list-details.component';
+import { UserDetailsRowComponent } from './users/user-details-row/user-details-row.component';
 import { UserListComponent } from './users/user-list/user-list.component';
 
 @NgModule({
@@ -45,7 +45,7 @@ import { UserListComponent } from './users/user-list/user-list.component';
     UserListComponent,
     UserFormComponent,
     MembersComponent,
-    UserListDetailsComponent,
+    UserDetailsRowComponent,
   ],
   providers: [
     StorageService,

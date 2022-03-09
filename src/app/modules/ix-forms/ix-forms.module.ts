@@ -37,7 +37,6 @@ import { IxTextareaComponent } from 'app/modules/ix-forms/components/ix-textarea
 import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
 import IxValidatorsService from 'app/modules/ix-forms/services/ix-validators.service';
 import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
-import { EnclosureModule } from 'app/pages/system/view-enclosure/enclosure.module';
 
 @NgModule({
   imports: [
@@ -46,7 +45,6 @@ import { EnclosureModule } from 'app/pages/system/view-enclosure/enclosure.modul
     ReactiveFormsModule,
     MarkdownModule.forRoot(),
     FlexLayoutModule,
-    EnclosureModule,
     MatFormFieldModule,
     MatInputModule,
     MatSelectModule,

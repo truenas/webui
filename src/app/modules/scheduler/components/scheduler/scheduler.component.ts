@@ -30,7 +30,7 @@ export class SchedulerComponent implements ControlValueAccessor {
   /**
    * Optional extra time boundaries for every day, i.e. "15:30" - "23:30"
    */
-  @Input() beginTime: string;
+  @Input() startTime: string;
   @Input() endTime: string;
 
   readonly defaultPresets = getDefaultCrontabPresets(this.translate);
@@ -76,7 +76,7 @@ export class SchedulerComponent implements ControlValueAccessor {
   onCustomOptionSelected(): void {
     this.matDialog.open(SchedulerModalComponent, {
       data: {
-        beginTime: this.beginTime,
+        startTime: this.startTime,
         endTime: this.endTime,
         hideMinutes: this.hideMinutes,
         crontab: this.customCrontab,
