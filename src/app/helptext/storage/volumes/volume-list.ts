@@ -1,16 +1,6 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
 export default {
-  unlockDialog_password_placeholder: T('Passphrase'),
-
-  unlockDialog_recovery_key_placeholder: T('Recovery Key'),
-  unlockDialog_recovery_key_tooltip: T('Unlock the pool with a recovery \
- key file instead of a passphrase. Select a recovery key file to upload \
- from the local system.'),
-
-  unlockDialog_services_placeholder: T('Restart Services'),
-  unlockDialog_services_tooltip: T('List of system services to restart when the pool is unlocked.'),
-
   snapshotDialog_name_tooltip: T('Add a name for the new snapshot.'),
   snapshotDialog_recursive_tooltip: T('Set to include child datasets of the chosen dataset.'),
 
@@ -55,7 +45,6 @@ the system dataset transfers back to the TrueNAS operating system device.'),
     saveButton: T('Export/Disconnect'),
   },
 
-  downloadKey: T('Download Key'),
   exporting: T('Exporting Pool'),
   exportDisconnect: T('Export/Disconnect Pool'),
   exportSuccess: T("Successfully exported/disconnected '"),
@@ -65,12 +54,6 @@ the system dataset transfers back to the TrueNAS operating system device.'),
  one-way operation that might make some features of\
  the pool incompatible with older versions of TrueNAS: '),
 
-  pool_lock_warning_paratext_a: T('WARNING: Locking pool <i>'),
-  pool_lock_warning_paratext_b: T('</i>.\
- Data on the pool will not be accessible until the pool is unlocked.'),
-
-  permissions_edit_msg1: T('Root dataset permissions cannot be edited.'),
-  permissions_edit_msg2: T('This dataset has an active ACL. Changes to permissions must be made with the ACL editor.'),
   acl_edit_msg: T('Root dataset ACL cannot be edited.'),
 
   expand_pool_dialog: {
@@ -83,18 +66,11 @@ the system dataset transfers back to the TrueNAS operating system device.'),
     title: T('Pool Expanded'),
   },
 
-  unlock_msg: T('Unlock the pool with either a passphrase or a recovery key.'),
-
   pool_actions_title: T('Pool Actions'),
   encryption_actions_title: T('Encryption Actions'),
 
-  export_keys_title: T('Export Dataset Keys for '),
-  export_keys_button: T('Export'),
-
   dataset_actions: T('Dataset Actions'),
   zvol_actions: T('Zvol Actions'),
-  unlock_action: T('Unlock'),
-  lock_action: T('Lock'),
   encryption_options: T('Encryption Options'),
   encryption_options_dialog: {
     inherit_placeholder: T('Inherit encryption properties from parent'),
@@ -120,11 +96,4 @@ the system dataset transfers back to the TrueNAS operating system device.'),
     button: T('Lock'),
     locking_dataset: T('Locking Dataset'),
   },
-  encryptMsg: T('These services depend on pool <i>{name}</i> and will be disrupted if the pool is locked:'),
-  datasetDeleteMsg: T('These services depend on dataset <i>{name}</i> and will be destroyed if the dataset is deleted:'),
-  zvolDeleteMsg: T('These services depend on ZVol <i>{name}</i> and will be destroyed if the ZVol is deleted:'),
-  runningMsg: T('These running services are using'),
-  unknownMsg: T('These unknown processes are using this pool:'),
-  terminatedMsg: T('WARNING: These unknown processes will be terminated while locking the pool.'),
-  dataErrMsg: T('Error gathering data on pool.'),
 };

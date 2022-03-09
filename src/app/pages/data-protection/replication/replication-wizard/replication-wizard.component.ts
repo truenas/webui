@@ -571,7 +571,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
           width: '50%',
         },
         {
-          placeholder: helptext.lifetime_value_placeholder,
+          placeholder: '',
           type: 'input',
           name: 'lifetime_value',
           inputType: 'number',
@@ -592,7 +592,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
         {
           type: 'select',
           name: 'lifetime_unit',
-          tooltip: helptext.lifetime_unit_tooltip,
+          tooltip: '',
           options: [{
             label: this.translate.instant('Hours'),
             value: LifetimeUnit.Hour,
@@ -740,7 +740,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
       type: 'select',
       name: 'cipher',
       placeholder: helptext.cipher_placeholder,
-      tooltip: helptext.cipher_tooltip,
+      tooltip: '',
       options: [
         {
           label: this.translate.instant('Standard (Secure)'),

@@ -1,8 +1,6 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
 export default {
-  lldp_fieldset_general: T('General Options'),
-
   lldp_intdesc_placeholder: T('Interface Description'),
   lldp_intdesc_tooltip: T('Enables <i>receive</i> mode. Any received peer \
  information is saved in interface descriptions.'),
@@ -17,6 +15,4 @@ export default {
 
   lldp_location_placeholder: T('Location'),
   lldp_location_tooltip: T('The physical location of the host.'),
-
-  formTitle: T('LLDP'),
 };

@@ -4,7 +4,6 @@ import { regexValidator } from 'app/modules/entity/entity-form/validators/regex-
 
 export default {
   cifs_srv_fieldset_netbios: T('NetBIOS'),
-  cifs_srv_fieldset_idmap: T('IDMAP'),
   cifs_srv_fieldset_other: T('Other Options'),
 
   cifs_srv_netbiosname_placeholder: T('NetBIOS Name'),

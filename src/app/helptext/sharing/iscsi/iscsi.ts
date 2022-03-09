@@ -75,8 +75,6 @@ export const helptextSharingIscsi = {
  port. The address <i>0.0.0.0</i> can be selected to listen on all IPv4 \
  addresses, or <i>::</i> to listen on all IPv6 addresses.'),
 
-  portal_form_validators_ip: [Validators.required],
-
   portal_form_placeholder_port: T('Port'),
   portal_form_tooltip_port: T(
     'TCP port used to access the iSCSI target.\
@@ -117,9 +115,6 @@ export const helptextSharingIscsi = {
   initiator_form_placeholder_comment: T('Description'),
   initiator_form_tooltip_comment: T('Any notes about initiators.'),
 
-  fieldset_globalconf: T('Global Configuration'),
-
-  globalconf_placeholder_basename: T('Base Name'),
   globalconf_tooltip_basename: T(
     'Lowercase alphanumeric characters plus dot (.), dash (-),\
  and colon (:) are allowed. See the\
@@ -127,25 +122,15 @@ export const helptextSharingIscsi = {
  section of <a href="https://tools.ietf.org/html/rfc3721.html"\
  target="_blank">RFC3721</a>.',
   ),
-  globalconf_validators_basename: [Validators.required],
 
-  globalconf_placeholder_isns_servers: T('ISNS Servers'),
   globalconf_tooltip_isns_servers: T('Hostnames or IP addresses of the \
  ISNS servers to be registered with the iSCSI targets and portals of \
  the system. Separate entries by pressing <code>Enter</code>.'),
 
-  globalconf_placeholder_pool_avail_threshold: T(
-    'Pool Available Space Threshold (%)',
-  ),
   globalconf_tooltip_pool_avail_threshold: T('Generate an alert when the \
    pool has this percent space remaining. This is typically \
    configured at the pool level when using zvols or at the extent level \
    for both file and device based extents.'),
-
-  globalconf_placeholder_alua: T('Enable iSCSI ALUA'),
-  globalconf_tooltip_alua: T('Allow initiator to discover paths to both\
- TrueNAS controllers on the target and increase storage traffic\
- efficiency. Requires ALUA-capable, High Availability (HA) hardware.'),
 
   fieldset_extent_basic: T('Basic Info'),
   fieldset_extent_type: T('Type'),
@@ -310,12 +295,6 @@ export const helptextSharingIscsi = {
 
   fc_initiators_placeholder: T('Connected Initiators'),
   fc_initiators_tooltip: T(''),
-
-  fc_update_dialog: {
-    title: T('Updated'),
-    text: T('Fibre Channel '),
-    msg: T(' update successful'),
-  },
 
   // wizard
   step1_label: T('Create or Choose Block Device'),

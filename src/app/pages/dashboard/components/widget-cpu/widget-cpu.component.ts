@@ -1,5 +1,5 @@
 import {
-  Component, AfterViewInit, Input, ViewChild, OnDestroy, ElementRef,
+  Component, AfterViewInit, Input, OnDestroy, ElementRef,
 } from '@angular/core';
 import { MediaObserver } from '@angular/flex-layout';
 import { NgForm } from '@angular/forms';
@@ -19,8 +19,7 @@ import { CpuStatsEvent } from 'app/interfaces/events/cpu-stats-event.interface';
 import { SysInfoEvent } from 'app/interfaces/events/sys-info-event.interface';
 import { AllCpusUpdate } from 'app/interfaces/reporting.interface';
 import { Theme } from 'app/interfaces/theme.interface';
-import { ViewChartBarComponent } from 'app/modules/charts/components/view-chart-bar/view-chart-bar.component';
-import { GaugeConfig, ViewChartGaugeComponent } from 'app/modules/charts/components/view-chart-gauge/view-chart-gauge.component';
+import { GaugeConfig } from 'app/modules/charts/components/view-chart-gauge/view-chart-gauge.component';
 import { WidgetComponent } from 'app/pages/dashboard/components/widget/widget.component';
 import { WidgetCpuData } from 'app/pages/dashboard/interfaces/widget-data.interface';
 import { CoreService } from 'app/services/core-service/core.service';
@@ -33,8 +32,6 @@ import { ThemeService } from 'app/services/theme/theme.service';
   styleUrls: ['./widget-cpu.component.scss'],
 })
 export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit, OnDestroy {
-  @ViewChild('load', { static: true }) cpuLoad: ViewChartGaugeComponent;
-  @ViewChild('cores', { static: true }) cpuCores: ViewChartBarComponent;
   @Input() data: Subject<CoreEvent>;
   @Input() cpuModel: string;
   chart: any;// Chart.js instance with per core data

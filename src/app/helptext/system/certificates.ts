@@ -9,11 +9,7 @@ export const helptextSystemCertificates = {
     fieldset_basic: T('Identifier and Type'),
     fieldset_type: T('Certificate Options'),
     fieldset_certificate: T('Certificate Subject'),
-    fieldset_basic_constraints: T('Basic Constraints'),
     fieldset_extra: T('Extra Constraints'),
-    fieldset_authority_key_identifier: T('Authority Key Identifier'),
-    fieldset_extended_key_usage: T('Extended Key Usage'),
-    fieldset_key_usage: T('Key Usage'),
 
     name: {
       placeholder: T('Name'),
