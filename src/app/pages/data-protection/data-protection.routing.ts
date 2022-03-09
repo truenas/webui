@@ -8,9 +8,8 @@ import { ReplicationListComponent } from './replication/replication-list/replica
 import { ReplicationWizardComponent } from './replication/replication-wizard/replication-wizard.component';
 import { RsyncFormComponent } from './rsync/rsync-form/rsync-form.component';
 import { RsyncListComponent } from './rsync/rsync-list/rsync-list.component';
-import { ResilverConfigComponent } from './scrub/resilver-config/resilver-config.component';
-import { ScrubFormComponent } from './scrub/scrub-form/scrub-form.component';
-import { ScrubListComponent } from './scrub/scrub-list/scrub-list.component';
+import { ResilverConfigComponent } from './scrub-task/resilver-config/resilver-config.component';
+import { ScrubListComponent } from './scrub-task/scrub-list/scrub-list.component';
 import { SnapshotFormComponent } from './snapshot/snapshot-form/snapshot-form.component';
 import { SnapshotListComponent } from './snapshot/snapshot-list/snapshot-list.component';
 
@@ -106,14 +105,6 @@ export const dataProtectionRoutes: Routes = [{
         path: '',
         component: ScrubListComponent,
         data: { title: 'Scrub Tasks', breadcrumb: 'Scrub Tasks' },
-      }, {
-        path: 'add',
-        component: ScrubFormComponent,
-        data: { title: 'Add', breadcrumb: 'Add' },
-      }, {
-        path: 'edit/:pk',
-        component: ScrubFormComponent,
-        data: { title: 'Edit', breadcrumb: 'Edit' },
       }, {
         path: 'priority',
         data: { title: 'Resilver Priority', breadcrumb: 'Resilver Priority', icon: 'event_note' },

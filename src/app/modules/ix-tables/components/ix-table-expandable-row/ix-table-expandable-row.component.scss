@@ -9,7 +9,7 @@
 
   .details {
     margin: 0;
-    padding: 16px;
+    padding: 16px 0;
 
     dt {
       display: inline-block;
@@ -21,7 +21,6 @@
       display: inline-block;
       margin: 0;
     }
-
   }
 
   .detail-label {
@@ -29,6 +28,13 @@
   }
 
   .actions {
-    padding: 8px 16px;
+    flex: 1;
+    padding: 8px 0;
+
+    ::ng-deep {
+      .mat-button .mat-icon {
+        margin-right: 8px;
+      }
+    }
   }
 }

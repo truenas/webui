@@ -364,21 +364,7 @@ certificate still approved.'),
   },
 
   list: {
-    tooltip_route_add: T('Create CA'),
-
-    column_name: T('Name'),
-    column_internal: T('Internal'),
-    column_issuer: T('Issuer'),
-    column_distinguished_name: T('Distinguished Name'),
-    column_from: T('From'),
-    column_until: T('Until'),
-
-    action_view: T('View'),
     action_sign: T('Sign CSR'),
-    action_export_certificate: T('Export Certificate'),
-    action_export_private_key: T('Export Private Key'),
-
-    action_delete: T('Delete'),
   },
 
   sign: {

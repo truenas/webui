@@ -1,9 +1,7 @@
 import {
-  Component, OnInit, ChangeDetectionStrategy, Input, EventEmitter, Output, ViewChild,
-  OnDestroy, ChangeDetectorRef,
+  Component, ChangeDetectionStrategy, Input, EventEmitter, Output,
 } from '@angular/core';
-import { MatRowDef, MatTableDataSource, MatColumnDef } from '@angular/material/table';
-import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { map } from 'rxjs/operators';
 import { Option } from 'app/interfaces/option.interface';
@@ -11,50 +9,30 @@ import { User } from 'app/interfaces/user.interface';
 import { DialogFormConfiguration } from 'app/modules/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/modules/entity/entity-dialog/entity-dialog.component';
 import { EntityUtils } from 'app/modules/entity/utils';
-import { IxTableComponent } from 'app/modules/ix-tables/components/ix-table/ix-table.component';
 import { UserFormComponent } from 'app/pages/account/users/user-form/user-form.component';
-import { AppLoaderService, ModalService } from 'app/services';
-import { DialogService } from 'app/services/dialog.service';
-import { WebSocketService } from 'app/services/ws.service';
+import {
+  WebSocketService, ModalService, AppLoaderService, DialogService,
+} from 'app/services';
 
 @UntilDestroy()
 @Component({
-  selector: 'app-user-list-details',
-  templateUrl: './user-list-details.component.html',
+  selector: 'user-details-row',
+  templateUrl: './user-details-row.component.html',
+  styleUrls: ['./user-details-row.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class UserListDetailsComponent implements OnInit, OnDestroy {
-  @Input() expandedRow: User;
-  @Input() dataSource: MatTableDataSource<User>;
+export class UserDetailsRowComponent {
+  @Input() user: User;
   @Input() colspan: number;
   @Output() update = new EventEmitter<void>();
-  @ViewChild(MatRowDef, { static: false }) rowDef: MatRowDef<User>;
-  @ViewChild(MatColumnDef, { static: false }) columnDef: MatColumnDef;
 
   constructor(
-    private table: IxTableComponent<User>,
     private ws: WebSocketService,
-    private modalService: ModalService,
-    private dialogService: DialogService,
     private translate: TranslateService,
-    private cdr: ChangeDetectorRef,
+    private modalService: ModalService,
     private loader: AppLoaderService,
-  ) { }
-
-  ngOnInit(): void {
-    if (this.table) {
-      this.cdr.detectChanges();
-      this.table.addColumnDef(this.columnDef);
-      this.table.addRowDef(this.rowDef);
-    }
-  }
-
-  ngOnDestroy(): void {
-    if (this.table) {
-      this.table.removeRowDef(this.rowDef);
-      this.table.removeColumnDef(this.columnDef);
-    }
-  }
+    private dialogService: DialogService,
+  ) {}
 
   getDetails(user: User): Option[] {
     return [
@@ -77,9 +55,7 @@ export class UserListDetailsComponent implements OnInit, OnDestroy {
   async doDelete(user: User): Promise<void> {
     this.loader.open();
     const showCheckboxIfLastMember = await this.ws.call('group.query', [[['id', '=', user.group.id]]]).pipe(
-      map((groups) => {
-        return groups.length ? groups[0].users.length === 1 : false;
-      }),
+      map((groups) => (groups.length ? groups[0].users.length === 1 : false)),
     ).toPromise();
 
     const confirmOptions: DialogFormConfiguration = {

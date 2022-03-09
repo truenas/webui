@@ -9,6 +9,7 @@ import { FieldSets } from 'app/modules/entity/entity-form/classes/field-sets';
 import { EntityFormComponent } from 'app/modules/entity/entity-form/entity-form.component';
 import { FormSelectConfig, UnitType } from 'app/modules/entity/entity-form/models/field-config.interface';
 import { EntityUtils } from 'app/modules/entity/utils';
+import { CronPresetValue } from 'app/modules/scheduler/utils/get-default-crontab-presets.utils';
 import { DialogService, StorageService, TaskService } from 'app/services';
 import { ModalService } from 'app/services/modal.service';
 
@@ -96,7 +97,7 @@ export class SnapshotFormComponent implements FormConfiguration {
           options: ['begin', 'end'],
           validation: [Validators.required],
           required: true,
-          value: '0 0 * * *',
+          value: CronPresetValue.Daily,
         }, {
           type: 'select',
           name: 'begin',
@@ -179,7 +180,7 @@ export class SnapshotFormComponent implements FormConfiguration {
     });
 
     entityForm.formGroup.controls['cron_schedule'].valueChanges.pipe(untilDestroyed(this)).subscribe((value) => {
-      if (value === '0 0 * * *' || value === '0 0 * * sun' || value === '0 0 1 * *') {
+      if (value === CronPresetValue.Daily || value === CronPresetValue.Weekly || value === CronPresetValue.Monthly) {
         this.entityForm.setDisabled('begin', true, true);
         this.entityForm.setDisabled('end', true, true);
       } else {

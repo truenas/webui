@@ -14,7 +14,6 @@ export default {
 
   zvol_volsize_placeholder: T('Size for this zvol'),
   zvol_volsize_tooltip: T('Specify a size and value such as <i>10 GiB</i>.'),
-  zvol_volsize_validation: [Validators.required, Validators.min(0)],
 
   zvol_forcesize_placeholder: T('Force size'),
   zvol_forcesize_tooltip: T('The system restricts creating a zvol that brings the\

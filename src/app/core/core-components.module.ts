@@ -18,7 +18,6 @@ import { ViewControllerComponent } from 'app/core/components/view-controller/vie
 import { FormatDateTimePipe } from 'app/core/pipes/format-datetime.pipe';
 import { MapValuePipe } from 'app/core/pipes/map-value.pipe';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
-import { EntityModule } from 'app/modules/entity/entity.module';
 import { StorageService } from 'app/services/storage.service';
 
 @NgModule({
@@ -33,7 +32,6 @@ import { StorageService } from 'app/services/storage.service';
     MatButtonModule,
     RouterModule,
     CommonDirectivesModule,
-    EntityModule,
   ],
   declarations: [
     ViewControllerComponent,

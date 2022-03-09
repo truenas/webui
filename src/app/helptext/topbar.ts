@@ -93,15 +93,10 @@ Login or signup is required.'),
 address. Please verify the email address before continuing.'),
   },
   changePasswordDialog: {
-    pw_form_title_name: T('Change Administrator Password'),
-    pw_current_pw_placeholder: T('Current Password'),
-    pw_new_pw_placeholder: T('New Password'),
     pw_new_pw_tooltip: T('Passwords cannot contain a <b>?</b>. Passwords should \
 be at least eight characters and contain a mix of lower and \
 upper case, numbers, and special characters.'),
-    pw_confirm_pw_placeholder: T('Confirm Password'),
     pw_invalid_title: T('Incorrect Password'),
-    pw_invalid_msg: T('The administrator password is incorrect.'),
     pw_updated: T('Password updated.'),
   },
 };

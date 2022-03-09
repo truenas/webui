@@ -1,16 +1,9 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
 export default {
-  copyright_year: '2020',
   dockerhost: T('Docker Host'),
 
-  ctrlr: T('TrueNAS controller'),
-  ctrlrs: T('TrueNAS controllers'),
   Ctrlr: T('TrueNAS Controller'),
-  Ctrlrs: T('TrueNAS Controllers'),
-  thisCtlr: T('This Controller'),
-  unknownCtrl: T('The active controller cannot be detected.'),
-
   sysUpdateMessage: T('A system update is in progress. It might have been launched in another window or by an external source like TrueCommand.'),
   sysUpdateMessagePt2: T('This system will restart when the update completes.'),
 
@@ -24,17 +17,10 @@ export default {
     suggestion_label: T('(Examples: 500 KiB, 500M, 2 TB)'),
   },
 
-  noLogDilaog: {
+  noLogDialog: {
     title: T('No Logs'),
     message: T('No logs are available for this task.'),
   },
-
-  ha_connecting_text: T('Waiting for active TrueNAS controller to come up...'),
-
-  fieldset_general_options: T('General Options'),
-  fieldset_other_options: T('Other Options'),
-
-  hostname: T('Hostname'),
 
   scheduler: {
     general: {
@@ -71,13 +57,4 @@ export default {
 
   pasteValueStartsWithSpace: T('The pasted string starts with a space'),
   pasteValueEndsWithSpace: T('The pasted string ends with a space'),
-
-  rootpw: {
-    placeholder: T('Root Password'),
-    tooltip: T('Enter the root password to authorize this operation.'),
-    error_msg: T('The administrator password is incorrect.'),
-    error_title: T('Warning'),
-    dialog_title: T('Action Requires Administrator Confirmation'),
-  },
-
 };
