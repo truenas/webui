@@ -4,6 +4,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { mockJob, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
@@ -20,6 +21,7 @@ describe('PullImageFormComponent', () => {
     imports: [
       IxFormsModule,
       ReactiveFormsModule,
+      EntityModule,
     ],
     providers: [
       mockWebsocket([

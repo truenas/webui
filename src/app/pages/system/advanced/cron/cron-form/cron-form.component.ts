@@ -11,6 +11,7 @@ import { Cronjob } from 'app/interfaces/cronjob.interface';
 import { UserComboboxProvider } from 'app/modules/ix-forms/classes/user-combobox-provider';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { crontabToSchedule } from 'app/modules/scheduler/utils/crontab-to-schedule.utils';
+import { CronPresetValue } from 'app/modules/scheduler/utils/get-default-crontab-presets.utils';
 import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
 import { UserService, WebSocketService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
@@ -36,7 +37,7 @@ export class CronFormComponent {
     description: [''],
     command: ['', Validators.required],
     user: ['', Validators.required],
-    schedule: ['0 0 * * *', Validators.required],
+    schedule: [CronPresetValue.Daily as string, Validators.required],
     stdout: [true],
     stderr: [false],
     enabled: [true],

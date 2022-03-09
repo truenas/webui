@@ -10,6 +10,7 @@ import { mockJob, mockWebsocket } from 'app/core/testing/utils/mock-websocket.ut
 import { PoolStatus } from 'app/enums/pool-status.enum';
 import { DatasetAttachment } from 'app/interfaces/pool-attachment.interface';
 import { Process } from 'app/interfaces/process.interface';
+import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { ExportDisconnectModalComponent } from 'app/pages/storage/volumes/volumes-list/components/export-disconnect-modal.component';
@@ -61,6 +62,7 @@ describe('ExportDisconnectModalComponent', () => {
       imports: [
         IxFormsModule,
         ReactiveFormsModule,
+        EntityModule,
       ],
       providers: [
         mockWebsocket([

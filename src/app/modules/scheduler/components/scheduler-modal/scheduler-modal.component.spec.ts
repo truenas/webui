@@ -17,7 +17,6 @@ import {
   SchedulerPreviewColumnComponent,
 } from 'app/modules/scheduler/components/scheduler-modal/scheduler-preview-column/scheduler-preview-column.component';
 import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
-import { DocsService } from 'app/services/docs.service';
 import { selectTimezone } from 'app/store/system-config/system-config.selectors';
 import { SchedulerModalComponent } from './scheduler-modal.component';
 
@@ -48,7 +47,6 @@ describe('SchedulerModalComponent', () => {
           },
         ],
       }),
-      mockProvider(DocsService), // TODO: Unclear why this is even needed.
     ],
     declarations: [
       MockComponent(SchedulerPreviewColumnComponent),
