@@ -472,6 +472,7 @@
   "Force Create": "",
   "Force Delete": "",
   "Force Size": "",
+  "Force delete": "",
   "Force deletion of dataset <i>{datasetName}</i>?": "",
   "Force deletion of zvol <i>{name}</i>?": "",
   "Force unmount": "",

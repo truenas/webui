@@ -11,7 +11,7 @@ import { EntityDialogComponent } from 'app/modules/entity/entity-dialog/entity-d
 import { FormSelectConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-table.component';
-import { EntityTableAction, EntityTableConfig } from 'app/modules/entity/entity-table/entity-table.interface';
+import { EntityTableAction, EntityTableConfig, EntityTableConfirmDialog } from 'app/modules/entity/entity-table/entity-table.interface';
 import { ApplicationToolbarControl } from 'app/pages/applications/application-toolbar-control.enum';
 import { DialogService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
@@ -30,6 +30,11 @@ export class DockerImagesComponent implements EntityTableConfig {
   queryCall = 'container.image.query' as const;
   wsDelete = 'container.image.delete' as const;
   disableActionsConfig = true;
+  confirmDeleteDialog: EntityTableConfirmDialog = {};
+
+  wsDeleteParams(row: any, id: string): unknown[] {
+    return [{ id, force: this.forceDelete }];
+  }
 
   columns = [
     { name: helptext.dockerImages.columns.id, prop: 'id', always_display: true },
@@ -47,6 +52,7 @@ export class DockerImagesComponent implements EntityTableConfig {
     },
   };
 
+  forceDelete: boolean;
   filterString = '';
   constructor(
     protected dialogService: DialogService,
@@ -89,6 +95,8 @@ export class DockerImagesComponent implements EntityTableConfig {
       name: 'update',
       disabled: !row.update_available,
       onClick: (row: ContainerImage) => {
+        delete this.confirmDeleteDialog.title;
+        delete this.confirmDeleteDialog.button;
         this.onClickUpdateImage(row);
       },
     }, {
@@ -97,7 +105,21 @@ export class DockerImagesComponent implements EntityTableConfig {
       label: helptext.dockerImages.menu.delete,
       name: 'delete',
       onClick: (row: ContainerImage) => {
+        delete this.confirmDeleteDialog.title;
+        delete this.confirmDeleteDialog.button;
+        this.forceDelete = false;
         this.entityList.doDelete(row);
+      },
+    }, {
+      id: row.id,
+      icon: 'delete',
+      label: helptext.dockerImages.menu.forceDelete,
+      name: 'forceDelete',
+      onClick: (row: ContainerImage) => {
+        this.confirmDeleteDialog.title = this.translate.instant('Force delete');
+        this.confirmDeleteDialog.button = this.translate.instant('Force delete');
+        this.forceDelete = true;
+        this.entityList.doDelete(row, this.translate.instant('Force delete'));
       },
     });
 

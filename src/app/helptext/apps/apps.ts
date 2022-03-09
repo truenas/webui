@@ -538,6 +538,7 @@ export default {
   dockerImages: {
     menu: {
       update: T('Update Image'),
+      forceDelete: T('Force delete'),
       delete: T('Delete'),
     },
     columns: {

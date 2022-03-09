@@ -65,6 +65,7 @@
   "Expand Row": "",
   "Expand row": "",
   "File size is limited to {maxUploadSizeMibs} MiB.": "",
+  "Force delete": "",
   "Force deletion of zvol <i>{name}</i>?": "",
   "Go to Storage": "",
   "Hidden columns are not available for sorting or filtering. Hiding columns improves performance.": "",
