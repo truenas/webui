@@ -2,6 +2,7 @@ import { HttpClientModule, HttpClient } from '@angular/common/http';
 import { NgModule, ErrorHandler } from '@angular/core';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MatDialogModule } from '@angular/material/dialog';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -98,6 +99,7 @@ import { WebSocketService } from './services/ws.service';
       serializer: CustomRouterStateSerializer,
     }),
     EffectsModule.forRoot(rootEffects),
+    MatDialogModule,
   ],
   declarations: [
     AppComponent,

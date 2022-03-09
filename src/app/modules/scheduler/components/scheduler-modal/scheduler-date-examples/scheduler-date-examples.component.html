@@ -1,7 +1,7 @@
 <div
   *ngFor="let date of scheduleExamples | slice: 0: maxExamples"
   class="schedule-example"
->{{ date | formatDateTime }}</div>
+>{{ date | formatDateTime: null }}</div>
 
 <div
   *ngIf="scheduleExamples.length > maxExamples"

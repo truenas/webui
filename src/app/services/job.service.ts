@@ -53,7 +53,7 @@ export class JobService {
       const log = job && job.logs_excerpt ? job.logs_excerpt : null;
 
       if (!log) {
-        this.dialog.info(globalHelptext.noLogDilaog.title, globalHelptext.noLogDilaog.message);
+        this.dialog.info(globalHelptext.noLogDialog.title, globalHelptext.noLogDialog.message);
       } else {
         const targetJob = job;
         this.dialog.confirm({

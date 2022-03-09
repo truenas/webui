@@ -1,15 +1,6 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
 export default {
-  usage_tooltip: T(
-    '<b>Ctrl+C</b> kills a foreground process.<br>\
-    Many utilities are built-in:<br> <b>Iperf</b>,\
-    <b>Netperf</b>, <b>IOzone</b>, <b>arcstat</b>,\
-    <b>tw_cli</b>, <br><b>MegaCli</b>,\
-    <b>freenas-debug</b>, <b>tmux</b>,\
-    <b>Dmidecode</b>.',
-  ),
-
   dialog_title: T('Copy and Paste'),
 
   copy_paste_message: T(
@@ -20,8 +11,6 @@ export default {
     systems, use <i>Ctrl+Insert</i> to copy and \
     <i>Shift+Insert</i> to paste.',
   ),
-
-  action_dismiss: T('Dismiss'),
 
   podConsole: {
     nopod: {

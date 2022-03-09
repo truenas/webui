@@ -1,12 +1,6 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
 export default {
-  dataset_permissions_id_placeholder: T('Path'),
-
-  dataset_permissions_acl_placeholder: T('ACL Type'),
-  dataset_permissions_acl_tooltip: T('Select the type that matches the type of client\
- accessing the dataset.'),
-
   dataset_permissions_user_placeholder: T('User'),
   dataset_permissions_user_tooltip: T('Select the user to control the dataset. Users\
  created manually or imported from a directory service\
@@ -38,10 +32,6 @@ are submitted only when this box is set.'),
 
   dataset_permissions_traverse_placeholder: T('Apply permissions to child datasets'),
   dataset_permissions_traverse_tooltip: T('Apply permissions recursively to all child datasets of the current dataset.'),
-
-  dataset_permissions_dialog_warning: T('Warning'),
-  dataset_permissions_dialog_warning_message: T('Changing dataset permission mode can severely\
- affect existing permissions, particularly when going from Windows to Unix permissions.'),
 
   heading_owner: T('Owner'),
   heading_access: T('Access'),

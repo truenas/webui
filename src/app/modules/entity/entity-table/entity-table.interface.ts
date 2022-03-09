@@ -2,6 +2,7 @@ import { Type } from '@angular/core';
 import { TooltipPosition } from '@angular/material/tooltip';
 import { Observable } from 'rxjs';
 import { ApiMethod } from 'app/interfaces/api-directory.interface';
+import { EmptyConfig, EmptyType } from 'app/modules/entity/entity-empty/entity-empty.component';
 import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-table.component';
 
 export interface EntityTableConfig<Row = any> {
@@ -48,6 +49,10 @@ export interface EntityTableConfig<Row = any> {
   addBtnDisabled?: boolean;
   routeAddTooltip?: string;
 
+  /**
+   * Returns EmptyConfig for EmptyType or returns null if default behavior is acceptable for that EmptyType
+   */
+  getCustomEmptyConfig?: (emptyType: EmptyType) => EmptyConfig;
   wsDeleteParams?: (row: Row, id: string) => any;
   addRows?: (entity: EntityTableComponent) => void;
   changeEvent?: (entity: EntityTableComponent) => void;

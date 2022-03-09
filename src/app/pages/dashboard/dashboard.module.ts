@@ -23,7 +23,7 @@ import { DashboardFormComponent } from 'app/pages/dashboard/components/dashboard
 import { DashboardComponent } from 'app/pages/dashboard/components/dashboard/dashboard.component';
 import { WidgetControllerComponent } from 'app/pages/dashboard/components/widget-controller/widget-controller.component';
 import { WidgetCpuComponent } from 'app/pages/dashboard/components/widget-cpu/widget-cpu.component';
-import WidgetHelpComponent from 'app/pages/dashboard/components/widget-help/widget-help.component';
+import { WidgetHelpComponent } from 'app/pages/dashboard/components/widget-help/widget-help.component';
 import { WidgetMemoryComponent } from 'app/pages/dashboard/components/widget-memory/widget-memory.component';
 import { WidgetNetworkComponent } from 'app/pages/dashboard/components/widget-network/widget-network.component';
 import { WidgetNicComponent } from 'app/pages/dashboard/components/widget-nic/widget-nic.component';

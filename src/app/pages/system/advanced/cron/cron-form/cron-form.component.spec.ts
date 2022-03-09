@@ -111,7 +111,7 @@ describe('CronFormComponent', () => {
         minute: '0-30',
         hour: '*/2',
         dom: '2',
-        dow: 'mon,tue',
+        dow: 'tue,wed',
         month: '*',
       },
       stderr: true,
@@ -126,7 +126,7 @@ describe('CronFormComponent', () => {
 
     await form.fillForm({
       Description: 'Updated cron job',
-      Schedule: '* */2 * * 1-4',
+      Schedule: '* */2 * * 0-4',
       Enabled: false,
     });
 
@@ -142,7 +142,7 @@ describe('CronFormComponent', () => {
         hour: '*/2',
         dom: '*',
         month: '*',
-        dow: 'mon,tue,wed,sun',
+        dow: 'mon,tue,wed,thu,sun',
       },
       stderr: false,
       stdout: true,
