@@ -55,7 +55,7 @@ def open_the_storage_page_and_click_on_the_system_3_dots_button_select_add_datas
     assert wait_on_element(driver, 5, '//tr[contains(.,"tank")]//mat-icon[text()="more_vert"]', 'clickable')
     driver.find_element_by_xpath('//tr[contains(.,"tank")]//mat-icon[text()="more_vert"]').click()
     assert wait_on_element(driver, 4, '//button[normalize-space(text())="Add Dataset"]', 'clickable')
-    driver.find_element_by_xpath('//button[normalize-space(text())="Add Dataset"]').click()    
+    driver.find_element_by_xpath('//button[normalize-space(text())="Add Dataset"]').click()
 
 
 @then(parsers.parse('on the Add Dataset page, input the dataset name "{dataset_name}".'))
