@@ -134,4 +134,4 @@ def click_the_save_button_which_should_be_returned_to_the_storage_page_on_the_ed
     driver.find_element_by_xpath('//tr[contains(.,"tank_acl_dataset")]//mat-icon[text()="more_vert"]').click()
     assert wait_on_element(driver, 5, '//button[normalize-space(text())="View Permissions"]', 'clickable')
     driver.find_element_by_xpath('//button[normalize-space(text())="View Permissions"]').click()
-    assert wait_on_element(driver, 10, f'//div[text()="{group_name}" and @class="item-value"]')
+    assert wait_on_element(driver, 10, f'//div[text()="Group - {group_name}"]')
