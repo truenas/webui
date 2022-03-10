@@ -29,6 +29,15 @@ interface Slide {
   index?: string;
 }
 
+enum Path {
+  Overview = 'overview',
+  Empty = 'empty',
+  Addresses = 'addresses',
+  Vlans = 'vlans',
+  Interfaces = 'interfaces',
+  VlanAddresses = 'vlan addresses',
+}
+
 @UntilDestroy()
 @Component({
   selector: 'widget-nic',
@@ -46,6 +55,7 @@ export class WidgetNicComponent extends WidgetComponent implements AfterViewInit
 
   readonly LinkState = LinkState;
   readonly NetworkInterfaceAliasType = NetworkInterfaceAliasType;
+  readonly PathEnum = Path;
 
   get currentSlideName(): string {
     return this.path[parseInt(this.currentSlide)].name;
@@ -58,9 +68,9 @@ export class WidgetNicComponent extends WidgetComponent implements AfterViewInit
   title = 'Interface';
 
   path: Slide[] = [
-    { name: this.translate.instant('overview') },
-    { name: this.translate.instant('empty') },
-    { name: this.translate.instant('empty') },
+    { name: this.PathEnum.Overview },
+    { name: this.PathEnum.Empty },
+    { name: this.PathEnum.Empty },
   ];
 
   get ipAddresses(): NetworkInterfaceAlias[] {
@@ -114,7 +124,7 @@ export class WidgetNicComponent extends WidgetComponent implements AfterViewInit
   }
 
   updateSlide(name: string, verified: boolean, slideIndex: number, dataIndex?: number): void {
-    if (name !== 'overview' && !verified) { return; }
+    if (name !== this.PathEnum.Overview && !verified) { return; }
     const slide: Slide = {
       name,
       index: typeof dataIndex !== 'undefined' ? dataIndex.toString() : null,
