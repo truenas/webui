@@ -2,13 +2,10 @@
 """SCALE UI: feature tests."""
 
 import time
-from selenium.webdriver.common.action_chains import ActionChains
-from selenium.webdriver.common.keys import Keys
 from function import (
     wait_on_element,
     is_element_present,
     wait_on_element_disappear,
-    attribute_value_exist,
     ssh_cmd
 )
 from pytest_bdd import (
@@ -154,24 +151,14 @@ def check_the_enable_box_and_click_save(driver):
 @then('the Active Directory setup should successfully save without an error.')
 def the_active_directory_setup_should_successfully_save_without_an_error(driver):
     """the Active Directory setup should successfully save without an error.."""
-    assert wait_on_element_disappear(driver, 60, '//h6[contains(.,"Please wait")]')
-    time.sleep(30)
+    assert wait_on_element_disappear(driver, 30, '//h6[contains(.,"Please wait")]')
+    assert wait_on_element_disappear(driver, 30, '//h1[text()="Start"]')
+    assert wait_on_element(driver, 7, f'//span[text()="{domain.upper()}"]')
 
 
 @then(parsers.parse('run "{cmd1}" and verify that "{ad_object1}" is in output.'))
 def run_cmd1_and_verify_that_ad01administrator_is_in__output(driver, cmd1, root_password, nas_ip, ad_object1):
     """verify that "AD01\administrator" is in output.."""
-    time.sleep(1)
-    global ssh_result
-    ssh_result = ssh_cmd(cmd1, 'root', root_password, nas_ip)
-    assert ssh_result['result'], ssh_result['output']
-    assert ad_object1 in ssh_result['output'], ssh_result['output']
-
-
-@then(parsers.parse('run "{cmd2}" andverify that "{ad_object2}" is in output.'))
-def run_cmd2_and_verify_that_ad01domain_admin_is_in_output(driver, cmd2, root_password, nas_ip, ad_object2):
-    """verify that "AD01\domain admin" is in output.."""
-    time.sleep(1)
     global ssh_result
     ssh_result = ssh_cmd(cmd1, 'root', root_password, nas_ip)
     assert ssh_result['result'], ssh_result['output']
@@ -181,7 +168,6 @@ def run_cmd2_and_verify_that_ad01domain_admin_is_in_output(driver, cmd2, root_pa
 @then(parsers.parse('Run "{cmd3}"'))
 def run_cmd3(driver, cmd3, root_password, nas_ip):
     """run cmd3"""
-    time.sleep(1)
     global ssh_result
     ssh_result = ssh_cmd(cmd3, 'root', root_password, nas_ip)
     assert ssh_result['result'], ssh_result['output']
@@ -224,17 +210,15 @@ def click_summit_the_dataset_name_data_should_be_created(driver, dataset_name):
 @then(parsers.parse('click on the "{dataset_name}" 3 dots button, select Edit Permissions.'))
 def click_on_the_dataset_name_3_dots_button_select_edit_permissions(driver, dataset_name):
     """click on the "{dataset_name}" 3 dots button, select Edit Permissions.."""
-    time.sleep(1)
-    #assert wait_on_element(driver, 5, '//div[normalize-space(text())="system"]//mat-icon', 'clickable')
-    #driver.find_element_by_xpath('//div[normalize-space(text())="system"]//mat-icon').click()
-    time.sleep(2)
+    assert wait_on_element(driver, 7, '//h1[text()="Storage"]')
+    assert wait_on_element(driver, 10, '//div[contains(text(),"my_acl_dataset")]')
     assert wait_on_element(driver, 5, '//tr[contains(.,"my_acl_dataset")]//mat-icon[text()="more_vert"]', 'clickable')
     driver.find_element_by_xpath('//tr[contains(.,"my_acl_dataset")]//mat-icon[text()="more_vert"]').click()
-    assert wait_on_element(driver, 5, '//button[normalize-space(text())="View Permissions"]')
+    assert wait_on_element(driver, 5, '//button[normalize-space(text())="View Permissions"]', 'clickable')
     driver.find_element_by_xpath('//button[normalize-space(text())="View Permissions"]').click()
-    time.sleep(2)
-    assert wait_on_element(driver, 5, '//mat-icon[normalize-space(text())="edit"]')
+    assert wait_on_element(driver, 5, '//mat-icon[normalize-space(text())="edit"]', 'clickable')
     driver.find_element_by_xpath('//mat-icon[normalize-space(text())="edit"]').click()
+
 
 @then(parsers.parse('The Edit ACL page should open, select OPEN for Default ACL Option, select "{group_name}" for Group name, check the Apply Group.'))
 def the_edit_acl_page_should_open_select_open_for_default_acl_option_select_group_name_for_group_name_check_the_apply_group(driver, group_name):
@@ -259,7 +243,7 @@ def the_edit_acl_page_should_open_select_open_for_default_acl_option_select_grou
     driver.find_element_by_xpath('//span[contains(text(),"Group")]').click()
     assert wait_on_element(driver, 5, '//input[@data-placeholder="Group"]', 'inputable')
     driver.find_element_by_xpath('//input[@data-placeholder="Group"]').clear()
-    driver.find_element_by_xpath('//input[@data-placeholder="Group"]').send_keys('AD01\Domain users')
+    driver.find_element_by_xpath('//input[@data-placeholder="Group"]').send_keys(f'{group_name}')
     assert wait_on_element(driver, 5, '//mat-select[@ix-auto="select__Permissions"]', 'clickable')
     driver.find_element_by_xpath('//mat-select[@ix-auto="select__Permissions"]').click()
     assert wait_on_element(driver, 5, '//div//mat-option//span[contains(text(),"Full Control")]', 'clickable')
@@ -271,14 +255,11 @@ def click_the_save_button_which_should_be_returned_to_the_storage_page_on_the_ed
     """click the Save button, which should be returned to the storage page, on the Edit ACL page, verify that the group name is "{group_name}".."""
     assert wait_on_element(driver, 5, '//span[contains(text(),"Save Access Control List")]', 'clickable')
     driver.find_element_by_xpath('//span[contains(text(),"Save Access Control List")]').click()
-    time.sleep(8)
-    #driver.find_element_by_xpath('//div[normalize-space(text())="system"]//mat-icon').click()
-    time.sleep(2)
+    assert wait_on_element_disappear(driver, 30, '//h6[contains(.,"Please wait")]')
+    assert wait_on_element(driver, 10, '//h1[text()="Storage"]')
     assert wait_on_element(driver, 10, '//div[contains(text(),"my_acl_dataset")]')
-    time.sleep(2)
-    assert wait_on_element(driver, 5, '//tr[contains(.,"my_acl_dataset")]//mat-icon[text()="more_vert"]')
+    assert wait_on_element(driver, 5, '//tr[contains(.,"my_acl_dataset")]//mat-icon[text()="more_vert"]', 'clickable')
     driver.find_element_by_xpath('//tr[contains(.,"my_acl_dataset")]//mat-icon[text()="more_vert"]').click()
     assert wait_on_element(driver, 5, '//button[normalize-space(text())="View Permissions"]')
     driver.find_element_by_xpath('//button[normalize-space(text())="View Permissions"]').click()
-    time.sleep(2)
-    assert wait_on_element(driver, 5, '//div[contains(text(),"AD01\\administrator")]')
+    assert wait_on_element(driver, 7, f'//div[text()="{group_name}" and @class="item-value"]')
