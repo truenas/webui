@@ -99,7 +99,7 @@ def the_edit_acl_page_should_open_select_open_for_default_acl_option_select_grou
     assert wait_on_element(driver, 5, '//div[contains(.,"Owner Group:") and @class="control"]//input', 'inputable')
     driver.find_element_by_xpath('//div[contains(.,"Owner Group:") and @class="control"]//input').click()
     driver.find_element_by_xpath('//div[contains(.,"Owner Group:") and @class="control"]//input').clear()
-    driver.find_element_by_xpath('//div[contains(.,"Owner Group:") and @class="control"]//input').send_keys('AD01\\administrator')
+    driver.find_element_by_xpath('//div[contains(.,"Owner Group:") and @class="control"]//input').send_keys(group_name)
     assert wait_on_element(driver, 5, '//span[contains(text(),"Save Access Control List")]', 'clickable')
     driver.find_element_by_xpath('//span[contains(text(),"Save Access Control List")]').click()
     assert wait_on_element(driver, 7, '//h1[contains(.,"Storage")]')
