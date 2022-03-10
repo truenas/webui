@@ -20,9 +20,12 @@ import { StaticRoute } from 'app/interfaces/static-route.interface';
 import { Interval } from 'app/interfaces/timeout.interface';
 import { AppTableAction, AppTableConfig, TableComponent } from 'app/modules/entity/table/table.component';
 import { TableService } from 'app/modules/entity/table/table.service';
-import { IpmiRow } from 'app/pages/network/network-dashboard.interface';
-import { NetworkInterfaceUi } from 'app/pages/network/network-interface-ui.interface';
-import { StaticRouteFormComponent } from 'app/pages/network/static-route-form/static-route-form.component';
+import {
+  OpenVpnServerConfigComponent,
+} from 'app/pages/network/components/open-vpn-server-config/open-vpn-server-config.component';
+import { StaticRouteFormComponent } from 'app/pages/network/components/static-route-form/static-route-form.component';
+import { IpmiRow } from 'app/pages/network/interfaces/network-dashboard.interface';
+import { NetworkInterfaceUi } from 'app/pages/network/interfaces/network-interface-ui.interface';
 import {
   AppLoaderService,
   DialogService,
@@ -34,10 +37,9 @@ import { IpmiService } from 'app/services/ipmi.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { ModalService } from 'app/services/modal.service';
 import { EntityUtils } from '../../modules/entity/utils';
-import { InterfacesFormComponent } from './forms/interfaces-form.component';
-import { IpmiFormComponent } from './forms/ipmi-form.component';
-import { OpenvpnClientComponent } from './forms/service-openvpn-client.component';
-import { OpenvpnServerComponent } from './forms/service-openvpn-server.component';
+import { InterfacesFormComponent } from './components/forms/interfaces-form.component';
+import { IpmiFormComponent } from './components/forms/ipmi-form.component';
+import { OpenvpnClientComponent } from './components/forms/service-openvpn-client.component';
 
 @UntilDestroy()
 @Component({
@@ -156,7 +158,7 @@ export class NetworkComponent implements OnInit, OnDestroy {
       if (row.service === ServiceName.OpenVpnClient) {
         this.modalService.openInSlideIn(OpenvpnClientComponent, row.id);
       } else if (row.service === ServiceName.OpenVpnServer) {
-        this.modalService.openInSlideIn(OpenvpnServerComponent, row.id);
+        this.slideInService.open(OpenVpnServerConfigComponent, { wide: true });
       }
     },
     afterGetData: () => {
@@ -165,7 +167,7 @@ export class NetworkComponent implements OnInit, OnDestroy {
         if (state.configureOpenVPN === 'client') {
           this.modalService.openInSlideIn(OpenvpnClientComponent);
         } else {
-          this.modalService.openInSlideIn(OpenvpnServerComponent);
+          this.slideInService.open(OpenVpnServerConfigComponent, { wide: true });
         }
       }
     },

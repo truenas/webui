@@ -10,9 +10,9 @@ import { IxRadioGroupHarness } from 'app/modules/ix-forms/components/ix-radio-gr
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
+import { NetworkConfigurationComponent } from 'app/pages/network/components/configuration/configuration.component';
 import { DialogService, LanguageService, WebSocketService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { NetworkConfigurationComponent } from './configuration.component';
 
 describe('NetworkConfigurationComponent', () => {
   let spectator: Spectator<NetworkConfigurationComponent>;

@@ -1,9 +1,11 @@
+import { OpenVpnDeviceType } from 'app/enums/open-vpn-device-type.enum';
+
 export interface OpenvpnServerConfig {
   additional_parameters: string;
   authentication_algorithm: string;
   cipher: string;
   compression: string;
-  device_type: string;
+  device_type: OpenVpnDeviceType;
   id: number;
   interface: string;
   netmask: number;

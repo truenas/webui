@@ -2389,6 +2389,7 @@
   "Open VPN Server": "",
   "OpenVPN": "",
   "OpenVPN Client Settings": "",
+  "OpenVPN Server": "",
   "OpenVPN Server Settings": "",
   "OpenVPN {serviceLabel} service failed to start.": "",
   "OpenVPN {serviceLabel} service failed to stop.": "",

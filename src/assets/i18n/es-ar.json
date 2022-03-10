@@ -633,6 +633,7 @@
   "Open": "",
   "Open Ticket": "",
   "OpenVPN": "",
+  "OpenVPN Server": "",
   "OpenVPN {serviceLabel} service failed to start.": "",
   "OpenVPN {serviceLabel} service failed to stop.": "",
   "Optional. Only needed for private images.": "",
