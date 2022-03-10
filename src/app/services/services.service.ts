@@ -11,10 +11,6 @@ import { WebSocketService } from './ws.service';
 export class ServicesService {
   constructor(protected ws: WebSocketService) {}
 
-  getSmbBindIpChoices(): Observable<Choices> {
-    return this.ws.call('smb.bindip_choices');
-  }
-
   // OpenVPN Service
   getOpenVpnClientAuthAlgorithmChoices(): Observable<Choices> {
     return this.ws.call('openvpn.client.authentication_algorithm_choices');
