@@ -19,5 +19,10 @@ module.exports = {
   moduleNameMapper: pathsToModuleNameMapper(compilerOptions.paths || {}, {
     prefix: '<rootDir>/',
     "^@/(.)$": "/src/$1"
-  })
+  }),
+  coverageThreshold: {
+    global: {
+      lines: 0,
+    },
+  },
 };

@@ -12,8 +12,10 @@ jobs:
           cache: 'yarn'
       - run: yarn install --frozen-lockfile
       - run: yarn run extract # Extracts messages again to make sure they are not broken
+      - run: yarn build:prod:aot
       - uses: ArtiomTr/jest-coverage-report-action@v2
         with:
           test-script: yarn test:pr
           package-manager: yarn
-      - run: yarn build:prod:aot
+          skip-step: install
+          annotations: none
