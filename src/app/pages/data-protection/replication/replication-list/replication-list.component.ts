@@ -228,7 +228,7 @@ export class ReplicationListComponent implements EntityTableConfig {
         this.dialog.errorReport(row.state.state, `<pre>${row.state.error}</pre>`);
       }
     } else {
-      this.dialog.info(globalHelptext.noLogDilaog.title, globalHelptext.noLogDilaog.message);
+      this.dialog.info(globalHelptext.noLogDialog.title, globalHelptext.noLogDialog.message);
     }
   }
 

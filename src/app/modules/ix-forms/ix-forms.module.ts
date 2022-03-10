@@ -2,10 +2,23 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatChipsModule } from '@angular/material/chips';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatRadioModule } from '@angular/material/radio';
+import { MatSelectModule } from '@angular/material/select';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { TreeModule } from '@circlon/angular-tree-component';
 import { TranslateModule } from '@ngx-translate/core';
 import { MarkdownModule } from 'ngx-markdown';
-import { MaterialModule } from 'app/app-material.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { IxCheckboxComponent } from 'app/modules/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxChipsComponent } from 'app/modules/ix-forms/components/ix-chips/ix-chips.component';
@@ -24,17 +37,28 @@ import { IxTextareaComponent } from 'app/modules/ix-forms/components/ix-textarea
 import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
 import IxValidatorsService from 'app/modules/ix-forms/services/ix-validators.service';
 import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
-import { EnclosureModule } from 'app/pages/system/view-enclosure/enclosure.module';
 
 @NgModule({
   imports: [
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
-    MaterialModule,
     MarkdownModule.forRoot(),
     FlexLayoutModule,
-    EnclosureModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatSelectModule,
+    MatButtonModule,
+    MatAutocompleteModule,
+    MatIconModule,
+    MatSlideToggleModule,
+    MatProgressBarModule,
+    MatRadioModule,
+    MatTooltipModule,
+    MatDividerModule,
+    MatProgressSpinnerModule,
+    MatChipsModule,
+    MatCheckboxModule,
     CommonDirectivesModule,
     TooltipModule,
     TranslateModule,

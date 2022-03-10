@@ -34,7 +34,7 @@ export class ViewChartDonutComponent extends ViewChartComponent implements OnIni
       },
       tooltip: {
         format: {
-          value: (value: any) => {
+          value: (value: string) => {
             if (this.units) {
               return value + this.units;
             }

@@ -2,13 +2,11 @@ import {
   Component, AfterViewInit, Input, SimpleChanges, OnChanges,
 } from '@angular/core';
 import { UUID } from 'angular2-uuid';
-import { ViewComponent } from 'app/core/components/view/view.component';
 import {
   ChartConfiguration,
   LegendOptions,
   TooltipOptions,
 } from 'app/modules/charts/components/view-chart/view-chart.component.types';
-import { ThemeService } from 'app/services/theme/theme.service';
 
 export interface ChartData {
   legend: string;
@@ -51,7 +49,7 @@ export const viewChartMetadata = {
   template: viewChartMetadata.template,
   styleUrls: ['./view-chart.component.scss'],
 })
-export class ViewChartComponent extends ViewComponent implements OnChanges, AfterViewInit {
+export class ViewChartComponent implements OnChanges, AfterViewInit {
   chartColors: string[];
   maxLabels: number;
   units: string;
@@ -90,8 +88,7 @@ export class ViewChartComponent extends ViewComponent implements OnChanges, Afte
 
   chartConfig: ChartConfiguration;
 
-  constructor(themeService: ThemeService) {
-    super(themeService);
+  constructor() {
     this.chartId = 'chart-' + UUID.UUID();
     this.chartType = 'pie';
     this.units = '';
@@ -115,13 +112,13 @@ export class ViewChartComponent extends ViewComponent implements OnChanges, Afte
     return this._data;
   }
 
-  set data(d: ChartData[]) {
-    if (!d) {
+  set data(chartData: ChartData[]) {
+    if (!chartData) {
       this._data = [];
     } else {
       const result: any[] = [];
 
-      d.forEach((data) => {
+      chartData.forEach((data) => {
         // setup data
         const legend = [data.legend];
         const dataObj = legend.concat(data.data);

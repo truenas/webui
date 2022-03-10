@@ -2,8 +2,17 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatListModule } from '@angular/material/list';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatTabsModule } from '@angular/material/tabs';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslateModule } from '@ngx-translate/core';
-import { MaterialModule } from 'app/app-material.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { CastModule } from 'app/modules/cast/cast.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
@@ -46,9 +55,18 @@ import { WebdavListComponent } from './webdav/webdav-list/webdav-list.component'
     ReactiveFormsModule,
     routing,
     EntityModule,
-    MaterialModule,
     TranslateModule,
+    MatProgressBarModule,
+    MatTabsModule,
+    MatCardModule,
+    MatIconModule,
     FlexLayoutModule,
+    MatListModule,
+    MatMenuModule,
+    MatFormFieldModule,
+    MatTooltipModule,
+    MatButtonModule,
+    MatProgressSpinnerModule,
     CommonDirectivesModule,
     TooltipModule,
     CastModule,

@@ -1,6 +1,6 @@
 import { CdkVirtualScrollViewport } from '@angular/cdk/scrolling';
 import {
-  Component, ElementRef, OnInit, OnDestroy, AfterViewInit, ViewChild,
+  Component, ElementRef, OnInit, OnDestroy, AfterViewInit, ViewChild, Type,
 } from '@angular/core';
 import {
   Router, ActivatedRoute,
@@ -72,7 +72,7 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, AfterViewIn
   fieldConfig: FieldConfig[] = [];
   fieldSets: FieldSet[];
   diskReportConfigReady = false;
-  actionsConfig: any;
+  actionsConfig: { actionType: Type<ReportsGlobalControlsComponent>; actionConfig: ReportsDashboardComponent };
 
   constructor(
     public modalService: ModalService,

@@ -79,8 +79,8 @@ describe('ServiceUpsComponent', () => {
     expect(values).toEqual({
       Identifier: 'ups',
       'UPS Mode': 'Master',
-      'Driver *': 'Powerware ups 5 PW9315 3-phase (bcmxcp)',
-      'Port or Hostname *': '/dev/uhid',
+      Driver: 'Powerware ups 5 PW9315 3-phase (bcmxcp)',
+      'Port or Hostname': '/dev/uhid',
       'Monitor User': 'upsmon',
       'Monitor Password': '',
       'Extra Users': '',
@@ -102,8 +102,8 @@ describe('ServiceUpsComponent', () => {
     await form.fillForm({
       Identifier: 'ups',
       'UPS Mode': 'Master',
-      'Driver *': 'HP ups 3 R1500 G2 Serial port (bcmxcp)',
-      'Port or Hostname *': 'auto',
+      Driver: 'HP ups 3 R1500 G2 Serial port (bcmxcp)',
+      'Port or Hostname': 'auto',
       'Monitor User': 'upsmon',
       'Monitor Password': 'pleasechange',
       'Extra Users': '',
