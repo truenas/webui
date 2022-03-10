@@ -537,6 +537,14 @@ button.mat-button.mat-primary {
   opacity: 1 !important;
 }
 
+a.mat-button.mat-primary:focus-visible,
+button.mat-button.mat-primary:focus-visible,
+button.mat-button.mat-accent:focus-visible {
+  box-shadow: none !important;
+  outline: 1px solid var(--fg2);
+  outline-offset: 0;
+}
+
 button.mat-button.mat-accent {
   background-color: var(--accent) !important;
   color: var(--accent-txt) !important;

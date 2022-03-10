@@ -58,6 +58,11 @@
   width: 175px;
 }
 
+.ix-logo:focus-visible {
+  background-color: var(--hover-bg);
+  outline: 1px solid var(--accent);
+}
+
 .ix-logo.xs {
   height: 50px;
   right: 0;

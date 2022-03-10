@@ -1562,6 +1562,6 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
 
   // focus state styles for mat-form-field
   .mat-form-field.mat-focused:focus-within {
-    outline: 1px solid var(--accent);
+    outline: 1px solid var(--primary);
   }
 } // end of ix theme

@@ -38,7 +38,7 @@ input[name='DummyUsername'] {
 }
 
 .input-container input:focus-visible {
-  box-shadow: 0 0 0 1px var(--accent) inset;
+  box-shadow: 0 0 0 1px var(--primary) inset;
   outline: 0 transparent;
 }
 

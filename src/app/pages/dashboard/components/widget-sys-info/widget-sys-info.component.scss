@@ -35,6 +35,11 @@
   color: var(--primary-txt) !important;
 }
 
+.widget .left button.mat-button:focus-visible {
+  box-shadow: 0 0 0 1px var(--fg2) inset !important;
+  outline-width: 0;
+}
+
 .view-overview .mat-card-title-text {
   margin-left: calc(40% + 16px) !important;
 }

@@ -82,6 +82,7 @@ a:hover {
 }
 
 a:focus-visible,
+button.mat-button.mat-accent:focus-visible:focus-visible,
 .ix-blue button:focus-visible,
 button:focus-visible {
   background-color: var(--hover-bg) !important;
