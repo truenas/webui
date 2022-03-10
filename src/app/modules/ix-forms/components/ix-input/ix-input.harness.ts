@@ -43,4 +43,8 @@ export class IxInputHarness extends ComponentHarness implements IxFormControlHar
 
     return harness.setValue(value);
   }
+
+  async isDisabled(): Promise<boolean> {
+    return (await this.getMatInputHarness()).isDisabled();
+  }
 }

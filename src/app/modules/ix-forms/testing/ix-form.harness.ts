@@ -101,4 +101,17 @@ export class IxFormHarness extends ComponentHarness {
       await control.setValue(values[label]);
     }
   }
+
+  async getDisabledState(): Promise<{ [label: string]: boolean }> {
+    const controlsDict = await this.getControlHarnessesDict();
+
+    const result: { [label: string]: boolean } = {};
+    for (const label in controlsDict) {
+      const control = controlsDict[label] as IxFormControlHarness;
+
+      result[label] = await control.isDisabled();
+    }
+
+    return result;
+  }
 }

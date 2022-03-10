@@ -4,6 +4,8 @@
 :host {
   display: block;
   margin-bottom: 12px;
+  margin-top: 12px;
+  padding: 8px 0;
 }
 
 .full-width {
@@ -11,17 +13,13 @@
   width: 100%;
 }
 
-.container {
-  padding: 8px 0;
-}
-
 .tooltip {
-  margin-left: 8px;
+  margin: 0 0 0 8px;
 }
 
 .input-container {
   background: var(--bg1);
-  border: solid 1px var(--lines);
+  border: solid 1.5px var(--lines);
   border-radius: 2px;
   font-size: 12px;
   padding: 7px;
@@ -42,11 +40,15 @@
 }
 
 .label-container {
-  margin-bottom: 5px;
+  align-items: center;
+  display: flex;
+  margin-bottom: 1px;
   margin-left: 1px;
+  min-height: 24px;
 }
 
 .label {
+  display: inline-flex;
   font-size: x-small;
 }
 

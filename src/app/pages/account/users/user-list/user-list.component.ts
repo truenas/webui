@@ -15,6 +15,7 @@ import { User } from 'app/interfaces/user.interface';
 import { EmptyConfig, EmptyType } from 'app/modules/entity/entity-empty/entity-empty.component';
 import { EntityToolbarComponent } from 'app/modules/entity/entity-toolbar/entity-toolbar.component';
 import { ControlConfig, ToolbarConfig } from 'app/modules/entity/entity-toolbar/models/control-config.interface';
+import { IxDetailRowDirective } from 'app/modules/ix-tables/directives/ix-detail-row.directive';
 import { userPageEntered } from 'app/pages/account/users/store/user.actions';
 import { selectUsers, selectUserState, selectUsersTotal } from 'app/pages/account/users/store/user.selectors';
 import { CoreService } from 'app/services/core-service/core.service';
@@ -22,7 +23,7 @@ import { ModalService } from 'app/services/modal.service';
 import { AppState } from 'app/store';
 import { builtinUsersToggled } from 'app/store/preferences/preferences.actions';
 import { waitForPreferences } from 'app/store/preferences/preferences.selectors';
-import { IxDetailRowDirective } from '../../../../modules/ix-tables/directives/ix-detail-row.directive';
+import { IxSlideInService } from '../../../../services/ix-slide-in.service';
 import { UserFormComponent } from '../user-form/user-form.component';
 
 @UntilDestroy()
@@ -73,6 +74,7 @@ export class UserListComponent implements OnInit {
   constructor(
     private translate: TranslateService,
     private modalService: ModalService,
+    private slideIn: IxSlideInService,
     private cdr: ChangeDetectorRef,
     private core: CoreService,
     private store$: Store<AppState>,
@@ -125,7 +127,8 @@ export class UserListComponent implements OnInit {
   }
 
   doAdd(): void {
-    this.modalService.openInSlideIn(UserFormComponent);
+    const modal = this.slideIn.open(UserFormComponent, { wide: true });
+    modal.setupForm();
   }
 
   onToggle(row: User): void {

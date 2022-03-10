@@ -4,16 +4,16 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
-import { of, Subject } from 'rxjs';
+import { of } from 'rxjs';
 import { mockWebsocket, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
 import { Preferences } from 'app/interfaces/preferences.interface';
 import { User } from 'app/interfaces/user.interface';
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxTableModule } from 'app/modules/ix-tables/ix-table.module';
-import { UserFormComponent } from 'app/pages/account/users/user-form/user-form.component';
 import {
-  WebSocketService, DialogService, ModalService, AppLoaderService,
+  WebSocketService, DialogService, AppLoaderService,
 } from 'app/services';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { selectPreferences } from 'app/store/preferences/preferences.selectors';
 import { UserDetailsRowComponent } from './user-details-row.component';
 
@@ -46,7 +46,6 @@ describe('UserDetailsRowComponent', () => {
   let spectator: Spectator<UserDetailsRowComponent>;
   let loader: HarnessLoader;
   let ws: WebSocketService;
-  let modal: ModalService;
   let dialog: DialogService;
 
   const createComponent = createComponentFactory({
@@ -65,11 +64,8 @@ describe('UserDetailsRowComponent', () => {
       mockProvider(DialogService, {
         dialogForm: jest.fn(() => of(true)),
       }),
-      mockProvider(ModalService, {
-        openInSlideIn: jest.fn(() => of(true)),
-        onClose$: new Subject<unknown>(),
-      }),
       mockProvider(AppLoaderService),
+      mockProvider(IxSlideInService),
       provideMockStore({
         selectors: [
           {
@@ -92,17 +88,14 @@ describe('UserDetailsRowComponent', () => {
     });
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     ws = spectator.inject(WebSocketService);
-    modal = spectator.inject(ModalService);
     dialog = spectator.inject(DialogService);
   });
 
   it('should open edit user form', async () => {
-    jest.spyOn(modal, 'openInSlideIn').mockImplementation();
-
     const editButton = await loader.getHarness(MatButtonHarness.with({ text: 'editEdit' }));
     await editButton.click();
 
-    expect(modal.openInSlideIn).toHaveBeenCalledWith(UserFormComponent, 1);
+    expect(spectator.inject(IxSlideInService).close).toHaveBeenCalled();
   });
 
   it('should make websocket call to delete user', async () => {

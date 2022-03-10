@@ -38,4 +38,8 @@ export class JiraOauthHarness extends ComponentHarness implements IxFormControlH
     const loginButton = await this.locatorFor(MatButtonHarness)();
     return loginButton.getText();
   }
+
+  async isDisabled(): Promise<boolean> {
+    return (await this.getMatInputHarness()).isDisabled();
+  }
 }
