@@ -126,12 +126,14 @@ def click_on_edit_the_interface_settings_page_should_open(driver):
 @then('uncheck DHCP, input the NAS IP, then click APPLY')
 def uncheck_dhcp_input_the_nas_ip_then_click_apply(driver, nas_ip):
     """uncheck DHCP, input the NAS IP, then click APPLY."""
-    assert wait_on_element(driver, 7, '//mat-checkbox[@ix-auto="checkbox__DHCP"]')
+    assert wait_on_element(driver, 7, '//input[@ix-auto="input__IP Address"]', 'inputable')
+    assert wait_on_element(driver, 7, '//mat-checkbox[@ix-auto="checkbox__DHCP"]', 'clickable')
     if attribute_value_exist(driver, '//mat-checkbox[@ix-auto="checkbox__DHCP"]', 'class', 'mat-checkbox-checked'):
         driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__DHCP"]').click()
+    time.sleep(0.5)
     driver.find_element_by_xpath('//input[@ix-auto="input__IP Address"]').clear()
     driver.find_element_by_xpath('//input[@ix-auto="input__IP Address"]').send_keys(nas_ip)
-    assert wait_on_element(driver, 7, '//button[@ix-auto="button__APPLY"]')
+    assert wait_on_element(driver, 7, '//button[@ix-auto="button__APPLY"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__APPLY"]').click()
 
 
