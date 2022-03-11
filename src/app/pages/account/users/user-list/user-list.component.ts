@@ -1,5 +1,5 @@
 import {
-  Component, OnInit, ChangeDetectorRef, ViewChild, ChangeDetectionStrategy,
+  Component, OnInit, ChangeDetectorRef, ViewChild, ChangeDetectionStrategy, ViewChildren, QueryList,
 } from '@angular/core';
 import { MatSort, Sort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
@@ -13,13 +13,13 @@ import { User } from 'app/interfaces/user.interface';
 import { EmptyConfig, EmptyType } from 'app/modules/entity/entity-empty/entity-empty.component';
 import { EntityToolbarComponent } from 'app/modules/entity/entity-toolbar/entity-toolbar.component';
 import { ControlConfig, ToolbarConfig } from 'app/modules/entity/entity-toolbar/models/control-config.interface';
-import { DialogService } from 'app/services';
 import { CoreService } from 'app/services/core-service/core.service';
 import { ModalService } from 'app/services/modal.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 import { builtinUsersToggled } from 'app/store/preferences/preferences.actions';
 import { waitForPreferences } from 'app/store/preferences/preferences.selectors';
+import { IxDetailRowDirective } from '../../../../modules/ix-tables/directives/ix-detail-row.directive';
 import { UserFormComponent } from '../user-form/user-form.component';
 
 @UntilDestroy()
@@ -54,6 +54,7 @@ export class UserListComponent implements OnInit {
     title: this.translate.instant('Can not retrieve response'),
   };
   expandedRow: User;
+  @ViewChildren(IxDetailRowDirective) private detailRows: QueryList<IxDetailRowDirective>;
 
   private hideBuiltinUsers = true;
 
@@ -68,7 +69,6 @@ export class UserListComponent implements OnInit {
   }
 
   constructor(
-    private dialogService: DialogService,
     private ws: WebSocketService,
     private translate: TranslateService,
     private modalService: ModalService,
@@ -132,9 +132,20 @@ export class UserListComponent implements OnInit {
     this.modalService.openInSlideIn(UserFormComponent);
   }
 
-  expandRow(row: User): void {
+  onToggle(row: User): void {
     this.expandedRow = this.expandedRow === row ? null : row;
+    this.toggleDetailRows();
     this.cdr.markForCheck();
+  }
+
+  toggleDetailRows(): void {
+    this.detailRows.forEach((row) => {
+      if (row.expanded && row.ixDetailRow !== this.expandedRow) {
+        row.close();
+      } else if (!row.expanded && row.ixDetailRow === this.expandedRow) {
+        row.open();
+      }
+    });
   }
 
   setupToolbar(): void {

@@ -2,8 +2,13 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MatCardModule } from '@angular/material/card';
+import { MatIconModule } from '@angular/material/icon';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatTabsModule } from '@angular/material/tabs';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslateModule } from '@ngx-translate/core';
-import { MaterialModule } from 'app/app-material.module';
 import { CoreComponents } from 'app/core/core-components.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { EntityModule } from 'app/modules/entity/entity.module';
@@ -17,12 +22,17 @@ import { JobsListComponent } from './jobs-list/jobs-list.component';
     CoreComponents,
     EntityModule,
     CommonModule,
+    MatIconModule,
+    MatTooltipModule,
+    MatProgressBarModule,
+    MatProgressSpinnerModule,
+    MatTabsModule,
+    MatCardModule,
     FormsModule,
     IxTableModule,
     TranslateModule,
     ReactiveFormsModule,
     routing,
-    MaterialModule,
     FlexLayoutModule,
     CommonDirectivesModule,
   ],

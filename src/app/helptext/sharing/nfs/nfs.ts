@@ -3,7 +3,6 @@ import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
 export const helptextSharingNfs = {
   // NFSListComponent
-  column_name: T('Name'),
   column_path: T('Path'),
   column_comment: T('Description'),
   column_enabled: T('Enabled'),
@@ -98,8 +97,4 @@ export const helptextSharingNfs = {
   ),
 
   placeholder_security: T('Security'),
-
-  actions_add_path: T('Add Additional Path'),
-  actions_remove_path: T('Remove Additional Path'),
-
 };

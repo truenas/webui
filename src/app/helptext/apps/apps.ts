@@ -1,4 +1,3 @@
-import { Validators } from '@angular/forms';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
 export default {
@@ -200,256 +199,8 @@ export default {
       placeholder: T('Application Name'),
       tooltip: T(''),
     },
-    train: {
-      placeholder: T('Train'),
-      tooltip: T(''),
-    },
-    version: {
-      placeholder: T('Version'),
-      tooltip: T(''),
-    },
-    repository: {
-      placeholder: T('Image repository'),
-      tooltip: T(''),
-    },
-    container_port: {
-      placeholder: T('Container port'),
-      tooltip: T(''),
-    },
-    node_port: {
-      placeholder: T('Node port'),
-      tooltip: T('The range of valid ports is 9000-65535.'),
-      validation: [Validators.min(9000), Validators.max(65535)],
-    },
-
-    image: {
-      title: T('Image'),
-      tag: {
-        placeholder: T('Image Tag'),
-        tooltip: T('Tag to use for the specified image'),
-      },
-      repo: {
-        placeholder: T('Image Repository'),
-        tooltip: T('Docker image repository'),
-      },
-      pullPolicy: {
-        placeholder: T('Image Pull Policy'),
-        tooltip: T('Docker image pull policy'),
-        options: [
-          {
-            value: 'IfNotPresent',
-            label: T('Only pull image if not present on host.'),
-          },
-          {
-            value: 'Always',
-            label: T('Always pull image even if present on host.'),
-          },
-          {
-            value: 'Never',
-            label: T('Never pull image even if it is not present on host.'),
-          },
-        ],
-      },
-    },
-    update: {
-      title: T('Restart/Update'),
-      placeholder: T('Update Strategy'),
-      tooltip: T(''),
-      options: [
-        {
-          value: 'RollingUpdate',
-          label: T('Create new pods and then kill old ones.'),
-        },
-        {
-          value: 'Recreate',
-          label: T('Kill existing pods before creating new ones.'),
-        },
-      ],
-    },
-    restart: {
-      placeholder: T('Restart Policy'),
-      tooltip: T(''),
-      options: [
-        {
-          value: 'Always',
-          label: T('Always restart containers in a pod if they exit.'),
-        },
-        {
-          value: 'OnFailure',
-          label: T('Only restart containers if they exit with a failure.'),
-        },
-        {
-          value: 'Never',
-          label: T('Never restart containers if they exit.'),
-        },
-      ],
-    },
-    container: {
-      title: T('Container Entrypoint'),
-      command: {
-        placeholder: T('Container CMD'),
-        tooltip: T('Commands to execute inside container overriding image CMD default. \
- Use <i>ENTER</i> after each entry.'),
-      },
-      args: {
-        placeholder: T('Container Args'),
-        tooltip: T('Specify arguments for container command. Use <i>ENTER</i> after each entry.'),
-      },
-      env_vars: {
-        title: T('Container Environment Variables'),
-        key: {
-          placeholder: T('Environment Variable Name'),
-          tooltip: T(''),
-        },
-        value: {
-          placeholder: T('Environment Variable Value'),
-          tooltip: T(''),
-        },
-      },
-    },
     networking: T('Networking'),
-    externalInterfaces: {
-      title: T('Add External Interfaces'),
-      host: {
-        placeholder: T('Host Interface'),
-        tooltip: T(''),
-      },
-      ipam: {
-        placeholder: T('IP Address Management'),
-        tooltip: T('Specify type for IPAM.'),
-        options: [
-          {
-            value: 'dhcp',
-            label: T('Use DHCP'),
-          },
-          {
-            value: 'static',
-            label: T('Use static IP'),
-          },
-        ],
-      },
-      staticConfig: {
-        placeholder: T('Static IP'),
-        tooltip: T(''),
-      },
-      staticRoutes: {
-        title: T('Static Route Configuration'),
-
-        destination: {
-          placeholder: T('Static Route: Destination'),
-        },
-        gateway: {
-          placeholder: T('Static Route: Gateway'),
-        },
-      },
-    },
-    DNSPolicy: {
-      title: T('DNS'),
-      placeholder: T('DNS Policy'),
-      tooltip: T('Default behaviour is for pod to inherit the name resolution configuration \
- from the node that the pods run on. If <i>None</i> is specified, it allows a Pod to ignore DNS \
- settings from the Kubernetes environment.'),
-      options: [
-        {
-          value: 'Default',
-          label: T('Use Default DNS Policy'),
-        },
-        {
-          value: 'None',
-          label: T('Ignore DNS settings from the Kuberentes cluster'),
-        },
-      ],
-    },
-    DNSConfig: {
-      label: T('DNS Configuration'),
-      nameservers: {
-        placeholder: T('Nameservers'),
-        tooltip: T('Use <i>ENTER</i> after each entry.'),
-      },
-      searches: {
-        placeholder: T('Searches'),
-        tooltip: T('Use <i>ENTER</i> after each entry.'),
-      },
-    },
-    hostNetwork: {
-      title: T('Host Network/Host Ports'),
-      placeholder: T('Host Network'),
-      tooltip: T('Provide access to node network namespace for the workload.'),
-    },
     externalLabel: T('Add External Interfaces'),
-    hostPortsList: {
-      containerPort: {
-        placeholder: T('Container Port'),
-        validation: [
-          Validators.pattern('^[0-9]*$'),
-        ],
-      },
-      hostPort: {
-        placeholder: T('Host Port'),
-
-      },
-    },
-    portForwardingList: {
-      title: T('Port Forwarding List'),
-      containerPort: {
-        placeholder: T('Container Port'),
-        validation: [
-          Validators.pattern('^[0-9]*$'),
-        ],
-      },
-      nodePort: {
-        placeholder: T('Node Port'),
-        tooltip: T('The range of valid ports is 9000-65535.'),
-        validation: [
-          Validators.pattern('^[0-9]*$'),
-          Validators.min(9000), Validators.max(65535)],
-      },
-      protocol: {
-        placeholder: T('Protocol'),
-        options: [
-          {
-            value: 'TCP',
-            label: T('TCP Protocol'),
-          },
-          {
-            value: 'UDP',
-            label: T('UDP Protocol'),
-          },
-        ],
-      },
-    },
-    hostPathVolumes: {
-      title: T('Host Path Volumes'),
-      hostPath: {
-        placeholder: T('Host Path'),
-        tooltip: T(''),
-      },
-      mountPath: {
-        placeholder: T('Mount Path'),
-        tooltip: T('Path where host path will be mounted inside the pod'),
-      },
-      readOnly: {
-        placeholder: T('Read Only'),
-      },
-    },
-    volumes: {
-      title: T('Volumes'),
-      mountPath: {
-        placeholder: T('Mount Path'),
-        tooltip: T('Path where the volume path will be mounted inside the pod'),
-      },
-      datasetName: {
-        placeholder: T('Dataset Name'),
-        tooltip: T(''),
-      },
-    },
-    security: {
-      title: T('Security Settings'),
-      privileged: {
-        placeholder: T('Privileged'),
-        tooltip: T(''),
-      },
-    },
   },
 
   chartWizard: {
@@ -457,18 +208,6 @@ export default {
       label: 'Application Name',
       version: 'Version',
     },
-  },
-
-  wizardLabels: {
-    image: T('Image and Policies'),
-    container: T('Container Settings'),
-  },
-
-  updateImageDialog: {
-    title: T('Update Image'),
-    message: T('Update the image for '),
-    success: T('Success'),
-    successMsg: T('The image was updated.'),
   },
 
   podConsole: {
@@ -481,7 +220,7 @@ export default {
       placeholder: T('Pods'),
       action: T('Choose'),
     },
-    chooseConatiner: {
+    chooseContainer: {
       title: T('Choose container'),
       placeholder: T('Containers'),
     },
@@ -504,7 +243,7 @@ export default {
     choosePod: {
       placeholder: T('Pods'),
     },
-    chooseConatiner: {
+    chooseContainer: {
       placeholder: T('Containers'),
     },
     tailLines: {
@@ -587,22 +326,16 @@ export default {
   },
 
   pullImageForm: {
-    title: T('Pull Image'),
-    label: T('Docker Registry Authentication'),
     username: {
-      placeholder: T('User Name'),
       tooltip: T('Please input user name.'),
     },
     password: {
-      placeholder: T('Password'),
       tooltip: T('Please input password.'),
     },
     imageName: {
-      placeholder: T('Image Name'),
       tooltip: T('Please specify the name of the image to pull. Format for the name is "registry/repo/image"'),
     },
     imageTags: {
-      placeholder: T('Image Tag'),
       tooltip: T('Please specifies tag of the image'),
     },
   },

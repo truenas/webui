@@ -2,6 +2,8 @@ import { HttpClientModule, HttpClient } from '@angular/common/http';
 import { NgModule, ErrorHandler } from '@angular/core';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterModule } from '@angular/router';
@@ -20,13 +22,11 @@ import {
   TranslateMessageFormatCompiler,
 } from 'ngx-translate-messageformat-compiler';
 import { NgxWebstorageModule } from 'ngx-webstorage';
-import { MaterialModule } from 'app/app-material.module';
-import { ConsolePanelDialogComponent } from 'app/components/common/dialog/console-panel/console-panel-dialog.component';
-import { DownloadKeyDialogComponent } from 'app/components/common/dialog/download-key/download-key-dialog.component';
 import { IcuMissingTranslationHandler } from 'app/core/classes/icu-missing-translation-handler';
 import { createTranslateLoader } from 'app/core/classes/icu-translations-loader';
 import { CoreComponents } from 'app/core/core-components.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
+import { DownloadKeyDialogComponent } from 'app/modules/common/dialog/download-key/download-key-dialog.component';
 import { TerminalModule } from 'app/modules/terminal/terminal.module';
 import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
 import { IxFileUploadService } from 'app/services/ix-file-upload.service';
@@ -35,18 +35,10 @@ import { rootEffects, rootReducers } from 'app/store';
 import { CustomRouterStateSerializer } from 'app/store/router/custom-router-serializer';
 import { AppComponent } from './app.component';
 import { rootRouterConfig } from './app.routes';
-import { AppCommonModule } from './components/common/app-common.module';
-import { AboutDialogComponent } from './components/common/dialog/about/about-dialog.component';
-import { DirectoryServicesMonitorComponent } from './components/common/dialog/directory-services-monitor/directory-services-monitor.component';
-import { ResilverProgressDialogComponent } from './components/common/dialog/resilver-progress/resilver-progress.component';
 import { AppLoaderModule } from './modules/app-loader/app-loader.module';
 import { AppLoaderService } from './modules/app-loader/app-loader.service';
+import { AppCommonModule } from './modules/common/app-common.module';
 import { EntityModule } from './modules/entity/entity.module';
-import { ConfirmDialogComponent } from './pages/common/confirm-dialog/confirm-dialog.component';
-import { ErrorDialogComponent } from './pages/common/error-dialog/error-dialog.component';
-import { GeneralDialogComponent } from './pages/common/general-dialog/general-dialog.component';
-import { InfoDialogComponent } from './pages/common/info-dialog/info-dialog.component';
-import { SelectDialogComponent } from './pages/common/select-dialog/select-dialog.component';
 import { AuthService } from './services/auth/auth.service';
 import { NavigationService } from './services/navigation/navigation.service';
 import { RoutePartsService } from './services/route-parts/route-parts.service';
@@ -78,7 +70,6 @@ import { WebSocketService } from './services/ws.service';
       },
       useDefaultLang: false,
     }),
-    MaterialModule,
     RouterModule.forRoot(rootRouterConfig, { useHash: false }),
     NgxPopperjsModule.forRoot({ appendTo: 'body' }),
     MarkdownModule.forRoot(),
@@ -86,6 +77,7 @@ import { WebSocketService } from './services/ws.service';
     FormsModule,
     ReactiveFormsModule,
     EntityModule,
+    MatSnackBarModule,
     TerminalModule,
     CommonDirectivesModule,
     NgxWebstorageModule.forRoot(),
@@ -107,19 +99,11 @@ import { WebSocketService } from './services/ws.service';
       serializer: CustomRouterStateSerializer,
     }),
     EffectsModule.forRoot(rootEffects),
+    MatDialogModule,
   ],
   declarations: [
     AppComponent,
-    ConfirmDialogComponent,
-    ErrorDialogComponent,
-    InfoDialogComponent,
-    GeneralDialogComponent,
-    AboutDialogComponent,
-    DirectoryServicesMonitorComponent,
-    ConsolePanelDialogComponent,
     DownloadKeyDialogComponent,
-    ResilverProgressDialogComponent,
-    SelectDialogComponent,
   ],
   providers: [
     RoutePartsService,

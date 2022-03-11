@@ -10,7 +10,6 @@ import { ExplorerType } from 'app/enums/explorer-type.enum';
 import { LifetimeUnit } from 'app/enums/lifetime-unit.enum';
 import { LoggingLevel } from 'app/enums/logging-level.enum';
 import { NetcatMode } from 'app/enums/netcat-mode.enum';
-import { ProductType } from 'app/enums/product-type.enum';
 import { ReadOnlyMode } from 'app/enums/readonly-mode.enum';
 import { ReplicationEncryptionKeyFormat } from 'app/enums/replication-encryption-key-format.enum';
 import { RetentionPolicy } from 'app/enums/retention-policy.enum';
@@ -30,6 +29,7 @@ import { FormExplorerConfig, FormSelectConfig } from 'app/modules/entity/entity-
 import { RelationAction } from 'app/modules/entity/entity-form/models/relation-action.enum';
 import { RelationConnection } from 'app/modules/entity/entity-form/models/relation-connection.enum';
 import { EntityUtils } from 'app/modules/entity/utils';
+import { CronPresetValue } from 'app/modules/scheduler/utils/get-default-crontab-presets.utils';
 import {
   WebSocketService,
   TaskService,
@@ -601,7 +601,7 @@ export class ReplicationFormComponent implements FormConfiguration {
           name: 'restrict_schedule_picker',
           tooltip: helptext.restrict_schedule_picker_tooltip,
           options: ['restrict_schedule_begin', 'restrict_schedule_end'],
-          value: '0 0 * * *',
+          value: CronPresetValue.Daily,
           relation: [
             {
               action: RelationAction.Show,
@@ -1019,7 +1019,7 @@ export class ReplicationFormComponent implements FormConfiguration {
           placeholder: helptext.schedule_picker_placeholder,
           tooltip: helptext.schedule_picker_tooltip,
           options: ['schedule_begin', 'schedule_end'],
-          value: '0 0 * * *',
+          value: CronPresetValue.Daily,
           relation: [
             {
               action: RelationAction.Show,
@@ -1190,10 +1190,9 @@ export class ReplicationFormComponent implements FormConfiguration {
     this.isNew = entityForm.isNew;
     this.title = entityForm.isNew ? helptext.replication_task_add : helptext.replication_task_edit;
 
-    const isTruenasCore = window.localStorage.getItem('product_type') === ProductType.Core;
     const readonlyCtrl = this.entityForm.formGroup.controls['readonly'];
     if (this.pk === undefined) {
-      readonlyCtrl.setValue(isTruenasCore ? ReadOnlyMode.Set : ReadOnlyMode.Require);
+      readonlyCtrl.setValue(ReadOnlyMode.Require);
     }
 
     if (this.entityForm.formGroup.controls['speed_limit'].value) {
@@ -1260,7 +1259,7 @@ export class ReplicationFormComponent implements FormConfiguration {
     });
 
     entityForm.formGroup.controls['schedule_picker'].valueChanges.pipe(untilDestroyed(this)).subscribe((value) => {
-      if (value === '0 0 * * *' || value === '0 0 * * sun' || value === '0 0 1 * *') {
+      if (value === CronPresetValue.Daily || value === CronPresetValue.Weekly || value === CronPresetValue.Monthly) {
         entityForm.setDisabled('schedule_begin', true, true);
         entityForm.setDisabled('schedule_end', true, true);
       } else {
@@ -1270,7 +1269,7 @@ export class ReplicationFormComponent implements FormConfiguration {
     });
 
     entityForm.formGroup.controls['restrict_schedule_picker'].valueChanges.pipe(untilDestroyed(this)).subscribe((value) => {
-      if (value === '0 0 * * *' || value === '0 0 * * sun' || value === '0 0 1 * *') {
+      if (value === CronPresetValue.Daily || value === CronPresetValue.Weekly || value === CronPresetValue.Monthly) {
         entityForm.setDisabled('restrict_schedule_begin', true, true);
         entityForm.setDisabled('restrict_schedule_end', true, true);
       } else {
@@ -1395,9 +1394,9 @@ export class ReplicationFormComponent implements FormConfiguration {
   }
 
   parsePickerTime(
-    picker: any,
-    begin: any,
-    end: any,
+    picker: string,
+    begin: string,
+    end: string,
   ): Schedule {
     const spl = picker.split(' ');
     return {

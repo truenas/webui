@@ -22,7 +22,7 @@ export class EqualValidatorDirective implements Validator {
     // self value
     const currentControlValue = currentControl.value;
 
-    // control vlaue
+    // control value
     const anotherControl = currentControl.root.get(this.validateEqual);
     const anotherControlValue = anotherControl ? anotherControl.value : null;
 

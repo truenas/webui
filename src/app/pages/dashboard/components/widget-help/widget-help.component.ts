@@ -14,7 +14,7 @@ import { LocaleService } from 'app/services/locale.service';
   templateUrl: './widget-help.component.html',
   styleUrls: ['./widget-help.component.scss'],
 })
-export default class WidgetHelpComponent extends WidgetComponent implements OnInit {
+export class WidgetHelpComponent extends WidgetComponent implements OnInit {
   copyrightYear = this.localeService.getCopyrightYearFromBuildTime();
   systemType: ProductType;
   helptext = helptext;

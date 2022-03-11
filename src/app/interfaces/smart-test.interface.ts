@@ -18,6 +18,7 @@ export interface SmartTestUi extends SmartTest {
   cron_schedule: string;
   frequency: string;
   next_run: string;
+  disksLabel?: string[];
 }
 
 export interface SmartConfig {

@@ -1,5 +1,5 @@
 import {
-  Component, AfterViewInit, OnDestroy, Input,
+  Component, AfterViewInit, OnDestroy, Input, OnInit,
 } from '@angular/core';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -27,7 +27,7 @@ import { ThemeService } from 'app/services/theme/theme.service';
 
 interface NicInfo {
   ip: string;
-  state: string;
+  state: LinkState;
   in: string;
   out: string;
   lastSent: number;
@@ -46,7 +46,7 @@ interface NicInfoMap {
   templateUrl: './widget-network.component.html',
   styleUrls: ['./widget-network.component.scss'],
 })
-export class WidgetNetworkComponent extends WidgetComponent implements AfterViewInit, OnDestroy {
+export class WidgetNetworkComponent extends WidgetComponent implements OnInit, AfterViewInit, OnDestroy {
   @Input() stats: Subject<CoreEvent>;
   @Input() nics: BaseNetworkInterface[];
 
@@ -175,7 +175,7 @@ export class WidgetNetworkComponent extends WidgetComponent implements AfterView
     }
   }
 
-  ngAfterViewInit(): void {
+  ngOnInit(): void {
     this.availableNics = this.nics.filter((nic) => nic.state.link_state === LinkState.Up);
 
     this.updateGridInfo();
@@ -185,7 +185,9 @@ export class WidgetNetworkComponent extends WidgetComponent implements AfterView
     if (this.interval) {
       clearInterval(this.interval);
     }
+  }
 
+  ngAfterViewInit(): void {
     this.interval = setInterval(() => {
       this.fetchReportData();
     }, 10000);
@@ -198,6 +200,7 @@ export class WidgetNetworkComponent extends WidgetComponent implements AfterView
           const received = this.utils.convert(evt.data.received_bytes_rate);
 
           const nicInfo = this.nicInfoMap[nicName];
+          nicInfo.state = evt.data.link_state as LinkState;
           nicInfo.in = `${received.value} ${received.units}/s`;
           nicInfo.out = `${sent.value} ${sent.units}/s`;
 
@@ -320,9 +323,22 @@ export class WidgetNetworkComponent extends WidgetComponent implements AfterView
     return ip;
   }
 
-  getLinkState(nic: BaseNetworkInterface): string {
-    if (!nic.state.aliases) { return ''; }
-    return nic.state.link_state.replace(/_/g, ' ');
+  getLinkState(nic: BaseNetworkInterface): LinkState {
+    if (!nic.state.aliases) {
+      return null;
+    }
+    if (!this.nicInfoMap[nic.name]) {
+      return nic.state.link_state;
+    }
+    return this.nicInfoMap[nic.name].state;
+  }
+
+  getLinkStateLabel(nic: BaseNetworkInterface): string {
+    const linkState = this.getLinkState(nic);
+    if (!linkState) {
+      return '';
+    }
+    return linkState.replace(/_/g, ' ');
   }
 
   async fetchReportData(): Promise<void> {

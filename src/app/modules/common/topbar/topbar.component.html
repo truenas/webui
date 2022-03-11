@@ -1,0 +1,152 @@
+<mat-toolbar class="topbar">
+  <mat-toolbar-row>
+    <!-- Sidenav toggle button -->
+    <button mat-icon-button id="sidenavToggle" (click)="toggleCollapse()"
+      [matTooltip]="mat_tooltips.toggle_collapse | translate" matTooltipPosition="right" ix-auto ix-auto-type="button"
+      ix-auto-identifier="sidenavToggle">
+      <mat-icon>menu</mat-icon>
+    </button>
+    <span fxFlex></span>
+    <div>
+      <mat-icon (click)="openIx()" [svgIcon]="toggleLogo()" alt="iXsystems logo" class="ix-logo {{screenSize}} {{toggleLogo()}}">
+      </mat-icon>
+    </div>
+
+    <truecommand-button></truecommand-button>
+    
+    <!-- finish update -->
+    <button *ngIf="upgradeWaitingToFinish" mat-icon-button id="finish-update"
+      [matTooltip]="mat_tooltips.upgrade_waiting | translate" (click)="upgradePendingDialog()"
+      class="topbar-button-right" ix-auto ix-auto-type="button" ix-auto-identifier="upgradeWaiting">
+      <mat-icon class="movement">update</mat-icon>
+    </button>
+    <!--loading icon-->
+    <button *ngIf="updateIsRunning" mat-icon-button id="update-running" [matTooltip]="mat_tooltips.update | translate"
+      (click)="showUpdateDialog()" class="topbar-button-right" ix-auto ix-auto-type="button"
+      ix-auto-identifier="updateRunning">
+      <mat-icon class="movement">system_update_alt</mat-icon>
+    </button>
+    <button *ngIf="pendingNetworkChanges" mat-icon-button id="network"
+      [matTooltip]="mat_tooltips.pending_network_changes | translate" (click)="showNetworkChangesPending()"
+      class="topbar-button-right" ix-auto ix-auto-type="button" ix-auto-identifier="networkPending">
+      <mat-icon class="movement">device_hub</mat-icon>
+    </button>
+    <button *ngIf="showResilvering" mat-icon-button id="resilver" [matTooltip]="mat_tooltips.resilvering | translate"
+      (click)="showResilveringDetails()" class="topbar-button-right" ix-auto ix-auto-type="button"
+      ix-auto-identifier="resilvering">
+      <mat-icon class="fa-spin">autorenew</mat-icon>
+    </button>
+    <!-- HA Status -->
+    <span *ngIf="is_ha && ha_status_text">
+      <button *ngIf="ha_disabled_reasons.length === 0" mat-icon-button id="ha" [matTooltip]="ha_status_text | translate"
+              class="topbar-button-right" (click)="showHaStatus()" ix-auto ix-auto-type="button" ix-auto-identifier="haStatus">
+        <mat-icon svgIcon="ha_enabled"></mat-icon>
+      </button>
+      <button *ngIf="ha_disabled_reasons.length > 0" mat-icon-button id="ha" [matTooltip]="ha_status_text | translate"
+              class="topbar-button-right" (click)="showHaStatus()" ix-auto ix-auto-type="button" ix-auto-identifier="haStatus">
+        <mat-icon *ngIf="ha_disabled_reasons[0] === FailoverDisabledReason.NoSystemReady; else HADisabled" svgIcon="ha_reconnecting">
+        </mat-icon>
+        <ng-template #HADisabled>
+          <mat-icon svgIcon="ha_disabled"></mat-icon>
+        </ng-template>
+      </button>
+    </span>
+    <!-- Directory Services Monitor -->
+    <button mat-icon-button *ngIf="showDirServicesIcon" id="dirservices-manager"
+      [matTooltip]="mat_tooltips.directory_services_monitor | translate" (click)="onShowDirServicesMonitor()" ix-auto
+      class="topbar-button-right" ix-auto-type="button" ix-auto-identifier="dirServices">
+      <mat-icon>info</mat-icon>
+    </button>
+    <!-- Jobs Panel -->
+    <button
+      mat-icon-button
+      id="task-manager"
+      [matTooltip]="mat_tooltips.task_manager | translate"
+      class="topbar-button-right"
+      (click)="onJobIndicatorPressed()"
+      ix-auto
+      ix-auto-type="button"
+      ix-auto-identifier="taskManager"
+    >
+      <mat-icon
+        *appLet="jobBadgeCount$ | async as jobBadgeCount"
+        [matBadge]="jobBadgeCount"
+        matBadgeSize="small"
+        matBadgeColor="warn"
+        [matBadgeHidden]="jobBadgeCount === 0"
+      >assignment</mat-icon>
+    </button>
+    <!-- Alert toggle button -->
+    <button
+      mat-icon-button
+      class="topbar-button-right overflow-visible"
+      [matTooltip]="mat_tooltips.alerts | translate"
+      (click)="onAlertIndicatorPressed()"
+    >
+      <mat-icon
+        *appLet="alertBadgeCount$ | async as alertBadgeCount"
+        [matBadge]="alertBadgeCount"
+        matBadgeSize="small"
+        matBadgeColor="warn"
+        [matBadgeHidden]="alertBadgeCount === 0"
+      >notifications</mat-icon>
+    </button>
+    <!-- User and UI menu -->
+    <button
+      name="Settings"
+      mat-icon-button
+      [matTooltip]="mat_tooltips.settings | translate"
+      [matMenuTriggerFor]="accountMenu"
+      class="topbar-button-right"
+      ix-auto ix-auto-type="button" ix-auto-identifier="settings"
+    >
+      <mat-icon role="image" fontSet="mdi-set" fontIcon="mdi-account-circle" class="icon account"></mat-icon>
+    </button>
+    <mat-menu #accountMenu="matMenu">
+      <button class="hidden-button" mat-menu-item></button>
+      <button name="settings-change-password" mat-menu-item (click)="openChangePasswordDialog()" ix-auto
+        ix-auto-type="option" ix-auto-identifier="Change Password">
+        <mat-icon>dialpad</mat-icon>
+        <span>{{'Change Password' | translate}}</span>
+      </button>
+      <button name="settings-api" mat-menu-item [routerLink]="['/apikeys']" ix-auto ix-auto-type="option"
+        ix-auto-identifier="API">
+        <mat-icon>laptop</mat-icon>
+        <span>{{'API Keys' | translate}}</span>
+      </button>
+      <button name="settings-guide" mat-menu-item (click)="navExternal('https://www.truenas.com/docs/')" ix-auto ix-auto-type="option"
+        ix-auto-identifier="Guide">
+        <mat-icon>library_books</mat-icon>
+        <span>{{'Guide' | translate}}</span>
+      </button>
+      <button name="settings-about" mat-menu-item (click)="onShowAbout()" ix-auto ix-auto-type="option"
+        ix-auto-identifier="About">
+        <mat-icon>info_outline</mat-icon>
+        <span>{{'About' | translate}}</span>
+      </button>
+    </mat-menu>
+    <!-- Top right power menu -->
+    <button name="Power" mat-icon-button [matTooltip]="mat_tooltips.power | translate" [matMenuTriggerFor]="runMenu"
+      class="topbar-button-right" ix-auto ix-auto-type="button" ix-auto-identifier="power">
+      <mat-icon>power_settings_new</mat-icon>
+    </button>
+    <mat-menu #runMenu="matMenu">
+      <button class="hidden-button" mat-menu-item></button>
+      <button name="power-log-out" mat-menu-item (click)="signOut()" ix-auto ix-auto-type="option"
+        ix-auto-identifier="Log Out">
+        <mat-icon>exit_to_app</mat-icon>
+        <span>{{'Log Out' | translate}}</span>
+      </button>
+      <button name="power-restart" mat-menu-item (click)="onReboot()" ix-auto ix-auto-type="option"
+        ix-auto-identifier="Restart">
+        <mat-icon>replay</mat-icon>
+        <span>{{'Restart' | translate}}</span>
+      </button>
+      <button name="power-shut-down" mat-menu-item (click)="onShutdown()" ix-auto ix-auto-type="option"
+        ix-auto-identifier="Shut Down">
+        <mat-icon>power_settings_new</mat-icon>
+        <span>{{'Shut Down' | translate}}</span>
+      </button>
+    </mat-menu>
+  </mat-toolbar-row>
+</mat-toolbar>

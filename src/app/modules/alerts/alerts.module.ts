@@ -1,10 +1,12 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatRippleModule } from '@angular/material/core';
 import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
 import { MatMenuModule } from '@angular/material/menu';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterModule } from '@angular/router';
 import { EffectsModule } from '@ngrx/effects';
@@ -28,6 +30,8 @@ import { alertStateKey } from 'app/modules/alerts/store/alert.selectors';
     MatMenuModule,
     MatIconModule,
     RouterModule,
+    MatCheckboxModule,
+    MatProgressBarModule,
     MatListModule,
     MatTooltipModule,
     CommonDirectivesModule,
