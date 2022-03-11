@@ -20,6 +20,9 @@ from pytest_bdd import (
     when,
     parsers
 )
+import pytest
+
+pytestmark = [pytest.mark.debug_test]
 
 # random mount point to avoid the same test to break if it ever run in the same time
 mountpoint = f'/mnt/nfs_host{"".join(random.choices(string.digits, k=2))}'
@@ -301,7 +304,7 @@ def umount_the_nfs_share_and_verify_the_mountpoint_is_empty(driver):
     cmd = f'umount {mountpoint}'
     login_results = ssh_cmd(cmd, 'root', passwd, host)
     assert login_results['result'], str(login_results)
-    cmd = f'test -z (ls -A -- "{mountpoint}")'
+    cmd = f'test -z `ls -A -- "{mountpoint}"`'
     login_results = ssh_cmd(cmd, 'root', passwd, host)
     assert login_results['result'], str(login_results)
 

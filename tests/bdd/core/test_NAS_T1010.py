@@ -17,9 +17,7 @@ from pytest_bdd import (
     when,
     parsers
 )
-import pytest
 
-pytestmark = [pytest.mark.debug_test]
 
 @scenario('features/NAS-T1010.feature', 'Create an smb share with the system ACL dataset')
 def test_create_an_smb_share_with_the_system_acl_dataset():

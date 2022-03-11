@@ -16,6 +16,10 @@ from pytest_bdd import (
     then,
     when
 )
+import pytest
+
+pytestmark = [pytest.mark.debug_test]
+
 # random mount point to avoid the same test to break if it ever run in the same time
 mountpoint = f'/mnt/nfs_host{"".join(random.choices(string.digits, k=2))}'
 
