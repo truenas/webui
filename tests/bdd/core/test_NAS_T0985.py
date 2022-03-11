@@ -93,7 +93,8 @@ def when_the_pool_manager_appears_enter_the_tank_for_pool_name(driver):
 @then('click ada1 checkbox, press the right arrow under Data VDevs')
 def click_ada1_checkbox_press_the_right_arrow_under_data_vdevs(driver):
     """click ada1 checkbox, press the right arrow under Data VDevs."""
-    assert wait_on_element(driver, 7, '//button[@id="vdev__add-button"]', 'clickable')
+    assert wait_on_element(driver, 7, '//mat-checkbox[@id="pool-manager__disks-ada1"]', 'clickable')
+    assert wait_on_element(driver, 7, '//mat-checkbox[@id="pool-manager__disks-ada2"]', 'clickable')
     driver.find_element_by_xpath('//mat-checkbox[@id="pool-manager__disks-ada1"]').click()
     assert wait_on_element(driver, 7, '//button[@id="vdev__add-button"]', 'clickable')
     driver.find_element_by_xpath('//button[@id="vdev__add-button"]').click()
