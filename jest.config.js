@@ -4,7 +4,9 @@ const { compilerOptions } = require('./tsconfig');
 require('jest-preset-angular/ngcc-jest-processor');
 
 // Deliberately set to not UTC.
-process.env.TZ = 'Europe/Kiev';
+if (process) {
+  process.env.TZ = 'Europe/Kiev';
+}
 
 module.exports = {
   preset: 'jest-preset-angular',
