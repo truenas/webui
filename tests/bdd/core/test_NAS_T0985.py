@@ -59,7 +59,7 @@ def click_storage_on_the_side_menu_and_click_pools(driver):
     """click Storage on the side menu and click Pools."""
     assert wait_on_element(driver, 7, '//mat-list-item[@ix-auto="option__Storage"]', 'clickable')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Storage"]').click()
-    assert wait_on_element(driver, 7, '//mat-list-item[@ix-auto="option__Pools"]')
+    assert wait_on_element(driver, 7, '//mat-list-item[@ix-auto="option__Pools"]', 'clickable')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Pools"]').click()
 
 
@@ -67,6 +67,7 @@ def click_storage_on_the_side_menu_and_click_pools(driver):
 def when_the_pools_page_appears_click_add(driver):
     """when the Pools page appears, click Add."""
     assert wait_on_element(driver, 7, '//div[contains(.,"Pools")]')
+    assert wait_on_element(driver, 7, '//button[@ix-auto="button___ADD"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button___ADD"]').click()
 
 
@@ -74,7 +75,9 @@ def when_the_pools_page_appears_click_add(driver):
 def select_create_new_pool_click_create_pool(driver):
     """select Create new pool Click create pool."""
     assert wait_on_element(driver, 7, '//label[contains(.,"Create a pool:")]')
+    assert wait_on_element(driver, 7, '//mat-radio-button[@ix-auto="radio__is_new_Create new pool"]', 'clickable')
     driver.find_element_by_xpath('//mat-radio-button[@ix-auto="radio__is_new_Create new pool"]').click()
+    assert wait_on_element(driver, 7, '//button[@ix-auto="button__CREATE POOL"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__CREATE POOL"]').click()
 
 
@@ -82,6 +85,7 @@ def select_create_new_pool_click_create_pool(driver):
 def when_the_pool_manager_appears_enter_the_tank_for_pool_name(driver):
     """when the Pool Manager appears, enter the tank for pool name."""
     assert wait_on_element(driver, 7, '//div[contains(.,"Pool Manager")]')
+    assert wait_on_element(driver, 7, '//input[@placeholder="Name"]', 'inputable')
     driver.find_element_by_xpath('//input[@placeholder="Name"]').clear()
     driver.find_element_by_xpath('//input[@placeholder="Name"]').send_keys('tank')
 
@@ -89,10 +93,11 @@ def when_the_pool_manager_appears_enter_the_tank_for_pool_name(driver):
 @then('click ada1 checkbox, press the right arrow under Data VDevs')
 def click_ada1_checkbox_press_the_right_arrow_under_data_vdevs(driver):
     """click ada1 checkbox, press the right arrow under Data VDevs."""
+    assert wait_on_element(driver, 7, '//button[@id="vdev__add-button"]', 'clickable')
     driver.find_element_by_xpath('//mat-checkbox[@id="pool-manager__disks-ada1"]').click()
-    assert wait_on_element(driver, 7, '//button[@id="vdev__add-button"]')
+    assert wait_on_element(driver, 7, '//button[@id="vdev__add-button"]', 'clickable')
     driver.find_element_by_xpath('//button[@id="vdev__add-button"]').click()
-    assert wait_on_element(driver, 7, '//mat-checkbox[@id="pool-manager__force-submit-checkbox"]')
+    assert wait_on_element(driver, 7, '//mat-checkbox[@id="pool-manager__force-submit-checkbox"]', 'clickable')
     driver.find_element_by_xpath('//mat-checkbox[@id="pool-manager__force-submit-checkbox"]').click()
     assert wait_on_element(driver, 7, '//mat-checkbox[@ix-auto="checkbox__CONFIRM"]', 'clickable')
     driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__CONFIRM"]').click()
@@ -103,27 +108,29 @@ def click_ada1_checkbox_press_the_right_arrow_under_data_vdevs(driver):
 @then('click create, On the Warning widget, click confirm checkbox, click CREATE POOL')
 def click_create_on_the_warning_widget_click_confirm_checkbox_click_create_pool(driver):
     """click create, On the Warning widget, click confirm checkbox, click CREATE POOL."""
-    assert wait_on_element(driver, 7, '//button[@name="create-button"]')
+    assert wait_on_element(driver, 7, '//button[@name="create-button"]', 'clickable')
     driver.find_element_by_xpath('//button[@name="create-button"]').click()
     assert wait_on_element(driver, 7, '//h1[contains(.,"Warning")]')
+    assert wait_on_element(driver, 7, '//mat-checkbox[@ix-auto="checkbox__CONFIRM"]', 'clickable')
     driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__CONFIRM"]').click()
+    assert wait_on_element(driver, 7, '//button[@ix-auto="button__CREATE POOL"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__CREATE POOL"]').click()
 
 
 @then('Create pool should appear while pool is being created')
 def create_pool_should_appear_while_pool_is_being_created(driver):
     """Create pool should appear while pool is being created."""
-    assert wait_on_element_disappear(driver, 20, '//h1[contains(.,"Create Pool")]')
+    assert wait_on_element_disappear(driver, 30, '//h1[contains(.,"Create Pool")]')
 
 
 @then('you should be returned to the list of pools')
 def you_should_be_returned_to_the_list_of_pools(driver):
     """you should be returned to the list of pools."""
-    assert wait_on_element(driver, 7, '//div[contains(.,"Pools")]')
+    assert wait_on_element(driver, 10, '//div[contains(.,"Pools")]')
 
 
 @then('the tank should appear in the list')
 def the_tank_should_appear_in_the_list(driver):
     """the tank should appear in the list."""
-    assert wait_on_element(driver, 7, '//mat-panel-title[contains(.,"tank")]')
+    assert wait_on_element(driver, 15, '//mat-panel-title[contains(.,"tank")]')
     assert wait_on_element(driver, 7, '//td[@ix-auto="value__tank_name"]')
