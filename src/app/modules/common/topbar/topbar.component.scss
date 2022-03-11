@@ -50,12 +50,17 @@
 
 .ix-logo {
   cursor: pointer;
-  fill: var(--topbar-txt) !important;
+  fill: none !important;
   height: 50px;
   position: relative;
   right: -10px;
   top: 5px;
   width: 175px;
+}
+
+.ix-logo.ix_full_logo,
+.ix-logo.ix_logomark {
+  fill: var(--topbar-txt) !important;
 }
 
 .ix-logo.xs {

@@ -12,6 +12,8 @@ export const customSvgIcons = {
   ha_enabled: 'assets/customicons/ha_enabled.svg',
   ix_full_logo: 'assets/customicons/ix_full_logo.svg',
   ix_logomark: 'assets/customicons/ix_logomark.svg',
+  ix_full_logo_rgb: 'assets/customicons/ix_full_logo_rgb.svg',
+  ix_logomark_rgb: 'assets/customicons/ix_logomark_rgb.svg',
   ha_reconnecting: 'assets/customicons/ha_reconnecting.svg',
   truenas_logomark_color: 'assets/customicons/truenas_enterprise_logomark_rgb.svg',
   truenas_logotype_color: 'assets/customicons/truenas_enterprise_logotype_rgb.svg',
