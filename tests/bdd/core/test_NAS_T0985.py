@@ -66,7 +66,7 @@ def click_storage_on_the_side_menu_and_click_pools(driver):
 @then('when the Pools page appears, click Add')
 def when_the_pools_page_appears_click_add(driver):
     """when the Pools page appears, click Add."""
-    assert wait_on_element(driver, 7, '//div[contains(.,"Pools")]')
+    assert wait_on_element(driver, 10, '//div[contains(text(),"Pools")]')
     assert wait_on_element(driver, 7, '//button[@ix-auto="button___ADD"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button___ADD"]').click()
 
@@ -127,11 +127,11 @@ def create_pool_should_appear_while_pool_is_being_created(driver):
 @then('you should be returned to the list of pools')
 def you_should_be_returned_to_the_list_of_pools(driver):
     """you should be returned to the list of pools."""
-    assert wait_on_element(driver, 10, '//div[contains(.,"Pools")]')
+    assert wait_on_element(driver, 15, '//div[contains(text(),"Pools")]')
 
 
 @then('the tank should appear in the list')
 def the_tank_should_appear_in_the_list(driver):
     """the tank should appear in the list."""
-    assert wait_on_element(driver, 15, '//mat-panel-title[contains(.,"tank")]')
+    assert wait_on_element(driver, 30, '//mat-panel-title[contains(.,"tank")]')
     assert wait_on_element(driver, 7, '//td[@ix-auto="value__tank_name"]')
