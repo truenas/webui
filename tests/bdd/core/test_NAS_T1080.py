@@ -16,9 +16,6 @@ from pytest_bdd import (
     then,
     when,
 )
-import pytest
-
-pytestmark = [pytest.mark.debug_test]
 
 
 @scenario('features/NAS-T1080.feature', 'Verify that a pool can be encrypted, locked and unlocked with a passphrase')
