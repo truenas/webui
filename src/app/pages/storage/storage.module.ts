@@ -97,6 +97,7 @@ import { routing } from './storage.routing';
     MatListModule,
     MatMenuModule,
     MatIconModule,
+    MatInputModule,
     MatTooltipModule,
     MatButtonModule,
     MatSelectModule,
