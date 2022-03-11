@@ -6,7 +6,7 @@ import { EntityTableAction, EntityTableConfig } from 'app/modules/entity/entity-
 import { VolumeImportWizardComponent } from 'app/pages/storage/volumes/volume-import-wizard/volume-import-wizard.component';
 import { VolumesListComponent } from 'app/pages/storage/volumes/volumes-list/volumes-list.component';
 import { CoreService } from 'app/services/core-service/core.service';
-import { ModalService } from 'app/services/modal.service';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
 @Component({
@@ -27,7 +27,7 @@ export class VolumesListControlsComponent implements GlobalAction, OnInit {
   constructor(
     private fb: FormBuilder,
     private core: CoreService,
-    private modalService: ModalService,
+    private slideInService: IxSlideInService,
   ) {}
 
   ngOnInit(): void {
@@ -57,6 +57,6 @@ export class VolumesListControlsComponent implements GlobalAction, OnInit {
   }
 
   onClickImport(): void {
-    this.modalService.openInSlideIn(VolumeImportWizardComponent);
+    this.slideInService.open(VolumeImportWizardComponent);
   }
 }
