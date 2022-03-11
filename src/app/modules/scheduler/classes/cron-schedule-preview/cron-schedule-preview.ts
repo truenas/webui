@@ -1,8 +1,8 @@
 import Cron from 'croner';
 import {
-  addDays,
+  addDays, addMinutes,
   endOfMonth,
-  getDate, getMonth, isBefore, isWithinInterval,
+  getDate, getMonth, isAfter, isBefore, isWithinInterval,
   setHours,
   setMinutes,
   subMinutes,
@@ -66,7 +66,7 @@ export class CronSchedulePreview {
       }
 
       if (!this.isWithinTimeConstrains(nextRun)) {
-        previousDate = nextRun;
+        previousDate = addMinutes(nextRun, 1);
         continue;
       }
 
@@ -80,8 +80,6 @@ export class CronSchedulePreview {
   }
 
   private isWithinTimeConstrains(date: Date): boolean {
-    return true;
-    // TODO: Will be implemented later.
     if (!this.options.startTime || !this.options.endTime) {
       return true;
     }
@@ -91,6 +89,10 @@ export class CronSchedulePreview {
 
     const startDate = setMinutes(setHours(date, Number(startHour)), Number(startMinutes));
     const endDate = setMinutes(setHours(date, Number(endHour)), Number(endMinutes));
+
+    if (!isAfter(endDate, startDate)) {
+      return true;
+    }
 
     return isWithinInterval(date, { start: startDate, end: endDate });
   }

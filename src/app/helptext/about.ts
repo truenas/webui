@@ -26,12 +26,7 @@ export default {
   opensourceB: T('Open Source'),
   opensourceC: T('software, which is provided as-is with no warranty.'),
 
-  findagainA: T('Find this information later by clicking'),
-  findagainB: T('(top-right), then'),
-  findagainC: T('About.'),
-
   actionBtnText: {
-    splash: T('Get Started'),
     about: T('Close'),
   },
 };

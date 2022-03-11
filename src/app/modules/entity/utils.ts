@@ -110,50 +110,53 @@ export class EntityUtils {
       let scroll = false;
       if ((res.extra as any).excerpt) {
         this.errorReport(res, dialog);
-      }
-      res.extra.forEach((extraItem) => {
-        const field = extraItem[0].split('.')[1];
-        const error = extraItem[1];
+      } else if (Array.isArray(res.extra)) {
+        res.extra.forEach((extraItem) => {
+          const field = extraItem[0].split('.')[1];
+          const error = extraItem[1];
 
-        let fc = _.find(entity.fieldConfig, { name: field })
-          || (entity.getErrorField ? entity.getErrorField(field) : undefined);
-        let stepIndex;
-        if (entity.wizardConfig) {
-          _.find(entity.wizardConfig, (step, index) => {
-            stepIndex = index;
-            fc = _.find(step.fieldConfig, { name: field });
-            return fc;
-          });
-        }
-        if (targetFieldConfig) {
-          fc = _.find(targetFieldConfig, { name: field })
+          let fc = _.find(entity.fieldConfig, { name: field })
             || (entity.getErrorField ? entity.getErrorField(field) : undefined);
-        }
+          let stepIndex;
+          if (entity.wizardConfig) {
+            _.find(entity.wizardConfig, (step, index) => {
+              stepIndex = index;
+              fc = _.find(step.fieldConfig, { name: field });
+              return fc;
+            });
+          }
+          if (targetFieldConfig) {
+            fc = _.find(targetFieldConfig, { name: field })
+              || (entity.getErrorField ? entity.getErrorField(field) : undefined);
+          }
 
-        if (fc && !fc['isHidden']) {
-          const element = document.getElementById(field);
-          if (element) {
-            if (entity.conf && entity.conf.advancedFields
-              && _.indexOf(entity.conf.advancedFields, field) > -1
-              && entity.conf.isBasicMode) {
-              entity.conf.isBasicMode = false;
+          if (fc && !fc['isHidden']) {
+            const element = document.getElementById(field);
+            if (element) {
+              if (entity.conf && entity.conf.advancedFields
+                && _.indexOf(entity.conf.advancedFields, field) > -1
+                && entity.conf.isBasicMode) {
+                entity.conf.isBasicMode = false;
+              }
+              if (!scroll) {
+                element.scrollIntoView({ behavior: 'auto', block: 'end', inline: 'nearest' });
+                scroll = true;
+              }
             }
-            if (!scroll) {
-              element.scrollIntoView({ behavior: 'auto', block: 'end', inline: 'nearest' });
-              scroll = true;
+            fc['hasErrors'] = true;
+            fc['errors'] = error;
+            if (entity.wizardConfig && entity.entityWizard) {
+              entity.entityWizard.stepper.selectedIndex = stepIndex;
             }
+          } else if (entity.error) {
+            entity.error = error;
+          } else {
+            this.errorReport(res, dialog);
           }
-          fc['hasErrors'] = true;
-          fc['errors'] = error;
-          if (entity.wizardConfig && entity.entityWizard) {
-            entity.entityWizard.stepper.selectedIndex = stepIndex;
-          }
-        } else if (entity.error) {
-          entity.error = error;
-        } else {
-          this.errorReport(res, dialog);
-        }
-      });
+        });
+      } else {
+        this.errorReport(res, dialog);
+      }
     } else {
       this.errorReport(res, dialog);
     }

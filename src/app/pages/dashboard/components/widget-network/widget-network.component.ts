@@ -27,7 +27,7 @@ import { ThemeService } from 'app/services/theme/theme.service';
 
 interface NicInfo {
   ip: string;
-  state: string;
+  state: LinkState;
   in: string;
   out: string;
   lastSent: number;
@@ -200,6 +200,7 @@ export class WidgetNetworkComponent extends WidgetComponent implements OnInit, A
           const received = this.utils.convert(evt.data.received_bytes_rate);
 
           const nicInfo = this.nicInfoMap[nicName];
+          nicInfo.state = evt.data.link_state as LinkState;
           nicInfo.in = `${received.value} ${received.units}/s`;
           nicInfo.out = `${sent.value} ${sent.units}/s`;
 
@@ -322,9 +323,22 @@ export class WidgetNetworkComponent extends WidgetComponent implements OnInit, A
     return ip;
   }
 
-  getLinkState(nic: BaseNetworkInterface): string {
-    if (!nic.state.aliases) { return ''; }
-    return nic.state.link_state.replace(/_/g, ' ');
+  getLinkState(nic: BaseNetworkInterface): LinkState {
+    if (!nic.state.aliases) {
+      return null;
+    }
+    if (!this.nicInfoMap[nic.name]) {
+      return nic.state.link_state;
+    }
+    return this.nicInfoMap[nic.name].state;
+  }
+
+  getLinkStateLabel(nic: BaseNetworkInterface): string {
+    const linkState = this.getLinkState(nic);
+    if (!linkState) {
+      return '';
+    }
+    return linkState.replace(/_/g, ' ');
   }
 
   async fetchReportData(): Promise<void> {

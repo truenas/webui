@@ -351,7 +351,7 @@ export class CloudsyncListComponent implements EntityTableConfig<CloudSyncTaskUi
         this.job.showLogs(row.job);
       }
     } else {
-      this.dialog.info(globalHelptext.noLogDilaog.title, globalHelptext.noLogDilaog.message);
+      this.dialog.info(globalHelptext.noLogDialog.title, globalHelptext.noLogDialog.message);
     }
   }
 

@@ -41,7 +41,6 @@ export default {
 
   changekey2_headline: T('Encryption Key for Pool '),
   changekey_instructions2: T('Changing') + passphraseMessage,
-  changekey_passphrase2_placeholder: T('Verify passphrase'),
 
   changekey_remove_passphrase_placeholder: T('Remove passphrase'),
   changekey_remove_passphrase_tooltip: T('Delete the passphrase from \
@@ -81,5 +80,4 @@ export default {
 
   delete_recovery_key_title: T('Remove Recovery Key'),
   delete_recovery_key_message: T('Deactivate the recovery key for this pool?'),
-
 };

@@ -1,5 +1,5 @@
 export interface SchedulerModalConfig {
-  beginTime: string;
+  startTime: string;
   endTime: string;
   hideMinutes: boolean;
   crontab: string;

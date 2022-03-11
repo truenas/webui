@@ -175,4 +175,28 @@ describe('CronSchedulePreview - listNextRunsInMonth', () => {
       ]);
     });
   });
+
+  describe('With startTime and endTime', () => {
+    let cron: CronSchedulePreview;
+
+    beforeEach(() => {
+      cron = new CronSchedulePreview({
+        crontab: '*/30 * * * *',
+        startTime: '15:20',
+        endTime: '17:00',
+      });
+    });
+
+    it('limits runs to be within provided time boundaries', () => {
+      const nextRuns = cron.listNextRunsInMonth(new Date('2022-02-19 15:00:00'), 5);
+
+      expect(nextRuns.map(toNewYorkTime)).toEqual([
+        '2022-02-19 15:30:00',
+        '2022-02-19 16:00:00',
+        '2022-02-19 16:30:00',
+        '2022-02-19 17:00:00',
+        '2022-02-20 15:30:00',
+      ]);
+    });
+  });
 });

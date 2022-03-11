@@ -8,8 +8,7 @@
     </button>
     <span fxFlex></span>
     <div>
-      <mat-icon (click)="openIx()" [svgIcon]="screenSize == 'xs' ? 'ix_logomark' : 'ix_full_logo'" alt="iXsystems logo"
-                class="ix-logo {{screenSize}}">
+      <mat-icon (click)="openIx()" [svgIcon]="toggleLogo()" alt="iXsystems logo" class="ix-logo {{screenSize}} {{toggleLogo()}}">
       </mat-icon>
     </div>
 
