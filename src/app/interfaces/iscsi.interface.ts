@@ -83,7 +83,7 @@ export interface IscsiTargetExtent {
   extent: number;
   id: number;
   lunid: number;
-  target: string;
+  target: number;
 }
 
 export type IscsiTargetExtentUpdate = Omit<IscsiTargetExtent, 'id'>;

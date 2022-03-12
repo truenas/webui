@@ -18,7 +18,9 @@ import { AppLoaderService } from '../modules/app-loader/app-loader.service';
 import { WebSocketService } from './ws.service';
 
 @UntilDestroy()
-@Injectable()
+@Injectable({
+  providedIn: 'root',
+})
 export class DialogService {
   protected loaderOpen = false;
 
