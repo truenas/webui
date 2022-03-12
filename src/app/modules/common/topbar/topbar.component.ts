@@ -94,7 +94,7 @@ export class TopbarComponent implements OnInit, OnDestroy {
   readonly FailoverDisabledReason = FailoverDisabledReason;
 
   constructor(
-    private themeService: ThemeService,
+    public themeService: ThemeService,
     private router: Router,
     private ws: WebSocketService,
     private dialogService: DialogService,
@@ -281,6 +281,20 @@ export class TopbarComponent implements OnInit, OnDestroy {
       data,
       sender: this,
     });
+  }
+
+  toggleLogo(): string {
+    const isBlueTheme = this.themeService.activeTheme === 'ix-blue' || this.themeService.activeTheme === 'midnight';
+    if (isBlueTheme && this.screenSize === 'xs') {
+      return 'ix_logomark';
+    }
+    if (!isBlueTheme && this.screenSize === 'xs') {
+      return 'ix_logomark_rgb';
+    }
+    if (isBlueTheme && this.screenSize !== 'xs') {
+      return 'ix_full_logo';
+    }
+    return 'ix_full_logo_rgb';
   }
 
   onShowAbout(): void {

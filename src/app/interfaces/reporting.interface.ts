@@ -1,3 +1,5 @@
+import { LinkState } from 'app/enums/network-interface.enum';
+
 export interface ReportingRealtimeUpdate {
   cpu: AllCpusUpdate;
   disks: DisksUpdate;
@@ -41,6 +43,7 @@ export interface AllNetworkInterfacesUpdate {
 }
 
 export interface NetworkInterfaceUpdate {
+  link_state: LinkState;
   received_bytes: number;
   received_bytes_rate: number;
   sent_bytes: number;

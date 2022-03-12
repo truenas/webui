@@ -8,13 +8,12 @@
     </button>
     <span fxFlex></span>
     <div>
-      <mat-icon (click)="openIx()" [svgIcon]="screenSize == 'xs' ? 'ix_logomark' : 'ix_full_logo'" alt="iXsystems logo"
-                class="ix-logo {{screenSize}}" tabindex="0">
+      <mat-icon (click)="openIx()" [svgIcon]="toggleLogo()" alt="iXsystems logo" class="ix-logo {{screenSize}} {{toggleLogo()}}" tabindex="0">
       </mat-icon>
     </div>
 
     <truecommand-button></truecommand-button>
-    
+
     <!-- finish update -->
     <button *ngIf="upgradeWaitingToFinish" mat-icon-button id="finish-update"
       [matTooltip]="mat_tooltips.upgrade_waiting | translate" (click)="upgradePendingDialog()"
