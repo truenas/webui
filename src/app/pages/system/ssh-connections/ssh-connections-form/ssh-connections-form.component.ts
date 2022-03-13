@@ -320,17 +320,17 @@ export class SshConnectionsFormComponent {
     return wsResponse;
   }
 
-  async customSubmit(data) {
+  customSubmit(data) {
     this.loader.open();
     if (data['private_key'] == 'NEW') {
-      await this.replicationService.genSSHKeypair().then(
-        async (res) => {
+      this.replicationService.genSSHKeypair().then(
+        (res) => {
           const payload = {
             name: data['name'] + ' Key',
             type: 'SSH_KEY_PAIR',
             attributes: res,
           };
-          await this.ws.call('keychaincredential.create', [payload]).toPromise().then(
+          this.ws.call('keychaincredential.create', [payload]).toPromise().then(
             (sshKey) => {
               data['private_key'] = sshKey.id;
 
