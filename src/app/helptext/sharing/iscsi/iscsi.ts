@@ -221,10 +221,6 @@ export const helptextSharingIscsi = {
   extent_placeholder_enabled: T('Enabled'),
   extent_tooltip_enabled: T('Set to enable the iSCSI extent.'),
 
-  fieldset_group: T('Group'),
-  fieldset_user: T('User'),
-  fieldset_peeruser: T('Peer User'),
-
   authaccess_placeholder_tag: T('Group ID'),
   authaccess_tooltip_tag: T(
     'Allow different groups to be configured\
@@ -248,28 +244,16 @@ export const helptextSharingIscsi = {
 
   authaccess_placeholder_secret_confirm: T('Secret (Confirm)'),
 
-  authaccess_placeholder_peeruser: T('Peer User'),
   authaccess_tooltip_peeruser: T(
     'Only entered when configuring mutual CHAP. Usually the same value\
  as <i>User</i>.',
   ),
-
-  authaccess_placeholder_peersecret: T('Peer Secret'),
   authaccess_tooltip_peersecret: T(
     'Mutual secret password. Required when Peer User is set. Must be\
  different than the <i>Secret</i>.',
   ),
-  authaccess_error_duplicate_secrets: T('Secret and Peer Secret can not be the same.'),
 
-  authaccess_placeholder_peersecret_confirm: T('Peer Secret (Confirm)'),
-
-  fieldset_associated_target: T('Associated Target'),
-
-  associated_target_placeholder_target: T('Target'),
   associated_target_tooltip_target: T('Select an existing target.'),
-  associated_target_validators_target: [Validators.required],
-
-  associated_target_placeholder_lunid: T('LUN ID'),
   associated_target_tooltip_lunid: T(
     'Select the value or enter a value between\
  <i>0</i> and <i>1023</i>. Some initiators\
@@ -277,15 +261,8 @@ export const helptextSharingIscsi = {
  this field blank to automatically assign\
  the next available ID.',
   ),
-  associated_target_validators_lunid: [
-    Validators.min(0),
-    Validators.max(1023),
-    Validators.pattern(/^(0|[1-9]\d*)$/),
-  ],
 
-  associated_target_placeholder_extent: T('Extent'),
   associated_target_tooltip_extent: T('Select an existing extent.'),
-  associated_target_validators_extent: [Validators.required],
 
   fc_mode_placeholder: T('Mode'),
   fc_mode_tooltip: T(''),

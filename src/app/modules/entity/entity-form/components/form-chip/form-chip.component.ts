@@ -45,6 +45,19 @@ export class FormChipComponent implements Field, OnInit {
     });
   }
 
+  paste(event: ClipboardEvent): void {
+    const lineBreakValues = event.clipboardData.getData('Text').split(/\n/);
+    if (lineBreakValues.length > 1) {
+      event.preventDefault();
+      lineBreakValues.forEach((value) => {
+        if (value.trim()) {
+          this.chipLists.push(value.trim());
+        }
+      });
+      this.group.controls[this.config.name].setValue(this.chipLists);
+    }
+  }
+
   add(event: MatChipInputEvent): void {
     const input = event.chipInput.inputElement;
     const value = event.value;

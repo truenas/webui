@@ -17,6 +17,8 @@ import { CommonDirectivesModule } from 'app/directives/common/common-directives.
 import { CastModule } from 'app/modules/cast/cast.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
+import { AuthorizedAccessFormComponent } from 'app/pages/sharing/iscsi/authorized-access/authorized-access-form/authorized-access-form.component';
+import { AuthorizedAccessListComponent } from 'app/pages/sharing/iscsi/authorized-access/authorized-access-list/authorized-access-list.component';
 import { TargetGlobalConfigurationComponent } from 'app/pages/sharing/iscsi/target-global-configuration/target-global-configuration.component';
 import { UserService } from 'app/services/user.service';
 import { EntityFormService } from '../../modules/entity/entity-form/services/entity-form.service';
@@ -24,8 +26,6 @@ import { EntityModule } from '../../modules/entity/entity.module';
 import { SharesDashboardComponent } from './components/shares-dashboard/shares-dashboard.component';
 import { AssociatedTargetFormComponent } from './iscsi/associated-target/associated-target-form/associated-target-form.component';
 import { AssociatedTargetListComponent } from './iscsi/associated-target/associated-target-list/associated-target-list.component';
-import { AuthorizedAccessFormComponent } from './iscsi/authorizedaccess/authorizedaccess-form/authorizedaccess-form.component';
-import { AuthorizedAccessListComponent } from './iscsi/authorizedaccess/authorizedaccess-list/authorizedaccess-list.component';
 import { ExtentFormComponent } from './iscsi/extent/extent-form/extent-form.component';
 import { ExtentListComponent } from './iscsi/extent/extent-list/extent-list.component';
 import { FibreChannelPortComponent } from './iscsi/fibre-channel-ports/fibre-channel-port/fibre-channel-port.component';
