@@ -1015,9 +1015,10 @@ export class DatasetFormComponent implements FormConfiguration {
     this.recordsizeControl.valueChanges.pipe(untilDestroyed(this)).subscribe((recordSize: string) => {
       const recordSizeNumber = parseInt(this.reverseRecordSizeMap[recordSize], 10);
       if (this.minimumRecommendedRecordsize && this.recommendedSize) {
-        this.recordsizeWarning = helptext.dataset_form_warning_1
-          + this.minimumRecommendedRecordsize
-          + helptext.dataset_form_warning_2;
+        this.recordsizeWarning = this.translate.instant(
+          helptext.dataset_form_warning,
+          { size: this.minimumRecommendedRecordsize },
+        );
         if (recordSizeNumber < this.recommendedSize) {
           this.recordsizeField.warnings = this.recordsizeWarning;
           this.isBasicMode = false;

@@ -758,15 +758,15 @@ export class ReplicationFormComponent implements FormConfiguration {
           tooltip: helptext.readonly_tooltip,
           options: [
             {
-              label: this.translate.instant('SET'),
+              label: 'SET',
               value: ReadOnlyMode.Set,
             },
             {
-              label: this.translate.instant('REQUIRE'),
+              label: 'REQUIRE',
               value: ReadOnlyMode.Require,
             },
             {
-              label: this.translate.instant('IGNORE'),
+              label: 'IGNORE',
               value: ReadOnlyMode.Ignore,
             },
           ],
