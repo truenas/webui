@@ -15,19 +15,11 @@ module.exports = {
   setupFilesAfterEnv: ['<rootDir>/src/setup-jest.ts'],
   collectCoverage: true,
   collectCoverageFrom: ["**/*.ts"],
-  coverageReporters: ['html'],
-  coverageDirectory: 'coverage/my-app',
+  coverageReporters: ['html', 'json'],
+  coverageDirectory: 'coverage/webui',
   moduleDirectories: ['node_modules', 'src'],
   moduleNameMapper: pathsToModuleNameMapper(compilerOptions.paths || {}, {
     prefix: '<rootDir>/',
     "^@/(.)$": "/src/$1"
   }),
-  coverageThreshold: {
-    global: {
-      lines: 0,
-      branches: 0,
-      functions: 0,
-      statements: 0
-    },
-  },
 };
