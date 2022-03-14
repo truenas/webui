@@ -85,6 +85,9 @@ def select_create_new_pool_click_create_pool(driver):
 def when_the_pool_manager_appears_enter_the_tank_for_pool_name(driver):
     """when the Pool Manager appears, enter the tank for pool name."""
     assert wait_on_element(driver, 7, '//div[contains(.,"Pool Manager")]')
+    # Make sure that the Pool Manager UI is ready to use.
+    # sometimes Please wait takes more time to disappear.
+    assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
     assert wait_on_element(driver, 7, '//input[@placeholder="Name"]', 'inputable')
     driver.find_element_by_xpath('//input[@placeholder="Name"]').clear()
     driver.find_element_by_xpath('//input[@placeholder="Name"]').send_keys('tank')
