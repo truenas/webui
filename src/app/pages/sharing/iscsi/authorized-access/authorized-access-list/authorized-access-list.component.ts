@@ -1,8 +1,13 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-table.component';
 import { EntityTableConfig } from 'app/modules/entity/entity-table/entity-table.interface';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { AuthorizedAccessFormComponent } from '../authorized-access-form/authorized-access-form.component';
 
+@UntilDestroy()
 @Component({
   selector: 'app-iscsi-authorizedaccess-list',
   template: `
@@ -13,8 +18,6 @@ export class AuthorizedAccessListComponent implements EntityTableConfig {
   tableTitle = this.translate.instant('Authorized Access');
   queryCall = 'iscsi.auth.query' as const;
   wsDelete = 'iscsi.auth.delete' as const;
-  routeAdd: string[] = ['sharing', 'iscsi', 'auth', 'add'];
-  routeEdit: string[] = ['sharing', 'iscsi', 'auth', 'edit'];
   routeAddTooltip = this.translate.instant('Add Authorized Access');
 
   columns = [
@@ -43,7 +46,24 @@ export class AuthorizedAccessListComponent implements EntityTableConfig {
   };
 
   constructor(
-    protected router: Router,
-    protected translate: TranslateService,
+    private router: Router,
+    private translate: TranslateService,
+    private slideInService: IxSlideInService,
   ) {}
+
+  afterInit(entityList: EntityTableComponent): void {
+    this.slideInService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
+      entityList.getData();
+    });
+  }
+
+  doAdd(): void {
+    this.slideInService.open(AuthorizedAccessFormComponent);
+  }
+
+  doEdit(id: number, entityList: EntityTableComponent): void {
+    const row = entityList.rows.find((row) => row.id === id);
+    const form = this.slideInService.open(AuthorizedAccessFormComponent);
+    form.setAccessForEdit(row);
+  }
 }
