@@ -111,7 +111,7 @@ def pytest_runtest_makereport(item):
         if (report.skipped and xfail) or (report.failed and not xfail):
             screenshot_name = f'screenshot/{report.nodeid.replace("::", "_")}.png'
             # look if there is a Error window
-            if element_exist('//h1[contains(.,"Error")]'):
+            if element_exist('//h1[contains(.,"FAILED")]'):
 
                 web_driver.find_element_by_xpath('//div[@ix-auto="button__backtrace-toggle"]').click()
                 time.sleep(2)
