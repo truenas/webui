@@ -33,7 +33,6 @@ export class AssociatedTargetFormComponent {
     lunid: [null as number, [
       Validators.min(0),
       Validators.max(1023),
-      Validators.pattern(/^(0|[1-9]\d*)$/),
     ]],
     extent: [null as number, Validators.required],
   });
