@@ -64,8 +64,25 @@
             [sticky]="isLeftStickyColumnNo(i)"
             matColumnDef="{{column}}"
           >
-            <th [ngClass]="{'sticky-left-offset': shouldApplyStickyOffset(i), 'sticky-border-right': isLeftStickyColumnNo(i) && isTableOverflow()}" class="data-column" mat-header-cell *matHeaderCellDef>{{ currentColumns[i].name | translate }}</th>
-            <td [ngClass]="{'sticky-left-offset': shouldApplyStickyOffset(i), 'sticky-border-right': isLeftStickyColumnNo(i) && isTableOverflow()}" [ngStyle]="{'cursor': (checkLength() && !conf.onRowClick) ? 'auto' : 'pointer'}" class="data-column" (mouseover)="onHover($event, true)" (mouseout)="onHover($event, false)" mat-cell *matCellDef="let element">
+            <th
+              [class.sticky-left-offset]="shouldApplyStickyOffset(i)"
+              [class.sticky-border-right]="isLeftStickyColumnNo(i) && isTableOverflow()"
+              [class.padded-away]="!shouldApplyStickyOffset(i) && !(isLeftStickyColumnNo(i) && isTableOverflow())"
+              class="data-column" 
+              mat-header-cell 
+              *matHeaderCellDef
+            >{{ currentColumns[i].name | translate }}</th>
+            <td
+              [class.sticky-left-offset]="shouldApplyStickyOffset(i)"
+              [class.sticky-border-right]="isLeftStickyColumnNo(i) && isTableOverflow()"
+              [ngStyle]="{ 'cursor': (checkLength() && !conf.onRowClick) ? 'auto' : 'pointer' }" 
+              [class.padded-away]="!shouldApplyStickyOffset(i) && !(isLeftStickyColumnNo(i) && isTableOverflow())"
+              class="data-column" 
+              (mouseover)="onHover($event, true)" 
+              (mouseout)="onHover($event, false)" 
+              mat-cell 
+              *matCellDef="let element"
+            >
               <div class="text-overflow-ellipsis" [matTooltip]="currentColumns[i].enableMatTooltip ? element[column] : null">{{element[column]}}</div>
             </td>
           </ng-container>
@@ -142,8 +159,20 @@
 
           <!-- Interactive Toggle Column -->
           <ng-container *ngIf="column == 'state' && isInteractive(column)" matColumnDef="{{column}}">
-            <th class="toggle-column" mat-header-cell *matHeaderCellDef>{{ currentColumns[i].name | translate }}</th>
-            <td class="toggle-column" mat-cell *matCellDef="let element" (mouseover)="onHover($event, true)" (mouseout)="onHover($event, false)">
+            <th 
+              [class.padded-away]="!shouldApplyStickyOffset(i) && !(isLeftStickyColumnNo(i) && isTableOverflow())"
+              class="toggle-column" 
+              mat-header-cell 
+              *matHeaderCellDef
+            >{{ currentColumns[i].name | translate }}</th>
+            <td 
+              class="toggle-column" 
+              [class.padded-away]="!shouldApplyStickyOffset(i) && !(isLeftStickyColumnNo(i) && isTableOverflow())"
+              mat-cell 
+              *matCellDef="let element" 
+              (mouseover)="onHover($event, true)" 
+              (mouseout)="onHover($event, false)"
+            >
               <mat-spinner [diameter]='40' *ngIf="element['onChanging']; else actionButtons"></mat-spinner>
               <ng-template #actionButtons>
                 <!-- Toggle -->
@@ -177,16 +206,29 @@
 
           <!-- Interactive Checkbox Column -->
           <ng-container *ngIf="['enabled', 'enable', 'autostart'].includes(column) && isInteractive(column)" matColumnDef="{{column}}">
-            <th class="toggle-column" mat-header-cell *matHeaderCellDef>{{ currentColumns[i].name | translate }}</th>
-            <td class="toggle-column" mat-cell *matCellDef="let element" (mouseover)="onHover($event, true)" (mouseout)="onHover($event, false)">
+            <th 
+              [class.padded-away]="!shouldApplyStickyOffset(i) && !(isLeftStickyColumnNo(i) && isTableOverflow())"
+              class="toggle-column" 
+              mat-header-cell 
+              *matHeaderCellDef
+            >{{ currentColumns[i].name | translate }}</th>
+            <td 
+              class="toggle-column" 
+              mat-cell 
+              *matCellDef="let element" 
+              [class.padded-away]="!shouldApplyStickyOffset(i) && !(isLeftStickyColumnNo(i) && isTableOverflow())"
+              (mouseover)="onHover($event, true)" 
+              (mouseout)="onHover($event, false)"
+            >
               <mat-checkbox
-              color="primary"
-              id="checkbox__{{element.name}}"
-              class="checkbox"
-              [(ngModel)]="element[column]"
-              (change)="this.conf.onCheckboxChange(element)"
-              (click)="$event.stopPropagation()"
-              ix-auto ix-auto-type="checkbox" ix-auto-identifier="{{ column }}__{{ element.name}}"></mat-checkbox>
+                color="primary"
+                id="checkbox__{{element.name}}"
+                class="checkbox"
+                [(ngModel)]="element[column]"
+                (change)="this.conf.onCheckboxChange(element)"
+                (click)="$event.stopPropagation()"
+                ix-auto ix-auto-type="checkbox" ix-auto-identifier="{{ column }}__{{ element.name}}"
+              ></mat-checkbox>
             </td>
           </ng-container>
 
