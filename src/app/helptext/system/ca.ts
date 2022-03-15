@@ -182,6 +182,10 @@ matches your certificate usage scenario.'),
       placeholder: T('Confirm Passphrase'),
     },
 
+    add_to_trusted_store: {
+      placeholder: T('Add To Trusted Store'),
+    },
+
     basic_constraints: {
       config: {
         placeholder: T('Basic Constraints Config'),
