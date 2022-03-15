@@ -269,7 +269,6 @@ export class CertificateAuthorityAddComponent implements WizardConfiguration {
           type: 'checkbox',
           name: 'add_to_trusted_store',
           placeholder: helptextSystemCa.add.add_to_trusted_store.placeholder,
-          tooltip: helptextSystemCa.add.add_to_trusted_store.tooltip,
         },
         {
           type: 'checkbox',

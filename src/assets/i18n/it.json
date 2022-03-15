@@ -181,7 +181,6 @@
   "Add any notes about this zvol.": "",
   "Add catalog to system even if some trains are unhealthy.": "",
   "Add more options from <a href=\"https://linux.die.net/man/8/tftpd\" target=\"_blank\">tftpd(8)</a>. Add one option on each line.": "",
-  "Add this certificate to trusted root store.": "",
   "Added disks are erased, then the pool is extended onto the new disks with the chosen topology. Existing data on the pool is kept intact.": "",
   "Adding Vdevs to an encrypted pool resets the passphrase and recovery key!": "",
   "Adding data vdevs of different types is not supported.": "",

@@ -189,7 +189,6 @@
   "Add more options from <a href=\"https://linux.die.net/man/8/tftpd\" target=\"_blank\">tftpd(8)</a>. Add one option on each line.": "",
   "Add one or more disks to be used for data.": "",
   "Add one or more disks to extend the pool.": "",
-  "Add this certificate to trusted root store.": "",
   "Add this user to additional groups.": "",
   "Added disks are erased, then the pool is extended onto the new disks with the chosen topology. Existing data on the pool is kept intact.": "",
   "Adding Vdevs to an encrypted pool resets the passphrase and recovery key!": "",

@@ -184,7 +184,6 @@ matches your certificate usage scenario.'),
 
     add_to_trusted_store: {
       placeholder: T('Add To Trusted Store'),
-      tooltip: T('Add this certificate to trusted root store.'),
     },
 
     basic_constraints: {
