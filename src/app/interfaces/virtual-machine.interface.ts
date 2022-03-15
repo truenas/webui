@@ -50,6 +50,7 @@ export type VmDisplayWebUriParams = [
       },
     ];
   },
+  protocol?: string,
 ];
 
 export interface VmPortWizardResult {

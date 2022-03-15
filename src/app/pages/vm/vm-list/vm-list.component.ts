@@ -278,19 +278,6 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow>, On
     });
   }
 
-  extractHostname(url: string): string {
-    let hostname: string;
-    if (url.includes('//')) {
-      hostname = url.split('/')[2];
-    } else {
-      hostname = url.split('/')[0];
-    }
-    hostname = hostname.split(':')[0];
-    hostname = hostname.split('?')[0];
-
-    return hostname;
-  }
-
   doRowAction(row: VirtualMachineRow, method: ApiMethod, params: unknown[] = [row.id], updateTable = false): void {
     if (method === this.wsMethods.stop) {
       this.dialogRef = this.dialog.open(EntityJobComponent,
@@ -506,7 +493,9 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow>, On
                 'vm.get_display_web_uri',
                 [
                   vm.id,
-                  this.extractHostname(window.origin),
+                  window.location.host,
+                  undefined,
+                  window.location.protocol.replace(':', ''),
                 ],
               ).pipe(untilDestroyed(this)).subscribe((webUris) => {
                 this.loader.close();
@@ -545,7 +534,9 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow>, On
                     'vm.get_display_web_uri',
                     [
                       vm.id,
-                      this.extractHostname(window.origin),
+                      window.location.host,
+                      undefined,
+                      window.location.protocol.replace(':', ''),
                     ],
                   ).pipe(untilDestroyed(this)).subscribe((webUris) => {
                     this.loader.close();
@@ -622,7 +613,7 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow>, On
           'vm.get_display_web_uri',
           [
             vm.id,
-            this.extractHostname(window.origin),
+            window.location.host,
             {
               devices_passwords: [
                 {
