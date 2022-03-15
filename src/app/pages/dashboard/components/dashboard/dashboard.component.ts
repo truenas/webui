@@ -619,11 +619,21 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       return;
     }
 
-    const hidden = this.dashState
-      .filter((w) => state.every((s) => !(w.identifier && w.identifier == s.identifier || w.name && w.name == s.name)))
-      .map((widget) => ({ ...widget, rendered: false }));
+    const dashState = this.dashState.map((widget) => {
+      if (state.every((s) => !(
+        widget.identifier
+        && widget.identifier == s.identifier
+        || widget.name && widget.name == s.name
+      ))) {
+        return {
+          ...widget,
+          rendered: false,
+        };
+      }
+      return widget;
+    });
 
-    this.setDashState([...state, ...hidden]);
+    this.setDashState(dashState);
   }
 
   private setDashState(dashState: DashConfigItem[]): void {
