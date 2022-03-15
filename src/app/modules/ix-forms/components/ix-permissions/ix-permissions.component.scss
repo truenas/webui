@@ -1,0 +1,51 @@
+@import '../../../../../../node_modules/text-security/text-security.css';
+
+:host {
+  color: var(--fg1);
+  display: block;
+
+  margin-bottom: 12px;
+  margin-top: 18px;
+  padding: 8px 0;
+}
+
+td {
+  padding: 5px 7px;
+}
+
+.tooltip {
+  margin-left: 8px;
+
+  vertical-align: -4px;
+}
+
+.permissions-container {
+  &.disabled {
+    opacity: 0.38;
+
+    mat-checkbox {
+      cursor: not-allowed;
+    }
+  }
+
+  &.readonly {
+    input {
+      cursor: copy;
+    }
+  }
+}
+
+.label-container {
+  margin-bottom: 1px;
+  margin-left: 1px;
+}
+
+.label {
+  font-size: x-small;
+}
+
+.mat-error {
+  display: block;
+  font-size: 12px;
+  margin-top: 3px;
+}

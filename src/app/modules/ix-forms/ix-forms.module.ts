@@ -28,6 +28,7 @@ import { IxExplorerComponent } from 'app/modules/ix-forms/components/ix-explorer
 import { IxFieldsetComponent } from 'app/modules/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxFileInputComponent } from 'app/modules/ix-forms/components/ix-file-input/ix-file-input.component';
 import { IxInputComponent } from 'app/modules/ix-forms/components/ix-input/ix-input.component';
+import { IxPermissionsComponent } from 'app/modules/ix-forms/components/ix-permissions/ix-permissions.component';
 import { IxRadioGroupComponent } from 'app/modules/ix-forms/components/ix-radio-group/ix-radio-group.component';
 import { IxSelectComponent } from 'app/modules/ix-forms/components/ix-select/ix-select.component';
 import { IxModalHeaderComponent } from 'app/modules/ix-forms/components/ix-slide-in/components/ix-modal-header/ix-modal-header.component';
@@ -74,6 +75,7 @@ import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
     IxCheckboxComponent,
     IxTextareaComponent,
     IxComboboxComponent,
+    IxPermissionsComponent,
     IxChipsComponent,
     IxExplorerComponent,
     IxFileInputComponent,
@@ -88,6 +90,7 @@ import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
     IxModalHeaderComponent,
     IxFieldsetComponent,
     IxCheckboxComponent,
+    IxPermissionsComponent,
     IxTextareaComponent,
     IxChipsComponent,
     IxComboboxComponent,

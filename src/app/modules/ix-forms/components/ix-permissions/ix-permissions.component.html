@@ -1,0 +1,107 @@
+<div *ngIf="label" class="label-container">
+  <label class="label">
+    <span [innerHTML]="label"></span>
+    <span *ngIf="required" class="required">*</span>
+  </label>
+  <tooltip *ngIf="tooltip" [header]="label" class="tooltip" [message]="tooltip"></tooltip>
+</div>
+
+<div class="permissions-container">
+  <table [class.disabled]="isDisabled">
+    <tr>
+      <td></td>
+      <td><span class="label">{{"Read" | translate}}</span></td>
+      <td><span class="label">{{"Write" | translate}}</span></td>
+      <td><span class="label">{{"Execute" | translate}}</span></td>
+    </tr>
+    <tr>
+      <td>
+        <span class="label">{{"User" | translate}}</span>
+      </td>
+      <td>
+        <mat-checkbox
+          [disabled]="isDisabled"
+          color="primary"
+          [checked]="ownerRead"
+          (change)="toggleOwnerRead()"
+        ></mat-checkbox>
+      </td>
+      <td>
+        <mat-checkbox
+          [disabled]="isDisabled"
+          color="primary"
+          [checked]="ownerWrite"
+          (change)="toggleOwnerWrite()"
+        ></mat-checkbox>
+      </td>
+      <td>
+        <mat-checkbox
+          [disabled]="isDisabled"
+          color="primary" 
+          [checked]="ownerExec" 
+          (change)="toggleOwnerExec()"
+        ></mat-checkbox>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <span class="label">{{"Group" | translate}}</span>
+      </td>
+      <td>
+        <mat-checkbox
+          [disabled]="isDisabled"
+          color="primary"
+          [checked]="groupRead"
+          (change)="toggleGroupRead()"
+        ></mat-checkbox> 
+      </td>
+      <td>
+        <mat-checkbox
+          [disabled]="isDisabled"
+          color="primary" 
+          [checked]="groupWrite" 
+          (change)="toggleGroupWrite()"
+        ></mat-checkbox>
+      </td>
+      <td>
+        <mat-checkbox
+          [disabled]="isDisabled"
+          color="primary" 
+          [checked]="groupExec" 
+          (change)="toggleGroupExec()"
+        ></mat-checkbox>
+      </td>
+    </tr>
+    <tr *ngIf="!hideOthersPermissions">
+      <td>
+        <span class="label">{{"Other" | translate}}</span>
+      </td>
+      <td>
+        <mat-checkbox 
+          [disabled]="isDisabled"
+          color="primary" 
+          [checked]="otherRead" 
+          (change)="toggleOtherRead()"
+        ></mat-checkbox>
+      </td>
+      <td>
+        <mat-checkbox
+          [disabled]="isDisabled"
+          color="primary"
+          [checked]="otherWrite"
+          (change)="toggleOtherWrite()"
+        ></mat-checkbox>
+      </td>
+      <td>
+        <mat-checkbox
+          [disabled]="isDisabled"
+          color="primary"
+          [checked]="otherExec"
+          (change)="toggleOtherExec()"
+        ></mat-checkbox>
+      </td>
+    </tr>
+  </table>
+</div>
+
+<ix-errors [control]="controlDirective.control" [label]="label"></ix-errors>

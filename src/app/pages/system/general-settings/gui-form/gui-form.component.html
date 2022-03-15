@@ -84,6 +84,13 @@
           [label]="helptext.ui_consolemsg.label | translate"
           [tooltip]="helptext.ui_consolemsg.tooltip | translate"
         ></ix-checkbox>
+        <ix-permissions
+          formControlName="ui_perms"
+          [label]="'Permissions'"
+          [required]="true"
+          [hideOthersPermissions]="true"
+          [tooltip]="'Permissions tooltipss'"
+        ></ix-permissions>
       </ix-fieldset>
 
       <div class="form-actions">
