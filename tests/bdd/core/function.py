@@ -103,8 +103,9 @@ def ssh_cmd(command, username, password, host):
     try:
         process = run(cmd, stdout=PIPE, universal_newlines=True, timeout=10)
         output = process.stdout
+        stderr = process.stderr
         if process.returncode != 0:
-            return {'result': False, 'output': output}
+            return {'result': False, 'output': stderr}
         else:
             return {'result': True, 'output': output}
     except TimeoutExpired:
