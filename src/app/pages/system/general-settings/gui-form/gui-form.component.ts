@@ -107,6 +107,7 @@ export class GuiFormComponent {
       crash_reporting: values.crash_reporting,
       usage_collection: values.usage_collection,
       ui_consolemsg: values.ui_consolemsg,
+      ui_perms: values.ui_perms, // IxPermissions test; must remove
     };
 
     this.isFormLoading = true;

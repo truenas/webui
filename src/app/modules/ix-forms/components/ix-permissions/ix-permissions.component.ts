@@ -53,7 +53,7 @@ export class IxPermissionsComponent implements ControlValueAccessor {
     if (value && this.formatRe.test(value)) {
       this.value = value;
     } else {
-      value = '000';
+      this.value = '000';
       console.error('Invalid value format for ', this.label);
     }
 

@@ -22,7 +22,7 @@ import { selectPreferences, selectTheme } from 'app/store/preferences/preference
 import { selectGeneralConfig } from 'app/store/system-config/system-config.selectors';
 
 // TODO: Disabled for PR review only.
-xdescribe('GuiFormComponent', () => {
+describe('GuiFormComponent', () => {
   let spectator: Spectator<GuiFormComponent>;
   let loader: HarnessLoader;
   let ws: WebSocketService;
@@ -47,6 +47,7 @@ xdescribe('GuiFormComponent', () => {
     ui_certificate: {
       id: 1,
     } as Certificate,
+    ui_perms: '235', // IxPermissions test; must remove
   } as SystemGeneralConfig;
 
   const createComponent = createComponentFactory({
@@ -129,6 +130,7 @@ xdescribe('GuiFormComponent', () => {
         'Web Interface HTTPS Port': '443',
         'Web Interface IPv4 Address': ['0.0.0.0'],
         'Web Interface IPv6 Address': ['::'],
+        Permissions: '235', // IxPermissions test; must remove
       },
     );
   });
@@ -138,6 +140,7 @@ xdescribe('GuiFormComponent', () => {
     await form.fillForm({
       'Show Console Messages': true,
       'Usage collection': true,
+      Permissions: '202', // IxPermissions test; must remove
     });
 
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
@@ -149,6 +152,7 @@ xdescribe('GuiFormComponent', () => {
         ui_certificate: 1,
         ui_consolemsg: true,
         usage_collection: true,
+        ui_perms: '202', // IxPermissions test; must remove
       },
     ]);
   });
