@@ -196,7 +196,7 @@ export const helptextSharingSmb = {
   share_name_placeholder: T('Share Name'),
   share_name_tooltip: T('Name that was created with the SMB share.'),
 
-  ae_who_sid_placeholder: T('SID'),
+  ae_who_sid_placeholder: 'SID',
   ae_who_sid_tooltip: T('Who this ACL entry applies to, shown as a\
  <a href="https://docs.microsoft.com/en-us/windows/win32/secauthz/security-identifiers" target="_blank">Windows\
  Security Identifier</a>. Either a <i>SID</i> or a <i>Domain</i> and <i>Name</i> is required for this ACL.'),

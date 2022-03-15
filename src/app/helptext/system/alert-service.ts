@@ -22,7 +22,7 @@ export default {
  href="https://docs.aws.amazon.com/sns/latest/dg/sms_supported-countries.html"\
  target="_blank">AWS account region</a>.'),
 
-  AWSSNS_topic_arn_placeholder: T('ARN'),
+  AWSSNS_topic_arn_placeholder: 'ARN',
   AWSSNS_topic_arn_tooltip: T('Topic <a\
  href="https://docs.aws.amazon.com/sns/latest/dg/CreateTopic.html"\
  target="_blank">Amazon Resource Name (ARN)</a> for\

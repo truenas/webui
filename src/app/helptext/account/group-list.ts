@@ -8,7 +8,7 @@ export default {
   group_list_actions_label_delete: T('Delete'),
 
   deleteDialog: {
-    title: T('Delete Group '),
+    title: T('Delete Group'),
     saveButtonText: T('DELETE'),
   },
 };

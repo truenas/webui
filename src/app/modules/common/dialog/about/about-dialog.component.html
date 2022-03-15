@@ -12,33 +12,19 @@
     <div class="help">{{ helptext.help | translate }}</div>
     <div class="line-item">
       <div fxFlex="10%"><mat-icon class="bullet-icon">assignment</mat-icon></div>
-      <div fxFlex="90%" class="medium-font">{{ helptext.docsA | translate }}
-        <a href="https://www.truenas.com/docs/" target="_blank">
-          {{ helptext.docsB | translate }}</a> {{ helptext.docsC | translate }}
-      </div>
+      <div fxFlex="90%" class="medium-font" [innerHtml]="helptext.docs | translate"></div>
     </div>
 
     <div class="line-item">
       <div fxFlex="10%"><mat-icon class="bullet-icon">group</mat-icon></div>
-      <div fxFlex="90%" class="medium-font">{{ helptext.forumsA | translate}} <a href="https://www.ixsystems.com/community/"
-				target="_blank">
-        {{ helptext.forumsB | translate }}</a> {{ helptext.forumsC | translate }} {{systemType}} {{ helptext.forumsD }}.
-      </div>
+      <div fxFlex="90%" class="medium-font" [innerHtml]="helptext.forums | translate"></div>
     </div>
 
     <div class="line-item" *ngIf="systemType === ProductType.Core">
       <div fxFlex="10%"><img id="ix-img" src="assets/images/iX_Logomark.svg"></div>
-      <div fxFlex="90%" class="medium-font">{{ helptext.contactA | translate }}
-        <a href="https://www.ixsystems.com/truenas/?utm_source=truenas+core+ui&utm_medium=os&utm_campaign=welcome"
-					target="_blank">
-          {{ helptext.contactB | translate }}</a> {{ helptext.contactC | translate }}
-        <a href="https://www.ixsystems.com/quote-form/?utm_source=truenas+core+ui&utm_medium=os&utm_campaign=welcome"
-					target="_blank">{{ helptext.contactD | translate }}</a>
-      </div>
+      <div fxFlex="90%" class="medium-font" [innerHtml]="helptext.contact | translate"></div>
     </div>
-    <div id="open-source">TrueNAS {{systemType}} {{ helptext.opensourceA | translate }} <a href="https://github.com/truenas/" target="_blank"
-		  >{{ helptext.opensourceB | translate }}</a> {{ helptext.opensourceC | translate }}
-    </div>
+    <div id="open-source" [innerHtml]="helptext.opensource | translate: { product: systemType } "></div>
   </div>
 
 </div>
