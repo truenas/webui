@@ -2,7 +2,7 @@ import { HarnessLoader, parallel } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
@@ -31,18 +31,15 @@ describe('DownloadClientConfigModalComponent', () => {
       ]),
       mockProvider(ServicesService, {
         generateOpenServerClientConfig: jest.fn(() => of('Key')),
+        getCerts: jest.fn(() => of([
+          { id: 1, name: 'Certificates 1' },
+          { id: 2, name: 'Certificates 2' },
+        ])),
       }),
       mockProvider(StorageService, {
         downloadText: jest.fn(),
       }),
       mockProvider(MatDialogRef),
-      {
-        provide: MAT_DIALOG_DATA,
-        useValue: [
-          { value: 1, label: 'Certificates 1' },
-          { value: 2, label: 'Certificates 2' },
-        ],
-      },
     ],
   });
 

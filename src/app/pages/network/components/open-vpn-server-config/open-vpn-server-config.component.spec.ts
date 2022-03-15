@@ -186,11 +186,6 @@ tls_crypt_auth: New Key`,
     const downloadConfigButton = await loader.getHarness(MatButtonHarness.with({ text: 'Download Client Config' }));
     await downloadConfigButton.click();
 
-    expect(dialog.open).toHaveBeenCalledWith(DownloadClientConfigModalComponent, {
-      data: [
-        { label: 'Certificate 1', value: 1 },
-        { label: 'Certificate 2', value: 2 },
-      ],
-    });
+    expect(dialog.open).toHaveBeenCalledWith(DownloadClientConfigModalComponent);
   });
 });

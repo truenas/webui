@@ -1,13 +1,12 @@
 import {
-  ChangeDetectionStrategy, Component, Inject,
+  ChangeDetectionStrategy, Component,
 } from '@angular/core';
 import { Validators } from '@angular/forms';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MatDialogRef } from '@angular/material/dialog';
 import { FormControl } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { Observable, of } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
-import { Option } from 'app/interfaces/option.interface';
+import { idNameArrayToOptions } from 'app/helpers/options.helper';
 import { EntityUtils } from 'app/modules/entity/utils';
 import {
   AppLoaderService, DialogService, ServicesService, StorageService, WebSocketService,
@@ -21,7 +20,7 @@ import {
 })
 export class DownloadClientConfigModalComponent {
   selectControl = new FormControl(null as number, Validators.required);
-  serverCertificates$: Observable<Option[]>;
+  serverCertificates$ = this.services.getCerts().pipe(idNameArrayToOptions());
 
   constructor(
     private ws: WebSocketService,
@@ -30,10 +29,7 @@ export class DownloadClientConfigModalComponent {
     private dialogRef: MatDialogRef<DownloadClientConfigModalComponent>,
     private services: ServicesService,
     private storageService: StorageService,
-    @Inject(MAT_DIALOG_DATA) serverCertificates: Option[],
-  ) {
-    this.serverCertificates$ = of(serverCertificates);
-  }
+  ) {}
 
   onSave(): void {
     const clientCertificateId = this.selectControl.value;

@@ -10,7 +10,6 @@ import { map } from 'rxjs/operators';
 import { OpenVpnDeviceType } from 'app/enums/open-vpn-device-type.enum';
 import { idNameArrayToOptions } from 'app/helpers/options.helper';
 import helptext from 'app/helptext/services/components/service-openvpn';
-import { Option } from 'app/interfaces/option.interface';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import {
@@ -142,14 +141,7 @@ export class OpenVpnServerConfigComponent implements OnInit {
   }
 
   onDownloadClientConfig(): void {
-    let serverCertificates: Option[];
-    this.serverCertificates$.pipe(untilDestroyed(this)).subscribe((certificates) => {
-      serverCertificates = certificates;
-    });
-
-    this.matDialog.open(DownloadClientConfigModalComponent, {
-      data: serverCertificates,
-    });
+    this.matDialog.open(DownloadClientConfigModalComponent);
   }
 
   private loadConfig(): void {
