@@ -76,7 +76,7 @@ def wait_for_the_alert_and_verify_the_core_files_warning_alert(driver):
     assert wait_on_element(driver, 7, '//button[contains(.,"notifications")]', 'clickable')
     driver.find_element_by_xpath('//button[contains(.,"notifications")]').click()
     assert wait_on_element(driver, 7, '//h3[text()="Alerts"]')
-    assert wait_on_element(driver, 7, '/div[contains(@class, "alert-body")]//h3[contains(.,"Warning")]')
+    assert wait_on_element(driver, 7, '//div[contains(@class, "alert-body")]')
     assert wait_on_element(driver, 7, '//h4[contains(.,"Core files for the following executables were found: /usr/bin/python")]')
     assert wait_on_element(driver, 7, '//ix-alert[contains(.,"Core files")]//mat-icon[text()="warning"]')
 
