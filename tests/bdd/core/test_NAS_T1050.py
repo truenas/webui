@@ -85,12 +85,13 @@ def on_the_dashboard_click_on_storage_on_the_side_menu_click_on_pools(driver):
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Storage"]').click()
     assert wait_on_element(driver, 7, '//mat-list-item[@ix-auto="option__Pools"]', 'clickable')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Pools"]').click()
-    assert wait_on_element(driver, 7, '//div[contains(.,"Pools")]')
+    assert wait_on_element(driver, 10, '//div[contains(text(),"Pools")]')
 
 
 @then('click on the tank pool three dots button, select Add Dataset')
 def click_on_the_tank_pool_three_dots_button_select_add_dataset(driver):
     """click on the tank pool three dots button, select Add Dataset."""
+    assert wait_on_element(driver, 15, '//mat-panel-title[contains(text(),"tank")]')
     assert wait_on_element(driver, 7, '//mat-icon[@id="actions_menu_button__tank"]', 'clickable')
     driver.find_element_by_xpath('//mat-icon[@id="actions_menu_button__tank"]').click()
     assert wait_on_element(driver, 7, '//button[@ix-auto="action__tank_Add Dataset"]', 'clickable')
