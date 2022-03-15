@@ -12,11 +12,12 @@ module.exports = {
   testMatch: ['**/+(*.)+(spec).+(ts)'],
   setupFilesAfterEnv: ['<rootDir>/src/setup-jest.ts'],
   collectCoverage: true,
-  coverageReporters: ['html'],
-  coverageDirectory: 'coverage/my-app',
+  collectCoverageFrom: ["**/*.ts"],
+  coverageReporters: ['html', 'json'],
+  coverageDirectory: 'coverage/webui',
   moduleDirectories: ['node_modules', 'src'],
   moduleNameMapper: pathsToModuleNameMapper(compilerOptions.paths || {}, {
     prefix: '<rootDir>/',
     "^@/(.)$": "/src/$1"
-  })
+  }),
 };

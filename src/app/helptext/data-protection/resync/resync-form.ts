@@ -24,9 +24,9 @@ export default {
   rsync_remotehost_placeholder: T('Remote Host'),
   rsync_remotehost_validation: [Validators.required],
   rsync_remotehost_tooltip: T('Enter the IP address or hostname of the remote\
-                system that will store the copy. Use the format\
-                <i>username@remote_host</i> if the username differs\
-                on the remote host.'),
+ system that will store the copy. Use the format\
+ <i>username@remote_host</i> if the username differs\
+ on the remote host.'),
 
   rsync_remoteport_placeholder: T('Remote SSH Port'),
   rsync_remoteport_tooltip: T('Enter the SSH Port of the remote system.'),

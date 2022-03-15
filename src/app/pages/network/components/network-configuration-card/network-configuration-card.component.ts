@@ -40,13 +40,13 @@ export class NetworkConfigurationCardComponent implements OnInit {
   get serviceAnnouncement(): string {
     const options: string[] = [];
     if (this.config.service_announcement.netbios) {
-      options.push(this.translate.instant('NETBIOS-NS'));
+      options.push('NETBIOS-NS');
     }
     if (this.config.service_announcement.mdns) {
-      options.push(this.translate.instant('mDNS'));
+      options.push('mDNS');
     }
     if (this.config.service_announcement.wsd) {
-      options.push(this.translate.instant('WS-DISCOVERY'));
+      options.push('WS-DISCOVERY');
     }
 
     return options.join(', ');

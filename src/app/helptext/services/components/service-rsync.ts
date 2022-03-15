@@ -72,12 +72,5 @@ field to deactivate the module without completely removing it.'),
  rejected when the patterns match. Separate entries by pressing \
  <code>Enter</code>.'),
 
-  rsyncmod_auxiliary_placeholder: T('Auxiliary Parameters'),
-  rsyncmod_auxiliary_tooltip: T('Enter any additional settings from <a\
- href="https://www.samba.org/ftp/rsync/rsyncd.conf.html"\
- target="_blank">rsyncd.conf(5)</a>. Separate entries by \
- pressing <code>Enter</code>.'),
-
-  configureFormTitle: T('Rsync Configure'),
   moduleFormTitle: T('Rsync Module'),
 };

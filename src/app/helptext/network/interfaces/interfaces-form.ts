@@ -39,7 +39,7 @@ export default {
  when editing an interface.'),
   int_name_validation: [],
 
-  int_dhcp_placeholder: T('DHCP'),
+  int_dhcp_placeholder: 'DHCP',
   int_dhcp_tooltip: T('Set to enable DHCP. Leave unset to create a static\
  IPv4 or IPv6 configuration. Only one interface can\
  be configured for DHCP.'),

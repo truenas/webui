@@ -22,6 +22,7 @@ interface NetTraffic {
   sentUnits: string;
   received: string;
   receivedUnits: string;
+  linkState: LinkState;
 }
 
 interface Slide {
@@ -71,9 +72,17 @@ export class WidgetNicComponent extends WidgetComponent implements AfterViewInit
     });
   }
 
-  get linkState(): string {
-    if (!this.nicState && !this.nicState.aliases) { return ''; }
-    return this.nicState.link_state.replace(/_/g, ' ');
+  get linkState(): LinkState {
+    if (!this.nicState && !this.nicState.aliases) { return null; }
+    if (!this.traffic) {
+      return this.nicState.link_state;
+    }
+    return this.traffic.linkState;
+  }
+
+  get linkStateLabel(): string {
+    if (!this.linkState) { return ''; }
+    return this.linkState.replace(/_/g, ' ');
   }
 
   constructor(
@@ -108,6 +117,7 @@ export class WidgetNicComponent extends WidgetComponent implements AfterViewInit
           sentUnits: sent.units,
           received: received.value,
           receivedUnits: received.units,
+          linkState: evt.data.link_state as LinkState,
         };
       }
     });

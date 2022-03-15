@@ -145,6 +145,10 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
 
     this.isSidenavCollapsed = this.layoutService.isMenuCollapsed;
 
+    this.ws.authStatus.pipe(untilDestroyed(this)).subscribe((evt) => {
+      this.core.emit({ name: 'Authenticated', data: evt, sender: this });
+    });
+
     this.core.emit({ name: 'SysInfoRequest', sender: this });
     this.store$.dispatch(adminUiInitialized());
   }

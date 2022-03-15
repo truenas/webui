@@ -61,16 +61,16 @@
               <div class="overlay" fxFlex="100" fxLayout="column" fxLayoutAlign="space-around center">
 
                 <div fxFlex="66" class="left-content">
-                  <div class="nic-name" [ngClass]="{ 'up': nicState.link_state == LinkState.Up, 'down': nicState.link_state !== LinkState.Up }">
+                  <div class="nic-name" [ngClass]="{ 'up': linkState == LinkState.Up, 'down': linkState !== LinkState.Up }">
                     <span textLimiter threshold="7" content="{{nicState.name | translate}}"></span>
                   </div>
 
-                  <div class="link-state" [ngClass]="{'up': nicState.link_state == LinkState.Up, 'down': nicState.link_state !== LinkState.Up}">
-                    {{linkState | translate }}
-                    <mat-icon *ngIf="nicState.link_state == LinkState.Up " role="img" fontSet="mdi-set" fontIcon="mdi-check-circle"></mat-icon>
-                    <mat-icon *ngIf="nicState.link_state !== LinkState.Up " role="img" fontSet="mdi-set" fontIcon="mdi-close-circle"></mat-icon>
+                  <div class="link-state" [ngClass]="{'up': linkState == LinkState.Up, 'down': linkState !== LinkState.Up}">
+                    {{ linkStateLabel | translate }}
+                    <mat-icon *ngIf="linkState == LinkState.Up " role="img" fontSet="mdi-set" fontIcon="mdi-check-circle"></mat-icon>
+                    <mat-icon *ngIf="linkState !== LinkState.Up " role="img" fontSet="mdi-set" fontIcon="mdi-close-circle"></mat-icon>
 
-                    <div *ngIf="traffic && nicState.link_state == LinkState.Up" class="nic-traffic">
+                    <div *ngIf="traffic && linkState == LinkState.Up" class="nic-traffic">
                       <div class="tr">
                         <div class="td label"><strong>{{"In" | translate}}: &nbsp;</strong></div>
                         <div class="td value"><span class="stat">{{traffic.received}}</span> {{traffic.receivedUnits}}/s</div>
@@ -81,11 +81,11 @@
                       </div>
                     </div>
 
-                    <div *ngIf="!traffic && nicState.link_state == LinkState.Up" class="nic-traffic-gathering">
+                    <div *ngIf="!traffic && linkState == LinkState.Up" class="nic-traffic-gathering">
                       {{ "Gathering data" | translate }}...
                     </div>
 
-                    <div *ngIf="nicState.link_state !== LinkState.Up" class="no-nic-traffic">
+                    <div *ngIf="linkState !== LinkState.Up" class="no-nic-traffic">
                       No Traffic
                     </div>
                   </div>

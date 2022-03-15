@@ -472,6 +472,7 @@ export class NetworkComponent implements OnInit, OnDestroy {
             if (!evt.interfaces[row.id]) {
               row.link_state = null;
             } else {
+              row.link_state = evt.interfaces[row.id].link_state;
               if (evt.interfaces[row.id].received_bytes !== undefined) {
                 row.received = this.storageService.convertBytesToHumanReadable(evt.interfaces[row.id].received_bytes);
                 row.received_bytes = evt.interfaces[row.id].received_bytes;
