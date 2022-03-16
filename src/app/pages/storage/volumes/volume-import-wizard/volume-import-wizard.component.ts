@@ -83,20 +83,20 @@ export class VolumeImportWizardComponent implements OnInit {
       this.slideInService.close();
       this.modalService.refreshTable();
     });
-    dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((res) => {
+    dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((result) => {
       dialogRef.close(false);
       this.isFormLoading = false;
-      this.errorReport(res);
+      this.errorReport(result);
     });
   }
 
-  errorReport(res: any): void {
-    if (res.reason && res.trace) {
-      this.dialogService.errorReport(this.translate.instant('Error importing pool'), res.reason, res.trace.formatted);
-    } else if (res.error && res.exception) {
-      this.dialogService.errorReport(this.translate.instant('Error importing pool'), res.error, res.exception);
+  errorReport(result: any): void {
+    if (result.reason && result.trace) {
+      this.dialogService.errorReport(this.translate.instant('Error importing pool'), result.reason, result.trace.formatted);
+    } else if (result.error && result.exception) {
+      this.dialogService.errorReport(this.translate.instant('Error importing pool'), result.error, result.exception);
     } else {
-      console.error(res);
+      console.error(result);
     }
   }
 }
