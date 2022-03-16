@@ -8,9 +8,9 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockJob, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { PoolStatus } from 'app/enums/pool-status.enum';
-import { Option } from 'app/interfaces/option.interface';
 import { PoolFindResult } from 'app/interfaces/pool-import.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
+import { IxSelectHarness } from 'app/modules/ix-forms/components/ix-select/ix-select.harness';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { WebSocketService, DialogService } from 'app/services';
@@ -72,15 +72,18 @@ describe('VolumeImportWizardComponent', () => {
     ws = spectator.inject(WebSocketService);
   });
 
-  it('loads and shows the current list of pools to import when form is opened', (done) => {
-    spectator.component.pool.options.subscribe((options: Option[]) => {
+  it('loads and shows the current list of pools to import when form is opened', () => {
+    spectator.component.pool.options.subscribe(async () => {
+      const form = await loader.getHarness(IxFormHarness);
+      const controls = await form.getControlHarnessesDict();
+      const poolSelect = await (controls['Pool'] as IxSelectHarness).getSelectHarness();
+      const options = await poolSelect.getOptions();
       expect(ws.job).toHaveBeenCalledWith('pool.import_find');
       expect(options).toEqual([
         { label: 'pool_name_1 | pool_guid_1', value: 'pool_guid_1' },
         { label: 'pool_name_2 | pool_guid_2', value: 'pool_guid_2' },
         { label: 'pool_name_3 | pool_guid_3', value: 'pool_guid_3' },
       ]);
-      done();
     });
   });
 
