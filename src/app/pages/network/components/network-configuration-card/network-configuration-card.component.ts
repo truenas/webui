@@ -9,7 +9,7 @@ import { NetworkActivityType } from 'app/enums/network-activity-type.enum';
 import { NetworkConfiguration } from 'app/interfaces/network-configuration.interface';
 import { NetworkSummary } from 'app/interfaces/network-summary.interface';
 import { Option } from 'app/interfaces/option.interface';
-import { NetworkConfigurationComponent } from 'app/pages/network/configuration/configuration.component';
+import { NetworkConfigurationComponent } from 'app/pages/network/components/configuration/configuration.component';
 import { ModalService, WebSocketService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
@@ -40,13 +40,13 @@ export class NetworkConfigurationCardComponent implements OnInit {
   get serviceAnnouncement(): string {
     const options: string[] = [];
     if (this.config.service_announcement.netbios) {
-      options.push(this.translate.instant('NETBIOS-NS'));
+      options.push('NETBIOS-NS');
     }
     if (this.config.service_announcement.mdns) {
-      options.push(this.translate.instant('mDNS'));
+      options.push('mDNS');
     }
     if (this.config.service_announcement.wsd) {
-      options.push(this.translate.instant('WS-DISCOVERY'));
+      options.push('WS-DISCOVERY');
     }
 
     return options.join(', ');

@@ -45,6 +45,7 @@ export interface CertificateExtensions {
 }
 
 export interface CertificateAuthorityUpdate {
+  add_to_trusted_store: boolean;
   tos: boolean;
   csr_id: number;
   signedby: number;
@@ -81,6 +82,7 @@ export interface CertificateAuthority {
   CA_type_internal: boolean;
   CSR: unknown;
   DN: string;
+  add_to_trusted_store: boolean;
   cert_type: string; // Enum?
   cert_type_CSR: boolean;
   cert_type_existing: boolean;

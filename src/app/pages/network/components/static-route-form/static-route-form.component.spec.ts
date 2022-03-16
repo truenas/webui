@@ -8,7 +8,7 @@ import { StaticRoute } from 'app/interfaces/static-route.interface';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
-import { StaticRouteFormComponent } from 'app/pages/network/static-route-form/static-route-form.component';
+import { StaticRouteFormComponent } from 'app/pages/network/components/static-route-form/static-route-form.component';
 import { WebSocketService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 

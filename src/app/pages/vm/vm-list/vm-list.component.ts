@@ -57,7 +57,9 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow>, On
     {
       name: this.translate.instant('State') as string, prop: 'state', always_display: true, toggle: true,
     },
-    { name: this.translate.instant('Autostart') as string, prop: 'autostart', checkbox: true },
+    {
+      name: this.translate.instant('Autostart') as string, prop: 'autostart', checkbox: true, always_display: true,
+    },
     { name: this.translate.instant('Virtual CPUs') as string, prop: 'vcpus', hidden: true },
     { name: this.translate.instant('Cores') as string, prop: 'cores', hidden: true },
     { name: this.translate.instant('Threads') as string, prop: 'threads', hidden: true },

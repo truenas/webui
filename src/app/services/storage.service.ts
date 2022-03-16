@@ -50,6 +50,11 @@ export class StorageService {
     this.downloadBlob(blob, filename);
   }
 
+  downloadText(contents: string, filename: string): void {
+    const blob = new Blob([contents], { type: 'text/plain' });
+    this.downloadBlob(blob, filename);
+  }
+
   downloadBlob(blob: Blob, filename: string): void {
     const dlink = document.createElement('a');
     document.body.appendChild(dlink);

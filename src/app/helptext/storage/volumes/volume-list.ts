@@ -47,8 +47,6 @@ the system dataset transfers back to the TrueNAS operating system device.'),
 
   exporting: T('Exporting Pool'),
   exportDisconnect: T('Export/Disconnect Pool'),
-  exportSuccess: T("Successfully exported/disconnected '"),
-  destroyed: T("'. All data on that pool was destroyed."),
 
   upgradePoolDialog_warning: T('Proceed with upgrading the pool? WARNING: Upgrading a pool is a\
  one-way operation that might make some features of\
@@ -79,7 +77,6 @@ the system dataset transfers back to the TrueNAS operating system device.'),
     save_button: T('Save'),
   },
   pool_options_dialog: {
-    dialog_title: T('Edit Pool Options for '),
     autotrim_placeholder: T('Auto TRIM'),
     autotrim_tooltip: T('Enable for TrueNAS to periodically review data blocks and identify\
  empty blocks of obsolete blocks that can be deleted. Unset to incorporate day block\
@@ -87,8 +84,6 @@ the system dataset transfers back to the TrueNAS operating system device.'),
     confirm_checkbox: T('Confirm'),
     save_button: T('Save'),
     dialog_saved_title: T('Pool Options Saved'),
-    dialog_saved_message1: T('pool options for '),
-    dialog_saved_message2: T(' successfully saved.'),
     save_pool_options: T('Save Pool Options'),
     saving_pool_options: T('Saving Pool Options...'),
   },

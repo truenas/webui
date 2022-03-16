@@ -12,8 +12,8 @@ export default {
   vdev_types: {
     stripe: T('Stripe'),
     mirror: T('Mirror'),
-    raidz: T('Raid-z'),
-    raidz2: T('Raid-z2'),
-    raidz3: T('Raid-z3'),
+    raidz: 'Raid-z',
+    raidz2: 'Raid-z2',
+    raidz3: 'Raid-z3',
   },
 };
