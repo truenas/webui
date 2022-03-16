@@ -50,6 +50,11 @@ export class StorageService {
     this.downloadBlob(blob, filename);
   }
 
+  downloadText(contents: string, filename: string): void {
+    const blob = new Blob([contents], { type: 'text/plain' });
+    this.downloadBlob(blob, filename);
+  }
+
   downloadBlob(blob: Blob, filename: string): void {
     const dlink = document.createElement('a');
     document.body.appendChild(dlink);
@@ -101,7 +106,7 @@ export class StorageService {
     }
     // Select table columns labled with GiB, Mib, etc
     // Regex checks for ' XiB' with a leading space and X === K, M, G or T
-    // also include bytes unit, which will get from convertBytestoHumanReadable function
+    // also include bytes unit, which will get from convertBytesToHumanReadable function
     if (typeof (tempArr[n]) === 'string'
       && (tempArr[n].slice(-2) === ' B' || /\s[KMGT]iB$/.test(tempArr[n].slice(-4)) || tempArr[n].slice(-6) === ' bytes')) {
       let bytes = []; let kbytes = []; let mbytes = []; let gbytes = []; let
@@ -141,35 +146,34 @@ export class StorageService {
     } else if (typeof (tempArr[n]) === 'string'
       && tempArr[n][tempArr[n].length - 1].match(/[KMGTB]/)
       && tempArr[n][tempArr[n].length - 2].match(/[0-9]/)) {
-      // eslint-disable-next-line @typescript-eslint/naming-convention
-      let B = []; let K = []; let M = []; let G = []; let T = [];
+      let bytes = []; let kiloBytes = []; let megaBytes = []; let gigaBytes = []; let teraBytes = [];
       for (const i of tempArr) {
         switch (i.slice(-1)) {
           case 'B':
-            B.push(i);
+            bytes.push(i);
             break;
           case 'K':
-            K.push(i);
+            kiloBytes.push(i);
             break;
           case 'M':
-            M.push(i);
+            megaBytes.push(i);
             break;
           case 'G':
-            G.push(i);
+            gigaBytes.push(i);
             break;
           case 'T':
-            T.push(i);
+            teraBytes.push(i);
         }
       }
 
       // Sort each array independently, then put them back together
-      B = B.sort(myCollator.compare);
-      K = K.sort(myCollator.compare);
-      M = M.sort(myCollator.compare);
-      G = G.sort(myCollator.compare);
-      T = T.sort(myCollator.compare);
+      bytes = bytes.sort(myCollator.compare);
+      kiloBytes = kiloBytes.sort(myCollator.compare);
+      megaBytes = megaBytes.sort(myCollator.compare);
+      gigaBytes = gigaBytes.sort(myCollator.compare);
+      teraBytes = teraBytes.sort(myCollator.compare);
 
-      sorter = B.concat(K, M, G, T);
+      sorter = bytes.concat(kiloBytes, megaBytes, gigaBytes, teraBytes);
 
     // Select strings that Date.parse can turn into a number (ie, that are a legit date)
     } else if (typeof (tempArr[n]) === 'string'
@@ -192,20 +196,20 @@ export class StorageService {
       sorter = tempArr.sort(myCollator.compare);
     }
     // Rejoins the sorted keys with the rest of the row data
-    let v: number;
-    // ascending or decending
+    let sort: number;
+    // ascending or descending
     if (asc === 'asc') {
-      (v = 1);
+      sort = 1;
     } else {
-      (v = -1);
+      sort = -1;
     }
     arr.sort((a, b) => {
       const aValue = a[key];
       const bValue = b[key];
       if (sorter.indexOf(aValue) > sorter.indexOf(bValue)) {
-        return v;
+        return sort;
       }
-      return -1 * v;
+      return -1 * sort;
     });
 
     return arr;
@@ -381,7 +385,7 @@ export class StorageService {
   }
 
   // Converts a number from bytes to the most natural human readable format
-  convertBytestoHumanReadable(
+  convertBytesToHumanReadable(
     rawBytes: number | string,
     decimalPlaces?: number,
     minUnits?: string,

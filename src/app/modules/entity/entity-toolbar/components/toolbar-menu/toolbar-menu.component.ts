@@ -1,7 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { Subject } from 'rxjs';
-import { IxAbstractObject } from 'app/core/classes/ix-abstract-object';
+import { getUniqueId } from 'app/helpers/get-unique-id.helper';
 import { ControlConfig } from 'app/modules/entity/entity-toolbar/models/control-config.interface';
 import { Control } from 'app/modules/entity/entity-toolbar/models/control.interface';
 
@@ -9,12 +9,13 @@ import { Control } from 'app/modules/entity/entity-toolbar/models/control.interf
   selector: 'toolbar-menu',
   templateUrl: 'toolbar-menu.component.html',
 })
-export class ToolbarMenuComponent extends IxAbstractObject {
+export class ToolbarMenuComponent {
   @Input() config?: ControlConfig;
   @Input() controller: Subject<Control>;
-  constructor(public translate: TranslateService) {
-    super();
-  }
+
+  id = getUniqueId();
+
+  constructor(public translate: TranslateService) {}
 
   onClick(value: any): void {
     this.config.value = value;

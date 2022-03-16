@@ -674,7 +674,7 @@ export class AlertServiceComponent implements FormConfiguration {
     },
   ];
 
-  custActions = [
+  customActions = [
     {
       id: 'authenticate',
       name: this.translate.instant('SEND TEST ALERT'),

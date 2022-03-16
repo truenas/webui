@@ -80,5 +80,5 @@ IMPORTANT: Two-factor authentication is time-based and requires that the system 
     },
 
     formTitle: T('Two-Factor Authentication'),
-  }, // end form
+  },
 };

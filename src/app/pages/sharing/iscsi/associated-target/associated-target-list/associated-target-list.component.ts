@@ -13,6 +13,8 @@ import { EntityUtils } from 'app/modules/entity/utils';
 import {
   AppLoaderService, DialogService, IscsiService, WebSocketService,
 } from 'app/services';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { AssociatedTargetFormComponent } from '../associated-target-form/associated-target-form.component';
 
 @UntilDestroy()
 @Component({
@@ -26,14 +28,12 @@ export class AssociatedTargetListComponent implements EntityTableConfig {
   tableTitle = 'Associated Targets';
   queryCall = 'iscsi.targetextent.query' as const;
   wsDelete = 'iscsi.targetextent.delete' as const;
-  routeAdd: string[] = ['sharing', 'iscsi', 'associatedtarget', 'add'];
   routeAddTooltip = this.translate.instant('Add Target/Extent');
-  routeEdit: string[] = ['sharing', 'iscsi', 'associatedtarget', 'edit'];
 
   columns = [
     {
       name: this.translate.instant('Target'),
-      prop: 'target',
+      prop: 'targetName',
       always_display: true,
     },
     {
@@ -42,7 +42,7 @@ export class AssociatedTargetListComponent implements EntityTableConfig {
     },
     {
       name: this.translate.instant('Extent'),
-      prop: 'extent',
+      prop: 'extentName',
     },
   ];
   rowIdentifier = 'target';
@@ -51,23 +51,28 @@ export class AssociatedTargetListComponent implements EntityTableConfig {
     sorting: { columns: this.columns },
     deleteMsg: {
       title: 'Target/Extent',
-      key_props: ['target', 'extent'],
+      key_props: ['targetName', 'extentName'],
     },
   };
 
   protected entityList: EntityTableComponent;
 
   constructor(
-    protected router: Router,
-    protected iscsiService: IscsiService,
+    private router: Router,
+    private iscsiService: IscsiService,
     private loader: AppLoaderService,
     private dialogService: DialogService,
     private ws: WebSocketService,
     private translate: TranslateService,
+    private slideInService: IxSlideInService,
   ) {}
 
   afterInit(entityList: EntityTableComponent): void {
     this.entityList = entityList;
+
+    this.slideInService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
+      this.entityList.getData();
+    });
   }
 
   dataHandler(entityList: EntityTableComponent): void {
@@ -76,10 +81,14 @@ export class AssociatedTargetListComponent implements EntityTableConfig {
       this.iscsiService.getExtents(),
     ]).pipe(untilDestroyed(this)).subscribe(([targets, extents]) => {
       entityList.rows.forEach((row) => {
-        row.target = _.find(targets, { id: row.target })['name'];
-        row.extent = _.find(extents, { id: row.extent })['name'];
+        row.targetName = _.find(targets, { id: row.target })['name'];
+        row.extentName = _.find(extents, { id: row.extent })['name'];
       });
     });
+  }
+
+  doAdd(): void {
+    this.slideInService.open(AssociatedTargetFormComponent);
   }
 
   getActions(row: IscsiTargetExtent): EntityTableAction[] {
@@ -88,7 +97,10 @@ export class AssociatedTargetListComponent implements EntityTableConfig {
       name: 'edit',
       icon: 'edit',
       label: this.translate.instant('Edit'),
-      onClick: (rowinner: IscsiTargetExtent) => { this.entityList.doEdit(rowinner.id); },
+      onClick: (extent: IscsiTargetExtent) => {
+        const form = this.slideInService.open(AssociatedTargetFormComponent);
+        form.setTargetForEdit(extent);
+      },
     }, {
       id: row.target,
       name: 'delete',
@@ -100,7 +112,7 @@ export class AssociatedTargetListComponent implements EntityTableConfig {
           (sessions) => {
             let warningMsg = '';
             sessions.forEach((session) => {
-              if (session.target.split(':')[1] === rowinner.target) {
+              if (Number(session.target.split(':')[1]) === rowinner.target) {
                 warningMsg = `<font color="red">${this.translate.instant('Warning: iSCSI Target is already in use.</font><br>')}`;
               }
             });
@@ -115,8 +127,8 @@ export class AssociatedTargetListComponent implements EntityTableConfig {
               this.entityList.loaderOpen = true;
               this.ws.call(this.wsDelete, [rowinner.id, true]).pipe(untilDestroyed(this)).subscribe(
                 () => { this.entityList.getData(); },
-                (resinner: WebsocketError) => {
-                  new EntityUtils().handleError(this, resinner);
+                (error: WebsocketError) => {
+                  new EntityUtils().handleError(this, error);
                   this.loader.close();
                 },
               );

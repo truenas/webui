@@ -1,8 +1,7 @@
 <div class="full-width container has-tooltip">
-
   <div *ngIf="label || tooltip" class="label-container">
     <label class="label">
-      {{label}}
+      {{ label }}
       <span *ngIf="required" class="required">*</span>
     </label>
     <tooltip *ngIf="tooltip" [header]="label" class="tooltip" [message]="tooltip"></tooltip>
@@ -18,18 +17,18 @@
       (ngModelChange)="onChange($event)"
     >
       <ng-container *ngIf="opts$ | async as opts; else loadingOrError">
-        <mat-option *ngFor="let option of opts$ | async" [value]="option.value">{{option.label}}</mat-option>
+        <mat-option *ngFor="let option of opts$ | async" [value]="option.value">{{ option.label }}</mat-option>
       </ng-container>
 
       <ng-template #loadingOrError>
-        <ng-container *ngIf="errorObject">
-          <mat-option [disabled]="true">{{'Options cannot be loaded' | translate}}</mat-option>
+        <ng-container *ngIf="hasErrorInOptions">
+          <mat-option [disabled]="true">{{ 'Options cannot be loaded' | translate }}</mat-option>
         </ng-container>
       </ng-template>
     </mat-select>
   </div>
   <ix-errors [control]="controlDirective.control" [label]="label"></ix-errors>
 
-  <mat-hint *ngIf="hint">{{hint}}</mat-hint>
+  <mat-hint *ngIf="hint">{{ hint }}</mat-hint>
 
 </div>

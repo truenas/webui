@@ -38,8 +38,8 @@ export class IxSelectComponent implements ControlValueAccessor, OnChanges {
   ngOnChanges(): void {
     if (this.options) {
       this.opts$ = this.options.pipe(
-        catchError((error) => {
-          this.errorObject = error;
+        catchError(() => {
+          this.hasErrorInOptions = false;
           return EMPTY;
         }),
       );
@@ -48,7 +48,7 @@ export class IxSelectComponent implements ControlValueAccessor, OnChanges {
 
   formControl = new FormControl(this).value as FormControl;
   isDisabled = false;
-  errorObject: any = null;
+  hasErrorInOptions = false;
   opts$: Observable<Option[]>;
 
   onChange: (value: IxSelectValue) => void = (): void => {};

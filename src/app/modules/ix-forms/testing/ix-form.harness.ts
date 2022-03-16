@@ -4,12 +4,16 @@ import { IxChipsHarness } from 'app/modules/ix-forms/components/ix-chips/ix-chip
 import { IxComboboxHarness } from 'app/modules/ix-forms/components/ix-combobox/ix-combobox.harness';
 import { IxExplorerHarness } from 'app/modules/ix-forms/components/ix-explorer/ix-explorer.harness';
 import { IxInputHarness } from 'app/modules/ix-forms/components/ix-input/ix-input.harness';
+import {
+  IxIpInputWithNetmaskHarness,
+} from 'app/modules/ix-forms/components/ix-ip-input-with-netmask/ix-ip-input-with-netmask.harness';
 import { IxRadioGroupHarness } from 'app/modules/ix-forms/components/ix-radio-group/ix-radio-group.harness';
 import { IxSelectHarness } from 'app/modules/ix-forms/components/ix-select/ix-select.harness';
 import { IxSlideToggleHarness } from 'app/modules/ix-forms/components/ix-slide-toggle/ix-slide-toggle.harness';
 import { IxTextareaHarness } from 'app/modules/ix-forms/components/ix-textarea/ix-textarea.harness';
 import { IxFormControlHarness } from 'app/modules/ix-forms/interfaces/ix-form-control-harness.interface';
 import { JiraOauthHarness } from 'app/modules/ix-forms/testing/jira-oauth.harness';
+import { SchedulerHarness } from 'app/modules/scheduler/components/scheduler/scheduler.harness';
 
 const childSelectors = [
   IxInputHarness,
@@ -22,6 +26,8 @@ const childSelectors = [
   IxSlideToggleHarness,
   IxRadioGroupHarness,
   JiraOauthHarness,
+  SchedulerHarness,
+  IxIpInputWithNetmaskHarness,
 ] as const;
 
 type SupportedFormControlHarness = InstanceType<(typeof childSelectors)[number]>;

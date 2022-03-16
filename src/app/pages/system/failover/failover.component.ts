@@ -39,7 +39,7 @@ export class FailoverComponent implements FormConfiguration {
   masterControl: FormControl;
   warned = false;
 
-  custActions = [
+  customActions = [
     {
       id: 'sync_to_peer',
       name: this.translate.instant('Sync to Peer'),

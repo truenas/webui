@@ -1,6 +1,6 @@
 <mat-card class="form-card">
   <div class="mat-content">
-    <form (ngSubmit)="onSubmit()" *ngIf="formGroup" [formGroup]="formGroup" class="form-wrap" #entityForm="ngForm">
+    <form (ngSubmit)="onSubmit()" *ngIf="formGroup" [formGroup]="formGroup" class="form-wrap">
       <div class="fieldset-container fieldset-display-default" *ngIf="fieldSets">
         <ng-container *ngFor="let fieldSet of fieldSets.list(); let i = index">
           <div [ngClass]="fieldSet.class" *ngIf="i==selectedIndex" [style.margin-bottom.px]="12" class="fieldset divider-{{fieldSet.divider}}" fxFlex="100%" fxFlex.gt-xs="calc({{fieldSet.width}} - 16px)">

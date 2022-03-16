@@ -13,7 +13,7 @@ import { IxTableHarness } from 'app/modules/ix-tables/testing/ix-table.harness';
 import { DialogService, ModalService, WebSocketService } from 'app/services';
 import { selectPreferences } from 'app/store/preferences/preferences.selectors';
 import { CoreService } from '../../../../services/core-service/core.service';
-import { UserListDetailsComponent } from '../user-list-details/user-list-details.component';
+import { UserDetailsRowComponent } from '../user-details-row/user-details-row.component';
 import { UserListComponent } from './user-list.component';
 
 export const fakeUserDataSource: User[] = [{
@@ -77,7 +77,7 @@ describe('UserListComponent', () => {
       IxTableModule,
     ],
     declarations: [
-      MockComponent(UserListDetailsComponent),
+      MockComponent(UserDetailsRowComponent),
     ],
     providers: [
       mockWebsocket([
@@ -97,7 +97,6 @@ describe('UserListComponent', () => {
           {
             selector: selectPreferences,
             value: {
-              showUserListMessage: false,
               hideBuiltinUsers: false,
             } as Preferences,
           },
@@ -158,6 +157,19 @@ describe('UserListComponent', () => {
 
     await element.click();
 
-    expect(await element.hasClass('expanded-row')).toBeTruthy();
+    expect(await element.hasClass('expanded')).toBeTruthy();
+  });
+
+  it('should expand only one row on click', async () => {
+    const table = await loader.getHarness(IxTableHarness);
+    const [firstRow, secondRow] = await table.getRows();
+
+    const firstRowElement = await firstRow.host();
+    await firstRowElement.click();
+
+    const secondRowElement = await secondRow.host();
+    await secondRowElement.click();
+
+    expect(spectator.queryAll('.expanded').length).toEqual(1);
   });
 });

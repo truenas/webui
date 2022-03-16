@@ -34,6 +34,7 @@ import { RelationAction } from 'app/modules/entity/entity-form/models/relation-a
 import { RelationConnection } from 'app/modules/entity/entity-form/models/relation-connection.enum';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { EntityUtils, NULL_VALUE } from 'app/modules/entity/utils';
+import { CronPresetValue } from 'app/modules/scheduler/utils/get-default-crontab-presets.utils';
 import { CloudCredentialsFormComponent } from 'app/pages/credentials/backup-credentials/forms/cloud-credentials-form.component';
 import {
   AppLoaderService, CloudCredentialService, DialogService, JobService, WebSocketService,
@@ -224,7 +225,7 @@ export class CloudsyncFormComponent implements FormConfiguration {
           placeholder: helptext.cloudsync_picker_placeholder,
           tooltip: helptext.cloudsync_picker_tooltip,
           required: true,
-          value: '0 0 * * *',
+          value: CronPresetValue.Daily,
         },
         {
           type: 'checkbox',
@@ -431,7 +432,7 @@ export class CloudsyncFormComponent implements FormConfiguration {
 
   protected providers: CloudsyncProvider[];
   protected taskSchemas = ['encryption', 'fast_list', 'chunk_size', 'storage_class'];
-  custActions = [
+  customActions = [
     {
       id: 'dry_run',
       name: helptext.action_button_dry_run,
@@ -1131,7 +1132,7 @@ export class CloudsyncFormComponent implements FormConfiguration {
     }
   }
 
-  isCustActionDisabled(): boolean {
+  isCustomActionDisabled(): boolean {
     return !this.entityForm.valid;
   }
 }

@@ -10,7 +10,9 @@ import {
 } from 'app/interfaces/iscsi.interface';
 import { WebSocketService } from './ws.service';
 
-@Injectable()
+@Injectable({
+  providedIn: 'root',
+})
 export class IscsiService {
   constructor(protected ws: WebSocketService) {}
 

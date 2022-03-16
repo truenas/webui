@@ -201,9 +201,8 @@ export interface FormRadioOption {
 }
 
 export interface FormSchedulerConfig<P = unknown> extends BaseFieldConfig<P> {
-  options?: string[];
+  options?: [startTime: string, endTime: string];
   noMinutes?: boolean;
-  onChangeOption?(data: { event: Event }): void;
   type: 'scheduler';
 }
 

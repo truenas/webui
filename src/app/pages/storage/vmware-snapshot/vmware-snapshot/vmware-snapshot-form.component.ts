@@ -103,7 +103,7 @@ export class VmwareSnapshotFormComponent implements FormConfiguration {
     },
   ];
 
-  custActions = [
+  customActions = [
     {
       id: 'FetchDataStores',
       name: this.translate.instant('Fetch DataStores'),

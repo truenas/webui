@@ -73,7 +73,7 @@ export class VolumeCreatekeyFormComponent implements FormConfiguration {
     },
   ];
 
-  custActions = [
+  customActions = [
     {
       id: 'download_encrypt_key',
       name: this.translate.instant('Download Encryption Key'),

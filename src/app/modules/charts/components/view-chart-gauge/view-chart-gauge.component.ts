@@ -58,8 +58,8 @@ export class ViewChartGaugeComponent /* extends DisplayObject */ implements Afte
     return this._data;
   }
 
-  set data(d) {
-    this._data = d;
+  set data(data) {
+    this._data = data;
   }
 
   render(): void {
@@ -152,13 +152,13 @@ export class ViewChartGaugeComponent /* extends DisplayObject */ implements Afte
   }
 
   load(newAngle: number) {
-    return (d: any) => {
-      const interpolate = d3.interpolate(d.endAngle, newAngle);
+    return (datum: { endAngle: number }) => {
+      const interpolate = d3.interpolate(datum.endAngle, newAngle);
 
-      return (t: number) => {
-        d.endAngle = interpolate(t);
+      return (tween: number) => {
+        datum.endAngle = interpolate(tween);
 
-        return this.arc(d);
+        return this.arc(datum as d3.DefaultArcObject);
       };
     };
   }

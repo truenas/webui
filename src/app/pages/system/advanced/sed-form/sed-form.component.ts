@@ -55,7 +55,6 @@ export class SedFormComponent {
   readonly tooltips = {
     sed_user: helptextSystemAdvanced.sed_user_tooltip,
     sed_passwd: helptextSystemAdvanced.sed_passwd_tooltip,
-    sed_passwd2: helptextSystemAdvanced.sed_passwd2_tooltip,
   };
 
   constructor(

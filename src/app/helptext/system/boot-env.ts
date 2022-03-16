@@ -11,18 +11,11 @@ export const helptextSystemBootenv = {
  the new device.',
   ),
 
-  clone_fieldset: T('Clone Boot Environment'),
-
-  clone_name_placeholder: T('Name'),
   clone_name_tooltip: T(
     'Name of the new cloned boot environment. Alphanumeric characters, dashes (-), underscores (_), \
     and periods (.) are allowed.',
   ),
-
-  clone_source_placeholder: T('Source'),
   clone_source_tooltip: T('Boot environment to be cloned.'),
-
-  create_name_placeholder: T('Name'),
   create_name_tooltip: T(
     'Boot environment name. Alphanumeric characters, dashes (-), underscores (_), \
     and periods (.) are allowed.',
@@ -32,9 +25,6 @@ export const helptextSystemBootenv = {
   list_dialog_keep_action: T('Set Keep Flag'),
   list_dialog_unkeep_action: T('Remove Keep Flag'),
   list_dialog_scrub_action: T('Start Scrub'),
-
-  rename_name_placeholder: T('Name'),
-  rename_fieldset_name: T('Rename this Boot Environment'),
 
   replace_name_placeholder: T('Member Disk'),
 
@@ -47,5 +37,4 @@ export const helptextSystemBootenv = {
     title: T('Error'),
     message: T('Could not delete boot environment.'),
   },
-
 };

@@ -4,10 +4,10 @@ import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
-import { combineLatest } from 'rxjs';
-import { filter } from 'rxjs/operators';
+import { Subject } from 'rxjs';
+import { map } from 'rxjs/operators';
 import helptext from 'app/helptext/account/group-list';
-import { ConfirmOptions } from 'app/interfaces/dialog.interface';
+import { CoreEvent } from 'app/interfaces/events';
 import { Group, MembershipGroup } from 'app/interfaces/group.interface';
 import { User } from 'app/interfaces/user.interface';
 import { AppLoaderService } from 'app/modules/app-loader/app-loader.service';
@@ -15,15 +15,17 @@ import { DialogFormConfiguration } from 'app/modules/entity/entity-dialog/dialog
 import { EntityDialogComponent } from 'app/modules/entity/entity-dialog/entity-dialog.component';
 import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-table.component';
 import { EntityTableAction, EntityTableConfig } from 'app/modules/entity/entity-table/entity-table.interface';
+import { EntityToolbarComponent } from 'app/modules/entity/entity-toolbar/entity-toolbar.component';
+import { ControlConfig, ToolbarConfig } from 'app/modules/entity/entity-toolbar/models/control-config.interface';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { GroupFormComponent } from 'app/pages/account/groups/group-form/group-form.component';
 import { DialogService } from 'app/services';
+import { CoreService } from 'app/services/core-service/core.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 import {
   builtinGroupsToggled,
-  oneTimeBuiltinGroupsMessageShown,
 } from 'app/store/preferences/preferences.actions';
 import { waitForPreferences } from 'app/store/preferences/preferences.selectors';
 
@@ -40,13 +42,7 @@ export class GroupListComponent implements EntityTableConfig<MembershipGroup> {
   wsDelete = 'group.delete' as const;
   protected entityList: EntityTableComponent;
   protected loaderOpen = false;
-  globalConfig = {
-    id: 'config',
-    tooltip: helptext.globalConfigTooltip,
-    onClick: () => {
-      this.toggleBuiltins();
-    },
-  };
+  settingsEvent$: Subject<CoreEvent> = new Subject();
 
   columns = [
     { name: 'Group', prop: 'group', always_display: true },
@@ -65,8 +61,8 @@ export class GroupListComponent implements EntityTableConfig<MembershipGroup> {
       key_props: ['group'],
     },
   };
+  filterString = '';
 
-  private showGroupListMessage = false;
   private hideBuiltinGroups = true;
 
   constructor(
@@ -77,17 +73,14 @@ export class GroupListComponent implements EntityTableConfig<MembershipGroup> {
     private translate: TranslateService,
     private slideInService: IxSlideInService,
     private store$: Store<AppState>,
+    private core: CoreService,
   ) {}
 
-  preInit(): void {
-    combineLatest([
-      this.ws.call('user.query'),
-      this.store$.pipe(waitForPreferences),
-    ]).pipe(untilDestroyed(this)).subscribe(([users, preferences]) => {
+  prerequisite(): Promise<boolean> {
+    return this.ws.call('user.query').pipe(map((users) => {
       this.users = users;
-      this.showGroupListMessage = preferences.showGroupListMessage;
-      this.hideBuiltinGroups = preferences.hideBuiltinGroups;
-    });
+      return true;
+    })).toPromise();
   }
 
   resourceTransformIncomingRestData(data: Group[]): MembershipGroup[] {
@@ -110,13 +103,14 @@ export class GroupListComponent implements EntityTableConfig<MembershipGroup> {
 
   afterInit(entityList: EntityTableComponent): void {
     this.entityList = entityList;
-    setTimeout(() => {
-      if (this.showGroupListMessage) {
-        this.showOneTimeBuiltinMsg();
-      }
-    }, 2000);
 
     this.slideInService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
+      this.entityList.getData();
+    });
+
+    this.store$.pipe(waitForPreferences).pipe(untilDestroyed(this)).subscribe((preferences) => {
+      this.hideBuiltinGroups = preferences.hideBuiltinGroups;
+      this.setupToolbar();
       this.entityList.getData();
     });
   }
@@ -210,42 +204,67 @@ export class GroupListComponent implements EntityTableConfig<MembershipGroup> {
   }
 
   toggleBuiltins(): void {
-    let dialogOptions: ConfirmOptions;
-    if (this.hideBuiltinGroups) {
-      dialogOptions = {
-        title: this.translate.instant('Show Built-in Groups'),
-        message: this.translate.instant('Show built-in groups (default setting is <i>hidden</i>).'),
-        hideCheckBox: true,
-        buttonMsg: this.translate.instant('Show'),
-      };
-    } else {
-      dialogOptions = {
-        title: this.translate.instant('Hide Built-in Groups'),
-        message: this.translate.instant('Hide built-in groups (default setting is <i>hidden</i>).'),
-        hideCheckBox: true,
-        buttonMsg: this.translate.instant('Hide'),
-      };
-    }
-
-    this.dialogService.confirm(dialogOptions).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
-      this.store$.dispatch(builtinGroupsToggled());
-      this.entityList.getData();
-    });
-  }
-
-  showOneTimeBuiltinMsg(): void {
-    this.store$.dispatch(oneTimeBuiltinGroupsMessageShown());
-    this.dialogService.confirm({
-      title: helptext.builtinMessageDialog.title,
-      message: helptext.builtinMessageDialog.message,
-      hideCheckBox: true,
-      buttonMsg: helptext.builtinMessageDialog.button,
-      hideCancel: true,
-    });
+    this.store$.dispatch(builtinGroupsToggled());
+    this.entityList.getData();
   }
 
   doAdd(): void {
     const modal = this.slideInService.open(GroupFormComponent);
     modal.setupForm();
+  }
+
+  setupToolbar(): void {
+    this.settingsEvent$ = new Subject();
+    this.settingsEvent$.pipe(
+      untilDestroyed(this),
+    ).subscribe((event: CoreEvent) => {
+      switch (event.data.event_control) {
+        case 'filter':
+          this.filterString = event.data.filter;
+          this.entityList.filter(this.filterString);
+          break;
+        case 'add':
+          this.doAdd();
+          break;
+        case 'config':
+          this.toggleBuiltins();
+          break;
+        default:
+          break;
+      }
+    });
+
+    const controls: ControlConfig[] = [
+      {
+        name: 'filter',
+        type: 'input',
+        value: this.filterString,
+        placeholder: this.translate.instant('Search'),
+      },
+      {
+        name: 'config',
+        type: 'slide-toggle',
+        value: !this.hideBuiltinGroups,
+        label: this.translate.instant('Show Built-In Groups'),
+      },
+      {
+        name: 'add',
+        type: 'button',
+        label: this.translate.instant('Add'),
+        color: 'primary',
+        ixAutoIdentifier: 'Groups_ADD',
+      },
+    ];
+
+    const toolbarConfig: ToolbarConfig = {
+      target: this.settingsEvent$,
+      controls,
+    };
+    const settingsConfig = {
+      actionType: EntityToolbarComponent,
+      actionConfig: toolbarConfig,
+    };
+
+    this.core.emit({ name: 'GlobalActions', data: settingsConfig, sender: this });
   }
 }

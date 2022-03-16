@@ -57,7 +57,6 @@ export class IxInputComponent implements ControlValueAccessor {
     }
     this.formatted = formatted;
     this.value = value;
-    this.cdr.markForCheck();
   }
 
   input(ixInput: HTMLInputElement): void {
@@ -107,7 +106,7 @@ export class IxInputComponent implements ControlValueAccessor {
     this.onChange('');
   }
 
-  setDisabledState?(isDisabled: boolean): void {
+  setDisabledState(isDisabled: boolean): void {
     this.isDisabled = isDisabled;
     this.cdr.markForCheck();
   }

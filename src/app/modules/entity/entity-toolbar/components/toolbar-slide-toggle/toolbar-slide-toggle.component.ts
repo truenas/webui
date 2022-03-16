@@ -3,7 +3,7 @@ import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { Subject } from 'rxjs';
 import { filter } from 'rxjs/operators';
-import { IxAbstractObject } from 'app/core/classes/ix-abstract-object';
+import { getUniqueId } from 'app/helpers/get-unique-id.helper';
 import { ControlConfig } from 'app/modules/entity/entity-toolbar/models/control-config.interface';
 import { Control } from 'app/modules/entity/entity-toolbar/models/control.interface';
 import { DialogService } from 'app/services';
@@ -14,16 +14,16 @@ import { DialogService } from 'app/services';
   templateUrl: './toolbar-slide-toggle.component.html',
   styleUrls: ['toolbar-slide-toggle.component.scss'],
 })
-export class ToolbarSlideToggleComponent extends IxAbstractObject {
+export class ToolbarSlideToggleComponent {
   @Input() config?: ControlConfig;
   @Input() controller: Subject<Control>;
+
+  id = getUniqueId();
 
   constructor(
     public translate: TranslateService,
     private dialogService: DialogService,
-  ) {
-    super();
-  }
+  ) {}
 
   onClick(event: Event | MouseEvent): void {
     event.preventDefault();

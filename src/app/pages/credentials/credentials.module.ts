@@ -4,8 +4,9 @@ import { FlexLayoutModule } from '@angular/flex-layout';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
 import { MatDividerModule } from '@angular/material/divider';
+import { MatIconModule } from '@angular/material/icon';
+import { MatMenuModule } from '@angular/material/menu';
 import { TranslateModule } from '@ngx-translate/core';
-import { MaterialModule } from 'app/app-material.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { SshKeypairFormComponent } from 'app/pages/credentials/backup-credentials/ssh-keypair-form/ssh-keypair-form.component';
@@ -42,8 +43,9 @@ import { CertificateEditComponent } from './certificates-dash/forms/certificate-
     FlexLayoutModule,
     MatDividerModule,
     TranslateModule,
+    MatIconModule,
+    MatMenuModule,
     EntityModule,
-    MaterialModule,
     CommonDirectivesModule,
     IxFormsModule,
     ReactiveFormsModule,

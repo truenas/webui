@@ -35,14 +35,6 @@ export const helptextSystemUpdate = {
   manual_update_action: T('Manual Update'),
   manual_update_description: T('Uploading file...'),
 
-  secretseed: {
-    placeholder: T('Include Password Secret Seed'),
-  },
-
-  save_config_form: {
-    button_text: T('Save'),
-  },
-
   manual_update_error_dialog: {
     message: T('Error submitting file'),
   },
@@ -72,11 +64,4 @@ export const helptextSystemUpdate = {
  Continue with download?'),
   non_ha_confirm_msg: T('Apply updates and reboot system after downloading.'),
   ha_confirm_msg: T('Check the box for full upgrade. Leave unchecked to download only.'),
-
-  pending_title: T('Apply Pending Updates'),
-  non_ha_pending_msg: T('The system will reboot and be briefly unavailable while applying updates. \
-Apply updates and reboot?'),
-  ha_pending_msg: T('Upgrades both controllers. Files are downloaded to the Active Controller \
-and then transferred to the Standby Controller. The upgrade process starts concurrently on both TrueNAS Controllers.'),
-
 };

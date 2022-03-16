@@ -67,7 +67,7 @@ export class ZvolFormComponent implements FormConfiguration {
   title: string;
 
   protected origVolSize: number;
-  protected origHuman: any;
+  protected origHuman: string | number;
 
   protected non_encrypted_warned = false;
   protected encrypted_parent = false;
@@ -77,7 +77,7 @@ export class ZvolFormComponent implements FormConfiguration {
   protected generate_key = true;
   protected encryption_algorithm: string;
 
-  custActions = [
+  customActions = [
     {
       id: 'basic_mode',
       name: globalHelptext.basic_options,
@@ -143,7 +143,7 @@ export class ZvolFormComponent implements FormConfiguration {
         parent: this,
         validation: [
           (control: FormControl): ValidationErrors => {
-            const config = this.fieldSets[0].config.find((c) => c.name === 'volsize');
+            const volsizeConfig = this.fieldSets[0].config.find((config) => config.name === 'volsize');
 
             const size = control.value && typeof control.value === 'string' ? this.storageService.convertHumanStringToNum(control.value, true) : null;
             const humanSize = control.value;
@@ -153,21 +153,21 @@ export class ZvolFormComponent implements FormConfiguration {
               : null;
 
             if (errors) {
-              config.hasErrors = true;
-              config.errors = globalHelptext.human_readable.input_error;
+              volsizeConfig.hasErrors = true;
+              volsizeConfig.errors = globalHelptext.human_readable.input_error;
             } else if (size === 0) {
-              config.hasErrors = true;
-              config.errors = helptext.zvol_volsize_zero_error;
+              volsizeConfig.hasErrors = true;
+              volsizeConfig.errors = helptext.zvol_volsize_zero_error;
               errors = { invalid_byte_string: true };
             } else if ((this.origHuman && humanSize)
                       && (humanSize !== this.origHuman)
                       && (size < this.origVolSize)) {
-              config.hasErrors = true;
-              config.errors = helptext.zvol_volsize_shrink_error;
+              volsizeConfig.hasErrors = true;
+              volsizeConfig.errors = helptext.zvol_volsize_shrink_error;
               errors = { invalid_byte_string: true };
             } else {
-              config.hasErrors = false;
-              config.errors = '';
+              volsizeConfig.hasErrors = false;
+              volsizeConfig.errors = '';
             }
 
             return errors;
@@ -372,7 +372,7 @@ export class ZvolFormComponent implements FormConfiguration {
     'key',
   ];
 
-  isCustActionVisible(actionId: string): boolean {
+  isCustomActionVisible(actionId: string): boolean {
     if (actionId === 'advanced_mode' && !this.isBasicMode) {
       return false;
     } if (actionId === 'basic_mode' && this.isBasicMode) {
@@ -631,7 +631,7 @@ export class ZvolFormComponent implements FormConfiguration {
         parentDataset = parentDataset.join('/');
 
         this.ws.call('pool.dataset.query', [[['id', '=', parentDataset]]]).pipe(untilDestroyed(this)).subscribe((parentDataset) => {
-          this.custActions = null;
+          this.customActions = null;
 
           sparse.isHidden = true;
           volblocksize.isHidden = true;
@@ -647,7 +647,7 @@ export class ZvolFormComponent implements FormConfiguration {
           // decimal has to be truncated to three decimal places
           this.origVolSize = volumesize;
 
-          const humansize = this.storageService.convertBytestoHumanReadable(volumesize);
+          const humansize = this.storageService.convertBytesToHumanReadable(volumesize);
           this.origHuman = humansize;
 
           entityForm.formGroup.controls['name'].setValue(pkDatasets[0].name);

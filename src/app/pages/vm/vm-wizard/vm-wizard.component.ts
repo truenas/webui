@@ -706,12 +706,12 @@ export class VmWizardComponent implements WizardConfiguration {
             } else if (stat.free_bytes > 40 * 1073741824) {
               const vmOs = this.getFormControlFromFieldName('os').value;
               if (vmOs === 'Windows') {
-                this.getFormControlFromFieldName('volsize').setValue(this.storageService.convertBytestoHumanReadable(volsize, 0));
+                this.getFormControlFromFieldName('volsize').setValue(this.storageService.convertBytesToHumanReadable(volsize, 0));
               } else {
-                this.getFormControlFromFieldName('volsize').setValue(this.storageService.convertBytestoHumanReadable(volsize, 0));
+                this.getFormControlFromFieldName('volsize').setValue(this.storageService.convertBytesToHumanReadable(volsize, 0));
               }
             } else if (stat.free_bytes > 10 * 1073741824) {
-              this.getFormControlFromFieldName('volsize').setValue((this.storageService.convertBytestoHumanReadable(volsize, 0)));
+              this.getFormControlFromFieldName('volsize').setValue((this.storageService.convertBytesToHumanReadable(volsize, 0)));
             }
           });
         } else {
@@ -835,24 +835,20 @@ export class VmWizardComponent implements WizardConfiguration {
     }, 2000);
   }
 
-  getRndInteger(min: number, max: number): number {
-    return Math.floor(Math.random() * (max - min + 1)) + min;
-  }
-
   memoryValidator(name: string): ValidatorFn {
     return (control: FormControl) => {
-      const config = this.wizardConfig[1].fieldConfig.find((c) => c.name === name);
+      const memoryConfig = this.wizardConfig[1].fieldConfig.find((config) => config.name === name);
 
       const errors = this.storageService.convertHumanStringToNum(control.value) < 268435456
         ? { validMem: true }
         : null;
 
       if (errors) {
-        config.hasErrors = true;
-        config.warnings = helptext.memory_size_err;
+        memoryConfig.hasErrors = true;
+        memoryConfig.warnings = helptext.memory_size_err;
       } else {
-        config.hasErrors = false;
-        config.warnings = '';
+        memoryConfig.hasErrors = false;
+        memoryConfig.warnings = '';
       }
 
       return errors;
@@ -862,18 +858,18 @@ export class VmWizardComponent implements WizardConfiguration {
   cpuValidator(name: string): ValidatorFn {
     // TODO: setTimeout breaks typing
     return (): any => {
-      const config = this.wizardConfig[1].fieldConfig.find((c) => c.name === name);
+      const cpuConfig = this.wizardConfig[1].fieldConfig.find((config) => config.name === name);
       setTimeout(() => {
         const errors = this.vcpus * this.cores * this.threads > this.maxVcpus
           ? { validCPU: true }
           : null;
 
         if (errors) {
-          config.hasErrors = true;
-          config.warnings = this.translate.instant(helptext.vcpus_warning, { maxVCPUs: this.maxVcpus });
+          cpuConfig.hasErrors = true;
+          cpuConfig.warnings = this.translate.instant(helptext.vcpus_warning, { maxVCPUs: this.maxVcpus });
         } else {
-          config.hasErrors = false;
-          config.warnings = '';
+          cpuConfig.hasErrors = false;
+          cpuConfig.warnings = '';
         }
         return errors;
       }, 100);
@@ -882,7 +878,7 @@ export class VmWizardComponent implements WizardConfiguration {
 
   volSizeValidator(name: string): ValidatorFn {
     return (control: FormControl) => {
-      const config = this.wizardConfig[2].fieldConfig.find((c) => c.name === name);
+      const sizeConfig = this.wizardConfig[2].fieldConfig.find((config) => config.name === name);
 
       if (control.value && this.statSize) {
         const requestedSize = this.storageService.convertHumanStringToNum(control.value);
@@ -891,11 +887,11 @@ export class VmWizardComponent implements WizardConfiguration {
           : null;
 
         if (errors) {
-          config.hasErrors = true;
-          config.warnings = this.translate.instant('Cannot allocate {size} to storage for this virtual machine.', { size: this.storageService.humanReadable });
+          sizeConfig.hasErrors = true;
+          sizeConfig.warnings = this.translate.instant('Cannot allocate {size} to storage for this virtual machine.', { size: this.storageService.humanReadable });
         } else {
-          config.hasErrors = false;
-          config.warnings = '';
+          sizeConfig.hasErrors = false;
+          sizeConfig.warnings = '';
         }
 
         return errors;
@@ -910,7 +906,7 @@ export class VmWizardComponent implements WizardConfiguration {
       console.error(vmMemoryRequested); // leaves form in previous error state
     } else if (enteredVal.replace(/\s/g, '').match(/[^0-9]/g) === null) {
       this.entityWizard.formArray.get([1]).get('memory')
-        .setValue(this.storageService.convertBytestoHumanReadable(enteredVal.replace(/\s/g, ''), 0));
+        .setValue(this.storageService.convertBytesToHumanReadable(enteredVal.replace(/\s/g, ''), 0));
     } else {
       this.entityWizard.formArray.get([1]).get('memory').setValue(this.storageService.humanReadable);
       _.find(this.wizardConfig[1].fieldConfig, { name: 'memory' })['hasErrors'] = false;

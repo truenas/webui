@@ -1,5 +1,5 @@
 import {
-  Component, AfterViewInit, Input, ViewChild, OnDestroy, ElementRef,
+  Component, AfterViewInit, Input, OnDestroy, ElementRef,
 } from '@angular/core';
 import { MediaObserver } from '@angular/flex-layout';
 import {
@@ -16,8 +16,6 @@ import { ThemeUtils } from 'app/core/classes/theme-utils/theme-utils';
 import { CoreEvent } from 'app/interfaces/events';
 import { MemoryStatsEventData } from 'app/interfaces/events/memory-stats-event.interface';
 import { Theme } from 'app/interfaces/theme.interface';
-import { ViewChartBarComponent } from 'app/modules/charts/components/view-chart-bar/view-chart-bar.component';
-import { ViewChartGaugeComponent } from 'app/modules/charts/components/view-chart-gauge/view-chart-gauge.component';
 import { WidgetComponent } from 'app/pages/dashboard/components/widget/widget.component';
 import { WidgetMemoryData } from 'app/pages/dashboard/interfaces/widget-data.interface';
 import { CoreService } from 'app/services/core-service/core.service';
@@ -30,8 +28,6 @@ import { ThemeService } from 'app/services/theme/theme.service';
   styleUrls: ['./widget-memory.component.scss'],
 })
 export class WidgetMemoryComponent extends WidgetComponent implements AfterViewInit, OnDestroy {
-  @ViewChild('memorygauge', { static: true }) cpuLoad: ViewChartGaugeComponent;
-  @ViewChild('cores', { static: true }) cpuCores: ViewChartBarComponent;
   @Input() data: Subject<CoreEvent>;
   @Input() ecc = false;
   chart: Chart;// chart instance
@@ -89,7 +85,7 @@ export class WidgetMemoryComponent extends WidgetComponent implements AfterViewI
   }
 
   ngAfterViewInit(): void {
-    this.core.register({ observerClass: this, eventName: 'ThemeChanged' })
+    this.core.register({ observerClass: this })
       .pipe(
         switchMap(() => this.data),
         untilDestroyed(this),

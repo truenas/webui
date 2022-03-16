@@ -136,7 +136,7 @@ export class DatasetTrivialPermissionsComponent implements FormConfiguration {
     },
   ];
 
-  custActions = [
+  customActions = [
     {
       id: 'cancel',
       name: helptext.acl_manager_button,
@@ -156,7 +156,7 @@ export class DatasetTrivialPermissionsComponent implements FormConfiguration {
     },
   ];
 
-  isCustActionVisible(action: string): boolean {
+  isCustomActionVisible(action: string): boolean {
     if (action !== 'cancel') {
       return true;
     }

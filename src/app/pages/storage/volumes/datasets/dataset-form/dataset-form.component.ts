@@ -83,12 +83,12 @@ export class DatasetFormComponent implements FormConfiguration {
     'quota', 'refquota', 'reservation', 'refreservation', 'special_small_block_size',
   ];
   protected originalSize: { [field in SizeField]?: string } = {};
-  protected originalHumanSize: { [field in SizeField]?: any } = {};
+  protected originalHumanSize: { [field in SizeField]?: string | number } = {};
 
   protected warning = 80;
   protected critical = 95;
 
-  custActions = [
+  customActions = [
     {
       id: 'basic_mode',
       name: globalHelptext.basic_options,
@@ -912,7 +912,7 @@ export class DatasetFormComponent implements FormConfiguration {
     }
   }
 
-  isCustActionVisible(actionId: string): boolean {
+  isCustomActionVisible(actionId: string): boolean {
     if (actionId === 'advanced_mode' && !this.isBasicMode) {
       return false;
     } if (actionId === 'basic_mode' && this.isBasicMode) {
@@ -1015,9 +1015,10 @@ export class DatasetFormComponent implements FormConfiguration {
     this.recordsizeControl.valueChanges.pipe(untilDestroyed(this)).subscribe((recordSize: string) => {
       const recordSizeNumber = parseInt(this.reverseRecordSizeMap[recordSize], 10);
       if (this.minimumRecommendedRecordsize && this.recommendedSize) {
-        this.recordsizeWarning = helptext.dataset_form_warning_1
-          + this.minimumRecommendedRecordsize
-          + helptext.dataset_form_warning_2;
+        this.recordsizeWarning = this.translate.instant(
+          helptext.dataset_form_warning,
+          { size: this.minimumRecommendedRecordsize },
+        );
         if (recordSizeNumber < this.recommendedSize) {
           this.recordsizeField.warnings = this.recordsizeWarning;
           this.isBasicMode = false;
@@ -1032,7 +1033,7 @@ export class DatasetFormComponent implements FormConfiguration {
   paramMap: {
     volid?: string;
     pk?: string;
-    parent?: any;
+    parent?: string;
   };
 
   preInit(entityForm: EntityFormComponent): void {
@@ -1392,7 +1393,7 @@ export class DatasetFormComponent implements FormConfiguration {
       ? this.getFieldValueOrNone(wsResponse.refquota_critical)
       : this.critical;
     const refquotaCriticalInherit = this.isInherited(wsResponse.refquota_critical, refquotaCritical);
-    const sizeValues: { [field in SizeField]?: any } = {};
+    const sizeValues: { [field in SizeField]?: string | number } = {};
     this.sizeFields.forEach((field) => {
       if (wsResponse[field] && wsResponse[field].rawvalue) {
         this.originalSize[field] = wsResponse[field].rawvalue;
@@ -1423,16 +1424,16 @@ export class DatasetFormComponent implements FormConfiguration {
       refquota_warning_inherit: refquotaWarningInherit,
       refquota_critical: refquotaCritical,
       refquota_critical_inherit: refquotaCriticalInherit,
-      quota: this.originalHumanSize['quota'],
+      quota: this.originalHumanSize['quota'] as number,
       readonly: this.getFieldValueOrRaw(wsResponse.readonly),
       exec: this.getFieldValueOrRaw(wsResponse.exec),
       recordsize: this.getFieldValueOrRaw(wsResponse.recordsize),
-      refquota: this.originalHumanSize['refquota'],
-      refreservation: this.originalHumanSize['refreservation'],
-      reservation: this.originalHumanSize['reservation'],
+      refquota: this.originalHumanSize['refquota'] as number,
+      refreservation: this.originalHumanSize['refreservation'] as number,
+      reservation: this.originalHumanSize['reservation'] as number,
       snapdir: this.getFieldValueOrRaw(wsResponse.snapdir),
       sync: this.getFieldValueOrRaw(wsResponse.sync),
-      special_small_block_size: this.originalHumanSize['special_small_block_size'],
+      special_small_block_size: this.originalHumanSize['special_small_block_size'] as number,
     };
 
     if (

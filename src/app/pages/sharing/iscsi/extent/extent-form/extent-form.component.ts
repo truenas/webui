@@ -361,7 +361,7 @@ export class ExtentFormComponent implements FormConfiguration {
       delete transformed['path'];
     }
     if (data.filesize && data.filesize !== '0') {
-      transformed.filesize = this.storageService.convertBytestoHumanReadable(this.originalFilesize);
+      transformed.filesize = this.storageService.convertBytesToHumanReadable(this.originalFilesize);
     }
     return transformed;
   }

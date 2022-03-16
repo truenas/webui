@@ -5,7 +5,6 @@ import { defaultPreferences } from 'app/store/preferences/default-preferences.co
 import {
   builtinGroupsToggled,
   builtinUsersToggled, guiFormClosedWithoutSaving, guiFormSubmitted, localizationFormSubmitted, noPreferencesFound,
-  oneTimeBuiltinGroupsMessageShown, oneTimeBuiltinUsersMessageShown,
   preferencesLoaded, preferredColumnsUpdated, themeChangedInGuiForm,
   themeNotFound,
 } from 'app/store/preferences/preferences.actions';
@@ -38,14 +37,8 @@ export const preferencesReducer = createReducer(
     timeFormat,
   })),
 
-  on(oneTimeBuiltinUsersMessageShown, (state) => updatePreferences(state, {
-    showUserListMessage: false,
-  })),
   on(builtinUsersToggled, (state) => updatePreferences(state, {
     hideBuiltinUsers: !state.preferences.hideBuiltinUsers,
-  })),
-  on(oneTimeBuiltinGroupsMessageShown, (state) => updatePreferences(state, {
-    showGroupListMessage: false,
   })),
   on(builtinGroupsToggled, (state) => updatePreferences(state, {
     hideBuiltinGroups: !state.preferences.hideBuiltinGroups,
