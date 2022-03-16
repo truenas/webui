@@ -30,14 +30,14 @@ def test_verify_ssh_access_with_root_works(driver):
 def the_browser_is_open_navigate_to_the_freenas_url(driver, nas_ip):
     """the browser is open, navigate to the FreeNAS URL."""
     driver.get(f"http://{nas_ip}/ui/sessions/signin")
-    assert wait_on_element(driver, 10, '//input[@placeholder="Username"]')
+    assert wait_on_element(driver, 20, '//input[@placeholder="Username"]')
     time.sleep(1)
 
 
 @when('login appears, enter the root user and is password')
 def login_appears_enter_the_root_user_and_is_password(driver, root_password):
     """login appears, enter the root user and is password."""
-    assert wait_on_element(driver, 10, '//input[@placeholder="Username"]')
+    assert wait_on_element(driver, 5, '//input[@placeholder="Username"]')
     driver.find_element_by_xpath('//input[@placeholder="Username"]').clear()
     driver.find_element_by_xpath('//input[@placeholder="Username"]').send_keys('root')
     driver.find_element_by_xpath('//input[@placeholder="Password"]').clear()
@@ -49,8 +49,8 @@ def login_appears_enter_the_root_user_and_is_password(driver, root_password):
 @then('you should see the dashboard')
 def you_should_see_the_dashboard(driver):
     """you should see the dashboard."""
-    assert wait_on_element(driver, 5, '//li[contains(.,"Dashboard")]')
-    if wait_on_element(driver, 5, '//div[contains(.,"Looking for help?")]'):
+    assert wait_on_element(driver, 10, '//li[contains(.,"Dashboard")]')
+    if wait_on_element(driver, 10, '//div[contains(.,"Looking for help?")]'):
         assert wait_on_element(driver, 10, '//button[@ix-auto="button__CLOSE"]')
         driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
     assert wait_on_element(driver, 5, '//span[contains(.,"System Information")]')
