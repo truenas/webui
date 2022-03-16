@@ -23,6 +23,7 @@ pytestmark = [pytest.mark.debug_test]
 @scenario('features/NAS-T981.feature', 'Verify SSH Access with root works')
 def test_verify_ssh_access_with_root_works(driver):
     """Verify SSH Access with root works."""
+    pass
 
 
 @given('the browser is open, navigate to the FreeNAS URL')

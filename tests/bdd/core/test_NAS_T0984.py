@@ -23,6 +23,11 @@ pytestmark = [pytest.mark.debug_test]
 @scenario('features/NAS-T984.feature', 'Setting interface from dhcp to a static ip')
 def test_setting_interface_from_dhcp_to_a_static_ip(driver):
     """Setting interface from dhcp to a static ip."""
+    # refresh in case the it took to long to wait on interface to finish the
+    # configuration. It will log out if so and the next test will login.
+    # This is to make sure that we sill login.
+    driver.refresh()
+    time.sleep(3)
 
 
 @given('the browser is open, the FreeNAS URL and logged in')
