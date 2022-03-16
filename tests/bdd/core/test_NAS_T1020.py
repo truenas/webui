@@ -16,9 +16,6 @@ from pytest_bdd import (
     when,
     parsers
 )
-import pytest
-
-pytestmark = [pytest.mark.debug_test]
 
 
 @scenario('features/NAS-T1020.feature', 'Create an iSCSI share without Authorized Access Peer with a zvol')

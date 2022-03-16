@@ -14,9 +14,6 @@ from pytest_bdd import (
     when,
     parsers
 )
-import pytest
-
-pytestmark = [pytest.mark.debug_test]
 
 
 @scenario('features/NAS-T1025.feature', 'Create a 1gb zvol call noauth1 for the no auth iscsi test case')
