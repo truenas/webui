@@ -34,6 +34,8 @@ import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
 import { DiskBulkEditComponent } from 'app/pages/storage/disks/disk-bulk-edit/disk-bulk-edit.component';
 import { DiskFormComponent } from 'app/pages/storage/disks/disk-form/disk-form.component';
 import { DiskListComponent } from 'app/pages/storage/disks/disk-list/disk-list.component';
+import { DiskWipeDialogComponent } from 'app/pages/storage/disks/disk-wipe-dialog/disk-wipe-dialog.component';
+import { ManualTestDialogComponent } from 'app/pages/storage/disks/manual-test-dialog/manual-test-dialog.component';
 import { SmartResultsComponent } from 'app/pages/storage/disks/smart-results/smart-results.component';
 import { ImportDiskComponent } from 'app/pages/storage/import-disk/import-disk.component';
 import { SnapshotsModule } from 'app/pages/storage/snapshots/snapshots.module';
@@ -158,6 +160,8 @@ import { routing } from './storage.routing';
     VolumeStatusComponent,
     ZvolFormComponent,
     ZvolWizardComponent,
+    DiskWipeDialogComponent,
+    ManualTestDialogComponent,
   ],
   exports: [VolumesListControlsComponent],
   providers: [

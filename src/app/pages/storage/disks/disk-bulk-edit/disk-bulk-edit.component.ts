@@ -77,7 +77,7 @@ export class DiskBulkEditComponent implements FormConfiguration {
           type: 'input',
           name: 'disk_smartoptions',
           placeholder: helptext.disk_form_smartoptions_placeholder,
-          value: this.diskBucket.SMARToptions,
+          value: this.diskBucket.smartOptions,
           tooltip: helptext.disk_form_smartoptions_tooltip,
         },
       ],

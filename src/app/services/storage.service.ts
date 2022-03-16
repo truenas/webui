@@ -20,10 +20,10 @@ export class StorageService {
   diskNames: string[];
   hddStandby: DiskStandby;
   diskToggleStatus: boolean;
-  SMARToptions: string;
+  smartOptions: string;
   advPowerMgt: DiskPowerLevel;
   humanReadable: string;
-  IECUnits = ['KiB', 'MiB', 'GiB', 'TiB', 'PiB'];
+  iecUnits = ['KiB', 'MiB', 'GiB', 'TiB', 'PiB'];
 
   constructor(protected ws: WebSocketService) {}
 
@@ -268,9 +268,9 @@ export class StorageService {
       return '';
     }
 
-    const iecUnitsStr = this.IECUnits.join('|');
-    const shortUnitsStr = this.IECUnits.map((unit) => unit.charAt(0) + unit.charAt(2)).join('|');
-    const humanUnitsStr = this.IECUnits.map((unit) => unit.charAt(0)).join('|');
+    const iecUnitsStr = this.iecUnits.join('|');
+    const shortUnitsStr = this.iecUnits.map((unit) => unit.charAt(0) + unit.charAt(2)).join('|');
+    const humanUnitsStr = this.iecUnits.map((unit) => unit.charAt(0)).join('|');
     const allUnitsStr = (iecUnitsStr + '|' + shortUnitsStr + '|' + humanUnitsStr).toUpperCase();
     const unitsRe = new RegExp('^\\s*(' + allUnitsStr + '){1}\\s*$');
 
@@ -291,7 +291,7 @@ export class StorageService {
     if (!unitStr) {
       return 1;
     }
-    return (1024 ** (this.IECUnits.indexOf(unitStr) + 1));
+    return (1024 ** (this.iecUnits.indexOf(unitStr) + 1));
   }
 
   // sample data, input and return values
@@ -396,7 +396,7 @@ export class StorageService {
         bytes = bytes / 1024;
         i++;
       } while (bytes >= 1024 && i < 4);
-      units = this.IECUnits[i];
+      units = this.iecUnits[i];
     } else if (minUnits) {
       units = minUnits;
     } else {

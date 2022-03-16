@@ -89,10 +89,10 @@ export class EntityJobComponent implements OnInit {
     });
 
     this.failure.pipe(untilDestroyed(this)).subscribe((job) => {
-      job.error = _.replace(job.error, '<', '< ');
-      job.error = _.replace(job.error, '>', ' >');
+      let error = _.replace(job.error, '<', '< ');
+      error = _.replace(error, '>', ' >');
 
-      this.description = '<b>Error:</b> ' + job.error;
+      this.description = '<b>Error:</b> ' + error;
     });
 
     if (this.openJobsManagerOnClose) {
