@@ -105,3 +105,5 @@ def click_save_you_should_not_be_allowed_to_save_the_invalid_email(driver):
     time.sleep(1)
     assert wait_on_element(driver, 7, '//button[@ix-auto="button__CANCEL"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__CANCEL"]').click()
+    assert wait_on_element(driver, 7, '//div[contains(.,"Users")]')
+    assert wait_on_element(driver, 7, '//a[@ix-auto="expander__ericbsd"]', 'clickable')
