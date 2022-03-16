@@ -93,9 +93,8 @@ def open_a_new_tab_navigate_to_backblaze_url_click_sign_in(driver, backblaze_url
     driver.execute_script("window.open();")
     driver.switch_to.window(driver.window_handles[1])
     driver.get(backblaze_url)
-    assert wait_on_element(driver, 5, '//img[@alt="Backblaze Logo"]')
+    assert wait_on_element(driver, 5, '//img[@src="/pics/backblaze-logo.gif"]')
     assert wait_on_element(driver, 5, '//a[@id="signIn"]', 'clickable')
-    driver.find_element_by_xpath('//a[@id="signIn"]').click()
 
 
 @then('enter the <user_name> click Next and enter the <password> click Next')
