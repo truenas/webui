@@ -27,7 +27,7 @@ def test_setting_interface_from_dhcp_to_a_static_ip(driver):
     # configuration. It will log out if so and the next test will login.
     # This is to make sure that we sill login.
     driver.refresh()
-    time.sleep(3)
+    time.sleep(5)
 
 
 @given('the browser is open, the FreeNAS URL and logged in')
