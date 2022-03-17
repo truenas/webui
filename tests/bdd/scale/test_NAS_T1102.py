@@ -135,8 +135,8 @@ def click_on_system_dataset_pool_select_system_click_save(driver):
     assert wait_on_element(driver, 5, '//h3[contains(.,"System Dataset Pool") and @class="ix-formtitle"]')
     assert wait_on_element(driver, 5, '//mat-select', 'clickable')
     driver.find_element_by_xpath('//mat-select').click()
-    assert wait_on_element(driver, 5, '//mat-option[contains(.,"system")]', 'clickable')
-    driver.find_element_by_xpath('//mat-option[contains(.,"system")]').click()
+    assert wait_on_element(driver, 5, '//mat-option[@role="option"]//span[contains(.,"system")]', 'clickable')
+    driver.find_element_by_xpath('//mat-option[@role="option"]//span[contains(.,"system")]').click()
     assert wait_on_element(driver, 30, '//ix-slide-in[@id="ix-slide-in-form"]//button//span[contains(.,"Save")]', 'clickable')
     driver.find_element_by_xpath('//ix-slide-in[@id="ix-slide-in-form"]//button//span[contains(.,"Save")]').click()
 
