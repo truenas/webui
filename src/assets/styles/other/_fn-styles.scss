@@ -82,13 +82,16 @@ a:hover {
 }
 
 a:focus-visible,
-button.mat-button.mat-accent:focus-visible:focus-visible,
+button.mat-button.mat-accent:focus-visible,
 .ix-blue button:focus-visible,
 button:focus-visible {
-  background-color: var(--hover-bg) !important;
   border-color: transparent !important;
-  box-shadow: 0 0 0 1px var(--accent) inset !important;
+  box-shadow: 0 0 0 1px var(--alt-bg2) inset !important;
   outline-width: 0;
+}
+
+a:focus-visible {
+  box-shadow: 0 0 0 1px var(--alt-bg2) inset !important;
 }
 
 a {
@@ -595,6 +598,10 @@ body .mat-select-trigger {
   display: flex;
   flex-direction: row;
   width: 100%;
+}
+
+.slide-in-nav-item a:focus-visible {
+  box-shadow: none !important;
 }
 
 .sidebar-panel.mat-sidenav .sidebar-list-item.open > .mat-list-item-content > .sub-menu {

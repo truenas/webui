@@ -25,7 +25,8 @@
   }
 
   a.sidenav-link:focus-visible {
-    box-shadow: 0 0 0 1px var(--accent) inset !important;
+    background: var(--hover-bg) !important;
+    box-shadow: 0 0 0 1px var(--hover-bg) inset !important;
     outline-width: 0;
   }
 }

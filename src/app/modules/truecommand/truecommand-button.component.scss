@@ -13,3 +13,10 @@
 ::ng-deep mat-icon.truecommand-icon.FAILED > span.mat-badge-content {
   background: var(--warn);
 }
+
+button.sdk-focused.sdk-keyboard-focused,
+button:focus-visible {
+  background: rgb(255, 255, 255, 0.2) !important;
+  box-shadow: 0 0 0 1px rgb(255, 255, 255, 0.3) inset !important;
+  outline-width: 0;
+}

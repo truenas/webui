@@ -46,6 +46,10 @@
   text-align: center;
 }
 
+.external-link:focus-visible {
+  background: var(--hover-bg) !important;
+}
+
 
 /* NARROW SCREENS */
 .xs.widget {
