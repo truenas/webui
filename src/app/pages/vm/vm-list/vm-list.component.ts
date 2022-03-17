@@ -494,7 +494,6 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow>, On
                 [
                   vm.id,
                   window.location.host,
-                  undefined,
                   window.location.protocol.replace(':', ''),
                 ],
               ).pipe(untilDestroyed(this)).subscribe((webUris) => {
@@ -535,7 +534,6 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow>, On
                     [
                       vm.id,
                       window.location.host,
-                      undefined,
                       window.location.protocol.replace(':', ''),
                     ],
                   ).pipe(untilDestroyed(this)).subscribe((webUris) => {
@@ -614,6 +612,7 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow>, On
           [
             vm.id,
             window.location.host,
+            window.location.protocol.replace(':', ''),
             {
               devices_passwords: [
                 {
