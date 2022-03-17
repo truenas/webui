@@ -48,7 +48,7 @@
         <button
           mat-mini-fab
           color="primary"
-          [disabled]="isUpdateRunning"
+          [disabled]="!checkable || isUpdateRunning"
           id="single-train-refresh-button"
           matTooltip="Refresh"
           (click)="check()"
