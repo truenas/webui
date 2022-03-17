@@ -167,6 +167,7 @@
   "Add Sysctl": "",
   "Add Target": "",
   "Add Target/Extent": "",
+  "Add To Trusted Store": "",
   "Add Tunable": "",
   "Add Unix (NFS) Share": "",
   "Add User": "",
@@ -2040,6 +2041,7 @@
   "Open VPN Client": "",
   "Open VPN Server": "",
   "OpenVPN": "",
+  "OpenVPN Server": "",
   "OpenVPN {serviceLabel} service failed to start.": "",
   "OpenVPN {serviceLabel} service failed to stop.": "",
   "Operating System": "",
@@ -3953,7 +3955,6 @@
   "[Use fewer transactions in exchange for more RAM.](https://rclone.org/docs/#fast-list) This can also speed up or slow down the transfer.": "[Use fewer transactions in exchange for more RAM.](https://rclone.org/docs/\\#fast-list) This can also speed up or slow down the transfer.",
   "close": "cerrar",
   "days": "días",
-  "empty": "vacío",
   "group": "grupo",
   "password": "contraseña"
 }

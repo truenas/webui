@@ -9,7 +9,7 @@ import { NetworkActivityType } from 'app/enums/network-activity-type.enum';
 import { NetworkConfiguration } from 'app/interfaces/network-configuration.interface';
 import { NetworkSummary } from 'app/interfaces/network-summary.interface';
 import { Option } from 'app/interfaces/option.interface';
-import { NetworkConfigurationComponent } from 'app/pages/network/configuration/configuration.component';
+import { NetworkConfigurationComponent } from 'app/pages/network/components/configuration/configuration.component';
 import { ModalService, WebSocketService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
