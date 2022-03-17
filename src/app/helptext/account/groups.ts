@@ -17,7 +17,7 @@ export default {
  target="_blank">sudo</a>. Group members are prompted\
  for their password when using <b>sudo</b>.'),
 
-  allow_tooltip: T('<b>Not recommended.</b> Allow more than one group to \
+  allow_tooltip: T('<b>Not recommended.</b> Allow more than one group to\
  have the same group ID.'),
 
   smb_tooltip: T('Set to allow group to be used for Samba permissions and authentication.'),

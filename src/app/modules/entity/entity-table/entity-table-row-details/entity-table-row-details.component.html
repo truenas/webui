@@ -45,25 +45,27 @@
   class="wrapper__action-buttons"
   *ngIf="parent.hasActions"
 >
-  <ng-container *ngFor="let action of actions">
-    <button
-      *ngIf="!parent.conf.isActionVisible || parent.conf.isActionVisible.bind(parent.conf)(action.id, this.config)"
-      mat-button
-      [disabled]="action.disabled"
-      id="action_button_{{ action?.name }}__{{action.id}}"
-      [ix-auto]="config.name"
-      ix-auto-type="button"
-      ix-auto-identifier="{{ action?.name | uppercase }}_{{action.id}}"
-      (click)="action.onClick(this.config)"
-    >
-      <div fxLayoutAlign="center center" fxLayoutGap="8px">
-        <mat-icon>{{ action.icon }}</mat-icon>
-        <p
-          [matTooltip]="action.matTooltip"
-          [matTooltipDisabled]="!action.disabled"
-          [matTooltipPosition]="action.ttposition ? action.ttposition : 'below'"
-        >{{ action.label | translate}}</p>
-      </div>
-    </button>
-  </ng-container>
+  <div class="wrap-buttons-container">
+    <ng-container *ngFor="let action of actions">
+      <button
+        *ngIf="!parent.conf.isActionVisible || parent.conf.isActionVisible.bind(parent.conf)(action.id, this.config)"
+        mat-button
+        [disabled]="action.disabled"
+        id="action_button_{{ action?.name }}__{{action.id}}"
+        [ix-auto]="config.name"
+        ix-auto-type="button"
+        ix-auto-identifier="{{ action?.name | uppercase }}_{{action.id}}"
+        (click)="action.onClick(this.config)"
+      >
+        <div fxLayoutAlign="center center" fxLayoutGap="8px">
+          <mat-icon>{{ action.icon }}</mat-icon>
+          <p
+            [matTooltip]="action.matTooltip"
+            [matTooltipDisabled]="!action.disabled"
+            [matTooltipPosition]="action.ttposition ? action.ttposition : 'below'"
+          >{{ action.label | translate}}</p>
+        </div>
+      </button>
+    </ng-container>
+  </div>
 </div>

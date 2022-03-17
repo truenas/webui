@@ -64,9 +64,9 @@ export default {
  Options include <i>RFC2307</i> (included in Windows 2003 R2) and <i>Service for Unix (SFU)</i>. \
  For SFU 3.0 or 3.5, choose "SFU". For SFU 2.0, choose "SFU20".'),
       options: [
-        { label: T('RFC2307'), value: 'RFC2307' },
-        { label: T('SFU'), value: 'SFU' },
-        { label: T('SFU20'), value: 'SFU20' },
+        { label: 'RFC2307', value: 'RFC2307' },
+        { label: 'SFU', value: 'SFU' },
+        { label: 'SFU20', value: 'SFU20' },
       ],
     },
     unix_primary_group: {

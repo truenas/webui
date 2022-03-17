@@ -1,4 +1,5 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
+import { OpenVpnDeviceType } from 'app/enums/open-vpn-device-type.enum';
 
 export default {
   // Helptext for client component
@@ -117,10 +118,10 @@ target="_blank">here.</a>'),
  <a href="https://community.openvpn.net/openvpn/wiki/BridgingAndRouting" target="_blank">here</a>.'),
     enum: [{
       label: 'TUN',
-      value: 'TUN',
+      value: OpenVpnDeviceType.Tun,
     }, {
       label: 'TAP',
-      value: 'TAP',
+      value: OpenVpnDeviceType.Tap,
     }],
   },
   protocol: {

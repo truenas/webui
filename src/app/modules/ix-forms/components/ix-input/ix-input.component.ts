@@ -106,7 +106,7 @@ export class IxInputComponent implements ControlValueAccessor {
     this.onChange('');
   }
 
-  setDisabledState?(isDisabled: boolean): void {
+  setDisabledState(isDisabled: boolean): void {
     this.isDisabled = isDisabled;
     this.cdr.markForCheck();
   }

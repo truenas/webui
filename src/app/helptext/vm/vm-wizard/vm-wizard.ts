@@ -11,9 +11,9 @@ export default {
   os_placeholder: T('Guest Operating System'),
   os_tooltip: T('Choose the VM operating system type.'),
   os_options: [
-    { label: T('Windows'), value: 'Windows' },
-    { label: T('Linux'), value: 'Linux' },
-    { label: T('FreeBSD'), value: 'FreeBSD' },
+    { label: 'Windows', value: 'Windows' },
+    { label: 'Linux', value: 'Linux' },
+    { label: 'FreeBSD', value: 'FreeBSD' },
   ],
   os_validation: [Validators.required],
 

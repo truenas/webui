@@ -7,7 +7,7 @@ export default {
   fieldset_general: T('General Options'),
   fieldset_access: T('Access'),
   fieldset_bw: T('Bandwidth'),
-  fieldset_tls: T('TLS'),
+  fieldset_tls: 'TLS',
   fieldset_other: T('Other Options'),
 
   port_placeholder: T('Port'),
@@ -194,5 +194,5 @@ export default {
   rootlogin_dialog_title: T('Allow Root Login'),
   rootlogin_dialog_message: T('Enabling this option can expose administrator credentials and is not recommended.'),
 
-  formTitle: T('FTP'),
+  formTitle: 'FTP',
 };

@@ -16,7 +16,6 @@
     "build:prod": "node scripts/setup_prod.js && yarn run build -- --configuration production",
     "build:prod:aot": "yarn run build:prod --base-href /ui/ && node scripts/verify_build.js",
     "test": "jest",
-    "test:coverage": "jest --coverage",
     "test:watch": "jest --watch",
     "test:ci": "jest --runInBand",
     "test:pr": "echo 'Setting up temporary environment file...\n' && ./setup_env.js -i 'headless.local' && jest",
@@ -28,8 +27,6 @@
     "reinstall": "yarn run rimraf yarn.lock; yarn run rimraf node_modules; yarn cache clean -f; yarn install",
     "extract": "node scripts/extract_strings.js",
     "validate-translations": "node scripts/validate_translations.js",
-    "po2json": "echo 'This command will soon be removed'",
-    "create_po_pr": "echo 'This command will soon be removed'",
     "generate_licenses": "yarn licenses generate-disclaimer > src/assets/disclaimer.txt && yarn licenses list --json > src/assets/licenses.json",
     "generate_licenses_list": "yarn licenses list > licenses.txt",
     "prepare": "husky install"
