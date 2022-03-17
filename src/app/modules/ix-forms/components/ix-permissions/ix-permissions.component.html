@@ -10,13 +10,13 @@
   <table [class.disabled]="isDisabled">
     <tr>
       <td></td>
-      <td><span class="label">{{"Read" | translate}}</span></td>
-      <td><span class="label">{{"Write" | translate}}</span></td>
-      <td><span class="label">{{"Execute" | translate}}</span></td>
+      <td><span class="header-label">{{"Read" | translate}}</span></td>
+      <td><span class="header-label">{{"Write" | translate}}</span></td>
+      <td><span class="header-label">{{"Execute" | translate}}</span></td>
     </tr>
     <tr>
       <td>
-        <span class="label">{{"User" | translate}}</span>
+        <span class="header-label">{{"User" | translate}}</span>
       </td>
       <td>
         <mat-checkbox
@@ -45,7 +45,7 @@
     </tr>
     <tr>
       <td>
-        <span class="label">{{"Group" | translate}}</span>
+        <span class="header-label">{{"Group" | translate}}</span>
       </td>
       <td>
         <mat-checkbox
@@ -74,7 +74,7 @@
     </tr>
     <tr *ngIf="!hideOthersPermissions">
       <td>
-        <span class="label">{{"Other" | translate}}</span>
+        <span class="header-label">{{"Other" | translate}}</span>
       </td>
       <td>
         <mat-checkbox 
