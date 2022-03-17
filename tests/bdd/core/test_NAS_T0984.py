@@ -79,20 +79,27 @@ def the_network_global_configuration_page_should_open(driver):
 @then(parsers.parse('input Nameserver 1 "{ad_nameserver1}" and input Nameserver 2 "{ad_nameserver2}"'))
 def input_Nameserver_1_and_input_Nameserver_2(driver, ad_nameserver1, ad_nameserver2):
     """input Nameserver 1 "ad_nameserver1" and input Nameserver 2 "ad_nameserver2"."""
-    assert wait_on_element(driver, 7, '//input[@placeholder="Nameserver 1"]')
+    assert wait_on_element(driver, 7, '//input[@placeholder="Nameserver 1"]', 'inputable')
     driver.find_element_by_xpath('//input[@placeholder="Nameserver 1"]').clear()
     driver.find_element_by_xpath('//input[@placeholder="Nameserver 1"]').send_keys(ad_nameserver1)
     driver.find_element_by_xpath('//input[@placeholder="Nameserver 2"]').clear()
     driver.find_element_by_xpath('//input[@placeholder="Nameserver 2"]').send_keys(ad_nameserver2)
 
 
-@then(parsers.parse('input Nameserver 3 "{ad_nameserver3}", input a hostname and click SAVE'))
+@then(parsers.parse('input Nameserver 3 "{ad_nameserver3}", input the hostname'))
 def input_Nameserver_3_and_click_save(driver, ad_nameserver3, nas_hostname):
     """input Nameserver 3 "ad_nameserver3" and click SAVE."""
     driver.find_element_by_xpath('//input[@placeholder="Nameserver 3"]').clear()
     driver.find_element_by_xpath('//input[@placeholder="Nameserver 3"]').send_keys(ad_nameserver3)
     driver.find_element_by_xpath('//input[@ix-auto="input__Hostname"]').clear()
     driver.find_element_by_xpath('//input[@ix-auto="input__Hostname"]').send_keys(nas_hostname)
+
+
+@then(parsers.parse('input the Default Gateway "{default_gateway}" and click SAVE'))
+def input_the_default_route_and_click_save(driver, default_gateway):
+    """input the Default Route "default_route" and click SAVE."""
+    driver.find_element_by_xpath('//input[@placeholder="IPv4 Default Gateway"]').clear()
+    driver.find_element_by_xpath('//input[@placeholder="IPv4 Default Gateway"]').send_keys(default_gateway)
     assert wait_on_element(driver, 7, '//button[@ix-auto="button__SAVE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
 
