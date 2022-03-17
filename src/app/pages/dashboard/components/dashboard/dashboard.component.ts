@@ -528,7 +528,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       case 'pool':
         if (spl) {
           const pools = this.pools.filter((pool) => pool[key as keyof Pool] === value);
-          if (pools) { data = pools[0]; }
+          if (pools.length) { data = pools[0]; }
         } else {
           console.warn('DashConfigItem has no identifier!');
         }
@@ -536,7 +536,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       case 'interface':
         if (spl) {
           const nics = this.nics.filter((nic) => nic[key as keyof DashboardNetworkInterface] === value);
-          if (nics) { data = nics[0].state; }
+          if (nics.length) { data = nics[0].state; }
         } else {
           console.warn('DashConfigItem has no identifier!');
         }
@@ -579,11 +579,12 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     const hidden = this.dashState
-      .filter((widget) => {
-        return newState.every((updatedWidget) => {
-          return !(widget?.identifier === updatedWidget.identifier || widget?.name === updatedWidget.name);
-        });
-      })
+      .filter((widget) => newState.every((updatedWidget) => {
+        if (widget.identifier) {
+          return widget.identifier !== updatedWidget.identifier;
+        }
+        return widget.name !== updatedWidget.name;
+      }))
       .map((widget) => ({ ...widget, rendered: false }));
 
     this.setDashState([...newState, ...hidden]);
