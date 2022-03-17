@@ -48,24 +48,30 @@
   color: var(--topbar-txt) !important;
 }
 
+.ix-logo:focus-visible,
+.topbar button:focus-visible {
+  background: rgb(255, 255, 255, 0.2);
+  box-shadow: 0 0 0 1px rgb(255, 255, 255, 0.3) inset;
+  outline-width: 0;
+}
+
+.ix-logo:focus-visible {
+  background: rgb(120, 120, 120, 0.2) !important;
+}
+
 .ix-logo {
   cursor: pointer;
   fill: none !important;
-  height: 50px;
+  height: 48px;
   position: relative;
   right: -10px;
-  top: 5px;
+  top: 4px;
   width: 175px;
 }
 
 .ix-logo.ix_full_logo,
 .ix-logo.ix_logomark {
   fill: var(--topbar-txt) !important;
-}
-
-.ix-logo:focus-visible {
-  background-color: var(--hover-bg);
-  outline: 1px solid var(--accent);
 }
 
 .ix-logo.xs {

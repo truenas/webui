@@ -39,6 +39,7 @@
   z-index: 9999;
 
   .app-logo {
+    margin-left: 8px;
     margin-right: 8px;
   }
 
@@ -56,6 +57,13 @@
 
 .branding.scale .app-logo-text {
   top: 13px;
+}
+
+.logo:focus-visible,
+.logo-text:focus-visible {
+  background: rgba(120, 120, 120, 0.2);
+  box-shadow: 0 0 0 1px rgb(255, 255, 255, 0.3) inset;
+  outline-width: 0;
 }
 
 .branding.topbar {

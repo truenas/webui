@@ -94,6 +94,10 @@ div.view-more-row:hover {
   vertical-align: middle;
 }
 
+.title a:focus-visible {
+  background: var(--hover-bg);
+}
+
 button div.label-warning-icon {
   display: inline;
 }

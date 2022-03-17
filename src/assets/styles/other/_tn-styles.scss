@@ -1410,6 +1410,11 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     background: var(--hover-bg) !important;
   }
 
+  .slide-in-nav-item:focus-within {
+    background-color: var(--hover-bg) !important;
+    box-shadow: -1px 0 0 1px var(--btn-default-bg) !important;
+  }
+
   .sidebar-panel.mat-sidenav .sidebar-list-item.highlighted {
     background-color: var(--bg2);
     border-left: 6px solid var(--primary);
@@ -1420,6 +1425,10 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
       mat-icon {
         color: var(--primary);
       }
+    }
+
+    .mat-list-item-content > a:focus-visible {
+      background: var(--hover-bg);
     }
   }
 
