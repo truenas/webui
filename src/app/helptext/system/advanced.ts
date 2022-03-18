@@ -10,6 +10,7 @@ export const helptext_system_advanced = {
   fieldset_sed: T('Self-Encrypting Drive'),
   fieldset_kernel: T('Kernel'),
   fieldset_syslog: T('Syslog'),
+  fieldset_replication: T('Replication'),
 
   dialog_generate_debug_title: T('Generate Debug File'),
   dialog_generate_debug_message: T('This operation might take a long time. Proceed?'),
@@ -65,6 +66,10 @@ export const helptext_system_advanced = {
   debugkernel_placeholder: T('Enable Debug Kernel'),
   debugkernel_tooltip: T('Set to boot a debug kernel after the next system\
   reboot.'),
+
+  max_parallel_replication_tasks_placeholder: T('Replication Tasks Limit'),
+  max_parallel_replication_tasks_tooltip: T('Maximum number of replication tasks being executed \
+simultaneously.'),
 
   consolemsg_placeholder: T('Show Console Messages'),
   consolemsg_tooltip: T('Display console messages in real time\

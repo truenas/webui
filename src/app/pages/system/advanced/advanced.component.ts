@@ -358,6 +358,24 @@ export class AdvancedComponent implements OnDestroy {
       ],
     },
     { name: 'divider', divider: true },
+    {
+      name: helptext_system_advanced.fieldset_replication,
+      label: true,
+      class: 'replication',
+      width: '49%',
+      config: [
+        {
+          type: 'input',
+          name: 'max_tasks',
+          placeholder: helptext_system_advanced.max_parallel_replication_tasks_placeholder,
+          tooltip: helptext_system_advanced.max_parallel_replication_tasks_tooltip,
+          inputType: 'number',
+          validation: [Validators.min(0)],
+        },
+      ],
+    },
+    { name: 'spacer', label: false, width: '51%' },
+    { name: 'divider', divider: true },
   ]);
 
   constructor(
@@ -433,6 +451,10 @@ export class AdvancedComponent implements OnDestroy {
       this.ws.call(this.queryCall).subscribe((adv_values) => {
         entityEdit.formGroup.controls['sed_passwd2'].setValue(adv_values.sed_passwd);
       });
+      this.ws.call('replication.config.config').subscribe((rplc_values) => {
+        entityEdit.formGroup.controls['max_tasks'].setValue(rplc_values.max_parallel_replication_tasks);
+      });
+
       this.adv_serialport = this.fieldSets.config('serialport');
       this.adv_serialspeed = this.fieldSets.config('serialspeed');
       this.adv_serialconsole = entityEdit.formGroup.controls['serialconsole'];
@@ -462,13 +484,20 @@ export class AdvancedComponent implements OnDestroy {
     body.overprovision = this.storage.convertHumanStringToNum(body.overprovision) / 1073741824;
     body.legacy_ui ? window.localStorage.setItem('exposeLegacyUI', body.legacy_ui)
       : window.localStorage.setItem('exposeLegacyUI', 'false');
+    const maxTasks = body.max_tasks > 0 ? body.max_tasks : null;
+    delete body.max_tasks;
     delete body.sed_passwd2;
     this.load.open();
     return this.ws.call('system.advanced.update', [body]).subscribe((res) => {
-      this.load.close();
-      this.entityForm.success = true;
-      this.entityForm.formGroup.markAsPristine();
-      this.adminLayout.onShowConsoleFooterBar(body['consolemsg']);
+      this.ws.call('replication.config.update', [{ max_parallel_replication_tasks: maxTasks }]).subscribe(() => {
+        this.load.close();
+        this.entityForm.success = true;
+        this.entityForm.formGroup.markAsPristine();
+        this.adminLayout.onShowConsoleFooterBar(body['consolemsg']);
+      }, (res) => {
+        this.load.close();
+        new EntityUtils().handleWSError(this.entityForm, res);
+      });
     }, (res) => {
       this.load.close();
       new EntityUtils().handleWSError(this.entityForm, res);
