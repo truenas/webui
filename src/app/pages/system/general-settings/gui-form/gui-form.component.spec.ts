@@ -129,7 +129,6 @@ describe('GuiFormComponent', () => {
         'Web Interface HTTPS Port': '443',
         'Web Interface IPv4 Address': ['0.0.0.0'],
         'Web Interface IPv6 Address': ['::'],
-        Permissions: '235', // IxPermissions test; must remove
       },
     );
   });
@@ -139,7 +138,6 @@ describe('GuiFormComponent', () => {
     await form.fillForm({
       'Show Console Messages': true,
       'Usage collection': true,
-      Permissions: '202', // IxPermissions test; must remove
     });
 
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
