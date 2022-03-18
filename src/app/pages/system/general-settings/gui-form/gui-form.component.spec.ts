@@ -22,7 +22,7 @@ import { selectPreferences, selectTheme } from 'app/store/preferences/preference
 import { selectGeneralConfig } from 'app/store/system-config/system-config.selectors';
 
 // TODO: Disabled for PR review only.
-xdescribe('GuiFormComponent', () => {
+describe('GuiFormComponent', () => {
   let spectator: Spectator<GuiFormComponent>;
   let loader: HarnessLoader;
   let ws: WebSocketService;
