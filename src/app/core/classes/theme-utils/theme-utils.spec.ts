@@ -81,4 +81,22 @@ describe('ThemeUtils', () => {
     const blue = utils.rgbToHsl(blueRgb);
     expect(blue).toBe('hsl(240, 100%, 50%)');
   });
+
+  describe('darken', () => {
+    it('darkens color by the amount provided', () => {
+      const sourceColor = '#AAAAAA';
+      const resultingColor = utils.darken(sourceColor, 5);
+
+      expect(resultingColor).toEqual('hsl(0, 0%, 61.7%)');
+    });
+  });
+
+  describe('lighten', () => {
+    it('lightens color by the amount provided', () => {
+      const sourceColor = '#AAAAAA';
+      const resultingColor = utils.lighten(sourceColor, 5);
+
+      expect(resultingColor).toEqual('hsl(0, 0%, 71.7%)');
+    });
+  });
 });

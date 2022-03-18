@@ -18,7 +18,7 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "test:ci": "jest --runInBand",
-    "test:pr": "echo 'Setting up temporary environment file...\n' && ./setup_env.js -i 'headless.local' && jest",
+    "test:pr": "echo 'Setting up temporary environment file...\n' && ./setup_env.js -i 'headless.local' && jest --coverage",
     "lint": "ng lint && stylelint src/**/*.scss && markuplint src/**/*.html",
     "lint:fix": "ng lint --fix && stylelint --fix src/**/*.scss && markuplint --fix src/**/*.html",
     "snyk": "snyk test",
