@@ -63,8 +63,8 @@ def the_users_page_should_open_click_the_greaterthansign_right_of_the_users(driv
 @then('the User Field should expand down, click the Edit button')
 def the_user_field_should_expand_down_click_the_edit_button(driver):
     """the User Field should expand down, click the Edit button."""
-    assert wait_on_element(driver, 10, '(//tr[contains(.,"ericbsd")]/following-sibling::tr)[1]//button[contains(.,"Edit")]', 'clickable')
-    driver.find_element_by_xpath('(//tr[contains(.,"ericbsd")]/following-sibling::tr)[1]//button[contains(.,"Edit")]').click()
+    assert wait_on_element(driver, 10, '(//tr[contains(.,"ericbsd")]/following-sibling::user-details-row)[1]//button[contains(.,"Edit")]', 'clickable')
+    driver.find_element_by_xpath('(//tr[contains(.,"ericbsd")]/following-sibling::user-details-row)[1]//button[contains(.,"Edit")]').click()
 
 
 @then('the User Edit Page should open, add the root group and click save')
