@@ -351,8 +351,8 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   startListeners(): void {
     this.core.register({ observerClass: this, eventName: 'UserAttributes' }).pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
-      if (evt.data.dashState) {
-        this.applyState(this.sanitizeState(evt.data.dashState));
+      if (evt.data?.dashState) {
+        this.applyState(this.sanitizeState(evt.data.dashState as DashConfigItem[]));
       }
       this.dashStateReady = true;
     });
