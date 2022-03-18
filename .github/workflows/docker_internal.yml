@@ -1,7 +1,6 @@
 name: 'Internal PR Docker Build'
 
 on:
-  push:
   pull_request:
     types:
       - 'synchronize'
