@@ -196,6 +196,10 @@ def create_smb_share_with_path_tankrtacltest1share(driver, path):
     assert wait_on_element(driver, 5, '//button[@ix-auto="button__SAVE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
     assert wait_on_element_disappear(driver, 15, '//h6[contains(.,"Please wait")]')
+    if is_element_present(driver, '//h1[contains(., 'Enable service')]'):
+        driver.find_element_by_xpath('//button[@ix-auto="button__ENABLE SERVICE"]').click()
+        assert wait_on_element(driver, 5, //h1[contains(., 'SMB Service')])
+        driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
 
 
 @then('Apply ACL to rt-acl-test-1 with recusrive checked')
