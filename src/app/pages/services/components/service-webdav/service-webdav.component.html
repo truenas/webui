@@ -28,7 +28,7 @@
           [tooltip]="certssl.tooltip"
           [options]="certssl.options"
           (linkClicked)="certificatesLinkClicked()"
-          [linkText]="'Certificates'"
+          [linkText]="'Certificates' | translate"
         ></ix-select>
         <ix-select
           [formControlName]="htauth.fcName"

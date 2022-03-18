@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 import { helptextSystemKmip } from 'app/helptext/system/kmip';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
@@ -84,7 +85,7 @@ export class KmipComponent implements FormConfiguration {
           ],
           class: 'inline',
           width: '50%',
-          linkText: 'Certificate Authorities',
+          linkText: this.translate.instant('Certificate Authorities'),
           linkClicked: () => {
             this.router.navigate(['/', 'credentials', 'certificates']);
           },
@@ -145,7 +146,7 @@ export class KmipComponent implements FormConfiguration {
     private systemGeneralService: SystemGeneralService,
     private dialogService: DialogService,
     private dialog: MatDialog, private router: Router,
-    private ws: WebSocketService,
+    private ws: WebSocketService, private translate: TranslateService,
   ) {
     this.ws.call(this.queryCall).pipe(untilDestroyed(this)).subscribe(
       (res) => {

@@ -137,7 +137,7 @@ export class LdapComponent implements FormConfiguration {
           placeholder: helptext.ldap_certificate_placeholder,
           tooltip: helptext.ldap_certificate_tooltip,
           options: [{ label: '---', value: null }],
-          linkText: 'Certificates',
+          linkText: this.translate.instant('Certificates'),
           linkClicked: () => {
             this.modalService.closeSlideIn().then(() => {
               this.router.navigate(['/', 'credentials', 'certificates']);

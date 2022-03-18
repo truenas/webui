@@ -32,7 +32,7 @@ export class OpenvpnClientComponent implements FormConfiguration {
           placeholder: helptext.certificate.client_placeholder,
           tooltip: helptext.certificate.tooltip,
           options: [],
-          linkText: 'Certificates',
+          linkText: this.translate.instant('Certificates'),
           linkClicked: () => {
             this.modalService.closeSlideIn().then(() => {
               this.router.navigate(['/', 'credentials', 'certificates']);
@@ -45,7 +45,7 @@ export class OpenvpnClientComponent implements FormConfiguration {
           placeholder: helptext.root_ca.placeholder,
           tooltip: helptext.root_ca.tooltip,
           options: [],
-          linkText: 'Certificate Authorities',
+          linkText: this.translate.instant('Certificate Authorities'),
           linkClicked: () => {
             this.modalService.closeSlideIn().then(() => {
               this.router.navigate(['/', 'credentials', 'certificates']);
