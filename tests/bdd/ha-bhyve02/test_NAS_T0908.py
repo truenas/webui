@@ -20,7 +20,7 @@ def test_add_user(driver):
 @given(parsers.parse('The browser is open navigate to "{nas_url}"'))
 def the_browser_is_open_navigate_to_nas_url(driver, nas_url):
     """The browser is open navigate to "{nas_url}"."""
-    driver.get(f"http://{nas_url}/ui/dashboard/")
+    driver.get(f"http://{nas_url}")
     time.sleep(3)
 
 
