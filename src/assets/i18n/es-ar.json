@@ -594,7 +594,6 @@
   "OpenVPN {serviceLabel} service failed to stop.": "",
   "Optional. Only needed for private images.": "",
   "Options cannot be loaded": "",
-  "Other (Too complicated to be displayed)": "",
   "Other TrueNAS controller cannot be reached.": "",
   "Other TrueNAS controller has no license.": "",
   "Other TrueNAS controller has not finished booting.": "",

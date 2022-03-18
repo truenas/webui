@@ -10,6 +10,7 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
+import { MatListModule } from '@angular/material/list';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatRadioModule } from '@angular/material/radio';
@@ -20,6 +21,7 @@ import { TreeModule } from '@circlon/angular-tree-component';
 import { TranslateModule } from '@ngx-translate/core';
 import { MarkdownModule } from 'ngx-markdown';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
+import { IxCheckboxListComponent } from 'app/modules/ix-forms/components/ix-checkbox-list/ix-checkbox-list.component';
 import { IxCheckboxComponent } from 'app/modules/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxChipsComponent } from 'app/modules/ix-forms/components/ix-chips/ix-chips.component';
 import { IxComboboxComponent } from 'app/modules/ix-forms/components/ix-combobox/ix-combobox.component';
@@ -66,6 +68,7 @@ import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
     TooltipModule,
     TranslateModule,
     TreeModule,
+    MatListModule,
   ],
   declarations: [
     IxInputComponent,
@@ -83,6 +86,7 @@ import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
     IxSlideToggleComponent,
     IxRadioGroupComponent,
     IxIpInputWithNetmaskComponent,
+    IxCheckboxListComponent,
   ],
   exports: [
     IxErrorsComponent,
@@ -100,6 +104,7 @@ import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
     IxSlideToggleComponent,
     IxRadioGroupComponent,
     IxIpInputWithNetmaskComponent,
+    IxCheckboxListComponent,
   ],
   providers: [
     IxFormatterService,

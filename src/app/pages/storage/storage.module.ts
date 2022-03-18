@@ -158,6 +158,7 @@ import { routing } from './storage.routing';
     VolumeStatusComponent,
     ZvolFormComponent,
     ZvolWizardComponent,
+    EditNfsAceComponent,
   ],
   exports: [VolumesListControlsComponent],
   providers: [

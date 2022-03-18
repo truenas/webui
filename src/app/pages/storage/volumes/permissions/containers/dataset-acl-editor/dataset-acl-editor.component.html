@@ -96,12 +96,12 @@
         </div>
         <div class="column-right">
           <ng-container *ngIf="acl.acl[selectedAceIndex] as selectedAce">
-            <app-edit-nfs-ace
+            <ix-edit-nfs-ace
               *ngIf="isNfsAcl; else posixAcl"
               [ace]="selectedAce | cast"
-            ></app-edit-nfs-ace>
+            ></ix-edit-nfs-ace>
             <ng-template #posixAcl>
-              <app-edit-posix-ace [ace]="selectedAce | cast"></app-edit-posix-ace>
+              <ix-edit-posix-ace [ace]="selectedAce | cast"></ix-edit-posix-ace>
             </ng-template>
           </ng-container>
         </div>

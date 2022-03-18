@@ -50,6 +50,10 @@
     background-color: var(--contrast-darker);
     flex-basis: 400px;
   }
+
+  .column-right {
+    flex-grow: 1;
+  }
 }
 
 .controls-container {

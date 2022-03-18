@@ -9,5 +9,5 @@ export type MapOption = [
 ];
 
 export interface RadioOption extends Option {
-  tooltip: string;
+  tooltip?: string;
 }
