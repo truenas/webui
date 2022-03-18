@@ -86,7 +86,7 @@ def the_user_edit_page_should_open_add_the_root_group_and_click_save(driver):
     assert wait_on_element(driver, 7, '//mat-option[@ix-auto="option__Auxiliary Groups_root"]', 'clickable')
     driver.find_element_by_xpath('//mat-option[@ix-auto="option__Auxiliary Groups_root"]').click()
     driver.find_element_by_xpath('//mat-option[@ix-auto="option__Auxiliary Groups_root"]').send_keys(Keys.TAB)
-    wait_on_element(driver, 10, '//button[@ix-auto="button__SAVE"]', 'clickable')
+    assert wait_on_element(driver, 15, '//button[@ix-auto="button__SAVE"]', 'clickable')
     element = driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]')
     driver.execute_script("arguments[0].scrollIntoView();", element)
     driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
