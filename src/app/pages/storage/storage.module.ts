@@ -162,8 +162,6 @@ import { routing } from './storage.routing';
     ZvolWizardComponent,
     DiskWipeDialogComponent,
     ManualTestDialogComponent,
-    EditNfsAceComponent,
-    EditPosixAceComponent,
   ],
   exports: [VolumesListControlsComponent],
   providers: [
