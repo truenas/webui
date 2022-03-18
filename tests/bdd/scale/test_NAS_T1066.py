@@ -133,7 +133,7 @@ def click_test_changes_check_confirm_click_test_changes_again(driver, nas_ip):
 @then('when "Please wait" goes away, and there are unapplied network changes, click "Save Changes"')
 def when_please_wait_goes_away_and_there_are_unapplied_network_changes_click_save_changes(driver):
     """when "Please wait" goes away, and there are unapplied network changes, click "Save Changes"."""
-    assert wait_on_element_disappear(driver, 65, '//h6[contains(.,"Please wait")]')
+    assert wait_on_element_disappear(driver, 85, '//h6[contains(.,"Please wait")]')
     assert wait_on_element(driver, 10, '//h1[contains(.,"Network")]')
     assert wait_on_element(driver, 7, '//button[@ix-auto="button__keepChange"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__keepChange"]').click()
