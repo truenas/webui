@@ -52,7 +52,6 @@ export class GuiFormComponent {
     crash_reporting: [false, [Validators.required]],
     usage_collection: [false, [Validators.required]],
     ui_consolemsg: [false, [Validators.required]],
-    ui_perms: ['235', Validators.required],
   });
 
   options = {
@@ -107,7 +106,6 @@ export class GuiFormComponent {
       crash_reporting: values.crash_reporting,
       usage_collection: values.usage_collection,
       ui_consolemsg: values.ui_consolemsg,
-      ui_perms: values.ui_perms, // IxPermissions test; must remove
     };
 
     this.isFormLoading = true;

@@ -20,7 +20,6 @@ export interface SystemGeneralConfig {
   usage_collection: boolean;
   usage_collection_is_set: boolean;
   wizardshown: boolean;
-  ui_perms?: string; // IxPermissions test; must remove
 }
 
 export interface SystemGeneralConfigUpdate {
@@ -39,6 +38,5 @@ export interface SystemGeneralConfigUpdate {
   usage_collection?: boolean;
   sysloglevel?: string;
   syslogserver?: string;
-  ui_perms?: string; // IxPermissions test; must remove
   ui_certificate?: number;
 }

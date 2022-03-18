@@ -47,7 +47,6 @@ describe('GuiFormComponent', () => {
     ui_certificate: {
       id: 1,
     } as Certificate,
-    ui_perms: '235', // IxPermissions test; must remove
   } as SystemGeneralConfig;
 
   const createComponent = createComponentFactory({
@@ -152,7 +151,6 @@ describe('GuiFormComponent', () => {
         ui_certificate: 1,
         ui_consolemsg: true,
         usage_collection: true,
-        ui_perms: '202', // IxPermissions test; must remove
       },
     ]);
   });
