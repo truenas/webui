@@ -58,7 +58,9 @@ export class MockWebsocketService extends WebSocketService {
       ...response,
       id: this.jobIdCounter,
     };
+    when(this.call).calledWith(method).mockReturnValue(of(this.jobIdCounter));
     when(this.call).calledWith(method, expect.anything()).mockReturnValue(of(this.jobIdCounter));
+    when(this.job).calledWith(method).mockReturnValue(of(responseWithJobId));
     when(this.job).calledWith(method, expect.anything()).mockReturnValue(of(responseWithJobId));
     when(this.call)
       .calledWith('core.get_jobs', [[['id', '=', this.jobIdCounter]]])
