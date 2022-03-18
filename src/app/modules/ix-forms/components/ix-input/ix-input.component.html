@@ -39,11 +39,17 @@
     <i class="material-icons" matTooltip="Show" *ngIf="!showPassword">visibility_off</i>
   </button>
 </div>
+
+<div *ngIf="linkText">
+  <a (click)="linkClicked.emit()" class="link">{{ linkText | translate }}<mat-icon style="font-size: x-small;">open_in_new</mat-icon></a>
+</div>
+
 <div *ngIf="invalid">
   <mat-error>
     <div [innerHTML]="invalidMessage()"></div>
   </mat-error>
 </div>
+
 <ix-errors [control]="controlDirective.control" [label]="label"></ix-errors>
 
 <mat-hint *ngIf="hint">{{hint}}</mat-hint>

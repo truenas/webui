@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatDialogRef } from '@angular/material/dialog/dialog-ref';
+import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
@@ -120,12 +121,17 @@ export class IdmapFormComponent implements FormConfiguration {
         {
           type: 'select',
           name: 'certificate',
-          placeholder: helptext.idmap.certificate_id.placeholder,
+          placeholder: 'Rehan Cert', // helptext.idmap.certificate_id.placeholder,
           tooltip: helptext.idmap.certificate_id.tooltip,
           options: [],
+          linkText: 'Certificates',
+          linkClicked: () => {
+            this.modalService.closeSlideIn().then(() => {
+              this.router.navigate(['/', 'credentials', 'certificates']);
+            });
+          },
           isHidden: true,
         },
-
       ],
     },
     {
@@ -289,7 +295,7 @@ export class IdmapFormComponent implements FormConfiguration {
   ];
 
   constructor(protected idmapService: IdmapService, protected validationService: ValidationService,
-    private modalService: ModalService,
+    private modalService: ModalService, private router: Router,
     protected dialogService: DialogService, protected dialog: MatDialog) {
     this.getRow = this.modalService.getRow$.pipe(untilDestroyed(this)).subscribe((rowId: number) => {
       this.pk = rowId;

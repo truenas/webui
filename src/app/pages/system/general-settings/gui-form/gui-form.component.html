@@ -16,6 +16,8 @@
           [tooltip]="helptext.ui_certificate.tooltip | translate"
           [options]="options.ui_certificate"
           [required]="true"
+          (linkClicked)="certificatesLinkClicked()"
+          [linkText]="'Certificates'"
         ></ix-select>
 
         <ix-select

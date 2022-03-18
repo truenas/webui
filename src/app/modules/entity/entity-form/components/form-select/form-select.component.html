@@ -115,6 +115,11 @@
       </ng-container>
     </mat-select>
   </mat-form-field>
+
+  <div *ngIf="config.linkText">
+    <a (click)="linkClicked()" class="link">{{ config.linkText | translate }}<mat-icon style="font-size: x-small;">open_in_new</mat-icon></a>
+  </div>
+
   <div class="margin-for-error">
     <form-errors [control]="group.controls[config.name]" [config]="config"></form-errors>
     <mat-error *ngIf="config['hasErrors']"><div [innerHTML]="config['errors']"></div></mat-error>

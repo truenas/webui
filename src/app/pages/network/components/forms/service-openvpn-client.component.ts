@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
@@ -8,7 +9,7 @@ import { OpenvpnClientConfigUpdate } from 'app/interfaces/openvpn-client-config.
 import { EntityFormComponent } from 'app/modules/entity/entity-form/entity-form.component';
 import { FieldConfig, FormSelectConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/modules/entity/entity-form/models/fieldset.interface';
-import { ServicesService } from 'app/services';
+import { ModalService, ServicesService } from 'app/services';
 
 @UntilDestroy()
 @Component({
@@ -31,6 +32,12 @@ export class OpenvpnClientComponent implements FormConfiguration {
           placeholder: helptext.certificate.client_placeholder,
           tooltip: helptext.certificate.tooltip,
           options: [],
+          linkText: 'Certificates',
+          linkClicked: () => {
+            this.modalService.closeSlideIn().then(() => {
+              this.router.navigate(['/', 'credentials', 'certificates']);
+            });
+          },
         },
         {
           type: 'select',
@@ -38,6 +45,12 @@ export class OpenvpnClientComponent implements FormConfiguration {
           placeholder: helptext.root_ca.placeholder,
           tooltip: helptext.root_ca.tooltip,
           options: [],
+          linkText: 'Certificate Authorities',
+          linkClicked: () => {
+            this.modalService.closeSlideIn().then(() => {
+              this.router.navigate(['/', 'credentials', 'certificates']);
+            });
+          },
         },
         {
           type: 'input',
@@ -127,6 +140,7 @@ export class OpenvpnClientComponent implements FormConfiguration {
   constructor(
     protected services: ServicesService,
     protected translate: TranslateService,
+    private router: Router, private modalService: ModalService,
   ) { }
 
   afterInit(entityEdit: EntityFormComponent): void {

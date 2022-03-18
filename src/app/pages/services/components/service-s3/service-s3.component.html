@@ -50,6 +50,8 @@
           [label]="'Certificate' | translate"
           [tooltip]="tooltips.certificate | translate"
           [options]="certificateOptions$"
+          (linkClicked)="certificatesLinkClicked()"
+          [linkText]="'Certificates'"
         ></ix-select>
         <ix-input
           *ngIf="form.controls['certificate'].value !== null"

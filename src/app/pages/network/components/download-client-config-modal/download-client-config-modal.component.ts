@@ -3,6 +3,7 @@ import {
 } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
+import { Router } from '@angular/router';
 import { FormControl } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { switchMap } from 'rxjs/operators';
@@ -11,6 +12,7 @@ import { EntityUtils } from 'app/modules/entity/utils';
 import {
   AppLoaderService, DialogService, ServicesService, StorageService, WebSocketService,
 } from 'app/services';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
 @Component({
@@ -28,6 +30,8 @@ export class DownloadClientConfigModalComponent {
     private dialogService: DialogService,
     private dialogRef: MatDialogRef<DownloadClientConfigModalComponent>,
     private services: ServicesService,
+    private router: Router,
+    private slideInService: IxSlideInService,
     private storageService: StorageService,
   ) {}
 
@@ -53,5 +57,11 @@ export class DownloadClientConfigModalComponent {
           new EntityUtils().handleWsError(this, error, this.dialogService);
         },
       );
+  }
+
+  certificatesLinkClicked(): void {
+    this.dialogRef.close();
+    this.slideInService.close();
+    this.router.navigate(['/', 'credentials', 'certificates']);
   }
 }

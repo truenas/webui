@@ -101,6 +101,10 @@ export class ServiceFtpComponent implements FormConfiguration, OnInit {
           placeholder: helptext.ssltls_certificate_placeholder,
           tooltip: helptext.ssltls_certificate_tooltip,
           options: [{ label: '-', value: null }],
+          linkText: 'Certificates',
+          linkClicked: () => {
+            this.router.navigate(['/', 'credentials', 'certificates']);
+          },
         },
       ],
     },

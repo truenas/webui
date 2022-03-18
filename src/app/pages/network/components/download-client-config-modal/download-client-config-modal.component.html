@@ -5,6 +5,8 @@
     [label]="'Client Certificate' | translate"
     [options]="serverCertificates$"
     [required]="true"
+    [linkText]="'Certificates'"
+    (linkClicked)="certificatesLinkClicked()"
   ></ix-select>
 </div>
 <div mat-dialog-actions class="buttons">
