@@ -791,6 +791,7 @@ export type ApiDirectory = {
   'system.product_type': { params: void; response: ProductType };
   'system.advanced.syslog_certificate_choices': { params: void; response: Choices };
   'system.advanced.syslog_certificate_authority_choices': { params: void; response: Choices };
+  'system.advanced.sed_global_password': { params: void; response: string };
   'system.is_stable': { params: void; response: boolean };
 
   // Replication
