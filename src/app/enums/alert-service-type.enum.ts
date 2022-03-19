@@ -9,4 +9,5 @@ export enum AlertServiceType {
   SnmpTrap = 'SNMPTrap',
   Telegram = 'Telegram',
   VictorOps = 'VictorOps',
+  FreeTelecom = 'FreeTelecom',
 }

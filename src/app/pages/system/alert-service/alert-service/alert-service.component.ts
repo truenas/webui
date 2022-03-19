@@ -95,6 +95,9 @@ export class AlertServiceComponent implements FormConfiguration {
           }, {
             label: 'VictorOps',
             value: AlertServiceType.VictorOps,
+          }, {
+            label: 'FreeTelecom',
+            value: AlertServiceType.FreeTelecom,
           }],
           value: AlertServiceType.AwsSns,
         },
@@ -665,6 +668,50 @@ export class AlertServiceComponent implements FormConfiguration {
             when: [{
               name: 'type',
               value: AlertServiceType.VictorOps,
+            }],
+          }],
+          required: true,
+          validation: [Validators.required],
+        },
+        // FreeTelecom
+        {
+          type: 'input',
+          name: 'FreeTelecom-url',
+          placeholder: helptext.FreeTelecom_url_placeholder,
+          tooltip: helptext.FreeTelecom_url_tooltip,
+          relation: [{
+            action: RelationAction.Show,
+            when: [{
+              name: 'type',
+              value: AlertServiceType.FreeTelecom,
+            }],
+          }],
+        },
+        {
+          type: 'input',
+          name: 'FreeTelecom-user',
+          placeholder: helptext.FreeTelecom_user_placeholder,
+          tooltip: helptext.FreeTelecom_user_tooltip,
+          relation: [{
+            action: RelationAction.Show,
+            when: [{
+              name: 'type',
+              value: AlertServiceType.FreeTelecom,
+            }],
+          }],
+          required: true,
+          validation: [Validators.required],
+        },
+        {
+          type: 'input',
+          name: 'FreeTelecom-pass',
+          placeholder: helptext.FreeTelecom_pass_placeholder,
+          tooltip: helptext.FreeTelecom_pass_tooltip,
+          relation: [{
+            action: RelationAction.Show,
+            when: [{
+              name: 'type',
+              value: AlertServiceType.FreeTelecom,
             }],
           }],
           required: true,

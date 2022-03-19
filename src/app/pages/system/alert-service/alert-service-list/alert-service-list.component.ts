@@ -48,6 +48,7 @@ export class AlertServiceListComponent implements EntityTableConfig<AlertService
     AlertServiceType.SnmpTrap,
     AlertServiceType.Telegram,
     AlertServiceType.VictorOps,
+    AlertServiceType.FreeTelecom,
   ];
 
   constructor(
