@@ -135,41 +135,6 @@ export class EntityJobComponent implements OnInit {
     this.hideProgressValue = hide;
   }
 
-  show(): void {
-    this.ws.call('core.get_jobs', [[['id', '=', this.jobId]]])
-      .pipe(untilDestroyed(this))
-      .subscribe((jobs) => {
-        if (jobs.length > 0) {
-          this.jobUpdate(jobs[0]);
-        }
-      });
-    this.ws.subscribe('core.get_jobs').pipe(
-      filter((event) => event.id === this.jobId),
-      map((event) => event.fields),
-      untilDestroyed(this),
-    ).subscribe((job) => {
-      this.jobUpdate(job);
-    });
-  }
-
-  jobUpdate(job: Job): void {
-    this.job = job;
-    this.showAbortButton = this.job.abortable;
-    if (job.progress) {
-      this.progress.emit(job.progress);
-    }
-    switch (job.state) {
-      case JobState.Success:
-        this.success.emit(this.job);
-        break;
-      case JobState.Failed:
-        this.failure.emit(this.job);
-        break;
-      default:
-        break;
-    }
-  }
-
   submit(): void {
     let subscriptionId: string = null;
     this.ws.job(this.method, this.args)
@@ -251,13 +216,18 @@ export class EntityJobComponent implements OnInit {
       case JobState.Failed:
         this.failure.emit(this.job);
         break;
+      case JobState.Aborted:
+        this.aborted.emit(this.job);
+        break;
       default:
         break;
     }
   }
 
   abortJob(): void {
-    this.ws.call('core.job_abort', [this.job.id]).pipe(untilDestroyed(this)).subscribe();
+    this.ws.call('core.job_abort', [this.job.id]).pipe(untilDestroyed(this)).subscribe(() => {
+      this.dialogRef.close();
+    });
   }
 
   /**
