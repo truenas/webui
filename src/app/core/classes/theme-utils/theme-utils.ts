@@ -129,17 +129,6 @@ export class ThemeUtils {
     return this.adjustLightness(value, pc, 'lighten');
   }
 
-  adjustLightness(value: string, pc: number, method = 'darken'): string {
-    const rgb: number[] = this.forceRgb(value);
-    const hsl = this.rgbToHsl(rgb, false, false) as number[];
-    let lightness: number = method === 'lighten' ? hsl[2] + pc : hsl[2] - pc;
-    lightness = lightness > 100 ? 100 : lightness;
-
-    const adjusted = [hsl[0], hsl[1], lightness];
-
-    return 'hsl(' + adjusted[0] + ', ' + adjusted[1] + '%, ' + adjusted[2] + '%)';
-  }
-
   rgbToHsl(param: string | number[], inputString = true, outputString = true): number[] | string {
     const value: number[] = inputString ? this.forceRgb(param as string) : param as number[];
 
@@ -191,5 +180,16 @@ export class ThemeUtils {
     const output = trimmed.split(',');
 
     return output.map((str) => parseFloat(str));
+  }
+
+  private adjustLightness(value: string, pc: number, method = 'darken'): string {
+    const rgb: number[] = this.forceRgb(value);
+    const hsl = this.rgbToHsl(rgb, false, false) as number[];
+    let lightness: number = method === 'lighten' ? hsl[2] + pc : hsl[2] - pc;
+    lightness = lightness > 100 ? 100 : lightness;
+
+    const adjusted = [hsl[0], hsl[1], lightness];
+
+    return 'hsl(' + adjusted[0] + ', ' + adjusted[1] + '%, ' + adjusted[2] + '%)';
   }
 }
