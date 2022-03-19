@@ -83,6 +83,9 @@ export class AlertServiceComponent {
           }, {
             label: 'VictorOps',
             value: 'VictorOps',
+          },{
+            label: 'FreeTelecom',
+            value: 'FreeTelecom',
           }],
           value: 'AWSSNS',
         },
@@ -623,6 +626,50 @@ export class AlertServiceComponent {
               name: "type",
               value: 'VictorOps',
             }]
+          }],
+          required: true,
+          validation: [Validators.required],
+        },
+        // FreeTelecom
+        {
+          type: 'input',
+          name: 'FreeTelecom-url',
+          placeholder: helptext.FreeTelecom_url_placeholder,
+          tooltip: helptext.FreeTelecom_url_tooltip,
+          relation: [{
+            action: "SHOW",
+            when: [{
+              name: "type",
+              value: 'FreeTelecom',
+            }]
+          }]
+        },
+        {
+          type: 'input',
+          name: 'FreeTelecom-user',
+          placeholder: helptext.FreeTelecom_user_placeholder,
+          tooltip: helptext.FreeTelecom_user_tooltip,
+          relation: [{
+            action: "SHOW",
+            when: [{
+              name: "type",
+              value: 'FreeTelecom',
+            }]
+          }],
+          required: true,
+          validation: [Validators.required],
+        },
+        {
+          type: 'input',
+          name: 'FreeTelecom-pass',
+          placeholder: helptext.FreeTelecom_pass_placeholder,
+          tooltip: helptext.FreeTelecom_pass_tooltip,
+          relation: [{
+            action: "SHOW",
+            when: [{
+              name: "type",
+              value: 'FreeTelecom',
+            }],
           }],
           required: true,
           validation: [Validators.required],

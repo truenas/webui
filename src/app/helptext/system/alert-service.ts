@@ -181,4 +181,18 @@ export default {
  href="https://portal.victorops.com/public/api-docs.html#/Routing32Keys"\
  target="_blank">VictorOps routing key</a>.'),
 
+    FreeTelecom_url_placeholder: T('Api URL'),
+    FreeTelecom_url_tooltip: T('Enter or paste the <a\
+    href="https://mobile.free.fr/account/mes-options/notifications-sms"\
+    target="_blank">FreeTelecom SMS Api URL</a>.'),
+
+    FreeTelecom_user_placeholder: T('User ID'),
+    FreeTelecom_user_tooltip: T('Enter or paste the <a\
+    href="https://mobile.free.fr/account/mes-options/notifications-sms"\
+    target="_blank">FreeTelecom SMS Api User ID</a>.'),
+    
+    FreeTelecom_pass_placeholder: T('Pass'),
+    FreeTelecom_pass_tooltip: T('Enter or paste the <a\
+    href="https://mobile.free.fr/account/mes-options/notifications-sms"\
+    target="_blank">FreeTelecom SMS Api Pass</a>.'),
 }

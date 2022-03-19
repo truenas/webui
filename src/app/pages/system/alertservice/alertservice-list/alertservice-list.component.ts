@@ -33,7 +33,7 @@ export class AlertServiceListComponent {
     },
   };
 
-  private providerList = ['AWSSNS','Mail','InfluxDB','Mattermost','OpsGenie','PagerDuty', 'Slack','SNMPTrap', 'VictorOps'];
+  private providerList = ['AWSSNS', 'Mail', 'InfluxDB', 'Mattermost', 'OpsGenie', 'PagerDuty', 'Slack', 'SNMPTrap', 'VictorOps', 'FreeTelecom'];
 
   constructor(
     protected router: Router,
