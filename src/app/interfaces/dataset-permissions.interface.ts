@@ -1,8 +1,8 @@
 export type DatasetPermissionsUpdate = [
   path: string,
   update: {
-    user: string;
-    group: string;
+    user?: string;
+    group?: string;
     mode: string;
     acl: unknown[];
     options: {

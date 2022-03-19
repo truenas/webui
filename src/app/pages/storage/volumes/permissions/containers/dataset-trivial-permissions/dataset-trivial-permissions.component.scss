@@ -21,3 +21,21 @@
   display: block;
   padding: 5px 10px;
 }
+
+.owner-and-access {
+  display: flex;
+  border-bottom: 1px solid var(--lines);
+
+  .owner-fields,
+  .access-fields {
+    flex: 1;
+  }
+}
+
+.advanced-fields {
+  border-bottom: 1px solid var(--lines);
+}
+
+.set-acl-button {
+  margin-left: auto;
+}
