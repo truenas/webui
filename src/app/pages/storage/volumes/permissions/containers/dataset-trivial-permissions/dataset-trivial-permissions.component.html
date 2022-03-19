@@ -9,7 +9,7 @@
   </mat-card-header>
 
   <mat-card-content>
-    <form [formGroup]="form">
+    <form [formGroup]="form" (submit)="onSubmit()">
       <div class="owner-and-access">
         <ix-fieldset [title]="'Owner' | translate" class="owner-fields">
           <ix-combobox
@@ -17,6 +17,7 @@
             [label]="'User' | translate"
             [tooltip]="tooltips.user | translate"
             [provider]="userProvider"
+            [required]="isToApplyUser"
           ></ix-combobox>
 
           <ix-checkbox
@@ -30,6 +31,7 @@
             [label]="'Group' | translate"
             [tooltip]="tooltips.group | translate"
             [provider]="groupProvider"
+            [required]="isToApplyGroup"
           ></ix-combobox>
 
           <ix-checkbox
@@ -39,27 +41,34 @@
           ></ix-checkbox>
         </ix-fieldset>
         <ix-fieldset [title]="'Access' | translate" class="access-fields">
-
+          <ix-permissions
+            formControlName="mode"
+            [label]="'Access Mode' | translate"
+            [tooltip]="tooltips.mode"
+          ></ix-permissions>
         </ix-fieldset>
       </div>
       <div class="advanced-fields">
-        <ix-checkbox
-          formControlName="recursive"
-          [label]="'Apply permissions recursively' | translate"
-          [tooltip]="tooltips.recursive | translate"
-        ></ix-checkbox>
+        <ix-fieldset [title]="'Advanced' | translate">
+          <ix-checkbox
+            formControlName="recursive"
+            [label]="'Apply permissions recursively' | translate"
+            [tooltip]="tooltips.recursive | translate"
+          ></ix-checkbox>
 
-        <ix-checkbox
-          *ngIf="isRecursive$ | async"
-          formControlName="traverse"
-          [label]="'Apply permissions to child datasets' | translate"
-          [tooltip]="tooltips.traverse | translate"
-        ></ix-checkbox>
+          <ix-checkbox
+            *ngIf="isRecursive$ | async"
+            formControlName="traverse"
+            [label]="'Apply permissions to child datasets' | translate"
+            [tooltip]="tooltips.traverse | translate"
+          ></ix-checkbox>
+        </ix-fieldset>
       </div>
 
       <div class="form-actions">
         <button
           mat-button
+          class="save-button"
           type="submit"
           [disabled]="form.invalid || isLoading"
           color="primary"
@@ -71,6 +80,7 @@
         >{{ 'Cancel' | translate }}</button>
 
         <button
+          *ngIf="canSetAcl"
           class="set-acl-button"
           mat-button
           type="button"

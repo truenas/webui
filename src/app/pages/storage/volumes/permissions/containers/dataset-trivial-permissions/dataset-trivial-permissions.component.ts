@@ -1,18 +1,23 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+import { forkJoin } from 'rxjs';
+import { filter, switchMap } from 'rxjs/operators';
 import { AclType } from 'app/enums/acl-type.enum';
 import helptext from 'app/helptext/storage/volumes/datasets/dataset-permissions';
 import { DatasetPermissionsUpdate } from 'app/interfaces/dataset-permissions.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
+import { EntityUtils } from 'app/modules/entity/utils';
 import { GroupComboboxProvider } from 'app/modules/ix-forms/classes/group-combobox-provider';
 import { UserComboboxProvider } from 'app/modules/ix-forms/classes/user-combobox-provider';
-import { DialogService, StorageService, UserService, WebSocketService } from 'app/services';
-import { forkJoin } from 'rxjs';
-import { filter, switchMap } from 'rxjs/operators';
+import IxValidatorsService from 'app/modules/ix-forms/services/ix-validators.service';
+import {
+  DialogService, StorageService, UserService, WebSocketService,
+} from 'app/services';
 
 @UntilDestroy()
 @Component({
@@ -22,9 +27,15 @@ import { filter, switchMap } from 'rxjs/operators';
 })
 export class DatasetTrivialPermissionsComponent implements OnInit {
   form = this.formBuilder.group({
-    user: [''],
+    user: ['', [this.validatorService.validateOnCondition(
+      () => this.isToApplyUser,
+      Validators.required,
+    )]],
     applyUser: [false],
-    group: [''],
+    group: ['', [this.validatorService.validateOnCondition(
+      () => this.isToApplyGroup,
+      Validators.required,
+    )]],
     mode: [''],
     applyGroup: [false],
     permission: [''],
@@ -44,7 +55,7 @@ export class DatasetTrivialPermissionsComponent implements OnInit {
     applyUser: helptext.apply_user.tooltip,
     group: helptext.dataset_permissions_group_tooltip,
     applyGroup: helptext.apply_group.tooltip,
-    permissions: helptext.dataset_permissions_mode_tooltip,
+    mode: helptext.dataset_permissions_mode_tooltip,
     recursive: helptext.dataset_permissions_recursive_tooltip,
     traverse: helptext.dataset_permissions_traverse_tooltip,
   };
@@ -64,10 +75,19 @@ export class DatasetTrivialPermissionsComponent implements OnInit {
     private dialog: DialogService,
     private userService: UserService,
     private matDialog: MatDialog,
+    private validatorService: IxValidatorsService,
   ) {}
 
   get canSetAcl(): boolean {
     return this.aclType !== AclType.Off;
+  }
+
+  get isToApplyUser(): boolean {
+    return this.form?.value?.applyUser;
+  }
+
+  get isToApplyGroup(): boolean {
+    return this.form?.value?.applyGroup;
   }
 
   ngOnInit(): void {
@@ -80,7 +100,6 @@ export class DatasetTrivialPermissionsComponent implements OnInit {
 
   onSetAclPressed(): void {
     if (this.aclType === AclType.Posix1e) {
-      // TODO: WTF is this split
       this.router.navigate([
         '/', 'storage', 'id', this.datasetId.split('/')[0], 'dataset',
         'posix-acl', this.datasetId,
@@ -129,12 +148,10 @@ export class DatasetTrivialPermissionsComponent implements OnInit {
             user: stat.user,
             group: stat.group,
           });
-
-          // TODO: CDR?
         },
         (error) => {
           this.isLoading = false;
-          // TODO: Borked
+          new EntityUtils().handleWsError(this, error, this.dialog);
         },
       );
   }
@@ -143,9 +160,8 @@ export class DatasetTrivialPermissionsComponent implements OnInit {
     const values = this.form.value;
 
     const update = {
-      acl: [],
       options: {
-        stripacl: true,
+        stripacl: false,
         recursive: values.recursive,
         traverse: values.traverse,
       },
