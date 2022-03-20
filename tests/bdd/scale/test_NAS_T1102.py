@@ -1,6 +1,6 @@
 # coding=utf-8
 """SCALE UI: feature tests."""
-
+import time
 from function import (
     wait_on_element,
     is_element_present,
@@ -133,9 +133,10 @@ def click_on_system_dataset_configure_button_and_close_the_popup(driver):
 def click_on_system_dataset_pool_select_system_click_save(driver):
     """click on System Dataset Pool select system, click Save."""
     assert wait_on_element(driver, 5, '//h3[contains(.,"System Dataset Pool") and @class="ix-formtitle"]')
+    time.sleep(2)
     assert wait_on_element(driver, 5, '//mat-select', 'clickable')
     driver.find_element_by_xpath('//mat-select').click()
-    assert wait_on_element(driver, 5, '//mat-option[@role="option"]//span[contains(.,"system")]', 'clickable')
+    assert wait_on_element(driver, 10, '//mat-option[@role="option"]//span[contains(.,"system")]', 'clickable')
     driver.find_element_by_xpath('//mat-option[@role="option"]//span[contains(.,"system")]').click()
     assert wait_on_element(driver, 30, '//ix-slide-in[@id="ix-slide-in-form"]//button//span[contains(.,"Save")]', 'clickable')
     driver.find_element_by_xpath('//ix-slide-in[@id="ix-slide-in-form"]//button//span[contains(.,"Save")]').click()
