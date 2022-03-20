@@ -79,7 +79,8 @@ def change_should_be_saved_open_the_user_page_and_verify_the_user_disable_passwo
     """change should be saved, open the user page and verify the user Disable Password is false."""
     assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
     assert wait_on_element(driver, 5, '//h1[contains(.,"Users")]')
-    assert wait_on_element(driver, 5, '//tr[contains(.,"ericbsd")]')
+    assert wait_on_element(driver, 10, '//tr[contains(.,"ericbsd")]//mat-icon', 'clickable')
+    driver.find_element_by_xpath('//tr[contains(.,"ericbsd")]//mat-icon').click()
     element_text = driver.find_element_by_xpath('(//tr[contains(.,"ericbsd")]/following-sibling::user-details-row)[1]//dt[contains(.,"Password Disabled:")]/../dd').text
     assert element_text == 'false'
 
