@@ -111,7 +111,7 @@ def after_remove_the_core_files_in_vardbsystemcores(driver, nas_ip, root_passwor
 def verify_that_the_core_file_alert_disappear(driver):
     """verify that the core file alert disappear."""
     assert wait_on_element_disappear(driver, 180, '//span[contains(.,"notifications")]//span[contains(text(),"1")]')
-    driver.find_element_by_xpath('//mat-icon[text()="check_circle"').click()
+    driver.find_element_by_xpath('//mat-icon[text()="check_circle"]').click()
     assert wait_on_element(driver, 7, '//h3[text()="Alerts"]')
     assert not is_element_present(driver, '//h4[contains(.,"Core files")]')
     assert wait_on_element(driver, 7, '//button[contains(.,"clear")]', 'clickable')
