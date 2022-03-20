@@ -494,7 +494,7 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow>, On
                 [
                   vm.id,
                   window.location.host,
-                  window.location.protocol.replace(':', ''),
+                  { protocol: window.location.protocol.replace(':', '').toUpperCase() },
                 ],
               ).pipe(untilDestroyed(this)).subscribe((webUris) => {
                 this.loader.close();
@@ -534,7 +534,7 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow>, On
                     [
                       vm.id,
                       window.location.host,
-                      window.location.protocol.replace(':', ''),
+                      { protocol: window.location.protocol.replace(':', '').toUpperCase() },
                     ],
                   ).pipe(untilDestroyed(this)).subscribe((webUris) => {
                     this.loader.close();
@@ -612,8 +612,8 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow>, On
           [
             vm.id,
             window.location.host,
-            window.location.protocol.replace(':', ''),
             {
+              protocol: window.location.protocol.replace(':', '').toUpperCase(),
               devices_passwords: [
                 {
                   device_id: displayDevice.id,
