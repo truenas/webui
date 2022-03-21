@@ -21,7 +21,6 @@ import { themeChangedInGuiForm } from 'app/store/preferences/preferences.actions
 import { selectPreferences, selectTheme } from 'app/store/preferences/preferences.selectors';
 import { selectGeneralConfig } from 'app/store/system-config/system-config.selectors';
 
-// TODO: Disabled for PR review only.
 describe('GuiFormComponent', () => {
   let spectator: Spectator<GuiFormComponent>;
   let loader: HarnessLoader;

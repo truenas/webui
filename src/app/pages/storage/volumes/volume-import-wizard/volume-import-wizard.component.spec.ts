@@ -29,7 +29,7 @@ describe('VolumeImportWizardComponent', () => {
       success: new EventEmitter(),
       failure: new EventEmitter(),
     } as unknown as EntityJobComponent,
-  } as MatDialogRef<EntityJobComponent, any>;
+  } as MatDialogRef<EntityJobComponent>;
 
   const createComponent = createComponentFactory({
     component: VolumeImportWizardComponent,
@@ -62,7 +62,7 @@ describe('VolumeImportWizardComponent', () => {
       mockProvider(DialogService),
       mockProvider(MatDialog, {
         open: () => mockDialogRef,
-      } as unknown as MatDialog),
+      }),
     ],
   });
 
@@ -72,19 +72,17 @@ describe('VolumeImportWizardComponent', () => {
     ws = spectator.inject(WebSocketService);
   });
 
-  it('loads and shows the current list of pools to import when form is opened', () => {
-    spectator.component.pool.options.subscribe(async () => {
-      const form = await loader.getHarness(IxFormHarness);
-      const controls = await form.getControlHarnessesDict();
-      const poolSelect = await (controls['Pool'] as IxSelectHarness).getSelectHarness();
-      const options = await poolSelect.getOptions();
-      expect(ws.job).toHaveBeenCalledWith('pool.import_find');
-      expect(options).toEqual([
-        { label: 'pool_name_1 | pool_guid_1', value: 'pool_guid_1' },
-        { label: 'pool_name_2 | pool_guid_2', value: 'pool_guid_2' },
-        { label: 'pool_name_3 | pool_guid_3', value: 'pool_guid_3' },
-      ]);
-    });
+  it('loads and shows the current list of pools to import when form is opened', async () => {
+    const form = await loader.getHarness(IxFormHarness);
+    const controls = await form.getControlHarnessesDict();
+    const optionLabels = await (controls['Pool'] as IxSelectHarness).getOptionLabels();
+
+    expect(ws.job).toHaveBeenCalledWith('pool.import_find');
+    expect(optionLabels).toEqual([
+      'pool_name_1 | pool_guid_1',
+      'pool_name_2 | pool_guid_2',
+      'pool_name_3 | pool_guid_3',
+    ]);
   });
 
   it('doing the import', async () => {
