@@ -99,4 +99,13 @@ describe('ThemeUtils', () => {
       expect(resultingColor).toEqual('hsl(0, 0%, 71.7%)');
     });
   });
+
+  describe('hslToArray', () => {
+    it('converts hsl string to an array of values', () => {
+      const hsl = 'hsl(0, 0%, 71.7%)';
+
+      const values = utils.hslToArray(hsl);
+      expect(values).toEqual([0, 0, 71.7]);
+    });
+  });
 });

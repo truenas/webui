@@ -1,5 +1,8 @@
 name: CI
-on: [push, pull_request]
+on:
+  push:
+  pull_request:
+    types: [synchronize]
 jobs:
   build:
     name: Build and Test

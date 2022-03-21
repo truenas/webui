@@ -112,8 +112,4 @@ export class NavigationService {
   iconTypeMenuTitle = 'Frequently Accessed';
   // sets defaultMenu as default;
   menuItems$ = new BehaviorSubject<MenuItem[]>(this.defaultMenu);
-
-  publishNavigationChange(): void {
-    this.menuItems$.next(this.defaultMenu);
-  }
 }
