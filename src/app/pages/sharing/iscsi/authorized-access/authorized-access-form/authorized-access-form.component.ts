@@ -41,10 +41,7 @@ export class AuthorizedAccessFormComponent {
       Validators.required,
       this.validatorService.withMessage(
         matchOtherValidator('secret_confirm'),
-        {
-          message: this.translate.instant('Secret and confirmation should match'),
-          forProperty: 'matchOther',
-        },
+        this.translate.instant('Secret and confirmation should match.'),
       ),
     ]],
     secret_confirm: ['', Validators.required],
@@ -58,17 +55,11 @@ export class AuthorizedAccessFormComponent {
       Validators.maxLength(16),
       this.validatorService.withMessage(
         doesNotEqualValidator('secret'),
-        {
-          message: this.translate.instant('Secret and Peer Secret can not be the same.'),
-          forProperty: 'matchesOther',
-        },
+        this.translate.instant('Secret and Peer Secret can not be the same.'),
       ),
       this.validatorService.withMessage(
         matchOtherValidator('peersecret_confirm'),
-        {
-          message: this.translate.instant('Secret and confirmation should match'),
-          forProperty: 'matchOther',
-        },
+        this.translate.instant('Secret and confirmation should match.'),
       ),
     ]],
     peersecret_confirm: [''],

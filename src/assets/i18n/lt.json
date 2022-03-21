@@ -2783,7 +2783,7 @@
   "Secret Encryption Key": "",
   "Secret Key": "",
   "Secret and Peer Secret can not be the same.": "",
-  "Secret and confirmation should match": "",
+  "Secret and confirmation should match.": "",
   "Secure data within this dataset. Data is unusable until      unlocked with an encryption key or passphrase.": "",
   "Security": "",
   "See <a href=\"https://crypto.stackexchange.com/questions/1190/why-is-elliptic-curve-cryptography-not-widely-used-compared-to-rsa\" target=\"blank\"> Why is elliptic curve cryptography not widely used, compared to RSA?</a> for more information about key types.": "",

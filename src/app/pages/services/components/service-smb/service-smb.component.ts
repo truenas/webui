@@ -36,16 +36,14 @@ export class ServiceSmbComponent implements OnInit {
   form = this.fb.group({
     netbiosname: ['', [Validators.required, Validators.maxLength(15)]],
     netbiosname_b: ['', [Validators.required, Validators.maxLength(15)]],
-    netbiosalias: [[] as string[], [this.validatorsService.validateOnCondition(
-      (control: AbstractControl) => (control.value ? control.value.some((alias: string) => alias.length > 15) : []),
-      this.validatorsService.withMessage(
-        Validators.maxLength(15),
-        {
-          forProperty: 'maxLength',
-          message: this.translate.instant('Aliases must be 15 characters or less.'),
+    netbiosalias: [[] as string[], [
+      this.validatorsService.customValidator(
+        (control: AbstractControl) => {
+          return control.value?.some((alias: string) => alias.length > 15);
         },
+        this.translate.instant('Aliases must be 15 characters or less.'),
       ),
-    )]],
+    ]],
     workgroup: ['', [Validators.required]],
     description: ['', []],
     enable_smb1: [false, []],
