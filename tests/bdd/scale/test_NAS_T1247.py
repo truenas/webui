@@ -67,21 +67,21 @@ def on_the_service_page_press_on_configure_smb(driver):
 def the_smb_page_loads_click_advanced(driver):
     """the SMB page loads click advanced."""
     assert wait_on_element(driver, 5, '//h1[contains(text(),"SMB")]')
-    assert wait_on_element(driver, 10, '//button[@ix-auto="button__ADVANCED OPTIONS"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__ADVANCED OPTIONS"]').click()
+    assert wait_on_element(driver, 10, '//button[contains(.,"Advanced Settings")]', 'clickable')
+    driver.find_element_by_xpath('//button[contains(.,"Advanced Settings")]').click()
 
 
 @then('Enter parameters and click save')
 def enter_parameters_and_click_save(driver):
     """Enter parameters and click save."""
-    element = driver.find_element_by_xpath('//button[@ix-auto="button__CANCEL"]')
+    element = driver.find_element_by_xpath('//button[contains(.,"Cancel")]')
     # Scroll to SSH service
     driver.execute_script("arguments[0].scrollIntoView();", element)
     auxvariable_str = "vfs objects = full_audit\nfull_audit:success = rename write pwrite unlinkat linkat mkdirat\nfull_audit:failure = connect\nfull_audit:prefix = %I|%m|%S"
-    driver.find_element_by_xpath('//div[@ix-auto="textarea__Auxiliary Parameters"]//textarea').click()
-    driver.find_element_by_xpath('//div[@ix-auto="textarea__Auxiliary Parameters"]//textarea').send_keys(auxvariable_str)
-    assert wait_on_element(driver, 5, '//button[@ix-auto="button__SAVE"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
+    driver.find_element_by_xpath('//div[contains(.,"Auxiliary Parameters")]//textarea').click()
+    driver.find_element_by_xpath('//div[contains(.,"Auxiliary Parameters")]//textarea').send_keys(auxvariable_str)
+    assert wait_on_element(driver, 5, '//button[contains(.,"Save")]', 'clickable')
+    driver.find_element_by_xpath('//button[contains(.,"Save")]').click()
 
 
 
