@@ -92,7 +92,7 @@ def enter_abcd1234_for_both_fields_and_confirm_and_save(driver):
     assert wait_on_element(driver, 5, '//ix-input[@formcontrolname="confirm_passphrase"]//input[@type="search"]', 'inputable')
     driver.find_element_by_xpath('//ix-input[@formcontrolname="confirm_passphrase"]//input[@type="search"]').clear()
     driver.find_element_by_xpath('//ix-input[@formcontrolname="confirm_passphrase"]//input[@type="search"]').send_keys("abcd1234")
-    #assert wait_on_element(driver, 10, '//mat-error[contains(.,"The passwords do not match.")]') is False
+    assert wait_on_element(driver, 10, '//mat-error[contains(.,"The passwords do not match.")]') is False
     
     element = driver.find_element_by_xpath('//ix-checkbox[@formcontrolname="confirm"]')
     driver.execute_script("arguments[0].scrollIntoView();", element)
