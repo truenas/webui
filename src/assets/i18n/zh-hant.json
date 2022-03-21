@@ -1083,6 +1083,7 @@
   "Force Delete": "",
   "Force Size": "",
   "Force Stop After Timeout": "",
+  "Force delete": "",
   "Force deletion of dataset <i>{datasetName}</i>?": "",
   "Force deletion of zvol <i>{name}</i>?": "",
   "Force the VM to stop if it has not already  stopped within the specified shutdown timeout. Without this option selected, the VM will  receive the shutdown signal, but may or may not complete the shutdown process.": "",
