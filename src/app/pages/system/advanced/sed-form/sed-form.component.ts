@@ -33,10 +33,7 @@ export class SedFormComponent {
     sed_passwd2: ['', [
       this.validatorsService.withMessage(
         matchOtherValidator('sed_passwd'),
-        {
-          message: this.translate.instant('SED password and confirmation should match.'),
-          forProperty: 'matchOther',
-        },
+        this.translate.instant('SED password and confirmation should match.'),
       ),
     ]],
   });

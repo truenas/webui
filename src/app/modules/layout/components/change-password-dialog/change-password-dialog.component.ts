@@ -27,10 +27,7 @@ export class ChangePasswordDialogComponent {
       Validators.required,
       this.validatorsService.withMessage(
         matchOtherValidator('password'),
-        {
-          message: this.translate.instant('New password and confirmation should match.'),
-          forProperty: 'matchOther',
-        },
+        this.translate.instant('New password and confirmation should match.'),
       ),
     ]],
   });
