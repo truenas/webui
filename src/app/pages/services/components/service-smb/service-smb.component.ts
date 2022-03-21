@@ -147,9 +147,7 @@ export class ServiceSmbComponent implements OnInit {
   }
 
   onSubmit(): void {
-    const values: SmbConfigUpdate = {
-      ...this.form.value,
-    };
+    const values: SmbConfigUpdate = this.form.value;
 
     this.isFormLoading = true;
     this.ws.call('smb.update', [values])
