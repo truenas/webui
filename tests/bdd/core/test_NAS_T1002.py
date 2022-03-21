@@ -57,9 +57,9 @@ def you_see_the_dashboard(driver):
 @then('click Storage on the side menu and click Pools')
 def click_storage_on_the_side_menu_and_click_pools(driver):
     """click Storage on the side menu and click Pools."""
-    assert wait_on_element(driver, 7, '//mat-list-item[@ix-auto="option__Storage"]')
+    assert wait_on_element(driver, 7, '//mat-list-item[@ix-auto="option__Storage"]', 'clickable')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Storage"]').click()
-    assert wait_on_element(driver, 7, '//mat-list-item[@ix-auto="option__Pools"]')
+    assert wait_on_element(driver, 7, '//mat-list-item[@ix-auto="option__Pools"]', 'clickable')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Pools"]').click()
 
 
@@ -67,6 +67,7 @@ def click_storage_on_the_side_menu_and_click_pools(driver):
 def when_the_pools_page_appears_click_add(driver):
     """when the Pools page appears, click Add."""
     assert wait_on_element(driver, 7, '//div[contains(.,"Pools")]')
+    assert wait_on_element(driver, 7, '//button[@ix-auto="button___ADD"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button___ADD"]').click()
     assert wait_on_element(driver, 7, '//label[contains(.,"Create a pool:")]')
 
@@ -74,8 +75,9 @@ def when_the_pools_page_appears_click_add(driver):
 @then('select Create new pool and click CREATE POOL')
 def select_create_new_pool_and_click_create_pool(driver):
     """select Create new pool and click CREATE POOL."""
+    assert wait_on_element(driver, 7, '//mat-radio-button[@ix-auto="radio__is_new_Create new pool"]', 'clickable')
     driver.find_element_by_xpath('//mat-radio-button[@ix-auto="radio__is_new_Create new pool"]').click()
-    assert wait_on_element(driver, 7, '//button[@ix-auto="button__CREATE POOL"]')
+    assert wait_on_element(driver, 7, '//button[@ix-auto="button__CREATE POOL"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__CREATE POOL"]').click()
 
 
@@ -83,6 +85,7 @@ def select_create_new_pool_and_click_create_pool(driver):
 def when_the_pool_manager_page_open_input_system_for_pool_name(driver):
     """when the Pool Manager page open, input "system" for pool name."""
     assert wait_on_element(driver, 7, '//div[contains(.,"Pool Manager")]')
+    assert wait_on_element(driver, 7, '//input[@placeholder="Name"]', 'inputable')
     driver.find_element_by_xpath('//input[@placeholder="Name"]').clear()
     driver.find_element_by_xpath('//input[@placeholder="Name"]').send_keys('system')
 
@@ -90,15 +93,17 @@ def when_the_pool_manager_page_open_input_system_for_pool_name(driver):
 @then('click the checkbox next to ada3, and press the right arrow under data vdev, click create')
 def click_the_checkbox_next_to_ada3_and_press_the_right_arrow_under_data_vdev_click_create(driver):
     """click the checkbox next to ada3, and press the right arrow under data vdev, click create."""
+    assert wait_on_element(driver, 7, '//mat-checkbox[@id="pool-manager__disks-ada3"]', 'clickable')
     driver.find_element_by_xpath('//mat-checkbox[@id="pool-manager__disks-ada3"]').click()
-    assert wait_on_element(driver, 7, '//button[@id="vdev__add-button"]')
+    assert wait_on_element(driver, 7, '//button[@id="vdev__add-button"]', 'clickable')
     driver.find_element_by_xpath('//button[@id="vdev__add-button"]').click()
-    assert wait_on_element(driver, 7, '//mat-checkbox[@id="pool-manager__force-submit-checkbox"]')
+    assert wait_on_element(driver, 7, '//mat-checkbox[@id="pool-manager__force-submit-checkbox"]', 'clickable')
     driver.find_element_by_xpath('//mat-checkbox[@id="pool-manager__force-submit-checkbox"]').click()
+    assert wait_on_element(driver, 7, '//mat-checkbox[@ix-auto="checkbox__CONFIRM"]', 'clickable')
     driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__CONFIRM"]').click()
-    assert wait_on_element(driver, 7, '//button[@ix-auto="button__CONTINUE"]')
+    assert wait_on_element(driver, 7, '//button[@ix-auto="button__CONTINUE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__CONTINUE"]').click()
-    assert wait_on_element(driver, 7, '//button[@name="create-button"]')
+    assert wait_on_element(driver, 7, '//button[@name="create-button"]', 'clickable')
     driver.find_element_by_xpath('//button[@name="create-button"]').click()
 
 
@@ -106,8 +111,9 @@ def click_the_checkbox_next_to_ada3_and_press_the_right_arrow_under_data_vdev_cl
 def click_the_confirm_checkbox_click_create_pool(driver):
     """click the Confirm checkbox, click CREATE POOL."""
     assert wait_on_element(driver, 7, '//h1[contains(.,"Warning")]')
+    assert wait_on_element(driver, 7, '//mat-checkbox[@ix-auto="checkbox__CONFIRM"]', 'clickable')
     driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__CONFIRM"]').click()
-    assert wait_on_element(driver, 7, '//button[@ix-auto="button__CREATE POOL"]')
+    assert wait_on_element(driver, 7, '//button[@ix-auto="button__CREATE POOL"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__CREATE POOL"]').click()
 
 
@@ -126,7 +132,7 @@ def when_completed_you_should_be_on_the_pools_page(driver):
 @then('the system Pool should be in the pools list')
 def the_system_pool_should_be_in_the_pools_list(driver):
     """the system Pool should be in the pools list."""
-    assert wait_on_element(driver, 7, '//mat-panel-title[contains(.,"system")]')
+    assert wait_on_element(driver, 10, '//mat-panel-title[contains(.,"system")]')
     driver.find_element_by_xpath('//td[@ix-auto="value__system_name"]')
 
 
@@ -136,8 +142,9 @@ def click_systems_on_the_side_menu_and_click_system_dataset(driver):
     element = driver.find_element_by_xpath('//span[contains(.,"root")]')
     driver.execute_script("arguments[0].scrollIntoView();", element)
     time.sleep(0.5)
+    assert wait_on_element(driver, 7, '//mat-list-item[@ix-auto="option__System"]', 'clickable')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__System"]').click()
-    assert wait_on_element(driver, 7, '//mat-list-item[@ix-auto="option__System Dataset"]')
+    assert wait_on_element(driver, 7, '//mat-list-item[@ix-auto="option__System Dataset"]', 'clickable')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__System Dataset"]').click()
 
 
@@ -145,14 +152,14 @@ def click_systems_on_the_side_menu_and_click_system_dataset(driver):
 def when_the_system_dataset_page_appears_click_on_system_dataset_pool(driver):
     """when the System Dataset page appears, click on System Dataset Pool."""
     assert wait_on_element(driver, 7, '//h4[contains(.,"Configure System Dataset")]')
-    assert wait_on_element(driver, 7, '//mat-select[@ix-auto="select__System Dataset Pool"]')
+    assert wait_on_element(driver, 7, '//mat-select[@ix-auto="select__System Dataset Pool"]', 'clickable')
     driver.find_element_by_xpath('//mat-select[@ix-auto="select__System Dataset Pool"]').click()
 
 
 @then('select system, and click Save')
 def select_system_and_click_save(driver):
     """select system, and click Save."""
-    assert wait_on_element(driver, 7, '//mat-option[@ix-auto="option__System Dataset Pool_system"]')
+    assert wait_on_element(driver, 7, '//mat-option[@ix-auto="option__System Dataset Pool_system"]', 'clickable')
     driver.find_element_by_xpath('//mat-option[@ix-auto="option__System Dataset Pool_system"]').click()
     assert wait_on_element(driver, 7, '//button[@ix-auto="button__SAVE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
@@ -162,3 +169,4 @@ def select_system_and_click_save(driver):
 def please_wait_should_appear_without_errors(driver):
     """Please wait should appear without errors."""
     assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
+    assert wait_on_element(driver, 7, '//div[text()="Settings saved."]')

@@ -15,8 +15,6 @@ from pytest_bdd import (
 )
 import pytest
 
-pytestmark = [pytest.mark.debug_test]
-
 
 @scenario('features/NAS-T1142.feature', 'Verify Backblaze B2 credentials can be added')
 def test_verify_backblaze_b2_credentials_can_be_added(driver):

@@ -20,6 +20,7 @@ from pytest_bdd import (
     parsers
 )
 
+
 user = os.environ.get('USER')
 mount_point = f'/tmp/iscsi_{"".join(random.choices(string.digits, k=2))}'
 
@@ -235,13 +236,15 @@ def unmount_and_remove_the_mount_point_and_the_system_is_linux_clean_iscsiconf(d
     mount_results = ssh_cmd(cmd, 'root', passwd, hst)
     assert mount_results['result'], str(mount_results)
     if system == 'linux':
-        cmd = f"iscsiadm -m node -T {iqn} -p {nas_ip}:3260 -u"
+        cmd = f"iscsiadm -m node -T iqn.2005-10.org.freenas.ctl:{targets} -p {nas_ip}:3260 -u"
         logout_results = ssh_cmd(cmd, 'root', passwd, hst)
         assert logout_results['result'], str(logout_results)
         cmd = "iscsiadm -m session"
         session_results = ssh_cmd(cmd, 'root', passwd, hst)
-        assert not session_results['result'], str(session_results)
-        assert targets not in session_results['output'], str(session_results)
+        if session_results['result'] is True:
+            assert (targets and f'{nas_ip}:3260') not in str(session_results), str(session_results)
+        else:
+            assert session_results['result'] is False, str(session_results)
         cmd = f"iscsiadm -m discoverydb -t sendtargets -p {nas_ip}:3260 -o delete"
         session_results = ssh_cmd(cmd, 'root', passwd, hst)
         assert session_results['result'], str(session_results)

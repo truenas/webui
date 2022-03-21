@@ -103,10 +103,11 @@ def ssh_cmd(command, username, password, host):
     try:
         process = run(cmd, stdout=PIPE, universal_newlines=True, timeout=10)
         output = process.stdout
+        stderr = process.stderr
         if process.returncode != 0:
-            return {'result': False, 'output': output}
+            return {'result': False, 'output': output, 'stderr': stderr}
         else:
-            return {'result': True, 'output': output}
+            return {'result': True, 'output': output, 'stderr': stderr}
     except TimeoutExpired:
         return {'result': False, 'output': 'Timeout'}
 
@@ -256,10 +257,9 @@ def word_xor(data, key):
 
     data = make_bytes(data)
     key = make_bytes(key)
-    l = len(key)
+    line_numbers = len(key)
     result = bytearray()
     cycles = len(data)
-    for i in range(cycles):
-        result += (data[i] ^ key[i % l]).to_bytes(1, 'little')
-    
+    for num in range(cycles):
+        result += (data[num] ^ key[num % line_numbers]).to_bytes(1, 'little')
     return result

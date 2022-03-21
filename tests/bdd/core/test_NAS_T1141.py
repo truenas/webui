@@ -17,9 +17,6 @@ from pytest_bdd import (
     when,
     parsers
 )
-import pytest
-
-pytestmark = [pytest.mark.debug_test]
 
 
 @scenario('features/NAS-T1141.feature', 'Verify Google Drive Cloud Sync task works')

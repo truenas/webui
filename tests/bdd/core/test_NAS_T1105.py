@@ -14,6 +14,9 @@ from pytest_bdd import (
     then,
     when
 )
+import pytest
+
+pytestmark = [pytest.mark.debug_test]
 
 
 @scenario('features/NAS-T1105.feature', 'Verify the Nextcloud plugin functions')
@@ -143,9 +146,10 @@ def a_new_tab_or_window_should_load_nextcloud_credentials_page(driver):
     """a new tab or window should load Nextcloud Credentials page."""
     driver.switch_to.window(driver.window_handles[1])
     time.sleep(1)
-    assert wait_on_element(driver, 7, '//div[@class="logo" and contains(.,"Nextcloud")]')
-    assert wait_on_element(driver, 5, '//input[@placeholder="Username"]')
+    assert wait_on_element(driver, 10, '//div[@class="logo" and contains(.,"Nextcloud")]')
+    assert wait_on_element(driver, 5, '//input[@placeholder="Username or email"]')
     assert wait_on_element(driver, 5, '//input[@placeholder="Password"]')
+    assert wait_on_element(driver, 5, '//input[@value="Log in"]', 'clickable')
     driver.close()
     driver.switch_to.window(driver.window_handles[0])
     assert wait_on_element(driver, 5, '//div[text()="Plugins"]')
