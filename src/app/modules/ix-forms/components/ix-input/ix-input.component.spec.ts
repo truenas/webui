@@ -1,11 +1,19 @@
-import { NgControl } from '@angular/forms';
+import { NgControl, ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
+import { MockComponent } from 'ng-mocks';
+import { IxErrorsComponent } from 'app/modules/ix-forms/components/ix-errors/ix-errors.component';
 import { IxInputComponent } from 'app/modules/ix-forms/components/ix-input/ix-input.component';
 
 describe('IxInputComponent', () => {
   let spectator: Spectator<IxInputComponent>;
   const createComponent = createComponentFactory({
     component: IxInputComponent,
+    imports: [
+      ReactiveFormsModule,
+    ],
+    declarations: [
+      MockComponent(IxErrorsComponent),
+    ],
     providers: [NgControl],
   });
 

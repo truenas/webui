@@ -4,18 +4,18 @@
     <form [formGroup]="formGroup" class="ix-form-container" (submit)="onSubmit()">
       <ix-fieldset [title]="helptext.import_label | translate">
         <ix-select
-            [formControlName]="pool.fcName"
-            [label]="pool.label | translate"
-            [tooltip]="pool.tooltip | translate"
-            [options]="pool.options"
+          [formControlName]="pool.fcName"
+          [label]="pool.label | translate"
+          [tooltip]="pool.tooltip | translate"
+          [options]="pool.options"
         ></ix-select>
       </ix-fieldset>
       <div class="form-actions">
         <button
-            mat-button
-            type="submit"
-            [disabled]="formGroup.invalid || isFormLoading"
-            color="primary"
+          mat-button
+          type="submit"
+          [disabled]="formGroup.invalid || isFormLoading"
+          color="primary"
         >{{ 'Import' | translate }}</button>
       </div>
     </form>
