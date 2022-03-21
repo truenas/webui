@@ -447,6 +447,9 @@ export class CloudsyncFormComponent implements FormConfiguration {
         dialogRef.componentInstance.showRealtimeLogs = true;
         dialogRef.componentInstance.hideProgressValue = true;
         dialogRef.componentInstance.submit();
+        dialogRef.componentInstance.aborted.pipe(untilDestroyed(this)).subscribe(() => {
+          dialogRef.componentInstance.showCloseButton = true;
+        });
         dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
           dialogRef.componentInstance.showCloseButton = true;
         });
