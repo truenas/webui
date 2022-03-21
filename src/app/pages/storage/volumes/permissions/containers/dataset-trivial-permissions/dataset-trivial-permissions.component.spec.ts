@@ -106,6 +106,7 @@ describe('DatasetTrivialPermissionsComponent', () => {
       {
         user: 'games',
         group: 'kmem',
+        acl: [],
         options: {
           recursive: false,
           stripacl: false,
@@ -126,6 +127,7 @@ describe('DatasetTrivialPermissionsComponent', () => {
       'trivial',
       {
         mode: '777',
+        acl: [],
         options: {
           recursive: false,
           stripacl: true,
@@ -162,6 +164,7 @@ describe('DatasetTrivialPermissionsComponent', () => {
       'trivial',
       {
         mode: '555',
+        acl: [],
         options: {
           recursive: true,
           stripacl: true,
