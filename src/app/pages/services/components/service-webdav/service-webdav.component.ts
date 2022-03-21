@@ -71,7 +71,7 @@ export class ServiceWebdavComponent implements OnInit {
         const certKeys = Object.keys(certificates);
         const options = certKeys.map((key) => ({
           label: certificates[key],
-          value: key,
+          value: Number(key),
         }));
 
         return [
