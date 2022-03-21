@@ -94,8 +94,8 @@ def enter_abcd1234_for_both_fields_and_confirm_and_save(driver):
     driver.find_element_by_xpath('//ix-input[@formcontrolname="confirm_passphrase"]//input[@type="search"]').send_keys("abcd1234")
     #assert wait_on_element(driver, 10, '//mat-error[contains(.,"The passwords do not match.")]') is False
     
-    assert wait_on_element(driver, 10, '//ix-checkbox[@formcontrolname="confirm"]', 'clickable')
-    driver.find_element_by_xpath('//ix-checkbox[@formcontrolname="confirm"]').click()   
+    assert wait_on_element(driver, 10, '//ix-checkbox[@formcontrolname="confirm"]//input[@type="checkbox"]', 'clickable')
+    driver.find_element_by_xpath('//ix-checkbox[@formcontrolname="confirm"]//input[@type="checkbox"]').click()   
     assert wait_on_element(driver, 5, '//button[contains(.,"Save")]', 'clickable')
     driver.find_element_by_xpath('//button[contains(.,"Save")]').click()
     assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
