@@ -160,6 +160,7 @@ export class DatasetTrivialPermissionsComponent implements OnInit {
     const values = this.form.value;
 
     const update = {
+      acl: [],
       options: {
         stripacl: false,
         recursive: values.recursive,
