@@ -175,13 +175,13 @@ def confirm_options(driver):
     driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
 
     assert wait_on_element(driver, 5, '//*[contains(.,"Installing")]')
-    assert wait_on_element_disappear(driver, 120, '//*[contains(.,"Installing")]')
+    assert wait_on_element_disappear(driver, 180, '//*[contains(.,"Installing")]')
 
 
 @then('confirm installation is successful')
 def confirm_installation_is_successful(driver):
     """confirm installation is successful."""
-    assert wait_on_element(driver, 120, '//h3[text()="plex"]')
+    assert wait_on_element(driver, 180, '//h3[text()="plex"]')
     assert wait_on_element(driver, 10, '//div[contains(.,"plex") and @class="content"]//button', 'clickable')
     time.sleep(1)
     assert wait_on_element(driver, 10, '//div[contains(text(),"Installed Applications")]', 'clickable')
