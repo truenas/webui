@@ -22,8 +22,12 @@
   border: solid 1.5px var(--lines);
   border-radius: 2px;
   font-size: 12px;
-  padding: 7px;
+  padding: 6px 8px;
   position: relative;
+
+  ::ng-deep .mat-select-trigger {
+    font-size: 12px !important;
+  }
 
   &:focus-within {
     border-color: var(--primary);

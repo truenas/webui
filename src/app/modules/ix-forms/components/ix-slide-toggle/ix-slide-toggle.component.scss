@@ -6,16 +6,11 @@
   font-size: 12px;
   margin: 12px 0;
 
-  ::ng-deep tooltip {
-    display: inline-flex;
-    margin: 0 0 0 8px;
-
-    .tooltip {
-      display: inline-flex;
-    }
-  }
-
   mat-slide-toggle {
     margin: 0 8px 0 0;
   }
+}
+
+.tooltip {
+  margin: 0 0 0 8px;
 }

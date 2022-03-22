@@ -1,4 +1,5 @@
 :host {
+  align-items: center;
   color: var(--fg1);
   display: flex;
   flex-wrap: wrap;
@@ -9,13 +10,10 @@
   mat-checkbox {
     margin-left: 0;
   }
-
-  ::ng-deep tooltip {
-    display: inline-flex;
-    margin: 0 0 0 8px;
-
-    .tooltip {
-      display: inline-flex;
-    }
-  }
 }
+
+.tooltip {
+  margin: 0 0 0 8px;
+}
+
+

@@ -1,6 +1,5 @@
 :host {
   display: block;
-
   margin-bottom: 12px;
   margin-top: 18px;
 }
@@ -15,7 +14,7 @@
 }
 
 .tooltip {
-  margin-left: 8px;
+  margin: 0 0 0 8px;
 }
 
 .input-container {
@@ -24,7 +23,7 @@
   border-radius: 2px;
   display: flex;
   flex-direction: row;
-  font-size: 13px;
+  font-size: 12px;
   padding: 6px 8px;
   position: relative;
 
@@ -43,10 +42,14 @@
 }
 
 .label-container {
-  margin-bottom: 5px;
+  align-items: center;
+  display: flex;
+  margin-bottom: 1px;
   margin-left: 1px;
+  min-height: 24px;
 }
 
 .label {
+  display: inline-flex;
   font-size: x-small;
 }
