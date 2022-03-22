@@ -1562,7 +1562,6 @@
   "{serviceName} service failed to start.": "",
   "{serviceName} service failed to stop.": "",
   "{this} and {that}. At least one is required": "",
-  " KiB.": " КиБ.",
   " When the <b>UPS Mode</b> is set to <i>slave</i>. Enter the open network port number of the UPS <i>Master</i> system. The default port is <i>3493</i>.": " Когда <b>Режим ИБП</b> установлен в <i>ведомый</i>. Введите номер открытого сетевого порта <i>ведущей</i> системы ИБП. Порт по умолчанию - <i>3493</i>.",
   " day, ": " день, ",
   " days, ": " дней, ",

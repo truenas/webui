@@ -1,5 +1,5 @@
 export interface FtpConfig {
-  anonpath: unknown;
+  anonpath: string;
   anonuserbw: number;
   anonuserdlbw: number;
   banner: string;
@@ -24,7 +24,7 @@ export interface FtpConfig {
   resume: boolean;
   reversedns: boolean;
   rootlogin: boolean;
-  ssltls_certificate: unknown;
+  ssltls_certificate: number;
   timeout: number;
   timeout_notransfer: number;
   tls: boolean;

@@ -1,0 +1,289 @@
+<mat-card class="card">
+  <mat-card-content>
+    <mat-progress-bar *ngIf="isFormLoading" mode="indeterminate"></mat-progress-bar>
+    <form [formGroup]="form" class="ix-form-container" (submit)="onSubmit()">
+      <div class="form-columns">
+        <div class="column">
+          <ix-fieldset [title]="'General Options' | translate">
+            <ix-input
+              formControlName="port"
+              [label]="'Port' | translate"
+              [required]="true"
+              [tooltip]="helptext.port_tooltip | translate"
+              type="number"
+            ></ix-input>
+            <ix-input
+              formControlName="clients"
+              [label]="'Clients' | translate"
+              [required]="true"
+              [tooltip]="helptext.clients_tooltip | translate"
+              type="number"
+            ></ix-input>
+            <ix-input
+              formControlName="ipconnections"
+              [label]="'Connections' | translate"
+              [required]="true"
+              [tooltip]="helptext.ipconnections_tooltip | translate"
+              type="number"
+            ></ix-input>
+            <ix-input
+              formControlName="loginattempt"
+              [label]="'Login Attempts' | translate"
+              [required]="true"
+              [tooltip]="helptext.loginattempt_tooltip | translate"
+              type="number"
+            ></ix-input>
+            <ix-input
+              formControlName="timeout_notransfer"
+              [label]="'Notransfer Timeout' | translate"
+              [required]="true"
+              [tooltip]="helptext.timeout_notransfer_tooltip | translate"
+              type="number"
+            ></ix-input>
+            <ix-input
+              formControlName="timeout"
+              [label]="'Timeout' | translate"
+              [required]="true"
+              [tooltip]="helptext.timeout_tooltip | translate"
+              type="number"
+            ></ix-input>
+            <ix-select
+              formControlName="ssltls_certificate"
+              [label]="'Certificate' | translate"
+              [tooltip]="helptext.ssltls_certificate_tooltip | translate"
+              [options]="certificates$"
+            ></ix-select>
+          </ix-fieldset>
+
+          <ng-container *ngIf="isAdvancedMode">
+            <ix-fieldset [title]="'Access' | translate">
+              <ix-checkbox
+                formControlName="defaultroot"
+                [label]="'Always Chroot' | translate"
+                [tooltip]="helptext.defaultroot_tooltip | translate"
+              ></ix-checkbox>
+              <ix-checkbox
+                formControlName="rootlogin"
+                [label]="'Allow Root Login' | translate"
+                [tooltip]="helptext.rootlogin_tooltip | translate"
+              ></ix-checkbox>
+              <ix-checkbox
+                formControlName="onlyanonymous"
+                [label]="'Allow Anonymous Login' | translate"
+                [tooltip]="helptext.onlyanonymous_tooltip | translate"
+              ></ix-checkbox>
+              <ix-explorer
+                *ngIf="isAnonymousLoginAllowed$ | async"
+                formControlName="anonpath"
+                [label]="'Path' | translate"
+                [tooltip]="helptext.anonpath_tooltip | translate"
+                [nodeProvider]="treeNodeProvider"
+              ></ix-explorer>
+              <ix-checkbox
+                formControlName="onlylocal"
+                [label]="'Allow Local User Login' | translate"
+                [tooltip]="helptext.onlylocal_tooltip | translate"
+              ></ix-checkbox>
+              <ix-checkbox
+                formControlName="ident"
+                [label]="'Require IDENT Authentication' | translate"
+                [tooltip]="helptext.ident_tooltip | translate"
+              ></ix-checkbox>
+              <ix-permissions
+                formControlName="filemask"
+                [label]="'File Permissions' | translate"
+                [tooltip]="helptext.filemask_tooltip | translate"
+              ></ix-permissions>
+              <ix-permissions
+                formControlName="dirmask"
+                [label]="'Directory Permissions' | translate"
+                [tooltip]="helptext.dirmask_tooltip | translate"
+              ></ix-permissions>
+            </ix-fieldset>
+          </ng-container>
+        </div>
+        <div *ngIf="isAdvancedMode" class="column">
+          <ix-fieldset title="TLS">
+            <ix-checkbox
+              formControlName="tls"
+              [label]="'Enable TLS' | translate"
+              [tooltip]="helptext.tls_tooltip | translate"
+            ></ix-checkbox>
+            <ng-container *ngIf="isTlsEnabled$ | async">
+              <ix-select
+                formControlName="tls_policy"
+                [label]="'TLS Policy' | translate"
+                [tooltip]="helptext.tls_policy_tooltip | translate"
+                [options]="tlsPolicyOptions$"
+              ></ix-select>
+              <ix-checkbox
+                formControlName="tls_opt_allow_client_renegotiations"
+                [label]="'TLS Allow Client Renegotiations' | translate"
+                [tooltip]="helptext.tls_opt_allow_client_renegotiations_tooltip | translate"
+              ></ix-checkbox>
+              <ix-checkbox
+                formControlName="tls_opt_allow_dot_login"
+                [label]="'TLS Allow Dot Login' | translate"
+                [tooltip]="helptext.tls_opt_allow_dot_login_tooltip | translate"
+              ></ix-checkbox>
+              <ix-checkbox
+                formControlName="tls_opt_allow_per_user"
+                [label]="'TLS Allow Per User' | translate"
+                [tooltip]="helptext.tls_opt_allow_per_user_tooltip | translate"
+              ></ix-checkbox>
+              <ix-checkbox
+                formControlName="tls_opt_common_name_required"
+                [label]="'TLS Common Name Required' | translate"
+                [tooltip]="helptext.tls_opt_common_name_required_tooltip | translate"
+              ></ix-checkbox>
+              <ix-checkbox
+                formControlName="tls_opt_enable_diags"
+                [label]="'TLS Enable Diagnostics' | translate"
+                [tooltip]="helptext.tls_opt_enable_diags_tooltip | translate"
+              ></ix-checkbox>
+              <ix-checkbox
+                formControlName="tls_opt_export_cert_data"
+                [label]="'TLS Export Certificate Data' | translate"
+                [tooltip]="helptext.tls_opt_export_cert_data_tooltip | translate"
+              ></ix-checkbox>
+              <ix-checkbox
+                formControlName="tls_opt_no_cert_request"
+                [label]="'TLS No Certificate Request' | translate"
+                [tooltip]="helptext.tls_opt_no_cert_request_tooltip | translate"
+              ></ix-checkbox>
+              <ix-checkbox
+                formControlName="tls_opt_no_empty_fragments"
+                [label]="'TLS No Empty Fragments' | translate"
+                [tooltip]="helptext.tls_opt_no_empty_fragments_tooltip | translate"
+              ></ix-checkbox>
+              <ix-checkbox
+                formControlName="tls_opt_no_session_reuse_required"
+                [label]="'TLS No Session Reuse Required' | translate"
+                [tooltip]="helptext.tls_opt_no_session_reuse_required_tooltip | translate"
+              ></ix-checkbox>
+              <ix-checkbox
+                formControlName="tls_opt_stdenvvars"
+                [label]="'TLS Export Standard Vars' | translate"
+                [tooltip]="helptext.tls_opt_stdenvvars_tooltip | translate"
+              ></ix-checkbox>
+              <ix-checkbox
+                formControlName="tls_opt_dns_name_required"
+                [label]="'TLS DNS Name Required' | translate"
+                [tooltip]="helptext.tls_opt_dns_name_required_tooltip | translate"
+              ></ix-checkbox>
+              <ix-checkbox
+                formControlName="tls_opt_ip_address_required"
+                [label]="'TLS IP Address Required' | translate"
+                [tooltip]="helptext.tls_opt_ip_address_required_tooltip | translate"
+              ></ix-checkbox>
+            </ng-container>
+          </ix-fieldset>
+          <ix-fieldset [title]="'Other Options' | translate">
+            <ix-input
+              formControlName="passiveportsmin"
+              type="number"
+              [label]="'Minimum Passive Port' | translate"
+              [tooltip]="helptext.passiveportsmin_tooltip"
+            ></ix-input>
+            <ix-input
+              formControlName="passiveportsmax"
+              type="number"
+              [label]="'Maximum Passive Port' | translate"
+              [tooltip]="helptext.passiveportsmax_tooltip"
+            ></ix-input>
+            <ix-checkbox
+              formControlName="fxp"
+              [label]="'Enable FXP' | translate"
+              [tooltip]="helptext.fxp_tooltip | translate"
+            ></ix-checkbox>
+            <ix-checkbox
+              formControlName="resume"
+              [label]="'Allow Transfer Resumption' | translate"
+              [tooltip]="helptext.resume_tooltip | translate"
+            ></ix-checkbox>
+            <ix-checkbox
+              formControlName="reversedns"
+              [label]="'Perform Reverse DNS Lookups' | translate"
+              [tooltip]="helptext.reversedns_tooltip | translate"
+            ></ix-checkbox>
+            <ix-input
+              formControlName="masqaddress"
+              [label]="'Masquerade Address' | translate"
+              [tooltip]="helptext.masqaddress_tooltip | translate"
+            ></ix-input>
+            <ix-textarea
+              formControlName="banner"
+              [label]="'Display Login' | translate"
+              [tooltip]="helptext.banner_tooltip | translate"
+            ></ix-textarea>
+            <ix-textarea
+              formControlName="options"
+              [label]="'Auxiliary Parameters' | translate"
+              [tooltip]="helptext.options_tooltip | translate"
+            ></ix-textarea>
+          </ix-fieldset>
+
+          <ix-fieldset [title]="'Bandwidth' | translate">
+            <ix-input
+              formControlName="localuserbw"
+              [label]="helptext.localuserbw_placeholder | translate"
+              [tooltip]="helptext.userbw_tooltip | translate"
+              [format]="iecFormatter.memorySizeFormatting"
+              [parse]="iecFormatter.memorySizeParsing"
+            ></ix-input>
+            <ix-input
+              formControlName="localuserdlbw"
+              [label]="'Local User Download Bandwidth' | translate"
+              [tooltip]="helptext.userbw_tooltip | translate"
+              [format]="iecFormatter.memorySizeFormatting"
+              [parse]="iecFormatter.memorySizeParsing"
+            ></ix-input>
+            <ix-input
+              formControlName="anonuserbw"
+              [label]="'Anonymous User Upload Bandwidth' | translate"
+              [tooltip]="helptext.userbw_tooltip | translate"
+              [format]="iecFormatter.memorySizeFormatting"
+              [parse]="iecFormatter.memorySizeParsing"
+            ></ix-input>
+            <ix-input
+              formControlName="anonuserdlbw"
+              [label]="'Anonymous User Download Bandwidth' | translate"
+              [tooltip]="helptext.userbw_tooltip | translate"
+              [format]="iecFormatter.memorySizeFormatting"
+              [parse]="iecFormatter.memorySizeParsing"
+            ></ix-input>
+          </ix-fieldset>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button
+          mat-button
+          type="submit"
+          [disabled]="form.invalid || isFormLoading"
+          color="primary"
+        >{{ 'Save' | translate }}</button>
+
+        <button
+          mat-button
+          type="button"
+          [routerLink]="['/services']"
+        >{{ 'Cancel' | translate }}</button>
+
+        <button
+          *ngIf="isAdvancedMode; else basicModeButton"
+          mat-button
+          type="button"
+          (click)="onToggleAdvancedOptions()"
+        >{{ 'Basic Options' | translate }}</button>
+        <ng-template #basicModeButton>
+          <button
+            mat-button
+            type="button"
+            (click)="onToggleAdvancedOptions()"
+          >{{ 'Advanced Options' | translate }}</button>
+        </ng-template>
+      </div>
+    </form>
+  </mat-card-content>
+</mat-card>
