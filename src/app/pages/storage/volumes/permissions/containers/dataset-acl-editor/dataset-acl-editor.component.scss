@@ -17,16 +17,19 @@
   }
 
   .ownership-row {
-    align-items: center;
     display: flex;
     padding-left: 25px;
     width: 100%;
+
+    label {
+      margin-top: 15px;
+    }
   }
 
-  .control {
-    align-items: center;
-    display: flex;
+  .owner-combobox {
+    margin: 0;
     margin-right: 20px;
+    min-width: 220px;
   }
 }
 

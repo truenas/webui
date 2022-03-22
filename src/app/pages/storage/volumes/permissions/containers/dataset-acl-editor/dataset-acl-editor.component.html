@@ -14,16 +14,20 @@
         <div>{{ fullDatasetPath }}</div>
       </div>
 
-      <div class="ownership-row">
-        <div class="control">
-          <label class="header-label">{{ 'Owner' | translate }}:</label>
-          <div dynamicField [config]="ownerFieldConfig" [group]="ownerFormGroup"></div>
-        </div>
+      <div class="ownership-row" [formGroup]="ownerFormGroup">
+        <label class="header-label">{{ 'Owner' | translate }}:</label>
+        <ix-combobox
+          class="owner-combobox"
+          formControlName="owner"
+          [provider]="userProvider"
+        ></ix-combobox>
 
-        <div class="control">
-          <label class="header-label">{{ 'Owner Group' | translate }}:</label>
-          <div dynamicField [config]="ownerGroupFieldConfig" [group]="ownerFormGroup"></div>
-        </div>
+        <label class="header-label">{{ 'Owner Group' | translate }}:</label>
+        <ix-combobox
+          class="owner-combobox"
+          formControlName="ownerGroup"
+          [provider]="groupProvider"
+        ></ix-combobox>
       </div>
     </mat-card-header>
 
@@ -40,14 +44,18 @@
 
           <div class="controls-container">
             <div class="controls">
-              <div class="checkboxes">
-                <div dynamicField [config]="recursiveFieldConfig" [group]="saveParameters"></div>
-                <div
+              <div class="checkboxes" [formGroup]="saveParameters">
+                <ix-checkbox
+                  formControlName="recursive"
+                  [label]="helptext.dataset_acl_recursive_placeholder | translate"
+                  [tooltip]="helptext.dataset_acl_recursive_tooltip | translate"
+                ></ix-checkbox>
+                <ix-checkbox
                   *ngIf="saveParameters.get('recursive').value"
-                  dynamicField
-                  [config]="traverseFieldConfig"
-                  [group]="saveParameters"
-                ></div>
+                  formControlName="traverse"
+                  [label]="helptext.dataset_acl_traverse_placeholder | translate"
+                  [tooltip]="helptext.dataset_acl_traverse_tooltip | translate"
+                ></ix-checkbox>
               </div>
 
               <div class="control-buttons">

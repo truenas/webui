@@ -358,6 +358,7 @@
   "Failed to load datasets": "",
   "Fetching data...": "",
   "Fibre Channel Port {name} update successful.": "",
+  "Field is required": "",
   "File Inherit": "",
   "File size is limited to 50 MiB.": "",
   "File size is limited to {maxUploadSizeMibs} MiB.": "",

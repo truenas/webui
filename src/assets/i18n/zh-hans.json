@@ -78,6 +78,7 @@
   "Expand Row": "",
   "Expand row": "",
   "Expected Finished Time:": "",
+  "Field is required": "",
   "File size is limited to {maxUploadSizeMibs} MiB.": "",
   "Force deletion of zvol <i>{name}</i>?": "",
   "Go to Storage": "",
