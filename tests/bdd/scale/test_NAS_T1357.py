@@ -61,7 +61,7 @@ def stop_machinaris_from_running(driver):
         driver.find_element_by_xpath('//div[text()="Installed Applications"]').click()
     assert wait_on_element(driver, 60, '//strong[text()="machinaris-test"]')
     time.sleep(1)
-    assert wait_on_element(driver, 45, '//mat-card[contains(.,"machinaris")]//span[contains(.,"Stop")]', 'clickable')
+    assert wait_on_element(driver, 60, '//mat-card[contains(.,"machinaris")]//span[contains(.,"Stop")]', 'clickable')
     driver.find_element_by_xpath('//mat-card[contains(.,"machinaris")]//span[contains(.,"Stop")]').click()
 
 
@@ -115,5 +115,5 @@ def confirm(driver):
 def confirm_image_is_deleted(driver):
     """confirm image is deleted."""
     assert wait_on_element(driver, 10, '//*[contains(.,"Please wait")]')
-    assert wait_on_element_disappear(driver, 30, '//*[contains(.,"Please wait")]')
-    assert wait_on_element_disappear(driver, 30, '//tr[contains(.,"machinaris")]')
+    assert wait_on_element_disappear(driver, 60, '//*[contains(.,"Please wait")]')
+    assert wait_on_element_disappear(driver, 60, '//tr[contains(.,"machinaris")]')
