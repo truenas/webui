@@ -43,7 +43,8 @@ export type VmDisplayWebUriParams = [
   id: number,
   domain: string,
   options?: {
-    devices_passwords: [
+    protocol?: string;
+    devices_passwords?: [
       {
         device_id: number;
         password: string;
