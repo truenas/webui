@@ -22,6 +22,8 @@ export class IxRadioGroupComponent implements ControlValueAccessor {
   @Input() tooltip: string;
   @Input() required: boolean;
   @Input() options: Observable<RadioOption[]>;
+  @Input() inlineFields: boolean;
+  @Input() inlineFieldFlex: string;
 
   isDisabled = false;
   value: string;
@@ -31,6 +33,22 @@ export class IxRadioGroupComponent implements ControlValueAccessor {
     private cdr: ChangeDetectorRef,
   ) {
     this.controlDirective.valueAccessor = this;
+  }
+
+  get containerLayout(): string {
+    return this.inlineFields ? 'row wrap' : 'column';
+  }
+
+  get fieldFlex(): string {
+    if (!this.inlineFields) {
+      return '100%';
+    }
+
+    if (this.inlineFields && this.inlineFieldFlex) {
+      return this.inlineFieldFlex;
+    }
+
+    return '50%';
   }
 
   onChange: (value: string) => void = (): void => {};
@@ -49,7 +67,7 @@ export class IxRadioGroupComponent implements ControlValueAccessor {
     this.onTouch = onTouched;
   }
 
-  setDisabledState?(isDisabled: boolean): void {
+  setDisabledState(isDisabled: boolean): void {
     this.isDisabled = isDisabled;
     this.cdr.markForCheck();
   }
