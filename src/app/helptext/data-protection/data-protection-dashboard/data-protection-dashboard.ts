@@ -10,4 +10,5 @@ export default {
 
   no_snapshot_sent_yet: T('No snapshots sent yet'),
   task_is_running: T('Task is running'),
+  task_aborted: T('Task Aborted'),
 };
