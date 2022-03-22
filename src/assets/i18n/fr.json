@@ -897,6 +897,7 @@
   "Used Space": "",
   "Used:": "",
   "User and Group Ownership": "",
+  "Users could not be loaded": "",
   "Using this option will replicate all snapshots  which names match specified regular expression. The  performance on the systems with large number of snapshots  will be lower, as snapshots metadata needs to be read in order  to determine snapshots creation order.": "",
   "Using this option will replicate all snapshots which names match specified regular expression. The performance on the systems with large number of snapshots will be lower, as snapshots metadata needs to be read in order to determine snapshots creation order.": "",
   "VLANs": "",

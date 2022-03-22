@@ -4,18 +4,21 @@ import {
 import { MatSort, Sort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { Store } from '@ngrx/store';
+import { select, Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
-import { Subject } from 'rxjs';
-import { map } from 'rxjs/operators';
+import {
+  combineLatest, Observable, of, Subject,
+} from 'rxjs';
+import { map, switchMap } from 'rxjs/operators';
 import { CoreEvent } from 'app/interfaces/events';
 import { User } from 'app/interfaces/user.interface';
 import { EmptyConfig, EmptyType } from 'app/modules/entity/entity-empty/entity-empty.component';
 import { EntityToolbarComponent } from 'app/modules/entity/entity-toolbar/entity-toolbar.component';
 import { ControlConfig, ToolbarConfig } from 'app/modules/entity/entity-toolbar/models/control-config.interface';
+import { userPageEntered } from 'app/pages/account/users/store/user.actions';
+import { selectUsers, selectUserState, selectUsersTotal } from 'app/pages/account/users/store/user.selectors';
 import { CoreService } from 'app/services/core-service/core.service';
 import { ModalService } from 'app/services/modal.service';
-import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 import { builtinUsersToggled } from 'app/store/preferences/preferences.actions';
 import { waitForPreferences } from 'app/store/preferences/preferences.selectors';
@@ -35,41 +38,39 @@ export class UserListComponent implements OnInit {
   settingsEvent$: Subject<CoreEvent> = new Subject();
   filterString = '';
   dataSource: MatTableDataSource<User> = new MatTableDataSource([]);
-  loading = false;
-  error = false;
   defaultSort: Sort = { active: 'uid', direction: 'asc' };
-  emptyConf: EmptyConfig = {
+  emptyConfig: EmptyConfig = {
     type: EmptyType.NoPageData,
     title: this.translate.instant('No Users'),
     large: true,
   };
-  loadingConf: EmptyConfig = {
+  loadingConfig: EmptyConfig = {
     type: EmptyType.Loading,
     large: false,
     title: this.translate.instant('Loading...'),
   };
-  errorConf: EmptyConfig = {
+  errorConfig: EmptyConfig = {
     type: EmptyType.Errors,
     large: true,
     title: this.translate.instant('Can not retrieve response'),
   };
   expandedRow: User;
   @ViewChildren(IxDetailRowDirective) private detailRows: QueryList<IxDetailRowDirective>;
+  error$ = this.store$.select(selectUserState).pipe(map((state) => state.error));
+  isLoading$ = this.store$.select(selectUserState).pipe(map((state) => state.isLoading));
+  isEmpty$ = this.store$.select(selectUsersTotal).pipe(map((total) => total === 0));
+  emptyOrErrorConfig$: Observable<EmptyConfig> = combineLatest([this.isEmpty$, this.error$]).pipe(
+    switchMap(([_, isError]) => {
+      if (isError) {
+        return of(this.errorConfig);
+      }
 
+      return of(this.emptyConfig);
+    }),
+  );
   private hideBuiltinUsers = true;
 
-  get currentEmptyConf(): EmptyConfig {
-    if (this.loading) {
-      return this.loadingConf;
-    }
-    if (this.error) {
-      return this.errorConf;
-    }
-    return this.emptyConf;
-  }
-
   constructor(
-    private ws: WebSocketService,
     private translate: TranslateService,
     private modalService: ModalService,
     private cdr: ChangeDetectorRef,
@@ -78,54 +79,49 @@ export class UserListComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.loading = true;
-    this.store$.pipe(waitForPreferences, untilDestroyed(this)).subscribe((preferences) => {
+    this.store$.dispatch(userPageEntered());
+    this.getPreferences();
+    this.getUsers();
+  }
+
+  getPreferences(): void {
+    this.store$.pipe(
+      waitForPreferences,
+      untilDestroyed(this),
+    ).subscribe((preferences) => {
       this.hideBuiltinUsers = preferences.hideBuiltinUsers;
       this.setupToolbar();
-      this.getUsers();
-      this.modalService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
-        this.getUsers();
-      });
+      this.cdr.markForCheck();
     });
   }
 
   getUsers(): void {
-    this.loading = true;
-    this.ws.call('user.query').pipe(
-      map((users) => {
-        if (this.hideBuiltinUsers) {
-          // TODO: Use QueryParams and QueryFilter when it is possible
-          // [['OR', [['builtin', '=', false], ['username', '=', 'root']]]]
-          return users.filter((user) => !user.builtin || user.username === 'root');
-        }
-        return users;
-      }),
+    this.store$.pipe(
+      select(selectUsers),
       untilDestroyed(this),
-    ).subscribe(
-      (users) => {
-        this.createDataSource(users);
-        this.loading = false;
-        this.error = false;
-        this.cdr.markForCheck();
-      },
-      () => {
-        this.createDataSource();
-        this.loading = false;
-        this.error = true;
-        this.cdr.markForCheck();
-      },
-    );
+    ).subscribe((users) => {
+      this.createDataSource(users);
+      this.cdr.markForCheck();
+    }, () => {
+      this.createDataSource();
+      this.cdr.markForCheck();
+    });
   }
 
   createDataSource(users: User[] = []): void {
     this.dataSource = new MatTableDataSource(users);
-    this.dataSource.sort = this.sort;
-    this.dataSource.filter = this.filterString;
+    setTimeout(() => {
+      // TODO: Figure out how to avoid setTimeout to make it work on first loading
+      if (this.filterString) {
+        this.dataSource.filter = this.filterString;
+      }
+      this.dataSource.sort = this.sort;
+      this.cdr.markForCheck();
+    }, 0);
   }
 
   toggleBuiltins(): void {
     this.store$.dispatch(builtinUsersToggled());
-    this.getUsers();
   }
 
   doAdd(): void {
