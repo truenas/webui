@@ -65,12 +65,12 @@ def click_add_catalog(driver):
 def fill_out_the_form(driver):
     """fill out the form."""
     assert wait_on_element(driver, 7, '//div[contains(.,"Add Catalog")]')
-    assert wait_on_element(driver, 7, '//div[contains(., " Catalog Name ")]/following-sibling::div//input')
-    driver.find_element_by_xpath('//div[contains(., " Catalog Name ")]/following-sibling::div//input').clear()
-    driver.find_element_by_xpath('//div[contains(., " Catalog Name ")]/following-sibling::div//input').send_keys('truecharts')
-    assert wait_on_element(driver, 7, '//div[contains(., " Repository ")]/following-sibling::div//input')
-    driver.find_element_by_xpath('//div[contains(., " Repository ")]/following-sibling::div//input').clear()
-    driver.find_element_by_xpath('//div[contains(., " Repository ")]/following-sibling::div//input').send_keys('https://github.com/truecharts/catalog')
+    assert wait_on_element(driver, 7, '//ix-input[@formcontrolname = "label"]//input')
+    driver.find_element_by_xpath('//ix-input[@formcontrolname = "label"]//input').clear()
+    driver.find_element_by_xpath('//ix-input[@formcontrolname = "label"]//input').send_keys('truecharts')
+    assert wait_on_element(driver, 7, '//ix-input[@formcontrolname = "repository"]//input')
+    driver.find_element_by_xpath('//ix-input[@formcontrolname = "repository"]//input').clear()
+    driver.find_element_by_xpath('//ix-input[@formcontrolname = "repository"]//input').send_keys('https://github.com/truecharts/catalog')
     assert wait_on_element(driver, 10, '//span[contains(.,"Save")]', 'clickable')
     driver.find_element_by_xpath('//span[contains(.,"Save")]').click()
 
