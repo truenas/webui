@@ -116,22 +116,21 @@ describe('UserFormComponent', () => {
     it('sends a create payload to websocket and closes modal when save is pressed', async () => {
       const form = await loader.getHarness(IxFormHarness);
       await form.fillForm({
-        'Confirm Password': 'test-pass',
-        'Full Name': 'new',
+        'Full Name': 'John Smith',
         Password: 'test-pass',
-        Username: 'test-user',
+        'Confirm Password': 'test-pass',
       });
 
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(ws.call).toHaveBeenCalledWith('user.create', [{
-        full_name: 'new',
+      expect(ws.call).toHaveBeenCalledWith('user.create', [expect.objectContaining({
+        full_name: 'John Smith',
         group_create: true,
         password: 'test-pass',
         uid: 1234,
-        username: 'test-user',
-      }]);
+        username: 'jsmith',
+      })]);
     });
   });
 
@@ -143,6 +142,21 @@ describe('UserFormComponent', () => {
     it('check uid field is disabled', async () => {
       const uidInput = await loader.getHarness(IxInputHarness.with({ label: 'UID' }));
       expect(await uidInput.isDisabled()).toBeTruthy();
+    });
+
+    it('check change password', async () => {
+      const form = await loader.getHarness(IxFormHarness);
+      await form.fillForm({
+        Password: 'changepwd',
+        'Confirm Password': 'changepwd',
+      });
+
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      await saveButton.click();
+
+      expect(ws.call).toHaveBeenCalledWith('user.update', [69, expect.objectContaining({
+        password: 'changepwd',
+      })]);
     });
 
     it('shows current group values when form is being edited', async () => {
@@ -204,6 +218,7 @@ describe('UserFormComponent', () => {
           password_disabled: false,
           shell: '/usr/bin/zsh',
           smb: false,
+          sshpubkey: null,
           sudo: true,
           username: 'updated',
         },

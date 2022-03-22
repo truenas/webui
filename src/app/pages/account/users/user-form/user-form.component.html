@@ -13,6 +13,7 @@
           formControlName="username"
           [label]="'Username' | translate"
           [tooltip]="tooltips.username | translate"
+          [hint]="getUsernameHint()"
           [required]="true"
         ></ix-input>
         <ix-input
@@ -27,12 +28,14 @@
           formControlName="password"
           [label]="'Password' | translate"
           [tooltip]="tooltips.password | translate"
+          [required]="true"
           type="password"
         ></ix-input>
         <ix-input
           *ngIf="isNew"
           formControlName="password_conf"
           [label]="'Confirm Password' | translate"
+          [required]="true"
           type="password"
         ></ix-input>
         <ix-input

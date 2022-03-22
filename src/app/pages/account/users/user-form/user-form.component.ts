@@ -1,7 +1,7 @@
 import {
   Component, ChangeDetectionStrategy, ChangeDetectorRef,
 } from '@angular/core';
-import { AbstractControl, Validators } from '@angular/forms';
+import { Validators } from '@angular/forms';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
@@ -44,7 +44,6 @@ export class UserFormComponent {
     return this.isNew ? this.translate.instant('Add User') : this.translate.instant('Edit User');
   }
   isFormLoading = false;
-  isBasicMode = true;
   subscriptions: Subscription[] = [];
 
   form = this.fb.group({
@@ -53,13 +52,9 @@ export class UserFormComponent {
       Validators.required,
       Validators.pattern(UserService.namePattern),
       Validators.maxLength(16),
-      this.validatorsService.customValidator(
-        (control: AbstractControl) => control?.value?.length > 8,
-        this.translate.instant('Usernames can be up to 16 characters long. When using NIS or other legacy software with limited username lengths, keep usernames to eight characters or less for compatibility.'),
-      ),
     ]],
     email: ['', [Validators.email]],
-    password: ['', [Validators.pattern(UserService.passwordPattern), Validators.required]],
+    password: ['', [Validators.required, Validators.pattern(UserService.passwordPattern)]],
     password_conf: ['', [
       Validators.required,
       this.validatorsService.withMessage(
@@ -159,10 +154,10 @@ export class UserFormComponent {
   onSubmit(): void {
     const values = this.form.value;
     const body: UserUpdate = {
-      email: values.email === '' ? null : values.email,
+      email: values.email ? values.email : null,
       full_name: values.full_name,
-      group: values.group,
-      groups: values.groups,
+      group: values.group ? values.group : null,
+      groups: values.groups?.length ? values.groups : null,
       home_mode: values.home_mode,
       home: values.home,
       locked: values.password_disabled ? false : values.locked,
@@ -193,11 +188,8 @@ export class UserFormComponent {
     }
 
     request$.pipe(
-      switchMap((id) => {
-        return this.ws.call('user.query', [
-          [['id', '=', id]],
-        ]).pipe(map((users) => users[0]));
-      }),
+      switchMap((id) => this.ws.call('user.query', [[['id', '=', id]]])),
+      map((users) => users[0]),
       untilDestroyed(this),
     ).subscribe((user) => {
       if (this.isNew) {
@@ -222,7 +214,17 @@ export class UserFormComponent {
     this.storageService.downloadBlob(blob, `${name}_public_key_rsa`);
   }
 
+  getUsernameHint(): string {
+    if (this.form.get('username')?.value?.length > 8) {
+      return this.translate.instant('Usernames can be up to 16 characters long. When using NIS or other legacy software with limited username lengths, keep usernames to eight characters or less for compatibility.');
+    }
+    return null;
+  }
+
   private setupNewUserForm(): void {
+    this.form.get('password_edit').disable();
+    this.form.get('password_conf_edit').disable();
+
     this.setNamesInUseValidator();
     this.setHomeSharePath();
     this.setNextUserId();
@@ -256,6 +258,8 @@ export class UserFormComponent {
       username: user.username,
     });
 
+    this.form.get('password').disable();
+    this.form.get('password_conf').disable();
     this.form.get('uid').disable();
     this.subscriptions.push(
       this.form.get('locked').disabledWhile(this.form.get('password_disabled').value$),
