@@ -1,323 +1,206 @@
-import { Component } from '@angular/core';
-import { FormGroup } from '@angular/forms';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
+import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import * as _ from 'lodash';
-import { filter } from 'rxjs/operators';
+import { forkJoin } from 'rxjs';
+import { filter, switchMap } from 'rxjs/operators';
 import { AclType } from 'app/enums/acl-type.enum';
 import helptext from 'app/helptext/storage/volumes/datasets/dataset-permissions';
 import { DatasetPermissionsUpdate } from 'app/interfaces/dataset-permissions.interface';
-import { FormConfiguration } from 'app/interfaces/entity-form.interface';
-import { EntityFormComponent } from 'app/modules/entity/entity-form/entity-form.component';
-import { FormComboboxConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
-import { FieldSet } from 'app/modules/entity/entity-form/models/fieldset.interface';
-import { RelationAction } from 'app/modules/entity/entity-form/models/relation-action.enum';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
+import { EntityUtils } from 'app/modules/entity/utils';
+import { GroupComboboxProvider } from 'app/modules/ix-forms/classes/group-combobox-provider';
+import { UserComboboxProvider } from 'app/modules/ix-forms/classes/user-combobox-provider';
+import IxValidatorsService from 'app/modules/ix-forms/services/ix-validators.service';
 import {
   DialogService, StorageService, UserService, WebSocketService,
 } from 'app/services';
 
 @UntilDestroy()
 @Component({
-  selector: 'app-dataset-permissions',
   templateUrl: './dataset-trivial-permissions.component.html',
   styleUrls: ['./dataset-trivial-permissions.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class DatasetTrivialPermissionsComponent implements FormConfiguration {
-  protected updateCall = 'pool.dataset.permission' as const;
+export class DatasetTrivialPermissionsComponent implements OnInit {
+  form = this.formBuilder.group({
+    user: ['', [this.validatorService.validateOnCondition(
+      () => this.isToApplyUser,
+      Validators.required,
+    )]],
+    applyUser: [false],
+    group: ['', [this.validatorService.validateOnCondition(
+      () => this.isToApplyGroup,
+      Validators.required,
+    )]],
+    mode: [''],
+    applyGroup: [false],
+    permission: [''],
+    recursive: [false],
+    traverse: [false],
+  });
 
-  datasetPath: string;
+  isLoading = false;
   aclType: AclType;
+  datasetPath: string;
 
-  protected datasetId: string;
-  formGroup: FormGroup;
-  routeSuccess: string[] = ['storage'];
-  isEntity = true;
-  private entityForm: EntityFormComponent;
-  protected userField: FormComboboxConfig;
-  protected groupField: FormComboboxConfig;
+  readonly userProvider = new UserComboboxProvider(this.userService);
+  readonly groupProvider = new GroupComboboxProvider(this.userService);
 
-  fieldSets: FieldSet[] = [
-    {
-      name: helptext.heading_owner,
-      label: true,
-      config: [
-        {
-          type: 'combobox',
-          name: 'user',
-          placeholder: helptext.dataset_permissions_user_placeholder,
-          tooltip: helptext.dataset_permissions_user_tooltip,
-          options: [],
-          searchOptions: [],
-          parent: this,
-          updater: (value: string) => this.updateUserSearchOptions(value),
-          loadMoreOptions: this.loadMoreOptions,
-        },
-        {
-          type: 'checkbox',
-          name: 'apply_user',
-          placeholder: helptext.apply_user.placeholder,
-          tooltip: helptext.apply_user.tooltip,
-          value: false,
-        },
-        {
-          type: 'combobox',
-          name: 'group',
-          placeholder: helptext.dataset_permissions_group_placeholder,
-          tooltip: helptext.dataset_permissions_group_tooltip,
-          options: [],
-          searchOptions: [],
-          parent: this,
-          updater: (value: string) => this.updateGroupSearchOptions(value),
-          loadMoreOptions: this.loadMoreGroupOptions,
-        },
-        {
-          type: 'checkbox',
-          name: 'apply_group',
-          placeholder: helptext.apply_group.placeholder,
-          tooltip: helptext.apply_group.tooltip,
-          value: false,
-        },
-      ],
-      width: '50%',
-    },
-    {
-      name: helptext.heading_access,
-      label: true,
-      config: [
-        {
-          type: 'permissions',
-          name: 'mode',
-          placeholder: helptext.dataset_permissions_mode_placeholder,
-          tooltip: helptext.dataset_permissions_mode_tooltip,
-          isHidden: false,
-        },
-      ],
-      width: '50%',
-    },
-    {
-      name: 'divider',
-      divider: true,
-    },
-    {
-      name: helptext.heading_advanced,
-      label: true,
-      config: [
-        {
-          type: 'checkbox',
-          name: 'recursive',
-          placeholder: helptext.dataset_permissions_recursive_placeholder,
-          tooltip: helptext.dataset_permissions_recursive_tooltip,
-          value: false,
-        },
-        {
-          type: 'checkbox',
-          name: 'traverse',
-          placeholder: helptext.dataset_permissions_traverse_placeholder,
-          tooltip: helptext.dataset_permissions_traverse_tooltip,
-          value: false,
-          isHidden: true,
-          relation: [{
-            action: RelationAction.Show,
-            when: [{
-              name: 'recursive',
-              value: true,
-            }],
-          }],
-        },
-      ],
-      width: '100%',
-    },
-    {
-      name: 'divider',
-      divider: true,
-    },
-  ];
+  readonly tooltips = {
+    user: helptext.dataset_permissions_user_tooltip,
+    applyUser: helptext.apply_user.tooltip,
+    group: helptext.dataset_permissions_group_tooltip,
+    applyGroup: helptext.apply_group.tooltip,
+    mode: helptext.dataset_permissions_mode_tooltip,
+    recursive: helptext.dataset_permissions_recursive_tooltip,
+    traverse: helptext.dataset_permissions_traverse_tooltip,
+  };
 
-  customActions = [
-    {
-      id: 'cancel',
-      name: helptext.acl_manager_button,
-      function: () => {
-        if (this.aclType === AclType.Posix1e) {
-          this.router.navigate([
-            '/', 'storage', 'id', this.datasetId.split('/')[0], 'dataset',
-            'posix-acl', this.datasetId,
-          ]);
-        } else {
-          this.router.navigate([
-            '/', 'storage', 'id', this.datasetId.split('/')[0], 'dataset',
-            'acl', this.datasetId,
-          ]);
-        }
-      },
-    },
-  ];
+  readonly isRecursive$ = this.form.select((values) => values.recursive);
 
-  isCustomActionVisible(action: string): boolean {
-    if (action !== 'cancel') {
-      return true;
-    }
+  private datasetId: string;
+  private oldDatasetMode: string;
 
+  constructor(
+    private formBuilder: FormBuilder,
+    private router: Router,
+    private activatedRoute: ActivatedRoute,
+    private ws: WebSocketService,
+    private storageService: StorageService,
+    private translate: TranslateService,
+    private dialog: DialogService,
+    private userService: UserService,
+    private matDialog: MatDialog,
+    private validatorService: IxValidatorsService,
+  ) {}
+
+  get canSetAcl(): boolean {
     return this.aclType !== AclType.Off;
   }
 
-  protected datasetMode: string;
+  get isToApplyUser(): boolean {
+    return this.form?.value?.applyUser;
+  }
 
-  constructor(
-    protected aroute: ActivatedRoute,
-    protected ws: WebSocketService,
-    protected userService: UserService,
-    protected storageService: StorageService,
-    protected mdDialog: MatDialog,
-    protected dialog: DialogService,
-    protected router: Router,
-    protected translate: TranslateService,
-  ) { }
+  get isToApplyGroup(): boolean {
+    return this.form?.value?.applyGroup;
+  }
 
-  preInit(entityEdit: EntityFormComponent): void {
-    entityEdit.isNew = true;
-    this.aroute.params.pipe(untilDestroyed(this)).subscribe((params) => {
-      this.datasetId = params['pk'];
-      this.datasetPath = '/mnt/' + this.datasetId;
+  ngOnInit(): void {
+    this.datasetId = this.activatedRoute.snapshot.params['pk'];
+    this.datasetPath = '/mnt/' + this.datasetId;
+
+    this.loadPermissionsInformation();
+    this.setRecursiveWarning();
+  }
+
+  onSetAclPressed(): void {
+    if (this.aclType === AclType.Posix1e) {
+      this.router.navigate([
+        '/', 'storage', 'id', this.datasetId.split('/')[0], 'dataset',
+        'posix-acl', this.datasetId,
+      ]);
+    } else {
+      this.router.navigate([
+        '/', 'storage', 'id', this.datasetId.split('/')[0], 'dataset',
+        'acl', this.datasetId,
+      ]);
+    }
+  }
+
+  onSubmit(): void {
+    const payload = this.preparePayload();
+
+    const dialogRef = this.matDialog.open(EntityJobComponent, {
+      data: {
+        title: this.translate.instant('Saving Permissions'),
+      },
     });
+    const jobComponent = dialogRef.componentInstance;
 
-    this.ws.call('pool.dataset.query', [[['id', '=', this.datasetId]]]).pipe(untilDestroyed(this)).subscribe((dataset) => {
-      this.aclType = dataset[0].acltype.value as AclType;
-    });
-
-    this.userService.userQueryDsCache().pipe(untilDestroyed(this)).subscribe((users) => {
-      this.userField = _.find(
-        this.fieldSets.find((set) => set.name === helptext.heading_owner).config,
-        { name: 'user' },
-      ) as FormComboboxConfig;
-      this.userField.options = users.map((user) => {
-        return { label: user.username, value: user.username };
-      });
-    });
-
-    this.userService.groupQueryDsCache().pipe(untilDestroyed(this)).subscribe((groups) => {
-      this.groupField = _.find(
-        this.fieldSets.find((set) => set.name === helptext.heading_owner).config,
-        { name: 'group' },
-      ) as FormComboboxConfig;
-      this.groupField.options = groups.map((group) => {
-        return { label: group.group, value: group.group };
-      });
+    jobComponent.setDescription(this.translate.instant('Saving Permissions...'));
+    jobComponent.setCall('pool.dataset.permission', payload);
+    jobComponent.submit();
+    jobComponent.success.pipe(untilDestroyed(this)).subscribe(() => {
+      dialogRef.close();
+      this.router.navigate(['/', 'storage']);
     });
   }
 
-  afterInit(entityEdit: EntityFormComponent): void {
-    this.entityForm = entityEdit;
-    this.storageService.filesystemStat(this.datasetPath).pipe(untilDestroyed(this)).subscribe((stat) => {
-      this.datasetMode = stat.mode.toString(8).substring(2, 5);
-      entityEdit.formGroup.controls['mode'].setValue(this.datasetMode);
-      entityEdit.formGroup.controls['user'].setValue(stat.user);
-      entityEdit.formGroup.controls['group'].setValue(stat.group);
-    });
+  private loadPermissionsInformation(): void {
+    this.isLoading = true;
+    forkJoin([
+      this.ws.call('pool.dataset.query', [[['id', '=', this.datasetId]]]),
+      this.storageService.filesystemStat(this.datasetPath),
+    ])
+      .pipe(untilDestroyed(this))
+      .subscribe(
+        ([datasets, stat]) => {
+          this.isLoading = false;
+          this.aclType = datasets[0].acltype.value as AclType;
+          this.oldDatasetMode = stat.mode.toString(8).substring(2, 5);
+          this.form.patchValue({
+            mode: this.oldDatasetMode,
+            user: stat.user,
+            group: stat.group,
+          });
+        },
+        (error) => {
+          this.isLoading = false;
+          new EntityUtils().handleWsError(this, error, this.dialog);
+        },
+      );
+  }
 
-    const recursive = entityEdit.formGroup.controls['recursive'];
-    recursive.valueChanges.pipe(untilDestroyed(this)).subscribe((value: boolean) => {
-      if (value) {
-        this.dialog.confirm({
+  private preparePayload(): DatasetPermissionsUpdate {
+    const values = this.form.value;
+
+    const update = {
+      acl: [],
+      options: {
+        stripacl: false,
+        recursive: values.recursive,
+        traverse: values.traverse,
+      },
+    } as DatasetPermissionsUpdate[1];
+    if (values.applyUser) {
+      update['user'] = values.user;
+    }
+
+    if (values.applyGroup) {
+      update['group'] = values.group;
+    }
+
+    if (this.oldDatasetMode !== values.mode) {
+      update['mode'] = values.mode;
+      update.options['stripacl'] = true;
+    }
+
+    return [this.datasetId, update];
+  }
+
+  private setRecursiveWarning(): void {
+    this.form.controls.recursive.valueChanges.pipe(
+      filter(Boolean),
+      switchMap(() => {
+        return this.dialog.confirm({
           title: this.translate.instant('Warning'),
           message: this.translate.instant('Setting permissions recursively will affect this directory and any others below it. This might make data inaccessible.'),
-        }).pipe(
-          filter((confirmed) => !confirmed),
-          untilDestroyed(this),
-        ).subscribe(() => {
-          recursive.setValue(false);
         });
+      }),
+      untilDestroyed(this),
+    ).subscribe((confirmed) => {
+      if (confirmed) {
+        return;
       }
-    });
-  }
 
-  updateGroupSearchOptions(value = ''): void {
-    this.userService.groupQueryDsCache(value).pipe(untilDestroyed(this)).subscribe((groups) => {
-      this.groupField.searchOptions = groups.map((group) => {
-        return { label: group.group, value: group.group };
+      this.form.patchValue({
+        recursive: false,
       });
     });
-  }
-
-  updateUserSearchOptions(value = ''): void {
-    this.userService.userQueryDsCache(value).pipe(untilDestroyed(this)).subscribe((items) => {
-      this.userField.searchOptions = items.map((user) => {
-        return { label: user.username, value: user.username };
-      });
-    });
-  }
-
-  beforeSubmit(data: any): void {
-    if (!data.apply_user) {
-      delete data.user;
-    }
-    if (!data.apply_group) {
-      delete data.group;
-    }
-    delete data.apply_user;
-    delete data.apply_group;
-
-    data['acl'] = [];
-
-    data['options'] = {
-      stripacl: true,
-      recursive: data['recursive'],
-      traverse: data['traverse'],
-    };
-    delete data['recursive'];
-    delete data['traverse'];
-
-    if (data['mode'] === this.datasetMode) {
-      delete data['mode'];
-      data['options']['stripacl'] = false;
-    }
-  }
-
-  customSubmit(data: DatasetPermissionsUpdate[1]): void {
-    const dialogRef = this.mdDialog.open(EntityJobComponent, { data: { title: this.translate.instant('Saving Permissions') } });
-    dialogRef.componentInstance.setDescription(this.translate.instant('Saving Permissions...'));
-    dialogRef.componentInstance.setCall(this.updateCall, [this.datasetId, data]);
-    dialogRef.componentInstance.submit();
-    dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
-      this.entityForm.success = true;
-      dialogRef.close();
-      this.router.navigate(['/', ...this.routeSuccess]);
-    });
-    dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((err) => {
-      console.error(err);
-    });
-  }
-
-  loadMoreOptions(length: number, parent: this, searchText: string): void {
-    parent.userService.userQueryDsCache(searchText, length)
-      .pipe(untilDestroyed(parent))
-      .subscribe((users) => {
-        const userOptions = users.map((user) => {
-          return { label: user.username, value: user.username };
-        });
-        if (searchText === '') {
-          parent.userField.options = parent.userField.options.concat(userOptions);
-        } else {
-          parent.userField.searchOptions = parent.userField.searchOptions.concat(userOptions);
-        }
-      });
-  }
-
-  loadMoreGroupOptions(length: number, parent: this, searchText: string): void {
-    parent.userService.groupQueryDsCache(searchText, false, length)
-      .pipe(untilDestroyed(parent))
-      .subscribe((groups) => {
-        const groupOptions = groups.map((group) => {
-          return { label: group.group, value: group.group };
-        });
-        if (searchText === '') {
-          parent.groupField.options = parent.groupField.options.concat(groupOptions);
-        } else {
-          parent.groupField.searchOptions = parent.groupField.searchOptions.concat(groupOptions);
-        }
-      });
   }
 }
