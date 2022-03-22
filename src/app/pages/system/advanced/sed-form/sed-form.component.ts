@@ -65,9 +65,10 @@ export class SedFormComponent {
     private sysGeneralService: SystemGeneralService,
   ) {}
 
-  setupForm(group: AdvancedConfig): void {
+  setupForm(group: AdvancedConfig, sedPassword: string): void {
     this.form.patchValue({
       sed_user: group?.sed_user,
+      sed_passwd: sedPassword,
     });
     this.cdr.markForCheck();
   }
@@ -77,9 +78,6 @@ export class SedFormComponent {
 
     const values = this.form.value;
     delete values.sed_passwd2;
-    if (!values.sed_passwd) {
-      delete values.sed_passwd;
-    }
 
     this.ws.call('system.advanced.update', [values]).pipe(untilDestroyed(this)).subscribe(() => {
       this.isFormLoading = false;

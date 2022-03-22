@@ -80,6 +80,7 @@ export class AdvancedSettingsComponent implements OnInit {
   systemDatasetPool: string;
   entityForm: EntityFormComponent;
   isFirstTime = true;
+  sedPassword = '';
 
   isHa = false;
   formEvent$: Subject<CoreEvent>;
@@ -415,17 +416,27 @@ export class AdvancedSettingsComponent implements OnInit {
             },
           ],
         },
-        {
-          title: helptextSystemAdvanced.fieldset_sed,
-          id: AdvancedCardId.Sed,
-          items: [
-            {
-              label: helptextSystemAdvanced.sed_user_placeholder,
-              value: advancedConfig.sed_user,
-            },
-          ],
-        },
       ];
+
+      this.ws.call('system.advanced.sed_global_password').pipe(untilDestroyed(this)).subscribe(
+        (sedPassword) => {
+          this.sedPassword = sedPassword;
+          this.dataCards.push({
+            title: helptextSystemAdvanced.fieldset_sed,
+            id: AdvancedCardId.Sed,
+            items: [
+              {
+                label: helptextSystemAdvanced.sed_user_placeholder,
+                value: advancedConfig.sed_user,
+              },
+              {
+                label: this.translate.instant('Password'),
+                value: sedPassword ? '\*'.repeat(sedPassword.length) : '–',
+              },
+            ],
+          });
+        },
+      );
 
       this.ws.call('device.get_info', [DeviceType.Gpu]).pipe(untilDestroyed(this)).subscribe((gpus) => {
         const isolatedGpus = gpus.filter((gpu: Device) => advancedConfig.isolated_gpu_pci_ids.findIndex(
@@ -480,7 +491,7 @@ export class AdvancedSettingsComponent implements OnInit {
         this.ixModal.open(IsolatedGpuPcisFormComponent);
         break;
       case AdvancedCardId.Sed:
-        this.ixModal.open(SedFormComponent).setupForm(this.configData);
+        this.ixModal.open(SedFormComponent).setupForm(this.configData, this.sedPassword);
         break;
       default:
         break;

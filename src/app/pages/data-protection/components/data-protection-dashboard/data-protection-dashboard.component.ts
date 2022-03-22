@@ -877,12 +877,15 @@ export class DataProtectionDashboardComponent implements OnInit {
 
   runningStateButton(jobId: number): void {
     const dialogRef = this.mdDialog.open(EntityJobComponent, {
-      data: { title: this.translate.instant(helptext.task_is_running) },
+      data: { title: helptext.task_is_running },
     });
     dialogRef.componentInstance.jobId = jobId;
     dialogRef.componentInstance.wsshow();
     dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
       dialogRef.close();
+    });
+    dialogRef.componentInstance.aborted.pipe(untilDestroyed(this)).subscribe(() => {
+      this.dialog.info(helptext.task_aborted, '', '300px', 'info', true);
     });
     dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe(() => {
       dialogRef.close();
