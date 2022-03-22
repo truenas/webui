@@ -122,7 +122,7 @@ export class IdmapFormComponent implements FormConfiguration {
         {
           type: 'select',
           name: 'certificate',
-          placeholder: 'Rehan Cert', // helptext.idmap.certificate_id.placeholder,
+          placeholder: helptext.idmap.certificate_id.placeholder,
           tooltip: helptext.idmap.certificate_id.tooltip,
           options: [],
           linkText: this.translate.instant('Certificates'),
