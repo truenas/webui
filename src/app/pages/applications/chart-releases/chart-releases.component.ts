@@ -427,21 +427,66 @@ export class ChartReleasesComponent implements OnInit {
   }
 
   delete(name: string): void {
-    this.dialogService.confirm({
+    const dialogConfirmation = this.dialogService.confirm({
       title: helptext.charts.delete_dialog.title,
       message: this.translate.instant('Delete {name}?', { name }),
-    }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
-      this.dialogRef = this.mdDialog.open(EntityJobComponent, {
-        data: {
-          title: helptext.charts.delete_dialog.job,
-        },
+      secondaryCheckBox: true,
+      secondaryCheckBoxMsg: this.translate.instant('Delete docker images used by the app'),
+      data: [{ delete_unused_images: false }],
+    });
+    let deleteUnusedImages = false;
+    dialogConfirmation.componentInstance.switchSelectionEmitter.pipe(
+      untilDestroyed(this),
+    ).subscribe((checked: boolean) => {
+      deleteUnusedImages = checked;
+    });
+    dialogConfirmation.afterClosed().pipe(
+      filter(Boolean),
+      untilDestroyed(this),
+    )
+      .subscribe(() => {
+        if (deleteUnusedImages) {
+          this.appLoaderService.open();
+          this.ws.call(
+            'chart.release.get_chart_releases_using_chart_release_images',
+            [name],
+          ).pipe(untilDestroyed(this)).subscribe((imagesNotTobeDeleted) => {
+            this.appLoaderService.close();
+            const imageNames = Object.keys(imagesNotTobeDeleted);
+            if (imageNames.length > 0) {
+              const imageMessage = imageNames.reduce((prev: string, current: string) => {
+                const imageNameIndexed = current;
+                return prev + '<li>' + imageNameIndexed + '</li>';
+              }, '<ul>') + '</ul>';
+              this.dialogService.confirm({
+                title: this.translate.instant('Images not to be deleted'),
+                message: this.translate.instant('These images will not be removed as there are other apps which are consuming them')
+              + imageMessage,
+                disableClose: true,
+                buttonMsg: this.translate.instant('OK'),
+              }).pipe(filter(Boolean), untilDestroyed(this))
+                .subscribe(() => {
+                  this.executeDelete(name, deleteUnusedImages);
+                });
+            }
+          });
+        } else {
+          this.executeDelete(name, deleteUnusedImages);
+        }
       });
-      this.dialogRef.componentInstance.setCall('chart.release.delete', [name]);
-      this.dialogRef.componentInstance.submit();
-      this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
-        this.dialogService.closeAllDialogs();
-        this.refreshChartReleases();
-      });
+  }
+
+  executeDelete(name: string, deleteUnusedImages: boolean): void {
+    this.dialogRef = this.mdDialog.open(EntityJobComponent, {
+      data: {
+        title: helptext.charts.delete_dialog.job,
+      },
+    });
+    this.dialogRef.componentInstance.setCall('chart.release.delete', [name, { delete_unused_images: deleteUnusedImages }]);
+    this.dialogRef.componentInstance.submit();
+    this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
+      this.dialogService.closeAllDialogs();
+      this.refreshChartReleases();
     });
   }
 

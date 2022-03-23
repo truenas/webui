@@ -362,7 +362,8 @@ export type ApiDirectory = {
   'chart.release.create': { params: [ChartReleaseCreate]; response: ChartRelease };
   'chart.release.update': { params: any; response: ChartRelease };
   'chart.release.upgrade': { params: any; response: ChartRelease };
-  'chart.release.delete': { params: [name: string]; response: boolean };
+  'chart.release.delete': { params: [string, { delete_unused_images: boolean }]; response: boolean };
+  'chart.release.get_chart_releases_using_chart_release_images': { params: [name: string]; response: Choices };
   'chart.release.scale': { params: [name: string, params: { replica_count: number }]; response: ChartScaleResult };
   'chart.release.pod_console_choices': { params: [string]; response: Record<string, string[]> };
   'chart.release.nic_choices': { params: void; response: Choices };
