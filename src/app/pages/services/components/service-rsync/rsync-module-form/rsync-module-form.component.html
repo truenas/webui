@@ -9,24 +9,24 @@
               formControlName="name"
               [label]="'Name' | translate"
               [required]="true"
-              [tooltip]="tooltips.name"
+              [tooltip]="tooltips.name | translate"
             ></ix-input>
             <ix-explorer
               formControlName="path"
               [label]="'Path' | translate"
               [required]="true"
-              [tooltip]="tooltips.path"
+              [tooltip]="tooltips.path | translate"
               [nodeProvider]="treeNodeProvider"
             ></ix-explorer>
             <ix-input
               formControlName="comment"
               [label]="'Comment' | translate"
-              [tooltip]="tooltips.comment"
+              [tooltip]="tooltips.comment | translate"
             ></ix-input>
             <ix-checkbox
               formControlName="enabled"
               [label]="'Enabled' | translate"
-              [tooltip]="tooltips.enabled"
+              [tooltip]="tooltips.enabled | translate"
             ></ix-checkbox>
           </ix-fieldset>
 
@@ -34,7 +34,7 @@
             <ix-textarea
               formControlName="auxiliary"
               [label]="'Auxiliary Parameters' | translate"
-              [tooltip]="tooltips.auxiliary"
+              [tooltip]="tooltips.auxiliary | translate"
             ></ix-textarea>
           </ix-fieldset>
         </div>
@@ -45,34 +45,35 @@
               [label]="'Access Mode' | translate"
               [required]="true"
               [options]="modeOptions$"
+              [tooltip]="tooltips.mode | translate"
             ></ix-select>
             <ix-input
               formControlName="maxconn"
               [label]="'Max Connections' | translate"
-              [tooltip]="tooltips.maxconn"
+              [tooltip]="tooltips.maxconn | translate"
               type="number"
             ></ix-input>
             <ix-combobox
               formControlName="user"
               [label]="'User' | translate"
-              [tooltip]="tooltips.user"
+              [tooltip]="tooltips.user | translate"
               [provider]="userProvider"
             ></ix-combobox>
             <ix-combobox
               formControlName="group"
               [label]="'Group' | translate"
-              [tooltip]="tooltips.group"
+              [tooltip]="tooltips.group | translate"
               [provider]="groupProvider"
             ></ix-combobox>
             <ix-chips
               formControlName="hostsallow"
               [label]="'Hosts Allow' | translate"
-              [tooltip]="tooltips.hostsallow"
+              [tooltip]="tooltips.hostsallow | translate"
             ></ix-chips>
             <ix-chips
               formControlName="hostsdeny"
               [label]="'Hosts Deny' | translate"
-              [tooltip]="tooltips.hostsdeny"
+              [tooltip]="tooltips.hostsdeny | translate"
             ></ix-chips>
           </ix-fieldset>
         </div>
