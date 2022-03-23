@@ -973,6 +973,7 @@ export type ApiDirectory = {
   // WEBDAV
   'webdav.config': { params: void; response: WebdavConfig };
   'webdav.update': { params: [WebdavConfigUpdate]; response: WebdavConfig };
+  'webdav.cert_choices': { params: void; response: Choices };
 
   // InitShutdownScript
   'initshutdownscript.query': { params: QueryParams<InitShutdownScript>; response: InitShutdownScript[] };
