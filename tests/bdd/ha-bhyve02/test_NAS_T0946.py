@@ -148,6 +148,7 @@ def navigate_to_network_and_on_the_network_page_click_on_global_configuration_se
     """navigate to Network and on the Network page click on Global Configuration Settings."""
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Network"]').click()
     assert wait_on_element(driver, 7, '//h1[contains(.,"Network")]')
+    assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
     assert wait_on_element(driver, 7, '//button[contains(.,"Settings")]', 'clickable')
     driver.find_element_by_xpath('//button[contains(.,"Settings")]').click()
     assert wait_on_element(driver, 7, '//h3[contains(.,"Global Configuration")]')
@@ -165,6 +166,38 @@ def enter_hostname_Virtual_ipv4_default_gateway_(driver, vhost, gatway):
     driver.find_element_by_xpath('//input[@ix-auto="input__IPv4 Default Gateway"]').send_keys(gatway)
 
 
+# enter Hostname "tn-bhyve01-nodea", Hostname (TrueNAS Controller 2) "tn-bhyve01-nodeb", Hostname (Virtual) "tn-bhyve01"
+@then(parsers.parse('enter Hostname "{host1}", Hostname (TrueNAS Controller 2) "{host2}", Hostname (Virtual) "{vhost}"'))
+def enter_hostname_hostname_truenas_controller_2_hostname_virtual(driver, host1, host2, vhost):
+    """enter Hostname "{host1}", Hostname (TrueNAS Controller 2) "{host2}", Hostname (Virtual) "{vhost}"."""
+    assert wait_on_element(driver, 7, '//input[@ix-auto="input__Hostname"]', 'inputable')
+    driver.find_element_by_xpath('//input[@ix-auto="input__Hostname"]').clear()
+    driver.find_element_by_xpath('//input[@ix-auto="input__Hostname"]').send_keys(host1)
+    assert wait_on_element(driver, 7, '//input[@ix-auto="input__Hostname (TrueNAS Controller 2)"]', 'clickable')
+    driver.find_element_by_xpath('//input[@ix-auto="input__Hostname (TrueNAS Controller 2)"]').clear()
+    driver.find_element_by_xpath('//input[@ix-auto="input__Hostname (TrueNAS Controller 2)"]').send_keys(host2)
+    assert wait_on_element(driver, 7, '//input[@ix-auto="input__Hostname (Virtual)"]', 'clickable')
+    driver.find_element_by_xpath('//input[@ix-auto="input__Hostname (Virtual)"]').clear()
+    driver.find_element_by_xpath('//input[@ix-auto="input__Hostname (Virtual)"]').send_keys(vhost)
+
+
+# And Domain "tn.ixsystems.net", Nameserver1 "10.150.0.5", Nameserver2 "10.150.0.5", Nameserver2 "10.150.8.5", IPv4 Default Gateway "10.238.238.1"
+@then(parsers.parse('Domain "{domain}", Nameserver1 "{nameserver1}", Nameserver2 "{nameserver2}", Nameserver3 "{nameserver3}", IPv4 Default Gateway "{gatway}"'))
+def Domain_Nameserver1_Nameserver2_Nameserver2_IPv4_Default_Gateway(driver, domain, nameserver1, nameserver2, nameserver3, gatway):
+    """Domain "{domain}", Nameserver1 "{nameserver1}", Nameserver2 "{nameserver2}", Nameserver3 "{nameserver3}", IPv4 Default Gateway "{gatway}"."""
+    driver.find_element_by_xpath('//input[@ix-auto="input__Domain"]').clear()
+    driver.find_element_by_xpath('//input[@ix-auto="input__Domain"]').send_keys(domain)
+    driver.find_element_by_xpath('//input[@ix-auto="input__Nameserver 1"]').clear()
+    driver.find_element_by_xpath('//input[@ix-auto="input__Nameserver 1"]').send_keys(nameserver1)
+    driver.find_element_by_xpath('//input[@ix-auto="input__Nameserver 2"]').clear()
+    driver.find_element_by_xpath('//input[@ix-auto="input__Nameserver 2"]').send_keys(nameserver2)
+    driver.find_element_by_xpath('//input[@ix-auto="input__Nameserver 3"]').clear()
+    driver.find_element_by_xpath('//input[@ix-auto="input__Nameserver 3"]').send_keys(nameserver3)
+    assert wait_on_element(driver, 7, '//input[@ix-auto="input__IPv4 Default Gateway"]', 'clickable')
+    driver.find_element_by_xpath('//input[@ix-auto="input__IPv4 Default Gateway"]').clear()
+    driver.find_element_by_xpath('//input[@ix-auto="input__IPv4 Default Gateway"]').send_keys(gatway)
+
+
 @then('click save when finished')
 def click_save_when_finished(driver):
     """click save when finished."""
@@ -175,8 +208,9 @@ def click_save_when_finished(driver):
 @then('"Please wait" should appear while settings are being applied and You should be returned to Network page')
 def please_wait_should_appear_while_settings_are_being_applied_you_should_be_returned_to_network_page(driver):
     """"Please wait" should appear while settings are being applied and You should be returned to Network page."""
-    assert wait_on_element_disappear(driver, 15, '//h6[contains(.,"Please wait")]')
+    assert wait_on_element_disappear(driver, 30, '//h6[contains(.,"Please wait")]')
     assert wait_on_element(driver, 7, '//h1[contains(.,"Network")]')
+    time.sleep(1)
 
 
 @then('navigate to System then click Failover')
