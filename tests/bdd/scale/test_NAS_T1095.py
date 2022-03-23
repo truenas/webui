@@ -71,8 +71,11 @@ def the_user_edit_page_should_open_change_the_password_in_both_fields_and_click_
     driver.find_element_by_xpath('//input[@ix-auto="input__Password"]').send_keys('testing1234')
     driver.find_element_by_xpath('//input[@ix-auto="input__Confirm Password"]').clear()
     driver.find_element_by_xpath('//input[@ix-auto="input__Confirm Password"]').send_keys('testing1234')
-    assert wait_on_element(driver, 7, '//button[@ix-auto="button__SAVE"]', 'clickable')
+    element = driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]')
+    driver.execute_script("arguments[0].scrollIntoView();", element)
+    assert.wait_on_element(driver, 10, '//button[@ix-auto="button__SAVE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
+    time.sleep(1)
 
 
 @then('the changes should be saved without an error try to ssh with the old password for that user')
