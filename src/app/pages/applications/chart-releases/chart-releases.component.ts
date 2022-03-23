@@ -468,6 +468,8 @@ export class ChartReleasesComponent implements OnInit {
                 .subscribe(() => {
                   this.executeDelete(name, deleteUnusedImages);
                 });
+            } else {
+              this.executeDelete(name, deleteUnusedImages);
             }
           });
         } else {
