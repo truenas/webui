@@ -785,6 +785,7 @@
   "Pair this certificate's public key with the Certificate Authority private key used to sign this certificate.": "",
   "Parent dataset path (read-only).": "",
   "Parent path": "",
+  "Passphrase and confirmation should match.": "",
   "Passphrase {successMessage} <i>{poolName}</i>": "",
   "Passthrough": "",
   "Password Disabled": "",
