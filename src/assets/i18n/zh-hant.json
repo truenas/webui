@@ -2933,7 +2933,6 @@
   "{service} Service": "",
   "{this} and {that}. At least one is required": "",
   "{used} of {total} ({used_pct})": "",
-  " KiB.": " KiB",
   " day, ": "天， ",
   " days, ": "天， ",
   " seconds.": " 秒。",

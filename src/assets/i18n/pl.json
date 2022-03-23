@@ -3790,7 +3790,6 @@
   "{service} Service": "",
   "{this} and {that}. At least one is required": "",
   "{used} of {total} ({used_pct})": "",
-  " KiB.": " KB",
   " day, ": " dzień",
   " days, ": " dni",
   " seconds.": " sekund",

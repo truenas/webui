@@ -101,8 +101,10 @@ export default {
  means any port above 1023.'),
   passiveportsmax_validation: [rangeValidator(0, 65535), Validators.required],
 
-  localuserbw_placeholder: T('Local User Upload Bandwidth: '),
-  userbw_tooltip: T('In KiBs or greater. A default of <i>0 KiB</i> means unlimited. '),
+  localuserbw_placeholder: T('Local User Upload Bandwidth: ') + globalHelptext.human_readable.suggestion_label,
+  userbw_tooltip: T('In KiBs or greater. A default of <i>0 KiB</i> means unlimited. ')
+    + globalHelptext.human_readable.suggestion_tooltip
+    + ' KiB.',
   userbw_validation: [Validators.required],
 
   bandwidth_err: globalHelptext.human_readable.input_error,
