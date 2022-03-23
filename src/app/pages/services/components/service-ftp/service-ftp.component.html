@@ -52,6 +52,8 @@
               [label]="'Certificate' | translate"
               [tooltip]="helptext.ssltls_certificate_tooltip | translate"
               [options]="certificates$"
+              [linkText]="'Certificates' | translate"
+              (linkClicked)="onLinkClicked()"
             ></ix-select>
           </ix-fieldset>
 
