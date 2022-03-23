@@ -70,7 +70,9 @@ def the_user_edit_page_should_open_change_disable_password_to_no_and_click_save(
     driver.find_element_by_xpath('//mat-select[@ix-auto="select__Disable Password"]').click()
     assert wait_on_element(driver, 3, '//mat-option[@ix-auto="option__Disable Password_No"]', 'clickable')
     driver.find_element_by_xpath('//mat-option[@ix-auto="option__Disable Password_No"]').click()
-    wait_on_element(driver, 10, '//button[@ix-auto="button__SAVE"]', 'clickable')
+    element = driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]')
+    driver.execute_script("arguments[0].scrollIntoView();", element)
+    assert.wait_on_element(driver, 10, '//button[@ix-auto="button__SAVE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
     time.sleep(1)
 
