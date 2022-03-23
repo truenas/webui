@@ -1,0 +1,13 @@
+.form-actions {
+  margin: 8px 10px;
+}
+
+.two-columns {
+  display: flex;
+
+  > * {
+    display: block;
+    margin: 0 5px;
+    width: 50%;
+  }
+}

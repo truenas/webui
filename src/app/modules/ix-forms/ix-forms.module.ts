@@ -31,6 +31,8 @@ import { IxFieldsetComponent } from 'app/modules/ix-forms/components/ix-fieldset
 import { IxFileInputComponent } from 'app/modules/ix-forms/components/ix-file-input/ix-file-input.component';
 import { IxInputComponent } from 'app/modules/ix-forms/components/ix-input/ix-input.component';
 import { IxIpInputWithNetmaskComponent } from 'app/modules/ix-forms/components/ix-ip-input-with-netmask/ix-ip-input-with-netmask.component';
+import { IxListItemComponent } from 'app/modules/ix-forms/components/ix-list/ix-list-item/ix-list-item.component';
+import { IxListComponent } from 'app/modules/ix-forms/components/ix-list/ix-list.component';
 import { IxPermissionsComponent } from 'app/modules/ix-forms/components/ix-permissions/ix-permissions.component';
 import { IxRadioGroupComponent } from 'app/modules/ix-forms/components/ix-radio-group/ix-radio-group.component';
 import { IxSelectComponent } from 'app/modules/ix-forms/components/ix-select/ix-select.component';
@@ -78,6 +80,8 @@ import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
     IxModalHeaderComponent,
     IxCheckboxComponent,
     IxTextareaComponent,
+    IxListComponent,
+    IxListItemComponent,
     IxComboboxComponent,
     IxPermissionsComponent,
     IxChipsComponent,
@@ -98,6 +102,8 @@ import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
     IxCheckboxComponent,
     IxPermissionsComponent,
     IxTextareaComponent,
+    IxListComponent,
+    IxListItemComponent,
     IxChipsComponent,
     IxComboboxComponent,
     IxExplorerComponent,
