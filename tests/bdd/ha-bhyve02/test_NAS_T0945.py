@@ -58,8 +58,8 @@ def you_should_see_the_dashboard(driver):
         try:
             assert wait_on_element(driver, 2, '//button[@ix-auto="button__I AGREE"]', 'clickable')
             driver.find_element_by_xpath('//button[@ix-auto="button__I AGREE"]').click()
-            assert wait_on_element(driver, 2, '//button[@ix-auto="button__CLOSE"]', 'clickable')
-            driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
+            if wait_on_element(driver, 2, '//button[@ix-auto="button__CLOSE"]', 'clickable'):
+                driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
         except ElementClickInterceptedException:
             assert wait_on_element(driver, 2, '//button[@ix-auto="button__CLOSE"]', 'clickable')
             driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
