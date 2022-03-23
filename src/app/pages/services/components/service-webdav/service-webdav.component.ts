@@ -66,11 +66,12 @@ export class ServiceWebdavComponent implements OnInit {
     fcName: 'certssl',
     label: helptext.certssl_placeholder,
     tooltip: helptext.certssl_tooltip,
-    options: this.systemGeneralService.getCertificates().pipe(
+    options: this.ws.call('webdav.cert_choices').pipe(
       map((certificates) => {
-        const options = certificates.map((certificate) => ({
-          label: certificate.name,
-          value: certificate.id,
+        const certKeys = Object.keys(certificates);
+        const options = certKeys.map((key) => ({
+          label: certificates[key],
+          value: Number(key),
         }));
 
         return [
