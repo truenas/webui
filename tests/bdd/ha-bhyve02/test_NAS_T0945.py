@@ -106,6 +106,7 @@ def the_ssh_general_options_page_should_open(driver):
 def click_the_checkbox_log_in_as_root_with_password(driver):
     """click the checkbox "Log in as root with password"."""
     assert wait_on_element(driver, 5, '//mat-checkbox[contains(.,"Log in as Root with Password")]', 'clickable')
+    time.sleep(0.5)
     value_exist = attribute_value_exist(driver, '//mat-checkbox[contains(.,"Log in as Root with Password")]', 'class', 'mat-checkbox-checked')
     if not value_exist:
         driver.find_element_by_xpath('//mat-checkbox[contains(.,"Log in as Root with Password")]').click()
