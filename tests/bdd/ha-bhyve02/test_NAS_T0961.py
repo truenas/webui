@@ -193,12 +193,15 @@ def click_on_system_dataser_pool_select_dozer_click_Save(driver, pool_name):
 def Please_wait_should_appear_while_settings_are_being_applied(driver):
     """Please wait should appear while settings are being applied."""
     # assert need to be added after the UI get fix.
-    wait_on_element_disappear(driver, 20, '//mat-progress-bar')
+    assert wait_on_element_disappear(driver, 30, '//mat-progress-bar')
+    assert wait_on_element_disappear(driver, 10, '//div[contains(.,"System Dataset Pool:")]//span[text()="tank"]')
+    assert wait_on_element(driver, 5, '//div[contains(.,"System Dataset Pool:")]//span[text()="dozer"]')
 
 
 @then('navigate to the dashboard')
 def navigate_to_dashboard(driver):
     """navigate to The dashboard."""
+    assert wait_on_element(driver, 5, '//mat-list-item[@ix-auto="option__Dashboard"]', 'clickable')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
     assert wait_on_element(driver, 10, '//span[contains(.,"System Information")]')
 
@@ -206,7 +209,7 @@ def navigate_to_dashboard(driver):
 @then('refresh and wait for the second node to be up')
 def refresh_and_wait_for_the_second_node_to_be_up(driver):
     """refresh and wait for the second node to be up"""
-    assert wait_on_element(driver, 120, '//div[contains(.,"tn-bhyve01-nodeb")]')
+    # assert wait_on_element(driver, 120, '//div[contains(.,"tn-bhyve01-nodeb")]')
     assert wait_on_element(driver, 120, '//mat-icon[@svgicon="ha_enabled"]')
     # 5 second to let the system get ready for the next step.
     time.sleep(5)
