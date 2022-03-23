@@ -10,6 +10,7 @@ import { Preferences } from 'app/interfaces/preferences.interface';
 import { User } from 'app/interfaces/user.interface';
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxTableModule } from 'app/modules/ix-tables/ix-table.module';
+import { UserFormComponent } from 'app/pages/account/users/user-form/user-form.component';
 import {
   WebSocketService, DialogService, AppLoaderService,
 } from 'app/services';
@@ -55,8 +56,10 @@ describe('UserDetailsRowComponent', () => {
       IxTableModule,
     ],
     declarations: [
+      UserFormComponent,
     ],
     providers: [
+      mockProvider(IxSlideInService),
       mockWebsocket([
         mockCall('user.delete'),
         mockCall('group.query', []),
@@ -65,7 +68,6 @@ describe('UserDetailsRowComponent', () => {
         dialogForm: jest.fn(() => of(true)),
       }),
       mockProvider(AppLoaderService),
-      mockProvider(IxSlideInService),
       provideMockStore({
         selectors: [
           {
@@ -91,11 +93,15 @@ describe('UserDetailsRowComponent', () => {
     dialog = spectator.inject(DialogService);
   });
 
+  it('checks colspan attribute', () => {
+    expect(spectator.query('td').getAttribute('colspan')).toBe('5');
+  });
+
   it('should open edit user form', async () => {
     const editButton = await loader.getHarness(MatButtonHarness.with({ text: 'editEdit' }));
     await editButton.click();
 
-    expect(spectator.inject(IxSlideInService).close).toHaveBeenCalled();
+    expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(UserFormComponent, { wide: true });
   });
 
   it('should make websocket call to delete user', async () => {
@@ -105,8 +111,5 @@ describe('UserDetailsRowComponent', () => {
 
     expect(dialog.dialogForm).toHaveBeenCalled();
     expect(ws.call).toHaveBeenCalledWith('group.query', [[['id', '=', 41]]]);
-
-    // TODO: Find a way to make it work
-    // expect(ws.call).toHaveBeenCalledWith('user.delete', 1);
   });
 });

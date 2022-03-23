@@ -11,9 +11,9 @@ import { EntityDialogComponent } from 'app/modules/entity/entity-dialog/entity-d
 import { EntityUtils } from 'app/modules/entity/utils';
 import { UserFormComponent } from 'app/pages/account/users/user-form/user-form.component';
 import {
-  WebSocketService, ModalService, AppLoaderService, DialogService,
+  WebSocketService, AppLoaderService, DialogService,
 } from 'app/services';
-import { IxSlideInService } from '../../../../services/ix-slide-in.service';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
 @Component({
@@ -26,11 +26,11 @@ export class UserDetailsRowComponent {
   @Input() user: User;
   @Input() colspan: number;
   @Output() update = new EventEmitter<void>();
+  private editForm: UserFormComponent;
 
   constructor(
     private ws: WebSocketService,
     private translate: TranslateService,
-    private modalService: ModalService,
     private loader: AppLoaderService,
     private dialogService: DialogService,
     private slideIn: IxSlideInService,
@@ -52,7 +52,9 @@ export class UserDetailsRowComponent {
 
   doEdit(user: User): void {
     const editForm = this.slideIn.open(UserFormComponent, { wide: true });
-    editForm.setupForm(user);
+    if (editForm) {
+      editForm.setupForm(user);
+    }
   }
 
   async doDelete(user: User): Promise<void> {

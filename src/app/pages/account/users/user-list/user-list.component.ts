@@ -19,7 +19,6 @@ import { IxDetailRowDirective } from 'app/modules/ix-tables/directives/ix-detail
 import { userPageEntered } from 'app/pages/account/users/store/user.actions';
 import { selectUsers, selectUserState, selectUsersTotal } from 'app/pages/account/users/store/user.selectors';
 import { CoreService } from 'app/services/core-service/core.service';
-import { ModalService } from 'app/services/modal.service';
 import { AppState } from 'app/store';
 import { builtinUsersToggled } from 'app/store/preferences/preferences.actions';
 import { waitForPreferences } from 'app/store/preferences/preferences.selectors';
@@ -73,7 +72,6 @@ export class UserListComponent implements OnInit {
 
   constructor(
     private translate: TranslateService,
-    private modalService: ModalService,
     private slideIn: IxSlideInService,
     private cdr: ChangeDetectorRef,
     private core: CoreService,
