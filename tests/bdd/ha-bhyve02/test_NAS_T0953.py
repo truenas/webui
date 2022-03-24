@@ -133,14 +133,14 @@ def open_the_user_drop_down_to_verify_the_user_disable_password_is_true(driver):
     assert wait_on_element(driver, 5, '//tr[contains(.,"ericbsd")]/td', 'clickable')
     driver.find_element_by_xpath('//tr[contains(.,"ericbsd")]/td').click()
     assert wait_on_element(driver, 7, '(//tr[contains(.,"ericbsd")]/following-sibling::tr)[1]//button[contains(.,"Edit")]')
-    driver.find_element_by_xpath('//dt[contains(.,"Password Disabled:")]')
+    driver.find_element_by_xpath('(//tr[contains(.,"ericbsd")]/following-sibling::tr)[1]//dt[contains(.,"Password Disabled:")]')
 
 
 @then('Updated value should be visible')
 def updated_value_should_be_visible(driver):
     """Updated value should be visible."""
-    assert wait_on_element(driver, 5, '//dt[contains(.,"Password Disabled:")]/../dd')
-    element_text = driver.find_element_by_xpath('//dt[contains(.,"Password Disabled:")]/../dd').text
+    assert wait_on_element(driver, 5, '(//tr[contains(.,"ericbsd")]/following-sibling::tr)[1]//dt[contains(.,"Password Disabled:")]/../dd')
+    element_text = driver.find_element_by_xpath('(//tr[contains(.,"ericbsd")]/following-sibling::tr)[1]//dt[contains(.,"Password Disabled:")]/../dd').text
     assert element_text == 'true'
 
 

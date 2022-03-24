@@ -106,6 +106,7 @@ def the_user_edit_page_should_open(driver):
 @then('Add user to additional groups, like wheel and save change')
 def add_user_to_additional_groups_like_wheel_and_save_change(driver):
     """Add user to additional groups, like wheel and save change."""
+    assert wait_on_element(driver, 7, '//h4[contains(.,"Identification")]')
     assert wait_on_element(driver, 7, '//label[contains(.,"Auxiliary Groups")]')
     element = driver.find_element_by_xpath('//label[contains(.,"Auxiliary Groups")]')
     driver.execute_script("arguments[0].scrollIntoView();", element)
