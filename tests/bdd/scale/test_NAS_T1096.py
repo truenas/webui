@@ -64,22 +64,22 @@ def the_user_edit_page_should_open_change_the_password_in_the_2nd_field(driver):
     """the User Edit Page should open, change the password in the 2nd field."""
     assert wait_on_element(driver, 10, '//h3[contains(.,"Edit User")]')
     assert wait_on_element_disappear(driver, 10, '//h6[contains(.,"Please wait")]')
-    assert wait_on_element(driver, 10, '//input[@ix-auto="input__Password"]', 'inputable')
-    driver.find_element_by_xpath('//input[@ix-auto="input__Password"]').clear()
-    driver.find_element_by_xpath('//input[@ix-auto="input__Password"]').send_keys('testing1234')
-    driver.find_element_by_xpath('//input[@ix-auto="input__Confirm Password"]').clear()
-    driver.find_element_by_xpath('//input[@ix-auto="input__Confirm Password"]').send_keys('1234testing')
+    assert wait_on_element(driver, 10, '//ix-input[@formcontrolname="password"]//input', 'inputable')
+    driver.find_element_by_xpath('//ix-input[@formcontrolname="password"]//input').clear()
+    driver.find_element_by_xpath('//ix-input[@formcontrolname="password"]//input').send_keys('testing1234')
+    driver.find_element_by_xpath('//ix-input[@formcontrolname="password_conf"]//input').clear()
+    driver.find_element_by_xpath('//ix-input[@formcontrolname="password_conf"]//input').send_keys('1234testing')
 
 
 @then('you should not be able to save the changes and an error message should appear')
 def you_should_not_be_able_to_save_the_changes_and_an_error_message_should_appear(driver):
     """you should not be able to save the changes and an error message should appear."""
-    wait_on_element(driver, 3, '//button[@ix-auto="button__SAVE"]', 'clickable')
-    element = driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]')
+    wait_on_element(driver, 3, '//button[span[contains(.,"Save")]]', 'clickable')
+    element = driver.find_element_by_xpath('//button[span[contains(.,"Save")]]')
     class_attribute = element.get_attribute('disabled')
     assert class_attribute == 'true'
-    driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
+    driver.find_element_by_xpath('//button[span[contains(.,"Save")]]').click()
     assert wait_on_element(driver, 3, '//h4[contains(.,"Identification")]')
     assert wait_on_element(driver, 3, '//mat-error[contains(.,"The passwords do not match.")]')
-    assert wait_on_element(driver, 10, '//*[@id="close-icon"]', 'clickable')
-    driver.find_element_by_xpath('//*[@id="close-icon"]').click()
+    assert wait_on_element(driver, 10, '//*[@id="ix-close-icon"]', 'clickable')
+    driver.find_element_by_xpath('//*[@id="ix-close-icon"]').click()
