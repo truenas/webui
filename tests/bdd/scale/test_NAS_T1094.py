@@ -4,6 +4,7 @@
 import time
 from function import (
     wait_on_element,
+    attribute_value_exist,
     is_element_present,
     wait_on_element_disappear,
     ssh_cmd,
