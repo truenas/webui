@@ -23,33 +23,23 @@
         ></ix-input>
       </div>
       <div fxFlex="50%">
+        <ix-slide-toggle
+          formControlName="password_disabled"
+          [label]="'Disable Password' | translate"
+          [tooltip]="tooltips.password_disabled | translate"
+        ></ix-slide-toggle>
         <ix-input
-          *ngIf="isNew"
           formControlName="password"
           [label]="'Password' | translate"
-          [tooltip]="tooltips.password | translate"
-          [required]="true"
+          [tooltip]="(isNew ? tooltips.password : tooltips.password_edit) | translate"
+          [required]="isNew"
           type="password"
         ></ix-input>
         <ix-input
-          *ngIf="isNew"
           formControlName="password_conf"
           [label]="'Confirm Password' | translate"
-          [required]="true"
-          type="password"
-        ></ix-input>
-        <ix-input
-          *ngIf="!isNew"
-          formControlName="password_edit"
-          [label]="'Password' | translate"
-          [tooltip]="tooltips.password_edit | translate"
-          type="password"
-        ></ix-input>
-        <ix-input
-          *ngIf="!isNew"
-          formControlName="password_conf_edit"
-          [label]="'Confirm Password' | translate"
-          [tooltip]="tooltips.password_conf_edit | translate"
+          [tooltip]="!isNew ? (tooltips.password_conf_edit | translate) : null"
+          [required]="isNew"
           type="password"
         ></ix-input>
       </div>
@@ -66,6 +56,7 @@
           [label]="'UID' | translate"
           [tooltip]="tooltips.uid | translate"
           [required]="true"
+          type="number"
         ></ix-input>
         <ix-slide-toggle
           formControlName="group_create"
@@ -110,7 +101,7 @@
       </ix-fieldset>
     </div>
     <div fxFlex="50%">
-      <ix-fieldset [title]="'Authentication'">
+      <ix-fieldset [title]="'Authentication' | translate">
         <ix-textarea
           formControlName="sshpubkey"
           [label]="'SSH Public Key' | translate"
@@ -122,11 +113,6 @@
           [tooltip]="tooltips.shell | translate"
           [provider]="shellProvider"
         ></ix-combobox>
-        <ix-slide-toggle
-          formControlName="password_disabled"
-          [label]="'Disable Password' | translate"
-          [tooltip]="tooltips.password_disabled"
-        ></ix-slide-toggle>
         <ix-checkbox
           formControlName="locked"
           [label]="'Lock User' | translate"

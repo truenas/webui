@@ -7,7 +7,9 @@ import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import _ from 'lodash';
-import { Observable, Subscription } from 'rxjs';
+import {
+  combineLatest, Observable, of, Subscription,
+} from 'rxjs';
 import {
   filter, map, switchMap,
 } from 'rxjs/operators';
@@ -15,7 +17,6 @@ import { choicesToOptions } from 'app/helpers/options.helper';
 import helptext from 'app/helptext/account/user-form';
 import { User, UserUpdate } from 'app/interfaces/user.interface';
 import { forbiddenValues } from 'app/modules/entity/entity-form/validators/forbidden-values-validation';
-import { numberValidator } from 'app/modules/entity/entity-form/validators/number-validation';
 import { matchOtherValidator } from 'app/modules/entity/entity-form/validators/password-validation/password-validation';
 import { SimpleAsyncComboboxProvider } from 'app/modules/ix-forms/classes/simple-async-combobox-provider';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
@@ -54,22 +55,24 @@ export class UserFormComponent {
       Validators.maxLength(16),
     ]],
     email: ['', [Validators.email]],
-    password: ['', [Validators.required, Validators.pattern(UserService.passwordPattern)]],
+    password: ['', [
+      this.validatorsService.validateOnCondition(
+        () => this.isNew,
+        Validators.required,
+      ),
+      Validators.pattern(UserService.passwordPattern),
+    ]],
     password_conf: ['', [
-      Validators.required,
+      this.validatorsService.validateOnCondition(
+        () => this.isNew,
+        Validators.required,
+      ),
       this.validatorsService.withMessage(
         matchOtherValidator('password'),
-        this.translate.instant('Password and confirmation should match.'),
+        this.translate.instant(this.isNew ? 'Password and confirmation should match.' : 'New password and confirmation should match.'),
       ),
     ]],
-    password_edit: ['', [Validators.pattern(UserService.passwordPattern)]],
-    password_conf_edit: ['', [
-      this.validatorsService.withMessage(
-        matchOtherValidator('password_edit'),
-        this.translate.instant('New password and confirmation should match.'),
-      ),
-    ]],
-    uid: [null as number, [Validators.required, numberValidator()]],
+    uid: [null as number, [Validators.required]],
     group: [null as number],
     group_create: [true],
     groups: [[] as number[]],
@@ -141,6 +144,10 @@ export class UserFormComponent {
       this.form.patchValue({ home_mode: '755' });
     }
     this.subscriptions.push(
+      this.form.get('locked').disabledWhile(this.form.get('password_disabled').value$),
+      this.form.get('sudo').disabledWhile(this.form.get('password_disabled').value$),
+      this.form.get('password').disabledWhile(this.form.get('password_disabled').value$),
+      this.form.get('password_conf').disabledWhile(this.form.get('password_disabled').value$),
       this.form.get('group').disabledWhile(this.form.get('group_create').value$),
     );
 
@@ -156,8 +163,8 @@ export class UserFormComponent {
     const body: UserUpdate = {
       email: values.email ? values.email : null,
       full_name: values.full_name,
-      group: values.group ? values.group : null,
-      groups: values.groups?.length ? values.groups : null,
+      group: values.group,
+      groups: values.groups,
       home_mode: values.home_mode,
       home: values.home,
       locked: values.password_disabled ? false : values.locked,
@@ -180,9 +187,9 @@ export class UserFormComponent {
         uid: values.uid,
       }]);
     } else {
-      const passwordEditNotEmpty = values.password_edit !== '' && values.password_conf_edit !== '';
-      if (passwordEditNotEmpty) {
-        body.password = values.password_edit;
+      const passwordNotEmpty = values.password !== '' && values.password_conf !== '';
+      if (passwordNotEmpty && !values.password_disabled) {
+        body.password = values.password;
       }
       request$ = this.ws.call('user.update', [this.editingUser.id, body]);
     }
@@ -222,9 +229,6 @@ export class UserFormComponent {
   }
 
   private setupNewUserForm(): void {
-    this.form.get('password_edit').disable();
-    this.form.get('password_conf_edit').disable();
-
     this.setNamesInUseValidator();
     this.setHomeSharePath();
     this.setNextUserId();
@@ -258,18 +262,10 @@ export class UserFormComponent {
       username: user.username,
     });
 
-    this.form.get('password').disable();
-    this.form.get('password_conf').disable();
     this.form.get('uid').disable();
-    this.subscriptions.push(
-      this.form.get('locked').disabledWhile(this.form.get('password_disabled').value$),
-      this.form.get('password_conf_edit').disabledWhile(this.form.get('password_disabled').value$),
-      this.form.get('password_edit').disabledWhile(this.form.get('password_disabled').value$),
-      this.form.get('sudo').disabledWhile(this.form.get('password_disabled').value$),
-    );
+    this.form.get('group_create').disable();
 
     if (user.builtin) {
-      this.form.get('group_create').disable();
       this.form.get('group').disable();
       this.form.get('home_mode').disable();
       this.form.get('home').disable();
@@ -297,15 +293,14 @@ export class UserFormComponent {
     ]]).pipe(
       filter((shares) => !!shares.length),
       map((shares) => shares[0].path),
+      switchMap((homeSharePath) => {
+        this.form.patchValue({ home: homeSharePath });
+
+        return combineLatest([of(homeSharePath), this.form.get('username').valueChanges]);
+      }),
       untilDestroyed(this),
-    ).subscribe((path) => {
-      const homeSharePath = path;
-      this.form.patchValue({ home: homeSharePath });
-      this.form.get('username').valueChanges.pipe(
-        untilDestroyed(this),
-      ).subscribe((username: string) => {
-        this.form.patchValue({ home: `${homeSharePath}/${username}` });
-      });
+    ).subscribe(([homeSharePath, username]) => {
+      this.form.patchValue({ home: `${homeSharePath}/${username}` });
     });
   }
 

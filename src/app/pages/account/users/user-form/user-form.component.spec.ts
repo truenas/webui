@@ -9,7 +9,9 @@ import { of } from 'rxjs';
 import { mockWebsocket, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
 import { Choices } from 'app/interfaces/choices.interface';
 import { Group } from 'app/interfaces/group.interface';
+import { SmbShare } from 'app/interfaces/smb-share.interface';
 import { User } from 'app/interfaces/user.interface';
+import { IxExplorerHarness } from 'app/modules/ix-forms/components/ix-explorer/ix-explorer.harness';
 import { IxInputHarness } from 'app/modules/ix-forms/components/ix-input/ix-input.harness';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
@@ -71,7 +73,7 @@ describe('UserFormComponent', () => {
           id: 102,
           group: 'mock-group',
         }] as Group[]),
-        mockCall('sharing.smb.query', []),
+        mockCall('sharing.smb.query', [{ path: '/mnt/users' }] as SmbShare[]),
       ]),
       mockProvider(IxSlideInService, {
         onClose$: of(true),
@@ -111,6 +113,16 @@ describe('UserFormComponent', () => {
 
       expect(ws.call).toHaveBeenCalledWith('user.get_next_uid');
       expect(value).toBe('1234');
+    });
+
+    it('loads home share path and puts it in home field', async () => {
+      const homeInput = await loader.getHarness(IxExplorerHarness.with({ label: 'Home Directory' }));
+      expect(ws.call).toHaveBeenCalledWith('sharing.smb.query', [[['enabled', '=', true], ['home', '=', true]]]);
+      expect(await homeInput.getValue()).toBe('/mnt/users');
+
+      const usernameInput = await loader.getHarness(IxInputHarness.with({ label: 'Username' }));
+      await usernameInput.setValue('test');
+      expect(await homeInput.getValue()).toBe('/mnt/users/test');
     });
 
     it('sends a create payload to websocket and closes modal when save is pressed', async () => {
@@ -259,7 +271,7 @@ describe('UserFormComponent', () => {
     });
   });
 
-  it('checks download ssh public key button', async () => {
+  it('only shows download ssh key button when ssh key is filled in', async () => {
     spectator.component.setupForm();
 
     const downloadButtons = await loader.getAllHarnesses(MatButtonHarness.with({ text: 'Download SSH Public Key' }));
