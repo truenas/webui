@@ -1,15 +1,20 @@
 # Contributing
 
-## Raising Issues
+Anyone is free to help us build and maintain this project. If you see an issue that needs working on because it's important to you, you can contribute to the code by
+- First fork the repo, and then clone it locally.
+- Create a new branch.
+- In the root of the project, run yarn install.
 
-Feel free to raise an issue if you have a question, an enhancement, or a bug report.
+    This will install the dependencies, link the packages and do a build.
 
-You can raise issues by either creating a ticket on our Jira (https://jira.ixsystems.net) or by creating a PR with a detailed description of the current behavior and the expected behavior after the suggested fix.
+- Make the required changes.
 
-While raising an issue on Jira, please provide as much information as possible. Add screenshots and attached a debug file which you can get from your truenas 
+## Validating Your Changes
 
-Before creating a new ticket, user keywords to search if a duplicated issue has already been raised. In which case, you can show your interest in the ticket by commenting under it.
+We have a automated CI process setup which gets run on every PR. You must pass all of the checks for us to consider merging your PR. The checks make sure that all of the unit tests pass on your PR and that it builds successfully. Furthermore, multiple linter rules are enabled on the repo to ensure that the code is up to the format standards that we would like to keep in our project. If the linter sees issues in your project, it might ask you to remove those issues before you can make a commit.
 
-You can easily contribute to our project by creating a fork or a new branch. After committing your changes, you can create a PR. PR's require at least one approved review from a member of the UI Team before they can be merged. When you create a new PR, someone from the UI team is automatically requested for a PR review. Alternatively, you can ask for a review from @truenas/ui_team.
+## Create a new Pull Request
 
-Once your PR has been approved, your PR can be merged. Depending on the project status, merge actions might be restricted to authorized individuals only. In which case, approved PRs will be automatically merged in due time.
+Pull requests required at least one approved review from one of the members of the UI team before they can be merged. When you create a new PR, a member of the UI team will be automatically asked to review it. Alternatively, you can ask for review from @truenas/ui_team.
+
+Once your code has been reviewed and approved, your PR can be merged. Depending on the status of the project, somtimes only authorized members of the UI team can merge PRs. In which case a member of the UI team will be responsible for merging your PR.
