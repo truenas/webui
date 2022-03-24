@@ -26,5 +26,4 @@ We recommend that any new code that you add, you should also add unit tests for 
 
 Pull requests required at least one approved review from one of the members of the UI team before they can be merged. When you create a new PR, a member of the UI team will be automatically asked to review it. Alternatively, you can ask for review from @truenas/ui_team.
 
-Once your code has been reviewed and approved, your PR can be merged. Depending on the status of the project, somtimes only authorized members of the UI team can merge PRs. In which case a member of the UI team will be responsible for merging your PR.
-
+Once we have reviewed your PR, we will provide any feedback that needs addressing. If you feel a requested change is wrong, don't be afraid to discuss with us in the comments. Once the feedback is addressed, and the PR is reviewed, we'll ensure the branch is up to date with target, and merge it for you. Depending on the status of the project, somtimes only authorized members of the UI team can merge PRs. In which case, it might take a bit more time for it to be merged.
