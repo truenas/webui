@@ -40,3 +40,13 @@ export function parseMode(mode: string): UnixFilePermissions {
     },
   };
 }
+
+export function invertUmask(umask: string): string {
+  const perm = parseInt(umask, 8);
+  let mask = (~perm & 0o777).toString(8);
+  while (mask.length < 3) {
+    mask = '0' + mask;
+  }
+
+  return mask;
+}

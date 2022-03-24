@@ -14,9 +14,7 @@ import helptext from 'app/helptext/services/components/service-webdav';
 import { WebdavConfig, WebdavConfigUpdate, WebdavProtocol } from 'app/interfaces/webdav-config.interface';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
-import {
-  SystemGeneralService, WebSocketService, ValidationService, DialogService,
-} from 'app/services';
+import { WebSocketService, ValidationService, DialogService } from 'app/services';
 
 @UntilDestroy()
 @Component({
@@ -66,11 +64,12 @@ export class ServiceWebdavComponent implements OnInit {
     fcName: 'certssl',
     label: helptext.certssl_placeholder,
     tooltip: helptext.certssl_tooltip,
-    options: this.systemGeneralService.getCertificates().pipe(
+    options: this.ws.call('webdav.cert_choices').pipe(
       map((certificates) => {
-        const options = certificates.map((certificate) => ({
-          label: certificate.name,
-          value: certificate.id,
+        const certKeys = Object.keys(certificates);
+        const options = certKeys.map((key) => ({
+          label: certificates[key],
+          value: Number(key),
         }));
 
         return [
@@ -105,7 +104,6 @@ export class ServiceWebdavComponent implements OnInit {
     protected router: Router,
     protected route: ActivatedRoute,
     protected ws: WebSocketService,
-    protected systemGeneralService: SystemGeneralService,
     protected validationService: ValidationService,
     private cdr: ChangeDetectorRef,
     private dialogService: DialogService,
@@ -163,6 +161,10 @@ export class ServiceWebdavComponent implements OnInit {
         }
       },
     );
+  }
+
+  certificatesLinkClicked(): void {
+    this.router.navigate(['/', 'credentials', 'certificates']);
   }
 
   onSubmit(): void {

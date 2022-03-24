@@ -48,6 +48,12 @@
   }
 }
 
+.link {
+  color: var(--primary);
+  cursor: pointer;
+  font-size: x-small;
+}
+
 .label-container {
   align-items: center;
   display: flex;

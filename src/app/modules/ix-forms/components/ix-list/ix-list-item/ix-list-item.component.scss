@@ -1,0 +1,15 @@
+:host {
+  background: rgba(0, 0, 0, 0.1);
+  margin-bottom: 10px;
+}
+
+.list-item {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.delete-btn {
+  margin-bottom: -28px;
+  margin-left: auto;
+}

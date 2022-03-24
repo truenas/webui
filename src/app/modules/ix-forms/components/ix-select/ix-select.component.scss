@@ -17,6 +17,12 @@
   margin: 0 0 0 8px;
 }
 
+.link {
+  color: var(--primary);
+  cursor: pointer;
+  font-size: x-small;
+}
+
 .input-container {
   background: var(--bg1);
   border: solid 1.5px var(--lines);

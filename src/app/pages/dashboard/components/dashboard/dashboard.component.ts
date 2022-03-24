@@ -263,6 +263,9 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    if (this.interval) {
+      clearInterval(this.interval);
+    }
     this.stopListeners();
     this.core.unregister({ observerClass: this });
 
