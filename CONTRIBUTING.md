@@ -17,7 +17,7 @@ If you want to contribute to the translation of our UI, you can do so by editing
 }
 `
 
-## Create a new Pull Request
+## Raise a Pull Request
 
 Pull requests required at least one approved review from one of the members of the UI team before they can be merged. When you create a new PR, a member of the UI team will be automatically asked to review it. Alternatively, you can ask for review from @truenas/ui_team.
 
