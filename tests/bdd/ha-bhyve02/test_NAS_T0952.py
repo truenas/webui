@@ -132,4 +132,4 @@ def open_the_drop_down_details_pane_for_the_user(driver):
 @then('verify that the home directory has changed')
 def verify_that_the_home_directory_has_changed(driver):
     """verify that the home directory has changed."""
-    assert wait_on_element(driver, 5, '(//tr[contains(.,"ericbsd")]/following-sibling::tr)[1]//dd[contains(.,"/mnt/tank/ericbsd")]')
+    assert wait_on_element(driver, 5, '(//tr[contains(.,"ericbsd")]/following-sibling::tr)[1]//dd[contains(text(),"/mnt/tank/ericbsd")]')

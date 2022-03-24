@@ -105,6 +105,7 @@ def the_user_edit_page_should_open(driver):
 @then(parsers.parse('Change the users email for "{email}" and click save'))
 def change_the_users_email_and_click_save(driver, email):
     """Change the users email for "{email}" and click save."""
+    assert wait_on_element(driver, 7, '//h4[contains(.,"Identification")]')
     assert wait_on_element(driver, 7, '//input[@ix-auto="input__Email"]', 'inputable')
     driver.find_element_by_xpath('//input[@ix-auto="input__Email"]').clear()
     driver.find_element_by_xpath('//input[@ix-auto="input__Email"]').send_keys(email)
@@ -122,12 +123,13 @@ def change_should_be_saved(driver):
 @then('Open the user drop down to verify the email has been changed')
 def open_the_user_drop_down_to_verify_the_email_has_been_changed(driver):
     """Open the user drop down to verify the email has been changed."""
+    assert wait_on_element(driver, 5, '//tr[contains(.,"ericbsd")]/td', 'clickable')
     driver.find_element_by_xpath('//tr[contains(.,"ericbsd")]/td').click()
     assert wait_on_element(driver, 7, '(//tr[contains(.,"ericbsd")]/following-sibling::tr)[1]//button[contains(.,"Edit")]')
-    driver.find_element_by_xpath('//dt[contains(.,"Email:")]')
+    driver.find_element_by_xpath('(//tr[contains(.,"ericbsd")]/following-sibling::tr)[1]//dt[contains(text(),"Email:")]')
 
 
 @then('Updated value should be visible')
 def updated_value_should_be_visible(driver):
     """Updated value should be visible."""
-    driver.find_element_by_xpath('//dd[contains(.,"eturgeon@ixsystems.com")]')
+    driver.find_element_by_xpath('(//tr[contains(.,"ericbsd")]/following-sibling::tr)[1]//dd[contains(text(),"eturgeon@ixsystems.com")]')
