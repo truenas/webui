@@ -3,7 +3,7 @@
 Anyone is free to help us build and maintain this project. If you see an issue that needs working on because it's important to you, you can contribute to the code by
 - First fork the repo, and then clone it locally.
 - Create a new branch.
-- Review the README file to learn how to build and run the project as well as connect it to your TrueNAS
+- Review the [README](https://github.com/truenas/webui/blob/master/README.md) file to learn how to build and run the project as well as connect it to your TrueNAS
 - Make the required changes.
 
 ## Validating Your Changes
