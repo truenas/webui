@@ -64,16 +64,16 @@ def the_user_edit_page_should_open_change_the_path_of_the_users_home_directory(d
     """the User Edit Page should open, change the path of the users Home Directory."""
     assert wait_on_element(driver, 10, '//h3[contains(.,"Edit User")]')
     assert wait_on_element_disappear(driver, 10, '//h6[contains(.,"Please wait")]')
-    assert wait_on_element(driver, 7, '//input[@ix-auto="input__home"]', 'inputable')
-    driver.find_element_by_xpath('//input[@ix-auto="input__home"]').clear()
-    driver.find_element_by_xpath('//input[@ix-auto="input__home"]').send_keys('/mnt/tank/ericbsd')
+    assert wait_on_element(driver, 7, '//ix-explorer[@formcontrolname="home"]//input', 'inputable')
+    driver.find_element_by_xpath('//ix-explorer[@formcontrolname="home"]//input').clear()
+    driver.find_element_by_xpath('//ix-explorer[@formcontrolname="home"]//input').send_keys('/mnt/tank/ericbsd')
 
 
 @then('click save and changes should be saved, the drop-down details pane should show the home directory has changed')
 def click_save_and_changes_should_be_saved_the_dropdown_details_pane_should_show_the_home_directory_has_changed(driver):
     """click save and changes should be saved, the drop-down details pane should show the home directory has changed."""
-    assert wait_on_element(driver, 2, '//button[@ix-auto="button__SAVE"]')
-    driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
+    assert wait_on_element(driver, 2, '//button[span[contains(.,"Save")]]')
+    driver.find_element_by_xpath('//button[span[contains(.,"Save")]]').click()
     assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
     assert wait_on_element(driver, 7, '//div[contains(.,"Users")]')
     assert wait_on_element(driver, 10, '//tr[contains(.,"ericbsd")]//mat-icon', 'clickable')
