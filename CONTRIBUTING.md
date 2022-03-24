@@ -8,7 +8,7 @@ Anyone is free to help us build and maintain this project. If you see an issue t
 
 ESLint is setup to ensure that the code is up to the format standards that we would like to keep in our project. If the linter sees issues in your project, it might ask you to fix those issues before you can make a commit. A set of precommit commands will run to extract new text into translation files and check linter for any issues.
 
-If you want to contribute to the translation of our UI, you can do so by editing one of the `src\assets\i18n\[language_name].json` files. In each of those files, text strings and their translations in the relevant language are kept as key/value pairs.
+If you want to contribute to the translation of our UI, you can do so by editing one of the `[language_name].json` files under `src\assets\i18n\`. In each of those files, text strings and their translations in the relevant language are kept as key/value pairs.
 `
 {
   ...
