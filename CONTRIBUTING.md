@@ -20,7 +20,7 @@ If you want to contribute to the translation of our UI, you can do so by editing
 
 ## Tests
 
-We recommend that any new code that you add, you should also add unit tests for it. Covering it also reported on the PRs by the `codecov` bot.
+We recommend that any new code that you add, you should also add unit tests for it. Covering is also reported on the PRs by the `codecov` bot.
 
 ## Raise a Pull Request
 
