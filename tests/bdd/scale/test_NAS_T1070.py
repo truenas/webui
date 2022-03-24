@@ -71,14 +71,14 @@ def click_enable_permit_sudo_checkbox_and_click_save(driver):
     """click Enable Permit Sudo checkbox and click save."""
     assert wait_on_element(driver, 10, '//h3[contains(.,"Edit User")]')
     assert wait_on_element_disappear(driver, 10, '//h6[contains(.,"Please wait")]')
-    element = driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]')
+    element = driver.find_element_by_xpath('//button[span[contains(.,"Save")]]')
     driver.execute_script("arguments[0].scrollIntoView();", element)
     time.sleep(5)
-    value_exist = attribute_value_exist(driver, '//mat-checkbox[@ix-auto="checkbox__Permit Sudo"]', 'class', 'mat-checkbox-checked')
+    value_exist = attribute_value_exist(driver, '//ix-checkbox[@formcontrolname = "sudo"]//mat-checkbox', 'class', 'mat-checkbox-checked')
     if not value_exist:
-        driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__Permit Sudo"]').click()
-    wait_on_element(driver, 10, '//button[@ix-auto="button__SAVE"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
+        driver.find_element_by_xpath('//ix-checkbox[@formcontrolname = "sudo"]//mat-checkbox').click()
+    wait_on_element(driver, 10, '//button[span[contains(.,"Save")]]', 'clickable')
+    driver.find_element_by_xpath('//button[span[contains(.,"Save")]]').click()
 
 
 @then('the changes should be saved')
@@ -107,12 +107,12 @@ def updated_value_should_be_visible(driver):
     """updated value should be visible."""
     assert wait_on_element(driver, 10, '//h3[contains(.,"Edit User")]')
     assert wait_on_element_disappear(driver, 10, '//h6[contains(.,"Please wait")]')
-    element = driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]')
+    element = driver.find_element_by_xpath('//button[span[contains(.,"Save")]]')
     driver.execute_script("arguments[0].scrollIntoView();", element)
     time.sleep(0.5)
-    assert attribute_value_exist(driver, '//mat-checkbox[@ix-auto="checkbox__Permit Sudo"]', 'class', 'mat-checkbox-checked')
-    assert wait_on_element(driver, 10, '//*[@id="close-icon"]', 'clickable')
-    driver.find_element_by_xpath('//*[@id="close-icon"]').click()
+    assert attribute_value_exist(driver, '//ix-checkbox[@formcontrolname = "sudo"]//mat-checkbox', 'class', 'mat-checkbox-checked')
+    assert wait_on_element(driver, 10, '//*[@id="ix-close-icon"]', 'clickable')
+    driver.find_element_by_xpath('//*[@id="ix-close-icon"]').click()
     time.sleep(0.5)
 
 
