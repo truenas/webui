@@ -13,7 +13,7 @@ If you want to contribute to the translation of our UI, you can do so by editing
 `
 {
   ...,
-  "Translate this text": "Translated that text",
+  "Translate this text": "[Translation]",
   ...
 }
 `
