@@ -145,7 +145,7 @@
       color="primary"
     >{{ 'Save' | translate }}</button>
     <button
-      *ngIf="form.get('sshpubkey').value"
+      *ngIf="!isNew"
       mat-button
       type="button"
       (click)="onDownloadSshPublicKey()"
