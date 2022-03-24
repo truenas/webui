@@ -111,6 +111,10 @@ export class ThemeService {
     document.documentElement.style.setProperty('--white', '#ffffff');
     document.documentElement.style.setProperty('--grey', '#989898');
 
+    // Add neutral focus color
+    document.documentElement.style.setProperty('--focus-bg', 'rgba(122, 122, 122, .25)');
+    document.documentElement.style.setProperty('--focus-brd', 'rgba(255, 255, 255, .25)');
+
     // Set Material palette colors
     document.documentElement.style.setProperty('--primary', theme['primary']);
     document.documentElement.style.setProperty('--accent', theme['accent']);

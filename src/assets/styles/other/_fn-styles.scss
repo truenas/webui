@@ -86,7 +86,7 @@ button.mat-button.mat-accent:focus-visible,
 .ix-blue button:focus-visible,
 button:focus-visible {
   border-color: transparent !important;
-  box-shadow: 0 0 0 1px var(--alt-bg2) inset !important;
+  box-shadow: 0 0 0 1px var(--focus-brd) inset !important;
   outline-width: 0;
 }
 

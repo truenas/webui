@@ -14,9 +14,9 @@
   background: var(--warn);
 }
 
-button.sdk-focused.sdk-keyboard-focused,
+button.cdk-focused.cdk-keyboard-focused:focus-visible,
 button:focus-visible {
-  background: rgb(255, 255, 255, 0.2) !important;
-  box-shadow: 0 0 0 1px rgb(255, 255, 255, 0.3) inset !important;
+  background: var(--focus-bg);
+  box-shadow: 0 0 0 1px var(--focus-brd) inset !important;
   outline-width: 0;
 }

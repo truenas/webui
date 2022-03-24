@@ -50,13 +50,9 @@
 
 .ix-logo:focus-visible,
 .topbar button:focus-visible {
-  background: rgb(255, 255, 255, 0.2);
-  box-shadow: 0 0 0 1px rgb(255, 255, 255, 0.3) inset;
+  background: var(--focus-bg);
+  box-shadow: 0 0 0 1px var(--focus-brd) inset !important;
   outline-width: 0;
-}
-
-.ix-logo:focus-visible {
-  background: rgb(120, 120, 120, 0.2) !important;
 }
 
 .ix-logo {

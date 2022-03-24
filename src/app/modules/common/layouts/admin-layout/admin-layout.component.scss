@@ -61,8 +61,8 @@
 
 .logo:focus-visible,
 .logo-text:focus-visible {
-  background: rgba(120, 120, 120, 0.2);
-  box-shadow: 0 0 0 1px rgb(255, 255, 255, 0.3) inset;
+  background: var(--focus-bg);
+  box-shadow: 0 0 0 1px var(--focus-brd) inset !important;
   outline-width: 0;
 }
 
