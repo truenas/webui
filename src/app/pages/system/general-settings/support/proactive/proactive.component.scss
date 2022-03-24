@@ -1,0 +1,8 @@
+.two-columns {
+  display: flex;
+
+  > * {
+    display: block;
+    width: 50%;
+  }
+}
