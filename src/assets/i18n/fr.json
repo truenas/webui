@@ -1,6 +1,5 @@
 {
   "": "",
-  " KiB.": "",
   " bytes.": "",
   "1 minute": "",
   "2 minute": "",
@@ -27,6 +26,7 @@
   "Add Target/Extent": "",
   "Add To Trusted Store": "",
   "Add any more <a href=\"https://man7.org/linux/man-pages/man5/sshd_config.5.html\" target=\"_blank\">sshd_config(5)</a> options not covered in this screen. Enter one option per line. These options are case-sensitive. Misspellings can prevent the SSH service from starting.": "",
+  "Add listen": "",
   "Add more options from <a href=\"https://linux.die.net/man/8/tftpd\" target=\"_blank\">tftpd(8)</a>. Add one option on each line.": "",
   "Additional  <a href=\"https://www.samba.org/samba/docs/current/man-html/smb.conf.5.html\" target=\"_blank\">smb.conf</a>  parameters.": "",
   "Additional Kerberos application settings. See the \"appdefaults\" section of <a href=\"https://web.mit.edu/kerberos/krb5-1.12/doc/admin/conf_files/krb5_conf.html\" target=\"_blank\">[krb.conf(5)]</a>. for available settings and usage syntax.": "",
@@ -207,6 +207,7 @@
   "Edit Kerberos Realm": "",
   "Edit NTP Server": "",
   "Edit Pool Options for {name}": "",
+  "Edit Portal": "",
   "Edit Sysctl": "",
   "Electing {controller}.": "",
   "Enable GPU support": "",
