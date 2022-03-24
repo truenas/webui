@@ -3,7 +3,7 @@
 Anyone is free to help us build and maintain this project. If you see an issue that needs working on because it's important to you, you can contribute to the code by
 - First fork the repo, and then clone it locally.
 - Create a new branch.
-- In the root of the project, run `yarn install` to install the dependecies and then `yarn start` to build the project and start running it in localhost.
+- Review the README file to learn how to build and run the project as well as connect it to your TrueNAS
 - Make the required changes.
 
 ## Validating Your Changes
