@@ -29,4 +29,4 @@ Once your code has been reviewed and approved, your PR can be merged. Depending 
 
 ## Tests
 
-We're aiming to have more and more of our code covered by tests. So, we recommend that any new code that you add, you should also add unit tests for it. Covering it also reported on the PRs by the `codecov` bot.
+We recommend that any new code that you add, you should also add unit tests for it. Covering it also reported on the PRs by the `codecov` bot.
