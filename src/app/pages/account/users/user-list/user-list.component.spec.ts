@@ -3,7 +3,6 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
-import { of, Subject } from 'rxjs';
 import { Preferences } from 'app/interfaces/preferences.interface';
 import { User } from 'app/interfaces/user.interface';
 import { EntityModule } from 'app/modules/entity/entity.module';
@@ -11,7 +10,7 @@ import { IxTableModule } from 'app/modules/ix-tables/ix-table.module';
 import { IxTableHarness } from 'app/modules/ix-tables/testing/ix-table.harness';
 import { usersInitialState, UsersState } from 'app/pages/account/users/store/user.reducer';
 import { selectUsers, selectUserState, selectUsersTotal } from 'app/pages/account/users/store/user.selectors';
-import { DialogService, ModalService, WebSocketService } from 'app/services';
+import { DialogService, WebSocketService } from 'app/services';
 import { CoreService } from 'app/services/core-service/core.service';
 import { selectPreferences } from 'app/store/preferences/preferences.selectors';
 import { UserDetailsRowComponent } from '../user-details-row/user-details-row.component';
@@ -81,12 +80,9 @@ describe('UserListComponent', () => {
       UserDetailsRowComponent,
     ],
     providers: [
+      mockProvider(CoreService),
       mockProvider(WebSocketService),
       mockProvider(DialogService),
-      mockProvider(ModalService, {
-        openInSlideIn: jest.fn(() => of(true)),
-        onClose$: new Subject<unknown>(),
-      }),
       provideMockStore({
         selectors: [
           {
@@ -109,7 +105,6 @@ describe('UserListComponent', () => {
           },
         ],
       }),
-      mockProvider(CoreService),
     ],
   });
 

@@ -172,7 +172,7 @@ export class WebSocketService {
     }
   }
 
-  subscribe<K extends keyof ApiEventDirectory>(name: K): Observable<ApiEvent<ApiEventDirectory[K]['response']>> {
+  subscribe<K extends keyof ApiEventDirectory>(name: K | '*'): Observable<ApiEvent<ApiEventDirectory[K]['response']>> {
     const source = Observable.create((observer: Subscriber<ApiEventDirectory[K]['response']>) => {
       if (this.subscriptions.has(name)) {
         this.subscriptions.get(name).push(observer);

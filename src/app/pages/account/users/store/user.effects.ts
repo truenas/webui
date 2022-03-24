@@ -10,7 +10,7 @@ import { ApiEventMessage } from 'app/enums/api-event-message.enum';
 import { QueryParams } from 'app/interfaces/query-api.interface';
 import { User } from 'app/interfaces/user.interface';
 import {
-  userPageEntered, usersLoaded, usersNotLoaded, userAdded, userChanged, userRemoved,
+  userPageEntered, usersLoaded, usersNotLoaded, userRemoved,
 } from 'app/pages/account/users/store/user.actions';
 import { WebSocketService } from 'app/services';
 import { AppState } from 'app/store';
@@ -41,23 +41,7 @@ export class UserEffects {
     }),
   ));
 
-  // TODO: Two types of subscription need to be refactored into one in WebSocketService.
-  subscribeToUpdates$ = createEffect(() => this.actions$.pipe(
-    ofType(usersLoaded),
-    switchMap(() => {
-      return this.ws.subscribe('user.query').pipe(
-        filter((event) => !(event.msg === ApiEventMessage.Changed && event.cleared)),
-        map((event) => {
-          switch (event.msg) {
-            case ApiEventMessage.Added:
-              return userAdded({ user: event.fields });
-            case ApiEventMessage.Changed:
-              return userChanged({ user: event.fields });
-          }
-        }),
-      );
-    }),
-  ));
+  // userAdded() and userChanged() are dispatched from the User Form
 
   subscribeToRemoval$ = createEffect(() => this.actions$.pipe(
     ofType(usersLoaded),
