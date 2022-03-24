@@ -526,6 +526,7 @@
   "Parent path": "",
   "Partition": "",
   "Passphrase": "",
+  "Passphrase and confirmation should match.": "",
   "Passphrase {successMessage} <i>{poolName}</i>": "",
   "Passthrough": "",
   "Password Disabled": "",

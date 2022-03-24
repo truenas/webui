@@ -1695,6 +1695,7 @@
   "Parent dataset path (read-only).": "",
   "Parent path": "",
   "Partition": "",
+  "Passphrase and confirmation should match.": "",
   "Passphrase {successMessage} <i>{poolName}</i>": "",
   "Passthrough": "",
   "Password Disabled": "",
