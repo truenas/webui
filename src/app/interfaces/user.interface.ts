@@ -49,7 +49,7 @@ export type DeleteUserParams = [
 export interface UserUpdate {
   uid?: number;
   username?: string;
-  group?: string;
+  group?: number;
   home?: string;
   home_mode?: string;
   shell?: string;
@@ -64,6 +64,7 @@ export interface UserUpdate {
   sudo_nopasswd?: boolean;
   sudo_commands?: string[];
   sshpubkey?: string;
-  groups?: string;
+  groups?: number[];
+  group_create?: boolean;
   attributes?: Record<string, unknown>;
 }

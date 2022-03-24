@@ -1,63 +1,67 @@
-<mat-card>
-  <mat-card-content>
-    <table
-      ix-table
-      [dataSource]="dataSource"
-      matSort
-      matSortDisableClear="true"
-      [matSortActive]="defaultSort.active"
-      [matSortDirection]="defaultSort.direction"
-      [multiTemplateDataRows]="true"
-      [fixedLayout]="true"
-    >
-      <ng-container matColumnDef="username">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'Username' | translate }}</th>
-        <td mat-cell *matCellDef="let user; dataSource: dataSource">{{ user.username }}</td>
-      </ng-container>
+<entity-empty *ngIf="isLoading$ | async; else loaded" [conf]="loadingConfig"></entity-empty>
 
-      <ng-container matColumnDef="uid">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'UID' | translate }}</th>
-        <td mat-cell *matCellDef="let user; dataSource: dataSource">{{ user.uid }}</td>
-      </ng-container>
+<ng-template #loaded>
+  <mat-card>
+    <mat-card-content>
+      <table
+        ix-table
+        [dataSource]="dataSource"
+        matSort
+        matSortDisableClear="true"
+        [matSortActive]="defaultSort.active"
+        [matSortDirection]="defaultSort.direction"
+        [multiTemplateDataRows]="true"
+        [fixedLayout]="true"
+      >
+        <ng-container matColumnDef="username">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'Username' | translate }}</th>
+          <td mat-cell *matCellDef="let user; dataSource: dataSource">{{ user.username }}</td>
+        </ng-container>
 
-      <ng-container matColumnDef="builtin">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'Builtin' | translate }}</th>
-        <td mat-cell *matCellDef="let user; dataSource: dataSource">{{ user.builtin }}</td>
-      </ng-container>
+        <ng-container matColumnDef="uid">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'UID' | translate }}</th>
+          <td mat-cell *matCellDef="let user; dataSource: dataSource">{{ user.uid }}</td>
+        </ng-container>
 
-      <ng-container matColumnDef="home">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'Home' | translate }}</th>
-        <td mat-cell *matCellDef="let user; dataSource: dataSource">{{ user.home }}</td>
-      </ng-container>
+        <ng-container matColumnDef="builtin">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'Builtin' | translate }}</th>
+          <td mat-cell *matCellDef="let user; dataSource: dataSource">{{ user.builtin }}</td>
+        </ng-container>
 
-      <ng-container matColumnDef="full_name">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'Full Name' | translate }}</th>
-        <td mat-cell *matCellDef="let user; dataSource: dataSource">{{ user.full_name }}</td>
-      </ng-container>
+        <ng-container matColumnDef="home">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'Home' | translate }}</th>
+          <td mat-cell *matCellDef="let user; dataSource: dataSource">{{ user.home }}</td>
+        </ng-container>
 
-      <ix-expand-toggle-column [expandedRow]="expandedRow" (toggle)="onToggle($event)"></ix-expand-toggle-column>
+        <ng-container matColumnDef="full_name">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'Full Name' | translate }}</th>
+          <td mat-cell *matCellDef="let user; dataSource: dataSource">{{ user.full_name }}</td>
+        </ng-container>
 
-      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-      <tr
-        mat-row
-        *matRowDef="let user; columns: displayedColumns; dataSource: dataSource"
-        [ixDetailRow]="user"
-        [ixDetailRowOptions]="{ colspan: displayedColumns.length, updater: this.getUsers }"
-        [ixDetailRowTemplate]="expandedRowTemplate"
-        (toggle)="onToggle($event)"
-      ></tr>
+        <ix-expand-toggle-column [expandedRow]="expandedRow" (toggle)="onToggle($event)"></ix-expand-toggle-column>
 
-      <tr class="mat-row no-data-row" *matNoDataRow>
-        <td class="mat-cell" [attr.colspan]="displayedColumns.length">
-          <entity-empty [conf]="currentEmptyConf"></entity-empty>
-        </td>
-      </tr>
-    </table>
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr
+          mat-row
+          *matRowDef="let user; columns: displayedColumns; dataSource: dataSource"
+          [ixDetailRow]="user"
+          [ixDetailRowOptions]="{ colspan: displayedColumns.length }"
+          [ixDetailRowTemplate]="expandedRowTemplate"
+          (toggle)="onToggle($event)"
+        ></tr>
 
-    <ix-table-paginator [dataSource]="dataSource"></ix-table-paginator>
-  </mat-card-content>
-</mat-card>
+        <tr class="mat-row no-data-row" *matNoDataRow>
+          <td class="mat-cell" [attr.colspan]="displayedColumns.length">
+            <entity-empty [conf]="emptyOrErrorConfig$ | async"></entity-empty>
+          </td>
+        </tr>
+      </table>
 
-<ng-template #expandedRowTemplate let-user let-colspan="colspan" let-updater="updater">
-  <user-details-row [user]="user" [colspan]="colspan" (update)="updater()"></user-details-row>
+      <ix-table-paginator [dataSource]="dataSource"></ix-table-paginator>
+    </mat-card-content>
+  </mat-card>
+</ng-template>
+
+<ng-template #expandedRowTemplate let-user let-colspan="colspan">
+  <user-details-row [user]="user" [colspan]="colspan"></user-details-row>
 </ng-template>

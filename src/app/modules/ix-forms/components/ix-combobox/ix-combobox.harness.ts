@@ -37,4 +37,8 @@ export class IxComboboxHarness extends ComponentHarness implements IxFormControl
     await harness.focus();
     await harness.selectOption({ text: optionLabel });
   }
+
+  async isDisabled(): Promise<boolean> {
+    return (await this.getAutoCompleteHarness()).isDisabled();
+  }
 }
