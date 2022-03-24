@@ -2191,6 +2191,7 @@
   "User-defined string used to decrypt the dataset. Can be used instead of an encryption key.<br>      WARNING: the passphrase is the only means to decrypt the information stored in this dataset. Be sure to create a      memorable passphrase or physically secure the passphrase.": "",
   "Username, Password, or 2FA Code is incorrect.": "",
   "Usernames can be up to 16 characters long. When using NIS or other legacy software with limited username lengths, keep usernames to eight characters or less for compatibility.": "",
+  "Users could not be loaded": "",
   "Uses the SMB Service <i>NetBIOS Name</i> to advertise  the server to WS-Discovery clients. This causes the computer appear in  the <i>Network Neighborhood</i> of modern Windows OSes.": "",
   "Using this option will replicate all snapshots  which names match specified regular expression. The  performance on the systems with large number of snapshots  will be lower, as snapshots metadata needs to be read in order  to determine snapshots creation order.": "",
   "Using this option will replicate all snapshots which names match specified regular expression. The performance on the systems with large number of snapshots will be lower, as snapshots metadata needs to be read in order to determine snapshots creation order.": "",

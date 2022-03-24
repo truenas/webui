@@ -13,13 +13,11 @@ import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxTableModule } from 'app/modules/ix-tables/ix-table.module';
 import { GroupFormComponent } from 'app/pages/account/groups/group-form/group-form.component';
 import { GroupListComponent } from 'app/pages/account/groups/group-list/group-list.component';
-import { UserFormComponent } from 'app/pages/account/users/user-form/user-form.component';
 import { StorageService } from 'app/services/storage.service';
 import { EntityModule } from '../../modules/entity/entity.module';
 import { routing } from './account.routing';
 import { MembersComponent } from './groups/members/members.component';
-import { UserDetailsRowComponent } from './users/user-details-row/user-details-row.component';
-import { UserListComponent } from './users/user-list/user-list.component';
+import { UsersModule } from './users/users.module';
 
 @NgModule({
   imports: [
@@ -38,14 +36,12 @@ import { UserListComponent } from './users/user-list/user-list.component';
     IxFormsModule,
     IxTableModule,
     FlexLayoutModule,
+    UsersModule,
   ],
   declarations: [
     GroupListComponent,
     GroupFormComponent,
-    UserListComponent,
-    UserFormComponent,
     MembersComponent,
-    UserDetailsRowComponent,
   ],
   providers: [
     StorageService,
