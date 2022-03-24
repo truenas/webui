@@ -6,11 +6,16 @@ Anyone is free to help us build and maintain this project. If you see an issue t
 - Review the [README](https://github.com/truenas/webui/blob/master/README.md) file to learn how to build and run the project as well as connect it to your TrueNAS
 - Make the required changes.
 
-## Validating Your Changes
+ESLint is setup to ensure that the code is up to the format standards that we would like to keep in our project. If the linter sees issues in your project, it might ask you to fix those issues before you can make a commit. A set of precommit commands will run to extract new text into translation files and check linter for any issues.
 
-We have a automated CI process setup which gets run on every PR. You must pass all of the checks for us to consider merging your PR. The checks make sure that all of the unit tests pass on your PR and that it builds successfully. Furthermore, multiple linter rules are enabled on the repo to ensure that the code is up to the format standards that we would like to keep in our project. If the linter sees issues in your project, it might ask you to remove those issues before you can make a commit.
-
-You can check if your code formatting follows our stands by running 
+If you want to contribute to the translation of our UI, you can do so by editing one of the `src\assets\i18n\[language_name].json` files. In each of those files, text strings and their translations in the relevant language are kept as key/value pairs.
+`
+{
+  ...
+  "Translate this text": "Translated that text",
+  ...
+}
+`
 
 ## Create a new Pull Request
 
