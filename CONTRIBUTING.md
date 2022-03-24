@@ -18,7 +18,9 @@ If you want to contribute to the translation of our UI, you can do so by editing
 }
 `
 
-Once you're satisfied with the changes you have made, it's time to raise a PR.
+## Tests
+
+We recommend that any new code that you add, you should also add unit tests for it. Covering it also reported on the PRs by the `codecov` bot.
 
 ## Raise a Pull Request
 
@@ -26,7 +28,3 @@ Pull requests required at least one approved review from one of the members of t
 
 Once your code has been reviewed and approved, your PR can be merged. Depending on the status of the project, somtimes only authorized members of the UI team can merge PRs. In which case a member of the UI team will be responsible for merging your PR.
 
-
-## Tests
-
-We recommend that any new code that you add, you should also add unit tests for it. Covering it also reported on the PRs by the `codecov` bot.
