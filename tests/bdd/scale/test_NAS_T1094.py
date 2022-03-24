@@ -66,14 +66,15 @@ def the_user_edit_page_should_open_change_disable_password_to_no_and_click_save(
     """the User Edit Page should open, change "Disable Password" to No and click save."""
     assert wait_on_element_disappear(driver, 10, '//h6[contains(.,"Please wait")]')
     assert wait_on_element(driver, 10, '//h3[contains(.,"Edit User")]')
-    assert wait_on_element(driver, 3, '//mat-select[@ix-auto="select__Disable Password"]', 'clickable')
-    driver.find_element_by_xpath('//mat-select[@ix-auto="select__Disable Password"]').click()
-    assert wait_on_element(driver, 3, '//mat-option[@ix-auto="option__Disable Password_No"]', 'clickable')
-    driver.find_element_by_xpath('//mat-option[@ix-auto="option__Disable Password_No"]').click()
-    element = driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]')
+    assert wait_on_element(driver, 3, '//ix-slide-toggle[@formcontrolname="password_disabled"]//mat-slide-toggle/label', 'clickable')
+    driver.find_element_by_xpath('//ix-slide-toggle[@formcontrolname="password_disabled"]//mat-slide-toggle/label').click()
+    value_exist = attribute_value_exist(driver, '//ix-slide-toggle[@formcontrolname="password_disabled"]//mat-slide-toggle', 'class', 'mat-checked')
+    if value_exist:
+        driver.find_element_by_xpath('//ix-slide-toggle[@formcontrolname="password_disabled"]//mat-slide-toggle/label').click()
+    element = driver.find_element_by_xpath('//button[span[contains(.,"Save")]]')
     driver.execute_script("arguments[0].scrollIntoView();", element)
-    assert wait_on_element(driver, 10, '//button[@ix-auto="button__SAVE"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
+    assert wait_on_element(driver, 10, '//button[span[contains(.,"Save")]]', 'clickable')
+    driver.find_element_by_xpath('//button[span[contains(.,"Save")]]').click()
     time.sleep(1)
 
 @then('change should be saved, open the user page and verify the user Disable Password is false')
