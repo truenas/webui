@@ -4,7 +4,6 @@ Anyone is free to help us build and maintain this project. If you see an issue t
 - First fork the repo, and then clone it locally.
 - Create a new branch.
 - In the root of the project, run `yarn install` to install the dependecies and then `yarn start` to build the project and start running it in localhost.
-- - This will install the dependencies, link the packages and do a build.
 - Make the required changes.
 
 ## Validating Your Changes
