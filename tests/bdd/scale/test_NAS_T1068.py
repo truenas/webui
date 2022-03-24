@@ -70,15 +70,15 @@ def the_user_edit_page_should_open_change_the_user_shell_and_click_save(driver):
     """the User Edit Page should open, change the user shell and click save."""
     assert wait_on_element(driver, 10, '//h3[contains(.,"Edit User")]')
     assert wait_on_element_disappear(driver, 10, '//h6[contains(.,"Please wait")]')
-    element = driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]')
+    element = driver.find_element_by_xpath('//button[span[contains(.,"Save")]]')
     driver.execute_script("arguments[0].scrollIntoView();", element)
     time.sleep(0.5)
-    assert wait_on_element(driver, 5, '//mat-select[@ix-auto="select__Shell"]', 'clickable')
-    driver.find_element_by_xpath('//mat-select[@ix-auto="select__Shell"]').click()
+    assert wait_on_element(driver, 5, '//ix-combobox[@formcontrolname="shell"]', 'clickable')
+    driver.find_element_by_xpath('//ix-combobox[@formcontrolname="shell"]').click()
     assert wait_on_element(driver, 10, '//span[contains(.,"zsh")]', 'clickable')
-    driver.find_element_by_xpath('//mat-option[@ix-auto="option__Shell_zsh"]').click()
-    wait_on_element(driver, 10, '//button[@ix-auto="button__SAVE"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
+    driver.find_element_by_xpath('//mat-option[span[contains(.,"zsh")]]').click()
+    wait_on_element(driver, 10, '//button[span[contains(.,"Save")]]', 'clickable')
+    driver.find_element_by_xpath('//button[span[contains(.,"Save")]]').click()
 
 
 @then('open the user dropdown, and verify the shell value has changed')
