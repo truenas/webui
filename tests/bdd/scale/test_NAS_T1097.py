@@ -71,18 +71,18 @@ def the_user_edit_page_should_open_change_the_user_email_eturgeonixsystemscom(dr
     """the User Edit Page should open, change the user email "eturgeon@ixsystemscom"."""
     assert wait_on_element(driver, 10, '//h3[contains(.,"Edit User")]')
     assert wait_on_element_disappear(driver, 10, '//h6[contains(.,"Please wait")]')
-    assert wait_on_element(driver, 7, '//input[@ix-auto="input__Email"]', 'inputable')
-    driver.find_element_by_xpath('//input[@ix-auto="input__Email"]').clear()
-    driver.find_element_by_xpath('//input[@ix-auto="input__Email"]').send_keys("eturgeon@ixsystemscom")
+    assert wait_on_element(driver, 7, '//ix-input[@formcontrolname="email"]//input', 'inputable')
+    driver.find_element_by_xpath('//ix-input[@formcontrolname="email"]//input').clear()
+    driver.find_element_by_xpath('//ix-input[@formcontrolname="email"]//input').send_keys("eturgeon@ixsystemscom")
 
 
 @then('you should not be able to save the changes and an error message should appear')
 def you_should_not_be_able_to_save_the_changes_and_an_error_message_should_appear(driver):
     """you should not be able to save the changes and an error message should appear."""
-    wait_on_element(driver, 10, '//button[@ix-auto="button__SAVE"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
+    wait_on_element(driver, 10, '//button[span[contains(.,"Save")]]', 'clickable')
+    driver.find_element_by_xpath('//button[span[contains(.,"Save")]]').click()
     assert wait_on_element(driver, 3, '//h4[contains(.,"Identification")]')
     assert wait_on_element(driver, 3, '//mat-error[contains(.,"Not a valid E-Mail address")]')
     time.sleep(0.5)
-    assert wait_on_element(driver, 10, '//*[@id="close-icon"]', 'clickable')
-    driver.find_element_by_xpath('//*[@id="close-icon"]').click()
+    assert wait_on_element(driver, 10, '//*[@id="ix-close-icon"]', 'clickable')
+    driver.find_element_by_xpath('//*[@id="ix-close-icon"]').click()
