@@ -5,6 +5,7 @@ import time
 from function import (
     wait_on_element,
     is_element_present,
+    attribute_value_exist,
     wait_on_element_disappear,
     ssh_cmd,
 )
@@ -66,11 +67,14 @@ def the_user_edit_page_should_open_change_disable_password_to_yes_and_click_save
     """the User Edit Page should open, change "Disable Password" to Yes and click save."""
     assert wait_on_element(driver, 10, '//h3[contains(.,"Edit User")]')
     assert wait_on_element_disappear(driver, 10, '//h6[contains(.,"Please wait")]')
-    driver.find_element_by_xpath('//mat-select[@ix-auto="select__Disable Password"]').click()
-    assert wait_on_element(driver, 3, '//mat-option[@ix-auto="option__Disable Password_Yes"]', 'clickable')
-    driver.find_element_by_xpath('//mat-option[@ix-auto="option__Disable Password_Yes"]').click()
-    wait_on_element(driver, 10, '//button[@ix-auto="button__SAVE"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
+    #driver.find_element_by_xpath('//ix-slide-toggle[@formcontrolname="password_disabled"]//mat-slide-toggle/label').click()
+    assert wait_on_element(driver, 3, '//ix-slide-toggle[@formcontrolname="password_disabled"]//mat-slide-toggle/label', 'clickable')
+    driver.find_element_by_xpath('//ix-slide-toggle[@formcontrolname="password_disabled"]//mat-slide-toggle/label').click()
+    value_exist = attribute_value_exist(driver, '//ix-slide-toggle[@formcontrolname="password_disabled"]//mat-slide-toggle', 'class', 'mat-checked')
+    if not value_exist:
+        driver.find_element_by_xpath('//ix-slide-toggle[@formcontrolname="password_disabled"]//mat-slide-toggle/label').click()
+    wait_on_element(driver, 10, '//button[span[contains(.,"Save")]]', 'clickable')
+    driver.find_element_by_xpath('//button[span[contains(.,"Save")]]').click()
 
 
 @then('change should be saved, open the user page and verify the user Disable Password is true')
