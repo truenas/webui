@@ -11,7 +11,7 @@ ESLint is setup to ensure that the code is up to the format standards that we wo
 If you want to contribute to the translation of our UI, you can do so by editing one of the `[language_name].json` files under `src\assets\i18n\`. In each of those files, text strings and their translations in the relevant language are kept as key/value pairs.
 `
 {
-  ...
+  ...,
   "Translate this text": "Translated that text",
   ...
 }
