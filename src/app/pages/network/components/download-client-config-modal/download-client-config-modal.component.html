@@ -5,9 +5,11 @@
     [label]="'Client Certificate' | translate"
     [options]="serverCertificates$"
     [required]="true"
-    [linkText]="'Certificates' | translate"
-    (linkClicked)="certificatesLinkClicked()"
+    class="linked-input"
   ></ix-select>
+  <a class="link" (click)="certificatesLinkClicked()">
+    {{ 'Certificates' | translate }}<mat-icon style="font-size: 12px">open_in_new</mat-icon>
+  </a>
 </div>
 <div mat-dialog-actions class="buttons">
   <button

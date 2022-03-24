@@ -10,19 +10,24 @@
               [label]="'Server Certificate' | translate"
               [required]="true"
               [options]="serverCertificates$"
-              (linkClicked)="certificatesLinkClicked()"
-              [linkText]="'Certificates' | translate"
-              [tooltip]="tooltips.server_certificate | translate"
+              class="linked-input"
             ></ix-select>
+            <a class="link" (click)="certificatesLinkClicked()">
+              {{ 'Certificates' | translate }}<mat-icon style="font-size: 12px">open_in_new</mat-icon>
+            </a>
+
             <ix-select
               formControlName="root_ca"
               [label]="'Root CA' | translate"
               [required]="true"
               [options]="rootAuthorities$"
+              class="linked-input"
               [tooltip]="tooltips.root_ca | translate"
-              [linkText]="'Certificate Authorities' | translate"
-              [tooltip]="tooltips.server_certificate | translate"
             ></ix-select>
+            <a class="link" (click)="certificatesLinkClicked()">
+              {{ 'Certificate Authorities' | translate }}<mat-icon style="font-size: 12px">open_in_new</mat-icon>
+            </a>
+
             <ix-ip-input-with-netmask
               formControlName="server"
               [label]="'Server' | translate"
