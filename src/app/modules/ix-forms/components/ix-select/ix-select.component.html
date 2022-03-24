@@ -28,10 +28,6 @@
     </mat-select>
   </div>
 
-
-  <div *ngIf="linkText">
-    <a (click)="linkClicked.emit()" class="link">{{ linkText | translate }}<mat-icon style="font-size: x-small;">open_in_new</mat-icon></a>
-  </div>
   <ix-errors [control]="controlDirective.control" [label]="label"></ix-errors>
 
   <mat-hint *ngIf="hint">{{ hint }}</mat-hint>

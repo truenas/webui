@@ -52,9 +52,11 @@
               [label]="'Certificate' | translate"
               [tooltip]="helptext.ssltls_certificate_tooltip | translate"
               [options]="certificates$"
-              [linkText]="'Certificates' | translate"
-              (linkClicked)="onLinkClicked()"
+              class="linked-input"
             ></ix-select>
+            <a class="link" (click)="onLinkClicked()">
+              {{ 'Certificates' | translate }}<mat-icon>open_in_new</mat-icon>
+            </a>
           </ix-fieldset>
 
           <ng-container *ngIf="isAdvancedMode">

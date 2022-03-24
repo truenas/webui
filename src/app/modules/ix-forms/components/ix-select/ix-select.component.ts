@@ -1,6 +1,6 @@
 import {
   ChangeDetectionStrategy, ChangeDetectorRef,
-  Component, EventEmitter, Input, OnChanges, Output,
+  Component, Input, OnChanges,
 } from '@angular/core';
 import {
   ControlValueAccessor, FormControl, NgControl,
@@ -27,8 +27,6 @@ export class IxSelectComponent implements ControlValueAccessor, OnChanges {
   @Input() required: boolean;
   @Input() tooltip: string;
   @Input() multiple: boolean;
-  @Output() linkClicked: EventEmitter<void> = new EventEmitter();
-  @Input() linkText: string = null;
 
   constructor(
     public controlDirective: NgControl,
