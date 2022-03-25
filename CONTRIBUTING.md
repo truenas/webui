@@ -14,7 +14,7 @@ Here's the layout of the main branches
 - `truenas/12.0-stable` points to TrueNAS Core 12.0
 - `truenas/13.0-stbale` corresponds to TrueNAS Core 13.0
 
-Based on the version of TrueNAS that you would like to make changes to, base your branch from that branch in the project. This affects whether or not we're able to merge your changes back to the relevent version since they have significant differences and cannot be merged.
+Based on the version of TrueNAS that you would like to make changes to, base your branch from that branch in the project. This affects whether or not we're able to merge your changes back to the relevent version since they have significant differences and cannot be interchanged.
 
 ## Code Validation
 
