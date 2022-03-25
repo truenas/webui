@@ -17,8 +17,9 @@
       (ngModelChange)="onChange($event)"
     >
       <ng-container *ngIf="opts$ | async as opts; else loadingOrError">
-        <mat-option *ngFor="let option of opts$ | async" [value]="option.value">{{ option.label }}</mat-option>
         <mat-option *ngIf="opts.length === 0" value="" [disabled]="true">{{ 'No options' | translate  }}</mat-option>
+        <mat-option *ngIf="opts.length > 0 && !multiple && !required" [value]="null">--</mat-option>
+        <mat-option *ngFor="let option of opts$ | async" [value]="option.value">{{ option.label }}</mat-option>
       </ng-container>
 
       <ng-template #loadingOrError>
