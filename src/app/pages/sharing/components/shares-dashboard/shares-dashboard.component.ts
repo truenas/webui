@@ -384,6 +384,20 @@ export class SharesDashboardComponent implements AfterViewInit {
       }, (err) => {
         new EntityUtils().handleWsError(this, err, this.dialog);
       });
+    } else if (share === ShareType.Iscsi) {
+      const targetForm = this.slideInService.open(TargetFormComponent, { wide: true });
+      if (id) {
+        targetForm.setTargetForEdit(tableComponent.displayedDataSource.find((row) => row.id === id));
+      }
+      this.slideInService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
+        if (!tableComponent) {
+          this.refreshDashboard();
+        } else {
+          tableComponent.getData();
+        }
+      }, (err) => {
+        new EntityUtils().handleWsError(this, err, this.dialog);
+      });
     } else {
       this.modalService.openInSlideIn(formComponent, id);
       this.modalService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {

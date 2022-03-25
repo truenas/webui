@@ -22,6 +22,16 @@ export const helptextSharingIscsi = {
   target_form_placeholder_mode: T('Target Mode'),
   target_form_tooltip_mode: T('Define the target as *iSCSI*,\
  *Fibre Channel*, or *Both*.'),
+  target_form_enum_mode: [{
+    label: 'iSCSI',
+    value: 'ISCSI',
+  }, {
+    label: 'Fibre Channel',
+    value: 'FC',
+  }, {
+    label: 'Both',
+    value: 'BOTH',
+  }],
 
   target_form_placeholder_portal: T('Portal Group ID'),
   target_form_tooltip_portal: T(
@@ -39,6 +49,16 @@ export const helptextSharingIscsi = {
   target_form_tooltip_authmethod: T(
     'Choices are <i>None, Auto, CHAP,</i> or <i>Mutual CHAP</i>.',
   ),
+  target_form_enum_authmethod: [{
+    label: 'None',
+    value: 'NONE',
+  }, {
+    label: 'CHAP',
+    value: 'CHAP',
+  }, {
+    label: 'Mutual CHAP',
+    value: 'CHAP_MUTUAL',
+  }],
 
   target_form_placeholder_auth: T('Authentication Group Number'),
   target_form_tooltip_auth: T(

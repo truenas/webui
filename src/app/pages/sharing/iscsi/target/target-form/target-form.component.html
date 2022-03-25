@@ -1,0 +1,93 @@
+<ix-modal-header [title]="title" [loading]="isLoading"></ix-modal-header>
+<mat-card>
+  <mat-card-content>
+    <form [formGroup]="form" class="ix-form-container" (submit)="onSubmit()">
+      <div class="columns">
+        <div class="column">
+          <ix-fieldset [title]="helptext.fieldset_target_basic | translate">
+            <ix-input
+              [formControlName]="'name'"
+              [label]="helptext.target_form_placeholder_name | translate"
+              [tooltip]="helptext.target_form_tooltip_name | translate"
+              [placeholder]="helptext.target_form_placeholder_name | translate"
+              [required]="true"
+            ></ix-input>
+            <ix-input
+              [formControlName]="'alias'"
+              [label]="helptext.target_form_placeholder_alias | translate"
+              [tooltip]="helptext.target_form_tooltip_alias | translate"
+              [placeholder]="helptext.target_form_placeholder_alias | translate"
+            ></ix-input>
+            <ix-select
+              [formControlName]="'mode'"
+              [label]="helptext.target_form_placeholder_mode | translate"
+              [options]="modes$"
+              [tooltip]="helptext.target_form_tooltip_mode | translate"
+              [fxHide]="true"
+            ></ix-select>
+          </ix-fieldset>
+        </div>
+        <div class="column">
+          <ix-fieldset [title]="helptext.fieldset_target_group | translate">
+            <div fxLayout="column" class="dynamic-field form-list box">
+              <div fxLayout="row" fxFlex="100%" fxLayoutAlign="space-between center" class="list-top-bar">
+                <label>{{ 'Add groups' | translate}}</label>
+                <button mat-button type="button" (click)="addGroup()"> {{"Add" | translate}} </button>
+              </div>
+              <ng-container *ngIf="form.controls.groups.value.length; else empty" formArrayName="groupsForm">
+                <div *ngFor="let liControl of form.controls.groups.value; let i = index" class="form-list-item">
+                  <div [formGroupName]="i">
+                    <ix-select
+                      formControlName='portal'
+                      [label]="helptext.target_form_placeholder_portal | translate"
+                      [options]="portals$"
+                      [tooltip]="helptext.target_form_tooltip_portal | translate"
+                      [required]="true"
+                    ></ix-select>
+                    <ix-select
+                      formControlName='initiator'
+                      [label]="helptext.target_form_placeholder_initiator | translate"
+                      [options]="initiators$"
+                      [tooltip]="helptext.target_form_tooltip_initiator | translate"
+                    ></ix-select>
+                    <ix-select
+                      formControlName='authmethod'
+                      [label]="helptext.target_form_placeholder_authmethod | translate"
+                      [options]="authmethods$"
+                      [tooltip]="helptext.target_form_tooltip_authmethod | translate"
+                    ></ix-select>
+                    <ix-select
+                      formControlName='auth'
+                      [label]="helptext.target_form_placeholder_auth | translate"
+                      [options]="auths$"
+                      [tooltip]="helptext.target_form_tooltip_auth | translate"
+                    ></ix-select>
+                  </div>
+                  <div class="list-action list-action-inline">
+                    <div>
+                      <button mat-icon-button class="top-right" (click)="deleteGroup(i)">
+                        <mat-icon>clear</mat-icon>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </ng-container>
+              <ng-template #empty>
+                <span class="form-list-item">{{ "No items have been added yet." | translate }}</span>
+              </ng-template>
+            </div>
+          </ix-fieldset>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button
+          mat-button
+          type="submit"
+          [disabled]="form.invalid || isLoading"
+          color="primary"
+        >{{ 'Save' | translate }}</button>
+      </div>
+    </form>
+  </mat-card-content>
+</mat-card>

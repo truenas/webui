@@ -1,0 +1,37 @@
+.columns {
+  display: flex;
+
+  .column {
+    flex: 1;
+    margin-right: 16px;
+
+    &:last-of-type {
+      margin-right: 0;
+    }
+  }
+}
+
+.form-actions {
+  margin: 8px 10px;
+
+  button {
+    margin-right: 5px;
+  }
+}
+
+.top-right {
+  position: absolute;
+  right: 5px;
+  top: 1px;
+}
+
+.form-list-item {
+  background: rgba(0, 0, 0, 0.1);
+  margin-bottom: 15px;
+  padding: 15px;
+  right: 1px;
+}
+
+.list-top-bar {
+  margin: 10px 0;
+}
