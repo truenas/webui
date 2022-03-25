@@ -14,6 +14,7 @@ import { DatasetChangeKeyParams } from 'app/interfaces/dataset-change-key.interf
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { matchOtherValidator } from 'app/modules/entity/entity-form/validators/password-validation/password-validation';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
+import IxValidatorsService from 'app/modules/ix-forms/services/ix-validators.service';
 import {
   EncryptionOptionsDialogData,
 } from 'app/pages/storage/volumes/encyption-options-dialog/encryption-options-dialog-data.interface';
@@ -41,7 +42,10 @@ export class EncryptionOptionsDialogComponent implements OnInit {
     generate_key: [false],
     key: ['', [Validators.required, Validators.minLength(64), Validators.maxLength(64)]],
     passphrase: ['', Validators.minLength(8)],
-    confirm_passphrase: ['', matchOtherValidator('passphrase')],
+    confirm_passphrase: ['', this.validatorsService.withMessage(
+      matchOtherValidator('passphrase'),
+      this.translate.instant('Passphrase and confirmation should match.'),
+    )],
     pbkdf2iters: [350000, Validators.min(100000)],
     algorithm: [''],
     confirm: [false, [Validators.requiredTrue]],
@@ -71,6 +75,7 @@ export class EncryptionOptionsDialogComponent implements OnInit {
     private dialog: DialogService,
     private matDialog: MatDialog,
     private dialogRef: MatDialogRef<EncryptionOptionsDialogComponent>,
+    private validatorsService: IxValidatorsService,
     private errorHandler: FormErrorHandlerService,
     @Inject(MAT_DIALOG_DATA) public data: EncryptionOptionsDialogData,
   ) {}
