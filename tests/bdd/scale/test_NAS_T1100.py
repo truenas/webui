@@ -94,11 +94,11 @@ def the_user_edit_page_should_open_input_the_ssh_key_and_click_save(driver, ssh_
     """the User Edit Page should open, input the SSH key and click save."""
     assert wait_on_element(driver, 10, '//h3[contains(.,"Edit User")]')
     assert wait_on_element_disappear(driver, 10, '//h6[contains(.,"Please wait")]')
-    assert wait_on_element(driver, 5, '//div[@ix-auto="textarea__SSH Public Key"]/div/textarea', 'inputable')
-    driver.find_element_by_xpath('//div[@ix-auto="textarea__SSH Public Key"]/div/textarea').clear()
-    driver.find_element_by_xpath('//div[@ix-auto="textarea__SSH Public Key"]/div/textarea').send_keys(ssh_key)
-    assert wait_on_element(driver, 2, '//button[@ix-auto="button__SAVE"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
+    assert wait_on_element(driver, 5, '//ix-textarea[@formcontrolname = "sshpubkey"]//textarea', 'inputable')
+    driver.find_element_by_xpath('//ix-textarea[@formcontrolname = "sshpubkey"]//textarea').clear()
+    driver.find_element_by_xpath('//ix-textarea[@formcontrolname = "sshpubkey"]//textarea').send_keys(ssh_key)
+    assert wait_on_element(driver, 2, '//button[span[contains(.,"Save")]]', 'clickable')
+    driver.find_element_by_xpath('//button[span[contains(.,"Save")]]').click()
     assert wait_on_element_disappear(driver, 30, '//h6[contains(.,"Please wait")]')
 
 
@@ -112,11 +112,11 @@ def reopen_the_user_edit_page_and_verify_sshkey_was_saved(driver, ssh_key):
     driver.find_element_by_xpath('(//tr[contains(.,"root")]/following-sibling::user-details-row)[1]//button[contains(.,"Edit")]').click()
     assert wait_on_element(driver, 10, '//h3[contains(.,"Edit User")]')
     assert wait_on_element_disappear(driver, 10, '//h6[contains(.,"Please wait")]')
-    assert wait_on_element(driver, 5, '//div[@ix-auto="textarea__SSH Public Key"]/div/textarea', 'inputable')
-    assert attribute_value_exist(driver, '//div[@ix-auto="textarea__SSH Public Key"]/div/textarea', 'value', ssh_key)
+    assert wait_on_element(driver, 5, '//ix-textarea[@formcontrolname = "sshpubkey"]//textarea', 'inputable')
+    assert attribute_value_exist(driver, '//ix-textarea[@formcontrolname = "sshpubkey"]//textarea', 'value', ssh_key)
     time.sleep(0.5)
-    assert wait_on_element(driver, 10, '//*[@id="close-icon"]', 'clickable')
-    driver.find_element_by_xpath('//*[@id="close-icon"]').click()
+    assert wait_on_element(driver, 10, '//*[@id="ix-close-icon"]', 'clickable')
+    driver.find_element_by_xpath('//*[@id="ix-close-icon"]').click()
 
 
 @then('Verify that you can ssh with the sshkey')
