@@ -125,6 +125,11 @@ describe('UserFormComponent', () => {
       expect(await homeInput.getValue()).toBe('/mnt/users/test');
     });
 
+    it('checks download ssh key button is hidden', async () => {
+      const downloadButtons = await loader.getAllHarnesses(MatButtonHarness.with({ text: 'Download SSH Public Key' }));
+      expect(downloadButtons).toHaveLength(0);
+    });
+
     it('sends a create payload to websocket and closes modal when save is pressed', async () => {
       const form = await loader.getHarness(IxFormHarness);
       await form.fillForm({
@@ -169,6 +174,19 @@ describe('UserFormComponent', () => {
       expect(ws.call).toHaveBeenCalledWith('user.update', [69, expect.objectContaining({
         password: 'changepwd',
       })]);
+    });
+
+    it('shows download ssh key button', async () => {
+      const form = await loader.getHarness(IxFormHarness);
+      await form.fillForm({
+        'SSH Public Key': 'test-key',
+        Username: 'test-user',
+      });
+
+      const downloadButton = await loader.getHarness(MatButtonHarness.with({ text: 'Download SSH Public Key' }));
+      await downloadButton.click();
+
+      expect(spectator.inject(StorageService).downloadBlob).toHaveBeenCalledWith(new Blob(), 'test-user_public_key_rsa');
     });
 
     it('shows current group values when form is being edited', async () => {
@@ -269,23 +287,5 @@ describe('UserFormComponent', () => {
         Username: true,
       }));
     });
-  });
-
-  it('only shows download ssh key button when ssh key is filled in', async () => {
-    spectator.component.setupForm();
-
-    const downloadButtons = await loader.getAllHarnesses(MatButtonHarness.with({ text: 'Download SSH Public Key' }));
-    expect(downloadButtons).toHaveLength(0);
-
-    const form = await loader.getHarness(IxFormHarness);
-    await form.fillForm({
-      'SSH Public Key': 'test-key',
-      Username: 'test-user',
-    });
-
-    const downloadButton = await loader.getHarness(MatButtonHarness.with({ text: 'Download SSH Public Key' }));
-    await downloadButton.click();
-
-    expect(spectator.inject(StorageService).downloadBlob).toHaveBeenCalledWith(new Blob(), 'test-user_public_key_rsa');
   });
 });
