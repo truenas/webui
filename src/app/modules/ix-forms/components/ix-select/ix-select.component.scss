@@ -92,4 +92,10 @@
       @include material-icon('check_circle', 'after');
     }
   }
+
+  .mat-option {
+    &[aria-disabled=true] {
+      opacity: 0.5;
+    }
+  }
 }
