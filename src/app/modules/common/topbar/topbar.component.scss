@@ -48,13 +48,20 @@
   color: var(--topbar-txt) !important;
 }
 
+.ix-logo:focus-visible,
+.topbar button:focus-visible {
+  background: var(--focus-bg);
+  box-shadow: 0 0 0 1px var(--focus-brd) inset !important;
+  outline-width: 0;
+}
+
 .ix-logo {
   cursor: pointer;
   fill: none !important;
-  height: 50px;
+  height: 48px;
   position: relative;
   right: -10px;
-  top: 5px;
+  top: 4px;
   width: 175px;
 }
 

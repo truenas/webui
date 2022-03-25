@@ -13,5 +13,10 @@
     ::ng-deep a {
       color: var(--primary);
     }
+
+    ::ng-deep a:focus-visible {
+      background: var(--hover-bg) !important;
+    }
   }
 }
+

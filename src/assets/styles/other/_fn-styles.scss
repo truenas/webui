@@ -81,6 +81,19 @@ a:hover {
   text-decoration: none;
 }
 
+a:focus-visible,
+button.mat-button.mat-accent:focus-visible,
+.ix-blue button:focus-visible,
+button:focus-visible {
+  border-color: transparent !important;
+  box-shadow: 0 0 0 1px var(--focus-brd) inset !important;
+  outline-width: 0;
+}
+
+a:focus-visible {
+  box-shadow: 0 0 0 1px var(--alt-bg2) inset !important;
+}
+
 a {
   color: inherit;
 }
@@ -585,6 +598,10 @@ body .mat-select-trigger {
   display: flex;
   flex-direction: row;
   width: 100%;
+}
+
+.slide-in-nav-item a:focus-visible {
+  box-shadow: none !important;
 }
 
 .sidebar-panel.mat-sidenav .sidebar-list-item.open > .mat-list-item-content > .sub-menu {
