@@ -80,6 +80,6 @@ def you_should_not_be_able_to_save_the_changes_and_an_error_message_should_appea
     assert class_attribute == 'true'
     driver.find_element_by_xpath('//button[span[contains(.,"Save")]]').click()
     assert wait_on_element(driver, 3, '//ix-fieldset[contains(.,"Identification")]')
-    assert wait_on_element(driver, 3, '//mat-error[contains(.,"The passwords do not match.")]')
+    assert wait_on_element(driver, 3, '//mat-error[contains(.,"Password and confirmation should match.")]')
     assert wait_on_element(driver, 10, '//*[@id="ix-close-icon"]', 'clickable')
     driver.find_element_by_xpath('//*[@id="ix-close-icon"]').click()
