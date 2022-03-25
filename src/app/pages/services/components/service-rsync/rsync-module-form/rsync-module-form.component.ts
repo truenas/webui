@@ -53,7 +53,7 @@ export class RsyncModuleFormComponent {
 
   readonly userProvider = new UserComboboxProvider(this.userService);
   readonly groupProvider = new GroupComboboxProvider(this.userService);
-  readonly treeNodeProvider = this.filesystemService.getFilesystemNodeProvider();
+  readonly treeNodeProvider = this.filesystemService.getFilesystemNodeProvider({ directoriesOnly: true });
 
   readonly tooltips = {
     name: helptext.rsyncmod_name_tooltip,
