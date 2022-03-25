@@ -22,6 +22,7 @@ import {
   SystemGeneralService,
   WebSocketService,
   DialogService,
+  AppLoaderService,
 } from 'app/services';
 import { ModalService } from 'app/services/modal.service';
 
@@ -136,6 +137,12 @@ export class LdapComponent implements FormConfiguration {
           placeholder: helptext.ldap_certificate_placeholder,
           tooltip: helptext.ldap_certificate_tooltip,
           options: [{ label: '---', value: null }],
+          linkText: this.translate.instant('Certificates'),
+          linkClicked: () => {
+            this.modalService.closeSlideIn().then(() => {
+              this.router.navigate(['/', 'credentials', 'certificates']);
+            });
+          },
         },
         {
           type: 'checkbox',
@@ -225,6 +232,7 @@ export class LdapComponent implements FormConfiguration {
     private modalService: ModalService,
     private dialogService: DialogService,
     private matDialog: MatDialog,
+    private loader: AppLoaderService,
     private systemGeneralService: SystemGeneralService,
     private translate: TranslateService,
   ) { }

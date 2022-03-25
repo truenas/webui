@@ -8,13 +8,15 @@
 }
 
 .tooltip {
-  margin-left: 8px;
-  vertical-align: -4px;
+  margin: 0 0 0 8px;
 }
 
 .label-container {
+  align-items: center;
+  display: flex;
   margin-bottom: 1px;
   margin-left: 1px;
+  min-height: 24px;
 
   .label {
     font-size: x-small;
@@ -35,7 +37,7 @@
     border: solid 1.5px var(--lines);
     border-radius: 2px;
     flex-direction: row;
-    font-size: 13px;
+    font-size: 12px;
     padding: 6px 8px;
     position: relative;
 

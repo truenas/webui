@@ -31,4 +31,8 @@ export class IxTextareaHarness extends ComponentHarness implements IxFormControl
   async setValue(value: string): Promise<void> {
     return (await this.getMatInputHarness()).setValue(value);
   }
+
+  async isDisabled(): Promise<boolean> {
+    return (await this.getMatInputHarness()).isDisabled();
+  }
 }

@@ -3,7 +3,6 @@
 :host {
   color: var(--fg1);
   display: block;
-
   margin-bottom: 12px;
   margin-top: 18px;
   padding: 8px 0;
@@ -14,9 +13,7 @@ td {
 }
 
 .tooltip {
-  margin-left: 8px;
-
-  vertical-align: -4px;
+  margin: 0 0 0 8px;
 }
 
 .permissions-container {
@@ -36,12 +33,16 @@ td {
 }
 
 .label-container {
+  align-items: center;
+  display: flex;
   margin-bottom: 1px;
   margin-left: 1px;
+  min-height: 24px;
 }
 
 .label {
-  font-size: 12px;
+  display: inline-flex;
+  font-size: x-small;
 }
 
 .header-label {

@@ -68,10 +68,6 @@ export const helptextSharingIscsi = {
 
   target_form_placeholder_delete: T('Delete'),
 
-  fieldset_portal_basic: T('Basic Info'),
-  fieldset_portal_authgroup: T('Authentication Method and Group'),
-  fieldset_portal_ip: T('IP Address'),
-
   portal_form_placeholder_comment: T('Description'),
   portal_form_tooltip_comment: T(
     'Optional description. Portals are automatically assigned a numeric\
@@ -100,7 +96,6 @@ export const helptextSharingIscsi = {
     'TCP port used to access the iSCSI target.\
  Default is <i>3260</i>.',
   ),
-  portal_form_validators_port: [Validators.required],
 
   portal_form_placeholder_delete: T('Delete'),
 
