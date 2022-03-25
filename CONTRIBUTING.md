@@ -6,9 +6,23 @@ Anyone is free to help us build and maintain this project. If you see an issue t
 - Review the [README](https://github.com/truenas/webui/blob/master/README.md) file to learn how to build and run the project as well as connect it to your TrueNAS
 - Make the required changes.
 
+## Branches
+
+Here's the layout of the main branches
+
+- `master` corresponds to most recent scale
+- `truenas/12.0-stable` points to TrueNAS Core 12.0
+- `truenas/13.0-stbale` corresponds to TrueNAS Core 13.0
+
+Based on the version of TrueNAS that you would like to make changes to, base your branch from that branch in the project. This affects whether or not we're able to merge your changes back to the relevent version since they have significant differences and cannot be merged.
+
+## Code Validation
+
 ESLint is setup to ensure that the code is up to the format standards that we would like to keep in our project. If the linter sees issues in your project, it might ask you to fix those issues before you can make a commit. A set of precommit commands will run to extract new text into translation files and check linter for any issues.
 
-If you want to contribute to the translation of our UI, you can do so by editing one of the `[language_name].json` files under `src\assets\i18n\`. In each of those files, text strings and their translations in the relevant language are kept as key/value pairs.
+### Translating the UI
+
+If you want to contribute to the translation of our UI, you can do so by editing one of the `[language_name].json` files under `src\assets\i18n\`. In each of those files, text strings and their translations in the relevant language are kept as key/value pairs e.g.,
 
 `
 {
@@ -20,7 +34,7 @@ If you want to contribute to the translation of our UI, you can do so by editing
 
 ## Tests
 
-We recommend that any new code that you add, you should also add unit tests for it. Covering is also reported on the PRs by the `codecov` bot.
+When adding new changes, try to add unit tests when and where possible. Covering is also reported on the PRs by the `codecov` bot.
 
 ## Raise a Pull Request
 
