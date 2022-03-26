@@ -400,6 +400,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
 
   // System wide hover effects
   .mat-select-panel .mat-option:focus,
+  .mat-select-panel .mat-option:focus-visible,
   .mat-select-panel .mat-option.mat-selected:not(.mat-option-multiple) {
     @include variable(background, --primary, $primary, !important);
     @include variable(color, --primary-txt, $primary-txt, !important);
@@ -1409,6 +1410,11 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     background: var(--hover-bg) !important;
   }
 
+  .slide-in-nav-item:focus-within {
+    background-color: var(--hover-bg) !important;
+    box-shadow: -1px 0 0 1px var(--btn-default-bg) !important;
+  }
+
   .sidebar-panel.mat-sidenav .sidebar-list-item.highlighted {
     background-color: var(--bg2);
     border-left: 6px solid var(--primary);
@@ -1419,6 +1425,10 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
       mat-icon {
         color: var(--primary);
       }
+    }
+
+    .mat-list-item-content > a:focus-visible {
+      background: var(--hover-bg);
     }
   }
 
@@ -1557,5 +1567,10 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
       pointer-events: none;
       visibility: hidden;
     }
+  }
+
+  // focus state styles for mat-form-field
+  .mat-form-field.mat-focused:focus-within {
+    outline: 1px solid var(--primary);
   }
 } // end of ix theme

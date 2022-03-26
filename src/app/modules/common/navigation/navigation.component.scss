@@ -23,4 +23,10 @@
   .nav-section-divider {
     margin: 0 -24px;
   }
+
+  a.sidenav-link:focus-visible {
+    background: var(--hover-bg);
+    box-shadow: 0 0 0 1px var(--hover-bg) inset;
+    outline-width: 0;
+  }
 }

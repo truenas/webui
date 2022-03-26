@@ -58,16 +58,18 @@ export class IxPermissionsHarness extends ComponentHarness implements IxFormCont
       grp += 1;
     }
 
-    if ((await permissions[6].isChecked())) {
-      other += 4;
-    }
+    if (permissions.length > 6) {
+      if ((await permissions[6].isChecked())) {
+        other += 4;
+      }
 
-    if ((await permissions[7].isChecked())) {
-      other += 2;
-    }
+      if ((await permissions[7].isChecked())) {
+        other += 2;
+      }
 
-    if ((await permissions[8].isChecked())) {
-      other += 1;
+      if ((await permissions[8].isChecked())) {
+        other += 1;
+      }
     }
 
     return new Promise((resolve) => {

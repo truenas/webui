@@ -1,19 +1,24 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-table.component';
 import { EntityTableConfig } from 'app/modules/entity/entity-table/entity-table.interface';
+import {
+  RsyncModuleFormComponent,
+} from 'app/pages/services/components/service-rsync/rsync-module-form/rsync-module-form.component';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
+@UntilDestroy()
 @Component({
   selector: 'app-rsync-module-list',
   template: '<entity-table [title]="title" [conf]="this"></entity-table>',
 })
-export class RsyncModuleListComponent implements EntityTableConfig {
+export class RsyncModuleListComponent implements EntityTableConfig, OnInit {
   title = this.translate.instant('RSYNC Modules');
   queryCall = 'rsyncmod.query' as const;
   hasDetails = true;
   wsDelete = 'rsyncmod.delete' as const;
-  routeAdd: string[] = ['services', 'rsync', 'rsync-module', 'add'];
-  routeEdit: string[] = ['services', 'rsync', 'rsync-module', 'edit'];
+  entityList: EntityTableComponent;
   protected routeDelete: string[] = ['services', 'rsync', 'rsync-module', 'delete'];
 
   columns = [
@@ -34,7 +39,20 @@ export class RsyncModuleListComponent implements EntityTableConfig {
     sorting: { columns: this.columns },
   };
 
-  constructor(protected translate: TranslateService) {}
+  constructor(
+    private translate: TranslateService,
+    private slideInService: IxSlideInService,
+  ) {}
+
+  ngOnInit(): void {
+    this.slideInService.onClose$
+      .pipe(untilDestroyed(this))
+      .subscribe(() => this.entityList.getData());
+  }
+
+  afterInit(entityList: EntityTableComponent): void {
+    this.entityList = entityList;
+  }
 
   dataHandler(entityTable: EntityTableComponent): void {
     const rows = entityTable.rows;
@@ -45,5 +63,15 @@ export class RsyncModuleListComponent implements EntityTableConfig {
         { label: this.translate.instant('Host Deny'), value: row['hostsdeny'] },
         { label: this.translate.instant('Auxiliary parameters'), value: row['auxiliary'] });
     });
+  }
+
+  doAdd(): void {
+    this.slideInService.open(RsyncModuleFormComponent, { wide: true });
+  }
+
+  doEdit(id: number): void {
+    const row = this.entityList.rows.find((row) => row.id === id);
+    const form = this.slideInService.open(RsyncModuleFormComponent, { wide: true });
+    form.setModuleForEdit(row);
   }
 }

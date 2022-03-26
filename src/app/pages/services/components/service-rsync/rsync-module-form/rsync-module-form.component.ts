@@ -1,212 +1,111 @@
-import { Component } from '@angular/core';
-import { FormGroup, Validators } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import {
+  ChangeDetectionStrategy, ChangeDetectorRef, Component,
+} from '@angular/core';
+import { Validators } from '@angular/forms';
+import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import * as _ from 'lodash';
-import { Observable } from 'rxjs';
-import { ExplorerType } from 'app/enums/explorer-type.enum';
+import { TranslateService } from '@ngx-translate/core';
+import { Observable, of } from 'rxjs';
 import { RsyncModuleMode } from 'app/enums/rsync-mode.enum';
 import helptext from 'app/helptext/services/components/service-rsync';
-import { FormConfiguration } from 'app/interfaces/entity-form.interface';
-import { RsyncModule, RsyncModuleCreate } from 'app/interfaces/rsync-module.interface';
-import { EntityFormComponent } from 'app/modules/entity/entity-form/entity-form.component';
-import { FieldConfig, FormComboboxConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
-import { FieldSet } from 'app/modules/entity/entity-form/models/fieldset.interface';
+import { RsyncModule } from 'app/interfaces/rsync-module.interface';
+import { GroupComboboxProvider } from 'app/modules/ix-forms/classes/group-combobox-provider';
+import { UserComboboxProvider } from 'app/modules/ix-forms/classes/user-combobox-provider';
+import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { UserService, WebSocketService } from 'app/services';
+import { FilesystemService } from 'app/services/filesystem.service';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
 @Component({
-  selector: 'app-rsync-module-form',
-  template: '<entity-form [conf]="this"></entity-form>',
+  templateUrl: './rsync-module-form.component.html',
+  styleUrls: ['./rsync-module-form.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-
-export class RsyncModuleFormComponent implements FormConfiguration {
-  queryCall = 'rsyncmod.query' as const;
-  routeSuccess: string[] = ['services', 'rsync', 'rsync-module'];
-  isEntity = true;
-  formGroup: FormGroup;
-  pk: number;
-  title = helptext.moduleFormTitle;
-  addCall = 'rsyncmod.create' as const;
-  isNew: boolean;
-  fieldConfig: FieldConfig[] = [];
-  fieldSets: FieldSet[] = [
-    {
-      name: helptext.rsyncd_fieldset_general,
-      label: true,
-      width: '49%',
-      config: [{
-        type: 'input',
-        name: 'name',
-        placeholder: helptext.rsyncmod_name_placeholder,
-        tooltip: helptext.rsyncmod_name_tooltip,
-        validation: Validators.required,
-        required: true,
-      }, {
-        type: 'explorer',
-        initial: '/mnt',
-        explorerType: ExplorerType.Directory,
-        placeholder: helptext.rsyncmod_path_placeholder,
-        name: 'path',
-        tooltip: helptext.rsyncmod_path_tooltip,
-        validation: helptext.rsyncmod_path_validation,
-        required: true,
-      }, {
-        type: 'input',
-        name: 'comment',
-        placeholder: helptext.rsyncmod_comment_placeholder,
-        tooltip: helptext.rsyncmod_comment_tooltip,
-      }, {
-        type: 'checkbox',
-        name: 'enabled',
-        placeholder: helptext.rsyncmod_enabled_placeholder,
-        tooltip: helptext.rsyncmod_enabled_tooltip,
-      }],
-    },
-    { name: 'spacer', label: false, width: '2%' },
-    {
-      name: helptext.rsyncd_fieldset_access,
-      label: true,
-      width: '49%',
-      config: [
-        {
-          type: 'select',
-          name: 'mode',
-          placeholder: helptext.rsyncmod_mode_placeholder,
-          options: helptext.rsyncmod_mode_options,
-          tooltip: helptext.rsyncmod_mode_tooltip,
-          required: true,
-        },
-        {
-          type: 'input',
-          name: 'maxconn',
-          placeholder: helptext.rsyncmod_maxconn_placeholder,
-          inputType: 'number',
-          value: 0,
-          validation: helptext.rsyncmod_maxconn_validation,
-          tooltip: helptext.rsyncmod_maxconn_tooltip,
-        },
-        {
-          type: 'combobox',
-          name: 'user',
-          placeholder: helptext.rsyncmod_user_placeholder,
-          tooltip: helptext.rsyncmod_user_tooltip,
-          options: [],
-          searchOptions: [],
-          parent: this,
-          updater: (value: string) => this.updateUserSearchOptions(value),
-        },
-        {
-          type: 'combobox',
-          name: 'group',
-          placeholder: helptext.rsyncmod_group_placeholder,
-          tooltip: helptext.rsyncmod_group_tooltip,
-          options: [],
-          searchOptions: [],
-          parent: this,
-          updater: (value: string) => this.updateGroupSearchOptions(value),
-        },
-        {
-          type: 'chip',
-          name: 'hostsallow',
-          placeholder: helptext.rsyncmod_hostsallow_placeholder,
-          tooltip: helptext.rsyncmod_hostsallow_tooltip,
-        },
-        {
-          type: 'chip',
-          name: 'hostsdeny',
-          placeholder: helptext.rsyncmod_hostsdeny_placeholder,
-          tooltip: helptext.rsyncmod_hostsdeny_tooltip,
-        },
-      ],
-    },
-    { name: 'divider', divider: true },
-    {
-      name: helptext.rsyncd_fieldset_other,
-      label: true,
-      config: [
-        {
-          type: 'textarea',
-          name: 'auxiliary',
-          placeholder: helptext.rsyncd_auxiliary_placeholder,
-          tooltip: helptext.rsyncd_auxiliary_tooltip,
-          value: '',
-        },
-      ],
-    },
-    { name: 'divider', divider: true },
-  ];
-
-  private rsyncmodGroupField: FormComboboxConfig;
-  private rsyncmodUserField: FormComboboxConfig;
-  protected entityForm: EntityFormComponent;
-  constructor(protected ws: WebSocketService, protected router: Router,
-    protected userService: UserService, protected route: ActivatedRoute) {
+export class RsyncModuleFormComponent {
+  get isNew(): boolean {
+    return !this.editingModule;
   }
 
-  afterInit(entityForm: EntityFormComponent): void {
-    this.entityForm = entityForm;
-    this.isNew = entityForm.isNew;
+  get title(): string {
+    return this.isNew
+      ? this.translate.instant('Add Rsync Module')
+      : this.translate.instant('Edit Rsync Module');
+  }
 
-    const accessSet = _.find(this.fieldSets, { name: helptext.rsyncd_fieldset_access });
+  form = this.formBuilder.group({
+    name: ['', Validators.required],
+    path: ['', Validators.required],
+    comment: [''],
+    enabled: [false],
+    mode: [RsyncModuleMode.ReadOnly],
+    maxconn: [0, Validators.min(0)],
+    user: [''],
+    group: [''],
+    hostsallow: [[] as string[]],
+    hostsdeny: [[] as string[]],
+    auxiliary: [''],
+  });
 
-    this.rsyncmodUserField = accessSet.config.find((config) => config.name === 'user') as FormComboboxConfig;
-    this.userService.userQueryDsCache().pipe(untilDestroyed(this)).subscribe((users) => {
-      users.forEach((user) => {
-        this.rsyncmodUserField.options.push({ label: user.username, value: user.username });
-      });
-    });
+  isLoading = false;
+  editingModule: RsyncModule;
+  modeOptions$ = of(helptext.rsyncmod_mode_options);
 
-    this.rsyncmodGroupField = accessSet.config.find((config) => config.name === 'group') as FormComboboxConfig;
-    this.userService.groupQueryDsCache().pipe(untilDestroyed(this)).subscribe((groups) => {
-      groups.forEach((group) => {
-        this.rsyncmodGroupField.options.push({ label: group.group, value: group.group });
-      });
-    });
+  readonly userProvider = new UserComboboxProvider(this.userService);
+  readonly groupProvider = new GroupComboboxProvider(this.userService);
+  readonly treeNodeProvider = this.filesystemService.getFilesystemNodeProvider({ directoriesOnly: true });
 
+  readonly tooltips = {
+    name: helptext.rsyncmod_name_tooltip,
+    path: helptext.rsyncmod_path_tooltip,
+    comment: helptext.rsyncmod_comment_tooltip,
+    enabled: helptext.rsyncmod_enabled_tooltip,
+    mode: helptext.rsyncmod_mode_tooltip,
+    maxconn: helptext.rsyncmod_maxconn_tooltip,
+    user: helptext.rsyncmod_user_tooltip,
+    group: helptext.rsyncmod_group_tooltip,
+    hostsallow: helptext.rsyncmod_hostsallow_tooltip,
+    hostsdeny: helptext.rsyncmod_hostsdeny_tooltip,
+    auxiliary: helptext.rsyncd_auxiliary_tooltip,
+  };
+
+  constructor(
+    private formBuilder: FormBuilder,
+    private ws: WebSocketService,
+    private cdr: ChangeDetectorRef,
+    private errorHandler: FormErrorHandlerService,
+    private translate: TranslateService,
+    private slideInService: IxSlideInService,
+    private filesystemService: FilesystemService,
+    private userService: UserService,
+  ) {}
+
+  setModuleForEdit(module: RsyncModule): void {
+    this.editingModule = module;
+    this.form.patchValue(module);
+  }
+
+  onSubmit(): void {
+    const values = this.form.value;
+
+    this.isLoading = true;
+    let request$: Observable<unknown>;
     if (this.isNew) {
-      entityForm.formGroup.controls['mode'].setValue(RsyncModuleMode.ReadOnly);
+      request$ = this.ws.call('rsyncmod.create', [values]);
+    } else {
+      request$ = this.ws.call('rsyncmod.update', [
+        this.editingModule.id,
+        values,
+      ]);
     }
 
-    this.route.params.pipe(untilDestroyed(this)).subscribe((params) => {
-      if (params['pk']) {
-        this.pk = parseInt(params['pk'], 10);
-        this.ws.call('rsyncmod.query', [
-          [
-            ['id', '=', this.pk],
-          ],
-        ]).pipe(untilDestroyed(this)).subscribe((res) => {
-          for (const i in res[0]) {
-            if (i !== 'id') {
-              entityForm.formGroup.controls[i].setValue(res[0][i as keyof RsyncModule]);
-            }
-          }
-        });
-      }
+    request$.pipe(untilDestroyed(this)).subscribe(() => {
+      this.isLoading = false;
+      this.slideInService.close();
+    }, (error) => {
+      this.isLoading = false;
+      this.errorHandler.handleWsFormError(error, this.form);
+      this.cdr.markForCheck();
     });
-
-    if (!this.isNew) {
-      entityForm.submitFunction = this.submitFunction;
-    }
-  }
-
-  updateGroupSearchOptions(value = ''): void {
-    this.userService.groupQueryDsCache(value).pipe(untilDestroyed(this)).subscribe((groups) => {
-      this.rsyncmodGroupField.searchOptions = groups.map((group) => {
-        return { label: group.group, value: group.group };
-      });
-    });
-  }
-
-  updateUserSearchOptions(value = ''): void {
-    this.userService.userQueryDsCache(value).pipe(untilDestroyed(this)).subscribe((items) => {
-      this.rsyncmodUserField.searchOptions = items.map((user) => {
-        return { label: user.username, value: user.username };
-      });
-    });
-  }
-
-  submitFunction(formData: RsyncModuleCreate): Observable<RsyncModule> {
-    return this.ws.call('rsyncmod.update', [this.pk, formData]);
   }
 }

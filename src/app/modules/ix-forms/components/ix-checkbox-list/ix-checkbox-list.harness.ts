@@ -1,5 +1,5 @@
 import {
-  BaseHarnessFilters, ComponentHarness, HarnessPredicate,
+  BaseHarnessFilters, ComponentHarness, HarnessPredicate, parallel,
 } from '@angular/cdk/testing';
 import { MatCheckboxHarness } from '@angular/material/checkbox/testing';
 import { IxFormControlHarness } from 'app/modules/ix-forms/interfaces/ix-form-control-harness.interface';
@@ -54,13 +54,8 @@ export class IxCheckboxListHarness extends ComponentHarness implements IxFormCon
 
   async isDisabled(): Promise<boolean> {
     const checkboxes = await this.getCheckboxes();
-    for (const checkbox of checkboxes) {
-      const isDisabled = await checkbox.isDisabled();
-      if (isDisabled) {
-        return true;
-      }
-    }
+    const inputState = await parallel(() => checkboxes.map((control) => control.isDisabled()));
 
-    return false;
+    return new Promise((resolve) => resolve(inputState.every(Boolean)));
   }
 }
