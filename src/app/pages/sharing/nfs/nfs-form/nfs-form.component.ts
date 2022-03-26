@@ -4,7 +4,6 @@ import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 import { ExplorerType } from 'app/enums/explorer-type.enum';
 import { NfsSecurityProvider } from 'app/enums/nfs-security-provider.enum';
-import { ProductType } from 'app/enums/product-type.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import globalHelptext from 'app/helptext/global-helptext';
 import { helptextSharingNfs, shared } from 'app/helptext/sharing';
@@ -36,59 +35,31 @@ export class NfsFormComponent implements FormConfiguration {
   isBasicMode = true;
   entityForm: EntityFormComponent;
   saveButtonEnabled = true;
-  productType = window.localStorage.getItem('product_type') as ProductType;
-  hideOnScale = ['alldirs', 'quiet'];
   title: string = helptextSharingNfs.title;
   isOneColumnForm = true;
 
   fieldSets = new FieldSets([
-    {
-      name: helptextSharingNfs.fieldset_paths,
-      label: true,
-      config: [
-        {
-          type: 'list',
-          name: 'paths',
-          width: '100%',
-          templateListField: [
-            {
-              name: 'path',
-              placeholder: helptextSharingNfs.placeholder_path,
-              tooltip: helptextSharingNfs.tooltip_path,
-              type: 'explorer',
-              explorerType: ExplorerType.Directory,
-              initial: '/mnt',
-              required: true,
-              validation: helptextSharingNfs.validators_path,
-            },
-          ],
-          listFields: [],
-        },
-      ],
-    },
-    { name: 'divider_general', divider: true },
     {
       name: helptextSharingNfs.fieldset_general,
       class: 'general',
       label: true,
       config: [
         {
+          type: 'explorer',
+          name: 'path',
+          width: '100%',
+          placeholder: helptextSharingNfs.placeholder_path,
+          explorerType: ExplorerType.Directory,
+          initial: '/mnt',
+          required: true,
+          validation: helptextSharingNfs.validators_path,
+          tooltip: helptextSharingNfs.tooltip_path,
+        },
+        {
           type: 'input',
           name: 'comment',
           placeholder: helptextSharingNfs.placeholder_comment,
           tooltip: helptextSharingNfs.tooltip_comment,
-        },
-        {
-          type: 'checkbox',
-          name: 'alldirs',
-          placeholder: helptextSharingNfs.placeholder_alldirs,
-          tooltip: helptextSharingNfs.tooltip_alldirs,
-        },
-        {
-          type: 'checkbox',
-          name: 'quiet',
-          placeholder: helptextSharingNfs.placeholder_quiet,
-          tooltip: helptextSharingNfs.tooltip_quiet,
         },
         {
           type: 'checkbox',
@@ -336,12 +307,6 @@ export class NfsFormComponent implements FormConfiguration {
         this.maproot_group = this.fieldSets.config('maproot_group') as FormComboboxConfig;
         this.maproot_group.options = groupOptions;
       });
-
-    if (this.productType.includes(ProductType.Scale)) {
-      this.hideOnScale.forEach((name) => {
-        this.entityForm.setDisabled(name, true, true);
-      });
-    }
   }
 
   isCustomActionVisible(actionId: string): boolean {
@@ -355,17 +320,11 @@ export class NfsFormComponent implements FormConfiguration {
   }
 
   resourceTransformIncomingRestData(data: NfsShare): any {
-    const paths = [];
-    for (let i = 0; i < data['paths'].length; i++) {
-      paths.push({ path: data['paths'][i], alias: data['aliases'][i] ? data['aliases'][i] : undefined });
-    }
-
     const networks = data.networks.map((network) => ({ network }));
     const hosts = data.hosts.map((host) => ({ host }));
 
     return {
       ...data,
-      paths,
       networks,
       hosts,
     };
@@ -374,8 +333,6 @@ export class NfsFormComponent implements FormConfiguration {
   clean(data: any): any {
     return {
       ...data,
-      paths: (data.paths as any[]).filter((path) => !!path.path).map((path) => path.path),
-      aliases: (data.paths as any[]).filter((path) => !!path.alias).map((path) => path.alias),
       networks: (data.networks as any[]).filter((network) => !!network.network).map((network) => network.network),
       hosts: (data.hosts as any[]).filter((host) => !!host.host).map((host) => host.host),
     };

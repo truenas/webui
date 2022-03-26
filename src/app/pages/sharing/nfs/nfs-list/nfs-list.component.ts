@@ -39,7 +39,7 @@ export class NfsListComponent implements EntityTableConfig<NfsShare> {
 
   columns = [
     {
-      name: this.translate.instant(helptextSharingNfs.column_path), prop: 'paths', showLockedStatus: true, always_display: true,
+      name: this.translate.instant(helptextSharingNfs.column_path), prop: 'path', showLockedStatus: true, always_display: true,
     },
     { name: this.translate.instant(helptextSharingNfs.column_comment), prop: 'comment' },
     { name: this.translate.instant(helptextSharingNfs.column_enabled), prop: 'enabled', checkbox: true },
@@ -50,7 +50,7 @@ export class NfsListComponent implements EntityTableConfig<NfsShare> {
     sorting: { columns: this.columns },
     deleteMsg: {
       title: this.translate.instant('Unix (NFS) Share'),
-      key_props: ['paths'],
+      key_props: ['path'],
     },
   };
 
@@ -73,7 +73,7 @@ export class NfsListComponent implements EntityTableConfig<NfsShare> {
     message: shared.delete_share_message,
     isMessageComplete: true,
     button: this.translate.instant('Unshare'),
-    buildTitle: (share: NfsShare) => `${this.translate.instant('Unshare')} ${share.paths.join(', ')}`,
+    buildTitle: (share: NfsShare) => `${this.translate.instant('Unshare')} ${share.path}`,
   };
 
   doAdd(id?: number): void {

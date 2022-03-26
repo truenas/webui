@@ -169,14 +169,14 @@ export class SharesDashboardComponent implements AfterViewInit {
           deleteCall: 'sharing.nfs.delete',
           deleteMsg: {
             title: this.translate.instant('NFS Share'),
-            key_props: ['paths'],
+            key_props: ['path'],
           },
           limitRowsByMaxHeight: true,
           hideEntityEmpty: true,
           emptyEntityLarge: false,
           parent: this,
           columns: [
-            { name: helptextSharingNfs.column_path, prop: 'paths', showLockedStatus: true },
+            { name: helptextSharingNfs.column_path, prop: 'path', showLockedStatus: true },
             { name: helptextSharingNfs.column_comment, prop: 'comment', hiddenIfEmpty: true },
             {
               name: helptextSharingNfs.column_enabled,

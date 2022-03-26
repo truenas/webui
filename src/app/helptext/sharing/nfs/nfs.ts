@@ -10,18 +10,13 @@ export const helptextSharingNfs = {
   // NFSFormComponent
   title: T('Add NFS'),
   editTitle: T('Edit NFS'),
-  fieldset_paths: T('Paths'),
   fieldset_general: T('General Options'),
   fieldset_access: T('Access'),
   fieldset_networks: T('Networks'),
   fieldset_hosts: T('Hosts'),
 
   placeholder_path: T('Path'),
-  tooltip_path: T(
-    'Full path to the pool or dataset to share. Mandatory.\
- Click <b>ADD ADDITIONAL PATH</b> to configure\
- multiple paths.',
-  ),
+  tooltip_path: T('Full path to the pool or dataset to share. Mandatory.'),
   validators_path: [Validators.required],
 
   error_alias: T('The <i>Alias</i> field can either be left empty or \
