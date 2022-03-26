@@ -17,7 +17,6 @@ import { UserService, WebSocketService } from 'app/services';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
-// TODO: Remember to clean up helptext
 @UntilDestroy()
 @Component({
   templateUrl: './rsync-task-form.component.html',
