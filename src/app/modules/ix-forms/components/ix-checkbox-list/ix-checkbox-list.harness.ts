@@ -51,4 +51,16 @@ export class IxCheckboxListHarness extends ComponentHarness implements IxFormCon
       }
     }
   }
+
+  async isDisabled(): Promise<boolean> {
+    const checkboxes = await this.getCheckboxes();
+    for (const checkbox of checkboxes) {
+      const isDisabled = await checkbox.isDisabled();
+      if (isDisabled) {
+        return true;
+      }
+    }
+
+    return false;
+  }
 }
