@@ -38,6 +38,6 @@ When adding new changes, try to add unit tests when and where possible. Covering
 
 ## Raise a Pull Request
 
-Pull requests required at least one approved review from one of the members of the UI team before they can be merged. When you create a new PR, a member of the UI team will be automatically asked to review it. Alternatively, you can ask for review from @truenas/ui_team.
+Pull requests require at least one approved review from one of the members of the UI team before they can be merged. When you create a new PR, a member of the UI team will be automatically asked to review it. Alternatively, you can ask for review from @truenas/ui_team.
 
-Once we have reviewed your PR, we will provide any feedback that needs addressing. If you feel a requested change is wrong, don't be afraid to discuss with us in the comments. Once the feedback is addressed, and the PR is reviewed, we'll ensure the branch is up to date with target, and merge it for you. Depending on the status of the project, somtimes only authorized members of the UI team can merge PRs. In which case, it might take a bit more time for it to be merged.
+Once we have reviewed your PR, we will provide any feedback that needs addressing. If you feel a requested change is wrong, don't be afraid to discuss with us in the comments. Once the feedback is addressed, and the PR is reviewed, we'll ensure the branch is up to date with target, and merge it for you. Depending on the status of the project, sometimes only authorized members of the UI team can merge PRs. In which case, it might take a bit more time for it to be merged.
