@@ -39,9 +39,6 @@ export default {
       tooltip: T('Configure virtual addressing topology when running in TUN mode. \
  (TAP mode always uses a SUBNET topology.)'),
       enum: [{
-        label: '---',
-        value: null,
-      }, {
         label: 'NET30',
         value: 'NET30',
       }, {
@@ -102,9 +99,6 @@ target="_blank">here.</a>'),
     placeholder: T('Compression'),
     tooltip: T('Choose a compression algorithm.'),
     enum: [{
-      label: '---',
-      value: null,
-    }, {
       label: 'LZO',
       value: 'LZO',
     }, {
