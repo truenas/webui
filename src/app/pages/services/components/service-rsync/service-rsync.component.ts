@@ -16,8 +16,7 @@ export class ServiceRsyncComponent implements OnInit {
   {
     label: 'Rsync Module',
     path: '/services/rsync/rsync-module',
-  },
-  ];
+  }];
   constructor(protected router: Router, protected aroute: ActivatedRoute) {}
 
   ngOnInit(): void {

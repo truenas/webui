@@ -60,6 +60,11 @@
   margin-top: 10px;
 }
 
+.form-textarea textarea:focus-visible {
+  outline: 0 transparent;
+  outline: 1px solid var(--primary);
+}
+
 .form-textarea {
   &.paragraph {
     overflow-wrap: break-word;

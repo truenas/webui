@@ -76,7 +76,7 @@ export class ServiceS3Component implements OnInit {
     certificate: helptext.certificate_tooltip,
   };
 
-  readonly treeNodeProvider = this.filesystemService.getFilesystemNodeProvider();
+  readonly treeNodeProvider = this.filesystemService.getFilesystemNodeProvider({ directoriesOnly: true });
   readonly bindIpOptions$ = this.ws.call('s3.bindip_choices').pipe(choicesToOptions());
   readonly certificateOptions$ = this.systemGeneralService.getCertificates().pipe(
     map((certificates) => {

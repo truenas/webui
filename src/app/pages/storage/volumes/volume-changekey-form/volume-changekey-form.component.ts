@@ -48,7 +48,7 @@ export class VolumeChangekeyFormComponent implements FormConfiguration {
     }, {
       type: 'paragraph',
       name: 'encrypt-headline',
-      paraText: '<i class="material-icons">lock</i>' + helptext.changekey2_headline,
+      paraText: '<i class="material-icons">lock</i>' + this.translate.instant(helptext.changekey2_headline),
     }, {
       type: 'paragraph',
       name: 'changekey-instructions',
