@@ -25,7 +25,7 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
 export class ProactiveComponent implements OnInit {
   isLoading = false;
   title = helptext.proactive.title;
-
+  FormDisable: boolean;
   form = this.formBuilder.group({
     name: ['', [Validators.required]],
     title: ['', [Validators.required]],
@@ -39,7 +39,6 @@ export class ProactiveComponent implements OnInit {
   });
 
   readonly helptext = helptext;
-
   readonly labels = {
     pc_name: helptext.proactive.pc_name_placeholder,
     pc_title: helptext.proactive.pc_title_placeholder,
@@ -63,13 +62,15 @@ export class ProactiveComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.isLoading = true;
     this.loadConfig();
+    this.afterInit();
   }
 
   onSubmit(): void {
     const values = this.form.value as SupportConfigUpdate;
-
     this.isLoading = true;
+
     this.ws.call('support.update', [values])
       .pipe(untilDestroyed(this))
       .subscribe(
@@ -89,6 +90,7 @@ export class ProactiveComponent implements OnInit {
 
   private loadConfig(): void {
     this.isLoading = true;
+
     this.ws.call('support.config')
       .pipe(untilDestroyed(this))
       .subscribe(
@@ -104,5 +106,25 @@ export class ProactiveComponent implements OnInit {
         },
       );
   }
+
+  private afterInit(): void {
+    this.ws.call('support.is_available').pipe(untilDestroyed(this)).subscribe((res) => {
+      if (!res) {
+        this.FormDisable = true;
+        this.form.disable();
+        // this.slideInService.close();
+        // this.dialogService.info(helptext.proactive.dialog_unavailable_title,
+        //   helptext.proactive.dialog_unavailable_warning, '500px', 'warning', true);
+      } else {
+        this.FormDisable = false;
+        this.ws.call('support.is_available_and_enabled').pipe(untilDestroyed(this)).subscribe((res) => {
+          if (res) {
+            this.form.controls['enabled'].setValue(true);
+          } else {
+            this.form.controls['enabled'].setValue(false);
+          }
+        });
+      }
+    });
+  }
 }
-// this.ws.call('support.is_available') if available support

@@ -4,8 +4,9 @@
     <form [formGroup]="form" class="ix-form-container" (submit)="onSubmit()">
       <div class="two-columns">
         <ix-fieldset
-          [title]="helptext.proactive.primary_contact"
-          [tooltip]="helptext.proactive.instructions">
+          [style.opacity]="FormDisable ? .38 : null"
+          [title]="helptext.proactive.primary_contact | translate"
+          [tooltip]="helptext.proactive.instructions | translate">
           <ix-input
             formControlName="name"
             [label]="labels.pc_name | translate"
@@ -32,7 +33,8 @@
           ></ix-checkbox>
         </ix-fieldset>
 
-        <ix-fieldset [title]="helptext.proactive.secondary_contact">
+        <ix-fieldset
+          [title]="helptext.proactive.secondary_contact | translate">
           <ix-input
             formControlName="secondary_name"
             [label]="labels.sec_name | translate"
@@ -59,7 +61,7 @@
         <button
           mat-button
           type="submit"
-          [disabled]="form.invalid || isLoading"
+          [disabled]="form.invalid || isLoading || FormDisable"
           color="primary"
         >{{ 'Save' | translate }}</button>
       </div>
