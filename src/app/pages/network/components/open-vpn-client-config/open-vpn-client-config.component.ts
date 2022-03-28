@@ -2,6 +2,7 @@ import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
 import { Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { of } from 'rxjs';
@@ -95,6 +96,7 @@ export class OpenVpnClientConfigComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private slideInService: IxSlideInService,
     private dialogService: DialogService,
+    private router: Router,
   ) {}
 
   ngOnInit(): void {
@@ -137,5 +139,10 @@ export class OpenVpnClientConfigComponent implements OnInit {
           new EntityUtils().handleWsError(null, error, this.dialogService);
         },
       );
+  }
+
+  certificatesLinkClicked(): void {
+    this.slideInService.close(null, false);
+    this.router.navigate(['/', 'credentials', 'certificates']);
   }
 }

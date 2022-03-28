@@ -10,12 +10,16 @@
               [label]="'Client Certificate' | translate"
               [options]="clientCertificates$"
               [tooltip]="tooltips.client_certificate | translate"
+              [linkText]="'Certificates' | translate"
+              (linkClicked)="certificatesLinkClicked()"
             ></ix-select>
             <ix-select
               formControlName="root_ca"
               [label]="'Root CA' | translate"
               [options]="rootAuthorities$"
               [tooltip]="tooltips.root_ca | translate"
+              [linkText]="'Certificate Authorities' | translate"
+              (linkClicked)="certificatesLinkClicked()"
             ></ix-select>
             <ix-input
               formControlName="remote"
