@@ -319,11 +319,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnDestroy
       sessionStorage.updateLastChecked
       && Number(sessionStorage.updateLastChecked) + oneDay > Date.now()
     ) {
-      if (sessionStorage.updateAvailable === 'true') {
-        this.updateAvailable = true;
-      } else {
-        this.updateAvailable = false;
-      }
+      this.updateAvailable = sessionStorage.updateAvailable === 'true';
       return;
     }
     sessionStorage.updateLastChecked = Date.now();
