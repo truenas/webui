@@ -12,7 +12,7 @@
           formControlName="sysloglevel"
           [label]="'Syslog Level' | translate"
           [tooltip]="tooltips.sysloglevel"
-          [options]="levelOptions"
+          [options]="levelOptions$"
         ></ix-select>
         <ix-input
           formControlName="syslogserver"
@@ -23,7 +23,7 @@
           formControlName="syslog_transport"
           [label]="'Syslog Transport' | translate"
           [tooltip]="tooltips.syslog_transport"
-          [options]="transportOptions"
+          [options]="transportOptions$"
         ></ix-select>
 
         <ng-container *ngIf="isTlsTransport$ | async">
@@ -31,12 +31,12 @@
             formControlName="syslog_tls_certificate"
             [label]="'Syslog TLS Certificate' | translate"
             [tooltip]="tooltips.syslog_transport"
-            [options]="certificateOptions"
+            [options]="certificateOptions$"
           ></ix-select>
           <ix-select
             formControlName="syslog_tls_certificate_authority"
             [label]="'Syslog TLS Certificate Authority' | translate"
-            [options]="certificateAuthorityOptions"
+            [options]="certificateAuthorityOptions$"
             [required]="true"
           ></ix-select>
         </ng-container>

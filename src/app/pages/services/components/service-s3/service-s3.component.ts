@@ -80,13 +80,10 @@ export class ServiceS3Component implements OnInit {
   readonly bindIpOptions$ = this.ws.call('s3.bindip_choices').pipe(choicesToOptions());
   readonly certificateOptions$ = this.systemGeneralService.getCertificates().pipe(
     map((certificates) => {
-      return [
-        { label: '---', value: null },
-        ...certificates.map((certificate) => ({
-          label: certificate.name,
-          value: certificate.id,
-        })),
-      ];
+      return certificates.map((certificate) => ({
+        label: certificate.name,
+        value: certificate.id,
+      }));
     }),
   );
 

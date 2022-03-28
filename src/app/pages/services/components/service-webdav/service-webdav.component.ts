@@ -67,15 +67,10 @@ export class ServiceWebdavComponent implements OnInit {
     options: this.ws.call('webdav.cert_choices').pipe(
       map((certificates) => {
         const certKeys = Object.keys(certificates);
-        const options = certKeys.map((key) => ({
+        return certKeys.map((key) => ({
           label: certificates[key],
           value: Number(key),
         }));
-
-        return [
-          { label: '---', value: null },
-          ...options,
-        ];
       }),
     ),
     hidden: false,
