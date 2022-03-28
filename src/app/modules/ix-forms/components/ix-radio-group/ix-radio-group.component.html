@@ -8,12 +8,17 @@
 
 <mat-radio-group
   color="primary"
+  [fxLayout]="containerLayout"
   [required]="required"
   [disabled]="isDisabled"
   [value]="value"
   (change)="onRadiosChanged($event)"
 >
-  <div *ngFor="let option of options | async">
+  <div
+    *ngFor="let option of options | async"
+    fxFlex="100%"
+    [fxFlex.gt-md]="fieldFlex"
+  >
     <mat-radio-button [value]="option.value">
       {{option.label}}
     </mat-radio-button>

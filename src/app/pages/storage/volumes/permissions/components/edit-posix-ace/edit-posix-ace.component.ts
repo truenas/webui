@@ -1,106 +1,83 @@
 import {
-  ChangeDetectionStrategy, Component, Input, OnChanges,
+  ChangeDetectionStrategy, Component, Input, OnChanges, OnInit,
 } from '@angular/core';
-import { FormGroup } from '@angular/forms';
+import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { of } from 'rxjs';
 import { PosixAclTag, PosixPermission } from 'app/enums/posix-acl.enum';
-import {
-  PosixAclItem,
-} from 'app/interfaces/acl.interface';
-import { FormConfiguration } from 'app/interfaces/entity-form.interface';
-import { EntityFormComponent } from 'app/modules/entity/entity-form/entity-form.component';
-import { FieldConfig, FormComboboxConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
-import { FieldSet } from 'app/modules/entity/entity-form/models/fieldset.interface';
-import { FieldRelationService } from 'app/modules/entity/entity-form/services/field-relation.service';
-import { getEditPosixAceFieldSet } from 'app/pages/storage/volumes/permissions/components/edit-posix-ace/edit-posix-ace-field-set';
-import { EditPosixAceFormValues } from 'app/pages/storage/volumes/permissions/components/edit-posix-ace/edit-posix-ace-form-values.interface';
+import helptext from 'app/helptext/storage/volumes/datasets/dataset-acl';
+import { PosixAclItem } from 'app/interfaces/acl.interface';
+import { GroupComboboxProvider } from 'app/modules/ix-forms/classes/group-combobox-provider';
+import { UserComboboxProvider } from 'app/modules/ix-forms/classes/user-combobox-provider';
 import { DatasetAclEditorStore } from 'app/pages/storage/volumes/permissions/stores/dataset-acl-editor.store';
 import { UserService } from 'app/services';
 
 @UntilDestroy()
 @Component({
-  selector: 'app-edit-posix-ace',
-  template: '<entity-form [conf]="this"></entity-form>',
+  selector: 'ix-edit-posix-ace',
+  templateUrl: './edit-posix-ace.component.html',
+  styleUrls: ['./edit-posix-ace.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class EditPosixAceComponent implements FormConfiguration, OnChanges {
+export class EditPosixAceComponent implements OnInit, OnChanges {
   @Input() ace: PosixAclItem;
 
-  formGroup: FormGroup;
-  fieldSets: FieldSet[] = [];
-  fieldConfig: FieldConfig[] = [];
-  hideSaveBtn = true;
+  form = this.formBuilder.group({
+    tag: [null as PosixAclTag],
+    user: [null as string],
+    group: [null as string],
+    permissions: [[] as PosixPermission[]],
+    default: [false],
+  });
+
+  readonly tags$ = of(helptext.posix_tag.options);
+  readonly permissions$ = of(helptext.posix_perms.options);
+
+  readonly tooltips = {
+    tag: helptext.posix_tag.tooltip,
+    user: helptext.dataset_acl_user_tooltip,
+    group: helptext.dataset_acl_group_tooltip,
+    permissions: helptext.posix_perms.tooltip,
+    default: helptext.posix_default.tooltip,
+  };
+
+  readonly userProvider = new UserComboboxProvider(this.userService);
+  readonly groupProvider = new GroupComboboxProvider(this.userService);
 
   constructor(
     private userService: UserService,
     private store: DatasetAclEditorStore,
-    private relationService: FieldRelationService,
-  ) {
-    this.fieldSets = (getEditPosixAceFieldSet.bind(this))(userService);
+    private formBuilder: FormBuilder,
+  ) {}
+
+  get isUserTag(): boolean {
+    return this.form.value.tag === PosixAclTag.User;
   }
 
-  ngOnChanges(): void {
-    if (this.formGroup) {
-      this.updateFormValues();
-    }
+  get isGroupTag(): boolean {
+    return this.form.value.tag === PosixAclTag.Group;
   }
 
-  preInit(): void {
-    this.userService.userQueryDsCache().pipe(untilDestroyed(this)).subscribe((users) => {
-      const userOptions = users.map((user) => ({ label: user.username, value: user.username }));
-
-      const userControl = this.fieldConfig.find((config) => config.name === 'user') as FormComboboxConfig;
-      userControl.options = userOptions;
-    });
-
-    this.userService.groupQueryDsCache().pipe(untilDestroyed(this)).subscribe((groups) => {
-      const groupOptions = groups.map((group) => ({ label: group.group, value: group.group }));
-
-      const groupControl = this.fieldConfig.find((config) => config.name === 'group') as FormComboboxConfig;
-      groupControl.options = groupOptions;
-    });
-  }
-
-  afterInit(entityForm: EntityFormComponent): void {
-    this.formGroup = entityForm.formGroup;
-    this.formGroup.valueChanges
-      .pipe(untilDestroyed(this))
-      .subscribe(() => this.onAceUpdated());
-    this.formGroup.statusChanges
-      .pipe(untilDestroyed(this))
-      .subscribe(() => this.onFormStatusUpdated());
-
+  ngOnInit(): void {
+    this.setFormListeners();
     this.updateFormValues();
   }
 
-  onFormStatusUpdated(): void {
-    this.store.updateSelectedAceValidation(this.formGroup.valid);
+  ngOnChanges(): void {
+    this.updateFormValues();
   }
-  private updateFormValues(): void {
-    const formValues = {
-      tag: this.ace.tag,
-      user: this.ace.tag === PosixAclTag.User ? this.ace.who : '',
-      group: this.ace.tag === PosixAclTag.Group ? this.ace.who : '',
-      default: this.ace.default,
-      permissions: Object.entries(this.ace.perms)
-        .filter(([_, isOn]) => isOn)
-        .map(([permission]) => permission),
-    } as EditPosixAceFormValues;
 
-    this.formGroup.reset(formValues, { emitEvent: false });
+  private setFormListeners(): void {
+    this.form.valueChanges
+      .pipe(untilDestroyed(this))
+      .subscribe(() => this.onAceUpdated());
+    this.form.statusChanges
+      .pipe(untilDestroyed(this))
+      .subscribe(() => this.onFormStatusUpdated());
+  }
 
-    // TODO: This is a workaround for form components relying on valueChanges instead of control-value-accessor.
-    this.formGroup.get('permissions').setValue(formValues.permissions, { onlySelf: true });
-
-    this.fieldConfig.forEach((config) => {
-      this.relationService.refreshRelations(config, this.formGroup, { emitEvent: false });
-    });
-
-    this.formGroup.markAllAsTouched();
-
-    setTimeout(() => {
-      this.onFormStatusUpdated();
-    });
+  private onFormStatusUpdated(): void {
+    this.store.updateSelectedAceValidation(this.form.valid);
   }
 
   private onAceUpdated(): void {
@@ -110,7 +87,7 @@ export class EditPosixAceComponent implements FormConfiguration, OnChanges {
   }
 
   private formValuesToAce(): PosixAclItem {
-    const formValues = this.formGroup.value as EditPosixAceFormValues;
+    const formValues = this.form.value;
 
     const ace = {
       tag: formValues.tag,
@@ -132,5 +109,25 @@ export class EditPosixAceComponent implements FormConfiguration, OnChanges {
     }
 
     return ace;
+  }
+
+  private updateFormValues(): void {
+    const formValues = {
+      tag: this.ace.tag,
+      user: this.ace.tag === PosixAclTag.User ? this.ace.who : '',
+      group: this.ace.tag === PosixAclTag.Group ? this.ace.who : '',
+      default: this.ace.default,
+      permissions: Object.entries(this.ace.perms)
+        .filter(([_, isOn]) => isOn)
+        .map(([permission]) => permission as PosixPermission),
+    };
+
+    this.form.reset(formValues, { emitEvent: false });
+
+    this.form.markAllAsTouched();
+
+    setTimeout(() => {
+      this.onFormStatusUpdated();
+    });
   }
 }

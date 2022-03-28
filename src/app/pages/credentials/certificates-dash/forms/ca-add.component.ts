@@ -89,9 +89,7 @@ export class CertificateAuthorityAddComponent implements WizardConfiguration {
           name: 'signedby',
           placeholder: helptextSystemCa.add.signedby.placeholder,
           tooltip: helptextSystemCa.add.signedby.tooltip,
-          options: [
-            { label: '---', value: null },
-          ],
+          options: [],
           isHidden: true,
           disabled: true,
           required: true,

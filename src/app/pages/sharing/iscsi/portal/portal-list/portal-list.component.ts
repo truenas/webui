@@ -1,11 +1,15 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { Choices } from 'app/interfaces/choices.interface';
 import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-table.component';
 import { EntityTableConfig } from 'app/modules/entity/entity-table/entity-table.interface';
+import { PortalFormComponent } from 'app/pages/sharing/iscsi/portal/portal-form/portal-form.component';
 import { IscsiService } from 'app/services';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
+@UntilDestroy()
 @Component({
   selector: 'app-iscsi-portal-list',
   template: `
@@ -16,9 +20,7 @@ export class PortalListComponent implements EntityTableConfig {
   tableTitle = this.translate.instant('Portals');
   queryCall = 'iscsi.portal.query' as const;
   wsDelete = 'iscsi.portal.delete' as const;
-  routeAdd: string[] = ['sharing', 'iscsi', 'portals', 'add'];
   routeAddTooltip = this.translate.instant('Add Portal');
-  routeEdit: string[] = ['sharing', 'iscsi', 'portals', 'edit'];
 
   columns = [
     {
@@ -58,7 +60,35 @@ export class PortalListComponent implements EntityTableConfig {
     protected router: Router,
     protected iscsiService: IscsiService,
     protected translate: TranslateService,
+    private slideInService: IxSlideInService,
   ) {}
+
+  afterInit(entityList: EntityTableComponent): void {
+    this.slideInService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
+      entityList.getData();
+    });
+  }
+
+  doAdd(): void {
+    this.slideInService.open(PortalFormComponent);
+  }
+
+  doEdit(id: number, entityList: EntityTableComponent): void {
+    const row = entityList.rows.find((row) => row.id === id);
+    const listen = row.listen.map((item: string) => {
+      const lastIndex = item.lastIndexOf(':');
+      return {
+        ip: item.substring(0, lastIndex),
+        port: Number(item.substring(lastIndex + 1)),
+      };
+    });
+
+    const form = this.slideInService.open(PortalFormComponent);
+    form.setupForm({
+      ...row,
+      listen,
+    });
+  }
 
   prerequisite(): Promise<boolean> {
     return new Promise(async (resolve) => {

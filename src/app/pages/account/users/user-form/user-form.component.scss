@@ -1,0 +1,14 @@
+:host {
+  ix-slide-toggle {
+    margin-bottom: 27px;
+    margin-top: 50px;
+  }
+}
+
+.form-actions {
+  margin: 8px 10px;
+
+  button + button {
+    margin-left: 10px;
+  }
+}
