@@ -285,6 +285,7 @@ describe('UserFormComponent', () => {
         'Home Directory': true,
         'Primary Group': true,
         Username: true,
+        'Microsoft Account': true,
       }));
     });
   });
