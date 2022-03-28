@@ -157,6 +157,7 @@
   "Successfully exported/disconnected {pool}.": "",
   "Suggestion": "",
   "TLS Server Hostname": "",
+  "Task Aborted": "",
   "Tasks could not be loaded": "",
   "The <a href=\"https://www.ixsystems.com/community/\" target=\"_blank\" class=\"external-link\">TrueNAS Community Forums</a> are the best place to ask questions and interact with fellow TrueNAS users.": "",
   "The <a href=\"https://www.truenas.com/docs/\" target=\"_blank\">TrueNAS Documentation Site</a> is a collaborative website with helpful guides and information about your new storage system.": "",
