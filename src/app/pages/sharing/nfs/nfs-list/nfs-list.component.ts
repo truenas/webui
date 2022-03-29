@@ -6,8 +6,9 @@ import { NfsShare } from 'app/interfaces/nfs-share.interface';
 import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-table.component';
 import { EntityTableConfig } from 'app/modules/entity/entity-table/entity-table.interface';
 import { EntityUtils } from 'app/modules/entity/utils';
-import { WebSocketService, ModalService } from 'app/services';
+import { WebSocketService } from 'app/services';
 import { DialogService } from 'app/services/dialog.service';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { NfsFormComponent } from '../nfs-form/nfs-form.component';
 
 @UntilDestroy()
@@ -55,7 +56,7 @@ export class NfsListComponent implements EntityTableConfig<NfsShare> {
   };
 
   constructor(
-    private modalService: ModalService,
+    private slideInService: IxSlideInService,
     protected ws: WebSocketService,
     private dialog: DialogService,
     private translate: TranslateService,
@@ -64,7 +65,7 @@ export class NfsListComponent implements EntityTableConfig<NfsShare> {
   afterInit(entityList: EntityTableComponent): void {
     this.entityList = entityList;
 
-    this.modalService.refreshTable$.pipe(untilDestroyed(this)).subscribe(() => {
+    this.slideInService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
       this.entityList.getData();
     });
   }
@@ -76,12 +77,14 @@ export class NfsListComponent implements EntityTableConfig<NfsShare> {
     buildTitle: (share: NfsShare) => `${this.translate.instant('Unshare')} ${share.path}`,
   };
 
-  doAdd(id?: number): void {
-    this.modalService.openInSlideIn(NfsFormComponent, id);
+  doAdd(): void {
+    this.slideInService.open(NfsFormComponent);
   }
 
   doEdit(id: number): void {
-    this.doAdd(id);
+    const row = this.entityList.rows.find((row) => row.id === id);
+    const form = this.slideInService.open(NfsFormComponent);
+    form.setNfsShareForEdit(row);
   }
 
   onCheckboxChange(row: NfsShare): void {
