@@ -1,400 +1,140 @@
-import { Component } from '@angular/core';
-import {
-  Validators, FormControl, ValidationErrors, AbstractControl,
-} from '@angular/forms';
-import { Router, ActivatedRoute } from '@angular/router';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
+import { Validators } from '@angular/forms';
+import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import * as _ from 'lodash';
-import { ExplorerType } from 'app/enums/explorer-type.enum';
-import { IscsiExtentType } from 'app/enums/iscsi.enum';
-import globalHelptext from 'app/helptext/global-helptext';
+import { TranslateService } from '@ngx-translate/core';
+import _ from 'lodash';
+import { Observable, of } from 'rxjs';
+import { map } from 'rxjs/operators';
+import { IscsiExtentRpm, IscsiExtentType } from 'app/enums/iscsi.enum';
 import { helptextSharingIscsi } from 'app/helptext/sharing';
-import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { IscsiExtent } from 'app/interfaces/iscsi.interface';
-import { QueryFilter } from 'app/interfaces/query-api.interface';
-import { AppLoaderService } from 'app/modules/app-loader/app-loader.service';
-import { EntityFormComponent } from 'app/modules/entity/entity-form/entity-form.component';
-import { FieldConfig, FormSelectConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
-import { FieldSet } from 'app/modules/entity/entity-form/models/fieldset.interface';
-import { EntityUtils } from 'app/modules/entity/utils';
-import {
-  IscsiService, WebSocketService, StorageService,
-} from 'app/services';
+import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
+import { IscsiService, StorageService, WebSocketService } from 'app/services';
+import { FilesystemService } from 'app/services/filesystem.service';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
 @Component({
-  selector: 'app-iscsi-initiator-form',
-  template: '<entity-form [conf]="this"></entity-form>',
-  providers: [IscsiService, StorageService],
+  templateUrl: './extent-form.component.html',
+  styleUrls: ['./extent-form.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ExtentFormComponent implements FormConfiguration {
-  addCall = 'iscsi.extent.create' as const;
-  queryCall = 'iscsi.extent.query' as const;
-  editCall = 'iscsi.extent.update' as const;
-  customFilter: [[Partial<QueryFilter<IscsiExtent>>]] = [[['id', '=']]];
-  routeSuccess: string[] = ['sharing', 'iscsi', 'extent'];
-  isEntity = true;
-  protected entityForm: EntityFormComponent;
-  isNew = false;
-  protected originalFilesize: number;
+export class ExtentFormComponent {
+  get isNew(): boolean {
+    return !this.editingExtent;
+  }
 
-  fieldSets: FieldSet[] = [
-    {
-      name: helptextSharingIscsi.fieldset_extent_basic,
-      label: true,
-      class: 'basic',
-      width: '100%',
-      config: [
-        {
-          type: 'input',
-          name: 'name',
-          placeholder: helptextSharingIscsi.extent_placeholder_name,
-          tooltip: helptextSharingIscsi.extent_tooltip_name,
-          required: true,
-          validation: helptextSharingIscsi.extent_validators_name,
-        },
-        {
-          type: 'input',
-          name: 'comment',
-          placeholder: helptextSharingIscsi.extent_placeholder_comment,
-          tooltip: helptextSharingIscsi.extent_tooltip_comment,
-        },
-        {
-          type: 'checkbox',
-          name: 'enabled',
-          placeholder: helptextSharingIscsi.extent_placeholder_enabled,
-          tooltip: helptextSharingIscsi.extent_tooltip_enabled,
-          value: true,
-        },
-      ],
-    },
-    {
-      name: helptextSharingIscsi.fieldset_extent_type,
-      label: true,
-      class: 'type',
-      width: '100%',
-      config: [
-        {
-          type: 'select',
-          name: 'type',
-          placeholder: helptextSharingIscsi.extent_placeholder_type,
-          tooltip: helptextSharingIscsi.extent_tooltip_type,
-          options: [
-            {
-              label: 'Device',
-              value: 'DISK',
-            },
-            {
-              label: 'File',
-              value: 'FILE',
-            },
-          ],
-        },
-        {
-          type: 'select',
-          name: 'disk',
-          placeholder: helptextSharingIscsi.extent_placeholder_disk,
-          tooltip: helptextSharingIscsi.extent_tooltip_disk,
-          options: [],
-          isHidden: false,
-          disabled: false,
-          required: true,
-          validation: helptextSharingIscsi.extent_validators_disk,
-        },
-        {
-          type: 'explorer',
-          explorerType: ExplorerType.File,
-          initial: '/mnt',
-          name: 'path',
-          placeholder: helptextSharingIscsi.extent_placeholder_path,
-          tooltip: helptextSharingIscsi.extent_tooltip_path,
-          isHidden: false,
-          disabled: false,
-          required: true,
-          validation: helptextSharingIscsi.extent_validators_path,
-        },
-        {
-          type: 'input',
-          name: 'filesize',
-          placeholder: helptextSharingIscsi.extent_placeholder_filesize,
-          tooltip: helptextSharingIscsi.extent_tooltip_filesize,
-          isHidden: false,
-          disabled: false,
-          required: true,
-          blurEvent: () => this.blurFilesize(),
-          blurStatus: true,
-          parent: this,
-          validation: [Validators.required,
-            (control: FormControl): ValidationErrors => {
-              const filesizeConfig = this.fieldConfig.find((config) => config.name === 'filesize');
-              const size = this.storageService.convertHumanStringToNum(control.value, true);
-              const errors = control.value && Number.isNaN(size)
-                ? { invalid_byte_string: true }
-                : null;
-              if (errors) {
-                filesizeConfig.hasErrors = true;
-                filesizeConfig.errors = globalHelptext.human_readable.input_error;
-              } else {
-                filesizeConfig.hasErrors = false;
-                filesizeConfig.errors = '';
-              }
+  get isDevice(): boolean {
+    return (this.form.controls.type.value !== IscsiExtentType.File);
+  }
 
-              return errors;
-            },
-          ],
-        },
-        {
-          type: 'input',
-          name: 'serial',
-          placeholder: helptextSharingIscsi.extent_placeholder_serial,
-          tooltip: helptextSharingIscsi.extent_tooltip_serial,
-        },
-        {
-          type: 'select',
-          name: 'blocksize',
-          placeholder: helptextSharingIscsi.extent_placeholder_blocksize,
-          tooltip: helptextSharingIscsi.extent_tooltip_blocksize,
-          options: [
-            {
-              label: '512',
-              value: 512,
-            },
-            {
-              label: '1024',
-              value: 1024,
-            },
-            {
-              label: '2048',
-              value: 2048,
-            },
-            {
-              label: '4096',
-              value: 4096,
-            },
-          ],
-          value: 512,
-        },
-        {
-          type: 'checkbox',
-          name: 'pblocksize',
-          placeholder: helptextSharingIscsi.extent_placeholder_pblocksize,
-          tooltip: helptextSharingIscsi.extent_tooltip_pblocksize,
-        },
-        {
-          type: 'input',
-          name: 'avail_threshold',
-          placeholder: helptextSharingIscsi.extent_placeholder_avail_threshold,
-          tooltip: helptextSharingIscsi.extent_tooltip_avail_threshold,
-          isHidden: false,
-        },
-      ],
-    },
-    {
-      name: helptextSharingIscsi.fieldset_extent_options,
-      label: true,
-      class: 'options',
-      width: '100%',
-      config: [
-        {
-          type: 'checkbox',
-          name: 'insecure_tpc',
-          placeholder: helptextSharingIscsi.extent_placeholder_insecure_tpc,
-          tooltip: helptextSharingIscsi.extent_tooltip_insecure_tpc,
-          value: true,
-        },
-        {
-          type: 'checkbox',
-          name: 'xen',
-          placeholder: helptextSharingIscsi.extent_placeholder_xen,
-          tooltip: helptextSharingIscsi.extent_tooltip_xen,
-        },
-        {
-          type: 'select',
-          name: 'rpm',
-          placeholder: helptextSharingIscsi.extent_placeholder_rpm,
-          tooltip: helptextSharingIscsi.extent_tooltip_rpm,
-          options: [
-            {
-              label: 'UNKNOWN',
-              value: 'UNKNOWN',
-            },
-            {
-              label: 'SSD',
-              value: 'SSD',
-            },
-            {
-              label: '5400',
-              value: '5400',
-            },
-            {
-              label: '7200',
-              value: '7200',
-            },
-            {
-              label: '10000',
-              value: '10000',
-            },
-            {
-              label: '15000',
-              value: '15000',
-            },
-          ],
-          value: 'SSD',
-        },
-        {
-          type: 'checkbox',
-          name: 'ro',
-          placeholder: helptextSharingIscsi.extent_placeholder_ro,
-          tooltip: helptextSharingIscsi.extent_tooltip_ro,
-        },
-      ],
-    },
-  ];
+  get isAvailableThreshold(): boolean {
+    return _.startsWith(this.form.controls.disk.value, 'zvol');
+  }
 
-  protected deviceFieldGroup = [
-    'disk',
-  ];
-  protected fileFieldGroup = [
-    'path',
-    'filesize',
-  ];
-  protected extentTypeControl: AbstractControl;
-  protected extentDiskControl: AbstractControl;
-  pk: string;
-  protected availableThresholdField: FieldConfig;
-  fieldConfig: FieldConfig[];
+  get title(): string {
+    return this.isNew
+      ? this.translate.instant('Add Extent')
+      : this.translate.instant('Edit Extent');
+  }
+
+  form = this.formBuilder.group({
+    name: ['', Validators.required],
+    comment: [''],
+    enabled: [true],
+    type: [IscsiExtentType.Disk],
+    disk: [''],
+    path: ['/mnt'],
+    filesize: [''],
+    serial: [''],
+    blocksize: [512],
+    pblocksize: [false],
+    avail_threshold: [null as number, [Validators.min(1), Validators.max(99)]],
+    insecure_tpc: [true],
+    xen: [false],
+    rpm: [IscsiExtentRpm.Ssd],
+    ro: [false],
+  });
+
+  isLoading = false;
+
+  readonly helptext = helptextSharingIscsi;
+
+  readonly rpms$ = of(this.helptext.extent_form_enum_rpm);
+  readonly types$ = of(this.helptext.extent_form_enum_type);
+  readonly blocksizes$ = of(this.helptext.extent_form_enum_blocksize);
+  readonly disks$ = this.iscsiService.getExtentDevices().pipe(
+    map((devices) => {
+      const opts = [];
+      for (const i in devices) {
+        opts.push({ label: devices[i], value: i });
+      }
+      return _.sortBy(opts, ['label']);
+    }),
+  );
+  readonly treeNodeProvider = this.filesystemService.getFilesystemNodeProvider();
+
+  private editingExtent: IscsiExtent;
 
   constructor(
-    protected router: Router,
-    protected aroute: ActivatedRoute,
     protected iscsiService: IscsiService,
-    protected ws: WebSocketService,
-    protected loader: AppLoaderService,
+    private translate: TranslateService,
+    private formBuilder: FormBuilder,
+    private slideInService: IxSlideInService,
+    private errorHandler: FormErrorHandlerService,
+    private cdr: ChangeDetectorRef,
+    private ws: WebSocketService,
+    private filesystemService: FilesystemService,
     protected storageService: StorageService,
   ) {}
 
-  preInit(): void {
-    this.aroute.params.pipe(untilDestroyed(this)).subscribe((params) => {
-      // removed serial field in edit mode
-      if (!params['pk']) {
-        this.isNew = true;
-        const extentTypeFieldset = _.find(this.fieldSets, { class: 'type' });
-        extentTypeFieldset.config = _.filter(extentTypeFieldset.config, (item) => item.name !== 'serial');
-      } else {
-        this.isNew = false;
-        this.pk = params['pk'];
-        this.customFilter[0][0].push(parseInt(params['pk'], 10));
+  setExtentForEdit(extent: IscsiExtent): void {
+    if (extent.type === IscsiExtentType.Disk) {
+      if (_.startsWith(extent.path, 'zvol')) {
+        extent.disk = extent.path;
       }
-    });
+      delete extent.path;
+    }
+
+    this.editingExtent = extent;
+    this.form.patchValue(extent);
   }
 
-  afterInit(entityForm: EntityFormComponent): void {
-    this.entityForm = entityForm;
-    this.fieldConfig = entityForm.fieldConfig;
-    const extentDiskField = _.find(this.fieldConfig, { name: 'disk' }) as FormSelectConfig;
-    // get device options
-    this.iscsiService.getExtentDevices().pipe(untilDestroyed(this)).subscribe((res) => {
-      const options = [];
-      for (const i in res) {
-        options.push({ label: res[i], value: i });
-      }
-      extentDiskField.options = _.sortBy(options, ['label']);
-    });
+  onSubmit(): void {
+    const values = {
+      ...this.form.value,
+    };
 
-    this.extentTypeControl = entityForm.formGroup.controls['type'];
-    this.extentTypeControl.valueChanges.pipe(untilDestroyed(this)).subscribe((value: string) => {
-      this.formUpdate(value);
-    });
+    if (values.type === IscsiExtentType.Disk) {
+      values.path = values.disk;
+    }
 
-    this.availableThresholdField = _.find(this.fieldConfig, { name: 'avail_threshold' });
-    this.extentDiskControl = entityForm.formGroup.controls['disk'];
-    this.extentDiskControl.valueChanges.pipe(untilDestroyed(this)).subscribe((value: string) => {
-      // zvol
-      if (_.startsWith(value, 'zvol')) {
-        this.availableThresholdField.isHidden = false;
-      } else {
-        this.availableThresholdField.isHidden = true;
-        if (this.pk && value !== undefined && _.find(extentDiskField.options, { value }) === undefined) {
-          extentDiskField.options.push({ label: value, value });
-        }
-      }
-    });
+    let originalFilesize = parseInt(values.filesize, 10);
+    if (originalFilesize !== 0) {
+      originalFilesize = originalFilesize + (values.blocksize - originalFilesize % values.blocksize);
+    }
 
+    values.filesize = originalFilesize.toString();
+
+    this.isLoading = true;
+    let request$: Observable<unknown>;
     if (this.isNew) {
-      this.extentTypeControl.setValue('DISK');
+      request$ = this.ws.call('iscsi.extent.create', [values]);
+    } else {
+      request$ = this.ws.call('iscsi.extent.update', [
+        this.editingExtent.id,
+        values,
+      ]);
     }
-  }
 
-  formUpdate(type: string): void {
-    const isDevice = type !== 'FILE';
-
-    this.fileFieldGroup.forEach((field) => {
-      const control = _.find(this.fieldConfig, { name: field });
-      control['isHidden'] = isDevice;
-      control.disabled = isDevice;
-      if (isDevice) {
-        this.entityForm.formGroup.controls[field].disable();
-      } else {
-        this.entityForm.formGroup.controls[field].enable();
-      }
+    request$.pipe(untilDestroyed(this)).subscribe(() => {
+      this.isLoading = false;
+      this.slideInService.close();
+    }, (error) => {
+      this.isLoading = false;
+      this.errorHandler.handleWsFormError(error, this.form);
+      this.cdr.markForCheck();
     });
-
-    this.deviceFieldGroup.forEach((field) => {
-      const control = _.find(this.fieldConfig, { name: field });
-      control['isHidden'] = !isDevice;
-      control.disabled = !isDevice;
-      if (!isDevice) {
-        this.entityForm.formGroup.controls[field].disable();
-      } else {
-        this.entityForm.formGroup.controls[field].enable();
-      }
-    });
-  }
-
-  resourceTransformIncomingRestData(data: IscsiExtent): any {
-    this.originalFilesize = parseInt(data.filesize, 10);
-    const transformed: any = { ...data };
-    if (data.type === IscsiExtentType.Disk) {
-      if (_.startsWith(data.path, 'zvol')) {
-        transformed['disk'] = data.path;
-      }
-      delete transformed['path'];
-    }
-    if (data.filesize && data.filesize !== '0') {
-      transformed.filesize = this.storageService.convertBytesToHumanReadable(this.originalFilesize);
-    }
-    return transformed;
-  }
-
-  customEditCall(value: any): void {
-    this.loader.open();
-    if (value['type'] === 'DISK') {
-      value['path'] = value['disk'];
-    }
-    this.ws.call(this.editCall, [parseInt(this.pk, 10), value]).pipe(untilDestroyed(this)).subscribe(
-      () => {
-        this.loader.close();
-        this.router.navigate(new Array('/').concat(this.routeSuccess));
-      },
-      (res) => {
-        this.loader.close();
-        new EntityUtils().handleWsError(this.entityForm, res);
-      },
-    );
-  }
-
-  beforeSubmit(data: any): void {
-    data.filesize = this.storageService.convertHumanStringToNum(data.filesize, true);
-    if (this.pk === undefined || this.originalFilesize !== data.filesize) {
-      data.filesize = data.filesize === 0
-        ? data.filesize
-        : (data.filesize + (data.blocksize - data.filesize % data.blocksize));
-    }
-  }
-
-  blurFilesize(): void {
-    if (this.entityForm) {
-      this.entityForm.formGroup.controls['filesize'].setValue(this.storageService.humanReadable);
-    }
   }
 }

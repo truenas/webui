@@ -216,6 +216,27 @@ export const helptextSharingIscsi = {
   extent_placeholder_enabled: T('Enabled'),
   extent_tooltip_enabled: T('Set to enable the iSCSI extent.'),
 
+  extent_form_enum_rpm: [
+    { label: 'UNKNOWN', value: 'UNKNOWN' },
+    { label: 'SSD', value: 'SSD' },
+    { label: '5400', value: '5400' },
+    { label: '7200', value: '7200' },
+    { label: '10000', value: '10000' },
+    { label: '15000', value: '15000' },
+  ],
+
+  extent_form_enum_type: [
+    { label: T('Device'), value: 'DISK' },
+    { label: T('File'), value: 'FILE' },
+  ],
+
+  extent_form_enum_blocksize: [
+    { label: '512', value: 512 },
+    { label: '1024', value: 1024 },
+    { label: '2048', value: 2048 },
+    { label: '4096', value: 4096 },
+  ],
+
   authaccess_placeholder_tag: T('Group ID'),
   authaccess_tooltip_tag: T(
     'Allow different groups to be configured\
