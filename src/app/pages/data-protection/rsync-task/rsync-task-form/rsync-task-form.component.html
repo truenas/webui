@@ -1,0 +1,156 @@
+<ix-modal-header [title]="title" [loading]="isLoading"></ix-modal-header>
+<mat-card>
+  <mat-card-content>
+    <form [formGroup]="form" class="ix-form-container" (submit)="onSubmit()">
+      <div class="fieldsets">
+        <ix-fieldset [title]="'Source' | translate" class="fieldset">
+          <ix-explorer
+            formControlName="path"
+            [label]="'Path' | translate"
+            [tooltip]="helptext.rsync_path_tooltip | translate"
+            [required]="true"
+            [nodeProvider]="treeNodeProvider"
+          ></ix-explorer>
+          <ix-combobox
+            formControlName="user"
+            [label]="'User' | translate"
+            [tooltip]="helptext.rsync_user_tooltip | translate"
+            [required]="true"
+            [provider]="userProvider"
+          ></ix-combobox>
+          <ix-select
+            formControlName="direction"
+            [label]="'Direction' | translate"
+            [tooltip]="helptext.rsync_direction_tooltip | translate"
+            [required]="true"
+            [options]="directions$"
+          ></ix-select>
+          <ix-input
+            formControlName="desc"
+            [label]="'Description' | translate"
+            [tooltip]="helptext.rsync_description_tooltip | translate"
+          ></ix-input>
+        </ix-fieldset>
+
+        <ix-fieldset [title]="'Remote' | translate" class="fieldset">
+          <ix-input
+            formControlName="remotehost"
+            [label]="'Remote Host' | translate"
+            [required]="true"
+            [tooltip]="helptext.rsync_remotehost_tooltip | translate"
+          ></ix-input>
+          <ix-select
+            formControlName="mode"
+            [label]="'Rsync Mode' | translate"
+            [tooltip]="helptext.rsync_mode_tooltip | translate"
+            [options]="rsyncModes$"
+          ></ix-select>
+          <ng-container *ngIf="isSshMode; else moduleFields">
+            <ix-input
+              formControlName="remoteport"
+              [label]="'Remote SSH Port' | translate"
+              [required]="true"
+              type="number"
+              [tooltip]="helptext.rsync_remoteport_tooltip"
+            ></ix-input>
+            <ix-explorer
+              formControlName="remotepath"
+              [label]="'Remote Path' | translate"
+              [nodeProvider]="treeNodeProvider"
+              [tooltip]="helptext.rsync_mode_tooltip"
+            ></ix-explorer>
+            <ix-checkbox
+              formControlName="validate_rpath"
+              [label]="'Validate Remote Path' | translate"
+              [tooltip]="helptext.rsync_validate_rpath_tooltip"
+            ></ix-checkbox>
+          </ng-container>
+          <ng-template #moduleFields>
+            <ix-input
+              formControlName="remotemodule"
+              [label]="'Remote Module Name' | translate"
+              [tooltip]="helptext.rsync_remotemodule_tooltip"
+              [required]="true"
+            ></ix-input>
+          </ng-template>
+        </ix-fieldset>
+
+        <ix-fieldset [title]="'Schedule' | translate" class="fieldset">
+          <ix-scheduler
+            formControlName="schedule"
+            [required]="true"
+            [label]="'Schedule' | translate"
+            [tooltip]="helptext.rsync_picker_tooltip | translate"
+          ></ix-scheduler>
+          <ix-checkbox
+            formControlName="recursive"
+            [label]="'Recursive' | translate"
+            [tooltip]="helptext.rsync_recursive_tooltip | translate"
+          ></ix-checkbox>
+          <ix-checkbox
+            formControlName="enabled"
+            [label]="'Enabled' | translate"
+            [tooltip]="helptext.rsync_enabled_tooltip"
+          ></ix-checkbox>
+        </ix-fieldset>
+
+        <ix-fieldset [title]="'More Options' | translate" class="fieldset">
+          <ix-checkbox
+            formControlName="times"
+            [label]="'Times' | translate"
+            [tooltip]="helptext.rsync_times_tooltip"
+          ></ix-checkbox>
+          <ix-checkbox
+            formControlName="compress"
+            [label]="'Compress' | translate"
+            [tooltip]="helptext.rsync_compress_tooltip"
+          ></ix-checkbox>
+          <ix-checkbox
+            formControlName="archive"
+            [label]="'Archive' | translate"
+            [tooltip]="helptext.rsync_archive_tooltip"
+          ></ix-checkbox>
+          <ix-checkbox
+            formControlName="delete"
+            [label]="'Delete' | translate"
+            [tooltip]="helptext.rsync_delete_tooltip"
+          ></ix-checkbox>
+          <ix-checkbox
+            formControlName="quiet"
+            [label]="'Quiet' | translate"
+            [tooltip]="helptext.rsync_quiet_tooltip"
+          ></ix-checkbox>
+          <ix-checkbox
+            formControlName="preserveperm"
+            [label]="'Preserve Permissions' | translate"
+            [tooltip]="helptext.rsync_preserveperm_tooltip"
+          ></ix-checkbox>
+          <ix-checkbox
+            formControlName="preserveattr"
+            [label]="'Preserve Extended Attributes' | translate"
+            [tooltip]="helptext.rsync_preserveattr_tooltip"
+          ></ix-checkbox>
+          <ix-checkbox
+            formControlName="delayupdates"
+            [label]="'Delay Updates' | translate"
+            [tooltip]="helptext.rsync_delayupdates_tooltip"
+          ></ix-checkbox>
+          <ix-chips
+            formControlName="extra"
+            [label]="'Auxiliary Parameters' | translate"
+            [tooltip]="helptext.rsync_extra_tooltip"
+          ></ix-chips>
+        </ix-fieldset>
+      </div>
+
+      <div class="form-actions">
+        <button
+          mat-button
+          type="submit"
+          [disabled]="form.invalid || isLoading"
+          color="primary"
+        >{{ 'Save' | translate }}</button>
+      </div>
+    </form>
+  </mat-card-content>
+</mat-card>
