@@ -212,7 +212,6 @@ def after_settings_are_applied_you_should_see_settings_applied(driver):
 @then('Navigate to Network then Interfaces, click next to vtnet0, click edit')
 def navigate_to_network_then_interfaces_click_next_to_vtnet0_click_edit(driver):
     """Navigate to Network then Interfaces, click next to vtnet0, click edit."""
-    assert wait_on_element(driver, 7, '//mat-list-item[@ix-auto="option__Network"]', 'clickable')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Network"]').click()
     assert wait_on_element(driver, 7, '//mat-list-item[@ix-auto="option__Interfaces"]', 'clickable')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Interfaces"]').click()
