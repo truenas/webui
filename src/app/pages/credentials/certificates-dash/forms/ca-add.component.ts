@@ -89,9 +89,7 @@ export class CertificateAuthorityAddComponent implements WizardConfiguration {
           name: 'signedby',
           placeholder: helptextSystemCa.add.signedby.placeholder,
           tooltip: helptextSystemCa.add.signedby.tooltip,
-          options: [
-            { label: '---', value: null },
-          ],
+          options: [],
           isHidden: true,
           disabled: true,
           required: true,
@@ -265,6 +263,11 @@ export class CertificateAuthorityAddComponent implements WizardConfiguration {
     {
       label: helptextSystemCa.add.fieldset_extra,
       fieldConfig: [
+        {
+          type: 'checkbox',
+          name: 'add_to_trusted_store',
+          placeholder: helptextSystemCa.add.add_to_trusted_store.placeholder,
+        },
         {
           type: 'checkbox',
           name: 'BasicConstraints-enabled',
@@ -679,6 +682,12 @@ export class CertificateAuthorityAddComponent implements WizardConfiguration {
         } else if (this.getField('key_type').value === 'EC') {
           this.hideField('key_length', true);
         }
+        this.hideField('add_to_trusted_store', false);
+        this.relationFields.forEach((field) => {
+          if (field.includes('-enabled')) {
+            this.getField(field).setValue(this.getField(field).value);
+          }
+        });
       } else if (res === 'CA_CREATE_INTERMEDIATE') {
         this.importcaFields.forEach((field) => this.hideField(field, true));
         this.internalcaFields.forEach((field) => this.hideField(field, true));
@@ -689,11 +698,18 @@ export class CertificateAuthorityAddComponent implements WizardConfiguration {
         } else if (this.getField('key_type').value === 'EC') {
           this.hideField('key_length', true);
         }
+        this.hideField('add_to_trusted_store', true);
+        this.relationFields.forEach((field) => {
+          if (field.includes('-enabled')) {
+            this.getField(field).setValue(this.getField(field).value);
+          }
+        });
       } else if (res === 'CA_CREATE_IMPORTED') {
         this.intermediatecaFields.forEach((field) => this.hideField(field, true));
         this.importcaFields.forEach((field) => this.hideField(field, false));
         this.internalcaFields.forEach((field) => this.hideField(field, true));
         this.extensionFields.forEach((field) => this.hideField(field, true));
+        this.hideField('add_to_trusted_store', false);
 
         this.wizardConfig[1].skip = true;
         this.wizardConfig[2].skip = true;
@@ -781,7 +797,7 @@ export class CertificateAuthorityAddComponent implements WizardConfiguration {
         } else if (reset && this.entityForm.formGroup.controls[item].value === value[item]) {
           this.entityForm.formGroup.controls[item].setValue(undefined);
         } else if (!reset) {
-          this.entityForm.formGroup.controls[item].setValue(value[item]);
+          this.entityForm.formGroup.controls[item]?.setValue(value[item]);
         }
       });
     }
@@ -864,6 +880,9 @@ export class CertificateAuthorityAddComponent implements WizardConfiguration {
       data['cert_extensions'] = certExtensions;
 
       delete data['profiles'];
+    }
+    if (data.create_type === 'CA_CREATE_INTERMEDIATE') {
+      delete data['add_to_trusted_store'];
     }
 
     return data;

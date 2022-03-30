@@ -3,132 +3,132 @@
   <mat-card-content>
     <form [formGroup]="form" class="ix-form-container" (submit)="onSubmit()">
       <div class="two-columns">
-        <ix-fieldset [title]="helptext.ups_fieldset_general">
+        <ix-fieldset [title]="helptext.ups_fieldset_general | translate">
           <ix-input
             formControlName="identifier"
-            [label]="labels.identifier"
-            [tooltip]="tooltips.identifier"
+            [label]="labels.identifier | translate"
+            [tooltip]="tooltips.identifier | translate"
             [required]="true"
           ></ix-input>
           <ix-select
             formControlName="mode"
-            [label]="labels.mode"
+            [label]="labels.mode | translate"
             [options]="modeOptions$"
-            [tooltip]="tooltips.mode"
+            [tooltip]="tooltips.mode | translate"
           ></ix-select>
           <ix-input
             *ngIf="!isMasterMode"
             formControlName="remotehost"
-            [label]="labels.remotehost"
-            [tooltip]="tooltips.remotehost"
+            [label]="labels.remotehost | translate"
+            [tooltip]="tooltips.remotehost | translate"
             [required]="true"
           ></ix-input>
           <ix-input
             *ngIf="!isMasterMode"
             formControlName="remoteport"
-            [label]="labels.remoteport"
-            [tooltip]="tooltips.remoteport"
+            [label]="labels.remoteport | translate"
+            [tooltip]="tooltips.remoteport | translate"
             [required]="true"
             type="number"
           ></ix-input>
           <ix-combobox
             *ngIf="isMasterMode"
             formControlName="driver"
-            [label]="labels.driver"
-            [tooltip]="tooltips.driver"
+            [label]="labels.driver | translate"
+            [tooltip]="tooltips.driver | translate"
             [provider]="providers.driver"
             [required]="true"
           ></ix-combobox>
           <ix-combobox
             formControlName="port"
-            [label]="labels.port"
-            [tooltip]="tooltips.port"
+            [label]="labels.port | translate"
+            [tooltip]="tooltips.port | translate"
             [provider]="providers.port"
             [required]="isMasterMode"
           ></ix-combobox>
         </ix-fieldset>
-        <ix-fieldset [title]="helptext.ups_fieldset_monitor">
+        <ix-fieldset [title]="helptext.ups_fieldset_monitor | translate">
           <ix-input
             formControlName="monuser"
-            [label]="labels.monuser"
-            [tooltip]="tooltips.monuser"
+            [label]="labels.monuser | translate"
+            [tooltip]="tooltips.monuser | translate"
             [required]="true"
           ></ix-input>
           <ix-input
             formControlName="monpwd"
-            [label]="labels.monpwd"
-            [tooltip]="tooltips.monpwd"
+            [label]="labels.monpwd | translate"
+            [tooltip]="tooltips.monpwd | translate"
             [required]="true"
             type="password"
           ></ix-input>
           <ix-textarea
             formControlName="extrausers"
-            [label]="labels.extrausers"
-            [tooltip]="tooltips.extrausers"
+            [label]="labels.extrausers | translate"
+            [tooltip]="tooltips.extrausers | translate"
           ></ix-textarea>
           <ix-checkbox
             formControlName="rmonitor"
-            [label]="labels.rmonitor"
-            [tooltip]="tooltips.rmonitor"
+            [label]="labels.rmonitor | translate"
+            [tooltip]="tooltips.rmonitor | translate"
           ></ix-checkbox>
         </ix-fieldset>
       </div>
 
       <div class="one-column">
-        <ix-fieldset [title]="helptext.ups_fieldset_shutdown">
+        <ix-fieldset [title]="helptext.ups_fieldset_shutdown | translate">
           <ix-select
             formControlName="shutdown"
-            [label]="labels.shutdown"
+            [label]="labels.shutdown | translate"
             [options]="shutdownOptions$"
-            [tooltip]="tooltips.shutdown"
+            [tooltip]="tooltips.shutdown | translate"
           ></ix-select>
           <ix-input
             formControlName="shutdowntimer"
-            [label]="labels.shutdowntimer"
-            [tooltip]="tooltips.shutdowntimer"
+            [label]="labels.shutdowntimer | translate"
+            [tooltip]="tooltips.shutdowntimer | translate"
             type="number"
           ></ix-input>
           <ix-input
             formControlName="shutdowncmd"
-            [label]="labels.shutdowncmd"
-            [tooltip]="tooltips.shutdowncmd"
+            [label]="labels.shutdowncmd | translate"
+            [tooltip]="tooltips.shutdowncmd | translate"
           ></ix-input>
           <ix-checkbox
             formControlName="powerdown"
-            [label]="labels.powerdown"
-            [tooltip]="tooltips.powerdown"
+            [label]="labels.powerdown | translate"
+            [tooltip]="tooltips.powerdown | translate"
           ></ix-checkbox>
         </ix-fieldset>
       </div>
 
       <div class="one-column">
-        <ix-fieldset [title]="helptext.ups_fieldset_other">
+        <ix-fieldset [title]="helptext.ups_fieldset_other | translate">
           <ix-input
             formControlName="nocommwarntime"
-            [label]="labels.nocommwarntime"
-            [tooltip]="tooltips.nocommwarntime"
+            [label]="labels.nocommwarntime | translate"
+            [tooltip]="tooltips.nocommwarntime | translate"
             type="number"
           ></ix-input>
           <ix-input
             formControlName="hostsync"
-            [label]="labels.hostsync"
-            [tooltip]="tooltips.hostsync"
+            [label]="labels.hostsync | translate"
+            [tooltip]="tooltips.hostsync | translate"
             type="number"
           ></ix-input>
           <ix-input
             formControlName="description"
-            [label]="labels.description"
-            [tooltip]="tooltips.description"
+            [label]="labels.description | translate"
+            [tooltip]="tooltips.description | translate"
           ></ix-input>
           <ix-textarea
             formControlName="options"
-            [label]="labels.options"
-            [tooltip]="tooltips.options"
+            [label]="labels.options | translate"
+            [tooltip]="tooltips.options | translate"
           ></ix-textarea>
           <ix-textarea
             formControlName="optionsupsd"
-            [label]="labels.optionsupsd"
-            [tooltip]="tooltips.optionsupsd"
+            [label]="labels.optionsupsd | translate"
+            [tooltip]="tooltips.optionsupsd | translate"
           ></ix-textarea>
         </ix-fieldset>
       </div>

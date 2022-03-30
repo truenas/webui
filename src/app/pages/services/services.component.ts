@@ -201,6 +201,8 @@ export class ServicesComponent implements OnInit {
       .pipe(untilDestroyed(this))
       .subscribe((res) => {
         if (!res) {
+          // To uncheck the checkbox
+          service.enable = false;
           // Middleware should return the service id
           throw new Error('Method service.update failed. No response from server');
         }

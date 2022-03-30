@@ -17,12 +17,12 @@ import { ApiMethod } from 'app/interfaces/api-directory.interface';
 import { SysInfoEvent, SystemInfoWithFeatures } from 'app/interfaces/events/sys-info-event.interface';
 import { SystemUpdateTrain } from 'app/interfaces/system-update.interface';
 import { AppLoaderService } from 'app/modules/app-loader/app-loader.service';
+import { ConfirmDialogComponent } from 'app/modules/common/dialog/confirm-dialog/confirm-dialog.component';
 import { DialogFormConfiguration } from 'app/modules/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/modules/entity/entity-dialog/entity-dialog.component';
 import { FieldConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { EntityUtils } from 'app/modules/entity/utils';
-import { ConfirmDialogComponent } from 'app/pages/common/confirm-dialog/confirm-dialog.component';
 import { StorageService, SystemGeneralService, WebSocketService } from 'app/services';
 import { CoreService } from 'app/services/core-service/core.service';
 import { DialogService } from 'app/services/dialog.service';
@@ -43,6 +43,7 @@ export class UpdateComponent implements OnInit {
   progress: Record<string, unknown> = {};
   error: string;
   autoCheck = false;
+  checkable = false;
   train: string;
   trains: { name: string; description: string }[] = [];
   selectedTrain: string;
@@ -162,6 +163,7 @@ export class UpdateComponent implements OnInit {
       this.autoCheck = isAutoDownloadOn;
 
       this.ws.call('update.get_trains').pipe(untilDestroyed(this)).subscribe((res) => {
+        this.checkable = true;
         this.fullTrainList = res.trains;
 
         // On page load, make sure we are working with train of the current OS
@@ -195,6 +197,13 @@ export class UpdateComponent implements OnInit {
         }
         // To remember train descrip if user switches away and then switches back
         this.trainDescriptionOnPageLoad = this.currentTrainDescription;
+      },
+      (err) => {
+        this.dialogService.info(
+          err.trace.class,
+          this.translate.instant('TrueNAS was unable to reach update servers.'),
+          '500px',
+        );
       });
     });
 

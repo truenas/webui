@@ -4,7 +4,7 @@ import { IxFormControlHarness } from 'app/modules/ix-forms/interfaces/ix-form-co
 import { getErrorText } from '../../utils/harness.utils';
 
 export interface IxSelectHarnessFilters extends SelectHarnessFilters {
-  label: string;
+  label?: string;
 }
 
 export class IxSelectHarness extends ComponentHarness implements IxFormControlHarness {
@@ -64,5 +64,13 @@ export class IxSelectHarness extends ComponentHarness implements IxFormControlHa
 
   async isDisabled(): Promise<boolean> {
     return (await this.getSelectHarness()).isDisabled();
+  }
+
+  async getOptionLabels(): Promise<string[]> {
+    const matSelect = await this.getSelectHarness();
+    await matSelect.open();
+    const options = await matSelect.getOptions();
+
+    return parallel(() => options.map((option) => option.getText()));
   }
 }

@@ -1,6 +1,6 @@
 import {
   ChangeDetectionStrategy, ChangeDetectorRef,
-  Component, Input, OnChanges,
+  Component, EventEmitter, Input, OnChanges, Output,
 } from '@angular/core';
 import {
   ControlValueAccessor, FormControl, NgControl,
@@ -27,6 +27,8 @@ export class IxSelectComponent implements ControlValueAccessor, OnChanges {
   @Input() required: boolean;
   @Input() tooltip: string;
   @Input() multiple: boolean;
+  @Output() linkClicked: EventEmitter<void> = new EventEmitter();
+  @Input() linkText: string = null;
 
   constructor(
     public controlDirective: NgControl,
@@ -38,8 +40,8 @@ export class IxSelectComponent implements ControlValueAccessor, OnChanges {
   ngOnChanges(): void {
     if (this.options) {
       this.opts$ = this.options.pipe(
-        catchError((error) => {
-          this.errorObject = error;
+        catchError(() => {
+          this.hasErrorInOptions = false;
           return EMPTY;
         }),
       );
@@ -48,7 +50,7 @@ export class IxSelectComponent implements ControlValueAccessor, OnChanges {
 
   formControl = new FormControl(this).value as FormControl;
   isDisabled = false;
-  errorObject: any = null;
+  hasErrorInOptions = false;
   opts$: Observable<Option[]>;
 
   onChange: (value: IxSelectValue) => void = (): void => {};

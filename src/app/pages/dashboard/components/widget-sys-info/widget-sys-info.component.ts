@@ -40,7 +40,6 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnDestroy
   certified = false;
   updateAvailable = false;
   private _updateBtnStatus = 'default';
-  updateBtnLabel: string = this.translate.instant('Check for Updates');
   private _themeAccentColors: string[];
   manufacturer = '';
   buildDate: string;
@@ -134,9 +133,15 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnDestroy
   get updateBtnStatus(): string {
     if (this.updateAvailable) {
       this._updateBtnStatus = 'default';
-      this.updateBtnLabel = this.translate.instant('Updates Available');
     }
     return this._updateBtnStatus;
+  }
+
+  get updateBtnLabel(): string {
+    if (this.updateAvailable) {
+      return this.translate.instant('Updates Available');
+    }
+    return this.translate.instant('Check for Updates');
   }
 
   processSysInfo(systemInfo: SystemInfo): void {
@@ -314,9 +319,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnDestroy
       sessionStorage.updateLastChecked
       && Number(sessionStorage.updateLastChecked) + oneDay > Date.now()
     ) {
-      if (sessionStorage.updateAvailable === 'true') {
-        this.updateAvailable = true;
-      }
+      this.updateAvailable = sessionStorage.updateAvailable === 'true';
       return;
     }
     sessionStorage.updateLastChecked = Date.now();
@@ -324,6 +327,8 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnDestroy
 
     this.ws.call('update.check_available').pipe(untilDestroyed(this)).subscribe((update) => {
       if (update.status !== SystemUpdateStatus.Available) {
+        this.updateAvailable = false;
+        sessionStorage.updateAvailable = 'false';
         return;
       }
 

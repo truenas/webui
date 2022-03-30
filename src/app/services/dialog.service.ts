@@ -7,18 +7,20 @@ import { filter } from 'rxjs/operators';
 import { ConfirmOptions, ConfirmOptionsWithSecondaryCheckbox } from 'app/interfaces/dialog.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { Option } from 'app/interfaces/option.interface';
+import { ConfirmDialogComponent } from 'app/modules/common/dialog/confirm-dialog/confirm-dialog.component';
+import { ErrorDialogComponent } from 'app/modules/common/dialog/error-dialog/error-dialog.component';
+import { GeneralDialogComponent, GeneralDialogConfig } from 'app/modules/common/dialog/general-dialog/general-dialog.component';
+import { InfoDialogComponent } from 'app/modules/common/dialog/info-dialog/info-dialog.component';
+import { SelectDialogComponent } from 'app/modules/common/dialog/select-dialog/select-dialog.component';
 import { DialogFormConfiguration } from 'app/modules/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/modules/entity/entity-dialog/entity-dialog.component';
-import { ConfirmDialogComponent } from 'app/pages/common/confirm-dialog/confirm-dialog.component';
-import { ErrorDialogComponent } from 'app/pages/common/error-dialog/error-dialog.component';
-import { GeneralDialogComponent, GeneralDialogConfig } from 'app/pages/common/general-dialog/general-dialog.component';
-import { InfoDialogComponent } from 'app/pages/common/info-dialog/info-dialog.component';
-import { SelectDialogComponent } from 'app/pages/common/select-dialog/select-dialog.component';
 import { AppLoaderService } from '../modules/app-loader/app-loader.service';
 import { WebSocketService } from './ws.service';
 
 @UntilDestroy()
-@Injectable()
+@Injectable({
+  providedIn: 'root',
+})
 export class DialogService {
   protected loaderOpen = false;
 
@@ -75,12 +77,15 @@ export class DialogService {
       dialogRef.componentInstance.method = options.method;
       dialogRef.componentInstance.switchSelectionEmitter.pipe(untilDestroyed(this)).subscribe((selection: boolean) => {
         const data = options.data;
-        if (selection) {
+        if (selection && data[0]) {
           if (data[0] && data[0].hasOwnProperty('reboot')) {
             data[0].reboot = !data[0].reboot;
           }
           if (data[0] && data[0].hasOwnProperty('overcommit')) {
             data[0].overcommit = !data[0].overcommit;
+          }
+          if (data[0] && data[0].hasOwnProperty('delete_unused_images')) {
+            data[0].delete_unused_images = !data[0].delete_unused_images;
           }
           dialogRef.componentInstance.data = data;
           return dialogRef;
@@ -193,7 +198,7 @@ export class DialogService {
     }
   }
 
-  generalDialog(conf: GeneralDialogConfig, matConfig?: MatDialogConfig): Observable<any> {
+  generalDialog(conf: GeneralDialogConfig, matConfig?: MatDialogConfig): Observable<boolean> {
     const dialogRef = this.dialog.open(GeneralDialogComponent, matConfig);
     dialogRef.componentInstance.conf = conf;
 

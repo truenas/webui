@@ -1,0 +1,89 @@
+.fa-spin {
+  animation: fa-spin 2s infinite linear;
+}
+@keyframes fa-spin {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(359deg);
+  }
+}
+@keyframes fa-spin {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(359deg);
+  }
+}
+
+@keyframes nudge {
+  0%,
+  100% {
+    transform: translate(0, 0);
+  }
+
+  50% {
+    transform: translate(10px, 0);
+  }
+
+  80% {
+    transform: translate(-10px, 0);
+  }
+}
+
+.mdi-icon {
+  font-size: 24px;
+}
+
+.hidden-button {
+  height: 0 !important;
+}
+
+.topbar {
+  background-color: var(--topbar) !important;
+  color: var(--topbar-txt) !important;
+}
+
+.ix-logo:focus-visible,
+.topbar button:focus-visible {
+  background: var(--focus-bg);
+  box-shadow: 0 0 0 1px var(--focus-brd) inset !important;
+  outline-width: 0;
+}
+
+.ix-logo {
+  cursor: pointer;
+  fill: none !important;
+  height: 48px;
+  position: relative;
+  right: -10px;
+  top: 4px;
+  width: 175px;
+}
+
+.ix-logo.ix_full_logo,
+.ix-logo.ix_logomark {
+  fill: var(--topbar-txt) !important;
+}
+
+.ix-logo.xs {
+  height: 50px;
+  right: 0;
+  width: 50px;
+}
+
+.icon {
+  &.account {
+    font-size: 180%;
+  }
+}
+
+.topbar-button-right {
+  &.overflow-visible {
+    overflow: visible;
+  }
+}

@@ -1,23 +1,25 @@
 :host {
   color: var(--fg1);
   display: block;
-
   margin-bottom: 12px;
   margin-top: 18px;
   padding: 8px 0;
 }
 
+.tooltip {
+  margin: 0 0 0 8px;
+}
+
 .label-container {
-  margin-bottom: 5px;
+  align-items: center;
+  display: flex;
+  margin-bottom: 1px;
   margin-left: 1px;
+  min-height: 24px;
 
   .label {
+    display: inline-flex;
     font-size: x-small;
-  }
-
-  .tooltip {
-    margin-left: 8px;
-    vertical-align: -4px;
   }
 }
 
@@ -31,9 +33,9 @@
     border-radius: 0;
     color: var(--fg2);
     cursor: pointer;
-    display: inline-block;
+    display: inline-flex;
     font-family: var(--font-family-body);
-    font-size: 14px;
+    font-size: 13px;
     font-weight: bold;
     line-height: 36px;
     margin: 0;
@@ -67,13 +69,13 @@
   .file {
     align-items: center;
     display: flex;
-    margin: 5px 0;
+    margin: 6px 0;
   }
 
   .file-action {
     cursor: pointer;
     display: inline-flex;
-    margin-right: 5px;
+    margin-right: 8px;
     opacity: 0.5;
 
     &:hover {
@@ -82,7 +84,7 @@
   }
 
   .file-size {
-    margin-left: 5px;
+    margin-left: 8px;
     opacity: 0.65;
   }
 

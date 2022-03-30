@@ -1,10 +1,6 @@
 import { Validators } from '@angular/forms';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
-const passphraseMessage = T(' a passphrase invalidates an existing pool \
- recovery key file. To save a backup of the existing encryption key \
- without making any changes, click <b>DOWNLOAD ENCRYPTION KEY</b>.');
-
 export default {
 // Add key form
   add_key_headline: T('Recovery Key for Pool '),
@@ -34,14 +30,17 @@ export default {
   changekey_adminpw_validation: [Validators.required],
 
   changekey_headline: T('Encryption Key for Pool '),
-  changekey_instructions: T('Creating') + passphraseMessage,
+  changekey_instructions: T('Creating a passphrase invalidates an existing pool \
+ recovery key file. To save a backup of the existing encryption key \
+ without making any changes, click <b>DOWNLOAD ENCRYPTION KEY</b>.'),
   changekey_passphrase_placeholder: T('Encryption Passphrase'),
   changekey_passphrase_tooltip: T('Enter the new encryption key passphrase.'),
   changekey_passphrase_validation: [Validators.required],
 
   changekey2_headline: T('Encryption Key for Pool '),
-  changekey_instructions2: T('Changing') + passphraseMessage,
-  changekey_passphrase2_placeholder: T('Verify passphrase'),
+  changekey_instructions2: T('Changing a passphrase invalidates an existing pool \
+ recovery key file. To save a backup of the existing encryption key \
+ without making any changes, click <b>DOWNLOAD ENCRYPTION KEY</b>.'),
 
   changekey_remove_passphrase_placeholder: T('Remove passphrase'),
   changekey_remove_passphrase_tooltip: T('Delete the passphrase from \
@@ -81,5 +80,4 @@ export default {
 
   delete_recovery_key_title: T('Remove Recovery Key'),
   delete_recovery_key_message: T('Deactivate the recovery key for this pool?'),
-
 };

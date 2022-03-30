@@ -239,7 +239,7 @@ export class CertificateAuthorityEditComponent implements FormConfiguration {
     customSubmit: (entityDialog) => this.doSignCsr(entityDialog),
   };
 
-  custActions = [
+  customActions = [
     {
       id: 'sign_CSR',
       name: helptextSystemCertificates.edit.signCSR,

@@ -21,7 +21,7 @@ export class IxSlideInService {
     if (error) {
       this.slideInClosed$.error(error);
     }
-    this.slideInClosed$.next(response || {});
+    this.slideInClosed$.next(response === undefined ? {} : response);
     this.slideInComponent.closeSlideIn();
   }
 

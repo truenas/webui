@@ -116,8 +116,8 @@ export class TargetListComponent implements EntityTableConfig, OnInit {
               this.entityList.loaderOpen = true;
               this.entityList.ws.call(this.wsDelete, payload).pipe(untilDestroyed(this)).subscribe(
                 () => { this.entityList.getData(); },
-                (resinner: WebsocketError) => {
-                  new EntityUtils().handleWsError(this, resinner, this.entityList.dialogService);
+                (error: WebsocketError) => {
+                  new EntityUtils().handleWsError(this, error, this.entityList.dialogService);
                   this.entityList.loader.close();
                 },
               );

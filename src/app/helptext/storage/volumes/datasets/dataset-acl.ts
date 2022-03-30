@@ -9,16 +9,10 @@ import { mapToOptions } from 'app/helpers/options.helper';
 import {
   NfsFormFlagsType,
   NfsFormPermsType,
-} from 'app/pages/storage/volumes/permissions/components/edit-nfs-ace/edit-nfs-ace-form-values.interface';
+} from 'app/pages/storage/volumes/permissions/components/edit-nfs-ace/edit-nfs-ace-form.types';
 
 export default {
-  dataset_acl_title_file: T('File Information'),
   dataset_acl_title_entry: T('Access Control Entry'),
-  dataset_acl_title_advanced: T('Advanced'),
-
-  dataset_acl_path_placeholder: T('Path'),
-
-  dataset_acl_aces_placeholder: T('Access Control Entries'),
 
   dataset_acl_tag_placeholder: T('Who'),
   dataset_acl_tag_tooltip: T('Access Control Entry (ACE) user or group.\
@@ -52,17 +46,10 @@ export default {
   dataset_acl_group_placeholder: T('Group'),
   dataset_acl_group_tooltip: T('Group to which this ACL entry applies.'),
 
-  dataset_acl_uid_placeholder: T('User'),
   dataset_acl_uid_tooltip: T('User who controls the dataset. This user\
  always has permissions to read or write the ACL and read or write\
  attributes. Users created manually or imported from a directory service\
  appear in the drop-down menu.'),
-
-  apply_user: {
-    placeholder: T('Apply User'),
-    tooltip: T('Confirm changes to <i>User</i>. To prevent errors, changes to the <i>User</i> \
-are submitted only when this box is set.'),
-  },
 
   dataset_acl_gid_placeholder: T('Group'),
   dataset_acl_gid_tooltip: T('The group which controls the dataset. This\
@@ -70,25 +57,10 @@ are submitted only when this box is set.'),
  <i>Who</i>. Groups created manually or imported from a directory\
  service appear in the drop-down menu.'),
 
-  apply_group: {
-    placeholder: T('Apply Group'),
-    tooltip: T('Confirm changes to <i>Group</i>. To prevent errors, changes to the <i>Group</i> \
-are submitted only when this box is set.'),
-  },
-
   dataset_acl_perms_placeholder: T('Permissions'),
   dataset_acl_perms_tooltip: T('Select permissions to apply to the chosen\
  <i>Who</i>. Choices change depending on the <i>Permissions Type</i>.'),
-  dataset_acl_basic_perms_options: [
-    ...mapToOptions(nfsBasicPermissionLabels),
-    {
-      label: T('Other (Too complicated to be displayed)'),
-      value: 'OTHER',
-      disable: true,
-      hiddenFromDisplay: true,
-    },
-  ],
-  dataset_acl_basic_perms_other_warning: T('These permissions are too complicated to be displayed and cannot be saved unless changed.'),
+  dataset_acl_basic_perms_options: mapToOptions(nfsBasicPermissionLabels),
   dataset_acl_advanced_perms_options: mapToOptions(nfsAdvancedPermissionLabels),
 
   dataset_acl_flags_set_title: T('Flags'),
@@ -110,12 +82,6 @@ are submitted only when this box is set.'),
   dataset_acl_basic_flags_options: [
     { label: T('Inherit'), value: NfsBasicFlag.Inherit },
     { label: T('No Inherit'), value: NfsBasicFlag.NoInherit },
-    {
-      label: T('Other (Too complicated to be displayed)'),
-      value: 'OTHER',
-      disable: true,
-      hiddenFromDisplay: true,
-    },
   ],
   dataset_acl_advanced_flags_options: [
     { label: T('File Inherit'), value: NfsAdvancedFlag.FileInherit },
@@ -158,24 +124,8 @@ are submitted only when this box is set.'),
 
   },
 
-  dataset_acl_stripacl_dialog_warning: T('Warning'),
-  dataset_acl_stripacl_dialog_warning_message: T('Stripping the ACL resets\
- dataset permissions. This can make data inaccessible until new\
- permissions are created.'),
-
   dataset_acl_toplevel_dialog_message: T('Editing top-level datasets can\
  prevent users from accessing data in child datasets.'),
-
-  dataset_acl_add_item_btn: T('Add ACL Item'),
-
-  user_not_found: T('Could not find a user name for this user ID.'),
-  group_not_found: T('Could not find a group name for this group ID.'),
-
-  empty_acl_dialog: {
-    title: T('Error'),
-    message: T('Cannot open this ACL. Check the permissions this dataset \
- has inherited from parents.'),
-  },
 
   posix_perms: {
     placeholder: T('Permissions'),
@@ -198,8 +148,6 @@ are submitted only when this box is set.'),
     tooltip: T('Default'),
   },
 
-  permissions_editor_button: T('Use Permissions Editor'),
-
   type_dialog: {
     title: T('Create an ACL'),
     radio_preset: T('Select a preset ACL'),
@@ -212,8 +160,6 @@ are submitted only when this box is set.'),
     message: T('The chosen preset ACL will <strong>REPLACE</strong> the ACL currently displayed in the form \
  and delete any unsaved changes.'),
   },
-
-  preset_cust_action_btn: T('Select an ACL Preset'),
 
   save_dialog: {
     title: T('Updating Dataset ACL'),

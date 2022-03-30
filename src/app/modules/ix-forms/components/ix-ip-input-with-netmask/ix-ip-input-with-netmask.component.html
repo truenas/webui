@@ -1,0 +1,31 @@
+<div *ngIf="label" class="label-container">
+  <label class="label">
+    <span [innerHTML]="label"></span>
+    <span *ngIf="required" class="required">*</span>
+  </label>
+  <tooltip *ngIf="tooltip" [header]="label" class="tooltip" [message]="tooltip"></tooltip>
+</div>
+
+<div class="input-container" [class.disabled]="isDisabled">
+  <input
+    #addressInput
+    matInput
+    [required]="required"
+    [disabled]="isDisabled"
+    type=""
+    [value]="address"
+    (input)="onAddressInput(addressInput)"
+    (blur)="onTouched()"
+  >
+  <div class="slash">/</div>
+  <mat-select
+    class="select"
+    [value]="netmask"
+    (selectionChange)="onNetmaskChange($event)"
+  >
+    <mat-option *ngFor="let option of netmaskOptions" [value]="option.value">
+      {{ option.label | translate }}
+    </mat-option>
+  </mat-select>
+</div>
+<ix-errors [control]="controlDirective.control" [label]="label"></ix-errors>

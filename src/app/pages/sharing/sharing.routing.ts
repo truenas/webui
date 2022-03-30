@@ -2,13 +2,10 @@ import { ModuleWithProviders } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { SharesDashboardComponent } from 'app/pages/sharing/components/shares-dashboard/shares-dashboard.component';
-import { AssociatedTargetFormComponent } from './iscsi/associated-target/associated-target-form/associated-target-form.component';
-import { AuthorizedAccessFormComponent } from './iscsi/authorizedaccess/authorizedaccess-form/authorizedaccess-form.component';
 import { ExtentFormComponent } from './iscsi/extent/extent-form/extent-form.component';
 import { InitiatorFormComponent } from './iscsi/initiator/initiator-form/initiator-form.component';
 import { IscsiWizardComponent } from './iscsi/iscsi-wizard/iscsi-wizard.component';
 import { IscsiComponent } from './iscsi/iscsi.component';
-import { PortalFormComponent } from './iscsi/portal/portal-form/portal-form.component';
 import { TargetFormComponent } from './iscsi/target/target-form/target-form.component';
 import { NfsListComponent } from './nfs/nfs-list/nfs-list.component';
 import { SmbAclComponent } from './smb/smb-acl/smb-acl.component';
@@ -97,15 +94,6 @@ export const routes: Routes = [
               {
                 path: 'portals',
                 data: { title: 'Portals', breadcrumb: 'Portals' },
-                children: [{
-                  path: 'add',
-                  component: PortalFormComponent,
-                  data: { title: 'Add', breadcrumb: 'Add' },
-                }, {
-                  path: 'edit/:pk',
-                  component: PortalFormComponent,
-                  data: { title: 'Edit', breadcrumb: 'Edit' },
-                }],
               }, {
                 path: 'initiators',
                 data: { title: 'Initiators', breadcrumb: 'Initiators' },
@@ -121,15 +109,6 @@ export const routes: Routes = [
               }, {
                 path: 'auth',
                 data: { title: 'Authorized Access', breadcrumb: 'Authorized Access' },
-                children: [{
-                  path: 'add',
-                  component: AuthorizedAccessFormComponent,
-                  data: { title: 'Add', breadcrumb: 'Add' },
-                }, {
-                  path: 'edit/:pk',
-                  component: AuthorizedAccessFormComponent,
-                  data: { title: 'Edit', breadcrumb: 'Edit' },
-                }],
               },
               {
                 path: 'target',
@@ -160,15 +139,6 @@ export const routes: Routes = [
               {
                 path: 'associatedtarget',
                 data: { title: 'Associated Targets', breadcrumb: 'Associated Targets' },
-                children: [{
-                  path: 'add',
-                  component: AssociatedTargetFormComponent,
-                  data: { title: 'Add', breadcrumb: 'Add' },
-                }, {
-                  path: 'edit/:pk',
-                  component: AssociatedTargetFormComponent,
-                  data: { title: 'Edit', breadcrumb: 'Edit' },
-                }],
               }],
           }],
       },

@@ -83,6 +83,7 @@ export class AdvancedSettingsComponent implements OnInit {
   systemDatasetPool: string;
   entityForm: EntityFormComponent;
   isFirstTime = true;
+  sedPassword = '';
 
   isHa = false;
   formEvent$: Subject<CoreEvent>;
@@ -142,10 +143,14 @@ export class AdvancedSettingsComponent implements OnInit {
       { name: this.translate.instant('Next Run'), prop: 'next_run' },
     ],
     add: async () => {
-      await this.onSettingsPressed(AdvancedCardId.Cron);
+      await this.showFirstTimeWarningIfNeeded();
+      this.ixModal.open(CronFormComponent);
     },
-    edit: async (row: CronjobRow) => {
-      await this.onSettingsPressed(AdvancedCardId.Cron, row.id);
+    edit: async (cron: CronjobRow) => {
+      await this.showFirstTimeWarningIfNeeded();
+
+      const modal = this.ixModal.open(CronFormComponent);
+      modal.setCronForEdit(cron);
     },
   };
 
@@ -418,17 +423,27 @@ export class AdvancedSettingsComponent implements OnInit {
             },
           ],
         },
-        {
-          title: helptextSystemAdvanced.fieldset_sed,
-          id: AdvancedCardId.Sed,
-          items: [
-            {
-              label: helptextSystemAdvanced.sed_user_placeholder,
-              value: advancedConfig.sed_user,
-            },
-          ],
-        },
       ];
+
+      this.ws.call('system.advanced.sed_global_password').pipe(untilDestroyed(this)).subscribe(
+        (sedPassword) => {
+          this.sedPassword = sedPassword;
+          this.dataCards.push({
+            title: helptextSystemAdvanced.fieldset_sed,
+            id: AdvancedCardId.Sed,
+            items: [
+              {
+                label: helptextSystemAdvanced.sed_user_placeholder,
+                value: advancedConfig.sed_user,
+              },
+              {
+                label: this.translate.instant('Password'),
+                value: sedPassword ? '\*'.repeat(sedPassword.length) : '–',
+              },
+            ],
+          });
+        },
+      );
 
       this.ws.call('device.get_info', [DeviceType.Gpu]).pipe(untilDestroyed(this)).subscribe((gpus) => {
         const isolatedGpus = gpus.filter((gpu: Device) => advancedConfig.isolated_gpu_pci_ids.findIndex(
@@ -471,9 +486,6 @@ export class AdvancedSettingsComponent implements OnInit {
       case AdvancedCardId.Sysctl:
         this.modalService.openInSlideIn(TunableFormComponent, id);
         break;
-      case AdvancedCardId.Cron:
-        this.modalService.openInSlideIn(CronFormComponent, id);
-        break;
       case AdvancedCardId.SystemDatasetPool:
         this.ixModal.open(SystemDatasetPoolComponent);
         break;
@@ -481,7 +493,7 @@ export class AdvancedSettingsComponent implements OnInit {
         this.ixModal.open(IsolatedGpuPcisFormComponent);
         break;
       case AdvancedCardId.Sed:
-        this.ixModal.open(SedFormComponent).setupForm(this.configData);
+        this.ixModal.open(SedFormComponent).setupForm(this.configData, this.sedPassword);
         break;
       default:
         break;

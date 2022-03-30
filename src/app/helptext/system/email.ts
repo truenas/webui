@@ -70,11 +70,11 @@ export const helptextSystemEmail = {
   send_mail_method: {
     placeholder: T('Send Mail Method'),
     smtp: {
-      placeholder: T('SMTP'),
+      placeholder: 'SMTP',
       tooltip: T('Enable SMTP configuration'),
     },
     gmail: {
-      placeholder: T('GMail OAuth'),
+      placeholder: 'GMail OAuth',
       tooltip: T('Enable GMail OAuth authentication.'),
     },
   },

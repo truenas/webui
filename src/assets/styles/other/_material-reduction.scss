@@ -28,6 +28,7 @@ html {font-size: 87.5%;} /*14px*/
   --sidenav-width: 240px;
   --btn-default-bg: var(--alt-bg2);
   --hover-bg: var(--lines) !important;
+  --primary-lighter: var(--primary);
   --font-family-body: 'IBM Plex Sans';
 }
 
@@ -519,8 +520,8 @@ button.mat-button.mat-default,
 button.mat-default,
 button.mat-button.mat-accent.btn-default,
 button.mat-button[type='button']:not(button.mat-primary) {
-  background: var(--btn-default-bg) !important;
-  background-color: var(--btn-default-bg) !important;
+  background: var(--btn-default-bg);
+  background-color: var(--btn-default-bg);
   color: var(--fg2) !important;
 }
 
@@ -535,6 +536,14 @@ button.mat-button.mat-primary {
   background-color: var(--primary) !important;
   color: var(--primary-txt) !important;
   opacity: 1 !important;
+}
+
+a.mat-button.mat-primary:focus-visible,
+button.mat-button.mat-primary:focus-visible {
+  background: var(--primary-lighter) !important;
+  box-shadow: none !important;
+  outline: 1px solid var(--grey);
+  outline-offset: 0;
 }
 
 button.mat-button.mat-accent {

@@ -81,6 +81,19 @@ a:hover {
   text-decoration: none;
 }
 
+a:focus-visible,
+button.mat-button.mat-accent:focus-visible,
+.ix-blue button:focus-visible,
+button:focus-visible {
+  border-color: transparent !important;
+  box-shadow: 0 0 0 1px var(--focus-brd) inset !important;
+  outline-width: 0;
+}
+
+a:focus-visible {
+  box-shadow: 0 0 0 1px var(--alt-bg2) inset !important;
+}
+
 a {
   color: inherit;
 }
@@ -587,6 +600,10 @@ body .mat-select-trigger {
   width: 100%;
 }
 
+.slide-in-nav-item a:focus-visible {
+  box-shadow: none !important;
+}
+
 .sidebar-panel.mat-sidenav .sidebar-list-item.open > .mat-list-item-content > .sub-menu {
   max-height: 1000px;
 }
@@ -848,4 +865,10 @@ body.safari-platform .mat-raised-button {
 .ascii-art-font {
   font-family: Consolas,Monaco,Lucida Console,Liberation Mono,DejaVu Sans Mono,Bitstream Vera Sans Mono,Courier New, monospace !important;
   line-height: 1 !important;
+}
+
+/*---- widgets buttons alignment ----*/
+.widget .primary-nav .back-arrow {
+  line-height: 20px;
+  vertical-align: middle;
 }

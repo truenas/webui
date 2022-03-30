@@ -22,6 +22,7 @@ import {
   SystemGeneralService,
   WebSocketService,
   DialogService,
+  AppLoaderService,
 } from 'app/services';
 import { ModalService } from 'app/services/modal.service';
 
@@ -43,7 +44,7 @@ export class LdapComponent implements FormConfiguration {
   protected ldapSchemaField: FormSelectConfig;
   protected hostnames: string[];
   protected entityForm: EntityFormComponent;
-  custActions: FormCustomAction[] = [
+  customActions: FormCustomAction[] = [
     {
       id: helptext.ldap_custactions_basic_id,
       name: global_helptext.basic_options,
@@ -136,6 +137,12 @@ export class LdapComponent implements FormConfiguration {
           placeholder: helptext.ldap_certificate_placeholder,
           tooltip: helptext.ldap_certificate_tooltip,
           options: [{ label: '---', value: null }],
+          linkText: this.translate.instant('Certificates'),
+          linkClicked: () => {
+            this.modalService.closeSlideIn().then(() => {
+              this.router.navigate(['/', 'credentials', 'certificates']);
+            });
+          },
         },
         {
           type: 'checkbox',
@@ -208,7 +215,7 @@ export class LdapComponent implements FormConfiguration {
 
   advancedFields = helptext.ldap_advanced_fields;
 
-  isCustActionVisible(actionId: string): boolean {
+  isCustomActionVisible(actionId: string): boolean {
     if (actionId === 'advanced_mode' && !this.isBasicMode) {
       return false;
     } if (actionId === 'basic_mode' && this.isBasicMode) {
@@ -225,6 +232,7 @@ export class LdapComponent implements FormConfiguration {
     private modalService: ModalService,
     private dialogService: DialogService,
     private matDialog: MatDialog,
+    private loader: AppLoaderService,
     private systemGeneralService: SystemGeneralService,
     private translate: TranslateService,
   ) { }

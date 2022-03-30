@@ -1,0 +1,24 @@
+<div *ngIf="label" class="label-container">
+  <label class="label">
+    <span [innerHTML]="label"></span>
+    <span *ngIf="required" class="required">*</span>
+  </label>
+  <tooltip *ngIf="tooltip" [header]="label" class="tooltip" [message]="tooltip"></tooltip>
+</div>
+
+<div class="checkbox-list" [fxLayout]="containerLayout">
+  <mat-checkbox
+    *ngFor="let option of (options | async)"
+    class="checkbox"
+    fxFlex="100%"
+    [fxFlex.gt-md]="fieldFlex"
+    color="primary"
+    [checked]="isChecked(option.value)"
+    [disabled]="isDisabled"
+    (change)="onCheckboxChanged(option.value)"
+    (blur)="onTouch()"
+  >
+    {{ option.label }}
+  </mat-checkbox>
+</div>
+<ix-errors [control]="controlDirective.control" [label]="label"></ix-errors>

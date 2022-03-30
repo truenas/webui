@@ -94,7 +94,7 @@ export class ImportDiskComponent implements OnDestroy, FormConfiguration {
   msdosfsLocaleField: FormSelectConfig;
   private entityForm: EntityFormComponent;
   protected dialogRef: MatDialogRef<EntityJobComponent>;
-  custActions: FormCustomAction[];
+  customActions: FormCustomAction[];
 
   constructor(
     protected router: Router,
@@ -177,7 +177,7 @@ export class ImportDiskComponent implements OnDestroy, FormConfiguration {
   }
 
   customSubmit(payload: any): void {
-    this.custActions = [];
+    this.customActions = [];
     const fsOptions: Record<string, unknown> = {};
     if (payload.fs_type === 'msdosfs' && payload.msdosfs_locale) {
       fsOptions['locale'] = payload.msdosfs_locale;
@@ -190,7 +190,7 @@ export class ImportDiskComponent implements OnDestroy, FormConfiguration {
       this.dialogRef.close();
       this.entityForm.success = true;
       this.job.showLogs(job, this.translate.instant('Disk Imported: Log Summary'), this.translate.instant('Close'));
-      this.custActions = [
+      this.customActions = [
         {
           id: 'view_import_log',
           name: 'View Import Log',
@@ -204,7 +204,7 @@ export class ImportDiskComponent implements OnDestroy, FormConfiguration {
       this.dialogRef.close();
       this.entityForm.success = false;
       this.job.showLogs(job, this.translate.instant('Disk Import Aborted: Log Summary'), this.translate.instant('Close'));
-      this.custActions = [
+      this.customActions = [
         {
           id: 'view_import_log',
           name: 'View Import Log',

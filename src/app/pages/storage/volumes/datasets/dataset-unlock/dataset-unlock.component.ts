@@ -7,6 +7,7 @@ import {
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 import { DatasetEncryptionType } from 'app/enums/dataset-encryption-type.enum';
 import helptext from 'app/helptext/storage/volumes/datasets/dataset-unlock';
@@ -183,6 +184,7 @@ export class DatasetUnlockComponent implements FormConfiguration {
     protected loader: AppLoaderService,
     protected dialog: MatDialog,
     protected entityFormService: EntityFormService,
+    private translate: TranslateService,
   ) {}
 
   preInit(): void {
@@ -201,7 +203,9 @@ export class DatasetUnlockComponent implements FormConfiguration {
       data: { title: helptext.fetching_encryption_summary_title },
       disableClose: true,
     });
-    dialogRef.componentInstance.setDescription(helptext.fetching_encryption_summary_message + this.pk);
+    dialogRef.componentInstance.setDescription(
+      this.translate.instant(helptext.fetching_encryption_summary_message) + this.pk,
+    );
     dialogRef.componentInstance.setCall(this.queryCall, [this.pk]);
     dialogRef.componentInstance.submit();
     dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe((res: Job<DatasetEncryptionSummary[]>) => {
@@ -214,9 +218,9 @@ export class DatasetUnlockComponent implements FormConfiguration {
         for (let i = 0; i < res.result.length; i++) {
           if (this.datasets.controls[i] === undefined) {
             const templateListField = _.cloneDeep(this.datasetsField.templateListField);
-            const newfg = this.entityFormService.createFormGroup(templateListField);
-            newfg.setParent(this.datasets);
-            this.datasets.controls.push(newfg);
+            const newFormGroup = this.entityFormService.createFormGroup(templateListField);
+            newFormGroup.setParent(this.datasets);
+            this.datasets.controls.push(newFormGroup);
             this.datasetsField.listFields.push(templateListField);
           }
           const controls = listFields[i];
@@ -343,7 +347,9 @@ export class DatasetUnlockComponent implements FormConfiguration {
       data: { title: helptext.fetching_encryption_summary_title },
       disableClose: true,
     });
-    dialogRef.componentInstance.setDescription(helptext.fetching_encryption_summary_message + this.pk);
+    dialogRef.componentInstance.setDescription(
+      this.translate.instant(helptext.fetching_encryption_summary_message) + this.pk,
+    );
     if (body.key_file && this.subs) {
       const formData: FormData = new FormData();
       formData.append('data', JSON.stringify({

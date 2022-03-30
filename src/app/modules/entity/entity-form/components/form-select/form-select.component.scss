@@ -19,6 +19,12 @@
   padding: 8px;
 }
 
+.link {
+  color: var(--primary);
+  cursor: pointer;
+  font-size: x-small;
+}
+
 :host-context(app-system-alert) {
   .inline-label label.label.input-select {
     padding: 8px !important;

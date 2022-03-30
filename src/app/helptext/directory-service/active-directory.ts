@@ -93,7 +93,7 @@ export default {
   activedirectory_kerberos_principal_tooltip: T('Select the location of the principal in the \
  keytab created in <b>Directory Services > Kerberos Keytabs</b>.'),
 
-  computer_account_OU_name: T('createcomputer'),
+  computer_account_OU_name: 'createcomputer',
   computer_account_OU_placeholder: T('Computer Account OU'),
   computer_account_OU_tooltip: T('The OU in which new computer accounts are created. \
  The OU string is read from top to bottom without RDNs. Slashes ("/") are used as \

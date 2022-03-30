@@ -33,18 +33,12 @@ export class SnapshotAddFormComponent implements OnInit {
     dataset: ['', Validators.required],
     name: [this.getDefaultSnapshotName(), [this.validatorsService.withMessage(
       atLeastOne('naming_schema', [helptext.snapshot_add_name_placeholder, helptext.snapshot_add_naming_schema_placeholder]),
-      {
-        forProperty: 'atLeastOne',
-        message: this.translate.instant('Name or Naming Schema must be provided.'),
-      },
+      this.translate.instant('Name or Naming Schema must be provided.'),
     ), this.validatorsService.validateOnCondition(
       (control: AbstractControl) => control.value && control.parent?.get('naming_schema').value,
       this.validatorsService.withMessage(
         requiredEmpty(),
-        {
-          forProperty: 'requiredEmpty',
-          message: this.translate.instant('Name and Naming Schema cannot be provided at the same time.'),
-        },
+        this.translate.instant('Name and Naming Schema cannot be provided at the same time.'),
       ),
     )]],
     naming_schema: [''],
@@ -131,7 +125,6 @@ export class SnapshotAddFormComponent implements OnInit {
   private getNamingSchemaOptions(): Observable<Option[]> {
     return this.ws.call('replication.list_naming_schemas').pipe(
       map(new EntityUtils().array1dToLabelValuePair),
-      map((options) => [{ label: '---', value: undefined }, ...options]),
     );
   }
 }

@@ -1,5 +1,10 @@
+:host {
+  display: inline-flex;
+}
+
 .tooltip {
-  display: inline-block;
+  display: inline-flex;
+  margin: 0;
 }
 
 .tooltip-icon {

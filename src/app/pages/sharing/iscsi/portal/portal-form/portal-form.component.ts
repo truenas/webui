@@ -1,254 +1,202 @@
-import { Component } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef, Component,
+} from '@angular/core';
 import { Validators } from '@angular/forms';
-import { Router, ActivatedRoute } from '@angular/router';
+import { Router } from '@angular/router';
+import { FormBuilder, FormControl } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
+import { Observable, of } from 'rxjs';
+import { IscsiAuthMethod } from 'app/enums/iscsi.enum';
+import { choicesToOptions, tagArrayToOptions } from 'app/helpers/options.helper';
 import { helptextSharingIscsi } from 'app/helptext/sharing';
-import { FormConfiguration } from 'app/interfaces/entity-form.interface';
-import { IscsiExtent, IscsiInterface, IscsiPortal } from 'app/interfaces/iscsi.interface';
-import { Option } from 'app/interfaces/option.interface';
-import { QueryFilter } from 'app/interfaces/query-api.interface';
-import { EntityFormComponent } from 'app/modules/entity/entity-form/entity-form.component';
-import { FieldConfig, FormListConfig, FormSelectConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
-import { FieldSet } from 'app/modules/entity/entity-form/models/fieldset.interface';
-import { selectedOptionValidator } from 'app/modules/entity/entity-form/validators/invalid-option-selected';
+import { IscsiInterface, IscsiPortal } from 'app/interfaces/iscsi.interface';
 import { ipValidator } from 'app/modules/entity/entity-form/validators/ip-validation';
-import { EntityUtils } from 'app/modules/entity/utils';
-import { IscsiService, WebSocketService, AppLoaderService } from 'app/services';
-
-interface PortalListen {
-  ip: string[];
-  port: string;
-}
-
-interface PortalAddress {
-  ip: string;
-  port: string;
-}
+import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
+import { IscsiService, WebSocketService } from 'app/services';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
 @Component({
-  selector: 'app-iscsi-portal-add',
-  template: '<entity-form [conf]="this"></entity-form>',
-  providers: [IscsiService],
+  templateUrl: './portal-form.component.html',
+  styleUrls: ['./portal-form.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class PortalFormComponent implements FormConfiguration {
-  addCall = 'iscsi.portal.create' as const;
-  queryCall = 'iscsi.portal.query' as const;
-  editCall = 'iscsi.portal.update' as const;
-  routeSuccess: string[] = ['sharing', 'iscsi', 'portals'];
-  customFilter: [[Partial<QueryFilter<IscsiExtent>>]] = [[['id', '=']]];
-  isEntity = true;
+export class PortalFormComponent {
+  isLoading = false;
+  private editingIscsiPortal: IscsiPortal;
+  listen: IscsiInterface[] = [];
+  listPrefix = '__';
 
-  protected getValidOptions = this.iscsiService.getIpChoices().toPromise().then((ips) => {
-    const options: Option[] = [];
-    for (const ip in ips) {
-      options.push({ label: ips[ip], value: ip });
-    }
-    return options;
+  get isNew(): boolean {
+    return !this.editingIscsiPortal;
+  }
+
+  get title(): string {
+    return this.isNew
+      ? this.translate.instant('Add Portal')
+      : this.translate.instant('Edit Portal');
+  }
+
+  form = this.fb.group({
+    comment: [''],
+    discovery_authmethod: [IscsiAuthMethod.None],
+    discovery_authgroup: [null as number],
   });
-  fieldSets: FieldSet[] = [
+
+  readonly labels = {
+    comment: helptextSharingIscsi.portal_form_placeholder_comment,
+    discovery_authmethod: helptextSharingIscsi.portal_form_placeholder_discovery_authmethod,
+    discovery_authgroup: helptextSharingIscsi.portal_form_placeholder_discovery_authgroup,
+    ip: helptextSharingIscsi.portal_form_placeholder_ip,
+    port: helptextSharingIscsi.portal_form_placeholder_port,
+  };
+
+  readonly tooltips = {
+    comment: helptextSharingIscsi.portal_form_tooltip_comment,
+    discovery_authmethod: helptextSharingIscsi.portal_form_tooltip_discovery_authmethod,
+    discovery_authgroup: helptextSharingIscsi.portal_form_tooltip_discovery_authgroup,
+    ip: helptextSharingIscsi.portal_form_tooltip_ip,
+    port: helptextSharingIscsi.portal_form_tooltip_port,
+  };
+
+  readonly authmethodOptions$ = of([
     {
-      name: helptextSharingIscsi.fieldset_portal_basic,
-      label: true,
-      class: 'basic',
-      width: '100%',
-      config: [
-        {
-          type: 'input',
-          name: 'comment',
-          placeholder: helptextSharingIscsi.portal_form_placeholder_comment,
-          tooltip: helptextSharingIscsi.portal_form_tooltip_comment,
-        },
-      ],
+      label: 'NONE',
+      value: IscsiAuthMethod.None,
     },
     {
-      name: helptextSharingIscsi.fieldset_portal_authgroup,
-      label: true,
-      class: 'authgroup',
-      width: '100%',
-      config: [
-        {
-          type: 'select',
-          name: 'discovery_authmethod',
-          placeholder: helptextSharingIscsi.portal_form_placeholder_discovery_authmethod,
-          tooltip: helptextSharingIscsi.portal_form_tooltip_discovery_authmethod,
-          options: [
-            {
-              label: 'NONE',
-              value: 'NONE',
-            },
-            {
-              label: 'CHAP',
-              value: 'CHAP',
-            },
-            {
-              label: 'Mutual CHAP',
-              value: 'CHAP_MUTUAL',
-            },
-          ],
-          value: 'NONE',
-        },
-        {
-          type: 'select',
-          name: 'discovery_authgroup',
-          placeholder: helptextSharingIscsi.portal_form_placeholder_discovery_authgroup,
-          tooltip: helptextSharingIscsi.portal_form_tooltip_discovery_authgroup,
-          options: [{ label: '---', value: null }],
-          value: null,
-        },
-      ],
+      label: 'CHAP',
+      value: IscsiAuthMethod.Chap,
     },
     {
-      name: helptextSharingIscsi.fieldset_portal_ip,
-      label: true,
-      class: 'ip',
-      width: '100%',
-      config: [
-        {
-          type: 'list',
-          name: 'listen',
-          templateListField: [
-            {
-              type: 'select',
-              multiple: true,
-              name: 'ip',
-              placeholder: helptextSharingIscsi.portal_form_placeholder_ip,
-              tooltip: helptextSharingIscsi.portal_form_tooltip_ip,
-              options: [],
-              class: 'inline',
-              width: '60%',
-              required: true,
-              validation: [Validators.required, ipValidator('all')],
-              asyncValidation: [selectedOptionValidator(this.getValidOptions)],
-            },
-            {
-              type: 'input',
-              name: 'port',
-              placeholder: helptextSharingIscsi.portal_form_placeholder_port,
-              tooltip: helptextSharingIscsi.portal_form_tooltip_port,
-              value: '3260',
-              validation: helptextSharingIscsi.portal_form_validators_port,
-              class: 'inline',
-              width: '30%',
-            },
-          ],
-          listFields: [],
-        },
-      ],
+      label: 'Mutual CHAP',
+      value: IscsiAuthMethod.ChapMutual,
+    },
+  ]);
+  readonly authgroupOptions$ = this.iscsiService.getAuth().pipe(tagArrayToOptions());
+  readonly listenOptions$ = this.iscsiService.getIpChoices().pipe(choicesToOptions());
+
+  private ipAddressFromControls = [
+    {
+      name: 'ip',
+      default: [] as string[],
+      validator: [Validators.required, ipValidator('all')],
+    },
+    {
+      name: 'port',
+      default: 3260,
+      validator: [Validators.required],
     },
   ];
 
-  fieldConfig: FieldConfig[];
-  pk: number;
-  protected authgroupField: FormSelectConfig;
-  protected entityForm: EntityFormComponent;
-  protected ip: PortalAddress[];
-
   constructor(
+    private fb: FormBuilder,
     protected router: Router,
-    protected iscsiService: IscsiService,
-    protected aroute: ActivatedRoute,
-    protected loader: AppLoaderService,
+    private translate: TranslateService,
     protected ws: WebSocketService,
-  ) { }
+    private cdr: ChangeDetectorRef,
+    private slideInService: IxSlideInService,
+    private errorHandler: FormErrorHandlerService,
+    protected iscsiService: IscsiService,
+  ) {}
 
-  prerequisite(): Promise<boolean> {
-    return new Promise(async (resolve) => {
-      const listenIpFieldConfig = _.find(this.fieldSets[2].config, { name: 'listen' }) as FormListConfig;
-      const listenIpField = listenIpFieldConfig.templateListField[0] as FormSelectConfig;
-      await this.iscsiService.getIpChoices().toPromise().then((ips) => {
-        for (const ip in ips) {
-          listenIpField.options.push({ label: ips[ip], value: ip });
+  setupForm(iscsiPortal: IscsiPortal): void {
+    this.editingIscsiPortal = iscsiPortal;
+
+    Object.entries(_.groupBy(iscsiPortal.listen, 'port')).forEach(([port, listen], index) => {
+      const newListItem: any = {};
+      this.ipAddressFromControls.forEach((fc) => {
+        let defaultValue = Number(port) as number | string[];
+        if (fc.name === 'ip') {
+          defaultValue = listen.map((item) => item.ip);
         }
-        const listenListFields = listenIpFieldConfig.listFields;
-        for (const listenField of listenListFields) {
-          const ipField = _.find(listenField, { name: 'ip' }) as FormSelectConfig;
-          ipField.options = listenIpField.options;
-        }
-        resolve(true);
-      }, () => {
-        resolve(false);
+
+        newListItem[fc.name] = defaultValue;
+        this.form.addControl(`${fc.name}${this.listPrefix}${index}`, new FormControl(defaultValue, fc.validator));
       });
+      this.listen.push(newListItem);
     });
+
+    this.form.patchValue({
+      ...iscsiPortal,
+    });
+    this.cdr.markForCheck();
   }
 
-  preInit(): void {
-    this.aroute.params.pipe(untilDestroyed(this)).subscribe((params) => {
-      if (params['pk']) {
-        this.pk = params['pk'];
-        this.customFilter[0][0].push(parseInt(params['pk'], 10));
+  onAdd(): void {
+    const newIndex = this.listen.length;
+    const newListItem: any = {};
+    this.ipAddressFromControls.forEach((fc) => {
+      newListItem[fc.name] = fc.default;
+      this.form.addControl(`${fc.name}${this.listPrefix}${newIndex}`, new FormControl(fc.default, fc.validator));
+    });
+
+    this.listen.push(newListItem);
+  }
+
+  onDelete(index: number): void {
+    this.ipAddressFromControls.forEach((fc) => {
+      this.form.removeControl(`${fc.name}${this.listPrefix}${index}`);
+    });
+
+    this.listen.splice(index, 1);
+  }
+
+  prepareSubmit(values: any): IscsiInterface[] {
+    const listen = [] as IscsiInterface[];
+
+    const tempListen: { name: string; index: string; value: string | number | string[] }[] = [];
+    Object.keys(values).forEach((key) => {
+      const keys = key.split(this.listPrefix);
+      if (keys.length > 1) {
+        tempListen.push({ name: keys[0], index: keys[1], value: values[key] });
       }
     });
-    const authgroupFieldset = _.find(this.fieldSets, { class: 'authgroup' });
-    this.authgroupField = _.find(authgroupFieldset.config, { name: 'discovery_authgroup' }) as FormSelectConfig;
-    this.iscsiService.getAuth().pipe(untilDestroyed(this)).subscribe((accessRecords) => {
-      accessRecords.forEach((record) => {
-        if (_.find(this.authgroupField.options, { value: record.tag }) === undefined) {
-          this.authgroupField.options.push({ label: String(record.tag), value: record.tag });
-        }
-      });
-    });
-  }
 
-  afterInit(entityForm: EntityFormComponent): void {
-    this.entityForm = entityForm;
-    this.fieldConfig = entityForm.fieldConfig;
-
-    entityForm.formGroup.controls['listen'].valueChanges.pipe(untilDestroyed(this)).subscribe((res: PortalListen[]) => {
-      this.genPortalAddress(res);
-    });
-  }
-
-  customEditCall(value: any): void {
-    this.loader.open();
-    this.ws.call(this.editCall, [this.pk, value]).pipe(untilDestroyed(this)).subscribe(
-      () => {
-        this.loader.close();
-        this.router.navigate(new Array('/').concat(this.routeSuccess));
-      },
-      (res) => {
-        this.loader.close();
-        new EntityUtils().handleWsError(this.entityForm, res);
-      },
-    );
-  }
-
-  genPortalAddress(data: PortalListen[]): void {
-    let ips: PortalAddress[] = [];
-    data.forEach((portal) => {
-      if (portal['ip']) {
-        const samePortIps = portal['ip'].reduce(
-          (fullIps: PortalAddress[], currip: string) => fullIps.concat({ ip: currip, port: portal['port'] }),
-          [],
-        );
-        ips = ips.concat(samePortIps);
-      }
-    });
-    this.ip = ips;
-  }
-
-  beforeSubmit(data: any): void {
-    data['listen'] = this.ip;
-  }
-
-  resourceTransformIncomingRestData(data: IscsiPortal): any {
-    const ports = new Map() as any;
-    const groupedIp: IscsiInterface[] = [];
-    data.listen.forEach((listen) => {
-      // TODO: Incorrect usage of map. Update to .get
-      if (ports[listen.port] === undefined) {
-        ports[listen.port] = [];
-        groupedIp.push({
-          ip: ports[listen.port],
-          port: listen.port,
+    Object.values(_.groupBy(tempListen, 'index')).forEach((item) => {
+      const ip = item.find((ele) => ele.name === 'ip')?.value as string[];
+      const port = item.find((ele) => ele.name === 'port')?.value;
+      if (ip && port) {
+        ip.forEach((sip) => {
+          listen.push({
+            ip: sip,
+            port: Number(port),
+          });
         });
       }
-      ports[listen.port].push(listen['ip']);
     });
-    return {
-      ...data,
-      listen: groupedIp,
+
+    return listen;
+  }
+
+  onSubmit(): void {
+    const values = this.form.value;
+    const params = {
+      comment: values.comment,
+      discovery_authmethod: values.discovery_authmethod,
+      discovery_authgroup: values.discovery_authgroup,
+      listen: this.prepareSubmit(values),
     };
+
+    this.isLoading = true;
+    let request$: Observable<unknown>;
+    if (this.isNew) {
+      request$ = this.ws.call('iscsi.portal.create', [params]);
+    } else {
+      request$ = this.ws.call('iscsi.portal.update', [this.editingIscsiPortal.id, params]);
+    }
+
+    request$.pipe(untilDestroyed(this)).subscribe(() => {
+      this.isLoading = false;
+      this.cdr.markForCheck();
+      this.slideInService.close();
+    }, (error) => {
+      this.isLoading = false;
+      this.errorHandler.handleWsFormError(error, this.form);
+      this.cdr.markForCheck();
+    });
   }
 }

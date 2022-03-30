@@ -47,7 +47,7 @@ export class VolumeCreatekeyFormComponent implements FormConfiguration {
     }, {
       type: 'paragraph',
       name: 'encrypt-headline',
-      paraText: '<i class="material-icons">lock</i>' + helptext.changekey_headline,
+      paraText: '<i class="material-icons">lock</i>' + this.translate.instant(helptext.changekey_headline),
     }, {
       type: 'paragraph',
       name: 'createkey-instructions',
@@ -73,7 +73,7 @@ export class VolumeCreatekeyFormComponent implements FormConfiguration {
     },
   ];
 
-  custActions = [
+  customActions = [
     {
       id: 'download_encrypt_key',
       name: this.translate.instant('Download Encryption Key'),

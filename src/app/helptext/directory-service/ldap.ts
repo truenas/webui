@@ -5,7 +5,6 @@ export default {
   title: T('LDAP'),
 
   ldap_server_creds: T('Server Credentials'),
-  ldap_advanced: T('Advanced Settings'),
 
   ldap_custactions_basic_id: 'basic_mode',
 
@@ -126,25 +125,24 @@ export default {
   ldap_enable_tooltip: T('Activates the configuration. Unset to disable the\
  configuration without deleting it.'),
 
-  ldap_advanced_fields:
-[
-  'anonbind',
-  'disable_freenas_cache',
-  'usersuffix',
-  'groupsuffix',
-  'passwordsuffix',
-  'machinesuffix',
-  'sudosuffix',
-  'kerberos_realm',
-  'kerberos_principal',
-  'ssl',
-  'certificate',
-  'validate_certificates',
-  'timeout',
-  'dns_timeout',
-  'idmap_backend',
-  'has_samba_schema',
-  'auxiliary_parameters',
-  'schema',
-],
+  ldap_advanced_fields: [
+    'anonbind',
+    'disable_freenas_cache',
+    'usersuffix',
+    'groupsuffix',
+    'passwordsuffix',
+    'machinesuffix',
+    'sudosuffix',
+    'kerberos_realm',
+    'kerberos_principal',
+    'ssl',
+    'certificate',
+    'validate_certificates',
+    'timeout',
+    'dns_timeout',
+    'idmap_backend',
+    'has_samba_schema',
+    'auxiliary_parameters',
+    'schema',
+  ],
 };
