@@ -168,8 +168,7 @@ def try_login_with_ssh(driver):
     actions.send_keys('ssh ericbsd@127.0.0.1', Keys.ENTER)
     actions.perform()
     time.sleep(1)
-    wait_on_element(driver, 4, '//span[contains(.,"(yes/no)?")]')
-    if is_element_present(driver, '//span[contains(.,"(yes/no)?")]'):
+    if wait_on_element(driver, 4, '//span[contains(text(),"(yes/no/[fingerprint])?")]'):
         actions = ActionChains(driver)
         actions.send_keys('yes', Keys.ENTER)
         actions.perform()
