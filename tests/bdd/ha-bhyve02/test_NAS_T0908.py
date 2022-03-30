@@ -39,22 +39,24 @@ def if_login_appear_enter_user_and_password(driver, user, password):
 @then('You should see the dashboard and "System Information"')
 def you_should_see_the_dashboard_and_system_information(driver):
     """You should see the dashboard and "System Information"."""
-    assert wait_on_element(driver, 7, '//span[contains(.,"System Information")]')
-    if wait_on_element(driver, 2, '//div[contains(.,"Looking for help?")]'):
+    assert wait_on_element(driver, 7, '//a[text()="Dashboard"]')
+    if wait_on_element(driver, 3, '//div[contains(.,"Looking for help?")]'):
         assert wait_on_element(driver, 10, '//button[@ix-auto="button__CLOSE"]', 'clickable')
         driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
+    assert wait_on_element(driver, 7, '//span[contains(text(),"System Information")]')
 
 
 @then('Click on the Accounts item in the left side menu')
 def click_on_the_accounts_item_in_the_left_side_menu(driver):
     """Click on the Accounts item in the left side menu."""
+    assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Accounts"]', 'clickable')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Accounts"]').click()
 
 
 @then('The Accounts menu should expand down')
 def the_accounts_menu_should_expand_down(driver):
     """The Accounts menu should expand down."""
-    assert wait_on_element(driver, 7, '//mat-list-item[@ix-auto="option__Users"]')
+    assert wait_on_element(driver, 7, '//mat-list-item[@ix-auto="option__Users"]', 'clickable')
     element = driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Accounts"]')
     class_attribute = element.get_attribute('class')
     assert 'open' in class_attribute, class_attribute
