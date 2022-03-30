@@ -141,7 +141,7 @@ def both_serials_show_show_under_system_serial_serial1_and_serial2(driver, seria
 @then('Navigate to Network click Global Configuration')
 def navigate_to_network_click_global_configuration(driver):
     """Navigate to Network click Global Configuration."""
-    assert wait_on_element(driver, 7, '//mat-list-item[@ix-auto="option__Network"]', 'clickable')
+    assert wait_on_element(driver, 7, '//mat-list-item[@ix-auto="option__Network"]')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Network"]').click()
     assert wait_on_element(driver, 7, '//mat-list-item[@ix-auto="option__Global Configuration"]', 'clickable')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Global Configuration"]').click()
