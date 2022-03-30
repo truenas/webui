@@ -58,7 +58,7 @@ export class NfsFormComponent implements OnInit {
   readonly helptext = helptextSharingNfs;
   readonly userProvider = new UserComboboxProvider(this.userService);
   readonly groupProvider = new GroupComboboxProvider(this.userService);
-  readonly treeNodeProvider = this.filesystemService.getFilesystemNodeProvider();
+  readonly treeNodeProvider = this.filesystemService.getFilesystemNodeProvider({ directoriesOnly: true });
 
   readonly securityOptions$ = of([
     {
