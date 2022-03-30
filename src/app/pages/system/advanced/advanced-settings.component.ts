@@ -367,20 +367,21 @@ export class AdvancedSettingsComponent implements OnInit {
             },
           ],
         },
-        {
-          title: helptextSystemAdvanced.fieldset_kernel,
-          id: AdvancedCardId.Kernel,
-          items: [
-            {
-              label: helptextSystemAdvanced.autotune_placeholder,
-              value: advancedConfig.autotune ? helptext.enabled : helptext.disabled,
-            },
-            {
-              label: helptextSystemAdvanced.debugkernel_placeholder,
-              value: advancedConfig.debugkernel ? helptext.enabled : helptext.disabled,
-            },
-          ],
-        },
+        // TODO: Supposedly temporarly disabled https://jira.ixsystems.com/browse/NAS-115361
+        // {
+        //   title: helptextSystemAdvanced.fieldset_kernel,
+        //   id: AdvancedCardId.Kernel,
+        //   items: [
+        //     {
+        //       label: helptextSystemAdvanced.autotune_placeholder,
+        //       value: advancedConfig.autotune ? helptext.enabled : helptext.disabled,
+        //     },
+        //     {
+        //       label: helptextSystemAdvanced.debugkernel_placeholder,
+        //       value: advancedConfig.debugkernel ? helptext.enabled : helptext.disabled,
+        //     },
+        //   ],
+        // },
         {
           id: AdvancedCardId.Cron,
           title: helptextSystemAdvanced.fieldset_cron,
