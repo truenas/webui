@@ -146,11 +146,11 @@ def navigate_to_network_click_global_configuration(driver):
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Global Configuration"]').click()
 
 
-@then(parsers.parse('Enter Hostname "{host1}", Hostname (TrueNAS Controller 2) "{host2}", Hostname (Virtual) "{vhost}", Domain "{domain}", Nameserver1 "{nameserver1}", Nameserver2 "{nameserver2}", IPv4 Default Gateway "{gatway}"'))
-def enter_hostname_hostname_truenas_controller_2_hostname_virtual_domain_nameserver1_nameserver2_ipv4_default_gateway_(driver, host1, host2, vhost, domain, nameserver1, nameserver2, gatway):
-    """Enter Hostname "{host1}", Hostname (TrueNAS Controller 2) "{host2}", Hostname (Virtual) "{vhost}", Domain "{domain}", Nameserver1 "{nameserver1}", Nameserver2 "{nameserver2}", IPv4 Default Gateway "{gatway}"."""
+@then(parsers.parse('Enter Hostname "{host1}", Hostname (TrueNAS Controller 2) "{host2}", Hostname (Virtual) "{vhost}", Domain "{domain}"'))
+def enter_hostname_truenas_controller_2_hostname_virtual(driver, host1, host2, vhost, domain):
+    """Enter Hostname "{host1}", Hostname (TrueNAS Controller 2) "{host2}", Hostname (Virtual) "{vhost}", Domain "{domain}"."""
     assert wait_on_element(driver, 7, '//a[contains(.,"Global Configuration")]')
-    assert wait_on_element(driver, 7, '//input[@ix-auto="input__Hostname"]')
+    assert wait_on_element(driver, 7, '//input[@ix-auto="input__Hostname"]', 'inputable')
     driver.find_element_by_xpath('//input[@ix-auto="input__Hostname"]').clear()
     driver.find_element_by_xpath('//input[@ix-auto="input__Hostname"]').send_keys(host1)
     driver.find_element_by_xpath('//input[@ix-auto="input__Hostname (TrueNAS Controller 2)"]').clear()
@@ -159,12 +159,19 @@ def enter_hostname_hostname_truenas_controller_2_hostname_virtual_domain_nameser
     driver.find_element_by_xpath('//input[@ix-auto="input__Hostname (Virtual)"]').send_keys(vhost)
     driver.find_element_by_xpath('//input[@ix-auto="input__Domain"]').clear()
     driver.find_element_by_xpath('//input[@ix-auto="input__Domain"]').send_keys(domain)
-    driver.find_element_by_xpath('//input[@ix-auto="input__IPv4 Default Gateway"]').clear()
-    driver.find_element_by_xpath('//input[@ix-auto="input__IPv4 Default Gateway"]').send_keys(gatway)
+
+
+@then(parsers.parse('Enter Nameserver1 "{nameserver1}", Nameserver2 "{nameserver2}", Nameserver3 "{nameserver3}", IPv4 Default Gateway "{gatway}"'))
+def enter_nameserver1_nameserver2_nameservere_ipv4_default_gateway(driver, nameserver1, nameserver2, nameserver3, gatway):
+    """Enter Nameserver1 "{nameserver1}", Nameserver2 "{nameserver2}", Nameserver3 "{nameserver3}", IPv4 Default Gateway "{gatway}"."""
     driver.find_element_by_xpath('//input[@ix-auto="input__Nameserver 1"]').clear()
     driver.find_element_by_xpath('//input[@ix-auto="input__Nameserver 1"]').send_keys(nameserver1)
     driver.find_element_by_xpath('//input[@ix-auto="input__Nameserver 2"]').clear()
     driver.find_element_by_xpath('//input[@ix-auto="input__Nameserver 2"]').send_keys(nameserver2)
+    driver.find_element_by_xpath('//input[@ix-auto="input__Nameserver 3"]').clear()
+    driver.find_element_by_xpath('//input[@ix-auto="input__Nameserver 3"]').send_keys(nameserver3)
+    driver.find_element_by_xpath('//input[@ix-auto="input__IPv4 Default Gateway"]').clear()
+    driver.find_element_by_xpath('//input[@ix-auto="input__IPv4 Default Gateway"]').send_keys(gatway)
 
 
 @then('click save when finished')
@@ -227,9 +234,9 @@ def interface_settings_should_appear(driver):
     assert wait_on_element(driver, 7, '//h4[contains(.,"Interface Settings")]')
 
 
-@then(parsers.parse('Uncheck DHCP, check Critical, Select 1 for Failover Group, select the Failover VHID "{vhid}", IP Address (This Controller) "{ip1}" then select /"{netmask1}", IP Address (TrueNAS Controller 2) "{ip2}" then select /"{netmask2}", Virtual IP Address "{vip}"'))
-def uncheck_dhcp_check_critical_select_1_for_failover_group_select_the_failover_vhid_ip_address_this_controller__then_select_23_ip_address_truenas_controller_2_then_select_23_virtual_ip_address(driver, vhid, ip1, netmask1, ip2, netmask2, vip):
-    """Uncheck DHCP, check Critical, Select 1 for Failover Group, select the Failover VHID "{vhid}", IP Address (This Controller) "{ip1}" then select /"{netmask1}", IP Address (TrueNAS Controller 2) "{ip2}" then select /"{netmask2}", Virtual IP Address, "{vip}"."""
+@then(parsers.parse('Uncheck DHCP, check Critical, Select 1 for Failover Group, select the Failover VHID "{vhid}", IP Address (This Controller) "{ip1}" then select /"{netmask1}"'))
+def uncheck_dhcp_check_critical_select_1_for_failover_group_select_the_failover_vhid_ip_address_this_controller_then_select_netmask(driver, vhid, ip1, netmask1):
+    """Uncheck DHCP, check Critical, Select 1 for Failover Group, select the Failover VHID "{vhid}", IP Address (This Controller) "{ip1}" then select /"{netmask1}"."""
     assert wait_on_element(driver, 7, '//mat-checkbox[@ix-auto="checkbox__DHCP"]', 'clickable')
     driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__DHCP"]').click()
     driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__Critical"]').click()
@@ -248,6 +255,11 @@ def uncheck_dhcp_check_critical_select_1_for_failover_group_select_the_failover_
     driver.find_element_by_xpath('//input[@ix-auto="input__IP Address (This Controller)"]').send_keys(ip1)
     driver.find_element_by_xpath('//mat-select[@ix-auto="input__IP Address (This Controller)"]').click()
     driver.find_element_by_xpath(f'//mat-option[@ix-auto="option__{netmask1}"]').click()
+
+
+@then(parsers.parse('Enter IP Address (TrueNAS Controller 2) "{ip2}" then select /"{netmask2}", Virtual IP Address "{vip}"'))
+def input_ip_address_truenas_controller_2_then_select_netmask_virtual_ip_address(driver, ip2, netmask2, vip):
+    """Enter IP Address (TrueNAS Controller 2) "{ip2}" then select /"{netmask2}", Virtual IP Address "{vip}"."""
     driver.find_element_by_xpath('//input[@ix-auto="input__IP Address (TrueNAS Controller 2)"]').clear()
     driver.find_element_by_xpath('//input[@ix-auto="input__IP Address (TrueNAS Controller 2)"]').send_keys(ip2)
     driver.find_element_by_xpath('//mat-select[@ix-auto="input__IP Address (TrueNAS Controller 2)"]').click()
@@ -423,6 +435,7 @@ def navigate_to_dashboard_and_verify_that_both_controllers_show(driver):
     assert wait_on_element(driver, 7, '//span[contains(.,"System Information")]')
     # need to wait for all controller to be online.
     assert wait_on_element(driver, 60, '//div[contains(.,"tn-bhyve03-nodea")]')
+    driver.refresh()
     assert wait_on_element(driver, 420, '//div[contains(.,"tn-bhyve03-nodeb")]')
     assert wait_on_element(driver, 60, '//mat-icon[@svgicon="ha_enabled"]')
 
