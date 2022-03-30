@@ -291,7 +291,7 @@ def please_wait_should_appear_while_settings_are_being_applied(driver):
 @then('Navigate to Storage click Disks then click name several times to sort in alphabetical order')
 def navigate_to_storage_click_disks_then_click_name_several_times_to_sort_in_alphabetical_order(driver):
     """Navigate to Storage click Disks then click name several times to sort in alphabetical order."""
-    assert wait_on_element(driver, 7, '//mat-list-item[@ix-auto="option__Disks"]', 'clickable')
+    assert wait_on_element(driver, 7, '//mat-list-item[@ix-auto="option__Storage"]', 'clickable')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Storage"]').click()
     assert wait_on_element(driver, 7, '//mat-list-item[@ix-auto="option__Disks"]', 'clickable')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Disks"]').click()
