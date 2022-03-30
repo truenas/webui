@@ -604,9 +604,6 @@ export class InterfacesFormComponent implements FormConfiguration {
     if (data.type === NetworkInterfaceType.Bridge && data.bridge_members === undefined) {
       data.bridge_members = [];
     }
-    if (data.stp) {
-      delete data.stp;
-    }
     if (failoverAliases.length > 0) {
       data.failover_aliases = failoverAliases;
     }
@@ -661,7 +658,7 @@ export class InterfacesFormComponent implements FormConfiguration {
       ...data,
       aliases: transformedAliases,
       mtu: data.mtu || data.state?.mtu,
-      stp: (data as BridgeNetworkInterface)?.stp || true,
+      stp: !!(data as BridgeNetworkInterface)?.stp,
     };
   }
 
