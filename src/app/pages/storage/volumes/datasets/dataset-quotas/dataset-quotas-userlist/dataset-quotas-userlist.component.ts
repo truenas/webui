@@ -89,9 +89,10 @@ export class DatasetQuotasUserlistComponent implements OnDestroy {
               });
             }
             this.loader.open();
-            this.ws.call('pool.dataset.set_quota', [this.pk, payload]).subscribe((res) => {
+            this.ws.call('pool.dataset.set_quota', [this.pk, payload]).subscribe(() => {
               this.loader.close();
               this.entityList.getData();
+              this.getInvalidQuotas();
             }, (err) => {
               this.loader.close();
               this.dialogService.errorReport('Error', err.reason, err.trace.formatted);
@@ -204,6 +205,10 @@ export class DatasetQuotasUserlistComponent implements OnDestroy {
     const paramMap: any = (<any> this.aroute.params).getValue();
     this.pk = paramMap.pk;
     this.useFullFilter = window.localStorage.getItem('useFullFilter') !== 'false';
+    this.getInvalidQuotas();
+  }
+
+  getInvalidQuotas(): void {
     this.ws.call(
       'pool.dataset.get_quota',
       [this.pk, DatasetQuotaType.User, [['name', '=', null]]],
