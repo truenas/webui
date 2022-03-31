@@ -127,21 +127,6 @@ describe('TargetFormComponent', () => {
     expect(spectator.inject(IxSlideInService).close).toHaveBeenCalled();
   });
 
-  it('shows values for an existing target when form is opened for edit', async () => {
-    spectator.component.setTargetForEdit(existingTarget);
-
-    const values = await form.getValues();
-    expect(values).toEqual({
-      'Target Name': 'name_test',
-      'Target Alias': 'alias_test',
-      'Target Mode': 'iSCSI',
-      'Authentication Group Number': '55',
-      'Authentication Method': 'Mutual CHAP',
-      'Initiator Group ID': '3 (initiator_1)',
-      'Portal Group ID': '22 (comment_2)',
-    });
-  });
-
   it('edits existing target when form opened for edit is submitted', async () => {
     spectator.component.setTargetForEdit(existingTarget);
 

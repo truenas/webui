@@ -29,53 +29,41 @@
         </div>
         <div class="column">
           <ix-fieldset [title]="helptext.fieldset_target_group | translate">
-            <div fxLayout="column" class="dynamic-field form-list box">
-              <div fxLayout="row" fxFlex="100%" fxLayoutAlign="space-between center" class="list-top-bar">
-                <label>{{ 'Add groups' | translate}}</label>
-                <button mat-button type="button" (click)="addGroup()"> {{"Add" | translate}} </button>
-              </div>
-              <ng-container *ngIf="form.controls.groups.value.length; else empty" formArrayName="groupsForm">
-                <div *ngFor="let liControl of form.controls.groups.value; let i = index" class="form-list-item">
-                  <div [formGroupName]="i">
-                    <ix-select
-                      formControlName='portal'
-                      [label]="helptext.target_form_placeholder_portal | translate"
-                      [options]="portals$"
-                      [tooltip]="helptext.target_form_tooltip_portal | translate"
-                      [required]="true"
-                    ></ix-select>
-                    <ix-select
-                      formControlName='initiator'
-                      [label]="helptext.target_form_placeholder_initiator | translate"
-                      [options]="initiators$"
-                      [tooltip]="helptext.target_form_tooltip_initiator | translate"
-                    ></ix-select>
-                    <ix-select
-                      formControlName='authmethod'
-                      [label]="helptext.target_form_placeholder_authmethod | translate"
-                      [options]="authmethods$"
-                      [tooltip]="helptext.target_form_tooltip_authmethod | translate"
-                    ></ix-select>
-                    <ix-select
-                      formControlName='auth'
-                      [label]="helptext.target_form_placeholder_auth | translate"
-                      [options]="auths$"
-                      [tooltip]="helptext.target_form_tooltip_auth | translate"
-                    ></ix-select>
-                  </div>
-                  <div class="list-action list-action-inline">
-                    <div>
-                      <button mat-icon-button class="top-right" (click)="deleteGroup(i)">
-                        <mat-icon>clear</mat-icon>
-                      </button>
-                    </div>
-                  </div>
-                </div>
+            <ix-list
+              [empty]="groups.length === 0"
+              [label]="'Add groups' | translate"
+              (add)="addGroup()"
+            >
+              <ng-container *ngFor="let item of groups; let i = index">
+                <ix-list-item (delete)="deleteGroup(i)">
+                  <ix-select
+                    [formControlName]="'portal' + listPrefix + i"
+                    [label]="helptext.target_form_placeholder_portal | translate"
+                    [options]="portals$"
+                    [tooltip]="helptext.target_form_tooltip_portal | translate"
+                    [required]="true"
+                  ></ix-select>
+                  <ix-select
+                    [formControlName]="'initiator' + listPrefix + i"
+                    [label]="helptext.target_form_placeholder_initiator | translate"
+                    [options]="initiators$"
+                    [tooltip]="helptext.target_form_tooltip_initiator | translate"
+                  ></ix-select>
+                  <ix-select
+                    [formControlName]="'authmethod' + listPrefix + i"
+                    [label]="helptext.target_form_placeholder_authmethod | translate"
+                    [options]="authmethods$"
+                    [tooltip]="helptext.target_form_tooltip_authmethod | translate"
+                  ></ix-select>
+                  <ix-select
+                    [formControlName]="'auth' + listPrefix + i"
+                    [label]="helptext.target_form_placeholder_auth | translate"
+                    [options]="auths$"
+                    [tooltip]="helptext.target_form_tooltip_auth | translate"
+                  ></ix-select>
+                </ix-list-item>
               </ng-container>
-              <ng-template #empty>
-                <span class="form-list-item">{{ "No items have been added yet." | translate }}</span>
-              </ng-template>
-            </div>
+            </ix-list>
           </ix-fieldset>
         </div>
       </div>

@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
 import { Validators } from '@angular/forms';
-import { FormBuilder } from '@ngneat/reactive-forms';
+import { FormBuilder, FormControl } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import _ from 'lodash';
@@ -74,16 +74,36 @@ export class TargetFormComponent {
   );
 
   isLoading = false;
+  groups: IscsiTargetGroup[] = [];
+  listPrefix = '__';
 
   form = this.formBuilder.group({
     name: ['', Validators.required],
     alias: [''],
     mode: ['ISCSI' as IscsiTargetMode],
-    groups: [[] as IscsiTargetGroup[]],
-    groupsForm: this.formBuilder.array([]),
   });
 
   private editingTarget: IscsiTarget;
+
+  private groupsFromControls = [
+    {
+      name: 'portal',
+      default: null as number,
+      validator: [Validators.required],
+    },
+    {
+      name: 'initiator',
+      default: null as number,
+    },
+    {
+      name: 'authmethod',
+      default: IscsiAuthMethod.None,
+    },
+    {
+      name: 'auth',
+      default: null as number,
+    },
+  ];
 
   constructor(
     protected iscsiService: IscsiService,
@@ -97,34 +117,37 @@ export class TargetFormComponent {
 
   setTargetForEdit(target: IscsiTarget): void {
     this.editingTarget = target;
-    this.form.patchValue(target);
 
-    for (const group of target.groups) {
-      this.form.controls.groupsForm.push(
-        this.formBuilder.group({
-          portal: [group.portal, Validators.required],
-          initiator: [group.initiator],
-          authmethod: [group.authmethod],
-          auth: [group.auth],
-        }),
-      );
-    }
+    Object.values(target.groups).forEach((group, index) => {
+      this.groupsFromControls.forEach((fc) => {
+        this.form.addControl(`${fc.name}${this.listPrefix}${index}`, new FormControl(fc.name, fc?.validator));
+      });
+      this.groups.push(group);
+    });
+
+    this.form.patchValue({
+      ...target,
+    });
   }
 
   onSubmit(): void {
-    const values = {
-      ...this.form.value,
+    const values = this.form.value;
+
+    const params = {
+      name: values.name,
+      alias: values.alias,
+      mode: values.mode,
+      groups: this.groups,
     };
-    delete (values.groupsForm);
 
     this.isLoading = true;
     let request$: Observable<unknown>;
     if (this.isNew) {
-      request$ = this.ws.call('iscsi.target.create', [values]);
+      request$ = this.ws.call('iscsi.target.create', [params]);
     } else {
       request$ = this.ws.call('iscsi.target.update', [
         this.editingTarget.id,
-        values,
+        params,
       ]);
     }
 
@@ -139,24 +162,21 @@ export class TargetFormComponent {
   }
 
   addGroup(): void {
-    this.form.controls.groups.value.push({
-      portal: null,
-      initiator: null,
-      authmethod: IscsiAuthMethod.None,
-      auth: null,
+    const newIndex = this.groups.length;
+    const newListItem: any = {};
+    this.groupsFromControls.forEach((fc) => {
+      newListItem[fc.name] = fc.default;
+      this.form.addControl(`${fc.name}${this.listPrefix}${newIndex}`, new FormControl(fc.default, fc?.validator));
     });
-    this.form.controls.groupsForm.push(
-      this.formBuilder.group({
-        portal: ['', Validators.required],
-        initiator: [''],
-        authmethod: [''],
-        auth: [''],
-      }),
-    );
+
+    this.groups.push(newListItem);
   }
 
   deleteGroup(id: number): void {
-    this.form.controls.groups.value.splice(id, 1);
-    this.form.controls.groupsForm.removeAt(id);
+    this.groupsFromControls.forEach((fc) => {
+      this.form.removeControl(`${fc.name}${this.listPrefix}${id}`);
+    });
+
+    this.groups.splice(id, 1);
   }
 }
