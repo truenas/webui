@@ -1060,7 +1060,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
   enclosureOverride(view: string) {
     if (view !== this.view) {
       this.selectedDisk = null;
-      this.clearDisk();
+      // this.clearDisk();
       this.loadEnclosure(this.selectedEnclosure, view, true);
     }
   }
