@@ -48,7 +48,7 @@ export class ServiceDynamicDnsComponent implements OnInit {
     checkip_path: helptext.checkip_path_tooltip,
     ssl: helptext.ssl_tooltip,
     custom_ddns_server: helptext.custom_ddns_server_tooltip,
-    custom_ddns_path: helptext.custom_ddns_server_tooltip,
+    custom_ddns_path: helptext.custom_ddns_path_tooltip,
     domain: helptext.domain_tooltip,
     period: helptext.period_tooltip,
     username: helptext.username_tooltip,
