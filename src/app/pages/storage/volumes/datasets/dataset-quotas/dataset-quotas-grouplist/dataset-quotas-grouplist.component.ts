@@ -9,6 +9,8 @@ import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/d
 import { T } from 'app/translate-marker';
 import globalHelptext from 'app/helptext/global-helptext';
 import helptext from 'app/helptext/storage/volumes/datasets/dataset-quotas';
+import { DatasetQuota, DatasetQuotaType, SetDatasetQuota } from 'app/interfaces/dataset-quotas.interface';
+import { filter } from 'rxjs/operators';
 
 @Component({
   selector: 'app-dataset-quotas-grouplist',
@@ -45,24 +47,59 @@ export class DatasetQuotasGrouplistComponent implements OnDestroy {
     },
   };
 
+  invalidQuotas: DatasetQuota[] = null;
+
   constructor(protected ws: WebSocketService, protected storageService: StorageService,
     protected dialogService: DialogService, protected loader: AppLoaderService,
     protected router: Router, protected aroute: ActivatedRoute,
     private translate: TranslateService) { }
 
   getAddActions() {
-    return [{
-      label: T('Toggle Display'),
-      onClick: () => {
-        this.toggleDisplay();
+    return [
+      {
+        label: T('Toggle Display'),
+        onClick: () => {
+          this.toggleDisplay();
+        },
       },
-    },
-    {
-      label: T('Set Quotas (Bulk)'),
-      onClick: () => {
-        this.router.navigate(['storage', 'pools', 'group-quotas-form', this.pk]);
+      {
+        label: T('Set Quotas (Bulk)'),
+        onClick: () => {
+          this.router.navigate(['storage', 'pools', 'group-quotas-form', this.pk]);
+        },
       },
-    },
+      {
+        label: T('Remove quotas for invalid groups'),
+        onClick: () => {
+          this.dialogService.confirm({
+            title: T('Remove invalid quotas'),
+            message: T('This action will set all dataset quotas for the removed or invalid groups to 0, virutally removing any dataset quota entires for such groups. Are you sure you want to proceed?'),
+            buttonMsg: T('Remove'),
+          }).pipe(filter(Boolean)).subscribe(() => {
+            const payload: SetDatasetQuota[] = [];
+            for (const quota of this.invalidQuotas) {
+              payload.push({
+                id: quota.id.toString(),
+                quota_type: DatasetQuotaType.Group,
+                quota_value: 0,
+              });
+              payload.push({
+                id: quota.id.toString(),
+                quota_type: DatasetQuotaType.GroupObj,
+                quota_value: 0,
+              });
+            }
+            this.loader.open();
+            this.ws.call('pool.dataset.set_quota', [this.pk, payload]).subscribe((res) => {
+              this.loader.close();
+              this.entityList.getData();
+            }, (err) => {
+              this.loader.close();
+              this.dialogService.errorReport('Error', err.reason, err.trace.formatted);
+            });
+          });
+        },
+      },
     ];
   }
 
@@ -76,7 +113,7 @@ export class DatasetQuotasGrouplistComponent implements OnDestroy {
       name: 'edit',
       onClick: () => {
         self.loader.open();
-        self.ws.call('pool.dataset.get_quota', [self.pk, 'GROUP', [['id', '=', row.id]]]).subscribe((res) => {
+        self.ws.call('pool.dataset.get_quota', [self.pk, DatasetQuotaType.Group, [['id', '=', row.id]]]).subscribe((res) => {
           self.loader.close();
           const conf: DialogFormConfiguration = {
             title: helptext.groups.dialog.title,
@@ -133,7 +170,7 @@ export class DatasetQuotasGrouplistComponent implements OnDestroy {
               const entryData = data.formValue;
               const payload = [];
               payload.push({
-                quota_type: 'GROUP',
+                quota_type: DatasetQuotaType.Group,
                 id: res[0].id,
                 quota_value: self.storageService.convertHumanStringToNum(entryData.data_quota),
               },
@@ -168,11 +205,17 @@ export class DatasetQuotasGrouplistComponent implements OnDestroy {
     const paramMap: any = (<any> this.aroute.params).getValue();
     this.pk = paramMap.pk;
     this.useFullFilter = window.localStorage.getItem('useFullFilter') !== 'false';
+    this.ws.call(
+      'pool.dataset.get_quota',
+      [this.pk, DatasetQuotaType.Group, [['name', '=', null]]],
+    ).subscribe((quotas: DatasetQuota[]) => {
+      this.invalidQuotas = quotas;
+    });
   }
 
   callGetFunction(entityList) {
     const filter = this.useFullFilter ? this.fullFilter : this.emptyFilter;
-    this.ws.call('pool.dataset.get_quota', [this.pk, 'GROUP', filter]).subscribe((res) => {
+    this.ws.call('pool.dataset.get_quota', [this.pk, DatasetQuotaType.Group, filter]).subscribe((res) => {
       entityList.handleData(res, true);
     });
   }
