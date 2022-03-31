@@ -29,6 +29,7 @@ export class IxSelectComponent implements ControlValueAccessor, OnChanges {
   @Input() multiple: boolean;
   @Output() linkClicked: EventEmitter<void> = new EventEmitter();
   @Input() linkText: string = null;
+  @Input() emptyValue: string = null;
 
   constructor(
     public controlDirective: NgControl,
