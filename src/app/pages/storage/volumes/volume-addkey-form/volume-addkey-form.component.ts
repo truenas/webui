@@ -42,7 +42,7 @@ export class VolumeAddkeyFormComponent implements FormConfiguration {
     {
       type: 'paragraph',
       name: 'encrypt-headline',
-      paraText: '<i class="material-icons">lock</i>' + helptext.add_key_headline,
+      paraText: '<i class="material-icons">lock</i>' + this.translate.instant(helptext.add_key_headline),
     }, {
       type: 'paragraph',
       name: 'addkey-instructions',

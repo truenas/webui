@@ -134,7 +134,7 @@ describe('ServiceSmbComponent', () => {
     const form = await loader.getHarness(IxFormHarness);
     await form.fillForm({
       'NetBIOS Name': 'truenas-scale',
-      'NetBIOS Alias': ['truenas-scale-alias', 'truenas-scale-alias2'],
+      'NetBIOS Alias': ['truenas-alias', 'truenas-alias2'],
       Description: 'TrueNAS SCALE Server',
       'Enable SMB1 support': true,
       'NTLMv1 Auth': true,
@@ -147,7 +147,7 @@ describe('ServiceSmbComponent', () => {
     expect(ws.call).toHaveBeenLastCalledWith('smb.update', [{
       // New basic options
       netbiosname: 'truenas-scale',
-      netbiosalias: ['truenas-scale-alias', 'truenas-scale-alias2'],
+      netbiosalias: ['truenas-alias', 'truenas-alias2'],
       description: 'TrueNAS SCALE Server',
       enable_smb1: true,
       ntlmv1_auth: true,

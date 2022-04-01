@@ -40,7 +40,7 @@ export class VolumeRekeyFormComponent implements FormConfiguration {
     }, {
       type: 'paragraph',
       name: 'encrypt-headline',
-      paraText: '<i class="material-icons">lock</i>' + helptext.rekey_headline,
+      paraText: '<i class="material-icons">lock</i>' + this.translate.instant(helptext.rekey_headline),
     }, {
       type: 'paragraph',
       name: 'rekey-instructions',

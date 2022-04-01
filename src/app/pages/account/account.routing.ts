@@ -7,8 +7,6 @@ import { BackupCredentialsComponent } from '../credentials/backup-credentials/ba
 import { CertificatesDashComponent } from '../credentials/certificates-dash/certificates-dash.component';
 import { TwoFactorComponent } from '../system/two-factor/two-factor.component';
 import { MembersComponent } from './groups/members/members.component';
-import { UserFormComponent } from './users/user-form/user-form.component';
-import { UserListComponent } from './users/user-list/user-list.component';
 
 export const routes: Routes = [{
   path: '',
@@ -16,21 +14,8 @@ export const routes: Routes = [{
   children: [
     {
       path: 'users',
+      loadChildren: () => import('app/pages/account/users/users.module').then((module) => module.UsersModule),
       data: { title: 'Users', breadcrumb: 'Users', icon: 'group' },
-      children: [{
-        path: '',
-        component: UserListComponent,
-        data: { title: 'Users', breadcrumb: 'Users' },
-      }, {
-        path: 'add',
-        component: UserFormComponent,
-        data: { title: 'Add', breadcrumb: 'Add' },
-      },
-      {
-        path: 'edit/:pk',
-        component: UserFormComponent,
-        data: { title: 'Edit', breadcrumb: 'Edit' },
-      }],
     }, {
       path: 'groups',
       data: { title: 'Groups', breadcrumb: 'Groups', icon: 'group_work' },

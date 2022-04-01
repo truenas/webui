@@ -111,6 +111,10 @@ export class ThemeService {
     document.documentElement.style.setProperty('--white', '#ffffff');
     document.documentElement.style.setProperty('--grey', '#989898');
 
+    // Add neutral focus color
+    document.documentElement.style.setProperty('--focus-bg', 'rgba(122, 122, 122, .25)');
+    document.documentElement.style.setProperty('--focus-brd', 'rgba(255, 255, 255, .25)');
+
     // Set Material palette colors
     document.documentElement.style.setProperty('--primary', theme['primary']);
     document.documentElement.style.setProperty('--accent', theme['accent']);
@@ -132,15 +136,18 @@ export class ThemeService {
 
     // Set multiple background color contrast options
     const contrastSrc = theme['bg2'];
+    const contrastPrimary = theme[primaryColor] as string;
     const contrastDarker = this.utils.darken(contrastSrc, 5);
     const contrastDarkest = this.utils.darken(contrastSrc, 10);
     const contrastLighter = this.utils.lighten(contrastSrc, 5);
     const contrastLightest = this.utils.lighten(contrastSrc, 10);
+    const primaryLightest = this.utils.lighten(contrastPrimary, 5);
 
     document.documentElement.style.setProperty('--contrast-darker', contrastDarker);
     document.documentElement.style.setProperty('--contrast-darkest', contrastDarkest);
     document.documentElement.style.setProperty('--contrast-lighter', contrastLighter);
     document.documentElement.style.setProperty('--contrast-lightest', contrastLightest);
+    document.documentElement.style.setProperty('--primary-lighter', primaryLightest);
 
     let topbarTextColor;
     if (!theme['topbar-txt'] && theme.topbar) {

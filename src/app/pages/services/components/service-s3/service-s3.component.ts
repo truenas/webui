@@ -76,17 +76,14 @@ export class ServiceS3Component implements OnInit {
     certificate: helptext.certificate_tooltip,
   };
 
-  readonly treeNodeProvider = this.filesystemService.getFilesystemNodeProvider();
+  readonly treeNodeProvider = this.filesystemService.getFilesystemNodeProvider({ directoriesOnly: true });
   readonly bindIpOptions$ = this.ws.call('s3.bindip_choices').pipe(choicesToOptions());
   readonly certificateOptions$ = this.systemGeneralService.getCertificates().pipe(
     map((certificates) => {
-      return [
-        { label: '---', value: null },
-        ...certificates.map((certificate) => ({
-          label: certificate.name,
-          value: certificate.id,
-        })),
-      ];
+      return certificates.map((certificate) => ({
+        label: certificate.name,
+        value: certificate.id,
+      }));
     }),
   );
 
@@ -147,6 +144,10 @@ export class ServiceS3Component implements OnInit {
         this.form.get('tls_server_uri').removeValidators(this.tlsServerUriRequiredIfCertificateNotNull.validatorFn());
       }
     });
+  }
+
+  certificatesLinkClicked(): void {
+    this.router.navigate(['/', 'credentials', 'certificates']);
   }
 
   onSubmit(): void {

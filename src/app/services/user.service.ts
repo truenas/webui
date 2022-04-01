@@ -1,9 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
 import { DsUncachedGroup, DsUncachedUser } from 'app/interfaces/ds-cache.interface';
 import { Group } from 'app/interfaces/group.interface';
-import { Option } from 'app/interfaces/option.interface';
 import { QueryFilter } from 'app/interfaces/query-api.interface';
 import { User } from 'app/interfaces/user.interface';
 import { WebSocketService } from './ws.service';
@@ -11,6 +9,7 @@ import { WebSocketService } from './ws.service';
 @Injectable({ providedIn: 'root' })
 export class UserService {
   static namePattern = /^[a-zA-Z0-9_][a-zA-Z0-9_\.-]*[$]?$/;
+  static passwordPattern = /^[^?]*$/;
   protected uncachedUserQuery = 'dscache.get_uncached_user' as const;
   protected uncachedGroupQuery = 'dscache.get_uncached_group' as const;
   protected userQuery = 'user.query' as const;
@@ -65,20 +64,6 @@ export class UserService {
   async getGroupObject(groupId: string | number): Promise<DsUncachedGroup> {
     return this.ws
       .call('group.get_group_obj', [typeof groupId === 'string' ? { groupname: groupId } : { gid: groupId }])
-      .toPromise();
-  }
-
-  async shellChoices(userId?: number): Promise<Option[]> {
-    return this.ws
-      .call('user.shell_choices', userId ? [userId] : [])
-      .pipe(
-        map((choices) => {
-          return Object.keys(choices || {}).map((key) => ({
-            label: choices[key],
-            value: key,
-          }));
-        }),
-      )
       .toPromise();
   }
 }

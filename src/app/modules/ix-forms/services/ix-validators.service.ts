@@ -4,25 +4,24 @@ import {
 } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
 import isCidr from 'is-cidr';
-import _ from 'lodash';
 
 @Injectable()
 export default class IxValidatorsService {
   constructor(protected translate: TranslateService) {}
 
-  withMessage(validatorFn: ValidatorFn, errMessage?: { message: string; forProperty: string }): ValidatorFn {
+  withMessage(validatorFn: ValidatorFn, errorMessage: string): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
       const errors = validatorFn(control);
-      if (errMessage && errMessage.message && errMessage.forProperty
-        && errors && errors[errMessage.forProperty]
-      ) {
-        if (_.isPlainObject(errors[errMessage.forProperty])) {
-          errors[errMessage.forProperty].message = errMessage.message;
-        } else {
-          errors[errMessage.forProperty] = { message: errMessage.message };
-        }
+      if (!errors || Object.keys(errors).length === 0) {
+        return null;
       }
-      return errors;
+
+      const errorKey = Object.keys(errors)[0];
+      return {
+        [errorKey]: {
+          message: errorMessage,
+        },
+      };
     };
   }
 
@@ -69,12 +68,30 @@ export default class IxValidatorsService {
     return Validators.compose([
       this.withMessage(
         Validators.pattern(new RegExp(`^${name}$`)),
-        { message: validationMessage, forProperty: 'pattern' },
+        validationMessage,
       ),
       this.withMessage(
         Validators.required,
-        { message: validationMessage, forProperty: 'required' },
+        validationMessage,
       ),
     ]);
+  }
+
+  /**
+   * Specify simple validator function returning true for error and an error message.
+   */
+  customValidator(validatorFn: (control: AbstractControl) => boolean, message: string): ValidatorFn {
+    return this.withMessage(
+      (control) => {
+        const hasError = validatorFn(control);
+
+        if (!hasError) {
+          return null;
+        }
+
+        return { customValidator: true };
+      },
+      message,
+    );
   }
 }

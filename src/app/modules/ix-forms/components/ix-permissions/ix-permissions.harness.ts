@@ -1,4 +1,6 @@
-import { BaseHarnessFilters, ComponentHarness, HarnessPredicate } from '@angular/cdk/testing';
+import {
+  BaseHarnessFilters, ComponentHarness, HarnessPredicate, parallel,
+} from '@angular/cdk/testing';
 import { MatCheckboxHarness } from '@angular/material/checkbox/testing';
 import { PosixPermission } from 'app/enums/posix-acl.enum';
 import { parseMode } from 'app/helpers/mode.helper';
@@ -56,16 +58,18 @@ export class IxPermissionsHarness extends ComponentHarness implements IxFormCont
       grp += 1;
     }
 
-    if ((await permissions[6].isChecked())) {
-      other += 4;
-    }
+    if (permissions.length > 6) {
+      if ((await permissions[6].isChecked())) {
+        other += 4;
+      }
 
-    if ((await permissions[7].isChecked())) {
-      other += 2;
-    }
+      if ((await permissions[7].isChecked())) {
+        other += 2;
+      }
 
-    if ((await permissions[8].isChecked())) {
-      other += 1;
+      if ((await permissions[8].isChecked())) {
+        other += 1;
+      }
     }
 
     return new Promise((resolve) => {
@@ -96,5 +100,12 @@ export class IxPermissionsHarness extends ComponentHarness implements IxFormCont
           reject(errors);
         });
     });
+  }
+
+  async isDisabled(): Promise<boolean> {
+    const checkboxes = await this.getMatCheckboxHarnesses();
+    const inputState = await parallel(() => checkboxes.map((control) => control.isDisabled()));
+
+    return new Promise((resolve) => resolve(inputState.every((control) => !!control)));
   }
 }

@@ -18,14 +18,13 @@ export default {
   v3_username_tooltip: T('Enter a username to register with this service.'),
   v3_authtype_tooltip: T('Choose an authentication method.'),
   v3_authtype_options: [
-    { label: '---', value: '' }, { label: 'MD5', value: 'MD5' },
+    { label: 'MD5', value: 'MD5' },
     { label: 'SHA', value: 'SHA' },
   ],
 
   v3_password_tooltip: T('Enter a password of at least eight characters.'),
   v3_privproto_tooltip: T('Choose a privacy protocol.'),
   v3_privproto_options: [
-    { label: '---', value: null },
     { label: 'AES', value: 'AES' },
     { label: 'DES', value: 'DES' },
   ],
