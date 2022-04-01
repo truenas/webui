@@ -4,6 +4,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, Spectator, mockProvider } from '@ngneat/spectator/jest';
+import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockJob, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { AppLoaderModule } from 'app/modules/app-loader/app-loader.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
@@ -23,7 +24,7 @@ describe('LeaveDomainDialogComponent', () => {
     ],
     providers: [
       mockWebsocket([
-        mockJob('activedirectory.leave'),
+        mockJob('activedirectory.leave', fakeSuccessfulJob()),
       ]),
       mockProvider(DialogService),
       mockProvider(MatDialogRef),
@@ -50,6 +51,6 @@ describe('LeaveDomainDialogComponent', () => {
       password: '12345678',
     }]);
     expect(spectator.inject(DialogService).info).toHaveBeenCalled();
-    expect(spectator.inject(MatDialogRef).close()).toHaveBeenCalledWith(true);
+    expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith(true);
   });
 });
