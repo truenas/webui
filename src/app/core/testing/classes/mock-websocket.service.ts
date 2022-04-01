@@ -34,8 +34,10 @@ export class MockWebsocketService extends WebSocketService {
     this.job = jest.fn();
     this.subscribe = jest.fn(() => this.subscribeStream$ as Observable<ApiEvent<unknown>>);
     this.sub = jest.fn(() => of());
-    this.socket.send = jest.fn();
-    this.socket.close = jest.fn();
+    this.socket = {
+      send: jest.fn(),
+      close: jest.fn(),
+    } as unknown as WebSocket;
     when(this.call).mockImplementation((method: ApiMethod, args: unknown[]) => {
       throw Error(`Unmocked websocket call ${method} with ${JSON.stringify(args)}`);
     });
@@ -58,7 +60,9 @@ export class MockWebsocketService extends WebSocketService {
       ...response,
       id: this.jobIdCounter,
     };
+    when(this.call).calledWith(method).mockReturnValue(of(this.jobIdCounter));
     when(this.call).calledWith(method, expect.anything()).mockReturnValue(of(this.jobIdCounter));
+    when(this.job).calledWith(method).mockReturnValue(of(responseWithJobId));
     when(this.job).calledWith(method, expect.anything()).mockReturnValue(of(responseWithJobId));
     when(this.call)
       .calledWith('core.get_jobs', [[['id', '=', this.jobIdCounter]]])
@@ -73,5 +77,9 @@ export class MockWebsocketService extends WebSocketService {
 
   onclose(): void {
     // Noop to avoid calling redirect.
+  }
+
+  connect(): void {
+    // Noop
   }
 }

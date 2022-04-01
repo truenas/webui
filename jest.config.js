@@ -11,7 +11,7 @@ module.exports = {
   roots: ['<rootDir>/src/'],
   testMatch: ['**/+(*.)+(spec).+(ts)'],
   setupFilesAfterEnv: ['<rootDir>/src/setup-jest.ts'],
-  collectCoverage: true,
+  collectCoverage: false,
   collectCoverageFrom: ["**/*.ts"],
   coverageReporters: ['html', 'json'],
   coverageDirectory: 'coverage/webui',

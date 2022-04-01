@@ -1,10 +1,10 @@
-import { FactoryProvider, ExistingProvider } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatIconTestingModule } from '@angular/material/icon/testing';
 import {
   Spectator, createComponentFactory, mockProvider, SpectatorFactory,
 } from '@ngneat/spectator/jest';
+import { of } from 'rxjs';
 import { mockWebsocket, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
 import { TrueCommandStatus } from 'app/enums/true-command-status.enum';
 import { TrueCommandConfig } from 'app/interfaces/true-command-config.interface';
@@ -12,14 +12,6 @@ import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { TruecommandStatusModalComponent } from 'app/modules/truecommand/components/truecommand-status-modal.component';
 import { TruecommandButtonComponent } from 'app/modules/truecommand/truecommand-button.component';
 import { DialogService } from 'app/services';
-
-function getWsWithMockResponse(
-  truecommandConfig: Partial<TrueCommandConfig> = {},
-): (FactoryProvider | ExistingProvider)[] {
-  return mockWebsocket([
-    mockCall('truecommand.config', getFakeConfig(truecommandConfig)),
-  ]);
-}
 
 function getFakeConfig(overrides: Partial<TrueCommandConfig>): TrueCommandConfig {
   return {
@@ -47,9 +39,17 @@ describe('TruecommandButtonComponent', () => {
         ReactiveFormsModule,
         MatIconTestingModule,
       ],
+      declarations: [
+        TruecommandStatusModalComponent,
+      ],
       providers: [
-        getWsWithMockResponse(config),
-        mockProvider(DialogService),
+        mockWebsocket([
+          mockCall('truecommand.config', getFakeConfig(config)),
+        ]),
+        mockProvider(DialogService, {
+          generalDialog: jest.fn(() => of()),
+          dialogForm: jest.fn(() => of()),
+        }),
         mockProvider(MatDialogRef),
       ],
     });
@@ -66,8 +66,6 @@ describe('TruecommandButtonComponent', () => {
         spectator = createComponent();
 
         dialogServiceMock = spectator.inject(DialogService);
-        jest.spyOn(dialogServiceMock, 'dialogForm');
-        jest.spyOn(dialogServiceMock, 'generalDialog');
       });
 
       it(`shows ${expectedButtonId} button with trueconnect icon`, () => {
@@ -117,7 +115,6 @@ describe('TruecommandButtonComponent', () => {
         spectator = createComponent();
 
         dialogServiceMock = spectator.inject(DialogService);
-        jest.spyOn(dialogServiceMock, 'dialogForm');
 
         matDialogMock = spectator.inject(MatDialog);
         jest.spyOn(matDialogMock, 'open');

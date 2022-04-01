@@ -131,32 +131,11 @@ export class SharesDashboardComponent implements AfterViewInit {
     }
   }
 
-  refreshDashboard(shareType: ShareType = null): void {
-    switch (shareType) {
-      case ShareType.Iscsi: {
-        this.iscsiTableConf = this.getTableConfigForShareType(ShareType.Iscsi);
-        break;
-      }
-      case ShareType.Nfs: {
-        this.nfsTableConf = this.getTableConfigForShareType(ShareType.Nfs);
-        break;
-      }
-      case ShareType.Smb: {
-        this.smbTableConf = this.getTableConfigForShareType(ShareType.Smb);
-        break;
-      }
-      case ShareType.WebDav: {
-        this.webdavTableConf = this.getTableConfigForShareType(ShareType.WebDav);
-        break;
-      }
-      default: {
-        this.webdavTableConf = this.getTableConfigForShareType(ShareType.WebDav);
-        this.nfsTableConf = this.getTableConfigForShareType(ShareType.Nfs);
-        this.smbTableConf = this.getTableConfigForShareType(ShareType.Smb);
-        this.iscsiTableConf = this.getTableConfigForShareType(ShareType.Iscsi);
-        break;
-      }
-    }
+  refreshDashboard(): void {
+    this.webdavTableConf = this.getTableConfigForShareType(ShareType.WebDav);
+    this.nfsTableConf = this.getTableConfigForShareType(ShareType.Nfs);
+    this.smbTableConf = this.getTableConfigForShareType(ShareType.Smb);
+    this.iscsiTableConf = this.getTableConfigForShareType(ShareType.Iscsi);
   }
 
   getTableConfigForShareType(shareType: ShareType): InputExpandableTableConf {
@@ -169,14 +148,14 @@ export class SharesDashboardComponent implements AfterViewInit {
           deleteCall: 'sharing.nfs.delete',
           deleteMsg: {
             title: this.translate.instant('NFS Share'),
-            key_props: ['paths'],
+            key_props: ['path'],
           },
           limitRowsByMaxHeight: true,
           hideEntityEmpty: true,
           emptyEntityLarge: false,
           parent: this,
           columns: [
-            { name: helptextSharingNfs.column_path, prop: 'paths', showLockedStatus: true },
+            { name: helptextSharingNfs.column_path, prop: 'path', showLockedStatus: true },
             { name: helptextSharingNfs.column_comment, prop: 'comment', hiddenIfEmpty: true },
             {
               name: helptextSharingNfs.column_enabled,
@@ -370,10 +349,15 @@ export class SharesDashboardComponent implements AfterViewInit {
         formComponent = TargetFormComponent;
         break;
     }
-    if (share === ShareType.WebDav) {
-      const webdavForm = this.slideInService.open(WebdavFormComponent);
+    if ([ShareType.WebDav, ShareType.Nfs].includes(share)) {
+      const form = this.slideInService.open(formComponent);
       if (id) {
-        webdavForm.setWebdavForEdit(tableComponent.displayedDataSource.find((row) => row.id === id));
+        const row = tableComponent.displayedDataSource.find((row) => row.id === id);
+        if (share === ShareType.WebDav) {
+          (form as WebdavFormComponent).setWebdavForEdit(row);
+        } else if (share === ShareType.Nfs) {
+          (form as NfsFormComponent).setNfsShareForEdit(row);
+        }
       }
       this.slideInService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
         if (!tableComponent) {
@@ -381,8 +365,6 @@ export class SharesDashboardComponent implements AfterViewInit {
         } else {
           tableComponent.getData();
         }
-      }, (err) => {
-        new EntityUtils().handleWsError(this, err, this.dialog);
       });
     } else {
       this.modalService.openInSlideIn(formComponent, id);

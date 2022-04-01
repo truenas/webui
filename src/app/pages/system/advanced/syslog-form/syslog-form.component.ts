@@ -5,7 +5,7 @@ import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { forkJoin, of, Subscription } from 'rxjs';
-import { map, switchMap } from 'rxjs/operators';
+import { switchMap } from 'rxjs/operators';
 import { SyslogLevel, SyslogTransport } from 'app/enums/syslog.enum';
 import { choicesToOptions } from 'app/helpers/options.helper';
 import { helptextSystemAdvanced, helptextSystemAdvanced as helptext } from 'app/helptext/system/advanced';
@@ -47,13 +47,12 @@ export class SyslogFormComponent implements OnInit {
     syslog: helptext.system_dataset_tooltip,
   };
 
-  readonly levelOptions = of(helptextSystemAdvanced.sysloglevel.options);
-  readonly transportOptions = of(helptextSystemAdvanced.syslog_transport.options);
-  readonly certificateOptions = this.ws.call('system.advanced.syslog_certificate_choices').pipe(
+  readonly levelOptions$ = of(helptextSystemAdvanced.sysloglevel.options);
+  readonly transportOptions$ = of(helptextSystemAdvanced.syslog_transport.options);
+  readonly certificateOptions$ = this.ws.call('system.advanced.syslog_certificate_choices').pipe(
     choicesToOptions(),
-    map((options) => [{ label: '---', value: null }, ...options]),
   );
-  readonly certificateAuthorityOptions = this.ws.call('system.advanced.syslog_certificate_authority_choices')
+  readonly certificateAuthorityOptions$ = this.ws.call('system.advanced.syslog_certificate_authority_choices')
     .pipe(choicesToOptions());
 
   constructor(

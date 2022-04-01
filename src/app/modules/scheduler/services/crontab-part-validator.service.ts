@@ -37,9 +37,6 @@ export class CrontabPartValidatorService {
       };
     };
 
-    return this.validatorsService.withMessage(validator, {
-      forProperty: 'crontabPart',
-      message: this.translate.instant('Incorrect crontab value.'),
-    });
+    return this.validatorsService.withMessage(validator, this.translate.instant('Incorrect crontab value.'));
   }
 }

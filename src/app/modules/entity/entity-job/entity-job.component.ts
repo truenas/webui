@@ -89,10 +89,10 @@ export class EntityJobComponent implements OnInit {
     });
 
     this.failure.pipe(untilDestroyed(this)).subscribe((job) => {
-      job.error = _.replace(job.error, '<', '< ');
-      job.error = _.replace(job.error, '>', ' >');
+      let error = _.replace(job.error, '<', '< ');
+      error = _.replace(error, '>', ' >');
 
-      this.description = '<b>Error:</b> ' + job.error;
+      this.description = '<b>Error:</b> ' + error;
     });
 
     if (this.openJobsManagerOnClose) {
@@ -137,41 +137,6 @@ export class EntityJobComponent implements OnInit {
 
   disableProgressValue(hide: boolean): void {
     this.hideProgressValue = hide;
-  }
-
-  show(): void {
-    this.ws.call('core.get_jobs', [[['id', '=', this.jobId]]])
-      .pipe(untilDestroyed(this))
-      .subscribe((jobs) => {
-        if (jobs.length > 0) {
-          this.jobUpdate(jobs[0]);
-        }
-      });
-    this.ws.subscribe('core.get_jobs').pipe(
-      filter((event) => event.id === this.jobId),
-      map((event) => event.fields),
-      untilDestroyed(this),
-    ).subscribe((job) => {
-      this.jobUpdate(job);
-    });
-  }
-
-  jobUpdate(job: Job): void {
-    this.job = job;
-    this.showAbortButton = this.job.abortable;
-    if (job.progress) {
-      this.progress.emit(job.progress);
-    }
-    switch (job.state) {
-      case JobState.Success:
-        this.success.emit(this.job);
-        break;
-      case JobState.Failed:
-        this.failure.emit(this.job);
-        break;
-      default:
-        break;
-    }
   }
 
   submit(): void {
@@ -282,13 +247,18 @@ export class EntityJobComponent implements OnInit {
       case JobState.Failed:
         this.failure.emit(this.job);
         break;
+      case JobState.Aborted:
+        this.aborted.emit(this.job);
+        break;
       default:
         break;
     }
   }
 
   abortJob(): void {
-    this.ws.call('core.job_abort', [this.job.id]).pipe(untilDestroyed(this)).subscribe();
+    this.ws.call('core.job_abort', [this.job.id]).pipe(untilDestroyed(this)).subscribe(() => {
+      this.dialogRef.close();
+    });
   }
 
   /**

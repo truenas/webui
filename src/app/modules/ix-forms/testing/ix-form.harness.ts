@@ -1,4 +1,5 @@
 import { ComponentHarness, parallel } from '@angular/cdk/testing';
+import { IxCheckboxListHarness } from 'app/modules/ix-forms/components/ix-checkbox-list/ix-checkbox-list.harness';
 import { IxCheckboxHarness } from 'app/modules/ix-forms/components/ix-checkbox/ix-checkbox.harness';
 import { IxChipsHarness } from 'app/modules/ix-forms/components/ix-chips/ix-chips.harness';
 import { IxComboboxHarness } from 'app/modules/ix-forms/components/ix-combobox/ix-combobox.harness';
@@ -7,6 +8,7 @@ import { IxInputHarness } from 'app/modules/ix-forms/components/ix-input/ix-inpu
 import {
   IxIpInputWithNetmaskHarness,
 } from 'app/modules/ix-forms/components/ix-ip-input-with-netmask/ix-ip-input-with-netmask.harness';
+import { IxPermissionsHarness } from 'app/modules/ix-forms/components/ix-permissions/ix-permissions.harness';
 import { IxRadioGroupHarness } from 'app/modules/ix-forms/components/ix-radio-group/ix-radio-group.harness';
 import { IxSelectHarness } from 'app/modules/ix-forms/components/ix-select/ix-select.harness';
 import { IxSlideToggleHarness } from 'app/modules/ix-forms/components/ix-slide-toggle/ix-slide-toggle.harness';
@@ -18,6 +20,7 @@ import { SchedulerHarness } from 'app/modules/scheduler/components/scheduler/sch
 const childSelectors = [
   IxInputHarness,
   IxCheckboxHarness,
+  IxPermissionsHarness,
   IxSelectHarness,
   IxTextareaHarness,
   IxComboboxHarness,
@@ -25,6 +28,7 @@ const childSelectors = [
   IxExplorerHarness,
   IxSlideToggleHarness,
   IxRadioGroupHarness,
+  IxCheckboxListHarness,
   JiraOauthHarness,
   SchedulerHarness,
   IxIpInputWithNetmaskHarness,
@@ -98,5 +102,18 @@ export class IxFormHarness extends ComponentHarness {
 
       await control.setValue(values[label]);
     }
+  }
+
+  async getDisabledState(): Promise<{ [label: string]: boolean }> {
+    const controlsDict = await this.getControlHarnessesDict();
+
+    const result: { [label: string]: boolean } = {};
+    for (const label in controlsDict) {
+      const control = controlsDict[label] as IxFormControlHarness;
+
+      result[label] = await control.isDisabled();
+    }
+
+    return result;
   }
 }

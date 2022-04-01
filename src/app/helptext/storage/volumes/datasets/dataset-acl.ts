@@ -9,7 +9,7 @@ import { mapToOptions } from 'app/helpers/options.helper';
 import {
   NfsFormFlagsType,
   NfsFormPermsType,
-} from 'app/pages/storage/volumes/permissions/components/edit-nfs-ace/edit-nfs-ace-form-values.interface';
+} from 'app/pages/storage/volumes/permissions/components/edit-nfs-ace/edit-nfs-ace-form.types';
 
 export default {
   dataset_acl_title_entry: T('Access Control Entry'),
@@ -60,15 +60,7 @@ export default {
   dataset_acl_perms_placeholder: T('Permissions'),
   dataset_acl_perms_tooltip: T('Select permissions to apply to the chosen\
  <i>Who</i>. Choices change depending on the <i>Permissions Type</i>.'),
-  dataset_acl_basic_perms_options: [
-    ...mapToOptions(nfsBasicPermissionLabels),
-    {
-      label: T('Other (Too complicated to be displayed)'),
-      value: 'OTHER',
-      disable: true,
-      hiddenFromDisplay: true,
-    },
-  ],
+  dataset_acl_basic_perms_options: mapToOptions(nfsBasicPermissionLabels),
   dataset_acl_advanced_perms_options: mapToOptions(nfsAdvancedPermissionLabels),
 
   dataset_acl_flags_set_title: T('Flags'),
@@ -90,12 +82,6 @@ export default {
   dataset_acl_basic_flags_options: [
     { label: T('Inherit'), value: NfsBasicFlag.Inherit },
     { label: T('No Inherit'), value: NfsBasicFlag.NoInherit },
-    {
-      label: T('Other (Too complicated to be displayed)'),
-      value: 'OTHER',
-      disable: true,
-      hiddenFromDisplay: true,
-    },
   ],
   dataset_acl_advanced_flags_options: [
     { label: T('File Inherit'), value: NfsAdvancedFlag.FileInherit },

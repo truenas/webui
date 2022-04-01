@@ -10,6 +10,8 @@
               [label]="'Server Certificate' | translate"
               [required]="true"
               [options]="serverCertificates$"
+              (linkClicked)="certificatesLinkClicked()"
+              [linkText]="'Certificates' | translate"
               [tooltip]="tooltips.server_certificate | translate"
             ></ix-select>
             <ix-select
@@ -18,6 +20,8 @@
               [required]="true"
               [options]="rootAuthorities$"
               [tooltip]="tooltips.root_ca | translate"
+              [linkText]="'Certificate Authorities' | translate"
+              [tooltip]="tooltips.server_certificate | translate"
             ></ix-select>
             <ix-ip-input-with-netmask
               formControlName="server"

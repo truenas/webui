@@ -36,9 +36,10 @@ describe('SedFormComponent', () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     ws = spectator.inject(WebSocketService);
-    spectator.component.setupForm({
-      sed_user: SedUser.User,
-    } as AdvancedConfig);
+    spectator.component.setupForm(
+      { sed_user: SedUser.User } as AdvancedConfig,
+      '123',
+    );
   });
 
   it('shows current system advanced sed values when form is being edited', async () => {
@@ -47,7 +48,7 @@ describe('SedFormComponent', () => {
 
     expect(values).toEqual({
       'ATA Security User': SedUser.User,
-      'SED Password': '',
+      'SED Password': '123',
       'Confirm SED Password': '',
     });
   });

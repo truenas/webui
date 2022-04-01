@@ -43,6 +43,7 @@ export class UpdateComponent implements OnInit {
   progress: Record<string, unknown> = {};
   error: string;
   autoCheck = false;
+  checkable = false;
   train: string;
   trains: { name: string; description: string }[] = [];
   selectedTrain: string;
@@ -162,6 +163,7 @@ export class UpdateComponent implements OnInit {
       this.autoCheck = isAutoDownloadOn;
 
       this.ws.call('update.get_trains').pipe(untilDestroyed(this)).subscribe((res) => {
+        this.checkable = true;
         this.fullTrainList = res.trains;
 
         // On page load, make sure we are working with train of the current OS
@@ -195,6 +197,13 @@ export class UpdateComponent implements OnInit {
         }
         // To remember train descrip if user switches away and then switches back
         this.trainDescriptionOnPageLoad = this.currentTrainDescription;
+      },
+      (err) => {
+        this.dialogService.info(
+          err.trace.class,
+          this.translate.instant('TrueNAS was unable to reach update servers.'),
+          '500px',
+        );
       });
     });
 

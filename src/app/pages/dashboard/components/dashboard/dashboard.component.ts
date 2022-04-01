@@ -263,6 +263,9 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    if (this.interval) {
+      clearInterval(this.interval);
+    }
     this.stopListeners();
     this.core.unregister({ observerClass: this });
 
@@ -528,7 +531,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       case 'pool':
         if (spl) {
           const pools = this.pools.filter((pool) => pool[key as keyof Pool] === value);
-          if (pools) { data = pools[0]; }
+          if (pools.length) { data = pools[0]; }
         } else {
           console.warn('DashConfigItem has no identifier!');
         }
@@ -536,7 +539,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       case 'interface':
         if (spl) {
           const nics = this.nics.filter((nic) => nic[key as keyof DashboardNetworkInterface] === value);
-          if (nics) { data = nics[0].state; }
+          if (nics.length) { data = nics[0].state; }
         } else {
           console.warn('DashConfigItem has no identifier!');
         }
@@ -579,11 +582,12 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     const hidden = this.dashState
-      .filter((widget) => {
-        return newState.every((updatedWidget) => {
-          return !(widget?.identifier === updatedWidget.identifier || widget?.name === updatedWidget.name);
-        });
-      })
+      .filter((widget) => newState.every((updatedWidget) => {
+        if (widget.identifier) {
+          return widget.identifier !== updatedWidget.identifier;
+        }
+        return widget.name !== updatedWidget.name;
+      }))
       .map((widget) => ({ ...widget, rendered: false }));
 
     this.setDashState([...newState, ...hidden]);
@@ -730,8 +734,8 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private loadUserAttributes(): void {
     this.ws.call('user.query', [[['id', '=', 1]]]).pipe(untilDestroyed(this)).subscribe((user) => {
-      if (user[0].attributes.dashState) {
-        this.applyState(user[0].attributes.dashState);
+      if (user[0]?.attributes.dashState) {
+        this.applyState(this.sanitizeState(user[0].attributes.dashState));
       }
       this.dashStateReady = true;
     });

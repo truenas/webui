@@ -186,8 +186,7 @@ export class DirectoryServicesComponent implements OnInit {
   ngOnInit(): void {
     this.refreshCards();
     merge(
-      this.modalService.onClose$,
-      this.slideInService.onClose$,
+      this.slideInService.onClose$.pipe(filter((res) => !!res)),
       this.modalService.refreshTable$,
     )
       .pipe(untilDestroyed(this))

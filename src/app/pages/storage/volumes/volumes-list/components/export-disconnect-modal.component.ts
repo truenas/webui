@@ -42,18 +42,12 @@ export class ExportDisconnectModalComponent implements OnInit {
 
   readonly nameInputRequired = this.validatorsService.withMessage(
     Validators.required,
-    {
-      forProperty: 'required',
-      message: this.translate.instant('Name of the pool is required'),
-    },
+    this.translate.instant('Name of the pool is required'),
   );
 
   readonly nameInputMustMatch = this.validatorsService.withMessage(
     Validators.pattern(new RegExp(`^${this.data.pool.name}$`)),
-    {
-      forProperty: 'pattern',
-      message: this.translate.instant('Name of the pool must be correct'),
-    },
+    this.translate.instant('Name of the pool must be correct'),
   );
 
   showSysDatasetWarning: boolean;

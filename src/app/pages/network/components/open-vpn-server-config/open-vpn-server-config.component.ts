@@ -3,6 +3,7 @@ import {
 } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
+import { Router } from '@angular/router';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { of, Subscription } from 'rxjs';
@@ -87,6 +88,7 @@ export class OpenVpnServerConfigComponent implements OnInit {
     private services: ServicesService,
     private loader: AppLoaderService,
     private cdr: ChangeDetectorRef,
+    private router: Router,
     private slideInService: IxSlideInService,
     private dialogService: DialogService,
     private storageService: StorageService,
@@ -120,6 +122,11 @@ export class OpenVpnServerConfigComponent implements OnInit {
           this.cdr.markForCheck();
         },
       );
+  }
+
+  certificatesLinkClicked(): void {
+    this.router.navigate(['/', 'credentials', 'certificates']);
+    this.slideInService.close(null, false);
   }
 
   onRenewStaticKey(): void {

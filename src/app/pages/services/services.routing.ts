@@ -2,7 +2,6 @@ import { ModuleWithProviders } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { ServiceDynamicDnsComponent } from 'app/pages/services/components/service-dynamic-dns/service-dynamic-dns.component';
 import { ServiceNfsComponent } from 'app/pages/services/components/service-nfs/service-nfs.component';
-import { RsyncModuleFormComponent } from 'app/pages/services/components/service-rsync/rsync-module-form/rsync-module-form.component';
 import { ServiceSshComponent } from 'app/pages/services/components/service-ssh/service-ssh.component';
 import { ServiceFtpComponent } from './components/service-ftp/service-ftp.component';
 import { ServiceLldpComponent } from './components/service-lldp/service-lldp.component';
@@ -57,15 +56,6 @@ export const routes: Routes = [
           {
             path: 'rsync-module',
             data: { title: 'Rsync Module', breadcrumb: 'Rsync Module' },
-            children: [{
-              path: 'add',
-              component: RsyncModuleFormComponent,
-              data: { title: 'Add', breadcrumb: 'Add' },
-            }, {
-              path: 'edit/:pk',
-              component: RsyncModuleFormComponent,
-              data: { title: 'Edit', breadcrumb: 'Edit' },
-            }],
           },
         ],
       },

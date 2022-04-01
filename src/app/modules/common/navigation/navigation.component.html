@@ -29,7 +29,7 @@
         <mat-icon *ngIf="item.icon === 'console-line'" role="img" fontSet="mdi-set" fontIcon="mdi-{{item.icon}}" class="icon console-line"></mat-icon>
         <span>{{item.name | translate}}</span>
       </a>
-      <a *ngIf="item.type === 'slideOut'" name="{{item.name.replace(' ', '_')}}-menu" (click)="toggleMenu(item.state, item.sub)" class="sidenav-link">
+      <a *ngIf="item.type === 'slideOut'" name="{{item.name.replace(' ', '_')}}-menu" (click)="toggleMenu(item.state, item.sub)" class="sidenav-link" tabindex="0" (keyup.enter)="toggleMenu(item.state, item.sub)">
         <span class="menu-item-tooltip" [matTooltip]="item.tooltip" matTooltipPosition="right"></span>
         <mat-icon>{{item.icon}}</mat-icon>
         <span>{{item.name | translate}}</span>
@@ -42,7 +42,7 @@
         <mat-icon>{{item.icon}}</mat-icon>
         <span>{{item.name | translate}}</span>
       </a>
-      <a mat-button class="absorbs-focus">
+      <a mat-button class="absorbs-focus" [tabIndex]="-1">
         <!-- 'absorbs' the focus behavior -->
       </a>
     </mat-list-item>

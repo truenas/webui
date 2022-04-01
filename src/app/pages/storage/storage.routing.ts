@@ -21,7 +21,6 @@ import { GroupQuotaFormComponent } from './volumes/datasets/dataset-quotas/datas
 import { UserQuotaFormComponent } from './volumes/datasets/dataset-quotas/dataset-quotas-userlist/user-quota-form/user-quota-form.component';
 import { DatasetUnlockComponent } from './volumes/datasets/dataset-unlock/dataset-unlock.component';
 import { ManagerComponent } from './volumes/manager/manager.component';
-import { VolumeImportWizardComponent } from './volumes/volume-import-wizard/volume-import-wizard.component';
 import { VolumeStatusComponent } from './volumes/volume-status/volume-status.component';
 import { VolumesListComponent } from './volumes/volumes-list/volumes-list.component';
 import { ZvolFormComponent } from './volumes/zvol/zvol-form/zvol-form.component';
@@ -109,11 +108,6 @@ export const routes: Routes = [
             path: 'manager/:pk',
             component: ManagerComponent,
             data: { title: 'Add Vdevs to Pool', breadcrumb: 'Add Vdevs to Pool' },
-          },
-          {
-            path: 'import',
-            component: VolumeImportWizardComponent,
-            data: { title: 'Import Pool', breadcrumb: 'Import Pool' },
           },
           {
             path: 'status/:pk',
