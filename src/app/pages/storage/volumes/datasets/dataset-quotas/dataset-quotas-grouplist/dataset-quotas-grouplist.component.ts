@@ -176,7 +176,7 @@ export class DatasetQuotasGrouplistComponent implements OnDestroy {
                 quota_value: self.storageService.convertHumanStringToNum(entryData.data_quota),
               },
               {
-                quota_type: 'GROUPOBJ',
+                quota_type: DatasetQuotaType.GroupObj,
                 id: res[0].id,
                 quota_value: entryData.obj_quota,
               });
