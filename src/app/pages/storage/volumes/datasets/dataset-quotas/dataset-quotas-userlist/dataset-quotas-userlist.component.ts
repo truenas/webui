@@ -175,7 +175,7 @@ export class DatasetQuotasUserlistComponent implements OnDestroy {
                 quota_value: self.storageService.convertHumanStringToNum(entryData.data_quota),
               },
               {
-                quota_type: 'USEROBJ',
+                quota_type: DatasetQuotaType.UserObj,
                 id: res[0].id,
                 quota_value: entryData.obj_quota,
               });
