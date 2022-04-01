@@ -7,6 +7,7 @@ import {
 import { Validators } from '@angular/forms';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { forkJoin } from 'rxjs';
 import { helptextSystemSupport as helptext } from 'app/helptext/system/support';
 import { SupportConfigUpdate } from 'app/interfaces/support.interface';
 import { AppLoaderService } from 'app/modules/app-loader/app-loader.service';
@@ -25,7 +26,7 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
 export class ProactiveComponent implements OnInit {
   isLoading = false;
   title = helptext.proactive.title;
-  FormDisable: boolean;
+  isFormDisabled = false;
   form = this.formBuilder.group({
     name: ['', [Validators.required]],
     title: ['', [Validators.required]],
@@ -39,17 +40,6 @@ export class ProactiveComponent implements OnInit {
   });
 
   readonly helptext = helptext;
-  readonly labels = {
-    pc_name: helptext.proactive.pc_name_placeholder,
-    pc_title: helptext.proactive.pc_title_placeholder,
-    pc_email: helptext.proactive.pc_email_placeholder,
-    pc_phone: helptext.proactive.pc_phone_placeholder,
-    enable_checkbox: helptext.proactive.enable_checkbox_placeholder,
-    sec_name: helptext.proactive.sec_name_placeholder,
-    sec_title: helptext.proactive.sec_title_placeholder,
-    sec_email: helptext.proactive.sec_email_placeholder,
-    sec_phone: helptext.proactive.sec_phone_placeholder,
-  };
 
   constructor(
     private formBuilder: FormBuilder,
@@ -62,9 +52,7 @@ export class ProactiveComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.isLoading = true;
     this.loadConfig();
-    this.afterInit();
   }
 
   onSubmit(): void {
@@ -76,8 +64,9 @@ export class ProactiveComponent implements OnInit {
       .subscribe(
         () => {
           this.isLoading = false;
-          this.slideInService.close();
           this.cdr.markForCheck();
+          this.slideInService.close();
+
           this.dialogService.info(helptext.proactive.dialog_title,
             helptext.proactive.dialog_mesage, '350px', 'info', true);
         }, (error) => {
@@ -91,40 +80,39 @@ export class ProactiveComponent implements OnInit {
   private loadConfig(): void {
     this.isLoading = true;
 
-    this.ws.call('support.config')
+    forkJoin([
+      this.ws.call('support.config'),
+      this.ws.call('support.is_available'),
+      this.ws.call('support.is_available_and_enabled'),
+    ])
       .pipe(untilDestroyed(this))
       .subscribe(
-        (config) => {
-          this.form.patchValue(config);
+        ([config, isAvailable, isEnabled]) => {
           this.isLoading = false;
           this.cdr.markForCheck();
+
+          if (!isAvailable) {
+            this.supportUnavailable();
+            return;
+          }
+          this.form.patchValue({
+            ...config,
+            enabled: isEnabled,
+          });
         },
         (error) => {
-          this.isLoading = false;
+          this.isFormDisabled = true;
+          this.form.disable();
           this.cdr.markForCheck();
           new EntityUtils().handleWsError(null, error, this.dialogService);
         },
       );
   }
 
-  private afterInit(): void {
-    this.ws.call('support.is_available').pipe(untilDestroyed(this)).subscribe((res) => {
-      if (!res) {
-        this.FormDisable = true;
-        this.form.disable();
-        // this.slideInService.close();
-        // this.dialogService.info(helptext.proactive.dialog_unavailable_title,
-        //   helptext.proactive.dialog_unavailable_warning, '500px', 'warning', true);
-      } else {
-        this.FormDisable = false;
-        this.ws.call('support.is_available_and_enabled').pipe(untilDestroyed(this)).subscribe((res) => {
-          if (res) {
-            this.form.controls['enabled'].setValue(true);
-          } else {
-            this.form.controls['enabled'].setValue(false);
-          }
-        });
-      }
-    });
+  supportUnavailable(): void {
+    this.isFormDisabled = true;
+    this.form.disable();
+    this.dialogService.info(helptext.proactive.dialog_unavailable_title,
+      helptext.proactive.dialog_unavailable_warning, '500px', 'warning', true);
   }
 }

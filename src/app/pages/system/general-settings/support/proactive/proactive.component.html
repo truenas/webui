@@ -4,55 +4,56 @@
     <form [formGroup]="form" class="ix-form-container" (submit)="onSubmit()">
       <div class="two-columns">
         <ix-fieldset
-          [style.opacity]="FormDisable ? .38 : null"
+          [class.form-disable]="isFormDisabled"
           [title]="helptext.proactive.primary_contact | translate"
           [tooltip]="helptext.proactive.instructions | translate">
           <ix-input
             formControlName="name"
-            [label]="labels.pc_name | translate"
+            [label]="'Name' | translate"
             [required]="true"
           ></ix-input>
           <ix-input
             formControlName="title"
-            [label]="labels.pc_title | translate"
+            [label]="'Title' | translate"
             [required]="true"
           ></ix-input>
           <ix-input
             formControlName="email"
-            [label]="labels.pc_email | translate"
+            [label]="'Email' | translate"
             [required]="true"
           ></ix-input>
           <ix-input
             formControlName="phone"
-            [label]="labels.pc_phone | translate"
+            [label]="'Phone Number' | translate"
             [required]="true"
           ></ix-input>
           <ix-checkbox
             formControlName="enabled"
-            [label]="labels.enable_checkbox"
+            [label]="'Enable iXsystems Proactive Support' | translate"
           ></ix-checkbox>
         </ix-fieldset>
 
         <ix-fieldset
+          [class.form-disable]="isFormDisabled"
           [title]="helptext.proactive.secondary_contact | translate">
           <ix-input
             formControlName="secondary_name"
-            [label]="labels.sec_name | translate"
+            [label]="'Secondary Name' | translate"
             [required]="true"
           ></ix-input>
           <ix-input
             formControlName="secondary_title"
-            [label]="labels.sec_title | translate"
+            [label]="'Secondary Title' | translate"
             [required]="true"
           ></ix-input>
           <ix-input
             formControlName="secondary_email"
-            [label]="labels.sec_email | translate"
+            [label]="'Secondary Email' | translate"
             [required]="true"
           ></ix-input>
           <ix-input
             formControlName="secondary_phone"
-            [label]="labels.sec_phone | translate"
+            [label]="'Secondary Phone Number' | translate"
             [required]="true"
           ></ix-input>
         </ix-fieldset>
@@ -61,7 +62,7 @@
         <button
           mat-button
           type="submit"
-          [disabled]="form.invalid || isLoading || FormDisable"
+          [disabled]="form.invalid || isLoading || isFormDisabled"
           color="primary"
         >{{ 'Save' | translate }}</button>
       </div>
