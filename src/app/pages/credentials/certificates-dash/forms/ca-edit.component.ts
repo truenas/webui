@@ -14,9 +14,6 @@ import { FieldConfig, FormParagraphConfig } from 'app/modules/entity/entity-form
 import { FieldSet } from 'app/modules/entity/entity-form/models/fieldset.interface';
 import { EntityUtils } from 'app/modules/entity/utils';
 import {
-  SignCsrDialogComponent,
-} from 'app/pages/credentials/certificates-dash/sign-csr-dialog/sign-csr-dialog.component';
-import {
   WebSocketService, AppLoaderService, StorageService, DialogService, SystemGeneralService,
 } from 'app/services';
 import { ModalService } from 'app/services/modal.service';
@@ -223,21 +220,6 @@ export class CertificateAuthorityEditComponent implements FormConfiguration {
     this.setForm();
     return data;
   }
-
-  customActions = [
-    {
-      id: 'sign_CSR',
-      name: helptextSystemCertificates.edit.signCSR,
-      function: () => {
-        const dialog = this.matDialog.open(SignCsrDialogComponent, {
-          data: this.rowNum,
-        });
-        dialog.afterClosed().pipe(untilDestroyed(this)).subscribe(() => {
-          this.modalService.refreshTable();
-        });
-      },
-    },
-  ];
 
   setForm(): void {
     const fields: (keyof CertificateAuthority)[] = [
