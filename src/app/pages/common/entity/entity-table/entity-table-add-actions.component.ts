@@ -6,6 +6,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { RestService } from '../../../../services/rest.service';
 
 import { EntityTableComponent } from './entity-table.component';
+import { EntityTableService } from 'app/pages/common/entity/entity-table/entity-table.service';
 
 @Component({
   selector: 'app-entity-table-add-actions',
@@ -25,9 +26,13 @@ export class EntityTableAddActionsComponent implements OnInit {
     return this.actions.length + addAction;
   }
 
-  constructor(protected translate: TranslateService) { }
+  constructor(protected translate: TranslateService, private entityTableService: EntityTableService) { }
 
   ngOnInit() {
     this.actions = this.entity.getAddActions();
+
+    this.entityTableService.addActionsUpdater$.subscribe((actions: any) => {
+      this.actions = actions;
+    });
   }
 }
