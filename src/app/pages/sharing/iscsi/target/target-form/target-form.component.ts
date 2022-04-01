@@ -120,7 +120,7 @@ export class TargetFormComponent {
 
     Object.values(target.groups).forEach((group, index) => {
       this.groupsFromControls.forEach((fc) => {
-        this.form.addControl(`${fc.name}${this.listPrefix}${index}`, new FormControl(fc.name, fc?.validator));
+        this.form.addControl(`${fc.name}${this.listPrefix}${index}`, new FormControl(fc.name, fc.validator));
       });
       this.groups.push(group);
     });
@@ -166,7 +166,7 @@ export class TargetFormComponent {
     const newListItem: any = {};
     this.groupsFromControls.forEach((fc) => {
       newListItem[fc.name] = fc.default;
-      this.form.addControl(`${fc.name}${this.listPrefix}${newIndex}`, new FormControl(fc.default, fc?.validator));
+      this.form.addControl(`${fc.name}${this.listPrefix}${newIndex}`, new FormControl(fc.default, fc.validator));
     });
 
     this.groups.push(newListItem);
