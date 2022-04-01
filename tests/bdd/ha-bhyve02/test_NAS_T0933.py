@@ -372,7 +372,7 @@ def the_edit_acl_page_should_open(driver):
 
 
 @then(parsers.parse('Select OPEN for Default ACL Option, then select "{group_name}" for Group name, check the Apply Group'))
-def setting_permissions_set_user_to_root_and_then_select_AD01_administrator_for_groups_check_the_apply_group_and_select_open_for_default_acl_option(driver):
+def setting_permissions_set_user_to_root_and_then_select_AD01_administrator_for_groups_check_the_apply_group_and_select_open_for_default_acl_option(driver, group_name):
     """Select OPEN for Default ACL Option, then select "AD01\administrator" for Group name, check the Apply Group."""
     assert wait_on_element(driver, 5, '//mat-select[@ix-auto="select__Default ACL Options"]')
     driver.find_element_by_xpath('//mat-select[@ix-auto="select__Default ACL Options"]').click()
@@ -383,9 +383,9 @@ def setting_permissions_set_user_to_root_and_then_select_AD01_administrator_for_
 
     assert wait_on_element(driver, 5, '//mat-checkbox[@ix-auto="checkbox__Apply Group"]/label/div', 'clickable')
     driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__Apply Group"]/label/div').click()
-    assert wait_on_element(driver, 5, '//div[contains(.,"Group") and contains(@class,"mat-form-field-infix")]//input')
+    assert wait_on_element(driver, 5, '//div[contains(.,"Group") and contains(@class,"mat-form-field-infix")]//input', 'inputable')
     driver.find_element_by_xpath('//div[contains(.,"Group") and contains(@class,"mat-form-field-infix")]//input').clear()
-    driver.find_element_by_xpath('//div[contains(.,"Group") and contains(@class,"mat-form-field-infix")]//input').send_keys('AD01\\administrator')
+    driver.find_element_by_xpath('//div[contains(.,"Group") and contains(@class,"mat-form-field-infix")]//input').send_keys(group_name)
 
 
 @then('Click the Save button, should be return to pool page')
@@ -399,8 +399,8 @@ def click_the_save_button(driver):
 
 
 @then(parsers.parse('Verify that group name is "{group_name}"'))
-def verify_that_group_name_is_AD01_administrator(driver):
+def verify_that_group_name_is_AD01_administrator(driver, group_name):
     """Verify that group name is "AD01\administrator"."""
     time.sleep(1)
     assert wait_on_element(driver, 5, '//div[contains(.,"Group") and contains(@class,"mat-form-field-infix")]//input', 'clickable')
-    assert attribute_value_exist(driver, '//div[contains(.,"Group") and contains(@class,"mat-form-field-infix")]//input', 'value', "AD01\\administrator")
+    assert attribute_value_exist(driver, '//div[contains(.,"Group") and contains(@class,"mat-form-field-infix")]//input', 'value', group_name)
