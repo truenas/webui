@@ -1,255 +1,182 @@
-import { Component } from '@angular/core';
-import { Router, ActivatedRoute } from '@angular/router';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
+import { Validators } from '@angular/forms';
+import { FormBuilder, FormControl } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import * as _ from 'lodash';
-import { LicenseFeature } from 'app/enums/license-feature.enum';
+import _ from 'lodash';
+import { Observable, of } from 'rxjs';
+import { map } from 'rxjs/operators';
+import { IscsiAuthMethod, IscsiTargetMode } from 'app/enums/iscsi.enum';
 import { helptextSharingIscsi } from 'app/helptext/sharing';
-import { FormConfiguration } from 'app/interfaces/entity-form.interface';
-import { IscsiExtent, IscsiTargetUpdate } from 'app/interfaces/iscsi.interface';
-import { QueryFilter } from 'app/interfaces/query-api.interface';
-import { EntityFormComponent } from 'app/modules/entity/entity-form/entity-form.component';
-import { FieldConfig, FormListConfig, FormSelectConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
-import { FieldSet } from 'app/modules/entity/entity-form/models/fieldset.interface';
-import { EntityUtils } from 'app/modules/entity/utils';
-import {
-  IscsiService, WebSocketService, AppLoaderService, ModalService,
-} from 'app/services';
+import { IscsiTarget, IscsiTargetGroup } from 'app/interfaces/iscsi.interface';
+import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
+import { IscsiService, WebSocketService } from 'app/services';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
 @Component({
-  selector: 'app-iscsi-target-form',
-  template: '<entity-form [conf]="this"></entity-form>',
-  providers: [IscsiService],
+  templateUrl: './target-form.component.html',
+  styleUrls: ['./target-form.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class TargetFormComponent implements FormConfiguration {
-  queryCall = 'iscsi.target.query' as const;
-  addCall = 'iscsi.target.create' as const;
-  editCall = 'iscsi.target.update' as const;
-  customFilter: [[Partial<QueryFilter<IscsiExtent>>]] = [[['id', '=']]];
-  isEntity = true;
+export class TargetFormComponent {
+  get isNew(): boolean {
+    return !this.editingTarget;
+  }
 
-  fieldSets: FieldSet[] = [
+  get title(): string {
+    return this.isNew
+      ? this.translate.instant('Add ISCSI Target')
+      : this.translate.instant('Edit ISCSI Target');
+  }
+
+  readonly helptext = helptextSharingIscsi;
+  readonly modes$ = of(this.helptext.target_form_enum_mode);
+  readonly portals$ = this.iscsiService.listPortals().pipe(
+    map((portals) => {
+      const opts = [];
+      opts.push({ label: '---', value: null });
+      portals.forEach((portal) => {
+        let label = String(portal.tag);
+        if (portal.comment) {
+          label += ' (' + portal.comment + ')';
+        }
+        opts.push({ label, value: portal.id });
+      });
+      return opts;
+    }),
+  );
+  readonly initiators$ = this.iscsiService.listInitiators().pipe(
+    map((initiators) => {
+      const opts = [];
+      opts.push({ label: 'None', value: null });
+      initiators.forEach((initiator) => {
+        const optionLabel = initiator.id
+          + ' ('
+          + (initiator.initiators.length === 0 ? 'ALL Initiators Allowed' : initiator.initiators.toString())
+          + ')';
+        opts.push({ label: optionLabel, value: initiator.id });
+      });
+      return opts;
+    }),
+  );
+  readonly authmethods$ = of(this.helptext.target_form_enum_authmethod);
+  readonly auths$ = this.iscsiService.getAuth().pipe(
+    map((auths) => {
+      const opts = [];
+      opts.push({ label: 'None', value: null });
+      const tags = _.uniq(auths.map((item) => item.tag));
+      tags.forEach((tag) => {
+        opts.push({ label: String(tag), value: tag });
+      });
+      return opts;
+    }),
+  );
+
+  isLoading = false;
+  groups: IscsiTargetGroup[] = [];
+  listPrefix = '__';
+
+  form = this.formBuilder.group({
+    name: ['', Validators.required],
+    alias: [''],
+    mode: ['ISCSI' as IscsiTargetMode],
+  });
+
+  private editingTarget: IscsiTarget;
+
+  private groupsFromControls = [
     {
-      name: helptextSharingIscsi.fieldset_target_basic,
-      label: true,
-      class: 'basic',
-      width: '100%',
-      config: [
-        {
-          type: 'input',
-          name: 'name',
-          placeholder: helptextSharingIscsi.target_form_placeholder_name,
-          tooltip: helptextSharingIscsi.target_form_tooltip_name,
-          required: true,
-          validation: helptextSharingIscsi.target_form_validators_name,
-        },
-        {
-          type: 'input',
-          name: 'alias',
-          placeholder: helptextSharingIscsi.target_form_placeholder_alias,
-          tooltip: helptextSharingIscsi.target_form_tooltip_alias,
-        },
-        {
-          type: 'select',
-          name: 'mode',
-          placeholder: helptextSharingIscsi.target_form_placeholder_mode,
-          tooltip: helptextSharingIscsi.target_form_tooltip_mode,
-          options: [
-            {
-              label: 'iSCSI',
-              value: 'ISCSI',
-            },
-            {
-              label: 'Fibre Channel',
-              value: 'FC',
-            },
-            {
-              label: 'Both',
-              value: 'BOTH',
-            },
-          ],
-          value: 'ISCSI',
-          isHidden: true,
-        },
-      ],
+      name: 'portal',
+      default: null as number,
+      validator: [Validators.required],
     },
     {
-      name: helptextSharingIscsi.fieldset_target_group,
-      label: true,
-      class: 'group',
-      width: '100%',
-      config: [
-        {
-          type: 'list',
-          name: 'groups',
-          width: '100%',
-          templateListField: [
-            {
-              type: 'select',
-              name: 'portal',
-              placeholder: helptextSharingIscsi.target_form_placeholder_portal,
-              tooltip: helptextSharingIscsi.target_form_tooltip_portal,
-              value: '',
-              options: [],
-              required: true,
-              validation: helptextSharingIscsi.target_form_validators_portal,
-              width: '100%',
-            },
-            {
-              type: 'select',
-              name: 'initiator',
-              placeholder: helptextSharingIscsi.target_form_placeholder_initiator,
-              tooltip: helptextSharingIscsi.target_form_tooltip_initiator,
-              value: null,
-              options: [],
-              width: '100%',
-            },
-            {
-              type: 'select',
-              name: 'authmethod',
-              placeholder: helptextSharingIscsi.target_form_placeholder_authmethod,
-              tooltip: helptextSharingIscsi.target_form_tooltip_authmethod,
-              width: '100%',
-              value: 'NONE',
-              options: [
-                {
-                  label: 'None',
-                  value: 'NONE',
-                },
-                {
-                  label: 'CHAP',
-                  value: 'CHAP',
-                },
-                {
-                  label: 'Mutual CHAP',
-                  value: 'CHAP_MUTUAL',
-                },
-              ],
-            },
-            {
-              type: 'select',
-              name: 'auth',
-              placeholder: helptextSharingIscsi.target_form_placeholder_auth,
-              tooltip: helptextSharingIscsi.target_form_tooltip_auth,
-              value: null,
-              width: '100%',
-              options: [],
-            },
-          ],
-          listFields: [],
-        },
-      ],
+      name: 'initiator',
+      default: null as number,
+    },
+    {
+      name: 'authmethod',
+      default: IscsiAuthMethod.None,
+    },
+    {
+      name: 'auth',
+      default: null as number,
     },
   ];
-  fieldConfig: FieldConfig[];
-  title: string = this.translate.instant('Add ISCSI Target');
-  pk: number;
-  protected entityForm: EntityFormComponent;
-  constructor(protected router: Router,
-    protected aroute: ActivatedRoute,
+
+  constructor(
     protected iscsiService: IscsiService,
-    protected loader: AppLoaderService,
-    public translate: TranslateService,
-    protected ws: WebSocketService,
-    private modalService: ModalService) {
-    this.modalService.getRow$.pipe(untilDestroyed(this)).subscribe((rowId: number) => {
-      this.customFilter = [[['id', '=', rowId]]];
-      this.pk = rowId;
-    });
-    const basicFieldset = _.find(this.fieldSets, { class: 'basic' });
-    this.ws.call('system.info').pipe(untilDestroyed(this)).subscribe(
-      (systemInfo) => {
-        if (systemInfo.license && systemInfo.license.features.includes(LicenseFeature.FibreChannel)) {
-          _.find(basicFieldset.config, { name: 'mode' }).isHidden = false;
-        }
-      },
-    );
-  }
+    private translate: TranslateService,
+    private formBuilder: FormBuilder,
+    private slideInService: IxSlideInService,
+    private errorHandler: FormErrorHandlerService,
+    private cdr: ChangeDetectorRef,
+    private ws: WebSocketService,
+  ) {}
 
-  async prerequisite(): Promise<boolean> {
-    const targetGroupFieldset = _.find(this.fieldSets, { class: 'group' });
-    const targetGroupFieldConfig = _.find(targetGroupFieldset.config, { name: 'groups' }) as FormListConfig;
-    const portalGroupField = targetGroupFieldConfig.templateListField[0] as FormSelectConfig;
-    const initiatorGroupField = targetGroupFieldConfig.templateListField[1] as FormSelectConfig;
-    const authGroupField = targetGroupFieldConfig.templateListField[3] as FormSelectConfig;
-    const promise1 = new Promise((resolve) => {
-      this.iscsiService.listPortals().toPromise().then(
-        (portals) => {
-          portals.forEach((portal) => {
-            let label = String(portal.tag);
-            if (portal.comment) {
-              label += ' (' + portal.comment + ')';
-            }
-            portalGroupField.options.push({ label, value: portal.id });
-          });
-          resolve(true);
-        },
-        () => {
-          resolve(false);
-        },
-      );
-    });
-    const promise2 = new Promise((resolve) => {
-      this.iscsiService.listInitiators().toPromise().then(
-        (initiatorsRes) => {
-          initiatorGroupField.options.push({ label: 'None', value: null });
-          initiatorsRes.forEach((initiator) => {
-            const optionLabel = initiator.id
-              + ' ('
-              + (initiator.initiators.length === 0 ? 'ALL Initiators Allowed' : initiator.initiators.toString())
-              + ')';
-            initiatorGroupField.options.push({ label: optionLabel, value: initiator.id });
-          });
-          resolve(true);
-        },
-        () => {
-          resolve(false);
-        },
-      );
-    });
-    const promise3 = new Promise((resolve) => {
-      this.iscsiService.getAuth().toPromise().then(
-        (accessRecords) => {
-          const tags = _.uniq(accessRecords.map((item) => item.tag));
-          authGroupField.options.push({ label: 'None', value: null });
-          for (const tag of tags) {
-            authGroupField.options.push({ label: String(tag), value: tag });
-          }
-          resolve(true);
-        },
-        () => {
-          resolve(false);
-        },
-      );
+  setTargetForEdit(target: IscsiTarget): void {
+    this.editingTarget = target;
+
+    Object.values(target.groups).forEach((group, index) => {
+      this.groupsFromControls.forEach((fc) => {
+        this.form.addControl(`${fc.name}${this.listPrefix}${index}`, new FormControl(fc.name, fc.validator));
+      });
+      this.groups.push(group);
     });
 
-    return Promise.all([promise1, promise2, promise3]).then(
-      () => true,
-    );
+    this.form.patchValue({
+      ...target,
+    });
   }
 
-  afterInit(entityForm: EntityFormComponent): void {
-    this.entityForm = entityForm;
-    this.fieldConfig = entityForm.fieldConfig;
-    this.title = entityForm.isNew ? this.translate.instant('Add ISCSI Target') : this.translate.instant('Edit ISCSI Target');
+  onSubmit(): void {
+    const values = this.form.value;
+
+    const params = {
+      name: values.name,
+      alias: values.alias,
+      mode: values.mode,
+      groups: this.groups,
+    };
+
+    this.isLoading = true;
+    let request$: Observable<unknown>;
+    if (this.isNew) {
+      request$ = this.ws.call('iscsi.target.create', [params]);
+    } else {
+      request$ = this.ws.call('iscsi.target.update', [
+        this.editingTarget.id,
+        params,
+      ]);
+    }
+
+    request$.pipe(untilDestroyed(this)).subscribe(() => {
+      this.isLoading = false;
+      this.slideInService.close();
+    }, (error) => {
+      this.isLoading = false;
+      this.errorHandler.handleWsFormError(error, this.form);
+      this.cdr.markForCheck();
+    });
   }
 
-  customEditCall(value: IscsiTargetUpdate): void {
-    this.loader.open();
-    this.ws.call(this.editCall, [this.pk, value]).pipe(untilDestroyed(this)).subscribe(
-      () => {
-        this.loader.close();
-        this.modalService.closeSlideIn();
-      },
-      (res) => {
-        this.loader.close();
-        new EntityUtils().handleWsError(this.entityForm, res);
-      },
-    );
+  addGroup(): void {
+    const newIndex = this.groups.length;
+    const newListItem: any = {};
+    this.groupsFromControls.forEach((fc) => {
+      newListItem[fc.name] = fc.default;
+      this.form.addControl(`${fc.name}${this.listPrefix}${newIndex}`, new FormControl(fc.default, fc.validator));
+    });
+
+    this.groups.push(newListItem);
   }
 
-  afterSubmit(): void {
-    this.modalService.closeSlideIn();
+  deleteGroup(id: number): void {
+    this.groupsFromControls.forEach((fc) => {
+      this.form.removeControl(`${fc.name}${this.listPrefix}${id}`);
+    });
+
+    this.groups.splice(id, 1);
   }
 }
