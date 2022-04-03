@@ -1107,6 +1107,8 @@
   "Level 254 - Maximum performance, maximum power usage": "",
   "Level 64 - Intermediate power usage with Standby": "",
   "Libdefaults Auxiliary Parameters": "",
+  "Lifetime Unit": "",
+  "Lifetime Value": "",
   "Lifetime: ": "",
   "Limit": "",
   "Limit replication speed to this number of bytes per second.": "",

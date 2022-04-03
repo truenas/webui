@@ -1615,6 +1615,8 @@
   "Libdefaults Auxiliary Parameters": "",
   "License": "",
   "Lifetime": "",
+  "Lifetime Unit": "",
+  "Lifetime Value": "",
   "Lifetime: ": "",
   "Limit": "",
   "Limit replication speed to this number of bytes per second.": "",

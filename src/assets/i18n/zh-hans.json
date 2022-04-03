@@ -102,6 +102,8 @@
   "It seems you haven't setup any WebDAV Shares yet. Please click the button below to add an WebDAV Share.": "",
   "Jobs": "",
   "Last Scrub Run:": "",
+  "Lifetime Unit": "",
+  "Lifetime Value": "",
   "Logged In To Jira": "",
   "Login to Jira": "",
   "Maximum number of replication tasks being executed simultaneously.": "",

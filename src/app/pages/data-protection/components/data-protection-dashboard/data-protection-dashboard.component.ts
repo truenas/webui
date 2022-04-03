@@ -209,10 +209,11 @@ export class DataProtectionDashboardComponent implements OnInit {
           isActionVisible: this.isActionVisible,
           parent: this,
           add: () => {
-            this.modalService.openInSlideIn(SnapshotFormComponent);
+            this.slideInService.open(SnapshotFormComponent, { wide: true });
           },
           edit: (row: PeriodicSnapshotTaskUi) => {
-            this.modalService.openInSlideIn(SnapshotFormComponent, row.id);
+            const slideIn = this.slideInService.open(SnapshotFormComponent, { wide: true });
+            slideIn.setTaskForEdit(row);
           },
           onButtonClick: (row) => {
             this.stateButton(row);

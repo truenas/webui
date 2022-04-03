@@ -1,0 +1,11 @@
+<div *ngIf="label" class="label-container">
+  <label class="label">
+    <span [innerHTML]="label"></span>
+    <span *ngIf="required" class="required">*</span>
+  </label>
+  <tooltip *ngIf="tooltip" [header]="label" class="tooltip" [message]="tooltip"></tooltip>
+</div>
+<div class="group-container" [class.group-label]="label">
+  <ng-content></ng-content>
+</div>
+<mat-hint *ngIf="hint">{{hint}}</mat-hint>

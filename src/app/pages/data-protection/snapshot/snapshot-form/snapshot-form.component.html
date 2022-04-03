@@ -1,0 +1,101 @@
+<ix-modal-header [title]="title" [loading]="isLoading"></ix-modal-header>
+<mat-card>
+  <mat-card-content>
+    <form [formGroup]="form" class="ix-form-container" (submit)="onSubmit()">
+      <div class="columns">
+        <div class="column">
+          <ix-fieldset [title]="'Dataset' | translate">
+            <ix-select
+              formControlName="dataset"
+              [label]="labels.dataset | translate"
+              [tooltip]="tooltips.dataset | translate"
+              [required]="true"
+              [options]="datasetOptions$"
+            ></ix-select>
+            <ix-chips
+              formControlName="exclude"
+              [label]="labels.exclude | translate"
+              [placeholder]="labels.exclude | translate"
+              [tooltip]="tooltips.exclude | translate"
+            ></ix-chips>
+            <ix-checkbox
+              formControlName="recursive"
+              [label]="labels.recursive | translate"
+              [tooltip]="tooltips.recursive | translate"
+            ></ix-checkbox>
+          </ix-fieldset>
+        </div>
+        <div class="column">
+          <ix-fieldset [title]="'Schedule' | translate">
+            <ix-input-group
+              [label]="labels.lifetime | translate"
+              [tooltip]="tooltips.lifetime | translate"
+              [required]="true"
+            >
+              <ix-input
+                formControlName="lifetime_value"
+                [label]="'Lifetime Value' | translate"
+                [required]="true"
+                type="number"
+              ></ix-input>
+              <ix-select
+                formControlName="lifetime_unit"
+                [label]="'Lifetime Unit' | translate"
+                [options]="lifetimeOptions$"
+                [required]="true"
+              ></ix-select>
+            </ix-input-group>
+            <ix-input
+              formControlName="naming_schema"
+              [label]="labels.naming_schema | translate"
+              [tooltip]="tooltips.naming_schema | translate"
+            ></ix-input>
+            <ix-scheduler
+              formControlName="schedule"
+              [label]="labels.schedule | translate"
+              [tooltip]="tooltips.schedule | translate"
+              [required]="true"
+            ></ix-scheduler>
+            <ix-select
+              *ngIf="isTimeMode"
+              formControlName="begin"
+              [label]="labels.begin | translate"
+              [tooltip]="tooltips.begin | translate"
+              [required]="true"
+              [options]="timeOptions$"
+            ></ix-select>
+            <ix-select
+              *ngIf="isTimeMode"
+              formControlName="end"
+              [label]="labels.end | translate"
+              [tooltip]="tooltips.end | translate"
+              [required]="true"
+              [options]="timeOptions$"
+            ></ix-select>
+            <ix-checkbox
+              formControlName="allow_empty"
+              [label]="labels.allow_empty | translate"
+              [tooltip]="tooltips.allow_empty | translate"
+            ></ix-checkbox>
+            <ix-checkbox
+              formControlName="enabled"
+              [label]="labels.enabled | translate"
+              [tooltip]="tooltips.enabled | translate"
+            ></ix-checkbox>
+          </ix-fieldset>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button
+          mat-button
+          type="submit"
+          [disabled]="form.invalid || isLoading"
+          color="primary"
+        >
+          {{ 'Save' | translate }}
+        </button>
+      </div>
+    </form>
+  </mat-card-content>
+</mat-card>
