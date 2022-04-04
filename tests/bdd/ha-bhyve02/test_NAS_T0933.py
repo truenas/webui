@@ -67,6 +67,7 @@ def verify_midclt_call_smb_get_smb_ha_mode_return_UNIFIED_or_LEGACY(driver):
 @then('You should see the dashboard and "System Information"')
 def you_should_see_the_dashboard_and_system_information(driver):
     """You should see the dashboard and "System Information"."""
+    assert wait_on_element(driver, 7, '//a[text()="Dashboard"]')
     assert wait_on_element(driver, 5, '//span[contains(.,"System Information")]')
 
 
