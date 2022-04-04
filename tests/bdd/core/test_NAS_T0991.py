@@ -107,14 +107,15 @@ def click_save_and_changes_should_be_saved(driver):
 @then('open the drop-down details pane')
 def open_the_dropdown_details_pane(driver):
     """open the drop-down details pane."""
-    assert wait_on_element(driver, 5, '//a[@ix-auto="expander__ericbsd"]')
-    assert wait_on_element(driver, 7, '//a[@ix-auto="expander__ericbsd"]', 'clickable')
+    assert wait_on_element(driver, 5, '//div[@id="ericbsd_Username"]')
+    assert wait_on_element(driver, 5, '//a[@ix-auto="expander__ericbsd"]', 'clickable')
     driver.find_element_by_xpath('//a[@ix-auto="expander__ericbsd"]').click()
     assert wait_on_element(driver, 7, '//button[@ix-auto="button__EDIT_ericbsd"]')
-    driver.find_element_by_xpath('//h4[contains(.,"Home directory:")]')
+    assert wait_on_element(driver, 5, '//h4[contains(.,"Home directory:")]')
 
 
 @then('verify that the home directory has changed')
 def verify_that_the_home_directory_has_changed(driver):
     """verify that the home directory has changed."""
-    driver.find_element_by_xpath('//p[contains(.,"/mnt/tank/ericbsd")]')
+    assert wait_on_element(driver, 5, '//p[contains(.,"/mnt/tank/ericbsd")]')
+    time.sleep(1)
