@@ -154,7 +154,7 @@ export class SupportComponent implements OnInit {
   }
 
   openProactive(): void {
-    this.modalService.openInSlideIn(ProactiveComponent);
+    this.slideInService.open(ProactiveComponent, { wide: true });
   }
 
   updateProductionStatus(event: MatCheckboxChange): void {
