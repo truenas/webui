@@ -829,7 +829,7 @@ export type ApiDirectory = {
   // Service
   'service.started': { params: [ServiceName]; response: boolean };
   'service.query': { params: QueryParams<Service>; response: Service[] };
-  'service.update': { params: [number, Partial<Service>]; response: number };
+  'service.update': { params: [number | ServiceName, Partial<Service>]; response: number };
   'service.start': { params: [ServiceName]; response: boolean };
   'service.stop': {
     params: [ServiceName];
