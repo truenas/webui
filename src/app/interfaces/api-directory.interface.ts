@@ -690,7 +690,6 @@ export type ApiDirectory = {
   'pool.processes': { params: [id: number]; response: Process[] };
   'pool.query': { params: QueryParams<Pool>; response: Pool[] };
   'pool.recoverykey_rm': { params: [number, { admin_password: string }]; response: void };
-  'pool.rekey': { params: [number, { admin_password: string }]; response: void };
   'pool.remove': { params: PoolRemoveParams; response: void };
   'pool.replace': { params: [id: number, params: PoolReplaceParams]; response: boolean };
   'pool.resilver.config': { params: void; response: ResilverConfig };

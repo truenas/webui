@@ -66,12 +66,8 @@ import { DatasetTrivialPermissionsComponent } from 'app/pages/storage/volumes/pe
 import { PermissionsSidebarComponent } from 'app/pages/storage/volumes/permissions/containers/permissions-sidebar/permissions-sidebar.component';
 import { DatasetAclEditorStore } from 'app/pages/storage/volumes/permissions/stores/dataset-acl-editor.store';
 import { PermissionsSidebarStore } from 'app/pages/storage/volumes/permissions/stores/permissions-sidebar.store';
-import { VolumeAddkeyFormComponent } from 'app/pages/storage/volumes/volume-addkey-form/volume-addkey-form.component';
-import { VolumeChangekeyFormComponent } from 'app/pages/storage/volumes/volume-changekey-form/volume-changekey-form.component';
-import { VolumeCreatekeyFormComponent } from 'app/pages/storage/volumes/volume-createkey-form/volume-createkey-form.component';
 import { VolumeImportWizardComponent } from 'app/pages/storage/volumes/volume-import-wizard/volume-import-wizard.component';
 import { VolumesListControlsComponent } from 'app/pages/storage/volumes/volume-list-controls/volumes-list-controls.component';
-import { VolumeRekeyFormComponent } from 'app/pages/storage/volumes/volume-rekey-form/volume-rekey-form.component';
 import { VolumeStatusComponent } from 'app/pages/storage/volumes/volume-status/volume-status.component';
 import { ExportDisconnectModalComponent } from 'app/pages/storage/volumes/volumes-list/components/export-disconnect-modal.component';
 import { VolumesListComponent } from 'app/pages/storage/volumes/volumes-list/volumes-list.component';
@@ -150,11 +146,7 @@ import { routing } from './storage.routing';
     VdevComponent,
     VmwareSnapshotFormComponent,
     VmwareSnapshotListComponent,
-    VolumeAddkeyFormComponent,
-    VolumeChangekeyFormComponent,
-    VolumeCreatekeyFormComponent,
     VolumeImportWizardComponent,
-    VolumeRekeyFormComponent,
     VolumesListComponent,
     VolumesListControlsComponent,
     VolumeStatusComponent,
