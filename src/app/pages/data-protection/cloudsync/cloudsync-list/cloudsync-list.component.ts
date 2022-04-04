@@ -367,6 +367,7 @@ export class CloudsyncListComponent implements EntityTableConfig<CloudSyncTaskUi
         });
         dialogRef.componentInstance.aborted.pipe(untilDestroyed(this)).subscribe(() => {
           dialogRef.close();
+          this.dialog.info(this.translate.instant('Task Aborted'), '', '300px', 'info', true);
           this.ws.unsubscribe('filesystem.file_tail_follow:' + row.job.logs_path);
           this.ws.unsub('filesystem.file_tail_follow:' + row.job.logs_path, subId);
         });
