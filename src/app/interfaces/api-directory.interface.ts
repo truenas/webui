@@ -690,7 +690,6 @@ export type ApiDirectory = {
   'pool.processes': { params: [id: number]; response: Process[] };
   'pool.query': { params: QueryParams<Pool>; response: Pool[] };
   'pool.recoverykey_rm': { params: [number, { admin_password: string }]; response: void };
-  'pool.rekey': { params: [number, { admin_password: string }]; response: void };
   'pool.remove': { params: PoolRemoveParams; response: void };
   'pool.replace': { params: [id: number, params: PoolReplaceParams]; response: boolean };
   'pool.resilver.config': { params: void; response: ResilverConfig };
@@ -830,7 +829,7 @@ export type ApiDirectory = {
   // Service
   'service.started': { params: [ServiceName]; response: boolean };
   'service.query': { params: QueryParams<Service>; response: Service[] };
-  'service.update': { params: [number, Partial<Service>]; response: number };
+  'service.update': { params: [number | ServiceName, Partial<Service>]; response: number };
   'service.start': { params: [ServiceName]; response: boolean };
   'service.stop': {
     params: [ServiceName];
