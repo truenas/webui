@@ -1079,7 +1079,8 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
     const self = this;
 
     const obj = self.system.enclosures[self.selectedEnclosure.enclosureKey];
-    const currentLabel = obj.label !== obj.name ? obj.label : self.selectedEnclosure.model;
+    // const currentLabel = obj.label !== obj.name ? obj.label : self.selectedEnclosure.model;
+    const currentLabel = obj.label ? obj.label : self.selectedEnclosure.model;
     const conf = {
       title: T('Change Enclosure Label'),
       fieldConfig: [

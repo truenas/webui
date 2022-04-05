@@ -245,7 +245,7 @@ export class ViewEnclosureComponent implements AfterContentInit, OnChanges, OnDe
           view.icon = 'fan';
           views.push(view);
           break;
-        case 'Temperature Sensor':
+        case 'Temperature Sensors':
           view.alias = 'Temperature';
           view.icon = 'fan';
           views.push(view);
@@ -260,12 +260,12 @@ export class ViewEnclosureComponent implements AfterContentInit, OnChanges, OnDe
           view.icon = 'flash';
           views.push(view);
           break;
-        case 'SAS Connector':
+        case 'SAS Expander':
           view.alias = 'SAS';
           view.icon = 'flash';
           views.push(view);
           break;
-        case 'Enclosure Services Controller Electronics':
+        case 'Enclosure':
           view.alias = 'Services';
           view.icon = 'flash';
           views.push(view);

@@ -11,7 +11,8 @@
   <mat-toolbar id="Disks-toolbar">
     <div *ngIf="selectedEnclosure" class="mat-card-title-text">
       {{currentTab.alias}} on 
-      {{selectedEnclosure.label == selectedEnclosure.name ? selectedEnclosure.model : selectedEnclosure.label}} 
+      {{selectedEnclosure.label ? selectedEnclosure.label : selectedEnclosure.model}}
+      <!-- {{selectedEnclosure.label == selectedEnclosure.name ? selectedEnclosure.model : selectedEnclosure.label}}  -->
       ({{selectedEnclosure.enclosureKey}})
     </div>
 
