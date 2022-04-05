@@ -75,7 +75,6 @@ def the_users_page_should_open(driver):
     if is_element_present(driver, '//h1[contains(.,"Display Note")]'):
         driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
     assert wait_on_element(driver, 7, '//div[contains(.,"Users")]')
-    driver.find_element_by_xpath('//div[contains(.,"Users")]')
 
 
 @then('Click the "Add" Button on the right side of the screen')

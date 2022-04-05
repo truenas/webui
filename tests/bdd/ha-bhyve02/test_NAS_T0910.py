@@ -81,7 +81,6 @@ def click_on_users(driver):
 def the_users_page_should_open(driver):
     """The Users page should open."""
     assert wait_on_element(driver, 7, '//div[contains(.,"Users")]')
-    driver.find_element_by_xpath('//div[contains(.,"Users")]')
 
 
 @then('On the right side of the table, click the Greater-Than-Sign for one of the users.')
