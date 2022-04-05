@@ -18,7 +18,7 @@ import { AppLoaderService } from 'app/modules/app-loader/app-loader.service';
 import { EmptyConfig } from 'app/modules/entity/entity-empty/entity-empty.component';
 import { AppTableConfig } from 'app/modules/entity/table/table.component';
 import { ActiveDirectoryComponent } from 'app/pages/directory-service/components/active-directory/active-directory.component';
-import { KerberosKeytabsFormComponent } from 'app/pages/directory-service/components/kerberos-keytabs/kerberos-keytabs-form.component';
+import { KerberosKeytabsFormComponent } from 'app/pages/directory-service/components/kerberos-keytabs/kerberos-keytabs-form/kerberos-keytabs-form.component';
 import { KerberosSettingsComponent } from 'app/pages/directory-service/components/kerberos-settings/kerberos-settings.component';
 import { requiredIdmapDomains } from 'app/pages/directory-service/utils/required-idmap-domains.utils';
 import {
@@ -345,7 +345,7 @@ export class DirectoryServicesComponent implements OnInit {
       filter(Boolean),
       untilDestroyed(this),
     ).subscribe(() => {
-      if (component === KerberosSettingsComponent) {
+      if (component === KerberosSettingsComponent || component === KerberosKeytabsFormComponent) {
         this.slideInService.open(component);
       } else {
         this.modalService.openInSlideIn(component, id);

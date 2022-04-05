@@ -5,8 +5,8 @@ import helptext from 'app/helptext/directory-service/kerberos-keytabs-form-list'
 import { KerberosKeytab } from 'app/interfaces/kerberos-config.interface';
 import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-table.component';
 import { EntityTableAction, EntityTableConfig } from 'app/modules/entity/entity-table/entity-table.interface';
-import { KerberosKeytabsFormComponent } from 'app/pages/directory-service/components/kerberos-keytabs/kerberos-keytabs-form.component';
-import { ModalService } from 'app/services/modal.service';
+import { KerberosKeytabsFormComponent } from 'app/pages/directory-service/components/kerberos-keytabs/kerberos-keytabs-form/kerberos-keytabs-form.component';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
 @Component({
@@ -33,24 +33,25 @@ export class KerberosKeytabsListComponent implements EntityTableConfig {
   };
 
   constructor(
-    private modalService: ModalService,
+    private slideInService: IxSlideInService,
     private translate: TranslateService,
   ) { }
 
   afterInit(entityList: EntityTableComponent): void {
     this.entityList = entityList;
-    this.modalService.refreshTable$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.entityList.getData();
+    this.slideInService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
+      entityList.getData();
     });
   }
 
-  getAddActions(): EntityTableAction[] {
-    return [{
-      label: this.translate.instant('Add'),
-      onClick: () => {
-        this.doAdd();
-      },
-    }] as EntityTableAction[];
+  doAdd(): void {
+    this.slideInService.open(KerberosKeytabsFormComponent);
+  }
+
+  doEdit(id: number): void {
+    const row = this.entityList.rows.find((row) => row.id === id);
+    const form = this.slideInService.open(KerberosKeytabsFormComponent);
+    form.setKerberosKeytabsForEdit(row);
   }
 
   getActions(): EntityTableAction<KerberosKeytab>[] {
@@ -59,7 +60,7 @@ export class KerberosKeytabsListComponent implements EntityTableConfig {
       id: 'edit',
       label: this.translate.instant('Edit'),
       onClick: (row: KerberosKeytab) => {
-        this.doAdd(row.id);
+        this.doEdit(row.id);
       },
     }, {
       id: 'delete',
@@ -70,9 +71,5 @@ export class KerberosKeytabsListComponent implements EntityTableConfig {
     });
 
     return actions as EntityTableAction[];
-  }
-
-  doAdd(id?: number): void {
-    this.modalService.openInSlideIn(KerberosKeytabsFormComponent, id);
   }
 }
