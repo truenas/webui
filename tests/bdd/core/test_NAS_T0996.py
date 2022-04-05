@@ -70,6 +70,7 @@ def the_users_page_should_open(driver):
 @then('click the Greater-Than-Sign right of the users')
 def click_the_greaterthansign_right_of_the_users(driver):
     """click the Greater-Than-Sign right of the users."""
+    assert wait_on_element(driver, 7, '//div[@id="ericbsd_Username"]')
     assert wait_on_element(driver, 7, '//a[@ix-auto="expander__ericbsd"]', 'clickable')
     driver.find_element_by_xpath('//a[@ix-auto="expander__ericbsd"]').click()
 
@@ -77,7 +78,7 @@ def click_the_greaterthansign_right_of_the_users(driver):
 @then('the User Field should expand down, then click the Edit button')
 def the_user_field_should_expand_down_then_click_the_edit_button(driver):
     """the User Field should expand down, then click the Edit button."""
-    assert wait_on_element(driver, 7, '//button[@ix-auto="button__EDIT_ericbsd"]')
+    assert wait_on_element(driver, 7, '//button[@ix-auto="button__EDIT_ericbsd"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__EDIT_ericbsd"]').click()
 
 
@@ -91,7 +92,7 @@ def the_user_edit_page_should_open(driver):
 @then(parsers.parse('change the mail with an invalid email "{email}"'))
 def change_the_mail_with_an_invalid_email(driver, email):
     """change the mail with an invalid email."""
-    assert wait_on_element(driver, 7, '//input[@ix-auto="input__Email"]')
+    assert wait_on_element(driver, 7, '//input[@ix-auto="input__Email"]', 'inputable')
     driver.find_element_by_xpath('//input[@ix-auto="input__Email"]').clear()
     driver.find_element_by_xpath('//input[@ix-auto="input__Email"]').send_keys(email)
     assert wait_on_element(driver, 7, '//button[@ix-auto="button__SAVE"]', 'clickable')
@@ -106,4 +107,5 @@ def click_save_you_should_not_be_allowed_to_save_the_invalid_email(driver):
     assert wait_on_element(driver, 7, '//button[@ix-auto="button__CANCEL"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__CANCEL"]').click()
     assert wait_on_element(driver, 7, '//div[contains(.,"Users")]')
+    assert wait_on_element(driver, 7, '//div[@id="ericbsd_Username"]')
     assert wait_on_element(driver, 7, '//a[@ix-auto="expander__ericbsd"]', 'clickable')
