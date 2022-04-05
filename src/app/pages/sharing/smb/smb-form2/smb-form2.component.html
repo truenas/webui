@@ -1,0 +1,39 @@
+<ix-modal-header [title]="title" [loading]="isLoading"></ix-modal-header>
+<mat-card>
+  <mat-card-content>
+    <form [formGroup]="form" class="ix-form-container"  (submit)="submit()">
+      <ix-fieldset [title]="'Basic' | translate">
+        <ix-explorer
+          formControlName="path"
+          [required]="true"
+          [tooltip]="helptextSharingSmb.tooltip_path",
+          [label]="helptextSharingSmb.placeholder_path"
+          [nodeProvider]="treeNodeProvider"
+        ></ix-explorer>
+        <ix-input
+          formControlName="name"
+          [label]="helptextSharingSmb.placeholder_name"
+          [tooltip]="helptextSharingSmb.tooltip_name"
+          [required]="true"
+          (blur)="blurEventName()"
+        ></ix-input>
+        <ix-select
+          formControlName="purpose"
+          [label]="helptextSharingSmb.placeholder_purpose"
+          [tooltip]="helptextSharingSmb.tooltip_purpose"
+          [options]="options.purpose$"
+        ></ix-select>
+        <ix-input
+          formControlName="comment"
+          [label]="helptextSharingSmb.placeholder_comment"
+          [tooltip]="helptextSharingSmb.tooltip_comment"
+        ></ix-input>
+        <ix-checkbox
+          formControlName="enabled"
+          [label]="helptextSharingSmb.placeholder_enabled"
+          [tooltip]="helptextSharingSmb.tooltip_enabled"
+        ></ix-checkbox>
+      </ix-fieldset>
+    </form>
+  </mat-card-content>
+</mat-card>
