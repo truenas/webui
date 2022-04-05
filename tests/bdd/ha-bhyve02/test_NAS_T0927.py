@@ -69,6 +69,7 @@ def the_users_page_should_open(driver):
 @then('On the right side of the table, click the Greater-Than-Sign for one of the users')
 def on_the_right_side_of_the_table_click_the_greaterthansign_for_one_of_the_users(driver):
     """On the right side of the table, click the Greater-Than-Sign for one of the users."""
+    assert wait_on_element(driver, 7, '//div[@id="ericbsd_Username"]')
     assert wait_on_element(driver, 7, '//a[@ix-auto="expander__ericbsd"]', 'clickable')
     driver.find_element_by_xpath('//a[@ix-auto="expander__ericbsd"]').click()
 
@@ -76,7 +77,7 @@ def on_the_right_side_of_the_table_click_the_greaterthansign_for_one_of_the_user
 @then('The User Field should expand down to list further details')
 def the_user_field_should_expand_down_to_list_further_details(driver):
     """The User Field should expand down to list further details."""
-    assert wait_on_element(driver, 7, '//button[@ix-auto="button__EDIT_ericbsd"]')
+    assert wait_on_element(driver, 7, '//button[@ix-auto="button__EDIT_ericbsd"]', 'clickable')
 
 
 @then('Click the Edit button that appears')

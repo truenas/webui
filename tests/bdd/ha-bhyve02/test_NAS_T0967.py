@@ -64,7 +64,7 @@ def click_on_the_accounts_item_in_the_left_side_menu(driver):
 @then('The Accounts menu should expand down')
 def the_accounts_menu_should_expand_down(driver):
     """The Accounts menu should expand down."""
-    assert wait_on_element(driver, 7, '//mat-list-item[@ix-auto="option__Users"]')
+    assert wait_on_element(driver, 7, '//mat-list-item[@ix-auto="option__Users"]', 'clickable')
     element = driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Accounts"]')
     class_attribute = element.get_attribute('class')
     assert 'open' in class_attribute, class_attribute
@@ -92,7 +92,6 @@ def click_the_add_button_on_the_right_side_of_the_screen(driver):
 def the_users_add_page_should_open(driver):
     """The Users Add Page should open."""
     assert wait_on_element(driver, 7, '//h4[contains(.,"Identification")]')
-    driver.find_element_by_xpath('//h4[contains(.,"Identification")]')
 
 
 @then('Fill in the following fields Full Name, Username, Password, Confirm Password and click Save')
@@ -114,6 +113,6 @@ def fill_in_the_following_fields_full_name_username_password_confirm_password_an
 @then('User should be created and added to the user list')
 def user_should_be_created_and_added_to_the_user_list(driver):
     """User should be created and added to the user list."""
-    wait_on_element_disappear(driver, 7, '//h6[contains(.,"Please wait")]')
+    assert wait_on_element_disappear(driver, 7, '//h6[contains(.,"Please wait")]')
     assert wait_on_element(driver, 7, '//div[contains(.,"Users")]')
     driver.find_element_by_xpath('//div[@ix-auto="value__user2_Username"]')

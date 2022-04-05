@@ -63,7 +63,7 @@ def click_on_the_accounts_item_in_the_left_side_menu(driver):
 @then('The Accounts menu should expand down')
 def the_accounts_menu_should_expand_down(driver):
     """The Accounts menu should expand down."""
-    assert wait_on_element(driver, 7, '//mat-list-item[@ix-auto="option__Users"]')
+    assert wait_on_element(driver, 7, '//mat-list-item[@ix-auto="option__Users"]', 'clickable')
     element = driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Accounts"]')
     class_attribute = element.get_attribute('class')
     assert 'open' in class_attribute, class_attribute
@@ -84,6 +84,7 @@ def the_users_page_should_open(driver):
 @then('On the right side of the table, click the Greater-Than-Sign for one of the users')
 def on_the_right_side_of_the_table_click_the_greaterthansign_for_one_of_the_users(driver):
     """On the right side of the table, click the Greater-Than-Sign for one of the users."""
+    assert wait_on_element(driver, 7, '//div[@id="ericbsd_Username"]')
     assert wait_on_element(driver, 7, '//a[@ix-auto="expander__ericbsd"]', 'clickable')
     driver.find_element_by_xpath('//a[@ix-auto="expander__ericbsd"]').click()
 
@@ -91,8 +92,7 @@ def on_the_right_side_of_the_table_click_the_greaterthansign_for_one_of_the_user
 @then('The User Field should expand down to list further details')
 def the_user_field_should_expand_down_to_list_further_details(driver):
     """The User Field should expand down to list further details."""
-    assert wait_on_element(driver, 7, '//button[@ix-auto="button__EDIT_ericbsd"]')
-    driver.find_element_by_xpath('//button[@ix-auto="button__EDIT_ericbsd"]')
+    assert wait_on_element(driver, 7, '//button[@ix-auto="button__EDIT_ericbsd"]', 'clickable')
 
 
 @then('Click the Edit button that appears')
@@ -105,7 +105,6 @@ def click_the_edit_button_that_appears(driver):
 def the_user_edit_page_should_open(driver):
     """The User Edit Page should open."""
     assert wait_on_element(driver, 7, '//h4[contains(.,"Identification")]')
-    driver.find_element_by_xpath('//h4[contains(.,"Identification")]')
 
 
 @then('Change the password in both fields but make sure they are different and try to click save.')
@@ -126,4 +125,3 @@ def you_should_not_be_able_to_save_the_changes(driver):
     assert class_attribute == 'true'
     driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
     assert wait_on_element(driver, 7, '//h4[contains(.,"Identification")]')
-    driver.find_element_by_xpath('//h4[contains(.,"Identification")]')
