@@ -40,10 +40,10 @@ def if_login_page_appear_enter_root_and_password(driver, user, password):
         driver.find_element_by_xpath('//input[@placeholder="Password"]').send_keys(password)
         assert wait_on_element(driver, 4, '//button[@name="signin_button"]')
         driver.find_element_by_xpath('//button[@name="signin_button"]').click()
-    else:
+    if not is_element_present(driver, '//li[contains(.,"Dashboard")]'):
+        assert wait_on_element(driver, 10, '//span[contains(.,"root")]')
         element = driver.find_element_by_xpath('//span[contains(.,"root")]')
         driver.execute_script("arguments[0].scrollIntoView();", element)
-        time.sleep(0.5)
         assert wait_on_element(driver, 5, '//mat-list-item[@ix-auto="option__Dashboard"]', 'clickable')
         driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
 
@@ -51,6 +51,7 @@ def if_login_page_appear_enter_root_and_password(driver, user, password):
 @then('You should see the dashboard and "System Information"')
 def you_should_see_the_dashboard_and_system_information(driver):
     """You should see the dashboard and "System Information"."""
+    assert wait_on_element(driver, 7, '//a[text()="Dashboard"]')
     assert wait_on_element(driver, 5, '//span[contains(.,"System Information")]')
 
 

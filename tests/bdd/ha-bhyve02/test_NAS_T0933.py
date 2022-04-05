@@ -67,6 +67,7 @@ def verify_midclt_call_smb_get_smb_ha_mode_return_UNIFIED_or_LEGACY(driver):
 @then('You should see the dashboard and "System Information"')
 def you_should_see_the_dashboard_and_system_information(driver):
     """You should see the dashboard and "System Information"."""
+    assert wait_on_element(driver, 7, '//a[text()="Dashboard"]')
     assert wait_on_element(driver, 5, '//span[contains(.,"System Information")]')
 
 
@@ -157,6 +158,7 @@ def active_directory_should_successfully_save_and_start_without_an_error(driver)
     assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
     assert wait_on_element(driver, 10, '//div[contains(.,"Settings saved.")]')
     assert wait_on_element_disappear(driver, 20, '//h1[contains(text(),"Configuring Active Directory")]')
+    assert wait_on_element(driver, 7, '//div[contains(.,"Settings saved.")]')
 
 
 @then('Navigate to Shell')
@@ -164,7 +166,7 @@ def navigate_to_shell(driver):
     """Navigate to Shell."""
     element = driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Reporting"]')
     driver.execute_script("arguments[0].scrollIntoView();", element)
-    time.sleep(0.5)
+    time.sleep(1)
     assert wait_on_element(driver, 5, '//mat-list-item[@ix-auto="option__Shell"]', 'clickable')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Shell"]').click()
 
@@ -246,10 +248,6 @@ def navigate_to_dashboard(driver):
 @then('Press INITIATE FAILOVER, check confirm and press FAILOVER')
 def press_initiate_failover_check_confirm_and_press_failover(driver):
     """Press INITIATE FAILOVER, check confirm and press FAILOVER"""
-    # driver.refresh()
-    # if wait_on_element(driver, 5, '//div[contains(.,"Looking for help?")]'):
-    #     assert wait_on_element(driver, 10, '//button[@ix-auto="button__CLOSE"]', 'clickable')
-    #     driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
     assert wait_on_element(driver, 60, '//button[@ix-auto="button__INITIATE FAILOVER"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__INITIATE FAILOVER"]').click()
     assert wait_on_element(driver, 5, '//h1[contains(.,"Initiate Failover")]')
@@ -263,7 +261,7 @@ def wait_for_the_login_page_to_appear(driver):
     """Wait for the login page to appear"""
     assert wait_on_element(driver, 120, '//input[@placeholder="Username"]')
     # wait for HA is enabled to avoid UI refreshing
-    assert wait_on_element(driver, 120, '//p[contains(.,"HA is enabled")]')
+    assert wait_on_element(driver, 140, '//p[contains(.,"HA is enabled")]')
 
 
 @then(parsers.parse('At the login page enter "{user}" and "{password}"'))
@@ -375,7 +373,7 @@ def the_edit_acl_page_should_open(driver):
 
 
 @then(parsers.parse('Select OPEN for Default ACL Option, then select "{group_name}" for Group name, check the Apply Group'))
-def setting_permissions_set_user_to_root_and_then_select_AD01_administrator_for_groups_check_the_apply_group_and_select_open_for_default_acl_option(driver):
+def setting_permissions_set_user_to_root_and_then_select_AD01_administrator_for_groups_check_the_apply_group_and_select_open_for_default_acl_option(driver, group_name):
     """Select OPEN for Default ACL Option, then select "AD01\administrator" for Group name, check the Apply Group."""
     assert wait_on_element(driver, 5, '//mat-select[@ix-auto="select__Default ACL Options"]')
     driver.find_element_by_xpath('//mat-select[@ix-auto="select__Default ACL Options"]').click()
@@ -386,9 +384,9 @@ def setting_permissions_set_user_to_root_and_then_select_AD01_administrator_for_
 
     assert wait_on_element(driver, 5, '//mat-checkbox[@ix-auto="checkbox__Apply Group"]/label/div', 'clickable')
     driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__Apply Group"]/label/div').click()
-    assert wait_on_element(driver, 5, '//div[contains(.,"Group") and contains(@class,"mat-form-field-infix")]//input')
+    assert wait_on_element(driver, 5, '//div[contains(.,"Group") and contains(@class,"mat-form-field-infix")]//input', 'inputable')
     driver.find_element_by_xpath('//div[contains(.,"Group") and contains(@class,"mat-form-field-infix")]//input').clear()
-    driver.find_element_by_xpath('//div[contains(.,"Group") and contains(@class,"mat-form-field-infix")]//input').send_keys('AD01\\administrator')
+    driver.find_element_by_xpath('//div[contains(.,"Group") and contains(@class,"mat-form-field-infix")]//input').send_keys(group_name)
 
 
 @then('Click the Save button, should be return to pool page')
@@ -402,8 +400,8 @@ def click_the_save_button(driver):
 
 
 @then(parsers.parse('Verify that group name is "{group_name}"'))
-def verify_that_group_name_is_AD01_administrator(driver):
+def verify_that_group_name_is_AD01_administrator(driver, group_name):
     """Verify that group name is "AD01\administrator"."""
     time.sleep(1)
     assert wait_on_element(driver, 5, '//div[contains(.,"Group") and contains(@class,"mat-form-field-infix")]//input', 'clickable')
-    assert attribute_value_exist(driver, '//div[contains(.,"Group") and contains(@class,"mat-form-field-infix")]//input', 'value', "AD01\\administrator")
+    assert attribute_value_exist(driver, '//div[contains(.,"Group") and contains(@class,"mat-form-field-infix")]//input', 'value', group_name)

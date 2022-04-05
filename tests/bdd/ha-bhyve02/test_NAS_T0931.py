@@ -76,6 +76,7 @@ def if_login_page_appear_enter_root_and_password(driver, user, password):
 @then('You should see the dashboard')
 def you_should_see_the_dashboard(driver):
     """You should see the dashboard."""
+    assert wait_on_element(driver, 7, '//a[text()="Dashboard"]')
     assert wait_on_element(driver, 5, '//span[contains(.,"System Information")]')
 
 
@@ -98,14 +99,14 @@ def the_users_page_should_open(driver):
 @then('On the right side of the table, click the Greater-Than-Sign for the root user')
 def on_the_right_side_of_the_table_click_the_greaterthansign_for_the_root_user(driver):
     """On the right side of the table, click the Greater-Than-Sign for the root user."""
-    assert wait_on_element(driver, 5, '//a[@ix-auto="expander__root"]')
+    assert wait_on_element(driver, 5, '//a[@ix-auto="expander__root"]', 'clickable')
     driver.find_element_by_xpath('//a[@ix-auto="expander__root"]').click()
 
 
 @then('The User Field should expand down to list further details')
 def the_user_field_should_expand_down_to_list_further_details(driver):
     """The User Field should expand down to list further details."""
-    assert wait_on_element(driver, 5, '//button[@ix-auto="button__EDIT_root"]')
+    assert wait_on_element(driver, 5, '//button[@ix-auto="button__EDIT_root"]', 'clickable')
 
 
 @then('Click the Edit button that appears')
@@ -123,7 +124,7 @@ def the_user_edit_page_should_open(driver):
 @then('In the SSH public Key field paste a public key and save the change')
 def in_the_ssh_public_key_field_paste_a_public_key_and_save_the_change(driver, ssh_key):
     """In the SSH public Key field paste a public key and save the change."""
-    assert wait_on_element(driver, 5, '//textarea[@placeholder="SSH Public Key"]', 'clickable')
+    assert wait_on_element(driver, 5, '//textarea[@placeholder="SSH Public Key"]', 'inputable')
     driver.find_element_by_xpath('//textarea[@placeholder="SSH Public Key"]').clear()
     driver.find_element_by_xpath('//textarea[@placeholder="SSH Public Key"]').send_keys(ssh_key)
     assert wait_on_element(driver, 5, '//button[@ix-auto="button__SAVE"]', 'clickable')
@@ -133,6 +134,7 @@ def in_the_ssh_public_key_field_paste_a_public_key_and_save_the_change(driver, s
 @then('Change should be saved')
 def change_should_be_saved(driver):
     """Change should be saved."""
+    assert wait_on_element(driver, 5, '//div[contains(.,"Users")]')
     assert wait_on_element(driver, 10, '//div[@ix-auto="value__root_Username"]')
 
 
@@ -150,7 +152,7 @@ def reopen_the_root_user_edit_page_and_ensure_that_the_key_was_saved(driver):
 @then('Public key should be on the root user page')
 def public_key_should_be_on_the_root_user_page(driver, ssh_key):
     """Public key should be on the root user page."""
-    assert wait_on_element(driver, 5, '//textarea[@placeholder="SSH Public Key"]')
+    assert wait_on_element(driver, 5, '//textarea[@placeholder="SSH Public Key"]', 'inputable')
     assert attribute_value_exist(driver, '//textarea[@placeholder="SSH Public Key"]', 'value', ssh_key)
 
 

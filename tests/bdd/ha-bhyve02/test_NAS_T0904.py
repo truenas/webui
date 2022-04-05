@@ -42,16 +42,12 @@ def login_appear_enter_root_and_password(driver, user, password):
         driver.find_element_by_xpath('//input[@placeholder="Password"]').send_keys(password)
         assert wait_on_element(driver, 4, '//button[@name="signin_button"]')
         driver.find_element_by_xpath('//button[@name="signin_button"]').click()
-    else:
-        element = driver.find_element_by_xpath('//span[contains(.,"root")]')
-        driver.execute_script("arguments[0].scrollIntoView();", element)
-        assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Dashboard"]', 'clickable')
-        driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
 
 
 @then('you should see the dashboard')
 def you_should_see_the_dashboard(driver):
     """you should see the dashboard."""
+    assert wait_on_element(driver, 7, '//a[text()="Dashboard"]')
     assert wait_on_element(driver, 10, '//button[@ix-auto="button__CLOSE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
     assert wait_on_element(driver, 5, '//span[contains(.,"System Information")]')

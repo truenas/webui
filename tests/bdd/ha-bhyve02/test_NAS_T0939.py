@@ -43,10 +43,10 @@ def if_login_page_appear_enter_root_and_password(driver, user, password):
         driver.find_element_by_xpath('//input[@placeholder="Password"]').send_keys(password)
         assert wait_on_element(driver, 4, '//button[@name="signin_button"]')
         driver.find_element_by_xpath('//button[@name="signin_button"]').click()
-    else:
+    if not is_element_present(driver, '//li[contains(.,"Dashboard")]'):
+        assert wait_on_element(driver, 10, '//span[contains(.,"root")]')
         element = driver.find_element_by_xpath('//span[contains(.,"root")]')
         driver.execute_script("arguments[0].scrollIntoView();", element)
-        time.sleep(0.5)
         assert wait_on_element(driver, 5, '//mat-list-item[@ix-auto="option__Dashboard"]', 'clickable')
         driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
 
@@ -54,6 +54,7 @@ def if_login_page_appear_enter_root_and_password(driver, user, password):
 @then('You should see the dashboard and "System Information"')
 def you_should_see_the_dashboard_and_system_information(driver):
     """You should see the dashboard and "System Information"."""
+    assert wait_on_element(driver, 7, '//a[text()="Dashboard"]')
     assert wait_on_element(driver, 5, '//span[contains(.,"System Information")]')
 
 
@@ -167,7 +168,7 @@ def click_on_smb_start_automatically_checkbox(driver):
 def send_a_file_to_the_share_with_nas_url_smbname_and_user_password(driver, nas_url, smbname, user, password):
     """Send a file the share with "nas_url"/"smbname" and "user"%"password"."""
     run_cmd('touch testfile.txt')
-    results = run_cmd(f'smbclient //{nas_url}/{smbname} -W AD01 -U {user}%{password} -c "put testfile.txt testfile.txt"')
+    results = run_cmd(f'smbclient //{nas_url}/{smbname} -W AD02 -U {user}%{password} -c "put testfile.txt testfile.txt"')
     time.sleep(1)
     run_cmd('rm testfile.txt')
     assert results['result'], results['output']

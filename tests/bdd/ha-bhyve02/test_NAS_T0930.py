@@ -76,6 +76,7 @@ def if_login_page_appear_enter_root_and_password(driver, user, password):
 @then('You should see the dashboard')
 def you_should_see_the_dashboard(driver):
     """You should see the dashboard."""
+    assert wait_on_element(driver, 7, '//a[text()="Dashboard"]')
     assert wait_on_element(driver, 5, '//span[contains(.,"System Information")]')
 
 
@@ -92,13 +93,12 @@ def click_on_the_accounts_click_on_users(driver):
 def the_users_page_should_open(driver):
     """The Users page should open."""
     assert wait_on_element(driver, 5, '//div[contains(.,"Users")]')
-    assert wait_on_element(driver, 10, '//div[@ix-auto="value__ericbsd_Username"]')
 
 
 @then('On the right side of the table, click the Greater-Than-Sign for one of the users')
 def on_the_right_side_of_the_table_click_the_greaterthansign_for_one_of_the_users(driver):
     """On the right side of the table, click the Greater-Than-Sign for one of the users."""
-    assert wait_on_element(driver, 5, '//a[@ix-auto="expander__ericbsd"]')
+    assert wait_on_element(driver, 7, '//div[@id="ericbsd_Username"]')
     assert wait_on_element(driver, 7, '//a[@ix-auto="expander__ericbsd"]', 'clickable')
     driver.find_element_by_xpath('//a[@ix-auto="expander__ericbsd"]').click()
 
@@ -135,7 +135,8 @@ def in_the_ssh_public_key_field_paste_a_public_key_and_save_the_change(driver, s
 @then('Change should be saved')
 def change_should_be_saved(driver):
     """Change should be saved."""
-    assert wait_on_element(driver, 10, '//div[@ix-auto="value__ericbsd_Username"]')
+    assert wait_on_element(driver, 5, '//div[contains(.,"Users")]')
+    assert wait_on_element(driver, 7, '//div[@id="ericbsd_Username"]')
 
 
 @then('Reopen the user edit page and ensure that the key was saved')
