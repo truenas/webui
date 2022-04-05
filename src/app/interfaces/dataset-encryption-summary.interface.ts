@@ -1,4 +1,4 @@
-import { DatasetEncryptionType } from 'app/enums/dataset-encryption-type.enum';
+import { DatasetEncryptionType } from 'app/enums/dataset.enum';
 
 export interface DatasetEncryptionSummary {
   key_format: DatasetEncryptionType;

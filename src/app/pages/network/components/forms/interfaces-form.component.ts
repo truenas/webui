@@ -116,7 +116,7 @@ export class InterfacesFormComponent implements FormConfiguration {
           isHidden: true,
           disabled: true,
           validation: helptext.lagg_protocol_validation,
-          value: 'NONE',
+          value: LinkAggregationProtocol.None,
         },
         {
           type: 'select',

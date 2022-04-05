@@ -53,7 +53,7 @@ export class ExpandableTableComponent implements OnInit, AfterViewChecked {
       this.tableConf.expandable = true;
     }
 
-    this.tableConf.afterGetDataExpandable = (data: any) => {
+    this.tableConf.afterGetDataExpandable = (data) => {
       this.isEmpty = !data.length;
       this.disabled = true;
       if (this.tableConf.limitRows) {

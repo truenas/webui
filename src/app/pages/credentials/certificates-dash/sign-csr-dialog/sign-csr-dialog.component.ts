@@ -5,7 +5,7 @@ import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { idNameArrayToOptions } from 'app/helpers/options.helper';
 import { helptextSystemCa } from 'app/helptext/system/ca';
-import { EntityUtils } from 'app/modules/entity/utils';
+import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import {
   AppLoaderService, DialogService, SystemGeneralService, WebSocketService,
 } from 'app/services';
@@ -19,7 +19,7 @@ import {
 export class SignCsrDialogComponent {
   form = this.formBuilder.group({
     csr_cert_id: [null as number, Validators.required],
-    name: [''],
+    name: ['', Validators.required],
   });
 
   csrs$ = this.systemGeneralService.getUnsignedCertificates().pipe(idNameArrayToOptions());
@@ -33,6 +33,7 @@ export class SignCsrDialogComponent {
     private loader: AppLoaderService,
     private ws: WebSocketService,
     private dialogService: DialogService,
+    private errorHandler: FormErrorHandlerService,
     @Inject(MAT_DIALOG_DATA) private caId: number,
   ) {}
 
@@ -52,7 +53,7 @@ export class SignCsrDialogComponent {
         },
         (error) => {
           this.loader.close();
-          new EntityUtils().handleWsError(this, error, this.dialogService);
+          this.errorHandler.handleWsFormError(error, this.form);
         },
       );
   }
