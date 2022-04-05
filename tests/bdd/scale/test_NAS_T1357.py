@@ -116,4 +116,4 @@ def confirm_image_is_deleted(driver):
     """confirm image is deleted."""
     assert wait_on_element(driver, 10, '//*[contains(.,"Please wait")]')
     assert wait_on_element_disappear(driver, 30, '//*[contains(.,"Please wait")]')
-    assert wait_on_element_disappear(driver, 30, '//tr[contains(.,"machinaris")]')
+    assert wait_on_element_disappear(driver, 30, '//tr[contains(.,"machinaris")]') is False 
