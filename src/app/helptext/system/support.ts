@@ -17,10 +17,10 @@ export const helptextSystemSupport = {
     pc_email_validation: [Validators.required, Validators.email],
 
     secondary_contact: T('Secondary Contact'),
-    sec_name_placeholder: T('Name'),
-    sec_title_placeholder: T('Title'),
-    sec_email_placeholder: T('Email'),
-    sec_phone_placeholder: T('Phone Number'),
+    sec_name_placeholder: T('Secondary Name'),
+    sec_title_placeholder: T('Secondary Title'),
+    sec_email_placeholder: T('Secondary Email'),
+    sec_phone_placeholder: T('Secondary Phone Number'),
     sec_email_validation: [Validators.required, Validators.email],
 
     enable_checkbox_placeholder: T('Enable iXsystems Proactive Support'),
