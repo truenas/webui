@@ -6,7 +6,7 @@
         <ix-explorer
           formControlName="path"
           [required]="true"
-          [tooltip]="helptextSharingSmb.tooltip_path",
+          [tooltip]="helptextSharingSmb.tooltip_path"
           [label]="helptextSharingSmb.placeholder_path"
           [nodeProvider]="treeNodeProvider"
         ></ix-explorer>
@@ -21,6 +21,7 @@
           formControlName="purpose"
           [label]="helptextSharingSmb.placeholder_purpose"
           [tooltip]="helptextSharingSmb.tooltip_purpose"
+          emptyValue=""
           [options]="options.purpose$"
         ></ix-select>
         <ix-input
@@ -34,6 +35,119 @@
           [tooltip]="helptextSharingSmb.tooltip_enabled"
         ></ix-checkbox>
       </ix-fieldset>
+      <ix-fieldset
+        *ngIf="isAdvancedMode"
+        [title]="'Access' | translate"
+      >
+        <ix-checkbox
+          formControlName="acl"
+          [label]="helptextSharingSmb.placeholder_acl"
+          [tooltip]="helptextSharingSmb.tooltip_acl"
+        ></ix-checkbox>
+        <ix-checkbox
+          formControlName="ro"
+          [label]="helptextSharingSmb.placeholder_ro"
+          [tooltip]="helptextSharingSmb.tooltip_ro"
+        ></ix-checkbox>
+        <ix-checkbox
+          formControlName="browsable"
+          [label]="helptextSharingSmb.placeholder_browsable"
+          [tooltip]="helptextSharingSmb.tooltip_browsable"
+        ></ix-checkbox>
+        <ix-checkbox
+          formControlName="guestok"
+          [label]="helptextSharingSmb.placeholder_guestok"
+          [tooltip]="helptextSharingSmb.tooltip_guestok"
+        ></ix-checkbox>
+        <ix-checkbox
+          formControlName="abe"
+          [label]="helptextSharingSmb.placeholder_abe"
+          [tooltip]="helptextSharingSmb.tooltip_abe"
+        ></ix-checkbox>
+        <ix-chips
+          formControlName="hostsallow"
+          [label]="helptextSharingSmb.placeholder_hostsallow"
+          [tooltip]="helptextSharingSmb.tooltip_hostsallow"
+        ></ix-chips>
+        <ix-chips
+          formControlName="hostsdeny"
+          [label]="helptextSharingSmb.placeholder_hostsdeny"
+          [tooltip]="helptextSharingSmb.tooltip_hostsdeny"
+        ></ix-chips>
+      </ix-fieldset>
+      <ix-fieldset
+        *ngIf="isAdvancedMode"
+        [title]="'Other Options' | translate"
+      >
+        <ix-checkbox
+          formControlName="home"
+          [label]="helptextSharingSmb.placeholder_home"
+          [tooltip]="helptextSharingSmb.tooltip_home"
+        ></ix-checkbox>
+        <ix-checkbox
+          formControlName="timemachine"
+          [label]="helptextSharingSmb.placeholder_timemachine"
+          [tooltip]="helptextSharingSmb.tooltip_timemachine"
+        ></ix-checkbox>
+        <ix-checkbox
+          formControlName="afp"
+          [label]="helptextSharingSmb.placeholder_afp"
+          [tooltip]="helptextSharingSmb.tooltip_afp"
+        ></ix-checkbox>
+        <ix-checkbox
+          formControlName="shadowcopy"
+          [label]="helptextSharingSmb.placeholder_shadowcopy"
+          [tooltip]="helptextSharingSmb.tooltip_shadowcopy"
+        ></ix-checkbox>
+        <ix-checkbox
+          formControlName="recyclebin"
+          [label]="helptextSharingSmb.placeholder_recyclebin"
+          [tooltip]="helptextSharingSmb.tooltip_recyclebin"
+        ></ix-checkbox>
+        <ix-checkbox
+          formControlName="aapl_name_mangling"
+          [label]="helptextSharingSmb.placeholder_aapl_name_mangling"
+          [tooltip]="helptextSharingSmb.tooltip_aapl_name_mangling"
+        ></ix-checkbox>
+        <ix-checkbox
+          formControlName="streams"
+          [label]="helptextSharingSmb.placeholder_streams"
+          [tooltip]="helptextSharingSmb.tooltip_streams"
+        ></ix-checkbox>
+        <ix-checkbox
+          formControlName="durablehandle"
+          [label]="helptextSharingSmb.placeholder_durablehandle"
+          [tooltip]="helptextSharingSmb.tooltip_durablehandle"
+        ></ix-checkbox>
+        <ix-checkbox
+          formControlName="fsrvp"
+          [label]="helptextSharingSmb.placeholder_fsrvp"
+          [tooltip]="helptextSharingSmb.tooltip_fsrvp"
+        ></ix-checkbox>
+        <ix-input
+          formControlName="path_suffix"
+          [label]="helptextSharingSmb.placeholder_path_suffix"
+          [tooltip]="helptextSharingSmb.tooltip_path_suffix"
+        ></ix-input>
+        <ix-textarea
+          formControlName="auxsmbconf"
+          [label]="helptextSharingSmb.placeholder_auxsmbconf"
+          [tooltip]="helptextSharingSmb.tooltip_auxsmbconf"
+        ></ix-textarea>
+      </ix-fieldset>
+      <div class="form-actions">
+        <button
+          mat-button
+          type="submit"
+          [disabled]="form.invalid || isLoading"
+          color="primary"
+        >{{ 'Save' | translate }}</button>
+        <button
+          mat-button
+          type="button"
+          (click)="toggleAdvancedMode()"
+        >{{ isAdvancedMode ? ('Basic Options' | translate) : ('Advanced Options' | translate) }}</button>
+      </div>
     </form>
   </mat-card-content>
 </mat-card>

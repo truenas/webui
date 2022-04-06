@@ -29,6 +29,7 @@ import { EntityUtils } from 'app/modules/entity/utils';
 import { TargetFormComponent } from 'app/pages/sharing/iscsi/target/target-form/target-form.component';
 import { NfsFormComponent } from 'app/pages/sharing/nfs/nfs-form/nfs-form.component';
 import { SmbFormComponent } from 'app/pages/sharing/smb/smb-form/smb-form.component';
+import { SmbForm2Component } from 'app/pages/sharing/smb/smb-form2/smb-form2.component';
 import { WebdavFormComponent } from 'app/pages/sharing/webdav/webdav-form/webdav-form.component';
 import {
   DialogService,
@@ -334,13 +335,19 @@ export class SharesDashboardComponent implements AfterViewInit {
   }
 
   add(tableComponent: TableComponent, share: ShareType, id?: number): void {
-    let formComponent: Type<NfsFormComponent | SmbFormComponent | WebdavFormComponent | TargetFormComponent>;
+    let formComponent: Type<
+    NfsFormComponent |
+    SmbFormComponent |
+    SmbForm2Component |
+    WebdavFormComponent |
+    TargetFormComponent
+    >;
     switch (share) {
       case ShareType.Nfs:
         formComponent = NfsFormComponent;
         break;
       case ShareType.Smb:
-        formComponent = SmbFormComponent;
+        formComponent = SmbForm2Component;
         break;
       case ShareType.WebDav:
         formComponent = WebdavFormComponent;
@@ -349,7 +356,7 @@ export class SharesDashboardComponent implements AfterViewInit {
         formComponent = TargetFormComponent;
         break;
     }
-    if ([ShareType.WebDav, ShareType.Nfs].includes(share)) {
+    if ([ShareType.WebDav, ShareType.Nfs, ShareType.Smb].includes(share)) {
       const form = this.slideInService.open(formComponent);
       if (id) {
         const row = tableComponent.displayedDataSource.find((row) => row.id === id);
@@ -357,6 +364,8 @@ export class SharesDashboardComponent implements AfterViewInit {
           (form as WebdavFormComponent).setWebdavForEdit(row);
         } else if (share === ShareType.Nfs) {
           (form as NfsFormComponent).setNfsShareForEdit(row);
+        } else if (share === ShareType.Smb) {
+          (form as SmbForm2Component).setSmbShareForEdit(row);
         }
       }
       this.slideInService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
