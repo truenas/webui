@@ -28,6 +28,7 @@
   "Enter accounts that have administrative access. See <a href=\"https://linux.die.net/man/5/upsd.users\" target=\"_blank\">upsd.users(5)</a> for examples.": "",
   "Enter the device name of the interface. This cannot be changed after the interface is created.": "",
   "File size is limited to {maxUploadSizeMibs} MiB.": "",
+  "In some cases it's possible that the provided key/passphrase is valid but the path where the dataset is supposed to be mounted after being unlocked already exists and is not empty. In this case, unlock operation would fail. This can be overridden by Force flag. When it is set, system will rename the existing directory/file path where the dataset should be mounted resulting in successful unlock of the dataset.": "",
   "Maximum number of replication tasks being executed simultaneously.": "",
   "N/A": "",
   "Off by default. When set, <a href=\"https://www.samba.org/samba/docs/current/man-html/smbd.8.html\" target=\"_blank\">smbd(8)</a> attempts to authenticate users with the insecure and vulnerable NTLMv1 encryption. This setting allows backward compatibility with older versions of Windows, but is not recommended and should not be used on untrusted networks.": "",
