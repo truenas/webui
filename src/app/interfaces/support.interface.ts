@@ -31,6 +31,7 @@ export type FetchSupportParams = [
 export interface NewTicketResponse {
   ticket: number;
   url: string;
+  has_debug: boolean;
 }
 
 export type OauthJiraMessage = MessageEvent<{

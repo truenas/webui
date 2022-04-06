@@ -54,7 +54,7 @@ describe('GuiFormComponent', () => {
       DialogService,
       mockWebsocket([
         mockCall('system.general.update', mockSystemGeneralConfig),
-        mockCall('service.restart'),
+        mockCall('system.general.ui_restart'),
       ]),
       mockProvider(IxSlideInService),
       mockProvider(SystemGeneralService, {

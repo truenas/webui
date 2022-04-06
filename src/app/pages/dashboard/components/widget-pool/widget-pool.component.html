@@ -2,7 +2,8 @@
   <div class="card-container front">
     <mat-card class="front overflow-hidden" fxLayout="row" fxLayoutWrap fxLayoutAlign="space-between stretch">
       <mat-card-content #carouselparent>
-        <mat-toolbar-row class="view-{{path.length > 0 ? currentSlideName : 'Pool'}}">
+        <mat-toolbar-row class="view-{{path.length > 0 ? currentSlideName : 'Pool'}}" [class.drag-handle]="showReorderHandle">
+          <ng-content [select]="[cdkDragHandle]"></ng-content>
 
           <!-- Mobile Only: Exit widget -->
           <button fxHide.gt-xs class="mat-card-title-text primary-nav" *ngIf="currentSlide == '0'" mat-icon-button color="default"
@@ -16,8 +17,9 @@
             <mat-icon class="back-arrow">chevron_left</mat-icon>
           </button>
           <span class="mat-card-title-text primary-nav">
-            <span class="card-title-text">
-              &nbsp;<span>{{title | translate}}</span>
+            <span class="card-title-text" [class.drag-handle]="showReorderHandle">
+              <span class="grip" *ngIf="showReorderHandle"></span>
+              &nbsp;{{title | translate}}
             </span>
           </span>
 
@@ -70,7 +72,7 @@
 
           <!--<ng-container *ngTemplateOutlet="path[0].template"></ng-container>-->
           <div *ngFor="let slide of path;" fxFlex="100" class="slide {{slide.name}}" >
-            <ng-content *ngTemplateOutlet="slide.template"></ng-content>
+            <ng-container *ngTemplateOutlet="slide.template"></ng-container>
           </div>
 
           <!-- FRONT -->

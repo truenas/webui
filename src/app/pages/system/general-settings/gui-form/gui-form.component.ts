@@ -8,8 +8,7 @@ import {
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { filter } from 'rxjs/operators';
-import { ServiceName } from 'app/enums/service-name.enum';
+import { filter, tap } from 'rxjs/operators';
 import { choicesToOptions } from 'app/helpers/options.helper';
 import { helptextSystemGeneral as helptext } from 'app/helptext/system/general';
 import { SystemGeneralConfig, SystemGeneralConfigUpdate } from 'app/interfaces/system-config.interface';
@@ -119,7 +118,6 @@ export class GuiFormComponent {
     ).subscribe(() => {
       this.isFormLoading = false;
       this.cdr.markForCheck();
-      this.slideInService.close();
       this.handleServiceRestart(body);
     }, (error) => {
       this.isFormLoading = false;
@@ -161,6 +159,7 @@ export class GuiFormComponent {
         title: this.translate.instant(helptext.dialog_confirm_title),
         message: this.translate.instant(helptext.dialog_confirm_message),
       }).pipe(
+        tap(() => this.slideInService.close()),
         filter(Boolean),
         untilDestroyed(this),
       ).subscribe(() => {
@@ -179,7 +178,7 @@ export class GuiFormComponent {
 
         this.loader.open();
         this.ws.shuttingdown = true; // not really shutting down, just stop websocket detection temporarily
-        this.ws.call('service.restart', [ServiceName.Http]).pipe(
+        this.ws.call('system.general.ui_restart').pipe(
           untilDestroyed(this),
         ).subscribe(
           () => {
@@ -196,6 +195,8 @@ export class GuiFormComponent {
           },
         );
       });
+    } else {
+      this.slideInService.close();
     }
   }
 }

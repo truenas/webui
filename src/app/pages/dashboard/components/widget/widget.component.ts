@@ -18,6 +18,7 @@ export class WidgetComponent extends IxObject {
   @Input() widgetSize: string;
   @Input() rendered?: boolean = true;
   @Input() configurable = false;
+  @Input() showReorderHandle = false;
   @Output() back = new EventEmitter();
   title: string = this.translate.instant('Widget Base Class');
   chartSize: number;

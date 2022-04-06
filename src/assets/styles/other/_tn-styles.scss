@@ -574,6 +574,11 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     max-width: 800px;
   }
 
+  .overflow-dialog .mat-dialog-container {
+    max-height: calc(100vh - 100px);
+    overflow: auto !important;
+  }
+
   .mat-dialog-title {
     .warning-icon {
       color: #ffc107;

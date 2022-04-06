@@ -7,11 +7,13 @@ import { AppCommonModule } from 'app/components/common/app-common.module';
 import { CoreComponents } from 'app/core/components/core-components.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { CastModule } from 'app/modules/cast/cast.module';
+import { IxDropGridModule } from 'app/pages/common/ix-drop-grid/ix-drop-grid.module';
 import { IxFormsModule } from 'app/pages/common/ix-forms/ix-forms.module';
 import { DashboardFormComponent } from 'app/pages/dashboard/components/dashboard-form/dashboard-form.component';
 import { DashboardComponent } from 'app/pages/dashboard/components/dashboard/dashboard.component';
 import { WidgetControllerComponent } from 'app/pages/dashboard/components/widget-controller/widget-controller.component';
 import { WidgetCpuComponent } from 'app/pages/dashboard/components/widget-cpu/widget-cpu.component';
+import WidgetHelpComponent from 'app/pages/dashboard/components/widget-help/widget-help.component';
 import { WidgetMemoryComponent } from 'app/pages/dashboard/components/widget-memory/widget-memory.component';
 import { WidgetNetworkComponent } from 'app/pages/dashboard/components/widget-network/widget-network.component';
 import { WidgetNicComponent } from 'app/pages/dashboard/components/widget-nic/widget-nic.component';
@@ -40,6 +42,7 @@ import { routing } from './dashboard.routing';
     EntityModule,
     TranslateModule,
     CastModule,
+    IxDropGridModule,
   ],
   declarations: [
     DashboardComponent,
@@ -49,6 +52,7 @@ import { routing } from './dashboard.routing';
     WidgetNicComponent,
     WidgetCpuComponent,
     WidgetMemoryComponent,
+    WidgetHelpComponent,
     WidgetPoolComponent,
     WidgetControllerComponent,
     WidgetNetworkComponent,
@@ -59,6 +63,7 @@ import { routing } from './dashboard.routing';
   entryComponents: [
     WidgetComponent,
     WidgetSysInfoComponent,
+    WidgetHelpComponent,
     WidgetNicComponent,
     WidgetCpuComponent,
     WidgetMemoryComponent,

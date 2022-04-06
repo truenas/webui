@@ -720,6 +720,19 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, A
     return res;
   }
 
+  patchCurrentRows<T>(
+    rowSelector: (row: T) => boolean,
+    rowMutator: (row: T) => T,
+  ): void {
+    this.currentRows = this.currentRows.map((row) => {
+      if (rowSelector(row)) {
+        return rowMutator(row) || row;
+      }
+      return row;
+    });
+    this.dataSourceStreamer$.next(this.currentRows);
+  }
+
   isLeftStickyColumnNo(i: number): boolean {
     return i === (this.currentColumns[0].prop === 'multiselect' ? 1 : 0);
   }

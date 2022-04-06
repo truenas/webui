@@ -29,10 +29,6 @@ import { NetworkInterfacesChangedEvent } from 'app/interfaces/events/network-int
 import { ResilveringEvent } from 'app/interfaces/events/resilvering-event.interface';
 import { SidenavStatusData } from 'app/interfaces/events/sidenav-status-event.interface';
 import { SysInfoEvent } from 'app/interfaces/events/sys-info-event.interface';
-import {
-  UserPreferencesEvent,
-  UserPreferencesReadyEvent,
-} from 'app/interfaces/events/user-preferences-event.interface';
 import { ResilverData } from 'app/interfaces/resilver-job.interface';
 import { Interval } from 'app/interfaces/timeout.interface';
 import { TrueCommandConfig } from 'app/interfaces/true-command-config.interface';
@@ -87,7 +83,6 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
   pendingUpgradeChecked = false;
   sysName = 'TrueNAS CORE';
   hostname: string;
-  showWelcome: boolean;
   checkin_remaining: number;
   checkin_interval: Interval;
   updateIsRunning = false;
@@ -260,11 +255,11 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
 
     this.core.emit({ name: 'SysInfoRequest', sender: this });
 
-    this.core.register({ observerClass: this, eventName: 'UserPreferences' }).pipe(untilDestroyed(this)).subscribe((evt: UserPreferencesEvent) => {
-      this.preferencesHandler(evt);
+    this.core.register({ observerClass: this, eventName: 'UserPreferences' }).pipe(untilDestroyed(this)).subscribe(() => {
+      this.preferencesHandler();
     });
-    this.core.register({ observerClass: this, eventName: 'UserPreferencesReady' }).pipe(untilDestroyed(this)).subscribe((evt: UserPreferencesReadyEvent) => {
-      this.preferencesHandler(evt);
+    this.core.register({ observerClass: this, eventName: 'UserPreferencesReady' }).pipe(untilDestroyed(this)).subscribe(() => {
+      this.preferencesHandler();
     });
     this.core.emit({ name: 'UserPreferencesRequest', sender: this });
 
@@ -273,14 +268,10 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
     });
   }
 
-  preferencesHandler(evt: UserPreferencesEvent | UserPreferencesReadyEvent): void {
+  preferencesHandler(): void {
     if (this.isWaiting) {
       this.target.next({ name: 'SubmitComplete', sender: this });
       this.isWaiting = false;
-    }
-    this.showWelcome = evt.data.showWelcomeDialog && !(localStorage.getItem('turnOffWelcomeDialog') as unknown as boolean);
-    if (this.showWelcome) {
-      this.onShowAbout();
     }
   }
 
@@ -328,7 +319,6 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
     this.dialog.open(AboutDialogComponent, {
       maxWidth: '600px',
       data: {
-        extraMsg: this.showWelcome,
         systemType: this.systemType,
       },
       disableClose: true,
