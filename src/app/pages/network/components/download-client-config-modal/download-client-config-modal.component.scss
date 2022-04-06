@@ -8,18 +8,25 @@
   justify-content: flex-end;
 }
 
+.linked-select {
+  position: relative;
 
-.linked-input {
-  margin-bottom: -10px;
-}
+  .link-wrapper {
+    display: flex;
+    flex-direction: row-reverse;
+  }
 
-.link {
-  color: var(--primary);
-  cursor: pointer;
-  font-size: x-small;
-  margin-top: -10px;
+  .link {
+    color: var(--primary);
+    cursor: pointer;
+    font-size: x-small;
+    position: absolute;
+    text-decoration: underline;
+    top: 24px;
+    z-index: 1;
+  }
 
-  mat-icon {
-    font-size: 12px;
+  ix-select {
+    width: 100%;
   }
 }

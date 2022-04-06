@@ -9,18 +9,23 @@
           [options]="options.themes"
           [required]="true"
         ></ix-select>
-
-        <ix-select
-          formControlName="ui_certificate"
-          [label]="helptext.ui_certificate.label | translate"
-          [tooltip]="helptext.ui_certificate.tooltip | translate"
-          [options]="options.ui_certificate"
-          [required]="true"
-          class="linked-input"
-        ></ix-select>
-        <a class="link" (click)="certificatesLinkClicked()">
-          {{ 'Certificates' | translate }}<mat-icon>open_in_new</mat-icon>
-        </a>
+        <div class="linked-select">
+          <div class="link-wrapper">
+            <a class="link" (click)="certificatesLinkClicked()">
+              {{ 'Manage Certificates' | translate }}
+            </a>
+          </div>
+          <ix-select
+            style="width: 100%;"
+            formControlName="ui_certificate"
+            [label]="helptext.ui_certificate.label | translate"
+            [tooltip]="helptext.ui_certificate.tooltip | translate"
+            [options]="options.ui_certificate"
+            [required]="true"
+          ></ix-select>
+        </div>
+        
+        
 
         <ix-select
           formControlName="ui_address"

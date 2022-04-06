@@ -5,28 +5,34 @@
       <ix-fieldset>
         <div class="columns">
           <div class="column">
-            <ix-select
-              formControlName="server_certificate"
-              [label]="'Server Certificate' | translate"
-              [required]="true"
-              [options]="serverCertificates$"
-              class="linked-input"
-            ></ix-select>
-            <a class="link" (click)="certificatesLinkClicked()">
-              {{ 'Certificates' | translate }}<mat-icon>open_in_new</mat-icon>
-            </a>
+            <div class="linked-select">
+              <div class="link-wrapper">
+                <a class="link" (click)="certificatesLinkClicked()">
+                  {{ 'Manage Certificates' | translate }}
+                </a>
+              </div>
+              <ix-select
+                formControlName="server_certificate"
+                [label]="'Server Certificate' | translate"
+                [required]="true"
+                [options]="serverCertificates$"
+              ></ix-select>
+            </div>
 
-            <ix-select
-              formControlName="root_ca"
-              [label]="'Root CA' | translate"
-              [required]="true"
-              [options]="rootAuthorities$"
-              class="linked-input"
-              [tooltip]="tooltips.root_ca | translate"
-            ></ix-select>
-            <a class="link" (click)="certificatesLinkClicked()">
-              {{ 'Certificate Authorities' | translate }}<mat-icon>open_in_new</mat-icon>
-            </a>
+            <div class="linked-select">
+              <div class="link-wrapper">
+                <a class="link" (click)="certificatesLinkClicked()">
+                  {{ 'Manage Certificates' | translate }}
+                </a>
+              </div>
+              <ix-select
+                formControlName="root_ca"
+                [label]="'Root CA' | translate"
+                [required]="true"
+                [options]="rootAuthorities$"
+                [tooltip]="tooltips.root_ca | translate"
+              ></ix-select>
+            </div>
 
             <ix-ip-input-with-netmask
               formControlName="server"

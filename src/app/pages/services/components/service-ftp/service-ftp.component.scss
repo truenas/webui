@@ -22,17 +22,25 @@
   }
 }
 
-.linked-input {
-  margin-bottom: -10px;
-}
+.linked-select {
+  position: relative;
 
-.link {
-  color: var(--primary);
-  cursor: pointer;
-  font-size: x-small;
-  margin-top: -10px;
+  .link-wrapper {
+    display: flex;
+    flex-direction: row-reverse;
+  }
 
-  mat-icon {
-    font-size: 12px;
+  .link {
+    color: var(--primary);
+    cursor: pointer;
+    font-size: x-small;
+    position: absolute;
+    text-decoration: underline;
+    top: 24px;
+    z-index: 1;
+  }
+
+  ix-select {
+    width: 100%;
   }
 }

@@ -45,16 +45,19 @@
           [label]="'Enable Browser' | translate"
           [tooltip]="tooltips.storage_path | translate"
         ></ix-checkbox>
-        <ix-select
-          formControlName="certificate"
-          [label]="'Certificate' | translate"
-          [tooltip]="tooltips.certificate | translate"
-          [options]="certificateOptions$"
-          class="linked-input"
-        ></ix-select>
-        <a class="link" (click)="certificatesLinkClicked()">
-          {{ 'Certificates' | translate }}<mat-icon>open_in_new</mat-icon>
-        </a>
+        <div class="linked-select">
+          <div class="link-wrapper">
+            <a class="link" (click)="certificatesLinkClicked()">
+              {{ 'Manage Certificates' | translate }}
+            </a>
+          </div>
+          <ix-select
+            formControlName="certificate"
+            [label]="'Certificate' | translate"
+            [tooltip]="tooltips.certificate | translate"
+            [options]="certificateOptions$"
+          ></ix-select>
+        </div>
         <ix-input
           *ngIf="form.controls['certificate'].value !== null"
           formControlName="tls_server_uri"
