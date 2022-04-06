@@ -11,7 +11,7 @@ import { EntityTableAction, EntityTableConfig } from 'app/modules/entity/entity-
 import { EntityUtils } from 'app/modules/entity/utils';
 import { SmbFormComponent } from 'app/pages/sharing/smb/smb-form/smb-form.component';
 import { DialogService, WebSocketService } from 'app/services';
-import { ModalService } from 'app/services/modal.service';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
 @Component({
@@ -23,6 +23,7 @@ export class SmbListComponent implements EntityTableConfig {
   queryCall = 'sharing.smb.query' as const;
   updateCall = 'sharing.smb.update' as const;
   wsDelete = 'sharing.smb.delete' as const;
+  shares: SmbShare[];
   routeAdd: string[] = ['sharing', 'smb', 'add'];
   routeAddTooltip = this.translate.instant('Add Windows (SMB) Share');
   protected routeDelete: string[] = ['sharing', 'smb', 'delete'];
@@ -66,25 +67,28 @@ export class SmbListComponent implements EntityTableConfig {
   constructor(
     private ws: WebSocketService,
     private router: Router,
+    private slideInService: IxSlideInService,
     private dialog: DialogService,
     private translate: TranslateService,
-    private modalService: ModalService,
   ) {}
 
   afterInit(entityList: EntityTableComponent): void {
     this.entityList = entityList;
+  }
 
-    this.modalService.refreshTable$.pipe(untilDestroyed(this)).subscribe(() => {
+  doAdd(): void {
+    this.slideInService.open(SmbFormComponent);
+    this.slideInService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
       this.entityList.getData();
     });
   }
 
-  doAdd(id?: number): void {
-    this.modalService.openInSlideIn(SmbFormComponent, id);
-  }
-
-  doEdit(id: number): void {
-    this.doAdd(id);
+  doEdit(id: string | number): void {
+    const form = this.slideInService.open(SmbFormComponent);
+    form.setSmbShareForEdit(this.shares.find((share) => share.id === id));
+    this.slideInService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
+      this.entityList.getData();
+    });
   }
 
   getActions(row: SmbShare): EntityTableAction[] {
@@ -180,5 +184,9 @@ export class SmbListComponent implements EntityTableConfig {
         new EntityUtils().handleWsError(this, err, this.dialog);
       },
     );
+  }
+  resourceTransformIncomingRestData(data: SmbShare[]): SmbShare[] {
+    this.shares = data;
+    return data;
   }
 }

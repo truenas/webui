@@ -20,7 +20,6 @@ import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
 import { AuthorizedAccessFormComponent } from 'app/pages/sharing/iscsi/authorized-access/authorized-access-form/authorized-access-form.component';
 import { AuthorizedAccessListComponent } from 'app/pages/sharing/iscsi/authorized-access/authorized-access-list/authorized-access-list.component';
 import { TargetGlobalConfigurationComponent } from 'app/pages/sharing/iscsi/target-global-configuration/target-global-configuration.component';
-import { SmbForm2Component } from 'app/pages/sharing/smb/smb-form2/smb-form2.component';
 import { UserService } from 'app/services/user.service';
 import { EntityFormService } from '../../modules/entity/entity-form/services/entity-form.service';
 import { EntityModule } from '../../modules/entity/entity.module';
@@ -87,7 +86,6 @@ import { WebdavListComponent } from './webdav/webdav-list/webdav-list.component'
     TargetGlobalConfigurationComponent,
     PortalListComponent,
     PortalFormComponent,
-    SmbForm2Component,
     DynamicListComponent,
     InitiatorListComponent,
     InitiatorFormComponent,
