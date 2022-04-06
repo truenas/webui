@@ -400,6 +400,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
 
   // System wide hover effects
   .mat-select-panel .mat-option:focus,
+  .mat-select-panel .mat-option:focus-visible,
   .mat-select-panel .mat-option.mat-selected:not(.mat-option-multiple) {
     @include variable(background, --primary, $primary, !important);
     @include variable(color, --primary-txt, $primary-txt, !important);
@@ -1253,25 +1254,9 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     }
   }
 
-  app-createpassphrase-form #changekey-instructions,
-  app-createpassphrase-form #createkey-instructions,
-  app-addkey-form #addkey-instructions,
-  app-volumeunlock-form #rekey-instructions,
   app-ssh-keypairs-form #key_instructions {
     font-size: 0.9rem;
     margin-bottom: 1rem;
-  }
-
-  app-createpassphrase-form,
-  app-addkey-form {
-    #cust_button_Cancel {
-      background-color: var(--accent);
-      color: black !important;
-    }
-  }
-
-  #recovery_key span {
-    margin-right: 5px;
   }
 
   iscsi .mat-tab-links {
@@ -1282,31 +1267,6 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     text-align: center;
     width: 50px;
   }
-
-  // Reset Encryption form
-  #encrypt-headline p {
-    font-size: 1.5rem;
-    font-weight: 500;
-    margin-bottom: 0.7rem;
-
-    i {
-      margin-right: 5px;
-      position: relative;
-      top: 3px;
-    }
-  }
-
-  #encryptionkey-passphrase-instructions p,
-  #set_recoverykey-instructions p {
-    font-size: 0.9rem;
-    margin-top: 1rem;
-  }
-
-  #encryptionkey-passphrase {
-    max-width: 640px;
-  }
-
-  // end of reset encryption form
 
   confirm-dialog div.message-content p {
     margin-bottom: 10px;
@@ -1409,6 +1369,11 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     background: var(--hover-bg) !important;
   }
 
+  .slide-in-nav-item:focus-within {
+    background-color: var(--hover-bg) !important;
+    box-shadow: -1px 0 0 1px var(--btn-default-bg) !important;
+  }
+
   .sidebar-panel.mat-sidenav .sidebar-list-item.highlighted {
     background-color: var(--bg2);
     border-left: 6px solid var(--primary);
@@ -1419,6 +1384,10 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
       mat-icon {
         color: var(--primary);
       }
+    }
+
+    .mat-list-item-content > a:focus-visible {
+      background: var(--hover-bg);
     }
   }
 
@@ -1557,5 +1526,10 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
       pointer-events: none;
       visibility: hidden;
     }
+  }
+
+  // focus state styles for mat-form-field
+  .mat-form-field.mat-focused:focus-within {
+    outline: 1px solid var(--primary);
   }
 } // end of ix theme

@@ -1,0 +1,71 @@
+<ix-modal-header [title]="title | translate" [loading]="isLoading"></ix-modal-header>
+<mat-card>
+  <mat-card-content>
+    <form [formGroup]="form" class="ix-form-container" (submit)="onSubmit()">
+      <div class="two-columns">
+        <ix-fieldset
+          [class.form-disable]="isFormDisabled"
+          [title]="helptext.proactive.primary_contact | translate"
+          [tooltip]="helptext.proactive.instructions | translate">
+          <ix-input
+            formControlName="name"
+            [label]="'Name' | translate"
+            [required]="true"
+          ></ix-input>
+          <ix-input
+            formControlName="title"
+            [label]="'Title' | translate"
+            [required]="true"
+          ></ix-input>
+          <ix-input
+            formControlName="email"
+            [label]="'Email' | translate"
+            [required]="true"
+          ></ix-input>
+          <ix-input
+            formControlName="phone"
+            [label]="'Phone Number' | translate"
+            [required]="true"
+          ></ix-input>
+          <ix-checkbox
+            formControlName="enabled"
+            [label]="'Enable iXsystems Proactive Support' | translate"
+          ></ix-checkbox>
+        </ix-fieldset>
+
+        <ix-fieldset
+          [class.form-disable]="isFormDisabled"
+          [title]="helptext.proactive.secondary_contact | translate">
+          <ix-input
+            formControlName="secondary_name"
+            [label]="'Secondary Name' | translate"
+            [required]="true"
+          ></ix-input>
+          <ix-input
+            formControlName="secondary_title"
+            [label]="'Secondary Title' | translate"
+            [required]="true"
+          ></ix-input>
+          <ix-input
+            formControlName="secondary_email"
+            [label]="'Secondary Email' | translate"
+            [required]="true"
+          ></ix-input>
+          <ix-input
+            formControlName="secondary_phone"
+            [label]="'Secondary Phone Number' | translate"
+            [required]="true"
+          ></ix-input>
+        </ix-fieldset>
+      </div>
+      <div class="form-actions">
+        <button
+          mat-button
+          type="submit"
+          [disabled]="form.invalid || isLoading || isFormDisabled"
+          color="primary"
+        >{{ 'Save' | translate }}</button>
+      </div>
+    </form>
+  </mat-card-content>
+</mat-card>

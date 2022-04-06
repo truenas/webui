@@ -27,6 +27,7 @@ export class IxSelectComponent implements ControlValueAccessor, OnChanges {
   @Input() required: boolean;
   @Input() tooltip: string;
   @Input() multiple: boolean;
+  @Input() emptyValue: string = null;
 
   constructor(
     public controlDirective: NgControl,

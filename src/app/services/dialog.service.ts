@@ -77,12 +77,15 @@ export class DialogService {
       dialogRef.componentInstance.method = options.method;
       dialogRef.componentInstance.switchSelectionEmitter.pipe(untilDestroyed(this)).subscribe((selection: boolean) => {
         const data = options.data;
-        if (selection) {
+        if (selection && data[0]) {
           if (data[0] && data[0].hasOwnProperty('reboot')) {
             data[0].reboot = !data[0].reboot;
           }
           if (data[0] && data[0].hasOwnProperty('overcommit')) {
             data[0].overcommit = !data[0].overcommit;
+          }
+          if (data[0] && data[0].hasOwnProperty('delete_unused_images')) {
+            data[0].delete_unused_images = !data[0].delete_unused_images;
           }
           dialogRef.componentInstance.data = data;
           return dialogRef;

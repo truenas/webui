@@ -6,8 +6,9 @@ import { NfsShare } from 'app/interfaces/nfs-share.interface';
 import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-table.component';
 import { EntityTableConfig } from 'app/modules/entity/entity-table/entity-table.interface';
 import { EntityUtils } from 'app/modules/entity/utils';
-import { WebSocketService, ModalService } from 'app/services';
+import { WebSocketService } from 'app/services';
 import { DialogService } from 'app/services/dialog.service';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { NfsFormComponent } from '../nfs-form/nfs-form.component';
 
 @UntilDestroy()
@@ -39,7 +40,7 @@ export class NfsListComponent implements EntityTableConfig<NfsShare> {
 
   columns = [
     {
-      name: this.translate.instant(helptextSharingNfs.column_path), prop: 'paths', showLockedStatus: true, always_display: true,
+      name: this.translate.instant(helptextSharingNfs.column_path), prop: 'path', showLockedStatus: true, always_display: true,
     },
     { name: this.translate.instant(helptextSharingNfs.column_comment), prop: 'comment' },
     { name: this.translate.instant(helptextSharingNfs.column_enabled), prop: 'enabled', checkbox: true },
@@ -50,12 +51,12 @@ export class NfsListComponent implements EntityTableConfig<NfsShare> {
     sorting: { columns: this.columns },
     deleteMsg: {
       title: this.translate.instant('Unix (NFS) Share'),
-      key_props: ['paths'],
+      key_props: ['path'],
     },
   };
 
   constructor(
-    private modalService: ModalService,
+    private slideInService: IxSlideInService,
     protected ws: WebSocketService,
     private dialog: DialogService,
     private translate: TranslateService,
@@ -64,7 +65,7 @@ export class NfsListComponent implements EntityTableConfig<NfsShare> {
   afterInit(entityList: EntityTableComponent): void {
     this.entityList = entityList;
 
-    this.modalService.refreshTable$.pipe(untilDestroyed(this)).subscribe(() => {
+    this.slideInService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
       this.entityList.getData();
     });
   }
@@ -73,15 +74,17 @@ export class NfsListComponent implements EntityTableConfig<NfsShare> {
     message: shared.delete_share_message,
     isMessageComplete: true,
     button: this.translate.instant('Unshare'),
-    buildTitle: (share: NfsShare) => `${this.translate.instant('Unshare')} ${share.paths.join(', ')}`,
+    buildTitle: (share: NfsShare) => `${this.translate.instant('Unshare')} ${share.path}`,
   };
 
-  doAdd(id?: number): void {
-    this.modalService.openInSlideIn(NfsFormComponent, id);
+  doAdd(): void {
+    this.slideInService.open(NfsFormComponent);
   }
 
   doEdit(id: number): void {
-    this.doAdd(id);
+    const row = this.entityList.rows.find((row) => row.id === id);
+    const form = this.slideInService.open(NfsFormComponent);
+    form.setNfsShareForEdit(row);
   }
 
   onCheckboxChange(row: NfsShare): void {

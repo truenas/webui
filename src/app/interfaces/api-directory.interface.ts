@@ -362,7 +362,8 @@ export type ApiDirectory = {
   'chart.release.create': { params: [ChartReleaseCreate]; response: ChartRelease };
   'chart.release.update': { params: any; response: ChartRelease };
   'chart.release.upgrade': { params: any; response: ChartRelease };
-  'chart.release.delete': { params: [name: string]; response: boolean };
+  'chart.release.delete': { params: [string, { delete_unused_images: boolean }]; response: boolean };
+  'chart.release.get_chart_releases_using_chart_release_images': { params: [name: string]; response: Choices };
   'chart.release.scale': { params: [name: string, params: { replica_count: number }]; response: ChartScaleResult };
   'chart.release.pod_console_choices': { params: [string]; response: Record<string, string[]> };
   'chart.release.nic_choices': { params: void; response: Choices };
@@ -689,7 +690,6 @@ export type ApiDirectory = {
   'pool.processes': { params: [id: number]; response: Process[] };
   'pool.query': { params: QueryParams<Pool>; response: Pool[] };
   'pool.recoverykey_rm': { params: [number, { admin_password: string }]; response: void };
-  'pool.rekey': { params: [number, { admin_password: string }]; response: void };
   'pool.remove': { params: PoolRemoveParams; response: void };
   'pool.replace': { params: [id: number, params: PoolReplaceParams]; response: boolean };
   'pool.resilver.config': { params: void; response: ResilverConfig };
@@ -829,7 +829,7 @@ export type ApiDirectory = {
   // Service
   'service.started': { params: [ServiceName]; response: boolean };
   'service.query': { params: QueryParams<Service>; response: Service[] };
-  'service.update': { params: [number, Partial<Service>]; response: number };
+  'service.update': { params: [number | ServiceName, Partial<Service>]; response: number };
   'service.start': { params: [ServiceName]; response: boolean };
   'service.stop': {
     params: [ServiceName];

@@ -9,11 +9,11 @@ import { EntityFormService } from 'app/modules/entity/entity-form/services/entit
 import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-table.component';
 import { EntityTableAction, EntityTableConfig } from 'app/modules/entity/entity-table/entity-table.interface';
 import { EntityUtils } from 'app/modules/entity/utils';
-import { RsyncFormComponent } from 'app/pages/data-protection/rsync/rsync-form/rsync-form.component';
+import { RsyncTaskFormComponent } from 'app/pages/data-protection/rsync-task/rsync-task-form/rsync-task-form.component';
 import {
   WebSocketService, DialogService, TaskService, JobService, UserService,
 } from 'app/services';
-import { ModalService } from 'app/services/modal.service';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
 @Component({
@@ -21,7 +21,7 @@ import { ModalService } from 'app/services/modal.service';
   template: '<entity-table [title]="title" [conf]="this"></entity-table>',
   providers: [TaskService, JobService, UserService, EntityFormService],
 })
-export class RsyncListComponent implements EntityTableConfig {
+export class RsyncTaskListComponent implements EntityTableConfig {
   title = this.translate.instant('Rsync Tasks');
   queryCall = 'rsynctask.query' as const;
   wsDelete = 'rsynctask.delete' as const;
@@ -72,13 +72,13 @@ export class RsyncListComponent implements EntityTableConfig {
     protected taskService: TaskService,
     protected dialog: DialogService,
     protected job: JobService,
-    protected modalService: ModalService,
+    private slideInService: IxSlideInService,
     protected translate: TranslateService,
   ) {}
 
   afterInit(entityList: EntityTableComponent): void {
     this.entityList = entityList;
-    this.modalService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
+    this.slideInService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
       this.entityList.getData();
     });
   }
@@ -177,11 +177,13 @@ export class RsyncListComponent implements EntityTableConfig {
     }
   }
 
-  doAdd(id?: number): void {
-    this.modalService.openInSlideIn(RsyncFormComponent, id);
+  doAdd(): void {
+    this.slideInService.open(RsyncTaskFormComponent, { wide: true });
   }
 
   doEdit(id: number): void {
-    this.doAdd(id);
+    const row = this.entityList.rows.find((row) => row.id === id);
+    const form = this.slideInService.open(RsyncTaskFormComponent, { wide: true });
+    form.setTaskForEdit(row);
   }
 }
