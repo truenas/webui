@@ -17,7 +17,7 @@ import { forbiddenValues } from 'app/modules/entity/entity-form/validators/forbi
 import { EntityUtils } from 'app/modules/entity/utils';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import {
-  AppLoaderService, DialogService, ModalService, WebSocketService,
+  AppLoaderService, DialogService, WebSocketService,
 } from 'app/services';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
@@ -106,15 +106,11 @@ export class SmbFormComponent implements OnInit {
     private translate: TranslateService,
     private router: Router,
     protected loader: AppLoaderService,
-    private modalService: ModalService,
     private errorHandler: FormErrorHandlerService,
     private filesystemService: FilesystemService,
   ) {
-    combineLatest([
-      this.ws.call('sharing.smb.query', []),
-      this.modalService.getRow$,
-    ]).pipe(
-      map(([shares, pk]) => shares.filter((share) => share.id !== pk).map((share) => share.name)),
+    this.ws.call('sharing.smb.query', []).pipe(
+      map((shares) => shares.map((share) => share.name)),
       untilDestroyed(this),
     ).subscribe((shareNames) => {
       ['global', ...shareNames].forEach((name) => this.namesInUse.push(name));
@@ -124,10 +120,10 @@ export class SmbFormComponent implements OnInit {
   ngOnInit(): void {
     this.form.get('purpose').valueChanges.pipe(untilDestroyed(this)).subscribe(
       (value: string) => {
+        this.clearPresets();
         if (!this.presets[value]) {
           return;
         }
-        this.clearPresets();
         for (const param in this.presets[value].params) {
           this.presetFields.push(param as keyof SmbShare);
           const ctrl = this.form.get(param);
@@ -215,6 +211,10 @@ export class SmbFormComponent implements OnInit {
     this.hostsDenyOnLoad = smbShare.hostsdeny ? [...smbShare.hostsdeny] : [];
     this.isTimeMachineOn = smbShare.timemachine;
     this.title = helptextSharingSmb.formTitleEdit;
+    const index = this.namesInUse.findIndex((name) => name === smbShare.name);
+    if (index >= 0) {
+      this.namesInUse.splice(index, 1);
+    }
     this.form.patchValue(smbShare);
   }
 
