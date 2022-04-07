@@ -1,5 +1,6 @@
 # coding=utf-8
 """SCALE UI: feature tests."""
+
 import time
 from function import (
     wait_on_element,
