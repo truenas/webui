@@ -16,7 +16,6 @@ from pytest_bdd import (
     parsers
 )
 import pytest
-
 pytestmark = [pytest.mark.debug_test]
 
 

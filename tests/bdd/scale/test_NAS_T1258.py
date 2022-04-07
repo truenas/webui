@@ -16,6 +16,9 @@ from pytest_bdd import (
     then,
     when,
 )
+import pytest
+pytestmark = [pytest.mark.debug_test]
+
 
 @scenario('features/NAS-T1258.feature', 'Verify a Certificate Signing Request can be created')
 def test_verify_a_certificate_signing_request_can_be_created():
