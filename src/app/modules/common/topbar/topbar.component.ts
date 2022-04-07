@@ -529,8 +529,8 @@ export class TopbarComponent implements OnInit, OnDestroy {
         dialogRef.close(false);
         this.upgradeWaitingToFinish = false;
       });
-      dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((failure: any) => {
-        this.dialogService.errorReport(failure.error, failure.reason, failure.trace.formatted);
+      dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((failure) => {
+        new EntityUtils().errorReport(failure, this.dialogService);
       });
     });
   }
