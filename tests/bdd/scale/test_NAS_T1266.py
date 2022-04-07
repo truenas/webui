@@ -12,8 +12,6 @@ from pytest_bdd import (
     then,
     when,
 )
-import pytest
-pytestmark = [pytest.mark.debug_test]
 
 
 @scenario('features/NAS-T1266.feature', 'Verify a Certificate Signing Request can be deleted')

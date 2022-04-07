@@ -14,8 +14,6 @@ from pytest_bdd import (
     then,
     when,
 )
-import pytest
-pytestmark = [pytest.mark.debug_test]
 
 
 @scenario('features/NAS-T1263.feature', 'Verify a Certficate can be imported')
