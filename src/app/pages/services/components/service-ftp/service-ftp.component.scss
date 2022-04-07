@@ -21,3 +21,26 @@
     width: 50%;
   }
 }
+
+.linked-select {
+  position: relative;
+
+  .link-wrapper {
+    display: flex;
+    flex-direction: row-reverse;
+  }
+
+  .link {
+    color: var(--primary);
+    cursor: pointer;
+    font-size: x-small;
+    position: absolute;
+    text-decoration: underline;
+    top: 24px;
+    z-index: 1;
+  }
+
+  ix-select {
+    width: 100%;
+  }
+}
