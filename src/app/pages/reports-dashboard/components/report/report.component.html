@@ -68,7 +68,7 @@
 
       <mat-card-content fxLayout="row wrap" fxLayout.gt-xs="row wrap" fxLayoutAlign="space-between start" fxFlex="100" *ngIf="!report?.errorConf">
         <!-- Chart -->
-        <div class="chart-wrapper-outer" fxFlex="calc(100% - 400px)">
+        <div class="chart-wrapper-outer" fxFlex="calc(100% - 420px)">
           <div class="chart-wrapper">
             <linechart
               *ngIf="report && data && chartColors"
@@ -116,7 +116,7 @@
           </div>
         </div>
 
-        <section class="legend" #legendElement fxFlex="400px" fxLayout="column" fxLayoutAlign="start">
+        <section class="legend" #legendElement fxFlex="420px" fxLayout="column" fxLayoutAlign="start">
           <div *ngIf="report && data && data.legend" class="legend-timestamp" fxFlex="32px">
             <div>
               <span *ngIf="data && legendData && legendData.xHTML">
@@ -165,7 +165,7 @@
                 <ng-container *ngIf="data && data.aggregations">
                   <td *ngFor="let key of aggregationKeys" class="report-analytics">
                     <span>
-                      {{ data.aggregations[aggregationKey(key)][i] ? data.aggregations[aggregationKey(key)][i] : 'null' }}
+                      {{ data.aggregations[key][i] ? data.aggregations[key][i] : 'null' }}
                     </span>
                   </td>
                 </ng-container>

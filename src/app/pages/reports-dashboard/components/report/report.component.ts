@@ -13,12 +13,13 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { UUID } from 'angular2-uuid';
 import { add, sub } from 'date-fns';
+import _ from 'lodash';
 import { filter, take } from 'rxjs/operators';
 import { ProductType } from 'app/enums/product-type.enum';
 import { CoreEvent } from 'app/interfaces/events';
 import { ThemeChangedEvent, ThemeDataEvent } from 'app/interfaces/events/theme-events.interface';
 import { ReportingGraph } from 'app/interfaces/reporting-graph.interface';
-import { ReportingData } from 'app/interfaces/reporting.interface';
+import { ReportingAggregationKeys, ReportingData } from 'app/interfaces/reporting.interface';
 import { EmptyConfig, EmptyType } from 'app/pages/common/entity/entity-empty/entity-empty.component';
 import { WidgetComponent } from 'app/pages/dashboard/components/widget/widget.component';
 import { LineChartComponent } from 'app/pages/reports-dashboard/components/line-chart/line-chart.component';
@@ -80,8 +81,8 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
     return this.identifier ? trimmed.replace(/{identifier}/, this.identifier) : this.report.title;
   }
 
-  get aggregationKeys(): (keyof ReportingData['aggregations'])[] {
-    return Object.keys(this.data.aggregations) as (keyof ReportingData['aggregations'])[];
+  get aggregationKeys(): ReportingAggregationKeys[] {
+    return Object.keys(this.data.aggregations) as ReportingAggregationKeys[];
   }
 
   legendData: any = {};
@@ -133,6 +134,47 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
     return result.toLowerCase() !== 'invalid date' ? result : null;
   }
 
+  formatInterfaceUnit(value: string): string {
+    if (value && value.split(' ', 2)[0] !== '0') {
+      if (value.split(' ', 2)[1]) {
+        value += '/s';
+      } else {
+        value += 'b/s';
+      }
+    }
+    return value;
+  }
+
+  formatLegendSeries(series: any[], data: ReportingData): any[] {
+    switch (data.name) {
+      case 'interface':
+        series.forEach((e) => {
+          e.yHTML = this.formatInterfaceUnit(e.yHTML);
+        });
+        break;
+      default:
+        break;
+    }
+    return series;
+  }
+
+  formatData(data: ReportingData): ReportingData {
+    switch (data.name) {
+      case 'interface':
+        if (data.aggregations) {
+          for (const key in data.aggregations) {
+            _.set(data.aggregations, key, data.aggregations[key as ReportingAggregationKeys].map(
+              (value) => this.formatInterfaceUnit(value),
+            ));
+          }
+        }
+        break;
+      default:
+        break;
+    }
+    return data;
+  }
+
   constructor(
     public router: Router,
     public translate: TranslateService,
@@ -147,13 +189,14 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
     this.core.register({ observerClass: this, eventName: 'ReportData-' + this.chartId }).pipe(
       untilDestroyed(this),
     ).subscribe((evt: CoreEvent) => {
-      this.data = evt.data;
+      this.data = this.formatData(evt.data);
       this.handleError(evt);
     });
 
     this.core.register({ observerClass: this, eventName: 'LegendEvent-' + this.chartId }).pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
       const clone = { ...evt.data };
       clone.xHTML = this.formatTime(evt.data.xHTML);
+      clone.series = this.formatLegendSeries(evt.data.series, this.data);
       this.legendData = clone;
     });
 
@@ -197,11 +240,6 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
         this.setupData(changes);
       }
     }
-  }
-
-  // TODO: Helps with template type checking. To be removed when 'strict' checks are enabled.
-  aggregationKey(key: keyof ReportingData['aggregations']): keyof ReportingData['aggregations'] {
-    return key;
   }
 
   private async setupData(changes: SimpleChanges): Promise<void> {

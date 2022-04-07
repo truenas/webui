@@ -37,7 +37,7 @@
 table.legend-table {
   display: table;
   margin-right: 36px;
-  width: 400px;
+  width: 420px;
 }
 
 tr.header th {
@@ -236,7 +236,7 @@ span.disk-detail-subtitle {
 
 .disk-detail-temps-bar {
   border-bottom: solid 3px;
-  border-image: linear-gradient(to right, lightseagreen, yellow 45%, red 55%)15;
+  border-image: linear-gradient(to right, lightseagreen, yellow 45%, red 55%);
   padding-bottom: 5px;
 }
 
