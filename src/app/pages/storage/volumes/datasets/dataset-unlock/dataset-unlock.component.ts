@@ -353,7 +353,11 @@ export class DatasetUnlockComponent implements FormConfiguration {
         datasets.push(ds);
       }
     }
-    const payload: DatasetEncryptionSummaryQueryParams = { key_file: body.key_file, datasets };
+    const payload: DatasetEncryptionSummaryQueryParams = {
+      key_file: body.key_file,
+      force: body.force,
+      datasets,
+    };
     const dialogRef = this.dialog.open(EntityJobComponent, {
       data: { title: helptext.fetching_encryption_summary_title },
       disableClose: true,
