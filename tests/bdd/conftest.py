@@ -95,8 +95,8 @@ def driver():
 
 
 # Close Firefox after all tests are completed
-# def pytest_sessionfinish(session, exitstatus):
-#     web_driver.quit()
+def pytest_sessionfinish(session, exitstatus):
+    web_driver.quit()
 
 
 @pytest.mark.hookwrapper
@@ -111,8 +111,7 @@ def pytest_runtest_makereport(item):
         if (report.skipped and xfail) or (report.failed and not xfail):
             screenshot_name = f'screenshot/{report.nodeid.replace("::", "_")}.png'
             # look if there is a Error window
-            if element_exist('//h1[contains(.,"FAILED")]'):
-
+            if element_exist('//h1[contains(.,"Error")]') or element_exist('//h1[contains(.,"FAILED")]'):
                 web_driver.find_element_by_xpath('//div[@ix-auto="button__backtrace-toggle"]').click()
                 time.sleep(2)
                 traceback_name = f'screenshot/{report.nodeid.replace("::", "_")}_error.txt'
