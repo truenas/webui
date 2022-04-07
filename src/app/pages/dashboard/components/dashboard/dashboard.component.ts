@@ -354,8 +354,8 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   startListeners(): void {
     this.core.register({ observerClass: this, eventName: 'UserAttributes' }).pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
-      if (evt.data.dashState) {
-        this.applyState(this.sanitizeState(evt.data.dashState));
+      if (evt.data?.dashState) {
+        this.applyState(this.sanitizeState(evt.data.dashState as DashConfigItem[]));
       }
       this.dashStateReady = true;
     });
@@ -564,7 +564,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       case 'pool':
         if (spl) {
           const pools = this.pools.filter((pool) => pool[key as keyof Pool] == value);
-          if (pools) { data = pools[0]; }
+          if (pools.length) { data = pools[0]; }
         } else {
           console.warn('DashConfigItem has no identifier!');
         }
@@ -572,7 +572,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       case 'interface':
         if (spl) {
           const nics = this.nics.filter((nic) => nic[key as keyof DashboardNetworkInterface] == value);
-          if (nics) { data = nics[0].state; }
+          if (nics.length) { data = nics[0].state; }
         } else {
           console.warn('DashConfigItem has no identifier!');
         }
@@ -623,7 +623,12 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     const hidden = this.dashState
-      .filter((w) => state.every((s) => !(w.identifier && w.identifier == s.identifier || w.name && w.name == s.name)))
+      .filter((w) => state.every((s) => {
+        if (w.identifier) {
+          return w.identifier !== s.identifier;
+        }
+        return w.name !== s.name;
+      }))
       .map((widget) => ({ ...widget, rendered: false }));
 
     this.setDashState([...state, ...hidden]);

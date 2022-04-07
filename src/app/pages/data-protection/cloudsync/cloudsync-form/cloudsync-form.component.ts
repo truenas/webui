@@ -446,6 +446,9 @@ export class CloudsyncFormComponent implements FormConfiguration {
         dialogRef.componentInstance.showRealtimeLogs = true;
         dialogRef.componentInstance.hideProgressValue = true;
         dialogRef.componentInstance.submit();
+        dialogRef.componentInstance.aborted.pipe(untilDestroyed(this)).subscribe(() => {
+          dialogRef.componentInstance.showCloseButton = true;
+        });
         dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
           dialogRef.componentInstance.showCloseButton = true;
           // this.matDialog.closeAll();
@@ -579,9 +582,9 @@ export class CloudsyncFormComponent implements FormConfiguration {
     if (data.direction === Direction.Pull) {
       data.path_destination = data.path;
 
-      if (data.attributes.include?.length) {
-        data.attributes.folder_source = data.attributes.include.map((p: string) => {
-          return data.attributes.folder + '/' + p.split('/')[1];
+      if (data.include?.length) {
+        data.attributes.folder_source = data.include.map((path: string) => {
+          return data.attributes.folder + '/' + path.split('/')[1];
         });
       } else {
         data.attributes.folder_source = data.attributes.folder;

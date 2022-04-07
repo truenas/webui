@@ -37,7 +37,6 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
   protected ipPlaceholder: string;
   protected failoverPlaceholder: string;
   saveSubmitText = helptext.int_save_button;
-  protected warnedAboutOffloading = false;
   protected isOneColumnForm = true;
   private lagPortsOption: Option[] = [];
 
@@ -232,12 +231,6 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
       label: true,
       class: 'other_settings',
       config: [
-        {
-          type: 'checkbox',
-          name: 'disable_offload_capabilities',
-          placeholder: helptext.disable_offload_capabilities_placeholder,
-          tooltip: helptext.disable_offload_capabilities_tooltip,
-        },
         {
           type: 'input',
           name: 'mtu',
@@ -461,21 +454,6 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
       failoverAddress['isHidden'] = false;
     }
     this.aliasesField = _.find(this.fieldConfig, { name: 'aliases' });
-
-    entityForm.formGroup.controls['disable_offload_capabilities'].valueChanges.pipe(untilDestroyed(this)).subscribe((res: boolean) => {
-      if (res && !this.warnedAboutOffloading) {
-        this.dialog.confirm({
-          title: helptext.disable_offload_capabilities_warning_title,
-          message: helptext.disable_offload_capabilities_warning_msg,
-        }).pipe(untilDestroyed(this)).subscribe((confirm: boolean) => {
-          if (confirm) {
-            this.warnedAboutOffloading = true;
-          } else {
-            entityForm.formGroup.controls['disable_offload_capabilities'].setValue(false);
-          }
-        });
-      }
-    });
 
     if (window.localStorage.getItem('product_type').includes(ProductType.Enterprise)) {
       this.ws.call('failover.licensed').pipe(untilDestroyed(this)).subscribe((isHa) => {

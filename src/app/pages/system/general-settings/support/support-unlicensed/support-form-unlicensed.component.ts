@@ -3,6 +3,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
+import { delay } from 'rxjs/operators';
 import { NewTicketType } from 'app/enums/new-ticket-type.enum';
 import { helptextSystemSupport as helptext } from 'app/helptext/system/support';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
@@ -16,7 +17,8 @@ import {
   FieldConfig, FormButtonConfig, FormSelectConfig,
 } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
-import { DialogService, WebSocketService } from 'app/services/';
+import { EntityUtils } from 'app/pages/common/entity/utils';
+import { AppLoaderService, DialogService, WebSocketService } from 'app/services/';
 import { ModalService } from 'app/services/modal.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 
@@ -35,6 +37,7 @@ export class SupportFormUnlicensedComponent implements FormConfiguration {
   title = helptext.ticket;
   protected isOneColumnForm = true;
   private token: string;
+  maxUploadSizeBytes = 0;
 
   fieldConfig: FieldConfig[] = [];
   fieldSets: FieldSet<this>[] = [
@@ -132,6 +135,7 @@ export class SupportFormUnlicensedComponent implements FormConfiguration {
     protected dialog: DialogService,
     private modalService: ModalService,
     private translate: TranslateService,
+    public loader: AppLoaderService,
     private sysGeneralService: SystemGeneralService,
   ) { }
 
@@ -141,6 +145,21 @@ export class SupportFormUnlicensedComponent implements FormConfiguration {
     if (oauthToken) {
       this.applyToken(oauthToken);
     }
+
+    this.loader.open();
+    this.ws.call('support.attach_ticket_max_size').pipe(delay(3000), untilDestroyed(this)).subscribe(
+      (sizeMibs: number) => {
+        this.loader.close();
+        this.maxUploadSizeBytes = +sizeMibs * 1024 * 1024;
+      },
+      (err: any) => {
+        this.loader.close();
+        new EntityUtils().handleError(this, err);
+        // This request is a prereq for this form to function successfully.
+        // Which means if it errors out, the form should be closed or navigated away
+        this.resetForm();
+      },
+    );
   }
 
   customSubmit(entityEdit: any): void {
@@ -161,12 +180,17 @@ export class SupportFormUnlicensedComponent implements FormConfiguration {
 
   openDialog(payload: CreateNewTicket): void {
     const dialogRef = this.matDialog.open(EntityJobComponent, { data: { title: this.translate.instant('Ticket'), closeOnClickOutside: true } });
-    let url: string;
+    let description: string;
     dialogRef.componentInstance.setCall('support.new_ticket', [payload]);
     dialogRef.componentInstance.submit();
     dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe((res: Job<NewTicketResponse>) => {
       if (res.result) {
-        url = `<a href="${res.result.url}" target="_blank" style="text-decoration:underline;">${res.result.url}</a>`;
+        const url = `<a href="${res.result.url}" target="_blank" style="text-decoration:underline;">${res.result.url}</a>`;
+        if (!res.result.has_debug && payload.attach_debug) {
+          description = this.translate.instant(helptext.debugSizeLimitWarning + '\n' + url);
+        } else {
+          description = url;
+        }
       }
       if (res.method === 'support.new_ticket' && this.subs && this.subs.length > 0) {
         this.subs.forEach((item) => {
@@ -188,9 +212,9 @@ export class SupportFormUnlicensedComponent implements FormConfiguration {
             dialogRef.componentInstance.setDescription(res.error);
           });
         });
-        dialogRef.componentInstance.setDescription(url);
+        dialogRef.componentInstance.setDescription(description);
       } else {
-        dialogRef.componentInstance.setDescription(url);
+        dialogRef.componentInstance.setDescription(description);
         this.resetForm();
       }
     });

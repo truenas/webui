@@ -38,6 +38,7 @@
         [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
         [matChipInputAddOnBlur]="addOnBlur"
         (matChipInputTokenEnd)="add($event)"
+        (paste)="paste($event)"
       >
       <ng-template #autoCompleteBlock>
         <input
