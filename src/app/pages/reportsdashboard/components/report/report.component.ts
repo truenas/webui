@@ -24,6 +24,7 @@ import { LocaleService } from 'app/services/locale.service';
 import { T } from '../../../../translate-marker';
 import { filter, take } from 'rxjs/operators';
 import { HttpClient } from '@angular/common/http';
+import _ from 'lodash';
 
 interface DateTime {
   dateFormat: string;
@@ -178,6 +179,45 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, A
     return result.toLowerCase() !== 'invalid date' ? result : null;
   }
 
+  formatInterfaceUnit(value: string) {
+    if (value && value.split(' ', 2)[0] !== '0') {
+      if (value.split(' ', 2)[1]) {
+        value += '/s';
+      } else {
+        value += 'b/s';
+      }
+    }
+    return value;
+  }
+
+  formatLegendSeries(series: any[], data) {
+    switch (data.name) {
+      case 'interface':
+        series.forEach((e) => {
+          e.yHTML = this.formatInterfaceUnit(e.yHTML);
+        });
+        break;
+      default:
+        break;
+    }
+    return series;
+  }
+
+  formatData(data: ReportData) {
+    switch (data.name) {
+      case 'interface':
+        if (data.aggregations) {
+          for (var key in data.aggregations) {
+            _.set(data.aggregations, key, (data.aggregations[key] as string[]).map((value) => this.formatInterfaceUnit(value)));
+          }
+        }
+        break;
+      default:
+        break;
+    }
+    return data;
+  }
+
   constructor(
     public router: Router,
     public translate: TranslateService,
@@ -189,13 +229,14 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, A
     super(translate);
 
     this.core.register({ observerClass: this, eventName: 'ReportData-' + this.chartId }).subscribe((evt: CoreEvent) => {
-      this.data = evt.data;
+      this.data = this.formatData(evt.data);
       this.handleError(evt);
     });
 
     this.core.register({ observerClass: this, eventName: 'LegendEvent-' + this.chartId }).subscribe((evt: CoreEvent) => {
       const clone = { ...evt.data };
       clone.xHTML = this.formatTime(evt.data.xHTML);
+      clone.series = this.formatLegendSeries(evt.data.series, this.data);
       this.legendData = clone;
     });
 

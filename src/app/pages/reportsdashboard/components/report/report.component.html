@@ -41,7 +41,7 @@
         <mat-card-content fxLayout="row wrap" fxLayout.gt-xs="row wrap" fxLayoutAlign="space-between start" fxFlex="100">
 
           <ng-container *ngIf="report.error">
-            <div class="chart-wrapper-outer" fxFlex="calc(100% - 400px)">
+            <div class="chart-wrapper-outer" fxFlex="calc(100% - 420px)">
               <div class="chart-wrapper-empty">
                 <div class="chart-wrapper-child">
                   <div>
@@ -55,7 +55,7 @@
           </ng-container>
 
           <ng-container *ngIf="report.empty">
-            <div class="chart-wrapper-outer" fxFlex="calc(100% - 400px)">
+            <div class="chart-wrapper-outer" fxFlex="calc(100% - 420px)">
               <div class="chart-wrapper-empty">
                 <div class="chart-wrapper-child">
                   <div>
@@ -70,7 +70,7 @@
           </ng-container>
 
           <ng-container *ngIf="!report.empty && !report.error">
-            <div class="chart-wrapper-outer" fxFlex="calc(100% - 400px)">
+            <div class="chart-wrapper-outer" fxFlex="calc(100% - 420px)">
               <div class="chart-wrapper" >
                 <linechart
                   *ngIf="report && data && chartColors"
@@ -118,7 +118,7 @@
 
             </div>
 
-            <section class="legend" #legendElement fxFlex="400px" fxLayout="column" fxLayoutAlign="start"  >
+            <section class="legend" #legendElement fxFlex="420px" fxLayout="column" fxLayoutAlign="start"  >
 
             <div *ngIf="report && data && data.legend" class="legend-timestamp" fxFlex="32px">
               <div >
