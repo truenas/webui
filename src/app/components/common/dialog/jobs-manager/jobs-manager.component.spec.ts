@@ -5,8 +5,8 @@ import {
 } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { JobItemComponent } from 'app/components/common/dialog/jobs-manager/components/job-item/job-item.component';
-import { CoreComponents } from 'app/core/components/core-components.module';
-import { FormatDateTimePipe } from 'app/core/components/pipes/format-datetime.pipe';
+import { CoreComponents } from 'app/core/core-components.module';
+import { FormatDateTimePipe } from 'app/core/pipes/format-datetime.pipe';
 import { byButton } from 'app/core/testing/utils/by-button.utils';
 import { mockWebsocket, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
 import { JobState } from 'app/enums/job-state.enum';

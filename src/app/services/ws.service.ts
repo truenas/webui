@@ -123,8 +123,8 @@ export class WebSocketService {
 
       this.pendingCalls.delete(data.id);
       if (data.error) {
-        console.error('Error: ', data.error);
-        call.observer.error(data.error);
+        console.error('Error: ', data.id, data.error);
+        call?.observer?.error(data.error);
       }
       if (call && call.observer) {
         call.observer.next(data.result);

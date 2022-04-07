@@ -4,7 +4,7 @@ import { FlexLayoutModule } from '@angular/flex-layout';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 import { MaterialModule } from 'app/app-material.module';
-import { CoreComponents } from 'app/core/components/core-components.module';
+import { CoreComponents } from 'app/core/core-components.module';
 import { TerminalModule } from 'app/pages/common/terminal/terminal.module';
 import {
   VmService, NetworkService, SystemGeneralService,

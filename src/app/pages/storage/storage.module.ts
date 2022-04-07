@@ -9,7 +9,7 @@ import { NgxDatatableModule } from '@swimlane/ngx-datatable';
 import { NgxFilesizeModule } from 'ngx-filesize';
 import { TreeTableModule } from 'primeng/treetable';
 import { MaterialModule } from 'app/app-material.module';
-import { CoreComponents } from 'app/core/components/core-components.module';
+import { CoreComponents } from 'app/core/core-components.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { CastModule } from 'app/modules/cast/cast.module';
 import { TooltipModule } from 'app/modules/tooltip/tooltip.module';

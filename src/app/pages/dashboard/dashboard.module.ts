@@ -4,7 +4,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 import { MaterialModule } from 'app/app-material.module';
 import { AppCommonModule } from 'app/components/common/app-common.module';
-import { CoreComponents } from 'app/core/components/core-components.module';
+import { CoreComponents } from 'app/core/core-components.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { CastModule } from 'app/modules/cast/cast.module';
 import { IxDropGridModule } from 'app/pages/common/ix-drop-grid/ix-drop-grid.module';
@@ -19,7 +19,6 @@ import { WidgetNetworkComponent } from 'app/pages/dashboard/components/widget-ne
 import { WidgetNicComponent } from 'app/pages/dashboard/components/widget-nic/widget-nic.component';
 import { WidgetPoolComponent } from 'app/pages/dashboard/components/widget-pool/widget-pool.component';
 import { WidgetStorageComponent } from 'app/pages/dashboard/components/widget-storage/widget-storage.component';
-import { SimpleFailoverBtnDialogComponent } from 'app/pages/dashboard/components/widget-sys-info/simple-failover-btn-dialog.component';
 import {
   SimpleFailoverBtnComponent,
 } from 'app/pages/dashboard/components/widget-sys-info/simple-failover-btn.component';
@@ -58,7 +57,6 @@ import { routing } from './dashboard.routing';
     WidgetNetworkComponent,
     WidgetStorageComponent,
     SimpleFailoverBtnComponent,
-    SimpleFailoverBtnDialogComponent,
   ],
   entryComponents: [
     WidgetComponent,

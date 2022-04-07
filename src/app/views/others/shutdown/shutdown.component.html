@@ -24,7 +24,7 @@
     </ng-template>
     <div>
       <span fxFlex class="copyright-txt">
-        TrueNAS {{productType}}® © {{copyrightYear}} -
+        TrueNAS {{productType | mapValue: productTypeLabels}}® © {{copyrightYear}} -
         <a href="http://www.ixsystems.com" target="_blank" title="iXsystems, Inc."> iXsystems, Inc</a>.
       </span>
     </div>

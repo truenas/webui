@@ -7,6 +7,7 @@ import { QRCodeModule } from 'angular2-qrcode';
 import { MarkdownModule } from 'ngx-markdown';
 import { NgxUploaderModule } from 'ngx-uploader';
 import { MaterialModule } from 'app/app-material.module';
+import { CoreComponents } from 'app/core/core-components.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { CastModule } from 'app/modules/cast/cast.module';
 import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
@@ -21,7 +22,6 @@ import { NtpServerFormComponent } from 'app/pages/system/general-settings/ntp-se
 import { NtpServerListComponent } from 'app/pages/system/general-settings/ntp-server/ntp-server-list/ntp-server-list.component';
 import { QrDialogComponent } from 'app/pages/system/two-factor/qr-dialog/qr-dialog.component';
 import { ManualUpdateComponent } from 'app/pages/system/update/manual-update/manual-update.component';
-import { CoreComponents } from '../../core/components/core-components.module';
 import { EntityModule } from '../common/entity/entity.module';
 import { AdvancedSettingsComponent } from './advanced/advanced-settings.component';
 import { ConsoleFormComponent } from './advanced/console-form/console-form.component';

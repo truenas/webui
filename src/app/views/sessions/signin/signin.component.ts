@@ -17,7 +17,7 @@ import { ApiService } from 'app/core/services/api.service';
 import { CoreService } from 'app/core/services/core-service/core.service';
 import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
 import { FailoverStatus } from 'app/enums/failover-status.enum';
-import { ProductType, productTypeReadableText } from 'app/enums/product-type.enum';
+import { ProductType, productTypeLabels } from 'app/enums/product-type.enum';
 import globalHelptext from 'app/helptext/global-helptext';
 import productText from 'app/helptext/product';
 import helptext from 'app/helptext/topbar';
@@ -41,8 +41,7 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
   @ViewChild('username', { read: ElementRef }) usernameInput: ElementRef<HTMLElement>;
 
   failed = false;
-  product_type: ProductType;
-  productTypeReadableText: string;
+  productType: ProductType;
   logo_ready = false;
   product = productText.product;
   ha_info_ready = false;
@@ -55,7 +54,7 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
 
   private interval: Interval;
   tokenObservable: Subscription;
-  HAInterval: Interval;
+  haInterval: Interval;
   isTwoFactor = false;
   private didSetFocus = false;
 
@@ -86,6 +85,7 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
 
   readonly ProductType = ProductType;
   readonly FailoverStatus = FailoverStatus;
+  readonly productTypeLabels = productTypeLabels;
 
   constructor(
     private ws: WebSocketService,
@@ -119,17 +119,16 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
     if (!this.logo_ready) {
       this.sysGeneralService.getProductType$.pipe(untilDestroyed(this)).subscribe((res) => {
         this.logo_ready = true;
-        this.product_type = res as ProductType;
-        this.productTypeReadableText = productTypeReadableText.get(this.product_type);
+        this.productType = res as ProductType;
         if (this.interval) {
           clearInterval(this.interval);
         }
-        if (this.product_type.includes(ProductType.Enterprise) || this.product_type === ProductType.Scale) {
-          if (this.HAInterval) {
-            clearInterval(this.HAInterval);
+        if (this.productType.includes(ProductType.Enterprise) || this.productType === ProductType.Scale) {
+          if (this.haInterval) {
+            clearInterval(this.haInterval);
           }
           this.getHaStatus();
-          this.HAInterval = setInterval(() => {
+          this.haInterval = setInterval(() => {
             this.getHaStatus();
           }, 6000);
         } else if (this.canLogin()) {
@@ -185,8 +184,8 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
     if (this.interval) {
       clearInterval(this.interval);
     }
-    if (this.HAInterval) {
-      clearInterval(this.HAInterval);
+    if (this.haInterval) {
+      clearInterval(this.haInterval);
     }
     this.core.unregister({ observerClass: this });
     if (this.tokenObservable) {
@@ -243,7 +242,7 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
     if (this.logo_ready && this.connected
        && (this.failover_status === FailoverStatus.Single
         || this.failover_status === FailoverStatus.Master
-        || this.product_type === ProductType.Core)) {
+        || this.productType === ProductType.Core)) {
       if (!this.didSetFocus && this.usernameInput) {
         setTimeout(() => {
           this.didSetFocus = true;
@@ -258,7 +257,7 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   get productSupportsHa(): boolean {
-    return this.product_type?.includes(ProductType.Enterprise) || this.product_type === ProductType.Scale;
+    return this.productType?.includes(ProductType.Enterprise) || this.productType === ProductType.Scale;
   }
 
   getHaStatus(): void {
@@ -330,13 +329,11 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
     this.submitButton.disabled = true;
     this.progressBar.mode = 'indeterminate';
 
-    if (this.isTwoFactor) {
-      this.ws.login(this.signinData.username, this.signinData.password, this.signinData.otp)
-        .pipe(untilDestroyed(this)).subscribe((result) => { this.loginCallback(result); });
-    } else {
-      this.ws.login(this.signinData.username, this.signinData.password)
-        .pipe(untilDestroyed(this)).subscribe((result) => { this.loginCallback(result); });
-    }
+    const request$ = this.isTwoFactor
+      ? this.ws.login(this.signinData.username, this.signinData.password, this.signinData.otp)
+      : this.ws.login(this.signinData.username, this.signinData.password);
+
+    request$.pipe(untilDestroyed(this)).subscribe((result) => this.loginCallback(result));
   }
 
   setpassword(): void {
@@ -361,8 +358,8 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
       if (this.interval) {
         clearInterval(this.interval);
       }
-      if (this.HAInterval) {
-        clearInterval(this.HAInterval);
+      if (this.haInterval) {
+        clearInterval(this.haInterval);
       }
       if (this.ws.redirectUrl) {
         this.router.navigateByUrl(this.ws.redirectUrl);
