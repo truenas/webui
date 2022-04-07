@@ -813,8 +813,8 @@ export class IscsiWizardComponent implements WizardConfiguration {
       },
     );
     this.ws.call('pool.dataset.recommended_zvol_blocksize', [pool]).pipe(untilDestroyed(this)).subscribe(
-      (res) => {
-        this.entityWizard.formArray.get([0]).get('volblocksize').setValue(res);
+      (recommendedSize) => {
+        this.entityWizard.formArray.get([0]).get('volblocksize').setValue(recommendedSize);
       },
       () => {
         datasetField.hasErrors = true;

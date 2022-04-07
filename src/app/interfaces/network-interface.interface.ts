@@ -1,9 +1,10 @@
 import {
+  CreateNetworkInterfaceType, LacpduRate,
   LinkAggregationProtocol,
   LinkState,
   NetworkInterfaceAliasType,
   NetworkInterfaceFlags,
-  NetworkInterfaceType,
+  NetworkInterfaceType, XmitHashPolicy,
 } from 'app/enums/network-interface.enum';
 
 export interface BaseNetworkInterface {
@@ -103,3 +104,29 @@ export interface ServiceRestartedOnNetworkSync {
   service: string;
   ips: string[];
 }
+
+export interface NetworkInterfaceCreate {
+  name?: string;
+  description?: string;
+  type?: CreateNetworkInterfaceType;
+  disable_offload_capabilities?: boolean;
+  ipv4_dhcp?: boolean;
+  ipv6_auto?: boolean;
+  aliases?: NetworkInterfaceAlias[];
+  failover_critical?: boolean;
+  failover_group?: number;
+  failover_vhid?: number;
+  failover_aliases: NetworkInterfaceAlias[];
+  failover_virtual_aliases: NetworkInterfaceAlias[];
+  bridge_members: string[];
+  lag_protocol?: LinkAggregationProtocol;
+  xmit_hash_policy?: XmitHashPolicy;
+  lacpdu_rate?: LacpduRate;
+  lag_ports?: string[];
+  vlan_parent_interface?: string;
+  vlan_tag?: number;
+  vlan_pcp?: number;
+  mtu?: number;
+}
+
+export type NetworkInterfaceUpdate = Omit<NetworkInterfaceCreate, 'type'>;
