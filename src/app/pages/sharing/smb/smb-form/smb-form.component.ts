@@ -80,7 +80,7 @@ export class SmbFormComponent implements OnInit {
     enabled: [true],
     acl: [false],
     ro: [false],
-    browsable: [false],
+    browsable: [true],
     guestok: [false],
     abe: [false],
     hostsallow: [[] as string[]],
@@ -139,7 +139,6 @@ export class SmbFormComponent implements OnInit {
       this.afpConfirm(value);
     });
 
-    this.form.get('browsable').setValue(true);
     if (!this.isNew) {
       this.form.get('aapl_name_mangling').valueChanges.pipe(untilDestroyed(this)).subscribe((value) => {
         if (value !== this.mangle && !this.mangleWarningSent) {

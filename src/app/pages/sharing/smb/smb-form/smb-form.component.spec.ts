@@ -4,18 +4,19 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
-import { ServiceName } from 'app/enums/service-name.enum';
-import { Service } from 'app/interfaces/service.interface';
-import { SmbPresets, SmbShare } from 'app/interfaces/smb-share.interface';
-import { IxInputHarness } from 'app/modules/ix-forms/components/ix-input/ix-input.harness';
-import { IxSelectHarness } from 'app/modules/ix-forms/components/ix-select/ix-select.harness';
-import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
-import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
-import { SmbFormComponent } from 'app/pages/sharing/smb/smb-form/smb-form.component';
-import { DialogService } from 'app/services';
-import { FilesystemService } from 'app/services/filesystem.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { mockCall, mockWebsocket } from '../../../../core/testing/utils/mock-websocket.utils';
+import { ServiceName } from '../../../../enums/service-name.enum';
+import { Service } from '../../../../interfaces/service.interface';
+import { SmbPresets, SmbShare } from '../../../../interfaces/smb-share.interface';
+import { IxCheckboxHarness } from '../../../../modules/ix-forms/components/ix-checkbox/ix-checkbox.harness';
+import { IxInputHarness } from '../../../../modules/ix-forms/components/ix-input/ix-input.harness';
+import { IxSelectHarness } from '../../../../modules/ix-forms/components/ix-select/ix-select.harness';
+import { IxFormsModule } from '../../../../modules/ix-forms/ix-forms.module';
+import { IxFormHarness } from '../../../../modules/ix-forms/testing/ix-form.harness';
+import { DialogService } from '../../../../services';
+import { FilesystemService } from '../../../../services/filesystem.service';
+import { IxSlideInService } from '../../../../services/ix-slide-in.service';
+import { SmbFormComponent } from './smb-form.component';
 
 describe('SmbFormComponent',
   () => {
@@ -31,8 +32,8 @@ describe('SmbFormComponent',
       browsable: true,
       recyclebin: true,
       guestok: true,
-      hostsallow: [],
-      hostsdeny: [],
+      hostsallow: ['host1'],
+      hostsdeny: ['host2'],
       auxsmbconf: '',
       aapl_name_mangling: false,
       abe: true,
@@ -182,24 +183,9 @@ describe('SmbFormComponent',
       await advancedButton.click();
 
       const fields = Object.keys(await form.getControlHarnessesDict());
-      expect(fields).toContain('Enable ACL');
-      expect(fields).toContain('Export Read Only');
-      expect(fields).toContain('Browsable to Network Clients');
-      expect(fields).toContain('Allow Guest Access');
-      expect(fields).toContain('Access Based Share Enumeration');
-      expect(fields).toContain('Hosts Allow');
-      expect(fields).toContain('Hosts Deny');
-      expect(fields).toContain('Use as Home Share');
-      expect(fields).toContain('Time Machine');
-      expect(fields).toContain('Legacy AFP Compatibility');
-      expect(fields).toContain('Enable Shadow Copies');
-      expect(fields).toContain('Export Recycle Bin');
-      expect(fields).toContain('Use Apple-style Character Encoding');
-      expect(fields).toContain('Enable Alternate Data Streams');
-      expect(fields).toContain('Enable SMB2/3 Durable Handles');
-      expect(fields).toContain('Enable FSRVP');
-      expect(fields).toContain('Path Suffix');
-      expect(fields).toContain('Auxiliary Parameters');
+      for (const param in formLabels) {
+        expect(fields).toContain(formLabels[param]);
+      }
     });
 
     it('sets the correct options array for purpose field', async () => {
@@ -247,5 +233,34 @@ describe('SmbFormComponent',
         }
       }
       expect(true).toBeTruthy();
+    });
+
+    it('should show confirmation warning when afp is checked', async () => {
+      const advancedButton = await loader.getHarness(MatButtonHarness.with({ text: 'Advanced Options' }));
+      await advancedButton.click();
+      const afpCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: formLabels.afp }));
+      await afpCheckbox.setValue(true);
+      expect(spectator.inject(DialogService).confirm).toHaveBeenCalled();
+    });
+
+    it('shows values of existing share when editing', async () => {
+      spectator.component.setSmbShareForEdit(existingShare);
+
+      const advancedButton = await loader.getHarness(MatButtonHarness.with({ text: 'Advanced Options' }));
+      await advancedButton.click();
+
+      const values = await form.getValues();
+
+      const existingShareWithLabels: { [key: string]: any } = {};
+      for (const key in existingShare) {
+        if (!formLabels[key]) {
+          continue;
+        }
+        existingShareWithLabels[formLabels[key]] = existingShare[key as keyof SmbShare];
+      }
+
+      existingShareWithLabels[formLabels.purpose] = presets[existingShareWithLabels[formLabels.purpose]].verbose_name;
+
+      expect(values).toMatchObject(existingShareWithLabels);
     });
   });
