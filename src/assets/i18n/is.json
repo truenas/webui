@@ -1836,6 +1836,7 @@
   "Importing pools.": "",
   "In": "",
   "In KiBs or greater. A default of <i>0 KiB</i> means unlimited. ": "",
+  "In some cases it's possible that the provided key/passphrase is valid but the path where the dataset is supposed to be mounted after being unlocked already exists and is not empty. In this case, unlock operation would fail. This can be overridden by Force flag. When it is set, system will rename the existing directory/file path where the dataset should be mounted resulting in successful unlock of the dataset.": "",
   "Include Dataset Properties": "",
   "Include Password Secret Seed": "",
   "Include dataset properties with the replicated  snapshots.": "",
