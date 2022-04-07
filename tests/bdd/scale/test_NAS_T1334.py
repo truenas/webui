@@ -1,11 +1,9 @@
 # coding=utf-8
 """SCALE UI: feature tests."""
 
-import time
 from function import (
     wait_on_element,
     is_element_present,
-    attribute_value_exist,
     wait_on_element_disappear,
 )
 from pytest_bdd import (
@@ -13,8 +11,9 @@ from pytest_bdd import (
     scenario,
     then,
     when,
-    parsers
 )
+import pytest
+pytestmark = [pytest.mark.debug_test]
 
 
 @scenario('features/NAS-T1334.feature', 'Apps Page - Stop an App')
@@ -57,6 +56,7 @@ def the_apps_page_load_open_installed_applications(driver):
         driver.find_element_by_xpath('//div[contains(text(),"Installed Applications")]').click()
         assert wait_on_element(driver, 7, '//h3[contains(.,"No Applications Installed")]')
 
+
 @then('click the stop button and confirm')
 def click_the_stop_button_and_confirm(driver):
     """click the stop button and confirm."""
@@ -70,4 +70,3 @@ def verify_the_application_has_stopped(driver):
     assert wait_on_element(driver, 5, '//h1[contains(.,"Stopping")]')
     assert wait_on_element_disappear(driver, 60, '//h1[contains(.,"Stopping")]')
     assert wait_on_element(driver, 15, '//mat-card[contains(.,"collabora-test")]//span[contains(.,"STOPPED ")]')
-

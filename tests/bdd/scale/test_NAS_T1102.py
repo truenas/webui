@@ -13,8 +13,6 @@ from pytest_bdd import (
     then,
     when,
 )
-import pytest
-pytestmark = [pytest.mark.debug_test]
 
 
 @scenario('features/NAS-T1102.feature', 'Creating new pool and set it as a system dataset')

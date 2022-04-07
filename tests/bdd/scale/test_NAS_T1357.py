@@ -1,7 +1,6 @@
 # coding=utf-8
 """SCALE UI: feature tests."""
 
-import time
 from function import (
     wait_on_element,
     is_element_present,
@@ -49,20 +48,19 @@ def on_the_dashboard_click_on_apps(driver):
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Apps"]').click()
 
 
-@then('Stop machinaris from running')
-def stop_machinaris_from_running(driver):
-    """Stop machinaris from running."""
+@then('Stop nextcloud from running')
+def stop_nextcloud_from_running(driver):
+    """Stop nextcloud from running."""
     assert wait_on_element(driver, 10, '//h1[text()="Applications"]')
-    if wait_on_element(driver, 60, '//strong[text()="machinaris-test"]') is False:
+    if wait_on_element(driver, 60, '//strong[text()="nextcloud-test"]') is False:
         assert wait_on_element(driver, 10, '//div[text()="Available Applications"]', 'clickable')
         driver.find_element_by_xpath('//div[text()="Available Applications"]').click()
-        wait_on_element(driver, 60, '//h3[text()="machinaris"]')
+        assert wait_on_element(driver, 60, '//h3[text()="nextcloud"]')
         assert wait_on_element(driver, 10, '//div[text()="Installed Applications"]', 'clickable')
         driver.find_element_by_xpath('//div[text()="Installed Applications"]').click()
-    assert wait_on_element(driver, 60, '//strong[text()="machinaris-test"]')
-    time.sleep(1)
-    assert wait_on_element(driver, 60, '//mat-card[contains(.,"machinaris")]//span[contains(.,"Stop")]', 'clickable')
-    driver.find_element_by_xpath('//mat-card[contains(.,"machinaris")]//span[contains(.,"Stop")]').click()
+    assert wait_on_element(driver, 60, '//strong[text()="nextcloud-test"]')
+    assert wait_on_element(driver, 45, '//mat-card[contains(.,"nextcloud")]//span[contains(.,"Stop")]', 'clickable')
+    driver.find_element_by_xpath('//mat-card[contains(.,"nextcloud")]//span[contains(.,"Stop")]').click()
 
 
 @then('Verify the application has stopped')
@@ -70,7 +68,7 @@ def verify_the_application_has_stopped(driver):
     """Verify the application has stopped."""
     assert wait_on_element(driver, 5, '//h1[contains(.,"Stopping")]')
     assert wait_on_element_disappear(driver, 180, '//h1[contains(.,"Stopping")]')
-    assert wait_on_element(driver, 15, '//mat-card[contains(.,"machinaris-test")]//span[contains(.,"STOPPED ")]')
+    assert wait_on_element(driver, 15, '//mat-card[contains(.,"nextcloud-test")]//span[contains(.,"STOPPED ")]')
 
 
 @then('open available applications')
@@ -88,11 +86,12 @@ def when_the_apps_page_loads_open_manager_docker_images(driver):
     driver.find_element_by_xpath('//div[contains(text(),"Manage Docker Images")]').click()
 
 
-@then('click the three dots icon for machinaris')
-def click_the_three_dots_icon_for_machinaris(driver):
-    """click the three dots icon for machinaris."""
-    assert wait_on_element(driver, 20, '//tr[contains(.,"machinaris")]//mat-icon[contains(.,"more_vert")]', 'clickable')
-    driver.find_element_by_xpath('//tr[contains(.,"machinaris")]//mat-icon[contains(.,"more_vert")]').click()
+@then('click the three dots icon for nextcloud')
+def click_the_three_dots_icon_for_nextcloud(driver):
+    """click the three dots icon for nextcloud."""
+    assert wait_on_element(driver, 10, '//div[contains(text(),"Items per page:")]')
+    assert wait_on_element(driver, 20, '//tr[contains(.,"nextcloud-")]//mat-icon[contains(.,"more_vert")]', 'clickable')
+    driver.find_element_by_xpath('//tr[contains(.,"nextcloud")]//mat-icon[contains(.,"more_vert")]').click()
 
 
 @then('click delete')
@@ -105,6 +104,7 @@ def click_delete(driver):
 @then('confirm')
 def confirm(driver):
     """confirm."""
+
     assert wait_on_element(driver, 2, '//mat-checkbox[@ix-auto="checkbox__CONFIRM"]', 'clickable')
     driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__CONFIRM"]').click()
     wait_on_element(driver, 10, '//button[@ix-auto="button__DELETE"]', 'clickable')
@@ -115,5 +115,5 @@ def confirm(driver):
 def confirm_image_is_deleted(driver):
     """confirm image is deleted."""
     assert wait_on_element(driver, 10, '//*[contains(.,"Please wait")]')
-    assert wait_on_element_disappear(driver, 30, '//*[contains(.,"Please wait")]')
-    assert is_element_present(driver, '//tr[contains(.,"machinaris")]') is False
+    assert wait_on_element_disappear(driver, 35, '//*[contains(.,"Please wait")]')
+    assert wait_on_element_disappear(driver, 15, '//tr[contains(.,"nextcloud")]')

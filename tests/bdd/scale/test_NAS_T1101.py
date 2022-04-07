@@ -12,8 +12,6 @@ from pytest_bdd import (
     then,
     when,
 )
-import pytest
-pytestmark = [pytest.mark.debug_test]
 
 
 @scenario('features/NAS-T1101.feature', 'Wipe one disk not in a pool')
