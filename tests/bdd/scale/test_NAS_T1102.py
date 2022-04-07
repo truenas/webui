@@ -1,6 +1,7 @@
 # coding=utf-8
 """SCALE UI: feature tests."""
 
+import time
 from function import (
     wait_on_element,
     is_element_present,
@@ -13,7 +14,6 @@ from pytest_bdd import (
     when,
 )
 import pytest
-
 pytestmark = [pytest.mark.debug_test]
 
 
@@ -132,7 +132,9 @@ def click_on_system_dataset_configure_button_and_close_the_popup(driver):
 @then('click on System Dataset Pool select system, click Save')
 def click_on_system_dataset_pool_select_system_click_save(driver):
     """click on System Dataset Pool select system, click Save."""
-    assert wait_on_element(driver, 5, '//h3[contains(.,"System Dataset Pool")]')
+    assert wait_on_element(driver, 5, '//h3[contains(text(),"System Dataset Pool") and @class="ix-formtitle"]')
+    assert wait_on_element(driver, 5, '//label[contains(text(),"Select Pool")]')
+    time.sleep(0.5)
     assert wait_on_element(driver, 5, '//mat-select', 'clickable')
     driver.find_element_by_xpath('//mat-select').click()
     assert wait_on_element(driver, 5, '//mat-option[@role="option"]//span[contains(.,"system")]')
@@ -144,4 +146,4 @@ def click_on_system_dataset_pool_select_system_click_save(driver):
 @then('Please wait should appear while settings are being applied')
 def please_wait_should_appear_while_settings_are_being_applied(driver):
     """Please wait should appear while settings are being applied."""
-    assert wait_on_element_disappear(driver, 20, '//ix-slide-in[@id="ix-slide-in-form"]//button//span[contains(.,"Save")]')
+    assert wait_on_element_disappear(driver, 30, '//ix-slide-in[@id="ix-slide-in-form"]//button//span[contains(.,"Save")]')
