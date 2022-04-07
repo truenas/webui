@@ -241,7 +241,7 @@ export class TopbarComponent implements OnInit, OnDestroy {
       clearInterval(this.interval);
     }
 
-    this.ws.unsubscribe('failover.disabled_reasons');
+    this.ws.unsubscribe('failover.disabled.reasons');
 
     this.core.unregister({ observerClass: this });
   }

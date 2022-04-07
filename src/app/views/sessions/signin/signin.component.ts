@@ -271,7 +271,7 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
           }, (err) => {
             console.error(err);
           });
-          this.ws.call('failover.disabled_reasons').pipe(untilDestroyed(this)).subscribe((reasons) => {
+          this.ws.call('failover.disabled.reasons').pipe(untilDestroyed(this)).subscribe((reasons) => {
             this.checking_status = false;
             this.ha_disabled_reasons = reasons;
             this.show_reasons = false;
