@@ -48,8 +48,8 @@ export class SystemProfileService extends BaseService {
     });
 
     // HA Status change events
-    this.websocket.call('failover.disabled.reasons').subscribe((res) => {
-      this.updateHa(res);
+    this.websocket.subscribe('failover.disabled.reasons').subscribe((res) => {
+      this.updateHa(res.fields);
     });
   }
 
