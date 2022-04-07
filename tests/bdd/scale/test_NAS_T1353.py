@@ -14,6 +14,7 @@ from pytest_bdd import (
 import pytest
 pytestmark = [pytest.mark.debug_test]
 
+
 @scenario('features/NAS-T1353.feature', 'Apps Page - Validate  adding TrueCharts')
 def test_apps_page__validate__adding_truecharts():
     """Apps Page - Validate  adding TrueCharts."""

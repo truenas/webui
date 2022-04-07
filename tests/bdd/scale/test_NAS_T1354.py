@@ -16,6 +16,7 @@ from pytest_bdd import (
 import pytest
 pytestmark = [pytest.mark.debug_test]
 
+
 @scenario('features/NAS-T1354.feature', 'Apps Page - Validate removing a Catalog')
 def test_apps_page__validate_removing_a_catalog():
     """Apps Page - Validate removing a Catalog."""

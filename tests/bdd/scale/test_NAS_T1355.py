@@ -1,11 +1,9 @@
 # coding=utf-8
 """SCALE UI: feature tests."""
 
-import time
 from function import (
     wait_on_element,
     is_element_present,
-    attribute_value_exist,
     wait_on_element_disappear,
 )
 from pytest_bdd import (
@@ -13,8 +11,9 @@ from pytest_bdd import (
     scenario,
     then,
     when,
-    parsers
 )
+import pytest
+pytestmark = [pytest.mark.debug_test]
 
 
 @scenario('features/NAS-T1355.feature', 'Apps Page - Validate removing an app')
@@ -66,7 +65,6 @@ def click_three_dots_icon_for_chia_and_select_delete(driver):
     driver.find_element_by_xpath('//span[contains(.,"Delete")]').click()
 
 
-
 @then('confirm the delete confirmation')
 def confirm_the_delete_confirmation(driver):
     """confirm the delete confirmation."""
@@ -77,6 +75,7 @@ def confirm_the_delete_confirmation(driver):
     driver.find_element_by_xpath('//button[@ix-auto="button__CONTINUE"]').click()
     assert wait_on_element(driver, 5, '//*[contains(.,"Deleting...")]')
     assert wait_on_element_disappear(driver, 60, '//*[contains(.,"Deleting...")]')
+
 
 @then('confirm deletion is successful')
 def confirm_deletion_is_successful(driver):
