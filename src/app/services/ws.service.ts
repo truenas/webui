@@ -46,7 +46,7 @@ export class WebSocketService {
 
   subscriptions = new Map<string, Observer<unknown>[]>();
 
-  constructor(private router: Router) {
+  constructor(protected router: Router) {
     this.authStatus$ = new Subject<boolean>();
     this.onOpenSubject$ = new Subject();
     this.onCloseSubject$ = new Subject();
