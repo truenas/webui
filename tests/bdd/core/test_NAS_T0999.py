@@ -91,13 +91,15 @@ def the_users_page_should_open(driver):
 @then('click the Greater-Than-Sign right of the root user')
 def click_the_greaterthansign_right_of_the_user(driver):
     """click the Greater-Than-Sign right of the root user."""
+    assert wait_on_element(driver, 7, '//div[@id="root_Username"]')
+    assert wait_on_element(driver, 7, '//a[@ix-auto="expander__root"]', 'clickable')
     driver.find_element_by_xpath('//a[@ix-auto="expander__root"]').click()
 
 
 @then('the root user field should expand down, then click the Edit button')
 def the_root_user_field_should_expand_down_then_click_the_edit_button(driver):
     """the root user field should expand down, then click the Edit button."""
-    assert wait_on_element(driver, 7, '//button[@ix-auto="button__EDIT_root"]')
+    assert wait_on_element(driver, 7, '//button[@ix-auto="button__EDIT_root"]', 'inputable')
     driver.find_element_by_xpath('//button[@ix-auto="button__EDIT_root"]').click()
 
 
@@ -111,7 +113,7 @@ def the_user_edit_page_should_open(driver):
 @then('input the public key in the SSH Public Key field, then click save')
 def input_the_public_key_in_the_ssh_public_key_field_then_click_save(driver, ssh_key):
     """input the public key in the SSH Public Key field, then click save."""
-    assert wait_on_element(driver, 5, '//textarea[@placeholder="SSH Public Key"]', 'clickable')
+    assert wait_on_element(driver, 5, '//textarea[@placeholder="SSH Public Key"]', 'inputable')
     driver.find_element_by_xpath('//textarea[@placeholder="SSH Public Key"]').clear()
     driver.find_element_by_xpath('//textarea[@placeholder="SSH Public Key"]').send_keys(ssh_key)
     assert wait_on_element(driver, 5, '//button[@ix-auto="button__SAVE"]', 'clickable')
@@ -128,9 +130,9 @@ def changes_should_be_saved_without_an_error(driver):
 @then('reopen the root user edit page')
 def reopen_the_user_edit_page(driver):
     """reopen the root user edit page."""
-    assert wait_on_element(driver, 5, '//a[@ix-auto="expander__root"]')
+    assert wait_on_element(driver, 5, '//a[@ix-auto="expander__root"]', 'clickable')
     driver.find_element_by_xpath('//a[@ix-auto="expander__root"]').click()
-    assert wait_on_element(driver, 5, '//button[@ix-auto="button__EDIT_root"]')
+    assert wait_on_element(driver, 5, '//button[@ix-auto="button__EDIT_root"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__EDIT_root"]').click()
     assert wait_on_element(driver, 5, '//h4[contains(.,"Identification")]')
     time.sleep(0.5)
@@ -139,7 +141,7 @@ def reopen_the_user_edit_page(driver):
 @then('verify the public key save properly')
 def verify_the_public_key_save_properly(driver, ssh_key):
     """verify the public key save properly."""
-    assert wait_on_element(driver, 5, '//textarea[@placeholder="SSH Public Key"]')
+    assert wait_on_element(driver, 5, '//textarea[@placeholder="SSH Public Key"]', 'inputable')
     assert attribute_value_exist(driver, '//textarea[@placeholder="SSH Public Key"]', 'value', ssh_key)
 
 

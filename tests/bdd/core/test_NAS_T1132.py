@@ -453,7 +453,9 @@ def on_the_box_test_folder_tab_delete_one_file(driver):
     driver.refresh()
     time.sleep(1)
     assert wait_on_element(driver, 7, '//h1[text()="test"]')
-    assert wait_on_element(driver, 5, '//a[text()="Gloomy_Forest_wallpaper_ForWallpapercom.jpg"]')
+    assert wait_on_element(driver, 7, '//a[text()="music"]', 'clickable')
+    assert wait_on_element(driver, 5, '//a[text()="Explaining_BSD.pdf"]', 'clickable')
+    assert wait_on_element(driver, 5, '//a[text()="Gloomy_Forest_wallpaper_ForWallpapercom.jpg"]', 'clickable')
     action = ActionChains(driver)
     action.move_to_element(driver.find_element_by_xpath('//a[text()="Gloomy_Forest_wallpaper_ForWallpapercom.jpg"]')).perform()
     action.context_click().perform()
@@ -462,7 +464,7 @@ def on_the_box_test_folder_tab_delete_one_file(driver):
     assert wait_on_element(driver, 5, '//h2[contains(.,"Delete Item")]')
     assert wait_on_element(driver, 5, '//button[@data-resin-target="primarybutton"]', 'clickable')
     driver.find_element_by_xpath('//button[@data-resin-target="primarybutton"]').click()
-    assert wait_on_element_disappear(driver, 5, '//a[text()="Gloomy_Forest_wallpaper_ForWallpapercom.jpg"]')
+    assert wait_on_element_disappear(driver, 7, '//a[text()="Gloomy_Forest_wallpaper_ForWallpapercom.jpg"]')
 
 
 @then('on the NAS cloud sync task tab, click Run Now')

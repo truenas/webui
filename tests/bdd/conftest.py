@@ -118,6 +118,7 @@ def pytest_runtest_makereport(item):
         error_xpath = '//h1[normalize-space(text())="Error"]'
         failed_xpath = '//h1[normalize-space(text())="FAILED"]'
         download_xpath = '//h1[normalize-space(text())="Error Downloading File"]'
+        # This looks for plugins install error box and will close the dialog.
         if element_exist(error_xpath) or element_exist(failed_xpath) or element_exist(download_xpath):
             web_driver.find_element_by_xpath('//div[@ix-auto="button__backtrace-toggle"]').click()
             time.sleep(2)
@@ -131,6 +132,14 @@ def pytest_runtest_makereport(item):
                 # if can't click Close ESCAPE
                 ActionChains(web_driver).send_keys(Keys.ESCAPE).perform()
         save_screenshot(screenshot_name)
+        # This looks for plugins install error box and will close the dialog.
+        if element_exist('//mat-dialog-container[contains(.,"Install") and contains(.,"Error")]'):
+            try:
+                web_driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
+            except ElementClickInterceptedException:
+                # if can't click Close ESCAPE
+                ActionChains(web_driver).send_keys(Keys.ESCAPE).perform()
+
         # To make sure we are not stuck on a combobox to stop other test to fail
         if element_exist('//mat-option'):
             ActionChains(web_driver).send_keys(Keys.TAB).perform()

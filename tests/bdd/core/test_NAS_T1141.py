@@ -239,8 +239,8 @@ def open_a_new_tab_navigate_to_google_drive_url_and_input_account_id(driver, dri
     driver.switch_to.window(driver.window_handles[1])
     driver.get(driver_url)
     assert wait_on_element(driver, 5, '//a[@title="Google"]')
-    assert wait_on_element(driver, 5, '//div[@class="glue-header__cta"]//a[contains(text(),"Go to Drive")]', 'clickable')
-    driver.find_element_by_xpath('//div[@class="glue-header__cta"]//a[contains(text(),"Go to Drive")]').click()
+    assert wait_on_element(driver, 5, '//div[@class="glue-header__container glue-header__container--cta"]//a[contains(text(),"Go to Drive")]', 'clickable')
+    driver.find_element_by_xpath('//div[@class="glue-header__container glue-header__container--cta"]//a[contains(text(),"Go to Drive")]').click()
 
 
 @then('enter the <user_name> click Next and enter the <password> click Next')
