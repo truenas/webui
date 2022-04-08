@@ -29,7 +29,6 @@ import { WidgetNetworkComponent } from 'app/pages/dashboard/components/widget-ne
 import { WidgetNicComponent } from 'app/pages/dashboard/components/widget-nic/widget-nic.component';
 import { WidgetPoolComponent } from 'app/pages/dashboard/components/widget-pool/widget-pool.component';
 import { WidgetStorageComponent } from 'app/pages/dashboard/components/widget-storage/widget-storage.component';
-import { SimpleFailoverBtnDialogComponent } from 'app/pages/dashboard/components/widget-sys-info/simple-failover-btn-dialog.component';
 import {
   SimpleFailoverBtnComponent,
 } from 'app/pages/dashboard/components/widget-sys-info/simple-failover-btn.component';
@@ -78,7 +77,6 @@ import { routing } from './dashboard.routing';
     WidgetNetworkComponent,
     WidgetStorageComponent,
     SimpleFailoverBtnComponent,
-    SimpleFailoverBtnDialogComponent,
   ],
 })
 export class DashboardModule {

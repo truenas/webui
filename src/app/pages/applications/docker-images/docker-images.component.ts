@@ -32,7 +32,7 @@ export class DockerImagesComponent implements EntityTableConfig {
   disableActionsConfig = true;
   confirmDeleteDialog: EntityTableConfirmDialog = {};
 
-  wsDeleteParams(row: any, id: string): unknown[] {
+  wsDeleteParams(_: unknown, id: string): unknown[] {
     return [id, { force: this.forceDelete }];
   }
 

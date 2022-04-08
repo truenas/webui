@@ -95,7 +95,7 @@ export interface AppTableConfig<P = any> {
   onButtonClick?(row: unknown): void;
 
   expandable?: boolean; // field introduced by ExpandableTable, "fake" field
-  afterGetDataExpandable?(data: any): any; // field introduced by ExpandableTable, "fake" field
+  afterGetDataExpandable?<T>(data: T[]): T[]; // field introduced by ExpandableTable, "fake" field
 }
 
 @UntilDestroy()
