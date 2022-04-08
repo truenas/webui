@@ -9,6 +9,7 @@ import { ServiceName } from '../../../../enums/service-name.enum';
 import { Service } from '../../../../interfaces/service.interface';
 import { SmbPresets, SmbShare } from '../../../../interfaces/smb-share.interface';
 import { IxCheckboxHarness } from '../../../../modules/ix-forms/components/ix-checkbox/ix-checkbox.harness';
+import { IxExplorerHarness } from '../../../../modules/ix-forms/components/ix-explorer/ix-explorer.harness';
 import { IxInputHarness } from '../../../../modules/ix-forms/components/ix-input/ix-input.harness';
 import { IxSelectHarness } from '../../../../modules/ix-forms/components/ix-select/ix-select.harness';
 import { IxFormsModule } from '../../../../modules/ix-forms/ix-forms.module';
@@ -260,7 +261,39 @@ describe('SmbFormComponent',
       }
 
       existingShareWithLabels[formLabels.purpose] = presets[existingShareWithLabels[formLabels.purpose]].verbose_name;
-
       expect(values).toMatchObject(existingShareWithLabels);
+    });
+
+    it('should show warning only if aaple_name_mangling value changes when editing', async () => {
+      spectator.component.setSmbShareForEdit(existingShare);
+
+      const advancedButton = await loader.getHarness(MatButtonHarness.with({ text: 'Advanced Options' }));
+      await advancedButton.click();
+
+      const aaplNameManglingCheckbox = await loader.getHarness(
+        IxCheckboxHarness.with({ label: formLabels.aapl_name_mangling }),
+      );
+
+      await aaplNameManglingCheckbox.setValue(!existingShare.aapl_name_mangling);
+      expect(spectator.inject(DialogService).confirm).toHaveBeenCalled();
+    });
+
+    it('should autofill name from path if name is empty', async () => {
+      // spectator.component.setSmbShareForEdit(existingShare);
+
+      const advancedButton = await loader.getHarness(MatButtonHarness.with({ text: 'Advanced Options' }));
+      await advancedButton.click();
+
+      const nameControl = await loader.getHarness(IxInputHarness.with({ label: formLabels.name }));
+      await nameControl.setValue('');
+      const pathControl = await loader.getHarness(IxExplorerHarness.with({ label: formLabels.path }));
+      await pathControl.setValue('/mnt/pool2/ds22');
+
+      expect(await nameControl.getValue()).toEqual('ds22');
+
+      // const mockWebsocket = spectator.inject(MockWebsocketService);
+      // mockWebsocket.mockCallOnce('nfs.config', {
+      //   v4: true,
+      // } as SmbSh);
     });
   });
