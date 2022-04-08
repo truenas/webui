@@ -9,6 +9,7 @@ import { helptextSystemCa } from 'app/helptext/system/ca';
 import { helptextSystemCertificates } from 'app/helptext/system/certificates';
 import { CertificateAuthority } from 'app/interfaces/certificate-authority.interface';
 import { Certificate } from 'app/interfaces/certificate.interface';
+import { DnsAuthenticator } from 'app/interfaces/dns-authenticator.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { DialogFormConfiguration } from 'app/modules/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/modules/entity/entity-dialog/entity-dialog.component';
@@ -18,10 +19,11 @@ import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.com
 import { AppTableAction, AppTableConfig, TableComponent } from 'app/modules/entity/table/table.component';
 import { TableService } from 'app/modules/entity/table/table.service';
 import { EntityUtils } from 'app/modules/entity/utils';
-import { AcmednsFormComponent } from 'app/pages/credentials/certificates-dash/forms/acmedns-form.component';
+import { AcmednsFormComponent } from 'app/pages/credentials/certificates-dash/forms/acmedns-form/acmedns-form.component';
 import {
   SystemGeneralService, WebSocketService, DialogService, StorageService, ModalServiceMessage,
 } from 'app/services';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { ModalService } from 'app/services/modal.service';
 import { CertificateAuthorityAddComponent } from './forms/ca-add.component';
 import { CertificateAuthorityEditComponent } from './forms/ca-edit.component';
@@ -43,6 +45,7 @@ export class CertificatesDashComponent implements OnInit {
 
   constructor(
     private modalService: ModalService,
+    private slideInService: IxSlideInService,
     private ws: WebSocketService,
     private dialog: MatDialog,
     private systemGeneralService: SystemGeneralService,
@@ -55,6 +58,9 @@ export class CertificatesDashComponent implements OnInit {
 
   ngOnInit(): void {
     this.getCards();
+    this.slideInService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
+      this.getCards();
+    });
     this.modalService.refreshTable$.pipe(untilDestroyed(this)).subscribe(() => {
       this.getCards();
     });
@@ -214,10 +220,11 @@ export class CertificatesDashComponent implements OnInit {
           ],
           parent: this,
           add: () => {
-            this.modalService.openInSlideIn(AcmednsFormComponent);
+            this.slideInService.open(AcmednsFormComponent);
           },
-          edit: (row: CertificateAuthority) => {
-            this.modalService.openInSlideIn(AcmednsFormComponent, row.id);
+          edit: (row: DnsAuthenticator) => {
+            const form = this.slideInService.open(AcmednsFormComponent);
+            form.setAcmednsForEdit(row);
           },
         },
       },

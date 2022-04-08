@@ -266,7 +266,7 @@ export type ApiDirectory = {
 
   // Acme
   'acme.dns.authenticator.query': { params: void; response: DnsAuthenticator[] };
-  'acme.dns.authenticator.create': { params: CreateDnsAuthenticator; response: DnsAuthenticator };
+  'acme.dns.authenticator.create': { params: [CreateDnsAuthenticator]; response: DnsAuthenticator };
   'acme.dns.authenticator.update': { params: [number, UpdateDnsAuthenticator]; response: DnsAuthenticator };
   'acme.dns.authenticator.delete': { params: [id: number]; response: boolean };
   'acme.dns.authenticator.authenticator_schemas': { params: void; response: AuthenticatorSchema[] };

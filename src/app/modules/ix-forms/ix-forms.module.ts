@@ -25,6 +25,7 @@ import { IxCheckboxListComponent } from 'app/modules/ix-forms/components/ix-chec
 import { IxCheckboxComponent } from 'app/modules/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxChipsComponent } from 'app/modules/ix-forms/components/ix-chips/ix-chips.component';
 import { IxComboboxComponent } from 'app/modules/ix-forms/components/ix-combobox/ix-combobox.component';
+import { IxDynamicFieldsComponent } from 'app/modules/ix-forms/components/ix-dynamic-fields/ix-dynamic-fields.component';
 import { IxErrorsComponent } from 'app/modules/ix-forms/components/ix-errors/ix-errors.component';
 import { IxExplorerComponent } from 'app/modules/ix-forms/components/ix-explorer/ix-explorer.component';
 import { IxFieldsetComponent } from 'app/modules/ix-forms/components/ix-fieldset/ix-fieldset.component';
@@ -91,6 +92,7 @@ import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
     IxRadioGroupComponent,
     IxIpInputWithNetmaskComponent,
     IxCheckboxListComponent,
+    IxDynamicFieldsComponent,
   ],
   exports: [
     IxErrorsComponent,
@@ -112,6 +114,7 @@ import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
     IxRadioGroupComponent,
     IxIpInputWithNetmaskComponent,
     IxCheckboxListComponent,
+    IxDynamicFieldsComponent,
   ],
   providers: [
     IxFormatterService,
