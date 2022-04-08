@@ -65,7 +65,6 @@ describe('IxSelectComponent', () => {
       const select = await loader.getHarness(MatSelectHarness);
       const state = await select.isDisabled();
 
-      spectator.detectChanges();
       expect(state).toBeTruthy();
     });
 
@@ -129,18 +128,15 @@ describe('IxSelectComponent', () => {
       ]);
       control = new FormControl<string>();
       spectator = createHost(
-        '<ix-select [formControl]="control" [multiple]="true"></ix-select>',
-        { hostProps: { control } },
+        '<ix-select [formControl]="control" [multiple]="true" [options]="options$"></ix-select>',
+        { hostProps: { control, options$ } },
       );
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       spectator.fixture.detectChanges();
     });
 
     it('multiple values must be selected if \'multiple\' is true', async () => {
-      spectator.setInput({ options: options$ });
-
       const select = await loader.getHarness(MatSelectHarness);
-      spectator.detectChanges();
 
       await select.open();
       await select.clickOptions({ text: 'GBR' });

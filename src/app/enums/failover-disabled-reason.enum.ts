@@ -5,7 +5,7 @@ export enum FailoverDisabledReason {
   NoPong = 'NO_PONG',
   NoFailover = 'NO_FAILOVER',
   NoLicense = 'NO_LICENSE',
-  DisagreeCarp = 'DISAGREE_CARP',
+  DisagreeVip = 'DISAGREE_VIP',
   MismatchDisks = 'MISMATCH_DISKS',
   NoCriticalInterfaces = 'NO_CRITICAL_INTERFACES',
 }

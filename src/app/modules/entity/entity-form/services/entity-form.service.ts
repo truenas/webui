@@ -4,7 +4,7 @@ import {
 } from '@angular/forms';
 import { TreeNode } from '@circlon/angular-tree-component';
 import * as _ from 'lodash';
-import { DatasetType } from 'app/enums/dataset-type.enum';
+import { DatasetType } from 'app/enums/dataset.enum';
 import { ExplorerType } from 'app/enums/explorer-type.enum';
 import { FileType } from 'app/enums/file-type.enum';
 import { FileRecord } from 'app/interfaces/file-record.interface';

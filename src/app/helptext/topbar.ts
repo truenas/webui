@@ -14,7 +14,7 @@ export default {
     [FailoverDisabledReason.NoPong]: T('Other TrueNAS controller cannot be reached.'),
     [FailoverDisabledReason.NoFailover]: T('Failover is administratively disabled.'),
     [FailoverDisabledReason.NoLicense]: T('Other TrueNAS controller has no license.'),
-    [FailoverDisabledReason.DisagreeCarp]: T('Nodes CARP states do not agree.'),
+    [FailoverDisabledReason.DisagreeVip]: T('Nodes Virtual IP states do not agree.'),
     [FailoverDisabledReason.MismatchDisks]: T('The TrueNAS controllers do not have the same quantity of disks.'),
     [FailoverDisabledReason.NoCriticalInterfaces]: T('No network interfaces are marked critical for failover.'),
   },
