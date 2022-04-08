@@ -79,6 +79,7 @@ import { ToolbarMultimenuComponent } from './entity-toolbar/components/toolbar-m
 import { EntityRowDetailsComponent } from './entity-table/entity-row-details.component';
 import { TaskScheduleListComponent } from 'app/pages/task-calendar/components/task-schedule-list/task-schedule-list.component';
 import { FormStatusComponent } from './entity-form/components/form-status/form-status.component';
+import { EntityTableService } from './entity-table/entity-table.service';
 
 @NgModule({
   imports: [
@@ -204,6 +205,7 @@ import { FormStatusComponent } from './entity-form/components/form-status/form-s
     AppLoaderService,
     DocsService,
     JobService,
+    EntityTableService,
   ],
 })
 export class EntityModule {}
