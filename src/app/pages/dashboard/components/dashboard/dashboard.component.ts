@@ -267,6 +267,9 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       clearInterval(this.interval);
     }
     this.stopListeners();
+    if (this.interval) {
+      clearInterval(this.interval);
+    }
     this.core.unregister({ observerClass: this });
 
     // Restore top level scrolling

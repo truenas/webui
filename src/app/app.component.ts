@@ -71,7 +71,8 @@ export class AppComponent {
     router.events.pipe(untilDestroyed(this)).subscribe((event) => {
       // save currenturl
       if (event instanceof NavigationEnd) {
-        if (this.ws.loggedIn && event.url !== '/sessions/signin') {
+        const navigation = this.router.getCurrentNavigation();
+        if (this.ws.loggedIn && event.url !== '/sessions/signin' && !navigation?.extras?.skipLocationChange) {
           sessionStorage.currentUrl = event.url;
         }
       }

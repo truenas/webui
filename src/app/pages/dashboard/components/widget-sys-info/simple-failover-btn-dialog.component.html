@@ -1,7 +1,0 @@
-<h1 mat-dialog-title>{{title | translate}}</h1>
-<div mat-dialog-content>{{msg1 | translate}}</div>
-<div mat-dialog-actions fxLayout="row wrap">
-  <mat-checkbox fxFlex="80px" fxFlex.xs="100" class="confirm-checkbox" color="accent" [(ngModel)]="confirmed">{{checkbox | translate}}</mat-checkbox>
-  <button class="dialog-button" fxFlex="calc(45% - 40px)" fxFlex.xs="45" mat-button color="accent" (click)="onNoClick()" cdkFocusInitial>{{cancel | translate}}</button>
-  <button class="dialog-button" fxFlex="calc(45% - 40px)" fxFlex.xs="45" mat-button color="primary" [disabled]="isDisabled" [mat-dialog-close]="data.agreed">{{action | translate}}</button>
-</div>
