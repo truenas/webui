@@ -90,7 +90,7 @@ def when_the_apps_page_loads_open_manager_docker_images(driver):
 def click_the_three_dots_icon_for_nextcloud(driver):
     """click the three dots icon for nextcloud."""
     assert wait_on_element(driver, 10, '//div[contains(text(),"Items per page:")]')
-    assert wait_on_element(driver, 20, '//tr[contains(.,"nextcloud-")]//mat-icon[contains(.,"more_vert")]', 'clickable')
+    assert wait_on_element(driver, 20, '//tr[contains(.,"nextcloud")]//mat-icon[contains(.,"more_vert")]', 'clickable')
     driver.find_element_by_xpath('//tr[contains(.,"nextcloud")]//mat-icon[contains(.,"more_vert")]').click()
 
 
