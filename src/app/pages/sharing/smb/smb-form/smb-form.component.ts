@@ -4,7 +4,9 @@ import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import _ from 'lodash';
-import { combineLatest, Observable, of } from 'rxjs';
+import {
+  combineLatest, Observable, of,
+} from 'rxjs';
 import {
   catchError, debounceTime, map, switchMap, tap,
 } from 'rxjs/operators';
@@ -139,24 +141,9 @@ export class SmbFormComponent implements OnInit {
       this.afpConfirm(value);
     });
 
-    if (!this.isNew) {
-      this.form.get('aapl_name_mangling').valueChanges.pipe(untilDestroyed(this)).subscribe((value) => {
-        if (value !== this.mangle && !this.mangleWarningSent) {
-          this.mangleWarningSent = true;
-          this.dialog.confirm({
-            title: helptextSharingSmb.manglingDialog.title,
-            message: helptextSharingSmb.manglingDialog.message,
-            hideCheckBox: true,
-            buttonMsg: helptextSharingSmb.manglingDialog.action,
-            hideCancel: true,
-          });
-        }
-      });
-    }
-
     const pathFormControl = this.form.get('path');
     /*  If name is empty, auto-populate after path selection */
-    pathFormControl.valueChanges.pipe(untilDestroyed(this)).subscribe((path) => {
+    pathFormControl.valueChanges.pipe(debounceTime(50), untilDestroyed(this)).subscribe((path) => {
       const nameControl = this.form.get('name');
       if (path && !nameControl.value) {
         const name = path.split('/').pop();
@@ -193,7 +180,7 @@ export class SmbFormComponent implements OnInit {
       hideCheckBox: true,
       buttonMsg: helptextSharingSmb.stripACLDialog.button,
       hideCancel: true,
-    });
+    }).pipe(untilDestroyed(this)).subscribe();
   }
 
   clearPresets(): void {
@@ -214,6 +201,18 @@ export class SmbFormComponent implements OnInit {
     if (index >= 0) {
       this.namesInUse.splice(index, 1);
     }
+    this.form.get('aapl_name_mangling').valueChanges.pipe(untilDestroyed(this)).subscribe((value) => {
+      if (value !== this.mangle && !this.mangleWarningSent) {
+        this.mangleWarningSent = true;
+        this.dialog.confirm({
+          title: helptextSharingSmb.manglingDialog.title,
+          message: helptextSharingSmb.manglingDialog.message,
+          hideCheckBox: true,
+          buttonMsg: helptextSharingSmb.manglingDialog.action,
+          hideCancel: true,
+        }).pipe(untilDestroyed(this)).subscribe();
+      }
+    });
     this.form.patchValue(smbShare);
   }
 
