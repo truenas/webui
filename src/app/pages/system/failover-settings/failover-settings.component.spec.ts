@@ -62,7 +62,6 @@ describe('FailoverComponent', () => {
 
   it('updates failover settings when form is submitted', async () => {
     await form.fillForm({
-      'Disable Failover': true,
       'Network Timeout Before Initiating Failover': 20,
     });
 
@@ -70,7 +69,7 @@ describe('FailoverComponent', () => {
     await saveButton.click();
 
     expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('failover.update', [{
-      disabled: true,
+      disabled: false,
       master: true,
       timeout: '20',
     }]);

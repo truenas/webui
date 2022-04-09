@@ -4,13 +4,16 @@ import {
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+import { Subscription } from 'rxjs';
 import { filter, switchMap, take } from 'rxjs/operators';
 import { helptextSystemFailover } from 'app/helptext/system/failover';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { DialogService, WebSocketService } from 'app/services';
 
-@UntilDestroy()
+@UntilDestroy({
+  arrayName: 'subscriptions',
+})
 @Component({
   templateUrl: './failover-settings.component.html',
   styleUrls: ['./failover-settings.component.scss'],
@@ -22,6 +25,12 @@ export class FailoverSettingsComponent implements OnInit {
     disabled: [false],
     master: [true],
     timeout: [null as number],
+  });
+
+  subscriptions: Subscription[] = [];
+
+  hasSaveAndFailover$ = this.form.select((values) => {
+    return !values.master && !values.disabled;
   });
 
   readonly helptext = helptextSystemFailover;
@@ -47,8 +56,9 @@ export class FailoverSettingsComponent implements OnInit {
       .pipe(
         switchMap(() => {
           return this.dialogService.info(
+            this.translate.instant('Failover'),
             this.translate.instant('Settings saved.'),
-            '', '300px', 'info',
+            '300px', 'info',
           );
         }),
         untilDestroyed(this),
@@ -86,6 +96,7 @@ export class FailoverSettingsComponent implements OnInit {
         filter(Boolean),
         switchMap(() => {
           this.isLoading = true;
+          this.cdr.markForCheck();
           return this.ws.call('failover.sync_to_peer', dialog.componentInstance.data as [{ reboot?: boolean }]);
         }),
         untilDestroyed(this),
@@ -93,6 +104,7 @@ export class FailoverSettingsComponent implements OnInit {
       .subscribe(
         () => {
           this.isLoading = false;
+          this.cdr.markForCheck();
           this.dialogService.info(
             helptextSystemFailover.confirm_dialogs.sync_title,
             helptextSystemFailover.confirm_dialogs.sync_to_message,
@@ -101,6 +113,7 @@ export class FailoverSettingsComponent implements OnInit {
         },
         (error) => {
           this.isLoading = false;
+          this.cdr.markForCheck();
           new EntityUtils().handleWsError(this, error, this.dialogService);
         },
       );
@@ -116,6 +129,7 @@ export class FailoverSettingsComponent implements OnInit {
         filter(Boolean),
         switchMap(() => {
           this.isLoading = true;
+          this.cdr.markForCheck();
           return this.ws.call('failover.sync_from_peer');
         }),
         untilDestroyed(this),
@@ -123,6 +137,7 @@ export class FailoverSettingsComponent implements OnInit {
       .subscribe(
         () => {
           this.isLoading = false;
+          this.cdr.markForCheck();
           this.dialogService.info(
             helptextSystemFailover.confirm_dialogs.sync_title,
             helptextSystemFailover.confirm_dialogs.sync_from_message,
@@ -131,6 +146,7 @@ export class FailoverSettingsComponent implements OnInit {
         },
         (error) => {
           this.isLoading = false;
+          this.cdr.markForCheck();
           new EntityUtils().handleWsError(this, error, this.dialogService);
         },
       );
@@ -150,6 +166,7 @@ export class FailoverSettingsComponent implements OnInit {
             master: true,
           });
           this.setFailoverConfirmation();
+          this.setFormRelations();
         },
         (error) => {
           this.isLoading = false;
@@ -179,5 +196,13 @@ export class FailoverSettingsComponent implements OnInit {
       .subscribe(() => {
         this.form.patchValue({ master: true });
       });
+  }
+
+  private setFormRelations(): void {
+    this.subscriptions.push(
+      this.form.controls.master.disabledWhile(
+        this.form.select((values) => values.disabled),
+      ),
+    );
   }
 }

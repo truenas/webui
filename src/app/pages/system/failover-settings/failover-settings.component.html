@@ -27,16 +27,18 @@
           type="submit"
           [disabled]="form.invalid || isLoading"
           color="primary"
-        >{{ this.form.value.master ? ('Save' | translate) : ('Save And Failover' | translate) }}</button>
+        >{{ (hasSaveAndFailover$ | async) ? ('Save And Failover' | translate) : ('Save' | translate) }}</button>
 
         <button
           mat-button
           type="button"
+          [disabled]="isLoading"
           (click)="onSyncToPeerPressed()"
         >{{ 'Sync To Peer' | translate }}</button>
         <button
           mat-button
           type="button"
+          [disabled]="isLoading"
           (click)="onSyncFromPeerPressed()"
         >{{ 'Sync From Peer' | translate }}</button>
       </div>
