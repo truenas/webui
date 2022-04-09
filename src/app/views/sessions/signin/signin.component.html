@@ -133,7 +133,7 @@
             </div>
 
             <div class="copyright-line">
-              <span  class="copyright-txt">TrueNAS {{productTypeReadableText}} ® © {{copyrightYear}} </span>
+              <span  class="copyright-txt">TrueNAS {{productType | mapValue: productTypeLabels }} ® © {{copyrightYear}} </span>
               <img id="full-logo" (click)="openIx()" src="assets/images/ix_logo_full.png">
             </div>
           </div>
