@@ -4,6 +4,8 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
+import { helptextSharingSmb } from 'app/helptext/sharing/smb/smb';
+import { MockWebsocketService } from '../../../../core/testing/classes/mock-websocket.service';
 import { mockCall, mockWebsocket } from '../../../../core/testing/utils/mock-websocket.utils';
 import { ServiceName } from '../../../../enums/service-name.enum';
 import { Service } from '../../../../interfaces/service.interface';
@@ -162,7 +164,7 @@ describe('SmbFormComponent',
           mockCall('service.start'),
           mockCall('service.restart'),
           mockCall('sharing.smb.presets', { ...presets }),
-          mockCall('filesystem.acl_is_trivial', false),
+          mockCall('filesystem.acl_is_trivial', true),
           mockCall('pool.dataset.path_in_locked_datasets', false),
         ]),
         mockProvider(IxSlideInService),
@@ -242,6 +244,14 @@ describe('SmbFormComponent',
       const afpCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: formLabels.afp }));
       await afpCheckbox.setValue(true);
       expect(spectator.inject(DialogService).confirm).toHaveBeenCalled();
+
+      // const confirmCheckbox = await loader.getHarness(MatCheckboxHarness.with(
+      // { selector: '.confirm-checkbox' }));
+      // await confirmCheckbox.check();
+
+      // const confirmButton = await loader.getHarness(
+      //  MatButtonHarness.with({ selector: '#confirm-dialog__action-button' }));
+      // await confirmButton.click();
     });
 
     it('shows values of existing share when editing', async () => {
@@ -275,7 +285,13 @@ describe('SmbFormComponent',
       );
 
       await aaplNameManglingCheckbox.setValue(!existingShare.aapl_name_mangling);
-      expect(spectator.inject(DialogService).confirm).toHaveBeenCalled();
+      expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({
+        title: helptextSharingSmb.manglingDialog.title,
+        message: helptextSharingSmb.manglingDialog.message,
+        hideCheckBox: true,
+        buttonMsg: helptextSharingSmb.manglingDialog.action,
+        hideCancel: true,
+      });
     });
 
     it('should autofill name from path if name is empty', async () => {
@@ -290,10 +306,21 @@ describe('SmbFormComponent',
       await pathControl.setValue('/mnt/pool2/ds22');
 
       expect(await nameControl.getValue()).toEqual('ds22');
+    });
 
-      // const mockWebsocket = spectator.inject(MockWebsocketService);
-      // mockWebsocket.mockCallOnce('nfs.config', {
-      //   v4: true,
-      // } as SmbSh);
+    it('should show strip acl warning if acl is trivial', async () => {
+      const mockWebsocket = spectator.inject(MockWebsocketService);
+      mockWebsocket.mockCallOnce('filesystem.acl_is_trivial', false);
+
+      const pathControl = await loader.getHarness(IxExplorerHarness.with({ label: formLabels.path }));
+      await pathControl.setValue('/mnt/pool2/ds22');
+
+      expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({
+        title: helptextSharingSmb.stripACLDialog.title,
+        message: helptextSharingSmb.stripACLDialog.message,
+        hideCheckBox: true,
+        buttonMsg: helptextSharingSmb.stripACLDialog.button,
+        hideCancel: true,
+      });
     });
   });
