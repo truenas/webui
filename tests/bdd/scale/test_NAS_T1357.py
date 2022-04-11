@@ -67,7 +67,7 @@ def stop_nextcloud_from_running(driver):
 def verify_the_application_has_stopped(driver):
     """Verify the application has stopped."""
     assert wait_on_element(driver, 5, '//h1[contains(.,"Stopping")]')
-    assert wait_on_element_disappear(driver, 180, '//h1[contains(.,"Stopping")]')
+    assert wait_on_element_disappear(driver, 300, '//h1[contains(.,"Stopping")]')
     assert wait_on_element(driver, 15, '//mat-card[contains(.,"nextcloud-test")]//span[contains(.,"STOPPED ")]')
 
 
