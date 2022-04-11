@@ -30,3 +30,12 @@ mat-dialog-content.entity-job-dialog.mat-dialog-content {
   max-height: 200px;
   overflow-y: auto;
 }
+
+.logs {
+  background: rgba(0, 0, 0, 0.096);
+  color: white;
+  overflow-x: auto;
+  padding: 5px;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
