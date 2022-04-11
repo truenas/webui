@@ -173,6 +173,9 @@ def confirm_installation_is_successful(driver):
             time.sleep(2)
             assert wait_on_element(driver, 10, '//span[contains(.,"Refresh Events")]', 'clickable')
             driver.find_element_by_xpath('//span[contains(.,"Refresh Events")]').click()
+            # make sure Please wait pop up is gone before continuing.
+            if wait_on_element(driver, 3, '//*[contains(.,"Please wait")]'):
+                assert wait_on_element_disappear(driver, 10, '//*[contains(.,"Please wait")]')
         else:
             assert wait_on_element(driver, 10, '//span[contains(.,"Close")]', 'clickable')
             driver.find_element_by_xpath('//span[contains(.,"Close")]').click()
