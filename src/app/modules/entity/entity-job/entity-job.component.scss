@@ -24,3 +24,18 @@ mat-dialog-content.entity-job-dialog.mat-dialog-content {
 .entity-job-time {
   opacity: 0.5;
 }
+
+.logs-container {
+  margin-bottom: 20px;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.logs {
+  background: rgba(0, 0, 0, 0.096);
+  color: white;
+  overflow-x: auto;
+  padding: 5px;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}

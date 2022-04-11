@@ -47,14 +47,19 @@
               [tooltip]="helptext.timeout_tooltip | translate"
               type="number"
             ></ix-input>
-            <ix-select
-              formControlName="ssltls_certificate"
-              [label]="'Certificate' | translate"
-              [tooltip]="helptext.ssltls_certificate_tooltip | translate"
-              [options]="certificates$"
-              [linkText]="'Certificates' | translate"
-              (linkClicked)="onLinkClicked()"
-            ></ix-select>
+            <div class="linked-select">
+              <div class="link-wrapper">
+                <a class="link" (click)="onLinkClicked()">
+                  {{ 'Manage Certificates' | translate }}
+                </a>
+              </div>
+              <ix-select
+                formControlName="ssltls_certificate"
+                [label]="'Certificate' | translate"
+                [tooltip]="helptext.ssltls_certificate_tooltip | translate"
+                [options]="certificates$"
+              ></ix-select>
+            </div>
           </ix-fieldset>
 
           <ng-container *ngIf="isAdvancedMode">

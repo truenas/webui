@@ -9,7 +9,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
-import { DatasetEncryptionType } from 'app/enums/dataset-encryption-type.enum';
+import { DatasetEncryptionType } from 'app/enums/dataset.enum';
 import helptext from 'app/helptext/storage/volumes/datasets/dataset-unlock';
 import {
   DatasetEncryptionSummary, DatasetEncryptionSummaryQueryParams, DatasetEncryptionSummaryQueryParamsDataset,
@@ -170,6 +170,19 @@ export class DatasetUnlockComponent implements FormConfiguration {
     {
       name: 'encrypted_roots_divider',
       divider: true,
+    },
+    {
+      name: 'force',
+      label: false,
+      config: [
+        {
+          type: 'checkbox',
+          name: 'force',
+          placeholder: this.translate.instant('Force'),
+          value: false,
+          tooltip: helptext.dataset_force_tooltip,
+        },
+      ],
     },
   ];
 
@@ -342,7 +355,11 @@ export class DatasetUnlockComponent implements FormConfiguration {
         datasets.push(ds);
       }
     }
-    const payload: DatasetEncryptionSummaryQueryParams = { key_file: body.key_file, datasets };
+    const payload: DatasetEncryptionSummaryQueryParams = {
+      key_file: body.key_file,
+      force: body.force,
+      datasets,
+    };
     const dialogRef = this.dialog.open(EntityJobComponent, {
       data: { title: helptext.fetching_encryption_summary_title },
       disableClose: true,

@@ -39,7 +39,7 @@ export class VdevComponent implements OnInit {
   showDiskSizeError: boolean;
   vdev_type_disabled = false;
   private ten_mib = 10 * 1024 * 1024;
-  protected mindisks: any = {
+  protected mindisks: { [key: string]: number } = {
     stripe: 1, mirror: 2, raidz: 3, raidz2: 4, raidz3: 5,
   };
 

@@ -1,4 +1,4 @@
-import { DatasetType } from 'app/enums/dataset-type.enum';
+import { DatasetType } from 'app/enums/dataset.enum';
 
 export interface MatchDatastoresWithDatasets {
   datastores: VmwareDatastore[];
