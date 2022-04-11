@@ -5,6 +5,7 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { MockWebsocketService } from 'app/core/testing/classes/mock-websocket.service';
+import { ProductType } from 'app/enums/product-type.enum';
 import { helptextSharingSmb } from 'app/helptext/sharing/smb/smb';
 import { mockCall, mockWebsocket } from '../../../../core/testing/utils/mock-websocket.utils';
 import { ServiceName } from '../../../../enums/service-name.enum';
@@ -141,6 +142,7 @@ describe('SmbFormComponent', () => {
   let spectator: Spectator<SmbFormComponent>;
   let loader: HarnessLoader;
   let form: IxFormHarness;
+  let websocket: WebSocketService;
 
   const createComponent = createComponentFactory({
     component: SmbFormComponent,
@@ -169,7 +171,6 @@ describe('SmbFormComponent', () => {
       mockProvider(IxSlideInService),
       mockProvider(AppLoaderService),
       mockProvider(FilesystemService),
-      mockProvider(MockWebsocketService),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
         info: jest.fn(() => of(true)),
@@ -181,6 +182,7 @@ describe('SmbFormComponent', () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     form = await loader.getHarness(IxFormHarness);
+    websocket = spectator.inject(WebSocketService);
   });
 
   it('shows all the fields when Advanced Options button is pressed', async () => {
@@ -372,10 +374,15 @@ describe('SmbFormComponent', () => {
       ...attrs,
     });
 
+    const mockWebsocket = spectator.inject(MockWebsocketService);
+    mockWebsocket.mockCallOnce('filesystem.acl_is_trivial', true);
+
+    spectator.component.productType = ProductType.ScaleEnterprise;
+
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('sharing.smb.create', [{
+    expect(websocket.call).toHaveBeenCalledWith('sharing.smb.create', [{
       path: '/mnt/pool123/ds222',
       name: 'ds223',
       purpose: 'ENHANCED_TIMEMACHINE',
@@ -407,7 +414,7 @@ describe('SmbFormComponent', () => {
       cancelMsg: helptextSharingSmb.restart_smb_dialog.cancel_btn,
     });
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('service.restart', [ServiceName.Cifs]);
+    expect(websocket.call).toHaveBeenCalledWith('service.restart', [ServiceName.Cifs]);
 
     expect(spectator.inject(DialogService).info).toHaveBeenCalledWith(
       helptextSharingSmb.restarted_smb_dialog.title,
@@ -419,15 +426,20 @@ describe('SmbFormComponent', () => {
       IxExplorerHarness.with({ label: formLabels.path }),
     )).getValue();
     expect(
-      spectator.inject(WebSocketService).call,
+      websocket.call,
     ).toHaveBeenCalledWith(
       'pool.dataset.path_in_locked_datasets',
       [pathValue],
     );
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('service.query', []);
+    expect(websocket.call).toHaveBeenCalledWith('service.query', []);
 
-    spectator.inject(MockWebsocketService).mockCallOnce('filesystem.acl_is_trivial', true);
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('filesystem.acl_is_trivial', [pathValue]);
+    expect(websocket.call).toHaveBeenCalledWith('filesystem.acl_is_trivial', [pathValue]);
+    // expect(spectator.inject(DialogService).confirm).toHaveBeenNthCalledWith(6, {
+    //   title: helptextSharingSmb.dialog_edit_acl_title,
+    //   message: helptextSharingSmb.dialog_edit_acl_message,
+    //   hideCheckBox: true,
+    //   buttonMsg: helptextSharingSmb.dialog_edit_acl_button,
+    // });
   });
 });

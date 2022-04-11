@@ -36,7 +36,7 @@ export class SmbFormComponent implements OnInit {
   namesInUse: string[] = [];
   existingSmbShare: SmbShare;
   readonly helptextSharingSmb = helptextSharingSmb;
-  productType = window.localStorage.getItem('product_type') as ProductType;
+  productType = localStorage.getItem('product_type') as ProductType;
   private stripACLWarningSent = false;
   private mangleWarningSent = false;
   private isTimeMachineOn = false;
