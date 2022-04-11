@@ -204,6 +204,6 @@ def confirm_installation_is_successful(driver):
         else:
             assert wait_on_element(driver, 10, '//span[contains(.,"Close")]', 'clickable')
             driver.find_element_by_xpath('//span[contains(.,"Close")]').click()
-        assert wait_on_element(driver, 180, '//mat-card[contains(.,"truecommand-test")]//span[@class="status active"]')
+        assert wait_on_element(driver, 300, '//mat-card[contains(.,"truecommand-test")]//span[@class="status active"]')
     else:
-        assert wait_on_element(driver, 180, '//mat-card[contains(.,"truecommand-test")]//span[@class="status active"]')
+        assert wait_on_element(driver, 300, '//mat-card[contains(.,"truecommand-test")]//span[@class="status active"]')
