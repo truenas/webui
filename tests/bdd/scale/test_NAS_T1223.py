@@ -117,5 +117,5 @@ def verify_that_the_core_file_alert_disappear(driver):
     assert wait_on_element(driver, 7, '//button[contains(.,"clear")]', 'clickable')
     driver.find_element_by_xpath('//button[contains(.,"clear")]').click()
     time.sleep(0.5)
-    #if wait_on_element(driver, 5, '//div[contains(@class,"mat-drawer-backdrop")]'):
-    #    assert wait_on_element_disappear (driver, 20, '//div[contains(@class,"mat-drawer-backdrop")]')
+    # if wait_on_element(driver, 5, '//div[contains(@class,"mat-drawer-backdrop")]'):
+    #    assert wait_on_element_disappear(driver, 20, '//div[contains(@class,"mat-drawer-backdrop")]')
