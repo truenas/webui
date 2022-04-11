@@ -4,9 +4,7 @@ import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import _ from 'lodash';
-import {
-  combineLatest, Observable, of,
-} from 'rxjs';
+import { Observable, of } from 'rxjs';
 import {
   catchError, debounceTime, map, switchMap, tap,
 } from 'rxjs/operators';
@@ -299,57 +297,21 @@ export class SmbFormComponent implements OnInit {
       .pipe(untilDestroyed(this))
       .subscribe(
         (res) => {
-          if (res) {
-            this.dialog.closeAllDialogs();
-          } else {
-          /**
-           * If share does have trivial ACL, check if user wants to edit dataset permissions. If not,
-           * nav to SMB shares list view.
-           */
-            const promptUserAclEdit = (): Observable<[boolean, Record<string, unknown>] | [boolean]> => {
-              return this.ws.call('filesystem.acl_is_trivial', [sharePath]).pipe(
-                switchMap((isTrivialAcl) => {
-                  let nextStep;
-                  // If share does not have trivial ACL, move on. Otherwise, perform some async data-gathering
-                  // operations
-                  if (!isTrivialAcl || !datasetId.includes('/') || this.productType.includes(ProductType.Scale)) {
-                    nextStep = combineLatest([of(false), of({})]);
-                  } else {
-                    nextStep = combineLatest([
-                    /* Check if user wants to edit the share's ACL */
-                      this.dialog.confirm({
-                        title: helptextSharingSmb.dialog_edit_acl_title,
-                        message: helptextSharingSmb.dialog_edit_acl_message,
-                        hideCheckBox: true,
-                        buttonMsg: helptextSharingSmb.dialog_edit_acl_button,
-                      }),
-                    ]);
-                  }
-
-                  return nextStep;
-                }),
-                tap(([doConfigureAcl]) => {
-                  if (doConfigureAcl) {
-                    this.router.navigate(['/'].concat(aclRoute));
-                  } else {
-                    this.dialog.closeAllDialogs();
-                  }
-                }),
-              );
-            };
-
+          this.dialog.closeAllDialogs();
+          if (!res) {
             this.ws.call('service.query', [])
               .pipe(
                 map((response) => _.find(response, { service: ServiceName.Cifs })),
                 switchMap((cifsService) => {
+                  this.dialog.closeAllDialogs();
                   if (cifsService.enable) {
-                    return promptUserAclEdit();
+                    return of();
                   }
 
                   /**
-               * Allow user to enable cifs service, then ask about editing
-               * dataset ACL.
-               */
+                   * Allow user to enable cifs service, then ask about editing
+                   * dataset ACL.
+                   */
                   return this.dialog.confirm({
                     title: shared.dialog_title,
                     message: shared.dialog_message,
@@ -375,7 +337,6 @@ export class SmbFormComponent implements OnInit {
                       }
                       return of(true);
                     }),
-                    switchMap(promptUserAclEdit),
                   );
                 }),
                 untilDestroyed(this),

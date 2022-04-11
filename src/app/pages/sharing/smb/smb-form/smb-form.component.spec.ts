@@ -5,8 +5,7 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { MockWebsocketService } from 'app/core/testing/classes/mock-websocket.service';
-import { ProductType } from 'app/enums/product-type.enum';
-import { helptextSharingSmb } from 'app/helptext/sharing/smb/smb';
+import { helptextSharingSmb, shared } from 'app/helptext/sharing';
 import { mockCall, mockWebsocket } from '../../../../core/testing/utils/mock-websocket.utils';
 import { ServiceName } from '../../../../enums/service-name.enum';
 import { Service } from '../../../../interfaces/service.interface';
@@ -159,7 +158,8 @@ describe('SmbFormComponent', () => {
         ]),
         mockCall('service.query', [{
           service: ServiceName.Cifs,
-          enable: true,
+          id: 4,
+          enable: false,
         } as Service]),
         mockCall('service.update'),
         mockCall('service.start'),
@@ -374,11 +374,6 @@ describe('SmbFormComponent', () => {
       ...attrs,
     });
 
-    const mockWebsocket = spectator.inject(MockWebsocketService);
-    mockWebsocket.mockCallOnce('filesystem.acl_is_trivial', true);
-
-    spectator.component.productType = ProductType.ScaleEnterprise;
-
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
@@ -434,12 +429,21 @@ describe('SmbFormComponent', () => {
 
     expect(websocket.call).toHaveBeenCalledWith('service.query', []);
 
-    expect(websocket.call).toHaveBeenCalledWith('filesystem.acl_is_trivial', [pathValue]);
-    // expect(spectator.inject(DialogService).confirm).toHaveBeenNthCalledWith(6, {
-    //   title: helptextSharingSmb.dialog_edit_acl_title,
-    //   message: helptextSharingSmb.dialog_edit_acl_message,
-    //   hideCheckBox: true,
-    //   buttonMsg: helptextSharingSmb.dialog_edit_acl_button,
-    // });
+    expect(spectator.inject(DialogService).confirm).toHaveBeenNthCalledWith(6, {
+      title: shared.dialog_title,
+      message: shared.dialog_message,
+      hideCheckBox: true,
+      buttonMsg: shared.dialog_button,
+    });
+
+    expect(spectator.inject(MockWebsocketService).call).toHaveBeenCalledWith('service.update', [4, { enable: true }]);
+    expect(spectator.inject(MockWebsocketService).call).toHaveBeenCalledWith('service.start', [ServiceName.Cifs]);
+    expect(spectator.inject(DialogService).info).toHaveBeenNthCalledWith(
+      2,
+      'SMB Service',
+      'The SMB service has been enabled.',
+      '250px',
+      'info',
+    );
   });
 });
