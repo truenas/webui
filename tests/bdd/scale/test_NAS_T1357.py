@@ -1,6 +1,7 @@
 # coding=utf-8
 """SCALE UI: feature tests."""
 
+import time
 from function import (
     wait_on_element,
     is_element_present,
@@ -84,12 +85,15 @@ def when_the_apps_page_loads_open_manager_docker_images(driver):
     """when the Apps page loads, open Manager Docker Images."""
     assert wait_on_element(driver, 10, '//div[contains(text(),"Manage Docker Images")]', 'clickable')
     driver.find_element_by_xpath('//div[contains(text(),"Manage Docker Images")]').click()
+    time.sleep(0.5)
 
 
 @then('click the three dots icon for nextcloud')
 def click_the_three_dots_icon_for_nextcloud(driver):
     """click the three dots icon for nextcloud."""
+    assert wait_on_element(driver, 10, '//th[text()="Tags"]')
     assert wait_on_element(driver, 10, '//div[contains(text(),"Items per page:")]')
+    assert wait_on_element(driver, 10, '//div[contains(text(),"nextcloud")]')
     assert wait_on_element(driver, 20, '//tr[contains(.,"nextcloud")]//mat-icon[contains(.,"more_vert")]', 'clickable')
     driver.find_element_by_xpath('//tr[contains(.,"nextcloud")]//mat-icon[contains(.,"more_vert")]').click()
 
