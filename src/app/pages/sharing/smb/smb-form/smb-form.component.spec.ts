@@ -4,6 +4,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
+import { MockWebsocketService } from 'app/core/testing/classes/mock-websocket.service';
 import { helptextSharingSmb } from 'app/helptext/sharing/smb/smb';
 import { mockCall, mockWebsocket } from '../../../../core/testing/utils/mock-websocket.utils';
 import { ServiceName } from '../../../../enums/service-name.enum';
@@ -168,9 +169,10 @@ describe('SmbFormComponent', () => {
       mockProvider(IxSlideInService),
       mockProvider(AppLoaderService),
       mockProvider(FilesystemService),
+      mockProvider(MockWebsocketService),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
-        info: jest.fn(() => of()),
+        info: jest.fn(() => of(true)),
       }),
     ],
   });
@@ -364,6 +366,8 @@ describe('SmbFormComponent', () => {
 
     attrs[formLabels.purpose] = presets[attrs[formLabels.purpose] as string].verbose_name;
     attrs[formLabels.name] = 'ds223';
+    attrs[formLabels.hostsallow] = ['host11'];
+    attrs[formLabels.hostsdeny] = ['host22'];
     await form.fillForm({
       ...attrs,
     });
@@ -382,8 +386,8 @@ describe('SmbFormComponent', () => {
       browsable: true,
       guestok: true,
       abe: true,
-      hostsallow: ['host1'],
-      hostsdeny: ['host2'],
+      hostsallow: ['host11'],
+      hostsdeny: ['host22'],
       home: false,
       afp: false,
       shadowcopy: true,
@@ -394,5 +398,36 @@ describe('SmbFormComponent', () => {
       fsrvp: false,
       auxsmbconf: '',
     }]);
+
+    expect(spectator.inject(DialogService).confirm).toHaveBeenNthCalledWith(5, {
+      title: helptextSharingSmb.restart_smb_dialog.title,
+      message: helptextSharingSmb.restart_smb_dialog.message_allow_deny,
+      hideCheckBox: true,
+      buttonMsg: helptextSharingSmb.restart_smb_dialog.title,
+      cancelMsg: helptextSharingSmb.restart_smb_dialog.cancel_btn,
+    });
+
+    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('service.restart', [ServiceName.Cifs]);
+
+    expect(spectator.inject(DialogService).info).toHaveBeenCalledWith(
+      helptextSharingSmb.restarted_smb_dialog.title,
+      helptextSharingSmb.restarted_smb_dialog.message,
+      '250px',
+    );
+
+    const pathValue = await (await loader.getHarness(
+      IxExplorerHarness.with({ label: formLabels.path }),
+    )).getValue();
+    expect(
+      spectator.inject(WebSocketService).call,
+    ).toHaveBeenCalledWith(
+      'pool.dataset.path_in_locked_datasets',
+      [pathValue],
+    );
+
+    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('service.query', []);
+
+    spectator.inject(MockWebsocketService).mockCallOnce('filesystem.acl_is_trivial', true);
+    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('filesystem.acl_is_trivial', [pathValue]);
   });
 });
