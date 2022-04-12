@@ -29,8 +29,11 @@ export class FailoverSettingsComponent implements OnInit {
 
   subscriptions: Subscription[] = [];
 
-  hasSaveAndFailover$ = this.form.select((values) => {
-    return !values.master && !values.disabled;
+  submitButtonText$ = this.form.select((values) => {
+    if (!values.master && !values.disabled) {
+      return this.translate.instant('Save And Failover');
+    }
+    return this.translate.instant('Save');
   });
 
   readonly helptext = helptextSystemFailover;

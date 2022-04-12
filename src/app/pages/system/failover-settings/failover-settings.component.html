@@ -27,7 +27,7 @@
           type="submit"
           [disabled]="form.invalid || isLoading"
           color="primary"
-        >{{ (hasSaveAndFailover$ | async) ? ('Save And Failover' | translate) : ('Save' | translate) }}</button>
+        >{{ submitButtonText$ | async }}</button>
 
         <button
           mat-button
