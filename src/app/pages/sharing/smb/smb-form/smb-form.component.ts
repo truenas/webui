@@ -1,4 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
+} from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -27,6 +29,7 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
   selector: 'smb-form',
   templateUrl: './smb-form.component.html',
   styleUrls: ['./smb-form.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SmbFormComponent implements OnInit {
   isLoading = false;
@@ -99,6 +102,7 @@ export class SmbFormComponent implements OnInit {
   });
 
   constructor(
+    private cdr: ChangeDetectorRef,
     private formBuilder: FormBuilder,
     private ws: WebSocketService,
     private dialog: DialogService,
@@ -378,6 +382,7 @@ export class SmbFormComponent implements OnInit {
 
   submit(): void {
     this.isLoading = true;
+    this.cdr.markForCheck();
     const smbShare = this.form.value;
     let request$: Observable<unknown>;
     if (this.isNew) {
@@ -398,6 +403,7 @@ export class SmbFormComponent implements OnInit {
     },
     (error) => {
       this.isLoading = false;
+      this.cdr.markForCheck();
       this.errorHandler.handleWsFormError(error, this.form);
     });
   }
