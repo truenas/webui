@@ -9,6 +9,7 @@
 
   <div class="input-container" [class.disabled]="isDisabled">
     <mat-select
+      #matSelect
       [(ngModel)]="value"
       [required]="required"
       [disabled]="isDisabled"
