@@ -63,7 +63,7 @@
               [label]="helptext.extent_placeholder_disk | translate"
               [options]="disks$"
               [tooltip]="helptext.extent_tooltip_disk | translate"
-              [required]="isDevice ? true : false"
+              [required]="true"
               [fxHide]="!isDevice"
             ></ix-select>
             <ix-explorer
@@ -71,7 +71,7 @@
               [nodeProvider]="treeNodeProvider"
               [label]="helptext.extent_placeholder_path | translate"
               [tooltip]="helptext.extent_tooltip_path | translate"
-              [required]="isDevice ? false : true"
+              [required]="true"
               [fxHide]="isDevice"
             ></ix-explorer>
             <ix-input
@@ -79,7 +79,7 @@
               [label]="helptext.extent_placeholder_filesize | translate"
               [tooltip]="helptext.extent_tooltip_filesize | translate"
               [placeholder]="helptext.extent_placeholder_filesize | translate"
-              [required]="isDevice ? false : true"
+              [required]="true"
               type="number"
               [fxHide]="isDevice"
             ></ix-input>

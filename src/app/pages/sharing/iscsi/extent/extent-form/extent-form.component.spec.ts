@@ -26,7 +26,7 @@ describe('ExtentFormComponent', () => {
     type: IscsiExtentType.File,
     disk: 'key_device_2',
     path: '/mnt/opt',
-    filesize: '512',
+    filesize: 512,
     serial: 'serial_number',
     blocksize: 1024,
     pblocksize: true,
@@ -114,7 +114,6 @@ describe('ExtentFormComponent', () => {
       comment: 'new_comment',
       disk: 'key_device_2',
       enabled: false,
-      filesize: '2048',
       insecure_tpc: false,
       name: 'new_name',
       path: 'key_device_2',
@@ -157,7 +156,7 @@ describe('ExtentFormComponent', () => {
     await form.fillForm({
       Name: 'test_name',
       Description: 'test_comment',
-      Filesize: '2049',
+      Filesize: 2049,
       'Logical Block Size': '512',
     });
 
@@ -170,9 +169,8 @@ describe('ExtentFormComponent', () => {
         avail_threshold: 50,
         blocksize: 512,
         comment: 'test_comment',
-        disk: 'key_device_2',
         enabled: false,
-        filesize: '2560',
+        filesize: 2560,
         insecure_tpc: false,
         name: 'test_name',
         path: '/mnt/opt',

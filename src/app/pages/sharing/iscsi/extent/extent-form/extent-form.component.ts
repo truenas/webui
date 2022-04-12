@@ -1,4 +1,6 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
+import {
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
+} from '@angular/core';
 import { Validators } from '@angular/forms';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -20,7 +22,7 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
   styleUrls: ['./extent-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ExtentFormComponent {
+export class ExtentFormComponent implements OnInit {
   get isNew(): boolean {
     return !this.editingExtent;
   }
@@ -46,7 +48,7 @@ export class ExtentFormComponent {
     type: [IscsiExtentType.Disk],
     disk: [''],
     path: ['/mnt'],
-    filesize: [''],
+    filesize: [null as number],
     serial: [''],
     blocksize: [512],
     pblocksize: [false],
@@ -89,6 +91,21 @@ export class ExtentFormComponent {
     protected storageService: StorageService,
   ) {}
 
+  ngOnInit(): void {
+    this.form.controls.type.valueChanges.pipe(untilDestroyed(this)).subscribe((value: IscsiExtentType) => {
+      if (value === IscsiExtentType.Disk) {
+        this.form.controls.disk.enable();
+        this.form.controls.path.disable();
+        this.form.controls.filesize.disable();
+      }
+      if (value === IscsiExtentType.File) {
+        this.form.controls.disk.disable();
+        this.form.controls.path.enable();
+        this.form.controls.filesize.enable();
+      }
+    });
+  }
+
   setExtentForEdit(extent: IscsiExtent): void {
     if (extent.type === IscsiExtentType.Disk) {
       if (_.startsWith(extent.path, 'zvol')) {
@@ -110,12 +127,11 @@ export class ExtentFormComponent {
       values.path = values.disk;
     }
 
-    let originalFilesize = parseInt(values.filesize, 10);
-    if (originalFilesize !== 0) {
-      originalFilesize = originalFilesize + (values.blocksize - originalFilesize % values.blocksize);
+    if (values.type === IscsiExtentType.File) {
+      if (+values.filesize !== 0) {
+        values.filesize = +values.filesize + (values.blocksize - +values.filesize % values.blocksize);
+      }
     }
-
-    values.filesize = originalFilesize.toString();
 
     this.isLoading = true;
     let request$: Observable<unknown>;

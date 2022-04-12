@@ -61,7 +61,7 @@ export interface IscsiExtent {
   comment: string;
   disk: string;
   enabled: boolean;
-  filesize: string;
+  filesize: number;
   id: number;
   insecure_tpc: boolean;
   name: string;
