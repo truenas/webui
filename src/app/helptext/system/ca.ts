@@ -372,7 +372,6 @@ certificate still approved.'),
   },
 
   sign: {
-    fieldset_certificate: T('Sign CSR'),
     ca_id: {
       placeholder: T('CA ID'),
     },

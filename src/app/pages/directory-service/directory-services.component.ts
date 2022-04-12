@@ -347,7 +347,7 @@ export class DirectoryServicesComponent implements OnInit {
     ).subscribe(() => {
       if (component === KerberosSettingsComponent) {
         this.slideInService.open(component);
-      } else if (component === ActiveDirectoryComponent) {
+      } else if (component === ActiveDirectoryComponent || component === LdapComponent) {
         this.slideInService.open(component, { wide: true });
       } else {
         this.modalService.openInSlideIn(component, id);
