@@ -141,12 +141,9 @@ def confirm_installation_is_successful(driver):
         assert wait_on_element(driver, 20, '//strong[contains(.,"plex-test")]')
         assert wait_on_element(driver, 20, '//strong[contains(.,"plex-test")]', 'clickable')
         driver.find_element_by_xpath('//strong[contains(.,"plex-test")]').click()
-        assert wait_on_element(driver, 5, '//*[contains(.,"Please wait")]')
-        # sometimes the please wait window opens and closes so fast that the test fails here, other times it shows for about a second 
-        time.sleep(3)  # we have to wait for the page to settle down and the cards to fully load
-        # assert wait_on_element(driver, 5, '//*[contains(.,"Please wait")]')
-        # assert wait_on_element_disappear(driver, 10, '//*[contains(.,"Please wait")]')
-        # refresh loop
+        if wait_on_element(driver, 5, '//*[contains(.,"Please wait")]'):
+            assert wait_on_element_disappear(driver, 10, '//*[contains(.,"Please wait")]')
+        assert wait_on_element(driver, 10, '//div[@class="logo-container" and contains(.,"plex-test")]')
         assert wait_on_element(driver, 10, '//mat-panel-title[contains(.,"Application Events")]', 'clickable')
         driver.find_element_by_xpath('//mat-panel-title[contains(.,"Application Events")]').click()
         while is_element_present(driver, '//div[(normalize-space(text())="Started container plex")]') is False:
