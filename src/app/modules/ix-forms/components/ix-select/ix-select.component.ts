@@ -40,7 +40,7 @@ export class IxSelectComponent implements ControlValueAccessor, OnChanges {
 
   ngOnChanges(): void {
     if (this.options) {
-      this.matSelect.panel?.nativeElement.remove(0);
+      this.matSelect?.panel?.nativeElement.remove(0);
       this.opts$ = this.options.pipe(
         catchError(() => {
           this.hasErrorInOptions = false;
