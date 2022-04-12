@@ -608,7 +608,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
 
   // Resizes loader dialog which appears on update, wipe disk, etc.
   .entity-job-dialog {
-    max-height: 300px;
+    max-height: 350px;
     max-width: 500px;
     min-width: 200px;
   }
