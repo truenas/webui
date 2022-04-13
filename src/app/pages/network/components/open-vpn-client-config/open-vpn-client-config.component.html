@@ -5,22 +5,32 @@
       <ix-fieldset>
         <div class="columns">
           <div class="column">
-            <ix-select
-              formControlName="client_certificate"
-              [label]="'Client Certificate' | translate"
-              [options]="clientCertificates$"
-              [tooltip]="tooltips.client_certificate | translate"
-              [linkText]="'Certificates' | translate"
-              (linkClicked)="certificatesLinkClicked()"
-            ></ix-select>
-            <ix-select
-              formControlName="root_ca"
-              [label]="'Root CA' | translate"
-              [options]="rootAuthorities$"
-              [tooltip]="tooltips.root_ca | translate"
-              [linkText]="'Certificate Authorities' | translate"
-              (linkClicked)="certificatesLinkClicked()"
-            ></ix-select>
+            <div class="linked-select">
+              <div class="link-wrapper">
+                <a class="link" (click)="certificatesLinkClicked()">
+                  {{ 'Manage Certificates' | translate }}
+                </a>
+              </div>
+              <ix-select
+                formControlName="client_certificate"
+                [label]="'Client Certificate' | translate"
+                [options]="clientCertificates$"
+                [tooltip]="tooltips.client_certificate | translate"
+              ></ix-select>
+            </div>
+            <div class="linked-select">
+              <div class="link-wrapper">
+                <a class="link" (click)="certificatesLinkClicked()">
+                  {{ 'Manage Certificates' | translate }}
+                </a>
+              </div>
+              <ix-select
+                formControlName="root_ca"
+                [label]="'Root CA' | translate"
+                [options]="rootAuthorities$"
+                [tooltip]="tooltips.root_ca | translate"
+              ></ix-select>
+            </div>
             <ix-input
               formControlName="remote"
               [label]="'Remote' | translate"
