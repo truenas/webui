@@ -52,6 +52,7 @@ def on_the_dashboard_click_storage_on_the_left_sidebar(driver):
 def open_the_storage_page_and_click_on_the_system_3_dots_button_select_add_dataset(driver):
     """open the Storage page and click on the system 3 dots button, select Add Dataset.."""
     assert wait_on_element(driver, 10, '//h1[contains(.,"Storage")]')
+    assert wait_on_element_disappear(driver, 15, '//mat-spinner[@role="progressbar"]')
     assert wait_on_element(driver, 5, '//tr[contains(.,"tank")]//mat-icon[text()="more_vert"]', 'clickable')
     driver.find_element_by_xpath('//tr[contains(.,"tank")]//mat-icon[text()="more_vert"]').click()
     assert wait_on_element(driver, 4, '//button[normalize-space(text())="Add Dataset"]', 'clickable')
@@ -78,6 +79,7 @@ def on_the_add_dataset_page_input_the_dataset_name_dataset_name(driver, dataset_
 def click_summit_the_dataset_name_data_should_be_created(driver, dataset_name):
     """click Summit the "{dataset_name}" data should be created.."""
     assert wait_on_element(driver, 10, '//h1[text()="Storage"]')
+    assert wait_on_element_disappear(driver, 15, '//mat-spinner[@role="progressbar"]')
     assert wait_on_element(driver, 10, f'//div[contains(text(),"{dataset_name}")]')
 
 
@@ -102,7 +104,8 @@ def the_edit_acl_page_should_open_select_open_for_default_acl_option_select_grou
     driver.find_element_by_xpath('//div[contains(.,"Owner Group:") and @class="control"]//input').send_keys(group_name)
     assert wait_on_element(driver, 5, '//span[contains(text(),"Save Access Control List")]', 'clickable')
     driver.find_element_by_xpath('//span[contains(text(),"Save Access Control List")]').click()
-    assert wait_on_element(driver, 7, '//h1[contains(.,"Storage")]')
+    assert wait_on_element(driver, 7, '//h1[text()="Storage"]')
+    assert wait_on_element_disappear(driver, 15, '//mat-spinner[@role="progressbar"]')
     assert wait_on_element(driver, 5, '//tr[contains(.,"tank_acl_dataset")]//mat-icon[text()="more_vert"]', 'clickable')
     driver.find_element_by_xpath('//tr[contains(.,"tank_acl_dataset")]//mat-icon[text()="more_vert"]').click()
     assert wait_on_element(driver, 5, '//button[normalize-space(text())="View Permissions"]', 'clickable')
@@ -129,6 +132,7 @@ def click_the_save_button_which_should_be_returned_to_the_storage_page_on_the_ed
     driver.find_element_by_xpath('//span[contains(text(),"Save Access Control List")]').click()
     assert wait_on_element_disappear(driver, 30, '//h6[contains(.,"Please wait")]')
     assert wait_on_element(driver, 10, '//h1[text()="Storage"]')
+    assert wait_on_element_disappear(driver, 15, '//mat-spinner[@role="progressbar"]')
     assert wait_on_element(driver, 10, '//div[contains(text(),"tank_acl_dataset")]')
     assert wait_on_element(driver, 5, '//tr[contains(.,"tank_acl_dataset")]//mat-icon[text()="more_vert"]', 'clickable')
     driver.find_element_by_xpath('//tr[contains(.,"tank_acl_dataset")]//mat-icon[text()="more_vert"]').click()
