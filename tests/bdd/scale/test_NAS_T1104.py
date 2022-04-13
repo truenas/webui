@@ -180,6 +180,8 @@ def after_open_the_storage_page_and_click_on_the_system_3_dots_button_select_add
     assert wait_on_element(driver, 5, '//mat-list-item[@ix-auto="option__Storage"]', 'clickable')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Storage"]').click()
     assert wait_on_element(driver, 7, '//h1[text()="Storage"]')
+    # This will wait for the spinner to go away and looks like this xpath work for all spinners.
+    assert wait_on_element_disappear(driver, 15, '//mat-spinner[@role="progressbar"]')
     assert wait_on_element(driver, 5, '//tr[contains(.,"system")]//mat-icon[text()="more_vert"]', 'clickable')
     driver.find_element_by_xpath('//tr[contains(.,"system")]//mat-icon[text()="more_vert"]').click()
     assert wait_on_element(driver, 4, '//button[normalize-space(text())="Add Dataset"]', 'clickable')
@@ -211,6 +213,7 @@ def click_summit_the_dataset_name_data_should_be_created(driver, dataset_name):
 def click_on_the_dataset_name_3_dots_button_select_edit_permissions(driver, dataset_name):
     """click on the "{dataset_name}" 3 dots button, select Edit Permissions.."""
     assert wait_on_element(driver, 7, '//h1[text()="Storage"]')
+    assert wait_on_element_disappear(driver, 15, '//mat-spinner[@role="progressbar"]')
     assert wait_on_element(driver, 10, '//div[contains(text(),"my_acl_dataset")]')
     assert wait_on_element(driver, 5, '//tr[contains(.,"my_acl_dataset")]//mat-icon[text()="more_vert"]', 'clickable')
     driver.find_element_by_xpath('//tr[contains(.,"my_acl_dataset")]//mat-icon[text()="more_vert"]').click()
@@ -231,6 +234,7 @@ def the_edit_acl_page_should_open_select_open_for_default_acl_option_select_grou
     assert wait_on_element(driver, 5, '//span[contains(text(),"Save Access Control List")]', 'clickable')
     driver.find_element_by_xpath('//span[contains(text(),"Save Access Control List")]').click()
     assert wait_on_element(driver, 7, '//h1[text()="Storage"]')
+    assert wait_on_element_disappear(driver, 15, '//mat-spinner[@role="progressbar"]')
     assert wait_on_element(driver, 5, '//tr[contains(.,"my_acl_dataset")]//mat-icon[text()="more_vert"]', 'clickable')
     driver.find_element_by_xpath('//tr[contains(.,"my_acl_dataset")]//mat-icon[text()="more_vert"]').click()
     assert wait_on_element(driver, 5, '//button[normalize-space(text())="View Permissions"]', 'clickable')
@@ -257,6 +261,7 @@ def click_the_save_button_which_should_be_returned_to_the_storage_page_on_the_ed
     driver.find_element_by_xpath('//span[contains(text(),"Save Access Control List")]').click()
     assert wait_on_element_disappear(driver, 30, '//h6[contains(.,"Please wait")]')
     assert wait_on_element(driver, 10, '//h1[text()="Storage"]')
+    assert wait_on_element_disappear(driver, 15, '//mat-spinner[@role="progressbar"]')
     assert wait_on_element(driver, 10, '//div[contains(text(),"my_acl_dataset")]')
     assert wait_on_element(driver, 5, '//tr[contains(.,"my_acl_dataset")]//mat-icon[text()="more_vert"]', 'clickable')
     driver.find_element_by_xpath('//tr[contains(.,"my_acl_dataset")]//mat-icon[text()="more_vert"]').click()
