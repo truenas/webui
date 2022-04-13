@@ -1,4 +1,4 @@
-import { DatasetQuotaType } from 'app/enums/dataset-quota-type.enum';
+import { DatasetQuotaType } from 'app/enums/dataset.enum';
 import { QueryParams } from 'app/interfaces/query-api.interface';
 
 export interface DatasetQuota {

@@ -292,7 +292,7 @@ export class VolumeStatusComponent implements OnInit, OnDestroy {
         }
         this.dialogService.confirm({
           title: helptext.offline_disk.title,
-          message: helptext.offline_disk.message + name + '?',
+          message: this.translate.instant(helptext.offline_disk.message) + name + '?',
           buttonMsg: helptext.offline_disk.buttonMsg,
         }).pipe(
           filter(Boolean),
@@ -322,7 +322,7 @@ export class VolumeStatusComponent implements OnInit, OnDestroy {
 
         this.dialogService.confirm({
           title: helptext.online_disk.title,
-          message: helptext.online_disk.message + diskName + '?',
+          message: this.translate.instant(helptext.online_disk.message) + diskName + '?',
           buttonMsg: helptext.online_disk.buttonMsg,
         }).pipe(
           filter(Boolean),
@@ -356,7 +356,7 @@ export class VolumeStatusComponent implements OnInit, OnDestroy {
         _.find(this.replaceDiskFormFields, { name: 'label' }).value = row.guid;
 
         const conf: DialogFormConfiguration = {
-          title: helptext.replace_disk.form_title + name,
+          title: this.translate.instant(helptext.replace_disk.form_title) + name,
           fieldConfig: this.replaceDiskFormFields,
           saveButtonText: helptext.replace_disk.saveButtonText,
           customSubmit: (entityDialog: EntityDialogComponent) => {
@@ -408,7 +408,7 @@ export class VolumeStatusComponent implements OnInit, OnDestroy {
 
         this.dialogService.confirm({
           title: helptext.remove_disk.title,
-          message: helptext.remove_disk.message + diskName + '?',
+          message: this.translate.instant(helptext.remove_disk.message) + diskName + '?',
           buttonMsg: helptext.remove_disk.buttonMsg,
         }).pipe(
           filter(Boolean),
@@ -509,7 +509,13 @@ export class VolumeStatusComponent implements OnInit, OnDestroy {
                 diskName = pIndex > -1 ? row.name.substring(0, pIndex) : row.name;
               }
 
-              this.dialogService.info(helptext.extend_disk.title, helptext.extend_disk.info_dialog_content + diskName + '.', '', 'info', true);
+              this.dialogService.info(
+                helptext.extend_disk.title,
+                this.translate.instant(helptext.extend_disk.info_dialog_content) + diskName + '.',
+                '',
+                'info',
+                true,
+              );
             });
             dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((res: Job) => {
               dialogRef.close();

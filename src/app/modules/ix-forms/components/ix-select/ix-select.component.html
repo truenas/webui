@@ -18,7 +18,7 @@
     >
       <ng-container *ngIf="opts$ | async as opts; else loadingOrError">
         <mat-option *ngIf="opts.length === 0" value="" [disabled]="true">{{ 'No options' | translate  }}</mat-option>
-        <mat-option *ngIf="opts.length > 0 && !multiple && !required" [value]="null">--</mat-option>
+        <mat-option *ngIf="opts.length > 0 && !multiple && !required" [value]="emptyValue">--</mat-option>
         <mat-option *ngFor="let option of opts$ | async" [value]="option.value">{{ option.label }}</mat-option>
       </ng-container>
 
@@ -30,10 +30,6 @@
     </mat-select>
   </div>
 
-
-  <div *ngIf="linkText">
-    <a (click)="linkClicked.emit()" class="link">{{ linkText | translate }}<mat-icon style="font-size: x-small;">open_in_new</mat-icon></a>
-  </div>
   <ix-errors [control]="controlDirective.control" [label]="label"></ix-errors>
 
   <mat-hint *ngIf="hint">{{ hint }}</mat-hint>

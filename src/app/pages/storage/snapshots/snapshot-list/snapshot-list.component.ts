@@ -277,6 +277,7 @@ export class SnapshotListComponent implements OnInit {
   doBatchDelete(snapshots: ZfsSnapshot[]): void {
     this.matDialog.open(SnapshotBatchDeleteDialogComponent, {
       data: snapshots,
+      disableClose: true,
     }).afterClosed().pipe(
       filter(Boolean),
       untilDestroyed(this),

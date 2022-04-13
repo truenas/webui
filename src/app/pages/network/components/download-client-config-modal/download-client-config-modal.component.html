@@ -1,13 +1,18 @@
 <h1 mat-dialog-title>{{ 'Select Client Certificate' | translate }}</h1>
 <div mat-dialog-content>
-  <ix-select
-    [formControl]="selectControl"
-    [label]="'Client Certificate' | translate"
-    [options]="serverCertificates$"
-    [required]="true"
-    [linkText]="'Certificates' | translate"
-    (linkClicked)="certificatesLinkClicked()"
-  ></ix-select>
+  <div class="linked-select">
+    <div class="link-wrapper">
+      <a class="link" (click)="certificatesLinkClicked()">
+        {{ 'Manage Certificates' | translate }}
+      </a>
+    </div>
+    <ix-select
+      [formControl]="selectControl"
+      [label]="'Client Certificate' | translate"
+      [options]="serverCertificates$"
+      [required]="true"
+    ></ix-select>
+  </div>
 </div>
 <div mat-dialog-actions class="buttons">
   <button

@@ -11,6 +11,7 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
+import { CoreComponents } from 'app/core/core-components.module';
 import { ConfigResetComponent } from './config-reset/config-reset.component';
 import { FailoverComponent } from './failover/failover.component';
 import { othersRoutes } from './others.routing';
@@ -31,6 +32,7 @@ import { ShutdownComponent } from './shutdown/shutdown.component';
     FlexLayoutModule,
     TranslateModule,
     RouterModule.forChild(othersRoutes),
+    CoreComponents,
   ],
   declarations: [RebootComponent, FailoverComponent, ShutdownComponent, ConfigResetComponent],
 })
