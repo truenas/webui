@@ -53,12 +53,7 @@ def on_the_dashboard_click_on_apps(driver):
 def stop_nextcloud_from_running(driver):
     """Stop nextcloud from running."""
     assert wait_on_element(driver, 10, '//h1[text()="Applications"]')
-    if wait_on_element(driver, 60, '//strong[text()="nextcloud-test"]') is False:
-        assert wait_on_element(driver, 10, '//div[text()="Available Applications"]', 'clickable')
-        driver.find_element_by_xpath('//div[text()="Available Applications"]').click()
-        assert wait_on_element(driver, 60, '//h3[text()="nextcloud"]')
-        assert wait_on_element(driver, 10, '//div[text()="Installed Applications"]', 'clickable')
-        driver.find_element_by_xpath('//div[text()="Installed Applications"]').click()
+    assert wait_on_element_disappear(driver, 120, '//mat-spinner[@role="progressbar"]')
     assert wait_on_element(driver, 60, '//strong[text()="nextcloud-test"]')
     assert wait_on_element(driver, 45, '//mat-card[contains(.,"nextcloud")]//span[contains(.,"Stop")]', 'clickable')
     driver.find_element_by_xpath('//mat-card[contains(.,"nextcloud")]//span[contains(.,"Stop")]').click()
@@ -68,7 +63,7 @@ def stop_nextcloud_from_running(driver):
 def verify_the_application_has_stopped(driver):
     """Verify the application has stopped."""
     assert wait_on_element(driver, 5, '//h1[contains(.,"Stopping")]')
-    assert wait_on_element_disappear(driver, 300, '//h1[contains(.,"Stopping")]')
+    assert wait_on_element_disappear(driver, 180, '//h1[contains(.,"Stopping")]')
     assert wait_on_element(driver, 15, '//mat-card[contains(.,"nextcloud-test")]//span[contains(.,"STOPPED ")]')
 
 
@@ -77,7 +72,8 @@ def open_available_applications(driver):
     """open available applications."""
     assert wait_on_element(driver, 10, '//div[contains(text(),"Available Applications")]', 'clickable')
     driver.find_element_by_xpath('//div[contains(text(),"Available Applications")]').click()
-    assert wait_on_element(driver, 7, '//div[contains(.,"Available Applications")]')
+    assert wait_on_element_disappear(driver, 60, '//mat-spinner[@role="progressbar"]')
+    time.sleep(1)
 
 
 @then('when the Apps page loads, open Manager Docker Images')
@@ -85,7 +81,7 @@ def when_the_apps_page_loads_open_manager_docker_images(driver):
     """when the Apps page loads, open Manager Docker Images."""
     assert wait_on_element(driver, 10, '//div[contains(text(),"Manage Docker Images")]', 'clickable')
     driver.find_element_by_xpath('//div[contains(text(),"Manage Docker Images")]').click()
-    time.sleep(0.5)
+    time.sleep(1)
 
 
 @then('click the three dots icon for nextcloud')
