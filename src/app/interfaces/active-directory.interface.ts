@@ -22,7 +22,7 @@ export interface ActiveDirectoryUpdate {
   nss_info: NssInfoType;
   createcomputer: string;
   netbiosname: string;
-  netbiosname_b: string;
+  netbiosname_b?: string;
   netbiosalias: string[];
   enable: boolean;
 }

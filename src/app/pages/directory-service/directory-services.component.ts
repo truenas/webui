@@ -165,7 +165,7 @@ export class DirectoryServicesComponent implements OnInit {
 
   readonly noDirectoryServicesConfig: EmptyConfig = {
     title: this.translate.instant('Active Directory and LDAP are disabled.'),
-    message: this.translate.instant('Only one can be active at a time'),
+    message: this.translate.instant('Only one can be active at a time.'),
     large: true,
     icon: 'account-box',
   };
@@ -347,7 +347,7 @@ export class DirectoryServicesComponent implements OnInit {
     ).subscribe(() => {
       if (component === KerberosSettingsComponent || component === KerberosKeytabsFormComponent) {
         this.slideInService.open(component);
-      } else if (component === LdapComponent) {
+      } else if (component === ActiveDirectoryComponent || component === LdapComponent) {
         this.slideInService.open(component, { wide: true });
       } else {
         this.modalService.openInSlideIn(component, id);
