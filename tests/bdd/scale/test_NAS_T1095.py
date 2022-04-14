@@ -5,6 +5,7 @@ import time
 from function import (
     wait_on_element,
     is_element_present,
+    attribute_value_exist,
     wait_on_element_disappear,
     ssh_cmd,
 )
@@ -57,8 +58,8 @@ def the_users_page_should_open_click_the_greaterthansign_the_user_field_should_e
     assert wait_on_element(driver, 7, '//div[contains(.,"Users")]')
     assert wait_on_element(driver, 10, '//tr[contains(.,"ericbsd")]//mat-icon', 'clickable')
     driver.find_element_by_xpath('//tr[contains(.,"ericbsd")]//mat-icon').click()
-    assert wait_on_element(driver, 10, '(//tr[contains(.,"ericbsd")]/following-sibling::tr)[1]//button[contains(.,"Edit")]', 'clickable')
-    driver.find_element_by_xpath('(//tr[contains(.,"ericbsd")]/following-sibling::tr)[1]//button[contains(.,"Edit")]').click()
+    assert wait_on_element(driver, 10, '(//tr[contains(.,"ericbsd")]/following-sibling::user-details-row)[1]//button[contains(.,"Edit")]', 'clickable')
+    driver.find_element_by_xpath('(//tr[contains(.,"ericbsd")]/following-sibling::user-details-row)[1]//button[contains(.,"Edit")]').click()
 
 
 @then('the User Edit Page should open, change the password in both fields and click save')
@@ -66,13 +67,16 @@ def the_user_edit_page_should_open_change_the_password_in_both_fields_and_click_
     """the User Edit Page should open, change the password in both fields and click save."""
     assert wait_on_element(driver, 10, '//h3[contains(.,"Edit User")]')
     assert wait_on_element_disappear(driver, 10, '//h6[contains(.,"Please wait")]')
-    assert wait_on_element(driver, 10, '//input[@ix-auto="input__Password"]', 'inputable')
-    driver.find_element_by_xpath('//input[@ix-auto="input__Password"]').clear()
-    driver.find_element_by_xpath('//input[@ix-auto="input__Password"]').send_keys('testing1234')
-    driver.find_element_by_xpath('//input[@ix-auto="input__Confirm Password"]').clear()
-    driver.find_element_by_xpath('//input[@ix-auto="input__Confirm Password"]').send_keys('testing1234')
-    assert wait_on_element(driver, 7, '//button[@ix-auto="button__SAVE"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
+    assert wait_on_element(driver, 10, '//ix-input[@formcontrolname="password"]//input', 'inputable')
+    driver.find_element_by_xpath('//ix-input[@formcontrolname="password"]//input').clear()
+    driver.find_element_by_xpath('//ix-input[@formcontrolname="password"]//input').send_keys('testing1234')
+    driver.find_element_by_xpath('//ix-input[@formcontrolname="password_conf"]//input').clear()
+    driver.find_element_by_xpath('//ix-input[@formcontrolname="password_conf"]//input').send_keys('testing1234')
+    element = driver.find_element_by_xpath('//button[span[contains(.,"Save")]]')
+    driver.execute_script("arguments[0].scrollIntoView();", element)
+    assert wait_on_element(driver, 10, '//button[span[contains(.,"Save")]]', 'clickable')
+    driver.find_element_by_xpath('//button[span[contains(.,"Save")]]').click()
+    time.sleep(1)
 
 
 @then('the changes should be saved without an error try to ssh with the old password for that user')

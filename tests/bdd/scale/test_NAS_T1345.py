@@ -5,7 +5,6 @@ import time
 from function import (
     wait_on_element,
     is_element_present,
-    attribute_value_exist,
     wait_on_element_disappear,
 )
 from pytest_bdd import (
@@ -13,8 +12,9 @@ from pytest_bdd import (
     scenario,
     then,
     when,
-    parsers
 )
+import pytest
+pytestmark = [pytest.mark.debug_test]
 
 
 @scenario('features/NAS-T1345.feature', 'Apps Page - Validate plex')
@@ -65,7 +65,6 @@ def click_install(driver):
     driver.find_element_by_xpath('//mat-card[contains(.,"plex")]//span[contains(.,"Install")]').click()
     if is_element_present(driver, '//*[contains(.,"Please wait")]'):
         assert wait_on_element_disappear(driver, 10, '//*[contains(.,"Please wait")]')
-
 
 
 @then('set application name')
@@ -128,7 +127,8 @@ def confirm_options(driver):
     driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
 
     assert wait_on_element(driver, 5, '//*[contains(.,"Installing")]')
-    assert wait_on_element_disappear(driver, 30, '//*[contains(.,"Installing")]')
+    assert wait_on_element_disappear(driver, 45, '//*[contains(.,"Installing")]')
+
 
 @then('confirm installation is successful')
 def confirm_installation_is_successful(driver):
@@ -141,26 +141,26 @@ def confirm_installation_is_successful(driver):
         assert wait_on_element(driver, 20, '//strong[contains(.,"plex-test")]')
         assert wait_on_element(driver, 20, '//strong[contains(.,"plex-test")]', 'clickable')
         driver.find_element_by_xpath('//strong[contains(.,"plex-test")]').click()
-        assert wait_on_element(driver, 5, '//*[contains(.,"Please wait")]')
-        # sometimes the please wait window opens and closes so fast that the test fails here, other times it shows for about a second 
-        time.sleep(3)  # we have to wait for the page to settle down and the cards to fully load
-        #assert wait_on_element(driver, 5, '//*[contains(.,"Please wait")]')
-        #assert wait_on_element_disappear(driver, 10, '//*[contains(.,"Please wait")]')    
-        # refresh loop
+        if wait_on_element(driver, 5, '//*[contains(.,"Please wait")]'):
+            assert wait_on_element_disappear(driver, 10, '//*[contains(.,"Please wait")]')
+        assert wait_on_element(driver, 10, '//div[@class="logo-container" and contains(.,"plex-test")]')
         assert wait_on_element(driver, 10, '//mat-panel-title[contains(.,"Application Events")]', 'clickable')
         driver.find_element_by_xpath('//mat-panel-title[contains(.,"Application Events")]').click()
         while is_element_present(driver, '//div[(normalize-space(text())="Started container plex")]') is False:
             time.sleep(2)
             assert wait_on_element(driver, 10, '//span[contains(.,"Refresh Events")]', 'clickable')
             driver.find_element_by_xpath('//span[contains(.,"Refresh Events")]').click()
+            # make sure Please wait pop up is gone before continuing.
+            if wait_on_element(driver, 3, '//*[contains(.,"Please wait")]'):
+                assert wait_on_element_disappear(driver, 10, '//*[contains(.,"Please wait")]')
         else:
             assert wait_on_element(driver, 10, '//span[contains(.,"Close")]', 'clickable')
             driver.find_element_by_xpath('//span[contains(.,"Close")]').click()
-            time.sleep(30) # Because of slow start up times, Plex takes another 10-15 second to switch from "Deploying to Active"  So we can either flip the page constantly or just wait and give it time.
+            time.sleep(30)  # Because of slow start up times, Plex takes another 10-15 second to switch from "Deploying to Active"  So we can either flip the page constantly or just wait and give it time.
             assert wait_on_element(driver, 10, '//div[contains(text(),"Available Applications")]', 'clickable')
             driver.find_element_by_xpath('//div[contains(text(),"Available Applications")]').click()
             assert wait_on_element(driver, 10, '//div[contains(text(),"Installed Applications")]', 'clickable')
             driver.find_element_by_xpath('//div[contains(text(),"Installed Applications")]').click()
-            assert wait_on_element(driver, 20, '//mat-card[contains(.,"plex-test")]//span[@class="status active"]')
+            assert wait_on_element(driver, 300, '//mat-card[contains(.,"plex-test")]//span[@class="status active"]')
     else:
-        assert wait_on_element(driver, 20, '//mat-card[contains(.,"plex-test")]//span[@class="status active"]')
+        assert wait_on_element(driver, 300, '//mat-card[contains(.,"plex-test")]//span[@class="status active"]')

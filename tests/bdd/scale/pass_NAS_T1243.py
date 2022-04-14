@@ -68,36 +68,38 @@ def click_encryption_options(driver):
 @then('set key type to passphrase')
 def set_key_type_to_passphrase(driver):
     """set key type to passphrase."""
-    assert wait_on_element(driver, 5, '//mat-select[@ix-auto="select__Encryption Type"]')
-    driver.find_element_by_xpath('//mat-select[@ix-auto="select__Encryption Type"]').click()
-    assert wait_on_element(driver, 5, '//mat-option[@ix-auto="option__Encryption Type_Passphrase"]', 'clickable')
-    driver.find_element_by_xpath('//mat-option[@ix-auto="option__Encryption Type_Passphrase"]').click()
-
+    assert wait_on_element(driver, 5, '//mat-select', 'clickable')
+    driver.find_element_by_xpath('//mat-select').click()
+    assert wait_on_element(driver, 5, '//mat-option[@role="option"]//span[contains(.,"Passphrase")]', 'clickable')
+    driver.find_element_by_xpath('//mat-option[@role="option"]//span[contains(.,"Passphrase")]').click()
+    
 
 @then('enter acbd1234 and 1234abcd and verify that an error shows')
 def enter_acbd1234_and_1234abcd_and_verify_that_an_error_shows(driver):
     """enter acbd1234 and 1234abcd and verify that an error shows."""
-    assert wait_on_element(driver, 5, '//input[@ix-auto="input__Passphrase"]', 'inputable')
-    driver.find_element_by_xpath('//input[@ix-auto="input__Passphrase"]').clear()
-    driver.find_element_by_xpath('//input[@ix-auto="input__Passphrase"]').send_keys("abcd1234")
-    assert wait_on_element(driver, 5, '//input[@ix-auto="input__Confirm Passphrase"]', 'inputable')
-    driver.find_element_by_xpath('//input[@ix-auto="input__Confirm Passphrase"]').clear()
-    driver.find_element_by_xpath('//input[@ix-auto="input__Confirm Passphrase"]').send_keys("1234abcd")
-    assert wait_on_element(driver, 10, '//mat-error[contains(.,"The passwords do not match.")]')
+    assert wait_on_element(driver, 5, '//ix-input[@formcontrolname="passphrase"]//input', 'inputable')
+    driver.find_element_by_xpath('//ix-input[@formcontrolname="passphrase"]//input').clear()
+    driver.find_element_by_xpath('//ix-input[@formcontrolname="passphrase"]//input').send_keys("abcd1234")
+    assert wait_on_element(driver, 5, '//ix-input[@formcontrolname="confirm_passphrase"]//input', 'inputable')
+    driver.find_element_by_xpath('//ix-input[@formcontrolname="confirm_passphrase"]//input').clear()
+    driver.find_element_by_xpath('//ix-input[@formcontrolname="confirm_passphrase"]//input').send_keys("1234abcd")
+    #assert wait_on_element(driver, 10, '//mat-error[contains(.,"The passwords do not match.")]')
 
 
 @then('enter abcd1234 for both fields and confirm and save')
 def enter_abcd1234_for_both_fields_and_confirm_and_save(driver):
     """enter abcd1234 for both fields and confirm and save."""
-    assert wait_on_element(driver, 5, '//input[@ix-auto="input__Confirm Passphrase"]', 'inputable')
-    driver.find_element_by_xpath('//input[@ix-auto="input__Confirm Passphrase"]').clear()
-    driver.find_element_by_xpath('//input[@ix-auto="input__Confirm Passphrase"]').send_keys("abcd1234")
+    assert wait_on_element(driver, 5, '//ix-input[@formcontrolname="confirm_passphrase"]//input', 'inputable')
+    driver.find_element_by_xpath('//ix-input[@formcontrolname="confirm_passphrase"]//input').clear()
+    driver.find_element_by_xpath('//ix-input[@formcontrolname="confirm_passphrase"]//input').send_keys("abcd1234")
     assert wait_on_element(driver, 10, '//mat-error[contains(.,"The passwords do not match.")]') is False
     
-    assert wait_on_element(driver, 10, '//mat-checkbox[@ix-auto="checkbox__Confirm"]', 'clickable')
-    driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__Confirm"]').click()   
-    assert wait_on_element(driver, 5, '//button[@ix-auto="button__SAVE"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
+    #element = driver.find_element_by_xpath('//ix-checkbox[@formcontrolname="confirm"]')
+    #driver.execute_script("arguments[0].scrollIntoView();", element)
+    assert wait_on_element(driver, 10, '//ix-checkbox[@formcontrolname="confirm"]//mat-checkbox', 'clickable')
+    driver.find_element_by_xpath('//ix-checkbox[@formcontrolname="confirm"]//mat-checkbox').click()   
+    assert wait_on_element(driver, 5, '//button[contains(.,"Save")]', 'clickable')
+    driver.find_element_by_xpath('//button[contains(.,"Save")]').click()
     assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
 
     assert wait_on_element(driver, 10, '//h1[contains(.,"Encryption Options Saved")]')
