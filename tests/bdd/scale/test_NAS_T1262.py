@@ -1,13 +1,9 @@
 # coding=utf-8
 """SCALE UI: feature tests."""
 
-import time
-from selenium.webdriver.common.keys import Keys
-from function import(
+from function import (
     wait_on_element,
     is_element_present,
-    attribute_value_exist,
-    wait_for_attribute_value,
     wait_on_element_disappear,
 )
 from pytest_bdd import (
@@ -75,4 +71,4 @@ def click_the_confirm_checkbox_and_click_delete(driver):
 @then('verify that the Cert was deleted')
 def verify_that_the_cert_was_deleted(driver):
     """verify that the Cert was deleted."""
-    assert wait_on_element(driver, 10, '//li[contains(.,"Name: cert1")]') is False
+    assert wait_on_element_disappear(driver, 20, '//li[contains(.,"Name: cert1")]')

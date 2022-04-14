@@ -1,13 +1,9 @@
 # coding=utf-8
 """SCALE UI: feature tests."""
 
-import time
-from selenium.webdriver.common.keys import Keys
 from function import(
     wait_on_element,
     is_element_present,
-    attribute_value_exist,
-    wait_for_attribute_value,
     wait_on_element_disappear,
 )
 from pytest_bdd import (
@@ -16,6 +12,7 @@ from pytest_bdd import (
     then,
     when,
 )
+
 
 @scenario('features/NAS-T1260.feature', 'Verify a certificate authority can be created')
 def test_verify_a_certificate_authority_can_be_created():
@@ -57,12 +54,12 @@ def click_on_ca_add(driver):
     assert wait_on_element(driver, 7, '//h3[contains(text(),"Certificates")]')
     assert wait_on_element(driver, 5, '//mat-card[contains(.,"Certificate Authorities")]//button[contains(.,"Add")]', 'clickable')
     driver.find_element_by_xpath('//mat-card[contains(.,"Certificate Authorities")]//button[contains(.,"Add")]').click()
-    
+
 
 @then('set name and type and click next')
 def set_name_and_type_and_click_next(driver):
     """set name and type and click next."""
-    assert wait_on_element(driver, 10, '//h3[contains(text(),"Add CA")]')       
+    assert wait_on_element(driver, 10, '//h3[contains(text(),"Add CA")]')
     assert wait_on_element(driver, 5, '//input[@ix-auto="input__Name"]', 'inputable')
     driver.find_element_by_xpath('//input[@ix-auto="input__Name"]').clear()
     driver.find_element_by_xpath('//input[@ix-auto="input__Name"]').send_keys('ca1')
@@ -83,6 +80,7 @@ def set_key_info_and_click_next(driver):
     driver.find_element_by_xpath('//mat-option[@ix-auto="option__Key Type_RSA"]').click()
     assert wait_on_element(driver, 10, '//div[contains(.,"Certificate Options") and contains(@class,"mat-step")]//button[@ix-auto="button__NEXT"]', 'clickable')
     driver.find_element_by_xpath('//div[contains(.,"Certificate Options") and contains(@class,"mat-step")]//button[@ix-auto="button__NEXT"]').click()
+
 
 @then('set company info and click next')
 def set_company_info_and_click_next(driver):

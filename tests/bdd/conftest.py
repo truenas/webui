@@ -8,10 +8,13 @@ import time
 from configparser import ConfigParser
 from platform import system
 from selenium import webdriver
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 from selenium.common.exceptions import (
     NoSuchElementException,
-    TimeoutException
+    TimeoutException,
+    ElementClickInterceptedException
 )
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
@@ -108,8 +111,7 @@ def pytest_runtest_makereport(item):
         if (report.skipped and xfail) or (report.failed and not xfail):
             screenshot_name = f'screenshot/{report.nodeid.replace("::", "_")}.png'
             # look if there is a Error window
-            if element_exist('//h1[contains(.,"Error")]'):
-
+            if element_exist('//h1[contains(.,"Error")]') or element_exist('//h1[contains(.,"FAILED")]'):
                 web_driver.find_element_by_xpath('//div[@ix-auto="button__backtrace-toggle"]').click()
                 time.sleep(2)
                 traceback_name = f'screenshot/{report.nodeid.replace("::", "_")}_error.txt'
@@ -123,7 +125,17 @@ def pytest_runtest_makereport(item):
             # take screenshot after looking for error
             save_screenshot(screenshot_name)
             if wait_on_element(1, '//mat-icon[@id="close-icon" and text()="cancel"]', 'clickable'):
-                web_driver.find_element_by_xpath('//mat-icon[@id="close-icon" and text()="cancel"]').click()
+                try:
+                    web_driver.find_element_by_xpath('//mat-icon[@id="close-icon" and text()="cancel"]').click()
+                except ElementClickInterceptedException:
+                    try:
+                        # Press Tab in case a dropdown is in the way
+                        actions = ActionChains(web_driver)
+                        actions.send_keys(Keys.TAB)
+                        actions.perform()
+                        web_driver.find_element_by_xpath('//mat-icon[@id="close-icon" and text()="cancel"]').click()
+                    except ElementClickInterceptedException:
+                        pass
 
 
 def save_screenshot(name):

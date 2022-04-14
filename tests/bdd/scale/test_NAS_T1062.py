@@ -17,7 +17,6 @@ from pytest_bdd import (
     when,
 )
 import pytest
-
 pytestmark = [pytest.mark.debug_test]
 
 
@@ -89,6 +88,7 @@ def the_ssh_general_options_page_should_open(driver):
 def click_the_checkbox_log_in_as_root_with_password(driver):
     """click the checkbox "Log in as root with password"."""
     assert wait_on_element(driver, 10, '//ix-checkbox[@formcontrolname="rootlogin"]//mat-checkbox', 'clickable')
+    time.sleep(0.5)
     value_exist = attribute_value_exist(driver, '//ix-checkbox[@formcontrolname="rootlogin"]//mat-checkbox', 'class', 'mat-checkbox-checked')
     if not value_exist:
         driver.find_element_by_xpath('//ix-checkbox[@formcontrolname="rootlogin"]//mat-checkbox').click()

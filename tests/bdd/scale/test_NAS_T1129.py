@@ -2,16 +2,13 @@
 """SCALE UI: feature tests."""
 
 import time
-from selenium.webdriver import ActionChains
-from selenium.webdriver.common.keys import Keys
 from function import (
     wait_on_element,
     is_element_present,
     attribute_value_exist,
     wait_on_element_disappear,
     run_cmd,
-    ssh_cmd,
-    post
+    ssh_cmd
 )
 from pytest_bdd import (
     given,
@@ -82,21 +79,24 @@ def input_my_ldap_smb_test_share_as_the_description_and_click_summit(driver, des
     checkbox_checked = attribute_value_exist(driver, '//mat-checkbox[@ix-auto="checkbox__Enabled"]', 'class', 'mat-checkbox-checked')
     if not checkbox_checked:
         driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__Enabled"]').click()
+    time.sleep(0.5)
     assert wait_on_element(driver, 5, '//button[@ix-auto="button__SAVE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
+    time.sleep(0.5)
+    assert wait_on_element_disappear(driver, 30, '//h6[contains(.,"Please wait")]')
 
 
 @then('the ldapsmbshare should be added to the Shares list')
 def the_ldapsmbshare_should_be_added_to_the_shares_list(driver):
     """the ldapsmbshare should be added to the Shares list."""
-    assert wait_on_element(driver, 5, f'//div[contains(.,"ldapsmbshare")]')
+    assert wait_on_element(driver, 5, '//div[contains(.,"ldapsmbshare")]')
 
 
 @then(parsers.parse('send a file to the share with ip/"{ldapsmbshare}" and "{ldap_user}" and "{ldap_password}"'))
 def send_a_file_to_the_share_with_ipldapsmbshare_and_eturgeon_and_need_4_testing(ldapsmbshare, ldap_user, ldap_password, nas_ip):
     """send a file to the share with ip/ldapsmbshare and "eturgeon" and "Need_4_testing"."""
     run_cmd('touch testfile.txt')
-    results = run_cmd(f'smbclient //{nas_ip}/{ldapsmbshare} -W AD01 -U {ldap_user}%{ldap_password} -c "put testfile.txt testfile.txt"')
+    results = run_cmd(f'smbclient //{nas_ip}/{ldapsmbshare} -U {ldap_user}%{ldap_password} -c "put testfile.txt testfile.txt"')
     assert results['result'], results['output']
     run_cmd('rm testfile.txt')
 
@@ -125,6 +125,8 @@ def click_on_credentialsdirectoryservices_then_ldap_settings_then_disable_and_cl
     wait_on_element(driver, 10, '//span[contains(text(),"Save")]', 'clickable')
     driver.find_element_by_xpath('//span[contains(text(),"Save")]').click()
     assert wait_on_element_disappear(driver, 60, '//h6[contains(.,"Please wait")]')
-    # return to dashboard in case the server is slow, so the next test doesn't fail.
-    assert wait_on_element(driver, 5, '//mat-list-item[@ix-auto="option__Dashboard"]', 'clickable')
-    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()    
+    assert wait_on_element(driver, 10, '//h1[text()="Directory Services"]')
+    # Make sure Active Directory and LDAP are both disabled
+    assert wait_on_element(driver, 10, '//h3[text()="Active Directory and LDAP are disabled."]')
+    assert wait_on_element(driver, 7, '//span[contains(text(),"Configure Active Directory")]', 'clickable')
+    assert wait_on_element(driver, 7, '//span[contains(text(),"Configure LDAP")]', 'clickable')

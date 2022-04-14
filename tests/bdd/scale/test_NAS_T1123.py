@@ -8,8 +8,7 @@ from function import (
     attribute_value_exist,
     wait_on_element_disappear,
     run_cmd,
-    ssh_cmd,
-    post
+    ssh_cmd
 )
 from pytest_bdd import (
     given,
@@ -91,7 +90,7 @@ def set_path_to_the_acl_dataset_mntsystemkmy_acl_dataset_input_mysmbshare_as_nam
 @then(parsers.parse('"{smbname}" should be added, Click on service and the Service page should open'))
 def mysmbshare_should_be_added_click_on_service_and_the_service_page_should_open(driver, smbname):
     """"{smbname}" should be added, Click on service and the Service page should open."""
-    assert wait_on_element(driver, 5, f'//div[contains(.,"mysmbshare")]')
+    assert wait_on_element(driver, 5, '//div[contains(.,"mysmbshare")]')
     time.sleep(2)
 
 
@@ -99,7 +98,7 @@ def mysmbshare_should_be_added_click_on_service_and_the_service_page_should_open
 def send_a_file_to_the_share_with_nas_ipmysmbshare_and_administrator_and_abcd1234(driver, nas_ip, mysmbshare, user, password):
     """Send a file to the share with nas_IP/"{mysmbshare}" and "{user}" and "{password}"."""
     run_cmd('touch testfile.txt')
-    results = run_cmd(f'smbclient //{nas_ip}/{mysmbshare} -W AD01 -U {user}%{password} -c "put testfile.txt testfile.txt"')
+    results = run_cmd(f'smbclient //{nas_ip}/{mysmbshare} -W AD02 -U {user}%{password} -c "put testfile.txt testfile.txt"')
     run_cmd('rm testfile.txt')
     assert results['result'], results['output']
 
