@@ -1,13 +1,14 @@
-<ng-container [formGroup]="form">
-    <ng-container *ngFor="let attr of attributes" [formGroupName]="'attributes'">
-      <ng-container *ngIf="typeFields === 'input'">
+<ng-container [formGroup]="fieldsFormGroup">
+    <ng-container *ngFor="let field of fields">
+      <ng-container [ngSwitch]="field.type">
         <ix-input
-                [formControlName]="attr.schema._name_"
-                [label]="attr.schema.title | translate"
-                [placeholder]="attr.schema.title | translate"
-                [required]="attr.schema._required_"
-                [fxHide]="attr.type !== selectFields"
-            ></ix-input>
+          *ngSwitchCase="'input'"
+          [formControlName]="field.name"
+          [label]="field.title | translate"
+          [placeholder]="field.title | translate"
+          [required]="field.required"
+          [fxHide]="field.hidden"
+        ></ix-input>
       </ng-container>
     </ng-container>
 </ng-container>

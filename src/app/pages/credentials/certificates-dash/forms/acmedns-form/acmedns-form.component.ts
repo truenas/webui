@@ -7,8 +7,8 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { DnsAuthenticatorType } from 'app/enums/dns-authenticator-type.enum';
 import { helptextSystemAcme as helptext } from 'app/helptext/system/acme';
-import { AttributesSchema } from 'app/interfaces/attributes-schema.interface';
 import { DnsAuthenticator } from 'app/interfaces/dns-authenticator.interface';
+import { DynamicFieldsSchema } from 'app/interfaces/dynamic-fields-schema.interface';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { WebSocketService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
@@ -37,7 +37,7 @@ export class AcmednsFormComponent {
   });
 
   isLoading = false;
-  attributes: AttributesSchema[] = [];
+  attributes: DynamicFieldsSchema[] = [];
   selectAuthenticator = DnsAuthenticatorType.Cloudflare;
 
   readonly helptext = helptext;
@@ -54,8 +54,11 @@ export class AcmednsFormComponent {
             new FormControl('', input._required_ ? [Validators.required] : []),
           );
           this.attributes.push({
-            type: schema.key,
-            schema: input,
+            name: input._name_,
+            type: 'input',
+            title: input.title,
+            required: input._required_,
+            show_if: [schema.key],
           });
         }
       }
@@ -85,10 +88,12 @@ export class AcmednsFormComponent {
   onChange(event: DnsAuthenticatorType): void {
     this.selectAuthenticator = event;
     for (const attribute of this.attributes) {
-      if (event === attribute.type) {
-        this.form.controls.attributes.controls[attribute.schema._name_].setDisable(false);
+      if (attribute.show_if.includes(event)) {
+        this.form.controls.attributes.controls[attribute.name].enable();
+        attribute.hidden = false;
       } else {
-        this.form.controls.attributes.controls[attribute.schema._name_].setDisable(true);
+        this.form.controls.attributes.controls[attribute.name].disable();
+        attribute.hidden = true;
       }
     }
   }

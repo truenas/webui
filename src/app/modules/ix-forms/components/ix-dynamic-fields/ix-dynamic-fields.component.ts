@@ -1,8 +1,9 @@
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, Input, OnInit,
+} from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { UntilDestroy } from '@ngneat/until-destroy';
-import { DnsAuthenticatorType } from 'app/enums/dns-authenticator-type.enum';
-import { AttributesSchema } from 'app/interfaces/attributes-schema.interface';
+import { DynamicFieldsSchema } from 'app/interfaces/dynamic-fields-schema.interface';
 
 @UntilDestroy()
 @Component({
@@ -12,9 +13,14 @@ import { AttributesSchema } from 'app/interfaces/attributes-schema.interface';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 
-export class IxDynamicFieldsComponent {
-  @Input() form: FormGroup;
-  @Input() typeFields: string;
-  @Input() selectFields: DnsAuthenticatorType;
-  @Input() attributes: AttributesSchema[];
+export class IxDynamicFieldsComponent implements OnInit {
+  @Input() formGroup: FormGroup;
+  @Input() fieldsFormGroupName: string;
+  @Input() fields: DynamicFieldsSchema[];
+
+  fieldsFormGroup: FormGroup;
+
+  ngOnInit(): void {
+    this.fieldsFormGroup = this.formGroup.controls[this.fieldsFormGroupName] as FormGroup;
+  }
 }
