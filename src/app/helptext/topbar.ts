@@ -14,7 +14,7 @@ export default {
     [FailoverDisabledReason.NoPong]: T('Other TrueNAS controller cannot be reached.'),
     [FailoverDisabledReason.NoFailover]: T('Failover is administratively disabled.'),
     [FailoverDisabledReason.NoLicense]: T('Other TrueNAS controller has no license.'),
-    [FailoverDisabledReason.DisagreeCarp]: T('Nodes CARP states do not agree.'),
+    [FailoverDisabledReason.DisagreeVip]: T('Nodes Virtual IP states do not agree.'),
     [FailoverDisabledReason.MismatchDisks]: T('The TrueNAS controllers do not have the same quantity of disks.'),
     [FailoverDisabledReason.NoCriticalInterfaces]: T('No network interfaces are marked critical for failover.'),
   },
@@ -93,15 +93,10 @@ Login or signup is required.'),
 address. Please verify the email address before continuing.'),
   },
   changePasswordDialog: {
-    pw_form_title_name: T('Change Administrator Password'),
-    pw_current_pw_placeholder: T('Current Password'),
-    pw_new_pw_placeholder: T('New Password'),
     pw_new_pw_tooltip: T('Passwords cannot contain a <b>?</b>. Passwords should \
 be at least eight characters and contain a mix of lower and \
 upper case, numbers, and special characters.'),
-    pw_confirm_pw_placeholder: T('Confirm Password'),
     pw_invalid_title: T('Incorrect Password'),
-    pw_invalid_msg: T('The administrator password is incorrect.'),
     pw_updated: T('Password updated.'),
   },
 };

@@ -2,13 +2,13 @@ import { ModuleWithProviders } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { AlertServiceListComponent } from 'app/pages/system/alert-service/alert-service-list/alert-service-list.component';
+import { FailoverSettingsComponent } from 'app/pages/system/failover-settings/failover-settings.component';
 import { GeneralSettingsComponent } from 'app/pages/system/general-settings/general-settings.component';
 import { ManualUpdateComponent } from 'app/pages/system/update/manual-update/manual-update.component';
 import { ViewEnclosureComponent } from 'app/pages/system/view-enclosure/components/view-enclosure/view-enclosure.component';
 import { ServicesComponent } from '../services/services.component';
 import { ShellComponent } from '../shell/shell.component';
 import { AdvancedSettingsComponent } from './advanced/advanced-settings.component';
-import { CronFormComponent } from './advanced/cron/cron-form/cron-form.component';
 import { CronListComponent } from './advanced/cron/cron-list/cron-list.component';
 import { InitshutdownListComponent } from './advanced/initshutdown/initshutdown-list/initshutdown-list.component';
 import { AlertServiceComponent } from './alert-service/alert-service/alert-service.component';
@@ -18,7 +18,6 @@ import { BootPoolReplaceFormComponent } from './bootenv/boot-pool-replace/boot-p
 import { BootEnvironmentListComponent } from './bootenv/bootenv-list/bootenv-list.component';
 import { BootStatusListComponent } from './bootenv/bootenv-status/bootenv-status.component';
 import { EmailComponent } from './email/email.component';
-import { FailoverComponent } from './failover/failover.component';
 import { EulaComponent } from './general-settings/support/eula/eula.component';
 import { SupportComponent } from './general-settings/support/support.component';
 import { TunableListComponent } from './tunable/tunable-list/tunable-list.component';
@@ -131,7 +130,7 @@ export const routes: Routes = [
       ],
     }, {
       path: 'failover',
-      component: FailoverComponent,
+      component: FailoverSettingsComponent,
       data: { title: T('Failover'), breadcrumb: T('Failover'), icon: 'device_hub' },
     }, {
       path: 'support',
@@ -166,14 +165,6 @@ export const routes: Routes = [
         path: '',
         component: CronListComponent,
         data: { title: 'Cron Jobs', breadcrumb: 'Cron Jobs' },
-      }, {
-        path: 'add',
-        component: CronFormComponent,
-        data: { title: 'Add', breadcrumb: 'Add' },
-      }, {
-        path: 'edit/:pk',
-        component: CronFormComponent,
-        data: { title: 'Edit', breadcrumb: 'Edit' },
       }],
     }, {
       path: 'initshutdown',

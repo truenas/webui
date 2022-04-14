@@ -66,4 +66,8 @@ export class IxChipsHarness extends ComponentHarness implements IxFormControlHar
       await input.sendSeparatorKey(TestKey.ENTER);
     }
   }
+
+  async isDisabled(): Promise<boolean> {
+    return (await this.getChipInputHarness()).isDisabled();
+  }
 }

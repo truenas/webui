@@ -19,6 +19,7 @@ import { ipv4or6cidrValidator } from 'app/modules/entity/entity-form/validators/
 import { matchOtherValidator } from 'app/modules/entity/entity-form/validators/password-validation/password-validation';
 import { EntityWizardComponent } from 'app/modules/entity/entity-wizard/entity-wizard.component';
 import { EntityUtils } from 'app/modules/entity/utils';
+import { UseforDefaults } from 'app/pages/sharing/iscsi/iscsi-wizard/usefor-defaults.interface';
 import {
   IscsiService, WebSocketService, NetworkService, StorageService, DialogService,
 } from 'app/services';
@@ -435,7 +436,7 @@ export class IscsiWizardComponent implements WizardConfiguration {
     'volsize_unit',
     'volblocksize',
   ];
-  // allways hidden fields
+  // always hidden fields
   protected hiddenFieldGroup = [
     'volblocksize',
     'insecure_tpc',
@@ -443,7 +444,7 @@ export class IscsiWizardComponent implements WizardConfiguration {
     'rpm',
   ];
 
-  protected defaultUseforSettings: any[] = [
+  protected defaultUseforSettings: UseforDefaults[] = [
     {
       key: 'vmware',
       values: {
@@ -788,7 +789,7 @@ export class IscsiWizardComponent implements WizardConfiguration {
     const settings = _.find(this.defaultUseforSettings, { key: selected });
     for (const i in settings.values) {
       const controller = this.entityWizard.formArray.get([0]).get(i);
-      controller.setValue(settings.values[i]);
+      controller.setValue(settings.values[i as keyof UseforDefaults['values']]);
     }
   }
 
@@ -812,8 +813,8 @@ export class IscsiWizardComponent implements WizardConfiguration {
       },
     );
     this.ws.call('pool.dataset.recommended_zvol_blocksize', [pool]).pipe(untilDestroyed(this)).subscribe(
-      (res) => {
-        this.entityWizard.formArray.get([0]).get('volblocksize').setValue(res);
+      (recommendedSize) => {
+        this.entityWizard.formArray.get([0]).get('volblocksize').setValue(recommendedSize);
       },
       () => {
         datasetField.hasErrors = true;

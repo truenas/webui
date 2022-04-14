@@ -39,7 +39,7 @@ export default {
  when editing an interface.'),
   int_name_validation: [],
 
-  int_dhcp_placeholder: T('DHCP'),
+  int_dhcp_placeholder: 'DHCP',
   int_dhcp_tooltip: T('Set to enable DHCP. Leave unset to create a static\
  IPv4 or IPv6 configuration. Only one interface can\
  be configured for DHCP.'),
@@ -70,6 +70,9 @@ export default {
 
   bridge_members_placeholder: T('Bridge Members'),
   bridge_members_tooltip: T('Network interfaces to include in the bridge.'),
+
+  bridge_stp_placeholder: T('STP'),
+  bridge_stp_tooltip: T('Enable/Disable STP on the bridge interfaces configurable.'),
 
   failover_critical_placeholder: T('Critical'),
   failover_critical_tooltip: T('Interfaces marked <i>critical</i> are\

@@ -3,7 +3,6 @@ import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
 export const helptextSharingSmb = {
   fieldset_basic: T('Basic'),
-  fieldset_advanced: T('Advanced'),
   fieldset_access: T('Access'),
   fieldset_other: T('Other Options'),
 
@@ -50,11 +49,6 @@ export const helptextSharingSmb = {
   afpDialog_message: T('This option controls how metadata and alternate data streams read write to disks. Only enable this when the share configuration was migrated from the deprecated Apple Filing Protocol (AFP). Do not attempt to force a previous AFP share to behave like a pure SMB share or file corruption can occur.'),
   afpDialog_button: T('I understand'),
 
-  placeholder_default_permissions: T('Default Permissions'),
-  tooltip_default_permissions: T('When enabled, the ACLs grant read and \
- write access for owner or group and read-only for others. <b>Only</b> leave \
- unset when creating a share on a system that already has custom ACLs configured.'),
-
   placeholder_acl: T('Enable ACL'),
   tooltip_acl: T('Enable ACL support for the SMB share.'),
 
@@ -73,11 +67,7 @@ export const helptextSharingSmb = {
  </b>. When the files are in a different dataset or a child dataset, \
  they are copied to the dataset where the Recycle Bin is located. To \
  prevent excessive space usage, files larger than 20 MiB are deleted \
- rather than moved. Adjust the <i>Auxiliary Parameter</i> \
- <samp>crossrename:sizelimit=</samp> setting to allow larger files. \
- For example, <samp>crossrename:sizelimit=\'{\'50\'}\'</samp> allows moves of \
- files up to 50 MiB in size. This means files can be permanently \
- deleted or moved from the recycle bin. <b>This is not a replacement \
+ rather than moved. <b>This is not a replacement \
  for ZFS snapshots.</b>'),
 
   placeholder_guestok: T('Allow Guest Access'),
@@ -202,7 +192,7 @@ export const helptextSharingSmb = {
   share_name_placeholder: T('Share Name'),
   share_name_tooltip: T('Name that was created with the SMB share.'),
 
-  ae_who_sid_placeholder: T('SID'),
+  ae_who_sid_placeholder: 'SID',
   ae_who_sid_tooltip: T('Who this ACL entry applies to, shown as a\
  <a href="https://docs.microsoft.com/en-us/windows/win32/secauthz/security-identifiers" target="_blank">Windows\
  Security Identifier</a>. Either a <i>SID</i> or a <i>Domain</i> and <i>Name</i> is required for this ACL.'),

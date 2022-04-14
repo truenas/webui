@@ -205,17 +205,17 @@ export class SnapshotListComponent implements OnInit {
     this.getToolbarEvents();
     const controls: ControlConfig[] = [
       {
+        name: 'filter',
+        type: 'input',
+        value: this.filterString,
+        placeholder: this.translate.instant('Search'),
+      },
+      {
         name: 'extra-columns',
         type: 'slide-toggle',
         label: this.translate.instant('Show extra columns'),
         value: this.showExtraColumns,
         confirmOptions: this.getConfirmOptions(),
-      },
-      {
-        name: 'filter',
-        type: 'input',
-        value: this.filterString,
-        placeholder: this.translate.instant('Search'),
       },
       {
         name: 'add',
@@ -277,6 +277,7 @@ export class SnapshotListComponent implements OnInit {
   doBatchDelete(snapshots: ZfsSnapshot[]): void {
     this.matDialog.open(SnapshotBatchDeleteDialogComponent, {
       data: snapshots,
+      disableClose: true,
     }).afterClosed().pipe(
       filter(Boolean),
       untilDestroyed(this),

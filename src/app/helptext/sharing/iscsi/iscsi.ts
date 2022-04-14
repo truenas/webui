@@ -22,6 +22,16 @@ export const helptextSharingIscsi = {
   target_form_placeholder_mode: T('Target Mode'),
   target_form_tooltip_mode: T('Define the target as *iSCSI*,\
  *Fibre Channel*, or *Both*.'),
+  target_form_enum_mode: [{
+    label: 'iSCSI',
+    value: 'ISCSI',
+  }, {
+    label: 'Fibre Channel',
+    value: 'FC',
+  }, {
+    label: 'Both',
+    value: 'BOTH',
+  }],
 
   target_form_placeholder_portal: T('Portal Group ID'),
   target_form_tooltip_portal: T(
@@ -39,6 +49,16 @@ export const helptextSharingIscsi = {
   target_form_tooltip_authmethod: T(
     'Choices are <i>None, Auto, CHAP,</i> or <i>Mutual CHAP</i>.',
   ),
+  target_form_enum_authmethod: [{
+    label: 'None',
+    value: 'NONE',
+  }, {
+    label: 'CHAP',
+    value: 'CHAP',
+  }, {
+    label: 'Mutual CHAP',
+    value: 'CHAP_MUTUAL',
+  }],
 
   target_form_placeholder_auth: T('Authentication Group Number'),
   target_form_tooltip_auth: T(
@@ -47,10 +67,6 @@ export const helptextSharingIscsi = {
   ),
 
   target_form_placeholder_delete: T('Delete'),
-
-  fieldset_portal_basic: T('Basic Info'),
-  fieldset_portal_authgroup: T('Authentication Method and Group'),
-  fieldset_portal_ip: T('IP Address'),
 
   portal_form_placeholder_comment: T('Description'),
   portal_form_tooltip_comment: T(
@@ -75,14 +91,11 @@ export const helptextSharingIscsi = {
  port. The address <i>0.0.0.0</i> can be selected to listen on all IPv4 \
  addresses, or <i>::</i> to listen on all IPv6 addresses.'),
 
-  portal_form_validators_ip: [Validators.required],
-
   portal_form_placeholder_port: T('Port'),
   portal_form_tooltip_port: T(
     'TCP port used to access the iSCSI target.\
  Default is <i>3260</i>.',
   ),
-  portal_form_validators_port: [Validators.required],
 
   portal_form_placeholder_delete: T('Delete'),
 
@@ -117,9 +130,6 @@ export const helptextSharingIscsi = {
   initiator_form_placeholder_comment: T('Description'),
   initiator_form_tooltip_comment: T('Any notes about initiators.'),
 
-  fieldset_globalconf: T('Global Configuration'),
-
-  globalconf_placeholder_basename: T('Base Name'),
   globalconf_tooltip_basename: T(
     'Lowercase alphanumeric characters plus dot (.), dash (-),\
  and colon (:) are allowed. See the\
@@ -127,25 +137,15 @@ export const helptextSharingIscsi = {
  section of <a href="https://tools.ietf.org/html/rfc3721.html"\
  target="_blank">RFC3721</a>.',
   ),
-  globalconf_validators_basename: [Validators.required],
 
-  globalconf_placeholder_isns_servers: T('ISNS Servers'),
   globalconf_tooltip_isns_servers: T('Hostnames or IP addresses of the \
  ISNS servers to be registered with the iSCSI targets and portals of \
  the system. Separate entries by pressing <code>Enter</code>.'),
 
-  globalconf_placeholder_pool_avail_threshold: T(
-    'Pool Available Space Threshold (%)',
-  ),
   globalconf_tooltip_pool_avail_threshold: T('Generate an alert when the \
    pool has this percent space remaining. This is typically \
    configured at the pool level when using zvols or at the extent level \
    for both file and device based extents.'),
-
-  globalconf_placeholder_alua: T('Enable iSCSI ALUA'),
-  globalconf_tooltip_alua: T('Allow initiator to discover paths to both\
- TrueNAS controllers on the target and increase storage traffic\
- efficiency. Requires ALUA-capable, High Availability (HA) hardware.'),
 
   fieldset_extent_basic: T('Basic Info'),
   fieldset_extent_type: T('Type'),
@@ -236,9 +236,26 @@ export const helptextSharingIscsi = {
   extent_placeholder_enabled: T('Enabled'),
   extent_tooltip_enabled: T('Set to enable the iSCSI extent.'),
 
-  fieldset_group: T('Group'),
-  fieldset_user: T('User'),
-  fieldset_peeruser: T('Peer User'),
+  extent_form_enum_rpm: [
+    { label: 'UNKNOWN', value: 'UNKNOWN' },
+    { label: 'SSD', value: 'SSD' },
+    { label: '5400', value: '5400' },
+    { label: '7200', value: '7200' },
+    { label: '10000', value: '10000' },
+    { label: '15000', value: '15000' },
+  ],
+
+  extent_form_enum_type: [
+    { label: T('Device'), value: 'DISK' },
+    { label: T('File'), value: 'FILE' },
+  ],
+
+  extent_form_enum_blocksize: [
+    { label: '512', value: 512 },
+    { label: '1024', value: 1024 },
+    { label: '2048', value: 2048 },
+    { label: '4096', value: 4096 },
+  ],
 
   authaccess_placeholder_tag: T('Group ID'),
   authaccess_tooltip_tag: T(
@@ -263,28 +280,16 @@ export const helptextSharingIscsi = {
 
   authaccess_placeholder_secret_confirm: T('Secret (Confirm)'),
 
-  authaccess_placeholder_peeruser: T('Peer User'),
   authaccess_tooltip_peeruser: T(
     'Only entered when configuring mutual CHAP. Usually the same value\
  as <i>User</i>.',
   ),
-
-  authaccess_placeholder_peersecret: T('Peer Secret'),
   authaccess_tooltip_peersecret: T(
     'Mutual secret password. Required when Peer User is set. Must be\
  different than the <i>Secret</i>.',
   ),
-  authaccess_error_duplicate_secrets: T('Secret and Peer Secret can not be the same.'),
 
-  authaccess_placeholder_peersecret_confirm: T('Peer Secret (Confirm)'),
-
-  fieldset_associated_target: T('Associated Target'),
-
-  associated_target_placeholder_target: T('Target'),
   associated_target_tooltip_target: T('Select an existing target.'),
-  associated_target_validators_target: [Validators.required],
-
-  associated_target_placeholder_lunid: T('LUN ID'),
   associated_target_tooltip_lunid: T(
     'Select the value or enter a value between\
  <i>0</i> and <i>1023</i>. Some initiators\
@@ -292,15 +297,8 @@ export const helptextSharingIscsi = {
  this field blank to automatically assign\
  the next available ID.',
   ),
-  associated_target_validators_lunid: [
-    Validators.min(0),
-    Validators.max(1023),
-    Validators.pattern(/^(0|[1-9]\d*)$/),
-  ],
 
-  associated_target_placeholder_extent: T('Extent'),
   associated_target_tooltip_extent: T('Select an existing extent.'),
-  associated_target_validators_extent: [Validators.required],
 
   fc_mode_placeholder: T('Mode'),
   fc_mode_tooltip: T(''),
@@ -310,12 +308,6 @@ export const helptextSharingIscsi = {
 
   fc_initiators_placeholder: T('Connected Initiators'),
   fc_initiators_tooltip: T(''),
-
-  fc_update_dialog: {
-    title: T('Updated'),
-    text: T('Fibre Channel '),
-    msg: T(' update successful'),
-  },
 
   // wizard
   step1_label: T('Create or Choose Block Device'),

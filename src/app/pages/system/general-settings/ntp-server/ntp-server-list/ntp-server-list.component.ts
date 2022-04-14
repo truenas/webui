@@ -6,7 +6,8 @@ import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { filter, switchMap } from 'rxjs/operators';
 import { NtpServer } from 'app/interfaces/ntp-server.interface';
-import { EmptyConfig, EmptyType } from 'app/modules/entity/entity-empty/entity-empty.component';
+import { EmptyType } from 'app/modules/entity/entity-empty/entity-empty.component';
+import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
 import { NtpServerFormComponent } from 'app/pages/system/general-settings/ntp-server/ntp-server-form/ntp-server-form.component';
 import { WebSocketService, DialogService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
@@ -30,31 +31,16 @@ export class NtpServerListComponent implements OnInit {
     'actions',
   ];
   loading = false;
-  loadingConf: EmptyConfig = {
-    type: EmptyType.Loading,
-    large: false,
-    title: this.translate.instant('Loading...'),
-  };
-  emptyConf: EmptyConfig = {
-    type: EmptyType.NoPageData,
-    large: true,
-    title: this.translate.instant('No servers have been added yet'),
-  };
-  errorConf: EmptyConfig = {
-    type: EmptyType.Errors,
-    large: true,
-    title: this.translate.instant('Can not retrieve response'),
-  };
   error = false;
 
-  get currentEmptyConf(): EmptyConfig {
+  get emptyType(): EmptyType {
     if (this.loading) {
-      return this.loadingConf;
+      return EmptyType.Loading;
     }
     if (this.error) {
-      return this.errorConf;
+      return EmptyType.Errors;
     }
-    return this.emptyConf;
+    return EmptyType.NoPageData;
   }
 
   constructor(
@@ -62,6 +48,7 @@ export class NtpServerListComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private slideInService: IxSlideInService,
     private dialog: DialogService,
+    public emptyService: EmptyService,
     private translate: TranslateService,
   ) { }
 

@@ -34,3 +34,10 @@
     background-color: rgba(0, 0, 0, 0.1);
   }
 }
+
+.wrap-buttons-container {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 2px;
+}

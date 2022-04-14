@@ -1,4 +1,5 @@
 import { Direction } from 'app/enums/direction.enum';
+import { RsyncMode } from 'app/enums/rsync-mode.enum';
 import { DataProtectionTaskState } from 'app/interfaces/data-protection-task-state.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { Schedule } from 'app/interfaces/schedule.interface';
@@ -15,7 +16,7 @@ export interface RsyncTask {
   id: number;
   job: Job;
   locked: boolean;
-  mode: string;
+  mode: RsyncMode;
   path: string;
   preserveattr: boolean;
   preserveperm: boolean;

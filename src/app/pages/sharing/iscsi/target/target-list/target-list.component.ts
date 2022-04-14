@@ -8,8 +8,8 @@ import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-tab
 import { EntityTableAction, EntityTableConfig } from 'app/modules/entity/entity-table/entity-table.interface';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { TargetFormComponent } from 'app/pages/sharing/iscsi/target/target-form/target-form.component';
-import { ModalService } from 'app/services';
 import { IscsiService } from 'app/services/iscsi.service';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
 @Component({
@@ -52,7 +52,7 @@ export class TargetListComponent implements EntityTableConfig, OnInit {
   protected entityList: EntityTableComponent;
   constructor(
     private iscsiService: IscsiService,
-    private modalService: ModalService,
+    private slideInService: IxSlideInService,
     private translate: TranslateService,
   ) {}
 
@@ -67,17 +67,19 @@ export class TargetListComponent implements EntityTableConfig, OnInit {
 
   afterInit(entityList: EntityTableComponent): void {
     this.entityList = entityList;
-  }
-
-  doAdd(rowId: string = null): void {
-    this.modalService.openInSlideIn(TargetFormComponent, rowId);
-    this.modalService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.entityList.getData();
+    this.slideInService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
+      entityList.getData();
     });
   }
 
+  doAdd(): void {
+    this.slideInService.open(TargetFormComponent, { wide: true });
+  }
+
   doEdit(id: string): void {
-    this.doAdd(id);
+    const row = this.entityList.rows.find((row) => row.id === id);
+    const form = this.slideInService.open(TargetFormComponent, { wide: true });
+    form.setTargetForEdit(row);
   }
 
   getActions(row: IscsiTarget): EntityTableAction<IscsiTarget>[] {
@@ -116,8 +118,8 @@ export class TargetListComponent implements EntityTableConfig, OnInit {
               this.entityList.loaderOpen = true;
               this.entityList.ws.call(this.wsDelete, payload).pipe(untilDestroyed(this)).subscribe(
                 () => { this.entityList.getData(); },
-                (resinner: WebsocketError) => {
-                  new EntityUtils().handleWsError(this, resinner, this.entityList.dialogService);
+                (error: WebsocketError) => {
+                  new EntityUtils().handleWsError(this, error, this.entityList.dialogService);
                   this.entityList.loader.close();
                 },
               );

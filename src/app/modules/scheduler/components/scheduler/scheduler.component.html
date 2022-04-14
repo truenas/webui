@@ -2,7 +2,7 @@
 
   <div *ngIf="label || tooltip" class="label-container">
     <label class="label">
-      {{label}}
+      {{ label }}
       <span *ngIf="required" class="required">*</span>
     </label>
     <tooltip *ngIf="tooltip" [header]="label" class="tooltip" [message]="tooltip"></tooltip>

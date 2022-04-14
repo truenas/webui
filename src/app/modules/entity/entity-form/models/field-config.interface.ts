@@ -5,7 +5,7 @@ import { MatSelectionListChange } from '@angular/material/list';
 import { MatRadioChange } from '@angular/material/radio/radio';
 import { MatSelectChange } from '@angular/material/select';
 import { ITreeOptions } from '@circlon/angular-tree-component';
-import { DatasetType } from 'app/enums/dataset-type.enum';
+import { DatasetType } from 'app/enums/dataset.enum';
 import { ExplorerType } from 'app/enums/explorer-type.enum';
 import { Option } from 'app/interfaces/option.interface';
 import { FieldType } from 'app/modules/entity/entity-form/components/dynamic-field/dynamic-field.directive';
@@ -203,7 +203,6 @@ export interface FormRadioOption {
 export interface FormSchedulerConfig<P = unknown> extends BaseFieldConfig<P> {
   options?: [startTime: string, endTime: string];
   noMinutes?: boolean;
-  onChangeOption?(data: { event: Event }): void;
   type: 'scheduler';
 }
 
@@ -212,6 +211,8 @@ export interface FormSelectConfig<P = unknown> extends BaseFieldConfig<P> {
   enableTextWrapForOptions?: boolean;
   fileLocation?: string;
   inlineLabel?: string;
+  linkText?: string;
+  linkClicked?(): void;
   isLoading?: boolean;
   multiple?: boolean;
   onChangeOption?(data: { event: MatSelectChange }): void;

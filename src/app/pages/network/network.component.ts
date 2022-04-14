@@ -20,9 +20,12 @@ import { StaticRoute } from 'app/interfaces/static-route.interface';
 import { Interval } from 'app/interfaces/timeout.interface';
 import { AppTableAction, AppTableConfig, TableComponent } from 'app/modules/entity/table/table.component';
 import { TableService } from 'app/modules/entity/table/table.service';
-import { IpmiRow } from 'app/pages/network/network-dashboard.interface';
-import { NetworkInterfaceUi } from 'app/pages/network/network-interface-ui.interface';
-import { StaticRouteFormComponent } from 'app/pages/network/static-route-form/static-route-form.component';
+import {
+  OpenVpnServerConfigComponent,
+} from 'app/pages/network/components/open-vpn-server-config/open-vpn-server-config.component';
+import { StaticRouteFormComponent } from 'app/pages/network/components/static-route-form/static-route-form.component';
+import { IpmiRow } from 'app/pages/network/interfaces/network-dashboard.interface';
+import { NetworkInterfaceUi } from 'app/pages/network/interfaces/network-interface-ui.interface';
 import {
   AppLoaderService,
   DialogService,
@@ -34,10 +37,9 @@ import { IpmiService } from 'app/services/ipmi.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { ModalService } from 'app/services/modal.service';
 import { EntityUtils } from '../../modules/entity/utils';
-import { InterfacesFormComponent } from './forms/interfaces-form.component';
-import { IpmiFormComponent } from './forms/ipmi-form.component';
-import { OpenvpnClientComponent } from './forms/service-openvpn-client.component';
-import { OpenvpnServerComponent } from './forms/service-openvpn-server.component';
+import { InterfacesFormComponent } from './components/forms/interfaces-form.component';
+import { IpmiFormComponent } from './components/forms/ipmi-form.component';
+import { OpenvpnClientComponent } from './components/forms/service-openvpn-client.component';
 
 @UntilDestroy()
 @Component({
@@ -156,7 +158,7 @@ export class NetworkComponent implements OnInit, OnDestroy {
       if (row.service === ServiceName.OpenVpnClient) {
         this.modalService.openInSlideIn(OpenvpnClientComponent, row.id);
       } else if (row.service === ServiceName.OpenVpnServer) {
-        this.modalService.openInSlideIn(OpenvpnServerComponent, row.id);
+        this.slideInService.open(OpenVpnServerConfigComponent, { wide: true });
       }
     },
     afterGetData: () => {
@@ -165,7 +167,7 @@ export class NetworkComponent implements OnInit, OnDestroy {
         if (state.configureOpenVPN === 'client') {
           this.modalService.openInSlideIn(OpenvpnClientComponent);
         } else {
-          this.modalService.openInSlideIn(OpenvpnServerComponent);
+          this.slideInService.open(OpenVpnServerConfigComponent, { wide: true });
         }
       }
     },
@@ -239,7 +241,7 @@ export class NetworkComponent implements OnInit, OnDestroy {
         .subscribe((isHa) => {
           if (isHa) {
             this.ws
-              .call('failover.disabled_reasons')
+              .call('failover.disabled.reasons')
               .pipe(untilDestroyed(this))
               .subscribe((reasons) => {
                 if (reasons.length === 0) {
@@ -468,12 +470,18 @@ export class NetworkComponent implements OnInit, OnDestroy {
         if (evt.interfaces) {
           tableSource.forEach((row) => {
             if (!evt.interfaces[row.id]) {
-              return;
+              row.link_state = null;
+            } else {
+              row.link_state = evt.interfaces[row.id].link_state;
+              if (evt.interfaces[row.id].received_bytes !== undefined) {
+                row.received = this.storageService.convertBytesToHumanReadable(evt.interfaces[row.id].received_bytes);
+                row.received_bytes = evt.interfaces[row.id].received_bytes;
+              }
+              if (evt.interfaces[row.id].sent_bytes !== undefined) {
+                row.sent = this.storageService.convertBytesToHumanReadable(evt.interfaces[row.id].sent_bytes);
+                row.sent_bytes = evt.interfaces[row.id].sent_bytes;
+              }
             }
-            row.received = this.storageService.convertBytestoHumanReadable(evt.interfaces[row.id].received_bytes);
-            row.received_bytes = evt.interfaces[row.id].received_bytes;
-            row.sent = this.storageService.convertBytestoHumanReadable(evt.interfaces[row.id].sent_bytes);
-            row.sent_bytes = evt.interfaces[row.id].sent_bytes;
           });
         }
       });
@@ -482,8 +490,7 @@ export class NetworkComponent implements OnInit, OnDestroy {
   interfaceDataSourceHelper(res: NetworkInterface[]): NetworkInterfaceUi[] {
     return res.map((networkInterface) => {
       const transformed = { ...networkInterface } as NetworkInterfaceUi;
-      // TODO: Replace with probably enum for link_state.
-      transformed['link_state'] = networkInterface['state']['link_state'].replace('LINK_STATE_', '');
+      transformed['link_state'] = networkInterface['state']['link_state'];
       const addresses = new Set([]);
       transformed.aliases.forEach((alias) => {
         // TODO: See if checks can be removed or replace with enum.

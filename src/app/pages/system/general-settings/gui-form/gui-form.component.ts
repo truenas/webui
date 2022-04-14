@@ -5,6 +5,7 @@ import {
 import {
   Validators,
 } from '@angular/forms';
+import { Router } from '@angular/router';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
@@ -52,7 +53,6 @@ export class GuiFormComponent {
     crash_reporting: [false, [Validators.required]],
     usage_collection: [false, [Validators.required]],
     ui_consolemsg: [false, [Validators.required]],
-    test: [''],
   });
 
   options = {
@@ -74,6 +74,7 @@ export class GuiFormComponent {
     private ws: WebSocketService,
     private dialog: DialogService,
     private loader: AppLoaderService,
+    private router: Router,
     private translate: TranslateService,
     private errorHandler: FormErrorHandlerService,
     private store$: Store<AppState>,
@@ -122,6 +123,11 @@ export class GuiFormComponent {
       this.errorHandler.handleWsFormError(error, this.formGroup);
       this.cdr.markForCheck();
     });
+  }
+
+  certificatesLinkClicked(): void {
+    this.router.navigate(['/', 'credentials', 'certificates']);
+    this.slideInService.close(null, false);
   }
 
   getIsServiceRestartRequired(current: SystemGeneralConfig, next: SystemGeneralConfigUpdate): boolean {

@@ -9,7 +9,8 @@ import { helptextSystemSupport as helptext } from 'app/helptext/system/support';
 import { FormCustomAction, FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { Subs } from 'app/interfaces/subs.interface';
-import { NewTicketResponse } from 'app/interfaces/support.interface';
+import { CreateNewTicket, NewTicketResponse } from 'app/interfaces/support.interface';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { AppLoaderService } from 'app/modules/app-loader/app-loader.service';
 import { FormUploadComponent } from 'app/modules/entity/entity-form/components/form-upload/form-upload.component';
 import { EntityFormComponent } from 'app/modules/entity/entity-form/entity-form.component';
@@ -32,7 +33,7 @@ export class SupportFormLicensedComponent implements FormConfiguration {
   subs: Subs[];
   saveSubmitText = helptext.submitBtn;
   title = helptext.ticket;
-  custActions: FormCustomAction[] = [];
+  customActions: FormCustomAction[] = [];
   maxUploadSizeMibs: number;
   fieldConfig: FieldConfig[] = [];
   fieldSets: FieldSet[] = [
@@ -165,7 +166,7 @@ export class SupportFormLicensedComponent implements FormConfiguration {
 
   afterInit(entityEdit: EntityFormComponent): void {
     this.entityEdit = entityEdit;
-    this.custActions = [
+    this.customActions = [
       {
         id: 'userguide',
         name: helptext.update_license.user_guide_button,
@@ -190,7 +191,7 @@ export class SupportFormLicensedComponent implements FormConfiguration {
         this.loader.close();
         this.maxUploadSizeMibs = sizeMibs;
       },
-      (err: any) => {
+      (err: WebsocketError) => {
         new EntityUtils().handleError(this, err);
         // This request is a prereq for this form to function successfully.
         // Which means if it errors out, the form should be closed or navigated away
@@ -201,7 +202,7 @@ export class SupportFormLicensedComponent implements FormConfiguration {
 
   emailListValidator(name: string): ValidatorFn {
     return (control: FormControl) => {
-      const config = this.fieldConfig.find((c) => c.name === name);
+      const emailListConfig = this.fieldConfig.find((config) => config.name === name);
       if (control.value) {
         let counter = 0;
         const regex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
@@ -219,11 +220,11 @@ export class SupportFormLicensedComponent implements FormConfiguration {
           : null;
 
         if (errors) {
-          config.hasErrors = true;
-          config.errors = helptext.cc.err;
+          emailListConfig.hasErrors = true;
+          emailListConfig.errors = helptext.cc.err;
         } else {
-          config.hasErrors = false;
-          config.errors = '';
+          emailListConfig.hasErrors = false;
+          emailListConfig.errors = '';
         }
 
         return errors;
@@ -248,7 +249,7 @@ export class SupportFormLicensedComponent implements FormConfiguration {
     this.openDialog(payload);
   }
 
-  openDialog(payload: any): void {
+  openDialog(payload: CreateNewTicket): void {
     const dialogRef = this.dialog.open(EntityJobComponent, { data: { title: 'Ticket', closeOnClickOutside: true } });
     let description: string;
     dialogRef.componentInstance.setCall('support.new_ticket', [payload]);

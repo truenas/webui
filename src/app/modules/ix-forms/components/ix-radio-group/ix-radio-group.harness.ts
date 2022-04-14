@@ -1,10 +1,12 @@
-import { BaseHarnessFilters, ComponentHarness, HarnessPredicate } from '@angular/cdk/testing';
+import {
+  BaseHarnessFilters, ComponentHarness, HarnessPredicate, parallel,
+} from '@angular/cdk/testing';
 import { MatRadioGroupHarness } from '@angular/material/radio/testing';
 import { IxFormControlHarness } from 'app/modules/ix-forms/interfaces/ix-form-control-harness.interface';
 import { getErrorText } from '../../utils/harness.utils';
 
 export interface IxRadioGroupHarnessFilters extends BaseHarnessFilters {
-  label: string;
+  label?: string;
 }
 
 export class IxRadioGroupHarness extends ComponentHarness implements IxFormControlHarness {
@@ -30,6 +32,13 @@ export class IxRadioGroupHarness extends ComponentHarness implements IxFormContr
 
   async setValue(value: string): Promise<void> {
     const harness = (await this.getMatRadioGroupHarness());
-    return harness.checkRadioButton({ selector: value });
+    return harness.checkRadioButton({ label: value });
+  }
+
+  async isDisabled(): Promise<boolean> {
+    const radioButtons = await (await this.getMatRadioGroupHarness()).getRadioButtons();
+    const inputState = await parallel(() => radioButtons.map((control) => control.isDisabled()));
+
+    return new Promise((resolve) => resolve(inputState.every((control) => !!control)));
   }
 }

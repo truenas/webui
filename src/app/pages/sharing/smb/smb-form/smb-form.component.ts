@@ -271,7 +271,7 @@ export class SmbFormComponent implements FormConfiguration {
   protected accessFieldsets = _.find(this.fieldSets, { class: 'access' });
   protected otherFieldsets = _.find(this.fieldSets, { class: 'other' });
 
-  custActions = [
+  customActions = [
     {
       id: 'basic_mode',
       name: globalHelptext.basic_options,
@@ -316,7 +316,7 @@ export class SmbFormComponent implements FormConfiguration {
     return data;
   }
 
-  isCustActionVisible(actionId: string): boolean {
+  isCustomActionVisible(actionId: string): boolean {
     if (actionId === 'advanced_mode' && !this.isBasicMode) {
       return false;
     }

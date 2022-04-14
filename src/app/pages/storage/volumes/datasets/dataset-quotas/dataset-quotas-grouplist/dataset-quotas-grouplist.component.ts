@@ -4,7 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { filter } from 'rxjs/operators';
-import { DatasetQuotaType } from 'app/enums/dataset-quota-type.enum';
+import { DatasetQuotaType } from 'app/enums/dataset.enum';
 import globalHelptext from 'app/helptext/global-helptext';
 import helptext from 'app/helptext/storage/volumes/datasets/dataset-quotas';
 import { DatasetQuota } from 'app/interfaces/dataset-quota.interface';
@@ -99,7 +99,7 @@ export class DatasetQuotasGrouplistComponent implements EntityTableConfig, OnDes
                 tooltip: this.translate.instant(helptext.groups.data_quota.tooltip)
                 + this.translate.instant(globalHelptext.human_readable.suggestion_tooltip)
                 + this.translate.instant(' bytes.'),
-                value: this.storageService.convertBytestoHumanReadable(res[0].quota, 0, null, true),
+                value: this.storageService.convertBytesToHumanReadable(res[0].quota, 0, null, true),
                 id: 'data-quota_input',
                 blurStatus: true,
                 blurEvent: () => this.blurEvent(),
@@ -191,7 +191,7 @@ export class DatasetQuotasGrouplistComponent implements EntityTableConfig, OnDes
         name: row.name
           ? row.name
           : `*ERR* (${this.translate.instant(helptext.shared.nameErr)}), ID: ${row.id}`,
-        quota: this.storageService.convertBytestoHumanReadable(row.quota, 0),
+        quota: this.storageService.convertBytesToHumanReadable(row.quota, 0),
         used_percent: `${Math.round((row.used_percent) * 100) / 100}%`,
         obj_used_percent: `${Math.round((row.obj_used_percent) * 100) / 100}%`,
       };

@@ -56,16 +56,14 @@ export interface IscsiTargetGroup {
 }
 
 export interface IscsiExtent {
-  avail_threshold: null;
+  avail_threshold: number;
   blocksize: number;
   comment: string;
   disk: string;
   enabled: boolean;
-  filesize: string;
+  filesize: number;
   id: number;
   insecure_tpc: boolean;
-  locked: boolean;
-  naa: string;
   name: string;
   path: string;
   pblocksize: boolean;
@@ -73,7 +71,6 @@ export interface IscsiExtent {
   rpm: IscsiExtentRpm;
   serial: string;
   type: IscsiExtentType;
-  vendor: string;
   xen: boolean;
 }
 
@@ -83,7 +80,7 @@ export interface IscsiTargetExtent {
   extent: number;
   id: number;
   lunid: number;
-  target: string;
+  target: number;
 }
 
 export type IscsiTargetExtentUpdate = Omit<IscsiTargetExtent, 'id'>;

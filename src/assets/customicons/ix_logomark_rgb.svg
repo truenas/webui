@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="144"
+   height="144"
+   viewBox="0 0 38.100001 38.100001"
+   version="1.1"
+   id="svg8"
+   inkscape:version="0.92.4 (5da689c313, 2019-01-14)"
+   sodipodi:docname="ix_logomark_rgb.svg">
+  <defs
+     id="defs2" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="2.8"
+     inkscape:cx="211.20834"
+     inkscape:cy="109.1013"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     fit-margin-top="0"
+     fit-margin-left="0"
+     fit-margin-right="0"
+     fit-margin-bottom="0"
+     units="px"
+     inkscape:window-width="1920"
+     inkscape:window-height="1029"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:lockguides="true" />
+  <metadata
+     id="metadata5">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(-85.122486,10.948988)">
+    <g
+       id="full-rgb"
+       transform="matrix(0.26458334,0,0,0.26458334,91.089235,-1.5052371)">
+      <g
+         id="logoMark">
+        <path
+           style="fill:#0096d6"
+           d="m 57.7805,42.3333 -1.1133,2.19 L 43.0164,71.36 A 82.4847,82.4847 0 0 0 62.927,64.8919 c 1.729,-0.8145 3.3765,-1.7071 5.0059,-2.6075 L 58.8962,44.5237 Z"
+           data-name="logoMark &lt;PathItem&gt;"
+           id="logoMark_PathItem_"
+           inkscape:connector-curvature="0" />
+        <path
+           style="fill:#0096d6"
+           d="M 57.783,27.0716 58.8962,24.8855 71.5452,0.1043 A 69.5054,69.5054 0 0 0 45.9,3.7844 l 10.7672,21.1011 z"
+           data-name="logoMark &lt;PathItem&gt;"
+           id="logoMark_PathItem_2"
+           inkscape:connector-curvature="0" />
+        <path
+           style="fill:#0096d6"
+           d="M 53.698,34.83 53.4041,34.2572 39.0647,6.35 C 38.033,6.7821 37.0007,7.21 35.9729,7.6947 9.6985,20.074 -5.5593,42.9173 1.8865,58.7132 6.5618,68.64 19.12,73.3645 34.31,72.4739 L 53.4041,35.4021 Z M 31.2254,61.8645 H 24.8865 V 28.5584 h 6.3389 z M 28.0759,22.9988 a 3.2488,3.2488 0 0 1 -3.2509,-3.248 l 9e-4,-0.0083 10e-4,-0.0074 -0.0019,-0.0171 9e-4,-0.0078 -9e-4,-0.0073 a 3.1992,3.1992 0 0 1 3.2026,-3.2 l 0.0078,0.001 0.0078,-0.001 0.0171,0.0015 0.0073,-5e-4 0.0083,-0.001 a 3.2481,3.2481 0 0 1 0,6.4961 z"
+           data-name="logoMark &lt;CompoundPathItem&gt;"
+           id="logoMark_CompoundPathItem_"
+           inkscape:connector-curvature="0" />
+        <path
+           style="fill:#0096d6"
+           d="m 79.1492,1.1863 -16.9824,33.0708 -0.29,0.57 0.294,0.5747 11.92,23.148 C 93.2885,45.6998 103.3261,27.2685 97.0141,13.8774 93.95,7.3777 87.4861,3.1253 79.1492,1.1863 Z"
+           data-name="logoMark &lt;PathItem&gt;"
+           id="logoMark_PathItem_3"
+           inkscape:connector-curvature="0" />
+        <path
+           style="fill:#ffffff"
+           d="m 61.8772,34.8274 0.29,-0.57 16.982,-33.0711 C 78.76,1.0955 78.3909,0.9822 77.9949,0.9031 A 46.3539,46.3539 0 0 0 72.8123,0.177 C 72.3962,0.14 71.9661,0.1311 71.5452,0.1043 L 58.8962,24.8855 57.783,27.0716 56.6672,24.8855 45.9,3.7844 C 45.5284,3.9065 45.1573,4.01 44.7838,4.1399 Q 42.4584,4.9368 40.1309,5.8865 C 39.7755,6.0335 39.42,6.2014 39.065,6.3504 L 53.4041,34.2571 53.698,34.8299 53.4041,35.4021 34.31,72.4739 c 0.45,-0.0273 0.8921,-0.041 1.3467,-0.0781 q 2.8989,-0.23 5.9116,-0.7373 c 0.4771,-0.0811 0.9683,-0.208 1.4483,-0.2989 l 13.6506,-26.8359 1.1133,-2.19 1.1157,2.19 9.0367,17.7607 c 0.3349,-0.1855 0.6972,-0.3476 1.0273,-0.539 q 2.15,-1.2217 4.169,-2.5332 c 0.3305,-0.2129 0.6362,-0.4444 0.9619,-0.6621 l -11.92,-23.148 z"
+           data-name="logoMark &lt;PathItem&gt;"
+           id="logoMark_PathItem_4"
+           inkscape:connector-curvature="0" />
+        <polygon
+           style="fill:#ffffff"
+           points="31.225,61.864 31.225,28.558 24.887,28.558 24.887,61.864 26.047,61.864 "
+           data-name="logoMark &lt;PathItem&gt;"
+           id="logoMark_PathItem_5" />
+        <path
+           style="fill:#ffffff"
+           d="m 28.1,16.4446 -0.0088,10e-4 -0.0074,5e-4 a 3.3256,3.3256 0 0 0 -3.3149,3.312 l -10e-4,0.0078 -9e-4,0.0088 a 3.3308,3.3308 0 1 0 3.333,-3.33 z"
+           data-name="logoMark &lt;PathItem&gt;"
+           id="logoMark_PathItem_6"
+           inkscape:connector-curvature="0" />
+      </g>
+    </g>
+  </g>
+</svg>

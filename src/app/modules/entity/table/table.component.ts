@@ -2,8 +2,10 @@ import {
   Component, OnInit, Input, ViewChild, AfterViewInit, AfterViewChecked, ElementRef,
 } from '@angular/core';
 import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
 import { Observable, Subject } from 'rxjs';
 import { JobState } from 'app/enums/job-state.enum';
+import { LinkState } from 'app/enums/network-interface.enum';
 import { ApiDirectory } from 'app/interfaces/api-directory.interface';
 import { EmptyConfig, EmptyType } from 'app/modules/entity/entity-empty/entity-empty.component';
 import { TableService } from 'app/modules/entity/table/table.service';
@@ -93,7 +95,7 @@ export interface AppTableConfig<P = any> {
   onButtonClick?(row: unknown): void;
 
   expandable?: boolean; // field introduced by ExpandableTable, "fake" field
-  afterGetDataExpandable?(data: any): any; // field introduced by ExpandableTable, "fake" field
+  afterGetDataExpandable?<T>(data: T[]): T[]; // field introduced by ExpandableTable, "fake" field
 }
 
 @UntilDestroy()
@@ -105,6 +107,7 @@ export interface AppTableConfig<P = any> {
 })
 export class TableComponent implements OnInit, AfterViewInit, AfterViewChecked {
   @ViewChild('table') table: ElementRef<HTMLElement>;
+  LinkState = LinkState;
 
   _tableConf: AppTableConfig;
   title = '';
@@ -146,7 +149,10 @@ export class TableComponent implements OnInit, AfterViewInit, AfterViewChecked {
     }
   }
 
-  constructor(public tableService: TableService) {}
+  constructor(
+    public tableService: TableService,
+    public translate: TranslateService,
+  ) {}
 
   calculateLimitRows(): void {
     if (this.table) {
@@ -256,11 +262,6 @@ export class TableComponent implements OnInit, AfterViewInit, AfterViewChecked {
     }
   }
 
-  // TODO: Enum
-  unifyState(state: string): string {
-    return this.tableService.unifyState(state);
-  }
-
   showInOutInfo(element: any): string {
     if (element.oldSent === undefined) {
       element.oldSent = element.sent_bytes;
@@ -277,7 +278,7 @@ export class TableComponent implements OnInit, AfterViewInit, AfterViewChecked {
       this.tableService.updateStateInfoIcon(element[this.idProp], 'received');
     }
 
-    return `Sent: ${element.sent} Received: ${element.received}`;
+    return `${this.translate.instant('Sent')}: ${element.sent} ${this.translate.instant('Received')}: ${element.received}`;
   }
 
   openViewMore(): void {

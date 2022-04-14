@@ -11,7 +11,7 @@ import { CronSchedulePreview } from 'app/modules/scheduler/classes/cron-schedule
 })
 export class SchedulerDateExamplesComponent implements OnChanges {
   @Input() cronPreview: CronSchedulePreview;
-  @Input() zonedStartDate: string;
+  @Input() startDate: Date;
 
   scheduleExamples: Date[] = [];
 
@@ -19,7 +19,7 @@ export class SchedulerDateExamplesComponent implements OnChanges {
 
   ngOnChanges(): void {
     this.scheduleExamples = this.cronPreview.listNextRunsInMonth(
-      this.zonedStartDate,
+      this.startDate,
       this.maxExamples + 1,
     );
   }

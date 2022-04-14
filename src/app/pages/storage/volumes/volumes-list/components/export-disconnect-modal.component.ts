@@ -42,18 +42,12 @@ export class ExportDisconnectModalComponent implements OnInit {
 
   readonly nameInputRequired = this.validatorsService.withMessage(
     Validators.required,
-    {
-      forProperty: 'required',
-      message: this.translate.instant('Name of the pool is required'),
-    },
+    this.translate.instant('Name of the pool is required'),
   );
 
   readonly nameInputMustMatch = this.validatorsService.withMessage(
     Validators.pattern(new RegExp(`^${this.data.pool.name}$`)),
-    {
-      forProperty: 'pattern',
-      message: this.translate.instant('Name of the pool must be correct'),
-    },
+    this.translate.instant('Name of the pool must be correct'),
   );
 
   showSysDatasetWarning: boolean;
@@ -183,12 +177,12 @@ export class ExportDisconnectModalComponent implements OnInit {
       this.isFormLoading = false;
       this.dialogRef.close(true);
 
-      const msg = this.translate.instant(helptext.exportSuccess);
-      const destroyed = this.translate.instant(helptext.destroyed);
+      const message = this.translate.instant('Successfully exported/disconnected {pool}.', { pool: pool.name });
+      const destroyed = this.translate.instant('All data on that pool was destroyed.');
       if (!value.destroy) {
-        this.dialogService.info(helptext.exportDisconnect, msg + pool.name + "'", '500px', 'info');
+        this.dialogService.info(helptext.exportDisconnect, message, '500px', 'info');
       } else {
-        this.dialogService.info(helptext.exportDisconnect, msg + pool.name + destroyed, '500px', 'info');
+        this.dialogService.info(helptext.exportDisconnect, message + ' ' + destroyed, '500px', 'info');
       }
       entityJobRef.close(true);
     });

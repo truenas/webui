@@ -7,16 +7,8 @@ export default {
   group_list_actions_id_edit: 'edit',
   group_list_actions_label_delete: T('Delete'),
 
-  builtinMessageDialog: {
-    title: T('Display Note'),
-    message: T('All built-in groups are \
- hidden by default. Use the gear icon (top-right) to toggle the display of built-in groups.'),
-    button: T('Close'),
-  },
-  globalConfigTooltip: T('Toggle built-in groups'),
-
   deleteDialog: {
-    title: T('Delete Group '),
+    title: T('Delete Group'),
     saveButtonText: T('DELETE'),
   },
 };

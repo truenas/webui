@@ -6,10 +6,12 @@ import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 import { Observable } from 'rxjs';
 import { filter } from 'rxjs/operators';
-import { DatasetEncryptionType } from 'app/enums/dataset-encryption-type.enum';
-import { DatasetType } from 'app/enums/dataset-type.enum';
+import {
+  DatasetEncryptionType, DatasetRecordSize, DatasetSync, DatasetType,
+} from 'app/enums/dataset.enum';
 import { DeduplicationSetting } from 'app/enums/deduplication-setting.enum';
 import { OnOff } from 'app/enums/on-off.enum';
+import { inherit } from 'app/enums/with-inherit.enum';
 import { ZfsPropertySource } from 'app/enums/zfs-property-source.enum';
 import globalHelptext from 'app/helptext/global-helptext';
 import helptext from 'app/helptext/storage/volumes/zvol-form';
@@ -62,12 +64,12 @@ export class ZvolFormComponent implements FormConfiguration {
   customFilter: [[QueryFilter<unknown>]?] = [];
   edit_data: any;
   protected entityForm: EntityFormComponent;
-  minimum_recommended_zvol_volblocksize: string;
+  minimum_recommended_zvol_volblocksize: DatasetRecordSize;
   namesInUse: string[] = [];
   title: string;
 
   protected origVolSize: number;
-  protected origHuman: any;
+  protected origHuman: string | number;
 
   protected non_encrypted_warned = false;
   protected encrypted_parent = false;
@@ -77,7 +79,7 @@ export class ZvolFormComponent implements FormConfiguration {
   protected generate_key = true;
   protected encryption_algorithm: string;
 
-  custActions = [
+  customActions = [
     {
       id: 'basic_mode',
       name: globalHelptext.basic_options,
@@ -143,7 +145,7 @@ export class ZvolFormComponent implements FormConfiguration {
         parent: this,
         validation: [
           (control: FormControl): ValidationErrors => {
-            const config = this.fieldSets[0].config.find((c) => c.name === 'volsize');
+            const volsizeConfig = this.fieldSets[0].config.find((config) => config.name === 'volsize');
 
             const size = control.value && typeof control.value === 'string' ? this.storageService.convertHumanStringToNum(control.value, true) : null;
             const humanSize = control.value;
@@ -153,21 +155,21 @@ export class ZvolFormComponent implements FormConfiguration {
               : null;
 
             if (errors) {
-              config.hasErrors = true;
-              config.errors = globalHelptext.human_readable.input_error;
+              volsizeConfig.hasErrors = true;
+              volsizeConfig.errors = globalHelptext.human_readable.input_error;
             } else if (size === 0) {
-              config.hasErrors = true;
-              config.errors = helptext.zvol_volsize_zero_error;
+              volsizeConfig.hasErrors = true;
+              volsizeConfig.errors = helptext.zvol_volsize_zero_error;
               errors = { invalid_byte_string: true };
             } else if ((this.origHuman && humanSize)
                       && (humanSize !== this.origHuman)
                       && (size < this.origVolSize)) {
-              config.hasErrors = true;
-              config.errors = helptext.zvol_volsize_shrink_error;
+              volsizeConfig.hasErrors = true;
+              volsizeConfig.errors = helptext.zvol_volsize_shrink_error;
               errors = { invalid_byte_string: true };
             } else {
-              config.hasErrors = false;
-              config.errors = '';
+              volsizeConfig.hasErrors = false;
+              volsizeConfig.errors = '';
             }
 
             return errors;
@@ -186,9 +188,9 @@ export class ZvolFormComponent implements FormConfiguration {
         placeholder: helptext.zvol_sync_placeholder,
         tooltip: helptext.zvol_sync_tooltip,
         options: [
-          { label: this.translate.instant('Standard'), value: 'STANDARD' },
-          { label: this.translate.instant('Always'), value: 'ALWAYS' },
-          { label: this.translate.instant('Disabled'), value: 'DISABLED' },
+          { label: this.translate.instant('Standard'), value: DatasetSync.Standard },
+          { label: this.translate.instant('Always'), value: DatasetSync.Always },
+          { label: this.translate.instant('Disabled'), value: DatasetSync.Disabled },
         ],
       },
       {
@@ -372,7 +374,7 @@ export class ZvolFormComponent implements FormConfiguration {
     'key',
   ];
 
-  isCustActionVisible(actionId: string): boolean {
+  isCustomActionVisible(actionId: string): boolean {
     if (actionId === 'advanced_mode' && !this.isBasicMode) {
       return false;
     } if (actionId === 'basic_mode' && this.isBasicMode) {
@@ -565,11 +567,11 @@ export class ZvolFormComponent implements FormConfiguration {
         entityForm.setDisabled('name', true);
       }
 
-      this.entityForm.formGroup.controls['volblocksize'].valueChanges.pipe(untilDestroyed(this)).subscribe((res: string) => {
-        const resNumber = parseInt((this.reverseZvolBlockSizeMap as any)[res], 10);
+      this.entityForm.formGroup.controls['volblocksize'].valueChanges.pipe(untilDestroyed(this)).subscribe((recordSize: DatasetRecordSize) => {
+        const resNumber = parseInt(this.reverseZvolBlockSizeMap[recordSize], 10);
         if (this.minimum_recommended_zvol_volblocksize) {
           const recommendedSizeNumber = parseInt(
-            (this.reverseZvolBlockSizeMap as any)[this.minimum_recommended_zvol_volblocksize], 0,
+            this.reverseZvolBlockSizeMap[this.minimum_recommended_zvol_volblocksize], 0,
           );
           if (resNumber < recommendedSizeNumber) {
             _.find(this.fieldConfig, { name: 'volblocksize' }).warnings = `${this.translate.instant(helptext.blocksize_warning.a)} ${this.minimum_recommended_zvol_volblocksize}. ${this.translate.instant(helptext.blocksize_warning.b)}`;
@@ -580,19 +582,19 @@ export class ZvolFormComponent implements FormConfiguration {
       });
 
       const inheritTr = this.translate.instant('Inherit');
-      const readonlyInherit: Option[] = [{ label: `${inheritTr} (${pkDatasets[0].readonly.rawvalue})`, value: 'INHERIT' }];
+      const readonlyInherit: Option[] = [{ label: `${inheritTr} (${pkDatasets[0].readonly.rawvalue})`, value: inherit }];
       const readonly = _.find(this.fieldConfig, { name: 'readonly' }) as FormSelectConfig;
       readonly.options = readonlyInherit.concat(readonly.options);
       let readonlyValue;
       if (this.isNew) {
-        readonlyValue = 'INHERIT';
+        readonlyValue = inherit;
       } else {
         readonlyValue = pkDatasets[0].readonly.value;
         if (
           pkDatasets[0].readonly.source === ZfsPropertySource.Default
           || pkDatasets[0].readonly.source === ZfsPropertySource.Inherited
         ) {
-          readonlyValue = 'INHERIT';
+          readonlyValue = inherit;
         }
       }
       entityForm.formGroup.controls['readonly'].setValue(readonlyValue);
@@ -604,26 +606,26 @@ export class ZvolFormComponent implements FormConfiguration {
       const volblocksize = _.find(this.fieldConfig, { name: 'volblocksize' }) as FormSelectConfig;
 
       if (pkDatasets && pkDatasets[0].type === DatasetType.Filesystem) {
-        const syncInherit: Option[] = [{ label: `${inheritTr} (${pkDatasets[0].sync.rawvalue})`, value: 'INHERIT' }];
+        const syncInherit: Option[] = [{ label: `${inheritTr} (${pkDatasets[0].sync.rawvalue})`, value: inherit }];
         sync.options = syncInherit.concat(sync.options);
 
-        const compressionInherit: Option[] = [{ label: `${inheritTr} (${pkDatasets[0].compression.rawvalue})`, value: 'INHERIT' }];
+        const compressionInherit: Option[] = [{ label: `${inheritTr} (${pkDatasets[0].compression.rawvalue})`, value: inherit }];
         compression.options = compressionInherit.concat(compression.options);
 
-        const deduplicationInherit: Option[] = [{ label: `${inheritTr} (${pkDatasets[0].deduplication.rawvalue})`, value: 'INHERIT' }];
+        const deduplicationInherit: Option[] = [{ label: `${inheritTr} (${pkDatasets[0].deduplication.rawvalue})`, value: inherit }];
         deduplication.options = deduplicationInherit.concat(deduplication.options);
 
-        const volblocksizeInherit: Option[] = [{ label: `${inheritTr}`, value: 'INHERIT' }];
+        const volblocksizeInherit: Option[] = [{ label: `${inheritTr}`, value: inherit }];
         volblocksize.options = volblocksizeInherit.concat(volblocksize.options);
 
-        entityForm.formGroup.controls['sync'].setValue('INHERIT');
-        entityForm.formGroup.controls['compression'].setValue('INHERIT');
-        entityForm.formGroup.controls['deduplication'].setValue('INHERIT');
-        entityForm.formGroup.controls['readonly'].setValue('INHERIT');
+        entityForm.formGroup.controls['sync'].setValue(inherit);
+        entityForm.formGroup.controls['compression'].setValue(inherit);
+        entityForm.formGroup.controls['deduplication'].setValue(inherit);
+        entityForm.formGroup.controls['readonly'].setValue(inherit);
         const root = this.parent.split('/')[0];
-        this.ws.call('pool.dataset.recommended_zvol_blocksize', [root]).pipe(untilDestroyed(this)).subscribe((res) => {
-          this.entityForm.formGroup.controls['volblocksize'].setValue(res);
-          this.minimum_recommended_zvol_volblocksize = res;
+        this.ws.call('pool.dataset.recommended_zvol_blocksize', [root]).pipe(untilDestroyed(this)).subscribe((recommendedSize) => {
+          this.entityForm.formGroup.controls['volblocksize'].setValue(recommendedSize);
+          this.minimum_recommended_zvol_volblocksize = recommendedSize;
         });
       } else {
         let parentDataset: string | string[] = pkDatasets[0].name.split('/');
@@ -631,7 +633,7 @@ export class ZvolFormComponent implements FormConfiguration {
         parentDataset = parentDataset.join('/');
 
         this.ws.call('pool.dataset.query', [[['id', '=', parentDataset]]]).pipe(untilDestroyed(this)).subscribe((parentDataset) => {
-          this.custActions = null;
+          this.customActions = null;
 
           sparse.isHidden = true;
           volblocksize.isHidden = true;
@@ -647,7 +649,7 @@ export class ZvolFormComponent implements FormConfiguration {
           // decimal has to be truncated to three decimal places
           this.origVolSize = volumesize;
 
-          const humansize = this.storageService.convertBytestoHumanReadable(volumesize);
+          const humansize = this.storageService.convertBytesToHumanReadable(volumesize);
           this.origHuman = humansize;
 
           entityForm.formGroup.controls['name'].setValue(pkDatasets[0].name);
@@ -665,7 +667,7 @@ export class ZvolFormComponent implements FormConfiguration {
           ) {
             syncOptions = [{ label: `${inheritTr} (${parentDataset[0].sync.rawvalue})`, value: parentDataset[0].sync.value }];
           } else {
-            syncOptions = [{ label: `${inheritTr} (${parentDataset[0].sync.rawvalue})`, value: 'INHERIT' }];
+            syncOptions = [{ label: `${inheritTr} (${parentDataset[0].sync.rawvalue})`, value: inherit }];
             entityForm.formGroup.controls['sync'].setValue(pkDatasets[0].sync.value);
           }
           sync.options = syncOptions.concat(sync.options);
@@ -673,12 +675,12 @@ export class ZvolFormComponent implements FormConfiguration {
           if (pkDatasets[0].compression.source === ZfsPropertySource.Default) {
             compressionOptions = [{ label: `${inheritTr} (${parentDataset[0].compression.rawvalue})`, value: parentDataset[0].compression.value }];
           } else {
-            compressionOptions = [{ label: `${inheritTr} (${parentDataset[0].compression.rawvalue})`, value: 'INHERIT' }];
+            compressionOptions = [{ label: `${inheritTr} (${parentDataset[0].compression.rawvalue})`, value: inherit }];
           }
           compression.options = compressionOptions.concat(compression.options);
 
           if (pkDatasets[0].compression.source === ZfsPropertySource.Inherited) {
-            entityForm.formGroup.controls['compression'].setValue('INHERIT');
+            entityForm.formGroup.controls['compression'].setValue(inherit);
           } else {
             entityForm.formGroup.controls['compression'].setValue(pkDatasets[0].compression.value);
           }
@@ -689,7 +691,7 @@ export class ZvolFormComponent implements FormConfiguration {
           ) {
             deduplicationOptions = [{ label: `${inheritTr} (${parentDataset[0].deduplication.rawvalue})`, value: parentDataset[0].deduplication.value }];
           } else {
-            deduplicationOptions = [{ label: `${inheritTr} (${parentDataset[0].deduplication.rawvalue})`, value: 'INHERIT' }];
+            deduplicationOptions = [{ label: `${inheritTr} (${parentDataset[0].deduplication.rawvalue})`, value: inherit }];
             entityForm.formGroup.controls['deduplication'].setValue(pkDatasets[0].deduplication.value);
           }
           deduplication.options = deduplicationOptions.concat(deduplication.options);
@@ -713,19 +715,19 @@ export class ZvolFormComponent implements FormConfiguration {
   addSubmit(body: any): Observable<Dataset> {
     const data: any = this.sendAsBasicOrAdvanced(body);
 
-    if (data.sync === 'INHERIT') {
+    if (data.sync === inherit) {
       delete (data.sync);
     }
-    if (data.compression === 'INHERIT') {
+    if (data.compression === inherit) {
       delete (data.compression);
     }
-    if (data.deduplication === 'INHERIT') {
+    if (data.deduplication === inherit) {
       delete (data.deduplication);
     }
-    if (data.readonly === 'INHERIT') {
+    if (data.readonly === inherit) {
       delete (data.readonly);
     }
-    if (data.volblocksize !== 'INHERIT') {
+    if (data.volblocksize !== inherit) {
       let volblocksizeIntegerValue = data.volblocksize.match(/[a-zA-Z]+|[+-]?([0-9]+([.][0-9]*)?|[.][0-9]+)+/g)[0];
       volblocksizeIntegerValue = parseInt(volblocksizeIntegerValue, 10);
 

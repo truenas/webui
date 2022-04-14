@@ -16,11 +16,15 @@ export default {
   dataset_name_paratext: T('<strong>Dataset:</strong> '),
   dataset_passphrase_placeholder: T('Dataset Passphrase'),
   dataset_passphrase_tooltip: T('The user-defined string that can unlock this dataset.'),
+  dataset_force_tooltip: T('In some cases it\'s possible that the provided key/passphrase is valid but the path \
+where the dataset is supposed to be mounted after being unlocked already exists and is not empty. In this case, unlock \
+operation would fail. This can be overridden by Force flag. \
+When it is set, system will rename the existing \
+directory/file path where the dataset should be mounted resulting in successful unlock of the dataset.'),
   dataset_passphrase_validation: [Validators.minLength(8)],
   fetching_encryption_summary_title: T('Fetching Encryption Summary'),
   fetching_encryption_summary_message: T('Fetching Encryption Summary for '),
   unlocking_datasets_title: T('Unlocking Datasets'),
-  unlocking_datasets_message: T('Unlocking datasets for '),
   unlock_dataset_dialog: {
     title: T('Unlock Datasets'),
     errors: T('Errors'),
@@ -36,7 +40,4 @@ export default {
     unlock_message: T('These datasets were successfully unlocked.'),
     skipped_message: T('These datasets were not unlocked because the parent datasets could not be unlocked.'),
   },
-  unlock_successful_title: T('Unlock Successful'),
-  unlock_successful_message: T('Datasets for '),
-  unlock_successful_message2: T(' successfully unlocked'),
 };

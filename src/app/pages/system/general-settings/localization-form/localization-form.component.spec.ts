@@ -111,9 +111,9 @@ describe('LocalizationFormComponent', () => {
       expect(values).toEqual({
         'Date Format': '2021-10-16',
         'Console Keyboard Map': 'English (US) (us)',
-        'Language *': 'English (en)',
+        Language: 'English (en)',
         'Time Format': '16:22:14 (24 Hours)',
-        'Timezone *': 'America/Los_Angeles',
+        Timezone: 'America/Los_Angeles',
       });
     });
 
@@ -125,8 +125,8 @@ describe('LocalizationFormComponent', () => {
         'Date Format': 'October 16, 2021',
         'Time Format': '04:22:14 PM',
         'Console Keyboard Map': 'English (US) (us)',
-        'Language *': 'English (en)',
-        'Timezone *': 'America/Los_Angeles',
+        Language: 'English (en)',
+        Timezone: 'America/Los_Angeles',
       });
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();

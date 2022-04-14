@@ -114,6 +114,12 @@ export class FormSelectComponent implements Field, AfterViewInit, AfterViewCheck
     });
   }
 
+  linkClicked(): void {
+    if (this.config.linkClicked) {
+      this.config.linkClicked();
+    }
+  }
+
   ngAfterViewChecked(): void {
     if (!this.formReady && typeof this.config.options !== 'undefined' && this.config.options && this.config.options.length > 0) {
       const newStates = this.config.options.map((item) => item && this.selectedValues.includes(item.value));
