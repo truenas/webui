@@ -1,0 +1,99 @@
+<mat-card class="card">
+  <mat-card-content>
+    <mat-progress-bar *ngIf="isLoading" mode="indeterminate"></mat-progress-bar>
+    <form [formGroup]="form" class="ix-form-container" (submit)="onSubmit()">
+      <ix-fieldset [title]="'Email Options' | translate">
+        <ix-radio-group
+          [label]="'Send Mail Method' | translate"
+          [formControl]="sendMethodControl"
+          [options]="sendMethodOptions$"
+        ></ix-radio-group>
+        <ng-container *ngIf="isSmtp; else gmailOauth">
+          <ix-input
+            [label]="'From Email' | translate"
+            formControlName="fromemail"
+            [required]="true"
+            [tooltip]="helptext.fromemail.tooltip | translate"
+          ></ix-input>
+          <ix-input
+            [label]="'From Name' | translate"
+            formControlName="fromname"
+            [tooltip]="helptext.fromname.tooltip | translate"
+          ></ix-input>
+          <ix-input
+            [label]="'Outgoing Mail Server' | translate"
+            formControlName="outgoingserver"
+            [tooltip]="helptext.outgoingserver.tooltip | translate"
+          ></ix-input>
+          <ix-input
+            [label]="'Mail Server Port' | translate"
+            formControlName="port"
+            type="number"
+            [required]="true"
+            [tooltip]="helptext.port.tooltip | translate"
+          ></ix-input>
+          <ix-select
+            [label]="'Security' | translate"
+            formControlName="security"
+            [tooltip]="helptext.security.tooltip | translate"
+            [options]="securityOptions$"
+          ></ix-select>
+          <ix-checkbox
+            [label]="'SMTP Authentication' | translate"
+            formControlName="smtp"
+            [tooltip]="helptext.auth.smtp.tooltip | translate"
+          ></ix-checkbox>
+
+          <ng-container *ngIf="hasSmtpAuthentication">
+            <ix-input
+              [label]="'Username' | translate"
+              formControlName="user"
+              [tooltip]="helptext.user.tooltip | translate"
+            ></ix-input>
+            <ix-input
+              [label]="'Password' | translate"
+              formControlName="pass"
+              type="password"
+              [tooltip]="helptext.pass.tooltip | translate"
+            ></ix-input>
+          </ng-container>
+        </ng-container>
+      </ix-fieldset>
+
+      <ng-template #gmailOauth>
+        <div class="oauth-message">
+          <ng-container *ngIf="hasOauthAuthorization; else logInToGmail">
+            <mat-icon>check_circle</mat-icon>
+            {{ 'Gmail credentials have been applied.' | translate }}
+          </ng-container>
+          <ng-template #logInToGmail>
+            <mat-icon>info</mat-icon>
+            {{ 'Log in to Gmail to set up Oauth credentials.' | translate }}
+          </ng-template>
+        </div>
+        <button
+          mat-button
+          type="button"
+          class="oauth-button"
+          (click)="onLoginToGmailPressed()"
+        >
+          {{ hasOauthAuthorization ? ('Log In To Gmail Again') : ('Log In To Gmail' | translate) }}
+        </button>
+      </ng-template>
+
+      <div class="form-actions">
+        <button
+          mat-button
+          type="submit"
+          [disabled]="!isValid || isLoading"
+          color="primary"
+        >{{ 'Save' | translate }}</button>
+        <button
+          mat-button
+          type="button"
+          (click)="onSendTestEmailPressed()"
+        >{{ 'Send Test Mail' | translate }}</button>
+      </div>
+    </form>
+  </mat-card-content>
+</mat-card>
