@@ -31,6 +31,10 @@ export class PageTitleService {
   }
 
   private observeRouteChanges(): void {
+    const routeParts = this.routePartsService.generateRouteParts(this.route.snapshot);
+    if (routeParts.length > 0) {
+      this.title$.next(routeParts[0]?.title || '');
+    }
     this.router.events.pipe(
       filter((event) => event instanceof NavigationEnd),
       untilDestroyed(this),

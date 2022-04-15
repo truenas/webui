@@ -1,5 +1,11 @@
 import {
-  Component, OnInit, ChangeDetectorRef, ViewChild, ChangeDetectionStrategy, ViewChildren, QueryList,
+  Component,
+  OnInit,
+  ChangeDetectorRef,
+  ViewChild, ChangeDetectionStrategy,
+  ViewChildren, QueryList,
+  AfterViewInit,
+  TemplateRef,
 } from '@angular/core';
 import { MatSort, Sort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
@@ -19,6 +25,7 @@ import { IxDetailRowDirective } from 'app/modules/ix-tables/directives/ix-detail
 import { userPageEntered } from 'app/pages/account/users/store/user.actions';
 import { selectUsers, selectUserState, selectUsersTotal } from 'app/pages/account/users/store/user.selectors';
 import { CoreService } from 'app/services/core-service/core.service';
+import { LayoutService } from 'app/services/layout.service';
 import { AppState } from 'app/store';
 import { builtinUsersToggled } from 'app/store/preferences/preferences.actions';
 import { waitForPreferences } from 'app/store/preferences/preferences.selectors';
@@ -31,8 +38,9 @@ import { UserFormComponent } from '../user-form/user-form.component';
   styleUrls: ['./user-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class UserListComponent implements OnInit {
+export class UserListComponent implements OnInit, AfterViewInit {
   @ViewChild(MatSort, { static: false }) sort: MatSort;
+  @ViewChild('pageHeader') pageHeader: TemplateRef<any>;
 
   displayedColumns: string[] = ['username', 'uid', 'builtin', 'full_name', 'actions'];
   settingsEvent$: Subject<CoreEvent> = new Subject();
@@ -54,6 +62,7 @@ export class UserListComponent implements OnInit {
     large: true,
     title: this.translate.instant('Can not retrieve response'),
   };
+  filterValue = '';
   expandedRow: User;
   @ViewChildren(IxDetailRowDirective) private detailRows: QueryList<IxDetailRowDirective>;
   error$ = this.store$.select(selectUserState).pipe(map((state) => state.error));
@@ -68,7 +77,7 @@ export class UserListComponent implements OnInit {
       return of(this.emptyConfig);
     }),
   );
-  private hideBuiltinUsers = true;
+  hideBuiltinUsers = true;
 
   constructor(
     private translate: TranslateService,
@@ -76,12 +85,25 @@ export class UserListComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private core: CoreService,
     private store$: Store<AppState>,
+    private layoutService: LayoutService,
   ) { }
 
   ngOnInit(): void {
     this.store$.dispatch(userPageEntered());
     this.getPreferences();
     this.getUsers();
+  }
+
+  ngAfterViewInit(): void {
+    this.layoutService.pageHeaderUpdater$.next(this.pageHeader);
+  }
+
+  shouldShowResetInput(): boolean {
+    return this.filterValue && !!this.filterValue.length;
+  }
+
+  input(filterInput: HTMLInputElement): void {
+    this.filterValue = filterInput.value;
   }
 
   getPreferences(): void {
@@ -93,6 +115,11 @@ export class UserListComponent implements OnInit {
       this.setupToolbar();
       this.cdr.markForCheck();
     });
+  }
+
+  resetInput(input: HTMLInputElement): void {
+    this.filterValue = '';
+    input.value = '';
   }
 
   getUsers(): void {

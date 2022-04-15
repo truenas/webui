@@ -1,3 +1,46 @@
+<ng-template #pageHeader>
+  <div class="header-container">
+    <div class="title-container">
+      <a [routerLink]="['/', 'network']"><strong>NETWORK</strong></a>
+      <h1>Users</h1>
+    </div>
+    <div class="header-actions">
+      <button
+        color="primary" 
+        class="btn" 
+        (click)="doAdd()" 
+        mat-button
+      >Add</button>
+      <mat-slide-toggle 
+        [checked]="!hideBuiltinUsers" 
+        (change)="toggleBuiltins()" 
+        class="slider"
+      >Show Built-in Users</mat-slide-toggle>
+      <div class="input-container">
+        <span class="prefix-icon">
+          <mat-icon>search</mat-icon>
+        </span>
+        <input
+          class="prefix-padding"
+          matInput
+          #filterInput
+          [class.has-reset-input-icon]="shouldShowResetInput()"
+          (input)="input(filterInput)"
+          [placeholder]="'Search'"
+        >
+        <span *ngIf="shouldShowResetInput()" class="reset-input">
+          <mat-icon
+            (click)="resetInput(filterInput)" 
+            role="img" 
+            fontSet="mdi-set" 
+            fontIcon="mdi-close-circle"
+          ></mat-icon>
+        </span>
+      </div>
+    </div>
+  </div>
+</ng-template>
+
 <entity-empty *ngIf="isLoading$ | async; else loaded" [conf]="loadingConfig"></entity-empty>
 
 <ng-template #loaded>

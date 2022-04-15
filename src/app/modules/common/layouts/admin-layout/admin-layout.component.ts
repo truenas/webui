@@ -1,10 +1,19 @@
+import { TemplatePortal } from '@angular/cdk/portal';
 import {
-  AfterViewChecked, ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild,
+  AfterViewChecked,
+  AfterViewInit,
+  ChangeDetectorRef,
+  Component,
+  ElementRef,
+  OnInit,
+  TemplateRef,
+  ViewChild,
+  ViewContainerRef,
 } from '@angular/core';
 import { MediaChange, MediaObserver } from '@angular/flex-layout';
 import { MatDialog } from '@angular/material/dialog';
 import { MatDrawerMode, MatSidenav } from '@angular/material/sidenav';
-import { NavigationEnd, Router } from '@angular/router';
+import { NavigationEnd, NavigationStart, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { UUID } from 'angular2-uuid';
@@ -34,7 +43,7 @@ import { waitForGeneralConfig } from 'app/store/system-config/system-config.sele
   templateUrl: './admin-layout.component.html',
   styleUrls: ['./admin-layout.component.scss'],
 })
-export class AdminLayoutComponent implements OnInit, AfterViewChecked {
+export class AdminLayoutComponent implements OnInit, AfterViewChecked, AfterViewInit {
   private isMobile: boolean;
   isSidenavOpen = true;
   isSidenavCollapsed = false;
@@ -53,6 +62,8 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
   consoleMsgsSubscriptionId: string = null;
   subs: SubMenuItem[];
   copyrightYear = this.localeService.getCopyrightYearFromBuildTime();
+
+  headerPortalOutlet: TemplatePortal = null;
 
   readonly ProductType = ProductType;
 
@@ -74,6 +85,8 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
     private localeService: LocaleService,
     private layoutService: LayoutService,
     private store$: Store<AppState>,
+    private viewContainerRef: ViewContainerRef,
+    private cdr: ChangeDetectorRef,
   ) {
     // detect server type
     this.sysGeneralService.getProductType$.pipe(untilDestroyed(this)).subscribe((res) => {
@@ -82,6 +95,9 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
 
     // Close sidenav after route change in mobile
     this.router.events.pipe(untilDestroyed(this)).subscribe((routeChange) => {
+      if (routeChange instanceof NavigationStart) {
+        this.headerPortalOutlet = null;
+      }
       if (routeChange instanceof NavigationEnd && this.isMobile) {
         this.sideNav.close();
       }
@@ -155,6 +171,13 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
 
   ngAfterViewChecked(): void {
     this.scrollToBottomOnFooterBar();
+  }
+
+  ngAfterViewInit(): void {
+    this.layoutService.pageHeaderUpdater$.pipe(untilDestroyed(this)).subscribe((headerContent: TemplateRef<any>) => {
+      this.headerPortalOutlet = new TemplatePortal(headerContent, this.viewContainerRef);
+      this.cdr.detectChanges();
+    });
   }
 
   updateSidenav(force?: 'open' | 'close'): void {

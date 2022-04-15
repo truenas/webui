@@ -72,7 +72,8 @@
 
     <!-- App content -->
     <div class="rightside-content-hold" [class.has-footer]="isShowFooterConsole">
-      <pagetitle [breadcrumbs]="true" [productType]="productType"></pagetitle>
+      <pagetitle *ngIf="!headerPortalOutlet" [breadcrumbs]="true" [productType]="productType"></pagetitle>
+      <ng-template *ngIf="headerPortalOutlet" [cdkPortalOutlet]="headerPortalOutlet"></ng-template>
       <router-outlet></router-outlet>
     </div>
     <div class="footer-console-bar" *ngIf="isShowFooterConsole" ix-auto ix-auto-type="shell" ix-auto-identifier="footer-console">
