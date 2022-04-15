@@ -1,0 +1,13 @@
+.two-columns {
+  display: flex;
+  margin-top: 20px;
+
+  > * {
+    display: block;
+    width: 50%;
+  }
+}
+
+.buttons {
+  margin-left: 1px;
+}

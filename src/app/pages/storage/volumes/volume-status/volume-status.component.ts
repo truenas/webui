@@ -16,7 +16,12 @@ import { CoreEvent } from 'app/interfaces/events';
 import { Job } from 'app/interfaces/job.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { Pool, PoolScan, PoolTopologyCategory } from 'app/interfaces/pool.interface';
-import { VDev, VDevStats, UnusedDisk } from 'app/interfaces/storage.interface';
+import {
+  VDev,
+  VDevStats,
+  UnusedDisk,
+  Disk,
+} from 'app/interfaces/storage.interface';
 import { DialogFormConfiguration } from 'app/modules/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/modules/entity/entity-dialog/entity-dialog.component';
 import { FieldConfig, FormSelectConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
@@ -31,6 +36,7 @@ import {
   WebSocketService, AppLoaderService, DialogService,
 } from 'app/services';
 import { CoreService } from 'app/services/core-service/core.service';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { ModalService } from 'app/services/modal.service';
 
 interface PoolDiskInfo {
@@ -161,6 +167,7 @@ export class VolumeStatusComponent implements OnInit, OnDestroy {
     protected matDialog: MatDialog,
     protected modalService: ModalService,
     protected translate: TranslateService,
+    private slideIn: IxSlideInService,
   ) {}
 
   getZfsPoolScan(poolName: string): void {
@@ -275,8 +282,8 @@ export class VolumeStatusComponent implements OnInit, OnDestroy {
         const pIndex = row.name.lastIndexOf('p');
         const diskName = pIndex > -1 ? row.name.substring(0, pIndex) : row.name;
 
-        this.ws.call('disk.query', [[['devname', '=', diskName]]]).pipe(untilDestroyed(this)).subscribe((res) => {
-          this.onClickEdit(res[0].identifier);
+        this.ws.call('disk.query', [[['devname', '=', diskName]]]).pipe(untilDestroyed(this)).subscribe((disks) => {
+          this.onClickEdit(disks[0]);
         });
       },
       isHidden: false,
@@ -646,9 +653,9 @@ export class VolumeStatusComponent implements OnInit, OnDestroy {
     };
   }
 
-  onClickEdit(pk: string): void {
-    const diskForm = this.modalService.openInSlideIn(DiskFormComponent);
-    diskForm.inIt(pk);
+  onClickEdit(disk: Disk): void {
+    const editForm = this.slideIn.open(DiskFormComponent, { wide: true });
+    editForm.setFormDisck(disk);
   }
 
   poolRemove(id: number, label: number | string): void {

@@ -435,7 +435,7 @@ export type ApiDirectory = {
 
   // Disk
   'disk.query': { params: QueryParams<Disk, DiskQueryOptions>; response: Disk[] };
-  'disk.update': { params: [string, DiskUpdate]; response: Disk };
+  'disk.update': { params: [id: string, update: DiskUpdate]; response: Disk };
   'disk.get_unused': { params: [joinPartitions?: boolean]; response: UnusedDisk[] };
   'disk.temperatures': { params: [disks: string[]]; response: DiskTemperatures };
   'disk.wipe': { params: DiskWipeParams; response: void };

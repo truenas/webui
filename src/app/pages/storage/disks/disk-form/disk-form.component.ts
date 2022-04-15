@@ -1,174 +1,69 @@
-import { Component } from '@angular/core';
-import { Validators } from '@angular/forms';
-import { Router, ActivatedRoute } from '@angular/router';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
+import { of } from 'rxjs';
+import { DiskPowerLevel } from 'app/enums/disk-power-level.enum';
+import { DiskStandby } from 'app/enums/disk-standby.enum';
 import helptext from 'app/helptext/storage/disks/disks';
-import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { Option } from 'app/interfaces/option.interface';
 import { QueryFilter } from 'app/interfaces/query-api.interface';
-import { Disk } from 'app/interfaces/storage.interface';
-import { FieldConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
-import { FieldSet } from 'app/modules/entity/entity-form/models/fieldset.interface';
-import { RelationAction } from 'app/modules/entity/entity-form/models/relation-action.enum';
-import { WebSocketService } from 'app/services';
+import { Disk, DiskUpdate } from 'app/interfaces/storage.interface';
+import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
+import { DialogService, WebSocketService } from 'app/services';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
 @Component({
   selector: 'app-disk-form',
-  template: '<entity-form [conf]="this"></entity-form>',
+  templateUrl: 'disk-form.component.html',
+  styleUrls: ['disk-form.component.scss'],
 })
-export class DiskFormComponent implements FormConfiguration {
-  routeSuccess: string[] = ['storage', 'disks'];
-  queryCall = 'disk.query' as const;
-  editCall = 'disk.update' as const;
+export class DiskFormComponent implements OnInit {
+  readonly queryCall = 'disk.query' as const;
+  readonly editCall = 'disk.update' as const;
   customFilter: [[Partial<QueryFilter<Disk>>]] = [[['identifier', '=']]];
-  isEntity = true;
-
-  fieldConfig: FieldConfig[];
-  fieldSets: FieldSet[] = [
-    {
-      name: helptext.fieldset_disk,
-      label: true,
-      class: 'general',
-      width: '100%',
-      config: [
-        {
-          type: 'input',
-          name: 'name',
-          placeholder: helptext.disk_form_name_placeholder,
-          tooltip: helptext.disk_form_name_tooltip,
-          readonly: true,
-        },
-        {
-          type: 'input',
-          name: 'serial',
-          placeholder: helptext.disk_form_serial_placeholder,
-          tooltip: helptext.disk_form_serial_tooltip,
-          readonly: true,
-        },
-        {
-          type: 'input',
-          name: 'description',
-          placeholder: helptext.disk_form_description_placeholder,
-          tooltip: helptext.disk_form_description_tooltip,
-        },
-      ],
-    },
-    {
-      name: helptext.fieldset_temperature,
-      label: true,
-      class: 'general',
-      width: '100%',
-      config: [
-        {
-          type: 'input',
-          inputType: 'number',
-          name: 'critical',
-          placeholder: helptext.disk_form_critical_placeholder,
-          tooltip: helptext.disk_form_critical_tooltip,
-          min: 0,
-          validation: [Validators.min(0)],
-        },
-        {
-          type: 'input',
-          inputType: 'number',
-          name: 'difference',
-          placeholder: helptext.disk_form_difference_placeholder,
-          tooltip: helptext.disk_form_difference_tooltip,
-          min: 0,
-          validation: [Validators.min(0)],
-        },
-        {
-          type: 'input',
-          inputType: 'number',
-          name: 'informational',
-          placeholder: helptext.disk_form_informational_placeholder,
-          tooltip: helptext.disk_form_informational_tooltip,
-          min: 0,
-          validation: [Validators.min(0)],
-        },
-      ],
-    },
-    { name: 'divider', divider: true },
-    {
-      name: helptext.fieldset_powermgmt,
-      label: true,
-      class: 'general',
-      width: '100%',
-      config: [
-        {
-          type: 'select',
-          name: 'hddstandby',
-          placeholder: helptext.disk_form_hddstandby_placeholder,
-          tooltip: helptext.disk_form_hddstandby_tooltip,
-          options: helptext.disk_form_hddstandby_options,
-        },
-        {
-          type: 'select',
-          name: 'advpowermgmt',
-          placeholder: helptext.disk_form_advpowermgmt_placeholder,
-          tooltip: helptext.disk_form_advpowermgmt_tooltip,
-          options: helptext.disk_form_advpowermgmt_options,
-        },
-      ],
-    },
-    {
-      name: helptext.fieldset_smartsed,
-      label: true,
-      class: 'general',
-      width: '100%',
-      config: [
-        {
-          type: 'checkbox',
-          name: 'togglesmart',
-          placeholder: helptext.disk_form_togglesmart_placeholder,
-          tooltip: helptext.disk_form_togglesmart_tooltip,
-        },
-        {
-          type: 'input',
-          name: 'smartoptions',
-          placeholder: helptext.disk_form_smartoptions_placeholder,
-          tooltip: helptext.disk_form_smartoptions_tooltip,
-        },
-        {
-          type: 'input',
-          name: 'passwd',
-          placeholder: helptext.disk_form_passwd_placeholder,
-          tooltip: helptext.disk_form_passwd_tooltip,
-          inputType: 'password',
-          value: '',
-          togglePw: true,
-          relation: [
-            {
-              action: RelationAction.Disable,
-              when: [
-                {
-                  name: 'clear_pw',
-                  value: true,
-                },
-              ],
-            },
-          ],
-        },
-        {
-          type: 'checkbox',
-          name: 'clear_pw',
-          placeholder: helptext.clear_pw.placeholder,
-          tooltip: helptext.clear_pw.tooltip,
-        },
-      ],
-    },
-    { name: 'divider', divider: true },
-  ];
-
-  title: string;
-
-  rowid: string;
+  form = this.fb.group({
+    name: [''],
+    serial: [''],
+    description: [''],
+    critical: [null as number, [Validators.min(0)]],
+    difference: [null as number, [Validators.min(0)]],
+    informational: [null as number, [Validators.min(0)]],
+    hddstandby: [null as DiskStandby],
+    advpowermgmt: [null as DiskPowerLevel],
+    togglesmart: [false],
+    smartoptions: [],
+    passwd: [''],
+    clear_pw: [false],
+  });
+  readonly helptext = helptext;
+  readonly advpowermgmt_options: Option[] = helptext.disk_form_advpowermgmt_options;
+  readonly hddstandbyOptions$ = of(helptext.disk_form_hddstandby_options);
+  readonly advpowermgmtOptions$ = of(this.translateOptions(this.advpowermgmt_options));
+  isLoading = false;
+  title = helptext.disk_form_title;
+  existingDisk: Disk;
 
   constructor(
-    private router: Router,
+    private translate: TranslateService,
     protected ws: WebSocketService,
-    protected aroute: ActivatedRoute,
+    private fb: FormBuilder,
+    private dialogService: DialogService,
+    private cdr: ChangeDetectorRef,
+    private errorHandler: FormErrorHandlerService,
+    private slideInService: IxSlideInService,
   ) {
+  }
+
+  ngOnInit(): void {
+    this.passwordState();
+  }
+
+  private translateOptions(options: Option[]): Option[] {
+    return options.map((el) => {
+      return { label: this.translate.instant(el.label), value: el.value };
+    });
   }
 
   resourceTransformIncomingRestData(data: Disk): Disk {
@@ -177,16 +72,24 @@ export class DiskFormComponent implements FormConfiguration {
     return transformed;
   }
 
-  preInit(): void {
-    this.aroute.params.pipe(untilDestroyed(this)).subscribe((params) => {
-      /*
-       * Make sure the route is "storage/disks" before
-       * using the pk value
-       * */
-      if (params['pk'] && this.router.url.startsWith('/storage/disks')) {
-        this.customFilter[0][0].push(params['pk']);
-      }
-    });
+  setFormDisck(disk: Disk): void {
+    this.existingDisk = disk;
+    this.form.patchValue(this.resourceTransformIncomingRestData(disk));
+  }
+
+  private passwordState(): void {
+    this.form.controls['clear_pw'].valueChanges
+      .pipe(untilDestroyed(this))
+      .subscribe(
+        (state) => {
+          const controlPasswd = this.form.controls['passwd'];
+          if (state) {
+            controlPasswd.disable();
+          } else {
+            controlPasswd.enable();
+          }
+        },
+      );
   }
 
   beforeSubmit(value: any): void {
@@ -207,14 +110,30 @@ export class DiskFormComponent implements FormConfiguration {
     value.informational = value.informational === '' ? null : value.informational;
   }
 
-  inIt(pk: string): void {
-    this.title = helptext.disk_form_title;
+  onSubmit(): void {
+    const values = this.form.value;
 
-    delete this.routeSuccess;
+    this.beforeSubmit(values);
+    this.isLoading = true;
+    this.ws.call(this.editCall, [this.existingDisk.identifier, values as DiskUpdate])
+      .pipe(untilDestroyed(this))
+      .subscribe(
+        () => {
+          this.isLoading = false;
+          this.cdr.markForCheck();
+          this.slideInService.close();
+          this.dialogService.info(helptext.dialog_title,
+            helptext.dialog_msg_save_success, '350px', 'info', true);
+        },
+        (error) => {
+          this.isLoading = false;
+          this.cdr.markForCheck();
+          this.errorHandler.handleWsFormError(error, this.form);
+        },
+      );
+  }
 
-    if (pk) {
-      this.rowid = pk;
-      this.customFilter[0][0].push(pk);
-    }
+  goBack(): void {
+    this.slideInService.close();
   }
 }

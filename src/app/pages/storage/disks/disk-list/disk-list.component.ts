@@ -23,7 +23,9 @@ import {
 } from 'app/pages/storage/disks/manual-test-dialog/manual-test-dialog.component';
 import { DialogService, StorageService, WebSocketService } from 'app/services';
 import { CoreService } from 'app/services/core-service/core.service';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LocaleService } from 'app/services/locale.service';
+import { DiskFormComponent } from '../disk-form/disk-form.component';
 
 @UntilDestroy()
 @Component({
@@ -111,7 +113,8 @@ export class DiskListComponent implements EntityTableConfig<Disk> {
 
         this.router.navigate(['/', 'storage', 'disks', 'bulk-edit']);
       } else {
-        this.router.navigate(['/', 'storage', 'disks', 'edit', selected[0].identifier]);
+        const editForm = this.slideInService.open(DiskFormComponent, { wide: true });
+        editForm.setFormDisck(selected[0]);
       }
     },
   }, {
@@ -135,6 +138,7 @@ export class DiskListComponent implements EntityTableConfig<Disk> {
     private matDialog: MatDialog,
     private core: CoreService,
     protected translate: TranslateService,
+    private slideInService: IxSlideInService,
   ) {}
 
   getActions(parentRow: Disk): EntityTableAction[] {
@@ -143,8 +147,9 @@ export class DiskListComponent implements EntityTableConfig<Disk> {
       icon: 'edit',
       name: 'edit',
       label: this.translate.instant('Edit'),
-      onClick: (row: Disk) => {
-        this.router.navigate(['/', 'storage', 'disks', 'edit', row.identifier]);
+      onClick: (disk: Disk) => {
+        const editForm = this.slideInService.open(DiskFormComponent, { wide: true });
+        editForm.setFormDisck(disk);
       },
     }];
 
@@ -225,6 +230,10 @@ export class DiskListComponent implements EntityTableConfig<Disk> {
       if (evt) {
         entityList.getData();
       }
+    });
+    this.slideInService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
+      entityList.getData();
+      entityList.pageChanged();
     });
   }
 
