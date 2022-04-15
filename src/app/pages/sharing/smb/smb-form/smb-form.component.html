@@ -15,7 +15,7 @@
           [label]="helptextSharingSmb.placeholder_name"
           [tooltip]="helptextSharingSmb.tooltip_name"
           [required]="true"
-          (blur)="blurEventName()"
+          (blur)="setEmptyNameFromPath()"
         ></ix-input>
         <ix-select
           formControlName="purpose"
@@ -145,7 +145,7 @@
         <button
           mat-button
           type="button"
-          (click)="toggleAdvancedMode()"
+          (click)="this.isAdvancedMode = !this.isAdvancedMode"
         >{{ isAdvancedMode ? ('Basic Options' | translate) : ('Advanced Options' | translate) }}</button>
       </div>
     </form>

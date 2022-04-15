@@ -6,9 +6,11 @@ import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import _ from 'lodash';
-import { Observable, of } from 'rxjs';
 import {
-  catchError, debounceTime, map, switchMap, tap,
+  combineLatest, concat, Observable,
+} from 'rxjs';
+import {
+  debounceTime, filter, map, tap,
 } from 'rxjs/operators';
 import { ProductType } from 'app/enums/product-type.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
@@ -16,7 +18,6 @@ import { helptextSharingSmb, shared } from 'app/helptext/sharing';
 import { Option } from 'app/interfaces/option.interface';
 import { SmbPresets, SmbShare } from 'app/interfaces/smb-share.interface';
 import { forbiddenValues } from 'app/modules/entity/entity-form/validators/forbidden-values-validation';
-import { EntityUtils } from 'app/modules/entity/utils';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import {
   AppLoaderService, DialogService, WebSocketService,
@@ -219,16 +220,12 @@ export class SmbFormComponent implements OnInit {
   }
 
   /* If user blurs name field with empty value, try to auto-populate based on path */
-  blurEventName(): void {
+  setEmptyNameFromPath(): void {
     const pathControl = this.form.get('path');
     const nameControl = this.form.get('name');
     if (pathControl.value && !nameControl.value) {
       nameControl.setValue(pathControl.value.split('/').pop());
     }
-  }
-
-  toggleAdvancedMode(): void {
-    this.isAdvancedMode = !this.isAdvancedMode;
   }
 
   restartService(source: string): void {
@@ -242,6 +239,7 @@ export class SmbFormComponent implements OnInit {
       buttonMsg: helptextSharingSmb.restart_smb_dialog.title,
       cancelMsg: helptextSharingSmb.restart_smb_dialog.cancel_btn,
     };
+
     this.dialog.confirm(confirmOptions).pipe(
       untilDestroyed(this),
     ).subscribe((res: boolean) => {
@@ -286,80 +284,53 @@ export class SmbFormComponent implements OnInit {
 
   checkAclActions(): void {
     const sharePath: string = this.form.get('path').value;
-    const datasetId = sharePath.replace('/mnt/', '');
-    const poolName = datasetId.split('/')[0];
     const homeShare = this.form.get('home').value;
-    const aclRoute = ['storage', 'id', poolName, 'dataset', 'acl', datasetId];
 
     if (homeShare && this.isNew) {
-      this.router.navigate(['/'].concat(aclRoute), { queryParams: { homeShare: true } });
+      const datasetId = sharePath.replace('/mnt/', '');
+      const poolName = datasetId.split('/')[0];
+      this.router.navigate(['/'].concat(['storage', 'id', poolName, 'dataset', 'acl', datasetId]), { queryParams: { homeShare: true } });
       return;
     }
-    // If this call returns true OR an [ENOENT] err comes back, just return to table
-    // because the pool or ds is encrypted. Otherwise, do the next checks
-    this.ws.call('pool.dataset.path_in_locked_datasets', [sharePath])
-      .pipe(untilDestroyed(this))
-      .subscribe(
-        (res) => {
-          this.dialog.closeAllDialogs();
-          if (!res) {
-            this.ws.call('service.query', [])
-              .pipe(
-                map((response) => _.find(response, { service: ServiceName.Cifs })),
-                switchMap((cifsService) => {
-                  this.dialog.closeAllDialogs();
-                  if (cifsService.enable) {
-                    return of();
-                  }
 
-                  /**
-                   * Allow user to enable cifs service, then ask about editing
-                   * dataset ACL.
-                   */
-                  return this.dialog.confirm({
-                    title: shared.dialog_title,
-                    message: shared.dialog_message,
-                    hideCheckBox: true,
-                    buttonMsg: shared.dialog_button,
-                  }).pipe(
-                    switchMap((doEnableService) => {
-                      if (doEnableService) {
-                        return this.ws.call('service.update', [cifsService.id, { enable: true }]).pipe(
-                          switchMap(() => this.ws.call('service.start', [cifsService.service])),
-                          switchMap(() => {
-                            return this.dialog.info(
-                              this.translate.instant('{service} Service', { service: 'SMB' }),
-                              this.translate.instant('The {service} service has been enabled.', { service: 'SMB' }),
-                              '250px',
-                              'info',
-                            );
-                          }),
-                          catchError((error) => {
-                            return this.dialog.errorReport(error.error, error.reason, error.trace.formatted);
-                          }),
-                        );
-                      }
-                      return of(true);
-                    }),
-                  );
-                }),
-                untilDestroyed(this),
-              )
-              .subscribe(
-                () => {},
-                (error) => new EntityUtils().handleWsError(this, error, this.dialog),
-              );
-          }
-        },
-        (err) => {
-          if (err.reason.includes('[ENOENT]')) {
-            this.dialog.closeAllDialogs();
-          } else {
-          // If some other err comes back from filesystem.path_is_encrypted
-            this.dialog.errorReport(helptextSharingSmb.action_edit_acl_dialog.title, err.reason, err.trace.formatted);
-          }
-        },
-      );
+    combineLatest([
+      this.ws.call('pool.dataset.path_in_locked_datasets'),
+      this.ws.call('service.query', []).pipe(
+        map((response) => _.find(response, { service: ServiceName.Cifs })),
+      ),
+    ]).pipe(untilDestroyed(this)).subscribe(([pathInLockedDatasets, cifsService]) => {
+      this.dialog.closeAllDialogs();
+      if (!pathInLockedDatasets && !cifsService.enable) {
+        this.dialog.confirm({
+          title: shared.dialog_title,
+          message: shared.dialog_message,
+          hideCheckBox: true,
+          buttonMsg: shared.dialog_button,
+        })
+          .pipe(filter(Boolean), untilDestroyed(this))
+          .subscribe(() => {
+            concat([
+              this.ws.call('service.update', [cifsService.id, { enable: true }]),
+              this.ws.call('service.start', [cifsService.service]),
+            ]).pipe(untilDestroyed(this)).subscribe(() => {
+              this.dialog.info(
+                this.translate.instant('{service} Service', { service: 'SMB' }),
+                this.translate.instant('The {service} service has been enabled.',
+                  { service: 'SMB' }), '250px', 'info',
+              ).pipe(untilDestroyed(this)).subscribe();
+            }, (error) => {
+              this.dialog.errorReport(error.error, error.reason, error.trace.formatted);
+            });
+          });
+      }
+    }, (err) => {
+      if (err.reason.includes('[ENOENT]')) {
+        this.dialog.closeAllDialogs();
+      } else {
+        // If some other err comes back from filesystem.path_is_encrypted
+        this.dialog.errorReport(helptextSharingSmb.action_edit_acl_dialog.title, err.reason, err.trace.formatted);
+      }
+    });
   }
 
   afpConfirm(value: boolean): void {
