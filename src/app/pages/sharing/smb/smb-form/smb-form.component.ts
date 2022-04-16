@@ -245,24 +245,25 @@ export class SmbFormComponent implements OnInit {
     ).subscribe((res: boolean) => {
       if (res) {
         this.loader.open();
-        this.ws.call('service.restart', [ServiceName.Cifs]).pipe(untilDestroyed(this)).subscribe(
-          () => {
-            this.loader.close();
-            this.dialog
-              .info(
-                helptextSharingSmb.restarted_smb_dialog.title,
-                helptextSharingSmb.restarted_smb_dialog.message,
-                '250px',
-              )
-              .pipe(untilDestroyed(this)).subscribe(() => {
-                this.checkAclActions();
-              });
-          },
-          (err) => {
-            this.loader.close();
-            this.dialog.errorReport('Error', err.err, err.backtrace);
-          },
-        );
+        this.ws.call(
+          'service.restart',
+          [ServiceName.Cifs],
+        ).pipe(untilDestroyed(this)).subscribe(() => {
+          this.loader.close();
+          this.dialog
+            .info(
+              helptextSharingSmb.restarted_smb_dialog.title,
+              helptextSharingSmb.restarted_smb_dialog.message,
+              '250px',
+            )
+            .pipe(untilDestroyed(this)).subscribe(() => {
+              this.checkAclActions();
+            });
+        },
+        (err) => {
+          this.loader.close();
+          this.dialog.errorReport('Error', err.err, err.backtrace);
+        });
       } else if (source === 'timemachine') {
         this.checkAllowDeny();
       } else {
@@ -306,22 +307,23 @@ export class SmbFormComponent implements OnInit {
           message: shared.dialog_message,
           hideCheckBox: true,
           buttonMsg: shared.dialog_button,
-        })
-          .pipe(filter(Boolean), untilDestroyed(this))
-          .subscribe(() => {
-            concat([
-              this.ws.call('service.update', [cifsService.id, { enable: true }]),
-              this.ws.call('service.start', [cifsService.service]),
-            ]).pipe(untilDestroyed(this)).subscribe(() => {
-              this.dialog.info(
-                this.translate.instant('{service} Service', { service: 'SMB' }),
-                this.translate.instant('The {service} service has been enabled.',
-                  { service: 'SMB' }), '250px', 'info',
-              ).pipe(untilDestroyed(this)).subscribe();
-            }, (error) => {
-              this.dialog.errorReport(error.error, error.reason, error.trace.formatted);
-            });
+        }).pipe(
+          filter(Boolean),
+          untilDestroyed(this),
+        ).subscribe(() => {
+          concat([
+            this.ws.call('service.update', [cifsService.id, { enable: true }]),
+            this.ws.call('service.start', [cifsService.service]),
+          ]).pipe(untilDestroyed(this)).subscribe(() => {
+            this.dialog.info(
+              this.translate.instant('{service} Service', { service: 'SMB' }),
+              this.translate.instant('The {service} service has been enabled.',
+                { service: 'SMB' }), '250px', 'info',
+            ).pipe(untilDestroyed(this)).subscribe();
+          }, (error) => {
+            this.dialog.errorReport(error.error, error.reason, error.trace.formatted);
           });
+        });
       }
     }, (err) => {
       if (err.reason.includes('[ENOENT]')) {
