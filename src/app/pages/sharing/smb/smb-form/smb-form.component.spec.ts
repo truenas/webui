@@ -403,6 +403,14 @@ describe('SmbFormComponent', () => {
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenNthCalledWith(5, {
       title: helptextSharingSmb.restart_smb_dialog.title,
+      message: helptextSharingSmb.restart_smb_dialog.message_time_machine,
+      hideCheckBox: true,
+      buttonMsg: helptextSharingSmb.restart_smb_dialog.title,
+      cancelMsg: helptextSharingSmb.restart_smb_dialog.cancel_btn,
+    });
+
+    expect(spectator.inject(DialogService).confirm).toHaveBeenNthCalledWith(6, {
+      title: helptextSharingSmb.restart_smb_dialog.title,
       message: helptextSharingSmb.restart_smb_dialog.message_allow_deny,
       hideCheckBox: true,
       buttonMsg: helptextSharingSmb.restart_smb_dialog.title,
@@ -429,7 +437,7 @@ describe('SmbFormComponent', () => {
 
     expect(websocket.call).toHaveBeenCalledWith('service.query', []);
 
-    expect(spectator.inject(DialogService).confirm).toHaveBeenNthCalledWith(6, {
+    expect(spectator.inject(DialogService).confirm).toHaveBeenNthCalledWith(7, {
       title: shared.dialog_title,
       message: shared.dialog_message,
       hideCheckBox: true,

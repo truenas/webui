@@ -354,7 +354,7 @@ export class SmbFormComponent implements OnInit {
     ) {
       confirmations.push(this.dialog.confirm({
         title: helptextSharingSmb.restart_smb_dialog.title,
-        message: helptextSharingSmb.restart_smb_dialog.message_time_machine,
+        message: helptextSharingSmb.restart_smb_dialog.message_allow_deny,
         hideCheckBox: true,
         buttonMsg: helptextSharingSmb.restart_smb_dialog.title,
         cancelMsg: helptextSharingSmb.restart_smb_dialog.cancel_btn,
