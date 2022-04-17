@@ -7,7 +7,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import _ from 'lodash';
 import {
-  combineLatest, forkJoin, Observable, of,
+  combineLatest, Observable, of,
 } from 'rxjs';
 import {
   debounceTime, filter, map, switchMap, tap,
@@ -76,6 +76,15 @@ export class SmbFormComponent implements OnInit {
       }),
     ),
   };
+
+  get hasHostAllowDenyChanged(): boolean {
+    return !_.isEqual(this.hostsAllowOnLoad, this.form.get('hostsallow').value)
+           || !_.isEqual(this.hostsDenyOnLoad, this.form.get('hostsdeny').value);
+  }
+
+  get shouldEnableTimemachineService(): boolean {
+    return this.form.get('timemachine').value && !this.isTimeMachineOn;
+  }
 
   form = this.formBuilder.group({
     path: ['', Validators.required],
@@ -338,29 +347,36 @@ export class SmbFormComponent implements OnInit {
   }
 
   shouldServiceRestart(): Observable<boolean> {
-    const confirmations: Observable<boolean>[] = [];
-    if (this.form.get('timemachine').value && !this.isTimeMachineOn) {
-      confirmations.push(this.dialog.confirm({
+    if (this.shouldEnableTimemachineService) {
+      return this.dialog.confirm({
         title: helptextSharingSmb.restart_smb_dialog.title,
         message: helptextSharingSmb.restart_smb_dialog.message_time_machine,
         hideCheckBox: true,
         buttonMsg: helptextSharingSmb.restart_smb_dialog.title,
         cancelMsg: helptextSharingSmb.restart_smb_dialog.cancel_btn,
-      }));
+      }).pipe(
+        switchMap((confirmed) => {
+          if (!confirmed) {
+            return this.warnIfHostsAllowDenyAreChanged();
+          }
+          return of(true);
+        }),
+      );
     }
-    if (
-      !_.isEqual(this.hostsAllowOnLoad, this.form.get('hostsallow').value)
-      || !_.isEqual(this.hostsDenyOnLoad, this.form.get('hostsdeny').value)
-    ) {
-      confirmations.push(this.dialog.confirm({
+    return this.warnIfHostsAllowDenyAreChanged();
+  }
+
+  warnIfHostsAllowDenyAreChanged(): Observable<boolean> {
+    if (this.hasHostAllowDenyChanged) {
+      return this.dialog.confirm({
         title: helptextSharingSmb.restart_smb_dialog.title,
         message: helptextSharingSmb.restart_smb_dialog.message_allow_deny,
         hideCheckBox: true,
         buttonMsg: helptextSharingSmb.restart_smb_dialog.title,
         cancelMsg: helptextSharingSmb.restart_smb_dialog.cancel_btn,
-      }));
+      });
     }
-    return forkJoin(confirmations).pipe(map((shouldRestart) => shouldRestart.some((restart) => restart)));
+    return of(false);
   }
 
   restartServices(): Observable<boolean> {
