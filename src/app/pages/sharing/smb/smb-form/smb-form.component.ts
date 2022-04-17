@@ -7,15 +7,16 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import _ from 'lodash';
 import {
-  combineLatest, concat, Observable,
+  combineLatest, forkJoin, Observable, of,
 } from 'rxjs';
 import {
-  debounceTime, filter, map, tap,
+  debounceTime, filter, map, switchMap, tap,
 } from 'rxjs/operators';
 import { ProductType } from 'app/enums/product-type.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { helptextSharingSmb, shared } from 'app/helptext/sharing';
 import { Option } from 'app/interfaces/option.interface';
+import { Service } from 'app/interfaces/service.interface';
 import { SmbPresets, SmbShare } from 'app/interfaces/smb-share.interface';
 import { forbiddenValues } from 'app/modules/entity/entity-form/validators/forbidden-values-validation';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
@@ -221,118 +222,17 @@ export class SmbFormComponent implements OnInit {
 
   /* If user blurs name field with empty value, try to auto-populate based on path */
   setEmptyNameFromPath(): void {
-    const pathControl = this.form.get('path');
     const nameControl = this.form.get('name');
-    if (pathControl.value && !nameControl.value) {
-      nameControl.setValue(pathControl.value.split('/').pop());
-    }
-  }
-
-  restartService(source: string): void {
-    const confirmOptions = {
-      title: helptextSharingSmb.restart_smb_dialog.title,
-      message:
-        source === 'timemachine'
-          ? helptextSharingSmb.restart_smb_dialog.message_time_machine
-          : helptextSharingSmb.restart_smb_dialog.message_allow_deny,
-      hideCheckBox: true,
-      buttonMsg: helptextSharingSmb.restart_smb_dialog.title,
-      cancelMsg: helptextSharingSmb.restart_smb_dialog.cancel_btn,
-    };
-
-    this.dialog.confirm(confirmOptions).pipe(
-      untilDestroyed(this),
-    ).subscribe((res: boolean) => {
-      if (res) {
-        this.loader.open();
-        this.ws.call(
-          'service.restart',
-          [ServiceName.Cifs],
-        ).pipe(untilDestroyed(this)).subscribe(() => {
-          this.loader.close();
-          this.dialog
-            .info(
-              helptextSharingSmb.restarted_smb_dialog.title,
-              helptextSharingSmb.restarted_smb_dialog.message,
-              '250px',
-            )
-            .pipe(untilDestroyed(this)).subscribe(() => {
-              this.checkAclActions();
-            });
-        },
-        (err) => {
-          this.loader.close();
-          this.dialog.errorReport('Error', err.err, err.backtrace);
-        });
-      } else if (source === 'timemachine') {
-        this.checkAllowDeny();
-      } else {
-        this.checkAclActions();
-      }
-    });
-  }
-
-  checkAllowDeny(): void {
-    if (
-      !_.isEqual(this.hostsAllowOnLoad, this.form.get('hostsallow').value)
-      || !_.isEqual(this.hostsDenyOnLoad, this.form.get('hostsdeny').value)
-    ) {
-      this.restartService('allowdeny');
-    } else {
-      this.checkAclActions();
-    }
-  }
-
-  checkAclActions(): void {
-    const sharePath: string = this.form.get('path').value;
-    const homeShare = this.form.get('home').value;
-
-    if (homeShare && this.isNew) {
-      const datasetId = sharePath.replace('/mnt/', '');
-      const poolName = datasetId.split('/')[0];
-      this.router.navigate(['/'].concat(['storage', 'id', poolName, 'dataset', 'acl', datasetId]), { queryParams: { homeShare: true } });
+    if (nameControl.value) {
       return;
     }
 
-    combineLatest([
-      this.ws.call('pool.dataset.path_in_locked_datasets'),
-      this.ws.call('service.query', []).pipe(
-        map((response) => _.find(response, { service: ServiceName.Cifs })),
-      ),
-    ]).pipe(untilDestroyed(this)).subscribe(([pathInLockedDatasets, cifsService]) => {
-      this.dialog.closeAllDialogs();
-      if (!pathInLockedDatasets && !cifsService.enable) {
-        this.dialog.confirm({
-          title: shared.dialog_title,
-          message: shared.dialog_message,
-          hideCheckBox: true,
-          buttonMsg: shared.dialog_button,
-        }).pipe(
-          filter(Boolean),
-          untilDestroyed(this),
-        ).subscribe(() => {
-          concat([
-            this.ws.call('service.update', [cifsService.id, { enable: true }]),
-            this.ws.call('service.start', [cifsService.service]),
-          ]).pipe(untilDestroyed(this)).subscribe(() => {
-            this.dialog.info(
-              this.translate.instant('{service} Service', { service: 'SMB' }),
-              this.translate.instant('The {service} service has been enabled.',
-                { service: 'SMB' }), '250px', 'info',
-            ).pipe(untilDestroyed(this)).subscribe();
-          }, (error) => {
-            this.dialog.errorReport(error.error, error.reason, error.trace.formatted);
-          });
-        });
-      }
-    }, (err) => {
-      if (err.reason.includes('[ENOENT]')) {
-        this.dialog.closeAllDialogs();
-      } else {
-        // If some other err comes back from filesystem.path_is_encrypted
-        this.dialog.errorReport(helptextSharingSmb.action_edit_acl_dialog.title, err.reason, err.trace.formatted);
-      }
-    });
+    const pathControl = this.form.get('path');
+    if (!pathControl.value) {
+      return;
+    }
+
+    nameControl.setValue(pathControl.value.split('/').pop());
   }
 
   afpConfirm(value: boolean): void {
@@ -364,20 +264,108 @@ export class SmbFormComponent implements OnInit {
       request$ = this.ws.call('sharing.smb.update', [this.existingSmbShare.id, smbShare]);
     }
 
+    let cifsServiceInstance: Service;
     request$.pipe(
       untilDestroyed(this),
     ).subscribe(() => {
-      if (smbShare.timemachine && !this.isTimeMachineOn) {
-        this.restartService('timemachine');
-      } else {
-        this.checkAllowDeny();
-      }
-      this.slideInService.close();
+      this.shouldServiceRestart().pipe(
+        switchMap((restart) => {
+          if (restart) {
+            return this.restartServices();
+          }
+          return of();
+        }),
+        switchMap(() => {
+          return combineLatest([
+            this.ws.call('pool.dataset.path_in_locked_datasets'),
+            this.ws.call('service.query', []).pipe(
+              map((response) => _.find(response, { service: ServiceName.Cifs })),
+            ),
+          ]);
+        }),
+        map(([pathInLockedDatasets, cifsService]) => {
+          cifsServiceInstance = cifsService;
+          return !pathInLockedDatasets && !cifsService.enable;
+        }),
+        filter(Boolean),
+        switchMap(() => {
+          return this.dialog.confirm({
+            title: shared.dialog_title,
+            message: shared.dialog_message,
+            hideCheckBox: true,
+            buttonMsg: shared.dialog_button,
+          });
+        }),
+        filter(Boolean),
+        switchMap(() => this.ws.call('service.update', [cifsServiceInstance.id, { enable: true }])),
+        switchMap(() => this.ws.call('service.start', [cifsServiceInstance.service])),
+        switchMap(() => {
+          return this.dialog.info(
+            this.translate.instant('{service} Service', { service: 'SMB' }),
+            this.translate.instant('The {service} service has been enabled.', { service: 'SMB' }),
+            '250px', 'info',
+          );
+        }),
+        untilDestroyed(this),
+      ).subscribe(
+        () => {},
+        (err) => {
+          if (err.reason.includes('[ENOENT]')) {
+            this.dialog.closeAllDialogs();
+          } else {
+            this.dialog.errorReport(err.error, err.reason, err.trace.formatted);
+          }
+        },
+      );
     },
     (error) => {
       this.isLoading = false;
       this.cdr.markForCheck();
       this.errorHandler.handleWsFormError(error, this.form);
     });
+  }
+
+  shouldServiceRestart(): Observable<boolean> {
+    const confirmations: Observable<boolean>[] = [];
+    if (this.form.get('timemachine').value && !this.isTimeMachineOn) {
+      confirmations.push(this.dialog.confirm({
+        title: helptextSharingSmb.restart_smb_dialog.title,
+        message: helptextSharingSmb.restart_smb_dialog.message_time_machine,
+        hideCheckBox: true,
+        buttonMsg: helptextSharingSmb.restart_smb_dialog.title,
+        cancelMsg: helptextSharingSmb.restart_smb_dialog.cancel_btn,
+      }));
+    }
+    if (
+      !_.isEqual(this.hostsAllowOnLoad, this.form.get('hostsallow').value)
+      || !_.isEqual(this.hostsDenyOnLoad, this.form.get('hostsdeny').value)
+    ) {
+      confirmations.push(this.dialog.confirm({
+        title: helptextSharingSmb.restart_smb_dialog.title,
+        message: helptextSharingSmb.restart_smb_dialog.message_time_machine,
+        hideCheckBox: true,
+        buttonMsg: helptextSharingSmb.restart_smb_dialog.title,
+        cancelMsg: helptextSharingSmb.restart_smb_dialog.cancel_btn,
+      }));
+    }
+    return forkJoin(confirmations).pipe(map((shouldRestart) => shouldRestart.some((restart) => restart)));
+  }
+
+  restartServices(): Observable<boolean> {
+    this.loader.open();
+    return this.ws.call(
+      'service.restart',
+      [ServiceName.Cifs],
+    ).pipe(
+      switchMap(() => {
+        this.loader.close();
+        return this.dialog.info(
+          helptextSharingSmb.restarted_smb_dialog.title,
+          helptextSharingSmb.restarted_smb_dialog.message,
+          '250px',
+        );
+      }),
+      untilDestroyed(this),
+    );
   }
 }
