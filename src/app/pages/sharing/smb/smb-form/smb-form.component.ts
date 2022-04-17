@@ -275,9 +275,21 @@ export class SmbFormComponent implements OnInit {
           }
           return of();
         }),
+        filter(() => {
+          const sharePath: string = this.form.get('path').value;
+          const homeShare = this.form.get('home').value;
+
+          if (homeShare && this.isNew) {
+            const datasetId = sharePath.replace('/mnt/', '');
+            const poolName = datasetId.split('/')[0];
+            this.router.navigate(['/'].concat(['storage', 'id', poolName, 'dataset', 'acl', datasetId]), { queryParams: { homeShare: true } });
+            return false;
+          }
+          return true;
+        }),
         switchMap(() => {
           return combineLatest([
-            this.ws.call('pool.dataset.path_in_locked_datasets'),
+            this.ws.call('pool.dataset.path_in_locked_datasets', [this.form.get('path').value]),
             this.ws.call('service.query', []).pipe(
               map((response) => _.find(response, { service: ServiceName.Cifs })),
             ),
