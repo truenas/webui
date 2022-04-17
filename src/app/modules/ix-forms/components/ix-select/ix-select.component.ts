@@ -45,6 +45,7 @@ export class IxSelectComponent implements ControlValueAccessor, OnChanges {
     if (!this.options) {
       this.hasErrorInOptions = true;
     } else {
+      this.hasErrorInOptions = false;
       this.opts$ = this.options.pipe(
         catchError(() => {
           this.hasErrorInOptions = true;
