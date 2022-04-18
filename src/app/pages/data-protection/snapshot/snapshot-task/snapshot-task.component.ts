@@ -95,11 +95,7 @@ export class SnapshotTaskComponent {
   ) {}
 
   get isTimeMode(): boolean {
-    return ![
-      CronPresetValue.Daily,
-      CronPresetValue.Weekly,
-      CronPresetValue.Monthly,
-    ].includes(this.form.value.schedule as CronPresetValue);
+    return this.form.value.schedule === CronPresetValue.Hourly;
   }
 
   setTaskForEdit(task: PeriodicSnapshotTask): void {
