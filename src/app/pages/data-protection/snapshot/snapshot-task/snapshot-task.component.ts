@@ -19,7 +19,7 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
 @UntilDestroy()
 @Component({
   templateUrl: './snapshot-task.component.html',
-  styleUrls: ['./snapshot-form.component.scss'],
+  styleUrls: ['./snapshot-task.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SnapshotTaskComponent {
