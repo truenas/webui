@@ -35,7 +35,7 @@
 }
 
 .medium-font {
-  font-size: 1rem;
+  font-size: 14px;
   padding: 0 15px;
   text-align: left;
 }
@@ -46,10 +46,13 @@
   text-align: center;
 }
 
+::ng-deep a {
+  color: var(--primary);
+}
+
 .external-link:focus-visible {
   background: var(--hover-bg) !important;
 }
-
 
 /* NARROW SCREENS */
 .xs.widget {

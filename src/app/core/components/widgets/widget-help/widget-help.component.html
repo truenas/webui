@@ -32,7 +32,10 @@
             <div fxFlex="10%"><mat-icon class="bullet-icon">mail</mat-icon></div>
             <div fxFlex="90%" class="medium-font" [innerHtml]="helptext.newsLetter | translate"></div>
           </div>
-          <div id="open-source" [innerHtml]="helptext.opensource | translate: { product: systemType } "></div>
+          <div id="open-source">TrueNAS {{systemType}} {{ helptext.opensourceA | translate }}
+            <a href="https://github.com/freenas/" target="_blank" class="external-link">{{ helptext.opensourceB | translate }}</a>
+            {{ helptext.opensourceC | translate }}
+          </div>
         </div>
         <div id="footer">
           <div fxFlex="45%" fxFlex.xs="100" class="copyright-txt">TrueNAS {{ systemType }}® © {{copyrightYear}} -

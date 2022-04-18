@@ -12,7 +12,6 @@ import { CoreService, CoreEvent } from 'app/core/services/core.service';
 import { LocaleService } from 'app/services/locale.service';
 
 export interface DialogData {
-  extraMsg: boolean;
   systemType: string;
 }
 
@@ -38,11 +37,6 @@ export class AboutModalDialog {
     protected core: CoreService,
     private prefServices: PreferencesService,
   ) {
-    this.extraMsg = data.extraMsg;
     this.systemType = data.systemType;
-  }
-
-  turnOffWelcomeDialog() {
-    this.core.emit({ name: 'ChangePreference', data: { key: 'showWelcomeDialog', value: false }, sender: this });
   }
 }
