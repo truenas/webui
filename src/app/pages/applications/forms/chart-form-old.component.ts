@@ -22,7 +22,7 @@ import { remapAppConfigData } from '../utils/remap-app-config-data.utils';
   selector: 'chart-form',
   template: '<entity-form [conf]="this"></entity-form>',
 })
-export class ChartFormComponent implements FormConfiguration {
+export class ChartFormComponentOld implements FormConfiguration {
   queryCall = 'chart.release.query' as const;
   customFilter: CatalogQueryParams;
   addCall = 'chart.release.create' as const;
