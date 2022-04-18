@@ -174,10 +174,12 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked, AfterView
   }
 
   ngAfterViewInit(): void {
-    this.layoutService.pageHeaderUpdater$.pipe(untilDestroyed(this)).subscribe((headerContent: TemplateRef<any>) => {
-      this.headerPortalOutlet = new TemplatePortal(headerContent, this.viewContainerRef);
-      this.cdr.detectChanges();
-    });
+    this.layoutService.pageHeaderUpdater$
+      .pipe(untilDestroyed(this))
+      .subscribe((headerContent: TemplateRef<unknown>) => {
+        this.headerPortalOutlet = new TemplatePortal(headerContent, this.viewContainerRef);
+        this.cdr.detectChanges();
+      });
   }
 
   updateSidenav(force?: 'open' | 'close'): void {

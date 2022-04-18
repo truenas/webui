@@ -8,9 +8,9 @@ import * as domHelper from 'app/helpers/dom.helper';
 export class LayoutService {
   private readonly collapsedMenuClass = 'collapsed-menu';
 
-  private headerUpdater$: ReplaySubject<TemplateRef<any>> = new ReplaySubject();
+  private headerUpdater$: ReplaySubject<TemplateRef<unknown>> = new ReplaySubject();
 
-  get pageHeaderUpdater$(): ReplaySubject<TemplateRef<any>> {
+  get pageHeaderUpdater$(): ReplaySubject<TemplateRef<unknown>> {
     return this.headerUpdater$;
   }
 

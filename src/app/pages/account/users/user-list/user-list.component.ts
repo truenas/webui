@@ -40,7 +40,7 @@ import { UserFormComponent } from '../user-form/user-form.component';
 })
 export class UserListComponent implements OnInit, AfterViewInit {
   @ViewChild(MatSort, { static: false }) sort: MatSort;
-  @ViewChild('pageHeader') pageHeader: TemplateRef<any>;
+  @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
 
   displayedColumns: string[] = ['username', 'uid', 'builtin', 'full_name', 'actions'];
   settingsEvent$: Subject<CoreEvent> = new Subject();
