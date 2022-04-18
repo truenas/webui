@@ -1,11 +1,10 @@
 import {
-  AfterViewInit, Component, Input, OnDestroy, OnInit, Type, ViewChild,
+  AfterViewInit, ChangeDetectorRef, Component, Input, OnDestroy, OnInit, Type, ViewChild,
 } from '@angular/core';
-import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
+import { NavigationEnd, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { filter } from 'rxjs/operators';
 import { ViewControllerComponent } from 'app/core/components/view-controller/view-controller.component';
-import { ProductType } from 'app/enums/product-type.enum';
 import { GlobalActionsEvent } from 'app/interfaces/events/global-actions-event.interface';
 import { PseudoRouteChangeEvent } from 'app/interfaces/events/pseudo-route-change-event.interface';
 import { GlobalAction, GlobalActionConfig } from 'app/interfaces/global-action.interface';
@@ -21,8 +20,7 @@ import { RoutePart, RoutePartsService } from 'app/services/route-parts/route-par
 })
 export class PageTitleComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('viewcontroller', { static: false }) viewcontroller: ViewControllerComponent;
-  @Input() breadcrumbs: boolean;
-  @Input() productType: ProductType;
+  @Input() breadcrumbs = true;
   title$ = this.pageTitleService.title$;
   copyrightYear = this.localeService.getCopyrightYearFromBuildTime();
   hasInitialized = false;
@@ -34,15 +32,15 @@ export class PageTitleComponent implements OnInit, AfterViewInit, OnDestroy {
   constructor(
     private router: Router,
     private routePartsService: RoutePartsService,
-    private activeRoute: ActivatedRoute,
     private core: CoreService,
+    private cdr: ChangeDetectorRef,
     private localeService: LocaleService,
     private pageTitleService: PageTitleService,
   ) {}
 
   ngOnInit(): void {
   // must be running once to get breadcrumbs
-    this.routeParts = this.routePartsService.generateRouteParts(this.activeRoute.snapshot);
+    this.routeParts = this.routePartsService.routeParts;
 
     // generate url from parts
     this.routeParts.reverse().map((item, i) => {
@@ -66,7 +64,7 @@ export class PageTitleComponent implements OnInit, AfterViewInit, OnDestroy {
     ).subscribe(() => {
       this.destroyActions();
 
-      this.routeParts = this.routePartsService.generateRouteParts(this.activeRoute.snapshot);
+      this.routeParts = this.routePartsService.routeParts;
 
       // generate url from parts
       this.routeParts.reverse().map((item, i) => {
@@ -108,6 +106,7 @@ export class PageTitleComponent implements OnInit, AfterViewInit, OnDestroy {
       if (this.hasInitialized) {
         this.renderActions(this.globalActionsConfig);
       }
+      this.cdr.markForCheck();
     });
   }
 

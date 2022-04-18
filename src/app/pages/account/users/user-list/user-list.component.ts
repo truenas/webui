@@ -92,6 +92,7 @@ export class UserListComponent implements OnInit, AfterViewInit {
     this.store$.dispatch(userPageEntered());
     this.getPreferences();
     this.getUsers();
+    this.setupToolbar();
   }
 
   ngAfterViewInit(): void {
@@ -225,5 +226,6 @@ export class UserListComponent implements OnInit, AfterViewInit {
     };
 
     this.core.emit({ name: 'GlobalActions', data: settingsConfig, sender: this });
+    this.cdr.markForCheck();
   }
 }

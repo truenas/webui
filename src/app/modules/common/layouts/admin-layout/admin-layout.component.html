@@ -72,7 +72,7 @@
 
     <!-- App content -->
     <div class="rightside-content-hold" [class.has-footer]="isShowFooterConsole">
-      <pagetitle *ngIf="!headerPortalOutlet" [breadcrumbs]="true" [productType]="productType"></pagetitle>
+      <pagetitle *ngIf="!headerPortalOutlet"></pagetitle>
       <ng-template *ngIf="headerPortalOutlet" [cdkPortalOutlet]="headerPortalOutlet"></ng-template>
       <router-outlet></router-outlet>
     </div>

@@ -31,7 +31,7 @@ export class PageTitleService {
   }
 
   private observeRouteChanges(): void {
-    const routeParts = this.routePartsService.generateRouteParts(this.route.snapshot);
+    const routeParts = this.routePartsService.routeParts;
     if (routeParts.length > 0) {
       this.title$.next(routeParts[0]?.title || '');
     }
@@ -39,7 +39,7 @@ export class PageTitleService {
       filter((event) => event instanceof NavigationEnd),
       untilDestroyed(this),
     ).subscribe(() => {
-      const routeParts = this.routePartsService.generateRouteParts(this.route.snapshot);
+      const routeParts = this.routePartsService.routeParts;
       this.title$.next(routeParts[0]?.title || '');
     });
   }

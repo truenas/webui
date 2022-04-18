@@ -1,5 +1,5 @@
 <ng-template #pageHeader>
-  <div class="header-container">
+  <!-- <div class="header-container">
     <div class="title-container">
       <a [routerLink]="['/', 'network']"><strong>NETWORK</strong></a>
       <h1>Users</h1>
@@ -38,7 +38,8 @@
         </span>
       </div>
     </div>
-  </div>
+  </div> -->
+  <pagetitle></pagetitle>
 </ng-template>
 
 <entity-empty *ngIf="isLoading$ | async; else loaded" [conf]="loadingConfig"></entity-empty>

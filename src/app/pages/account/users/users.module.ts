@@ -25,6 +25,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { NgxFilesizeModule } from 'ngx-filesize';
 import { CoreComponents } from 'app/core/core-components.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
+import { AppCommonModule } from 'app/modules/common/app-common.module';
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxTableModule } from 'app/modules/ix-tables/ix-table.module';
@@ -60,6 +61,7 @@ import { UserDetailsRowComponent } from './user-details-row/user-details-row.com
     MatExpansionModule,
     MatCardModule,
     MatDialogModule,
+    AppCommonModule,
     MatTooltipModule,
     MatProgressBarModule,
     MatProgressSpinnerModule,
