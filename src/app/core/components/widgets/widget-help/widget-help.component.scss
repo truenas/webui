@@ -1,0 +1,67 @@
+.widget {
+  height: 400px;
+  width: 600px;
+}
+
+.widget .mat-card .mat-card-content > div {
+  padding: 8px 16px !important;
+}
+
+.copyright-txt {
+  align-self: flex-end;
+  font-size: 11px;
+  text-align: center;
+}
+
+.widget mat-card-content {
+  width: 100%;
+}
+
+.container {
+  padding: 16px;
+}
+
+
+.line-item {
+  margin: 20px;
+}
+
+.line-item mat-icon {
+  font-size: 2.5rem;
+}
+
+.line-item div {
+  align-items: center;
+}
+
+.medium-font {
+  font-size: 1rem;
+  padding: 0 15px;
+  text-align: left;
+}
+
+#open-source {
+  font-size: 0.75rem;
+  padding: 1rem;
+  text-align: center;
+}
+
+.external-link:focus-visible {
+  background: var(--hover-bg) !important;
+}
+
+
+/* NARROW SCREENS */
+.xs.widget {
+  height: calc(100vh - 96px);
+  position: absolute;
+  width: 100vw;
+}
+
+.xs.widget .mat-card {
+  overflow-y: scroll;
+}
+
+::ng-deep a:focus-visible {
+  background: var(--hover-bg);
+}

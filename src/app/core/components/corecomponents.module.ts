@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
+import { WidgetHelpComponent } from 'app/core/components/widgets/widget-help/widget-help.component';
 import { MaterialModule } from '../../appMaterial.module';
 import { OverlayModule } from '@angular/cdk/overlay';
 import { PortalModule } from '@angular/cdk/portal';
@@ -92,6 +93,7 @@ import { ConvertPipe } from './pipes/convert.pipe';
     SimpleFailoverBtnComponent,
     SimpleFailoverBtnDialog,
     ConvertPipe,
+    WidgetHelpComponent,
   ],
   exports: [ // Modules and Components here
     CommonModule,
@@ -126,6 +128,7 @@ import { ConvertPipe } from './pipes/convert.pipe';
     WidgetControllerComponent,
     SimpleFailoverBtnComponent,
     SimpleFailoverBtnDialog,
+    WidgetHelpComponent,
   ],
   entryComponents: [
     ContextMenuComponent,
@@ -149,6 +152,7 @@ import { ConvertPipe } from './pipes/convert.pipe';
     WidgetCpuComponent,
     WidgetMemoryComponent,
     WidgetPoolComponent,
+    WidgetHelpComponent,
     TextLimiterTooltipComponent,
     WidgetControllerComponent,
     SimpleFailoverBtnComponent,
