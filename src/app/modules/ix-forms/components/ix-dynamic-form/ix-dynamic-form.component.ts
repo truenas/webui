@@ -3,20 +3,20 @@ import {
 } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { UntilDestroy } from '@ngneat/until-destroy';
-import { DynamicFieldsSchema } from 'app/interfaces/dynamic-fields-schema.interface';
+import { DynamicFormSchema } from 'app/interfaces/dynamic-form-schema.interface';
 
 @UntilDestroy()
 @Component({
-  selector: 'ix-dynamic-fields',
-  styleUrls: ['./ix-dynamic-fields.component.scss'],
-  templateUrl: './ix-dynamic-fields.component.html',
+  selector: 'ix-dynamic-form',
+  styleUrls: ['./ix-dynamic-form.component.scss'],
+  templateUrl: './ix-dynamic-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 
-export class IxDynamicFieldsComponent implements OnInit {
+export class IxDynamicFormComponent implements OnInit {
   @Input() formGroup: FormGroup;
   @Input() fieldsFormGroupName: string;
-  @Input() fields: DynamicFieldsSchema[];
+  @Input() fields: DynamicFormSchema[];
 
   fieldsFormGroup: FormGroup;
 

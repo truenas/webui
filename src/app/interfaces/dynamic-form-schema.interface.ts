@@ -1,4 +1,4 @@
-export interface DynamicFieldsSchema {
+export interface DynamicFormSchema {
   name: string;
   type: string;
   title?: string;

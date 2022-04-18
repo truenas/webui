@@ -8,7 +8,7 @@ import { map } from 'rxjs/operators';
 import { DnsAuthenticatorType } from 'app/enums/dns-authenticator-type.enum';
 import { helptextSystemAcme as helptext } from 'app/helptext/system/acme';
 import { DnsAuthenticator } from 'app/interfaces/dns-authenticator.interface';
-import { DynamicFieldsSchema } from 'app/interfaces/dynamic-fields-schema.interface';
+import { DynamicFormSchema } from 'app/interfaces/dynamic-form-schema.interface';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { WebSocketService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
@@ -37,7 +37,7 @@ export class AcmednsFormComponent {
   });
 
   isLoading = false;
-  attributes: DynamicFieldsSchema[] = [];
+  attributes: DynamicFormSchema[] = [];
   selectAuthenticator = DnsAuthenticatorType.Cloudflare;
 
   readonly helptext = helptext;
