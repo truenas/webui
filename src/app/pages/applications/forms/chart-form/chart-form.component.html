@@ -1,5 +1,23 @@
 <ix-modal-header [title]="title" [loading]="isLoading"></ix-modal-header>
 <mat-card>
   <mat-card-content>
+    <form [formGroup]="form" class="ix-form-container" (submit)="onSubmit()">
+      <ix-input
+        [formControlName]="'release_name'"
+        [label]="helptext.chartForm.release_name.placeholder | translate"
+        [tooltip]="helptext.chartForm.release_name.tooltip | translate"
+        [placeholder]="helptext.chartForm.release_name.placeholder | translate"
+        [required]="true"
+      ></ix-input>
+
+      <div class="form-actions">
+        <button
+          mat-button
+          type="submit"
+          [disabled]="form.invalid || isLoading"
+          color="primary"
+        >{{ 'Save' | translate }}</button>
+      </div>
+    </form>
   </mat-card-content>
 </mat-card>

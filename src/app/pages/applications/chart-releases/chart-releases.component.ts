@@ -367,13 +367,23 @@ export class ChartReleasesComponent implements OnInit {
 
   edit(name: string): void {
     const catalogApp = this.chartItems[name];
-    const form = this.slideInService.open(ChartFormComponent);
-    if (catalogApp.chart_metadata.name === ixChartApp) {
-      form.setTitle(helptext.launch);
-    } else {
-      form.setTitle(name);
-    }
-    form.loadingSchema(name);
+    this.appLoaderService.open();
+    this.ws.call('chart.release.query', [
+      [['id', '=', name]],
+      { extra: { include_chart_schema: true } },
+    ]).pipe(untilDestroyed(this)).subscribe((res: ChartRelease[]) => {
+      this.appLoaderService.close();
+      const form = this.slideInService.open(ChartFormComponent);
+      if (catalogApp.chart_metadata.name === ixChartApp) {
+        form.setTitle(helptext.launch);
+      } else {
+        form.setTitle(catalogApp.chart_metadata.name);
+      }
+      if (res.length) {
+        form.setTitle(res[0].name);
+        form.parseChartSchema(res[0].chart_schema);
+      }
+    });
   }
 
   getSelectedItems(): string[] {
