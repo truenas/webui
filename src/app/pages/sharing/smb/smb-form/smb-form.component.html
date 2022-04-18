@@ -6,33 +6,33 @@
         <ix-explorer
           formControlName="path"
           [required]="true"
-          [tooltip]="helptextSharingSmb.tooltip_path"
-          [label]="helptextSharingSmb.placeholder_path"
+          [tooltip]="helptextSharingSmb.tooltip_path | translate"
+          [label]="helptextSharingSmb.placeholder_path | translate"
           [nodeProvider]="treeNodeProvider"
         ></ix-explorer>
         <ix-input
           formControlName="name"
-          [label]="helptextSharingSmb.placeholder_name"
-          [tooltip]="helptextSharingSmb.tooltip_name"
+          [label]="helptextSharingSmb.placeholder_name | translate"
+          [tooltip]="helptextSharingSmb.tooltip_name | translate"
           [required]="true"
           (blur)="setEmptyNameFromPath()"
         ></ix-input>
         <ix-select
           formControlName="purpose"
-          [label]="helptextSharingSmb.placeholder_purpose"
-          [tooltip]="helptextSharingSmb.tooltip_purpose"
+          [label]="helptextSharingSmb.placeholder_purpose | translate"
+          [tooltip]="helptextSharingSmb.tooltip_purpose | translate"
           emptyValue=""
           [options]="options.purpose$"
         ></ix-select>
         <ix-input
           formControlName="comment"
-          [label]="helptextSharingSmb.placeholder_comment"
-          [tooltip]="helptextSharingSmb.tooltip_comment"
+          [label]="helptextSharingSmb.placeholder_comment | translate"
+          [tooltip]="helptextSharingSmb.tooltip_comment | translate"
         ></ix-input>
         <ix-checkbox
           formControlName="enabled"
-          [label]="helptextSharingSmb.placeholder_enabled"
-          [tooltip]="helptextSharingSmb.tooltip_enabled"
+          [label]="helptextSharingSmb.placeholder_enabled | translate"
+          [tooltip]="helptextSharingSmb.tooltip_enabled | translate"
         ></ix-checkbox>
       </ix-fieldset>
       <ix-fieldset
@@ -41,38 +41,38 @@
       >
         <ix-checkbox
           formControlName="acl"
-          [label]="helptextSharingSmb.placeholder_acl"
-          [tooltip]="helptextSharingSmb.tooltip_acl"
+          [label]="helptextSharingSmb.placeholder_acl | translate"
+          [tooltip]="helptextSharingSmb.tooltip_acl | translate"
         ></ix-checkbox>
         <ix-checkbox
           formControlName="ro"
-          [label]="helptextSharingSmb.placeholder_ro"
-          [tooltip]="helptextSharingSmb.tooltip_ro"
+          [label]="helptextSharingSmb.placeholder_ro | translate"
+          [tooltip]="helptextSharingSmb.tooltip_ro | translate"
         ></ix-checkbox>
         <ix-checkbox
           formControlName="browsable"
-          [label]="helptextSharingSmb.placeholder_browsable"
-          [tooltip]="helptextSharingSmb.tooltip_browsable"
+          [label]="helptextSharingSmb.placeholder_browsable | translate"
+          [tooltip]="helptextSharingSmb.tooltip_browsable | translate"
         ></ix-checkbox>
         <ix-checkbox
           formControlName="guestok"
-          [label]="helptextSharingSmb.placeholder_guestok"
-          [tooltip]="helptextSharingSmb.tooltip_guestok"
+          [label]="helptextSharingSmb.placeholder_guestok | translate"
+          [tooltip]="helptextSharingSmb.tooltip_guestok | translate"
         ></ix-checkbox>
         <ix-checkbox
           formControlName="abe"
-          [label]="helptextSharingSmb.placeholder_abe"
-          [tooltip]="helptextSharingSmb.tooltip_abe"
+          [label]="helptextSharingSmb.placeholder_abe | translate"
+          [tooltip]="helptextSharingSmb.tooltip_abe | translate"
         ></ix-checkbox>
         <ix-chips
           formControlName="hostsallow"
-          [label]="helptextSharingSmb.placeholder_hostsallow"
-          [tooltip]="helptextSharingSmb.tooltip_hostsallow"
+          [label]="helptextSharingSmb.placeholder_hostsallow | translate"
+          [tooltip]="helptextSharingSmb.tooltip_hostsallow | translate"
         ></ix-chips>
         <ix-chips
           formControlName="hostsdeny"
-          [label]="helptextSharingSmb.placeholder_hostsdeny"
-          [tooltip]="helptextSharingSmb.tooltip_hostsdeny"
+          [label]="helptextSharingSmb.placeholder_hostsdeny | translate"
+          [tooltip]="helptextSharingSmb.tooltip_hostsdeny | translate"
         ></ix-chips>
       </ix-fieldset>
       <ix-fieldset
@@ -81,58 +81,58 @@
       >
         <ix-checkbox
           formControlName="home"
-          [label]="helptextSharingSmb.placeholder_home"
-          [tooltip]="helptextSharingSmb.tooltip_home"
+          [label]="helptextSharingSmb.placeholder_home | translate"
+          [tooltip]="helptextSharingSmb.tooltip_home | translate"
         ></ix-checkbox>
         <ix-checkbox
           formControlName="timemachine"
-          [label]="helptextSharingSmb.placeholder_timemachine"
-          [tooltip]="helptextSharingSmb.tooltip_timemachine"
+          [label]="helptextSharingSmb.placeholder_timemachine | translate"
+          [tooltip]="helptextSharingSmb.tooltip_timemachine | translate"
         ></ix-checkbox>
         <ix-checkbox
           formControlName="afp"
-          [label]="helptextSharingSmb.placeholder_afp"
-          [tooltip]="helptextSharingSmb.tooltip_afp"
+          [label]="helptextSharingSmb.placeholder_afp | translate"
+          [tooltip]="helptextSharingSmb.tooltip_afp | translate"
         ></ix-checkbox>
         <ix-checkbox
           formControlName="shadowcopy"
-          [label]="helptextSharingSmb.placeholder_shadowcopy"
-          [tooltip]="helptextSharingSmb.tooltip_shadowcopy"
+          [label]="helptextSharingSmb.placeholder_shadowcopy | translate"
+          [tooltip]="helptextSharingSmb.tooltip_shadowcopy | translate"
         ></ix-checkbox>
         <ix-checkbox
           formControlName="recyclebin"
-          [label]="helptextSharingSmb.placeholder_recyclebin"
-          [tooltip]="helptextSharingSmb.tooltip_recyclebin"
+          [label]="helptextSharingSmb.placeholder_recyclebin | translate"
+          [tooltip]="helptextSharingSmb.tooltip_recyclebin | translate"
         ></ix-checkbox>
         <ix-checkbox
           formControlName="aapl_name_mangling"
-          [label]="helptextSharingSmb.placeholder_aapl_name_mangling"
-          [tooltip]="helptextSharingSmb.tooltip_aapl_name_mangling"
+          [label]="helptextSharingSmb.placeholder_aapl_name_mangling | translate"
+          [tooltip]="helptextSharingSmb.tooltip_aapl_name_mangling | translate"
         ></ix-checkbox>
         <ix-checkbox
           formControlName="streams"
-          [label]="helptextSharingSmb.placeholder_streams"
-          [tooltip]="helptextSharingSmb.tooltip_streams"
+          [label]="helptextSharingSmb.placeholder_streams | translate"
+          [tooltip]="helptextSharingSmb.tooltip_streams | translate"
         ></ix-checkbox>
         <ix-checkbox
           formControlName="durablehandle"
-          [label]="helptextSharingSmb.placeholder_durablehandle"
-          [tooltip]="helptextSharingSmb.tooltip_durablehandle"
+          [label]="helptextSharingSmb.placeholder_durablehandle | translate"
+          [tooltip]="helptextSharingSmb.tooltip_durablehandle | translate"
         ></ix-checkbox>
         <ix-checkbox
           formControlName="fsrvp"
-          [label]="helptextSharingSmb.placeholder_fsrvp"
-          [tooltip]="helptextSharingSmb.tooltip_fsrvp"
+          [label]="helptextSharingSmb.placeholder_fsrvp | translate"
+          [tooltip]="helptextSharingSmb.tooltip_fsrvp | translate"
         ></ix-checkbox>
         <ix-input
           formControlName="path_suffix"
-          [label]="helptextSharingSmb.placeholder_path_suffix"
-          [tooltip]="helptextSharingSmb.tooltip_path_suffix"
+          [label]="helptextSharingSmb.placeholder_path_suffix | translate"
+          [tooltip]="helptextSharingSmb.tooltip_path_suffix | translate"
         ></ix-input>
         <ix-textarea
           formControlName="auxsmbconf"
-          [label]="helptextSharingSmb.placeholder_auxsmbconf"
-          [tooltip]="helptextSharingSmb.tooltip_auxsmbconf"
+          [label]="helptextSharingSmb.placeholder_auxsmbconf | translate"
+          [tooltip]="helptextSharingSmb.tooltip_auxsmbconf | translate"
         ></ix-textarea>
       </ix-fieldset>
       <div class="form-actions">
