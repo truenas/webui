@@ -104,6 +104,7 @@ export class WebdavFormComponent {
     const values = this.form.value;
 
     this.isFormLoading = true;
+    this.cdr.detectChanges();
     let request$: Observable<unknown>;
     if (this.editingWebdav) {
       request$ = this.ws.call('sharing.webdav.update', [
