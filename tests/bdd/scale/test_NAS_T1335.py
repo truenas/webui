@@ -5,7 +5,6 @@ import time
 from function import (
     wait_on_element,
     is_element_present,
-    attribute_value_exist,
     wait_on_element_disappear,
 )
 from pytest_bdd import (
@@ -13,8 +12,10 @@ from pytest_bdd import (
     scenario,
     then,
     when,
-    parsers
 )
+import pytest
+pytestmark = [pytest.mark.debug_test]
+
 
 @scenario('features/NAS-T1335.feature', 'Apps Page - Remove an App')
 def test_apps_page__remove_an_app():
@@ -65,6 +66,7 @@ def click_the_three_dots_icon_and_select_delete(driver):
     assert wait_on_element(driver, 20, '//span[contains(.,"Delete")]', 'clickable')
     driver.find_element_by_xpath('//span[contains(.,"Delete")]').click()
 
+
 @then('confirm that you want to delete')
 def confirm_that_you_want_to_delete(driver):
     """confirm that you want to delete."""
@@ -73,10 +75,11 @@ def confirm_that_you_want_to_delete(driver):
     wait_on_element(driver, 10, '//button[@ix-auto="button__CONTINUE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__CONTINUE"]').click()
 
+
 @then('Verify the application has been deleted')
 def verify_the_application_has_been_deleted(driver):
     """Verify the application has been deleted."""
     assert wait_on_element(driver, 5, '//h1[contains(.,"Deleting...")]')
     assert wait_on_element_disappear(driver, 60, '//h1[contains(.,"Deleting...")]')
-    time.sleep(1) # we have to wait for the page to update
-    assert wait_on_element(driver, 10, '//mat-card[contains(.,"collabora-test")]') is False
+    time.sleep(1)  # we have to wait for the page to update
+    assert wait_on_element_disappear(driver, 10, '//mat-card[contains(.,"collabora-test")]')

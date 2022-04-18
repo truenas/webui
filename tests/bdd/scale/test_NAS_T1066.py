@@ -16,7 +16,6 @@ from pytest_bdd import (
     parsers
 )
 import pytest
-
 pytestmark = [pytest.mark.debug_test]
 
 
@@ -56,38 +55,38 @@ def you_see_the_dashboard_click_network_on_the_side_menu(driver):
 def the_network_page_will_open_click_global_configuration_settings(driver):
     """the Network page will open, click Global Configuration Settings."""
     assert wait_on_element(driver, 10, '//h1[contains(.,"Network")]')
-    assert wait_on_element(driver, 10, '//button[@ix-auto="button__globalSettings"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__globalSettings"]').click()
+    assert wait_on_element(driver, 10, '//button[contains(.,"Settings")]', 'clickable')
+    driver.find_element_by_xpath('//button[contains(.,"Settings")]').click()
 
 
 @then(parsers.parse('the global config page will open and input Nameservers "{nameserver1}", "{nameserver2}" and "{nameserver3}"'))
 def the_global_config_page_will_open_and_input_nameservers(driver, nameserver1, nameserver2, nameserver3):
     """the global config page will open and input Nameservers "{nameserver1}", "{nameserver2}" and "{nameserver3}"."""
     assert wait_on_element(driver, 10, '//h3[contains(.,"Global Configuration")]')
-    assert wait_on_element(driver, 7, '//input[@ix-auto="input__Nameserver 1"]', 'inputable')
-    driver.find_element_by_xpath('//input[@ix-auto="input__Nameserver 1"]').clear()
-    driver.find_element_by_xpath('//input[@ix-auto="input__Nameserver 1"]').send_keys(nameserver1)
-    driver.find_element_by_xpath('//input[@ix-auto="input__Nameserver 2"]').clear()
-    driver.find_element_by_xpath('//input[@ix-auto="input__Nameserver 2"]').send_keys(nameserver2)
-    driver.find_element_by_xpath('//input[@ix-auto="input__Nameserver 3"]').clear()
-    driver.find_element_by_xpath('//input[@ix-auto="input__Nameserver 3"]').send_keys(nameserver3)
+    assert wait_on_element(driver, 7, '//ix-input[contains(.,"Nameserver 3")]//input', 'inputable')
+    driver.find_element_by_xpath('//ix-input[contains(.,"Nameserver 1")]//input').clear()
+    driver.find_element_by_xpath('//ix-input[contains(.,"Nameserver 1")]//input').send_keys(nameserver1)
+    driver.find_element_by_xpath('//ix-input[contains(.,"Nameserver 2")]//input').clear()
+    driver.find_element_by_xpath('//ix-input[contains(.,"Nameserver 2")]//input').send_keys(nameserver2)
+    driver.find_element_by_xpath('//ix-input[contains(.,"Nameserver 3")]//input').clear()
+    driver.find_element_by_xpath('//ix-input[contains(.,"Nameserver 3")]//input').send_keys(nameserver3)
 
 
 @then(parsers.parse('input gateway "{gateway}" and an hostname and click SAVE'))
 def input_gateway_and_a_hostname_and_click_save(driver, nas_hostname, gateway):
     """input gateway "{gateway}" and an hostname and click SAVE."""
-    driver.find_element_by_xpath('//input[@ix-auto="input__IPv4 Default Gateway"]').clear()
-    driver.find_element_by_xpath('//input[@ix-auto="input__IPv4 Default Gateway"]').send_keys(gateway)
-    driver.find_element_by_xpath('//input[@ix-auto="input__Hostname"]').clear()
-    driver.find_element_by_xpath('//input[@ix-auto="input__Hostname"]').send_keys(nas_hostname)
-    assert wait_on_element(driver, 7, '//button[@ix-auto="button__SAVE"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
+    driver.find_element_by_xpath('//ix-input[contains(.,"IPv4 Default")]//input').clear()
+    driver.find_element_by_xpath('//ix-input[contains(.,"IPv4 Default")]//input').send_keys(gateway)
+    driver.find_element_by_xpath('//ix-input[contains(.,"Hostname")]//input').clear()
+    driver.find_element_by_xpath('//ix-input[contains(.,"Hostname")]//input').send_keys(nas_hostname)
+    assert wait_on_element(driver, 7, '//button[contains(.,"Save")]', 'clickable')
+    driver.find_element_by_xpath('//button[contains(.,"Save")]').click()
 
 
 @then('"Please wait" should appear, changes should be saved without errors, the network page will reload')
 def please_wait_should_appear_changes_should_be_saved_without_errors_the_network_page_will_reload(driver):
     """"Please wait" should appear, changes should be saved without errors, the network page will reload."""
-    assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
+    assert wait_on_element_disappear(driver, 20, '//div[contains(@class,"mat-progress-bar-element")]')
     assert wait_on_element(driver, 10, '//h1[contains(.,"Network")]')
 
 
@@ -133,7 +132,7 @@ def click_test_changes_check_confirm_click_test_changes_again(driver, nas_ip):
 @then('when "Please wait" goes away, and there are unapplied network changes, click "Save Changes"')
 def when_please_wait_goes_away_and_there_are_unapplied_network_changes_click_save_changes(driver):
     """when "Please wait" goes away, and there are unapplied network changes, click "Save Changes"."""
-    assert wait_on_element_disappear(driver, 65, '//h6[contains(.,"Please wait")]')
+    assert wait_on_element_disappear(driver, 85, '//h6[contains(.,"Please wait")]')
     assert wait_on_element(driver, 10, '//h1[contains(.,"Network")]')
     assert wait_on_element(driver, 7, '//button[@ix-auto="button__keepChange"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__keepChange"]').click()

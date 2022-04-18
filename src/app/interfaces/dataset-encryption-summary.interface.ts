@@ -12,6 +12,7 @@ export interface DatasetEncryptionSummary {
 
 export interface DatasetEncryptionSummaryQueryParams {
   key_file?: boolean;
+  force?: boolean;
   datasets?: DatasetEncryptionSummaryQueryParamsDataset[];
 }
 

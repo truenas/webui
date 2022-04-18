@@ -7,7 +7,9 @@
       <mat-icon *ngIf="productType === ProductType.Scale || productType == ProductType.ScaleEnterprise" class="logo" svgIcon="truenas_scale_logo_full" alt="TrueNAS SCALE logo"></mat-icon>
     </ng-template>
     <div>
-      <span fxFlex class="copyright-txt">TrueNAS {{productType}}® © {{copyrightYear}} - <a href="http://www.ixsystems.com" target="_blank" title="iXsystems, Inc."> iXsystems, Inc</a>.</span>
+      <span fxFlex class="copyright-txt">
+        TrueNAS {{productType | mapValue: productTypeLabels}}® © {{copyrightYear}} - <a href="http://www.ixsystems.com" target="_blank" title="iXsystems, Inc."> iXsystems, Inc</a>.
+      </span>
     </div>
   </mat-card>
 </div>

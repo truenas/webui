@@ -2,7 +2,7 @@ import {
   HttpClient, HttpErrorResponse, HttpEvent, HttpEventType,
 } from '@angular/common/http';
 import {
-  OnInit, Component, EventEmitter, Output, Inject,
+  OnInit, Component, EventEmitter, Output, Inject, AfterViewChecked,
 } from '@angular/core';
 import {
   MatDialog, MatDialogConfig, MatDialogRef, MAT_DIALOG_DATA,
@@ -24,7 +24,7 @@ import { WebSocketService } from 'app/services';
   templateUrl: 'entity-job.component.html',
   styleUrls: ['./entity-job.component.scss'],
 })
-export class EntityJobComponent implements OnInit {
+export class EntityJobComponent implements OnInit, AfterViewChecked {
   job: Job = {} as Job;
   progressTotalPercent = 0;
   description: string;
@@ -110,6 +110,10 @@ export class EntityJobComponent implements OnInit {
           });
         });
     }
+  }
+
+  ngAfterViewChecked(): void {
+    this.scrollBottom();
   }
 
   setCall<K extends ApiMethod>(method: K, args?: ApiDirectory[K]['params']): void {
@@ -271,7 +275,6 @@ export class EntityJobComponent implements OnInit {
     const subscriptionId = UUID.UUID();
     const subName = 'filesystem.file_tail_follow:' + this.job.logs_path;
     this.ws.sub(subName, subscriptionId).pipe(untilDestroyed(this)).subscribe((res) => {
-      this.scrollBottom();
       if (res && res.data && typeof res.data === 'string') {
         this.realtimeLogs += res.data;
       }
@@ -281,6 +284,10 @@ export class EntityJobComponent implements OnInit {
 
   scrollBottom(): void {
     const cardContainer = document.getElementsByClassName('entity-job-dialog')[0];
-    cardContainer.scrollTop = cardContainer.scrollHeight;
+    const logsContainer = cardContainer.getElementsByClassName('logs-container')[0];
+    if (!logsContainer) {
+      return;
+    }
+    logsContainer.scrollTop = logsContainer.scrollHeight;
   }
 }

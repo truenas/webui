@@ -1,0 +1,47 @@
+<mat-card class="card">
+  <mat-card-content>
+    <mat-progress-bar *ngIf="isLoading" mode="indeterminate"></mat-progress-bar>
+    <form [formGroup]="form" class="ix-form-container" (submit)="onSubmit()">
+      <ix-fieldset [title]="'Failover Configuration' | translate">
+        <ix-checkbox
+          formControlName="disabled"
+          [label]="'Disable Failover' | translate"
+          [tooltip]="helptext.disabled_tooltip | translate"
+        ></ix-checkbox>
+        <ix-checkbox
+          formControlName="master"
+          [label]="'Default TrueNAS controller' | translate"
+          [tooltip]="helptext.master_tooltip | translate"
+        ></ix-checkbox>
+        <ix-input
+          formControlName="timeout"
+          [label]="'Network Timeout Before Initiating Failover' | translate"
+          [tooltip]="helptext.timeout_tooltip | translate"
+          type="number"
+        ></ix-input>
+      </ix-fieldset>
+
+      <div class="form-actions">
+        <button
+          mat-button
+          type="submit"
+          [disabled]="form.invalid || isLoading"
+          color="primary"
+        >{{ submitButtonText$ | async }}</button>
+
+        <button
+          mat-button
+          type="button"
+          [disabled]="isLoading"
+          (click)="onSyncToPeerPressed()"
+        >{{ 'Sync To Peer' | translate }}</button>
+        <button
+          mat-button
+          type="button"
+          [disabled]="isLoading"
+          (click)="onSyncFromPeerPressed()"
+        >{{ 'Sync From Peer' | translate }}</button>
+      </div>
+    </form>
+  </mat-card-content>
+</mat-card>
