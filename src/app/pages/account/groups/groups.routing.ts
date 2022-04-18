@@ -14,7 +14,7 @@ export const routes: Routes = [
         data: { title: 'Groups', breadcrumb: 'Groups' },
       },
       {
-        path: 'members/:pk',
+        path: ':pk/members',
         component: GroupMembersComponent,
         data: { title: 'Update Members', breadcrumb: 'Members' },
       },

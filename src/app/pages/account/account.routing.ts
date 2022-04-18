@@ -8,7 +8,7 @@ import { TwoFactorComponent } from '../system/two-factor/two-factor.component';
 
 export const routes: Routes = [{
   path: '',
-  data: { title: 'Accounts' },
+  data: { title: 'Accounts', breadcrumb: 'Accounts' },
   children: [
     {
       path: 'users',

@@ -68,8 +68,7 @@ describe('GroupMembersComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(ws.call).toHaveBeenLastCalledWith('group.update', [1, { users: [41] }]);
-
-    expect(spectator.inject(Router).navigate).toHaveBeenLastCalledWith(['/', 'credentials', 'groups']);
+    expect(ws.call).toHaveBeenCalledWith('group.update', [1, { users: [41] }]);
+    expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/', 'credentials', 'groups']);
   });
 });

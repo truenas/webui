@@ -1,8 +1,9 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { Spectator } from '@ngneat/spectator';
-import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
+import { Router } from '@angular/router';
+import { SpectatorRouting } from '@ngneat/spectator';
+import { mockProvider, createRoutingFactory } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
 import { mockWebsocket, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
@@ -12,9 +13,7 @@ import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxTableModule } from 'app/modules/ix-tables/ix-table.module';
 import { GroupDetailsRowComponent } from 'app/pages/account/groups/group-details-row/group-details-row.component';
 import { GroupFormComponent } from 'app/pages/account/groups/group-form/group-form.component';
-import {
-  WebSocketService, DialogService, AppLoaderService,
-} from 'app/services';
+import { DialogService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { selectPreferences } from 'app/store/preferences/preferences.selectors';
 
@@ -28,12 +27,11 @@ const dummyGroup = {
 } as Group;
 
 describe('GroupDetailsRowComponent', () => {
-  let spectator: Spectator<GroupDetailsRowComponent>;
+  let spectator: SpectatorRouting<GroupDetailsRowComponent>;
   let loader: HarnessLoader;
-  let ws: WebSocketService;
-  let dialog: DialogService;
+  let dialogServiceMock: DialogService;
 
-  const createComponent = createComponentFactory({
+  const createComponent = createRoutingFactory({
     component: GroupDetailsRowComponent,
     imports: [
       EntityModule,
@@ -50,9 +48,8 @@ describe('GroupDetailsRowComponent', () => {
         mockCall('group.query', []),
       ]),
       mockProvider(DialogService, {
-        dialogForm: jest.fn(() => of(true)),
+        dialogForm: jest.fn(() => of()),
       }),
-      mockProvider(AppLoaderService),
       provideMockStore({
         selectors: [
           {
@@ -74,27 +71,35 @@ describe('GroupDetailsRowComponent', () => {
       },
     });
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    ws = spectator.inject(WebSocketService);
-    dialog = spectator.inject(DialogService);
+    dialogServiceMock = spectator.inject(DialogService);
   });
 
   it('checks colspan attribute', () => {
     expect(spectator.query('td').getAttribute('colspan')).toBe('5');
   });
 
+  it('should redirect to group members form', async () => {
+    const membersButton = await loader.getHarness(MatButtonHarness.with({ text: 'peopleMembers' }));
+    await membersButton.click();
+
+    expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/', 'credentials', 'groups', 1, 'members']);
+  });
+
   it('should open edit group form', async () => {
     const editButton = await loader.getHarness(MatButtonHarness.with({ text: 'editEdit' }));
     await editButton.click();
 
-    expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(GroupFormComponent, { wide: true });
+    expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(GroupFormComponent);
   });
 
-  it('should make websocket call to delete user', async () => {
-    jest.spyOn(dialog, 'dialogForm').mockImplementation();
+  it('should make websocket call to delete group', async () => {
     const deleteButton = await loader.getHarness(MatButtonHarness.with({ text: 'deleteDelete' }));
     await deleteButton.click();
 
-    expect(dialog.dialogForm).toHaveBeenCalled();
-    expect(ws.call).toHaveBeenCalledWith('group.delete', 1);
+    expect(dialogServiceMock.dialogForm).toHaveBeenCalledWith(
+      expect.objectContaining({
+        title: 'Delete Group',
+      }),
+    );
   });
 });

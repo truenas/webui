@@ -5,6 +5,7 @@ import { Observable } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 import { User } from 'app/interfaces/user.interface';
 import { EntityUtils } from 'app/modules/entity/utils';
+import { DialogService } from 'app/services';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
@@ -25,14 +26,17 @@ export class GroupMembersComponent implements OnInit {
     private ws: WebSocketService,
     private activatedRoute: ActivatedRoute,
     private router: Router,
+    private dialog: DialogService,
   ) {}
 
   ngOnInit(): void {
     this.isFormLoading = true;
     this.activatedRoute.params.pipe(
       untilDestroyed(this),
-    ).subscribe((params: Params) => this.groupId = params.pk);
-    this.getGroupDetails();
+    ).subscribe((params: Params) => {
+      this.groupId = params.pk;
+      this.getGroupDetails();
+    });
   }
 
   getGroupDetails(): void {
@@ -74,7 +78,7 @@ export class GroupMembersComponent implements OnInit {
       this.router.navigate(['/', 'credentials', 'groups']);
     }, (error) => {
       this.isFormLoading = false;
-      new EntityUtils().handleWsError(null, error);
+      new EntityUtils().handleWsError(this, error, this.dialog);
     });
   }
 }
