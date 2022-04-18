@@ -1,14 +1,10 @@
 # coding=utf-8
 """SCALE UI: feature tests."""
 
-import time
-from selenium.webdriver.common.keys import Keys
-from function import(
+from function import (
     wait_on_element,
     is_element_present,
-    attribute_value_exist,
-    wait_for_attribute_value,
-    wait_on_element_disappear,
+    wait_on_element_disappear
 )
 from pytest_bdd import (
     given,
@@ -52,7 +48,6 @@ def on_the_dashboard_click_on_credentials_and_certificates(driver):
     driver.find_element_by_xpath('//*[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Certificates"]').click()
 
 
-
 @then('click on the trash icon for ca1')
 def click_on_the_trash_icon_for_ca1(driver):
     """click on the trash icon for ca1."""
@@ -69,14 +64,9 @@ def click_the_confirm_checkbox_and_click_delete(driver):
     driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__CONFIRM"]').click()
     assert wait_on_element(driver, 10, '//button[@ix-auto="button__DELETE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__DELETE"]').click()
-    #assert wait_on_element(driver, 5, '//*[contains(.,"Deleting")]')
-    #assert wait_on_element_disappear(driver, 10, '//*[contains(.,"Deleteing")]')
-    #no dialog box so we need to sleep for the UI to reload
-    time.sleep(2)
 
 
 @then('verify that the CA was deleted')
 def verify_that_the_ca_was_deleted(driver):
     """verify that the CA was deleted."""
-    assert wait_on_element(driver, 10, '//li[contains(.,"Name: ca1")]') is False
-
+    assert wait_on_element_disappear(driver, 20, '//li[contains(.,"Name: ca1")]')

@@ -479,7 +479,7 @@ export type ApiDirectory = {
   'failover.node': { params: void; response: string };
   'failover.disabled.reasons': { params: void; response: FailoverDisabledReason[] };
   'failover.config': { params: void; response: FailoverConfig };
-  'failover.sync_to_peer': { params: { reboot?: boolean }; response: void };
+  'failover.sync_to_peer': { params: [{ reboot?: boolean }]; response: void };
   'failover.upgrade_finish': { params: void; response: boolean };
   'failover.upgrade': { params: void; response: boolean };
 

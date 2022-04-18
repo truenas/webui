@@ -48,6 +48,7 @@ def you_should_be_on_the_dashboard_click_on_storage(driver):
     assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Storage"]', 'clickable')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Storage"]').click()
 
+
 @then('the storage page should open, then click on the tank three dots button, select Add Dataset')
 def the_storage_page_should_open_then_click_on_the_tank_three_dots_button_select_add_dataset(driver):
     """the storage page should open, then click on the tank three dots button, select Add Dataset."""
@@ -58,7 +59,6 @@ def the_storage_page_should_open_then_click_on_the_tank_three_dots_button_select
     driver.find_element_by_xpath('//button[normalize-space(text())="Add Dataset"]').click()   
 
 
-                     
 @then(parsers.parse('the Dataset window should open, input dataset name "{dataset_name}" and click save'))
 def the_dataset_window_should_open_input_dataset_name_my_ldap_dataset_and_click_save(driver, dataset_name):
     """the Dataset window should open, input dataset name "{dataset_name}" and click save."""

@@ -2,6 +2,7 @@ import { ModuleWithProviders } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { AlertServiceListComponent } from 'app/pages/system/alert-service/alert-service-list/alert-service-list.component';
+import { FailoverSettingsComponent } from 'app/pages/system/failover-settings/failover-settings.component';
 import { GeneralSettingsComponent } from 'app/pages/system/general-settings/general-settings.component';
 import { ManualUpdateComponent } from 'app/pages/system/update/manual-update/manual-update.component';
 import { ViewEnclosureComponent } from 'app/pages/system/view-enclosure/components/view-enclosure/view-enclosure.component';
@@ -17,7 +18,6 @@ import { BootPoolReplaceFormComponent } from './bootenv/boot-pool-replace/boot-p
 import { BootEnvironmentListComponent } from './bootenv/bootenv-list/bootenv-list.component';
 import { BootStatusListComponent } from './bootenv/bootenv-status/bootenv-status.component';
 import { EmailComponent } from './email/email.component';
-import { FailoverComponent } from './failover/failover.component';
 import { EulaComponent } from './general-settings/support/eula/eula.component';
 import { SupportComponent } from './general-settings/support/support.component';
 import { TunableListComponent } from './tunable/tunable-list/tunable-list.component';
@@ -130,7 +130,7 @@ export const routes: Routes = [
       ],
     }, {
       path: 'failover',
-      component: FailoverComponent,
+      component: FailoverSettingsComponent,
       data: { title: T('Failover'), breadcrumb: T('Failover'), icon: 'device_hub' },
     }, {
       path: 'support',

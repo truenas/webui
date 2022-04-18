@@ -49,6 +49,7 @@ import { BootEnvironmentListComponent } from 'app/pages/system/bootenv/bootenv-l
 import { BootenvStatsDialogComponent } from 'app/pages/system/bootenv/bootenv-stats-dialog/bootenv-stats-dialog.component';
 import { BootStatusListComponent } from 'app/pages/system/bootenv/bootenv-status/bootenv-status.component';
 import { EmailComponent } from 'app/pages/system/email/email.component';
+import { FailoverSettingsComponent } from 'app/pages/system/failover-settings/failover-settings.component';
 import { GeneralSettingsComponent } from 'app/pages/system/general-settings/general-settings.component';
 import { GuiFormComponent } from 'app/pages/system/general-settings/gui-form/gui-form.component';
 import { LocalizationFormComponent } from 'app/pages/system/general-settings/localization-form/localization-form.component';
@@ -71,7 +72,6 @@ import { ManualUpdateComponent } from 'app/pages/system/update/manual-update/man
 import { UpdateComponent } from 'app/pages/system/update/update.component';
 import { EnclosureModule } from 'app/pages/system/view-enclosure/enclosure.module';
 import { ReplicationFormComponent } from './advanced/replication-form/replication-form.component';
-import { FailoverComponent } from './failover/failover.component';
 import { routing } from './system.routing';
 
 @NgModule({
@@ -124,7 +124,7 @@ import { routing } from './system.routing';
     CronListComponent,
     EmailComponent,
     EulaComponent,
-    FailoverComponent,
+    FailoverSettingsComponent,
     FileTicketFormComponent,
     GeneralSettingsComponent,
     GuiFormComponent,

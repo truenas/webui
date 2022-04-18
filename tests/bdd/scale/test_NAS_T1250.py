@@ -37,6 +37,7 @@ def the_browser_is_open_navigate_to_the_scale_url_and_login(driver, nas_ip, root
         assert wait_on_element(driver, 5, '//button[@name="signin_button"]')
         driver.find_element_by_xpath('//button[@name="signin_button"]').click()
     else:
+        assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Dashboard"]', 'clickable')
         driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
 
 
@@ -46,7 +47,6 @@ def on_the_dashboard_click_on_credentials_and_local_groups(driver):
     assert wait_on_element(driver, 10, '//span[contains(.,"Dashboard")]')
     assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Credentials"]', 'clickable')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Credentials"]').click()
-    time.sleep(1)
     assert wait_on_element(driver, 10, '//*[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Local Groups"]', 'clickable')
     driver.find_element_by_xpath('//*[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Local Groups"]').click()
 
@@ -54,9 +54,9 @@ def on_the_dashboard_click_on_credentials_and_local_groups(driver):
 @then('on the Groups page, close the note and click Add')
 def on_the_groups_page_close_the_note_and_click_add(driver):
     """on the Groups page, close the note and click Add."""
-    assert wait_on_element(driver, 7, '//h1[contains(.,"Display Note")]')
-    assert wait_on_element(driver, 5, '//span[contains(text(),"CLOSE")]', 'clickable')
-    driver.find_element_by_xpath('//span[contains(text(),"CLOSE")]').click()  
+    if is_element_present(driver, '//h1[contains(.,"Display Note")]'):
+        assert wait_on_element(driver, 5, '//span[contains(text(),"CLOSE")]', 'clickable')
+        driver.find_element_by_xpath('//span[contains(text(),"CLOSE")]').click() 
     assert wait_on_element(driver, 10, '//h1[contains(text(),"Groups")]')
     assert wait_on_element(driver, 10, '//button[@ix-auto="button__Groups_ADD"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__Groups_ADD"]').click()
@@ -66,8 +66,7 @@ def on_the_groups_page_close_the_note_and_click_add(driver):
 def input_the_group_name_and_click_save(driver):
     """input the group name and click save."""
     assert wait_on_element(driver, 7, '//h3[contains(.,"Add Group")]')
-
-    assert wait_on_element(driver, 7, '//ix-input[@formcontrolname="name"]//input')
+    assert wait_on_element(driver, 7, '//ix-input[@formcontrolname="name"]//input', 'inputable')
     driver.find_element_by_xpath('//ix-input[@formcontrolname="name"]//input').clear()
     driver.find_element_by_xpath('//ix-input[@formcontrolname="name"]//input').send_keys('qetest')
     assert wait_on_element(driver, 7, '//span[contains(text(),"Save")]', 'clickable')
