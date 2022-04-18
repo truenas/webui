@@ -343,6 +343,10 @@ export class SmbFormComponent implements OnInit {
       this.isLoading = false;
       this.cdr.markForCheck();
       this.errorHandler.handleWsFormError(error, this.form);
+    }, () => {
+      this.isLoading = false;
+      this.cdr.markForCheck();
+      this.slideInService.close();
     });
   }
 
