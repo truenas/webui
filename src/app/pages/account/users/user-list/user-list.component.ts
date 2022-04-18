@@ -17,6 +17,7 @@ import {
 } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 import { CoreEvent } from 'app/interfaces/events';
+import { GlobalActionConfig } from 'app/interfaces/global-action.interface';
 import { User } from 'app/interfaces/user.interface';
 import { EmptyConfig, EmptyType } from 'app/modules/entity/entity-empty/entity-empty.component';
 import { EntityToolbarComponent } from 'app/modules/entity/entity-toolbar/entity-toolbar.component';
@@ -41,6 +42,7 @@ import { UserFormComponent } from '../user-form/user-form.component';
 export class UserListComponent implements OnInit, AfterViewInit {
   @ViewChild(MatSort, { static: false }) sort: MatSort;
   @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
+  toolbarActionsConfig: GlobalActionConfig = null;
 
   displayedColumns: string[] = ['username', 'uid', 'builtin', 'full_name', 'actions'];
   settingsEvent$: Subject<CoreEvent> = new Subject();
@@ -220,12 +222,11 @@ export class UserListComponent implements OnInit, AfterViewInit {
       target: this.settingsEvent$,
       controls,
     };
-    const settingsConfig = {
+    this.toolbarActionsConfig = {
       actionType: EntityToolbarComponent,
       actionConfig: toolbarConfig,
     };
 
-    this.core.emit({ name: 'GlobalActions', data: settingsConfig, sender: this });
     this.cdr.markForCheck();
   }
 }

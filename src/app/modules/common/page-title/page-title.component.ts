@@ -1,5 +1,5 @@
 import {
-  AfterViewInit, ChangeDetectorRef, Component, Input, OnDestroy, OnInit, Type, ViewChild,
+  AfterViewInit, Component, Input, OnDestroy, OnInit, Type, ViewChild,
 } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -24,6 +24,12 @@ export class PageTitleComponent implements OnInit, AfterViewInit, OnDestroy {
   title$ = this.pageTitleService.title$;
   copyrightYear = this.localeService.getCopyrightYearFromBuildTime();
   hasInitialized = false;
+  @Input() set toolbarActionsConfig(actionConfig: GlobalActionConfig) {
+    this.globalActionsConfig = actionConfig;
+    if (this.hasInitialized) {
+      this.renderActions(this.globalActionsConfig);
+    }
+  }
   private globalActionsConfig: GlobalActionConfig;
   private globalActions: GlobalAction;
 
@@ -33,7 +39,6 @@ export class PageTitleComponent implements OnInit, AfterViewInit, OnDestroy {
     private router: Router,
     private routePartsService: RoutePartsService,
     private core: CoreService,
-    private cdr: ChangeDetectorRef,
     private localeService: LocaleService,
     private pageTitleService: PageTitleService,
   ) {}
@@ -106,7 +111,6 @@ export class PageTitleComponent implements OnInit, AfterViewInit, OnDestroy {
       if (this.hasInitialized) {
         this.renderActions(this.globalActionsConfig);
       }
-      this.cdr.markForCheck();
     });
   }
 
