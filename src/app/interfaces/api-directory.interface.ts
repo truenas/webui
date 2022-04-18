@@ -838,9 +838,9 @@ export type ApiDirectory = {
   'service.started': { params: [ServiceName]; response: boolean };
   'service.query': { params: QueryParams<Service>; response: Service[] };
   'service.update': { params: [number | ServiceName, Partial<Service>]; response: number };
-  'service.start': { params: [ServiceName]; response: boolean };
+  'service.start': { params: [ServiceName, { silent: boolean }]; response: boolean };
   'service.stop': {
-    params: [ServiceName];
+    params: [ServiceName, { silent: boolean }];
     response: boolean; // False indicates that service has been stopped.
   };
   'service.restart': { params: [ServiceName]; response: void };
