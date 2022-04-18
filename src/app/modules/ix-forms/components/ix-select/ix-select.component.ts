@@ -1,11 +1,10 @@
 import {
   ChangeDetectionStrategy, ChangeDetectorRef,
-  Component, Input, OnChanges, ViewChild,
+  Component, Input, OnChanges,
 } from '@angular/core';
 import {
   ControlValueAccessor, FormControl, NgControl,
 } from '@angular/forms';
-import { MatSelect } from '@angular/material/select';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { EMPTY, Observable } from 'rxjs';
 import { catchError } from 'rxjs/operators';
@@ -29,7 +28,6 @@ export class IxSelectComponent implements ControlValueAccessor, OnChanges {
   @Input() tooltip: string;
   @Input() multiple: boolean;
   @Input() emptyValue: string = null;
-  @ViewChild('matSelect') matSelect: MatSelect;
 
   constructor(
     public controlDirective: NgControl,
@@ -40,7 +38,6 @@ export class IxSelectComponent implements ControlValueAccessor, OnChanges {
 
   ngOnChanges(): void {
     if (this.options) {
-      this.matSelect?.panel?.nativeElement.remove(0);
       this.opts$ = this.options.pipe(
         catchError(() => {
           this.hasErrorInOptions = false;
