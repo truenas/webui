@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import _ from 'lodash';
-import { filter, map } from 'rxjs/operators';
+import { filter, map, take } from 'rxjs/operators';
 import { ServiceName, serviceNames } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { helptextSharingWebdav, helptextSharingSmb, helptextSharingNfs } from 'app/helptext/sharing';
@@ -165,7 +165,7 @@ export class SharesDashboardComponent implements AfterViewInit {
           add() {
             this.parent.slideInService.open(NfsFormComponent);
             this.parent.slideInService.onClose$
-              .pipe(untilDestroyed(this.parent))
+              .pipe(take(1), untilDestroyed(this.parent))
               .subscribe(() => {
                 if (!this.tableComponent) {
                   this.parent.refreshDashboard();
@@ -178,7 +178,7 @@ export class SharesDashboardComponent implements AfterViewInit {
             const form = this.parent.slideInService.open(NfsFormComponent);
             (form as NfsFormComponent).setNfsShareForEdit(row);
             this.parent.slideInService.onClose$
-              .pipe(untilDestroyed(this.parent))
+              .pipe(take(1), untilDestroyed(this.parent))
               .subscribe(() => {
                 if (!this.tableComponent) {
                   this.parent.refreshDashboard();
@@ -226,7 +226,7 @@ export class SharesDashboardComponent implements AfterViewInit {
           add() {
             this.parent.slideInService.open(TargetFormComponent, { wide: true });
             this.parent.slideInService.onClose$
-              .pipe(untilDestroyed(this.parent))
+              .pipe(take(1), untilDestroyed(this.parent))
               .subscribe(() => {
                 if (!this.tableComponent) {
                   this.parent.refreshDashboard();
@@ -239,7 +239,7 @@ export class SharesDashboardComponent implements AfterViewInit {
             const targetForm = this.parent.slideInService.open(TargetFormComponent, { wide: true });
             targetForm.setTargetForEdit(row);
             this.parent.slideInService.onClose$
-              .pipe(untilDestroyed(this.parent))
+              .pipe(take(1), untilDestroyed(this.parent))
               .subscribe(() => {
                 if (!this.tableComponent) {
                   this.parent.refreshDashboard();
@@ -304,7 +304,7 @@ export class SharesDashboardComponent implements AfterViewInit {
           add() {
             this.parent.slideInService.open(WebdavFormComponent);
             this.parent.slideInService.onClose$
-              .pipe(untilDestroyed(this.parent))
+              .pipe(take(1), untilDestroyed(this.parent))
               .subscribe(() => {
                 if (!this.tableComponent) {
                   this.parent.refreshDashboard();
@@ -318,7 +318,7 @@ export class SharesDashboardComponent implements AfterViewInit {
             const form = this.parent.slideInService.open(WebdavFormComponent);
             (form as WebdavFormComponent).setWebdavForEdit(row);
             this.parent.slideInService.onClose$
-              .pipe(untilDestroyed(this.parent))
+              .pipe(take(1), untilDestroyed(this.parent))
               .subscribe(() => {
                 if (!this.tableComponent) {
                   this.parent.refreshDashboard();
@@ -369,7 +369,7 @@ export class SharesDashboardComponent implements AfterViewInit {
           add() {
             this.parent.slideInService.open(SmbFormComponent);
             this.parent.slideInService.onClose$
-              .pipe(untilDestroyed(this.parent))
+              .pipe(take(1), untilDestroyed(this.parent))
               .subscribe(() => {
                 if (!this.tableComponent) {
                   this.parent.refreshDashboard();
@@ -382,7 +382,7 @@ export class SharesDashboardComponent implements AfterViewInit {
             const form = this.parent.slideInService.open(SmbFormComponent);
             (form as SmbFormComponent).setSmbShareForEdit(row);
             this.parent.slideInService.onClose$
-              .pipe(untilDestroyed(this.parent))
+              .pipe(take(1), untilDestroyed(this.parent))
               .subscribe(() => {
                 if (!this.tableComponent) {
                   this.parent.refreshDashboard();

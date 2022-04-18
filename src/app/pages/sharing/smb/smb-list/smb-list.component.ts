@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+import { take } from 'rxjs/operators';
 import { ProductType } from 'app/enums/product-type.enum';
 import { shared, helptextSharingSmb } from 'app/helptext/sharing';
 import vol_helptext from 'app/helptext/storage/volumes/volume-list';
@@ -78,7 +79,7 @@ export class SmbListComponent implements EntityTableConfig {
 
   doAdd(): void {
     this.slideInService.open(SmbFormComponent);
-    this.slideInService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
+    this.slideInService.onClose$.pipe(take(1), untilDestroyed(this)).subscribe(() => {
       this.entityList.getData();
     });
   }
@@ -86,7 +87,7 @@ export class SmbListComponent implements EntityTableConfig {
   doEdit(id: string | number): void {
     const form = this.slideInService.open(SmbFormComponent);
     form.setSmbShareForEdit(this.shares.find((share) => share.id === id));
-    this.slideInService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
+    this.slideInService.onClose$.pipe(take(1), untilDestroyed(this)).subscribe(() => {
       this.entityList.getData();
     });
   }
