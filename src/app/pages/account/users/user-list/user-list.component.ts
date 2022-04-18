@@ -92,11 +92,11 @@ export class UserListComponent implements OnInit, AfterViewInit {
     this.store$.dispatch(userPageEntered());
     this.getPreferences();
     this.getUsers();
-    this.setupToolbar();
   }
 
   ngAfterViewInit(): void {
     this.layoutService.pageHeaderUpdater$.next(this.pageHeader);
+    this.setupToolbar();
   }
 
   shouldShowResetInput(): boolean {
