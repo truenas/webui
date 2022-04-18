@@ -6,6 +6,7 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { LifetimeUnit } from 'app/enums/lifetime-unit.enum';
 import { PeriodicSnapshotTask } from 'app/interfaces/periodic-snapshot-task.interface';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
@@ -13,16 +14,16 @@ import { SchedulerModule } from 'app/modules/scheduler/scheduler.module';
 import { StorageService, TaskService, WebSocketService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { selectTimezone } from 'app/store/system-config/system-config.selectors';
-import { SnapshotFormComponent } from './snapshot-form.component';
+import { SnapshotTaskComponent } from './snapshot-task.component';
 
-describe('SnapshotFormComponent', () => {
+describe('SnapshotTaskComponent', () => {
   const existingTask = {
     allow_empty: true,
     dataset: 'test',
     enabled: true,
     exclude: [],
     id: 1,
-    lifetime_unit: 'WEEK',
+    lifetime_unit: LifetimeUnit.Week,
     lifetime_value: 2,
     naming_schema: 'auto-%Y-%m-%d_%H-%M',
     recursive: true,
@@ -41,11 +42,11 @@ describe('SnapshotFormComponent', () => {
     vmware_sync: false,
   } as PeriodicSnapshotTask;
 
-  let spectator: Spectator<SnapshotFormComponent>;
+  let spectator: Spectator<SnapshotTaskComponent>;
   let loader: HarnessLoader;
   let form: IxFormHarness;
   const createComponent = createComponentFactory({
-    component: SnapshotFormComponent,
+    component: SnapshotTaskComponent,
     imports: [
       IxFormsModule,
       SchedulerModule,
@@ -93,7 +94,7 @@ describe('SnapshotFormComponent', () => {
       Exclude: [],
       Recursive: true,
       'Lifetime Value': 2,
-      'Lifetime Unit': 'WEEK(S)',
+      'Lifetime Unit': LifetimeUnit.Week,
       'Naming Schema': 'auto-%Y-%m-%d_%H-%M',
       Schedule: '0 0 * * *',
       'Allow Taking Empty Snapshots': false,
@@ -108,7 +109,7 @@ describe('SnapshotFormComponent', () => {
       dataset: 'test',
       enabled: true,
       exclude: [],
-      lifetime_unit: 'WEEK',
+      lifetime_unit: LifetimeUnit.Week,
       lifetime_value: '2',
       naming_schema: 'auto-%Y-%m-%d_%H-%M',
       recursive: true,
@@ -132,7 +133,7 @@ describe('SnapshotFormComponent', () => {
       Exclude: [],
       Recursive: true,
       'Lifetime Value': '2',
-      'Lifetime Unit': 'WEEK(S)',
+      'Lifetime Unit': LifetimeUnit.Week,
       'Naming Schema': 'auto-%Y-%m-%d_%H-%M',
       Schedule: 'Daily (0 0 * * *)  At 00:00 (12:00 AM)',
       'Allow Taking Empty Snapshots': true,
@@ -157,7 +158,7 @@ describe('SnapshotFormComponent', () => {
       {
         allow_empty: true,
         dataset: 'test',
-        lifetime_unit: 'WEEK',
+        lifetime_unit: LifetimeUnit.Week,
         lifetime_value: 2,
         naming_schema: 'auto-%Y-%m-%d_%H-%M',
         enabled: false,

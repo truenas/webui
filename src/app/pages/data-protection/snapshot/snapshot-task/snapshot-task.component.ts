@@ -18,11 +18,11 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
 @Component({
-  templateUrl: './snapshot-form.component.html',
+  templateUrl: './snapshot-task.component.html',
   styleUrls: ['./snapshot-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class SnapshotFormComponent {
+export class SnapshotTaskComponent {
   get isNew(): boolean {
     return !this.editingTask;
   }
@@ -78,7 +78,7 @@ export class SnapshotFormComponent {
   readonly datasetOptions$ = this.storageService.getDatasetNameOptions();
   readonly timeOptions$ = of(this.taskService.getTimeOptions());
   readonly lifetimeOptions$ = of(
-    Object.values(LifetimeUnit).map((lifetime) => ({ label: lifetime + '(S)', value: lifetime })),
+    Object.values(LifetimeUnit).map((lifetime) => ({ label: lifetime, value: lifetime })),
   );
 
   private editingTask: PeriodicSnapshotTask;

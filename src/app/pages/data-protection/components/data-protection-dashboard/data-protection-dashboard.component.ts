@@ -35,7 +35,7 @@ import { ReplicationWizardComponent } from 'app/pages/data-protection/replicatio
 import { RsyncTaskFormComponent } from 'app/pages/data-protection/rsync-task/rsync-task-form/rsync-task-form.component';
 import { ScrubTaskFormComponent } from 'app/pages/data-protection/scrub-task/scrub-task-form/scrub-task-form.component';
 import { SmartTaskFormComponent } from 'app/pages/data-protection/smart-task/smart-task-form/smart-task-form.component';
-import { SnapshotFormComponent } from 'app/pages/data-protection/snapshot/snapshot-form/snapshot-form.component';
+import { SnapshotTaskComponent } from 'app/pages/data-protection/snapshot/snapshot-task/snapshot-task.component';
 import {
   DialogService, ModalServiceMessage,
   StorageService,
@@ -209,10 +209,10 @@ export class DataProtectionDashboardComponent implements OnInit {
           isActionVisible: this.isActionVisible,
           parent: this,
           add: () => {
-            this.slideInService.open(SnapshotFormComponent, { wide: true });
+            this.slideInService.open(SnapshotTaskComponent, { wide: true });
           },
           edit: (row: PeriodicSnapshotTaskUi) => {
-            const slideIn = this.slideInService.open(SnapshotFormComponent, { wide: true });
+            const slideIn = this.slideInService.open(SnapshotTaskComponent, { wide: true });
             slideIn.setTaskForEdit(row);
           },
           onButtonClick: (row) => {
