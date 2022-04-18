@@ -32,7 +32,8 @@
             <div fxFlex="10%"><mat-icon class="bullet-icon">mail</mat-icon></div>
             <div fxFlex="90%" class="medium-font" [innerHtml]="helptext.newsLetter | translate"></div>
           </div>
-          <div id="open-source">TrueNAS {{systemType}} {{ helptext.opensourceA | translate }}
+          <div *ngIf="systemType !== 'ENTERPRISE'" id="open-source">
+            TrueNAS {{systemType}} {{ helptext.opensourceA | translate }}
             <a href="https://github.com/freenas/" target="_blank" class="external-link">{{ helptext.opensourceB | translate }}</a>
             {{ helptext.opensourceC | translate }}
           </div>
