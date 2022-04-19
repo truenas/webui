@@ -3,6 +3,7 @@ import {
 } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
+import { Router } from '@angular/router';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
@@ -76,6 +77,7 @@ export class LdapComponent implements OnInit {
     private slideInService: IxSlideInService,
     private errorHandler: FormErrorHandlerService,
     private matDialog: MatDialog,
+    private router: Router,
     private translate: TranslateService,
     private modalService: ModalService,
   ) {}
@@ -105,6 +107,10 @@ export class LdapComponent implements OnInit {
         this.cdr.markForCheck();
       },
     );
+  }
+
+  onManageCertificatesClicked(): void {
+    this.router.navigate(['/', 'credentials', 'certificates']);
   }
 
   onSubmit(): void {
