@@ -17,6 +17,7 @@ import { portRangeValidator } from 'app/modules/entity/entity-form/validators/ra
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
+import IxValidatorsService from 'app/modules/ix-forms/services/ix-validators.service';
 import { DialogService, WebSocketService } from 'app/services';
 
 enum SendMethod {
@@ -37,7 +38,13 @@ export class EmailComponent implements OnInit {
     fromemail: ['', [Validators.required, Validators.email]],
     fromname: [''],
     outgoingserver: [''],
-    port: [null as number, [Validators.required, portRangeValidator()]],
+    port: [null as number, [
+      this.validatorService.validateOnCondition(
+        (control) => control.parent && this.isSmtp && this.hasSmtpAuthentication,
+        Validators.required,
+      ),
+      portRangeValidator(),
+    ]],
     security: [MailSecurity.Plain],
     smtp: [false],
     user: [''],
@@ -75,6 +82,7 @@ export class EmailComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private translate: TranslateService,
     private matDialog: MatDialog,
+    private validatorService: IxValidatorsService,
     @Inject(WINDOW) private window: Window,
   ) {}
 
@@ -150,6 +158,7 @@ export class EmailComponent implements OnInit {
           this.dialogService.info(
             this.translate.instant('Email'),
             this.translate.instant('Email settings updated.'),
+            '500px', 'info',
           );
           this.cdr.markForCheck();
         },
