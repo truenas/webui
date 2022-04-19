@@ -271,7 +271,7 @@ export class SmbFormComponent implements OnInit {
           }
           return of(true);
         }),
-        filter(() => {
+        switchMap(() => {
           const sharePath: string = this.form.get('path').value;
           const homeShare = this.form.get('home').value;
 
@@ -281,10 +281,11 @@ export class SmbFormComponent implements OnInit {
             this.router.navigate(['/'].concat(
               ['storage', 'id', poolName, 'dataset', 'acl', datasetId],
             ), { queryParams: { homeShare: true } });
-            return false;
+            return of(false);
           }
-          return true;
+          return of(true);
         }),
+        filter(Boolean),
         switchMap(() => this.ws.call('pool.dataset.path_in_locked_datasets', [this.form.get('path').value])),
         filter((pathInLockedDatasets) => !pathInLockedDatasets),
         switchMap(() => this.ws.call('service.query')),

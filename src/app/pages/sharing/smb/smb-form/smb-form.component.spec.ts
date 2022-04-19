@@ -215,7 +215,7 @@ describe('SmbFormComponent', () => {
     expect(await nameControl.getErrorText()).toEqual('The name "ds222" is already in use.');
   });
 
-  it('when a preset is selected, the relevent fields should be impacted', async () => {
+  it('when a preset is selected, the relevant fields should be impacted', async () => {
     const advancedButton = await loader.getHarness(MatButtonHarness.with({ text: 'Advanced Options' }));
     await advancedButton.click();
 
