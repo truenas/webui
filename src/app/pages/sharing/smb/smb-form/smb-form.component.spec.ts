@@ -287,9 +287,9 @@ describe('SmbFormComponent', () => {
     );
 
     if (existingShare.aapl_name_mangling) {
-      await (await aaplNameManglingCheckbox.getMatCheckboxHarness()).uncheck();
+      await aaplNameManglingCheckbox.setValue(false);
     } else {
-      await (await aaplNameManglingCheckbox.getMatCheckboxHarness()).check();
+      await aaplNameManglingCheckbox.setValue(true);
     }
     expect(spectator.inject(DialogService).confirm).toHaveBeenNthCalledWith(2, {
       title: helptextSharingSmb.manglingDialog.title,
