@@ -9,7 +9,7 @@ import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.u
 import { ServiceName } from 'app/enums/service-name.enum';
 import { helptextSharingSmb, shared } from 'app/helptext/sharing';
 import { Service } from 'app/interfaces/service.interface';
-import { SmbPresets, SmbShare } from 'app/interfaces/smb-share.interface';
+import { SmbPresets, SmbPresetType, SmbShare } from 'app/interfaces/smb-share.interface';
 import { IxCheckboxHarness } from 'app/modules/ix-forms/components/ix-checkbox/ix-checkbox.harness';
 import { IxExplorerHarness } from 'app/modules/ix-forms/components/ix-explorer/ix-explorer.harness';
 import { IxInputHarness } from 'app/modules/ix-forms/components/ix-input/ix-input.harness';
@@ -24,7 +24,7 @@ import { SmbFormComponent } from './smb-form.component';
 describe('SmbFormComponent', () => {
   const existingShare: SmbShare = {
     id: 1,
-    purpose: 'ENHANCED_TIMEMACHINE',
+    purpose: SmbPresetType.MultiUserTimeMachine,
     path: '/mnt/pool123/ds222',
     path_suffix: '%U',
     home: false,

@@ -16,7 +16,7 @@ import { ProductType } from 'app/enums/product-type.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { helptextSharingSmb, shared } from 'app/helptext/sharing';
 import { Option } from 'app/interfaces/option.interface';
-import { SmbPresets, SmbShare } from 'app/interfaces/smb-share.interface';
+import { SmbPresets, SmbPresetType, SmbShare } from 'app/interfaces/smb-share.interface';
 import { forbiddenValues } from 'app/modules/entity/entity-form/validators/forbidden-values-validation';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import {
@@ -123,7 +123,7 @@ export class SmbFormComponent implements OnInit {
         options.push({ label: presets[presetName].verbose_name, value: presetName });
       }
       this.purposeOptions$ = of(options);
-      this.form.get('purpose').setValue('DEFAULT_SHARE');
+      this.form.get('purpose').setValue(SmbPresetType.DefaultShareParameters);
     });
 
     this.form.get('purpose').valueChanges.pipe(untilDestroyed(this)).subscribe(
