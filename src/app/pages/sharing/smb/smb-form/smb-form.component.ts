@@ -16,6 +16,7 @@ import { ProductType } from 'app/enums/product-type.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { helptextSharingSmb, shared } from 'app/helptext/sharing';
 import { Option } from 'app/interfaces/option.interface';
+import { Service } from 'app/interfaces/service.interface';
 import { SmbPresets, SmbPresetType, SmbShare } from 'app/interfaces/smb-share.interface';
 import { forbiddenValues } from 'app/modules/entity/entity-form/validators/forbidden-values-validation';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
@@ -65,7 +66,7 @@ export class SmbFormComponent implements OnInit {
 
   form = this.formBuilder.group({
     path: ['', Validators.required],
-    name: ['', [forbiddenValues(this.namesInUse), Validators.required]],
+    name: ['', [Validators.required]],
     purpose: [SmbPresetType.DefaultShareParameters],
     comment: [''],
     enabled: [true],
@@ -157,6 +158,7 @@ export class SmbFormComponent implements OnInit {
       const name = pathControl.value.split('/').pop();
       nameControl.setValue(name);
     }
+    this.cdr.markForCheck();
   }
 
   checkAndShowStripAclWarning(path: string, aclValue: boolean): void {
@@ -202,6 +204,7 @@ export class SmbFormComponent implements OnInit {
       untilDestroyed(this),
     ).subscribe((shareNames) => {
       this.namesInUse = ['global', ...shareNames];
+      this.form.get('name').setValidators(forbiddenValues(this.namesInUse));
     });
   }
 
@@ -271,54 +274,10 @@ export class SmbFormComponent implements OnInit {
           }
           return of(true);
         }),
-        switchMap(() => {
-          const sharePath: string = this.form.get('path').value;
-          const homeShare = this.form.get('home').value;
-
-          if (homeShare && this.isNew) {
-            const datasetId = sharePath.replace('/mnt/', '');
-            const poolName = datasetId.split('/')[0];
-            this.router.navigate(['/'].concat(
-              ['storage', 'id', poolName, 'dataset', 'acl', datasetId],
-            ), { queryParams: { homeShare: true } });
-            return of(false);
-          }
-          return of(true);
-        }),
+        switchMap(this.shouldRedirectToAclEdit),
         filter(Boolean),
-        switchMap(() => this.ws.call('pool.dataset.path_in_locked_datasets', [this.form.get('path').value])),
-        filter((pathInLockedDatasets) => !pathInLockedDatasets),
-        switchMap(() => this.ws.call('service.query')),
-        map((services) => _.find(services, { service: ServiceName.Cifs })),
-        filter((cifsService) => !cifsService.enable),
-        switchMap((cifsService) => {
-          return this.dialog.confirm({
-            title: shared.dialog_title,
-            message: shared.dialog_message,
-            hideCheckBox: true,
-            buttonMsg: shared.dialog_button,
-          }).pipe(switchMap((confirm) => combineLatest([of(cifsService), of(confirm)])));
-        }),
-        filter(([, confirm]) => confirm),
-        switchMap(
-          ([cifsService]) => this.ws.call(
-            'service.update',
-            [cifsService.id, { enable: true }],
-          ).pipe(switchMap(() => of(cifsService))),
-        ),
-        switchMap(
-          (cifsService) => this.ws.call(
-            'service.start',
-            [cifsService.service],
-          ),
-        ),
-        switchMap(() => {
-          return this.dialog.info(
-            this.translate.instant('{service} Service', { service: 'SMB' }),
-            this.translate.instant('The {service} service has been enabled.', { service: 'SMB' }),
-            '250px', 'info',
-          );
-        }),
+        switchMap(this.shouldEnableServiceAutomaticRestart),
+        switchMap(this.shouldStartAndUpdateCifsService),
         untilDestroyed(this),
       ).subscribe(
         () => {},
@@ -391,5 +350,60 @@ export class SmbFormComponent implements OnInit {
       }),
       untilDestroyed(this),
     );
+  }
+
+  shouldEnableServiceAutomaticRestart(): Observable<Service> {
+    return this.ws.call('pool.dataset.path_in_locked_datasets', [this.form.get('path').value]).pipe(
+      filter((pathInLockedDatasets) => !pathInLockedDatasets),
+      switchMap(() => this.ws.call('service.query')),
+      map((services) => _.find(services, { service: ServiceName.Cifs })),
+      filter((cifsService) => !cifsService.enable),
+    );
+  }
+
+  shouldStartAndUpdateCifsService(cifsService: Service): Observable<boolean> {
+    return this.dialog.confirm({
+      title: shared.dialog_title,
+      message: shared.dialog_message,
+      hideCheckBox: true,
+      buttonMsg: shared.dialog_button,
+    }).pipe(
+      switchMap((confirm) => combineLatest([of(cifsService), of(confirm)])),
+      filter(([, confirm]) => confirm),
+      switchMap(
+        ([cifsService]) => this.ws.call(
+          'service.update',
+          [cifsService.id, { enable: true }],
+        ).pipe(switchMap(() => of(cifsService))),
+      ),
+      switchMap(
+        (cifsService) => this.ws.call(
+          'service.start',
+          [cifsService.service],
+        ),
+      ),
+      switchMap(() => {
+        return this.dialog.info(
+          this.translate.instant('{service} Service', { service: 'SMB' }),
+          this.translate.instant('The {service} service has been enabled.', { service: 'SMB' }),
+          '250px', 'info',
+        );
+      }),
+    );
+  }
+
+  shouldRedirectToAclEdit(): Observable<boolean> {
+    const sharePath: string = this.form.get('path').value;
+    const homeShare = this.form.get('home').value;
+
+    if (homeShare && this.isNew) {
+      const datasetId = sharePath.replace('/mnt/', '');
+      const poolName = datasetId.split('/')[0];
+      this.router.navigate(['/'].concat(
+        ['storage', 'id', poolName, 'dataset', 'acl', datasetId],
+      ), { queryParams: { homeShare: true } });
+      return of(false);
+    }
+    return of(true);
   }
 }
