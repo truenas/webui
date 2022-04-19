@@ -10,7 +10,7 @@ import {
   combineLatest, Observable, of,
 } from 'rxjs';
 import {
-  debounceTime, filter, map, switchMap,
+  debounceTime, filter, map, switchMap, tap,
 } from 'rxjs/operators';
 import { ProductType } from 'app/enums/product-type.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
@@ -123,13 +123,12 @@ export class SmbFormComponent implements OnInit {
       this.afpConfirmEnable(value);
     });
 
-    this.form.get('path').valueChanges.pipe(debounceTime(50), untilDestroyed(this)).subscribe((path: string) => {
-      this.setNameFromPath(path);
-      this.checkAndShowStripAclWarning(path, this.form.get('acl').value);
-    });
-
-    this.form.get('acl').valueChanges.pipe(debounceTime(100)).pipe(untilDestroyed(this)).subscribe((aclValue: boolean) => {
-      this.checkAndShowStripAclWarning(this.form.get('path').value, aclValue);
+    combineLatest([
+      this.form.get('path').valueChanges
+        .pipe(debounceTime(50), tap((path: string) => this.setNameFromPath(path))),
+      this.form.get('acl').valueChanges.pipe(debounceTime(100)),
+    ]).pipe(untilDestroyed(this)).subscribe(([path, acl]) => {
+      this.checkAndShowStripAclWarning(path, acl);
     });
   }
 
