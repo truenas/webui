@@ -1,6 +1,7 @@
 import {
   fakeAsync, flush, tick,
 } from '@angular/core/testing';
+import { ReactiveFormsModule } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import {
@@ -18,6 +19,7 @@ import { NfsAclTag, NfsAclType, NfsBasicPermission } from 'app/enums/nfs-acl.enu
 import { NfsAcl } from 'app/interfaces/acl.interface';
 import { FileSystemStat } from 'app/interfaces/filesystem-stat.interface';
 import { EntityModule } from 'app/modules/entity/entity.module';
+import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { AclEditorListComponent } from 'app/pages/storage/volumes/permissions/components/acl-editor-list/acl-editor-list.component';
 import { EditNfsAceComponent } from 'app/pages/storage/volumes/permissions/components/edit-nfs-ace/edit-nfs-ace.component';
 import { EditPosixAceComponent } from 'app/pages/storage/volumes/permissions/components/edit-posix-ace/edit-posix-ace.component';
@@ -64,7 +66,9 @@ describe('DatasetAclEditorComponent', () => {
     component: DatasetAclEditorComponent,
     imports: [
       EntityModule,
+      IxFormsModule,
       CoreComponents,
+      ReactiveFormsModule,
     ],
     declarations: [
       MockComponent(EditPosixAceComponent),

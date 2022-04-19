@@ -1,5 +1,8 @@
 import { Injectable } from '@angular/core';
-import { ActivatedRouteSnapshot, Params } from '@angular/router';
+import {
+  ActivatedRoute, ActivatedRouteSnapshot, NavigationEnd, Params, Router,
+} from '@angular/router';
+import { filter } from 'rxjs/operators';
 
 export interface RoutePart {
   title: string;
@@ -12,9 +15,23 @@ export interface RoutePart {
 
 @Injectable()
 export class RoutePartsService {
-  routeParts: RoutePart[];
+  private lastSuccessfullrouteParts: RoutePart[];
 
-  generateRouteParts(snapshot: ActivatedRouteSnapshot): RoutePart[] {
+  constructor(private activatedRoute: ActivatedRoute, private router: Router) {
+    // only execute when routechange
+    this.lastSuccessfullrouteParts = this.generateRouteParts(this.activatedRoute.snapshot);
+    this.router.events.pipe(
+      filter((event) => event instanceof NavigationEnd),
+    ).subscribe(() => {
+      this.lastSuccessfullrouteParts = this.generateRouteParts(this.activatedRoute.snapshot);
+    });
+  }
+
+  get routeParts(): RoutePart[] {
+    return this.lastSuccessfullrouteParts;
+  }
+
+  private generateRouteParts(snapshot: ActivatedRouteSnapshot): RoutePart[] {
     let routeParts: RoutePart[] = [];
     if (snapshot) {
       if (snapshot.firstChild) {
