@@ -24,6 +24,7 @@ export class IxInputComponent implements ControlValueAccessor {
   @Input() autocomplete = 'off';
   @Output() linkClicked: EventEmitter<void> = new EventEmitter();
   @Input() linkText: string = null;
+  @Output() inputBlur: EventEmitter<unknown> = new EventEmitter();
 
   /** If formatted value returned by parseAndFormatInput has non-numeric letters
    * and input 'type' is a number, the input will stay empty on the form */
@@ -120,7 +121,7 @@ export class IxInputComponent implements ControlValueAccessor {
     }
   }
 
-  blur(): void {
+  blurred(): void {
     this.onTouch();
     if (this.formatted) {
       if (this.parse) {
@@ -133,6 +134,7 @@ export class IxInputComponent implements ControlValueAccessor {
 
     this.onChange(this.value);
     this.cdr.markForCheck();
+    this.inputBlur.emit();
   }
 
   onPasswordToggled(): void {

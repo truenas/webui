@@ -15,7 +15,7 @@
           [label]="helptextSharingSmb.placeholder_name | translate"
           [tooltip]="helptextSharingSmb.tooltip_name | translate"
           [required]="true"
-          (blur)="setEmptyNameFromPath()"
+          (inputBlur)="setNameFromPath()"
         ></ix-input>
         <ix-select
           formControlName="purpose"

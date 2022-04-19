@@ -117,13 +117,21 @@ export class SmbFormComponent implements OnInit {
       this.afpConfirmEnable(value);
     });
 
-    combineLatest([
-      this.form.get('path').valueChanges
-        .pipe(debounceTime(50), tap((path: string) => this.setNameFromPath(path))),
-      this.form.get('acl').valueChanges.pipe(debounceTime(100)),
-    ]).pipe(untilDestroyed(this)).subscribe(([path, acl]) => {
-      this.checkAndShowStripAclWarning(path, acl);
-    });
+    this.form.get('path').valueChanges
+      .pipe(
+        debounceTime(50),
+        tap(() => this.setNameFromPath()),
+        untilDestroyed(this),
+      )
+      .subscribe((path) => {
+        this.checkAndShowStripAclWarning(path, this.form.get('acl').value);
+      });
+
+    this.form.get('acl').valueChanges
+      .pipe(debounceTime(100), untilDestroyed(this))
+      .subscribe((acl) => {
+        this.checkAndShowStripAclWarning(this.form.get('path').value, acl);
+      });
 
     this.form.get('aapl_name_mangling').valueChanges.pipe(
       filter((value) => value !== this.existingSmbShare?.aapl_name_mangling),
@@ -139,10 +147,14 @@ export class SmbFormComponent implements OnInit {
     ).subscribe();
   }
 
-  setNameFromPath(path: string): void {
+  setNameFromPath(): void {
+    const pathControl = this.form.get('path');
+    if (!pathControl.value) {
+      return;
+    }
     const nameControl = this.form.get('name');
-    if (path && !nameControl.value) {
-      const name = path.split('/').pop();
+    if (pathControl.value && !nameControl.value) {
+      const name = pathControl.value.split('/').pop();
       nameControl.setValue(name);
     }
   }
@@ -218,21 +230,6 @@ export class SmbFormComponent implements OnInit {
       this.namesInUse.splice(index, 1);
     }
     this.form.patchValue(smbShare);
-  }
-
-  /* If user blurs name field with empty value, try to auto-populate based on path */
-  setEmptyNameFromPath(): void {
-    const nameControl = this.form.get('name');
-    if (nameControl.value) {
-      return;
-    }
-
-    const pathControl = this.form.get('path');
-    if (!pathControl.value) {
-      return;
-    }
-
-    nameControl.setValue(pathControl.value.split('/').pop());
   }
 
   afpConfirmEnable(value: boolean): void {
