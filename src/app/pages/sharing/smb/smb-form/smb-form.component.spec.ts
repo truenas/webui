@@ -84,27 +84,6 @@ describe('SmbFormComponent', () => {
         auxsmbconf: '',
       },
     },
-    DEFAULT_SHARE: {
-      verbose_name: 'Default share parameters',
-      params: {
-        path_suffix: '',
-        home: false,
-        ro: false,
-        browsable: true,
-        timemachine: false,
-        recyclebin: false,
-        abe: false,
-        hostsallow: [],
-        hostsdeny: [],
-        aapl_name_mangling: false,
-        acl: true,
-        durablehandle: true,
-        shadowcopy: true,
-        streams: true,
-        fsrvp: false,
-        auxsmbconf: '',
-      },
-    },
     ENHANCED_TIMEMACHINE: {
       verbose_name: 'Multi-user time machine',
       params: {
@@ -113,27 +92,11 @@ describe('SmbFormComponent', () => {
         auxsmbconf: 'zfs_core:zfs_auto_create=true\nzfs_core:base_user_quota=1T',
       },
     },
-    MULTI_PROTOCOL_NFS: {
-      verbose_name: 'Multi-protocol (NFSv3/SMB) shares',
-      params: {
-        acl: false,
-        streams: false,
-        durablehandle: false,
-        auxsmbconf: 'oplocks = no\nlevel2 oplocks = no\nstrict locking = yes',
-      },
-    },
     PRIVATE_DATASETS: {
       verbose_name: 'Private SMB Datasets and Shares',
       params: {
         path_suffix: '%U',
         auxsmbconf: 'zfs_core:zfs_auto_create=true',
-      },
-    },
-    WORM_DROPBOX: {
-      verbose_name: 'SMB WORM. Files become readonly via SMB after 5 minutes',
-      params: {
-        path_suffix: '',
-        auxsmbconf: 'worm:grace_period = 300',
       },
     },
   };
