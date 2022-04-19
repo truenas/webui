@@ -77,7 +77,7 @@ describe('DiskFormComponent', () => {
   it('disable password field', async () => {
     const clearPassword = await loader.getHarness(IxCheckboxHarness.with({ label: 'Clear SED Password' }));
     const sedPassword = await loader.getHarness(IxInputHarness.with({ label: 'SED Password' }));
-    clearPassword.setValue(true);
+    await clearPassword.setValue(true);
 
     expect(sedPassword.isDisabled()).toBeTruthy();
   });
