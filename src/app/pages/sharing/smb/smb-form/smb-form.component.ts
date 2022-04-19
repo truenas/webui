@@ -41,13 +41,8 @@ export class SmbFormComponent implements OnInit {
   productType = localStorage.getItem('product_type') as ProductType;
   private wasStipAclWarningShown = false;
   private mangleWarningSent = false;
-  private isTimeMachineOn = false;
-  private mangle: boolean;
 
   title: string = helptextSharingSmb.formTitleAdd;
-
-  private hostsAllowOnLoad: string[] = [];
-  private hostsDenyOnLoad: string[] = [];
 
   get isNew(): boolean {
     return !this.existingSmbShare;
@@ -61,12 +56,12 @@ export class SmbFormComponent implements OnInit {
   purposeOptions$: Observable<Option[]>;
 
   get hasHostAllowDenyChanged(): boolean {
-    return !_.isEqual(this.hostsAllowOnLoad, this.form.get('hostsallow').value)
-           || !_.isEqual(this.hostsDenyOnLoad, this.form.get('hostsdeny').value);
+    return !_.isEqual(this.existingSmbShare.hostsallow, this.form.get('hostsallow').value)
+           || !_.isEqual(this.existingSmbShare.hostsdeny, this.form.get('hostsdeny').value);
   }
 
   get shouldEnableTimemachineService(): boolean {
-    return this.form.get('timemachine').value && !this.isTimeMachineOn;
+    return this.form.get('timemachine').value && !this.existingSmbShare.timemachine;
   }
 
   form = this.formBuilder.group({
@@ -205,28 +200,29 @@ export class SmbFormComponent implements OnInit {
 
   setSmbShareForEdit(smbShare: SmbShare): void {
     this.existingSmbShare = smbShare;
-    this.hostsAllowOnLoad = smbShare.hostsallow ? [...smbShare.hostsallow] : [];
-    this.mangle = smbShare.aapl_name_mangling;
-    this.hostsDenyOnLoad = smbShare.hostsdeny ? [...smbShare.hostsdeny] : [];
-    this.isTimeMachineOn = smbShare.timemachine;
     this.title = helptextSharingSmb.formTitleEdit;
     const index = this.namesInUse.findIndex((name) => name === smbShare.name);
     if (index >= 0) {
       this.namesInUse.splice(index, 1);
     }
     this.form.get('aapl_name_mangling').valueChanges.pipe(untilDestroyed(this)).subscribe((value) => {
-      if (value !== this.mangle && !this.mangleWarningSent) {
-        this.mangleWarningSent = true;
-        this.dialog.confirm({
-          title: helptextSharingSmb.manglingDialog.title,
-          message: helptextSharingSmb.manglingDialog.message,
-          hideCheckBox: true,
-          buttonMsg: helptextSharingSmb.manglingDialog.action,
-          hideCancel: true,
-        }).pipe(untilDestroyed(this)).subscribe();
+      if (value === this.existingSmbShare.aapl_name_mangling || this.mangleWarningSent) {
+        return;
       }
+      this.showMangleWarning();
     });
     this.form.patchValue(smbShare);
+  }
+
+  showMangleWarning(): void {
+    this.mangleWarningSent = true;
+    this.dialog.confirm({
+      title: helptextSharingSmb.manglingDialog.title,
+      message: helptextSharingSmb.manglingDialog.message,
+      hideCheckBox: true,
+      buttonMsg: helptextSharingSmb.manglingDialog.action,
+      hideCancel: true,
+    }).pipe(untilDestroyed(this)).subscribe();
   }
 
   /* If user blurs name field with empty value, try to auto-populate based on path */
