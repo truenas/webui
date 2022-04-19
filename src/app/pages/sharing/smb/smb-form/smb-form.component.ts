@@ -16,7 +16,6 @@ import { ProductType } from 'app/enums/product-type.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { helptextSharingSmb, shared } from 'app/helptext/sharing';
 import { Option } from 'app/interfaces/option.interface';
-import { Service } from 'app/interfaces/service.interface';
 import { SmbPresets, SmbShare } from 'app/interfaces/smb-share.interface';
 import { forbiddenValues } from 'app/modules/entity/entity-form/validators/forbidden-values-validation';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
@@ -273,7 +272,6 @@ export class SmbFormComponent implements OnInit {
       request$ = this.ws.call('sharing.smb.update', [this.existingSmbShare.id, smbShare]);
     }
 
-    let cifsServiceInstance: Service;
     request$.pipe(
       untilDestroyed(this),
     ).subscribe(() => {
@@ -282,7 +280,7 @@ export class SmbFormComponent implements OnInit {
           if (restart) {
             return this.restartServices();
           }
-          return of();
+          return of(true);
         }),
         filter(() => {
           const sharePath: string = this.form.get('path').value;
@@ -291,35 +289,39 @@ export class SmbFormComponent implements OnInit {
           if (homeShare && this.isNew) {
             const datasetId = sharePath.replace('/mnt/', '');
             const poolName = datasetId.split('/')[0];
-            this.router.navigate(['/'].concat(['storage', 'id', poolName, 'dataset', 'acl', datasetId]), { queryParams: { homeShare: true } });
+            this.router.navigate(['/'].concat(
+              ['storage', 'id', poolName, 'dataset', 'acl', datasetId],
+            ), { queryParams: { homeShare: true } });
             return false;
           }
           return true;
         }),
-        switchMap(() => {
-          return combineLatest([
-            this.ws.call('pool.dataset.path_in_locked_datasets', [this.form.get('path').value]),
-            this.ws.call('service.query', []).pipe(
-              map((response) => _.find(response, { service: ServiceName.Cifs })),
-            ),
-          ]);
-        }),
-        map(([pathInLockedDatasets, cifsService]) => {
-          cifsServiceInstance = cifsService;
-          return !pathInLockedDatasets && !cifsService.enable;
-        }),
-        filter(Boolean),
-        switchMap(() => {
+        switchMap(() => this.ws.call('pool.dataset.path_in_locked_datasets', [this.form.get('path').value])),
+        filter((pathInLockedDatasets) => !pathInLockedDatasets),
+        switchMap(() => this.ws.call('service.query')),
+        map((services) => _.find(services, { service: ServiceName.Cifs })),
+        filter((cifsService) => !cifsService.enable),
+        switchMap((cifsService) => {
           return this.dialog.confirm({
             title: shared.dialog_title,
             message: shared.dialog_message,
             hideCheckBox: true,
             buttonMsg: shared.dialog_button,
-          });
+          }).pipe(switchMap((confirm) => combineLatest([of(cifsService), of(confirm)])));
         }),
-        filter(Boolean),
-        switchMap(() => this.ws.call('service.update', [cifsServiceInstance.id, { enable: true }])),
-        switchMap(() => this.ws.call('service.start', [cifsServiceInstance.service])),
+        filter(([, confirm]) => confirm),
+        switchMap(
+          ([cifsService]) => this.ws.call(
+            'service.update',
+            [cifsService.id, { enable: true }],
+          ).pipe(switchMap(() => of(cifsService))),
+        ),
+        switchMap(
+          (cifsService) => this.ws.call(
+            'service.start',
+            [cifsService.service],
+          ),
+        ),
         switchMap(() => {
           return this.dialog.info(
             this.translate.instant('{service} Service', { service: 'SMB' }),
@@ -336,6 +338,10 @@ export class SmbFormComponent implements OnInit {
           } else {
             this.dialog.errorReport(err.error, err.reason, err.trace.formatted);
           }
+        }, () => {
+          this.isLoading = false;
+          this.cdr.markForCheck();
+          this.slideInService.close();
         },
       );
     },
@@ -343,10 +349,6 @@ export class SmbFormComponent implements OnInit {
       this.isLoading = false;
       this.cdr.markForCheck();
       this.errorHandler.handleWsFormError(error, this.form);
-    }, () => {
-      this.isLoading = false;
-      this.cdr.markForCheck();
-      this.slideInService.close();
     });
   }
 
