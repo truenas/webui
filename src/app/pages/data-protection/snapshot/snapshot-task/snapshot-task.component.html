@@ -27,24 +27,21 @@
         </div>
         <div class="column">
           <ix-fieldset [title]="'Schedule' | translate">
-            <ix-input-group
-              [label]="labels.lifetime | translate"
-              [tooltip]="tooltips.lifetime | translate"
-              [required]="true"
-            >
+            <div class="input-group">
               <ix-input
                 formControlName="lifetime_value"
-                [label]="'Lifetime Value' | translate"
+                [label]="labels.lifetime | translate"
+                [tooltip]="tooltips.lifetime | translate"
                 [required]="true"
                 type="number"
               ></ix-input>
               <ix-select
                 formControlName="lifetime_unit"
-                [label]="'Lifetime Unit' | translate"
+                [label]="'Unit' | translate"
                 [options]="lifetimeOptions$"
                 [required]="true"
               ></ix-select>
-            </ix-input-group>
+            </div>
             <ix-input
               formControlName="naming_schema"
               [label]="labels.naming_schema | translate"
