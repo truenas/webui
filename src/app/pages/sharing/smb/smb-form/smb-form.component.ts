@@ -10,7 +10,7 @@ import {
   combineLatest, Observable, of,
 } from 'rxjs';
 import {
-  debounceTime, filter, map, switchMap, tap,
+  debounceTime, filter, map, switchMap, take, tap,
 } from 'rxjs/operators';
 import { ProductType } from 'app/enums/product-type.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
@@ -40,7 +40,6 @@ export class SmbFormComponent implements OnInit {
   readonly helptextSharingSmb = helptextSharingSmb;
   productType = localStorage.getItem('product_type') as ProductType;
   private wasStipAclWarningShown = false;
-  private mangleWarningSent = false;
 
   title: string = helptextSharingSmb.formTitleAdd;
 
@@ -56,12 +55,12 @@ export class SmbFormComponent implements OnInit {
   purposeOptions$: Observable<Option[]>;
 
   get hasHostAllowDenyChanged(): boolean {
-    return !_.isEqual(this.existingSmbShare.hostsallow, this.form.get('hostsallow').value)
-           || !_.isEqual(this.existingSmbShare.hostsdeny, this.form.get('hostsdeny').value);
+    return !_.isEqual(this.existingSmbShare?.hostsallow, this.form.get('hostsallow').value)
+           || !_.isEqual(this.existingSmbShare?.hostsdeny, this.form.get('hostsdeny').value);
   }
 
   get shouldEnableTimemachineService(): boolean {
-    return this.form.get('timemachine').value && !this.existingSmbShare.timemachine;
+    return this.form.get('timemachine').value && !this.existingSmbShare?.timemachine;
   }
 
   form = this.formBuilder.group({
@@ -125,6 +124,19 @@ export class SmbFormComponent implements OnInit {
     ]).pipe(untilDestroyed(this)).subscribe(([path, acl]) => {
       this.checkAndShowStripAclWarning(path, acl);
     });
+
+    this.form.get('aapl_name_mangling').valueChanges.pipe(
+      filter((value) => value !== this.existingSmbShare?.aapl_name_mangling),
+      take(1), // instead of mangleWarningSent
+      switchMap(() => this.dialog.confirm({
+        title: helptextSharingSmb.manglingDialog.title,
+        message: helptextSharingSmb.manglingDialog.message,
+        hideCheckBox: true,
+        buttonMsg: helptextSharingSmb.manglingDialog.action,
+        hideCancel: true,
+      })),
+      untilDestroyed(this),
+    ).subscribe();
   }
 
   setNameFromPath(path: string): void {
@@ -205,24 +217,7 @@ export class SmbFormComponent implements OnInit {
     if (index >= 0) {
       this.namesInUse.splice(index, 1);
     }
-    this.form.get('aapl_name_mangling').valueChanges.pipe(untilDestroyed(this)).subscribe((value) => {
-      if (value === this.existingSmbShare.aapl_name_mangling || this.mangleWarningSent) {
-        return;
-      }
-      this.showMangleWarning();
-    });
     this.form.patchValue(smbShare);
-  }
-
-  showMangleWarning(): void {
-    this.mangleWarningSent = true;
-    this.dialog.confirm({
-      title: helptextSharingSmb.manglingDialog.title,
-      message: helptextSharingSmb.manglingDialog.message,
-      hideCheckBox: true,
-      buttonMsg: helptextSharingSmb.manglingDialog.action,
-      hideCancel: true,
-    }).pipe(untilDestroyed(this)).subscribe();
   }
 
   /* If user blurs name field with empty value, try to auto-populate based on path */
