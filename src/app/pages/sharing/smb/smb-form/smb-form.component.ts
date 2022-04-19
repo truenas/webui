@@ -10,7 +10,7 @@ import {
   combineLatest, Observable, of,
 } from 'rxjs';
 import {
-  debounceTime, filter, map, switchMap, tap,
+  debounceTime, filter, map, switchMap,
 } from 'rxjs/operators';
 import { ProductType } from 'app/enums/product-type.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
@@ -58,23 +58,7 @@ export class SmbFormComponent implements OnInit {
   presets: SmbPresets;
   protected presetFields: (keyof SmbShare)[] = [];
 
-  options: { [key: string]: Observable<Option[]> } = {
-    purpose$: this.ws.call('sharing.smb.presets').pipe(
-      map((presets) => {
-        this.presets = presets;
-        const options: Option[] = [];
-        for (const presetName in presets) {
-          options.push({ label: presets[presetName].verbose_name, value: presetName });
-        }
-        return options;
-      }),
-      tap(() => {
-        if (this.isNew) {
-          this.form.get('purpose').setValue('DEFAULT_SHARE');
-        }
-      }),
-    ),
-  };
+  purposeOptions$: Observable<Option[]>;
 
   get hasHostAllowDenyChanged(): boolean {
     return !_.isEqual(this.hostsAllowOnLoad, this.form.get('hostsallow').value)
@@ -132,6 +116,16 @@ export class SmbFormComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.ws.call('sharing.smb.presets').pipe(untilDestroyed(this)).subscribe((presets) => {
+      this.presets = presets;
+      const options: Option[] = [];
+      for (const presetName in presets) {
+        options.push({ label: presets[presetName].verbose_name, value: presetName });
+      }
+      this.purposeOptions$ = of(options);
+      this.form.get('purpose').setValue('DEFAULT_SHARE');
+    });
+
     this.form.get('purpose').valueChanges.pipe(untilDestroyed(this)).subscribe(
       (value: string) => {
         this.clearPresets();
