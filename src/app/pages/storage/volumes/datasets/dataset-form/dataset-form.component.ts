@@ -9,6 +9,7 @@ import { Observable, Subscription } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { AclMode, AclType } from 'app/enums/acl-type.enum';
 import { DatasetAclType } from 'app/enums/dataset-acl-type.enum';
+import { DatasetChecksum } from 'app/enums/dataset-checksum.enum';
 import { DatasetEncryptionType } from 'app/enums/dataset-encryption-type.enum';
 import { DeduplicationSetting } from 'app/enums/deduplication-setting.enum';
 import { LicenseFeature } from 'app/enums/license-feature.enum';
@@ -87,6 +88,8 @@ export class DatasetFormComponent implements FormConfiguration {
 
   protected warning = 80;
   protected critical = 95;
+
+  private wasDedupChecksumWarningShown = false;
 
   custActions = [
     {
@@ -553,6 +556,13 @@ export class DatasetFormComponent implements FormConfiguration {
         },
         {
           type: 'select',
+          name: 'checksum',
+          label: this.translate.instant('Checksum'),
+          placeholder: this.translate.instant('Checksum'),
+          options: [],
+        },
+        {
+          type: 'select',
           name: 'readonly',
           placeholder: helptext.dataset_form_readonly_placeholder,
           tooltip: helptext.dataset_form_readonly_tooltip,
@@ -744,6 +754,7 @@ export class DatasetFormComponent implements FormConfiguration {
     'refquota_warning_inherit',
     'refquota_critical_inherit',
     'special_small_block_size',
+    'checksum',
     'acltype',
     'aclmode',
   ];
@@ -963,10 +974,19 @@ export class DatasetFormComponent implements FormConfiguration {
     this.dedupField = _.find(this.fieldConfig, { name: 'deduplication' });
     this.dedupValue = this.dedupControl.value;
     this.dedupControl.valueChanges.pipe(untilDestroyed(this)).subscribe((dedup: DeduplicationSetting) => {
-      if (dedup === DeduplicationSetting.Inherit || dedup === DeduplicationSetting.Off) {
+      if (dedup === DeduplicationSetting.Inherit || dedup === DeduplicationSetting.Off || !dedup) {
         this.dedupField.warnings = '';
       } else {
         this.dedupField.warnings = helptext.dataset_form_deduplication_warning;
+
+        const checksum = this.entityForm.formGroup.get('checksum').value;
+
+        if (this.wasDedupChecksumWarningShown || !checksum || checksum === DatasetChecksum.Sha512) {
+          return;
+        }
+
+        this.showDedupChecksumWarning();
+        this.entityForm.formGroup.get('checksum').setValue(DatasetChecksum.Sha512);
       }
     });
 
@@ -1058,6 +1078,13 @@ export class DatasetFormComponent implements FormConfiguration {
       const compression = _.find(this.fieldConfig, { name: 'compression' }) as FormSelectConfig;
       for (const key in choices) {
         compression.options.push({ label: key, value: choices[key] });
+      }
+    });
+
+    this.ws.call('pool.dataset.checksum_choices').pipe(untilDestroyed(this)).subscribe((checksumChoices) => {
+      const checksumFieldConfig = _.find(this.fieldConfig, { name: 'checksum' }) as FormSelectConfig;
+      for (const key in checksumChoices) {
+        checksumFieldConfig.options.push({ label: key, value: checksumChoices[key] });
       }
     });
 
@@ -1214,6 +1241,7 @@ export class DatasetFormComponent implements FormConfiguration {
             const sync = _.find(this.fieldConfig, { name: 'sync' }) as FormSelectConfig;
             const compression = _.find(this.fieldConfig, { name: 'compression' }) as FormSelectConfig;
             const deduplication = _.find(this.fieldConfig, { name: 'deduplication' }) as FormSelectConfig;
+            const checksum = _.find(this.fieldConfig, { name: 'checksum' }) as FormSelectConfig;
             const exec = _.find(this.fieldConfig, { name: 'exec' }) as FormSelectConfig;
             const readonly = _.find(this.fieldConfig, { name: 'readonly' }) as FormSelectConfig;
             const atime = _.find(this.fieldConfig, { name: 'atime' }) as FormSelectConfig;
@@ -1221,6 +1249,7 @@ export class DatasetFormComponent implements FormConfiguration {
             const syncInherit: Option[] = [{ label: `Inherit (${pkDataset[0].sync.rawvalue})`, value: 'INHERIT' }];
             const compressionInherit: Option[] = [{ label: `Inherit (${pkDataset[0].compression.rawvalue})`, value: 'INHERIT' }];
             const deduplicationInherit: Option[] = [{ label: `Inherit (${pkDataset[0].deduplication.rawvalue})`, value: 'INHERIT' }];
+            const checksumInherit = [{ label: `Inherit (${pkDataset[0].checksum.rawvalue})`, value: 'INHERIT' }];
             const execInherit: Option[] = [{ label: `Inherit (${pkDataset[0].exec.rawvalue})`, value: 'INHERIT' }];
             const readonlyInherit: Option[] = [{ label: `Inherit (${pkDataset[0].readonly.rawvalue})`, value: 'INHERIT' }];
             const atimeInherit: Option[] = [{ label: `Inherit (${pkDataset[0].atime.rawvalue})`, value: 'INHERIT' }];
@@ -1242,6 +1271,7 @@ export class DatasetFormComponent implements FormConfiguration {
             sync.options = syncInherit.concat(sync.options);
             compression.options = compressionInherit.concat(compression.options);
             deduplication.options = deduplicationInherit.concat(deduplication.options);
+            checksum.options = checksumInherit.concat(checksum.options);
             exec.options = execInherit.concat(exec.options);
             readonly.options = readonlyInherit.concat(readonly.options);
             atime.options = atimeInherit.concat(atime.options);
@@ -1250,6 +1280,7 @@ export class DatasetFormComponent implements FormConfiguration {
             entityForm.formGroup.controls['sync'].setValue('INHERIT');
             entityForm.formGroup.controls['compression'].setValue('INHERIT');
             entityForm.formGroup.controls['deduplication'].setValue('INHERIT');
+            entityForm.formGroup.controls['checksum'].setValue('INHERIT');
             entityForm.formGroup.controls['exec'].setValue('INHERIT');
             entityForm.formGroup.controls['readonly'].setValue('INHERIT');
             entityForm.formGroup.controls['atime'].setValue('INHERIT');
@@ -1269,6 +1300,7 @@ export class DatasetFormComponent implements FormConfiguration {
               const editReadonly = _.find(this.fieldConfig, { name: 'readonly' }) as FormSelectConfig;
               const editAtime = _.find(this.fieldConfig, { name: 'atime' }) as FormSelectConfig;
               const editRecordsize = _.find(this.fieldConfig, { name: 'recordsize' }) as FormSelectConfig;
+              const editChecksum = _.find(this.fieldConfig, { name: 'checksum' }) as FormSelectConfig;
 
               const editSyncCollection: Option[] = [{ label: `Inherit (${this.parentDataset.sync.rawvalue})`, value: 'INHERIT' }];
               editSync.options = editSyncCollection.concat(editSync.options);
@@ -1281,6 +1313,9 @@ export class DatasetFormComponent implements FormConfiguration {
 
               const editExecCollection: Option[] = [{ label: `Inherit (${this.parentDataset.exec.rawvalue})`, value: 'INHERIT' }];
               editExec.options = editExecCollection.concat(editExec.options);
+
+              const editChecksumCollection = [{ label: `Inherit (${this.parentDataset.deduplication.rawvalue})`, value: 'INHERIT' }];
+              editChecksum.options = editChecksumCollection.concat(editChecksum.options);
 
               const editReadonlyCollection: Option[] = [{ label: `Inherit (${this.parentDataset.readonly.rawvalue})`, value: 'INHERIT' }];
               editReadonly.options = editReadonlyCollection.concat(editReadonly.options);
@@ -1312,6 +1347,10 @@ export class DatasetFormComponent implements FormConfiguration {
               ) {
                 deduplicationValue = 'INHERIT';
               }
+              let checksumValue = pkDataset[0].checksum.value;
+              if (pkDataset[0].checksum.source === 'DEFAULT' || pkDataset[0].checksum.source === 'INHERITED') {
+                checksumValue = 'INHERIT';
+              }
               let execValue = pkDataset[0].exec.value;
               if ([ZfsPropertySource.Inherited, ZfsPropertySource.Default].includes(pkDataset[0].exec.source)) {
                 execValue = 'INHERIT';
@@ -1331,6 +1370,7 @@ export class DatasetFormComponent implements FormConfiguration {
 
               entityForm.formGroup.controls['deduplication'].setValue(deduplicationValue);
               entityForm.formGroup.controls['exec'].setValue(execValue);
+              entityForm.formGroup.controls['checksum'].setValue(checksumValue);
               entityForm.formGroup.controls['readonly'].setValue(readonlyValue);
               entityForm.formGroup.controls['atime'].setValue(atimeValue);
               entityForm.formGroup.controls['recordsize'].setValue(recordsizeValue);
@@ -1414,6 +1454,7 @@ export class DatasetFormComponent implements FormConfiguration {
       compression: this.getFieldValueOrRaw(wsResponse.compression),
       copies: this.getFieldValueOrRaw(wsResponse.copies),
       deduplication: this.getFieldValueOrRaw(wsResponse.deduplication),
+      checksum: this.getFieldValueOrRaw(wsResponse.checksum),
       quota_warning: quotaWarning,
       quota_warning_inherit: quotaWarningInherit,
       quota_critical: quotaCritical,
@@ -1551,6 +1592,9 @@ export class DatasetFormComponent implements FormConfiguration {
     if (data.deduplication === 'INHERIT') {
       delete (data.deduplication);
     }
+    if (data.checksum === 'INHERIT') {
+      delete data.checksum;
+    }
     if (data.recordsize === '1M') {
       data.recordsize = '1024K';
     }
@@ -1654,5 +1698,18 @@ export class DatasetFormComponent implements FormConfiguration {
 
   setTitle(title: string): void {
     this.title = this.translate.instant(title);
+  }
+
+  private showDedupChecksumWarning(): void {
+    this.wasDedupChecksumWarningShown = true;
+    this.dialogService.confirm({
+      hideCancel: true,
+      title: this.translate.instant('Default Checksum Warning'),
+      hideCheckBox: true,
+      message: this.translate.instant(`The default "Checksum" value for datasets with deduplication used to be SHA256.
+       Our testing has shown that SHA512 performs better for such datasets.
+       We've changed the checksum value from SHA256 to SHA512. You can change it back in "Advanced Options".`),
+      buttonMsg: this.translate.instant('OK'),
+    });
   }
 }
