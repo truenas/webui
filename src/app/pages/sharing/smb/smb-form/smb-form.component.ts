@@ -39,7 +39,7 @@ export class SmbFormComponent implements OnInit {
   existingSmbShare: SmbShare;
   readonly helptextSharingSmb = helptextSharingSmb;
   productType = localStorage.getItem('product_type') as ProductType;
-  private stripACLWarningSent = false;
+  private wasStipAclWarningShown = false;
   private mangleWarningSent = false;
   private isTimeMachineOn = false;
   private mangle: boolean;
@@ -106,16 +106,67 @@ export class SmbFormComponent implements OnInit {
     protected loader: AppLoaderService,
     private errorHandler: FormErrorHandlerService,
     private filesystemService: FilesystemService,
-  ) {
-    this.ws.call('sharing.smb.query', []).pipe(
-      map((shares) => shares.map((share) => share.name)),
-      untilDestroyed(this),
-    ).subscribe((shareNames) => {
-      ['global', ...shareNames].forEach((name) => this.namesInUse.push(name));
+  ) { }
+
+  ngOnInit(): void {
+    this.setupPurposePresets();
+    this.getUnusableNamesForShare();
+
+    this.form.get('purpose').valueChanges.pipe(untilDestroyed(this)).subscribe(
+      (value: string) => {
+        this.clearPresets();
+        this.setValuesFromPreset(value);
+      },
+    );
+
+    this.form.get('afp').valueChanges.pipe(untilDestroyed(this)).subscribe((value: boolean) => {
+      this.afpConfirmEnable(value);
+    });
+
+    this.form.get('path').valueChanges.pipe(debounceTime(50), untilDestroyed(this)).subscribe((path: string) => {
+      this.setNameFromPath(path);
+      this.checkAndShowStripAclWarning(path, this.form.get('acl').value);
+    });
+
+    this.form.get('acl').valueChanges.pipe(debounceTime(100)).pipe(untilDestroyed(this)).subscribe((aclValue: boolean) => {
+      this.checkAndShowStripAclWarning(this.form.get('path').value, aclValue);
     });
   }
 
-  ngOnInit(): void {
+  setNameFromPath(path: string): void {
+    const nameControl = this.form.get('name');
+    if (path && !nameControl.value) {
+      const name = path.split('/').pop();
+      nameControl.setValue(name);
+    }
+  }
+
+  checkAndShowStripAclWarning(path: string, aclValue: boolean): void {
+    if (!this.wasStipAclWarningShown && path && !aclValue) {
+      this.ws.call('filesystem.acl_is_trivial', [path]).pipe(untilDestroyed(this)).subscribe((aclIsTrivial) => {
+        if (!aclIsTrivial) {
+          this.wasStipAclWarningShown = true;
+          this.showStripAclWarning();
+        }
+      });
+    }
+  }
+
+  setValuesFromPreset(preset: string): void {
+    if (!this.presets[preset]) {
+      return;
+    }
+    for (const param in this.presets[preset].params) {
+      this.presetFields.push(param as keyof SmbShare);
+      const ctrl = this.form.get(param);
+      if (ctrl && param !== 'auxsmbconf') {
+        ctrl.setValue(this.presets[preset].params[param as keyof SmbShare]);
+        ctrl.disable();
+      }
+    }
+  }
+
+  setupPurposePresets(): void {
     this.ws.call('sharing.smb.presets').pipe(untilDestroyed(this)).subscribe((presets) => {
       this.presets = presets;
       const options: Option[] = [];
@@ -124,57 +175,14 @@ export class SmbFormComponent implements OnInit {
       }
       this.purposeOptions$ = of(options);
     });
+  }
 
-    this.form.get('purpose').valueChanges.pipe(untilDestroyed(this)).subscribe(
-      (value: string) => {
-        this.clearPresets();
-        if (!this.presets[value]) {
-          return;
-        }
-        for (const param in this.presets[value].params) {
-          this.presetFields.push(param as keyof SmbShare);
-          const ctrl = this.form.get(param);
-          if (ctrl && param !== 'auxsmbconf') {
-            ctrl.setValue(this.presets[value].params[param as keyof SmbShare]);
-            ctrl.disable();
-          }
-        }
-      },
-    );
-
-    this.form.get('afp').valueChanges.pipe(untilDestroyed(this)).subscribe((value: boolean) => {
-      this.afpConfirm(value);
-    });
-
-    const pathFormControl = this.form.get('path');
-    /*  If name is empty, auto-populate after path selection */
-    pathFormControl.valueChanges.pipe(debounceTime(50), untilDestroyed(this)).subscribe((path) => {
-      const nameControl = this.form.get('name');
-      if (path && !nameControl.value) {
-        const name = path.split('/').pop();
-        nameControl.setValue(name);
-      }
-
-      if (!this.stripACLWarningSent) {
-        this.ws.call('filesystem.acl_is_trivial', [path]).pipe(untilDestroyed(this)).subscribe((res) => {
-          if (!res && !this.form.get('acl').value) {
-            this.stripACLWarningSent = true;
-            this.showStripAclWarning();
-          }
-        });
-      }
-    });
-
-    this.form.get('acl').valueChanges.pipe(debounceTime(100)).pipe(untilDestroyed(this)).subscribe((res) => {
-      if (!res && pathFormControl.value && !this.stripACLWarningSent) {
-        this.ws.call('filesystem.acl_is_trivial', [pathFormControl.value])
-          .pipe(untilDestroyed(this)).subscribe((res) => {
-            if (!res) {
-              this.stripACLWarningSent = true;
-              this.showStripAclWarning();
-            }
-          });
-      }
+  getUnusableNamesForShare(): void {
+    this.ws.call('sharing.smb.query', []).pipe(
+      map((shares) => shares.map((share) => share.name)),
+      untilDestroyed(this),
+    ).subscribe((shareNames) => {
+      this.namesInUse = ['global', ...shareNames];
     });
   }
 
@@ -236,7 +244,7 @@ export class SmbFormComponent implements OnInit {
     nameControl.setValue(pathControl.value.split('/').pop());
   }
 
-  afpConfirm(value: boolean): void {
+  afpConfirmEnable(value: boolean): void {
     if (!value) {
       return;
     }
