@@ -20,7 +20,6 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
   styleUrls: ['disk-form.component.scss'],
 })
 export class DiskFormComponent implements OnInit {
-  readonly queryCall = 'disk.query' as const;
   readonly editCall = 'disk.update' as const;
   customFilter: [[Partial<QueryFilter<Disk>>]] = [[['identifier', '=']]];
   form = this.fb.group({
@@ -60,6 +59,11 @@ export class DiskFormComponent implements OnInit {
     this.passwordState();
   }
 
+  setFormDisck(disk: Disk): void {
+    this.existingDisk = disk;
+    this.form.patchValue(this.resourceTransformIncomingRestData(disk));
+  }
+
   private translateOptions(options: Option[]): Option[] {
     return options.map((el) => {
       return { label: this.translate.instant(el.label), value: el.value };
@@ -70,11 +74,6 @@ export class DiskFormComponent implements OnInit {
     const transformed = { ...data };
     delete transformed.passwd;
     return transformed;
-  }
-
-  setFormDisck(disk: Disk): void {
-    this.existingDisk = disk;
-    this.form.patchValue(this.resourceTransformIncomingRestData(disk));
   }
 
   private passwordState(): void {
