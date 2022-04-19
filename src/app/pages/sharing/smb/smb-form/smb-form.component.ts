@@ -72,7 +72,7 @@ export class SmbFormComponent implements OnInit {
   form = this.formBuilder.group({
     path: ['', Validators.required],
     name: ['', [forbiddenValues(this.namesInUse), Validators.required]],
-    purpose: [''],
+    purpose: [SmbPresetType.DefaultShareParameters],
     comment: [''],
     enabled: [true],
     acl: [false],
@@ -123,7 +123,6 @@ export class SmbFormComponent implements OnInit {
         options.push({ label: presets[presetName].verbose_name, value: presetName });
       }
       this.purposeOptions$ = of(options);
-      this.form.get('purpose').setValue(SmbPresetType.DefaultShareParameters);
     });
 
     this.form.get('purpose').valueChanges.pipe(untilDestroyed(this)).subscribe(
