@@ -141,14 +141,15 @@ export class SmbFormComponent implements OnInit {
   }
 
   checkAndShowStripAclWarning(path: string, aclValue: boolean): void {
-    if (!this.wasStipAclWarningShown && path && !aclValue) {
-      this.ws.call('filesystem.acl_is_trivial', [path]).pipe(untilDestroyed(this)).subscribe((aclIsTrivial) => {
-        if (!aclIsTrivial) {
-          this.wasStipAclWarningShown = true;
-          this.showStripAclWarning();
-        }
-      });
+    if (this.wasStipAclWarningShown || !path || aclValue) {
+      return;
     }
+    this.ws.call('filesystem.acl_is_trivial', [path]).pipe(untilDestroyed(this)).subscribe((aclIsTrivial) => {
+      if (!aclIsTrivial) {
+        this.wasStipAclWarningShown = true;
+        this.showStripAclWarning();
+      }
+    });
   }
 
   setValuesFromPreset(preset: string): void {
