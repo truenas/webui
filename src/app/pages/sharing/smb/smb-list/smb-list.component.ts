@@ -75,6 +75,7 @@ export class SmbListComponent implements EntityTableConfig {
 
   afterInit(entityList: EntityTableComponent): void {
     this.entityList = entityList;
+    this.shares = entityList.rows;
   }
 
   doAdd(): void {
@@ -185,9 +186,5 @@ export class SmbListComponent implements EntityTableConfig {
         new EntityUtils().handleWsError(this, err, this.dialog);
       },
     );
-  }
-  resourceTransformIncomingRestData(data: SmbShare[]): SmbShare[] {
-    this.shares = data;
-    return data;
   }
 }
