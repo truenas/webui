@@ -157,6 +157,11 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
     return scale > 1 ? 1 : scale;
   }
 
+  get enclosureLabel() {
+    const obj = this.system.enclosures[this.selectedEnclosure.enclosureKey];
+    return obj.label ? obj.label : this.selectedEnclosure.model;
+  }
+
   scaleArgs: string;
 
   constructor(
