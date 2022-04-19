@@ -8,8 +8,7 @@ from function import (
     attribute_value_exist,
     wait_on_element_disappear,
     run_cmd,
-    ssh_cmd,
-    post
+    ssh_cmd
 )
 from pytest_bdd import (
     given,
@@ -87,10 +86,11 @@ def set_path_to_the_acl_dataset_mnttanktank_acl_dataset_input_mytankshare_as_nam
     driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
     assert wait_on_element_disappear(driver, 15, '//h6[contains(.,"Please wait")]')
 
+
 @then(parsers.parse('"{smbname}" should be added, Click on service and the Service page should open'))
 def mysmbshare_should_be_added_click_on_service_and_the_service_page_should_open(driver, smbname):
     """"{smbname}" should be added, Click on service and the Service page should open."""
-    assert wait_on_element(driver, 5, f'//div[contains(.,"mytankshare")]')
+    assert wait_on_element(driver, 5, '//div[contains(.,"mytankshare")]')
     time.sleep(2)
 
 
@@ -98,7 +98,7 @@ def mysmbshare_should_be_added_click_on_service_and_the_service_page_should_open
 def send_a_file_to_the_share_with_nas_ipmysmbshare_and_administrator_and_abcd1234(driver, nas_ip, mytankshare, user, password):
     """Send a file to the share with nas_IP/"{mytankshare}" and "{user}" and "{password}"."""
     run_cmd('touch testfile.txt')
-    results = run_cmd(f'smbclient //{nas_ip}/{mytankshare} -W AD01 -U {user}%{password} -c "put testfile.txt testfile.txt"')
+    results = run_cmd(f'smbclient //{nas_ip}/{mytankshare} -W AD02 -U {user}%{password} -c "put testfile.txt testfile.txt"')
     run_cmd('rm testfile.txt')
     assert results['result'], results['output']
 

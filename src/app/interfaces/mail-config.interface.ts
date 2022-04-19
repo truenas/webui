@@ -4,7 +4,7 @@ export interface MailConfig {
   fromemail: string;
   fromname: string;
   id: number;
-  oauth: unknown;
+  oauth: GmailOauthConfig | Record<string, never>;
   outgoingserver: string;
   pass: string;
   port: number;
@@ -13,7 +13,24 @@ export interface MailConfig {
   user: string;
 }
 
-export type MailConfigUpdate = Omit<MailConfig, 'id'>;
+export interface GmailOauthConfig {
+  client_id: string;
+  client_secret: string;
+  refresh_token: string;
+}
+
+export interface MailConfigUpdate {
+  // Smtp field is actually about smtp authentication.
+  smtp?: boolean;
+  fromemail: string;
+  fromname: string;
+  oauth: GmailOauthConfig;
+  outgoingserver?: string;
+  pass?: string;
+  port?: number;
+  security?: MailSecurity;
+  user?: string;
+}
 
 export interface SendMailParams {
   subject: string;

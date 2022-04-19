@@ -1,14 +1,10 @@
 # coding=utf-8
 """SCALE UI: feature tests."""
 
-import time
-from selenium.webdriver.common.keys import Keys
-from function import(
+from function import (
     wait_on_element,
     is_element_present,
-    attribute_value_exist,
-    wait_for_attribute_value,
-    wait_on_element_disappear,
+    wait_on_element_disappear
 )
 from pytest_bdd import (
     given,
@@ -87,8 +83,7 @@ def set_cert_options_and_click_next(driver):
     assert wait_on_element(driver, 10, '//span[contains(.,"RSA")]', 'clickable')
     driver.find_element_by_xpath('//mat-option[@ix-auto="option__Key Type_RSA"]').click()
     assert wait_on_element(driver, 10, '//div[contains(.,"Certificate Options") and contains(@class,"mat-step")]//button[@ix-auto="button__NEXT"]', 'clickable')
-    driver.find_element_by_xpath('//div[contains(.,"Certificate Options") and contains(@class,"mat-step")]//button[@ix-auto="button__NEXT"]').click()  
-  
+    driver.find_element_by_xpath('//div[contains(.,"Certificate Options") and contains(@class,"mat-step")]//button[@ix-auto="button__NEXT"]').click()
 
 
 @then('set cert subject and click next')

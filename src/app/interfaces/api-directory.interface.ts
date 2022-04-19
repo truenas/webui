@@ -1,6 +1,6 @@
 import { DefaultAclType } from 'app/enums/acl-type.enum';
 import { AlertPolicy } from 'app/enums/alert-policy.enum';
-import { DatasetType } from 'app/enums/dataset-type.enum';
+import { DatasetRecordSize, DatasetType } from 'app/enums/dataset.enum';
 import { DeviceType } from 'app/enums/device-type.enum';
 import { EnclosureSlotStatus } from 'app/enums/enclosure-slot-status.enum';
 import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
@@ -86,7 +86,9 @@ import { DatasetHasVmsQueryParams } from 'app/interfaces/dataset-has-vms-query-p
 import { DatasetLockParams, DatasetUnlockParams, DatasetUnlockResult } from 'app/interfaces/dataset-lock.interface';
 import { DatasetPermissionsUpdate } from 'app/interfaces/dataset-permissions.interface';
 import { DatasetQuota, DatasetQuotaQueryParams, SetDatasetQuota } from 'app/interfaces/dataset-quota.interface';
-import { Dataset, ExtraDatasetQueryOptions } from 'app/interfaces/dataset.interface';
+import {
+  Dataset, DatasetCreate, DatasetUpdate, ExtraDatasetQueryOptions,
+} from 'app/interfaces/dataset.interface';
 import { Device } from 'app/interfaces/device.interface';
 import { DirectoryServicesState } from 'app/interfaces/directory-services-state.interface';
 import {
@@ -147,7 +149,11 @@ import {
   NetworkConfiguration,
   NetworkConfigurationUpdate,
 } from 'app/interfaces/network-configuration.interface';
-import { NetworkInterface, ServiceRestartedOnNetworkSync } from 'app/interfaces/network-interface.interface';
+import {
+  NetworkInterface,
+  NetworkInterfaceCreate, NetworkInterfaceUpdate,
+  ServiceRestartedOnNetworkSync,
+} from 'app/interfaces/network-interface.interface';
 import { NetworkSummary } from 'app/interfaces/network-summary.interface';
 import { AddNfsPrincipal, NfsConfig, NfsConfigUpdate } from 'app/interfaces/nfs-config.interface';
 import { NfsShare, NfsShareUpdate } from 'app/interfaces/nfs-share.interface';
@@ -169,6 +175,7 @@ import { QueryParams } from 'app/interfaces/query-api.interface';
 import { ReplicationConfigUpdate } from 'app/interfaces/replication-config-update.interface';
 import { ReplicationConfig } from 'app/interfaces/replication-config.interface';
 import {
+  ReplicationCreate,
   ReplicationTask,
 } from 'app/interfaces/replication-task.interface';
 import { ReportingGraph } from 'app/interfaces/reporting-graph.interface';
@@ -457,9 +464,10 @@ export type ApiDirectory = {
   'filesystem.get_default_acl': { params: [DefaultAclType]; response: NfsAclItem[] | PosixAclItem[] };
   'filesystem.statfs': { params: [path: string]; response: Statfs };
   'filesystem.getacl': { params: AclQueryParams; response: Acl };
-  'filesystem.setacl': { params: [SetAcl]; response: any };
+  'filesystem.setacl': { params: [SetAcl]; response: void };
 
   // Failover
+  'failover.become_passive': { params: void; response: void };
   'failover.licensed': { params: void; response: boolean };
   'failover.upgrade_pending': { params: void; response: boolean };
   'failover.sync_from_peer': { params: void; response: void };
@@ -469,9 +477,9 @@ export type ApiDirectory = {
   'failover.call_remote': { params: FailoverRemoteCall; response: unknown };
   'failover.get_ips': { params: void; response: string[] };
   'failover.node': { params: void; response: string };
-  'failover.disabled_reasons': { params: void; response: FailoverDisabledReason[] };
+  'failover.disabled.reasons': { params: void; response: FailoverDisabledReason[] };
   'failover.config': { params: void; response: FailoverConfig };
-  'failover.sync_to_peer': { params: { reboot?: boolean }; response: void };
+  'failover.sync_to_peer': { params: [{ reboot?: boolean }]; response: void };
   'failover.upgrade_finish': { params: void; response: boolean };
   'failover.upgrade': { params: void; response: boolean };
 
@@ -527,8 +535,8 @@ export type ApiDirectory = {
   'interface.lag_ports_choices': { params: [id: string]; response: Choices };
   'interface.vlan_parent_interface_choices': { params: void; response: Choices };
   'interface.query': { params: QueryParams<NetworkInterface>; response: NetworkInterface[] };
-  'interface.create': { params: any; response: NetworkInterface };
-  'interface.update': { params: any; response: NetworkInterface };
+  'interface.create': { params: [NetworkInterfaceCreate]; response: NetworkInterface };
+  'interface.update': { params: [NetworkInterfaceUpdate]; response: NetworkInterface };
   'interface.delete': { params: [id: string]; response: string };
   'interface.has_pending_changes': { params: void; response: boolean };
   'interface.checkin_waiting': { params: void; response: number | null };
@@ -650,7 +658,7 @@ export type ApiDirectory = {
   'pool.dataset.attachments': { params: [datasetId: string]; response: DatasetAttachment[] };
   'pool.dataset.change_key': { params: [id: string, params: DatasetChangeKeyParams]; response: void };
   'pool.dataset.compression_choices': { params: void; response: Choices };
-  'pool.dataset.create': { params: any; response: Dataset };
+  'pool.dataset.create': { params: [DatasetCreate]; response: Dataset };
   'pool.dataset.delete': { params: [path: string, params: { recursive: boolean; force?: boolean }]; response: boolean };
   'pool.dataset.encryption_algorithm_choices': { params: void; response: Choices };
   'pool.dataset.encryption_summary': {
@@ -667,18 +675,18 @@ export type ApiDirectory = {
   'pool.dataset.promote': { params: [id: string]; response: void };
   'pool.dataset.query': { params: QueryParams<Dataset, ExtraDatasetQueryOptions>; response: Dataset[] };
   'pool.dataset.query_encrypted_roots_keys': { params: void; response: DatasetEncryptedRootKeys };
-  'pool.dataset.recommended_zvol_blocksize': { params: [name: string]; response: string };
+  'pool.dataset.recommended_zvol_blocksize': { params: [name: string]; response: DatasetRecordSize };
   'pool.dataset.set_quota': { params: [dataset: string, quotas: SetDatasetQuota[]]; response: void };
   'pool.dataset.unlock': { params: [path: string, params: DatasetUnlockParams]; response: DatasetUnlockResult };
   'pool.dataset.unlock_services_restart_choices': { params: [id: string]; response: Choices };
-  'pool.dataset.update': { params: any; response: Dataset };
+  'pool.dataset.update': { params: [id: string, update: DatasetUpdate]; response: Dataset };
   'pool.detach': { params: [id: number, params: { label: string }]; response: boolean };
   'pool.download_encryption_key': { params: [volumeId: number, fileName?: string]; response: string };
   'pool.expand': { params: PoolExpandParams; response: null };
   'pool.export': { params: PoolExportParams; response: void };
   'pool.filesystem_choices': { params: [DatasetType[]?]; response: string[] };
   'pool.get_disks': { params: [ids: string[]]; response: string[] };
-  'pool.import_disk': { params: ImportDiskParams; response: any };
+  'pool.import_disk': { params: ImportDiskParams; response: void };
   'pool.import_disk_autodetect_fs_type': { params: [path: string]; response: string };
   'pool.import_disk_msdosfs_locales': { params: void; response: string[] };
   'pool.import_find': { params: void; response: PoolFindResult[] };
@@ -690,7 +698,6 @@ export type ApiDirectory = {
   'pool.processes': { params: [id: number]; response: Process[] };
   'pool.query': { params: QueryParams<Pool>; response: Pool[] };
   'pool.recoverykey_rm': { params: [number, { admin_password: string }]; response: void };
-  'pool.rekey': { params: [number, { admin_password: string }]; response: void };
   'pool.remove': { params: PoolRemoveParams; response: void };
   'pool.replace': { params: [id: number, params: PoolReplaceParams]; response: boolean };
   'pool.resilver.config': { params: void; response: ResilverConfig };
@@ -711,7 +718,7 @@ export type ApiDirectory = {
 
   // Replication
   'replication.list_datasets': { params: [transport: TransportMode, credentials?: number]; response: string[] };
-  'replication.create': { params: any; response: ReplicationTask };
+  'replication.create': { params: [ReplicationCreate]; response: ReplicationTask };
   'replication.query': { params: QueryParams<ReplicationTask>; response: ReplicationTask[] };
   'replication.restore': { params: [id: number, params: { name: string; target_dataset: string }]; response: void };
   'replication.run': { params: [id: number]; response: number };
@@ -722,7 +729,7 @@ export type ApiDirectory = {
     params: TargetUnmatchedSnapshotsParams;
     response: { [dataset: string]: string[] };
   };
-  'replication.update': { params: any; response: ReplicationTask };
+  'replication.update': { params: [id: number, update: Partial<ReplicationCreate>]; response: ReplicationTask };
 
   // Rsync
   'rsynctask.run': { params: [id: number]; response: any };

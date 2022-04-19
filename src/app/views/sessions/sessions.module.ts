@@ -12,6 +12,7 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
+import { CoreComponents } from 'app/core/core-components.module';
 import { sessionsRoutes } from './sessions.routing';
 import { SigninComponent } from './signin/signin.component';
 
@@ -31,6 +32,7 @@ import { SigninComponent } from './signin/signin.component';
     FlexLayoutModule,
     TranslateModule,
     RouterModule.forChild(sessionsRoutes),
+    CoreComponents,
   ],
   declarations: [SigninComponent],
 })

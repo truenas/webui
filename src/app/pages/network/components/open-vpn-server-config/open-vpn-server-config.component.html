@@ -5,24 +5,35 @@
       <ix-fieldset>
         <div class="columns">
           <div class="column">
-            <ix-select
-              formControlName="server_certificate"
-              [label]="'Server Certificate' | translate"
-              [required]="true"
-              [options]="serverCertificates$"
-              (linkClicked)="certificatesLinkClicked()"
-              [linkText]="'Certificates' | translate"
-              [tooltip]="tooltips.server_certificate | translate"
-            ></ix-select>
-            <ix-select
-              formControlName="root_ca"
-              [label]="'Root CA' | translate"
-              [required]="true"
-              [options]="rootAuthorities$"
-              [tooltip]="tooltips.root_ca | translate"
-              [linkText]="'Certificate Authorities' | translate"
-              [tooltip]="tooltips.server_certificate | translate"
-            ></ix-select>
+            <div class="linked-select">
+              <div class="link-wrapper">
+                <a class="link" (click)="certificatesLinkClicked()">
+                  {{ 'Manage Certificates' | translate }}
+                </a>
+              </div>
+              <ix-select
+                formControlName="server_certificate"
+                [label]="'Server Certificate' | translate"
+                [required]="true"
+                [options]="serverCertificates$"
+              ></ix-select>
+            </div>
+
+            <div class="linked-select">
+              <div class="link-wrapper">
+                <a class="link" (click)="certificatesLinkClicked()">
+                  {{ 'Manage Certificates' | translate }}
+                </a>
+              </div>
+              <ix-select
+                formControlName="root_ca"
+                [label]="'Root CA' | translate"
+                [required]="true"
+                [options]="rootAuthorities$"
+                [tooltip]="tooltips.root_ca | translate"
+              ></ix-select>
+            </div>
+
             <ix-ip-input-with-netmask
               formControlName="server"
               [label]="'Server' | translate"

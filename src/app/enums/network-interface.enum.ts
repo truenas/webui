@@ -6,6 +6,12 @@ export enum NetworkInterfaceType {
   Unknown = 'UNKNOWN',
 }
 
+export enum CreateNetworkInterfaceType {
+  Bridge = 'BRIDGE',
+  LinkAggregation = 'LINK_AGGREGATION',
+  Vlan = 'VLAN',
+}
+
 export enum NetworkInterfaceAliasType {
   Inet = 'INET',
   Inet6 = 'INET6',

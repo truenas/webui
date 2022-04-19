@@ -22,6 +22,16 @@ export const helptextSharingIscsi = {
   target_form_placeholder_mode: T('Target Mode'),
   target_form_tooltip_mode: T('Define the target as *iSCSI*,\
  *Fibre Channel*, or *Both*.'),
+  target_form_enum_mode: [{
+    label: 'iSCSI',
+    value: 'ISCSI',
+  }, {
+    label: 'Fibre Channel',
+    value: 'FC',
+  }, {
+    label: 'Both',
+    value: 'BOTH',
+  }],
 
   target_form_placeholder_portal: T('Portal Group ID'),
   target_form_tooltip_portal: T(
@@ -39,6 +49,16 @@ export const helptextSharingIscsi = {
   target_form_tooltip_authmethod: T(
     'Choices are <i>None, Auto, CHAP,</i> or <i>Mutual CHAP</i>.',
   ),
+  target_form_enum_authmethod: [{
+    label: 'None',
+    value: 'NONE',
+  }, {
+    label: 'CHAP',
+    value: 'CHAP',
+  }, {
+    label: 'Mutual CHAP',
+    value: 'CHAP_MUTUAL',
+  }],
 
   target_form_placeholder_auth: T('Authentication Group Number'),
   target_form_tooltip_auth: T(
@@ -215,6 +235,27 @@ export const helptextSharingIscsi = {
 
   extent_placeholder_enabled: T('Enabled'),
   extent_tooltip_enabled: T('Set to enable the iSCSI extent.'),
+
+  extent_form_enum_rpm: [
+    { label: 'UNKNOWN', value: 'UNKNOWN' },
+    { label: 'SSD', value: 'SSD' },
+    { label: '5400', value: '5400' },
+    { label: '7200', value: '7200' },
+    { label: '10000', value: '10000' },
+    { label: '15000', value: '15000' },
+  ],
+
+  extent_form_enum_type: [
+    { label: T('Device'), value: 'DISK' },
+    { label: T('File'), value: 'FILE' },
+  ],
+
+  extent_form_enum_blocksize: [
+    { label: '512', value: 512 },
+    { label: '1024', value: 1024 },
+    { label: '2048', value: 2048 },
+    { label: '4096', value: 4096 },
+  ],
 
   authaccess_placeholder_tag: T('Group ID'),
   authaccess_tooltip_tag: T(

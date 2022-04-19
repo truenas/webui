@@ -1,11 +1,9 @@
 # coding=utf-8
 """SCALE UI: feature tests."""
 
-import time
 from function import (
     wait_on_element,
     is_element_present,
-    attribute_value_exist,
     wait_on_element_disappear,
 )
 from pytest_bdd import (
@@ -13,8 +11,10 @@ from pytest_bdd import (
     scenario,
     then,
     when,
-    parsers
 )
+import pytest
+pytestmark = [pytest.mark.debug_test]
+
 
 @scenario('features/NAS-T1285.feature', 'Apps Page Validation')
 def test_apps_page_validation():
@@ -58,7 +58,7 @@ def the_apps_page_load_select_pool(driver):
     driver.find_element_by_xpath('//mat-option[@ix-auto="option__Pools_tank"]').click()
     assert wait_on_element(driver, 7, '//button[@name="Choose_button"]', 'clickable')
     driver.find_element_by_xpath('//button[@name="Choose_button"]').click()
-    assert wait_on_element_disappear(driver, 30, '//h1[contains(.,"Configuring...")]')
+    assert wait_on_element_disappear(driver, 60, '//h1[contains(.,"Configuring...")]')
     assert wait_on_element(driver, 7, '//button[@ix-auto="button__CLOSE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
 
@@ -67,10 +67,11 @@ def the_apps_page_load_select_pool(driver):
 def the_available_applications_tab_loads(driver):
     """the Available Applications Tab loads."""
     # used for local testing, so you dont have to unset and reset the pool every time 
-    #assert wait_on_element(driver, 10, '//div[contains(text(),"Available Applications")]', 'clickable')
-    #driver.find_element_by_xpath('//div[contains(text(),"Available Applications")]').click()
+    # assert wait_on_element(driver, 10, '//div[contains(text(),"Available Applications")]', 'clickable')
+    # driver.find_element_by_xpath('//div[contains(text(),"Available Applications")]').click()
     assert wait_on_element(driver, 7, '//div[contains(.,"Available Applications")]')
     assert wait_on_element(driver, 7, '//h3[contains(.,"minio")]')
+
 
 @then('verify the setting slide out works')
 def verify_the_setting_slide_out_works(driver):
@@ -97,8 +98,8 @@ def open_the_manage_docker_images_page(driver):
     """open the Manage Docker Images Page."""
     assert wait_on_element(driver, 10, '//div[contains(text(),"Manage Docker Images")]', 'clickable')
     driver.find_element_by_xpath('//div[contains(text(),"Manage Docker Images")]').click()
-    assert wait_on_element(driver, 7, '//h3[contains(.,"No Docker Images")]')
-    #assert wait_on_element(driver, 7, '//div[contains(.,"zfs-driver")]')
+    # seems like sometimes zfs-driver is present.
+    assert wait_on_element(driver, 5, '//h3[contains(.,"No Docker Images")]') or wait_on_element(driver, 5, '//div[contains(.,"rancher")]')
 
 
 @then('open the Manage Catalogs Page')
