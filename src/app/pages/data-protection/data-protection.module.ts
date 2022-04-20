@@ -8,6 +8,8 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { SchedulerModule } from 'app/modules/scheduler/scheduler.module';
+import { RsyncTaskFormComponent } from 'app/pages/data-protection/rsync-task/rsync-task-form/rsync-task-form.component';
+import { RsyncTaskListComponent } from 'app/pages/data-protection/rsync-task/rsync-task-list/rsync-task-list.component';
 import {
   ScrubTaskFormComponent,
 } from 'app/pages/data-protection/scrub-task/scrub-task-form/scrub-task-form.component';
@@ -21,8 +23,6 @@ import { dataProtectionRoutes } from './data-protection.routing';
 import { ReplicationFormComponent } from './replication/replication-form/replication-form.component';
 import { ReplicationListComponent } from './replication/replication-list/replication-list.component';
 import { ReplicationWizardComponent } from './replication/replication-wizard/replication-wizard.component';
-import { RsyncFormComponent } from './rsync/rsync-form/rsync-form.component';
-import { RsyncListComponent } from './rsync/rsync-list/rsync-list.component';
 import { ResilverConfigComponent } from './scrub-task/resilver-config/resilver-config.component';
 import { ScrubListComponent } from './scrub-task/scrub-list/scrub-list.component';
 import { SmartTaskListComponent } from './smart-task/smart-task-list/smart-task-list.component';
@@ -47,8 +47,8 @@ import { SnapshotListComponent } from './snapshot/snapshot-list/snapshot-list.co
   declarations: [
     SnapshotListComponent,
     SnapshotFormComponent,
-    RsyncListComponent,
-    RsyncFormComponent,
+    RsyncTaskListComponent,
+    RsyncTaskFormComponent,
     SmartTaskListComponent,
     SmartTaskFormComponent,
     ReplicationListComponent,

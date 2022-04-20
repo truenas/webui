@@ -125,7 +125,6 @@ export class SnapshotAddFormComponent implements OnInit {
   private getNamingSchemaOptions(): Observable<Option[]> {
     return this.ws.call('replication.list_naming_schemas').pipe(
       map(new EntityUtils().array1dToLabelValuePair),
-      map((options) => [{ label: '---', value: undefined }, ...options]),
     );
   }
 }

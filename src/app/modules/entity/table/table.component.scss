@@ -51,6 +51,12 @@ div.table-container {
   table-layout: fixed;
 }
 
+.table-cell mat-icon.table-action-button {
+  display: inline-block;
+  margin: 0;
+  text-align: center;
+}
+
 .table-action-button {
   margin-right: 5px;
 }
@@ -86,6 +92,10 @@ div.view-more-row:hover {
 .title-icon {
   font-size: 1.5rem;
   vertical-align: middle;
+}
+
+.title a:focus-visible {
+  background: var(--hover-bg);
 }
 
 button div.label-warning-icon {

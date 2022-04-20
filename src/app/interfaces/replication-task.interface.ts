@@ -70,3 +70,50 @@ export interface ReplicationTaskUi extends ReplicationTask {
   ssh_connection: string;
   task_last_snapshot: string;
 }
+
+export interface ReplicationCreate {
+  name: string;
+  direction: Direction;
+  transport: TransportMode;
+  ssh_credentials?: SshCredentials | number[];
+  netcat_active_side?: NetcatMode;
+  netcat_active_side_listen_address?: string;
+  netcat_active_side_port_max?: number;
+  netcat_active_side_port_min?: number;
+  netcat_passive_side_connect_address?: string;
+  source_datasets?: string[];
+  target_dataset: string;
+  recursive: boolean;
+  exclude?: string[];
+  properties?: boolean;
+  properties_exclude?: string[];
+  properties_override?: Record<string, unknown>;
+  replicate?: boolean;
+  encryption?: boolean;
+  encryption_key?: string;
+  encryption_key_format?: ReplicationEncryptionKeyFormat;
+  encryption_key_location?: string;
+  periodic_snapshot_tasks?: number[] | PeriodicSnapshotTask[];
+  naming_schema?: string[];
+  also_include_naming_schema?: string[];
+  name_regex?: string;
+  auto: boolean;
+  schedule?: Schedule;
+  restrict_schedule?: Schedule;
+  only_matching_schedule?: boolean;
+  allow_from_scratch?: boolean;
+  readonly?: ReadOnlyMode;
+  hold_pending_snapshots?: boolean;
+  retention_policy: RetentionPolicy;
+  lifetime_value?: number;
+  lifetime_unit?: LifetimeUnit;
+  lifetimes?: Schedule[];
+  compression?: CompressionType;
+  speed_limit?: number;
+  large_block?: boolean;
+  embed?: boolean;
+  compressed?: boolean;
+  retries?: number;
+  logging_level?: LoggingLevel;
+  enabled: boolean;
+}

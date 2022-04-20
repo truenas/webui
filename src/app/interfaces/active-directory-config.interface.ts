@@ -1,3 +1,5 @@
+import { NssInfoType } from 'app/interfaces/active-directory.interface';
+
 export interface ActiveDirectoryConfig {
   allow_dns_updates: boolean;
   allow_trusted_doms: boolean;
@@ -10,17 +12,16 @@ export interface ActiveDirectoryConfig {
   enable: boolean;
   id: number;
   kerberos_principal: string;
-  kerberos_realm: {
-    id: string;
-  };
+  kerberos_realm: number;
   netbiosalias: string[];
   netbiosname: string;
-  nss_info: unknown;
+  nss_info: NssInfoType;
   restrict_pam: boolean;
-  site: unknown;
+  site: string;
   timeout: number;
   use_default_domain: boolean;
   verbose_logging: boolean;
+  job_id?: number;
 }
 
 export interface LeaveActiveDirectory {

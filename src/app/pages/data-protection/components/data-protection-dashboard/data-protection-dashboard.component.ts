@@ -32,7 +32,7 @@ import { EntityUtils } from 'app/modules/entity/utils';
 import { CloudsyncFormComponent } from 'app/pages/data-protection/cloudsync/cloudsync-form/cloudsync-form.component';
 import { ReplicationFormComponent } from 'app/pages/data-protection/replication/replication-form/replication-form.component';
 import { ReplicationWizardComponent } from 'app/pages/data-protection/replication/replication-wizard/replication-wizard.component';
-import { RsyncFormComponent } from 'app/pages/data-protection/rsync/rsync-form/rsync-form.component';
+import { RsyncTaskFormComponent } from 'app/pages/data-protection/rsync-task/rsync-task-form/rsync-task-form.component';
 import { ScrubTaskFormComponent } from 'app/pages/data-protection/scrub-task/scrub-task-form/scrub-task-form.component';
 import { SmartTaskFormComponent } from 'app/pages/data-protection/smart-task/smart-task-form/smart-task-form.component';
 import { SnapshotFormComponent } from 'app/pages/data-protection/snapshot/snapshot-form/snapshot-form.component';
@@ -345,10 +345,11 @@ export class DataProtectionDashboardComponent implements OnInit {
           isActionVisible: this.isActionVisible,
           parent: this,
           add: () => {
-            this.modalService.openInSlideIn(RsyncFormComponent);
+            this.slideInService.open(RsyncTaskFormComponent, { wide: true });
           },
           edit: (row: RsyncTaskUi) => {
-            this.modalService.openInSlideIn(RsyncFormComponent, row.id);
+            const form = this.slideInService.open(RsyncTaskFormComponent, { wide: true });
+            form.setTaskForEdit(row);
           },
           onButtonClick: (row: RsyncTaskUi) => {
             this.stateButton(row);
@@ -887,12 +888,15 @@ export class DataProtectionDashboardComponent implements OnInit {
 
   runningStateButton(jobId: number): void {
     const dialogRef = this.mdDialog.open(EntityJobComponent, {
-      data: { title: this.translate.instant(helptext.task_is_running) },
+      data: { title: helptext.task_is_running },
     });
     dialogRef.componentInstance.jobId = jobId;
     dialogRef.componentInstance.wsshow();
     dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
       dialogRef.close();
+    });
+    dialogRef.componentInstance.aborted.pipe(untilDestroyed(this)).subscribe(() => {
+      this.dialog.info(helptext.task_aborted, '', '300px', 'info', true);
     });
     dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe(() => {
       dialogRef.close();
@@ -902,7 +906,37 @@ export class DataProtectionDashboardComponent implements OnInit {
   stateButton(row: TaskTableRow): void {
     if (row.job) {
       if (row.job.state === JobState.Running) {
-        this.runningStateButton(row.job.id);
+        const dialogRef = this.mdDialog.open(EntityJobComponent, { data: { title: this.translate.instant('Task is running') } });
+        dialogRef.componentInstance.jobId = row.job.id;
+        dialogRef.componentInstance.job = row.job;
+        let subId: string = null;
+        if (row.job.logs_path) {
+          dialogRef.componentInstance.enableRealtimeLogs(true);
+          subId = dialogRef.componentInstance.getRealtimeLogs();
+        }
+        dialogRef.componentInstance.wsshow();
+        dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
+          dialogRef.close();
+          if (subId) {
+            this.ws.unsubscribe('filesystem.file_tail_follow:' + row.job.logs_path);
+            this.ws.unsub('filesystem.file_tail_follow:' + row.job.logs_path, subId);
+          }
+        });
+        dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe(() => {
+          dialogRef.close();
+          if (subId) {
+            this.ws.unsubscribe('filesystem.file_tail_follow:' + row.job.logs_path);
+            this.ws.unsub('filesystem.file_tail_follow:' + row.job.logs_path, subId);
+          }
+        });
+        dialogRef.componentInstance.aborted.pipe(untilDestroyed(this)).subscribe(() => {
+          dialogRef.close();
+          this.dialog.info(this.translate.instant('Task Aborted'), '', '300px', 'info', true);
+          if (subId) {
+            this.ws.unsubscribe('filesystem.file_tail_follow:' + row.job.logs_path);
+            this.ws.unsub('filesystem.file_tail_follow:' + row.job.logs_path, subId);
+          }
+        });
       } else if (row.state.warnings && row.state.warnings.length > 0) {
         let list = '';
         row.state.warnings.forEach((warning: string) => {

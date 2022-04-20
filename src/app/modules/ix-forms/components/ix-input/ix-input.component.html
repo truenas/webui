@@ -40,10 +40,6 @@
   </button>
 </div>
 
-<div *ngIf="linkText">
-  <a (click)="linkClicked.emit()" class="link">{{ linkText | translate }}<mat-icon style="font-size: x-small;">open_in_new</mat-icon></a>
-</div>
-
 <div *ngIf="invalid">
   <mat-error>
     <div [innerHTML]="invalidMessage()"></div>

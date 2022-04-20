@@ -136,13 +136,14 @@ export class NetworkConfigurationComponent implements OnInit {
     label: '',
     tooltip: '',
     options: of([
-      // deny type + empty list
+      // Mismatch between enum and label is expected.
+      // We will send empty list of services when Allow All or Deny All is selected.
+      // I.e. selecting 'Allow All' will send Deny [], effectively allowing all services.
       {
         label: helptext.outbound_network_activity.allow.placeholder,
         value: NetworkActivityType.Deny,
         tooltip: helptext.outbound_network_activity.allow.tooltip,
       },
-      // allow type + empty list
       {
         label: helptext.outbound_network_activity.deny.placeholder,
         value: NetworkActivityType.Allow,

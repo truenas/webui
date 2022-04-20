@@ -37,6 +37,7 @@
 
   &:focus-within {
     border-color: var(--primary);
+    border-width: 1px;
   }
 
   &.disabled {
@@ -90,6 +91,12 @@
 
     &.mat-pseudo-checkbox-checked {
       @include material-icon('check_circle', 'after');
+    }
+  }
+
+  .mat-option {
+    &[aria-disabled=true] {
+      opacity: 0.5;
     }
   }
 }

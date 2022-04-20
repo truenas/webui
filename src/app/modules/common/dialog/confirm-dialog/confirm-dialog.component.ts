@@ -19,7 +19,7 @@ export class ConfirmDialogComponent {
   secondaryCheckBox = false;
   secondaryCheckBoxMsg = '';
   method: ApiMethod;
-  data: string;
+  data: unknown;
   tooltip: string;
   hideCancel = false;
   textToCopy: string;

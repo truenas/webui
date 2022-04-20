@@ -241,7 +241,7 @@ export class NetworkComponent implements OnInit, OnDestroy {
         .subscribe((isHa) => {
           if (isHa) {
             this.ws
-              .call('failover.disabled_reasons')
+              .call('failover.disabled.reasons')
               .pipe(untilDestroyed(this))
               .subscribe((reasons) => {
                 if (reasons.length === 0) {

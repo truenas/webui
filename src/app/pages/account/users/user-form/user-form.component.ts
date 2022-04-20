@@ -60,7 +60,6 @@ export class UserFormComponent {
         () => this.isNew,
         Validators.required,
       ),
-      Validators.pattern(UserService.passwordPattern),
     ]],
     password_conf: ['', [
       this.validatorsService.validateOnCondition(
@@ -252,7 +251,7 @@ export class UserFormComponent {
       groups: user.groups,
       home: user.home,
       locked: user.locked,
-      microsoft_account: user.microsoft_account,
+      microsoft_account: user.builtin ? false : user.microsoft_account,
       password_disabled: user.password_disabled,
       shell: user.shell,
       smb: user.smb,
@@ -270,6 +269,7 @@ export class UserFormComponent {
       this.form.get('home_mode').disable();
       this.form.get('home').disable();
       this.form.get('username').disable();
+      this.form.get('microsoft_account').disable();
     }
 
     this.setNamesInUseValidator(user.username);

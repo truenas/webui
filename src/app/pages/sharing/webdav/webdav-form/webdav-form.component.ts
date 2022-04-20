@@ -63,7 +63,7 @@ export class WebdavFormComponent {
     enabled: helptextSharingWebdav.tooltip_enabled,
   };
 
-  readonly treeNodeProvider = this.filesystemService.getFilesystemNodeProvider();
+  readonly treeNodeProvider = this.filesystemService.getFilesystemNodeProvider({ directoriesOnly: true });
 
   constructor(
     private fb: FormBuilder,

@@ -6,10 +6,8 @@ from selenium.webdriver.common.keys import Keys
 from function import (
     wait_on_element,
     is_element_present,
-    attribute_value_exist,
-    wait_for_attribute_value,
     wait_on_element_disappear,
-    ssh_sudo,
+    ssh_sudo
 )
 from pytest_bdd import (
     given,
@@ -41,6 +39,7 @@ def the_browser_is_open_navigate_to_the_scale_url_and_login(driver, nas_ip, root
     else:
         driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
 
+
 @when('on the dashboard click on Credentials and Local Users')
 def on_the_dashboard_click_on_credentials_and_local_users(driver):
     """on the dashboard click on Credentials and Local Users."""
@@ -68,13 +67,17 @@ def create_new_qetestuser_user_add_to_qatest_group(driver):
     driver.find_element_by_xpath('//input[@ix-auto="input__Confirm Password"]').clear()
     driver.find_element_by_xpath('//input[@ix-auto="input__Confirm Password"]').send_keys('testing')
     assert wait_on_element(driver, 7, '//mat-select[@ix-auto="select__Auxiliary Groups"]', 'clickable')
+    # scroll down to Auxiliary Groups
+    element = driver.find_element_by_xpath('//mat-select[@ix-auto="select__Auxiliary Groups"]')
+    driver.execute_script("arguments[0].scrollIntoView();", element)
+    assert wait_on_element(driver, 7, '//mat-select[@ix-auto="select__Auxiliary Groups"]', 'clickable')
     driver.find_element_by_xpath('//mat-select[@ix-auto="select__Auxiliary Groups"]').click()
     element = driver.find_element_by_xpath('//span[contains(.,"qatest")]')
     # Scroll to qatest
     driver.execute_script("arguments[0].scrollIntoView();", element)
-    assert wait_on_element(driver, 7, '//mat-option[@ix-auto="option__Auxiliary Groups_qatest"]', 'clickable')
+    assert wait_on_element(driver, 15, '//mat-option[@ix-auto="option__Auxiliary Groups_qatest"]', 'clickable')
     driver.find_element_by_xpath('//mat-option[@ix-auto="option__Auxiliary Groups_qatest"]').click()
-    #time.sleep(2)
+    # time.sleep(2)
     driver.find_element_by_xpath('//mat-option[@ix-auto="option__Auxiliary Groups_qatest"]').send_keys(Keys.TAB)
     element = driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]')
     driver.execute_script("arguments[0].scrollIntoView();", element)
@@ -83,6 +86,7 @@ def create_new_qetestuser_user_add_to_qatest_group(driver):
     assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
     assert wait_on_element(driver, 10, '//div[contains(.,"Users")]')
     assert wait_on_element(driver, 10, '//div[contains(.,"qetestuser")]')
+
 
 @then('verify user can ssh in and cannot sudo')
 def verify_user_can_ssh_in_and_cannot_sudo(driver, nas_ip):
@@ -120,7 +124,7 @@ def check_the_enable_sudo_box_and_click_save(driver):
     driver.find_element_by_xpath('//ix-checkbox[@formcontrolname="sudo"]//mat-checkbox').click()
     assert wait_on_element(driver, 7, '//span[contains(text(),"Save")]', 'clickable')
     driver.find_element_by_xpath('//span[contains(text(),"Save")]').click()
-    #give middleware time to actually do its work
+    # give middleware time to actually do its work
     time.sleep(4)
 
 
@@ -131,4 +135,3 @@ def ssh_in_with_qetest_user_and_try_to_sudo(driver, nas_ip):
     cmd = 'ls /'
     sudo_results2 = ssh_sudo(cmd, nas_ip, 'qetestuser', 'testing')
     assert "vmlinuz" in sudo_results2, str(sudo_results2)
-
