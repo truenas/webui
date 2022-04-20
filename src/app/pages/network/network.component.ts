@@ -664,15 +664,23 @@ export class NetworkComponent implements OnInit, OnDestroy {
       return;
     }
 
+    this.loader.open();
     this.ws.call('interface.query', [[['id', '=', state.editInterface]]])
       .pipe(untilDestroyed(this))
-      .subscribe((interfaces) => {
-        if (!interfaces[0]) {
-          return;
-        }
+      .subscribe(
+        (interfaces) => {
+          this.loader.close();
+          if (!interfaces[0]) {
+            return;
+          }
 
-        const form = this.slideInService.open(InterfaceFormComponent);
-        form.setInterfaceForEdit(interfaces[0]);
-      });
+          const form = this.slideInService.open(InterfaceFormComponent);
+          form.setInterfaceForEdit(interfaces[0]);
+        },
+        (error) => {
+          this.loader.close();
+          new EntityUtils().handleWsError(this, error);
+        },
+      );
   }
 }
