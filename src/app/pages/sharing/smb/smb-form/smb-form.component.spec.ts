@@ -357,7 +357,7 @@ describe('SmbFormComponent', () => {
     expect(websocket.call).toHaveBeenCalledWith('sharing.smb.create', [{
       path: '/mnt/pool123/ds222',
       name: 'ds223',
-      purpose: 'ENHANCED_TIMEMACHINE',
+      purpose: SmbPresetType.MultiUserTimeMachine,
       comment: '',
       enabled: true,
       acl: true,
