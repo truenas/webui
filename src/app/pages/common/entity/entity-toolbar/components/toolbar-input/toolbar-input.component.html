@@ -1,6 +1,6 @@
 <div class="toolbar-input form-element" id="row-filter">
   <div class="toolbar-input-placeholder" *ngIf="isShowPlaceholder()">{{ config.placeholder | translate }}</div>
-  <mat-form-field>
+  <mat-form-field title="{{ config.placeholder | translate }}">
     <span matPrefix class="search-icon-wrapper"><mat-icon>search</mat-icon></span>
     <mat-label>{{ config.placeholder | translate }}</mat-label>
     <input
