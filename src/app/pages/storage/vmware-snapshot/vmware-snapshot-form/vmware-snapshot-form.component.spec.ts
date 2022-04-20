@@ -12,7 +12,7 @@ import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-erro
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { DialogService, WebSocketService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { VmwareSnapshotFormComponent } from './vmware-snapshot-task.component';
+import { VmwareSnapshotFormComponent } from './vmware-snapshot-form.component';
 
 describe('VmwareSnapshotFormComponent', () => {
   const existingSnapshot = {
