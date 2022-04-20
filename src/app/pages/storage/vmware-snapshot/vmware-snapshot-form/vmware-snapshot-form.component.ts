@@ -156,38 +156,26 @@ export class VmwareSnapshotFormComponent implements OnInit {
       ]);
     }
 
-    // Looks for a mismatch and raises a confirm dialog if there is one; otherwise saves w/o the dialog
-    const dataStoreMatch = this.datastoreList.find((datastore) => datastore.name === values.datastore);
-    if (
-      !dataStoreMatch
-      || (dataStoreMatch.name === values.datastore && dataStoreMatch.filesystems[0] !== values.filesystem)
-    ) {
-      const fileSystemObj = this.filesystemList.find((item) => item.name === values.filesystem);
-      const datastoreObj = this.datastoreList.find((item) => item.name === values.datastore);
+    const datastoreObj = this.datastoreList.find((datastore) => datastore.name === values.datastore);
+    const fileSystemObj = this.filesystemList.find((filesystem) => filesystem.name === values.filesystem);
 
-      this.dialogService.confirm({
-        title: this.translate.instant('Are you sure?'),
-        message: this.translate.instant(
-          'The filesystem {filesystemName} is {filesystemDescription}, but datastore {datastoreName} is {datastoreDescription}. Is this correct?',
-          {
-            filesystemName: fileSystemObj.name,
-            filesystemDescription: fileSystemObj.description,
-            datastoreName: datastoreObj.name,
-            datastoreDescription: datastoreObj.description || this.translate.instant('(No description)'),
-          },
-        ),
-        hideCheckBox: true,
-      }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
-        request$.pipe(untilDestroyed(this)).subscribe(() => {
-          this.isLoading = false;
-          this.slideInService.close();
-        }, (error) => {
-          this.isLoading = false;
-          this.errorHandler.handleWsFormError(error, this.form);
-          this.cdr.markForCheck();
-        });
-      });
-    } else {
+    (
+      datastoreObj.filesystems[0] !== values.filesystem
+        ? this.dialogService.confirm({
+          title: this.translate.instant('Are you sure?'),
+          message: this.translate.instant(
+            'The filesystem {filesystemName} is {filesystemDescription}, but datastore {datastoreName} is {datastoreDescription}. Is this correct?',
+            {
+              filesystemName: fileSystemObj.name,
+              filesystemDescription: fileSystemObj.description || this.translate.instant('(No description)'),
+              datastoreName: datastoreObj.name,
+              datastoreDescription: datastoreObj.description || this.translate.instant('(No description)'),
+            },
+          ),
+          hideCheckBox: true,
+        })
+        : of(true)
+    ).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
       request$.pipe(untilDestroyed(this)).subscribe(() => {
         this.isLoading = false;
         this.slideInService.close();
@@ -196,6 +184,6 @@ export class VmwareSnapshotFormComponent implements OnInit {
         this.errorHandler.handleWsFormError(error, this.form);
         this.cdr.markForCheck();
       });
-    }
+    });
   }
 }
