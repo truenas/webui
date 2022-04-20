@@ -1,5 +1,11 @@
 export interface DynamicFormSchema {
   name: string;
+  description: string;
+  schema: DynamicFormSchemaNode[];
+}
+
+export interface DynamicFormSchemaNode {
+  name: string;
   type: string;
   title?: string;
   show_if?: string[];
