@@ -20,8 +20,37 @@ from pytest_bdd import (
 
 
 @scenario('features/NAS-T1124.feature', 'Create an smb share with the tank ACL dataset')
-def test_create_an_smb_share_with_the_tank_acl_dataset():
+def test_create_an_smb_share_with_the_tank_acl_dataset(driver):
     """Create an smb share with the tank ACL dataset."""
+    # Disable the AD
+    assert wait_on_element(driver, 7, '//mat-list-item[@ix-auto="option__Credentials"]', 'clickable')
+    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Credentials"]').click()
+    assert wait_on_element(driver, 7, '//*[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Directory Services"]', 'clickable')
+    driver.find_element_by_xpath('//*[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Directory Services"]').click()
+    """the Directory Services page should open, then click LDAP settings button."""
+    # Verify the page is starting to load
+    assert wait_on_element(driver, 5, '//h1[text()="Directory Services"]')
+    time.sleep(1)
+    # First we have to disable AD
+    assert wait_on_element(driver, 5, '//mat-card//span[contains(text(),"Settings")]', 'clickable')
+    driver.find_element_by_xpath('//mat-card//span[contains(text(),"Settings")]').click()
+    # Verify the box is starting to load
+    assert wait_on_element(driver, 5, '//h3[text()="Active Directory"]')
+    assert wait_on_element(driver, 5, '//mat-checkbox[contains(@ix-auto, "Enable (requires password")]', 'clickable')
+    checkbox_checked = attribute_value_exist(driver, '//mat-checkbox[contains(@ix-auto, "Enable (requires password")]', 'class', 'mat-checkbox-checked')
+    assert wait_on_element(driver, 5, '//mat-card//span[contains(text(),"Settings")]', 'clickable')
+    driver.find_element_by_xpath('//mat-card//span[contains(text(),"Settings")]').click()
+    # Verify the box is starting to load
+    assert wait_on_element(driver, 5, '//h3[text()="Active Directory"]')
+    assert wait_on_element(driver, 5, '//mat-checkbox[contains(@ix-auto, "Enable (requires password")]', 'clickable')
+    checkbox_checked = attribute_value_exist(driver, '//mat-checkbox[contains(@ix-auto, "Enable (requires password")]', 'class', 'mat-checkbox-checked')
+    # The checkbox should be checked
+    if checkbox_checked:
+        driver.find_element_by_xpath('//mat-checkbox[contains(@ix-auto, "Enable (requires password")]').click()
+    assert wait_on_element(driver, 5, '//span[contains(text(),"Save")]', 'clickable')
+    driver.find_element_by_xpath('//span[contains(text(),"Save")]').click()
+    assert wait_on_element_disappear(driver, 15, '//h6[contains(.,"Please wait")]')
+    assert wait_on_element(driver, 10, '//h3[text()="Active Directory and LDAP are disabled."]')
 
 
 @given('the browser is open, the FreeNAS URL and logged in')
