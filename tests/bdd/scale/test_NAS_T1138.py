@@ -5,8 +5,7 @@ import time
 from function import (
     wait_on_element,
     is_element_present,
-    attribute_value_exist,
-    wait_on_element_disappear,
+    wait_on_element_disappear
 )
 from pytest_bdd import (
     given,
@@ -82,8 +81,7 @@ def please_wait_should_appear_and_the_nopeer1_zvol_should_be_created(driver):
     """Please wait should appear, And the nopeer1 zvol should be created."""
     assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
     assert wait_on_element(driver, 10, '//div[contains(.,"nopeer1")]')
-    ## return to dashboard
+    # return to dashboard
     assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Dashboard"]', 'clickable')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
     time.sleep(1)
-
