@@ -71,6 +71,9 @@ export default {
   bridge_members_placeholder: T('Bridge Members'),
   bridge_members_tooltip: T('Network interfaces to include in the bridge.'),
 
+  bridge_stp_placeholder: T('STP'),
+  bridge_stp_tooltip: T('Enable/Disable STP on the bridge interfaces configurable.'),
+
   failover_critical_placeholder: T('Critical'),
   failover_critical_tooltip: T('Interfaces marked <i>critical</i> are\
  considered necessary for normal operation. When the last critical\

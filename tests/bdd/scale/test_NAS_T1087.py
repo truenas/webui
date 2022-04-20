@@ -60,8 +60,8 @@ def the_users_page_should_open_click_the_greaterthansign_right_of_the_users(driv
 @then('the User Field should expand down, click the Edit button')
 def the_user_field_should_expand_down_click_the_edit_button(driver):
     """the User Field should expand down, click the Edit button."""
-    assert wait_on_element(driver, 10, '(//tr[contains(.,"ericbsd")]/following-sibling::tr)[1]//button[contains(.,"Edit")]', 'clickable')
-    driver.find_element_by_xpath('(//tr[contains(.,"ericbsd")]/following-sibling::tr)[1]//button[contains(.,"Edit")]').click()
+    assert wait_on_element(driver, 10, '(//tr[contains(.,"ericbsd")]/following-sibling::user-details-row)[1]//button[contains(.,"Edit")]', 'clickable')
+    driver.find_element_by_xpath('(//tr[contains(.,"ericbsd")]/following-sibling::user-details-row)[1]//button[contains(.,"Edit")]').click()
 
 
 @then('the User Edit Page should open, change the user email "eturgeon@ixsystems.com" and click save')
@@ -69,13 +69,13 @@ def the_user_edit_page_should_open_change_the_user_email_eturgeonixsystemscom_an
     """the User Edit Page should open, change the user email "eturgeon@ixsystems.com" and click save."""
     assert wait_on_element(driver, 10, '//h3[contains(.,"Edit User")]')
     assert wait_on_element_disappear(driver, 10, '//h6[contains(.,"Please wait")]')
-    assert wait_on_element(driver, 7, '//input[@ix-auto="input__Email"]', 'inputable')
-    driver.find_element_by_xpath('//input[@ix-auto="input__Email"]').clear()
-    driver.find_element_by_xpath('//input[@ix-auto="input__Email"]').send_keys("eturgeon@ixsystems.com")
-    assert wait_on_element(driver, 10, '//button[@ix-auto="button__SAVE"]', 'clickable')
-    element = driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]')
+    assert wait_on_element(driver, 7, '//ix-input[@formcontrolname="email"]//input', 'inputable')
+    driver.find_element_by_xpath('//ix-input[@formcontrolname="email"]//input').clear()
+    driver.find_element_by_xpath('//ix-input[@formcontrolname="email"]//input').send_keys("eturgeon@ixsystems.com")
+    assert wait_on_element(driver, 10, '//button[span[contains(.,"Save")]]', 'clickable')
+    element = driver.find_element_by_xpath('//button[span[contains(.,"Save")]]')
     driver.execute_script("arguments[0].scrollIntoView();", element)
-    driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
+    driver.find_element_by_xpath('//button[span[contains(.,"Save")]]').click()
 
 
 @then('change should be saved, open the user dropdown, the email value should be visible')

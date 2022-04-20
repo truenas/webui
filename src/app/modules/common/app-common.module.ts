@@ -1,3 +1,4 @@
+import { PortalModule } from '@angular/cdk/portal';
 import { ScrollingModule } from '@angular/cdk/scrolling';
 import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
@@ -63,6 +64,7 @@ import { ThemeService } from 'app/services/theme/theme.service';
     FlexLayoutModule,
     CommonDirectivesModule,
     TranslateModule,
+    PortalModule,
     IxFormsModule,
     MatIconModule,
     MatMenuModule,

@@ -74,6 +74,8 @@ def the_directory_services_page_should_open_then_click_ldap_settings_button(driv
     assert wait_on_element(driver, 5, '//span[contains(text(),"Save")]', 'clickable')
     driver.find_element_by_xpath('//span[contains(text(),"Save")]').click()
     assert wait_on_element_disappear(driver, 15, '//h6[contains(.,"Please wait")]')
+    # Make sure Active Directory and LDAP are both disabled
+    assert wait_on_element(driver, 10, '//h3[text()="Active Directory and LDAP are disabled."]')
     assert wait_on_element(driver, 7, '//span[contains(text(),"Configure LDAP")]', 'clickable')
     driver.find_element_by_xpath('//span[contains(text(),"Configure LDAP")]').click()
     # Verify the LDAP box is starting to load

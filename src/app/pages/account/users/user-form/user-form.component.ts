@@ -60,7 +60,6 @@ export class UserFormComponent {
         () => this.isNew,
         Validators.required,
       ),
-      Validators.pattern(UserService.passwordPattern),
     ]],
     password_conf: ['', [
       this.validatorsService.validateOnCondition(

@@ -1,12 +1,20 @@
+import { AclMode } from 'app/enums/acl-type.enum';
+import {
+  DatasetAclType, DatasetRecordSize, DatasetSnapdir, DatasetSync,
+} from 'app/enums/dataset.enum';
+import { DeduplicationSetting } from 'app/enums/deduplication-setting.enum';
+import { OnOff } from 'app/enums/on-off.enum';
+import { WithInherit } from 'app/enums/with-inherit.enum';
+
 export interface DatasetFormData {
   name: string;
-  acltype?: string;
+  acltype?: DatasetAclType;
   comments: string;
-  sync: string;
+  sync: DatasetSync;
   compression: string;
-  atime: string;
+  atime: WithInherit<OnOff>;
   share_type: string;
-  aclmode?: string;
+  aclmode?: AclMode;
   refquota: number;
   refquota_unit?: string;
   quota: number;
@@ -15,12 +23,12 @@ export interface DatasetFormData {
   refreservation_unit?: string;
   reservation: number;
   reservation_unit?: string;
-  deduplication: string;
-  exec: string;
-  readonly: string;
-  snapdir: string;
-  copies: string;
-  recordsize: string;
+  deduplication: DeduplicationSetting;
+  exec: WithInherit<OnOff>;
+  readonly: WithInherit<OnOff>;
+  snapdir: DatasetSnapdir;
+  copies: WithInherit<number>;
+  recordsize: WithInherit<DatasetRecordSize>;
   casesensitivity: string;
   quota_warning: number;
   quota_warning_inherit: boolean;

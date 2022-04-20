@@ -570,7 +570,7 @@ export class UpdateComponent implements OnInit {
     this.ds.componentInstance.isSubmitEnabled = true;
     this.ds.afterClosed().pipe(untilDestroyed(this)).subscribe((status) => {
       if (status) {
-        if (!(this.ds.componentInstance.data[0] as any).reboot) {
+        if (!(this.ds.componentInstance.data as [{ reboot: boolean }])[0].reboot) {
           this.dialogRef = this.dialog.open(EntityJobComponent, { data: { title: this.updateTitle } });
           this.dialogRef.componentInstance.setCall('update.download');
           this.dialogRef.componentInstance.submit();
