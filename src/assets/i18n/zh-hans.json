@@ -213,6 +213,7 @@
   "Token is required. Please login to get one!": "",
   "TrueNAS was unable to reach update servers.": "",
   "TrueNAS {product} is Free and <a href=\"https://github.com/truenas/\" target=\"_blank\"> Open Source</a> software, which is provided as-is with no warranty.": "",
+  "Unit": "",
   "Unknown PID": "",
   "Use compressed WRITE records to make the  stream more efficient. The destination system must also support  compressed WRITE records. See  <a href=\"https://linux.die.net/man/8/zfs\"  target=\"_blank\">zfs(8)</a>.": "",
   "Use this option to allow legacy SMB clients to connect to the  server. Note that SMB1 is being deprecated and it is advised  to upgrade clients to operating system versions that support  modern versions of the SMB protocol.": "",
