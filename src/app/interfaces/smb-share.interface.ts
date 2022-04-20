@@ -20,7 +20,7 @@ export interface SmbShare {
   name: string;
   path: string;
   path_suffix: string;
-  purpose: SmbPresetType; // Possibly enum: "DEFAULT_SHARE"
+  purpose: SmbPresetType;
   recyclebin: boolean;
   ro: boolean;
   shadowcopy: boolean;

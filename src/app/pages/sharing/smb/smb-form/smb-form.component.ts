@@ -28,7 +28,6 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
 @Component({
-  selector: 'smb-form',
   templateUrl: './smb-form.component.html',
   styleUrls: ['./smb-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -40,7 +39,7 @@ export class SmbFormComponent implements OnInit {
   existingSmbShare: SmbShare;
   readonly helptextSharingSmb = helptextSharingSmb;
   productType = localStorage.getItem('product_type') as ProductType;
-  private wasStipAclWarningShown = false;
+  private wasStripAclWarningShown = false;
 
   title: string = helptextSharingSmb.formTitleAdd;
 
@@ -107,36 +106,28 @@ export class SmbFormComponent implements OnInit {
     this.setupPurposePresets();
     this.getUnusableNamesForShare();
 
-    this.form.get('purpose').valueChanges.pipe(untilDestroyed(this)).subscribe(
-      (value: string) => {
-        this.clearPresets();
-        this.setValuesFromPreset(value);
-      },
-    );
+    this.setupPurposeControl();
+    this.setupAfpWarning();
 
-    this.form.get('afp').valueChanges.pipe(untilDestroyed(this)).subscribe((value: boolean) => {
-      this.afpConfirmEnable(value);
-    });
+    this.setupPathControl();
 
-    this.form.get('path').valueChanges
-      .pipe(
-        debounceTime(50),
-        tap(() => this.setNameFromPath()),
-        untilDestroyed(this),
-      )
-      .subscribe((path) => {
-        this.checkAndShowStripAclWarning(path, this.form.get('acl').value);
-      });
+    this.setupAclControl();
 
+    this.setupMangleWarning();
+  }
+
+  setupAclControl(): void {
     this.form.get('acl').valueChanges
       .pipe(debounceTime(100), untilDestroyed(this))
       .subscribe((acl) => {
         this.checkAndShowStripAclWarning(this.form.get('path').value, acl);
       });
+  }
 
+  setupMangleWarning(): void {
     this.form.get('aapl_name_mangling').valueChanges.pipe(
       filter((value) => value !== this.existingSmbShare?.aapl_name_mangling),
-      take(1), // instead of mangleWarningSent
+      take(1),
       switchMap(() => this.dialog.confirm({
         title: helptextSharingSmb.manglingDialog.title,
         message: helptextSharingSmb.manglingDialog.message,
@@ -146,6 +137,33 @@ export class SmbFormComponent implements OnInit {
       })),
       untilDestroyed(this),
     ).subscribe();
+  }
+
+  setupPathControl(): void {
+    this.form.get('path').valueChanges
+      .pipe(
+        debounceTime(50),
+        tap(() => this.setNameFromPath()),
+        untilDestroyed(this),
+      )
+      .subscribe((path) => {
+        this.checkAndShowStripAclWarning(path, this.form.get('acl').value);
+      });
+  }
+
+  setupAfpWarning(): void {
+    this.form.get('afp').valueChanges.pipe(untilDestroyed(this)).subscribe((value: boolean) => {
+      this.afpConfirmEnable(value);
+    });
+  }
+
+  setupPurposeControl(): void {
+    this.form.get('purpose').valueChanges.pipe(untilDestroyed(this)).subscribe(
+      (value: string) => {
+        this.clearPresets();
+        this.setValuesFromPreset(value);
+      },
+    );
   }
 
   setNameFromPath(): void {
@@ -162,12 +180,12 @@ export class SmbFormComponent implements OnInit {
   }
 
   checkAndShowStripAclWarning(path: string, aclValue: boolean): void {
-    if (this.wasStipAclWarningShown || !path || aclValue) {
+    if (this.wasStripAclWarningShown || !path || aclValue) {
       return;
     }
     this.ws.call('filesystem.acl_is_trivial', [path]).pipe(untilDestroyed(this)).subscribe((aclIsTrivial) => {
       if (!aclIsTrivial) {
-        this.wasStipAclWarningShown = true;
+        this.wasStripAclWarningShown = true;
         this.showStripAclWarning();
       }
     });
