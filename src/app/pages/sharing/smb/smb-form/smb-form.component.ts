@@ -287,6 +287,9 @@ export class SmbFormComponent implements OnInit {
           } else {
             this.dialog.errorReport(err.error, err.reason, err.trace.formatted);
           }
+          this.isLoading = false;
+          this.cdr.markForCheck();
+          this.slideInService.close();
         }, () => {
           this.isLoading = false;
           this.cdr.markForCheck();
@@ -301,7 +304,7 @@ export class SmbFormComponent implements OnInit {
     });
   }
 
-  shouldServiceRestart(): Observable<boolean> {
+  shouldServiceRestart = (): Observable<boolean> => {
     if (this.shouldEnableTimemachineService) {
       return this.dialog.confirm({
         title: helptextSharingSmb.restart_smb_dialog.title,
@@ -319,9 +322,9 @@ export class SmbFormComponent implements OnInit {
       );
     }
     return this.warnIfHostsAllowDenyAreChanged();
-  }
+  };
 
-  warnIfHostsAllowDenyAreChanged(): Observable<boolean> {
+  warnIfHostsAllowDenyAreChanged = (): Observable<boolean> => {
     if (this.hasHostAllowDenyChanged) {
       return this.dialog.confirm({
         title: helptextSharingSmb.restart_smb_dialog.title,
@@ -332,9 +335,9 @@ export class SmbFormComponent implements OnInit {
       });
     }
     return of(false);
-  }
+  };
 
-  restartServices(): Observable<boolean> {
+  restartServices = (): Observable<boolean> => {
     this.loader.open();
     return this.ws.call(
       'service.restart',
@@ -348,20 +351,19 @@ export class SmbFormComponent implements OnInit {
           '250px',
         );
       }),
-      untilDestroyed(this),
     );
-  }
+  };
 
-  shouldEnableServiceAutomaticRestart(): Observable<Service> {
+  shouldEnableServiceAutomaticRestart = (): Observable<Service> => {
     return this.ws.call('pool.dataset.path_in_locked_datasets', [this.form.get('path').value]).pipe(
       filter((pathInLockedDatasets) => !pathInLockedDatasets),
       switchMap(() => this.ws.call('service.query')),
       map((services) => _.find(services, { service: ServiceName.Cifs })),
       filter((cifsService) => !cifsService.enable),
     );
-  }
+  };
 
-  shouldStartAndUpdateCifsService(cifsService: Service): Observable<boolean> {
+  shouldStartAndUpdateCifsService = (cifsService: Service): Observable<boolean> => {
     return this.dialog.confirm({
       title: shared.dialog_title,
       message: shared.dialog_message,
@@ -390,9 +392,9 @@ export class SmbFormComponent implements OnInit {
         );
       }),
     );
-  }
+  };
 
-  shouldRedirectToAclEdit(): Observable<boolean> {
+  shouldRedirectToAclEdit = (): Observable<boolean> => {
     const sharePath: string = this.form.get('path').value;
     const homeShare = this.form.get('home').value;
 
@@ -405,5 +407,5 @@ export class SmbFormComponent implements OnInit {
       return of(false);
     }
     return of(true);
-  }
+  };
 }

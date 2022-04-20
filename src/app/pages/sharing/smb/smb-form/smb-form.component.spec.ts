@@ -164,11 +164,8 @@ describe('SmbFormComponent', () => {
     expect(optionLabels).toEqual([
       '--',
       'No presets',
-      'Default share parameters',
       'Multi-user time machine',
-      'Multi-protocol (NFSv3/SMB) shares',
       'Private SMB Datasets and Shares',
-      'SMB WORM. Files become readonly via SMB after 5 minutes',
     ]);
   });
 
@@ -273,6 +270,14 @@ describe('SmbFormComponent', () => {
     await pathControl.setValue('/mnt/pool2/ds22');
 
     expect(await nameControl.getValue()).toEqual('ds22');
+
+    expect(spectator.inject(DialogService).confirm).toHaveBeenNthCalledWith(3, {
+      title: helptextSharingSmb.stripACLDialog.title,
+      message: helptextSharingSmb.stripACLDialog.message,
+      hideCheckBox: true,
+      buttonMsg: helptextSharingSmb.stripACLDialog.button,
+      hideCancel: true,
+    });
   });
 
   it('should show strip acl warning if acl is trivial when path changes', async () => {
@@ -287,7 +292,7 @@ describe('SmbFormComponent', () => {
     const aclCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: formLabels.acl }));
     await (await aclCheckbox.getMatCheckboxHarness()).uncheck();
 
-    expect(spectator.inject(DialogService).confirm).toHaveBeenNthCalledWith(3, {
+    expect(spectator.inject(DialogService).confirm).toHaveBeenNthCalledWith(4, {
       title: helptextSharingSmb.stripACLDialog.title,
       message: helptextSharingSmb.stripACLDialog.message,
       hideCheckBox: true,
@@ -309,7 +314,7 @@ describe('SmbFormComponent', () => {
     const aclCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: formLabels.acl }));
     await (await aclCheckbox.getMatCheckboxHarness()).uncheck();
 
-    expect(spectator.inject(DialogService).confirm).toHaveBeenNthCalledWith(4, {
+    expect(spectator.inject(DialogService).confirm).toHaveBeenNthCalledWith(5, {
       title: helptextSharingSmb.stripACLDialog.title,
       message: helptextSharingSmb.stripACLDialog.message,
       hideCheckBox: true,
@@ -336,6 +341,15 @@ describe('SmbFormComponent', () => {
     await form.fillForm({
       ...attrs,
     });
+
+    expect(spectator.inject(DialogService).confirm)
+      .toHaveBeenNthCalledWith(6, {
+        title: helptextSharingSmb.stripACLDialog.title,
+        message: helptextSharingSmb.stripACLDialog.message,
+        hideCheckBox: true,
+        buttonMsg: helptextSharingSmb.stripACLDialog.button,
+        hideCancel: true,
+      });
 
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
@@ -364,13 +378,14 @@ describe('SmbFormComponent', () => {
       auxsmbconf: '',
     }]);
 
-    expect(spectator.inject(DialogService).confirm).toHaveBeenNthCalledWith(5, {
-      title: helptextSharingSmb.restart_smb_dialog.title,
-      message: helptextSharingSmb.restart_smb_dialog.message_time_machine,
-      hideCheckBox: true,
-      buttonMsg: helptextSharingSmb.restart_smb_dialog.title,
-      cancelMsg: helptextSharingSmb.restart_smb_dialog.cancel_btn,
-    });
+    expect(spectator.inject(DialogService).confirm)
+      .toHaveBeenNthCalledWith(7, {
+        title: helptextSharingSmb.restart_smb_dialog.title,
+        message: helptextSharingSmb.restart_smb_dialog.message_time_machine,
+        hideCheckBox: true,
+        buttonMsg: helptextSharingSmb.restart_smb_dialog.title,
+        cancelMsg: helptextSharingSmb.restart_smb_dialog.cancel_btn,
+      });
 
     expect(websocket.call).toHaveBeenCalledWith('service.restart', [ServiceName.Cifs]);
 
@@ -390,23 +405,25 @@ describe('SmbFormComponent', () => {
       [pathValue],
     );
 
-    expect(websocket.call).toHaveBeenCalledWith('service.query', []);
+    expect(websocket.call).toHaveBeenCalledWith('service.query');
 
-    expect(spectator.inject(DialogService).confirm).toHaveBeenNthCalledWith(6, {
-      title: shared.dialog_title,
-      message: shared.dialog_message,
-      hideCheckBox: true,
-      buttonMsg: shared.dialog_button,
-    });
+    expect(spectator.inject(DialogService).confirm)
+      .toHaveBeenNthCalledWith(8, {
+        title: shared.dialog_title,
+        message: shared.dialog_message,
+        hideCheckBox: true,
+        buttonMsg: shared.dialog_button,
+      });
 
     expect(spectator.inject(MockWebsocketService).call).toHaveBeenCalledWith('service.update', [4, { enable: true }]);
     expect(spectator.inject(MockWebsocketService).call).toHaveBeenCalledWith('service.start', [ServiceName.Cifs]);
-    expect(spectator.inject(DialogService).info).toHaveBeenNthCalledWith(
-      2,
-      'SMB Service',
-      'The SMB service has been enabled.',
-      '250px',
-      'info',
-    );
+    expect(spectator.inject(DialogService).info)
+      .toHaveBeenNthCalledWith(
+        2,
+        'SMB Service',
+        'The SMB service has been enabled.',
+        '250px',
+        'info',
+      );
   });
 });
