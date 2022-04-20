@@ -12,9 +12,9 @@ import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-erro
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { DialogService, WebSocketService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { VmwareSnapshotTaskComponent } from './vmware-snapshot-task.component';
+import { VmwareSnapshotFormComponent } from './vmware-snapshot-task.component';
 
-describe('VmwareSnapshotTaskComponent', () => {
+describe('VmwareSnapshotFormComponent', () => {
   const existingSnapshot = {
     id: 1,
     datastore: 'ds01',
@@ -24,11 +24,11 @@ describe('VmwareSnapshotTaskComponent', () => {
     username: 'root',
   } as VmwareSnapshot;
 
-  let spectator: Spectator<VmwareSnapshotTaskComponent>;
+  let spectator: Spectator<VmwareSnapshotFormComponent>;
   let loader: HarnessLoader;
   let form: IxFormHarness;
   const createComponent = createComponentFactory({
-    component: VmwareSnapshotTaskComponent,
+    component: VmwareSnapshotFormComponent,
     imports: [
       IxFormsModule,
       ReactiveFormsModule,

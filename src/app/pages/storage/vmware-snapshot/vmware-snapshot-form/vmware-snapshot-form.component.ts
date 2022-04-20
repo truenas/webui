@@ -9,8 +9,7 @@ import { Observable, of } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import helptext from 'app/helptext/storage/vmware-snapshot/vmware-snapshot';
 import {
-  MatchDatastoresWithDatasets,
-  MatchDatastoresWithDatasetsParams, VmwareDatastore, VmwareFilesystem, VmwareSnapshot, VmwareSnapshotUpdate,
+  MatchDatastoresWithDatasets, VmwareDatastore, VmwareFilesystem, VmwareSnapshot, VmwareSnapshotUpdate,
 } from 'app/interfaces/vmware.interface';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
@@ -19,11 +18,11 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
 @Component({
-  templateUrl: './vmware-snapshot-task.component.html',
-  styleUrls: ['./vmware-snapshot-task.component.scss'],
+  templateUrl: './vmware-snapshot-form.component.html',
+  styleUrls: ['./vmware-snapshot-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class VmwareSnapshotTaskComponent implements OnInit {
+export class VmwareSnapshotFormComponent implements OnInit {
   get isNew(): boolean {
     return !this.editingSnapshot;
   }
@@ -100,45 +99,47 @@ export class VmwareSnapshotTaskComponent implements OnInit {
   onFetchDataStores(): void {
     const { hostname, username, password } = this.form.value;
 
-    if (hostname && username && password) {
-      this.isLoading = true;
-      this.ws.call('vmware.match_datastores_with_datasets', [{
-        hostname,
-        username,
-        password,
-      } as MatchDatastoresWithDatasetsParams]).pipe(untilDestroyed(this)).subscribe(
-        (res: MatchDatastoresWithDatasets) => {
-          this.isLoading = false;
-          this.filesystemList = res.filesystems;
-          this.datastoreList = res.datastores;
-
-          this.filesystemOptions$ = of(
-            this.filesystemList.map((filesystem) => ({
-              label: filesystem.name,
-              value: filesystem.name,
-            })),
-          );
-
-          this.datastoreOptions$ = of(
-            this.datastoreList.map((datastore) => ({
-              label: datastore.name,
-              value: datastore.name,
-            })),
-          );
-          this.cdr.markForCheck();
-        },
-        (error) => {
-          this.isLoading = false;
-          this.datastoreOptions$ = of([]);
-          if (error.reason && error.reason.includes('[ETIMEDOUT]')) {
-            this.dialogService.errorReport(helptext.connect_err_dialog.title, helptext.connect_err_dialog.msg);
-          } else {
-            new EntityUtils().handleWsError(null, error, this.dialogService);
-          }
-          this.cdr.markForCheck();
-        },
-      );
+    if (!hostname || !username || !password) {
+      return;
     }
+
+    this.isLoading = true;
+    this.ws.call('vmware.match_datastores_with_datasets', [{
+      hostname,
+      username,
+      password,
+    }]).pipe(untilDestroyed(this)).subscribe(
+      (res: MatchDatastoresWithDatasets) => {
+        this.isLoading = false;
+        this.filesystemList = res.filesystems;
+        this.datastoreList = res.datastores;
+
+        this.filesystemOptions$ = of(
+          this.filesystemList.map((filesystem) => ({
+            label: filesystem.name,
+            value: filesystem.name,
+          })),
+        );
+
+        this.datastoreOptions$ = of(
+          this.datastoreList.map((datastore) => ({
+            label: datastore.name,
+            value: datastore.name,
+          })),
+        );
+        this.cdr.markForCheck();
+      },
+      (error) => {
+        this.isLoading = false;
+        this.datastoreOptions$ = of([]);
+        if (error.reason && error.reason.includes('[ETIMEDOUT]')) {
+          this.dialogService.errorReport(helptext.connect_err_dialog.title, helptext.connect_err_dialog.msg);
+        } else {
+          new EntityUtils().handleWsError(null, error, this.dialogService);
+        }
+        this.cdr.markForCheck();
+      },
+    );
   }
 
   onSubmit(): void {
