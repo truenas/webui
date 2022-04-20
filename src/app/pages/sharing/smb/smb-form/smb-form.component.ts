@@ -6,9 +6,7 @@ import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import _ from 'lodash';
-import {
-  combineLatest, Observable, of,
-} from 'rxjs';
+import { Observable, of } from 'rxjs';
 import {
   debounceTime, filter, map, switchMap, take, tap,
 } from 'rxjs/operators';
@@ -388,20 +386,14 @@ export class SmbFormComponent implements OnInit {
       hideCheckBox: true,
       buttonMsg: shared.dialog_button,
     }).pipe(
-      switchMap((confirm) => combineLatest([of(cifsService), of(confirm)])),
-      filter(([, confirm]) => confirm),
+      filter((confirm) => confirm),
       switchMap(
-        ([cifsService]) => this.ws.call(
+        () => this.ws.call(
           'service.update',
           [cifsService.id, { enable: true }],
-        ).pipe(switchMap(() => of(cifsService))),
-      ),
-      switchMap(
-        (cifsService) => this.ws.call(
-          'service.start',
-          [cifsService.service],
         ),
       ),
+      switchMap(() => this.ws.call('service.start', [cifsService.service])),
       switchMap(() => {
         return this.dialog.info(
           this.translate.instant('{service} Service', { service: 'SMB' }),
