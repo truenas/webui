@@ -20,6 +20,8 @@
 
   input.mat-input-element {
     height: 18px;
+    white-space: nowrap;
+    width: calc(100% - 37px);
   }
 }
 
