@@ -24,7 +24,6 @@ export class SmbListComponent implements EntityTableConfig {
   queryCall = 'sharing.smb.query' as const;
   updateCall = 'sharing.smb.update' as const;
   wsDelete = 'sharing.smb.delete' as const;
-  shares: SmbShare[];
   routeAdd: string[] = ['sharing', 'smb', 'add'];
   routeAddTooltip = this.translate.instant('Add Windows (SMB) Share');
   protected routeDelete: string[] = ['sharing', 'smb', 'delete'];
@@ -75,7 +74,6 @@ export class SmbListComponent implements EntityTableConfig {
 
   afterInit(entityList: EntityTableComponent): void {
     this.entityList = entityList;
-    this.shares = entityList.rows;
   }
 
   doAdd(): void {
@@ -87,7 +85,7 @@ export class SmbListComponent implements EntityTableConfig {
 
   doEdit(id: string | number): void {
     const form = this.slideInService.open(SmbFormComponent);
-    form.setSmbShareForEdit(this.shares.find((share) => share.id === id));
+    form.setSmbShareForEdit(this.entityList.rows.find((share) => share.id === id));
     this.slideInService.onClose$.pipe(take(1), untilDestroyed(this)).subscribe(() => {
       this.entityList.getData();
     });
