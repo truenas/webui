@@ -40,7 +40,7 @@ import { SmartResultsComponent } from 'app/pages/storage/disks/smart-results/sma
 import { ImportDiskComponent } from 'app/pages/storage/import-disk/import-disk.component';
 import { SnapshotsModule } from 'app/pages/storage/snapshots/snapshots.module';
 import { VmwareSnapshotListComponent } from 'app/pages/storage/vmware-snapshot/vmware-snapshot-list/vmware-snapshot-list.component';
-import { VmwareSnapshotFormComponent } from 'app/pages/storage/vmware-snapshot/vmware-snapshot/vmware-snapshot-form.component';
+import { VmwareSnapshotTaskComponent } from 'app/pages/storage/vmware-snapshot/vmware-snapshot-task/vmware-snapshot-task.component';
 import { DatasetFormComponent } from 'app/pages/storage/volumes/datasets/dataset-form/dataset-form.component';
 import { DatasetQuotasGrouplistComponent } from 'app/pages/storage/volumes/datasets/dataset-quotas/dataset-quotas-grouplist/dataset-quotas-grouplist.component';
 import { GroupQuotaFormComponent } from 'app/pages/storage/volumes/datasets/dataset-quotas/dataset-quotas-grouplist/group-quota-form/group-quota-form.component';
@@ -144,7 +144,7 @@ import { routing } from './storage.routing';
     UnlockDialogComponent,
     UserQuotaFormComponent,
     VdevComponent,
-    VmwareSnapshotFormComponent,
+    VmwareSnapshotTaskComponent,
     VmwareSnapshotListComponent,
     VolumeImportWizardComponent,
     VolumesListComponent,
