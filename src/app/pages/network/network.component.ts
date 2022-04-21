@@ -21,6 +21,7 @@ import { Interval } from 'app/interfaces/timeout.interface';
 import { AppTableAction, AppTableConfig, TableComponent } from 'app/modules/entity/table/table.component';
 import { TableService } from 'app/modules/entity/table/table.service';
 import { InterfaceFormComponent } from 'app/pages/network/components/interface-form/interface-form.component';
+import { OpenVpnClientConfigComponent } from 'app/pages/network/components/open-vpn-client-config/open-vpn-client-config.component';
 import {
   OpenVpnServerConfigComponent,
 } from 'app/pages/network/components/open-vpn-server-config/open-vpn-server-config.component';
@@ -39,7 +40,6 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { ModalService } from 'app/services/modal.service';
 import { EntityUtils } from '../../modules/entity/utils';
 import { IpmiFormComponent } from './components/forms/ipmi-form.component';
-import { OpenvpnClientComponent } from './components/forms/service-openvpn-client.component';
 
 @UntilDestroy()
 @Component({
@@ -151,7 +151,7 @@ export class NetworkComponent implements OnInit, OnDestroy {
     isActionVisible: this.isOpenVpnActionVisible,
     edit: (row: Service) => {
       if (row.service === ServiceName.OpenVpnClient) {
-        this.modalService.openInSlideIn(OpenvpnClientComponent, row.id);
+        this.slideInService.open(OpenVpnClientConfigComponent, { wide: true });
       } else if (row.service === ServiceName.OpenVpnServer) {
         this.slideInService.open(OpenVpnServerConfigComponent, { wide: true });
       }
@@ -160,7 +160,7 @@ export class NetworkComponent implements OnInit, OnDestroy {
       const state = this.navigation.extras.state as { configureOpenVPN: string };
       if (state && state.configureOpenVPN) {
         if (state.configureOpenVPN === 'client') {
-          this.modalService.openInSlideIn(OpenvpnClientComponent);
+          this.slideInService.open(OpenVpnClientConfigComponent, { wide: true });
         } else {
           this.slideInService.open(OpenVpnServerConfigComponent, { wide: true });
         }
