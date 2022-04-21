@@ -31,7 +31,6 @@ export interface UserPreferences {
   timeFormat?: string;
   nicType?: string;
   nicAttach?: string;
-  showWelcomeDialog?: boolean;
   showUserListMessage?: boolean;
   showGroupListMessage?: boolean;
   expandAvailablePlugins?: boolean;
@@ -61,7 +60,6 @@ export class PreferencesService {
     timeFormat: 'HH:mm:ss',
     nicType: null,
     nicAttach: null,
-    showWelcomeDialog: true,
     showUserListMessage: true,
     showGroupListMessage: true,
     expandAvailablePlugins: true,

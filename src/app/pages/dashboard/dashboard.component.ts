@@ -376,6 +376,8 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       conf.push({ name: 'Interface', identifier: 'name,' + nic.name, rendered: true });
     });
 
+    conf.push({ name: 'Help', rendered: true });
+
     return conf;
   }
 

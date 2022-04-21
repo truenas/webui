@@ -246,10 +246,6 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
       this.target.next({ name: 'SubmitComplete', sender: this });
       this.isWaiting = false;
     }
-    this.showWelcome = evt.data.showWelcomeDialog;
-    if (this.showWelcome) {
-      this.onShowAbout();
-    }
   }
 
   checkLegacyUISetting() {
@@ -299,7 +295,7 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
   }
 
   onShowAbout() {
-    const dialogRef = this.dialog.open(AboutModalDialog, {
+    this.dialog.open(AboutModalDialog, {
       maxWidth: '600px',
       data: {
         extraMsg: this.showWelcome,
