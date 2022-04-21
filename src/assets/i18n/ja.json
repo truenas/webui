@@ -2911,6 +2911,7 @@
   "Unique LUN ID. The default is generated from the MAC address of the system.": "",
   "Unique Virtual Host ID on the broadcast  segment of the network. Configuring multiple Virtual IP addresses  requires a separate VHID for each address.": "",
   "Unique drive identifier. Log in to a Microsoft account and choose  a drive from the <i>Drives List</i> drop-down to add a valid ID.": "",
+  "Unit": "",
   "Unix (NFS) Share": "",
   "Unix NSS Info": "",
   "Unix Permissions": "",
