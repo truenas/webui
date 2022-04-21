@@ -111,6 +111,7 @@ export class LdapComponent implements OnInit {
 
   onManageCertificatesClicked(): void {
     this.router.navigate(['/', 'credentials', 'certificates']);
+    this.slideInService.close(null, false);
   }
 
   onSubmit(): void {
