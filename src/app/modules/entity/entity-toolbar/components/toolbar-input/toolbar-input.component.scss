@@ -15,13 +15,13 @@
     text-overflow: ellipsis;
     top: 11px;
     white-space: nowrap;
-    width: calc(100% - 37px);
+    width: calc(100% - 57px);
   }
 
-  input.mat-input-element {
+  .mat-input-element {
     height: 18px;
     white-space: nowrap;
-    width: calc(100% - 37px);
+    width: calc(100% - 11px);
   }
 }
 
