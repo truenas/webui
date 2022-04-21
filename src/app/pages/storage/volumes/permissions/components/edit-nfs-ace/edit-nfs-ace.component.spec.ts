@@ -15,10 +15,6 @@ import { IxSelectHarness } from 'app/modules/ix-forms/components/ix-select/ix-se
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import {
-  NfsFormFlagsType,
-  NfsFormPermsType,
-} from 'app/pages/storage/volumes/permissions/components/edit-nfs-ace/edit-nfs-ace-form.types';
-import {
   EditNfsAceComponent,
 } from 'app/pages/storage/volumes/permissions/components/edit-nfs-ace/edit-nfs-ace.component';
 import { DatasetAclEditorStore } from 'app/pages/storage/volumes/permissions/stores/dataset-acl-editor.store';
@@ -84,15 +80,15 @@ describe('EditNfsAceComponent', () => {
     expect(values).toEqual({
       Who: 'User',
       User: 'trunk',
-      'ACL Type': NfsAclType.Allow,
-      'Permissions Type': NfsFormPermsType.Advanced,
+      'ACL Type': 'Allow',
+      'Permissions Type': 'Advanced',
       Permissions: [
         'Read Data',
         'Append Data',
         'Execute',
         'Read ACL',
       ],
-      'Flags Type': NfsFormFlagsType.Advanced,
+      'Flags Type': 'Advanced',
       Flags: [
         'File Inherit',
         'Directory Inherit',

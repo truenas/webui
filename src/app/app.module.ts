@@ -35,6 +35,7 @@ import { rootEffects, rootReducers } from 'app/store';
 import { CustomRouterStateSerializer } from 'app/store/router/custom-router-serializer';
 import { AppComponent } from './app.component';
 import { rootRouterConfig } from './app.routes';
+import { getWindow, WINDOW } from './helpers/window.helper';
 import { AppLoaderModule } from './modules/app-loader/app-loader.module';
 import { AppLoaderService } from './modules/app-loader/app-loader.service';
 import { AppCommonModule } from './modules/common/app-common.module';
@@ -118,6 +119,10 @@ import { WebSocketService } from './services/ws.service';
       useValue: Sentry.createErrorHandler({
         showDialog: false,
       }),
+    },
+    {
+      provide: WINDOW,
+      useFactory: getWindow,
     },
   ],
   bootstrap: [
