@@ -1,5 +1,7 @@
 {
   "": "",
+  "Add VM Snapshot": "",
+  "Edit VM Snapshot": "",
   "Encryption is for users storing sensitive data.  Pool-level encryption does not apply to the storage pool or disks in the pool. It applies  to the root dataset that shares the pool name and any child datasets created unless you change  the encryption at the time you create the child dataset. For more information on encryption please  refer to the <a href=\"http://TrueNAS.com/docs/\" target=\"_blank\">TrueNAS Documentation hub</a>.": "",
   "Files that are deleted from the same  dataset are moved to the Recycle Bin and do not take any additional  space. <b>Deleting files over NFS will remove the files permanently  </b>. When the files are in a different dataset or a child dataset,  they are copied to the dataset where the Recycle Bin is located. To  prevent excessive space usage, files larger than 20 MiB are deleted  rather than moved. <b>This is not a replacement  for ZFS snapshots.</b>": "",
   "In some cases it's possible that the provided key/passphrase is valid but the path where the dataset is supposed to be mounted after being unlocked already exists and is not empty. In this case, unlock operation would fail. This can be overridden by Force flag. When it is set, system will rename the existing directory/file path where the dataset should be mounted resulting in successful unlock of the dataset.": "",
@@ -1423,7 +1425,6 @@
   "Enter the user on the VMware host with permission to snapshot virtual machines.": "在具有快照虚拟机权限的VMware主机上输入用户。",
   "Enter the username if the SMTP server requires authentication.": "如果SMTP服务器需要身份验证，请输入用户名。",
   "Enter the version to roll back to.": "输入要回滚到的版本。",
-  "Enter valid VMware ESXI/vSphere credentials to fetch datastores.": "输入有效的VMware ESXI / vSphere凭据以获取数据存储。",
   "Enter zvol name to continue.": "输入 zvol 名称以继续。",
   "Enter {value} below to confirm.": "输入 {value} 以确认。",
   "Entering <i>0</i> uses the actual file size and requires that the file already exists. Otherwise, specify the file size for the new file.": "输入<i>0</i>使用实际文件大小，并要求该文件已存在。否则，请指定新文件的文件大小。",
