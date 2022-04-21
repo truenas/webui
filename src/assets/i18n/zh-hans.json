@@ -165,7 +165,7 @@
   "Select the <a href=\"https://man7.org/linux/man-pages/man3/syslog.3.html\" target=\"_blank\">syslog(3)</a> facility of the SFTP server.": "选择记录SFTP服务器 <a href=\"https://man7.org/linux/man-pages/man3/syslog.3.html\" target=\"_blank\">syslog(3)</a> 的设备。",
   "Select the <a href=\"https://man7.org/linux/man-pages/man3/syslog.3.html\" target=\"_blank\">syslog(3)</a> level of the SFTP server.": "选择SFTP服务器的 <a href=\"https://man7.org/linux/man-pages/man3/syslog.3.html\" target=\"_blank\">syslog(3)</a> 等级。",
   "Select the script.     The script will be run using     <a href=\"https://man7.org/linux/man-pages/man1/sh.1p.html\"     target=\"_blank\">sh(1)</a>.": "选择脚本。     脚本将通过     <a href=\"https://man7.org/linux/man-pages/man1/sh.1p.html\"     target=\"_blank\">sh(1)</a> 运行。",
-  "Serial Shell": "",
+  "Serial Shell": "串口 Shell",
   "Set to inhibit some syslog diagnostics to avoid error messages. See <a href=\"https://man7.org/linux/man-pages/man5/exports.5.html\" target=\"_blank\">exports(5)</a> for examples.": "",
   "Set to log <a href=\"https://man7.org/linux/man-pages/man8/mountd.8.html\" target=\"_blank\">mountd(8)</a> syslog requests.": "",
   "Set to log <a href=\"https://man7.org/linux/man-pages/man8/statd.8.html\" target=\"_blank\">rpc.statd(8)</a> and <a href=\"https://linux.die.net/man/8/rpc.lockd\" target=\"_blank\">rpc.lockd(8)</a> syslog requests.": "",
