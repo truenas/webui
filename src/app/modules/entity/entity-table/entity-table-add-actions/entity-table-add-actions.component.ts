@@ -26,7 +26,6 @@ export class EntityTableAddActionsComponent implements GlobalAction, OnInit, Aft
   menuTriggerMessage = 'Click for options';
   spin = true;
   direction = 'left';
-  animationMode = 'fling';
 
   get totalActions(): number {
     const addAction = this.entity.conf.routeAdd || this.entity.conf.doAdd ? 1 : 0;

@@ -22,7 +22,6 @@ export class NavigationComponent implements OnInit {
   hasIconTypeMenuItem: boolean;
   iconTypeMenuTitle: string;
   menuItems: MenuItem[];
-  menuList = document.getElementsByClassName('top-level');
   isHighlighted: string;
 
   @Output() menuToggled: EventEmitter<[string, SubMenuItem[]]> = new EventEmitter();

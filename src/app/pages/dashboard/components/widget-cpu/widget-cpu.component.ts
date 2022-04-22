@@ -65,7 +65,6 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
   usageMin: number;
   usageMinThreads: number[] = [];
 
-  legendColors: string[];
   legendIndex: number;
 
   labels: string[] = [];

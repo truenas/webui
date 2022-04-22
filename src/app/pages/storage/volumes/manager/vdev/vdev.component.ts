@@ -1,6 +1,5 @@
 import {
   Component,
-  ElementRef,
   Input,
   OnInit,
   ViewChild,
@@ -46,9 +45,10 @@ export class VdevComponent implements OnInit {
   startingHeight: number;
   expandedRows: number;
 
-  constructor(public elementRef: ElementRef,
+  constructor(
     public translate: TranslateService,
-    public sorter: StorageService) {}
+    public sorter: StorageService,
+  ) {}
 
   ngOnInit(): void {
     if (this.group === 'data') {

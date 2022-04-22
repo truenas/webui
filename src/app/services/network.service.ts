@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import * as isCidr from 'is-cidr';
 import { Observable } from 'rxjs';
 import { Choices } from 'app/interfaces/choices.interface';
 import { Option } from 'app/interfaces/option.interface';
@@ -64,12 +63,5 @@ export class NetworkService {
         return { label: String((33 - i) * 4), value: String((33 - i) * 4) };
       },
     );
-  }
-
-  authNetworkValidator(str: string): boolean {
-    if (isCidr.v4(str) || isCidr.v6(str)) {
-      return true;
-    }
-    return false;
   }
 }

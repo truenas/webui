@@ -56,9 +56,7 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
     this.translate,
     this.storage,
     {} as VolumesListPool,
-    this.messageService,
     this.http,
-    this.validationService,
   );
 
   viewingPermissionsForDataset: VolumesListDataset;
@@ -96,9 +94,7 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
       this.translate,
       this.storage,
       {} as VolumesListPool,
-      this.messageService,
       this.http,
-      this.validationService,
     ) as EntityTableConfig,
   } as EntityTableComponent;
 
@@ -240,9 +236,7 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
           this.translate,
           this.storage,
           pool,
-          this.messageService,
           this.http,
-          this.validationService,
         );
         pool.type = 'zpool';
 

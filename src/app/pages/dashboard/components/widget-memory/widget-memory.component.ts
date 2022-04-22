@@ -48,12 +48,10 @@ export class WidgetMemoryComponent extends WidgetComponent implements AfterViewI
   subtitle: string = this.translate.instant('% of all cores');
   configurable = false;
   chartId = UUID.UUID();
-  memTotal: number;
   legendData: any;
   colorPattern: string[];
   currentTheme: Theme;
 
-  legendColors: string[];
   private legendIndex: number;
   labels: string[] = [this.translate.instant('Free'), this.translate.instant('ZFS Cache'), this.translate.instant('Services')];
 

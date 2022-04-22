@@ -18,7 +18,6 @@ export class EntityTableActionsComponent implements OnInit, OnChanges {
   @Input() groups = false;
 
   actions: EntityTableAction[];
-  showMenu = true;
 
   key_prop: string;
 

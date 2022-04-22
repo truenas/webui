@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import {
-  FormArray, FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators,
+  FormArray, FormControl, ValidationErrors, ValidatorFn, Validators,
 } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -54,7 +54,6 @@ export class VmWizardComponent implements WizardConfiguration {
   addWsCall = 'vm.create' as const;
   summary: Record<string, unknown> = {};
   isLinear = true;
-  firstFormGroup: FormGroup;
   summaryTitle = this.translate.instant('VM Summary');
   namesInUse: string[] = [];
   statSize: Statfs;

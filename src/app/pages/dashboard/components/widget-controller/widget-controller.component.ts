@@ -72,8 +72,4 @@ export class WidgetControllerComponent extends WidgetComponent implements OnDest
   launchWidget(widget: DashConfigItem): void {
     this.launcher.emit(widget);
   }
-
-  triggerConfigure(): void {
-    this.actionsConfig.target.next({ name: 'ToolbarChanged' });
-  }
 }

@@ -28,7 +28,6 @@ import { ModalService } from 'app/services/modal.service';
 export class IdmapFormComponent implements FormConfiguration {
   title: string;
   isEntity = true;
-  protected namesInUse: string[] = [];
   queryCall = 'idmap.query' as const;
   addCall = 'idmap.create' as const;
   editCall = 'idmap.update' as const;

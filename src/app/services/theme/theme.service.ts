@@ -16,7 +16,6 @@ import { selectTheme } from 'app/store/preferences/preferences.selectors';
 export class ThemeService {
   activeTheme = 'default';
   defaultTheme = defaultTheme.name;
-  activeThemeSwatch: string[];
 
   // Theme lists
   allThemes: Theme[] = allThemes;
@@ -166,10 +165,6 @@ export class ThemeService {
       theme.logoPath = 'assets/images/light-logo.svg';
       theme.logoTextPath = 'assets/images/light-logo-text.svg';
     }
-  }
-
-  hexToRgb(str: string): { hex: string; rgb: number[] } {
-    return this.utils.hexToRgb(str);
   }
 
   darkTest(css: string): boolean {

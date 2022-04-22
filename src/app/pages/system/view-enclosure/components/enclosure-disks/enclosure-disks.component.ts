@@ -167,13 +167,6 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
     return this.overview.nativeElement.offsetWidth;
   }
 
-  get cardScale(): number {
-    const scale = this.cardWidth / this.maxCardWidth;
-    return scale > 1 ? 1 : scale;
-  }
-
-  scaleArgs: string;
-
   constructor(
     public el: ElementRef,
     protected core: CoreService,

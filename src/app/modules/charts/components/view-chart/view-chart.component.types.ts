@@ -1,10 +1,6 @@
 export type PrimitiveArray = (string | boolean | number | null)[];
 export type FormatFunction = (v: any, id: string, i: number, j: number) => void;
 
-export interface TargetIds {
-  ids: ArrayOrString;
-}
-
 export type ArrayOrString = string[] | string;
 
 export interface ChartConfiguration {

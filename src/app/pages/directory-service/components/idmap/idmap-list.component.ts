@@ -33,7 +33,6 @@ export class IdmapListComponent implements EntityTableConfig {
   queryCallOption: QueryParams<Idmap>;
   wsDelete = 'idmap.delete' as const;
   protected entityList: EntityTableComponent;
-  protected idmapFormComponent: IdmapFormComponent;
 
   columns = [
     {
