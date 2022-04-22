@@ -360,34 +360,12 @@ certificate still approved.'),
   },
 
   edit: {
-    title: T('Edit Certificate'),
-    titleCSR: T('Edit CSR'),
-    fieldset_certificate: T('Certificate'),
     name: {
-      // TODO:
-      placeholder: T('Identifier'),
       tooltip: T(
         'Enter an alphanumeric name for the certificate.\
  Underscore (_), and dash (-) characters are allowed.',
       ),
-      validation: [Validators.required],
     },
-
-    certificate: {
-      placeholder: T('Certificate'),
-    },
-
-    privatekey: {
-      placeholder: T('Private Key'),
-    },
-
-    csr: {
-      placeholder: T('Signing Request'),
-    },
-
-    subject: T('Subject'),
-
-    signCSR: T('Sign CSR'),
   },
 
   list: {
