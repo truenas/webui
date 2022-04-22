@@ -230,6 +230,7 @@
   "Create {vdevs} new {vdevType} data vdevs using {used} ({size}) {type}s and leaving {remaining} of those drives unused.": "",
   "Creating Certificate": "",
   "Cron Jobs": "",
+  "Current Version": "",
   "Custom Name": "",
   "Custom Provider": "",
   "Custom Value": "",

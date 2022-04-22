@@ -116,6 +116,7 @@
   "Create New Primary Group": "",
   "Create {vdevs} new {vdevType} data vdevs using {used} ({size}) {type}s and leaving {remaining} of those drives unused.": "",
   "Credential": "",
+  "Current Version": "",
   "Custom Provider": "",
   "DEBUG": "",
   "DOCS": "",
