@@ -4,6 +4,7 @@ import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
+import { merge } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { helptextSystemCa } from 'app/helptext/system/ca';
 import { helptextSystemCertificates } from 'app/helptext/system/certificates';
@@ -14,19 +15,22 @@ import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.com
 import { AppTableAction, AppTableConfig, TableComponent } from 'app/modules/entity/table/table.component';
 import { TableService } from 'app/modules/entity/table/table.service';
 import { EntityUtils } from 'app/modules/entity/utils';
+import {
+  CertificateAuthorityEditComponent,
+} from 'app/pages/credentials/certificates-dash/certificate-authority-edit/certificate-authority-edit.component';
 import { AcmednsFormComponent } from 'app/pages/credentials/certificates-dash/forms/acmedns-form.component';
 import {
   SignCsrDialogComponent,
 } from 'app/pages/credentials/certificates-dash/sign-csr-dialog/sign-csr-dialog.component';
 import {
-  SystemGeneralService, WebSocketService, DialogService, StorageService, ModalServiceMessage,
+  SystemGeneralService, WebSocketService, DialogService, StorageService,
 } from 'app/services';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { ModalService } from 'app/services/modal.service';
+import { CertificateEditComponent } from './certificate-edit/certificate-edit.component';
 import { CertificateAuthorityAddComponent } from './forms/ca-add.component';
-import { CertificateAuthorityEditComponent } from './forms/ca-edit.component';
 import { CertificateAcmeAddComponent } from './forms/certificate-acme-add.component';
 import { CertificateAddComponent } from './forms/certificate-add.component';
-import { CertificateEditComponent } from './forms/certificate-edit.component';
 
 @UntilDestroy()
 @Component({
@@ -41,6 +45,7 @@ export class CertificatesDashComponent implements OnInit {
 
   constructor(
     private modalService: ModalService,
+    private slideInService: IxSlideInService,
     private ws: WebSocketService,
     private dialog: MatDialog,
     private systemGeneralService: SystemGeneralService,
@@ -53,14 +58,14 @@ export class CertificatesDashComponent implements OnInit {
 
   ngOnInit(): void {
     this.getCards();
-    this.modalService.refreshTable$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.getCards();
-    });
-    this.modalService.message$.pipe(untilDestroyed(this)).subscribe((res: ModalServiceMessage) => {
-      if (res['action'] === 'open' && res['component'] === 'acmeComponent') {
-        this.openForm(res['row']);
-      }
-    });
+    merge(
+      this.slideInService.onClose$,
+      this.modalService.refreshTable$,
+    )
+      .pipe(untilDestroyed(this))
+      .subscribe(() => {
+        this.getCards();
+      });
   }
 
   getCards(): void {
@@ -107,8 +112,9 @@ export class CertificatesDashComponent implements OnInit {
           add: () => {
             this.modalService.openInSlideIn(CertificateAddComponent);
           },
-          edit: (row: Certificate) => {
-            this.modalService.openInSlideIn(CertificateEditComponent, row.id);
+          edit: (certificate: Certificate) => {
+            const slideIn = this.slideInService.open(CertificateEditComponent, { wide: true });
+            slideIn.setCertificate(certificate);
           },
         },
       },
@@ -134,8 +140,9 @@ export class CertificatesDashComponent implements OnInit {
           add: () => {
             this.modalService.openInSlideIn(CertificateAddComponent, 'csr');
           },
-          edit: (row: Certificate) => {
-            this.modalService.openInSlideIn(CertificateEditComponent, row.id);
+          edit: (certificate: Certificate) => {
+            const slideIn = this.slideInService.open(CertificateEditComponent, { wide: true });
+            slideIn.setCertificate(certificate);
           },
         },
       },
@@ -175,7 +182,8 @@ export class CertificatesDashComponent implements OnInit {
             this.modalService.openInSlideIn(CertificateAuthorityAddComponent);
           },
           edit: (row: CertificateAuthority) => {
-            this.modalService.openInSlideIn(CertificateAuthorityEditComponent, row.id);
+            const form = this.slideInService.open(CertificateAuthorityEditComponent, { wide: true });
+            form.setCertificateAuthority(row);
           },
           delete: (row: CertificateAuthority, table: TableComponent) => {
             if (row.signed_certificates > 0) {
@@ -375,11 +383,5 @@ export class CertificatesDashComponent implements OnInit {
     };
 
     return [acmeAction, revokeAction, ...caRowActions];
-  }
-
-  openForm(id: number): void {
-    setTimeout(() => {
-      this.modalService.openInSlideIn(CertificateAcmeAddComponent, id);
-    }, 200);
   }
 }

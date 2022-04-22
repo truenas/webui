@@ -364,6 +364,7 @@ certificate still approved.'),
     titleCSR: T('Edit CSR'),
     fieldset_certificate: T('Certificate'),
     name: {
+      // TODO:
       placeholder: T('Identifier'),
       tooltip: T(
         'Enter an alphanumeric name for the certificate.\
