@@ -4,12 +4,12 @@
     <form [formGroup]="form" class="ix-form-container" (submit)="onSubmit()">
       <ix-fieldset [title]="'General Options' | translate">
 
-        <p><b>{{ 'Current Version' | translate }}</b>: {{ currentVersion }}</p>
+        <p><b>{{ 'Current Version' | translate }}</b>: {{ currentVersion }} {{ filename }}</p>
 
         <ix-select
-          fomrControlName="filelocation"
+          formControlName="filelocation"
           [label]="helptext.filelocation.placeholder | translate"
-          [tooltip]="helptext.filelocation.tooltip ! translate"
+          [tooltip]="helptext.filelocation.tooltip | translate"
           [options]="fileLocationOptions$"
           [required]="true"
         ></ix-select>
@@ -18,7 +18,6 @@
           formControlName="rebootAfterManualUpdate"
           [label]="helptext.rebootAfterManualUpdate.placeholder"
           [tooltip]="helptext.rebootAfterManualUpdate.tooltip"
-          *ngIf="!isHa"
         ></ix-checkbox>
         
       </ix-fieldset>
@@ -30,11 +29,7 @@
           [disabled]="form.invalid || isFormLoading"
           color="primary"
         >{{ 'Save' | translate }}</button>
-        <button
-          mat-button
-          color="accent"
-          (click)="onCancel()"
-        >{{ 'Cancel' | translate }}</button>
+        
       </div>
     </form>
   </mat-card-content>
