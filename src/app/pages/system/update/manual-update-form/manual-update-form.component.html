@@ -18,6 +18,7 @@
           formControlName="rebootAfterManualUpdate"
           [label]="helptext.rebootAfterManualUpdate.placeholder"
           [tooltip]="helptext.rebootAfterManualUpdate.tooltip"
+          *ngIf="!isHa"
         ></ix-checkbox>
         
       </ix-fieldset>
