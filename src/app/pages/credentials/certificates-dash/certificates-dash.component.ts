@@ -22,9 +22,7 @@ import { AcmednsFormComponent } from 'app/pages/credentials/certificates-dash/fo
 import {
   SignCsrDialogComponent,
 } from 'app/pages/credentials/certificates-dash/sign-csr-dialog/sign-csr-dialog.component';
-import {
-  SystemGeneralService, WebSocketService, DialogService, StorageService,
-} from 'app/services';
+import { WebSocketService, DialogService, StorageService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { ModalService } from 'app/services/modal.service';
 import { CertificateEditComponent } from './certificate-edit/certificate-edit.component';
@@ -48,7 +46,6 @@ export class CertificatesDashComponent implements OnInit {
     private slideInService: IxSlideInService,
     private ws: WebSocketService,
     private dialog: MatDialog,
-    private systemGeneralService: SystemGeneralService,
     private dialogService: DialogService,
     private storage: StorageService,
     private http: HttpClient,
