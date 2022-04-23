@@ -13,5 +13,14 @@
     position: absolute;
     top: 13px;
   }
+
+  input:-webkit-autofill,
+  input:-webkit-autofill:hover,
+  input:-webkit-autofill:focus,
+  input:-webkit-autofill:focus-visible,
+  input:-webkit-autofill:active {
+    box-shadow: 0 0 0 30px rgba(0, 0, 0, 0.1) inset,
+      0 0 0 30px var(--bg1) inset !important;
+  }
 }
 
