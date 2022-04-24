@@ -1,10 +1,10 @@
 <mat-card class="card">
   <mat-card-content>
-    <mat-progress-bar *ngIf="isFormLoading" mode="indeterminate"></mat-progress-bar>
+    <mat-progress-bar *ngIf="isFormLoading$ | async" mode="indeterminate"></mat-progress-bar>
     <form [formGroup]="form" class="ix-form-container" (submit)="onSubmit()">
       <ix-fieldset [title]="'General Options' | translate">
 
-        <p><b>{{ 'Current Version' | translate }}</b>: {{ currentVersion }} {{ filename }}</p>
+        <p><b>{{ 'Current Version' | translate }}</b>: {{ currentVersion }}</p>
 
         <ix-select
           formControlName="filelocation"
@@ -15,6 +15,7 @@
         ></ix-select>
 
         <ix-file-input
+          formControlName="updateFile"
           [label]="helptext.filename.placeholder | translate"
           [tooltip]="helptext.filename.tooltip | translate"
           [multiple]="false"
@@ -25,7 +26,7 @@
           formControlName="rebootAfterManualUpdate"
           [label]="helptext.rebootAfterManualUpdate.placeholder"
           [tooltip]="helptext.rebootAfterManualUpdate.tooltip"
-          *ngIf="!isHa"
+          *ngIf="!isHa && isEnterprise"
         ></ix-checkbox>
         
       </ix-fieldset>
@@ -34,7 +35,7 @@
         <button
           mat-button
           type="submit"
-          [disabled]="form.invalid || isFormLoading"
+          [disabled]="form.invalid || (isFormLoading$ | async)"
           color="primary"
         >{{ 'Save' | translate }}</button>
         

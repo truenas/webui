@@ -215,7 +215,7 @@ export class FileTicketFormComponent implements OnInit {
   openSuccessDialog(params: NewTicketResponse): void {
     const conf: DialogFormConfiguration = {
       title: this.translate.instant('Ticket'),
-      message: this.translate.instant('Congratulations! Your ticket has been submitted successfully. It may take some time before images appear.'),
+      message: this.translate.instant('Your ticket has been submitted successfully. It may take some time before images appear.'),
       fieldConfig: [],
       cancelButtonText: this.translate.instant('Close'),
       saveButtonText: this.translate.instant('Open Ticket'),
