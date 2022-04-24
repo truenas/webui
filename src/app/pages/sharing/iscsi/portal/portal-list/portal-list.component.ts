@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { Choices } from 'app/interfaces/choices.interface';
@@ -57,7 +56,6 @@ export class PortalListComponent implements EntityTableConfig {
   ipChoices: Choices;
 
   constructor(
-    protected router: Router,
     protected iscsiService: IscsiService,
     protected translate: TranslateService,
     private slideInService: IxSlideInService,

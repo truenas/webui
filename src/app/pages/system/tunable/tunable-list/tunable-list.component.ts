@@ -1,12 +1,10 @@
 import { Component } from '@angular/core';
 import { TooltipPosition } from '@angular/material/tooltip';
-import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { ProductType } from 'app/enums/product-type.enum';
 import { Tunable } from 'app/interfaces/tunable.interface';
 import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-table.component';
 import { EntityTableConfig } from 'app/modules/entity/entity-table/entity-table.interface';
-import { WebSocketService } from 'app/services';
 
 @Component({
   selector: 'system-tunables-list',
@@ -66,9 +64,6 @@ export class TunableListComponent implements EntityTableConfig {
   };
 
   constructor(
-    protected router: Router,
-    protected aroute: ActivatedRoute,
-    protected ws: WebSocketService,
     protected translate: TranslateService,
   ) {}
 

@@ -7,7 +7,6 @@ import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-tab
 import { EntityTableConfig } from 'app/modules/entity/entity-table/entity-table.interface';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { WebdavFormComponent } from 'app/pages/sharing/webdav/webdav-form/webdav-form.component';
-import { ModalService } from 'app/services';
 import { DialogService } from 'app/services/dialog.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -57,7 +56,6 @@ export class WebdavListComponent implements EntityTableConfig, OnInit {
 
   constructor(
     private ws: WebSocketService,
-    private modalService: ModalService,
     private dialog: DialogService,
     private translate: TranslateService,
     private slideInService: IxSlideInService,

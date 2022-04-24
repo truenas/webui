@@ -21,9 +21,8 @@ import {
   ManualTestDialogComponent,
   ManualTestDialogParams,
 } from 'app/pages/storage/disks/manual-test-dialog/manual-test-dialog.component';
-import { DialogService, StorageService, WebSocketService } from 'app/services';
+import { StorageService, WebSocketService } from 'app/services';
 import { CoreService } from 'app/services/core-service/core.service';
-import { LocaleService } from 'app/services/locale.service';
 
 @UntilDestroy()
 @Component({
@@ -130,8 +129,6 @@ export class DiskListComponent implements EntityTableConfig<Disk> {
     protected ws: WebSocketService,
     protected router: Router,
     public diskbucket: StorageService,
-    protected dialogService: DialogService,
-    protected localeService: LocaleService,
     private matDialog: MatDialog,
     private core: CoreService,
     protected translate: TranslateService,

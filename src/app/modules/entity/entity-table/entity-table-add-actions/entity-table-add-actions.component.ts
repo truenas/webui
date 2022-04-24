@@ -2,7 +2,6 @@ import {
   Component, ElementRef, Input, ViewChild, OnInit, AfterViewInit,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateService } from '@ngx-translate/core';
 import { fromEvent as observableFromEvent } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { GlobalAction } from 'app/interfaces/global-action.interface';
@@ -31,8 +30,6 @@ export class EntityTableAddActionsComponent implements GlobalAction, OnInit, Aft
     const addAction = this.entity.conf.routeAdd || this.entity.conf.doAdd ? 1 : 0;
     return this.actions.length + addAction;
   }
-
-  constructor(protected translate: TranslateService) { }
 
   ngOnInit(): void {
     this.actions = this.entity.getAddActions();

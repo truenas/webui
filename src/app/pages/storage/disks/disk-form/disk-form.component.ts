@@ -9,7 +9,6 @@ import { Disk } from 'app/interfaces/storage.interface';
 import { FieldConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/modules/entity/entity-form/models/fieldset.interface';
 import { RelationAction } from 'app/modules/entity/entity-form/models/relation-action.enum';
-import { WebSocketService } from 'app/services';
 
 @UntilDestroy()
 @Component({
@@ -166,7 +165,6 @@ export class DiskFormComponent implements FormConfiguration {
 
   constructor(
     private router: Router,
-    protected ws: WebSocketService,
     protected aroute: ActivatedRoute,
   ) {
   }

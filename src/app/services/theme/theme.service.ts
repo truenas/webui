@@ -4,7 +4,6 @@ import { select, Store } from '@ngrx/store';
 import { filter } from 'rxjs/operators';
 import { ThemeUtils } from 'app/core/classes/theme-utils/theme-utils';
 import { Theme } from 'app/interfaces/theme.interface';
-import { WebSocketService } from 'app/services';
 import { CoreService } from 'app/services/core-service/core.service';
 import { allThemes, defaultTheme } from 'app/services/theme/theme.constants';
 import { AppState } from 'app/store';
@@ -24,7 +23,6 @@ export class ThemeService {
 
   userThemeLoaded = false;
   constructor(
-    private ws: WebSocketService,
     private core: CoreService,
     private store$: Store<AppState>,
   ) {

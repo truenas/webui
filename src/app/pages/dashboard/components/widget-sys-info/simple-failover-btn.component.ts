@@ -1,13 +1,11 @@
 import {
   Component, Input,
 } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateService } from '@ngx-translate/core';
 import { filter } from 'rxjs/operators';
 import { helptextSystemFailover } from 'app/helptext/system/failover';
-import { DialogService, WebSocketService } from 'app/services';
+import { DialogService } from 'app/services';
 
 @UntilDestroy()
 @Component({
@@ -20,9 +18,6 @@ export class SimpleFailoverBtnComponent {
   @Input() disabled?: boolean = false;
   constructor(
     private dialog: DialogService,
-    protected matDialog: MatDialog,
-    public translate: TranslateService,
-    private ws: WebSocketService,
     private router: Router,
   ) {}
 

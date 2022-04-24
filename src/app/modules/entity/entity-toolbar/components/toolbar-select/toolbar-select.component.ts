@@ -1,6 +1,5 @@
 import { Component, Input } from '@angular/core';
 import { MatSelectChange } from '@angular/material/select/select';
-import { TranslateService } from '@ngx-translate/core';
 import { Subject } from 'rxjs';
 import { ControlConfig } from 'app/modules/entity/entity-toolbar/models/control-config.interface';
 import { Control } from 'app/modules/entity/entity-toolbar/models/control.interface';
@@ -13,8 +12,6 @@ import { Control } from 'app/modules/entity/entity-toolbar/models/control.interf
 export class ToolbarSelectComponent {
   @Input() config?: ControlConfig;
   @Input() controller: Subject<Control>;
-
-  constructor(public translate: TranslateService) {}
 
   onChange(event: MatSelectChange): void {
     this.config.value = event.value;

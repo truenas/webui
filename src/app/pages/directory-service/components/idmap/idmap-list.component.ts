@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { filter, map, tap } from 'rxjs/operators';
@@ -59,7 +58,6 @@ export class IdmapListComponent implements EntityTableConfig {
     protected idmapService: IdmapService,
     private ws: WebSocketService,
     private modalService: ModalService,
-    public mdDialog: MatDialog,
     protected dialogService: DialogService,
     protected translate: TranslateService,
   ) { }

@@ -294,9 +294,15 @@ export class IdmapFormComponent implements FormConfiguration {
     'sssd_compat',
   ];
 
-  constructor(protected idmapService: IdmapService, protected validationService: ValidationService,
-    private modalService: ModalService, private router: Router, private translate: TranslateService,
-    protected dialogService: DialogService, protected dialog: MatDialog) {
+  constructor(
+    protected idmapService: IdmapService,
+    protected validationService: ValidationService,
+    private modalService: ModalService,
+    private router: Router,
+    private translate: TranslateService,
+    protected dialogService: DialogService,
+    protected dialog: MatDialog,
+  ) {
     this.getRow = this.modalService.getRow$.pipe(untilDestroyed(this)).subscribe((rowId: number) => {
       this.pk = rowId;
       this.getRow.unsubscribe();

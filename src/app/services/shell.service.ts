@@ -1,16 +1,12 @@
 import {
   Injectable, EventEmitter,
 } from '@angular/core';
-import { Router } from '@angular/router';
 import { LocalStorage } from 'ngx-webstorage';
-import { Subject } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { ShellConnectedEvent } from '../interfaces/shell.interface';
 
 @Injectable()
 export class ShellService {
-  onCloseSubject$: Subject<true> ;
-  onOpenSubject$: Subject<true> ;
   pendingMessages: string[] = [];
   socket: WebSocket;
   connected = false;
@@ -32,11 +28,6 @@ export class ShellService {
   shellOutput = new EventEmitter<ArrayBuffer>();
   shellConnected = new EventEmitter<ShellConnectedEvent>();
 
-  constructor(private _router: Router) {
-    this.onOpenSubject$ = new Subject();
-    this.onCloseSubject$ = new Subject();
-  }
-
   connect(): void {
     this.socket = new WebSocket(
       (window.location.protocol === 'https:' ? 'wss://' : 'ws://')
@@ -48,7 +39,6 @@ export class ShellService {
   }
 
   onopen(): void {
-    this.onOpenSubject$.next(true);
     if (this.vmId) {
       this.send(JSON.stringify({ token: this.token, options: { vm_id: this.vmId } }));
     } else if (this.podInfo) {
@@ -78,7 +68,6 @@ export class ShellService {
 
   onclose(): void {
     this.connected = false;
-    this.onCloseSubject$.next(true);
     this.shellConnected.emit({
       connected: this.connected,
     });

@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatDialogRef } from '@angular/material/dialog/dialog-ref';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import {
@@ -109,7 +109,6 @@ export class UpdateComponent implements OnInit {
 
   constructor(
     protected router: Router,
-    protected route: ActivatedRoute,
     protected ws: WebSocketService,
     protected dialog: MatDialog,
     public sysGenService: SystemGeneralService,

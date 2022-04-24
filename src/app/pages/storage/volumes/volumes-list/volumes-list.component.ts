@@ -16,7 +16,6 @@ import { Dataset, ExtraDatasetQueryOptions } from 'app/interfaces/dataset.interf
 import { QueryParams } from 'app/interfaces/query-api.interface';
 import { AppLoaderService } from 'app/modules/app-loader/app-loader.service';
 import { EmptyConfig, EmptyType } from 'app/modules/entity/entity-empty/entity-empty.component';
-import { MessageService } from 'app/modules/entity/entity-form/services/message.service';
 import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-table.component';
 import { EntityTableConfig } from 'app/modules/entity/entity-table/entity-table.interface';
 import { VolumesListControlsComponent } from 'app/pages/storage/volumes/volume-list-controls/volumes-list-controls.component';
@@ -25,7 +24,7 @@ import {
   VolumesListPool,
 } from 'app/pages/storage/volumes/volumes-list/volumes-list-pool.interface';
 import { VolumesListTableConfig } from 'app/pages/storage/volumes/volumes-list/volumes-list-table-config';
-import { JobService, ValidationService } from 'app/services';
+import { JobService } from 'app/services';
 import { CoreService } from 'app/services/core-service/core.service';
 import { DialogService } from 'app/services/dialog.service';
 import { ModalService } from 'app/services/modal.service';
@@ -156,10 +155,8 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
     protected job: JobService,
     protected storage: StorageService,
     protected store$: Store<AppState>,
-    protected messageService: MessageService,
     protected http: HttpClient,
     modalService: ModalService,
-    protected validationService: ValidationService,
     public cdr: ChangeDetectorRef,
   ) {
     super(core, router, ws, dialogService, loader, translate, sorter, job, store$, mdDialog, modalService, cdr);

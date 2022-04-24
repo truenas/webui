@@ -2,14 +2,12 @@ import {
   Component, Input, Output, EventEmitter, OnDestroy,
 } from '@angular/core';
 import { MediaObserver } from '@angular/flex-layout';
-import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { EmptyConfig } from 'app/modules/entity/entity-empty/entity-empty.component';
 import { ToolbarConfig } from 'app/modules/entity/entity-toolbar/models/control-config.interface';
 import { WidgetComponent } from 'app/pages/dashboard/components/widget/widget.component';
 import { CoreService } from 'app/services/core-service/core.service';
-import { ThemeService } from 'app/services/theme/theme.service';
 
 export interface DashConfigItem {
   name: string; // Shown in UI fields
@@ -40,11 +38,9 @@ export class WidgetControllerComponent extends WidgetComponent implements OnDest
   screenType = 'Desktop'; // Desktop || Mobile
 
   constructor(
-    public router: Router,
     public translate: TranslateService,
     public mediaObserver: MediaObserver,
     private core: CoreService,
-    public themeService: ThemeService,
   ) {
     super(translate);
 
