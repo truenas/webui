@@ -34,9 +34,13 @@ export class ManualUpdateFormComponent implements OnInit {
   isFormLoading = false;
   form = this.formBuilder.group({
     filelocation: ['', Validators.required],
+    filename: [''],
     rebootAfterManualUpdate: [false],
   });
   filename = '';
+  private get apiEndPoint(): string {
+    return '/_upload?auth_token=' + this.ws.token;
+  }
 
   userPrefs: Preferences = null;
   readonly helptext = helptext;

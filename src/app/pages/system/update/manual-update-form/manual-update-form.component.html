@@ -14,6 +14,13 @@
           [required]="true"
         ></ix-select>
 
+        <ix-file-input
+          [label]="helptext.filename.placeholder | translate"
+          [tooltip]="helptext.filename.tooltip | translate"
+          [multiple]="false"
+          [required]="true"
+          [acceptedFiles]="'.tar,.update'"
+        ></ix-file-input>
         <ix-checkbox
           formControlName="rebootAfterManualUpdate"
           [label]="helptext.rebootAfterManualUpdate.placeholder"
