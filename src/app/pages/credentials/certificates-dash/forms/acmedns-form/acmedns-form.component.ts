@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
-import { Validators } from '@angular/forms';
+import { FormGroup, Validators } from '@angular/forms';
 import { FormBuilder, FormControl } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
@@ -12,6 +12,11 @@ import { DynamicFormSchema } from 'app/interfaces/dynamic-form-schema.interface'
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { WebSocketService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+
+interface DnsAuthenticatorList {
+  key: string;
+  variables: string[];
+}
 
 @UntilDestroy()
 @Component({
@@ -36,32 +41,42 @@ export class AcmednsFormComponent {
     attributes: this.formBuilder.group({}),
   });
 
+  get formGroup(): FormGroup {
+    return this.form.controls['attributes'] as FormGroup;
+  }
+
   isLoading = false;
-  attributes: DynamicFormSchema[] = [];
-  selectAuthenticator = DnsAuthenticatorType.Cloudflare;
+  dynamicSection: DynamicFormSchema[] = [];
+  dnsAuthenticatorList: DnsAuthenticatorList[] = [];
 
   readonly helptext = helptext;
 
   authenticator_options$ = this.ws.call('acme.dns.authenticator.authenticator_schemas').pipe(
     map((schemas) => {
-      this.attributes = [];
+      const dynamicSchema: DynamicFormSchema = { name: '', description: '', schema: [] };
       const opts = [];
+      this.dnsAuthenticatorList = [];
+      this.dynamicSection = [];
+
       for (const schema of schemas) {
-        opts.push({ label: schema.key, value: schema.key });
+        const variables: string[] = [];
         for (const input of schema.schema) {
-          this.form.controls.attributes.addControl(
-            input._name_,
-            new FormControl('', input._required_ ? [Validators.required] : []),
-          );
-          this.attributes.push({
-            name: input._name_,
+          const newFormControl = new FormControl('', input._required_ ? [Validators.required] : []);
+          this.form.controls.attributes.addControl(input._name_, newFormControl);
+          dynamicSchema.schema.push({
+            variable: input._name_,
             type: 'input',
             title: input.title,
             required: input._required_,
-            show_if: [schema.key],
           });
+          variables.push(input._name_);
         }
+
+        this.dnsAuthenticatorList.push({ key: schema.key, variables });
+        opts.push({ label: schema.key, value: schema.key });
       }
+
+      this.dynamicSection.push(dynamicSchema);
       this.onChange(DnsAuthenticatorType.Cloudflare);
       if (!this.isNew) {
         this.form.patchValue(this.editingAcmedns);
@@ -86,16 +101,13 @@ export class AcmednsFormComponent {
   }
 
   onChange(event: DnsAuthenticatorType): void {
-    this.selectAuthenticator = event;
-    for (const attribute of this.attributes) {
-      if (attribute.show_if.includes(event)) {
-        this.form.controls.attributes.controls[attribute.name].enable();
-        attribute.hidden = false;
+    this.dnsAuthenticatorList.forEach((auth) => {
+      if (auth.key === event) {
+        auth.variables.forEach((varible) => this.form.controls.attributes.controls[varible].enable());
       } else {
-        this.form.controls.attributes.controls[attribute.name].disable();
-        attribute.hidden = true;
+        auth.variables.forEach((varible) => this.form.controls.attributes.controls[varible].disable());
       }
-    }
+    });
   }
 
   onSubmit(): void {

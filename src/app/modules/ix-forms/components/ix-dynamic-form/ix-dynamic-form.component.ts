@@ -1,9 +1,9 @@
 import {
-  ChangeDetectionStrategy, Component, Input, OnInit,
+  ChangeDetectionStrategy, Component, EventEmitter, Input, Output,
 } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { UntilDestroy } from '@ngneat/until-destroy';
-import { DynamicFormSchema } from 'app/interfaces/dynamic-form-schema.interface';
+import { AddListItemEmitter, DeleteListItemEmitter, DynamicFormSchema } from 'app/interfaces/dynamic-form-schema.interface';
 
 @UntilDestroy()
 @Component({
@@ -13,14 +13,18 @@ import { DynamicFormSchema } from 'app/interfaces/dynamic-form-schema.interface'
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 
-export class IxDynamicFormComponent implements OnInit {
-  @Input() formGroup: FormGroup;
-  @Input() fieldsFormGroupName: string;
-  @Input() fields: DynamicFormSchema[];
+export class IxDynamicFormComponent {
+  @Input() dynamicForm: FormGroup;
+  @Input() dynamicSection: DynamicFormSchema[];
 
-  fieldsFormGroup: FormGroup;
+  @Output() addListItem = new EventEmitter<AddListItemEmitter>();
+  @Output() deleteListItem = new EventEmitter<DeleteListItemEmitter>();
 
-  ngOnInit(): void {
-    this.fieldsFormGroup = this.formGroup.controls[this.fieldsFormGroupName] as FormGroup;
+  addControlNext(event: AddListItemEmitter): void {
+    this.addListItem.emit(event);
+  }
+
+  removeControlNext(event: DeleteListItemEmitter): void {
+    this.deleteListItem.emit(event);
   }
 }

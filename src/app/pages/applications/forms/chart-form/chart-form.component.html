@@ -10,6 +10,13 @@
         [required]="true"
       ></ix-input>
 
+      <ix-dynamic-form
+        [dynamicSection]="dynamicSection"
+        [dynamicForm]="formGroup"
+        (addListItem)="addFormListItem($event)"
+        (deleteListItem)="deleteFormListItem($event)"
+      ></ix-dynamic-form>
+
       <div class="form-actions">
         <button
           mat-button

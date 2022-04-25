@@ -1,14 +1,12 @@
-<ng-container [formGroup]="fieldsFormGroup">
-    <ng-container *ngFor="let field of fields">
-      <ng-container [ngSwitch]="field.type">
-        <ix-input
-          *ngSwitchCase="'input'"
-          [formControlName]="field.name"
-          [label]="field.title | translate"
-          [placeholder]="field.title | translate"
-          [required]="field.required"
-          [fxHide]="field.hidden"
-        ></ix-input>
-      </ng-container>
+<ng-container *ngFor="let section of dynamicSection">
+  <ix-fieldset *ngIf="section.schema.length" [title]="section.name | translate">
+    <ng-container *ngFor="let schema of section.schema">
+      <ix-dynamic-form-item
+        [dynamicSchema]="schema"
+        [dynamicForm]="dynamicForm"
+        (addListItem)="addControlNext($event)"
+        (deleteListItem)="removeControlNext($event)"
+      ></ix-dynamic-form-item>
     </ng-container>
+  </ix-fieldset>
 </ng-container>

@@ -1,3 +1,9 @@
+import { FormArray } from '@angular/forms';
+import { Observable } from 'rxjs';
+import { ChartSchemaNode } from 'app/interfaces/chart-release.interface';
+import { Option } from 'app/interfaces/option.interface';
+import { TreeNodeProvider } from 'app/modules/ix-forms/components/ix-explorer/ix-explorer.component';
+
 export interface DynamicFormSchema {
   name: string;
   description: string;
@@ -5,20 +11,25 @@ export interface DynamicFormSchema {
 }
 
 export interface DynamicFormSchemaNode {
-  name: string;
+  variable: string;
   type: string;
+  attrs?: DynamicFormSchemaNode[];
+  items?: DynamicFormSchemaNode[];
+  items_schema?: ChartSchemaNode[];
   title?: string;
-  show_if?: string[];
-  default?: any;
   required?: boolean;
-  value?: string;
-  max_length?: number;
-  min_length?: number;
-  min?: number;
-  max?: number;
-  cidr?: boolean;
   private?: boolean;
-  hidden?: boolean;
-  show_subquestions_if?: any;
-  editable?: boolean;
+  options?: Observable<Option[]>;
+  nodeProvider?: TreeNodeProvider;
+  cidr?: boolean;
+}
+
+export interface AddListItemEmitter {
+  array: FormArray;
+  schema: ChartSchemaNode[];
+}
+
+export interface DeleteListItemEmitter {
+  array: FormArray;
+  index: number;
 }
