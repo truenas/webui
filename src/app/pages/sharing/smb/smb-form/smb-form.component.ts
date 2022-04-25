@@ -6,12 +6,15 @@ import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import _ from 'lodash';
-import { Observable, of } from 'rxjs';
+import {
+  EMPTY, noop, Observable, of,
+} from 'rxjs';
 import {
   debounceTime, filter, map, switchMap, take, tap,
 } from 'rxjs/operators';
 import { ProductType } from 'app/enums/product-type.enum';
-import { ServiceName } from 'app/enums/service-name.enum';
+import { ServiceName, serviceNames } from 'app/enums/service-name.enum';
+import { ServiceStatus } from 'app/enums/service-status.enum';
 import { helptextSharingSmb, shared } from 'app/helptext/sharing';
 import { Option } from 'app/interfaces/option.interface';
 import { Service } from 'app/interfaces/service.interface';
@@ -283,20 +286,17 @@ export class SmbFormComponent implements OnInit {
     request$.pipe(
       untilDestroyed(this),
     ).subscribe(() => {
-      this.shouldServiceRestart().pipe(
-        switchMap((restart) => {
-          if (restart) {
-            return this.restartServices();
+      this.getCifsService().pipe(
+        switchMap((cifsService) => {
+          if (cifsService.state === ServiceStatus.Stopped) {
+            return this.startAndEnableService(cifsService);
           }
-          return of(true);
+          return this.restartCifsServiceIfNecessary();
         }),
-        switchMap(this.shouldRedirectToAclEdit),
-        filter(Boolean),
-        switchMap(this.shouldEnableServiceAutomaticRestart),
-        switchMap(this.shouldStartAndUpdateCifsService),
+        switchMap(this.redirectToAclEditIfRequired),
         untilDestroyed(this),
       ).subscribe(
-        () => {},
+        noop,
         (err) => {
           if (err.reason.includes('[ENOENT]')) {
             this.dialog.closeAllDialogs();
@@ -306,7 +306,8 @@ export class SmbFormComponent implements OnInit {
           this.isLoading = false;
           this.cdr.markForCheck();
           this.slideInService.close();
-        }, () => {
+        },
+        () => {
           this.isLoading = false;
           this.cdr.markForCheck();
           this.slideInService.close();
@@ -318,6 +319,17 @@ export class SmbFormComponent implements OnInit {
       this.cdr.markForCheck();
       this.errorHandler.handleWsFormError(error, this.form);
     });
+  }
+
+  restartCifsServiceIfNecessary(): Observable<boolean> {
+    return this.shouldServiceRestart().pipe(
+      switchMap((shouldRestart) => {
+        if (shouldRestart) {
+          return this.restartCifsService();
+        }
+        return of(true);
+      }),
+    );
   }
 
   shouldServiceRestart = (): Observable<boolean> => {
@@ -353,7 +365,7 @@ export class SmbFormComponent implements OnInit {
     return of(false);
   };
 
-  restartServices = (): Observable<boolean> => {
+  restartCifsService = (): Observable<boolean> => {
     this.loader.open();
     return this.ws.call(
       'service.restart',
@@ -370,41 +382,7 @@ export class SmbFormComponent implements OnInit {
     );
   };
 
-  shouldEnableServiceAutomaticRestart = (): Observable<Service> => {
-    return this.ws.call('pool.dataset.path_in_locked_datasets', [this.form.get('path').value]).pipe(
-      filter((pathInLockedDatasets) => !pathInLockedDatasets),
-      switchMap(() => this.ws.call('service.query')),
-      map((services) => _.find(services, { service: ServiceName.Cifs })),
-      filter((cifsService) => !cifsService.enable),
-    );
-  };
-
-  shouldStartAndUpdateCifsService = (cifsService: Service): Observable<boolean> => {
-    return this.dialog.confirm({
-      title: shared.dialog_title,
-      message: shared.dialog_message,
-      hideCheckBox: true,
-      buttonMsg: shared.dialog_button,
-    }).pipe(
-      filter((confirm) => confirm),
-      switchMap(
-        () => this.ws.call(
-          'service.update',
-          [cifsService.id, { enable: true }],
-        ),
-      ),
-      switchMap(() => this.ws.call('service.start', [cifsService.service])),
-      switchMap(() => {
-        return this.dialog.info(
-          this.translate.instant('{service} Service', { service: 'SMB' }),
-          this.translate.instant('The {service} service has been enabled.', { service: 'SMB' }),
-          '250px', 'info',
-        );
-      }),
-    );
-  };
-
-  shouldRedirectToAclEdit = (): Observable<boolean> => {
+  redirectToAclEditIfRequired = (): Observable<boolean> => {
     const sharePath: string = this.form.get('path').value;
     const homeShare = this.form.get('home').value;
 
@@ -417,5 +395,53 @@ export class SmbFormComponent implements OnInit {
       return of(false);
     }
     return of(true);
+  };
+
+  startAndEnableService = (cifsService: Service): Observable<boolean> => {
+    const dialog = this.dialog.confirm({
+      title: this.translate.instant('Start {service} Service', { service: serviceNames.get(ServiceName.Cifs) }),
+      message: this.translate.instant('SMB Service is not currently running. Start the service now?'),
+      hideCheckBox: true,
+      secondaryCheckBox: true,
+      secondaryCheckBoxMsg: shared.dialog_message,
+      buttonMsg: shared.dialog_button,
+    });
+    let restartAutometically = false;
+    let startNow = false;
+    dialog.componentInstance.isSubmitEnabled = true;
+    dialog.componentInstance.switchSelectionEmitter
+      .pipe(untilDestroyed(this))
+      .subscribe((restart) => restartAutometically = restart);
+    dialog.componentInstance.customSubmit = () => {
+      startNow = true;
+      dialog.close();
+    };
+    return dialog.afterClosed().pipe(
+      switchMap(() => {
+        if (startNow && restartAutometically) {
+          return this.ws.call(
+            'service.update',
+            [cifsService.id, { enable: restartAutometically }],
+          );
+        }
+        return EMPTY;
+      }),
+      switchMap(() => (startNow ? this.ws.call('service.start', [cifsService.service]) : EMPTY)),
+      switchMap(() => {
+        if (!startNow) {
+          return EMPTY;
+        }
+        return this.dialog.info(
+          this.translate.instant('{service} Service', { service: 'SMB' }),
+          this.translate.instant('The {service} service has been started.', { service: 'SMB' }),
+          '250px', 'info',
+        );
+      }),
+      switchMap(() => of(startNow)),
+    );
+  };
+
+  getCifsService = (): Observable<Service> => {
+    return this.ws.call('service.query').pipe(map((services) => _.find(services, { service: ServiceName.Cifs })));
   };
 }
