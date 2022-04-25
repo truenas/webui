@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Params, Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { Observable } from 'rxjs';
-import { map, switchMap } from 'rxjs/operators';
+import { switchMap } from 'rxjs/operators';
+import { Group } from 'app/interfaces/group.interface';
 import { User } from 'app/interfaces/user.interface';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { DialogService } from 'app/services';
@@ -19,8 +19,7 @@ export class GroupMembersComponent implements OnInit {
   users: User[] = [];
 
   isFormLoading = false;
-  groupId = '';
-  groupName = '';
+  group: Group;
 
   constructor(
     private ws: WebSocketService,
@@ -32,35 +31,19 @@ export class GroupMembersComponent implements OnInit {
   ngOnInit(): void {
     this.isFormLoading = true;
     this.activatedRoute.params.pipe(
-      untilDestroyed(this),
-    ).subscribe((params: Params) => {
-      this.groupId = params.pk;
-      this.getGroupDetails();
-    });
-  }
-
-  getGroupDetails(): void {
-    this.ws.call('group.query', [[['id', '=', parseInt(this.groupId)]]]).pipe(
+      switchMap((params) => this.ws.call('group.query', [[['id', '=', parseInt(params.pk)]]])),
       switchMap((groups) => {
-        this.groupName = groups[0].group;
-        return this.ws.call('user.query', [[['id', 'in', groups[0].users]]]);
-      }),
-      switchMap((users) => {
-        this.users = users;
-        this.selectedMembers = users;
-        return this.getMembers();
+        this.group = groups[0];
+        return this.ws.call('user.query');
       }),
       untilDestroyed(this),
-    ).subscribe((members) => {
-      this.members.push(...members);
+    ).subscribe((users) => {
+      this.users = users;
+      const members = users.filter((user) => this.group.users.includes(user.id));
+      this.members = members;
+      this.selectedMembers = members;
       this.isFormLoading = false;
     });
-  }
-
-  getMembers(): Observable<User[]> {
-    return this.ws.call('user.query').pipe(
-      map((users) => users.filter((user) => this.users.findIndex((x) => user.id === x.id))),
-    );
   }
 
   onCancel(): void {
@@ -71,7 +54,7 @@ export class GroupMembersComponent implements OnInit {
     this.isFormLoading = true;
 
     const userIds = this.selectedMembers.map((user) => user.id);
-    this.ws.call('group.update', [Number(this.groupId), { users: userIds }]).pipe(
+    this.ws.call('group.update', [this.group.id, { users: userIds }]).pipe(
       untilDestroyed(this),
     ).subscribe(() => {
       this.isFormLoading = false;

@@ -131,6 +131,6 @@ describe('GroupListComponent', () => {
     await firstExpandButton.click();
     await secondExpandButton.click();
 
-    expect(spectator.queryAll('.expanded').length).toEqual(1);
+    expect(spectator.queryAll('.expanded')).toHaveLength(1);
   });
 });

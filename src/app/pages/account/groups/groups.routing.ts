@@ -6,7 +6,7 @@ import { GroupMembersComponent } from 'app/pages/account/groups/group-members/gr
 export const routes: Routes = [
   {
     path: 'groups',
-    data: { title: 'Groups', breadcrumbs: 'Groups' },
+    data: { title: 'Groups', breadcrumb: 'Groups' },
     children: [
       {
         path: '',

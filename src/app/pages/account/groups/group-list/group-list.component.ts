@@ -56,11 +56,12 @@ export class GroupListComponent implements OnInit {
   };
   expandedRow: Group;
   @ViewChildren(IxDetailRowDirective) private detailRows: QueryList<IxDetailRowDirective>;
-  error$ = this.store$.select(selectGroupState).pipe(map((state) => state.error));
   isLoading$ = this.store$.select(selectGroupState).pipe(map((state) => state.isLoading));
-  isEmpty$ = this.store$.select(selectGroupsTotal).pipe(map((total) => total === 0));
-  emptyOrErrorConfig$: Observable<EmptyConfig> = combineLatest([this.isEmpty$, this.error$]).pipe(
-    switchMap(([_, isError]) => {
+  emptyOrErrorConfig$: Observable<EmptyConfig> = combineLatest([
+    this.store$.select(selectGroupsTotal).pipe(map((total) => total === 0)),
+    this.store$.select(selectGroupState).pipe(map((state) => state.error)),
+  ]).pipe(
+    switchMap(([, isError]) => {
       if (isError) {
         return of(this.errorConfig);
       }

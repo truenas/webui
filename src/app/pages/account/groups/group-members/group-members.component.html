@@ -1,18 +1,20 @@
 <mat-card class="form-card">
   <mat-progress-bar *ngIf="isFormLoading" mode="indeterminate"></mat-progress-bar>
-  <mat-card-title *ngIf="groupName">{{ 'Manage members of {name} group' | translate: { name: groupName } }}</mat-card-title>
+  <mat-card-title *ngIf="group?.group">{{ 'Manage members of {name} group' | translate: { name: group.group } }}</mat-card-title>
 
   <mat-card-content>
-    <div class="padding-16" *ngIf="members.length">
+    <div class="padding-16" *ngIf="users.length">
       <app-dual-listbox
-        [items]="members"
+        [items]="users"
         [(selectedItems)]="selectedMembers"
         minHeight="55vh"
         maxHeight="55vh"
         [title1]="'All users' | translate"
-        [title2]="'Group members' | translate">
-        <ng-template #templateItem let-item="data">
-          <mat-list-item>{{ item.username }}</mat-list-item>
+        [title2]="'Group members' | translate"
+      >
+        <ng-template #templateItem let-item>
+          <mat-icon matListIcon fontSet="mdi-set" fontIcon="mdi-account" class="icon account"></mat-icon>
+          <span matLine>{{ item.username }}</span>
         </ng-template>
       </app-dual-listbox>
     </div>
