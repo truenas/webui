@@ -27,7 +27,8 @@ export class IxRadioGroupHarness extends ComponentHarness implements IxFormContr
   }
 
   async getValue(): Promise<string> {
-    return (await this.getMatRadioGroupHarness()).getCheckedValue();
+    const checkedRadio = await (await this.getMatRadioGroupHarness()).getCheckedRadioButton();
+    return checkedRadio.getLabelText();
   }
 
   async setValue(value: string): Promise<void> {

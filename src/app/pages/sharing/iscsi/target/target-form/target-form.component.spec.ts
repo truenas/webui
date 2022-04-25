@@ -1,5 +1,6 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { FlexLayoutModule } from '@angular/flex-layout';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
@@ -44,6 +45,7 @@ describe('TargetFormComponent', () => {
     imports: [
       IxFormsModule,
       ReactiveFormsModule,
+      FlexLayoutModule,
     ],
     providers: [
       mockProvider(IxSlideInService),

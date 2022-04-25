@@ -127,7 +127,7 @@ export interface CertificateAuthority {
   san: string[];
   serial: number;
   signed_certificates: number;
-  signedby: unknown;
+  signedby: null;
   state: string;
   subject_name_hash: number;
   type: number;

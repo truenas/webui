@@ -1,0 +1,29 @@
+.columns {
+  display: flex;
+
+  .column {
+    flex: 1;
+  }
+}
+
+.form-actions {
+  border-top: 1px solid var(--lines);
+  padding: 16px 11px;
+}
+
+.input-group {
+  display: flex;
+
+  > * {
+    margin-bottom: 6px;
+    margin-top: 0;
+  }
+
+  ix-input {
+    flex: 1;
+  }
+
+  ix-select {
+    width: 100px;
+  }
+}
