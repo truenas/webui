@@ -655,7 +655,7 @@ export class VolumeStatusComponent implements OnInit, OnDestroy {
 
   onClickEdit(disk: Disk): void {
     const editForm = this.slideIn.open(DiskFormComponent, { wide: true });
-    editForm.setFormDisck(disk);
+    editForm.setFormDisk(disk);
   }
 
   poolRemove(id: number, label: number | string): void {

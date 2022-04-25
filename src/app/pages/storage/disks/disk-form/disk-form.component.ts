@@ -1,4 +1,9 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  OnInit,
+} from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
@@ -7,7 +12,6 @@ import { DiskPowerLevel } from 'app/enums/disk-power-level.enum';
 import { DiskStandby } from 'app/enums/disk-standby.enum';
 import helptext from 'app/helptext/storage/disks/disks';
 import { Option } from 'app/interfaces/option.interface';
-import { QueryFilter } from 'app/interfaces/query-api.interface';
 import { Disk, DiskUpdate } from 'app/interfaces/storage.interface';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { DialogService, WebSocketService } from 'app/services';
@@ -15,13 +19,11 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
 @Component({
-  selector: 'app-disk-form',
   templateUrl: 'disk-form.component.html',
   styleUrls: ['disk-form.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DiskFormComponent implements OnInit {
-  readonly editCall = 'disk.update' as const;
-  customFilter: [[Partial<QueryFilter<Disk>>]] = [[['identifier', '=']]];
   form = this.fb.group({
     name: [''],
     serial: [''],
@@ -37,16 +39,15 @@ export class DiskFormComponent implements OnInit {
     clear_pw: [false],
   });
   readonly helptext = helptext;
-  readonly advpowermgmt_options: Option[] = helptext.disk_form_advpowermgmt_options;
+  readonly title = helptext.disk_form_title;
   readonly hddstandbyOptions$ = of(helptext.disk_form_hddstandby_options);
-  readonly advpowermgmtOptions$ = of(this.translateOptions(this.advpowermgmt_options));
+  readonly advpowermgmtOptions$ = of(this.translateOptions(this.helptext.disk_form_advpowermgmt_options));
   isLoading = false;
-  title = helptext.disk_form_title;
   existingDisk: Disk;
 
   constructor(
     private translate: TranslateService,
-    protected ws: WebSocketService,
+    private ws: WebSocketService,
     private fb: FormBuilder,
     private dialogService: DialogService,
     private cdr: ChangeDetectorRef,
@@ -56,27 +57,23 @@ export class DiskFormComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.passwordState();
+    this.clearPasswordField();
   }
 
-  setFormDisck(disk: Disk): void {
+  setFormDisk(disk: Disk): void {
     this.existingDisk = disk;
-    this.form.patchValue(this.resourceTransformIncomingRestData(disk));
+    const transformedData = { ...disk };
+    delete transformedData.passwd;
+    this.form.patchValue(transformedData);
   }
 
   private translateOptions(options: Option[]): Option[] {
-    return options.map((el) => {
-      return { label: this.translate.instant(el.label), value: el.value };
+    return options.map((option) => {
+      return { label: this.translate.instant(option.label), value: option.value };
     });
   }
 
-  resourceTransformIncomingRestData(data: Disk): Disk {
-    const transformed = { ...data };
-    delete transformed.passwd;
-    return transformed;
-  }
-
-  private passwordState(): void {
+  private clearPasswordField(): void {
     this.form.controls['clear_pw'].valueChanges
       .pipe(untilDestroyed(this))
       .subscribe(
@@ -91,30 +88,32 @@ export class DiskFormComponent implements OnInit {
       );
   }
 
-  beforeSubmit(value: any): void {
-    if (value.passwd === '') {
-      delete value.passwd;
+  transformFormValue(value: any): DiskUpdate {
+    const transformedValue = value;
+    if (transformedValue.passwd === '') {
+      delete transformedValue.passwd;
     }
 
-    if (value.clear_pw) {
-      value.passwd = '';
+    if (transformedValue.clear_pw) {
+      transformedValue.passwd = '';
     }
 
-    delete value.clear_pw;
-    delete value.name;
-    delete value.serial;
+    delete transformedValue.clear_pw;
+    delete transformedValue.name;
+    delete transformedValue.serial;
 
-    value.critical = value.critical === '' ? null : value.critical;
-    value.difference = value.difference === '' ? null : value.difference;
-    value.informational = value.informational === '' ? null : value.informational;
+    transformedValue.critical = transformedValue.critical === '' ? null : transformedValue.critical;
+    transformedValue.difference = transformedValue.difference === '' ? null : transformedValue.difference;
+    transformedValue.informational = transformedValue.informational === '' ? null : transformedValue.informational;
+
+    return transformedValue;
   }
 
   onSubmit(): void {
-    const values = this.form.value;
+    const valuesDiskUpdate = this.transformFormValue(this.form.value);
 
-    this.beforeSubmit(values);
     this.isLoading = true;
-    this.ws.call(this.editCall, [this.existingDisk.identifier, values as DiskUpdate])
+    this.ws.call('disk.update', [this.existingDisk.identifier, valuesDiskUpdate])
       .pipe(untilDestroyed(this))
       .subscribe(
         () => {
@@ -130,9 +129,5 @@ export class DiskFormComponent implements OnInit {
           this.errorHandler.handleWsFormError(error, this.form);
         },
       );
-  }
-
-  goBack(): void {
-    this.slideInService.close();
   }
 }

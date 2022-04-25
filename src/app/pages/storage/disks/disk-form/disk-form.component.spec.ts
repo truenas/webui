@@ -2,9 +2,7 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import {
-  byText, createComponentFactory, mockProvider, Spectator,
-} from '@ngneat/spectator/jest';
+import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { DiskBus } from 'app/enums/disk-bus.enum';
 import { DiskPowerLevel } from 'app/enums/disk-power-level.enum';
@@ -74,7 +72,7 @@ describe('DiskFormComponent', () => {
     form = await loader.getHarness(IxFormHarness);
   });
 
-  it('disable password field', async () => {
+  it('the field \'SED Password\' should be disabled if the checkbox \'Clear SED Password\' value is true', async () => {
     const clearPassword = await loader.getHarness(IxCheckboxHarness.with({ label: 'Clear SED Password' }));
     const sedPassword = await loader.getHarness(IxInputHarness.with({ label: 'SED Password' }));
     await clearPassword.setValue(true);
@@ -82,15 +80,8 @@ describe('DiskFormComponent', () => {
     expect(sedPassword.isDisabled()).toBeTruthy();
   });
 
-  it('butoon \'cancel\' closes the slide modal', () => {
-    const btnCancel = spectator.query(byText('Cancel'));
-    spectator.click(btnCancel);
-
-    expect(spectator.inject(IxSlideInService).close).toHaveBeenCalled();
-  });
-
   it('setting form data', async () => {
-    spectator.component.setFormDisck(dataDisk);
+    spectator.component.setFormDisk(dataDisk);
     const formValue = await form.getValues();
     expect(formValue).toEqual({
       'Advanced Power Management': 'Level 127 - Maximum power usage with Standby',
@@ -109,7 +100,7 @@ describe('DiskFormComponent', () => {
   });
 
   it('changing form data', async () => {
-    spectator.component.setFormDisck(dataDisk);
+    spectator.component.setFormDisk(dataDisk);
     const changeValue = {
       'Advanced Power Management': 'Level 64 - Intermediate power usage with Standby',
       Critical: '',

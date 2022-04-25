@@ -114,7 +114,7 @@ export class DiskListComponent implements EntityTableConfig<Disk> {
         this.router.navigate(['/', 'storage', 'disks', 'bulk-edit']);
       } else {
         const editForm = this.slideInService.open(DiskFormComponent, { wide: true });
-        editForm.setFormDisck(selected[0]);
+        editForm.setFormDisk(selected[0]);
       }
     },
   }, {
@@ -149,7 +149,7 @@ export class DiskListComponent implements EntityTableConfig<Disk> {
       label: this.translate.instant('Edit'),
       onClick: (disk: Disk) => {
         const editForm = this.slideInService.open(DiskFormComponent, { wide: true });
-        editForm.setFormDisck(disk);
+        editForm.setFormDisk(disk);
       },
     }];
 
