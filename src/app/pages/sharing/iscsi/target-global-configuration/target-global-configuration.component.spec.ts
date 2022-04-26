@@ -105,7 +105,7 @@ describe('TargetGlobalConfigurationComponent', () => {
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalled();
     expect(ws.call).toHaveBeenCalledWith('service.update', [13, { enable: true }]);
-    expect(ws.call).toHaveBeenCalledWith('service.start', [ServiceName.Iscsi]);
+    expect(ws.call).toHaveBeenCalledWith('service.start', [ServiceName.Iscsi, { silent: false }]);
     expect(spectator.inject(DialogService).info).toHaveBeenCalled();
   });
 });

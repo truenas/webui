@@ -577,7 +577,7 @@ export class NetworkComponent implements OnInit, OnDestroy {
       onClick: (row: any) => {
         row.onChanging = true;
         this.ws
-          .call('service.stop', [row.service])
+          .call('service.stop', [row.service, { silent: false }])
           .pipe(untilDestroyed(this))
           .subscribe(
             (res) => {
@@ -601,8 +601,8 @@ export class NetworkComponent implements OnInit, OnDestroy {
                 this.translate.instant('Error stopping service OpenVPN {serviceLabel}', {
                   serviceLabel: row.service_label,
                 }),
-                err.message,
-                err.stack,
+                err.reason,
+                err.trace.formatted,
               );
             },
           );
@@ -615,7 +615,7 @@ export class NetworkComponent implements OnInit, OnDestroy {
       onClick: (row: any) => {
         row.onChanging = true;
         this.ws
-          .call('service.start', [row.service])
+          .call('service.start', [row.service, { silent: false }])
           .pipe(untilDestroyed(this))
           .subscribe(
             (res) => {
@@ -639,8 +639,8 @@ export class NetworkComponent implements OnInit, OnDestroy {
                 this.translate.instant('Error starting service OpenVPN {serviceLabel}', {
                   serviceLabel: row.service_label,
                 }),
-                err.message,
-                err.stack,
+                err.reason,
+                err.trace.formatted,
               );
             },
           );
