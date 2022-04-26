@@ -213,8 +213,6 @@ export class AdvancedSettingsComponent implements OnInit {
     },
   };
 
-  readonly CardId = AdvancedCardId;
-
   constructor(
     private ws: WebSocketService,
     private modalService: ModalService,
