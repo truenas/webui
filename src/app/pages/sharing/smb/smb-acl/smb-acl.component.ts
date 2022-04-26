@@ -44,6 +44,8 @@ export class SMBAclComponent {
           type: 'list',
           name: 'share_acl',
           width: '100%',
+          deleteButtonOnFirst: true,
+          addBtnMessage: helptext_sharing_smb.share_acl_add_btn,
           listFields: [],
           templateListField: [
             {

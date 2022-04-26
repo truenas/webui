@@ -195,6 +195,7 @@ export const helptext_sharing_smb = {
   // share acl
   share_acl_basic: T('Basic'),
   share_acl_entries: T('ACL Entries'),
+  share_acl_add_btn: T('Add'),
 
   share_name_placeholder: T('Share Name'),
   share_name_tooltip: T('Name that was created with the SMB share.'),
