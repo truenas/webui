@@ -13,7 +13,8 @@ from pytest_bdd import (
     then,
     when,
 )
-
+import pytest
+pytestmark = [pytest.mark.debug_test]
 
 
 @scenario('features/NAS-T1344.feature', 'Apps Page - Validate chia')
