@@ -4188,7 +4188,6 @@
   "[Use fewer transactions in exchange for more RAM.](https://rclone.org/docs/#fast-list) This can also speed up or slow down the transfer.": "[Use fewer transactions in exchange for more RAM.](https://rclone.org/docs/\\#fast-list) This can also speed up or slow down the transfer.",
   "close": "cerrar",
   "days": "días",
-  "empty": "vacío",
   "group": "grupo",
   "password": "contraseña"
 }
