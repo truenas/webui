@@ -91,7 +91,8 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
   get expanders() {
     if (!this.system.platform.includes('MINI') && this.system.enclosures && this.selectedEnclosure.disks[0]) {
       const enclosureNumber = Number(this.selectedEnclosure.disks[0].enclosure.number);
-      return this.system.getEnclosureExpanders(enclosureNumber);
+      const index = this.system.getEnclosureIndexByNumber(enclosureNumber);
+      return this.system.getEnclosureExpanders(index);
     }
     return this._expanders;
   }
@@ -154,6 +155,11 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
   get cardScale() {
     const scale = this.cardWidth / this.maxCardWidth;
     return scale > 1 ? 1 : scale;
+  }
+
+  get enclosureLabel() {
+    const obj = this.system.enclosures[this.selectedEnclosure.enclosureKey];
+    return obj.label ? obj.label : this.selectedEnclosure.model;
   }
 
   scaleArgs: string;
@@ -379,7 +385,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
     if (this.currentView == 'details') {
       this.clearDisk();
     }
-    const enclosure = this.system.enclosures[profile.enclosureKey];
+    const { enclosure } = profile;
     switch (enclosure.model) {
       case 'R10':
         this.chassis = new R10();
@@ -495,9 +501,9 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
   }
 
   createExtractedEnclosure(profile) {
-    const raw_enclosure = this.system.enclosures[profile.enclosureKey];
+    const model = profile.enclosure.model;
     let chassis;
-    switch (raw_enclosure.model) {
+    switch (model) {
       case 'R10':
         chassis = new R10();
         break;
@@ -551,7 +557,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
           name: 'Error',
           data: {
             name: 'Unsupported Hardware',
-            message: '\"' + raw_enclosure.model + '\" is not a supported model. (METHOD: createExtractedEnclosure)',
+            message: '\"' + model + '\" is not a supported model. (METHOD: createExtractedEnclosure)',
           },
         });
         this.aborted = true;
@@ -837,7 +843,11 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
     }
 
     // Also check slot status
-    const elements = this.system.rearIndex && disk.enclosure.number == this.system.rearIndex ? this.system.enclosures[disk.enclosure.number].elements : this.system.enclosures[disk.enclosure.number].elements[0].elements;
+    const enclosureIndex = this.system.getEnclosureIndexByNumber(disk.enclosure.number);
+    const elements = this.system.rearIndex
+      && enclosureIndex == this.system.rearIndex
+      ? this.system.enclosures[enclosureIndex].elements
+      : this.system.enclosures[enclosureIndex].elements[0].elements;
     const slot = elements.filter((s) => s.slot == disk.enclosure.slot);
 
     if (!failed && slot.fault) {
@@ -876,7 +886,11 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
       }
 
       // Also check slot status
-      const elements = this.system.rearIndex && disk.enclosure.number == this.system.rearIndex ? this.system.enclosures[disk.enclosure.number].elements : this.system.enclosures[disk.enclosure.number].elements[0].elements;
+      const enclosureIndex = this.system.getEnclosureIndexByNumber(disk.enclosure.number);
+      const elements = this.system.rearIndex
+        && enclosureIndex == this.system.rearIndex
+        ? this.system.enclosures[enclosureIndex].elements
+        : this.system.enclosures[enclosureIndex].elements[0].elements;
       const slot = elements.filter((s) => s.slot == disk.enclosure.slot);
 
       if (!failed && slot.fault) {
@@ -886,7 +900,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
       if (failed) {
         const location = this.view;
         const failure: DiskFailure = {
-          disk: disk.name, enclosure: disk.enclosure.number, slot: disk.enclosure.slot, location,
+          disk: disk.name, enclosure: enclosureIndex, slot: disk.enclosure.slot, location,
         };
         failedDisks.push(failure);
       }
@@ -1051,7 +1065,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
   enclosureOverride(view: string) {
     if (view !== this.view) {
       this.selectedDisk = null;
-      this.clearDisk();
+      // this.clearDisk();
       this.loadEnclosure(this.selectedEnclosure, view, true);
     }
   }
@@ -1070,7 +1084,8 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
     const self = this;
 
     const obj = self.system.enclosures[self.selectedEnclosure.enclosureKey];
-    const currentLabel = obj.label !== obj.name ? obj.label : self.selectedEnclosure.model;
+    // const currentLabel = obj.label !== obj.name ? obj.label : self.selectedEnclosure.model;
+    const currentLabel = obj.label ? obj.label : self.selectedEnclosure.model;
     const conf = {
       title: T('Change Enclosure Label'),
       fieldConfig: [

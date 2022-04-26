@@ -85,6 +85,15 @@ export class ApiService {
         responseEvent: 'DisksData',
       },
     },
+    DisksRequestExtra: {
+      apiCall: {
+        protocol: 'websocket',
+        version: '2.0',
+        args: [[], { extra: { pools: true } }],
+        namespace: 'disk.query',
+        responseEvent: 'DisksData',
+      },
+    },
     MultipathRequest: {
       apiCall: {
         protocol: 'websocket',

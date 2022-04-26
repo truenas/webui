@@ -25,7 +25,7 @@ interface EnclosureResponse {
   number: string;
   name: string;
   model: string;
-  controller: string;
+  controller: boolean;
   label: string;
   elements: unknown[];
 }
@@ -126,11 +126,12 @@ export class ViewEnclosureComponent implements AfterContentInit, OnChanges, OnDe
     });
 
     core.register({ observerClass: this, eventName: 'EnclosureData' }).subscribe((evt: CoreEvent) => {
-      evt.data = this.parseEnclosureData(evt.data);
+      evt.data = this.parseEnclosures(evt.data);
+      evt.data = this.sortEnclosures(evt.data);
 
       this.system = new SystemProfiler(this.system_product, evt.data);
       this.selectedEnclosure = this.system.profile[this.system.headIndex];
-      core.emit({ name: 'DisksRequest', sender: this });
+      core.emit({ name: 'DisksRequestExtra', sender: this });
       core.emit({ name: 'SensorDataRequest', sender: this });
     });
 
@@ -185,7 +186,7 @@ export class ViewEnclosureComponent implements AfterContentInit, OnChanges, OnDe
 
   fetchData() {
     console.warn('Fetching Data...');
-    this.core.emit({ name: 'DisksRequest', sender: this });
+    this.core.emit({ name: 'DisksRequestExtra', sender: this });
   }
 
   ngAfterContentInit() {
@@ -228,7 +229,7 @@ export class ViewEnclosureComponent implements AfterContentInit, OnChanges, OnDe
     views.unshift(disks);
     let matchIndex;
 
-    this.system.enclosures[this.selectedEnclosure.enclosureKey].elements.forEach((element, index) => {
+    this.selectedEnclosure.enclosure.elements.forEach((element, index) => {
       const view = {
         name: element.name,
         alias: '',
@@ -244,7 +245,7 @@ export class ViewEnclosureComponent implements AfterContentInit, OnChanges, OnDe
           view.icon = 'fan';
           views.push(view);
           break;
-        case 'Temperature Sensor':
+        case 'Temperature Sensors':
           view.alias = 'Temperature';
           view.icon = 'fan';
           views.push(view);
@@ -259,12 +260,12 @@ export class ViewEnclosureComponent implements AfterContentInit, OnChanges, OnDe
           view.icon = 'flash';
           views.push(view);
           break;
-        case 'SAS Connector':
+        case 'SAS Expander':
           view.alias = 'SAS';
           view.icon = 'flash';
           views.push(view);
           break;
-        case 'Enclosure Services Controller Electronics':
+        case 'Enclosure':
           view.alias = 'Services';
           view.icon = 'flash';
           views.push(view);
@@ -283,30 +284,59 @@ export class ViewEnclosureComponent implements AfterContentInit, OnChanges, OnDe
     }
   }
 
-  private parseEnclosureData(enclosures: EnclosureResponse[]): EnclosureResponse[] {
-    const parsedEnclosure: EnclosureResponse[] = [];
-
-    enclosures.forEach((enclosure, idx) => {
-      parsedEnclosure.push({
-        id: enclosure.id,
-        number: enclosure.number,
-        name: enclosure.name,
-        model: enclosure.model,
-        controller: enclosure.controller,
-        label: enclosure.label,
-        elements: [],
-      });
-      for (const [keyElem, valElem] of Object.entries(enclosure.elements)) {
-        const newElem = {
-          name: keyElem,
-          elements: [],
-        };
-        for (const [keySlot, valSlot] of Object.entries(valElem)) {
-          newElem.elements.push(Object.assign(valSlot, { slot: parseInt(keySlot) }));
-        }
-        parsedEnclosure[idx].elements.push(newElem);
+  private sortEnclosures(enclosures: EnclosureResponse[]): EnclosureResponse[] {
+    const sortedEnclosures: EnclosureResponse[] = [];
+    for (const enclosure of enclosures) {
+      if (!enclosure.id.includes('plx_enclosure') && enclosure.controller == true) {
+        sortedEnclosures.unshift(enclosure);
+      } else {
+        sortedEnclosures.push(enclosure);
       }
+    }
+    return sortedEnclosures;
+  }
+
+  private parseEnclosures(enclosures: EnclosureResponse[]): EnclosureResponse[] {
+    return enclosures.map((enclosure) => ({
+      id: enclosure.id,
+      number: enclosure.number,
+      name: enclosure.name,
+      model: enclosure.model,
+      controller: enclosure.controller,
+      label: enclosure.label,
+      elements: this.parseEnclosure(enclosure.elements),
+    } as EnclosureResponse));
+  }
+
+  private parseEnclosure(elements: Object): Object[] {
+    return Object.entries(elements).map(([keyElem, valElem]) => {
+      if (keyElem === 'Array Device Slot') {
+        return this.parseEnclosureSlotElements(keyElem, valElem);
+      }
+
+      return this.parseEnclosureOtherElements(keyElem, valElem);
     });
-    return parsedEnclosure;
+  }
+
+  private parseEnclosureSlotElements(name: string, elements: Object): Object {
+    return {
+      name,
+      elements: this.parseEnclosureElements(elements),
+      has_slot_status: true,
+    };
+  }
+
+  private parseEnclosureOtherElements(name: string, elements: Object): Object {
+    return {
+      name,
+      elements: this.parseEnclosureElements(elements),
+      has_slot_status: false,
+    };
+  }
+
+  private parseEnclosureElements(elements: Object): Object[] {
+    return Object.entries(elements)
+      .slice(1) // skip 1st key
+      .map(([keySlot, valSlot]) => Object.assign(valSlot, { slot: parseInt(keySlot) }));
   }
 }

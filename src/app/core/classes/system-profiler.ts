@@ -4,6 +4,7 @@ interface Enclosure {
   diskKeys?: any;
   poolKeys?: any;
   enclosureKey?: number;
+  number: number;
 }
 
 interface VDev {
@@ -67,30 +68,31 @@ export class SystemProfiler {
   }
 
   createProfile() {
-    let rearEnclosure;
-
-    // with the enclosure info we set up basic data structure
-    for (let i = 0; i < this.enclosures.length; i++) {
+    this.enclosures.forEach((enclosure, index: number) => {
       // Detect rear drive bays
-      if (this.enclosures[i].controller == true) {
-        if (this.enclosures[i].id.includes('plx_enclosure')) {
-          this.enclosures[i].model = this.enclosures[this.headIndex].model + ' Rear Bays';
-          this.rearIndex = i;
+      if (enclosure.controller == true) {
+        if (enclosure.id.includes('plx_enclosure')) {
+          enclosure.model = this.enclosures[this.headIndex].model + ' Rear Bays';
+          this.rearIndex = index;
         } else {
-          this.headIndex = i;
+          this.headIndex = index;
         }
       }
 
       const series = this.getSeriesFromModel(this.platform);
-      const enclosure = {
-        model: this.headIndex == i ? series : this.enclosures[i].model,
+      const profile = {
+        model: this.headIndex == index ? series : enclosure.model,
         disks: [],
         diskKeys: {},
         poolKeys: {},
+        number: enclosure.number,
+        enclosure,
+        label: enclosure.label,
+        name: enclosure.name,
       };
 
-      this.profile.push(enclosure);
-    }
+      this.profile.push(profile);
+    });
 
     if (typeof this.headIndex !== 'number') {
       console.warn('No Head Unit Detected! Defaulting to enclosure 0...');
@@ -109,6 +111,14 @@ export class SystemProfiler {
     return model;
   }
 
+  getEnclosureIndexByNumber(number: number) {
+    return this.profile.findIndex((enclosure) => enclosure.number === number);
+  }
+
+  getEnclosureByNumber(number: number) {
+    return this.profile.find((enclosure) => enclosure.number === number);
+  }
+
   private parseDiskData(disks) {
     // Clean the slate before we start
     this.profile.forEach((enc) => enc.disks = []);
@@ -116,9 +126,10 @@ export class SystemProfiler {
     const data = disks; // DEBUG
     data.forEach((item, index) => {
       if (!item.enclosure) { return; } // Ignore boot disks
-
-      const enclosure = this.profile[item.enclosure.number];
-      if (!enclosure) { return; }
+      const enclosure = this.getEnclosureByNumber(item.enclosure.number);
+      if (!enclosure) {
+        return;
+      }
       item.status = 'AVAILABLE'; // Label it as available. If it is assigned to a vdev/pool then this will be overridden later.
       enclosure.diskKeys[item.devname] = enclosure.disks.length; // index to enclosure.disks
       enclosure.disks.push(item);
@@ -143,7 +154,7 @@ export class SystemProfiler {
         item.name = 'Power Supply';
         return item;
       });
-      const powerSupply = { name: 'Power Supply', elements, header: ['Descriptor', 'Status', 'Value'] };
+      const powerSupply = { name: 'Power Supply', elements, header: ['descriptor', 'status', 'value'] };
       this.enclosures[this.headIndex].elements.push(powerSupply);
     }
   }

@@ -10,8 +10,8 @@
 
   <mat-toolbar id="Disks-toolbar">
     <div *ngIf="selectedEnclosure" class="mat-card-title-text">
-      {{currentTab.alias}} on 
-      {{system.enclosures[selectedEnclosure.enclosureKey].label == system.enclosures[selectedEnclosure.enclosureKey].name ? selectedEnclosure.model : system.enclosures[selectedEnclosure.enclosureKey].label}} 
+      {{currentTab.alias}} on {{enclosureLabel}}
+      <!-- {{selectedEnclosure.label == selectedEnclosure.name ? selectedEnclosure.model : selectedEnclosure.label}}  -->
       ({{selectedEnclosure.enclosureKey}})
     </div>
 
@@ -29,7 +29,7 @@
   </mat-toolbar>
 
   <!-- Tabs other than Disks -->
-  <tab-content class="other-tab" *ngIf="currentTab.alias !== 'Disks'" [data]="system.enclosures[selectedEnclosure.enclosureKey].elements[currentTab.elementIndex]" ></tab-content>
+  <tab-content class="other-tab" *ngIf="currentTab.alias !== 'Disks'" [data]="selectedEnclosure.enclosure.elements[currentTab.elementIndex]" ></tab-content>
   
   <mat-card-content id="Disks-content" [class]="currentTab.alias">
 
@@ -99,7 +99,7 @@
         <!-- DETAILS OVERLAY -->
           <div *ngIf="currentView == 'details' || exitingView == 'details'" class="details stage-left dom-overlay">
             <div class="content">
-              <h1 class="disk-name {{selectedDisk.name}}">{{selectedDisk.name}}</h1>
+              <h1 class="disk-name {{selectedDisk?.name}}">{{selectedDisk?.name}}</h1>
               <div class="title">
                 <span class="semibold">vdev: </span> 
                 <span *ngIf="selectedVdev.type == 'DISK'"> NONE </span>
@@ -118,7 +118,7 @@
               </div>
               <div class="title">
                 <span class="semibold">Slot: </span> 
-                <span>{{selectedDisk.enclosure.slot}}</span> 
+                <span>{{selectedDisk?.enclosure.slot}}</span> 
               </div>
             </div>
           </div>
@@ -127,7 +127,7 @@
             <div class="content" (mouseenter)="toggleHighlightMode('on')" (mouseleave)="toggleHighlightMode('off')">
 
               <div *ngIf="selectedVdevDisks; else noVdevDisks;" class="legend">
-                <div *ngFor="let disk of selectedVdevDisks; let i = index" class="vdev-disk {{disk}}"(mouseenter)="highlightPath(disk)" (mouseleave)="unhighlightPath(disk)"><div class="swatch" [style.background]="selectedDisk.devname == disk ? theme.yellow : theme.cyan"></div>{{disk}} <span> {{ selectedEnclosure.disks[disk] }}</span>
+                <div *ngFor="let disk of selectedVdevDisks; let i = index" class="vdev-disk {{disk}}"(mouseenter)="highlightPath(disk)" (mouseleave)="unhighlightPath(disk)"><div class="swatch" [style.background]="selectedDisk?.devname == disk ? theme.yellow : theme.cyan"></div>{{disk}} <span> {{ selectedEnclosure.disks[disk] }}</span>
                   <span *ngIf="!selectedVdev.slots[disk]">({{ selectedVdev.diskEnclosures[disk] == system.rearIndex ? 'Rear' : selectedVdev.diskEnclosures[disk] }})</span>
                 </div>
               </div>
