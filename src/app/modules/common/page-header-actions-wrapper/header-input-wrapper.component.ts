@@ -1,4 +1,4 @@
-import { Component, TemplateRef } from '@angular/core';
+import { Component, EventEmitter, TemplateRef } from '@angular/core';
 
 @Component({
   selector: 'page-header-actions-wrapper',
@@ -8,4 +8,6 @@ import { Component, TemplateRef } from '@angular/core';
 export class HeaderInputWrapperComponent {
   template: TemplateRef<any>;
   prefixIcon: string;
+  postfixClick = new EventEmitter<void>();
+  shouldShowPostfixIcon: () => boolean;
 }

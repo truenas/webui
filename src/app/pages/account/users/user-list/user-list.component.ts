@@ -21,8 +21,6 @@ import { CoreEvent } from 'app/interfaces/events';
 import { GlobalActionConfig } from 'app/interfaces/global-action.interface';
 import { User } from 'app/interfaces/user.interface';
 import { EmptyConfig, EmptyType } from 'app/modules/entity/entity-empty/entity-empty.component';
-import { EntityToolbarComponent } from 'app/modules/entity/entity-toolbar/entity-toolbar.component';
-import { ControlConfig, ToolbarConfig } from 'app/modules/entity/entity-toolbar/models/control-config.interface';
 import { IxDetailRowDirective } from 'app/modules/ix-tables/directives/ix-detail-row.directive';
 import { userPageEntered } from 'app/pages/account/users/store/user.actions';
 import { selectUsers, selectUserState, selectUsersTotal } from 'app/pages/account/users/store/user.selectors';
@@ -98,12 +96,11 @@ export class UserListComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit(): void {
     this.layoutService.pageHeaderUpdater$.next(this.pageHeader);
-    this.setupToolbar();
   }
 
-  shouldShowResetInput(): boolean {
+  shouldShowResetInput = (): boolean => {
     return this.filterValue && !!this.filterValue.length;
-  }
+  };
 
   input(filterInput: HTMLInputElement): void {
     this.filterValue = filterInput.value;
@@ -115,11 +112,13 @@ export class UserListComponent implements OnInit, AfterViewInit {
       untilDestroyed(this),
     ).subscribe((preferences) => {
       this.hideBuiltinUsers = preferences.hideBuiltinUsers;
-      this.setupToolbar();
       this.cdr.markForCheck();
     });
   }
 
+  postfixClicked(input: HTMLInputElement): void {
+    this.resetInput(input);
+  }
   resetInput(input: HTMLInputElement): void {
     this.filterValue = '';
     input.value = '';
@@ -175,58 +174,8 @@ export class UserListComponent implements OnInit, AfterViewInit {
     });
   }
 
-  setupToolbar(): void {
-    this.settingsEvent$ = new Subject();
-    this.settingsEvent$.pipe(
-      untilDestroyed(this),
-    ).subscribe((event: CoreEvent) => {
-      switch (event.data.event_control) {
-        case 'filter':
-          this.filterString = event.data.filter;
-          this.dataSource.filter = event.data.filter;
-          break;
-        case 'add':
-          this.doAdd();
-          break;
-        case 'config':
-          this.toggleBuiltins();
-          break;
-        default:
-          break;
-      }
-    });
-
-    const controls: ControlConfig[] = [
-      {
-        name: 'filter',
-        type: 'input',
-        value: this.filterString,
-        placeholder: this.translate.instant('Search'),
-      },
-      {
-        name: 'config',
-        type: 'slide-toggle',
-        value: !this.hideBuiltinUsers,
-        label: this.translate.instant('Show Built-In Users'),
-      },
-      {
-        name: 'add',
-        type: 'button',
-        label: this.translate.instant('Add'),
-        color: 'primary',
-        ixAutoIdentifier: 'Users_ADD',
-      },
-    ];
-
-    const toolbarConfig: ToolbarConfig = {
-      target: this.settingsEvent$,
-      controls,
-    };
-    this.toolbarActionsConfig = {
-      actionType: EntityToolbarComponent,
-      actionConfig: toolbarConfig,
-    };
-
-    this.cdr.markForCheck();
+  filter(inputElement: HTMLInputElement): void {
+    this.filterString = inputElement.value;
+    this.dataSource.filter = inputElement.value;
   }
 }
