@@ -20,6 +20,7 @@ import { StaticRoute } from 'app/interfaces/static-route.interface';
 import { Interval } from 'app/interfaces/timeout.interface';
 import { AppTableAction, AppTableConfig, TableComponent } from 'app/modules/entity/table/table.component';
 import { TableService } from 'app/modules/entity/table/table.service';
+import { OpenVpnClientConfigComponent } from 'app/pages/network/components/open-vpn-client-config/open-vpn-client-config.component';
 import {
   OpenVpnServerConfigComponent,
 } from 'app/pages/network/components/open-vpn-server-config/open-vpn-server-config.component';
@@ -39,7 +40,6 @@ import { ModalService } from 'app/services/modal.service';
 import { EntityUtils } from '../../modules/entity/utils';
 import { InterfacesFormComponent } from './components/forms/interfaces-form.component';
 import { IpmiFormComponent } from './components/forms/ipmi-form.component';
-import { OpenvpnClientComponent } from './components/forms/service-openvpn-client.component';
 
 @UntilDestroy()
 @Component({
@@ -156,7 +156,7 @@ export class NetworkComponent implements OnInit, OnDestroy {
     isActionVisible: this.isOpenVpnActionVisible,
     edit: (row: Service) => {
       if (row.service === ServiceName.OpenVpnClient) {
-        this.modalService.openInSlideIn(OpenvpnClientComponent, row.id);
+        this.slideInService.open(OpenVpnClientConfigComponent, { wide: true });
       } else if (row.service === ServiceName.OpenVpnServer) {
         this.slideInService.open(OpenVpnServerConfigComponent, { wide: true });
       }
@@ -165,7 +165,7 @@ export class NetworkComponent implements OnInit, OnDestroy {
       const state = this.navigation.extras.state as { configureOpenVPN: string };
       if (state && state.configureOpenVPN) {
         if (state.configureOpenVPN === 'client') {
-          this.modalService.openInSlideIn(OpenvpnClientComponent);
+          this.slideInService.open(OpenVpnClientConfigComponent, { wide: true });
         } else {
           this.slideInService.open(OpenVpnServerConfigComponent, { wide: true });
         }
@@ -577,7 +577,7 @@ export class NetworkComponent implements OnInit, OnDestroy {
       onClick: (row: any) => {
         row.onChanging = true;
         this.ws
-          .call('service.stop', [row.service])
+          .call('service.stop', [row.service, { silent: false }])
           .pipe(untilDestroyed(this))
           .subscribe(
             (res) => {
@@ -601,8 +601,8 @@ export class NetworkComponent implements OnInit, OnDestroy {
                 this.translate.instant('Error stopping service OpenVPN {serviceLabel}', {
                   serviceLabel: row.service_label,
                 }),
-                err.message,
-                err.stack,
+                err.reason,
+                err.trace.formatted,
               );
             },
           );
@@ -615,7 +615,7 @@ export class NetworkComponent implements OnInit, OnDestroy {
       onClick: (row: any) => {
         row.onChanging = true;
         this.ws
-          .call('service.start', [row.service])
+          .call('service.start', [row.service, { silent: false }])
           .pipe(untilDestroyed(this))
           .subscribe(
             (res) => {
@@ -639,8 +639,8 @@ export class NetworkComponent implements OnInit, OnDestroy {
                 this.translate.instant('Error starting service OpenVPN {serviceLabel}', {
                   serviceLabel: row.service_label,
                 }),
-                err.message,
-                err.stack,
+                err.reason,
+                err.trace.formatted,
               );
             },
           );

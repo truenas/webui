@@ -10,7 +10,6 @@ import { DiskListComponent } from './disks/disk-list/disk-list.component';
 import { SmartResultsComponent } from './disks/smart-results/smart-results.component';
 import { ImportDiskComponent } from './import-disk/import-disk.component';
 import { VmwareSnapshotListComponent } from './vmware-snapshot/vmware-snapshot-list/vmware-snapshot-list.component';
-import { VmwareSnapshotFormComponent } from './vmware-snapshot/vmware-snapshot/vmware-snapshot-form.component';
 import { DatasetFormComponent } from './volumes/datasets/dataset-form/dataset-form.component';
 import { GroupQuotaFormComponent } from './volumes/datasets/dataset-quotas/dataset-quotas-grouplist/group-quota-form/group-quota-form.component';
 import { UserQuotaFormComponent } from './volumes/datasets/dataset-quotas/dataset-quotas-userlist/user-quota-form/user-quota-form.component';
@@ -125,17 +124,6 @@ export const routes: Routes = [
             component: VmwareSnapshotListComponent,
             data: { title: 'VMware Snapshots', breadcrumb: 'VMware Snapshots' },
           },
-          {
-            path: 'add',
-            component: VmwareSnapshotFormComponent,
-            data: { title: 'Add', breadcrumb: 'Add' },
-          },
-          {
-            path: 'edit/:pk',
-            component: VmwareSnapshotFormComponent,
-            data: { title: 'Edit', breadcrumb: 'Edit' },
-          },
-
         ],
       },
       {

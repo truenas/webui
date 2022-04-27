@@ -5,6 +5,7 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { NetworkActivityType } from 'app/enums/network-activity-type.enum';
 import { NetworkConfiguration } from 'app/interfaces/network-configuration.interface';
 import { IxRadioGroupHarness } from 'app/modules/ix-forms/components/ix-radio-group/ix-radio-group.harness';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
@@ -34,7 +35,7 @@ describe('NetworkConfigurationComponent', () => {
         mockCall('network.configuration.config', {
           activity: {
             activities: [],
-            type: 'DENY',
+            type: NetworkActivityType.Deny,
           },
           domain: 'local',
           domains: [],
@@ -95,7 +96,7 @@ describe('NetworkConfigurationComponent', () => {
       'Nameserver 3': '',
       'IPv4 Default Gateway': '',
       'IPv6 Default Gateway': '',
-      'Allow All': 'DENY',
+      'Allow All': 'Allow All',
       'HTTP Proxy': '',
       'Enable Netwait Feature': false,
       'Host Name Database': [],
@@ -136,7 +137,7 @@ describe('NetworkConfigurationComponent', () => {
       [{
         activity: {
           activities: [],
-          type: 'DENY',
+          type: NetworkActivityType.Deny,
         },
         domain: 'local',
         domains: [],
@@ -158,6 +159,26 @@ describe('NetworkConfigurationComponent', () => {
           wsd: true,
         },
       }],
+    );
+  });
+
+  it('saves activity as ALLOW with activities = [] when "Deny All" is selected ', async () => {
+    const outboundRadioGroup = await loader.getHarness(IxRadioGroupHarness.with({ selector: '.outbound-network-radio' }));
+    await outboundRadioGroup.setValue('Deny All');
+
+    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+    await saveButton.click();
+
+    expect(ws.call).toHaveBeenCalledWith(
+      'network.configuration.update',
+      [
+        expect.objectContaining({
+          activity: {
+            activities: [],
+            type: NetworkActivityType.Allow,
+          },
+        }),
+      ],
     );
   });
 });
