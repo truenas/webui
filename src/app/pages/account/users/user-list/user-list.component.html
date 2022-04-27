@@ -1,6 +1,9 @@
 <ng-template #pageHeader>
     <page-title-header [title]="title$">
       <button mat-button type="button" color="primary">{{ 'Add' | translate }}</button>
+      <mat-slide-toggle>
+        <label>Show Built-in Users</label>
+      </mat-slide-toggle>
       <ng-template headerInput [prefixIcon]="'search'">
         <input matInput placeholder="Search">
       </ng-template>
