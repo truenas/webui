@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
 import {
+  AbstractControl,
   FormArray, FormBuilder, FormControl, FormGroup, Validators,
 } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -22,6 +23,7 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
 })
 export class ChartFormComponent {
   title: string;
+  config: any;
   name: string;
   isLoading = false;
   dynamicSection: DynamicFormSchema[] = [];
@@ -51,6 +53,10 @@ export class ChartFormComponent {
     this.title = title;
   }
 
+  setChartConfig(config: { [key: string]: any }): void {
+    this.config = config;
+  }
+
   parseChartSchema(chartSchema: ChartSchema): void {
     this.form.controls.release_name.setValue(this.title);
     this.form.controls.release_name.disable();
@@ -64,7 +70,7 @@ export class ChartFormComponent {
           this.addFormSchema(question, question.group);
         }
       });
-      // TODO: patch form
+      this.form.controls.data.patchValue(this.config);
     } catch (error: unknown) {
       console.error(error);
       this.dialogService.errorReport(helptext.chartForm.parseError.title, helptext.chartForm.parseError.message);
@@ -90,18 +96,18 @@ export class ChartFormComponent {
         schema.subquestions.forEach((subquestion) => {
           this.addFormControls(subquestion, formGroup);
           if (subquestion.schema.default === schema.show_subquestions_if) {
-            formGroup.get(subquestion.variable).enable();
+            formGroup.controls[subquestion.variable].enable();
           } else {
-            formGroup.get(subquestion.variable).disable();
+            formGroup.controls[subquestion.variable].disable();
           }
 
           newFormControl.valueChanges
             .pipe(untilDestroyed(this))
             .subscribe((value) => {
               if (value === schema.show_subquestions_if) {
-                formGroup.get(subquestion.variable).enable();
+                formGroup.controls[subquestion.variable].enable();
               } else {
-                formGroup.get(subquestion.variable).disable();
+                formGroup.controls[subquestion.variable].disable();
               }
             });
         });
@@ -115,10 +121,35 @@ export class ChartFormComponent {
     } else if (schema.type === 'dict') {
       formGroup.addControl(chartSchemaNode.variable, new FormGroup({}));
       for (const attr of schema.attrs) {
-        this.addFormControls(attr, formGroup.get(chartSchemaNode.variable) as FormGroup);
+        this.addFormControls(attr, formGroup.controls[chartSchemaNode.variable] as FormGroup);
       }
     } else if (schema.type === 'list') {
       formGroup.addControl(chartSchemaNode.variable, new FormArray([]));
+
+      let items: ChartSchemaNode[] = [];
+      chartSchemaNode.schema.items.forEach((item) => {
+        item.schema.attrs.forEach((attr) => {
+          items = items.concat(attr);
+        });
+      });
+
+      const configControlPath = this.getControlPath(formGroup.controls[chartSchemaNode.variable], '').split('.');
+      configControlPath.shift();
+
+      let nextItem: any = this.config;
+      for (const path of configControlPath) {
+        nextItem = nextItem[path];
+      }
+
+      if (Array.isArray(nextItem)) {
+        // eslint-disable-next-line unused-imports/no-unused-vars
+        for (const _ of nextItem) {
+          this.addFormListItem({
+            array: formGroup.controls[chartSchemaNode.variable] as FormArray,
+            schema: items,
+          });
+        }
+      }
     }
   }
 
@@ -209,14 +240,19 @@ export class ChartFormComponent {
       });
     } else if (beforSchema.type === 'list') {
       let items: DynamicFormSchemaNode[] = [];
+      let itemsSchema: ChartSchemaNode[] = [];
       beforSchema.items.forEach((item) => {
-        items = items.concat(this.transformSchemaNode(item));
+        item.schema.attrs.forEach((attr) => {
+          items = items.concat(this.transformSchemaNode(attr));
+          itemsSchema = itemsSchema.concat(attr);
+        });
       });
       afterSchemas.push({
         variable: chartSchemaNode.variable,
         type: 'list',
+        title: chartSchemaNode.label,
         items,
-        items_schema: chartSchemaNode.schema.items,
+        items_schema: itemsSchema,
       });
     } else {
       console.error('Unsupported type = ', beforSchema.type);
@@ -225,15 +261,42 @@ export class ChartFormComponent {
   }
 
   addFormListItem(event: AddListItemEmitter): void {
+    const itemFormGroup = new FormGroup({});
     event.schema.forEach((item) => {
-      const formGroup = new FormGroup({});
-      this.addFormControls(item, formGroup);
-      event.array.push(formGroup);
+      this.addFormControls(item, itemFormGroup);
     });
+    event.array.push(itemFormGroup);
   }
 
   deleteFormListItem(event: DeleteListItemEmitter): void {
     event.array.removeAt(event.index);
+  }
+
+  getControlName(control: AbstractControl): string | null {
+    if (control.parent == null) {
+      return null;
+    }
+    const children = control.parent.controls;
+
+    if (Array.isArray(children)) {
+      for (let index = 0; index < children.length; index++) {
+        if (children[index] === control) {
+          return `${index}`;
+        }
+      }
+      return null;
+    }
+    return Object.keys(children).find((name) => control === children[name]) || null;
+  }
+
+  getControlPath(control: AbstractControl, path: string): string | null {
+    path = this.getControlName(control) + path;
+
+    if (control.parent && this.getControlName(control.parent)) {
+      path = '.' + path;
+      return this.getControlPath(control.parent, path);
+    }
+    return path;
   }
 
   onSubmit(): void {

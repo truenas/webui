@@ -381,6 +381,7 @@ export class ChartReleasesComponent implements OnInit {
       }
       if (res.length) {
         form.setTitle(res[0].name);
+        form.setChartConfig(res[0].config);
         form.parseChartSchema(res[0].chart_schema);
       }
     });
