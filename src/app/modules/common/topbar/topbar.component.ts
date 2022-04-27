@@ -122,16 +122,9 @@ export class TopbarComponent implements OnInit, OnDestroy {
 
       this.ws.call('failover.licensed').pipe(untilDestroyed(this)).subscribe((isHa) => {
         this.is_ha = isHa;
-        if (this.is_ha) {
-          window.localStorage.setItem('alias_ips', 'show');
-        } else {
-          window.localStorage.setItem('alias_ips', '0');
-        }
         this.getHaStatus();
       });
       this.sysName = 'TrueNAS ENTERPRISE';
-    } else {
-      window.localStorage.setItem('alias_ips', '0');
     }
     this.ws.subscribe('core.get_jobs').pipe(untilDestroyed(this)).subscribe((event) => {
       if (event && (event.fields.method === 'update.update' || event.fields.method === 'failover.upgrade')) {

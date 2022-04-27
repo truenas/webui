@@ -19,6 +19,7 @@ import { StaticRoute } from 'app/interfaces/static-route.interface';
 import { Interval } from 'app/interfaces/timeout.interface';
 import { AppTableAction, AppTableConfig, TableComponent } from 'app/modules/entity/table/table.component';
 import { TableService } from 'app/modules/entity/table/table.service';
+import { InterfaceFormComponent } from 'app/pages/network/components/interface-form/interface-form.component';
 import { OpenVpnClientConfigComponent } from 'app/pages/network/components/open-vpn-client-config/open-vpn-client-config.component';
 import {
   OpenVpnServerConfigComponent,
@@ -37,7 +38,6 @@ import { IpmiService } from 'app/services/ipmi.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { ModalService } from 'app/services/modal.service';
 import { EntityUtils } from '../../modules/entity/utils';
-import { InterfacesFormComponent } from './components/forms/interfaces-form.component';
 import { IpmiFormComponent } from './components/forms/ipmi-form.component';
 
 @UntilDestroy()
@@ -76,10 +76,11 @@ export class NetworkComponent implements OnInit, OnDestroy {
     getInOutInfo: this.getInterfaceInOutInfo.bind(this),
     parent: this,
     add: () => {
-      this.showInterfacesForm();
+      this.slideInService.open(InterfaceFormComponent);
     },
     edit: (row: NetworkInterfaceUi) => {
-      this.showInterfacesForm(row.id);
+      const interfacesForm = this.slideInService.open(InterfaceFormComponent);
+      interfacesForm.setInterfaceForEdit(row);
     },
     delete: (row: NetworkInterfaceUi, table: TableComponent) => {
       const deleteAction = row.type === NetworkInterfaceType.Physical ? this.translate.instant('Reset configuration for ') : this.translate.instant('Delete ');
@@ -87,12 +88,6 @@ export class NetworkComponent implements OnInit, OnDestroy {
         this.dialog.info(helptext.ha_enabled_edit_title, helptext.ha_enabled_edit_msg);
       } else {
         this.tableService.delete(table, row, deleteAction);
-      }
-    },
-    afterGetData: () => {
-      const state = this.navigation.extras.state as { editInterface: string };
-      if (state && state.editInterface) {
-        this.modalService.openInSlideIn(InterfacesFormComponent, state.editInterface);
       }
     },
     afterDelete: this.afterDelete.bind(this),
@@ -215,6 +210,7 @@ export class NetworkComponent implements OnInit, OnDestroy {
 
     this.slideInService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
       this.staticRoutesTableConf.tableComponent.getData();
+      this.checkInterfacePendingChanges();
     });
 
     this.checkInterfacePendingChanges();
@@ -249,6 +245,8 @@ export class NetworkComponent implements OnInit, OnDestroy {
           }
         });
     }
+
+    this.openInterfaceForEditFromRoute();
   }
 
   checkInterfacePendingChanges(): void {
@@ -550,11 +548,6 @@ export class NetworkComponent implements OnInit, OnDestroy {
     }];
   }
 
-  showInterfacesForm(id?: string): void {
-    const interfacesForm = this.modalService.openInSlideIn(InterfacesFormComponent, id);
-    interfacesForm.afterModalFormClosed = this.checkInterfacePendingChanges.bind(this);
-  }
-
   openvpnDataSourceHelper(res: any[]): any[] {
     return res.filter((item) => {
       if (item.service.includes('openvpn_')) {
@@ -661,5 +654,31 @@ export class NetworkComponent implements OnInit, OnDestroy {
       return false;
     }
     return true;
+  }
+
+  private openInterfaceForEditFromRoute(): void {
+    const state = this.navigation.extras.state as { editInterface: string };
+    if (!state?.editInterface) {
+      return;
+    }
+
+    this.loader.open();
+    this.ws.call('interface.query', [[['id', '=', state.editInterface]]])
+      .pipe(untilDestroyed(this))
+      .subscribe(
+        (interfaces) => {
+          this.loader.close();
+          if (!interfaces[0]) {
+            return;
+          }
+
+          const form = this.slideInService.open(InterfaceFormComponent);
+          form.setInterfaceForEdit(interfaces[0]);
+        },
+        (error) => {
+          this.loader.close();
+          new EntityUtils().handleWsError(this, error);
+        },
+      );
   }
 }

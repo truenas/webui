@@ -19,6 +19,7 @@ import { NetworkConfigurationComponent } from 'app/pages/network/components/conf
 import {
   DownloadClientConfigModalComponent,
 } from 'app/pages/network/components/download-client-config-modal/download-client-config-modal.component';
+import { InterfaceFormComponent } from 'app/pages/network/components/interface-form/interface-form.component';
 import {
   NetworkConfigurationCardComponent,
 } from 'app/pages/network/components/network-configuration-card/network-configuration-card.component';
@@ -29,7 +30,6 @@ import { NetworkService } from 'app/services';
 import { CoreService } from 'app/services/core-service/core.service';
 import { EntityFormService } from '../../modules/entity/entity-form/services/entity-form.service';
 import { EntityModule } from '../../modules/entity/entity.module';
-import { InterfacesFormComponent } from './components/forms/interfaces-form.component';
 import { IpmiFormComponent } from './components/forms/ipmi-form.component';
 import { NetworkComponent } from './network.component';
 import { routing } from './network.routing';
@@ -58,7 +58,7 @@ import { routing } from './network.routing';
   ],
   declarations: [
     StaticRouteFormComponent,
-    InterfacesFormComponent,
+    InterfaceFormComponent,
     NetworkConfigurationComponent,
     IpmiFormComponent,
     NetworkComponent,
