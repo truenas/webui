@@ -359,76 +359,77 @@ export class UserFormComponent {
         this.group.options.push({ label: res[i].group, value: res[i].id });
         this.groups.options.push({ label: res[i].group, value: res[i].id });
       }
-    });
 
-    /* list users */
-    const filter = ['id', '=', parseInt(this.pk, 10)];
-    this.ws.call('user.query', [[filter]]).subscribe(async (res) => {
-      if (res.length !== 0 && res[0].home !== '/nonexistent') {
-        this.storageService.filesystemStat(res[0].home).subscribe((stat) => {
-          entityForm.formGroup.controls['home_mode'].setValue(stat.mode.toString(8).substring(2, 5));
-        });
-      } else {
-        entityForm.formGroup.controls['home_mode'].setValue('755');
-      }
-
-      if (!entityForm.isNew) {
-        entityForm.setDisabled('uid', true);
-        entityForm.formGroup.controls['username'].setValue(res[0].username);
-        // Be sure namesInUse is loaded, edit it, set username again to force validation
-        setTimeout(() => {
-          this.namesInUse.splice(this.namesInUse.indexOf(res[0].username), 1);
-          entityForm.formGroup.controls['username'].setValue(res[0].username);
-        }, 500);
-        entityForm.formGroup.controls['full_name'].setValue(res[0].full_name);
-        entityForm.formGroup.controls['email'].setValue(res[0].email);
-        entityForm.formGroup.controls['password_disabled'].setValue(res[0].password_disabled);
-        entityForm.formGroup.controls['locked'].setValue(res[0].locked);
-        entityForm.formGroup.controls['sudo'].setValue(res[0].sudo);
-        entityForm.formGroup.controls['microsoft_account'].setValue(res[0].microsoft_account);
-        entityForm.formGroup.controls['sshpubkey'].setValue(res[0].sshpubkey);
-        entityForm.formGroup.controls['groups'].setValue(res[0].groups);
-        entityForm.formGroup.controls['home'].setValue(res[0].home);
-        entityForm.formGroup.controls['shell'].setValue(res[0].shell);
-        entityForm.setDisabled('password', true);
-        entityForm.setDisabled('password_conf', true);
-
-        this.fieldSets
-          .hideConfig('password')
-          .hideConfig('password_conf')
-          .showConfig('password_edit')
-          .showConfig('password_conf_edit');
-
-        if (res[0].builtin) {
-          entityForm.setDisabled('username', true);
-          entityForm.formGroup.controls['uid'].setValue(res[0].uid);
-          entityForm.setDisabled('uid', true);
-          entityForm.setValue('group', res[0].group.id);
-          entityForm.setDisabled('group', true);
-          entityForm.setDisabled('home', true);
-          entityForm.setDisabled('home_mode', true);
-          this.fieldSets.hideConfig('home_mode');
+      /* list users */
+      const filter = ['id', '=', parseInt(this.pk, 10)];
+      this.ws.call('user.query', [[filter]]).subscribe(async (res) => {
+        if (res.length !== 0 && res[0].home !== '/nonexistent') {
+          this.storageService.filesystemStat(res[0].home).subscribe((stat) => {
+            entityForm.formGroup.controls['home_mode'].setValue(stat.mode.toString(8).substring(2, 5));
+          });
         } else {
-          entityForm.formGroup.controls['uid'].setValue(res[0].uid);
-          entityForm.setDisabled('group', false);
-          entityForm.setValue('group', res[0].group.id);
-          entityForm.formGroup.controls['shell'].setValue(res[0].shell);
+          entityForm.formGroup.controls['home_mode'].setValue('755');
         }
-      } else {
-        this.ws.call('user.get_next_uid').subscribe((next_uid) => {
-          entityForm.formGroup.controls['uid'].setValue(next_uid);
-        });
-      }
-      this.userService.shellChoices(parseInt(this.pk, 10)).then((choices) => {
-        this.shells = choices;
-        this.shell = this.fieldSets.config('shell');
-        this.shell.options = this.shells;
 
-        if (entityForm.isNew && Array.isArray(this.shells) && this.shells.length > 0) {
-          entityForm.formGroup.controls['shell'].setValue(this.shells[0].value);
+        if (!entityForm.isNew) {
+          entityForm.setDisabled('uid', true);
+          entityForm.formGroup.controls['username'].setValue(res[0].username);
+          // Be sure namesInUse is loaded, edit it, set username again to force validation
+          setTimeout(() => {
+            this.namesInUse.splice(this.namesInUse.indexOf(res[0].username), 1);
+            entityForm.formGroup.controls['username'].setValue(res[0].username);
+          }, 500);
+          entityForm.formGroup.controls['full_name'].setValue(res[0].full_name);
+          entityForm.formGroup.controls['email'].setValue(res[0].email);
+          entityForm.formGroup.controls['password_disabled'].setValue(res[0].password_disabled);
+          entityForm.formGroup.controls['locked'].setValue(res[0].locked);
+          entityForm.formGroup.controls['sudo'].setValue(res[0].sudo);
+          entityForm.formGroup.controls['microsoft_account'].setValue(res[0].microsoft_account);
+          entityForm.formGroup.controls['sshpubkey'].setValue(res[0].sshpubkey);
+          entityForm.formGroup.controls['groups'].setValue(res[0].groups);
+          entityForm.formGroup.controls['home'].setValue(res[0].home);
+          entityForm.formGroup.controls['shell'].setValue(res[0].shell);
+          entityForm.setDisabled('password', true);
+          entityForm.setDisabled('password_conf', true);
+
+          this.fieldSets
+            .hideConfig('password')
+            .hideConfig('password_conf')
+            .showConfig('password_edit')
+            .showConfig('password_conf_edit');
+
+          if (res[0].builtin) {
+            entityForm.setDisabled('username', true);
+            entityForm.formGroup.controls['uid'].setValue(res[0].uid);
+            entityForm.setDisabled('uid', true);
+            entityForm.setValue('group', res[0].group.id);
+            entityForm.setDisabled('group', true);
+            entityForm.setDisabled('home', true);
+            entityForm.setDisabled('home_mode', true);
+            this.fieldSets.hideConfig('home_mode');
+          } else {
+            entityForm.formGroup.controls['uid'].setValue(res[0].uid);
+            entityForm.setDisabled('group', false);
+            entityForm.setValue('group', res[0].group.id);
+            entityForm.formGroup.controls['shell'].setValue(res[0].shell);
+          }
+        } else {
+          this.ws.call('user.get_next_uid').subscribe((next_uid) => {
+            entityForm.formGroup.controls['uid'].setValue(next_uid);
+          });
         }
+        this.userService.shellChoices(parseInt(this.pk, 10)).then((choices) => {
+          this.shells = choices;
+          this.shell = this.fieldSets.config('shell');
+          this.shell.options = this.shells;
+
+          if (entityForm.isNew && Array.isArray(this.shells) && this.shells.length > 0) {
+            entityForm.formGroup.controls['shell'].setValue(this.shells[0].value);
+          }
+        });
       });
     });
+
     if (!entityForm.isNew) {
       entityForm.submitFunction = this.submitFunction;
     }
