@@ -1,5 +1,10 @@
 <ng-template #pageHeader>
-  <pagetitle [toolbarActionsConfig]="toolbarActionsConfig"></pagetitle>
+    <page-title-header [title]="title$">
+      <button mat-button type="button" color="primary">{{ 'Add' | translate }}</button>
+      <ng-template headerInput [prefixIcon]="'search'">
+        <input matInput placeholder="Search">
+      </ng-template>
+    </page-title-header>
 </ng-template>
 
 <entity-empty *ngIf="isLoading$ | async; else loaded" [conf]="loadingConfig"></entity-empty>

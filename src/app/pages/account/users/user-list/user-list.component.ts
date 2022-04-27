@@ -13,6 +13,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { select, Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import {
+  BehaviorSubject,
   combineLatest, Observable, of, Subject,
 } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
@@ -40,6 +41,7 @@ import { UserFormComponent } from '../user-form/user-form.component';
 })
 export class UserListComponent implements OnInit, AfterViewInit {
   @ViewChild(MatSort, { static: false }) sort: MatSort;
+  title$: BehaviorSubject<string> = new BehaviorSubject('Users');
   @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
   toolbarActionsConfig: GlobalActionConfig = null;
 

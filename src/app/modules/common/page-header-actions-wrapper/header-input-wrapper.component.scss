@@ -1,0 +1,17 @@
+.header-input-wrapper {
+  align-items: center;
+  background: var(--bg2);
+  color: white;
+  display: flex;
+  flex-direction: row;
+  padding: 3px;
+
+  mat-icon {
+    margin-right: 3px;
+    padding-top: 3px;
+  }
+
+  &:focus-within {
+    border: thin solid var(--primary);
+  }
+}

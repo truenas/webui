@@ -1,0 +1,20 @@
+.header-container {
+  color: white;
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 16px;
+  padding: 0 10px;
+}
+
+.title-container {
+  display: flex;
+  flex-direction: row;
+  flex-grow: 1;
+}
+
+.actions-container {
+  display: flex;
+  flex-direction: row-reverse;
+  flex-grow: 1;
+  gap: 0 10px;
+}
