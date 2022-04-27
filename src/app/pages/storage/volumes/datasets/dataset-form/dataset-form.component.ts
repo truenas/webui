@@ -21,6 +21,7 @@ import { OnOff } from 'app/enums/on-off.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { inherit } from 'app/enums/with-inherit.enum';
 import { ZfsPropertySource } from 'app/enums/zfs-property-source.enum';
+import { singleArrayToOptions } from 'app/helpers/options.helper';
 import globalHelptext from 'app/helptext/global-helptext';
 import helptext from 'app/helptext/storage/volumes/datasets/dataset-form';
 import { Dataset, ExtraDatasetQueryOptions } from 'app/interfaces/dataset.interface';
@@ -35,6 +36,7 @@ import { FieldSet } from 'app/modules/entity/entity-form/models/fieldset.interfa
 import { RelationAction } from 'app/modules/entity/entity-form/models/relation-action.enum';
 import { forbiddenValues } from 'app/modules/entity/entity-form/validators/forbidden-values-validation';
 import { EntityUtils } from 'app/modules/entity/utils';
+import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
 import { DatasetFormData } from 'app/pages/storage/volumes/datasets/dataset-form/dataset-form-data.interface';
 import { StorageService, WebSocketService } from 'app/services';
 import { DialogService } from 'app/services/dialog.service';
@@ -59,10 +61,8 @@ export class DatasetFormComponent implements FormConfiguration {
   parentDataset: Dataset;
   protected entityForm: EntityFormComponent;
   minimumRecommendedRecordsize: DatasetRecordSize = '128K';
-  protected recordsizeField: FieldConfig;
+  protected recordsizeField: FormSelectConfig;
   protected recordsizeControl: FormControl;
-  protected recommendedSize: number;
-  protected recordsizeWarning: string;
   protected dedupValue: string;
   protected dedupControl: FormControl;
   protected dedupField: FieldConfig;
@@ -771,43 +771,6 @@ export class DatasetFormComponent implements FormConfiguration {
     'pbkdf2iters',
   ];
 
-  protected byteMap = {
-    T: 1099511627776,
-    G: 1073741824,
-    M: 1048576,
-    K: 1024,
-    B: 1,
-  };
-  protected recordSizeMap = {
-    512: '512',
-    1024: '1K',
-    2048: '2K',
-    4096: '4K',
-    8192: '8K',
-    16384: '16K',
-    32768: '32K',
-    65536: '64K',
-    131072: '128K',
-    262144: '256K',
-    524288: '512K',
-    1048576: '1024K',
-  };
-  protected reverseRecordSizeMap = {
-    512: '512',
-    '1K': '1024',
-    '2K': '2048',
-    '4K': '4096',
-    '8K': '8192',
-    '16K': '16384',
-    '32K': '32768',
-    '64K': '65536',
-    '128K': '131072',
-    '256K': '262144',
-    '512K': '524288',
-    '1024K': '1048576',
-    '1M': '1048576',
-  };
-
   setBasicMode(isBasicMode: boolean): void {
     this.isBasicMode = isBasicMode;
     if (this.isParentEncrypted && !this.isEncryptionInherited) {
@@ -938,6 +901,7 @@ export class DatasetFormComponent implements FormConfiguration {
     protected storageService: StorageService,
     protected modalService: ModalService,
     protected translate: TranslateService,
+    protected formatter: IxFormatterService,
   ) { }
 
   initial(entityForm: EntityFormComponent): void {
@@ -1018,22 +982,30 @@ export class DatasetFormComponent implements FormConfiguration {
     });
 
     this.recordsizeControl = this.entityForm.formGroup.controls['recordsize'] as FormControl;
+    this.recordsizeField = _.find(this.fieldConfig, { name: 'recordsize' }) as FormSelectConfig;
 
-    this.recordsizeField = _.find(this.fieldConfig, { name: 'recordsize' });
+    this.ws.call('pool.dataset.recordsize_choices')
+      .pipe(
+        singleArrayToOptions(),
+        untilDestroyed(this),
+      )
+      .subscribe((options) => {
+        this.recordsizeField.options = options;
+      });
+
     this.recordsizeControl.valueChanges.pipe(untilDestroyed(this)).subscribe((recordSize: DatasetRecordSize) => {
-      const recordSizeNumber = parseInt(this.reverseRecordSizeMap[recordSize], 10);
-      if (this.minimumRecommendedRecordsize && this.recommendedSize) {
-        this.recordsizeWarning = this.translate.instant(
-          helptext.dataset_form_warning,
-          { size: this.minimumRecommendedRecordsize },
-        );
-        if (recordSizeNumber < this.recommendedSize) {
-          this.recordsizeField.warnings = this.recordsizeWarning;
-          this.isBasicMode = false;
-        } else {
-          this.recordsizeField.warnings = null;
-        }
+      const currentSize = this.formatter.convertHumanStringToNum(recordSize);
+      const minimumRecommendedSize = this.formatter.convertHumanStringToNum(this.minimumRecommendedRecordsize);
+      if (!currentSize || !minimumRecommendedSize || currentSize >= minimumRecommendedSize) {
+        this.recordsizeField.warnings = null;
+        return;
       }
+
+      this.recordsizeField.warnings = this.translate.instant(
+        helptext.dataset_form_warning,
+        { size: this.minimumRecommendedRecordsize },
+      );
+      this.isBasicMode = false;
     });
     this.setBasicMode(this.isBasicMode);
   }
@@ -1075,9 +1047,6 @@ export class DatasetFormComponent implements FormConfiguration {
       const root = this.parent.split('/')[0];
       this.ws.call('pool.dataset.recommended_zvol_blocksize', [root]).pipe(untilDestroyed(this)).subscribe((recommendedSize) => {
         this.minimumRecommendedRecordsize = recommendedSize;
-        this.recommendedSize = parseInt(
-          this.reverseRecordSizeMap[this.minimumRecommendedRecordsize], 0,
-        );
       });
 
       this.ws.call('pool.dataset.query', [[['id', '=', this.pk]]]).pipe(untilDestroyed(this)).subscribe(
@@ -1505,7 +1474,7 @@ export class DatasetFormComponent implements FormConfiguration {
       delete data.refquota_critical;
     }
 
-    if ((data.recordsize as string) === '1M') {
+    if (data.recordsize === '1M') {
       data.recordsize = '1024K';
     }
 

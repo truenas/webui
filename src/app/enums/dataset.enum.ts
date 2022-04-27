@@ -43,19 +43,7 @@ export type DatasetVolumeBlockSize =
   | '64K'
   | '128K';
 
-export type DatasetRecordSize =
-  | '512'
-  | '1K'
-  | '2K'
-  | '4K'
-  | '8K'
-  | '16K'
-  | '32K'
-  | '64K'
-  | '128K'
-  | '256K'
-  | '512K'
-  | '1024K';
+export type DatasetRecordSize = string;
 
 export enum DatasetSync {
   Standard = 'STANDARD',
