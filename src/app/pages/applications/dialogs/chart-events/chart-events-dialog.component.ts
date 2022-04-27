@@ -11,7 +11,6 @@ import { ChartReleaseEvent } from 'app/interfaces/chart-release-event.interface'
 import { ChartContainerImage, ChartRelease } from 'app/interfaces/chart-release.interface';
 import { AppLoaderService } from 'app/modules/app-loader/app-loader.service';
 import { ApplicationsService } from 'app/pages/applications/applications.service';
-import { LocaleService } from 'app/services/locale.service';
 
 @UntilDestroy()
 @Component({
@@ -30,7 +29,6 @@ export class ChartEventsDialogComponent implements OnInit {
   constructor(
     public dialogRef: MatDialogRef<ChartEventsDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: ChartRelease,
-    protected localeService: LocaleService,
     private loader: AppLoaderService,
     public appService: ApplicationsService,
   ) {

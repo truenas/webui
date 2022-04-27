@@ -1,4 +1,3 @@
-import { HttpClient } from '@angular/common/http';
 import { Injectable, OnDestroy } from '@angular/core';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -31,7 +30,6 @@ export class ReportsService implements OnDestroy {
 
   constructor(
     private ws: WebSocketService,
-    protected http: HttpClient,
     private core: CoreService,
   ) {
     this.reportsUtils = new Worker(new URL('./reports-utils.worker', import.meta.url), { type: 'module' });

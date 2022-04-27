@@ -4,7 +4,6 @@ import {
 import { Sort } from '@angular/material/sort';
 import { MatTable } from '@angular/material/table';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateService } from '@ngx-translate/core';
 import { TreeNode } from 'primeng/api';
 import { TreeTableGlobalFilterEvent } from 'app/interfaces/events/tree-table-global-filter-event.interface';
 import { EntityTreeTable } from 'app/modules/entity/entity-tree-table/entity-tree-table.model';
@@ -55,7 +54,6 @@ export class EntityTreeTableComponent implements OnInit, AfterViewInit {
     private ws: WebSocketService,
     private treeTableService: EntityTreeTableService,
     private dialogService: DialogService,
-    protected translate: TranslateService,
     protected core: CoreService,
   ) { }
 
@@ -158,10 +156,6 @@ export class EntityTreeTableComponent implements OnInit, AfterViewInit {
         new EntityUtils().handleWsError(this, err, this.dialogService);
       },
     );
-  }
-
-  clickAction(): null {
-    return null;
   }
 
   expandNode(rootNode: TreeNode): void {

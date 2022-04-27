@@ -13,7 +13,6 @@ import { CoreEvent } from 'app/interfaces/events';
 import { NetworkInterfacesChangedEvent } from 'app/interfaces/events/network-interfaces-changed-event.interface';
 import { Ipmi } from 'app/interfaces/ipmi.interface';
 import { NetworkInterface } from 'app/interfaces/network-interface.interface';
-import { NetworkSummary } from 'app/interfaces/network-summary.interface';
 import { ReportingRealtimeUpdate } from 'app/interfaces/reporting.interface';
 import { Service } from 'app/interfaces/service.interface';
 import { StaticRoute } from 'app/interfaces/static-route.interface';
@@ -187,7 +186,6 @@ export class NetworkComponent implements OnInit, OnDestroy {
     },
   };
 
-  networkSummary: NetworkSummary;
   ipmiEnabled: boolean;
 
   hasConsoleFooter = false;

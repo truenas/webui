@@ -3236,7 +3236,6 @@
   "Domain Account Password": "網域帳戶密碼",
   "Domain Name": "網域名稱",
   "Domain for the user <i>Name</i>. Required when a <i>SID</i> is not entered. Local users have the SMB server NetBIOS name: <code>freenas\\smbusers</code>.": "Domain for the user <i>Name</i>. Required when a <i>SID</i> is not entered. Local users have the SMB server NetBIOS name: <code>freenas\\\\smbusers</code>.",
-  "Don't show this message again": "不再顯示此訊息",
   "Done": "完成",
   "Download": "下載",
   "Download File": "下載檔案",

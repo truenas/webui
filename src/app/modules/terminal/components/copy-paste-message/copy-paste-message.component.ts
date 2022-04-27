@@ -11,6 +11,8 @@ export class CopyPasteMessageComponent {
   title = helptext.dialog_title;
   messageHtml = helptext.copy_paste_message;
 
-  constructor(public dialogRef: MatDialogRef<CopyPasteMessageComponent>,
-    protected translate: TranslateService) {}
+  constructor(
+    public dialogRef: MatDialogRef<CopyPasteMessageComponent>,
+    protected translate: TranslateService,
+  ) {}
 }

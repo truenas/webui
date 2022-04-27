@@ -8,7 +8,6 @@ import {
   SimpleChanges,
 } from '@angular/core';
 import { NgForm } from '@angular/forms';
-import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
@@ -178,7 +177,6 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
   }
 
   constructor(
-    public router: Router,
     public translate: TranslateService,
     private reportsService: ReportsService,
     private ws: WebSocketService,

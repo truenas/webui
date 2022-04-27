@@ -51,7 +51,6 @@ export class AlertConfigComponent implements OnInit {
     { label: this.translate.instant('EMERGENCY'), value: AlertLevel.Emergency },
   ];
   formGroup: FormGroup;
-  isReady = false;
   protected defaults: AlertDefaults[] = [];
 
   selectedIndex = 0;

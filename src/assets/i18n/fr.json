@@ -1768,7 +1768,6 @@
   "Domain Name": "Nom de domaine",
   "Domain for the user <i>Name</i>. Required when a <i>SID</i> is not entered. Local users have the SMB server NetBIOS name: <code>freenas\\smbusers</code>.": "Domaine pour le <i>nom</i> d'utilisateur. Requis lorsqu'un <i>SID</i> n'est pas saisi. Les utilisateurs locaux ont le nom NetBIOS du serveur SMB : <code>freenas\\\\smbusers</code>.",
   "Domain:": "Domaine :",
-  "Don't show this message again": "Ne plus afficher ce message",
   "Done": "Terminé",
   "Download": "Télécharger",
   "Download Client Config": "Télécharger la configuration du client",

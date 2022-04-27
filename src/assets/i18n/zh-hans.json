@@ -1121,7 +1121,6 @@
   "Domain Name": "域名",
   "Domain for the user <i>Name</i>. Required when a <i>SID</i> is not entered. Local users have the SMB server NetBIOS name: <code>freenas\\smbusers</code>.": "用户<i>名称</i>的域。如果未输入<i> SID </i>，则为必填项。本地用户具有SMB服务器的NetBIOS名称：<code>freenas\\\\smbusers</code>。",
   "Domain:": "域名：",
-  "Don't show this message again": "不再显示此消息",
   "Done": "完成",
   "Download": "下载",
   "Download Client Config": "下载客户端配置",

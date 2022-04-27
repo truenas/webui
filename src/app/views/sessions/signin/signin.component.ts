@@ -1,5 +1,4 @@
 import { AutofillMonitor } from '@angular/cdk/text-field';
-import { HttpClient } from '@angular/common/http';
 import {
   Component, OnInit, ViewChild, OnDestroy, ElementRef, AfterViewInit,
 } from '@angular/core';
@@ -95,7 +94,6 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
     private fb: FormBuilder,
     private core: CoreService,
     private autofill: AutofillMonitor,
-    private http: HttpClient,
     private sysGeneralService: SystemGeneralService,
     private localeService: LocaleService,
   ) {

@@ -6,7 +6,6 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { DiskPowerLevel } from 'app/enums/disk-power-level.enum';
 import { DiskStandby } from 'app/enums/disk-standby.enum';
-import { Choices } from 'app/interfaces/choices.interface';
 import { FileSystemStat } from 'app/interfaces/filesystem-stat.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { Disk } from 'app/interfaces/storage.interface';
@@ -226,17 +225,6 @@ export class StorageService {
 
   diskToggleBucket(bool: boolean): void {
     this.diskToggleStatus = bool;
-  }
-
-  poolUnlockServiceOptions(id: number): Observable<Option[]> {
-    return this.ws.call('pool.unlock_services_restart_choices', [id]).pipe(
-      map((response: Choices) => {
-        return Object.keys(response || {}).map((serviceId) => ({
-          label: response[serviceId],
-          value: serviceId,
-        }));
-      }),
-    );
   }
 
   getDatasetNameOptions(): Observable<Option[]> {

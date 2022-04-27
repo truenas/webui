@@ -26,7 +26,7 @@ export class ConfirmDialogComponent {
 
   @Output() switchSelectionEmitter = new EventEmitter<boolean>();
 
-  constructor(public dialogRef: MatDialogRef < ConfirmDialogComponent >, protected translate: TranslateService) {
+  constructor(public dialogRef: MatDialogRef<ConfirmDialogComponent>, protected translate: TranslateService) {
   }
 
   toggleSubmit(data: MatCheckboxChange): void {

@@ -3,7 +3,6 @@ import {
 } from '@angular/core';
 import { MediaObserver } from '@angular/flex-layout';
 import { NgForm } from '@angular/forms';
-import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { UUID } from 'angular2-uuid';
@@ -65,7 +64,6 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
   usageMin: number;
   usageMinThreads: number[] = [];
 
-  legendColors: string[];
   legendIndex: number;
 
   labels: string[] = [];
@@ -73,7 +71,6 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
   private utils: ThemeUtils;
 
   constructor(
-    router: Router,
     public translate: TranslateService,
     public mediaObserver: MediaObserver,
     private el: ElementRef<HTMLElement>,

@@ -37,8 +37,6 @@ export class AlertComponent implements OnChanges {
     return this.alert.dismissed;
   }
 
-  readonly alertLevelLabels = alertLevelLabels;
-
   constructor(
     private store$: Store<AppState>,
     private translate: TranslateService,

@@ -2,9 +2,7 @@ import { Location } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateService } from '@ngx-translate/core';
 import { ProductType, productTypeLabels } from 'app/enums/product-type.enum';
-import { AppLoaderService } from 'app/modules/app-loader/app-loader.service';
 import { WebSocketService, SystemGeneralService } from 'app/services';
 import { DialogService } from 'app/services/dialog.service';
 import { LocaleService } from 'app/services/locale.service';
@@ -25,8 +23,6 @@ export class ShutdownComponent implements OnInit {
   constructor(
     protected ws: WebSocketService,
     protected router: Router,
-    protected loader: AppLoaderService,
-    public translate: TranslateService,
     protected dialogService: DialogService,
     private sysGeneralService: SystemGeneralService,
     private localeService: LocaleService,

@@ -5,7 +5,7 @@ import {
 import {
   Validators,
 } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { of } from 'rxjs';
@@ -97,7 +97,6 @@ export class ServiceWebdavComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     protected router: Router,
-    protected route: ActivatedRoute,
     protected ws: WebSocketService,
     protected validationService: ValidationService,
     private cdr: ChangeDetectorRef,

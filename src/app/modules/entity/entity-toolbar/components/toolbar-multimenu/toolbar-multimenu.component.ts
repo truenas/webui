@@ -1,7 +1,6 @@
 import {
   Component, Input, OnInit,
 } from '@angular/core';
-import { TranslateService } from '@ngx-translate/core';
 import { Subject } from 'rxjs';
 import { getUniqueId } from 'app/helpers/get-unique-id.helper';
 import { ControlConfig } from 'app/modules/entity/entity-toolbar/models/control-config.interface';
@@ -19,8 +18,6 @@ export class ToolbarMultimenuComponent implements OnInit {
   values: any[] = [];
   selectStates: boolean [] = [];
   id = getUniqueId();
-
-  constructor(public translate: TranslateService) {}
 
   ngOnInit(): void {
     this.selectStates.length = this.config.options.length;
