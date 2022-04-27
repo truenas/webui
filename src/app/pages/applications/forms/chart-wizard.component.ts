@@ -36,9 +36,11 @@ export class ChartWizardComponent implements OnDestroy, WizardConfiguration {
   private selectedVersionKey: string;
   isLinear = true;
 
-  constructor(private mdDialog: MatDialog, private dialogService: DialogService,
-    private modalService: ModalService) {
-  }
+  constructor(
+    private mdDialog: MatDialog,
+    private dialogService: DialogService,
+    private modalService: ModalService,
+  ) {}
 
   setTitle(title: string): void {
     this.title = title;

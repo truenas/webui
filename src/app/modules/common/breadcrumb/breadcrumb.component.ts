@@ -20,11 +20,13 @@ export class BreadcrumbComponent implements OnInit {
 
   routeParts: RoutePart[];
   isEnabled = true;
-  constructor(private router: Router,
+  constructor(
+    private router: Router,
     private routePartsService: RoutePartsService,
     private activeRoute: ActivatedRoute,
     private core: CoreService,
-    private localeService: LocaleService) { }
+    private localeService: LocaleService,
+  ) { }
 
   ngOnInit(): void {
   // must be running once to get breadcrumbs

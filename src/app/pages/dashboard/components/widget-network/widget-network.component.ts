@@ -1,7 +1,6 @@
 import {
   Component, AfterViewInit, OnDestroy, Input, OnInit,
 } from '@angular/core';
-import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { ChartData, ChartOptions } from 'chart.js';
@@ -150,7 +149,6 @@ export class WidgetNetworkComponent extends WidgetComponent implements OnInit, A
   };
 
   constructor(
-    public router: Router,
     private ws: WebSocketService,
     private reportsService: ReportsService,
     private tableService: TableService,

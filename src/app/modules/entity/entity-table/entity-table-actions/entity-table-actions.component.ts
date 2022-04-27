@@ -1,7 +1,6 @@
 import {
   Component, Input, OnInit, OnChanges,
 } from '@angular/core';
-import { TranslateService } from '@ngx-translate/core';
 import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-table.component';
 import { EntityTableAction } from 'app/modules/entity/entity-table/entity-table.interface';
 
@@ -18,7 +17,6 @@ export class EntityTableActionsComponent implements OnInit, OnChanges {
   @Input() groups = false;
 
   actions: EntityTableAction[];
-  showMenu = true;
 
   key_prop: string;
 
@@ -35,8 +33,6 @@ export class EntityTableActionsComponent implements OnInit, OnChanges {
   get inlineActions(): boolean {
     return this.entity.conf.inlineActions || false;
   }
-
-  constructor(protected translate: TranslateService) { }
 
   ngOnInit(): void {
     if (this.entity.conf.config && this.entity.conf.config.deleteMsg) {

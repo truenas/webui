@@ -482,7 +482,7 @@ export class SmbFormComponent implements FormConfiguration {
                     switchMap((doEnableService) => {
                       if (doEnableService) {
                         return this.ws.call('service.update', [cifsService.id, { enable: true }]).pipe(
-                          switchMap(() => this.ws.call('service.start', [cifsService.service])),
+                          switchMap(() => this.ws.call('service.start', [cifsService.service, { silent: false }])),
                           switchMap(() => {
                             return this.dialog.info(
                               this.translate.instant('{service} Service', { service: 'SMB' }),

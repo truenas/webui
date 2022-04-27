@@ -233,7 +233,7 @@ describe('NfsFormComponent', () => {
     await saveButton.click();
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalled();
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('service.start', [ServiceName.Nfs]);
+    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('service.start', [ServiceName.Nfs, { silent: false }]);
     expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('service.update', [ServiceName.Nfs, { enable: true }]);
   });
 });
