@@ -87,6 +87,7 @@ export class DatasetFormComponent implements FormConfiguration {
 
   protected warning = 80;
   protected critical = 95;
+  private dataset: Dataset;
 
   custActions = [
     {
@@ -1372,6 +1373,7 @@ export class DatasetFormComponent implements FormConfiguration {
   }
 
   resourceTransformIncomingRestData(wsResponse: Dataset): DatasetFormData {
+    this.dataset = wsResponse;
     if (wsResponse.special_small_block_size && wsResponse.special_small_block_size.rawvalue === '0') {
       delete wsResponse.special_small_block_size;
     }
@@ -1466,34 +1468,22 @@ export class DatasetFormComponent implements FormConfiguration {
       delete data.special_small_block_size;
     }
 
-    if (data.quota_warning_inherit) {
-      delete (data.quota_warning);
+    if (data.quota_warning_inherit && this.dataset?.quota_warning) {
+      data.quota_warning = 'INHERIT';
     }
-    if (data.quota_critical_inherit) {
-      delete (data.quota_critical);
+    if (data.quota_critical_inherit && this.dataset?.quota_critical) {
+      data.quota_critical = 'INHERIT';
     }
-    if (data.refquota_warning_inherit) {
-      delete (data.refquota_warning);
+    if (data.refquota_warning_inherit && this.dataset?.refquota_warning) {
+      data.refquota_warning = 'INHERIT';
     }
-    if (data.refquota_critical_inherit) {
-      delete (data.refquota_critical);
+    if (data.refquota_critical_inherit && this.dataset?.refquota_critical) {
+      data.refquota_critical = 'INHERIT';
     }
     delete (data.quota_warning_inherit);
     delete (data.quota_critical_inherit);
     delete (data.refquota_warning_inherit);
     delete (data.refquota_critical_inherit);
-    if (!data.quota_warning) {
-      delete data.quota_warning;
-    }
-    if (!data.quota_critical) {
-      delete data.quota_critical;
-    }
-    if (!data.refquota_warning) {
-      delete data.refquota_warning;
-    }
-    if (!data.refquota_critical) {
-      delete data.refquota_critical;
-    }
 
     if (data.recordsize === '1M') {
       data.recordsize = '1024K';
