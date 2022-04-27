@@ -1,3 +1,4 @@
+import { DatasetChecksum } from 'app/enums/dataset-checksum.enum';
 import { DatasetType } from 'app/enums/dataset-type.enum';
 import { ZfsProperty } from 'app/interfaces/zfs-property.interface';
 
@@ -38,6 +39,7 @@ export interface Dataset {
   special_small_block_size: ZfsProperty<string>;
   sync: ZfsProperty<string>;
   xattr: ZfsProperty<boolean>;
+  checksum: ZfsProperty<DatasetChecksum>;
 
   // Absent if extra.retrieve_children is false
   children?: Dataset[];

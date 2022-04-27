@@ -1,3 +1,5 @@
+import { DatasetChecksum } from 'app/enums/dataset-checksum.enum';
+
 export interface DatasetFormData {
   name: string;
   acltype?: string;
@@ -31,4 +33,5 @@ export interface DatasetFormData {
   refquota_critical: number;
   refquota_critical_inherit: boolean;
   special_small_block_size: number;
+  checksum: DatasetChecksum;
 }
