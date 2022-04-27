@@ -207,8 +207,8 @@ def click_initiate_failover_click_the_confirm_checkbox_and_press_failover(driver
     assert wait_on_element(driver, 5, '//h1[text()="Initiate Failover"]')
     assert wait_on_element(driver, 5, '//mat-checkbox[contains(@class,"confirm-checkbox")]', 'clickable')
     driver.find_element_by_xpath('//mat-checkbox[contains(@class,"confirm-checkbox")]').click()
-    assert wait_on_element(driver, 5, '//button[.//text()="Failover"]', 'clickable')
-    driver.find_element_by_xpath('//button[.//text()="Failover"]').click()
+    assert wait_on_element(driver, 5, '//button[.//text()="FAILOVER"]', 'clickable')
+    driver.find_element_by_xpath('//button[.//text()="FAILOVER"]').click()
 
 
 @then('wait for the login page to appear')

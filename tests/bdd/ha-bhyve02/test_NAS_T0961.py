@@ -234,8 +234,8 @@ def press_Initiate_Failover_and_confirm(driver):
     assert wait_on_element(driver, 5, '//h1[text()="Initiate Failover"]')
     assert wait_on_element(driver, 5, '//mat-checkbox[contains(@class,"confirm-checkbox")]', 'clickable')
     driver.find_element_by_xpath('//mat-checkbox[contains(@class,"confirm-checkbox")]').click()
-    assert wait_on_element(driver, 5, '//button[.//text()="Failover"]', 'clickable')
-    driver.find_element_by_xpath('//button[.//text()="Failover"]').click()
+    assert wait_on_element(driver, 5, '//button[.//text()="FAILOVER"]', 'clickable')
+    driver.find_element_by_xpath('//button[.//text()="FAILOVER"]').click()
 
 
 @then('wait for the login and the HA enabled status and login')
