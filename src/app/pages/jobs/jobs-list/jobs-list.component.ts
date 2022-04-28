@@ -43,7 +43,6 @@ export class JobsListComponent implements OnInit, AfterViewInit {
   toolbarConfig: ToolbarConfig;
   settingsEvent$: Subject<CoreEvent> = new Subject();
   filterString = '';
-  jobTableIndexes = [JobTab.All, JobTab.Running, JobTab.Failed];
   selectedIndex: JobTab = 0;
   emptyConfig: EmptyConfig = {
     type: EmptyType.NoPageData,

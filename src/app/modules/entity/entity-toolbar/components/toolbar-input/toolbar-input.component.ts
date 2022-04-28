@@ -1,7 +1,6 @@
 import {
   Component, Input, ViewChild, ElementRef, ViewEncapsulation,
 } from '@angular/core';
-import { TranslateService } from '@ngx-translate/core';
 import { Subject } from 'rxjs';
 import { ControlConfig } from 'app/modules/entity/entity-toolbar/models/control-config.interface';
 import { Control } from 'app/modules/entity/entity-toolbar/models/control.interface';
@@ -20,7 +19,6 @@ export class ToolbarInputComponent {
   @ViewChild('filter', { static: false }) filter: ElementRef;
   filterValue = '';
   hasFocus = false;
-  constructor(public translate: TranslateService) {}
 
   reset(): void {
     this.filterValue = '';

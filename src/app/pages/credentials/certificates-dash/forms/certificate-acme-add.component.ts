@@ -133,8 +133,10 @@ export class CertificateAcmeAddComponent implements FormConfiguration {
 
   constructor(
     protected ws: WebSocketService,
-    protected loader: AppLoaderService, private dialog: MatDialog,
-    protected entityFormService: EntityFormService, protected dialogService: DialogService,
+    protected loader: AppLoaderService,
+    private dialog: MatDialog,
+    protected entityFormService: EntityFormService,
+    protected dialogService: DialogService,
     private modalService: ModalService,
   ) {
     this.getRow = this.modalService.getRow$.pipe(untilDestroyed(this)).subscribe((rowId: number) => {

@@ -2,7 +2,6 @@ import { HttpClient } from '@angular/common/http';
 import { Component } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateService } from '@ngx-translate/core';
 import helptext from 'app/helptext/storage/volumes/download-key';
 import { AppLoaderService } from 'app/modules/app-loader/app-loader.service';
 import { EntityUtils } from 'app/modules/entity/utils';
@@ -26,7 +25,6 @@ export class DownloadKeyDialogComponent {
   help = helptext;
 
   constructor(
-    protected translate: TranslateService,
     public dialogRef: MatDialogRef<DownloadKeyDialogComponent>,
     private ws: WebSocketService,
     private storage: StorageService,

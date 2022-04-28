@@ -1,6 +1,5 @@
 import { Component, Input } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
-import { TranslateService } from '@ngx-translate/core';
 
 export interface GeneralDialogConfig {
   title?: string;
@@ -32,7 +31,6 @@ export class GeneralDialogComponent {
   confirmed = false;
   constructor(
     public dialogRef: MatDialogRef<GeneralDialogComponent>,
-    protected translate: TranslateService,
   ) { }
 
   isDisabled(): boolean {

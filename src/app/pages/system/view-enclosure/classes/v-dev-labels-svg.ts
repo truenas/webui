@@ -22,28 +22,27 @@ export class VDevLabelsSvg {
 
   protected svg: Selection<SVGSVGElement, unknown, HTMLElement, unknown>; // Our d3 generated svg layer
   protected mainStage: Container; // WebGL Canvas
-  protected app: Application;
-  protected chassis: ChassisView; // The chassis we are labelling
   color: string;
   selectedDiskColor: string;
   highlightColor: string;
   highlightedDiskName: string;
-  selectedDisk: EnclosureDisk;
 
   private trays: Record<string, { x: number; y: number; width: number; height: number }> = {};
 
-  constructor(chassis: ChassisView, app: Application, theme: Theme, disk: EnclosureDisk) {
-    this.selectedDisk = disk;
+  constructor(
+    private chassis: ChassisView,
+    private app: Application,
+    private selectedDisk: EnclosureDisk,
+    theme: Theme,
+  ) {
     this.color = 'var(--cyan)';
     this.selectedDiskColor = 'var(--yellow)';
     this.highlightColor = theme.yellow;
 
-    this.onInit(chassis, app);
+    this.onInit();
   }
 
-  onInit(chassis: ChassisView, app: Application): void {
-    this.chassis = chassis;
-    this.app = app;
+  onInit(): void {
     this.mainStage = this.app.stage;
     this.d3Init();
 

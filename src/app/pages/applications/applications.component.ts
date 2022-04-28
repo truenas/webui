@@ -2,7 +2,6 @@ import {
   Component, OnInit, ViewChild, ViewEncapsulation, AfterViewInit,
 } from '@angular/core';
 import { MatTabChangeEvent } from '@angular/material/tabs';
-import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Subject } from 'rxjs';
 import { capitalizeFirstLetter } from 'app/helpers/text.helpers';
@@ -16,7 +15,6 @@ import { ApplicationTab } from 'app/pages/applications/application-tab.enum';
 import { ApplicationToolbarControl } from 'app/pages/applications/application-toolbar-control.enum';
 import { CoreService } from 'app/services/core-service/core.service';
 import { ModalService } from 'app/services/modal.service';
-import { ApplicationsService } from './applications.service';
 import { CatalogComponent } from './catalog/catalog.component';
 import { ChartReleasesComponent } from './chart-releases/chart-releases.component';
 import { DockerImagesComponent } from './docker-images/docker-images.component';
@@ -46,9 +44,7 @@ export class ApplicationsComponent implements OnInit, AfterViewInit {
   selectedCatalogOptions: Option[] = [];
 
   constructor(
-    private appService: ApplicationsService,
     private core: CoreService,
-    private aroute: ActivatedRoute,
     private modalService: ModalService,
   ) {}
 

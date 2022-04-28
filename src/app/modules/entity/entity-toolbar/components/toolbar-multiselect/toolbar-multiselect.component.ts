@@ -3,7 +3,6 @@ import {
 } from '@angular/core';
 import { MatOption } from '@angular/material/core';
 import { MatSelect } from '@angular/material/select';
-import { TranslateService } from '@ngx-translate/core';
 import { Subject } from 'rxjs';
 import { getUniqueId } from 'app/helpers/get-unique-id.helper';
 import { Option } from 'app/interfaces/option.interface';
@@ -23,7 +22,6 @@ export class ToolbarMultiSelectComponent implements AfterViewInit {
   id = getUniqueId();
 
   constructor(
-    public translate: TranslateService,
     private changeDetectorRef: ChangeDetectorRef,
   ) {}
 

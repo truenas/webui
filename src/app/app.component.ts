@@ -19,9 +19,6 @@ import { WebSocketService } from './services/ws.service';
   templateUrl: './app.component.html',
 })
 export class AppComponent {
-  appTitle = 'TrueNAS';
-  protected accountUserResource = 'account/users/1';
-
   constructor(
     public title: Title,
     private router: Router,
