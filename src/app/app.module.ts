@@ -26,6 +26,7 @@ import { IcuMissingTranslationHandler } from 'app/core/classes/icu-missing-trans
 import { createTranslateLoader } from 'app/core/classes/icu-translations-loader';
 import { CoreComponents } from 'app/core/core-components.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
+import { getWindow, WINDOW } from 'app/helpers/window.helper';
 import { DownloadKeyDialogComponent } from 'app/modules/common/dialog/download-key/download-key-dialog.component';
 import { TerminalModule } from 'app/modules/terminal/terminal.module';
 import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
@@ -35,7 +36,6 @@ import { rootEffects, rootReducers } from 'app/store';
 import { CustomRouterStateSerializer } from 'app/store/router/custom-router-serializer';
 import { AppComponent } from './app.component';
 import { rootRouterConfig } from './app.routes';
-import { getWindow, WINDOW } from './helpers/window.helper';
 import { AppLoaderModule } from './modules/app-loader/app-loader.module';
 import { AppLoaderService } from './modules/app-loader/app-loader.service';
 import { AppCommonModule } from './modules/common/app-common.module';

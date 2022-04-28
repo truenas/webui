@@ -28,7 +28,6 @@ import { ModalService } from 'app/services/modal.service';
 export class IdmapFormComponent implements FormConfiguration {
   title: string;
   isEntity = true;
-  protected namesInUse: string[] = [];
   queryCall = 'idmap.query' as const;
   addCall = 'idmap.create' as const;
   editCall = 'idmap.update' as const;
@@ -295,9 +294,15 @@ export class IdmapFormComponent implements FormConfiguration {
     'sssd_compat',
   ];
 
-  constructor(protected idmapService: IdmapService, protected validationService: ValidationService,
-    private modalService: ModalService, private router: Router, private translate: TranslateService,
-    protected dialogService: DialogService, protected dialog: MatDialog) {
+  constructor(
+    protected idmapService: IdmapService,
+    protected validationService: ValidationService,
+    private modalService: ModalService,
+    private router: Router,
+    private translate: TranslateService,
+    protected dialogService: DialogService,
+    protected dialog: MatDialog,
+  ) {
     this.getRow = this.modalService.getRow$.pipe(untilDestroyed(this)).subscribe((rowId: number) => {
       this.pk = rowId;
       this.getRow.unsubscribe();

@@ -2,7 +2,7 @@ import {
   ChangeDetectionStrategy, Component, Inject, OnInit,
 } from '@angular/core';
 import { Validators } from '@angular/forms';
-import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
@@ -73,7 +73,6 @@ export class EncryptionOptionsDialogComponent implements OnInit {
     private translate: TranslateService,
     private loader: AppLoaderService,
     private dialog: DialogService,
-    private matDialog: MatDialog,
     private dialogRef: MatDialogRef<EncryptionOptionsDialogComponent>,
     private validatorsService: IxValidatorsService,
     private errorHandler: FormErrorHandlerService,

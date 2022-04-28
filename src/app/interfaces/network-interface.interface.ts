@@ -48,8 +48,8 @@ export interface LinkAggregationNetworkInterface extends BaseNetworkInterface {
   lag_ports: string[];
   lag_protocol: LinkAggregationProtocol;
   disable_offload_capabilities: boolean;
-  lacpdu_rate: string;
-  xmit_hash_policy: string;
+  lacpdu_rate: LacpduRate;
+  xmit_hash_policy: XmitHashPolicy;
 }
 
 export type NetworkInterface =
@@ -59,7 +59,7 @@ export type NetworkInterface =
   | VlanNetworkInterface;
 
 export interface NetworkInterfaceAlias {
-  type: NetworkInterfaceAliasType;
+  type?: NetworkInterfaceAliasType;
   address: string;
   netmask?: number;
   broadcast?: string;

@@ -169,7 +169,7 @@ export class ServicesComponent implements OnInit {
     this.cdr.markForCheck();
 
     const serviceName = this.serviceNames.get(service.service);
-    this.ws.call(rpc, [service.service]).pipe(
+    this.ws.call(rpc, [service.service, { silent: false }]).pipe(
       untilDestroyed(this),
     ).subscribe((success) => {
       if (success) {
@@ -190,7 +190,7 @@ export class ServicesComponent implements OnInit {
       if (rpc === 'service.stop') {
         message = this.translate.instant('Error stopping service {serviceName}.', { serviceName });
       }
-      this.dialog.errorReport(message, error.message, error.stack);
+      this.dialog.errorReport(message, error.reason, error.trace.formatted);
       this.serviceLoadingMap.set(service.service, false);
       this.cdr.markForCheck();
     });

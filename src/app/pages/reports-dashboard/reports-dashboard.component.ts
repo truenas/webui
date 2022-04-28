@@ -7,7 +7,7 @@ import {
 } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { Subject, BehaviorSubject, forkJoin } from 'rxjs';
+import { Subject, forkJoin } from 'rxjs';
 import { ReportTab } from 'app/enums/report-tab.enum';
 import { CoreEvent } from 'app/interfaces/events';
 import { Option } from 'app/interfaces/option.interface';
@@ -21,7 +21,6 @@ import {
 } from 'app/services';
 import { CoreService } from 'app/services/core-service/core.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { ModalService } from 'app/services/modal.service';
 import { Report } from './components/report/report.component';
 import { ReportsConfigFormComponent } from './components/reports-config-form/reports-config-form.component';
 import { ReportsGlobalControlsComponent } from './components/reports-global-controls/reports-global-controls.component';
@@ -51,14 +50,8 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, AfterViewIn
   activeTab = { label: this.translate.instant('CPU'), value: ReportTab.Cpu } as Tab;
   activeTabVerified = false;
   allTabs: Tab[] = [];
-  loadingReports = false;
 
-  displayList: number[] = [];
   visibleReports: number[] = [];
-
-  totalVisibleReports = 4;
-  viewportEnd = false;
-  viewportOffset = new BehaviorSubject(null);
 
   // Report Builder Options (entity-form-embedded)
   target: Subject<CoreEvent> = new Subject();
@@ -68,14 +61,12 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, AfterViewIn
   diskDevices: Option[] = [];
   diskMetrics: Option[] = [];
   saveSubmitText = this.translate.instant('Generate Reports');
-  actionButtonsAlign = 'left';
   fieldConfig: FieldConfig[] = [];
   fieldSets: FieldSet[];
   diskReportConfigReady = false;
   actionsConfig: { actionType: Type<ReportsGlobalControlsComponent>; actionConfig: ReportsDashboardComponent };
 
   constructor(
-    public modalService: ModalService,
     private router: Router,
     private core: CoreService,
     private route: ActivatedRoute,
@@ -125,15 +116,6 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, AfterViewIn
 
     this.actionsConfig = { actionType: ReportsGlobalControlsComponent, actionConfig: this };
     this.core.emit({ name: 'GlobalActions', data: this.actionsConfig, sender: this });
-  }
-
-  getVisibility(key: number): boolean {
-    const test = this.visibleReports.indexOf(key);
-    return test !== -1;
-  }
-
-  getBatch(): number[] {
-    return this.visibleReports;
   }
 
   nextBatch(evt: number): void {

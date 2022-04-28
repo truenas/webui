@@ -1,5 +1,4 @@
 import { Component, Input } from '@angular/core';
-import { TranslateService } from '@ngx-translate/core';
 import { Subject } from 'rxjs';
 import { getUniqueId } from 'app/helpers/get-unique-id.helper';
 import { ControlConfig } from 'app/modules/entity/entity-toolbar/models/control-config.interface';
@@ -14,8 +13,6 @@ export class ToolbarMenuComponent {
   @Input() controller: Subject<Control>;
 
   id = getUniqueId();
-
-  constructor(public translate: TranslateService) {}
 
   onClick(value: any): void {
     this.config.value = value;

@@ -526,7 +526,6 @@ export class IscsiWizardComponent implements WizardConfiguration {
     private cloudcredentialService: CloudCredentialService,
     private dialogService: DialogService,
     private loader: AppLoaderService,
-    private networkService: NetworkService,
     private router: Router,
     private storageService: StorageService,
   ) {
