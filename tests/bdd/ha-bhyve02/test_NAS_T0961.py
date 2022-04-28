@@ -194,7 +194,7 @@ def Please_wait_should_appear_while_settings_are_being_applied(driver):
     """Please wait should appear while settings are being applied."""
     # assert need to be added after the UI get fix.
     assert wait_on_element_disappear(driver, 30, '//mat-progress-bar')
-    assert wait_on_element_disappear(driver, 10, '//div[contains(.,"System Dataset Pool:")]//span[text()="tank"]')
+    assert wait_on_element_disappear(driver, 20, '//div[contains(.,"System Dataset Pool:")]//span[text()="tank"]')
     assert wait_on_element(driver, 5, '//div[contains(.,"System Dataset Pool:")]//span[text()="dozer"]')
 
 
