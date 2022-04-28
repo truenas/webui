@@ -4,7 +4,8 @@ import {
   Component,
   OnInit,
 } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import { Validators } from '@angular/forms';
+import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
@@ -34,7 +35,7 @@ export class DiskFormComponent implements OnInit {
     hddstandby: [null as DiskStandby],
     advpowermgmt: [null as DiskPowerLevel],
     togglesmart: [false],
-    smartoptions: [],
+    smartoptions: [''],
     passwd: [''],
     clear_pw: [false],
   });
@@ -62,9 +63,7 @@ export class DiskFormComponent implements OnInit {
 
   setFormDisk(disk: Disk): void {
     this.existingDisk = disk;
-    const transformedData = { ...disk };
-    delete transformedData.passwd;
-    this.form.patchValue(transformedData);
+    this.form.patchValue({ ...disk });
   }
 
   private translateOptions(options: Option[]): Option[] {
@@ -88,8 +87,8 @@ export class DiskFormComponent implements OnInit {
       );
   }
 
-  transformFormValue(value: any): DiskUpdate {
-    const transformedValue = value;
+  prepareUpdate(value: any): DiskUpdate {
+    const transformedValue = { ...value };
     if (transformedValue.passwd === '') {
       delete transformedValue.passwd;
     }
@@ -110,7 +109,7 @@ export class DiskFormComponent implements OnInit {
   }
 
   onSubmit(): void {
-    const valuesDiskUpdate = this.transformFormValue(this.form.value);
+    const valuesDiskUpdate: DiskUpdate = this.prepareUpdate(this.form.value);
 
     this.isLoading = true;
     this.ws.call('disk.update', [this.existingDisk.identifier, valuesDiskUpdate])

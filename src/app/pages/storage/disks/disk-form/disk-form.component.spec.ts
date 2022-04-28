@@ -25,10 +25,10 @@ describe('DiskFormComponent', () => {
     name: 'sdc',
     serial: 'VB9fbb6dfe-9cf26570',
     advpowermgmt: DiskPowerLevel.Level127,
-    critical: '5',
+    critical: 5,
     description: 'Some disk description',
-    difference: '5',
-    informational: '5',
+    difference: 5,
+    informational: 5,
     hddstandby: DiskStandby.Minutes10,
     passwd: '123',
     smartoptions: 'smart options',
@@ -72,7 +72,7 @@ describe('DiskFormComponent', () => {
     form = await loader.getHarness(IxFormHarness);
   });
 
-  it('the field \'SED Password\' should be disabled if the checkbox \'Clear SED Password\' value is true', async () => {
+  it('it disables \'SED Password\' when \'Clear SED Password\' is checked', async () => {
     const clearPassword = await loader.getHarness(IxCheckboxHarness.with({ label: 'Clear SED Password' }));
     const sedPassword = await loader.getHarness(IxInputHarness.with({ label: 'SED Password' }));
     await clearPassword.setValue(true);
@@ -80,7 +80,7 @@ describe('DiskFormComponent', () => {
     expect(sedPassword.isDisabled()).toBeTruthy();
   });
 
-  it('setting form data', async () => {
+  it('sets disk settings when form is opened', async () => {
     spectator.component.setFormDisk(dataDisk);
     const formValue = await form.getValues();
     expect(formValue).toEqual({
@@ -94,19 +94,19 @@ describe('DiskFormComponent', () => {
       Informational: '5',
       Name: 'sdc',
       'S.M.A.R.T. extra options': 'smart options',
-      'SED Password': '',
+      'SED Password': '123',
       Serial: 'VB9fbb6dfe-9cf26570',
     });
   });
 
-  it('changing form data', async () => {
+  it('it saves disk settings when form is saved', async () => {
     spectator.component.setFormDisk(dataDisk);
     const changeValue = {
       'Advanced Power Management': 'Level 64 - Intermediate power usage with Standby',
       Critical: '',
       Description: 'New disk description',
       Difference: '',
-      Informational: '',
+      Informational: '10',
       'HDD Standby': '10',
       'S.M.A.R.T. extra options': 'new smart options',
       'Enable S.M.A.R.T.': true,
@@ -122,7 +122,7 @@ describe('DiskFormComponent', () => {
       critical: null,
       description: 'New disk description',
       difference: null,
-      informational: null,
+      informational: '10',
       hddstandby: '10',
       smartoptions: 'new smart options',
       togglesmart: true,

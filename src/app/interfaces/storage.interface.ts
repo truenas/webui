@@ -45,16 +45,16 @@ export interface EnclosureSlot {
 export interface Disk {
   advpowermgmt: DiskPowerLevel;
   bus: DiskBus;
-  critical: string;
+  critical: number;
   description: string;
   devname: string;
-  difference: string;
+  difference: number;
   duplicate_serial: string[];
   enclosure: EnclosureSlot;
   expiretime: string;
   hddstandby: DiskStandby;
   identifier: string;
-  informational: string;
+  informational: number;
   model: string;
   multipath_member: string;
   multipath_name: string;
