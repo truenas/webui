@@ -76,7 +76,7 @@
   "Use compressed WRITE records to make the  stream more efficient. The destination system must also support  compressed WRITE records. See  <a href=\"https://linux.die.net/man/8/zfs\"  target=\"_blank\">zfs(8)</a>.": "",
   "Use this option to allow legacy SMB clients to connect to the  server. Note that SMB1 is being deprecated and it is advised  to upgrade clients to operating system versions that support  modern versions of the SMB protocol.": "此选项允许旧版本的 SMB 客户端连接到服务器。请注意，SMB1 即将被弃用，建议升级客户端到支持当前版本的操作系统。",
   "Users could not be loaded": "用户无法被加载",
-  "VLAN Tag": "",
+  "VLAN Tag": "VLAN 标签",
   "WARNING: Based on the pool topology, {size} is the minimum recommended record size. Choosing a smaller size can reduce system performance.": "警告：基于存储池拓扑，{size} 是建议的最小记录大小。选择过小的大小将降低系统性能。",
   "WARNING: These unknown processes will be terminated while exporting the pool.": "警告：导出存储池时，这些未知进程将被终止。",
   "Warning: There are {n} USB disks available that have non-unique serial numbers. USB controllers may report disk serial incorrectly, making such disks indistinguishable from each other. Adding such disks to a pool can result in lost data.": "警告：有 {n} 个 USB 磁盘可用，且其序列号不唯一。USB 控制器可能会报告磁盘序列号错误，这样的磁盘可能无法区分。添加这样的磁盘到存储池会导致数据丢失。",
