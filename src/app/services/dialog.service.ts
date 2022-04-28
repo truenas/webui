@@ -167,7 +167,7 @@ export class DialogService {
           isHidden: !confirmBox,
         },
       ],
-      saveButtonText: buttonMsg || T('DELETE'),
+      saveButtonText: buttonMsg || T('Delete'),
       afterInit(entityDialog: EntityDialogComponent) {
         entityDialog.formGroup.controls['name'].valueChanges.pipe(untilDestroyed(entityDialog)).subscribe((res) => {
           entityDialog.submitEnabled = res === name && (confirmBox ? entityDialog.formGroup.controls['confirm'].value : true);
