@@ -1,6 +1,6 @@
 <div class="page-wrap height-100 login-form">
   <div class="session-form-hold">
-    <mat-progress-bar mode="determinate" value="0" class="session-progress"></mat-progress-bar>
+    <mat-progress-bar [mode]="connected() ? 'determinate' : 'indeterminate'" value="0" class="session-progress"></mat-progress-bar>
     <mat-card>
       <mat-card-content>
         <div [hidden]="!(connected() && logo_ready)">
