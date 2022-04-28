@@ -436,8 +436,7 @@ def navigate_to_dashboard_and_verify_that_both_controllers_show(driver):
     assert wait_on_element(driver, 7, '//span[contains(.,"System Information")]')
     # need to wait for all controller to be online.
     assert wait_on_element(driver, 60, '//div[contains(.,"tn-bhyve03-nodea")]')
-    driver.refresh()
-    assert wait_on_element(driver, 420, '//div[contains(.,"tn-bhyve03-nodeb")]')
+    assert wait_on_element(driver, 300, '//div[contains(.,"tn-bhyve03-nodeb")]')
     assert wait_on_element(driver, 60, '//mat-icon[@svgicon="ha_enabled"]')
 
 
