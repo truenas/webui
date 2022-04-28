@@ -47,11 +47,12 @@ import { selectSnapshots, selectSnapshotState } from '../store/snapshot.selector
   providers: [FormatDateTimePipe],
 })
 export class SnapshotListComponent implements OnInit {
-  error$ = this.store$.select(selectSnapshotState).pipe(map((state) => state.error));
   isLoading$ = this.store$.select(selectSnapshotState).pipe(map((state) => state.isLoading));
-  isEmpty$ = this.store$.select(selectSnapshotsTotal).pipe(map((total) => total === 0));
-  emptyOrErrorConfig$: Observable<EmptyConfig> = combineLatest([this.isEmpty$, this.error$]).pipe(
-    switchMap(([_, isError]) => {
+  emptyOrErrorConfig$: Observable<EmptyConfig> = combineLatest([
+    this.store$.select(selectSnapshotsTotal).pipe(map((total) => total === 0)),
+    this.store$.select(selectSnapshotState).pipe(map((state) => state.error)),
+  ]).pipe(
+    switchMap(([, isError]) => {
       if (isError) {
         return of(this.errorConfig);
       }

@@ -13,10 +13,6 @@ export interface Group {
   users: number[];
 }
 
-export interface MembershipGroup extends Group {
-  membership?: string;
-}
-
 export type DeleteGroupParams = [
   id: number,
   params: { delete_users: boolean },
