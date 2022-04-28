@@ -260,7 +260,6 @@ def press_initiate_failover_check_confirm_and_press_failover(driver):
 def wait_for_the_login_page_to_appear(driver):
     """Wait for the login page to appear"""
     assert wait_on_element(driver, 120, '//input[@placeholder="Username"]')
-    driver.refresh()
     # wait for HA is enabled to avoid UI refreshing
     assert wait_on_element(driver, 240, '//p[contains(.,"HA is enabled")]')
 
