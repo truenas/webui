@@ -2,12 +2,13 @@ import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import _ from 'lodash';
 import {
-  EMPTY, noop, Observable, of,
+  EMPTY, Observable, of,
 } from 'rxjs';
 import {
   debounceTime, filter, map, switchMap, take, tap,
@@ -21,6 +22,7 @@ import { Service } from 'app/interfaces/service.interface';
 import { SmbPresets, SmbPresetType, SmbShare } from 'app/interfaces/smb-share.interface';
 import { forbiddenValues } from 'app/modules/entity/entity-form/validators/forbidden-values-validation';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
+import { RestartSmbDialogComponent } from 'app/pages/sharing/smb/smb-form/restart-smb-dialog/restart-smb-dialog.component';
 import {
   AppLoaderService, DialogService, WebSocketService,
 } from 'app/services';
@@ -55,13 +57,38 @@ export class SmbFormComponent implements OnInit {
 
   purposeOptions$: Observable<Option[]>;
 
-  get hasHostAllowDenyChanged(): boolean {
-    return !_.isEqual(this.existingSmbShare?.hostsallow, this.form.get('hostsallow').value)
-           || !_.isEqual(this.existingSmbShare?.hostsdeny, this.form.get('hostsdeny').value);
+  get hasAddedAllowDenyHosts(): boolean {
+    const hostsallow = this.form.get('hostsallow').value;
+    const hostsdeny = this.form.get('hostsdeny').value;
+    return (this.isNew && hostsallow && hostsallow.length > 0)
+      || (this.isNew && hostsdeny && hostsdeny.length > 0)
+      || this.hasHostAllowDenyChanged(hostsallow, hostsdeny);
   }
 
-  get shouldEnableTimemachineService(): boolean {
-    return this.form.get('timemachine').value && !this.existingSmbShare?.timemachine;
+  hasHostAllowDenyChanged(hostsallow: string[], hostsdeny: string[]): boolean {
+    return !_.isEqual(this.existingSmbShare?.hostsallow, hostsallow)
+           || !_.isEqual(this.existingSmbShare?.hostsdeny, hostsdeny);
+  }
+
+  get isRestartRequired(): boolean {
+    return this.isNewTimemachineShare
+      || this.isNewHomeShare
+      || this.isPathChanged
+      || this.hasAddedAllowDenyHosts;
+  }
+
+  get isNewTimemachineShare(): boolean {
+    const timemachine = this.form.get('timemachine').value;
+    return (this.isNew && timemachine) || (timemachine !== this.existingSmbShare?.timemachine);
+  }
+
+  get isNewHomeShare(): boolean {
+    const homeShare = this.form.get('home').value;
+    return (this.isNew && homeShare) || (homeShare !== this.existingSmbShare?.home);
+  }
+
+  get isPathChanged(): boolean {
+    return !this.isNew && this.form.get('path').value !== this.existingSmbShare?.path;
   }
 
   form = this.formBuilder.group({
@@ -94,6 +121,7 @@ export class SmbFormComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private formBuilder: FormBuilder,
     private ws: WebSocketService,
+    private mdDialog: MatDialog,
     private dialog: DialogService,
     private slideInService: IxSlideInService,
     private translate: TranslateService,
@@ -296,18 +324,26 @@ export class SmbFormComponent implements OnInit {
         switchMap(this.redirectToAclEditIfRequired),
         untilDestroyed(this),
       ).subscribe(
-        noop,
+        (redirect) => {
+          this.isLoading = false;
+          this.cdr.markForCheck();
+          if (redirect) {
+            const sharePath: string = this.form.get('path').value;
+            const homeShare = this.form.get('home').value;
+            const datasetId = sharePath.replace('/mnt/', '');
+            const poolName = datasetId.split('/')[0];
+            this.router.navigate(['/'].concat(
+              ['storage', 'id', poolName, 'dataset', 'acl', datasetId],
+            ), { queryParams: { homeShare } });
+          }
+          this.slideInService.close();
+        },
         (err) => {
           if (err.reason.includes('[ENOENT]')) {
             this.dialog.closeAllDialogs();
           } else {
             this.dialog.errorReport(err.error, err.reason, err.trace.formatted);
           }
-          this.isLoading = false;
-          this.cdr.markForCheck();
-          this.slideInService.close();
-        },
-        () => {
           this.isLoading = false;
           this.cdr.markForCheck();
           this.slideInService.close();
@@ -327,43 +363,30 @@ export class SmbFormComponent implements OnInit {
         if (shouldRestart) {
           return this.restartCifsService();
         }
-        return of(true);
+        return of(false);
       }),
     );
   }
 
   shouldServiceRestart = (): Observable<boolean> => {
-    if (this.shouldEnableTimemachineService) {
-      return this.dialog.confirm({
-        title: helptextSharingSmb.restart_smb_dialog.title,
-        message: helptextSharingSmb.restart_smb_dialog.message_time_machine,
-        hideCheckBox: true,
-        buttonMsg: helptextSharingSmb.restart_smb_dialog.title,
-        cancelMsg: helptextSharingSmb.restart_smb_dialog.cancel_btn,
-      }).pipe(
-        switchMap((confirmed) => {
-          if (!confirmed) {
-            return this.warnIfHostsAllowDenyAreChanged();
-          }
-          return of(true);
-        }),
-      );
-    }
-    return this.warnIfHostsAllowDenyAreChanged();
+    return this.promptIfRestartRequired();
   };
 
-  warnIfHostsAllowDenyAreChanged = (): Observable<boolean> => {
-    if (this.hasHostAllowDenyChanged) {
-      return this.dialog.confirm({
-        title: helptextSharingSmb.restart_smb_dialog.title,
-        message: helptextSharingSmb.restart_smb_dialog.message_allow_deny,
-        hideCheckBox: true,
-        buttonMsg: helptextSharingSmb.restart_smb_dialog.title,
-        cancelMsg: helptextSharingSmb.restart_smb_dialog.cancel_btn,
+  promptIfRestartRequired(): Observable<boolean> {
+    if (this.isRestartRequired) {
+      const dialog = this.mdDialog.open(RestartSmbDialogComponent, {
+        data: {
+          timemachine: this.isNewTimemachineShare,
+          homeshare: this.isNewHomeShare,
+          path: this.isPathChanged,
+          hosts: this.hasAddedAllowDenyHosts,
+          isNew: this.isNew,
+        },
       });
+      return dialog.afterClosed();
     }
     return of(false);
-  };
+  }
 
   restartCifsService = (): Observable<boolean> => {
     this.loader.open();
@@ -384,17 +407,12 @@ export class SmbFormComponent implements OnInit {
 
   redirectToAclEditIfRequired = (): Observable<boolean> => {
     const sharePath: string = this.form.get('path').value;
-    const homeShare = this.form.get('home').value;
-
-    if (homeShare && this.isNew) {
-      const datasetId = sharePath.replace('/mnt/', '');
-      const poolName = datasetId.split('/')[0];
-      this.router.navigate(['/'].concat(
-        ['storage', 'id', poolName, 'dataset', 'acl', datasetId],
-      ), { queryParams: { homeShare: true } });
-      return of(false);
-    }
-    return of(true);
+    const datasetId = sharePath.replace('/mnt/', '');
+    return this.ws.call('filesystem.stat', [sharePath]).pipe(
+      switchMap((stat) => {
+        return of(stat.acl !== this.existingSmbShare.acl && datasetId.includes('/'));
+      }),
+    );
   };
 
   startAndEnableService = (cifsService: Service): Observable<boolean> => {

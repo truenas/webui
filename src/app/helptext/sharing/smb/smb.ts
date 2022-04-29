@@ -235,4 +235,6 @@ export const helptextSharingSmb = {
     action: T('I Understand'),
   },
 
+  restartPt1: T('The following changes to this SMB Share require the SMB Service to be restarted before they can take effect.'),
+  restartPt2: T('Would you like to restart the SMB Service?'),
 };

@@ -4,6 +4,7 @@ import { FlexLayoutModule } from '@angular/flex-layout';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
+import { MatDialogModule } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
@@ -20,6 +21,7 @@ import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
 import { AuthorizedAccessFormComponent } from 'app/pages/sharing/iscsi/authorized-access/authorized-access-form/authorized-access-form.component';
 import { AuthorizedAccessListComponent } from 'app/pages/sharing/iscsi/authorized-access/authorized-access-list/authorized-access-list.component';
 import { TargetGlobalConfigurationComponent } from 'app/pages/sharing/iscsi/target-global-configuration/target-global-configuration.component';
+import { RestartSmbDialogComponent } from 'app/pages/sharing/smb/smb-form/restart-smb-dialog/restart-smb-dialog.component';
 import { UserService } from 'app/services/user.service';
 import { EntityFormService } from '../../modules/entity/entity-form/services/entity-form.service';
 import { EntityModule } from '../../modules/entity/entity.module';
@@ -62,6 +64,7 @@ import { WebdavListComponent } from './webdav/webdav-list/webdav-list.component'
     MatIconModule,
     FlexLayoutModule,
     MatListModule,
+    MatDialogModule,
     MatMenuModule,
     MatFormFieldModule,
     MatTooltipModule,
@@ -80,6 +83,7 @@ import { WebdavListComponent } from './webdav/webdav-list/webdav-list.component'
     WebdavFormComponent,
     SmbListComponent,
     SmbFormComponent,
+    RestartSmbDialogComponent,
     SmbAclComponent,
     IscsiComponent,
     IscsiWizardComponent,
