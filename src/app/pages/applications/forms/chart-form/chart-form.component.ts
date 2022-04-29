@@ -10,6 +10,7 @@ import { ChartSchema, ChartSchemaNode } from 'app/interfaces/chart-release.inter
 import {
   AddListItemEmitter, DeleteListItemEmitter, DynamicFormSchema, DynamicFormSchemaNode,
 } from 'app/interfaces/dynamic-form-schema.interface';
+import { Relation } from 'app/modules/entity/entity-form/models/field-relation.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { DialogService } from 'app/services';
 import { FilesystemService } from 'app/services/filesystem.service';
@@ -87,10 +88,6 @@ export class ChartFormComponent {
         schema.min_length ? Validators.minLength(schema.min_length) : Validators.nullValidator,
       ]);
 
-      if (schema.editable !== undefined && !schema.editable) {
-        newFormControl.disable();
-      }
-
       if (schema.subquestions) {
         schema.subquestions.forEach((subquestion) => {
           this.addFormControls(subquestion, formGroup);
@@ -99,24 +96,46 @@ export class ChartFormComponent {
           } else {
             formGroup.controls[subquestion.variable].disable();
           }
-
-          newFormControl.valueChanges
-            .pipe(untilDestroyed(this))
-            .subscribe((value) => {
-              if (value === schema.show_subquestions_if) {
-                formGroup.controls[subquestion.variable].enable();
-              } else {
-                formGroup.controls[subquestion.variable].disable();
+        });
+        newFormControl.valueChanges
+          .pipe(untilDestroyed(this))
+          .subscribe((value) => {
+            schema.subquestions.forEach((subquestion) => {
+              if (formGroup.controls[subquestion.variable].parent.enabled) {
+                if (value === schema.show_subquestions_if) {
+                  formGroup.controls[subquestion.variable].enable();
+                } else {
+                  formGroup.controls[subquestion.variable].disable();
+                }
               }
             });
-        });
-      }
-
-      if (schema.hidden) {
-        newFormControl.disable();
+          });
       }
 
       formGroup.addControl(chartSchemaNode.variable, newFormControl);
+
+      if (schema.show_if) {
+        const relations: Relation[] = schema.show_if.map((item) => ({
+          fieldName: item[0],
+          operatorName: item[1],
+          operatorValue: item[2],
+        }));
+        relations.forEach((relation) => {
+          if (formGroup.controls[relation.fieldName]) {
+            formGroup.controls[relation.fieldName].valueChanges
+              .pipe(untilDestroyed(this))
+              .subscribe((value) => {
+                if (formGroup.controls[chartSchemaNode.variable].parent.enabled) {
+                  if (value === relation.operatorValue) {
+                    formGroup.controls[chartSchemaNode.variable].enable();
+                  } else {
+                    formGroup.controls[chartSchemaNode.variable].disable();
+                  }
+                }
+              });
+          }
+        });
+      }
     } else if (schema.type === 'dict') {
       formGroup.addControl(chartSchemaNode.variable, new FormGroup({}));
       for (const attr of schema.attrs) {
@@ -171,6 +190,8 @@ export class ChartFormComponent {
             type: 'input',
             title: chartSchemaNode.label,
             required: beforSchema.required,
+            hidden: beforSchema.hidden,
+            editable: beforSchema.editable,
             private: beforSchema.private,
           });
           break;
@@ -185,6 +206,8 @@ export class ChartFormComponent {
                 label: option.description,
               }))),
               required: beforSchema.required,
+              hidden: beforSchema.hidden,
+              editable: beforSchema.editable,
             });
           } else {
             afterSchemas.push({
@@ -192,6 +215,8 @@ export class ChartFormComponent {
               type: 'input',
               title: chartSchemaNode.label,
               required: beforSchema.required,
+              hidden: beforSchema.hidden,
+              editable: beforSchema.editable,
               private: beforSchema.private,
             });
           }
@@ -202,6 +227,8 @@ export class ChartFormComponent {
             type: 'input',
             title: chartSchemaNode.label,
             required: beforSchema.required,
+            hidden: beforSchema.hidden,
+            editable: beforSchema.editable,
           });
           break;
         case 'hostpath':
@@ -211,6 +238,8 @@ export class ChartFormComponent {
             title: chartSchemaNode.label,
             nodeProvider: this.filesystemService.getFilesystemNodeProvider(),
             required: beforSchema.required,
+            hidden: beforSchema.hidden,
+            editable: beforSchema.editable,
           });
           break;
         case 'boolean':
@@ -219,6 +248,8 @@ export class ChartFormComponent {
             type: 'checkbox',
             title: chartSchemaNode.label,
             required: beforSchema.required,
+            hidden: beforSchema.hidden,
+            editable: beforSchema.editable,
           });
           break;
       }
@@ -236,6 +267,8 @@ export class ChartFormComponent {
         variable: chartSchemaNode.variable,
         type: 'dict',
         attrs,
+        hidden: beforSchema.hidden,
+        editable: beforSchema.editable,
       });
     } else if (beforSchema.type === 'list') {
       let items: DynamicFormSchemaNode[] = [];
@@ -252,6 +285,8 @@ export class ChartFormComponent {
         title: chartSchemaNode.label,
         items,
         items_schema: itemsSchema,
+        hidden: beforSchema.hidden,
+        editable: beforSchema.editable,
       });
     } else {
       console.error('Unsupported type = ', beforSchema.type);

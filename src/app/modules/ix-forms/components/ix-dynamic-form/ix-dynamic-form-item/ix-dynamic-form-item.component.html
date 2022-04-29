@@ -7,7 +7,8 @@
       [dynamicForm]="getFormGroup"
       (addListItem)="addControlNext($event)"
       (deleteListItem)="removeControlNext($event)"
-      [fxHide]="isHide"
+      [fxHide]="isHide || dynamicSchema.hidden"
+      [class.disabled]="dynamicSchema.editable === false"
     ></ix-dynamic-form-item>
   </ng-container>
   <ng-container *ngSwitchCase="'list'">
@@ -16,7 +17,8 @@
       [empty]="getFormArray.controls.length === 0"
       [formArrayName]="dynamicSchema.variable"
       (add)="addControl()"
-      [fxHide]="isHide"
+      [fxHide]="isHide || dynamicSchema.hidden"
+      [class.disabled]="dynamicSchema.editable === false"
     >
       <ix-list-item
         *ngFor="let element of getFormArray.controls; let i = index"
@@ -38,7 +40,8 @@
     [label]="dynamicSchema.title | translate"
     [placeholder]="dynamicSchema.title | translate"
     [required]="dynamicSchema.required"
-    [fxHide]="isHide"
+    [fxHide]="isHide || dynamicSchema.hidden"
+    [class.disabled]="dynamicSchema.editable === false"
     [type]="dynamicSchema.private === true ? 'password' : undefined"
   ></ix-input>
   <ix-select
@@ -47,7 +50,8 @@
     [label]="dynamicSchema.title | translate"
     [options]="dynamicSchema.options"
     [required]="dynamicSchema.required"
-    [fxHide]="isHide"
+    [fxHide]="isHide || dynamicSchema.hidden"
+    [class.disabled]="dynamicSchema.editable === false"
   ></ix-select>
   <ix-explorer
     *ngSwitchCase="'explorer'"
@@ -55,13 +59,15 @@
     [label]="dynamicSchema.title | translate"
     [required]="dynamicSchema.required"
     [nodeProvider]="dynamicSchema.nodeProvider"
-    [fxHide]="isHide"
+    [fxHide]="isHide || dynamicSchema.hidden"
+    [class.disabled]="dynamicSchema.editable === false"
   ></ix-explorer>
   <ix-checkbox
     *ngSwitchCase="'checkbox'"
     [formControlName]="dynamicSchema.variable"
     [label]="dynamicSchema.title | translate"
     [required]="dynamicSchema.required"
-    [fxHide]="isHide"
+    [fxHide]="isHide || dynamicSchema.hidden"
+    [class.disabled]="dynamicSchema.editable === false"
   ></ix-checkbox>
 </ng-container>

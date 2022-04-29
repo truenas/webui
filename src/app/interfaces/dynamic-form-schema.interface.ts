@@ -18,6 +18,8 @@ export interface DynamicFormSchemaNode {
   items_schema?: ChartSchemaNode[];
   title?: string;
   required?: boolean;
+  hidden?: boolean;
+  editable?: boolean;
   private?: boolean;
   options?: Observable<Option[]>;
   nodeProvider?: TreeNodeProvider;
