@@ -39,6 +39,7 @@
     ix-auto-type="button"
     ix-auto-identifier="{{cancelMsg | uppercase}}"
   >{{ cancelMsg | translate }}</button>
+  <copy-btn [text]="textToCopy" *ngIf="textToCopy" [showPopup]="false" btnText="Copy URL"></copy-btn>
   <button
     id="confirm-dialog__action-button"
     mat-button

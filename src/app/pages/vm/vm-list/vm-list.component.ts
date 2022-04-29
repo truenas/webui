@@ -27,7 +27,7 @@ import { EntityTableAction, EntityTableConfig } from 'app/modules/entity/entity-
 import { EntityUtils } from 'app/modules/entity/utils';
 import { VirtualMachineRow } from 'app/pages/vm/vm-list/virtual-machine-row.interface';
 import {
-  WebSocketService, StorageService, AppLoaderService, DialogService, VmService,
+  WebSocketService, StorageService, AppLoaderService, DialogService, VmService, RedirectService,
 } from 'app/services';
 import { ModalService } from 'app/services/modal.service';
 import { VmWizardComponent } from '../vm-wizard/vm-wizard.component';
@@ -104,6 +104,7 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow>, On
     private modalService: ModalService,
     private vmService: VmService,
     private translate: TranslateService,
+    private redirect: RedirectService,
   ) {
     if (this.productType !== ProductType.Scale) {
       // TODO: Check if it can be removed
@@ -503,7 +504,7 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow>, On
                 if (webUris[displayDevices[0].id].error) {
                   return this.dialogService.info('Error', webUris[displayDevices[0].id].error);
                 }
-                window.open(webUris[displayDevices[0].id].uri, '_blank');
+                this.redirect.open(webUris[displayDevices[0].id].uri, '_blank');
               }, (err) => {
                 this.loader.close();
                 new EntityUtils().handleError(this, err);
@@ -543,7 +544,7 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow>, On
                     if (webUris[displayDevice.id].error) {
                       return this.dialogService.info('Error', webUris[displayDevice.id].error);
                     }
-                    window.open(webUris[displayDevice.id].uri, '_blank');
+                    this.redirect.open(webUris[displayDevice.id].uri, '_blank');
                   }, (err) => {
                     this.loader.close();
                     new EntityUtils().handleError(this, err);
@@ -631,7 +632,7 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow>, On
             return passwordConfiguration.fieldConfig[0].warnings = webUris[displayDevice.id].error;
           }
           passDialog.dialogRef.close();
-          window.open(webUris[displayDevice.id].uri, '_blank');
+          this.redirect.open(webUris[displayDevice.id].uri, '_blank');
         }, (err) => {
           passDialog.dialogRef.close();
           this.loader.close();

@@ -22,6 +22,7 @@ export class ConfirmDialogComponent {
   data: unknown;
   tooltip: string;
   hideCancel = false;
+  textToCopy: string;
   customSubmit: () => void;
 
   @Output() switchSelectionEmitter = new EventEmitter<boolean>();

@@ -30,6 +30,7 @@ import { NetworkInterfaceUi } from 'app/pages/network/interfaces/network-interfa
 import {
   AppLoaderService,
   DialogService,
+  RedirectService,
   StorageService,
   WebSocketService,
 } from 'app/services';
@@ -196,6 +197,7 @@ export class NetworkComponent implements OnInit, OnDestroy {
     private ipmiService: IpmiService,
     private slideInService: IxSlideInService,
     private core: CoreService,
+    private redirect: RedirectService,
   ) {
     this.navigation = this.router.getCurrentNavigation();
   }
@@ -543,7 +545,7 @@ export class NetworkComponent implements OnInit, OnDestroy {
       name: 'manage',
       matTooltip: this.translate.instant('Manage'),
       onClick: (row: IpmiRow) => {
-        window.open(`http://${row.ipaddress}`);
+        this.redirect.open(`http://${row.ipaddress}`);
       },
     }];
   }

@@ -110,18 +110,28 @@ export class GuiFormComponent {
       ui_consolemsg: values.ui_consolemsg,
     };
 
-    this.isFormLoading = true;
-    this.store$.dispatch(guiFormSubmitted({ theme: values.theme }));
-    this.ws.call('system.general.update', [body]).pipe(
-      untilDestroyed(this),
-    ).subscribe(() => {
-      this.isFormLoading = false;
-      this.cdr.markForCheck();
-      this.handleServiceRestart(body);
-    }, (error) => {
-      this.isFormLoading = false;
-      this.errorHandler.handleWsFormError(error, this.formGroup);
-      this.cdr.markForCheck();
+    (
+      !this.configData.ui_httpsredirect && body.ui_httpsredirect
+        ? this.dialog.confirm({
+          title: this.translate.instant(helptext.redirect_confirm_title),
+          message: this.translate.instant(helptext.redirect_confirm_message),
+          hideCheckBox: true,
+        })
+        : of(true)
+    ).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
+      this.isFormLoading = true;
+      this.store$.dispatch(guiFormSubmitted({ theme: values.theme }));
+      this.ws.call('system.general.update', [body]).pipe(
+        untilDestroyed(this),
+      ).subscribe(() => {
+        this.isFormLoading = false;
+        this.cdr.markForCheck();
+        this.handleServiceRestart(body);
+      }, (error) => {
+        this.isFormLoading = false;
+        this.errorHandler.handleWsFormError(error, this.formGroup);
+        this.cdr.markForCheck();
+      });
     });
   }
 

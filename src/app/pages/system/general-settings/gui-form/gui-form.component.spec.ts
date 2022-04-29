@@ -152,7 +152,7 @@ describe('GuiFormComponent', () => {
     ]);
   });
 
-  it('shows confirm dialog if service restart is needed and restarts it', async () => {
+  it('shows confirm dialogs of enable redirect and service restart and restarts it', async () => {
     const websocket = spectator.inject(WebSocketService);
     websocket.connected = true;
 
@@ -164,8 +164,13 @@ describe('GuiFormComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    const dialog = spectator.inject(DialogService);
-    expect(dialog.confirm).toHaveBeenCalledWith(expect.objectContaining({
+    const redirectDialog = spectator.inject(DialogService);
+    expect(redirectDialog.confirm).toHaveBeenCalledWith(expect.objectContaining({
+      title: 'Enable HTTPS Redirect',
+    }));
+
+    const restartDialog = spectator.inject(DialogService);
+    expect(restartDialog.confirm).toHaveBeenCalledWith(expect.objectContaining({
       title: 'Restart Web Service',
     }));
     expect(ws.call).toHaveBeenCalledWith('system.general.ui_restart');

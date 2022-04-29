@@ -27,6 +27,7 @@ import { ApplicationTab } from 'app/pages/applications/application-tab.enum';
 import { ApplicationToolbarControl } from 'app/pages/applications/application-toolbar-control.enum';
 import { ChartUpgradeDialogComponent } from 'app/pages/applications/dialogs/chart-upgrade/chart-upgrade-dialog.component';
 import { ChartUpgradeDialogConfig } from 'app/pages/applications/interfaces/chart-upgrade-dialog-config.interface';
+import { RedirectService } from 'app/services';
 import { DialogService, WebSocketService } from 'app/services/index';
 import { ModalService } from 'app/services/modal.service';
 import { ApplicationsService } from '../applications.service';
@@ -147,6 +148,7 @@ export class ChartReleasesComponent implements OnInit {
     private modalService: ModalService,
     private router: Router,
     protected ws: WebSocketService,
+    private redirect: RedirectService,
   ) { }
 
   ngOnInit(): void {
@@ -286,7 +288,7 @@ export class ChartReleasesComponent implements OnInit {
   }
 
   portalLink(chart: ChartRelease, name: string = 'web_portal'): void {
-    window.open(chart.portals[name][0]);
+    this.redirect.open(chart.portals[name][0]);
   }
 
   update(name: string): void {
