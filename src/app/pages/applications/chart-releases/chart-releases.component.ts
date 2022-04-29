@@ -153,6 +153,10 @@ export class ChartReleasesComponent implements OnInit {
 
   ngOnInit(): void {
     this.addChartReleaseChangedEventListener();
+
+    this.slideInService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
+      this.refreshChartReleases();
+    });
   }
 
   onToolbarAction(evt: CoreEvent): void {

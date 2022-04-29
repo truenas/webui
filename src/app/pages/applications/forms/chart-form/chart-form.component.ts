@@ -1,17 +1,17 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import {
-  AbstractControl,
-  FormArray, FormBuilder, FormControl, FormGroup, Validators,
+  AbstractControl, FormArray, FormBuilder, FormControl, FormGroup, Validators,
 } from '@angular/forms';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { Observable, of } from 'rxjs';
+import { of } from 'rxjs';
 import helptext from 'app/helptext/apps/apps';
 import { ChartSchema, ChartSchemaNode } from 'app/interfaces/chart-release.interface';
 import {
   AddListItemEmitter, DeleteListItemEmitter, DynamicFormSchema, DynamicFormSchemaNode,
 } from 'app/interfaces/dynamic-form-schema.interface';
-import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
-import { DialogService, WebSocketService } from 'app/services';
+import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
+import { DialogService } from 'app/services';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
@@ -27,6 +27,7 @@ export class ChartFormComponent {
   name: string;
   isLoading = false;
   dynamicSection: DynamicFormSchema[] = [];
+  dialogRef: MatDialogRef<EntityJobComponent>;
 
   form = this.formBuilder.group({
     release_name: ['', Validators.required],
@@ -42,11 +43,9 @@ export class ChartFormComponent {
   constructor(
     private formBuilder: FormBuilder,
     private slideInService: IxSlideInService,
-    private errorHandler: FormErrorHandlerService,
-    private cdr: ChangeDetectorRef,
-    private ws: WebSocketService,
     private dialogService: DialogService,
     private filesystemService: FilesystemService,
+    private mdDialog: MatDialog,
   ) {}
 
   setTitle(title: string): void {
@@ -300,19 +299,23 @@ export class ChartFormComponent {
   }
 
   onSubmit(): void {
-    // TODO: update request format
-    const values = this.form.value;
+    const payload: any[] = [];
+    payload.push({
+      values: this.form.controls.data.value,
+    });
 
-    this.isLoading = true;
-    const request$: Observable<unknown> = this.ws.call('chart.release.update', values);
+    payload.unshift(this.title);
 
-    request$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.isLoading = false;
+    this.dialogRef = this.mdDialog.open(EntityJobComponent, {
+      data: {
+        title: helptext.updating,
+      },
+    });
+    this.dialogRef.componentInstance.setCall('chart.release.update', payload);
+    this.dialogRef.componentInstance.submit();
+    this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
+      this.dialogService.closeAllDialogs();
       this.slideInService.close();
-    }, (error) => {
-      this.isLoading = false;
-      this.errorHandler.handleWsFormError(error, this.form);
-      this.cdr.markForCheck();
     });
   }
 }
