@@ -2,12 +2,15 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
+import { MatDialog } from '@angular/material/dialog';
+import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
-import { MockWebsocketService } from 'app/core/testing/classes/mock-websocket.service';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { ServiceName } from 'app/enums/service-name.enum';
-import { helptextSharingSmb, shared } from 'app/helptext/sharing';
+import { ServiceStatus } from 'app/enums/service-status.enum';
+import { helptextSharingSmb } from 'app/helptext/sharing';
+import { FileSystemStat } from 'app/interfaces/filesystem-stat.interface';
 import { Service } from 'app/interfaces/service.interface';
 import { SmbPresets, SmbPresetType, SmbShare } from 'app/interfaces/smb-share.interface';
 import { IxCheckboxHarness } from 'app/modules/ix-forms/components/ix-checkbox/ix-checkbox.harness';
@@ -16,6 +19,7 @@ import { IxInputHarness } from 'app/modules/ix-forms/components/ix-input/ix-inpu
 import { IxSelectHarness } from 'app/modules/ix-forms/components/ix-select/ix-select.harness';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
+import { RestartSmbDialogComponent } from 'app/pages/sharing/smb/smb-form/restart-smb-dialog/restart-smb-dialog.component';
 import { AppLoaderService, DialogService, WebSocketService } from 'app/services';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
@@ -123,7 +127,11 @@ describe('SmbFormComponent', () => {
           service: ServiceName.Cifs,
           id: 4,
           enable: false,
+          state: ServiceStatus.Running,
         } as Service]),
+        mockCall('filesystem.stat', {
+          acl: false,
+        } as FileSystemStat),
         mockCall('service.update'),
         mockCall('service.start'),
         mockCall('service.restart'),
@@ -132,8 +140,14 @@ describe('SmbFormComponent', () => {
         mockCall('pool.dataset.path_in_locked_datasets', false),
       ]),
       mockProvider(IxSlideInService),
+      mockProvider(Router),
       mockProvider(AppLoaderService),
       mockProvider(FilesystemService),
+      mockProvider(MatDialog, {
+        open: jest.fn(() => ({
+          afterClosed: () => of(true),
+        })),
+      }),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
         info: jest.fn(() => of(true)),
@@ -378,13 +392,17 @@ describe('SmbFormComponent', () => {
       auxsmbconf: '',
     }]);
 
-    expect(spectator.inject(DialogService).confirm)
-      .toHaveBeenNthCalledWith(7, {
-        title: helptextSharingSmb.restart_smb_dialog.title,
-        message: helptextSharingSmb.restart_smb_dialog.message_time_machine,
-        hideCheckBox: true,
-        buttonMsg: helptextSharingSmb.restart_smb_dialog.title,
-        cancelMsg: helptextSharingSmb.restart_smb_dialog.cancel_btn,
+    expect(websocket.call).toHaveBeenCalledWith('service.query');
+
+    expect(spectator.inject(MatDialog).open)
+      .toHaveBeenCalledWith(RestartSmbDialogComponent, {
+        data: {
+          timemachine: true,
+          homeshare: true,
+          path: false,
+          hosts: true,
+          isNew: true,
+        },
       });
 
     expect(websocket.call).toHaveBeenCalledWith('service.restart', [ServiceName.Cifs]);
@@ -395,35 +413,18 @@ describe('SmbFormComponent', () => {
       '250px',
     );
 
-    const pathValue = await (await loader.getHarness(
+    const sharePath = await (await loader.getHarness(
       IxExplorerHarness.with({ label: formLabels.path }),
     )).getValue();
-    expect(
-      websocket.call,
-    ).toHaveBeenCalledWith(
-      'pool.dataset.path_in_locked_datasets',
-      [pathValue],
-    );
 
-    expect(websocket.call).toHaveBeenCalledWith('service.query');
-
-    expect(spectator.inject(DialogService).confirm)
-      .toHaveBeenNthCalledWith(8, {
-        title: shared.dialog_title,
-        message: shared.dialog_message,
-        hideCheckBox: true,
-        buttonMsg: shared.dialog_button,
-      });
-
-    expect(spectator.inject(MockWebsocketService).call).toHaveBeenCalledWith('service.update', [4, { enable: true }]);
-    expect(spectator.inject(MockWebsocketService).call).toHaveBeenCalledWith('service.start', [ServiceName.Cifs]);
-    expect(spectator.inject(DialogService).info)
-      .toHaveBeenNthCalledWith(
-        2,
-        'SMB Service',
-        'The SMB service has been enabled.',
-        '250px',
-        'info',
-      );
+    expect(websocket.call).toHaveBeenCalledWith('filesystem.stat', [sharePath]);
+    const homeShare = await (await loader.getHarness(
+      IxCheckboxHarness.with({ label: formLabels.home }),
+    )).getValue();
+    const datasetId = sharePath.replace('/mnt/', '');
+    const poolName = datasetId.split('/')[0];
+    expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/'].concat(
+      ['storage', 'id', poolName, 'dataset', 'acl', datasetId],
+    ), { queryParams: { homeShare } });
   });
 });

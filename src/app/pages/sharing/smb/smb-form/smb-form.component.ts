@@ -410,7 +410,7 @@ export class SmbFormComponent implements OnInit {
     const datasetId = sharePath.replace('/mnt/', '');
     return this.ws.call('filesystem.stat', [sharePath]).pipe(
       switchMap((stat) => {
-        return of(stat.acl !== this.existingSmbShare.acl && datasetId.includes('/'));
+        return of(stat.acl !== this.form.get('acl').value && datasetId.includes('/'));
       }),
     );
   };
