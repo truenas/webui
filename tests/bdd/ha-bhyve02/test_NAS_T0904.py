@@ -48,8 +48,9 @@ def login_appear_enter_root_and_password(driver, user, password):
 def you_should_see_the_dashboard(driver):
     """you should see the dashboard."""
     assert wait_on_element(driver, 7, '//a[text()="Dashboard"]')
-    assert wait_on_element(driver, 10, '//button[@ix-auto="button__CLOSE"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
+    if wait_on_element(driver, 5, '//div[contains(.,"Looking for help?")]'):
+        assert wait_on_element(driver, 5, '//button[@ix-auto="button__CLOSE"]', 'clickable')
+        driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
     assert wait_on_element(driver, 5, '//span[contains(.,"System Information")]')
 
 
@@ -109,7 +110,7 @@ def click_start_automatically_ssh_checkbox_and_enable_the_ssh_service(driver):
     element = driver.find_element_by_xpath('//button[@ix-auto="button__S3_Actions"]')
     driver.execute_script("arguments[0].scrollIntoView();", element)
     time.sleep(1)
-    driver.find_element_by_xpath('//div[@ix-auto="value__SSH"]')
+    assert wait_on_element(driver, 5, '//mat-checkbox[@ix-auto="checkbox__SSH_Start Automatically"]', 'clickable')
     value_exist = attribute_value_exist(driver, '//mat-checkbox[@ix-auto="checkbox__SSH_Start Automatically"]', 'class', 'mat-checkbox-checked')
     if not value_exist:
         driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__SSH_Start Automatically"]').click()
