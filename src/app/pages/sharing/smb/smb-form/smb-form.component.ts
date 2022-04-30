@@ -420,22 +420,22 @@ export class SmbFormComponent implements OnInit {
       secondaryCheckBoxMsg: shared.dialog_message,
       buttonMsg: shared.dialog_button,
     });
-    let restartAutometically = false;
+    let restartAutomatically = false;
     let startNow = false;
     dialog.componentInstance.isSubmitEnabled = true;
     dialog.componentInstance.switchSelectionEmitter
       .pipe(untilDestroyed(this))
-      .subscribe((restart) => restartAutometically = restart);
+      .subscribe((restart) => restartAutomatically = restart);
     dialog.componentInstance.customSubmit = () => {
       startNow = true;
       dialog.close();
     };
     return dialog.afterClosed().pipe(
       switchMap(() => {
-        if (startNow && restartAutometically) {
+        if (startNow && restartAutomatically) {
           return this.ws.call(
             'service.update',
-            [cifsService.id, { enable: restartAutometically }],
+            [cifsService.id, { enable: restartAutomatically }],
           );
         }
         return EMPTY;
