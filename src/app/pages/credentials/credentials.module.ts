@@ -8,6 +8,8 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { CoreComponents } from 'app/core/core-components.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
@@ -22,6 +24,7 @@ import {
 import {
   ViewCertificateDialogComponent,
 } from 'app/pages/credentials/certificates-dash/view-certificate-dialog/view-certificate-dialog.component';
+import { KmipComponent } from 'app/pages/credentials/kmip/kmip.component';
 import { EntityModule } from '../../modules/entity/entity.module';
 import { BackupCredentialsComponent } from './backup-credentials/backup-credentials.component';
 import { CloudCredentialsFormComponent } from './backup-credentials/forms/cloud-credentials-form.component';
@@ -51,6 +54,7 @@ import { CertificateAddComponent } from './certificates-dash/forms/certificate-a
     SignCsrDialogComponent,
     ViewCertificateDialogComponent,
     CertificateDetailsComponent,
+    KmipComponent,
   ],
   imports: [
     CommonModule,
@@ -67,6 +71,8 @@ import { CertificateAddComponent } from './certificates-dash/forms/certificate-a
     MatDialogModule,
     MatButtonModule,
     CoreComponents,
+    MatProgressBarModule,
+    RouterModule,
   ],
 })
 export class CredentialsModule { }

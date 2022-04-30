@@ -1,11 +1,13 @@
 import { ModuleWithProviders } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
+import { KmipComponent } from 'app/pages/credentials/kmip/kmip.component';
 import { DirectoryServicesComponent } from 'app/pages/directory-service/directory-services.component';
 import { BackupCredentialsComponent } from '../credentials/backup-credentials/backup-credentials.component';
 import { CertificatesDashComponent } from '../credentials/certificates-dash/certificates-dash.component';
 import { TwoFactorComponent } from '../system/two-factor/two-factor.component';
 
+// TODO: Move to credentials module
 export const routes: Routes = [{
   path: '',
   data: { title: 'Accounts', breadcrumb: 'Accounts' },
@@ -25,7 +27,7 @@ export const routes: Routes = [{
       data: { title: ('Two-Factor Auth'), breadcrumb: ('Two-Factor Auth') },
     },
 
-    // Temporary dashboards attached to accounts for now
+    // TODO: Temporary dashboards attached to accounts for now
     {
       path: 'directory-services',
       component: DirectoryServicesComponent,
@@ -40,6 +42,11 @@ export const routes: Routes = [{
       path: 'certificates',
       component: CertificatesDashComponent,
       data: { title: ('Certificates'), breadcrumb: T('Certificates') },
+    },
+    {
+      path: 'kmip',
+      component: KmipComponent,
+      data: { title: 'KMIP', breadcrumb: 'KMIP' },
     },
   ],
 }];
