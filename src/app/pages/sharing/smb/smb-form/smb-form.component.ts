@@ -8,7 +8,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import _ from 'lodash';
 import {
-  EMPTY, Observable, of,
+  EMPTY, noop, Observable, of,
 } from 'rxjs';
 import {
   debounceTime, filter, map, switchMap, take, tap,
@@ -94,7 +94,7 @@ export class SmbFormComponent implements OnInit {
   form = this.formBuilder.group({
     path: ['', Validators.required],
     name: ['', [Validators.required]],
-    purpose: [SmbPresetType.DefaultShareParameters],
+    purpose: [''],
     comment: [''],
     enabled: [true],
     acl: [false],
@@ -132,17 +132,20 @@ export class SmbFormComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.setupPurposePresets();
+    this.setupPurposePresets().pipe(
+      tap(() => {
+        this.setupAfpWarning();
+        this.setupMangleWarning();
+      }),
+      untilDestroyed(this),
+    ).subscribe(noop);
     this.getUnusableNamesForShare();
 
     this.setupPurposeControl();
-    this.setupAfpWarning();
 
     this.setupPathControl();
 
     this.setupAclControl();
-
-    this.setupMangleWarning();
   }
 
   setupAclControl(): void {
@@ -234,15 +237,22 @@ export class SmbFormComponent implements OnInit {
     }
   }
 
-  setupPurposePresets(): void {
-    this.ws.call('sharing.smb.presets').pipe(untilDestroyed(this)).subscribe((presets) => {
+  /**
+   *
+   * @returns Observable<void> to allow setting warnings for values changes once default or previous preset is applied
+   */
+  setupPurposePresets(): Observable<void> {
+    return this.ws.call('sharing.smb.presets').pipe(switchMap((presets) => {
       this.presets = presets;
       const options: Option[] = [];
       for (const presetName in presets) {
         options.push({ label: presets[presetName].verbose_name, value: presetName });
       }
       this.purposeOptions$ = of(options);
-    });
+      this.form.get('purpose').setValue(SmbPresetType.DefaultShareParameters);
+      this.cdr.markForCheck();
+      return EMPTY;
+    }));
   }
 
   getUnusableNamesForShare(): void {
