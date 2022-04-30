@@ -321,7 +321,7 @@ export class SmbFormComponent implements OnInit {
           }
           return this.restartCifsServiceIfNecessary();
         }),
-        switchMap(this.redirectToAclEditIfRequired),
+        switchMap(this.shouldRedirectToAclEdit),
         untilDestroyed(this),
       ).subscribe(
         (redirect) => {
@@ -401,7 +401,7 @@ export class SmbFormComponent implements OnInit {
     );
   };
 
-  redirectToAclEditIfRequired = (): Observable<boolean> => {
+  shouldRedirectToAclEdit = (): Observable<boolean> => {
     const sharePath: string = this.form.get('path').value;
     const datasetId = sharePath.replace('/mnt/', '');
     return this.ws.call('filesystem.stat', [sharePath]).pipe(
