@@ -73,7 +73,7 @@ export class SmbFormComponent implements OnInit {
   get isRestartRequired(): boolean {
     return this.isNewTimemachineShare
       || this.isNewHomeShare
-      || this.isPathChanged
+      || this.wasPathChanged
       || this.hasAddedAllowDenyHosts;
   }
 
@@ -87,7 +87,7 @@ export class SmbFormComponent implements OnInit {
     return (this.isNew && homeShare) || (homeShare !== this.existingSmbShare?.home);
   }
 
-  get isPathChanged(): boolean {
+  get wasPathChanged(): boolean {
     return !this.isNew && this.form.get('path').value !== this.existingSmbShare?.path;
   }
 
@@ -374,7 +374,7 @@ export class SmbFormComponent implements OnInit {
         data: {
           timemachine: this.isNewTimemachineShare,
           homeshare: this.isNewHomeShare,
-          path: this.isPathChanged,
+          path: this.wasPathChanged,
           hosts: this.hasAddedAllowDenyHosts,
           isNew: this.isNew,
         },
