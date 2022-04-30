@@ -358,7 +358,7 @@ export class SmbFormComponent implements OnInit {
   }
 
   restartCifsServiceIfNecessary(): Observable<boolean> {
-    return this.shouldServiceRestart().pipe(
+    return this.promptIfRestartRequired().pipe(
       switchMap((shouldRestart) => {
         if (shouldRestart) {
           return this.restartCifsService();
@@ -367,10 +367,6 @@ export class SmbFormComponent implements OnInit {
       }),
     );
   }
-
-  shouldServiceRestart = (): Observable<boolean> => {
-    return this.promptIfRestartRequired();
-  };
 
   promptIfRestartRequired(): Observable<boolean> {
     if (this.isRestartRequired) {
