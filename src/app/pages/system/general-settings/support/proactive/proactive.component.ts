@@ -65,8 +65,10 @@ export class ProactiveComponent implements OnInit {
           this.cdr.markForCheck();
           this.slideInService.close();
 
-          this.dialogService.info(helptext.proactive.dialog_title,
-            helptext.proactive.dialog_mesage, '350px', 'info', true);
+          this.dialogService.info(
+            helptext.proactive.dialog_title,
+            helptext.proactive.dialog_mesage,
+          );
         }, (error) => {
           this.isLoading = false;
           this.errorHandler.handleWsFormError(error, this.form);
@@ -110,7 +112,9 @@ export class ProactiveComponent implements OnInit {
   supportUnavailable(): void {
     this.isFormDisabled = true;
     this.form.disable();
-    this.dialogService.info(helptext.proactive.dialog_unavailable_title,
-      helptext.proactive.dialog_unavailable_warning, '500px', 'warning', true);
+    this.dialogService.warn(
+      helptext.proactive.dialog_unavailable_title,
+      helptext.proactive.dialog_unavailable_warning,
+    );
   }
 }

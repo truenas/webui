@@ -320,7 +320,7 @@ export class BootEnvironmentListComponent implements EntityTableConfig {
       this.loader.open();
       this.ws.call('boot.scrub').pipe(untilDestroyed(this)).subscribe(() => {
         this.loader.close();
-        this.dialog.info(this.translate.instant('Scrub Started'), '', '300px', 'info', true);
+        this.dialog.info(this.translate.instant('Scrub Started'), '');
       },
       (res: WebsocketError) => {
         new EntityUtils().handleWsError(this, res, this.dialog);

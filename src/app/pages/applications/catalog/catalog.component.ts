@@ -304,9 +304,6 @@ export class CatalogComponent implements OnInit {
         this.dialogService.info(
           helptext.choosePool.success,
           this.translate.instant(helptext.choosePool.unsetPool.label),
-          '500px',
-          'info',
-          true,
         );
       });
 
@@ -337,9 +334,6 @@ export class CatalogComponent implements OnInit {
       this.dialogService.info(
         helptext.choosePool.success,
         this.translate.instant(helptext.choosePool.message) + res.result.pool,
-        '500px',
-        'info',
-        true,
       );
     });
   }

@@ -157,8 +157,6 @@ export class WebdavFormComponent {
             this.dialog.info(
               this.translate.instant('{service} Service', { service: 'WebDAV' }),
               this.translate.instant('The {service} service has been enabled.', { service: 'WebDAV' }),
-              '300px',
-              'info',
             );
           }),
           catchError((error) => {

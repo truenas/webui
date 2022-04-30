@@ -114,9 +114,6 @@ export class CronListComponent implements EntityTableConfig<CronjobRow> {
                 this.dialog.info(
                   this.translate.instant('Job {job} Completed Successfully', { job: row.description }),
                   message,
-                  '500px',
-                  'info',
-                  true,
                 );
               },
               (err: WebsocketError) => new EntityUtils().handleError(this, err),
