@@ -60,7 +60,7 @@ export class DatasetFormComponent implements FormConfiguration {
   isNew = false;
   parentDataset: Dataset;
   protected entityForm: EntityFormComponent;
-  minimumRecommendedRecordsize: DatasetRecordSize = '128K';
+  minimumRecommendedRecordsize: DatasetRecordSize = '128K' as DatasetRecordSize;
   protected recordsizeField: FormSelectConfig;
   protected recordsizeControl: FormControl;
   protected dedupValue: string;
@@ -603,26 +603,7 @@ export class DatasetFormComponent implements FormConfiguration {
           name: 'recordsize',
           placeholder: helptext.dataset_form_recordsize_placeholder,
           tooltip: helptext.dataset_form_recordsize_tooltip,
-          options: [
-            {
-              label: '512', value: '512', disable: true, hiddenFromDisplay: true,
-            },
-            {
-              label: '1 KiB', value: '1K', disable: true, hiddenFromDisplay: true,
-            },
-            {
-              label: '2 KiB', value: '2K', disable: true, hiddenFromDisplay: true,
-            },
-            { label: '4 KiB', value: '4K' },
-            { label: '8 KiB', value: '8K' },
-            { label: '16 KiB', value: '16K' },
-            { label: '32 KiB', value: '32K' },
-            { label: '64 KiB', value: '64K' },
-            { label: '128 KiB', value: '128K' },
-            { label: '256 KiB', value: '256K' },
-            { label: '512 KiB', value: '512K' },
-            { label: '1 MiB', value: '1M' },
-          ],
+          options: [],
         },
         {
           type: 'select',
@@ -1474,10 +1455,6 @@ export class DatasetFormComponent implements FormConfiguration {
       delete data.refquota_critical;
     }
 
-    if (data.recordsize === '1M') {
-      data.recordsize = '1024K';
-    }
-
     if (data.acltype === DatasetAclType.Posix || data.acltype === DatasetAclType.Off) {
       data.aclmode = AclMode.Discard;
     } else if (data.acltype === DatasetAclType.Inherit) {
@@ -1529,9 +1506,6 @@ export class DatasetFormComponent implements FormConfiguration {
     }
     if (data.deduplication === inherit) {
       delete (data.deduplication);
-    }
-    if (data.recordsize === '1M') {
-      data.recordsize = '1024K';
     }
     // encryption values
     if (data.inherit_encryption) {

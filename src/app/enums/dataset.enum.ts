@@ -1,3 +1,5 @@
+import { Brand } from 'utility-types';
+
 export enum DatasetAclType {
   Inherit = 'INHERIT',
   Off = 'OFF',
@@ -31,19 +33,8 @@ export enum DatasetType {
   Volume = 'VOLUME',
 }
 
-// Enum doesn't work too well with numeric keys.
-export type DatasetVolumeBlockSize =
-  | '512'
-  | '1K'
-  | '2K'
-  | '4K'
-  | '8K'
-  | '16K'
-  | '32K'
-  | '64K'
-  | '128K';
-
-export type DatasetRecordSize = string;
+export type DatasetVolumeBlockSize = Brand<string, 'DatasetVolumeBlockSize'>;
+export type DatasetRecordSize = Brand<string, 'DatasetRecordSize'>;
 
 export enum DatasetSync {
   Standard = 'STANDARD',
