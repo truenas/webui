@@ -669,7 +669,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
   }
 
   app-dual-listbox .chosen .mat-list-item-content {
-    color: white;
+    color: var(--fg2);
   }
 
   .vdev-action-btn:disabled {
