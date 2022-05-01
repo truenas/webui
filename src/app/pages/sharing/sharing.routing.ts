@@ -2,7 +2,6 @@ import { ModuleWithProviders } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { SharesDashboardComponent } from 'app/pages/sharing/components/shares-dashboard/shares-dashboard.component';
-import { ExtentFormComponent } from './iscsi/extent/extent-form/extent-form.component';
 import { InitiatorFormComponent } from './iscsi/initiator/initiator-form/initiator-form.component';
 import { IscsiWizardComponent } from './iscsi/iscsi-wizard/iscsi-wizard.component';
 import { IscsiComponent } from './iscsi/iscsi.component';
@@ -116,15 +115,6 @@ export const routes: Routes = [
               {
                 path: 'extent',
                 data: { title: 'Extents', breadcrumb: 'Extents' },
-                children: [{
-                  path: 'add',
-                  component: ExtentFormComponent,
-                  data: { title: 'Add', breadcrumb: 'Add' },
-                }, {
-                  path: 'edit/:pk',
-                  component: ExtentFormComponent,
-                  data: { title: 'Edit', breadcrumb: 'Edit' },
-                }],
               },
               {
                 path: 'associatedtarget',

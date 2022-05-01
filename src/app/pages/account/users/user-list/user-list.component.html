@@ -1,3 +1,7 @@
+<ng-template #pageHeader>
+  <pagetitle [toolbarActionsConfig]="toolbarActionsConfig"></pagetitle>
+</ng-template>
+
 <entity-empty *ngIf="isLoading$ | async; else loaded" [conf]="loadingConfig"></entity-empty>
 
 <ng-template #loaded>

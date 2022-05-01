@@ -26,8 +26,8 @@ import { ReplicationWizardComponent } from './replication/replication-wizard/rep
 import { ResilverConfigComponent } from './scrub-task/resilver-config/resilver-config.component';
 import { ScrubListComponent } from './scrub-task/scrub-list/scrub-list.component';
 import { SmartTaskListComponent } from './smart-task/smart-task-list/smart-task-list.component';
-import { SnapshotFormComponent } from './snapshot/snapshot-form/snapshot-form.component';
 import { SnapshotListComponent } from './snapshot/snapshot-list/snapshot-list.component';
+import { SnapshotTaskComponent } from './snapshot/snapshot-task/snapshot-task.component';
 
 @NgModule({
   imports: [
@@ -46,7 +46,7 @@ import { SnapshotListComponent } from './snapshot/snapshot-list/snapshot-list.co
   ],
   declarations: [
     SnapshotListComponent,
-    SnapshotFormComponent,
+    SnapshotTaskComponent,
     RsyncTaskListComponent,
     RsyncTaskFormComponent,
     SmartTaskListComponent,

@@ -526,7 +526,6 @@ export class IscsiWizardComponent implements WizardConfiguration {
     private cloudcredentialService: CloudCredentialService,
     private dialogService: DialogService,
     private loader: AppLoaderService,
-    private networkService: NetworkService,
     private router: Router,
     private storageService: StorageService,
   ) {
@@ -813,8 +812,8 @@ export class IscsiWizardComponent implements WizardConfiguration {
       },
     );
     this.ws.call('pool.dataset.recommended_zvol_blocksize', [pool]).pipe(untilDestroyed(this)).subscribe(
-      (res) => {
-        this.entityWizard.formArray.get([0]).get('volblocksize').setValue(res);
+      (recommendedSize) => {
+        this.entityWizard.formArray.get([0]).get('volblocksize').setValue(recommendedSize);
       },
       () => {
         datasetField.hasErrors = true;

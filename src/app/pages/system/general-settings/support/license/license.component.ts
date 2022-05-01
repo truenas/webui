@@ -3,7 +3,6 @@ import {
   ChangeDetectorRef, Component,
 } from '@angular/core';
 import { Validators } from '@angular/forms';
-import { Router } from '@angular/router';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { filter } from 'rxjs/operators';
@@ -33,7 +32,6 @@ export class LicenseComponent {
 
   constructor(
     private fb: FormBuilder,
-    protected router: Router,
     private dialogService: DialogService,
     private slideInService: IxSlideInService,
     protected ws: WebSocketService,

@@ -1,13 +1,10 @@
 # coding=utf-8
 """SCALE UI: feature tests."""
 
-import time
 from selenium.webdriver.common.keys import Keys
-from function import(
+from function import (
     wait_on_element,
     is_element_present,
-    attribute_value_exist,
-    wait_for_attribute_value,
     wait_on_element_disappear,
 )
 from pytest_bdd import (
@@ -16,6 +13,7 @@ from pytest_bdd import (
     then,
     when,
 )
+
 
 @scenario('features/NAS-T1258.feature', 'Verify a Certificate Signing Request can be created')
 def test_verify_a_certificate_signing_request_can_be_created():
@@ -62,7 +60,7 @@ def click_on_csr_add(driver):
 @then('set name and type and click next')
 def set_name_and_type_and_click_next(driver):
     """set name and type and click next."""
-    assert wait_on_element(driver, 10, '//h3[contains(text(),"Add CSR")]')       
+    assert wait_on_element(driver, 10, '//h3[contains(text(),"Add CSR")]')
     assert wait_on_element(driver, 5, '//input[@ix-auto="input__Name"]', 'inputable')
     driver.find_element_by_xpath('//input[@ix-auto="input__Name"]').clear()
     driver.find_element_by_xpath('//input[@ix-auto="input__Name"]').send_keys('csr1')
@@ -150,7 +148,7 @@ def click_save_on_the_confirm_options_page(driver):
     driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
     assert wait_on_element(driver, 5, '/*[contains(.,"Creating Certificate")]')
     assert wait_on_element_disappear(driver, 10, '//*[contains(.,"Creating Certificate")]')
-       
+
 
 @then('verify that the CSR was added')
 def verify_that_the_csr_was_added(driver):

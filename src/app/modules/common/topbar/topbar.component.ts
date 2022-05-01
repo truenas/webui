@@ -63,7 +63,6 @@ export class TopbarComponent implements OnInit, OnDestroy {
   waitingNetworkCheckin = false;
   resilveringDetails: ResilverData;
   currentTheme = 'ix-blue';
-  isTaskMangerOpened = false;
   isDirServicesMonitorOpened = false;
   taskDialogRef: MatDialogRef<JobsPanelComponent>;
   dirServicesMonitor: MatDialogRef<DirectoryServicesMonitorComponent>;
@@ -123,16 +122,9 @@ export class TopbarComponent implements OnInit, OnDestroy {
 
       this.ws.call('failover.licensed').pipe(untilDestroyed(this)).subscribe((isHa) => {
         this.is_ha = isHa;
-        if (this.is_ha) {
-          window.localStorage.setItem('alias_ips', 'show');
-        } else {
-          window.localStorage.setItem('alias_ips', '0');
-        }
         this.getHaStatus();
       });
       this.sysName = 'TrueNAS ENTERPRISE';
-    } else {
-      window.localStorage.setItem('alias_ips', '0');
     }
     this.ws.subscribe('core.get_jobs').pipe(untilDestroyed(this)).subscribe((event) => {
       if (event && (event.fields.method === 'update.update' || event.fields.method === 'failover.upgrade')) {
@@ -241,7 +233,7 @@ export class TopbarComponent implements OnInit, OnDestroy {
       clearInterval(this.interval);
     }
 
-    this.ws.unsubscribe('failover.disabled_reasons');
+    this.ws.unsubscribe('failover.disabled.reasons');
 
     this.core.unregister({ observerClass: this });
   }
@@ -529,8 +521,8 @@ export class TopbarComponent implements OnInit, OnDestroy {
         dialogRef.close(false);
         this.upgradeWaitingToFinish = false;
       });
-      dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((failure: any) => {
-        this.dialogService.errorReport(failure.error, failure.reason, failure.trace.formatted);
+      dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((failure) => {
+        new EntityUtils().errorReport(failure, this.dialogService);
       });
     });
   }

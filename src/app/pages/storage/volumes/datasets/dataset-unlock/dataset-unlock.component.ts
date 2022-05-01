@@ -9,7 +9,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
-import { DatasetEncryptionType } from 'app/enums/dataset-encryption-type.enum';
+import { DatasetEncryptionType } from 'app/enums/dataset.enum';
 import helptext from 'app/helptext/storage/volumes/datasets/dataset-unlock';
 import {
   DatasetEncryptionSummary, DatasetEncryptionSummaryQueryParams, DatasetEncryptionSummaryQueryParamsDataset,
@@ -18,7 +18,6 @@ import { DatasetUnlockParams, DatasetUnlockResult } from 'app/interfaces/dataset
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { Subs } from 'app/interfaces/subs.interface';
-import { AppLoaderService } from 'app/modules/app-loader/app-loader.service';
 import { FormUploadComponent } from 'app/modules/entity/entity-form/components/form-upload/form-upload.component';
 import { EntityFormComponent } from 'app/modules/entity/entity-form/entity-form.component';
 import {
@@ -30,7 +29,7 @@ import { EntityFormService } from 'app/modules/entity/entity-form/services/entit
 import { MessageService } from 'app/modules/entity/entity-form/services/message.service';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { EntityUtils } from 'app/modules/entity/utils';
-import { WebSocketService, StorageService, DialogService } from 'app/services';
+import { DialogService } from 'app/services';
 import { UnlockDialogComponent } from './unlock-dialog/unlock-dialog.component';
 
 @UntilDestroy()
@@ -171,17 +170,26 @@ export class DatasetUnlockComponent implements FormConfiguration {
       name: 'encrypted_roots_divider',
       divider: true,
     },
+    {
+      name: 'force',
+      label: false,
+      config: [
+        {
+          type: 'checkbox',
+          name: 'force',
+          placeholder: this.translate.instant('Force'),
+          value: false,
+          tooltip: helptext.dataset_force_tooltip,
+        },
+      ],
+    },
   ];
 
   constructor(
     protected router: Router,
-    protected route: ActivatedRoute,
     protected aroute: ActivatedRoute,
     protected messageService: MessageService,
-    protected ws: WebSocketService,
-    protected storageService: StorageService,
     protected dialogService: DialogService,
-    protected loader: AppLoaderService,
     protected dialog: MatDialog,
     protected entityFormService: EntityFormService,
     private translate: TranslateService,
@@ -342,7 +350,11 @@ export class DatasetUnlockComponent implements FormConfiguration {
         datasets.push(ds);
       }
     }
-    const payload: DatasetEncryptionSummaryQueryParams = { key_file: body.key_file, datasets };
+    const payload: DatasetEncryptionSummaryQueryParams = {
+      key_file: body.key_file,
+      force: body.force,
+      datasets,
+    };
     const dialogRef = this.dialog.open(EntityJobComponent, {
       data: { title: helptext.fetching_encryption_summary_title },
       disableClose: true,

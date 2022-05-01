@@ -19,18 +19,18 @@ import { NetworkConfigurationComponent } from 'app/pages/network/components/conf
 import {
   DownloadClientConfigModalComponent,
 } from 'app/pages/network/components/download-client-config-modal/download-client-config-modal.component';
+import { InterfaceFormComponent } from 'app/pages/network/components/interface-form/interface-form.component';
 import {
   NetworkConfigurationCardComponent,
 } from 'app/pages/network/components/network-configuration-card/network-configuration-card.component';
+import { OpenVpnClientConfigComponent } from 'app/pages/network/components/open-vpn-client-config/open-vpn-client-config.component';
 import { OpenVpnServerConfigComponent } from 'app/pages/network/components/open-vpn-server-config/open-vpn-server-config.component';
 import { StaticRouteFormComponent } from 'app/pages/network/components/static-route-form/static-route-form.component';
 import { NetworkService } from 'app/services';
 import { CoreService } from 'app/services/core-service/core.service';
 import { EntityFormService } from '../../modules/entity/entity-form/services/entity-form.service';
 import { EntityModule } from '../../modules/entity/entity.module';
-import { InterfacesFormComponent } from './components/forms/interfaces-form.component';
 import { IpmiFormComponent } from './components/forms/ipmi-form.component';
-import { OpenvpnClientComponent } from './components/forms/service-openvpn-client.component';
 import { NetworkComponent } from './network.component';
 import { routing } from './network.routing';
 
@@ -58,12 +58,12 @@ import { routing } from './network.routing';
   ],
   declarations: [
     StaticRouteFormComponent,
-    InterfacesFormComponent,
+    InterfaceFormComponent,
     NetworkConfigurationComponent,
     IpmiFormComponent,
     NetworkComponent,
-    OpenvpnClientComponent,
     OpenVpnServerConfigComponent,
+    OpenVpnClientConfigComponent,
     NetworkConfigurationCardComponent,
     DownloadClientConfigModalComponent,
   ],

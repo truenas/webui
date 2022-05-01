@@ -19,16 +19,14 @@ export class ConfirmDialogComponent {
   secondaryCheckBox = false;
   secondaryCheckBoxMsg = '';
   method: ApiMethod;
-  data: string;
+  data: unknown;
   tooltip: string;
   hideCancel = false;
-  textToCopy: string;
-  keyTextArea: boolean;
   customSubmit: () => void;
 
   @Output() switchSelectionEmitter = new EventEmitter<boolean>();
 
-  constructor(public dialogRef: MatDialogRef < ConfirmDialogComponent >, protected translate: TranslateService) {
+  constructor(public dialogRef: MatDialogRef<ConfirmDialogComponent>, protected translate: TranslateService) {
   }
 
   toggleSubmit(data: MatCheckboxChange): void {

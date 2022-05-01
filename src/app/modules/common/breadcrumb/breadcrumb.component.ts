@@ -1,10 +1,9 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import {
   Router, NavigationEnd, ActivatedRoute,
 } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { filter } from 'rxjs/operators';
-import { ProductType } from 'app/enums/product-type.enum';
 import { PseudoRouteChangeEvent } from 'app/interfaces/events/pseudo-route-change-event.interface';
 import { CoreService } from 'app/services/core-service/core.service';
 import { LocaleService } from 'app/services/locale.service';
@@ -17,20 +16,21 @@ import { RoutePartsService, RoutePart } from 'app/services/route-parts/route-par
   styleUrls: ['./breadcrumb.component.scss'],
 })
 export class BreadcrumbComponent implements OnInit {
-  @Input() productType: ProductType;
   copyrightYear = this.localeService.getCopyrightYearFromBuildTime();
 
   routeParts: RoutePart[];
   isEnabled = true;
-  constructor(private router: Router,
+  constructor(
+    private router: Router,
     private routePartsService: RoutePartsService,
     private activeRoute: ActivatedRoute,
     private core: CoreService,
-    private localeService: LocaleService) { }
+    private localeService: LocaleService,
+  ) { }
 
   ngOnInit(): void {
   // must be running once to get breadcrumbs
-    this.routeParts = this.routePartsService.generateRouteParts(this.activeRoute.snapshot);
+    this.routeParts = this.routePartsService.routeParts;
     // generate url from parts
     this.routeParts.reverse().map((item, i) => {
       // prepend / to first part
@@ -52,7 +52,7 @@ export class BreadcrumbComponent implements OnInit {
         filter((event) => event instanceof NavigationEnd),
         untilDestroyed(this),
       ).subscribe(() => {
-        this.routeParts = this.routePartsService.generateRouteParts(this.activeRoute.snapshot);
+        this.routeParts = this.routePartsService.routeParts;
         // generate url from parts
         this.routeParts.reverse().map((item, i) => {
           // prepend / to first part

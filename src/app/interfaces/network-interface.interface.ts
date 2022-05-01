@@ -1,9 +1,10 @@
 import {
+  CreateNetworkInterfaceType, LacpduRate,
   LinkAggregationProtocol,
   LinkState,
   NetworkInterfaceAliasType,
   NetworkInterfaceFlags,
-  NetworkInterfaceType,
+  NetworkInterfaceType, XmitHashPolicy,
 } from 'app/enums/network-interface.enum';
 
 export interface BaseNetworkInterface {
@@ -32,6 +33,7 @@ export interface PhysicalNetworkInterface extends BaseNetworkInterface {
 export interface BridgeNetworkInterface extends BaseNetworkInterface {
   type: NetworkInterfaceType.Bridge;
   bridge_members?: string[];
+  stp?: boolean;
 }
 
 export interface VlanNetworkInterface extends BaseNetworkInterface {
@@ -46,8 +48,8 @@ export interface LinkAggregationNetworkInterface extends BaseNetworkInterface {
   lag_ports: string[];
   lag_protocol: LinkAggregationProtocol;
   disable_offload_capabilities: boolean;
-  lacpdu_rate: string;
-  xmit_hash_policy: string;
+  lacpdu_rate: LacpduRate;
+  xmit_hash_policy: XmitHashPolicy;
 }
 
 export type NetworkInterface =
@@ -57,7 +59,7 @@ export type NetworkInterface =
   | VlanNetworkInterface;
 
 export interface NetworkInterfaceAlias {
-  type: NetworkInterfaceAliasType;
+  type?: NetworkInterfaceAliasType;
   address: string;
   netmask?: number;
   broadcast?: string;
@@ -102,3 +104,29 @@ export interface ServiceRestartedOnNetworkSync {
   service: string;
   ips: string[];
 }
+
+export interface NetworkInterfaceCreate {
+  name?: string;
+  description?: string;
+  type?: CreateNetworkInterfaceType;
+  disable_offload_capabilities?: boolean;
+  ipv4_dhcp?: boolean;
+  ipv6_auto?: boolean;
+  aliases?: NetworkInterfaceAlias[];
+  failover_critical?: boolean;
+  failover_group?: number;
+  failover_vhid?: number;
+  failover_aliases: NetworkInterfaceAlias[];
+  failover_virtual_aliases: NetworkInterfaceAlias[];
+  bridge_members: string[];
+  lag_protocol?: LinkAggregationProtocol;
+  xmit_hash_policy?: XmitHashPolicy;
+  lacpdu_rate?: LacpduRate;
+  lag_ports?: string[];
+  vlan_parent_interface?: string;
+  vlan_tag?: number;
+  vlan_pcp?: number;
+  mtu?: number;
+}
+
+export type NetworkInterfaceUpdate = Omit<NetworkInterfaceCreate, 'type'>;

@@ -19,9 +19,6 @@ import { WebSocketService } from './services/ws.service';
   templateUrl: './app.component.html',
 })
 export class AppComponent {
-  appTitle = 'TrueNAS';
-  protected accountUserResource = 'account/users/1';
-
   constructor(
     public title: Title,
     private router: Router,
@@ -71,7 +68,8 @@ export class AppComponent {
     router.events.pipe(untilDestroyed(this)).subscribe((event) => {
       // save currenturl
       if (event instanceof NavigationEnd) {
-        if (this.ws.loggedIn && event.url !== '/sessions/signin') {
+        const navigation = this.router.getCurrentNavigation();
+        if (this.ws.loggedIn && event.url !== '/sessions/signin' && !navigation?.extras?.skipLocationChange) {
           sessionStorage.currentUrl = event.url;
         }
       }

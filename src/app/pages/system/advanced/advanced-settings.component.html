@@ -2,16 +2,12 @@
   class="wrapper"
   gdGap="8px"
   gdRows="fit-content(30vh)"
-  gdColumns="100% 100%"
+  gdColumns="100%"
   gdColumns.gt-xs="50% 50%"
-  gdAreas="data-card1 | data-card2 | sysctl-card | data-card3 | cron-card | initshutdown-card | data-card7 | data-card9 | data-card8"
-  gdAreas.gt-xs="data-card1 data-card2 | sysctl-card data-card3 | cron-card initshutdown-card | data-card7 data-card9 | . data-card8"
 >
   <ng-container *ngFor="let card of dataCards; index as i">
     <mat-card
-      *ngIf="[CardId.Cron, CardId.InitShutdown, CardId.Sysctl].includes(card.id) === false"
-      class="data-card{{ i + 1 }}"
-      gdArea="data-card{{ i + 1 }}"
+      *ngIf="card.items"
     >
       <mat-toolbar-row>
         <h3>{{ card.title | translate }}</h3>
@@ -36,9 +32,8 @@
     </mat-card>
 
     <app-table
-      *ngIf="[CardId.Cron, CardId.InitShutdown, CardId.Sysctl].includes(card.id)"
+      *ngIf="card.tableConf"
       [conf]="card.tableConf"
-      [gdArea]="card.id + '-card'"
     ></app-table>
   </ng-container>
 </div>

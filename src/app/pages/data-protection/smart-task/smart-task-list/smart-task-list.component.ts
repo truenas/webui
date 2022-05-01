@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-import { Router, ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import helptext from 'app/helptext/data-protection/smart/smart';
@@ -61,8 +60,6 @@ export class SmartTaskListComponent implements EntityTableConfig {
   constructor(
     protected storageService: StorageService,
     protected slideInService: IxSlideInService,
-    protected router: Router,
-    protected aroute: ActivatedRoute,
     protected taskService: TaskService,
     protected entityFormService: EntityFormService,
     protected translate: TranslateService,

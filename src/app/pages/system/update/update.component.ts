@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatDialogRef } from '@angular/material/dialog/dialog-ref';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import {
@@ -109,7 +109,6 @@ export class UpdateComponent implements OnInit {
 
   constructor(
     protected router: Router,
-    protected route: ActivatedRoute,
     protected ws: WebSocketService,
     protected dialog: MatDialog,
     public sysGenService: SystemGeneralService,
@@ -570,7 +569,7 @@ export class UpdateComponent implements OnInit {
     this.ds.componentInstance.isSubmitEnabled = true;
     this.ds.afterClosed().pipe(untilDestroyed(this)).subscribe((status) => {
       if (status) {
-        if (!(this.ds.componentInstance.data[0] as any).reboot) {
+        if (!(this.ds.componentInstance.data as [{ reboot: boolean }])[0].reboot) {
           this.dialogRef = this.dialog.open(EntityJobComponent, { data: { title: this.updateTitle } });
           this.dialogRef.componentInstance.setCall('update.download');
           this.dialogRef.componentInstance.submit();

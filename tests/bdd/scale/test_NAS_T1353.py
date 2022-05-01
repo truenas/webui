@@ -1,26 +1,21 @@
 # coding=utf-8
 """SCALE UI: feature tests."""
 
-import time
 from function import (
     wait_on_element,
-    is_element_present,
-    attribute_value_exist,
-    wait_on_element_disappear,
+    is_element_present
 )
 from pytest_bdd import (
     given,
     scenario,
     then,
-    when,
-    parsers
+    when
 )
 
 
 @scenario('features/NAS-T1353.feature', 'Apps Page - Validate  adding TrueCharts')
 def test_apps_page__validate__adding_truecharts():
     """Apps Page - Validate  adding TrueCharts."""
-
 
 
 @given('the browser is open, navigate to the SCALE URL, and login')
@@ -61,7 +56,7 @@ def when_the_apps_page_loads_open_manage_catalogs(driver):
 @then('click add catalog')
 def click_add_catalog(driver):
     """click add catalog."""
-    time.sleep(2)  # we have to wait for the page to settle down and the card to fully load
+    assert wait_on_element(driver, 10, '//div[text()="OFFICIAL"]')
     assert wait_on_element(driver, 10, '//span[contains(.,"Add Catalog")]', 'clickable')
     driver.find_element_by_xpath('//span[contains(.,"Add Catalog")]').click()
 
@@ -70,15 +65,12 @@ def click_add_catalog(driver):
 def fill_out_the_form(driver):
     """fill out the form."""
     assert wait_on_element(driver, 7, '//div[contains(.,"Add Catalog")]')
-
-    assert wait_on_element(driver, 7, '//div[contains(., " Catalog Name ")]/following-sibling::div//input')
-    driver.find_element_by_xpath('//div[contains(., " Catalog Name ")]/following-sibling::div//input').clear()
-    driver.find_element_by_xpath('//div[contains(., " Catalog Name ")]/following-sibling::div//input').send_keys('truecharts')
-
-    assert wait_on_element(driver, 7, '//div[contains(., " Repository ")]/following-sibling::div//input')
-    driver.find_element_by_xpath('//div[contains(., " Repository ")]/following-sibling::div//input').clear()
-    driver.find_element_by_xpath('//div[contains(., " Repository ")]/following-sibling::div//input').send_keys('https://github.com/truecharts/catalog')
-
+    assert wait_on_element(driver, 7, '//ix-input[@formcontrolname = "label"]//input')
+    driver.find_element_by_xpath('//ix-input[@formcontrolname = "label"]//input').clear()
+    driver.find_element_by_xpath('//ix-input[@formcontrolname = "label"]//input').send_keys('truecharts')
+    assert wait_on_element(driver, 7, '//ix-input[@formcontrolname = "repository"]//input')
+    driver.find_element_by_xpath('//ix-input[@formcontrolname = "repository"]//input').clear()
+    driver.find_element_by_xpath('//ix-input[@formcontrolname = "repository"]//input').send_keys('https://github.com/truecharts/catalog')
     assert wait_on_element(driver, 10, '//span[contains(.,"Save")]', 'clickable')
     driver.find_element_by_xpath('//span[contains(.,"Save")]').click()
 
@@ -86,7 +78,7 @@ def fill_out_the_form(driver):
 @then('close confirmation dialog')
 def close_confirmation_dialog(driver):
     """close confirmation dialog."""
-    assert wait_on_element(driver, 7, '//span[contains(.,"Success")]')
+    assert wait_on_element(driver, 30, '//span[contains(.,"Success")]')
     assert wait_on_element(driver, 10, '//span[contains(.,"Close")]', 'clickable')
     driver.find_element_by_xpath('//span[contains(.,"Close")]').click()
 
@@ -94,5 +86,4 @@ def close_confirmation_dialog(driver):
 @then('confirm installation is successful')
 def confirm_installation_is_successful(driver):
     """confirm installation is successful."""
-    time.sleep(2) # Because of slow ui update times
-    assert wait_on_element(driver, 600, '//div[contains(.,"TRUECHARTS")]')
+    assert wait_on_element(driver, 900, '//div[text()="TRUECHARTS"]')

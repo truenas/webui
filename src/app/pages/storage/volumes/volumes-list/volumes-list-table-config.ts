@@ -9,8 +9,7 @@ import * as _ from 'lodash';
 import { TreeNode } from 'primeng/api';
 import { forkJoin, Observable } from 'rxjs';
 import { filter } from 'rxjs/operators';
-import { DatasetEncryptionType } from 'app/enums/dataset-encryption-type.enum';
-import { DatasetType } from 'app/enums/dataset-type.enum';
+import { DatasetEncryptionType, DatasetType } from 'app/enums/dataset.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { OnOff } from 'app/enums/on-off.enum';
 import { PoolScanFunction } from 'app/enums/pool-scan-function.enum';
@@ -31,7 +30,6 @@ import { SystemDatasetConfig } from 'app/interfaces/system-dataset-config.interf
 import { DialogFormConfiguration } from 'app/modules/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/modules/entity/entity-dialog/entity-dialog.component';
 import { FormUploadComponent } from 'app/modules/entity/entity-form/components/form-upload/form-upload.component';
-import { MessageService } from 'app/modules/entity/entity-form/services/message.service';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { EntityTableAction, EntityTableConfig } from 'app/modules/entity/entity-table/entity-table.interface';
 import { EntityUtils } from 'app/modules/entity/utils';
@@ -52,7 +50,7 @@ import {
 } from 'app/pages/storage/volumes/volumes-list/volumes-list-pool.interface';
 import { VolumesListComponent } from 'app/pages/storage/volumes/volumes-list/volumes-list.component';
 import {
-  AppLoaderService, DialogService, StorageService, ValidationService, WebSocketService,
+  AppLoaderService, DialogService, StorageService, WebSocketService,
 } from 'app/services';
 
 export class VolumesListTableConfig implements EntityTableConfig {
@@ -87,7 +85,6 @@ export class VolumesListTableConfig implements EntityTableConfig {
   showSpinner: boolean;
   // TODO: Unused?
   encryptedStatus: number;
-  restartServices = false;
   subs: Subs;
   productType = window.localStorage.getItem('product_type') as ProductType;
 
@@ -103,9 +100,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
     protected translate: TranslateService,
     protected storageService: StorageService,
     protected volumeData: VolumesListPool,
-    protected messageService: MessageService,
     protected http: HttpClient,
-    protected validationService: ValidationService,
   ) {
     if (typeof (this.classId) !== 'undefined' && this.classId !== '' && volumeData && volumeData['children']) {
       this.tableData = volumeData['children'].map((child) => {

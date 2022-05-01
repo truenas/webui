@@ -13,7 +13,6 @@ from pytest_bdd import (
     when,
 )
 import pytest
-
 pytestmark = [pytest.mark.debug_test]
 
 

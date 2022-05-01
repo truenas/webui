@@ -196,6 +196,10 @@ def create_smb_share_with_path_tankrtacltest1share(driver, path):
     assert wait_on_element(driver, 5, '//button[@ix-auto="button__SAVE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
     assert wait_on_element_disappear(driver, 15, '//h6[contains(.,"Please wait")]')
+    if is_element_present(driver, '//h1[contains(., "Enable service")]'):
+        driver.find_element_by_xpath('//button[@ix-auto="button__ENABLE SERVICE"]').click()
+        assert wait_on_element(driver, 5, '//h1[contains(., "SMB Service")]')
+        driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
 
 
 @then('Apply ACL to rt-acl-test-1 with recusrive checked')
@@ -255,8 +259,8 @@ def verify_the_smb_share_filesystem_has_the_acl_that_was_applied_to_rtacltest1(d
     assert wait_on_element(driver, 5, '//div[contains(.,"Shares")]')
     assert wait_on_element(driver, 5, '//mat-panel-title//h5//a[contains(.,"(SMB)")]', 'clickable')
     driver.find_element_by_xpath('//mat-panel-title//h5//a[contains(.,"(SMB)")]').click()
-    assert wait_on_element(driver, 5, f'//tr[contains(.,"rt-test")]//mat-icon[@ix-auto="options__rt-test"]', 'clickable')
-    driver.find_element_by_xpath(f'//tr[contains(.,"rt-test")]//mat-icon[@ix-auto="options__rt-test"]').click()
+    assert wait_on_element(driver, 5, f'//tr[contains(.,"rt-test")]//button[@aria-label="Actionable Options"]', 'clickable')
+    driver.find_element_by_xpath(f'//tr[contains(.,"rt-test")]//button[@aria-label="Actionable Options"]').click()
     assert wait_on_element(driver, 5, f'//button[@ix-auto="action__rt-test_Edit Filesystem ACL"]', 'clickable')
     driver.find_element_by_xpath(f'//button[@ix-auto="action__rt-test_Edit Filesystem ACL"]').click()
     assert wait_on_element(driver, 5, '//h1[contains(text(),"Edit POSIX.1e ACL")]')

@@ -764,6 +764,19 @@ body .mat-select-trigger {
   padding: 0.9rem 1.2rem;
 }
 
+/*---- Chrome autocomplete Forms -----*/
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:focus-visible,
+input:-webkit-autofill:active {
+  box-shadow: 0 0 0 30px var(--bg1) inset !important;
+}
+
+input:-webkit-autofill {
+  -webkit-text-fill-color: var(--fg1);
+}
+
 /*---- Inbox -----*/
 .messages.mat-list,
 .messages .mat-list-item-content {

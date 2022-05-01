@@ -1,5 +1,11 @@
 import {
-  Component, OnInit, ChangeDetectorRef, ViewChild, ChangeDetectionStrategy, ViewChildren, QueryList,
+  Component,
+  OnInit,
+  ChangeDetectorRef,
+  ViewChild, ChangeDetectionStrategy,
+  ViewChildren, QueryList,
+  AfterViewInit,
+  TemplateRef,
 } from '@angular/core';
 import { MatSort, Sort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
@@ -11,6 +17,7 @@ import {
 } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 import { CoreEvent } from 'app/interfaces/events';
+import { GlobalActionConfig } from 'app/interfaces/global-action.interface';
 import { User } from 'app/interfaces/user.interface';
 import { EmptyConfig, EmptyType } from 'app/modules/entity/entity-empty/entity-empty.component';
 import { EntityToolbarComponent } from 'app/modules/entity/entity-toolbar/entity-toolbar.component';
@@ -18,7 +25,7 @@ import { ControlConfig, ToolbarConfig } from 'app/modules/entity/entity-toolbar/
 import { IxDetailRowDirective } from 'app/modules/ix-tables/directives/ix-detail-row.directive';
 import { userPageEntered } from 'app/pages/account/users/store/user.actions';
 import { selectUsers, selectUserState, selectUsersTotal } from 'app/pages/account/users/store/user.selectors';
-import { CoreService } from 'app/services/core-service/core.service';
+import { LayoutService } from 'app/services/layout.service';
 import { AppState } from 'app/store';
 import { builtinUsersToggled } from 'app/store/preferences/preferences.actions';
 import { waitForPreferences } from 'app/store/preferences/preferences.selectors';
@@ -31,8 +38,10 @@ import { UserFormComponent } from '../user-form/user-form.component';
   styleUrls: ['./user-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class UserListComponent implements OnInit {
+export class UserListComponent implements OnInit, AfterViewInit {
   @ViewChild(MatSort, { static: false }) sort: MatSort;
+  @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
+  toolbarActionsConfig: GlobalActionConfig = null;
 
   displayedColumns: string[] = ['username', 'uid', 'builtin', 'full_name', 'actions'];
   settingsEvent$: Subject<CoreEvent> = new Subject();
@@ -54,13 +63,15 @@ export class UserListComponent implements OnInit {
     large: true,
     title: this.translate.instant('Can not retrieve response'),
   };
+  filterValue = '';
   expandedRow: User;
   @ViewChildren(IxDetailRowDirective) private detailRows: QueryList<IxDetailRowDirective>;
-  error$ = this.store$.select(selectUserState).pipe(map((state) => state.error));
   isLoading$ = this.store$.select(selectUserState).pipe(map((state) => state.isLoading));
-  isEmpty$ = this.store$.select(selectUsersTotal).pipe(map((total) => total === 0));
-  emptyOrErrorConfig$: Observable<EmptyConfig> = combineLatest([this.isEmpty$, this.error$]).pipe(
-    switchMap(([_, isError]) => {
+  emptyOrErrorConfig$: Observable<EmptyConfig> = combineLatest([
+    this.store$.select(selectUsersTotal).pipe(map((total) => total === 0)),
+    this.store$.select(selectUserState).pipe(map((state) => state.error)),
+  ]).pipe(
+    switchMap(([, isError]) => {
       if (isError) {
         return of(this.errorConfig);
       }
@@ -68,20 +79,33 @@ export class UserListComponent implements OnInit {
       return of(this.emptyConfig);
     }),
   );
-  private hideBuiltinUsers = true;
+  hideBuiltinUsers = true;
 
   constructor(
     private translate: TranslateService,
     private slideIn: IxSlideInService,
     private cdr: ChangeDetectorRef,
-    private core: CoreService,
     private store$: Store<AppState>,
+    private layoutService: LayoutService,
   ) { }
 
   ngOnInit(): void {
     this.store$.dispatch(userPageEntered());
     this.getPreferences();
     this.getUsers();
+  }
+
+  ngAfterViewInit(): void {
+    this.layoutService.pageHeaderUpdater$.next(this.pageHeader);
+    this.setupToolbar();
+  }
+
+  shouldShowResetInput(): boolean {
+    return this.filterValue && !!this.filterValue.length;
+  }
+
+  input(filterInput: HTMLInputElement): void {
+    this.filterValue = filterInput.value;
   }
 
   getPreferences(): void {
@@ -93,6 +117,11 @@ export class UserListComponent implements OnInit {
       this.setupToolbar();
       this.cdr.markForCheck();
     });
+  }
+
+  resetInput(input: HTMLInputElement): void {
+    this.filterValue = '';
+    input.value = '';
   }
 
   getUsers(): void {
@@ -192,11 +221,11 @@ export class UserListComponent implements OnInit {
       target: this.settingsEvent$,
       controls,
     };
-    const settingsConfig = {
+    this.toolbarActionsConfig = {
       actionType: EntityToolbarComponent,
       actionConfig: toolbarConfig,
     };
 
-    this.core.emit({ name: 'GlobalActions', data: settingsConfig, sender: this });
+    this.cdr.markForCheck();
   }
 }

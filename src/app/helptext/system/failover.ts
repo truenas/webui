@@ -6,8 +6,6 @@ export const helptextSystemFailover = {
   dialog_initiate_failover_title: T('Initiate Failover'),
   dialog_initiate_failover_message: T('WARNING: A failover will \
  temporarily interrupt system services.'),
-  dialog_initiate_failover_checkbox: T('Confirm'),
-  dialog_initiate_cancel: T('Cancel'),
   dialog_initiate_action: T('Failover'),
 
   dialog_sync_to_peer_title: T('Sync to Peer'),

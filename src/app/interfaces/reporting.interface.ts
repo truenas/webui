@@ -117,6 +117,8 @@ export interface ReportingParams {
   identifier: string;
 }
 
+export type ReportingAggregationKeys = 'min' | 'mean' | 'max';
+
 export interface ReportingData {
   end: number;
   identifier: string;
@@ -126,8 +128,6 @@ export interface ReportingData {
   step: number;
   data: number[][];
   aggregations: {
-    min: number[];
-    mean: number[];
-    max: number[];
+    [key in ReportingAggregationKeys]: string[];
   };
 }

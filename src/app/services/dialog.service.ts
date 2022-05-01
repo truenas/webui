@@ -14,7 +14,6 @@ import { InfoDialogComponent } from 'app/modules/common/dialog/info-dialog/info-
 import { SelectDialogComponent } from 'app/modules/common/dialog/select-dialog/select-dialog.component';
 import { DialogFormConfiguration } from 'app/modules/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/modules/entity/entity-dialog/entity-dialog.component';
-import { AppLoaderService } from '../modules/app-loader/app-loader.service';
 import { WebSocketService } from './ws.service';
 
 @UntilDestroy()
@@ -24,7 +23,7 @@ import { WebSocketService } from './ws.service';
 export class DialogService {
   protected loaderOpen = false;
 
-  constructor(private dialog: MatDialog, private ws: WebSocketService, protected loader: AppLoaderService) {
+  constructor(private dialog: MatDialog, private ws: WebSocketService) {
     /* Close all open dialogs when websocket connection is dropped */
     this.ws.onCloseSubject$.pipe(
       filter(Boolean),
@@ -60,14 +59,6 @@ export class DialogService {
     }
     if (options.cancelMsg) {
       dialogRef.componentInstance.cancelMsg = options.cancelMsg;
-    }
-
-    if (options.textToCopy) {
-      dialogRef.componentInstance.keyTextArea = options.keyTextArea;
-    }
-
-    if (options.keyTextArea) {
-      dialogRef.componentInstance.textToCopy = options.textToCopy;
     }
 
     if ('secondaryCheckBox' in options && options.secondaryCheckBox) {
@@ -176,7 +167,7 @@ export class DialogService {
           isHidden: !confirmBox,
         },
       ],
-      saveButtonText: buttonMsg || T('DELETE'),
+      saveButtonText: buttonMsg || T('Delete'),
       afterInit(entityDialog: EntityDialogComponent) {
         entityDialog.formGroup.controls['name'].valueChanges.pipe(untilDestroyed(entityDialog)).subscribe((res) => {
           entityDialog.submitEnabled = res === name && (confirmBox ? entityDialog.formGroup.controls['confirm'].value : true);

@@ -24,8 +24,7 @@ export class TrivialPermissionsComponent {
 
   constructor(
     private translate: TranslateService,
-  ) {
-  }
+  ) {}
 
   private statToPermissionItems(stat: FileSystemStat): PermissionItem[] {
     const permissions = parseApiMode(stat.mode);

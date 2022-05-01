@@ -1,15 +1,14 @@
 import { Component } from '@angular/core';
 import {
-  FormArray, FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators,
+  FormArray, FormControl, ValidationErrors, ValidatorFn, Validators,
 } from '@angular/forms';
-import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 import { combineLatest, Observable } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
-import { DatasetType } from 'app/enums/dataset-type.enum';
+import { DatasetType } from 'app/enums/dataset.enum';
 import { DeviceType } from 'app/enums/device-type.enum';
 import { ExplorerType } from 'app/enums/explorer-type.enum';
 import { ProductType } from 'app/enums/product-type.enum';
@@ -54,7 +53,6 @@ export class VmWizardComponent implements WizardConfiguration {
   addWsCall = 'vm.create' as const;
   summary: Record<string, unknown> = {};
   isLinear = true;
-  firstFormGroup: FormGroup;
   summaryTitle = this.translate.instant('VM Summary');
   namesInUse: string[] = [];
   statSize: Statfs;
@@ -481,7 +479,6 @@ export class VmWizardComponent implements WizardConfiguration {
     public vmService: VmService,
     public networkService: NetworkService,
     protected loader: AppLoaderService,
-    protected dialog: MatDialog,
     public messageService: MessageService,
     private dialogService: DialogService,
     private storageService: StorageService,

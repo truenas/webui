@@ -67,11 +67,7 @@ export const helptextSharingSmb = {
  </b>. When the files are in a different dataset or a child dataset, \
  they are copied to the dataset where the Recycle Bin is located. To \
  prevent excessive space usage, files larger than 20 MiB are deleted \
- rather than moved. Adjust the <i>Auxiliary Parameter</i> \
- <samp>crossrename:sizelimit=</samp> setting to allow larger files. \
- For example, <samp>crossrename:sizelimit=\'{\'50\'}\'</samp> allows moves of \
- files up to 50 MiB in size. This means files can be permanently \
- deleted or moved from the recycle bin. <b>This is not a replacement \
+ rather than moved. <b>This is not a replacement \
  for ZFS snapshots.</b>'),
 
   placeholder_guestok: T('Allow Guest Access'),

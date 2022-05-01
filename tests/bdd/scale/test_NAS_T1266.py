@@ -1,13 +1,9 @@
 # coding=utf-8
 """SCALE UI: feature tests."""
 
-import time
-from selenium.webdriver.common.keys import Keys
-from function import(
+from function import (
     wait_on_element,
     is_element_present,
-    attribute_value_exist,
-    wait_for_attribute_value,
     wait_on_element_disappear,
 )
 from pytest_bdd import (
@@ -21,6 +17,7 @@ from pytest_bdd import (
 @scenario('features/NAS-T1266.feature', 'Verify a Certificate Signing Request can be deleted')
 def test_verify_a_certificate_signing_request_can_be_deleted():
     """Verify a Certificate Signing Request can be deleted."""
+
 
 @given('the browser is open, navigate to the SCALE URL, and login')
 def the_browser_is_open_navigate_to_the_scale_url_and_login(driver, nas_ip, root_password):
@@ -74,4 +71,4 @@ def click_the_confirm_checkbox_and_click_delete(driver):
 @then('verify that the CSR was deleted')
 def verify_that_the_csr_wasdeleted(driver):
     """verify that the CSR was deleted."""
-    assert wait_on_element(driver, 10, '//li[contains(.,"Name: csr1")]') is False
+    assert wait_on_element_disappear(driver, 20, '//li[contains(.,"Name: csr1")]')

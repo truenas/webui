@@ -3,7 +3,7 @@ import { Component } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatDialogRef } from '@angular/material/dialog/dialog-ref';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
@@ -80,7 +80,6 @@ export class ManualUpdateComponent implements FormConfiguration {
 
   constructor(
     protected router: Router,
-    protected route: ActivatedRoute,
     protected ws: WebSocketService,
     public messageService: MessageService,
     protected dialog: MatDialog,

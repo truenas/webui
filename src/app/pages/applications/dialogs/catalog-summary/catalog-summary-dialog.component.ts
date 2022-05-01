@@ -4,7 +4,6 @@ import {
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import helptext from 'app/helptext/apps/apps';
 import { CatalogApp, CatalogAppVersion } from 'app/interfaces/catalog.interface';
-import { LocaleService } from 'app/services/locale.service';
 
 @Component({
   selector: 'catalog-summary-dialog',
@@ -24,7 +23,6 @@ export class CatalogSummaryDialogComponent implements OnInit {
   constructor(
     public dialogRef: MatDialogRef<CatalogSummaryDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: CatalogApp,
-    protected localeService: LocaleService,
   ) {
     this.catalogApp = data;
   }

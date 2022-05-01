@@ -1,3 +1,4 @@
+import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
 import { Alert } from 'app/interfaces/alert.interface';
 import { ChartRelease } from 'app/interfaces/chart-release.interface';
 import { DirectoryServicesState } from 'app/interfaces/directory-services-state.interface';
@@ -14,7 +15,7 @@ export type ApiEventDirectory = {
   'chart.release.query': { response: ChartRelease };
   'core.get_jobs': { response: Job };
   'directoryservices.status': { response: DirectoryServicesState };
-  'failover.disabled_reasons': { response: any };
+  'failover.disabled.reasons': { response: FailoverDisabledReason[] };
   'service.query': { response: Service };
   'truecommand.config': { response: TrueCommandConfig };
   'vm.query': { response: VirtualMachine };
