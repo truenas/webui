@@ -123,9 +123,9 @@ export class DatasetQuotasGrouplistComponent implements EntityTableConfig, OnDes
           ...this.addActions,
           this.getRemoveInvalidQuotasAction(quotas),
         ];
-        this.tableService.addActionsUpdater$.next(newActions);
+        this.tableService.triggerActionsUpdate(newActions);
       } else {
-        this.tableService.addActionsUpdater$.next([...this.addActions]);
+        this.tableService.triggerActionsUpdate([...this.addActions]);
       }
     });
   }

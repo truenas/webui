@@ -226,12 +226,12 @@ export class DatasetQuotasUserlistComponent implements EntityTableConfig, OnDest
       [this.pk, DatasetQuotaType.User, params],
     ).pipe(untilDestroyed(this)).subscribe((quotas: DatasetQuota[]) => {
       if (quotas && quotas.length) {
-        this.tableService.addActionsUpdater$.next([
+        this.tableService.triggerActionsUpdate([
           ...this.addActions,
           this.getRemoveInvalidQuotasAction(quotas),
         ]);
       } else {
-        this.tableService.addActionsUpdater$.next([...this.addActions]);
+        this.tableService.triggerActionsUpdate([...this.addActions]);
       }
     });
   }

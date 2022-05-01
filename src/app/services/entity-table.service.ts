@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Subject } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -7,7 +7,11 @@ import { Subject } from 'rxjs';
 export class EntityTableService {
   private addActionsUpdaterSubject$: Subject<unknown> = new Subject();
 
-  get addActionsUpdater$(): Subject<unknown> {
-    return this.addActionsUpdaterSubject$;
+  get addActionsUpdater$(): Observable<unknown> {
+    return this.addActionsUpdaterSubject$.asObservable();
+  }
+
+  triggerActionsUpdate(actions: unknown): void {
+    this.addActionsUpdaterSubject$.next(actions);
   }
 }
