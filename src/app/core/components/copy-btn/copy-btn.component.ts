@@ -11,7 +11,6 @@ export class CopyButtonComponent {
   @ViewChild('el', { static: false }) el: ElementRef;
   @Input() text: string;
   @Input() showPopup = true;
-  @Input() btnText: string;
   popupIsVisible = false;
 
   onIconClick(): void {

@@ -11,7 +11,9 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { combineLatest, of } from 'rxjs';
-import { filter, takeUntil, tap } from 'rxjs/operators';
+import {
+  filter, switchMap, takeUntil, tap,
+} from 'rxjs/operators';
 import { choicesToOptions } from 'app/helpers/options.helper';
 import { helptextSystemGeneral as helptext } from 'app/helptext/system/general';
 import { SystemGeneralConfig, SystemGeneralConfigUpdate } from 'app/interfaces/system-config.interface';
@@ -118,20 +120,22 @@ export class GuiFormComponent {
           hideCheckBox: true,
         })
         : of(true)
-    ).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
-      this.isFormLoading = true;
-      this.store$.dispatch(guiFormSubmitted({ theme: values.theme }));
-      this.ws.call('system.general.update', [body]).pipe(
-        untilDestroyed(this),
-      ).subscribe(() => {
-        this.isFormLoading = false;
-        this.cdr.markForCheck();
-        this.handleServiceRestart(body);
-      }, (error) => {
-        this.isFormLoading = false;
-        this.errorHandler.handleWsFormError(error, this.formGroup);
-        this.cdr.markForCheck();
-      });
+    ).pipe(
+      filter(Boolean),
+      tap(() => {
+        this.isFormLoading = true;
+        this.store$.dispatch(guiFormSubmitted({ theme: values.theme }));
+      }),
+      switchMap(() => this.ws.call('system.general.update', [body])),
+      untilDestroyed(this),
+    ).subscribe(() => {
+      this.isFormLoading = false;
+      this.cdr.markForCheck();
+      this.handleServiceRestart(body);
+    }, (error) => {
+      this.isFormLoading = false;
+      this.errorHandler.handleWsFormError(error, this.formGroup);
+      this.cdr.markForCheck();
     });
   }
 

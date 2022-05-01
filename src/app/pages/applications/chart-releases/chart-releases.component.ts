@@ -288,7 +288,7 @@ export class ChartReleasesComponent implements OnInit {
   }
 
   portalLink(chart: ChartRelease, name: string = 'web_portal'): void {
-    this.redirect.open(chart.portals[name][0]);
+    this.redirect.openWindow(chart.portals[name][0]);
   }
 
   update(name: string): void {

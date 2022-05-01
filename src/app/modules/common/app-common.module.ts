@@ -37,6 +37,7 @@ import { DirectoryServicesMonitorComponent } from 'app/modules/common/dialog/dir
 import { ErrorDialogComponent } from 'app/modules/common/dialog/error-dialog/error-dialog.component';
 import { GeneralDialogComponent } from 'app/modules/common/dialog/general-dialog/general-dialog.component';
 import { InfoDialogComponent } from 'app/modules/common/dialog/info-dialog/info-dialog.component';
+import { RedirectDialogComponent } from 'app/modules/common/dialog/redirect-dialog/redirect-dialog.component';
 import { ResilverProgressDialogComponent } from 'app/modules/common/dialog/resilver-progress/resilver-progress.component';
 import { SelectDialogComponent } from 'app/modules/common/dialog/select-dialog/select-dialog.component';
 import { AdminLayoutComponent } from 'app/modules/common/layouts/admin-layout/admin-layout.component';
@@ -106,6 +107,7 @@ import { ThemeService } from 'app/services/theme/theme.service';
     GeneralDialogComponent,
     ErrorDialogComponent,
     AboutDialogComponent,
+    RedirectDialogComponent,
     NavigationComponent,
     ConsolePanelDialogComponent,
     DirectoryServicesMonitorComponent,

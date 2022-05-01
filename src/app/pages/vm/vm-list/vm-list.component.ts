@@ -504,7 +504,7 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow>, On
                 if (webUris[displayDevices[0].id].error) {
                   return this.dialogService.info('Error', webUris[displayDevices[0].id].error);
                 }
-                this.redirect.open(webUris[displayDevices[0].id].uri, '_blank');
+                this.redirect.openWindow(webUris[displayDevices[0].id].uri, '_blank');
               }, (err) => {
                 this.loader.close();
                 new EntityUtils().handleError(this, err);
@@ -544,7 +544,7 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow>, On
                     if (webUris[displayDevice.id].error) {
                       return this.dialogService.info('Error', webUris[displayDevice.id].error);
                     }
-                    this.redirect.open(webUris[displayDevice.id].uri, '_blank');
+                    this.redirect.openWindow(webUris[displayDevice.id].uri, '_blank');
                   }, (err) => {
                     this.loader.close();
                     new EntityUtils().handleError(this, err);
@@ -632,7 +632,7 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow>, On
             return passwordConfiguration.fieldConfig[0].warnings = webUris[displayDevice.id].error;
           }
           passDialog.dialogRef.close();
-          this.redirect.open(webUris[displayDevice.id].uri, '_blank');
+          this.redirect.openWindow(webUris[displayDevice.id].uri, '_blank');
         }, (err) => {
           passDialog.dialogRef.close();
           this.loader.close();

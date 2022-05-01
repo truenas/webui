@@ -61,10 +61,6 @@ export class DialogService {
       dialogRef.componentInstance.cancelMsg = options.cancelMsg;
     }
 
-    if (options.textToCopy) {
-      dialogRef.componentInstance.textToCopy = options.textToCopy;
-    }
-
     if ('secondaryCheckBox' in options && options.secondaryCheckBox) {
       dialogRef.componentInstance.secondaryCheckBox = options.secondaryCheckBox;
       dialogRef.componentInstance.secondaryCheckBoxMsg = options.secondaryCheckBoxMsg;

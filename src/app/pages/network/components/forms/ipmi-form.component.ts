@@ -46,7 +46,7 @@ export class IpmiFormComponent implements FormConfiguration {
       id: 'connect',
       name: this.translate.instant('Manage'),
       function: () => {
-        this.redirect.open(`http://${this.managementIp}`);
+        this.redirect.openWindow(`http://${this.managementIp}`);
       },
     },
   ];
