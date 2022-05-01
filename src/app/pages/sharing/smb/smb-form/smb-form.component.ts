@@ -8,7 +8,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import _ from 'lodash';
 import {
-  EMPTY, noop, Observable, of,
+  noop, Observable, of,
 } from 'rxjs';
 import {
   debounceTime, filter, map, switchMap, take, tap,
@@ -132,13 +132,14 @@ export class SmbFormComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.setupPurposePresets().pipe(
+    this.setupAndApplyPurposePresets().pipe(
       tap(() => {
         this.setupAfpWarning();
         this.setupMangleWarning();
       }),
       untilDestroyed(this),
     ).subscribe(noop);
+
     this.getUnusableNamesForShare();
 
     this.setupPurposeControl();
@@ -241,7 +242,7 @@ export class SmbFormComponent implements OnInit {
    *
    * @returns Observable<void> to allow setting warnings for values changes once default or previous preset is applied
    */
-  setupPurposePresets(): Observable<void> {
+  setupAndApplyPurposePresets(): Observable<void> {
     return this.ws.call('sharing.smb.presets').pipe(switchMap((presets) => {
       this.presets = presets;
       const options: Option[] = [];
@@ -249,9 +250,9 @@ export class SmbFormComponent implements OnInit {
         options.push({ label: presets[presetName].verbose_name, value: presetName });
       }
       this.purposeOptions$ = of(options);
-      this.form.get('purpose').setValue(SmbPresetType.DefaultShareParameters);
+      this.form.get('purpose').setValue(this.isNew ? SmbPresetType.DefaultShareParameters : this.existingSmbShare?.purpose);
       this.cdr.markForCheck();
-      return EMPTY;
+      return of(null);
     }));
   }
 
@@ -448,12 +449,12 @@ export class SmbFormComponent implements OnInit {
             [cifsService.id, { enable: restartAutomatically }],
           );
         }
-        return EMPTY;
+        return of({});
       }),
-      switchMap(() => (startNow ? this.ws.call('service.start', [cifsService.service]) : EMPTY)),
+      switchMap(() => (startNow ? this.ws.call('service.start', [cifsService.service]) : of({}))),
       switchMap(() => {
         if (!startNow) {
-          return EMPTY;
+          return of({});
         }
         return this.dialog.info(
           this.translate.instant('{service} Service', { service: 'SMB' }),
