@@ -176,7 +176,6 @@ describe('SmbFormComponent', () => {
     const purposeSelect = await loader.getHarness(IxSelectHarness.with({ label: 'Purpose' }));
     const optionLabels = await purposeSelect.getOptionLabels();
     expect(optionLabels).toEqual([
-      '--',
       'No presets',
       'Multi-user time machine',
       'Private SMB Datasets and Shares',
@@ -195,8 +194,7 @@ describe('SmbFormComponent', () => {
 
     const purposeSelect = await loader.getHarness(IxSelectHarness.with({ label: formLabels.purpose }));
 
-    const labels = await purposeSelect.getOptionLabels(); /** 1 so to Skip '--' */
-    labels.splice(0, 1);
+    const labels = await purposeSelect.getOptionLabels();
     const presetKeys = Object.keys(presets);
     const form = await loader.getHarness(IxFormHarness);
     const fields = await form.getControlHarnessesDict();
