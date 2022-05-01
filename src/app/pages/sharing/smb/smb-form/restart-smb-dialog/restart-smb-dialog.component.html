@@ -9,10 +9,10 @@
       <li *ngIf="data.path">{{ pathMessage }}</li>
     </ul>
 
-    <p>{{ helptext.restartPt2 }}</p>
+    <p><strong>{{ helptext.restartPt2 }}</strong></p>
   </div>
 </mat-dialog-content>
 <mat-dialog-actions align="end">
-  <button mat-button [mat-dialog-close]="false">{{ 'Cancel' | translate }}</button>
+  <button mat-button [mat-dialog-close]="false">{{ 'No' | translate }}</button>
   <button mat-button [mat-dialog-close]="true" cdkFocusInitial color="primary">{{ 'Restart Service' | translate }}</button>
 </mat-dialog-actions>

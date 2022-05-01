@@ -130,6 +130,7 @@
   "Name of the zvol is required": "",
   "Name of the zvol must be correct": "",
   "New password and confirmation should match.": "",
+  "No": "",
   "No NFS Shares have been configured yet": "",
   "No SMB Shares have been configured yet": "",
   "No WebDAV Shares have been configured yet": "",

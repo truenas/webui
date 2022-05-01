@@ -159,7 +159,7 @@ export class SmbFormComponent implements OnInit {
 
   setupMangleWarning(): void {
     this.form.get('aapl_name_mangling').valueChanges.pipe(
-      filter((value) => value !== this.existingSmbShare?.aapl_name_mangling),
+      filter((value) => value !== this.existingSmbShare?.aapl_name_mangling && !this.isNew),
       take(1),
       switchMap(() => this.dialog.confirm({
         title: helptextSharingSmb.manglingDialog.title,
