@@ -18,7 +18,6 @@ import { DatasetUnlockParams, DatasetUnlockResult } from 'app/interfaces/dataset
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { Subs } from 'app/interfaces/subs.interface';
-import { AppLoaderService } from 'app/modules/app-loader/app-loader.service';
 import { FormUploadComponent } from 'app/modules/entity/entity-form/components/form-upload/form-upload.component';
 import { EntityFormComponent } from 'app/modules/entity/entity-form/entity-form.component';
 import {
@@ -30,7 +29,7 @@ import { EntityFormService } from 'app/modules/entity/entity-form/services/entit
 import { MessageService } from 'app/modules/entity/entity-form/services/message.service';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { EntityUtils } from 'app/modules/entity/utils';
-import { WebSocketService, StorageService, DialogService } from 'app/services';
+import { DialogService } from 'app/services';
 import { UnlockDialogComponent } from './unlock-dialog/unlock-dialog.component';
 
 @UntilDestroy()
@@ -188,13 +187,9 @@ export class DatasetUnlockComponent implements FormConfiguration {
 
   constructor(
     protected router: Router,
-    protected route: ActivatedRoute,
     protected aroute: ActivatedRoute,
     protected messageService: MessageService,
-    protected ws: WebSocketService,
-    protected storageService: StorageService,
     protected dialogService: DialogService,
-    protected loader: AppLoaderService,
     protected dialog: MatDialog,
     protected entityFormService: EntityFormService,
     private translate: TranslateService,

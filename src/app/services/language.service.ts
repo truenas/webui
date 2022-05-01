@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { UntilDestroy } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
@@ -393,17 +393,6 @@ export class LanguageService {
 
       return this.setLanguageFromBrowser();
     }));
-  }
-
-  setMiddlewareLanguage(lang: string): void {
-    this.ws.call(this.updateCall,
-      [{ language: lang }]).pipe(untilDestroyed(this)).subscribe(
-      () => {},
-      (err) => {
-        console.error(err);
-      },
-    );
-    this.setLanguage(lang);
   }
 
   /**

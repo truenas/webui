@@ -84,7 +84,7 @@ describe('FailoverComponent', () => {
     const confirmCheckbox = await rootLoader.getHarness(MatCheckboxHarness.with({ label: 'Confirm' }));
     await confirmCheckbox.check();
 
-    const proceedButton = await rootLoader.getHarness(MatButtonHarness.with({ text: 'PROCEED' }));
+    const proceedButton = await rootLoader.getHarness(MatButtonHarness.with({ text: 'Proceed' }));
     await proceedButton.click();
 
     expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('failover.sync_to_peer', [{ reboot: true }]);
@@ -103,7 +103,7 @@ describe('FailoverComponent', () => {
     const confirmCheckbox = await rootLoader.getHarness(MatCheckboxHarness.with({ label: 'Confirm' }));
     await confirmCheckbox.check();
 
-    const proceedButton = await rootLoader.getHarness(MatButtonHarness.with({ text: 'PROCEED' }));
+    const proceedButton = await rootLoader.getHarness(MatButtonHarness.with({ text: 'Proceed' }));
     await proceedButton.click();
 
     expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('failover.sync_from_peer');
@@ -131,7 +131,7 @@ describe('FailoverComponent', () => {
     const confirmCheckbox = await rootLoader.getHarness(MatCheckboxHarness.with({ label: 'Confirm' }));
     await confirmCheckbox.check();
 
-    const proceedButton = await rootLoader.getHarness(MatButtonHarness.with({ text: 'CONTINUE' }));
+    const proceedButton = await rootLoader.getHarness(MatButtonHarness.with({ text: 'Continue' }));
     await proceedButton.click();
 
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save And Failover' }));

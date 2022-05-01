@@ -1,6 +1,6 @@
 import { Component, OnDestroy } from '@angular/core';
 import { FormControl, ValidationErrors } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { filter } from 'rxjs/operators';
@@ -55,10 +55,14 @@ export class DatasetQuotasUserlistComponent implements EntityTableConfig, OnDest
     },
   };
 
-  constructor(protected ws: WebSocketService, protected storageService: StorageService,
-    protected dialogService: DialogService, protected loader: AppLoaderService,
-    protected router: Router, protected aroute: ActivatedRoute,
-    private translate: TranslateService) { }
+  constructor(
+    protected ws: WebSocketService,
+    protected storageService: StorageService,
+    protected dialogService: DialogService,
+    protected loader: AppLoaderService,
+    protected aroute: ActivatedRoute,
+    private translate: TranslateService,
+  ) { }
 
   getAddActions(): EntityTableAction[] {
     return [{

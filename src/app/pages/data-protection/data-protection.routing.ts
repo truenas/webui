@@ -9,7 +9,6 @@ import { ReplicationListComponent } from './replication/replication-list/replica
 import { ReplicationWizardComponent } from './replication/replication-wizard/replication-wizard.component';
 import { ResilverConfigComponent } from './scrub-task/resilver-config/resilver-config.component';
 import { ScrubListComponent } from './scrub-task/scrub-list/scrub-list.component';
-import { SnapshotFormComponent } from './snapshot/snapshot-form/snapshot-form.component';
 import { SnapshotListComponent } from './snapshot/snapshot-list/snapshot-list.component';
 
 export const dataProtectionRoutes: Routes = [{
@@ -43,14 +42,6 @@ export const dataProtectionRoutes: Routes = [{
         path: '',
         component: SnapshotListComponent,
         data: { title: 'Periodic Snapshot Tasks', breadcrumb: 'Periodic Snapshot Tasks' },
-      }, {
-        path: 'add',
-        component: SnapshotFormComponent,
-        data: { title: 'Add', breadcrumb: 'Add' },
-      }, {
-        path: 'edit/:pk',
-        component: SnapshotFormComponent,
-        data: { title: 'Edit', breadcrumb: 'Edit' },
       }],
     }, {
       path: 'replication',

@@ -30,8 +30,6 @@ export class SchedulerPreviewColumnComponent implements OnChanges, OnInit {
   @Input() startTime: string;
   @Input() endTime: string;
 
-  scheduleExamples: Date[] = [];
-
   /**
    * 1 for 1st day of the month, etc.
    */

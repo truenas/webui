@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { FormGroup, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
-import { ActivatedRoute, NavigationExtras, Router } from '@angular/router';
+import { NavigationExtras, Router } from '@angular/router';
 import { TreeNode } from '@circlon/angular-tree-component';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
@@ -464,16 +464,16 @@ export class CloudsyncFormComponent implements FormConfiguration {
     },
   ];
 
-  constructor(protected router: Router,
-    protected aroute: ActivatedRoute,
+  constructor(
+    protected router: Router,
     protected loader: AppLoaderService,
     protected dialog: DialogService,
     protected matDialog: MatDialog,
     protected ws: WebSocketService,
     protected cloudcredentialService: CloudCredentialService,
-    protected job: JobService,
     protected modalService: ModalService,
-    protected translate: TranslateService) {
+    protected translate: TranslateService,
+  ) {
     this.cloudcredentialService.getProviders().pipe(untilDestroyed(this)).subscribe((providers) => {
       this.providers = providers;
     });

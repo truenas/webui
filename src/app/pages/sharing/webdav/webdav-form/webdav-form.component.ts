@@ -151,7 +151,7 @@ export class WebdavFormComponent {
           tap(() => this.loader.open()),
           switchMap(() => forkJoin([
             this.ws.call('service.update', [service.id, { enable: true }]),
-            this.ws.call('service.start', [service.service]),
+            this.ws.call('service.start', [service.service, { silent: false }]),
           ])),
           tap(() => {
             this.loader.close();

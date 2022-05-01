@@ -26,11 +26,17 @@ export class ConfigResetComponent implements OnInit {
   readonly ProductType = ProductType;
   readonly productTypeLabels = productTypeLabels;
 
-  constructor(protected ws: WebSocketService, protected router: Router,
-    protected loader: AppLoaderService, public translate: TranslateService,
-    protected dialogService: DialogService, protected dialog: MatDialog,
-    private sysGeneralService: SystemGeneralService, private localeService: LocaleService,
-    private location: Location) {
+  constructor(
+    protected ws: WebSocketService,
+    protected router: Router,
+    protected loader: AppLoaderService,
+    public translate: TranslateService,
+    protected dialogService: DialogService,
+    protected dialog: MatDialog,
+    private sysGeneralService: SystemGeneralService,
+    private localeService: LocaleService,
+    private location: Location,
+  ) {
     this.sysGeneralService.getProductType$.pipe(untilDestroyed(this)).subscribe((res) => {
       this.productType = res as ProductType;
     });

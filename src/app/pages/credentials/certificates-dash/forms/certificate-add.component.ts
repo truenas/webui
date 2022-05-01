@@ -10,7 +10,6 @@ import { helptextSystemCa } from 'app/helptext/system/ca';
 import { helptextSystemCertificates } from 'app/helptext/system/certificates';
 import { Certificate, CertificateProfile } from 'app/interfaces/certificate.interface';
 import { WizardConfiguration } from 'app/interfaces/entity-wizard.interface';
-import { AppLoaderService } from 'app/modules/app-loader/app-loader.service';
 import { FieldConfig, FormSelectConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
 import { RelationAction } from 'app/modules/entity/entity-form/models/relation-action.enum';
 import { RelationConnection } from 'app/modules/entity/entity-form/models/relation-connection.enum';
@@ -641,7 +640,6 @@ export class CertificateAddComponent implements WizardConfiguration {
     protected dialog: MatDialog,
     protected systemGeneralService: SystemGeneralService,
     private modalService: ModalService,
-    protected loader: AppLoaderService,
     private dialogService: DialogService,
     private translate: TranslateService,
   ) {

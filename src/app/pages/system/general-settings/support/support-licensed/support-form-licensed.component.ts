@@ -19,7 +19,6 @@ import { FieldSet } from 'app/modules/entity/entity-form/models/fieldset.interfa
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { WebSocketService } from 'app/services/';
-import { DialogService } from 'app/services/dialog.service';
 import { ModalService } from 'app/services/modal.service';
 
 @UntilDestroy()
@@ -159,10 +158,14 @@ export class SupportFormLicensedComponent implements FormConfiguration {
     },
   ];
 
-  constructor(public dialog: MatDialog, public loader: AppLoaderService,
-    private translate: TranslateService, public ws: WebSocketService,
-    public dialogService: DialogService, public router: Router,
-    private modalService: ModalService) { }
+  constructor(
+    public dialog: MatDialog,
+    public loader: AppLoaderService,
+    private translate: TranslateService,
+    public ws: WebSocketService,
+    public router: Router,
+    private modalService: ModalService,
+  ) { }
 
   afterInit(entityEdit: EntityFormComponent): void {
     this.entityEdit = entityEdit;

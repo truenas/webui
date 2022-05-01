@@ -1,7 +1,6 @@
 import {
   Component, EventEmitter, OnInit, Output,
 } from '@angular/core';
-import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
 import { filter } from 'rxjs/operators';
@@ -22,7 +21,6 @@ export class NavigationComponent implements OnInit {
   hasIconTypeMenuItem: boolean;
   iconTypeMenuTitle: string;
   menuItems: MenuItem[];
-  menuList = document.getElementsByClassName('top-level');
   isHighlighted: string;
 
   @Output() menuToggled: EventEmitter<[string, SubMenuItem[]]> = new EventEmitter();
@@ -30,7 +28,6 @@ export class NavigationComponent implements OnInit {
 
   constructor(
     private navService: NavigationService,
-    private router: Router,
     private ws: WebSocketService,
     private core: CoreService,
   ) {}

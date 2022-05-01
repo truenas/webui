@@ -103,7 +103,7 @@ describe('ServicesComponent', () => {
     await slideToggle.toggle();
 
     expect(await slideToggle.isChecked()).toBeTruthy();
-    expect(ws.call).toHaveBeenCalledWith('service.start', [serviceKey]);
+    expect(ws.call).toHaveBeenCalledWith('service.start', [serviceKey, { silent: false }]);
   });
 
   it('should change service autostart state when checkbox is ticked', async () => {

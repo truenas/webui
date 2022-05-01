@@ -6,7 +6,6 @@ import { JobState } from 'app/enums/job-state.enum';
 import helptext from 'app/helptext/apps/apps';
 import { Catalog, CatalogQueryParams } from 'app/interfaces/catalog.interface';
 import { CoreEvent } from 'app/interfaces/events';
-import { AppLoaderService } from 'app/modules/app-loader/app-loader.service';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import {
   EntityTableComponent,
@@ -67,7 +66,6 @@ export class ManageCatalogsComponent implements EntityTableConfig<Catalog>, OnIn
   constructor(
     private mdDialog: MatDialog,
     private dialogService: DialogService,
-    private loader: AppLoaderService,
     private ws: WebSocketService,
     private slideInService: IxSlideInService,
   ) {}

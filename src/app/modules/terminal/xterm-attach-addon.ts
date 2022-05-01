@@ -6,12 +6,10 @@ import { Terminal, IDisposable, ITerminalAddon } from 'xterm';
  * but it always sends messages as binary.
  */
 export class XtermAttachAddon implements ITerminalAddon {
-  private readonly socket: WebSocket;
   private disposables: IDisposable[] = [];
   private encoder = new TextEncoder();
 
-  constructor(socket: WebSocket) {
-    this.socket = socket;
+  constructor(private socket: WebSocket) {
     // always set binary type to arraybuffer, we do not handle blobs
     this.socket.binaryType = 'arraybuffer';
   }

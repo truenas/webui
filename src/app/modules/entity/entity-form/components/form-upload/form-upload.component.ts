@@ -30,8 +30,11 @@ export class FormUploadComponent {
   fbrowser: HTMLInputElement;
 
   constructor(
-    protected ws: WebSocketService, protected http: HttpClient, private loader: AppLoaderService,
-    public dialog: DialogService, public translate: TranslateService,
+    protected ws: WebSocketService,
+    protected http: HttpClient,
+    private loader: AppLoaderService,
+    public dialog: DialogService,
+    public translate: TranslateService,
   ) {}
 
   fileBtnClick(): void {

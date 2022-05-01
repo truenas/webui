@@ -1,7 +1,5 @@
 import { Injectable } from '@angular/core';
-import {
-  ActivatedRoute, NavigationEnd, Router,
-} from '@angular/router';
+import { NavigationEnd, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { BehaviorSubject } from 'rxjs';
 import { filter } from 'rxjs/operators';
@@ -15,7 +13,6 @@ export class PageTitleService {
   title$ = new BehaviorSubject('');
 
   constructor(
-    private route: ActivatedRoute,
     private router: Router,
     private routePartsService: RoutePartsService,
   ) {
