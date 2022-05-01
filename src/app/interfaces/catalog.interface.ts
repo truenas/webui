@@ -78,7 +78,17 @@ export interface CatalogApp {
     label?: string;
     train: string;
   };
-  schema?: any;
+  schema?: {
+    groups: ChartSchemaGroup[];
+    questions: ChartSchemaNode[];
+    portals: {
+      web_portal: {
+        host: string[];
+        ports: string[];
+        protocols: string[];
+      };
+    };
+  };
 }
 
 export interface CatalogAppVersion {
