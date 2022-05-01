@@ -1,10 +1,11 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import {
-  AbstractControl, FormArray, FormBuilder, FormControl, FormGroup, Validators,
+  FormArray, FormBuilder, FormControl, FormGroup, Validators,
 } from '@angular/forms';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { of } from 'rxjs';
+import { ixChartApp } from 'app/constants/catalog.constants';
 import helptext from 'app/helptext/apps/apps';
 import { CatalogApp } from 'app/interfaces/catalog.interface';
 import { ChartSchemaNode } from 'app/interfaces/chart-release.interface';
@@ -25,20 +26,16 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
 })
 export class ChartWizardComponent {
   title: string;
-  config: any;
-  name: string;
   isLoading = false;
   dynamicSection: DynamicFormSchema[] = [];
+  catalogApp: CatalogApp;
+  selectedVersionKey: string;
   dialogRef: MatDialogRef<EntityJobComponent>;
 
   form = this.formBuilder.group({
     release_name: ['', Validators.required],
-    data: this.formBuilder.group({}),
+    version: ['', Validators.required],
   });
-
-  get formGroup(): FormGroup {
-    return this.form.controls['data'] as FormGroup;
-  }
 
   readonly helptext = helptext;
 
@@ -54,19 +51,55 @@ export class ChartWizardComponent {
     this.title = title;
   }
 
-  setChartConfig(config: { [key: string]: any }): void {
-    this.config = config;
-  }
-
   setCatalogApp(chartSchema: CatalogApp): void {
+    this.catalogApp = chartSchema;
+    this.title = this.catalogApp.name;
+    let hideVersion = false;
+    if (this.catalogApp.name === ixChartApp) {
+      this.title = helptext.launch;
+      hideVersion = true;
+    }
+    const versionKeys: string[] = [];
+    Object.keys(this.catalogApp.versions).forEach((versionKey) => {
+      if (this.catalogApp.versions[versionKey].healthy) {
+        versionKeys.push(versionKey);
+      }
+    });
+
+    if (!this.selectedVersionKey) {
+      this.selectedVersionKey = versionKeys[0];
+    }
+
+    this.form.controls.version.setValue(this.selectedVersionKey);
+
+    this.dynamicSection.push({
+      name: 'Application name',
+      description: '',
+      schema: [
+        {
+          variable: 'release_name',
+          type: 'input',
+          title: helptext.chartForm.release_name.placeholder,
+          required: true,
+        },
+        {
+          variable: 'version',
+          type: 'select',
+          title: helptext.chartWizard.nameGroup.version,
+          required: true,
+          options: of(versionKeys.map((option) => ({ value: option, label: option }))),
+          hidden: hideVersion,
+        },
+      ],
+    });
     chartSchema.schema.groups.forEach((group) => {
       this.dynamicSection.push({ ...group, schema: [] });
     });
     try {
       chartSchema.schema.questions.forEach((question) => {
         if (this.dynamicSection.find((schema) => schema.name === question.group)) {
-          // this.addFormControls(question, this.form.controls.data as FormGroup);
-          // this.addFormSchema(question, question.group);
+          this.addFormControls(question, this.form);
+          this.addFormSchema(question, question.group);
         }
       });
     } catch (error: unknown) {
@@ -120,6 +153,9 @@ export class ChartWizardComponent {
         }));
         relations.forEach((relation) => {
           if (formGroup.controls[relation.fieldName]) {
+            if (formGroup.controls[relation.fieldName].value !== relation.operatorValue) {
+              formGroup.controls[chartSchemaNode.variable].disable();
+            }
             formGroup.controls[relation.fieldName].valueChanges
               .pipe(untilDestroyed(this))
               .subscribe((value) => {
@@ -141,31 +177,6 @@ export class ChartWizardComponent {
       }
     } else if (schema.type === 'list') {
       formGroup.addControl(chartSchemaNode.variable, new FormArray([]));
-
-      let items: ChartSchemaNode[] = [];
-      chartSchemaNode.schema.items.forEach((item) => {
-        item.schema.attrs.forEach((attr) => {
-          items = items.concat(attr);
-        });
-      });
-
-      const configControlPath = this.getControlPath(formGroup.controls[chartSchemaNode.variable], '').split('.');
-      configControlPath.shift();
-
-      let nextItem: any = this.config;
-      for (const path of configControlPath) {
-        nextItem = nextItem[path];
-      }
-
-      if (Array.isArray(nextItem)) {
-        // eslint-disable-next-line unused-imports/no-unused-vars
-        for (const _ of nextItem) {
-          this.addFormListItem({
-            array: formGroup.controls[chartSchemaNode.variable] as FormArray,
-            schema: items,
-          });
-        }
-      }
     }
   }
 
@@ -272,10 +283,15 @@ export class ChartWizardComponent {
       let items: DynamicFormSchemaNode[] = [];
       let itemsSchema: ChartSchemaNode[] = [];
       beforSchema.items.forEach((item) => {
-        item.schema.attrs.forEach((attr) => {
-          items = items.concat(this.transformSchemaNode(attr));
-          itemsSchema = itemsSchema.concat(attr);
-        });
+        if (item.schema.attrs) {
+          item.schema.attrs.forEach((attr) => {
+            items = items.concat(this.transformSchemaNode(attr));
+            itemsSchema = itemsSchema.concat(attr);
+          });
+        } else {
+          items = items.concat(this.transformSchemaNode(item));
+          itemsSchema = itemsSchema.concat(item);
+        }
       });
       afterSchemas.push({
         variable: chartSchemaNode.variable,
@@ -302,33 +318,6 @@ export class ChartWizardComponent {
 
   deleteFormListItem(event: DeleteListItemEmitter): void {
     event.array.removeAt(event.index);
-  }
-
-  getControlName(control: AbstractControl): string | null {
-    if (control.parent == null) {
-      return null;
-    }
-    const children = control.parent.controls;
-
-    if (Array.isArray(children)) {
-      for (let index = 0; index < children.length; index++) {
-        if (children[index] === control) {
-          return `${index}`;
-        }
-      }
-      return null;
-    }
-    return Object.keys(children).find((name) => control === children[name]) || null;
-  }
-
-  getControlPath(control: AbstractControl, path: string): string | null {
-    path = this.getControlName(control) + path;
-
-    if (control.parent && this.getControlName(control.parent)) {
-      path = '.' + path;
-      return this.getControlPath(control.parent, path);
-    }
-    return path;
   }
 
   onSubmit(): void {

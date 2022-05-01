@@ -2,17 +2,9 @@
 <mat-card>
   <mat-card-content>
     <form [formGroup]="form" class="ix-form-container" (submit)="onSubmit()">
-      <ix-input
-        [formControlName]="'release_name'"
-        [label]="helptext.chartForm.release_name.placeholder | translate"
-        [tooltip]="helptext.chartForm.release_name.tooltip | translate"
-        [placeholder]="helptext.chartForm.release_name.placeholder | translate"
-        [required]="true"
-      ></ix-input>
-
       <ix-dynamic-form
         [dynamicSection]="dynamicSection"
-        [dynamicForm]="formGroup"
+        [dynamicForm]="form"
         (addListItem)="addFormListItem($event)"
         (deleteListItem)="deleteFormListItem($event)"
       ></ix-dynamic-form>

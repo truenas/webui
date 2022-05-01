@@ -32,12 +32,7 @@ export class ChartFormComponent {
 
   form = this.formBuilder.group({
     release_name: ['', Validators.required],
-    data: this.formBuilder.group({}),
   });
-
-  get formGroup(): FormGroup {
-    return this.form.controls['data'] as FormGroup;
-  }
 
   readonly helptext = helptext;
 
@@ -59,18 +54,32 @@ export class ChartFormComponent {
 
   parseChartSchema(chartSchema: ChartSchema): void {
     this.form.controls.release_name.setValue(this.title);
-    this.form.controls.release_name.disable();
+
+    this.dynamicSection.push({
+      name: 'Application name',
+      description: '',
+      schema: [
+        {
+          variable: 'release_name',
+          type: 'input',
+          title: helptext.chartForm.release_name.placeholder,
+          required: true,
+          editable: false,
+        },
+      ],
+    });
+
     chartSchema.schema.groups.forEach((group) => {
       this.dynamicSection.push({ ...group, schema: [] });
     });
     try {
       chartSchema.schema.questions.forEach((question) => {
         if (this.dynamicSection.find((schema) => schema.name === question.group)) {
-          this.addFormControls(question, this.form.controls.data as FormGroup);
+          this.addFormControls(question, this.form);
           this.addFormSchema(question, question.group);
         }
       });
-      this.form.controls.data.patchValue(this.config);
+      this.form.patchValue(this.config);
     } catch (error: unknown) {
       console.error(error);
       this.dialogService.errorReport(helptext.chartForm.parseError.title, helptext.chartForm.parseError.message);
@@ -146,14 +155,16 @@ export class ChartFormComponent {
 
       let items: ChartSchemaNode[] = [];
       chartSchemaNode.schema.items.forEach((item) => {
-        item.schema.attrs.forEach((attr) => {
-          items = items.concat(attr);
-        });
+        if (item.schema.attrs) {
+          item.schema.attrs.forEach((attr) => {
+            items = items.concat(attr);
+          });
+        } else {
+          items = items.concat(item);
+        }
       });
 
       const configControlPath = this.getControlPath(formGroup.controls[chartSchemaNode.variable], '').split('.');
-      configControlPath.shift();
-
       let nextItem: any = this.config;
       for (const path of configControlPath) {
         nextItem = nextItem[path];
@@ -274,10 +285,15 @@ export class ChartFormComponent {
       let items: DynamicFormSchemaNode[] = [];
       let itemsSchema: ChartSchemaNode[] = [];
       beforSchema.items.forEach((item) => {
-        item.schema.attrs.forEach((attr) => {
-          items = items.concat(this.transformSchemaNode(attr));
-          itemsSchema = itemsSchema.concat(attr);
-        });
+        if (item.schema.attrs) {
+          item.schema.attrs.forEach((attr) => {
+            items = items.concat(this.transformSchemaNode(attr));
+            itemsSchema = itemsSchema.concat(attr);
+          });
+        } else {
+          items = items.concat(this.transformSchemaNode(item));
+          itemsSchema = itemsSchema.concat(item);
+        }
       });
       afterSchemas.push({
         variable: chartSchemaNode.variable,
@@ -335,8 +351,10 @@ export class ChartFormComponent {
 
   onSubmit(): void {
     const payload: any[] = [];
+    const data = this.form.value;
+    delete data.release_name;
     payload.push({
-      values: this.form.controls.data.value,
+      values: data,
     });
 
     payload.unshift(this.title);
