@@ -164,8 +164,8 @@ describe('GuiFormComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    const redirectDialog = spectator.inject(DialogService);
-    expect(redirectDialog.confirm).toHaveBeenCalledWith(expect.objectContaining({
+    const dialog = spectator.inject(DialogService);
+    expect(dialog.confirm).toHaveBeenCalledWith(expect.objectContaining({
       title: 'Enable HTTPS Redirect',
     }));
   });
@@ -182,13 +182,8 @@ describe('GuiFormComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    const redirectDialog = spectator.inject(DialogService);
-    expect(redirectDialog.confirm).toHaveBeenCalledWith(expect.objectContaining({
-      title: 'Enable HTTPS Redirect',
-    }));
-
-    const restartDialog = spectator.inject(DialogService);
-    expect(restartDialog.confirm).toHaveBeenCalledWith(expect.objectContaining({
+    const dialog = spectator.inject(DialogService);
+    expect(dialog.confirm).toHaveBeenCalledWith(expect.objectContaining({
       title: 'Restart Web Service',
     }));
     expect(ws.call).toHaveBeenCalledWith('system.general.ui_restart');
