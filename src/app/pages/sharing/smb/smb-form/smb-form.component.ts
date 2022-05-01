@@ -451,7 +451,7 @@ export class SmbFormComponent implements OnInit {
         }
         return of({});
       }),
-      switchMap(() => (startNow ? this.ws.call('service.start', [cifsService.service]) : of({}))),
+      switchMap(() => (startNow ? this.ws.call('service.start', [cifsService.service, { silent: false }]) : of({}))),
       switchMap(() => {
         if (!startNow) {
           return of({});
