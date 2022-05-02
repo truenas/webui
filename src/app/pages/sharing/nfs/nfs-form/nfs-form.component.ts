@@ -189,8 +189,6 @@ export class NfsFormComponent implements OnInit {
             this.dialogService.info(
               this.translate.instant('{service} Service', { service: 'NFS' }),
               this.translate.instant('The {service} service has been enabled.', { service: 'NFS' }),
-              '250px',
-              'info',
             );
 
             return undefined;

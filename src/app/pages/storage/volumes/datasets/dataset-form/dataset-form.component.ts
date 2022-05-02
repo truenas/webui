@@ -649,7 +649,7 @@ export class DatasetFormComponent implements FormConfiguration {
               aclModeFormControl.setValue(AclMode.Inherit);
               this.entityForm.setDisabled('aclmode', true, false);
             }
-            this.dialogService.info('ACL Types & ACL Modes', helptext.acl_type_change_warning);
+            this.dialogService.warn('ACL Types & ACL Modes', helptext.acl_type_change_warning);
           },
         },
         {

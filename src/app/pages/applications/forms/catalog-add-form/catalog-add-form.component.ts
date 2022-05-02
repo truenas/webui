@@ -51,7 +51,8 @@ export class CatalogAddFormComponent {
         this.isFormLoading = false;
         this.cdr.markForCheck();
         this.dialogService.info(
-          helptext.catalogForm.dialog.title, helptext.catalogForm.dialog.message, '500px', 'info', true,
+          helptext.catalogForm.dialog.title,
+          helptext.catalogForm.dialog.message,
         );
         this.slideInService.close();
       }, (error) => {

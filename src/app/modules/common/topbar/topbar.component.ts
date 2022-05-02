@@ -406,7 +406,6 @@ export class TopbarComponent implements OnInit, OnDestroy {
         this.dialogService.info(
           network_interfaces_helptext.checkin_complete_title,
           network_interfaces_helptext.checkin_complete_message,
-          '500px', 'info',
         );
         this.waitingNetworkCheckin = false;
       }, (err) => {
@@ -478,11 +477,11 @@ export class TopbarComponent implements OnInit, OnDestroy {
 
   showHaStatus(): void {
     let reasons = '<ul>\n';
-    let haIcon = 'info';
+    let isWarning = false;
     let haStatus: string;
     if (this.ha_disabled_reasons.length > 0) {
       haStatus = helptext.ha_status_text_disabled;
-      haIcon = 'warning';
+      isWarning = true;
       this.ha_disabled_reasons.forEach((reason) => {
         const reasonText = helptext.ha_disabled_reasons[reason];
         reasons = reasons + '<li>' + this.translate.instant(reasonText) + '</li>\n';
@@ -493,7 +492,11 @@ export class TopbarComponent implements OnInit, OnDestroy {
     }
     reasons = reasons + '</ul>';
 
-    this.dialogService.info(haStatus, reasons, '500px', haIcon, true);
+    if (isWarning) {
+      this.dialogService.warn(haStatus, reasons, true);
+    } else {
+      this.dialogService.info(haStatus, reasons, true);
+    }
   }
 
   checkUpgradePending(): void {

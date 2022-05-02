@@ -140,8 +140,6 @@ export class CloudsyncListComponent implements EntityTableConfig<CloudSyncTaskUi
                     this.dialog.info(
                       this.translate.instant('Task Started'),
                       this.translate.instant('Cloud sync <i>{taskName}</i> has started.', { taskName: row.description }),
-                      '500px',
-                      'info',
                       true,
                     );
                     this.job.getJobStatus(jobId).pipe(untilDestroyed(this)).subscribe((job: Job) => {
@@ -177,8 +175,6 @@ export class CloudsyncListComponent implements EntityTableConfig<CloudSyncTaskUi
                     this.dialog.info(
                       this.translate.instant('Task Stopped'),
                       this.translate.instant('Cloud sync <i>{taskName}</i> stopped.', { taskName: row.description }),
-                      '500px',
-                      'info',
                       true,
                     );
                   },
@@ -210,8 +206,6 @@ export class CloudsyncListComponent implements EntityTableConfig<CloudSyncTaskUi
                     this.dialog.info(
                       this.translate.instant('Task Started'),
                       this.translate.instant('Cloud sync <i>{taskName}</i> has started.', { taskName: row.description }),
-                      '500px',
-                      'info',
                       true,
                     );
                     this.job.getJobStatus(jobId).pipe(untilDestroyed(this)).subscribe((job: Job) => {
@@ -367,7 +361,7 @@ export class CloudsyncListComponent implements EntityTableConfig<CloudSyncTaskUi
         });
         dialogRef.componentInstance.aborted.pipe(untilDestroyed(this)).subscribe(() => {
           dialogRef.close();
-          this.dialog.info(this.translate.instant('Task Aborted'), '', '300px', 'info', true);
+          this.dialog.info(this.translate.instant('Task Aborted'), '');
           this.ws.unsubscribe('filesystem.file_tail_follow:' + row.job.logs_path);
           this.ws.unsub('filesystem.file_tail_follow:' + row.job.logs_path, subId);
         });
@@ -375,7 +369,7 @@ export class CloudsyncListComponent implements EntityTableConfig<CloudSyncTaskUi
         this.job.showLogs(row.job);
       }
     } else {
-      this.dialog.info(globalHelptext.noLogDialog.title, globalHelptext.noLogDialog.message);
+      this.dialog.warn(globalHelptext.noLogDialog.title, globalHelptext.noLogDialog.message);
     }
   }
 

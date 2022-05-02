@@ -146,8 +146,6 @@ describe('WebdavFormComponent', () => {
     expect(spectator.inject(DialogService).info).toHaveBeenCalledWith(
       'WebDAV Service',
       'The WebDAV service has been enabled.',
-      '300px',
-      'info',
     );
 
     expect(spectator.inject(IxSlideInService).close).toHaveBeenCalled();
