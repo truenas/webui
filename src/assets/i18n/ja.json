@@ -3163,7 +3163,7 @@
   "Year(s)": "",
   "Years": "",
   "Yes I understand the risks": "",
-  "You are trying to open:<br>\n{url}<br><br>\nBecause HTTP to HTTPS redirect is enabled in settings your browser will force HTTPS connection for this URL.<br>\nThis may create issues if app does not support secure connections.<br>\n<br>\nYou can try opening app url in a fresh browser or incognito mode.<br>\nAlternatively you can disable redirect in Settings, clear browser cache and try again.": "",
+  "You are trying to open:<br>\n{url}<br><br>\nBecause HTTP to HTTPS redirect is enabled in settings your browser will force HTTPS connection for this URL.<br>\nThis may create issues if app does not support secure connections.<br>\n<br>\nYou can try opening app url in an incognito mode.<br>\nAlternatively you can disable redirect in Settings, clear browser cache and try again.": "",
   "You can clear reporting database and start data collection immediately.": "",
   "You can join the <a href=\"https://www.truenas.com/newsletter/\" target=\"_blank\" class=\"external-link\">TrueNAS Newsletter</a> for monthly updates and latest developments.": "",
   "You have changed one of the settings that require Kubernetes cluster re-initialization. Please be aware that this will delete installed apps and their data.": "",
