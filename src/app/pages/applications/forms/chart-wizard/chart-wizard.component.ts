@@ -8,12 +8,13 @@ import { of } from 'rxjs';
 import { ixChartApp } from 'app/constants/catalog.constants';
 import helptext from 'app/helptext/apps/apps';
 import { CatalogApp } from 'app/interfaces/catalog.interface';
-import { ChartSchemaNode } from 'app/interfaces/chart-release.interface';
+import { ChartReleaseCreate, ChartSchemaNode } from 'app/interfaces/chart-release.interface';
 import {
   AddListItemEmitter, DeleteListItemEmitter, DynamicFormSchema, DynamicFormSchemaNode,
 } from 'app/interfaces/dynamic-form-schema.interface';
 import { Relation } from 'app/modules/entity/entity-form/models/field-relation.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
+import { EntityUtils } from 'app/modules/entity/utils';
 import { DialogService } from 'app/services';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
@@ -321,6 +322,34 @@ export class ChartWizardComponent {
   }
 
   onSubmit(): void {
-    // TODO: Submit form
+    const data = this.form.value;
+    delete data.version;
+
+    this.dialogRef = this.mdDialog.open(EntityJobComponent, {
+      data: {
+        title: helptext.installing,
+      },
+    });
+
+    this.dialogRef.componentInstance.setCall('chart.release.create', [{
+      catalog: this.catalogApp.catalog.id,
+      item: this.catalogApp.name,
+      release_name: data.release_name,
+      train: this.catalogApp.catalog.train,
+      version: this.selectedVersionKey,
+      values: data,
+    } as ChartReleaseCreate]);
+    this.dialogRef.componentInstance.submit();
+    this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
+      this.dialogService.closeAllDialogs();
+      this.slideInService.close();
+    });
+    this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((res) => {
+      if (res.exc_info && res.exc_info.extra) {
+        new EntityUtils().handleWsError(this, res);
+      } else {
+        this.dialogService.errorReport('Error', res.error, res.exception);
+      }
+    });
   }
 }
