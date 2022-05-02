@@ -2,10 +2,10 @@ import { ModuleWithProviders } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { GroupListComponent } from 'app/pages/account/groups/group-list/group-list.component';
+import { BackupCredentialsComponent } from 'app/pages/credentials/backup-credentials/backup-credentials.component';
+import { CertificatesDashComponent } from 'app/pages/credentials/certificates-dash/certificates-dash.component';
 import { DirectoryServicesComponent } from 'app/pages/directory-service/directory-services.component';
-import { BackupCredentialsComponent } from '../credentials/backup-credentials/backup-credentials.component';
-import { CertificatesDashComponent } from '../credentials/certificates-dash/certificates-dash.component';
-import { TwoFactorComponent } from '../system/two-factor/two-factor.component';
+import { TwoFactorComponent } from 'app/pages/system/two-factor/two-factor.component';
 import { MembersComponent } from './groups/members/members.component';
 
 export const routes: Routes = [{

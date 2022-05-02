@@ -23,11 +23,12 @@ import { EmptyConfig, EmptyType } from 'app/modules/entity/entity-empty/entity-e
 import { EntityToolbarComponent } from 'app/modules/entity/entity-toolbar/entity-toolbar.component';
 import { ToolbarConfig, ControlConfig } from 'app/modules/entity/entity-toolbar/models/control-config.interface';
 import { IxCheckboxColumnComponent } from 'app/modules/ix-tables/components/ix-checkbox-column/ix-checkbox-column.component';
+import { SnapshotAddFormComponent } from 'app/pages/storage/snapshots/snapshot-add-form/snapshot-add-form.component';
 import { SnapshotBatchDeleteDialogComponent } from 'app/pages/storage/snapshots/snapshot-batch-delete-dialog/snapshot-batch-delete-dialog.component';
 import { SnapshotCloneDialogComponent } from 'app/pages/storage/snapshots/snapshot-clone-dialog/snapshot-clone-dialog.component';
 import { SnapshotRollbackDialogComponent } from 'app/pages/storage/snapshots/snapshot-rollback-dialog/snapshot-rollback-dialog.component';
 import { snapshotPageEntered } from 'app/pages/storage/snapshots/store/snapshot.actions';
-import { selectSnapshotsTotal } from 'app/pages/storage/snapshots/store/snapshot.selectors';
+import { selectSnapshotsTotal, selectSnapshots, selectSnapshotState } from 'app/pages/storage/snapshots/store/snapshot.selectors';
 import {
   DialogService, WebSocketService, AppLoaderService,
 } from 'app/services';
@@ -36,8 +37,6 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { AppState } from 'app/store';
 import { snapshotExtraColumnsToggled } from 'app/store/preferences/preferences.actions';
 import { waitForPreferences } from 'app/store/preferences/preferences.selectors';
-import { SnapshotAddFormComponent } from '../snapshot-add-form/snapshot-add-form.component';
-import { selectSnapshots, selectSnapshotState } from '../store/snapshot.selectors';
 
 @UntilDestroy()
 @Component({

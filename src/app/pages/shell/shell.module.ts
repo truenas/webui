@@ -4,8 +4,8 @@ import { FormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 import { CoreComponents } from 'app/core/core-components.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
+import { EntityModule } from 'app/modules/entity/entity.module';
 import { TerminalModule } from 'app/modules/terminal/terminal.module';
-import { EntityModule } from '../../modules/entity/entity.module';
 import { ShellComponent } from './shell.component';
 import { routing } from './shell.routing';
 

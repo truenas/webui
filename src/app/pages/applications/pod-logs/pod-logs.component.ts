@@ -17,10 +17,10 @@ import { EntityDialogComponent } from 'app/modules/entity/entity-dialog/entity-d
 import { FormSelectConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
 import { EntityToolbarComponent } from 'app/modules/entity/entity-toolbar/entity-toolbar.component';
 import { EntityUtils } from 'app/modules/entity/utils';
+import { ApplicationsService } from 'app/pages/applications/applications.service';
 import { DialogService, ShellService, WebSocketService } from 'app/services';
 import { CoreService } from 'app/services/core-service/core.service';
 import { StorageService } from 'app/services/storage.service';
-import { ApplicationsService } from '../applications.service';
 
 interface PodLogEvent {
   data: string;
