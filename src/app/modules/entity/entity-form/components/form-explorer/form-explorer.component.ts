@@ -101,6 +101,10 @@ export class FormExplorerComponent implements Field, OnInit {
     this.customTemplateStringOptions.displayField = 'subTitle';
   }
 
+  shouldBeDisabled(): boolean {
+    return this.config.disabled || this.config.readonly;
+  }
+
   getChildren(node: TreeNode): Promise<ListdirChild[]> {
     switch (this.config.explorerType) {
       case ExplorerType.Directory:

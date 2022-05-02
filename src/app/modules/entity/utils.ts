@@ -296,7 +296,7 @@ export class EntityUtils {
     return result;
   }
 
-  parseSchemaFieldConfig(schemaConfig: ChartSchemaNode): FieldConfig[] {
+  parseSchemaFieldConfig(schemaConfig: ChartSchemaNode, isNew: boolean = false): FieldConfig[] {
     let results: FieldConfig[] = [];
 
     if (schemaConfig.schema.hidden) {
@@ -320,6 +320,10 @@ export class EntityUtils {
     }
     if (schemaConfig.label !== undefined) {
       fieldConfig.placeholder = schemaConfig.label;
+    }
+    if (schemaConfig.schema.immutable && !isNew) {
+      fieldConfig['readonly'] = true;
+      fieldConfig['disabled'] = true;
     }
 
     let relations: Relation[] = null;
@@ -401,7 +405,7 @@ export class EntityUtils {
 
       let listFields: FieldConfig[] = [];
       schemaConfig.schema.items.forEach((item) => {
-        const fields = this.parseSchemaFieldConfig(item);
+        const fields = this.parseSchemaFieldConfig(item, isNew);
         listFields = listFields.concat(fields);
       });
 
@@ -419,7 +423,7 @@ export class EntityUtils {
 
         let subFields: FieldConfig[] = [];
         schemaConfig.schema.attrs.forEach((dictConfig) => {
-          const fields = this.parseSchemaFieldConfig(dictConfig);
+          const fields = this.parseSchemaFieldConfig(dictConfig, isNew);
           subFields = subFields.concat(fields);
         });
         dictConfig['subFields'] = subFields;
@@ -436,7 +440,7 @@ export class EntityUtils {
 
         if (schemaConfig.schema.subquestions) {
           schemaConfig.schema.subquestions.forEach((subquestion) => {
-            const subResults = this.parseSchemaFieldConfig(subquestion);
+            const subResults = this.parseSchemaFieldConfig(subquestion, isNew);
 
             if (schemaConfig.schema.show_subquestions_if !== undefined) {
               subResults.forEach((subFieldConfig) => {

@@ -8,6 +8,7 @@ import helptext from 'app/helptext/apps/apps';
 import { CatalogQueryParams } from 'app/interfaces/catalog.interface';
 import { ChartRelease } from 'app/interfaces/chart-release.interface';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { EntityFormComponent } from 'app/modules/entity/entity-form/entity-form.component';
 import { FieldConfig, FormDictConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/modules/entity/entity-form/models/fieldset.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
@@ -28,6 +29,7 @@ export class ChartFormComponent implements FormConfiguration {
   addCall = 'chart.release.create' as const;
   editCall = 'chart.release.update' as const;
   isEntity = true;
+  entityForm: EntityFormComponent;
 
   title: string;
   private name: string;
@@ -69,6 +71,10 @@ export class ChartFormComponent implements FormConfiguration {
     this.title = title;
   }
 
+  preInit(entityForm: EntityFormComponent): void {
+    this.entityForm = entityForm;
+  }
+
   parseSchema(catalogApp: ChartRelease): FieldSet[] {
     let fieldSets: FieldSet[] = [];
     try {
@@ -86,7 +92,7 @@ export class ChartFormComponent implements FormConfiguration {
       this.catalogApp.chart_schema.schema.questions.forEach((question) => {
         const fieldSet = fieldSets.find((fieldSet) => fieldSet.name === question.group);
         if (fieldSet) {
-          const fieldConfigs = this.entityUtils.parseSchemaFieldConfig(question);
+          const fieldConfigs = this.entityUtils.parseSchemaFieldConfig(question, this.entityForm.isNew);
 
           const imageConfig = _.find(fieldConfigs, { name: 'image' }) as FormDictConfig;
           if (imageConfig) {
