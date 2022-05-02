@@ -15,7 +15,7 @@ export class HeaderInputDirective implements OnInit {
   @Input() shouldShowReset: Observable<boolean>;
   @Output() resetInput = new EventEmitter<void>();
   constructor(private vcRef: ViewContainerRef,
-    private templateRef: TemplateRef<any>,
+    private templateRef: TemplateRef<unknown>,
     private compFact: ComponentFactoryResolver) { }
 
   ngOnInit(): void {

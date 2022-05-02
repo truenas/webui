@@ -1,10 +1,13 @@
 .header-input-wrapper {
   align-items: center;
   background: var(--bg2);
+  border: thin solid transparent;
   color: white;
   display: flex;
   flex-direction: row;
   padding: 3px;
+  padding-right: 32px;
+  position: relative;
 
   .prefix-icon {
     mat-icon {
@@ -19,9 +22,13 @@
 
   .reset-input {
     align-items: center;
+    bottom: 0;
     cursor: pointer;
     display: flex;
     opacity: 0.5;
+    position: absolute;
+    right: 0.1px;
+    top: 0;
     user-select: none;
 
     mat-icon {
