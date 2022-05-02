@@ -9,7 +9,6 @@ import { Option } from 'app/interfaces/option.interface';
 import { AppState } from 'app/store';
 import { waitForPreferences } from 'app/store/preferences/preferences.selectors';
 import { selectTimezone } from 'app/store/system-config/system-config.selectors';
-import { SystemGeneralService } from '.';
 
 @UntilDestroy()
 @Injectable()
@@ -21,7 +20,6 @@ export class LocaleService {
   target: Subject<CoreEvent> = new Subject();
 
   constructor(
-    public sysGeneralService: SystemGeneralService,
     private store$: Store<AppState>,
   ) {
     combineLatest([

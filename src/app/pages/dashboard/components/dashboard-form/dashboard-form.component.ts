@@ -6,10 +6,8 @@ import {
 import { FormGroup } from '@angular/forms';
 import { FormBuilder, FormControl } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateService } from '@ngx-translate/core';
 import { Subject } from 'rxjs';
 import { CoreEvent } from 'app/interfaces/events';
-import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { DashConfigItem } from 'app/pages/dashboard/components/widget-controller/widget-controller.component';
 import { WebSocketService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
@@ -36,11 +34,9 @@ export class DashboardFormComponent {
   formEvents$: Subject<CoreEvent>;
 
   constructor(
-    private translate: TranslateService,
     private formBuilder: FormBuilder,
     private ws: WebSocketService,
     private slideInService: IxSlideInService,
-    private errorHandler: FormErrorHandlerService,
     private changeDetectorRef: ChangeDetectorRef,
   ) {}
 

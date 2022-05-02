@@ -2,6 +2,12 @@ import { ClipboardModule } from '@angular/cdk/clipboard';
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MatCardModule } from '@angular/material/card';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatIconModule } from '@angular/material/icon';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatSortModule } from '@angular/material/sort';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslateModule } from '@ngx-translate/core';
 import { CoreComponents } from 'app/core/core-components.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
@@ -10,14 +16,18 @@ import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import {
   ApiKeyFormDialogComponent,
 } from 'app/pages/api-keys/components/api-key-form-dialog/api-key-form-dialog.component';
-import { ApiKeysComponent } from 'app/pages/api-keys/components/api-keys/api-keys.component';
+import { ApiKeyListComponent } from 'app/pages/api-keys/components/api-key-list/api-key-list.component';
 import {
   KeyCreatedDialogComponent,
 } from 'app/pages/api-keys/components/key-created-dialog/key-created-dialog.component';
+import { AppCommonModule } from '../../modules/common/app-common.module';
+import { IxTableModule } from '../../modules/ix-tables/ix-table.module';
 import { routing } from './api-keys.routing';
+import { ApiKeyComponentStore } from './store/api-key.store';
 
 @NgModule({
   imports: [
+    AppCommonModule,
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
@@ -27,12 +37,26 @@ import { routing } from './api-keys.routing';
     CoreComponents,
     TranslateModule,
     IxFormsModule,
+    IxTableModule,
+    MatCardModule,
+    MatSortModule,
+    MatIconModule,
+    MatMenuModule,
+    MatTooltipModule,
+    MatDialogModule,
     routing,
+    TranslateModule,
   ],
   declarations: [
-    ApiKeysComponent,
+    ApiKeyListComponent,
     ApiKeyFormDialogComponent,
     KeyCreatedDialogComponent,
+  ],
+  exports: [
+    ApiKeyListComponent,
+  ],
+  providers: [
+    ApiKeyComponentStore,
   ],
 })
 export class ApiKeysModule { }

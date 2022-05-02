@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { FormControl, ValidationErrors, Validators } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
@@ -404,7 +404,6 @@ export class ZvolFormComponent implements FormConfiguration {
   }
 
   constructor(
-    protected router: Router,
     protected aroute: ActivatedRoute,
     protected ws: WebSocketService,
     protected loader: AppLoaderService,

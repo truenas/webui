@@ -5,7 +5,6 @@ import { DeviceType } from 'app/enums/device-type.enum';
 import { EnclosureSlotStatus } from 'app/enums/enclosure-slot-status.enum';
 import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
 import { FailoverStatus } from 'app/enums/failover-status.enum';
-import { LacpduRate, XmitHashPolicy } from 'app/enums/network-interface.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { TransportMode } from 'app/enums/transport-mode.enum';
@@ -536,13 +535,13 @@ export type ApiDirectory = {
   'interface.vlan_parent_interface_choices': { params: void; response: Choices };
   'interface.query': { params: QueryParams<NetworkInterface>; response: NetworkInterface[] };
   'interface.create': { params: [NetworkInterfaceCreate]; response: NetworkInterface };
-  'interface.update': { params: [NetworkInterfaceUpdate]; response: NetworkInterface };
+  'interface.update': { params: [id: string, update: NetworkInterfaceUpdate]; response: NetworkInterface };
   'interface.delete': { params: [id: string]; response: string };
   'interface.has_pending_changes': { params: void; response: boolean };
   'interface.checkin_waiting': { params: void; response: number | null };
   'interface.checkin': { params: void; response: void };
-  'interface.xmit_hash_policy_choices': { params: void; response: { [key: string]: keyof XmitHashPolicy } };
-  'interface.lacpdu_rate_choices': { params: void; response: { [key: string]: keyof LacpduRate } };
+  'interface.xmit_hash_policy_choices': { params: void; response: Choices };
+  'interface.lacpdu_rate_choices': { params: void; response: Choices };
 
   // iSCSI
   'iscsi.initiator.query': { params: QueryParams<IscsiInitiatorGroup>; response: IscsiInitiatorGroup[] };
@@ -838,9 +837,9 @@ export type ApiDirectory = {
   'service.started': { params: [ServiceName]; response: boolean };
   'service.query': { params: QueryParams<Service>; response: Service[] };
   'service.update': { params: [number | ServiceName, Partial<Service>]; response: number };
-  'service.start': { params: [ServiceName]; response: boolean };
+  'service.start': { params: [ServiceName, { silent: boolean }]; response: boolean };
   'service.stop': {
-    params: [ServiceName];
+    params: [ServiceName, { silent: boolean }];
     response: boolean; // False indicates that service has been stopped.
   };
   'service.restart': { params: [ServiceName]; response: void };

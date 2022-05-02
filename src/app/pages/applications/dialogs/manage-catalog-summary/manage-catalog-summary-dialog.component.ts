@@ -11,7 +11,6 @@ import { AppLoaderService } from 'app/modules/app-loader/app-loader.service';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { DialogService, WebSocketService } from 'app/services';
-import { LocaleService } from 'app/services/locale.service';
 
 @UntilDestroy()
 @Component({
@@ -34,7 +33,6 @@ export class ManageCatalogSummaryDialogComponent implements OnInit {
   constructor(
     public dialogRef: MatDialogRef<EntityJobComponent>,
     @Inject(MAT_DIALOG_DATA) public data: Catalog,
-    protected localeService: LocaleService,
     private ws: WebSocketService,
     private loader: AppLoaderService,
     protected dialogService: DialogService,

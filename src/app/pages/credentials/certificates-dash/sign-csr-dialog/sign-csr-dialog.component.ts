@@ -7,7 +7,7 @@ import { idNameArrayToOptions } from 'app/helpers/options.helper';
 import { helptextSystemCa } from 'app/helptext/system/ca';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import {
-  AppLoaderService, DialogService, SystemGeneralService, WebSocketService,
+  AppLoaderService, SystemGeneralService, WebSocketService,
 } from 'app/services';
 
 @UntilDestroy()
@@ -32,7 +32,6 @@ export class SignCsrDialogComponent {
     private formBuilder: FormBuilder,
     private loader: AppLoaderService,
     private ws: WebSocketService,
-    private dialogService: DialogService,
     private errorHandler: FormErrorHandlerService,
     @Inject(MAT_DIALOG_DATA) private caId: number,
   ) {}

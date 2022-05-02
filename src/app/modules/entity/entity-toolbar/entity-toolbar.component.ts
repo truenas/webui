@@ -4,11 +4,9 @@ import {
   OnChanges, SimpleChanges,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateService } from '@ngx-translate/core';
 import { Subject } from 'rxjs';
 import { CoreEvent } from 'app/interfaces/events';
 import { GlobalAction } from 'app/interfaces/global-action.interface';
-import { AppLoaderService } from 'app/modules/app-loader/app-loader.service';
 import { ToolbarConfig } from 'app/modules/entity/entity-toolbar/models/control-config.interface';
 import { Control } from 'app/modules/entity/entity-toolbar/models/control.interface';
 
@@ -24,10 +22,7 @@ export class EntityToolbarComponent implements OnChanges, GlobalAction {
   controller$: Subject<Control>;
   values: any;
 
-  constructor(
-    protected loader: AppLoaderService,
-    public translate: TranslateService,
-  ) {
+  constructor() {
     this.controller$ = new Subject();
   }
 
