@@ -1,7 +1,7 @@
 <div class="header-input-wrapper">
-    <span *ngIf="prefixIcon"><mat-icon>{{ prefixIcon }}</mat-icon></span>
+    <span class="prefix-icon" *ngIf="prefixIcon"><mat-icon>{{ prefixIcon }}</mat-icon></span>
     <ng-template [ngTemplateOutlet]='template'></ng-template>
-    <span *ngIf="shouldShowPostfixIcon()" class="reset-input">
-      <mat-icon (click)="postfixClick.emit()" role="img" fontSet="mdi-set" fontIcon="mdi-close-circle"></mat-icon>
+    <span class="reset-icon reset-input" *ngIf="shouldShowReset$ | async">
+      <mat-icon (click)="reset.emit()" role="img" fontSet="mdi-set" fontIcon="mdi-close-circle"></mat-icon>
     </span>
 </div>

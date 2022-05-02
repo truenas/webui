@@ -2,6 +2,7 @@ import {
   ComponentFactoryResolver, ComponentRef, Directive, EventEmitter, Input, OnInit, Output, TemplateRef, ViewContainerRef,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Observable } from 'rxjs';
 import { HeaderInputWrapperComponent } from 'app/modules/common/page-header-actions-wrapper/header-input-wrapper.component';
 
 @UntilDestroy()
@@ -11,8 +12,8 @@ import { HeaderInputWrapperComponent } from 'app/modules/common/page-header-acti
 export class HeaderInputDirective implements OnInit {
   compRef: ComponentRef<HeaderInputWrapperComponent>;
   @Input() prefixIcon: string;
-  @Input() shouldShowPostfixIcon: () => boolean;
-  @Output() postfixClick = new EventEmitter<void>();
+  @Input() shouldShowReset: Observable<boolean>;
+  @Output() resetInput = new EventEmitter<void>();
   constructor(private vcRef: ViewContainerRef,
     private templateRef: TemplateRef<any>,
     private compFact: ComponentFactoryResolver) { }
@@ -22,7 +23,7 @@ export class HeaderInputDirective implements OnInit {
     this.compRef = this.vcRef.createComponent(myComp);
     this.compRef.instance.template = this.templateRef;
     this.compRef.instance.prefixIcon = this.prefixIcon;
-    this.compRef.instance.postfixClick.pipe(untilDestroyed(this)).subscribe(() => this.postfixClick.emit());
-    this.compRef.instance.shouldShowPostfixIcon = this.shouldShowPostfixIcon;
+    this.compRef.instance.reset.pipe(untilDestroyed(this)).subscribe(() => this.resetInput.emit());
+    this.compRef.instance.shouldShowReset$ = this.shouldShowReset;
   }
 }

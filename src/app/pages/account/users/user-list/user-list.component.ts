@@ -6,6 +6,7 @@ import {
   ViewChildren, QueryList,
   AfterViewInit,
   TemplateRef,
+  ElementRef,
 } from '@angular/core';
 import { MatSort, Sort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
@@ -41,6 +42,7 @@ export class UserListComponent implements OnInit, AfterViewInit {
   @ViewChild(MatSort, { static: false }) sort: MatSort;
   title$: BehaviorSubject<string> = new BehaviorSubject('Users');
   @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
+  @ViewChild('filterInput') filterInput: ElementRef<HTMLInputElement>;
   toolbarActionsConfig: GlobalActionConfig = null;
 
   displayedColumns: string[] = ['username', 'uid', 'builtin', 'full_name', 'actions'];
@@ -63,6 +65,8 @@ export class UserListComponent implements OnInit, AfterViewInit {
     large: true,
     title: this.translate.instant('Can not retrieve response'),
   };
+  readonly shouldShowResetInput$ = new BehaviorSubject<boolean>(false);
+  readonly shouldShowReset$ = this.shouldShowResetInput$.asObservable();
   filterValue = '';
   expandedRow: User;
   @ViewChildren(IxDetailRowDirective) private detailRows: QueryList<IxDetailRowDirective>;
@@ -98,14 +102,6 @@ export class UserListComponent implements OnInit, AfterViewInit {
     this.layoutService.pageHeaderUpdater$.next(this.pageHeader);
   }
 
-  shouldShowResetInput = (): boolean => {
-    return this.filterValue && !!this.filterValue.length;
-  };
-
-  input(filterInput: HTMLInputElement): void {
-    this.filterValue = filterInput.value;
-  }
-
   getPreferences(): void {
     this.store$.pipe(
       waitForPreferences,
@@ -114,14 +110,6 @@ export class UserListComponent implements OnInit, AfterViewInit {
       this.hideBuiltinUsers = preferences.hideBuiltinUsers;
       this.cdr.markForCheck();
     });
-  }
-
-  postfixClicked(input: HTMLInputElement): void {
-    this.resetInput(input);
-  }
-  resetInput(input: HTMLInputElement): void {
-    this.filterValue = '';
-    input.value = '';
   }
 
   getUsers(): void {
@@ -174,8 +162,19 @@ export class UserListComponent implements OnInit, AfterViewInit {
     });
   }
 
-  filter(inputElement: HTMLInputElement): void {
-    this.filterString = inputElement.value;
-    this.dataSource.filter = inputElement.value;
+  clearFilter(): void {
+    this.shouldShowResetInput$.next(false);
+    this.filterInput.nativeElement.value = '';
+    this.filter();
+  }
+
+  filter(): void {
+    if (!this.filterInput.nativeElement.value) {
+      this.shouldShowResetInput$.next(false);
+    } else {
+      this.shouldShowResetInput$.next(true);
+    }
+    this.filterString = this.filterInput.nativeElement.value;
+    this.dataSource.filter = this.filterInput.nativeElement.value;
   }
 }

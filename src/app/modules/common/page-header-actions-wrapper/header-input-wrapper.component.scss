@@ -6,12 +6,27 @@
   flex-direction: row;
   padding: 3px;
 
-  mat-icon {
-    margin-right: 3px;
-    padding-top: 3px;
+  .prefix-icon {
+    mat-icon {
+      margin-right: 3px;
+      padding-top: 3px;
+    }
   }
 
   &:focus-within {
     border: thin solid var(--primary);
+  }
+
+  .reset-input {
+    align-items: center;
+    cursor: pointer;
+    display: flex;
+    opacity: 0.5;
+    user-select: none;
+
+    mat-icon {
+      font-size: 16px;
+      margin-top: 0;
+    }
   }
 }
