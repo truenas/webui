@@ -4,7 +4,6 @@ import {
 import { UUID } from 'angular2-uuid';
 import {
   ChartConfiguration,
-  LegendOptions,
   TooltipOptions,
 } from 'app/modules/charts/components/view-chart/view-chart.component.types';
 
@@ -51,7 +50,6 @@ export const viewChartMetadata = {
 })
 export class ViewChartComponent implements OnChanges, AfterViewInit {
   chartColors: string[];
-  maxLabels: number;
   units: string;
   max: number;
   @Input() width: number;
@@ -65,9 +63,6 @@ export class ViewChartComponent implements OnChanges, AfterViewInit {
   protected colors: string[];
   legend: Legend[] = [];
   showLegendValues = false;
-  protected legendOptions: LegendOptions = {
-    show: false,
-  };
   protected tooltipOptions: TooltipOptions = {
     contents: (raw) => {
       if (!this.showLegendValues) {

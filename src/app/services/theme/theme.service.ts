@@ -4,7 +4,6 @@ import { select, Store } from '@ngrx/store';
 import { filter } from 'rxjs/operators';
 import { ThemeUtils } from 'app/core/classes/theme-utils/theme-utils';
 import { Theme } from 'app/interfaces/theme.interface';
-import { WebSocketService } from 'app/services';
 import { CoreService } from 'app/services/core-service/core.service';
 import { allThemes, defaultTheme } from 'app/services/theme/theme.constants';
 import { AppState } from 'app/store';
@@ -16,7 +15,6 @@ import { selectTheme } from 'app/store/preferences/preferences.selectors';
 export class ThemeService {
   activeTheme = 'default';
   defaultTheme = defaultTheme.name;
-  activeThemeSwatch: string[];
 
   // Theme lists
   allThemes: Theme[] = allThemes;
@@ -25,7 +23,6 @@ export class ThemeService {
 
   userThemeLoaded = false;
   constructor(
-    private ws: WebSocketService,
     private core: CoreService,
     private store$: Store<AppState>,
   ) {
@@ -166,10 +163,6 @@ export class ThemeService {
       theme.logoPath = 'assets/images/light-logo.svg';
       theme.logoTextPath = 'assets/images/light-logo-text.svg';
     }
-  }
-
-  hexToRgb(str: string): { hex: string; rgb: number[] } {
-    return this.utils.hexToRgb(str);
   }
 
   darkTest(css: string): boolean {

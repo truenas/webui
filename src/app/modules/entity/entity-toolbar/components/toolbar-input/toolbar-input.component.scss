@@ -10,8 +10,18 @@
     font-family: Roboto, 'Helvetica Neue', sans-serif;
     left: 35.5px;
     opacity: 0.55;
+    overflow: hidden;
     position: absolute;
-    top: 13px;
+    text-overflow: ellipsis;
+    top: 11px;
+    white-space: nowrap;
+    width: calc(100% - 57px);
+  }
+
+  .mat-input-element {
+    height: 18px;
+    white-space: nowrap;
+    width: calc(100% - 11px);
   }
 
   input:-webkit-autofill,

@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { filter, switchMap } from 'rxjs/operators';
@@ -63,13 +62,11 @@ export class CronListComponent implements EntityTableConfig<CronjobRow> {
   };
 
   constructor(
-    public router: Router,
     protected ws: WebSocketService,
     public translate: TranslateService,
     protected taskService: TaskService,
     public dialog: DialogService,
     public slideInService: IxSlideInService,
-    public userService: UserService,
   ) {}
 
   afterInit(entityList: EntityTableComponent): void {

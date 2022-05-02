@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
 import { FormGroup, Validators } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
@@ -1270,8 +1269,6 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
   ];
 
   constructor(
-    protected router: Router,
-    protected aroute: ActivatedRoute,
     protected ws: WebSocketService,
     protected cloudcredentialService: CloudCredentialService,
     protected dialog: DialogService,

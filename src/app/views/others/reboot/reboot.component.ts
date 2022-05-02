@@ -3,7 +3,6 @@ import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateService } from '@ngx-translate/core';
 import { ProductType, productTypeLabels } from 'app/enums/product-type.enum';
 import { AppLoaderService } from 'app/modules/app-loader/app-loader.service';
 import { WebSocketService, SystemGeneralService } from 'app/services';
@@ -27,7 +26,6 @@ export class RebootComponent implements OnInit {
     protected ws: WebSocketService,
     protected router: Router,
     protected loader: AppLoaderService,
-    public translate: TranslateService,
     protected dialogService: DialogService,
     protected dialog: MatDialog,
     private sysGeneralService: SystemGeneralService,

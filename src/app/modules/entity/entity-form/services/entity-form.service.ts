@@ -106,15 +106,6 @@ export class EntityFormService {
     return formArray;
   }
 
-  insertFormArrayGroup(index: number, formArray: FormArray, controls: FieldConfig[]): void {
-    const formGroup = this.createFormGroup(controls);
-    formArray.insert(index, formGroup);
-  }
-
-  removeFormArrayGroup(index: number, formArray: FormArray): void {
-    formArray.removeAt(index);
-  }
-
   /**
    * @deprecated Use FilesystemService.getFilesystemNodeProvider for all new code.
    */

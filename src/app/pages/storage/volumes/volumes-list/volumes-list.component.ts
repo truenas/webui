@@ -16,7 +16,6 @@ import { Dataset, ExtraDatasetQueryOptions } from 'app/interfaces/dataset.interf
 import { QueryParams } from 'app/interfaces/query-api.interface';
 import { AppLoaderService } from 'app/modules/app-loader/app-loader.service';
 import { EmptyConfig, EmptyType } from 'app/modules/entity/entity-empty/entity-empty.component';
-import { MessageService } from 'app/modules/entity/entity-form/services/message.service';
 import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-table.component';
 import { EntityTableConfig } from 'app/modules/entity/entity-table/entity-table.interface';
 import { DatasetFormComponent } from 'app/pages/storage/volumes/datasets/dataset-form/dataset-form.component';
@@ -27,7 +26,7 @@ import {
 } from 'app/pages/storage/volumes/volumes-list/volumes-list-pool.interface';
 import { VolumesListTableConfig } from 'app/pages/storage/volumes/volumes-list/volumes-list-table-config';
 import { ZvolFormComponent } from 'app/pages/storage/volumes/zvol/zvol-form/zvol-form.component';
-import { JobService, ValidationService } from 'app/services';
+import { JobService } from 'app/services';
 import { CoreService } from 'app/services/core-service/core.service';
 import { DialogService } from 'app/services/dialog.service';
 import { ModalService } from 'app/services/modal.service';
@@ -56,9 +55,7 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
     this.translate,
     this.storage,
     {} as VolumesListPool,
-    this.messageService,
     this.http,
-    this.validationService,
   );
 
   viewingPermissionsForDataset: VolumesListDataset;
@@ -96,9 +93,7 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
       this.translate,
       this.storage,
       {} as VolumesListPool,
-      this.messageService,
       this.http,
-      this.validationService,
     ) as EntityTableConfig,
   } as EntityTableComponent;
 
@@ -160,10 +155,8 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
     protected job: JobService,
     protected storage: StorageService,
     protected store$: Store<AppState>,
-    protected messageService: MessageService,
     protected http: HttpClient,
     modalService: ModalService,
-    protected validationService: ValidationService,
     public cdr: ChangeDetectorRef,
   ) {
     super(core, router, ws, dialogService, loader, translate, sorter, job, store$, mdDialog, modalService, cdr);
@@ -240,9 +233,7 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
           this.translate,
           this.storage,
           pool,
-          this.messageService,
           this.http,
-          this.validationService,
         );
         pool.type = 'zpool';
 

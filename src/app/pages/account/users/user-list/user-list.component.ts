@@ -26,7 +26,6 @@ import { IxDetailRowDirective } from 'app/modules/ix-tables/directives/ix-detail
 import { userPageEntered } from 'app/pages/account/users/store/user.actions';
 import { selectUsers, selectUserState, selectUsersTotal } from 'app/pages/account/users/store/user.selectors';
 import { UserFormComponent } from 'app/pages/account/users/user-form/user-form.component';
-import { CoreService } from 'app/services/core-service/core.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LayoutService } from 'app/services/layout.service';
 import { AppState } from 'app/store';
@@ -67,11 +66,12 @@ export class UserListComponent implements OnInit, AfterViewInit {
   filterValue = '';
   expandedRow: User;
   @ViewChildren(IxDetailRowDirective) private detailRows: QueryList<IxDetailRowDirective>;
-  error$ = this.store$.select(selectUserState).pipe(map((state) => state.error));
   isLoading$ = this.store$.select(selectUserState).pipe(map((state) => state.isLoading));
-  isEmpty$ = this.store$.select(selectUsersTotal).pipe(map((total) => total === 0));
-  emptyOrErrorConfig$: Observable<EmptyConfig> = combineLatest([this.isEmpty$, this.error$]).pipe(
-    switchMap(([_, isError]) => {
+  emptyOrErrorConfig$: Observable<EmptyConfig> = combineLatest([
+    this.store$.select(selectUsersTotal).pipe(map((total) => total === 0)),
+    this.store$.select(selectUserState).pipe(map((state) => state.error)),
+  ]).pipe(
+    switchMap(([, isError]) => {
       if (isError) {
         return of(this.errorConfig);
       }
@@ -85,7 +85,6 @@ export class UserListComponent implements OnInit, AfterViewInit {
     private translate: TranslateService,
     private slideIn: IxSlideInService,
     private cdr: ChangeDetectorRef,
-    private core: CoreService,
     private store$: Store<AppState>,
     private layoutService: LayoutService,
   ) { }

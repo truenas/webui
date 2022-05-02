@@ -2,7 +2,6 @@ import { Component, OnDestroy } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatDialogRef } from '@angular/material/dialog/dialog-ref';
-import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
@@ -97,7 +96,6 @@ export class ImportDiskComponent implements OnDestroy, FormConfiguration {
   customActions: FormCustomAction[];
 
   constructor(
-    protected router: Router,
     protected ws: WebSocketService,
     protected dialog: MatDialog,
     protected dialogService: DialogService,

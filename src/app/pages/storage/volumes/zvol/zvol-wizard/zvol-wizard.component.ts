@@ -3,7 +3,6 @@ import {
   FormControl, FormGroup, ValidationErrors, Validators,
 } from '@angular/forms';
 import { MatStepper } from '@angular/material/stepper';
-import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable } from 'rxjs';
@@ -26,7 +25,6 @@ import { EntityWizardComponent } from 'app/modules/entity/entity-wizard/entity-w
 import { EntityUtils } from 'app/modules/entity/utils';
 import { StorageService, WebSocketService } from 'app/services';
 import { CoreService } from 'app/services/core-service/core.service';
-import { DialogService } from 'app/services/dialog.service';
 import { ModalService } from 'app/services/modal.service';
 
 interface ZvolFormData {
@@ -299,11 +297,8 @@ export class ZvolWizardComponent implements WizardConfiguration {
 
   constructor(
     protected core: CoreService,
-    protected router: Router,
-    protected aroute: ActivatedRoute,
     protected ws: WebSocketService,
     protected loader: AppLoaderService,
-    protected dialogService: DialogService,
     protected storageService: StorageService,
     private translate: TranslateService,
     protected modalService: ModalService,

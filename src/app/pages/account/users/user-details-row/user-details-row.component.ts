@@ -26,7 +26,6 @@ export class UserDetailsRowComponent {
   @Input() user: User;
   @Input() colspan: number;
   @Output() update = new EventEmitter<void>();
-  private editForm: UserFormComponent;
 
   constructor(
     private ws: WebSocketService,

@@ -19,9 +19,6 @@ import { SystemGeneralService } from './services';
   templateUrl: './app.component.html',
 })
 export class AppComponent {
-  appTitle = 'TrueNAS';
-  protected accountUserResource = 'account/users/1';
-
   constructor(
     public title: Title,
     private router: Router,

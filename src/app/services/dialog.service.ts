@@ -7,7 +7,6 @@ import { filter } from 'rxjs/operators';
 import { ConfirmOptions, ConfirmOptionsWithSecondaryCheckbox } from 'app/interfaces/dialog.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { Option } from 'app/interfaces/option.interface';
-import { AppLoaderService } from 'app/modules/app-loader/app-loader.service';
 import { ConfirmDialogComponent } from 'app/modules/common/dialog/confirm-dialog/confirm-dialog.component';
 import { ErrorDialogComponent } from 'app/modules/common/dialog/error-dialog/error-dialog.component';
 import { GeneralDialogComponent, GeneralDialogConfig } from 'app/modules/common/dialog/general-dialog/general-dialog.component';
@@ -24,7 +23,7 @@ import { WebSocketService } from './ws.service';
 export class DialogService {
   protected loaderOpen = false;
 
-  constructor(private dialog: MatDialog, private ws: WebSocketService, protected loader: AppLoaderService) {
+  constructor(private dialog: MatDialog, private ws: WebSocketService) {
     /* Close all open dialogs when websocket connection is dropped */
     this.ws.onCloseSubject$.pipe(
       filter(Boolean),
@@ -168,7 +167,7 @@ export class DialogService {
           isHidden: !confirmBox,
         },
       ],
-      saveButtonText: buttonMsg || T('DELETE'),
+      saveButtonText: buttonMsg || T('Delete'),
       afterInit(entityDialog: EntityDialogComponent) {
         entityDialog.formGroup.controls['name'].valueChanges.pipe(untilDestroyed(entityDialog)).subscribe((res) => {
           entityDialog.submitEnabled = res === name && (confirmBox ? entityDialog.formGroup.controls['confirm'].value : true);
