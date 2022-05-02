@@ -70,11 +70,12 @@ export class UserListComponent implements OnInit, AfterViewInit {
   filterValue = '';
   expandedRow: User;
   @ViewChildren(IxDetailRowDirective) private detailRows: QueryList<IxDetailRowDirective>;
-  error$ = this.store$.select(selectUserState).pipe(map((state) => state.error));
   isLoading$ = this.store$.select(selectUserState).pipe(map((state) => state.isLoading));
-  isEmpty$ = this.store$.select(selectUsersTotal).pipe(map((total) => total === 0));
-  emptyOrErrorConfig$: Observable<EmptyConfig> = combineLatest([this.isEmpty$, this.error$]).pipe(
-    switchMap(([_, isError]) => {
+  emptyOrErrorConfig$: Observable<EmptyConfig> = combineLatest([
+    this.store$.select(selectUsersTotal).pipe(map((total) => total === 0)),
+    this.store$.select(selectUserState).pipe(map((state) => state.error)),
+  ]).pipe(
+    switchMap(([, isError]) => {
       if (isError) {
         return of(this.errorConfig);
       }

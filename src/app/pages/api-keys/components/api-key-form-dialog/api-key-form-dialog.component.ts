@@ -11,7 +11,8 @@ import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-erro
 import {
   KeyCreatedDialogComponent,
 } from 'app/pages/api-keys/components/key-created-dialog/key-created-dialog.component';
-import { AppLoaderService, WebSocketService } from 'app/services';
+import { ApiKeyComponentStore } from 'app/pages/api-keys/store/api-key.store';
+import { WebSocketService, AppLoaderService } from 'app/services';
 
 @UntilDestroy()
 @Component({
@@ -37,6 +38,7 @@ export class ApiKeyFormDialogComponent implements OnInit {
     private ws: WebSocketService,
     private loader: AppLoaderService,
     private errorHandler: FormErrorHandlerService,
+    private store: ApiKeyComponentStore,
     @Inject(MAT_DIALOG_DATA) private editingRow: ApiKey,
   ) {}
 
@@ -59,13 +61,18 @@ export class ApiKeyFormDialogComponent implements OnInit {
 
     request$
       .pipe(untilDestroyed(this))
-      .subscribe((response) => {
+      .subscribe((apiKey) => {
+        if (this.isNew) {
+          this.store.apiKeyAdded(apiKey);
+        } else {
+          this.store.apiKeyEdited(apiKey);
+        }
         this.loader.close();
         this.dialogRef.close(true);
 
-        if (response.key) {
+        if (apiKey.key) {
           this.matDialog.open(KeyCreatedDialogComponent, {
-            data: response.key,
+            data: apiKey.key,
           });
         }
       }, (error) => {
