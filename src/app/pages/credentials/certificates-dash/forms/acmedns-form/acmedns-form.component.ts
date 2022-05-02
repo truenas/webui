@@ -38,7 +38,7 @@ export class AcmednsFormComponent {
   form = this.formBuilder.group({
     name: [null as string, Validators.required],
     authenticator: [DnsAuthenticatorType.Cloudflare, Validators.required],
-    attributes: this.formBuilder.group({}),
+    attributes: this.formBuilder.group<Record<string, string>>({}),
   });
 
   get formGroup(): FormGroup {
@@ -64,7 +64,7 @@ export class AcmednsFormComponent {
           const newFormControl = new FormControl('', input._required_ ? [Validators.required] : []);
           this.form.controls.attributes.addControl(input._name_, newFormControl);
           dynamicSchema.schema.push({
-            variable: input._name_,
+            controlName: input._name_,
             type: 'input',
             title: input.title,
             required: input._required_,

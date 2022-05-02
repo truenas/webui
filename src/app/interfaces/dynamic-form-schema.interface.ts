@@ -1,6 +1,5 @@
 import { FormArray } from '@angular/forms';
 import { Observable } from 'rxjs';
-import { ChartSchemaNode } from 'app/interfaces/chart-release.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { TreeNodeProvider } from 'app/modules/ix-forms/components/ix-explorer/ix-explorer.component';
 
@@ -10,25 +9,55 @@ export interface DynamicFormSchema {
   schema: DynamicFormSchemaNode[];
 }
 
-export interface DynamicFormSchemaNode {
-  variable: string;
-  type: string;
-  attrs?: DynamicFormSchemaNode[];
-  items?: DynamicFormSchemaNode[];
-  items_schema?: ChartSchemaNode[];
+export type DynamicFormSchemaNode =
+| DynamicFormSchemaInput
+| DynamicFormSchemaSelect
+| DynamicFormSchemaExplorer
+| DynamicFormSchemaCheckbox
+| DynamicFormSchemaDict
+| DynamicFormSchemaList;
+
+export interface DynamicFormSchemaBase {
+  controlName: string;
   title?: string;
   required?: boolean;
   hidden?: boolean;
   editable?: boolean;
+}
+
+export interface DynamicFormSchemaInput extends DynamicFormSchemaBase {
+  type: 'input';
   private?: boolean;
+}
+
+export interface DynamicFormSchemaSelect extends DynamicFormSchemaBase {
+  type: 'select';
   options?: Observable<Option[]>;
+}
+
+export interface DynamicFormSchemaExplorer extends DynamicFormSchemaBase {
+  type: 'explorer';
   nodeProvider?: TreeNodeProvider;
-  cidr?: boolean;
+}
+
+export interface DynamicFormSchemaCheckbox extends DynamicFormSchemaBase {
+  type: 'checkbox';
+}
+
+export interface DynamicFormSchemaList extends DynamicFormSchemaBase {
+  type: 'list';
+  items?: DynamicFormSchemaNode[];
+  items_schema?: any[];
+}
+
+export interface DynamicFormSchemaDict extends DynamicFormSchemaBase {
+  type: 'dict';
+  attrs?: DynamicFormSchemaNode[];
 }
 
 export interface AddListItemEmitter {
   array: FormArray;
-  schema: ChartSchemaNode[];
+  schema: any[];
 }
 
 export interface DeleteListItemEmitter {

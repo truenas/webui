@@ -3,7 +3,7 @@ import {
 } from '@angular/core';
 import { FormArray, FormGroup } from '@angular/forms';
 import { UntilDestroy } from '@ngneat/until-destroy';
-import { AddListItemEmitter, DeleteListItemEmitter, DynamicFormSchemaNode } from 'app/interfaces/dynamic-form-schema.interface';
+import { AddListItemEmitter, DeleteListItemEmitter } from 'app/interfaces/dynamic-form-schema.interface';
 
 @UntilDestroy()
 @Component({
@@ -14,21 +14,21 @@ import { AddListItemEmitter, DeleteListItemEmitter, DynamicFormSchemaNode } from
 })
 export class IxDynamicFormItemComponent {
   @Input() dynamicForm: FormGroup;
-  @Input() dynamicSchema: DynamicFormSchemaNode;
+  @Input() dynamicSchema: any;
 
   @Output() addListItem = new EventEmitter<AddListItemEmitter>();
   @Output() deleteListItem = new EventEmitter<DeleteListItemEmitter>();
 
   get getFormGroup(): FormGroup {
-    return this.dynamicForm.controls[this.dynamicSchema.variable] as FormGroup;
+    return this.dynamicForm.controls[this.dynamicSchema.controlName] as FormGroup;
   }
 
   get getFormArray(): FormArray {
-    return this.dynamicForm.controls[this.dynamicSchema.variable] as FormArray;
+    return this.dynamicForm.controls[this.dynamicSchema.controlName] as FormArray;
   }
 
   get isHide(): boolean {
-    return this.dynamicForm.controls[this.dynamicSchema.variable].disabled;
+    return this.dynamicForm.controls[this.dynamicSchema.controlName].disabled;
   }
 
   getFormItem(element: any): FormGroup {

@@ -78,13 +78,13 @@ export class ChartWizardComponent {
       description: '',
       schema: [
         {
-          variable: 'release_name',
+          controlName: 'release_name',
           type: 'input',
           title: helptext.chartForm.release_name.placeholder,
           required: true,
         },
         {
-          variable: 'version',
+          controlName: 'version',
           type: 'select',
           title: helptext.chartWizard.nameGroup.version,
           required: true,
@@ -196,7 +196,7 @@ export class ChartWizardComponent {
       switch (beforSchema.type) {
         case 'int':
           afterSchemas.push({
-            variable: chartSchemaNode.variable,
+            controlName: chartSchemaNode.variable,
             type: 'input',
             title: chartSchemaNode.label,
             required: beforSchema.required,
@@ -208,7 +208,7 @@ export class ChartWizardComponent {
         case 'string':
           if (beforSchema.enum) {
             afterSchemas.push({
-              variable: chartSchemaNode.variable,
+              controlName: chartSchemaNode.variable,
               type: 'select',
               title: chartSchemaNode.label,
               options: of(beforSchema.enum.map((option) => ({
@@ -221,7 +221,7 @@ export class ChartWizardComponent {
             });
           } else {
             afterSchemas.push({
-              variable: chartSchemaNode.variable,
+              controlName: chartSchemaNode.variable,
               type: 'input',
               title: chartSchemaNode.label,
               required: beforSchema.required,
@@ -233,7 +233,7 @@ export class ChartWizardComponent {
           break;
         case 'path':
           afterSchemas.push({
-            variable: chartSchemaNode.variable,
+            controlName: chartSchemaNode.variable,
             type: 'input',
             title: chartSchemaNode.label,
             required: beforSchema.required,
@@ -243,7 +243,7 @@ export class ChartWizardComponent {
           break;
         case 'hostpath':
           afterSchemas.push({
-            variable: chartSchemaNode.variable,
+            controlName: chartSchemaNode.variable,
             type: 'explorer',
             title: chartSchemaNode.label,
             nodeProvider: this.filesystemService.getFilesystemNodeProvider(),
@@ -254,7 +254,7 @@ export class ChartWizardComponent {
           break;
         case 'boolean':
           afterSchemas.push({
-            variable: chartSchemaNode.variable,
+            controlName: chartSchemaNode.variable,
             type: 'checkbox',
             title: chartSchemaNode.label,
             required: beforSchema.required,
@@ -274,7 +274,7 @@ export class ChartWizardComponent {
         attrs = attrs.concat(this.transformSchemaNode(attr));
       });
       afterSchemas.push({
-        variable: chartSchemaNode.variable,
+        controlName: chartSchemaNode.variable,
         type: 'dict',
         attrs,
         hidden: beforSchema.hidden,
@@ -295,7 +295,7 @@ export class ChartWizardComponent {
         }
       });
       afterSchemas.push({
-        variable: chartSchemaNode.variable,
+        controlName: chartSchemaNode.variable,
         type: 'list',
         title: chartSchemaNode.label,
         items,

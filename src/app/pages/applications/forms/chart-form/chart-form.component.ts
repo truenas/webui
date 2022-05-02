@@ -60,7 +60,7 @@ export class ChartFormComponent {
       description: '',
       schema: [
         {
-          variable: 'release_name',
+          controlName: 'release_name',
           type: 'input',
           title: helptext.chartForm.release_name.placeholder,
           required: true,
@@ -197,7 +197,7 @@ export class ChartFormComponent {
       switch (beforSchema.type) {
         case 'int':
           afterSchemas.push({
-            variable: chartSchemaNode.variable,
+            controlName: chartSchemaNode.variable,
             type: 'input',
             title: chartSchemaNode.label,
             required: beforSchema.required,
@@ -209,7 +209,7 @@ export class ChartFormComponent {
         case 'string':
           if (beforSchema.enum) {
             afterSchemas.push({
-              variable: chartSchemaNode.variable,
+              controlName: chartSchemaNode.variable,
               type: 'select',
               title: chartSchemaNode.label,
               options: of(beforSchema.enum.map((option) => ({
@@ -222,7 +222,7 @@ export class ChartFormComponent {
             });
           } else {
             afterSchemas.push({
-              variable: chartSchemaNode.variable,
+              controlName: chartSchemaNode.variable,
               type: 'input',
               title: chartSchemaNode.label,
               required: beforSchema.required,
@@ -234,7 +234,7 @@ export class ChartFormComponent {
           break;
         case 'path':
           afterSchemas.push({
-            variable: chartSchemaNode.variable,
+            controlName: chartSchemaNode.variable,
             type: 'input',
             title: chartSchemaNode.label,
             required: beforSchema.required,
@@ -244,7 +244,7 @@ export class ChartFormComponent {
           break;
         case 'hostpath':
           afterSchemas.push({
-            variable: chartSchemaNode.variable,
+            controlName: chartSchemaNode.variable,
             type: 'explorer',
             title: chartSchemaNode.label,
             nodeProvider: this.filesystemService.getFilesystemNodeProvider(),
@@ -255,7 +255,7 @@ export class ChartFormComponent {
           break;
         case 'boolean':
           afterSchemas.push({
-            variable: chartSchemaNode.variable,
+            controlName: chartSchemaNode.variable,
             type: 'checkbox',
             title: chartSchemaNode.label,
             required: beforSchema.required,
@@ -275,7 +275,7 @@ export class ChartFormComponent {
         attrs = attrs.concat(this.transformSchemaNode(attr));
       });
       afterSchemas.push({
-        variable: chartSchemaNode.variable,
+        controlName: chartSchemaNode.variable,
         type: 'dict',
         attrs,
         hidden: beforSchema.hidden,
@@ -296,7 +296,7 @@ export class ChartFormComponent {
         }
       });
       afterSchemas.push({
-        variable: chartSchemaNode.variable,
+        controlName: chartSchemaNode.variable,
         type: 'list',
         title: chartSchemaNode.label,
         items,

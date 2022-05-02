@@ -15,7 +15,7 @@
     <ix-list
       [label]="dynamicSchema.title | translate" 
       [empty]="getFormArray.controls.length === 0"
-      [formArrayName]="dynamicSchema.variable"
+      [formArrayName]="dynamicSchema.controlName"
       (add)="addControl()"
       [fxHide]="isHide || dynamicSchema.hidden"
       [class.disabled]="dynamicSchema.editable === false"
@@ -36,7 +36,7 @@
   </ng-container>
   <ix-input
     *ngSwitchCase="'input'"
-    [formControlName]="dynamicSchema.variable"
+    [formControlName]="dynamicSchema.controlName"
     [label]="dynamicSchema.title | translate"
     [placeholder]="dynamicSchema.title | translate"
     [required]="dynamicSchema.required"
@@ -46,7 +46,7 @@
   ></ix-input>
   <ix-select
     *ngSwitchCase="'select'"
-    [formControlName]="dynamicSchema.variable"
+    [formControlName]="dynamicSchema.controlName"
     [label]="dynamicSchema.title | translate"
     [options]="dynamicSchema.options"
     [required]="dynamicSchema.required"
@@ -55,7 +55,7 @@
   ></ix-select>
   <ix-explorer
     *ngSwitchCase="'explorer'"
-    [formControlName]="dynamicSchema.variable"
+    [formControlName]="dynamicSchema.controlName"
     [label]="dynamicSchema.title | translate"
     [required]="dynamicSchema.required"
     [nodeProvider]="dynamicSchema.nodeProvider"
@@ -64,7 +64,7 @@
   ></ix-explorer>
   <ix-checkbox
     *ngSwitchCase="'checkbox'"
-    [formControlName]="dynamicSchema.variable"
+    [formControlName]="dynamicSchema.controlName"
     [label]="dynamicSchema.title | translate"
     [required]="dynamicSchema.required"
     [fxHide]="isHide || dynamicSchema.hidden"
