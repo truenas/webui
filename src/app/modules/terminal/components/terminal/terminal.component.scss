@@ -21,7 +21,6 @@
 
   .xterm-screen {
     overflow: hidden auto;
-    padding-right: 8px;
 
     .xterm-helpers {
       height: 0;
@@ -29,7 +28,10 @@
     }
 
     canvas {
+      left: 0;
       max-width: 100%;
+      position: absolute;
+      top: 0;
     }
   }
 }
