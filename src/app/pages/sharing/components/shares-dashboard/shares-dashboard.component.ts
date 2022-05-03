@@ -556,7 +556,7 @@ export class SharesDashboardComponent implements AfterViewInit {
             .subscribe((hasChanged: boolean) => {
               if (hasChanged) {
                 if (service.state === ServiceStatus.Running && rpc === 'service.stop') {
-                  this.dialog.info(
+                  this.dialog.warn(
                     this.translate.instant('Service failed to stop'),
                     this.translate.instant(
                       'The {service} service failed to stop.',
@@ -567,7 +567,7 @@ export class SharesDashboardComponent implements AfterViewInit {
                 service.state = ServiceStatus.Running;
               } else {
                 if (service.state === ServiceStatus.Stopped && rpc === 'service.start') {
-                  this.dialog.info(
+                  this.dialog.warn(
                     this.translate.instant('Service failed to start'),
                     this.translate.instant(
                       'The {service} service failed to start.',

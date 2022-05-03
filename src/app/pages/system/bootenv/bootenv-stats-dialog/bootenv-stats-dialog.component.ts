@@ -63,8 +63,6 @@ export class BootenvStatsDialogComponent implements OnInit {
         this.dialog.info(
           this.translate.instant('Scrub Interval Set'),
           this.translate.instant('Scrub interval set to {scrubIntervalValue} days', { scrubIntervalValue: interval }),
-          '300px',
-          'info',
         );
       }, (error) => {
         this.loader.close();

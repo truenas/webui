@@ -119,8 +119,6 @@ export class AdvancedSettingsComponent implements OnInit {
                   this.dialog.info(
                     this.translate.instant('Job {job} Completed Successfully', { job: row.description }),
                     message,
-                    '500px',
-                    'info',
                     true,
                   );
                 },
@@ -274,7 +272,7 @@ export class AdvancedSettingsComponent implements OnInit {
     }
 
     return this.dialog
-      .info(helptextSystemAdvanced.first_time.title, helptextSystemAdvanced.first_time.message)
+      .warn(helptextSystemAdvanced.first_time.title, helptextSystemAdvanced.first_time.message)
       .pipe(tap(() => this.isFirstTime = false))
       .toPromise();
   }

@@ -51,15 +51,15 @@ export class ChangePasswordDialogComponent {
     const { currentPassword, password } = this.form.value;
     this.ws.call('auth.check_user', ['root', currentPassword]).pipe(
       tap((passwordVerified) => {
-        if (!passwordVerified) {
-          this.dialogService.info(
-            helptext.changePasswordDialog.pw_invalid_title,
-            helptext.changePasswordDialog.pw_invalid_title,
-            '300px',
-            'warning',
-          );
-          this.loader.close();
+        if (passwordVerified) {
+          return;
         }
+
+        this.dialogService.warn(
+          helptext.changePasswordDialog.pw_invalid_title,
+          helptext.changePasswordDialog.pw_invalid_title,
+        );
+        this.loader.close();
       }),
       filter(Boolean),
       switchMap(() => this.ws.call('user.update', [1, { password }])),
@@ -68,8 +68,6 @@ export class ChangePasswordDialogComponent {
       this.dialogService.info(
         this.translate.instant('Success'),
         helptext.changePasswordDialog.pw_updated,
-        '300px',
-        'info',
       );
       this.loader.close();
       this.dialogRef.close();

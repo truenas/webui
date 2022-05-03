@@ -1038,7 +1038,7 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, A
                     }
                   }
                   if (message === '') {
-                    this.dialogService.info(this.translate.instant('Items deleted'), '', '300px', 'info', true);
+                    this.dialogService.info(this.translate.instant('Items deleted'), '');
                   } else {
                     message = '<ul>' + message + '</ul>';
                     this.dialogService.errorReport(this.translate.instant('Items Delete Failed'), message);

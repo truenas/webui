@@ -174,13 +174,13 @@ export class ServicesComponent implements OnInit {
     ).subscribe((success) => {
       if (success) {
         if (service.state === ServiceStatus.Running && rpc === 'service.stop') {
-          this.dialog.info(
+          this.dialog.warn(
             this.translate.instant('Service failed to stop'),
             this.translate.instant('{serviceName} service failed to stop.', { serviceName }),
           );
         }
       } else if (service.state === ServiceStatus.Stopped && rpc === 'service.start') {
-        this.dialog.info(
+        this.dialog.warn(
           this.translate.instant('Service failed to start'),
           this.translate.instant('{serviceName} service failed to start.', { serviceName }),
         );

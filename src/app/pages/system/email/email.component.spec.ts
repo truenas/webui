@@ -136,8 +136,6 @@ describe('EmailComponent', () => {
       expect(spectator.inject(DialogService).info).toHaveBeenCalledWith(
         'Email',
         'Email settings updated.',
-        expect.anything(),
-        expect.anything(),
       );
     });
 
@@ -185,8 +183,6 @@ describe('EmailComponent', () => {
       expect(spectator.inject(DialogService).info).toHaveBeenCalledWith(
         'Email',
         'Test email sent!',
-        expect.anything(),
-        expect.anything(),
       );
     });
   });
@@ -255,8 +251,6 @@ describe('EmailComponent', () => {
       expect(spectator.inject(DialogService).info).toHaveBeenCalledWith(
         'Email',
         'Email settings updated.',
-        expect.anything(),
-        expect.anything(),
       );
     });
 
@@ -292,8 +286,6 @@ describe('EmailComponent', () => {
       expect(spectator.inject(DialogService).info).toHaveBeenCalledWith(
         'Email',
         'Test email sent!',
-        expect.anything(),
-        expect.anything(),
       );
     });
   });

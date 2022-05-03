@@ -198,10 +198,9 @@ export class UpdateComponent implements OnInit {
         this.trainDescriptionOnPageLoad = this.currentTrainDescription;
       },
       (err) => {
-        this.dialogService.info(
+        this.dialogService.warn(
           err.trace.class,
           this.translate.instant('TrueNAS was unable to reach update servers.'),
-          '500px',
         );
       });
     });
@@ -575,7 +574,7 @@ export class UpdateComponent implements OnInit {
           this.dialogRef.componentInstance.submit();
           this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
             this.dialogRef.close(false);
-            this.dialogService.info(this.translate.instant('Updates successfully downloaded'), '', '450px', 'info', true);
+            this.dialogService.info(this.translate.instant('Updates successfully downloaded'), '');
             this.pendingupdates();
           });
           this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((err) => {
