@@ -127,8 +127,6 @@ export class ReplicationListComponent implements EntityTableConfig {
                 this.dialog.info(
                   this.translate.instant('Task started'),
                   this.translate.instant('Replication <i>{name}</i> has started.', { name: row.name }),
-                  '500px',
-                  'info',
                   true,
                 );
                 this.job.getJobStatus(jobId).pipe(untilDestroyed(this)).subscribe((job: Job) => {
@@ -243,14 +241,14 @@ export class ReplicationListComponent implements EntityTableConfig {
         });
         dialogRef.componentInstance.aborted.pipe(untilDestroyed(this)).subscribe(() => {
           dialogRef.close();
-          this.dialog.info(this.translate.instant('Task Aborted'), '', '300px', 'info', true);
+          this.dialog.info(this.translate.instant('Task Aborted'), '');
           if (subId) {
             this.ws.unsubscribe('filesystem.file_tail_follow:' + row.job.logs_path);
             this.ws.unsub('filesystem.file_tail_follow:' + row.job.logs_path, subId);
           }
         });
       } else if (row.state.state === JobState.Hold) {
-        this.dialog.info(this.translate.instant('Task is on hold'), row.state.reason, '500px', 'info', true);
+        this.dialog.info(this.translate.instant('Task is on hold'), row.state.reason);
       } else if (row.state.warnings && row.state.warnings.length > 0) {
         let list = '';
         row.state.warnings.forEach((warning: string) => {
@@ -261,7 +259,7 @@ export class ReplicationListComponent implements EntityTableConfig {
         this.dialog.errorReport(row.state.state, `<pre>${row.state.error}</pre>`);
       }
     } else {
-      this.dialog.info(globalHelptext.noLogDialog.title, globalHelptext.noLogDialog.message);
+      this.dialog.warn(globalHelptext.noLogDialog.title, globalHelptext.noLogDialog.message);
     }
   }
 

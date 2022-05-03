@@ -91,8 +91,6 @@ describe('FailoverComponent', () => {
     expect(spectator.inject(DialogService).info).toHaveBeenCalledWith(
       helptextSystemFailover.confirm_dialogs.sync_title,
       helptextSystemFailover.confirm_dialogs.sync_to_message,
-      expect.anything(),
-      expect.anything(),
     );
   });
 
@@ -110,8 +108,6 @@ describe('FailoverComponent', () => {
     expect(spectator.inject(DialogService).info).toHaveBeenCalledWith(
       helptextSystemFailover.confirm_dialogs.sync_title,
       helptextSystemFailover.confirm_dialogs.sync_from_message,
-      expect.anything(),
-      expect.anything(),
     );
   });
 

@@ -416,7 +416,7 @@ export class ChartReleasesComponent implements OnInit {
           }
         });
 
-        this.dialogService.info(helptext.bulkActions.success, this.translate.instant(helptext.bulkActions.finished), '500px', 'info', true);
+        this.dialogService.info(helptext.bulkActions.success, this.translate.instant(helptext.bulkActions.finished));
       }
     } else {
       this.dialogService.errorReport(

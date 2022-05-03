@@ -63,15 +63,20 @@ export class BootPoolAttachFormComponent {
 
     const { dev, expand } = this.form.value;
     this.ws.job('boot.attach', [dev, { expand }]).pipe(untilDestroyed(this)).subscribe((job) => {
-      if (job.state === JobState.Success) {
-        this.isFormLoading = false;
-        this.cdr.markForCheck();
-        this.dialogService.info(helptextSystemBootenv.attach_dialog.title,
-          `<i>${dev}</i> ${helptextSystemBootenv.attach_dialog.message}`, '300px', 'info', true)
-          .pipe(untilDestroyed(this)).subscribe(() => {
-            this.router.navigate(['system', 'boot']);
-          });
+      if (job.state !== JobState.Success) {
+        return;
       }
+
+      this.isFormLoading = false;
+      this.cdr.markForCheck();
+      this.dialogService.info(
+        helptextSystemBootenv.attach_dialog.title,
+        `<i>${dev}</i> ${helptextSystemBootenv.attach_dialog.message}`,
+        true,
+      )
+        .pipe(untilDestroyed(this)).subscribe(() => {
+          this.router.navigate(['system', 'boot']);
+        });
     }, (error) => {
       this.isFormLoading = false;
       this.errorHandler.handleWsFormError(error, this.form);

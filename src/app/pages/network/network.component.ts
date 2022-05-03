@@ -85,7 +85,7 @@ export class NetworkComponent implements OnInit, OnDestroy {
     delete: (row: NetworkInterfaceUi, table: TableComponent) => {
       const deleteAction = row.type === NetworkInterfaceType.Physical ? this.translate.instant('Reset configuration for ') : this.translate.instant('Delete ');
       if (this.isHaEnabled) {
-        this.dialog.info(helptext.ha_enabled_edit_title, helptext.ha_enabled_edit_msg);
+        this.dialog.warn(helptext.ha_enabled_edit_title, helptext.ha_enabled_edit_msg);
       } else {
         this.tableService.delete(table, row, deleteAction);
       }
@@ -396,7 +396,7 @@ export class NetworkComponent implements OnInit, OnDestroy {
         () => {
           this.core.emit({ name: 'NetworkInterfacesChanged', data: { commit: true, checkin: true }, sender: this });
           this.loader.close();
-          this.dialog.info(helptext.checkin_complete_title, helptext.checkin_complete_message, '500px', 'info');
+          this.dialog.info(helptext.checkin_complete_title, helptext.checkin_complete_message);
           this.hasPendingChanges = false;
           this.checkinWaiting = false;
           clearInterval(this.checkinInterval);
@@ -431,7 +431,7 @@ export class NetworkComponent implements OnInit, OnDestroy {
                 this.hasPendingChanges = false;
                 this.checkinWaiting = false;
                 this.loader.close();
-                this.dialog.info(helptext.rollback_changes_title, helptext.changes_rolled_back, '500px', 'info', true);
+                this.dialog.info(helptext.rollback_changes_title, helptext.changes_rolled_back);
               },
               (err) => {
                 this.loader.close();
@@ -614,7 +614,7 @@ export class NetworkComponent implements OnInit, OnDestroy {
                 row.state = ServiceStatus.Running;
                 row.onChanging = false;
               } else {
-                this.dialog.info(
+                this.dialog.warn(
                   this.translate.instant('Service failed to start'),
                   this.translate.instant('OpenVPN {serviceLabel} service failed to start.', {
                     serviceLabel: row.service_label,

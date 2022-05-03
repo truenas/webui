@@ -1428,7 +1428,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
       (res) => {
         this.entityForm.loader.close();
         if (res.valid) {
-          this.dialog.info(this.translate.instant('Valid'), this.translate.instant('The Credential is valid.'), '500px', 'info');
+          this.dialog.info(this.translate.instant('Valid'), this.translate.instant('The Credential is valid.'));
         } else {
           this.dialog.errorReport('Error', res.excerpt, res.error);
         }

@@ -1,10 +1,10 @@
 <h1 mat-dialog-title>
-  <mat-icon class="information-icon">{{icon}}</mat-icon>
+  <mat-icon class="information-icon">{{ icon }}</mat-icon>
   <span [innerHTML]="title | translate"></span>
 </h1>
 <div mat-dialog-content>
   <div *ngIf="!isHtml" class="info-panel">
-    <div class="textarea" readonly matInput>{{info | translate}}</div>
+    <div class="textarea" readonly matInput>{{ info | translate }}</div>
   </div>
   <div *ngIf="isHtml" class="info-panel ip-overflow-auto">
     <span [innerHtml]="info"></span>
@@ -20,5 +20,5 @@
     ix-auto
     ix-auto-type="button"
     ix-auto-identifier="CLOSE"
-  >{{"Close" | translate}}</button>
+  >{{ 'Close' | translate }}</button>
 </div>
