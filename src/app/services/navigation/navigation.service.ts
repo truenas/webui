@@ -68,9 +68,6 @@ export class NavigationService {
           name: 'KMIP',
           state: 'kmip',
           isVisible$: of(this.window.localStorage.getItem('product_type') === ProductType.ScaleEnterprise),
-        }, {
-          name: 'KMIP OLD',
-          state: 'kmip2',
         },
       ],
     },

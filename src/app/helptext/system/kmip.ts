@@ -65,12 +65,12 @@ export const helptextSystemKmip = {
   },
 
   syncInfoDialog: {
-    title: T('Sync Keys'),
-    info: T('Sync ZFS/SED keys between KMIP Server and TN database.'),
+    title: T('Keys Synced'),
+    info: T('ZFS/SED keys synced between KMIP Server and TN database.'),
   },
 
   clearSyncKeyInfoDialog: {
-    title: T('Clear Pending Sync Keys'),
-    info: T('Clear all keys which are pending to be synced between KMIP server and TN database.'),
+    title: T('Pending Sync Keys Cleared'),
+    info: T('Keys pending to be synced between KMIP server and TN database were cleared.'),
   },
 };

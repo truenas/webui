@@ -60,11 +60,9 @@ export class KmipComponent implements OnInit {
     this.isLoading = true;
     this.ws.call('kmip.sync_keys').pipe(untilDestroyed(this)).subscribe(
       () => {
-        // TODO: Weird messages
         this.dialogService.info(
           helptextSystemKmip.syncInfoDialog.title,
           helptextSystemKmip.syncInfoDialog.info,
-          '500px', 'info',
         );
         this.isLoading = false;
         this.cdr.markForCheck();
@@ -84,8 +82,6 @@ export class KmipComponent implements OnInit {
         this.dialogService.info(
           helptextSystemKmip.clearSyncKeyInfoDialog.title,
           helptextSystemKmip.clearSyncKeyInfoDialog.info,
-          '500px',
-          'info',
         );
         this.isLoading = false;
         this.cdr.markForCheck();
@@ -106,7 +102,7 @@ export class KmipComponent implements OnInit {
     dialogRef.componentInstance.setCall('kmip.update', [this.form.value]);
     dialogRef.componentInstance.submit();
     dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
-      this.dialogService.info('KMIP', this.translate.instant('Settings saved.'), '500px', 'info');
+      this.dialogService.info('KMIP', this.translate.instant('Settings saved.'));
       dialogRef.close(true);
     });
   }

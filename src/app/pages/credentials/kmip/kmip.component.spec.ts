@@ -113,7 +113,7 @@ describe('KmipComponent', () => {
       }],
     );
     expect(spectator.inject(DialogService).info).toHaveBeenCalledWith(
-      'KMIP', 'Settings saved.', expect.anything(), expect.anything(),
+      'KMIP', 'Settings saved.',
     );
   });
 
@@ -146,8 +146,6 @@ describe('KmipComponent', () => {
       expect(spectator.inject(DialogService).info).toHaveBeenCalledWith(
         helptextSystemKmip.syncInfoDialog.title,
         helptextSystemKmip.syncInfoDialog.info,
-        expect.anything(),
-        expect.anything(),
       );
     });
 
@@ -159,8 +157,6 @@ describe('KmipComponent', () => {
       expect(spectator.inject(DialogService).info).toHaveBeenCalledWith(
         helptextSystemKmip.clearSyncKeyInfoDialog.title,
         helptextSystemKmip.clearSyncKeyInfoDialog.info,
-        expect.anything(),
-        expect.anything(),
       );
     });
   });
