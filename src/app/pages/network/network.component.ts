@@ -19,6 +19,7 @@ import { StaticRoute } from 'app/interfaces/static-route.interface';
 import { Interval } from 'app/interfaces/timeout.interface';
 import { AppTableAction, AppTableConfig, TableComponent } from 'app/modules/entity/table/table.component';
 import { TableService } from 'app/modules/entity/table/table.service';
+import { EntityUtils } from 'app/modules/entity/utils';
 import { InterfaceFormComponent } from 'app/pages/network/components/interface-form/interface-form.component';
 import { OpenVpnClientConfigComponent } from 'app/pages/network/components/open-vpn-client-config/open-vpn-client-config.component';
 import {
@@ -37,7 +38,6 @@ import { CoreService } from 'app/services/core-service/core.service';
 import { IpmiService } from 'app/services/ipmi.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { ModalService } from 'app/services/modal.service';
-import { EntityUtils } from '../../modules/entity/utils';
 import { IpmiFormComponent } from './components/forms/ipmi-form.component';
 
 @UntilDestroy()

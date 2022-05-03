@@ -1,4 +1,4 @@
-import { ResilverData } from '../resilver-job.interface';
+import { ResilverData } from 'app/interfaces/resilver-job.interface';
 
 export interface ResilveringEvent {
   name: string;

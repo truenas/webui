@@ -3,7 +3,7 @@ import {
 } from '@angular/cdk/testing';
 import { MatCheckboxHarness } from '@angular/material/checkbox/testing';
 import { IxFormControlHarness } from 'app/modules/ix-forms/interfaces/ix-form-control-harness.interface';
-import { getErrorText } from '../../utils/harness.utils';
+import { getErrorText } from 'app/modules/ix-forms/utils/harness.utils';
 
 export interface IxCheckboxListHarnessFilters extends BaseHarnessFilters {
   label?: string;

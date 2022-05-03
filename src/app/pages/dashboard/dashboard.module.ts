@@ -17,6 +17,7 @@ import { CommonDirectivesModule } from 'app/directives/common/common-directives.
 import { CastModule } from 'app/modules/cast/cast.module';
 import { ChartsModule } from 'app/modules/charts/charts.module';
 import { AppCommonModule } from 'app/modules/common/app-common.module';
+import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxDropGridModule } from 'app/modules/ix-drop-grid/ix-drop-grid.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { DashboardFormComponent } from 'app/pages/dashboard/components/dashboard-form/dashboard-form.component';
@@ -34,7 +35,6 @@ import {
 } from 'app/pages/dashboard/components/widget-sys-info/simple-failover-btn.component';
 import { WidgetSysInfoComponent } from 'app/pages/dashboard/components/widget-sys-info/widget-sys-info.component';
 import { WidgetComponent } from 'app/pages/dashboard/components/widget/widget.component';
-import { EntityModule } from '../../modules/entity/entity.module';
 import { routing } from './dashboard.routing';
 
 @NgModule({

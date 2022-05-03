@@ -5,13 +5,13 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { SmartPowerMode } from 'app/enums/smart-power.mode';
+import { SmartConfig } from 'app/interfaces/smart-test.interface';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { DialogService, WebSocketService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { SmartPowerMode } from '../../../../enums/smart-power.mode';
-import { SmartConfig } from '../../../../interfaces/smart-test.interface';
 import { ServiceSmartComponent } from './service-smart.component';
 
 describe('ServiceSmartComponent', () => {
