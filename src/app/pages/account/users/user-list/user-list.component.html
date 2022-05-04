@@ -1,11 +1,12 @@
 <ng-template #pageHeader>
     <page-title-header [title]="title$">
       <button
-        mat-button 
-        type="button" 
-        color="primary"
         (click)="doAdd()"
-      >{{ 'Add' | translate }}</button>
+        [color]="'primary'"
+        mat-button
+      >
+        {{ 'Add' | translate }}
+      </button>
       <mat-slide-toggle 
         (change)="toggleBuiltins()" 
         [checked]="!this.hideBuiltinUsers"

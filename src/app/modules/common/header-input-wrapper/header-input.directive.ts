@@ -3,7 +3,7 @@ import {
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Observable } from 'rxjs';
-import { HeaderInputWrapperComponent } from 'app/modules/common/page-header-actions-wrapper/header-input-wrapper.component';
+import { HeaderInputWrapperComponent } from 'app/modules/common/header-input-wrapper/header-input-wrapper.component';
 
 @UntilDestroy()
 @Directive({

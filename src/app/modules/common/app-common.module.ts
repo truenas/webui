@@ -39,12 +39,12 @@ import { GeneralDialogComponent } from 'app/modules/common/dialog/general-dialog
 import { InfoDialogComponent } from 'app/modules/common/dialog/info-dialog/info-dialog.component';
 import { ResilverProgressDialogComponent } from 'app/modules/common/dialog/resilver-progress/resilver-progress.component';
 import { SelectDialogComponent } from 'app/modules/common/dialog/select-dialog/select-dialog.component';
+import { HeaderInputWrapperComponent } from 'app/modules/common/header-input-wrapper/header-input-wrapper.component';
+import { HeaderInputDirective } from 'app/modules/common/header-input-wrapper/header-input.directive';
 import { AdminLayoutComponent } from 'app/modules/common/layouts/admin-layout/admin-layout.component';
 import { AuthLayoutComponent } from 'app/modules/common/layouts/auth-layout/auth-layout.component';
 import { ModalComponent } from 'app/modules/common/modal/modal.component';
 import { NavigationComponent } from 'app/modules/common/navigation/navigation.component';
-import { HeaderInputWrapperComponent } from 'app/modules/common/page-header-actions-wrapper/header-input-wrapper.component';
-import { HeaderInputDirective } from 'app/modules/common/page-header-actions-wrapper/header-input.directive';
 import { PageTitleHeaderComponent } from 'app/modules/common/page-title-header/page-title-header.component';
 import { PageTitleComponent } from 'app/modules/common/page-title/page-title.component';
 import { SecondaryMenuComponent } from 'app/modules/common/secondary-menu/secondary-menu.component';

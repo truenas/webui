@@ -12,3 +12,9 @@
 .mat-card {
   overflow: hidden;
 }
+
+button:focus-visible {
+  background: var(--focus-bg);
+  box-shadow: 0 0 0 1px var(--focus-brd) inset !important;
+  outline-width: 0;
+}
