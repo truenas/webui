@@ -103,7 +103,7 @@ describe('SmbAclComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith([13, {
+    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('smb.sharesec.update', [13, {
       share_acl: [
         { ae_perm: SmbSharesecPermission.Read, ae_type: SmbSharesecType.Allowed, ae_who_sid: 'S-1-1-0' },
         { ae_perm: SmbSharesecPermission.Full, ae_type: SmbSharesecType.Denied, ae_who_sid: 'S-1-1-1' },
