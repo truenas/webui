@@ -23,6 +23,7 @@ import { Wizard } from 'app/pages/common/entity/entity-form/models/wizard.interf
 import { forbiddenValues } from 'app/pages/common/entity/entity-form/validators/forbidden-values-validation';
 import { EntityWizardComponent } from 'app/pages/common/entity/entity-wizard/entity-wizard.component';
 import { EntityUtils } from 'app/pages/common/entity/utils';
+import { IxFormatterService } from 'app/pages/common/ix-forms/services/ix-formatter.service';
 import { StorageService, WebSocketService } from 'app/services';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { DialogService } from 'app/services/dialog.service';
@@ -59,7 +60,7 @@ export class ZvolWizardComponent implements WizardConfiguration {
   volid: string;
   customFilter: QueryParams<Dataset> = [];
   protected entityWizard: EntityWizardComponent;
-  minimumRecommendedZvolVolblocksize: keyof ZvolWizardComponent['reverseZvolBlockSizeMap'];
+  minimumRecommendedZvolVolblocksize: string;
   namesInUse: string[] = [];
   title: string;
   isLinear = true;
@@ -81,28 +82,6 @@ export class ZvolWizardComponent implements WizardConfiguration {
       function: () => { this.isBasicMode = !this.isBasicMode; },
     },
   ];
-
-  protected byteMap = {
-    T: 1099511627776,
-    G: 1073741824,
-    M: 1048576,
-    K: 1024,
-  };
-  protected reverseZvolBlockSizeMap = {
-    512: '512',
-    '1K': '1024',
-    '2K': '2048',
-    '4K': '4096',
-    '8K': '8192',
-    '16K': '16384',
-    '32K': '32768',
-    '64K': '65536',
-    '128K': '131072',
-    '256K': '262144',
-    '512K': '524288',
-    '1024K': '1048576',
-    '1M': '1048576',
-  };
 
   wizardConfig: Wizard[] = [
     {
@@ -306,6 +285,7 @@ export class ZvolWizardComponent implements WizardConfiguration {
     protected storageService: StorageService,
     private translate: TranslateService,
     protected modalService: ModalService,
+    private formatter: IxFormatterService,
   ) {}
 
   preInit(entityWizard: EntityWizardComponent): void {
@@ -351,10 +331,9 @@ export class ZvolWizardComponent implements WizardConfiguration {
         this.title = helptext.zvol_title_add;
 
         const root = this.parent.split('/')[0];
-        this.ws.call('pool.dataset.recommended_zvol_blocksize', [root]).pipe(untilDestroyed(this)).subscribe((res) => {
-          zvolEntityForm.controls['volblocksize'].setValue(res);
-          // TODO: Check if actual server response matches map
-          this.minimumRecommendedZvolVolblocksize = res as any;
+        this.ws.call('pool.dataset.recommended_zvol_blocksize', [root]).pipe(untilDestroyed(this)).subscribe((recommendedSize) => {
+          zvolEntityForm.controls['volblocksize'].setValue(recommendedSize);
+          this.minimumRecommendedZvolVolblocksize = recommendedSize;
         });
       } else {
         let parentDataset: string | string[] = pkDataset[0].name.split('/');
@@ -484,17 +463,17 @@ export class ZvolWizardComponent implements WizardConfiguration {
     zvolEntityForm.controls['sparse'].valueChanges.pipe(untilDestroyed(this)).subscribe((sparse) => {
       this.summary[this.translate.instant('Sparse')] = sparse;
     });
-    zvolEntityForm.controls['volblocksize'].valueChanges.pipe(untilDestroyed(this)).subscribe((res: keyof ZvolWizardComponent['reverseZvolBlockSizeMap']) => {
-      const resNumber = parseInt(this.reverseZvolBlockSizeMap[res], 10);
-      if (this.minimumRecommendedZvolVolblocksize) {
-        const recommendedSize = parseInt(this.reverseZvolBlockSizeMap[this.minimumRecommendedZvolVolblocksize], 0);
-        if (resNumber < recommendedSize) {
-          this.wizardConfig[1].fieldConfig.find((c) => c.name === 'volblocksize').warnings = `${this.translate.instant(helptext.blocksize_warning.a)} ${this.minimumRecommendedZvolVolblocksize}. ${this.translate.instant(helptext.blocksize_warning.b)}`;
-        } else {
-          this.wizardConfig[1].fieldConfig.find((c) => c.name === 'volblocksize').warnings = null;
-        }
+    const volBlockSizeField = this.wizardConfig[1].fieldConfig.find((config) => config.name === 'volblocksize') as FormSelectConfig;
+    zvolEntityForm.controls['volblocksize'].valueChanges.pipe(untilDestroyed(this)).subscribe((recordSize) => {
+      const currentSize = this.formatter.convertHumanStringToNum(recordSize);
+      const minimumRecommendedSize = this.formatter.convertHumanStringToNum(this.minimumRecommendedZvolVolblocksize);
+      if (!currentSize || !minimumRecommendedSize || currentSize >= minimumRecommendedSize) {
+        volBlockSizeField.warnings = null;
+        return;
       }
-      this.summary[this.translate.instant('Block Size')] = res;
+      const warnings = `${this.translate.instant(helptext.blocksize_warning.a)} ${this.minimumRecommendedZvolVolblocksize}. ${this.translate.instant(helptext.blocksize_warning.b)}`;
+      this.wizardConfig[1].fieldConfig.find((config) => config.name === 'volblocksize').warnings = warnings;
+      this.summary[this.translate.instant('Block Size')] = recordSize;
     });
   }
 
