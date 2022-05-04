@@ -1,5 +1,7 @@
 import { Validators } from '@angular/forms';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
+import { ticketCategoryLabels, ticketCriticalityLabels, ticketEnvironmentLabels } from 'app/enums/file-ticket.enum';
+import { mapToOptions } from 'app/helpers/options.helper';
 
 export const helptextSystemSupport = {
   proactive: {
@@ -43,19 +45,14 @@ export const helptextSystemSupport = {
   },
 
   name: {
-    placeholder: T('Name'),
     tooltip: T('Enter the name of the contact person.'),
-    validation: [Validators.required],
   },
 
   email: {
-    placeholder: T('Email'),
     tooltip: T('Enter the email of the contact person. Use the format <i>name</i>@<i>domain.com</i>.'),
-    validation: [Validators.required, Validators.email],
   },
 
   cc: {
-    placeholder: T('CC'),
     tooltip: T('Email addresses to receive copies of iXsystems Support \
   messages about this issue. Use the format <i>name</i>@<i>domain.com</i>. \
   Separate entries by pressing <code>Enter</code>.'),
@@ -65,9 +62,7 @@ export const helptextSystemSupport = {
   },
 
   phone: {
-    placeholder: T('Phone'),
     tooltip: T('Enter the phone number of the contact person.'),
-    validation: [Validators.required],
   },
 
   category: {
@@ -78,19 +73,17 @@ export const helptextSystemSupport = {
  Choose the category that best describes the bug or\
  feature being reported.',
     ),
-    validation: [Validators.required],
+    options: mapToOptions(ticketCategoryLabels),
   },
 
   environment: {
-    placeholder: T('Environment'),
     tooltip: T('Select the appropriate environment.'), // DRAFT TOOLTIP
-    validation: [Validators.required],
+    options: mapToOptions(ticketEnvironmentLabels),
   },
 
   criticality: {
-    placeholder: T('Criticality'),
     tooltip: T('Select the appropriate level of criticality.'), // DRAFT TOOLTIP
-    validation: [Validators.required],
+    options: mapToOptions(ticketCriticalityLabels),
   },
 
   attach_debug: {
@@ -106,7 +99,6 @@ export const helptextSystemSupport = {
   title: {
     placeholder: T('Subject'),
     tooltip: T('Enter a descriptive title for the new issue.'),
-    validation: [Validators.required],
   },
 
   body: {
@@ -116,7 +108,6 @@ export const helptextSystemSupport = {
  Describe the problem and provide any steps to\
  replicate the issue.',
     ),
-    validation: [Validators.required],
   },
 
   screenshot: {
@@ -125,8 +116,6 @@ export const helptextSystemSupport = {
   },
 
   update_license: {
-    user_guide_button: T('User Guide'),
-    eula_button: T('EULA'),
     license_placeholder: T('License'),
     reload_dialog_title: T('Reload the page'),
     reload_dialog_message: T('Reload the page for the license to take effect.'),

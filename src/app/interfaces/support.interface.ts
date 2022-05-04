@@ -1,11 +1,11 @@
-import { NewTicketType } from 'app/enums/new-ticket-type.enum';
+import { TicketType } from 'app/enums/file-ticket.enum';
 
 export interface CreateNewTicket {
   attach_debug: boolean;
   body: string;
   category: string;
   title: string;
-  type: NewTicketType;
+  type: TicketType;
   token: string;
 }
 
