@@ -268,7 +268,7 @@ def input_user_name_and_password_click_sign_in(driver, user_name, password):
             time.sleep(1)
         driver.switch_to.window(driver.window_handles[1])
     assert wait_on_element(driver, 15, '//nav[contains(.,"Dropbox")]//span[text()="Dropbox"]')
-    time.sleep(1)
+    time.sleep(2)
 
 
 @then(parsers.parse('click on {folder1} then click on the test folder'))
@@ -283,16 +283,16 @@ def click_on_folder1_then_click_on_the_test_folder(driver, folder1):
     assert wait_on_element(driver, 15, '//span[text()="test"]', 'clickable')
     time.sleep(1)
     driver.find_element_by_xpath('//span[text()="test"]').click()
-    time.sleep(1)
+    time.sleep(1.5)
 
 
 @then('verify all files are in the test folder')
 def verify_all_files_are_in_the_test_folder(driver):
     """verify all files are in the test folder."""
-    assert wait_on_element(driver, 7, '//nav[contains(.,"test")]//span[text()="test"]')
+    assert wait_on_element(driver, 10, '//nav[contains(.,"test")]//span[text()="test"]')
+    assert wait_on_element(driver, 10, '//span[text()="music"]', 'clickable')
     assert wait_on_element(driver, 7, '//span[text()="Explaining_BSD.pdf"]', 'clickable')
     assert wait_on_element(driver, 5, '//span[text()="Gloomy_Forest_wallpaper_ForWallpapercom.jpg"]', 'clickable')
-    assert wait_on_element(driver, 5, '//span[text()="music"]', 'clickable')
     driver.find_element_by_xpath('//span[text()="music"]').click()
     assert wait_on_element(driver, 7, '//nav[contains(.,"music")]//span[text()="music"]')
     assert wait_on_element(driver, 7, '//span[text()="Mr_Smith_Pequeñas_Guitarras.mp3"]', 'clickable')
