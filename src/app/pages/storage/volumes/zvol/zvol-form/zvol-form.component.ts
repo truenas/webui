@@ -98,27 +98,6 @@ export class ZvolFormComponent implements Formconfiguration {
     },
   ];
 
-  protected byteMap: Object = {
-    T: 1099511627776,
-    G: 1073741824,
-    M: 1048576,
-    K: 1024,
-  };
-  protected reverseZvolBlockSizeMap: Object = {
-    512: '512',
-    '1K': '1024',
-    '2K': '2048',
-    '4K': '4096',
-    '8K': '8192',
-    '16K': '16384',
-    '32K': '32768',
-    '64K': '65536',
-    '128K': '131072',
-    '256K': '262144',
-    '512K': '524288',
-    '1024K': '1048576',
-    '1M': '1048576',
-  };
   fieldConfig: FieldConfig[];
 
   fieldSets: FieldSet[] = [
@@ -255,14 +234,7 @@ export class ZvolFormComponent implements Formconfiguration {
           name: 'volblocksize',
           placeholder: helptext.zvol_volblocksize_placeholder,
           tooltip: helptext.zvol_volblocksize_tooltip,
-          options: [
-            { label: '4 KiB', value: '4K' },
-            { label: '8 KiB', value: '8K' },
-            { label: '16 KiB', value: '16K' },
-            { label: '32 KiB', value: '32K' },
-            { label: '64 KiB', value: '64K' },
-            { label: '128 KiB', value: '128K' },
-          ],
+          options: [],
           isHidden: false,
         },
         {
@@ -754,20 +726,25 @@ export class ZvolFormComponent implements Formconfiguration {
       this.entityForm.setDisabled('dedup_warning', false, false);
     }
 
-    this.entityForm.formGroup.controls['volblocksize'].valueChanges.subscribe((res) => {
-      const res_number = parseInt(this.reverseZvolBlockSizeMap[res], 10);
-      if (this.minimum_recommended_zvol_volblocksize) {
-        const recommended_size_number = parseInt(this.reverseZvolBlockSizeMap[this.minimum_recommended_zvol_volblocksize], 0);
-        if (res_number < recommended_size_number) {
-          this.translate.get(helptext.blocksize_warning.a).subscribe((blockMsgA) => (
-            this.translate.get(helptext.blocksize_warning.b).subscribe((blockMsgB) => {
-              _.find(this.fieldConfig, { name: 'volblocksize' }).warnings = `${blockMsgA} ${this.minimum_recommended_zvol_volblocksize}. ${blockMsgB}`;
-            })
-          ));
-        } else {
-          _.find(this.fieldConfig, { name: 'volblocksize' }).warnings = null;
-        }
+    const volBlockSizeField = _.find(this.fieldConfig, { name: 'volblocksize' });
+    this.ws.call('pool.dataset.recordsize_choices').subscribe((recordSizes) => {
+      volBlockSizeField.options = recordSizes.map((recordSize) => ({
+        label: recordSize,
+        value: recordSize,
+      }));
+    });
+
+    this.entityForm.formGroup.controls['volblocksize'].valueChanges.subscribe((blockSize) => {
+      const currentSize = this.storageService.convertHumanStringWithBytesToNum(blockSize);
+      const minimumRecommendedSize = this.storageService.convertHumanStringWithBytesToNum(this.minimum_recommended_zvol_volblocksize);
+      if (!currentSize || !minimumRecommendedSize || currentSize >= minimumRecommendedSize) {
+        volBlockSizeField.warnings = null;
+        return;
       }
+
+      const blockMsgA = this.translate.instant(helptext.blocksize_warning.a);
+      const blockMsgB = this.translate.instant(helptext.blocksize_warning.b);
+      volBlockSizeField.warnings = `${blockMsgA} ${this.minimum_recommended_zvol_volblocksize}. ${blockMsgB}`;
     });
   }
 

@@ -401,4 +401,17 @@ export class StorageService {
     }
     return `${Math.max(bytes, 0.1).toFixed(dec)} ${units}`;
   }
+
+  /**
+   * Same as convertHumanStringToNum, but also supports byte values, e.g. 512B.
+   * TODO: It's a hacky workaround. Do not use.
+   * @deprecated
+   */
+  convertHumanStringWithBytesToNum(hstr: string): number {
+    if (hstr && hstr.match(/\d+B/)) {
+      return parseInt(hstr.substring(0, hstr.length - 1));
+    }
+
+    return this.convertHumanStringToNum(hstr);
+  }
 }

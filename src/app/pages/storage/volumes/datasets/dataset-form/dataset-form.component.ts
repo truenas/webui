@@ -74,7 +74,6 @@ export class DatasetFormComponent implements Formconfiguration {
   minimum_recommended_dataset_recordsize = '128K';
   protected recordsize_field: any;
   protected recordsize_fg: any;
-  protected recommended_size_number: any;
   protected recordsize_warning: any;
   protected dedup_warned = false;
   protected dedup_value: any;
@@ -626,26 +625,7 @@ export class DatasetFormComponent implements Formconfiguration {
           name: 'recordsize',
           placeholder: helptext.dataset_form_recordsize_placeholder,
           tooltip: helptext.dataset_form_recordsize_tooltip,
-          options: [
-            {
-              label: '512', value: '512', disable: true, hiddenFromDisplay: true,
-            },
-            {
-              label: '1 KiB', value: '1K', disable: true, hiddenFromDisplay: true,
-            },
-            {
-              label: '2 KiB', value: '2K', disable: true, hiddenFromDisplay: true,
-            },
-            { label: '4 KiB', value: '4K' },
-            { label: '8 KiB', value: '8K' },
-            { label: '16 KiB', value: '16K' },
-            { label: '32 KiB', value: '32K' },
-            { label: '64 KiB', value: '64K' },
-            { label: '128 KiB', value: '128K' },
-            { label: '256 KiB', value: '256K' },
-            { label: '512 KiB', value: '512K' },
-            { label: '1 MiB', value: '1M' },
-          ],
+          options: [],
         },
         {
           type: 'select',
@@ -751,43 +731,6 @@ export class DatasetFormComponent implements Formconfiguration {
     'confirm_passphrase',
     'pbkdf2iters',
   ];
-
-  protected byteMap: Object = {
-    T: 1099511627776,
-    G: 1073741824,
-    M: 1048576,
-    K: 1024,
-    B: 1,
-  };
-  protected recordSizeMap: Object = {
-    512: '512',
-    1024: '1K',
-    2048: '2K',
-    4096: '4K',
-    8192: '8K',
-    16384: '16K',
-    32768: '32K',
-    65536: '64K',
-    131072: '128K',
-    262144: '256K',
-    524288: '512K',
-    1048576: '1024K',
-  };
-  protected reverseRecordSizeMap: Object = {
-    512: '512',
-    '1K': '1024',
-    '2K': '2048',
-    '4K': '4096',
-    '8K': '8192',
-    '16K': '16384',
-    '32K': '32768',
-    '64K': '65536',
-    '128K': '131072',
-    '256K': '262144',
-    '512K': '524288',
-    '1024K': '1048576',
-    '1M': '1048576',
-  };
 
   setBasicMode(basic_mode) {
     this.isBasicMode = basic_mode;
@@ -1025,21 +968,29 @@ export class DatasetFormComponent implements Formconfiguration {
     });
 
     this.recordsize_fg = this.entityForm.formGroup.controls['recordsize'];
-
     this.recordsize_field = _.find(this.fieldConfig, { name: 'recordsize' });
-    this.recordsize_fg.valueChanges.subscribe((record_size) => {
-      const record_size_number = parseInt(this.reverseRecordSizeMap[record_size], 10);
-      if (this.minimum_recommended_dataset_recordsize && this.recommended_size_number) {
-        this.recordsize_warning = helptext.dataset_form_warning_1
-          + this.minimum_recommended_dataset_recordsize
-          + helptext.dataset_form_warning_2;
-        if (record_size_number < this.recommended_size_number) {
-          this.recordsize_field.warnings = this.recordsize_warning;
-          this.isBasicMode = false;
-        } else {
-          this.recordsize_field.warnings = null;
-        }
+
+    this.ws.call('pool.dataset.recordsize_choices').subscribe((recordSizes) => {
+      this.recordsize_field.options = recordSizes.map((recordSize) => ({
+        label: recordSize,
+        value: recordSize,
+      }));
+    });
+
+    this.recordsize_fg.valueChanges.subscribe((recordSize) => {
+      const currentSize = this.storageService.convertHumanStringWithBytesToNum(recordSize);
+      const minimumRecommendedSize = this.storageService.convertHumanStringWithBytesToNum(this.minimum_recommended_dataset_recordsize);
+      if (!currentSize || !minimumRecommendedSize || currentSize >= minimumRecommendedSize) {
+        this.recordsize_field.warnings = null;
+        return;
       }
+
+      this.recordsize_warning = helptext.dataset_form_warning_1
+        + this.minimum_recommended_dataset_recordsize
+        + helptext.dataset_form_warning_2;
+
+      this.recordsize_field.warnings = this.recordsize_warning;
+      this.isBasicMode = false;
     });
     this.setBasicMode(this.isBasicMode);
   }
@@ -1083,7 +1034,6 @@ export class DatasetFormComponent implements Formconfiguration {
       const root = this.parent.split('/')[0];
       this.ws.call('pool.dataset.recommended_zvol_blocksize', [root]).subscribe((res) => {
         this.minimum_recommended_dataset_recordsize = res;
-        this.recommended_size_number = parseInt(this.reverseRecordSizeMap[this.minimum_recommended_dataset_recordsize], 0);
       });
       combineLatest(this.ws.call('pool.query', [[['name', '=', root]]]), this.ws.call('pool.dataset.query', [[['id', '=', this.pk]]])).subscribe(
         ([pk_pool, pk_dataset]) => {
@@ -1510,9 +1460,6 @@ export class DatasetFormComponent implements Formconfiguration {
       delete data.refquota_critical;
     }
 
-    if (data.recordsize === '1M') {
-      data.recordsize = '1024K';
-    }
     return this.ws.call('pool.dataset.update', [this.pk, data]);
   }
 
@@ -1559,9 +1506,6 @@ export class DatasetFormComponent implements Formconfiguration {
     }
     if (data.checksum === 'INHERIT') {
       delete data.checksum;
-    }
-    if (data.recordsize === '1M') {
-      data.recordsize = '1024K';
     }
     // encryption values
     if (data.encryption) {
