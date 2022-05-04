@@ -234,7 +234,14 @@ export class ZvolFormComponent implements Formconfiguration {
           name: 'volblocksize',
           placeholder: helptext.zvol_volblocksize_placeholder,
           tooltip: helptext.zvol_volblocksize_tooltip,
-          options: [],
+          options: [
+            { label: '4 KiB', value: '4K' },
+            { label: '8 KiB', value: '8K' },
+            { label: '16 KiB', value: '16K' },
+            { label: '32 KiB', value: '32K' },
+            { label: '64 KiB', value: '64K' },
+            { label: '128 KiB', value: '128K' },
+          ],
           isHidden: false,
         },
         {
@@ -727,13 +734,6 @@ export class ZvolFormComponent implements Formconfiguration {
     }
 
     const volBlockSizeField = _.find(this.fieldConfig, { name: 'volblocksize' });
-    this.ws.call('pool.dataset.recordsize_choices').subscribe((recordSizes) => {
-      volBlockSizeField.options = recordSizes.map((recordSize) => ({
-        label: recordSize,
-        value: recordSize,
-      }));
-    });
-
     this.entityForm.formGroup.controls['volblocksize'].valueChanges.subscribe((blockSize) => {
       const currentSize = this.storageService.convertHumanStringWithBytesToNum(blockSize);
       const minimumRecommendedSize = this.storageService.convertHumanStringWithBytesToNum(this.minimum_recommended_zvol_volblocksize);
