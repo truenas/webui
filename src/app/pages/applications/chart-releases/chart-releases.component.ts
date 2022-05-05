@@ -384,9 +384,7 @@ export class ChartReleasesComponent implements OnInit {
         form.setTitle(catalogApp.chart_metadata.name);
       }
       if (res.length) {
-        form.setTitle(res[0].name);
-        form.setChartConfig(res[0].config);
-        form.parseChartSchema(res[0].chart_schema);
+        form.setChartEdit(res[0]);
       }
     });
   }

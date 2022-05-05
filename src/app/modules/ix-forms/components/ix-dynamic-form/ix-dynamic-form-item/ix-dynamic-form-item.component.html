@@ -1,6 +1,7 @@
 
-<ng-container [ngSwitch]="dynamicSchema.type" [formGroup]="dynamicForm">
+<div [ngSwitch]="dynamicSchema.type" [formGroup]="dynamicForm" [class.indent]="dynamicSchema.indent">
   <ng-container *ngSwitchCase="'dict'">
+    <div *ngIf="!isHide && !dynamicSchema.hidden">{{dynamicSchema.title}}</div>
     <ix-dynamic-form-item
       *ngFor="let attr of dynamicSchema.attrs"
       [dynamicSchema]="attr"
@@ -50,6 +51,7 @@
     [formControlName]="dynamicSchema.controlName"
     [label]="dynamicSchema.title | translate"
     [options]="dynamicSchema.options"
+    [tooltip]="dynamicSchema.tooltip | translate"
     [required]="dynamicSchema.required"
     [fxHide]="isHide || dynamicSchema.hidden"
     [class.disabled]="dynamicSchema.editable === false"
@@ -58,6 +60,7 @@
     *ngSwitchCase="'explorer'"
     [formControlName]="dynamicSchema.controlName"
     [label]="dynamicSchema.title | translate"
+    [tooltip]="dynamicSchema.tooltip | translate"
     [required]="dynamicSchema.required"
     [nodeProvider]="dynamicSchema.nodeProvider"
     [fxHide]="isHide || dynamicSchema.hidden"
@@ -67,8 +70,9 @@
     *ngSwitchCase="'checkbox'"
     [formControlName]="dynamicSchema.controlName"
     [label]="dynamicSchema.title | translate"
+    [tooltip]="dynamicSchema.tooltip | translate"
     [required]="dynamicSchema.required"
     [fxHide]="isHide || dynamicSchema.hidden"
     [class.disabled]="dynamicSchema.editable === false"
   ></ix-checkbox>
-</ng-container>
+</div>

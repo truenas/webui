@@ -25,7 +25,7 @@ import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.com
 import { EntityUtils } from 'app/modules/entity/utils';
 import { ApplicationTab } from 'app/pages/applications/application-tab.enum';
 import { ApplicationToolbarControl } from 'app/pages/applications/application-toolbar-control.enum';
-import { ChartWizardComponent } from 'app/pages/applications/forms/chart-wizard/chart-wizard.component';
+import { ChartFormComponent } from 'app/pages/applications/forms/chart-form/chart-form.component';
 import { KubernetesSettingsComponent } from 'app/pages/applications/kubernetes-settings/kubernetes-settings.component';
 import { DialogService, WebSocketService } from 'app/services/index';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
@@ -357,8 +357,8 @@ export class CatalogComponent implements OnInit {
         };
         catalogAppInfo.schema = catalogApp.versions[catalogApp.latest_version].schema;
 
-        const chartWizard = this.slideInService.open(ChartWizardComponent);
-        chartWizard.setCatalogApp(catalogAppInfo);
+        const chartWizard = this.slideInService.open(ChartFormComponent);
+        chartWizard.setChartCreate(catalogAppInfo);
       }
     });
   }

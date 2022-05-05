@@ -5,13 +5,16 @@ import {
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { of } from 'rxjs';
+import { ixChartApp } from 'app/constants/catalog.constants';
 import helptext from 'app/helptext/apps/apps';
-import { ChartSchema, ChartSchemaNode } from 'app/interfaces/chart-release.interface';
+import { CatalogApp } from 'app/interfaces/catalog.interface';
+import { ChartRelease, ChartReleaseCreate, ChartSchemaNode } from 'app/interfaces/chart-release.interface';
 import {
   AddListItemEmitter, DeleteListItemEmitter, DynamicFormSchema, DynamicFormSchemaNode,
 } from 'app/interfaces/dynamic-form-schema.interface';
 import { Relation } from 'app/modules/entity/entity-form/models/field-relation.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
+import { EntityUtils } from 'app/modules/entity/utils';
 import { DialogService } from 'app/services';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
@@ -25,14 +28,15 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
 export class ChartFormComponent {
   title: string;
   config: any;
-  name: string;
+  catalogApp: CatalogApp;
+  selectedVersionKey: string;
+
   isLoading = false;
+  isNew = true;
   dynamicSection: DynamicFormSchema[] = [];
   dialogRef: MatDialogRef<EntityJobComponent>;
 
-  form = this.formBuilder.group({
-    release_name: ['', Validators.required],
-  });
+  form = this.formBuilder.group({});
 
   readonly helptext = helptext;
 
@@ -48,12 +52,12 @@ export class ChartFormComponent {
     this.title = title;
   }
 
-  setChartConfig(config: { [key: string]: any }): void {
-    this.config = config;
-  }
+  setChartEdit(chart: ChartRelease): void {
+    this.isNew = false;
+    this.title = chart.name;
+    this.config = chart.config;
 
-  parseChartSchema(chartSchema: ChartSchema): void {
-    this.form.controls.release_name.setValue(this.title);
+    this.form.addControl('release_name', new FormControl(this.title, [Validators.required]));
 
     this.dynamicSection.push({
       name: 'Application name',
@@ -69,17 +73,75 @@ export class ChartFormComponent {
       ],
     });
 
-    chartSchema.schema.groups.forEach((group) => {
+    chart.chart_schema.schema.groups.forEach((group) => {
       this.dynamicSection.push({ ...group, schema: [] });
     });
     try {
-      chartSchema.schema.questions.forEach((question) => {
+      chart.chart_schema.schema.questions.forEach((question) => {
         if (this.dynamicSection.find((schema) => schema.name === question.group)) {
           this.addFormControls(question, this.form);
           this.addFormSchema(question, question.group);
         }
       });
       this.form.patchValue(this.config);
+    } catch (error: unknown) {
+      console.error(error);
+      this.dialogService.errorReport(helptext.chartForm.parseError.title, helptext.chartForm.parseError.message);
+    }
+  }
+
+  setChartCreate(chart: CatalogApp): void {
+    this.catalogApp = chart;
+    this.title = this.catalogApp.name;
+    let hideVersion = false;
+    if (this.catalogApp.name === ixChartApp) {
+      this.title = helptext.launch;
+      hideVersion = true;
+    }
+    const versionKeys: string[] = [];
+    Object.keys(this.catalogApp.versions).forEach((versionKey) => {
+      if (this.catalogApp.versions[versionKey].healthy) {
+        versionKeys.push(versionKey);
+      }
+    });
+
+    if (!this.selectedVersionKey) {
+      this.selectedVersionKey = versionKeys[0];
+    }
+
+    this.form.addControl('release_name', new FormControl('', [Validators.required]));
+    this.form.addControl('version', new FormControl(this.selectedVersionKey, [Validators.required]));
+
+    this.dynamicSection.push({
+      name: 'Application name',
+      description: '',
+      schema: [
+        {
+          controlName: 'release_name',
+          type: 'input',
+          title: helptext.chartForm.release_name.placeholder,
+          required: true,
+        },
+        {
+          controlName: 'version',
+          type: 'select',
+          title: helptext.chartWizard.nameGroup.version,
+          required: true,
+          options: of(versionKeys.map((option) => ({ value: option, label: option }))),
+          hidden: hideVersion,
+        },
+      ],
+    });
+    chart.schema.groups.forEach((group) => {
+      this.dynamicSection.push({ ...group, schema: [] });
+    });
+    try {
+      chart.schema.questions.forEach((question) => {
+        if (this.dynamicSection.find((schema) => schema.name === question.group)) {
+          this.addFormControls(question, this.form);
+          this.addFormSchema(question, question.group);
+        }
+      });
     } catch (error: unknown) {
       console.error(error);
       this.dialogService.errorReport(helptext.chartForm.parseError.title, helptext.chartForm.parseError.message);
@@ -131,6 +193,9 @@ export class ChartFormComponent {
         }));
         relations.forEach((relation) => {
           if (formGroup.controls[relation.fieldName]) {
+            if (formGroup.controls[relation.fieldName].value !== relation.operatorValue) {
+              formGroup.controls[chartSchemaNode.variable].disable();
+            }
             formGroup.controls[relation.fieldName].valueChanges
               .pipe(untilDestroyed(this))
               .subscribe((value) => {
@@ -153,30 +218,32 @@ export class ChartFormComponent {
     } else if (schema.type === 'list') {
       formGroup.addControl(chartSchemaNode.variable, new FormArray([]));
 
-      let items: ChartSchemaNode[] = [];
-      chartSchemaNode.schema.items.forEach((item) => {
-        if (item.schema.attrs) {
-          item.schema.attrs.forEach((attr) => {
-            items = items.concat(attr);
-          });
-        } else {
-          items = items.concat(item);
+      if (!this.isNew) {
+        let items: ChartSchemaNode[] = [];
+        chartSchemaNode.schema.items.forEach((item) => {
+          if (item.schema.attrs) {
+            item.schema.attrs.forEach((attr) => {
+              items = items.concat(attr);
+            });
+          } else {
+            items = items.concat(item);
+          }
+        });
+
+        const configControlPath = this.getControlPath(formGroup.controls[chartSchemaNode.variable], '').split('.');
+        let nextItem: any = this.config;
+        for (const path of configControlPath) {
+          nextItem = nextItem[path];
         }
-      });
 
-      const configControlPath = this.getControlPath(formGroup.controls[chartSchemaNode.variable], '').split('.');
-      let nextItem: any = this.config;
-      for (const path of configControlPath) {
-        nextItem = nextItem[path];
-      }
-
-      if (Array.isArray(nextItem)) {
-        // eslint-disable-next-line unused-imports/no-unused-vars
-        for (const _ of nextItem) {
-          this.addFormListItem({
-            array: formGroup.controls[chartSchemaNode.variable] as FormArray,
-            schema: items,
-          });
+        if (Array.isArray(nextItem)) {
+          // eslint-disable-next-line unused-imports/no-unused-vars
+          for (const _ of nextItem) {
+            this.addFormListItem({
+              array: formGroup.controls[chartSchemaNode.variable] as FormArray,
+              schema: items,
+            });
+          }
         }
       }
     }
@@ -202,6 +269,7 @@ export class ChartFormComponent {
             title: chartSchemaNode.label,
             required: beforSchema.required,
             hidden: beforSchema.hidden,
+            tooltip: chartSchemaNode.description,
             editable: beforSchema.editable,
             private: beforSchema.private,
           });
@@ -216,9 +284,10 @@ export class ChartFormComponent {
                 value: option.value,
                 label: option.description,
               }))),
-              required: beforSchema.required,
+              required: true,
               hidden: beforSchema.hidden,
               editable: beforSchema.editable,
+              tooltip: chartSchemaNode.description,
             });
           } else {
             afterSchemas.push({
@@ -228,6 +297,7 @@ export class ChartFormComponent {
               required: beforSchema.required,
               hidden: beforSchema.hidden,
               editable: beforSchema.editable,
+              tooltip: chartSchemaNode.description,
               private: beforSchema.private,
             });
           }
@@ -240,6 +310,7 @@ export class ChartFormComponent {
             required: beforSchema.required,
             hidden: beforSchema.hidden,
             editable: beforSchema.editable,
+            tooltip: chartSchemaNode.description,
           });
           break;
         case 'hostpath':
@@ -251,6 +322,7 @@ export class ChartFormComponent {
             required: beforSchema.required,
             hidden: beforSchema.hidden,
             editable: beforSchema.editable,
+            tooltip: chartSchemaNode.description,
           });
           break;
         case 'boolean':
@@ -261,12 +333,15 @@ export class ChartFormComponent {
             required: beforSchema.required,
             hidden: beforSchema.hidden,
             editable: beforSchema.editable,
+            tooltip: chartSchemaNode.description,
           });
           break;
       }
       if (beforSchema.subquestions) {
         beforSchema.subquestions.forEach((subquestion) => {
-          afterSchemas = afterSchemas.concat(this.transformSchemaNode(subquestion));
+          const objs = this.transformSchemaNode(subquestion);
+          objs.forEach((obj) => obj.indent = true);
+          afterSchemas = afterSchemas.concat(objs);
         });
       }
     } else if (beforSchema.type === 'dict') {
@@ -277,6 +352,7 @@ export class ChartFormComponent {
       afterSchemas.push({
         controlName: chartSchemaNode.variable,
         type: 'dict',
+        title: chartSchemaNode.label,
         attrs,
         hidden: beforSchema.hidden,
         editable: beforSchema.editable,
@@ -350,25 +426,40 @@ export class ChartFormComponent {
   }
 
   onSubmit(): void {
-    const payload: any[] = [];
     const data = this.form.value;
-    delete data.release_name;
-    payload.push({
-      values: data,
-    });
-
-    payload.unshift(this.title);
-
     this.dialogRef = this.mdDialog.open(EntityJobComponent, {
       data: {
-        title: helptext.updating,
+        title: this.isNew ? helptext.installing : helptext.updating,
       },
     });
-    this.dialogRef.componentInstance.setCall('chart.release.update', payload);
+
+    if (this.isNew) {
+      delete data.version;
+      this.dialogRef.componentInstance.setCall('chart.release.create', [{
+        catalog: this.catalogApp.catalog.id,
+        item: this.catalogApp.name,
+        release_name: data.release_name,
+        train: this.catalogApp.catalog.train,
+        version: this.selectedVersionKey,
+        values: data,
+      } as ChartReleaseCreate]);
+    } else {
+      delete data.release_name;
+      this.dialogRef.componentInstance.setCall('chart.release.update', [this.title, { values: data }]);
+    }
+
     this.dialogRef.componentInstance.submit();
     this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
       this.dialogService.closeAllDialogs();
       this.slideInService.close();
+    });
+
+    this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((res) => {
+      if (res.exc_info && res.exc_info.extra) {
+        new EntityUtils().handleWsError(this, res);
+      } else {
+        this.dialogService.errorReport('Error', res.error, res.exception);
+      }
     });
   }
 }

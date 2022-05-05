@@ -23,27 +23,31 @@ export interface DynamicFormSchemaBase {
   required?: boolean;
   hidden?: boolean;
   editable?: boolean;
+  indent?: boolean;
 }
 
 export interface DynamicFormSchemaInput extends DynamicFormSchemaBase {
   type: 'input';
+  tooltip?: string;
   private?: boolean;
   placeholder?: string;
-  tooltip?: string;
 }
 
 export interface DynamicFormSchemaSelect extends DynamicFormSchemaBase {
   type: 'select';
+  tooltip?: string;
   options?: Observable<Option[]>;
 }
 
 export interface DynamicFormSchemaExplorer extends DynamicFormSchemaBase {
   type: 'explorer';
+  tooltip?: string;
   nodeProvider?: TreeNodeProvider;
 }
 
 export interface DynamicFormSchemaCheckbox extends DynamicFormSchemaBase {
   type: 'checkbox';
+  tooltip?: string;
 }
 
 export interface DynamicFormSchemaList extends DynamicFormSchemaBase {
