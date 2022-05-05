@@ -362,7 +362,7 @@ def verify_all_files_are_moved_from_the_dropbox_test_folder_to_the_dataset(drive
     time.sleep(0.5)
     driver.refresh()
     time.sleep(1)
-    assert wait_on_element(driver, 5, '//nav[contains(.,"test")]//span[text()="test"]')
+    assert wait_on_element(driver, 7, '//nav[contains(.,"test")]//span[text()="test"]')
     assert wait_on_element(driver, 7, '//span[text()="music"]')
     assert not is_element_present(driver, '//span[text()="Explaining_BSD.pdf"]')
     assert not is_element_present(driver, '//span[text()="Gloomy_Forest_wallpaper_ForWallpapercom.jpg"]')

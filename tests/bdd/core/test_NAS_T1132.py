@@ -341,7 +341,7 @@ def verify_all_files_are_moved_from_the_box_test_folder_to_the_dataset(driver, n
     time.sleep(1)
     driver.refresh()
     time.sleep(1)
-    assert wait_on_element(driver, 5, '//h1[text()="test"]')
+    assert wait_on_element(driver, 7, '//h1[text()="test"]')
     assert wait_on_element(driver, 5, '//a[text()="music"]', 'clickable')
     assert wait_on_element_disappear(driver, 10, '//a[text()="Explaining_BSD.pdf"]')
     assert not is_element_present(driver, '//a[text()="Explaining_BSD.pdf"]')

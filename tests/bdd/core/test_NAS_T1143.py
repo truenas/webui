@@ -376,7 +376,7 @@ def verify_all_files_are_moved_from_the_backblaze_b2_test_folder_to_the_dataset(
     assert wait_on_element(driver, 5, '//a[@id="refreshButtonId"]', 'clickable')
     driver.find_element_by_xpath('//a[@id="refreshButtonId"]').click()
     time.sleep(1)
-    assert wait_on_element(driver, 5, f'//a[text()="{my_bucket}"]', 'clickable')
+    assert wait_on_element(driver, 7, f'//a[text()="{my_bucket}"]', 'clickable')
     assert wait_on_element(driver, 5, '//span[contains(text(),"music")]', 'clickable')
     assert wait_on_element(driver, 5, '//div[@class="b2-browse-name" and contains(.,"Explaining_BSD.pdf (2) *")]')
     assert wait_on_element(driver, 5, '//div[@class="b2-browse-name" and contains(.,"Gloomy_Forest_wallpaper_ForWallpapercom.jpg (2) *")]')
