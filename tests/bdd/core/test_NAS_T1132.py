@@ -462,6 +462,7 @@ def on_the_box_test_folder_tab_delete_one_file(driver):
     action.context_click().perform()
     assert wait_on_element(driver, 5, '//li[@class="menu-item TrashMenuItem" and contains(.,"Trash")]', 'clickable')
     driver.find_element_by_xpath('//li[@class="menu-item TrashMenuItem" and contains(.,"Trash")]').click()
+    time.sleep(1)
     assert wait_on_element(driver, 5, '//h2[contains(.,"Delete Item")]')
     assert wait_on_element(driver, 5, '//button[@data-resin-target="primarybutton"]', 'clickable')
     driver.find_element_by_xpath('//button[@data-resin-target="primarybutton"]').click()
