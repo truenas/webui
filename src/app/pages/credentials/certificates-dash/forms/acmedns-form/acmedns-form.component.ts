@@ -7,7 +7,7 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { DnsAuthenticatorType } from 'app/enums/dns-authenticator-type.enum';
 import { helptextSystemAcme as helptext } from 'app/helptext/system/acme';
-import { DnsAuthenticator } from 'app/interfaces/dns-authenticator.interface';
+import { AuthenticatorSchema, DnsAuthenticator } from 'app/interfaces/dns-authenticator.interface';
 import { DynamicFormSchema } from 'app/interfaces/dynamic-form-schema.interface';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { WebSocketService } from 'app/services';
@@ -46,13 +46,20 @@ export class AcmednsFormComponent {
   }
 
   isLoading = false;
+  isLoadingSchemas = true;
   dynamicSection: DynamicFormSchema[] = [];
   dnsAuthenticatorList: DnsAuthenticatorList[] = [];
 
   readonly helptext = helptext;
 
-  authenticator_options$ = this.ws.call('acme.dns.authenticator.authenticator_schemas').pipe(
+  getAuthenticatorSchemas(): Observable<AuthenticatorSchema[]> {
+    this.isLoading = true;
+    return this.ws.call('acme.dns.authenticator.authenticator_schemas');
+  }
+
+  authenticator_options$ = this.getAuthenticatorSchemas().pipe(
     map((schemas) => {
+      this.isLoading = true;
       const dynamicSchema: DynamicFormSchema = { name: '', description: '', schema: [] };
       const opts = [];
       this.dnsAuthenticatorList = [];
@@ -81,6 +88,8 @@ export class AcmednsFormComponent {
       if (!this.isNew) {
         this.form.patchValue(this.editingAcmedns);
       }
+      this.isLoading = false;
+      this.isLoadingSchemas = false;
       return opts;
     }),
   );

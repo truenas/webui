@@ -10,34 +10,18 @@ import { helptextSystemCa } from 'app/helptext/system/ca';
 import { helptextSystemCertificates } from 'app/helptext/system/certificates';
 import { CertificateAuthority } from 'app/interfaces/certificate-authority.interface';
 import { Certificate } from 'app/interfaces/certificate.interface';
-<<<<<<< HEAD
 import { DnsAuthenticator } from 'app/interfaces/dns-authenticator.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
-import { DialogFormConfiguration } from 'app/modules/entity/entity-dialog/dialog-form-configuration.interface';
-import { EntityDialogComponent } from 'app/modules/entity/entity-dialog/entity-dialog.component';
-import { FieldConfig, FormSelectConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
-=======
->>>>>>> master
 import { EntityFormService } from 'app/modules/entity/entity-form/services/entity-form.service';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { AppTableAction, AppTableConfig, TableComponent } from 'app/modules/entity/table/table.component';
 import { TableService } from 'app/modules/entity/table/table.service';
 import { EntityUtils } from 'app/modules/entity/utils';
-<<<<<<< HEAD
-import { AcmednsFormComponent } from 'app/pages/credentials/certificates-dash/forms/acmedns-form/acmedns-form.component';
-import {
-  SystemGeneralService, WebSocketService, DialogService, StorageService, ModalServiceMessage,
-} from 'app/services';
-=======
 import {
   CertificateAuthorityEditComponent,
 } from 'app/pages/credentials/certificates-dash/certificate-authority-edit/certificate-authority-edit.component';
-import { AcmednsFormComponent } from 'app/pages/credentials/certificates-dash/forms/acmedns-form.component';
-import {
-  SignCsrDialogComponent,
-} from 'app/pages/credentials/certificates-dash/sign-csr-dialog/sign-csr-dialog.component';
+import { AcmednsFormComponent } from 'app/pages/credentials/certificates-dash/forms/acmedns-form/acmedns-form.component';
+import { SignCsrDialogComponent } from 'app/pages/credentials/certificates-dash/sign-csr-dialog/sign-csr-dialog.component';
 import { WebSocketService, DialogService, StorageService } from 'app/services';
->>>>>>> master
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { ModalService } from 'app/services/modal.service';
 import { CertificateEditComponent } from './certificate-edit/certificate-edit.component';
@@ -70,24 +54,6 @@ export class CertificatesDashComponent implements OnInit {
 
   ngOnInit(): void {
     this.getCards();
-<<<<<<< HEAD
-    this.slideInService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.getCards();
-    });
-    this.modalService.refreshTable$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.getCards();
-    });
-    this.modalService.message$.pipe(untilDestroyed(this)).subscribe((res: ModalServiceMessage) => {
-      if (res['action'] === 'open' && res['component'] === 'acmeComponent') {
-        this.openForm(res['row']);
-      }
-    });
-    this.systemGeneralService.getUnsignedCertificates().pipe(untilDestroyed(this)).subscribe((res) => {
-      res.forEach((item) => {
-        this.unsignedCsrSelectField.options.push(
-          { label: item.name, value: item.id },
-        );
-=======
     merge(
       this.slideInService.onClose$,
       this.modalService.refreshTable$,
@@ -95,7 +61,6 @@ export class CertificatesDashComponent implements OnInit {
       .pipe(untilDestroyed(this))
       .subscribe(() => {
         this.getCards();
->>>>>>> master
       });
   }
 

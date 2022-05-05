@@ -13,19 +13,16 @@ import { CoreComponents } from 'app/core/core-components.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { SshKeypairFormComponent } from 'app/pages/credentials/backup-credentials/ssh-keypair-form/ssh-keypair-form.component';
-<<<<<<< HEAD
-import { AcmednsFormComponent } from 'app/pages/credentials/certificates-dash/forms/acmedns-form/acmedns-form.component';
-=======
 import {
   CertificateDetailsComponent,
 } from 'app/pages/credentials/certificates-dash/certificate-details/certificate-details.component';
+import { AcmednsFormComponent } from 'app/pages/credentials/certificates-dash/forms/acmedns-form/acmedns-form.component';
 import {
   SignCsrDialogComponent,
 } from 'app/pages/credentials/certificates-dash/sign-csr-dialog/sign-csr-dialog.component';
 import {
   ViewCertificateDialogComponent,
 } from 'app/pages/credentials/certificates-dash/view-certificate-dialog/view-certificate-dialog.component';
->>>>>>> master
 import { EntityModule } from '../../modules/entity/entity.module';
 import { BackupCredentialsComponent } from './backup-credentials/backup-credentials.component';
 import { CloudCredentialsFormComponent } from './backup-credentials/forms/cloud-credentials-form.component';

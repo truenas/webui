@@ -28,6 +28,8 @@ export interface DynamicFormSchemaBase {
 export interface DynamicFormSchemaInput extends DynamicFormSchemaBase {
   type: 'input';
   private?: boolean;
+  placeholder?: string;
+  tooltip?: string;
 }
 
 export interface DynamicFormSchemaSelect extends DynamicFormSchemaBase {
