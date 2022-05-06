@@ -94,7 +94,7 @@ def open_a_new_tab_navigate_to_backblaze_url_click_sign_in(driver, backblaze_url
     driver.switch_to.window(driver.window_handles[1])
     driver.get(backblaze_url)
     assert wait_on_element(driver, 7, '(//img[@alt="Backblaze Logo"])[1]')
-    assert wait_on_element(driver, 5, '//a[@id="signIn"]', 'clickable')
+    assert wait_on_element(driver, 5, '//a[text()="Sign In"]', 'clickable')
 
 
 @then('enter the <user_name> click Next and enter the <password> click Next')
@@ -124,9 +124,10 @@ def click_on_Browser_Files_click_on_bucket_then_click_on_the_test_folder(driver,
     assert wait_on_element(driver, 5, '//span[text()="Overview"]')
     assert wait_on_element(driver, 5, '//a[text()="Browse Files"]', 'clickable')
     driver.find_element_by_xpath('//a[text()="Browse Files"]').click()
+    assert wait_on_element(driver, 7, '//h1[text()="Browse Files"]')
     assert wait_on_element(driver, 5, '//div[@class="b2-browse-crumbs" and contains(.,"Buckets")]')
-    assert wait_on_element(driver, 5, f'//span[contains(text(),"{bucket}")]', 'clickable')
-    driver.find_element_by_xpath(f'//span[contains(text(),"{bucket}")]').click()
+    assert wait_on_element(driver, 5, f'//span[contains(text(),"{bucket} ")]', 'clickable')
+    driver.find_element_by_xpath(f'//span[contains(text(),"{bucket} ")]').click()
     assert wait_on_element(driver, 10, f'//a[text()="{bucket}"]', 'clickable')
     time.sleep(1)
 
