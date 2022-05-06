@@ -9,8 +9,10 @@ import { SmbShare } from 'app/interfaces/smb-share.interface';
 import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-table.component';
 import { EntityTableAction, EntityTableConfig } from 'app/modules/entity/entity-table/entity-table.interface';
 import { EntityUtils } from 'app/modules/entity/utils';
+import { SmbAclComponent } from 'app/pages/sharing/smb/smb-acl/smb-acl.component';
 import { SmbFormComponent } from 'app/pages/sharing/smb/smb-form/smb-form.component';
 import { DialogService, WebSocketService } from 'app/services';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { ModalService } from 'app/services/modal.service';
 
 @UntilDestroy()
@@ -69,6 +71,7 @@ export class SmbListComponent implements EntityTableConfig {
     private dialog: DialogService,
     private translate: TranslateService,
     private modalService: ModalService,
+    private slideInService: IxSlideInService,
   ) {}
 
   afterInit(entityList: EntityTableComponent): void {
@@ -106,20 +109,15 @@ export class SmbListComponent implements EntityTableConfig {
         label: helptextSharingSmb.action_share_acl,
         onClick: (row: SmbShare) => {
           this.ws.call('pool.dataset.path_in_locked_datasets', [row.path]).pipe(untilDestroyed(this)).subscribe(
-            (res) => {
-              if (res) {
+            (isLockedInDatasets) => {
+              if (isLockedInDatasets) {
                 this.lockedPathDialog(row.path);
-              } else {
-                // A home share has a name (homes) set; row.name works for other shares
-                const searchName = row.home ? 'homes' : row.name;
-                this.ws.call('smb.sharesec.query', [[['share_name', '=', searchName]]]).pipe(untilDestroyed(this)).subscribe(
-                  (res) => {
-                    this.router.navigate(
-                      ['/'].concat(['sharing', 'smb', 'acl', String(res[0].id)]),
-                    );
-                  },
-                );
+                return;
               }
+              // A home share has a name (homes) set; row.name works for other shares
+              const searchName = row.home ? 'homes' : row.name;
+              const slideIn = this.slideInService.open(SmbAclComponent);
+              slideIn.setSmbShareName(searchName);
             },
           );
         },
