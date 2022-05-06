@@ -1,5 +1,4 @@
 import { AfterViewInit, Component, Type } from '@angular/core';
-import { Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
@@ -16,8 +15,6 @@ import { Service } from 'app/interfaces/service.interface';
 import { SmbShare } from 'app/interfaces/smb-share.interface';
 import { WebDavShare } from 'app/interfaces/web-dav-share.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
-import { DialogFormConfiguration } from 'app/modules/entity/entity-dialog/dialog-form-configuration.interface';
-import { EntityDialogComponent } from 'app/modules/entity/entity-dialog/entity-dialog.component';
 import {
   ExpandableTableState,
   InputExpandableTableConf,
@@ -526,31 +523,6 @@ export class SharesDashboardComponent implements AfterViewInit {
       case 3:
         return 'fourth';
     }
-  }
-
-  showAddDialog(): void {
-    const conf: DialogFormConfiguration = {
-      title: this.translate.instant('Add New Share'),
-      message: this.translate.instant('Select the type of Share you want to add'),
-      saveButtonText: this.translate.instant('Create'),
-      fieldConfig: [{
-        type: 'radio',
-        name: 'share_type',
-        options: [
-          { label: 'SMB', value: ShareType.Smb },
-          { label: 'NFS', value: ShareType.Nfs },
-          { label: 'iSCSI Target', value: ShareType.Iscsi },
-          { label: 'WebDAV', value: ShareType.WebDav },
-        ],
-        validation: [Validators.required],
-      },
-      ],
-      customSubmit: (dialog: EntityDialogComponent) => {
-        dialog.dialogRef.close();
-        this.add(null, dialog.formValue.share_type);
-      },
-    };
-    this.dialog.dialogForm(conf);
   }
 
   onSlideToggle(card: ShareType, row: ShareTableRow, param: 'enabled' | 'ro'): void {
