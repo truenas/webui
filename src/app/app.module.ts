@@ -41,6 +41,7 @@ import { AppLoaderService } from './modules/app-loader/app-loader.service';
 import { AppCommonModule } from './modules/common/app-common.module';
 import { EntityModule } from './modules/entity/entity.module';
 import { AuthService } from './services/auth/auth.service';
+import { EntityTableService } from './services/entity-table.service';
 import { NavigationService } from './services/navigation/navigation.service';
 import { RoutePartsService } from './services/route-parts/route-parts.service';
 import { WebSocketService } from './services/ws.service';
@@ -112,6 +113,7 @@ import { WebSocketService } from './services/ws.service';
     AuthService,
     WebSocketService,
     AppLoaderService,
+    EntityTableService,
     IxSlideInService,
     IxFileUploadService,
     {

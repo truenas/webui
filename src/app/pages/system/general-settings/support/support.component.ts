@@ -162,12 +162,14 @@ export class SupportComponent implements OnInit {
       this.dialog.dialogForm(this.updateProdStatusConf);
     } else {
       this.ws.call('truenas.set_production', [false, false]).pipe(untilDestroyed(this)).subscribe(() => {
-        this.dialog.info(helptext.is_production_dialog.title,
-          helptext.is_production_dialog.message, '300px', 'info', true);
+        this.dialog.info(helptext.is_production_dialog.title, helptext.is_production_dialog.message);
       }, (err) => {
         this.loader.close();
-        this.dialog.errorReport(helptext.is_production_error_dialog.title,
-          err.error.message, err.error.traceback);
+        this.dialog.errorReport(
+          helptext.is_production_error_dialog.title,
+          err.error.message,
+          err.error.traceback,
+        );
       });
     }
   }

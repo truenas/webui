@@ -11,6 +11,7 @@ import { Preferences } from 'app/interfaces/preferences.interface';
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxTableModule } from 'app/modules/ix-tables/ix-table.module';
 import { IxTableHarness } from 'app/modules/ix-tables/testing/ix-table.harness';
+import { snapshotsInitialState, SnapshotsState } from 'app/pages/storage/snapshots/store/snapshot.reducer';
 import {
   selectSnapshots, selectSnapshotState, selectSnapshotsTotal,
 } from 'app/pages/storage/snapshots/store/snapshot.selectors';
@@ -20,7 +21,6 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { AppState } from 'app/store';
 import { selectPreferences } from 'app/store/preferences/preferences.selectors';
 import { selectGeneralConfig } from 'app/store/system-config/system-config.selectors';
-import { snapshotsInitialState, SnapshotsState } from '../store/snapshot.reducer';
 import { SnapshotListComponent } from './snapshot-list.component';
 
 describe('SnapshotListComponent', () => {

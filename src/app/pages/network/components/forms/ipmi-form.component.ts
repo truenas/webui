@@ -255,7 +255,7 @@ export class IpmiFormComponent implements FormConfiguration {
     this.loader.open();
     return call$.pipe(untilDestroyed(this)).subscribe(() => {
       this.loader.close();
-      this.dialog.info(this.translate.instant('Settings saved.'), '', '300px', 'info', true);
+      this.dialog.info(this.translate.instant('Settings saved.'), '');
     }, (res) => {
       this.loader.close();
       new EntityUtils().handleWsError(this.entityEdit, res);

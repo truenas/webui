@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { UUID } from 'angular2-uuid';
+import { environment } from 'environments/environment';
 import { LocalStorage } from 'ngx-webstorage';
 import {
   Observable, Observer, Subject, Subscriber,
@@ -14,7 +15,6 @@ import { ApiEventDirectory } from 'app/interfaces/api-event-directory.interface'
 import { ApiEvent } from 'app/interfaces/api-event.interface';
 import { LoginParams } from 'app/interfaces/auth.interface';
 import { Job } from 'app/interfaces/job.interface';
-import { environment } from '../../environments/environment';
 
 @UntilDestroy()
 @Injectable()

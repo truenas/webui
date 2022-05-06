@@ -118,8 +118,6 @@ export class TargetGlobalConfigurationComponent implements OnInit {
             this.dialogService.info(
               this.translate.instant('{service} Service', { service: 'iSCSI' }),
               this.translate.instant('The {service} service has been enabled.', { service: 'iSCSI' }),
-              '250px',
-              'info',
             );
           }),
           catchError((error) => {
