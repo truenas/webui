@@ -185,6 +185,7 @@ export class AdvancedSettingsComponent implements OnInit {
 
   sysctlTableConf: AppTableConfig = {
     title: helptextSystemAdvanced.fieldset_sysctl,
+    titleHref: '/system/sysctl',
     queryCall: 'tunable.query',
     deleteCall: 'tunable.delete',
     deleteMsg: {
