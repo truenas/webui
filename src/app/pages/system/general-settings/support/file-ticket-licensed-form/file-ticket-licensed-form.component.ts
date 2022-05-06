@@ -6,14 +6,20 @@ import { Router } from '@angular/router';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+import * as EmailValidator from 'email-validator';
 import {
   of, Observable, EMPTY, BehaviorSubject, throwError,
 } from 'rxjs';
 import {
   filter, map, switchMap, tap, catchError, take,
 } from 'rxjs/operators';
-import { TicketCriticality, TicketEnvironment, TicketType } from 'app/enums/file-ticket.enum';
+import {
+  ticketAcceptedFiles, TicketCategory, ticketCategoryLabels,
+  TicketCriticality, ticketCriticalityLabels,
+  TicketEnvironment, ticketEnvironmentLabels,
+} from 'app/enums/file-ticket.enum';
 import { JobState } from 'app/enums/job-state.enum';
+import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextSystemSupport as helptext } from 'app/helptext/system/support';
 import { Job } from 'app/interfaces/job.interface';
 import {
@@ -37,7 +43,6 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
 })
 export class FileTicketLicensedFormComponent implements OnInit {
   isFormLoading = true;
-  regex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
   form = this.fb.group({
     name: ['', [Validators.required]],
@@ -45,13 +50,13 @@ export class FileTicketLicensedFormComponent implements OnInit {
     cc: [[] as string[], [
       this.validatorsService.customValidator(
         (control: AbstractControl) => {
-          return !control.value?.every((item: string) => item.match(this.regex));
+          return !control.value?.every((item: string) => EmailValidator.validate(item));
         },
         this.translate.instant(helptext.cc.err),
       ),
     ]],
     phone: ['', [Validators.required]],
-    category: [TicketType.Bug, [Validators.required]],
+    category: [TicketCategory.Bug, [Validators.required]],
     environment: [TicketEnvironment.Production, [Validators.required]],
     criticality: [TicketCriticality.Inquiry, [Validators.required]],
     title: ['', Validators.required],
@@ -60,9 +65,10 @@ export class FileTicketLicensedFormComponent implements OnInit {
     screenshot: [null as FileList],
   });
 
-  readonly categoryOptions$ = of(helptext.category.options);
-  readonly environmentOptions$ = of(helptext.environment.options);
-  readonly criticalityOptions$ = of(helptext.criticality.options);
+  readonly acceptedFiles = ticketAcceptedFiles;
+  readonly categoryOptions$ = of(mapToOptions(ticketCategoryLabels, this.translate));
+  readonly environmentOptions$ = of(mapToOptions(ticketEnvironmentLabels, this.translate));
+  readonly criticalityOptions$ = of(mapToOptions(ticketCriticalityLabels, this.translate));
 
   tooltips = {
     name: helptext.name.tooltip,
@@ -127,7 +133,7 @@ export class FileTicketLicensedFormComponent implements OnInit {
     delete payload.screenshot;
 
     this.isFormLoading = true;
-    this.ws.job('support.new_ticket', [payload as unknown as CreateNewTicket]).pipe(
+    this.ws.job('support.new_ticket', [payload as CreateNewTicket]).pipe(
       tap((job) => this.jobs$.next([this.getJobStatus(job.id)])),
       filter((job) => job.state === JobState.Success),
       untilDestroyed(this),

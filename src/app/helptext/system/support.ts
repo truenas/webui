@@ -1,7 +1,5 @@
 import { Validators } from '@angular/forms';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
-import { ticketCategoryLabels, ticketCriticalityLabels, ticketEnvironmentLabels } from 'app/enums/file-ticket.enum';
-import { mapToOptions } from 'app/helpers/options.helper';
 
 export const helptextSystemSupport = {
   proactive: {
@@ -73,17 +71,14 @@ export const helptextSystemSupport = {
  Choose the category that best describes the bug or\
  feature being reported.',
     ),
-    options: mapToOptions(ticketCategoryLabels),
   },
 
   environment: {
-    tooltip: T('Select the appropriate environment.'), // DRAFT TOOLTIP
-    options: mapToOptions(ticketEnvironmentLabels),
+    tooltip: T('Select the appropriate environment.'),
   },
 
   criticality: {
-    tooltip: T('Select the appropriate level of criticality.'), // DRAFT TOOLTIP
-    options: mapToOptions(ticketCriticalityLabels),
+    tooltip: T('Select the appropriate level of criticality.'),
   },
 
   attach_debug: {

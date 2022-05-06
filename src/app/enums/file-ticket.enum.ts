@@ -51,3 +51,5 @@ export const ticketCriticalityLabels = new Map<TicketCriticality, string>([
   [TicketCriticality.LossFunctionality, T('Loss of Functionality')],
   [TicketCriticality.TotalDown, T('Total Down')],
 ]);
+
+export const ticketAcceptedFiles = 'image/png,image/jpeg,image/gif' as const;

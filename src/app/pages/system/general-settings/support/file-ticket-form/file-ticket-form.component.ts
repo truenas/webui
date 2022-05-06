@@ -12,7 +12,7 @@ import {
 import {
   filter, map, switchMap, debounceTime, tap, catchError, take,
 } from 'rxjs/operators';
-import { TicketType, ticketTypeLabels } from 'app/enums/file-ticket.enum';
+import { ticketAcceptedFiles, TicketType, ticketTypeLabels } from 'app/enums/file-ticket.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextSystemSupport as helptext } from 'app/helptext/system/support';
@@ -47,7 +47,9 @@ export class FileTicketFormComponent implements OnInit {
     body: ['', Validators.required],
     screenshot: [null as FileList],
   });
-  typeOptions$ = of(mapToOptions(ticketTypeLabels));
+
+  readonly acceptedFiles = ticketAcceptedFiles;
+  readonly typeOptions$ = of(mapToOptions(ticketTypeLabels, this.translate));
   categoryOptions$: Observable<Option[]> = this.getCategories().pipe(
     tap((options) => this.form.get('category').setDisable(!options.length)),
   );
