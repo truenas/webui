@@ -1,23 +1,27 @@
 import {
   Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef,
 } from '@angular/core';
-import { Validators } from '@angular/forms';
+import { AbstractControl, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import _ from 'lodash';
+import * as EmailValidator from 'email-validator';
 import {
-  of, Observable, EMPTY, BehaviorSubject, combineLatest, throwError,
+  of, Observable, EMPTY, BehaviorSubject, throwError,
 } from 'rxjs';
 import {
-  filter, map, switchMap, debounceTime, tap, catchError, take,
+  filter, map, switchMap, tap, catchError, take,
 } from 'rxjs/operators';
-import { ticketAcceptedFiles, TicketType, ticketTypeLabels } from 'app/enums/file-ticket.enum';
+import {
+  ticketAcceptedFiles, TicketCategory, ticketCategoryLabels,
+  TicketCriticality, ticketCriticalityLabels,
+  TicketEnvironment, ticketEnvironmentLabels,
+} from 'app/enums/file-ticket.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextSystemSupport as helptext } from 'app/helptext/system/support';
 import { Job } from 'app/interfaces/job.interface';
-import { Option } from 'app/interfaces/option.interface';
 import {
   CreateNewTicket, NewTicketResponse,
 } from 'app/interfaces/support.interface';
@@ -25,76 +29,82 @@ import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { DialogFormConfiguration } from 'app/modules/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/modules/entity/entity-dialog/entity-dialog.component';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
-import { SystemGeneralService, WebSocketService } from 'app/services';
+import IxValidatorsService from 'app/modules/ix-forms/services/ix-validators.service';
+import { WebSocketService } from 'app/services';
 import { DialogService } from 'app/services/dialog.service';
 import { IxFileUploadService } from 'app/services/ix-file-upload.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
 @Component({
-  templateUrl: './file-ticket-form.component.html',
-  styleUrls: ['./file-ticket-form.component.scss'],
+  templateUrl: './file-ticket-licensed-form.component.html',
+  styleUrls: ['./file-ticket-licensed-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class FileTicketFormComponent implements OnInit {
-  isFormLoading$ = new BehaviorSubject(true);
+export class FileTicketLicensedFormComponent implements OnInit {
+  isFormLoading = true;
+
   form = this.fb.group({
-    token: ['', [Validators.required]],
-    category: ['', [Validators.required]],
-    type: [TicketType.Bug, Validators.required],
-    attach_debug: [false],
+    name: ['', [Validators.required]],
+    email: ['', [Validators.required, Validators.email]],
+    cc: [[] as string[], [
+      this.validatorsService.customValidator(
+        (control: AbstractControl) => {
+          return !control.value?.every((item: string) => EmailValidator.validate(item));
+        },
+        this.translate.instant(helptext.cc.err),
+      ),
+    ]],
+    phone: ['', [Validators.required]],
+    category: [TicketCategory.Bug, [Validators.required]],
+    environment: [TicketEnvironment.Production, [Validators.required]],
+    criticality: [TicketCriticality.Inquiry, [Validators.required]],
     title: ['', Validators.required],
     body: ['', Validators.required],
+    attach_debug: [false],
     screenshot: [null as FileList],
   });
 
   readonly acceptedFiles = ticketAcceptedFiles;
-  readonly typeOptions$ = of(mapToOptions(ticketTypeLabels, this.translate));
-  categoryOptions$: Observable<Option[]> = this.getCategories().pipe(
-    tap((options) => this.form.get('category').setDisable(!options.length)),
-  );
+  readonly categoryOptions$ = of(mapToOptions(ticketCategoryLabels, this.translate));
+  readonly environmentOptions$ = of(mapToOptions(ticketEnvironmentLabels, this.translate));
+  readonly criticalityOptions$ = of(mapToOptions(ticketCriticalityLabels, this.translate));
+
   tooltips = {
-    token: helptext.token.tooltip,
-    type: helptext.type.tooltip,
-    category: helptext.category.tooltip,
-    attach_debug: helptext.attach_debug.tooltip,
+    name: helptext.name.tooltip,
+    email: helptext.email.tooltip,
+    cc: helptext.cc.tooltip,
+    phone: helptext.phone.tooltip,
+    category: helptext.type.tooltip,
+    environment: helptext.environment.tooltip,
+    criticality: helptext.criticality.tooltip,
     title: helptext.title.tooltip,
     body: helptext.body.tooltip,
+    attach_debug: helptext.attach_debug.tooltip,
     screenshot: helptext.screenshot.tooltip,
   };
+
   private screenshots: File[] = [];
   private get apiEndPoint(): string {
     return '/_upload?auth_token=' + this.ws.token;
   }
   jobs$: BehaviorSubject<Observable<Job>[]> = new BehaviorSubject([]);
-  isFormDisabled$ = combineLatest([this.form.status$, this.isFormLoading$]).pipe(
-    map(([status, loading]) => status === 'INVALID' || loading),
-  );
 
   constructor(
     private ws: WebSocketService,
     private fb: FormBuilder,
     private cdr: ChangeDetectorRef,
     private translate: TranslateService,
-    private sysGeneralService: SystemGeneralService,
     private slideIn: IxSlideInService,
     private errorHandler: FormErrorHandlerService,
     private fileUpload: IxFileUploadService,
     private dialog: DialogService,
-  ) {
-    this.form.get('category').setDisable(true);
-    this.restoreToken();
-  }
+    private router: Router,
+    private validatorsService: IxValidatorsService,
+  ) { }
 
   ngOnInit(): void {
-    this.isFormLoading$.next(false);
-
-    this.form.get('token').value$.pipe(
-      filter((token) => !!token),
-      untilDestroyed(this),
-    ).subscribe((token) => {
-      this.sysGeneralService.setTokenForJira(token);
-    });
+    this.isFormLoading = false;
 
     this.form.get('screenshot').valueChanges.pipe(
       switchMap((screenshots) => this.fileUpload.validateScreenshots(screenshots)),
@@ -118,47 +128,12 @@ export class FileTicketFormComponent implements OnInit {
     });
   }
 
-  getCategories(): Observable<Option[]> {
-    return this.form.get('token').value$.pipe(
-      filter((token) => !!token),
-      debounceTime(300),
-      switchMap((token) => this.ws.call('support.fetch_categories', [token])),
-      map((choices) => Object.entries(choices).map(([label, value]) => ({ label, value }))),
-      map((options) => _.sortBy(options, ['label'])),
-      catchError((error: WebsocketError) => {
-        this.errorHandler.handleWsFormError(error, this.form);
-
-        return EMPTY;
-      }),
-    );
-  }
-
-  restoreToken(): void {
-    const token = this.sysGeneralService.getTokenForJira();
-    if (token) {
-      this.form.patchValue({ token });
-    }
-  }
-
   onSubmit(): void {
-    const values = this.form.value;
+    const payload = { ...this.form.value };
+    delete payload.screenshot;
 
-    const payload = {
-      category: values.category,
-      title: values.title,
-      body: values.body,
-      type: values.type,
-      token: values.token,
-    } as CreateNewTicket;
-
-    if (values.attach_debug) {
-      // TODO: Improve UX for attaching debug
-      // It possible to show job `system.generate_debug` or `system.debug`
-      payload.attach_debug = values.attach_debug;
-    }
-
-    this.isFormLoading$.next(true);
-    this.ws.job('support.new_ticket', [payload]).pipe(
+    this.isFormLoading = true;
+    this.ws.job('support.new_ticket', [payload as CreateNewTicket]).pipe(
       tap((job) => this.jobs$.next([this.getJobStatus(job.id)])),
       filter((job) => job.state === JobState.Success),
       untilDestroyed(this),
@@ -188,7 +163,7 @@ export class FileTicketFormComponent implements OnInit {
             console.error(error);
           },
           () => {
-            this.isFormLoading$.next(false);
+            this.isFormLoading = false;
             this.slideIn.close();
             this.openSuccessDialog(job.result);
           },
@@ -197,17 +172,16 @@ export class FileTicketFormComponent implements OnInit {
           this.fileUpload.upload(file, 'support.attach_ticket', [{
             ticket: job.result.ticket,
             filename: file.name,
-            token: payload.token,
           }], this.apiEndPoint);
         }
       } else {
-        this.isFormLoading$.next(false);
+        this.isFormLoading = false;
         this.slideIn.close();
         this.openSuccessDialog(job.result);
       }
     }, (error) => {
       console.error(error);
-      this.isFormLoading$.next(false);
+      this.isFormLoading = false;
       this.errorHandler.handleWsFormError(error, this.form);
     });
   }
@@ -233,5 +207,14 @@ export class FileTicketFormComponent implements OnInit {
       map((jobs) => jobs[0]),
       catchError((error) => throwError(error)),
     );
+  }
+
+  onUserGuidePressed(): void {
+    window.open('https://www.truenas.com/docs/hub/');
+  }
+
+  onEulaPressed(): void {
+    this.slideIn.close();
+    this.router.navigate(['system', 'support', 'eula']);
   }
 }
