@@ -35,7 +35,12 @@ import { DiskFormComponent } from '../disk-form/disk-form.component';
 export class DiskListComponent implements EntityTableConfig<Disk> {
   title = this.translate.instant('Disks');
   queryCall = 'disk.query' as const;
-  queryCallOption: QueryParams<Disk, { extra: { pools: true } }> = [[], { extra: { pools: true } }];
+  queryCallOption: QueryParams<Disk, { extra: { pools: true; passwords: true } }> = [[], {
+    extra: {
+      pools: true,
+      passwords: true,
+    },
+  }];
   noAdd = true;
 
   columns = [

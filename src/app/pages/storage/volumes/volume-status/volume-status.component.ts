@@ -16,6 +16,7 @@ import { CoreEvent } from 'app/interfaces/events';
 import { Job } from 'app/interfaces/job.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { Pool, PoolScan, PoolTopologyCategory } from 'app/interfaces/pool.interface';
+import { QueryParams } from 'app/interfaces/query-api.interface';
 import {
   VDev,
   VDevStats,
@@ -281,8 +282,8 @@ export class VolumeStatusComponent implements OnInit, OnDestroy {
       onClick: (row: Pool) => {
         const pIndex = row.name.lastIndexOf('p');
         const diskName = pIndex > -1 ? row.name.substring(0, pIndex) : row.name;
-
-        this.ws.call('disk.query', [[['devname', '=', diskName]]]).pipe(untilDestroyed(this)).subscribe((disks) => {
+        const queryCallOption: QueryParams<Disk, { extra: { passwords: true } }> = [[['devname', '=', diskName]], { extra: { passwords: true } }];
+        this.ws.call('disk.query', queryCallOption).pipe(untilDestroyed(this)).subscribe((disks) => {
           this.onClickEdit(disks[0]);
         });
       },
