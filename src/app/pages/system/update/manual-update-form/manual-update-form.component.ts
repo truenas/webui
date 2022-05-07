@@ -236,11 +236,13 @@ export class ManualUpdateFormComponent implements OnInit {
         );
       });
     dialogRef.componentInstance.failure
-      .pipe(take(1))
-      .pipe(untilDestroyed(this)).subscribe((failure) => {
+      .pipe(take(1), untilDestroyed(this)).subscribe((failure) => {
         dialogRef.close(false);
         this.isFormLoading$.next(false);
         this.dialogService.errorReport(failure.error, failure.state, failure.exception);
       });
+    dialogRef.afterClosed().pipe(untilDestroyed(this)).subscribe(() => {
+      this.isFormLoading$.next(false);
+    });
   }
 }
