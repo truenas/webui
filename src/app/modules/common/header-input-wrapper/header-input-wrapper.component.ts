@@ -10,7 +10,7 @@ import { Observable } from 'rxjs';
 })
 export class HeaderInputWrapperComponent {
   @ViewChild('container') container: ElementRef<HTMLElement>;
-  template: TemplateRef<any>;
+  template: TemplateRef<unknown>;
   prefixIcon: string;
   reset = new EventEmitter<void>();
   shouldShowReset$: Observable<boolean>;
