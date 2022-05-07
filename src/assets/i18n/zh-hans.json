@@ -419,7 +419,6 @@
   "Apply Pending update": "应用更新",
   "Apply Quotas to Selected Groups": "将配额应用于所选组",
   "Apply Quotas to Selected Users": "将配额应用于所选用户",
-  "Apply Update": "应用更新",
   "Apply User": "应用于用户",
   "Apply permissions recursively": "递归应用权限",
   "Apply permissions recursively to all child datasets of the current dataset.": "以递归方式将权限应用于当前数据集的所有子数据集。",

@@ -1802,7 +1802,6 @@
   "Apply Pending update": "Применить ожидающее обновление",
   "Apply Quotas to Selected Groups": "Применить квоты для выбранных групп",
   "Apply Quotas to Selected Users": "Применить квоты для выбранных пользователей",
-  "Apply Update": "Применить обновление",
   "Apply User": "Применить пользователя",
   "Apply permissions recursively": "Применить разрешения рекурсивно",
   "Apply permissions recursively to all child datasets of the current dataset.": "Рекурсивно применять разрешения ко всем дочерним наборам данных текущего набора данных.",
