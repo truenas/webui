@@ -58,7 +58,7 @@ describe('ProactiveComponent', () => {
     form = await loader.getHarness(IxFormHarness);
   });
 
-  it('loading config data for a form', async () => {
+  it('loads current proactive settings and shows them in the form', async () => {
     expect(ws.call).toHaveBeenCalledWith('support.config');
     const value = await form.getValues();
     expect(value).toEqual({
@@ -74,7 +74,7 @@ describe('ProactiveComponent', () => {
     });
   });
 
-  it('support update proactive form', async () => {
+  it('saves support config when form is submitted', async () => {
     const sendValue = {
       Name: 'Jhon Smith',
       'Phone Number': '+777-77-77-77',
@@ -96,12 +96,12 @@ describe('ProactiveComponent', () => {
     expect(spectator.inject(IxSlideInService).close).toHaveBeenCalled();
   });
 
-  it('if support available is false', async () => {
+  it('shows a warning when support is not available', async () => {
     spectator.inject(MockWebsocketService).mockCall('support.is_available', false);
     spectator.component.ngOnInit();
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
 
-    expect(spectator.inject(DialogService).info).toHaveBeenCalled();
+    expect(spectator.inject(DialogService).warn).toHaveBeenCalled();
     expect(saveButton.isDisabled()).toBeTruthy();
   });
 });

@@ -1,12 +1,10 @@
 import { ModuleWithProviders } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { SharesDashboardComponent } from 'app/pages/sharing/components/shares-dashboard/shares-dashboard.component';
 import { InitiatorFormComponent } from './iscsi/initiator/initiator-form/initiator-form.component';
 import { IscsiWizardComponent } from './iscsi/iscsi-wizard/iscsi-wizard.component';
 import { IscsiComponent } from './iscsi/iscsi.component';
 import { NfsListComponent } from './nfs/nfs-list/nfs-list.component';
-import { SmbAclComponent } from './smb/smb-acl/smb-acl.component';
 import { SmbFormComponent } from './smb/smb-form/smb-form.component';
 import { SmbListComponent } from './smb/smb-list/smb-list.component';
 import { WebdavFormComponent } from './webdav/webdav-form/webdav-form.component';
@@ -62,10 +60,6 @@ export const routes: Routes = [
           path: 'edit/:pk',
           component: SmbFormComponent,
           data: { title: 'Edit', breadcrumb: 'Edit' },
-        }, {
-          path: 'acl/:pk',
-          component: SmbAclComponent,
-          data: { title: T('Share ACL'), breadcrumb: T('Share ACL') },
         }],
       }, {
         path: 'iscsi',

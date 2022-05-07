@@ -1,10 +1,11 @@
+import { TranslateService } from '@ngx-translate/core';
 import { OperatorFunction } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Choices } from 'app/interfaces/choices.interface';
 import { MapOption, Option } from 'app/interfaces/option.interface';
 
-export function mapToOptions(map: Map<string, string>): Option[] {
-  return Array.from(map.entries()).map(([value, label]) => ({ label, value }));
+export function mapToOptions(map: Map<string, string>, translate: TranslateService): Option[] {
+  return Array.from(map.entries()).map(([value, label]) => ({ label: translate.instant(label), value }));
 }
 
 /**

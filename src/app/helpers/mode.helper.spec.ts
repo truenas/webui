@@ -1,4 +1,4 @@
-import { PosixPermission } from '../enums/posix-acl.enum';
+import { PosixPermission } from 'app/enums/posix-acl.enum';
 import { parseMode } from './mode.helper';
 
 describe('parseMode', () => {

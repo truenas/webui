@@ -61,7 +61,6 @@ export class FailoverSettingsComponent implements OnInit {
           return this.dialogService.info(
             this.translate.instant('Failover'),
             this.translate.instant('Settings saved.'),
-            '300px', 'info',
           );
         }),
         untilDestroyed(this),
@@ -111,7 +110,6 @@ export class FailoverSettingsComponent implements OnInit {
           this.dialogService.info(
             helptextSystemFailover.confirm_dialogs.sync_title,
             helptextSystemFailover.confirm_dialogs.sync_to_message,
-            '', 'info',
           );
         },
         (error) => {
@@ -144,7 +142,6 @@ export class FailoverSettingsComponent implements OnInit {
           this.dialogService.info(
             helptextSystemFailover.confirm_dialogs.sync_title,
             helptextSystemFailover.confirm_dialogs.sync_from_message,
-            '', 'info',
           );
         },
         (error) => {
