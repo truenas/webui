@@ -1,7 +1,6 @@
 import {
   Component, OnInit, AfterViewInit, OnDestroy, ElementRef,
 } from '@angular/core';
-import { MediaObserver } from '@angular/flex-layout';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { tween, styler } from 'popmotion';
@@ -28,7 +27,6 @@ import { DashConfigItem } from 'app/pages/dashboard/components/widget-controller
 import { WebSocketService } from 'app/services';
 import { CoreService } from 'app/services/core-service/core.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { ModalService } from 'app/services/modal.service';
 
 // TODO: This adds additional fields. Unclear if vlan is coming from backend
 type DashboardNetworkInterface = NetworkInterface & {
@@ -90,7 +88,6 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   large = 'lg';
   medium = 'md';
   small = 'sm';
-  noteFlex = '23';
 
   statsDataEvent$: Subject<CoreEvent> = new Subject<CoreEvent>();
   interval: Interval;
@@ -132,9 +129,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   constructor(
     protected core: CoreService,
     protected ws: WebSocketService,
-    public mediaObserver: MediaObserver,
     private el: ElementRef,
-    public modalService: ModalService,
     private translate: TranslateService,
     private slideInService: IxSlideInService,
   ) {
@@ -263,7 +258,13 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    if (this.interval) {
+      clearInterval(this.interval);
+    }
     this.stopListeners();
+    if (this.interval) {
+      clearInterval(this.interval);
+    }
     this.core.unregister({ observerClass: this });
 
     // Restore top level scrolling
@@ -528,7 +529,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       case 'pool':
         if (spl) {
           const pools = this.pools.filter((pool) => pool[key as keyof Pool] === value);
-          if (pools) { data = pools[0]; }
+          if (pools.length) { data = pools[0]; }
         } else {
           console.warn('DashConfigItem has no identifier!');
         }
@@ -536,7 +537,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       case 'interface':
         if (spl) {
           const nics = this.nics.filter((nic) => nic[key as keyof DashboardNetworkInterface] === value);
-          if (nics) { data = nics[0].state; }
+          if (nics.length) { data = nics[0].state; }
         } else {
           console.warn('DashConfigItem has no identifier!');
         }
@@ -579,11 +580,12 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     const hidden = this.dashState
-      .filter((widget) => {
-        return newState.every((updatedWidget) => {
-          return !(widget?.identifier === updatedWidget.identifier || widget?.name === updatedWidget.name);
-        });
-      })
+      .filter((widget) => newState.every((updatedWidget) => {
+        if (widget.identifier) {
+          return widget.identifier !== updatedWidget.identifier;
+        }
+        return widget.name !== updatedWidget.name;
+      }))
       .map((widget) => ({ ...widget, rendered: false }));
 
     this.setDashState([...newState, ...hidden]);
@@ -730,8 +732,8 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private loadUserAttributes(): void {
     this.ws.call('user.query', [[['id', '=', 1]]]).pipe(untilDestroyed(this)).subscribe((user) => {
-      if (user[0].attributes.dashState) {
-        this.applyState(user[0].attributes.dashState);
+      if (user[0]?.attributes.dashState) {
+        this.applyState(this.sanitizeState(user[0].attributes.dashState));
       }
       this.dashStateReady = true;
     });

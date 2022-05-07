@@ -1,15 +1,14 @@
 import { Component } from '@angular/core';
 import {
-  FormArray, FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators,
+  FormArray, FormControl, ValidationErrors, ValidatorFn, Validators,
 } from '@angular/forms';
-import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 import { combineLatest, Observable } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
-import { DatasetType } from 'app/enums/dataset-type.enum';
+import { DatasetType } from 'app/enums/dataset.enum';
 import { DeviceType } from 'app/enums/device-type.enum';
 import { ExplorerType } from 'app/enums/explorer-type.enum';
 import { ProductType } from 'app/enums/product-type.enum';
@@ -54,7 +53,6 @@ export class VmWizardComponent implements WizardConfiguration {
   addWsCall = 'vm.create' as const;
   summary: Record<string, unknown> = {};
   isLinear = true;
-  firstFormGroup: FormGroup;
   summaryTitle = this.translate.instant('VM Summary');
   namesInUse: string[] = [];
   statSize: Statfs;
@@ -481,7 +479,6 @@ export class VmWizardComponent implements WizardConfiguration {
     public vmService: VmService,
     public networkService: NetworkService,
     protected loader: AppLoaderService,
-    protected dialog: MatDialog,
     public messageService: MessageService,
     private dialogService: DialogService,
     private storageService: StorageService,
@@ -835,24 +832,20 @@ export class VmWizardComponent implements WizardConfiguration {
     }, 2000);
   }
 
-  getRndInteger(min: number, max: number): number {
-    return Math.floor(Math.random() * (max - min + 1)) + min;
-  }
-
   memoryValidator(name: string): ValidatorFn {
     return (control: FormControl) => {
-      const config = this.wizardConfig[1].fieldConfig.find((c) => c.name === name);
+      const memoryConfig = this.wizardConfig[1].fieldConfig.find((config) => config.name === name);
 
       const errors = this.storageService.convertHumanStringToNum(control.value) < 268435456
         ? { validMem: true }
         : null;
 
       if (errors) {
-        config.hasErrors = true;
-        config.warnings = helptext.memory_size_err;
+        memoryConfig.hasErrors = true;
+        memoryConfig.warnings = helptext.memory_size_err;
       } else {
-        config.hasErrors = false;
-        config.warnings = '';
+        memoryConfig.hasErrors = false;
+        memoryConfig.warnings = '';
       }
 
       return errors;
@@ -862,18 +855,18 @@ export class VmWizardComponent implements WizardConfiguration {
   cpuValidator(name: string): ValidatorFn {
     // TODO: setTimeout breaks typing
     return (): any => {
-      const config = this.wizardConfig[1].fieldConfig.find((c) => c.name === name);
+      const cpuConfig = this.wizardConfig[1].fieldConfig.find((config) => config.name === name);
       setTimeout(() => {
         const errors = this.vcpus * this.cores * this.threads > this.maxVcpus
           ? { validCPU: true }
           : null;
 
         if (errors) {
-          config.hasErrors = true;
-          config.warnings = this.translate.instant(helptext.vcpus_warning, { maxVCPUs: this.maxVcpus });
+          cpuConfig.hasErrors = true;
+          cpuConfig.warnings = this.translate.instant(helptext.vcpus_warning, { maxVCPUs: this.maxVcpus });
         } else {
-          config.hasErrors = false;
-          config.warnings = '';
+          cpuConfig.hasErrors = false;
+          cpuConfig.warnings = '';
         }
         return errors;
       }, 100);
@@ -882,7 +875,7 @@ export class VmWizardComponent implements WizardConfiguration {
 
   volSizeValidator(name: string): ValidatorFn {
     return (control: FormControl) => {
-      const config = this.wizardConfig[2].fieldConfig.find((c) => c.name === name);
+      const sizeConfig = this.wizardConfig[2].fieldConfig.find((config) => config.name === name);
 
       if (control.value && this.statSize) {
         const requestedSize = this.storageService.convertHumanStringToNum(control.value);
@@ -891,11 +884,11 @@ export class VmWizardComponent implements WizardConfiguration {
           : null;
 
         if (errors) {
-          config.hasErrors = true;
-          config.warnings = this.translate.instant('Cannot allocate {size} to storage for this virtual machine.', { size: this.storageService.humanReadable });
+          sizeConfig.hasErrors = true;
+          sizeConfig.warnings = this.translate.instant('Cannot allocate {size} to storage for this virtual machine.', { size: this.storageService.humanReadable });
         } else {
-          config.hasErrors = false;
-          config.warnings = '';
+          sizeConfig.hasErrors = false;
+          sizeConfig.warnings = '';
         }
 
         return errors;

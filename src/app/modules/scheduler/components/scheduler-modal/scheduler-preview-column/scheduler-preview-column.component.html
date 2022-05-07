@@ -15,12 +15,12 @@
 </div>
 
 <div class="schedule-list">
-  <div class="timezone-message"><strong>{{"System Time Zone:" | translate}}</strong> {{ timezone }}</div>
+  <div class="timezone-message"><strong>{{ "System Time Zone:" | translate }}</strong> {{ timezone }}</div>
 
   <ix-scheduler-date-examples
     *ngIf="cronPreview && !isPastMonth"
     class="schedule-example-section"
     [cronPreview]="cronPreview"
-    [zonedStartDate]="zonedStartDate"
+    [startDate]="startDate"
   ></ix-scheduler-date-examples>
 </div>

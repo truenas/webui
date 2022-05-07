@@ -1,10 +1,6 @@
-import { Validators } from '@angular/forms';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
 export default {
-  fieldset_snapshot: T('Snapshot'),
-
-  // storage/snapshots/snapshot-add
   snapshot_add_dataset_placeholder: T('Dataset'),
   snapshot_add_dataset_tooltip: T('Select a dataset or zvol.'),
 
@@ -21,17 +17,8 @@ export default {
   snapshot_add_recursive_tooltip: T('Set to include child datasets of the \
  chosen dataset.'),
 
-  // storage/snapshots/snapshot-clone
-  snapshot_clone_name_placeholder: T('Name'),
   snapshot_clone_name_tooltip: T('Name of the new dataset created from the \
  cloned snapshot.'),
-  snapshot_clone_name_validation: [Validators.required],
-
-  label_clone: T('Clone to New Dataset'),
-  label_delete: T('Delete'),
-  label_rollback: T('Rollback'),
-
-  rollback_snapshot_placeholder: T('Snapshot'),
 
   rollback_recursive_radio_placeholder: T('Stop Rollback if Snapshots Exist:'),
   rollback_recursive_radio_tooltip: T('Choose a safety level for the \

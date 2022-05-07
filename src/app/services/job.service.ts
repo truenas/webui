@@ -15,9 +15,6 @@ import { WebSocketService } from './ws.service';
 @UntilDestroy()
 @Injectable()
 export class JobService {
-  protected accountUserResource = 'account/users/';
-  protected accountAllGroupsResource = 'account/all_groups/';
-
   constructor(
     protected ws: WebSocketService,
     protected dialog: DialogService,
@@ -53,7 +50,7 @@ export class JobService {
       const log = job && job.logs_excerpt ? job.logs_excerpt : null;
 
       if (!log) {
-        this.dialog.info(globalHelptext.noLogDilaog.title, globalHelptext.noLogDilaog.message);
+        this.dialog.warn(globalHelptext.noLogDialog.title, globalHelptext.noLogDialog.message);
       } else {
         const targetJob = job;
         this.dialog.confirm({

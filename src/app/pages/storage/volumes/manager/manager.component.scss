@@ -44,6 +44,10 @@
   flex-direction: column;
 }
 
+.manager input[name='poolname']:focus-visible {
+  box-shadow: 0 0 0 1px var(--primary) inset;
+}
+
 .buttons {
   display: flex;
 }
@@ -78,6 +82,15 @@ h4 {
 
 .vdev-h4 {
   margin-bottom: 0;
+}
+
+.footer-div {
+  width: 100%;
+}
+
+.footer-main {
+  align-items: baseline;
+  display: flex;
 }
 
 .data-div {

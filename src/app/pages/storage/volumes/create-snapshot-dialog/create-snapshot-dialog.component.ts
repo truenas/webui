@@ -70,8 +70,6 @@ export class CreateSnapshotDialogComponent implements OnInit {
         this.dialog.info(
           this.translate.instant('Create Snapshot'),
           this.translate.instant('Snapshot successfully taken.'),
-          '500px',
-          'info',
         );
         this.loader.close();
         this.dialogRef.close();

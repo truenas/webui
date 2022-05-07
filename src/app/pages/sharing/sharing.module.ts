@@ -2,21 +2,30 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatListModule } from '@angular/material/list';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatTabsModule } from '@angular/material/tabs';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslateModule } from '@ngx-translate/core';
-import { MaterialModule } from 'app/app-material.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { CastModule } from 'app/modules/cast/cast.module';
+import { EntityFormService } from 'app/modules/entity/entity-form/services/entity-form.service';
+import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
+import { AuthorizedAccessFormComponent } from 'app/pages/sharing/iscsi/authorized-access/authorized-access-form/authorized-access-form.component';
+import { AuthorizedAccessListComponent } from 'app/pages/sharing/iscsi/authorized-access/authorized-access-list/authorized-access-list.component';
 import { TargetGlobalConfigurationComponent } from 'app/pages/sharing/iscsi/target-global-configuration/target-global-configuration.component';
 import { UserService } from 'app/services/user.service';
-import { EntityFormService } from '../../modules/entity/entity-form/services/entity-form.service';
-import { EntityModule } from '../../modules/entity/entity.module';
 import { SharesDashboardComponent } from './components/shares-dashboard/shares-dashboard.component';
 import { AssociatedTargetFormComponent } from './iscsi/associated-target/associated-target-form/associated-target-form.component';
 import { AssociatedTargetListComponent } from './iscsi/associated-target/associated-target-list/associated-target-list.component';
-import { AuthorizedAccessFormComponent } from './iscsi/authorizedaccess/authorizedaccess-form/authorizedaccess-form.component';
-import { AuthorizedAccessListComponent } from './iscsi/authorizedaccess/authorizedaccess-list/authorizedaccess-list.component';
 import { ExtentFormComponent } from './iscsi/extent/extent-form/extent-form.component';
 import { ExtentListComponent } from './iscsi/extent/extent-list/extent-list.component';
 import { FibreChannelPortComponent } from './iscsi/fibre-channel-ports/fibre-channel-port/fibre-channel-port.component';
@@ -46,9 +55,18 @@ import { WebdavListComponent } from './webdav/webdav-list/webdav-list.component'
     ReactiveFormsModule,
     routing,
     EntityModule,
-    MaterialModule,
     TranslateModule,
+    MatProgressBarModule,
+    MatTabsModule,
+    MatCardModule,
+    MatIconModule,
     FlexLayoutModule,
+    MatListModule,
+    MatMenuModule,
+    MatFormFieldModule,
+    MatTooltipModule,
+    MatButtonModule,
+    MatProgressSpinnerModule,
     CommonDirectivesModule,
     TooltipModule,
     CastModule,

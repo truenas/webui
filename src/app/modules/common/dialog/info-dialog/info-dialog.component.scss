@@ -1,0 +1,25 @@
+:host {
+  display: block;
+  min-width: 350px;
+}
+
+.info-panel {
+  max-height: 65vh !important;
+
+  span {
+    display: block;
+    font-family: monospace;
+    unicode-bidi: embed;
+    white-space: pre-line;
+  }
+}
+
+.ip-overflow-auto {
+  overflow: auto !important;
+}
+
+.information-icon {
+  margin-right: 5px;
+  position: relative;
+  top: 5px;
+}

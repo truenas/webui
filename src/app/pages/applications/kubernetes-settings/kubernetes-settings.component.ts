@@ -58,15 +58,10 @@ export class KubernetesSettingsComponent implements OnInit {
 
   readonly routeInterfaceOptions$ = this.appService.getInterfaces().pipe(
     map((interfaces) => {
-      const options = interfaces.map((networkInterface) => ({
+      return interfaces.map((networkInterface) => ({
         label: networkInterface.name,
         value: networkInterface.name,
       }));
-
-      return [
-        { label: '---', value: null },
-        ...options,
-      ];
     }),
   );
 

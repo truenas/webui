@@ -1,19 +1,20 @@
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
-import { FormControl, FormGroup } from '@angular/forms';
+import { Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute } from '@angular/router';
+import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { filter } from 'rxjs/operators';
 import { AclType, DefaultAclType } from 'app/enums/acl-type.enum';
 import helptext from 'app/helptext/storage/volumes/datasets/dataset-acl';
 import { Acl } from 'app/interfaces/acl.interface';
-import { FormCheckboxConfig, FormComboboxConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
+import { GroupComboboxProvider } from 'app/modules/ix-forms/classes/group-combobox-provider';
+import { UserComboboxProvider } from 'app/modules/ix-forms/classes/user-combobox-provider';
 import { SelectPresetModalComponent } from 'app/pages/storage/volumes/permissions/components/select-preset-modal/select-preset-modal.component';
 import { SelectPresetModalConfig } from 'app/pages/storage/volumes/permissions/interfaces/select-preset-modal-config.interface';
 import { DatasetAclEditorStore } from 'app/pages/storage/volumes/permissions/stores/dataset-acl-editor.store';
-import { getFormUserGroupLoaders } from 'app/pages/storage/volumes/permissions/utils/get-form-user-group-loaders.utils';
 import { DialogService, UserService } from 'app/services';
 
 @UntilDestroy()
@@ -30,49 +31,15 @@ export class DatasetAclEditorComponent implements OnInit {
   selectedAceIndex: number;
   acesWithError: number[];
 
-  saveParameters = new FormGroup({
-    recursive: new FormControl(),
-    traverse: new FormControl(),
+  saveParameters = this.formBuilder.group({
+    recursive: [false],
+    traverse: [false],
   });
 
-  ownerFormGroup = new FormGroup({
-    owner: new FormControl(),
-    ownerGroup: new FormControl(),
+  ownerFormGroup = this.formBuilder.group({
+    owner: ['', Validators.required],
+    ownerGroup: ['', Validators.required],
   });
-
-  readonly recursiveFieldConfig: FormCheckboxConfig = {
-    type: 'checkbox',
-    name: 'recursive',
-    placeholder: helptext.dataset_acl_recursive_placeholder,
-    tooltip: helptext.dataset_acl_recursive_tooltip,
-    value: false,
-  };
-  readonly traverseFieldConfig: FormCheckboxConfig = {
-    type: 'checkbox',
-    name: 'traverse',
-    placeholder: helptext.dataset_acl_traverse_placeholder,
-    tooltip: helptext.dataset_acl_traverse_tooltip,
-    value: false,
-  };
-
-  readonly ownerFieldConfig: FormComboboxConfig = {
-    type: 'combobox',
-    name: 'owner',
-    options: [],
-    inlineFields: true,
-    searchOptions: [],
-    parent: this,
-    updateLocal: true,
-  };
-
-  readonly ownerGroupFieldConfig: FormComboboxConfig = {
-    type: 'combobox',
-    name: 'ownerGroup',
-    options: [],
-    searchOptions: [],
-    parent: this,
-    updateLocal: true,
-  };
 
   get isNfsAcl(): boolean {
     return this.acl.acltype === AclType.Nfs4;
@@ -82,6 +49,10 @@ export class DatasetAclEditorComponent implements OnInit {
     return Boolean(this.route.snapshot.queryParams['homeShare']);
   }
 
+  readonly userProvider = new UserComboboxProvider(this.userService);
+  readonly groupProvider = new GroupComboboxProvider(this.userService);
+  readonly helptext = helptext;
+
   constructor(
     private store: DatasetAclEditorStore,
     private route: ActivatedRoute,
@@ -89,6 +60,7 @@ export class DatasetAclEditorComponent implements OnInit {
     private dialogService: DialogService,
     private matDialog: MatDialog,
     private userService: UserService,
+    private formBuilder: FormBuilder,
   ) {}
 
   ngOnInit(): void {
@@ -131,22 +103,6 @@ export class DatasetAclEditorComponent implements OnInit {
 
         this.saveParameters.patchValue({ recursive: false });
       });
-    });
-
-    const userGroupLoaders = getFormUserGroupLoaders(this.userService);
-    this.ownerFieldConfig.updater = userGroupLoaders.updateUserSearchOptions;
-    this.ownerFieldConfig.loadMoreOptions = userGroupLoaders.loadMoreUserOptions;
-    this.ownerGroupFieldConfig.updater = userGroupLoaders.updateGroupSearchOptions;
-    this.ownerGroupFieldConfig.loadMoreOptions = userGroupLoaders.loadMoreGroupOptions;
-
-    this.userService.userQueryDsCache().pipe(untilDestroyed(this)).subscribe((users) => {
-      const userOptions = users.map((user) => ({ label: user.username, value: user.username }));
-      this.ownerFieldConfig.options = userOptions;
-    });
-
-    this.userService.groupQueryDsCache().pipe(untilDestroyed(this)).subscribe((groups) => {
-      const groupOptions = groups.map((group) => ({ label: group.group, value: group.group }));
-      this.ownerGroupFieldConfig.options = groupOptions;
     });
   }
 

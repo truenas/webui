@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { FormGroup, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
-import { ActivatedRoute, NavigationExtras, Router } from '@angular/router';
+import { NavigationExtras, Router } from '@angular/router';
 import { TreeNode } from '@circlon/angular-tree-component';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
@@ -34,6 +34,7 @@ import { RelationAction } from 'app/modules/entity/entity-form/models/relation-a
 import { RelationConnection } from 'app/modules/entity/entity-form/models/relation-connection.enum';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { EntityUtils, NULL_VALUE } from 'app/modules/entity/utils';
+import { CronPresetValue } from 'app/modules/scheduler/utils/get-default-crontab-presets.utils';
 import { CloudCredentialsFormComponent } from 'app/pages/credentials/backup-credentials/forms/cloud-credentials-form.component';
 import {
   AppLoaderService, CloudCredentialService, DialogService, JobService, WebSocketService,
@@ -224,7 +225,7 @@ export class CloudsyncFormComponent implements FormConfiguration {
           placeholder: helptext.cloudsync_picker_placeholder,
           tooltip: helptext.cloudsync_picker_tooltip,
           required: true,
-          value: '0 0 * * *',
+          value: CronPresetValue.Daily,
         },
         {
           type: 'checkbox',
@@ -445,7 +446,13 @@ export class CloudsyncFormComponent implements FormConfiguration {
         dialogRef.componentInstance.showAbortButton = true;
         dialogRef.componentInstance.showRealtimeLogs = true;
         dialogRef.componentInstance.hideProgressValue = true;
+        dialogRef.componentInstance.aborted.pipe(untilDestroyed(this)).subscribe(() => {
+          dialogRef.componentInstance.showCloseButton = true;
+        });
         dialogRef.componentInstance.submit();
+        dialogRef.componentInstance.aborted.pipe(untilDestroyed(this)).subscribe(() => {
+          dialogRef.componentInstance.showCloseButton = true;
+        });
         dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
           dialogRef.componentInstance.showCloseButton = true;
         });
@@ -457,16 +464,16 @@ export class CloudsyncFormComponent implements FormConfiguration {
     },
   ];
 
-  constructor(protected router: Router,
-    protected aroute: ActivatedRoute,
+  constructor(
+    protected router: Router,
     protected loader: AppLoaderService,
     protected dialog: DialogService,
     protected matDialog: MatDialog,
     protected ws: WebSocketService,
     protected cloudcredentialService: CloudCredentialService,
-    protected job: JobService,
     protected modalService: ModalService,
-    protected translate: TranslateService) {
+    protected translate: TranslateService,
+  ) {
     this.cloudcredentialService.getProviders().pipe(untilDestroyed(this)).subscribe((providers) => {
       this.providers = providers;
     });
@@ -925,7 +932,7 @@ export class CloudsyncFormComponent implements FormConfiguration {
       }))
       .pipe(filter(() => this.formGroup.get('transfer_mode').value !== TransferMode.Copy))
       .pipe(untilDestroyed(this)).subscribe(() => {
-        this.dialog.info(helptext.resetTransferModeDialog.title, helptext.resetTransferModeDialog.content, '500px', 'info', true);
+        this.dialog.info(helptext.resetTransferModeDialog.title, helptext.resetTransferModeDialog.content, true);
         this.formGroup.get('transfer_mode').setValue(TransferMode.Copy);
       });
 

@@ -1,216 +1,148 @@
-import { Component } from '@angular/core';
-import { MatCheckboxChange } from '@angular/material/checkbox';
-import { Router } from '@angular/router';
+import {
+  Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, QueryList, ViewChild, ViewChildren,
+} from '@angular/core';
+import { MatSort, Sort } from '@angular/material/sort';
+import { MatTableDataSource } from '@angular/material/table';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { Store } from '@ngrx/store';
+import { select, Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
-import { Subject } from 'rxjs';
-import { map } from 'rxjs/operators';
-import helptext from 'app/helptext/account/group-list';
+import {
+  Subject, Observable, combineLatest, of,
+} from 'rxjs';
+import { map, switchMap } from 'rxjs/operators';
 import { CoreEvent } from 'app/interfaces/events';
-import { Group, MembershipGroup } from 'app/interfaces/group.interface';
-import { User } from 'app/interfaces/user.interface';
-import { AppLoaderService } from 'app/modules/app-loader/app-loader.service';
-import { DialogFormConfiguration } from 'app/modules/entity/entity-dialog/dialog-form-configuration.interface';
-import { EntityDialogComponent } from 'app/modules/entity/entity-dialog/entity-dialog.component';
-import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-table.component';
-import { EntityTableAction, EntityTableConfig } from 'app/modules/entity/entity-table/entity-table.interface';
+import { Group } from 'app/interfaces/group.interface';
+import { EmptyConfig, EmptyType } from 'app/modules/entity/entity-empty/entity-empty.component';
 import { EntityToolbarComponent } from 'app/modules/entity/entity-toolbar/entity-toolbar.component';
 import { ControlConfig, ToolbarConfig } from 'app/modules/entity/entity-toolbar/models/control-config.interface';
-import { EntityUtils } from 'app/modules/entity/utils';
+import { IxDetailRowDirective } from 'app/modules/ix-tables/directives/ix-detail-row.directive';
 import { GroupFormComponent } from 'app/pages/account/groups/group-form/group-form.component';
-import { DialogService } from 'app/services';
+import { groupPageEntered } from 'app/pages/account/groups/store/group.actions';
+import { selectGroupState, selectGroupsTotal, selectGroups } from 'app/pages/account/groups/store/group.selectors';
 import { CoreService } from 'app/services/core-service/core.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
-import {
-  builtinGroupsToggled,
-} from 'app/store/preferences/preferences.actions';
+import { builtinGroupsToggled } from 'app/store/preferences/preferences.actions';
 import { waitForPreferences } from 'app/store/preferences/preferences.selectors';
 
 @UntilDestroy()
 @Component({
-  selector: 'app-group-list',
-  template: '<entity-table [title]="title" [conf]="this"></entity-table>',
+  templateUrl: './group-list.component.html',
+  styleUrls: ['./group-list.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class GroupListComponent implements EntityTableConfig<MembershipGroup> {
-  users: User[] = [];
-  members: User[] = [];
-  title = 'Groups';
-  queryCall = 'group.query' as const;
-  wsDelete = 'group.delete' as const;
-  protected entityList: EntityTableComponent;
-  protected loaderOpen = false;
+export class GroupListComponent implements OnInit {
+  @ViewChild(MatSort, { static: false }) sort: MatSort;
+
+  displayedColumns: string[] = ['group', 'gid', 'builtin', 'sudo', 'smb', 'actions'];
   settingsEvent$: Subject<CoreEvent> = new Subject();
-
-  columns = [
-    { name: 'Group', prop: 'group', always_display: true },
-    { name: 'GID', prop: 'gid' },
-    { name: 'Builtin', prop: 'builtin' },
-    { name: 'Permit Sudo', prop: 'sudo' },
-    { name: 'Membership', prop: 'membership', hidden: false },
-    { name: 'Samba Authentication', prop: 'smb', hidden: true },
-  ];
-  rowIdentifier = 'group';
-  config = {
-    paging: true,
-    sorting: { columns: this.columns },
-    deleteMsg: {
-      title: this.translate.instant('Group'),
-      key_props: ['group'],
-    },
-  };
   filterString = '';
+  dataSource: MatTableDataSource<Group> = new MatTableDataSource([]);
+  defaultSort: Sort = { active: 'gid', direction: 'asc' };
+  emptyConfig: EmptyConfig = {
+    type: EmptyType.NoPageData,
+    title: this.translate.instant('No Groups'),
+    large: true,
+  };
+  loadingConfig: EmptyConfig = {
+    type: EmptyType.Loading,
+    large: false,
+    title: this.translate.instant('Loading...'),
+  };
+  errorConfig: EmptyConfig = {
+    type: EmptyType.Errors,
+    large: true,
+    title: this.translate.instant('Can not retrieve response'),
+  };
+  expandedRow: Group;
+  @ViewChildren(IxDetailRowDirective) private detailRows: QueryList<IxDetailRowDirective>;
+  isLoading$ = this.store$.select(selectGroupState).pipe(map((state) => state.isLoading));
+  emptyOrErrorConfig$: Observable<EmptyConfig> = combineLatest([
+    this.store$.select(selectGroupsTotal).pipe(map((total) => total === 0)),
+    this.store$.select(selectGroupState).pipe(map((state) => state.error)),
+  ]).pipe(
+    switchMap(([, isError]) => {
+      if (isError) {
+        return of(this.errorConfig);
+      }
 
+      return of(this.emptyConfig);
+    }),
+  );
   private hideBuiltinGroups = true;
 
   constructor(
-    private router: Router,
-    protected dialogService: DialogService,
-    protected loader: AppLoaderService,
-    protected ws: WebSocketService,
     private translate: TranslateService,
-    private slideInService: IxSlideInService,
-    private store$: Store<AppState>,
+    private slideIn: IxSlideInService,
+    private cdr: ChangeDetectorRef,
     private core: CoreService,
-  ) {}
+    private store$: Store<AppState>,
+  ) { }
 
-  prerequisite(): Promise<boolean> {
-    return this.ws.call('user.query').pipe(map((users) => {
-      this.users = users;
-      return true;
-    })).toPromise();
+  ngOnInit(): void {
+    this.store$.dispatch(groupPageEntered());
+    this.getPreferences();
+    this.getGroups();
   }
 
-  resourceTransformIncomingRestData(data: Group[]): MembershipGroup[] {
-    // Default setting is to hide builtin groups
-    if (this.hideBuiltinGroups) {
-      const newData: MembershipGroup[] = [];
-      data.forEach((item) => {
-        if (!item.builtin) {
-          this.members = this.users.filter((user) => item.users.includes(user.id));
-          newData.push({
-            ...item,
-            membership: this.members.map((member) => member.username).join(', '),
-          });
-        }
-      });
-      return data = newData;
-    }
-    return data;
-  }
-
-  afterInit(entityList: EntityTableComponent): void {
-    this.entityList = entityList;
-
-    this.slideInService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.entityList.getData();
-    });
-
-    this.store$.pipe(waitForPreferences).pipe(untilDestroyed(this)).subscribe((preferences) => {
+  getPreferences(): void {
+    this.store$.pipe(
+      waitForPreferences,
+      untilDestroyed(this),
+    ).subscribe((preferences) => {
       this.hideBuiltinGroups = preferences.hideBuiltinGroups;
       this.setupToolbar();
-      this.entityList.getData();
+      this.cdr.markForCheck();
     });
   }
 
-  isActionVisible(actionId: string, row: Group): boolean {
-    if (actionId === 'delete' && row.builtin) {
-      return false;
-    }
-    return true;
+  getGroups(): void {
+    this.store$.pipe(
+      select(selectGroups),
+      untilDestroyed(this),
+    ).subscribe((groups) => {
+      this.createDataSource(groups);
+      this.cdr.markForCheck();
+    }, () => {
+      this.createDataSource();
+      this.cdr.markForCheck();
+    });
   }
 
-  getActions(row: Group): EntityTableAction[] {
-    const actions = [];
-    actions.push({
-      id: row.group,
-      name: helptext.group_list_actions_id_member,
-      label: helptext.group_list_actions_label_member,
-      icon: 'people',
-      onClick: (members: Group) => {
-        this.router.navigate(['/', 'credentials', 'groups', 'members', String(members.id)]);
-      },
-    });
-    if (row.builtin === !true) {
-      actions.push({
-        id: row.group,
-        icon: 'edit',
-        label: helptext.group_list_actions_label_edit,
-        name: helptext.group_list_actions_id_edit,
-        onClick: (group: Group) => {
-          const modal = this.slideInService.open(GroupFormComponent);
-          modal.setupForm(group);
-        },
-      });
-      actions.push({
-        id: row.group,
-        icon: 'delete',
-        name: 'delete',
-        label: helptext.group_list_actions_label_delete,
-        onClick: (group: Group) => {
-          const conf: DialogFormConfiguration = {
-            title: helptext.deleteDialog.title,
-            message: this.translate.instant('Delete group "{name}"?', { name: group.group }),
-            fieldConfig: [],
-            confirmCheckbox: true,
-            saveButtonText: helptext.deleteDialog.saveButtonText,
-            preInit: () => {
-              if (!this.members.length) {
-                return;
-              }
-              conf.fieldConfig.push({
-                type: 'checkbox',
-                name: 'delete_users',
-                placeholder: this.translate.instant(
-                  'Delete {n, plural, one {# user} other {# users}} with this primary group?',
-                  { n: this.members.length },
-                ),
-                value: false,
-                onChange: (valueChangeData: { event: MatCheckboxChange }) => {
-                  if (valueChangeData.event.checked) {
-                    this.dialogService.info('Following users will be deleted', this.members.map((user, index) => {
-                      if (user.full_name && user.full_name.length) {
-                        return (index + 1) + '. ' + user.username + ' (' + user.full_name + ')';
-                      }
-                      return (index + 1) + '. ' + user.username;
-                    }).join('\n'));
-                  }
-                },
-              });
-            },
-            customSubmit: (entityDialog: EntityDialogComponent) => {
-              entityDialog.dialogRef.close(true);
-              this.loader.open();
-              this.ws.call(this.wsDelete, [group.id, entityDialog.formValue])
-                .pipe(untilDestroyed(this))
-                .subscribe(() => {
-                  this.entityList.getData();
-                  this.loader.close();
-                },
-                (err) => {
-                  new EntityUtils().handleWsError(this, err, this.dialogService);
-                  this.loader.close();
-                });
-            },
-          };
-          this.dialogService.dialogForm(conf);
-        },
-      });
-    }
-
-    return actions as EntityTableAction[];
+  createDataSource(groups: Group[] = []): void {
+    this.dataSource = new MatTableDataSource(groups);
+    setTimeout(() => {
+      // TODO: Figure out how to avoid setTimeout to make it work on first loading
+      if (this.filterString) {
+        this.dataSource.filter = this.filterString;
+      }
+      this.dataSource.sort = this.sort;
+      this.cdr.markForCheck();
+    }, 0);
   }
 
   toggleBuiltins(): void {
     this.store$.dispatch(builtinGroupsToggled());
-    this.entityList.getData();
   }
 
   doAdd(): void {
-    const modal = this.slideInService.open(GroupFormComponent);
-    modal.setupForm();
+    this.slideIn.open(GroupFormComponent).setupForm();
+  }
+
+  onToggle(row: Group): void {
+    this.expandedRow = this.expandedRow === row ? null : row;
+    this.toggleDetailRows();
+    this.cdr.markForCheck();
+  }
+
+  toggleDetailRows(): void {
+    this.detailRows.forEach((row) => {
+      if (row.expanded && row.ixDetailRow !== this.expandedRow) {
+        row.close();
+      } else if (!row.expanded && row.ixDetailRow === this.expandedRow) {
+        row.open();
+      }
+    });
   }
 
   setupToolbar(): void {
@@ -221,7 +153,7 @@ export class GroupListComponent implements EntityTableConfig<MembershipGroup> {
       switch (event.data.event_control) {
         case 'filter':
           this.filterString = event.data.filter;
-          this.entityList.filter(this.filterString);
+          this.dataSource.filter = event.data.filter;
           break;
         case 'add':
           this.doAdd();

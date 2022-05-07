@@ -2,7 +2,7 @@ import {
   HttpClient, HttpErrorResponse, HttpEvent, HttpEventType,
 } from '@angular/common/http';
 import {
-  OnInit, Component, EventEmitter, Output, Inject,
+  OnInit, Component, EventEmitter, Output, Inject, AfterViewChecked,
 } from '@angular/core';
 import {
   MatDialog, MatDialogConfig, MatDialogRef, MAT_DIALOG_DATA,
@@ -24,7 +24,7 @@ import { WebSocketService } from 'app/services';
   templateUrl: 'entity-job.component.html',
   styleUrls: ['./entity-job.component.scss'],
 })
-export class EntityJobComponent implements OnInit {
+export class EntityJobComponent implements OnInit, AfterViewChecked {
   job: Job = {} as Job;
   progressTotalPercent = 0;
   description: string;
@@ -89,10 +89,10 @@ export class EntityJobComponent implements OnInit {
     });
 
     this.failure.pipe(untilDestroyed(this)).subscribe((job) => {
-      job.error = _.replace(job.error, '<', '< ');
-      job.error = _.replace(job.error, '>', ' >');
+      let error = _.replace(job.error, '<', '< ');
+      error = _.replace(error, '>', ' >');
 
-      this.description = '<b>Error:</b> ' + job.error;
+      this.description = '<b>Error:</b> ' + error;
     });
 
     if (this.openJobsManagerOnClose) {
@@ -110,6 +110,10 @@ export class EntityJobComponent implements OnInit {
           });
         });
     }
+  }
+
+  ngAfterViewChecked(): void {
+    this.scrollBottom();
   }
 
   setCall<K extends ApiMethod>(method: K, args?: ApiDirectory[K]['params']): void {
@@ -137,41 +141,6 @@ export class EntityJobComponent implements OnInit {
 
   disableProgressValue(hide: boolean): void {
     this.hideProgressValue = hide;
-  }
-
-  show(): void {
-    this.ws.call('core.get_jobs', [[['id', '=', this.jobId]]])
-      .pipe(untilDestroyed(this))
-      .subscribe((jobs) => {
-        if (jobs.length > 0) {
-          this.jobUpdate(jobs[0]);
-        }
-      });
-    this.ws.subscribe('core.get_jobs').pipe(
-      filter((event) => event.id === this.jobId),
-      map((event) => event.fields),
-      untilDestroyed(this),
-    ).subscribe((job) => {
-      this.jobUpdate(job);
-    });
-  }
-
-  jobUpdate(job: Job): void {
-    this.job = job;
-    this.showAbortButton = this.job.abortable;
-    if (job.progress) {
-      this.progress.emit(job.progress);
-    }
-    switch (job.state) {
-      case JobState.Success:
-        this.success.emit(this.job);
-        break;
-      case JobState.Failed:
-        this.failure.emit(this.job);
-        break;
-      default:
-        break;
-    }
   }
 
   submit(): void {
@@ -282,13 +251,18 @@ export class EntityJobComponent implements OnInit {
       case JobState.Failed:
         this.failure.emit(this.job);
         break;
+      case JobState.Aborted:
+        this.aborted.emit(this.job);
+        break;
       default:
         break;
     }
   }
 
   abortJob(): void {
-    this.ws.call('core.job_abort', [this.job.id]).pipe(untilDestroyed(this)).subscribe();
+    this.ws.call('core.job_abort', [this.job.id]).pipe(untilDestroyed(this)).subscribe(() => {
+      this.dialogRef.close();
+    });
   }
 
   /**
@@ -301,7 +275,6 @@ export class EntityJobComponent implements OnInit {
     const subscriptionId = UUID.UUID();
     const subName = 'filesystem.file_tail_follow:' + this.job.logs_path;
     this.ws.sub(subName, subscriptionId).pipe(untilDestroyed(this)).subscribe((res) => {
-      this.scrollBottom();
       if (res && res.data && typeof res.data === 'string') {
         this.realtimeLogs += res.data;
       }
@@ -311,6 +284,10 @@ export class EntityJobComponent implements OnInit {
 
   scrollBottom(): void {
     const cardContainer = document.getElementsByClassName('entity-job-dialog')[0];
-    cardContainer.scrollTop = cardContainer.scrollHeight;
+    const logsContainer = cardContainer.getElementsByClassName('logs-container')[0];
+    if (!logsContainer) {
+      return;
+    }
+    logsContainer.scrollTop = logsContainer.scrollHeight;
   }
 }

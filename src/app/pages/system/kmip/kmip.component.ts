@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 import { helptextSystemKmip } from 'app/helptext/system/kmip';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
@@ -68,6 +70,10 @@ export class KmipComponent implements FormConfiguration {
           ],
           class: 'inline',
           width: '50%',
+          linkText: 'Certificates',
+          linkClicked: () => {
+            this.router.navigate(['/', 'credentials', 'certificates']);
+          },
         },
         {
           type: 'select',
@@ -79,6 +85,10 @@ export class KmipComponent implements FormConfiguration {
           ],
           class: 'inline',
           width: '50%',
+          linkText: this.translate.instant('Certificate Authorities'),
+          linkClicked: () => {
+            this.router.navigate(['/', 'credentials', 'certificates']);
+          },
         },
       ],
     },
@@ -135,8 +145,8 @@ export class KmipComponent implements FormConfiguration {
   constructor(
     private systemGeneralService: SystemGeneralService,
     private dialogService: DialogService,
-    private dialog: MatDialog,
-    private ws: WebSocketService,
+    private dialog: MatDialog, private router: Router,
+    private ws: WebSocketService, private translate: TranslateService,
   ) {
     this.ws.call(this.queryCall).pipe(untilDestroyed(this)).subscribe(
       (res) => {
@@ -210,7 +220,7 @@ export class KmipComponent implements FormConfiguration {
   syncKeys(): void {
     this.ws.call('kmip.sync_keys').pipe(untilDestroyed(this)).subscribe(
       () => {
-        this.dialogService.info(helptextSystemKmip.syncInfoDialog.title, helptextSystemKmip.syncInfoDialog.info, '500px', 'info', true);
+        this.dialogService.info(helptextSystemKmip.syncInfoDialog.title, helptextSystemKmip.syncInfoDialog.info);
       },
       (err) => {
         new EntityUtils().handleWsError(this, err, this.dialogService);
@@ -221,7 +231,10 @@ export class KmipComponent implements FormConfiguration {
   clearSyncKeys(): void {
     this.ws.call('kmip.clear_sync_pending_keys').pipe(untilDestroyed(this)).subscribe(
       () => {
-        this.dialogService.info(helptextSystemKmip.clearSyncKeyInfoDialog.title, helptextSystemKmip.clearSyncKeyInfoDialog.info, '500px', 'info', true);
+        this.dialogService.info(
+          helptextSystemKmip.clearSyncKeyInfoDialog.title,
+          helptextSystemKmip.clearSyncKeyInfoDialog.info,
+        );
       },
       (err) => {
         new EntityUtils().handleWsError(this, err, this.dialogService);

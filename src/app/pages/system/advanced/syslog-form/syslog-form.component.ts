@@ -4,8 +4,8 @@ import {
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
-import { forkJoin, of } from 'rxjs';
-import { map, switchMap } from 'rxjs/operators';
+import { forkJoin, of, Subscription } from 'rxjs';
+import { switchMap } from 'rxjs/operators';
 import { SyslogLevel, SyslogTransport } from 'app/enums/syslog.enum';
 import { choicesToOptions } from 'app/helpers/options.helper';
 import { helptextSystemAdvanced, helptextSystemAdvanced as helptext } from 'app/helptext/system/advanced';
@@ -16,7 +16,7 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { AppState } from 'app/store';
 import { advancedConfigUpdated } from 'app/store/system-config/system-config.actions';
 
-@UntilDestroy()
+@UntilDestroy({ arrayName: 'subscriptions' })
 @Component({
   templateUrl: 'syslog-form.component.html',
   styleUrls: ['./syslog-form.component.scss'],
@@ -24,6 +24,8 @@ import { advancedConfigUpdated } from 'app/store/system-config/system-config.act
 })
 export class SyslogFormComponent implements OnInit {
   isFormLoading = false;
+  subscriptions: Subscription[] = [];
+
   readonly form = this.fb.group({
     fqdn_syslog: [false],
     sysloglevel: [null as SyslogLevel],
@@ -45,13 +47,12 @@ export class SyslogFormComponent implements OnInit {
     syslog: helptext.system_dataset_tooltip,
   };
 
-  readonly levelOptions = of(helptextSystemAdvanced.sysloglevel.options);
-  readonly transportOptions = of(helptextSystemAdvanced.syslog_transport.options);
-  readonly certificateOptions = this.ws.call('system.advanced.syslog_certificate_choices').pipe(
+  readonly levelOptions$ = of(helptextSystemAdvanced.sysloglevel.options);
+  readonly transportOptions$ = of(helptextSystemAdvanced.syslog_transport.options);
+  readonly certificateOptions$ = this.ws.call('system.advanced.syslog_certificate_choices').pipe(
     choicesToOptions(),
-    map((options) => [{ label: '---', value: null }, ...options]),
   );
-  readonly certificateAuthorityOptions = this.ws.call('system.advanced.syslog_certificate_authority_choices')
+  readonly certificateAuthorityOptions$ = this.ws.call('system.advanced.syslog_certificate_authority_choices')
     .pipe(choicesToOptions());
 
   constructor(
@@ -64,7 +65,9 @@ export class SyslogFormComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.form.controls['syslog_tls_certificate'].enabledWhile(this.isTlsTransport$);
+    this.subscriptions.push(
+      this.form.controls['syslog_tls_certificate'].enabledWhile(this.isTlsTransport$),
+    );
 
     this.loadForm();
   }

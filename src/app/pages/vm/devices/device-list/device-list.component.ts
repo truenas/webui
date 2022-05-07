@@ -141,8 +141,7 @@ export class DeviceListComponent implements EntityTableConfig {
         this.dialogService.info(
           this.translate.instant('Change order for <b>{vmDevice}</b>', { vmDevice: `${row.dtype} ${row.id}` }),
           details,
-          '500px',
-          'info',
+          true,
         );
       },
     });

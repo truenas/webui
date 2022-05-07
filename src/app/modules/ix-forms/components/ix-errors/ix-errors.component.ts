@@ -24,7 +24,13 @@ export class IxErrorsComponent implements OnChanges {
   readonly defaultErrMessages = {
     min: (min: number) => this.translate.instant('Minimum value is {min}', { min }),
     max: (max: number) => this.translate.instant('Maximum value is {max}', { max }),
-    required: () => this.translate.instant('{field} is required', { field: this.label }),
+    required: () => {
+      if (this.label) {
+        return this.translate.instant('{field} is required', { field: this.label });
+      }
+
+      return this.translate.instant('Field is required');
+    },
     email: () => this.translate.instant('Value must be a valid email address'),
     minlength: (minLength: number) => this.translate.instant(
       'The length of {field} should be at least {minLength}',
@@ -52,7 +58,6 @@ export class IxErrorsComponent implements OnChanges {
     if ('control' in changes && this.control) {
       // This manually works around: https://github.com/angular/angular/issues/10816
       this.statusChangeSubscription?.unsubscribe();
-      // eslint-disable-next-line rxjs-angular/prefer-takeuntil
       this.statusChangeSubscription = this.control.statusChanges.pipe(untilDestroyed(this)).subscribe(() => {
         const newErrors: string[] = [];
         for (const error in this.control.errors) {

@@ -5,7 +5,7 @@ import cronstrue from 'cronstrue/i18n';
   name: 'crontabExplanation',
 })
 export class CrontabExplanationPipe implements PipeTransform {
-  transform(crontab: string): any {
+  transform(crontab: string): string {
     return cronstrue.toString(crontab);
   }
 }

@@ -1,12 +1,11 @@
 import { Injectable } from '@angular/core';
-import { ProductType } from '../enums/product-type.enum';
-import urls from '../helptext/urls';
-import { WebSocketService } from './ws.service';
+import { ProductType } from 'app/enums/product-type.enum';
+import urls from 'app/helptext/urls';
 
-@Injectable()
+@Injectable({
+  providedIn: 'root',
+})
 export class DocsService {
-  constructor(public ws: WebSocketService) { }
-
   docReplace(message: string): string {
     if (message !== undefined && typeof message === 'string') {
       // For some reason # markers are getting a "\" appended to them by the translate service now

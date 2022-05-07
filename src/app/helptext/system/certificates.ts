@@ -9,11 +9,7 @@ export const helptextSystemCertificates = {
     fieldset_basic: T('Identifier and Type'),
     fieldset_type: T('Certificate Options'),
     fieldset_certificate: T('Certificate Subject'),
-    fieldset_basic_constraints: T('Basic Constraints'),
     fieldset_extra: T('Extra Constraints'),
-    fieldset_authority_key_identifier: T('Authority Key Identifier'),
-    fieldset_extended_key_usage: T('Extended Key Usage'),
-    fieldset_key_usage: T('Key Usage'),
 
     name: {
       placeholder: T('Name'),
@@ -364,33 +360,12 @@ certificate still approved.'),
   },
 
   edit: {
-    title: T('Edit Certificate'),
-    titleCSR: T('Edit CSR'),
-    fieldset_certificate: T('Certificate'),
     name: {
-      placeholder: T('Identifier'),
       tooltip: T(
         'Enter an alphanumeric name for the certificate.\
  Underscore (_), and dash (-) characters are allowed.',
       ),
-      validation: [Validators.required],
     },
-
-    certificate: {
-      placeholder: T('Certificate'),
-    },
-
-    privatekey: {
-      placeholder: T('Private Key'),
-    },
-
-    csr: {
-      placeholder: T('Signing Request'),
-    },
-
-    subject: T('Subject'),
-
-    signCSR: T('Sign CSR'),
   },
 
   list: {

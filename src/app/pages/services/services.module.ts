@@ -1,9 +1,19 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatIconModule } from '@angular/material/icon';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { MatTableModule } from '@angular/material/table';
+import { MatTabsModule } from '@angular/material/tabs';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslateModule } from '@ngx-translate/core';
-import { MaterialModule } from 'app/app-material.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
+import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxTableModule } from 'app/modules/ix-tables/ix-table.module';
 import { ServiceDynamicDnsComponent } from 'app/pages/services/components/service-dynamic-dns/service-dynamic-dns.component';
@@ -21,7 +31,6 @@ import { ServiceSshComponent } from 'app/pages/services/components/service-ssh/s
 import { ServiceTftpComponent } from 'app/pages/services/components/service-tftp/service-tftp.component';
 import { ServiceUpsComponent } from 'app/pages/services/components/service-ups/service-ups.component';
 import { ServiceWebdavComponent } from 'app/pages/services/components/service-webdav/service-webdav.component';
-import { EntityModule } from '../../modules/entity/entity.module';
 import { ServiceSmartComponent } from './components/service-smart/service-smart.component';
 import { ServicesComponent } from './services.component';
 import { routing } from './services.routing';
@@ -32,12 +41,21 @@ import { routing } from './services.routing';
     FormsModule,
     EntityModule,
     routing,
-    MaterialModule,
     TranslateModule,
     CommonDirectivesModule,
     IxFormsModule,
+    MatIconModule,
+    MatTooltipModule,
+    MatSlideToggleModule,
+    MatProgressSpinnerModule,
+    MatCardModule,
+    MatProgressBarModule,
+    MatTabsModule,
     ReactiveFormsModule,
     IxTableModule,
+    MatTableModule,
+    MatCheckboxModule,
+    MatButtonModule,
   ],
   declarations: [
     ServicesComponent,

@@ -44,20 +44,14 @@ export class DeviceDeleteModalComponent implements OnInit {
     if (this.data.row.dtype === VmDeviceType.Disk) {
       const zvolConfirmRequired = this.validatorsService.withMessage(
         Validators.required,
-        {
-          forProperty: 'required',
-          message: this.translate.instant('Name of the zvol is required'),
-        },
+        this.translate.instant('Name of the zvol is required'),
       );
 
       const zvolName = this.getZvolName(this.data.row);
 
       const zvolConfirmMustMatch = this.validatorsService.withMessage(
         Validators.pattern(new RegExp(`^${zvolName}$`)),
-        {
-          forProperty: 'pattern',
-          message: this.translate.instant('Name of the zvol must be correct'),
-        },
+        this.translate.instant('Name of the zvol must be correct'),
       );
 
       this.form.controls['zvolConfirm'].setValidators([

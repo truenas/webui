@@ -1,0 +1,21 @@
+.columns {
+  display: flex;
+
+  .column {
+    flex: 1;
+    margin-right: 16px;
+
+    &:last-of-type {
+      margin-right: 0;
+    }
+  }
+}
+
+.form-actions {
+  margin: 8px 10px;
+
+  button {
+    margin-right: 5px;
+  }
+}
+

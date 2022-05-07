@@ -1,3 +1,5 @@
+import { LinkState } from 'app/enums/network-interface.enum';
+
 export interface ReportingRealtimeUpdate {
   cpu: AllCpusUpdate;
   disks: DisksUpdate;
@@ -41,6 +43,7 @@ export interface AllNetworkInterfacesUpdate {
 }
 
 export interface NetworkInterfaceUpdate {
+  link_state: LinkState;
   received_bytes: number;
   received_bytes_rate: number;
   sent_bytes: number;
@@ -114,6 +117,8 @@ export interface ReportingParams {
   identifier: string;
 }
 
+export type ReportingAggregationKeys = 'min' | 'mean' | 'max';
+
 export interface ReportingData {
   end: number;
   identifier: string;
@@ -123,8 +128,6 @@ export interface ReportingData {
   step: number;
   data: number[][];
   aggregations: {
-    min: number[];
-    mean: number[];
-    max: number[];
+    [key in ReportingAggregationKeys]: string[];
   };
 }

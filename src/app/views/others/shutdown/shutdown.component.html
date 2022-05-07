@@ -3,28 +3,20 @@
   <mat-card id="shutdown-card">
     <mat-card-content id="shutdown-message">{{ "System is shutting down..." | translate }}</mat-card-content>
     <mat-icon
-      *ngIf="productType === ProductType.Core; else isTruenas"
-      svgIcon="truenas_core_logo_full"
+      *ngIf="productType === ProductType.Enterprise"
       class="logo"
-      alt="TrueNAS CORE logo"
+      svgIcon="truenas_enterprise_logo_full"
+      alt="TrueNAS ENTERPRISE logo"
     ></mat-icon>
-    <ng-template #isTruenas>
-      <mat-icon
-        *ngIf="productType === ProductType.Enterprise"
-        class="logo"
-        svgIcon="truenas_enterprise_logo_full"
-        alt="TrueNAS ENTERPRISE logo"
-      ></mat-icon>
-      <mat-icon
-        *ngIf="productType === ProductType.Scale || productType == ProductType.ScaleEnterprise"
-        class="logo"
-        svgIcon="truenas_scale_logo_full"
-        alt="TrueNAS SCALE logo"
-      ></mat-icon>
-    </ng-template>
+    <mat-icon
+      *ngIf="productType === ProductType.Scale || productType == ProductType.ScaleEnterprise"
+      class="logo"
+      svgIcon="truenas_scale_logo_full"
+      alt="TrueNAS SCALE logo"
+    ></mat-icon>
     <div>
       <span fxFlex class="copyright-txt">
-        TrueNAS {{productType}}® © {{copyrightYear}} -
+        TrueNAS {{productType | mapValue: productTypeLabels}}® © {{copyrightYear}} -
         <a href="http://www.ixsystems.com" target="_blank" title="iXsystems, Inc."> iXsystems, Inc</a>.
       </span>
     </div>

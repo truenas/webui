@@ -2,7 +2,7 @@ import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
 } from '@angular/core';
 import { Validators } from '@angular/forms';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import helptext from 'app/helptext/storage/snapshots/snapshots';
@@ -28,7 +28,6 @@ export class SnapshotCloneDialogComponent implements OnInit {
 
   constructor(
     private ws: WebSocketService,
-    private dialogRef: MatDialogRef<SnapshotCloneDialogComponent>,
     private loader: AppLoaderService,
     private fb: FormBuilder,
     private errorHandler: FormErrorHandlerService,

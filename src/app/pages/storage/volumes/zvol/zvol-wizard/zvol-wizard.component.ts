@@ -3,13 +3,13 @@ import {
   FormControl, FormGroup, ValidationErrors, Validators,
 } from '@angular/forms';
 import { MatStepper } from '@angular/material/stepper';
-import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable } from 'rxjs';
-import { DatasetType } from 'app/enums/dataset-type.enum';
+import { DatasetRecordSize, DatasetSync, DatasetType } from 'app/enums/dataset.enum';
 import { DeduplicationSetting } from 'app/enums/deduplication-setting.enum';
 import { ExplorerType } from 'app/enums/explorer-type.enum';
+import { inherit } from 'app/enums/with-inherit.enum';
 import { ZfsPropertySource } from 'app/enums/zfs-property-source.enum';
 import globalHelptext from 'app/helptext/global-helptext';
 import helptext from 'app/helptext/storage/volumes/zvol-form';
@@ -23,9 +23,9 @@ import { Wizard } from 'app/modules/entity/entity-form/models/wizard.interface';
 import { forbiddenValues } from 'app/modules/entity/entity-form/validators/forbidden-values-validation';
 import { EntityWizardComponent } from 'app/modules/entity/entity-wizard/entity-wizard.component';
 import { EntityUtils } from 'app/modules/entity/utils';
+import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
 import { StorageService, WebSocketService } from 'app/services';
 import { CoreService } from 'app/services/core-service/core.service';
-import { DialogService } from 'app/services/dialog.service';
 import { ModalService } from 'app/services/modal.service';
 
 interface ZvolFormData {
@@ -59,7 +59,7 @@ export class ZvolWizardComponent implements WizardConfiguration {
   volid: string;
   customFilter: QueryParams<Dataset> = [];
   protected entityWizard: EntityWizardComponent;
-  minimumRecommendedZvolVolblocksize: keyof ZvolWizardComponent['reverseZvolBlockSizeMap'];
+  minimumRecommendedZvolVolblocksize: DatasetRecordSize;
   namesInUse: string[] = [];
   title: string;
   isLinear = true;
@@ -81,28 +81,6 @@ export class ZvolWizardComponent implements WizardConfiguration {
       function: () => { this.isBasicMode = !this.isBasicMode; },
     },
   ];
-
-  protected byteMap = {
-    T: 1099511627776,
-    G: 1073741824,
-    M: 1048576,
-    K: 1024,
-  };
-  protected reverseZvolBlockSizeMap = {
-    512: '512',
-    '1K': '1024',
-    '2K': '2048',
-    '4K': '4096',
-    '8K': '8192',
-    '16K': '16384',
-    '32K': '32768',
-    '64K': '65536',
-    '128K': '131072',
-    '256K': '262144',
-    '512K': '524288',
-    '1024K': '1048576',
-    '1M': '1048576',
-  };
 
   wizardConfig: Wizard[] = [
     {
@@ -197,9 +175,9 @@ export class ZvolWizardComponent implements WizardConfiguration {
           placeholder: helptext.zvol_sync_placeholder,
           tooltip: helptext.zvol_sync_tooltip,
           options: [
-            { label: this.translate.instant('Standard'), value: 'STANDARD' },
-            { label: this.translate.instant('Always'), value: 'ALWAYS' },
-            { label: this.translate.instant('Disabled'), value: 'DISABLED' },
+            { label: this.translate.instant('Standard'), value: DatasetSync.Standard },
+            { label: this.translate.instant('Always'), value: DatasetSync.Always },
+            { label: this.translate.instant('Disabled'), value: DatasetSync.Disabled },
           ],
         },
         {
@@ -298,14 +276,12 @@ export class ZvolWizardComponent implements WizardConfiguration {
 
   constructor(
     protected core: CoreService,
-    protected router: Router,
-    protected aroute: ActivatedRoute,
     protected ws: WebSocketService,
     protected loader: AppLoaderService,
-    protected dialogService: DialogService,
     protected storageService: StorageService,
     private translate: TranslateService,
     protected modalService: ModalService,
+    private formatter: IxFormatterService,
   ) {}
 
   preInit(entityWizard: EntityWizardComponent): void {
@@ -337,27 +313,26 @@ export class ZvolWizardComponent implements WizardConfiguration {
       }
       const inheritTr = this.translate.instant('Inherit');
       if (pkDataset && pkDataset[0].type === DatasetType.Filesystem) {
-        const syncInherit: Option[] = [{ label: `${inheritTr} (${pkDataset[0].sync.rawvalue})`, value: 'INHERIT' }];
-        const compressionInherit: Option[] = [{ label: `${inheritTr} (${pkDataset[0].compression.rawvalue})`, value: 'INHERIT' }];
-        const deduplicationInherit: Option[] = [{ label: `${inheritTr} (${pkDataset[0].deduplication.rawvalue})`, value: 'INHERIT' }];
-        const volblocksizeInherit: Option[] = [{ label: `${inheritTr}`, value: 'INHERIT' }];
+        const syncInherit: Option[] = [{ label: `${inheritTr} (${pkDataset[0].sync.rawvalue})`, value: inherit }];
+        const compressionInherit: Option[] = [{ label: `${inheritTr} (${pkDataset[0].compression.rawvalue})`, value: inherit }];
+        const deduplicationInherit: Option[] = [{ label: `${inheritTr} (${pkDataset[0].deduplication.rawvalue})`, value: inherit }];
+        const volblocksizeInherit: Option[] = [{ label: `${inheritTr}`, value: inherit }];
 
         sync.options = syncInherit.concat(sync.options);
         compression.options = compressionInherit.concat(compression.options);
         deduplication.options = deduplicationInherit.concat(deduplication.options);
         volblocksize.options = volblocksizeInherit.concat(volblocksize.options);
 
-        zvolEntityForm.controls['sync'].setValue('INHERIT');
-        zvolEntityForm.controls['compression'].setValue('INHERIT');
-        zvolEntityForm.controls['deduplication'].setValue('INHERIT');
+        zvolEntityForm.controls['sync'].setValue(inherit);
+        zvolEntityForm.controls['compression'].setValue(inherit);
+        zvolEntityForm.controls['deduplication'].setValue(inherit);
 
         this.title = helptext.zvol_title_add;
 
         const root = this.parent.split('/')[0];
-        this.ws.call('pool.dataset.recommended_zvol_blocksize', [root]).pipe(untilDestroyed(this)).subscribe((res) => {
-          zvolEntityForm.controls['volblocksize'].setValue(res);
-          // TODO: Check if actual server response matches map
-          this.minimumRecommendedZvolVolblocksize = res as any;
+        this.ws.call('pool.dataset.recommended_zvol_blocksize', [root]).pipe(untilDestroyed(this)).subscribe((recommendedSize) => {
+          zvolEntityForm.controls['volblocksize'].setValue(recommendedSize);
+          this.minimumRecommendedZvolVolblocksize = recommendedSize;
         });
       } else {
         let parentDataset: string | string[] = pkDataset[0].name.split('/');
@@ -400,7 +375,7 @@ export class ZvolWizardComponent implements WizardConfiguration {
           ) {
             syncOptions = [{ label: `${inheritTr} (${parentDataset[0].sync.rawvalue})`, value: parentDataset[0].sync.value }];
           } else {
-            syncOptions = [{ label: `${inheritTr} (${parentDataset[0].sync.rawvalue})`, value: 'INHERIT' }];
+            syncOptions = [{ label: `${inheritTr} (${parentDataset[0].sync.rawvalue})`, value: inherit }];
             zvolEntityForm.controls['sync'].setValue(pkDataset[0].sync.value);
           }
 
@@ -413,7 +388,7 @@ export class ZvolWizardComponent implements WizardConfiguration {
           ) {
             compressionOptions = [{ label: `${inheritTr} (${parentDataset[0].compression.rawvalue})`, value: parentDataset[0].compression.value }];
           } else {
-            compressionOptions = [{ label: `${inheritTr} (${parentDataset[0].compression.rawvalue})`, value: 'INHERIT' }];
+            compressionOptions = [{ label: `${inheritTr} (${parentDataset[0].compression.rawvalue})`, value: inherit }];
             zvolEntityForm.controls['compression'].setValue(pkDataset[0].compression.value);
           }
 
@@ -429,7 +404,7 @@ export class ZvolWizardComponent implements WizardConfiguration {
               value: parentDataset[0].deduplication.value,
             }];
           } else {
-            deduplicationOptions = [{ label: `${inheritTr} (${parentDataset[0].deduplication.rawvalue})`, value: 'INHERIT' }];
+            deduplicationOptions = [{ label: `${inheritTr} (${parentDataset[0].deduplication.rawvalue})`, value: inherit }];
             zvolEntityForm.controls['deduplication'].setValue(pkDataset[0].deduplication.value);
           }
 
@@ -487,18 +462,17 @@ export class ZvolWizardComponent implements WizardConfiguration {
     zvolEntityForm.controls['sparse'].valueChanges.pipe(untilDestroyed(this)).subscribe((sparse) => {
       this.summary[this.translate.instant('Sparse')] = sparse;
     });
-    zvolEntityForm.controls['volblocksize'].valueChanges.pipe(untilDestroyed(this)).subscribe((res: keyof ZvolWizardComponent['reverseZvolBlockSizeMap']) => {
-      const resNumber = parseInt(this.reverseZvolBlockSizeMap[res], 10);
-      if (this.minimumRecommendedZvolVolblocksize) {
-        const recommendedSize = parseInt(this.reverseZvolBlockSizeMap[this.minimumRecommendedZvolVolblocksize], 0);
-        if (resNumber < recommendedSize) {
-          const warnings = `${this.translate.instant(helptext.blocksize_warning.a)} ${this.minimumRecommendedZvolVolblocksize}. ${this.translate.instant(helptext.blocksize_warning.b)}`;
-          this.wizardConfig[1].fieldConfig.find((config) => config.name === 'volblocksize').warnings = warnings;
-        } else {
-          this.wizardConfig[1].fieldConfig.find((config) => config.name === 'volblocksize').warnings = null;
-        }
+    zvolEntityForm.controls['volblocksize'].valueChanges.pipe(untilDestroyed(this)).subscribe((recordSize: DatasetRecordSize) => {
+      const volBlockSizeField = this.wizardConfig[1].fieldConfig.find((config) => config.name === 'volblocksize');
+      const currentSize = this.formatter.convertHumanStringToNum(recordSize);
+      const minimumRecommendedSize = this.formatter.convertHumanStringToNum(this.minimumRecommendedZvolVolblocksize);
+      if (!currentSize || !minimumRecommendedSize || currentSize >= minimumRecommendedSize) {
+        volBlockSizeField.warnings = null;
+        return;
       }
-      this.summary[this.translate.instant('Block Size')] = res;
+      const warnings = `${this.translate.instant(helptext.blocksize_warning.a)} ${this.minimumRecommendedZvolVolblocksize}. ${this.translate.instant(helptext.blocksize_warning.b)}`;
+      this.wizardConfig[1].fieldConfig.find((config) => config.name === 'volblocksize').warnings = warnings;
+      this.summary[this.translate.instant('Block Size')] = recordSize;
     });
   }
 
@@ -513,17 +487,17 @@ export class ZvolWizardComponent implements WizardConfiguration {
     delete body.path;
     const data: any = this.sendAsBasicOrAdvanced(body);
 
-    if (data.sync === 'INHERIT') {
+    if (data.sync === inherit) {
       delete (data.sync);
     }
-    if (data.compression === 'INHERIT') {
+    if (data.compression === inherit) {
       delete (data.compression);
     }
-    if (data.deduplication === 'INHERIT') {
+    if (data.deduplication === inherit) {
       delete (data.deduplication);
     }
 
-    if (data.volblocksize !== 'INHERIT') {
+    if (data.volblocksize !== inherit) {
       let volblocksizeIntegerValue = data.volblocksize.match(/[a-zA-Z]+|[+-]?([0-9]+([.][0-9]*)?|[.][0-9]+)+/g)[0];
       volblocksizeIntegerValue = parseInt(volblocksizeIntegerValue, 10);
 

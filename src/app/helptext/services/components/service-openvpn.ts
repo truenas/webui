@@ -1,4 +1,5 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
+import { OpenVpnDeviceType } from 'app/enums/open-vpn-device-type.enum';
 
 export default {
   // Helptext for client component
@@ -25,22 +26,16 @@ export default {
   server: {
     header: T('OpenVPN Server Settings'),
     server: {
-      placeholder: T('Server'),
       tooltip: T('Enter the IP address and netmask of the server.'),
     },
     tls_crypt_auth: {
-      placeholder: T('TLS Crypt Auth'),
       tooltip: T('When <code>tls_crypt_auth_enabled</code> is enabled and <code>tls_crypt_auth</code> is not provided, \
  a static key is automatically generated to be used with OpenVPN client.'),
     },
     topology: {
-      placeholder: T('Topology'),
       tooltip: T('Configure virtual addressing topology when running in TUN mode. \
  (TAP mode always uses a SUBNET topology.)'),
       enum: [{
-        label: '---',
-        value: null,
-      }, {
         label: 'NET30',
         value: 'NET30',
       }, {
@@ -52,20 +47,10 @@ export default {
       },
       ],
     },
-    buttons: {
-      renew: T('Renew Static Key'),
-      download: T('Download Client Config'),
-    },
-    static_dialog: {
-      title: T('New Static Key Settings'),
-      buttonTxt: T('Close'),
-    },
-    formTitle: T('Open VPN Server'),
   },
   // Helptext for both components
   certificate: {
     client_placeholder: T('Client Certificate'),
-    server_placeholder: T('Server Certificate'),
     tooltip: T('Choose a valid client certificate which exists \
 on this system and hasn\'t been revoked. Find more about generating certificates and CAs \
 for OpenVPN <a href="https://community.openvpn.net/openvpn/wiki/HOWTO#SettingupyourownCertificateAuthorityCAandgeneratingcertificatesandkeysforanOpenVPNserverandmultipleclients" \
@@ -101,9 +86,6 @@ target="_blank">here.</a>'),
     placeholder: T('Compression'),
     tooltip: T('Choose a compression algorithm.'),
     enum: [{
-      label: '---',
-      value: null,
-    }, {
       label: 'LZO',
       value: 'LZO',
     }, {
@@ -117,10 +99,10 @@ target="_blank">here.</a>'),
  <a href="https://community.openvpn.net/openvpn/wiki/BridgingAndRouting" target="_blank">here</a>.'),
     enum: [{
       label: 'TUN',
-      value: 'TUN',
+      value: OpenVpnDeviceType.Tun,
     }, {
       label: 'TAP',
-      value: 'TAP',
+      value: OpenVpnDeviceType.Tap,
     }],
   },
   protocol: {
@@ -146,5 +128,4 @@ target="_blank">here.</a>'),
       value: 'TCP6',
     }],
   },
-  error_dialog_title: T('Error'),
 };

@@ -5,6 +5,11 @@
   margin-bottom: 12px;
   margin-top: 18px;
   padding: 8px 0;
+
+  .mat-chip-list {
+    display: block;
+    width: 100%;
+  }
 }
 
 .label-container {
@@ -28,6 +33,7 @@
 
   &:focus-within {
     border-color: var(--primary);
+    border-width: 1px;
   }
 
   &.disabled {

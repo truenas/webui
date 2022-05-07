@@ -27,7 +27,7 @@ export class SchedulerHarness extends ComponentHarness implements IxFormControlH
   }
 
   async openCustomModal(): Promise<void> {
-    const select = (await this.getSelectHarness());
+    const select = await this.getSelectHarness();
     await select.open();
     await select.clickOptions({ text: /Custom/ });
   }
@@ -40,17 +40,33 @@ export class SchedulerHarness extends ComponentHarness implements IxFormControlH
     await this.openCustomModal();
 
     const locator = this.documentRootLocatorFactory();
-    const modal = await locator.locatorFor(SchedulerModalHarness)();
+    try {
+      const modal = await locator.locatorFor(SchedulerModalHarness)();
 
-    const [minutes, hours, days] = crontab.split(' ');
-    await modal.setMinutes(minutes);
-    await modal.setHours(hours);
-    await modal.setDays(days);
+      const parts = crontab.split(' ');
+      const hasMinutes = parts.length === 5;
 
-    const parsed = cronParser.parseExpression(crontab);
-    await modal.setMonths(parsed.fields.month);
-    await modal.setDaysOfWeek(parsed.fields.dayOfWeek);
-    await modal.pressDone();
+      if (hasMinutes) {
+        await modal.setMinutes(parts[0]);
+        await modal.setHours(parts[1]);
+        await modal.setDays(parts[2]);
+      } else {
+        await modal.setHours(parts[0]);
+        await modal.setDays(parts[1]);
+      }
+
+      const parsed = cronParser.parseExpression(hasMinutes ? crontab : `0 ${crontab}`);
+      await modal.setMonths(parsed.fields.month);
+      await modal.setDaysOfWeek(parsed.fields.dayOfWeek);
+      await modal.pressDone();
+    } catch (error: unknown) {
+      if ((error as Error).message.includes('Failed to find element')
+        && (error as Error).message.includes('ix-scheduler-modal')) {
+        throw new Error('Failed to find ix-scheduler-modal. This may happen if Store with timezone is not provided.');
+      }
+
+      throw error;
+    }
   }
 
   async isDisabled(): Promise<boolean> {

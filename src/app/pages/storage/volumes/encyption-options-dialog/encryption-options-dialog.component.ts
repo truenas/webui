@@ -2,11 +2,11 @@ import {
   ChangeDetectionStrategy, Component, Inject, OnInit,
 } from '@angular/core';
 import { Validators } from '@angular/forms';
-import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { of } from 'rxjs';
+import { of, Subscription } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { combineLatestIsAny } from 'app/helpers/combine-latest-is-any.helper';
 import dataset_helptext from 'app/helptext/storage/volumes/datasets/dataset-form';
@@ -14,6 +14,7 @@ import { DatasetChangeKeyParams } from 'app/interfaces/dataset-change-key.interf
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { matchOtherValidator } from 'app/modules/entity/entity-form/validators/password-validation/password-validation';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
+import IxValidatorsService from 'app/modules/ix-forms/services/ix-validators.service';
 import {
   EncryptionOptionsDialogData,
 } from 'app/pages/storage/volumes/encyption-options-dialog/encryption-options-dialog-data.interface';
@@ -25,7 +26,9 @@ enum EncryptionType {
   Passphrase = 'passphrase',
 }
 
-@UntilDestroy()
+@UntilDestroy({
+  arrayName: 'subscriptions',
+})
 @Component({
   selector: 'ix-encryption-options-dialog',
   templateUrl: './encryption-options-dialog.component.html',
@@ -39,11 +42,16 @@ export class EncryptionOptionsDialogComponent implements OnInit {
     generate_key: [false],
     key: ['', [Validators.required, Validators.minLength(64), Validators.maxLength(64)]],
     passphrase: ['', Validators.minLength(8)],
-    confirm_passphrase: ['', matchOtherValidator('passphrase')],
+    confirm_passphrase: ['', this.validatorsService.withMessage(
+      matchOtherValidator('passphrase'),
+      this.translate.instant('Passphrase and confirmation should match.'),
+    )],
     pbkdf2iters: [350000, Validators.min(100000)],
     algorithm: [''],
     confirm: [false, [Validators.requiredTrue]],
   });
+
+  subscriptions: Subscription[] = [];
 
   isInheriting$ = this.form.select((values) => values.inherit_encryption);
   isKey$ = this.form.select((values) => values.encryption_type === EncryptionType.Key);
@@ -65,8 +73,8 @@ export class EncryptionOptionsDialogComponent implements OnInit {
     private translate: TranslateService,
     private loader: AppLoaderService,
     private dialog: DialogService,
-    private matDialog: MatDialog,
     private dialogRef: MatDialogRef<EncryptionOptionsDialogComponent>,
+    private validatorsService: IxValidatorsService,
     private errorHandler: FormErrorHandlerService,
     @Inject(MAT_DIALOG_DATA) public data: EncryptionOptionsDialogData,
   ) {}
@@ -139,8 +147,6 @@ export class EncryptionOptionsDialogComponent implements OnInit {
     this.dialog.info(
       this.translate.instant('Encryption Options Saved'),
       this.translate.instant('Encryption options for {id} successfully saved.', { id: this.data.row.id }),
-      '500px',
-      'info',
     );
   }
 
@@ -174,15 +180,19 @@ export class EncryptionOptionsDialogComponent implements OnInit {
       this.form.controls['encryption_type'].disable();
     }
 
-    this.form.controls['key'].disabledWhile(combineLatestIsAny([
-      this.isSetToGenerateKey$,
-      this.isKey$.pipe(map((value) => !value)),
-      this.isInheriting$,
-    ]));
+    this.subscriptions.push(
+      this.form.controls['key'].disabledWhile(combineLatestIsAny([
+        this.isSetToGenerateKey$,
+        this.isKey$.pipe(map((value) => !value)),
+        this.isInheriting$,
+      ])),
+    );
 
     const arePassphraseFieldsDisabled$ = combineLatestIsAny([this.isKey$, this.isInheriting$]);
-    this.form.controls['passphrase'].disabledWhile(arePassphraseFieldsDisabled$);
-    this.form.controls['confirm_passphrase'].disabledWhile(arePassphraseFieldsDisabled$);
-    this.form.controls['pbkdf2iters'].disabledWhile(arePassphraseFieldsDisabled$);
+    this.subscriptions.push(
+      this.form.controls['passphrase'].disabledWhile(arePassphraseFieldsDisabled$),
+      this.form.controls['confirm_passphrase'].disabledWhile(arePassphraseFieldsDisabled$),
+      this.form.controls['pbkdf2iters'].disabledWhile(arePassphraseFieldsDisabled$),
+    );
   }
 }

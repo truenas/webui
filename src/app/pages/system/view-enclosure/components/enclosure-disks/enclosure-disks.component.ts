@@ -1,8 +1,6 @@
 import {
   Component, Input, AfterContentInit, OnChanges, SimpleChanges, ViewChild, ElementRef, OnDestroy, ChangeDetectorRef,
 } from '@angular/core';
-import { MediaObserver } from '@angular/flex-layout';
-import { DomSanitizer } from '@angular/platform-browser';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import {
@@ -167,18 +165,8 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
     return this.overview.nativeElement.offsetWidth;
   }
 
-  get cardScale(): number {
-    const scale = this.cardWidth / this.maxCardWidth;
-    return scale > 1 ? 1 : scale;
-  }
-
-  scaleArgs: string;
-
   constructor(
-    public el: ElementRef,
     protected core: CoreService,
-    public sanitizer: DomSanitizer,
-    public mediaObserver: MediaObserver,
     public cdr: ChangeDetectorRef,
     public dialogService: DialogService,
     protected translate: TranslateService,
@@ -704,7 +692,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
         const vdev = this.system.getVdevInfo(this.selectedDisk.devname);
         this.selectedVdev = vdev;
 
-        this.labels = new VDevLabelsSvg(this.enclosure, this.app, this.theme, this.selectedDisk);
+        this.labels = new VDevLabelsSvg(this.enclosure, this.app, this.selectedDisk, this.theme);
 
         this.labels.events$.next({ name: 'LabelDrives', data: vdev, sender: this } as LabelDrivesEvent);
 

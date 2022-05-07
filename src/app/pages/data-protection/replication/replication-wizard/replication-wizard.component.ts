@@ -7,7 +7,7 @@ import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 import { take } from 'rxjs/operators';
 import { CipherType } from 'app/enums/cipher-type.enum';
-import { DatasetSource } from 'app/enums/dataset-source.enum';
+import { DatasetSource } from 'app/enums/dataset.enum';
 import { Direction } from 'app/enums/direction.enum';
 import { ExplorerType } from 'app/enums/explorer-type.enum';
 import { KeychainCredentialType } from 'app/enums/keychain-credential-type.enum';
@@ -43,6 +43,7 @@ import { EntityFormService } from 'app/modules/entity/entity-form/services/entit
 import { forbiddenValues } from 'app/modules/entity/entity-form/validators/forbidden-values-validation';
 import { EntityWizardComponent } from 'app/modules/entity/entity-wizard/entity-wizard.component';
 import { EntityUtils } from 'app/modules/entity/utils';
+import { CronPresetValue } from 'app/modules/scheduler/utils/get-default-crontab-presets.utils';
 import {
   AppLoaderService,
   DialogService,
@@ -523,7 +524,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
           name: 'schedule_picker',
           placeholder: helptext.schedule_placeholder,
           tooltip: helptext.schedule_tooltip,
-          value: '0 0 * * *',
+          value: CronPresetValue.Daily,
           class: 'inline',
           width: '50%',
           relation: [{
@@ -570,7 +571,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
           width: '50%',
         },
         {
-          placeholder: helptext.lifetime_value_placeholder,
+          placeholder: '',
           type: 'input',
           name: 'lifetime_value',
           inputType: 'number',
@@ -591,7 +592,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
         {
           type: 'select',
           name: 'lifetime_unit',
-          tooltip: helptext.lifetime_unit_tooltip,
+          tooltip: '',
           options: [{
             label: this.translate.instant('Hours'),
             value: LifetimeUnit.Hour,
@@ -739,7 +740,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
       type: 'select',
       name: 'cipher',
       placeholder: helptext.cipher_placeholder,
-      tooltip: helptext.cipher_tooltip,
+      tooltip: '',
       options: [
         {
           label: this.translate.instant('Standard (Secure)'),
@@ -1382,8 +1383,6 @@ export class ReplicationWizardComponent implements WizardConfiguration {
           this.dialogService.info(
             this.translate.instant('Task started'),
             this.translate.instant('Replication <i>{name}</i> has started.', { name: value['name'] }),
-            '500px',
-            'info',
             true,
           );
         },

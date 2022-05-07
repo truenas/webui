@@ -81,6 +81,19 @@ a:hover {
   text-decoration: none;
 }
 
+a:focus-visible,
+button.mat-button.mat-accent:focus-visible,
+.ix-blue button:focus-visible,
+button:focus-visible {
+  border-color: transparent !important;
+  box-shadow: 0 0 0 1px var(--focus-brd) inset !important;
+  outline-width: 0;
+}
+
+a:focus-visible {
+  box-shadow: 0 0 0 1px var(--alt-bg2) inset !important;
+}
+
 a {
   color: inherit;
 }
@@ -587,6 +600,10 @@ body .mat-select-trigger {
   width: 100%;
 }
 
+.slide-in-nav-item a:focus-visible {
+  box-shadow: none !important;
+}
+
 .sidebar-panel.mat-sidenav .sidebar-list-item.open > .mat-list-item-content > .sub-menu {
   max-height: 1000px;
 }
@@ -745,6 +762,19 @@ body .mat-select-trigger {
 
 .default-table tbody tr td {
   padding: 0.9rem 1.2rem;
+}
+
+/*---- Chrome autocomplete Forms -----*/
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:focus-visible,
+input:-webkit-autofill:active {
+  box-shadow: 0 0 0 30px var(--bg1) inset !important;
+}
+
+input:-webkit-autofill {
+  -webkit-text-fill-color: var(--fg1);
 }
 
 /*---- Inbox -----*/

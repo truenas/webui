@@ -1,6 +1,7 @@
 import { DatePipe } from '@angular/common';
 import { Component } from '@angular/core';
 import { Validators } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { filter } from 'rxjs/operators';
@@ -14,6 +15,7 @@ import { AppLoaderService } from 'app/modules/app-loader/app-loader.service';
 import { DialogFormConfiguration } from 'app/modules/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/modules/entity/entity-dialog/entity-dialog.component';
 import { EntityFormService } from 'app/modules/entity/entity-form/services/entity-form.service';
+import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-table.component';
 import { EntityTableAction, EntityTableConfig } from 'app/modules/entity/entity-table/entity-table.interface';
 import { EntityUtils } from 'app/modules/entity/utils';
@@ -86,6 +88,7 @@ export class ReplicationListComponent implements EntityTableConfig {
     protected modalService: ModalService,
     protected loader: AppLoaderService,
     private translate: TranslateService,
+    private matDialog: MatDialog,
   ) {}
 
   afterInit(entityList: EntityTableComponent): void {
@@ -124,8 +127,6 @@ export class ReplicationListComponent implements EntityTableConfig {
                 this.dialog.info(
                   this.translate.instant('Task started'),
                   this.translate.instant('Replication <i>{name}</i> has started.', { name: row.name }),
-                  '500px',
-                  'info',
                   true,
                 );
                 this.job.getJobStatus(jobId).pipe(untilDestroyed(this)).subscribe((job: Job) => {
@@ -215,9 +216,39 @@ export class ReplicationListComponent implements EntityTableConfig {
   stateButton(row: ReplicationTaskUi): void {
     if (row.job) {
       if (row.state.state === JobState.Running) {
-        this.entityList.runningStateButton(row.job.id);
+        const dialogRef = this.matDialog.open(EntityJobComponent, { data: { title: this.translate.instant('Task is running') } });
+        dialogRef.componentInstance.jobId = row.job.id;
+        dialogRef.componentInstance.job = row.job;
+        let subId: string = null;
+        if (row.job.logs_path) {
+          dialogRef.componentInstance.enableRealtimeLogs(true);
+          subId = dialogRef.componentInstance.getRealtimeLogs();
+        }
+        dialogRef.componentInstance.wsshow();
+        dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
+          dialogRef.close();
+          if (subId) {
+            this.ws.unsubscribe('filesystem.file_tail_follow:' + row.job.logs_path);
+            this.ws.unsub('filesystem.file_tail_follow:' + row.job.logs_path, subId);
+          }
+        });
+        dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe(() => {
+          dialogRef.close();
+          if (subId) {
+            this.ws.unsubscribe('filesystem.file_tail_follow:' + row.job.logs_path);
+            this.ws.unsub('filesystem.file_tail_follow:' + row.job.logs_path, subId);
+          }
+        });
+        dialogRef.componentInstance.aborted.pipe(untilDestroyed(this)).subscribe(() => {
+          dialogRef.close();
+          this.dialog.info(this.translate.instant('Task Aborted'), '');
+          if (subId) {
+            this.ws.unsubscribe('filesystem.file_tail_follow:' + row.job.logs_path);
+            this.ws.unsub('filesystem.file_tail_follow:' + row.job.logs_path, subId);
+          }
+        });
       } else if (row.state.state === JobState.Hold) {
-        this.dialog.info(this.translate.instant('Task is on hold'), row.state.reason, '500px', 'info', true);
+        this.dialog.info(this.translate.instant('Task is on hold'), row.state.reason);
       } else if (row.state.warnings && row.state.warnings.length > 0) {
         let list = '';
         row.state.warnings.forEach((warning: string) => {
@@ -228,7 +259,7 @@ export class ReplicationListComponent implements EntityTableConfig {
         this.dialog.errorReport(row.state.state, `<pre>${row.state.error}</pre>`);
       }
     } else {
-      this.dialog.info(globalHelptext.noLogDilaog.title, globalHelptext.noLogDilaog.message);
+      this.dialog.warn(globalHelptext.noLogDialog.title, globalHelptext.noLogDialog.message);
     }
   }
 

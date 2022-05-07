@@ -1,18 +1,14 @@
 import { Routes } from '@angular/router';
+import { RsyncTaskListComponent } from 'app/pages/data-protection/rsync-task/rsync-task-list/rsync-task-list.component';
+import { SmartTaskListComponent } from 'app/pages/data-protection/smart-task/smart-task-list/smart-task-list.component';
 import { CloudsyncFormComponent } from './cloudsync/cloudsync-form/cloudsync-form.component';
 import { CloudsyncListComponent } from './cloudsync/cloudsync-list/cloudsync-list.component';
 import { DataProtectionDashboardComponent } from './components/data-protection-dashboard/data-protection-dashboard.component';
 import { ReplicationFormComponent } from './replication/replication-form/replication-form.component';
 import { ReplicationListComponent } from './replication/replication-list/replication-list.component';
 import { ReplicationWizardComponent } from './replication/replication-wizard/replication-wizard.component';
-import { RsyncFormComponent } from './rsync/rsync-form/rsync-form.component';
-import { RsyncListComponent } from './rsync/rsync-list/rsync-list.component';
-import { ResilverConfigComponent } from './scrub/resilver-config/resilver-config.component';
-import { ScrubFormComponent } from './scrub/scrub-form/scrub-form.component';
-import { ScrubListComponent } from './scrub/scrub-list/scrub-list.component';
-import { SmartFormComponent } from './smart/smart-form/smart-form.component';
-import { SmartListComponent } from './smart/smart-list/smart-list.component';
-import { SnapshotFormComponent } from './snapshot/snapshot-form/snapshot-form.component';
+import { ResilverConfigComponent } from './scrub-task/resilver-config/resilver-config.component';
+import { ScrubListComponent } from './scrub-task/scrub-list/scrub-list.component';
 import { SnapshotListComponent } from './snapshot/snapshot-list/snapshot-list.component';
 
 export const dataProtectionRoutes: Routes = [{
@@ -46,14 +42,6 @@ export const dataProtectionRoutes: Routes = [{
         path: '',
         component: SnapshotListComponent,
         data: { title: 'Periodic Snapshot Tasks', breadcrumb: 'Periodic Snapshot Tasks' },
-      }, {
-        path: 'add',
-        component: SnapshotFormComponent,
-        data: { title: 'Add', breadcrumb: 'Add' },
-      }, {
-        path: 'edit/:pk',
-        component: SnapshotFormComponent,
-        data: { title: 'Edit', breadcrumb: 'Edit' },
       }],
     }, {
       path: 'replication',
@@ -81,32 +69,16 @@ export const dataProtectionRoutes: Routes = [{
       data: { title: 'Rsync Tasks', breadcrumb: 'Rsync Tasks', icon: 'event_note' },
       children: [{
         path: '',
-        component: RsyncListComponent,
+        component: RsyncTaskListComponent,
         data: { title: 'Rsync Tasks', breadcrumb: 'Rsync Tasks' },
-      }, {
-        path: 'add',
-        component: RsyncFormComponent,
-        data: { title: 'Add', breadcrumb: 'Add' },
-      }, {
-        path: 'edit/:pk',
-        component: RsyncFormComponent,
-        data: { title: 'Edit', breadcrumb: 'Edit' },
       }],
     }, {
       path: 'smart',
       data: { title: 'S.M.A.R.T. Tests', breadcrumb: 'S.M.A.R.T. Tests', icon: 'event_note' },
       children: [{
         path: '',
-        component: SmartListComponent,
+        component: SmartTaskListComponent,
         data: { title: 'S.M.A.R.T. Tests', breadcrumb: 'S.M.A.R.T. Tests' },
-      }, {
-        path: 'add',
-        component: SmartFormComponent,
-        data: { title: 'Add', breadcrumb: 'Add' },
-      }, {
-        path: 'edit/:pk',
-        component: SmartFormComponent,
-        data: { title: 'Edit', breadcrumb: 'Edit' },
       }],
     }, {
       path: 'scrub',
@@ -115,14 +87,6 @@ export const dataProtectionRoutes: Routes = [{
         path: '',
         component: ScrubListComponent,
         data: { title: 'Scrub Tasks', breadcrumb: 'Scrub Tasks' },
-      }, {
-        path: 'add',
-        component: ScrubFormComponent,
-        data: { title: 'Add', breadcrumb: 'Add' },
-      }, {
-        path: 'edit/:pk',
-        component: ScrubFormComponent,
-        data: { title: 'Edit', breadcrumb: 'Edit' },
       }, {
         path: 'priority',
         data: { title: 'Resilver Priority', breadcrumb: 'Resilver Priority', icon: 'event_note' },

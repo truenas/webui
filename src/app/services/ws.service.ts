@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { UUID } from 'angular2-uuid';
+import { environment } from 'environments/environment';
 import { LocalStorage } from 'ngx-webstorage';
 import {
   Observable, Observer, Subject, Subscriber,
@@ -14,7 +15,6 @@ import { ApiEventDirectory } from 'app/interfaces/api-event-directory.interface'
 import { ApiEvent } from 'app/interfaces/api-event.interface';
 import { LoginParams } from 'app/interfaces/auth.interface';
 import { Job } from 'app/interfaces/job.interface';
-import { environment } from '../../environments/environment';
 
 @UntilDestroy()
 @Injectable()
@@ -124,8 +124,8 @@ export class WebSocketService {
 
       this.pendingCalls.delete(data.id);
       if (data.error) {
-        console.error('Error: ', data.error);
-        call.observer.error(data.error);
+        console.error('Error: ', data.id, data.error);
+        call?.observer?.error(data.error);
       }
       if (call && call.observer) {
         call.observer.next(data.result);
@@ -136,9 +136,9 @@ export class WebSocketService {
       setTimeout(() => this.ping(), 20000);
       this.onconnect();
     } else if (data.msg === ApiEventMessage.Changed || data.msg === ApiEventMessage.Added) {
-      this.subscriptions.forEach((v, k) => {
-        if (k === '*' || k === data.collection) {
-          v.forEach((item) => { item.next(data); });
+      this.subscriptions.forEach((observers, name) => {
+        if (name === '*' || name === data.collection) {
+          observers.forEach((item) => { item.next(data); });
         }
       });
     } else
@@ -172,7 +172,7 @@ export class WebSocketService {
     }
   }
 
-  subscribe<K extends keyof ApiEventDirectory>(name: K): Observable<ApiEvent<ApiEventDirectory[K]['response']>> {
+  subscribe<K extends keyof ApiEventDirectory>(name: K | '*'): Observable<ApiEvent<ApiEventDirectory[K]['response']>> {
     const source = Observable.create((observer: Subscriber<ApiEventDirectory[K]['response']>) => {
       if (this.subscriptions.has(name)) {
         this.subscriptions.get(name).push(observer);
@@ -185,10 +185,10 @@ export class WebSocketService {
 
   unsubscribe(observer: any): void {
     // FIXME: just does not have a good performance :)
-    this.subscriptions.forEach((v) => {
-      v.forEach((item) => {
+    this.subscriptions.forEach((observers) => {
+      observers.forEach((item) => {
         if (item === observer) {
-          v.splice(v.indexOf(item), 1);
+          observers.splice(observers.indexOf(item), 1);
         }
       });
     });

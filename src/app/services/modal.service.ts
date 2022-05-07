@@ -2,8 +2,8 @@ import {
   ComponentFactoryResolver, Injectable, Injector, Type,
 } from '@angular/core';
 import { Subject } from 'rxjs';
-import { ModalConfiguration } from 'app/components/common/modal/modal-configuration.interface';
-import { ModalComponent } from 'app/components/common/modal/modal.component';
+import { ModalConfiguration } from 'app/modules/common/modal/modal-configuration.interface';
+import { ModalComponent } from 'app/modules/common/modal/modal.component';
 
 export interface ModalServiceMessage {
   action: string;
@@ -72,16 +72,10 @@ export class ModalService {
     modal.open(conf);
   }
 
-  private close(id: string, error?: any, response?: any): Promise<boolean> {
+  private close(id: string): Promise<boolean> {
     // close modal specified by id
     const modal = this.modals.find((modal) => modal.id === id);
-    if (error) {
-      this.onClose$.error(error);
-    } else if (response) {
-      this.onClose$.next(response);
-    } else {
-      this.onClose$.next(true);
-    }
+    this.onClose$.next(true);
     return modal.close();
   }
 }

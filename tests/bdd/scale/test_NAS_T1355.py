@@ -1,11 +1,9 @@
 # coding=utf-8
 """SCALE UI: feature tests."""
 
-import time
 from function import (
     wait_on_element,
     is_element_present,
-    attribute_value_exist,
     wait_on_element_disappear,
 )
 from pytest_bdd import (
@@ -13,8 +11,9 @@ from pytest_bdd import (
     scenario,
     then,
     when,
-    parsers
 )
+import pytest
+pytestmark = [pytest.mark.debug_test]
 
 
 @scenario('features/NAS-T1355.feature', 'Apps Page - Validate removing an app')
@@ -60,11 +59,10 @@ def make_sure_the_installed_tab_is_open(driver):
 @then('click three dots icon for Chia and select delete')
 def click_three_dots_icon_for_chia_and_select_delete(driver):
     """click three dots icon for Chia and select delete."""
-    assert wait_on_element(driver, 20, '//mat-card[contains(.,"chia-test")]//mat-icon[contains(.,"more_vert")]', 'clickable')
+    assert wait_on_element(driver, 60, '//mat-card[contains(.,"chia-test")]//mat-icon[contains(.,"more_vert")]', 'clickable')
     driver.find_element_by_xpath('//mat-card[contains(.,"chia-test")]//mat-icon[contains(.,"more_vert")]').click()
     assert wait_on_element(driver, 10, '//span[contains(.,"Delete")]', 'clickable')
     driver.find_element_by_xpath('//span[contains(.,"Delete")]').click()
-
 
 
 @then('confirm the delete confirmation')
@@ -78,7 +76,8 @@ def confirm_the_delete_confirmation(driver):
     assert wait_on_element(driver, 5, '//*[contains(.,"Deleting...")]')
     assert wait_on_element_disappear(driver, 60, '//*[contains(.,"Deleting...")]')
 
+
 @then('confirm deletion is successful')
 def confirm_deletion_is_successful(driver):
     """confirm deletion is successful."""
-    assert wait_on_element(driver, 20, '//mat-card[contains(.,"chia-test")]') is False
+    assert is_element_present(driver, '//mat-card[contains(.,"chia-test")]') is False

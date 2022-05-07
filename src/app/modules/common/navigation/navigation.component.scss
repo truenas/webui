@@ -1,0 +1,32 @@
+:host {
+  .icon {
+    &.jail {
+      margin: 0 16px 0 10px;
+      max-width: 28px;
+    }
+
+    &.console-line {
+      font-size: 24px;
+    }
+  }
+
+  .absorbs-focus {
+    height: 0;
+    position: absolute;
+  }
+
+  .nav-section-title {
+    margin-left: -6px;
+    padding-left: 0;
+  }
+
+  .nav-section-divider {
+    margin: 0 -24px;
+  }
+
+  a.sidenav-link:focus-visible {
+    background: var(--hover-bg);
+    box-shadow: 0 0 0 1px var(--hover-bg) inset;
+    outline-width: 0;
+  }
+}

@@ -1,28 +1,28 @@
 import { Injectable } from '@angular/core';
 import { MatDialog, MatDialogRef, MatDialogConfig } from '@angular/material/dialog';
-import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Observable } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { ConfirmOptions, ConfirmOptionsWithSecondaryCheckbox } from 'app/interfaces/dialog.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { Option } from 'app/interfaces/option.interface';
+import { ConfirmDialogComponent } from 'app/modules/common/dialog/confirm-dialog/confirm-dialog.component';
+import { ErrorDialogComponent } from 'app/modules/common/dialog/error-dialog/error-dialog.component';
+import { GeneralDialogComponent, GeneralDialogConfig } from 'app/modules/common/dialog/general-dialog/general-dialog.component';
+import { InfoDialogComponent } from 'app/modules/common/dialog/info-dialog/info-dialog.component';
+import { SelectDialogComponent } from 'app/modules/common/dialog/select-dialog/select-dialog.component';
 import { DialogFormConfiguration } from 'app/modules/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/modules/entity/entity-dialog/entity-dialog.component';
-import { ConfirmDialogComponent } from 'app/pages/common/confirm-dialog/confirm-dialog.component';
-import { ErrorDialogComponent } from 'app/pages/common/error-dialog/error-dialog.component';
-import { GeneralDialogComponent, GeneralDialogConfig } from 'app/pages/common/general-dialog/general-dialog.component';
-import { InfoDialogComponent } from 'app/pages/common/info-dialog/info-dialog.component';
-import { SelectDialogComponent } from 'app/pages/common/select-dialog/select-dialog.component';
-import { AppLoaderService } from '../modules/app-loader/app-loader.service';
 import { WebSocketService } from './ws.service';
 
 @UntilDestroy()
-@Injectable()
+@Injectable({
+  providedIn: 'root',
+})
 export class DialogService {
   protected loaderOpen = false;
 
-  constructor(private dialog: MatDialog, private ws: WebSocketService, protected loader: AppLoaderService) {
+  constructor(private dialog: MatDialog, private ws: WebSocketService) {
     /* Close all open dialogs when websocket connection is dropped */
     this.ws.onCloseSubject$.pipe(
       filter(Boolean),
@@ -60,14 +60,6 @@ export class DialogService {
       dialogRef.componentInstance.cancelMsg = options.cancelMsg;
     }
 
-    if (options.textToCopy) {
-      dialogRef.componentInstance.keyTextArea = options.keyTextArea;
-    }
-
-    if (options.keyTextArea) {
-      dialogRef.componentInstance.textToCopy = options.textToCopy;
-    }
-
     if ('secondaryCheckBox' in options && options.secondaryCheckBox) {
       dialogRef.componentInstance.secondaryCheckBox = options.secondaryCheckBox;
       dialogRef.componentInstance.secondaryCheckBoxMsg = options.secondaryCheckBoxMsg;
@@ -75,12 +67,15 @@ export class DialogService {
       dialogRef.componentInstance.method = options.method;
       dialogRef.componentInstance.switchSelectionEmitter.pipe(untilDestroyed(this)).subscribe((selection: boolean) => {
         const data = options.data;
-        if (selection) {
+        if (selection && data[0]) {
           if (data[0] && data[0].hasOwnProperty('reboot')) {
             data[0].reboot = !data[0].reboot;
           }
           if (data[0] && data[0].hasOwnProperty('overcommit')) {
             data[0].overcommit = !data[0].overcommit;
+          }
+          if (data[0] && data[0].hasOwnProperty('delete_unused_images')) {
+            data[0].delete_unused_images = !data[0].delete_unused_images;
           }
           dialogRef.componentInstance.data = data;
           return dialogRef;
@@ -104,12 +99,23 @@ export class DialogService {
     return dialogRef.afterClosed();
   }
 
-  info(title: string, info: string, width = '500px', icon = 'report_problem', isHtml = false): Observable<boolean> {
-    const dialogRef = this.dialog.open(InfoDialogComponent, { width });
+  info(title: string, info: string, isHtml = false): Observable<boolean> {
+    const dialogRef = this.dialog.open(InfoDialogComponent);
 
     dialogRef.componentInstance.title = title;
     dialogRef.componentInstance.info = info;
-    dialogRef.componentInstance.icon = icon;
+    dialogRef.componentInstance.icon = 'info';
+    dialogRef.componentInstance.isHtml = isHtml;
+
+    return dialogRef.afterClosed();
+  }
+
+  warn(title: string, info: string, isHtml = false): Observable<boolean> {
+    const dialogRef = this.dialog.open(InfoDialogComponent);
+
+    dialogRef.componentInstance.title = title;
+    dialogRef.componentInstance.info = info;
+    dialogRef.componentInstance.icon = 'warning';
     dialogRef.componentInstance.isHtml = isHtml;
 
     return dialogRef.afterClosed();
@@ -145,55 +151,13 @@ export class DialogService {
     return dialogRef.afterClosed();
   }
 
-  doubleConfirm(
-    title: string,
-    message: string,
-    name: string,
-    confirmBox?: boolean,
-    buttonMsg?: string,
-  ): Observable<boolean> {
-    const conf = {
-      title,
-      message,
-      name,
-      confirmInstructions: true,
-      fieldConfig: [
-        {
-          type: 'input',
-          name: 'name',
-          required: true,
-          hideErrMsg: true,
-        },
-        {
-          type: 'checkbox',
-          name: 'confirm',
-          placeholder: T('Confirm'),
-          isHidden: !confirmBox,
-        },
-      ],
-      saveButtonText: buttonMsg || T('DELETE'),
-      afterInit(entityDialog: EntityDialogComponent) {
-        entityDialog.formGroup.controls['name'].valueChanges.pipe(untilDestroyed(entityDialog)).subscribe((res) => {
-          entityDialog.submitEnabled = res === name && (confirmBox ? entityDialog.formGroup.controls['confirm'].value : true);
-        });
-        entityDialog.formGroup.controls['confirm'].valueChanges.pipe(untilDestroyed(entityDialog)).subscribe((res) => {
-          entityDialog.submitEnabled = res && (entityDialog.formGroup.controls['name'].value === name);
-        });
-      },
-      customSubmit(entityDialog: EntityDialogComponent) {
-        entityDialog.dialogRef.close(true);
-      },
-    } as DialogFormConfiguration;
-    return this.dialogForm(conf);
-  }
-
   closeAllDialogs(): void {
     for (const openDialog of this.dialog.openDialogs) {
       openDialog.close();
     }
   }
 
-  generalDialog(conf: GeneralDialogConfig, matConfig?: MatDialogConfig): Observable<any> {
+  generalDialog(conf: GeneralDialogConfig, matConfig?: MatDialogConfig): Observable<boolean> {
     const dialogRef = this.dialog.open(GeneralDialogComponent, matConfig);
     dialogRef.componentInstance.conf = conf;
 

@@ -301,6 +301,7 @@ div#cardHeaderContainer {
 
 .sticky-border-right {
   border-right: 1px solid var(--lines);
+  padding-right: 5px;
 }
 
 button div.label-warning-icon {
@@ -361,4 +362,12 @@ div.mat-card-table {
   box-shadow: none;
   color: inherit;
   cursor: pointer;
+}
+
+.mat-table-sticky {
+  z-index: 2 !important;
+}
+
+.padded-away {
+  padding-left: 10px;
 }

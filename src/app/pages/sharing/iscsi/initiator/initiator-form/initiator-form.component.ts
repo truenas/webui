@@ -102,7 +102,6 @@ export class InitiatorFormComponent implements OnInit {
     protected entityFormService: EntityFormService,
     protected fieldRelationService: FieldRelationService,
     protected dialog: DialogService,
-    protected networkService: NetworkService,
   ) { }
 
   getConnectedInitiators(): void {

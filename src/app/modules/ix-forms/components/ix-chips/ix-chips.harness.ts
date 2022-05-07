@@ -4,7 +4,7 @@ import {
 import { MatChipHarness, MatChipListHarness } from '@angular/material/chips/testing';
 import { MatChipInputHarness } from '@angular/material/chips/testing/chip-input-harness';
 import { IxFormControlHarness } from 'app/modules/ix-forms/interfaces/ix-form-control-harness.interface';
-import { getErrorText } from '../../utils/harness.utils';
+import { getErrorText } from 'app/modules/ix-forms/utils/harness.utils';
 
 export interface IxChipsHarnessFilters extends BaseHarnessFilters {
   label: string;
@@ -65,5 +65,9 @@ export class IxChipsHarness extends ComponentHarness implements IxFormControlHar
       await input.setValue(value);
       await input.sendSeparatorKey(TestKey.ENTER);
     }
+  }
+
+  async isDisabled(): Promise<boolean> {
+    return (await this.getChipInputHarness()).isDisabled();
   }
 }

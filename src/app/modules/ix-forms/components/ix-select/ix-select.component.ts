@@ -27,6 +27,12 @@ export class IxSelectComponent implements ControlValueAccessor, OnChanges {
   @Input() required: boolean;
   @Input() tooltip: string;
   @Input() multiple: boolean;
+  @Input() emptyValue: string = null;
+
+  formControl = new FormControl(this).value as FormControl;
+  isDisabled = false;
+  hasErrorInOptions = false;
+  opts$: Observable<Option[]>;
 
   constructor(
     public controlDirective: NgControl,
@@ -36,20 +42,18 @@ export class IxSelectComponent implements ControlValueAccessor, OnChanges {
   }
 
   ngOnChanges(): void {
-    if (this.options) {
+    if (!this.options) {
+      this.hasErrorInOptions = true;
+    } else {
+      this.hasErrorInOptions = false;
       this.opts$ = this.options.pipe(
-        catchError((error) => {
-          this.errorObject = error;
+        catchError(() => {
+          this.hasErrorInOptions = true;
           return EMPTY;
         }),
       );
     }
   }
-
-  formControl = new FormControl(this).value as FormControl;
-  isDisabled = false;
-  errorObject: any = null;
-  opts$: Observable<Option[]>;
 
   onChange: (value: IxSelectValue) => void = (): void => {};
   onTouch: () => void = (): void => {};

@@ -14,10 +14,11 @@ import globalHelptext from 'app/helptext/global-helptext';
 import helptext from 'app/helptext/vm/vm-list';
 import wizardHelptext from 'app/helptext/vm/vm-wizard/vm-wizard';
 import { ApiMethod } from 'app/interfaces/api-directory.interface';
-import { VirtualMachine } from 'app/interfaces/virtual-machine.interface';
+import { VirtualizationDetails, VirtualMachine } from 'app/interfaces/virtual-machine.interface';
 import { VmDisplayDevice } from 'app/interfaces/vm-device.interface';
 import { DialogFormConfiguration } from 'app/modules/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/modules/entity/entity-dialog/entity-dialog.component';
+import { EmptyType, EmptyConfig } from 'app/modules/entity/entity-empty/entity-empty.component';
 import { MessageService } from 'app/modules/entity/entity-form/services/message.service';
 import { regexValidator } from 'app/modules/entity/entity-form/validators/regex-validation';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
@@ -25,11 +26,11 @@ import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-tab
 import { EntityTableAction, EntityTableConfig } from 'app/modules/entity/entity-table/entity-table.interface';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { VirtualMachineRow } from 'app/pages/vm/vm-list/virtual-machine-row.interface';
+import { VmWizardComponent } from 'app/pages/vm/vm-wizard/vm-wizard.component';
 import {
   WebSocketService, StorageService, AppLoaderService, DialogService, VmService,
 } from 'app/services';
 import { ModalService } from 'app/services/modal.service';
-import { VmWizardComponent } from '../vm-wizard/vm-wizard.component';
 
 @UntilDestroy()
 @Component({
@@ -48,6 +49,7 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow>, On
   private productType = window.localStorage.getItem('product_type') as ProductType;
   hasVirtualizationSupport = false;
   disableActionsConfig = true;
+  virtualizationDetails: VirtualizationDetails = null;
 
   entityList: EntityTableComponent<VirtualMachineRow>;
   columns = [
@@ -55,7 +57,9 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow>, On
     {
       name: this.translate.instant('State') as string, prop: 'state', always_display: true, toggle: true,
     },
-    { name: this.translate.instant('Autostart') as string, prop: 'autostart', checkbox: true },
+    {
+      name: this.translate.instant('Autostart') as string, prop: 'autostart', checkbox: true, always_display: true,
+    },
     { name: this.translate.instant('Virtual CPUs') as string, prop: 'vcpus', hidden: true },
     { name: this.translate.instant('Cores') as string, prop: 'cores', hidden: true },
     { name: this.translate.instant('Threads') as string, prop: 'threads', hidden: true },
@@ -120,17 +124,9 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow>, On
     this.entityList = entityList;
 
     this.vmService.getVirtualizationDetails().pipe(untilDestroyed(this)).subscribe((virtualization) => {
+      this.virtualizationDetails = virtualization;
       this.hasVirtualizationSupport = virtualization.supported;
       this.disableActionsConfig = !virtualization.supported;
-      if (!this.hasVirtualizationSupport) {
-        this.entityList.emptyTableConf = {
-          large: true,
-          icon: 'laptop',
-          title: this.translate.instant('Virtualization is not supported'),
-          message: virtualization.error.replace('INFO: ', ''),
-          button: null,
-        };
-      }
     }, () => {
       /* fallback when endpoint is unavailable */
       this.disableActionsConfig = false;
@@ -153,6 +149,27 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow>, On
         },
       );
     });
+  }
+
+  getCustomEmptyConfig(emptyType: EmptyType): EmptyConfig {
+    if (!this.virtualizationDetails) {
+      return null;
+    }
+
+    if (
+      (emptyType === EmptyType.FirstUse || emptyType === EmptyType.NoPageData)
+      && !this.virtualizationDetails.supported
+    ) {
+      return {
+        large: true,
+        icon: 'laptop',
+        title: this.translate.instant('Virtualization is not supported'),
+        message: this.virtualizationDetails.error.replace('INFO: ', ''),
+        button: null,
+      };
+    }
+
+    return null;
   }
 
   resourceTransformIncomingRestData(vms: VirtualMachine[]): VirtualMachineRow[] {
@@ -263,20 +280,7 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow>, On
     });
   }
 
-  extractHostname(url: string): string {
-    let hostname: string;
-    if (url.includes('//')) {
-      hostname = url.split('/')[2];
-    } else {
-      hostname = url.split('/')[0];
-    }
-    hostname = hostname.split(':')[0];
-    hostname = hostname.split('?')[0];
-
-    return hostname;
-  }
-
-  doRowAction(row: VirtualMachineRow, method: ApiMethod, params: any[] = [row.id], updateTable = false): void {
+  doRowAction(row: VirtualMachineRow, method: ApiMethod, params: unknown[] = [row.id], updateTable = false): void {
     if (method === this.wsMethods.stop) {
       this.dialogRef = this.dialog.open(EntityJobComponent,
         { data: { title: this.translate.instant('Stopping {rowName}', { rowName: row.name }) } });
@@ -292,8 +296,6 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow>, On
         this.dialogService.info(
           this.translate.instant('Finished'),
           this.translate.instant('If {vmName} is still running, the Guest OS did not respond as expected. It is possible to use <i>Power Off</i> or the <i>Force Stop After Timeout</i> option to stop the VM.', { vmName: row.name }),
-          '450px',
-          'info',
           true,
         );
         this.checkMemory();
@@ -491,12 +493,13 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow>, On
                 'vm.get_display_web_uri',
                 [
                   vm.id,
-                  this.extractHostname(window.origin),
+                  window.location.host,
+                  { protocol: window.location.protocol.replace(':', '').toUpperCase() },
                 ],
               ).pipe(untilDestroyed(this)).subscribe((webUris) => {
                 this.loader.close();
                 if (webUris[displayDevices[0].id].error) {
-                  return this.dialogService.info('Error', webUris[displayDevices[0].id].error);
+                  return this.dialogService.warn('Error', webUris[displayDevices[0].id].error);
                 }
                 window.open(webUris[displayDevices[0].id].uri, '_blank');
               }, (err) => {
@@ -530,12 +533,13 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow>, On
                     'vm.get_display_web_uri',
                     [
                       vm.id,
-                      this.extractHostname(window.origin),
+                      window.location.host,
+                      { protocol: window.location.protocol.replace(':', '').toUpperCase() },
                     ],
                   ).pipe(untilDestroyed(this)).subscribe((webUris) => {
                     this.loader.close();
                     if (webUris[displayDevice.id].error) {
-                      return this.dialogService.info('Error', webUris[displayDevice.id].error);
+                      return this.dialogService.warn('Error', webUris[displayDevice.id].error);
                     }
                     window.open(webUris[displayDevice.id].uri, '_blank');
                   }, (err) => {
@@ -607,8 +611,9 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow>, On
           'vm.get_display_web_uri',
           [
             vm.id,
-            this.extractHostname(window.origin),
+            window.location.host,
             {
+              protocol: window.location.protocol.replace(':', '').toUpperCase(),
               devices_passwords: [
                 {
                   device_id: displayDevice.id,

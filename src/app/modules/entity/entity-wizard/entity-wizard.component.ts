@@ -188,7 +188,7 @@ export class EntityWizardComponent implements OnInit {
           } else if (this.conf.routeSuccess) {
             this.router.navigate(new Array('/').concat(this.conf.routeSuccess));
           } else {
-            this.dialog.info(this.translate.instant('Settings saved'), '', '300px', 'info', true);
+            this.dialog.info(this.translate.instant('Settings saved'), '');
           }
         },
         (res) => {

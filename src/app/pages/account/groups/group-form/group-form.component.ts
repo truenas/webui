@@ -4,14 +4,18 @@ import {
 import { Validators } from '@angular/forms';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 import { Observable } from 'rxjs';
+import { map, switchMap } from 'rxjs/operators';
 import helptext from 'app/helptext/account/groups';
 import { Group } from 'app/interfaces/group.interface';
 import { forbiddenValues } from 'app/modules/entity/entity-form/validators/forbidden-values-validation';
 import { regexValidator } from 'app/modules/entity/entity-form/validators/regex-validation';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
+import { groupAdded, groupChanged } from 'app/pages/account/groups/store/group.actions';
+import { GroupSlice } from 'app/pages/account/groups/store/group.selectors';
 import { UserService, WebSocketService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
@@ -54,6 +58,7 @@ export class GroupFormComponent {
     private cdr: ChangeDetectorRef,
     private errorHandler: FormErrorHandlerService,
     private translate: TranslateService,
+    private store$: Store<GroupSlice>,
   ) { }
 
   /**
@@ -115,7 +120,16 @@ export class GroupFormComponent {
       ]);
     }
 
-    request$.pipe(untilDestroyed(this)).subscribe(() => {
+    request$.pipe(
+      switchMap((id) => this.ws.call('group.query', [[['id', '=', id]]])),
+      map((groups) => groups[0]),
+      untilDestroyed(this),
+    ).subscribe((group) => {
+      if (this.isNew) {
+        this.store$.dispatch(groupAdded({ group }));
+      } else {
+        this.store$.dispatch(groupChanged({ group }));
+      }
       this.isFormLoading = false;
       this.slideInService.close();
       this.cdr.markForCheck();

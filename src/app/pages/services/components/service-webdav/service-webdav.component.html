@@ -21,13 +21,19 @@
           [label]="tcpportssl.label"
           [tooltip]="tcpportssl.tooltip"
         ></ix-input>
-        <ix-select
-          *ngIf="!certssl.hidden"
-          [formControlName]="certssl.fcName"
-          [label]="certssl.label"
-          [tooltip]="certssl.tooltip"
-          [options]="certssl.options"
-        ></ix-select>
+        <div class="linked-select" *ngIf="!certssl.hidden">
+          <div class="link-wrapper">
+            <a class="link" (click)="certificatesLinkClicked()">
+              {{ 'Manage Certificates' | translate }}
+            </a>
+          </div>
+          <ix-select
+            [formControlName]="certssl.fcName"
+            [label]="certssl.label"
+            [tooltip]="certssl.tooltip"
+            [options]="certssl.options"
+          ></ix-select>
+        </div>
         <ix-select
           [formControlName]="htauth.fcName"
           [label]="htauth.label"

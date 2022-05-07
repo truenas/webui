@@ -13,16 +13,21 @@ import { CoreEvent } from 'app/interfaces/events';
 import { NetworkInterfacesChangedEvent } from 'app/interfaces/events/network-interfaces-changed-event.interface';
 import { Ipmi } from 'app/interfaces/ipmi.interface';
 import { NetworkInterface } from 'app/interfaces/network-interface.interface';
-import { NetworkSummary } from 'app/interfaces/network-summary.interface';
 import { ReportingRealtimeUpdate } from 'app/interfaces/reporting.interface';
 import { Service } from 'app/interfaces/service.interface';
 import { StaticRoute } from 'app/interfaces/static-route.interface';
 import { Interval } from 'app/interfaces/timeout.interface';
 import { AppTableAction, AppTableConfig, TableComponent } from 'app/modules/entity/table/table.component';
 import { TableService } from 'app/modules/entity/table/table.service';
-import { IpmiRow } from 'app/pages/network/network-dashboard.interface';
-import { NetworkInterfaceUi } from 'app/pages/network/network-interface-ui.interface';
-import { StaticRouteFormComponent } from 'app/pages/network/static-route-form/static-route-form.component';
+import { EntityUtils } from 'app/modules/entity/utils';
+import { InterfaceFormComponent } from 'app/pages/network/components/interface-form/interface-form.component';
+import { OpenVpnClientConfigComponent } from 'app/pages/network/components/open-vpn-client-config/open-vpn-client-config.component';
+import {
+  OpenVpnServerConfigComponent,
+} from 'app/pages/network/components/open-vpn-server-config/open-vpn-server-config.component';
+import { StaticRouteFormComponent } from 'app/pages/network/components/static-route-form/static-route-form.component';
+import { IpmiRow } from 'app/pages/network/interfaces/network-dashboard.interface';
+import { NetworkInterfaceUi } from 'app/pages/network/interfaces/network-interface-ui.interface';
 import {
   AppLoaderService,
   DialogService,
@@ -33,11 +38,7 @@ import { CoreService } from 'app/services/core-service/core.service';
 import { IpmiService } from 'app/services/ipmi.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { ModalService } from 'app/services/modal.service';
-import { EntityUtils } from '../../modules/entity/utils';
-import { InterfacesFormComponent } from './forms/interfaces-form.component';
-import { IpmiFormComponent } from './forms/ipmi-form.component';
-import { OpenvpnClientComponent } from './forms/service-openvpn-client.component';
-import { OpenvpnServerComponent } from './forms/service-openvpn-server.component';
+import { IpmiFormComponent } from './components/forms/ipmi-form.component';
 
 @UntilDestroy()
 @Component({
@@ -75,23 +76,18 @@ export class NetworkComponent implements OnInit, OnDestroy {
     getInOutInfo: this.getInterfaceInOutInfo.bind(this),
     parent: this,
     add: () => {
-      this.showInterfacesForm();
+      this.slideInService.open(InterfaceFormComponent);
     },
     edit: (row: NetworkInterfaceUi) => {
-      this.showInterfacesForm(row.id);
+      const interfacesForm = this.slideInService.open(InterfaceFormComponent);
+      interfacesForm.setInterfaceForEdit(row);
     },
     delete: (row: NetworkInterfaceUi, table: TableComponent) => {
       const deleteAction = row.type === NetworkInterfaceType.Physical ? this.translate.instant('Reset configuration for ') : this.translate.instant('Delete ');
       if (this.isHaEnabled) {
-        this.dialog.info(helptext.ha_enabled_edit_title, helptext.ha_enabled_edit_msg);
+        this.dialog.warn(helptext.ha_enabled_edit_title, helptext.ha_enabled_edit_msg);
       } else {
         this.tableService.delete(table, row, deleteAction);
-      }
-    },
-    afterGetData: () => {
-      const state = this.navigation.extras.state as { editInterface: string };
-      if (state && state.editInterface) {
-        this.modalService.openInSlideIn(InterfacesFormComponent, state.editInterface);
       }
     },
     afterDelete: this.afterDelete.bind(this),
@@ -154,18 +150,18 @@ export class NetworkComponent implements OnInit, OnDestroy {
     isActionVisible: this.isOpenVpnActionVisible,
     edit: (row: Service) => {
       if (row.service === ServiceName.OpenVpnClient) {
-        this.modalService.openInSlideIn(OpenvpnClientComponent, row.id);
+        this.slideInService.open(OpenVpnClientConfigComponent, { wide: true });
       } else if (row.service === ServiceName.OpenVpnServer) {
-        this.modalService.openInSlideIn(OpenvpnServerComponent, row.id);
+        this.slideInService.open(OpenVpnServerConfigComponent, { wide: true });
       }
     },
     afterGetData: () => {
       const state = this.navigation.extras.state as { configureOpenVPN: string };
       if (state && state.configureOpenVPN) {
         if (state.configureOpenVPN === 'client') {
-          this.modalService.openInSlideIn(OpenvpnClientComponent);
+          this.slideInService.open(OpenVpnClientConfigComponent, { wide: true });
         } else {
-          this.modalService.openInSlideIn(OpenvpnServerComponent);
+          this.slideInService.open(OpenVpnServerConfigComponent, { wide: true });
         }
       }
     },
@@ -185,7 +181,6 @@ export class NetworkComponent implements OnInit, OnDestroy {
     },
   };
 
-  networkSummary: NetworkSummary;
   ipmiEnabled: boolean;
 
   hasConsoleFooter = false;
@@ -215,6 +210,7 @@ export class NetworkComponent implements OnInit, OnDestroy {
 
     this.slideInService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
       this.staticRoutesTableConf.tableComponent.getData();
+      this.checkInterfacePendingChanges();
     });
 
     this.checkInterfacePendingChanges();
@@ -239,7 +235,7 @@ export class NetworkComponent implements OnInit, OnDestroy {
         .subscribe((isHa) => {
           if (isHa) {
             this.ws
-              .call('failover.disabled_reasons')
+              .call('failover.disabled.reasons')
               .pipe(untilDestroyed(this))
               .subscribe((reasons) => {
                 if (reasons.length === 0) {
@@ -249,6 +245,8 @@ export class NetworkComponent implements OnInit, OnDestroy {
           }
         });
     }
+
+    this.openInterfaceForEditFromRoute();
   }
 
   checkInterfacePendingChanges(): void {
@@ -398,7 +396,7 @@ export class NetworkComponent implements OnInit, OnDestroy {
         () => {
           this.core.emit({ name: 'NetworkInterfacesChanged', data: { commit: true, checkin: true }, sender: this });
           this.loader.close();
-          this.dialog.info(helptext.checkin_complete_title, helptext.checkin_complete_message, '500px', 'info');
+          this.dialog.info(helptext.checkin_complete_title, helptext.checkin_complete_message);
           this.hasPendingChanges = false;
           this.checkinWaiting = false;
           clearInterval(this.checkinInterval);
@@ -433,7 +431,7 @@ export class NetworkComponent implements OnInit, OnDestroy {
                 this.hasPendingChanges = false;
                 this.checkinWaiting = false;
                 this.loader.close();
-                this.dialog.info(helptext.rollback_changes_title, helptext.changes_rolled_back, '500px', 'info', true);
+                this.dialog.info(helptext.rollback_changes_title, helptext.changes_rolled_back);
               },
               (err) => {
                 this.loader.close();
@@ -470,6 +468,7 @@ export class NetworkComponent implements OnInit, OnDestroy {
             if (!evt.interfaces[row.id]) {
               row.link_state = null;
             } else {
+              row.link_state = evt.interfaces[row.id].link_state;
               if (evt.interfaces[row.id].received_bytes !== undefined) {
                 row.received = this.storageService.convertBytesToHumanReadable(evt.interfaces[row.id].received_bytes);
                 row.received_bytes = evt.interfaces[row.id].received_bytes;
@@ -549,11 +548,6 @@ export class NetworkComponent implements OnInit, OnDestroy {
     }];
   }
 
-  showInterfacesForm(id?: string): void {
-    const interfacesForm = this.modalService.openInSlideIn(InterfacesFormComponent, id);
-    interfacesForm.afterModalFormClosed = this.checkInterfacePendingChanges.bind(this);
-  }
-
   openvpnDataSourceHelper(res: any[]): any[] {
     return res.filter((item) => {
       if (item.service.includes('openvpn_')) {
@@ -574,7 +568,7 @@ export class NetworkComponent implements OnInit, OnDestroy {
       onClick: (row: any) => {
         row.onChanging = true;
         this.ws
-          .call('service.stop', [row.service])
+          .call('service.stop', [row.service, { silent: false }])
           .pipe(untilDestroyed(this))
           .subscribe(
             (res) => {
@@ -598,8 +592,8 @@ export class NetworkComponent implements OnInit, OnDestroy {
                 this.translate.instant('Error stopping service OpenVPN {serviceLabel}', {
                   serviceLabel: row.service_label,
                 }),
-                err.message,
-                err.stack,
+                err.reason,
+                err.trace.formatted,
               );
             },
           );
@@ -612,7 +606,7 @@ export class NetworkComponent implements OnInit, OnDestroy {
       onClick: (row: any) => {
         row.onChanging = true;
         this.ws
-          .call('service.start', [row.service])
+          .call('service.start', [row.service, { silent: false }])
           .pipe(untilDestroyed(this))
           .subscribe(
             (res) => {
@@ -620,7 +614,7 @@ export class NetworkComponent implements OnInit, OnDestroy {
                 row.state = ServiceStatus.Running;
                 row.onChanging = false;
               } else {
-                this.dialog.info(
+                this.dialog.warn(
                   this.translate.instant('Service failed to start'),
                   this.translate.instant('OpenVPN {serviceLabel} service failed to start.', {
                     serviceLabel: row.service_label,
@@ -636,8 +630,8 @@ export class NetworkComponent implements OnInit, OnDestroy {
                 this.translate.instant('Error starting service OpenVPN {serviceLabel}', {
                   serviceLabel: row.service_label,
                 }),
-                err.message,
-                err.stack,
+                err.reason,
+                err.trace.formatted,
               );
             },
           );
@@ -660,5 +654,31 @@ export class NetworkComponent implements OnInit, OnDestroy {
       return false;
     }
     return true;
+  }
+
+  private openInterfaceForEditFromRoute(): void {
+    const state = this.navigation.extras.state as { editInterface: string };
+    if (!state?.editInterface) {
+      return;
+    }
+
+    this.loader.open();
+    this.ws.call('interface.query', [[['id', '=', state.editInterface]]])
+      .pipe(untilDestroyed(this))
+      .subscribe(
+        (interfaces) => {
+          this.loader.close();
+          if (!interfaces[0]) {
+            return;
+          }
+
+          const form = this.slideInService.open(InterfaceFormComponent);
+          form.setInterfaceForEdit(interfaces[0]);
+        },
+        (error) => {
+          this.loader.close();
+          new EntityUtils().handleWsError(this, error);
+        },
+      );
   }
 }

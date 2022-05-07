@@ -1,7 +1,9 @@
 import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatDialogRef } from '@angular/material/dialog/dialog-ref';
+import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
 import { filter } from 'rxjs/operators';
@@ -26,7 +28,6 @@ import { ModalService } from 'app/services/modal.service';
 export class IdmapFormComponent implements FormConfiguration {
   title: string;
   isEntity = true;
-  protected namesInUse: string[] = [];
   queryCall = 'idmap.query' as const;
   addCall = 'idmap.create' as const;
   editCall = 'idmap.update' as const;
@@ -123,9 +124,14 @@ export class IdmapFormComponent implements FormConfiguration {
           placeholder: helptext.idmap.certificate_id.placeholder,
           tooltip: helptext.idmap.certificate_id.tooltip,
           options: [],
+          linkText: this.translate.instant('Certificates'),
+          linkClicked: () => {
+            this.modalService.closeSlideIn().then(() => {
+              this.router.navigate(['/', 'credentials', 'certificates']);
+            });
+          },
           isHidden: true,
         },
-
       ],
     },
     {
@@ -288,9 +294,15 @@ export class IdmapFormComponent implements FormConfiguration {
     'sssd_compat',
   ];
 
-  constructor(protected idmapService: IdmapService, protected validationService: ValidationService,
+  constructor(
+    protected idmapService: IdmapService,
+    protected validationService: ValidationService,
     private modalService: ModalService,
-    protected dialogService: DialogService, protected dialog: MatDialog) {
+    private router: Router,
+    private translate: TranslateService,
+    protected dialogService: DialogService,
+    protected dialog: MatDialog,
+  ) {
     this.getRow = this.modalService.getRow$.pipe(untilDestroyed(this)).subscribe((rowId: number) => {
       this.pk = rowId;
       this.getRow.unsubscribe();
@@ -410,8 +422,10 @@ export class IdmapFormComponent implements FormConfiguration {
       this.dialogRef.componentInstance.submit();
       this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
         this.dialog.closeAll();
-        this.dialogService.info(helptext.idmap.clear_cache_dialog.success_title,
-          helptext.idmap.clear_cache_dialog.success_msg, '250px', '', true);
+        this.dialogService.info(
+          helptext.idmap.clear_cache_dialog.success_title,
+          helptext.idmap.clear_cache_dialog.success_msg,
+        );
       });
       this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((res) => {
         this.dialog.closeAll();

@@ -5,6 +5,10 @@
   ix-auto-type="dialog"
   ix-auto-identifier="title"
 >
+  <div *ngIf="showRealtimeLogs && realtimeLogs" class="logs-container">
+    <h5>{{ 'Logs' | translate }}</h5>
+    <pre #logs class="message logs">{{ realtimeLogs }}</pre>
+  </div>
 
   <div *ngIf="job?.state === JobState.Running">
     <div fxLayout="row" fxLayoutAlign="space-between baseline" fxLayoutGap="8px">
@@ -53,10 +57,8 @@
     </div>
   </div>
 
-  <div *ngIf="showRealtimeLogs && realtimeLogs">
-    <h5>{{ 'Logs' | translate }}</h5>
-    <pre class="message">{{ realtimeLogs }}</pre>
-  </div>
+  
+
 </mat-dialog-content>
 
 <div mat-dialog-actions>

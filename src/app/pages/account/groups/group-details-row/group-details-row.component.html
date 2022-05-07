@@ -1,0 +1,18 @@
+<td [attr.colspan]="colspan">
+  <ix-table-expandable-row>
+    <button mat-button (click)="openGroupMembersForm()">
+      <mat-icon>people</mat-icon>
+      <span>{{ 'Members' | translate }}</span>
+    </button>
+
+    <button *ngIf="!group.builtin" mat-button (click)="doEdit(group)">
+      <mat-icon>edit</mat-icon>
+      <span>{{ 'Edit' | translate }}</span>
+    </button>
+
+    <button *ngIf="!group.builtin" mat-button (click)="doDelete(group)">
+      <mat-icon>delete</mat-icon>
+      <span>{{ 'Delete' | translate }}</span>
+    </button>
+  </ix-table-expandable-row>
+</td>

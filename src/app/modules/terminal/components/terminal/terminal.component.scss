@@ -10,7 +10,28 @@
   padding: 10px 0 10px 10px;
 }
 
-#terminal {
+:host ::ng-deep #terminal {
   height: 100%;
+  position: relative;
   width: 100%;
+
+  .xterm-viewport {
+    position: absolute;
+  }
+
+  .xterm-screen {
+    overflow: hidden auto;
+
+    .xterm-helpers {
+      height: 0;
+      opacity: 0;
+    }
+
+    canvas {
+      left: 0;
+      max-width: 100%;
+      position: absolute;
+      top: 0;
+    }
+  }
 }

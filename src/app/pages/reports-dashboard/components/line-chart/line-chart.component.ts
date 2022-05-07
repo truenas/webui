@@ -7,12 +7,11 @@ import Dygraph, { dygraphs } from 'dygraphs';
 // eslint-disable-next-line
 import smoothPlotter from 'dygraphs/src/extras/smooth-plotter.js';
 import { ThemeUtils } from 'app/core/classes/theme-utils/theme-utils';
-import { ViewComponent } from 'app/core/components/view/view.component';
 import { ReportingData } from 'app/interfaces/reporting.interface';
 import { Theme } from 'app/interfaces/theme.interface';
+import { Report } from 'app/pages/reports-dashboard/components/report/report.component';
 import { CoreService } from 'app/services/core-service/core.service';
 import { ThemeService } from 'app/services/theme/theme.service';
-import { Report } from '../report/report.component';
 
 interface Conversion {
   value: number;
@@ -26,7 +25,7 @@ interface Conversion {
   templateUrl: './line-chart.component.html',
   styleUrls: ['./line-chart.component.scss'],
 })
-export class LineChartComponent extends ViewComponent implements AfterViewInit, OnDestroy, OnChanges {
+export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
   @ViewChild('wrapper', { static: true }) el: ElementRef;
   @Input() chartId: string;
   @Input() chartColors: string[];
@@ -55,7 +54,6 @@ export class LineChartComponent extends ViewComponent implements AfterViewInit, 
 
   chart: Dygraph;
   conf: any;
-  columns: any;
 
   units = '';
   yLabelPrefix: string;
@@ -67,9 +65,9 @@ export class LineChartComponent extends ViewComponent implements AfterViewInit, 
   controlUid: string;
 
   private utils: ThemeUtils;
+  private _data: ReportingData;
 
   constructor(private core: CoreService, public themeService: ThemeService) {
-    super(themeService);
     this.utils = new ThemeUtils();
     this.controlUid = 'chart_' + UUID.UUID();
   }
@@ -98,7 +96,7 @@ export class LineChartComponent extends ViewComponent implements AfterViewInit, 
     const yLabelSuffix = this.labelY === 'Bits/s' ? this.labelY.toLowerCase() : this.labelY;
 
     // TODO: Try: dygraphs.Options
-    const options = {
+    const options: dygraphs.Options = {
       drawPoints: false, // Must be disabled for smoothPlotter
       pointSize: 1,
       includeZero: true,
@@ -120,7 +118,7 @@ export class LineChartComponent extends ViewComponent implements AfterViewInit, 
           },
         },
       },
-      legendFormatter: (data: any) => {
+      legendFormatter: (data: dygraphs.LegendData) => {
         const getSuffix = (converted: Conversion): string => {
           if (converted.shortName !== undefined) {
             return converted.shortName;
@@ -129,8 +127,8 @@ export class LineChartComponent extends ViewComponent implements AfterViewInit, 
           return converted.suffix !== undefined ? converted.suffix : '';
         };
 
-        const clone = { ...data };
-        clone.series.forEach((item: any, index: number) => {
+        const clone = { ...data } as any;
+        clone.series.forEach((item: dygraphs.SeriesLegendData, index: number) => {
           if (!item.y) { return; }
           const converted = this.formatLabelValue(item.y, this.inferUnits(this.labelY), 1, true);
           const suffix = getSuffix(converted);

@@ -1,6 +1,6 @@
 <div class="page-wrap height-100 login-form">
   <div class="session-form-hold">
-    <mat-progress-bar mode="determinate" value="0" class="session-progress"></mat-progress-bar>
+    <mat-progress-bar [mode]="connected() ? 'determinate' : 'indeterminate'" value="0" class="session-progress"></mat-progress-bar>
     <mat-card>
       <mat-card-content>
         <div [hidden]="!(connected() && logo_ready)">
@@ -133,7 +133,7 @@
             </div>
 
             <div class="copyright-line">
-              <span  class="copyright-txt">TrueNAS {{productTypeReadableText}} ® © {{copyrightYear}} </span>
+              <span  class="copyright-txt">TrueNAS {{productType | mapValue: productTypeLabels }} ® © {{copyrightYear}} </span>
               <img id="full-logo" (click)="openIx()" src="assets/images/ix_logo_full.png">
             </div>
           </div>

@@ -6,19 +6,18 @@ import { JobState } from 'app/enums/job-state.enum';
 import helptext from 'app/helptext/apps/apps';
 import { Catalog, CatalogQueryParams } from 'app/interfaces/catalog.interface';
 import { CoreEvent } from 'app/interfaces/events';
-import { AppLoaderService } from 'app/modules/app-loader/app-loader.service';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import {
   EntityTableComponent,
 } from 'app/modules/entity/entity-table/entity-table.component';
 import { EntityTableAction, EntityTableConfig } from 'app/modules/entity/entity-table/entity-table.interface';
 import { ApplicationToolbarControl } from 'app/pages/applications/application-toolbar-control.enum';
+import { ManageCatalogSummaryDialogComponent } from 'app/pages/applications/dialogs/manage-catalog-summary/manage-catalog-summary-dialog.component';
 import { CatalogAddFormComponent } from 'app/pages/applications/forms/catalog-add-form/catalog-add-form.component';
 import { CatalogEditFormComponent } from 'app/pages/applications/forms/catalog-edit-form/catalog-edit-form.component';
 import { DialogService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
-import { ManageCatalogSummaryDialogComponent } from '../dialogs/manage-catalog-summary/manage-catalog-summary-dialog.component';
 
 @UntilDestroy()
 @Component({
@@ -67,7 +66,6 @@ export class ManageCatalogsComponent implements EntityTableConfig<Catalog>, OnIn
   constructor(
     private mdDialog: MatDialog,
     private dialogService: DialogService,
-    private loader: AppLoaderService,
     private ws: WebSocketService,
     private slideInService: IxSlideInService,
   ) {}

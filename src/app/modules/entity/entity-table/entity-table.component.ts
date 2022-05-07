@@ -426,6 +426,16 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, A
     if (!emptyType) {
       return;
     }
+
+    let emptyConf = null;
+    if (this.conf?.getCustomEmptyConfig) {
+      emptyConf = this.conf.getCustomEmptyConfig(emptyType);
+      if (emptyConf) {
+        this.emptyTableConf = emptyConf;
+        return;
+      }
+    }
+
     let title = '';
     let message = '';
     let messagePreset = false;
@@ -537,20 +547,6 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, A
         }
         break;
     }
-  }
-
-  dropLastMaxWidth(): EntityTableColumn[] {
-    // Reset all column maxWidths
-    this.conf.columns.forEach((column) => {
-      if (this.colMaxWidths.length > 0) {
-        column['maxWidth'] = (this.colMaxWidths.find(({ name }) => name === column.name)).maxWidth;
-      }
-    });
-    // Delete maXwidth on last col displayed (prevents a display glitch)
-    if (this.conf.columns.length > 0) {
-      delete (this.conf.columns[Object.keys(this.conf.columns).length - 1]).maxWidth;
-    }
-    return this.conf.columns;
   }
 
   setShowSpinner(): void {
@@ -926,8 +922,8 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, A
           this.conf.afterDelete();
         }
       },
-      (resinner) => {
-        new EntityUtils().handleWsError(this, resinner, this.dialogService);
+      (error) => {
+        new EntityUtils().handleWsError(this, error, this.dialogService);
         this.loader.close();
       },
     );
@@ -1042,7 +1038,7 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, A
                     }
                   }
                   if (message === '') {
-                    this.dialogService.info(this.translate.instant('Items deleted'), '', '300px', 'info', true);
+                    this.dialogService.info(this.translate.instant('Items deleted'), '');
                   } else {
                     message = '<ul>' + message + '</ul>';
                     this.dialogService.errorReport(this.translate.instant('Items Delete Failed'), message);

@@ -112,14 +112,12 @@ export class TargetGlobalConfigurationComponent implements OnInit {
           filter(Boolean),
           switchMap(() => forkJoin([
             this.ws.call('service.update', [service.id, { enable: true }]),
-            this.ws.call('service.start', [service.service]),
+            this.ws.call('service.start', [service.service, { silent: false }]),
           ])),
           tap(() => {
             this.dialogService.info(
               this.translate.instant('{service} Service', { service: 'iSCSI' }),
               this.translate.instant('The {service} service has been enabled.', { service: 'iSCSI' }),
-              '250px',
-              'info',
             );
           }),
           catchError((error) => {

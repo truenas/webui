@@ -4,30 +4,31 @@ import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
+import { merge } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { helptextSystemCa } from 'app/helptext/system/ca';
 import { helptextSystemCertificates } from 'app/helptext/system/certificates';
 import { CertificateAuthority } from 'app/interfaces/certificate-authority.interface';
 import { Certificate } from 'app/interfaces/certificate.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
-import { DialogFormConfiguration } from 'app/modules/entity/entity-dialog/dialog-form-configuration.interface';
-import { EntityDialogComponent } from 'app/modules/entity/entity-dialog/entity-dialog.component';
-import { FieldConfig, FormSelectConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
 import { EntityFormService } from 'app/modules/entity/entity-form/services/entity-form.service';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { AppTableAction, AppTableConfig, TableComponent } from 'app/modules/entity/table/table.component';
 import { TableService } from 'app/modules/entity/table/table.service';
 import { EntityUtils } from 'app/modules/entity/utils';
+import {
+  CertificateAuthorityEditComponent,
+} from 'app/pages/credentials/certificates-dash/certificate-authority-edit/certificate-authority-edit.component';
 import { AcmednsFormComponent } from 'app/pages/credentials/certificates-dash/forms/acmedns-form.component';
 import {
-  SystemGeneralService, WebSocketService, DialogService, StorageService, ModalServiceMessage,
-} from 'app/services';
+  SignCsrDialogComponent,
+} from 'app/pages/credentials/certificates-dash/sign-csr-dialog/sign-csr-dialog.component';
+import { WebSocketService, DialogService, StorageService } from 'app/services';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { ModalService } from 'app/services/modal.service';
+import { CertificateEditComponent } from './certificate-edit/certificate-edit.component';
 import { CertificateAuthorityAddComponent } from './forms/ca-add.component';
-import { CertificateAuthorityEditComponent } from './forms/ca-edit.component';
 import { CertificateAcmeAddComponent } from './forms/certificate-acme-add.component';
 import { CertificateAddComponent } from './forms/certificate-add.component';
-import { CertificateEditComponent } from './forms/certificate-edit.component';
 
 @UntilDestroy()
 @Component({
@@ -39,13 +40,12 @@ export class CertificatesDashComponent implements OnInit {
   cards: { name: string; tableConf: AppTableConfig<CertificatesDashComponent> }[];
   protected dialogRef: MatDialogRef<EntityJobComponent>;
   private downloadActions: AppTableAction[];
-  private caId: number;
 
   constructor(
     private modalService: ModalService,
+    private slideInService: IxSlideInService,
     private ws: WebSocketService,
     private dialog: MatDialog,
-    private systemGeneralService: SystemGeneralService,
     private dialogService: DialogService,
     private storage: StorageService,
     private http: HttpClient,
@@ -55,21 +55,14 @@ export class CertificatesDashComponent implements OnInit {
 
   ngOnInit(): void {
     this.getCards();
-    this.modalService.refreshTable$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.getCards();
-    });
-    this.modalService.message$.pipe(untilDestroyed(this)).subscribe((res: ModalServiceMessage) => {
-      if (res['action'] === 'open' && res['component'] === 'acmeComponent') {
-        this.openForm(res['row']);
-      }
-    });
-    this.systemGeneralService.getUnsignedCertificates().pipe(untilDestroyed(this)).subscribe((res) => {
-      res.forEach((item) => {
-        this.unsignedCsrSelectField.options.push(
-          { label: item.name, value: item.id },
-        );
+    merge(
+      this.slideInService.onClose$,
+      this.modalService.refreshTable$,
+    )
+      .pipe(untilDestroyed(this))
+      .subscribe(() => {
+        this.getCards();
       });
-    });
   }
 
   getCards(): void {
@@ -116,8 +109,9 @@ export class CertificatesDashComponent implements OnInit {
           add: () => {
             this.modalService.openInSlideIn(CertificateAddComponent);
           },
-          edit: (row: Certificate) => {
-            this.modalService.openInSlideIn(CertificateEditComponent, row.id);
+          edit: (certificate: Certificate) => {
+            const slideIn = this.slideInService.open(CertificateEditComponent, { wide: true });
+            slideIn.setCertificate(certificate);
           },
         },
       },
@@ -143,8 +137,9 @@ export class CertificatesDashComponent implements OnInit {
           add: () => {
             this.modalService.openInSlideIn(CertificateAddComponent, 'csr');
           },
-          edit: (row: Certificate) => {
-            this.modalService.openInSlideIn(CertificateEditComponent, row.id);
+          edit: (certificate: Certificate) => {
+            const slideIn = this.slideInService.open(CertificateEditComponent, { wide: true });
+            slideIn.setCertificate(certificate);
           },
         },
       },
@@ -184,7 +179,8 @@ export class CertificatesDashComponent implements OnInit {
             this.modalService.openInSlideIn(CertificateAuthorityAddComponent);
           },
           edit: (row: CertificateAuthority) => {
-            this.modalService.openInSlideIn(CertificateAuthorityEditComponent, row.id);
+            const form = this.slideInService.open(CertificateAuthorityEditComponent, { wide: true });
+            form.setCertificateAuthority(row);
           },
           delete: (row: CertificateAuthority, table: TableComponent) => {
             if (row.signed_certificates > 0) {
@@ -346,15 +342,11 @@ export class CertificatesDashComponent implements OnInit {
       name: 'sign_CSR',
       matTooltip: helptextSystemCa.list.action_sign,
       onClick: (rowinner: CertificateAuthority) => {
-        this.systemGeneralService.getUnsignedCertificates().pipe(untilDestroyed(this)).subscribe((res) => {
-          this.unsignedCsrSelectField.options = [];
-          res.forEach((item) => {
-            this.unsignedCsrSelectField.options.push(
-              { label: item.name, value: item.id },
-            );
-          });
-          this.dialogService.dialogForm(this.signCsrFormConf);
-          this.caId = rowinner.id;
+        const dialog = this.dialog.open(SignCsrDialogComponent, {
+          data: rowinner.id,
+        });
+        dialog.afterClosed().pipe(untilDestroyed(this)).subscribe(() => {
+          this.getCards();
         });
       },
     };
@@ -388,55 +380,5 @@ export class CertificatesDashComponent implements OnInit {
     };
 
     return [acmeAction, revokeAction, ...caRowActions];
-  }
-
-  openForm(id: number): void {
-    setTimeout(() => {
-      this.modalService.openInSlideIn(CertificateAcmeAddComponent, id);
-    }, 200);
-  }
-
-  private unsignedCsrSelectField: FormSelectConfig = {
-    type: 'select',
-    name: 'csr_cert_id',
-    placeholder: helptextSystemCa.sign.csr_cert_id.placeholder,
-    tooltip: helptextSystemCa.sign.csr_cert_id.tooltip,
-    required: true,
-    options: [],
-  };
-
-  protected signCsrFieldConf: FieldConfig[] = [
-    this.unsignedCsrSelectField,
-    {
-      type: 'input',
-      name: 'name',
-      placeholder: helptextSystemCa.edit.name.placeholder,
-      tooltip: helptextSystemCa.sign.name.tooltip,
-    },
-  ];
-
-  signCsrFormConf: DialogFormConfiguration = {
-    title: helptextSystemCa.sign.fieldset_certificate,
-    fieldConfig: this.signCsrFieldConf,
-    method_ws: 'certificateauthority.ca_sign_csr',
-    saveButtonText: helptextSystemCa.sign.sign,
-    customSubmit: (entityDialog) => this.doSignCsr(entityDialog),
-  };
-
-  doSignCsr(entityDialog: EntityDialogComponent): void {
-    const payload = {
-      ca_id: this.caId,
-      csr_cert_id: entityDialog.formGroup.controls.csr_cert_id.value,
-      name: entityDialog.formGroup.controls.name.value,
-    };
-    entityDialog.loader.open();
-    entityDialog.ws.call('certificateauthority.ca_sign_csr', [payload]).pipe(untilDestroyed(this)).subscribe(() => {
-      entityDialog.loader.close();
-      this.dialogService.closeAllDialogs();
-      this.getCards();
-    }, (err: WebsocketError) => {
-      entityDialog.loader.close();
-      this.dialogService.errorReport(helptextSystemCa.error, err.reason, err.trace.formatted);
-    });
   }
 }

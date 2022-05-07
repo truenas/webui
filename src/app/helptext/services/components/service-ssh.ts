@@ -34,7 +34,6 @@ export default {
  href="https://man7.org/linux/man-pages/man3/syslog.3.html"\
  target="_blank">syslog(3)</a> level of the SFTP server.'),
   ssh_sftp_log_level_options: [
-    { label: '', value: '' },
     { label: 'Quiet', value: SshSftpLogLevel.Quiet },
     { label: 'Fatal', value: SshSftpLogLevel.Fatal },
     { label: 'Error', value: SshSftpLogLevel.Error },
@@ -50,7 +49,6 @@ export default {
  target="_blank">syslog(3)</a> facility of the SFTP\
  server.'),
   ssh_sftp_log_facility_options: [
-    { label: '', value: '' },
     { label: 'Daemon', value: SshSftpLogFacility.Daemon },
     { label: 'User', value: SshSftpLogFacility.User },
     { label: 'Auth', value: SshSftpLogFacility.Auth },

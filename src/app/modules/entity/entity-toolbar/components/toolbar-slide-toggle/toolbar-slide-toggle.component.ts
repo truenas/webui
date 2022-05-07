@@ -1,6 +1,5 @@
 import { Component, Input } from '@angular/core';
 import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
-import { TranslateService } from '@ngx-translate/core';
 import { Subject } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { getUniqueId } from 'app/helpers/get-unique-id.helper';
@@ -21,7 +20,6 @@ export class ToolbarSlideToggleComponent {
   id = getUniqueId();
 
   constructor(
-    public translate: TranslateService,
     private dialogService: DialogService,
   ) {}
 
