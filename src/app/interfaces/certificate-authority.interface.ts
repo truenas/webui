@@ -1,8 +1,8 @@
-import { CaCreateType } from '../enums/ca-create-type.enum';
-import { CertificateDigestAlgorithm } from '../enums/ca-digest-algorithm.enum';
-import { CertificateKeyType } from '../enums/ca-key-type.enum';
-import { EcCurve } from '../enums/ec-curve.enum';
-import { ExtendedKeyUsages } from '../enums/extended-key-usages.enum';
+import { CaCreateType } from 'app/enums/ca-create-type.enum';
+import { CertificateDigestAlgorithm } from 'app/enums/ca-digest-algorithm.enum';
+import { CertificateKeyType } from 'app/enums/ca-key-type.enum';
+import { EcCurve } from 'app/enums/ec-curve.enum';
+import { ExtendedKeyUsages } from 'app/enums/extended-key-usages.enum';
 
 export interface BasicConstraints {
   ca: boolean;

@@ -386,7 +386,6 @@ export class SmbFormComponent implements FormConfiguration {
               .info(
                 helptextSharingSmb.restarted_smb_dialog.title,
                 helptextSharingSmb.restarted_smb_dialog.message,
-                '250px',
               )
               .pipe(untilDestroyed(this)).subscribe(() => {
                 this.checkAclActions(entityForm);
@@ -487,8 +486,6 @@ export class SmbFormComponent implements FormConfiguration {
                             return this.dialog.info(
                               this.translate.instant('{service} Service', { service: 'SMB' }),
                               this.translate.instant('The {service} service has been enabled.', { service: 'SMB' }),
-                              '250px',
-                              'info',
                             );
                           }),
                           catchError((error) => {

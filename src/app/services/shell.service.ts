@@ -1,9 +1,9 @@
 import {
   Injectable, EventEmitter,
 } from '@angular/core';
+import { environment } from 'environments/environment';
 import { LocalStorage } from 'ngx-webstorage';
-import { environment } from '../../environments/environment';
-import { ShellConnectedEvent } from '../interfaces/shell.interface';
+import { ShellConnectedEvent } from 'app/interfaces/shell.interface';
 
 @Injectable()
 export class ShellService {

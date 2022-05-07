@@ -8,10 +8,10 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { of } from 'rxjs';
 import { Weekday } from 'app/enums/weekday.enum';
 import helptext from 'app/helptext/storage/resilver/resilver';
+import { EntityUtils } from 'app/modules/entity/utils';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { DialogService, TaskService, WebSocketService } from 'app/services';
-import { EntityUtils } from '../../../../modules/entity/utils';
-import { CalendarService } from '../../../../services/calendar.service';
+import { CalendarService } from 'app/services/calendar.service';
 
 @UntilDestroy()
 @Component({

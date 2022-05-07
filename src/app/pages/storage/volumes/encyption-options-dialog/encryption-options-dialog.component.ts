@@ -147,8 +147,6 @@ export class EncryptionOptionsDialogComponent implements OnInit {
     this.dialog.info(
       this.translate.instant('Encryption Options Saved'),
       this.translate.instant('Encryption options for {id} successfully saved.', { id: this.data.row.id }),
-      '500px',
-      'info',
     );
   }
 

@@ -13,10 +13,10 @@ import { FieldConfig, FormDictConfig } from 'app/modules/entity/entity-form/mode
 import { FieldSet } from 'app/modules/entity/entity-form/models/fieldset.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { EntityUtils } from 'app/modules/entity/utils';
+import { remapAppConfigData } from 'app/pages/applications/utils/remap-app-config-data.utils';
 import { remapAppSubmitData } from 'app/pages/applications/utils/remap-app-submit-data.utils';
-import { DialogService } from 'app/services/index';
+import { DialogService } from 'app/services';
 import { ModalService } from 'app/services/modal.service';
-import { remapAppConfigData } from '../utils/remap-app-config-data.utils';
 
 @UntilDestroy()
 @Component({

@@ -3,8 +3,12 @@ import {
 } from '@angular/core';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
-import { PosixAclTag, PosixPermission } from 'app/enums/posix-acl.enum';
+import {
+  PosixAclTag, posixAclTagLabels, PosixPermission, posixPermissionLabels,
+} from 'app/enums/posix-acl.enum';
+import { mapToOptions } from 'app/helpers/options.helper';
 import helptext from 'app/helptext/storage/volumes/datasets/dataset-acl';
 import { PosixAclItem } from 'app/interfaces/acl.interface';
 import { GroupComboboxProvider } from 'app/modules/ix-forms/classes/group-combobox-provider';
@@ -30,8 +34,8 @@ export class EditPosixAceComponent implements OnInit, OnChanges {
     default: [false],
   });
 
-  readonly tags$ = of(helptext.posix_tag.options);
-  readonly permissions$ = of(helptext.posix_perms.options);
+  readonly tags$ = of(mapToOptions(posixAclTagLabels, this.translate));
+  readonly permissions$ = of(mapToOptions(posixPermissionLabels, this.translate));
 
   readonly tooltips = {
     tag: helptext.posix_tag.tooltip,
@@ -48,6 +52,7 @@ export class EditPosixAceComponent implements OnInit, OnChanges {
     private userService: UserService,
     private store: DatasetAclEditorStore,
     private formBuilder: FormBuilder,
+    private translate: TranslateService,
   ) {}
 
   get isUserTag(): boolean {
