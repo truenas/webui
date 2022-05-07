@@ -24,7 +24,7 @@ import { LocalizationFormComponent } from 'app/pages/system/general-settings/loc
 import { DataCard } from 'app/pages/system/interfaces/data-card.interface';
 import { SystemGeneralService, DialogService, StorageService } from 'app/services';
 import { CoreService } from 'app/services/core-service/core.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { IxSlideInService, ResponseOnClose } from 'app/services/ix-slide-in.service';
 import { LocaleService } from 'app/services/locale.service';
 import { ThemeService } from 'app/services/theme/theme.service';
 import { AppState } from 'app/store';
@@ -248,9 +248,9 @@ export class GeneralSettingsComponent implements OnInit {
     switch (name) {
       case GeneralCardId.Gui:
         this.slideInService.open(GuiFormComponent);
-        this.slideInService.onClose$.pipe(take(1), untilDestroyed(this)).subscribe((wasSaved) => {
+        this.slideInService.onClose$.pipe(take(1), untilDestroyed(this)).subscribe(({ response }: ResponseOnClose) => {
           // TODO: Do not simplify. Refactor slideInService to be more like MatDialog.
-          if (wasSaved === true) {
+          if (response === true) {
             return;
           }
 
