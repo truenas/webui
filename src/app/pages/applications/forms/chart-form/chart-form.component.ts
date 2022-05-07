@@ -1,8 +1,9 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import {
-  AbstractControl, FormArray, FormBuilder, FormControl, FormGroup, Validators,
+  AbstractControl, FormArray, FormControl, FormGroup, Validators,
 } from '@angular/forms';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { of } from 'rxjs';
 import { ixChartApp } from 'app/constants/catalog.constants';
@@ -231,7 +232,7 @@ export class ChartFormComponent {
         });
 
         const configControlPath = this.getControlPath(formGroup.controls[chartSchemaNode.variable], '').split('.');
-        let nextItem: any = this.config;
+        let nextItem = this.config;
         for (const path of configControlPath) {
           nextItem = nextItem[path];
         }
@@ -389,7 +390,7 @@ export class ChartFormComponent {
   addFormListItem(event: AddListItemEmitter): void {
     const itemFormGroup = new FormGroup({});
     event.schema.forEach((item) => {
-      this.addFormControls(item, itemFormGroup);
+      this.addFormControls(item as ChartSchemaNode, itemFormGroup);
     });
     event.array.push(itemFormGroup);
   }

@@ -67,7 +67,7 @@ export interface ChartRelease {
   human_version: string;
   human_latest_version: string;
   container_images_update_available: boolean;
-  portals: { [name: string]: string[] };
+  portals: { [portal: string]: string[] };
   chart_schema: ChartSchema;
   history: { [key: string]: string };
   resources?: ChartResources;
@@ -140,7 +140,7 @@ export interface ChartSchema {
     groups: ChartSchemaGroup[];
     questions: ChartSchemaNode[];
     portals: {
-      web_portal: {
+      [portal: string]: {
         host: string[];
         ports: string[];
         protocols: string[];

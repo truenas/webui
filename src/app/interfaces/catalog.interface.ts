@@ -82,7 +82,7 @@ export interface CatalogApp {
     groups: ChartSchemaGroup[];
     questions: ChartSchemaNode[];
     portals: {
-      web_portal: {
+      [portal: string]: {
         host: string[];
         ports: string[];
         protocols: string[];
@@ -105,7 +105,7 @@ export interface CatalogAppVersion {
     groups: ChartSchemaGroup[];
     questions: ChartSchemaNode[];
     portals: {
-      web_portal: {
+      [portal: string]: {
         host: string[];
         ports: string[];
         protocols: string[];

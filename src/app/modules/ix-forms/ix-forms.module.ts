@@ -21,6 +21,7 @@ import { TreeModule } from '@circlon/angular-tree-component';
 import { TranslateModule } from '@ngx-translate/core';
 import { MarkdownModule } from 'ngx-markdown';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
+import { CastModule } from 'app/modules/cast/cast.module';
 import { IxCheckboxListComponent } from 'app/modules/ix-forms/components/ix-checkbox-list/ix-checkbox-list.component';
 import { IxCheckboxComponent } from 'app/modules/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxChipsComponent } from 'app/modules/ix-forms/components/ix-chips/ix-chips.component';
@@ -72,6 +73,7 @@ import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
     TranslateModule,
     TreeModule,
     MatListModule,
+    CastModule,
   ],
   declarations: [
     IxInputComponent,

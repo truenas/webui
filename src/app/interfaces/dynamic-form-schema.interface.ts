@@ -53,7 +53,7 @@ export interface DynamicFormSchemaCheckbox extends DynamicFormSchemaBase {
 export interface DynamicFormSchemaList extends DynamicFormSchemaBase {
   type: 'list';
   items?: DynamicFormSchemaNode[];
-  items_schema?: any[];
+  items_schema?: unknown[];
 }
 
 export interface DynamicFormSchemaDict extends DynamicFormSchemaBase {
@@ -63,7 +63,7 @@ export interface DynamicFormSchemaDict extends DynamicFormSchemaBase {
 
 export interface AddListItemEmitter {
   array: FormArray;
-  schema: any[];
+  schema: unknown[];
 }
 
 export interface DeleteListItemEmitter {
