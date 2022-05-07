@@ -103,8 +103,6 @@ export class RsyncTaskListComponent implements EntityTableConfig {
                 this.dialog.info(
                   this.translate.instant('Task Started'),
                   'Rsync task <i>' + row.remotehost + ' - ' + row.remotemodule + '</i> started.',
-                  '500px',
-                  'info',
                   true,
                 );
                 this.job.getJobStatus(jobId).pipe(untilDestroyed(this)).subscribe((job: Job) => {
@@ -173,7 +171,7 @@ export class RsyncTaskListComponent implements EntityTableConfig {
         this.job.showLogs(row.job);
       }
     } else {
-      this.dialog.info(globalHelptext.noLogDialog.title, globalHelptext.noLogDialog.message);
+      this.dialog.warn(globalHelptext.noLogDialog.title, globalHelptext.noLogDialog.message);
     }
   }
 

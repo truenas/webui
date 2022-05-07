@@ -1383,8 +1383,6 @@ export class ReplicationWizardComponent implements WizardConfiguration {
           this.dialogService.info(
             this.translate.instant('Task started'),
             this.translate.instant('Replication <i>{name}</i> has started.', { name: value['name'] }),
-            '500px',
-            'info',
             true,
           );
         },

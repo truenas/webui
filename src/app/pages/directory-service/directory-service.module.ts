@@ -10,6 +10,7 @@ import { MatListModule } from '@angular/material/list';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { TranslateModule } from '@ngx-translate/core';
 import { NgxUploaderModule } from 'ngx-uploader';
+import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxTableModule } from 'app/modules/ix-tables/ix-table.module';
 import { ActiveDirectoryComponent } from 'app/pages/directory-service/components/active-directory/active-directory.component';
@@ -23,7 +24,6 @@ import {
 import { routing } from 'app/pages/directory-service/directory-service.routing';
 import { DirectoryServicesComponent } from 'app/pages/directory-service/directory-services.component';
 import { SystemGeneralService } from 'app/services';
-import { EntityModule } from '../../modules/entity/entity.module';
 import { IdmapFormComponent } from './components/idmap/idmap-form.component';
 import { IdmapListComponent } from './components/idmap/idmap-list.component';
 import { KerberosRealmsFormComponent } from './components/kerberos-realms-form/kerberos-realms-form.component';

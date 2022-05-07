@@ -23,3 +23,9 @@ export enum PosixPermission {
   Write = 'WRITE',
   Execute = 'EXECUTE',
 }
+
+export const posixPermissionLabels = new Map<PosixPermission, string>([
+  [PosixPermission.Read, T('Read')],
+  [PosixPermission.Write, T('Write')],
+  [PosixPermission.Execute, T('Execute')],
+]);

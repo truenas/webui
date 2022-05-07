@@ -7,11 +7,11 @@ import {
 } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { customSvgIcons } from 'app/core/classes/custom-icons';
+import { WebSocketService } from 'app/services';
 import { SystemProfileService } from 'app/services/system-profile.service';
 import { ThemeService } from 'app/services/theme/theme.service';
 import productText from './helptext/product';
 import { SystemGeneralService } from './services';
-import { WebSocketService } from './services/ws.service';
 
 @UntilDestroy()
 @Component({

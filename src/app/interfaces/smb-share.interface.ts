@@ -55,6 +55,16 @@ export interface SmbSharesecAce {
   ae_who_sid: string;
 }
 
+export interface SmbSharesecAceUpdate {
+  ae_perm: SmbSharesecPermission;
+  ae_type: SmbSharesecType;
+  ae_who_name?: {
+    domain: string;
+    name: string;
+  };
+  ae_who_sid?: string;
+}
+
 export type SmbShareUpdate = {
   timemachine_quota?: number;
 } & Partial<Omit<SmbShare, 'id' | 'locked' | 'vuid'>>;

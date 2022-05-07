@@ -44,7 +44,6 @@ export class LeaveDomainDialogComponent {
           this.dialogService.info(
             helptext.ad_leave_domain_dialog.success,
             helptext.ad_leave_domain_dialog.success_msg,
-            '400px', 'info', true,
           );
 
           this.loader.close();

@@ -14,6 +14,8 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { NgxUploaderModule } from 'ngx-uploader';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { CastModule } from 'app/modules/cast/cast.module';
+import { EntityFormService } from 'app/modules/entity/entity-form/services/entity-form.service';
+import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { NetworkConfigurationComponent } from 'app/pages/network/components/configuration/configuration.component';
 import {
@@ -28,8 +30,6 @@ import { OpenVpnServerConfigComponent } from 'app/pages/network/components/open-
 import { StaticRouteFormComponent } from 'app/pages/network/components/static-route-form/static-route-form.component';
 import { NetworkService } from 'app/services';
 import { CoreService } from 'app/services/core-service/core.service';
-import { EntityFormService } from '../../modules/entity/entity-form/services/entity-form.service';
-import { EntityModule } from '../../modules/entity/entity.module';
 import { IpmiFormComponent } from './components/forms/ipmi-form.component';
 import { NetworkComponent } from './network.component';
 import { routing } from './network.routing';

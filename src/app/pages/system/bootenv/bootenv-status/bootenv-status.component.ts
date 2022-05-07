@@ -103,9 +103,6 @@ export class BootStatusListComponent implements OnInit {
         this.dialog.info(
           this.translate.instant('Device detached'),
           this.translate.instant('<i>{disk}</i> has been detached.', { disk }),
-          '300px',
-          'info',
-          true,
         );
       },
       (res) => {

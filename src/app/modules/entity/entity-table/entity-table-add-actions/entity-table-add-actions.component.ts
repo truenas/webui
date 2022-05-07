@@ -8,6 +8,7 @@ import { GlobalAction } from 'app/interfaces/global-action.interface';
 import { EntityTableAddActionsConfig } from 'app/modules/entity/entity-table/entity-table-add-actions/entity-table-add-actions-config.interface';
 import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-table.component';
 import { EntityTableAction } from 'app/modules/entity/entity-table/entity-table.interface';
+import { EntityTableService } from 'app/services/entity-table.service';
 
 @UntilDestroy()
 @Component({
@@ -31,8 +32,14 @@ export class EntityTableAddActionsComponent implements GlobalAction, OnInit, Aft
     return this.actions.length + addAction;
   }
 
+  constructor(private entityTableService: EntityTableService) { }
+
   ngOnInit(): void {
     this.actions = this.entity.getAddActions();
+
+    this.entityTableService.addActionsUpdater$.pipe(untilDestroyed(this)).subscribe((actions: any) => {
+      this.actions = actions;
+    });
   }
 
   ngAfterViewInit(): void {
