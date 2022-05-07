@@ -1,7 +1,7 @@
 .header-input-wrapper {
   align-items: center;
-  background: var(--bg2);
-  border: thin solid transparent;
+  background: rgba(0, 0, 0, 0.1);
+  border: 1px solid var(--lines);
   color: white;
   display: flex;
   flex-direction: row;
