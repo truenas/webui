@@ -8,15 +8,12 @@ import { MatListModule } from '@angular/material/list';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSortModule } from '@angular/material/sort';
 import { TranslateModule } from '@ngx-translate/core';
-import { NgxDualListboxModule } from 'app/modules/common/dual-list/dual-list.module';
+import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxTableModule } from 'app/modules/ix-tables/ix-table.module';
-import { GroupFormComponent } from 'app/pages/account/groups/group-form/group-form.component';
-import { GroupListComponent } from 'app/pages/account/groups/group-list/group-list.component';
 import { StorageService } from 'app/services/storage.service';
-import { EntityModule } from '../../modules/entity/entity.module';
 import { routing } from './account.routing';
-import { MembersComponent } from './groups/members/members.component';
+import { GroupsModule } from './groups/groups.module';
 import { UsersModule } from './users/users.module';
 
 @NgModule({
@@ -24,7 +21,6 @@ import { UsersModule } from './users/users.module';
     EntityModule,
     CommonModule,
     FormsModule,
-    NgxDualListboxModule,
     ReactiveFormsModule,
     routing,
     TranslateModule,
@@ -37,14 +33,12 @@ import { UsersModule } from './users/users.module';
     IxTableModule,
     FlexLayoutModule,
     UsersModule,
+    GroupsModule,
   ],
-  declarations: [
-    GroupListComponent,
-    GroupFormComponent,
-    MembersComponent,
-  ],
+  declarations: [],
   providers: [
     StorageService,
   ],
+  exports: [],
 })
 export class AccountModule {}

@@ -2,7 +2,6 @@ import {
   Component,
 } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
-import { TranslateService } from '@ngx-translate/core';
 import helptext from 'app/helptext/storage/volumes/datasets/dataset-unlock';
 import { DatasetUnlockParams } from 'app/interfaces/dataset-lock.interface';
 import { DatasetUnlockComponent } from 'app/pages/storage/volumes/datasets/dataset-unlock/dataset-unlock.component';
@@ -31,7 +30,6 @@ export class UnlockDialogComponent {
 
   constructor(
     public dialogRef: MatDialogRef<UnlockDialogComponent>,
-    protected translate: TranslateService,
     private dialogService: DialogService,
   ) {}
 
@@ -61,7 +59,7 @@ export class UnlockDialogComponent {
 
   showError(dataset: { name: string; unlock_error?: string }): void {
     if (this.dialogService && dataset.unlock_error) {
-      this.dialogService.info(
+      this.dialogService.warn(
         helptext.unlock_dataset_dialog.error_dialog_title + dataset.name,
         dataset.unlock_error,
       );

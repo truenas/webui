@@ -26,6 +26,9 @@ import { ResilverData } from 'app/interfaces/resilver-job.interface';
 import { Interval } from 'app/interfaces/timeout.interface';
 import { AlertSlice, selectImportantUnreadAlertsCount } from 'app/modules/alerts/store/alert.selectors';
 import { AppLoaderService } from 'app/modules/app-loader/app-loader.service';
+import { AboutDialogComponent } from 'app/modules/common/dialog/about/about-dialog.component';
+import { DirectoryServicesMonitorComponent } from 'app/modules/common/dialog/directory-services-monitor/directory-services-monitor.component';
+import { ResilverProgressDialogComponent } from 'app/modules/common/dialog/resilver-progress/resilver-progress.component';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { JobsPanelComponent } from 'app/modules/jobs/components/jobs-panel/jobs-panel.component';
@@ -42,9 +45,6 @@ import { SystemGeneralService } from 'app/services/system-general.service';
 import { ThemeService } from 'app/services/theme/theme.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { alertIndicatorPressed, sidenavUpdated, jobIndicatorPressed } from 'app/store/topbar/topbar.actions';
-import { AboutDialogComponent } from '../dialog/about/about-dialog.component';
-import { DirectoryServicesMonitorComponent } from '../dialog/directory-services-monitor/directory-services-monitor.component';
-import { ResilverProgressDialogComponent } from '../dialog/resilver-progress/resilver-progress.component';
 
 @UntilDestroy()
 @Component({
@@ -63,7 +63,6 @@ export class TopbarComponent implements OnInit, OnDestroy {
   waitingNetworkCheckin = false;
   resilveringDetails: ResilverData;
   currentTheme = 'ix-blue';
-  isTaskMangerOpened = false;
   isDirServicesMonitorOpened = false;
   taskDialogRef: MatDialogRef<JobsPanelComponent>;
   dirServicesMonitor: MatDialogRef<DirectoryServicesMonitorComponent>;
@@ -123,16 +122,9 @@ export class TopbarComponent implements OnInit, OnDestroy {
 
       this.ws.call('failover.licensed').pipe(untilDestroyed(this)).subscribe((isHa) => {
         this.is_ha = isHa;
-        if (this.is_ha) {
-          window.localStorage.setItem('alias_ips', 'show');
-        } else {
-          window.localStorage.setItem('alias_ips', '0');
-        }
         this.getHaStatus();
       });
       this.sysName = 'TrueNAS ENTERPRISE';
-    } else {
-      window.localStorage.setItem('alias_ips', '0');
     }
     this.ws.subscribe('core.get_jobs').pipe(untilDestroyed(this)).subscribe((event) => {
       if (event && (event.fields.method === 'update.update' || event.fields.method === 'failover.upgrade')) {
@@ -414,7 +406,6 @@ export class TopbarComponent implements OnInit, OnDestroy {
         this.dialogService.info(
           network_interfaces_helptext.checkin_complete_title,
           network_interfaces_helptext.checkin_complete_message,
-          '500px', 'info',
         );
         this.waitingNetworkCheckin = false;
       }, (err) => {
@@ -486,11 +477,11 @@ export class TopbarComponent implements OnInit, OnDestroy {
 
   showHaStatus(): void {
     let reasons = '<ul>\n';
-    let haIcon = 'info';
+    let isWarning = false;
     let haStatus: string;
     if (this.ha_disabled_reasons.length > 0) {
       haStatus = helptext.ha_status_text_disabled;
-      haIcon = 'warning';
+      isWarning = true;
       this.ha_disabled_reasons.forEach((reason) => {
         const reasonText = helptext.ha_disabled_reasons[reason];
         reasons = reasons + '<li>' + this.translate.instant(reasonText) + '</li>\n';
@@ -501,7 +492,11 @@ export class TopbarComponent implements OnInit, OnDestroy {
     }
     reasons = reasons + '</ul>';
 
-    this.dialogService.info(haStatus, reasons, '500px', haIcon, true);
+    if (isWarning) {
+      this.dialogService.warn(haStatus, reasons, true);
+    } else {
+      this.dialogService.info(haStatus, reasons, true);
+    }
   }
 
   checkUpgradePending(): void {

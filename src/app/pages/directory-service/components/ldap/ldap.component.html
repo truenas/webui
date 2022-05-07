@@ -45,13 +45,19 @@
               [tooltip]="helptext.ldap_ssl_tooltip"
               [options]="sslOptions$"
             ></ix-select>
-            <ix-select
-              formControlName="certificate"
-              [label]="'Certificate' | translate"
-              [tooltip]="helptext.ldap_certificate_tooltip"
-              [options]="certificates$"
-            ></ix-select>
-            <!-- TODO: Add link -->
+            <div class="linked-select">
+              <div class="link-wrapper">
+                <a class="link" (click)="onManageCertificatesClicked()">
+                  {{ 'Manage Certificates' | translate }}
+                </a>
+              </div>
+              <ix-select
+                formControlName="certificate"
+                [label]="'Certificate' | translate"
+                [tooltip]="helptext.ldap_certificate_tooltip"
+                [options]="certificates$"
+              ></ix-select>
+            </div>
             <ix-checkbox
               formControlName="validate_certificates"
               [label]="'Validate Certificates' | translate"

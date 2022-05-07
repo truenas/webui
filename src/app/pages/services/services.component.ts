@@ -169,18 +169,18 @@ export class ServicesComponent implements OnInit {
     this.cdr.markForCheck();
 
     const serviceName = this.serviceNames.get(service.service);
-    this.ws.call(rpc, [service.service]).pipe(
+    this.ws.call(rpc, [service.service, { silent: false }]).pipe(
       untilDestroyed(this),
     ).subscribe((success) => {
       if (success) {
         if (service.state === ServiceStatus.Running && rpc === 'service.stop') {
-          this.dialog.info(
+          this.dialog.warn(
             this.translate.instant('Service failed to stop'),
             this.translate.instant('{serviceName} service failed to stop.', { serviceName }),
           );
         }
       } else if (service.state === ServiceStatus.Stopped && rpc === 'service.start') {
-        this.dialog.info(
+        this.dialog.warn(
           this.translate.instant('Service failed to start'),
           this.translate.instant('{serviceName} service failed to start.', { serviceName }),
         );
@@ -190,7 +190,7 @@ export class ServicesComponent implements OnInit {
       if (rpc === 'service.stop') {
         message = this.translate.instant('Error stopping service {serviceName}.', { serviceName });
       }
-      this.dialog.errorReport(message, error.message, error.stack);
+      this.dialog.errorReport(message, error.reason, error.trace.formatted);
       this.serviceLoadingMap.set(service.service, false);
       this.cdr.markForCheck();
     });

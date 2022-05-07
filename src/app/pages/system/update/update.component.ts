@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatDialogRef } from '@angular/material/dialog/dialog-ref';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import {
@@ -109,7 +109,6 @@ export class UpdateComponent implements OnInit {
 
   constructor(
     protected router: Router,
-    protected route: ActivatedRoute,
     protected ws: WebSocketService,
     protected dialog: MatDialog,
     public sysGenService: SystemGeneralService,
@@ -199,10 +198,9 @@ export class UpdateComponent implements OnInit {
         this.trainDescriptionOnPageLoad = this.currentTrainDescription;
       },
       (err) => {
-        this.dialogService.info(
+        this.dialogService.warn(
           err.trace.class,
           this.translate.instant('TrueNAS was unable to reach update servers.'),
-          '500px',
         );
       });
     });
@@ -576,7 +574,7 @@ export class UpdateComponent implements OnInit {
           this.dialogRef.componentInstance.submit();
           this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
             this.dialogRef.close(false);
-            this.dialogService.info(this.translate.instant('Updates successfully downloaded'), '', '450px', 'info', true);
+            this.dialogService.info(this.translate.instant('Updates successfully downloaded'), '');
             this.pendingupdates();
           });
           this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((err) => {

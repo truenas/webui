@@ -10,11 +10,10 @@ import { LicenseInfoInSupport } from 'app/pages/system/general-settings/support/
 import { SystemInfoInSupport } from 'app/pages/system/general-settings/support/system-info-in-support.interface';
 import { WebSocketService, AppLoaderService, DialogService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { ModalService } from 'app/services/modal.service';
 import { FileTicketFormComponent } from './file-ticket-form/file-ticket-form.component';
+import { FileTicketLicensedFormComponent } from './file-ticket-licensed-form/file-ticket-licensed-form.component';
 import { LicenseComponent } from './license/license.component';
 import { ProactiveComponent } from './proactive/proactive.component';
-import { SupportFormLicensedComponent } from './support-licensed/support-form-licensed.component';
 
 @UntilDestroy()
 @Component({
@@ -38,7 +37,6 @@ export class SupportComponent implements OnInit {
 
   constructor(
     protected ws: WebSocketService,
-    private modalService: ModalService,
     private loader: AppLoaderService,
     private dialog: DialogService,
     private slideInService: IxSlideInService,
@@ -147,7 +145,7 @@ export class SupportComponent implements OnInit {
 
   fileTicket(): void {
     if (this.hasLicense) {
-      this.modalService.openInSlideIn(SupportFormLicensedComponent);
+      this.slideInService.open(FileTicketLicensedFormComponent, { wide: true });
     } else {
       this.slideInService.open(FileTicketFormComponent);
     }
@@ -162,12 +160,14 @@ export class SupportComponent implements OnInit {
       this.dialog.dialogForm(this.updateProdStatusConf);
     } else {
       this.ws.call('truenas.set_production', [false, false]).pipe(untilDestroyed(this)).subscribe(() => {
-        this.dialog.info(helptext.is_production_dialog.title,
-          helptext.is_production_dialog.message, '300px', 'info', true);
+        this.dialog.info(helptext.is_production_dialog.title, helptext.is_production_dialog.message);
       }, (err) => {
         this.loader.close();
-        this.dialog.errorReport(helptext.is_production_error_dialog.title,
-          err.error.message, err.error.traceback);
+        this.dialog.errorReport(
+          helptext.is_production_error_dialog.title,
+          err.error.message,
+          err.error.traceback,
+        );
       });
     }
   }

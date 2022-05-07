@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import {
   Component, ElementRef, OnDestroy, OnInit, ViewChild, ViewEncapsulation,
 } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { UUID } from 'angular2-uuid';
@@ -17,10 +17,10 @@ import { EntityDialogComponent } from 'app/modules/entity/entity-dialog/entity-d
 import { FormSelectConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
 import { EntityToolbarComponent } from 'app/modules/entity/entity-toolbar/entity-toolbar.component';
 import { EntityUtils } from 'app/modules/entity/utils';
+import { ApplicationsService } from 'app/pages/applications/applications.service';
 import { DialogService, ShellService, WebSocketService } from 'app/services';
 import { CoreService } from 'app/services/core-service/core.service';
 import { StorageService } from 'app/services/storage.service';
-import { ApplicationsService } from '../applications.service';
 
 interface PodLogEvent {
   data: string;
@@ -56,7 +56,8 @@ export class PodLogsComponent implements OnInit, OnDestroy {
   private podLogsChangedListener: Subscription;
   podLogs: PodLogEvent[];
 
-  constructor(protected core: CoreService,
+  constructor(
+    protected core: CoreService,
     private ws: WebSocketService,
     private appService: ApplicationsService,
     private dialogService: DialogService,
@@ -65,7 +66,7 @@ export class PodLogsComponent implements OnInit, OnDestroy {
     protected loader: AppLoaderService,
     protected storageService: StorageService,
     protected http: HttpClient,
-    protected router: Router) {}
+  ) {}
 
   ngOnInit(): void {
     this.aroute.params.pipe(untilDestroyed(this)).subscribe((params) => {

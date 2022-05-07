@@ -4,7 +4,6 @@ import {
 import { AbstractControl, FormGroup } from '@angular/forms';
 import { MatTabGroup } from '@angular/material/tabs';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 import {
   FieldConfig,
@@ -31,8 +30,7 @@ export class FormTaskComponent implements Field, AfterViewInit, OnInit {
   protected init: boolean;
   @ViewChild('tabGroup', { static: true }) tabGroup: MatTabGroup;
 
-  constructor(protected entityFormService: EntityFormService,
-    public translate: TranslateService) {}
+  constructor(protected entityFormService: EntityFormService) {}
 
   ngAfterViewInit(): void {
     this.activeTabField = this.config.tabs[this.tabGroup.selectedIndex];

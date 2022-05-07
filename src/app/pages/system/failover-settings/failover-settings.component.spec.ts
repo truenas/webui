@@ -84,15 +84,13 @@ describe('FailoverComponent', () => {
     const confirmCheckbox = await rootLoader.getHarness(MatCheckboxHarness.with({ label: 'Confirm' }));
     await confirmCheckbox.check();
 
-    const proceedButton = await rootLoader.getHarness(MatButtonHarness.with({ text: 'PROCEED' }));
+    const proceedButton = await rootLoader.getHarness(MatButtonHarness.with({ text: 'Proceed' }));
     await proceedButton.click();
 
     expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('failover.sync_to_peer', [{ reboot: true }]);
     expect(spectator.inject(DialogService).info).toHaveBeenCalledWith(
       helptextSystemFailover.confirm_dialogs.sync_title,
       helptextSystemFailover.confirm_dialogs.sync_to_message,
-      expect.anything(),
-      expect.anything(),
     );
   });
 
@@ -103,15 +101,13 @@ describe('FailoverComponent', () => {
     const confirmCheckbox = await rootLoader.getHarness(MatCheckboxHarness.with({ label: 'Confirm' }));
     await confirmCheckbox.check();
 
-    const proceedButton = await rootLoader.getHarness(MatButtonHarness.with({ text: 'PROCEED' }));
+    const proceedButton = await rootLoader.getHarness(MatButtonHarness.with({ text: 'Proceed' }));
     await proceedButton.click();
 
     expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('failover.sync_from_peer');
     expect(spectator.inject(DialogService).info).toHaveBeenCalledWith(
       helptextSystemFailover.confirm_dialogs.sync_title,
       helptextSystemFailover.confirm_dialogs.sync_from_message,
-      expect.anything(),
-      expect.anything(),
     );
   });
 
@@ -131,7 +127,7 @@ describe('FailoverComponent', () => {
     const confirmCheckbox = await rootLoader.getHarness(MatCheckboxHarness.with({ label: 'Confirm' }));
     await confirmCheckbox.check();
 
-    const proceedButton = await rootLoader.getHarness(MatButtonHarness.with({ text: 'CONTINUE' }));
+    const proceedButton = await rootLoader.getHarness(MatButtonHarness.with({ text: 'Continue' }));
     await proceedButton.click();
 
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save And Failover' }));

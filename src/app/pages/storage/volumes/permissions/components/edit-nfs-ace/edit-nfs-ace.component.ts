@@ -3,11 +3,16 @@ import {
 } from '@angular/core';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 import { of } from 'rxjs';
 import {
-  NfsAclTag, NfsAclType, NfsAdvancedFlag, NfsAdvancedPermission, NfsBasicFlag,
+  NfsAclTag, nfsAclTagLabels, NfsAclType,
+  nfsAclTypeLabels, NfsAdvancedFlag, nfsAdvancedFlagLabels,
+  NfsAdvancedPermission, nfsAdvancedPermissionLabels,
+  NfsBasicFlag, nfsBasicFlagLabels, nfsBasicPermissionLabels,
 } from 'app/enums/nfs-acl.enum';
+import { mapToOptions } from 'app/helpers/options.helper';
 import helptext from 'app/helptext/storage/volumes/datasets/dataset-acl';
 import {
   AdvancedNfsFlags,
@@ -22,7 +27,9 @@ import { GroupComboboxProvider } from 'app/modules/ix-forms/classes/group-combob
 import { UserComboboxProvider } from 'app/modules/ix-forms/classes/user-combobox-provider';
 import {
   NfsFormFlagsType,
+  nfsFormFlagsTypeLabels,
   NfsFormPermsType,
+  nfsFormPermsTypeLabels,
 } from 'app/pages/storage/volumes/permissions/components/edit-nfs-ace/edit-nfs-ace-form.types';
 import { DatasetAclEditorStore } from 'app/pages/storage/volumes/permissions/stores/dataset-acl-editor.store';
 import { newNfsAce } from 'app/pages/storage/volumes/permissions/utils/new-ace.utils';
@@ -51,14 +58,14 @@ export class EditNfsAceComponent implements OnChanges, OnInit {
     advancedFlags: [[] as NfsAdvancedFlag[]],
   });
 
-  readonly tags$ = of(helptext.dataset_acl_tag_options);
-  readonly aclTypes$ = of(helptext.dataset_acl_type_options);
-  readonly permissionTypes$ = of(helptext.dataset_acl_perms_type_options);
-  readonly basicPermissions$ = of(helptext.dataset_acl_basic_perms_options);
-  readonly advancedPermissions$ = of(helptext.dataset_acl_advanced_perms_options);
-  readonly flagTypes$ = of(helptext.dataset_acl_flags_type_options);
-  readonly basicFlags$ = of(helptext.dataset_acl_basic_flags_options);
-  readonly advancedFlags$ = of(helptext.dataset_acl_advanced_flags_options);
+  readonly tags$ = of(mapToOptions(nfsAclTagLabels, this.translate));
+  readonly aclTypes$ = of(mapToOptions(nfsAclTypeLabels, this.translate));
+  readonly permissionTypes$ = of(mapToOptions(nfsFormPermsTypeLabels, this.translate));
+  readonly basicPermissions$ = of(mapToOptions(nfsBasicPermissionLabels, this.translate));
+  readonly advancedPermissions$ = of(mapToOptions(nfsAdvancedPermissionLabels, this.translate));
+  readonly flagTypes$ = of(mapToOptions(nfsFormFlagsTypeLabels, this.translate));
+  readonly basicFlags$ = of(mapToOptions(nfsBasicFlagLabels, this.translate));
+  readonly advancedFlags$ = of(mapToOptions(nfsAdvancedFlagLabels, this.translate));
 
   readonly tooltips = {
     tag: helptext.dataset_acl_tag_tooltip,
@@ -80,6 +87,7 @@ export class EditNfsAceComponent implements OnChanges, OnInit {
     private formBuilder: FormBuilder,
     private store: DatasetAclEditorStore,
     private userService: UserService,
+    private translate: TranslateService,
   ) {}
 
   get isUserTag(): boolean {

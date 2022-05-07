@@ -8,7 +8,7 @@ import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import * as cronParser from 'cron-parser';
 import { formatDistanceToNowStrict } from 'date-fns';
-import { merge, Subject } from 'rxjs';
+import { Subject } from 'rxjs';
 import {
   filter, switchMap, take, tap,
 } from 'rxjs/operators';
@@ -38,6 +38,7 @@ import { ReplicationFormComponent } from 'app/pages/system/advanced/replication-
 import { SedFormComponent } from 'app/pages/system/advanced/sed-form/sed-form.component';
 import { SystemDatasetPoolComponent } from 'app/pages/system/advanced/system-dataset-pool/system-dataset-pool.component';
 import { DataCard } from 'app/pages/system/interfaces/data-card.interface';
+import { TunableFormComponent } from 'app/pages/system/tunable/tunable-form/tunable-form.component';
 import {
   DialogService,
   LanguageService,
@@ -47,10 +48,8 @@ import {
 } from 'app/services';
 import { CoreService } from 'app/services/core-service/core.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { ModalService } from 'app/services/modal.service';
 import { AppState } from 'app/store';
 import { waitForAdvancedConfig } from 'app/store/system-config/system-config.selectors';
-import { TunableFormComponent } from '../tunable/tunable-form/tunable-form.component';
 import { ConsoleFormComponent } from './console-form/console-form.component';
 import { IsolatedGpuPcisFormComponent } from './isolated-gpu-pcis/isolated-gpu-pcis-form.component';
 import { KernelFormComponent } from './kernel-form/kernel-form.component';
@@ -120,8 +119,6 @@ export class AdvancedSettingsComponent implements OnInit {
                   this.dialog.info(
                     this.translate.instant('Job {job} Completed Successfully', { job: row.description }),
                     message,
-                    '500px',
-                    'info',
                     true,
                   );
                 },
@@ -144,12 +141,12 @@ export class AdvancedSettingsComponent implements OnInit {
     ],
     add: async () => {
       await this.showFirstTimeWarningIfNeeded();
-      this.ixModal.open(CronFormComponent);
+      this.slideInService.open(CronFormComponent);
     },
     edit: async (cron: CronjobRow) => {
       await this.showFirstTimeWarningIfNeeded();
 
-      const modal = this.ixModal.open(CronFormComponent);
+      const modal = this.slideInService.open(CronFormComponent);
       modal.setCronForEdit(cron);
     },
   };
@@ -176,18 +173,19 @@ export class AdvancedSettingsComponent implements OnInit {
     ],
     add: async () => {
       await this.showFirstTimeWarningIfNeeded();
-      this.ixModal.open(InitShutdownFormComponent);
+      this.slideInService.open(InitShutdownFormComponent);
     },
     edit: async (script: InitShutdownScript) => {
       await this.showFirstTimeWarningIfNeeded();
 
-      const modal = this.ixModal.open(InitShutdownFormComponent);
+      const modal = this.slideInService.open(InitShutdownFormComponent);
       modal.setScriptForEdit(script);
     },
   };
 
   sysctlTableConf: AppTableConfig = {
     title: helptextSystemAdvanced.fieldset_sysctl,
+    titleHref: '/system/sysctl',
     queryCall: 'tunable.query',
     deleteCall: 'tunable.delete',
     deleteMsg: {
@@ -204,20 +202,17 @@ export class AdvancedSettingsComponent implements OnInit {
     ],
     add: async () => {
       await this.showFirstTimeWarningIfNeeded();
-      this.ixModal.open(TunableFormComponent);
+      this.slideInService.open(TunableFormComponent);
     },
     edit: async (tunable: Tunable) => {
       await this.showFirstTimeWarningIfNeeded();
-      const dialog = this.ixModal.open(TunableFormComponent);
+      const dialog = this.slideInService.open(TunableFormComponent);
       dialog.setTunableForEdit(tunable);
     },
   };
 
-  readonly CardId = AdvancedCardId;
-
   constructor(
     private ws: WebSocketService,
-    private modalService: ModalService,
     private language: LanguageService,
     private dialog: DialogService,
     private loader: AppLoaderService,
@@ -229,7 +224,7 @@ export class AdvancedSettingsComponent implements OnInit {
     public datePipe: DatePipe,
     protected userService: UserService,
     private translate: TranslateService,
-    private ixModal: IxSlideInService,
+    private slideInService: IxSlideInService,
     private store$: Store<AppState>,
   ) {}
 
@@ -239,11 +234,7 @@ export class AdvancedSettingsComponent implements OnInit {
       this.getDatasetData();
     });
 
-    merge(
-      this.modalService.refreshTable$,
-      this.modalService.onClose$,
-      this.ixModal.onClose$,
-    ).pipe(untilDestroyed(this)).subscribe(() => {
+    this.slideInService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
       this.refreshTables();
     });
 
@@ -282,7 +273,7 @@ export class AdvancedSettingsComponent implements OnInit {
     }
 
     return this.dialog
-      .info(helptextSystemAdvanced.first_time.title, helptextSystemAdvanced.first_time.message)
+      .warn(helptextSystemAdvanced.first_time.title, helptextSystemAdvanced.first_time.message)
       .pipe(tap(() => this.isFirstTime = false))
       .toPromise();
   }
@@ -312,7 +303,6 @@ export class AdvancedSettingsComponent implements OnInit {
     ).subscribe((replicationConfig) => {
       this.replicationConfig = replicationConfig;
 
-      this.modalService.refreshTable();
       this.getDataCardData();
     });
   }
@@ -469,32 +459,32 @@ export class AdvancedSettingsComponent implements OnInit {
     });
   }
 
-  async onSettingsPressed(name: AdvancedCardId, id?: number): Promise<void> {
+  async onSettingsPressed(name: AdvancedCardId): Promise<void> {
     await this.showFirstTimeWarningIfNeeded();
     switch (name) {
       case AdvancedCardId.Console:
-        this.ixModal.open(ConsoleFormComponent);
+        this.slideInService.open(ConsoleFormComponent);
         break;
       case AdvancedCardId.Kernel:
-        this.ixModal.open(KernelFormComponent).setupForm(this.configData);
+        this.slideInService.open(KernelFormComponent).setupForm(this.configData);
         break;
       case AdvancedCardId.Replication:
-        this.ixModal.open(ReplicationFormComponent);
+        this.slideInService.open(ReplicationFormComponent);
         break;
       case AdvancedCardId.Syslog:
-        this.ixModal.open(SyslogFormComponent);
+        this.slideInService.open(SyslogFormComponent);
         break;
       case AdvancedCardId.Sysctl:
-        this.modalService.openInSlideIn(TunableFormComponent, id);
+        this.slideInService.open(TunableFormComponent);
         break;
       case AdvancedCardId.SystemDatasetPool:
-        this.ixModal.open(SystemDatasetPoolComponent);
+        this.slideInService.open(SystemDatasetPoolComponent);
         break;
       case AdvancedCardId.Gpus:
-        this.ixModal.open(IsolatedGpuPcisFormComponent);
+        this.slideInService.open(IsolatedGpuPcisFormComponent);
         break;
       case AdvancedCardId.Sed:
-        this.ixModal.open(SedFormComponent).setupForm(this.configData, this.sedPassword);
+        this.slideInService.open(SedFormComponent).setupForm(this.configData, this.sedPassword);
         break;
       default:
         break;

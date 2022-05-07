@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { IscsiExtentType } from 'app/enums/iscsi.enum';
@@ -62,7 +61,6 @@ export class ExtentListComponent implements EntityTableConfig {
   };
 
   constructor(
-    protected router: Router,
     private slideInService: IxSlideInService,
     protected translate: TranslateService,
   ) {}

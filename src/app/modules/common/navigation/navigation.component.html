@@ -17,7 +17,7 @@
   <!-- Regular menu items -->
   <div *ngFor="let item of menuItems; let i = index">
     <!-- if it's not disabled and not a separator and not icon -->
-    <mat-list-item (click)="updateHighlightedClass(item.state)" class="sidebar-list-item top-level" role="listitem"
+    <mat-list-item (click)="updateHighlightedClass(item.state)" class="sidebar-list-item" role="listitem"
           *ngIf="!item.disabled && item.type !== 'separator' && item.type !== 'icon'"
           [ngClass]="{'has-submenu': item.type === 'slideOut', 'highlighted': isHighlighted === item.state}" routerLinkActive="highlighted" id="nav-{{i}}"
           ix-auto ix-auto-type="option" ix-auto-identifier="{{item.name}}">

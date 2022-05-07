@@ -5,8 +5,8 @@ import { Validators } from '@angular/forms';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { Observable, of } from 'rxjs';
-import { map, switchMap } from 'rxjs/operators';
+import { EMPTY, Observable, of } from 'rxjs';
+import { catchError, map, switchMap } from 'rxjs/operators';
 import { NfsSecurityProvider } from 'app/enums/nfs-security-provider.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { helptextSharingNfs, shared } from 'app/helptext/sharing';
@@ -124,6 +124,7 @@ export class NfsFormComponent implements OnInit {
 
   onSubmit(): void {
     this.isLoading = true;
+    this.cdr.markForCheck();
     const nfsShare = this.form.value;
     let request$: Observable<unknown>;
     if (this.isNew) {
@@ -140,6 +141,7 @@ export class NfsFormComponent implements OnInit {
       .subscribe(
         () => {
           this.isLoading = false;
+          this.cdr.markForCheck();
           this.slideInService.close();
         },
         (error) => {
@@ -184,17 +186,19 @@ export class NfsFormComponent implements OnInit {
         }
 
         return this.ws.call('service.update', [ServiceName.Nfs, { enable: true }]).pipe(
-          switchMap(() => this.ws.call('service.start', [ServiceName.Nfs])),
+          switchMap(() => this.ws.call('service.start', [ServiceName.Nfs, { silent: false }])),
           map(() => {
             this.dialogService.info(
               this.translate.instant('{service} Service', { service: 'NFS' }),
               this.translate.instant('The {service} service has been enabled.', { service: 'NFS' }),
-              '250px',
-              'info',
             );
 
             return undefined;
-          }),
+          },
+          catchError((error) => {
+            this.dialogService.errorReport(error.error, error.reason, error.trace.formatted);
+            return EMPTY;
+          })),
         );
       }),
     );

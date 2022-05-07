@@ -1,12 +1,14 @@
 <div class="ix-table-expandable-row">
-  <dl class="details">
-    <div *ngFor="let option of data">
-      <dt>{{ option.label }}:</dt>
-      <dd>{{ option.value?.toString() || '–' }}</dd>
-    </div>
-  </dl>
+  <ng-container *ngIf="data">
+    <dl class="details">
+      <div *ngFor="let option of data">
+        <dt>{{ option.label }}:</dt>
+        <dd>{{ option.value?.toString() || '–' }}</dd>
+      </div>
+    </dl>
 
-  <mat-divider></mat-divider>
+    <mat-divider></mat-divider>
+  </ng-container>
 
   <div class="actions" fxLayout="row" fxLayoutGap="8px">
     <ng-content></ng-content>

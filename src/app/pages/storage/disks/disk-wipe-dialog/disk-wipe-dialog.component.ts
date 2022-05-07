@@ -8,7 +8,7 @@ import { filter } from 'rxjs/operators';
 import { DiskWipeMethod } from 'app/enums/disk-wipe-method.enum';
 import helptext from 'app/helptext/storage/disks/disks';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
-import { DialogService, WebSocketService } from 'app/services';
+import { DialogService } from 'app/services';
 
 @UntilDestroy()
 @Component({
@@ -40,7 +40,6 @@ export class DiskWipeDialogComponent {
 
   constructor(
     private formBuilder: FormBuilder,
-    private ws: WebSocketService,
     private dialogService: DialogService,
     private translate: TranslateService,
     private matDialog: MatDialog,

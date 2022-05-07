@@ -5,7 +5,7 @@ import {
   ControlValueAccessor, NgControl, FormControl,
 } from '@angular/forms';
 import { UntilDestroy } from '@ngneat/until-destroy';
-import { IxFormatterService } from '../../services/ix-formatter.service';
+import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
 
 @UntilDestroy()
 @Component({

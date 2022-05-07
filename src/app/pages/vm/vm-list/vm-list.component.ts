@@ -26,11 +26,11 @@ import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-tab
 import { EntityTableAction, EntityTableConfig } from 'app/modules/entity/entity-table/entity-table.interface';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { VirtualMachineRow } from 'app/pages/vm/vm-list/virtual-machine-row.interface';
+import { VmWizardComponent } from 'app/pages/vm/vm-wizard/vm-wizard.component';
 import {
   WebSocketService, StorageService, AppLoaderService, DialogService, VmService,
 } from 'app/services';
 import { ModalService } from 'app/services/modal.service';
-import { VmWizardComponent } from '../vm-wizard/vm-wizard.component';
 
 @UntilDestroy()
 @Component({
@@ -296,8 +296,6 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow>, On
         this.dialogService.info(
           this.translate.instant('Finished'),
           this.translate.instant('If {vmName} is still running, the Guest OS did not respond as expected. It is possible to use <i>Power Off</i> or the <i>Force Stop After Timeout</i> option to stop the VM.', { vmName: row.name }),
-          '450px',
-          'info',
           true,
         );
         this.checkMemory();
@@ -501,7 +499,7 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow>, On
               ).pipe(untilDestroyed(this)).subscribe((webUris) => {
                 this.loader.close();
                 if (webUris[displayDevices[0].id].error) {
-                  return this.dialogService.info('Error', webUris[displayDevices[0].id].error);
+                  return this.dialogService.warn('Error', webUris[displayDevices[0].id].error);
                 }
                 window.open(webUris[displayDevices[0].id].uri, '_blank');
               }, (err) => {
@@ -541,7 +539,7 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow>, On
                   ).pipe(untilDestroyed(this)).subscribe((webUris) => {
                     this.loader.close();
                     if (webUris[displayDevice.id].error) {
-                      return this.dialogService.info('Error', webUris[displayDevice.id].error);
+                      return this.dialogService.warn('Error', webUris[displayDevice.id].error);
                     }
                     window.open(webUris[displayDevice.id].uri, '_blank');
                   }, (err) => {

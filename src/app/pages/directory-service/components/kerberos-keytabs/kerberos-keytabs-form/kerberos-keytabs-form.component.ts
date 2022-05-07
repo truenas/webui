@@ -4,7 +4,6 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable } from 'rxjs';
 import helptext from 'app/helptext/directory-service/kerberos-keytabs-form-list';
-import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { KerberosKeytab } from 'app/interfaces/kerberos-config.interface';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { WebSocketService } from 'app/services';
@@ -16,7 +15,7 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
   styleUrls: ['./kerberos-keytabs-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class KerberosKeytabsFormComponent implements FormConfiguration {
+export class KerberosKeytabsFormComponent {
   get isNew(): boolean {
     return !this.editingKerberosKeytab;
   }

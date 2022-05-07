@@ -220,7 +220,7 @@ export class KmipComponent implements FormConfiguration {
   syncKeys(): void {
     this.ws.call('kmip.sync_keys').pipe(untilDestroyed(this)).subscribe(
       () => {
-        this.dialogService.info(helptextSystemKmip.syncInfoDialog.title, helptextSystemKmip.syncInfoDialog.info, '500px', 'info', true);
+        this.dialogService.info(helptextSystemKmip.syncInfoDialog.title, helptextSystemKmip.syncInfoDialog.info);
       },
       (err) => {
         new EntityUtils().handleWsError(this, err, this.dialogService);
@@ -231,7 +231,10 @@ export class KmipComponent implements FormConfiguration {
   clearSyncKeys(): void {
     this.ws.call('kmip.clear_sync_pending_keys').pipe(untilDestroyed(this)).subscribe(
       () => {
-        this.dialogService.info(helptextSystemKmip.clearSyncKeyInfoDialog.title, helptextSystemKmip.clearSyncKeyInfoDialog.info, '500px', 'info', true);
+        this.dialogService.info(
+          helptextSystemKmip.clearSyncKeyInfoDialog.title,
+          helptextSystemKmip.clearSyncKeyInfoDialog.info,
+        );
       },
       (err) => {
         new EntityUtils().handleWsError(this, err, this.dialogService);

@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
 import { Validators } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
@@ -229,12 +228,11 @@ export class SshConnectionsFormComponent implements FormConfiguration {
   protected entityForm: EntityFormComponent;
 
   constructor(
-    private aroute: ActivatedRoute,
     private keychainCredentialService: KeychainCredentialService,
     private ws: WebSocketService,
     private loader: AppLoaderService,
     private dialogService: DialogService,
-    private replicationService: ReplicationService, private modalService: ModalService,
+    private modalService: ModalService,
   ) {
     this.getRow = this.modalService.getRow$.pipe(untilDestroyed(this)).subscribe((rowId: number) => {
       this.rowNum = rowId;

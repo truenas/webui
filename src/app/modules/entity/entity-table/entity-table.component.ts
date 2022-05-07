@@ -549,20 +549,6 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, A
     }
   }
 
-  dropLastMaxWidth(): EntityTableColumn[] {
-    // Reset all column maxWidths
-    this.conf.columns.forEach((column) => {
-      if (this.colMaxWidths.length > 0) {
-        column['maxWidth'] = (this.colMaxWidths.find(({ name }) => name === column.name)).maxWidth;
-      }
-    });
-    // Delete maXwidth on last col displayed (prevents a display glitch)
-    if (this.conf.columns.length > 0) {
-      delete (this.conf.columns[Object.keys(this.conf.columns).length - 1]).maxWidth;
-    }
-    return this.conf.columns;
-  }
-
   setShowSpinner(): void {
     this.showSpinner = true;
   }
@@ -1052,7 +1038,7 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, A
                     }
                   }
                   if (message === '') {
-                    this.dialogService.info(this.translate.instant('Items deleted'), '', '300px', 'info', true);
+                    this.dialogService.info(this.translate.instant('Items deleted'), '');
                   } else {
                     message = '<ul>' + message + '</ul>';
                     this.dialogService.errorReport(this.translate.instant('Items Delete Failed'), message);

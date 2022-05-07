@@ -1,6 +1,5 @@
 import { Component, Input } from '@angular/core';
 import { MatSliderChange } from '@angular/material/slider/slider';
-import { TranslateService } from '@ngx-translate/core';
 import { Subject } from 'rxjs';
 
 export interface ToolbarSliderConfig {
@@ -19,8 +18,6 @@ export interface ToolbarSliderConfig {
 export class ToolbarSliderComponent {
   @Input() config?: ToolbarSliderConfig;
   @Input() controller: Subject<{ name: string; value: number }>;
-
-  constructor(public translate: TranslateService) {}
 
   onChange(event: MatSliderChange): void {
     this.config.value = event.value;

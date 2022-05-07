@@ -128,7 +128,7 @@ def set_machinaris_environment_variables(driver):
 def set_resource_limits(driver):
     """set Resource Limits."""
     assert wait_on_element(driver, 7, '//button[@ix-auto="button__NEXT_Resource Limits"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__NEXT_Resource Limits"]').click() 
+    driver.find_element_by_xpath('//button[@ix-auto="button__NEXT_Resource Limits"]').click()
 
 
 @then('set Configure Coins')
