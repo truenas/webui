@@ -21,7 +21,6 @@
   "Enabled 'Time Machine'": "",
   "Enabled 'Use as Home Share'": "",
   "Encryption is for users storing sensitive data.  Pool-level encryption does not apply to the storage pool or disks in the pool. It applies  to the root dataset that shares the pool name and any child datasets created unless you change  the encryption at the time you create the child dataset. For more information on encryption please  refer to the <a href=\"http://TrueNAS.com/docs/\" target=\"_blank\">TrueNAS Documentation hub</a>.": "",
-  "File size is limited to {maxUploadSizeMibs} MiB.": "",
   "Groups could not be loaded": "",
   "Hardware": "",
   "Initial Deployment/Setup": "",
