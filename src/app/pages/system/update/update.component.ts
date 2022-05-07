@@ -29,7 +29,6 @@ import { DialogService } from 'app/services/dialog.service';
 
 @UntilDestroy()
 @Component({
-  selector: 'app-update',
   styleUrls: ['update.component.scss'],
   templateUrl: './update.component.html',
 })

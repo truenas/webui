@@ -25,7 +25,6 @@ import { DialogService } from 'app/services/dialog.service';
 
 @UntilDestroy()
 @Component({
-  selector: 'app-manualupdate',
   template: '<entity-form [conf]="this"></entity-form>',
   providers: [MessageService],
 })

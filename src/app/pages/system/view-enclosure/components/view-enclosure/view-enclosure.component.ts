@@ -18,7 +18,6 @@ import { CoreService } from 'app/services/core-service/core.service';
 
 @UntilDestroy()
 @Component({
-  selector: 'view-enclosure',
   templateUrl: './view-enclosure.component.html',
   styleUrls: ['./view-enclosure.component.scss'],
 })

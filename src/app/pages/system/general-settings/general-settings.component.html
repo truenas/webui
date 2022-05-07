@@ -14,7 +14,7 @@
       <h3>{{ supportTitle | translate }}</h3>
     </mat-toolbar-row>
 
-    <app-support></app-support>
+    <ix-support></ix-support>
   </mat-card>
 
   <mat-card class="data-card{{i+1}}" gdArea="data-card{{i+1}}" *ngFor="let card of dataCards; index as i; ">
@@ -35,5 +35,5 @@
     </mat-card-content>
   </mat-card>
 
-  <app-ntp-server-list gdArea="ntp-card"></app-ntp-server-list>
+  <ix-ntp-server-list gdArea="ntp-card"></ix-ntp-server-list>
 </div>

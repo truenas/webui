@@ -6,12 +6,12 @@
   <mat-card-content>
     <form [formGroup]="form" class="ix-form-container" (submit)="onSubmit()">
       <ix-fieldset>
-        <app-jira-oauth
+        <ix-jira-oauth
           formControlName="token"
           [label]="'Token' | translate"
           [tooltip]="tooltips.token | translate"
           [required]="true"
-        ></app-jira-oauth>
+        ></ix-jira-oauth>
         <ix-select
           formControlName="category"
           [label]="'Category' | translate"

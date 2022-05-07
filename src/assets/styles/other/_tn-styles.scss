@@ -1272,7 +1272,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     margin-bottom: 10px;
   }
 
-  app-eula p {
+  ix-eula p {
     margin-bottom: 15px;
   }
 
@@ -1320,7 +1320,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     }
   }
 
-  qr-dialog {
+  ix-qr-dialog {
     text-align: center;
 
     #qr-dialog-buttons {

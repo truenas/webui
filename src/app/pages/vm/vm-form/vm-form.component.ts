@@ -32,7 +32,6 @@ import { waitForAdvancedConfig } from 'app/store/system-config/system-config.sel
 
 @UntilDestroy()
 @Component({
-  selector: 'app-vm',
   template: '<entity-form [conf]="this"></entity-form>',
   providers: [StorageService],
 })

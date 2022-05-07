@@ -23,7 +23,6 @@ import { ModalService } from 'app/services/modal.service';
 
 @UntilDestroy()
 @Component({
-  selector: 'app-support-form-licensed',
   template: '<entity-form [conf]="this"></entity-form>',
 })
 export class SupportFormLicensedComponent implements FormConfiguration {

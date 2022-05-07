@@ -16,7 +16,6 @@ import { SystemGeneralService, DialogService, WebSocketService } from 'app/servi
 
 @UntilDestroy()
 @Component({
-  selector: 'app-system-kmip',
   templateUrl: './kmip.component.html',
   styleUrls: ['./kmip.component.scss'],
 })

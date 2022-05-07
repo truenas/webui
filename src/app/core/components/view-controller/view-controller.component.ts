@@ -9,7 +9,7 @@ import { LayoutContainer } from 'app/interfaces/layout-container.interface';
 import { CoreService } from 'app/services/core-service/core.service';
 
 @Component({
-  selector: 'viewcontroller',
+  selector: 'ix-view-controller',
   templateUrl: './view-controller.component.html',
   styleUrls: ['./view-controller.component.scss'],
 })

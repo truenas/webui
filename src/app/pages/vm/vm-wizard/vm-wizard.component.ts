@@ -45,7 +45,6 @@ import { waitForAdvancedConfig } from 'app/store/system-config/system-config.sel
 
 @UntilDestroy()
 @Component({
-  selector: 'app-vm-wizard',
   template: '<entity-wizard [conf]="this"></entity-wizard>',
   providers: [VmService],
 })

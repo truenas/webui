@@ -20,7 +20,6 @@ import { DialogService } from 'app/services/dialog.service';
 
 @UntilDestroy()
 @Component({
-  selector: 'app-device-list',
   template: `
     <entity-table [title]="title" [conf]="this"></entity-table>
   `,

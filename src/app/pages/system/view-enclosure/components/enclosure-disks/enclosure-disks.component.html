@@ -29,7 +29,7 @@
   </mat-toolbar>
 
   <!-- Tabs other than Disks -->
-  <tab-content class="other-tab" *ngIf="currentTab.alias !== 'Disks'" [data]="system.enclosures[selectedEnclosure.enclosureKey].elements[currentTab.elementIndex]"></tab-content>
+  <ix-tab-content class="other-tab" *ngIf="currentTab.alias !== 'Disks'" [data]="system.enclosures[selectedEnclosure.enclosureKey].elements[currentTab.elementIndex]"></ix-tab-content>
 
   <mat-card-content id="Disks-content" [class]="currentTab.alias">
 
@@ -223,7 +223,7 @@
         <div class="details-wrapper" fxFill fxLayout="row" fxLayoutAlign="space-around stretch">
 
           <div fxFlex="25" class="disk-basic-details" fxLayout="column" fxLayoutAlign="center center">
-            <disk-ui [data]="selectedDisk"></disk-ui><!-- disk icon + labels -->
+            <ix-disk-ui [data]="selectedDisk"></ix-disk-ui><!-- disk icon + labels -->
             <div class="capacity">{{converter(selectedDisk.size)}}</div>
             <div class="disk-actions">
               <button id="identify-btn" mat-button color="primary" (click)="toggleSlotStatus()">{{ 'Identify Drive' | translate }}</button>

@@ -29,7 +29,6 @@ import { ModalService } from 'app/services/modal.service';
 
 @UntilDestroy()
 @Component({
-  selector: 'app-device-add',
   templateUrl: './device-add.component.html',
   styleUrls: ['../../../../modules/entity/entity-form/entity-form.component.scss'],
 })

@@ -18,7 +18,7 @@ import { SupportFormLicensedComponent } from './support-licensed/support-form-li
 
 @UntilDestroy()
 @Component({
-  selector: 'app-support',
+  selector: 'ix-support',
   templateUrl: './support.component.html',
   styleUrls: ['./support.component.scss'],
 })

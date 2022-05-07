@@ -27,7 +27,6 @@ import { BootenvRow } from './bootenv-row.interface';
 
 @UntilDestroy()
 @Component({
-  selector: 'app-bootenv-list',
   template: '<entity-table [title]="title" [conf]="this"></entity-table>',
 })
 export class BootEnvironmentListComponent implements EntityTableConfig {

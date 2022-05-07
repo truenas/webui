@@ -22,7 +22,6 @@ import { generalConfigUpdated } from 'app/store/system-config/system-config.acti
 
 @UntilDestroy()
 @Component({
-  selector: 'localization-form',
   templateUrl: './localization-form.component.html',
   styleUrls: ['./localization-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

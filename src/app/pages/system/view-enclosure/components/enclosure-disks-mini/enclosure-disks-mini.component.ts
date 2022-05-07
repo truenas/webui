@@ -14,7 +14,7 @@ import { CoreService } from 'app/services/core-service/core.service';
 import { DialogService } from 'app/services/dialog.service';
 
 @Component({
-  selector: 'enclosure-disks-mini',
+  selector: 'ix-enclosure-disks-mini',
   templateUrl: './enclosure-disks-mini.component.html',
   styleUrls: ['../enclosure-disks/enclosure-disks.component.scss'],
 })

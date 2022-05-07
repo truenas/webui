@@ -15,7 +15,7 @@ import { RoutePart, RoutePartsService } from 'app/services/route-parts/route-par
 
 @UntilDestroy()
 @Component({
-  selector: 'pagetitle',
+  selector: 'ix-pagetitle',
   templateUrl: './page-title.component.html',
 })
 export class PageTitleComponent implements OnInit, AfterViewInit, OnDestroy {
