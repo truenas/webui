@@ -22,11 +22,8 @@ import { Preferences } from 'app/interfaces/preferences.interface';
 import { MessageService } from 'app/modules/entity/entity-form/services/message.service';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { EntityUtils } from 'app/modules/entity/utils';
-import {
-  AppLoaderService, DialogService, SystemGeneralService, WebSocketService,
-} from 'app/services';
+import { DialogService, SystemGeneralService, WebSocketService } from 'app/services';
 import { CoreService } from 'app/services/core-service/core.service';
-import { IxFileUploadService } from 'app/services/ix-file-upload.service';
 
 @UntilDestroy()
 @Component({
@@ -61,10 +58,8 @@ export class ManualUpdateFormComponent implements OnInit {
     private systemService: SystemGeneralService,
     private formBuilder: FormBuilder,
     private core: CoreService,
-    private fileUpload: IxFileUploadService,
     private ws: WebSocketService,
     private translate: TranslateService,
-    private appLoaderService: AppLoaderService,
   ) { }
 
   ngOnInit(): void {
@@ -178,73 +173,74 @@ export class ManualUpdateFormComponent implements OnInit {
     this.setupUpdateJobDialog(value.updateFile, value.filelocation);
   }
 
-  setupUpdateJobDialog(file: FileList, filelocation: string): void {
-    if (file.length) {
-      const dialogRef = this.mdDialog.open(EntityJobComponent, {
-        data: { title: helptext.manual_update_action },
-      });
-      if (this.isHa) {
-        dialogRef.componentInstance.disableProgressValue(true);
-      }
-      dialogRef.componentInstance.changeAltMessage(helptext.manual_update_description);
-      const formData: FormData = new FormData();
-      if (this.isHa) {
-        formData.append('data', JSON.stringify({
-          method: 'failover.upgrade',
-        }));
-      } else {
-        formData.append('data', JSON.stringify({
-          method: 'update.file',
-          params: [{ destination: filelocation }],
-        }));
-      }
-      formData.append('file', file[0]);
-
-      dialogRef.componentInstance.wspostWithProgressUpdates(this.apiEndPoint, formData);
-      dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
-        dialogRef.close(false);
-        if (!this.isHa) {
-          if (this.userPrefs.rebootAfterManualUpdate) {
-            this.router.navigate(['/others/reboot']);
-          } else {
-            this.dialogService.confirm({
-              title: this.translate.instant('Restart'),
-              message: this.translate.instant(helptext.rebootAfterManualUpdate.manual_reboot_msg),
-            }).pipe(
-              filter(Boolean),
-              untilDestroyed(this),
-            ).subscribe(() => this.router.navigate(['/others/reboot']));
-          }
-        } else { // HA System
-          this.dialogService.closeAllDialogs();
-          this.systemService.updateDone(); // Send 'finished' signal to topbar
-          this.router.navigate(['/']);
-          this.dialogService.confirm({
-            title: helptext.ha_update.complete_title,
-            message: helptext.ha_update.complete_msg,
-            hideCheckBox: true,
-            buttonMsg: helptext.ha_update.complete_action,
-            hideCancel: true,
-          }).pipe(untilDestroyed(this)).subscribe(() => {});
-        }
-      });
-      dialogRef.componentInstance.prefailure
-        .pipe(untilDestroyed(this))
-        .subscribe((prefailure: HttpErrorResponse) => {
-          dialogRef.close(false);
-          this.isFormLoading$.next(false);
-          this.dialogService.errorReport(
-            helptext.manual_update_error_dialog.message,
-            `${prefailure.status.toString()} ${prefailure.statusText}`,
-          );
-        });
-      dialogRef.componentInstance.failure
-        .pipe(take(1))
-        .pipe(untilDestroyed(this)).subscribe((failure) => {
-          dialogRef.close(false);
-          this.isFormLoading$.next(false);
-          this.dialogService.errorReport(failure.error, failure.state, failure.exception);
-        });
+  setupUpdateJobDialog(files: FileList, fileLocation: string): void {
+    if (!files.length) {
+      return;
     }
+    const dialogRef = this.mdDialog.open(EntityJobComponent, {
+      data: { title: helptext.manual_update_action },
+    });
+    if (this.isHa) {
+      dialogRef.componentInstance.disableProgressValue(true);
+    }
+    dialogRef.componentInstance.changeAltMessage(helptext.manual_update_description);
+    const formData: FormData = new FormData();
+    if (this.isHa) {
+      formData.append('data', JSON.stringify({
+        method: 'failover.upgrade',
+      }));
+    } else {
+      formData.append('data', JSON.stringify({
+        method: 'update.file',
+        params: [{ destination: fileLocation }],
+      }));
+    }
+    formData.append('file', files[0]);
+
+    dialogRef.componentInstance.wspostWithProgressUpdates(this.apiEndPoint, formData);
+    dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
+      dialogRef.close(false);
+      if (!this.isHa) {
+        if (this.userPrefs.rebootAfterManualUpdate) {
+          this.router.navigate(['/others/reboot']);
+        } else {
+          this.dialogService.confirm({
+            title: this.translate.instant('Restart'),
+            message: this.translate.instant(helptext.rebootAfterManualUpdate.manual_reboot_msg),
+          }).pipe(
+            filter(Boolean),
+            untilDestroyed(this),
+          ).subscribe(() => this.router.navigate(['/others/reboot']));
+        }
+      } else { // HA System
+        this.dialogService.closeAllDialogs();
+        this.systemService.updateDone(); // Send 'finished' signal to topbar
+        this.router.navigate(['/']);
+        this.dialogService.confirm({
+          title: helptext.ha_update.complete_title,
+          message: helptext.ha_update.complete_msg,
+          hideCheckBox: true,
+          buttonMsg: helptext.ha_update.complete_action,
+          hideCancel: true,
+        }).pipe(untilDestroyed(this)).subscribe(() => {});
+      }
+    });
+    dialogRef.componentInstance.prefailure
+      .pipe(untilDestroyed(this))
+      .subscribe((prefailure: HttpErrorResponse) => {
+        dialogRef.close(false);
+        this.isFormLoading$.next(false);
+        this.dialogService.errorReport(
+          helptext.manual_update_error_dialog.message,
+          `${prefailure.status.toString()} ${prefailure.statusText}`,
+        );
+      });
+    dialogRef.componentInstance.failure
+      .pipe(take(1))
+      .pipe(untilDestroyed(this)).subscribe((failure) => {
+        dialogRef.close(false);
+        this.isFormLoading$.next(false);
+        this.dialogService.errorReport(failure.error, failure.state, failure.exception);
+      });
   }
 }
