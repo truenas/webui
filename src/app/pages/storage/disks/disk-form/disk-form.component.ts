@@ -29,9 +29,9 @@ export class DiskFormComponent implements OnInit {
     name: [''],
     serial: [''],
     description: [''],
-    critical: [null as number, [Validators.min(0)]],
-    difference: [null as number, [Validators.min(0)]],
-    informational: [null as number, [Validators.min(0)]],
+    critical: [null as (number | string), [Validators.min(0)]],
+    difference: [null as (number | string), [Validators.min(0)]],
+    informational: [null as (number | string), [Validators.min(0)]],
     hddstandby: [null as DiskStandby],
     advpowermgmt: [null as DiskPowerLevel],
     togglesmart: [false],
@@ -87,8 +87,16 @@ export class DiskFormComponent implements OnInit {
       );
   }
 
-  prepareUpdate(value: any): DiskUpdate {
-    const transformedValue = { ...value };
+  prepareUpdate(value: DiskFormComponent['form']['value']): DiskUpdate {
+    const transformedValue = {
+      ...value,
+      number: this.existingDisk.number,
+      pool: this.existingDisk.pool,
+      critical: value.critical === '' ? null : value.critical as number,
+      difference: value.difference === '' ? null : value.difference as number,
+      informational: value.informational === '' ? null : value.informational as number,
+    };
+
     if (transformedValue.passwd === '') {
       delete transformedValue.passwd;
     }
@@ -100,10 +108,6 @@ export class DiskFormComponent implements OnInit {
     delete transformedValue.clear_pw;
     delete transformedValue.name;
     delete transformedValue.serial;
-
-    transformedValue.critical = transformedValue.critical === '' ? null : transformedValue.critical;
-    transformedValue.difference = transformedValue.difference === '' ? null : transformedValue.difference;
-    transformedValue.informational = transformedValue.informational === '' ? null : transformedValue.informational;
 
     return transformedValue;
   }

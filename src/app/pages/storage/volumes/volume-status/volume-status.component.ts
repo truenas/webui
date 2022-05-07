@@ -282,7 +282,7 @@ export class VolumeStatusComponent implements OnInit, OnDestroy {
       onClick: (row: Pool) => {
         const pIndex = row.name.lastIndexOf('p');
         const diskName = pIndex > -1 ? row.name.substring(0, pIndex) : row.name;
-        const queryCallOption: QueryParams<Disk, { extra: { passwords: true } }> = [[['devname', '=', diskName]], { extra: { passwords: true } }];
+        const queryCallOption: QueryParams<Disk, { extra: { passwords: boolean } }> = [[['devname', '=', diskName]], { extra: { passwords: true } }];
         this.ws.call('disk.query', queryCallOption).pipe(untilDestroyed(this)).subscribe((disks) => {
           this.onClickEdit(disks[0]);
         });
