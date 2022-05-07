@@ -408,7 +408,6 @@ describe('SmbFormComponent', () => {
     expect(spectator.inject(DialogService).info).toHaveBeenCalledWith(
       helptextSharingSmb.restarted_smb_dialog.title,
       helptextSharingSmb.restarted_smb_dialog.message,
-      '250px',
     );
 
     const sharePath = await (await loader.getHarness(
