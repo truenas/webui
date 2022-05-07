@@ -58,7 +58,6 @@ export class IxErrorsComponent implements OnChanges {
     if ('control' in changes && this.control) {
       // This manually works around: https://github.com/angular/angular/issues/10816
       this.statusChangeSubscription?.unsubscribe();
-      // eslint-disable-next-line rxjs-angular/prefer-takeuntil
       this.statusChangeSubscription = this.control.statusChanges.pipe(untilDestroyed(this)).subscribe(() => {
         const newErrors: string[] = [];
         for (const error in this.control.errors) {

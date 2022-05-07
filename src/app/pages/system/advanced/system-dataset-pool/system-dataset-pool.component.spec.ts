@@ -5,17 +5,17 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
+import { MockWebsocketService } from 'app/core/testing/classes/mock-websocket.service';
 import { mockCall, mockJob, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { ServiceName } from 'app/enums/service-name.enum';
+import { ServiceStatus } from 'app/enums/service-status.enum';
+import { Service } from 'app/interfaces/service.interface';
+import { SystemDatasetConfig } from 'app/interfaces/system-dataset-config.interface';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { DialogService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { MockWebsocketService } from '../../../../core/testing/classes/mock-websocket.service';
-import { ServiceName } from '../../../../enums/service-name.enum';
-import { ServiceStatus } from '../../../../enums/service-status.enum';
-import { Service } from '../../../../interfaces/service.interface';
-import { SystemDatasetConfig } from '../../../../interfaces/system-dataset-config.interface';
 import { SystemDatasetPoolComponent } from './system-dataset-pool.component';
 
 describe('SystemDatasetPoolComponent', () => {

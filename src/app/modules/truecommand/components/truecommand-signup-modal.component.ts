@@ -73,7 +73,7 @@ export class TruecommandSignupModalComponent implements OnInit {
         this.dialogRef.close();
 
         if (!this.isConnected) {
-          this.dialogService.info(helptext.checkEmailInfoDialog.title, helptext.checkEmailInfoDialog.message, '500px', 'info');
+          this.dialogService.info(helptext.checkEmailInfoDialog.title, helptext.checkEmailInfoDialog.message);
         }
       },
       (err) => {

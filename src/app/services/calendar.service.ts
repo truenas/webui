@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { Weekday } from 'app/enums/weekday.enum';
-import { Option } from '../interfaces/option.interface';
+import { Option } from 'app/interfaces/option.interface';
 
 @Injectable({ providedIn: 'root' })
 export class CalendarService {

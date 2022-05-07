@@ -6,10 +6,10 @@ import { NfsShare } from 'app/interfaces/nfs-share.interface';
 import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-table.component';
 import { EntityTableConfig } from 'app/modules/entity/entity-table/entity-table.interface';
 import { EntityUtils } from 'app/modules/entity/utils';
+import { NfsFormComponent } from 'app/pages/sharing/nfs/nfs-form/nfs-form.component';
 import { WebSocketService } from 'app/services';
 import { DialogService } from 'app/services/dialog.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { NfsFormComponent } from '../nfs-form/nfs-form.component';
 
 @UntilDestroy()
 @Component({

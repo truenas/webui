@@ -151,8 +151,6 @@ export class FibreChannelPortComponent implements OnInit {
         this.dialogService.info(
           this.translate.instant('Updated'),
           this.translate.instant('Fibre Channel Port {name} update successful.', { name: this.config.name }),
-          '500px',
-          'info',
         );
       },
       (err) => {

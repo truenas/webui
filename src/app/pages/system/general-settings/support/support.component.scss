@@ -1,3 +1,7 @@
+.mat-card-content {
+  color: var(--fg2);
+}
+
 .product-image {
   background-position: 50%;
   background-repeat: no-repeat;
@@ -9,14 +13,5 @@
 
   .links {
     margin-bottom: 5px;
-
-    ::ng-deep a {
-      color: var(--primary);
-    }
-
-    ::ng-deep a:focus-visible {
-      background: var(--hover-bg) !important;
-    }
   }
 }
-

@@ -1,4 +1,5 @@
 import { AclMode } from 'app/enums/acl-type.enum';
+import { DatasetChecksum } from 'app/enums/dataset-checksum.enum';
 import {
   DatasetAclType, DatasetRecordSize, DatasetSnapdir, DatasetSync,
 } from 'app/enums/dataset.enum';
@@ -30,13 +31,14 @@ export interface DatasetFormData {
   copies: WithInherit<number>;
   recordsize: WithInherit<DatasetRecordSize>;
   casesensitivity: string;
-  quota_warning: number;
+  quota_warning: WithInherit<number>;
   quota_warning_inherit: boolean;
-  quota_critical: number;
+  quota_critical: WithInherit<number>;
   quota_critical_inherit: boolean;
-  refquota_warning: number;
+  refquota_warning: WithInherit<number>;
   refquota_warning_inherit: boolean;
-  refquota_critical: number;
+  refquota_critical: WithInherit<number>;
   refquota_critical_inherit: boolean;
   special_small_block_size: number;
+  checksum: DatasetChecksum;
 }
