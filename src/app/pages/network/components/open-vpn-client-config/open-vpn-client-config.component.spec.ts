@@ -133,7 +133,7 @@ describe('OpenVpnClientConfigComponent', () => {
       client_certificate: 2,
       root_ca: 2,
       remote: '198.51.100.1',
-      port: '7000',
+      port: 7000,
       authentication_algorithm: 'MD99',
       cipher: 'AES-256-CFB',
       compression: 'LZ4',

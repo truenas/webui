@@ -142,7 +142,7 @@ describe('EmailComponent', () => {
         fromname: 'Jeremy',
         oauth: null,
         outgoingserver: 'smtp.ixsystems.com',
-        port: '21',
+        port: 21,
         security: MailSecurity.Ssl,
         smtp: false,
       }]);

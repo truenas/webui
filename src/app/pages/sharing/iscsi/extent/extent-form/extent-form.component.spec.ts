@@ -109,7 +109,7 @@ describe('ExtentFormComponent', () => {
     await saveButton.click();
 
     expect(spectator.inject(WebSocketService).call).toHaveBeenLastCalledWith('iscsi.extent.create', [{
-      avail_threshold: '70',
+      avail_threshold: 70,
       blocksize: 1024,
       comment: 'new_comment',
       disk: 'key_device_2',

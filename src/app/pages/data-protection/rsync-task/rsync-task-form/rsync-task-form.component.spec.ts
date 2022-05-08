@@ -223,7 +223,7 @@ describe('RsyncTaskFormComponent', () => {
       {
         ...existingTaskWithoutModule,
         mode: RsyncMode.Ssh,
-        remoteport: '45',
+        remoteport: 45,
         remotepath: '/mnt/path',
         validate_rpath: true,
       },
