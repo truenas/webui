@@ -197,7 +197,7 @@ import {
 } from 'app/interfaces/smart-test.interface';
 import { SmbConfig, SmbConfigUpdate } from 'app/interfaces/smb-config.interface';
 import {
-  SmbPresets, SmbShare, SmbSharesec, SmbSharesecAce, SmbShareUpdate,
+  SmbPresets, SmbShare, SmbSharesec, SmbSharesecAceUpdate, SmbShareUpdate,
 } from 'app/interfaces/smb-share.interface';
 import { SnmpConfig, SnmpConfigUpdate } from 'app/interfaces/snmp-config.interface';
 import { SshConfig, SshConfigUpdate } from 'app/interfaces/ssh-config.interface';
@@ -657,6 +657,7 @@ export type ApiDirectory = {
   'pool.dataset.attachments': { params: [datasetId: string]; response: DatasetAttachment[] };
   'pool.dataset.change_key': { params: [id: string, params: DatasetChangeKeyParams]; response: void };
   'pool.dataset.compression_choices': { params: void; response: Choices };
+  'pool.dataset.checksum_choices': { params: void; response: Choices };
   'pool.dataset.create': { params: [DatasetCreate]; response: Dataset };
   'pool.dataset.delete': { params: [path: string, params: { recursive: boolean; force?: boolean }]; response: boolean };
   'pool.dataset.encryption_algorithm_choices': { params: void; response: Choices };
@@ -767,7 +768,7 @@ export type ApiDirectory = {
   'smb.update': { params: [SmbConfigUpdate]; response: SmbConfig };
   'smb.config': { params: void; response: SmbConfig };
   'smb.sharesec.query': { params: QueryParams<SmbSharesec>; response: SmbSharesec[] };
-  'smb.sharesec.update': { params: [id: number, update: { share_acl: SmbSharesecAce[] }]; response: SmbSharesec };
+  'smb.sharesec.update': { params: [id: number, update: { share_acl: SmbSharesecAceUpdate[] }]; response: SmbSharesec };
 
   // SSH
   'ssh.update': { params: [SshConfigUpdate]; response: SshConfig };
