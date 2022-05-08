@@ -2,7 +2,6 @@ import { DatePipe } from '@angular/common';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as cronParser from 'cron-parser';
@@ -38,13 +37,11 @@ import { SystemDatasetPoolComponent } from 'app/pages/system/advanced/system-dat
 import { DataCard } from 'app/pages/system/interfaces/data-card.interface';
 import {
   DialogService,
-  LanguageService,
   StorageService,
   SystemGeneralService,
   UserService,
   WebSocketService,
 } from 'app/services';
-import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { ModalService } from 'app/services/modal.service';
 import { TunableFormComponent } from '../tunable/tunable-form/tunable-form.component';
@@ -210,10 +207,7 @@ export class AdvancedSettingsComponent implements OnInit {
     private ws: WebSocketService,
     private sysGeneralService: SystemGeneralService,
     private modalService: ModalService,
-    private language: LanguageService,
     private dialog: DialogService,
-    private loader: AppLoaderService,
-    private router: Router,
     private http: HttpClient,
     private storage: StorageService,
     public mdDialog: MatDialog,
