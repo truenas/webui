@@ -107,6 +107,13 @@ describe('IxInputComponent', () => {
       spectator.detectChanges();
       expect(spectator.query('input')).toHaveValue('');
     });
+    it('when called, input with \'number\' type sets to \'null\'', () => {
+      jest.spyOn(spectator.component, 'onChange').mockImplementation();
+      spectator.component.type = 'number';
+      spectator.component.resetInput(spectator.query('input'));
+      spectator.detectChanges();
+      expect(spectator.component.onChange).toHaveBeenCalledWith(null);
+    });
   });
 
   describe('getType()', () => {

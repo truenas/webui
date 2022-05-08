@@ -59,6 +59,13 @@ export class IxInputComponent implements ControlValueAccessor {
     this.value = value;
   }
 
+  formatValue(value: string | number): string | number {
+    if (this.type === 'number') {
+      return value ? Number(value) : null;
+    }
+    return value;
+  }
+
   input(ixInput: HTMLInputElement): void {
     this.invalid = ixInput.validity?.badInput;
     const value = ixInput.value;
@@ -67,7 +74,7 @@ export class IxInputComponent implements ControlValueAccessor {
     if (this.parse && !!value) {
       this.value = this.parse(value);
     }
-    this.onChange(this.value);
+    this.onChange(this.formatValue(this.value));
   }
 
   invalidMessage(): string {
@@ -102,8 +109,8 @@ export class IxInputComponent implements ControlValueAccessor {
     input.value = '';
     this.invalid = false;
     this.value = '';
-    this.formatted = '';
-    this.onChange('');
+    this.formatted = this.value;
+    this.onChange(this.formatValue(this.value));
   }
 
   setDisabledState(isDisabled: boolean): void {
@@ -129,7 +136,7 @@ export class IxInputComponent implements ControlValueAccessor {
       }
     }
 
-    this.onChange(this.value);
+    this.onChange(this.formatValue(this.value));
     this.cdr.markForCheck();
   }
 
