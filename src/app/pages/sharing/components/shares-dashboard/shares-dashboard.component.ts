@@ -33,7 +33,6 @@ import { WebdavFormComponent } from 'app/pages/sharing/webdav/webdav-form/webdav
 import {
   DialogService,
   IscsiService,
-  ModalService,
   WebSocketService,
 } from 'app/services';
 import { IxSlideInService, ResponseOnClose } from 'app/services/ix-slide-in.service';
@@ -86,7 +85,6 @@ export class SharesDashboardComponent implements AfterViewInit {
   readonly ServiceStatus = ServiceStatus;
 
   constructor(
-    private modalService: ModalService,
     private ws: WebSocketService,
     private dialog: DialogService,
     private router: Router,
