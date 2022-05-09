@@ -1,11 +1,11 @@
 import { ModuleWithProviders } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
+import { BackupCredentialsComponent } from 'app/pages/credentials/backup-credentials/backup-credentials.component';
+import { CertificatesDashComponent } from 'app/pages/credentials/certificates-dash/certificates-dash.component';
 import { KmipComponent } from 'app/pages/credentials/kmip/kmip.component';
 import { DirectoryServicesComponent } from 'app/pages/directory-service/directory-services.component';
-import { BackupCredentialsComponent } from '../credentials/backup-credentials/backup-credentials.component';
-import { CertificatesDashComponent } from '../credentials/certificates-dash/certificates-dash.component';
-import { TwoFactorComponent } from '../system/two-factor/two-factor.component';
+import { TwoFactorComponent } from 'app/pages/system/two-factor/two-factor.component';
 
 // TODO: Move to credentials module
 export const routes: Routes = [{

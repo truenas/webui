@@ -2,7 +2,9 @@ import { AclMode } from 'app/enums/acl-type.enum';
 import {
   DatasetAclType,
   DatasetCaseSensitivity,
-  DatasetChecksum, DatasetRecordSize, DatasetShareType,
+  DatasetChecksum,
+  DatasetRecordSize,
+  DatasetShareType,
   DatasetSnapdir,
   DatasetSync,
   DatasetType,
@@ -50,6 +52,7 @@ export interface Dataset {
   special_small_block_size: ZfsProperty<string>;
   sync: ZfsProperty<string>;
   xattr: ZfsProperty<boolean>;
+  checksum: ZfsProperty<DatasetChecksum>;
 
   // Absent if extra.retrieve_children is false
   children?: Dataset[];

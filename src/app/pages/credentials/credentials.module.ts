@@ -13,6 +13,7 @@ import { RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { CoreComponents } from 'app/core/core-components.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
+import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { SshKeypairFormComponent } from 'app/pages/credentials/backup-credentials/ssh-keypair-form/ssh-keypair-form.component';
 import {
@@ -25,7 +26,6 @@ import {
   ViewCertificateDialogComponent,
 } from 'app/pages/credentials/certificates-dash/view-certificate-dialog/view-certificate-dialog.component';
 import { KmipComponent } from 'app/pages/credentials/kmip/kmip.component';
-import { EntityModule } from '../../modules/entity/entity.module';
 import { BackupCredentialsComponent } from './backup-credentials/backup-credentials.component';
 import { CloudCredentialsFormComponent } from './backup-credentials/forms/cloud-credentials-form.component';
 import { SshConnectionsFormComponent } from './backup-credentials/forms/ssh-connections-form.component';

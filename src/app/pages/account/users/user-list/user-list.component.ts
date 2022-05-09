@@ -25,12 +25,12 @@ import { ControlConfig, ToolbarConfig } from 'app/modules/entity/entity-toolbar/
 import { IxDetailRowDirective } from 'app/modules/ix-tables/directives/ix-detail-row.directive';
 import { userPageEntered } from 'app/pages/account/users/store/user.actions';
 import { selectUsers, selectUserState, selectUsersTotal } from 'app/pages/account/users/store/user.selectors';
+import { UserFormComponent } from 'app/pages/account/users/user-form/user-form.component';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LayoutService } from 'app/services/layout.service';
 import { AppState } from 'app/store';
 import { builtinUsersToggled } from 'app/store/preferences/preferences.actions';
 import { waitForPreferences } from 'app/store/preferences/preferences.selectors';
-import { IxSlideInService } from '../../../../services/ix-slide-in.service';
-import { UserFormComponent } from '../user-form/user-form.component';
 
 @UntilDestroy()
 @Component({

@@ -10,10 +10,10 @@ import { IxTableModule } from 'app/modules/ix-tables/ix-table.module';
 import { IxTableHarness } from 'app/modules/ix-tables/testing/ix-table.harness';
 import { usersInitialState, UsersState } from 'app/pages/account/users/store/user.reducer';
 import { selectUsers, selectUserState, selectUsersTotal } from 'app/pages/account/users/store/user.selectors';
+import { UserDetailsRowComponent } from 'app/pages/account/users/user-details-row/user-details-row.component';
 import { DialogService, WebSocketService } from 'app/services';
 import { CoreService } from 'app/services/core-service/core.service';
 import { selectPreferences } from 'app/store/preferences/preferences.selectors';
-import { UserDetailsRowComponent } from '../user-details-row/user-details-row.component';
 import { UserListComponent } from './user-list.component';
 
 export const fakeUserDataSource: User[] = [{

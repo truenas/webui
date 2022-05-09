@@ -3,7 +3,7 @@ import {
   Component, ElementRef, Input, OnInit, ViewChild,
 } from '@angular/core';
 import { ServiceStatus } from 'app/enums/service-status.enum';
-import { AppTableAction, AppTableConfig } from 'app/modules/entity/table/table.component';
+import { AppTableAction, AppTableConfig, TableComponent } from 'app/modules/entity/table/table.component';
 
 export interface InputExpandableTableConf extends AppTableConfig {
   detailsHref?: string;
@@ -36,6 +36,8 @@ export class ExpandableTableComponent implements OnInit, AfterViewChecked {
   @Input('conf') tableConf: InputExpandableTableConf;
   @Input() expandableTableState: ExpandableTableState;
   @Input() disabled: boolean;
+
+  @ViewChild('tableComponent') tableComponent: TableComponent;
 
   @ViewChild('appTable', { read: ElementRef })
   appTable: ElementRef;

@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import {
   CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot, Router,
 } from '@angular/router';
-import { WebSocketService } from '../ws.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 @Injectable()
 export class AuthService implements CanActivate {
