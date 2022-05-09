@@ -65,19 +65,9 @@ export const routes: Routes = [
             data: { title: 'User Quotas', breadcrumb: 'User Quotas' },
           },
           {
-            path: 'user-quotas-form/:pk',
-            component: UserQuotaFormComponent,
-            data: { title: 'Set User Quotas', breadcrumb: 'Set User Quotas' },
-          },
-          {
             path: 'group-quotas/:pk',
             component: DatasetQuotasGrouplistComponent,
             data: { title: 'Edit Group Quotas', breadcrumb: 'Edit Group Quotas' },
-          },
-          {
-            path: 'group-quotas-form/:pk',
-            component: GroupQuotaFormComponent,
-            data: { title: 'Set Group Quotas', breadcrumb: 'Set Group Quotas' },
           },
           {
             path: 'id/:pk/dataset/acl/:path',

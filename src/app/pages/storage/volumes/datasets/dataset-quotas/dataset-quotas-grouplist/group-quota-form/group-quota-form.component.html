@@ -1,0 +1,45 @@
+<ix-modal-header [title]="'Add User Quotas' | translate" [loading]="isLoading"></ix-modal-header>
+<mat-card>
+  <mat-card-content>
+    <form [formGroup]="form" class="ix-form-container" (submit)="onSubmit()">
+      <ix-fieldset [title]="'Set Quotas' | translate">
+        <ix-input
+          formControlName="data_quota"
+          [label]="'User Data Quota (Examples: 500 KiB, 500M, 2 TB)' | translate"
+          [tooltip]="tooltips.dataQuota"
+          [format]="formatter.memorySizeFormatting"
+          [parse]="formatter.memorySizeParsing"
+        ></ix-input>
+        <ix-input
+          formControlName="obj_quota"
+          [label]="'User Object Quota' | translate"
+          [tooltip]="tooltips.objectQuota"
+        ></ix-input>
+      </ix-fieldset>
+
+      <ix-fieldset [title]="'Apply Quotas to Selected Users' | translate">
+        <ix-select
+          formControlName="system_entries"
+          [label]="'Select Users Cached by this System' | translate"
+          [tooltip]="tooltips.systemEntries"
+          [options]="systemEntries$"
+          [multiple]="true"
+        ></ix-select>
+        <ix-chips
+          formControlName="searched_entries"
+          [label]="'Search For Connected Users' | translate"
+          [tooltip]="tooltips.searchedEntries"
+        ></ix-chips>
+      </ix-fieldset>
+
+      <div class="form-actions">
+        <button
+          type="submit"
+          mat-button
+          color="primary"
+          [disabled]="form.invalid || isLoading"
+        >{{ 'Save' | translate }}</button>
+      </div>
+    </form>
+  </mat-card-content>
+</mat-card>

@@ -3,6 +3,10 @@ import { FormControl, ValidationErrors } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+import {
+  GroupQuotaFormComponent
+} from 'app/pages/storage/volumes/datasets/dataset-quotas/dataset-quotas-grouplist/group-quota-form/group-quota-form.component';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { filter } from 'rxjs/operators';
 import { DatasetQuotaType } from 'app/enums/dataset.enum';
 import globalHelptext from 'app/helptext/global-helptext';
@@ -32,7 +36,6 @@ export class DatasetQuotasGrouplistComponent implements EntityTableConfig, OnDes
   protected fullFilter: QueryParams<DatasetQuota> = [['OR', [['quota', '>', 0], ['obj_quota', '>', 0]]]];
   protected emptyFilter: QueryParams<DatasetQuota> = [];
   protected useFullFilter = true;
-  routeAdd: string[];
 
   columns = [
     {
@@ -71,6 +74,7 @@ export class DatasetQuotasGrouplistComponent implements EntityTableConfig, OnDes
     protected aroute: ActivatedRoute,
     private translate: TranslateService,
     private tableService: EntityTableService,
+    private slideInService: IxSlideInService,
   ) { }
 
   getRemoveInvalidQuotasAction(invalidQuotas: DatasetQuota[]): EntityTableAction {
@@ -236,9 +240,12 @@ export class DatasetQuotasGrouplistComponent implements EntityTableConfig, OnDes
     this.entityList = entityList;
     const paramMap = this.aroute.snapshot.params;
     this.pk = paramMap.pk;
-    this.routeAdd = ['storage', 'group-quotas-form', this.pk];
     this.useFullFilter = window.localStorage.getItem('useFullFilter') !== 'false';
     this.updateAddActions();
+
+    this.slideInService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
+      entityList.getData();
+    });
   }
 
   callGetFunction(entityList: EntityTableComponent): void {
@@ -289,6 +296,11 @@ export class DatasetQuotasGrouplistComponent implements EntityTableConfig, OnDes
       this.entityList.getData();
       this.loader.close();
     });
+  }
+
+  doAdd(): void {
+    const slideIn = this.slideInService.open(GroupQuotaFormComponent);
+    slideIn.setDatasetId(this.pk);
   }
 
   ngOnDestroy(): void {

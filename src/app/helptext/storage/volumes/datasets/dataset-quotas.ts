@@ -2,6 +2,7 @@ import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import globalHelptext from 'app/helptext/global-helptext';
 
 export default {
+  field_accepts_tooltip: T('This field accepts human-readable input (Ex. 50 GiB, 500M, 2 TB).'),
   users: {
     table_title: T('User Quotas'),
     quota_title: T('Set Quotas'),
