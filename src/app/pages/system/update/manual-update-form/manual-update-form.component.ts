@@ -17,6 +17,7 @@ import { JobState } from 'app/enums/job-state.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { helptextSystemUpdate as helptext } from 'app/helptext/system/update';
 import { SysInfoEvent } from 'app/interfaces/events/sys-info-event.interface';
+import { Job } from 'app/interfaces/job.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { Preferences } from 'app/interfaces/preferences.interface';
 import { MessageService } from 'app/modules/entity/entity-form/services/message.service';
@@ -183,8 +184,37 @@ export class ManualUpdateFormComponent implements OnInit {
     if (this.isHa) {
       dialogRef.componentInstance.disableProgressValue(true);
     }
+
     dialogRef.componentInstance.changeAltMessage(helptext.manual_update_description);
-    const formData: FormData = new FormData();
+
+    const formData: FormData = this.generateFormData(files, fileLocation);
+
+    dialogRef.componentInstance.wspostWithProgressUpdates(this.apiEndPoint, formData);
+    dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
+      dialogRef.close(false);
+      if (this.isHa) {
+        this.finishHaUpdate();
+      } else {
+        this.finishNonHaUpdate();
+      }
+    });
+
+    dialogRef.componentInstance.prefailure.pipe(
+      tap(() => dialogRef.close(false)),
+      untilDestroyed(this),
+    ).subscribe(this.handleUpdatePreFailure);
+
+    dialogRef.componentInstance.failure.pipe(
+      take(1),
+      tap(() => dialogRef.close(false)),
+      untilDestroyed(this),
+    ).subscribe(this.handleUpdateFailure);
+
+    dialogRef.afterClosed().pipe(untilDestroyed(this)).subscribe(() => this.isFormLoading$.next(false));
+  }
+
+  generateFormData(files: FileList, fileLocation: string): FormData {
+    const formData = new FormData();
     if (this.isHa) {
       formData.append('data', JSON.stringify({
         method: 'failover.upgrade',
@@ -196,53 +226,46 @@ export class ManualUpdateFormComponent implements OnInit {
       }));
     }
     formData.append('file', files[0]);
-
-    dialogRef.componentInstance.wspostWithProgressUpdates(this.apiEndPoint, formData);
-    dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
-      dialogRef.close(false);
-      if (!this.isHa) {
-        if (this.userPrefs.rebootAfterManualUpdate) {
-          this.router.navigate(['/others/reboot']);
-        } else {
-          this.dialogService.confirm({
-            title: this.translate.instant('Restart'),
-            message: this.translate.instant(helptext.rebootAfterManualUpdate.manual_reboot_msg),
-          }).pipe(
-            filter(Boolean),
-            untilDestroyed(this),
-          ).subscribe(() => this.router.navigate(['/others/reboot']));
-        }
-      } else { // HA System
-        this.dialogService.closeAllDialogs();
-        this.systemService.updateDone(); // Send 'finished' signal to topbar
-        this.router.navigate(['/']);
-        this.dialogService.confirm({
-          title: helptext.ha_update.complete_title,
-          message: helptext.ha_update.complete_msg,
-          hideCheckBox: true,
-          buttonMsg: helptext.ha_update.complete_action,
-          hideCancel: true,
-        }).pipe(untilDestroyed(this)).subscribe(() => {});
-      }
-    });
-    dialogRef.componentInstance.prefailure
-      .pipe(untilDestroyed(this))
-      .subscribe((prefailure: HttpErrorResponse) => {
-        dialogRef.close(false);
-        this.isFormLoading$.next(false);
-        this.dialogService.errorReport(
-          helptext.manual_update_error_dialog.message,
-          `${prefailure.status.toString()} ${prefailure.statusText}`,
-        );
-      });
-    dialogRef.componentInstance.failure
-      .pipe(take(1), untilDestroyed(this)).subscribe((failure) => {
-        dialogRef.close(false);
-        this.isFormLoading$.next(false);
-        this.dialogService.errorReport(failure.error, failure.state, failure.exception);
-      });
-    dialogRef.afterClosed().pipe(untilDestroyed(this)).subscribe(() => {
-      this.isFormLoading$.next(false);
-    });
+    return formData;
   }
+
+  finishNonHaUpdate(): void {
+    if (this.userPrefs.rebootAfterManualUpdate) {
+      this.router.navigate(['/others/reboot']);
+    } else {
+      this.dialogService.confirm({
+        title: this.translate.instant('Restart'),
+        message: this.translate.instant(helptext.rebootAfterManualUpdate.manual_reboot_msg),
+      }).pipe(
+        filter(Boolean),
+        untilDestroyed(this),
+      ).subscribe(() => this.router.navigate(['/others/reboot']));
+    }
+  }
+
+  finishHaUpdate(): void {
+    this.dialogService.closeAllDialogs();
+    this.systemService.updateDone(); // Send 'finished' signal to topbar
+    this.router.navigate(['/']);
+    this.dialogService.confirm({
+      title: helptext.ha_update.complete_title,
+      message: helptext.ha_update.complete_msg,
+      hideCheckBox: true,
+      buttonMsg: helptext.ha_update.complete_action,
+      hideCancel: true,
+    }).pipe(untilDestroyed(this)).subscribe(() => {});
+  }
+
+  handleUpdatePreFailure = (prefailure: HttpErrorResponse): void => {
+    this.isFormLoading$.next(false);
+    this.dialogService.errorReport(
+      helptext.manual_update_error_dialog.message,
+      `${prefailure.status.toString()} ${prefailure.statusText}`,
+    );
+  };
+
+  handleUpdateFailure = (failure: Job<null, unknown[]>): void => {
+    this.isFormLoading$.next(false);
+    this.dialogService.errorReport(failure.error, failure.state, failure.exception);
+  };
 }
