@@ -7,7 +7,7 @@ import { WebSocketService, IscsiService } from 'app/services';
 
 @UntilDestroy()
 @Component({
-  selector: 'iscsi',
+  selector: 'ix-iscsi',
   templateUrl: './iscsi.component.html',
   providers: [IscsiService],
 })

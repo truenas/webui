@@ -10,11 +10,11 @@
   </nav>
   <router-outlet [ngSwitch]="activeTab">
     <ix-target-global-configuration *ngSwitchCase="'configuration'"></ix-target-global-configuration>
-    <app-iscsi-portal-list *ngSwitchCase="'portals'"></app-iscsi-portal-list>
+    <ix-iscsi-portal-list *ngSwitchCase="'portals'"></ix-iscsi-portal-list>
     <app-iscsi-initiator-list *ngSwitchCase="'initiator'"></app-iscsi-initiator-list>
     <app-iscsi-authorizedaccess-list *ngSwitchCase="'auth'"></app-iscsi-authorizedaccess-list>
-    <app-iscsi-target-list *ngSwitchCase="'target'" [fcEnabled]="fcEnabled"></app-iscsi-target-list>
-    <app-iscsi-extent-list *ngSwitchCase="'extent'"></app-iscsi-extent-list>
+    <ix-iscsi-target-list *ngSwitchCase="'target'" [fcEnabled]="fcEnabled"></ix-iscsi-target-list>
+    <ix-iscsi-extent-list *ngSwitchCase="'extent'"></ix-iscsi-extent-list>
     <app-iscsi-associated-target-list *ngSwitchCase="'associatedtarget'"></app-iscsi-associated-target-list>
     <ng-container *ngSwitchCase="'fibrechannel'">
       <app-iscsi-fibre-channel-ports *ngIf="fcEnabled"></app-iscsi-fibre-channel-ports>

@@ -22,7 +22,6 @@ import { WebSocketService, AppLoaderService, DialogService } from 'app/services/
 
 @UntilDestroy()
 @Component({
-  selector: 'app-alertservice',
   template: '<entity-form [conf]="this"></entity-form>',
   providers: [EntityFormService],
 })

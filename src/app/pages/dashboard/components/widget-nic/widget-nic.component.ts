@@ -41,7 +41,7 @@ enum Path {
 
 @UntilDestroy()
 @Component({
-  selector: 'widget-nic',
+  selector: 'ix-widget-nic',
   templateUrl: './widget-nic.component.html',
   styleUrls: ['./widget-nic.component.scss'],
 })

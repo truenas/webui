@@ -42,7 +42,7 @@ import { IpmiFormComponent } from './components/forms/ipmi-form.component';
 
 @UntilDestroy()
 @Component({
-  selector: 'app-interfaces-list',
+  selector: 'ix-interfaces-list',
   templateUrl: './network.component.html',
   styleUrls: ['./network.component.scss'],
 })

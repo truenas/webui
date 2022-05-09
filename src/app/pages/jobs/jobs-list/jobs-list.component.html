@@ -161,13 +161,13 @@
       </tr>
     </table>
 
-    <app-job-logs-sidebar
+    <ix-job-logs-sidebar
       *ngIf="viewingLogsForJob"
       class="job-logs-sidebar"
       [job]="viewingLogsForJob"
       [viewType]="viewType"
       (closed)="onLogsSidebarClosed()"
-    ></app-job-logs-sidebar>
+    ></ix-job-logs-sidebar>
   </div>
 
   <ix-table-paginator [dataSource]="dataSource"></ix-table-paginator>

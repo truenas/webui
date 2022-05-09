@@ -22,7 +22,6 @@ import { ModalService } from 'app/services/modal.service';
 
 @UntilDestroy()
 @Component({
-  selector: 'app-idmap-form',
   template: '<entity-form [conf]="this"></entity-form>',
 })
 export class IdmapFormComponent implements FormConfiguration {

@@ -347,7 +347,7 @@
                     <div class="page-count">
                       <div>{{ selectedCount }} {{ 'selected' | translate }} / {{ rowCount }} {{ 'total' | translate }}</div>
                     </div>
-                    
+
                     <datatable-pager
                       [pagerLeftArrowIcon]="'datatable-icon-left'"
                       [pagerRightArrowIcon]="'datatable-icon-right'"
@@ -395,27 +395,27 @@
               <div class="data-title"><h4 class="vdev-h4">{{"Data VDevs" | translate}}</h4></div>
               <div class="duplicate-button"><button id="pool-manager__create-data-vdevs-button" mat-button class="btn btn-accent mat-accent" [disabled]="!canDuplicate" (click)="duplicate()">{{"Repeat" | translate}}</button></div>
             </div>
-            <app-vdev *ngFor="let vdev of vdevs.data; let i = index" [group]="'data'" [manager]="this" [index]="i" [initial_values]="vdev"></app-vdev>
+            <ix-vdev *ngFor="let vdev of vdevs.data; let i = index" [group]="'data'" [manager]="this" [index]="i" [initial_values]="vdev"></ix-vdev>
           </div>
           <div *ngIf="vdevs.cache.length > 0">
             <h4 class="vdev-h4">{{"Cache VDev" | translate}}</h4>
-            <app-vdev *ngFor="let vdev of vdevs.cache; let i = index" [group]="'cache'" [manager]="this" [index]="i"></app-vdev>
+            <ix-vdev *ngFor="let vdev of vdevs.cache; let i = index" [group]="'cache'" [manager]="this" [index]="i"></ix-vdev>
           </div>
           <div *ngIf="vdevs.log.length > 0">
             <h4 class="vdev-h4">{{"Log VDev" | translate}}</h4>
-            <app-vdev *ngFor="let vdev of vdevs.log; let i = index" [group]="'log'" [manager]="this" [index]="i"></app-vdev>
+            <ix-vdev *ngFor="let vdev of vdevs.log; let i = index" [group]="'log'" [manager]="this" [index]="i"></ix-vdev>
           </div>
           <div *ngIf="vdevs.spares.length > 0">
             <h4 class="vdev-h4">{{"Spare VDev" | translate}}</h4>
-            <app-vdev *ngFor="let vdev of vdevs.spares; let i = index" [group]="'spares'" [manager]="this" [index]="i"></app-vdev>
+            <ix-vdev *ngFor="let vdev of vdevs.spares; let i = index" [group]="'spares'" [manager]="this" [index]="i"></ix-vdev>
           </div>
           <div *ngIf="vdevs.special.length > 0">
             <h4 class="vdev-h4">{{"Metadata VDev" | translate}}</h4>
-            <app-vdev *ngFor="let vdev of vdevs.special; let i = index" [group]="'special'" [manager]="this" [index]="i"></app-vdev>
+            <ix-vdev *ngFor="let vdev of vdevs.special; let i = index" [group]="'special'" [manager]="this" [index]="i"></ix-vdev>
           </div>
           <div *ngIf="vdevs.dedup.length > 0">
             <h4 class="vdev-h4">{{"Dedup VDev" | translate}}</h4>
-            <app-vdev *ngFor="let vdev of vdevs.dedup; let i = index" [group]="'dedup'" [manager]="this" [index]="i"></app-vdev>
+            <ix-vdev *ngFor="let vdev of vdevs.dedup; let i = index" [group]="'dedup'" [manager]="this" [index]="i"></ix-vdev>
           </div>
         </div>
       </div>

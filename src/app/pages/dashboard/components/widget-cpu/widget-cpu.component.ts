@@ -26,7 +26,7 @@ import { ThemeService } from 'app/services/theme/theme.service';
 
 @UntilDestroy()
 @Component({
-  selector: 'widget-cpu',
+  selector: 'ix-widget-cpu',
   templateUrl: './widget-cpu.component.html',
   styleUrls: ['./widget-cpu.component.scss'],
 })

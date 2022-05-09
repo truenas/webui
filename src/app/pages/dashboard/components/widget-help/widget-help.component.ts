@@ -10,7 +10,7 @@ import { LocaleService } from 'app/services/locale.service';
 
 @UntilDestroy()
 @Component({
-  selector: 'widget-help',
+  selector: 'ix-widget-help',
   templateUrl: './widget-help.component.html',
   styleUrls: ['./widget-help.component.scss'],
 })

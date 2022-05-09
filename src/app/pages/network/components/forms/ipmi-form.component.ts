@@ -21,7 +21,7 @@ import { IpmiService } from 'app/services/ipmi.service';
 
 @UntilDestroy()
 @Component({
-  selector: 'app-ipmi',
+  selector: 'ix-ipmi',
   template: '<entity-form [conf]="this"></entity-form>',
 })
 export class IpmiFormComponent implements FormConfiguration {

@@ -14,7 +14,6 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
 @Component({
-  selector: 'app-dashboard-form',
   templateUrl: './dashboard-form.component.html',
   styleUrls: ['./dashboard-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
