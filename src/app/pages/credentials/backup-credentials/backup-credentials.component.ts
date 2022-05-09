@@ -11,6 +11,9 @@ import {
   KeychainSshKeyPair,
 } from 'app/interfaces/keychain-credential.interface';
 import { AppTableAction, AppTableConfig } from 'app/modules/entity/table/table.component';
+import {
+  SshConnectionFormComponent,
+} from 'app/pages/credentials/backup-credentials/ssh-connection-form/ssh-connection-form.component';
 import { SshKeypairFormComponent } from 'app/pages/credentials/backup-credentials/ssh-keypair-form/ssh-keypair-form.component';
 import {
   KeychainCredentialService, ReplicationService, StorageService, CloudCredentialService,
@@ -18,7 +21,6 @@ import {
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { ModalService } from 'app/services/modal.service';
 import { CloudCredentialsFormComponent } from './forms/cloud-credentials-form.component';
-import { SshConnectionsFormComponent } from './forms/ssh-connections-form.component';
 
 @UntilDestroy()
 @Component({
@@ -105,10 +107,11 @@ export class BackupCredentialsComponent implements OnInit {
           hideHeader: true,
           parent: this,
           add: () => {
-            this.modalService.openInSlideIn(SshConnectionsFormComponent);
+            this.slideInService.open(SshConnectionFormComponent);
           },
-          edit: (row: KeychainCredential) => {
-            this.modalService.openInSlideIn(SshConnectionsFormComponent, row.id);
+          edit: (row: KeychainSshCredentials) => {
+            const form = this.slideInService.open(SshConnectionFormComponent);
+            form.setConnectionForEdit(row);
           },
         },
       }, {
