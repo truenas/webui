@@ -30,7 +30,7 @@ export class IxInputComponent implements ControlValueAccessor {
 
   formControl = new FormControl(this).value as FormControl;
 
-  value: string | number = '';
+  private _value: string | number = '';
   formatted: string | number = '';
 
   isDisabled = false;
@@ -48,6 +48,18 @@ export class IxInputComponent implements ControlValueAccessor {
     this.controlDirective.valueAccessor = this;
   }
 
+  get value(): string | number {
+    return this._value;
+  }
+
+  set value(val: string | number) {
+    if (this.type === 'number') {
+      this._value = val ? Number(val) : null;
+      return;
+    }
+    this._value = val;
+  }
+
   writeValue(value: string | number): void {
     let formatted = value;
     if (value) {
@@ -59,13 +71,6 @@ export class IxInputComponent implements ControlValueAccessor {
     this.value = value;
   }
 
-  formatValue(value: string | number): string | number {
-    if (this.type === 'number') {
-      return value ? Number(value) : null;
-    }
-    return value;
-  }
-
   input(ixInput: HTMLInputElement): void {
     this.invalid = ixInput.validity?.badInput;
     const value = ixInput.value;
@@ -74,7 +79,7 @@ export class IxInputComponent implements ControlValueAccessor {
     if (this.parse && !!value) {
       this.value = this.parse(value);
     }
-    this.onChange(this.formatValue(this.value));
+    this.onChange(this.value);
   }
 
   invalidMessage(): string {
@@ -109,8 +114,8 @@ export class IxInputComponent implements ControlValueAccessor {
     input.value = '';
     this.invalid = false;
     this.value = '';
-    this.formatted = this.value;
-    this.onChange(this.formatValue(this.value));
+    this.formatted = '';
+    this.onChange(this.value);
   }
 
   setDisabledState(isDisabled: boolean): void {
@@ -136,7 +141,7 @@ export class IxInputComponent implements ControlValueAccessor {
       }
     }
 
-    this.onChange(this.formatValue(this.value));
+    this.onChange(this.value);
     this.cdr.markForCheck();
   }
 
