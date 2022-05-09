@@ -4,7 +4,9 @@ import { KeychainCredentialType } from 'app/enums/keychain-credential-type.enum'
 import { KeychainCredential, KeychainSshKeyPair } from 'app/interfaces/keychain-credential.interface';
 import { WebSocketService } from './ws.service';
 
-@Injectable()
+@Injectable({
+  providedIn: 'root',
+})
 export class KeychainCredentialService {
   constructor(protected ws: WebSocketService) { }
 
