@@ -141,6 +141,7 @@ export class TargetFormComponent {
     };
 
     this.isLoading = true;
+    this.cdr.markForCheck();
     let request$: Observable<unknown>;
     if (this.isNew) {
       request$ = this.ws.call('iscsi.target.create', [params]);

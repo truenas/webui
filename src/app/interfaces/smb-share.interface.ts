@@ -20,13 +20,22 @@ export interface SmbShare {
   name: string;
   path: string;
   path_suffix: string;
-  purpose: string; // Possibly enum: "DEFAULT_SHARE"
+  purpose: SmbPresetType;
   recyclebin: boolean;
   ro: boolean;
   shadowcopy: boolean;
   streams: boolean;
   timemachine: boolean;
   vuid: string;
+}
+
+export enum SmbPresetType {
+  NoPresets = 'NO_PRESET',
+  DefaultShareParameters = 'DEFAULT_SHARE',
+  MultiUserTimeMachine = 'ENHANCED_TIMEMACHINE',
+  MultiProtocolShares = 'MULTI_PROTOCOL_NFS',
+  PrivateSmbDatasets = 'PRIVATE_DATASETS',
+  SmbWorm = 'WORM_DROPBOX',
 }
 
 export interface SmbPreset {
@@ -53,6 +62,16 @@ export interface SmbSharesecAce {
     sidtype: string;
   };
   ae_who_sid: string;
+}
+
+export interface SmbSharesecAceUpdate {
+  ae_perm: SmbSharesecPermission;
+  ae_type: SmbSharesecType;
+  ae_who_name?: {
+    domain: string;
+    name: string;
+  };
+  ae_who_sid?: string;
 }
 
 export type SmbShareUpdate = {

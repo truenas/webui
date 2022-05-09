@@ -1,5 +1,6 @@
-import { AfterViewInit, Component, Type } from '@angular/core';
-import { Validators } from '@angular/forms';
+import {
+  AfterViewInit, Component, ViewChild,
+} from '@angular/core';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
@@ -15,14 +16,12 @@ import { Service } from 'app/interfaces/service.interface';
 import { SmbShare } from 'app/interfaces/smb-share.interface';
 import { WebDavShare } from 'app/interfaces/web-dav-share.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
-import { DialogFormConfiguration } from 'app/modules/entity/entity-dialog/dialog-form-configuration.interface';
-import { EntityDialogComponent } from 'app/modules/entity/entity-dialog/entity-dialog.component';
 import {
+  ExpandableTableComponent,
   ExpandableTableState,
   InputExpandableTableConf,
 } from 'app/modules/entity/table/expandable-table/expandable-table.component';
 import {
-  TableComponent,
   AppTableHeaderAction,
 } from 'app/modules/entity/table/table.component';
 import { EntityUtils } from 'app/modules/entity/utils';
@@ -36,7 +35,7 @@ import {
   ModalService,
   WebSocketService,
 } from 'app/services';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { IxSlideInService, ResponseOnClose } from 'app/services/ix-slide-in.service';
 
 enum ShareType {
   Smb = 'smb',
@@ -59,6 +58,11 @@ export class SharesDashboardComponent implements AfterViewInit {
   nfsTableConf: InputExpandableTableConf = this.getTableConfigForShareType(ShareType.Nfs);
   smbTableConf: InputExpandableTableConf = this.getTableConfigForShareType(ShareType.Smb);
   iscsiTableConf: InputExpandableTableConf = this.getTableConfigForShareType(ShareType.Iscsi);
+
+  @ViewChild('webdavTable', { static: false }) webdavTable: ExpandableTableComponent;
+  @ViewChild('nfsTable', { static: false }) nfsTable: ExpandableTableComponent;
+  @ViewChild('smbTable', { static: false }) smbTable: ExpandableTableComponent;
+  @ViewChild('iscsiTable', { static: false }) iscsiTable: ExpandableTableComponent;
 
   webdavHasItems = 0;
   nfsHasItems = 0;
@@ -129,6 +133,41 @@ export class SharesDashboardComponent implements AfterViewInit {
     if (this.iscsiHasItems) {
       this.iscsiExpandableState = ExpandableTableState.Expanded;
     }
+    this.setupTableRefreshOnPanelClose();
+  }
+
+  setupTableRefreshOnPanelClose(): void {
+    this.slideInService.onClose$.pipe(untilDestroyed(this)).subscribe(({ modalType }: ResponseOnClose) => {
+      switch (modalType) {
+        case WebdavFormComponent:
+          if (!this.webdavTable.tableComponent) {
+            this.refreshDashboard();
+          }
+          this.webdavTable.tableComponent.getData();
+          break;
+        case SmbFormComponent:
+          if (!this.smbTable.tableComponent) {
+            this.refreshDashboard();
+          }
+          this.smbTable.tableComponent.getData();
+          break;
+        case NfsFormComponent:
+          if (!this.nfsTable.tableComponent) {
+            this.refreshDashboard();
+          }
+          this.nfsTable.tableComponent.getData();
+          break;
+        case TargetFormComponent:
+          if (!this.iscsiTable.tableComponent) {
+            this.refreshDashboard();
+          }
+          this.iscsiTable.tableComponent.getData();
+          break;
+        default:
+          this.refreshDashboard();
+          break;
+      }
+    });
   }
 
   refreshDashboard(): void {
@@ -167,10 +206,11 @@ export class SharesDashboardComponent implements AfterViewInit {
           ],
           detailsHref: '/sharing/nfs',
           add() {
-            this.parent.add(this.tableComponent, ShareType.Nfs);
+            this.parent.slideInService.open(NfsFormComponent);
           },
           edit(row: NfsShare) {
-            this.parent.edit(this.tableComponent, ShareType.Nfs, row.id);
+            const form = this.parent.slideInService.open(NfsFormComponent);
+            (form as NfsFormComponent).setNfsShareForEdit(row);
           },
           afterGetData: (data: NfsShare[]) => {
             this.nfsHasItems = 0;
@@ -209,10 +249,11 @@ export class SharesDashboardComponent implements AfterViewInit {
             },
           ],
           add() {
-            this.parent.add(this.tableComponent, ShareType.Iscsi);
+            this.parent.slideInService.open(TargetFormComponent, { wide: true });
           },
           edit(row: IscsiTarget) {
-            this.parent.edit(this.tableComponent, ShareType.Iscsi, row.id);
+            const targetForm = this.parent.slideInService.open(TargetFormComponent, { wide: true });
+            targetForm.setTargetForEdit(row);
           },
           afterGetData: (data: IscsiTarget[]) => {
             this.iscsiHasItems = 0;
@@ -268,11 +309,12 @@ export class SharesDashboardComponent implements AfterViewInit {
             },
           ],
           add() {
-            this.parent.add(this.tableComponent, ShareType.WebDav);
+            this.parent.slideInService.open(WebdavFormComponent);
           },
           limitRowsByMaxHeight: true,
           edit(row: WebDavShare) {
-            this.parent.edit(this.tableComponent, ShareType.WebDav, row.id);
+            const form = this.parent.slideInService.open(WebdavFormComponent);
+            (form as WebdavFormComponent).setWebdavForEdit(row);
           },
           afterGetData: (data: WebDavShare[]) => {
             this.webdavHasItems = 0;
@@ -314,10 +356,11 @@ export class SharesDashboardComponent implements AfterViewInit {
           ],
           limitRowsByMaxHeight: true,
           add() {
-            this.parent.add(this.tableComponent, ShareType.Smb);
+            this.parent.slideInService.open(SmbFormComponent);
           },
           edit(row: SmbShare) {
-            this.parent.edit(this.tableComponent, ShareType.Smb, row.id);
+            const form = this.parent.slideInService.open(SmbFormComponent);
+            (form as SmbFormComponent).setSmbShareForEdit(row);
           },
           afterGetData: (data: SmbShare[]) => {
             this.smbHasItems = 0;
@@ -331,71 +374,6 @@ export class SharesDashboardComponent implements AfterViewInit {
         };
       }
     }
-  }
-
-  add(tableComponent: TableComponent, share: ShareType, id?: number): void {
-    let formComponent: Type<NfsFormComponent | SmbFormComponent | WebdavFormComponent | TargetFormComponent>;
-    switch (share) {
-      case ShareType.Nfs:
-        formComponent = NfsFormComponent;
-        break;
-      case ShareType.Smb:
-        formComponent = SmbFormComponent;
-        break;
-      case ShareType.WebDav:
-        formComponent = WebdavFormComponent;
-        break;
-      case ShareType.Iscsi:
-        formComponent = TargetFormComponent;
-        break;
-    }
-    if ([ShareType.WebDav, ShareType.Nfs].includes(share)) {
-      const form = this.slideInService.open(formComponent);
-      if (id) {
-        const row = tableComponent.displayedDataSource.find((row) => row.id === id);
-        if (share === ShareType.WebDav) {
-          (form as WebdavFormComponent).setWebdavForEdit(row);
-        } else if (share === ShareType.Nfs) {
-          (form as NfsFormComponent).setNfsShareForEdit(row);
-        }
-      }
-      this.slideInService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
-        if (!tableComponent) {
-          this.refreshDashboard();
-        } else {
-          tableComponent.getData();
-        }
-      });
-    } else if (share === ShareType.Iscsi) {
-      const targetForm = this.slideInService.open(TargetFormComponent, { wide: true });
-      if (id) {
-        targetForm.setTargetForEdit(tableComponent.displayedDataSource.find((row) => row.id === id));
-      }
-      this.slideInService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
-        if (!tableComponent) {
-          this.refreshDashboard();
-        } else {
-          tableComponent.getData();
-        }
-      }, (err) => {
-        new EntityUtils().handleWsError(this, err, this.dialog);
-      });
-    } else {
-      this.modalService.openInSlideIn(formComponent, id);
-      this.modalService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
-        if (!tableComponent) {
-          this.refreshDashboard();
-        } else {
-          tableComponent.getData();
-        }
-      }, (err) => {
-        new EntityUtils().handleWsError(this, err, this.dialog);
-      });
-    }
-  }
-
-  edit(tableComponent: TableComponent, share: ShareType, id: number): void {
-    this.add(tableComponent, share, id);
   }
 
   getTablesOrder(): string[] {
@@ -468,31 +446,6 @@ export class SharesDashboardComponent implements AfterViewInit {
       case 3:
         return 'fourth';
     }
-  }
-
-  showAddDialog(): void {
-    const conf: DialogFormConfiguration = {
-      title: this.translate.instant('Add New Share'),
-      message: this.translate.instant('Select the type of Share you want to add'),
-      saveButtonText: this.translate.instant('Create'),
-      fieldConfig: [{
-        type: 'radio',
-        name: 'share_type',
-        options: [
-          { label: 'SMB', value: ShareType.Smb },
-          { label: 'NFS', value: ShareType.Nfs },
-          { label: 'iSCSI Target', value: ShareType.Iscsi },
-          { label: 'WebDAV', value: ShareType.WebDav },
-        ],
-        validation: [Validators.required],
-      },
-      ],
-      customSubmit: (dialog: EntityDialogComponent) => {
-        dialog.dialogRef.close();
-        this.add(null, dialog.formValue.share_type);
-      },
-    };
-    this.dialog.dialogForm(conf);
   }
 
   onSlideToggle(card: ShareType, row: ShareTableRow, param: 'enabled' | 'ro'): void {
