@@ -1,5 +1,5 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
@@ -15,6 +15,7 @@ import {
 } from 'rxjs/operators';
 import { JobState } from 'app/enums/job-state.enum';
 import { ProductType } from 'app/enums/product-type.enum';
+import { WINDOW } from 'app/helpers/window.helper';
 import { helptextSystemUpdate as helptext } from 'app/helptext/system/update';
 import { SysInfoEvent } from 'app/interfaces/events/sys-info-event.interface';
 import { Job } from 'app/interfaces/job.interface';
@@ -61,6 +62,7 @@ export class ManualUpdateFormComponent implements OnInit {
     private core: CoreService,
     private ws: WebSocketService,
     private translate: TranslateService,
+    @Inject(WINDOW) private window: Window,
   ) { }
 
   ngOnInit(): void {
@@ -121,7 +123,7 @@ export class ManualUpdateFormComponent implements OnInit {
   }
 
   get isEnterprise(): boolean {
-    return window.localStorage.getItem('product_type').includes(ProductType.Enterprise);
+    return this.window.localStorage.getItem('product_type').includes(ProductType.Enterprise);
   }
 
   checkHaLicenseAndUpdateStatus(): void {
