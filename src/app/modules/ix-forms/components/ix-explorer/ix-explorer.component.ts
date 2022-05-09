@@ -137,6 +137,11 @@ export class IxExplorerComponent implements OnInit, ControlValueAccessor {
     this.onChange(newValue);
   }
 
+  valueChangedCustom(value: string): void {
+    this.value = value;
+    this.onChange(value);
+  }
+
   /**
    * Provides typing in templates
    */
