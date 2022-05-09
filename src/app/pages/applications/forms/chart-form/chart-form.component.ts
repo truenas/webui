@@ -7,18 +7,19 @@ import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { of } from 'rxjs';
 import { ixChartApp } from 'app/constants/catalog.constants';
+import { DynamicSchemaType } from 'app/enums/dynamic-schema-type.enum';
 import helptext from 'app/helptext/apps/apps';
 import { CatalogApp } from 'app/interfaces/catalog.interface';
 import { ChartRelease, ChartReleaseCreate, ChartSchemaNode } from 'app/interfaces/chart-release.interface';
 import {
-  AddListItemEmitter, DeleteListItemEmitter, DynamicFormSchema, DynamicFormSchemaNode,
+  AddListItemEmitter, DeleteListItemEmitter, DynamicFormSchema,
 } from 'app/interfaces/dynamic-form-schema.interface';
 import { Relation } from 'app/modules/entity/entity-form/models/field-relation.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { DialogService } from 'app/services';
-import { FilesystemService } from 'app/services/filesystem.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { TransformAppSchemaService } from 'app/services/transform-app-schema.service';
 
 @UntilDestroy()
 @Component({
@@ -45,7 +46,7 @@ export class ChartFormComponent {
     private formBuilder: FormBuilder,
     private slideInService: IxSlideInService,
     private dialogService: DialogService,
-    private filesystemService: FilesystemService,
+    private transformAppSchemaService: TransformAppSchemaService,
     private mdDialog: MatDialog,
   ) {}
 
@@ -151,7 +152,13 @@ export class ChartFormComponent {
 
   addFormControls(chartSchemaNode: ChartSchemaNode, formGroup: FormGroup): void {
     const schema = chartSchemaNode.schema;
-    if (['string', 'int', 'boolean', 'hostpath', 'path'].includes(schema.type)) {
+    if ([
+      DynamicSchemaType.Int,
+      DynamicSchemaType.String,
+      DynamicSchemaType.Boolean,
+      DynamicSchemaType.Path,
+      DynamicSchemaType.Hostpath,
+    ].includes(schema.type as DynamicSchemaType)) {
       const newFormControl = new FormControl(schema.default, [
         schema.required ? Validators.required : Validators.nullValidator,
         schema.max ? Validators.max(schema.max) : Validators.nullValidator,
@@ -211,12 +218,12 @@ export class ChartFormComponent {
           }
         });
       }
-    } else if (schema.type === 'dict') {
+    } else if (schema.type === DynamicSchemaType.Dict) {
       formGroup.addControl(chartSchemaNode.variable, new FormGroup({}));
       for (const attr of schema.attrs) {
         this.addFormControls(attr, formGroup.controls[chartSchemaNode.variable] as FormGroup);
       }
-    } else if (schema.type === 'list') {
+    } else if (schema.type === DynamicSchemaType.List) {
       formGroup.addControl(chartSchemaNode.variable, new FormArray([]));
 
       if (!this.isNew) {
@@ -253,138 +260,11 @@ export class ChartFormComponent {
   addFormSchema(chartSchemaNode: ChartSchemaNode, group: string): void {
     this.dynamicSection.forEach((section) => {
       if (section.name === group) {
-        section.schema = section.schema.concat(this.transformSchemaNode(chartSchemaNode));
+        section.schema = section.schema.concat(
+          this.transformAppSchemaService.transformNode(chartSchemaNode),
+        );
       }
     });
-  }
-
-  transformSchemaNode(chartSchemaNode: ChartSchemaNode): DynamicFormSchemaNode[] {
-    const beforSchema = chartSchemaNode.schema;
-    let afterSchemas: DynamicFormSchemaNode[] = [];
-    if (['string', 'int', 'boolean', 'hostpath', 'path'].includes(beforSchema.type)) {
-      switch (beforSchema.type) {
-        case 'int':
-          afterSchemas.push({
-            controlName: chartSchemaNode.variable,
-            type: 'input',
-            title: chartSchemaNode.label,
-            required: beforSchema.required,
-            hidden: beforSchema.hidden,
-            tooltip: chartSchemaNode.description,
-            editable: beforSchema.editable,
-            private: beforSchema.private,
-          });
-          break;
-        case 'string':
-          if (beforSchema.enum) {
-            afterSchemas.push({
-              controlName: chartSchemaNode.variable,
-              type: 'select',
-              title: chartSchemaNode.label,
-              options: of(beforSchema.enum.map((option) => ({
-                value: option.value,
-                label: option.description,
-              }))),
-              required: true,
-              hidden: beforSchema.hidden,
-              editable: beforSchema.editable,
-              tooltip: chartSchemaNode.description,
-            });
-          } else {
-            afterSchemas.push({
-              controlName: chartSchemaNode.variable,
-              type: 'input',
-              title: chartSchemaNode.label,
-              required: beforSchema.required,
-              hidden: beforSchema.hidden,
-              editable: beforSchema.editable,
-              tooltip: chartSchemaNode.description,
-              private: beforSchema.private,
-            });
-          }
-          break;
-        case 'path':
-          afterSchemas.push({
-            controlName: chartSchemaNode.variable,
-            type: 'input',
-            title: chartSchemaNode.label,
-            required: beforSchema.required,
-            hidden: beforSchema.hidden,
-            editable: beforSchema.editable,
-            tooltip: chartSchemaNode.description,
-          });
-          break;
-        case 'hostpath':
-          afterSchemas.push({
-            controlName: chartSchemaNode.variable,
-            type: 'explorer',
-            title: chartSchemaNode.label,
-            nodeProvider: this.filesystemService.getFilesystemNodeProvider(),
-            required: beforSchema.required,
-            hidden: beforSchema.hidden,
-            editable: beforSchema.editable,
-            tooltip: chartSchemaNode.description,
-          });
-          break;
-        case 'boolean':
-          afterSchemas.push({
-            controlName: chartSchemaNode.variable,
-            type: 'checkbox',
-            title: chartSchemaNode.label,
-            required: beforSchema.required,
-            hidden: beforSchema.hidden,
-            editable: beforSchema.editable,
-            tooltip: chartSchemaNode.description,
-          });
-          break;
-      }
-      if (beforSchema.subquestions) {
-        beforSchema.subquestions.forEach((subquestion) => {
-          const objs = this.transformSchemaNode(subquestion);
-          objs.forEach((obj) => obj.indent = true);
-          afterSchemas = afterSchemas.concat(objs);
-        });
-      }
-    } else if (beforSchema.type === 'dict') {
-      let attrs: DynamicFormSchemaNode[] = [];
-      beforSchema.attrs.forEach((attr) => {
-        attrs = attrs.concat(this.transformSchemaNode(attr));
-      });
-      afterSchemas.push({
-        controlName: chartSchemaNode.variable,
-        type: 'dict',
-        title: chartSchemaNode.label,
-        attrs,
-        hidden: beforSchema.hidden,
-        editable: beforSchema.editable,
-      });
-    } else if (beforSchema.type === 'list') {
-      let items: DynamicFormSchemaNode[] = [];
-      let itemsSchema: ChartSchemaNode[] = [];
-      beforSchema.items.forEach((item) => {
-        if (item.schema.attrs) {
-          item.schema.attrs.forEach((attr) => {
-            items = items.concat(this.transformSchemaNode(attr));
-            itemsSchema = itemsSchema.concat(attr);
-          });
-        } else {
-          items = items.concat(this.transformSchemaNode(item));
-          itemsSchema = itemsSchema.concat(item);
-        }
-      });
-      afterSchemas.push({
-        controlName: chartSchemaNode.variable,
-        type: 'list',
-        title: chartSchemaNode.label,
-        items,
-        items_schema: itemsSchema,
-        hidden: beforSchema.hidden,
-        editable: beforSchema.editable,
-      });
-    } else {
-      console.error('Unsupported type = ', beforSchema.type);
-    }
-    return afterSchemas;
   }
 
   addFormListItem(event: AddListItemEmitter): void {
