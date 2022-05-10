@@ -19,18 +19,30 @@
       [removable]="!isDisabled"
       (removed)="onRemove(item)"
     >
-      {{item}}
+      {{ item }}
       <mat-icon matChipRemove *ngIf="!isDisabled">cancel</mat-icon>
     </mat-chip>
     <input
+      #chipInput
       [placeholder]="placeholder"
       [disabled]="isDisabled"
+      [matAutocomplete]="auto"
       [matChipInputFor]="chipList"
       [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
-      [matChipInputAddOnBlur]="true"
-      (matChipInputTokenEnd)="onAdd($event)"
+      (blur)="onInputBlur($event)"
+      (matChipInputTokenEnd)="onAdd($event.value)"
     >
   </mat-chip-list>
+  <mat-autocomplete
+    #auto="matAutocomplete"
+    (optionSelected)="onSuggestionSelected($event)"
+  >
+    <ng-container *ngIf="suggestions$">
+      <mat-option *ngFor="let suggestion of suggestions$ | async" [value]="suggestion">
+        {{ suggestion }}
+      </mat-option>
+    </ng-container>
+  </mat-autocomplete>
 </div>
 <ix-errors [control]="controlDirective.control" [label]="label"></ix-errors>
 

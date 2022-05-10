@@ -15,9 +15,13 @@ import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-tab
 import { EntityTableAction, EntityTableConfig } from 'app/modules/entity/entity-table/entity-table.interface';
 import { DatasetQuotaRow } from 'app/pages/storage/volumes/datasets/dataset-quotas/dataset-quotas-grouplist/dataset-quota-row.interface';
 import {
+  UserQuotaFormComponent,
+} from 'app/pages/storage/volumes/datasets/dataset-quotas/dataset-quotas-userlist/user-quota-form/user-quota-form.component';
+import {
   AppLoaderService, DialogService, StorageService, WebSocketService,
 } from 'app/services';
 import { EntityTableService } from 'app/services/entity-table.service';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
 @Component({
@@ -72,6 +76,7 @@ export class DatasetQuotasUserlistComponent implements EntityTableConfig, OnDest
     protected aroute: ActivatedRoute,
     private translate: TranslateService,
     private tableService: EntityTableService,
+    private slideInService: IxSlideInService,
   ) { }
 
   getRemoveInvalidQuotasAction(invalidQuotas: DatasetQuota[]): EntityTableAction {
@@ -220,6 +225,10 @@ export class DatasetQuotasUserlistComponent implements EntityTableConfig, OnDest
     this.routeAdd = ['storage', 'user-quotas-form', this.pk];
     this.useFullFilter = window.localStorage.getItem('useFullFilter') !== 'false';
     this.updateAddActions();
+
+    this.slideInService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
+      entityList.getData();
+    });
   }
 
   updateAddActions(): void {
@@ -287,6 +296,11 @@ export class DatasetQuotasUserlistComponent implements EntityTableConfig, OnDest
       this.entityList.getData();
       this.loader.close();
     });
+  }
+
+  doAdd(): void {
+    const slideIn = this.slideInService.open(UserQuotaFormComponent);
+    slideIn.setDatasetId(this.pk);
   }
 
   ngOnDestroy(): void {

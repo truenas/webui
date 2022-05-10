@@ -9,16 +9,16 @@ import { DatasetQuotaType } from 'app/enums/dataset.enum';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import {
-  GroupQuotaFormComponent,
-} from 'app/pages/storage/volumes/datasets/dataset-quotas/dataset-quotas-grouplist/group-quota-form/group-quota-form.component';
+  UserQuotaFormComponent,
+} from 'app/pages/storage/volumes/datasets/dataset-quotas/dataset-quotas-userlist/user-quota-form/user-quota-form.component';
 import { UserService, WebSocketService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
-describe('GroupQuotaFormComponent', () => {
-  let spectator: Spectator<GroupQuotaFormComponent>;
+describe('UserQuotaFormComponent', () => {
+  let spectator: Spectator<UserQuotaFormComponent>;
   let loader: HarnessLoader;
   const createComponent = createComponentFactory({
-    component: GroupQuotaFormComponent,
+    component: UserQuotaFormComponent,
     imports: [
       ReactiveFormsModule,
       IxFormsModule,
@@ -28,7 +28,7 @@ describe('GroupQuotaFormComponent', () => {
         mockCall('pool.dataset.set_quota'),
       ]),
       mockProvider(UserService, {
-        groupQueryDsCache: () => of(),
+        userQueryDsCache: () => of(),
       }),
       mockProvider(IxSlideInService),
     ],
@@ -44,8 +44,8 @@ describe('GroupQuotaFormComponent', () => {
     const form = await loader.getHarness(IxFormHarness);
     await form.fillForm({
       'User Data Quota (Examples: 500 KiB, 500M, 2 TB)': '500M',
-      'Group Object Quota': 2000,
-      'Apply To Groups': ['roots', 'trunks'],
+      'User Object Quota': 2000,
+      'Apply To Users': ['jill', 'john'],
     });
 
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
@@ -55,10 +55,10 @@ describe('GroupQuotaFormComponent', () => {
     expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('pool.dataset.set_quota', [
       'my-dataset',
       [
-        { id: 'roots', quota_type: DatasetQuotaType.Group, quota_value: 524288000 },
-        { id: 'roots', quota_type: DatasetQuotaType.GroupObj, quota_value: '2000' },
-        { id: 'trunks', quota_type: DatasetQuotaType.Group, quota_value: 524288000 },
-        { id: 'trunks', quota_type: DatasetQuotaType.GroupObj, quota_value: '2000' },
+        { id: 'jill', quota_type: DatasetQuotaType.User, quota_value: 524288000 },
+        { id: 'jill', quota_type: DatasetQuotaType.UserObj, quota_value: '2000' },
+        { id: 'john', quota_type: DatasetQuotaType.User, quota_value: 524288000 },
+        { id: 'john', quota_type: DatasetQuotaType.UserObj, quota_value: '2000' },
       ],
     ]);
   });

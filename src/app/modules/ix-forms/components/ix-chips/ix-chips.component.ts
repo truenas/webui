@@ -1,10 +1,17 @@
 import { ENTER } from '@angular/cdk/keycodes';
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Input,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, Input, OnChanges, ViewChild,
 } from '@angular/core';
 import { ControlValueAccessor, NgControl } from '@angular/forms';
-import { MatChipInputEvent } from '@angular/material/chips/chip-input';
+import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { UntilDestroy } from '@ngneat/until-destroy';
+import {
+  fromEvent, merge, Observable, Subject,
+} from 'rxjs';
+import {
+  debounceTime, distinctUntilChanged, startWith, switchMap,
+} from 'rxjs/operators';
+import { ChipsProvider } from 'app/modules/ix-forms/components/ix-chips/chips-provider';
 
 @UntilDestroy()
 @Component({
@@ -13,15 +20,21 @@ import { UntilDestroy } from '@ngneat/until-destroy';
   styleUrls: ['./ix-chips.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class IxChipsComponent implements ControlValueAccessor {
+export class IxChipsComponent implements OnChanges, ControlValueAccessor {
   @Input() label: string;
   @Input() placeholder: string;
   @Input() hint: string;
   @Input() tooltip: string;
   @Input() required: boolean;
+  @Input() autocompleteProvider: ChipsProvider;
 
+  @ViewChild('chipInput', { static: true }) chipInput: ElementRef<HTMLInputElement>;
+
+  suggestions$: Observable<string[]>;
   values: string[] = [];
   isDisabled = false;
+
+  inputReset$ = new Subject();
 
   onChange: (value: string[]) => void = (): void => {};
   onTouch: () => void = (): void => {};
@@ -33,6 +46,10 @@ export class IxChipsComponent implements ControlValueAccessor {
     private cdr: ChangeDetectorRef,
   ) {
     this.controlDirective.valueAccessor = this;
+  }
+
+  ngOnChanges(): void {
+    this.setAutocomplete();
   }
 
   writeValue(value: string[]): void {
@@ -48,11 +65,6 @@ export class IxChipsComponent implements ControlValueAccessor {
     this.onTouch = onTouched;
   }
 
-  resetInput(): void {
-    this.values = [];
-    this.onChange(this.values);
-  }
-
   setDisabledState?(isDisabled: boolean): void {
     this.isDisabled = isDisabled;
     this.cdr.markForCheck();
@@ -63,19 +75,62 @@ export class IxChipsComponent implements ControlValueAccessor {
     this.updateValues(updatedValues);
   }
 
-  onAdd(event: MatChipInputEvent): void {
-    const newValue = (event.value || '').trim();
+  onAdd(value: string): void {
+    const newValue = (value || '').trim();
     if (!newValue || this.values.includes(newValue)) {
       return;
     }
 
-    event.chipInput.clear();
+    this.clearInput();
     this.updateValues([...this.values, newValue]);
+  }
+
+  onSuggestionSelected(event: MatAutocompleteSelectedEvent): void {
+    this.clearInput();
+    this.updateValues([...this.values, event.option.value]);
+  }
+
+  /**
+   * Adding chips on blur manually instead of [matChipInputAddOnBlur] to support autocomplete.
+   */
+  onInputBlur(event: FocusEvent): void {
+    const target: HTMLElement = event.relatedTarget as HTMLElement;
+    if (target?.tagName === 'MAT-OPTION') {
+      return;
+    }
+
+    this.onAdd(this.chipInput.nativeElement.value);
+  }
+
+  private setAutocomplete(): void {
+    if (!this.autocompleteProvider) {
+      this.suggestions$ = null;
+      return;
+    }
+
+    this.suggestions$ = merge(
+      fromEvent(this.chipInput.nativeElement, 'input')
+        .pipe(
+          startWith(''),
+          debounceTime(100),
+          distinctUntilChanged(),
+        ),
+      this.inputReset$,
+    ).pipe(
+      switchMap(() => {
+        return this.autocompleteProvider(this.chipInput.nativeElement.value);
+      }),
+    );
   }
 
   private updateValues(updatedValues: string[]): void {
     this.values = updatedValues;
     this.onChange(updatedValues);
     this.onTouch();
+  }
+
+  private clearInput(): void {
+    this.chipInput.nativeElement.value = '';
+    this.inputReset$.next();
   }
 }
