@@ -90,11 +90,9 @@ export class DiskFormComponent implements OnInit {
   prepareUpdate(value: DiskFormComponent['form']['value']): DiskUpdate {
     const transformedValue = {
       ...value,
-      number: this.existingDisk.number,
-      pool: this.existingDisk.pool,
-      critical: value.critical === '' ? null : value.critical as number,
-      difference: value.difference === '' ? null : value.difference as number,
-      informational: value.informational === '' ? null : value.informational as number,
+      critical: !value.critical ? null : Number(value.critical),
+      difference: !value.difference ? null : Number(value.difference),
+      informational: !value.informational ? null : Number(value.informational),
     };
 
     if (transformedValue.passwd === '') {
