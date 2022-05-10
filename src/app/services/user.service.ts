@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { combineLatest, Observable } from 'rxjs';
+import { combineLatest, Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { DsUncachedGroup, DsUncachedUser } from 'app/interfaces/ds-cache.interface';
 import { Group } from 'app/interfaces/group.interface';
@@ -19,6 +19,9 @@ export class UserService {
   constructor(protected ws: WebSocketService) {}
 
   private groupQueryDsCacheByName(name: string): Observable<Group[]> {
+    if (!(name && name.length)) {
+      return of([]);
+    }
     let queryArgs: QueryFilter<Group>[] = [];
     name = name.trim();
     if (name.length > 0) {
