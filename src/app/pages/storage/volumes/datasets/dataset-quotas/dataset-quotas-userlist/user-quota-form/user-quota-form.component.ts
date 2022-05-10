@@ -25,7 +25,6 @@ import {
 
 @UntilDestroy()
 @Component({
-  selector: 'app-user-quota-form',
   template: '<entity-form [conf]="this"></entity-form>',
 })
 export class UserQuotaFormComponent implements FormConfiguration, DoCheck {

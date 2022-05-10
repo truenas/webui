@@ -25,7 +25,6 @@ import {
 
 @UntilDestroy()
 @Component({
-  selector: 'app-group-quota-form',
   template: '<entity-form [conf]="this"></entity-form>',
 })
 export class GroupQuotaFormComponent implements FormConfiguration, DoCheck {

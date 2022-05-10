@@ -10,7 +10,6 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
 @Component({
-  selector: 'app-kerberos-keytabs-list',
   template: '<entity-table [title]="title" [conf]="this"></entity-table>',
 })
 export class KerberosKeytabsListComponent implements EntityTableConfig {

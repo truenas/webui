@@ -71,7 +71,6 @@ SmartTestUi
 
 @UntilDestroy()
 @Component({
-  selector: 'app-data-protection-dashboard',
   templateUrl: './data-protection-dashboard.component.html',
   providers: [
     TaskService,

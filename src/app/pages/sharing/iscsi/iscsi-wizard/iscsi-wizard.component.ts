@@ -27,7 +27,6 @@ import { CloudCredentialService } from 'app/services/cloud-credential.service';
 
 @UntilDestroy()
 @Component({
-  selector: 'app-iscsi-wizard',
   template: '<entity-wizard [conf]="this"></entity-wizard>',
   providers: [IscsiService, CloudCredentialService, NetworkService, StorageService],
 })

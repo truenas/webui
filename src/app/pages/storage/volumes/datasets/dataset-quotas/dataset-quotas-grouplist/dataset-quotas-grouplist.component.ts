@@ -21,7 +21,6 @@ import { EntityTableService } from 'app/services/entity-table.service';
 
 @UntilDestroy()
 @Component({
-  selector: 'app-dataset-quotas-grouplist',
   template: '<entity-table [title]="title" [conf]="this"></entity-table>',
 })
 export class DatasetQuotasGrouplistComponent implements EntityTableConfig, OnDestroy {

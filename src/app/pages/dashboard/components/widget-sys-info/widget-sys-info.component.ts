@@ -18,7 +18,7 @@ import { ThemeService } from 'app/services/theme/theme.service';
 
 @UntilDestroy()
 @Component({
-  selector: 'widget-sysinfo',
+  selector: 'ix-widget-sysinfo',
   templateUrl: './widget-sys-info.component.html',
   styleUrls: ['./widget-sys-info.component.scss'],
 })

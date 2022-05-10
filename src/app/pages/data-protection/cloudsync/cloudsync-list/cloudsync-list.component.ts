@@ -31,7 +31,6 @@ import { ModalService } from 'app/services/modal.service';
 
 @UntilDestroy()
 @Component({
-  selector: 'app-cloudsync-list',
   template: '<entity-table [title]="title" [conf]="this"></entity-table>',
   providers: [JobService, TaskService, CloudCredentialService],
 })

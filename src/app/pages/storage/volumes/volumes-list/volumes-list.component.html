@@ -55,12 +55,12 @@
       </div>
     </mat-expansion-panel>
   </mat-accordion>
-  <app-permissions-sidebar
+  <ix-permissions-sidebar
     *ngIf="viewingPermissionsForDataset"
     class="permissions-sidebar"
     [dataset]="viewingPermissionsForDataset"
     (closed)="onPermissionsSidebarClosed()"
-  ></app-permissions-sidebar>
+  ></ix-permissions-sidebar>
 </div>
 
 <div *ngIf="zfsPoolRows.length < 1 && showDefaults">
