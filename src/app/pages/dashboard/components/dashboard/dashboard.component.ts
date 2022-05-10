@@ -610,6 +610,9 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       ) {
         return false;
       }
+      if (widget.name === 'Interface' && !this.dataFromConfig(widget)) {
+        return false;
+      }
       return true;
     });
   }
@@ -635,8 +638,8 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private setDashState(dashState: DashConfigItem[]): void {
-    this.dashState = dashState;
-    this.renderedWidgets = dashState.filter((x) => x.rendered);
+    this.dashState = this.sanitizeState(dashState);
+    this.renderedWidgets = this.dashState.filter((widget) => widget.rendered);
   }
 
   private getActionsConfig(target$: Subject<CoreEvent>): EntityToolbarActionConfig {
