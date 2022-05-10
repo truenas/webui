@@ -1,0 +1,22 @@
+.header-container {
+  color: var(--primary-txt);
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  margin-bottom: 16px;
+  padding: 0 10px;
+}
+
+.title-container {
+  display: flex;
+  flex-direction: row;
+  flex-grow: 1;
+}
+
+.actions-container {
+  align-items: center;
+  display: flex;
+  flex-direction: row-reverse;
+  flex-grow: 1;
+  gap: 0 10px;
+}
