@@ -81,7 +81,7 @@ export class SystemDatasetPoolComponent implements OnInit {
         }),
         catchError((error) => {
           this.isFormLoading = false;
-          this.errorHandler.handleWsFormError(error, this.form);
+          this.errorHandler.handleWsFormError({ ...error, ...(error.exc_info || {}) }, this.form);
           this.cdr.markForCheck();
           return EMPTY;
         }),

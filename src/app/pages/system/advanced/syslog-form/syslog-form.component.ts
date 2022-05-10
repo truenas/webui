@@ -13,6 +13,7 @@ import { choicesToOptions } from 'app/helpers/options.helper';
 import { helptextSystemAdvanced, helptextSystemAdvanced as helptext } from 'app/helptext/system/advanced';
 import { AdvancedConfigUpdate } from 'app/interfaces/advanced-config.interface';
 import { EntityUtils } from 'app/pages/common/entity/utils';
+import { FormErrorHandlerService } from 'app/pages/common/ix-forms/services/form-error-handler.service';
 import { DialogService, SystemGeneralService, WebSocketService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
@@ -61,6 +62,7 @@ export class SyslogFormComponent implements OnInit {
     private slideInService: IxSlideInService,
     private dialogService: DialogService,
     private cdr: ChangeDetectorRef,
+    private errorHandler: FormErrorHandlerService,
   ) {}
 
   ngOnInit(): void {
@@ -99,7 +101,7 @@ export class SyslogFormComponent implements OnInit {
         }),
         catchError((error) => {
           this.isFormLoading = false;
-          new EntityUtils().handleWsError(this, error);
+          this.errorHandler.handleWsFormError({ ...error, ...(error.exc_info || {}) }, this.form);
           this.cdr.markForCheck();
           return EMPTY;
         }),
