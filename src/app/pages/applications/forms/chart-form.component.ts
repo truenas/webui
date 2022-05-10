@@ -92,7 +92,11 @@ export class ChartFormComponent implements FormConfiguration {
       this.catalogApp.chart_schema.schema.questions.forEach((question) => {
         const fieldSet = fieldSets.find((fieldSet) => fieldSet.name === question.group);
         if (fieldSet) {
-          const fieldConfigs = this.entityUtils.parseSchemaFieldConfig(question, this.entityForm.isNew);
+          const fieldConfigs = this.entityUtils.parseSchemaFieldConfig(
+            question,
+            this.entityForm.isNew,
+            !!question.schema.immutable,
+          );
 
           const imageConfig = _.find(fieldConfigs, { name: 'image' }) as FormDictConfig;
           if (imageConfig) {

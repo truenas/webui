@@ -296,7 +296,11 @@ export class EntityUtils {
     return result;
   }
 
-  parseSchemaFieldConfig(schemaConfig: ChartSchemaNode, isNew: boolean = false): FieldConfig[] {
+  parseSchemaFieldConfig(
+    schemaConfig: ChartSchemaNode,
+    isNew: boolean = false,
+    isParentImmutable: boolean = false,
+  ): FieldConfig[] {
     let results: FieldConfig[] = [];
 
     if (schemaConfig.schema.hidden) {
@@ -321,9 +325,8 @@ export class EntityUtils {
     if (schemaConfig.label !== undefined) {
       fieldConfig.placeholder = schemaConfig.label;
     }
-    if (schemaConfig.schema.immutable && !isNew) {
+    if ((schemaConfig.schema.immutable || isParentImmutable) && !isNew) {
       fieldConfig['readonly'] = true;
-      fieldConfig['disabled'] = true;
     }
 
     let relations: Relation[] = null;
@@ -405,7 +408,7 @@ export class EntityUtils {
 
       let listFields: FieldConfig[] = [];
       schemaConfig.schema.items.forEach((item) => {
-        const fields = this.parseSchemaFieldConfig(item, isNew);
+        const fields = this.parseSchemaFieldConfig(item, isNew, !!item.schema.immutable || isParentImmutable);
         listFields = listFields.concat(fields);
       });
 
@@ -423,7 +426,11 @@ export class EntityUtils {
 
         let subFields: FieldConfig[] = [];
         schemaConfig.schema.attrs.forEach((dictConfig) => {
-          const fields = this.parseSchemaFieldConfig(dictConfig, isNew);
+          const fields = this.parseSchemaFieldConfig(
+            dictConfig,
+            isNew,
+            !!dictConfig.schema.immutable || isParentImmutable,
+          );
           subFields = subFields.concat(fields);
         });
         dictConfig['subFields'] = subFields;
@@ -440,7 +447,11 @@ export class EntityUtils {
 
         if (schemaConfig.schema.subquestions) {
           schemaConfig.schema.subquestions.forEach((subquestion) => {
-            const subResults = this.parseSchemaFieldConfig(subquestion, isNew);
+            const subResults = this.parseSchemaFieldConfig(
+              subquestion,
+              isNew,
+              !!subquestion.schema.immutable || isParentImmutable,
+            );
 
             if (schemaConfig.schema.show_subquestions_if !== undefined) {
               subResults.forEach((subFieldConfig) => {
