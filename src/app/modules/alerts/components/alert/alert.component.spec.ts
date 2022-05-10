@@ -1,6 +1,4 @@
-import {
-  byText, createComponentFactory, Spectator,
-} from '@ngneat/spectator/jest';
+import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { EffectsModule } from '@ngrx/effects';
 import { Store, StoreModule } from '@ngrx/store';
 import { MockPipe, ngMocks } from 'ng-mocks';
@@ -86,8 +84,7 @@ describe('AlertComponent', () => {
   });
 
   it('shows alert datetime (formatted according to system settings) and system timezone', () => {
-    const datetime = spectator.query('.alert-time');
-    expect(datetime).toHaveText('Jan 10 2022 10:36 (America/Alaska)');
+    expect(alert.dateTimeElement).toHaveText('Jan 10 2022 10:36 (America/Alaska)');
 
     const formatPipe = ngMocks.findInstance(FormatDateTimePipe);
     expect(formatPipe.transform).toHaveBeenCalledWith(1641811015);
@@ -113,8 +110,7 @@ describe('AlertComponent', () => {
       dismissed: true,
     } as Alert);
 
-    const reopenLink = spectator.query(byText('Re-Open'));
-    spectator.click(reopenLink);
+    alert.clickReopenLink();
 
     expect(websocket.call).toHaveBeenCalledWith('alert.restore', ['79']);
 

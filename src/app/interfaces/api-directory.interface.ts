@@ -5,7 +5,6 @@ import { DeviceType } from 'app/enums/device-type.enum';
 import { EnclosureSlotStatus } from 'app/enums/enclosure-slot-status.enum';
 import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
 import { FailoverStatus } from 'app/enums/failover-status.enum';
-import { LacpduRate, XmitHashPolicy } from 'app/enums/network-interface.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { TransportMode } from 'app/enums/transport-mode.enum';
@@ -198,7 +197,7 @@ import {
 } from 'app/interfaces/smart-test.interface';
 import { SmbConfig, SmbConfigUpdate } from 'app/interfaces/smb-config.interface';
 import {
-  SmbPresets, SmbShare, SmbSharesec, SmbSharesecAce, SmbShareUpdate,
+  SmbPresets, SmbShare, SmbSharesec, SmbSharesecAceUpdate, SmbShareUpdate,
 } from 'app/interfaces/smb-share.interface';
 import { SnmpConfig, SnmpConfigUpdate } from 'app/interfaces/snmp-config.interface';
 import { SshConfig, SshConfigUpdate } from 'app/interfaces/ssh-config.interface';
@@ -536,13 +535,13 @@ export type ApiDirectory = {
   'interface.vlan_parent_interface_choices': { params: void; response: Choices };
   'interface.query': { params: QueryParams<NetworkInterface>; response: NetworkInterface[] };
   'interface.create': { params: [NetworkInterfaceCreate]; response: NetworkInterface };
-  'interface.update': { params: [NetworkInterfaceUpdate]; response: NetworkInterface };
+  'interface.update': { params: [id: string, update: NetworkInterfaceUpdate]; response: NetworkInterface };
   'interface.delete': { params: [id: string]; response: string };
   'interface.has_pending_changes': { params: void; response: boolean };
   'interface.checkin_waiting': { params: void; response: number | null };
   'interface.checkin': { params: void; response: void };
-  'interface.xmit_hash_policy_choices': { params: void; response: { [key: string]: keyof XmitHashPolicy } };
-  'interface.lacpdu_rate_choices': { params: void; response: { [key: string]: keyof LacpduRate } };
+  'interface.xmit_hash_policy_choices': { params: void; response: Choices };
+  'interface.lacpdu_rate_choices': { params: void; response: Choices };
 
   // iSCSI
   'iscsi.initiator.query': { params: QueryParams<IscsiInitiatorGroup>; response: IscsiInitiatorGroup[] };
@@ -658,6 +657,7 @@ export type ApiDirectory = {
   'pool.dataset.attachments': { params: [datasetId: string]; response: DatasetAttachment[] };
   'pool.dataset.change_key': { params: [id: string, params: DatasetChangeKeyParams]; response: void };
   'pool.dataset.compression_choices': { params: void; response: Choices };
+  'pool.dataset.checksum_choices': { params: void; response: Choices };
   'pool.dataset.create': { params: [DatasetCreate]; response: Dataset };
   'pool.dataset.delete': { params: [path: string, params: { recursive: boolean; force?: boolean }]; response: boolean };
   'pool.dataset.encryption_algorithm_choices': { params: void; response: Choices };
@@ -680,6 +680,7 @@ export type ApiDirectory = {
   'pool.dataset.unlock': { params: [path: string, params: DatasetUnlockParams]; response: DatasetUnlockResult };
   'pool.dataset.unlock_services_restart_choices': { params: [id: string]; response: Choices };
   'pool.dataset.update': { params: [id: string, update: DatasetUpdate]; response: Dataset };
+  'pool.dataset.recordsize_choices': { params: void; response: string[] };
   'pool.detach': { params: [id: number, params: { label: string }]; response: boolean };
   'pool.download_encryption_key': { params: [volumeId: number, fileName?: string]; response: string };
   'pool.expand': { params: PoolExpandParams; response: null };
@@ -767,7 +768,7 @@ export type ApiDirectory = {
   'smb.update': { params: [SmbConfigUpdate]; response: SmbConfig };
   'smb.config': { params: void; response: SmbConfig };
   'smb.sharesec.query': { params: QueryParams<SmbSharesec>; response: SmbSharesec[] };
-  'smb.sharesec.update': { params: [id: number, update: { share_acl: SmbSharesecAce[] }]; response: SmbSharesec };
+  'smb.sharesec.update': { params: [id: number, update: { share_acl: SmbSharesecAceUpdate[] }]; response: SmbSharesec };
 
   // SSH
   'ssh.update': { params: [SshConfigUpdate]; response: SshConfig };

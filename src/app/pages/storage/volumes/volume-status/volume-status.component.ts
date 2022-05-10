@@ -385,9 +385,6 @@ export class VolumeStatusComponent implements OnInit, OnDestroy {
               this.dialogService.info(
                 helptext.replace_disk.title,
                 this.translate.instant('Successfully replaced disk {disk}.', { disk: name }),
-                '',
-                'info',
-                true,
               );
             });
             dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((res: Job) => {
@@ -520,9 +517,6 @@ export class VolumeStatusComponent implements OnInit, OnDestroy {
               this.dialogService.info(
                 helptext.extend_disk.title,
                 this.translate.instant(helptext.extend_disk.info_dialog_content) + diskName + '.',
-                '',
-                'info',
-                true,
               );
             });
             dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((res: Job) => {

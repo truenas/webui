@@ -10,7 +10,6 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { forkJoin } from 'rxjs';
 import { helptextSystemSupport as helptext } from 'app/helptext/system/support';
 import { SupportConfigUpdate } from 'app/interfaces/support.interface';
-import { AppLoaderService } from 'app/modules/app-loader/app-loader.service';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { DialogService, WebSocketService } from 'app/services';
@@ -48,7 +47,6 @@ export class ProactiveComponent implements OnInit {
     private dialogService: DialogService,
     private slideInService: IxSlideInService,
     private errorHandler: FormErrorHandlerService,
-    protected loader: AppLoaderService,
   ) {}
 
   ngOnInit(): void {
@@ -67,8 +65,10 @@ export class ProactiveComponent implements OnInit {
           this.cdr.markForCheck();
           this.slideInService.close();
 
-          this.dialogService.info(helptext.proactive.dialog_title,
-            helptext.proactive.dialog_mesage, '350px', 'info', true);
+          this.dialogService.info(
+            helptext.proactive.dialog_title,
+            helptext.proactive.dialog_mesage,
+          );
         }, (error) => {
           this.isLoading = false;
           this.errorHandler.handleWsFormError(error, this.form);
@@ -112,7 +112,9 @@ export class ProactiveComponent implements OnInit {
   supportUnavailable(): void {
     this.isFormDisabled = true;
     this.form.disable();
-    this.dialogService.info(helptext.proactive.dialog_unavailable_title,
-      helptext.proactive.dialog_unavailable_warning, '500px', 'warning', true);
+    this.dialogService.warn(
+      helptext.proactive.dialog_unavailable_title,
+      helptext.proactive.dialog_unavailable_warning,
+    );
   }
 }

@@ -104,6 +104,7 @@ export class WebdavFormComponent {
     const values = this.form.value;
 
     this.isFormLoading = true;
+    this.cdr.detectChanges();
     let request$: Observable<unknown>;
     if (this.editingWebdav) {
       request$ = this.ws.call('sharing.webdav.update', [
@@ -157,8 +158,6 @@ export class WebdavFormComponent {
             this.dialog.info(
               this.translate.instant('{service} Service', { service: 'WebDAV' }),
               this.translate.instant('The {service} service has been enabled.', { service: 'WebDAV' }),
-              '300px',
-              'info',
             );
           }),
           catchError((error) => {

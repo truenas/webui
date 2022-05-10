@@ -16,16 +16,15 @@ import { Disk } from 'app/interfaces/storage.interface';
 import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-table.component';
 import { EntityTableAction, EntityTableConfig } from 'app/modules/entity/entity-table/entity-table.interface';
 import { EntityUtils } from 'app/modules/entity/utils';
+import { DiskFormComponent } from 'app/pages/storage/disks/disk-form/disk-form.component';
 import { DiskWipeDialogComponent } from 'app/pages/storage/disks/disk-wipe-dialog/disk-wipe-dialog.component';
 import {
   ManualTestDialogComponent,
   ManualTestDialogParams,
 } from 'app/pages/storage/disks/manual-test-dialog/manual-test-dialog.component';
-import { DialogService, StorageService, WebSocketService } from 'app/services';
+import { StorageService, WebSocketService } from 'app/services';
 import { CoreService } from 'app/services/core-service/core.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { LocaleService } from 'app/services/locale.service';
-import { DiskFormComponent } from '../disk-form/disk-form.component';
 
 @UntilDestroy()
 @Component({
@@ -138,8 +137,6 @@ export class DiskListComponent implements EntityTableConfig<Disk> {
     protected ws: WebSocketService,
     protected router: Router,
     public diskbucket: StorageService,
-    protected dialogService: DialogService,
-    protected localeService: LocaleService,
     private matDialog: MatDialog,
     private core: CoreService,
     protected translate: TranslateService,

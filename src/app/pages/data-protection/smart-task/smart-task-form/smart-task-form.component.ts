@@ -53,7 +53,7 @@ export class SmartTaskFormComponent {
   };
 
   readonly diskOptions$ = this.ws.call('smart.test.disk_choices').pipe(choicesToOptions());
-  readonly typeOptions$ = of(mapToOptions(smartTestTypeLabels));
+  readonly typeOptions$ = of(mapToOptions(smartTestTypeLabels, this.translate));
 
   private editingTest: SmartTest;
 

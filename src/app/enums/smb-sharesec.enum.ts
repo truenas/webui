@@ -5,6 +5,6 @@ export enum SmbSharesecPermission {
 }
 
 export enum SmbSharesecType {
-  Allow = 'ALLOW',
+  Allowed = 'ALLOWED',
   Denied = 'DENIED',
 }

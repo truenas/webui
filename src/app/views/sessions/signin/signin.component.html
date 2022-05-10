@@ -1,6 +1,6 @@
 <div class="page-wrap height-100 login-form">
   <div class="session-form-hold">
-    <mat-progress-bar mode="determinate" value="0" class="session-progress"></mat-progress-bar>
+    <mat-progress-bar [mode]="connected() ? 'determinate' : 'indeterminate'" value="0" class="session-progress"></mat-progress-bar>
     <mat-card>
       <mat-card-content>
         <div [hidden]="!(connected() && logo_ready)">
@@ -139,7 +139,7 @@
           </div>
         </div>
         <div class="disconnected" [hidden]="connected() && logo_ready">
-          <div *ngIf="product">
+          <div *ngIf="product" class="disconnected-content">
             <div class="fake-icon">?</div>
             <p *ngIf="!ha_status">
               {{ 'Connecting to {product}' | translate: { product } }}

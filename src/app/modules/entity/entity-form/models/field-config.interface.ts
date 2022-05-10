@@ -207,7 +207,6 @@ export interface FormSchedulerConfig<P = unknown> extends BaseFieldConfig<P> {
 }
 
 export interface FormSelectConfig<P = unknown> extends BaseFieldConfig<P> {
-  alert?: { message: string; forValues: any[] };
   enableTextWrapForOptions?: boolean;
   fileLocation?: string;
   inlineLabel?: string;

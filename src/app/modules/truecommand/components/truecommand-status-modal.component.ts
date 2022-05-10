@@ -1,7 +1,6 @@
 import { Component, Inject } from '@angular/core';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateService } from '@ngx-translate/core';
 import { TrueCommandStatus } from 'app/enums/true-command-status.enum';
 import helptext from 'app/helptext/topbar';
 import { TrueCommandConfig } from 'app/interfaces/true-command-config.interface';
@@ -21,9 +20,7 @@ export class TruecommandStatusModalComponent {
   readonly TrueCommandStatus = TrueCommandStatus;
 
   constructor(
-    public dialogRef: MatDialogRef<TruecommandStatusModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: { parent: TruecommandButtonComponent; data: TrueCommandConfig },
-    public translate: TranslateService,
     private dialogService: DialogService,
   ) {}
 

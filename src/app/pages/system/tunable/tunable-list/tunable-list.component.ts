@@ -1,35 +1,25 @@
 import { Component } from '@angular/core';
 import { TooltipPosition } from '@angular/material/tooltip';
-import { ActivatedRoute, Router } from '@angular/router';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { ProductType } from 'app/enums/product-type.enum';
 import { Tunable } from 'app/interfaces/tunable.interface';
 import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-table.component';
-import { EntityTableConfig } from 'app/modules/entity/entity-table/entity-table.interface';
-import { WebSocketService } from 'app/services';
+import { EntityTableAction, EntityTableConfig } from 'app/modules/entity/entity-table/entity-table.interface';
+import { TunableFormComponent } from 'app/pages/system/tunable/tunable-form/tunable-form.component';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
+@UntilDestroy()
 @Component({
-  selector: 'system-tunables-list',
   template: '<entity-table [title]="title" [conf]="this"></entity-table>',
 })
 export class TunableListComponent implements EntityTableConfig {
-  title: string = this.translate.instant('Tunables');
-  title_scale: string = this.translate.instant('Sysctl');
+  title: string = this.translate.instant('Sysctl');
   wsDelete = 'tunable.delete' as const;
   queryCall = 'tunable.query' as const;
-
-  routeEdit: string[] = ['system', 'tunable', 'edit'];
-  protected routeSuccess: string[] = ['system', 'tunable'];
-  routeAdd: string[] = ['system', 'tunable', 'add'];
-  routeAddTooltip: string = this.translate.instant('Add Tunable');
-
-  protected routeEditScale: string[] = ['system', 'sysctl', 'edit'];
-  protected routeSuccessScale: string[] = ['system', 'advanced'];
-  protected routeAddScale: string[] = ['system', 'sysctl', 'add'];
-  protected routeAddTooltipScale = this.translate.instant('Add Sysctl');
-
+  routeAddTooltip: string = this.translate.instant('Add Sysctl');
+  protected routeSuccess: string[] = ['system', 'sysctl'];
   protected productType: ProductType;
-
   protected entityList: EntityTableComponent;
 
   wsMultiDelete = 'core.bulk' as const;
@@ -59,30 +49,24 @@ export class TunableListComponent implements EntityTableConfig {
     paging: true,
     sorting: { columns: this.columns },
     deleteMsg: {
-      title: this.translate.instant('Tunable') as string,
+      title: this.translate.instant('Sysctl'),
       key_props: ['var'],
     },
     multiSelect: true,
   };
 
   constructor(
-    protected router: Router,
-    protected aroute: ActivatedRoute,
-    protected ws: WebSocketService,
     protected translate: TranslateService,
+    private slideInService: IxSlideInService,
   ) {}
 
   preInit(entityList: EntityTableComponent): void {
     this.entityList = entityList;
-    this.productType = window.localStorage.getItem('product_type') as ProductType;
-    if (this.productType === ProductType.Scale || this.productType === ProductType.ScaleEnterprise) {
-      this.routeAdd = this.routeAddScale;
-      this.routeEdit = this.routeEditScale;
-      this.routeSuccess = this.routeSuccessScale;
-      this.routeAddTooltip = this.routeAddTooltipScale;
-      this.config.deleteMsg.title = this.translate.instant('Sysctl');
-      this.title = this.title_scale;
-    }
+    this.slideInService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
+      this.entityList.loaderOpen = true;
+      this.entityList.needRefreshTable = true;
+      this.entityList.getData();
+    });
   }
 
   wsMultiDeleteParams(selected: Tunable[]): [string, number[][]?] {
@@ -90,5 +74,33 @@ export class TunableListComponent implements EntityTableConfig {
     const selectedId = selected.map((tunable) => [tunable.id]);
     params.push(selectedId);
     return params;
+  }
+
+  doAdd(): void {
+    this.slideInService.open(TunableFormComponent);
+  }
+
+  getActions(row: Tunable): EntityTableAction<Tunable>[] {
+    return [
+      {
+        icon: 'edit',
+        label: this.translate.instant('Edit'),
+        name: 'edit',
+        actionName: 'edit',
+        onClick: (row: Tunable) => {
+          const tunableForm = this.slideInService.open(TunableFormComponent);
+          tunableForm.setTunableForEdit(row);
+        },
+      },
+      {
+        icon: 'delete',
+        name: 'delete',
+        actionName: 'delete',
+        label: this.translate.instant('Delete'),
+        onClick: () => {
+          this.entityList.doDelete(row);
+        },
+      },
+    ] as EntityTableAction<Tunable>[];
   }
 }

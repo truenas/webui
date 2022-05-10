@@ -25,13 +25,12 @@ import { ControlConfig, ToolbarConfig } from 'app/modules/entity/entity-toolbar/
 import { IxDetailRowDirective } from 'app/modules/ix-tables/directives/ix-detail-row.directive';
 import { userPageEntered } from 'app/pages/account/users/store/user.actions';
 import { selectUsers, selectUserState, selectUsersTotal } from 'app/pages/account/users/store/user.selectors';
-import { CoreService } from 'app/services/core-service/core.service';
+import { UserFormComponent } from 'app/pages/account/users/user-form/user-form.component';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LayoutService } from 'app/services/layout.service';
 import { AppState } from 'app/store';
 import { builtinUsersToggled } from 'app/store/preferences/preferences.actions';
 import { waitForPreferences } from 'app/store/preferences/preferences.selectors';
-import { IxSlideInService } from '../../../../services/ix-slide-in.service';
-import { UserFormComponent } from '../user-form/user-form.component';
 
 @UntilDestroy()
 @Component({
@@ -67,11 +66,12 @@ export class UserListComponent implements OnInit, AfterViewInit {
   filterValue = '';
   expandedRow: User;
   @ViewChildren(IxDetailRowDirective) private detailRows: QueryList<IxDetailRowDirective>;
-  error$ = this.store$.select(selectUserState).pipe(map((state) => state.error));
   isLoading$ = this.store$.select(selectUserState).pipe(map((state) => state.isLoading));
-  isEmpty$ = this.store$.select(selectUsersTotal).pipe(map((total) => total === 0));
-  emptyOrErrorConfig$: Observable<EmptyConfig> = combineLatest([this.isEmpty$, this.error$]).pipe(
-    switchMap(([_, isError]) => {
+  emptyOrErrorConfig$: Observable<EmptyConfig> = combineLatest([
+    this.store$.select(selectUsersTotal).pipe(map((total) => total === 0)),
+    this.store$.select(selectUserState).pipe(map((state) => state.error)),
+  ]).pipe(
+    switchMap(([, isError]) => {
       if (isError) {
         return of(this.errorConfig);
       }
@@ -85,7 +85,6 @@ export class UserListComponent implements OnInit, AfterViewInit {
     private translate: TranslateService,
     private slideIn: IxSlideInService,
     private cdr: ChangeDetectorRef,
-    private core: CoreService,
     private store$: Store<AppState>,
     private layoutService: LayoutService,
   ) { }

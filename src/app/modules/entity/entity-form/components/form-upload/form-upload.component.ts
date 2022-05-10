@@ -30,8 +30,11 @@ export class FormUploadComponent {
   fbrowser: HTMLInputElement;
 
   constructor(
-    protected ws: WebSocketService, protected http: HttpClient, private loader: AppLoaderService,
-    public dialog: DialogService, public translate: TranslateService,
+    protected ws: WebSocketService,
+    protected http: HttpClient,
+    private loader: AppLoaderService,
+    public dialog: DialogService,
+    public translate: TranslateService,
   ) {}
 
   fileBtnClick(): void {
@@ -69,7 +72,7 @@ export class FormUploadComponent {
           if (event.statusText === 'OK') {
             this.newMessage(location + '/' + fileBrowser.files[0].name);
             this.loader.close();
-            this.dialog.info(this.translate.instant('File upload complete'), '', '300px', 'info', true);
+            this.dialog.info(this.translate.instant('File upload complete'), '');
           }
         }
       }, (error) => {
@@ -77,7 +80,7 @@ export class FormUploadComponent {
         this.dialog.errorReport(this.translate.instant('Error'), error.statusText, error.message);
       });
     } else {
-      this.dialog.info(this.translate.instant('Please make sure to select a file'), '', '300px', 'info', true);
+      this.dialog.warn(this.translate.instant('Please make sure to select a file'), '');
     }
   }
 

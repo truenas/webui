@@ -1,0 +1,14 @@
+:host {
+  display: block;
+
+  entity-empty {
+    align-items: center;
+    display: flex;
+    justify-content: center;
+    margin: auto;
+  }
+}
+
+.mat-card {
+  overflow: hidden;
+}
