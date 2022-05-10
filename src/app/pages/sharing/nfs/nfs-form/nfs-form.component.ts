@@ -124,6 +124,7 @@ export class NfsFormComponent implements OnInit {
 
   onSubmit(): void {
     this.isLoading = true;
+    this.cdr.markForCheck();
     const nfsShare = this.form.value;
     let request$: Observable<unknown>;
     if (this.isNew) {
@@ -140,6 +141,7 @@ export class NfsFormComponent implements OnInit {
       .subscribe(
         () => {
           this.isLoading = false;
+          this.cdr.markForCheck();
           this.slideInService.close();
         },
         (error) => {
@@ -189,8 +191,6 @@ export class NfsFormComponent implements OnInit {
             this.dialogService.info(
               this.translate.instant('{service} Service', { service: 'NFS' }),
               this.translate.instant('The {service} service has been enabled.', { service: 'NFS' }),
-              '250px',
-              'info',
             );
 
             return undefined;

@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+import { take } from 'rxjs/operators';
 import { ProductType } from 'app/enums/product-type.enum';
 import { shared, helptextSharingSmb } from 'app/helptext/sharing';
 import vol_helptext from 'app/helptext/storage/volumes/volume-list';
@@ -11,7 +12,7 @@ import { EntityTableAction, EntityTableConfig } from 'app/modules/entity/entity-
 import { EntityUtils } from 'app/modules/entity/utils';
 import { SmbFormComponent } from 'app/pages/sharing/smb/smb-form/smb-form.component';
 import { DialogService, WebSocketService } from 'app/services';
-import { ModalService } from 'app/services/modal.service';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
 @Component({
@@ -66,25 +67,28 @@ export class SmbListComponent implements EntityTableConfig {
   constructor(
     private ws: WebSocketService,
     private router: Router,
+    private slideInService: IxSlideInService,
     private dialog: DialogService,
     private translate: TranslateService,
-    private modalService: ModalService,
   ) {}
 
   afterInit(entityList: EntityTableComponent): void {
     this.entityList = entityList;
+  }
 
-    this.modalService.refreshTable$.pipe(untilDestroyed(this)).subscribe(() => {
+  doAdd(): void {
+    this.slideInService.open(SmbFormComponent);
+    this.slideInService.onClose$.pipe(take(1), untilDestroyed(this)).subscribe(() => {
       this.entityList.getData();
     });
   }
 
-  doAdd(id?: number): void {
-    this.modalService.openInSlideIn(SmbFormComponent, id);
-  }
-
-  doEdit(id: number): void {
-    this.doAdd(id);
+  doEdit(id: string | number): void {
+    const form = this.slideInService.open(SmbFormComponent);
+    form.setSmbShareForEdit(this.entityList.rows.find((share) => share.id === id));
+    this.slideInService.onClose$.pipe(take(1), untilDestroyed(this)).subscribe(() => {
+      this.entityList.getData();
+    });
   }
 
   getActions(row: SmbShare): EntityTableAction[] {

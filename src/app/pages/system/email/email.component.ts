@@ -158,7 +158,6 @@ export class EmailComponent implements OnInit {
           this.dialogService.info(
             this.translate.instant('Email'),
             this.translate.instant('Email settings updated.'),
-            '500px', 'info',
           );
           this.cdr.markForCheck();
         },
@@ -216,7 +215,6 @@ export class EmailComponent implements OnInit {
         this.dialogService.info(
           this.translate.instant('Email'),
           this.translate.instant('Test email sent!'),
-          '500px', 'info',
         );
       });
     });

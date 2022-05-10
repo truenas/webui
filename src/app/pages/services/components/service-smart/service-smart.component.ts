@@ -7,12 +7,12 @@ import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
+import { SmartPowerMode } from 'app/enums/smart-power.mode';
 import helptext from 'app/helptext/services/components/service-smart';
 import { numberValidator } from 'app/modules/entity/entity-form/validators/number-validation';
+import { EntityUtils } from 'app/modules/entity/utils';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { DialogService, WebSocketService } from 'app/services';
-import { SmartPowerMode } from '../../../../enums/smart-power.mode';
-import { EntityUtils } from '../../../../modules/entity/utils';
 
 @UntilDestroy()
 @Component({

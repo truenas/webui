@@ -10,8 +10,8 @@ import {
 } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
 import { Observable, of, throwError } from 'rxjs';
-import { Option } from '../../../../interfaces/option.interface';
-import { IxErrorsComponent } from '../ix-errors/ix-errors.component';
+import { Option } from 'app/interfaces/option.interface';
+import { IxErrorsComponent } from 'app/modules/ix-forms/components/ix-errors/ix-errors.component';
 import { IxSelectComponent } from './ix-select.component';
 
 describe('IxSelectComponent', () => {

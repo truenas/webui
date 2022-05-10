@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { MatDialog, MatDialogRef, MatDialogConfig } from '@angular/material/dialog';
-import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Observable } from 'rxjs';
 import { filter } from 'rxjs/operators';
@@ -68,7 +67,7 @@ export class DialogService {
       dialogRef.componentInstance.method = options.method;
       dialogRef.componentInstance.switchSelectionEmitter.pipe(untilDestroyed(this)).subscribe((selection: boolean) => {
         const data = options.data;
-        if (selection && data[0]) {
+        if (selection && data && data[0]) {
           if (data[0] && data[0].hasOwnProperty('reboot')) {
             data[0].reboot = !data[0].reboot;
           }
@@ -100,12 +99,23 @@ export class DialogService {
     return dialogRef.afterClosed();
   }
 
-  info(title: string, info: string, width = '500px', icon = 'report_problem', isHtml = false): Observable<boolean> {
-    const dialogRef = this.dialog.open(InfoDialogComponent, { width });
+  info(title: string, info: string, isHtml = false): Observable<boolean> {
+    const dialogRef = this.dialog.open(InfoDialogComponent);
 
     dialogRef.componentInstance.title = title;
     dialogRef.componentInstance.info = info;
-    dialogRef.componentInstance.icon = icon;
+    dialogRef.componentInstance.icon = 'info';
+    dialogRef.componentInstance.isHtml = isHtml;
+
+    return dialogRef.afterClosed();
+  }
+
+  warn(title: string, info: string, isHtml = false): Observable<boolean> {
+    const dialogRef = this.dialog.open(InfoDialogComponent);
+
+    dialogRef.componentInstance.title = title;
+    dialogRef.componentInstance.info = info;
+    dialogRef.componentInstance.icon = 'warning';
     dialogRef.componentInstance.isHtml = isHtml;
 
     return dialogRef.afterClosed();
@@ -139,48 +149,6 @@ export class DialogService {
     dialogRef.componentInstance.conf = conf;
 
     return dialogRef.afterClosed();
-  }
-
-  doubleConfirm(
-    title: string,
-    message: string,
-    name: string,
-    confirmBox?: boolean,
-    buttonMsg?: string,
-  ): Observable<boolean> {
-    const conf = {
-      title,
-      message,
-      name,
-      confirmInstructions: true,
-      fieldConfig: [
-        {
-          type: 'input',
-          name: 'name',
-          required: true,
-          hideErrMsg: true,
-        },
-        {
-          type: 'checkbox',
-          name: 'confirm',
-          placeholder: T('Confirm'),
-          isHidden: !confirmBox,
-        },
-      ],
-      saveButtonText: buttonMsg || T('Delete'),
-      afterInit(entityDialog: EntityDialogComponent) {
-        entityDialog.formGroup.controls['name'].valueChanges.pipe(untilDestroyed(entityDialog)).subscribe((res) => {
-          entityDialog.submitEnabled = res === name && (confirmBox ? entityDialog.formGroup.controls['confirm'].value : true);
-        });
-        entityDialog.formGroup.controls['confirm'].valueChanges.pipe(untilDestroyed(entityDialog)).subscribe((res) => {
-          entityDialog.submitEnabled = res && (entityDialog.formGroup.controls['name'].value === name);
-        });
-      },
-      customSubmit(entityDialog: EntityDialogComponent) {
-        entityDialog.dialogRef.close(true);
-      },
-    } as DialogFormConfiguration;
-    return this.dialogForm(conf);
   }
 
   closeAllDialogs(): void {

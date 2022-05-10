@@ -204,9 +204,11 @@ export class TerminalComponent implements OnInit, OnDestroy {
     this.xterm.setOption('fontSize', this.fontSize);
     this.fitAddon.fit();
     const size = this.fitAddon.proposeDimensions();
-    this.ws.call('core.resize_shell', [this.connectionId, size.cols, size.rows]).pipe(untilDestroyed(this)).subscribe(() => {
-      this.xterm.focus();
-    });
+    if (size) {
+      this.ws.call('core.resize_shell', [this.connectionId, size.cols, size.rows]).pipe(untilDestroyed(this)).subscribe(() => {
+        this.xterm.focus();
+      });
+    }
     return true;
   }
 

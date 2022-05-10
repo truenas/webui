@@ -58,12 +58,11 @@ import { NtpServerListComponent } from 'app/pages/system/general-settings/ntp-se
 import { EulaComponent } from 'app/pages/system/general-settings/support/eula/eula.component';
 import { JiraOauthComponent } from 'app/pages/system/general-settings/support/file-ticket-form/components/jira-oauth/jira-oauth.component';
 import { FileTicketFormComponent } from 'app/pages/system/general-settings/support/file-ticket-form/file-ticket-form.component';
+import { FileTicketLicensedFormComponent } from 'app/pages/system/general-settings/support/file-ticket-licensed-form/file-ticket-licensed-form.component';
 import { LicenseComponent } from 'app/pages/system/general-settings/support/license/license.component';
 import { ProactiveComponent } from 'app/pages/system/general-settings/support/proactive/proactive.component';
-import { SupportFormLicensedComponent } from 'app/pages/system/general-settings/support/support-licensed/support-form-licensed.component';
 import { SupportComponent } from 'app/pages/system/general-settings/support/support.component';
 import { SysInfoComponent } from 'app/pages/system/general-settings/support/sys-info/sys-info.component';
-import { KmipComponent } from 'app/pages/system/kmip/kmip.component';
 import { TunableFormComponent } from 'app/pages/system/tunable/tunable-form/tunable-form.component';
 import { TunableListComponent } from 'app/pages/system/tunable/tunable-list/tunable-list.component';
 import { QrDialogComponent } from 'app/pages/system/two-factor/qr-dialog/qr-dialog.component';
@@ -126,6 +125,7 @@ import { routing } from './system.routing';
     EulaComponent,
     FailoverSettingsComponent,
     FileTicketFormComponent,
+    FileTicketLicensedFormComponent,
     GeneralSettingsComponent,
     GuiFormComponent,
     InitShutdownFormComponent,
@@ -133,7 +133,6 @@ import { routing } from './system.routing';
     IsolatedGpuPcisFormComponent,
     JiraOauthComponent,
     KernelFormComponent,
-    KmipComponent,
     LicenseComponent,
     LocalizationFormComponent,
     ManualUpdateComponent,
@@ -143,7 +142,6 @@ import { routing } from './system.routing';
     QrDialogComponent,
     ReplicationFormComponent,
     SupportComponent,
-    SupportFormLicensedComponent,
     SysInfoComponent,
     SyslogFormComponent,
     SystemDatasetPoolComponent,

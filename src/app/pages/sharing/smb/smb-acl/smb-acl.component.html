@@ -1,0 +1,73 @@
+<ix-modal-header
+  [title]="'Share ACL for {share}' | translate: { share: shareName }"
+  [loading]="isLoading"
+></ix-modal-header>
+
+<mat-card>
+  <mat-card-content>
+    <form [formGroup]="form" class="ix-form-container" (submit)="onSubmit()">
+      <ix-fieldset [title]="'ACL Entries' | translate">
+        <ix-list
+          [empty]="form.controls.entries.length === 0"
+          [label]="'Add entry' | translate"
+          formArrayName="entries"
+          (add)="addAce()"
+        >
+          <ix-list-item
+            *ngFor="let entry of form.controls.entries.controls; let i = index"
+            [formGroupName]="i"
+            (delete)="removeAce(i)"
+          >
+            <div class="entry-row">
+              <ix-input
+                formControlName="ae_who_sid"
+                [label]="'SID' | translate"
+                [tooltip]="helptext.ae_who_sid_tooltip | translate"
+              ></ix-input>
+            </div>
+            <div class="entry-row">
+              <ix-input
+                formControlName="ae_who_name_domain"
+                [label]="'Domain' | translate"
+                [tooltip]="helptext.ae_who_name_domain_tooltip | translate"
+              ></ix-input>
+              <ix-input
+                formControlName="ae_who_name_name"
+                [label]="'Name' | translate"
+                [tooltip]="helptext.ae_who_name_name_tooltip | translate"
+              ></ix-input>
+            </div>
+            <div class="entry-row">
+              <ix-errors [control]="entry"></ix-errors>
+            </div>
+            <div class="entry-row">
+              <ix-select
+                formControlName="ae_perm"
+                [label]="'Permission' | translate"
+                [options]="permissions$"
+                [required]="true"
+                [tooltip]="helptext.ae_perm_tooltip | translate"
+              ></ix-select>
+              <ix-select
+                formControlName="ae_type"
+                [label]="'Type' | translate"
+                [options]="types$"
+                [required]="true"
+                [tooltip]="helptext.ae_type_tooltip | translate"
+              ></ix-select>
+            </div>
+          </ix-list-item>
+        </ix-list>
+      </ix-fieldset>
+
+      <div class="form-actions">
+        <button
+          mat-button
+          type="submit"
+          [disabled]="form.invalid || isLoading"
+          color="primary"
+        >{{ 'Save' | translate }}</button>
+      </div>
+    </form>
+  </mat-card-content>
+</mat-card>

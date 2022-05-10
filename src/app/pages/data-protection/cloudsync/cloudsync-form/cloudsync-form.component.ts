@@ -932,7 +932,7 @@ export class CloudsyncFormComponent implements FormConfiguration {
       }))
       .pipe(filter(() => this.formGroup.get('transfer_mode').value !== TransferMode.Copy))
       .pipe(untilDestroyed(this)).subscribe(() => {
-        this.dialog.info(helptext.resetTransferModeDialog.title, helptext.resetTransferModeDialog.content, '500px', 'info', true);
+        this.dialog.info(helptext.resetTransferModeDialog.title, helptext.resetTransferModeDialog.content, true);
         this.formGroup.get('transfer_mode').setValue(TransferMode.Copy);
       });
 
