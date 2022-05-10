@@ -122,7 +122,7 @@ export class DiskFormComponent implements OnInit {
           this.cdr.markForCheck();
           this.slideInService.close();
           this.dialogService.info(helptext.dialog_title,
-            helptext.dialog_msg_save_success, '350px', 'info', true);
+            helptext.dialog_msg_save_success, true);
         },
         (error) => {
           this.isLoading = false;
