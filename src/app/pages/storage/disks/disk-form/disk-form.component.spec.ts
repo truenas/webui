@@ -122,7 +122,7 @@ describe('DiskFormComponent', () => {
       critical: null,
       description: 'New disk description',
       difference: null,
-      informational: '10',
+      informational: 10,
       hddstandby: '10',
       smartoptions: 'new smart options',
       togglesmart: true,
