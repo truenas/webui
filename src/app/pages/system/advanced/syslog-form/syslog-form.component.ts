@@ -3,8 +3,11 @@ import {
 } from '@angular/core';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { forkJoin, of } from 'rxjs';
-import { map, switchMap } from 'rxjs/operators';
+import { EMPTY, forkJoin, of } from 'rxjs';
+import {
+  catchError, map, switchMap, tap,
+} from 'rxjs/operators';
+import { JobState } from 'app/enums/job-state.enum';
 import { SyslogLevel, SyslogTransport } from 'app/enums/syslog.enum';
 import { choicesToOptions } from 'app/helpers/options.helper';
 import { helptextSystemAdvanced, helptextSystemAdvanced as helptext } from 'app/helptext/system/advanced';
@@ -85,18 +88,24 @@ export class SyslogFormComponent implements OnInit {
 
     this.isFormLoading = true;
     this.ws.call('system.advanced.update', [configUpdate]).pipe(
-      switchMap(() => this.ws.job('systemdataset.update', [{ syslog }])),
+      switchMap(() => this.ws.job('systemdataset.update', [{ syslog }]).pipe(
+        tap((job) => {
+          if (job.state === JobState.Success) {
+            this.isFormLoading = false;
+            this.sysGeneralService.refreshSysGeneral();
+            this.cdr.markForCheck();
+            this.slideInService.close();
+          }
+        }),
+        catchError((error) => {
+          this.isFormLoading = false;
+          new EntityUtils().handleWsError(this, error);
+          this.cdr.markForCheck();
+          return EMPTY;
+        }),
+      )),
       untilDestroyed(this),
-    ).subscribe(() => {
-      this.isFormLoading = false;
-      this.cdr.markForCheck();
-      this.slideInService.close();
-      this.sysGeneralService.refreshSysGeneral();
-    }, (res) => {
-      this.isFormLoading = false;
-      new EntityUtils().handleWsError(this, res);
-      this.cdr.markForCheck();
-    });
+    ).subscribe();
   }
 
   private loadForm(): void {
