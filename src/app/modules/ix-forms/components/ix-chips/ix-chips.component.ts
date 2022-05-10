@@ -3,7 +3,6 @@ import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, Input, OnChanges, ViewChild,
 } from '@angular/core';
 import { ControlValueAccessor, NgControl } from '@angular/forms';
-import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import {
   fromEvent, merge, Observable, Subject,
@@ -83,11 +82,6 @@ export class IxChipsComponent implements OnChanges, ControlValueAccessor {
 
     this.clearInput();
     this.updateValues([...this.values, newValue]);
-  }
-
-  onSuggestionSelected(event: MatAutocompleteSelectedEvent): void {
-    this.clearInput();
-    this.updateValues([...this.values, event.option.value]);
   }
 
   /**

@@ -35,7 +35,7 @@
   </mat-chip-list>
   <mat-autocomplete
     #auto="matAutocomplete"
-    (optionSelected)="onSuggestionSelected($event)"
+    (optionSelected)="onAdd($event.option.value)"
   >
     <ng-container *ngIf="suggestions$">
       <mat-option *ngFor="let suggestion of suggestions$ | async" [value]="suggestion">

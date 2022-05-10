@@ -12,8 +12,6 @@ import { SmartResultsComponent } from './disks/smart-results/smart-results.compo
 import { ImportDiskComponent } from './import-disk/import-disk.component';
 import { VmwareSnapshotListComponent } from './vmware-snapshot/vmware-snapshot-list/vmware-snapshot-list.component';
 import { DatasetFormComponent } from './volumes/datasets/dataset-form/dataset-form.component';
-import { GroupQuotaFormComponent } from './volumes/datasets/dataset-quotas/dataset-quotas-grouplist/group-quota-form/group-quota-form.component';
-import { UserQuotaFormComponent } from './volumes/datasets/dataset-quotas/dataset-quotas-userlist/user-quota-form/user-quota-form.component';
 import { DatasetUnlockComponent } from './volumes/datasets/dataset-unlock/dataset-unlock.component';
 import { ManagerComponent } from './volumes/manager/manager.component';
 import { VolumeStatusComponent } from './volumes/volume-status/volume-status.component';
@@ -67,7 +65,7 @@ export const routes: Routes = [
           {
             path: 'group-quotas/:pk',
             component: DatasetQuotasGrouplistComponent,
-            data: { title: 'Edit Group Quotas', breadcrumb: 'Edit Group Quotas' },
+            data: { title: 'Group Quotas', breadcrumb: 'Edit Group Quotas' },
           },
           {
             path: 'id/:pk/dataset/acl/:path',
