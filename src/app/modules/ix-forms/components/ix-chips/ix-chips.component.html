@@ -8,6 +8,7 @@
 
 <div class="input-container" [class.disabled]="isDisabled">
   <mat-chip-list
+    [disabled]="isDisabled"
     #chipList class="form-chip"
     [required]="required"
   >
@@ -23,6 +24,7 @@
     </mat-chip>
     <input
       [placeholder]="placeholder"
+      [disabled]="isDisabled"
       [matChipInputFor]="chipList"
       [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
       [matChipInputAddOnBlur]="true"
