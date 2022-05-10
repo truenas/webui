@@ -43,7 +43,7 @@ describe('GroupQuotaFormComponent', () => {
   it('creates quotas when form is submitted', async () => {
     const form = await loader.getHarness(IxFormHarness);
     await form.fillForm({
-      'User Data Quota (Examples: 500 KiB, 500M, 2 TB)': '500M',
+      'Group Data Quota (Examples: 500 KiB, 500M, 2 TB)': '500M',
       'Group Object Quota': 2000,
       'Apply To Groups': ['roots', 'trunks'],
     });
