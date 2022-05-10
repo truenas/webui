@@ -106,7 +106,6 @@ export class IxComboboxComponent implements ControlValueAccessor, OnInit {
       if (selectedOptionFromLabel) {
         this.selectedOption = selectedOptionFromLabel;
         this.value = selectedOptionFromLabel.value;
-        this.filterChanged$.next('');
         this.onChange(this.value);
       }
       if (!this.selectedOption && this.value !== null && this.value !== '') {
