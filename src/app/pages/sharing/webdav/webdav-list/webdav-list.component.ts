@@ -13,7 +13,6 @@ import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
-  selector: 'webdav-list',
   template: '<entity-table [title]="title" [conf]="this"></entity-table>',
 })
 export class WebdavListComponent implements EntityTableConfig, OnInit {

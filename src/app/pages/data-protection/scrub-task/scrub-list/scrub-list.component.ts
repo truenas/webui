@@ -13,7 +13,6 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
 @Component({
-  selector: 'app-scrub-list',
   template: '<entity-table [title]="title" [conf]="this"></entity-table>',
   providers: [TaskService, UserService, EntityFormService],
 })

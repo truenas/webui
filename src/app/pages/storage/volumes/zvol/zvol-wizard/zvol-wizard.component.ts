@@ -44,7 +44,6 @@ interface ZvolFormData {
 
 @UntilDestroy()
 @Component({
-  selector: 'app-zvol-wizard',
   template: '<entity-wizard [conf]="this"></entity-wizard>',
 })
 export class ZvolWizardComponent implements WizardConfiguration {

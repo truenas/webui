@@ -23,7 +23,6 @@ import { IdmapFormComponent } from './idmap-form.component';
 
 @UntilDestroy()
 @Component({
-  selector: 'app-idmap-list',
   template: '<entity-table [title]="title" [conf]="this"></entity-table>',
 })
 export class IdmapListComponent implements EntityTableConfig {

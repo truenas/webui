@@ -13,7 +13,6 @@ import { StorageService } from 'app/services/storage.service';
 
 @UntilDestroy()
 @Component({
-  selector: 'app-disk-bulk-edit',
   template: '<entity-form [conf]="this"></entity-form>',
 })
 export class DiskBulkEditComponent implements FormConfiguration {

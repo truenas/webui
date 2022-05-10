@@ -731,15 +731,15 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
   }
 
   // Fix a layout problem on Sharing/ISCSI page with ink-bar under active link...
-  iscsi .mat-tab-label-active,
-  reportsdashboard .mat-tab-label-active {
+  ix-iscsi .mat-tab-label-active,
+  ix-reports-dashboard .mat-tab-label-active {
     @include variable(border-color, --primary, $primary);
     border-bottom: 2px solid;
   }
 
   //...by hiding ink bar, replacing it with a bottom border, above.
-  iscsi .mat-ink-bar,
-  reportsdashboard .mat-ink-bar {
+  ix-iscsi .mat-ink-bar,
+  ix-reports-dashboard .mat-ink-bar {
     opacity: 0;
   }
 
@@ -1083,7 +1083,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     vertical-align: top;
   }
 
-  app-volumes-list .ui-treetable-resizable .ui-treetable-tfoot>tr>td,
+  ix-volumes-list .ui-treetable-resizable .ui-treetable-tfoot>tr>td,
   .ui-treetable-resizable .ui-treetable-tbody>tr>td {
     max-width: 300px;
     text-overflow: ellipsis;
@@ -1091,7 +1091,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     white-space: nowrap;
   }
 
-  app-volumes-list td[id^='tbody__comments_'] {
+  ix-volumes-list td[id^='tbody__comments_'] {
     min-width: 200px;
     text-overflow: unset;
     white-space: normal !important;
@@ -1128,11 +1128,11 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
   }
 
   app-select-dialog .mat-select-placeholder,
-  app-ipmi .mat-select-placeholder {
+  ix-ipmi .mat-select-placeholder {
     @include variable(color, --fg2, $fg2);
   }
 
-  app-acmedns-form {
+  ix-acmedns-form {
     h4 {
       font-size: 20px;
     }
@@ -1259,11 +1259,11 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     margin-bottom: 1rem;
   }
 
-  iscsi .mat-tab-links {
+  ix-iscsi .mat-tab-links {
     flex-wrap: wrap;
   }
 
-  app-interfaces-list #timeout-field {
+  ix-interfaces-list #timeout-field {
     text-align: center;
     width: 50px;
   }

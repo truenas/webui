@@ -46,7 +46,6 @@ interface PoolDiskInfo {
 
 @UntilDestroy()
 @Component({
-  selector: 'volume-status',
   templateUrl: './volume-status.component.html',
   styleUrls: ['./volume-status.component.scss'],
 })

@@ -43,13 +43,13 @@
               [showReorderHandle]="reorderMode"
             ><span ixDragHandle></span></widget-sysinfo>
 
-            <widget-help
+            <ix-widget-help
               *ngSwitchCase="'help'"
               ixDrag
               [showReorderHandle]="reorderMode"
-            ><span ixDragHandle></span></widget-help>
+            ><span ixDragHandle></span></ix-widget-help>
 
-            <widget-cpu *ngSwitchCase="'cpu'"
+            <ix-widget-cpu *ngSwitchCase="'cpu'"
               fxFlex="{{widgetWidth}}px"
               fxFlex.xs="100"
               ixDrag
@@ -57,9 +57,9 @@
               [cpuModel]="systemInformation.model"
               [widgetSize]="medium"
               [showReorderHandle]="reorderMode"
-            ><span ixDragHandle></span></widget-cpu>
+            ><span ixDragHandle></span></ix-widget-cpu>
 
-            <widget-memory *ngSwitchCase="'memory'"
+            <ix-widget-memory *ngSwitchCase="'memory'"
               fxFlex="{{widgetWidth}}px"
               fxFlex.xs="100"
               ixDrag
@@ -67,9 +67,9 @@
               [data]="dataFromConfig(widget) | cast"
               [widgetSize]="medium"
               [showReorderHandle]="reorderMode"
-            ><span ixDragHandle></span></widget-memory>
+            ><span ixDragHandle></span></ix-widget-memory>
 
-            <widget-pool *ngSwitchCase="'pool'"
+            <ix-widget-pool *ngSwitchCase="'pool'"
               fxFlex="{{widgetWidth}}px"
               fxFlex.xs="100"
               ixDrag
@@ -77,9 +77,9 @@
               [volumeData]="volumeDataFromConfig(widget)"
               [widgetSize]="medium"
               [showReorderHandle]="reorderMode"
-            ><span ixDragHandle></span></widget-pool>
+            ><span ixDragHandle></span></ix-widget-pool>
 
-            <widget-storage *ngSwitchCase="'storage'"
+            <ix-widget-storage *ngSwitchCase="'storage'"
               fxFlex="{{widgetWidth}}px"
               fxFlex.xs="100"
               ixDrag
@@ -87,9 +87,9 @@
               [volumeData]="volumeDataFromConfig(widget) | cast"
               [widgetSize]="medium"
               [showReorderHandle]="reorderMode"
-            ><span ixDragHandle></span></widget-storage>
+            ><span ixDragHandle></span></ix-widget-storage>
 
-            <widget-nic *ngSwitchCase="'interface'"
+            <ix-widget-nic *ngSwitchCase="'interface'"
               fxFlex="{{widgetWidth}}px"
               fxFlex.xs="100"
               ixDrag
@@ -97,9 +97,9 @@
               [stats]="statsDataEvent$"
               [widgetSize]="medium"
               [showReorderHandle]="reorderMode"
-            ><span ixDragHandle></span></widget-nic>
+            ><span ixDragHandle></span></ix-widget-nic>
 
-            <widget-network *ngSwitchCase="'network'"
+            <ix-widget-network *ngSwitchCase="'network'"
               fxFlex="{{widgetWidth}}px"
               fxFlex.xs="100"
               ixDrag
@@ -107,7 +107,7 @@
               [stats]="statsDataEvent$"
               [widgetSize]="medium"
               [showReorderHandle]="reorderMode"
-            ><span ixDragHandle></span></widget-network>
+            ><span ixDragHandle></span></ix-widget-network>
 
           </ng-container>
         </div>
@@ -151,53 +151,53 @@
               [widgetSize]="medium">
             </widget-sysinfo>
 
-            <widget-help
+            <ix-widget-help
               *ngSwitchCase="'help'"
               (back)="onMobileBack()"
-            ></widget-help>
+            ></ix-widget-help>
 
-            <widget-cpu *ngSwitchCase="'cpu'"
+            <ix-widget-cpu *ngSwitchCase="'cpu'"
               (back)="onMobileBack()"
               [data]="dataFromConfig(widget) | cast"
               [cpuModel]="systemInformation.model"
               [widgetSize]="medium"
-            ></widget-cpu>
+            ></ix-widget-cpu>
 
-            <widget-memory *ngSwitchCase="'memory'"
+            <ix-widget-memory *ngSwitchCase="'memory'"
               (back)="onMobileBack()"
               [data]="dataFromConfig(widget) | cast"
               [widgetSize]="medium"
-            ></widget-memory>
+            ></ix-widget-memory>
 
-            <widget-pool *ngSwitchCase="'pool'"
+            <ix-widget-pool *ngSwitchCase="'pool'"
               (back)="onMobileBack()"
               [poolState]="dataFromConfig(widget) | cast"
               [volumeData]="volumeDataFromConfig(widget) | cast"
               [widgetSize]="medium"
-            ></widget-pool>
+            ></ix-widget-pool>
 
-            <widget-storage *ngSwitchCase="'storage'"
+            <ix-widget-storage *ngSwitchCase="'storage'"
               (back)="onMobileBack()"
               fxFlex="{{widgetWidth}}px"
               fxFlex.xs="100"
               [pools]="dataFromConfig(widget) | cast"
               [volumeData]="volumeDataFromConfig(widget) | cast"
               [widgetSize]="medium"
-            ></widget-storage>
+            ></ix-widget-storage>
 
-            <widget-nic *ngSwitchCase="'interface'"
+            <ix-widget-nic *ngSwitchCase="'interface'"
               (back)="onMobileBack()"
               [nicState]="dataFromConfig(widget) | cast"
               [stats]="statsDataEvent$"
               [widgetSize]="medium"
-            ></widget-nic>
+            ></ix-widget-nic>
 
-            <widget-network *ngSwitchCase="'network'"
+            <ix-widget-network *ngSwitchCase="'network'"
               (back)="onMobileBack()"
               [nics]="nics"
               [stats]="statsDataEvent$"
               [widgetSize]="medium"
-            ></widget-network>
+            ></ix-widget-network>
 
           </ng-container>
         </ng-container>

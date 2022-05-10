@@ -16,7 +16,6 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
 @Component({
-  selector: 'app-smb-list',
   template: '<entity-table [title]="title" [conf]="this"></entity-table>',
 })
 export class SmbListComponent implements EntityTableConfig {

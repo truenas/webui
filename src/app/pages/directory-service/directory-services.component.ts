@@ -46,7 +46,6 @@ interface DataCard {
 
 @UntilDestroy()
 @Component({
-  selector: 'directoryservices',
   templateUrl: './directory-services.component.html',
   styleUrls: ['./directory-services.component.scss'],
 })

@@ -47,7 +47,6 @@ type SizeField = 'quota' | 'refquota' | 'reservation' | 'refreservation' | 'spec
 
 @UntilDestroy()
 @Component({
-  selector: 'app-dataset-form',
   template: '<entity-form [conf]="this"></entity-form>',
 })
 export class DatasetFormComponent implements FormConfiguration {
