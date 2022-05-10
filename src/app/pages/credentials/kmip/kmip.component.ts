@@ -1,0 +1,132 @@
+import {
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
+} from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
+import { FormBuilder } from '@ngneat/reactive-forms';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
+import { forkJoin } from 'rxjs';
+import { idNameArrayToOptions } from 'app/helpers/options.helper';
+import { helptextSystemKmip } from 'app/helptext/system/kmip';
+import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
+import { EntityUtils } from 'app/modules/entity/utils';
+import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
+import { DialogService, SystemGeneralService, WebSocketService } from 'app/services';
+
+@UntilDestroy()
+@Component({
+  templateUrl: './kmip.component.html',
+  styleUrls: ['./kmip.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+})
+export class KmipComponent implements OnInit {
+  isKmipEnabled = false;
+  isSyncPending = false;
+  isLoading = false;
+
+  form = this.formBuilder.group({
+    server: [''],
+    port: [null as number],
+    certificate: [null as number],
+    certificate_authority: [null as number],
+    manage_sed_disks: [false],
+    manage_zfs_keys: [false],
+    enabled: [false],
+    change_server: [false],
+    validate: [false],
+    force_clear: [false],
+  });
+
+  readonly helptext = helptextSystemKmip;
+  readonly certificates$ = this.systemGeneralService.getCertificates().pipe(idNameArrayToOptions());
+  readonly certificateAuthorities$ = this.systemGeneralService.getCertificateAuthorities().pipe(idNameArrayToOptions());
+
+  constructor(
+    private ws: WebSocketService,
+    private formBuilder: FormBuilder,
+    private cdr: ChangeDetectorRef,
+    private matDialog: MatDialog,
+    private translate: TranslateService,
+    private dialogService: DialogService,
+    private errorHandler: FormErrorHandlerService,
+    private systemGeneralService: SystemGeneralService,
+  ) {}
+
+  ngOnInit(): void {
+    this.loadKmipConfig();
+  }
+
+  onSyncKeysPressed(): void {
+    this.isLoading = true;
+    this.ws.call('kmip.sync_keys').pipe(untilDestroyed(this)).subscribe(
+      () => {
+        this.dialogService.info(
+          helptextSystemKmip.syncInfoDialog.title,
+          helptextSystemKmip.syncInfoDialog.info,
+        );
+        this.isLoading = false;
+        this.cdr.markForCheck();
+      },
+      (err) => {
+        new EntityUtils().handleWsError(this, err, this.dialogService);
+        this.isLoading = false;
+        this.cdr.markForCheck();
+      },
+    );
+  }
+
+  onClearSyncKeysPressed(): void {
+    this.isLoading = true;
+    this.ws.call('kmip.clear_sync_pending_keys').pipe(untilDestroyed(this)).subscribe(
+      () => {
+        this.dialogService.info(
+          helptextSystemKmip.clearSyncKeyInfoDialog.title,
+          helptextSystemKmip.clearSyncKeyInfoDialog.info,
+        );
+        this.isLoading = false;
+        this.cdr.markForCheck();
+      },
+      (err) => {
+        new EntityUtils().handleWsError(this, err, this.dialogService);
+        this.isLoading = false;
+        this.cdr.markForCheck();
+      },
+    );
+  }
+
+  onSubmit(): void {
+    const dialogRef = this.matDialog.open(EntityJobComponent, {
+      data: { title: helptextSystemKmip.jobDialog.title },
+      disableClose: true,
+    });
+    dialogRef.componentInstance.setCall('kmip.update', [this.form.value]);
+    dialogRef.componentInstance.submit();
+    dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
+      this.dialogService.info('KMIP', this.translate.instant('Settings saved.'));
+      dialogRef.close(true);
+    });
+  }
+
+  private loadKmipConfig(): void {
+    this.isLoading = true;
+    forkJoin([
+      this.ws.call('kmip.config'),
+      this.ws.call('kmip.kmip_sync_pending'),
+    ])
+      .pipe(untilDestroyed(this))
+      .subscribe(
+        ([config, isSyncPending]) => {
+          this.form.patchValue(config);
+          this.isKmipEnabled = config.enabled;
+          this.isSyncPending = isSyncPending;
+          this.isLoading = false;
+          this.cdr.markForCheck();
+        },
+        (error) => {
+          this.isLoading = false;
+          new EntityUtils().handleWsError(this, error, this.dialogService);
+          this.cdr.markForCheck();
+        },
+      );
+  }
+}
