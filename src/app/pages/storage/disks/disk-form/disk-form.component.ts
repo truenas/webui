@@ -12,7 +12,6 @@ import { RelationAction } from 'app/modules/entity/entity-form/models/relation-a
 
 @UntilDestroy()
 @Component({
-  selector: 'app-disk-form',
   template: '<entity-form [conf]="this"></entity-form>',
 })
 export class DiskFormComponent implements FormConfiguration {

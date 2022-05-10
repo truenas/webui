@@ -26,7 +26,6 @@ import { CoreService } from 'app/services/core-service/core.service';
 
 @UntilDestroy()
 @Component({
-  selector: 'disk-list',
   template: '<entity-table [title]="title" [conf]="this"></entity-table>',
 })
 export class DiskListComponent implements EntityTableConfig<Disk> {

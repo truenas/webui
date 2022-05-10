@@ -9,7 +9,6 @@ import { PageTitleService } from 'app/services/page-title.service';
 
 @UntilDestroy()
 @Component({
-  selector: 'app-smart-test-results-list',
   template: '<entity-table [conf]="this"></entity-table>',
 })
 export class SmartResultsComponent implements EntityTableConfig {

@@ -19,7 +19,6 @@ import { UserService } from 'app/services/user.service';
 
 @UntilDestroy()
 @Component({
-  selector: 'app-cron-list',
   template: '<entity-table [title]="title" [conf]="this"></entity-table>',
   providers: [TaskService, UserService],
 })

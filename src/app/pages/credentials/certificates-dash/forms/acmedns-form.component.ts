@@ -15,7 +15,7 @@ import { ModalService } from 'app/services/modal.service';
 
 @UntilDestroy()
 @Component({
-  selector: 'app-acmedns-form',
+  selector: 'ix-acmedns-form',
   template: '<entity-form [conf]="this"></entity-form>',
 })
 export class AcmednsFormComponent implements FormConfiguration {

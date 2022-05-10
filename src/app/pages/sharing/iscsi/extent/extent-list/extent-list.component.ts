@@ -14,7 +14,7 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
 @Component({
-  selector: 'app-iscsi-extent-list',
+  selector: 'ix-iscsi-extent-list',
   template: `
     <entity-table [conf]="this" [title]="tableTitle"></entity-table>
   `,

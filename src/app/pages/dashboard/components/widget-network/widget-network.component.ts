@@ -41,7 +41,7 @@ interface NicInfoMap {
 
 @UntilDestroy()
 @Component({
-  selector: 'widget-network',
+  selector: 'ix-widget-network',
   templateUrl: './widget-network.component.html',
   styleUrls: ['./widget-network.component.scss'],
 })

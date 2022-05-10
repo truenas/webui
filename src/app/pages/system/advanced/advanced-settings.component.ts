@@ -70,7 +70,6 @@ enum AdvancedCardId {
 
 @UntilDestroy()
 @Component({
-  selector: 'app-advanced-settings',
   templateUrl: './advanced-settings.component.html',
   providers: [DatePipe, UserService],
 })
