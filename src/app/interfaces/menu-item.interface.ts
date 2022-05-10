@@ -1,15 +1,24 @@
+import { Observable } from 'rxjs';
+
+export enum MenuItemType {
+  Link = 'link',
+  SlideOut = 'slideOut',
+  Separator = 'separator',
+  ExternalLink = 'extLink',
+}
+
 export interface MenuItem {
-  type: string; // Possible values: link/slideOut/icon/separator/extLink
+  type: MenuItemType;
   name?: string; // Used as display text for item and title for separator type
-  state?: string; // Router state
-  icon?: string; // Item icon name
-  tooltip?: string; // Tooltip text
-  disabled?: boolean; // If true, item will not be appeared in sidenav.
-  sub?: SubMenuItem[]; // Dropdown items
+  state?: string;
+  icon?: string;
+  tooltip?: string;
+  sub?: SubMenuItem[];
+  isVisible$?: Observable<boolean>;
 }
 
 export interface SubMenuItem {
-  name: string; // Display text
-  state: string; // Router state
-  disabled?: boolean; // If true, item will not be appeared in sidenav.
+  name: string;
+  state: string;
+  isVisible$?: Observable<boolean>;
 }

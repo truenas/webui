@@ -6,6 +6,7 @@ import {
   ViewChildren, QueryList,
   AfterViewInit,
   TemplateRef,
+  ElementRef,
 } from '@angular/core';
 import { MatSort, Sort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
@@ -13,6 +14,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { select, Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import {
+  BehaviorSubject,
   combineLatest, Observable, of, Subject,
 } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
@@ -20,8 +22,6 @@ import { CoreEvent } from 'app/interfaces/events';
 import { GlobalActionConfig } from 'app/interfaces/global-action.interface';
 import { User } from 'app/interfaces/user.interface';
 import { EmptyConfig, EmptyType } from 'app/modules/entity/entity-empty/entity-empty.component';
-import { EntityToolbarComponent } from 'app/modules/entity/entity-toolbar/entity-toolbar.component';
-import { ControlConfig, ToolbarConfig } from 'app/modules/entity/entity-toolbar/models/control-config.interface';
 import { IxDetailRowDirective } from 'app/modules/ix-tables/directives/ix-detail-row.directive';
 import { userPageEntered } from 'app/pages/account/users/store/user.actions';
 import { selectUsers, selectUserState, selectUsersTotal } from 'app/pages/account/users/store/user.selectors';
@@ -40,7 +40,9 @@ import { waitForPreferences } from 'app/store/preferences/preferences.selectors'
 })
 export class UserListComponent implements OnInit, AfterViewInit {
   @ViewChild(MatSort, { static: false }) sort: MatSort;
+  title$: BehaviorSubject<string> = new BehaviorSubject('Users');
   @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
+  @ViewChild('filterInput') filterInput: ElementRef<HTMLInputElement>;
   toolbarActionsConfig: GlobalActionConfig = null;
 
   displayedColumns: string[] = ['username', 'uid', 'builtin', 'full_name', 'actions'];
@@ -63,6 +65,8 @@ export class UserListComponent implements OnInit, AfterViewInit {
     large: true,
     title: this.translate.instant('Can not retrieve response'),
   };
+  readonly shouldShowResetInput$ = new BehaviorSubject<boolean>(false);
+  readonly shouldShowReset$ = this.shouldShowResetInput$.asObservable();
   filterValue = '';
   expandedRow: User;
   @ViewChildren(IxDetailRowDirective) private detailRows: QueryList<IxDetailRowDirective>;
@@ -97,15 +101,6 @@ export class UserListComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit(): void {
     this.layoutService.pageHeaderUpdater$.next(this.pageHeader);
-    this.setupToolbar();
-  }
-
-  shouldShowResetInput(): boolean {
-    return this.filterValue && !!this.filterValue.length;
-  }
-
-  input(filterInput: HTMLInputElement): void {
-    this.filterValue = filterInput.value;
   }
 
   getPreferences(): void {
@@ -114,14 +109,8 @@ export class UserListComponent implements OnInit, AfterViewInit {
       untilDestroyed(this),
     ).subscribe((preferences) => {
       this.hideBuiltinUsers = preferences.hideBuiltinUsers;
-      this.setupToolbar();
       this.cdr.markForCheck();
     });
-  }
-
-  resetInput(input: HTMLInputElement): void {
-    this.filterValue = '';
-    input.value = '';
   }
 
   getUsers(): void {
@@ -174,58 +163,19 @@ export class UserListComponent implements OnInit, AfterViewInit {
     });
   }
 
-  setupToolbar(): void {
-    this.settingsEvent$ = new Subject();
-    this.settingsEvent$.pipe(
-      untilDestroyed(this),
-    ).subscribe((event: CoreEvent) => {
-      switch (event.data.event_control) {
-        case 'filter':
-          this.filterString = event.data.filter;
-          this.dataSource.filter = event.data.filter;
-          break;
-        case 'add':
-          this.doAdd();
-          break;
-        case 'config':
-          this.toggleBuiltins();
-          break;
-        default:
-          break;
-      }
-    });
+  clearFilter(): void {
+    this.shouldShowResetInput$.next(false);
+    this.filterInput.nativeElement.value = '';
+    this.filter();
+  }
 
-    const controls: ControlConfig[] = [
-      {
-        name: 'filter',
-        type: 'input',
-        value: this.filterString,
-        placeholder: this.translate.instant('Search'),
-      },
-      {
-        name: 'config',
-        type: 'slide-toggle',
-        value: !this.hideBuiltinUsers,
-        label: this.translate.instant('Show Built-In Users'),
-      },
-      {
-        name: 'add',
-        type: 'button',
-        label: this.translate.instant('Add'),
-        color: 'primary',
-        ixAutoIdentifier: 'Users_ADD',
-      },
-    ];
-
-    const toolbarConfig: ToolbarConfig = {
-      target: this.settingsEvent$,
-      controls,
-    };
-    this.toolbarActionsConfig = {
-      actionType: EntityToolbarComponent,
-      actionConfig: toolbarConfig,
-    };
-
-    this.cdr.markForCheck();
+  filter(): void {
+    if (!this.filterInput.nativeElement.value) {
+      this.shouldShowResetInput$.next(false);
+    } else {
+      this.shouldShowResetInput$.next(true);
+    }
+    this.filterString = this.filterInput.nativeElement.value;
+    this.dataSource.filter = this.filterInput.nativeElement.value;
   }
 }
