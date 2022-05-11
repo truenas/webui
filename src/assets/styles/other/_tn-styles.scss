@@ -1,4 +1,4 @@
-@use '~@angular/material' as mat;
+@use '@angular/material' as mat;
 @import '~@angular/material/theming';
 @include mat.core();
 @import '../scss-imports/cssvars';
@@ -87,6 +87,10 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
 
   .breadcrumb-bar {
     @include variable(color, --fg1, $fg1, !important);
+  }
+
+  .mat-checkbox-label {
+    color: var(--fg1);
   }
 
   .mat-slide-toggle.mat-checked:not(.mat-disabled) .mat-slide-toggle-thumb {

@@ -7,7 +7,7 @@
   </div>
   <ng-template #aclList>
     <div
-      *ngFor="let ace of acl.acl | cast; let i = index"
+      *ngFor="let ace of aces; let i = index"
       class="ace"
       [class.ace-selected]="i === selectedAceIndex"
       [class.fn-theme-red]="acesWithError.includes(i)"
