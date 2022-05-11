@@ -184,6 +184,8 @@ describe('SshConnectionFormComponent', () => {
     await form.fillForm({
       Port: '24',
       Host: 'remote.com',
+      Username: 'john',
+      'Private Key': 'Generate New',
       'Connect Timeout': '30',
     });
 
