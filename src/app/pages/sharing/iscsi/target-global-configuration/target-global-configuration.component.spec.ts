@@ -80,7 +80,7 @@ describe('TargetGlobalConfigurationComponent', () => {
     expect(ws.call).toHaveBeenCalledWith('iscsi.global.update', [{
       basename: 'iqn.new.org.freenas.ctl',
       isns_servers: ['32.12.112.42', '8.2.1.2'],
-      pool_avail_threshold: '15',
+      pool_avail_threshold: 15,
     }]);
   });
 

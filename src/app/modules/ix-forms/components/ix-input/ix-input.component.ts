@@ -31,7 +31,7 @@ export class IxInputComponent implements ControlValueAccessor {
 
   formControl = new FormControl(this).value as FormControl;
 
-  value: string | number = '';
+  private _value: string | number = '';
   formatted: string | number = '';
 
   isDisabled = false;
@@ -47,6 +47,18 @@ export class IxInputComponent implements ControlValueAccessor {
     private cdr: ChangeDetectorRef,
   ) {
     this.controlDirective.valueAccessor = this;
+  }
+
+  get value(): string | number {
+    return this._value;
+  }
+
+  set value(val: string | number) {
+    if (this.type === 'number') {
+      this._value = val ? Number(val) : null;
+      return;
+    }
+    this._value = val;
   }
 
   writeValue(value: string | number): void {
@@ -104,7 +116,7 @@ export class IxInputComponent implements ControlValueAccessor {
     this.invalid = false;
     this.value = '';
     this.formatted = '';
-    this.onChange('');
+    this.onChange(this.value);
   }
 
   setDisabledState(isDisabled: boolean): void {

@@ -150,14 +150,7 @@ export class ServiceUpsComponent implements OnInit {
   }
 
   onSubmit(): void {
-    const values = this.form.value;
-    const params = {
-      ...values,
-      remoteport: Number(values.remoteport),
-      nocommwarntime: values.nocommwarntime ? Number(values.nocommwarntime) : null,
-      shutdowntimer: values.shutdowntimer ? Number(values.shutdowntimer) : null,
-      hostsync: values.hostsync ? Number(values.hostsync) : null,
-    };
+    const params = this.form.value;
 
     if (this.isMasterMode) {
       delete params.remoteport;

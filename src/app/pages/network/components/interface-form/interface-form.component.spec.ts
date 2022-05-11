@@ -178,7 +178,7 @@ describe('InterfaceFormComponent', () => {
         lacpdu_rate: LacpduRate.Slow,
         lag_ports: ['enp0s3'],
         lag_protocol: LinkAggregationProtocol.Lacp,
-        mtu: '1600',
+        mtu: 1600,
         xmit_hash_policy: XmitHashPolicy.Layer2Plus3,
       }]);
     });
@@ -207,7 +207,7 @@ describe('InterfaceFormComponent', () => {
         ipv6_auto: true,
         vlan_parent_interface: 'enp0s3',
         vlan_pcp: 2,
-        vlan_tag: '2',
+        vlan_tag: 2,
         mtu: 1500,
         aliases: [],
       }]);
