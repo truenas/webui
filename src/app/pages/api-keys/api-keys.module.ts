@@ -11,8 +11,10 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslateModule } from '@ngx-translate/core';
 import { CoreComponents } from 'app/core/core-components.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
+import { AppCommonModule } from 'app/modules/common/app-common.module';
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
+import { IxTableModule } from 'app/modules/ix-tables/ix-table.module';
 import {
   ApiKeyFormDialogComponent,
 } from 'app/pages/api-keys/components/api-key-form-dialog/api-key-form-dialog.component';
@@ -20,8 +22,6 @@ import { ApiKeyListComponent } from 'app/pages/api-keys/components/api-key-list/
 import {
   KeyCreatedDialogComponent,
 } from 'app/pages/api-keys/components/key-created-dialog/key-created-dialog.component';
-import { AppCommonModule } from '../../modules/common/app-common.module';
-import { IxTableModule } from '../../modules/ix-tables/ix-table.module';
 import { routing } from './api-keys.routing';
 import { ApiKeyComponentStore } from './store/api-key.store';
 

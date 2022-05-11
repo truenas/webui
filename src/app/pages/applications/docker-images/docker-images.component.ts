@@ -13,9 +13,9 @@ import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.com
 import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-table.component';
 import { EntityTableAction, EntityTableConfig, EntityTableConfirmDialog } from 'app/modules/entity/entity-table/entity-table.interface';
 import { ApplicationToolbarControl } from 'app/pages/applications/application-toolbar-control.enum';
+import { PullImageFormComponent } from 'app/pages/applications/forms/pull-image-form/pull-image-form.component';
 import { DialogService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { PullImageFormComponent } from '../forms/pull-image-form/pull-image-form.component';
 
 @UntilDestroy()
 @Component({

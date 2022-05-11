@@ -9,6 +9,9 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { TranslateModule } from '@ngx-translate/core';
 import { CoreComponents } from 'app/core/core-components.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
+import { EntityFormService } from 'app/modules/entity/entity-form/services/entity-form.service';
+import { MessageService } from 'app/modules/entity/entity-form/services/message.service';
+import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { TerminalModule } from 'app/modules/terminal/terminal.module';
 import { DeviceDeleteModalComponent } from 'app/pages/vm/devices/device-list/device-delete-modal/device-delete-modal.component';
@@ -16,9 +19,6 @@ import { VmSerialShellComponent } from 'app/pages/vm/vm-serial-shell/vm-serial-s
 import {
   VmService, NetworkService, SystemGeneralService,
 } from 'app/services';
-import { EntityFormService } from '../../modules/entity/entity-form/services/entity-form.service';
-import { MessageService } from '../../modules/entity/entity-form/services/message.service';
-import { EntityModule } from '../../modules/entity/entity.module';
 import { DeviceAddComponent } from './devices/device-add/device-add.component';
 import { DeviceEditComponent } from './devices/device-edit/device-edit.component';
 import { DeviceListComponent } from './devices/device-list/device-list.component';

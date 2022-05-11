@@ -1,6 +1,6 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
+import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
 import globalHelptext from 'app/helptext/global-helptext';
-import { FailoverDisabledReason } from '../enums/failover-disabled-reason.enum';
 
 export default {
   ha_status: T('HA Status'),

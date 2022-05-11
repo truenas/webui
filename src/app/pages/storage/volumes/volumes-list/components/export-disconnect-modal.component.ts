@@ -180,9 +180,9 @@ export class ExportDisconnectModalComponent implements OnInit {
       const message = this.translate.instant('Successfully exported/disconnected {pool}.', { pool: pool.name });
       const destroyed = this.translate.instant('All data on that pool was destroyed.');
       if (!value.destroy) {
-        this.dialogService.info(helptext.exportDisconnect, message, '500px', 'info');
+        this.dialogService.info(helptext.exportDisconnect, message);
       } else {
-        this.dialogService.info(helptext.exportDisconnect, message + ' ' + destroyed, '500px', 'info');
+        this.dialogService.info(helptext.exportDisconnect, message + ' ' + destroyed);
       }
       entityJobRef.close(true);
     });

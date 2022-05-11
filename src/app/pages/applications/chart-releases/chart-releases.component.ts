@@ -25,14 +25,14 @@ import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.com
 import { EntityUtils } from 'app/modules/entity/utils';
 import { ApplicationTab } from 'app/pages/applications/application-tab.enum';
 import { ApplicationToolbarControl } from 'app/pages/applications/application-toolbar-control.enum';
+import { ApplicationsService } from 'app/pages/applications/applications.service';
+import { ChartEventsDialogComponent } from 'app/pages/applications/dialogs/chart-events/chart-events-dialog.component';
 import { ChartUpgradeDialogComponent } from 'app/pages/applications/dialogs/chart-upgrade/chart-upgrade-dialog.component';
 import { ChartFormComponent } from 'app/pages/applications/forms/chart-form/chart-form.component';
 import { ChartUpgradeDialogConfig } from 'app/pages/applications/interfaces/chart-upgrade-dialog-config.interface';
 import { DialogService, WebSocketService } from 'app/services/index';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { ModalService } from 'app/services/modal.service';
-import { ApplicationsService } from '../applications.service';
-import { ChartEventsDialogComponent } from '../dialogs/chart-events/chart-events-dialog.component';
 
 @UntilDestroy()
 @Component({
@@ -432,7 +432,7 @@ export class ChartReleasesComponent implements OnInit {
           }
         });
 
-        this.dialogService.info(helptext.bulkActions.success, this.translate.instant(helptext.bulkActions.finished), '500px', 'info', true);
+        this.dialogService.info(helptext.bulkActions.success, this.translate.instant(helptext.bulkActions.finished));
       }
     } else {
       this.dialogService.errorReport(

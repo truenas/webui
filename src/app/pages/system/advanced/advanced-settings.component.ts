@@ -38,6 +38,7 @@ import { ReplicationFormComponent } from 'app/pages/system/advanced/replication-
 import { SedFormComponent } from 'app/pages/system/advanced/sed-form/sed-form.component';
 import { SystemDatasetPoolComponent } from 'app/pages/system/advanced/system-dataset-pool/system-dataset-pool.component';
 import { DataCard } from 'app/pages/system/interfaces/data-card.interface';
+import { TunableFormComponent } from 'app/pages/system/tunable/tunable-form/tunable-form.component';
 import {
   DialogService,
   LanguageService,
@@ -49,7 +50,6 @@ import { CoreService } from 'app/services/core-service/core.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { AppState } from 'app/store';
 import { waitForAdvancedConfig } from 'app/store/system-config/system-config.selectors';
-import { TunableFormComponent } from '../tunable/tunable-form/tunable-form.component';
 import { ConsoleFormComponent } from './console-form/console-form.component';
 import { IsolatedGpuPcisFormComponent } from './isolated-gpu-pcis/isolated-gpu-pcis-form.component';
 import { KernelFormComponent } from './kernel-form/kernel-form.component';
@@ -119,8 +119,6 @@ export class AdvancedSettingsComponent implements OnInit {
                   this.dialog.info(
                     this.translate.instant('Job {job} Completed Successfully', { job: row.description }),
                     message,
-                    '500px',
-                    'info',
                     true,
                   );
                 },
@@ -274,7 +272,7 @@ export class AdvancedSettingsComponent implements OnInit {
     }
 
     return this.dialog
-      .info(helptextSystemAdvanced.first_time.title, helptextSystemAdvanced.first_time.message)
+      .warn(helptextSystemAdvanced.first_time.title, helptextSystemAdvanced.first_time.message)
       .pipe(tap(() => this.isFirstTime = false))
       .toPromise();
   }

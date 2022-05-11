@@ -213,7 +213,6 @@ export class VolumesListTableConfig implements EntityTableConfig {
                     this.dialogService.info(
                       helptext.pool_options_dialog.dialog_saved_title,
                       this.translate.instant('Pool options for {poolName} successfully saved.', { poolName: row.name }),
-                      '500px', 'info',
                     );
                     this.parentVolumesListComponent.repaintMe();
                   }
@@ -308,7 +307,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
                     () => {
                       this.loader.close();
                       const msg = this.translate.instant('Stopping scrub on pool');
-                      this.dialogService.info(T('Stop Scrub'), `${msg} <i>${row1.name}</i>`, '300px', 'info', true);
+                      this.dialogService.info(T('Stop Scrub'), `${msg} <i>${row1.name}</i>`, true);
                     },
                     (err) => {
                       this.loader.close();
@@ -337,16 +336,12 @@ export class VolumesListTableConfig implements EntityTableConfig {
                       this.dialogService.info(
                         this.translate.instant('Scrub Complete'),
                         this.translate.instant('Scrub complete on pool <i>{poolName}</i>.', { poolName: row1.name }),
-                        '300px',
-                        'info',
                         true,
                       );
                     } else {
                       this.dialogService.info(
                         this.translate.instant('Scrub Stopped'),
                         this.translate.instant('Stopped the scrub on pool <i>{poolName}</i>.', { poolName: row1.name }),
-                        '300px',
-                        'info',
                         true,
                       );
                     }
@@ -461,8 +456,6 @@ export class VolumesListTableConfig implements EntityTableConfig {
                     this.dialogService.info(
                       this.translate.instant('Upgraded'),
                       this.translate.instant('Successfully Upgraded {poolName}.', { poolName: row1.name }),
-                      '500px',
-                      'info',
                     ).pipe(untilDestroyed(this)).subscribe(() => {
                       this.parentVolumesListComponent.repaintMe();
                     });
@@ -606,7 +599,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
               this.loader.close();
               // Showing info here because there is no feedback on list parent for this if promoted.
               this.dialogService
-                .info(T('Promote Dataset'), T('Successfully Promoted ') + row1.id, '500px', 'info')
+                .info(T('Promote Dataset'), T('Successfully Promoted ') + row1.id)
                 .pipe(untilDestroyed(this, 'destroy'))
                 .subscribe(() => {
                   this.parentVolumesListComponent.repaintMe();

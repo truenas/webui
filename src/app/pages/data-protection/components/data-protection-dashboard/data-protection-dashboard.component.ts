@@ -554,8 +554,6 @@ export class DataProtectionDashboardComponent implements OnInit {
                     this.dialog.info(
                       this.translate.instant('Task started'),
                       this.translate.instant('Replication <i>{name}</i> has started.', { name: row.name }),
-                      '500px',
-                      'info',
                       true,
                     );
                     this.job
@@ -649,8 +647,6 @@ export class DataProtectionDashboardComponent implements OnInit {
                     this.dialog.info(
                       this.translate.instant('Task Started'),
                       this.translate.instant('Cloud sync <i>{taskName}</i> has started.', { taskName: row.description }),
-                      '500px',
-                      'info',
                       true,
                     );
                     this.job
@@ -689,8 +685,6 @@ export class DataProtectionDashboardComponent implements OnInit {
                     this.dialog.info(
                       this.translate.instant('Task Stopped'),
                       this.translate.instant('Cloud sync <i>{taskName}</i> stopped.', { taskName: row.description }),
-                      '500px',
-                      'info',
                       true,
                     );
                   },
@@ -722,8 +716,6 @@ export class DataProtectionDashboardComponent implements OnInit {
                     this.dialog.info(
                       this.translate.instant('Task Started'),
                       this.translate.instant('Cloud sync <i>{taskName}</i> has started.', { taskName: row.description }),
-                      '500px',
-                      'info',
                       true,
                     );
                     this.job
@@ -855,8 +847,6 @@ export class DataProtectionDashboardComponent implements OnInit {
                     this.dialog.info(
                       this.translate.instant('Task Started'),
                       this.translate.instant('Rsync task <i>{ taskName }</i> started.', { taskName: `${row.remotehost} – ${row.remotemodule}` }),
-                      '500px',
-                      'info',
                       true,
                     );
                     this.job
@@ -897,7 +887,7 @@ export class DataProtectionDashboardComponent implements OnInit {
       dialogRef.close();
     });
     dialogRef.componentInstance.aborted.pipe(untilDestroyed(this)).subscribe(() => {
-      this.dialog.info(helptext.task_aborted, '', '300px', 'info', true);
+      this.dialog.info(helptext.task_aborted, '', true);
     });
     dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe(() => {
       dialogRef.close();
@@ -932,7 +922,7 @@ export class DataProtectionDashboardComponent implements OnInit {
         });
         dialogRef.componentInstance.aborted.pipe(untilDestroyed(this)).subscribe(() => {
           dialogRef.close();
-          this.dialog.info(this.translate.instant('Task Aborted'), '', '300px', 'info', true);
+          this.dialog.info(this.translate.instant('Task Aborted'), '');
           if (subId) {
             this.ws.unsubscribe('filesystem.file_tail_follow:' + row.job.logs_path);
             this.ws.unsub('filesystem.file_tail_follow:' + row.job.logs_path, subId);
@@ -948,7 +938,7 @@ export class DataProtectionDashboardComponent implements OnInit {
         this.job.showLogs(row.job);
       }
     } else {
-      this.dialog.info(globalHelptext.noLogDialog.title, globalHelptext.noLogDialog.message);
+      this.dialog.warn(globalHelptext.noLogDialog.title, globalHelptext.noLogDialog.message);
     }
   }
 

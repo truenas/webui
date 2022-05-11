@@ -236,7 +236,7 @@ export class AlertConfigComponent implements OnInit {
     this.ws
       .call(this.editCall, [payload])
       .pipe(untilDestroyed(this)).subscribe(
-        () => this.dialog.info(this.translate.instant('Settings saved'), '', '300px', 'info', true),
+        () => this.dialog.info(this.translate.instant('Settings saved'), ''),
         (error) => new EntityUtils().handleWsError(this, error, this.dialog),
       )
       .add(() => this.loader.close());
