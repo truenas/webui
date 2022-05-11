@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
@@ -16,8 +17,10 @@ import { FieldSet } from 'app/modules/entity/entity-form/models/fieldset.interfa
 import { RelationAction } from 'app/modules/entity/entity-form/models/relation-action.enum';
 import { ipv4Validator } from 'app/modules/entity/entity-form/validators/ip-validation';
 import { EntityUtils } from 'app/modules/entity/utils';
+import {
+  IpmiIdentifyDialogComponent,
+} from 'app/pages/network/components/ipmi-identify-dialog/ipmi-identify-dialog.component';
 import { DialogService, WebSocketService } from 'app/services';
-import { IpmiService } from 'app/services/ipmi.service';
 
 @UntilDestroy()
 @Component({
@@ -39,7 +42,7 @@ export class IpmiFormComponent implements FormConfiguration {
       id: 'ipmi_identify',
       name: this.translate.instant('Identify Light'),
       function: () => {
-        this.ipmiService.showIdentifyDialog();
+        this.matDialog.open(IpmiIdentifyDialogComponent);
       },
     },
     {
@@ -155,8 +158,8 @@ export class IpmiFormComponent implements FormConfiguration {
     protected ws: WebSocketService,
     protected dialog: DialogService,
     protected loader: AppLoaderService,
+    private matDialog: MatDialog,
     private translate: TranslateService,
-    private ipmiService: IpmiService,
   ) { }
 
   async prerequisite(): Promise<boolean> {
