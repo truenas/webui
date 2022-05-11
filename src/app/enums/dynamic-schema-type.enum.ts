@@ -6,4 +6,5 @@ export enum DynamicSchemaType {
   Path = 'path',
   List = 'list',
   Dict = 'dict',
+  Ipaddr = 'ipaddr',
 }

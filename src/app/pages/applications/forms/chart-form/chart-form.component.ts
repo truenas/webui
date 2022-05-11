@@ -158,7 +158,7 @@ export class ChartFormComponent {
       DynamicSchemaType.Boolean,
       DynamicSchemaType.Path,
       DynamicSchemaType.Hostpath,
-    ].includes(schema.type as DynamicSchemaType)) {
+    ].includes(schema.type)) {
       const newFormControl = new FormControl(schema.default, [
         schema.required ? Validators.required : Validators.nullValidator,
         schema.max ? Validators.max(schema.max) : Validators.nullValidator,

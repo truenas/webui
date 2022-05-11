@@ -1,4 +1,5 @@
 import { ChartReleaseStatus } from 'app/enums/chart-release-status.enum';
+import { DynamicSchemaType } from 'app/enums/dynamic-schema-type.enum';
 import { ChartMetadata } from 'app/interfaces/catalog.interface';
 import { QueryParams } from 'app/interfaces/query-api.interface';
 
@@ -95,7 +96,7 @@ export interface ChartSchemaEnum {
 }
 
 export interface ChartSchemaNodeConf {
-  type: string;
+  type: DynamicSchemaType;
   attrs?: ChartSchemaNode[];
   items?: ChartSchemaNode[];
   default?: any;

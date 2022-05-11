@@ -1,5 +1,5 @@
 
-<div [formGroup]="dynamicForm" [class.indent]="dynamicSchema.indent">
+<div *ngIf="dynamicSchema" [formGroup]="dynamicForm" [class.indent]="dynamicSchema?.indent">
   <ng-container *ngIf="dynamicSchema.type === 'dict'">
     <div *ngIf="!isHide && !dynamicSchema.hidden">{{dynamicSchema.title}}</div>
     <ix-dynamic-form-item

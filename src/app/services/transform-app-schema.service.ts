@@ -24,7 +24,7 @@ export class TransformAppSchemaService {
       DynamicSchemaType.Boolean,
       DynamicSchemaType.Path,
       DynamicSchemaType.Hostpath,
-    ].includes(schema.type as DynamicSchemaType)) {
+    ].includes(schema.type)) {
       switch (schema.type) {
         case DynamicSchemaType.Int:
           newSchema.push({
