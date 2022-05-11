@@ -4,7 +4,7 @@
 
   <mat-card-content>
     <div class="padding-16" *ngIf="users.length">
-      <app-dual-listbox
+      <ix-dual-listbox
         [items]="users"
         [(selectedItems)]="selectedMembers"
         minHeight="55vh"
@@ -16,7 +16,7 @@
           <mat-icon matListIcon fontSet="mdi-set" fontIcon="mdi-account" class="icon account"></mat-icon>
           <span matLine>{{ item.username }}</span>
         </ng-template>
-      </app-dual-listbox>
+      </ix-dual-listbox>
     </div>
   </mat-card-content>
 

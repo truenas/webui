@@ -23,7 +23,7 @@ import { ModalService } from 'app/services/modal.service';
 
 @UntilDestroy()
 @Component({
-  selector: 'app-certificate-acme-add',
+  selector: 'ix-certificate-acme-add',
   template: '<entity-form [conf]="this"></entity-form>',
   providers: [EntityFormService],
 })

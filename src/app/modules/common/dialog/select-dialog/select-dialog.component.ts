@@ -3,7 +3,7 @@ import { MatDialogRef } from '@angular/material/dialog';
 import { Option } from 'app/interfaces/option.interface';
 
 @Component({
-  selector: 'app-select-dialog',
+  selector: 'ix-select-dialog',
   templateUrl: './select-dialog.component.html',
   styleUrls: ['./select-dialog.component.scss'],
 })

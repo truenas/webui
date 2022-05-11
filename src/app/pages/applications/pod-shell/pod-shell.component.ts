@@ -15,7 +15,6 @@ import { DialogService, ShellService, WebSocketService } from 'app/services';
 
 @UntilDestroy()
 @Component({
-  selector: 'app-pod-shell',
   template: '<app-terminal [conf]="this"></app-terminal>',
 })
 export class PodShellComponent implements TerminalConfiguration {

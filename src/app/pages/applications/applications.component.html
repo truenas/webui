@@ -6,15 +6,15 @@
     </mat-tab>
     <mat-tab label="{{ 'Available Applications' | translate}}"
           ix-auto ix-auto-type="tab" ix-auto-identifier="catalog">
-      <app-catalog (updateTab)="updateTab($event)"></app-catalog>
+      <ix-catalog (updateTab)="updateTab($event)"></ix-catalog>
     </mat-tab>
     <mat-tab label="{{ 'Manage Catalogs' | translate}}"
           ix-auto ix-auto-type="tab" ix-auto-identifier="manage-catalog">
-      <app-manage-catalogs></app-manage-catalogs>
+      <ix-manage-catalogs></ix-manage-catalogs>
     </mat-tab>
     <mat-tab label="{{ 'Manage Docker Images' | translate}}"
           ix-auto ix-auto-type="tab" ix-auto-identifier="manage-docker-images">
-      <app-docker-images></app-docker-images>
+      <ix-docker-images></ix-docker-images>
     </mat-tab>
   </mat-tab-group>
 </div>

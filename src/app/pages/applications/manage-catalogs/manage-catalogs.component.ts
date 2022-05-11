@@ -21,7 +21,7 @@ import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
-  selector: 'app-manage-catalogs',
+  selector: 'ix-manage-catalogs',
   template: '<entity-table [title]="title" [conf]="this"></entity-table>',
 })
 export class ManageCatalogsComponent implements EntityTableConfig<Catalog>, OnInit {

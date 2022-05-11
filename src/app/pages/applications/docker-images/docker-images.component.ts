@@ -19,7 +19,7 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
 @Component({
-  selector: 'app-docker-images',
+  selector: 'ix-docker-images',
   template: '<entity-table [title]="title" [conf]="this"></entity-table>',
 })
 export class DockerImagesComponent implements EntityTableConfig {

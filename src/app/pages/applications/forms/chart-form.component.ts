@@ -19,7 +19,6 @@ import { ModalService } from 'app/services/modal.service';
 
 @UntilDestroy()
 @Component({
-  selector: 'chart-form',
   template: '<entity-form [conf]="this"></entity-form>',
 })
 export class ChartFormComponent implements FormConfiguration {

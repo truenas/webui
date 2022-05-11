@@ -39,7 +39,7 @@ import { waitForGeneralConfig } from 'app/store/system-config/system-config.sele
 
 @UntilDestroy()
 @Component({
-  selector: 'app-admin-layout',
+  selector: 'ix-admin-layout',
   templateUrl: './admin-layout.component.html',
   styleUrls: ['./admin-layout.component.scss'],
 })

@@ -18,7 +18,6 @@ import { ModalService } from 'app/services/modal.service';
 
 @UntilDestroy()
 @Component({
-  selector: 'chart-add-wizard',
   template: '<entity-wizard [conf]="this"></entity-wizard>',
 })
 

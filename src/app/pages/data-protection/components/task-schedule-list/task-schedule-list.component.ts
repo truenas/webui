@@ -15,7 +15,7 @@ interface TaskScheduleRowConfig {
 
 @UntilDestroy()
 @Component({
-  selector: 'app-task-schedule-list',
+  selector: 'ix-task-schedule-list',
   templateUrl: './task-schedule-list.component.html',
 })
 export class TaskScheduleListComponent implements OnInit, OnChanges {

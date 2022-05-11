@@ -12,7 +12,6 @@ import {
 
 @UntilDestroy()
 @Component({
-  selector: 'downloadkey-dialog',
   styleUrls: ['./download-key-dialog.component.scss'],
   templateUrl: './download-key-dialog.component.html',
 })

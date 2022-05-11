@@ -22,7 +22,6 @@ import { SshConnectionsFormComponent } from './forms/ssh-connections-form.compon
 
 @UntilDestroy()
 @Component({
-  selector: 'app-backup-credentials',
   templateUrl: './backup-credentials.component.html',
   providers: [KeychainCredentialService, ReplicationService, CloudCredentialService],
 })

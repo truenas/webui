@@ -13,7 +13,6 @@ import { TaskService } from 'app/services/task.service';
 
 @UntilDestroy()
 @Component({
-  selector: 'app-snapshot-task-list',
   template: '<entity-table [title]="title" [conf]="this"></entity-table>',
   providers: [TaskService, StorageService],
 })

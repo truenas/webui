@@ -668,7 +668,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     width: 36px;
   }
 
-  app-dual-listbox .chosen .mat-list-item-content {
+  ix-dual-listbox .chosen .mat-list-item-content {
     color: var(--fg2);
   }
 
@@ -965,7 +965,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     overflow-y: hidden !important;
   }
 
-  app-admin-layout .not-alerts .mat-drawer-inner-container {
+  ix-admin-layout .not-alerts .mat-drawer-inner-container {
     overflow: visible !important;
   }
 
@@ -1127,7 +1127,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     @include variable(color, --fg2, $fg2);
   }
 
-  app-select-dialog .mat-select-placeholder,
+  ix-select-dialog .mat-select-placeholder,
   ix-ipmi .mat-select-placeholder {
     @include variable(color, --fg2, $fg2);
   }
@@ -1164,7 +1164,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     width: 50%;
   }
 
-  app-certificate-acme-add #authenticators {
+  ix-certificate-acme-add #authenticators {
     position: relative;
     top: -18px;
   }
@@ -1207,7 +1207,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
 
   app-entity-dialog #pool_processes p,
   ix-export-disconnect-modal .pool-summary,
-  confirm-dialog .warning-box {
+  ix-confirm-dialog .warning-box {
     background-color: rgb(223, 223, 223);
     color: rgb(19, 19, 19);
     max-height: 170px;
@@ -1216,8 +1216,8 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     width: 100%;
   }
 
-  confirm-dialog pre,
-  error-dialog pre {
+  ix-confirm-dialog pre,
+  ix-error-dialog pre {
     background: rgba(0, 0, 0, 0.096);
     overflow-x: auto;
     padding: 5px;
@@ -1268,7 +1268,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     width: 50px;
   }
 
-  confirm-dialog div.message-content p {
+  ix-confirm-dialog div.message-content p {
     margin-bottom: 10px;
   }
 

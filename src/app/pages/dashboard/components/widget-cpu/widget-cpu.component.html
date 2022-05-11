@@ -4,7 +4,7 @@
       <mat-card-content>
         <mat-toolbar-row [class.drag-handle]="showReorderHandle">
           <ng-content [select]="[cdkDragHandle]"></ng-content>
-          
+
           <!-- Mobile Only: Exit widget -->
           <button
             *ngIf="screenType == 'Mobile'"
@@ -47,7 +47,7 @@
         <div [ngClass]="{'mobile': screenType == 'Mobile'}" id="cpu-load-wrapper" fxLayout="row wrap" fxLayoutAlign="space-around center">
 
           <div class="viewchartgauge" fxFlex="47" fxFlex.xs="100">
-            <viewchartgauge [config]="cpuAvg" #load *ngIf="cpuAvg && cpuAvg.data; else loader"></viewchartgauge>
+            <ix-view-chart-gauge [config]="cpuAvg" #load *ngIf="cpuAvg && cpuAvg.data; else loader"></ix-view-chart-gauge>
           </div>
 
           <ng-template #loader>
