@@ -51,6 +51,7 @@ export class IxComboboxComponent implements ControlValueAccessor, OnInit {
   isDisabled = false;
   filterValue: string;
   selectedOption: Option = null;
+  textContent = '';
 
   onChange: (value: string | number) => void = (): void => {};
   onTouch: () => void = (): void => {};
@@ -180,6 +181,10 @@ export class IxComboboxComponent implements ControlValueAccessor, OnInit {
   }
 
   onChanged(changedValue: string): void {
+    if (this.selectedOption || this.value) {
+      this.resetInput();
+    }
+    this.textContent = changedValue;
     this.filterChanged$.next(changedValue);
   }
 
@@ -190,6 +195,7 @@ export class IxComboboxComponent implements ControlValueAccessor, OnInit {
     }
     this.selectedOption = null;
     this.value = null;
+    this.textContent = '';
     this.onChange(null);
   }
 
