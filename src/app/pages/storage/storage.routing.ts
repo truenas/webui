@@ -6,7 +6,6 @@ import { DatasetAclEditorComponent } from 'app/pages/storage/volumes/permissions
 import { DatasetTrivialPermissionsComponent } from 'app/pages/storage/volumes/permissions/containers/dataset-trivial-permissions/dataset-trivial-permissions.component';
 import { ViewEnclosureComponent } from 'app/pages/system/view-enclosure/components/view-enclosure/view-enclosure.component';
 import { DiskBulkEditComponent } from './disks/disk-bulk-edit/disk-bulk-edit.component';
-import { DiskFormComponent } from './disks/disk-form/disk-form.component';
 import { DiskListComponent } from './disks/disk-list/disk-list.component';
 import { SmartResultsComponent } from './disks/smart-results/smart-results.component';
 import { ImportDiskComponent } from './import-disk/import-disk.component';
@@ -125,19 +124,9 @@ export const routes: Routes = [
             data: { title: 'Disks', breadcrumb: 'Disks' },
           },
           {
-            path: 'edit/:pk',
-            component: DiskFormComponent,
-            data: { title: 'Edit Disk', breadcrumb: 'Edit Disk' },
-          },
-          {
             path: 'bulk-edit',
             component: DiskBulkEditComponent,
             data: { title: 'Bulk Edit Disks', breadcrumb: 'Bulk Edit Disks' },
-          },
-          {
-            path: 'pool/:poolId/edit/:pk',
-            component: DiskFormComponent,
-            data: { title: 'Edit Pool Disk', breadcrumb: 'Edit Pool Disk' },
           },
           {
             path: 'smartresults/:pk',
