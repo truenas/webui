@@ -83,7 +83,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   dashState: DashConfigItem[]; // Saved State
   previousState: DashConfigItem[];
   activeMobileWidget: DashConfigItem[] = [];
-  availableWidgets: DashConfigItem[] = [];
+  availableWidgets: DashConfigItem[] = this.generateDefaultConfig();
   renderedWidgets: DashConfigItem[];
 
   large = 'lg';

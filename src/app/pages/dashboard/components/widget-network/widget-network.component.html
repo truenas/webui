@@ -83,7 +83,7 @@
                               svgIcon="network-upload-download-disabled"
                             ></mat-icon>
                           </span>
-                          <ul *ngIf="getLinkState(nic)">
+                          <ul *ngIf="getLinkState(nic) === LinkState.Up">
                             <li><span class="label">{{ 'In' | translate }}:</span> {{ nicInfoMap[nic.state.name]?.in }}</li>
                             <li><span class="label">{{ 'Out' | translate }}:</span>{{ nicInfoMap[nic.state.name]?.out }}</li>
                           </ul>
