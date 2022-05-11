@@ -540,8 +540,8 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
   }
 
   checkUpgradePending() {
+    this.pendingUpgradeChecked = true;
     this.ws.call('failover.upgrade_pending').subscribe((res) => {
-      this.pendingUpgradeChecked = true;
       this.upgradeWaitingToFinish = res;
       if (res) {
         this.upgradePendingDialog();
