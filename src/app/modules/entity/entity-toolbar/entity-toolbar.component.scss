@@ -6,6 +6,9 @@
 
 .control-group > * {
   display: inline-block;
-  margin: 0 8px;
   max-height: 36px;
+
+  &:not(:last-child) {
+    margin-right: 8px;
+  }
 }

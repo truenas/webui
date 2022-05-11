@@ -236,10 +236,25 @@ body.collapsed-menu mat-sidenav-container.mat-drawer-opened mat-sidenav-content.
 .widget.splitv,
 .widget.splith,
 .widget.stats-widget {
-  left: calc(50% - 270px);
+  left: calc(50% - 50vw);
   margin: 8px 0;
   position: relative;
-  width: calc(600px * 0.9) !important;
+  width: calc(100vw * 0.9) !important;
+
+  &.xs {
+    .mat-card {
+      border: 0;
+    }
+
+    .controls {
+      right: 16px;
+    }
+  }
+
+  &:not(.xs) {
+    left: calc(50% - 270px);
+    width: calc(600px * 0.9) !important;
+  }
 }
 
 /* New Rules */
@@ -257,10 +272,9 @@ body.collapsed-menu mat-sidenav-container.mat-drawer-opened mat-sidenav-content.
 
 /* MOBILE */
 .xs.widget {
-  left: -6px;
   min-width: 320px;
   overflow-x: auto;
-  top: -10px;
+  top: -8px;
   width: 100vw !important;
 }
 
@@ -279,7 +293,7 @@ body.collapsed-menu mat-sidenav-container.mat-drawer-opened mat-sidenav-content.
   letter-spacing: 2px;
   line-height: 5px;
   margin-right: 0.3em;
-  margin-top: -0.7em;
+  margin-top: -0.9em;
   overflow: hidden;
   padding: 3px 4px;
   pointer-events: none;

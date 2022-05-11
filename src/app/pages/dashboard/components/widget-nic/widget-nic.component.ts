@@ -66,7 +66,8 @@ export class WidgetNicComponent extends WidgetComponent implements AfterViewInit
     return this.currentSlide === '0' ? 0 : parseInt(this.currentSlide) - 1;
   }
 
-  title = 'Interface';
+  defaultTitle = this.translate.instant('Interface');
+  title = this.defaultTitle;
 
   path: Slide[] = [
     { name: this.PathEnum.Overview },
@@ -112,7 +113,7 @@ export class WidgetNicComponent extends WidgetComponent implements AfterViewInit
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.nicState) {
-      this.title = this.currentSlide === '0' ? 'Interface' : this.nicState.name;
+      this.title = this.currentSlide === '0' ? this.defaultTitle : this.nicState.name;
     }
   }
 
@@ -159,7 +160,7 @@ export class WidgetNicComponent extends WidgetComponent implements AfterViewInit
     }).start(el.set);
 
     this.currentSlide = value.toString();
-    this.title = this.currentSlide === '0' ? 'Interface' : this.nicState.name;
+    this.title = this.currentSlide === '0' ? this.translate.instant('Interface') : this.nicState.name;
   }
 
   vlanAliases(vlanIndex: string | number): NetworkInterfaceAlias[] {

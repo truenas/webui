@@ -10,7 +10,7 @@
           </div>
         </mat-toolbar-row>
 
-        <div *ngIf="screenType == 'Mobile' || 'Desktop'" fxLayout="column" class="mobile" >
+        <div *ngIf="screenType === 'Mobile' || 'Desktop'" fxLayout="column" class="mobile" >
           <div *ngIf="!renderedWidgets.length && emptyConfig" fxFlex="65" class="bottom empty">
             <entity-empty [conf]="emptyConfig"></entity-empty>
           </div>

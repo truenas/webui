@@ -5,6 +5,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { tween, styler } from 'popmotion';
 import { Subject } from 'rxjs';
+import { rootUserId } from 'app/constants/root-user-id.contant';
 import { NetworkInterfaceAliasType, NetworkInterfaceType } from 'app/enums/network-interface.enum';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { CoreEvent } from 'app/interfaces/events';
@@ -92,8 +93,20 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   statsDataEvent$: Subject<CoreEvent> = new Subject<CoreEvent>();
   interval: Interval;
 
+  get isLoaded(): boolean {
+    return this.dashStateReady
+      && !this.empty
+      && this.statsDataEvent$
+      && this.pools
+      && this.nics
+      && this.volumeData
+      && this.sysinfoReady;
+  }
   // For empty state
   get empty(): boolean {
+    if (!this.dashState) {
+      return true;
+    }
     return this.dashState.every((widget) => !widget.rendered);
   }
 
@@ -103,7 +116,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     title: this.translate.instant('Dashboard is Empty!'),
     message: this.translate.instant('You have hidden all of your available widgets. Use the dashboard configuration form to add widgets.'),
     button: {
-      label: 'Configure Dashboard',
+      label: this.translate.instant('Configure Dashboard'),
       action: () => {
         this.showConfigForm();
       },
@@ -180,7 +193,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   optimizeWidgetContainer(): void {
     const wrapper = document.querySelector<HTMLElement>('.rightside-content-hold');
 
-    const withMargin = this.widgetWidth + 8;
+    const withMargin = this.widgetWidth + 16;
     const max = Math.floor(wrapper.offsetWidth / withMargin);
     const odw = max * withMargin;
     this.optimalDesktopWidth = odw.toString() + 'px';
@@ -247,7 +260,9 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.init();
+    this.startListeners();
+    this.getNetworkInterfaces();
+    this.getDisksData();
 
     this.ws.call('failover.licensed').pipe(untilDestroyed(this)).subscribe((hasFailover) => {
       if (hasFailover) {
@@ -270,77 +285,6 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     // Restore top level scrolling
     const wrapper = document.querySelector<HTMLElement>('.fn-maincontent');
     wrapper.style.overflow = 'auto';
-  }
-
-  init(): void {
-    this.startListeners();
-
-    this.ws.call('interface.query').pipe(untilDestroyed(this)).subscribe((interfaces) => {
-      const clone = [...interfaces] as DashboardNetworkInterface[];
-      const removeNics: { [nic: string]: number | string } = {};
-
-      // Store keys for fast lookup
-      const nicKeys: { [nic: string]: number | string } = {};
-      interfaces.forEach((item, index) => {
-        nicKeys[item.name] = index.toString();
-      });
-
-      // Process Vlans (attach vlans to their parent)
-      interfaces.forEach((item, index) => {
-        if (item.type !== NetworkInterfaceType.Vlan && !clone[index].state.vlans) {
-          clone[index].state.vlans = [];
-        }
-
-        if (item.type === NetworkInterfaceType.Vlan) {
-          const parentIndex = parseInt(nicKeys[item.state.parent] as string);
-          if (!clone[parentIndex].state.vlans) {
-            clone[parentIndex].state.vlans = [];
-          }
-
-          clone[parentIndex].state.vlans.push(item.state);
-          removeNics[item.name] = index;
-        }
-      });
-
-      // Process LAGGs
-      interfaces.forEach((item, index) => {
-        if (item.type === NetworkInterfaceType.LinkAggregation) {
-          clone[index].state.lagg_ports = item.lag_ports;
-          item.lag_ports.forEach((nic) => {
-            // Consolidate addresses
-            clone[index].state.aliases.forEach((item: any) => { item.interface = nic; });
-            clone[index].state.aliases = clone[index].state.aliases.concat(clone[nicKeys[nic] as number].state.aliases);
-
-            // Consolidate vlans
-            clone[index].state.vlans.forEach((item) => { item.interface = nic; });
-            clone[index].state.vlans = clone[index].state.vlans.concat(clone[nicKeys[nic] as number].state.vlans);
-
-            // Mark interface for removal
-            removeNics[nic] = nicKeys[nic];
-          });
-        }
-      });
-
-      // Remove NICs from list
-      for (let i = clone.length - 1; i >= 0; i--) {
-        if (removeNics[clone[i].name]) {
-          // Remove
-          clone.splice(i, 1);
-        } else {
-          // Only keep INET addresses
-          clone[i].state.aliases = clone[i].state.aliases.filter((address) => {
-            return [NetworkInterfaceAliasType.Inet, NetworkInterfaceAliasType.Inet6].includes(address.type);
-          });
-        }
-      }
-
-      // Update NICs array
-      this.nics = clone;
-
-      this.isDataReady();
-    });
-
-    this.getDisksData();
   }
 
   startListeners(): void {
@@ -417,9 +361,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   isDataReady(): void {
-    const isReady = Boolean(
-      this.statsDataEvent$ && Array.isArray(this.pools) && this.nics,
-    );
+    const isReady = Array.isArray(this.pools) && Array.isArray(this.nics);
 
     if (!isReady) {
       return;
@@ -430,7 +372,9 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       this.setDashState(this.availableWidgets);
     }
 
-    this.formEvents$.pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
+    this.formEvents$.pipe(
+      untilDestroyed(this),
+    ).subscribe((evt: CoreEvent) => {
       switch (evt.name) {
         case 'FormSubmit':
           this.setDashState(evt.data);
@@ -454,28 +398,34 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
     if (this.isHa) {
       conf.push({
-        name: 'System Information(Standby)', identifier: 'passive,true', rendered: true, id: conf.length.toString(),
+        id: conf.length.toString(),
+        name: 'System Information(Standby)',
+        identifier: 'passive,true',
+        rendered: true,
       });
     }
 
     conf.push({ name: 'Help', rendered: true });
-
     conf.push({ name: 'CPU', rendered: true, id: conf.length.toString() });
     conf.push({ name: 'Memory', rendered: true, id: conf.length.toString() });
-
     conf.push({ name: 'Storage', rendered: true, id: conf.length.toString() });
+    conf.push({ name: 'Network', rendered: true, id: conf.length.toString() });
 
-    this.pools.forEach((pool) => {
+    this.pools?.forEach((pool) => {
       conf.push({
-        name: 'Pool', identifier: 'name,' + pool.name, rendered: false, id: conf.length.toString(),
+        id: conf.length.toString(),
+        name: 'Pool',
+        identifier: `name,${pool.name}`,
+        rendered: false,
       });
     });
 
-    conf.push({ name: 'Network', rendered: true, id: conf.length.toString() });
-
-    this.nics.forEach((nic) => {
+    this.nics?.forEach((nic) => {
       conf.push({
-        name: 'Interface', identifier: 'name,' + nic.name, rendered: false, id: conf.length.toString(),
+        id: conf.length.toString(),
+        name: 'Interface',
+        identifier: `name,${nic.name}`,
+        rendered: false,
       });
     });
 
@@ -567,6 +517,9 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       ) {
         return false;
       }
+      if (widget.name === 'Interface' && !this.dataFromConfig(widget)) {
+        return false;
+      }
       return true;
     });
   }
@@ -592,8 +545,8 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private setDashState(dashState: DashConfigItem[]): void {
-    this.dashState = dashState;
-    this.renderedWidgets = dashState.filter((widget) => widget.rendered);
+    this.dashState = this.sanitizeState(dashState);
+    this.renderedWidgets = this.dashState.filter((widget) => widget.rendered);
   }
 
   private getActionsConfig(target$: Subject<CoreEvent>): EntityToolbarActionConfig {
@@ -731,11 +684,80 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private loadUserAttributes(): void {
-    this.ws.call('user.query', [[['id', '=', 1]]]).pipe(untilDestroyed(this)).subscribe((user) => {
+    this.ws.call('user.query', [[['id', '=', rootUserId]]]).pipe(
+      untilDestroyed(this),
+    ).subscribe((user) => {
       if (user[0]?.attributes.dashState) {
         this.applyState(this.sanitizeState(user[0].attributes.dashState));
       }
       this.dashStateReady = true;
+    });
+  }
+
+  private getNetworkInterfaces(): void {
+    this.ws.call('interface.query').pipe(untilDestroyed(this)).subscribe((interfaces) => {
+      const clone = [...interfaces] as DashboardNetworkInterface[];
+      const removeNics: { [nic: string]: number | string } = {};
+
+      // Store keys for fast lookup
+      const nicKeys: { [nic: string]: number | string } = {};
+      interfaces.forEach((item, index) => {
+        nicKeys[item.name] = index.toString();
+      });
+
+      // Process Vlans (attach vlans to their parent)
+      interfaces.forEach((item, index) => {
+        if (item.type !== NetworkInterfaceType.Vlan && !clone[index].state.vlans) {
+          clone[index].state.vlans = [];
+        }
+
+        if (item.type === NetworkInterfaceType.Vlan) {
+          const parentIndex = parseInt(nicKeys[item.state.parent] as string);
+          if (!clone[parentIndex].state.vlans) {
+            clone[parentIndex].state.vlans = [];
+          }
+
+          clone[parentIndex].state.vlans.push(item.state);
+          removeNics[item.name] = index;
+        }
+      });
+
+      // Process LAGGs
+      interfaces.forEach((item, index) => {
+        if (item.type === NetworkInterfaceType.LinkAggregation) {
+          clone[index].state.lagg_ports = item.lag_ports;
+          item.lag_ports.forEach((nic) => {
+            // Consolidate addresses
+            clone[index].state.aliases.forEach((item: any) => { item.interface = nic; });
+            clone[index].state.aliases = clone[index].state.aliases.concat(clone[nicKeys[nic] as number].state.aliases);
+
+            // Consolidate vlans
+            clone[index].state.vlans.forEach((item) => { item.interface = nic; });
+            clone[index].state.vlans = clone[index].state.vlans.concat(clone[nicKeys[nic] as number].state.vlans);
+
+            // Mark interface for removal
+            removeNics[nic] = nicKeys[nic];
+          });
+        }
+      });
+
+      // Remove NICs from list
+      for (let i = clone.length - 1; i >= 0; i--) {
+        if (removeNics[clone[i].name]) {
+          // Remove
+          clone.splice(i, 1);
+        } else {
+          // Only keep INET addresses
+          clone[i].state.aliases = clone[i].state.aliases.filter((address) => {
+            return [NetworkInterfaceAliasType.Inet, NetworkInterfaceAliasType.Inet6].includes(address.type);
+          });
+        }
+      }
+
+      // Update NICs array
+      this.nics = clone;
+
+      this.isDataReady();
     });
   }
 }

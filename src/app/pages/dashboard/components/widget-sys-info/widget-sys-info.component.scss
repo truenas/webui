@@ -13,11 +13,10 @@
   font-size: 1.5rem;
   height: 48px;
   left: 0;
-  line-height: 180%;
-  padding: 0 8px;
+  padding: 0 16px;
   position: absolute;
   text-align: left;
-  width: calc(100% - 16px);
+  width: 100%;
   z-index: 2;
 }
 
@@ -40,11 +39,16 @@
 }
 
 .view-overview .mat-card-title-text {
-  margin-left: calc(40% + 16px) !important;
+  margin-left: 40% !important;
+  padding-left: 14px;
 }
 
 span.passive {
+  align-items: baseline;
+  display: inline-flex;
   font-size: 75%;
+  margin-left: 4px;
+  opacity: 0.5;
   text-transform: lowercase;
 }
 
@@ -157,8 +161,7 @@ span.passive {
 .controls {
   color: var(--fg2);
   position: absolute;
-  right: 16px;
-  top: 0;
+  right: 8px;
 }
 
 .controls button {
@@ -187,10 +190,6 @@ span.passive {
   width: 12px;
 }
 
-.carousel-nav .back-arrow.mat-icon {
-  margin-top: -3px;
-}
-
 .carousel-nav .btn.active {
   opacity: 1;
 }
@@ -211,6 +210,34 @@ img.clickable,
 
 .mat-list-base .mat-list-item {
   border-bottom: solid 1px rgba(0, 0, 0, 0.1);
+}
+
+.mat-list-item strong {
+  margin-right: 6px;
+}
+
+.copy-version {
+  align-items: center;
+  display: flex;
+  flex: 1;
+  margin-right: -16px;
+  min-width: 0;
+
+  .copy-version-text {
+    display: inline-flex;
+    flex: 1;
+    min-width: 0;
+
+    span {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+  }
+
+  .copy-version-button {
+    margin-top: -4px;
+  }
 }
 
 .list-subheader {
@@ -412,11 +439,16 @@ div.generic.alert .mat-icon {
   width: auto;
 }
 
-.xs .freenas.product-image {
-  position: relative;
-  top: -24px;
-}
-
 .spinner {
   margin: 0 auto;
+}
+
+.loader {
+  display: flex;
+  height: 100%;
+  margin: auto;
+
+  .spinner {
+    margin: auto;
+  }
 }

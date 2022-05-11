@@ -222,7 +222,7 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
       diameter: 136,
       fontSize: 28,
       max: 100,
-      subtitle: 'Avg Usage',
+      subtitle: this.translate.instant('Avg Usage'),
     } as GaugeConfig;
     this.cpuAvg = config;
   }

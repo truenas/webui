@@ -18,8 +18,7 @@
 .controls {
   color: var(--fg2);
   position: absolute;
-  right: 16px;
-  top: 2px;
+  right: 8px;
 }
 
 mat-grid-tile {
@@ -171,7 +170,7 @@ mat-grid-list {
     display: inline-flex;
     height: 20px;
     justify-content: center;
-    margin-right: 4px;
+    margin-right: 6px;
     min-width: 20px;
     text-align: center;
     user-select: none;
@@ -240,5 +239,18 @@ mat-grid-list {
     height: 100%;
     justify-content: center;
     margin: 8px;
+  }
+}
+
+
+.widget .empty-state {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  height: calc(100% - 56px);
+  justify-content: center;
+
+  .mat-button {
+    margin-top: 32px;
   }
 }

@@ -12,7 +12,7 @@
   width: 536px;
 }
 
-#cpu-cores-wrapper {
+.bar-chart-wrapper {
   padding-top: 3%;
 }
 
@@ -96,7 +96,7 @@ h1.memory-used {
   font-family: var(--font-family-body);
   font-size: 350%;
   font-weight: 400;
-  line-height: 20px;
+  line-height: 1;
   margin: 56px 0 0;
 }
 
@@ -106,13 +106,13 @@ h1.memory-used span.memory-used-units {
 }
 
 .spinner-wrapper {
+  display: flex;
+  height: 100%;
   position: absolute;
-  text-align: center;
-  top: 48px;
   width: 100%;
 
   .spinner {
-    margin: 0 auto;
+    margin: auto;
   }
 }
 
@@ -142,7 +142,7 @@ h1.memory-used span.memory-used-units {
 .controls {
   color: var(--fg2);
   position: absolute;
-  right: 16px;
+  right: 8px;
 }
 
 .controls button {

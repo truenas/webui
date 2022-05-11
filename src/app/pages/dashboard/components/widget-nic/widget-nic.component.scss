@@ -13,12 +13,15 @@
   font-size: 1.5rem;
   height: 48px;
   left: 0;
-  line-height: 180%;
   padding: 0 8px;
   position: absolute;
   text-align: left;
   width: 100%;
   z-index: 4;
+
+  &.view-overview {
+    padding: 0 16px;
+  }
 }
 
 .xs.widget mat-toolbar-row.view-overview .controls,
@@ -143,8 +146,7 @@
 .controls {
   color: var(--fg2);
   position: absolute;
-  right: 16px;
-  top: 0;
+  right: 8px;
 }
 
 .controls button {
@@ -214,6 +216,10 @@
 
 .mat-list-base .mat-list-item {
   border-bottom: solid 1px rgba(0, 0, 0, 0.1);
+
+  strong {
+    margin-right: 6px;
+  }
 }
 
 .list-subheader {

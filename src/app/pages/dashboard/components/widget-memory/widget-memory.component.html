@@ -6,15 +6,25 @@
           <ng-content [select]="[cdkDragHandle]"></ng-content>
 
           <!-- Mobile Only: Exit widget -->
-          <button fxHide.gt-xs class="mat-card-title-text" mat-icon-button color="default"
-            ix-auto ix-auto-type="button" ix-auto-identifier="goBack">
-            <mat-icon (click)="goBack()" class="back-arrow">chevron_left</mat-icon>
-          </button><span fxHide.gt-xs>&nbsp;&nbsp;</span>
+          <button
+            fxHide.gt-xs
+            class="mat-card-title-text primary-nav"
+            mat-icon-button
+            color="default"
+            ix-auto
+            ix-auto-type="button"
+            ix-auto-identifier="goBack"
+            (click)="goBack()"
+          >
+            <mat-icon class="back-arrow">chevron_left</mat-icon>
+          </button>
+
+          <span fxHide.gt-xs>&nbsp;&nbsp;</span>
 
           <h3 class="mat-card-title-text">
             <div class="card-title-text" [class.drag-handle]="showReorderHandle">
               <span class="grip" *ngIf="showReorderHandle"></span>
-              {{title | translate}}
+              <span>{{title | translate}}</span>
             </div>
           </h3>
 
@@ -38,14 +48,15 @@
         </mat-toolbar-row>
 
 
-        <div id="cpu-cores-wrapper" class="bar-chart-wrapper" fxLayout="row wrap" fxLayoutAlign="space-around center">
+        <div class="bar-chart-wrapper" fxLayout="row wrap" fxLayoutAlign="space-around center">
 
-          <div class="spinner-wrapper"><mat-spinner [diameter]="40" *ngIf="!memData" class="spinner"></mat-spinner></div>
+          <div *ngIf="!memData" class="spinner-wrapper">
+            <mat-spinner [diameter]="120" class="spinner"></mat-spinner>
+          </div>
 
           <div class="primary-stat-wrapper" fxFlex.gt-xs="45" fxFlex.xs="100">
             <h1 class="memory-used">
               <span *ngIf="memData">
-                <!--<span>{{memData.data[0][1]}}</span>-->
                 <span>{{memData.max}}</span>
                 <span class="memory-used-units">GiB</span>
               </span>
@@ -57,7 +68,7 @@
               </span>
             </div>
             <!-- Legend -->
-            <div *ngIf="screenType == 'Desktop'" id="cpu-load-cores-legend">
+            <div *ngIf="screenType === 'Desktop'" id="cpu-load-cores-legend">
               <div *ngIf="memData; else noLegend" id="cpu-load-cores-legend-values">
 
                 <!-- Desktop -->
@@ -75,7 +86,7 @@
           </div>
 
           <!-- Mobile Legend -->
-          <div *ngIf="screenType == 'Mobile'" fxFlex="100" id="cpu-load-cores-legend" fxLayout="row wrap">
+          <div *ngIf="screenType === 'Mobile'" fxFlex="100" id="cpu-load-cores-legend" fxLayout="row wrap">
             <!-- Mobile -->
             <div fxFlex="100" fxHide.gt-xs class="list-subheader">  <span>{{"Legend" | translate}}</span></div>
             <mat-list *ngIf="memData; else noLegend" fxFlex="100" fxHide.gt-xs>
