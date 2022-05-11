@@ -127,10 +127,11 @@ export class KubernetesSettingsComponent implements OnInit {
           this.appService.updateContainerConfig(enableContainerImageUpdate),
         ]).pipe(
           tap(([job]) => {
-            if (job.state === JobState.Success) {
-              this.loader.close();
-              this.slideInService.close();
+            if (job.state !== JobState.Success) {
+              return;
             }
+            this.loader.close();
+            this.slideInService.close();
           }),
           catchError((error) => {
             this.loader.close();

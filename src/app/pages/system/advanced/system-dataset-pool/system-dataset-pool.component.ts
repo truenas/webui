@@ -65,27 +65,30 @@ export class SystemDatasetPoolComponent implements OnInit {
   }
 
   onSubmit(): void {
-    this.isFormLoading = true;
     const values = this.form.value;
 
     this.confirmSmbRestartIfNeeded().pipe(
       filter(Boolean),
-      switchMap(() => this.ws.job('systemdataset.update', [values]).pipe(
-        tap((job) => {
-          if (job.state === JobState.Success) {
+      switchMap(() => {
+        this.isFormLoading = true;
+        return this.ws.job('systemdataset.update', [values]).pipe(
+          tap((job) => {
+            if (job.state !== JobState.Success) {
+              return;
+            }
             this.isFormLoading = false;
             this.sysGeneralService.refreshSysGeneral();
             this.cdr.markForCheck();
             this.slideInService.close();
-          }
-        }),
-        catchError((error) => {
-          this.isFormLoading = false;
-          this.errorHandler.handleWsFormError({ ...error, ...(error.exc_info || {}) }, this.form);
-          this.cdr.markForCheck();
-          return EMPTY;
-        }),
-      )),
+          }),
+          catchError((error) => {
+            this.isFormLoading = false;
+            this.errorHandler.handleWsFormError({ ...error, ...(error.exc_info || {}) }, this.form);
+            this.cdr.markForCheck();
+            return EMPTY;
+          }),
+        );
+      }),
       untilDestroyed(this),
     ).subscribe();
   }

@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { ResponseErrorType } from 'app/enums/response-error-type.enum';
+import { Job } from 'app/interfaces/job.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { DialogService } from 'app/services';
@@ -11,9 +12,14 @@ export class FormErrorHandlerService {
     private dialog: DialogService,
   ) {}
 
-  handleWsFormError(error: WebsocketError, formGroup: FormGroup): void {
-    if (error.type === ResponseErrorType.Validation && error.extra) {
+  handleWsFormError(error: WebsocketError | Job, formGroup: FormGroup): void {
+    if ('type' in error && error.type === ResponseErrorType.Validation && error.extra) {
       this.handleValidationError(error, formGroup);
+      return;
+    }
+
+    if ('exc_info' in error && error.exc_info.type === ResponseErrorType.Validation && error.exc_info.extra) {
+      this.handleValidationError({ ...error, extra: error.exc_info.extra as any }, formGroup);
       return;
     }
 
@@ -23,8 +29,8 @@ export class FormErrorHandlerService {
 
   // TODO: Add support for api fields having different names than formgroup fields, i.e. private_key => privateKey
   // TODO: Same for nested API objects.
-  private handleValidationError(error: WebsocketError, formGroup: FormGroup): void {
-    for (const extraItem of error.extra) {
+  private handleValidationError(error: WebsocketError | Job, formGroup: FormGroup): void {
+    for (const extraItem of (error as WebsocketError).extra) {
       const field = extraItem[0].split('.')[1];
       const errorMessage = extraItem[1];
 

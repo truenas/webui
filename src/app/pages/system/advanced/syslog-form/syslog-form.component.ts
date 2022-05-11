@@ -92,12 +92,13 @@ export class SyslogFormComponent implements OnInit {
     this.ws.call('system.advanced.update', [configUpdate]).pipe(
       switchMap(() => this.ws.job('systemdataset.update', [{ syslog }]).pipe(
         tap((job) => {
-          if (job.state === JobState.Success) {
-            this.isFormLoading = false;
-            this.sysGeneralService.refreshSysGeneral();
-            this.cdr.markForCheck();
-            this.slideInService.close();
+          if (job.state !== JobState.Success) {
+            return;
           }
+          this.isFormLoading = false;
+          this.sysGeneralService.refreshSysGeneral();
+          this.cdr.markForCheck();
+          this.slideInService.close();
         }),
         catchError((error) => {
           this.isFormLoading = false;
