@@ -68,8 +68,8 @@
               </span>
             </div>
             <!-- Legend -->
-            <div *ngIf="screenType === 'Desktop'" id="cpu-load-cores-legend">
-              <div *ngIf="memData; else noLegend" id="cpu-load-cores-legend-values">
+            <div *ngIf="screenType === 'Desktop'" id="memory-legend">
+              <div *ngIf="memData; else noLegend" id="memory-legend-values">
 
                 <!-- Desktop -->
                 <div fxHide.xs *ngFor="let legendItem of memData.data; let i=index"  class="legend-item">
@@ -86,7 +86,7 @@
           </div>
 
           <!-- Mobile Legend -->
-          <div *ngIf="screenType === 'Mobile'" fxFlex="100" id="cpu-load-cores-legend" fxLayout="row wrap">
+          <div *ngIf="screenType === 'Mobile'" fxFlex="100" id="memory-legend" fxLayout="row wrap">
             <!-- Mobile -->
             <div fxFlex="100" fxHide.gt-xs class="list-subheader">  <span>{{"Legend" | translate}}</span></div>
             <mat-list *ngIf="memData; else noLegend" fxFlex="100" fxHide.gt-xs>
@@ -98,7 +98,7 @@
           </div>
 
           <ng-template #noLegend>
-            <div id="cpu-load-cores-legend-values" fxFlex fxLayout="row" fxLayoutAlign="space-around center">
+            <div id="memory-legend-values" fxFlex fxLayout="row" fxLayoutAlign="space-around center">
               <div fxFlex="100" class="legend-item chart-label">
                 <span class="label"></span>
               </div>
