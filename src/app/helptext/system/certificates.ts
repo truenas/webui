@@ -24,9 +24,8 @@ export const helptextSystemCertificates = {
 
     cert_create_type: {
       placeholder: T('Type'),
-      tooltip: T('<i>Internal Certificate</i> uses a system-managed CA for certificate issuance. \
- <i>Import Certificate</i> allows an existing certificate to be imported onto \
- the system.'),
+      tooltip: T('<i>Internal Certificates</i> use system-managed CAs for certificate issuance. \
+ <i>Import Certificate</i> lets you import an existing certificate onto the system.'),
       options: [
         { label: T('Internal Certificate'), value: 'CERTIFICATE_CREATE_INTERNAL' },
         { label: T('Import Certificate'), value: 'CERTIFICATE_CREATE_IMPORTED' },
@@ -36,10 +35,8 @@ export const helptextSystemCertificates = {
 
     csr_create_type: {
       placeholder: T('Type'),
-      tooltip: T('<i>Certificate Signing Request</i>: when an external CA will issue (sign) the certificate. \
-        Typically used with ACME, or when default browser trust is needed.\
- <i>Import Certificate Signing Request</i> allows an existing CSR \
- to be imported onto the system, typically for use with ACME or an internal CA.'),
+      tooltip: T('<i>Certificate Signing Requests</i> control when an external CA will issue (sign) the certificate. Typically used with ACME or other CAs that most popular browsers trust by default \
+ <i>Import Certificate Signing Request</i> lets you import an existing CSR onto the system. Typically used with ACME or internal CAs.'),
       options: [
         { label: T('Certificate Signing Request'), value: 'CERTIFICATE_CREATE_CSR' },
         { label: T('Import Certificate Signing Request'), value: 'CERTIFICATE_CREATE_IMPORTED_CSR' },
@@ -207,9 +204,10 @@ matches your certificate usage scenario.'),
     basic_constraints: {
       config: {
         placeholder: T('Basic Constraints Config'),
-        tooltip: T('Specify whether the certificate may be used for a Certificate Authority,\
-          and whether this extension is critical. Critical extensions must be recognized by the client or be rejected.\
-          Basic web certificates typically require CA disabled, and critical marked.'),
+        tooltip: T('Specify whether to use the certificate for a Certificate Authority \
+          and whether this extension is critical. Clients must recognize critical extensions \
+          to prevent rejection. Web certificates typically require you to disable \
+          CA and enable Critical Extension.'),
       },
       ca: {
         placeholder: T('CA'),
@@ -217,12 +215,9 @@ matches your certificate usage scenario.'),
       },
       enabled: {
         placeholder: T('Basic Constraints'),
-        tooltip: T('Activate the basic contstraints extension.\
- This extension identifies whether the \
- subject of the certificate is a CA, and the maximum depth of valid \
- certification paths that include this certificate. <br> \
- See <a href="https://www.ietf.org/rfc/rfc3280.txt">RFC 3280, section 4.2.1.10</a> \
- for more information.'),
+        tooltip: T('Activate the Basic Constraints extension to identify whether \
+          the certificate\'s subject is a CA and the maximum depth of valid \
+          certification paths that include this certificate.'),
       },
       path_length: {
         placeholder: T('Path Length'),
@@ -288,7 +283,7 @@ for more details.'),
         tooltip: T('Activate this certificate extension.\
 The Extended Key Usage extension identifies and limits valid uses for this certificate, such as client authentication or server authentication.\
 See <a href="https://www.ietf.org/rfc/rfc3280.txt" target="_blank">RFC 3280, section 4.2.1.13</a> \
-for more details.'),'),
+for more details.'),
       },
       extension_critical: {
         placeholder: T('Critical Extension'),
@@ -302,9 +297,9 @@ certificate still approved.'),
     key_usage: {
       config: {
         placeholder: T('Key Usage Config'),
-        tooltip: T('Specify the valid key usages for this certificate.\
-Web certificates will typically need at least Digital Signature and possibly Key Encipherment or Key Agreement,\
-while other applications may need additional key usages.'),
+        tooltip: T('Specify this certificate\'s valid Key Usages. Web certificates \
+          typically need at least Digital Signature and possibly Key Encipherment \
+          or Key Agreement, while other applications may need other usages.'),
       },
       enabled: {
         placeholder: T('Key Usage'),
