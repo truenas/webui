@@ -1,6 +1,7 @@
 import { ChartReleaseStatus } from 'app/enums/chart-release-status.enum';
 import { ChartSchemaType } from 'app/enums/chart-schema-type.enum';
 import { ChartMetadata } from 'app/interfaces/catalog.interface';
+import { HierarchicalObjectMap } from 'app/interfaces/hierarhical-object-map.interface';
 import { QueryParams } from 'app/interfaces/query-api.interface';
 
 export interface UsedPort {
@@ -48,10 +49,17 @@ export interface ChartReleaseCreate {
   version: string;
 }
 
+export type ChartFormValue = string | number | boolean | Record<string, unknown>;
+
+export interface ChartFormValues extends HierarchicalObjectMap<ChartFormValue> {
+  release_name: string;
+  version?: string;
+}
+
 export interface ChartRelease {
   name: string;
   info: ChartInfo;
-  config: { [key: string]: any };
+  config: { [key: string]: ChartFormValue };
   hooks: unknown[];
   version: number;
   namespace: string;

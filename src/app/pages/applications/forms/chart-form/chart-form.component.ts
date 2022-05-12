@@ -9,6 +9,8 @@ import { DynamicFormSchemaType } from 'app/enums/dynamic-form-schema-type.enum';
 import helptext from 'app/helptext/apps/apps';
 import { CatalogApp } from 'app/interfaces/catalog.interface';
 import {
+  ChartFormValue,
+  ChartFormValues,
   ChartRelease, ChartReleaseCreate, ChartSchema, ChartSchemaNode,
 } from 'app/interfaces/chart-release.interface';
 import { AddListItemEvent, DeleteListItemEvent, DynamicFormSchema } from 'app/interfaces/dynamic-form-schema.interface';
@@ -18,12 +20,6 @@ import { DialogService } from 'app/services';
 import { AppSchemaService } from 'app/services/app-schema.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
-interface ChartFormValues {
-  release_name: string;
-  version?: string;
-  [key: string]: string | number | boolean | Record<string, unknown>;
-}
-
 @UntilDestroy()
 @Component({
   templateUrl: './chart-form.component.html',
@@ -32,7 +28,7 @@ interface ChartFormValues {
 })
 export class ChartFormComponent {
   title: string;
-  config: { [key: string]: any };
+  config: { [key: string]: ChartFormValue };
   catalogApp: CatalogApp;
   selectedVersionKey: string;
 

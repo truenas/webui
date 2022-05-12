@@ -6,8 +6,9 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { of } from 'rxjs';
 import { ChartSchemaType } from 'app/enums/chart-schema-type.enum';
 import { DynamicFormSchemaType } from 'app/enums/dynamic-form-schema-type.enum';
-import { ChartSchemaNode } from 'app/interfaces/chart-release.interface';
+import { ChartFormValue, ChartSchemaNode } from 'app/interfaces/chart-release.interface';
 import { AddListItemEvent, DeleteListItemEvent, DynamicFormSchemaNode } from 'app/interfaces/dynamic-form-schema.interface';
+import { HierarchicalObjectMap } from 'app/interfaces/hierarhical-object-map.interface';
 import { Relation } from 'app/modules/entity/entity-form/models/field-relation.interface';
 import { FilesystemService } from 'app/services/filesystem.service';
 
@@ -155,7 +156,11 @@ export class AppSchemaService {
     return newSchema;
   }
 
-  addFormControls(chartSchemaNode: ChartSchemaNode, formGroup: FormGroup, config?: { [key: string]: any }): void {
+  addFormControls(
+    chartSchemaNode: ChartSchemaNode,
+    formGroup: FormGroup,
+    config?: HierarchicalObjectMap<ChartFormValue>,
+  ): void {
     const schema = chartSchemaNode.schema;
     if ([
       ChartSchemaType.Int,
@@ -246,7 +251,7 @@ export class AppSchemaService {
         const configControlPath = this.getControlPath(formGroup.controls[chartSchemaNode.variable], '').split('.');
         let nextItem = config;
         for (const path of configControlPath) {
-          nextItem = nextItem[path];
+          nextItem = nextItem[path] as HierarchicalObjectMap<ChartFormValue>;
         }
 
         if (Array.isArray(nextItem)) {
