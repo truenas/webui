@@ -1,0 +1,8 @@
+export enum DynamicFormSchemaType {
+  Input = 'input',
+  Select = 'select',
+  Explorer = 'explorer',
+  Checkbox = 'checkbox',
+  List = 'list',
+  Dict = 'dict',
+}

@@ -1,7 +1,7 @@
 import { ChartSchemaNode } from 'app/interfaces/chart-release.interface';
 import { DynamicFormSchemaNode } from 'app/interfaces/dynamic-form-schema.interface';
+import { AppSchemaService } from 'app/services/app-schema.service';
 import { FilesystemService } from 'app/services/filesystem.service';
-import { TransformAppSchemaService } from 'app/services/transform-app-schema.service';
 
 const beforData = [
   {
@@ -106,7 +106,7 @@ const afterData = [
       }, {
         controlName: 'value', editable: undefined, hidden: undefined, private: undefined, required: true, title: 'Option Value', tooltip: undefined, type: 'input',
       }],
-      items_schema: [{ label: 'Option Name', schema: { required: true, type: 'string' }, variable: 'name' }, { label: 'Option Value', schema: { required: true, type: 'string' }, variable: 'value' }],
+      itemsSchema: [{ label: 'Option Name', schema: { required: true, type: 'string' }, variable: 'name' }, { label: 'Option Value', schema: { required: true, type: 'string' }, variable: 'value' }],
       title: 'DNS Options',
       type: 'list',
     }],
@@ -132,12 +132,14 @@ const afterData = [
   }],
 ] as DynamicFormSchemaNode[][];
 
-describe('TransformAppSchemaService', () => {
-  const service = new TransformAppSchemaService({} as FilesystemService);
-  beforData.forEach((item, idx) => {
-    it('Variable ' + item.variable, () => {
-      const transformed = service.transformNode(item);
-      expect(transformed).toEqual(afterData[idx]);
+describe('AppSchemaService', () => {
+  const service = new AppSchemaService({} as FilesystemService);
+  describe('transformNode()', () => {
+    beforData.forEach((item, idx) => {
+      it('Variable ' + item.variable, () => {
+        const transformed = service.transformNode(item);
+        expect(transformed).toEqual(afterData[idx]);
+      });
     });
   });
 });

@@ -1,5 +1,6 @@
 import { FormArray } from '@angular/forms';
 import { Observable } from 'rxjs';
+import { DynamicFormSchemaType } from 'app/enums/dynamic-form-schema-type.enum';
 import { Option } from 'app/interfaces/option.interface';
 import { TreeNodeProvider } from 'app/modules/ix-forms/components/ix-explorer/ix-explorer.component';
 
@@ -27,46 +28,46 @@ export interface DynamicFormSchemaBase {
 }
 
 export interface DynamicFormSchemaInput extends DynamicFormSchemaBase {
-  type: 'input';
+  type: DynamicFormSchemaType.Input;
   tooltip?: string;
   private?: boolean;
   placeholder?: string;
 }
 
 export interface DynamicFormSchemaSelect extends DynamicFormSchemaBase {
-  type: 'select';
+  type: DynamicFormSchemaType.Select;
   tooltip?: string;
   options?: Observable<Option[]>;
 }
 
 export interface DynamicFormSchemaExplorer extends DynamicFormSchemaBase {
-  type: 'explorer';
+  type: DynamicFormSchemaType.Explorer;
   tooltip?: string;
   nodeProvider?: TreeNodeProvider;
 }
 
 export interface DynamicFormSchemaCheckbox extends DynamicFormSchemaBase {
-  type: 'checkbox';
+  type: DynamicFormSchemaType.Checkbox;
   tooltip?: string;
 }
 
 export interface DynamicFormSchemaList extends DynamicFormSchemaBase {
-  type: 'list';
+  type: DynamicFormSchemaType.List;
   items?: DynamicFormSchemaNode[];
-  items_schema?: unknown[];
+  itemsSchema?: unknown[];
 }
 
 export interface DynamicFormSchemaDict extends DynamicFormSchemaBase {
-  type: 'dict';
+  type: DynamicFormSchemaType.Dict;
   attrs?: DynamicFormSchemaNode[];
 }
 
-export interface AddListItemEmitter {
+export interface AddListItemEvent {
   array: FormArray;
   schema: unknown[];
 }
 
-export interface DeleteListItemEmitter {
+export interface DeleteListItemEvent {
   array: FormArray;
   index: number;
 }

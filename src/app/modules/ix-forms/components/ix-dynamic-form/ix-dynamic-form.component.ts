@@ -3,7 +3,7 @@ import {
 } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { UntilDestroy } from '@ngneat/until-destroy';
-import { AddListItemEmitter, DeleteListItemEmitter, DynamicFormSchema } from 'app/interfaces/dynamic-form-schema.interface';
+import { AddListItemEvent, DeleteListItemEvent, DynamicFormSchema } from 'app/interfaces/dynamic-form-schema.interface';
 
 @UntilDestroy()
 @Component({
@@ -17,14 +17,14 @@ export class IxDynamicFormComponent {
   @Input() dynamicForm: FormGroup;
   @Input() dynamicSection: DynamicFormSchema[];
 
-  @Output() addListItem = new EventEmitter<AddListItemEmitter>();
-  @Output() deleteListItem = new EventEmitter<DeleteListItemEmitter>();
+  @Output() addListItem = new EventEmitter<AddListItemEvent>();
+  @Output() deleteListItem = new EventEmitter<DeleteListItemEvent>();
 
-  addControlNext(event: AddListItemEmitter): void {
+  addControlNext(event: AddListItemEvent): void {
     this.addListItem.emit(event);
   }
 
-  removeControlNext(event: DeleteListItemEmitter): void {
+  removeControlNext(event: DeleteListItemEvent): void {
     this.deleteListItem.emit(event);
   }
 }

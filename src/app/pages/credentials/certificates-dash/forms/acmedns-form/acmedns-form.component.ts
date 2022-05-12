@@ -1,11 +1,13 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
+import {
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
+} from '@angular/core';
 import { FormGroup, Validators } from '@angular/forms';
 import { FormBuilder, FormControl } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { Observable, of } from 'rxjs';
 import { DnsAuthenticatorType } from 'app/enums/dns-authenticator-type.enum';
+import { DynamicFormSchemaType } from 'app/enums/dynamic-form-schema-type.enum';
 import { helptextSystemAcme as helptext } from 'app/helptext/system/acme';
 import { AuthenticatorSchema, DnsAuthenticator } from 'app/interfaces/dns-authenticator.interface';
 import { DynamicFormSchema, DynamicFormSchemaNode } from 'app/interfaces/dynamic-form-schema.interface';
@@ -25,7 +27,7 @@ interface DnsAuthenticatorList {
   styleUrls: ['./acmedns-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AcmednsFormComponent {
+export class AcmednsFormComponent implements OnInit {
   get isNew(): boolean {
     return !this.editingAcmedns;
   }
@@ -54,12 +56,10 @@ export class AcmednsFormComponent {
   readonly helptext = helptext;
 
   getAuthenticatorSchemas(): Observable<AuthenticatorSchema[]> {
-    this.isLoading = true;
     return this.ws.call('acme.dns.authenticator.authenticator_schemas');
   }
 
-  authenticator_options$ = this.getAuthenticatorSchemas().pipe(map((schemas) => this.loadSchemas(schemas)));
-
+  authenticator_options$: Observable<Option[]>;
   private editingAcmedns: DnsAuthenticator;
 
   constructor(
@@ -69,11 +69,36 @@ export class AcmednsFormComponent {
     private errorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,
     private ws: WebSocketService,
+    private changeDetectorRef: ChangeDetectorRef,
   ) {}
 
-  loadSchemas(schemas: AuthenticatorSchema[]): Option[] {
-    this.isLoading = true;
+  ngOnInit(): void {
+    this.loadSchemas();
+  }
 
+  private loadSchemas(): void {
+    this.isLoading = true;
+    this.getAuthenticatorSchemas()
+      .pipe(untilDestroyed(this))
+      .subscribe((schemas: AuthenticatorSchema[]) => {
+        this.setAuthenticatorOptions(schemas);
+        this.createAuthenticatorControls(schemas);
+
+        if (!this.isNew) {
+          this.form.patchValue(this.editingAcmedns);
+        }
+
+        this.isLoading = false;
+        this.isLoadingSchemas = false;
+        this.changeDetectorRef.detectChanges();
+      });
+  }
+
+  private setAuthenticatorOptions(schemas: AuthenticatorSchema[]): void {
+    this.authenticator_options$ = of(schemas.map((schema) => ({ label: schema.key, value: schema.key })));
+  }
+
+  private createAuthenticatorControls(schemas: AuthenticatorSchema[]): void {
     schemas.forEach((schema) => {
       schema.schema.forEach((input) => {
         this.form.controls.attributes.addControl(input._name_, new FormControl('', input._required_ ? [Validators.required] : []));
@@ -88,23 +113,13 @@ export class AcmednsFormComponent {
     }];
 
     this.dnsAuthenticatorList = schemas.map((schema) => this.parseSchemaForDnsAuthList(schema));
-
     this.onAuthenticatorTypeChanged(DnsAuthenticatorType.Cloudflare);
-
-    if (!this.isNew) {
-      this.form.patchValue(this.editingAcmedns);
-    }
-
-    this.isLoading = false;
-    this.isLoadingSchemas = false;
-
-    return schemas.map((schema) => ({ label: schema.key, value: schema.key }));
   }
 
   parseSchemaForDynamicSchema(schema: AuthenticatorSchema): DynamicFormSchemaNode[] {
     return schema.schema.map((input) => ({
       controlName: input._name_,
-      type: 'input',
+      type: DynamicFormSchemaType.Input,
       title: input.title,
       required: input._required_,
     }));

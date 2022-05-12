@@ -3,7 +3,8 @@ import {
 } from '@angular/core';
 import { FormArray, FormGroup } from '@angular/forms';
 import { UntilDestroy } from '@ngneat/until-destroy';
-import { AddListItemEmitter, DeleteListItemEmitter, DynamicFormSchemaNode } from 'app/interfaces/dynamic-form-schema.interface';
+import { DynamicFormSchemaType } from 'app/enums/dynamic-form-schema-type.enum';
+import { AddListItemEvent, DeleteListItemEvent, DynamicFormSchemaNode } from 'app/interfaces/dynamic-form-schema.interface';
 
 @UntilDestroy()
 @Component({
@@ -16,8 +17,10 @@ export class IxDynamicFormItemComponent {
   @Input() dynamicForm: FormGroup;
   @Input() dynamicSchema: DynamicFormSchemaNode;
 
-  @Output() addListItem = new EventEmitter<AddListItemEmitter>();
-  @Output() deleteListItem = new EventEmitter<DeleteListItemEmitter>();
+  @Output() addListItem = new EventEmitter<AddListItemEvent>();
+  @Output() deleteListItem = new EventEmitter<DeleteListItemEvent>();
+
+  readonly DynamicFormSchemaType = DynamicFormSchemaType;
 
   get getFormGroup(): FormGroup {
     return this.dynamicForm.controls[this.dynamicSchema.controlName] as FormGroup;
@@ -32,10 +35,10 @@ export class IxDynamicFormItemComponent {
   }
 
   addControl(): void {
-    if (this.dynamicSchema.type === 'list') {
+    if (this.dynamicSchema.type === DynamicFormSchemaType.List) {
       this.addListItem.emit({
         array: this.getFormArray,
-        schema: this.dynamicSchema.items_schema,
+        schema: this.dynamicSchema.itemsSchema,
       });
     }
   }
@@ -47,11 +50,11 @@ export class IxDynamicFormItemComponent {
     });
   }
 
-  addControlNext(event: AddListItemEmitter): void {
+  addControlNext(event: AddListItemEvent): void {
     this.addListItem.emit(event);
   }
 
-  removeControlNext(event: DeleteListItemEmitter): void {
+  removeControlNext(event: DeleteListItemEvent): void {
     this.deleteListItem.emit(event);
   }
 }

@@ -1,25 +1,28 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import {
-  AbstractControl, FormArray, FormControl, FormGroup, Validators,
-} from '@angular/forms';
+import { FormControl, Validators } from '@angular/forms';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { of } from 'rxjs';
 import { ixChartApp } from 'app/constants/catalog.constants';
-import { DynamicSchemaType } from 'app/enums/dynamic-schema-type.enum';
+import { DynamicFormSchemaType } from 'app/enums/dynamic-form-schema-type.enum';
 import helptext from 'app/helptext/apps/apps';
 import { CatalogApp } from 'app/interfaces/catalog.interface';
-import { ChartRelease, ChartReleaseCreate, ChartSchemaNode } from 'app/interfaces/chart-release.interface';
 import {
-  AddListItemEmitter, DeleteListItemEmitter, DynamicFormSchema,
-} from 'app/interfaces/dynamic-form-schema.interface';
-import { Relation } from 'app/modules/entity/entity-form/models/field-relation.interface';
+  ChartRelease, ChartReleaseCreate, ChartSchema, ChartSchemaNode,
+} from 'app/interfaces/chart-release.interface';
+import { AddListItemEvent, DeleteListItemEvent, DynamicFormSchema } from 'app/interfaces/dynamic-form-schema.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { DialogService } from 'app/services';
+import { AppSchemaService } from 'app/services/app-schema.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { TransformAppSchemaService } from 'app/services/transform-app-schema.service';
+
+interface ChartFormValues {
+  release_name: string;
+  version?: string;
+  [key: string]: string | number | boolean | Record<string, unknown>;
+}
 
 @UntilDestroy()
 @Component({
@@ -29,7 +32,7 @@ import { TransformAppSchemaService } from 'app/services/transform-app-schema.ser
 })
 export class ChartFormComponent {
   title: string;
-  config: any;
+  config: { [key: string]: any };
   catalogApp: CatalogApp;
   selectedVersionKey: string;
 
@@ -38,7 +41,9 @@ export class ChartFormComponent {
   dynamicSection: DynamicFormSchema[] = [];
   dialogRef: MatDialogRef<EntityJobComponent>;
 
-  form = this.formBuilder.group({});
+  form = this.formBuilder.group<ChartFormValues>({
+    release_name: '',
+  });
 
   readonly helptext = helptext;
 
@@ -46,7 +51,7 @@ export class ChartFormComponent {
     private formBuilder: FormBuilder,
     private slideInService: IxSlideInService,
     private dialogService: DialogService,
-    private transformAppSchemaService: TransformAppSchemaService,
+    private appSchemaService: AppSchemaService,
     private mdDialog: MatDialog,
   ) {}
 
@@ -67,7 +72,7 @@ export class ChartFormComponent {
       schema: [
         {
           controlName: 'release_name',
-          type: 'input',
+          type: DynamicFormSchemaType.Input,
           title: helptext.chartForm.release_name.placeholder,
           required: true,
           editable: false,
@@ -75,21 +80,7 @@ export class ChartFormComponent {
       ],
     });
 
-    chart.chart_schema.schema.groups.forEach((group) => {
-      this.dynamicSection.push({ ...group, schema: [] });
-    });
-    try {
-      chart.chart_schema.schema.questions.forEach((question) => {
-        if (this.dynamicSection.find((schema) => schema.name === question.group)) {
-          this.addFormControls(question, this.form);
-          this.addFormSchema(question, question.group);
-        }
-      });
-      this.form.patchValue(this.config);
-    } catch (error: unknown) {
-      console.error(error);
-      this.dialogService.errorReport(helptext.chartForm.parseError.title, helptext.chartForm.parseError.message);
-    }
+    this.buildDynamicForm(chart.chart_schema.schema);
   }
 
   setChartCreate(chart: CatalogApp): void {
@@ -120,13 +111,13 @@ export class ChartFormComponent {
       schema: [
         {
           controlName: 'release_name',
-          type: 'input',
+          type: DynamicFormSchemaType.Input,
           title: helptext.chartForm.release_name.placeholder,
           required: true,
         },
         {
           controlName: 'version',
-          type: 'select',
+          type: DynamicFormSchemaType.Select,
           title: helptext.chartWizard.nameGroup.version,
           required: true,
           options: of(versionKeys.map((option) => ({ value: option, label: option }))),
@@ -134,176 +125,49 @@ export class ChartFormComponent {
         },
       ],
     });
-    chart.schema.groups.forEach((group) => {
-      this.dynamicSection.push({ ...group, schema: [] });
-    });
+
+    this.buildDynamicForm(chart.schema);
+  }
+
+  buildDynamicForm(schema: ChartSchema['schema']): void {
     try {
-      chart.schema.questions.forEach((question) => {
+      schema.groups.forEach((group) => {
+        this.dynamicSection.push({ ...group, schema: [] });
+      });
+      schema.questions.forEach((question) => {
         if (this.dynamicSection.find((schema) => schema.name === question.group)) {
-          this.addFormControls(question, this.form);
+          this.addFormControls(question);
           this.addFormSchema(question, question.group);
         }
       });
+      if (!this.isNew) {
+        this.form.patchValue(this.config);
+      }
     } catch (error: unknown) {
-      console.error(error);
       this.dialogService.errorReport(helptext.chartForm.parseError.title, helptext.chartForm.parseError.message);
     }
   }
 
-  addFormControls(chartSchemaNode: ChartSchemaNode, formGroup: FormGroup): void {
-    const schema = chartSchemaNode.schema;
-    if ([
-      DynamicSchemaType.Int,
-      DynamicSchemaType.String,
-      DynamicSchemaType.Boolean,
-      DynamicSchemaType.Path,
-      DynamicSchemaType.Hostpath,
-    ].includes(schema.type)) {
-      const newFormControl = new FormControl(schema.default, [
-        schema.required ? Validators.required : Validators.nullValidator,
-        schema.max ? Validators.max(schema.max) : Validators.nullValidator,
-        schema.min ? Validators.min(schema.min) : Validators.nullValidator,
-        schema.max_length ? Validators.maxLength(schema.max_length) : Validators.nullValidator,
-        schema.min_length ? Validators.minLength(schema.min_length) : Validators.nullValidator,
-      ]);
-
-      if (schema.subquestions) {
-        schema.subquestions.forEach((subquestion) => {
-          this.addFormControls(subquestion, formGroup);
-          if (subquestion.schema.default === schema.show_subquestions_if) {
-            formGroup.controls[subquestion.variable].enable();
-          } else {
-            formGroup.controls[subquestion.variable].disable();
-          }
-        });
-        newFormControl.valueChanges
-          .pipe(untilDestroyed(this))
-          .subscribe((value) => {
-            schema.subquestions.forEach((subquestion) => {
-              if (formGroup.controls[subquestion.variable].parent.enabled) {
-                if (value === schema.show_subquestions_if) {
-                  formGroup.controls[subquestion.variable].enable();
-                } else {
-                  formGroup.controls[subquestion.variable].disable();
-                }
-              }
-            });
-          });
-      }
-
-      formGroup.addControl(chartSchemaNode.variable, newFormControl);
-
-      if (schema.show_if) {
-        const relations: Relation[] = schema.show_if.map((item) => ({
-          fieldName: item[0],
-          operatorName: item[1],
-          operatorValue: item[2],
-        }));
-        relations.forEach((relation) => {
-          if (formGroup.controls[relation.fieldName]) {
-            if (formGroup.controls[relation.fieldName].value !== relation.operatorValue) {
-              formGroup.controls[chartSchemaNode.variable].disable();
-            }
-            formGroup.controls[relation.fieldName].valueChanges
-              .pipe(untilDestroyed(this))
-              .subscribe((value) => {
-                if (formGroup.controls[chartSchemaNode.variable].parent.enabled) {
-                  if (value === relation.operatorValue) {
-                    formGroup.controls[chartSchemaNode.variable].enable();
-                  } else {
-                    formGroup.controls[chartSchemaNode.variable].disable();
-                  }
-                }
-              });
-          }
-        });
-      }
-    } else if (schema.type === DynamicSchemaType.Dict) {
-      formGroup.addControl(chartSchemaNode.variable, new FormGroup({}));
-      for (const attr of schema.attrs) {
-        this.addFormControls(attr, formGroup.controls[chartSchemaNode.variable] as FormGroup);
-      }
-    } else if (schema.type === DynamicSchemaType.List) {
-      formGroup.addControl(chartSchemaNode.variable, new FormArray([]));
-
-      if (!this.isNew) {
-        let items: ChartSchemaNode[] = [];
-        chartSchemaNode.schema.items.forEach((item) => {
-          if (item.schema.attrs) {
-            item.schema.attrs.forEach((attr) => {
-              items = items.concat(attr);
-            });
-          } else {
-            items = items.concat(item);
-          }
-        });
-
-        const configControlPath = this.getControlPath(formGroup.controls[chartSchemaNode.variable], '').split('.');
-        let nextItem = this.config;
-        for (const path of configControlPath) {
-          nextItem = nextItem[path];
-        }
-
-        if (Array.isArray(nextItem)) {
-          // eslint-disable-next-line unused-imports/no-unused-vars
-          for (const _ of nextItem) {
-            this.addFormListItem({
-              array: formGroup.controls[chartSchemaNode.variable] as FormArray,
-              schema: items,
-            });
-          }
-        }
-      }
-    }
+  addFormControls(question: ChartSchemaNode): void {
+    this.appSchemaService.addFormControls(question, this.form, this.config);
   }
 
   addFormSchema(chartSchemaNode: ChartSchemaNode, group: string): void {
     this.dynamicSection.forEach((section) => {
       if (section.name === group) {
         section.schema = section.schema.concat(
-          this.transformAppSchemaService.transformNode(chartSchemaNode),
+          this.appSchemaService.transformNode(chartSchemaNode),
         );
       }
     });
   }
 
-  addFormListItem(event: AddListItemEmitter): void {
-    const itemFormGroup = new FormGroup({});
-    event.schema.forEach((item) => {
-      this.addFormControls(item as ChartSchemaNode, itemFormGroup);
-    });
-    event.array.push(itemFormGroup);
+  addItem(event: AddListItemEvent): void {
+    this.appSchemaService.addFormListItem(event);
   }
 
-  deleteFormListItem(event: DeleteListItemEmitter): void {
-    event.array.removeAt(event.index);
-  }
-
-  getControlName(control: AbstractControl): string | null {
-    if (control.parent == null) {
-      return null;
-    }
-    const children = control.parent.controls;
-
-    if (Array.isArray(children)) {
-      for (let index = 0; index < children.length; index++) {
-        if (children[index] === control) {
-          return `${index}`;
-        }
-      }
-      return null;
-    }
-    return Object.keys(children).find((name) => control === children[name]) || null;
-  }
-
-  getControlPath(control: AbstractControl, path: string): string | null {
-    path = this.getControlName(control) + path;
-
-    if (control.parent && this.getControlName(control.parent)) {
-      path = '.' + path;
-      return this.getControlPath(control.parent, path);
-    }
-    return path;
+  deleteItem(event: DeleteListItemEvent): void {
+    this.appSchemaService.deleteFormListItem(event);
   }
 
   onSubmit(): void {

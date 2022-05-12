@@ -77,6 +77,7 @@ describe('AcmednsFormComponent', () => {
 
   it('shows values for an existing DNS Authenticator when form is opened for edit', async () => {
     spectator.component.setAcmednsForEdit(existingAcmedns);
+    spectator.component.ngOnInit();
 
     let authenticator: Option[];
     spectator.component.authenticator_options$.subscribe((options) => authenticator = options);

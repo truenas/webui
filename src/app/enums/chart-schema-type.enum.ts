@@ -1,4 +1,4 @@
-export enum DynamicSchemaType {
+export enum ChartSchemaType {
   Int = 'int',
   String = 'string',
   Boolean = 'boolean',
