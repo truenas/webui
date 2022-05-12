@@ -152,6 +152,24 @@ describe('GuiFormComponent', () => {
     ]);
   });
 
+  it('shows confirm dialog if enable redirect HTTPS', async () => {
+    const websocket = spectator.inject(WebSocketService);
+    websocket.connected = true;
+
+    const form = await loader.getHarness(IxFormHarness);
+    await form.fillForm({
+      'Web Interface HTTP -> HTTPS Redirect': true,
+    });
+
+    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+    await saveButton.click();
+
+    const dialog = spectator.inject(DialogService);
+    expect(dialog.confirm).toHaveBeenCalledWith(expect.objectContaining({
+      title: 'Enable HTTPS Redirect',
+    }));
+  });
+
   it('shows confirm dialog if service restart is needed and restarts it', async () => {
     const websocket = spectator.inject(WebSocketService);
     websocket.connected = true;

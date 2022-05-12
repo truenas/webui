@@ -16,7 +16,7 @@ import { FieldSet } from 'app/modules/entity/entity-form/models/fieldset.interfa
 import { RelationAction } from 'app/modules/entity/entity-form/models/relation-action.enum';
 import { ipv4Validator } from 'app/modules/entity/entity-form/validators/ip-validation';
 import { EntityUtils } from 'app/modules/entity/utils';
-import { DialogService, WebSocketService } from 'app/services';
+import { DialogService, RedirectService, WebSocketService } from 'app/services';
 import { IpmiService } from 'app/services/ipmi.service';
 
 @UntilDestroy()
@@ -46,7 +46,7 @@ export class IpmiFormComponent implements FormConfiguration {
       id: 'connect',
       name: this.translate.instant('Manage'),
       function: () => {
-        window.open(`http://${this.managementIp}`);
+        this.redirect.openWindow(`http://${this.managementIp}`);
       },
     },
   ];
@@ -157,6 +157,7 @@ export class IpmiFormComponent implements FormConfiguration {
     protected loader: AppLoaderService,
     private translate: TranslateService,
     private ipmiService: IpmiService,
+    private redirect: RedirectService,
   ) { }
 
   async prerequisite(): Promise<boolean> {
