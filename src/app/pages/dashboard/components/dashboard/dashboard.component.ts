@@ -11,7 +11,6 @@ import { Dataset } from 'app/interfaces/dataset.interface';
 import { CoreEvent } from 'app/interfaces/events';
 import { MemoryStatsEventData } from 'app/interfaces/events/memory-stats-event.interface';
 import { SysInfoEvent, SystemInfoWithFeatures } from 'app/interfaces/events/sys-info-event.interface';
-import { EntityToolbarActionConfig } from 'app/interfaces/global-action.interface';
 import {
   NetworkInterface,
   NetworkInterfaceState,
@@ -21,8 +20,6 @@ import { ReportingRealtimeUpdate } from 'app/interfaces/reporting.interface';
 import { Interval } from 'app/interfaces/timeout.interface';
 import { VolumesData, VolumeData } from 'app/interfaces/volume-data.interface';
 import { EmptyConfig, EmptyType } from 'app/modules/entity/entity-empty/entity-empty.component';
-import { EntityToolbarComponent } from 'app/modules/entity/entity-toolbar/entity-toolbar.component';
-import { ControlConfig } from 'app/modules/entity/entity-toolbar/models/control-config.interface';
 import { DashboardFormComponent } from 'app/pages/dashboard/components/dashboard-form/dashboard-form.component';
 import { DashConfigItem } from 'app/pages/dashboard/components/widget-controller/widget-controller.component';
 import { WebSocketService } from 'app/services';
@@ -52,33 +49,6 @@ export type DashboardNicState = NetworkInterfaceState & {
 export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   title$: BehaviorSubject<string> = new BehaviorSubject('Dashboard');
   @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
-  formEvents$: Subject<CoreEvent> = new Subject();
-  actionsConfig: EntityToolbarActionConfig;
-
-  reorderButtonConfig = {
-    name: 'dashReorder',
-    label: this.translate.instant('Reorder'),
-    type: 'button',
-    value: undefined,
-    color: 'primary',
-  } as ControlConfig;
-
-  confirmButtonConfig = {
-    name: 'dashConfirm',
-    label: this.translate.instant('Confirm'),
-    type: 'hidden',
-    value: undefined,
-    color: 'primary',
-  } as ControlConfig;
-
-  cancelButtonConfig = {
-    name: 'dashCancel',
-    label: this.translate.instant('Cancel'),
-    type: 'hidden',
-    value: undefined,
-    color: 'secondary',
-  } as ControlConfig;
-
   reorderMode = false;
 
   screenType = 'Desktop'; // Desktop || Mobile
@@ -173,6 +143,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   ngAfterViewInit(): void {
     this.layoutService.pageHeaderUpdater$.next(this.pageHeader);
     this.checkScreenSize();
+    this.startListeners();
   }
 
   getWidgetId(index: number, widget: DashConfigItem): string {
@@ -268,8 +239,6 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.startListeners();
-    this.getNetworkInterfaces();
     this.getDisksData();
 
     this.ws.call('failover.licensed').pipe(untilDestroyed(this)).subscribe((hasFailover) => {
@@ -284,7 +253,6 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     if (this.interval) {
       clearInterval(this.interval);
     }
-    this.stopListeners();
     if (this.interval) {
       clearInterval(this.interval);
     }
@@ -296,6 +264,8 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   startListeners(): void {
+    this.getNetworkInterfaces();
+
     this.ws.sub<ReportingRealtimeUpdate>('reporting.realtime').pipe(untilDestroyed(this)).subscribe((update) => {
       if (update.cpu) {
         this.statsDataEvent$.next({ name: 'CpuStats', data: update.cpu });
@@ -313,18 +283,10 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       if (update.interfaces) {
         const keys = Object.keys(update.interfaces);
         keys.forEach((key) => {
-          const data = update.interfaces[key];
-          this.statsDataEvent$.next({ name: 'NetTraffic_' + key, data });
+          this.statsDataEvent$.next({ name: 'NetTraffic_' + key, data: update.interfaces[key] });
         });
       }
     });
-  }
-
-  stopListeners(): void {
-    // unsubsribe from global actions
-    if (this.formEvents$) {
-      this.formEvents$.complete();
-    }
   }
 
   setVolumeData(data: Dataset[]): void {
@@ -380,19 +342,6 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       this.setDashState(this.availableWidgets);
     }
 
-    this.formEvents$.pipe(
-      untilDestroyed(this),
-    ).subscribe((evt: CoreEvent) => {
-      switch (evt.name) {
-        case 'FormSubmit':
-          this.setDashState(evt.data);
-          break;
-      }
-    });
-
-    this.actionsConfig = this.getActionsConfig(this.formEvents$);
-
-    this.core.emit({ name: 'GlobalActions', data: this.actionsConfig, sender: this });
     this.loadUserAttributes();
   }
 
@@ -511,7 +460,25 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   showConfigForm(): void {
     const modal = this.slideInService.open(DashboardFormComponent);
-    modal.setupForm(this.dashState, this.formEvents$);
+    modal.setupForm(this.dashState);
+    modal.onSubmit$.pipe(untilDestroyed(this)).subscribe((dashState) => {
+      this.setDashState(dashState);
+    });
+  }
+
+  onEnter(): void {
+    this.previousState = this.dashState.map((widget) => ({ ...widget }));
+    this.enterReorderMode();
+  }
+
+  onCancel(): void {
+    this.exitReorderMode();
+  }
+
+  onConfirm(): void {
+    this.saveState(this.dashState);
+    delete this.previousState;
+    this.exitReorderMode();
   }
 
   private sanitizeState(state: DashConfigItem[]): DashConfigItem[] {
@@ -554,30 +521,6 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     this.renderedWidgets = this.dashState.filter((widget) => widget.rendered);
   }
 
-  private getActionsConfig(target$: Subject<CoreEvent>): EntityToolbarActionConfig {
-    const controls = [
-      this.cancelButtonConfig,
-      this.confirmButtonConfig,
-      this.reorderButtonConfig,
-      {
-        name: 'dashConfig',
-        label: this.translate.instant('Configure'),
-        type: 'button',
-        value: 'click',
-        color: 'primary',
-      } as ControlConfig,
-    ];
-
-    const actionsConfig = {
-      actionType: EntityToolbarComponent,
-      actionConfig: {
-        target: target$,
-        controls,
-      },
-    };
-    return actionsConfig;
-  }
-
   private onScreenSizeChange(newScreenType: string, oldScreenType: string): void {
     if (newScreenType === 'Desktop' && oldScreenType === 'Mobile') {
       this.enableReorderMode();
@@ -586,21 +529,6 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     if (newScreenType === 'Mobile' && oldScreenType === 'Desktop') {
       this.disableReorderMode();
     }
-  }
-
-  onEnter(): void {
-    this.previousState = this.dashState.map((widget) => ({ ...widget }));
-    this.enterReorderMode();
-  }
-
-  onCancel(): void {
-    this.exitReorderMode();
-  }
-
-  onConfirm(): void {
-    this.saveState(this.dashState);
-    delete this.previousState;
-    this.exitReorderMode();
   }
 
   private enterReorderMode(): void {
@@ -735,7 +663,6 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
       // Update NICs array
       this.nics = clone;
-
       this.isDataReady();
     });
   }

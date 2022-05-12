@@ -5,7 +5,6 @@ import { MediaObserver } from '@angular/flex-layout';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { EmptyConfig } from 'app/modules/entity/entity-empty/entity-empty.component';
-import { ToolbarConfig } from 'app/modules/entity/entity-toolbar/models/control-config.interface';
 import { WidgetComponent } from 'app/pages/dashboard/components/widget/widget.component';
 import { CoreService } from 'app/services/core-service/core.service';
 
@@ -31,7 +30,6 @@ export class WidgetControllerComponent extends WidgetComponent implements OnDest
   @Input() renderedWidgets?: unknown[] = [];
   @Input() hiddenWidgets?: number[] = [];
   @Input() emptyConfig: EmptyConfig;
-  @Input() actionsConfig: ToolbarConfig;
 
   @Output() launcher = new EventEmitter<DashConfigItem>();
 

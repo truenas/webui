@@ -131,7 +131,7 @@ export class WidgetNicComponent extends WidgetComponent implements AfterViewInit
           sentUnits: sent.units,
           received: received.value,
           receivedUnits: received.units,
-          linkState: evt.data.link_state as LinkState,
+          linkState: this.linkState,
         };
       }
     });
