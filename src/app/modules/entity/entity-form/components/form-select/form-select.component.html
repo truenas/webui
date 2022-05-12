@@ -14,11 +14,11 @@
       {{ config.placeholder | translate }}
       <span *ngIf="config.required">*</span>
     </label>
-    <tooltip
+    <ix-tooltip
       *ngIf="config.tooltip"
       [header]="config.placeholder"
       [message]="config.tooltip"
-    ></tooltip>
+    ></ix-tooltip>
   </div>
 
   <ng-container *ngIf="config.inlineLabel">
@@ -85,11 +85,11 @@
             </span>
             {{ option.label | translate }}
 
-            <tooltip
+            <ix-tooltip
               *ngIf="option.tooltip"
               class="option-tooltip"
               [message]="option.tooltip"
-            ></tooltip>
+            ></ix-tooltip>
           </mat-option>
         </ng-container>
       </ng-container>
@@ -115,7 +115,7 @@
   </div>
 
   <div class="margin-for-error">
-    <form-errors [control]="group.controls[config.name]" [config]="config"></form-errors>
+    <ix-form-errors [control]="group.controls[config.name]" [config]="config"></ix-form-errors>
     <mat-error *ngIf="config['hasErrors']"><div [innerHTML]="config['errors']"></div></mat-error>
     <mat-error *ngIf="config.warnings"><div [innerHTML]="config.warnings | translate"></div></mat-error>
   </div>

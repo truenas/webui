@@ -117,8 +117,8 @@ span.code {
   padding: 16px 32px !important;
 }
 
-entity-table .mat-card,
-entity-form .mat-card {
+ix-entity-table .mat-card,
+ix-entity-form .mat-card {
   padding: 0 !important;
 }
 
@@ -127,8 +127,8 @@ entity-form .mat-card {
   max-width: 960px;
 }
 
-entity-form .mat-card > *,
-entity-table .mat-card > * {
+ix-entity-form .mat-card > *,
+ix-entity-table .mat-card > * {
   margin: 0 !important;
   padding: 16px !important;
 }
@@ -166,17 +166,17 @@ entity-table .mat-card > * {
   text-align: right;
 }
 
-entity-table .multiactions-title {
+ix-entity-table .multiactions-title {
   margin-bottom: 16px;
 }
 
-entity-table .mat-toolbar.mat-card-toolbar {
+ix-entity-table .mat-toolbar.mat-card-toolbar {
   position: relative;
   z-index: 2;
 }
 /* Elements with shadows */
 .datatable-header,
-entity-table .mat-toolbar.mat-card-toolbar {
+ix-entity-table .mat-toolbar.mat-card-toolbar {
   box-shadow: var(--fn-dropshadow);
 }
 
@@ -271,19 +271,19 @@ textarea.mat-input-element::placeholder {
   width: 100% !important;
 }
 
-entity-form-list .list-action-block-wrapper .form-element,
-entity-form-list .list-action-block-wrapper #password,
-entity-form-list .list-action-block-wrapper .form-element.form-combobox .mat-form-field,
-entity-form-list .list-action-block-wrapper .form-element.form-ip-netmask .mat-form-field,
-entity-form-list .list-action-block-wrapper .form-element.form-combobox .mat-menu-trigger,
-entity-form-list .list-action-block-wrapper .form-element .mat-form-field-wrapper,
-entity-form-list .list-action-block-wrapper .form-element input[type = 'password'],
-entity-form-list .list-action-block-wrapper .form-element input[type = 'email'],
-entity-form-list .list-action-block-wrapper .form-element input[type = 'text'],
-entity-form-list .list-action-block-wrapper .form-element input[type = 'number'],
-entity-form-list .list-action-block-wrapper .form-element textarea,
-entity-form-list .list-action-block-wrapper .has-tooltip mat-form-field.full-width,
-entity-form-list .list-action-block-wrapper .form-element select {
+ix-entity-form-list .list-action-block-wrapper .form-element,
+ix-entity-form-list .list-action-block-wrapper #password,
+ix-entity-form-list .list-action-block-wrapper .form-element.form-combobox .mat-form-field,
+ix-entity-form-list .list-action-block-wrapper .form-element.form-ip-netmask .mat-form-field,
+ix-entity-form-list .list-action-block-wrapper .form-element.form-combobox .mat-menu-trigger,
+ix-entity-form-list .list-action-block-wrapper .form-element .mat-form-field-wrapper,
+ix-entity-form-list .list-action-block-wrapper .form-element input[type = 'password'],
+ix-entity-form-list .list-action-block-wrapper .form-element input[type = 'email'],
+ix-entity-form-list .list-action-block-wrapper .form-element input[type = 'text'],
+ix-entity-form-list .list-action-block-wrapper .form-element input[type = 'number'],
+ix-entity-form-list .list-action-block-wrapper .form-element textarea,
+ix-entity-form-list .list-action-block-wrapper .has-tooltip mat-form-field.full-width,
+ix-entity-form-list .list-action-block-wrapper .form-element select {
   width: 100% !important;
 }
 

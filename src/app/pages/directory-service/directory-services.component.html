@@ -1,6 +1,6 @@
 <ng-container [ngSwitch]="true">
   <div fxLayout="column" fxLayoutAlign="center center" *ngSwitchCase="!isActiveDirectoryEnabled && !isLdapEnabled" class="everything-disabled">
-    <entity-empty [conf]="noDirectoryServicesConfig"></entity-empty>
+    <ix-entity-empty [conf]="noDirectoryServicesConfig"></ix-entity-empty>
     <div class="actions">
       <button mat-button (click)="onCardButtonPressed(DirectoryServicesCardId.ActiveDirectory)">
         {{ 'Configure Active Directory' | translate }}
@@ -54,10 +54,10 @@
   </h3>
 
   <div class="advanced-settings-cards">
-    <app-table [conf]="idmapTableConf"></app-table>
+    <ix-conf-table [conf]="idmapTableConf"></ix-conf-table>
     <ng-container *ngTemplateOutlet="dataCard; context: { card: kerberosSettingsDataCard }"></ng-container>
-    <app-table [conf]="kerberosRealmsTableConf"></app-table>
-    <app-table [conf]="kerberosKeytabTableConf"></app-table>
+    <ix-conf-table [conf]="kerberosRealmsTableConf"></ix-conf-table>
+    <ix-conf-table [conf]="kerberosKeytabTableConf"></ix-conf-table>
   </div>
 </cdk-accordion-item>
 

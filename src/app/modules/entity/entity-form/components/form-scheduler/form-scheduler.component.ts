@@ -6,7 +6,6 @@ import { Field } from 'app/modules/entity/entity-form/models/field.interface';
 
 @UntilDestroy()
 @Component({
-  selector: 'form-scheduler',
   templateUrl: './form-scheduler.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

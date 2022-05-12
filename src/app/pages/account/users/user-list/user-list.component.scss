@@ -1,7 +1,7 @@
 :host {
   display: block;
 
-  entity-empty {
+  ix-entity-empty {
     align-items: center;
     display: flex;
     justify-content: center;
@@ -41,7 +41,7 @@
     .slider {
       color: white;
     }
-    
+
     .input-container {
       background: var(--bg1);
       border: solid 1.5px var(--lines);
@@ -91,7 +91,7 @@
       top: 0;
       user-select: none;
     }
-    
+
     .prefix-icon {
       cursor: default;
       left: 0;

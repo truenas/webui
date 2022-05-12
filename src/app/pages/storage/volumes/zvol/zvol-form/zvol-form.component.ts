@@ -50,7 +50,7 @@ interface ZvolFormData {
 
 @UntilDestroy()
 @Component({
-  template: '<entity-form [conf]="this"></entity-form>',
+  template: '<ix-entity-form [conf]="this"></ix-entity-form>',
 })
 export class ZvolFormComponent implements FormConfiguration {
   pk: string;

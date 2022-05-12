@@ -23,7 +23,6 @@ import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
-  selector: 'services',
   styleUrls: ['./services.component.scss'],
   templateUrl: './services.component.html',
   providers: [IscsiService],

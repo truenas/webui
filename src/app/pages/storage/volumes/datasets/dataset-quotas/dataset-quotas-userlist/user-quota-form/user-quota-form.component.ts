@@ -25,7 +25,7 @@ import {
 
 @UntilDestroy()
 @Component({
-  template: '<entity-form [conf]="this"></entity-form>',
+  template: '<ix-entity-form [conf]="this"></ix-entity-form>',
 })
 export class UserQuotaFormComponent implements FormConfiguration, DoCheck {
   isEntity = true;

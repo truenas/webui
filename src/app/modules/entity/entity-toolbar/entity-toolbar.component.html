@@ -1,11 +1,11 @@
 <div *ngIf="config" class="control-group">
   <ng-container *ngFor="let control of config.controls">
-    <toolbar-button *ngIf="control.type == 'button'" [config]="control" [controller]="controller$" ></toolbar-button>
-    <toolbar-slider *ngIf="control.type == 'slider'" [config]="control" [controller]="controller$ | cast"></toolbar-slider>
-    <toolbar-input *ngIf="control.type == 'input'" [config]="control" [controller]="controller$" ></toolbar-input>
-    <toolbar-select *ngIf="control.type == 'select'" [config]="control" [controller]="controller$" ></toolbar-select>
-    <toolbar-menu *ngIf="control.type == 'menu'" [config]="control" [controller]="controller$"></toolbar-menu>
-    <toolbar-multimenu *ngIf="control.type == 'multimenu'" [config]="control" [controller]="controller$"></toolbar-multimenu>
-    <toolbar-multiselect *ngIf="control.type == 'multiselect'" [config]="control" [controller]="controller$"></toolbar-multiselect>
-    <toolbar-slide-toggle *ngIf="control.type == 'slide-toggle'" [config]="control" [controller]="controller$"></toolbar-slide-toggle>  </ng-container>
+    <ix-toolbar-button *ngIf="control.type == 'button'" [config]="control" [controller]="controller$" ></ix-toolbar-button>
+    <ix-toolbar-slider *ngIf="control.type == 'slider'" [config]="control" [controller]="controller$ | cast"></ix-toolbar-slider>
+    <ix-toolbar-input *ngIf="control.type == 'input'" [config]="control" [controller]="controller$" ></ix-toolbar-input>
+    <ix-toolbar-select *ngIf="control.type == 'select'" [config]="control" [controller]="controller$" ></ix-toolbar-select>
+    <ix-toolbar-menu *ngIf="control.type == 'menu'" [config]="control" [controller]="controller$"></ix-toolbar-menu>
+    <ix-toolbar-multimenu *ngIf="control.type == 'multimenu'" [config]="control" [controller]="controller$"></ix-toolbar-multimenu>
+    <ix-toolbar-multiselect *ngIf="control.type == 'multiselect'" [config]="control" [controller]="controller$"></ix-toolbar-multiselect>
+    <ix-toolbar-slide-toggle *ngIf="control.type == 'slide-toggle'" [config]="control" [controller]="controller$"></ix-toolbar-slide-toggle>  </ng-container>
 </div>

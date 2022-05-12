@@ -2,7 +2,7 @@
   <ix-pagetitle [toolbarActionsConfig]="toolbarActionsConfig"></ix-pagetitle>
 </ng-template>
 
-<entity-empty *ngIf="isLoading$ | async; else loaded" [conf]="loadingConfig"></entity-empty>
+<ix-entity-empty *ngIf="isLoading$ | async; else loaded" [conf]="loadingConfig"></ix-entity-empty>
 
 <ng-template #loaded>
   <mat-card>
@@ -56,7 +56,7 @@
 
         <tr class="mat-row no-data-row" *matNoDataRow>
           <td class="mat-cell" [attr.colspan]="displayedColumns.length">
-            <entity-empty [conf]="emptyOrErrorConfig$ | async"></entity-empty>
+            <ix-entity-empty [conf]="emptyOrErrorConfig$ | async"></ix-entity-empty>
           </td>
         </tr>
       </table>

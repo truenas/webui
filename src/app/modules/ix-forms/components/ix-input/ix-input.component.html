@@ -3,7 +3,7 @@
     <span [innerHTML]="label"></span>
     <span *ngIf="required" class="required">*</span>
   </label>
-  <tooltip *ngIf="tooltip" [header]="label" class="tooltip" [message]="tooltip"></tooltip>
+  <ix-tooltip *ngIf="tooltip" [header]="label" class="tooltip" [message]="tooltip"></ix-tooltip>
 </div>
 
 <div class="input-container" [class.disabled]="isDisabled" [class.readonly]="readonly">

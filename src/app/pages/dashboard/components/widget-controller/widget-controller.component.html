@@ -6,13 +6,13 @@
         <mat-toolbar-row >
           <h3 class="mat-card-title-text"><div class="card-title-text">{{title | translate}}</div></h3>
           <div *ngIf="actionsConfig" class="controls">
-            <entity-toolbar [conf]="actionsConfig"></entity-toolbar>
+            <ix-entity-toolbar [conf]="actionsConfig"></ix-entity-toolbar>
           </div>
         </mat-toolbar-row>
 
         <div *ngIf="screenType == 'Mobile' || 'Desktop'" fxLayout="column" class="mobile" >
           <div *ngIf="!renderedWidgets.length && emptyConfig" fxFlex="65" class="bottom empty">
-            <entity-empty [conf]="emptyConfig"></entity-empty>
+            <ix-entity-empty [conf]="emptyConfig"></ix-entity-empty>
           </div>
 
           <div *ngIf="renderedWidgets.length" fxFlex="65" class="bottom">

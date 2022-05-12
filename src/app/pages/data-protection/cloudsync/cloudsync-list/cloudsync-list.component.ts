@@ -31,7 +31,7 @@ import { ModalService } from 'app/services/modal.service';
 
 @UntilDestroy()
 @Component({
-  template: '<entity-table [title]="title" [conf]="this"></entity-table>',
+  template: '<ix-entity-table [title]="title" [conf]="this"></ix-entity-table>',
   providers: [JobService, TaskService, CloudCredentialService],
 })
 export class CloudsyncListComponent implements EntityTableConfig<CloudSyncTaskUi> {

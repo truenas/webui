@@ -4,11 +4,11 @@
       <div *ngIf="fieldConfig.type == 'dict'; else notDict">
         <ng-container *ngIf="value[fieldConfig.name]">
           <label>{{fieldConfig.placeholder | translate}}:</label>
-          <wizard-summary
+          <ix-wizard-summary
             [fieldConfigs]="asFormDictConfig(fieldConfig).subFields"
             [value]="value[fieldConfig.name]"
             [isRoot]="false"
-          ></wizard-summary>
+          ></ix-wizard-summary>
         </ng-container>
       </div>
       <ng-template #notDict>

@@ -43,7 +43,7 @@ import { ModalService } from 'app/services/modal.service';
 
 @UntilDestroy()
 @Component({
-  template: '<entity-form [conf]="this"></entity-form>',
+  template: '<ix-entity-form [conf]="this"></ix-entity-form>',
   providers: [CloudCredentialService, JobService],
 })
 export class CloudsyncFormComponent implements FormConfiguration {

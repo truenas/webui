@@ -4,7 +4,6 @@ import { FormDictConfig } from 'app/modules/entity/entity-form/models/field-conf
 import { Field } from 'app/modules/entity/entity-form/models/field.interface';
 
 @Component({
-  selector: 'entity-form-dict',
   templateUrl: './form-dict.component.html',
   styleUrls: ['../dynamic-field/dynamic-field.scss'],
 })

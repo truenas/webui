@@ -22,7 +22,7 @@ import { WebSocketService, AppLoaderService, DialogService } from 'app/services/
 
 @UntilDestroy()
 @Component({
-  template: '<entity-form [conf]="this"></entity-form>',
+  template: '<ix-entity-form [conf]="this"></ix-entity-form>',
   providers: [EntityFormService],
 })
 export class AlertServiceComponent implements FormConfiguration {

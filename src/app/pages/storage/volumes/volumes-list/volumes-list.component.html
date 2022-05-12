@@ -39,19 +39,19 @@
 
         <div fxLayoutAlign="end start" class="icon-row">
           <div class="global_volume_based_action_menu pool-icon" title="Pool Operations" >
-            <app-entity-table-actions
+            <ix-entity-table-actions
               icon_name="mdi-database-cog"
               [entity]="actionComponent"
               [row]="row"
               action="settings"
               [groups]="true"
-            ></app-entity-table-actions>
+            ></ix-entity-table-actions>
           </div>
         </div>
       </mat-expansion-panel-header>
 
       <div class="entity-tree-table-container">
-        <entity-tree-table *ngIf="row.volumesListTableConfig.tableData?.length > 0" [conf]="row.volumesListTableConfig" [expandRootNodes]="true"></entity-tree-table>
+        <ix-entity-tree-table *ngIf="row.volumesListTableConfig.tableData?.length > 0" [conf]="row.volumesListTableConfig" [expandRootNodes]="true"></ix-entity-tree-table>
       </div>
     </mat-expansion-panel>
   </mat-accordion>
@@ -66,7 +66,7 @@
 <div *ngIf="zfsPoolRows.length < 1 && showDefaults">
   <mat-card class="mat-card-padded">
     <mat-card-content name="no_pools">
-      <entity-empty [conf]="entityEmptyConf"></entity-empty>
+      <ix-entity-empty [conf]="entityEmptyConf"></ix-entity-empty>
     </mat-card-content>
   </mat-card>
 </div>

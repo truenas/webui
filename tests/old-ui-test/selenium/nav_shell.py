@@ -74,12 +74,12 @@ class use_shell_test(unittest.TestCase):
         #get the text of element data  into page_data
         page_data=ui_element_page.text
         print ("the Page now is: " + page_data)
-        #assert response to check if "Certain_String" is in the page_data 
+        #assert response to check if "Certain_String" is in the page_data
         self.assertTrue("Certain_String" in page_data)
         #similarly if status_data = page_data
         #conditional execution(eg-toggle service on/off based on current status)
         print "current status is: " + status_data
-        if status_data == "stopped": 
+        if status_data == "stopped":
             #Click on the toggle button if the current status = stopped and print changing status
             driver.find_element_by_xpath("XPATH OF THE STATUS TEXT").click()
             time.sleep(1)
@@ -133,8 +133,8 @@ class use_shell_test(unittest.TestCase):
         index = 0
         ui_text = "null"
         for x in range(0, 5):
-            if self.is_element_present(By.XPATH, "/html/body/app-root/app-admin-layout/md-sidenav-container/div[6]/div/app-user-list/entity-table/div/div[5]/ngx-datatable/div/datatable-body/datatable-selection/datatable-scroller/datatable-row-wrapper[" + str(x) + "]/datatable-body-row/div[2]/datatable-body-cell[1]/div/div"):
-                ui_element=driver.find_element_by_xpath("/html/body/app-root/app-admin-layout/md-sidenav-container/div[6]/div/app-user-list/entity-table/div/div[5]/ngx-datatable/div/datatable-body/datatable-selection/datatable-scroller/datatable-row-wrapper[" + str(x) + "]/datatable-body-row/div[2]/datatable-body-cell[1]/div/div")
+            if self.is_element_present(By.XPATH, "/html/body/ix-root/app-admin-layout/md-sidenav-container/div[6]/div/app-user-list/entity-table/div/div[5]/ngx-datatable/div/datatable-body/datatable-selection/datatable-scroller/datatable-row-wrapper[" + str(x) + "]/datatable-body-row/div[2]/datatable-body-cell[1]/div/div"):
+                ui_element=driver.find_element_by_xpath("/html/body/ix-root/app-admin-layout/md-sidenav-container/div[6]/div/app-user-list/entity-table/div/div[5]/ngx-datatable/div/datatable-body/datatable-selection/datatable-scroller/datatable-row-wrapper[" + str(x) + "]/datatable-body-row/div[2]/datatable-body-cell[1]/div/div")
                 ui_text = ui_element.text
             if (ui_text == name):
                 index = x

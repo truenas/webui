@@ -10,6 +10,6 @@
   gdAreas.lt-md="scrub | snapshot | replication | cloudsync | rsync | smart"
 >
   <div *ngFor="let card of dataCards; index as i" [gdArea]="card.name">
-    <app-table [conf]="card.tableConf" fxFlex></app-table>
+    <ix-conf-table [conf]="card.tableConf" fxFlex></ix-conf-table>
   </div>
 </div>

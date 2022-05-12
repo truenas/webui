@@ -26,7 +26,7 @@ import { CoreService } from 'app/services/core-service/core.service';
 
 @UntilDestroy()
 @Component({
-  template: '<entity-table [title]="title" [conf]="this"></entity-table>',
+  template: '<ix-entity-table [title]="title" [conf]="this"></ix-entity-table>',
 })
 export class DiskListComponent implements EntityTableConfig<Disk> {
   title = this.translate.instant('Disks');

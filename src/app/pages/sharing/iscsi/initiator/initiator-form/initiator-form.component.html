@@ -16,7 +16,7 @@
         [ngClass]="connectedInitiatorsDisabled ? 'disabled' : ''"
       >
         <label>{{'Connected Initiators' | translate}}</label>
-        <tooltip [message]="connectedInitiatorsTooltip"></tooltip>
+        <ix-tooltip [message]="connectedInitiatorsTooltip"></ix-tooltip>
         <mat-selection-list
           class="connected-initiators-list"
           #connectedInitiatorsList

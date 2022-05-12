@@ -16,7 +16,7 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
 @Component({
   selector: 'ix-iscsi-extent-list',
   template: `
-    <entity-table [conf]="this" [title]="tableTitle"></entity-table>
+    <ix-entity-table [conf]="this" [title]="tableTitle"></ix-entity-table>
   `,
 })
 export class ExtentListComponent implements EntityTableConfig {

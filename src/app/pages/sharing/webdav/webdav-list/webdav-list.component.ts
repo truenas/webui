@@ -13,7 +13,7 @@ import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
-  template: '<entity-table [title]="title" [conf]="this"></entity-table>',
+  template: '<ix-entity-table [title]="title" [conf]="this"></ix-entity-table>',
 })
 export class WebdavListComponent implements EntityTableConfig, OnInit {
   title = this.translate.instant('WebDAV');

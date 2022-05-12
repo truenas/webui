@@ -6,7 +6,6 @@ import { FormCheckboxConfig } from 'app/modules/entity/entity-form/models/field-
 import { Field } from 'app/modules/entity/entity-form/models/field.interface';
 
 @Component({
-  selector: 'form-checkbox',
   styleUrls:
       ['form-checkbox.component.scss', '../dynamic-field/dynamic-field.scss'],
   templateUrl: './form-checkbox.component.html',

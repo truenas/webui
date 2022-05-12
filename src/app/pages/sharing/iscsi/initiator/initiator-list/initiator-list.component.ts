@@ -5,7 +5,7 @@ import { EntityTableConfig } from 'app/modules/entity/entity-table/entity-table.
 @Component({
   selector: 'ix-iscsi-initiator-list',
   template: `
-    <entity-table [conf]="this" [title]="tableTitle"></entity-table>
+    <ix-entity-table [conf]="this" [title]="tableTitle"></ix-entity-table>
   `,
 })
 export class InitiatorListComponent implements EntityTableConfig {

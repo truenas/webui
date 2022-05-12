@@ -461,7 +461,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
 
   app-members .form-card.mat-card,
   device-edit .form-card.mat-card,
-  entity-form .form-card.mat-card {
+  ix-entity-form .form-card.mat-card {
     margin: 0 auto;
     max-width: 960px;
   }
@@ -1032,7 +1032,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     border-bottom: 1px solid var(--lines);
   }
 
-  app-entity-dialog .has-pwtoggle {
+  ix-entity-dialog .has-pwtoggle {
     background: rgba(0, 0, 0, 0) !important;
     padding: 0 0 10px !important;
 
@@ -1169,7 +1169,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     top: -18px;
   }
 
-  entity-form form-combobox mat-form-field {
+  ix-entity-form ix-form-combobox mat-form-field {
     min-width: 180px;
     width: 50%;
   }
@@ -1205,7 +1205,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
 
   // Scrollbars need separate rules for firefox and webkit
 
-  app-entity-dialog #pool_processes p,
+  ix-entity-dialog #pool_processes p,
   ix-export-disconnect-modal .pool-summary,
   ix-confirm-dialog .warning-box {
     background-color: rgb(223, 223, 223);
@@ -1233,7 +1233,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
       opacity: 0.38;
     }
 
-    entity-form-list .form-list .form-list-item > div.form-line {
+    ix-entity-form-list .form-list .form-list-item > div.form-line {
       display: block;
     }
 
@@ -1245,11 +1245,11 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
   }
 
   app-interfaces-form {
-    entity-form-list .form-list .form-list-item > div.form-line {
+    ix-entity-form-list .form-list .form-list-item > div.form-line {
       display: none;
     }
 
-    entity-form-list .form-list .form-list-item > div.form-line:first-child {
+    ix-entity-form-list .form-list .form-list-item > div.form-line:first-child {
       display: block;
     }
   }
@@ -1432,7 +1432,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
   // End slide-in menu ////////////////
 
   // Remove indentation for form elements on vertical stepper
-  .jw-modal-body entity-wizard {
+  .jw-modal-body ix-entity-wizard {
     mat-card {
       margin: 18px 0;
       padding: 0;

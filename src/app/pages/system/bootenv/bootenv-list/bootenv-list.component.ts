@@ -27,7 +27,7 @@ import { BootenvRow } from './bootenv-row.interface';
 
 @UntilDestroy()
 @Component({
-  template: '<entity-table [title]="title" [conf]="this"></entity-table>',
+  template: '<ix-entity-table [title]="title" [conf]="this"></ix-entity-table>',
 })
 export class BootEnvironmentListComponent implements EntityTableConfig {
   title = this.translate.instant('Boot Environments');
