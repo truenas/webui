@@ -11,10 +11,11 @@ import {
 } from 'chart.js';
 import * as d3 from 'd3';
 import { Subject } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
+import {
+  filter, map, switchMap, tap, throttleTime,
+} from 'rxjs/operators';
 import { ThemeUtils } from 'app/core/classes/theme-utils/theme-utils';
 import { CoreEvent } from 'app/interfaces/events';
-import { CpuStatsEvent } from 'app/interfaces/events/cpu-stats-event.interface';
 import { SysInfoEvent } from 'app/interfaces/events/sys-info-event.interface';
 import { AllCpusUpdate } from 'app/interfaces/reporting.interface';
 import { Theme } from 'app/interfaces/theme.interface';
@@ -122,25 +123,26 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
     this.core.register({ observerClass: this })
       .pipe(
         switchMap(() => this.data),
-        untilDestroyed(this),
-      ).subscribe((evt: CoreEvent) => {
-        if (evt.name === 'CpuStats') {
-          const cpuData = (evt as CpuStatsEvent).data;
-          if (!cpuData.average) {
-            return;
+        tap((evt) => {
+          if (evt.name === 'ThemeChanged') {
+            d3.select('#grad1 .begin')
+              .style('stop-color', this.getHighlightColor(0));
+
+            d3.select('#grad1 .end')
+              .style('stop-color', this.getHighlightColor(0.15));
           }
-
-          this.setCpuLoadData(['Load', parseInt(cpuData.average.usage.toFixed(1))]);
-          this.setCpuData(cpuData);
+        }),
+        filter((evt) => evt.name === 'CpuStats'),
+        map((evt) => evt.data),
+        throttleTime(500),
+        untilDestroyed(this),
+      ).subscribe((cpuData: AllCpusUpdate) => {
+        if (!cpuData.average) {
+          return;
         }
 
-        if (evt.name === 'ThemeChanged') {
-          d3.select('#grad1 .begin')
-            .style('stop-color', this.getHighlightColor(0));
-
-          d3.select('#grad1 .end')
-            .style('stop-color', this.getHighlightColor(0.15));
-        }
+        this.setCpuLoadData(['Load', parseInt(cpuData.average.usage.toFixed(1))]);
+        this.setCpuData(cpuData);
       });
   }
 
