@@ -12,7 +12,7 @@
     <input
       #ixInput
       matInput
-      [value]="selectedOption?.label"
+      [value]="selectedOption?.label || textContent"
       [placeholder]="placeholder"
       [disabled]="isDisabled"
       (input)="onChanged(ixInput.value)"

@@ -8,16 +8,15 @@ process.env.TZ = 'Europe/Kiev';
 
 module.exports = {
   preset: 'jest-preset-angular',
-  roots: ['<rootDir>/src/'],
-  testMatch: ['**/+(*.)+(spec).+(ts)'],
   setupFilesAfterEnv: ['<rootDir>/src/setup-jest.ts'],
   collectCoverage: false,
   collectCoverageFrom: ["**/*.ts"],
   coverageReporters: ['html', 'json'],
   coverageDirectory: 'coverage/webui',
   moduleDirectories: ['node_modules', 'src'],
-  moduleNameMapper: pathsToModuleNameMapper(compilerOptions.paths || {}, {
-    prefix: '<rootDir>/',
-    "^@/(.)$": "/src/$1"
-  }),
+  moduleNameMapper: pathsToModuleNameMapper(compilerOptions.paths || {}),
+  testPathIgnorePatterns: [
+    "node_modules/(?!(date-fns-tz|date-fns))",
+    "<rootDir>/dist/"
+  ],
 };

@@ -5,7 +5,6 @@ import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { helptextSystemAdvanced } from 'app/helptext/system/advanced';
 import { ReplicationConfig } from 'app/interfaces/replication-config.interface';
-import { numberValidator } from 'app/modules/entity/entity-form/validators/number-validation';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { DialogService, WebSocketService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
@@ -19,7 +18,7 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
 export class ReplicationFormComponent implements OnInit {
   isFormLoading = false;
   form = this.fb.group({
-    max_parallel_replication_tasks: [null as number, numberValidator()],
+    max_parallel_replication_tasks: [null as number],
   });
 
   readonly tooltips = {
@@ -62,7 +61,7 @@ export class ReplicationFormComponent implements OnInit {
   onSubmit(): void {
     const maxTasks = this.form.value.max_parallel_replication_tasks;
     const replicationConfigUpdate = {
-      max_parallel_replication_tasks: maxTasks > 0 ? maxTasks : null,
+      max_parallel_replication_tasks: maxTasks && maxTasks > 0 ? maxTasks : null,
     };
     this.isFormLoading = true;
     this.ws.call('replication.config.update', [replicationConfigUpdate]).pipe(untilDestroyed(this)).subscribe(() => {

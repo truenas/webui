@@ -40,10 +40,13 @@ import { InfoDialogComponent } from 'app/modules/common/dialog/info-dialog/info-
 import { RedirectDialogComponent } from 'app/modules/common/dialog/redirect-dialog/redirect-dialog.component';
 import { ResilverProgressDialogComponent } from 'app/modules/common/dialog/resilver-progress/resilver-progress.component';
 import { SelectDialogComponent } from 'app/modules/common/dialog/select-dialog/select-dialog.component';
+import { HeaderInputWrapperComponent } from 'app/modules/common/header-input-wrapper/header-input-wrapper.component';
+import { HeaderInputDirective } from 'app/modules/common/header-input-wrapper/header-input.directive';
 import { AdminLayoutComponent } from 'app/modules/common/layouts/admin-layout/admin-layout.component';
 import { AuthLayoutComponent } from 'app/modules/common/layouts/auth-layout/auth-layout.component';
 import { ModalComponent } from 'app/modules/common/modal/modal.component';
 import { NavigationComponent } from 'app/modules/common/navigation/navigation.component';
+import { PageTitleHeaderComponent } from 'app/modules/common/page-title-header/page-title-header.component';
 import { PageTitleComponent } from 'app/modules/common/page-title/page-title.component';
 import { SecondaryMenuComponent } from 'app/modules/common/secondary-menu/secondary-menu.component';
 import { TopbarComponent } from 'app/modules/common/topbar/topbar.component';
@@ -109,6 +112,9 @@ import { ThemeService } from 'app/services/theme/theme.service';
     AboutDialogComponent,
     RedirectDialogComponent,
     NavigationComponent,
+    PageTitleHeaderComponent,
+    HeaderInputWrapperComponent,
+    HeaderInputDirective,
     ConsolePanelDialogComponent,
     DirectoryServicesMonitorComponent,
     ModalComponent,
@@ -117,6 +123,11 @@ import { ThemeService } from 'app/services/theme/theme.service';
     SecondaryMenuComponent,
   ],
   providers: [ThemeService, DialogService, LanguageService, LocaleService, SvgIconRegistryService],
-  exports: [PageTitleComponent, ViewControllerComponent],
+  exports: [
+    PageTitleComponent,
+    PageTitleHeaderComponent,
+    ViewControllerComponent,
+    HeaderInputDirective,
+  ],
 })
 export class AppCommonModule {}

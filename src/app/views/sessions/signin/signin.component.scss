@@ -71,14 +71,23 @@
   padding: 0 16px;
 }
 
+.disconnected-content {
+  align-items: center;
+  display: flex;
+}
+
 div.fake-icon {
+  align-items: center;
   background-color: $fg2; //var(--fg2);
   border-radius: 50%;
   color: $bg2; //var(--bg2);
-  float: left;
+  display: flex;
   font-weight: 700;
-  margin: 6px 12px 12px 0;
-  padding: 2px 8px;
+  height: 30px;
+  justify-content: center;
+  margin-right: 12px;
+  min-width: 30px;
+  width: 30px;
 }
 
 #legacy-btn-wrapper {

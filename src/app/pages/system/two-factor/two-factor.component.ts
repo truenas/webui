@@ -114,9 +114,9 @@ export class TwoFactorComponent implements OnInit {
   onSubmit(): void {
     const values = this.form.value;
     const params = {
-      otp_digits: Number(values.otp_digits),
-      interval: Number(values.interval),
-      window: Number(values.window),
+      otp_digits: values.otp_digits,
+      interval: values.interval,
+      window: values.window,
       enabled: this.twoFactorEnabled,
       services: { ssh: values.ssh },
     };
