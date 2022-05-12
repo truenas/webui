@@ -42,7 +42,7 @@
 }
 
 .widgets-wrapper > * {
-  margin: 0 8px;
+  margin: 0 4px;
 }
 
 ::ng-deep .cdk-drop-list {
@@ -71,37 +71,4 @@
 
 ::ng-deep .cdk-drag-animating {
   transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
-}
-
-.widget.placeholder {
-  box-sizing: border-box;
-  cursor: wait;
-  flex: 1 1 100vw;
-  height: 250px;
-  margin: 8px 0;
-  max-width: 100vw;
-  min-width: 100vw;
-  width: 100vw !important;
-
-  &.xs {
-    left: 0;
-  }
-
-  &:not(.xs) {
-    flex: 1 1 540px;
-    height: 400px;
-    max-width: 540px;
-    min-width: 540px;
-  }
-}
-
-.mat-card.zero-state {
-  .mat-icon {
-    animation: loading 2s linear infinite;
-    color: var(--fg2);
-    height: 80px;
-    opacity: 0.1;
-    pointer-events: none;
-    width: auto;
-  }
 }

@@ -21,7 +21,10 @@ export interface DashConfigItem {
 @Component({
   selector: 'widget-controller',
   templateUrl: './widget-controller.component.html',
-  styleUrls: ['./widget-controller.component.scss'],
+  styleUrls: [
+    '../widget/widget.component.scss',
+    './widget-controller.component.scss',
+  ],
 })
 export class WidgetControllerComponent extends WidgetComponent implements OnDestroy {
   @Input() dashState: DashConfigItem[] = [];

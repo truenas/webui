@@ -43,7 +43,10 @@ enum Path {
 @Component({
   selector: 'widget-nic',
   templateUrl: './widget-nic.component.html',
-  styleUrls: ['./widget-nic.component.scss'],
+  styleUrls: [
+    '../widget/widget.component.scss',
+    './widget-nic.component.scss',
+  ],
 })
 export class WidgetNicComponent extends WidgetComponent implements AfterViewInit, OnDestroy, OnChanges {
   @Input() stats: Subject<CoreEvent>;

@@ -28,7 +28,10 @@ import { ThemeService } from 'app/services/theme/theme.service';
 @Component({
   selector: 'widget-cpu',
   templateUrl: './widget-cpu.component.html',
-  styleUrls: ['./widget-cpu.component.scss'],
+  styleUrls: [
+    '../widget/widget.component.scss',
+    './widget-cpu.component.scss',
+  ],
 })
 export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit, OnDestroy {
   @Input() data: Subject<CoreEvent>;

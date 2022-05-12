@@ -43,7 +43,10 @@ interface NicInfoMap {
 @Component({
   selector: 'widget-network',
   templateUrl: './widget-network.component.html',
-  styleUrls: ['./widget-network.component.scss'],
+  styleUrls: [
+    '../widget/widget.component.scss',
+    './widget-network.component.scss',
+  ],
 })
 export class WidgetNetworkComponent extends WidgetComponent implements OnInit, AfterViewInit, OnDestroy {
   @Input() stats: Subject<CoreEvent>;

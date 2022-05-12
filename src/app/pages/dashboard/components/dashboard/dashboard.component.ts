@@ -1,10 +1,10 @@
 import {
-  Component, OnInit, AfterViewInit, OnDestroy, ElementRef,
+  Component, OnInit, AfterViewInit, OnDestroy, ElementRef, TemplateRef, ViewChild,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { tween, styler } from 'popmotion';
-import { Subject } from 'rxjs';
+import { BehaviorSubject, Subject } from 'rxjs';
 import { rootUserId } from 'app/constants/root-user-id.contant';
 import { NetworkInterfaceAliasType, NetworkInterfaceType } from 'app/enums/network-interface.enum';
 import { Dataset } from 'app/interfaces/dataset.interface';
@@ -28,6 +28,7 @@ import { DashConfigItem } from 'app/pages/dashboard/components/widget-controller
 import { WebSocketService } from 'app/services';
 import { CoreService } from 'app/services/core-service/core.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { LayoutService } from 'app/services/layout.service';
 
 // TODO: This adds additional fields. Unclear if vlan is coming from backend
 type DashboardNetworkInterface = NetworkInterface & {
@@ -43,9 +44,14 @@ export type DashboardNicState = NetworkInterfaceState & {
 @Component({
   selector: 'dashboard',
   templateUrl: './dashboard.component.html',
-  styleUrls: ['./dashboard.component.scss'],
+  styleUrls: [
+    '../widget/widget.component.scss',
+    './dashboard.component.scss',
+  ],
 })
 export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
+  title$: BehaviorSubject<string> = new BehaviorSubject('Dashboard');
+  @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
   formEvents$: Subject<CoreEvent> = new Subject();
   actionsConfig: EntityToolbarActionConfig;
 
@@ -145,6 +151,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     private el: ElementRef,
     private translate: TranslateService,
     private slideInService: IxSlideInService,
+    private layoutService: LayoutService,
   ) {
     core.register({ observerClass: this, eventName: 'SidenavStatus' }).pipe(untilDestroyed(this)).subscribe(() => {
       setTimeout(() => {
@@ -164,6 +171,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngAfterViewInit(): void {
+    this.layoutService.pageHeaderUpdater$.next(this.pageHeader);
     this.checkScreenSize();
   }
 
@@ -193,7 +201,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   optimizeWidgetContainer(): void {
     const wrapper = document.querySelector<HTMLElement>('.rightside-content-hold');
 
-    const withMargin = this.widgetWidth + 16;
+    const withMargin = this.widgetWidth + 8;
     const max = Math.floor(wrapper.offsetWidth / withMargin);
     const odw = max * withMargin;
     this.optimalDesktopWidth = odw.toString() + 'px';
@@ -378,9 +386,6 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       switch (evt.name) {
         case 'FormSubmit':
           this.setDashState(evt.data);
-          break;
-        case 'ToolbarChanged':
-          this.handleToolbarChanged(evt);
           break;
       }
     });
@@ -583,37 +588,23 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
-  private handleToolbarChanged(evt: CoreEvent): void {
-    switch (evt.data?.event_control) {
-      case 'dashReorder':
-        this.previousState = this.dashState.map((widget) => ({ ...widget }));
+  onEnter(): void {
+    this.previousState = this.dashState.map((widget) => ({ ...widget }));
+    this.enterReorderMode();
+  }
 
-        this.enterReorderMode();
-        break;
+  onCancel(): void {
+    this.exitReorderMode();
+  }
 
-      case 'dashConfirm':
-        this.saveState(this.dashState);
-        delete this.previousState;
-
-        this.exitReorderMode();
-        break;
-
-      case 'dashCancel':
-        this.exitReorderMode();
-        break;
-
-      default:
-        this.showConfigForm();
-    }
+  onConfirm(): void {
+    this.saveState(this.dashState);
+    delete this.previousState;
+    this.exitReorderMode();
   }
 
   private enterReorderMode(): void {
     this.reorderMode = true;
-
-    this.reorderButtonConfig.type = 'hidden';
-
-    this.confirmButtonConfig.type = 'button';
-    this.cancelButtonConfig.type = 'button';
   }
 
   private exitReorderMode(): void {
@@ -623,28 +614,16 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     this.reorderMode = false;
-
-    this.reorderButtonConfig.type = 'button';
-
-    this.confirmButtonConfig.type = 'hidden';
-    this.cancelButtonConfig.type = 'hidden';
   }
 
   private enableReorderMode(): void {
     this.reorderMode = false;
-
-    this.reorderButtonConfig.type = 'button';
-
-    this.confirmButtonConfig.type = 'hidden';
-    this.cancelButtonConfig.type = 'hidden';
   }
 
   private disableReorderMode(): void {
     if (this.reorderMode) {
       this.exitReorderMode();
     }
-
-    this.reorderButtonConfig.type = 'hidden';
   }
 
   private saveState(state: DashConfigItem[]): void {

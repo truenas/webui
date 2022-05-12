@@ -25,7 +25,10 @@ import { ThemeService } from 'app/services/theme/theme.service';
 @Component({
   selector: 'widget-memory',
   templateUrl: './widget-memory.component.html',
-  styleUrls: ['./widget-memory.component.scss'],
+  styleUrls: [
+    '../widget/widget.component.scss',
+    './widget-memory.component.scss',
+  ],
 })
 export class WidgetMemoryComponent extends WidgetComponent implements AfterViewInit, OnDestroy {
   @Input() data: Subject<CoreEvent>;

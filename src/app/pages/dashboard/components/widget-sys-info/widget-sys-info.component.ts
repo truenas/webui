@@ -5,6 +5,7 @@ import { MediaObserver } from '@angular/flex-layout';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+import { take } from 'rxjs/operators';
 import { JobState } from 'app/enums/job-state.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { SystemUpdateStatus } from 'app/enums/system-update.enum';
@@ -20,7 +21,10 @@ import { ThemeService } from 'app/services/theme/theme.service';
 @Component({
   selector: 'widget-sysinfo',
   templateUrl: './widget-sys-info.component.html',
-  styleUrls: ['./widget-sys-info.component.scss'],
+  styleUrls: [
+    '../widget/widget.component.scss',
+    './widget-sys-info.component.scss',
+  ],
 })
 export class WidgetSysInfoComponent extends WidgetComponent implements OnDestroy, AfterViewInit {
   // HA
@@ -89,10 +93,17 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnDestroy
         this.ha_status = evt.data.status;
       });
     } else {
-      this.ws.call('system.info').pipe(untilDestroyed(this)).subscribe((systemInfo) => {
-        this.processSysInfo(systemInfo);
-      });
-      this.checkForUpdate();
+      this.ws.call('system.info').pipe(untilDestroyed(this)).subscribe(
+        (systemInfo) => {
+          this.processSysInfo(systemInfo);
+        },
+        (err) => {
+          console.error(err);
+        },
+        () => {
+          this.checkForUpdate();
+        },
+      );
 
       this.core.emit({ name: 'HAStatusRequest' });
     }
@@ -325,7 +336,10 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnDestroy
     sessionStorage.updateLastChecked = Date.now();
     sessionStorage.updateAvailable = 'false';
 
-    this.ws.call('update.check_available').pipe(untilDestroyed(this)).subscribe((update) => {
+    this.ws.call('update.check_available').pipe(
+      take(1),
+      untilDestroyed(this),
+    ).subscribe((update) => {
       if (update.status !== SystemUpdateStatus.Available) {
         this.updateAvailable = false;
         sessionStorage.updateAvailable = 'false';
