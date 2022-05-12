@@ -28,6 +28,7 @@ import {
 import { EntityUtils } from 'app/modules/entity/utils';
 import { TargetFormComponent } from 'app/pages/sharing/iscsi/target/target-form/target-form.component';
 import { NfsFormComponent } from 'app/pages/sharing/nfs/nfs-form/nfs-form.component';
+import { SmbAclComponent } from 'app/pages/sharing/smb/smb-acl/smb-acl.component';
 import { SmbFormComponent } from 'app/pages/sharing/smb/smb-form/smb-form.component';
 import { WebdavFormComponent } from 'app/pages/sharing/webdav/webdav-form/webdav-form.component';
 import {
@@ -145,6 +146,7 @@ export class SharesDashboardComponent implements AfterViewInit {
           this.webdavTable.tableComponent.getData();
           break;
         case SmbFormComponent:
+        case SmbAclComponent:
           if (!this.smbTable.tableComponent) {
             this.refreshDashboard();
           }
@@ -395,7 +397,8 @@ export class SharesDashboardComponent implements AfterViewInit {
                         const searchName = row.home ? 'homes' : row.name;
                         this.ws.call('smb.sharesec.query', [[['share_name', '=', searchName]]]).pipe(untilDestroyed(this)).subscribe(
                           (res) => {
-                            this.router.navigate(['/', 'sharing', 'smb', 'acl', String(res[0].id)]);
+                            const form = this.slideInService.open(SmbAclComponent);
+                            form.setSmbShareName(res[0].share_name);
                           },
                         );
                       }
