@@ -80,7 +80,7 @@ export class WidgetNicComponent extends WidgetComponent implements AfterViewInit
   ];
 
   get ipAddresses(): NetworkInterfaceAlias[] {
-    if (!this.nicState && !this.nicState.aliases) { return []; }
+    if (!this.nicState?.aliases?.length) { return []; }
 
     return this.nicState.aliases.filter((item) => {
       return [NetworkInterfaceAliasType.Inet, NetworkInterfaceAliasType.Inet6].includes(item.type);
@@ -88,11 +88,11 @@ export class WidgetNicComponent extends WidgetComponent implements AfterViewInit
   }
 
   get linkState(): LinkState {
-    if (!this.nicState && !this.nicState.aliases) { return null; }
-    if (!this.traffic) {
-      return this.nicState.link_state;
+    if (!this.nicState?.aliases?.length) { return null; }
+    if (this.traffic?.linkState) {
+      return this.traffic.linkState;
     }
-    return this.traffic.linkState;
+    return this.nicState.link_state;
   }
 
   get linkStateLabel(): string {

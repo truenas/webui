@@ -56,9 +56,7 @@ export class WidgetControllerComponent extends WidgetComponent implements OnDest
   }
 
   nameFromIdentifier(identifier: string): string {
-    const spl = identifier.split(',');
-    const key = spl[0];
-    const value = spl[1];
+    const [key, value] = identifier.split(',');
 
     if (key === 'name') {
       return value;

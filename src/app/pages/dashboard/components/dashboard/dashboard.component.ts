@@ -2,10 +2,11 @@ import {
   Component, OnInit, AfterViewInit, OnDestroy, ElementRef, TemplateRef, ViewChild,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { tween, styler } from 'popmotion';
 import { BehaviorSubject, Subject } from 'rxjs';
-import { rootUserId } from 'app/constants/root-user-id.contant';
+import { take } from 'rxjs/operators';
 import { NetworkInterfaceAliasType, NetworkInterfaceType } from 'app/enums/network-interface.enum';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { CoreEvent } from 'app/interfaces/events';
@@ -26,6 +27,8 @@ import { WebSocketService } from 'app/services';
 import { CoreService } from 'app/services/core-service/core.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LayoutService } from 'app/services/layout.service';
+import { AppState } from 'app/store';
+import { waitForDashboardState } from 'app/store/preferences/preferences.selectors';
 
 // TODO: This adds additional fields. Unclear if vlan is coming from backend
 type DashboardNetworkInterface = NetworkInterface & {
@@ -71,7 +74,6 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   get isLoaded(): boolean {
     return this.dashStateReady
-      && !this.empty
       && this.statsDataEvent$
       && this.pools
       && this.nics
@@ -79,7 +81,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       && this.sysinfoReady;
   }
   // For empty state
-  get empty(): boolean {
+  get isEmpty(): boolean {
     if (!this.dashState) {
       return true;
     }
@@ -112,7 +114,6 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   nics: DashboardNetworkInterface[];
 
-  showSpinner = true;
   initialLoading = true;
 
   constructor(
@@ -122,8 +123,9 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     private translate: TranslateService,
     private slideInService: IxSlideInService,
     private layoutService: LayoutService,
+    private store$: Store<AppState>,
   ) {
-    core.register({ observerClass: this, eventName: 'SidenavStatus' }).pipe(untilDestroyed(this)).subscribe(() => {
+    this.core.register({ observerClass: this, eventName: 'SidenavStatus' }).pipe(untilDestroyed(this)).subscribe(() => {
       setTimeout(() => {
         this.checkScreenSize();
       }, 100);
@@ -136,8 +138,8 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     };
   }
 
-  onWidgetReorder(newState: unknown[]): void {
-    this.applyState(this.sanitizeState(newState as DashConfigItem[]));
+  onWidgetReorder(newState: DashConfigItem[]): void {
+    this.applyState(newState);
   }
 
   ngAfterViewInit(): void {
@@ -239,8 +241,6 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.getDisksData();
-
     this.ws.call('failover.licensed').pipe(untilDestroyed(this)).subscribe((hasFailover) => {
       if (hasFailover) {
         this.isHa = true;
@@ -264,6 +264,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   startListeners(): void {
+    this.getDisksData();
     this.getNetworkInterfaces();
 
     this.ws.sub<ReportingRealtimeUpdate>('reporting.realtime').pipe(untilDestroyed(this)).subscribe((update) => {
@@ -341,7 +342,6 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     if (!this.dashState) {
       this.setDashState(this.availableWidgets);
     }
-
     this.loadUserAttributes();
   }
 
@@ -461,13 +461,13 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   showConfigForm(): void {
     const modal = this.slideInService.open(DashboardFormComponent);
     modal.setupForm(this.dashState);
-    modal.onSubmit$.pipe(untilDestroyed(this)).subscribe((dashState) => {
+    modal.onSubmit$.pipe(take(1), untilDestroyed(this)).subscribe((dashState) => {
       this.setDashState(dashState);
     });
   }
 
   onEnter(): void {
-    this.previousState = this.dashState.map((widget) => ({ ...widget }));
+    this.previousState = [...this.dashState];
     this.enterReorderMode();
   }
 
@@ -591,12 +591,12 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private loadUserAttributes(): void {
-    this.ws.call('user.query', [[['id', '=', rootUserId]]]).pipe(
+    this.store$.pipe(
+      waitForDashboardState,
+      take(1),
       untilDestroyed(this),
-    ).subscribe((user) => {
-      if (user[0]?.attributes.dashState) {
-        this.applyState(this.sanitizeState(user[0].attributes.dashState));
-      }
+    ).subscribe((dashState) => {
+      this.applyState(dashState);
       this.dashStateReady = true;
     });
   }
