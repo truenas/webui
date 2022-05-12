@@ -136,7 +136,7 @@ export class KubernetesSettingsComponent implements OnInit {
           catchError((error) => {
             this.loader.close();
 
-            this.errorHandler.handleWsFormError({ ...error, ...(error.exc_info || {}) }, this.form);
+            this.errorHandler.handleWsFormError(error, this.form);
             return EMPTY;
           }),
         );
