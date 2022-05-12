@@ -34,12 +34,14 @@ describe('RedirectDialogComponent', () => {
     expect(spectator.query('.message-content span')).toHaveText('You are trying to open:');
   });
 
-  xit('copies URL when Copy URL is pressed', async () => {
-    jest.spyOn(document, 'execCommand').mockImplementation();
-    const loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    const button = await loader.getHarness(MatButtonHarness.with({ text: 'Copy URL' }));
-    await button.click();
+  it('copies URL when Copy URL is pressed', async () => {
+    if (document.execCommand) {
+      jest.spyOn(document, 'execCommand').mockImplementation();
+      const loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      const button = await loader.getHarness(MatButtonHarness.with({ text: 'Copy URL' }));
+      await button.click();
 
-    expect(document.execCommand).toHaveBeenCalledWith('copy');
+      expect(document.execCommand).toHaveBeenCalledWith('copy');
+    }
   });
 });

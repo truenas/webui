@@ -99,21 +99,14 @@ export class GuiFormComponent {
 
   onSubmit(): void {
     const values = this.formGroup.value;
-    const body: SystemGeneralConfigUpdate = {
+    const params = {
+      ...values,
       ui_certificate: parseInt(values.ui_certificate),
-      ui_address: values.ui_address,
-      ui_v6address: values.ui_v6address,
-      ui_port: values.ui_port,
-      ui_httpsport: values.ui_httpsport,
-      ui_httpsprotocols: values.ui_httpsprotocols,
-      ui_httpsredirect: values.ui_httpsredirect,
-      crash_reporting: values.crash_reporting,
-      usage_collection: values.usage_collection,
-      ui_consolemsg: values.ui_consolemsg,
     };
+    delete params.theme;
 
     (
-      !this.configData.ui_httpsredirect && body.ui_httpsredirect
+      !this.configData.ui_httpsredirect && values.ui_httpsredirect
         ? this.dialog.confirm({
           title: this.translate.instant(helptext.redirect_confirm_title),
           message: this.translate.instant(helptext.redirect_confirm_message),
@@ -123,15 +116,19 @@ export class GuiFormComponent {
     ).pipe(
       filter(Boolean),
       tap(() => {
-        this.isFormLoading = true;
         this.store$.dispatch(guiFormSubmitted({ theme: values.theme }));
+        // prevent to revert momentarily to previous value due to `guiFormSubmitted`
+        this.formGroup.controls.ui_httpsredirect.setValue(values.ui_httpsredirect);
       }),
-      switchMap(() => this.ws.call('system.general.update', [body])),
+      switchMap(() => {
+        this.isFormLoading = true;
+        return this.ws.call('system.general.update', [params as SystemGeneralConfigUpdate]);
+      }),
       untilDestroyed(this),
     ).subscribe(() => {
       this.isFormLoading = false;
       this.cdr.markForCheck();
-      this.handleServiceRestart(body);
+      this.handleServiceRestart(params as SystemGeneralConfigUpdate);
     }, (error) => {
       this.isFormLoading = false;
       this.errorHandler.handleWsFormError(error, this.formGroup);
