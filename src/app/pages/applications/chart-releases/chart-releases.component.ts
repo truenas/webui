@@ -280,12 +280,12 @@ export class ChartReleasesComponent implements OnInit {
     });
   }
 
-  portalName(name: string = 'web_portal'): string {
+  portalName(name = 'web_portal'): string {
     const humanName = new EntityUtils().snakeToHuman(name);
     return humanName;
   }
 
-  portalLink(chart: ChartRelease, name: string = 'web_portal'): void {
+  portalLink(chart: ChartRelease, name = 'web_portal'): void {
     window.open(chart.portals[name][0]);
   }
 

@@ -97,10 +97,7 @@ export class AuthorizedAccessFormComponent {
   }
 
   onSubmit(): void {
-    const values = {
-      ...this.form.value,
-      tag: Number(this.form.value.tag),
-    };
+    const values = this.form.value;
     delete values['secret_confirm'];
     delete values['peersecret_confirm'];
 

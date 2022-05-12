@@ -66,10 +66,7 @@ export class AssociatedTargetFormComponent {
   }
 
   onSubmit(): void {
-    const values = {
-      ...this.form.value,
-      lunid: Number(this.form.value.lunid),
-    };
+    const values = this.form.value;
 
     this.isLoading = true;
     let request$: Observable<unknown>;
