@@ -99,7 +99,7 @@ describe('KmipComponent', () => {
     expect(mockEntityJobComponentRef.componentInstance.setCall).toHaveBeenCalledWith(
       'kmip.update',
       [{
-        port: '5697',
+        port: 5697,
         server: 'newkmip.truenas.com',
         certificate: 2,
         certificate_authority: 2,
