@@ -610,15 +610,13 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       const nicKeys: { [nic: string]: number | string } = {};
       interfaces.forEach((item, index) => {
         nicKeys[item.name] = index.toString();
-      });
 
-      // Process Vlans (attach vlans to their parent)
-      interfaces.forEach((item, index) => {
+        // Process Vlans (attach vlans to their parent)
         if (item.type !== NetworkInterfaceType.Vlan && !clone[index].state.vlans) {
           clone[index].state.vlans = [];
         }
 
-        if (item.type === NetworkInterfaceType.Vlan) {
+        if (item.type === NetworkInterfaceType.Vlan && item.state.parent) {
           const parentIndex = parseInt(nicKeys[item.state.parent] as string);
           if (!clone[parentIndex].state.vlans) {
             clone[parentIndex].state.vlans = [];
@@ -627,10 +625,8 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
           clone[parentIndex].state.vlans.push(item.state);
           removeNics[item.name] = index;
         }
-      });
 
-      // Process LAGGs
-      interfaces.forEach((item, index) => {
+        // Process LAGGs
         if (item.type === NetworkInterfaceType.LinkAggregation) {
           clone[index].state.lagg_ports = item.lag_ports;
           item.lag_ports.forEach((nic) => {

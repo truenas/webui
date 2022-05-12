@@ -9,6 +9,7 @@ import {
   styler,
 } from 'popmotion';
 import { Subject } from 'rxjs';
+import { filter, throttleTime } from 'rxjs/operators';
 import { LinkState, NetworkInterfaceAliasType } from 'app/enums/network-interface.enum';
 import { CoreEvent } from 'app/interfaces/events';
 import { NetworkInterfaceAlias } from 'app/interfaces/network-interface.interface';
@@ -121,19 +122,21 @@ export class WidgetNicComponent extends WidgetComponent implements AfterViewInit
   }
 
   ngAfterViewInit(): void {
-    this.stats.pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
-      if (evt.name === 'NetTraffic_' + this.nicState.name) {
-        const sent = this.utils.convert(evt.data.sent_bytes_rate);
-        const received = this.utils.convert(evt.data.received_bytes_rate);
+    this.stats.pipe(
+      filter((evt) => evt.name === 'NetTraffic_' + this.nicState.name),
+      throttleTime(500),
+      untilDestroyed(this),
+    ).subscribe((evt: CoreEvent) => {
+      const sent = this.utils.convert(evt.data.sent_bytes_rate);
+      const received = this.utils.convert(evt.data.received_bytes_rate);
 
-        this.traffic = {
-          sent: sent.value,
-          sentUnits: sent.units,
-          received: received.value,
-          receivedUnits: received.units,
-          linkState: this.linkState,
-        };
-      }
+      this.traffic = {
+        sent: sent.value,
+        sentUnits: sent.units,
+        received: received.value,
+        receivedUnits: received.units,
+        linkState: this.linkState,
+      };
     });
   }
 

@@ -6,7 +6,9 @@ import { TranslateService } from '@ngx-translate/core';
 import { ChartData, ChartOptions } from 'chart.js';
 import { sub } from 'date-fns';
 import { Subject } from 'rxjs';
-import { filter, map, take } from 'rxjs/operators';
+import {
+  filter, map, take, throttleTime,
+} from 'rxjs/operators';
 import { LinkState, NetworkInterfaceAliasType } from 'app/enums/network-interface.enum';
 import { CoreEvent } from 'app/interfaces/events';
 import { BaseNetworkInterface, NetworkInterfaceAlias } from 'app/interfaces/network-interface.interface';
@@ -193,35 +195,41 @@ export class WidgetNetworkComponent extends WidgetComponent implements OnInit, A
       this.fetchReportData();
     }, 10000);
 
-    this.stats.pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
-      if (evt.name.startsWith('NetTraffic_')) {
-        const nicName = evt.name.substr('NetTraffic_'.length);
-        if (nicName in this.nicInfoMap) {
-          const sent = this.utils.convert(evt.data.sent_bytes_rate);
-          const received = this.utils.convert(evt.data.received_bytes_rate);
+    this.stats.pipe(
+      filter((evt) => evt.name.startsWith('NetTraffic_')),
+      filter((evt) => {
+        const [, nicName] = evt.name.split('_');
+        return this.availableNics.findIndex((nic) => nic.name === nicName) !== -1;
+      }),
+      throttleTime(500),
+      untilDestroyed(this),
+    ).subscribe((evt: CoreEvent) => {
+      const [, nicName] = evt.name.split('_');
+      if (nicName in this.nicInfoMap) {
+        const sent = this.utils.convert(evt.data.sent_bytes_rate);
+        const received = this.utils.convert(evt.data.received_bytes_rate);
 
-          const nicInfo = this.nicInfoMap[nicName];
-          if (evt.data.link_state) {
-            nicInfo.state = evt.data.link_state as LinkState;
-          }
-          nicInfo.in = `${received.value} ${received.units}/s`;
-          nicInfo.out = `${sent.value} ${sent.units}/s`;
+        const nicInfo = this.nicInfoMap[nicName];
+        if (evt.data.link_state) {
+          nicInfo.state = evt.data.link_state as LinkState;
+        }
+        nicInfo.in = `${received.value} ${received.units}/s`;
+        nicInfo.out = `${sent.value} ${sent.units}/s`;
 
-          if (
-            evt.data.sent_bytes !== undefined
-            && evt.data.sent_bytes - nicInfo.lastSent > this.minSizeToActiveTrafficArrowIcon
-          ) {
-            nicInfo.lastSent = evt.data.sent_bytes;
-            this.tableService.updateStateInfoIcon(nicName, 'sent');
-          }
+        if (
+          evt.data.sent_bytes !== undefined
+          && evt.data.sent_bytes - nicInfo.lastSent > this.minSizeToActiveTrafficArrowIcon
+        ) {
+          nicInfo.lastSent = evt.data.sent_bytes;
+          this.tableService.updateStateInfoIcon(nicName, 'sent');
+        }
 
-          if (
-            evt.data.received_bytes !== undefined
-            && evt.data.received_bytes - nicInfo.lastReceived > this.minSizeToActiveTrafficArrowIcon
-          ) {
-            nicInfo.lastReceived = evt.data.received_bytes;
-            this.tableService.updateStateInfoIcon(nicName, 'received');
-          }
+        if (
+          evt.data.received_bytes !== undefined
+          && evt.data.received_bytes - nicInfo.lastReceived > this.minSizeToActiveTrafficArrowIcon
+        ) {
+          nicInfo.lastReceived = evt.data.received_bytes;
+          this.tableService.updateStateInfoIcon(nicName, 'received');
         }
       }
     });

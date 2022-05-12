@@ -1,17 +1,19 @@
 <ng-template #pageHeader>
   <page-title-header *ngIf="screenType === 'Desktop'" [title]="title$">
-    <button mat-button (click)="showConfigForm()" [color]="'primary'">
-      {{ 'Configure' | translate }}
-    </button>
-    <button *ngIf="reorderMode" mat-button (click)="onCancel()">
-      {{ 'Cancel' | translate }}
-    </button>
-    <button *ngIf="reorderMode" mat-button (click)="onConfirm()" [color]="'primary'">
-      {{ 'Save' | translate }}
-    </button>
-    <button *ngIf="!reorderMode" mat-button (click)="onEnter()" [color]="'primary'">
-      {{ 'Reorder' | translate }}
-    </button>
+    <ng-container *ngIf="isLoaded">
+      <button mat-button (click)="showConfigForm()" [color]="'primary'">
+        {{ 'Configure' | translate }}
+      </button>
+      <button *ngIf="reorderMode" mat-button (click)="onCancel()">
+        {{ 'Cancel' | translate }}
+      </button>
+      <button *ngIf="reorderMode" mat-button (click)="onConfirm()" [color]="'primary'">
+        {{ 'Save' | translate }}
+      </button>
+      <button *ngIf="!reorderMode" mat-button (click)="onEnter()" [color]="'primary'">
+        {{ 'Reorder' | translate }}
+      </button>
+    </ng-container>
   </page-title-header>
 </ng-template>
 
