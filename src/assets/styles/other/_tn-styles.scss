@@ -46,7 +46,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     height: 100vh;
   }
 
-  topbar .mat-toolbar-multiple-rows {
+  ix-topbar .mat-toolbar-multiple-rows {
     min-height: unset;
   }
 
@@ -459,8 +459,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
 
   //Entity Module Overrides
 
-  app-members .form-card.mat-card,
-  device-edit .form-card.mat-card,
+  ix-device-edit .form-card.mat-card,
   ix-entity-form .form-card.mat-card {
     margin: 0 auto;
     max-width: 960px;
@@ -579,13 +578,6 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
   #pool_processes {
     margin-bottom: 15px;
   }
-
-  app-volumeimport-wizard #key tooltip {
-    position: relative;
-    top: -4px;
-  }
-
-  // ------------------------
 
   // For some items on VM Wizard Hard Disks page
   #disk_radio {
@@ -1006,11 +998,11 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
   }
 
   // Adjustments to checkboxes and header labels on unique tables
-  services .datatable-body-cell .mat-checkbox {
+  ix-services .datatable-body-cell .mat-checkbox {
     bottom: 7px !important;
   }
 
-  services .datatable-header-cell-label {
+  ix-services .datatable-header-cell-label {
     margin-left: 15px;
   }
 
@@ -1121,10 +1113,6 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
 
   .rightside-content-hold {
     overflow-y: auto;
-  }
-
-  app-networksummary .mat-list .mat-subheader {
-    @include variable(color, --fg2, $fg2);
   }
 
   ix-select-dialog .mat-select-placeholder,
@@ -1244,21 +1232,6 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
 
   }
 
-  app-interfaces-form {
-    ix-entity-form-list .form-list .form-list-item > div.form-line {
-      display: none;
-    }
-
-    ix-entity-form-list .form-list .form-list-item > div.form-line:first-child {
-      display: block;
-    }
-  }
-
-  app-ssh-keypairs-form #key_instructions {
-    font-size: 0.9rem;
-    margin-bottom: 1rem;
-  }
-
   ix-iscsi .mat-tab-links {
     flex-wrap: wrap;
   }
@@ -1276,22 +1249,6 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     margin-bottom: 15px;
   }
 
-  app-general {
-    #language_sort,
-    #language_sort_radiogroup {
-      display: inline-flex;
-    }
-
-    mat-radio-button {
-      margin-left: 10px;
-    }
-  }
-
-  app-active-directory #successfully_updated {
-    position: relative;
-    top: 12px;
-  }
-
   mat-error a {
     text-decoration: underline;
   }
@@ -1305,7 +1262,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     overflow: auto;
   }
 
-  app-two-factor {
+  ix-two-factor {
     #instructions,
     #enabled_status {
       font-size: 115%;
