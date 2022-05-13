@@ -151,11 +151,7 @@ export class ServiceS3Component implements OnInit {
   }
 
   onSubmit(): void {
-    const values = {
-      ...this.form.value,
-      bindport: Number(this.form.value.bindport),
-      console_bindport: Number(this.form.value.console_bindport),
-    };
+    const values = this.form.value;
 
     if (values.certificate === null) {
       delete values.tls_server_uri;

@@ -69,14 +69,7 @@ export class ServiceNfsComponent implements OnInit {
   }
 
   onSubmit(): void {
-    const values = this.form.value;
-    const params = {
-      ...this.form.value,
-      mountd_port: values.mountd_port ? Number(values.mountd_port) : null,
-      rpcstatd_port: values.rpcstatd_port ? Number(values.rpcstatd_port) : null,
-      rpclockd_port: values.rpclockd_port ? Number(values.rpclockd_port) : null,
-      servers: Number(values.servers),
-    };
+    const params = this.form.value;
 
     this.isFormLoading = true;
     this.ws.call('nfs.update', [params])

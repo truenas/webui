@@ -49,7 +49,7 @@ export class IpmiFormComponent implements FormConfiguration {
       id: 'connect',
       name: this.translate.instant('Manage'),
       function: () => {
-        window.open(`http://${this.managementIp}`);
+        this.redirect.openWindow(`http://${this.managementIp}`);
       },
     },
   ];
@@ -160,6 +160,7 @@ export class IpmiFormComponent implements FormConfiguration {
     protected loader: AppLoaderService,
     private matDialog: MatDialog,
     private translate: TranslateService,
+    private redirect: RedirectService,
   ) { }
 
   async prerequisite(): Promise<boolean> {

@@ -106,7 +106,7 @@ describe('ReportsConfigFormComponent', () => {
     expect(ws.call).toHaveBeenLastCalledWith('reporting.update', [{
       confirm_rrd_destroy: true,
       cpu_in_percentage: true,
-      graph_age: '18',
+      graph_age: 18,
       graph_points: 2048,
       graphite: '127.0.0.1',
       graphite_separateinstances: true,
