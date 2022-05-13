@@ -4,8 +4,6 @@ import { Option } from 'app/interfaces/option.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityErrorHandler } from 'app/modules/entity/entity-form/interfaces/entity-error-handler.interface';
 import { FieldConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
-import { Relation, RelationGroup } from 'app/modules/entity/entity-form/models/field-relation.interface';
-import { RelationAction } from 'app/modules/entity/entity-form/models/relation-action.enum';
 import { DialogService } from 'app/services';
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
@@ -264,23 +262,6 @@ export class EntityUtils {
     } else {
       result = data;
     }
-
-    return result;
-  }
-
-  createRelations(relations: Relation[]): RelationGroup[] {
-    const result = relations.map((relation) => {
-      const relationFieldName = relation.fieldName;
-
-      return {
-        action: RelationAction.Show,
-        when: [{
-          name: relationFieldName,
-          operator: relation.operatorName,
-          value: relation.operatorValue,
-        }],
-      };
-    });
 
     return result;
   }
