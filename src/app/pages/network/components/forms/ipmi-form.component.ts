@@ -20,7 +20,7 @@ import { EntityUtils } from 'app/modules/entity/utils';
 import {
   IpmiIdentifyDialogComponent,
 } from 'app/pages/network/components/ipmi-identify-dialog/ipmi-identify-dialog.component';
-import { DialogService, WebSocketService } from 'app/services';
+import { DialogService, RedirectService, WebSocketService } from 'app/services';
 
 @UntilDestroy()
 @Component({
