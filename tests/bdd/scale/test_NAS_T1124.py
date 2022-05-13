@@ -38,12 +38,6 @@ def test_create_an_smb_share_with_the_tank_acl_dataset(driver):
     assert wait_on_element(driver, 5, '//h3[text()="Active Directory"]')
     assert wait_on_element(driver, 5, '//mat-checkbox[contains(@ix-auto, "Enable (requires password")]', 'clickable')
     checkbox_checked = attribute_value_exist(driver, '//mat-checkbox[contains(@ix-auto, "Enable (requires password")]', 'class', 'mat-checkbox-checked')
-    assert wait_on_element(driver, 5, '//mat-card//span[contains(text(),"Settings")]', 'clickable')
-    driver.find_element_by_xpath('//mat-card//span[contains(text(),"Settings")]').click()
-    # Verify the box is starting to load
-    assert wait_on_element(driver, 5, '//h3[text()="Active Directory"]')
-    assert wait_on_element(driver, 5, '//mat-checkbox[contains(@ix-auto, "Enable (requires password")]', 'clickable')
-    checkbox_checked = attribute_value_exist(driver, '//mat-checkbox[contains(@ix-auto, "Enable (requires password")]', 'class', 'mat-checkbox-checked')
     # The checkbox should be checked
     if checkbox_checked:
         driver.find_element_by_xpath('//mat-checkbox[contains(@ix-auto, "Enable (requires password")]').click()
@@ -86,7 +80,7 @@ def the_windows_sharessmb_page_should_open_click_add(driver):
     """The Windows Shares(SMB) page should open, Click Add."""
     assert wait_on_element(driver, 5, '//h1[contains(text(),"Sharing")]')
     assert wait_on_element(driver, 5, '//mat-card[contains(.,"SMB")]//button[@ix-auto="button__-add"]', 'clickable')
-    driver.find_element_by_xpath('//mat-card[contains(.,"SMB")]//button[@ix-auto="button__-add"]').click()    
+    driver.find_element_by_xpath('//mat-card[contains(.,"SMB")]//button[@ix-auto="button__-add"]').click()
 
 
 @then(parsers.parse('Set Path to the ACL dataset "{path}", Input "{smbname}" as name, Click to enable, Input "{description}" as description, and Click Summit'))
