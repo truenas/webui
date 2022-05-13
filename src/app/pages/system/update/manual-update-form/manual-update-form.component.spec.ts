@@ -83,4 +83,9 @@ describe('ManualUpdateFormComponent', () => {
       '/mnt/pool2',
     ]);
   });
+
+  /**
+   * TODO: More tests should be written to test form submission etc once
+   * harness and test files are ready for IxFileInputComponent
+   */
 });
