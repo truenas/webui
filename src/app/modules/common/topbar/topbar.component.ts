@@ -500,8 +500,8 @@ export class TopbarComponent implements OnInit, OnDestroy {
   }
 
   checkUpgradePending(): void {
+    this.pendingUpgradeChecked = true;
     this.ws.call('failover.upgrade_pending').pipe(untilDestroyed(this)).subscribe((res) => {
-      this.pendingUpgradeChecked = true;
       this.upgradeWaitingToFinish = res;
       if (res) {
         this.upgradePendingDialog();
