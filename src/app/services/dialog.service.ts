@@ -30,8 +30,8 @@ export class DialogService {
     ).subscribe(() => this.closeAllDialogs());
   }
 
-  confirm(confirmOptions: ConfirmOptions): Observable<boolean>
-  confirm(confirmOptions: ConfirmOptionsWithSecondaryCheckbox): MatDialogRef<ConfirmDialogComponent, unknown>
+  confirm(confirmOptions: ConfirmOptions): Observable<boolean>;
+  confirm(confirmOptions: ConfirmOptionsWithSecondaryCheckbox): MatDialogRef<ConfirmDialogComponent, unknown>;
   confirm(
     options: ConfirmOptions | ConfirmOptionsWithSecondaryCheckbox,
   ): Observable<boolean> | MatDialogRef<ConfirmDialogComponent, unknown> {

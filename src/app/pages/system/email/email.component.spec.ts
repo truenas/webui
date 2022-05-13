@@ -1,12 +1,11 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { EventEmitter } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { of } from 'rxjs';
 import { MockWebsocketService } from 'app/core/testing/classes/mock-websocket.service';
+import { mockEntityJobComponentRef } from 'app/core/testing/utils/mock-entity-job-component-ref.utils';
 import { mockCall, mockJob, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { MailSecurity } from 'app/enums/mail-security.enum';
 import { ProductType } from 'app/enums/product-type.enum';
@@ -15,7 +14,6 @@ import { GmailOauthConfig, MailConfig } from 'app/interfaces/mail-config.interfa
 import { OauthMessage } from 'app/interfaces/oauth-message.interface';
 import { SystemInfo } from 'app/interfaces/system-info.interface';
 import { User } from 'app/interfaces/user.interface';
-import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { DialogService, WebSocketService } from 'app/services';
@@ -26,17 +24,6 @@ describe('EmailComponent', () => {
   let loader: HarnessLoader;
   let form: IxFormHarness;
   let ws: WebSocketService;
-
-  const mockDialogRef = {
-    componentInstance: {
-      setDescription: jest.fn(),
-      setCall: jest.fn(),
-      submit: jest.fn(),
-      success: of(null),
-      failure: new EventEmitter(),
-    },
-    close: jest.fn(),
-  } as unknown as MatDialogRef<EntityJobComponent>;
 
   const createComponent = createComponentFactory({
     component: EmailComponent,
@@ -69,7 +56,7 @@ describe('EmailComponent', () => {
       ]),
       mockProvider(DialogService),
       mockProvider(MatDialog, {
-        open: jest.fn(() => mockDialogRef),
+        open: jest.fn(() => mockEntityJobComponentRef),
       }),
       {
         provide: WINDOW,
@@ -142,7 +129,7 @@ describe('EmailComponent', () => {
         fromname: 'Jeremy',
         oauth: null,
         outgoingserver: 'smtp.ixsystems.com',
-        port: '21',
+        port: 21,
         security: MailSecurity.Ssl,
         smtp: false,
       }]);
@@ -173,7 +160,7 @@ describe('EmailComponent', () => {
       const sendTestEmailButton = await loader.getHarness(MatButtonHarness.with({ text: 'Send Test Mail' }));
       await sendTestEmailButton.click();
 
-      expect(mockDialogRef.componentInstance.setCall).toHaveBeenCalledWith(
+      expect(mockEntityJobComponentRef.componentInstance.setCall).toHaveBeenCalledWith(
         'mail.send',
         [
           {
@@ -278,7 +265,7 @@ describe('EmailComponent', () => {
       const sendTestEmailButton = await loader.getHarness(MatButtonHarness.with({ text: 'Send Test Mail' }));
       await sendTestEmailButton.click();
 
-      expect(mockDialogRef.componentInstance.setCall).toHaveBeenCalledWith(
+      expect(mockEntityJobComponentRef.componentInstance.setCall).toHaveBeenCalledWith(
         'mail.send',
         [
           {

@@ -15,9 +15,13 @@ import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-tab
 import { EntityTableAction, EntityTableConfig } from 'app/modules/entity/entity-table/entity-table.interface';
 import { DatasetQuotaRow } from 'app/pages/storage/volumes/datasets/dataset-quotas/dataset-quotas-grouplist/dataset-quota-row.interface';
 import {
+  GroupQuotaFormComponent,
+} from 'app/pages/storage/volumes/datasets/dataset-quotas/dataset-quotas-grouplist/group-quota-form/group-quota-form.component';
+import {
   AppLoaderService, DialogService, StorageService, WebSocketService,
 } from 'app/services';
 import { EntityTableService } from 'app/services/entity-table.service';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
 @Component({
@@ -32,7 +36,6 @@ export class DatasetQuotasGrouplistComponent implements EntityTableConfig, OnDes
   protected fullFilter: QueryParams<DatasetQuota> = [['OR', [['quota', '>', 0], ['obj_quota', '>', 0]]]];
   protected emptyFilter: QueryParams<DatasetQuota> = [];
   protected useFullFilter = true;
-  routeAdd: string[];
 
   columns = [
     {
@@ -71,6 +74,7 @@ export class DatasetQuotasGrouplistComponent implements EntityTableConfig, OnDes
     protected aroute: ActivatedRoute,
     private translate: TranslateService,
     private tableService: EntityTableService,
+    private slideInService: IxSlideInService,
   ) { }
 
   getRemoveInvalidQuotasAction(invalidQuotas: DatasetQuota[]): EntityTableAction {
@@ -236,9 +240,12 @@ export class DatasetQuotasGrouplistComponent implements EntityTableConfig, OnDes
     this.entityList = entityList;
     const paramMap = this.aroute.snapshot.params;
     this.pk = paramMap.pk;
-    this.routeAdd = ['storage', 'group-quotas-form', this.pk];
     this.useFullFilter = window.localStorage.getItem('useFullFilter') !== 'false';
     this.updateAddActions();
+
+    this.slideInService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
+      entityList.getData();
+    });
   }
 
   callGetFunction(entityList: EntityTableComponent): void {
@@ -289,6 +296,11 @@ export class DatasetQuotasGrouplistComponent implements EntityTableConfig, OnDes
       this.entityList.getData();
       this.loader.close();
     });
+  }
+
+  doAdd(): void {
+    const slideIn = this.slideInService.open(GroupQuotaFormComponent);
+    slideIn.setDatasetId(this.pk);
   }
 
   ngOnDestroy(): void {

@@ -3,7 +3,7 @@ import { DiskPowerLevel } from 'app/enums/disk-power-level.enum';
 import { DiskStandby } from 'app/enums/disk-standby.enum';
 
 export default {
-  disk_form_title: T('Edit Pool Disk'),
+  disk_form_title: T('Edit Disk'),
   fieldset_disk: T('General'),
   fieldset_powermgmt: T('Power Management'),
   fieldset_temperature: T('Temperature Alerts'),
@@ -106,4 +106,7 @@ export default {
     startDescription: T('Wiping disk...'),
     infoContent: T('Disk Wiped successfully'),
   },
+
+  dialog_title: T('Settings saved'),
+  dialog_msg_save_success: T('Successfully saved Disk settings.'),
 };

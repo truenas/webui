@@ -110,7 +110,7 @@ describe('SnapshotTaskComponent', () => {
       enabled: true,
       exclude: [],
       lifetime_unit: LifetimeUnit.Week,
-      lifetime_value: '2',
+      lifetime_value: 2,
       naming_schema: 'auto-%Y-%m-%d_%H-%M',
       recursive: true,
       schedule: {

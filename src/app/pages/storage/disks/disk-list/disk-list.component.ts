@@ -16,6 +16,7 @@ import { Disk } from 'app/interfaces/storage.interface';
 import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-table.component';
 import { EntityTableAction, EntityTableConfig } from 'app/modules/entity/entity-table/entity-table.interface';
 import { EntityUtils } from 'app/modules/entity/utils';
+import { DiskFormComponent } from 'app/pages/storage/disks/disk-form/disk-form.component';
 import { DiskWipeDialogComponent } from 'app/pages/storage/disks/disk-wipe-dialog/disk-wipe-dialog.component';
 import {
   ManualTestDialogComponent,
@@ -23,6 +24,7 @@ import {
 } from 'app/pages/storage/disks/manual-test-dialog/manual-test-dialog.component';
 import { StorageService, WebSocketService } from 'app/services';
 import { CoreService } from 'app/services/core-service/core.service';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
 @Component({
@@ -32,7 +34,12 @@ import { CoreService } from 'app/services/core-service/core.service';
 export class DiskListComponent implements EntityTableConfig<Disk> {
   title = this.translate.instant('Disks');
   queryCall = 'disk.query' as const;
-  queryCallOption: QueryParams<Disk, { extra: { pools: true } }> = [[], { extra: { pools: true } }];
+  queryCallOption: QueryParams<Disk, { extra: { pools: boolean; passwords: boolean } }> = [[], {
+    extra: {
+      pools: true,
+      passwords: true,
+    },
+  }];
   noAdd = true;
 
   columns = [
@@ -110,7 +117,8 @@ export class DiskListComponent implements EntityTableConfig<Disk> {
 
         this.router.navigate(['/', 'storage', 'disks', 'bulk-edit']);
       } else {
-        this.router.navigate(['/', 'storage', 'disks', 'edit', selected[0].identifier]);
+        const editForm = this.slideInService.open(DiskFormComponent, { wide: true });
+        editForm.setFormDisk(selected[0]);
       }
     },
   }, {
@@ -132,6 +140,7 @@ export class DiskListComponent implements EntityTableConfig<Disk> {
     private matDialog: MatDialog,
     private core: CoreService,
     protected translate: TranslateService,
+    private slideInService: IxSlideInService,
   ) {}
 
   getActions(parentRow: Disk): EntityTableAction[] {
@@ -140,8 +149,9 @@ export class DiskListComponent implements EntityTableConfig<Disk> {
       icon: 'edit',
       name: 'edit',
       label: this.translate.instant('Edit'),
-      onClick: (row: Disk) => {
-        this.router.navigate(['/', 'storage', 'disks', 'edit', row.identifier]);
+      onClick: (disk: Disk) => {
+        const editForm = this.slideInService.open(DiskFormComponent, { wide: true });
+        editForm.setFormDisk(disk);
       },
     }];
 
@@ -222,6 +232,10 @@ export class DiskListComponent implements EntityTableConfig<Disk> {
       if (evt) {
         entityList.getData();
       }
+    });
+    this.slideInService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
+      entityList.getData();
+      entityList.pageChanged();
     });
   }
 
