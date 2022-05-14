@@ -17,7 +17,7 @@
     <span>{{ 'More info...' | translate }}</span>
   </div>
   <div id="err-bt-panel" class="backtrace-panel" [ngClass]="{'open':!isCloseMoreInfo}" *ngIf="backtrace">
-    <div class="textarea" id="err-bt-text" readonly matInput>{{ 'Error' | translate }}: {{backtrace}}</div>
+    <div class="textarea scrolled-down" id="err-bt-text" readonly matInput>{{ 'Error' | translate }}: {{backtrace}}</div>
   </div>
 </div>
 <div mat-dialog-actions>

@@ -7,3 +7,8 @@
   padding: unset;
   text-align: right;
 }
+
+.scrolled-down {
+  display: flex;
+  flex-direction: column-reverse;
+}
