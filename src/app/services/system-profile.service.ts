@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { Store } from '@ngrx/store';
 import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
 import { CoreEvent } from 'app/interfaces/events';
 import { HaStatus } from 'app/interfaces/events/ha-status-event.interface';
@@ -7,6 +8,8 @@ import { SystemInfo } from 'app/interfaces/system-info.interface';
 import { BaseService } from 'app/services/base.service';
 import { CoreService } from 'app/services/core-service/core.service';
 import { WebSocketService } from 'app/services/index';
+import { AppState } from 'app/store';
+import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 
 @Injectable({
   providedIn: 'root',
@@ -22,7 +25,11 @@ export class SystemProfileService extends BaseService {
     enclosure: false,
   };
 
-  constructor(protected core: CoreService, protected websocket: WebSocketService) {
+  constructor(
+    protected core: CoreService,
+    protected websocket: WebSocketService,
+    private store$: Store<AppState>,
+  ) {
     super(core, websocket);
 
     this.core.register({
@@ -72,7 +79,7 @@ export class SystemProfileService extends BaseService {
   }
 
   fetchProfile(localOnly?: boolean): void {
-    this.websocket.call('system.info').subscribe((systemInfo) => {
+    this.store$.pipe(waitForSystemInfo).subscribe((systemInfo) => {
       this.cache = systemInfo;
       if (localOnly) {
         this.buffer.push({ name: 'SysInfoRequest', sender: this });

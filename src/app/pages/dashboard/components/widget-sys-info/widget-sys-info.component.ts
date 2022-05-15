@@ -4,6 +4,7 @@ import {
 import { MediaObserver } from '@angular/flex-layout';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { JobState } from 'app/enums/job-state.enum';
 import { ProductType } from 'app/enums/product-type.enum';
@@ -15,6 +16,8 @@ import { SystemGeneralService, WebSocketService } from 'app/services';
 import { CoreService } from 'app/services/core-service/core.service';
 import { LocaleService } from 'app/services/locale.service';
 import { ThemeService } from 'app/services/theme/theme.service';
+import { AppState } from 'app/store';
+import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 
 @UntilDestroy()
 @Component({
@@ -65,6 +68,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnDestroy
     private locale: LocaleService,
     private core: CoreService,
     public themeService: ThemeService,
+    private store$: Store<AppState>,
   ) {
     super(translate);
     this.configurable = false;
@@ -89,7 +93,10 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnDestroy
         this.ha_status = evt.data.status;
       });
     } else {
-      this.ws.call('system.info').pipe(untilDestroyed(this)).subscribe((systemInfo) => {
+      this.store$.pipe(
+        waitForSystemInfo,
+        untilDestroyed(this),
+      ).subscribe((systemInfo) => {
         this.processSysInfo(systemInfo);
       });
       this.checkForUpdate();

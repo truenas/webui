@@ -31,6 +31,7 @@ import { AppState } from 'app/store';
 import { guiFormClosedWithoutSaving } from 'app/store/preferences/preferences.actions';
 import { waitForPreferences } from 'app/store/preferences/preferences.selectors';
 import { waitForGeneralConfig } from 'app/store/system-config/system-config.selectors';
+import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 import { GuiFormComponent } from './gui-form/gui-form.component';
 
 enum GeneralCardId {
@@ -267,52 +268,54 @@ export class GeneralSettingsComponent implements OnInit {
 
   saveConfigSubmit(entityDialog: EntityDialogComponent): void {
     entityDialog.loader.open();
-    entityDialog.ws.call('system.info').pipe(untilDestroyed(this)).subscribe((systemInfo) => {
-      let fileName = '';
-      let mimetype: string;
-      if (systemInfo) {
-        const hostname = systemInfo.hostname.split('.')[0];
-        const date = entityDialog.datePipe.transform(new Date(), 'yyyyMMddHHmmss');
-        fileName = hostname + '-' + systemInfo.version + '-' + date;
-        if (entityDialog.formValue['secretseed']) {
-          mimetype = 'application/x-tar';
-          fileName += '.tar';
-        } else {
-          mimetype = 'application/x-sqlite3';
-          fileName += '.db';
+    this.store$.pipe(waitForSystemInfo).pipe(untilDestroyed(this)).subscribe(
+      (systemInfo) => {
+        let fileName = '';
+        let mimetype: string;
+        if (systemInfo) {
+          const hostname = systemInfo.hostname.split('.')[0];
+          const date = entityDialog.datePipe.transform(new Date(), 'yyyyMMddHHmmss');
+          fileName = hostname + '-' + systemInfo.version + '-' + date;
+          if (entityDialog.formValue['secretseed']) {
+            mimetype = 'application/x-tar';
+            fileName += '.tar';
+          } else {
+            mimetype = 'application/x-sqlite3';
+            fileName += '.db';
+          }
         }
-      }
 
-      entityDialog.ws.call('core.download', ['config.save', [{ secretseed: entityDialog.formValue['secretseed'] }], fileName])
-        .pipe(untilDestroyed(this)).subscribe(
-          (download) => {
-            const url = download[1];
-            this.storage
-              .streamDownloadFile(this.http, url, fileName, mimetype)
-              .pipe(untilDestroyed(this))
-              .subscribe((file: Blob) => {
-                entityDialog.loader.close();
-                entityDialog.dialogRef.close();
-                this.storage.downloadBlob(file, fileName);
-              }, (err: Error) => {
-                entityDialog.loader.close();
-                entityDialog.dialogRef.close();
-                this.dialog.errorReport(helptext.config_download.failed_title,
-                  helptext.config_download.failed_message, err.message);
-              });
-          },
-          (err: WebsocketError) => {
-            entityDialog.loader.close();
-            entityDialog.dialogRef.close();
-            new EntityUtils().handleWsError(entityDialog, err, this.dialog);
-          },
-        );
-    },
-    (err: WebsocketError) => {
-      entityDialog.loader.close();
-      entityDialog.dialogRef.close();
-      new EntityUtils().handleWsError(entityDialog, err, this.dialog);
-    });
+        entityDialog.ws.call('core.download', ['config.save', [{ secretseed: entityDialog.formValue['secretseed'] }], fileName])
+          .pipe(untilDestroyed(this)).subscribe(
+            (download) => {
+              const url = download[1];
+              this.storage
+                .streamDownloadFile(this.http, url, fileName, mimetype)
+                .pipe(untilDestroyed(this))
+                .subscribe((file: Blob) => {
+                  entityDialog.loader.close();
+                  entityDialog.dialogRef.close();
+                  this.storage.downloadBlob(file, fileName);
+                }, (err: Error) => {
+                  entityDialog.loader.close();
+                  entityDialog.dialogRef.close();
+                  this.dialog.errorReport(helptext.config_download.failed_title,
+                    helptext.config_download.failed_message, err.message);
+                });
+            },
+            (err: WebsocketError) => {
+              entityDialog.loader.close();
+              entityDialog.dialogRef.close();
+              new EntityUtils().handleWsError(entityDialog, err, this.dialog);
+            },
+          );
+      },
+      (err: WebsocketError) => {
+        entityDialog.loader.close();
+        entityDialog.dialogRef.close();
+        new EntityUtils().handleWsError(entityDialog, err, this.dialog);
+      },
+    );
   }
 
   updater(file: FormUploadComponent): void {

@@ -1,10 +1,13 @@
 import { Injectable, OnDestroy } from '@angular/core';
+import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { CoreEvent } from 'app/interfaces/events';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { CoreService } from 'app/services/core-service/core.service';
 import { WebSocketService } from 'app/services/ws.service';
+import { AppState } from 'app/store';
+import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 
 /*
  * This service acts as a proxy between middleware/web worker
@@ -31,6 +34,7 @@ export class ReportsService implements OnDestroy {
   constructor(
     private ws: WebSocketService,
     private core: CoreService,
+    private store$: Store<AppState>,
   ) {
     this.reportsUtils = new Worker(new URL('./reports-utils.worker', import.meta.url), { type: 'module' });
 
@@ -124,7 +128,9 @@ export class ReportsService implements OnDestroy {
   }
 
   getServerTime(): Observable<Date> {
-    return this.ws.call('system.info')
+    return this.store$.pipe(
+      waitForSystemInfo,
+    )
       .pipe(map((systemInfo) => {
         const msToTrim = 60_000;
         return new Date(systemInfo.datetime.$date - msToTrim);

@@ -9,9 +9,9 @@ import { CertificateAuthority } from 'app/interfaces/certificate-authority.inter
 import { Certificate } from 'app/interfaces/certificate.interface';
 import { Choices } from 'app/interfaces/choices.interface';
 import { Option } from 'app/interfaces/option.interface';
-import { SystemInfo } from 'app/interfaces/system-info.interface';
 import { AppState } from 'app/store';
 import { waitForGeneralConfig } from 'app/store/system-config/system-config.selectors';
+import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 import { WebSocketService } from './ws.service';
 
 @Injectable({ providedIn: 'root' })
@@ -26,7 +26,7 @@ export class SystemGeneralService {
   toggleSentryInit(): void {
     combineLatest([
       this.isStable(),
-      this.getSysInfo(),
+      this.store$.pipe(waitForSystemInfo),
       this.store$.pipe(waitForGeneralConfig),
     ]).subscribe(([isStable, sysInfo, generalConfig]) => {
       if (!isStable && generalConfig.crash_reporting) {
@@ -96,10 +96,6 @@ export class SystemGeneralService {
 
   isStable(): Observable<boolean> {
     return this.ws.call('system.is_stable');
-  }
-
-  getSysInfo(): Observable<SystemInfo> {
-    return this.ws.call('system.info');
   }
 
   ipChoicesv4(): Observable<Choices> {

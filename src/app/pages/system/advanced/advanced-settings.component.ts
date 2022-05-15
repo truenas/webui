@@ -50,6 +50,7 @@ import { CoreService } from 'app/services/core-service/core.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { AppState } from 'app/store';
 import { waitForAdvancedConfig } from 'app/store/system-config/system-config.selectors';
+import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 import { ConsoleFormComponent } from './console-form/console-form.component';
 import { IsolatedGpuPcisFormComponent } from './isolated-gpu-pcis/isolated-gpu-pcis-form.component';
 import { KernelFormComponent } from './kernel-form/kernel-form.component';
@@ -492,7 +493,7 @@ export class AdvancedSettingsComponent implements OnInit {
   }
 
   saveDebug(): void {
-    this.ws.call('system.info').pipe(untilDestroyed(this)).subscribe((systemInfo) => {
+    this.store$.pipe(waitForSystemInfo, untilDestroyed(this)).subscribe((systemInfo) => {
       let fileName = '';
       let mimeType = 'application/gzip';
       if (systemInfo) {

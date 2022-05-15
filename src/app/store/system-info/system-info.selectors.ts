@@ -1,4 +1,5 @@
 import { createFeatureSelector, createSelector } from '@ngrx/store';
+import { selectNotNull } from 'app/helpers/select-not-null.helper';
 import { SystemInfoState } from 'app/store/system-info/system-info.reducer';
 
 export const systemInfoStateKey = 'systemInfo';
@@ -9,3 +10,5 @@ export const selectSystemInfo = createSelector(
   selectSystemInfoState,
   (state) => state.systemInfo,
 );
+
+export const waitForSystemInfo = selectNotNull(selectSystemInfo);

@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { MatCheckboxChange } from '@angular/material/checkbox/checkbox';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Store } from '@ngrx/store';
 import { helptextSystemSupport as helptext } from 'app/helptext/system/support';
 import { DialogFormConfiguration } from 'app/modules/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/modules/entity/entity-dialog/entity-dialog.component';
@@ -10,6 +11,8 @@ import { LicenseInfoInSupport } from 'app/pages/system/general-settings/support/
 import { SystemInfoInSupport } from 'app/pages/system/general-settings/support/system-info-in-support.interface';
 import { WebSocketService, AppLoaderService, DialogService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { AppState } from 'app/store';
+import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 import { FileTicketFormComponent } from './file-ticket-form/file-ticket-form.component';
 import { FileTicketLicensedFormComponent } from './file-ticket-licensed-form/file-ticket-licensed-form.component';
 import { LicenseComponent } from './license/license.component';
@@ -40,10 +43,11 @@ export class SupportComponent implements OnInit {
     private loader: AppLoaderService,
     private dialog: DialogService,
     private slideInService: IxSlideInService,
+    private store$: Store<AppState>,
   ) {}
 
   ngOnInit(): void {
-    this.ws.call('system.info').pipe(untilDestroyed(this)).subscribe((systemInfo) => {
+    this.store$.pipe(waitForSystemInfo, untilDestroyed(this)).subscribe((systemInfo) => {
       this.systemInfo = systemInfo;
       this.systemInfo.memory = (systemInfo.physmem / 1024 / 1024 / 1024).toFixed(0) + ' GiB';
       if (systemInfo.system_product.includes('MINI')) {
