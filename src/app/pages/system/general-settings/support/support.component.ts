@@ -48,7 +48,7 @@ export class SupportComponent implements OnInit {
 
   ngOnInit(): void {
     this.store$.pipe(waitForSystemInfo, untilDestroyed(this)).subscribe((systemInfo) => {
-      this.systemInfo = systemInfo;
+      this.systemInfo = { ...systemInfo };
       this.systemInfo.memory = (systemInfo.physmem / 1024 / 1024 / 1024).toFixed(0) + ' GiB';
       if (systemInfo.system_product.includes('MINI')) {
         this.getMiniImage(systemInfo.system_product);
