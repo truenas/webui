@@ -1,7 +1,7 @@
 import { Injectable, OnDestroy } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { map, take } from 'rxjs/operators';
 import { CoreEvent } from 'app/interfaces/events';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { CoreService } from 'app/services/core-service/core.service';
@@ -130,6 +130,9 @@ export class ReportsService implements OnDestroy {
   getServerTime(): Observable<Date> {
     return this.store$.pipe(
       waitForSystemInfo,
+      take(1), // This observable is used as a promise and since store
+      // observable never completes, the promise will never complete unless
+      // we use the take(1) operator to complete observable after first response
     )
       .pipe(map((systemInfo) => {
         const msToTrim = 60_000;
