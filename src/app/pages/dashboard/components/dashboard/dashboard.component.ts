@@ -10,7 +10,7 @@ import { NetworkInterfaceAliasType, NetworkInterfaceType } from 'app/enums/netwo
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { CoreEvent } from 'app/interfaces/events';
 import { MemoryStatsEventData } from 'app/interfaces/events/memory-stats-event.interface';
-import { SystemInfoWithFeatures } from 'app/interfaces/events/sys-info-event.interface';
+import { SystemFeatures, SystemInfoWithFeatures } from 'app/interfaces/events/sys-info-event.interface';
 import { EntityToolbarActionConfig } from 'app/interfaces/global-action.interface';
 import {
   NetworkInterface,
@@ -29,7 +29,7 @@ import { WebSocketService } from 'app/services';
 import { CoreService } from 'app/services/core-service/core.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { AppState } from 'app/store';
-import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
+import { waitForSystemFeatures, waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 
 // TODO: This adds additional fields. Unclear if vlan is coming from backend
 type DashboardNetworkInterface = NetworkInterface & {
@@ -415,6 +415,9 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
           this.loadPoolData();
         }
       }
+    });
+    this.store$.pipe(waitForSystemFeatures, untilDestroyed(this)).subscribe((features: SystemFeatures) => {
+      this.systemInformation.features = features;
     });
   }
 

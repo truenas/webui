@@ -5,11 +5,11 @@ import { Store } from '@ngrx/store';
 import { BehaviorSubject, of } from 'rxjs';
 import { ProductType } from 'app/enums/product-type.enum';
 import { WINDOW } from 'app/helpers/window.helper';
-import { SystemInfoWithFeatures } from 'app/interfaces/events/sys-info-event.interface';
+import { SystemFeatures } from 'app/interfaces/events/sys-info-event.interface';
 import { MenuItem, MenuItemType } from 'app/interfaces/menu-item.interface';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
-import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
+import { waitForSystemFeatures } from 'app/store/system-info/system-info.selectors';
 
 @UntilDestroy()
 @Injectable()
@@ -137,9 +137,9 @@ export class NavigationService {
   }
 
   private checkForEnclosureSupport(): void {
-    this.store$.pipe(waitForSystemInfo, untilDestroyed(this))
-      .subscribe((sysInfo: SystemInfoWithFeatures) => {
-        this.hasEnclosure$.next(sysInfo.features.enclosure);
+    this.store$.pipe(waitForSystemFeatures, untilDestroyed(this))
+      .subscribe((features: SystemFeatures) => {
+        this.hasEnclosure$.next(features.enclosure);
       });
   }
 }

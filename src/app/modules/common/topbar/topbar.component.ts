@@ -17,7 +17,7 @@ import { PoolScanState } from 'app/enums/pool-scan-state.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import network_interfaces_helptext from 'app/helptext/network/interfaces/interfaces-list';
 import helptext from 'app/helptext/topbar';
-import { HaStatus, HaStatusEvent } from 'app/interfaces/events/ha-status-event.interface';
+import { HaStatus } from 'app/interfaces/events/ha-status-event.interface';
 import { NetworkInterfacesChangedEvent } from 'app/interfaces/events/network-interfaces-changed-event.interface';
 import { ResilveringEvent } from 'app/interfaces/events/resilvering-event.interface';
 import { SidenavStatusData } from 'app/interfaces/events/sidenav-status-event.interface';
@@ -43,7 +43,7 @@ import { ModalService } from 'app/services/modal.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { ThemeService } from 'app/services/theme/theme.service';
 import { WebSocketService } from 'app/services/ws.service';
-import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
+import { selectHaStatus, waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 import { alertIndicatorPressed, sidenavUpdated, jobIndicatorPressed } from 'app/store/topbar/topbar.actions';
 
 @UntilDestroy()
@@ -465,8 +465,11 @@ export class TopbarComponent implements OnInit, OnDestroy {
   }
 
   getHaStatus(): void {
-    this.core.register({ observerClass: this, eventName: 'HA_Status' }).pipe(untilDestroyed(this)).subscribe((evt: HaStatusEvent) => {
-      this.updateHaInfo(evt.data);
+    this.store$.select(selectHaStatus).pipe(
+      filter((haStatus) => !!haStatus),
+      untilDestroyed(this),
+    ).subscribe((haStatus) => {
+      this.updateHaInfo(haStatus);
     });
   }
 

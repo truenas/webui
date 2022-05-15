@@ -9,7 +9,6 @@ import { PoolScanState } from 'app/enums/pool-scan-state.enum';
 import { CoreEvent } from 'app/interfaces/events';
 import { EnclosureLabelChangedEvent } from 'app/interfaces/events/enclosure-events.interface';
 import { ResilveringEvent } from 'app/interfaces/events/resilvering-event.interface';
-import { SystemInfoWithFeatures } from 'app/interfaces/events/sys-info-event.interface';
 import { EntityToolbarComponent } from 'app/modules/entity/entity-toolbar/entity-toolbar.component';
 import { EnclosureMetadata, SystemProfiler } from 'app/pages/system/view-enclosure/classes/system-profiler';
 import { ErrorMessage } from 'app/pages/system/view-enclosure/interfaces/error-message.interface';
@@ -17,7 +16,7 @@ import { ViewConfig } from 'app/pages/system/view-enclosure/interfaces/view.conf
 import { WebSocketService } from 'app/services';
 import { CoreService } from 'app/services/core-service/core.service';
 import { AppState } from 'app/store';
-import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
+import { waitForSystemFeatures, waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 
 @UntilDestroy()
 @Component({
@@ -141,9 +140,12 @@ export class ViewEnclosureComponent implements OnDestroy {
         if (!this.system_product) {
           this.system_product = sysInfo.system_product;
           this.system_manufacturer = sysInfo.system_manufacturer.toLowerCase();
-          this.supportedHardware = (sysInfo as SystemInfoWithFeatures).features.enclosure;
         }
       });
+
+    this.store$.pipe(waitForSystemFeatures, untilDestroyed(this)).subscribe((systemFeatures) => {
+      this.supportedHardware = systemFeatures.enclosure;
+    });
   }
 
   fetchData(): void {
