@@ -402,8 +402,6 @@ export class DeviceEditComponent implements OnInit {
       this.routeSuccess = ['vm', params['vmid'], 'devices', this.vmname];
     });
 
-    this.core.emit({ name: 'SysInfoRequest' });
-
     this.fieldSets = [
       {
         name: 'FallBack',

@@ -21,7 +21,6 @@ import { filter, take } from 'rxjs/operators';
 import { ProductType } from 'app/enums/product-type.enum';
 import { ForceSidenavEvent } from 'app/interfaces/events/force-sidenav-event.interface';
 import { SidenavStatusEvent } from 'app/interfaces/events/sidenav-status-event.interface';
-import { SysInfoEvent } from 'app/interfaces/events/sys-info-event.interface';
 import { SubMenuItem } from 'app/interfaces/menu-item.interface';
 import { Theme } from 'app/interfaces/theme.interface';
 import { alertPanelClosed } from 'app/modules/alerts/store/alert.actions';
@@ -36,6 +35,7 @@ import { AppState } from 'app/store';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
 import { waitForPreferences } from 'app/store/preferences/preferences.selectors';
 import { waitForGeneralConfig } from 'app/store/system-config/system-config.selectors';
+import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 
 @UntilDestroy()
 @Component({
@@ -110,12 +110,8 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked, AfterView
       core.emit({ name: 'MediaChange', data: change, sender: this });
     });
 
-    // Listen for system information changes
-    this.core.register({
-      observerClass: this,
-      eventName: 'SysInfo',
-    }).pipe(untilDestroyed(this)).subscribe((evt: SysInfoEvent) => {
-      this.hostname = evt.data.hostname;
+    this.store$.pipe(waitForSystemInfo, untilDestroyed(this)).subscribe((sysInfo) => {
+      this.hostname = sysInfo.hostname;
     });
 
     this.core.register({
@@ -165,7 +161,6 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked, AfterView
       this.core.emit({ name: 'Authenticated', data: evt, sender: this });
     });
 
-    this.core.emit({ name: 'SysInfoRequest', sender: this });
     this.store$.dispatch(adminUiInitialized());
   }
 

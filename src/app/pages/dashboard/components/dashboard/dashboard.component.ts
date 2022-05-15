@@ -2,6 +2,7 @@ import {
   Component, OnInit, AfterViewInit, OnDestroy, ElementRef,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { tween, styler } from 'popmotion';
 import { Subject } from 'rxjs';
@@ -9,7 +10,7 @@ import { NetworkInterfaceAliasType, NetworkInterfaceType } from 'app/enums/netwo
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { CoreEvent } from 'app/interfaces/events';
 import { MemoryStatsEventData } from 'app/interfaces/events/memory-stats-event.interface';
-import { SysInfoEvent, SystemInfoWithFeatures } from 'app/interfaces/events/sys-info-event.interface';
+import { SystemInfoWithFeatures } from 'app/interfaces/events/sys-info-event.interface';
 import { EntityToolbarActionConfig } from 'app/interfaces/global-action.interface';
 import {
   NetworkInterface,
@@ -27,6 +28,8 @@ import { DashConfigItem } from 'app/pages/dashboard/components/widget-controller
 import { WebSocketService } from 'app/services';
 import { CoreService } from 'app/services/core-service/core.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { AppState } from 'app/store';
+import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 
 // TODO: This adds additional fields. Unclear if vlan is coming from backend
 type DashboardNetworkInterface = NetworkInterface & {
@@ -132,6 +135,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     private el: ElementRef,
     private translate: TranslateService,
     private slideInService: IxSlideInService,
+    private store$: Store<AppState>,
   ) {
     core.register({ observerClass: this, eventName: 'SidenavStatus' }).pipe(untilDestroyed(this)).subscribe(() => {
       setTimeout(() => {
@@ -404,16 +408,14 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       this.loadVolumeData();
     }, 15000);
 
-    this.core.register({ observerClass: this, eventName: 'SysInfo' }).pipe(untilDestroyed(this)).subscribe((evt: SysInfoEvent) => {
+    this.store$.pipe(waitForSystemInfo, untilDestroyed(this)).subscribe((sysInfo) => {
       if (typeof this.systemInformation === 'undefined') {
-        this.systemInformation = evt.data;
+        this.systemInformation = { ...sysInfo } as SystemInfoWithFeatures;
         if (!this.pools || this.pools.length === 0) {
           this.loadPoolData();
         }
       }
     });
-
-    this.core.emit({ name: 'SysInfoRequest', sender: this });
   }
 
   isDataReady(): void {

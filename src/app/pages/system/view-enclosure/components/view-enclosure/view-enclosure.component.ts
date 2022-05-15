@@ -3,18 +3,21 @@ import {
 } from '@angular/core';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Store } from '@ngrx/store';
 import { Subject } from 'rxjs';
 import { PoolScanState } from 'app/enums/pool-scan-state.enum';
 import { CoreEvent } from 'app/interfaces/events';
 import { EnclosureLabelChangedEvent } from 'app/interfaces/events/enclosure-events.interface';
 import { ResilveringEvent } from 'app/interfaces/events/resilvering-event.interface';
-import { SysInfoEvent } from 'app/interfaces/events/sys-info-event.interface';
+import { SystemInfoWithFeatures } from 'app/interfaces/events/sys-info-event.interface';
 import { EntityToolbarComponent } from 'app/modules/entity/entity-toolbar/entity-toolbar.component';
 import { EnclosureMetadata, SystemProfiler } from 'app/pages/system/view-enclosure/classes/system-profiler';
 import { ErrorMessage } from 'app/pages/system/view-enclosure/interfaces/error-message.interface';
 import { ViewConfig } from 'app/pages/system/view-enclosure/interfaces/view.config';
 import { WebSocketService } from 'app/services';
 import { CoreService } from 'app/services/core-service/core.service';
+import { AppState } from 'app/store';
+import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 
 @UntilDestroy()
 @Component({
@@ -83,6 +86,7 @@ export class ViewEnclosureComponent implements OnDestroy {
     private core: CoreService,
     public router: Router,
     private ws: WebSocketService,
+    private store$: Store<AppState>,
   ) {
     this.events = new Subject<CoreEvent>();
     this.events.pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
@@ -132,15 +136,14 @@ export class ViewEnclosureComponent implements OnDestroy {
       this.fetchData();
     });
 
-    core.register({ observerClass: this, eventName: 'SysInfo' }).pipe(untilDestroyed(this)).subscribe((evt: SysInfoEvent) => {
-      if (!this.system_product) {
-        this.system_product = evt.data.system_product;
-        this.system_manufacturer = evt.data.system_manufacturer.toLowerCase();
-        this.supportedHardware = evt.data.features.enclosure;
-      }
-    });
-
-    core.emit({ name: 'SysInfoRequest', sender: this });
+    this.store$.pipe(waitForSystemInfo, untilDestroyed(this))
+      .subscribe((sysInfo) => {
+        if (!this.system_product) {
+          this.system_product = sysInfo.system_product;
+          this.system_manufacturer = sysInfo.system_manufacturer.toLowerCase();
+          this.supportedHardware = (sysInfo as SystemInfoWithFeatures).features.enclosure;
+        }
+      });
   }
 
   fetchData(): void {
