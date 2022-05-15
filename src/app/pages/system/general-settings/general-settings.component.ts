@@ -268,7 +268,7 @@ export class GeneralSettingsComponent implements OnInit {
 
   saveConfigSubmit(entityDialog: EntityDialogComponent): void {
     entityDialog.loader.open();
-    this.store$.pipe(waitForSystemInfo).pipe(untilDestroyed(this)).subscribe(
+    this.store$.pipe(waitForSystemInfo, untilDestroyed(this)).subscribe(
       (systemInfo) => {
         let fileName = '';
         let mimetype: string;
