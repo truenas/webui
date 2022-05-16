@@ -53,9 +53,9 @@ export class DeviceFormComponent implements OnInit {
   });
 
   diskForm = this.formBuilder.group({
-    path: [''],
+    path: ['', Validators.required],
     type: [null as VmDiskMode],
-    sectorsize: [null as number],
+    sectorsize: [0],
   });
 
   nicForm = this.formBuilder.group({
