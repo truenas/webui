@@ -1,19 +1,16 @@
-import {
-  AfterViewInit, Component, Input, OnDestroy,
-} from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { MediaObserver } from '@angular/flex-layout';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
-import { filter, take, finalize } from 'rxjs/operators';
+import { filter, take } from 'rxjs/operators';
 import { JobState } from 'app/enums/job-state.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { SystemUpdateStatus } from 'app/enums/system-update.enum';
 import { SystemInfo } from 'app/interfaces/system-info.interface';
 import { WidgetComponent } from 'app/pages/dashboard/components/widget/widget.component';
 import { SystemGeneralService, WebSocketService } from 'app/services';
-import { CoreService } from 'app/services/core-service/core.service';
 import { LocaleService } from 'app/services/locale.service';
 import { ThemeService } from 'app/services/theme/theme.service';
 import { AppState } from 'app/store';
@@ -28,12 +25,13 @@ import { selectHaStatus, waitForSystemInfo } from 'app/store/system-info/system-
     './widget-sys-info.component.scss',
   ],
 })
-export class WidgetSysInfoComponent extends WidgetComponent implements OnDestroy, AfterViewInit {
+export class WidgetSysInfoComponent extends WidgetComponent implements OnInit {
   // HA
   @Input() isHA = false;
   @Input() isPassive = false;
   @Input() enclosureSupport = false;
   @Input() showReorderHandle = false;
+  @Input() systemInfo: SystemInfo;
 
   title: string = this.translate.instant('System Info');
   data: SystemInfo;
@@ -53,7 +51,6 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnDestroy
   product_type = window.localStorage['product_type'] as ProductType;
   isFN = false;
   isUpdateRunning = false;
-  is_ha: boolean;
   ha_status: string;
   updateMethod = 'update.update';
   screenType = 'Desktop';
@@ -69,7 +66,6 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnDestroy
     public sysGenService: SystemGeneralService,
     public mediaObserver: MediaObserver,
     private locale: LocaleService,
-    private core: CoreService,
     public themeService: ThemeService,
     private store$: Store<AppState>,
   ) {
@@ -85,7 +81,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnDestroy
     });
   }
 
-  ngAfterViewInit(): void {
+  ngOnInit(): void {
     if (this.isHA && this.isPassive) {
       this.store$.select(selectHaStatus).pipe(
         filter((haStatus) => !!haStatus),
@@ -99,21 +95,20 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnDestroy
         this.ha_status = haStatus.status;
       });
     } else {
-      this.store$.pipe(
-        waitForSystemInfo,
-        untilDestroyed(this),
-        finalize(() => this.checkForUpdate()),
-      ).subscribe((systemInfo) => {
-        this.processSysInfo(systemInfo);
-      });
-
-      this.core.emit({ name: 'HAStatusRequest' });
+      this.store$.pipe(waitForSystemInfo, untilDestroyed(this)).subscribe(
+        (systemInfo) => {
+          this.processSysInfo(systemInfo);
+        }, (error) => {
+          console.error('System Info not available', error);
+        }, () => {
+          this.checkForUpdate();
+        },
+      );
     }
     if (window.localStorage.getItem('product_type').includes(ProductType.Enterprise)) {
       this.ws.call('failover.licensed').pipe(untilDestroyed(this)).subscribe((hasFailover) => {
         if (hasFailover) {
           this.updateMethod = 'failover.upgrade';
-          this.is_ha = true;
         }
         this.checkForRunningUpdate();
       });
@@ -131,10 +126,6 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnDestroy
         console.error(err);
       },
     );
-  }
-
-  ngOnDestroy(): void {
-    this.core.unregister({ observerClass: this });
   }
 
   get themeAccentColors(): string[] {
@@ -158,8 +149,8 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnDestroy
   }
 
   processSysInfo(systemInfo: SystemInfo): void {
-    this.loader = false;
     this.data = systemInfo;
+    this.loader = false;
 
     const build = new Date(this.data.buildtime['$date']);
     const year = build.getUTCFullYear();
