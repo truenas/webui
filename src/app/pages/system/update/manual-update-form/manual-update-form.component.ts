@@ -5,6 +5,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import {
   BehaviorSubject, noop, Observable, of, Subject,
@@ -17,7 +18,6 @@ import { JobState } from 'app/enums/job-state.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { helptextSystemUpdate as helptext } from 'app/helptext/system/update';
-import { SysInfoEvent } from 'app/interfaces/events/sys-info-event.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { Preferences } from 'app/interfaces/preferences.interface';
@@ -25,7 +25,8 @@ import { MessageService } from 'app/modules/entity/entity-form/services/message.
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { DialogService, SystemGeneralService, WebSocketService } from 'app/services';
-import { CoreService } from 'app/services/core-service/core.service';
+import { AppState } from 'app/store';
+import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 
 @UntilDestroy()
 @Component({
@@ -59,10 +60,10 @@ export class ManualUpdateFormComponent implements OnInit {
     protected router: Router,
     private systemService: SystemGeneralService,
     private formBuilder: FormBuilder,
-    private core: CoreService,
     private ws: WebSocketService,
     private translate: TranslateService,
     @Inject(WINDOW) private window: Window,
+    private store$: Store<AppState>,
   ) { }
 
   ngOnInit(): void {
@@ -98,13 +99,9 @@ export class ManualUpdateFormComponent implements OnInit {
   }
 
   getVersionNoFromSysInfo(): void {
-    this.core.register({
-      observerClass: this,
-      eventName: 'SysInfo',
-    }).pipe(untilDestroyed(this)).subscribe((evt: SysInfoEvent) => {
-      this.currentVersion = evt.data.version;
+    this.store$.pipe(waitForSystemInfo, untilDestroyed(this)).subscribe((sysInfo) => {
+      this.currentVersion = sysInfo.version;
     });
-    this.core.emit({ name: 'SysInfoRequest', sender: this });
   }
 
   setPoolOptions(): void {
@@ -173,10 +170,10 @@ export class ManualUpdateFormComponent implements OnInit {
     };
     this.ws.call('user.set_attribute', [1, 'preferences', this.userPrefs]).pipe(untilDestroyed(this)).subscribe(noop);
     this.systemService.updateRunningNoticeSent.emit();
-    this.setupUpdateJobDialog(value.updateFile, value.filelocation);
+    this.setupAndOpenUpdateJobDialog(value.updateFile, value.filelocation);
   }
 
-  setupUpdateJobDialog(files: FileList, fileLocation: string): void {
+  setupAndOpenUpdateJobDialog(files: FileList, fileLocation: string): void {
     if (!files.length) {
       return;
     }
