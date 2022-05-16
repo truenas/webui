@@ -272,17 +272,15 @@ export class GeneralSettingsComponent implements OnInit {
       (systemInfo) => {
         let fileName = '';
         let mimetype: string;
-        if (systemInfo) {
-          const hostname = systemInfo.hostname.split('.')[0];
-          const date = entityDialog.datePipe.transform(new Date(), 'yyyyMMddHHmmss');
-          fileName = hostname + '-' + systemInfo.version + '-' + date;
-          if (entityDialog.formValue['secretseed']) {
-            mimetype = 'application/x-tar';
-            fileName += '.tar';
-          } else {
-            mimetype = 'application/x-sqlite3';
-            fileName += '.db';
-          }
+        const hostname = systemInfo.hostname.split('.')[0];
+        const date = entityDialog.datePipe.transform(new Date(), 'yyyyMMddHHmmss');
+        fileName = hostname + '-' + systemInfo.version + '-' + date;
+        if (entityDialog.formValue['secretseed']) {
+          mimetype = 'application/x-tar';
+          fileName += '.tar';
+        } else {
+          mimetype = 'application/x-sqlite3';
+          fileName += '.db';
         }
 
         entityDialog.ws.call('core.download', ['config.save', [{ secretseed: entityDialog.formValue['secretseed'] }], fileName])
