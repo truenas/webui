@@ -5,6 +5,7 @@ import { Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { FormBuilder, FormControl } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { MailSecurity } from 'app/enums/mail-security.enum';
@@ -19,6 +20,8 @@ import { EntityUtils } from 'app/modules/entity/utils';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import IxValidatorsService from 'app/modules/ix-forms/services/ix-validators.service';
 import { DialogService, WebSocketService } from 'app/services';
+import { AppState } from 'app/store';
+import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 
 enum SendMethod {
   Smtp = 'smtp',
@@ -84,6 +87,7 @@ export class EmailComponent implements OnInit {
     private matDialog: MatDialog,
     private validatorService: IxValidatorsService,
     @Inject(WINDOW) private window: Window,
+    private store$: Store<AppState>,
   ) {}
 
   get hasSmtpAuthentication(): boolean {
@@ -194,7 +198,7 @@ export class EmailComponent implements OnInit {
   }
 
   private sendTestEmail(): void {
-    this.ws.call('system.info').pipe(untilDestroyed(this)).subscribe((systemInfo) => {
+    this.store$.pipe(waitForSystemInfo, untilDestroyed(this)).subscribe((systemInfo) => {
       const productType = this.window.localStorage.getItem('product_type') as ProductType;
       const email = {
         subject: `TrueNAS Test Message hostname: ${systemInfo.hostname}`,

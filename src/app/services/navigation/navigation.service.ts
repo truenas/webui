@@ -1,13 +1,15 @@
 import { Inject, Injectable } from '@angular/core';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Store } from '@ngrx/store';
 import { BehaviorSubject, of } from 'rxjs';
 import { ProductType } from 'app/enums/product-type.enum';
 import { WINDOW } from 'app/helpers/window.helper';
-import { SysInfoEvent } from 'app/interfaces/events/sys-info-event.interface';
+import { SystemFeatures } from 'app/interfaces/events/sys-info-event.interface';
 import { MenuItem, MenuItemType } from 'app/interfaces/menu-item.interface';
-import { CoreService } from 'app/services/core-service/core.service';
 import { WebSocketService } from 'app/services/ws.service';
+import { AppState } from 'app/store';
+import { waitForSystemFeatures } from 'app/store/system-info/system-info.selectors';
 
 @UntilDestroy()
 @Injectable()
@@ -121,8 +123,8 @@ export class NavigationService {
 
   constructor(
     private ws: WebSocketService,
-    private core: CoreService,
     @Inject(WINDOW) private window: Window,
+    private store$: Store<AppState>,
   ) {
     this.checkForFailoverSupport();
     this.checkForEnclosureSupport();
@@ -135,13 +137,9 @@ export class NavigationService {
   }
 
   private checkForEnclosureSupport(): void {
-    this.core.register({
-      observerClass: this,
-      eventName: 'SysInfo',
-    })
-      .pipe(untilDestroyed(this))
-      .subscribe((sysInfo: SysInfoEvent) => {
-        this.hasEnclosure$.next(sysInfo.data.features.enclosure);
+    this.store$.pipe(waitForSystemFeatures, untilDestroyed(this))
+      .subscribe((features: SystemFeatures) => {
+        this.hasEnclosure$.next(features.enclosure);
       });
   }
 }
