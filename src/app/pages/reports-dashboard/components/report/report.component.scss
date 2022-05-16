@@ -568,6 +568,7 @@ h3 {
 }
 
 .report .mat-card.zero-state .mat-icon {
+  animation: loading 2s linear infinite;
   color: var(--fg2);
   height: 80px;
   opacity: 0.1;
