@@ -351,7 +351,7 @@ export class CatalogComponent implements OnInit {
         };
         catalogAppInfo.schema = catalogApp.versions[catalogApp.latest_version].schema;
 
-        const chartWizard = this.slideInService.open(ChartFormComponent);
+        const chartWizard = this.slideInService.open(ChartFormComponent, { wide: true });
         chartWizard.setChartCreate(catalogAppInfo);
       }
     });

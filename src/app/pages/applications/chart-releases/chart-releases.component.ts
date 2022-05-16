@@ -377,7 +377,7 @@ export class ChartReleasesComponent implements OnInit {
       { extra: { include_chart_schema: true } },
     ]).pipe(untilDestroyed(this)).subscribe((res: ChartRelease[]) => {
       this.appLoaderService.close();
-      const form = this.slideInService.open(ChartFormComponent);
+      const form = this.slideInService.open(ChartFormComponent, { wide: true });
       if (catalogApp.chart_metadata.name === ixChartApp) {
         form.setTitle(helptext.launch);
       } else {
