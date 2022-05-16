@@ -4,6 +4,7 @@ import {
 import { MediaObserver } from '@angular/flex-layout';
 import { NgForm } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { UUID } from 'angular2-uuid';
 import {
@@ -16,7 +17,6 @@ import {
 } from 'rxjs/operators';
 import { ThemeUtils } from 'app/core/classes/theme-utils/theme-utils';
 import { CoreEvent } from 'app/interfaces/events';
-import { SysInfoEvent } from 'app/interfaces/events/sys-info-event.interface';
 import { AllCpusUpdate } from 'app/interfaces/reporting.interface';
 import { Theme } from 'app/interfaces/theme.interface';
 import { GaugeConfig } from 'app/modules/charts/components/view-chart-gauge/view-chart-gauge.component';
@@ -24,6 +24,8 @@ import { WidgetComponent } from 'app/pages/dashboard/components/widget/widget.co
 import { WidgetCpuData } from 'app/pages/dashboard/interfaces/widget-data.interface';
 import { CoreService } from 'app/services/core-service/core.service';
 import { ThemeService } from 'app/services/theme/theme.service';
+import { AppState } from 'app/store';
+import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 
 @UntilDestroy()
 @Component({
@@ -80,6 +82,7 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
     private el: ElementRef<HTMLElement>,
     public themeService: ThemeService,
     public core: CoreService,
+    private store$: Store<AppState>,
   ) {
     super(translate);
 
@@ -99,19 +102,10 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
       this.screenType = st;
     });
 
-    // Fetch CPU core count from SysInfo cache
-    this.core.register({
-      observerClass: this,
-      eventName: 'SysInfo',
-    }).pipe(untilDestroyed(this)).subscribe((evt: SysInfoEvent) => {
-      this.threadCount = evt.data.cores;
-      this.coreCount = evt.data.physical_cores;
+    this.store$.pipe(waitForSystemInfo, untilDestroyed(this)).subscribe((sysInfo) => {
+      this.threadCount = sysInfo.cores;
+      this.coreCount = sysInfo.physical_cores;
       this.hyperthread = this.threadCount !== this.coreCount;
-    });
-
-    this.core.emit({
-      name: 'SysInfoRequest',
-      sender: this,
     });
   }
 

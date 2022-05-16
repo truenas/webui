@@ -11,7 +11,7 @@ import { NetworkInterfaceAliasType, NetworkInterfaceType } from 'app/enums/netwo
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { CoreEvent } from 'app/interfaces/events';
 import { MemoryStatsEventData } from 'app/interfaces/events/memory-stats-event.interface';
-import { SysInfoEvent, SystemInfoWithFeatures } from 'app/interfaces/events/sys-info-event.interface';
+import { SystemFeatures, SystemInfoWithFeatures } from 'app/interfaces/events/sys-info-event.interface';
 import {
   NetworkInterface,
   NetworkInterfaceState,
@@ -29,6 +29,7 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LayoutService } from 'app/services/layout.service';
 import { AppState } from 'app/store';
 import { waitForDashboardState } from 'app/store/preferences/preferences.selectors';
+import { waitForSystemFeatures, waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 
 // TODO: This adds additional fields. Unclear if vlan is coming from backend
 type DashboardNetworkInterface = NetworkInterface & {
@@ -319,16 +320,17 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       this.loadVolumeData();
     }, 15000);
 
-    this.core.register({ observerClass: this, eventName: 'SysInfo' }).pipe(untilDestroyed(this)).subscribe((evt: SysInfoEvent) => {
+    this.store$.pipe(waitForSystemInfo, untilDestroyed(this)).subscribe((sysInfo) => {
       if (typeof this.systemInformation === 'undefined') {
-        this.systemInformation = evt.data;
+        this.systemInformation = { ...sysInfo } as SystemInfoWithFeatures;
         if (!this.pools || this.pools.length === 0) {
           this.loadPoolData();
         }
       }
     });
-
-    this.core.emit({ name: 'SysInfoRequest', sender: this });
+    this.store$.pipe(waitForSystemFeatures, untilDestroyed(this)).subscribe((features: SystemFeatures) => {
+      this.systemInformation.features = features;
+    });
   }
 
   isDataReady(): void {

@@ -9,7 +9,6 @@ import { NetworkInterfacesChangedEvent } from 'app/interfaces/events/network-int
 import { PseudoRouteChangeEvent } from 'app/interfaces/events/pseudo-route-change-event.interface';
 import { ResilveringEvent } from 'app/interfaces/events/resilvering-event.interface';
 import { SidenavStatusEvent } from 'app/interfaces/events/sidenav-status-event.interface';
-import { SysInfoEvent } from 'app/interfaces/events/sys-info-event.interface';
 import {
   ThemeChangedEvent,
   ThemeDataEvent, ThemeDataRequestEvent,
@@ -23,7 +22,6 @@ export interface UntypedEvent {
 }
 
 export type CoreEvent =
-  | SysInfoEvent
   | UntypedEvent
   | CpuStatsEvent
   | ResilveringEvent

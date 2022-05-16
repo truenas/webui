@@ -15,7 +15,6 @@ import { EntityFormService } from 'app/modules/entity/entity-form/services/entit
 import { EntityUtils } from 'app/modules/entity/utils';
 import { VmDeviceFieldSet } from 'app/pages/vm/vm-device-field-set.interface';
 import { WebSocketService, NetworkService, VmService } from 'app/services';
-import { CoreService } from 'app/services/core-service/core.service';
 import { DialogService } from 'app/services/dialog.service';
 
 @UntilDestroy()
@@ -337,7 +336,6 @@ export class DeviceEditComponent implements OnInit {
     protected loader: AppLoaderService,
     protected networkService: NetworkService,
     protected dialogService: DialogService,
-    private core: CoreService,
     protected vmService: VmService,
     protected translate: TranslateService,
   ) {}
@@ -401,8 +399,6 @@ export class DeviceEditComponent implements OnInit {
       this.vmId = params['vmid'];
       this.routeSuccess = ['vm', params['vmid'], 'devices', this.vmname];
     });
-
-    this.core.emit({ name: 'SysInfoRequest' });
 
     this.fieldSets = [
       {
