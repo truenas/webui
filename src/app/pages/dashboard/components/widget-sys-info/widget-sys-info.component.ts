@@ -4,17 +4,20 @@ import {
 import { MediaObserver } from '@angular/flex-layout';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
+import { filter } from 'rxjs/operators';
 import { JobState } from 'app/enums/job-state.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { SystemUpdateStatus } from 'app/enums/system-update.enum';
-import { HaStatusEvent } from 'app/interfaces/events/ha-status-event.interface';
 import { SystemInfo } from 'app/interfaces/system-info.interface';
 import { WidgetComponent } from 'app/pages/dashboard/components/widget/widget.component';
 import { SystemGeneralService, WebSocketService } from 'app/services';
 import { CoreService } from 'app/services/core-service/core.service';
 import { LocaleService } from 'app/services/locale.service';
 import { ThemeService } from 'app/services/theme/theme.service';
+import { AppState } from 'app/store';
+import { selectHaStatus, waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 
 @UntilDestroy()
 @Component({
@@ -65,6 +68,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnDestroy
     private locale: LocaleService,
     private core: CoreService,
     public themeService: ThemeService,
+    private store$: Store<AppState>,
   ) {
     super(translate);
     this.configurable = false;
@@ -80,16 +84,22 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnDestroy
 
   ngAfterViewInit(): void {
     if (this.isHA && this.isPassive) {
-      this.core.register({ observerClass: this, eventName: 'HA_Status' }).pipe(untilDestroyed(this)).subscribe((evt: HaStatusEvent) => {
-        if (evt.data.status === 'HA Enabled' && !this.data) {
+      this.store$.select(selectHaStatus).pipe(
+        filter((haStatus) => !!haStatus),
+        untilDestroyed(this),
+      ).subscribe((haStatus) => {
+        if (haStatus.status === 'HA Enabled' && !this.data) {
           this.ws.call('failover.call_remote', ['system.info']).pipe(untilDestroyed(this)).subscribe((systemInfo: SystemInfo) => {
             this.processSysInfo(systemInfo);
           });
         }
-        this.ha_status = evt.data.status;
+        this.ha_status = haStatus.status;
       });
     } else {
-      this.ws.call('system.info').pipe(untilDestroyed(this)).subscribe((systemInfo) => {
+      this.store$.pipe(
+        waitForSystemInfo,
+        untilDestroyed(this),
+      ).subscribe((systemInfo) => {
         this.processSysInfo(systemInfo);
       });
       this.checkForUpdate();
