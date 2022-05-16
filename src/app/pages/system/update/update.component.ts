@@ -28,7 +28,7 @@ import { StorageService, SystemGeneralService, WebSocketService } from 'app/serv
 import { CoreService } from 'app/services/core-service/core.service';
 import { DialogService } from 'app/services/dialog.service';
 import { AppState } from 'app/store';
-import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
+import { waitForSystemFeatures, waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 
 @UntilDestroy()
 @Component({
@@ -159,6 +159,10 @@ export class UpdateComponent implements OnInit {
     this.store$.pipe(waitForSystemInfo, untilDestroyed(this)).subscribe((sysInfo) => {
       this.sysInfo = sysInfo as SystemInfoWithFeatures;
       this.isHA = !!(sysInfo.license && sysInfo.license.system_serial_ha.length > 0);
+    });
+
+    this.store$.pipe(waitForSystemFeatures, untilDestroyed(this)).subscribe((features) => {
+      this.sysInfo.features = features;
     });
 
     this.ws.call('update.get_auto_download').pipe(untilDestroyed(this)).subscribe((isAutoDownloadOn) => {
