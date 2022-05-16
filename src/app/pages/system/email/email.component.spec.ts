@@ -4,6 +4,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialog } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { provideMockStore } from '@ngrx/store/testing';
 import { MockWebsocketService } from 'app/core/testing/classes/mock-websocket.service';
 import { mockEntityJobComponentRef } from 'app/core/testing/utils/mock-entity-job-component-ref.utils';
 import { mockCall, mockJob, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
@@ -12,11 +13,11 @@ import { ProductType } from 'app/enums/product-type.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { GmailOauthConfig, MailConfig } from 'app/interfaces/mail-config.interface';
 import { OauthMessage } from 'app/interfaces/oauth-message.interface';
-import { SystemInfo } from 'app/interfaces/system-info.interface';
 import { User } from 'app/interfaces/user.interface';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { DialogService, WebSocketService } from 'app/services';
+import { selectSystemInfo } from 'app/store/system-info/system-info.selectors';
 import { EmailComponent } from './email.component';
 
 describe('EmailComponent', () => {
@@ -32,6 +33,11 @@ describe('EmailComponent', () => {
       IxFormsModule,
     ],
     providers: [
+      provideMockStore({
+        selectors: [
+          { selector: selectSystemInfo, value: { hostname: 'host.truenas.com' } },
+        ],
+      }),
       mockWebsocket([
         mockCall('mail.config', {
           id: 1,
@@ -46,9 +52,6 @@ describe('EmailComponent', () => {
           user: 'authuser@ixsystems.com',
         }),
         mockCall('mail.update'),
-        mockCall('system.info', {
-          hostname: 'host.truenas.com',
-        } as SystemInfo),
         mockCall('user.query', [
           { email: 'root@truenas.com' },
         ] as User[]),
