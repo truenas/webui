@@ -24,6 +24,10 @@ export class AppSchemaService {
   transformNode(chartSchemaNode: ChartSchemaNode): DynamicFormSchemaNode[] {
     const schema = chartSchemaNode.schema;
     let newSchema: DynamicFormSchemaNode[] = [];
+    if (schema.hidden) {
+      return;
+    }
+
     if ([
       ChartSchemaType.Int,
       ChartSchemaType.String,
@@ -38,7 +42,6 @@ export class AppSchemaService {
             type: DynamicFormSchemaType.Input,
             title: chartSchemaNode.label,
             required: schema.required,
-            hidden: schema.hidden,
             tooltip: chartSchemaNode.description,
             editable: schema.editable,
             private: schema.private,
@@ -55,7 +58,6 @@ export class AppSchemaService {
                 label: option.description,
               }))),
               required: true,
-              hidden: schema.hidden,
               editable: schema.editable,
               tooltip: chartSchemaNode.description,
             });
@@ -65,7 +67,6 @@ export class AppSchemaService {
               type: DynamicFormSchemaType.Input,
               title: chartSchemaNode.label,
               required: schema.required,
-              hidden: schema.hidden,
               editable: schema.editable,
               tooltip: chartSchemaNode.description,
               private: schema.private,
@@ -78,7 +79,6 @@ export class AppSchemaService {
             type: DynamicFormSchemaType.Input,
             title: chartSchemaNode.label,
             required: schema.required,
-            hidden: schema.hidden,
             editable: schema.editable,
             tooltip: chartSchemaNode.description,
           });
@@ -90,7 +90,6 @@ export class AppSchemaService {
             title: chartSchemaNode.label,
             nodeProvider: this.filesystemService.getFilesystemNodeProvider(),
             required: schema.required,
-            hidden: schema.hidden,
             editable: schema.editable,
             tooltip: chartSchemaNode.description,
           });
@@ -101,7 +100,6 @@ export class AppSchemaService {
             type: DynamicFormSchemaType.Checkbox,
             title: chartSchemaNode.label,
             required: schema.required,
-            hidden: schema.hidden,
             editable: schema.editable,
             tooltip: chartSchemaNode.description,
           });
@@ -124,7 +122,6 @@ export class AppSchemaService {
         type: DynamicFormSchemaType.Dict,
         title: chartSchemaNode.label,
         attrs,
-        hidden: schema.hidden,
         editable: schema.editable,
       });
     } else if (schema.type === ChartSchemaType.List) {
@@ -147,7 +144,6 @@ export class AppSchemaService {
         title: chartSchemaNode.label,
         items,
         itemsSchema,
-        hidden: schema.hidden,
         editable: schema.editable,
       });
     } else {
@@ -162,6 +158,10 @@ export class AppSchemaService {
     config?: HierarchicalObjectMap<ChartFormValue>,
   ): void {
     const schema = chartSchemaNode.schema;
+    if (schema.hidden) {
+      return;
+    }
+
     if ([
       ChartSchemaType.Int,
       ChartSchemaType.String,
@@ -179,7 +179,7 @@ export class AppSchemaService {
 
       if (schema.subquestions) {
         schema.subquestions.forEach((subquestion) => {
-          this.addFormControls(subquestion, formGroup);
+          this.addFormControls(subquestion, formGroup, config);
           if (subquestion.schema.default === schema.show_subquestions_if) {
             formGroup.controls[subquestion.variable].enable();
           } else {
@@ -231,7 +231,7 @@ export class AppSchemaService {
     } else if (schema.type === ChartSchemaType.Dict) {
       formGroup.addControl(chartSchemaNode.variable, new FormGroup({}));
       for (const attr of schema.attrs) {
-        this.addFormControls(attr, formGroup.controls[chartSchemaNode.variable] as FormGroup);
+        this.addFormControls(attr, formGroup.controls[chartSchemaNode.variable] as FormGroup, config);
       }
     } else if (schema.type === ChartSchemaType.List) {
       formGroup.addControl(chartSchemaNode.variable, new FormArray([]));
