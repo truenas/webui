@@ -63,7 +63,7 @@ export class ViewChartGaugeComponent /* extends DisplayObject */ implements Afte
   }
 
   render(): void {
-    const lineWidth = 10;
+    const lineWidth = this.config.diameter / 10; // 10 percent of diameter
     this.arc = d3.arc()
       .innerRadius(this.config.diameter / 2 - lineWidth) // 80
       .outerRadius(this.config.diameter / 2) // 90

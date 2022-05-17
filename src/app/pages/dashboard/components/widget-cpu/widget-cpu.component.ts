@@ -4,6 +4,7 @@ import {
 import { MediaObserver } from '@angular/flex-layout';
 import { NgForm } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { UUID } from 'angular2-uuid';
 import {
@@ -11,11 +12,11 @@ import {
 } from 'chart.js';
 import * as d3 from 'd3';
 import { Subject } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
+import {
+  filter, map, switchMap, tap, throttleTime,
+} from 'rxjs/operators';
 import { ThemeUtils } from 'app/core/classes/theme-utils/theme-utils';
 import { CoreEvent } from 'app/interfaces/events';
-import { CpuStatsEvent } from 'app/interfaces/events/cpu-stats-event.interface';
-import { SysInfoEvent } from 'app/interfaces/events/sys-info-event.interface';
 import { AllCpusUpdate } from 'app/interfaces/reporting.interface';
 import { Theme } from 'app/interfaces/theme.interface';
 import { GaugeConfig } from 'app/modules/charts/components/view-chart-gauge/view-chart-gauge.component';
@@ -23,12 +24,17 @@ import { WidgetComponent } from 'app/pages/dashboard/components/widget/widget.co
 import { WidgetCpuData } from 'app/pages/dashboard/interfaces/widget-data.interface';
 import { CoreService } from 'app/services/core-service/core.service';
 import { ThemeService } from 'app/services/theme/theme.service';
+import { AppState } from 'app/store';
+import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 
 @UntilDestroy()
 @Component({
   selector: 'widget-cpu',
   templateUrl: './widget-cpu.component.html',
-  styleUrls: ['./widget-cpu.component.scss'],
+  styleUrls: [
+    '../widget/widget.component.scss',
+    './widget-cpu.component.scss',
+  ],
 })
 export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit, OnDestroy {
   @Input() data: Subject<CoreEvent>;
@@ -76,6 +82,7 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
     private el: ElementRef<HTMLElement>,
     public themeService: ThemeService,
     public core: CoreService,
+    private store$: Store<AppState>,
   ) {
     super(translate);
 
@@ -95,19 +102,10 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
       this.screenType = st;
     });
 
-    // Fetch CPU core count from SysInfo cache
-    this.core.register({
-      observerClass: this,
-      eventName: 'SysInfo',
-    }).pipe(untilDestroyed(this)).subscribe((evt: SysInfoEvent) => {
-      this.threadCount = evt.data.cores;
-      this.coreCount = evt.data.physical_cores;
+    this.store$.pipe(waitForSystemInfo, untilDestroyed(this)).subscribe((sysInfo) => {
+      this.threadCount = sysInfo.cores;
+      this.coreCount = sysInfo.physical_cores;
       this.hyperthread = this.threadCount !== this.coreCount;
-    });
-
-    this.core.emit({
-      name: 'SysInfoRequest',
-      sender: this,
     });
   }
 
@@ -119,25 +117,26 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
     this.core.register({ observerClass: this })
       .pipe(
         switchMap(() => this.data),
-        untilDestroyed(this),
-      ).subscribe((evt: CoreEvent) => {
-        if (evt.name === 'CpuStats') {
-          const cpuData = (evt as CpuStatsEvent).data;
-          if (!cpuData.average) {
-            return;
+        tap((evt) => {
+          if (evt.name === 'ThemeChanged') {
+            d3.select('#grad1 .begin')
+              .style('stop-color', this.getHighlightColor(0));
+
+            d3.select('#grad1 .end')
+              .style('stop-color', this.getHighlightColor(0.15));
           }
-
-          this.setCpuLoadData(['Load', parseInt(cpuData.average.usage.toFixed(1))]);
-          this.setCpuData(cpuData);
+        }),
+        filter((evt) => evt.name === 'CpuStats'),
+        map((evt) => evt.data),
+        throttleTime(500),
+        untilDestroyed(this),
+      ).subscribe((cpuData: AllCpusUpdate) => {
+        if (!cpuData.average) {
+          return;
         }
 
-        if (evt.name === 'ThemeChanged') {
-          d3.select('#grad1 .begin')
-            .style('stop-color', this.getHighlightColor(0));
-
-          d3.select('#grad1 .end')
-            .style('stop-color', this.getHighlightColor(0.15));
-        }
+        this.setCpuLoadData(['Load', parseInt(cpuData.average.usage.toFixed(1))]);
+        this.setCpuData(cpuData);
       });
   }
 
@@ -222,7 +221,7 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
       diameter: 136,
       fontSize: 28,
       max: 100,
-      subtitle: 'Avg Usage',
+      subtitle: this.translate.instant('Avg Usage'),
     } as GaugeConfig;
     this.cpuAvg = config;
   }

@@ -20,9 +20,8 @@ export const helptextSystemCertificates = {
 
     cert_create_type: {
       placeholder: T('Type'),
-      tooltip: T('<i>Internal Certificate</i> is used for internal or local \
- systems. <i>Import Certificate</i> allows an existing certificate to be imported onto \
- the system.'),
+      tooltip: T('<i>Internal Certificates</i> use system-managed CAs for certificate issuance. \
+ <i>Import Certificate</i> lets you import an existing certificate onto the system.'),
       options: [
         { label: T('Internal Certificate'), value: 'CERTIFICATE_CREATE_INTERNAL' },
         { label: T('Import Certificate'), value: 'CERTIFICATE_CREATE_IMPORTED' },
@@ -32,9 +31,8 @@ export const helptextSystemCertificates = {
 
     csr_create_type: {
       placeholder: T('Type'),
-      tooltip: T('<i>Certificate Signing Request</i> is used to get a CA signature. \
- <i>Import Certificate Signing Request</i> allows an existing CSR \
- to be imported onto the system.'),
+      tooltip: T('<i>Certificate Signing Requests</i> control when an external CA will issue (sign) the certificate. Typically used with ACME or other CAs that most popular browsers trust by default \
+ <i>Import Certificate Signing Request</i> lets you import an existing CSR onto the system. Typically used with ACME or internal CAs.'),
       options: [
         { label: T('Certificate Signing Request'), value: 'CERTIFICATE_CREATE_CSR' },
         { label: T('Import Certificate Signing Request'), value: 'CERTIFICATE_CREATE_IMPORTED_CSR' },
@@ -202,11 +200,10 @@ matches your certificate usage scenario.'),
     basic_constraints: {
       config: {
         placeholder: T('Basic Constraints Config'),
-        tooltip: T('The basic constraints extension identifies whether the \
- subject of the certificate is a CA and the maximum depth of valid \
- certification paths that include this certificate. <br> \
- See <a href="https://www.ietf.org/rfc/rfc3280.txt">RFC 3280, section 4.2.1.10</a> \
- for more information.'),
+        tooltip: T('Specify whether to use the certificate for a Certificate Authority \
+          and whether this extension is critical. Clients must recognize critical extensions \
+          to prevent rejection. Web certificates typically require you to disable \
+          CA and enable Critical Extension.'),
       },
       ca: {
         placeholder: T('CA'),
@@ -214,7 +211,9 @@ matches your certificate usage scenario.'),
       },
       enabled: {
         placeholder: T('Basic Constraints'),
-        tooltip: T('Activate this certificate extension.'),
+        tooltip: T('Activate the Basic Constraints extension to identify whether \
+          the certificate\'s subject is a CA and the maximum depth of valid \
+          certification paths that include this certificate.'),
       },
       path_length: {
         placeholder: T('Path Length'),
@@ -234,15 +233,8 @@ certificate still approved.'),
     authority_key_identifier: {
       config: {
         placeholder: T('Authority Key Config'),
-        tooltip: T('The authority key identifier extension provides a means of \
- identifying the public key corresponding to the private key used to \
- sign a certificate. This extension is used where an issuer has \
- multiple signing keys (either due to multiple concurrent key pairs or \
- due to changeover). The identification MAY be based on either the \
- key identifier (the subject key identifier in the issuer\'s \
- certificate) or on the issuer name and serial number.<br> \
- See <a href="https://www.ietf.org/rfc/rfc3280.txt">RFC 3280, section 4.2.1.1</a> \
- for more information.'),
+        tooltip: T('Specify whether the issued certificate should include Authority Key Identifier information,\
+          and whether the extension is critical. Critical extensions must be recognized by the client or be rejected.'),
       },
       authority_cert_issuer: {
         placeholder: T('Authority Cert Issuer'),
@@ -251,7 +243,16 @@ key used to sign this certificate.'),
       },
       enabled: {
         placeholder: T('Authority Key Identifier'),
-        tooltip: T('Activate this certificate extension.'),
+        tooltip: T('Activate this extension.\
+ The authority key identifier extension provides a means of \
+ identifying the public key corresponding to the private key used to \
+ sign a certificate. This extension is used where an issuer has \
+ multiple signing keys (either due to multiple concurrent key pairs or \
+ due to changeover). The identification MAY be based on either the \
+ key identifier (the subject key identifier in the issuer\'s \
+ certificate) or on the issuer name and serial number.<br> \
+ See <a href="https://www.ietf.org/rfc/rfc3280.txt">RFC 3280, section 4.2.1.1</a> \
+ for more information.'),
       },
       extension_critical: {
         placeholder: T('Critical Extension'),
@@ -275,7 +276,10 @@ for more details.'),
       },
       enabled: {
         placeholder: T('Extended Key Usage'),
-        tooltip: T('Activate this certificate extension.'),
+        tooltip: T('Activate this certificate extension.\
+The Extended Key Usage extension identifies and limits valid uses for this certificate, such as client authentication or server authentication.\
+See <a href="https://www.ietf.org/rfc/rfc3280.txt" target="_blank">RFC 3280, section 4.2.1.13</a> \
+for more details.'),
       },
       extension_critical: {
         placeholder: T('Critical Extension'),
@@ -289,7 +293,14 @@ certificate still approved.'),
     key_usage: {
       config: {
         placeholder: T('Key Usage Config'),
-        tooltip: T('The key usage extension defines the purpose \
+        tooltip: T('Specify this certificate\'s valid Key Usages. Web certificates \
+          typically need at least Digital Signature and possibly Key Encipherment \
+          or Key Agreement, while other applications may need other usages.'),
+      },
+      enabled: {
+        placeholder: T('Key Usage'),
+        tooltip: T('Activate this certificate extension.\
+  The key usage extension defines the purpose \
  (e.g., encipherment, signature, certificate signing) of the key contained in \
  the certificate. The usage restriction might be employed when a key that \
  could be used for more than one operation is to be restricted. For \
@@ -299,10 +310,6 @@ certificate still approved.'),
  management, the <i>Key Encipherment</i> bit would be asserted. <br> \
  See <a href="https://www.ietf.org/rfc/rfc3280.txt">RFC 3280, section 4.2.1.3</a> \
  for more information.'),
-      },
-      enabled: {
-        placeholder: T('Key Usage'),
-        tooltip: T('Activate this certificate extension.'),
       },
       digital_signature: {
         placeholder: T('Digital Signature'),

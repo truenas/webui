@@ -17,3 +17,10 @@ export const selectTheme = createSelector(
   selectPreferencesState,
   (state) => state.previewTheme || state.preferences?.userTheme,
 );
+
+export const selectDashboardState = createSelector(
+  selectPreferencesState,
+  (state) => state.dashboardState,
+);
+
+export const waitForDashboardState = selectNotNull(selectDashboardState);

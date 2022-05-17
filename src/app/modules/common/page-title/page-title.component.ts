@@ -17,6 +17,7 @@ import { RoutePart, RoutePartsService } from 'app/services/route-parts/route-par
 @Component({
   selector: 'pagetitle',
   templateUrl: './page-title.component.html',
+  styleUrls: ['./page-title.component.scss'],
 })
 export class PageTitleComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('viewcontroller', { static: false }) viewcontroller: ViewControllerComponent;
