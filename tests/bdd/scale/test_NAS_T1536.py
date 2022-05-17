@@ -86,4 +86,4 @@ def close_confirmation_dialog(driver):
 @then('confirm installation is successful')
 def confirm_installation_is_successful(driver):
     """confirm installation is successful."""
-    assert wait_on_element(driver, 900, '//div[text()="TRUECHARTS"]')
+    assert wait_on_element(driver, 1200, '//div[text()="TRUECHARTS"]')
