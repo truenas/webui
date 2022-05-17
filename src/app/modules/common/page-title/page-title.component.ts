@@ -13,6 +13,7 @@ import { PageTitleService } from 'app/services/page-title.service';
 @Component({
   selector: 'pagetitle',
   templateUrl: './page-title.component.html',
+  styleUrls: ['./page-title.component.scss'],
 })
 export class PageTitleComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('viewcontroller', { static: false }) viewcontroller: ViewControllerComponent;

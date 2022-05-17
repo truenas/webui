@@ -49,7 +49,10 @@ enum PoolHealthLevel {
 @Component({
   selector: 'widget-pool',
   templateUrl: './widget-pool.component.html',
-  styleUrls: ['./widget-pool.component.scss'],
+  styleUrls: [
+    '../widget/widget.component.scss',
+    './widget-pool.component.scss',
+  ],
 })
 export class WidgetPoolComponent extends WidgetComponent implements OnInit, AfterViewInit, OnDestroy, OnChanges {
   readonly VDevStatus = VDevStatus;

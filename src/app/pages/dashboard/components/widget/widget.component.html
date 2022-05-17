@@ -2,7 +2,7 @@
   <div class="card-container front">
     <mat-card class="front" fxLayout="row" fxLayoutWrap fxLayoutAlign="space-between stretch">
       <mat-toolbar-row fxLayout="row" fxLayoutWrap fxLayoutAlign="space-between start" fxFlex="100" class="mat-card-toolbar">
-        <h4 class="mat-card-title-text"><div class="card-title-text">{{title | translate}}</div></h4>
+        <h4 class="mat-card-title-text"><div class="card-title-text">{{ title | translate }}</div></h4>
         <button mat-icon-button [matMenuTriggerFor]="menu">
           <mat-icon>more_vert</mat-icon>
         </button>
@@ -10,7 +10,7 @@
       <mat-menu #menu="matMenu" color="warn">
         <button mat-menu-item (click)="toggleConfig()">
           <mat-icon>settings</mat-icon>
-          <span>Configure</span>
+          <span>{{ 'Configure' | translate }}</span>
         </button>
       </mat-menu>
       <mat-card-content fxLayout="row" fxLayoutAlign="center start" fxFlex="100">

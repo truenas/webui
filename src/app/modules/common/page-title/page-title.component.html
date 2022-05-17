@@ -1,6 +1,6 @@
 <div *ngIf="title$ | async as title" fxLayout="row wrap" class="page-title">
   <app-breadcrumb fxFlex="100%" [class.invisible]="!breadcrumbs"></app-breadcrumb>
-  <div fxFlex="100%" fxLayout='row wrap' fxLayoutAlign="space-between end">
+  <div fxFlex="100%" fxLayout="row wrap" fxLayoutAlign="space-between end">
     <h1>{{ title | translate }}</h1>
 
     <div class="viewcontroller-wrapper">

@@ -23,9 +23,9 @@ import { ixDropGridDirectiveToken } from 'app/modules/ix-drop-grid/ix-drop-grid.
     { provide: ixDropGridDirectiveToken, useExisting: IxDropGridDirective },
   ],
 })
-export class IxDropGridDirective extends CdkDropListGroup<IxDropGridItemDirective> implements OnInit {
-  @Input() ixDropGridModel: unknown[];
-  @Output() ixDropGridModelChange = new EventEmitter<unknown[]>();
+export class IxDropGridDirective<T = unknown> extends CdkDropListGroup<IxDropGridItemDirective> implements OnInit {
+  @Input() ixDropGridModel: T[];
+  @Output() ixDropGridModelChange = new EventEmitter<T[]>();
 
   placeholder: IxDropGridPlaceholderComponent;
   target: IxDropGridItemDirective;
