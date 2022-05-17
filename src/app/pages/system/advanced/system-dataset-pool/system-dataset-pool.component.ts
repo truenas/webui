@@ -11,6 +11,7 @@ import { EMPTY, Observable, of } from 'rxjs';
 import {
   catchError, filter, switchMap, tap,
 } from 'rxjs/operators';
+import { JobState } from 'app/enums/job-state.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { choicesToOptions } from 'app/helpers/options.helper';
@@ -67,25 +68,30 @@ export class SystemDatasetPoolComponent implements OnInit {
   }
 
   onSubmit(): void {
-    this.isFormLoading = true;
     const values = this.form.value;
 
     this.confirmSmbRestartIfNeeded().pipe(
       filter(Boolean),
-      switchMap(() => this.ws.job('systemdataset.update', [values]).pipe(
-        tap(() => {
-          this.isFormLoading = false;
-          this.cdr.markForCheck();
-          this.store$.dispatch(advancedConfigUpdated());
-          this.slideInService.close();
-        }),
-        catchError((error) => {
-          this.isFormLoading = false;
-          this.errorHandler.handleWsFormError(error, this.form);
-          this.cdr.markForCheck();
-          return EMPTY;
-        }),
-      )),
+      switchMap(() => {
+        this.isFormLoading = true;
+        return this.ws.job('systemdataset.update', [values]).pipe(
+          tap((job) => {
+            if (job.state !== JobState.Success) {
+              return;
+            }
+            this.isFormLoading = false;
+            this.store$.dispatch(advancedConfigUpdated());
+            this.cdr.markForCheck();
+            this.slideInService.close();
+          }),
+          catchError((error) => {
+            this.isFormLoading = false;
+            this.errorHandler.handleWsFormError(error, this.form);
+            this.cdr.markForCheck();
+            return EMPTY;
+          }),
+        );
+      }),
       untilDestroyed(this),
     ).subscribe();
   }

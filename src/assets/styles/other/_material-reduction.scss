@@ -778,32 +778,6 @@ mat-card.mat-card .mat-list-base {
   padding-top: 0;
 }
 
-/* This should probably be implemented as a component */
-.page-title {
-  border-bottom: solid 1px var(--lines);
-  color: var(--fg1);
-  margin: 0 auto 32px;
-  padding-bottom: 8px;
-  width: calc(100% - 16px);
-}
-
-.page-title > div {
-  min-height: 40px;
-}
-
-.page-title .form-element.form-combobox .mat-form-field,
-.page-title .form-element.form-ip-netmask .mat-form-field,
-.page-title .form-element.form-combobox .mat-menu-trigger,
-.page-title .form-element .mat-form-field-wrapper,
-.page-title .form-element input[type = 'password'],
-.page-title .form-element input[type = 'email'],
-.page-title .form-element input[type = 'text'],
-.page-title .form-element input[type = 'number'],
-.page-title .form-element textarea,
-.page-title .form-element select {
-  background-color: rgba(0, 0, 0, 0.1);
-}
-
 .mat-paginator-page-size {
   margin-top: 10px !important;
 }

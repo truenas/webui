@@ -1,5 +1,6 @@
-.copy-btn-trigger {
-  margin-left: 12px;
+:host {
+  align-items: center;
+  display: inline-flex;
 }
 
 .copy-btn-close-trigger {
@@ -66,12 +67,4 @@ div.text-limiter-tooltip::before {
   left: 0;
   opacity: 0;
   position: fixed;
-}
-
-@media (max-width: 599px) {
-  .copy-btn-trigger {
-    position: absolute;
-    right: 26px;
-    top: 4px;
-  }
 }

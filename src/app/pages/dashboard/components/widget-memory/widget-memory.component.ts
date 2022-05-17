@@ -11,7 +11,9 @@ import { TranslateService } from '@ngx-translate/core';
 import { UUID } from 'angular2-uuid';
 import { Chart, ChartColor, ChartDataSets } from 'chart.js';
 import { Subject } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
+import {
+  filter, map, switchMap, throttleTime,
+} from 'rxjs/operators';
 import { ThemeUtils } from 'app/core/classes/theme-utils/theme-utils';
 import { CoreEvent } from 'app/interfaces/events';
 import { MemoryStatsEventData } from 'app/interfaces/events/memory-stats-event.interface';
@@ -25,7 +27,10 @@ import { ThemeService } from 'app/services/theme/theme.service';
 @Component({
   selector: 'widget-memory',
   templateUrl: './widget-memory.component.html',
-  styleUrls: ['./widget-memory.component.scss'],
+  styleUrls: [
+    '../widget/widget.component.scss',
+    './widget-memory.component.scss',
+  ],
 })
 export class WidgetMemoryComponent extends WidgetComponent implements AfterViewInit, OnDestroy {
   @Input() data: Subject<CoreEvent>;
@@ -86,14 +91,13 @@ export class WidgetMemoryComponent extends WidgetComponent implements AfterViewI
     this.core.register({ observerClass: this })
       .pipe(
         switchMap(() => this.data),
+        filter((evt) => evt.name === 'MemoryStats'),
+        map((evt) => evt.data as MemoryStatsEventData),
+        throttleTime(500),
         untilDestroyed(this),
-      ).subscribe((evt: CoreEvent) => {
-        if (evt.name === 'MemoryStats') {
-          if (!evt.data.used) {
-            return;
-          }
-
-          this.setMemData(evt.data);
+      ).subscribe((data: MemoryStatsEventData) => {
+        if (data.used) {
+          this.setMemData(data);
           this.renderChart();
         }
       });

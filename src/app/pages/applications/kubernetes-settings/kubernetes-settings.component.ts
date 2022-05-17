@@ -10,6 +10,7 @@ import {
 import {
   catchError, filter, map, switchMap, tap,
 } from 'rxjs/operators';
+import { JobState } from 'app/enums/job-state.enum';
 import { choicesToOptions } from 'app/helpers/options.helper';
 import helptext from 'app/helptext/apps/apps';
 import { KubernetesConfig, KubernetesConfigUpdate } from 'app/interfaces/kubernetes-config.interface';
@@ -120,7 +121,10 @@ export class KubernetesSettingsComponent implements OnInit {
           this.ws.job('kubernetes.update', [values]),
           this.appService.updateContainerConfig(enableContainerImageUpdate),
         ]).pipe(
-          tap(() => {
+          tap(([job]) => {
+            if (job.state !== JobState.Success) {
+              return;
+            }
             this.loader.close();
             this.slideInService.close();
           }),

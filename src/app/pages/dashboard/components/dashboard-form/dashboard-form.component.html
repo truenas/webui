@@ -1,7 +1,7 @@
-<ix-modal-header [title]="title"></ix-modal-header>
+<ix-modal-header [title]="'Dashboard Configure' | translate" [loading]="isFormLoading"></ix-modal-header>
 <mat-card>
   <mat-card-content>
-    <form [formGroup]="formGroup" class="ix-form-container" (submit)="onSubmit()">
+    <form [formGroup]="form" class="ix-form-container" (submit)="onSubmit()">
       <ix-fieldset [title]="'System Widgets' | translate">
         <ix-slide-toggle
           *ngFor="let widget of systemWidgets"
@@ -30,7 +30,7 @@
         <button
           mat-button
           type="submit"
-          [disabled]="formGroup.invalid"
+          [disabled]="form.invalid || isFormLoading"
           color="primary"
           >{{ 'Save' | translate }}</button>
       </div>
