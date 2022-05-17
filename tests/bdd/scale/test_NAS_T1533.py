@@ -11,15 +11,15 @@ from pytest_bdd import (
     given,
     scenario,
     then,
-    when
+    when,
 )
 import pytest
 pytestmark = [pytest.mark.debug_test]
 
 
-@scenario('features/NAS-T1287.feature', 'Apps Page - Validate Collabora')
-def test_apps_page__validate_collabora():
-    """Apps Page - Validate Collabora."""
+@scenario('features/NAS-T1533.feature', 'Apps Page - Validate chia')
+def test_apps_page__validate_chia():
+    """Apps Page - Validate chia."""
 
 
 @given('the browser is open, navigate to the SCALE URL, and login')
@@ -61,50 +61,21 @@ def the_apps_page_load_open_available_applications(driver):
 def click_install(driver):
     """click install."""
     time.sleep(2)  # we have to wait for the page to settle down and the card to fully load
-    assert wait_on_element(driver, 20, '//mat-card[contains(.,"collabora")]//span[contains(.,"Install")]', 'clickable')
-    driver.find_element_by_xpath('//mat-card[contains(.,"collabora")]//span[contains(.,"Install")]').click()
-    assert wait_on_element(driver, 5, '//*[contains(.,"Please wait")]')
-    assert wait_on_element_disappear(driver, 10, '//*[contains(.,"Please wait")]')
+    assert wait_on_element(driver, 20, '//mat-card[contains(.,"chia")]//span[contains(.,"Install")]', 'clickable')
+    driver.find_element_by_xpath('//mat-card[contains(.,"chia")]//span[contains(.,"Install")]').click()
+    if is_element_present(driver, '//*[contains(.,"Please wait")]'):
+        assert wait_on_element_disappear(driver, 10, '//*[contains(.,"Please wait")]')
 
 
 @then('set application name')
 def set_application_name(driver):
     """set application name."""
-    assert wait_on_element(driver, 7, '//h3[contains(.,"collabora")]')
+    assert wait_on_element(driver, 7, '//h3[contains(.,"chia")]')
     assert wait_on_element(driver, 7, '//input[@ix-auto="input__Application Name"]')
     driver.find_element_by_xpath('//input[@ix-auto="input__Application Name"]').clear()
-    driver.find_element_by_xpath('//input[@ix-auto="input__Application Name"]').send_keys('collabora-test')
+    driver.find_element_by_xpath('//input[@ix-auto="input__Application Name"]').send_keys('chia-test')
     assert wait_on_element(driver, 7, '//button[@ix-auto="button__NEXT_Application Name"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__NEXT_Application Name"]').click()
-
-
-@then('set collabora configuration')
-def set_collabora_configuration(driver):
-    """set collabora configuration."""
-    driver.find_element_by_xpath('//input[@ix-auto="input__Password for WebUI"]').clear()
-    driver.find_element_by_xpath('//input[@ix-auto="input__Password for WebUI"]').send_keys('testingpass')
-
-    assert wait_on_element(driver, 5, '//mat-select[@ix-auto="select__Certificate"]', 'clickable')
-    driver.find_element_by_xpath('//mat-select[@ix-auto="select__Certificate"]').click()
-    # made the next xpath backward compatible
-    assert wait_on_element(driver, 7, '//span[contains(.,"freenas_default") or contains(.,"truenas_default")]', 'clickable')
-    driver.find_element_by_xpath('//span[contains(.,"freenas_default") or contains(.,"truenas_default")]').click()
-
-    assert wait_on_element(driver, 7, '//button[@ix-auto="button__NEXT_Collabora Configuration"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__NEXT_Collabora Configuration"]').click()
-
-
-@then('set collabora environment variables')
-def set_collabora_environment_variables(driver):
-    """set collabora environment variables."""
-    assert wait_on_element(driver, 7, '//button[@ix-auto="button__NEXT_Collabora Environment Variables"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__NEXT_Collabora Environment Variables"]').click()
-
-
-@then('set networking')
-def set_networking(driver):
-    assert wait_on_element(driver, 7, '//button[@ix-auto="button__NEXT_Networking"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__NEXT_Networking"]').click()
 
 
 @then('set storage')
@@ -114,13 +85,35 @@ def set_storage(driver):
     driver.find_element_by_xpath('//button[@ix-auto="button__NEXT_Storage"]').click()
 
 
+@then('set farmr.net configuration')
+def set_farmrnet_configuration(driver):
+    """set farmr.net configuration."""
+    assert wait_on_element(driver, 7, '//button[@ix-auto="button__NEXT_Farmr.net Configuration"]', 'clickable')
+    driver.find_element_by_xpath('//button[@ix-auto="button__NEXT_Farmr.net Configuration"]').click()
+
+
+@then('Chia Environment Variables')
+def chia_environment_variables(driver):
+    """Chia Environment Variables."""
+    assert wait_on_element(driver, 7, '//button[@ix-auto="button__NEXT_Chia Environment Variables"]', 'clickable')
+    driver.find_element_by_xpath('//button[@ix-auto="button__NEXT_Chia Environment Variables"]').click()
+
+
+@then('networking')
+def networking(driver):
+    """networking."""
+    assert wait_on_element(driver, 7, '//button[@ix-auto="button__NEXT_Networking"]', 'clickable')
+    driver.find_element_by_xpath('//button[@ix-auto="button__NEXT_Networking"]').click()
+
+
 @then('confirm options')
 def confirm_options(driver):
+    """confirm options."""
     assert wait_on_element(driver, 7, '//button[@ix-auto="button__SAVE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
 
     assert wait_on_element(driver, 5, '//*[contains(.,"Installing")]')
-    assert wait_on_element_disappear(driver, 45, '//*[contains(.,"Installing")]')
+    assert wait_on_element_disappear(driver, 120, '//*[contains(.,"Installing")]')
 
 
 @then('confirm installation is successful')
@@ -129,16 +122,16 @@ def confirm_installation_is_successful(driver):
     assert wait_on_element(driver, 10, '//div[contains(text(),"Installed Applications")]', 'clickable')
     driver.find_element_by_xpath('//div[contains(text(),"Installed Applications")]').click()
     time.sleep(2)  # we have to wait for the page to settle down and the card to fully load
-    if is_element_present(driver, '//mat-card[contains(.,"collabora-test")]//span[@class="status active"]') is False:
-        assert wait_on_element(driver, 20, '//strong[contains(.,"collabora-test")]')
-        assert wait_on_element(driver, 20, '//strong[contains(.,"collabora-test")]', 'clickable')
-        driver.find_element_by_xpath('//strong[contains(.,"collabora-test")]').click()
+    if is_element_present(driver, '//mat-card[contains(.,"chia-test")]//span[@class="status active"]') is False:
+        assert wait_on_element(driver, 20, '//strong[contains(.,"chia-test")]')
+        assert wait_on_element(driver, 20, '//strong[contains(.,"chia-test")]', 'clickable')
+        driver.find_element_by_xpath('//strong[contains(.,"chia-test")]').click()
         if wait_on_element(driver, 5, '//*[contains(.,"Please wait")]'):
             assert wait_on_element_disappear(driver, 10, '//*[contains(.,"Please wait")]')
-        assert wait_on_element(driver, 10, '//div[@class="logo-container" and contains(.,"collabora-test")]')
+        assert wait_on_element(driver, 10, '//div[@class="logo-container" and contains(.,"chia-test")]')
         assert wait_on_element(driver, 10, '//mat-panel-title[contains(.,"Application Events")]', 'clickable')
         driver.find_element_by_xpath('//mat-panel-title[contains(.,"Application Events")]').click()
-        while is_element_present(driver, '//div[(normalize-space(text())="Started container collabora")]') is False:
+        while is_element_present(driver, '//div[(normalize-space(text())="Started container chia")]') is False:
             time.sleep(2)
             assert wait_on_element(driver, 10, '//span[contains(.,"Refresh Events")]', 'clickable')
             driver.find_element_by_xpath('//span[contains(.,"Refresh Events")]').click()
@@ -154,6 +147,6 @@ def confirm_installation_is_successful(driver):
             driver.find_element_by_xpath('//div[contains(text(),"Available Applications")]').click()
             assert wait_on_element(driver, 10, '//div[contains(text(),"Installed Applications")]', 'clickable')
             driver.find_element_by_xpath('//div[contains(text(),"Installed Applications")]').click()
-            assert wait_on_element(driver, 300, '//mat-card[contains(.,"collabora-test")]//span[@class="status active"]')
+            assert wait_on_element(driver, 300, '//mat-card[contains(.,"chia-test")]//span[@class="status active"]')
     else:
-        assert wait_on_element(driver, 300, '//mat-card[contains(.,"collabora-test")]//span[@class="status active"]')
+        assert wait_on_element(driver, 300, '//mat-card[contains(.,"chia-test")]//span[@class="status active"]')

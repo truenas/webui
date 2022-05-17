@@ -1,7 +1,6 @@
 # coding=utf-8
 """SCALE UI: feature tests."""
 
-import time
 from function import (
     wait_on_element,
     is_element_present,
@@ -17,9 +16,9 @@ import pytest
 pytestmark = [pytest.mark.debug_test]
 
 
-@scenario('features/NAS-T1335.feature', 'Apps Page - Remove an App')
-def test_apps_page__remove_an_app():
-    """Apps Page - Remove an App."""
+@scenario('features/NAS-T1538.feature', 'Apps Page - Validate removing an app')
+def test_apps_page__validate_removing_an_app():
+    """Apps Page - Validate removing an app."""
 
 
 @given('the browser is open, navigate to the SCALE URL, and login')
@@ -49,37 +48,36 @@ def on_the_dashboard_click_on_apps(driver):
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Apps"]').click()
 
 
-@then('the Apps page load, open installed applications')
-def the_apps_page_load_open_installed_applications(driver):
-    """the Apps page load, open installed applications."""
+@then('make sure the installed tab is open')
+def make_sure_the_installed_tab_is_open(driver):
+    """make sure the installed tab is open."""
     if is_element_present(driver, '//mat-ink-bar[@style="visibility: visible; left: 0px; width: 183px;"]') is False:
         assert wait_on_element(driver, 10, '//div[contains(text(),"Installed Applications")]', 'clickable')
         driver.find_element_by_xpath('//div[contains(text(),"Installed Applications")]').click()
-        assert wait_on_element(driver, 7, '//h3[contains(.,"No Applications Installed")]')
 
 
-@then('click the three dots icon and select delete')
-def click_the_three_dots_icon_and_select_delete(driver):
-    """click the three dots icon and select delete."""
-    assert wait_on_element(driver, 20, '//mat-card[contains(.,"collabora")]//mat-icon[contains(.,"more_vert")]', 'clickable')
-    driver.find_element_by_xpath('//mat-card[contains(.,"collabora")]//mat-icon[contains(.,"more_vert")]').click()
-    assert wait_on_element(driver, 20, '//span[contains(.,"Delete")]', 'clickable')
+@then('click three dots icon for Chia and select delete')
+def click_three_dots_icon_for_chia_and_select_delete(driver):
+    """click three dots icon for Chia and select delete."""
+    assert wait_on_element(driver, 60, '//mat-card[contains(.,"chia-test")]//mat-icon[contains(.,"more_vert")]', 'clickable')
+    driver.find_element_by_xpath('//mat-card[contains(.,"chia-test")]//mat-icon[contains(.,"more_vert")]').click()
+    assert wait_on_element(driver, 10, '//span[contains(.,"Delete")]', 'clickable')
     driver.find_element_by_xpath('//span[contains(.,"Delete")]').click()
 
 
-@then('confirm that you want to delete')
-def confirm_that_you_want_to_delete(driver):
-    """confirm that you want to delete."""
+@then('confirm the delete confirmation')
+def confirm_the_delete_confirmation(driver):
+    """confirm the delete confirmation."""
+    assert wait_on_element(driver, 5, '//h1[contains(.,"Delete")]')
     assert wait_on_element(driver, 2, '//mat-checkbox[@ix-auto="checkbox__CONFIRM"]', 'clickable')
     driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__CONFIRM"]').click()
-    wait_on_element(driver, 10, '//button[@ix-auto="button__CONTINUE"]', 'clickable')
+    assert wait_on_element(driver, 10, '//button[@ix-auto="button__CONTINUE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__CONTINUE"]').click()
+    assert wait_on_element(driver, 5, '//*[contains(.,"Deleting...")]')
+    assert wait_on_element_disappear(driver, 60, '//*[contains(.,"Deleting...")]')
 
 
-@then('Verify the application has been deleted')
-def verify_the_application_has_been_deleted(driver):
-    """Verify the application has been deleted."""
-    assert wait_on_element(driver, 5, '//h1[contains(.,"Deleting...")]')
-    assert wait_on_element_disappear(driver, 60, '//h1[contains(.,"Deleting...")]')
-    time.sleep(1)  # we have to wait for the page to update
-    assert wait_on_element_disappear(driver, 10, '//mat-card[contains(.,"collabora-test")]')
+@then('confirm deletion is successful')
+def confirm_deletion_is_successful(driver):
+    """confirm deletion is successful."""
+    assert is_element_present(driver, '//mat-card[contains(.,"chia-test")]') is False
