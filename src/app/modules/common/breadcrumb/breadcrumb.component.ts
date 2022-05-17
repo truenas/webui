@@ -39,21 +39,8 @@ export class BreadcrumbComponent implements OnInit {
     breadcrumbs = _.uniqBy(breadcrumbs, 'title');
 
     breadcrumbs = breadcrumbs.filter((routePart) => {
-      // filters main menu routers that has sub menus
-      // Credentials Page
-      if (routePart.url === '/credentials') {
-        return false;
-      }
-      // System Settings Page
-      if (routePart.url === '/system') {
-        return false;
-      }
-      // Reporting Page
-      if (routePart.url === '/reportsdashboard') {
-        return false;
-      }
-
-      if (!routePart.breadcrumb) {
+      // filters routers that is disabled breadcrumb, has empty breadcrumb
+      if (routePart.disabled || !routePart.breadcrumb) {
         return false;
       }
       return true;

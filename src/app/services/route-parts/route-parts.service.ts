@@ -8,6 +8,7 @@ export interface RoutePart {
   title: string;
   breadcrumb: string;
   url: string;
+  disabled?: boolean;
 }
 
 @Injectable()
@@ -37,9 +38,11 @@ export class RoutePartsService {
         url += `/${routeUrl}`;
       }
 
-      const { title, breadcrumb } = child.snapshot.data;
+      const { title, breadcrumb, disabled } = child.snapshot.data;
       if (title) {
-        routeParts.push({ title, breadcrumb, url });
+        routeParts.push({
+          title, breadcrumb, disabled, url,
+        });
       }
 
       return this.generateRouteParts(child, url, routeParts);
