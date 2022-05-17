@@ -3,3 +3,8 @@ export enum ExplorerType {
   File = 'file',
   Dataset = 'dataset',
 }
+
+export enum ExplorerNodeType {
+  Directory = 'directory',
+  File = 'file',
+}
