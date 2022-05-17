@@ -186,7 +186,7 @@ def confirm_installation_is_successful(driver):
     time.sleep(1)
     assert wait_on_element(driver, 10, '//div[contains(text(),"Installed Applications")]', 'clickable')
     driver.find_element_by_xpath('//div[contains(text(),"Installed Applications")]').click()
-    assert wait_on_element(driver, 120, '//strong[text()="plex-test"]')
+    assert wait_on_element(driver, 1200, '//mat-card[contains(.,"plex-test")]')
     time.sleep(2)
     if is_element_present(driver, '//mat-card[contains(.,"truecommand-test")]//span[@class="status active"]') is False:
         assert wait_on_element(driver, 20, '//strong[contains(.,"truecommand-test")]')
