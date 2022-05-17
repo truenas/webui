@@ -1,14 +1,14 @@
 
 <div *ngIf="dynamicSchema" [formGroup]="dynamicForm" [class.indent]="dynamicSchema?.indent">
   <ng-container *ngIf="dynamicSchema.type === DynamicFormSchemaType.Dict">
-    <div *ngIf="!isHide && !dynamicSchema.hidden">{{dynamicSchema.title}}</div>
+    <div *ngIf="!isHidden && !dynamicSchema.hidden">{{dynamicSchema.title}}</div>
     <ix-dynamic-form-item
       *ngFor="let attr of dynamicSchema.attrs"
       [dynamicSchema]="attr"
-      [dynamicForm]="getFormGroup"
+      [dynamicForm]="dynamicForm.controls[this.dynamicSchema.controlName] | cast"
       (addListItem)="addControlNext($event)"
       (deleteListItem)="removeControlNext($event)"
-      [fxHide]="isHide || dynamicSchema.hidden"
+      [fxHide]="isHidden || dynamicSchema.hidden"
       [class.disabled]="dynamicSchema.editable === false"
     ></ix-dynamic-form-item>
   </ng-container>
@@ -18,7 +18,7 @@
     [empty]="getFormArray.controls.length === 0"
     [formArrayName]="dynamicSchema.controlName"
     (add)="addControl()"
-    [fxHide]="isHide || dynamicSchema.hidden"
+    [fxHide]="isHidden || dynamicSchema.hidden"
     [class.disabled]="dynamicSchema.editable === false"
   >
     <ix-list-item
@@ -42,7 +42,7 @@
     [placeholder]="dynamicSchema.placeholder | translate"
     [tooltip]="dynamicSchema.tooltip | translate"
     [required]="dynamicSchema.required"
-    [fxHide]="isHide || dynamicSchema.hidden"
+    [fxHide]="isHidden || dynamicSchema.hidden"
     [class.disabled]="dynamicSchema.editable === false"
     [type]="dynamicSchema.private === true ? 'password' : undefined"
   ></ix-input>
@@ -53,7 +53,7 @@
     [options]="dynamicSchema.options"
     [tooltip]="dynamicSchema.tooltip | translate"
     [required]="dynamicSchema.required"
-    [fxHide]="isHide || dynamicSchema.hidden"
+    [fxHide]="isHidden || dynamicSchema.hidden"
     [class.disabled]="dynamicSchema.editable === false"
   ></ix-select>
   <ix-explorer
@@ -63,7 +63,7 @@
     [tooltip]="dynamicSchema.tooltip | translate"
     [required]="dynamicSchema.required"
     [nodeProvider]="dynamicSchema.nodeProvider"
-    [fxHide]="isHide || dynamicSchema.hidden"
+    [fxHide]="isHidden || dynamicSchema.hidden"
     [class.disabled]="dynamicSchema.editable === false"
   ></ix-explorer>
   <ix-checkbox
@@ -72,7 +72,7 @@
     [label]="dynamicSchema.title | translate"
     [tooltip]="dynamicSchema.tooltip | translate"
     [required]="dynamicSchema.required"
-    [fxHide]="isHide || dynamicSchema.hidden"
+    [fxHide]="isHidden || dynamicSchema.hidden"
     [class.disabled]="dynamicSchema.editable === false"
   ></ix-checkbox>
 </div>

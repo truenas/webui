@@ -37,15 +37,30 @@ export class AppSchemaService {
     ].includes(schema.type)) {
       switch (schema.type) {
         case ChartSchemaType.Int:
-          newSchema.push({
-            controlName: chartSchemaNode.variable,
-            type: DynamicFormSchemaType.Input,
-            title: chartSchemaNode.label,
-            required: schema.required,
-            tooltip: chartSchemaNode.description,
-            editable: schema.editable,
-            private: schema.private,
-          });
+          if (schema.enum) {
+            newSchema.push({
+              controlName: chartSchemaNode.variable,
+              type: DynamicFormSchemaType.Select,
+              title: chartSchemaNode.label,
+              options: of(schema.enum.map((option) => ({
+                value: option.value,
+                label: option.description,
+              }))),
+              required: true,
+              editable: schema.editable,
+              tooltip: chartSchemaNode.description,
+            });
+          } else {
+            newSchema.push({
+              controlName: chartSchemaNode.variable,
+              type: DynamicFormSchemaType.Input,
+              title: chartSchemaNode.label,
+              required: schema.required,
+              tooltip: chartSchemaNode.description,
+              editable: schema.editable,
+              private: schema.private,
+            });
+          }
           break;
         case ChartSchemaType.String:
           if (schema.enum) {
@@ -203,6 +218,10 @@ export class AppSchemaService {
 
       formGroup.addControl(chartSchemaNode.variable, newFormControl);
 
+      if (schema.default !== undefined) {
+        formGroup.controls[chartSchemaNode.variable].setValue(schema.default);
+      }
+
       if (schema.show_if) {
         const relations: Relation[] = schema.show_if.map((item) => ({
           fieldName: item[0],
@@ -210,21 +229,42 @@ export class AppSchemaService {
           operatorValue: item[2],
         }));
         relations.forEach((relation) => {
-          if (formGroup.controls[relation.fieldName]) {
-            if (formGroup.controls[relation.fieldName].value !== relation.operatorValue) {
-              formGroup.controls[chartSchemaNode.variable].disable();
-            }
-            formGroup.controls[relation.fieldName].valueChanges
-              .pipe(untilDestroyed(this))
-              .subscribe((value) => {
-                if (formGroup.controls[chartSchemaNode.variable].parent.enabled) {
-                  if (value === relation.operatorValue) {
-                    formGroup.controls[chartSchemaNode.variable].enable();
-                  } else {
-                    formGroup.controls[chartSchemaNode.variable].disable();
+          if (!formGroup.controls[relation.fieldName]) {
+            formGroup.addControl(relation.fieldName, new FormControl());
+          }
+          switch (relation.operatorName) {
+            case '=':
+              if (formGroup.controls[relation.fieldName].value !== relation.operatorValue) {
+                formGroup.controls[chartSchemaNode.variable].disable();
+              }
+              formGroup.controls[relation.fieldName].valueChanges
+                .pipe(untilDestroyed(this))
+                .subscribe((value) => {
+                  if (formGroup.controls[chartSchemaNode.variable].parent.enabled) {
+                    if (value === relation.operatorValue) {
+                      formGroup.controls[chartSchemaNode.variable].enable();
+                    } else {
+                      formGroup.controls[chartSchemaNode.variable].disable();
+                    }
                   }
-                }
-              });
+                });
+              break;
+            case '!=':
+              if (formGroup.controls[relation.fieldName].value === relation.operatorValue) {
+                formGroup.controls[chartSchemaNode.variable].disable();
+              }
+              formGroup.controls[relation.fieldName].valueChanges
+                .pipe(untilDestroyed(this))
+                .subscribe((value) => {
+                  if (formGroup.controls[chartSchemaNode.variable].parent.enabled) {
+                    if (value !== relation.operatorValue) {
+                      formGroup.controls[chartSchemaNode.variable].enable();
+                    } else {
+                      formGroup.controls[chartSchemaNode.variable].disable();
+                    }
+                  }
+                });
+              break;
           }
         });
       }

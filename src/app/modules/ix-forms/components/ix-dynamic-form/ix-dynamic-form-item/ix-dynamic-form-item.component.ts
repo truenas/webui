@@ -22,15 +22,11 @@ export class IxDynamicFormItemComponent {
 
   readonly DynamicFormSchemaType = DynamicFormSchemaType;
 
-  get getFormGroup(): FormGroup {
-    return this.dynamicForm.controls[this.dynamicSchema.controlName] as FormGroup;
-  }
-
   get getFormArray(): FormArray {
     return this.dynamicForm.controls[this.dynamicSchema.controlName] as FormArray;
   }
 
-  get isHide(): boolean {
+  get isHidden(): boolean {
     return this.dynamicForm.controls[this.dynamicSchema.controlName].disabled;
   }
 
