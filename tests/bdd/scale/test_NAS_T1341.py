@@ -14,7 +14,7 @@ from pytest_bdd import (
 )
 
 
-@scenario('features/NAS-T341.feature', 'Verify a certificate authority can be deleted')
+@scenario('features/NAS-T1341.feature', 'Verify a certificate authority can be deleted')
 def test_verify_a_certificate_authority_can_be_deleted():
     """Verify a certificate authority can be deleted."""
 

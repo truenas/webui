@@ -17,7 +17,7 @@ import pytest
 pytestmark = [pytest.mark.debug_test]
 
 
-@scenario('features/NAS-T531.feature', 'Apps Page - Validate minio')
+@scenario('features/NAS-T1531.feature', 'Apps Page - Validate minio')
 def test_apps_page__validate_minio():
     """Apps Page - Validate minio."""
 

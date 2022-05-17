@@ -17,7 +17,7 @@ import pytest
 pytestmark = [pytest.mark.debug_test]
 
 
-@scenario('features/NAS-T1543.feature', 'Apps Page - Validate plex')
+@scenario('features/NAS-T1534.feature', 'Apps Page - Validate plex')
 def test_apps_page__validate_plex():
     """Apps Page - Validate plex."""
 

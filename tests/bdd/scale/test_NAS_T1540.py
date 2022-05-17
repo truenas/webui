@@ -17,7 +17,7 @@ import pytest
 pytestmark = [pytest.mark.debug_test]
 
 
-@scenario('features/NAS-T540.feature', 'Apps Page - Validate deleting a container image')
+@scenario('features/NAS-T1540.feature', 'Apps Page - Validate deleting a container image')
 def test_apps_page__validate_deleting_a_container_image():
     """Apps Page - Validate deleting a container image."""
 
