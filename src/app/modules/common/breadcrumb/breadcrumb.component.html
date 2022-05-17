@@ -1,18 +1,12 @@
-<div id="breadcrumb-bar" class="breadcrumb-bar" [ngClass]="{ 'invisible':!isEnabled && routeParts.length < 2 }">
+<div id="breadcrumb-bar" class="breadcrumb-bar" [ngClass]="{ 'invisible': breadcrumbs.length < 2 }">
   <ul class="breadcrumb">
-    <ng-container *ngFor="let part of routeParts; let i = index;">
-      <li *ngIf="i > 0 && i < routeParts.length - 1">&gt;</li>
-      <li ix-auto ix-auto-type="option" ix-auto-identifier="{{part.breadcrumb}}">
-        <ng-container *ngIf="i < routeParts.length - 1">
-          <span *ngIf="!part.disabled;else noclick">
-            <a [routerLink]="[part.url]">{{part.breadcrumb | translate}}</a>
-          </span>
+    <ng-container *ngFor="let breadcrumb of breadcrumbs; let i = index;">
+      <li *ngIf="i > 0 && i < breadcrumbs.length - 1">&gt;</li>
+      <li ix-auto ix-auto-type="option" ix-auto-identifier="{{ breadcrumb.breadcrumb }}">
+        <ng-container *ngIf="i < breadcrumbs.length - 1">
+          <a [routerLink]="[breadcrumb.url]">{{ breadcrumb.breadcrumb | translate }}</a>
         </ng-container>
-        <ng-template #noclick>
-          <a class="no-click">{{part.breadcrumb | translate}}</a>
-        </ng-template>
       </li>
     </ng-container>
   </ul>
- 
 </div>

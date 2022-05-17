@@ -1,17 +1,13 @@
 import {
   AfterViewInit, Component, Input, OnDestroy, OnInit, Type, ViewChild,
 } from '@angular/core';
-import { NavigationEnd, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { filter } from 'rxjs/operators';
 import { ViewControllerComponent } from 'app/core/components/view-controller/view-controller.component';
 import { GlobalActionsEvent } from 'app/interfaces/events/global-actions-event.interface';
-import { PseudoRouteChangeEvent } from 'app/interfaces/events/pseudo-route-change-event.interface';
 import { GlobalAction, GlobalActionConfig } from 'app/interfaces/global-action.interface';
 import { CoreService } from 'app/services/core-service/core.service';
 import { LocaleService } from 'app/services/locale.service';
 import { PageTitleService } from 'app/services/page-title.service';
-import { RoutePart, RoutePartsService } from 'app/services/route-parts/route-parts.service';
 
 @UntilDestroy()
 @Component({
@@ -33,77 +29,14 @@ export class PageTitleComponent implements OnInit, AfterViewInit, OnDestroy {
   private globalActionsConfig: GlobalActionConfig;
   private globalActions: GlobalAction;
 
-  routeParts: RoutePart[];
   isEnabled = true;
   constructor(
-    private router: Router,
-    private routePartsService: RoutePartsService,
     private core: CoreService,
     private localeService: LocaleService,
     private pageTitleService: PageTitleService,
   ) {}
 
   ngOnInit(): void {
-  // must be running once to get breadcrumbs
-    this.routeParts = this.routePartsService.routeParts;
-
-    // generate url from parts
-    this.routeParts.reverse().map((item, i) => {
-      // prepend / to first part
-      if (i === 0) {
-        item.url = `/${item.url}`;
-        if (!item['toplevel']) {
-          item.disabled = true;
-        }
-        return item;
-      }
-      // prepend previous part to current part
-      item.url = `${this.routeParts[i - 1].url}/${item.url}`;
-      return item;
-    });
-
-    // only execute when routechange
-    this.router.events.pipe(
-      filter((event) => event instanceof NavigationEnd),
-      untilDestroyed(this),
-    ).subscribe(() => {
-      this.destroyActions();
-
-      this.routeParts = this.routePartsService.routeParts;
-
-      // generate url from parts
-      this.routeParts.reverse().map((item, i) => {
-        // prepend / to first part
-        if (i === 0) {
-          item.url = `/${item.url}`;
-          if (!item['toplevel']) {
-            item.disabled = true;
-          }
-          return item;
-        }
-        // prepend previous part to current part
-        item.url = `${this.routeParts[i - 1].url}/${item.url}`;
-        return item;
-      });
-    });
-
-    // Pseudo routing events (for reports page)
-    this.core.register({ observerClass: this, eventName: 'PseudoRouteChange' }).pipe(untilDestroyed(this)).subscribe((evt: PseudoRouteChangeEvent) => {
-      this.routeParts = evt.data;
-      // generate url from parts
-      this.routeParts.map((item, i) => {
-        // prepend / to first part
-        if (i === 0) {
-          item.url = `/${item.url}`;
-          item.disabled = true;
-          return item;
-        }
-        // prepend previous part to current part
-        item.url = `${this.routeParts[i - 1].url}/${item.url}`;
-        return item;
-      });
-    });
-
     this.core.register({ observerClass: this, eventName: 'GlobalActions' }).pipe(untilDestroyed(this)).subscribe((evt: GlobalActionsEvent) => {
       // CONFIG OBJECT EXAMPLE: { actionType: EntityTableAddActionsComponent, actionConfig: this };
       this.globalActionsConfig = evt.data;
