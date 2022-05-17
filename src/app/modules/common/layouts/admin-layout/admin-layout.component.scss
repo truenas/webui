@@ -25,13 +25,15 @@
 
 .branding {
   align-items: center;
-  color: #444;
+  background-color: var(--topbar) !important;
+  color: var(--topbar-txt) !important;
   display: flex;
   height: 48px;
   justify-content: center;
   left: 0;
   line-height: 64px;
   max-width: var(--sidenav-width); /*15rem;*/
+  overflow: hidden;
   position: fixed;
   text-align: center;
   top: 0;
@@ -64,12 +66,6 @@
   background: var(--focus-bg);
   box-shadow: 0 0 0 1px var(--focus-brd) inset !important;
   outline-width: 0;
-}
-
-.branding.topbar {
-  background-color: var(--topbar) !important;
-  color: var(--topbar-txt) !important;
-  overflow: hidden;
 }
 
 .app-side-nav-container {

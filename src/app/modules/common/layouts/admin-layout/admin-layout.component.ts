@@ -71,7 +71,8 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked, AfterView
 
   @ViewChild(MatSidenav, { static: false }) private sideNav: MatSidenav;
   @ViewChild('footerBarScroll', { static: true }) private footerBarScroll: ElementRef;
-  freenasThemes: Theme[];
+  themes: Theme[];
+  productType$ = this.sysGeneralService.getProductType$;
 
   constructor(
     private router: Router,
@@ -88,11 +89,6 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked, AfterView
     private viewContainerRef: ViewContainerRef,
     private cdr: ChangeDetectorRef,
   ) {
-    // detect server type
-    this.sysGeneralService.getProductType$.pipe(untilDestroyed(this)).subscribe((res) => {
-      this.productType = res as ProductType;
-    });
-
     // Close sidenav after route change in mobile
     this.router.events.pipe(untilDestroyed(this)).subscribe((routeChange) => {
       if (routeChange instanceof NavigationStart) {
@@ -132,7 +128,7 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked, AfterView
   }
 
   ngOnInit(): void {
-    this.freenasThemes = this.themeService.allThemes;
+    this.themes = this.themeService.allThemes;
     this.currentTheme = this.themeService.currentTheme().name;
     const navigationHold = document.getElementById('scroll-area');
 

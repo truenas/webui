@@ -18,7 +18,6 @@ import { ProductType, productTypeLabels } from 'app/enums/product-type.enum';
 import globalHelptext from 'app/helptext/global-helptext';
 import productText from 'app/helptext/product';
 import helptext from 'app/helptext/topbar';
-import { ThemeChangedEvent } from 'app/interfaces/events/theme-events.interface';
 import { Interval } from 'app/interfaces/timeout.interface';
 import { matchOtherValidator } from 'app/modules/entity/entity-form/validators/password-validation/password-validation';
 import { SystemGeneralService } from 'app/services';
@@ -47,7 +46,7 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
 
   _copyrightYear = '';
   get copyrightYear(): string {
-    return window.localStorage && window.localStorage.buildtime ? this.localeService.getCopyrightYearFromBuildTime() : '';
+    return window.localStorage?.buildtime ? this.localeService.getCopyrightYearFromBuildTime() : '';
   }
 
   private interval: Interval;
@@ -113,13 +112,13 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
 
   checkSystemType(): void {
     if (!this.logo_ready) {
-      this.sysGeneralService.getProductType$.pipe(untilDestroyed(this)).subscribe((res) => {
+      this.sysGeneralService.getProductType$.pipe(untilDestroyed(this)).subscribe((productType) => {
         this.logo_ready = true;
-        this.productType = res as ProductType;
+        this.productType = productType;
         if (this.interval) {
           clearInterval(this.interval);
         }
-        if (this.productType.includes(ProductType.Enterprise) || this.productType === ProductType.Scale) {
+        if ([ProductType.Scale, ProductType.ScaleEnterprise].includes(this.productType)) {
           if (this.haInterval) {
             clearInterval(this.haInterval);
           }
@@ -131,7 +130,7 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
           this.checkBuildtime();
           this.loginToken();
         }
-        window.localStorage.setItem('product_type', res);
+        window.localStorage.setItem('product_type', productType);
       });
     }
   }
@@ -146,11 +145,6 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngOnInit(): void {
-    this.core.register({ observerClass: this, eventName: 'ThemeChanged' }).pipe(untilDestroyed(this)).subscribe((evt: ThemeChangedEvent) => {
-      if (this.router.url === '/sessions/signin' && evt.sender.userThemeLoaded) {
-        this.redirect();
-      }
-    });
     if (!this.logo_ready) {
       this.interval = setInterval(() => {
         this.checkSystemType();
@@ -235,10 +229,10 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   canLogin(): boolean {
-    if (this.logo_ready && this.connected
-       && (this.failover_status === FailoverStatus.Single
-        || this.failover_status === FailoverStatus.Master
-        || this.productType === ProductType.Core)) {
+    if (this.logo_ready
+      && this.connected()
+      && [FailoverStatus.Single, FailoverStatus.Master].includes(this.failover_status)
+    ) {
       if (!this.didSetFocus && this.usernameInput) {
         setTimeout(() => {
           this.didSetFocus = true;

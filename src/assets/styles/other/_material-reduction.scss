@@ -6,31 +6,7 @@ body {
   background: var(--bg1);
 }
 
-@font-face {
-  font-family: 'IBM Plex Sans';
-  src: url('../../fonts/IBM_Plex_Sans/IBMPlexSans-Regular.ttf') format('truetype');
-}
-
-@font-face {
-  font-family: Epilogue;
-  src: url('../../fonts/Epilogue/Epilogue-VariableFont_wght.ttf') format('truetype');
-}
-
 html {font-size: 87.5%;} /*14px*/
-
-/* CSS Vars */
-:root {
-  --fn-dropshadow: 0 1px 2px rgba(0, 0, 0, 0);
-  --contrast-normal: var(--bg2);
-  --light-theme-lines: var(--contrast-darkest);
-  --dark-theme-lines: var(--contrast-lighter);
-  --lines: var(--dark-theme-lines);
-  --sidenav-width: 240px;
-  --btn-default-bg: var(--alt-bg2);
-  --hover-bg: var(--lines) !important;
-  --primary-lighter: var(--primary);
-  --font-family-body: 'IBM Plex Sans';
-}
 
 body {
   font-family: var(--font-family-body), sans-serif;

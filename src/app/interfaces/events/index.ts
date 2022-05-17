@@ -9,10 +9,6 @@ import { NetworkInterfacesChangedEvent } from 'app/interfaces/events/network-int
 import { PseudoRouteChangeEvent } from 'app/interfaces/events/pseudo-route-change-event.interface';
 import { ResilveringEvent } from 'app/interfaces/events/resilvering-event.interface';
 import { SidenavStatusEvent } from 'app/interfaces/events/sidenav-status-event.interface';
-import {
-  ThemeChangedEvent,
-  ThemeDataEvent, ThemeDataRequestEvent,
-} from 'app/interfaces/events/theme-events.interface';
 import { TreeTableGlobalFilterEvent } from 'app/interfaces/events/tree-table-global-filter-event.interface';
 
 export interface UntypedEvent {
@@ -28,9 +24,6 @@ export type CoreEvent =
   | ForceSidenavEvent
   | SidenavStatusEvent
   | PseudoRouteChangeEvent
-  | ThemeChangedEvent
-  | ThemeDataRequestEvent
-  | ThemeDataEvent
   | TreeTableGlobalFilterEvent
   | MediaChangeEvent
   | NetworkInterfacesChangedEvent

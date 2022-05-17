@@ -727,18 +727,20 @@ body .mat-select-trigger {
 }
 
 .session-progress {
-  bottom: -5px;
-  position: relative;
+  position: absolute !important;
+  top: 0;
   z-index: 9999;
 }
 
 .session-form-hold {
   margin: 0 auto;
   max-width: 400px;
+  position: relative;
   width: 100%;
 }
 
 .session-form-hold > .mat-card {
+  border: 0;
   margin: 0;
 }
 

@@ -52,12 +52,12 @@ export const preferencesReducer = createReducer(
   on(snapshotExtraColumnsToggled, (state) => updatePreferences(state, {
     showSnapshotExtraColumns: !state.preferences.showSnapshotExtraColumns,
   })),
-  on(guiFormSubmitted, (state, { theme }) => updatePreferences(state, {
-    userTheme: theme,
+  on(guiFormSubmitted, (state, { theme }) => ({
+    ...updatePreferences(state, { userTheme: theme }),
+    previewTheme: null,
   })),
   on(themeChangedInGuiForm, (state, { theme }) => ({ ...state, previewTheme: theme })),
   on(guiFormClosedWithoutSaving, (state) => ({ ...state, previewTheme: null })),
-
   on(themeNotFound, (state) => updatePreferences(state, {
     userTheme: defaultTheme.name,
   })),

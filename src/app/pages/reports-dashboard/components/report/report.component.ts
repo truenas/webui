@@ -17,7 +17,6 @@ import _ from 'lodash';
 import { filter, take } from 'rxjs/operators';
 import { ProductType } from 'app/enums/product-type.enum';
 import { CoreEvent } from 'app/interfaces/events';
-import { ThemeChangedEvent, ThemeDataEvent } from 'app/interfaces/events/theme-events.interface';
 import { ReportingGraph } from 'app/interfaces/reporting-graph.interface';
 import { ReportingAggregationKeys, ReportingData } from 'app/interfaces/reporting.interface';
 import { Theme } from 'app/interfaces/theme.interface';
@@ -30,6 +29,7 @@ import { CoreService } from 'app/services/core-service/core.service';
 import { DialogService } from 'app/services/dialog.service';
 import { LocaleService } from 'app/services/locale.service';
 import { AppState } from 'app/store';
+import { selectTheme } from 'app/store/preferences/preferences.selectors';
 import { selectTimezone } from 'app/store/system-config/system-config.selectors';
 
 interface DateTime {
@@ -201,15 +201,9 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
       this.legendData = clone;
     });
 
-    this.core.register({ observerClass: this, eventName: 'ThemeData' }).pipe(untilDestroyed(this)).subscribe((evt: ThemeDataEvent) => {
-      this.chartColors = this.processThemeColors(evt.data);
+    this.store$.select(selectTheme).pipe(filter(Boolean), untilDestroyed(this)).subscribe((theme: Theme) => {
+      this.chartColors = this.processThemeColors(theme);
     });
-
-    this.core.register({ observerClass: this, eventName: 'ThemeChanged' }).pipe(untilDestroyed(this)).subscribe((evt: ThemeChangedEvent) => {
-      this.chartColors = this.processThemeColors(evt.data);
-    });
-
-    this.core.emit({ name: 'ThemeDataRequest', sender: this });
 
     this.store$.select(selectTimezone).pipe(untilDestroyed(this)).subscribe((timezone) => {
       this.timezone = timezone;

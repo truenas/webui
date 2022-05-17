@@ -1,6 +1,7 @@
 import {
   Component, ViewChild, ElementRef, ChangeDetectorRef,
 } from '@angular/core';
+import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { Point } from 'pixi.js';
 import { Theme } from 'app/interfaces/theme.interface';
@@ -12,6 +13,7 @@ import { EnclosureDisksComponent } from 'app/pages/system/view-enclosure/compone
 import { WebSocketService } from 'app/services';
 import { CoreService } from 'app/services/core-service/core.service';
 import { DialogService } from 'app/services/dialog.service';
+import { AppState } from 'app/store/index';
 
 @Component({
   selector: 'enclosure-disks-mini',
@@ -29,8 +31,9 @@ export class EnclosureDisksMiniComponent extends EnclosureDisksComponent {
     public dialogService: DialogService,
     protected translate: TranslateService,
     protected ws: WebSocketService,
+    protected store$: Store<AppState>,
   ) {
-    super(core, cdr, dialogService, translate, ws);
+    super(core, cdr, dialogService, translate, ws, store$);
     this.pixiWidth = 320;// 960 * 0.6; // PIXI needs an explicit number. Make sure the template flex width matches this
     this.pixiHeight = 480;
   }
