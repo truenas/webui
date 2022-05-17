@@ -1,8 +1,8 @@
 {
   "": "",
-  "'Hosts Allow' or 'Hosts Deny' has been set": "",
+  "'Hosts Allow' or 'Hosts Deny' has been set": "已设置为'Hosts Allow'或'Hosts Deny'",
   "'Hosts Allow' or 'Hosts Deny' has been updated": "",
-  "(This Controller)": "",
+  "(This Controller)": "（此控制器）",
   "(TrueNAS Controller 1)": "",
   "(TrueNAS Controller 2)": "",
   "<i>Certificate Signing Requests</i> control when an external CA will issue (sign) the certificate. Typically used with ACME or other CAs that most popular browsers trust by default  <i>Import Certificate Signing Request</i> lets you import an existing CSR onto the system. Typically used with ACME or internal CAs.": "",
