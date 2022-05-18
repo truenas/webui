@@ -32,6 +32,9 @@ def test_verify_auxilary_parameters_works_for_afp_share(driver):
     slider_value_exist = attribute_value_exist(driver, '//mat-slide-toggle[@ix-auto="slider__AFP_Running"]', 'class', 'mat-checked')
     if slider_value_exist:
         driver.find_element_by_xpath('//div[@ix-auto="overlay__AFP_Running"]').click()
+    assert wait_on_element(driver, 7, '//span[test()="Stop AFP?"]')
+    assert wait_on_element(driver, 5, '//button[@ix-auto="button__STOP"]', 'clickable')
+    driver.find_element_by_xpath('//button[@ix-auto="button__STOP"]').click()
 
 
 @given('the browser is open on the TrueNAS URL and logged in')
