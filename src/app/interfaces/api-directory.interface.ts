@@ -648,6 +648,7 @@ export type ApiDirectory = {
   'pool.dataset.attachments': { params: [datasetId: string]; response: PoolAttachment[] };
   'pool.dataset.change_key': { params: [id: number, params: DatasetChangeKeyParams]; response: void };
   'pool.dataset.compression_choices': { params: void; response: Choices };
+  'pool.dataset.checksum_choices': { params: void; response: Choices };
   'pool.dataset.create': { params: any; response: Dataset };
   'pool.dataset.delete': { params: [path: string, params: { recursive: boolean; force?: boolean }]; response: boolean };
   'pool.dataset.encryption_algorithm_choices': { params: void; response: Choices };
@@ -670,6 +671,7 @@ export type ApiDirectory = {
   'pool.dataset.unlock': { params: [path: string, params: DatasetUnlockParams]; response: DatasetUnlockResult };
   'pool.dataset.unlock_services_restart_choices': { params: [id: string]; response: Choices };
   'pool.dataset.update': { params: any; response: Dataset };
+  'pool.dataset.recordsize_choices': { params: void; response: string[] };
   'pool.detach': { params: [id: number, params: { label: string }]; response: boolean };
   'pool.download_encryption_key': { params: any; response: string };
   'pool.expand': { params: PoolExpandParams; response: null };

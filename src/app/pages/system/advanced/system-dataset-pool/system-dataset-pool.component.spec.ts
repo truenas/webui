@@ -4,6 +4,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
+import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockCall, mockJob, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { IxFormsModule } from 'app/pages/common/ix-forms/ix-forms.module';
 import { FormErrorHandlerService } from 'app/pages/common/ix-forms/services/form-error-handler.service';
@@ -40,7 +41,7 @@ describe('SystemDatasetPoolComponent', () => {
           'current-pool': 'current-pool',
           'new-pool': 'new-pool',
         }),
-        mockJob('systemdataset.update'),
+        mockJob('systemdataset.update', fakeSuccessfulJob()),
       ]),
       mockProvider(IxSlideInService),
       mockProvider(FormErrorHandlerService),

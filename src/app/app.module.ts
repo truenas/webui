@@ -32,6 +32,7 @@ import { CoreServices } from 'app/core/services/core-services.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
 import { TerminalModule } from 'app/pages/common/terminal/terminal.module';
+import { EntityTableService } from 'app/services/entity-table.service';
 import { ErdService } from 'app/services/erd.service';
 import { IxFileUploadService } from 'app/services/ix-file-upload.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
@@ -136,6 +137,7 @@ import { WebSocketService } from './services/ws.service';
     NotificationsService,
     ErdService,
     JobsManagerStore,
+    EntityTableService,
     IxSlideInService,
     IxFileUploadService,
     {

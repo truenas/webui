@@ -1,24 +1,23 @@
 # coding=utf-8
 """SCALE UI: feature tests."""
 
+import time
 from function import (
     wait_on_element,
     is_element_present,
-    wait_on_element_disappear,
+    wait_on_element_disappear
 )
 from pytest_bdd import (
     given,
     scenario,
     then,
-    when,
+    when
 )
-import pytest
-pytestmark = [pytest.mark.debug_test]
 
 
-@scenario('features/NAS-T1355.feature', 'Apps Page - Validate removing an app')
-def test_apps_page__validate_removing_an_app():
-    """Apps Page - Validate removing an app."""
+@scenario('features/NAS-T1537.feature', 'Apps Page - Validate removing a Catalog')
+def test_apps_page__validate_removing_a_catalog():
+    """Apps Page - Validate removing a Catalog."""
 
 
 @given('the browser is open, navigate to the SCALE URL, and login')
@@ -48,36 +47,37 @@ def on_the_dashboard_click_on_apps(driver):
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Apps"]').click()
 
 
-@then('make sure the installed tab is open')
-def make_sure_the_installed_tab_is_open(driver):
-    """make sure the installed tab is open."""
-    if is_element_present(driver, '//mat-ink-bar[@style="visibility: visible; left: 0px; width: 183px;"]') is False:
-        assert wait_on_element(driver, 10, '//div[contains(text(),"Installed Applications")]', 'clickable')
-        driver.find_element_by_xpath('//div[contains(text(),"Installed Applications")]').click()
+@then('when the Apps page loads, open manage catalogs')
+def when_the_apps_page_loads_open_manage_catalogs(driver):
+    """when the Apps page loads, open manage catalogs."""
+    assert wait_on_element(driver, 10, '//div[contains(text(),"Manage Catalogs")]', 'clickable')
+    driver.find_element_by_xpath('//div[contains(text(),"Manage Catalogs")]').click()
+    assert wait_on_element(driver, 7, '//div[contains(.,"Manage Catalogs")]')
 
 
-@then('click three dots icon for Chia and select delete')
-def click_three_dots_icon_for_chia_and_select_delete(driver):
-    """click three dots icon for Chia and select delete."""
-    assert wait_on_element(driver, 60, '//mat-card[contains(.,"chia-test")]//mat-icon[contains(.,"more_vert")]', 'clickable')
-    driver.find_element_by_xpath('//mat-card[contains(.,"chia-test")]//mat-icon[contains(.,"more_vert")]').click()
-    assert wait_on_element(driver, 10, '//span[contains(.,"Delete")]', 'clickable')
-    driver.find_element_by_xpath('//span[contains(.,"Delete")]').click()
+@then('click three dots icon for Truecharts and select delete')
+def click_three_dots_icon_for_truecharts_and_select_delete(driver):
+    """click three dots icon for Truecharts and select delete."""
+    time.sleep(5)  # we have to wait for the page to settle down and the card to fully load
+    assert wait_on_element(driver, 10, '//tr[contains(.,"TRUECHARTS")]//mat-icon[contains(.," more_vert ")]', 'clickable')
+    driver.find_element_by_xpath('//tr[contains(.,"TRUECHARTS")]//mat-icon[contains(.," more_vert ")]').click()
+    assert wait_on_element(driver, 10, '//button[@ix-auto="action__TRUECHARTS_Delete"]', 'clickable')
+    driver.find_element_by_xpath('//button[@ix-auto="action__TRUECHARTS_Delete"]').click()
 
 
-@then('confirm the delete confirmation')
-def confirm_the_delete_confirmation(driver):
-    """confirm the delete confirmation."""
-    assert wait_on_element(driver, 5, '//h1[contains(.,"Delete")]')
+@then('confirm the confirmation')
+def confirm_the_confirmation(driver):
+    """confirm the confirmation."""
     assert wait_on_element(driver, 2, '//mat-checkbox[@ix-auto="checkbox__CONFIRM"]', 'clickable')
     driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__CONFIRM"]').click()
-    assert wait_on_element(driver, 10, '//button[@ix-auto="button__CONTINUE"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__CONTINUE"]').click()
-    assert wait_on_element(driver, 5, '//*[contains(.,"Deleting...")]')
-    assert wait_on_element_disappear(driver, 60, '//*[contains(.,"Deleting...")]')
+    assert wait_on_element(driver, 10, '//button[@ix-auto="button__DELETE"]', 'clickable')
+    driver.find_element_by_xpath('//button[@ix-auto="button__DELETE"]').click()
+    time.sleep(0.5)
+    assert wait_on_element_disappear(driver, 25, '//h6[contains(.,"Please wait")]')
 
 
 @then('confirm deletion is successful')
 def confirm_deletion_is_successful(driver):
     """confirm deletion is successful."""
-    assert is_element_present(driver, '//mat-card[contains(.,"chia-test")]') is False
+    assert wait_on_element_disappear(driver, 10, '//div[text()="TRUECHARTS"]')
+    assert is_element_present(driver, '//div[text()="TRUECHARTS"]') is False

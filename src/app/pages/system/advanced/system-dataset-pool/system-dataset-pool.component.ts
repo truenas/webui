@@ -6,8 +6,11 @@ import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import _ from 'lodash';
-import { Observable, of } from 'rxjs';
-import { filter, switchMap } from 'rxjs/operators';
+import { EMPTY, Observable, of } from 'rxjs';
+import {
+  catchError, filter, switchMap, tap,
+} from 'rxjs/operators';
+import { JobState } from 'app/enums/job-state.enum';
 import { FormErrorHandlerService } from 'app/pages/common/ix-forms/services/form-error-handler.service';
 import { DialogService, SystemGeneralService, WebSocketService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
@@ -62,26 +65,32 @@ export class SystemDatasetPoolComponent implements OnInit {
   }
 
   onSubmit(): void {
-    this.isFormLoading = true;
     const values = this.form.value;
 
     this.confirmSmbRestartIfNeeded().pipe(
       filter(Boolean),
-      switchMap(() => this.ws.job('systemdataset.update', [values])),
+      switchMap(() => {
+        this.isFormLoading = true;
+        return this.ws.job('systemdataset.update', [values]).pipe(
+          tap((job) => {
+            if (job.state !== JobState.Success) {
+              return;
+            }
+            this.isFormLoading = false;
+            this.sysGeneralService.refreshSysGeneral();
+            this.cdr.markForCheck();
+            this.slideInService.close();
+          }),
+          catchError((error) => {
+            this.isFormLoading = false;
+            this.errorHandler.handleWsFormError(error, this.form);
+            this.cdr.markForCheck();
+            return EMPTY;
+          }),
+        );
+      }),
       untilDestroyed(this),
-    ).subscribe(
-      () => {
-        this.isFormLoading = false;
-        this.sysGeneralService.refreshSysGeneral();
-        this.cdr.markForCheck();
-        this.slideInService.close();
-      },
-      (error) => {
-        this.isFormLoading = false;
-        this.errorHandler.handleWsFormError(error, this.form);
-        this.cdr.markForCheck();
-      },
-    );
+    ).subscribe();
   }
 
   /**
