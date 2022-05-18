@@ -83,7 +83,7 @@ a:hover {
 
 a:focus-visible,
 button.mat-button.mat-accent:focus-visible,
-.ix-blue button:focus-visible,
+.ix-dark button:focus-visible,
 button:focus-visible {
   border-color: transparent !important;
   box-shadow: 0 0 0 1px var(--focus-brd) inset !important;
@@ -870,10 +870,12 @@ input:-webkit-autofill {
 }
 
 /*---- Safari compatibility - to overwrite the current css style ----*/
-body.safari-platform .mat-fab,
-body.safari-platform .mat-mini-fab,
-body.safari-platform .mat-raised-button {
-  transform: none;
+body.safari-platform {
+  .mat-fab,
+  .mat-mini-fab,
+  .mat-raised-button {
+    transform: none;
+  }
 }
 
 /*---- Ascii art font ----*/

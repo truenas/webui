@@ -1,3 +1,5 @@
+@import 'cssvars';
+
 :host {
   $pagetitle: 97px;
   $outer-padding: 16px;
@@ -51,6 +53,10 @@ ul.ct-legend {
   // Adjustment should really be applied to .rightside-content-hold (margin-top 90px instead of 104px),
   // but didn't want to risk breaking layouts of other pages so I applied this instead
   margin-top: -14px;
+
+  .mat-ink-bar {
+    @include variable(background-color, --primary, $primary);
+  }
 }
 
 nav.reports-toolbar {

@@ -26,7 +26,7 @@ import { ProactiveComponent } from './proactive/proactive.component';
 })
 export class SupportComponent implements OnInit {
   isProduction: boolean;
-  productImage = '';
+  productImage = 'ix-original-cropped.png';
   isProductImageRack = false;
   extraMargin = true;
   serverList = ['M40', 'M50', 'X10', 'X20', 'Z20', 'Z30', 'Z35', 'Z50'];

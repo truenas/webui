@@ -4,11 +4,11 @@
 @import '../scss-imports/cssvars';
 
 // mandatory stuff for theming
-$freenas-primary: mat.define-palette($md-primary);
-$freenas-accent: mat.define-palette($md-accent);
+$ix-primary: mat.define-palette($md-primary);
+$ix-accent: mat.define-palette($md-accent);
 
 // include the custom theme components into a theme object
-$freenas-theme: mat.define-light-theme($freenas-primary, $freenas-accent);
+$ix-theme: mat.define-light-theme($ix-primary, $ix-accent);
 
 $primary-dark: darken(map-get($md-primary, 500), 8%);
 
@@ -38,8 +38,8 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
 }
 
 // include the custom theme object into the angular material theme
-.ix-blue {
-  @include mat.all-component-themes($freenas-theme);
+.ix-dark {
+  @include mat.all-component-themes($ix-theme);
 
   // UI SHELL
   .mat-sidenav-container {
@@ -145,7 +145,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     font-size: 15px;
   }
 
-  /////////////////// SpecSelectors: Selectors not originally in ix-blue theme
+  /////////////////// SpecSelectors: Selectors not originally in ix-dark theme
   .mat-tab-label,
   .mat-tab-link {
     @include variable(color, --fg1, $fg1);
@@ -843,15 +843,10 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     color: var(--fg2);
   }
 
-  // Fixes color on Reports page tabs
-  #dashboardcontainerdiv .mat-ink-bar {
-    @include variable(background-color, --primary, $primary);
-  }
-
   .mat-button {
     @include variable(font-family, --font-family-body, $font-family-body, !important);
     background: var(--btn-default-bg);
-    font-weight: bold !important;
+    font-weight: 600 !important;
     text-transform: capitalize !important;
   }
 

@@ -1,10 +1,10 @@
 // Parts
+@import 'other/root-variables';
+@import 'fonts/index';
 @import 'components/charts';
 @import 'components/mat-card';
-@import 'other/root-variables';
 
 // Older scss files
-@import 'other/fonts';
 @import 'other/helpers';
 @import 'other/tn-styles';
 @import 'other/fn-styles';

@@ -63,7 +63,6 @@ export class TopbarComponent implements OnInit, OnDestroy {
   pendingNetworkChanges = false;
   waitingNetworkCheckin = false;
   resilveringDetails: ResilverData;
-  currentTheme = 'ix-blue';
   isDirServicesMonitorOpened = false;
   taskDialogRef: MatDialogRef<JobsPanelComponent>;
   dirServicesMonitor: MatDialogRef<DirectoryServicesMonitorComponent>;
