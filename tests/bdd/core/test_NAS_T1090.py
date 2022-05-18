@@ -6,6 +6,7 @@ from function import (
     wait_on_element,
     is_element_present,
     wait_on_element_disappear,
+    attribute_value_exist,
     ssh_cmd
 )
 from pytest_bdd import (
@@ -20,7 +21,17 @@ from pytest_bdd import (
 @scenario('features/NAS-T1090.feature', 'Verify auxiliary parameters works for AFP share')
 def test_verify_auxilary_parameters_works_for_afp_share(driver):
     """Verify auxiliary parameters works for AFP share."""
-    pass
+    # Stop AFP service some test failes after
+    assert wait_on_element(driver, 7, '//mat-list-item[@ix-auto="option__Services"]', 'clickable')
+    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Services"]').click()
+    assert wait_on_element(driver, 5, '//li[contains(.,"Services")]')
+    assert wait_on_element(driver, 5, '//div[@ix-auto="value__AFP"]')
+    checkbox_value_exist = attribute_value_exist(driver, '//mat-checkbox[@ix-auto="checkbox__AFP_Start Automatically"]', 'class', 'mat-checkbox-checked')
+    if checkbox_value_exist:
+        driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__AFP_Start Automatically"]').click()
+    slider_value_exist = attribute_value_exist(driver, '//mat-slide-toggle[@ix-auto="slider__AFP_Running"]', 'class', 'mat-checked')
+    if slider_value_exist:
+        driver.find_element_by_xpath('//div[@ix-auto="overlay__AFP_Running"]').click()
 
 
 @given('the browser is open on the TrueNAS URL and logged in')
