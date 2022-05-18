@@ -102,7 +102,7 @@ export class ManualUpdateFormComponent implements OnInit {
       if (!pools) {
         return;
       }
-      const options = [{ label: 'Memory device', value: ':temp:' }];
+      const options = [{ label: this.translate.instant('Memory device'), value: ':temp:' }];
       pools.forEach((pool) => {
         options.push({
           label: '/mnt/' + pool.name, value: '/mnt/' + pool.name,
@@ -113,7 +113,7 @@ export class ManualUpdateFormComponent implements OnInit {
   }
 
   get isEnterprise(): boolean {
-    return this.window.localStorage.getItem('product_type').includes(ProductType.Enterprise);
+    return this.window.localStorage.getItem('product_type').includes(ProductType.ScaleEnterprise);
   }
 
   checkHaLicenseAndUpdateStatus(): void {

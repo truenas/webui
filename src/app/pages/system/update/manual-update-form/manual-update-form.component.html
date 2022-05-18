@@ -2,7 +2,7 @@
   <mat-card-content>
     <mat-progress-bar *ngIf="isFormLoading$ | async" mode="indeterminate"></mat-progress-bar>
     <form [formGroup]="form" class="ix-form-container" (submit)="onSubmit()">
-      <ix-fieldset [title]="'General Options' | translate">
+      <ix-fieldset>
 
         <p><b>{{ 'Current Version' | translate }}</b>: {{ currentVersion }}</p>
 
@@ -24,8 +24,8 @@
         ></ix-file-input>
         <ix-checkbox
           formControlName="rebootAfterManualUpdate"
-          [label]="helptext.rebootAfterManualUpdate.placeholder"
-          [tooltip]="helptext.rebootAfterManualUpdate.tooltip"
+          [label]="helptext.rebootAfterManualUpdate.placeholder | translate"
+          [tooltip]="helptext.rebootAfterManualUpdate.tooltip | translate"
           *ngIf="!isHa && isEnterprise"
         ></ix-checkbox>
         
@@ -37,7 +37,7 @@
           type="submit"
           [disabled]="form.invalid || (isFormLoading$ | async)"
           color="primary"
-        >{{ 'Save' | translate }}</button>
+        >{{ 'Apply Update' | translate }}</button>
         
       </div>
     </form>
