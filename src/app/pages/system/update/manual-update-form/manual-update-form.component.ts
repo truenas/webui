@@ -1,5 +1,7 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, Inject, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
+} from '@angular/core';
 import { Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
@@ -34,6 +36,7 @@ import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
   templateUrl: './manual-update-form.component.html',
   providers: [MessageService],
   styleUrls: ['manual-update-form.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ManualUpdateFormComponent implements OnInit {
   isFormLoading$ = new BehaviorSubject(false);
@@ -62,6 +65,7 @@ export class ManualUpdateFormComponent implements OnInit {
     private translate: TranslateService,
     @Inject(WINDOW) private window: Window,
     private store$: Store<AppState>,
+    private cdr: ChangeDetectorRef,
   ) { }
 
   ngOnInit(): void {
@@ -94,6 +98,7 @@ export class ManualUpdateFormComponent implements OnInit {
   getVersionNoFromSysInfo(): void {
     this.store$.pipe(waitForSystemInfo, untilDestroyed(this)).subscribe((sysInfo) => {
       this.currentVersion = sysInfo.version;
+      this.cdr.markForCheck();
     });
   }
 
@@ -121,6 +126,7 @@ export class ManualUpdateFormComponent implements OnInit {
       this.ws.call('failover.licensed').pipe(untilDestroyed(this)).subscribe((isHa) => {
         this.isHa = isHa;
         this.checkForUpdateRunning();
+        this.cdr.markForCheck();
       });
     }
   }
@@ -152,6 +158,7 @@ export class ManualUpdateFormComponent implements OnInit {
     dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((err) => {
       new EntityUtils().handleWsError(this, err, this.dialogService);
     });
+    this.cdr.markForCheck();
   }
 
   onSubmit(): void {
@@ -161,6 +168,7 @@ export class ManualUpdateFormComponent implements OnInit {
       rebootAfterManualUpdate: value.rebootAfterManualUpdate,
     }));
     this.systemService.updateRunningNoticeSent.emit();
+    this.cdr.markForCheck();
     this.setupAndOpenUpdateJobDialog(value.updateFile, value.filelocation);
   }
 
@@ -200,7 +208,11 @@ export class ManualUpdateFormComponent implements OnInit {
       untilDestroyed(this),
     ).subscribe(this.handleUpdateFailure);
 
-    dialogRef.afterClosed().pipe(untilDestroyed(this)).subscribe(() => this.isFormLoading$.next(false));
+    dialogRef.afterClosed().pipe(untilDestroyed(this)).subscribe(() => {
+      this.isFormLoading$.next(false);
+      this.cdr.markForCheck();
+    });
+    this.cdr.markForCheck();
   }
 
   generateFormData(files: FileList, fileLocation: string): FormData {
@@ -236,6 +248,7 @@ export class ManualUpdateFormComponent implements OnInit {
   finishHaUpdate(): void {
     this.dialogService.closeAllDialogs();
     this.systemService.updateDone(); // Send 'finished' signal to topbar
+    this.cdr.markForCheck();
     this.router.navigate(['/']);
     this.dialogService.confirm({
       title: helptext.ha_update.complete_title,
@@ -252,10 +265,12 @@ export class ManualUpdateFormComponent implements OnInit {
       helptext.manual_update_error_dialog.message,
       `${prefailure.status.toString()} ${prefailure.statusText}`,
     );
+    this.cdr.markForCheck();
   };
 
   handleUpdateFailure = (failure: Job<null, unknown[]>): void => {
     this.isFormLoading$.next(false);
     this.dialogService.errorReport(failure.error, failure.state, failure.exception);
+    this.cdr.markForCheck();
   };
 }
