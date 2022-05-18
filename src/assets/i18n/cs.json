@@ -1208,7 +1208,7 @@
   "Enter the email of the contact person. Use the format <i>name</i>@<i>domain.com</i>.": "",
   "Enter the hostname to connect to.": "",
   "Enter the maximum number of attempts before client is disconnected. Increase this if users are prone to typos.": "",
-  "Enter the name of the loader, sysctl, or rc.conf variable to configure. <i>loader</i> tunables are used to specify parameters to pass to the kernel or load additional modules at boot time. <i>rc.conf</i> tunables are for enabling system services and daemons and only take effect after a reboot. <i>sysctl</i>  tunables are used to configure kernel parameters while the system is running and generally take effect immediately.": "",
+  "Enter the name of the sysctl variable to configure. <i>sysctl</i> tunables are used to configure kernel parameters while the system is running and generally take effect immediately.": "",
   "Enter the new encryption key passphrase.": "",
   "Enter the pre-Windows 2000 domain name.": "",
   "Enter the relative distinguished name of the site object in the Active Directory.": "",
