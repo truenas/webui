@@ -7,6 +7,7 @@ import {
   builtinUsersToggled, guiFormClosedWithoutSaving, guiFormSubmitted, localizationFormSubmitted, noPreferencesFound,
   preferencesLoaded, preferredColumnsUpdated, themeChangedInGuiForm,
   themeNotFound,
+  updateRebootAfterManualUpdate,
 } from 'app/store/preferences/preferences.actions';
 import { sidenavUpdated } from 'app/store/topbar/topbar.actions';
 import { snapshotExtraColumnsToggled } from './preferences.actions';
@@ -51,10 +52,13 @@ export const preferencesReducer = createReducer(
   })),
   on(themeChangedInGuiForm, (state, { theme }) => ({ ...state, previewTheme: theme })),
   on(guiFormClosedWithoutSaving, (state) => ({ ...state, previewTheme: null })),
-
   on(themeNotFound, (state) => updatePreferences(state, {
     userTheme: defaultTheme.name,
   })),
+  on(updateRebootAfterManualUpdate,
+    (state, { rebootAfterManualUpdate }) => updatePreferences(
+      state, { rebootAfterManualUpdate },
+    )),
 );
 
 export function updatePreferences(state: PreferencesState, update: Partial<Preferences>): PreferencesState {

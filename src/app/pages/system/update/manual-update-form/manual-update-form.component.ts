@@ -8,7 +8,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import {
-  BehaviorSubject, noop, Observable, of, Subject,
+  BehaviorSubject, noop, Observable, of,
 } from 'rxjs';
 import {
   filter,
@@ -20,34 +20,32 @@ import { WINDOW } from 'app/helpers/window.helper';
 import { helptextSystemUpdate as helptext } from 'app/helptext/system/update';
 import { Job } from 'app/interfaces/job.interface';
 import { Option } from 'app/interfaces/option.interface';
-import { Preferences } from 'app/interfaces/preferences.interface';
 import { MessageService } from 'app/modules/entity/entity-form/services/message.service';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { DialogService, SystemGeneralService, WebSocketService } from 'app/services';
 import { AppState } from 'app/store';
+import { updateRebootAfterManualUpdate } from 'app/store/preferences/preferences.actions';
+import { waitForPreferences } from 'app/store/preferences/preferences.selectors';
 import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 
 @UntilDestroy()
 @Component({
-  selector: 'manual-update-form',
   templateUrl: './manual-update-form.component.html',
   providers: [MessageService],
   styleUrls: ['manual-update-form.component.scss'],
 })
 export class ManualUpdateFormComponent implements OnInit {
-  isFormLoading$: Subject<boolean> = new BehaviorSubject(false);
+  isFormLoading$ = new BehaviorSubject(false);
   form = this.formBuilder.group({
     filelocation: ['', Validators.required],
     updateFile: [null as FileList],
     rebootAfterManualUpdate: [false],
   });
-  updateFile = '';
   private get apiEndPoint(): string {
     return '/_upload?auth_token=' + this.ws.token;
   }
 
-  userPrefs: Preferences = null;
   readonly helptext = helptext;
   currentVersion = '';
   fileLocationOptions$: Observable<Option[]>;
@@ -81,21 +79,16 @@ export class ManualUpdateFormComponent implements OnInit {
     ).subscribe(noop);
   }
 
-  getUserPrefs(): Observable<Preferences> {
-    if (this.userPrefs) {
-      return of(this.userPrefs);
-    }
-
-    return this.ws.call('user.query', [[['id', '=', 1]]]).pipe(
-      map((users) => users[0].attributes.preferences),
-      tap((prefs) => this.userPrefs = prefs),
+  getUserPrefs(): void {
+    this.store$.pipe(waitForPreferences).pipe(
       tap((userPrefs) => {
         if (userPrefs.rebootAfterManualUpdate === undefined) {
           userPrefs.rebootAfterManualUpdate = false;
         }
-        this.form.get('rebootAfterManualUpdate').setValue(this.userPrefs.rebootAfterManualUpdate);
+        this.form.get('rebootAfterManualUpdate').setValue(userPrefs.rebootAfterManualUpdate);
       }),
-    );
+      untilDestroyed(this),
+    ).subscribe(noop);
   }
 
   getVersionNoFromSysInfo(): void {
@@ -164,11 +157,9 @@ export class ManualUpdateFormComponent implements OnInit {
   onSubmit(): void {
     this.isFormLoading$.next(true);
     const value = this.form.value;
-    this.userPrefs = {
-      ...this.userPrefs,
+    this.store$.dispatch(updateRebootAfterManualUpdate({
       rebootAfterManualUpdate: value.rebootAfterManualUpdate,
-    };
-    this.ws.call('user.set_attribute', [1, 'preferences', this.userPrefs]).pipe(untilDestroyed(this)).subscribe(noop);
+    }));
     this.systemService.updateRunningNoticeSent.emit();
     this.setupAndOpenUpdateJobDialog(value.updateFile, value.filelocation);
   }
@@ -229,7 +220,7 @@ export class ManualUpdateFormComponent implements OnInit {
   }
 
   finishNonHaUpdate(): void {
-    if (this.userPrefs.rebootAfterManualUpdate) {
+    if (this.form.value.rebootAfterManualUpdate) {
       this.router.navigate(['/others/reboot']);
     } else {
       this.dialogService.confirm({

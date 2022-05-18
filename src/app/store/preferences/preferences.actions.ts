@@ -22,3 +22,8 @@ export const snapshotExtraColumnsToggled = createAction('[Preferences] Snapshot 
 export const themeChangedInGuiForm = createAction('[Preferences] Theme Changed In GUI Form', props<{ theme: string }>());
 export const guiFormSubmitted = createAction('[Preferences] GUI Form Submitted', props<{ theme: string }>());
 export const guiFormClosedWithoutSaving = createAction('[Preferences] GUI Form Closed Without Saving');
+
+export const updateRebootAfterManualUpdate = createAction(
+  '[Preferences] Reboot After Manual Update Option Updated',
+  props<{ rebootAfterManualUpdate: boolean }>(),
+);
