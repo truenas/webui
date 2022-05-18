@@ -208,9 +208,8 @@ def click_save_when_finished(driver):
 @then('"Please wait" should appear while settings are being applied and You should be returned to Network page')
 def please_wait_should_appear_while_settings_are_being_applied_you_should_be_returned_to_network_page(driver):
     """"Please wait" should appear while settings are being applied and You should be returned to Network page."""
-    assert wait_on_element_disappear(driver, 30, '//h6[contains(.,"Please wait")]')
+    assert wait_on_element_disappear(driver, 60, '//h6[contains(.,"Please wait")]')
     assert wait_on_element(driver, 7, '//h1[contains(.,"Network")]')
-    time.sleep(1)
 
 
 @then('navigate to System then click Failover')
@@ -437,26 +436,6 @@ def click_disable_failover_to_uncheck_it_click_save_and_confirm_changes(driver):
     attribute = element.get_attribute('class')
     assert 'mat-checkbox-checked' not in attribute, attribute
     assert wait_on_element(driver, 7, '//h4[contains(.,"Failover Configuration")]')
-
-
-@then(parsers.parse('enter Hostname "{host1}", Hostname (TrueNAS Controller 2) "{host2}", Hostname (Virtual) "{vhost}", Domain "{domain}", Nameserver1 "{nameserver1}", Nameserver2 "{nameserver2}"'))
-def enter_hostname_hostname_truenas_controller_2_hostname_virtual_domain_nameserver1_nameserver2(driver, host1, host2, vhost, domain, nameserver1, nameserver2):
-    """enter Hostname "{host1}", Hostname (TrueNAS Controller 2) "{host2}", Hostname (Virtual) "{vhost}", Domain "{domain}", Nameserver1 "{nameserver1}", Nameserver2 "{nameserver2}"."""
-    assert wait_on_element(driver, 7, '//input[@ix-auto="input__Hostname"]', 'clickable')
-    driver.find_element_by_xpath('//input[@ix-auto="input__Hostname"]').clear()
-    driver.find_element_by_xpath('//input[@ix-auto="input__Hostname"]').send_keys(host1)
-    assert wait_on_element(driver, 7, '//input[@ix-auto="input__Hostname (TrueNAS Controller 2)"]', 'clickable')
-    driver.find_element_by_xpath('//input[@ix-auto="input__Hostname (TrueNAS Controller 2)"]').clear()
-    driver.find_element_by_xpath('//input[@ix-auto="input__Hostname (TrueNAS Controller 2)"]').send_keys(host2)
-    assert wait_on_element(driver, 7, '//input[@ix-auto="input__Hostname (Virtual)"]', 'clickable')
-    driver.find_element_by_xpath('//input[@ix-auto="input__Hostname (Virtual)"]').clear()
-    driver.find_element_by_xpath('//input[@ix-auto="input__Hostname (Virtual)"]').send_keys(vhost)
-    driver.find_element_by_xpath('//input[@ix-auto="input__Domain"]').clear()
-    driver.find_element_by_xpath('//input[@ix-auto="input__Domain"]').send_keys(domain)
-    driver.find_element_by_xpath('//input[@ix-auto="input__Nameserver 1"]').clear()
-    driver.find_element_by_xpath('//input[@ix-auto="input__Nameserver 1"]').send_keys(nameserver1)
-    driver.find_element_by_xpath('//input[@ix-auto="input__Nameserver 2"]').clear()
-    driver.find_element_by_xpath('//input[@ix-auto="input__Nameserver 2"]').send_keys(nameserver2)
 
 
 @then('navigate to dashboard, and verify that both controllers show')
