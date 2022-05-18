@@ -10,6 +10,7 @@
         ></ix-input>
         <ix-select
           formControlName="type"
+          [required]="true"
           [label]="'Type' | translate"
           [tooltip]="tooltips.type | translate"
           [options]="typeOptions$"

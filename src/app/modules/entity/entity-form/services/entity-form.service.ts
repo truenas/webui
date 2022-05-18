@@ -147,6 +147,9 @@ export class EntityFormService {
     });
   }
 
+  /**
+   * @deprecated Use DatasetService.getDatasetNodeProvider
+   */
   getPoolDatasets(param: [DatasetType[]?] = []): Promise<ListdirChild[]> {
     const nodes: ListdirChild[] = [];
     return this.ws.call('pool.filesystem_choices', param).toPromise().then((res) => {
