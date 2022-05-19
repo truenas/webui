@@ -129,7 +129,7 @@ def set_machinaris_environment_variables(driver):
 def set_resource_limits(driver):
     """set Resource Limits."""
     assert wait_on_element(driver, 7, '//button[@ix-auto="button__NEXT_Resource Limits"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__NEXT_Resource Limits"]').click() 
+    driver.find_element_by_xpath('//button[@ix-auto="button__NEXT_Resource Limits"]').click()
 
 
 @then('set Configure Coins')
@@ -181,6 +181,6 @@ def confirm_installation_is_successful(driver):
             driver.find_element_by_xpath('//div[contains(text(),"Available Applications")]').click()
             assert wait_on_element(driver, 10, '//div[contains(text(),"Installed Applications")]', 'clickable')
             driver.find_element_by_xpath('//div[contains(text(),"Installed Applications")]').click()
-            assert wait_on_element(driver, 420, '//mat-card[contains(.,"machinaris-test")]//span[@class="status active"]')
+            assert wait_on_element(driver, 500, '//mat-card[contains(.,"machinaris-test")]//span[@class="status active"]')
     else:
-        assert wait_on_element(driver, 420, '//mat-card[contains(.,"machinaris-test")]//span[@class="status active"]')
+        assert wait_on_element(driver, 500, '//mat-card[contains(.,"machinaris-test")]//span[@class="status active"]')
