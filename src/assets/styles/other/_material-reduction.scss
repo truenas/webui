@@ -2,20 +2,7 @@
 
 /* TYPOGRAPHY */
 
-body {
-  background: var(--bg1);
-}
-
-html {font-size: 87.5%;} /*14px*/
-
-body {
-  font-family: var(--font-family-body);
-  font-weight: 400;
-  line-height: 1.65;
-}
-
-p {margin-bottom: 1.15rem;}
-
+p { margin-bottom: 1.15rem; }
 
 h1,
 h2,
@@ -30,14 +17,14 @@ h5 {
 }
 
 h1 {
+  color: var(--fg1);
   font-size: 2.488em;
   margin-top: 0;
 }
-h1 { color: var(--fg1);}
 
 h1,
 h2 {
-  font-family: var(--font-family-body);
+  font-family: 'Epilogue', var(--font-family-body);
   font-weight: 500;
 }
 
@@ -907,6 +894,7 @@ ul.nested-list li {
 
 
 .expanded-table mat-card {
+  border: 0 !important;
   margin: 0 !important;
 }
 

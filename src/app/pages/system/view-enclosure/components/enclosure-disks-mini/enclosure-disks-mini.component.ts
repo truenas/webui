@@ -13,6 +13,7 @@ import { EnclosureDisksComponent } from 'app/pages/system/view-enclosure/compone
 import { WebSocketService } from 'app/services';
 import { CoreService } from 'app/services/core-service/core.service';
 import { DialogService } from 'app/services/dialog.service';
+import { ThemeService } from 'app/services/theme/theme.service';
 import { AppState } from 'app/store/index';
 
 @Component({
@@ -32,8 +33,9 @@ export class EnclosureDisksMiniComponent extends EnclosureDisksComponent {
     protected translate: TranslateService,
     protected ws: WebSocketService,
     protected store$: Store<AppState>,
+    protected themeService: ThemeService,
   ) {
-    super(core, cdr, dialogService, translate, ws, store$);
+    super(core, cdr, dialogService, translate, ws, store$, themeService);
     this.pixiWidth = 320;// 960 * 0.6; // PIXI needs an explicit number. Make sure the template flex width matches this
     this.pixiHeight = 480;
   }

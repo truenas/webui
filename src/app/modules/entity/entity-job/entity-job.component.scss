@@ -3,9 +3,16 @@
   position: relative;
 }
 
-mat-dialog-content.entity-job-dialog.mat-dialog-content {
-  overflow: auto !important;
+mat-dialog-content.entity-job-dialog {
+  max-height: 350px;
+  max-width: 500px;
+  min-width: 200px;
+
+  .mat-dialog-content {
+    overflow: auto !important;
+  }
 }
+
 
 .mat-dialog-close {
   position: absolute;

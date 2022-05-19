@@ -12,7 +12,7 @@ import {
 } from 'popmotion';
 import { ValueReaction } from 'popmotion/lib/reactions/value';
 import { Subject } from 'rxjs';
-import { filter } from 'rxjs/operators';
+import { filter, map } from 'rxjs/operators';
 import { ThemeUtils } from 'app/core/classes/theme-utils/theme-utils';
 import { EnclosureSlotStatus } from 'app/enums/enclosure-slot-status.enum';
 import { EnclosureElement, EnclosureElementsGroup } from 'app/interfaces/enclosure.interface';
@@ -53,6 +53,7 @@ import { WebSocketService } from 'app/services';
 import { CoreService } from 'app/services/core-service/core.service';
 import { DialogService } from 'app/services/dialog.service';
 import { Temperature } from 'app/services/disk-temperature.service';
+import { ThemeService } from 'app/services/theme/theme.service';
 import { AppState } from 'app/store';
 import { selectTheme } from 'app/store/preferences/preferences.selectors';
 
@@ -175,6 +176,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
     protected translate: TranslateService,
     protected ws: WebSocketService,
     protected store$: Store<AppState>,
+    protected themeService: ThemeService,
   ) {
     this.themeUtils = new ThemeUtils();
 
@@ -203,7 +205,11 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
       this.resizeView();
     });
 
-    this.store$.select(selectTheme).pipe(filter(Boolean), untilDestroyed(this)).subscribe((theme: Theme) => {
+    this.store$.select(selectTheme).pipe(
+      filter(Boolean),
+      map(() => this.themeService.currentTheme()),
+      untilDestroyed(this),
+    ).subscribe((theme: Theme) => {
       this.theme = theme;
       this.setCurrentView(this.currentView);
       if (this.labels && this.labels.events$) {

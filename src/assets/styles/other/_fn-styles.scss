@@ -35,7 +35,7 @@
 
 /*---- Globals -----*/
 html {
-  font-size: 16px;
+  font-size: 87.5% /* 14px */;
 }
 
 html,
@@ -55,16 +55,14 @@ body:not(.safari-platform) {
 }
 
 body {
+  background: var(--bg1);
   color: rgba(0, 0, 0, 0.87);
-  font-family: 'Roboto',Helvetica Neue,sans-serif;
+  font-family: 'IBM Plex Sans', 'Roboto', 'Helvetica Neue', sans-serif;
   font-size: 0.875rem;
   font-weight: 400;
-  height: 100%;
-  line-height: 1.5;
+  line-height: 1.65;
   margin: 0;
   padding: 0;
-  position: relative;
-  width: 100%;
 }
 
 div {
@@ -327,16 +325,6 @@ samp {
 
 .full-width {
   width: 100%;
-}
-
-.text-small {
-  font-size: 0.813rem;
-}
-
-.text-small .mat-icon {
-  font-size: 1rem;
-  margin: 0 2px;
-  vertical-align: sub;
 }
 
 .mat-card-header .mat-card-title {

@@ -1,11 +1,11 @@
 @import 'cssvars';
 
 :host {
-  $pagetitle: 97px;
+  $pagetitle: 59px;
   $outer-padding: 16px;
 
   display: block;
-  height: calc(100% - #{$pagetitle});
+  height: calc(100% - #{$pagetitle} - #{$outer-padding});
   margin-right: -#{$outer-padding};
   position: relative;
 }
