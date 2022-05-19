@@ -20,7 +20,7 @@ export interface AlertsState extends EntityState<Alert> {
 
 export const adapter = createEntityAdapter<Alert>({
   sortComparer: (a, b) => Object.values(AlertLevel).indexOf(b.level) - Object.values(AlertLevel).indexOf(a.level)
-    || a.klass.localeCompare(b.klass)
+    || (a.klass || '').localeCompare(b.klass || '')
     || a.datetime.$date - b.datetime.$date,
 });
 
