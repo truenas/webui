@@ -61,7 +61,12 @@
                 fxLayoutAlign="center center"
               >
 
-                <div class="product-image {{product_enclosure}} {{product_type === ProductType.ScaleEnterprise ? 'truenas' : 'freenas'}} {{product_image == 'ix-original.svg' ? 'ix-logo' : ''}}">
+                <div
+                  class="product-image {{product_enclosure}}"
+                  [class.truenas]="product_type === ProductType.ScaleEnterprise"
+                  [class.freenas]="product_type !== ProductType.ScaleEnterprise"
+                  [class.ix-logo]="product_image == 'ix-original.svg'"
+                >
                   <img
                     *ngIf="product_image; else generic"
                     id="{{product_model}}"

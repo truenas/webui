@@ -4,7 +4,7 @@ import * as Sentry from '@sentry/angular';
 import { environment } from 'environments/environment';
 import * as _ from 'lodash';
 import { Subject, Observable, combineLatest } from 'rxjs';
-import { filter, map } from 'rxjs/operators';
+import { map, shareReplay } from 'rxjs/operators';
 import { CertificateAuthority } from 'app/interfaces/certificate-authority.interface';
 import { Certificate } from 'app/interfaces/certificate.interface';
 import { Choices } from 'app/interfaces/choices.interface';
@@ -42,8 +42,7 @@ export class SystemGeneralService {
     });
   }
 
-  productType = '';
-  getProductType$ = this.ws.call('system.product_type').pipe(filter((type) => !!type));
+  getProductType$ = this.ws.call('system.product_type').pipe(shareReplay());
 
   /**
    * OAuth token for JIRA access
