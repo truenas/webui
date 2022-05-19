@@ -18,7 +18,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { UUID } from 'angular2-uuid';
 import { filter, take } from 'rxjs/operators';
-import { ProductType } from 'app/enums/product-type.enum';
+import { ProductType, productTypeLabels } from 'app/enums/product-type.enum';
 import { ForceSidenavEvent } from 'app/interfaces/events/force-sidenav-event.interface';
 import { SidenavStatusEvent } from 'app/interfaces/events/sidenav-status-event.interface';
 import { SubMenuItem } from 'app/interfaces/menu-item.interface';
@@ -52,7 +52,7 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked, AfterView
   consoleMsg = '';
   hostname: string;
   consoleMessages: string[] = [];
-  productType = window.localStorage['product_type'] as ProductType;
+  productType: ProductType;
   logoPath = 'assets/images/light-logo.svg';
   logoTextPath = 'assets/images/light-logo-text.svg';
   currentTheme = '';
@@ -66,6 +66,7 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked, AfterView
   headerPortalOutlet: TemplatePortal = null;
 
   readonly ProductType = ProductType;
+  readonly productTypeLabels = productTypeLabels;
 
   isAlertPanelOpen$ = this.store$.select(selectIsAlertPanelOpen);
 
@@ -90,7 +91,7 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked, AfterView
   ) {
     // detect server type
     this.sysGeneralService.getProductType$.pipe(untilDestroyed(this)).subscribe((res) => {
-      this.productType = res as ProductType;
+      this.productType = res;
     });
 
     // Close sidenav after route change in mobile

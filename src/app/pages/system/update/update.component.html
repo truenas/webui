@@ -124,18 +124,7 @@
   </mat-card-content>
 </mat-card>
 
-<mat-card *ngIf="updates_available && pre_release_train && product_type === ProductType.Core" id="stable-warning-card">
-  <div class="stable-warning"><i class="material-icons" id="update-info">info</i>
-    <strong>{{"This is not a production release, and should only be used for testing." | translate}}</strong>
-  </div>
-  <div class="stable-warning" id="stable_warning_line_2">
-    <a href="https://www.truenas.com/docs/hub/intro/release-notes/" target="new">
-      {{"Before updating, please read the release notes." | translate}}
-    </a>
-  </div>
-</mat-card>
-
-<mat-card *ngIf="updates_available && release_train && product_type === ProductType.Core" id="stable-warning-card">
+<mat-card *ngIf="updates_available && pre_release_train && product_type === ProductType.ScaleEnterprise" id="stable-warning-card">
   <div class="stable-warning"><i class="material-icons" id="update-info">info</i>
     <a href="https://www.truenas.com/docs/hub/intro/release-notes/" target="new">
       {{"Before updating, please read the release notes." | translate}}
@@ -143,15 +132,7 @@
   </div>
 </mat-card>
 
-<mat-card *ngIf="updates_available && pre_release_train && product_type === ProductType.Enterprise" id="stable-warning-card">
-  <div class="stable-warning"><i class="material-icons" id="update-info">info</i>
-    <a href="https://www.truenas.com/docs/hub/intro/release-notes/" target="new">
-      {{"Before updating, please read the release notes." | translate}}
-    </a>
-  </div>
-</mat-card>
-
-<mat-card *ngIf="updates_available && release_train && product_type === ProductType.Enterprise" id="stable-warning-card">
+<mat-card *ngIf="updates_available && release_train && product_type === ProductType.ScaleEnterprise" id="stable-warning-card">
   <div class="stable-warning"><i class="material-icons" id="update-info">info</i>
     <a href="https://www.truenas.com/docs/hub/intro/release-notes/" target="new">
       {{"Before updating, please read the release notes." | translate}}

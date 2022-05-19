@@ -2,18 +2,7 @@
 <div id="wrapper">
   <mat-card id="shutdown-card">
     <mat-card-content id="shutdown-message">{{ "System is shutting down..." | translate }}</mat-card-content>
-    <mat-icon
-      *ngIf="productType === ProductType.Enterprise"
-      class="logo"
-      svgIcon="truenas_enterprise_logo_full"
-      alt="TrueNAS ENTERPRISE logo"
-    ></mat-icon>
-    <mat-icon
-      *ngIf="productType === ProductType.Scale || productType == ProductType.ScaleEnterprise"
-      class="logo"
-      svgIcon="truenas_scale_logo_full"
-      alt="TrueNAS SCALE logo"
-    ></mat-icon>
+    <mat-icon class="logo" svgIcon="truenas_scale_logo_full" alt="TrueNAS SCALE logo"></mat-icon>
     <div>
       <span fxFlex class="copyright-txt">
         TrueNAS {{productType | mapValue: productTypeLabels}}® © {{copyrightYear}} -
