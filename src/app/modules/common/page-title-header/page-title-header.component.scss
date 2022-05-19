@@ -8,14 +8,8 @@
   width: calc(100% - 16px);
 }
 
-.header-container {
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
-}
-
 .title-container {
-  align-items: center;
+  align-items: flex-end;
   display: flex;
   flex-direction: row;
   flex-grow: 1;
