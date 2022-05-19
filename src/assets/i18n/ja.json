@@ -337,6 +337,7 @@
   "Browse to the pool or dataset to store received  data.": "",
   "Bucket": "",
   "Builtin": "",
+  "Bulk Edit Disks": "",
   "Bulk actions": "",
   "Burst": "",
   "By default, Samba uses a hashing algorithm for NTFS illegal  characters. Enabling this option translates NTFS illegal characters to the Unicode private range.": "",

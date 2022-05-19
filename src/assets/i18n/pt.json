@@ -456,6 +456,7 @@
   "Bucket": "",
   "Bug": "",
   "Builtin": "",
+  "Bulk Edit Disks": "",
   "Bulk actions": "",
   "Burst": "",
   "By default, Samba uses a hashing algorithm for NTFS illegal  characters. Enabling this option translates NTFS illegal characters to the Unicode private range.": "",

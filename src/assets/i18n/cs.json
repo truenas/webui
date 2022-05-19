@@ -449,6 +449,7 @@
   "Bucket": "",
   "Bug": "",
   "Builtin": "",
+  "Bulk Edit Disks": "",
   "Bulk actions": "",
   "By default, Samba uses a hashing algorithm for NTFS illegal  characters. Enabling this option translates NTFS illegal characters to the Unicode private range.": "",
   "By default, the VM receives an auto-generated random MAC address. Enter a custom address into the field to override the default. Click <b>Generate MAC Address</b> to add a new randomized address into this field.": "",

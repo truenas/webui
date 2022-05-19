@@ -284,6 +284,7 @@
   "Browse to the path to be copied. Linux file path limits apply. Other operating systems can have different limits which might affect how they can be used as sources or destinations.": "",
   "Bug": "",
   "Builtin": "",
+  "Bulk Edit Disks": "",
   "Bulk actions": "",
   "Burst": "",
   "By default, Samba uses a hashing algorithm for NTFS illegal  characters. Enabling this option translates NTFS illegal characters to the Unicode private range.": "",

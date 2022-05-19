@@ -7,8 +7,6 @@ import { TranslateService } from '@ngx-translate/core';
 import * as filesize from 'filesize';
 import { forkJoin, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
-import { DiskPowerLevel } from 'app/enums/disk-power-level.enum';
-import { DiskStandby } from 'app/enums/disk-standby.enum';
 import { Choices } from 'app/interfaces/choices.interface';
 import { CoreEvent } from 'app/interfaces/events';
 import { QueryParams } from 'app/interfaces/query-api.interface';
@@ -16,6 +14,7 @@ import { Disk } from 'app/interfaces/storage.interface';
 import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-table.component';
 import { EntityTableAction, EntityTableConfig } from 'app/modules/entity/entity-table/entity-table.interface';
 import { EntityUtils } from 'app/modules/entity/utils';
+import { DiskBulkEditComponent } from 'app/pages/storage/disks/disk-bulk-edit/disk-bulk-edit.component';
 import { DiskFormComponent } from 'app/pages/storage/disks/disk-form/disk-form.component';
 import { DiskWipeDialogComponent } from 'app/pages/storage/disks/disk-wipe-dialog/disk-wipe-dialog.component';
 import {
@@ -25,6 +24,15 @@ import {
 import { StorageService, WebSocketService } from 'app/services';
 import { CoreService } from 'app/services/core-service/core.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+
+// interface DiskBulkDataForm {
+//   diskIds: string[];
+//   diskNames: string[];
+//   hddStandby?: DiskStandby;
+//   advPowerMgt?: DiskPowerLevel;
+//   smartOptions?: string;
+//   diskToggle: boolean;
+// }
 
 @UntilDestroy()
 @Component({
@@ -66,12 +74,12 @@ export class DiskListComponent implements EntityTableConfig<Disk> {
       key_props: ['name'],
     },
   };
-  diskIds: string[] = [];
-  diskNames: string[] = [];
-  hddStandby: DiskStandby[] = [];
-  advPowerMgt: DiskPowerLevel[] = [];
-  diskToggle: boolean;
-  smartOptions: string[] = [];
+  // diskIds: string[] = [];
+  // diskNames: string[] = [];
+  // hddStandby: DiskStandby[] = [];
+  // advPowerMgt: DiskPowerLevel[] = [];
+  // diskToggle: boolean;
+  // smartOptions: string[] = [];
   private smartDiskChoices: Choices = {};
 
   multiActions = [{
@@ -82,40 +90,8 @@ export class DiskListComponent implements EntityTableConfig<Disk> {
     ttpos: 'above' as TooltipPosition,
     onClick: (selected: Disk[]) => {
       if (selected.length > 1) {
-        for (const i of selected) {
-          this.diskIds.push(i.identifier);
-          this.diskNames.push(i.name);
-          this.hddStandby.push(i.hddstandby);
-          this.advPowerMgt.push(i.advpowermgmt);
-          if (i.togglesmart) {
-            this.diskToggle = true;
-            this.smartOptions.push(i.smartoptions);
-          }
-        }
-        this.diskbucket.diskIdsBucket(this.diskIds);
-        this.diskbucket.diskNamesBucket(this.diskNames);
-        this.diskbucket.diskToggleBucket(this.diskToggle);
-
-        // If all items match in an array, this fills in the value in the form; otherwise, blank
-        if (this.hddStandby.every((val, i, arr) => val === arr[0])) {
-          this.diskbucket.hddStandby = this.hddStandby[0];
-        } else {
-          this.diskbucket.hddStandby = undefined;
-        }
-
-        if (this.advPowerMgt.every((val, i, arr) => val === arr[0])) {
-          this.diskbucket.advPowerMgt = this.advPowerMgt[0];
-        } else {
-          this.diskbucket.advPowerMgt = undefined;
-        }
-
-        if (this.smartOptions.every((val, i, arr) => val === arr[0])) {
-          this.diskbucket.smartOptions = this.smartOptions[0];
-        } else {
-          this.diskbucket.smartOptions = undefined;
-        }
-
-        this.router.navigate(['/', 'storage', 'disks', 'bulk-edit']);
+        const diskBulkEditForm = this.slideInService.open(DiskBulkEditComponent, { wide: true });
+        diskBulkEditForm.setFormDiskBulk(selected);
       } else {
         const editForm = this.slideInService.open(DiskFormComponent, { wide: true });
         editForm.setFormDisk(selected[0]);
