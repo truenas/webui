@@ -3,53 +3,31 @@
   height: 16px !important;
   min-height: 16px !important;
   width: 100%;
-}
 
-.breadcrumb {
-  margin: 0;
-  padding: 0;
-}
+  .breadcrumb {
+    margin: 0;
+    padding: 0;
 
-.breadcrumb li {
-  float: left;
-  line-height: 16px;
-  list-style: none;
-}
+    li {
+      float: left;
+      line-height: 16px;
+      list-style: none;
 
-.breadcrumb li:not(:first-child)::before {
-  /*content: "/\A0";*/
-  content: ' ';
-  padding: 0 8px;
-}
+      &:not(:first-child)::before {
+        content: ' ';
+        padding: 0 8px;
+      }
 
-.breadcrumb li a {
-  color: var(--primary);
-  font-size: smaller;
-  font-weight: 600;
-  text-transform: uppercase;
-}
+      a {
+        color: var(--primary);
+        font-size: smaller;
+        font-weight: 600;
+        text-transform: uppercase;
 
-.breadcrumb li a:not(.no-click) {
-  color: var(--primary);
-}
-
-.copyright-txt {
-  line-height: 40px;
-  margin: 0;
-  padding: 0;
-  position: absolute;
-  right: 4px;
-}
-
-
-@media screen and (max-width: 400px) {
-  .copyright-txt {
-    font-size: 75%;
-  }
-}
-
-@media screen and (max-width: 348px) {
-  .copyright-txt {
-    font-size: 65%;
+        &.no-click {
+          color: inherit;
+        }
+      }
+    }
   }
 }

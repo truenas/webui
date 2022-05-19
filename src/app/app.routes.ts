@@ -37,7 +37,7 @@ export const rootRouterConfig: Routes = [{
   {
     path: 'credentials',
     loadChildren: () => import('./pages/account/account.module').then((module) => module.AccountModule),
-    data: { title: 'Credentials', breadcrumb: 'Credentials' },
+    data: { title: 'Credentials', breadcrumb: 'Credentials', disabled: true },
   },
   {
     path: 'system',

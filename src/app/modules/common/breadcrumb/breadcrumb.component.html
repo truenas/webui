@@ -4,8 +4,13 @@
       <li *ngIf="i > 0 && i < breadcrumbs.length - 1">&gt;</li>
       <li ix-auto ix-auto-type="option" ix-auto-identifier="{{ breadcrumb.breadcrumb }}">
         <ng-container *ngIf="i < breadcrumbs.length - 1">
-          <a [routerLink]="[breadcrumb.url]">{{ breadcrumb.breadcrumb | translate }}</a>
+          <span *ngIf="!breadcrumb.disabled;else noclick">
+            <a [routerLink]="[breadcrumb.url]">{{ breadcrumb.breadcrumb | translate }}</a>
+          </span>
         </ng-container>
+        <ng-template #noclick>
+          <a class="no-click">{{ breadcrumb.breadcrumb | translate }}</a>
+        </ng-template>
       </li>
     </ng-container>
   </ul>

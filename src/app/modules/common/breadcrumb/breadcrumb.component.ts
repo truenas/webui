@@ -39,8 +39,8 @@ export class BreadcrumbComponent implements OnInit {
     breadcrumbs = _.uniqBy(breadcrumbs, 'title');
 
     breadcrumbs = breadcrumbs.filter((routePart) => {
-      // filters routers that is disabled breadcrumb, has empty breadcrumb
-      if (routePart.disabled || !routePart.breadcrumb) {
+      // filters routers has empty breadcrumb
+      if (!routePart.breadcrumb) {
         return false;
       }
       return true;
