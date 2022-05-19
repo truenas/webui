@@ -256,10 +256,11 @@ def verify_all_files_are_copied_from_backblaze_b2_are_into_the_dataset(driver, n
 def on_the_nas_cloud_sync_task_tab_click_edit(driver):
     """on the NAS cloud sync task tab, click Edit."""
     driver.switch_to.window(driver.window_handles[0])
+    time.sleep(1)
     assert wait_on_element(driver, 5, '//div[contains(.,"Cloud Sync Tasks")]')
     assert wait_on_element(driver, 5, '//div[contains(text(),"My Backblaze B2 task")]')
     assert wait_on_element(driver, 5, '//a[@ix-auto="expander__My Backblaze B2 task"]', 'clickable')
-    if not wait_on_element(driver, 1, '//button[@ix-auto="button___edit"]', 'clickable'):
+    if not wait_on_element(driver, 2, '//button[@ix-auto="button___edit"]'):
         driver.find_element_by_xpath('//a[@ix-auto="expander__My Backblaze B2 task"]').click()
     time.sleep(1.5)
     assert wait_on_element(driver, 7, '//p[contains(text(),"backblazecreds")]')
