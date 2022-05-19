@@ -107,15 +107,6 @@ span.passive {
   top: 0;
 }
 
-.product-image.rackmount img,
-.product-image.ix-logo img {
-  width: 80%;
-}
-
-.product-image img {
-  width: 60%;
-}
-
 .slide .right {
   border-left: solid 1px rgba(0, 0, 0, 0.1);
   text-align: left;
@@ -255,20 +246,48 @@ img.clickable,
   height: 2.25rem;
 }
 
-.product-image.rackmount {
-  padding-bottom: 0;
-}
+.product-image {
+  &.rackmount,
+  &.ix-logo {
+    img {
+      width: 80%;
+    }
+  }
 
-.product-image.ix-logo,
-.product-image.rackmount .generic,
-.freenas .generic {
-  padding-bottom: 10%;
-}
+  &.rackmount {
+    padding-bottom: 0;
+  }
 
-.product-image.rackmount .generic,
-.freenas .mat-icon.generic {
-  height: auto;
-  width: calc(240px * 0.5);
+  &.ix-logo,
+  &.rackmount,
+  &.freenas,
+  &.truenas {
+    .generic {
+      padding-bottom: 10%;
+    }
+  }
+
+  &.rackmount,
+  &.freenas,
+  &.truenas {
+    .generic {
+      height: auto;
+      width: 120px;
+    }
+  }
+
+  img {
+    width: 60%;
+
+    &.certified-badge {
+      border-radius: 5px;
+      bottom: 30%;
+      height: 16%;
+      left: 54%;
+      position: absolute;
+      width: auto !important;
+    }
+  }
 }
 
 img.platform-logo {
@@ -277,15 +296,6 @@ img.platform-logo {
 
 .xs.carousel img.platform-logo {
   width: 70%;
-}
-
-.product-image img.certified-badge {
-  border-radius: 5px;
-  bottom: 30%;
-  height: 16%;
-  left: 54%;
-  position: absolute;
-  width: auto !important;
 }
 
 .content-left {

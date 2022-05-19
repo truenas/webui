@@ -212,7 +212,7 @@ export class UpdateComponent implements OnInit {
       });
     });
 
-    if (this.product_type.includes(ProductType.Enterprise)) {
+    if (this.product_type === ProductType.ScaleEnterprise) {
       setTimeout(() => { // To get around too many concurrent calls???
         this.ws.call('failover.licensed').pipe(untilDestroyed(this)).subscribe((res) => {
           if (res) {

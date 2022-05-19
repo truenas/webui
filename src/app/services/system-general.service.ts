@@ -4,7 +4,7 @@ import * as Sentry from '@sentry/angular';
 import { environment } from 'environments/environment';
 import * as _ from 'lodash';
 import { Subject, Observable, combineLatest } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { map, shareReplay } from 'rxjs/operators';
 import { CertificateAuthority } from 'app/interfaces/certificate-authority.interface';
 import { Certificate } from 'app/interfaces/certificate.interface';
 import { Choices } from 'app/interfaces/choices.interface';
@@ -42,26 +42,7 @@ export class SystemGeneralService {
     });
   }
 
-  productType = '';
-  getProductType$ = new Observable<string>((observer) => {
-    if (!this.productType) {
-      this.productType = 'pending';
-      this.ws.call('system.product_type').subscribe((res) => {
-        this.productType = res;
-        observer.next(this.productType);
-      });
-    } else {
-      const wait = setInterval(() => {
-        if (this.productType !== 'pending') {
-          clearInterval(wait);
-          observer.next(this.productType);
-        }
-      }, 10);
-    }
-    setTimeout(() => {
-      this.productType = '';
-    }, 5000);
-  });
+  getProductType$ = this.ws.call('system.product_type').pipe(shareReplay());
 
   /**
    * OAuth token for JIRA access

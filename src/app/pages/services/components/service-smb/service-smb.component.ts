@@ -117,7 +117,7 @@ export class ServiceSmbComponent implements OnInit {
 
   ngOnInit(): void {
     this.isFormLoading = true;
-    if (window?.localStorage?.getItem('product_type')?.includes(ProductType.Enterprise)) {
+    if (window.localStorage.getItem('product_type') === ProductType.ScaleEnterprise) {
       this.subscriptions.push(
         this.form.get('netbiosname_b').disabledWhile(
           this.ws.call('failover.licensed').pipe(

@@ -82,7 +82,7 @@ export class TopbarComponent implements OnInit, OnDestroy {
   updateNotificationSent = false;
   private user_check_in_prompted = false;
   mat_tooltips = helptext.mat_tooltips;
-  systemType: string;
+  productType: ProductType;
   screenSize = 'waiting';
 
   jobBadgeCount$ = this.store$.select(selectRunningJobsCount);
@@ -114,10 +114,14 @@ export class TopbarComponent implements OnInit, OnDestroy {
     this.mediaObserver.media$.pipe(untilDestroyed(this)).subscribe((evt) => {
       this.screenSize = evt.mqAlias;
     });
+
+    this.sysGenService.getProductType$.pipe(untilDestroyed(this)).subscribe((productType) => {
+      this.productType = productType;
+    });
   }
 
   ngOnInit(): void {
-    if (window.localStorage.getItem('product_type').includes(ProductType.Enterprise)) {
+    if (this.productType === ProductType.ScaleEnterprise) {
       this.checkEula();
 
       this.ws.call('failover.licensed').pipe(untilDestroyed(this)).subscribe((isHa) => {
@@ -191,10 +195,6 @@ export class TopbarComponent implements OnInit, OnDestroy {
 
     this.store$.pipe(waitForSystemInfo, untilDestroyed(this)).subscribe((sysInfo) => {
       this.hostname = sysInfo.hostname;
-    });
-
-    this.sysGenService.getProductType$.pipe(untilDestroyed(this)).subscribe((res) => {
-      this.systemType = res;
     });
 
     this.ws.onCloseSubject$.pipe(untilDestroyed(this)).subscribe(() => {
@@ -288,7 +288,7 @@ export class TopbarComponent implements OnInit, OnDestroy {
     this.dialog.open(AboutDialogComponent, {
       maxWidth: '600px',
       data: {
-        systemType: this.systemType,
+        systemType: this.productType,
       },
       disableClose: true,
     });
