@@ -19,13 +19,12 @@
       }
 
       a {
-        color: var(--primary);
         font-size: smaller;
         font-weight: 600;
         text-transform: uppercase;
 
-        &.no-click {
-          color: inherit;
+        &:not(.no-click) {
+          color: var(--primary);
         }
       }
     }
