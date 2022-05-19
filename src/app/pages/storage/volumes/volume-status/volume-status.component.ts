@@ -322,7 +322,7 @@ export class VolumeStatusComponent implements OnInit {
           fieldConfig: this.replaceDiskFormFields,
           saveButtonText: helptext.replace_disk.saveButtonText,
           parent: this,
-          customSubmit(entityDialog: any) {
+          customSubmit: (entityDialog: any) => {
             const body = { ...entityDialog.formValue };
             delete body['passphrase2'];
             if (this.duplicateSerialDisks.find((disk) => disk.name === entityDialog.formValue.new_disk)) {
@@ -339,7 +339,7 @@ export class VolumeStatusComponent implements OnInit {
               entityDialog.parent.getData();
               entityDialog.parent.getUnusedDisk();
               entityDialog.parent.dialogService.report(helptext.replace_disk.title, helptext.replace_disk.info_dialog_content + name + '.', '', 'info', true);
-            }),
+            });
             dialogRef.componentInstance.failure.subscribe((res) => {
               dialogRef.close();
               entityDialog.dialogRef.close();
