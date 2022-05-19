@@ -147,6 +147,6 @@ def confirm_installation_is_successful(driver):
             driver.find_element_by_xpath('//div[contains(text(),"Available Applications")]').click()
             assert wait_on_element(driver, 10, '//div[contains(text(),"Installed Applications")]', 'clickable')
             driver.find_element_by_xpath('//div[contains(text(),"Installed Applications")]').click()
-            assert wait_on_element(driver, 300, '//mat-card[contains(.,"nextcloud-test")]//span[@class="status active"]')
+            assert wait_on_element(driver, 500, '//mat-card[contains(.,"nextcloud-test")]//span[@class="status active"]')
     else:
-        assert wait_on_element(driver, 300, '//mat-card[contains(.,"nextcloud-test")]//span[@class="status active"]')
+        assert wait_on_element(driver, 500, '//mat-card[contains(.,"nextcloud-test")]//span[@class="status active"]')

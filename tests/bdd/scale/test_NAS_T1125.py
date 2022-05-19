@@ -21,6 +21,7 @@ from pytest_bdd import (
 @scenario('features/NAS-T1125.feature', 'Setting up LDAP and verify that it is setup on the NAS')
 def test_scale_ui_setting_up_ldap_and_verify_that_it_is_setup_on_the_nas():
     """Setting up LDAP and verify that it is setup on the NAS."""
+    pass
 
 
 @given('the browser is open, the FreeNAS URL and logged in')
@@ -46,8 +47,6 @@ def the_browser_is_open_the_freenas_url_and_logged_in(driver, nas_ip, root_passw
 def you_should_be_on_the_dashboard_click_on_credentials_and_then_directory_services(driver):
     """you should be on the dashboard, click on Credentials and then Directory Services.."""
     assert wait_on_element(driver, 10, '//span[contains(.,"Dashboard")]')
-    assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Dashboard"]', 'clickable')
-    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
     """click on the Credentials on the side menu, click on Local Users."""
     assert wait_on_element(driver, 7, '//mat-list-item[@ix-auto="option__Credentials"]', 'clickable')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Credentials"]').click()
@@ -60,21 +59,6 @@ def the_directory_services_page_should_open_then_click_ldap_settings_button(driv
     """the Directory Services page should open, then click LDAP settings button."""
     # Verify the page is starting to load
     assert wait_on_element(driver, 5, '//h1[text()="Directory Services"]')
-    time.sleep(1)
-    # First we have to disable AD
-    assert wait_on_element(driver, 5, '//mat-card//span[contains(text(),"Settings")]', 'clickable')
-    driver.find_element_by_xpath('//mat-card//span[contains(text(),"Settings")]').click()
-    # Verify the box is starting to load
-    assert wait_on_element(driver, 5, '//h3[text()="Active Directory"]')
-    assert wait_on_element(driver, 5, '//mat-checkbox[contains(@ix-auto, "Enable (requires password")]', 'clickable')
-    checkbox_checked = attribute_value_exist(driver, '//mat-checkbox[contains(@ix-auto, "Enable (requires password")]', 'class', 'mat-checkbox-checked')
-    # The checkbox should be checked
-    if checkbox_checked:
-        driver.find_element_by_xpath('//mat-checkbox[contains(@ix-auto, "Enable (requires password")]').click()
-    assert wait_on_element(driver, 5, '//span[contains(text(),"Save")]', 'clickable')
-    driver.find_element_by_xpath('//span[contains(text(),"Save")]').click()
-    assert wait_on_element_disappear(driver, 15, '//h6[contains(.,"Please wait")]')
-    # Make sure Active Directory and LDAP are both disabled
     assert wait_on_element(driver, 10, '//h3[text()="Active Directory and LDAP are disabled."]')
     assert wait_on_element(driver, 7, '//span[contains(text(),"Configure LDAP")]', 'clickable')
     driver.find_element_by_xpath('//span[contains(text(),"Configure LDAP")]').click()

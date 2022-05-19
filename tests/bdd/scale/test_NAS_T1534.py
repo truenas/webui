@@ -110,7 +110,7 @@ def set_scalingupgrade_policy(driver):
 def set_resource_reservation(driver):
     """set Resource Reservation."""
     assert wait_on_element(driver, 7, '//button[@ix-auto="button__NEXT_Resource Reservation"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__NEXT_Resource Reservation"]').click() 
+    driver.find_element_by_xpath('//button[@ix-auto="button__NEXT_Resource Reservation"]').click()
 
 
 @then('set Advanced DNS Settings')
@@ -161,6 +161,6 @@ def confirm_installation_is_successful(driver):
             driver.find_element_by_xpath('//div[contains(text(),"Available Applications")]').click()
             assert wait_on_element(driver, 10, '//div[contains(text(),"Installed Applications")]', 'clickable')
             driver.find_element_by_xpath('//div[contains(text(),"Installed Applications")]').click()
-            assert wait_on_element(driver, 300, '//mat-card[contains(.,"plex-test")]//span[@class="status active"]')
+            assert wait_on_element(driver, 500, '//mat-card[contains(.,"plex-test")]//span[@class="status active"]')
     else:
-        assert wait_on_element(driver, 300, '//mat-card[contains(.,"plex-test")]//span[@class="status active"]')
+        assert wait_on_element(driver, 500, '//mat-card[contains(.,"plex-test")]//span[@class="status active"]')

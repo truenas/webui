@@ -85,6 +85,9 @@ def set_path_to_the_acl_dataset_mntsystemkmy_acl_dataset_input_mysmbshare_as_nam
     assert wait_on_element(driver, 5, '//button[@ix-auto="button__SAVE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
     assert wait_on_element_disappear(driver, 15, '//h6[contains(.,"Please wait")]')
+    if wait_on_element(driver, 3, '//h1[text()="Enable service"]'):
+        assert wait_on_element(driver, 5, '//button[contains(.,"ENABLE SERVICE")]', 'clickable')
+        driver.find_element_by_xpath('//button[contains(.,"ENABLE SERVICE")]').click()
 
 
 @then(parsers.parse('"{smbname}" should be added, Click on service and the Service page should open'))

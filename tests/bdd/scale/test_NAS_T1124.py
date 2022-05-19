@@ -20,8 +20,31 @@ from pytest_bdd import (
 
 
 @scenario('features/NAS-T1124.feature', 'Create an smb share with the tank ACL dataset')
-def test_create_an_smb_share_with_the_tank_acl_dataset():
+def test_create_an_smb_share_with_the_tank_acl_dataset(driver):
     """Create an smb share with the tank ACL dataset."""
+    # Disable the AD
+    assert wait_on_element(driver, 7, '//mat-list-item[@ix-auto="option__Credentials"]', 'clickable')
+    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Credentials"]').click()
+    assert wait_on_element(driver, 7, '//*[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Directory Services"]', 'clickable')
+    driver.find_element_by_xpath('//*[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Directory Services"]').click()
+    """the Directory Services page should open, then click LDAP settings button."""
+    # Verify the page is starting to load
+    assert wait_on_element(driver, 5, '//h1[text()="Directory Services"]')
+    time.sleep(1)
+    # First we have to disable AD
+    assert wait_on_element(driver, 5, '//mat-card//span[contains(text(),"Settings")]', 'clickable')
+    driver.find_element_by_xpath('//mat-card//span[contains(text(),"Settings")]').click()
+    # Verify the box is starting to load
+    assert wait_on_element(driver, 5, '//h3[text()="Active Directory"]')
+    assert wait_on_element(driver, 5, '//mat-checkbox[contains(@ix-auto, "Enable (requires password")]', 'clickable')
+    checkbox_checked = attribute_value_exist(driver, '//mat-checkbox[contains(@ix-auto, "Enable (requires password")]', 'class', 'mat-checkbox-checked')
+    # The checkbox should be checked
+    if checkbox_checked:
+        driver.find_element_by_xpath('//mat-checkbox[contains(@ix-auto, "Enable (requires password")]').click()
+    assert wait_on_element(driver, 5, '//span[contains(text(),"Save")]', 'clickable')
+    driver.find_element_by_xpath('//span[contains(text(),"Save")]').click()
+    assert wait_on_element_disappear(driver, 15, '//h6[contains(.,"Please wait")]')
+    assert wait_on_element(driver, 10, '//h3[text()="Active Directory and LDAP are disabled."]')
 
 
 @given('the browser is open, the FreeNAS URL and logged in')
@@ -57,7 +80,7 @@ def the_windows_sharessmb_page_should_open_click_add(driver):
     """The Windows Shares(SMB) page should open, Click Add."""
     assert wait_on_element(driver, 5, '//h1[contains(text(),"Sharing")]')
     assert wait_on_element(driver, 5, '//mat-card[contains(.,"SMB")]//button[@ix-auto="button__-add"]', 'clickable')
-    driver.find_element_by_xpath('//mat-card[contains(.,"SMB")]//button[@ix-auto="button__-add"]').click()    
+    driver.find_element_by_xpath('//mat-card[contains(.,"SMB")]//button[@ix-auto="button__-add"]').click()
 
 
 @then(parsers.parse('Set Path to the ACL dataset "{path}", Input "{smbname}" as name, Click to enable, Input "{description}" as description, and Click Summit'))
@@ -85,6 +108,9 @@ def set_path_to_the_acl_dataset_mnttanktank_acl_dataset_input_mytankshare_as_nam
     assert wait_on_element(driver, 5, '//button[@ix-auto="button__SAVE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
     assert wait_on_element_disappear(driver, 15, '//h6[contains(.,"Please wait")]')
+    if wait_on_element(driver, 3, '//h1[text()="Enable service"]'):
+        assert wait_on_element(driver, 5, '//button[contains(.,"ENABLE SERVICE")]', 'clickable')
+        driver.find_element_by_xpath('//button[contains(.,"ENABLE SERVICE")]').click()
 
 
 @then(parsers.parse('"{smbname}" should be added, Click on service and the Service page should open'))
