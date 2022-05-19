@@ -165,7 +165,7 @@ export class IpmiFormComponent implements FormConfiguration {
 
   async prerequisite(): Promise<boolean> {
     return new Promise(async (resolve) => {
-      if (window.localStorage.getItem('product_type').includes(ProductType.Enterprise)) {
+      if (window.localStorage.getItem('product_type') === ProductType.ScaleEnterprise) {
         await this.ws.call('failover.licensed').toPromise().then((isHa) => {
           this.isHa = isHa;
         });

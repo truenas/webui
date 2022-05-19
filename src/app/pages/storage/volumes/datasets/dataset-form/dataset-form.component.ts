@@ -918,7 +918,7 @@ export class DatasetFormComponent implements FormConfiguration {
     this.productType = window.localStorage.getItem('product_type') as ProductType;
     const aclControl = entityForm.formGroup.get('aclmode');
     this.entityForm = entityForm;
-    if (this.productType.includes(ProductType.Enterprise)) {
+    if (this.productType === ProductType.ScaleEnterprise) {
       this.store$.pipe(waitForSystemInfo, untilDestroyed(this)).subscribe((systemInfo) => {
         if (systemInfo.license && systemInfo.license.features.includes(LicenseFeature.Dedup)) {
           this.entityForm.setDisabled('deduplication', false, false);

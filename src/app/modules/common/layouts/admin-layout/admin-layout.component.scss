@@ -17,12 +17,6 @@
   width: 36px;
 }
 
-.truenas-scale .app-logo {
-  height: 40px;
-  top: 12px;
-  width: 40px;
-}
-
 .branding {
   align-items: center;
   background-color: var(--topbar) !important;
@@ -48,6 +42,12 @@
   .app-logo-text {
     height: 40px;
     width: auto;
+  }
+
+  &.truenas-scale .app-logo {
+    height: 40px;
+    top: 12px;
+    width: 40px;
   }
 }
 

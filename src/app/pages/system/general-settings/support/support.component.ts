@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { MatCheckboxChange } from '@angular/material/checkbox/checkbox';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
+import { delay } from 'rxjs/operators';
 import { helptextSystemSupport as helptext } from 'app/helptext/system/support';
 import { DialogFormConfiguration } from 'app/modules/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/modules/entity/entity-dialog/entity-dialog.component';
@@ -34,9 +35,12 @@ export class SupportComponent implements OnInit {
   hasLicense = false;
   licenseInfo: LicenseInfoInSupport = null;
   links = [helptext.docHub, helptext.forums, helptext.licensing];
-  licenseButtonText: string;
   ticketText = helptext.ticket;
   proactiveText = helptext.proactive.title;
+
+  get licenseButtonText(): string {
+    return this.hasLicense ? helptext.updateTxt : helptext.enterTxt;
+  }
 
   constructor(
     protected ws: WebSocketService,
@@ -60,13 +64,13 @@ export class SupportComponent implements OnInit {
         this.licenseInfo = systemInfo.license;
         this.parseLicenseInfo();
       }
-      this.licenseButtonText = this.hasLicense ? helptext.updateTxt : helptext.enterTxt;
     });
-    setTimeout(() => {
-      this.ws.call('truenas.is_production').pipe(untilDestroyed(this)).subscribe((res) => {
-        this.isProduction = res;
-      });
-    }, 500);
+    this.ws.call('truenas.is_production').pipe(
+      delay(500),
+      untilDestroyed(this),
+    ).subscribe((res) => {
+      this.isProduction = res;
+    });
   }
 
   parseLicenseInfo(): void {

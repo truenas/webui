@@ -4,6 +4,7 @@ import { Store, StoreModule } from '@ngrx/store';
 import { MockComponent } from 'ng-mocks';
 import { MockWebsocketService } from 'app/core/testing/classes/mock-websocket.service';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { AlertLevel } from 'app/enums/alert-level.enum';
 import { ApiEventMessage } from 'app/enums/api-event-message.enum';
 import { Alert } from 'app/interfaces/alert.interface';
 import { AlertComponent } from 'app/modules/alerts/components/alert/alert.component';
@@ -21,12 +22,14 @@ const unreadAlerts = [
     dismissed: false,
     formatted: 'Unread 1',
     datetime: { $date: 1641811015 },
+    level: AlertLevel.Critical,
   },
   {
     id: '2',
     dismissed: false,
     formatted: 'Unread 2',
     datetime: { $date: 1641810015 },
+    level: AlertLevel.Alert,
   },
 ] as Alert[];
 
@@ -88,16 +91,16 @@ describe('AlertsPanelComponent', () => {
     const unreadAlertComponents = alertPanel.unreadAlertComponents;
 
     expect(unreadAlertComponents.length).toEqual(2);
-    expect(unreadAlertComponents[0].alert).toEqual(unreadAlerts[0]);
-    expect(unreadAlertComponents[1].alert).toEqual(unreadAlerts[1]);
+    expect(unreadAlertComponents[0].alert).toEqual(unreadAlerts[1]);
+    expect(unreadAlertComponents[1].alert).toEqual(unreadAlerts[0]);
   });
 
   it('shows a list of dismissed alerts', () => {
     const dismissedAlertComponents = alertPanel.dismissedAlertComponents;
 
     expect(dismissedAlertComponents.length).toEqual(2);
-    expect(dismissedAlertComponents[0].alert).toEqual(dismissedAlerts[0]);
-    expect(dismissedAlertComponents[1].alert).toEqual(dismissedAlerts[1]);
+    expect(dismissedAlertComponents[0].alert).toEqual(dismissedAlerts[1]);
+    expect(dismissedAlertComponents[1].alert).toEqual(dismissedAlerts[0]);
   });
 
   it('dismisses all alerts when Dismiss All Alerts is pressed', () => {
