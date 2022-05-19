@@ -1,10 +1,17 @@
-.header-container {
+:host {
+  border-bottom: solid 1px var(--lines);
+  box-sizing: border-box;
   color: var(--primary-txt);
+  display: block;
+  margin: 0 auto 32px;
+  padding-bottom: 8px;
+  width: calc(100% - 16px);
+}
+
+.header-container {
   display: flex;
   flex-direction: column;
   gap: 3px;
-  margin-bottom: 16px;
-  padding: 0 10px;
 }
 
 .title-container {
@@ -20,5 +27,5 @@
   display: flex;
   flex-direction: row-reverse;
   flex-grow: 1;
-  gap: 0 10px;
+  gap: 0 8px;
 }

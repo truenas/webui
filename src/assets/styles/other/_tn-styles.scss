@@ -810,7 +810,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
   .mat-button {
     @include variable(font-family, --font-family-body, $font-family-body, !important);
     background: var(--btn-default-bg);
-    font-weight: 500 !important;
+    font-weight: 700 !important;
     text-transform: capitalize !important;
   }
 
