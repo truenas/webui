@@ -25,15 +25,6 @@ import { StorageService, WebSocketService } from 'app/services';
 import { CoreService } from 'app/services/core-service/core.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
-// interface DiskBulkDataForm {
-//   diskIds: string[];
-//   diskNames: string[];
-//   hddStandby?: DiskStandby;
-//   advPowerMgt?: DiskPowerLevel;
-//   smartOptions?: string;
-//   diskToggle: boolean;
-// }
-
 @UntilDestroy()
 @Component({
   selector: 'disk-list',
@@ -74,12 +65,6 @@ export class DiskListComponent implements EntityTableConfig<Disk> {
       key_props: ['name'],
     },
   };
-  // diskIds: string[] = [];
-  // diskNames: string[] = [];
-  // hddStandby: DiskStandby[] = [];
-  // advPowerMgt: DiskPowerLevel[] = [];
-  // diskToggle: boolean;
-  // smartOptions: string[] = [];
   private smartDiskChoices: Choices = {};
 
   multiActions = [{

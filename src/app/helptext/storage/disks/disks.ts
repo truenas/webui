@@ -108,5 +108,5 @@ export default {
   },
 
   dialog_title: T('Settings saved'),
-  dialog_msg_save_success: T('Successfully saved Disk settings.'),
+  dialog_msg_save_success: T('Successfully saved Disk(s) settings.'),
 };

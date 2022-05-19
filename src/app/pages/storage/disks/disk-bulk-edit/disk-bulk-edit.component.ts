@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -8,29 +8,24 @@ import { DiskPowerLevel } from 'app/enums/disk-power-level.enum';
 import { DiskStandby } from 'app/enums/disk-standby.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import helptext from 'app/helptext/storage/disks/disks';
-import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { Disk } from 'app/interfaces/storage.interface';
 import { AppLoaderService } from 'app/modules/app-loader/app-loader.service';
 import { WebSocketService } from 'app/services';
 import { DialogService } from 'app/services/dialog.service';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { StorageService } from 'app/services/storage.service';
 
 @UntilDestroy()
 @Component({
   templateUrl: 'disk-bulk-edit.component.html',
   styleUrls: ['disk-bulk-edit.component.scss'],
-  // changeDetection: ChangeDetectionStrategy.OnPush,
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class DiskBulkEditComponent implements FormConfiguration {
-  routeSuccess: string[] = ['storage', 'disks'];
-  // isEntity = true;
-  // ------------------------------------------------
+export class DiskBulkEditComponent {
   diskIds: string[] = [];
   diskNames: string[] = [];
   isLoading = false;
-  title = '';
-  diskName: any; // any
   form = this.fb.group({
     hddstandby: [null as DiskStandby],
     advpowermgmt: [null as DiskPowerLevel],
@@ -51,19 +46,8 @@ export class DiskBulkEditComponent implements FormConfiguration {
     protected loader: AppLoaderService,
     public diskBucket: StorageService,
     private translate: TranslateService,
-  ) {
-    this.aroute.params.pipe(untilDestroyed(this)).subscribe((params) => { // --------------
-      if (params['poolId']) {
-        this.routeSuccess = ['storage', 'pools', 'status', params['poolId']];
-      }
-    });
-  }
-
-  afterInit(): void { // --------------
-    if (!this.diskBucket.ids) {
-      this.router.navigate(this.routeSuccess);
-    }
-  }
+    private slideInService: IxSlideInService,
+  ) {}
 
   private translateOptions(options: Option[]): Option[] {
     return options.map((option) => {
@@ -95,21 +79,21 @@ export class DiskBulkEditComponent implements FormConfiguration {
 
     // If all items match in an array, this fills in the value in the form; otherwise, blank
     if (hddStandby.every((val, i, arr) => val === arr[0])) {
-      setForm.hddstandby = hddStandby[0];
+      setForm.hddstandby = hddStandby[0] || null;
     } else {
-      setForm.hddstandby = undefined;
+      setForm.hddstandby = null;
     }
 
     if (advPowerMgt.every((val, i, arr) => val === arr[0])) {
-      setForm.advpowermgmt = advPowerMgt[0];
+      setForm.advpowermgmt = advPowerMgt[0] || null;
     } else {
-      setForm.advpowermgmt = undefined;
+      setForm.advpowermgmt = null;
     }
 
     if (smartOptions.every((val, i, arr) => val === arr[0])) {
-      setForm.smartoptions = smartOptions[0];
+      setForm.smartoptions = smartOptions[0] || null;
     } else {
-      setForm.smartoptions = '';
+      setForm.smartoptions = null;
     }
 
     this.form.patchValue({ ...setForm });
@@ -117,36 +101,47 @@ export class DiskBulkEditComponent implements FormConfiguration {
 
   onSubmit(): void {
     const req = [];
-    const data = { ...this.form.value };
+    const data: { [key: string]: any } = { ...this.form.value };
 
     if (!data.togglesmart) {
       data.smartoptions = '';
+    }
+
+    for (const key in data) {
+      if (data[key] === null) {
+        delete data[key];
+      }
     }
 
     for (const i of this.diskIds) {
       req.push([i, data]);
     }
 
+    this.isLoading = true;
     this.ws.job('core.bulk', ['disk.update', req])
       .pipe(untilDestroyed(this)).subscribe(
         (res) => {
           if (res.state === JobState.Success) {
-            // this.loader.close();
+            this.isLoading = false;
             let isSuccessful = true;
             for (const result of res.result) {
               if (result.error !== null) {
+                this.slideInService.close();
                 this.dialogService.errorReport(helptext.dialog_error, result.error);
                 isSuccessful = false;
                 break;
               }
             }
             if (isSuccessful) {
-              this.router.navigate(this.routeSuccess);
+              this.slideInService.close();
+              this.dialogService.info(helptext.dialog_title,
+                helptext.dialog_msg_save_success, true);
             }
           }
         },
         (err) => {
-          // this.loader.close();
+          this.isLoading = false;
+          this.slideInService.close();
           this.dialogService.errorReport(helptext.dialog_error, err.reason, err.trace.formatted);
         },
       );
