@@ -19,12 +19,13 @@
       }
 
       a {
+        color: var(--primary);
         font-size: smaller;
         font-weight: 600;
         text-transform: uppercase;
 
-        &:not(.no-click) {
-          color: var(--primary);
+        &.no-click {
+          color: var(--alt-fg2);
         }
       }
     }
