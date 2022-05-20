@@ -193,7 +193,7 @@ export class AppSchemaService {
   addFormControls(
     chartSchemaNode: ChartSchemaNode,
     formGroup: FormGroup,
-    config?: HierarchicalObjectMap<ChartFormValue>,
+    config: HierarchicalObjectMap<ChartFormValue>,
   ): void {
     const schema = chartSchemaNode.schema;
     if (schema.hidden) {
@@ -321,12 +321,11 @@ export class AppSchemaService {
         }
 
         if (Array.isArray(nextItem)) {
-          // eslint-disable-next-line unused-imports/no-unused-vars
-          for (const _ of nextItem) {
+          for (const item of nextItem) {
             this.addFormListItem({
               array: formGroup.controls[chartSchemaNode.variable] as FormArray,
               schema: items,
-            });
+            }, item);
           }
         }
       }
@@ -360,10 +359,10 @@ export class AppSchemaService {
     return path;
   }
 
-  addFormListItem(event: AddListItemEvent): void {
+  addFormListItem(event: AddListItemEvent, config?: HierarchicalObjectMap<ChartFormValue>): void {
     const itemFormGroup = new FormGroup({});
     event.schema.forEach((item) => {
-      this.addFormControls(item as ChartSchemaNode, itemFormGroup);
+      this.addFormControls(item as ChartSchemaNode, itemFormGroup, config);
     });
     event.array.push(itemFormGroup);
   }
