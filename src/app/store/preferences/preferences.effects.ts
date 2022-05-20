@@ -18,7 +18,7 @@ import {
 } from 'app/store/preferences/preferences.actions';
 import { selectPreferencesState } from 'app/store/preferences/preferences.selectors';
 import { sidenavUpdated } from 'app/store/topbar/topbar.actions';
-import { snapshotExtraColumnsToggled } from './preferences.actions';
+import { snapshotExtraColumnsToggled, updateRebootAfterManualUpdate } from './preferences.actions';
 
 @Injectable()
 export class PreferencesEffects {
@@ -53,9 +53,10 @@ export class PreferencesEffects {
       snapshotExtraColumnsToggled,
       builtinGroupsToggled,
       localizationFormSubmitted,
+      updateRebootAfterManualUpdate,
     ),
     withLatestFrom(this.store$.select(selectPreferencesState)),
-    switchMap(([_, state]) => {
+    switchMap(([, state]) => {
       if (!state.areLoaded) {
         return throwError('Attempting to save user preferences before they were loaded.');
       }

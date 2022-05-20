@@ -13,8 +13,7 @@ import {
   BehaviorSubject, noop, Observable, of,
 } from 'rxjs';
 import {
-  filter,
-  map, take, tap,
+  filter, take, tap,
 } from 'rxjs/operators';
 import { JobState } from 'app/enums/job-state.enum';
 import { ProductType } from 'app/enums/product-type.enum';
@@ -73,14 +72,6 @@ export class ManualUpdateFormComponent implements OnInit {
     this.getVersionNoFromSysInfo();
     this.setPoolOptions();
     this.getUserPrefs();
-    this.mapTempFileLocationValueToNull();
-  }
-
-  mapTempFileLocationValueToNull(): void {
-    this.form.get('filelocation').valueChanges.pipe(
-      map((filelocation) => (filelocation === ':temp:' ? null : filelocation)),
-      untilDestroyed(this),
-    ).subscribe(noop);
   }
 
   getUserPrefs(): void {
@@ -164,6 +155,7 @@ export class ManualUpdateFormComponent implements OnInit {
   onSubmit(): void {
     this.isFormLoading$.next(true);
     const value = this.form.value;
+    value.filelocation = value.filelocation === ':temp:' ? null : value.filelocation;
     this.store$.dispatch(updateRebootAfterManualUpdate({
       rebootAfterManualUpdate: value.rebootAfterManualUpdate,
     }));
