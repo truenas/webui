@@ -11,7 +11,7 @@ import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
 import { AppState } from 'app/store/index';
 import {
   builtinGroupsToggled,
-  builtinUsersToggled, localizationFormSubmitted,
+  builtinUsersToggled, guiFormSubmitted, localizationFormSubmitted,
   preferencesLoaded, preferredColumnsUpdated,
   themeNotFound,
 } from 'app/store/preferences/preferences.actions';
@@ -61,6 +61,7 @@ export class PreferencesEffects {
       snapshotExtraColumnsToggled,
       builtinGroupsToggled,
       localizationFormSubmitted,
+      guiFormSubmitted,
     ),
     withLatestFrom(this.store$.select(selectPreferencesState)),
     switchMap(([_, state]) => {

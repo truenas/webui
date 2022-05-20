@@ -19,7 +19,6 @@ import { ProductType, productTypeLabels } from 'app/enums/product-type.enum';
 import globalHelptext from 'app/helptext/global-helptext';
 import productText from 'app/helptext/product';
 import helptext from 'app/helptext/topbar';
-import { ThemeChangedEvent } from 'app/interfaces/events/theme-events.interface';
 import { Interval } from 'app/interfaces/timeout.interface';
 import { matchOtherValidator } from 'app/modules/entity/entity-form/validators/password-validation/password-validation';
 import { SystemGeneralService } from 'app/services';
@@ -48,7 +47,7 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
 
   _copyrightYear = '';
   get copyrightYear(): string {
-    return window.localStorage && window.localStorage.buildtime ? this.localeService.getCopyrightYearFromBuildTime() : '';
+    return window.localStorage?.buildtime ? this.localeService.getCopyrightYearFromBuildTime() : '';
   }
 
   tokenObservable: Subscription;
@@ -141,12 +140,6 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngOnInit(): void {
-    this.core.register({ observerClass: this, eventName: 'ThemeChanged' }).pipe(untilDestroyed(this)).subscribe((evt: ThemeChangedEvent) => {
-      if (this.router.url === '/sessions/signin' && evt.sender.userThemeLoaded) {
-        this.redirect();
-      }
-    });
-
     if (this.canLogin()) {
       this.checkBuildtime();
       this.loginToken();
