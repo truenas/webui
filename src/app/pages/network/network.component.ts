@@ -231,7 +231,7 @@ export class NetworkComponent implements OnInit, OnDestroy {
         }
       });
 
-    if (window.localStorage.getItem('product_type') === ProductType.Enterprise) {
+    if (window.localStorage.getItem('product_type') === ProductType.ScaleEnterprise) {
       this.ws
         .call('failover.licensed')
         .pipe(untilDestroyed(this))

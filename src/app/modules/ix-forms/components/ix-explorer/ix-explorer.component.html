@@ -29,10 +29,10 @@
     <!-- Do not remove #treeNodeTemplate even though it appears to be unused -->
     <ng-template #treeNodeTemplate let-node>
       <ng-container *ngIf="typeNode(node) as node">
-        <mat-icon *ngIf="node.hasChildren; else fileIcon">folder</mat-icon>
-        <ng-template #fileIcon><mat-icon>insert_drive_file</mat-icon></ng-template>
+        <mat-icon *ngIf="node.data.type === ExplorerNodeType.File; else folderIcon">insert_drive_file</mat-icon>
+        <ng-template #folderIcon><mat-icon>folder</mat-icon></ng-template>
 
-        <span class="node-name">{{node.data.name}}</span>
+        <span class="node-name">{{ node.data.name }}</span>
       </ng-container>
     </ng-template>
   </tree-root>

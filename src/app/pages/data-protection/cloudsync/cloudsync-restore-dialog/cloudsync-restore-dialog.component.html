@@ -1,0 +1,44 @@
+<h1 matDialogTitle>
+  {{ 'Restore Cloud Sync Task' | translate }}
+</h1>
+<form [formGroup]="form" class="ix-form-container" (submit)="onSubmit()">
+  <ix-input
+    formControlName="description"
+    [label]="'Description' | translate"
+    [required]="true"
+    [tooltip]="helptext.description_tooltip | translate"
+  ></ix-input>
+
+  <ix-select
+    formControlName="transfer_mode"
+    [label]="'Transfer Mode' | translate"
+    [required]="true"
+    [options]="transferModes$"
+  ></ix-select>
+
+  <ix-transfer-mode-explanation
+    [mode]="form.get('transfer_mode').value"
+  ></ix-transfer-mode-explanation>
+
+  <ix-explorer
+    formControlName="path"
+    [label]="'Directory/Files' | translate"
+    [required]="true"
+    [tooltip]="helptext.path_tooltip | translate"
+    [nodeProvider]="treeNodeProvider"
+  ></ix-explorer>
+
+  <div class="form-actions">
+    <button
+      mat-button
+      type="submit"
+      [disabled]="form.invalid"
+      color="primary"
+    >{{ 'Restore' | translate }}</button>
+    <button
+      mat-button
+      type="button"
+      matDialogClose
+    >{{ 'Cancel' | translate }}</button>
+  </div>
+</form>

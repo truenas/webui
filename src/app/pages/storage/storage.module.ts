@@ -75,6 +75,7 @@ import { ZvolFormComponent } from 'app/pages/storage/volumes/zvol/zvol-form/zvol
 import { ZvolWizardComponent } from 'app/pages/storage/volumes/zvol/zvol-wizard/zvol-wizard.component';
 import { UserService, StorageService, JobService } from 'app/services';
 import { routing } from './storage.routing';
+import { DatasetQuotaFormComponent } from './volumes/datasets/dataset-quotas/dataset-quota-form/dataset-quota-form.component';
 
 @NgModule({
   imports: [
@@ -154,6 +155,7 @@ import { routing } from './storage.routing';
     ZvolWizardComponent,
     DiskWipeDialogComponent,
     ManualTestDialogComponent,
+    DatasetQuotaFormComponent,
   ],
   exports: [VolumesListControlsComponent],
   providers: [

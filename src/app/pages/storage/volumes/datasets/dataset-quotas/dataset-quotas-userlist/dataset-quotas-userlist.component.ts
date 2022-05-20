@@ -1,18 +1,15 @@
 import { Component, OnDestroy } from '@angular/core';
-import { FormControl, ValidationErrors } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { filter } from 'rxjs/operators';
 import { DatasetQuotaType } from 'app/enums/dataset.enum';
-import globalHelptext from 'app/helptext/global-helptext';
 import helptext from 'app/helptext/storage/volumes/datasets/dataset-quotas';
 import { DatasetQuota, SetDatasetQuota } from 'app/interfaces/dataset-quota.interface';
 import { QueryFilter, QueryParams } from 'app/interfaces/query-api.interface';
-import { DialogFormConfiguration } from 'app/modules/entity/entity-dialog/dialog-form-configuration.interface';
-import { EntityDialogComponent } from 'app/modules/entity/entity-dialog/entity-dialog.component';
 import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-table.component';
 import { EntityTableAction, EntityTableConfig } from 'app/modules/entity/entity-table/entity-table.interface';
+import { DatasetQuotaFormComponent } from 'app/pages/storage/volumes/datasets/dataset-quotas/dataset-quota-form/dataset-quota-form.component';
 import { DatasetQuotaRow } from 'app/pages/storage/volumes/datasets/dataset-quotas/dataset-quotas-grouplist/dataset-quota-row.interface';
 import {
   UserQuotaFormComponent,
@@ -126,93 +123,8 @@ export class DatasetQuotasUserlistComponent implements EntityTableConfig, OnDest
       label: this.translate.instant('Edit'),
       name: 'edit',
       onClick: () => {
-        this.loader.open();
-        const params = [['id', '=', row.id] as QueryFilter<DatasetQuota>] as QueryParams<DatasetQuota>;
-        this.ws.call('pool.dataset.get_quota', [this.pk, DatasetQuotaType.User, params]).pipe(untilDestroyed(this)).subscribe((res) => {
-          this.loader.close();
-          const conf: DialogFormConfiguration = {
-            title: helptext.users.dialog.title,
-            fieldConfig: [
-              {
-                type: 'input',
-                name: 'name',
-                placeholder: helptext.users.dialog.user.placeholder,
-                value: res[0].name,
-                readonly: true,
-              },
-              {
-                type: 'input',
-                name: 'data_quota',
-                placeholder: this.translate.instant(helptext.users.data_quota.placeholder)
-                   + this.translate.instant(globalHelptext.human_readable.suggestion_label),
-                tooltip: this.translate.instant(helptext.users.data_quota.tooltip)
-                + this.translate.instant(globalHelptext.human_readable.suggestion_tooltip)
-                + this.translate.instant(' bytes.'),
-                value: this.storageService.convertBytesToHumanReadable(res[0].quota, 0, null, true),
-                id: 'data-quota_input',
-                blurStatus: true,
-                blurEvent: () => this.blurEvent(),
-                parent: this,
-                validation: [
-                  (control: FormControl): ValidationErrors => {
-                    const dataQuotaConfig = conf.fieldConfig.find((config) => config.name === 'data_quota');
-                    this.quotaValue = control.value;
-                    const size = this.storageService.convertHumanStringToNum(control.value);
-                    const errors = control.value && Number.isNaN(size)
-                      ? { invalid_byte_string: true }
-                      : null;
-
-                    if (errors) {
-                      dataQuotaConfig.hasErrors = true;
-                      dataQuotaConfig.errors = globalHelptext.human_readable.input_error;
-                    } else {
-                      dataQuotaConfig.hasErrors = false;
-                      dataQuotaConfig.errors = '';
-                    }
-                    return errors;
-                  },
-                ],
-              },
-              {
-                type: 'input',
-                name: 'obj_quota',
-                placeholder: helptext.users.obj_quota.placeholder,
-                tooltip: helptext.users.obj_quota.tooltip,
-                value: res[0].obj_quota,
-              },
-            ],
-            saveButtonText: helptext.shared.set,
-            cancelButtonText: helptext.shared.cancel,
-
-            customSubmit: (data: EntityDialogComponent) => {
-              const entryData = data.formValue;
-              const payload = [];
-              payload.push({
-                quota_type: DatasetQuotaType.User,
-                id: String(res[0].id),
-                quota_value: this.storageService.convertHumanStringToNum(entryData.data_quota),
-              },
-              {
-                quota_type: DatasetQuotaType.UserObj,
-                id: String(res[0].id),
-                quota_value: entryData.obj_quota,
-              });
-              this.loader.open();
-              this.ws.call('pool.dataset.set_quota', [this.pk, payload]).pipe(untilDestroyed(this)).subscribe(() => {
-                this.loader.close();
-                this.dialogService.closeAllDialogs();
-                this.entityList.getData();
-              }, (err) => {
-                this.loader.close();
-                this.dialogService.errorReport(this.translate.instant('Error'), err.reason, err.trace.formatted);
-              });
-            },
-          };
-          this.dialogService.dialogFormWide(conf);
-        }, (err) => {
-          this.loader.close();
-          this.dialogService.errorReport(this.translate.instant('Error'), err.reason, err.trace.formatted);
-        });
+        const form = this.slideInService.open(DatasetQuotaFormComponent);
+        form.setupForm(DatasetQuotaType.User, row.id, this.pk);
       },
     });
     return actions as EntityTableAction[];
