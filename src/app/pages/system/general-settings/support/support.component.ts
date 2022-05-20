@@ -57,7 +57,7 @@ export class SupportComponent implements OnInit {
       }
       if (systemInfo.license) {
         this.hasLicense = true;
-        this.licenseInfo = systemInfo.license;
+        this.licenseInfo = { ...systemInfo.license };
         this.parseLicenseInfo();
       }
       this.licenseButtonText = this.hasLicense ? helptext.updateTxt : helptext.enterTxt;
