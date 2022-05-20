@@ -1,9 +1,9 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnDestroy } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { of } from 'rxjs';
+import { of, Subscription } from 'rxjs';
 import { ixChartApp } from 'app/constants/catalog.constants';
 import { DynamicFormSchemaType } from 'app/enums/dynamic-form-schema-type.enum';
 import helptext from 'app/helptext/apps/apps';
@@ -26,7 +26,7 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
   styleUrls: ['./chart-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ChartFormComponent {
+export class ChartFormComponent implements OnDestroy {
   title: string;
   config: { [key: string]: ChartFormValue };
   catalogApp: CatalogApp;
@@ -36,6 +36,7 @@ export class ChartFormComponent {
   isNew = true;
   dynamicSection: DynamicFormSchema[] = [];
   dialogRef: MatDialogRef<EntityJobComponent>;
+  subscription = new Subscription();
 
   form = this.formBuilder.group<ChartFormValues>({
     release_name: '',
@@ -50,6 +51,10 @@ export class ChartFormComponent {
     private appSchemaService: AppSchemaService,
     private mdDialog: MatDialog,
   ) {}
+
+  ngOnDestroy(): void {
+    this.subscription.unsubscribe();
+  }
 
   setTitle(title: string): void {
     this.title = title;
@@ -145,7 +150,7 @@ export class ChartFormComponent {
   }
 
   addFormControls(question: ChartSchemaNode): void {
-    this.appSchemaService.addFormControls(question, this.form, this.config);
+    this.subscription.add(this.appSchemaService.addFormControls(question, this.form, this.config));
   }
 
   addFormSchema(chartSchemaNode: ChartSchemaNode, group: string): void {

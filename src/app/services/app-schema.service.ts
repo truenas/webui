@@ -3,7 +3,7 @@ import {
   FormGroup, FormControl, Validators, FormArray, AbstractControl,
 } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { of } from 'rxjs';
+import { of, Subscription } from 'rxjs';
 import { ChartSchemaType } from 'app/enums/chart-schema-type.enum';
 import { DynamicFormSchemaType } from 'app/enums/dynamic-form-schema-type.enum';
 import { ChartFormValue, ChartSchemaNode } from 'app/interfaces/chart-release.interface';
@@ -197,7 +197,8 @@ export class AppSchemaService {
     chartSchemaNode: ChartSchemaNode,
     formGroup: FormGroup,
     config: HierarchicalObjectMap<ChartFormValue>,
-  ): void {
+  ): Subscription {
+    const subscription = new Subscription();
     const schema = chartSchemaNode.schema;
     if (schema.hidden) {
       return;
@@ -221,14 +222,14 @@ export class AppSchemaService {
 
       if (schema.subquestions) {
         schema.subquestions.forEach((subquestion) => {
-          this.addFormControls(subquestion, formGroup, config);
+          subscription.add(this.addFormControls(subquestion, formGroup, config));
           if (subquestion.schema.default === schema.show_subquestions_if) {
             formGroup.controls[subquestion.variable].enable();
           } else {
             formGroup.controls[subquestion.variable].disable();
           }
         });
-        newFormControl.valueChanges
+        subscription.add(newFormControl.valueChanges
           .pipe(untilDestroyed(this))
           .subscribe((value) => {
             schema.subquestions.forEach((subquestion) => {
@@ -240,7 +241,7 @@ export class AppSchemaService {
                 }
               }
             });
-          });
+          }));
       }
 
       formGroup.addControl(chartSchemaNode.variable, newFormControl);
@@ -264,7 +265,7 @@ export class AppSchemaService {
               if (formGroup.controls[relation.fieldName].value !== relation.operatorValue) {
                 formGroup.controls[chartSchemaNode.variable].disable();
               }
-              formGroup.controls[relation.fieldName].valueChanges
+              subscription.add(formGroup.controls[relation.fieldName].valueChanges
                 .pipe(untilDestroyed(this))
                 .subscribe((value) => {
                   if (formGroup.controls[chartSchemaNode.variable].parent.enabled) {
@@ -274,13 +275,13 @@ export class AppSchemaService {
                       formGroup.controls[chartSchemaNode.variable].disable();
                     }
                   }
-                });
+                }));
               break;
             case '!=':
               if (formGroup.controls[relation.fieldName].value === relation.operatorValue) {
                 formGroup.controls[chartSchemaNode.variable].disable();
               }
-              formGroup.controls[relation.fieldName].valueChanges
+              subscription.add(formGroup.controls[relation.fieldName].valueChanges
                 .pipe(untilDestroyed(this))
                 .subscribe((value) => {
                   if (formGroup.controls[chartSchemaNode.variable].parent.enabled) {
@@ -290,7 +291,7 @@ export class AppSchemaService {
                       formGroup.controls[chartSchemaNode.variable].disable();
                     }
                   }
-                });
+                }));
               break;
           }
         });
@@ -298,7 +299,7 @@ export class AppSchemaService {
     } else if (schema.type === ChartSchemaType.Dict) {
       formGroup.addControl(chartSchemaNode.variable, new FormGroup({}));
       for (const attr of schema.attrs) {
-        this.addFormControls(attr, formGroup.controls[chartSchemaNode.variable] as FormGroup, config);
+        subscription.add(this.addFormControls(attr, formGroup.controls[chartSchemaNode.variable] as FormGroup, config));
       }
     } else if (schema.type === ChartSchemaType.List) {
       formGroup.addControl(chartSchemaNode.variable, new FormArray([]));
@@ -325,14 +326,15 @@ export class AppSchemaService {
 
         if (Array.isArray(nextItem)) {
           for (const item of nextItem) {
-            this.addFormListItem({
+            subscription.add(this.addFormListItem({
               array: formGroup.controls[chartSchemaNode.variable] as FormArray,
               schema: items,
-            }, item);
+            }, item));
           }
         }
       }
     }
+    return subscription;
   }
 
   getControlName(control: AbstractControl): string | null {
@@ -362,12 +364,15 @@ export class AppSchemaService {
     return path;
   }
 
-  addFormListItem(event: AddListItemEvent, config?: HierarchicalObjectMap<ChartFormValue>): void {
+  addFormListItem(event: AddListItemEvent, config?: HierarchicalObjectMap<ChartFormValue>): Subscription {
+    const subscriptionEvent = new Subscription();
     const itemFormGroup = new FormGroup({});
     event.schema.forEach((item) => {
-      this.addFormControls(item as ChartSchemaNode, itemFormGroup, config);
+      subscriptionEvent.add(this.addFormControls(item as ChartSchemaNode, itemFormGroup, config));
     });
     event.array.push(itemFormGroup);
+
+    return subscriptionEvent;
   }
 
   deleteFormListItem(event: DeleteListItemEvent): void {
