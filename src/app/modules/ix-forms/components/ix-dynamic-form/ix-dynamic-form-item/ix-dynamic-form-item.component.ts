@@ -28,21 +28,19 @@ export class IxDynamicFormItemComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.dynamicForm?.valueChanges.pipe(
-      map((changes) => {
-        const dependsOn = this.dynamicSchema?.dependsOn;
+    const dependsOn = this.dynamicSchema?.dependsOn;
 
-        if (!dependsOn) {
-          return null;
-        }
-
-        return changes[dependsOn];
-      }),
-      filter((x) => x != null),
-      distinctUntilChanged(),
-      untilDestroyed(this),
-    ).subscribe(() => {
-      this.changeDetectorRef.markForCheck();
+    dependsOn?.forEach((depend) => {
+      this.dynamicForm?.valueChanges.pipe(
+        map((changes) => {
+          return changes[depend];
+        }),
+        filter((x) => x != null),
+        distinctUntilChanged(),
+        untilDestroyed(this),
+      ).subscribe(() => {
+        this.changeDetectorRef.markForCheck();
+      });
     });
   }
 

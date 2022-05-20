@@ -148,7 +148,7 @@ export class AppSchemaService {
           const objs = this.transformNode(subquestion);
           objs.forEach((obj) => {
             obj.indent = true;
-            obj.dependsOn = chartSchemaNode.variable;
+            obj.dependsOn = [chartSchemaNode.variable];
           });
           newSchema = newSchema.concat(objs);
         });
@@ -186,6 +186,7 @@ export class AppSchemaService {
         items,
         itemsSchema,
         editable: schema.editable,
+        dependsOn: schema.show_if?.map((conditional) => conditional[0]),
       });
     } else {
       console.error('Unsupported type = ', schema.type);
@@ -249,53 +250,6 @@ export class AppSchemaService {
       if (schema.default !== undefined) {
         formGroup.controls[chartSchemaNode.variable].setValue(schema.default);
       }
-
-      if (schema.show_if) {
-        const relations: Relation[] = schema.show_if.map((item) => ({
-          fieldName: item[0],
-          operatorName: item[1],
-          operatorValue: item[2],
-        }));
-        relations.forEach((relation) => {
-          if (!formGroup.controls[relation.fieldName]) {
-            formGroup.addControl(relation.fieldName, new FormControl());
-          }
-          switch (relation.operatorName) {
-            case '=':
-              if (formGroup.controls[relation.fieldName].value !== relation.operatorValue) {
-                formGroup.controls[chartSchemaNode.variable].disable();
-              }
-              subscription.add(formGroup.controls[relation.fieldName].valueChanges
-                .pipe(untilDestroyed(this))
-                .subscribe((value) => {
-                  if (formGroup.controls[chartSchemaNode.variable].parent.enabled) {
-                    if (value === relation.operatorValue) {
-                      formGroup.controls[chartSchemaNode.variable].enable();
-                    } else {
-                      formGroup.controls[chartSchemaNode.variable].disable();
-                    }
-                  }
-                }));
-              break;
-            case '!=':
-              if (formGroup.controls[relation.fieldName].value === relation.operatorValue) {
-                formGroup.controls[chartSchemaNode.variable].disable();
-              }
-              subscription.add(formGroup.controls[relation.fieldName].valueChanges
-                .pipe(untilDestroyed(this))
-                .subscribe((value) => {
-                  if (formGroup.controls[chartSchemaNode.variable].parent.enabled) {
-                    if (value !== relation.operatorValue) {
-                      formGroup.controls[chartSchemaNode.variable].enable();
-                    } else {
-                      formGroup.controls[chartSchemaNode.variable].disable();
-                    }
-                  }
-                }));
-              break;
-          }
-        });
-      }
     } else if (schema.type === ChartSchemaType.Dict) {
       formGroup.addControl(chartSchemaNode.variable, new FormGroup({}));
       for (const attr of schema.attrs) {
@@ -334,6 +288,55 @@ export class AppSchemaService {
         }
       }
     }
+
+    if (schema.show_if) {
+      const relations: Relation[] = schema.show_if.map((item) => ({
+        fieldName: item[0],
+        operatorName: item[1],
+        operatorValue: item[2],
+      }));
+      relations.forEach((relation) => {
+        if (!formGroup.controls[relation.fieldName]) {
+          formGroup.addControl(relation.fieldName, new FormControl());
+          formGroup.controls[relation.fieldName].disable();
+        }
+        switch (relation.operatorName) {
+          case '=':
+            if (formGroup.controls[relation.fieldName].value !== relation.operatorValue) {
+              formGroup.controls[chartSchemaNode.variable].disable();
+            }
+            subscription.add(formGroup.controls[relation.fieldName].valueChanges
+              .pipe(untilDestroyed(this))
+              .subscribe((value) => {
+                if (value !== null && formGroup.controls[chartSchemaNode.variable].parent.enabled) {
+                  if (value === relation.operatorValue) {
+                    formGroup.controls[chartSchemaNode.variable].enable();
+                  } else {
+                    formGroup.controls[chartSchemaNode.variable].disable();
+                  }
+                }
+              }));
+            break;
+          case '!=':
+            if (formGroup.controls[relation.fieldName].value === relation.operatorValue) {
+              formGroup.controls[chartSchemaNode.variable].disable();
+            }
+            subscription.add(formGroup.controls[relation.fieldName].valueChanges
+              .pipe(untilDestroyed(this))
+              .subscribe((value) => {
+                if (value !== null && formGroup.controls[chartSchemaNode.variable].parent.enabled) {
+                  if (value !== relation.operatorValue) {
+                    formGroup.controls[chartSchemaNode.variable].enable();
+                  } else {
+                    formGroup.controls[chartSchemaNode.variable].disable();
+                  }
+                }
+              }));
+            break;
+        }
+      });
+    }
+
     return subscription;
   }
 

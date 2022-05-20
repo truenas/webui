@@ -21,7 +21,7 @@ export type DynamicFormSchemaNode =
 
 export interface DynamicFormSchemaBase {
   controlName: string;
-  dependsOn?: string;
+  dependsOn?: string[];
   title?: string;
   required?: boolean;
   hidden?: boolean;
