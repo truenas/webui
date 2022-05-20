@@ -15,6 +15,7 @@ export type DynamicFormSchemaNode =
 | DynamicFormSchemaSelect
 | DynamicFormSchemaExplorer
 | DynamicFormSchemaCheckbox
+| DynamicFormSchemaIpaddr
 | DynamicFormSchemaDict
 | DynamicFormSchemaList;
 
@@ -48,6 +49,11 @@ export interface DynamicFormSchemaExplorer extends DynamicFormSchemaBase {
 
 export interface DynamicFormSchemaCheckbox extends DynamicFormSchemaBase {
   type: DynamicFormSchemaType.Checkbox;
+  tooltip?: string;
+}
+
+export interface DynamicFormSchemaIpaddr extends DynamicFormSchemaBase {
+  type: DynamicFormSchemaType.Ipaddr;
   tooltip?: string;
 }
 

@@ -75,4 +75,11 @@
     [fxHide]="isHidden || dynamicSchema.hidden"
     [class.disabled]="dynamicSchema.editable === false"
   ></ix-checkbox>
+  <ix-ip-input-with-netmask
+    *ngIf="dynamicSchema.type === DynamicFormSchemaType.Ipaddr"
+    [formControlName]="dynamicSchema.controlName"
+    [label]="dynamicSchema.title | translate"
+    [tooltip]="dynamicSchema.tooltip | translate"
+    [required]="dynamicSchema.required"
+  ></ix-ip-input-with-netmask>
 </div>

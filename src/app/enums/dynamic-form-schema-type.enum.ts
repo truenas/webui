@@ -5,4 +5,5 @@ export enum DynamicFormSchemaType {
   Checkbox = 'checkbox',
   List = 'list',
   Dict = 'dict',
+  Ipaddr = 'ipaddr',
 }

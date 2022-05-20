@@ -34,6 +34,7 @@ export class AppSchemaService {
       ChartSchemaType.Boolean,
       ChartSchemaType.Path,
       ChartSchemaType.Hostpath,
+      ChartSchemaType.Ipaddr,
     ].includes(schema.type)) {
       switch (schema.type) {
         case ChartSchemaType.Int:
@@ -119,6 +120,28 @@ export class AppSchemaService {
             tooltip: chartSchemaNode.description,
           });
           break;
+        case ChartSchemaType.Ipaddr:
+          if (schema.cidr) {
+            newSchema.push({
+              controlName: chartSchemaNode.variable,
+              type: DynamicFormSchemaType.Ipaddr,
+              title: chartSchemaNode.label,
+              required: schema.required,
+              editable: schema.editable,
+              tooltip: chartSchemaNode.description,
+            });
+          } else {
+            newSchema.push({
+              controlName: chartSchemaNode.variable,
+              type: DynamicFormSchemaType.Input,
+              title: chartSchemaNode.label,
+              required: schema.required,
+              tooltip: chartSchemaNode.description,
+              editable: schema.editable,
+              private: schema.private,
+            });
+          }
+          break;
       }
       if (schema.subquestions) {
         schema.subquestions.forEach((subquestion) => {
@@ -183,6 +206,7 @@ export class AppSchemaService {
       ChartSchemaType.Boolean,
       ChartSchemaType.Path,
       ChartSchemaType.Hostpath,
+      ChartSchemaType.Ipaddr,
     ].includes(schema.type)) {
       const newFormControl = new FormControl(schema.default, [
         schema.required ? Validators.required : Validators.nullValidator,
@@ -291,7 +315,9 @@ export class AppSchemaService {
         const configControlPath = this.getControlPath(formGroup.controls[chartSchemaNode.variable], '').split('.');
         let nextItem = config;
         for (const path of configControlPath) {
-          nextItem = nextItem[path] as HierarchicalObjectMap<ChartFormValue>;
+          if (nextItem) {
+            nextItem = nextItem[path] as HierarchicalObjectMap<ChartFormValue>;
+          }
         }
 
         if (Array.isArray(nextItem)) {

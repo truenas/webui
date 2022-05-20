@@ -6,4 +6,5 @@ export enum ChartSchemaType {
   Path = 'path',
   List = 'list',
   Dict = 'dict',
+  Ipaddr = 'ipaddr',
 }
