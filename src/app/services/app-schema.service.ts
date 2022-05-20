@@ -146,7 +146,10 @@ export class AppSchemaService {
       if (schema.subquestions) {
         schema.subquestions.forEach((subquestion) => {
           const objs = this.transformNode(subquestion);
-          objs.forEach((obj) => obj.indent = true);
+          objs.forEach((obj) => {
+            obj.indent = true;
+            obj.dependsOn = chartSchemaNode.variable;
+          });
           newSchema = newSchema.concat(objs);
         });
       }

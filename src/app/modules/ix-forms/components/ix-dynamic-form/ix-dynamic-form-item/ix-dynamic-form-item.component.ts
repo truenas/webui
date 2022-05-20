@@ -1,8 +1,9 @@
 import {
-  ChangeDetectionStrategy, Component, EventEmitter, Input, Output,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output,
 } from '@angular/core';
 import { FormArray, FormGroup } from '@angular/forms';
-import { UntilDestroy } from '@ngneat/until-destroy';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { distinctUntilChanged, filter, map } from 'rxjs/operators';
 import { DynamicFormSchemaType } from 'app/enums/dynamic-form-schema-type.enum';
 import { AddListItemEvent, DeleteListItemEvent, DynamicFormSchemaNode } from 'app/interfaces/dynamic-form-schema.interface';
 
@@ -13,7 +14,7 @@ import { AddListItemEvent, DeleteListItemEvent, DynamicFormSchemaNode } from 'ap
   templateUrl: './ix-dynamic-form-item.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class IxDynamicFormItemComponent {
+export class IxDynamicFormItemComponent implements OnInit {
   @Input() dynamicForm: FormGroup;
   @Input() dynamicSchema: DynamicFormSchemaNode;
 
@@ -21,6 +22,29 @@ export class IxDynamicFormItemComponent {
   @Output() deleteListItem = new EventEmitter<DeleteListItemEvent>();
 
   readonly DynamicFormSchemaType = DynamicFormSchemaType;
+
+  constructor(
+    private changeDetectorRef: ChangeDetectorRef,
+  ) {}
+
+  ngOnInit(): void {
+    this.dynamicForm?.valueChanges.pipe(
+      map((changes) => {
+        const dependsOn = this.dynamicSchema?.dependsOn;
+
+        if (!dependsOn) {
+          return null;
+        }
+
+        return changes[dependsOn];
+      }),
+      filter((x) => x != null),
+      distinctUntilChanged(),
+      untilDestroyed(this),
+    ).subscribe(() => {
+      this.changeDetectorRef.markForCheck();
+    });
+  }
 
   get getFormArray(): FormArray {
     return this.dynamicForm.controls[this.dynamicSchema.controlName] as FormArray;
