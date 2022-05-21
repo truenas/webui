@@ -1,436 +1,359 @@
-import { Component } from '@angular/core';
+import {
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
+} from '@angular/core';
+import { Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
-import { MatDialogRef } from '@angular/material/dialog/dialog-ref';
 import { Router } from '@angular/router';
+import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import * as _ from 'lodash';
-import { Subscription } from 'rxjs';
-import { filter } from 'rxjs/operators';
-import { IdmapName } from 'app/enums/idmap-name.enum';
+import { Observable, of } from 'rxjs';
+import { filter, switchMap } from 'rxjs/operators';
+import {
+  IdmapBackend, IdmapLinkedService, IdmapName, IdmapSslEncryptionMode,
+} from 'app/enums/idmap.enum';
+import { idNameArrayToOptions } from 'app/helpers/options.helper';
 import helptext from 'app/helptext/directory-service/idmap';
-import { FormConfiguration } from 'app/interfaces/entity-form.interface';
-import { IdmapBackendOptions } from 'app/interfaces/idmap-backend-options.interface';
-import { EntityFormComponent } from 'app/modules/entity/entity-form/entity-form.component';
-import { FieldConfig, FormSelectConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
-import { FieldSet } from 'app/modules/entity/entity-form/models/fieldset.interface';
-import { RelationAction } from 'app/modules/entity/entity-form/models/relation-action.enum';
+import { IdmapBackendOption, IdmapBackendOptions } from 'app/interfaces/idmap-backend-options.interface';
+import { Idmap, IdmapUpdate } from 'app/interfaces/idmap.interface';
+import { Option } from 'app/interfaces/option.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { EntityUtils } from 'app/modules/entity/utils';
-import { ValidationService, IdmapService, DialogService } from 'app/services';
-import { ModalService } from 'app/services/modal.service';
+import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
+import IxValidatorsService from 'app/modules/ix-forms/services/ix-validators.service';
+import { requiredIdmapDomains } from 'app/pages/directory-service/utils/required-idmap-domains.utils';
+import {
+  DialogService, IdmapService, ValidationService, WebSocketService,
+} from 'app/services';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
+
+const minAllowedRange = 1000;
+const maxAllowedRange = 2147483647;
+const customIdmapName = 'custom' as const;
 
 @UntilDestroy()
 @Component({
-  selector: 'app-idmap-form',
-  template: '<entity-form [conf]="this"></entity-form>',
+  templateUrl: './idmap-form.component.html',
+  styleUrls: ['./idmap-form.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class IdmapFormComponent implements FormConfiguration {
-  title: string;
-  isEntity = true;
-  queryCall = 'idmap.query' as const;
-  addCall = 'idmap.create' as const;
-  editCall = 'idmap.update' as const;
-  pk: number;
-  queryKey = 'id';
-  private getRow = new Subscription();
-  rangeLowValidation = [
-    ...helptext.idmap.required_validator,
-    this.validationService.rangeValidator(1000, 2147483647),
-  ];
-  rangeHighValidation = [
-    ...helptext.idmap.required_validator,
-    this.validationService.rangeValidator(1000, 2147483647),
-    this.validationService.greaterThan('range_low', [helptext.idmap.range_low.placeholder]),
-  ];
-  private entityForm: EntityFormComponent;
-  protected backendChoices: IdmapBackendOptions;
-  protected dialogRef: MatDialogRef<EntityJobComponent>;
-  protected requiredDomains = [
-    IdmapName.DsTypeActiveDirectory,
-    IdmapName.DsTypeDefaultDomain,
-    IdmapName.DsTypeLdap,
-  ];
-  protected readOnly = false;
-  fieldConfig: FieldConfig[] = [];
-  protected isOneColumnForm = true;
-  fieldSetDisplay = 'default';
-  fieldSets: FieldSet[] = [
-    {
-      name: helptext.idmap.settings_label,
-      class: 'idmap-configuration-form',
-      colspan: 2,
-      label: false,
-      width: '100%',
-      config: [
-        {
-          type: 'select',
-          name: 'idmap_backend',
-          placeholder: helptext.idmap.idmap_backend.placeholder,
-          tooltip: helptext.idmap.idmap_backend.tooltip,
-          options: [],
-        },
-        {
-          type: 'select',
-          name: 'name',
-          placeholder: helptext.idmap.name.placeholder,
-          tooltip: helptext.idmap.name.tooltip,
-          required: true,
-          options: helptext.idmap.name.options,
-        },
-        {
-          type: 'input',
-          name: 'custom_name',
-          placeholder: helptext.idmap.custom_name.placeholder,
-          tooltip: helptext.idmap.custom_name.tooltip,
-          required: true,
-          relation: [
-            {
-              action: RelationAction.Show,
-              when: [{
-                name: 'name',
-                value: 'custom',
-              }],
-            },
-          ],
-        },
-        {
-          type: 'input',
-          name: 'dns_domain_name',
-          placeholder: helptext.idmap.dns_domain_name.placeholder,
-          tooltip: helptext.idmap.dns_domain_name.tooltip,
-        },
-        {
-          type: 'input',
-          name: 'range_low',
-          inputType: 'number',
-          placeholder: helptext.idmap.range_low.placeholder,
-          tooltip: helptext.idmap.range_tooltip,
-          validation: this.rangeLowValidation,
-          required: true,
-        },
-        {
-          type: 'input',
-          name: 'range_high',
-          inputType: 'number',
-          placeholder: helptext.idmap.range_high.placeholder,
-          tooltip: helptext.idmap.range_tooltip,
-          validation: this.rangeHighValidation,
-          required: true,
-        },
-        {
-          type: 'select',
-          name: 'certificate',
-          placeholder: helptext.idmap.certificate_id.placeholder,
-          tooltip: helptext.idmap.certificate_id.tooltip,
-          options: [],
-          linkText: this.translate.instant('Certificates'),
-          linkClicked: () => {
-            this.modalService.closeSlideIn().then(() => {
-              this.router.navigate(['/', 'credentials', 'certificates']);
-            });
-          },
-          isHidden: true,
-        },
-      ],
-    },
-    {
-      name: helptext.idmap.options_label,
-      class: 'idmap-configuration-form',
-      label: true,
-      colspan: 2,
-      width: '100%',
-      config: [
-        {
-          type: 'select',
-          name: 'schema_mode',
-          placeholder: helptext.idmap.schema_mode.placeholder,
-          tooltip: helptext.idmap.schema_mode.tooltip,
-          options: helptext.idmap.schema_mode.options,
-        },
-        {
-          type: 'checkbox',
-          name: 'unix_primary_group',
-          placeholder: helptext.idmap.unix_primary_group.placeholder,
-          tooltip: helptext.idmap.unix_primary_group.tooltip,
-        },
-        {
-          type: 'checkbox',
-          name: 'unix_nss_info',
-          placeholder: helptext.idmap.unix_nss.placeholder,
-          tooltip: helptext.idmap.unix_nss.tooltip,
-        },
-        {
-          type: 'input',
-          name: 'rangesize',
-          inputType: 'number',
-          placeholder: helptext.idmap.rangesize.placeholder,
-          tooltip: helptext.idmap.rangesize.tooltip,
-        },
-        {
-          type: 'checkbox',
-          name: 'readonly',
-          placeholder: helptext.idmap.readonly.placeholder,
-          tooltip: helptext.idmap.readonly.tooltip,
-        },
-        {
-          type: 'checkbox',
-          name: 'ignore_builtin',
-          placeholder: helptext.idmap.ignore_builtin.placeholder,
-          tooltip: helptext.idmap.ignore_builtin.tooltip,
-        },
-        {
-          type: 'input',
-          name: 'ldap_base_dn',
-          placeholder: helptext.idmap.ldap_basedn.placeholder,
-          tooltip: helptext.idmap.ldap_basedn.tooltip,
-        },
-        {
-          type: 'input',
-          name: 'ldap_user_dn',
-          placeholder: helptext.idmap.ldap_userdn.placeholder,
-          tooltip: helptext.idmap.ldap_userdn.tooltip,
-        },
-        {
-          type: 'input',
-          name: 'ldap_user_dn_password',
-          inputType: 'password',
-          togglePw: true,
-          placeholder: helptext.idmap.ldap_user_dn_password.placeholder,
-          tooltip: helptext.idmap.ldap_user_dn_password.tooltip,
-        },
-        {
-          type: 'input',
-          name: 'ldap_url',
-          placeholder: helptext.idmap.ldap_url.placeholder,
-          tooltip: helptext.idmap.ldap_url.tooltip,
-        },
-        {
-          type: 'select',
-          name: 'ssl',
-          placeholder: helptext.idmap.ssl.placeholder,
-          tooltip: helptext.idmap.ssl.tooltip,
-          options: helptext.idmap.ssl.options,
-        },
-        {
-          type: 'select',
-          name: 'linked_service',
-          placeholder: helptext.idmap.linked_service.placeholder,
-          tooltip: helptext.idmap.linked_service.tooltip,
-          options: helptext.idmap.linked_service.options,
-        },
-        {
-          type: 'input',
-          name: 'ldap_server',
-          placeholder: helptext.idmap.ldap_server.placeholder,
-          tooltip: helptext.idmap.ldap_server.tooltip,
-        },
-        {
-          type: 'input',
-          name: 'ldap_realm',
-          placeholder: helptext.idmap.ldap_realm.placeholder,
-          tooltip: helptext.idmap.ldap_realm.tooltip,
-        },
-        {
-          type: 'input',
-          name: 'bind_path_user',
-          placeholder: helptext.idmap.bind_path_user.placeholder,
-          tooltip: helptext.idmap.bind_path_user.tooltip,
-        },
-        {
-          type: 'input',
-          name: 'bind_path_group',
-          placeholder: helptext.idmap.bind_path_group.placeholder,
-          tooltip: helptext.idmap.bind_path_group.tooltip,
-        },
-        {
-          type: 'input',
-          name: 'user_cn',
-          placeholder: helptext.idmap.user_cn.placeholder,
-          tooltip: helptext.idmap.user_cn.tooltip,
-        },
-        {
-          type: 'input',
-          name: 'cn_realm',
-          placeholder: helptext.idmap.cn_realm.placeholder,
-          tooltip: helptext.idmap.cn_realm.tooltip,
-        },
-        {
-          type: 'input',
-          name: 'ldap_domain',
-          placeholder: helptext.idmap.ldap_domain.placeholder,
-          tooltip: helptext.idmap.ldap_server.tooltip,
-        },
-        {
-          type: 'checkbox',
-          name: 'sssd_compat',
-          placeholder: helptext.idmap.sssd_compat.placeholder,
-          tooltip: helptext.idmap.sssd_compat.tooltip,
-        },
-      ],
-    },
-  ];
+export class IdmapFormComponent implements OnInit {
+  get title(): string {
+    return this.isNew
+      ? this.translate.instant('Add Idmap')
+      : this.translate.instant('Edit Idmap');
+  }
 
-  private optionsFields = [
-    'schema_mode',
-    'unix_primary_group',
-    'unix_nss_info',
-    'rangesize',
-    'readonly',
-    'ignore_builtin',
-    'ldap_base_dn',
-    'ldap_user_dn',
-    'ldap_user_dn_password',
-    'ldap_url',
-    'ssl',
-    'linked_service',
-    'ldap_server',
-    'ldap_realm',
-    'bind_path_user',
-    'bind_path_group',
-    'user_cn',
-    'cn_realm',
-    'ldap_domain',
-    'sssd_compat',
-  ];
+  get isNew(): boolean {
+    return !this.existingIdmap;
+  }
+
+  form = this.formBuilder.group({
+    idmap_backend: [IdmapBackend.Ad],
+    name: [null as IdmapName | typeof customIdmapName, Validators.required],
+    custom_name: ['', this.validationHelpers.validateOnCondition(
+      (control) => control.parent?.value.name === customIdmapName,
+      Validators.required,
+    )],
+    dns_domain_name: [''],
+    range_low: [null as number, [
+      Validators.required,
+      this.validators.rangeValidator(minAllowedRange, maxAllowedRange),
+    ]],
+    range_high: [null as number, [
+      Validators.required,
+      this.validators.rangeValidator(minAllowedRange, maxAllowedRange),
+      this.validators.greaterThan('range_low', [helptext.idmap.range_low.placeholder]),
+    ]],
+    certificate: [null as number],
+    schema_mode: [''],
+    unix_primary_group: [false],
+    unix_nss_info: [false],
+    rangesize: [null as number],
+    readonly: [false],
+    ignore_builtin: [false],
+    ldap_base_dn: [''],
+    ldap_user_dn: [''],
+    ldap_user_dn_password: [''],
+    ldap_url: [''],
+    ssl: [null as IdmapSslEncryptionMode],
+    linked_service: [null as IdmapLinkedService],
+    ldap_server: [''],
+    ldap_realm: [''],
+    bind_path_user: [''],
+    bind_path_group: [''],
+    user_cn: [''],
+    cn_realm: [''],
+    ldap_domain: [''],
+    sssd_compat: [false],
+  });
+
+  backendChoices: IdmapBackendOptions;
+  existingIdmap: Idmap;
+  isLoading = false;
+
+  readonly helptext = helptext;
+
+  readonly editIdmapNames$ = of([
+    { label: this.translate.instant('Active Directory - Primary Domain'), value: IdmapName.DsTypeActiveDirectory },
+    { label: this.translate.instant('SMB - Primary Domain'), value: IdmapName.DsTypeDefaultDomain },
+    { label: this.translate.instant('LDAP - Primary Domain'), value: IdmapName.DsTypeLdap },
+    { label: this.translate.instant('Custom Value'), value: customIdmapName },
+  ]);
+  readonly createIdmapNames$ = of([
+    { label: this.translate.instant('SMB - Primary Domain'), value: IdmapName.DsTypeDefaultDomain },
+    { label: this.translate.instant('Custom Value'), value: customIdmapName },
+  ]);
+  readonly schemaModes$ = of([
+    { label: 'RFC2307', value: 'RFC2307' },
+    { label: 'SFU', value: 'SFU' },
+    { label: 'SFU20', value: 'SFU20' },
+  ]);
+  readonly sslModes$ = of([
+    { label: this.translate.instant('Off'), value: IdmapSslEncryptionMode.Off },
+    { label: this.translate.instant('On'), value: IdmapSslEncryptionMode.On },
+    { label: 'StartTLS', value: IdmapSslEncryptionMode.StartTls },
+  ]);
+  readonly linkedServices$ = of([
+    { label: this.translate.instant('Local Account'), value: IdmapLinkedService.LocalAccount },
+    { label: 'LDAP', value: IdmapLinkedService.Ldap },
+    { label: 'NIS', value: IdmapLinkedService.Nis },
+  ]);
+
+  certificates$ = this.idmapService.getCerts().pipe(idNameArrayToOptions());
+  backends$: Observable<Option[]>;
+
+  hasCertificateField$ = this.form.select((values) => {
+    return values.idmap_backend === IdmapBackend.Ldap
+      || values.idmap_backend === IdmapBackend.Rfc2307;
+  });
+
+  hasBackendField$ = this.form.select((values) => {
+    return values.name !== IdmapName.DsTypeDefaultDomain;
+  });
+
+  get isCustomName(): boolean {
+    return this.form.get('name').value === customIdmapName;
+  }
+
+  get currentBackend(): IdmapBackendOption {
+    return this.backendChoices?.[this.form.get('idmap_backend').value];
+  }
 
   constructor(
-    protected idmapService: IdmapService,
-    protected validationService: ValidationService,
-    private modalService: ModalService,
-    private router: Router,
+    private formBuilder: FormBuilder,
     private translate: TranslateService,
-    protected dialogService: DialogService,
-    protected dialog: MatDialog,
-  ) {
-    this.getRow = this.modalService.getRow$.pipe(untilDestroyed(this)).subscribe((rowId: number) => {
-      this.pk = rowId;
-      this.getRow.unsubscribe();
-    });
+    private ws: WebSocketService,
+    private validationHelpers: IxValidatorsService,
+    private validators: ValidationService,
+    private idmapService: IdmapService,
+    private dialogService: DialogService,
+    private matDialog: MatDialog,
+    private cdr: ChangeDetectorRef,
+    private errorHandler: FormErrorHandlerService,
+    private slideInService: IxSlideInService,
+    private router: Router,
+  ) {}
+
+  ngOnInit(): void {
+    this.loadBackendChoices();
+    this.setFormDependencies();
   }
 
-  resourceTransformIncomingRestData(data: any): any {
-    for (const item in data.options) {
-      data[item] = data.options[item];
-    }
-    if (data.certificate) {
-      data.certificate = data.certificate.id;
-    }
-    this.readOnly = this.requiredDomains.includes(data.name);
-    return data;
+  setIdmapForEdit(idmap: Idmap): void {
+    this.existingIdmap = idmap;
+    this.setEditingIdmapFormValues();
+    this.form.controls['name'].disable();
   }
 
-  afterInit(entityEdit: EntityFormComponent): void {
-    this.title = entityEdit.isNew ? helptext.title_add : helptext.title_edit;
-    this.entityForm = entityEdit;
-    this.optionsFields.forEach((option) => {
-      this.hideField(option, true, entityEdit);
-    });
+  isOptionVisible(option: keyof IdmapFormComponent['form']['value']): boolean {
+    const backend = this.currentBackend;
+    if (!backend) {
+      return false;
+    }
 
-    this.idmapService.getCerts().pipe(untilDestroyed(this)).subscribe((certificates) => {
-      const certificateConfig = this.fieldConfig.find((config) => config.name === 'certificate') as FormSelectConfig;
-      certificateConfig.options.push({ label: '---', value: null });
-      certificates.forEach((certificate) => {
-        certificateConfig.options.push({ label: certificate.name, value: certificate.id });
-      });
-    });
+    return Object.keys(backend.parameters).includes(option);
+  }
 
-    entityEdit.formGroup.controls['idmap_backend'].valueChanges.pipe(untilDestroyed(this)).subscribe((value: string) => {
-      this.optionsFields.forEach((option) => {
-        this.hideField(option, true, entityEdit);
-      });
-      for (const i in this.backendChoices[value].parameters) {
-        this.optionsFields.forEach((option) => {
-          if (option === i) {
-            const params = this.backendChoices[value].parameters[option];
-            this.hideField(option, false, entityEdit);
-            const field = _.find(this.fieldConfig, { name: option });
-            field['required'] = params.required;
-            entityEdit.formGroup.controls[option].setValue(params.default);
-            if (value === 'LDAP' || value === 'RFC2307') {
-              this.hideField('certificate', false, entityEdit);
-            } else {
-              this.hideField('certificate', true, entityEdit);
-            }
+  isOptionRequired(option: keyof IdmapFormComponent['form']['value']): boolean {
+    const backend = this.currentBackend;
+    if (!backend) {
+      return false;
+    }
+
+    return backend.parameters[option].required;
+  }
+
+  onSubmit(): void {
+    this.isLoading = true;
+
+    const params = this.prepareSubmitParams();
+
+    const request$ = this.isNew
+      ? this.ws.call('idmap.create', [params])
+      : this.ws.call('idmap.update', [this.existingIdmap.id, params]);
+
+    request$
+      .pipe(
+        switchMap(() => this.askAndClearCache()),
+        untilDestroyed(this),
+      )
+      .subscribe(
+        () => {
+          this.isLoading = false;
+          this.slideInService.close();
+        },
+        (error) => {
+          this.errorHandler.handleWsFormError(error, this.form);
+          this.isLoading = false;
+          this.cdr.markForCheck();
+        },
+      );
+  }
+
+  certificatesLinkClicked(): void {
+    this.slideInService.close();
+    this.router.navigate(['/', 'credentials', 'certificates']);
+  }
+
+  private loadBackendChoices(): void {
+    this.isLoading = true;
+
+    this.idmapService.getBackendChoices()
+      .pipe(untilDestroyed(this))
+      .subscribe(
+        (backendChoices) => {
+          this.isLoading = false;
+          this.cdr.markForCheck();
+          this.backendChoices = backendChoices;
+          this.backends$ = of(Object.keys(backendChoices).map((backend) => ({
+            label: backend,
+            value: backend,
+          })));
+
+          if (!this.existingIdmap) {
+            this.setDefaultsForBackendOptions();
           }
+        },
+        (error) => {
+          this.isLoading = false;
+          this.cdr.markForCheck();
+          new EntityUtils().handleWsError(this, error);
+        },
+      );
+  }
+
+  private setFormDependencies(): void {
+    this.form.controls.idmap_backend.valueChanges
+      .pipe(untilDestroyed(this))
+      .subscribe(() => this.setDefaultsForBackendOptions());
+
+    this.form.controls.name.valueChanges
+      .pipe(
+        filter((name) => name === IdmapName.DsTypeDefaultDomain),
+        untilDestroyed(this),
+      )
+      .subscribe(() => {
+        this.form.patchValue({
+          idmap_backend: IdmapBackend.Tdb,
         });
-      }
-    });
-
-    entityEdit.formGroup.controls['name'].valueChanges.pipe(untilDestroyed(this)).subscribe((value: IdmapName) => {
-      if (value === IdmapName.DsTypeDefaultDomain) {
-        entityEdit.formGroup.controls['idmap_backend'].setValue('TDB');
-        this.hideField('idmap_backend', true, entityEdit);
-      } else if (_.find(this.fieldConfig, { name: 'idmap_backend' }).isHidden) {
-        this.hideField('idmap_backend', false, entityEdit);
-      }
-    });
-
-    this.idmapService.getBackendChoices().pipe(untilDestroyed(this)).subscribe((backendChoices) => {
-      this.backendChoices = backendChoices;
-      const idmapBackendConfig = this.fieldConfig.find((config) => config.name === 'idmap_backend') as FormSelectConfig;
-      for (const item in backendChoices) {
-        idmapBackendConfig.options.push({ label: item, value: item });
-      }
-      entityEdit.formGroup.controls['idmap_backend'].setValue('AD');
-    });
-
-    setTimeout(() => {
-      if (this.readOnly) {
-        entityEdit.setDisabled('name', true, false);
-      }
-    }, 500);
+      });
   }
 
-  hideField(fieldName: string, show: boolean, entity: EntityFormComponent): void {
-    const target = _.find(this.fieldConfig, { name: fieldName });
-    target['isHidden'] = show;
-    entity.setDisabled(fieldName, show, show);
+  private setDefaultsForBackendOptions(): void {
+    if (!this.currentBackend) {
+      return;
+    }
+
+    Object.entries(this.currentBackend.parameters).forEach(([option, parameter]) => {
+      this.form.patchValue({
+        [option]: parameter.default,
+      });
+    });
   }
 
-  beforeSubmit(data: any): void {
-    if (data.dns_domain_name === null) {
-      delete data.dns_domain_name;
+  private setEditingIdmapFormValues(): void {
+    const hasCustomName = !requiredIdmapDomains.includes(this.existingIdmap.name as IdmapName);
+
+    this.form.patchValue({
+      ...this.existingIdmap,
+      name: hasCustomName ? customIdmapName : this.existingIdmap.name as IdmapName,
+      certificate: this.existingIdmap.certificate?.id,
+    });
+
+    if (hasCustomName) {
+      this.form.patchValue({
+        custom_name: this.existingIdmap.name,
+      });
     }
-    if (data.custom_name) {
-      data.name = data.custom_name;
-      delete data.custom_name;
-    }
-    const options: Record<string, string> = {};
-    for (const item in data) {
-      if (this.optionsFields.includes(item)) {
-        if (data[item]) {
-          options[item] = data[item];
-        }
-        delete data[item];
-      }
-    }
-    data['options'] = options;
+
+    Object.entries(this.existingIdmap.options).forEach(([option, value]) => {
+      this.form.patchValue({
+        [option]: value,
+      });
+    });
   }
 
-  afterSubmit(): void {
-    this.modalService.refreshTable();
-    this.dialogService.confirm({
+  private askAndClearCache(): Observable<unknown> {
+    return this.dialogService.confirm({
       title: helptext.idmap.clear_cache_dialog.title,
       message: helptext.idmap.clear_cache_dialog.message,
       hideCheckBox: true,
-    }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
-      this.dialogRef = this.dialog.open(EntityJobComponent, {
-        data: { title: (helptext.idmap.clear_cache_dialog.job_title) }, disableClose: true,
-      });
-      this.dialogRef.componentInstance.setCall('idmap.clear_idmap_cache');
-      this.dialogRef.componentInstance.submit();
-      this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
-        this.dialog.closeAll();
-        this.dialogService.info(
-          helptext.idmap.clear_cache_dialog.success_title,
-          helptext.idmap.clear_cache_dialog.success_msg,
-        );
-      });
-      this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((res) => {
-        this.dialog.closeAll();
-        new EntityUtils().handleWsError(this.entityForm, res);
-      });
+    }).pipe(
+      switchMap((confirmed) => {
+        if (!confirmed) {
+          return of(null);
+        }
+
+        const dialog = this.matDialog.open(EntityJobComponent, {
+          data: { title: helptext.idmap.clear_cache_dialog.job_title },
+          disableClose: true,
+        });
+        dialog.componentInstance.setCall('idmap.clear_idmap_cache');
+        dialog.componentInstance.submit();
+        dialog.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
+          this.dialogService.info(
+            helptext.idmap.clear_cache_dialog.success_title,
+            helptext.idmap.clear_cache_dialog.success_msg,
+          );
+        });
+
+        return dialog.afterClosed();
+      }),
+    );
+  }
+
+  private prepareSubmitParams(): IdmapUpdate {
+    const values = this.form.value;
+    const params = {
+      name: values.name,
+      range_high: values.range_high,
+      range_low: values.range_low,
+      idmap_backend: values.idmap_backend,
+      options: {},
+    } as IdmapUpdate;
+
+    if (values.dns_domain_name) {
+      params['dns_domain_name'] = values.dns_domain_name;
+    }
+
+    if (this.isCustomName) {
+      params['name'] = values.custom_name;
+    }
+
+    if (values.certificate) {
+      params['certificate'] = values.certificate;
+    }
+
+    Object.keys(this.currentBackend.parameters).forEach((option) => {
+      const value = values[option as keyof IdmapFormComponent['form']['value']] as string;
+      if (!value) {
+        return;
+      }
+
+      params.options[option] = value;
     });
+
+    return params;
   }
 }

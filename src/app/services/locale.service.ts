@@ -28,8 +28,11 @@ export class LocaleService {
     ]).pipe(untilDestroyed(this)).subscribe(([timezone, preferences]) => {
       this.timezone = timezone;
 
-      if (preferences) {
+      if (preferences?.dateFormat) {
         this.dateFormat = this.formatDateTimeToDateFns(preferences.dateFormat);
+      }
+
+      if (preferences?.timeFormat) {
         this.timeFormat = this.formatDateTimeToDateFns(preferences.timeFormat);
       }
     });

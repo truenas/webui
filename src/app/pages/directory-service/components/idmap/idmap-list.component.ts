@@ -3,7 +3,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { filter, map, tap } from 'rxjs/operators';
 import { DirectoryServiceState } from 'app/enums/directory-service-state.enum';
-import { IdmapName } from 'app/enums/idmap-name.enum';
+import { IdmapName } from 'app/enums/idmap.enum';
 import helptext from 'app/helptext/directory-service/idmap';
 import { Idmap } from 'app/interfaces/idmap.interface';
 import { QueryParams } from 'app/interfaces/query-api.interface';
@@ -18,6 +18,7 @@ import {
   IdmapService, WebSocketService,
 } from 'app/services';
 import { DialogService } from 'app/services/dialog.service';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { ModalService } from 'app/services/modal.service';
 import { IdmapFormComponent } from './idmap-form.component';
 
@@ -26,6 +27,7 @@ import { IdmapFormComponent } from './idmap-form.component';
   selector: 'app-idmap-list',
   template: '<entity-table [title]="title" [conf]="this"></entity-table>',
 })
+// TODO: Double add
 export class IdmapListComponent implements EntityTableConfig {
   title = this.translate.instant('Idmap');
   queryCall = 'idmap.query' as const;
@@ -58,6 +60,7 @@ export class IdmapListComponent implements EntityTableConfig {
     protected idmapService: IdmapService,
     private ws: WebSocketService,
     private modalService: ModalService,
+    private slideIn: IxSlideInService,
     protected dialogService: DialogService,
     protected translate: TranslateService,
   ) { }
@@ -83,7 +86,7 @@ export class IdmapListComponent implements EntityTableConfig {
 
   afterInit(entityList: EntityTableComponent): void {
     this.entityList = entityList;
-    this.modalService.refreshTable$.pipe(untilDestroyed(this)).subscribe(() => {
+    this.slideIn.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
       this.entityList.getData();
     });
   }
@@ -109,7 +112,7 @@ export class IdmapListComponent implements EntityTableConfig {
       onClick: () => {
         this.idmapService.getActiveDirectoryStatus().pipe(untilDestroyed(this)).subscribe((adConfig) => {
           if (adConfig.enable) {
-            this.doAdd();
+            this.slideIn.open(IdmapFormComponent);
           } else {
             this.dialogService.confirm({
               title: helptext.idmap.enable_ad_dialog.title,
@@ -134,10 +137,11 @@ export class IdmapListComponent implements EntityTableConfig {
       label: this.translate.instant('Edit'),
       disabled: row.disableEdit,
       onClick: (row: IdmapRow) => {
-        this.doAdd(row.id);
+        const form = this.slideIn.open(IdmapFormComponent);
+        form.setIdmapForEdit(row);
       },
     });
-    if (!requiredIdmapDomains.includes(row.name)) {
+    if (!requiredIdmapDomains.includes(row.name as IdmapName)) {
       actions.push({
         id: 'delete',
         label: this.translate.instant('Delete'),
@@ -157,10 +161,6 @@ export class IdmapListComponent implements EntityTableConfig {
       });
     }
     return actions as EntityTableAction[];
-  }
-
-  doAdd(id?: number): void {
-    this.modalService.openInSlideIn(IdmapFormComponent, id);
   }
 
   showActiveDirectoryForm(): void {

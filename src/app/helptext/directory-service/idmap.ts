@@ -1,6 +1,6 @@
 import { Validators } from '@angular/forms';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
-import { IdmapName } from 'app/enums/idmap-name.enum';
+import { IdmapName } from 'app/enums/idmap.enum';
 
 export default {
   title_add: T('Add Idmap'),
