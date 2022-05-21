@@ -27,7 +27,6 @@ import { IdmapFormComponent } from './idmap-form.component';
   selector: 'app-idmap-list',
   template: '<entity-table [title]="title" [conf]="this"></entity-table>',
 })
-// TODO: Double add
 export class IdmapListComponent implements EntityTableConfig {
   title = this.translate.instant('Idmap');
   queryCall = 'idmap.query' as const;
