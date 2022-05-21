@@ -1,5 +1,4 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { Router, ActivatedRoute } from '@angular/router';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
@@ -10,11 +9,9 @@ import { JobState } from 'app/enums/job-state.enum';
 import helptext from 'app/helptext/storage/disks/disks';
 import { Option } from 'app/interfaces/option.interface';
 import { Disk } from 'app/interfaces/storage.interface';
-import { AppLoaderService } from 'app/modules/app-loader/app-loader.service';
 import { WebSocketService } from 'app/services';
 import { DialogService } from 'app/services/dialog.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { StorageService } from 'app/services/storage.service';
 
 @UntilDestroy()
 @Component({
@@ -39,12 +36,8 @@ export class DiskBulkEditComponent {
 
   constructor(
     private fb: FormBuilder,
-    private router: Router,
     private dialogService: DialogService,
-    protected ws: WebSocketService,
-    protected aroute: ActivatedRoute,
-    protected loader: AppLoaderService,
-    public diskBucket: StorageService,
+    private ws: WebSocketService,
     private translate: TranslateService,
     private slideInService: IxSlideInService,
   ) {}
@@ -66,14 +59,14 @@ export class DiskBulkEditComponent {
     const advPowerMgt: DiskPowerLevel[] = [];
     const smartOptions: string[] = [];
 
-    for (const i of selectedDisks) {
-      this.diskIds.push(i.identifier);
-      this.diskNames.push(i.name);
-      hddStandby.push(i.hddstandby);
-      advPowerMgt.push(i.advpowermgmt);
-      if (i.togglesmart) {
+    for (const disk of selectedDisks) {
+      this.diskIds.push(disk.identifier);
+      this.diskNames.push(disk.name);
+      hddStandby.push(disk.hddstandby);
+      advPowerMgt.push(disk.advpowermgmt);
+      if (disk.togglesmart) {
         setForm.togglesmart = true;
-        smartOptions.push(i.smartoptions);
+        smartOptions.push(disk.smartoptions);
       }
     }
 
@@ -99,7 +92,7 @@ export class DiskBulkEditComponent {
     this.form.patchValue({ ...setForm });
   }
 
-  onSubmit(): void {
+  prepareDataSubmit(): any[][] {
     const req = [];
     const data: { [key: string]: any } = { ...this.form.value };
 
@@ -116,6 +109,12 @@ export class DiskBulkEditComponent {
     for (const i of this.diskIds) {
       req.push([i, data]);
     }
+
+    return req;
+  }
+
+  onSubmit(): void {
+    const req = this.prepareDataSubmit();
 
     this.isLoading = true;
     this.ws.job('core.bulk', ['disk.update', req])

@@ -7,11 +7,13 @@
         <ix-fieldset
           [title]="helptextBulkEdit.title | translate"
         >
-          <div>
-            <p>{{helptextBulkEdit.disks.placeholder}}</p>
+          <div class="container-disks">
+            <p class="label-disks">{{helptextBulkEdit.disks.placeholder}}</p>
             <tooltip *ngIf="helptextBulkEdit.disks.tooltip" [header]="helptextBulkEdit.disks.placeholder" class="tooltip" [message]="helptextBulkEdit.disks.tooltip"></tooltip>
-            <p *ngFor="let name of diskNames;">
-              {{name}}
+            <p class="name-disks">
+              <span *ngFor="let name of diskNames;  last as isLast">
+                {{name}}{{ isLast ? '' : ', ' }}
+              </span>
             </p>
           </div>
         </ix-fieldset>

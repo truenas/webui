@@ -11,3 +11,23 @@
 .form-actions {
   margin: 8px 10px;
 }
+
+.container-disks {
+  margin-top: 25px;
+}
+
+.label-disks {
+  display: inline-block;
+  font-size: x-small;
+  margin: 0 16px 0 0;
+}
+
+tooltip,
+.label-disks {
+  vertical-align: middle;
+}
+
+.name-disks {
+  font-size: 14px;
+  margin: 8px 0;
+}
