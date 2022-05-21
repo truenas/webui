@@ -14,10 +14,9 @@ import { TranslateService } from '@ngx-translate/core';
 import { UUID } from 'angular2-uuid';
 import { add, sub } from 'date-fns';
 import _ from 'lodash';
-import { filter, take } from 'rxjs/operators';
+import { filter, map, take } from 'rxjs/operators';
 import { ProductType } from 'app/enums/product-type.enum';
 import { CoreEvent } from 'app/interfaces/events';
-import { ThemeChangedEvent, ThemeDataEvent } from 'app/interfaces/events/theme-events.interface';
 import { ReportingGraph } from 'app/interfaces/reporting-graph.interface';
 import { ReportingAggregationKeys, ReportingData } from 'app/interfaces/reporting.interface';
 import { Theme } from 'app/interfaces/theme.interface';
@@ -29,7 +28,9 @@ import { WebSocketService } from 'app/services/';
 import { CoreService } from 'app/services/core-service/core.service';
 import { DialogService } from 'app/services/dialog.service';
 import { LocaleService } from 'app/services/locale.service';
+import { ThemeService } from 'app/services/theme/theme.service';
 import { AppState } from 'app/store';
+import { selectTheme } from 'app/store/preferences/preferences.selectors';
 import { selectTimezone } from 'app/store/system-config/system-config.selectors';
 
 interface DateTime {
@@ -184,6 +185,7 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
     private dialog: DialogService,
     private core: CoreService,
     private store$: Store<AppState>,
+    private themeService: ThemeService,
   ) {
     super(translate);
 
@@ -201,15 +203,13 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
       this.legendData = clone;
     });
 
-    this.core.register({ observerClass: this, eventName: 'ThemeData' }).pipe(untilDestroyed(this)).subscribe((evt: ThemeDataEvent) => {
-      this.chartColors = this.processThemeColors(evt.data);
+    this.store$.select(selectTheme).pipe(
+      filter(Boolean),
+      map(() => this.themeService.currentTheme()),
+      untilDestroyed(this),
+    ).subscribe((theme: Theme) => {
+      this.chartColors = this.processThemeColors(theme);
     });
-
-    this.core.register({ observerClass: this, eventName: 'ThemeChanged' }).pipe(untilDestroyed(this)).subscribe((evt: ThemeChangedEvent) => {
-      this.chartColors = this.processThemeColors(evt.data);
-    });
-
-    this.core.emit({ name: 'ThemeDataRequest', sender: this });
 
     this.store$.select(selectTimezone).pipe(untilDestroyed(this)).subscribe((timezone) => {
       this.timezone = timezone;

@@ -4,12 +4,23 @@ import { FlexLayoutModule } from '@angular/flex-layout';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatIconModule } from '@angular/material/icon';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { SchedulerModule } from 'app/modules/scheduler/scheduler.module';
+import {
+  CloudsyncRestoreDialogComponent,
+} from 'app/pages/data-protection/cloudsync/cloudsync-restore-dialog/cloudsync-restore-dialog.component';
+import {
+  TransferModeExplanationComponent,
+} from 'app/pages/data-protection/cloudsync/transfer-mode-explanation/transfer-mode-explanation.component';
+import {
+  ReplicationRestoreDialogComponent,
+} from 'app/pages/data-protection/replication/replication-restore-dialog/replication-restore-dialog.component';
 import { RsyncTaskFormComponent } from 'app/pages/data-protection/rsync-task/rsync-task-form/rsync-task-form.component';
 import { RsyncTaskListComponent } from 'app/pages/data-protection/rsync-task/rsync-task-list/rsync-task-list.component';
 import {
@@ -43,6 +54,8 @@ import { SnapshotTaskComponent } from './snapshot/snapshot-task/snapshot-task.co
     IxFormsModule,
     SchedulerModule,
     MatButtonModule,
+    MatDialogModule,
+    MatIconModule,
   ],
   declarations: [
     SnapshotListComponent,
@@ -60,6 +73,9 @@ import { SnapshotTaskComponent } from './snapshot/snapshot-task/snapshot-task.co
     CloudsyncFormComponent,
     DataProtectionDashboardComponent,
     ResilverConfigComponent,
+    CloudsyncRestoreDialogComponent,
+    TransferModeExplanationComponent,
+    ReplicationRestoreDialogComponent,
   ],
 })
 export class DataProtectionModule {}

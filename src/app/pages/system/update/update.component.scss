@@ -51,17 +51,22 @@
   overflow-y: auto;
 }
 
-#stable-warning-card {
+.train-info-card {
   padding: 2px 20px;
 }
 
 .stable-warning {
-  font-size: 1.1rem;
+  align-items: center;
+  display: flex;
   margin: 10px 0 !important;
-}
 
-.stable-warning a {
-  text-decoration: underline;
+  i {
+    margin-right: 10px;
+  }
+
+  a {
+    text-decoration: underline;
+  }
 }
 
 #stable_warning_line_2 {
@@ -71,12 +76,6 @@
 .update-button {
   margin-right: 3px;
   top: 6px;
-}
-
-#update-info {
-  margin-right: 10px;
-  position: relative;
-  top: 3px;
 }
 
 #update-spinner { bottom: 0;

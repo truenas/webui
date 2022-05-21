@@ -136,7 +136,7 @@ export class LocaleService {
       .replace('DD', 'dd')
       .replace('D', 'd')
       .replace(' A', ' aa');
-    if (!dateFnsFormat.includes('aa')) {
+    if (dateFnsFormat && !dateFnsFormat.includes('aa')) {
       dateFnsFormat = dateFnsFormat.replace(' a', ' aaaaa\'m\'');
     }
     return dateFnsFormat;

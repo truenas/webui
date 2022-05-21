@@ -52,12 +52,15 @@
 
         <div class="links-wrapper">
           <div class="links" *ngFor="let link of links">
-            <div [innerHTML]=link></div>
+            <div [innerHTML]="link"></div>
           </div>
         </div>
         <div *ngIf="hasLicense">
-          <mat-checkbox color="primary" (change)="updateProductionStatus($event)" [(ngModel)]="isProduction">
-            {{ 'This is a production system' | translate}}</mat-checkbox>
+          <mat-checkbox
+            color="primary"
+            (change)="updateProductionStatus($event)"
+            [(ngModel)]="isProduction"
+          >{{ 'This is a production system' | translate}}</mat-checkbox>
         </div>
 
         <!-- ACTION BUTTONS -->
