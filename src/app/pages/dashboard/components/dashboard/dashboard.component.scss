@@ -1,8 +1,5 @@
-#dashboard-spinner {
-  left: 48%;
-  position: absolute;
-  top: 58px;
-  z-index: 10;
+:host {
+  display: block;
 }
 
 .mobile-viewport {
@@ -12,6 +9,15 @@
   top: 48px;
   width: 100vw;
   z-index: 2;
+}
+
+.spinner {
+  &.xs {
+    left: 50%;
+    position: absolute;
+    top: 50%;
+    transform: translate(-50%, -50%);
+  }
 }
 
 .mobile-viewport.hidden {
@@ -32,7 +38,6 @@
 }
 
 .widgets-wrapper-container {
-  //width:calc(100% - 32px);
   margin: 0 auto;
 }
 

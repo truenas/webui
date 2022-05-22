@@ -27,3 +27,18 @@ export enum VmCpuMode {
   HostModel = 'HOST-MODEL',
   HostPassthrough = 'HOST-PASSTHROUGH',
 }
+
+export enum VmDiskMode {
+  Ahci = 'AHCI',
+  Virtio = 'VIRTIO',
+}
+
+export enum VmDisplayType {
+  Vnc = 'VNC',
+  Spice = 'SPICE',
+}
+
+export enum VmNicType {
+  E1000 = 'E1000',
+  Virtio = 'VIRTIO',
+}

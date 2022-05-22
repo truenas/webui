@@ -1,8 +1,3 @@
-.widget {
-  height: 400px;
-  width: 600px;
-}
-
 .widget mat-card-content {
   width: 100%;
 }
@@ -13,12 +8,15 @@
   font-size: 1.5rem;
   height: 48px;
   left: 0;
-  line-height: 180%;
   padding: 0 8px;
   position: absolute;
   text-align: left;
   width: 100%;
   z-index: 4;
+
+  &.view-overview {
+    padding: 0 16px;
+  }
 }
 
 .xs.widget mat-toolbar-row.view-overview .controls,
@@ -140,17 +138,6 @@
   top: 2px;
 }
 
-.controls {
-  color: var(--fg2);
-  position: absolute;
-  right: 16px;
-  top: 0;
-}
-
-.controls button {
-  display: inline-block;
-}
-
 .carousel-nav {
   background: var(--bg2);
   border-top: solid 1px var(--bg1);
@@ -214,6 +201,10 @@
 
 .mat-list-base .mat-list-item {
   border-bottom: solid 1px rgba(0, 0, 0, 0.1);
+
+  strong {
+    margin-right: 6px;
+  }
 }
 
 .list-subheader {

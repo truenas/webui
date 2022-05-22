@@ -11,14 +11,15 @@ import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
 import { AppState } from 'app/store/index';
 import {
   builtinGroupsToggled,
-  builtinUsersToggled, localizationFormSubmitted,
-  noPreferencesFound,
+  builtinUsersToggled, guiFormSubmitted, localizationFormSubmitted,
   preferencesLoaded, preferredColumnsUpdated,
   themeNotFound,
 } from 'app/store/preferences/preferences.actions';
 import { selectPreferencesState } from 'app/store/preferences/preferences.selectors';
 import { sidenavUpdated } from 'app/store/topbar/topbar.actions';
-import { snapshotExtraColumnsToggled } from './preferences.actions';
+import {
+  snapshotExtraColumnsToggled, dashboardStateLoaded, noPreferencesFound, noDashboardStateFound,
+} from './preferences.actions';
 
 @Injectable()
 export class PreferencesEffects {
@@ -28,6 +29,13 @@ export class PreferencesEffects {
       return this.ws.call('user.query', [[['id', '=', rootUserId]]]).pipe(
         map(([user]) => {
           const preferences = user.attributes.preferences;
+          const dashboardState = user.attributes.dashState;
+
+          if (dashboardState) {
+            this.store$.dispatch(dashboardStateLoaded({ dashboardState }));
+          } else {
+            this.store$.dispatch(noDashboardStateFound());
+          }
 
           if (!preferences) {
             return noPreferencesFound();
@@ -53,6 +61,7 @@ export class PreferencesEffects {
       snapshotExtraColumnsToggled,
       builtinGroupsToggled,
       localizationFormSubmitted,
+      guiFormSubmitted,
     ),
     withLatestFrom(this.store$.select(selectPreferencesState)),
     switchMap(([_, state]) => {

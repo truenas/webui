@@ -57,7 +57,6 @@ import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
 import { TruecommandModule } from 'app/modules/truecommand/truecommand.module';
 import { DialogService, LanguageService } from 'app/services';
 import { LocaleService } from 'app/services/locale.service';
-import { ThemeService } from 'app/services/theme/theme.service';
 
 @NgModule({
   imports: [
@@ -120,7 +119,7 @@ import { ThemeService } from 'app/services/theme/theme.service';
     PageTitleComponent,
     SecondaryMenuComponent,
   ],
-  providers: [ThemeService, DialogService, LanguageService, LocaleService, SvgIconRegistryService],
+  providers: [DialogService, LanguageService, LocaleService, SvgIconRegistryService],
   exports: [
     PageTitleComponent,
     PageTitleHeaderComponent,

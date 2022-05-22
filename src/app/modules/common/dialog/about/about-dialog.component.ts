@@ -18,8 +18,6 @@ export class AboutDialogComponent {
   systemType: ProductType;
   helptext = helptext;
 
-  readonly ProductType = ProductType;
-
   constructor(
     public dialogRef: MatDialogRef<AboutDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: DialogData,

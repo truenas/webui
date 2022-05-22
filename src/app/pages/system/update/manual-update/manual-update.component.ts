@@ -5,6 +5,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatDialogRef } from '@angular/material/dialog/dialog-ref';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 import { filter, take } from 'rxjs/operators';
@@ -12,7 +13,6 @@ import { JobState } from 'app/enums/job-state.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { helptextSystemUpdate as helptext } from 'app/helptext/system/update';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
-import { SysInfoEvent } from 'app/interfaces/events/sys-info-event.interface';
 import { FormUploadComponent } from 'app/modules/entity/entity-form/components/form-upload/form-upload.component';
 import { EntityFormComponent } from 'app/modules/entity/entity-form/entity-form.component';
 import { FieldConfig, FormSelectConfig, FormParagraphConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
@@ -22,6 +22,8 @@ import { EntityUtils } from 'app/modules/entity/utils';
 import { WebSocketService, SystemGeneralService } from 'app/services';
 import { CoreService } from 'app/services/core-service/core.service';
 import { DialogService } from 'app/services/dialog.service';
+import { AppState } from 'app/store';
+import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 
 @UntilDestroy()
 @Component({
@@ -87,20 +89,16 @@ export class ManualUpdateComponent implements FormConfiguration {
     private dialogService: DialogService,
     private systemService: SystemGeneralService,
     private core: CoreService,
+    private store$: Store<AppState>,
   ) {
-    this.core.register({
-      observerClass: this,
-      eventName: 'SysInfo',
-    }).pipe(untilDestroyed(this)).subscribe((evt: SysInfoEvent) => {
+    this.store$.pipe(waitForSystemInfo, untilDestroyed(this)).subscribe((sysInfo) => {
       const config = _.find(this.fieldConfig, { name: 'version' }) as FormParagraphConfig;
-      config.paraText += evt.data.version;
+      config.paraText += sysInfo.version;
     });
-
-    this.core.emit({ name: 'SysInfoRequest', sender: this });
   }
 
   preInit(): void {
-    if (window.localStorage.getItem('product_type').includes(ProductType.Enterprise)) {
+    if (window.localStorage.getItem('product_type') === ProductType.ScaleEnterprise) {
       this.ws.call('failover.licensed').pipe(untilDestroyed(this)).subscribe((isHa) => {
         if (isHa) {
           this.isHa = true;

@@ -1,9 +1,10 @@
 import { Injectable } from '@angular/core';
 import { map } from 'rxjs/operators';
+import { ExplorerNodeType } from 'app/enums/explorer-type.enum';
 import { FileType } from 'app/enums/file-type.enum';
 import { FileRecord } from 'app/interfaces/file-record.interface';
 import { QueryFilter } from 'app/interfaces/query-api.interface';
-import { TreeNode, ExplorerNodeData } from 'app/interfaces/tree-node.interface';
+import { ExplorerNodeData, TreeNode } from 'app/interfaces/tree-node.interface';
 import { TreeNodeProvider } from 'app/modules/ix-forms/components/ix-explorer/ix-explorer.component';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -50,6 +51,7 @@ export class FilesystemService {
             children.push({
               path: file.path,
               name: file.name,
+              type: file.type === FileType.Directory ? ExplorerNodeType.Directory : ExplorerNodeType.File,
               hasChildren: file.type === FileType.Directory,
             });
           });
