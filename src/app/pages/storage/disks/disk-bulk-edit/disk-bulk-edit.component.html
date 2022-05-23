@@ -11,9 +11,7 @@
             <p class="label-disks">{{helptextBulkEdit.disks.placeholder}}</p>
             <tooltip *ngIf="helptextBulkEdit.disks.tooltip" [header]="helptextBulkEdit.disks.placeholder" class="tooltip" [message]="helptextBulkEdit.disks.tooltip"></tooltip>
             <p class="name-disks">
-              <span *ngFor="let name of diskNames;  last as isLast">
-                {{name}}{{ isLast ? '' : ', ' }}
-              </span>
+              {{diskNames.join(', ')}}
             </p>
           </div>
         </ix-fieldset>
@@ -42,7 +40,7 @@
           ></ix-checkbox>
           <ix-input
             formControlName="smartoptions"
-            [label]="'S.M.A.R.T. extra options' | translate"
+            [label]="'S.M.A.R.T. Extra Options' | translate"
             [tooltip]="helptext.disk_form_smartoptions_tooltip | translate"
           ></ix-input>
         </ix-fieldset>
