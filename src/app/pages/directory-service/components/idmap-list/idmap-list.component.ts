@@ -12,15 +12,14 @@ import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-tab
 import { EntityTableAction, EntityTableConfig } from 'app/modules/entity/entity-table/entity-table.interface';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { ActiveDirectoryComponent } from 'app/pages/directory-service/components/active-directory/active-directory.component';
-import { IdmapRow } from 'app/pages/directory-service/components/idmap/idmap-row.interface';
+import { IdmapFormComponent } from 'app/pages/directory-service/components/idmap-form/idmap-form.component';
+import { IdmapRow } from 'app/pages/directory-service/components/idmap-list/idmap-row.interface';
 import { requiredIdmapDomains } from 'app/pages/directory-service/utils/required-idmap-domains.utils';
 import {
   IdmapService, WebSocketService,
 } from 'app/services';
 import { DialogService } from 'app/services/dialog.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { ModalService } from 'app/services/modal.service';
-import { IdmapFormComponent } from './idmap-form.component';
 
 @UntilDestroy()
 @Component({
@@ -58,7 +57,6 @@ export class IdmapListComponent implements EntityTableConfig {
   constructor(
     protected idmapService: IdmapService,
     private ws: WebSocketService,
-    private modalService: ModalService,
     private slideIn: IxSlideInService,
     protected dialogService: DialogService,
     protected translate: TranslateService,
@@ -163,6 +161,6 @@ export class IdmapListComponent implements EntityTableConfig {
   }
 
   showActiveDirectoryForm(): void {
-    this.modalService.openInSlideIn(ActiveDirectoryComponent);
+    this.slideIn.open(ActiveDirectoryComponent, { wide: true });
   }
 }

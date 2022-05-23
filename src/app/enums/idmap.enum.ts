@@ -25,3 +25,9 @@ export enum IdmapLinkedService {
   Ldap = 'LDAP',
   Nis = 'NIS',
 }
+
+export enum IdmapSchemaMode {
+  Rfc2307 = 'RFC2307',
+  Sfu = 'SFU',
+  Sfu20 = 'SFU20',
+}

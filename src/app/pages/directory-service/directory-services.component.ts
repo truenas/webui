@@ -18,6 +18,7 @@ import { AppLoaderService } from 'app/modules/app-loader/app-loader.service';
 import { EmptyConfig } from 'app/modules/entity/entity-empty/entity-empty.component';
 import { AppTableConfig } from 'app/modules/entity/table/table.component';
 import { ActiveDirectoryComponent } from 'app/pages/directory-service/components/active-directory/active-directory.component';
+import { IdmapFormComponent } from 'app/pages/directory-service/components/idmap-form/idmap-form.component';
 import { KerberosKeytabsFormComponent } from 'app/pages/directory-service/components/kerberos-keytabs/kerberos-keytabs-form/kerberos-keytabs-form.component';
 import { KerberosSettingsComponent } from 'app/pages/directory-service/components/kerberos-settings/kerberos-settings.component';
 import { requiredIdmapDomains } from 'app/pages/directory-service/utils/required-idmap-domains.utils';
@@ -26,7 +27,6 @@ import {
 } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { ModalService } from 'app/services/modal.service';
-import { IdmapFormComponent } from './components/idmap/idmap-form.component';
 import { KerberosRealmsFormComponent } from './components/kerberos-realms-form/kerberos-realms-form.component';
 import { LdapComponent } from './components/ldap/ldap.component';
 

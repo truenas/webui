@@ -10,7 +10,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { Observable, of } from 'rxjs';
 import { filter, switchMap } from 'rxjs/operators';
 import {
-  IdmapBackend, IdmapLinkedService, IdmapName, IdmapSslEncryptionMode,
+  IdmapBackend, IdmapLinkedService, IdmapName, IdmapSchemaMode, IdmapSslEncryptionMode,
 } from 'app/enums/idmap.enum';
 import { idNameArrayToOptions } from 'app/helpers/options.helper';
 import helptext from 'app/helptext/directory-service/idmap';
@@ -63,10 +63,10 @@ export class IdmapFormComponent implements OnInit {
     range_high: [null as number, [
       Validators.required,
       this.validators.rangeValidator(minAllowedRange, maxAllowedRange),
-      this.validators.greaterThan('range_low', [helptext.idmap.range_low.placeholder]),
+      this.validators.greaterThan('range_low', [this.translate.instant('Range Low')]),
     ]],
     certificate: [null as number],
-    schema_mode: [''],
+    schema_mode: [null as IdmapSchemaMode],
     unix_primary_group: [false],
     unix_nss_info: [false],
     rangesize: [null as number],
@@ -105,9 +105,9 @@ export class IdmapFormComponent implements OnInit {
     { label: this.translate.instant('Custom Value'), value: customIdmapName },
   ]);
   readonly schemaModes$ = of([
-    { label: 'RFC2307', value: 'RFC2307' },
-    { label: 'SFU', value: 'SFU' },
-    { label: 'SFU20', value: 'SFU20' },
+    { label: 'RFC2307', value: IdmapSchemaMode.Rfc2307 },
+    { label: 'SFU', value: IdmapSchemaMode.Sfu },
+    { label: 'SFU20', value: IdmapSchemaMode.Sfu20 },
   ]);
   readonly sslModes$ = of([
     { label: this.translate.instant('Off'), value: IdmapSslEncryptionMode.Off },
@@ -316,6 +316,7 @@ export class IdmapFormComponent implements OnInit {
             helptext.idmap.clear_cache_dialog.success_title,
             helptext.idmap.clear_cache_dialog.success_msg,
           );
+          dialog.close();
         });
 
         return dialog.afterClosed();
