@@ -296,6 +296,59 @@ export class EntityUtils {
     return result;
   }
 
+  parseSchemaAndCopyOldData(
+    schemaConfig: ChartSchemaNode,
+    isParentImmutable: boolean = false,
+    prevData: any,
+    objPath: string[] = [],
+    copiedAttrsList: { path: string[]; data: any }[] = [],
+  ): void {
+    if (isParentImmutable) {
+      return;
+    }
+    if (schemaConfig.schema.immutable) {
+      copiedAttrsList.push({
+        path: [...objPath],
+        data: _.get(prevData, [...objPath]),
+      });
+    }
+
+    if (schemaConfig.schema.type === 'list') {
+      schemaConfig.schema.items.forEach((item) => {
+        this.parseSchemaAndCopyOldData(
+          item,
+          !!item.schema.immutable || isParentImmutable,
+          prevData, [...objPath, item.variable], copiedAttrsList,
+        );
+      });
+    } else if (schemaConfig.schema.type === 'dict') {
+      if (schemaConfig.schema.attrs.length > 0) {
+        schemaConfig.schema.attrs.forEach((dictConfig) => {
+          this.parseSchemaAndCopyOldData(
+            dictConfig,
+            !!dictConfig.schema.immutable || isParentImmutable,
+            prevData,
+            [...objPath, dictConfig.variable],
+            copiedAttrsList,
+          );
+        });
+      }
+    }
+
+    if (schemaConfig.schema.subquestions) {
+      schemaConfig.schema.subquestions.forEach((subquestion) => {
+        objPath.pop();
+        this.parseSchemaAndCopyOldData(
+          subquestion,
+          !!subquestion.schema.immutable || isParentImmutable,
+          prevData,
+          [...objPath, subquestion.variable],
+          copiedAttrsList,
+        );
+      });
+    }
+  }
+
   parseSchemaFieldConfig(
     schemaConfig: ChartSchemaNode,
     isNew: boolean = false,

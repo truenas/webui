@@ -32,6 +32,7 @@ export class ChartFormComponent implements FormConfiguration {
   entityForm: EntityFormComponent;
 
   title: string;
+  dataToBeCopied: { path: string[]; data: any }[] = [];
   private name: string;
   private getRow = new Subscription();
   private rowName: string;
@@ -98,6 +99,25 @@ export class ChartFormComponent implements FormConfiguration {
             !!question.schema.immutable,
           );
 
+          const copiedAttrsList: { path: string[]; data: any }[] = [];
+
+          if (!this.entityForm.isNew) {
+            if (question.schema.immutable) {
+              copiedAttrsList.push({
+                path: [question.variable],
+                data: this.catalogApp.config[question.variable],
+              });
+            } else {
+              this.entityUtils.parseSchemaAndCopyOldData(
+                question,
+                !!question.schema.immutable,
+                this.catalogApp.config, [question.variable],
+                copiedAttrsList,
+              );
+            }
+            this.dataToBeCopied.push(...copiedAttrsList);
+          }
+
           const imageConfig = _.find(fieldConfigs, { name: 'image' }) as FormDictConfig;
           if (imageConfig) {
             const repositoryConfig = _.find(imageConfig.subFields, { name: 'repository' });
@@ -137,6 +157,11 @@ export class ChartFormComponent implements FormConfiguration {
 
   customSubmit(data: any): void {
     data = remapAppSubmitData(data);
+    if (!this.entityForm.isNew) {
+      for (const copiedData of this.dataToBeCopied) {
+        _.set(data, [...copiedData.path], copiedData.data);
+      }
+    }
     const payload = [];
     payload.push({
       values: data,
