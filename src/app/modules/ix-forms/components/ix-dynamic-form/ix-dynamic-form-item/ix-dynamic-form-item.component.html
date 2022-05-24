@@ -44,7 +44,7 @@
     [required]="dynamicSchema.required"
     [fxHide]="isHidden || dynamicSchema.hidden"
     [class.disabled]="dynamicSchema.editable === false"
-    [type]="dynamicSchema.private === true ? 'password' : undefined"
+    [type]="inputType"
   ></ix-input>
   <ix-select
     *ngIf="dynamicSchema.type === DynamicFormSchemaType.Select"

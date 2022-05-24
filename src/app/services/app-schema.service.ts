@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import {
   FormGroup, FormControl, Validators, FormArray, AbstractControl,
 } from '@angular/forms';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { UntilDestroy } from '@ngneat/until-destroy';
 import { of, Subscription } from 'rxjs';
 import { ChartSchemaType } from 'app/enums/chart-schema-type.enum';
 import { DynamicFormSchemaType } from 'app/enums/dynamic-form-schema-type.enum';
@@ -60,6 +60,7 @@ export class AppSchemaService {
               tooltip: chartSchemaNode.description,
               editable: schema.editable,
               private: schema.private,
+              number: true,
             });
           }
           break;
@@ -231,7 +232,6 @@ export class AppSchemaService {
           }
         });
         subscription.add(newFormControl.valueChanges
-          .pipe(untilDestroyed(this))
           .subscribe((value) => {
             schema.subquestions.forEach((subquestion) => {
               if (formGroup.controls[subquestion.variable].parent.enabled) {
@@ -306,7 +306,6 @@ export class AppSchemaService {
               formGroup.controls[chartSchemaNode.variable].disable();
             }
             subscription.add(formGroup.controls[relation.fieldName].valueChanges
-              .pipe(untilDestroyed(this))
               .subscribe((value) => {
                 if (value !== null && formGroup.controls[chartSchemaNode.variable].parent.enabled) {
                   if (value === relation.operatorValue) {
@@ -322,7 +321,6 @@ export class AppSchemaService {
               formGroup.controls[chartSchemaNode.variable].disable();
             }
             subscription.add(formGroup.controls[relation.fieldName].valueChanges
-              .pipe(untilDestroyed(this))
               .subscribe((value) => {
                 if (value !== null && formGroup.controls[chartSchemaNode.variable].parent.enabled) {
                   if (value !== relation.operatorValue) {
@@ -380,5 +378,29 @@ export class AppSchemaService {
 
   deleteFormListItem(event: DeleteListItemEvent): void {
     event.array.removeAt(event.index);
+  }
+
+  remapAppSubmitData(data: HierarchicalObjectMap<ChartFormValue>): HierarchicalObjectMap<ChartFormValue> {
+    let result: any;
+    if (data === undefined || data === null) {
+      result = data;
+    } else if (Array.isArray(data)) {
+      result = data.map((item) => {
+        if (Object.keys(item).length > 1) {
+          return this.remapAppSubmitData(item);
+        }
+        return this.remapAppSubmitData(item[Object.keys(item)[0]]);
+      });
+    } else if (typeof data === 'object') {
+      result = {};
+      Object.keys(data).forEach((key) => {
+        result[key] = this.remapAppSubmitData(data[key] as HierarchicalObjectMap<ChartFormValue>);
+      });
+    } else if (typeof data === 'string' && !Number.isNaN(Number(data))) {
+      result = Number(data);
+    } else {
+      result = data;
+    }
+    return result;
   }
 }

@@ -100,11 +100,10 @@ const afterData = [
     attrs: [{
       controlName: 'options',
       editable: undefined,
-      hidden: undefined,
       items: [{
-        controlName: 'name', editable: undefined, hidden: undefined, private: undefined, required: true, title: 'Option Name', tooltip: undefined, type: 'input',
+        controlName: 'name', editable: undefined, private: undefined, required: true, title: 'Option Name', tooltip: undefined, type: 'input',
       }, {
-        controlName: 'value', editable: undefined, hidden: undefined, private: undefined, required: true, title: 'Option Value', tooltip: undefined, type: 'input',
+        controlName: 'value', editable: undefined, private: undefined, required: true, title: 'Option Value', tooltip: undefined, type: 'input',
       }],
       itemsSchema: [{ label: 'Option Name', schema: { required: true, type: 'string' }, variable: 'name' }, { label: 'Option Value', schema: { required: true, type: 'string' }, variable: 'value' }],
       title: 'DNS Options',
@@ -112,21 +111,19 @@ const afterData = [
     }],
     controlName: 'dnsConfig',
     editable: undefined,
-    hidden: undefined,
     title: 'DNS Configuration',
     type: 'dict',
   }],
   [{
     attrs: [{
-      controlName: 'swarmPort', editable: undefined, hidden: undefined, private: undefined, required: true, title: 'Swarm Port to use for IPFS (Public)', tooltip: undefined, type: 'input',
+      controlName: 'swarmPort', editable: undefined, number: true, private: undefined, required: true, title: 'Swarm Port to use for IPFS (Public)', tooltip: undefined, type: 'input',
     }, {
-      controlName: 'apiPort', editable: undefined, hidden: undefined, private: undefined, required: true, title: 'API Port to use for IPFS (local)', tooltip: undefined, type: 'input',
+      controlName: 'apiPort', editable: undefined, number: true, private: undefined, required: true, title: 'API Port to use for IPFS (local)', tooltip: undefined, type: 'input',
     }, {
-      controlName: 'gatewayPort', editable: undefined, hidden: undefined, private: undefined, required: true, title: 'Gateway Port to use for IPFS (local)', tooltip: undefined, type: 'input',
+      controlName: 'gatewayPort', editable: undefined, number: true, private: undefined, required: true, title: 'Gateway Port to use for IPFS (local)', tooltip: undefined, type: 'input',
     }],
     controlName: 'service',
     editable: undefined,
-    hidden: undefined,
     title: 'IPFS Service Configuration',
     type: 'dict',
   }],

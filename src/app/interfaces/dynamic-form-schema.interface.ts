@@ -33,6 +33,7 @@ export interface DynamicFormSchemaInput extends DynamicFormSchemaBase {
   type: DynamicFormSchemaType.Input;
   tooltip?: string;
   private?: boolean;
+  number?: boolean;
   placeholder?: string;
 }
 

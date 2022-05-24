@@ -52,6 +52,17 @@ export class IxDynamicFormItemComponent implements OnInit {
     return this.dynamicForm.controls[this.dynamicSchema.controlName].disabled;
   }
 
+  get inputType(): string {
+    if (this.dynamicSchema.type === DynamicFormSchemaType.Input) {
+      if (this.dynamicSchema.private) {
+        return 'password';
+      }
+      if (this.dynamicSchema.number) {
+        return 'number';
+      }
+    }
+  }
+
   addControl(): void {
     if (this.dynamicSchema.type === DynamicFormSchemaType.List) {
       this.addListItem.emit({
