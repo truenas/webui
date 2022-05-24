@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
@@ -25,11 +26,22 @@ import { DialogService, RedirectService, WebSocketService } from 'app/services';
 @UntilDestroy()
 @Component({
   selector: 'app-ipmi',
-  template: '<entity-form [conf]="this"></entity-form>',
+  templateUrl: 'ipmi-form.component.html',
+  // changeDetection: ChangeDetectionStrategy.OnPush, // -------------
 })
 export class IpmiFormComponent implements FormConfiguration {
-  title = this.translate.instant('IPMI');
-  queryCall = 'ipmi.query' as const;
+  title = this.translate.instant('IPMI+++++'); //
+  queryCall = 'ipmi.query' as const; //
+  isLoading = false;
+  form = this.fb.group({
+    dhcp: [false], // false or true
+    ipaddress: [''],
+    gateway: [''],
+    netmask: [''],
+    vlan: [''], // unknown
+    password: [''],
+  });
+  readonly helptext = helptext;
 
   protected entityEdit: EntityFormComponent;
   isHa = false;
@@ -188,7 +200,18 @@ export class IpmiFormComponent implements FormConfiguration {
     private matDialog: MatDialog,
     private translate: TranslateService,
     private redirect: RedirectService,
+    private fb: FormBuilder,
   ) { }
+
+  onSubmit(): void {}
+
+  setFlashTime(): void {
+    this.matDialog.open(IpmiIdentifyDialogComponent);
+  }
+
+  openManageWindow(): void {
+    this.redirect.openWindow(`http://${this.managementIp}`);
+  }
 
   async prerequisite(): Promise<boolean> { // ngOninit
     return new Promise(async (resolve) => {
@@ -200,7 +223,7 @@ export class IpmiFormComponent implements FormConfiguration {
           await this.ws.call('failover.node').toPromise().then((node) => {
             this.currentControllerLabel = (node === 'A') ? '1' : '2'; // radio lable
             this.failoverControllerLabel = (node === 'A') ? '2' : '1'; // radio lable
-          });
+          }); // add this.remoteController = true
           this.fieldSets.unshift({
             name: helptext.ipmi_remote_controller,
             class: 'remote-controller',
