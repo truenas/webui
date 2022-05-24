@@ -55,6 +55,33 @@ export class IpmiFormComponent implements FormConfiguration {
   ];
   fieldConfig: FieldConfig[] = [];
   fieldSets: FieldSet[] = [
+    { // ----------------------------
+      name: helptext.ipmi_remote_controller,
+      class: 'remote-controller',
+      width: '100%',
+      label: true,
+      config: [
+        {
+          type: 'radio',
+          name: 'remoteController',
+          placeholder: '',
+          options: [
+            {
+              label: `Active: ${this.controllerName} '1'`,
+              value: false,
+            },
+            {
+              label: `Standby: ${this.controllerName} '2'`,
+              value: true,
+            },
+          ],
+          value: false,
+        },
+      ],
+    }, { // ------------------------------
+      name: 'ipmi_divider',
+      divider: true,
+    },
     {
       name: helptext.ipmi_configuration,
       label: true,
@@ -139,7 +166,7 @@ export class IpmiFormComponent implements FormConfiguration {
           placeholder: helptext.password_placeholder,
           validation: helptext.password_validation,
           hasErrors: false,
-          errors: helptext.password_errors,
+          errors: helptext.password_errors, // errors text
           togglePw: true,
           tooltip: helptext.password_tooltip,
         },
@@ -163,7 +190,7 @@ export class IpmiFormComponent implements FormConfiguration {
     private redirect: RedirectService,
   ) { }
 
-  async prerequisite(): Promise<boolean> {
+  async prerequisite(): Promise<boolean> { // ngOninit
     return new Promise(async (resolve) => {
       if (window.localStorage.getItem('product_type') === ProductType.ScaleEnterprise) {
         await this.ws.call('failover.licensed').toPromise().then((isHa) => {
@@ -171,8 +198,8 @@ export class IpmiFormComponent implements FormConfiguration {
         });
         if (this.isHa) {
           await this.ws.call('failover.node').toPromise().then((node) => {
-            this.currentControllerLabel = (node === 'A') ? '1' : '2';
-            this.failoverControllerLabel = (node === 'A') ? '2' : '1';
+            this.currentControllerLabel = (node === 'A') ? '1' : '2'; // radio lable
+            this.failoverControllerLabel = (node === 'A') ? '2' : '1'; // radio lable
           });
           this.fieldSets.unshift({
             name: helptext.ipmi_remote_controller,
@@ -211,12 +238,12 @@ export class IpmiFormComponent implements FormConfiguration {
     });
   }
 
-  afterInit(entityEdit: EntityFormComponent): void {
-    this.channelValue = entityEdit.pk;
-    this.entityEdit = entityEdit;
+  afterInit(entityEdit: EntityFormComponent): void { // ngOninit
+    this.channelValue = entityEdit.pk; // id network.component 182
+    this.entityEdit = entityEdit; // EntityFormComponent
 
     entityEdit.formGroup.controls['password'].statusChanges.pipe(untilDestroyed(this)).subscribe((status: string) => {
-      this.setErrorStatus(status, _.find(this.fieldConfig, { name: 'password' }));
+      this.setErrorStatus(status, _.find(this.fieldConfig, { name: 'password' })); // fieldConfig.hasError <mat-error *ngIf="config['hasErrors']">{{config['errors']}}
     });
 
     entityEdit.formGroup.controls['ipaddress'].statusChanges.pipe(untilDestroyed(this)).subscribe((status: string) => {
@@ -250,7 +277,7 @@ export class IpmiFormComponent implements FormConfiguration {
   }
 
   customSubmit(payload: IpmiUpdate): Subscription {
-    let call$ = this.ws.call('ipmi.update', [this.channelValue, payload]);
+    let call$ = this.ws.call('ipmi.update', [this.channelValue, payload]); //
     if (this.entityEdit.formGroup.controls['remoteController'] && this.entityEdit.formGroup.controls['remoteController'].value) {
       call$ = this.ws.call('failover.call_remote', ['ipmi.update', [this.channelValue, payload]]) as Observable<Ipmi>;
     }
@@ -266,7 +293,7 @@ export class IpmiFormComponent implements FormConfiguration {
   }
 
   loadData(filter: QueryParams<Ipmi> = []): void {
-    let query$ = this.ws.call(this.queryCall, filter);
+    let query$ = this.ws.call(this.queryCall, filter); // 'ipmi.query'
     if (this.entityEdit.formGroup.controls['remoteController'] && this.entityEdit.formGroup.controls['remoteController'].value) {
       query$ = this.ws.call('failover.call_remote', [this.queryCall, [filter]]) as Observable<Ipmi[]>;
     }
