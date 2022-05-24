@@ -3,17 +3,22 @@
   <mat-card-content>
 
     <form [formGroup]="form" class="ix-form-container" (submit)="onSubmit()">
-      <div class="two-columns">
+      <div>
         <ix-fieldset
           [title]="helptextBulkEdit.title | translate"
         >
-          <div class="container-disks">
-            <p class="label-disks">{{helptextBulkEdit.disks.placeholder}}</p>
-            <tooltip *ngIf="helptextBulkEdit.disks.tooltip" [header]="helptextBulkEdit.disks.placeholder" class="tooltip" [message]="helptextBulkEdit.disks.tooltip"></tooltip>
-            <p class="name-disks">
-              {{diskNames.join(', ')}}
-            </p>
-          </div>
+          <!--          <div class="container-disks">-->
+          <!--            <p class="label-disks">{{helptextBulkEdit.disks.placeholder}}</p>-->
+          <!--            <tooltip *ngIf="helptextBulkEdit.disks.tooltip" [header]="helptextBulkEdit.disks.placeholder" class="tooltip" [message]="helptextBulkEdit.disks.tooltip"></tooltip>-->
+          <!--            <p class="name-disks">-->
+          <!--              {{diskNames.join(', ')}}-->
+          <!--            </p>-->
+          <!--          </div>-->
+          <ix-chips
+            formControlName="disknames"
+            [label]="'Disks to be edited:' | translate"
+            [tooltip]="helptextBulkEdit.disks.tooltip | translate"
+          ></ix-chips>
         </ix-fieldset>
 
         <ix-fieldset

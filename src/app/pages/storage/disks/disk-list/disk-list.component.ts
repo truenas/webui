@@ -75,7 +75,7 @@ export class DiskListComponent implements EntityTableConfig<Disk> {
     ttpos: 'above' as TooltipPosition,
     onClick: (selected: Disk[]) => {
       if (selected.length > 1) {
-        const diskBulkEditForm = this.slideInService.open(DiskBulkEditComponent, { wide: true });
+        const diskBulkEditForm = this.slideInService.open(DiskBulkEditComponent);
         diskBulkEditForm.setFormDiskBulk(selected);
       } else {
         const editForm = this.slideInService.open(DiskFormComponent, { wide: true });

@@ -24,6 +24,7 @@ export class DiskBulkEditComponent {
   diskNames: string[] = [];
   isLoading = false;
   form = this.fb.group({
+    disknames: [null as string[]],
     hddstandby: [null as DiskStandby],
     advpowermgmt: [null as DiskPowerLevel],
     togglesmart: [false],
@@ -50,6 +51,7 @@ export class DiskBulkEditComponent {
 
   setFormDiskBulk(selectedDisks: Disk[]): void {
     const setForm: DiskBulkEditComponent['form']['value'] = {
+      disknames: [],
       hddstandby: '' as DiskStandby,
       advpowermgmt: '' as DiskPowerLevel,
       togglesmart: false,
@@ -61,7 +63,7 @@ export class DiskBulkEditComponent {
 
     for (const disk of selectedDisks) {
       this.diskIds.push(disk.identifier);
-      this.diskNames.push(disk.name);
+      setForm.disknames.push(disk.name);
       hddStandby.push(disk.hddstandby);
       advPowerMgt.push(disk.advpowermgmt);
       if (disk.togglesmart) {
@@ -90,6 +92,7 @@ export class DiskBulkEditComponent {
     }
 
     this.form.patchValue({ ...setForm });
+    this.form.controls['disknames'].setDisable(true);
   }
 
   prepareDataSubmit(): any[][] {
