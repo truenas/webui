@@ -41,6 +41,7 @@ export interface DynamicFormSchemaSelect extends DynamicFormSchemaBase {
   type: DynamicFormSchemaType.Select;
   tooltip?: string;
   options?: Observable<Option[]>;
+  hideEmpty?: boolean;
 }
 
 export interface DynamicFormSchemaExplorer extends DynamicFormSchemaBase {

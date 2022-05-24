@@ -18,7 +18,7 @@
     >
       <ng-container *ngIf="opts$ | async as opts; else loadingOrError">
         <mat-option *ngIf="opts.length === 0" [value]="null" [disabled]="true">{{ 'No options' | translate  }}</mat-option>
-        <mat-option *ngIf="opts.length > 0 && !multiple && !required" [value]="emptyValue">--</mat-option>
+        <mat-option *ngIf="opts.length > 0 && !multiple && !required && !hideEmpty" [value]="emptyValue">--</mat-option>
         <mat-option *ngFor="let option of opts$ | async" [value]="option.value">{{ option.label }}</mat-option>
       </ng-container>
 

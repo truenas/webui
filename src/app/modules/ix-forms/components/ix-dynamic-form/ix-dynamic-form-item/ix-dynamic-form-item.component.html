@@ -5,7 +5,7 @@
     <ix-dynamic-form-item
       *ngFor="let attr of dynamicSchema.attrs"
       [dynamicSchema]="attr"
-      [dynamicForm]="dynamicForm.controls[this.dynamicSchema.controlName] | cast"
+      [dynamicForm]="dynamicForm.controls[dynamicSchema.controlName] | cast"
       (addListItem)="addControlNext($event)"
       (deleteListItem)="removeControlNext($event)"
       [fxHide]="isHidden || dynamicSchema.hidden"
@@ -53,6 +53,7 @@
     [options]="dynamicSchema.options"
     [tooltip]="dynamicSchema.tooltip | translate"
     [required]="dynamicSchema.required"
+    [hideEmpty]="dynamicSchema.hideEmpty"
     [fxHide]="isHidden || dynamicSchema.hidden"
     [class.disabled]="dynamicSchema.editable === false"
   ></ix-select>

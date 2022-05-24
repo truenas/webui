@@ -47,7 +47,8 @@ export class AppSchemaService {
                 value: option.value,
                 label: option.description,
               }))),
-              required: true,
+              required: schema.required,
+              hideEmpty: true,
               editable: schema.editable,
               tooltip: chartSchemaNode.description,
             });
@@ -74,7 +75,8 @@ export class AppSchemaService {
                 value: option.value,
                 label: option.description,
               }))),
-              required: true,
+              required: schema.required,
+              hideEmpty: true,
               editable: schema.editable,
               tooltip: chartSchemaNode.description,
             });
