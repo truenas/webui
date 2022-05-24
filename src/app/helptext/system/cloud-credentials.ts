@@ -1,6 +1,5 @@
 import { Validators } from '@angular/forms';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
-import { regexValidator } from 'app/modules/entity/entity-form/validators/regex-validation';
 
 export const helptextSystemCloudcredentials = {
   fieldset_basic: T('Name and Provider'),
@@ -53,13 +52,6 @@ export const helptextSystemCloudcredentials = {
  Access Keys</i> and create a new key pair. Must be alphanumeric and \
  between 8 and 40 characters.',
     ),
-  },
-
-  max_upload_parts_s3: {
-    placeholder: T('Maximum Upload Parts'),
-    tooltip: T('Define the maximum number of chunks for a multipart upload. This can \
- be useful if a service does not support the 10,000 chunk AWS S3 specification.'),
-    validation: [regexValidator(/^\d+$/)],
   },
 
   endpoint_s3: {
