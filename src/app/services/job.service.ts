@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { Observable, Observer, Subject } from 'rxjs';
+import { Observable, Observer } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { JobState } from 'app/enums/job-state.enum';
 import globalHelptext from 'app/helptext/global-helptext';
@@ -15,8 +15,6 @@ import { WebSocketService } from './ws.service';
 @UntilDestroy()
 @Injectable()
 export class JobService {
-  onComplete$ = new Subject();
-
   constructor(
     protected ws: WebSocketService,
     protected dialog: DialogService,
@@ -31,7 +29,6 @@ export class JobService {
           observer.next(event.fields);
           if (event.fields.state === JobState.Success || event.fields.state === JobState.Failed) {
             observer.complete();
-            this.onComplete$.next(true);
           }
         }
       });

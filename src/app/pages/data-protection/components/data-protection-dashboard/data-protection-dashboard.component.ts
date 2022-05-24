@@ -18,6 +18,7 @@ import { RsyncTaskUi } from 'app/interfaces/rsync-task.interface';
 import { ScrubTaskUi } from 'app/interfaces/scrub-task.interface';
 import { SmartTestUi } from 'app/interfaces/smart-test.interface';
 import { Disk } from 'app/interfaces/storage.interface';
+import { AppLoaderService } from 'app/modules/app-loader/app-loader.service';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { AppTableAction, AppTableConfig } from 'app/modules/entity/table/table.component';
 import { EntityUtils } from 'app/modules/entity/utils';
@@ -85,6 +86,7 @@ export class DataProtectionDashboardComponent implements OnInit {
     private modalService: ModalService,
     private slideInService: IxSlideInService,
     private dialog: DialogService,
+    private loader: AppLoaderService,
     private mdDialog: MatDialog,
     private router: Router,
     private taskService: TaskService,
@@ -110,7 +112,6 @@ export class DataProtectionDashboardComponent implements OnInit {
       this.modalService.refreshTable$,
       this.modalService.onClose$,
       this.slideInService.onClose$,
-      this.job.onComplete$,
     )
       .pipe(untilDestroyed(this))
       .subscribe(() => {
