@@ -157,6 +157,23 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
           ],
           togglePw: true,
         },
+        {
+          type: 'input',
+          name: 'max_upload_parts-S3',
+          placeholder: helptext.max_upload_parts_s3.placeholder,
+          tooltip: helptext.max_upload_parts_s3.tooltip,
+          inputType: 'number',
+          validation: helptext.max_upload_parts_s3.validation,
+          relation: [
+            {
+              action: RelationAction.Show,
+              when: [{
+                name: 'provider',
+                value: 'S3',
+              }],
+            },
+          ],
+        },
         // backblaze b2
         {
           type: 'input',
