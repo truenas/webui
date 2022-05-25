@@ -3,43 +3,64 @@
   <mat-card-content>
 
     <form [formGroup]="form" class="ix-form-container" (submit)="onSubmit()">
-      <ix-fieldset
-        [title]="helptext.ipmi_remote_controller | translate"
-      ></ix-fieldset>
+      <ng-container *ngIf="remoteContrOptions">
+        <ix-fieldset
+          [title]="helptext.ipmi_remote_controller | translate"
+        >
+          <!--        class ?-->
+          <ix-radio-group
+            [formControlName]="'remoteController'"
+            [options]="remoteContrOptions"
+          >
+          </ix-radio-group>
+        </ix-fieldset>
+        <mat-divider></mat-divider>
+      </ng-container>
 
-      <ix-checkbox
-        formControlName="dhcp"
-        [label]="'DHCP' | translate"
-        [tooltip]="helptext.dhcp_tooltip | translate"
+      <ix-fieldset
+        [title]="helptext.ipmi_configuration | translate"
       >
-      </ix-checkbox>
-      <ix-input
-        formControlName="ipaddress"
-        [label]="'IPv4 Address' | translate"
-        [tooltip]="helptext.ipaddress_tooltip | translate"
-      ></ix-input>
-      <ix-input
-        formControlName="netmask"
-        [label]="'IPv4 Netmask' | translate"
-        [tooltip]="helptext.netmask_tooltip | translate"
-      ></ix-input>
-      <ix-input
-        formControlName="gateway"
-        [label]="'IPv4 Default Gateway' | translate"
-        [tooltip]="helptext.gateway_tooltip | translate"
-      ></ix-input>
-      <ix-input
-        formControlName="vlan"
-        [label]="'VLAN ID' | translate"
-        [tooltip]="helptext.vlan_tooltip | translate"
-        type="number"
-      ></ix-input>
-      <ix-input
-        formControlName="password"
-        [label]="'Password' | translate"
-        [tooltip]="helptext.password_tooltip | translate"
-        type="password"
-      ></ix-input>
+        <ix-checkbox
+          formControlName="dhcp"
+          [label]="'DHCP' | translate"
+          [tooltip]="helptext.dhcp_tooltip | translate"
+        >
+        </ix-checkbox>
+        <ix-input
+          formControlName="ipaddress"
+          [label]="'IPv4 Address' | translate"
+          [tooltip]="helptext.ipaddress_tooltip | translate"
+        ></ix-input>
+        <ix-input
+          formControlName="netmask"
+          [label]="'IPv4 Netmask' | translate"
+          [tooltip]="helptext.netmask_tooltip | translate"
+        ></ix-input>
+        <ix-input
+          formControlName="gateway"
+          [label]="'IPv4 Default Gateway' | translate"
+          [tooltip]="helptext.gateway_tooltip | translate"
+        ></ix-input>
+        <ix-input
+          formControlName="vlan"
+          [label]="'VLAN ID' | translate"
+          [tooltip]="helptext.vlan_tooltip | translate"
+          type="number"
+        ></ix-input>
+      </ix-fieldset>
+      <mat-divider></mat-divider>
+
+      <ix-fieldset
+        [title]="helptext.ipmi_password_reset | translate"
+      >
+        <ix-input
+          formControlName="password"
+          [label]="'Password' | translate"
+          [tooltip]="helptext.password_tooltip | translate"
+          type="password"
+        ></ix-input>
+      </ix-fieldset>
+      <mat-divider></mat-divider>
 
       <mat-card-actions class="buttons">
         <button
