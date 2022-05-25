@@ -1,7 +1,7 @@
 
 <div *ngIf="dynamicSchema" [formGroup]="dynamicForm" [class.indent]="dynamicSchema?.indent">
   <ng-container *ngIf="dynamicSchema.type === DynamicFormSchemaType.Dict">
-    <div *ngIf="!isHidden && !dynamicSchema.hidden">{{dynamicSchema.title}}</div>
+    <div class='label' *ngIf="!isHidden && !dynamicSchema.hidden">{{dynamicSchema.title}}</div>
     <ix-dynamic-form-item
       *ngFor="let attr of dynamicSchema.attrs"
       [dynamicSchema]="attr"
@@ -82,5 +82,7 @@
     [label]="dynamicSchema.title | translate"
     [tooltip]="dynamicSchema.tooltip | translate"
     [required]="dynamicSchema.required"
+    [fxHide]="isHidden || dynamicSchema.hidden"
+    [class.disabled]="dynamicSchema.editable === false"
   ></ix-ip-input-with-netmask>
 </div>
