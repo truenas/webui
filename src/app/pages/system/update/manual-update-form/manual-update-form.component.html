@@ -26,7 +26,7 @@
           formControlName="rebootAfterManualUpdate"
           [label]="helptext.rebootAfterManualUpdate.placeholder | translate"
           [tooltip]="helptext.rebootAfterManualUpdate.tooltip | translate"
-          *ngIf="!isHa && isEnterprise"
+          *ngIf="!isHa && systemService.isEnterprise"
         ></ix-checkbox>
 
       </ix-fieldset>

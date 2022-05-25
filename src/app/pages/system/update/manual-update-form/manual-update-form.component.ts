@@ -1,6 +1,6 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
@@ -16,8 +16,6 @@ import {
   filter, take, tap,
 } from 'rxjs/operators';
 import { JobState } from 'app/enums/job-state.enum';
-import { ProductType } from 'app/enums/product-type.enum';
-import { WINDOW } from 'app/helpers/window.helper';
 import { helptextSystemUpdate as helptext } from 'app/helptext/system/update';
 import { Job } from 'app/interfaces/job.interface';
 import { Option } from 'app/interfaces/option.interface';
@@ -58,11 +56,10 @@ export class ManualUpdateFormComponent implements OnInit {
     private dialogService: DialogService,
     private mdDialog: MatDialog,
     protected router: Router,
-    private systemService: SystemGeneralService,
+    public systemService: SystemGeneralService,
     private formBuilder: FormBuilder,
     private ws: WebSocketService,
     private translate: TranslateService,
-    @Inject(WINDOW) private window: Window,
     private store$: Store<AppState>,
     private cdr: ChangeDetectorRef,
   ) { }
@@ -108,12 +105,8 @@ export class ManualUpdateFormComponent implements OnInit {
     });
   }
 
-  get isEnterprise(): boolean {
-    return this.window.localStorage.getItem('product_type').includes(ProductType.ScaleEnterprise);
-  }
-
   checkHaLicenseAndUpdateStatus(): void {
-    if (this.isEnterprise) {
+    if (this.systemService.isEnterprise) {
       this.ws.call('failover.licensed').pipe(untilDestroyed(this)).subscribe((isHa) => {
         this.isHa = isHa;
         this.checkForUpdateRunning();
