@@ -73,7 +73,6 @@ export class StorageService {
     dlink.remove();
   }
 
-  // TODO: Simplify usages
   streamDownloadFile(url: string, filename: string, mimeType: string): Observable<Blob> {
     return this.http.post(url, '',
       { responseType: 'blob' }).pipe(
