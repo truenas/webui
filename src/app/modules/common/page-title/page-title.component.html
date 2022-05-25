@@ -1,4 +1,4 @@
-<page-title-header [title]="title$">
+<page-title-header [pageTitle]="title$ | async">
   <div class="viewcontroller-wrapper">
     <viewcontroller #viewcontroller></viewcontroller>
   </div>

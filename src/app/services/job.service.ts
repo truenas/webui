@@ -1,4 +1,3 @@
-import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -19,7 +18,6 @@ export class JobService {
     protected ws: WebSocketService,
     protected dialog: DialogService,
     protected storage: StorageService,
-    protected http: HttpClient,
   ) {}
 
   getJobStatus(jobId: number): Observable<Job> {
@@ -64,7 +62,7 @@ export class JobService {
           this.ws.call('core.download', ['filesystem.get', [targetJob.logs_path], targetJob.id + '.log']).pipe(untilDestroyed(this)).subscribe(
             ([_, url]) => {
               const mimetype = 'text/plain';
-              this.storage.streamDownloadFile(this.http, url, targetJob.id + '.log', mimetype).pipe(untilDestroyed(this)).subscribe(
+              this.storage.streamDownloadFile(url, targetJob.id + '.log', mimetype).pipe(untilDestroyed(this)).subscribe(
                 (file) => {
                   this.storage.downloadBlob(file, targetJob.id + '.log');
                 },

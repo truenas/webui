@@ -1,4 +1,3 @@
-import { Validators } from '@angular/forms';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
 export const helptextSystemGeneral = {
@@ -102,7 +101,6 @@ export const helptextSystemGeneral = {
 
   secretseed: {
     placeholder: T('Export Password Secret Seed'),
-    tooltip: T(''),
   },
 
   crash_reporting: {
@@ -123,14 +121,12 @@ export const helptextSystemGeneral = {
   },
 
   save_config_form: {
-    title: T('Save Configuration'),
     message: T(
       '<b>WARNING:</b> The configuration file contains\
  sensitive data like system passwords. However, SSH keys that are stored\
  in <samp>/root/.ssh</samp> are <b>NOT</b> backed up by this operation.\
  Additional sensitive information can be included in the configuration file.<br />',
     ),
-    button_text: T('Save'),
     warning: T(
       '<p>Including the Password Secret Seed allows using this\
  configuration file with a new boot device. This also\
@@ -139,16 +135,9 @@ export const helptextSystemGeneral = {
  <br /><b>Keep the configuration file safe and protect it\
  from unauthorized access!</b>',
     ),
-    host_key_warning: T(''),
   },
 
-  upload_config: { placeholder: T('Select Configuration File') },
-
   upload_config_form: {
-    title: T('Upload Config'),
-    button_text: T('Upload'),
-    tooltip: T('Browse to the locally saved configuration file.'),
-    validation: [Validators.required],
     message: T(
       '<p>The system will reboot to perform this operation!</p>\
  <p><font color="red">All passwords are reset when the \
@@ -156,15 +145,6 @@ export const helptextSystemGeneral = {
  without the Password Secret Seed. </font></p>',
     ),
   },
-
-  actions: {
-    config_button: T('Manage Configuration'),
-    save_config: T('Download File'),
-    upload_config: T('Upload File'),
-    reset_config: T('Reset to Defaults'),
-  },
-
-  reset_config_placeholder: T('Confirm'),
 
   reset_config_form: {
     title: T('Reset Configuration'),
@@ -183,20 +163,6 @@ export const helptextSystemGeneral = {
 
   dialog_error_title: T('Error restarting web service'),
 
-  snackbar_download_success: {
-    title: T('Download Successful'),
-    action: T('Success'),
-  },
-
-  config_download: {
-    failed_title: T('Error Downloading File'),
-    failed_message: T('Config could not be downloaded'),
-  },
-
-  config_upload: {
-    title: T('Upload Config'),
-    message: T('Uploading...'),
-  },
   enabled: T('Enabled'),
   disabled: T('Disabled'),
   default: T('Default'),
