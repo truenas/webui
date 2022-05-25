@@ -5,8 +5,7 @@ import { regexValidator } from 'app/modules/entity/entity-form/validators/regex-
 export const helptextSystemCloudcredentials = {
   fieldset_basic: T('Name and Provider'),
   fieldset_authentication: T('Authentication'),
-  fieldset_authentication_advanced: T('Authentication Advanced Options'),
-  fieldset_endpoint_advanced_options: T('Endpoint Advanced Options'),
+  fieldset_advanced: T('Advanced Options'),
   fieldset_oauth_authentication: T('OAuth Authentication'),
 
   add_tooltip: T('Add Cloud Credential'),
