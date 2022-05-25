@@ -1,141 +1,322 @@
 import { ChartSchemaNode } from 'app/interfaces/chart-release.interface';
-import { DynamicFormSchemaNode } from 'app/interfaces/dynamic-form-schema.interface';
+import {
+  DynamicFormSchemaCheckbox,
+  DynamicFormSchemaDict,
+  DynamicFormSchemaInput,
+  DynamicFormSchemaSelect,
+  DynamicFormSchemaList,
+  DynamicFormSchemaIpaddr,
+} from 'app/interfaces/dynamic-form-schema.interface';
 import { AppSchemaService } from 'app/services/app-schema.service';
 import { FilesystemService } from 'app/services/filesystem.service';
 
-const beforData = [
-  {
-    variable: 'dnsConfig',
-    label: 'DNS Configuration',
-    group: 'Advanced DNS Settings',
-    schema: {
-      type: 'dict',
-      attrs: [
-        {
-          variable: 'options',
-          label: 'DNS Options',
-          schema: {
-            type: 'list',
-            items: [
-              {
-                variable: 'optionsEntry',
-                label: 'Option Entry Configuration',
-                schema: {
-                  type: 'dict',
-                  attrs: [
-                    {
-                      variable: 'name',
-                      label: 'Option Name',
-                      schema: {
-                        type: 'string',
-                        required: true,
-                      },
-                    },
-                    {
-                      variable: 'value',
-                      label: 'Option Value',
-                      schema: {
-                        type: 'string',
-                        required: true,
-                      },
-                    },
-                  ],
-                },
-              },
-            ],
-          },
+const beforeIntString = [{
+  variable: 'variable_dict',
+  description: 'Description Dict',
+  label: 'Label Dict',
+  group: 'Group Dict',
+  schema: {
+    type: 'dict',
+    required: true,
+    attrs: [
+      {
+        variable: 'variable_input_int',
+        label: 'Label Input Int',
+        schema: {
+          type: 'int',
+          min: 9000,
+          max: 65535,
+          default: 9401,
+          required: true,
         },
-      ],
-    },
+      },
+      {
+        variable: 'variable_input_string',
+        label: 'Label Input String',
+        schema: {
+          type: 'string',
+          default: 'test_input string',
+          required: false,
+          private: true,
+        },
+      },
+    ],
   },
-  {
-    variable: 'service',
-    description: 'IPFS Service Configuration',
-    label: 'IPFS Service Configuration',
-    group: 'IPFS Configuration',
-    schema: {
-      type: 'dict',
-      required: true,
-      attrs: [
-        {
-          variable: 'swarmPort',
-          label: 'Swarm Port to use for IPFS (Public)',
-          schema: {
-            type: 'int',
-            min: 9000,
-            max: 65535,
-            default: 9401,
-            required: true,
-          },
-        },
-        {
-          variable: 'apiPort',
-          label: 'API Port to use for IPFS (local)',
-          schema: {
-            type: 'int',
-            min: 9000,
-            max: 65535,
-            default: 9501,
-            required: true,
-          },
-        },
-        {
-          variable: 'gatewayPort',
-          label: 'Gateway Port to use for IPFS (local)',
-          schema: {
-            type: 'int',
-            min: 9000,
-            max: 65535,
-            default: 9880,
-            required: true,
-          },
-        },
-      ],
-    },
-  },
-] as ChartSchemaNode[];
+}] as ChartSchemaNode[];
 
-const afterData = [
-  [{
-    attrs: [{
-      controlName: 'options',
-      editable: undefined,
-      items: [{
-        controlName: 'name', editable: undefined, private: undefined, required: true, title: 'Option Name', tooltip: undefined, type: 'input',
-      }, {
-        controlName: 'value', editable: undefined, private: undefined, required: true, title: 'Option Value', tooltip: undefined, type: 'input',
-      }],
-      itemsSchema: [{ label: 'Option Name', schema: { required: true, type: 'string' }, variable: 'name' }, { label: 'Option Value', schema: { required: true, type: 'string' }, variable: 'value' }],
-      title: 'DNS Options',
-      type: 'list',
-    }],
-    controlName: 'dnsConfig',
+const afterIntString = [[{
+  attrs: [{
+    controlName: 'variable_input_int',
     editable: undefined,
-    title: 'DNS Configuration',
-    type: 'dict',
-  }],
-  [{
-    attrs: [{
-      controlName: 'swarmPort', editable: undefined, number: true, private: undefined, required: true, title: 'Swarm Port to use for IPFS (Public)', tooltip: undefined, type: 'input',
-    }, {
-      controlName: 'apiPort', editable: undefined, number: true, private: undefined, required: true, title: 'API Port to use for IPFS (local)', tooltip: undefined, type: 'input',
-    }, {
-      controlName: 'gatewayPort', editable: undefined, number: true, private: undefined, required: true, title: 'Gateway Port to use for IPFS (local)', tooltip: undefined, type: 'input',
-    }],
-    controlName: 'service',
+    number: true,
+    private: undefined,
+    required: true,
+    title: 'Label Input Int',
+    tooltip: undefined,
+    type: 'input',
+  }, {
+    controlName: 'variable_input_string',
     editable: undefined,
-    title: 'IPFS Service Configuration',
+    private: true,
+    required: false,
+    title: 'Label Input String',
+    tooltip: undefined,
+    type: 'input',
+  }] as DynamicFormSchemaInput[],
+  controlName: 'variable_dict',
+  editable: undefined,
+  title: 'Label Dict',
+  type: 'dict',
+}]] as DynamicFormSchemaDict[][];
+
+const beforeEnum = [{
+  variable: 'variable_dict',
+  description: 'Description Dict',
+  label: 'Label Dict',
+  group: 'Group Dict',
+  schema: {
     type: 'dict',
+    required: true,
+    attrs: [
+      {
+        variable: 'variable_select_int',
+        label: 'Label Select Int',
+        schema: {
+          type: 'int',
+          default: 'test1',
+          required: true,
+          enum: [
+            {
+              value: 1,
+              description: 'test1',
+            },
+            {
+              value: 2,
+              description: 'test2',
+            },
+          ],
+        },
+      },
+      {
+        variable: 'variable_select_string',
+        label: 'Label Select String',
+        schema: {
+          type: 'string',
+          default: 1,
+          required: false,
+          enum: [
+            {
+              value: 'test1',
+              description: 'test1',
+            },
+            {
+              value: 'test2',
+              description: 'test2',
+            },
+          ],
+        },
+      },
+    ],
+  },
+}] as ChartSchemaNode[];
+
+const afterEnum = [[{
+  attrs: [{
+    controlName: 'variable_select_int',
+    editable: undefined,
+    hideEmpty: true,
+    required: true,
+    title: 'Label Select Int',
+    tooltip: undefined,
+    options: {
+      _isScalar: false,
+      _subscribe: expect.any(Function),
+    },
+    type: 'select',
+  }, {
+    controlName: 'variable_select_string',
+    editable: undefined,
+    hideEmpty: true,
+    required: false,
+    title: 'Label Select String',
+    tooltip: undefined,
+    options: {
+      _isScalar: false,
+      _subscribe: expect.any(Function),
+    },
+    type: 'select',
+  }] as DynamicFormSchemaSelect[],
+  controlName: 'variable_dict',
+  editable: undefined,
+  title: 'Label Dict',
+  type: 'dict',
+}]] as DynamicFormSchemaDict[][];
+
+const beforeBoolean = [{
+  variable: 'variable_boolean',
+  label: 'Label Boolean',
+  schema: {
+    type: 'boolean',
+    default: false,
+    show_subquestions_if: true,
+    subquestions: [
+      {
+        variable: 'variable_subquestion_boolean',
+        label: 'Label Subquestion Boolean',
+        schema: {
+          type: 'boolean',
+          default: true,
+        },
+      },
+    ],
+  },
+}] as ChartSchemaNode[];
+
+const afterBoolean = [[{
+  controlName: 'variable_boolean',
+  editable: undefined,
+  required: undefined,
+  title: 'Label Boolean',
+  tooltip: undefined,
+  type: 'checkbox',
+}, {
+  controlName: 'variable_subquestion_boolean',
+  dependsOn: ['variable_boolean'],
+  editable: undefined,
+  indent: true,
+  required: undefined,
+  title: 'Label Subquestion Boolean',
+  tooltip: undefined,
+  type: 'checkbox',
+}]] as DynamicFormSchemaCheckbox[][];
+
+const beforePath = [{
+  variable: 'variable_path',
+  label: 'Label Path',
+  schema: {
+    type: 'path',
+  },
+}] as ChartSchemaNode[];
+
+const afterPath = [[{
+  controlName: 'variable_path',
+  editable: undefined,
+  required: undefined,
+  title: 'Label Path',
+  tooltip: undefined,
+  type: 'input',
+}]] as DynamicFormSchemaInput[][];
+
+const beforeList = [{
+  variable: 'variable_list',
+  label: 'Label List',
+  schema: {
+    type: 'list',
+    default: [],
+    items: [
+      {
+        variable: 'item_list_1',
+        label: '',
+        schema: {
+          type: 'string',
+        },
+      },
+      {
+        variable: 'item_list_2',
+        label: '',
+        schema: {
+          type: 'int',
+        },
+      },
+    ],
+  },
+}] as ChartSchemaNode[];
+
+const afterList = [[{
+  controlName: 'variable_list',
+  dependsOn: undefined,
+  editable: undefined,
+  items: [{
+    controlName: 'item_list_1',
+    editable: undefined,
+    private: undefined,
+    required: undefined,
+    title: '',
+    tooltip: undefined,
+    type: 'input',
+  }, {
+    controlName: 'item_list_2',
+    editable: undefined,
+    number: true,
+    private: undefined,
+    required: undefined,
+    title: '',
+    tooltip: undefined,
+    type: 'input',
   }],
-] as DynamicFormSchemaNode[][];
+  itemsSchema: [
+    { label: '', schema: { type: 'string' }, variable: 'item_list_1' },
+    { label: '', schema: { type: 'int' }, variable: 'item_list_2' },
+  ],
+  title: 'Label List',
+  type: 'list',
+}]] as DynamicFormSchemaList[][];
+
+const beforeIpaddr = [{
+  variable: 'staticIP',
+  label: 'Static IP',
+  schema: {
+    type: 'ipaddr',
+    cidr: true,
+  },
+}] as ChartSchemaNode[];
+
+const afterIpaddr = [[{
+  controlName: 'staticIP',
+  editable: undefined,
+  required: undefined,
+  title: 'Static IP',
+  tooltip: undefined,
+  type: 'ipaddr',
+}]] as DynamicFormSchemaIpaddr[][];
 
 describe('AppSchemaService', () => {
   const service = new AppSchemaService({} as FilesystemService);
   describe('transformNode()', () => {
-    beforData.forEach((item, idx) => {
-      it('Variable ' + item.variable, () => {
+    beforeIntString.forEach((item, idx) => {
+      it('IntStringSchema', () => {
         const transformed = service.transformNode(item);
-        expect(transformed).toEqual(afterData[idx]);
+        expect(transformed).toEqual(afterIntString[idx]);
+      });
+    });
+    beforeEnum.forEach((item, idx) => {
+      it('EnumSchema', () => {
+        const transformed = service.transformNode(item);
+        expect(transformed).toEqual(afterEnum[idx]);
+      });
+    });
+    beforeBoolean.forEach((item, idx) => {
+      it('BooleanSchema', () => {
+        const transformed = service.transformNode(item);
+        expect(transformed).toEqual(afterBoolean[idx]);
+      });
+    });
+    beforePath.forEach((item, idx) => {
+      it('PathSchema', () => {
+        const transformed = service.transformNode(item);
+        expect(transformed).toEqual(afterPath[idx]);
+      });
+    });
+    beforeList.forEach((item, idx) => {
+      it('ListSchema', () => {
+        const transformed = service.transformNode(item);
+        expect(transformed).toEqual(afterList[idx]);
+      });
+    });
+    beforeIpaddr.forEach((item, idx) => {
+      it('IpaddrSchema', () => {
+        const transformed = service.transformNode(item);
+        expect(transformed).toEqual(afterIpaddr[idx]);
       });
     });
   });
