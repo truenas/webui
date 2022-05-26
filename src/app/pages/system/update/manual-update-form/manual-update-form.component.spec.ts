@@ -4,6 +4,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { ProductType } from 'app/enums/product-type.enum';
@@ -16,6 +17,7 @@ import { IxSelectHarness } from 'app/modules/ix-forms/components/ix-select/ix-se
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { ManualUpdateFormComponent } from 'app/pages/system/update/manual-update-form/manual-update-form.component';
 import { DialogService, SystemGeneralService } from 'app/services';
+import { selectPreferences } from 'app/store/preferences/preferences.selectors';
 
 describe('ManualUpdateFormComponent', () => {
   let spectator: Spectator<ManualUpdateFormComponent>;
@@ -65,6 +67,16 @@ describe('ManualUpdateFormComponent', () => {
           },
         },
       },
+      provideMockStore({
+        selectors: [
+          {
+            selector: selectPreferences,
+            value: {
+              rebootAfterManualUpdate: false,
+            } as Preferences,
+          },
+        ],
+      }),
     ],
   });
 
