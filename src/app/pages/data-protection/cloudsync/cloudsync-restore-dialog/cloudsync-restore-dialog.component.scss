@@ -1,0 +1,13 @@
+:host {
+  display: block;
+  width: 450px;
+}
+
+.form-actions {
+  display: flex;
+  flex-direction: row-reverse;
+
+  > button {
+    margin-left: 10px;
+  }
+}

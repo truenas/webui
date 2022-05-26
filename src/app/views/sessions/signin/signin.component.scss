@@ -114,7 +114,7 @@ form button {
 }
 
 .logo-wrapper {
-  background-color: $bg2; //var(--bg2);
+  background-color: var(--bg2);
   padding: 20% 0;
   position: relative;
 
@@ -126,7 +126,7 @@ form button {
   }
 
   img.logo-bg {
-    border-bottom: solid 1px rgb(0 0 0 / 42%);
+    border-bottom: solid 1px var(--lines);
     height: 100%;
     left: 0;
     opacity: 0.75;

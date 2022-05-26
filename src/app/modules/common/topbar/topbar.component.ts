@@ -1,5 +1,5 @@
 import {
-  Component, Input, OnDestroy, OnInit,
+  Component, Inject, Input, OnDestroy, OnInit,
 } from '@angular/core';
 import { MediaObserver } from '@angular/flex-layout';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
@@ -15,6 +15,7 @@ import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum'
 import { JobState } from 'app/enums/job-state.enum';
 import { PoolScanState } from 'app/enums/pool-scan-state.enum';
 import { ProductType } from 'app/enums/product-type.enum';
+import { WINDOW } from 'app/helpers/window.helper';
 import network_interfaces_helptext from 'app/helptext/network/interfaces/interfaces-list';
 import helptext from 'app/helptext/topbar';
 import { HaStatus } from 'app/interfaces/events/ha-status-event.interface';
@@ -62,7 +63,6 @@ export class TopbarComponent implements OnInit, OnDestroy {
   pendingNetworkChanges = false;
   waitingNetworkCheckin = false;
   resilveringDetails: ResilverData;
-  currentTheme = 'ix-blue';
   isDirServicesMonitorOpened = false;
   taskDialogRef: MatDialogRef<JobsPanelComponent>;
   dirServicesMonitor: MatDialogRef<DirectoryServicesMonitorComponent>;
@@ -82,8 +82,8 @@ export class TopbarComponent implements OnInit, OnDestroy {
   updateNotificationSent = false;
   private user_check_in_prompted = false;
   mat_tooltips = helptext.mat_tooltips;
-  systemType: string;
   screenSize = 'waiting';
+  productType: ProductType;
 
   jobBadgeCount$ = this.store$.select(selectRunningJobsCount);
   alertBadgeCount$ = this.store$.select(selectImportantUnreadAlertsCount);
@@ -97,7 +97,7 @@ export class TopbarComponent implements OnInit, OnDestroy {
     private router: Router,
     private ws: WebSocketService,
     private dialogService: DialogService,
-    private sysGenService: SystemGeneralService,
+    private systemGeneralService: SystemGeneralService,
     private dialog: MatDialog,
     private translate: TranslateService,
     private modalService: ModalService,
@@ -106,8 +106,13 @@ export class TopbarComponent implements OnInit, OnDestroy {
     private layoutService: LayoutService,
     private store$: Store<AlertSlice>,
     private core: CoreService,
+    @Inject(WINDOW) private window: Window,
   ) {
-    this.sysGenService.updateRunningNoticeSent.pipe(untilDestroyed(this)).subscribe(() => {
+    this.systemGeneralService.getProductType$.pipe(untilDestroyed(this)).subscribe((productType) => {
+      this.productType = productType;
+    });
+
+    this.systemGeneralService.updateRunningNoticeSent.pipe(untilDestroyed(this)).subscribe(() => {
       this.updateNotificationSent = true;
     });
 
@@ -117,7 +122,7 @@ export class TopbarComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    if (window.localStorage.getItem('product_type').includes(ProductType.Enterprise)) {
+    if (this.productType === ProductType.ScaleEnterprise) {
       this.checkEula();
 
       this.ws.call('failover.licensed').pipe(untilDestroyed(this)).subscribe((isHa) => {
@@ -136,7 +141,7 @@ export class TopbarComponent implements OnInit, OnDestroy {
 
         // When update starts on HA system, listen for 'finish', then quit listening
         if (this.is_ha) {
-          this.updateIsDone = this.sysGenService.updateIsDone$.pipe(untilDestroyed(this)).subscribe(() => {
+          this.updateIsDone = this.systemGeneralService.updateIsDone$.pipe(untilDestroyed(this)).subscribe(() => {
             this.updateIsRunning = false;
             this.updateIsDone.unsubscribe();
           });
@@ -156,8 +161,6 @@ export class TopbarComponent implements OnInit, OnDestroy {
         }
       }
     });
-    const theme = this.themeService.currentTheme();
-    this.currentTheme = theme.name;
 
     this.checkNetworkChangesPending();
     this.checkNetworkCheckinWaiting();
@@ -191,10 +194,6 @@ export class TopbarComponent implements OnInit, OnDestroy {
 
     this.store$.pipe(waitForSystemInfo, untilDestroyed(this)).subscribe((sysInfo) => {
       this.hostname = sysInfo.hostname;
-    });
-
-    this.sysGenService.getProductType$.pipe(untilDestroyed(this)).subscribe((res) => {
-      this.systemType = res;
     });
 
     this.ws.onCloseSubject$.pipe(untilDestroyed(this)).subscribe(() => {
@@ -288,7 +287,7 @@ export class TopbarComponent implements OnInit, OnDestroy {
     this.dialog.open(AboutDialogComponent, {
       maxWidth: '600px',
       data: {
-        systemType: this.systemType,
+        systemType: this.productType,
       },
       disableClose: true,
     });
@@ -303,11 +302,10 @@ export class TopbarComponent implements OnInit, OnDestroy {
       title: this.translate.instant('Shut down'),
       message: this.translate.instant('Shut down the system?'),
       buttonMsg: this.translate.instant('Shut Down'),
-    }).pipe(untilDestroyed(this)).subscribe((res) => {
-      if (!res) {
-        return;
-      }
-
+    }).pipe(
+      filter(Boolean),
+      untilDestroyed(this),
+    ).subscribe(() => {
       this.router.navigate(['/others/shutdown']);
     });
   }
@@ -317,11 +315,10 @@ export class TopbarComponent implements OnInit, OnDestroy {
       title: this.translate.instant('Restart'),
       message: this.translate.instant('Restart the system?'),
       buttonMsg: this.translate.instant('Restart'),
-    }).pipe(untilDestroyed(this)).subscribe((res) => {
-      if (!res) {
-        return;
-      }
-
+    }).pipe(
+      filter(Boolean),
+      untilDestroyed(this),
+    ).subscribe(() => {
       this.router.navigate(['/others/reboot']);
     });
   }
@@ -549,7 +546,7 @@ export class TopbarComponent implements OnInit, OnDestroy {
   }
 
   updateInProgress(): void {
-    this.sysGenService.updateRunning.emit('true');
+    this.systemGeneralService.updateRunning.emit('true');
     if (!this.updateNotificationSent) {
       this.showUpdateDialog();
       this.updateNotificationSent = true;

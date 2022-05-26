@@ -28,8 +28,11 @@ export class LocaleService {
     ]).pipe(untilDestroyed(this)).subscribe(([timezone, preferences]) => {
       this.timezone = timezone;
 
-      if (preferences) {
+      if (preferences?.dateFormat) {
         this.dateFormat = this.formatDateTimeToDateFns(preferences.dateFormat);
+      }
+
+      if (preferences?.timeFormat) {
         this.timeFormat = this.formatDateTimeToDateFns(preferences.timeFormat);
       }
     });
@@ -133,7 +136,7 @@ export class LocaleService {
       .replace('DD', 'dd')
       .replace('D', 'd')
       .replace(' A', ' aa');
-    if (!dateFnsFormat.includes('aa')) {
+    if (dateFnsFormat && !dateFnsFormat.includes('aa')) {
       dateFnsFormat = dateFnsFormat.replace(' a', ' aaaaa\'m\'');
     }
     return dateFnsFormat;

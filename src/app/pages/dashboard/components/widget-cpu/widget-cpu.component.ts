@@ -13,7 +13,7 @@ import {
 import * as d3 from 'd3';
 import { Subject } from 'rxjs';
 import {
-  filter, map, switchMap, tap, throttleTime,
+  filter, map, switchMap, throttleTime,
 } from 'rxjs/operators';
 import { ThemeUtils } from 'app/core/classes/theme-utils/theme-utils';
 import { CoreEvent } from 'app/interfaces/events';
@@ -25,6 +25,7 @@ import { WidgetCpuData } from 'app/pages/dashboard/interfaces/widget-data.interf
 import { CoreService } from 'app/services/core-service/core.service';
 import { ThemeService } from 'app/services/theme/theme.service';
 import { AppState } from 'app/store';
+import { selectTheme } from 'app/store/preferences/preferences.selectors';
 import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 
 @UntilDestroy()
@@ -114,18 +115,17 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
   }
 
   ngAfterViewInit(): void {
+    this.store$.select(selectTheme).pipe(
+      filter(Boolean),
+      untilDestroyed(this),
+    ).subscribe(() => {
+      d3.select('#grad1 .begin').style('stop-color', this.getHighlightColor(0));
+      d3.select('#grad1 .end').style('stop-color', this.getHighlightColor(0.15));
+    });
+
     this.core.register({ observerClass: this })
       .pipe(
         switchMap(() => this.data),
-        tap((evt) => {
-          if (evt.name === 'ThemeChanged') {
-            d3.select('#grad1 .begin')
-              .style('stop-color', this.getHighlightColor(0));
-
-            d3.select('#grad1 .end')
-              .style('stop-color', this.getHighlightColor(0.15));
-          }
-        }),
         filter((evt) => evt.name === 'CpuStats'),
         map((evt) => evt.data),
         throttleTime(500),

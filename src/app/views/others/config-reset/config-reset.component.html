@@ -1,11 +1,7 @@
 <div id="wrapper">
   <mat-card id="reset-card">
     <mat-card-content id="message"></mat-card-content>
-    <mat-icon svgIcon="truenas_core_logo_full" *ngIf="productType === ProductType.Core; else isTruenas" class="logo" alt="TrueNAS CORE logo"></mat-icon>
-    <ng-template #isTruenas>
-      <mat-icon *ngIf="productType === ProductType.Enterprise" class="logo" svgIcon="truenas_enterprise_logo_full" alt="TrueNAS ENTERPRISE logo"></mat-icon>
-      <mat-icon *ngIf="productType === ProductType.Scale || productType == ProductType.ScaleEnterprise" class="logo" svgIcon="truenas_scale_logo_full" alt="TrueNAS SCALE logo"></mat-icon>
-    </ng-template>
+    <mat-icon class="logo" svgIcon="truenas_scale_logo_full" alt="TrueNAS SCALE logo"></mat-icon>
     <div>
       <span fxFlex class="copyright-txt">
         TrueNAS {{productType | mapValue: productTypeLabels}}® © {{copyrightYear}} - <a href="http://www.ixsystems.com" target="_blank" title="iXsystems, Inc."> iXsystems, Inc</a>.

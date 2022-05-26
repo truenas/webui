@@ -98,7 +98,7 @@ export class ManualUpdateComponent implements FormConfiguration {
   }
 
   preInit(): void {
-    if (window.localStorage.getItem('product_type').includes(ProductType.Enterprise)) {
+    if (window.localStorage.getItem('product_type') === ProductType.ScaleEnterprise) {
       this.ws.call('failover.licensed').pipe(untilDestroyed(this)).subscribe((isHa) => {
         if (isHa) {
           this.isHa = true;

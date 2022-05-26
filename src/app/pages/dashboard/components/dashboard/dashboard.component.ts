@@ -1,5 +1,5 @@
 import {
-  Component, OnInit, AfterViewInit, OnDestroy, ElementRef, TemplateRef, ViewChild,
+  Component, OnInit, AfterViewInit, OnDestroy, ElementRef, TemplateRef, ViewChild, Inject,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
@@ -8,6 +8,7 @@ import { tween, styler } from 'popmotion';
 import { BehaviorSubject, Subject } from 'rxjs';
 import { take } from 'rxjs/operators';
 import { NetworkInterfaceAliasType, NetworkInterfaceType } from 'app/enums/network-interface.enum';
+import { WINDOW } from 'app/helpers/window.helper';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { CoreEvent } from 'app/interfaces/events';
 import { MemoryStatsEventData } from 'app/interfaces/events/memory-stats-event.interface';
@@ -125,28 +126,48 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     private slideInService: IxSlideInService,
     private layoutService: LayoutService,
     private store$: Store<AppState>,
+    @Inject(WINDOW) private window: Window,
   ) {
-    this.core.register({ observerClass: this, eventName: 'SidenavStatus' }).pipe(untilDestroyed(this)).subscribe(() => {
-      setTimeout(() => {
-        this.checkScreenSize();
-      }, 100);
-    });
-
-    this.checkScreenSize();
-
     window.onresize = () => {
+      this.checkScreenSize();
+    };
+    window.onload = () => {
       this.checkScreenSize();
     };
   }
 
-  onWidgetReorder(newState: DashConfigItem[]): void {
-    this.applyState(newState);
+  ngOnInit(): void {
+    this.checkScreenSize();
+    this.ws.call('failover.licensed').pipe(untilDestroyed(this)).subscribe((hasFailover) => {
+      if (hasFailover) {
+        this.isHa = true;
+      }
+    });
+    this.sysinfoReady = true;
   }
 
   ngAfterViewInit(): void {
     this.layoutService.pageHeaderUpdater$.next(this.pageHeader);
     this.checkScreenSize();
     this.startListeners();
+  }
+
+  ngOnDestroy(): void {
+    if (this.interval) {
+      clearInterval(this.interval);
+    }
+    if (this.interval) {
+      clearInterval(this.interval);
+    }
+    this.core.unregister({ observerClass: this });
+
+    // Restore top level scrolling
+    const wrapper = document.querySelector<HTMLElement>('.fn-maincontent');
+    wrapper.style.overflow = 'auto';
+  }
+
+  onWidgetReorder(newState: DashConfigItem[]): void {
+    this.applyState(newState);
   }
 
   getWidgetId(index: number, widget: DashConfigItem): string {
@@ -239,29 +260,6 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     if (startX !== endX) {
       carousel.set('x', endX);
     }
-  }
-
-  ngOnInit(): void {
-    this.ws.call('failover.licensed').pipe(untilDestroyed(this)).subscribe((hasFailover) => {
-      if (hasFailover) {
-        this.isHa = true;
-      }
-    });
-    this.sysinfoReady = true;
-  }
-
-  ngOnDestroy(): void {
-    if (this.interval) {
-      clearInterval(this.interval);
-    }
-    if (this.interval) {
-      clearInterval(this.interval);
-    }
-    this.core.unregister({ observerClass: this });
-
-    // Restore top level scrolling
-    const wrapper = document.querySelector<HTMLElement>('.fn-maincontent');
-    wrapper.style.overflow = 'auto';
   }
 
   startListeners(): void {

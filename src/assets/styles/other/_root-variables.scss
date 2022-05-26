@@ -1,0 +1,17 @@
+/* CSS Vars */
+:root {
+  --fn-dropshadow: 0 1px 2px rgba(0, 0, 0, 0);
+  --contrast-normal: var(--bg2);
+  --contrast-darker: hsl(0, 0%, 10.7%); // default theme fallback
+  --contrast-darkest: hsl(0, 0%, 5.7%); // default theme fallback
+  --contrast-lighter: hsl(0, 0%, 20.7%); // default theme fallback
+  --contrast-lightest: hsl(0, 0%, 25.7%); // default theme fallback
+  --light-theme-lines: var(--contrast-darkest);
+  --dark-theme-lines: var(--contrast-lighter);
+  --lines: var(--dark-theme-lines);
+  --sidenav-width: 240px;
+  --btn-default-bg: var(--alt-bg2);
+  --hover-bg: var(--lines) !important;
+  --primary-lighter: var(--primary);
+  --font-family-body: 'IBM Plex Sans', sans-serif;
+}

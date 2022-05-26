@@ -1,4 +1,4 @@
-import { IdmapName } from 'app/enums/idmap-name.enum';
+import { IdmapName } from 'app/enums/idmap.enum';
 
 export const requiredIdmapDomains = [
   IdmapName.DsTypeActiveDirectory,
