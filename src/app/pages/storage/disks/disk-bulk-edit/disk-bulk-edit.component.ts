@@ -21,7 +21,6 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
 })
 export class DiskBulkEditComponent {
   diskIds: string[] = [];
-  diskNames: string[] = [];
   isLoading = false;
   form = this.fb.group({
     disknames: [null as string[]],
@@ -118,7 +117,8 @@ export class DiskBulkEditComponent {
 
   onSubmit(): void {
     const req = this.prepareDataSubmit();
-
+    const succcessText = this.translate.instant('Successfully saved {n, plural, one {Disk} other {Disks}} settings.',
+      { n: req.length });
     this.isLoading = true;
     this.ws.job('core.bulk', ['disk.update', req])
       .pipe(untilDestroyed(this)).subscribe(
@@ -137,7 +137,7 @@ export class DiskBulkEditComponent {
             if (isSuccessful) {
               this.slideInService.close();
               this.dialogService.info(helptext.dialog_title,
-                helptext.dialog_msg_save_success, true);
+                succcessText, true);
             }
           }
         },

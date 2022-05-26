@@ -72,15 +72,14 @@ describe('DiskBulkEditComponent', () => {
     spectator.component.setFormDiskBulk([dataDisk1, dataDisk2]);
     const formValue = await form.getValues();
     const diskIds = spectator.component.diskIds;
-    const diskNames = spectator.component.diskNames;
     expect(formValue).toEqual({
+      'Disks to be edited:': ['sda', 'sdc'],
       'HDD Standby': '',
       'Advanced Power Management': '',
       'Enable S.M.A.R.T.': true,
-      'S.M.A.R.T. extra options': '/dev/hd[at], /dev/sd[az]',
+      'S.M.A.R.T. Extra Options': '/dev/hd[at], /dev/sd[az]',
     });
     expect(diskIds).toEqual(['{serial}VB76b9dd9d-4e5d8cf2', '{serial}VB5a315293-ea077d3d']);
-    expect(diskNames).toEqual(['sda', 'sdc']);
   });
 
   it('it update selected disks when form is submitted', async () => {
@@ -93,7 +92,7 @@ describe('DiskBulkEditComponent', () => {
       'HDD Standby': '10',
       'Advanced Power Management': 'Level 64 - Intermediate power usage with Standby',
       'Enable S.M.A.R.T.': true,
-      'S.M.A.R.T. extra options': 'new smart options',
+      'S.M.A.R.T. Extra Options': 'new smart options',
     };
     await form.fillForm(changeValue);
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));

@@ -339,6 +339,10 @@ samp {
   padding: 8px 12px;
 }
 
+.ix-form-container .mat-chip.mat-standard-chip.mat-chip-disabled {
+  opacity: 1;
+}
+
 .chart {
   display: block;
   width: 100%;

@@ -723,6 +723,7 @@
   "Successfully exported/disconnected {pool}.": "",
   "Successfully replaced disk {disk}.": "",
   "Successfully saved Disk settings.": "",
+  "Successfully saved {n, plural, one {Disk} other {Disks}} settings.": "",
   "Suggestion": "",
   "Sunday": "",
   "Support": "",
