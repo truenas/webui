@@ -2,26 +2,28 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+import { of } from 'rxjs';
+import { filter } from 'rxjs/operators';
 import { DatasetQuotaType } from 'app/enums/dataset.enum';
 import globalHelptext from 'app/helptext/global-helptext';
 import helptext from 'app/helptext/storage/volumes/datasets/dataset-quotas';
-import { DatasetQuota } from 'app/interfaces/dataset-quota.interface';
+import { DatasetQuota, SetDatasetQuota } from 'app/interfaces/dataset-quota.interface';
 import { QueryFilter, QueryParams } from 'app/interfaces/query-api.interface';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
-import { WebSocketService } from 'app/services';
+import { DialogService, WebSocketService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
 @Component({
-  templateUrl: './dataset-quota-form.component.html',
-  styleUrls: ['./dataset-quota-form.component.scss'],
+  templateUrl: './dataset-quota-edit-form.component.html',
+  styleUrls: ['./dataset-quota-edit-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class DatasetQuotaFormComponent {
+export class DatasetQuotaEditFormComponent {
   isFormLoading = false;
   private datasetQuota: DatasetQuota;
-  private pk: string;
+  private datasetId: string;
   private quotaType: DatasetQuotaType;
 
   get title(): string {
@@ -75,15 +77,16 @@ export class DatasetQuotaFormComponent {
     private cdr: ChangeDetectorRef,
     private errorHandler: FormErrorHandlerService,
     private slideIn: IxSlideInService,
+    protected dialogService: DialogService,
   ) {}
 
-  setupForm(quotaType: DatasetQuotaType, id: number, pk: string): void {
-    this.pk = pk;
+  setupEditQuotaForm(quotaType: DatasetQuotaType, datasetId: string, id: number): void {
+    this.datasetId = datasetId;
     this.quotaType = quotaType;
 
     const params = [['id', '=', id] as QueryFilter<DatasetQuota>] as QueryParams<DatasetQuota>;
     this.isFormLoading = true;
-    this.ws.call('pool.dataset.get_quota', [pk, quotaType, params])
+    this.ws.call('pool.dataset.get_quota', [datasetId, quotaType, params])
       .pipe(untilDestroyed(this)).subscribe(
         (res) => {
           this.datasetQuota = res[0];
@@ -103,16 +106,14 @@ export class DatasetQuotaFormComponent {
   }
 
   onSubmit(): void {
-    this.isFormLoading = true;
-
     const values = this.form.value;
-    const payload = [];
+    const payload: SetDatasetQuota[] = [];
     payload.push({
       quota_type: this.quotaType,
       id: String(this.datasetQuota.id),
       quota_value: values.data_quota,
-    },
-    {
+    });
+    payload.push({
       quota_type: this.quotaType === DatasetQuotaType.User
         ? DatasetQuotaType.UserObj
         : DatasetQuotaType.GroupObj,
@@ -120,16 +121,31 @@ export class DatasetQuotaFormComponent {
       quota_value: values.obj_quota,
     });
 
-    this.ws.call('pool.dataset.set_quota', [this.pk, payload])
-      .pipe(untilDestroyed(this))
-      .subscribe(() => {
-        this.isFormLoading = false;
-        this.slideIn.close();
-        this.cdr.markForCheck();
-      }, (error) => {
-        this.isFormLoading = false;
-        this.cdr.markForCheck();
-        this.errorHandler.handleWsFormError(error, this.form);
-      });
+    (
+      values.data_quota === 0 && values.obj_quota === 0
+        ? this.dialogService.confirm({
+          title: this.quotaType === DatasetQuotaType.User
+            ? this.translate.instant('Delete User Quota')
+            : this.translate.instant('Delete Group Quota'),
+          message: this.quotaType === DatasetQuotaType.User
+            ? this.translate.instant('Are you sure you want to delete the user quota <b>{name}</b>?', { name: values.name })
+            : this.translate.instant('Are you sure you want to delete the group quota <b>{name}</b>?', { name: values.name }),
+          buttonMsg: this.translate.instant('Delete'),
+        })
+        : of(true)
+    ).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
+      this.isFormLoading = true;
+      this.ws.call('pool.dataset.set_quota', [this.datasetId, payload])
+        .pipe(untilDestroyed(this))
+        .subscribe(() => {
+          this.isFormLoading = false;
+          this.slideIn.close();
+          this.cdr.markForCheck();
+        }, (error) => {
+          this.isFormLoading = false;
+          this.cdr.markForCheck();
+          this.errorHandler.handleWsFormError(error, this.form);
+        });
+    });
   }
 }

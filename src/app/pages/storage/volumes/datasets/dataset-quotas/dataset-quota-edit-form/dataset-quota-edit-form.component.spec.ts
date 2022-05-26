@@ -10,18 +10,18 @@ import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import {
-  DatasetQuotaFormComponent,
-} from 'app/pages/storage/volumes/datasets/dataset-quotas/dataset-quota-form/dataset-quota-form.component';
+  DatasetQuotaEditFormComponent,
+} from 'app/pages/storage/volumes/datasets/dataset-quotas/dataset-quota-edit-form/dataset-quota-edit-form.component';
 import { WebSocketService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
-describe('DatasetQuotaFormComponent', () => {
-  let spectator: Spectator<DatasetQuotaFormComponent>;
+describe('DatasetQuotaEditFormComponent', () => {
+  let spectator: Spectator<DatasetQuotaEditFormComponent>;
   let loader: HarnessLoader;
   let ws: WebSocketService;
 
   const createComponent = createComponentFactory({
-    component: DatasetQuotaFormComponent,
+    component: DatasetQuotaEditFormComponent,
     imports: [
       IxFormsModule,
       ReactiveFormsModule,
@@ -52,7 +52,7 @@ describe('DatasetQuotaFormComponent', () => {
 
   describe('editing user quota', () => {
     beforeEach(() => {
-      spectator.component.setupForm(DatasetQuotaType.User, 1, 'Test');
+      spectator.component.setupEditQuotaForm(DatasetQuotaType.User, 'Test', 1);
     });
 
     it('shows current quota values when editing', async () => {
@@ -99,7 +99,7 @@ describe('DatasetQuotaFormComponent', () => {
 
   describe('editing group quota', () => {
     beforeEach(() => {
-      spectator.component.setupForm(DatasetQuotaType.Group, 1, 'Test');
+      spectator.component.setupEditQuotaForm(DatasetQuotaType.Group, 'Test', 1);
     });
 
     it('shows current quota values when editing', async () => {

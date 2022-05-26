@@ -4,7 +4,6 @@ import globalHelptext from 'app/helptext/global-helptext';
 export default {
   field_accepts_tooltip: T('This field accepts human-readable input (Ex. 50 GiB, 500M, 2 TB).'),
   users: {
-    table_title: T('User Quotas'),
     quota_title: T('Set Quotas'),
     user_title: T('Apply Quotas to Selected Users'),
     usersTooltip: T('You can search both for local users as well as users from Active Directory.\
@@ -37,7 +36,6 @@ Press ENTER to separate entries.'),
   },
 
   groups: {
-    table_title: T('Group Quotas'),
     quota_title: T('Set Quotas'),
     group_title: T('Apply Quotas to Selected Groups'),
     groupsTooltip: T('You can search both for local groups as well as groups from Active Directory.\
