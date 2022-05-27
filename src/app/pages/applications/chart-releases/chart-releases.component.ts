@@ -30,7 +30,8 @@ import { ChartEventsDialogComponent } from 'app/pages/applications/dialogs/chart
 import { ChartUpgradeDialogComponent } from 'app/pages/applications/dialogs/chart-upgrade/chart-upgrade-dialog.component';
 import { ChartFormComponent } from 'app/pages/applications/forms/chart-form.component';
 import { ChartUpgradeDialogConfig } from 'app/pages/applications/interfaces/chart-upgrade-dialog-config.interface';
-import { DialogService, WebSocketService } from 'app/services';
+import { RedirectService } from 'app/services';
+import { DialogService, WebSocketService } from 'app/services/index';
 import { ModalService } from 'app/services/modal.service';
 
 @UntilDestroy()
@@ -147,6 +148,7 @@ export class ChartReleasesComponent implements OnInit {
     private modalService: ModalService,
     private router: Router,
     protected ws: WebSocketService,
+    private redirect: RedirectService,
   ) { }
 
   ngOnInit(): void {
@@ -280,13 +282,13 @@ export class ChartReleasesComponent implements OnInit {
     });
   }
 
-  portalName(name: string = 'web_portal'): string {
+  portalName(name = 'web_portal'): string {
     const humanName = new EntityUtils().snakeToHuman(name);
     return humanName;
   }
 
-  portalLink(chart: ChartRelease, name: string = 'web_portal'): void {
-    window.open(chart.portals[name][0]);
+  portalLink(chart: ChartRelease, name = 'web_portal'): void {
+    this.redirect.openWindow(chart.portals[name][0]);
   }
 
   update(name: string): void {

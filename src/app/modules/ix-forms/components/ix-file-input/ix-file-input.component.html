@@ -11,13 +11,12 @@
     <label>
       {{ 'Choose File' | translate }}
       <input
-        #ixFileInput
         type="file"
         [accept]="acceptedFiles"
         [required]="required"
         [disabled]="isDisabled"
-        [attr.multiple]="multiple"
-        (change)="onChanged(ixFileInput.files)"
+        [multiple]="multiple"
+        (change)="onChanged(asFileInput($event.target).files)"
       />
     </label>
   </div>

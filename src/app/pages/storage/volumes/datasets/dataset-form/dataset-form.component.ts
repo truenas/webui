@@ -3,6 +3,7 @@ import { FormControl, ValidationErrors, Validators } from '@angular/forms';
 import { MatSelectChange } from '@angular/material/select';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 import { Observable, Subscription } from 'rxjs';
@@ -42,6 +43,8 @@ import { DatasetFormData } from 'app/pages/storage/volumes/datasets/dataset-form
 import { StorageService, WebSocketService } from 'app/services';
 import { DialogService } from 'app/services/dialog.service';
 import { ModalService } from 'app/services/modal.service';
+import { AppState } from 'app/store';
+import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 
 type SizeField = 'quota' | 'refquota' | 'reservation' | 'refreservation' | 'special_small_block_size';
 
@@ -893,6 +896,7 @@ export class DatasetFormComponent implements FormConfiguration {
     protected modalService: ModalService,
     protected translate: TranslateService,
     protected formatter: IxFormatterService,
+    private store$: Store<AppState>,
   ) { }
 
   initial(entityForm: EntityFormComponent): void {
@@ -913,8 +917,8 @@ export class DatasetFormComponent implements FormConfiguration {
     this.productType = window.localStorage.getItem('product_type') as ProductType;
     const aclControl = entityForm.formGroup.get('aclmode');
     this.entityForm = entityForm;
-    if (this.productType.includes(ProductType.Enterprise)) {
-      this.ws.call('system.info').pipe(untilDestroyed(this)).subscribe((systemInfo) => {
+    if (this.productType === ProductType.ScaleEnterprise) {
+      this.store$.pipe(waitForSystemInfo, untilDestroyed(this)).subscribe((systemInfo) => {
         if (systemInfo.license && systemInfo.license.features.includes(LicenseFeature.Dedup)) {
           this.entityForm.setDisabled('deduplication', false, false);
         }

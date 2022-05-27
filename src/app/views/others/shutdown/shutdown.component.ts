@@ -27,8 +27,8 @@ export class ShutdownComponent implements OnInit {
     private localeService: LocaleService,
     private location: Location,
   ) {
-    this.sysGeneralService.getProductType$.pipe(untilDestroyed(this)).subscribe((res) => {
-      this.productType = res as ProductType;
+    this.sysGeneralService.getProductType$.pipe(untilDestroyed(this)).subscribe((productType) => {
+      this.productType = productType;
     });
   }
 

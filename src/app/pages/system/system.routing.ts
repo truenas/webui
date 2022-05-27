@@ -6,7 +6,7 @@ import { ShellComponent } from 'app/pages/shell/shell.component';
 import { AlertServiceListComponent } from 'app/pages/system/alert-service/alert-service-list/alert-service-list.component';
 import { FailoverSettingsComponent } from 'app/pages/system/failover-settings/failover-settings.component';
 import { GeneralSettingsComponent } from 'app/pages/system/general-settings/general-settings.component';
-import { ManualUpdateComponent } from 'app/pages/system/update/manual-update/manual-update.component';
+import { ManualUpdateFormComponent } from 'app/pages/system/update/manual-update-form/manual-update-form.component';
 import { ViewEnclosureComponent } from 'app/pages/system/view-enclosure/components/view-enclosure/view-enclosure.component';
 import { AdvancedSettingsComponent } from './advanced/advanced-settings.component';
 import { CronListComponent } from './advanced/cron/cron-list/cron-list.component';
@@ -96,7 +96,7 @@ export const routes: Routes = [
           children: [
             {
               path: '',
-              component: ManualUpdateComponent,
+              component: ManualUpdateFormComponent,
               data: { title: T('Manual Update'), breadcrumb: T('Manual Update') },
             },
           ],

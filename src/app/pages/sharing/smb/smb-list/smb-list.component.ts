@@ -10,6 +10,7 @@ import { SmbShare } from 'app/interfaces/smb-share.interface';
 import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-table.component';
 import { EntityTableAction, EntityTableConfig } from 'app/modules/entity/entity-table/entity-table.interface';
 import { EntityUtils } from 'app/modules/entity/utils';
+import { SmbAclComponent } from 'app/pages/sharing/smb/smb-acl/smb-acl.component';
 import { SmbFormComponent } from 'app/pages/sharing/smb/smb-form/smb-form.component';
 import { DialogService, WebSocketService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
@@ -117,9 +118,8 @@ export class SmbListComponent implements EntityTableConfig {
                 const searchName = row.home ? 'homes' : row.name;
                 this.ws.call('smb.sharesec.query', [[['share_name', '=', searchName]]]).pipe(untilDestroyed(this)).subscribe(
                   (res) => {
-                    this.router.navigate(
-                      ['/'].concat(['sharing', 'smb', 'acl', String(res[0].id)]),
-                    );
+                    const form = this.slideInService.open(SmbAclComponent);
+                    form.setSmbShareName(res[0].share_name);
                   },
                 );
               }

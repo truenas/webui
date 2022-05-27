@@ -4,13 +4,19 @@ import {
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
-import { forkJoin, of, Subscription } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
+import {
+  EMPTY, forkJoin, of, Subscription,
+} from 'rxjs';
+import {
+  catchError, switchMap, tap,
+} from 'rxjs/operators';
+import { JobState } from 'app/enums/job-state.enum';
 import { SyslogLevel, SyslogTransport } from 'app/enums/syslog.enum';
 import { choicesToOptions } from 'app/helpers/options.helper';
 import { helptextSystemAdvanced, helptextSystemAdvanced as helptext } from 'app/helptext/system/advanced';
 import { AdvancedConfigUpdate } from 'app/interfaces/advanced-config.interface';
 import { EntityUtils } from 'app/modules/entity/utils';
+import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { DialogService, WebSocketService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { AppState } from 'app/store';
@@ -62,6 +68,7 @@ export class SyslogFormComponent implements OnInit {
     private dialogService: DialogService,
     private cdr: ChangeDetectorRef,
     private store$: Store<AppState>,
+    private errorHandler: FormErrorHandlerService,
   ) {}
 
   ngOnInit(): void {
@@ -91,18 +98,26 @@ export class SyslogFormComponent implements OnInit {
 
     this.isFormLoading = true;
     this.ws.call('system.advanced.update', [configUpdate]).pipe(
-      switchMap(() => this.ws.job('systemdataset.update', [{ syslog }])),
+      switchMap(() => this.ws.job('systemdataset.update', [{ syslog }]).pipe(
+        tap((job) => {
+          if (job.state !== JobState.Success) {
+            return;
+          }
+
+          this.store$.dispatch(advancedConfigUpdated());
+          this.isFormLoading = false;
+          this.cdr.markForCheck();
+          this.slideInService.close();
+        }),
+        catchError((error) => {
+          this.isFormLoading = false;
+          this.errorHandler.handleWsFormError(error, this.form);
+          this.cdr.markForCheck();
+          return EMPTY;
+        }),
+      )),
       untilDestroyed(this),
-    ).subscribe(() => {
-      this.isFormLoading = false;
-      this.cdr.markForCheck();
-      this.slideInService.close();
-      this.store$.dispatch(advancedConfigUpdated());
-    }, (res) => {
-      this.isFormLoading = false;
-      new EntityUtils().handleWsError(this, res);
-      this.cdr.markForCheck();
-    });
+    ).subscribe();
   }
 
   private loadForm(): void {

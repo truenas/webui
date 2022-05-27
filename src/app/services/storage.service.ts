@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { SortDirection } from '@angular/material/sort';
 import { format } from 'date-fns-tz';
 import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { map, tap } from 'rxjs/operators';
 import { DiskPowerLevel } from 'app/enums/disk-power-level.enum';
 import { DiskStandby } from 'app/enums/disk-standby.enum';
 import { FileSystemStat } from 'app/interfaces/filesystem-stat.interface';
@@ -24,7 +24,10 @@ export class StorageService {
   humanReadable: string;
   iecUnits = ['KiB', 'MiB', 'GiB', 'TiB', 'PiB'];
 
-  constructor(protected ws: WebSocketService) {}
+  constructor(
+    protected ws: WebSocketService,
+    private http: HttpClient,
+  ) {}
 
   filesystemStat(path: string): Observable<FileSystemStat> {
     return this.ws.call('filesystem.stat', [path]);
@@ -70,8 +73,8 @@ export class StorageService {
     dlink.remove();
   }
 
-  streamDownloadFile(http: HttpClient, url: string, filename: string, mimeType: string): Observable<Blob> {
-    return http.post(url, '',
+  streamDownloadFile(url: string, filename: string, mimeType: string): Observable<Blob> {
+    return this.http.post(url, '',
       { responseType: 'blob' }).pipe(
       map(
         (res) => {
@@ -79,6 +82,12 @@ export class StorageService {
           return blob;
         },
       ),
+    );
+  }
+
+  downloadUrl(url: string, filename: string, mimeType: string): Observable<Blob> {
+    return this.streamDownloadFile(url, filename, mimeType).pipe(
+      tap((blob) => this.downloadBlob(blob, filename)),
     );
   }
 

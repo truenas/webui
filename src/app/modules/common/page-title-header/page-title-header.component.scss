@@ -1,0 +1,25 @@
+:host {
+  border-bottom: solid 1px var(--lines);
+  box-sizing: border-box;
+  color: var(--primary-txt);
+  display: block;
+  margin: 0 auto 32px;
+  padding-bottom: 8px;
+  width: calc(100% - 16px);
+}
+
+.title-container {
+  align-items: flex-end;
+  display: flex;
+  flex-direction: row;
+  flex-grow: 1;
+  min-height: 40px;
+}
+
+.actions-container {
+  align-items: center;
+  display: flex;
+  flex-direction: row-reverse;
+  flex-grow: 1;
+  gap: 0 8px;
+}

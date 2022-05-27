@@ -10,7 +10,9 @@ import {
 import {
   catchError, concatMap, toArray,
 } from 'rxjs/operators';
+import { ApiMethod } from 'app/interfaces/api-directory.interface';
 import { ValidatedFile } from 'app/interfaces/validated-file.interface';
+import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Injectable({
@@ -21,16 +23,21 @@ export class IxFileUploadService {
   private fileUploadProgress$ = new Subject<HttpProgressEvent>();
   private fileUploadSuccess$ = new Subject<HttpResponse<unknown>>();
 
+  get defaultUploadEndpoint(): string {
+    return '/_upload?auth_token=' + this.ws.token;
+  }
+
   constructor(
     protected http: HttpClient,
     private translate: TranslateService,
+    private ws: WebSocketService,
   ) {}
 
   upload(
     file: File,
-    method: string,
-    params: unknown[],
-    apiEndPoint: string,
+    method: ApiMethod,
+    params: unknown[] = [],
+    apiEndPoint = this.defaultUploadEndpoint,
   ): void {
     const formData: FormData = new FormData();
     formData.append('data', JSON.stringify({
@@ -64,7 +71,7 @@ export class IxFileUploadService {
     return this.fileUploadSuccess$;
   }
 
-  validateScreenshots(screenshots: FileList): Observable<ValidatedFile[]> {
+  validateScreenshots(screenshots: File[]): Observable<ValidatedFile[]> {
     return from(Array.from(screenshots)).pipe(
       concatMap((file: File): Observable<ValidatedFile> => {
         return this.validateScreenshot(file).pipe(

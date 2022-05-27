@@ -1,14 +1,19 @@
-import { IdmapName } from 'app/enums/idmap-name.enum';
+import { IdmapBackend, IdmapName } from 'app/enums/idmap.enum';
 
 export interface Idmap {
-  certificate: { cert_name: string };
-  dns_domain_name: unknown;
+  certificate: {
+    id: number;
+    cert_name: string;
+  };
+  dns_domain_name: string;
   id: number;
-  idmap_backend: string;
-  name: IdmapName;
-  options: Record<string, string>;
+  idmap_backend: IdmapBackend;
+  name: IdmapName | string;
+  options: Record<string, unknown>;
   range_high: number;
   range_low: number;
 }
 
-export type IdmapUpdate = Omit<Idmap, 'id'>;
+export type IdmapUpdate = Omit<Idmap, 'id' | 'certificate'> & {
+  certificate: number;
+};

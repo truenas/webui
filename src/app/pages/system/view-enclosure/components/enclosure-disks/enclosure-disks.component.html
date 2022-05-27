@@ -153,8 +153,8 @@
         <!-- EXPANDERS OVERLAY -->
         <div *ngIf="currentView == 'expanders' || exitingView == 'expanders'" class="expanders full-stage dom-overlay">
           <div *ngIf="expanders" class="content" >
-            <div *ngFor="let expander of expanders | cast" [style.width]="(100 / expanders.length).toString() + '%'" class="expander-item">
-              <div class="primary-number" >{{ expander.status }}</div>
+            <div *ngFor="let expander of expanders" [style.width]="(100 / expanders.length).toString() + '%'" class="expander-item">
+              <div class="primary-number">{{ $any(expander).status }}</div>
               <div class="title">{{expander.descriptor}}</div>
               <div class="subtitle">{{ 'Expander Status' | translate }}</div>
             </div>

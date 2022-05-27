@@ -12,13 +12,13 @@ import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
+import { filter } from 'rxjs/operators';
 import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
 import { FailoverStatus } from 'app/enums/failover-status.enum';
 import { ProductType, productTypeLabels } from 'app/enums/product-type.enum';
 import globalHelptext from 'app/helptext/global-helptext';
 import productText from 'app/helptext/product';
 import helptext from 'app/helptext/topbar';
-import { ThemeChangedEvent } from 'app/interfaces/events/theme-events.interface';
 import { Interval } from 'app/interfaces/timeout.interface';
 import { matchOtherValidator } from 'app/modules/entity/entity-form/validators/password-validation/password-validation';
 import { SystemGeneralService } from 'app/services';
@@ -46,10 +46,9 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
 
   _copyrightYear = '';
   get copyrightYear(): string {
-    return window.localStorage && window.localStorage.buildtime ? this.localeService.getCopyrightYearFromBuildTime() : '';
+    return window.localStorage?.buildtime ? this.localeService.getCopyrightYearFromBuildTime() : '';
   }
 
-  private interval: Interval;
   tokenObservable: Subscription;
   haInterval: Interval;
   isTwoFactor = false;
@@ -96,43 +95,38 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
     private sysGeneralService: SystemGeneralService,
     private localeService: LocaleService,
   ) {
-    this.ws = ws;
     const haStatus = window.sessionStorage.getItem('ha_status');
     if (haStatus && haStatus === 'true') {
       this.ha_status = true;
     }
-    this.checkSystemType();
-    this.ws.call('truecommand.connected').pipe(untilDestroyed(this)).subscribe((res) => {
-      if (res.connected) {
-        this.tc_ip = res.truecommand_ip;
-        this.tc_url = res.truecommand_url;
-      }
-    });
-  }
-
-  checkSystemType(): void {
-    if (!this.logo_ready) {
-      this.sysGeneralService.getProductType$.pipe(untilDestroyed(this)).subscribe((res) => {
-        this.logo_ready = true;
-        this.productType = res as ProductType;
-        if (this.interval) {
-          clearInterval(this.interval);
+    this.sysGeneralService.getProductType$.pipe(
+      filter(Boolean),
+      untilDestroyed(this),
+    ).subscribe((productType) => {
+      this.productType = productType as ProductType;
+      this.logo_ready = true;
+      if ([ProductType.Scale, ProductType.ScaleEnterprise].includes(this.productType)) {
+        if (this.haInterval) {
+          clearInterval(this.haInterval);
         }
-        if (this.productType.includes(ProductType.Enterprise) || this.productType === ProductType.Scale) {
-          if (this.haInterval) {
-            clearInterval(this.haInterval);
-          }
+        this.getHaStatus();
+        this.haInterval = setInterval(() => {
           this.getHaStatus();
-          this.haInterval = setInterval(() => {
-            this.getHaStatus();
-          }, 6000);
-        } else if (this.canLogin()) {
-          this.checkBuildtime();
-          this.loginToken();
-        }
-        window.localStorage.setItem('product_type', res);
-      });
-    }
+        }, 6000);
+      } else if (this.canLogin()) {
+        this.checkBuildtime();
+        this.loginToken();
+      }
+      window.localStorage.setItem('product_type', this.productType);
+    });
+
+    this.ws.call('truecommand.connected').pipe(
+      filter((res) => res.connected),
+      untilDestroyed(this),
+    ).subscribe((res) => {
+      this.tc_ip = res.truecommand_ip;
+      this.tc_url = res.truecommand_url;
+    });
   }
 
   ngAfterViewInit(): void {
@@ -145,17 +139,6 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngOnInit(): void {
-    this.core.register({ observerClass: this, eventName: 'ThemeChanged' }).pipe(untilDestroyed(this)).subscribe((evt: ThemeChangedEvent) => {
-      if (this.router.url === '/sessions/signin' && evt.sender.userThemeLoaded) {
-        this.redirect();
-      }
-    });
-    if (!this.logo_ready) {
-      this.interval = setInterval(() => {
-        this.checkSystemType();
-      }, 5000);
-    }
-
     if (this.canLogin()) {
       this.checkBuildtime();
       this.loginToken();
@@ -176,9 +159,6 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngOnDestroy(): void {
-    if (this.interval) {
-      clearInterval(this.interval);
-    }
     if (this.haInterval) {
       clearInterval(this.haInterval);
     }
@@ -234,10 +214,9 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   canLogin(): boolean {
-    if (this.logo_ready && this.connected
-       && (this.failover_status === FailoverStatus.Single
-        || this.failover_status === FailoverStatus.Master
-        || this.productType === ProductType.Core)) {
+    if (this.logo_ready && this.connected()
+      && [FailoverStatus.Single, FailoverStatus.Master].includes(this.failover_status)
+    ) {
       if (!this.didSetFocus && this.usernameInput) {
         setTimeout(() => {
           this.didSetFocus = true;
@@ -252,7 +231,7 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   get productSupportsHa(): boolean {
-    return this.productType?.includes(ProductType.Enterprise) || this.productType === ProductType.Scale;
+    return [ProductType.Scale, ProductType.ScaleEnterprise].includes(this.productType);
   }
 
   getHaStatus(): void {
@@ -350,9 +329,6 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
 
   redirect(): void {
     if (this.ws.token) {
-      if (this.interval) {
-        clearInterval(this.interval);
-      }
       if (this.haInterval) {
         clearInterval(this.haInterval);
       }

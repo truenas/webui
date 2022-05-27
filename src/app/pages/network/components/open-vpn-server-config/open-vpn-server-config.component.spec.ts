@@ -140,7 +140,7 @@ describe('OpenVpnServerConfigComponent', () => {
       root_ca: 2,
       server: '198.51.100.0',
       netmask: 25,
-      port: '7000',
+      port: 7000,
       authentication_algorithm: 'MD99',
       cipher: 'AES-256-CFB',
       compression: 'LZ4',

@@ -2,21 +2,12 @@ import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import globalHelptext from 'app/helptext/global-helptext';
 
 export default {
+  field_accepts_tooltip: T('This field accepts human-readable input (Ex. 50 GiB, 500M, 2 TB).'),
   users: {
-    table_title: T('User Quotas'),
     quota_title: T('Set Quotas'),
     user_title: T('Apply Quotas to Selected Users'),
-    system_select: {
-      placeholder: T('Select Users Cached by this System'),
-      tooltip: T('The list only shows users cached on this system. The search box \
-  below can locate all users, including users connected with Active Directory or other services.'),
-    },
-    search: {
-      placeholder: T('Search For Connected Users'),
-      tooltip: T('Search for all connected users. \
- Type a user name and press <i>ENTER</i>. A warning is shown \
- if there are no matches.'),
-    },
+    usersTooltip: T('You can search both for local users as well as users from Active Directory.\
+Press ENTER to separate entries.'),
     data_quota: {
       placeholder: T('User Data Quota '),
       tooltip: T('Amount of disk space that can be used by the selected users. \
@@ -45,20 +36,10 @@ export default {
   },
 
   groups: {
-    table_title: T('Group Quotas'),
     quota_title: T('Set Quotas'),
     group_title: T('Apply Quotas to Selected Groups'),
-    system_select: {
-      placeholder: T('Select Groups Cached by this System'),
-      tooltip: T('The list shows only groups cached on this system. The search box \
-  below can locate all groups, including groups connected with Active Directory or other services.'),
-    },
-    search: {
-      placeholder: T('Search For Connected Groups'),
-      tooltip: T('Search for all connected groups. \
- Type a group name and press <i>ENTER</i>. A warning is shown \
- if there are no matches.'),
-    },
+    groupsTooltip: T('You can search both for local groups as well as groups from Active Directory.\
+Press ENTER to separate entries.'),
     data_quota: {
       placeholder: T('Group Data Quota '),
       tooltip: T('Amount of disk space that can be used by the selected groups. \

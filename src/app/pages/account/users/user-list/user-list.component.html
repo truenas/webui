@@ -1,5 +1,32 @@
 <ng-template #pageHeader>
-  <ix-pagetitle [toolbarActionsConfig]="toolbarActionsConfig"></ix-pagetitle>
+  <page-title-header>
+    <button
+      (click)="doAdd()"
+      [color]="'primary'"
+      mat-button
+    >
+      {{ 'Add' | translate }}
+    </button>
+    <mat-slide-toggle
+      (change)="toggleBuiltins()"
+      [checked]="!this.hideBuiltinUsers"
+    >
+      <label>{{ 'Show Built-in Users' | translate }}</label>
+    </mat-slide-toggle>
+    <ng-template
+      headerInput
+      [prefixIcon]="'search'"
+      (resetInput)="clearFilter()"
+      [shouldShowReset]="shouldShowReset$"
+    >
+      <input
+        #filterInput
+        matInput
+        placeholder="Search"
+        (input)="filter()"
+      >
+    </ng-template>
+  </page-title-header>
 </ng-template>
 
 <entity-empty *ngIf="isLoading$ | async; else loaded" [conf]="loadingConfig"></entity-empty>

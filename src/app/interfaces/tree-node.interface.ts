@@ -1,4 +1,5 @@
 import { TreeNode as OriginalTreeNode } from '@circlon/angular-tree-component';
+import { ExplorerNodeType } from 'app/enums/explorer-type.enum';
 
 /**
  * This is basically a TreeNode from 'angular-tree-component'
@@ -15,6 +16,7 @@ export interface TreeNode<T> extends OriginalTreeNode {
 export interface ExplorerNodeData {
   path: string;
   name: string;
+  type: ExplorerNodeType;
 
   /**
    * There is both hasChildren on TreeNodeData (supplied by us) and on TreeNode (from angular-tree-component)

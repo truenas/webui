@@ -6,6 +6,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import _ from 'lodash';
 import { filter, map } from 'rxjs/operators';
+import { ProductType } from 'app/enums/product-type.enum';
 import { ServiceName, serviceNames } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { helptextSharingWebdav, helptextSharingSmb, helptextSharingNfs } from 'app/helptext/sharing';
@@ -27,12 +28,12 @@ import {
 import { EntityUtils } from 'app/modules/entity/utils';
 import { TargetFormComponent } from 'app/pages/sharing/iscsi/target/target-form/target-form.component';
 import { NfsFormComponent } from 'app/pages/sharing/nfs/nfs-form/nfs-form.component';
+import { SmbAclComponent } from 'app/pages/sharing/smb/smb-acl/smb-acl.component';
 import { SmbFormComponent } from 'app/pages/sharing/smb/smb-form/smb-form.component';
 import { WebdavFormComponent } from 'app/pages/sharing/webdav/webdav-form/webdav-form.component';
 import {
   DialogService,
   IscsiService,
-  ModalService,
   WebSocketService,
 } from 'app/services';
 import { IxSlideInService, ResponseOnClose } from 'app/services/ix-slide-in.service';
@@ -85,7 +86,6 @@ export class SharesDashboardComponent implements AfterViewInit {
   readonly ServiceStatus = ServiceStatus;
 
   constructor(
-    private modalService: ModalService,
     private ws: WebSocketService,
     private dialog: DialogService,
     private router: Router,
@@ -146,6 +146,7 @@ export class SharesDashboardComponent implements AfterViewInit {
           this.webdavTable.tableComponent.getData();
           break;
         case SmbFormComponent:
+        case SmbAclComponent:
           if (!this.smbTable.tableComponent) {
             this.refreshDashboard();
           }
@@ -371,6 +372,64 @@ export class SharesDashboardComponent implements AfterViewInit {
             }
           },
           limitRows: 5,
+          isActionVisible: (actionId: string, row: SmbShare) => {
+            switch (actionId) {
+              case 'edit_acl':
+                const rowName = row.path.replace('/mnt/', '');
+                return rowName.includes('/');
+              default:
+                return true;
+            }
+          },
+          getActions: () => {
+            return [
+              {
+                icon: 'share',
+                name: 'share_acl',
+                matTooltip: helptextSharingSmb.action_share_acl,
+                onClick: (row: SmbShare) => {
+                  this.ws.call('pool.dataset.path_in_locked_datasets', [row.path]).pipe(untilDestroyed(this)).subscribe(
+                    (res) => {
+                      if (res) {
+                        this.lockedPathDialog(row.path);
+                      } else {
+                        // A home share has a name (homes) set; row.name works for other shares
+                        const searchName = row.home ? 'homes' : row.name;
+                        this.ws.call('smb.sharesec.query', [[['share_name', '=', searchName]]]).pipe(untilDestroyed(this)).subscribe(
+                          (res) => {
+                            const form = this.slideInService.open(SmbAclComponent);
+                            form.setSmbShareName(res[0].share_name);
+                          },
+                        );
+                      }
+                    },
+                  );
+                },
+              },
+              {
+                icon: 'security',
+                name: 'edit_acl',
+                matTooltip: helptextSharingSmb.action_edit_acl,
+                onClick: (row: SmbShare) => {
+                  const rowName = row.path.replace('/mnt/', '');
+                  const poolName = rowName.split('/')[0];
+                  const datasetId = rowName;
+                  const productType = window.localStorage.getItem('product_type') as ProductType;
+                  this.ws.call('pool.dataset.path_in_locked_datasets', [row.path]).pipe(untilDestroyed(this)).subscribe(
+                    (res) => {
+                      if (res) {
+                        this.lockedPathDialog(row.path);
+                      } else if (productType.includes(ProductType.Scale)) {
+                        this.router.navigate(['/', 'storage', 'id', poolName, 'dataset', 'posix-acl', datasetId]);
+                      } else {
+                        this.router.navigate(['/', 'storage', 'pools', 'id', poolName, 'dataset', 'acl', datasetId]);
+                      }
+                    },
+                  );
+                },
+              },
+            ];
+          },
         };
       }
     }
@@ -570,5 +629,12 @@ export class SharesDashboardComponent implements AfterViewInit {
       default:
         return 'fn-theme-orange';
     }
+  }
+
+  lockedPathDialog(path: string): void {
+    this.dialog.errorReport(
+      helptextSharingSmb.action_edit_acl_dialog.title,
+      this.translate.instant('The path <i>{path}</i> is in a locked dataset.', { path }),
+    );
   }
 }

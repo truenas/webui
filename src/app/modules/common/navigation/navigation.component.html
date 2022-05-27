@@ -50,15 +50,16 @@
           <mat-icon>{{ item.icon }}</mat-icon>
           <span>{{ item.name | translate }}</span>
         </a>
-        <a mat-button class="absorbs-focus" [tabIndex]="-1">
-          <!-- 'absorbs' the focus behavior -->
-        </a>
       </mat-list-item>
 
       <div *ngIf="item.type === MenuItemType.Separator" class="mt-1 mb-1" >
         <mat-divider></mat-divider>
         <span *ngIf="item.name" class="nav-section-title text-muted">{{ item.name | translate }}</span>
       </div>
+
+      <a mat-button class="absorbs-focus" [tabIndex]="-1">
+        <!-- 'absorbs' the focus behavior -->
+      </a>
     </ng-container>
   </div>
 </mat-nav-list>

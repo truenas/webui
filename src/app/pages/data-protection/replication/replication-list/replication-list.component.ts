@@ -1,25 +1,23 @@
 import { DatePipe } from '@angular/common';
 import { Component } from '@angular/core';
-import { Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { filter } from 'rxjs/operators';
-import { ExplorerType } from 'app/enums/explorer-type.enum';
 import { JobState } from 'app/enums/job-state.enum';
-import helptext from 'app/helptext/data-protection/replication/replication';
 import globalHelptext from 'app/helptext/global-helptext';
 import { Job } from 'app/interfaces/job.interface';
 import { ReplicationTask, ReplicationTaskUi } from 'app/interfaces/replication-task.interface';
 import { AppLoaderService } from 'app/modules/app-loader/app-loader.service';
-import { DialogFormConfiguration } from 'app/modules/entity/entity-dialog/dialog-form-configuration.interface';
-import { EntityDialogComponent } from 'app/modules/entity/entity-dialog/entity-dialog.component';
 import { EntityFormService } from 'app/modules/entity/entity-form/services/entity-form.service';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-table.component';
 import { EntityTableAction, EntityTableConfig } from 'app/modules/entity/entity-table/entity-table.interface';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { ReplicationFormComponent } from 'app/pages/data-protection/replication/replication-form/replication-form.component';
+import {
+  ReplicationRestoreDialogComponent,
+} from 'app/pages/data-protection/replication/replication-restore-dialog/replication-restore-dialog.component';
 import { ReplicationWizardComponent } from 'app/pages/data-protection/replication/replication-wizard/replication-wizard.component';
 import {
   DialogService,
@@ -148,44 +146,16 @@ export class ReplicationListComponent implements EntityTableConfig {
         label: this.translate.instant('Restore'),
         icon: 'restore',
         onClick: (row: ReplicationTaskUi) => {
-          const conf: DialogFormConfiguration = {
-            title: helptext.replication_restore_dialog.title,
-            fieldConfig: [
-              {
-                type: 'input',
-                name: 'name',
-                placeholder: helptext.name_placeholder,
-                tooltip: helptext.name_tooltip,
-                validation: [Validators.required],
-                required: true,
-              },
-              {
-                type: 'explorer',
-                explorerType: ExplorerType.Dataset,
-                initial: '',
-                name: 'target_dataset',
-                placeholder: helptext.target_dataset_placeholder,
-                tooltip: helptext.target_dataset_tooltip,
-                validation: [Validators.required],
-                required: true,
-              },
-            ],
-            saveButtonText: helptext.replication_restore_dialog.saveButton,
-            customSubmit: (entityDialog: EntityDialogComponent) => {
-              this.loader.open();
-              this.ws.call('replication.restore', [row.id, entityDialog.formValue]).pipe(untilDestroyed(this)).subscribe(
-                () => {
-                  entityDialog.dialogRef.close(true);
-                  this.entityList.getData();
-                },
-                (err) => {
-                  this.loader.close();
-                  new EntityUtils().handleWsError(entityDialog, err, this.dialog);
-                },
-              );
-            },
-          };
-          this.dialog.dialogFormWide(conf);
+          const dialog = this.matDialog.open(ReplicationRestoreDialogComponent, {
+            data: row.id,
+          });
+          dialog
+            .afterClosed()
+            .pipe(untilDestroyed(this))
+            .subscribe(() => {
+              this.entityList.needRefreshTable = true;
+              this.entityList.getData();
+            });
         },
       },
       {

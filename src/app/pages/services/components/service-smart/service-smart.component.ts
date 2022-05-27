@@ -77,18 +77,8 @@ export class ServiceSmartComponent implements OnInit {
   onSubmit(): void {
     const values = this.form.value;
 
-    // Converting to numbers is only necessary for unit tests,
-    // which don't play nicely with numbers in inputs.
-    const params = {
-      interval: Number(values.interval),
-      powermode: values.powermode,
-      difference: Number(values.difference),
-      informational: Number(values.informational),
-      critical: Number(values.critical),
-    };
-
     this.isFormLoading = true;
-    this.ws.call('smart.update', [params])
+    this.ws.call('smart.update', [values])
       .pipe(untilDestroyed(this))
       .subscribe(
         () => {

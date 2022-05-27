@@ -1,5 +1,5 @@
 import { DatePipe } from '@angular/common';
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
@@ -50,6 +50,7 @@ import { CoreService } from 'app/services/core-service/core.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { AppState } from 'app/store';
 import { waitForAdvancedConfig } from 'app/store/system-config/system-config.selectors';
+import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 import { ConsoleFormComponent } from './console-form/console-form.component';
 import { IsolatedGpuPcisFormComponent } from './isolated-gpu-pcis/isolated-gpu-pcis-form.component';
 import { KernelFormComponent } from './kernel-form/kernel-form.component';
@@ -216,7 +217,6 @@ export class AdvancedSettingsComponent implements OnInit {
     private dialog: DialogService,
     private loader: AppLoaderService,
     private router: Router,
-    private http: HttpClient,
     private storage: StorageService,
     public mdDialog: MatDialog,
     private core: CoreService,
@@ -491,7 +491,7 @@ export class AdvancedSettingsComponent implements OnInit {
   }
 
   saveDebug(): void {
-    this.ws.call('system.info').pipe(untilDestroyed(this)).subscribe((systemInfo) => {
+    this.store$.pipe(waitForSystemInfo, untilDestroyed(this)).subscribe((systemInfo) => {
       let fileName = '';
       let mimeType = 'application/gzip';
       if (systemInfo) {
@@ -526,7 +526,7 @@ export class AdvancedSettingsComponent implements OnInit {
               this.dialogRef.componentInstance.wsshow();
               this.dialogRef.componentInstance.success.pipe(take(1), untilDestroyed(this)).subscribe(() => {
                 this.dialogRef.close();
-                this.storage.streamDownloadFile(this.http, url, fileName, mimeType)
+                this.storage.streamDownloadFile(url, fileName, mimeType)
                   .pipe(untilDestroyed(this)).subscribe(
                     (file) => {
                       this.storage.downloadBlob(file, fileName);

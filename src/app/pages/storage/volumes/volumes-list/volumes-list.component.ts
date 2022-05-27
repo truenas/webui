@@ -1,4 +1,3 @@
-import { HttpClient } from '@angular/common/http';
 import {
   ChangeDetectorRef, Component, OnDestroy, OnInit,
 } from '@angular/core';
@@ -55,7 +54,6 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
     this.translate,
     this.storage,
     {} as VolumesListPool,
-    this.http,
   );
 
   viewingPermissionsForDataset: VolumesListDataset;
@@ -93,7 +91,6 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
       this.translate,
       this.storage,
       {} as VolumesListPool,
-      this.http,
     ) as EntityTableConfig,
   } as EntityTableComponent;
 
@@ -155,7 +152,6 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
     protected job: JobService,
     protected storage: StorageService,
     protected store$: Store<AppState>,
-    protected http: HttpClient,
     modalService: ModalService,
     public cdr: ChangeDetectorRef,
   ) {
@@ -233,7 +229,6 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
           this.translate,
           this.storage,
           pool,
-          this.http,
         );
         pool.type = 'zpool';
 

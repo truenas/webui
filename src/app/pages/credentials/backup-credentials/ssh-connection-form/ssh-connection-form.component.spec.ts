@@ -137,7 +137,7 @@ describe('SshConnectionFormComponent', () => {
         cipher: CipherType.Disabled,
         connect_timeout: '20',
         host: 'truenas.com',
-        port: '23',
+        port: 23,
         remote_host_key: 'ssh-rsaNew',
         username: 'john',
       },
@@ -184,6 +184,8 @@ describe('SshConnectionFormComponent', () => {
     await form.fillForm({
       Port: '24',
       Host: 'remote.com',
+      Username: 'john',
+      'Private Key': 'Generate New',
       'Connect Timeout': '30',
     });
 
@@ -195,7 +197,7 @@ describe('SshConnectionFormComponent', () => {
     expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('keychaincredential.remote_ssh_host_key_scan', [{
       connect_timeout: '30',
       host: 'remote.com',
-      port: '24',
+      port: 24,
     }]);
   });
 

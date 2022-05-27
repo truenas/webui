@@ -1,9 +1,9 @@
-import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatDialogRef } from '@angular/material/dialog/dialog-ref';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import {
   catchError, filter, switchMap, tap,
@@ -14,7 +14,7 @@ import { SystemUpdateOperationType, SystemUpdateStatus } from 'app/enums/system-
 import globalHelptext from 'app/helptext/global-helptext';
 import { helptextSystemUpdate as helptext } from 'app/helptext/system/update';
 import { ApiMethod } from 'app/interfaces/api-directory.interface';
-import { SysInfoEvent, SystemInfoWithFeatures } from 'app/interfaces/events/sys-info-event.interface';
+import { SystemInfoWithFeatures } from 'app/interfaces/events/sys-info-event.interface';
 import { SystemUpdateTrain } from 'app/interfaces/system-update.interface';
 import { AppLoaderService } from 'app/modules/app-loader/app-loader.service';
 import { ConfirmDialogComponent } from 'app/modules/common/dialog/confirm-dialog/confirm-dialog.component';
@@ -26,6 +26,8 @@ import { EntityUtils } from 'app/modules/entity/utils';
 import { StorageService, SystemGeneralService, WebSocketService } from 'app/services';
 import { CoreService } from 'app/services/core-service/core.service';
 import { DialogService } from 'app/services/dialog.service';
+import { AppState } from 'app/store';
+import { waitForSystemFeatures, waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 
 @UntilDestroy()
 @Component({
@@ -115,8 +117,8 @@ export class UpdateComponent implements OnInit {
     protected dialogService: DialogService,
     public translate: TranslateService,
     protected storage: StorageService,
-    protected http: HttpClient,
     public core: CoreService,
+    private store$: Store<AppState>,
   ) {
     this.sysGenService.updateRunning.pipe(untilDestroyed(this)).subscribe((isUpdating: string) => {
       this.isUpdateRunning = isUpdating === 'true';
@@ -151,11 +153,14 @@ export class UpdateComponent implements OnInit {
     this.product_type = window.localStorage.getItem('product_type') as ProductType;
 
     // Get system info from global cache
-    this.core.register({ observerClass: this, eventName: 'SysInfo' }).pipe(untilDestroyed(this)).subscribe((evt: SysInfoEvent) => {
-      this.sysInfo = evt.data;
-      this.isHA = !!(evt.data.license && evt.data.license.system_serial_ha.length > 0);
+    this.store$.pipe(waitForSystemInfo, untilDestroyed(this)).subscribe((sysInfo) => {
+      this.sysInfo = sysInfo as SystemInfoWithFeatures;
+      this.isHA = !!(sysInfo.license && sysInfo.license.system_serial_ha.length > 0);
     });
-    this.core.emit({ name: 'SysInfoRequest', sender: this });
+
+    this.store$.pipe(waitForSystemFeatures, untilDestroyed(this)).subscribe((features) => {
+      this.sysInfo.features = features;
+    });
 
     this.ws.call('update.get_auto_download').pipe(untilDestroyed(this)).subscribe((isAutoDownloadOn) => {
       this.autoCheck = isAutoDownloadOn;
@@ -204,7 +209,7 @@ export class UpdateComponent implements OnInit {
       });
     });
 
-    if (this.product_type.includes(ProductType.Enterprise)) {
+    if (this.product_type === ProductType.ScaleEnterprise) {
       setTimeout(() => { // To get around too many concurrent calls???
         this.ws.call('failover.licensed').pipe(untilDestroyed(this)).subscribe((res) => {
           if (res) {
@@ -646,7 +651,7 @@ export class UpdateComponent implements OnInit {
       ['config.save', [{ secretseed: entityDialog.formValue['secretseed'] }], fileName],
     ).pipe(
       switchMap(([_, url]) => {
-        return this.storage.streamDownloadFile(this.http, url, fileName, mimetype).pipe(
+        return this.storage.streamDownloadFile(url, fileName, mimetype).pipe(
           tap((file: Blob) => {
             this.storage.downloadBlob(file, fileName);
             this.savedConfiguration = true;

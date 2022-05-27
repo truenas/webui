@@ -28,7 +28,7 @@ export class KerberosKeytabsFormComponent {
 
   form = this.formBuilder.group({
     name: ['', Validators.required],
-    file: [null as FileList, Validators.required],
+    file: [null as File[], Validators.required],
   });
 
   isLoading = false;
