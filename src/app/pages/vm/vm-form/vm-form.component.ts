@@ -103,6 +103,12 @@ export class VmFormComponent implements FormConfiguration {
           placeholder: helptext.autostart_placeholder,
           tooltip: helptext.autostart_tooltip,
         },
+        {
+          type: 'checkbox',
+          name: 'hyperv_enlightenments',
+          placeholder: helptext.hyperv_enlightenments_placeholder,
+          tooltip: helptext.hyperv_enlightenments_tooltip,
+        },
       ],
     },
     {
@@ -221,7 +227,7 @@ export class VmFormComponent implements FormConfiguration {
     private translate: TranslateService,
     private dialogService: DialogService,
     private store$: Store<AppState>,
-  ) {}
+  ) { }
 
   preInit(entityForm: EntityFormComponent): void {
     this.entityForm = entityForm;

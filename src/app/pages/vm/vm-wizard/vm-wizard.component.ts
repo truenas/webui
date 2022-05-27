@@ -86,6 +86,25 @@ export class VmWizardComponent implements WizardConfiguration {
           validation: helptext.os_validation,
         },
         {
+          type: 'checkbox',
+          name: 'hyperv_enlightenments',
+          placeholder: helptext.hyperv_enlightenments_placeholder,
+          tooltip: helptext.hyperv_enlightenments_tooltip,
+          value: false,
+          isHidden: false,
+          relation: [
+            {
+              action: RelationAction.Show,
+              when: [
+                {
+                  name: 'os',
+                  value: 'Windows',
+                },
+              ],
+            },
+          ],
+        },
+        {
           type: 'input',
           name: 'name',
           placeholder: helptext.name_placeholder,
@@ -485,7 +504,7 @@ export class VmWizardComponent implements WizardConfiguration {
     private translate: TranslateService,
     protected modalService: ModalService,
     private store$: Store<AppState>,
-  ) {}
+  ) { }
 
   preInit(entityWizard: EntityWizardComponent): void {
     this.entityWizard = entityWizard;
@@ -958,6 +977,7 @@ export class VmWizardComponent implements WizardConfiguration {
     vmPayload['vcpus'] = value.vcpus;
     vmPayload['cores'] = value.cores;
     vmPayload['threads'] = value.threads;
+    vmPayload['hyperv_enlightenments'] = value.hyperv_enlightenments;
     vmPayload['memory'] = Math.ceil(this.storageService.convertHumanStringToNum(value.memory) / 1024 ** 2); // bytes -> mb
     vmPayload['bootloader'] = value.bootloader;
     vmPayload['shutdown_timeout'] = value.shutdown_timeout;
