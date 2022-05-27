@@ -214,15 +214,11 @@ export class NetworkConfigurationComponent implements OnInit {
     );
     this.form.controls.netwait_enabled.valueChanges.pipe(untilDestroyed(this)).subscribe(
       (value: boolean) => {
-        if (value) {
-          this.netwait_ip.hidden = false;
-        } else {
-          this.netwait_ip.hidden = true;
-        }
+        this.netwait_ip.hidden = !value;
       },
     );
 
-    if ([ProductType.Enterprise, ProductType.ScaleEnterprise].includes(window.localStorage.getItem('product_type') as ProductType)) {
+    if (window.localStorage.getItem('product_type') === ProductType.ScaleEnterprise) {
       this.ws.call('failover.licensed').pipe(untilDestroyed(this)).subscribe((isHa) => {
         this.hostname_b.hidden = !isHa;
         this.hostname_virtual.hidden = !isHa;

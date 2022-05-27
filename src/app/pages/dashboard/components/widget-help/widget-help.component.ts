@@ -12,7 +12,10 @@ import { LocaleService } from 'app/services/locale.service';
 @Component({
   selector: 'ix-widget-help',
   templateUrl: './widget-help.component.html',
-  styleUrls: ['./widget-help.component.scss'],
+  styleUrls: [
+    '../widget/widget.component.scss',
+    './widget-help.component.scss',
+  ],
 })
 export class WidgetHelpComponent extends WidgetComponent implements OnInit {
   copyrightYear = this.localeService.getCopyrightYearFromBuildTime();
@@ -36,7 +39,7 @@ export class WidgetHelpComponent extends WidgetComponent implements OnInit {
 
   ngOnInit(): void {
     this.sysGenService.getProductType$.pipe(untilDestroyed(this)).subscribe((productType) => {
-      this.systemType = productType as ProductType;
+      this.systemType = productType;
     });
   }
 }

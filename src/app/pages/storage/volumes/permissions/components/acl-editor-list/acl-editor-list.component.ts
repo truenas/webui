@@ -25,6 +25,7 @@ export class AclEditorListComponent implements OnChanges {
   @Input() ownerGroup: string;
 
   permissionItems: PermissionItem[] = [];
+  aces: (NfsAclItem | PosixAclItem)[] = [];
 
   constructor(
     private store: DatasetAclEditorStore,
@@ -33,6 +34,7 @@ export class AclEditorListComponent implements OnChanges {
   }
 
   ngOnChanges(): void {
+    this.aces = this.acl.acl;
     if (this.acl.acltype === AclType.Nfs4) {
       this.permissionItems = this.acl.acl.map((ace) => {
         if (ace.tag === NfsAclTag.Owner) {

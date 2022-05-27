@@ -2,6 +2,7 @@ import {
   Component, Input, AfterContentInit, OnChanges, SimpleChanges, ViewChild, ElementRef, OnDestroy, ChangeDetectorRef,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import {
   Application, Container,
@@ -11,6 +12,7 @@ import {
 } from 'popmotion';
 import { ValueReaction } from 'popmotion/lib/reactions/value';
 import { Subject } from 'rxjs';
+import { filter, map } from 'rxjs/operators';
 import { ThemeUtils } from 'app/core/classes/theme-utils/theme-utils';
 import { EnclosureSlotStatus } from 'app/enums/enclosure-slot-status.enum';
 import { EnclosureElement, EnclosureElementsGroup } from 'app/interfaces/enclosure.interface';
@@ -18,7 +20,6 @@ import { CoreEvent } from 'app/interfaces/events';
 import { EnclosureLabelChangedEvent } from 'app/interfaces/events/enclosure-events.interface';
 import { LabelDrivesEvent } from 'app/interfaces/events/label-drives-event.interface';
 import { MediaChangeEvent } from 'app/interfaces/events/media-change-event.interface';
-import { ThemeChangedEvent, ThemeDataEvent } from 'app/interfaces/events/theme-events.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { Theme } from 'app/interfaces/theme.interface';
 import { DialogFormConfiguration } from 'app/modules/entity/entity-dialog/dialog-form-configuration.interface';
@@ -52,6 +53,9 @@ import { WebSocketService } from 'app/services';
 import { CoreService } from 'app/services/core-service/core.service';
 import { DialogService } from 'app/services/dialog.service';
 import { Temperature } from 'app/services/disk-temperature.service';
+import { ThemeService } from 'app/services/theme/theme.service';
+import { AppState } from 'app/store';
+import { selectTheme } from 'app/store/preferences/preferences.selectors';
 
 export enum EnclosureLocation {
   Front = 'front',
@@ -107,7 +111,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
   }
 
   private _expanders: EnclosureElement[] | EnclosureElementsGroup[] = [];
-  get expanders(): EnclosureElement[] | EnclosureElementsGroup[] {
+  get expanders(): (EnclosureElement | EnclosureElementsGroup)[] {
     if (!this.system.platform.includes('MINI') && this.system.enclosures && this.selectedEnclosure.disks[0]) {
       const enclosureNumber = Number(this.selectedEnclosure.disks[0].enclosure.number);
       return this.system.getEnclosureExpanders(enclosureNumber);
@@ -171,6 +175,8 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
     public dialogService: DialogService,
     protected translate: TranslateService,
     protected ws: WebSocketService,
+    protected store$: Store<AppState>,
+    protected themeService: ThemeService,
   ) {
     this.themeUtils = new ThemeUtils();
 
@@ -199,21 +205,18 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
       this.resizeView();
     });
 
-    core.register({ observerClass: this, eventName: 'ThemeData' }).pipe(untilDestroyed(this)).subscribe((evt: ThemeDataEvent) => {
-      this.theme = evt.data;
-    });
-
-    core.register({ observerClass: this, eventName: 'ThemeChanged' }).pipe(untilDestroyed(this)).subscribe((evt: ThemeChangedEvent) => {
-      if (this.theme === evt.data) { return; }
-      this.theme = evt.data;
+    this.store$.select(selectTheme).pipe(
+      filter(Boolean),
+      map(() => this.themeService.currentTheme()),
+      untilDestroyed(this),
+    ).subscribe((theme: Theme) => {
+      this.theme = theme;
       this.setCurrentView(this.currentView);
       if (this.labels && this.labels.events$) {
-        this.labels.events$.next(evt);
+        this.labels.events$.next({ name: 'ThemeChanged', data: theme, sender: this });
       }
       this.optimizeChassisOpacity();
     });
-
-    core.emit({ name: 'ThemeDataRequest', sender: this });
   }
 
   clearDisk(): void {

@@ -71,7 +71,7 @@ describe('FailoverComponent', () => {
     expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('failover.update', [{
       disabled: false,
       master: true,
-      timeout: '20',
+      timeout: 20,
     }]);
   });
 

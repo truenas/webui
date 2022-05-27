@@ -1,5 +1,6 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { FlexLayoutModule } from '@angular/flex-layout';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
@@ -42,6 +43,7 @@ describe('ExtentFormComponent', () => {
     imports: [
       IxFormsModule,
       ReactiveFormsModule,
+      FlexLayoutModule,
     ],
     providers: [
       mockProvider(IxSlideInService),
@@ -109,7 +111,7 @@ describe('ExtentFormComponent', () => {
     await saveButton.click();
 
     expect(spectator.inject(WebSocketService).call).toHaveBeenLastCalledWith('iscsi.extent.create', [{
-      avail_threshold: '70',
+      avail_threshold: 70,
       blocksize: 1024,
       comment: 'new_comment',
       disk: 'key_device_2',

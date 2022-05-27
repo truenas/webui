@@ -1,6 +1,29 @@
-<div class="widgets-wrapper-container" (window:resize)="onMobileResize($event)">
+<ng-template #pageHeader>
+  <page-title-header *ngIf="screenType === 'Desktop'">
+    <ng-container *ngIf="isLoaded">
+      <button mat-button (click)="showConfigForm()" [color]="'primary'">
+        {{ 'Configure' | translate }}
+      </button>
+      <button *ngIf="reorderMode" mat-button (click)="onCancel()">
+        {{ 'Cancel' | translate }}
+      </button>
+      <button *ngIf="reorderMode" mat-button (click)="onConfirm()" [color]="'primary'">
+        {{ 'Save' | translate }}
+      </button>
+      <button *ngIf="!reorderMode && !isEmpty" mat-button (click)="onEnter()" [color]="'primary'">
+        {{ 'Reorder' | translate }}
+      </button>
+    </ng-container>
+  </page-title-header>
+</ng-template>
 
-  <div class="widgets-wrapper" *ngIf="screenType == 'Desktop' && dashStateReady && empty" fxLayout="column" fxLayoutAlign="center center">
+<div class="widgets-wrapper-container" (window:resize)="onMobileResize($event)">
+  <div
+    *ngIf="screenType === 'Desktop' && dashStateReady && isEmpty"
+    class="widgets-wrapper"
+    fxLayout="column"
+    fxLayoutAlign="center center"
+  >
     <entity-empty [conf]="emptyDashConf"></entity-empty>
   </div>
 
@@ -13,11 +36,30 @@
     [ixDropGridModel]="renderedWidgets"
     (ixDropGridModelChange)="onWidgetReorder($event)"
   >
+    <!-- LOADING WIDGETS -->
+    <ng-container *ngIf="!isLoaded && screenType === 'Desktop'">
+      <div *ngFor="let _ of availableWidgets">
+        <div class="widget placeholder">
+          <div class="card-container front">
+            <mat-card
+              class="front zero-state"
+              fxLayout="row wrap"
+              fxLayoutAlign="center center"
+            >
+              <mat-card-content fxLayout="row wrap" fxLayoutAlign="center center" fxFlex="100">
+                <mat-icon class="generic" svgIcon="truenas_scale_logo_full"></mat-icon>
+              </mat-card-content>
+            </mat-card>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+
     <!-- SORTABLE WIDGETS -->
-    <ng-container *ngIf="dashStateReady && !empty && screenType == 'Desktop' && statsDataEvent$ && pools && nics && volumeData && sysinfoReady">
+    <ng-container *ngIf="isLoaded && screenType === 'Desktop'">
       <ng-container *ngIf="renderedWidgets">
         <div *ngFor="let widget of renderedWidgets; let index = index; trackBy: getWidgetId" ixDropGridItem>
-          <ng-container [ngSwitch]="widget.name.toLowerCase()">
+          <ng-container [ngSwitch]="widget.name | lowercase">
 
             <ix-widget-sysinfo *ngSwitchCase="'system information'"
               id="active"
@@ -116,22 +158,25 @@
   </div>
 </div>
 
+<ng-container *ngIf="!isLoaded && screenType === 'Mobile';">
+  <mat-spinner class="spinner xs" [diameter]="40"></mat-spinner>
+</ng-container>
+
 <!-- MOBILE WIDGETS -->
-<div class="mobile-viewport" [ngClass]="{'hidden': screenType == 'Desktop'}">
+<div class="mobile-viewport" [class.hidden]="screenType === 'Desktop'">
   <div class="carousel">
     <ix-widget-controller (launcher)="onMobileLaunch($event)"
-      *ngIf="screenType == 'Mobile' && dashState && dashState.length > 0;"
+      *ngIf="screenType === 'Mobile' && dashState && dashState.length > 0;"
       [renderedWidgets]="renderedWidgets"
       [dashState]="dashState"
-      [actionsConfig]="actionsConfig.actionConfig"
       [emptyConfig]="emptyDashConf"
       [widgetSize]="medium"
     ></ix-widget-controller>
 
     <div class="mobile-widget-container">
-      <ng-container  *ngIf="screenType == 'Mobile' && statsDataEvent$ && pools && nics && volumeData && sysinfoReady">
-        <ng-container  *ngFor="let widget of activeMobileWidget">
-          <ng-container [ngSwitch]="widget.name.toLowerCase()">
+      <ng-container *ngIf="isLoaded && screenType === 'Mobile';">
+        <ng-container *ngFor="let widget of activeMobileWidget">
+          <ng-container [ngSwitch]="widget.name | lowercase">
 
             <ix-widget-sysinfo *ngSwitchCase="'system information'"
               (back)="onMobileBack()"

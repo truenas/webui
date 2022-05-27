@@ -1,13 +1,5 @@
-<div *ngIf="title$ | async as title" fxLayout="row wrap" class="page-title">
-  <app-breadcrumb
-    fxFlex="100%"
-    [class.invisible]="!breadcrumbs && routeParts.length < 2"
-  ></app-breadcrumb>
-  <div fxFlex="100%" fxLayout='row wrap' fxLayoutAlign="space-between end">
-    <h1>{{ title | translate }}</h1>
-
-    <div class="viewcontroller-wrapper">
-      <ix-view-controller #viewcontroller></ix-view-controller>
-    </div>
+<page-title-header [pageTitle]="title$ | async">
+  <div class="viewcontroller-wrapper">
+    <ix-view-controller #viewcontroller></ix-view-controller>
   </div>
-</div>
+</page-title-header>

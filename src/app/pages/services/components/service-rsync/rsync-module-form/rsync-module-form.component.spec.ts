@@ -99,7 +99,7 @@ describe('RsyncModuleFormComponent', () => {
       enabled: true,
 
       mode: RsyncModuleMode.ReadOnly,
-      maxconn: '20',
+      maxconn: 20,
       user: 'games',
       group: 'wheel',
       hostsallow: ['host1.com'],

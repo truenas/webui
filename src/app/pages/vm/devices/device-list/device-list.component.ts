@@ -14,9 +14,11 @@ import {
   EntityTableComponent,
 } from 'app/modules/entity/entity-table/entity-table.component';
 import { EntityTableAction, EntityTableConfig } from 'app/modules/entity/entity-table/entity-table.interface';
+import { DeviceFormComponent } from 'app/pages/vm/devices/device-form/device-form.component';
 import { DeviceDeleteModalComponent } from 'app/pages/vm/devices/device-list/device-delete-modal/device-delete-modal.component';
 import { WebSocketService } from 'app/services';
 import { DialogService } from 'app/services/dialog.service';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
 @Component({
@@ -64,6 +66,7 @@ export class DeviceListComponent implements EntityTableConfig {
     private matDialog: MatDialog,
     private cdRef: ChangeDetectorRef,
     private translate: TranslateService,
+    private slideIn: IxSlideInService,
   ) {}
 
   isActionVisible(actionId: string, row: VmDevice): boolean {
@@ -78,7 +81,9 @@ export class DeviceListComponent implements EntityTableConfig {
       icon: 'edit',
       label: this.translate.instant('Edit'),
       onClick: (device: VmDevice) => {
-        this.router.navigate(['/', 'vm', this.pk, 'devices', this.vm, 'edit', String(device.id), device.dtype]);
+        const slideIn = this.slideIn.open(DeviceFormComponent);
+        slideIn.setVirtualMachineId(Number(this.pk));
+        slideIn.setDeviceForEdit(device);
       },
     });
     actions.push({
@@ -169,7 +174,6 @@ export class DeviceListComponent implements EntityTableConfig {
     this.aroute.params.pipe(untilDestroyed(this)).subscribe((params) => {
       this.pk = params['pk'];
       this.vm = params['name'];
-      this.routeAdd = ['vm', this.pk, 'devices', this.vm, 'add'];
       this.routeEdit = ['vm', this.pk, 'devices', this.vm, 'edit'];
       this.routeDelete = ['vm', this.pk, 'devices', this.vm, 'delete'];
       // this is filter by vm's id to show devices belonging to that VM
@@ -178,5 +182,14 @@ export class DeviceListComponent implements EntityTableConfig {
       this.cdRef.detectChanges();
       this.queryCallOption[0][0].push(parseInt(this.pk, 10));
     });
+
+    this.slideIn.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
+      this.entityList.getData();
+    });
+  }
+
+  doAdd(): void {
+    const slideIn = this.slideIn.open(DeviceFormComponent);
+    slideIn.setVirtualMachineId(Number(this.pk));
   }
 }

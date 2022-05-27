@@ -86,10 +86,7 @@ export class ServiceSshComponent implements OnInit {
   }
 
   onSubmit(): void {
-    const values = {
-      ...this.form.value,
-      tcpport: Number(this.form.value.tcpport),
-    };
+    const values = this.form.value;
 
     this.isFormLoading = true;
     this.ws.call('ssh.update', [values])

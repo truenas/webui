@@ -1,0 +1,24 @@
+<h1 matDialogTitle>{{ 'Save Configuration' | translate }}</h1>
+<form class="ix-form-container" (submit)="onSubmit()">
+  <div [innerHtml]="helptext.save_config_form.message | translate"></div>
+
+  <ix-checkbox
+    [formControl]="exportSeedCheckbox"
+    [label]="'Export Password Secret Seed' | translate"
+  ></ix-checkbox>
+
+  <div [innerHtml]="helptext.save_config_form.warning | translate"></div>
+
+  <div class="form-actions">
+    <button
+      mat-button
+      type="submit"
+      color="primary"
+    >{{ 'Save' | translate }}</button>
+    <button
+      mat-button
+      type="button"
+      [matDialogClose]="false"
+    >{{ 'Cancel' | translate }}</button>
+  </div>
+</form>

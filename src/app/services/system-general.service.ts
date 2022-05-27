@@ -1,17 +1,19 @@
-import { EventEmitter, Injectable } from '@angular/core';
+import { EventEmitter, Inject, Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
 import * as Sentry from '@sentry/angular';
 import { environment } from 'environments/environment';
 import * as _ from 'lodash';
 import { Subject, Observable, combineLatest } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { map, shareReplay } from 'rxjs/operators';
+import { ProductType } from 'app/enums/product-type.enum';
+import { WINDOW } from 'app/helpers/window.helper';
 import { CertificateAuthority } from 'app/interfaces/certificate-authority.interface';
 import { Certificate } from 'app/interfaces/certificate.interface';
 import { Choices } from 'app/interfaces/choices.interface';
 import { Option } from 'app/interfaces/option.interface';
-import { SystemInfo } from 'app/interfaces/system-info.interface';
 import { AppState } from 'app/store';
 import { waitForGeneralConfig } from 'app/store/system-config/system-config.selectors';
+import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 import { WebSocketService } from './ws.service';
 
 @Injectable({ providedIn: 'root' })
@@ -23,10 +25,14 @@ export class SystemGeneralService {
   updateRunningNoticeSent = new EventEmitter<string>();
   updateIsDone$ = new Subject();
 
+  get isEnterprise(): boolean {
+    return this.window.localStorage.getItem('product_type') === ProductType.ScaleEnterprise;
+  }
+
   toggleSentryInit(): void {
     combineLatest([
       this.isStable(),
-      this.getSysInfo(),
+      this.store$.pipe(waitForSystemInfo),
       this.store$.pipe(waitForGeneralConfig),
     ]).subscribe(([isStable, sysInfo, generalConfig]) => {
       if (!isStable && generalConfig.crash_reporting) {
@@ -42,26 +48,7 @@ export class SystemGeneralService {
     });
   }
 
-  productType = '';
-  getProductType$ = new Observable<string>((observer) => {
-    if (!this.productType) {
-      this.productType = 'pending';
-      this.ws.call('system.product_type').subscribe((res) => {
-        this.productType = res;
-        observer.next(this.productType);
-      });
-    } else {
-      const wait = setInterval(() => {
-        if (this.productType !== 'pending') {
-          clearInterval(wait);
-          observer.next(this.productType);
-        }
-      }, 10);
-    }
-    setTimeout(() => {
-      this.productType = '';
-    }, 5000);
-  });
+  getProductType$ = this.ws.call('system.product_type').pipe(shareReplay());
 
   /**
    * OAuth token for JIRA access
@@ -71,6 +58,7 @@ export class SystemGeneralService {
 
   constructor(
     protected ws: WebSocketService,
+    @Inject(WINDOW) private window: Window,
     private store$: Store<AppState>,
   ) {}
 
@@ -96,10 +84,6 @@ export class SystemGeneralService {
 
   isStable(): Observable<boolean> {
     return this.ws.call('system.is_stable');
-  }
-
-  getSysInfo(): Observable<SystemInfo> {
-    return this.ws.call('system.info');
   }
 
   ipChoicesv4(): Observable<Choices> {

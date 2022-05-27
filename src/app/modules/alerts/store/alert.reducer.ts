@@ -1,5 +1,6 @@
 import { createEntityAdapter, EntityState } from '@ngrx/entity';
 import { createReducer, on } from '@ngrx/store';
+import { AlertLevel } from 'app/enums/alert-level.enum';
 import { Alert } from 'app/interfaces/alert.interface';
 import {
   alertAdded,
@@ -18,7 +19,9 @@ export interface AlertsState extends EntityState<Alert> {
 }
 
 export const adapter = createEntityAdapter<Alert>({
-  sortComparer: (a, b) => b.datetime.$date - a.datetime.$date,
+  sortComparer: (a, b) => Object.values(AlertLevel).indexOf(b.level) - Object.values(AlertLevel).indexOf(a.level)
+    || (a.klass || '').localeCompare(b.klass || '')
+    || a.datetime.$date - b.datetime.$date,
 });
 
 export const alertsInitialState = adapter.getInitialState({

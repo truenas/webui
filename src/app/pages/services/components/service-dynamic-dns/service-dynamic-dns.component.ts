@@ -98,10 +98,7 @@ export class ServiceDynamicDnsComponent implements OnInit {
   }
 
   onSubmit(): void {
-    const values = {
-      ...this.form.value,
-      period: Number(this.form.controls['period'].value),
-    };
+    const values = this.form.value;
 
     this.isFormLoading = true;
     this.ws.call('dyndns.update', [values]).pipe(untilDestroyed(this)).subscribe(() => {

@@ -1,13 +1,13 @@
 import { CdkAccordionItem } from '@angular/cdk/accordion';
-import { Component, OnInit, Type } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import {
-  forkJoin, of, merge,
+  forkJoin, of, merge, Observable,
 } from 'rxjs';
 import { filter, switchMap } from 'rxjs/operators';
 import { DirectoryServiceState } from 'app/enums/directory-service-state.enum';
-import { IdmapName } from 'app/enums/idmap-name.enum';
+import { IdmapName } from 'app/enums/idmap.enum';
 import helptext from 'app/helptext/directory-service/dashboard';
 import idmapHelptext from 'app/helptext/directory-service/idmap';
 import { Idmap } from 'app/interfaces/idmap.interface';
@@ -18,6 +18,7 @@ import { AppLoaderService } from 'app/modules/app-loader/app-loader.service';
 import { EmptyConfig } from 'app/modules/entity/entity-empty/entity-empty.component';
 import { AppTableConfig } from 'app/modules/entity/table/table.component';
 import { ActiveDirectoryComponent } from 'app/pages/directory-service/components/active-directory/active-directory.component';
+import { IdmapFormComponent } from 'app/pages/directory-service/components/idmap-form/idmap-form.component';
 import { KerberosKeytabsFormComponent } from 'app/pages/directory-service/components/kerberos-keytabs/kerberos-keytabs-form/kerberos-keytabs-form.component';
 import { KerberosSettingsComponent } from 'app/pages/directory-service/components/kerberos-settings/kerberos-settings.component';
 import { requiredIdmapDomains } from 'app/pages/directory-service/utils/required-idmap-domains.utils';
@@ -26,22 +27,13 @@ import {
 } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { ModalService } from 'app/services/modal.service';
-import { IdmapFormComponent } from './components/idmap/idmap-form.component';
 import { KerberosRealmsFormComponent } from './components/kerberos-realms-form/kerberos-realms-form.component';
 import { LdapComponent } from './components/ldap/ldap.component';
 
-enum DirectoryServicesCardId {
-  ActiveDirectory = 'active-directory',
-  Ldap = 'ldap',
-  Idmap = 'idmap',
-  KerberosSettings = 'kerberos-settings',
-  KerberosKeytab = 'kerberos-keytab',
-}
-
 interface DataCard {
-  id: DirectoryServicesCardId;
   title: string;
   items: Option[];
+  onSettingsPressed: () => void;
 }
 
 @UntilDestroy()
@@ -73,10 +65,15 @@ export class DirectoryServicesComponent implements OnInit {
 
     ],
     add: () => {
-      this.onCardButtonPressed(DirectoryServicesCardId.Idmap);
+      this.ensureActiveDirectoryIsEnabledForIdmap()
+        .pipe(untilDestroyed(this))
+        .subscribe(() => {
+          this.slideInService.open(IdmapFormComponent);
+        });
     },
     edit: (row: Idmap) => {
-      this.onCardButtonPressed(DirectoryServicesCardId.Idmap, row.id);
+      const slideIn = this.slideInService.open(IdmapFormComponent);
+      slideIn.setIdmapForEdit(row);
     },
     getActions: () => {
       return [
@@ -105,7 +102,7 @@ export class DirectoryServicesComponent implements OnInit {
       ];
     },
     isActionVisible(actionId: string, row: Idmap) {
-      if (actionId === 'delete' && requiredIdmapDomains.includes(row.name)) {
+      if (actionId === 'delete' && requiredIdmapDomains.includes(row.name as IdmapName)) {
         return false;
       }
 
@@ -155,10 +152,11 @@ export class DirectoryServicesComponent implements OnInit {
       { name: 'Name', prop: 'name' },
     ],
     add: () => {
-      this.onCardButtonPressed(DirectoryServicesCardId.KerberosKeytab);
+      this.slideInService.open(KerberosKeytabsFormComponent);
     },
     edit: (row: KerberosKeytab) => {
-      this.onCardButtonPressed(DirectoryServicesCardId.KerberosKeytab, row.id);
+      const slideIn = this.slideInService.open(KerberosKeytabsFormComponent);
+      slideIn.setKerberosKeytabsForEdit(row);
     },
   };
 
@@ -168,8 +166,6 @@ export class DirectoryServicesComponent implements OnInit {
     large: true,
     icon: 'account-box',
   };
-
-  readonly DirectoryServicesCardId = DirectoryServicesCardId;
 
   constructor(
     private ws: WebSocketService,
@@ -211,7 +207,6 @@ export class DirectoryServicesComponent implements OnInit {
 
         this.activeDirectoryDataCard = {
           title: helptext.activeDirectory.title,
-          id: DirectoryServicesCardId.ActiveDirectory,
           items: [
             {
               label: helptext.activeDirectory.status,
@@ -226,10 +221,10 @@ export class DirectoryServicesComponent implements OnInit {
               value: activeDirectoryConfig?.bindname || null,
             },
           ],
+          onSettingsPressed: () => this.openActiveDirectoryForm(),
         };
         this.ldapDataCard = {
           title: helptext.ldap.title,
-          id: DirectoryServicesCardId.Ldap,
           items: [
             {
               label: helptext.ldap.status,
@@ -248,9 +243,9 @@ export class DirectoryServicesComponent implements OnInit {
               value: ldapConfig?.binddn || null,
             },
           ],
+          onSettingsPressed: () => this.openLdapForm(),
         };
         this.kerberosSettingsDataCard = {
-          id: DirectoryServicesCardId.KerberosSettings,
           title: helptext.kerberosSettings.title,
           items: [
             {
@@ -262,6 +257,7 @@ export class DirectoryServicesComponent implements OnInit {
               value: kerberosSettings?.libdefaults_aux || null,
             },
           ],
+          onSettingsPressed: () => this.openKerberosSettingsForm(),
         };
 
         if (this.isLdapEnabled) {
@@ -291,67 +287,16 @@ export class DirectoryServicesComponent implements OnInit {
       });
   }
 
-  onCardButtonPressed(name: DirectoryServicesCardId, id?: number): void {
-    let component: Type<ActiveDirectoryComponent
-    | IdmapFormComponent
-    | LdapComponent
-    | KerberosSettingsComponent
-    | KerberosKeytabsFormComponent
-    >;
+  openActiveDirectoryForm(): void {
+    this.slideInService.open(ActiveDirectoryComponent, { wide: true });
+  }
 
-    switch (name) {
-      case DirectoryServicesCardId.ActiveDirectory:
-        component = ActiveDirectoryComponent;
-        break;
-      case DirectoryServicesCardId.Ldap:
-        component = LdapComponent;
-        break;
-      case DirectoryServicesCardId.Idmap:
-        component = IdmapFormComponent;
-        break;
-      case DirectoryServicesCardId.KerberosSettings:
-        component = KerberosSettingsComponent;
-        break;
-      case DirectoryServicesCardId.KerberosKeytab:
-        component = KerberosKeytabsFormComponent;
-        break;
-      default:
-        break;
-    }
+  openLdapForm(): void {
+    this.slideInService.open(LdapComponent, { wide: true });
+  }
 
-    of(true).pipe(
-      switchMap(() => {
-        if (name === DirectoryServicesCardId.Idmap && !id) {
-          return this.idmapService.getActiveDirectoryStatus().pipe(
-            switchMap((adConfig) => {
-              if (!adConfig.enable) {
-                component = ActiveDirectoryComponent;
-                return this.dialog.confirm({
-                  title: idmapHelptext.idmap.enable_ad_dialog.title,
-                  message: idmapHelptext.idmap.enable_ad_dialog.message,
-                  hideCheckBox: true,
-                  buttonMsg: idmapHelptext.idmap.enable_ad_dialog.button,
-                });
-              }
-
-              return of(true);
-            }),
-          );
-        }
-
-        return of(true);
-      }),
-      filter(Boolean),
-      untilDestroyed(this),
-    ).subscribe(() => {
-      if (component === KerberosSettingsComponent || component === KerberosKeytabsFormComponent) {
-        this.slideInService.open(component);
-      } else if (component === ActiveDirectoryComponent || component === LdapComponent) {
-        this.slideInService.open(component, { wide: true });
-      } else {
-        this.modalService.openInSlideIn(component, id);
-      }
-    });
+  openKerberosSettingsForm(): void {
+    this.slideInService.open(KerberosSettingsComponent);
   }
 
   refreshTables(): void {
@@ -367,5 +312,30 @@ export class DirectoryServicesComponent implements OnInit {
    */
   typeCard(card: DataCard): DataCard {
     return card;
+  }
+
+  private ensureActiveDirectoryIsEnabledForIdmap(): Observable<boolean> {
+    return this.idmapService.getActiveDirectoryStatus().pipe(
+      switchMap((adConfig) => {
+        if (adConfig.enable) {
+          return of(true);
+        }
+
+        return this.dialog.confirm({
+          title: idmapHelptext.idmap.enable_ad_dialog.title,
+          message: idmapHelptext.idmap.enable_ad_dialog.message,
+          hideCheckBox: true,
+          buttonMsg: idmapHelptext.idmap.enable_ad_dialog.button,
+        })
+          .pipe(
+            filter((confirmed) => confirmed),
+            switchMap(() => {
+              this.openActiveDirectoryForm();
+              return of(false);
+            }),
+          );
+      }),
+      filter((canContinue) => canContinue),
+    );
   }
 }

@@ -9,6 +9,7 @@ import {
   styler,
 } from 'popmotion';
 import { Subject } from 'rxjs';
+import { filter, throttleTime } from 'rxjs/operators';
 import { LinkState, NetworkInterfaceAliasType } from 'app/enums/network-interface.enum';
 import { CoreEvent } from 'app/interfaces/events';
 import { NetworkInterfaceAlias } from 'app/interfaces/network-interface.interface';
@@ -43,7 +44,10 @@ enum Path {
 @Component({
   selector: 'ix-widget-nic',
   templateUrl: './widget-nic.component.html',
-  styleUrls: ['./widget-nic.component.scss'],
+  styleUrls: [
+    '../widget/widget.component.scss',
+    './widget-nic.component.scss',
+  ],
 })
 export class WidgetNicComponent extends WidgetComponent implements AfterViewInit, OnDestroy, OnChanges {
   @Input() stats: Subject<CoreEvent>;
@@ -66,7 +70,8 @@ export class WidgetNicComponent extends WidgetComponent implements AfterViewInit
     return this.currentSlide === '0' ? 0 : parseInt(this.currentSlide) - 1;
   }
 
-  title = 'Interface';
+  defaultTitle = this.translate.instant('Interface');
+  title = this.defaultTitle;
 
   path: Slide[] = [
     { name: this.PathEnum.Overview },
@@ -75,7 +80,7 @@ export class WidgetNicComponent extends WidgetComponent implements AfterViewInit
   ];
 
   get ipAddresses(): NetworkInterfaceAlias[] {
-    if (!this.nicState && !this.nicState.aliases) { return []; }
+    if (!this.nicState?.aliases?.length) { return []; }
 
     return this.nicState.aliases.filter((item) => {
       return [NetworkInterfaceAliasType.Inet, NetworkInterfaceAliasType.Inet6].includes(item.type);
@@ -83,11 +88,11 @@ export class WidgetNicComponent extends WidgetComponent implements AfterViewInit
   }
 
   get linkState(): LinkState {
-    if (!this.nicState && !this.nicState.aliases) { return null; }
-    if (!this.traffic) {
-      return this.nicState.link_state;
+    if (!this.nicState?.aliases?.length) { return null; }
+    if (this.traffic?.linkState) {
+      return this.traffic.linkState;
     }
-    return this.traffic.linkState;
+    return this.nicState.link_state;
   }
 
   get linkStateLabel(): string {
@@ -112,24 +117,26 @@ export class WidgetNicComponent extends WidgetComponent implements AfterViewInit
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.nicState) {
-      this.title = this.currentSlide === '0' ? 'Interface' : this.nicState.name;
+      this.title = this.currentSlide === '0' ? this.defaultTitle : this.nicState.name;
     }
   }
 
   ngAfterViewInit(): void {
-    this.stats.pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
-      if (evt.name === 'NetTraffic_' + this.nicState.name) {
-        const sent = this.utils.convert(evt.data.sent_bytes_rate);
-        const received = this.utils.convert(evt.data.received_bytes_rate);
+    this.stats.pipe(
+      filter((evt) => evt.name === 'NetTraffic_' + this.nicState.name),
+      throttleTime(500),
+      untilDestroyed(this),
+    ).subscribe((evt: CoreEvent) => {
+      const sent = this.utils.convert(evt.data.sent_bytes_rate);
+      const received = this.utils.convert(evt.data.received_bytes_rate);
 
-        this.traffic = {
-          sent: sent.value,
-          sentUnits: sent.units,
-          received: received.value,
-          receivedUnits: received.units,
-          linkState: evt.data.link_state as LinkState,
-        };
-      }
+      this.traffic = {
+        sent: sent.value,
+        sentUnits: sent.units,
+        received: received.value,
+        receivedUnits: received.units,
+        linkState: evt.data.link_state as LinkState,
+      };
     });
   }
 
@@ -159,7 +166,7 @@ export class WidgetNicComponent extends WidgetComponent implements AfterViewInit
     }).start(el.set);
 
     this.currentSlide = value.toString();
-    this.title = this.currentSlide === '0' ? 'Interface' : this.nicState.name;
+    this.title = this.currentSlide === '0' ? this.translate.instant('Interface') : this.nicState.name;
   }
 
   vlanAliases(vlanIndex: string | number): NetworkInterfaceAlias[] {

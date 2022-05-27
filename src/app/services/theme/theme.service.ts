@@ -1,50 +1,50 @@
-import { Injectable } from '@angular/core';
+import { Inject, Injectable } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { select, Store } from '@ngrx/store';
+import { Store } from '@ngrx/store';
 import { filter } from 'rxjs/operators';
 import { ThemeUtils } from 'app/core/classes/theme-utils/theme-utils';
+import { WINDOW } from 'app/helpers/window.helper';
 import { Theme } from 'app/interfaces/theme.interface';
-import { CoreService } from 'app/services/core-service/core.service';
 import { allThemes, defaultTheme } from 'app/services/theme/theme.constants';
 import { AppState } from 'app/store';
 import { themeNotFound } from 'app/store/preferences/preferences.actions';
 import { selectTheme } from 'app/store/preferences/preferences.selectors';
 
 @UntilDestroy()
-@Injectable()
+@Injectable({
+  providedIn: 'root',
+})
 export class ThemeService {
   activeTheme = 'default';
   defaultTheme = defaultTheme.name;
-
-  // Theme lists
   allThemes: Theme[] = allThemes;
 
   private utils: ThemeUtils;
 
-  userThemeLoaded = false;
   constructor(
-    private core: CoreService,
     private store$: Store<AppState>,
+    @Inject(WINDOW) private window: Window,
   ) {
     this.utils = new ThemeUtils();
 
-    // Set default list
-    this.core.register({ observerClass: this, eventName: 'ThemeDataRequest' }).pipe(untilDestroyed(this)).subscribe(() => {
-      this.core.emit({ name: 'ThemeData', data: this.findTheme(this.activeTheme), sender: this });
-    });
+    const savedTheme = this.window.sessionStorage.getItem('theme');
+    if (savedTheme) {
+      this.onThemeChanged(savedTheme);
+    }
 
-    this.store$.pipe(
-      select(selectTheme),
+    this.store$.select(selectTheme).pipe(
       filter(Boolean),
+      filter((theme) => theme !== this.activeTheme),
       untilDestroyed(this),
-    ).subscribe((theme: string) => this.onThemeChanged(theme));
+    ).subscribe((theme: string) => {
+      this.window.sessionStorage.setItem('theme', theme);
+      this.onThemeChanged(theme);
+    });
   }
 
   onThemeChanged(theme: string): void {
     this.activeTheme = this.getNormalizedThemeName(theme);
     this.setCssVars(this.findTheme(this.activeTheme, true));
-    this.userThemeLoaded = true;
-    this.core.emit({ name: 'ThemeChanged', data: this.findTheme(this.activeTheme), sender: this });
   }
 
   getNormalizedThemeName(theme: string): string {
@@ -153,15 +153,6 @@ export class ThemeService {
     } else if (!theme['topbar-txt'] && !theme.topbar) {
       topbarTextColor = this.utils.textContrast(theme[primaryColor] as string, theme['bg2']);
       document.documentElement.style.setProperty('--topbar-txt', topbarTextColor);
-    }
-
-    // Logo light/dark
-    if (theme['hasDarkLogo']) {
-      theme.logoPath = 'assets/images/logo.svg';
-      theme.logoTextPath = 'assets/images/logo-text.svg';
-    } else {
-      theme.logoPath = 'assets/images/light-logo.svg';
-      theme.logoTextPath = 'assets/images/light-logo-text.svg';
     }
   }
 

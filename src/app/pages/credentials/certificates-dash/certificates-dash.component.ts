@@ -1,4 +1,3 @@
-import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -47,7 +46,6 @@ export class CertificatesDashComponent implements OnInit {
     private dialog: MatDialog,
     private dialogService: DialogService,
     private storage: StorageService,
-    private http: HttpClient,
     private tableService: TableService,
     private translate: TranslateService,
   ) { }
@@ -255,7 +253,7 @@ export class CertificatesDashComponent implements OnInit {
             (res) => {
               const url = res[1];
               const mimetype = 'application/x-x509-user-cert';
-              this.storage.streamDownloadFile(this.http, url, fileName, mimetype)
+              this.storage.streamDownloadFile(url, fileName, mimetype)
                 .pipe(untilDestroyed(this))
                 .subscribe((file) => {
                   this.storage.downloadBlob(file, fileName);
@@ -273,7 +271,7 @@ export class CertificatesDashComponent implements OnInit {
             (res) => {
               const url = res[1];
               const mimetype = 'text/plain';
-              this.storage.streamDownloadFile(this.http, url, keyName, mimetype)
+              this.storage.streamDownloadFile(url, keyName, mimetype)
                 .pipe(untilDestroyed(this))
                 .subscribe((file) => {
                   this.storage.downloadBlob(file, keyName);

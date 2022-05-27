@@ -1,0 +1,147 @@
+.widget {
+  height: 400px;
+  left: calc(50% - 270px);
+  margin: 4px 0;
+  perspective: 1520px !important;
+  perspective-origin: 50% 50% !important;
+  position: relative;
+  width: calc(600px * 0.9) !important;
+
+  &.xs {
+    left: calc(50% - 50vw);
+    min-width: 320px;
+    overflow-x: auto;
+    top: -4px;
+    width: 100vw !important;
+
+    .mat-card {
+      border: 0;
+    }
+
+    .controls {
+      right: 16px;
+    }
+  }
+
+  &.placeholder {
+    box-sizing: border-box;
+    cursor: wait;
+    flex: 1 1 540px;
+    max-width: 540px;
+    min-width: 540px;
+
+    .mat-card.zero-state {
+      .mat-icon {
+        animation: loading 2s linear infinite;
+        color: var(--fg2);
+        height: 80px;
+        opacity: 0.1;
+        pointer-events: none;
+        width: auto;
+      }
+    }
+  }
+
+  .widget-footer {
+    border-top: solid 1px rgba(0, 0, 0, 0.1);
+    bottom: 0;
+    padding: 16px 0;
+    position: absolute;
+    text-align: center;
+    width: 100%;
+  }
+
+  .card-container {
+    height: 100%;
+    transform-style: preserve-3d;
+    width: 100%;
+
+    &.vertical .back {
+      transform: rotateX(-180deg);
+    }
+
+    &.horizontal .back {
+      transform: rotateY(-180deg);
+    }
+  }
+
+  .mat-card,
+  .mat-raised-button,
+  .mat-button {
+    backface-visibility: hidden;
+  }
+
+  .mat-card {
+    height: 100%;
+    left: 0;
+    margin: 0;
+    overflow: hidden;
+    padding: 0;
+    right: 0;
+    width: 100%;
+
+    &.back {
+      display: none;
+    }
+
+    .carousel {
+      padding: 0 !important;
+    }
+  }
+
+  .mat-card-content {
+    padding: 0 !important;
+    text-align: center;
+
+    > div {
+      padding: 0 !important;
+    }
+  }
+
+  .mat-toolbar-row {
+    border-bottom: none !important;
+    height: 56px !important;
+  }
+
+  .controls {
+    color: var(--fg2);
+    position: absolute;
+    right: 8px;
+
+    button {
+      display: inline-block;
+    }
+  }
+
+  .c3 {
+    .tick text,
+    text.c3-axis-y-label {
+      fill: var(--fg2);
+      font-weight: 500;
+      opacity: 0.8;
+    }
+
+    text.c3-axis-y-label {
+      font-size: 22px;
+    }
+
+    g.c3-axis {
+      opacity: 0.75;
+    }
+
+    g.c3-axis-y {
+      g.tick {
+        &:first-child {
+          opacity: 0;
+          visibility: hidden;
+        }
+
+        tspan {
+          font-family: Roboto;
+          font-weight: 500;
+        }
+      }
+    }
+  }
+}
+

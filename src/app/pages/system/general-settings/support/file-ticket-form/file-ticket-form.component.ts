@@ -45,7 +45,7 @@ export class FileTicketFormComponent implements OnInit {
     attach_debug: [false],
     title: ['', Validators.required],
     body: ['', Validators.required],
-    screenshot: [null as FileList],
+    screenshot: [null as File[]],
   });
 
   readonly acceptedFiles = ticketAcceptedFiles;
@@ -63,9 +63,6 @@ export class FileTicketFormComponent implements OnInit {
     screenshot: helptext.screenshot.tooltip,
   };
   private screenshots: File[] = [];
-  private get apiEndPoint(): string {
-    return '/_upload?auth_token=' + this.ws.token;
-  }
   jobs$: BehaviorSubject<Observable<Job>[]> = new BehaviorSubject([]);
   isFormDisabled$ = combineLatest([this.form.status$, this.isFormLoading$]).pipe(
     map(([status, loading]) => status === 'INVALID' || loading),
@@ -198,7 +195,7 @@ export class FileTicketFormComponent implements OnInit {
             ticket: job.result.ticket,
             filename: file.name,
             token: payload.token,
-          }], this.apiEndPoint);
+          }]);
         }
       } else {
         this.isFormLoading$.next(false);

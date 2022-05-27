@@ -1,39 +1,40 @@
-<mat-sidenav-container class="app-side-nav-container" fxLayout="row" ngClass.xs="xs" ngClass.sm="sm" ngClass.md="md" ngClass.lg="lg" ngClass.xl="xl">
+<mat-sidenav-container
+  class="app-side-nav-container"
+  fxLayout="row"
+  ngClass.xs="xs"
+  ngClass.sm="sm"
+  ngClass.md="md"
+  ngClass.lg="lg"
+  ngClass.xl="xl"
+>
   <!-- Main side navigation -->
-  <mat-sidenav fxFlex="sidenavWidth" #sidenav [opened]="isSidenavOpen" [mode]="sidenavMode" (closedStart)="onMenuClosed()" class="sidebar-panel not-alerts">
+  <mat-sidenav
+    [fxFlex]="sidenavWidth"
+    #sidenav
+    [opened]="isSidenavOpen"
+    [mode]="sidenavMode"
+    (closedStart)="onMenuClosed()"
+    class="sidebar-panel not-alerts"
+  >
     <div id="scroll-area" class="navigation-hold" fxLayout="column">
-      <div *ngFor="let theme of freenasThemes">
-        <div *ngIf="theme.name == currentTheme" ix-auto ix-auto-type="button" ix-auto-identifier="logo">
-          <!-- TrueNAS Core -->
-          <div class="branding topbar" *ngIf="productType == ProductType.Core ">
-            <a routerLink="/dashboard" class="logo">
-              <mat-icon [svgIcon]="themeService.isDefaultTheme ? 'truenas_core_logomark_color' : 'truenas_core_logomark'" alt="TrueNAS Core logo" class="app-logo"></mat-icon>
-            </a>
-            <a routerLink="/dashboard" class="logo-text">
-              <mat-icon [svgIcon]="themeService.isDefaultTheme ? 'truenas_core_logotype_color' : 'truenas_core_logotype'" alt="TrueNAS Core" class="app-logo-text"></mat-icon>
-            </a>
-          </div>
-
-          <!-- TrueNAS Enterprise -->
-          <div class="branding topbar" *ngIf="productType == ProductType.Enterprise ">
-            <a routerLink="/dashboard" class="logo">
-              <mat-icon [svgIcon]="themeService.isDefaultTheme ? 'truenas_enterprise_logomark_color' : 'truenas_enterprise_logomark'" alt="TrueNAS Core logo" class="app-logo"></mat-icon>
-            </a>
-            <a routerLink="/dashboard" class="logo-text">
-              <mat-icon [svgIcon]="themeService.isDefaultTheme ? 'truenas_enterprise_logotype_color' : 'truenas_enterprise_logotype'" alt="TrueNAS Core" class="app-logo-text"></mat-icon>
-            </a>
-          </div>
-
-          <!-- TrueNAS Scale -->
-          <div class="branding topbar {{'truenas-' + productType.toLowerCase()}}" *ngIf="productType == ProductType.Scale || productType == ProductType.ScaleEnterprise">
-            <a routerLink="/dashboard" class="logo">
-              <mat-icon [svgIcon]="themeService.isDefaultTheme ? 'truenas_scale_logomark_color' : 'truenas_scale_logomark'" alt="TrueNAS Core logo" class="app-logo"></mat-icon>
-            </a>
-            <a routerLink="/dashboard" class="logo-text">
-              <mat-icon [svgIcon]="themeService.isDefaultTheme ? 'truenas_scale_logotype_color' : 'truenas_scale_logotype'" alt="TrueNAS Core" class="app-logo-text"></mat-icon>
-            </a>
-          </div>
-        </div>
+      <div
+        class="branding topbar {{ 'truenas-' + (productType$ | async | lowercase) }}"
+        ix-auto ix-auto-type="button" ix-auto-identifier="logo"
+      >
+        <a routerLink="/dashboard" class="logo">
+          <mat-icon
+            [svgIcon]="themeService.isDefaultTheme ? 'truenas_scale_logomark_color' : 'truenas_scale_logomark'"
+            alt="TrueNAS SCALE"
+            class="app-logo"
+          ></mat-icon>
+        </a>
+        <a routerLink="/dashboard" class="logo-text">
+          <mat-icon
+            [svgIcon]="themeService.isDefaultTheme ? 'truenas_scale_logotype_color' : 'truenas_scale_logotype'"
+            alt="TrueNAS SCALE"
+            class="app-logo-text"
+          ></mat-icon>
+        </a>
       </div>
 
       <navigation (menuToggled)="toggleMenu($event)" (menuClosed)="toggleMenu()"></navigation>
@@ -44,16 +45,15 @@
 
       <div *ngIf="!isSidenavCollapsed" class="sidenav-copyright-txt">
         <div *ngIf="hostname" class="hostname-label" matTooltip="Hostname: {{hostname}}">{{hostname}}</div>
-        <div>TrueNAS {{productType}}®</div>
+        <div>TrueNAS {{ productType$ | async | mapValue: productTypeLabels }}&reg;</div>
         <div>
-          © {{copyrightYear}} - <a href="http://www.ixsystems.com"
-              target="_blank" title="iXsystems, Inc."> iXsystems, Inc</a>.
+          &copy; {{copyrightYear}} &ndash; <a href="http://www.ixsystems.com" target="_blank" title="iXsystems, Inc.">iXsystems, Inc</a>.
         </div>
       </div>
       <div
         *ngIf="isSidenavCollapsed"
         class="sidenav-copyright-icon"
-        matTooltip="TrueNAS {{productType}}® © {{copyrightYear}} by iXsystems Inc."
+        matTooltip="TrueNAS {{ productType$ | async | mapValue: productTypeLabels }}® © {{ copyrightYear }} by iXsystems Inc."
         matTooltipPosition="right"
       >
         <mat-icon>copyright</mat-icon>

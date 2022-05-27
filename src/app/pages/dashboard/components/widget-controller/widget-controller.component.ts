@@ -5,7 +5,6 @@ import { MediaObserver } from '@angular/flex-layout';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { EmptyConfig } from 'app/modules/entity/entity-empty/entity-empty.component';
-import { ToolbarConfig } from 'app/modules/entity/entity-toolbar/models/control-config.interface';
 import { WidgetComponent } from 'app/pages/dashboard/components/widget/widget.component';
 import { CoreService } from 'app/services/core-service/core.service';
 
@@ -21,14 +20,16 @@ export interface DashConfigItem {
 @Component({
   selector: 'ix-widget-controller',
   templateUrl: './widget-controller.component.html',
-  styleUrls: ['./widget-controller.component.scss'],
+  styleUrls: [
+    '../widget/widget.component.scss',
+    './widget-controller.component.scss',
+  ],
 })
 export class WidgetControllerComponent extends WidgetComponent implements OnDestroy {
   @Input() dashState: DashConfigItem[] = [];
   @Input() renderedWidgets?: unknown[] = [];
   @Input() hiddenWidgets?: number[] = [];
   @Input() emptyConfig: EmptyConfig;
-  @Input() actionsConfig: ToolbarConfig;
 
   @Output() launcher = new EventEmitter<DashConfigItem>();
 
@@ -55,9 +56,7 @@ export class WidgetControllerComponent extends WidgetComponent implements OnDest
   }
 
   nameFromIdentifier(identifier: string): string {
-    const spl = identifier.split(',');
-    const key = spl[0];
-    const value = spl[1];
+    const [key, value] = identifier.split(',');
 
     if (key === 'name') {
       return value;

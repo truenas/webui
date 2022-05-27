@@ -26,7 +26,7 @@ export class IxFileInputComponent implements ControlValueAccessor {
 
   formControl = new FormControl(this).value as FormControl;
 
-  onChange: (value: FileList) => void = (): void => {};
+  onChange: (value: File[]) => void = (): void => {};
   onTouch: () => void = (): void => {};
 
   constructor(
@@ -39,15 +39,18 @@ export class IxFileInputComponent implements ControlValueAccessor {
 
   onChanged(value: FileList): void {
     this.value = value;
-    this.onChange(value);
+    this.onChange([...value]);
   }
 
-  writeValue(value: FileList): void {
-    this.value = value;
+  writeValue(value: File[] | null): void {
+    if (!value?.length) {
+      return;
+    }
+    this.value = this.transformFiles(value);
     this.cdr.markForCheck();
   }
 
-  registerOnChange(onChange: (value: FileList) => void): void {
+  registerOnChange(onChange: (value: File[]) => void): void {
     this.onChange = onChange;
   }
 
@@ -76,10 +79,14 @@ export class IxFileInputComponent implements ControlValueAccessor {
   * @returns FileList
   */
   transformFiles(files: File[]): FileList {
-    const b = new ClipboardEvent('').clipboardData || new DataTransfer();
+    const dataTransfer = new ClipboardEvent('').clipboardData || new DataTransfer();
     for (let i = 0, len = files.length; i < len; i++) {
-      b.items.add(files[i]);
+      dataTransfer.items.add(files[i]);
     }
-    return b.files;
+    return dataTransfer.files;
+  }
+
+  asFileInput(target: EventTarget): HTMLInputElement {
+    return target as HTMLInputElement;
   }
 }
