@@ -21,7 +21,7 @@ import { EntityTableService } from 'app/services/entity-table.service';
 
 @UntilDestroy()
 @Component({
-  template: '<entity-table [title]="title" [conf]="this"></entity-table>',
+  template: '<ix-entity-table [title]="title" [conf]="this"></ix-entity-table>',
 })
 export class DatasetQuotasGrouplistComponent implements EntityTableConfig, OnDestroy {
   pk: string;

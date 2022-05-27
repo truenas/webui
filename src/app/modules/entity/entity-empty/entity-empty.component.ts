@@ -20,7 +20,7 @@ export interface EmptyConfig {
   };
 }
 @Component({
-  selector: 'entity-empty',
+  selector: 'ix-entity-empty',
   templateUrl: './entity-empty.component.html',
   styleUrls: ['./entity-empty.component.scss'],
 })

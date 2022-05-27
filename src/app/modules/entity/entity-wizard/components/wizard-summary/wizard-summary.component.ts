@@ -5,7 +5,7 @@ import { FieldConfig, FormDictConfig } from 'app/modules/entity/entity-form/mode
 import { EntityUtils } from 'app/modules/entity/utils';
 
 @Component({
-  selector: 'wizard-summary',
+  selector: 'ix-wizard-summary',
   templateUrl: './wizard-summary.component.html',
   styleUrls: ['../../entity-wizard.component.scss'],
 })

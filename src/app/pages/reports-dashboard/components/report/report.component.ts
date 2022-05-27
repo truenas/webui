@@ -57,7 +57,7 @@ export interface Report extends ReportingGraph {
 
 @UntilDestroy()
 @Component({
-  selector: 'report',
+  selector: 'ix-report',
   templateUrl: './report.component.html',
   styleUrls: ['./report.component.scss'],
 })

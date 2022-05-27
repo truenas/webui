@@ -5,7 +5,6 @@ import { TranslateService } from '@ngx-translate/core';
 
 @UntilDestroy()
 @Component({
-  selector: 'app-entity-snackbar',
   templateUrl: './entity-snackbar.component.html',
   styleUrls: ['./entity-snackbar.component.scss'],
 })

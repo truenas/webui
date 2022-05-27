@@ -16,7 +16,7 @@ import { ModalService } from 'app/services/modal.service';
 @UntilDestroy()
 @Component({
   selector: 'ix-acmedns-form',
-  template: '<entity-form [conf]="this"></entity-form>',
+  template: '<ix-entity-form [conf]="this"></ix-entity-form>',
 })
 export class AcmednsFormComponent implements FormConfiguration {
   addCall = 'acme.dns.authenticator.create' as const;

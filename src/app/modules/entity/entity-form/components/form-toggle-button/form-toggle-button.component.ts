@@ -11,7 +11,6 @@ import { Field } from 'app/modules/entity/entity-form/models/field.interface';
 
 @UntilDestroy()
 @Component({
-  selector: 'form-toggle-button',
   templateUrl: './form-toggle-button.component.html',
   styleUrls: ['./form-toggle-button.component.scss'],
 })

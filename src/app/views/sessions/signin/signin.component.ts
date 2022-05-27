@@ -29,6 +29,7 @@ import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-signin',
   templateUrl: './signin.component.html',
   styleUrls: ['./signin.component.scss'],
 })

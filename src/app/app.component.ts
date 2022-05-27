@@ -15,7 +15,7 @@ import { SystemGeneralService } from './services';
 
 @UntilDestroy()
 @Component({
-  selector: 'app-root',
+  selector: 'ix-root',
   templateUrl: './app.component.html',
 })
 export class AppComponent {

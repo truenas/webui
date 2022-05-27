@@ -12,7 +12,7 @@ import { RelationAction } from 'app/modules/entity/entity-form/models/relation-a
 
 @UntilDestroy()
 @Component({
-  template: '<entity-form [conf]="this"></entity-form>',
+  template: '<ix-entity-form [conf]="this"></ix-entity-form>',
 })
 export class DiskFormComponent implements FormConfiguration {
   routeSuccess: string[] = ['storage', 'disks'];

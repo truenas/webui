@@ -169,10 +169,10 @@
                 <ng-template #notemps>
                   <div class="no-temp" [fxFlex]="temperatures && temperatures.keys.length >= 4 ? '40%' : '100%' " >
                     <strong>{{diskName}}:</strong> Unknown{{temperatures.symbolText}}
-                    <tooltip
+                    <ix-tooltip
                         [header]="'Temperature data missing.' | translate"
                         [message]="'No temperature data was reported by the system. There can be a number of reasons why this might occur. For troubleshooting tips please go here' | translate">
-                    </tooltip>
+                    </ix-tooltip>
                   </div>
                 </ng-template>
               </ng-container>
@@ -184,10 +184,10 @@
                   <strong>{{diskName}}:</strong> &nbsp;&nbsp;&nbsp;
                   {{temperatures.values[diskName] ? temperatures.values[diskName] : 'Temperature not available.'}}
                   {{temperatures.values[diskName] ? temperatures.symbolText + 'C' : ''}}
-                  <tooltip *ngIf="!temperatures.values[diskName]"
+                  <ix-tooltip *ngIf="!temperatures.values[diskName]"
                     [header]="'Temperature data missing.' | translate"
                     [message]="'No temperature data was reported by the system. There can be a number of reasons why this might occur. For troubleshooting tips please go here' | translate">
-                  </tooltip>
+                  </ix-tooltip>
                 </li>
               </ng-container>
             </ul>

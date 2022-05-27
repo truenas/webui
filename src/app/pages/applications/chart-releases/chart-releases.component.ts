@@ -35,7 +35,7 @@ import { ModalService } from 'app/services/modal.service';
 
 @UntilDestroy()
 @Component({
-  selector: 'app-charts',
+  selector: 'ix-charts',
   templateUrl: './chart-releases.component.html',
   styleUrls: ['../applications.component.scss'],
 })

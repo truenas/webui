@@ -7,7 +7,7 @@ import { ShellService } from 'app/services';
 
 @UntilDestroy()
 @Component({
-  template: '<app-terminal [conf]="this"></app-terminal>',
+  template: '<ix-terminal [conf]="this"></ix-terminal>',
 })
 export class VmSerialShellComponent implements TerminalConfiguration {
   protected pk: string;

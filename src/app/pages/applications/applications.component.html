@@ -2,7 +2,7 @@
   <mat-tab-group animationDuration="0ms" [selectedIndex]="selectedTab" (selectedTabChange)="onTabSelected($event)">
     <mat-tab label="{{ 'Installed Applications' | translate}}"
           ix-auto ix-auto-type="tab" ix-auto-identifier="charts">
-      <app-charts (updateTab)="updateTab($event)"></app-charts>
+      <ix-charts (updateTab)="updateTab($event)"></ix-charts>
     </mat-tab>
     <mat-tab label="{{ 'Available Applications' | translate}}"
           ix-auto ix-auto-type="tab" ix-auto-identifier="catalog">

@@ -6,7 +6,6 @@ import { FormLabelConfig } from 'app/modules/entity/entity-form/models/field-con
 import { Field } from 'app/modules/entity/entity-form/models/field.interface';
 
 @Component({
-  selector: 'form-label',
   templateUrl: './form-label.component.html',
   styleUrls: ['../dynamic-field/dynamic-field.scss'],
 })

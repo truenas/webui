@@ -10,7 +10,7 @@ import { ControlConfig } from 'app/modules/entity/entity-toolbar/models/control-
 import { Control } from 'app/modules/entity/entity-toolbar/models/control.interface';
 
 @Component({
-  selector: 'toolbar-multiselect',
+  selector: 'ix-toolbar-multiselect',
   templateUrl: './toolbar-multiselect.component.html',
   styleUrls: ['./toolbar-multiselect.component.scss'],
 })

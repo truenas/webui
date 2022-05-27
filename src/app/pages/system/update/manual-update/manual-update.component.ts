@@ -25,7 +25,7 @@ import { DialogService } from 'app/services/dialog.service';
 
 @UntilDestroy()
 @Component({
-  template: '<entity-form [conf]="this"></entity-form>',
+  template: '<ix-entity-form [conf]="this"></ix-entity-form>',
   providers: [MessageService],
 })
 export class ManualUpdateComponent implements FormConfiguration {

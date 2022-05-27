@@ -9,7 +9,7 @@ import { PageTitleService } from 'app/services/page-title.service';
 
 @UntilDestroy()
 @Component({
-  template: '<entity-table [conf]="this"></entity-table>',
+  template: '<ix-entity-table [conf]="this"></ix-entity-table>',
 })
 export class SmartResultsComponent implements EntityTableConfig {
   queryCall = 'smart.test.results' as const;

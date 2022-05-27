@@ -10,5 +10,5 @@
     {{ config.label }}
     <span *ngIf="config.required" class="required">*</span>
   </mat-slide-toggle>
-  <tooltip *ngIf="config.tooltip" [header]="config.label" class="tooltip" [message]="config.tooltip"></tooltip>
+  <ix-tooltip *ngIf="config.tooltip" [header]="config.label" class="tooltip" [message]="config.tooltip"></ix-tooltip>
 </div>

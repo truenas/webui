@@ -27,7 +27,7 @@ import { DialogService } from 'app/services/dialog.service';
 @Component({
   template: `
   <div *ngIf="initialized">
-  <entity-form [conf]="this"></entity-form>
+  <ix-entity-form [conf]="this"></ix-entity-form>
   </div>`,
 })
 export class ImportDiskComponent implements OnDestroy, FormConfiguration {

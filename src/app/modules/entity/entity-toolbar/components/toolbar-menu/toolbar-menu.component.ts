@@ -5,7 +5,7 @@ import { ControlConfig } from 'app/modules/entity/entity-toolbar/models/control-
 import { Control } from 'app/modules/entity/entity-toolbar/models/control.interface';
 
 @Component({
-  selector: 'toolbar-menu',
+  selector: 'ix-toolbar-menu',
   templateUrl: 'toolbar-menu.component.html',
 })
 export class ToolbarMenuComponent {

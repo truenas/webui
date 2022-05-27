@@ -4,7 +4,7 @@ import { FibreChannelPortComponent } from './fibre-channel-port/fibre-channel-po
 
 @Component({
   selector: 'ix-iscsi-fibre-channel-ports',
-  template: '<entity-table [title]="title" [conf]="this"></entity-table>',
+  template: '<ix-entity-table [title]="title" [conf]="this"></ix-entity-table>',
 })
 export class FibreChannelPortsComponent implements EntityTableConfig {
   title = 'Fibre Channel';

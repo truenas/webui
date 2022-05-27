@@ -36,10 +36,10 @@
         </div>
       </div>
 
-      <navigation (menuToggled)="toggleMenu($event)" (menuClosed)="toggleMenu()"></navigation>
+      <ix-navigation (menuToggled)="toggleMenu($event)" (menuClosed)="toggleMenu()"></ix-navigation>
 
       <div class="slidein-nav slidein-nav-sm" [class.slidein-open]="isOpen">
-        <app-secondary-menu [subMenuItems]="subs" [menuName]="menuName" (toggleMenu)="toggleMenu()"></app-secondary-menu>
+        <ix-secondary-menu [subMenuItems]="subs" [menuName]="menuName" (toggleMenu)="toggleMenu()"></ix-secondary-menu>
       </div>
 
       <div *ngIf="!isSidenavCollapsed" class="sidenav-copyright-txt">
@@ -63,10 +63,10 @@
 
   <mat-sidenav-content fxFlex="calc(100% - {{sidenavWidth}})" class="fn-maincontent" [style.margin-left]="sidenavWidth">
     <!-- Top Bar -->
-    <topbar [sidenav]="sidenav"></topbar>
+    <ix-topbar [sidenav]="sidenav"></ix-topbar>
 
     <div class="slidein-nav slidein-nav-md" [class.slidein-open]="isOpen">
-      <app-secondary-menu [subMenuItems]="subs" [menuName]="menuName" (toggleMenu)="toggleMenu()"></app-secondary-menu>
+      <ix-secondary-menu [subMenuItems]="subs" [menuName]="menuName" (toggleMenu)="toggleMenu()"></ix-secondary-menu>
     </div>
     <div class="overlay" [class.isdark]="isOpen" (click)="toggleMenu()"></div>
 

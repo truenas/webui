@@ -48,12 +48,12 @@ ip = "10.20.21.232"
 
 
 xpaths = {
-          'usernameTxtBox': '/html/body/app-root/app-auth-layout/app-signin/div/div/mat-card/mat-card-content/div[1]/form/div[1]/mat-input-container/div/div[1]/div/input',
-          'passwordTxtBox': '/html/body/app-root/app-auth-layout/app-signin/div/div/mat-card/mat-card-content/div[1]/form/div[2]/mat-input-container/div/div[1]/div/input',
-          'submitButton': '/html/body/app-root/app-auth-layout/app-signin/div/div/mat-card/mat-card-content/div[1]/form/button',
-          'rootButton' : "/html/body/app-root/app-admin-layout/mat-sidenav-container/mat-sidenav-content/topbar/mat-toolbar/mat-toolbar-row/button[6]/span/mat-icon",
+          'usernameTxtBox': '/html/body/ix-root/ix-auth-layout/ix-signin/div/div/mat-card/mat-card-content/div[1]/form/div[1]/mat-input-container/div/div[1]/div/input',
+          'passwordTxtBox': '/html/body/ix-root/ix-auth-layout/ix-signin/div/div/mat-card/mat-card-content/div[1]/form/div[2]/mat-input-container/div/div[1]/div/input',
+          'submitButton': '/html/body/ix-root/ix-auth-layout/ix-signin/div/div/mat-card/mat-card-content/div[1]/form/button',
+          'rootButton' : "/html/body/ix-root/ix-admin-layout/mat-sidenav-container/mat-sidenav-content/ix-topbar/mat-toolbar/mat-toolbar-row/button[6]/span/mat-icon",
           'logoutButton' : "//*[contains(text(), 'Log out')]",
-          'logoutconfirmationCheckbox' : "/html/body/div[3]/div[2]/div[2]/md-dialog-container/confirm-dialog/div[1]/md-checkbox/label/div",
+          'logoutconfirmationCheckbox' : "/html/body/div[3]/div[2]/div[2]/md-dialog-container/ix-confirm-dialog/div[1]/md-checkbox/label/div",
           'logoutconfirmationButton' : "//*[contains(@name, 'ok_button')]"
           }
 

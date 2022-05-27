@@ -19,7 +19,7 @@ export enum ExpandableTableState {
 }
 
 @Component({
-  selector: 'app-expandable-table',
+  selector: 'ix-expandable-table',
   templateUrl: './expandable-table.component.html',
   styleUrls: ['./expandable-table.component.scss'],
 })

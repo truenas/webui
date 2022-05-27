@@ -5,7 +5,6 @@ import { FormReadFileConfig } from 'app/modules/entity/entity-form/models/field-
 import { Field } from 'app/modules/entity/entity-form/models/field.interface';
 
 @Component({
-  selector: 'form-readfile',
   templateUrl: './form-readfile.component.html',
   styleUrls: ['../dynamic-field/dynamic-field.scss'],
 })
