@@ -1,5 +1,5 @@
 <ng-template #pageHeader>
-  <page-title-header>
+  <ix-page-title-header>
     <button
       (click)="doAdd()"
       [color]="'primary'"
@@ -26,7 +26,7 @@
         (input)="filter()"
       >
     </ng-template>
-  </page-title-header>
+  </ix-page-title-header>
 </ng-template>
 
 <ix-entity-empty *ngIf="isLoading$ | async; else loaded" [conf]="loadingConfig"></ix-entity-empty>
