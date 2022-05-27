@@ -20,7 +20,7 @@ import { CoreService } from 'app/services/core-service/core.service';
 
 @UntilDestroy()
 @Component({
-  selector: 'app-terminal',
+  selector: 'ix-terminal',
   templateUrl: './terminal.component.html',
   styleUrls: ['./terminal.component.scss'],
   providers: [ShellService],

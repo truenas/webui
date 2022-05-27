@@ -44,7 +44,7 @@ interface ZvolFormData {
 
 @UntilDestroy()
 @Component({
-  template: '<entity-wizard [conf]="this"></entity-wizard>',
+  template: '<ix-entity-wizard [conf]="this"></ix-entity-wizard>',
 })
 export class ZvolWizardComponent implements WizardConfiguration {
   addWsCall = 'pool.dataset.create' as const;

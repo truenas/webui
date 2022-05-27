@@ -25,7 +25,7 @@ import { DialogService, RedirectService, WebSocketService } from 'app/services';
 @UntilDestroy()
 @Component({
   selector: 'ix-ipmi',
-  template: '<entity-form [conf]="this"></entity-form>',
+  template: '<ix-entity-form [conf]="this"></ix-entity-form>',
 })
 export class IpmiFormComponent implements FormConfiguration {
   title = this.translate.instant('IPMI');

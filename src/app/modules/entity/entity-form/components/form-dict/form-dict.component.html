@@ -9,7 +9,7 @@
 >
   <div *ngIf="config.placeholder" class="label-container">
     <label class="label input-text">{{config.label | translate}}</label>
-    <tooltip *ngIf="config.tooltip" [header]="config.placeholder" [message]="config.tooltip"></tooltip>
+    <ix-tooltip *ngIf="config.tooltip" [header]="config.placeholder" [message]="config.tooltip"></ix-tooltip>
   </div>
   <ng-container *ngFor="let field of config.subFields;" >
     <div *ngIf="!field.isHidden" fxFlex="calc(100% - 100px)"

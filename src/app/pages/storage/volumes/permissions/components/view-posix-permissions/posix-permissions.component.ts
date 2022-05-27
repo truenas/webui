@@ -9,7 +9,7 @@ import {
 import { posixAceToPermissionItem } from 'app/pages/storage/volumes/permissions/utils/posix-ace-to-permission-item.utils';
 
 @Component({
-  selector: 'app-posix-permissions',
+  selector: 'ix-posix-permissions',
   templateUrl: 'posix-permissions.component.html',
   styleUrls: ['./posix-permissions.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

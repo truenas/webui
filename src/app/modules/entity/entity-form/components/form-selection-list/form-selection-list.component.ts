@@ -5,7 +5,6 @@ import { FormSelectionListConfig } from 'app/modules/entity/entity-form/models/f
 import { Field } from 'app/modules/entity/entity-form/models/field.interface';
 
 @Component({
-  selector: 'form-selection-list',
   templateUrl: './form-selection-list.component.html',
   styleUrls: ['./form-selection-list.component.scss'],
 })

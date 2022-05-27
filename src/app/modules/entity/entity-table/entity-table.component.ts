@@ -59,7 +59,7 @@ import {
 @UntilDestroy()
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
-  selector: 'entity-table',
+  selector: 'ix-entity-table',
   templateUrl: './entity-table.component.html',
   styleUrls: ['./entity-table.component.scss'],
   providers: [DialogService, StorageService],

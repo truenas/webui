@@ -10,7 +10,7 @@ interface TimeData {
 }
 
 @Component({
-  selector: 'viewchartline',
+  selector: 'ix-view-chart-line',
   template: viewChartMetadata.template,
 })
 export class ViewChartLineComponent extends ViewChartComponent {

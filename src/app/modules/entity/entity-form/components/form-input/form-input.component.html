@@ -5,7 +5,7 @@
       {{config.placeholder | translate}}
       <span *ngIf="config.required">*</span>
     </label>
-    <tooltip *ngIf="config.tooltip" [header]="config.placeholder" [message]="config.tooltip"></tooltip>
+    <ix-tooltip *ngIf="config.tooltip" [header]="config.placeholder" [message]="config.tooltip"></ix-tooltip>
   </div>
 
   <!-- need to prevent browser autofill :/ -->
@@ -63,7 +63,7 @@
     <input type="file" id="fileInput" (change)="changeListener($event)"/>
   </ng-template>
   <div class="margin-for-error">
-    <form-errors [control]="group.controls[config.name]" [config]="config"></form-errors>
+    <ix-form-errors [control]="group.controls[config.name]" [config]="config"></ix-form-errors>
     <mat-error *ngIf="config['hasErrors']"><div [innerHTML]="config['errors']"></div></mat-error>
     <mat-error *ngIf="config.warnings"><div [innerHTML]="config.warnings | translate"></div></mat-error>
     <mat-hint *ngIf="config.hint"><div [innerHTML]="config.hint | translate"></div></mat-hint>

@@ -83,7 +83,7 @@
         <div class="vdev-estimated">
           <p *ngIf="group === 'data' && vdev_type_disabled">{{getType() | translate}}</p>
           <span>{{"Estimated raw capacity:" | translate}} {{size}}</span>
-          <tooltip [message]="vdev_type_tooltip"></tooltip>
+          <ix-tooltip [message]="vdev_type_tooltip"></ix-tooltip>
         </div>
       </div>
     </div>

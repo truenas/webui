@@ -100,7 +100,7 @@ export interface AppTableConfig<P = any> {
 
 @UntilDestroy()
 @Component({
-  selector: 'app-table',
+  selector: 'ix-conf-table',
   templateUrl: './table.component.html',
   styleUrls: ['./table.component.scss'],
   providers: [TableService],

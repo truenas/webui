@@ -9,7 +9,6 @@ import { DialogService } from 'app/services/dialog.service';
 
 @UntilDestroy()
 @Component({
-  selector: 'truecommand-status-modal',
   templateUrl: './truecommand-status-modal.component.html',
   styleUrls: ['./truecommand-status-modal.component.scss'],
 })

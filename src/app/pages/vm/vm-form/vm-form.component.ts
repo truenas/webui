@@ -32,7 +32,7 @@ import { waitForAdvancedConfig } from 'app/store/system-config/system-config.sel
 
 @UntilDestroy()
 @Component({
-  template: '<entity-form [conf]="this"></entity-form>',
+  template: '<ix-entity-form [conf]="this"></ix-entity-form>',
   providers: [StorageService],
 })
 export class VmFormComponent implements FormConfiguration {

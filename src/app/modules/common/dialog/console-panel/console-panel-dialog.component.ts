@@ -7,7 +7,6 @@ import { TranslateService } from '@ngx-translate/core';
 import { Interval } from 'app/interfaces/timeout.interface';
 
 @Component({
-  selector: 'consolepanel-dialog',
   styleUrls: ['./console-panel-dialog.component.scss'],
   templateUrl: './console-panel-dialog.component.html',
 })

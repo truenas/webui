@@ -20,7 +20,7 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
 @Component({
   selector: 'ix-iscsi-associated-target-list',
   template: `
-    <entity-table [conf]="this" [title]="tableTitle"></entity-table>
+    <ix-entity-table [conf]="this" [title]="tableTitle"></ix-entity-table>
   `,
   providers: [IscsiService],
 })

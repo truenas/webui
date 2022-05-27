@@ -19,7 +19,7 @@ import { UserService } from 'app/services/user.service';
 
 @UntilDestroy()
 @Component({
-  template: '<entity-table [title]="title" [conf]="this"></entity-table>',
+  template: '<ix-entity-table [title]="title" [conf]="this"></ix-entity-table>',
   providers: [TaskService, UserService],
 })
 export class CronListComponent implements EntityTableConfig<CronjobRow> {

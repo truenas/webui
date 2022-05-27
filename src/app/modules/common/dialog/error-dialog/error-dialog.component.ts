@@ -8,7 +8,7 @@ import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
-  selector: 'error-dialog',
+  selector: 'ix-error-dialog',
   templateUrl: './error-dialog.component.html',
   styleUrls: ['./error-dialog.component.scss'],
 })

@@ -5,7 +5,6 @@ import { FormParagraphConfig } from 'app/modules/entity/entity-form/models/field
 import { Field } from 'app/modules/entity/entity-form/models/field.interface';
 
 @Component({
-  selector: 'form-paragraph',
   templateUrl: './form-paragraph.component.html',
   styleUrls: ['../dynamic-field/dynamic-field.scss'],
 })

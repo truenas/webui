@@ -22,7 +22,6 @@ import { ManageCatalogsComponent } from './manage-catalogs/manage-catalogs.compo
 
 @UntilDestroy()
 @Component({
-  selector: 'app-applications',
   templateUrl: './applications.component.html',
   styleUrls: ['./applications.component.scss'],
   // eslint-disable-next-line @angular-eslint/use-component-view-encapsulation
