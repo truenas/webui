@@ -30,7 +30,9 @@ describe('SaveDebugButtonComponent', () => {
         open: () => mockEntityJobComponentRef,
       }),
       mockProvider(MatDialogRef),
-      mockProvider(StorageService),
+      mockProvider(StorageService, {
+        downloadUrl: jest.fn(() => of(undefined)),
+      }),
       provideMockStore({
         selectors: [
           {
