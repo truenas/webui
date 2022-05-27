@@ -19,7 +19,6 @@ import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 @Component({
   selector: 'ix-save-debug-button',
   templateUrl: './save-debug-button.component.html',
-  styleUrls: ['./save-debug-button.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SaveDebugButtonComponent {

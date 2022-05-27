@@ -33,8 +33,6 @@ import { LayoutService } from 'app/services/layout.service';
   providers: [EntityFormService],
 })
 export class AlertConfigComponent implements OnInit, AfterViewInit {
-  // TODO: Breadcrumb is weird
-
   protected queryCall = 'alertclasses.config' as const;
   protected editCall = 'alertclasses.update' as const;
   protected isEntity = true;
