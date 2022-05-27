@@ -14,7 +14,6 @@ import { StorageService } from 'app/services/storage.service';
 
 @UntilDestroy()
 @Component({
-  selector: 'app-smart-list',
   template: '<entity-table [title]="title" [conf]="this"></entity-table>',
   providers: [TaskService, EntityFormService],
 })

@@ -11,7 +11,7 @@ import { PermissionsSidebarStore } from 'app/pages/storage/volumes/permissions/s
 
 @UntilDestroy()
 @Component({
-  selector: 'app-permissions-sidebar',
+  selector: 'ix-permissions-sidebar',
   templateUrl: 'permissions-sidebar.component.html',
   styleUrls: ['./permissions-sidebar.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

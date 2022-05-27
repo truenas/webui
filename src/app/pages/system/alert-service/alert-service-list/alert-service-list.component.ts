@@ -10,7 +10,6 @@ import { WebSocketService, DialogService } from 'app/services';
 
 @UntilDestroy()
 @Component({
-  selector: 'app-alertservice-list',
   template: '<entity-table [title]="title" [conf]="this"></entity-table>',
 })
 export class AlertServiceListComponent implements EntityTableConfig<AlertService> {

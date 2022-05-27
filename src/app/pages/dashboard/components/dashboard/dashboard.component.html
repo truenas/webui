@@ -61,7 +61,7 @@
         <div *ngFor="let widget of renderedWidgets; let index = index; trackBy: getWidgetId" ixDropGridItem>
           <ng-container [ngSwitch]="widget.name | lowercase">
 
-            <widget-sysinfo *ngSwitchCase="'system information'"
+            <ix-widget-sysinfo *ngSwitchCase="'system information'"
               id="active"
               fxFlex="{{widgetWidth}}px"
               fxFlex.xs="100"
@@ -71,9 +71,9 @@
               [isPassive]="false"
               [widgetSize]="medium"
               [showReorderHandle]="reorderMode"
-            ><span ixDragHandle></span></widget-sysinfo>
+            ><span ixDragHandle></span></ix-widget-sysinfo>
 
-            <widget-sysinfo *ngSwitchCase="'system information(standby)'"
+            <ix-widget-sysinfo *ngSwitchCase="'system information(standby)'"
               id="passive"
               fxFlex="{{widgetWidth}}px"
               fxFlex.xs="100"
@@ -83,7 +83,7 @@
               [isPassive]="true"
               [widgetSize]="medium"
               [showReorderHandle]="reorderMode"
-            ><span ixDragHandle></span></widget-sysinfo>
+            ><span ixDragHandle></span></ix-widget-sysinfo>
 
             <ix-widget-help
               *ngSwitchCase="'help'"
@@ -165,36 +165,36 @@
 <!-- MOBILE WIDGETS -->
 <div class="mobile-viewport" [class.hidden]="screenType === 'Desktop'">
   <div class="carousel">
-    <widget-controller (launcher)="onMobileLaunch($event)"
+    <ix-widget-controller (launcher)="onMobileLaunch($event)"
       *ngIf="screenType === 'Mobile' && dashState && dashState.length > 0;"
       [renderedWidgets]="renderedWidgets"
       [dashState]="dashState"
       [emptyConfig]="emptyDashConf"
       [widgetSize]="medium"
-    ></widget-controller>
+    ></ix-widget-controller>
 
     <div class="mobile-widget-container">
       <ng-container *ngIf="isLoaded && screenType === 'Mobile';">
         <ng-container *ngFor="let widget of activeMobileWidget">
           <ng-container [ngSwitch]="widget.name | lowercase">
 
-            <widget-sysinfo *ngSwitchCase="'system information'"
+            <ix-widget-sysinfo *ngSwitchCase="'system information'"
               (back)="onMobileBack()"
               id="active"
               [enclosureSupport]="systemInformation.features.enclosure"
               [isHA]="isHa"
               [isPassive]="false"
               [widgetSize]="medium">
-            </widget-sysinfo>
+            </ix-widget-sysinfo>
 
-            <widget-sysinfo *ngSwitchCase="'system information(standby)'"
+            <ix-widget-sysinfo *ngSwitchCase="'system information(standby)'"
               (back)="onMobileBack()"
               id="passive"
               [enclosureSupport]="systemInformation.features.enclosure"
               [isHA]="isHa"
               [isPassive]="true"
               [widgetSize]="medium">
-            </widget-sysinfo>
+            </ix-widget-sysinfo>
 
             <ix-widget-help
               *ngSwitchCase="'help'"

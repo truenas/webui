@@ -32,7 +32,6 @@ import { ModalService } from 'app/services/modal.service';
 
 @UntilDestroy()
 @Component({
-  selector: 'app-replication-list',
   template: '<entity-table [title]="title" [conf]="this"></entity-table>',
   providers: [
     JobService,

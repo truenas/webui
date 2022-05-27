@@ -34,7 +34,6 @@ import { UnlockDialogComponent } from './unlock-dialog/unlock-dialog.component';
 
 @UntilDestroy()
 @Component({
-  selector: 'app-dataset-unlock',
   template: '<entity-form [conf]="this"></entity-form>',
 })
 export class DatasetUnlockComponent implements FormConfiguration {

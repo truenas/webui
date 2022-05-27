@@ -3,7 +3,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { EntityTableConfig } from 'app/modules/entity/entity-table/entity-table.interface';
 
 @Component({
-  selector: 'app-iscsi-initiator-list',
+  selector: 'ix-iscsi-initiator-list',
   template: `
     <entity-table [conf]="this" [title]="tableTitle"></entity-table>
   `,

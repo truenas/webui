@@ -9,7 +9,6 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
 @Component({
-  selector: 'app-initshutdown-list',
   template: '<entity-table [title]="title" [conf]="this"></entity-table>',
 })
 export class InitshutdownListComponent implements EntityTableConfig {
