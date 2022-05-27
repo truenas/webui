@@ -1,5 +1,5 @@
 <ng-template #pageHeader>
-  <page-title-header *ngIf="screenType === 'Desktop'" [title]="title$">
+  <page-title-header *ngIf="screenType === 'Desktop'">
     <ng-container *ngIf="isLoaded">
       <button mat-button (click)="showConfigForm()" [color]="'primary'">
         {{ 'Configure' | translate }}

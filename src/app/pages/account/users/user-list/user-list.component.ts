@@ -40,7 +40,6 @@ import { waitForPreferences } from 'app/store/preferences/preferences.selectors'
 })
 export class UserListComponent implements OnInit, AfterViewInit {
   @ViewChild(MatSort, { static: false }) sort: MatSort;
-  title$: BehaviorSubject<string> = new BehaviorSubject('Users');
   @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
   @ViewChild('filterInput') filterInput: ElementRef<HTMLInputElement>;
   toolbarActionsConfig: GlobalActionConfig = null;

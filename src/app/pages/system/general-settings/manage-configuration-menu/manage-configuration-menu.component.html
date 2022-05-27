@@ -1,0 +1,21 @@
+<button
+  mat-button
+  [matMenuTriggerFor]="menu"
+  color="primary"
+  class="menu-toggle"
+>
+  {{ 'Manage Configuration' | translate }}
+  <mat-icon class="menu-caret">arrow_drop_down</mat-icon>
+</button>
+
+<mat-menu #menu="matMenu">
+  <button mat-menu-item (click)="onDownloadConfig()">
+    {{ 'Download File' | translate }}
+  </button>
+  <button mat-menu-item (click)="onUploadConfig()">
+    {{ 'Upload File' | translate }}
+  </button>
+  <button mat-menu-item (click)="onResetDefaults()">
+    {{ 'Reset to Defaults' | translate }}
+  </button>
+</mat-menu>

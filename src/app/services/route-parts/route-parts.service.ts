@@ -25,7 +25,7 @@ export class RoutePartsService {
     });
   }
 
-  private generateRouteParts(route: ActivatedRoute, url: string = '', routeParts: RoutePart[] = []): RoutePart[] {
+  private generateRouteParts(route: ActivatedRoute, url = '', routeParts: RoutePart[] = []): RoutePart[] {
     const children: ActivatedRoute[] = route.children;
 
     if (children.length === 0) {

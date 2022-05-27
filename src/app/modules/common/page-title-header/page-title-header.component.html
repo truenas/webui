@@ -1,7 +1,7 @@
-<div *ngIf="title | async as pageTitle" fxLayout="row wrap" class="header-container">
+<div fxLayout="row wrap" class="header-container">
   <app-breadcrumb fxFlex="100%"></app-breadcrumb>
   <div class="title-container">
-    <h1>{{ pageTitle | translate }}</h1>
+    <h1>{{ pageTitle ? pageTitle : (defaultTitle$ | async) }}</h1>
     <div class="actions-container">
       <ng-content></ng-content>
     </div>
