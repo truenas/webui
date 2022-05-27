@@ -88,6 +88,12 @@ export default {
     tooltip: T(''),
   },
 
+  hyperv_enlightenments_placeholder: T('Enable Hyper-V Enlightenments'),
+  hyperv_enlightenments_tooltip: T('KVM implements Hyper-V Enlightenments \
+  for Windows guests. These features make Windows think they\'re \
+  running on top of a Hyper-V compatible hypervisor and use Hyper-V specific features. \
+  In some cases enabling these Enlightenments might improve usability and performance on the guest.'),
+
   memory_placeholder: T('Memory Size'),
   global_label: globalHelptext.human_readable.suggestion_label,
   memory_validation: [Validators.required],
