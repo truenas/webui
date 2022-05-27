@@ -18,6 +18,7 @@ import { IxDynamicFormItemComponent } from 'app/modules/ix-forms/components/ix-d
 import { IxExplorerComponent } from 'app/modules/ix-forms/components/ix-explorer/ix-explorer.component';
 import { IxInputComponent } from 'app/modules/ix-forms/components/ix-input/ix-input.component';
 import { IxIpInputWithNetmaskComponent } from 'app/modules/ix-forms/components/ix-ip-input-with-netmask/ix-ip-input-with-netmask.component';
+import { IxListItemComponent } from 'app/modules/ix-forms/components/ix-list/ix-list-item/ix-list-item.component';
 import { IxListComponent } from 'app/modules/ix-forms/components/ix-list/ix-list.component';
 import { IxSelectComponent } from 'app/modules/ix-forms/components/ix-select/ix-select.component';
 
@@ -32,17 +33,21 @@ const dynamicForm = new FormGroup({
   checkbox: new FormControl(true),
   ipaddr: new FormControl(''),
   explorer: new FormControl(''),
-  list: new FormArray([]),
+  list: new FormArray([
+    new FormGroup({
+      input: new FormControl(''),
+      select: new FormControl(''),
+    }),
+  ]),
 });
 
 const inputSchema = {
   controlName: 'input',
   editable: true,
-  number: true,
-  private: false,
+  inputType: 'password',
   required: true,
-  title: 'Label Input Int',
-  tooltip: undefined,
+  title: 'Label Input',
+  tooltip: 'Tooltip Input',
   type: 'input',
 } as DynamicFormSchemaInput;
 
@@ -52,7 +57,7 @@ const selectSchema = {
   hideEmpty: true,
   required: true,
   title: 'Label Select',
-  tooltip: undefined,
+  tooltip: 'Tooltip Select',
   options: of([]),
   type: 'select',
 } as DynamicFormSchemaSelect;
@@ -61,29 +66,37 @@ const checkboxSchema = {
   controlName: 'checkbox',
   editable: undefined,
   indent: true,
-  required: undefined,
+  required: false,
   title: 'Label Checkbox',
-  tooltip: undefined,
+  tooltip: 'Tooltip Checkbox',
   type: 'checkbox',
 } as DynamicFormSchemaCheckbox;
 
 const ipaddrSchema = {
   controlName: 'ipaddr',
   editable: undefined,
-  required: undefined,
-  title: 'Static IP',
-  tooltip: undefined,
+  required: true,
+  title: 'Label Ipaddr',
+  tooltip: 'Tooltip Ipaddr',
   type: 'ipaddr',
 } as DynamicFormSchemaIpaddr;
 
 const explorerSchema = {
   controlName: 'explorer',
+  tooltip: 'Tooltip Explorer',
+  required: true,
   type: 'explorer',
 } as DynamicFormSchemaExplorer;
 
 const listSchema = {
   controlName: 'list',
+  title: 'Label List',
   type: 'list',
+  items: [
+    inputSchema,
+    selectSchema,
+  ],
+  itemsSchema: [],
 } as DynamicFormSchemaList;
 
 const dictSchema = {
@@ -110,6 +123,7 @@ describe('IxDynamicFormItemComponent', () => {
     declarations: [
       MockComponent(IxInputComponent),
       MockComponent(IxListComponent),
+      MockComponent(IxListItemComponent),
       MockComponent(IxSelectComponent),
       MockComponent(IxCheckboxComponent),
       MockComponent(IxIpInputWithNetmaskComponent),
@@ -121,13 +135,18 @@ describe('IxDynamicFormItemComponent', () => {
     spectator = createComponent();
   });
 
-  describe('UI tests', () => {
-    it('input', () => {
-      spectator.component.dynamicForm = dynamicForm;
-      spectator.component.dynamicSchema = inputSchema;
-      spectator.detectComponentChanges();
+  describe('Component rendering', () => {
+    it('renders an "ix-input" when schema with "input" type is supplied', () => {
+      spectator = createComponent({
+        props: {
+          dynamicForm,
+          dynamicSchema: inputSchema,
+        },
+      });
       expect(spectator.query('ix-input')).toBeVisible();
-      expect(spectator.query('ix-input')).not.toBeDisabled();
+      expect(spectator.query(IxInputComponent).required).toBe(inputSchema.required);
+      expect(spectator.query(IxInputComponent).type).toBe(inputSchema.inputType);
+      expect(spectator.query(IxInputComponent).tooltip).toBe(inputSchema.tooltip);
 
       expect(spectator.query('ix-input')).not.toBeHidden();
       spectator.component.dynamicForm.controls.input.disable();
@@ -135,12 +154,17 @@ describe('IxDynamicFormItemComponent', () => {
       expect(spectator.query('ix-input')).toBeHidden();
     });
 
-    it('select', () => {
-      spectator.component.dynamicForm = dynamicForm;
-      spectator.component.dynamicSchema = selectSchema;
-      spectator.detectComponentChanges();
+    it('renders an "ix-select" when schema with "select" type is supplied', () => {
+      spectator = createComponent({
+        props: {
+          dynamicForm,
+          dynamicSchema: selectSchema,
+        },
+      });
       expect(spectator.query('ix-select')).toBeVisible();
-      expect(spectator.query('ix-select')).not.toBeDisabled();
+      expect(spectator.query(IxSelectComponent).required).toBe(selectSchema.required);
+      expect(spectator.query(IxSelectComponent).hideEmpty).toBe(selectSchema.hideEmpty);
+      expect(spectator.query(IxSelectComponent).tooltip).toBe(selectSchema.tooltip);
 
       expect(spectator.query('ix-select')).not.toBeHidden();
       spectator.component.dynamicForm.controls.select.disable();
@@ -148,12 +172,16 @@ describe('IxDynamicFormItemComponent', () => {
       expect(spectator.query('ix-select')).toBeHidden();
     });
 
-    it('checkbox', () => {
-      spectator.component.dynamicForm = dynamicForm;
-      spectator.component.dynamicSchema = checkboxSchema;
-      spectator.detectComponentChanges();
+    it('renders an "ix-checkbox" when schema with "checkbox" type is supplied', () => {
+      spectator = createComponent({
+        props: {
+          dynamicForm,
+          dynamicSchema: checkboxSchema,
+        },
+      });
       expect(spectator.query('ix-checkbox')).toBeVisible();
-      expect(spectator.query('ix-checkbox')).not.toBeDisabled();
+      expect(spectator.query(IxCheckboxComponent).required).toBe(checkboxSchema.required);
+      expect(spectator.query(IxCheckboxComponent).tooltip).toBe(checkboxSchema.tooltip);
 
       expect(spectator.query('ix-checkbox')).not.toBeHidden();
       spectator.component.dynamicForm.controls.checkbox.disable();
@@ -161,12 +189,16 @@ describe('IxDynamicFormItemComponent', () => {
       expect(spectator.query('ix-checkbox')).toBeHidden();
     });
 
-    it('ipaddr', () => {
-      spectator.component.dynamicForm = dynamicForm;
-      spectator.component.dynamicSchema = ipaddrSchema;
-      spectator.detectComponentChanges();
+    it('renders an "ix-ip-input-with-netmask" when schema with "ipaddr" type is supplied', () => {
+      spectator = createComponent({
+        props: {
+          dynamicForm,
+          dynamicSchema: ipaddrSchema,
+        },
+      });
       expect(spectator.query('ix-ip-input-with-netmask')).toBeVisible();
-      expect(spectator.query('ix-ip-input-with-netmask')).not.toBeDisabled();
+      expect(spectator.query(IxIpInputWithNetmaskComponent).required).toBe(ipaddrSchema.required);
+      expect(spectator.query(IxIpInputWithNetmaskComponent).tooltip).toBe(ipaddrSchema.tooltip);
 
       expect(spectator.query('ix-ip-input-with-netmask')).not.toBeHidden();
       spectator.component.dynamicForm.controls.ipaddr.disable();
@@ -174,12 +206,16 @@ describe('IxDynamicFormItemComponent', () => {
       expect(spectator.query('ix-ip-input-with-netmask')).toBeHidden();
     });
 
-    it('explorer', () => {
-      spectator.component.dynamicForm = dynamicForm;
-      spectator.component.dynamicSchema = explorerSchema;
-      spectator.detectComponentChanges();
+    it('renders an "ix-explorer" when schema with "explorer" type is supplied', () => {
+      spectator = createComponent({
+        props: {
+          dynamicForm,
+          dynamicSchema: explorerSchema,
+        },
+      });
       expect(spectator.query('ix-explorer')).toBeVisible();
-      expect(spectator.query('ix-explorer')).not.toBeDisabled();
+      expect(spectator.query(IxExplorerComponent).required).toBe(explorerSchema.required);
+      expect(spectator.query(IxExplorerComponent).tooltip).toBe(explorerSchema.tooltip);
 
       expect(spectator.query('ix-explorer')).not.toBeHidden();
       spectator.component.dynamicForm.controls.explorer.disable();
@@ -187,12 +223,18 @@ describe('IxDynamicFormItemComponent', () => {
       expect(spectator.query('ix-explorer')).toBeHidden();
     });
 
-    it('list', () => {
-      spectator.component.dynamicForm = dynamicForm;
-      spectator.component.dynamicSchema = listSchema;
-      spectator.detectComponentChanges();
+    it('renders an "ix-list" when schema with "list" type is supplied', () => {
+      spectator = createComponent({
+        props: {
+          dynamicForm,
+          dynamicSchema: listSchema,
+        },
+      });
       expect(spectator.query('ix-list')).toBeVisible();
-      expect(spectator.query('ix-list')).not.toBeDisabled();
+      expect(spectator.queryAll('ix-list-item').length).toEqual(1);
+      expect(spectator.queryAll('ix-dynamic-form-item').length).toEqual(listSchema.items.length);
+      expect(spectator.query(IxListComponent).empty).toBe(false);
+      expect(spectator.query(IxListComponent).label).toBe(listSchema.title);
 
       expect(spectator.query('ix-list')).not.toBeHidden();
       spectator.component.dynamicForm.controls.list.disable();
@@ -200,16 +242,17 @@ describe('IxDynamicFormItemComponent', () => {
       expect(spectator.query('ix-list')).toBeHidden();
     });
 
-    it('dict', () => {
-      spectator.component.dynamicForm = dynamicForm;
-      spectator.component.dynamicSchema = dictSchema;
-      spectator.detectComponentChanges();
+    it('renders an "ix-dynamic-form-item" when schema with "dict" type is supplied', () => {
+      spectator = createComponent({
+        props: {
+          dynamicForm,
+          dynamicSchema: dictSchema,
+        },
+      });
       expect(spectator.query('.label')).toHaveText('Label Dict');
+      expect(spectator.queryAll('ix-dynamic-form-item').length).toEqual(dictSchema.attrs.length);
 
-      expect(spectator.queryAll('ix-dynamic-form-item').length).toEqual(3);
-
-      spectator.queryAll('ix-dynamic-form-item').forEach((item) => {
-        expect(item).not.toBeDisabled();
+      spectator.queryAll(IxListItemComponent).forEach((item) => {
         expect(item).not.toBeHidden();
       });
 
@@ -217,7 +260,6 @@ describe('IxDynamicFormItemComponent', () => {
       spectator.detectComponentChanges();
 
       spectator.queryAll('ix-dynamic-form-item').forEach((item) => {
-        expect(item).not.toBeDisabled();
         expect(item).toBeHidden();
       });
     });
@@ -226,42 +268,57 @@ describe('IxDynamicFormItemComponent', () => {
   describe('Component methods', () => {
     it('isHidden()', () => {
       dynamicForm.controls.list.disable();
-      spectator.component.dynamicForm = dynamicForm;
-      spectator.component.dynamicSchema = listSchema;
+      spectator = createComponent({
+        props: {
+          dynamicForm,
+          dynamicSchema: listSchema,
+        },
+      });
       expect(spectator.component.isHidden).toBeTruthy();
     });
 
-    it('getFormArray()', () => {
-      spectator.component.dynamicForm = dynamicForm;
-      spectator.component.dynamicSchema = listSchema;
-      expect(spectator.component.getFormArray).toEqual(dynamicForm.controls.list);
-    });
-
-    it('addControl()', () => {
-      spectator.component.dynamicForm = dynamicForm;
-      spectator.component.dynamicSchema = listSchema;
+    it('emits "addListItem" when "(add)" is emitted by a list control', () => {
+      spectator = createComponent({
+        props: {
+          dynamicForm,
+          dynamicSchema: listSchema,
+        },
+      });
 
       jest.spyOn(spectator.component.addListItem, 'emit').mockImplementation();
-      spectator.component.addControl();
-      expect(spectator.component.addListItem.emit).toHaveBeenCalledTimes(1);
+      spectator.query(IxListComponent).add.emit();
+
+      expect(spectator.component.addListItem.emit).toHaveBeenCalledWith({
+        array: dynamicForm.controls.list,
+        schema: listSchema.itemsSchema,
+      });
     });
 
-    it('removeControl()', () => {
-      spectator.component.dynamicForm = dynamicForm;
-      spectator.component.dynamicSchema = listSchema;
+    it('emits "deleteListItem" when "(delete)" is emitted by a list control', () => {
+      spectator = createComponent({
+        props: {
+          dynamicForm,
+          dynamicSchema: listSchema,
+        },
+      });
 
       jest.spyOn(spectator.component.deleteListItem, 'emit').mockImplementation();
-      spectator.component.removeControl(1);
-      expect(spectator.component.deleteListItem.emit).toHaveBeenCalledTimes(1);
+      expect(spectator.queryAll(IxListItemComponent).length).toEqual(1);
+      spectator.query(IxListItemComponent).delete.emit();
+
+      expect(spectator.component.deleteListItem.emit).toHaveBeenCalledWith({
+        array: dynamicForm.controls.list,
+        index: 0,
+      });
     });
 
-    it('addControlNext()', () => {
+    it('forwarding "addListItem" event', () => {
       jest.spyOn(spectator.component.addListItem, 'emit').mockImplementation();
       spectator.component.addControlNext(undefined);
       expect(spectator.component.addListItem.emit).toHaveBeenCalledTimes(1);
     });
 
-    it('removeControlNext()', () => {
+    it('forwarding "deleteListItem" event', () => {
       jest.spyOn(spectator.component.deleteListItem, 'emit').mockImplementation();
       spectator.component.removeControlNext(undefined);
       expect(spectator.component.deleteListItem.emit).toHaveBeenCalledTimes(1);

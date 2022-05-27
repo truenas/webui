@@ -36,23 +36,35 @@ describe('IxDynamicFormComponent', () => {
     spectator = createComponent();
   });
 
-  describe('UI tests', () => {
-    it('section', () => {
-      spectator.component.dynamicForm = dynamicForm;
-      spectator.component.dynamicSection = dynamicSection;
-      spectator.detectComponentChanges();
+  describe('Component rendering', () => {
+    it('renders a correct number of sections', () => {
+      spectator = createComponent({
+        props: { dynamicForm, dynamicSection },
+      });
 
-      expect(spectator.queryAll('ix-dynamic-form-item').length).toEqual(7);
+      expect(spectator.queryAll('ix-fieldset').length).toEqual(dynamicSection.length);
+    });
+
+    it('renders a correct number of dynamic form', () => {
+      spectator = createComponent({
+        props: { dynamicForm, dynamicSection },
+      });
+
+      let dynamicFormsAmount = 0;
+      dynamicSection.forEach((section) => dynamicFormsAmount += section.schema.length);
+
+      expect(spectator.queryAll('ix-dynamic-form-item').length).toEqual(dynamicFormsAmount);
     });
   });
 
   describe('Component methods', () => {
-    it('addControlNext()', () => {
+    it('forwarding "addListItem" event', () => {
       jest.spyOn(spectator.component.addListItem, 'emit').mockImplementation();
       spectator.component.addControlNext(undefined);
       expect(spectator.component.addListItem.emit).toHaveBeenCalledTimes(1);
     });
-    it('removeControlNext()', () => {
+
+    it('forwarding "deleteListItem" event', () => {
       jest.spyOn(spectator.component.deleteListItem, 'emit').mockImplementation();
       spectator.component.removeControlNext(undefined);
       expect(spectator.component.deleteListItem.emit).toHaveBeenCalledTimes(1);

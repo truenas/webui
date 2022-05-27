@@ -60,8 +60,7 @@ export class AppSchemaService {
               required: schema.required,
               tooltip: chartSchemaNode.description,
               editable: schema.editable,
-              private: schema.private,
-              number: true,
+              inputType: 'number',
             });
           }
           break;
@@ -88,7 +87,7 @@ export class AppSchemaService {
               required: schema.required,
               editable: schema.editable,
               tooltip: chartSchemaNode.description,
-              private: schema.private,
+              inputType: schema.private ? 'password' : undefined,
             });
           }
           break;
@@ -141,7 +140,6 @@ export class AppSchemaService {
               required: schema.required,
               tooltip: chartSchemaNode.description,
               editable: schema.editable,
-              private: schema.private,
             });
           }
           break;

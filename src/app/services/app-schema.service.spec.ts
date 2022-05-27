@@ -48,8 +48,7 @@ const afterIntString = [[{
   attrs: [{
     controlName: 'variable_input_int',
     editable: undefined,
-    number: true,
-    private: undefined,
+    inputType: 'number',
     required: true,
     title: 'Label Input Int',
     tooltip: undefined,
@@ -57,7 +56,7 @@ const afterIntString = [[{
   }, {
     controlName: 'variable_input_string',
     editable: undefined,
-    private: true,
+    inputType: 'password',
     required: false,
     title: 'Label Input String',
     tooltip: undefined,
@@ -239,7 +238,7 @@ const afterList = [[{
   items: [{
     controlName: 'item_list_1',
     editable: undefined,
-    private: undefined,
+    inputType: undefined,
     required: undefined,
     title: '',
     tooltip: undefined,
@@ -247,8 +246,7 @@ const afterList = [[{
   }, {
     controlName: 'item_list_2',
     editable: undefined,
-    number: true,
-    private: undefined,
+    inputType: 'number',
     required: undefined,
     title: '',
     tooltip: undefined,
@@ -284,37 +282,37 @@ describe('AppSchemaService', () => {
   const service = new AppSchemaService({} as FilesystemService);
   describe('transformNode()', () => {
     beforeIntString.forEach((item, idx) => {
-      it('IntStringSchema', () => {
+      it('converts schema with "int" and "string" type', () => {
         const transformed = service.transformNode(item);
         expect(transformed).toEqual(afterIntString[idx]);
       });
     });
     beforeEnum.forEach((item, idx) => {
-      it('EnumSchema', () => {
+      it('converts schema with "emum" parameter', () => {
         const transformed = service.transformNode(item);
         expect(transformed).toEqual(afterEnum[idx]);
       });
     });
     beforeBoolean.forEach((item, idx) => {
-      it('BooleanSchema', () => {
+      it('converts schema with "boolean" type', () => {
         const transformed = service.transformNode(item);
         expect(transformed).toEqual(afterBoolean[idx]);
       });
     });
     beforePath.forEach((item, idx) => {
-      it('PathSchema', () => {
+      it('converts schema with "path" type', () => {
         const transformed = service.transformNode(item);
         expect(transformed).toEqual(afterPath[idx]);
       });
     });
     beforeList.forEach((item, idx) => {
-      it('ListSchema', () => {
+      it('converts schema with "list" type', () => {
         const transformed = service.transformNode(item);
         expect(transformed).toEqual(afterList[idx]);
       });
     });
     beforeIpaddr.forEach((item, idx) => {
-      it('IpaddrSchema', () => {
+      it('converts schema with "ipaddr" type', () => {
         const transformed = service.transformNode(item);
         expect(transformed).toEqual(afterIpaddr[idx]);
       });
