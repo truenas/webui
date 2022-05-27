@@ -1,18 +1,5 @@
 <ng-template #pageHeader>
   <page-title-header>
-    <button
-      (click)="doAdd()"
-      [color]="'primary'"
-      mat-button
-    >
-      {{ 'Add' | translate }}
-    </button>
-    <mat-slide-toggle
-      (change)="toggleBuiltins()"
-      [checked]="!this.hideBuiltinUsers"
-    >
-      <label>{{ 'Show Built-in Users' | translate }}</label>
-    </mat-slide-toggle>
     <ng-template
       headerInput
       [prefixIcon]="'search'"
@@ -26,6 +13,19 @@
         (input)="filter()"
       >
     </ng-template>
+    <mat-slide-toggle
+      (change)="toggleBuiltins()"
+      [checked]="!this.hideBuiltinUsers"
+    >
+      <label>{{ 'Show Built-in Users' | translate }}</label>
+    </mat-slide-toggle>
+    <button
+      (click)="doAdd()"
+      [color]="'primary'"
+      mat-button
+    >
+      {{ 'Add' | translate }}
+    </button>
   </page-title-header>
 </ng-template>
 

@@ -1,16 +1,14 @@
 import { DatePipe } from '@angular/common';
-import { HttpErrorResponse } from '@angular/common/http';
-import { Component, OnInit } from '@angular/core';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { Router } from '@angular/router';
+import {
+  AfterViewInit, Component, OnInit, TemplateRef, ViewChild,
+} from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import * as cronParser from 'cron-parser';
 import { formatDistanceToNowStrict } from 'date-fns';
-import { Subject } from 'rxjs';
 import {
-  filter, switchMap, take, tap,
+  filter, switchMap, tap,
 } from 'rxjs/operators';
 import { DeviceType } from 'app/enums/device-type.enum';
 import { helptextSystemAdvanced } from 'app/helptext/system/advanced';
@@ -18,17 +16,11 @@ import { helptextSystemGeneral as helptext } from 'app/helptext/system/general';
 import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
 import { Cronjob } from 'app/interfaces/cronjob.interface';
 import { Device } from 'app/interfaces/device.interface';
-import { CoreEvent } from 'app/interfaces/events';
-import { GlobalActionConfig } from 'app/interfaces/global-action.interface';
 import { InitShutdownScript } from 'app/interfaces/init-shutdown-script.interface';
 import { ReplicationConfig } from 'app/interfaces/replication-config.interface';
 import { Tunable } from 'app/interfaces/tunable.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
-import { AppLoaderService } from 'app/modules/app-loader/app-loader.service';
 import { EmptyType } from 'app/modules/entity/entity-empty/entity-empty.component';
-import { EntityFormComponent } from 'app/modules/entity/entity-form/entity-form.component';
-import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
-import { EntityToolbarComponent } from 'app/modules/entity/entity-toolbar/entity-toolbar.component';
 import { AppTableAction, AppTableConfig } from 'app/modules/entity/table/table.component';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { CronFormComponent } from 'app/pages/system/advanced/cron/cron-form/cron-form.component';
@@ -41,16 +33,13 @@ import { DataCard } from 'app/pages/system/interfaces/data-card.interface';
 import { TunableFormComponent } from 'app/pages/system/tunable/tunable-form/tunable-form.component';
 import {
   DialogService,
-  LanguageService,
-  StorageService,
   UserService,
   WebSocketService,
 } from 'app/services';
-import { CoreService } from 'app/services/core-service/core.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { LayoutService } from 'app/services/layout.service';
 import { AppState } from 'app/store';
 import { waitForAdvancedConfig } from 'app/store/system-config/system-config.selectors';
-import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 import { ConsoleFormComponent } from './console-form/console-form.component';
 import { IsolatedGpuPcisFormComponent } from './isolated-gpu-pcis/isolated-gpu-pcis-form.component';
 import { KernelFormComponent } from './kernel-form/kernel-form.component';
@@ -75,20 +64,16 @@ enum AdvancedCardId {
   templateUrl: './advanced-settings.component.html',
   providers: [DatePipe, UserService],
 })
-export class AdvancedSettingsComponent implements OnInit {
+export class AdvancedSettingsComponent implements OnInit, AfterViewInit {
   dataCards: DataCard<AdvancedCardId>[] = [];
   configData: AdvancedConfig;
   replicationConfig: ReplicationConfig;
   syslog: boolean;
   systemDatasetPool: string;
-  entityForm: EntityFormComponent;
   isFirstTime = true;
   sedPassword = '';
 
-  isHa = false;
-  formEvent$: Subject<CoreEvent>;
-  actionsConfig: GlobalActionConfig;
-  protected dialogRef: MatDialogRef<EntityJobComponent>;
+  @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
 
   cronTableConf: AppTableConfig = {
     title: helptextSystemAdvanced.fieldset_cron,
@@ -214,17 +199,10 @@ export class AdvancedSettingsComponent implements OnInit {
 
   constructor(
     private ws: WebSocketService,
-    private language: LanguageService,
     private dialog: DialogService,
-    private loader: AppLoaderService,
-    private router: Router,
-    private storage: StorageService,
-    public mdDialog: MatDialog,
-    private core: CoreService,
-    public datePipe: DatePipe,
-    protected userService: UserService,
     private translate: TranslateService,
     private slideInService: IxSlideInService,
+    private layoutService: LayoutService,
     private store$: Store<AppState>,
   ) {}
 
@@ -237,34 +215,10 @@ export class AdvancedSettingsComponent implements OnInit {
     this.slideInService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
       this.refreshTables();
     });
+  }
 
-    this.formEvent$ = new Subject();
-    this.formEvent$.pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
-      if (evt.data.save_debug) {
-        this.saveDebug();
-      }
-    });
-
-    // Setup Global Actions
-    const actionsConfig = {
-      actionType: EntityToolbarComponent,
-      actionConfig: {
-        target: this.formEvent$,
-        controls: [
-          {
-            name: 'save_debug',
-            label: this.translate.instant('Save Debug'),
-            type: 'button',
-            value: 'click',
-            color: 'primary',
-          },
-        ],
-      },
-    };
-
-    this.actionsConfig = actionsConfig;
-
-    this.core.emit({ name: 'GlobalActions', data: actionsConfig, sender: this });
+  ngAfterViewInit(): void {
+    this.layoutService.pageHeaderUpdater$.next(this.pageHeader);
   }
 
   async showFirstTimeWarningIfNeeded(): Promise<unknown> {
@@ -276,14 +230,6 @@ export class AdvancedSettingsComponent implements OnInit {
       .warn(helptextSystemAdvanced.first_time.title, helptextSystemAdvanced.first_time.message)
       .pipe(tap(() => this.isFirstTime = false))
       .toPromise();
-  }
-
-  afterInit(entityForm: EntityFormComponent): void {
-    this.entityForm = entityForm;
-
-    this.ws.call('failover.licensed').pipe(untilDestroyed(this)).subscribe((isHa) => {
-      this.isHa = isHa;
-    });
   }
 
   formatSyslogLevel(level: string): string {
@@ -489,80 +435,6 @@ export class AdvancedSettingsComponent implements OnInit {
       default:
         break;
     }
-  }
-
-  saveDebug(): void {
-    this.store$.pipe(waitForSystemInfo, untilDestroyed(this)).subscribe((systemInfo) => {
-      let fileName = '';
-      let mimeType = 'application/gzip';
-      if (systemInfo) {
-        const hostname = systemInfo.hostname.split('.')[0];
-        const date = this.datePipe.transform(new Date(), 'yyyyMMddHHmmss');
-        if (this.isHa) {
-          mimeType = 'application/x-tar';
-          fileName = `debug-${hostname}-${date}.tar`;
-        } else {
-          fileName = `debug-${hostname}-${date}.tgz`;
-        }
-      }
-      this.dialog
-        .confirm({
-          title: helptextSystemAdvanced.dialog_generate_debug_title,
-          message: helptextSystemAdvanced.dialog_generate_debug_message,
-          hideCheckBox: true,
-          buttonMsg: helptextSystemAdvanced.dialog_button_ok,
-        })
-        .pipe(
-          filter(Boolean),
-          untilDestroyed(this),
-        ).subscribe(() => {
-          this.ws.call('core.download', ['system.debug', [], fileName, true]).pipe(untilDestroyed(this)).subscribe(
-            (res) => {
-              const url = res[1];
-              this.dialogRef = this.mdDialog.open(EntityJobComponent, {
-                data: { title: this.translate.instant('Saving Debug') },
-                disableClose: true,
-              });
-              this.dialogRef.componentInstance.jobId = res[0];
-              this.dialogRef.componentInstance.wsshow();
-              this.dialogRef.componentInstance.success.pipe(take(1), untilDestroyed(this)).subscribe(() => {
-                this.dialogRef.close();
-                this.storage.streamDownloadFile(url, fileName, mimeType)
-                  .pipe(untilDestroyed(this)).subscribe(
-                    (file) => {
-                      this.storage.downloadBlob(file, fileName);
-                    },
-                    (err) => {
-                      if (this.dialogRef) {
-                        this.dialogRef.close();
-                      }
-                      if (err instanceof HttpErrorResponse) {
-                        this.dialog.errorReport(
-                          helptextSystemAdvanced.debug_download_failed_title,
-                          helptextSystemAdvanced.debug_download_failed_message,
-                          err.message,
-                        );
-                      } else {
-                        this.dialog.errorReport(
-                          helptextSystemAdvanced.debug_download_failed_title,
-                          helptextSystemAdvanced.debug_download_failed_message,
-                          err,
-                        );
-                      }
-                    },
-                  );
-              });
-              this.dialogRef.componentInstance.failure.pipe(take(1), untilDestroyed(this)).subscribe((saveDebugErr) => {
-                this.dialogRef.close();
-                new EntityUtils().handleWsError(this, saveDebugErr, this.dialog);
-              });
-            },
-            (err) => {
-              new EntityUtils().handleWsError(this, err, this.dialog);
-            },
-          );
-        });
-    });
   }
 
   refreshTables(): void {

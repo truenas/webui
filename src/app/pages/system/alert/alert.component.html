@@ -1,3 +1,31 @@
+<ng-template #pageHeader>
+  <page-title-header>
+    <button
+      (click)="onSubmit()"
+      [color]="'primary'"
+      mat-button
+    >
+      {{ 'Save' | translate }}
+    </button>
+    <button
+      mat-button
+      [matMenuTriggerFor]="categoriesMenu"
+    >
+      {{ 'Category' | translate }}
+      <mat-icon>arrow_drop_down</mat-icon>
+    </button>
+    <mat-menu #categoriesMenu="matMenu">
+      <button
+        *ngFor="let category of categories; let i = index"
+        mat-menu-item
+        (click)="onCategoryChanged(i)"
+      >
+        {{ category.title }}
+      </button>
+    </mat-menu>
+  </page-title-header>
+</ng-template>
+
 <mat-card class="form-card">
   <div class="mat-content">
     <form (ngSubmit)="onSubmit()" *ngIf="formGroup" [formGroup]="formGroup" class="form-wrap">

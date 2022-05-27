@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { SortDirection } from '@angular/material/sort';
 import { format } from 'date-fns-tz';
 import { Observable } from 'rxjs';
-import { map, tap } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 import { DiskPowerLevel } from 'app/enums/disk-power-level.enum';
 import { DiskStandby } from 'app/enums/disk-standby.enum';
 import { FileSystemStat } from 'app/interfaces/filesystem-stat.interface';
@@ -85,9 +85,9 @@ export class StorageService {
     );
   }
 
-  downloadUrl(url: string, filename: string, mimeType: string): Observable<Blob> {
+  downloadUrl(url: string, filename: string, mimeType: string): Observable<void> {
     return this.streamDownloadFile(url, filename, mimeType).pipe(
-      tap((blob) => this.downloadBlob(blob, filename)),
+      map((blob) => this.downloadBlob(blob, filename)),
     );
   }
 

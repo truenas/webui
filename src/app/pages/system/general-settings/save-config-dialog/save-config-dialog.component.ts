@@ -1,9 +1,10 @@
 import { DatePipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { MatDialogRef } from '@angular/material/dialog';
+import { ChangeDetectionStrategy, Component, Inject } from '@angular/core';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { FormControl } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
+import { TranslateService } from '@ngx-translate/core';
 import { switchMap } from 'rxjs/operators';
 import { helptextSystemGeneral as helptext } from 'app/helptext/system/general';
 import { EntityUtils } from 'app/modules/entity/utils';
@@ -12,6 +13,14 @@ import {
 } from 'app/services';
 import { AppState } from 'app/store';
 import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
+
+export interface SaveConfigDialogMessages {
+  title: string;
+  message: string;
+  warning: string;
+  saveButton: string;
+  cancelButton: string;
+}
 
 @UntilDestroy()
 @Component({
@@ -22,7 +31,15 @@ import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 export class SaveConfigDialogComponent {
   exportSeedCheckbox = new FormControl(false);
 
-  readonly helptext = helptext;
+  helptext: SaveConfigDialogMessages;
+
+  readonly defaultMessages: SaveConfigDialogMessages = {
+    message: helptext.save_config_form.message,
+    title: this.translate.instant('Save Configuration'),
+    warning: helptext.save_config_form.warning,
+    saveButton: this.translate.instant('Save'),
+    cancelButton: this.translate.instant('Cancel'),
+  };
 
   constructor(
     private ws: WebSocketService,
@@ -32,7 +49,14 @@ export class SaveConfigDialogComponent {
     private datePipe: DatePipe,
     private dialogRef: MatDialogRef<SaveConfigDialogComponent>,
     private dialog: DialogService,
-  ) {}
+    private translate: TranslateService,
+    @Inject(MAT_DIALOG_DATA) messageOverrides: Partial<SaveConfigDialogMessages> = {},
+  ) {
+    this.helptext = {
+      ...this.defaultMessages,
+      ...messageOverrides,
+    };
+  }
 
   onSubmit(): void {
     this.loader.open();
@@ -61,12 +85,12 @@ export class SaveConfigDialogComponent {
     ).subscribe(
       () => {
         this.loader.close();
-        this.dialogRef.close();
+        this.dialogRef.close(true);
       },
       (error) => {
         new EntityUtils().handleWsError(this, error, this.dialog);
         this.loader.close();
-        this.dialogRef.close();
+        this.dialogRef.close(false);
       },
     );
   }
