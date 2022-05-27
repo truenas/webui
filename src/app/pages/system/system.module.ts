@@ -79,7 +79,7 @@ import { TunableFormComponent } from 'app/pages/system/tunable/tunable-form/tuna
 import { TunableListComponent } from 'app/pages/system/tunable/tunable-list/tunable-list.component';
 import { QrDialogComponent } from 'app/pages/system/two-factor/qr-dialog/qr-dialog.component';
 import { TwoFactorComponent } from 'app/pages/system/two-factor/two-factor.component';
-import { ManualUpdateComponent } from 'app/pages/system/update/manual-update/manual-update.component';
+import { ManualUpdateFormComponent } from 'app/pages/system/update/manual-update-form/manual-update-form.component';
 import { UpdateComponent } from 'app/pages/system/update/update.component';
 import { EnclosureModule } from 'app/pages/system/view-enclosure/enclosure.module';
 import { ReplicationFormComponent } from './advanced/replication-form/replication-form.component';
@@ -149,7 +149,7 @@ import { routing } from './system.routing';
     KernelFormComponent,
     LicenseComponent,
     LocalizationFormComponent,
-    ManualUpdateComponent,
+    ManualUpdateFormComponent,
     NtpServerFormComponent,
     NtpServerListComponent,
     ProactiveComponent,

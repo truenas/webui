@@ -573,7 +573,7 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow>, On
         const path = `/var/log/libvirt/bhyve/${vm.id}_${vm.name}.log`;
         const filename = `${vm.id}_${vm.name}.log`;
         this.ws.call('core.download', ['filesystem.get', [path], filename]).pipe(
-          switchMap(([_, url]) => {
+          switchMap(([, url]) => {
             const mimetype = 'text/plain';
             return this.storageService.downloadUrl(url, filename, mimetype);
           }),

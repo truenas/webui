@@ -1,0 +1,132 @@
+<ng-template #pageHeader>
+  <page-title-header [title]="title$">
+    <button
+      (click)="doAdd()"
+      color="primary"
+      [disabled]="isLoading"
+      class="add-button"
+      mat-button
+    >
+      {{ 'Add' | translate }}
+    </button>
+    <button
+      *ngIf="invalidQuotas.length > 0"
+      (click)="removeInvalidQuotas()"
+      color="primary"
+      [disabled]="isLoading"
+      mat-button
+    >
+      {{ 'Remove Invalid Quotas' | translate }}
+    </button>
+    <mat-slide-toggle
+      (change)="toggleDisplay()"
+      [checked]="!useFullFilter"
+      [disabled]="isLoading"
+    >
+      <label>{{ 'Show All Users' | translate }}</label>
+    </mat-slide-toggle>
+    <ng-template
+      headerInput
+      [prefixIcon]="'search'"
+      (resetInput)="clearFilter()"
+      [shouldShowReset]="shouldShowReset$"
+    >
+      <input
+        #filterInput
+        matInput
+        placeholder="Search"
+        [disabled]="isLoading"
+        autocomplete="off"
+        (input)="filter()"
+      >
+    </ng-template>
+  </page-title-header>
+</ng-template>
+
+<entity-empty *ngIf="isLoading; else loaded" [conf]="loadingConfig"></entity-empty>
+
+<ng-template #loaded>
+  <mat-card>
+    <mat-card-content>
+      <table
+        ix-table
+        [dataSource]="dataSource"
+        matSort
+        matSortDisableClear="true"
+        [matSortActive]="defaultSort.active"
+        [matSortDirection]="defaultSort.direction"
+        [multiTemplateDataRows]="true"
+        [fixedLayout]="true"
+      >
+        <ng-container matColumnDef="name">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'Name' | translate }}</th>
+          <td mat-cell *matCellDef="let row; dataSource: dataSource">{{ renderRowValue(row, 'name') }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="id">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'ID' | translate }}</th>
+          <td mat-cell *matCellDef="let row; dataSource: dataSource">{{ renderRowValue(row, 'id') }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="quota">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'Data Quota' | translate }}</th>
+          <td mat-cell *matCellDef="let row; dataSource: dataSource">{{ renderRowValue(row, 'quota') }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="used_bytes">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'DQ Used' | translate }}</th>
+          <td mat-cell *matCellDef="let row; dataSource: dataSource">{{ renderRowValue(row, 'used_bytes') }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="used_percent">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'DQ % Used' | translate }}</th>
+          <td mat-cell *matCellDef="let row; dataSource: dataSource">{{ renderRowValue(row, 'used_percent') }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="obj_quota">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'Object Quota' | translate }}</th>
+          <td mat-cell *matCellDef="let row; dataSource: dataSource">{{ renderRowValue(row, 'obj_quota') }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="obj_used">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'OQ Used' | translate }}</th>
+          <td mat-cell *matCellDef="let row; dataSource: dataSource">{{ renderRowValue(row, 'obj_used') }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="obj_used_percent">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'OQ % Used' | translate }}</th>
+          <td mat-cell *matCellDef="let row; dataSource: dataSource">{{ renderRowValue(row, 'obj_used_percent') }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef></th>
+          <td mat-cell *matCellDef="let row; dataSource: dataSource">
+            <button
+              *ngIf="row.quota > 0 || row.obj_quota > 0"
+              mat-icon-button
+              [matTooltip]="'Delete' | translate"
+              matTooltipPosition="below"
+              (click)="$event.stopPropagation(); doDelete(row)"
+            >
+              <mat-icon>delete</mat-icon>
+            </button>
+          </td>
+        </ng-container>
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr
+          mat-row
+          *matRowDef="let row; columns: displayedColumns;"
+          (click)="doEdit(row)"
+        ></tr>
+
+        <tr class="mat-row no-data-row" *matNoDataRow>
+          <td class="mat-cell" [attr.colspan]="displayedColumns.length">
+            <entity-empty [conf]="emptyOrErrorConfig"></entity-empty>
+          </td>
+        </tr>
+      </table>
+
+      <ix-table-paginator [dataSource]="dataSource"></ix-table-paginator>
+    </mat-card-content>
+  </mat-card>
+</ng-template>

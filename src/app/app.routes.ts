@@ -37,12 +37,12 @@ export const rootRouterConfig: Routes = [{
   {
     path: 'credentials',
     loadChildren: () => import('./pages/account/account.module').then((module) => module.AccountModule),
-    data: { title: 'Credentials', breadcrumb: 'Credentials' },
+    data: { title: 'Credentials', breadcrumb: 'Credentials', disabled: true },
   },
   {
     path: 'system',
     loadChildren: () => import('./pages/system/system.module').then((module) => module.SystemModule),
-    data: { title: 'System', breadcrumb: 'System' },
+    data: { title: 'System', breadcrumb: 'System', disabled: true },
   },
   {
     path: 'tasks',
@@ -56,7 +56,7 @@ export const rootRouterConfig: Routes = [{
   {
     path: 'services',
     loadChildren: () => import('./pages/services/services.module').then((module) => module.ServicesModule),
-    data: { title: 'Services', breadcrumb: 'Services', toplevel: true },
+    data: { title: 'Services', breadcrumb: 'Services' },
   },
   {
     path: 'directoryservice',
@@ -66,17 +66,17 @@ export const rootRouterConfig: Routes = [{
   {
     path: 'vm',
     loadChildren: () => import('./pages/vm/vm.module').then((module) => module.VmModule),
-    data: { title: 'Virtual Machines', breadcrumb: 'Virtual Machines', toplevel: true },
+    data: { title: 'Virtual Machines', breadcrumb: 'Virtual Machines' },
   },
   {
     path: 'apps',
     component: ApplicationsComponent,
-    data: { title: 'Applications', breadcrumb: 'Applications', toplevel: true },
+    data: { title: 'Applications', breadcrumb: 'Applications' },
   },
   {
     path: 'apps/:tabIndex',
     loadChildren: () => import('./pages/applications/applications.module').then((module) => module.ApplicationsModule),
-    data: { title: 'Applications', breadcrumb: 'Applications', toplevel: true },
+    data: { title: 'Applications', breadcrumb: 'Applications' },
   },
   {
     path: 'sharing',
@@ -86,12 +86,12 @@ export const rootRouterConfig: Routes = [{
   {
     path: 'storage',
     loadChildren: () => import('./pages/storage/storage.module').then((module) => module.StorageModule),
-    data: { title: 'Storage', breadcrumb: 'Storage', toplevel: true },
+    data: { title: 'Storage', breadcrumb: 'Storage' },
   },
   {
     path: 'reportsdashboard',
     loadChildren: () => import('app/pages/reports-dashboard/reports-dashboard.module').then((module) => module.ReportsDashboardModule),
-    data: { title: 'Reporting', breadcrumb: 'Reporting' },
+    data: { title: 'Reporting', breadcrumb: 'Reporting', disabled: true },
   },
   {
     path: 'shell',
@@ -111,7 +111,7 @@ export const rootRouterConfig: Routes = [{
   {
     path: 'credentials',
     loadChildren: () => import('./pages/credentials/credentials.module').then((module) => module.CredentialsModule),
-    data: { title: 'Credentials', breadcrumb: 'Credentials' },
+    data: { title: 'Credentials', breadcrumb: 'Credentials', disabled: true },
   },
   {
     path: 'jobs',

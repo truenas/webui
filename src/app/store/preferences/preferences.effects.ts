@@ -14,6 +14,7 @@ import {
   builtinUsersToggled, guiFormSubmitted, localizationFormSubmitted,
   preferencesLoaded, preferredColumnsUpdated,
   themeNotFound,
+  updateRebootAfterManualUpdate,
 } from 'app/store/preferences/preferences.actions';
 import { selectPreferencesState } from 'app/store/preferences/preferences.selectors';
 import { sidenavUpdated } from 'app/store/topbar/topbar.actions';
@@ -62,9 +63,10 @@ export class PreferencesEffects {
       builtinGroupsToggled,
       localizationFormSubmitted,
       guiFormSubmitted,
+      updateRebootAfterManualUpdate,
     ),
     withLatestFrom(this.store$.select(selectPreferencesState)),
-    switchMap(([_, state]) => {
+    switchMap(([, state]) => {
       if (!state.areLoaded) {
         return throwError('Attempting to save user preferences before they were loaded.');
       }
