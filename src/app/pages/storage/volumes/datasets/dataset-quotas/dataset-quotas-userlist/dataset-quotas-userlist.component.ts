@@ -12,9 +12,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import {
-  delay, filter, switchMap, tap,
-} from 'rxjs/operators';
+import { filter, switchMap, tap } from 'rxjs/operators';
 import { DatasetQuotaType } from 'app/enums/dataset.enum';
 import helptext from 'app/helptext/storage/volumes/datasets/dataset-quotas';
 import { DatasetQuota, SetDatasetQuota } from 'app/interfaces/dataset-quota.interface';
@@ -145,7 +143,7 @@ export class DatasetQuotasUserlistComponent implements OnInit, AfterViewInit, On
     this.ws.call(
       'pool.dataset.get_quota',
       [this.datasetId, DatasetQuotaType.User, filter],
-    ).pipe(delay(2000), untilDestroyed(this)).subscribe((quotas: DatasetQuota[]) => {
+    ).pipe(untilDestroyed(this)).subscribe((quotas: DatasetQuota[]) => {
       this.isLoading = false;
       this.createDataSource(quotas);
       this.checkInvalidQuotas();
