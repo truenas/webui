@@ -8,8 +8,6 @@ import {
   ViewChild,
 } from '@angular/core';
 
-// TODO: Fix breadcrumbs
-
 @Component({
   selector: 'ix-search-input',
   templateUrl: './search-input.component.html',
