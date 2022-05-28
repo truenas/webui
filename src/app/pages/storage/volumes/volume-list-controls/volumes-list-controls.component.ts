@@ -1,9 +1,9 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { GlobalAction } from 'app/interfaces/global-action.interface';
-import { EntityTableAction, EntityTableConfig } from 'app/modules/entity/entity-table/entity-table.interface';
+import { EntityTableAction } from 'app/modules/entity/entity-table/entity-table.interface';
 import { VolumeImportWizardComponent } from 'app/pages/storage/volumes/volume-import-wizard/volume-import-wizard.component';
+import { VolumesListTableConfig } from 'app/pages/storage/volumes/volumes-list/volumes-list-table-config';
 import { VolumesListComponent } from 'app/pages/storage/volumes/volumes-list/volumes-list.component';
 import { CoreService } from 'app/services/core-service/core.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
@@ -14,10 +14,10 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
   templateUrl: './volumes-list-controls.component.html',
   styleUrls: ['./volumes-list-controls.component.scss'],
 })
-export class VolumesListControlsComponent implements GlobalAction, OnInit {
+export class VolumesListControlsComponent implements OnInit {
   @Input() entity: VolumesListComponent;
+  @Input() conf: VolumesListTableConfig;
 
-  conf: EntityTableConfig;
   actions: EntityTableAction[];
 
   form = this.fb.group({
@@ -36,16 +36,6 @@ export class VolumesListControlsComponent implements GlobalAction, OnInit {
         this.filterDatasets(value);
       },
     );
-  }
-
-  applyConfig(config: VolumesListComponent): void {
-    if (config) {
-      this.actions = config.getAddActions();
-      this.conf = config.conf;
-      this.entity = config;
-    } else {
-      throw new Error('This component requires an entity class for a config');
-    }
   }
 
   filterDatasets(value: string): void {

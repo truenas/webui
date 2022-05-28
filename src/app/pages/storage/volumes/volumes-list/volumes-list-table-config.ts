@@ -54,6 +54,7 @@ import {
 
 export class VolumesListTableConfig implements EntityTableConfig {
   hideTopActions = true;
+  disableActionsConfig = true;
   tableData: TreeNode[] = [];
   columns = [
     { name: T('Name'), prop: 'name', always_display: true },

@@ -85,7 +85,7 @@ export class AlertEffects {
   dismissAllAlerts$ = createEffect(() => this.actions$.pipe(
     ofType(dismissAllAlertsPressed),
     withLatestFrom(this.store$.select(selectUnreadAlerts).pipe(pairwise())),
-    mergeMap(([_, [unreadAlerts]]) => {
+    mergeMap(([, [unreadAlerts]]) => {
       const requests = unreadAlerts.map((alert) => this.ws.call('alert.dismiss', [alert.id]));
       return forkJoin(requests);
     }),
@@ -94,7 +94,7 @@ export class AlertEffects {
   reopenAllAlerts$ = createEffect(() => this.actions$.pipe(
     ofType(reopenAllAlertsPressed),
     withLatestFrom(this.store$.select(selectDismissedAlerts).pipe(pairwise())),
-    mergeMap(([_, [dismissedAlerts]]) => {
+    mergeMap(([, [dismissedAlerts]]) => {
       const requests = dismissedAlerts.map((alert) => this.ws.call('alert.restore', [alert.id]));
       return forkJoin(requests);
     }),

@@ -80,7 +80,7 @@ export class SaveConfigDialogComponent {
         }
 
         return this.ws.call('core.download', ['config.save', [{ secretseed: this.exportSeedCheckbox.value }], fileName]).pipe(
-          switchMap(([_, url]) => this.storage.downloadUrl(url, fileName, mimeType)),
+          switchMap(([, url]) => this.storage.downloadUrl(url, fileName, mimeType)),
         );
       }),
       untilDestroyed(this),

@@ -1,3 +1,12 @@
+<ng-template #pageHeader>
+  <page-title-header>
+    <ix-search-input
+      [disabled]="isLoading$ | async"
+      (search)="onSearch($event)"
+    ></ix-search-input>
+  </page-title-header>
+</ng-template>
+
 <div fxLayout="row">
   <mat-tab-group
     animationDuration="0ms"

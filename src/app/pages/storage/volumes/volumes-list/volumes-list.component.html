@@ -1,3 +1,9 @@
+<ng-template #pageHeader>
+  <page-title-header>
+    <app-volumes-list-controls [entity]="this" [conf]="conf"></app-volumes-list-controls>
+  </page-title-header>
+</ng-template>
+
 <div *ngIf="zfsPoolRows.length > 0" class="pools-container">
   <mat-accordion [multi]="true" class="pools">
     <mat-expansion-panel

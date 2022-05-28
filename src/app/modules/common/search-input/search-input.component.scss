@@ -1,14 +1,13 @@
-.header-input-wrapper {
+:host {
   align-items: center;
   background: rgba(0, 0, 0, 0.1);
   border: 1px solid var(--lines);
-  color: white;
+  color: white; // TODO: Theme based
   display: flex;
   flex-direction: row;
   padding: 3px;
   padding-right: 32px;
   position: relative;
-
 
   .prefix-icon {
     mat-icon {

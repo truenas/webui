@@ -1,14 +1,16 @@
 <ng-template #pageHeader>
-  <page-title-header [title]="title$">
-    <button
-      (click)="doAdd()"
-      color="primary"
+  <page-title-header>
+    <ix-search-input
       [disabled]="isLoading"
-      class="add-button"
-      mat-button
+      (search)="filter($event)"
+    ></ix-search-input>
+    <mat-slide-toggle
+      (change)="toggleDisplay()"
+      [checked]="!useFullFilter"
+      [disabled]="isLoading"
     >
-      {{ 'Add' | translate }}
-    </button>
+      <label>{{ 'Show All Groups' | translate }}</label>
+    </mat-slide-toggle>
     <button
       *ngIf="invalidQuotas.length > 0"
       (click)="removeInvalidQuotas()"
@@ -18,28 +20,15 @@
     >
       {{ 'Remove Invalid Quotas' | translate }}
     </button>
-    <mat-slide-toggle
-      (change)="toggleDisplay()"
-      [checked]="!useFullFilter"
+    <button
+      (click)="doAdd()"
+      color="primary"
       [disabled]="isLoading"
+      class="add-button"
+      mat-button
     >
-      <label>{{ 'Show All Groups' | translate }}</label>
-    </mat-slide-toggle>
-    <ng-template
-      headerInput
-      [prefixIcon]="'search'"
-      (resetInput)="clearFilter()"
-      [shouldShowReset]="shouldShowReset$"
-    >
-      <input
-        #filterInput
-        matInput
-        placeholder="Search"
-        [disabled]="isLoading"
-        autocomplete="off"
-        (input)="filter()"
-      >
-    </ng-template>
+      {{ 'Add' | translate }}
+    </button>
   </page-title-header>
 </ng-template>
 

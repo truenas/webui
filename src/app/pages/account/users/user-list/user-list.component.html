@@ -1,18 +1,7 @@
 <ng-template #pageHeader>
   <page-title-header>
-    <ng-template
-      headerInput
-      [prefixIcon]="'search'"
-      (resetInput)="clearFilter()"
-      [shouldShowReset]="shouldShowReset$"
-    >
-      <input
-        #filterInput
-        matInput
-        placeholder="Search"
-        (input)="filter()"
-      >
-    </ng-template>
+    <ix-search-input (search)="onListFiltered($event)"></ix-search-input>
+
     <mat-slide-toggle
       (change)="toggleBuiltins()"
       [checked]="!this.hideBuiltinUsers"

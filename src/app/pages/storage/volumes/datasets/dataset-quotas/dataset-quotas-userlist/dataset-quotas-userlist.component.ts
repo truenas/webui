@@ -5,7 +5,6 @@ import {
   ViewChild, ChangeDetectionStrategy,
   AfterViewInit,
   TemplateRef,
-  ElementRef,
   OnDestroy,
 } from '@angular/core';
 import { MatSort, Sort } from '@angular/material/sort';
@@ -13,8 +12,9 @@ import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { BehaviorSubject } from 'rxjs';
-import { filter, switchMap, tap } from 'rxjs/operators';
+import {
+  delay, filter, switchMap, tap,
+} from 'rxjs/operators';
 import { DatasetQuotaType } from 'app/enums/dataset.enum';
 import helptext from 'app/helptext/storage/volumes/datasets/dataset-quotas';
 import { DatasetQuota, SetDatasetQuota } from 'app/interfaces/dataset-quota.interface';
@@ -36,19 +36,14 @@ import { LayoutService } from 'app/services/layout.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DatasetQuotasUserlistComponent implements OnInit, AfterViewInit, OnDestroy {
-  title$: BehaviorSubject<string> = new BehaviorSubject(this.translate.instant('User Quotas'));
   @ViewChild(MatSort, { static: false }) sort: MatSort;
   @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
-  @ViewChild('filterInput') filterInput: ElementRef<HTMLInputElement>;
 
   datasetId: string;
   dataSource: MatTableDataSource<DatasetQuota> = new MatTableDataSource([]);
   invalidQuotas: DatasetQuota[] = [];
   displayedColumns: string[] = ['name', 'id', 'quota', 'used_bytes', 'used_percent', 'obj_quota', 'obj_used', 'obj_used_percent', 'actions'];
   defaultSort: Sort = { active: 'id', direction: 'asc' };
-  filterString = '';
-  readonly shouldShowResetInput$ = new BehaviorSubject<boolean>(false);
-  readonly shouldShowReset$ = this.shouldShowResetInput$.asObservable();
 
   isLoading = false;
   loadingConfig: EmptyConfig = {
@@ -150,7 +145,7 @@ export class DatasetQuotasUserlistComponent implements OnInit, AfterViewInit, On
     this.ws.call(
       'pool.dataset.get_quota',
       [this.datasetId, DatasetQuotaType.User, filter],
-    ).pipe(untilDestroyed(this)).subscribe((quotas: DatasetQuota[]) => {
+    ).pipe(delay(2000), untilDestroyed(this)).subscribe((quotas: DatasetQuota[]) => {
       this.isLoading = false;
       this.createDataSource(quotas);
       this.checkInvalidQuotas();
@@ -164,9 +159,6 @@ export class DatasetQuotasUserlistComponent implements OnInit, AfterViewInit, On
       this.emptyOrErrorConfig = this.emptyConfig;
     }
     this.dataSource = new MatTableDataSource(quotas);
-    if (this.filterString) {
-      this.dataSource.filter = this.filterString;
-    }
     this.dataSource.sort = this.sort;
     this.cdr.markForCheck();
   }
@@ -261,19 +253,7 @@ export class DatasetQuotasUserlistComponent implements OnInit, AfterViewInit, On
     );
   }
 
-  clearFilter(): void {
-    this.shouldShowResetInput$.next(false);
-    this.filterInput.nativeElement.value = '';
-    this.filter();
-  }
-
-  filter(): void {
-    if (!this.filterInput.nativeElement.value) {
-      this.shouldShowResetInput$.next(false);
-    } else {
-      this.shouldShowResetInput$.next(true);
-    }
-    this.filterString = this.filterInput.nativeElement.value;
-    this.dataSource.filter = this.filterInput.nativeElement.value;
+  filter(value: string): void {
+    this.dataSource.filter = value;
   }
 }
