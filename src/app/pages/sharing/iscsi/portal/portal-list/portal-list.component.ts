@@ -10,9 +10,9 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
 @Component({
-  selector: 'app-iscsi-portal-list',
+  selector: 'ix-iscsi-portal-list',
   template: `
-    <entity-table [conf]="this" [title]="tableTitle"></entity-table>
+    <ix-entity-table [conf]="this" [title]="tableTitle"></ix-entity-table>
   `,
 })
 export class PortalListComponent implements EntityTableConfig {

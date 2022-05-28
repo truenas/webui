@@ -6,7 +6,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { OauthJiraMessage } from 'app/interfaces/support.interface';
 
 @Component({
-  selector: 'app-jira-oauth',
+  selector: 'ix-jira-oauth',
   templateUrl: './jira-oauth.component.html',
   styleUrls: ['./jira-oauth.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

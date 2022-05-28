@@ -33,7 +33,6 @@ import { ModalService } from 'app/services/modal.service';
 
 @UntilDestroy()
 @Component({
-  selector: 'vm-list',
   templateUrl: './vm-list.component.html',
   styleUrls: ['./vm-list.component.scss'],
   providers: [VmService, MessageService],

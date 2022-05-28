@@ -4,7 +4,7 @@ import { UntilDestroy } from '@ngneat/until-destroy';
 
 @UntilDestroy()
 @Component({
-  selector: 'qr-dialog',
+  selector: 'ix-qr-dialog',
   templateUrl: './qr-dialog.component.html',
 })
 export class QrDialogComponent {

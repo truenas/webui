@@ -18,8 +18,7 @@ import { ModalService } from 'app/services/modal.service';
 
 @UntilDestroy()
 @Component({
-  selector: 'chart-add-wizard',
-  template: '<entity-wizard [conf]="this"></entity-wizard>',
+  template: '<ix-entity-wizard [conf]="this"></ix-entity-wizard>',
 })
 
 export class ChartWizardComponent implements OnDestroy, WizardConfiguration {

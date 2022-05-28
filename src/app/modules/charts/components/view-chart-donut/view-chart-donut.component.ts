@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ViewChartComponent } from 'app/modules/charts/components/view-chart/view-chart.component';
 
 @Component({
-  selector: 'viewchartdonut',
+  selector: 'ix-view-chart-donut',
   templateUrl: './view-chart-donut.component.html',
 })
 export class ViewChartDonutComponent extends ViewChartComponent implements OnInit {

@@ -11,7 +11,6 @@ import { Field } from 'app/modules/entity/entity-form/models/field.interface';
 import { EntityFormService } from 'app/modules/entity/entity-form/services/entity-form.service';
 
 @Component({
-  selector: 'form-explorer',
   templateUrl: './form-explorer.component.html',
   styleUrls: [
     '../dynamic-field/dynamic-field.scss',

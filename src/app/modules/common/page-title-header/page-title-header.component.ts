@@ -2,7 +2,7 @@ import { Component, Input } from '@angular/core';
 import { PageTitleService } from 'app/services/page-title.service';
 
 @Component({
-  selector: 'page-title-header',
+  selector: 'ix-page-title-header',
   templateUrl: './page-title-header.component.html',
   styleUrls: ['./page-title-header.component.scss'],
 })

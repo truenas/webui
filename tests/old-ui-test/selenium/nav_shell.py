@@ -25,8 +25,8 @@ except ImportError:
     import unittest
 
 xpaths = { 'navShell' : "//*[@id='nav-13']/div/a[1]",
-          'XPATH2' : "//*[@id='2']/form-checkbox/div/md-checkbox/label/div",
-         'XPATH' : "//*[@id='3']/form-select/div/md-select/div"
+          'XPATH2' : "//*[@id='2']/ix-form-checkbox/div/md-checkbox/label/div",
+         'XPATH' : "//*[@id='3']/ix-form-select/div/md-select/div"
           }
 
 
@@ -74,12 +74,12 @@ class use_shell_test(unittest.TestCase):
         #get the text of element data  into page_data
         page_data=ui_element_page.text
         print ("the Page now is: " + page_data)
-        #assert response to check if "Certain_String" is in the page_data 
+        #assert response to check if "Certain_String" is in the page_data
         self.assertTrue("Certain_String" in page_data)
         #similarly if status_data = page_data
         #conditional execution(eg-toggle service on/off based on current status)
         print "current status is: " + status_data
-        if status_data == "stopped": 
+        if status_data == "stopped":
             #Click on the toggle button if the current status = stopped and print changing status
             driver.find_element_by_xpath("XPATH OF THE STATUS TEXT").click()
             time.sleep(1)
@@ -133,8 +133,8 @@ class use_shell_test(unittest.TestCase):
         index = 0
         ui_text = "null"
         for x in range(0, 5):
-            if self.is_element_present(By.XPATH, "/html/body/app-root/app-admin-layout/md-sidenav-container/div[6]/div/app-user-list/entity-table/div/div[5]/ngx-datatable/div/datatable-body/datatable-selection/datatable-scroller/datatable-row-wrapper[" + str(x) + "]/datatable-body-row/div[2]/datatable-body-cell[1]/div/div"):
-                ui_element=driver.find_element_by_xpath("/html/body/app-root/app-admin-layout/md-sidenav-container/div[6]/div/app-user-list/entity-table/div/div[5]/ngx-datatable/div/datatable-body/datatable-selection/datatable-scroller/datatable-row-wrapper[" + str(x) + "]/datatable-body-row/div[2]/datatable-body-cell[1]/div/div")
+            if self.is_element_present(By.XPATH, "/html/body/ix-root/ix-admin-layout/md-sidenav-container/div[6]/div/app-user-list/ix-entity-table/div/div[5]/ngx-datatable/div/datatable-body/datatable-selection/datatable-scroller/datatable-row-wrapper[" + str(x) + "]/datatable-body-row/div[2]/datatable-body-cell[1]/div/div"):
+                ui_element=driver.find_element_by_xpath("/html/body/ix-root/ix-admin-layout/md-sidenav-container/div[6]/div/app-user-list/ix-entity-table/div/div[5]/ngx-datatable/div/datatable-body/datatable-selection/datatable-scroller/datatable-row-wrapper[" + str(x) + "]/datatable-body-row/div[2]/datatable-body-cell[1]/div/div")
                 ui_text = ui_element.text
             if (ui_text == name):
                 index = x
@@ -142,13 +142,13 @@ class use_shell_test(unittest.TestCase):
             ui_element = " "
 
         #click on the 3 dots
-        driver.find_element_by_xpath("//*[@id='entity-table-component']/div[5]/ngx-datatable/div/datatable-body/datatable-selection/datatable-scroller/datatable-row-wrapper[" + str(index) + "]/datatable-body-row/div[2]/datatable-body-cell[7]/div/app-entity-table-actions/div/md-icon").click()
+        driver.find_element_by_xpath("//*[@id='entity-table-component']/div[5]/ngx-datatable/div/datatable-body/datatable-selection/datatable-scroller/datatable-row-wrapper[" + str(index) + "]/datatable-body-row/div[2]/datatable-body-cell[7]/div/ix-entity-table-actions/div/md-icon").click()
         #click on delete option
         driver.find_element_by_xpath("/html/body/div[3]/div[3]/div/div/span[2]/button/div").click()
         #click on confirmation checkbox
-        driver.find_element_by_xpath("/html/body/div[3]/div[3]/div[2]/md-dialog-container/confirm-dialog/div[1]/md-checkbox/label/div").click()
+        driver.find_element_by_xpath("/html/body/div[3]/div[3]/div[2]/md-dialog-container/ix-confirm-dialog/div[1]/md-checkbox/label/div").click()
         #click on Ok
-        driver.find_element_by_xpath("/html/body/div[3]/div[3]/div[2]/md-dialog-container/confirm-dialog/div[2]/button[1]").click()
+        driver.find_element_by_xpath("/html/body/div[3]/div[3]/div[2]/md-dialog-container/ix-confirm-dialog/div[2]/button[1]").click()
         print (newusernameuncheck + " deleted")
 
 

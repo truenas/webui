@@ -22,7 +22,7 @@ xpaths = {
     'groupSudo': '//*[@id="bsdgrp_sudo"]/mat-checkbox/label/div',
     'breadcrumbBar1': "//div[@id='breadcrumb-bar']/ul/li/a",
     'breadcrumbBar2': "//*[@id='breadcrumb-bar']/ul/li[2]/a",
-    'permitSudo': "//div[5]/form-checkbox/div/mat-checkbox/label/div",
+    'permitSudo': "//div[5]/ix-form-checkbox/div/mat-checkbox/label/div",
     'newuserUserMenu': f"(.//*[normalize-space(text()) and normalize-space(.)='{newuserfn}'])[1]/following::a[1]",
     'newuserUserEdit': f"//button[@id='action_button_edit__{newuser}']/span/div/p",
     'newuserEmail': "(.//*[normalize-space(text()) and normalize-space(.)='Email:'])[1]/following::p[1]",

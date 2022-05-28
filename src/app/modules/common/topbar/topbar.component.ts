@@ -49,7 +49,7 @@ import { alertIndicatorPressed, sidenavUpdated, jobIndicatorPressed } from 'app/
 
 @UntilDestroy()
 @Component({
-  selector: 'topbar',
+  selector: 'ix-topbar',
   styleUrls: ['./topbar.component.scss'],
   templateUrl: './topbar.component.html',
 })

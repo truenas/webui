@@ -5,7 +5,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { ApiMethod } from 'app/interfaces/api-directory.interface';
 
 @Component({
-  selector: 'confirm-dialog',
+  selector: 'ix-confirm-dialog',
   templateUrl: './confirm-dialog.component.html',
   styleUrls: ['./confirm-dialog.component.scss'],
 })

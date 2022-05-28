@@ -8,7 +8,6 @@ import { DatasetUnlockComponent } from 'app/pages/storage/volumes/datasets/datas
 import { DialogService } from 'app/services';
 
 @Component({
-  selector: 'app-unlock-dialog',
   templateUrl: './unlock-dialog.component.html',
   styleUrls: ['./unlock-dialog.component.scss'],
 })

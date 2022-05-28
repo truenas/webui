@@ -31,7 +31,6 @@ import { CertificateAddComponent } from './forms/certificate-add.component';
 
 @UntilDestroy()
 @Component({
-  selector: 'app-certificates-dash',
   templateUrl: './certificates-dash.component.html',
   providers: [EntityFormService],
 })

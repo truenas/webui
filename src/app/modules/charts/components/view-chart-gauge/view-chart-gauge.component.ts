@@ -17,7 +17,7 @@ export interface GaugeConfig {
 }
 
 @Component({
-  selector: 'viewchartgauge',
+  selector: 'ix-view-chart-gauge',
   templateUrl: './view-chart-gauge.component.html',
 })
 export class ViewChartGaugeComponent /* extends DisplayObject */ implements AfterViewInit, OnChanges {

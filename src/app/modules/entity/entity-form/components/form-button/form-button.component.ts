@@ -4,7 +4,6 @@ import { FormButtonConfig } from 'app/modules/entity/entity-form/models/field-co
 import { Field } from 'app/modules/entity/entity-form/models/field.interface';
 
 @Component({
-  selector: 'form-button',
   templateUrl: './form-button.component.html',
 })
 export class FormButtonComponent implements Field {

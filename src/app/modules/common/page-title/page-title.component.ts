@@ -11,7 +11,7 @@ import { PageTitleService } from 'app/services/page-title.service';
 
 @UntilDestroy()
 @Component({
-  selector: 'pagetitle',
+  selector: 'ix-pagetitle',
   templateUrl: './page-title.component.html',
 })
 export class PageTitleComponent implements OnInit, AfterViewInit, OnDestroy {

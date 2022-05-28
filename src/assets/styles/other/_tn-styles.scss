@@ -46,7 +46,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     height: 100vh;
   }
 
-  topbar .mat-toolbar-multiple-rows {
+  ix-topbar .mat-toolbar-multiple-rows {
     min-height: unset;
   }
 
@@ -463,9 +463,8 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
 
   //Entity Module Overrides
 
-  app-members .form-card.mat-card,
-  device-edit .form-card.mat-card,
-  entity-form .form-card.mat-card {
+  ix-device-edit .form-card.mat-card,
+  ix-entity-form .form-card.mat-card {
     margin: 0 auto;
     max-width: 960px;
   }
@@ -584,13 +583,6 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     margin-bottom: 15px;
   }
 
-  app-volumeimport-wizard #key tooltip {
-    position: relative;
-    top: -4px;
-  }
-
-  // ------------------------
-
   // For some items on VM Wizard Hard Disks page
   #disk_radio {
     max-width: 220px;
@@ -665,7 +657,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     width: 36px;
   }
 
-  app-dual-listbox .chosen .mat-list-item-content {
+  ix-dual-listbox .chosen .mat-list-item-content {
     color: var(--fg2);
   }
 
@@ -718,15 +710,15 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
   }
 
   // Fix a layout problem on Sharing/ISCSI page with ink-bar under active link...
-  iscsi .mat-tab-label-active,
-  reportsdashboard .mat-tab-label-active {
+  ix-iscsi .mat-tab-label-active,
+  ix-reports-dashboard .mat-tab-label-active {
     @include variable(border-color, --primary, $primary);
     border-bottom: 2px solid;
   }
 
   //...by hiding ink bar, replacing it with a bottom border, above.
-  iscsi .mat-ink-bar,
-  reportsdashboard .mat-ink-bar {
+  ix-iscsi .mat-ink-bar,
+  ix-reports-dashboard .mat-ink-bar {
     opacity: 0;
   }
 
@@ -928,7 +920,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     overflow-y: hidden !important;
   }
 
-  app-admin-layout .not-alerts .mat-drawer-inner-container {
+  ix-admin-layout .not-alerts .mat-drawer-inner-container {
     overflow: visible !important;
   }
 
@@ -969,11 +961,11 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
   }
 
   // Adjustments to checkboxes and header labels on unique tables
-  services .datatable-body-cell .mat-checkbox {
+  ix-services .datatable-body-cell .mat-checkbox {
     bottom: 7px !important;
   }
 
-  services .datatable-header-cell-label {
+  ix-services .datatable-header-cell-label {
     margin-left: 15px;
   }
 
@@ -995,7 +987,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     border-bottom: 1px solid var(--lines);
   }
 
-  app-entity-dialog .has-pwtoggle {
+  ix-entity-dialog .has-pwtoggle {
     background: rgba(0, 0, 0, 0) !important;
     padding: 0 0 10px !important;
 
@@ -1046,7 +1038,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     vertical-align: top;
   }
 
-  app-volumes-list .ui-treetable-resizable .ui-treetable-tfoot>tr>td,
+  ix-volumes-list .ui-treetable-resizable .ui-treetable-tfoot>tr>td,
   .ui-treetable-resizable .ui-treetable-tbody>tr>td {
     max-width: 300px;
     text-overflow: ellipsis;
@@ -1054,7 +1046,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     white-space: nowrap;
   }
 
-  app-volumes-list td[id^='tbody__comments_'] {
+  ix-volumes-list td[id^='tbody__comments_'] {
     min-width: 200px;
     text-overflow: unset;
     white-space: normal !important;
@@ -1075,16 +1067,12 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     overflow-y: auto;
   }
 
-  app-networksummary .mat-list .mat-subheader {
+  ix-select-dialog .mat-select-placeholder,
+  ix-ipmi .mat-select-placeholder {
     @include variable(color, --fg2, $fg2);
   }
 
-  app-select-dialog .mat-select-placeholder,
-  app-ipmi .mat-select-placeholder {
-    @include variable(color, --fg2, $fg2);
-  }
-
-  app-acmedns-form {
+  ix-acmedns-form {
     h4 {
       font-size: 20px;
     }
@@ -1116,12 +1104,12 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     width: 50%;
   }
 
-  app-certificate-acme-add #authenticators {
+  ix-certificate-acme-add #authenticators {
     position: relative;
     top: -18px;
   }
 
-  entity-form form-combobox mat-form-field {
+  ix-entity-form ix-form-combobox mat-form-field {
     min-width: 180px;
     width: 50%;
   }
@@ -1157,9 +1145,9 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
 
   // Scrollbars need separate rules for firefox and webkit
 
-  app-entity-dialog #pool_processes p,
-  export-disconnect-modal .pool-summary,
-  confirm-dialog .warning-box {
+  ix-entity-dialog #pool_processes p,
+  ix-export-disconnect-modal .pool-summary,
+  ix-confirm-dialog .warning-box {
     background-color: rgb(223, 223, 223);
     color: rgb(19, 19, 19);
     max-height: 170px;
@@ -1168,8 +1156,8 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     width: 100%;
   }
 
-  confirm-dialog pre,
-  error-dialog pre {
+  ix-confirm-dialog pre,
+  ix-error-dialog pre {
     background: rgba(0, 0, 0, 0.096);
     overflow-x: auto;
     padding: 5px;
@@ -1185,7 +1173,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
       opacity: 0.38;
     }
 
-    entity-form-list .form-list .form-list-item > div.form-line {
+    ix-entity-form-list .form-list .form-list-item > div.form-line {
       display: block;
     }
 
@@ -1196,52 +1184,21 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
 
   }
 
-  app-interfaces-form {
-    entity-form-list .form-list .form-list-item > div.form-line {
-      display: none;
-    }
-
-    entity-form-list .form-list .form-list-item > div.form-line:first-child {
-      display: block;
-    }
-  }
-
-  app-ssh-keypairs-form #key_instructions {
-    font-size: 0.9rem;
-    margin-bottom: 1rem;
-  }
-
-  iscsi .mat-tab-links {
+  ix-iscsi .mat-tab-links {
     flex-wrap: wrap;
   }
 
-  app-interfaces-list #timeout-field {
+  ix-interfaces-list #timeout-field {
     text-align: center;
     width: 50px;
   }
 
-  confirm-dialog div.message-content p {
+  ix-confirm-dialog div.message-content p {
     margin-bottom: 10px;
   }
 
-  app-eula p {
+  ix-eula p {
     margin-bottom: 15px;
-  }
-
-  app-general {
-    #language_sort,
-    #language_sort_radiogroup {
-      display: inline-flex;
-    }
-
-    mat-radio-button {
-      margin-left: 10px;
-    }
-  }
-
-  app-active-directory #successfully_updated {
-    position: relative;
-    top: 12px;
   }
 
   mat-error a {
@@ -1257,7 +1214,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     overflow: auto;
   }
 
-  app-two-factor {
+  ix-two-factor {
     #instructions,
     #enabled_status {
       font-size: 115%;
@@ -1272,7 +1229,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     }
   }
 
-  qr-dialog {
+  ix-qr-dialog {
     text-align: center;
 
     #qr-dialog-buttons {
@@ -1376,7 +1333,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
   // End slide-in menu ////////////////
 
   // Remove indentation for form elements on vertical stepper
-  .jw-modal-body entity-wizard {
+  .jw-modal-body ix-entity-wizard {
     mat-card {
       margin: 18px 0;
       padding: 0;

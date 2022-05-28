@@ -99,7 +99,7 @@ describe('FileTicketLicensedFormComponent', () => {
       attach_debug: true,
     }]);
 
-    expect(spectator.query('app-job-item')).toBeTruthy();
+    expect(spectator.query('ix-job-item')).toBeTruthy();
   });
 
   it('opens window when User Guide is pressed', async () => {

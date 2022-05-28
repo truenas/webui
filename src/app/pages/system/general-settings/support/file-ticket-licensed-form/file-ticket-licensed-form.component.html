@@ -1,6 +1,6 @@
 <ix-modal-header [title]="'File Ticket' | translate" [loading]="isFormLoading"></ix-modal-header>
 <div class="ix-modal-subheader" *ngFor="let job$ of jobs$ | async">
-  <app-job-item *ngIf="job$ | async as job" [job]="job"></app-job-item>
+  <ix-job-item *ngIf="job$ | async as job" [job]="job"></ix-job-item>
 </div>
 <mat-card>
   <mat-card-content>

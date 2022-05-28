@@ -26,7 +26,7 @@
         [class]="extraMargin ? 'extra-margin' : 'regular-margin'"
       >
 
-        <app-sys-info
+        <ix-sys-info
           *ngIf="!hasLicense; else licensedSysInfo"
           [version]='systemInfo.version'
           [model]="systemInfo.model"
@@ -34,9 +34,9 @@
           [memory]="systemInfo.memory"
           [serial]="systemInfo.serial"
           [hasLicense]="hasLicense"
-          ></app-sys-info>
+          ></ix-sys-info>
         <ng-template #licensedSysInfo>
-          <app-sys-info
+          <ix-sys-info
             [customer_name]='licenseInfo.customer_name'
             [features]='licenseInfo.features'
             [contract_type]='licenseInfo.contract_type'
@@ -47,7 +47,7 @@
             [daysLeftinContract]='licenseInfo.daysLeftinContract'
             [hasLicense]="hasLicense"
           >
-          </app-sys-info>
+          </ix-sys-info>
         </ng-template>
 
         <div class="links-wrapper">

@@ -22,7 +22,6 @@ import { UserService } from 'app/services/user.service';
 
 @UntilDestroy({ arrayName: 'subscriptions' })
 @Component({
-  selector: 'app-service-smb',
   templateUrl: './service-smb.component.html',
   styleUrls: ['./service-smb.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

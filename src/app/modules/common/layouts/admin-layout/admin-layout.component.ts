@@ -39,7 +39,7 @@ import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 
 @UntilDestroy()
 @Component({
-  selector: 'app-admin-layout',
+  selector: 'ix-admin-layout',
   templateUrl: './admin-layout.component.html',
   styleUrls: ['./admin-layout.component.scss'],
 })

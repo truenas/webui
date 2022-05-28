@@ -18,7 +18,7 @@ import { selectHaStatus, waitForSystemInfo } from 'app/store/system-info/system-
 
 @UntilDestroy()
 @Component({
-  selector: 'widget-sysinfo',
+  selector: 'ix-widget-sysinfo',
   templateUrl: './widget-sys-info.component.html',
   styleUrls: [
     '../widget/widget.component.scss',
