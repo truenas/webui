@@ -45,6 +45,7 @@
     [fxHide]="isHidden || dynamicSchema.hidden"
     [class.disabled]="dynamicSchema.editable === false"
     [type]="dynamicSchema.inputType"
+    [parse]="dynamicSchema.inputType === 'number' ? numberParsing : null"
   ></ix-input>
   <ix-select
     *ngIf="dynamicSchema.type === DynamicFormSchemaType.Select"
