@@ -4,7 +4,7 @@ import {
 import { Job } from 'app/interfaces/job.interface';
 
 @Component({
-  selector: 'job-logs-row',
+  selector: 'ix-job-logs-row',
   templateUrl: './job-logs-row.component.html',
   styleUrls: ['./job-logs-row.component.scss'],
 })
