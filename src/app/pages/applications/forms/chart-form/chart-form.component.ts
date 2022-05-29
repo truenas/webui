@@ -172,7 +172,7 @@ export class ChartFormComponent implements OnDestroy {
   }
 
   onSubmit(): void {
-    const data = this.appSchemaService.remapAppSubmitData(this.form.value);
+    const data = this.appSchemaService.serializeFormValue(this.form.value) as ChartFormValues;
     this.dialogRef = this.mdDialog.open(EntityJobComponent, {
       data: {
         title: this.isNew ? helptext.installing : helptext.updating,

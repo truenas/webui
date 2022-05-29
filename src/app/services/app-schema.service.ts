@@ -380,27 +380,38 @@ export class AppSchemaService {
     event.array.removeAt(event.index);
   }
 
-  remapAppSubmitData(data: HierarchicalObjectMap<ChartFormValue>): HierarchicalObjectMap<ChartFormValue> {
-    let result: any;
-    if (data === undefined || data === null) {
-      result = data;
-    } else if (Array.isArray(data)) {
-      result = data.map((item) => {
-        if (Object.keys(item).length > 1) {
-          return this.remapAppSubmitData(item);
-        }
-        return this.remapAppSubmitData(item[Object.keys(item)[0]]);
-      });
-    } else if (typeof data === 'object') {
-      result = {};
-      Object.keys(data).forEach((key) => {
-        result[key] = this.remapAppSubmitData(data[key] as HierarchicalObjectMap<ChartFormValue>);
-      });
-    } else if (typeof data === 'string' && !Number.isNaN(Number(data))) {
-      result = Number(data);
-    } else {
-      result = data;
+  serializeFormValue(
+    data: HierarchicalObjectMap<ChartFormValue> | HierarchicalObjectMap<ChartFormValue>[] | ChartFormValue,
+  ): HierarchicalObjectMap<ChartFormValue> | HierarchicalObjectMap<ChartFormValue>[] | ChartFormValue {
+    if (data == null) {
+      return data;
     }
+
+    if (Array.isArray(data)) {
+      return this.serializeFormList(data);
+    }
+
+    if (typeof data === 'object') {
+      return this.serializeFormGroup(data as HierarchicalObjectMap<ChartFormValue>);
+    }
+
+    return data;
+  }
+
+  serializeFormGroup(groupValue: HierarchicalObjectMap<ChartFormValue>): HierarchicalObjectMap<ChartFormValue> {
+    const result = {} as HierarchicalObjectMap<ChartFormValue>;
+    Object.keys(groupValue).forEach((key) => {
+      result[key] = this.serializeFormValue(groupValue[key]) as HierarchicalObjectMap<ChartFormValue>;
+    });
     return result;
+  }
+
+  serializeFormList(list: HierarchicalObjectMap<ChartFormValue>[]): HierarchicalObjectMap<ChartFormValue>[] {
+    return list.map((listItem: HierarchicalObjectMap<ChartFormValue>) => {
+      if (Object.keys(listItem).length > 1) {
+        return this.serializeFormValue(listItem);
+      }
+      return this.serializeFormValue(listItem[Object.keys(listItem)[0]]);
+    }) as HierarchicalObjectMap<ChartFormValue>[];
   }
 }

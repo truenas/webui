@@ -318,4 +318,21 @@ describe('AppSchemaService', () => {
       });
     });
   });
+  describe('serializeFormValue()', () => {
+    it('serialization validation', () => {
+      expect(service.serializeFormValue(undefined)).toEqual(undefined);
+      expect(service.serializeFormValue(true)).toEqual(true);
+      expect(service.serializeFormValue(1)).toEqual(1);
+      expect(service.serializeFormValue('1')).toEqual('1');
+      expect(service.serializeFormValue('')).toEqual('');
+      expect(service.serializeFormValue('test')).toEqual('test');
+      expect(service.serializeFormValue(12)).toEqual(12);
+      expect(service.serializeFormValue({})).toEqual({});
+      expect(service.serializeFormValue([])).toEqual([]);
+      expect(service.serializeFormValue([{ a: 1 }, { a: 2 }, { a: 3 }])).toEqual([1, 2, 3]);
+      expect(service.serializeFormValue({ a: 1 })).toEqual({ a: 1 });
+      expect(service.serializeFormValue({ a: { b: 1 } })).toEqual({ a: { b: 1 } });
+      expect(service.serializeFormValue({ a: { b: [{ c: 'test' }] } })).toEqual({ a: { b: ['test'] } });
+    });
+  });
 });
