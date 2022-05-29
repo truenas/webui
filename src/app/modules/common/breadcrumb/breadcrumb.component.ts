@@ -7,7 +7,7 @@ import { RoutePartsService, RoutePart } from 'app/services/route-parts/route-par
 
 @UntilDestroy()
 @Component({
-  selector: 'app-breadcrumb',
+  selector: 'ix-breadcrumb',
   templateUrl: './breadcrumb.component.html',
   styleUrls: ['./breadcrumb.component.scss'],
 })

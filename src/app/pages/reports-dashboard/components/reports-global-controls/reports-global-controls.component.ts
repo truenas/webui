@@ -6,7 +6,6 @@ import { GlobalAction } from 'app/interfaces/global-action.interface';
 import { ReportsDashboardComponent } from 'app/pages/reports-dashboard/reports-dashboard.component';
 
 @Component({
-  selector: 'reports-global-controls',
   templateUrl: './reports-global-controls.component.html',
   styleUrls: ['./reports-global-controls.component.scss'],
 })

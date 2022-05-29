@@ -11,7 +11,6 @@ import { Field } from 'app/modules/entity/entity-form/models/field.interface';
 
 @UntilDestroy()
 @Component({
-  selector: 'form-permissions',
   styleUrls: ['../dynamic-field/dynamic-field.scss', 'form-permissions.scss'],
   templateUrl: './form-permissions.component.html',
 })

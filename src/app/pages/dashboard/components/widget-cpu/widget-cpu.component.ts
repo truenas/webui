@@ -30,7 +30,7 @@ import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 
 @UntilDestroy()
 @Component({
-  selector: 'widget-cpu',
+  selector: 'ix-widget-cpu',
   templateUrl: './widget-cpu.component.html',
   styleUrls: [
     '../widget/widget.component.scss',

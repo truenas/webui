@@ -4,7 +4,7 @@ import { LanguageService } from 'app/services/language.service';
 import { defaultTheme } from 'app/services/theme/theme.constants';
 
 @Component({
-  selector: 'app-auth-layout',
+  selector: 'ix-auth-layout',
   templateUrl: './auth-layout.component.html',
 })
 export class AuthLayoutComponent implements OnInit {
@@ -23,7 +23,7 @@ export class AuthLayoutComponent implements OnInit {
     const palette = Object.keys(theme) as (keyof Theme)[];
     palette.splice(0, 6);
 
-    const adminLayoutElement = document.getElementsByTagName('APP-AUTH-LAYOUT')[0] as HTMLElement;
+    const adminLayoutElement = document.getElementsByTagName('IX-AUTH-LAYOUT')[0] as HTMLElement;
 
     palette.forEach((color) => {
       adminLayoutElement.style.setProperty('--' + color, theme[color] as string);

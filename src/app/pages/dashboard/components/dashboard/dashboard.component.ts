@@ -44,7 +44,6 @@ export type DashboardNicState = NetworkInterfaceState & {
 
 @UntilDestroy()
 @Component({
-  selector: 'dashboard',
   templateUrl: './dashboard.component.html',
   styleUrls: [
     '../widget/widget.component.scss',

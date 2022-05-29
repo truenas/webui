@@ -15,7 +15,6 @@ type Version = Omit<UpgradeSummary, 'upgrade_version' | 'image_update_available'
 
 @UntilDestroy()
 @Component({
-  selector: 'chart-upgrade-dialog',
   styleUrls: ['./chart-upgrade-dialog.component.scss'],
   templateUrl: './chart-upgrade-dialog.component.html',
 })

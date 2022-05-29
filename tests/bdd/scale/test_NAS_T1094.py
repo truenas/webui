@@ -58,8 +58,8 @@ def the_users_page_should_open_click_the_greaterthansign_the_user_field_should_e
     assert wait_on_element(driver, 7, '//div[contains(.,"Users")]')
     assert wait_on_element(driver, 10, '//tr[contains(.,"ericbsd")]//mat-icon', 'clickable')
     driver.find_element_by_xpath('//tr[contains(.,"ericbsd")]//mat-icon').click()
-    assert wait_on_element(driver, 10, '(//tr[contains(.,"ericbsd")]/following-sibling::user-details-row)[1]//button[contains(.,"Edit")]', 'clickable')
-    driver.find_element_by_xpath('(//tr[contains(.,"ericbsd")]/following-sibling::user-details-row)[1]//button[contains(.,"Edit")]').click()
+    assert wait_on_element(driver, 10, '(//tr[contains(.,"ericbsd")]/following-sibling::ix-user-details-row)[1]//button[contains(.,"Edit")]', 'clickable')
+    driver.find_element_by_xpath('(//tr[contains(.,"ericbsd")]/following-sibling::ix-user-details-row)[1]//button[contains(.,"Edit")]').click()
 
 
 @then('the User Edit Page should open, change "Disable Password" to No and click save')
@@ -85,7 +85,7 @@ def change_should_be_saved_open_the_user_page_and_verify_the_user_disable_passwo
     assert wait_on_element(driver, 5, '//h1[contains(.,"Users")]')
     assert wait_on_element(driver, 10, '//tr[contains(.,"ericbsd")]//mat-icon', 'clickable')
     driver.find_element_by_xpath('//tr[contains(.,"ericbsd")]//mat-icon').click()
-    element_text = driver.find_element_by_xpath('(//tr[contains(.,"ericbsd")]/following-sibling::user-details-row)[1]//dt[contains(.,"Password Disabled:")]/../dd').text
+    element_text = driver.find_element_by_xpath('(//tr[contains(.,"ericbsd")]/following-sibling::ix-user-details-row)[1]//dt[contains(.,"Password Disabled:")]/../dd').text
     assert element_text == 'false'
 
 

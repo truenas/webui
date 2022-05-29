@@ -56,8 +56,7 @@ import { ModalService } from 'app/services/modal.service';
 
 @UntilDestroy()
 @Component({
-  selector: 'app-replication-wizard',
-  template: '<entity-wizard [conf]="this"></entity-wizard>',
+  template: '<ix-entity-wizard [conf]="this"></ix-entity-wizard>',
   providers: [KeychainCredentialService, ReplicationService, TaskService, DatePipe, EntityFormService],
 })
 export class ReplicationWizardComponent implements WizardConfiguration {

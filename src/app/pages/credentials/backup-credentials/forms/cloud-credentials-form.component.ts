@@ -29,8 +29,7 @@ import { ModalService } from 'app/services/modal.service';
 
 @UntilDestroy()
 @Component({
-  selector: 'app-cloudcredentials-form',
-  template: '<entity-form [conf]="this"></entity-form>',
+  template: '<ix-entity-form [conf]="this"></ix-entity-form>',
   providers: [CloudCredentialService, ReplicationService],
 })
 export class CloudCredentialsFormComponent implements FormConfiguration {

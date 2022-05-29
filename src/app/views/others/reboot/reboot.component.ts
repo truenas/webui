@@ -11,7 +11,6 @@ import { LocaleService } from 'app/services/locale.service';
 
 @UntilDestroy()
 @Component({
-  selector: 'system-reboot',
   templateUrl: './reboot.component.html',
   styleUrls: ['./reboot.component.scss'],
 })
@@ -33,7 +32,7 @@ export class RebootComponent implements OnInit {
     private location: Location,
   ) {
     this.sysGeneralService.getProductType$.pipe(untilDestroyed(this)).subscribe((res) => {
-      this.productType = res as ProductType;
+      this.productType = res;
     });
   }
 

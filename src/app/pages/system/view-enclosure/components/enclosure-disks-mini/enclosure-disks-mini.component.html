@@ -119,7 +119,7 @@
             <h3 class="header stats">{{ 'Stats' | translate }}</h3>
             <div class="disk-basic-details" fxLayout="row wrap" fxLayoutAlign="center center">
               <div>
-                <disk-ui [data]="selectedDisk"></disk-ui><!-- disk icon + labels -->
+                <ix-disk-ui [data]="selectedDisk"></ix-disk-ui><!-- disk icon + labels -->
                 <div class="capacity">{{converter(selectedDisk.size)}}</div>
               </div>
               <div class="disk-stats-wrapper" fxFlex>
@@ -160,19 +160,19 @@
           <div fxLayout="row wrap" fxLayoutGap="10%">
             <ng-container *ngIf="temperatures && temperatureScales">
               <ng-container *ngFor="let diskName of temperatures.keys;">
-                <temperature-meter *ngIf="temperatures.values[diskName]; else notemps"
+                <ix-temperature-meter *ngIf="temperatures.values[diskName]; else notemps"
                     [fxFlex]="temperatures && temperatures.keys.length >= 4 ? '40%' : '100%' "
                     [source]="diskName"
                     [value]="temperatures.values[diskName]"
                     [unit]="temperatures.unit"
-                    [symbolText]="temperatures.symbolText"></temperature-meter>
+                    [symbolText]="temperatures.symbolText"></ix-temperature-meter>
                 <ng-template #notemps>
                   <div class="no-temp" [fxFlex]="temperatures && temperatures.keys.length >= 4 ? '40%' : '100%' " >
                     <strong>{{diskName}}:</strong> Unknown{{temperatures.symbolText}}
-                    <tooltip
+                    <ix-tooltip
                         [header]="'Temperature data missing.' | translate"
                         [message]="'No temperature data was reported by the system. There can be a number of reasons why this might occur. For troubleshooting tips please go here' | translate">
-                    </tooltip>
+                    </ix-tooltip>
                   </div>
                 </ng-template>
               </ng-container>
@@ -184,10 +184,10 @@
                   <strong>{{diskName}}:</strong> &nbsp;&nbsp;&nbsp;
                   {{temperatures.values[diskName] ? temperatures.values[diskName] : 'Temperature not available.'}}
                   {{temperatures.values[diskName] ? temperatures.symbolText + 'C' : ''}}
-                  <tooltip *ngIf="!temperatures.values[diskName]"
+                  <ix-tooltip *ngIf="!temperatures.values[diskName]"
                     [header]="'Temperature data missing.' | translate"
                     [message]="'No temperature data was reported by the system. There can be a number of reasons why this might occur. For troubleshooting tips please go here' | translate">
-                  </tooltip>
+                  </ix-tooltip>
                 </li>
               </ng-container>
             </ul>

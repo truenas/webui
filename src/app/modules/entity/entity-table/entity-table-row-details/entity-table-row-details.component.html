@@ -20,12 +20,12 @@
         <mat-menu #widget="matMenu">
           <!-- column widgets need to be registered with this switch case -->
           <ng-container [ngSwitch]="column.widget.component">
-            <app-task-schedule-list
+            <ix-task-schedule-list
               *ngSwitchCase="'TaskScheduleListComponent'"
               [value]="getPropValue(column.prop)"
               [config]="config"
               [parent]="parent"
-            ></app-task-schedule-list>
+            ></ix-task-schedule-list>
           </ng-container>
         </mat-menu>
         <p>{{ config.enabled ? getPropValue(column.prop, true) : getPropValue(column.prop) }}</p>

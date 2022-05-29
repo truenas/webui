@@ -9,7 +9,6 @@ import { LocaleService } from 'app/services/locale.service';
 
 @UntilDestroy()
 @Component({
-  selector: 'system-shutdown',
   templateUrl: './shutdown.component.html',
   styleUrls: ['./shutdown.component.scss'],
 })

@@ -3,7 +3,6 @@ import { FormArrayConfig } from 'app/modules/entity/entity-form/models/field-con
 import { Field } from 'app/modules/entity/entity-form/models/field.interface';
 
 @Component({
-  selector: 'form-array',
   templateUrl: './form-array.component.html',
   styleUrls: ['./form-array.component.scss'],
 })

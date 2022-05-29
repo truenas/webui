@@ -14,7 +14,7 @@ import { DialogService, WebSocketService } from 'app/services';
 
 @UntilDestroy()
 @Component({
-  selector: 'manage-catalog-summary-dialog',
+  selector: 'ix-manage-catalog-summary-dialog',
   styleUrls: ['./manage-catalog-summary-dialog.component.scss'],
   templateUrl: './manage-catalog-summary-dialog.component.html',
   // eslint-disable-next-line @angular-eslint/use-component-view-encapsulation

@@ -11,7 +11,7 @@
   </mat-tab-group>
 </div>
 
-<entity-empty *ngIf="isLoading$ | async; else loaded" [conf]="loadingConfig"></entity-empty>
+<ix-entity-empty *ngIf="isLoading$ | async; else loaded" [conf]="loadingConfig"></ix-entity-empty>
 
 <ng-template #loaded>
   <div class="jobs-container">
@@ -137,7 +137,7 @@
 
       <tr class="mat-row no-data-row" *matNoDataRow>
         <td class="mat-cell" [attr.colspan]="displayedColumns.length">
-          <entity-empty [conf]="emptyConfig"></entity-empty>
+          <ix-entity-empty [conf]="emptyConfig"></ix-entity-empty>
         </td>
       </tr>
     </table>
@@ -147,5 +147,5 @@
 </ng-template>
 
 <ng-template #expandedRowTemplate let-job let-colspan="colspan">
-  <job-logs-row [colspan]="colspan" [job]="job"></job-logs-row>
+  <ix-job-logs-row [colspan]="colspan" [job]="job"></ix-job-logs-row>
 </ng-template>
