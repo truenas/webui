@@ -39,6 +39,10 @@ import {
 import { CoreService } from 'app/services/core-service/core.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { ModalService } from 'app/services/modal.service';
+import {
+  ReplaceDiskDialogData,
+  ReplaceDiskDialogComponent,
+} from './components/replace-disk-dialog/replace-disk-dialog.component';
 
 interface PoolDiskInfo {
   name: string;
@@ -78,46 +82,7 @@ export class VolumeStatusComponent implements OnInit, OnDestroy {
   };
 
   protected pk: number;
-  expandRows: number[] = [1];
 
-  protected replaceDiskFormFields: FieldConfig[] = [{
-    type: 'input',
-    name: 'label',
-    value: '',
-    isHidden: true,
-  }, {
-    type: 'select',
-    name: 'disk',
-    placeholder: helptext.dialogFormFields.disk.placeholder,
-    tooltip: helptext.dialogFormFields.disk.tooltip,
-    options: [],
-    required: true,
-    validation: [Validators.required],
-  }, {
-    type: 'input',
-    inputType: 'password',
-    name: 'passphrase',
-    placeholder: helptext.dialogFormFields.passphrase.placeholder,
-    tooltip: helptext.dialogFormFields.passphrase.tooltip,
-    required: true,
-    isHidden: true,
-    disabled: true,
-  }, {
-    type: 'input',
-    inputType: 'password',
-    name: 'passphrase2',
-    placeholder: helptext.dialogFormFields.passphrase2.placeholder,
-    tooltip: helptext.dialogFormFields.passphrase2.tooltip,
-    validation: [matchOtherValidator('passphrase')],
-    required: true,
-    isHidden: true,
-    disabled: true,
-  }, {
-    type: 'checkbox',
-    name: 'force',
-    placeholder: helptext.dialogFormFields.force.placeholder,
-    tooltip: helptext.dialogFormFields.force.tooltip,
-  }];
   protected extendVdevFormFields: FieldConfig[] = [{
     type: 'input',
     name: 'target_vdev',
@@ -207,21 +172,14 @@ export class VolumeStatusComponent implements OnInit, OnDestroy {
   }
 
   getUnusedDisk(): void {
-    const availableDisks: Option[] = [];
     const availableDisksForExtend: Option[] = [];
     this.ws.call('disk.get_unused').pipe(untilDestroyed(this)).subscribe((disks) => {
       disks.forEach((disk) => {
-        availableDisks.push({
-          label: disk.devname,
-          value: disk.identifier,
-        });
         availableDisksForExtend.push({
           label: disk.devname + ' (' + filesize(disk.size, { standard: 'iec' }) + ')',
           value: disk.name,
         });
       });
-      const diskConfig = _.find(this.replaceDiskFormFields, { name: 'disk' }) as FormSelectConfig;
-      diskConfig.options = availableDisks;
 
       const newDiskConfig = _.find(this.extendVdevFormFields, { name: 'new_disk' }) as FormSelectConfig;
       newDiskConfig.options = availableDisksForExtend;
@@ -353,51 +311,26 @@ export class VolumeStatusComponent implements OnInit, OnDestroy {
     }, {
       id: 'replace',
       label: helptext.actions_label.replace,
-      onClick: (row: Pool) => {
+      onClick: (row: { guid: string; name: string }) => {
         let name = row.name;
         if (!_.startsWith(name, '/')) {
           const pIndex = name.lastIndexOf('p');
           name = pIndex > -1 ? name.substring(0, pIndex) : name;
         }
-        const pk = this.pk;
-        _.find(this.replaceDiskFormFields, { name: 'label' }).value = row.guid;
-
-        const conf: DialogFormConfiguration = {
-          title: this.translate.instant(helptext.replace_disk.form_title) + name,
-          fieldConfig: this.replaceDiskFormFields,
-          saveButtonText: helptext.replace_disk.saveButtonText,
-          customSubmit: (entityDialog: EntityDialogComponent) => {
-            delete entityDialog.formValue['passphrase2'];
-
-            const dialogRef = this.matDialog.open(EntityJobComponent, {
-              data: { title: helptext.replace_disk.title },
-              disableClose: true,
-            });
-            dialogRef.componentInstance.setDescription(helptext.replace_disk.description);
-            dialogRef.componentInstance.setCall('pool.replace', [pk, entityDialog.formValue]);
-            dialogRef.componentInstance.submit();
-            dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
-              dialogRef.close(true);
-              entityDialog.dialogRef.close(true);
-              this.getData();
-              this.getUnusedDisk();
-              this.dialogService.info(
-                helptext.replace_disk.title,
-                this.translate.instant('Successfully replaced disk {disk}.', { disk: name }),
-              );
-            });
-            dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((res: Job) => {
-              dialogRef.close();
-              entityDialog.dialogRef.close();
-              let err: string = helptext.replace_disk.err_msg;
-              if (res.error.startsWith('[EINVAL]')) {
-                err = res.error;
-              }
-              this.dialogService.errorReport(helptext.replace_disk.err_title, err, res.exception);
-            });
-          },
-        };
-        this.dialogService.dialogForm(conf);
+        this.matDialog
+          .open(ReplaceDiskDialogComponent, {
+            data: {
+              poolId: this.pk,
+              guid: row.guid,
+              diskName: name,
+            } as ReplaceDiskDialogData,
+          })
+          .afterClosed()
+          .pipe(untilDestroyed(this))
+          .subscribe(() => {
+            this.getData();
+            this.getUnusedDisk();
+          });
       },
       isHidden: false,
     }, {
