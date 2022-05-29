@@ -5,7 +5,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { tween, styler } from 'popmotion';
-import { BehaviorSubject, Subject } from 'rxjs';
+import { Subject } from 'rxjs';
 import { take } from 'rxjs/operators';
 import { NetworkInterfaceAliasType, NetworkInterfaceType } from 'app/enums/network-interface.enum';
 import { WINDOW } from 'app/helpers/window.helper';
@@ -44,7 +44,6 @@ export type DashboardNicState = NetworkInterfaceState & {
 
 @UntilDestroy()
 @Component({
-  selector: 'dashboard',
   templateUrl: './dashboard.component.html',
   styleUrls: [
     '../widget/widget.component.scss',
@@ -52,7 +51,6 @@ export type DashboardNicState = NetworkInterfaceState & {
   ],
 })
 export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
-  title$: BehaviorSubject<string> = new BehaviorSubject('Dashboard');
   @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
   reorderMode = false;
 

@@ -1,11 +1,11 @@
 <ng-container [ngSwitch]="true">
   <div fxLayout="column" fxLayoutAlign="center center" *ngSwitchCase="!isActiveDirectoryEnabled && !isLdapEnabled" class="everything-disabled">
-    <entity-empty [conf]="noDirectoryServicesConfig"></entity-empty>
+    <ix-entity-empty [conf]="noDirectoryServicesConfig"></ix-entity-empty>
     <div class="actions">
-      <button mat-button (click)="onCardButtonPressed(DirectoryServicesCardId.ActiveDirectory)">
+      <button mat-button (click)="openActiveDirectoryForm()">
         {{ 'Configure Active Directory' | translate }}
       </button>
-      <button mat-button (click)="onCardButtonPressed(DirectoryServicesCardId.Ldap)">
+      <button mat-button (click)="openLdapForm()">
         {{ 'Configure LDAP' | translate }}
       </button>
     </div>
@@ -54,10 +54,10 @@
   </h3>
 
   <div class="advanced-settings-cards">
-    <app-table [conf]="idmapTableConf"></app-table>
+    <ix-conf-table [conf]="idmapTableConf"></ix-conf-table>
     <ng-container *ngTemplateOutlet="dataCard; context: { card: kerberosSettingsDataCard }"></ng-container>
-    <app-table [conf]="kerberosRealmsTableConf"></app-table>
-    <app-table [conf]="kerberosKeytabTableConf"></app-table>
+    <ix-conf-table [conf]="kerberosRealmsTableConf"></ix-conf-table>
+    <ix-conf-table [conf]="kerberosKeytabTableConf"></ix-conf-table>
   </div>
 </cdk-accordion-item>
 
@@ -66,7 +66,7 @@
     <mat-toolbar-row>
       <h3>{{ card.title | translate }}</h3>
       <div class="actions action-icon">
-        <button mat-button color="default" (click)="onCardButtonPressed(card.id)">
+        <button mat-button color="default" (click)="card.onSettingsPressed()">
           {{ 'Settings' | translate }}
         </button>
       </div>

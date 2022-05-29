@@ -24,7 +24,6 @@ import { CloudCredentialsFormComponent } from './forms/cloud-credentials-form.co
 
 @UntilDestroy()
 @Component({
-  selector: 'app-backup-credentials',
   templateUrl: './backup-credentials.component.html',
   providers: [KeychainCredentialService, ReplicationService, CloudCredentialService],
 })

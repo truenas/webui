@@ -19,7 +19,7 @@ interface FilterValue {
 
 @UntilDestroy()
 @Component({
-  selector: 'entity-tree-table',
+  selector: 'ix-entity-tree-table',
   templateUrl: './entity-tree-table.component.html',
   styleUrls: ['./entity-tree-table.component.scss'],
   providers: [EntityTreeTableService],

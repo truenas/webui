@@ -2,7 +2,6 @@ import { Component, Input } from '@angular/core';
 import { EntityAction, EntityRowDetails } from 'app/modules/entity/entity-table/entity-row-details/entity-row-details.interface';
 
 @Component({
-  selector: 'app-entity-row-details',
   styleUrls: ['./entity-row-details.component.scss'],
   templateUrl: './entity-row-details.component.html',
 })

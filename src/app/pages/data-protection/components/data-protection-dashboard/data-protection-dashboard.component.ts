@@ -70,7 +70,6 @@ SmartTestUi
 
 @UntilDestroy()
 @Component({
-  selector: 'app-data-protection-dashboard',
   templateUrl: './data-protection-dashboard.component.html',
   providers: [
     TaskService,
@@ -437,6 +436,7 @@ export class DataProtectionDashboardComponent implements OnInit {
         ).subscribe((job: Job) => {
           task.state = { state: job.state };
           task.job = job;
+          this.refreshTables();
         });
       }
 
@@ -465,6 +465,7 @@ export class DataProtectionDashboardComponent implements OnInit {
         ).subscribe((job: Job) => {
           task.state.state = job.state;
           task.job = job;
+          this.refreshTables();
         });
       }
       return task;
@@ -522,6 +523,7 @@ export class DataProtectionDashboardComponent implements OnInit {
         ).subscribe((job: Job) => {
           task.state = { state: job.state };
           task.job = job;
+          this.refreshTables();
         });
       }
 
@@ -561,6 +563,7 @@ export class DataProtectionDashboardComponent implements OnInit {
                       .subscribe((job: Job) => {
                         row.state = { state: job.state };
                         row.job = job;
+                        this.refreshTables();
                       });
                   },
                   (err) => {
@@ -619,6 +622,7 @@ export class DataProtectionDashboardComponent implements OnInit {
                       .subscribe((job: Job) => {
                         row.state = { state: job.state };
                         row.job = job;
+                        this.refreshTables();
                       });
                   },
                   (err) => {
@@ -688,6 +692,7 @@ export class DataProtectionDashboardComponent implements OnInit {
                       .subscribe((job: Job) => {
                         row.state = { state: job.state };
                         row.job = job;
+                        this.refreshTables();
                       });
                   },
                   (err) => {
@@ -746,6 +751,7 @@ export class DataProtectionDashboardComponent implements OnInit {
                       .subscribe((job: Job) => {
                         row.state = { state: job.state };
                         row.job = job;
+                        this.refreshTables();
                       });
                   },
                   (err) => {

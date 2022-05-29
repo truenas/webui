@@ -131,7 +131,7 @@ span.form-message.warning {
   padding-left: 3px;
 }
 
-:host-context(app-system-alert) {
+:host-context(ix-system-alert) {
   .form-line:last-child {
     margin-right: 0;
   }

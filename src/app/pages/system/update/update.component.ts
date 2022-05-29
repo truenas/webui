@@ -1,4 +1,3 @@
-import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatDialogRef } from '@angular/material/dialog/dialog-ref';
@@ -32,7 +31,7 @@ import { waitForSystemFeatures, waitForSystemInfo } from 'app/store/system-info/
 
 @UntilDestroy()
 @Component({
-  selector: 'app-update',
+  selector: 'ix-update',
   styleUrls: ['update.component.scss'],
   templateUrl: './update.component.html',
 })
@@ -119,7 +118,6 @@ export class UpdateComponent implements OnInit {
     protected dialogService: DialogService,
     public translate: TranslateService,
     protected storage: StorageService,
-    protected http: HttpClient,
     public core: CoreService,
     private store$: Store<AppState>,
   ) {
@@ -654,7 +652,7 @@ export class UpdateComponent implements OnInit {
       ['config.save', [{ secretseed: entityDialog.formValue['secretseed'] }], fileName],
     ).pipe(
       switchMap(([_, url]) => {
-        return this.storage.streamDownloadFile(this.http, url, fileName, mimetype).pipe(
+        return this.storage.streamDownloadFile(url, fileName, mimetype).pipe(
           tap((file: Blob) => {
             this.storage.downloadBlob(file, fileName);
             this.savedConfiguration = true;

@@ -22,9 +22,8 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
 @Component({
-  selector: 'app-device-list',
   template: `
-    <entity-table [title]="title" [conf]="this"></entity-table>
+    <ix-entity-table [title]="title" [conf]="this"></ix-entity-table>
   `,
 })
 export class DeviceListComponent implements EntityTableConfig {

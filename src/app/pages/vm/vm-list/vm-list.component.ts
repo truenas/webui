@@ -1,4 +1,3 @@
-import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
@@ -34,7 +33,6 @@ import { ModalService } from 'app/services/modal.service';
 
 @UntilDestroy()
 @Component({
-  selector: 'vm-list',
   templateUrl: './vm-list.component.html',
   styleUrls: ['./vm-list.component.scss'],
   providers: [VmService, MessageService],
@@ -100,7 +98,6 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow>, On
     private dialogService: DialogService,
     private router: Router,
     protected dialog: MatDialog,
-    private http: HttpClient,
     private modalService: ModalService,
     private vmService: VmService,
     private translate: TranslateService,
@@ -576,7 +573,7 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow>, On
         this.ws.call('core.download', ['filesystem.get', [path], filename]).pipe(untilDestroyed(this)).subscribe(
           ([_, url]) => {
             const mimetype = 'text/plain';
-            this.storageService.streamDownloadFile(this.http, url, filename, mimetype)
+            this.storageService.streamDownloadFile(url, filename, mimetype)
               .pipe(untilDestroyed(this))
               .subscribe((file) => {
                 this.storageService.downloadBlob(file, filename);

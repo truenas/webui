@@ -33,7 +33,7 @@ interface ExportDisconnectFormValue {
 
 @UntilDestroy()
 @Component({
-  selector: 'export-disconnect-modal',
+  selector: 'ix-export-disconnect-modal',
   styleUrls: ['./export-disconnect-modal.component.scss'],
   templateUrl: './export-disconnect-modal.component.html',
 })

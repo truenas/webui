@@ -14,7 +14,6 @@ import { LocaleService } from 'app/services/locale.service';
 
 @UntilDestroy()
 @Component({
-  selector: 'app-config-reset',
   templateUrl: './config-reset.component.html',
   styleUrls: ['./config-reset.component.scss'],
 })

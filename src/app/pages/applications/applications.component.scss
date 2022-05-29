@@ -229,8 +229,8 @@ mat-tab-group {
   width: 300px;
 }
 
-app-manage-catalogs {
-  entity-table {
+ix-manage-catalogs {
+  ix-entity-table {
     #entity-table-component.mat-card {
       margin: 0;
     }
@@ -245,8 +245,8 @@ app-manage-catalogs {
   }
 }
 
-app-docker-images {
-  entity-table {
+ix-docker-images {
+  ix-entity-table {
     #entity-table-component.mat-card {
       margin: 0;
     }

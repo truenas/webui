@@ -12,7 +12,7 @@
       {{config.customEventActionLabel}}
     </button>
   </mat-card-actions>
-  <tooltip *ngIf="config.tooltip" [header]="config.placeholder" [message]="config.tooltip"></tooltip>
+  <ix-tooltip *ngIf="config.tooltip" [header]="config.placeholder" [message]="config.tooltip"></ix-tooltip>
   <mat-error *ngIf="config['hasErrors']"><div [innerHTML]="config['errors']"></div></mat-error>
   <mat-error *ngIf="config.warnings"><div [innerHTML]="config.warnings | translate"></div></mat-error>
 </div>

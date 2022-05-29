@@ -3,7 +3,7 @@
     <span [innerHTML]="label"></span>
     <span *ngIf="required" class="required">*</span>
   </label>
-  <tooltip *ngIf="tooltip" [header]="label" class="tooltip" [message]="tooltip"></tooltip>
+  <ix-tooltip *ngIf="tooltip" [header]="label" class="tooltip" [message]="tooltip"></ix-tooltip>
 </div>
 
 <mat-radio-group
@@ -22,7 +22,7 @@
     <mat-radio-button [value]="option.value">
       {{option.label}}
     </mat-radio-button>
-    <tooltip *ngIf="option.tooltip" [header]="option.label" class="tooltip" [message]="option.tooltip"></tooltip>
+    <ix-tooltip *ngIf="option.tooltip" [header]="option.label" class="tooltip" [message]="option.tooltip"></ix-tooltip>
   </div>
 </mat-radio-group>
 <ix-errors [control]="controlDirective.control" [label]="label"></ix-errors>

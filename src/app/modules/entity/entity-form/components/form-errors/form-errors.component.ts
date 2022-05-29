@@ -3,7 +3,7 @@ import { AbstractControl } from '@angular/forms';
 import { FieldConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
 
 @Component({
-  selector: 'form-errors',
+  selector: 'ix-form-errors',
   templateUrl: './form-errors.component.html',
 })
 export class FormErrorsComponent {

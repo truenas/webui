@@ -3,7 +3,7 @@
     <span [innerHTML]="label"></span>
     <span *ngIf="required" class="required">*</span>
   </label>
-  <tooltip *ngIf="tooltip" [header]="label" class="tooltip" [message]="tooltip"></tooltip>
+  <ix-tooltip *ngIf="tooltip" [header]="label" class="tooltip" [message]="tooltip"></ix-tooltip>
 </div>
 
 <div class="permissions-container">
@@ -37,8 +37,8 @@
       <td>
         <mat-checkbox
           [disabled]="isDisabled"
-          color="primary" 
-          [checked]="ownerExec" 
+          color="primary"
+          [checked]="ownerExec"
           (change)="toggleOwnerExec()"
         ></mat-checkbox>
       </td>
@@ -53,21 +53,21 @@
           color="primary"
           [checked]="groupRead"
           (change)="toggleGroupRead()"
-        ></mat-checkbox> 
+        ></mat-checkbox>
       </td>
       <td>
         <mat-checkbox
           [disabled]="isDisabled"
-          color="primary" 
-          [checked]="groupWrite" 
+          color="primary"
+          [checked]="groupWrite"
           (change)="toggleGroupWrite()"
         ></mat-checkbox>
       </td>
       <td>
         <mat-checkbox
           [disabled]="isDisabled"
-          color="primary" 
-          [checked]="groupExec" 
+          color="primary"
+          [checked]="groupExec"
           (change)="toggleGroupExec()"
         ></mat-checkbox>
       </td>
@@ -77,10 +77,10 @@
         <span class="header-label">{{"Other" | translate}}</span>
       </td>
       <td>
-        <mat-checkbox 
+        <mat-checkbox
           [disabled]="isDisabled"
-          color="primary" 
-          [checked]="otherRead" 
+          color="primary"
+          [checked]="otherRead"
           (change)="toggleOtherRead()"
         ></mat-checkbox>
       </td>

@@ -1,7 +1,7 @@
 import { Component, Input } from '@angular/core';
 
 @Component({
-  selector: 'temperature-meter',
+  selector: 'ix-temperature-meter',
   templateUrl: './temperature-meter.component.html',
   styleUrls: ['./temperature-meter.component.scss'],
 })

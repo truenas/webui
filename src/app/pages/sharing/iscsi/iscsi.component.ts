@@ -10,7 +10,7 @@ import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 
 @UntilDestroy()
 @Component({
-  selector: 'iscsi',
+  selector: 'ix-iscsi',
   templateUrl: './iscsi.component.html',
   providers: [IscsiService],
 })

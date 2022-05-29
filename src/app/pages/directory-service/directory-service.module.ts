@@ -14,6 +14,7 @@ import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxTableModule } from 'app/modules/ix-tables/ix-table.module';
 import { ActiveDirectoryComponent } from 'app/pages/directory-service/components/active-directory/active-directory.component';
+import { IdmapFormComponent } from 'app/pages/directory-service/components/idmap-form/idmap-form.component';
 import { KerberosKeytabsFormComponent } from 'app/pages/directory-service/components/kerberos-keytabs/kerberos-keytabs-form/kerberos-keytabs-form.component';
 import { KerberosKeytabsListComponent } from 'app/pages/directory-service/components/kerberos-keytabs/kerberos-keytabs-list/kerberos-keytabs-list.component';
 import { KerberosRealmsListComponent } from 'app/pages/directory-service/components/kerberos-realms/kerberos-realms-list.component';
@@ -24,8 +25,7 @@ import {
 import { routing } from 'app/pages/directory-service/directory-service.routing';
 import { DirectoryServicesComponent } from 'app/pages/directory-service/directory-services.component';
 import { SystemGeneralService } from 'app/services';
-import { IdmapFormComponent } from './components/idmap/idmap-form.component';
-import { IdmapListComponent } from './components/idmap/idmap-list.component';
+import { IdmapListComponent } from './components/idmap-list/idmap-list.component';
 import { KerberosRealmsFormComponent } from './components/kerberos-realms-form/kerberos-realms-form.component';
 import { LdapComponent } from './components/ldap/ldap.component';
 

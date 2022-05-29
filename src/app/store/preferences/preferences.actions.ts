@@ -26,3 +26,8 @@ export const guiFormClosedWithoutSaving = createAction('[Preferences] GUI Form C
 
 export const dashboardStateLoaded = createAction('[Preferences API] Dashboard State Loaded', props<{ dashboardState: DashConfigItem[] }>());
 export const noDashboardStateFound = createAction('[Preferences API] No Dashboard State Found');
+
+export const updateRebootAfterManualUpdate = createAction(
+  '[Preferences] Reboot After Manual Update Option Updated',
+  props<{ rebootAfterManualUpdate: boolean }>(),
+);

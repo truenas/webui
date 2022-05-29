@@ -21,7 +21,7 @@ import { ProactiveComponent } from './proactive/proactive.component';
 
 @UntilDestroy()
 @Component({
-  selector: 'app-support',
+  selector: 'ix-support',
   templateUrl: './support.component.html',
   styleUrls: ['./support.component.scss'],
 })
@@ -61,7 +61,7 @@ export class SupportComponent implements OnInit {
       }
       if (systemInfo.license) {
         this.hasLicense = true;
-        this.licenseInfo = systemInfo.license;
+        this.licenseInfo = { ...systemInfo.license };
         this.parseLicenseInfo();
       }
     });

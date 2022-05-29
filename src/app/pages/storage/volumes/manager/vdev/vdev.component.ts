@@ -13,7 +13,7 @@ import { ManagerComponent } from 'app/pages/storage/volumes/manager/manager.comp
 import { StorageService } from 'app/services/storage.service';
 
 @Component({
-  selector: 'app-vdev',
+  selector: 'ix-vdev',
   templateUrl: 'vdev.component.html',
   styleUrls: ['vdev.component.scss'],
 })

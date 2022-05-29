@@ -5,7 +5,6 @@ import { NgForm } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
 
 @Component({
-  selector: 'widget',
   templateUrl: './widget.component.html',
 })
 export class WidgetComponent {

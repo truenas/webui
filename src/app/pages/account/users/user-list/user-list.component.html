@@ -1,5 +1,5 @@
 <ng-template #pageHeader>
-  <page-title-header [title]="title$">
+  <ix-page-title-header>
     <button
       (click)="doAdd()"
       [color]="'primary'"
@@ -26,10 +26,10 @@
         (input)="filter()"
       >
     </ng-template>
-  </page-title-header>
+  </ix-page-title-header>
 </ng-template>
 
-<entity-empty *ngIf="isLoading$ | async; else loaded" [conf]="loadingConfig"></entity-empty>
+<ix-entity-empty *ngIf="isLoading$ | async; else loaded" [conf]="loadingConfig"></ix-entity-empty>
 
 <ng-template #loaded>
   <mat-card>
@@ -83,7 +83,7 @@
 
         <tr class="mat-row no-data-row" *matNoDataRow>
           <td class="mat-cell" [attr.colspan]="displayedColumns.length">
-            <entity-empty [conf]="emptyOrErrorConfig$ | async"></entity-empty>
+            <ix-entity-empty [conf]="emptyOrErrorConfig$ | async"></ix-entity-empty>
           </td>
         </tr>
       </table>
@@ -94,5 +94,5 @@
 </ng-template>
 
 <ng-template #expandedRowTemplate let-user let-colspan="colspan">
-  <user-details-row [user]="user" [colspan]="colspan"></user-details-row>
+  <ix-user-details-row [user]="user" [colspan]="colspan"></ix-user-details-row>
 </ng-template>

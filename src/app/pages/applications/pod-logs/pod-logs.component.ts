@@ -1,4 +1,3 @@
-import { HttpClient } from '@angular/common/http';
 import {
   Component, ElementRef, OnDestroy, OnInit, ViewChild, ViewEncapsulation,
 } from '@angular/core';
@@ -29,7 +28,6 @@ interface PodLogEvent {
 
 @UntilDestroy()
 @Component({
-  selector: 'app-pod-logs',
   templateUrl: './pod-logs.component.html',
   styleUrls: ['./pod-logs.component.scss'],
   providers: [ShellService],
@@ -65,7 +63,6 @@ export class PodLogsComponent implements OnInit, OnDestroy {
     protected aroute: ActivatedRoute,
     protected loader: AppLoaderService,
     protected storageService: StorageService,
-    protected http: HttpClient,
   ) {}
 
   ngOnInit(): void {
@@ -274,7 +271,7 @@ export class PodLogsComponent implements OnInit, OnDestroy {
     ).pipe(untilDestroyed(this)).subscribe((res) => {
       this.loader.close();
       const url = res[1];
-      this.storageService.streamDownloadFile(this.http, url, fileName, mimetype)
+      this.storageService.streamDownloadFile(url, fileName, mimetype)
         .pipe(untilDestroyed(this))
         .subscribe((file: Blob) => {
           if (res !== null) {

@@ -25,7 +25,7 @@ import { ThemeService } from 'app/services/theme/theme.service';
 
 @UntilDestroy()
 @Component({
-  selector: 'widget-memory',
+  selector: 'ix-widget-memory',
   templateUrl: './widget-memory.component.html',
   styleUrls: [
     '../widget/widget.component.scss',

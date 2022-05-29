@@ -27,8 +27,7 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
 @Component({
-  selector: 'disk-list',
-  template: '<entity-table [title]="title" [conf]="this"></entity-table>',
+  template: '<ix-entity-table [title]="title" [conf]="this"></ix-entity-table>',
 })
 export class DiskListComponent implements EntityTableConfig<Disk> {
   title = this.translate.instant('Disks');

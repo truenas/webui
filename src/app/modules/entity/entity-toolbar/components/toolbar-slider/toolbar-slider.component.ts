@@ -12,7 +12,7 @@ export interface ToolbarSliderConfig {
 }
 
 @Component({
-  selector: 'toolbar-slider',
+  selector: 'ix-toolbar-slider',
   templateUrl: './toolbar-slider.component.html',
 })
 export class ToolbarSliderComponent {

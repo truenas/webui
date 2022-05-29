@@ -12,7 +12,7 @@ import { Control } from 'app/modules/entity/entity-toolbar/models/control.interf
 
 @UntilDestroy()
 @Component({
-  selector: 'entity-toolbar',
+  selector: 'ix-entity-toolbar',
   templateUrl: './entity-toolbar.component.html',
   styleUrls: ['./entity-toolbar.component.scss'],
 })

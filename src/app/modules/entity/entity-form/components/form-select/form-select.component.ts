@@ -14,7 +14,7 @@ import { EntityUtils, NULL_VALUE } from 'app/modules/entity/utils';
 
 @UntilDestroy()
 @Component({
-  selector: 'form-select',
+  selector: 'ix-form-select',
   styleUrls: ['form-select.component.scss', '../dynamic-field/dynamic-field.scss'],
   templateUrl: './form-select.component.html',
 })
