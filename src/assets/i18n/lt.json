@@ -3576,6 +3576,7 @@
   "Unset to disable this service without deleting it.": "",
   "Unset to prepend the domain name to the username. Unset to prevent name collisions when Allow Trusted Domains is set and multiple domains use the same username.": "",
   "Unshare": "",
+  "Unsupported Hardware": "",
   "Until": "",
   "Until: ": "",
   "Up to date": "",

@@ -85,8 +85,8 @@
                   <div class="generic alert" *ngIf="!product_image && isPassive && ha_status !== 'HA Enabled'">
                     <mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-alert"></mat-icon>
                   </div>
-                  <div *ngIf="product_image && isHA" class="ha-node-status">({{ isPassive ? "Standby" : "Active" | translate }})</div>
-                  <div *ngIf="ready && !product_image && product_type === ProductType.ScaleEnterprise" class="ha-node-status">(Unsupported Hardware)</div>
+                  <div *ngIf="product_image && isHA" class="ha-node-status">({{ (isPassive ? 'Standby' : 'Active') | translate }})</div>
+                  <div *ngIf="ready && !product_image && product_type === ProductType.ScaleEnterprise" class="ha-node-status">({{ 'Unsupported Hardware' | translate }})</div>
                 </div>
               </div>
 
