@@ -1,4 +1,3 @@
-import { HttpClient } from '@angular/common/http';
 import { Component } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -9,7 +8,7 @@ import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
-  selector: 'error-dialog',
+  selector: 'ix-error-dialog',
   templateUrl: './error-dialog.component.html',
   styleUrls: ['./error-dialog.component.scss'],
 })
@@ -23,7 +22,6 @@ export class ErrorDialogComponent {
   constructor(
     public dialogRef: MatDialogRef<ErrorDialogComponent>,
     private ws: WebSocketService,
-    public http: HttpClient,
     public storage: StorageService,
   ) {}
 
@@ -61,7 +59,7 @@ export class ErrorDialogComponent {
       (res) => {
         const url = res[1];
         const mimetype = 'text/plain';
-        this.storage.streamDownloadFile(this.http, url, this.logs.id + '.log', mimetype).pipe(untilDestroyed(this)).subscribe((file) => {
+        this.storage.streamDownloadFile(url, this.logs.id + '.log', mimetype).pipe(untilDestroyed(this)).subscribe((file) => {
           this.storage.downloadBlob(file, this.logs.id + '.log');
           if (this.dialogRef) {
             this.dialogRef.close();

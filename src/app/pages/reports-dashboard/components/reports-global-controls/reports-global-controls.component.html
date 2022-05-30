@@ -1,7 +1,7 @@
 <div *ngIf="config" class="reports-toolbar">
-  <div class="reports-dash-global-controls" fxLayout="row" fxLayoutAlign="center end">
+  <div class="reports-dash-global-controls" fxLayout="row" fxLayoutAlign="center center">
     <ng-container *ngIf="config.activeTab?.value === ReportTab.Disk">
-      <entity-toolbar fxFlex [conf]="config.toolbarConfig"></entity-toolbar>
+      <ix-entity-toolbar fxFlex [conf]="config.toolbarConfig"></ix-entity-toolbar>
     </ng-container>
 
     <div *ngIf="config.activeTab">

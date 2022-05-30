@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Input,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, Output,
 } from '@angular/core';
 import { ControlValueAccessor, FormControl, NgControl } from '@angular/forms';
 import { UntilDestroy } from '@ngneat/until-destroy';
@@ -22,6 +22,7 @@ export class IxInputComponent implements ControlValueAccessor {
   @Input() readonly: boolean;
   @Input() type: string;
   @Input() autocomplete = 'off';
+  @Output() inputBlur: EventEmitter<unknown> = new EventEmitter();
 
   /** If formatted value returned by parseAndFormatInput has non-numeric letters
    * and input 'type' is a number, the input will stay empty on the form */
@@ -30,7 +31,7 @@ export class IxInputComponent implements ControlValueAccessor {
 
   formControl = new FormControl(this).value as FormControl;
 
-  value: string | number = '';
+  private _value: string | number = '';
   formatted: string | number = '';
 
   isDisabled = false;
@@ -46,6 +47,18 @@ export class IxInputComponent implements ControlValueAccessor {
     private cdr: ChangeDetectorRef,
   ) {
     this.controlDirective.valueAccessor = this;
+  }
+
+  get value(): string | number {
+    return this._value;
+  }
+
+  set value(val: string | number) {
+    if (this.type === 'number') {
+      this._value = val ? Number(val) : null;
+      return;
+    }
+    this._value = val;
   }
 
   writeValue(value: string | number): void {
@@ -103,7 +116,7 @@ export class IxInputComponent implements ControlValueAccessor {
     this.invalid = false;
     this.value = '';
     this.formatted = '';
-    this.onChange('');
+    this.onChange(this.value);
   }
 
   setDisabledState(isDisabled: boolean): void {
@@ -118,7 +131,7 @@ export class IxInputComponent implements ControlValueAccessor {
     }
   }
 
-  blur(): void {
+  blurred(): void {
     this.onTouch();
     if (this.formatted) {
       if (this.parse) {
@@ -131,6 +144,7 @@ export class IxInputComponent implements ControlValueAccessor {
 
     this.onChange(this.value);
     this.cdr.markForCheck();
+    this.inputBlur.emit();
   }
 
   onPasswordToggled(): void {

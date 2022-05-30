@@ -1,12 +1,20 @@
-import { NewTicketType } from 'app/enums/new-ticket-type.enum';
+import {
+  TicketCategory, TicketCriticality, TicketEnvironment, TicketType,
+} from 'app/enums/file-ticket.enum';
 
 export interface CreateNewTicket {
   attach_debug: boolean;
   body: string;
-  category: string;
+  category: TicketCategory;
   title: string;
-  type: NewTicketType;
-  token: string;
+  type?: TicketType;
+  token?: string;
+  name?: string;
+  email?: string;
+  cc?: string[];
+  phone?: string;
+  environment?: TicketEnvironment;
+  criticality?: TicketCriticality;
 }
 
 export interface SupportConfig {

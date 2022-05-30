@@ -2,8 +2,7 @@
   <div class="header">
     <div class="header-overlay">
       <div class="logo-wrapper">
-        <mat-icon *ngIf="systemType === ProductType.Enterprise" svgIcon="truenas_enterprise_logo_full" class="logo" alt="TrueNAS ENTERPRISE logo"></mat-icon>
-        <mat-icon *ngIf="systemType === ProductType.Scale || systemType === ProductType.ScaleEnterprise" svgIcon="truenas_scale_logo_full" class="logo" alt="TrueNAS SCALE logo"></mat-icon>
+        <mat-icon svgIcon="truenas_scale_logo_full" class="logo" alt="TrueNAS SCALE logo"></mat-icon>
       </div>
     </div>
   </div>
@@ -20,10 +19,6 @@
       <div fxFlex="90%" class="medium-font" [innerHtml]="helptext.forums | translate"></div>
     </div>
 
-    <div class="line-item" *ngIf="systemType === ProductType.Core">
-      <div fxFlex="10%"><img id="ix-img" src="assets/images/iX_Logomark.svg"></div>
-      <div fxFlex="90%" class="medium-font" [innerHtml]="helptext.contact | translate"></div>
-    </div>
     <div id="open-source" [innerHtml]="helptext.opensource | translate: { product: systemType } "></div>
   </div>
 

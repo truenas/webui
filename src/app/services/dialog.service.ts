@@ -5,12 +5,10 @@ import { Observable } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { ConfirmOptions, ConfirmOptionsWithSecondaryCheckbox } from 'app/interfaces/dialog.interface';
 import { Job } from 'app/interfaces/job.interface';
-import { Option } from 'app/interfaces/option.interface';
 import { ConfirmDialogComponent } from 'app/modules/common/dialog/confirm-dialog/confirm-dialog.component';
 import { ErrorDialogComponent } from 'app/modules/common/dialog/error-dialog/error-dialog.component';
 import { GeneralDialogComponent, GeneralDialogConfig } from 'app/modules/common/dialog/general-dialog/general-dialog.component';
 import { InfoDialogComponent } from 'app/modules/common/dialog/info-dialog/info-dialog.component';
-import { SelectDialogComponent } from 'app/modules/common/dialog/select-dialog/select-dialog.component';
 import { DialogFormConfiguration } from 'app/modules/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/modules/entity/entity-dialog/entity-dialog.component';
 import { WebSocketService } from './ws.service';
@@ -30,8 +28,8 @@ export class DialogService {
     ).subscribe(() => this.closeAllDialogs());
   }
 
-  confirm(confirmOptions: ConfirmOptions): Observable<boolean>
-  confirm(confirmOptions: ConfirmOptionsWithSecondaryCheckbox): MatDialogRef<ConfirmDialogComponent, unknown>
+  confirm(confirmOptions: ConfirmOptions): Observable<boolean>;
+  confirm(confirmOptions: ConfirmOptionsWithSecondaryCheckbox): MatDialogRef<ConfirmDialogComponent, unknown>;
   confirm(
     options: ConfirmOptions | ConfirmOptionsWithSecondaryCheckbox,
   ): Observable<boolean> | MatDialogRef<ConfirmDialogComponent, unknown> {
@@ -67,7 +65,7 @@ export class DialogService {
       dialogRef.componentInstance.method = options.method;
       dialogRef.componentInstance.switchSelectionEmitter.pipe(untilDestroyed(this)).subscribe((selection: boolean) => {
         const data = options.data;
-        if (selection && data[0]) {
+        if (selection && data && data[0]) {
           if (data[0] && data[0].hasOwnProperty('reboot')) {
             data[0].reboot = !data[0].reboot;
           }
@@ -119,22 +117,6 @@ export class DialogService {
     dialogRef.componentInstance.isHtml = isHtml;
 
     return dialogRef.afterClosed();
-  }
-
-  /**
-   * @deprecated
-   */
-  select(
-    title: string,
-    options: Option[],
-    optionPlaceHolder: string,
-  ): MatDialogRef<SelectDialogComponent> {
-    const dialogRef = this.dialog.open(SelectDialogComponent, { width: '300px' });
-
-    dialogRef.componentInstance.title = title;
-    dialogRef.componentInstance.options = options;
-    dialogRef.componentInstance.optionPlaceHolder = optionPlaceHolder;
-    return dialogRef;
   }
 
   dialogForm(conf: DialogFormConfiguration, disableClose = false): Observable<boolean> {

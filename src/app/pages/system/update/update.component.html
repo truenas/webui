@@ -14,7 +14,7 @@
         (change)="toggleAutoCheck()"
         ix-auto ix-auto-type="checkbox" ix-auto-identifier="daily-updates"
       >{{"Check for Updates Daily and Download if Available" | translate}}</mat-checkbox>
-      <tooltip [message]=updatecheck_tooltip ix-auto ix-auto-type="tooltip-icon" ix-auto-identifier="update-check"></tooltip>
+      <ix-tooltip [message]=updatecheck_tooltip ix-auto ix-auto-type="tooltip-icon" ix-auto-identifier="update-check"></ix-tooltip>
     </div>
     <div class="train-card-row train-select-row" *ngIf="trains.length > 1; else trainName">
       <mat-label id="train-label">{{"Train" | translate}}</mat-label>
@@ -124,45 +124,32 @@
   </mat-card-content>
 </mat-card>
 
-<mat-card *ngIf="updates_available && pre_release_train && product_type === ProductType.Core" id="stable-warning-card">
-  <div class="stable-warning"><i class="material-icons" id="update-info">info</i>
+<mat-card *ngIf="updates_available && pre_release_train && product_type === ProductType.ScaleEnterprise" class="train-info-card">
+  <h4 class="stable-warning"><i class="material-icons">info</i>
+    <a href="https://www.truenas.com/docs/hub/intro/release-notes/" target="_blank">
+      {{"Before updating, please read the release notes." | translate}}
+    </a>
+  </h4>
+</mat-card>
+
+<mat-card *ngIf="updates_available && release_train && product_type === ProductType.ScaleEnterprise" class="train-info-card">
+  <h4 class="stable-warning"><i class="material-icons">info</i>
+    <a href="https://www.truenas.com/docs/hub/intro/release-notes/" target="_blank">
+      {{"Before updating, please read the release notes." | translate}}
+    </a>
+  </h4>
+</mat-card>
+
+<mat-card *ngIf="updates_available && pre_release_train && product_type === ProductType.Scale" class="train-info-card">
+  <h4 class="stable-warning"><i class="material-icons">info</i>
     <strong>{{"This is not a production release, and should only be used for testing." | translate}}</strong>
-  </div>
-  <div class="stable-warning" id="stable_warning_line_2">
-    <a href="https://www.truenas.com/docs/hub/intro/release-notes/" target="new">
-      {{"Before updating, please read the release notes." | translate}}
-    </a>
-  </div>
+  </h4>
 </mat-card>
 
-<mat-card *ngIf="updates_available && release_train && product_type === ProductType.Core" id="stable-warning-card">
-  <div class="stable-warning"><i class="material-icons" id="update-info">info</i>
-    <a href="https://www.truenas.com/docs/hub/intro/release-notes/" target="new">
-      {{"Before updating, please read the release notes." | translate}}
-    </a>
-  </div>
-</mat-card>
-
-<mat-card *ngIf="updates_available && pre_release_train && product_type === ProductType.Enterprise" id="stable-warning-card">
-  <div class="stable-warning"><i class="material-icons" id="update-info">info</i>
-    <a href="https://www.truenas.com/docs/hub/intro/release-notes/" target="new">
-      {{"Before updating, please read the release notes." | translate}}
-    </a>
-  </div>
-</mat-card>
-
-<mat-card *ngIf="updates_available && release_train && product_type === ProductType.Enterprise" id="stable-warning-card">
-  <div class="stable-warning"><i class="material-icons" id="update-info">info</i>
-    <a href="https://www.truenas.com/docs/hub/intro/release-notes/" target="new">
-      {{"Before updating, please read the release notes." | translate}}
-    </a>
-  </div>
-</mat-card>
-
-<mat-card *ngIf="updates_available && nightly_train" id="stable-warning-card">
-  <div class="stable-warning"><i class="material-icons" id="update-info">info</i>
+<mat-card *ngIf="updates_available && nightly_train" class="train-info-card">
+  <h4 class="stable-warning"><i class="material-icons">info</i>
     <strong>{{"This is not a production release, and should only be used for testing." | translate}}</strong>
-  </div>
+  </h4>
 </mat-card>
 
 <mat-card id="button-card" *ngIf="!isUpdateRunning">

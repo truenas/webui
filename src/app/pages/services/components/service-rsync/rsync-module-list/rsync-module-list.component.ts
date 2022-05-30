@@ -10,8 +10,8 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
 @Component({
-  selector: 'app-rsync-module-list',
-  template: '<entity-table [title]="title" [conf]="this"></entity-table>',
+  selector: 'ix-rsync-module-list',
+  template: '<ix-entity-table [title]="title" [conf]="this"></ix-entity-table>',
 })
 export class RsyncModuleListComponent implements EntityTableConfig, OnInit {
   title = this.translate.instant('RSYNC Modules');

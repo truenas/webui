@@ -16,7 +16,6 @@ import {
 
 @UntilDestroy()
 @Component({
-  selector: 'app-iscsi-fibre-channel-port',
   templateUrl: './fibre-channel-port.component.html',
   styleUrls: ['./fibre-channel-port.component.scss', '../../../../../modules/entity/entity-form/entity-form.component.scss'],
   providers: [IscsiService],

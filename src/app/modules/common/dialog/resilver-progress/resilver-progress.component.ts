@@ -8,7 +8,6 @@ import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
-  selector: 'app-resilver-progress-dialog',
   templateUrl: './resilver-progress.component.html',
   styleUrls: ['./resilver-progress.component.scss'],
 })

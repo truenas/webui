@@ -129,6 +129,6 @@ describe('FileTicketFormComponent', () => {
       type: 'BUG',
     }]);
 
-    expect(spectator.query('app-job-item')).toBeTruthy();
+    expect(spectator.query('ix-job-item')).toBeTruthy();
   });
 });

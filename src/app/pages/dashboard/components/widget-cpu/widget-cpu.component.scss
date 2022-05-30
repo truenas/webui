@@ -1,10 +1,9 @@
-.widget {
-  height: 400px;
-  width: 600px;
-}
-
 .widget mat-card-content {
   width: 100%;
+}
+
+.xs.widget #cpu-cores-wrapper {
+  margin-bottom: 32px;
 }
 
 #cpu-cores-chart {
@@ -12,56 +11,63 @@
   width: calc(100% - 32px);
 }
 
-.xs.widget #cpu-cores-wrapper {
-  margin-bottom: 32px;
-}
-
 #cpu-load-wrapper {
   height: 170px;
   position: relative;
-
 }
 
-#cpu-load-cores .mat-list-item {
-  border-bottom: none !important;
+#cpu-load-cores {
+  .legend-item {
+    .chart-label {
+      text-align: center;
+    }
+  }
+
+  .mat-list-item {
+    border-bottom: none !important;
+  }
+
+  .label-icon {
+    font-size: 18px;
+    left: -12px;
+    position: absolute;
+
+    &.warn {
+      color: var(--yellow);
+    }
+
+    &.danger {
+      color: var(--red);
+    }
+  }
 }
 
-#cpu-load-cores .label-icon {
-  font-size: 18px;
-  left: -12px;
-  position: absolute;
+
+#cpu-load-cores-legend {
+  .legend-item {
+    text-align: left;
+
+    .label {
+      font-weight: 500;
+    }
+
+    .legend-swatch {
+      margin: 4px 8px 0;
+    }
+
+    &.chart-label {
+      text-align: center;
+    }
+  }
 }
 
-#cpu-load-cores .label-icon.warn {
-  color: var(--yellow);
-}
-
-#cpu-load-cores .label-icon.danger {
-  color: var(--red);
-}
-
-#cpu-load-cores-legend .legend-item.chart-label {
-  text-align: center;
-}
-
-#cpu-load-cores-legend .legend-item {
-  text-align: left;
-}
-
-#cpu-load-cores-legend .legend-item .label {
-  font-weight: 500;
-}
-
-#cpu-load-cores-legend .legend-item .legend-swatch {
-  margin: 4px 8px 0;
-}
 
 #cpu-load-cores-values {
   width: 100%;
-}
 
-#cpu-load-cores-values .temperature {
-  text-align: right;
+  .temperature {
+    text-align: right;
+  }
 }
 
 .cpu-model {
@@ -102,16 +108,6 @@
 
 .title-wrapper .subtitle {
   font-size: 80%;
-}
-
-.controls {
-  color: var(--fg2);
-  position: absolute;
-  right: 16px;
-}
-
-.controls button {
-  display: inline-block;
 }
 
 .chart-wrapper {
@@ -224,4 +220,10 @@
 
 .spinner {
   margin: 0 auto;
+}
+
+::ng-deep .view-chart-gauge {
+  align-items: center;
+  display: flex;
+  justify-content: center;
 }

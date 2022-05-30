@@ -38,9 +38,9 @@ export class PageTitleService {
   }
 
   emitTitleFromRoute(): void {
-    const routeParts = this.routePartsService.routeParts;
-    if (routeParts.length > 0) {
-      this.title$.next(routeParts[0]?.title || '');
+    const breadcrumbs = this.routePartsService.routeParts;
+    if (breadcrumbs.length > 0) {
+      this.title$.next(breadcrumbs[breadcrumbs.length - 1].title || '');
     }
   }
 }

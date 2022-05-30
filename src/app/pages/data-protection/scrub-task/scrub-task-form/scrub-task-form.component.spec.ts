@@ -105,7 +105,7 @@ describe('ScrubTaskFormComponent', () => {
         minute: '*',
         month: '*',
       },
-      threshold: '30',
+      threshold: 30,
     }]);
     expect(spectator.inject(IxSlideInService).close).toHaveBeenCalled();
   });
@@ -134,7 +134,7 @@ describe('ScrubTaskFormComponent', () => {
         minute: '0',
         month: '*',
       },
-      threshold: '20',
+      threshold: 20,
     }]);
     expect(spectator.inject(IxSlideInService).close).toHaveBeenCalled();
   });

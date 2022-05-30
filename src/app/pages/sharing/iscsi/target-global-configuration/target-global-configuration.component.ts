@@ -14,7 +14,6 @@ import {
 } from 'rxjs/operators';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { helptextSharingIscsi, shared } from 'app/helptext/sharing';
-import { numberValidator } from 'app/modules/entity/entity-form/validators/number-validation';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { DialogService, WebSocketService } from 'app/services';
@@ -33,7 +32,7 @@ export class TargetGlobalConfigurationComponent implements OnInit {
   form = this.fb.group({
     basename: ['', Validators.required],
     isns_servers: [[] as string[]],
-    pool_avail_threshold: [null as number, numberValidator()],
+    pool_avail_threshold: [null as number],
   });
 
   readonly tooltips = {

@@ -1,17 +1,13 @@
 import { Component, OnInit } from '@angular/core';
-import { Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { merge } from 'rxjs';
 import { filter } from 'rxjs/operators';
-import { ExplorerType } from 'app/enums/explorer-type.enum';
 import { JobState } from 'app/enums/job-state.enum';
-import { TransferMode } from 'app/enums/transfer-mode.enum';
 import helptext_cloudsync from 'app/helptext/data-protection/cloudsync/cloudsync-form';
 import helptext from 'app/helptext/data-protection/data-protection-dashboard/data-protection-dashboard';
-import helptext_replication from 'app/helptext/data-protection/replication/replication';
 import helptext_smart from 'app/helptext/data-protection/smart/smart';
 import globalHelptext from 'app/helptext/global-helptext';
 import { CloudSyncTaskUi } from 'app/interfaces/cloud-sync-task.interface';
@@ -23,14 +19,17 @@ import { ScrubTaskUi } from 'app/interfaces/scrub-task.interface';
 import { SmartTestUi } from 'app/interfaces/smart-test.interface';
 import { Disk } from 'app/interfaces/storage.interface';
 import { AppLoaderService } from 'app/modules/app-loader/app-loader.service';
-import { DialogFormConfiguration } from 'app/modules/entity/entity-dialog/dialog-form-configuration.interface';
-import { EntityDialogComponent } from 'app/modules/entity/entity-dialog/entity-dialog.component';
-import { FormParagraphConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { AppTableAction, AppTableConfig } from 'app/modules/entity/table/table.component';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { CloudsyncFormComponent } from 'app/pages/data-protection/cloudsync/cloudsync-form/cloudsync-form.component';
+import {
+  CloudsyncRestoreDialogComponent,
+} from 'app/pages/data-protection/cloudsync/cloudsync-restore-dialog/cloudsync-restore-dialog.component';
 import { ReplicationFormComponent } from 'app/pages/data-protection/replication/replication-form/replication-form.component';
+import {
+  ReplicationRestoreDialogComponent,
+} from 'app/pages/data-protection/replication/replication-restore-dialog/replication-restore-dialog.component';
 import { ReplicationWizardComponent } from 'app/pages/data-protection/replication/replication-wizard/replication-wizard.component';
 import { RsyncTaskFormComponent } from 'app/pages/data-protection/rsync-task/rsync-task-form/rsync-task-form.component';
 import { ScrubTaskFormComponent } from 'app/pages/data-protection/scrub-task/scrub-task-form/scrub-task-form.component';
@@ -71,7 +70,6 @@ SmartTestUi
 
 @UntilDestroy()
 @Component({
-  selector: 'app-data-protection-dashboard',
   templateUrl: './data-protection-dashboard.component.html',
   providers: [
     TaskService,
@@ -438,6 +436,7 @@ export class DataProtectionDashboardComponent implements OnInit {
         ).subscribe((job: Job) => {
           task.state = { state: job.state };
           task.job = job;
+          this.refreshTables();
         });
       }
 
@@ -466,6 +465,7 @@ export class DataProtectionDashboardComponent implements OnInit {
         ).subscribe((job: Job) => {
           task.state.state = job.state;
           task.job = job;
+          this.refreshTables();
         });
       }
       return task;
@@ -523,6 +523,7 @@ export class DataProtectionDashboardComponent implements OnInit {
         ).subscribe((job: Job) => {
           task.state = { state: job.state };
           task.job = job;
+          this.refreshTables();
         });
       }
 
@@ -562,6 +563,7 @@ export class DataProtectionDashboardComponent implements OnInit {
                       .subscribe((job: Job) => {
                         row.state = { state: job.state };
                         row.job = job;
+                        this.refreshTables();
                       });
                   },
                   (err) => {
@@ -576,48 +578,13 @@ export class DataProtectionDashboardComponent implements OnInit {
         matTooltip: this.translate.instant('Restore'),
         icon: 'restore',
         onClick: (row) => {
-          const conf: DialogFormConfiguration = {
-            title: helptext_replication.replication_restore_dialog.title,
-            fieldConfig: [
-              {
-                type: 'input',
-                name: 'name',
-                placeholder: helptext_replication.name_placeholder,
-                tooltip: helptext_replication.name_tooltip,
-                validation: [Validators.required],
-                required: true,
-              },
-              {
-                type: 'explorer',
-                explorerType: ExplorerType.Dataset,
-                initial: '',
-                name: 'target_dataset',
-                placeholder: helptext_replication.target_dataset_placeholder,
-                tooltip: helptext_replication.target_dataset_tooltip,
-                validation: [Validators.required],
-                required: true,
-              },
-            ],
-            saveButtonText: helptext_replication.replication_restore_dialog.saveButton,
-            customSubmit: (entityDialog: EntityDialogComponent) => {
-              this.loader.open();
-              this.ws
-                .call('replication.restore', [row.id, entityDialog.formValue])
-                .pipe(untilDestroyed(entityDialog))
-                .subscribe(
-                  () => {
-                    entityDialog.dialogRef.close(true);
-                    this.loader.close();
-                    this.refreshTables();
-                  },
-                  (err) => {
-                    this.loader.close();
-                    new EntityUtils().handleWsError(entityDialog, err, this.dialog);
-                  },
-                );
-            },
-          };
-          this.dialog.dialogFormWide(conf);
+          const dialog = this.mdDialog.open(ReplicationRestoreDialogComponent, {
+            data: row.id,
+          });
+          dialog
+            .afterClosed()
+            .pipe(untilDestroyed(this))
+            .subscribe(() => this.refreshTables());
         },
       },
     ];
@@ -655,6 +622,7 @@ export class DataProtectionDashboardComponent implements OnInit {
                       .subscribe((job: Job) => {
                         row.state = { state: job.state };
                         row.job = job;
+                        this.refreshTables();
                       });
                   },
                   (err) => {
@@ -724,6 +692,7 @@ export class DataProtectionDashboardComponent implements OnInit {
                       .subscribe((job: Job) => {
                         row.state = { state: job.state };
                         row.job = job;
+                        this.refreshTables();
                       });
                   },
                   (err) => {
@@ -738,86 +707,13 @@ export class DataProtectionDashboardComponent implements OnInit {
         matTooltip: this.translate.instant('Restore'),
         name: 'restore',
         onClick: (row) => {
-          const conf: DialogFormConfiguration = {
-            title: this.translate.instant('Restore Cloud Sync Task'),
-            fieldConfig: [
-              {
-                type: 'input',
-                name: 'description',
-                placeholder: helptext_cloudsync.description_placeholder,
-                tooltip: helptext_cloudsync.description_tooltip,
-                validation: helptext_cloudsync.description_validation,
-                required: true,
-              },
-              {
-                type: 'select',
-                name: 'transfer_mode',
-                placeholder: helptext_cloudsync.transfer_mode_placeholder,
-                validation: helptext_cloudsync.transfer_mode_validation,
-                required: true,
-                options: [
-                  { label: this.translate.instant('SYNC'), value: TransferMode.Sync },
-                  { label: this.translate.instant('COPY'), value: TransferMode.Copy },
-                ],
-                value: TransferMode.Copy,
-              },
-              {
-                type: 'paragraph',
-                name: 'transfer_mode_warning',
-                paraText: helptext_cloudsync.transfer_mode_warning_copy,
-                isLargeText: true,
-                paragraphIcon: 'add_to_photos',
-              },
-              {
-                type: 'explorer',
-                explorerType: ExplorerType.Directory,
-                name: 'path',
-                placeholder: helptext_cloudsync.path_placeholder,
-                tooltip: helptext_cloudsync.path_tooltip,
-                validation: helptext_cloudsync.path_validation,
-                initial: '/mnt',
-                required: true,
-              },
-            ],
-            saveButtonText: 'Restore',
-            afterInit(entityDialog: EntityDialogComponent) {
-              entityDialog.formGroup
-                .get('transfer_mode')
-                .valueChanges.pipe(untilDestroyed(entityDialog))
-                .subscribe((mode: TransferMode) => {
-                  const paragraph = conf.fieldConfig.find((config) => {
-                    return config.name === 'transfer_mode_warning';
-                  }) as FormParagraphConfig;
-                  switch (mode) {
-                    case TransferMode.Sync:
-                      paragraph.paraText = helptext_cloudsync.transfer_mode_warning_sync;
-                      paragraph.paragraphIcon = 'sync';
-                      break;
-                    default:
-                      paragraph.paraText = helptext_cloudsync.transfer_mode_warning_copy;
-                      paragraph.paragraphIcon = 'add_to_photos';
-                  }
-                });
-            },
-            customSubmit: (entityDialog: EntityDialogComponent) => {
-              this.loader.open();
-              this.ws
-                .call('cloudsync.restore', [row.id, entityDialog.formValue])
-                .pipe(untilDestroyed(entityDialog))
-                .subscribe(
-                  () => {
-                    entityDialog.dialogRef.close(true);
-                    this.loader.close();
-                    this.refreshTables();
-                  },
-                  (err) => {
-                    this.loader.close();
-                    new EntityUtils().handleWsError(entityDialog, err, this.dialog);
-                  },
-                );
-            },
-          };
-          this.dialog.dialogFormWide(conf);
+          const dialog = this.mdDialog.open(CloudsyncRestoreDialogComponent, {
+            data: row.id,
+          });
+          dialog
+            .afterClosed()
+            .pipe(untilDestroyed(this))
+            .subscribe(() => this.refreshTables());
         },
       },
     ];
@@ -855,6 +751,7 @@ export class DataProtectionDashboardComponent implements OnInit {
                       .subscribe((job: Job) => {
                         row.state = { state: job.state };
                         row.job = job;
+                        this.refreshTables();
                       });
                   },
                   (err) => {

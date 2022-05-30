@@ -1,4 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { Navigation, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
@@ -21,6 +22,9 @@ import { AppTableAction, AppTableConfig, TableComponent } from 'app/modules/enti
 import { TableService } from 'app/modules/entity/table/table.service';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { InterfaceFormComponent } from 'app/pages/network/components/interface-form/interface-form.component';
+import {
+  IpmiIdentifyDialogComponent,
+} from 'app/pages/network/components/ipmi-identify-dialog/ipmi-identify-dialog.component';
 import { OpenVpnClientConfigComponent } from 'app/pages/network/components/open-vpn-client-config/open-vpn-client-config.component';
 import {
   OpenVpnServerConfigComponent,
@@ -35,14 +39,13 @@ import {
   WebSocketService,
 } from 'app/services';
 import { CoreService } from 'app/services/core-service/core.service';
-import { IpmiService } from 'app/services/ipmi.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { ModalService } from 'app/services/modal.service';
 import { IpmiFormComponent } from './components/forms/ipmi-form.component';
 
 @UntilDestroy()
 @Component({
-  selector: 'app-interfaces-list',
+  selector: 'ix-interfaces-list',
   templateUrl: './network.component.html',
   styleUrls: ['./network.component.scss'],
 })
@@ -193,7 +196,7 @@ export class NetworkComponent implements OnInit, OnDestroy {
     private modalService: ModalService,
     private translate: TranslateService,
     private tableService: TableService,
-    private ipmiService: IpmiService,
+    private matDialog: MatDialog,
     private slideInService: IxSlideInService,
     private core: CoreService,
   ) {
@@ -228,7 +231,7 @@ export class NetworkComponent implements OnInit, OnDestroy {
         }
       });
 
-    if (window.localStorage.getItem('product_type') === ProductType.Enterprise) {
+    if (window.localStorage.getItem('product_type') === ProductType.ScaleEnterprise) {
       this.ws
         .call('failover.licensed')
         .pipe(untilDestroyed(this))
@@ -247,6 +250,10 @@ export class NetworkComponent implements OnInit, OnDestroy {
     }
 
     this.openInterfaceForEditFromRoute();
+
+    this.ws.call('ipmi.is_loaded').pipe(untilDestroyed(this)).subscribe((isIpmiLoaded) => {
+      this.ipmiEnabled = isIpmiLoaded;
+    });
   }
 
   checkInterfacePendingChanges(): void {
@@ -536,7 +543,7 @@ export class NetworkComponent implements OnInit, OnDestroy {
       name: 'identify',
       matTooltip: this.translate.instant('Identify Light'),
       onClick: () => {
-        this.ipmiService.showIdentifyDialog();
+        this.matDialog.open(IpmiIdentifyDialogComponent);
       },
     }, {
       icon: 'launch',

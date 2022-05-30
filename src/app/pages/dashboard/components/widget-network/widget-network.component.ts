@@ -6,7 +6,9 @@ import { TranslateService } from '@ngx-translate/core';
 import { ChartData, ChartOptions } from 'chart.js';
 import { sub } from 'date-fns';
 import { Subject } from 'rxjs';
-import { filter, take } from 'rxjs/operators';
+import {
+  filter, map, take, throttleTime,
+} from 'rxjs/operators';
 import { LinkState, NetworkInterfaceAliasType } from 'app/enums/network-interface.enum';
 import { CoreEvent } from 'app/interfaces/events';
 import { BaseNetworkInterface, NetworkInterfaceAlias } from 'app/interfaces/network-interface.interface';
@@ -41,9 +43,12 @@ interface NicInfoMap {
 
 @UntilDestroy()
 @Component({
-  selector: 'widget-network',
+  selector: 'ix-widget-network',
   templateUrl: './widget-network.component.html',
-  styleUrls: ['./widget-network.component.scss'],
+  styleUrls: [
+    '../widget/widget.component.scss',
+    './widget-network.component.scss',
+  ],
 })
 export class WidgetNetworkComponent extends WidgetComponent implements OnInit, AfterViewInit, OnDestroy {
   @Input() stats: Subject<CoreEvent>;
@@ -190,33 +195,41 @@ export class WidgetNetworkComponent extends WidgetComponent implements OnInit, A
       this.fetchReportData();
     }, 10000);
 
-    this.stats.pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
-      if (evt.name.startsWith('NetTraffic_')) {
-        const nicName = evt.name.substr('NetTraffic_'.length);
-        if (nicName in this.nicInfoMap) {
-          const sent = this.utils.convert(evt.data.sent_bytes_rate);
-          const received = this.utils.convert(evt.data.received_bytes_rate);
+    this.stats.pipe(
+      filter((evt) => evt.name.startsWith('NetTraffic_')),
+      filter((evt) => {
+        const [, nicName] = evt.name.split('_');
+        return this.availableNics.findIndex((nic) => nic.name === nicName) !== -1;
+      }),
+      throttleTime(500),
+      untilDestroyed(this),
+    ).subscribe((evt: CoreEvent) => {
+      const [, nicName] = evt.name.split('_');
+      if (nicName in this.nicInfoMap) {
+        const sent = this.utils.convert(evt.data.sent_bytes_rate);
+        const received = this.utils.convert(evt.data.received_bytes_rate);
 
-          const nicInfo = this.nicInfoMap[nicName];
+        const nicInfo = this.nicInfoMap[nicName];
+        if (evt.data.link_state) {
           nicInfo.state = evt.data.link_state as LinkState;
-          nicInfo.in = `${received.value} ${received.units}/s`;
-          nicInfo.out = `${sent.value} ${sent.units}/s`;
+        }
+        nicInfo.in = `${received.value} ${received.units}/s`;
+        nicInfo.out = `${sent.value} ${sent.units}/s`;
 
-          if (
-            evt.data.sent_bytes !== undefined
-            && evt.data.sent_bytes - nicInfo.lastSent > this.minSizeToActiveTrafficArrowIcon
-          ) {
-            nicInfo.lastSent = evt.data.sent_bytes;
-            this.tableService.updateStateInfoIcon(nicName, 'sent');
-          }
+        if (
+          evt.data.sent_bytes !== undefined
+          && evt.data.sent_bytes - nicInfo.lastSent > this.minSizeToActiveTrafficArrowIcon
+        ) {
+          nicInfo.lastSent = evt.data.sent_bytes;
+          this.tableService.updateStateInfoIcon(nicName, 'sent');
+        }
 
-          if (
-            evt.data.received_bytes !== undefined
-            && evt.data.received_bytes - nicInfo.lastReceived > this.minSizeToActiveTrafficArrowIcon
-          ) {
-            nicInfo.lastReceived = evt.data.received_bytes;
-            this.tableService.updateStateInfoIcon(nicName, 'received');
-          }
+        if (
+          evt.data.received_bytes !== undefined
+          && evt.data.received_bytes - nicInfo.lastReceived > this.minSizeToActiveTrafficArrowIcon
+        ) {
+          nicInfo.lastReceived = evt.data.received_bytes;
+          this.tableService.updateStateInfoIcon(nicName, 'received');
         }
       }
     });
@@ -322,21 +335,16 @@ export class WidgetNetworkComponent extends WidgetComponent implements OnInit, A
   }
 
   getLinkState(nic: BaseNetworkInterface): LinkState {
-    if (!nic.state.aliases) {
-      return null;
+    if (!nic?.state?.aliases?.length) { return null; }
+    if (nic.state.name in this.nicInfoMap) {
+      return this.nicInfoMap[nic.state.name].state || LinkState.Down;
     }
-    if (!this.nicInfoMap[nic.name]) {
-      return nic.state.link_state;
-    }
-    return this.nicInfoMap[nic.name].state;
+
+    return nic.state.link_state;
   }
 
   getLinkStateLabel(nic: BaseNetworkInterface): string {
-    const linkState = this.getLinkState(nic);
-    if (!linkState) {
-      return '';
-    }
-    return linkState.replace(/_/g, ' ');
+    return this.getLinkState(nic).replace(/_/g, ' ');
   }
 
   async fetchReportData(): Promise<void> {
@@ -351,31 +359,31 @@ export class WidgetNetworkComponent extends WidgetComponent implements OnInit, A
     };
 
     this.availableNics.forEach((nic) => {
+      const networkInterfaceName = nic.state.name;
       const params = {
-        identifier: nic.name,
+        identifier: networkInterfaceName,
         name: 'interface',
       } as ReportingParams;
-      this.ws.call('reporting.get_data', [[params], timeFrame]).pipe(untilDestroyed(this)).subscribe((response) => {
-        const data = response[0];
-
-        const labels: number[] = [];
-        for (let i = 0; i <= data.data.length; i++) {
-          const label = (data.start + i * data.step) * 1000;
-          labels.push(label);
-        }
+      this.ws.call('reporting.get_data', [[params], timeFrame]).pipe(
+        map((response) => response[0]),
+        untilDestroyed(this),
+      ).subscribe((response) => {
+        const labels: number[] = response.data.map((_, index) => {
+          return (response.start + index * response.step) * 1000;
+        });
 
         const chartData = {
           datasets: [
             {
-              label: nic.name + '(in)',
-              data: data.data.map((item: number[], index: number) => ({ t: labels[index], y: item[0] })),
+              label: `incoming [${networkInterfaceName}]`,
+              data: response.data.map((item: number[], index: number) => ({ t: labels[index], y: item[0] })),
               borderColor: this.themeService.currentTheme().blue,
               backgroundColor: this.themeService.currentTheme().blue,
               pointRadius: 0.2,
             },
             {
-              label: nic.name + '(out)',
-              data: data.data.map((item: number[], index: number) => ({ t: labels[index], y: -item[1] })),
+              label: `outcoming [${networkInterfaceName}]`,
+              data: response.data.map((item: number[], index: number) => ({ t: labels[index], y: -item[1] })),
               borderColor: this.themeService.currentTheme().orange,
               backgroundColor: this.themeService.currentTheme().orange,
               pointRadius: 0.1,
@@ -383,10 +391,10 @@ export class WidgetNetworkComponent extends WidgetComponent implements OnInit, A
           ],
         };
 
-        this.nicInfoMap[nic.name].chartData = chartData;
+        this.nicInfoMap[networkInterfaceName].chartData = chartData;
       },
       (err: WebsocketError) => {
-        this.nicInfoMap[nic.name].emptyConfig = this.chartDataError(err, nic);
+        this.nicInfoMap[networkInterfaceName].emptyConfig = this.chartDataError(err, nic);
       });
     });
   }
@@ -408,7 +416,7 @@ export class WidgetNetworkComponent extends WidgetComponent implements OnInit, A
               message: `${errorMessage}<br/>${helpMessage}`,
               buttonMsg: this.translate.instant('Clear'),
             }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
-              this.nicInfoMap[nic.name].emptyConfig = this.loadingEmptyConfig;
+              this.nicInfoMap[nic.state.name].emptyConfig = this.loadingEmptyConfig;
               this.ws.call('reporting.clear').pipe(take(1), untilDestroyed(this)).subscribe();
             });
           },
@@ -433,7 +441,7 @@ export class WidgetNetworkComponent extends WidgetComponent implements OnInit, A
 
     if (
       this.nicInfoMap[nic.state.name].emptyConfig.type === this.emptyTypes.Loading
-      && !this.nicInfoMap[nic.name].chartData
+      && !this.nicInfoMap[nic.state.name].chartData
     ) {
       classes.push('chart-body-loading');
     }

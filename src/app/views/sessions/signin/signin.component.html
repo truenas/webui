@@ -139,14 +139,14 @@
           </div>
         </div>
         <div class="disconnected" [hidden]="connected() && logo_ready">
-          <div *ngIf="product">
+          <div *ngIf="product" class="disconnected-content">
             <div class="fake-icon">?</div>
             <p *ngIf="!ha_status">
               {{ 'Connecting to {product}' | translate: { product } }}
               {{ '... Make sure the {product} system is powered on and connected to the network.' | translate: { product } }}
             </p>
             <p *ngIf="ha_status">
-              {{"Waiting for Active TrueNAS controller to come up..." | translate}}
+              {{ 'Waiting for Active TrueNAS controller to come up...' | translate }}
             </p>
           </div>
         </div>

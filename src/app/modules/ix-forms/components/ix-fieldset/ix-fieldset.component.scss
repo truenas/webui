@@ -12,7 +12,7 @@ fieldset {
 
 legend {
   color: var(--fg1);
-  font-family: 'IBM Plex Sans', sans-serif;
+  font-family: var(--font-family-body);
   font-size: 15px;
   font-weight: 600;
   padding: 0;

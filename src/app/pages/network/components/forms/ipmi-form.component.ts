@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
@@ -16,13 +17,15 @@ import { FieldSet } from 'app/modules/entity/entity-form/models/fieldset.interfa
 import { RelationAction } from 'app/modules/entity/entity-form/models/relation-action.enum';
 import { ipv4Validator } from 'app/modules/entity/entity-form/validators/ip-validation';
 import { EntityUtils } from 'app/modules/entity/utils';
-import { DialogService, WebSocketService } from 'app/services';
-import { IpmiService } from 'app/services/ipmi.service';
+import {
+  IpmiIdentifyDialogComponent,
+} from 'app/pages/network/components/ipmi-identify-dialog/ipmi-identify-dialog.component';
+import { DialogService, RedirectService, WebSocketService } from 'app/services';
 
 @UntilDestroy()
 @Component({
-  selector: 'app-ipmi',
-  template: '<entity-form [conf]="this"></entity-form>',
+  selector: 'ix-ipmi',
+  template: '<ix-entity-form [conf]="this"></ix-entity-form>',
 })
 export class IpmiFormComponent implements FormConfiguration {
   title = this.translate.instant('IPMI');
@@ -39,14 +42,14 @@ export class IpmiFormComponent implements FormConfiguration {
       id: 'ipmi_identify',
       name: this.translate.instant('Identify Light'),
       function: () => {
-        this.ipmiService.showIdentifyDialog();
+        this.matDialog.open(IpmiIdentifyDialogComponent);
       },
     },
     {
       id: 'connect',
       name: this.translate.instant('Manage'),
       function: () => {
-        window.open(`http://${this.managementIp}`);
+        this.redirect.openWindow(`http://${this.managementIp}`);
       },
     },
   ];
@@ -155,13 +158,14 @@ export class IpmiFormComponent implements FormConfiguration {
     protected ws: WebSocketService,
     protected dialog: DialogService,
     protected loader: AppLoaderService,
+    private matDialog: MatDialog,
     private translate: TranslateService,
-    private ipmiService: IpmiService,
+    private redirect: RedirectService,
   ) { }
 
   async prerequisite(): Promise<boolean> {
     return new Promise(async (resolve) => {
-      if (window.localStorage.getItem('product_type').includes(ProductType.Enterprise)) {
+      if (window.localStorage.getItem('product_type') === ProductType.ScaleEnterprise) {
         await this.ws.call('failover.licensed').toPromise().then((isHa) => {
           this.isHa = isHa;
         });

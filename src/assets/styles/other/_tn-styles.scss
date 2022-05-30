@@ -1,14 +1,14 @@
-@use '~@angular/material' as mat;
+@use '@angular/material' as mat;
 @import '~@angular/material/theming';
 @include mat.core();
 @import '../scss-imports/cssvars';
 
 // mandatory stuff for theming
-$freenas-primary: mat.define-palette($md-primary);
-$freenas-accent: mat.define-palette($md-accent);
+$ix-primary: mat.define-palette($md-primary);
+$ix-accent: mat.define-palette($md-accent);
 
 // include the custom theme components into a theme object
-$freenas-theme: mat.define-light-theme($freenas-primary, $freenas-accent);
+$ix-theme: mat.define-light-theme($ix-primary, $ix-accent);
 
 $primary-dark: darken(map-get($md-primary, 500), 8%);
 
@@ -38,15 +38,15 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
 }
 
 // include the custom theme object into the angular material theme
-.ix-blue {
-  @include mat.all-component-themes($freenas-theme);
+.ix-dark {
+  @include mat.all-component-themes($ix-theme);
 
   // UI SHELL
   .mat-sidenav-container {
     height: 100vh;
   }
 
-  topbar .mat-toolbar-multiple-rows {
+  ix-topbar .mat-toolbar-multiple-rows {
     min-height: unset;
   }
 
@@ -87,6 +87,10 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
 
   .breadcrumb-bar {
     @include variable(color, --fg1, $fg1, !important);
+  }
+
+  .mat-checkbox-label {
+    color: var(--fg1);
   }
 
   .mat-slide-toggle.mat-checked:not(.mat-disabled) .mat-slide-toggle-thumb {
@@ -141,7 +145,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     font-size: 15px;
   }
 
-  /////////////////// SpecSelectors: Selectors not originally in ix-blue theme
+  /////////////////// SpecSelectors: Selectors not originally in ix-dark theme
   .mat-tab-label,
   .mat-tab-link {
     @include variable(color, --fg1, $fg1);
@@ -459,9 +463,8 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
 
   //Entity Module Overrides
 
-  app-members .form-card.mat-card,
-  device-edit .form-card.mat-card,
-  entity-form .form-card.mat-card {
+  ix-device-edit .form-card.mat-card,
+  ix-entity-form .form-card.mat-card {
     margin: 0 auto;
     max-width: 960px;
   }
@@ -580,13 +583,6 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     margin-bottom: 15px;
   }
 
-  app-volumeimport-wizard #key tooltip {
-    position: relative;
-    top: -4px;
-  }
-
-  // ------------------------
-
   // For some items on VM Wizard Hard Disks page
   #disk_radio {
     max-width: 220px;
@@ -604,13 +600,6 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     position: relative;
     text-align: center;
     top: 7px;
-  }
-
-  // Resizes loader dialog which appears on update, wipe disk, etc.
-  .entity-job-dialog {
-    max-height: 350px;
-    max-width: 500px;
-    min-width: 200px;
   }
 
   // Fix bug where ngx-datatable rows get stuck at original window width
@@ -668,7 +657,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     width: 36px;
   }
 
-  app-dual-listbox .chosen .mat-list-item-content {
+  ix-dual-listbox .chosen .mat-list-item-content {
     color: var(--fg2);
   }
 
@@ -710,16 +699,6 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     @include variable(stroke, --primary, $primary, !important);
   }
 
-  // Align button and tooltip on Add Replication form
-  #repl_remote_hostkey button {
-    left: 17px;
-  }
-
-  #repl_remote_hostkey .tooltip {
-    left: 145px;
-    top: -55px;
-  }
-
   // Theme color for slider (Shell page and elsewhere)
   .mat-slider {
     @include variable(color, --accent, $accent, !important);
@@ -731,21 +710,16 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
   }
 
   // Fix a layout problem on Sharing/ISCSI page with ink-bar under active link...
-  iscsi .mat-tab-label-active,
-  reportsdashboard .mat-tab-label-active {
+  ix-iscsi .mat-tab-label-active,
+  ix-reports-dashboard .mat-tab-label-active {
     @include variable(border-color, --primary, $primary);
     border-bottom: 2px solid;
   }
 
   //...by hiding ink bar, replacing it with a bottom border, above.
-  iscsi .mat-ink-bar,
-  reportsdashboard .mat-ink-bar {
+  ix-iscsi .mat-ink-bar,
+  ix-reports-dashboard .mat-ink-bar {
     opacity: 0;
-  }
-
-  // Properly align buttons on Dir Services / Idmap
-  #idmap-actions {
-    margin-left: 0;
   }
 
   // Adjustment of highlight over page number on pager in footer
@@ -756,20 +730,6 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
   // Background visually links the items in the form-explorer
   .form-ex-flex-container {
     @include variable(background, --bg1, $bg1);
-  }
-
-  // Align buttons on UI Prefs form
-  .prefs-form .mat-card-actions {
-    padding-left: 10px;
-    text-align: left !important;
-  }
-
-  // Keeps buttons on UI prefs form from overflowing page
-  @media (max-width:450px) {
-    .prefs-form button {
-      display: block;
-      margin-bottom: 10px !important;
-    }
   }
 
   // Helper styles for red,blue,green,cyan,orange,magenta,violet,yellow
@@ -839,15 +799,10 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     color: var(--fg2);
   }
 
-  // Fixes color on Reports page tabs
-  #dashboardcontainerdiv .mat-ink-bar {
-    @include variable(background-color, --primary, $primary);
-  }
-
   .mat-button {
     @include variable(font-family, --font-family-body, $font-family-body, !important);
     background: var(--btn-default-bg);
-    font-weight: bold !important;
+    font-weight: 700 !important;
     text-transform: capitalize !important;
   }
 
@@ -965,7 +920,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     overflow-y: hidden !important;
   }
 
-  app-admin-layout .not-alerts .mat-drawer-inner-container {
+  ix-admin-layout .not-alerts .mat-drawer-inner-container {
     overflow: visible !important;
   }
 
@@ -1006,11 +961,11 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
   }
 
   // Adjustments to checkboxes and header labels on unique tables
-  services .datatable-body-cell .mat-checkbox {
+  ix-services .datatable-body-cell .mat-checkbox {
     bottom: 7px !important;
   }
 
-  services .datatable-header-cell-label {
+  ix-services .datatable-header-cell-label {
     margin-left: 15px;
   }
 
@@ -1032,7 +987,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     border-bottom: 1px solid var(--lines);
   }
 
-  app-entity-dialog .has-pwtoggle {
+  ix-entity-dialog .has-pwtoggle {
     background: rgba(0, 0, 0, 0) !important;
     padding: 0 0 10px !important;
 
@@ -1083,7 +1038,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     vertical-align: top;
   }
 
-  app-volumes-list .ui-treetable-resizable .ui-treetable-tfoot>tr>td,
+  ix-volumes-list .ui-treetable-resizable .ui-treetable-tfoot>tr>td,
   .ui-treetable-resizable .ui-treetable-tbody>tr>td {
     max-width: 300px;
     text-overflow: ellipsis;
@@ -1091,7 +1046,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     white-space: nowrap;
   }
 
-  app-volumes-list td[id^='tbody__comments_'] {
+  ix-volumes-list td[id^='tbody__comments_'] {
     min-width: 200px;
     text-overflow: unset;
     white-space: normal !important;
@@ -1108,31 +1063,16 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     height: 52px;
   }
 
-  #idmap-err {
-    @include variable(color, --red, $red);
-    left: 26px;
-    position: absolute;
-    top: 100px;
-  }
-
-  #em_pwmessage {
-    margin: 10px 0;
-  }
-
   .rightside-content-hold {
     overflow-y: auto;
   }
 
-  app-networksummary .mat-list .mat-subheader {
+  ix-select-dialog .mat-select-placeholder,
+  ix-ipmi .mat-select-placeholder {
     @include variable(color, --fg2, $fg2);
   }
 
-  app-select-dialog .mat-select-placeholder,
-  app-ipmi .mat-select-placeholder {
-    @include variable(color, --fg2, $fg2);
-  }
-
-  app-acmedns-form {
+  ix-acmedns-form {
     h4 {
       font-size: 20px;
     }
@@ -1164,12 +1104,12 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     width: 50%;
   }
 
-  app-certificate-acme-add #authenticators {
+  ix-certificate-acme-add #authenticators {
     position: relative;
     top: -18px;
   }
 
-  entity-form form-combobox mat-form-field {
+  ix-entity-form ix-form-combobox mat-form-field {
     min-width: 180px;
     width: 50%;
   }
@@ -1205,9 +1145,9 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
 
   // Scrollbars need separate rules for firefox and webkit
 
-  app-entity-dialog #pool_processes p,
-  export-disconnect-modal .pool-summary,
-  confirm-dialog .warning-box {
+  ix-entity-dialog #pool_processes p,
+  ix-export-disconnect-modal .pool-summary,
+  ix-confirm-dialog .warning-box {
     background-color: rgb(223, 223, 223);
     color: rgb(19, 19, 19);
     max-height: 170px;
@@ -1216,8 +1156,8 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     width: 100%;
   }
 
-  confirm-dialog pre,
-  error-dialog pre {
+  ix-confirm-dialog pre,
+  ix-error-dialog pre {
     background: rgba(0, 0, 0, 0.096);
     overflow-x: auto;
     padding: 5px;
@@ -1233,7 +1173,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
       opacity: 0.38;
     }
 
-    entity-form-list .form-list .form-list-item > div.form-line {
+    ix-entity-form-list .form-list .form-list-item > div.form-line {
       display: block;
     }
 
@@ -1244,52 +1184,21 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
 
   }
 
-  app-interfaces-form {
-    entity-form-list .form-list .form-list-item > div.form-line {
-      display: none;
-    }
-
-    entity-form-list .form-list .form-list-item > div.form-line:first-child {
-      display: block;
-    }
-  }
-
-  app-ssh-keypairs-form #key_instructions {
-    font-size: 0.9rem;
-    margin-bottom: 1rem;
-  }
-
-  iscsi .mat-tab-links {
+  ix-iscsi .mat-tab-links {
     flex-wrap: wrap;
   }
 
-  app-interfaces-list #timeout-field {
+  ix-interfaces-list #timeout-field {
     text-align: center;
     width: 50px;
   }
 
-  confirm-dialog div.message-content p {
+  ix-confirm-dialog div.message-content p {
     margin-bottom: 10px;
   }
 
-  app-eula p {
+  ix-eula p {
     margin-bottom: 15px;
-  }
-
-  app-general {
-    #language_sort,
-    #language_sort_radiogroup {
-      display: inline-flex;
-    }
-
-    mat-radio-button {
-      margin-left: 10px;
-    }
-  }
-
-  app-active-directory #successfully_updated {
-    position: relative;
-    top: 12px;
   }
 
   mat-error a {
@@ -1305,7 +1214,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     overflow: auto;
   }
 
-  app-two-factor {
+  ix-two-factor {
     #instructions,
     #enabled_status {
       font-size: 115%;
@@ -1320,7 +1229,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     }
   }
 
-  qr-dialog {
+  ix-qr-dialog {
     text-align: center;
 
     #qr-dialog-buttons {
@@ -1345,10 +1254,6 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
   mat-hint {
     color: var(--yellow) !important;
     font-size: 0.7rem;
-  }
-
-  #cust_button_continue_with_afp {
-    background: var(--bg1);
   }
 
   /// Slide-in menu ///////////////////////////////
@@ -1417,10 +1322,6 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     z-index: 3;
   }
 
-  .isdark {
-    display: block;
-  }
-
   .slidein-nav .mat-list {
     padding: 0;
   }
@@ -1432,7 +1333,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
   // End slide-in menu ////////////////
 
   // Remove indentation for form elements on vertical stepper
-  .jw-modal-body entity-wizard {
+  .jw-modal-body ix-entity-wizard {
     mat-card {
       margin: 18px 0;
       padding: 0;
@@ -1441,15 +1342,10 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
 
   a[href*='//'] {
     color: var(--primary);
-  }
 
-  // Special class added for certificate display forms for long SANs and DNs
-  .break-all {
-    word-break: break-all;
-  }
-
-  .lowerme {
-    margin-top: 32px !important;
+    &:focus-visible {
+      background: var(--hover-bg) !important;
+    }
   }
 
   .complex-table-data {

@@ -13,8 +13,7 @@ import { StorageService } from 'app/services/storage.service';
 
 @UntilDestroy()
 @Component({
-  selector: 'app-disk-bulk-edit',
-  template: '<entity-form [conf]="this"></entity-form>',
+  template: '<ix-entity-form [conf]="this"></ix-entity-form>',
 })
 export class DiskBulkEditComponent implements FormConfiguration {
   routeSuccess: string[] = ['storage', 'disks'];

@@ -23,6 +23,15 @@ describe('TwoFactorComponent', () => {
   let loader: HarnessLoader;
   let ws: WebSocketService;
   let matDialog: MatDialog;
+  const twoFactorConfig = {
+    enabled: false,
+    id: 1,
+    interval: 30,
+    otp_digits: 6,
+    secret: null,
+    services: { ssh: false },
+    window: 0,
+  } as TwoFactorConfig;
 
   const createComponent = createComponentFactory({
     component: TwoFactorComponent,
@@ -32,15 +41,7 @@ describe('TwoFactorComponent', () => {
     ],
     providers: [
       mockWebsocket([
-        mockCall('auth.twofactor.config', {
-          enabled: false,
-          id: 1,
-          interval: 30,
-          otp_digits: 6,
-          secret: null,
-          services: { ssh: false },
-          window: 0,
-        } as TwoFactorConfig),
+        mockCall('auth.twofactor.config', twoFactorConfig),
         mockCall('auth.twofactor.provisioning_uri', 'otpauth://totp/iXsystems:truenas.local%40TrueNAS?secret=None&issuer=iXsystems'),
         mockCall('auth.twofactor.renew_secret'),
         mockCall('auth.twofactor.update'),
@@ -119,6 +120,13 @@ describe('TwoFactorComponent', () => {
   });
 
   it('open QR dialog when click `Show QR` button', async () => {
+    spectator.inject(MockWebsocketService).mockCall('auth.twofactor.config', {
+      ...twoFactorConfig,
+      enabled: true,
+      secret: '123456',
+    });
+    spectator.component.ngOnInit();
+
     jest.spyOn(matDialog, 'open').mockImplementation();
     const showQrButton = await loader.getHarness(MatButtonHarness.with({ text: 'Show QR' }));
     await showQrButton.click();
@@ -133,6 +141,12 @@ describe('TwoFactorComponent', () => {
   });
 
   it('renew 2FA Secret when click `Renew Secret` button', async () => {
+    spectator.inject(MockWebsocketService).mockCall('auth.twofactor.config', {
+      ...twoFactorConfig,
+      enabled: true,
+    });
+    spectator.component.ngOnInit();
+
     const renewButton = await loader.getHarness(MatButtonHarness.with({ text: 'Renew Secret' }));
     await renewButton.click();
 
@@ -147,8 +161,9 @@ describe('TwoFactorComponent', () => {
 
   it('disable 2FA when click `Disable Two-Factor Authentication` button', async () => {
     spectator.inject(MockWebsocketService).mockCall('auth.twofactor.config', {
+      ...twoFactorConfig,
       enabled: true,
-    } as TwoFactorConfig);
+    });
     spectator.component.ngOnInit();
 
     const disableButton = await loader.getHarness(MatButtonHarness.with({ text: 'Disable Two-Factor Authentication' }));

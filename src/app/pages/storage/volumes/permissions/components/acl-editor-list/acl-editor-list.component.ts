@@ -12,7 +12,7 @@ import { nfsAceToPermissionItem } from 'app/pages/storage/volumes/permissions/ut
 import { posixAceToPermissionItem } from 'app/pages/storage/volumes/permissions/utils/posix-ace-to-permission-item.utils';
 
 @Component({
-  selector: 'app-acl-editor-list',
+  selector: 'ix-acl-editor-list',
   templateUrl: 'acl-editor-list.component.html',
   styleUrls: ['./acl-editor-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -25,6 +25,7 @@ export class AclEditorListComponent implements OnChanges {
   @Input() ownerGroup: string;
 
   permissionItems: PermissionItem[] = [];
+  aces: (NfsAclItem | PosixAclItem)[] = [];
 
   constructor(
     private store: DatasetAclEditorStore,
@@ -33,6 +34,7 @@ export class AclEditorListComponent implements OnChanges {
   }
 
   ngOnChanges(): void {
+    this.aces = this.acl.acl;
     if (this.acl.acltype === AclType.Nfs4) {
       this.permissionItems = this.acl.acl.map((ace) => {
         if (ace.tag === NfsAclTag.Owner) {

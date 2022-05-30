@@ -13,8 +13,7 @@ import { TaskService } from 'app/services/task.service';
 
 @UntilDestroy()
 @Component({
-  selector: 'app-snapshot-task-list',
-  template: '<entity-table [title]="title" [conf]="this"></entity-table>',
+  template: '<ix-entity-table [title]="title" [conf]="this"></ix-entity-table>',
   providers: [TaskService, StorageService],
 })
 export class SnapshotListComponent implements EntityTableConfig<PeriodicSnapshotTaskUi> {

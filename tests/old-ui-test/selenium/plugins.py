@@ -130,11 +130,11 @@ class plugin_test(unittest.TestCase):
         return True
 
     def error_check(self):
-        if self.is_element_present(By.XPATH,'/html/body/div[3]/div/div[2]/md-dialog-container/error-dialog/div[1]/p'):
-            ui_element=driver.find_element_by_xpath('/html/body/div[3]/div/div[2]/md-dialog-container/error-dialog/div[1]/p')
+        if self.is_element_present(By.XPATH,'/html/body/div[3]/div/div[2]/md-dialog-container/ix-error-dialog/div[1]/p'):
+            ui_element=driver.find_element_by_xpath('/html/body/div[3]/div/div[2]/md-dialog-container/ix-error-dialog/div[1]/p')
             error_element=ui_element.text
             print (error_element)
-            driver.find_element_by_xpath('/html/body/div[3]/div/div[2]/md-dialog-container/error-dialog/div[2]/button').click()
+            driver.find_element_by_xpath('/html/body/div[3]/div/div[2]/md-dialog-container/ix-error-dialog/div[2]/button').click()
 
 
     @classmethod

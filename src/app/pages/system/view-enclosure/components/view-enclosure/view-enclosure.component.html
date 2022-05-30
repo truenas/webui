@@ -10,24 +10,24 @@
 
       <ng-container *ngIf="supportedHardware">
         <div *ngIf="!system.platform.includes('MINI'); else mini" class="enclosure-disks-wrapper">
-          <enclosure-disks
+          <ix-enclosure-disks
             *ngIf="events && system && system.pools && selectedEnclosure"
             [controller-events]="events"
             [current-tab]="currentView"
             [system-profiler]="system"
             [selected-enclosure]="selectedEnclosure">
-          </enclosure-disks>
+          </ix-enclosure-disks>
         </div>
 
         <ng-template #mini>
           <div>
-            <enclosure-disks-mini
+            <ix-enclosure-disks-mini
               *ngIf="events && system && system.pools && selectedEnclosure"
               [controller-events]="events"
               [current-tab]="currentView"
               [system-profiler]="system"
               [selected-enclosure]="selectedEnclosure">
-            </enclosure-disks-mini>
+            </ix-enclosure-disks-mini>
           </div>
         </ng-template>
       </ng-container>

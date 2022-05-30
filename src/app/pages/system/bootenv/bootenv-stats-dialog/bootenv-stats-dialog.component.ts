@@ -53,7 +53,7 @@ export class BootenvStatsDialogComponent implements OnInit {
   }
 
   onSubmit(): void {
-    const interval = Number(this.form.value.interval);
+    const interval = this.form.value.interval;
     this.loader.open();
     this.ws.call('boot.set_scrub_interval', [interval])
       .pipe(untilDestroyed(this))

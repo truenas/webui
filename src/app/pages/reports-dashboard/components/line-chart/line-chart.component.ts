@@ -21,7 +21,7 @@ interface Conversion {
 }
 
 @Component({
-  selector: 'linechart',
+  selector: 'ix-linechart',
   templateUrl: './line-chart.component.html',
   styleUrls: ['./line-chart.component.scss'],
 })

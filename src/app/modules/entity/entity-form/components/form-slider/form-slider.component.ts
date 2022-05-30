@@ -8,7 +8,6 @@ import { Field } from 'app/modules/entity/entity-form/models/field.interface';
 
 @UntilDestroy()
 @Component({
-  selector: 'form-slider',
   templateUrl: './form-slider.component.html',
   styleUrls: ['./form-slider.component.scss'],
 })

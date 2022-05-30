@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { MatCheckboxChange } from '@angular/material/checkbox/checkbox';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Store } from '@ngrx/store';
+import { delay } from 'rxjs/operators';
 import { helptextSystemSupport as helptext } from 'app/helptext/system/support';
 import { DialogFormConfiguration } from 'app/modules/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/modules/entity/entity-dialog/entity-dialog.component';
@@ -10,21 +12,22 @@ import { LicenseInfoInSupport } from 'app/pages/system/general-settings/support/
 import { SystemInfoInSupport } from 'app/pages/system/general-settings/support/system-info-in-support.interface';
 import { WebSocketService, AppLoaderService, DialogService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { ModalService } from 'app/services/modal.service';
+import { AppState } from 'app/store';
+import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 import { FileTicketFormComponent } from './file-ticket-form/file-ticket-form.component';
+import { FileTicketLicensedFormComponent } from './file-ticket-licensed-form/file-ticket-licensed-form.component';
 import { LicenseComponent } from './license/license.component';
 import { ProactiveComponent } from './proactive/proactive.component';
-import { SupportFormLicensedComponent } from './support-licensed/support-form-licensed.component';
 
 @UntilDestroy()
 @Component({
-  selector: 'app-support',
+  selector: 'ix-support',
   templateUrl: './support.component.html',
   styleUrls: ['./support.component.scss'],
 })
 export class SupportComponent implements OnInit {
   isProduction: boolean;
-  productImage = '';
+  productImage = 'ix-original-cropped.png';
   isProductImageRack = false;
   extraMargin = true;
   serverList = ['M40', 'M50', 'X10', 'X20', 'Z20', 'Z30', 'Z35', 'Z50'];
@@ -32,21 +35,24 @@ export class SupportComponent implements OnInit {
   hasLicense = false;
   licenseInfo: LicenseInfoInSupport = null;
   links = [helptext.docHub, helptext.forums, helptext.licensing];
-  licenseButtonText: string;
   ticketText = helptext.ticket;
   proactiveText = helptext.proactive.title;
 
+  get licenseButtonText(): string {
+    return this.hasLicense ? helptext.updateTxt : helptext.enterTxt;
+  }
+
   constructor(
     protected ws: WebSocketService,
-    private modalService: ModalService,
     private loader: AppLoaderService,
     private dialog: DialogService,
     private slideInService: IxSlideInService,
+    private store$: Store<AppState>,
   ) {}
 
   ngOnInit(): void {
-    this.ws.call('system.info').pipe(untilDestroyed(this)).subscribe((systemInfo) => {
-      this.systemInfo = systemInfo;
+    this.store$.pipe(waitForSystemInfo, untilDestroyed(this)).subscribe((systemInfo) => {
+      this.systemInfo = { ...systemInfo };
       this.systemInfo.memory = (systemInfo.physmem / 1024 / 1024 / 1024).toFixed(0) + ' GiB';
       if (systemInfo.system_product.includes('MINI')) {
         this.getMiniImage(systemInfo.system_product);
@@ -55,16 +61,16 @@ export class SupportComponent implements OnInit {
       }
       if (systemInfo.license) {
         this.hasLicense = true;
-        this.licenseInfo = systemInfo.license;
+        this.licenseInfo = { ...systemInfo.license };
         this.parseLicenseInfo();
       }
-      this.licenseButtonText = this.hasLicense ? helptext.updateTxt : helptext.enterTxt;
     });
-    setTimeout(() => {
-      this.ws.call('truenas.is_production').pipe(untilDestroyed(this)).subscribe((res) => {
-        this.isProduction = res;
-      });
-    }, 500);
+    this.ws.call('truenas.is_production').pipe(
+      delay(500),
+      untilDestroyed(this),
+    ).subscribe((res) => {
+      this.isProduction = res;
+    });
   }
 
   parseLicenseInfo(): void {
@@ -147,7 +153,7 @@ export class SupportComponent implements OnInit {
 
   fileTicket(): void {
     if (this.hasLicense) {
-      this.modalService.openInSlideIn(SupportFormLicensedComponent);
+      this.slideInService.open(FileTicketLicensedFormComponent, { wide: true });
     } else {
       this.slideInService.open(FileTicketFormComponent);
     }

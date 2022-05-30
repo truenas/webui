@@ -1,8 +1,8 @@
-.ix-blue manage-catalog-summary-dialog div.mat-dialog-content {
+.ix-dark ix-manage-catalog-summary-dialog div.mat-dialog-content {
   overflow: auto !important;
 }
 
-manage-catalog-summary-dialog {
+ix-manage-catalog-summary-dialog {
   font-size: 14px;
 
   .status {
@@ -18,12 +18,12 @@ manage-catalog-summary-dialog {
     border: 1px solid var(--green);
     color: var(--green);
   }
-    
+
   .status-filter {
     align-items: center;
     display: flex;
 
-        
+
     .mat-form-field {
       margin: 0 0 0 10px;
       width: unset !important;
@@ -38,7 +38,7 @@ manage-catalog-summary-dialog {
     margin: 10px 0;
     width: 100%;
   }
-    
+
   .version-list {
     height: 200px;
     margin-top: 10px;
@@ -53,7 +53,7 @@ manage-catalog-summary-dialog {
   .row-light {
     background: rgba(0, 0, 0, 0.1);
   }
-    
+
   .detail-row {
     padding: 5px 10px;
 
@@ -63,9 +63,9 @@ manage-catalog-summary-dialog {
 
     .info-col {
       height: 20px;
-    }        
+    }
   }
-    
+
   .value-row {
     opacity: 0.5;
   }

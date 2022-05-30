@@ -30,13 +30,14 @@ import { ChartEventsDialogComponent } from 'app/pages/applications/dialogs/chart
 import { ChartUpgradeDialogComponent } from 'app/pages/applications/dialogs/chart-upgrade/chart-upgrade-dialog.component';
 import { ChartFormComponent } from 'app/pages/applications/forms/chart-form/chart-form.component';
 import { ChartUpgradeDialogConfig } from 'app/pages/applications/interfaces/chart-upgrade-dialog-config.interface';
+import { RedirectService } from 'app/services';
 import { DialogService, WebSocketService } from 'app/services/index';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { ModalService } from 'app/services/modal.service';
 
 @UntilDestroy()
 @Component({
-  selector: 'app-charts',
+  selector: 'ix-charts',
   templateUrl: './chart-releases.component.html',
   styleUrls: ['../applications.component.scss'],
 })
@@ -149,6 +150,7 @@ export class ChartReleasesComponent implements OnInit {
     private slideInService: IxSlideInService,
     private router: Router,
     protected ws: WebSocketService,
+    private redirect: RedirectService,
   ) { }
 
   ngOnInit(): void {
@@ -286,13 +288,13 @@ export class ChartReleasesComponent implements OnInit {
     });
   }
 
-  portalName(name: string = 'web_portal'): string {
+  portalName(name = 'web_portal'): string {
     const humanName = new EntityUtils().snakeToHuman(name);
     return humanName;
   }
 
-  portalLink(chart: ChartRelease, name: string = 'web_portal'): void {
-    window.open(chart.portals[name][0]);
+  portalLink(chart: ChartRelease, name = 'web_portal'): void {
+    this.redirect.openWindow(chart.portals[name][0]);
   }
 
   update(name: string): void {

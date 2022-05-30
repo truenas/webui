@@ -3,6 +3,7 @@ import { FormControl, ValidationErrors, Validators } from '@angular/forms';
 import { MatSelectChange } from '@angular/material/select';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 import { Observable, Subscription } from 'rxjs';
@@ -11,6 +12,7 @@ import { AclMode, AclType } from 'app/enums/acl-type.enum';
 import {
   DatasetAclType,
   DatasetCaseSensitivity,
+  DatasetChecksum,
   DatasetEncryptionType, DatasetRecordSize,
   DatasetShareType,
   DatasetSync,
@@ -21,6 +23,7 @@ import { OnOff } from 'app/enums/on-off.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { inherit } from 'app/enums/with-inherit.enum';
 import { ZfsPropertySource } from 'app/enums/zfs-property-source.enum';
+import { singleArrayToOptions } from 'app/helpers/options.helper';
 import globalHelptext from 'app/helptext/global-helptext';
 import helptext from 'app/helptext/storage/volumes/datasets/dataset-form';
 import { Dataset, ExtraDatasetQueryOptions } from 'app/interfaces/dataset.interface';
@@ -35,17 +38,19 @@ import { FieldSet } from 'app/modules/entity/entity-form/models/fieldset.interfa
 import { RelationAction } from 'app/modules/entity/entity-form/models/relation-action.enum';
 import { forbiddenValues } from 'app/modules/entity/entity-form/validators/forbidden-values-validation';
 import { EntityUtils } from 'app/modules/entity/utils';
+import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
 import { DatasetFormData } from 'app/pages/storage/volumes/datasets/dataset-form/dataset-form-data.interface';
 import { StorageService, WebSocketService } from 'app/services';
 import { DialogService } from 'app/services/dialog.service';
 import { ModalService } from 'app/services/modal.service';
+import { AppState } from 'app/store';
+import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 
 type SizeField = 'quota' | 'refquota' | 'reservation' | 'refreservation' | 'special_small_block_size';
 
 @UntilDestroy()
 @Component({
-  selector: 'app-dataset-form',
-  template: '<entity-form [conf]="this"></entity-form>',
+  template: '<ix-entity-form [conf]="this"></ix-entity-form>',
 })
 export class DatasetFormComponent implements FormConfiguration {
   title: string;
@@ -58,11 +63,9 @@ export class DatasetFormComponent implements FormConfiguration {
   isNew = false;
   parentDataset: Dataset;
   protected entityForm: EntityFormComponent;
-  minimumRecommendedRecordsize: DatasetRecordSize = '128K';
-  protected recordsizeField: FieldConfig;
+  minimumRecommendedRecordsize: DatasetRecordSize = '128K' as DatasetRecordSize;
+  protected recordsizeField: FormSelectConfig;
   protected recordsizeControl: FormControl;
-  protected recommendedSize: number;
-  protected recordsizeWarning: string;
   protected dedupValue: string;
   protected dedupControl: FormControl;
   protected dedupField: FieldConfig;
@@ -93,6 +96,9 @@ export class DatasetFormComponent implements FormConfiguration {
 
   protected warning = 80;
   protected critical = 95;
+  private dataset: Dataset;
+
+  private wasDedupChecksumWarningShown = false;
 
   customActions = [
     {
@@ -558,6 +564,12 @@ export class DatasetFormComponent implements FormConfiguration {
         },
         {
           type: 'select',
+          name: 'checksum',
+          placeholder: this.translate.instant('Checksum'),
+          options: [],
+        },
+        {
+          type: 'select',
           name: 'readonly',
           placeholder: helptext.dataset_form_readonly_placeholder,
           tooltip: helptext.dataset_form_readonly_tooltip,
@@ -603,26 +615,7 @@ export class DatasetFormComponent implements FormConfiguration {
           name: 'recordsize',
           placeholder: helptext.dataset_form_recordsize_placeholder,
           tooltip: helptext.dataset_form_recordsize_tooltip,
-          options: [
-            {
-              label: '512', value: '512', disable: true, hiddenFromDisplay: true,
-            },
-            {
-              label: '1 KiB', value: '1K', disable: true, hiddenFromDisplay: true,
-            },
-            {
-              label: '2 KiB', value: '2K', disable: true, hiddenFromDisplay: true,
-            },
-            { label: '4 KiB', value: '4K' },
-            { label: '8 KiB', value: '8K' },
-            { label: '16 KiB', value: '16K' },
-            { label: '32 KiB', value: '32K' },
-            { label: '64 KiB', value: '64K' },
-            { label: '128 KiB', value: '128K' },
-            { label: '256 KiB', value: '256K' },
-            { label: '512 KiB', value: '512K' },
-            { label: '1 MiB', value: '1M' },
-          ],
+          options: [],
         },
         {
           type: 'select',
@@ -751,6 +744,7 @@ export class DatasetFormComponent implements FormConfiguration {
     'refquota_warning_inherit',
     'refquota_critical_inherit',
     'special_small_block_size',
+    'checksum',
     'acltype',
     'aclmode',
   ];
@@ -770,43 +764,6 @@ export class DatasetFormComponent implements FormConfiguration {
     'confirm_passphrase',
     'pbkdf2iters',
   ];
-
-  protected byteMap = {
-    T: 1099511627776,
-    G: 1073741824,
-    M: 1048576,
-    K: 1024,
-    B: 1,
-  };
-  protected recordSizeMap = {
-    512: '512',
-    1024: '1K',
-    2048: '2K',
-    4096: '4K',
-    8192: '8K',
-    16384: '16K',
-    32768: '32K',
-    65536: '64K',
-    131072: '128K',
-    262144: '256K',
-    524288: '512K',
-    1048576: '1024K',
-  };
-  protected reverseRecordSizeMap = {
-    512: '512',
-    '1K': '1024',
-    '2K': '2048',
-    '4K': '4096',
-    '8K': '8192',
-    '16K': '16384',
-    '32K': '32768',
-    '64K': '65536',
-    '128K': '131072',
-    '256K': '262144',
-    '512K': '524288',
-    '1024K': '1048576',
-    '1M': '1048576',
-  };
 
   setBasicMode(isBasicMode: boolean): void {
     this.isBasicMode = isBasicMode;
@@ -938,6 +895,8 @@ export class DatasetFormComponent implements FormConfiguration {
     protected storageService: StorageService,
     protected modalService: ModalService,
     protected translate: TranslateService,
+    protected formatter: IxFormatterService,
+    private store$: Store<AppState>,
   ) { }
 
   initial(entityForm: EntityFormComponent): void {
@@ -958,8 +917,8 @@ export class DatasetFormComponent implements FormConfiguration {
     this.productType = window.localStorage.getItem('product_type') as ProductType;
     const aclControl = entityForm.formGroup.get('aclmode');
     this.entityForm = entityForm;
-    if (this.productType.includes(ProductType.Enterprise)) {
-      this.ws.call('system.info').pipe(untilDestroyed(this)).subscribe((systemInfo) => {
+    if (this.productType === ProductType.ScaleEnterprise) {
+      this.store$.pipe(waitForSystemInfo, untilDestroyed(this)).subscribe((systemInfo) => {
         if (systemInfo.license && systemInfo.license.features.includes(LicenseFeature.Dedup)) {
           this.entityForm.setDisabled('deduplication', false, false);
         }
@@ -972,10 +931,19 @@ export class DatasetFormComponent implements FormConfiguration {
     this.dedupField = _.find(this.fieldConfig, { name: 'deduplication' });
     this.dedupValue = this.dedupControl.value;
     this.dedupControl.valueChanges.pipe(untilDestroyed(this)).subscribe((dedup: DeduplicationSetting) => {
-      if (dedup === DeduplicationSetting.Inherit || dedup === DeduplicationSetting.Off) {
+      if (dedup === DeduplicationSetting.Inherit || dedup === DeduplicationSetting.Off || !dedup) {
         this.dedupField.warnings = '';
       } else {
         this.dedupField.warnings = helptext.dataset_form_deduplication_warning;
+
+        const checksum = this.entityForm.formGroup.get('checksum').value;
+
+        if (this.wasDedupChecksumWarningShown || !checksum || checksum === DatasetChecksum.Sha512) {
+          return;
+        }
+
+        this.showDedupChecksumWarning();
+        this.entityForm.formGroup.get('checksum').setValue(DatasetChecksum.Sha512);
       }
     });
 
@@ -1018,22 +986,30 @@ export class DatasetFormComponent implements FormConfiguration {
     });
 
     this.recordsizeControl = this.entityForm.formGroup.controls['recordsize'] as FormControl;
+    this.recordsizeField = _.find(this.fieldConfig, { name: 'recordsize' }) as FormSelectConfig;
 
-    this.recordsizeField = _.find(this.fieldConfig, { name: 'recordsize' });
+    this.ws.call('pool.dataset.recordsize_choices')
+      .pipe(
+        singleArrayToOptions(),
+        untilDestroyed(this),
+      )
+      .subscribe((options) => {
+        this.recordsizeField.options = options;
+      });
+
     this.recordsizeControl.valueChanges.pipe(untilDestroyed(this)).subscribe((recordSize: DatasetRecordSize) => {
-      const recordSizeNumber = parseInt(this.reverseRecordSizeMap[recordSize], 10);
-      if (this.minimumRecommendedRecordsize && this.recommendedSize) {
-        this.recordsizeWarning = this.translate.instant(
-          helptext.dataset_form_warning,
-          { size: this.minimumRecommendedRecordsize },
-        );
-        if (recordSizeNumber < this.recommendedSize) {
-          this.recordsizeField.warnings = this.recordsizeWarning;
-          this.isBasicMode = false;
-        } else {
-          this.recordsizeField.warnings = null;
-        }
+      const currentSize = this.formatter.convertHumanStringToNum(recordSize);
+      const minimumRecommendedSize = this.formatter.convertHumanStringToNum(this.minimumRecommendedRecordsize);
+      if (!currentSize || !minimumRecommendedSize || currentSize >= minimumRecommendedSize) {
+        this.recordsizeField.warnings = null;
+        return;
       }
+
+      this.recordsizeField.warnings = this.translate.instant(
+        helptext.dataset_form_warning,
+        { size: this.minimumRecommendedRecordsize },
+      );
+      this.isBasicMode = false;
     });
     this.setBasicMode(this.isBasicMode);
   }
@@ -1071,13 +1047,17 @@ export class DatasetFormComponent implements FormConfiguration {
       }
     });
 
+    this.ws.call('pool.dataset.checksum_choices').pipe(untilDestroyed(this)).subscribe((checksumChoices) => {
+      const checksumFieldConfig = _.find(this.fieldConfig, { name: 'checksum' }) as FormSelectConfig;
+      for (const key in checksumChoices) {
+        checksumFieldConfig.options.push({ label: key, value: checksumChoices[key] });
+      }
+    });
+
     if (this.parent) {
       const root = this.parent.split('/')[0];
       this.ws.call('pool.dataset.recommended_zvol_blocksize', [root]).pipe(untilDestroyed(this)).subscribe((recommendedSize) => {
         this.minimumRecommendedRecordsize = recommendedSize;
-        this.recommendedSize = parseInt(
-          this.reverseRecordSizeMap[this.minimumRecommendedRecordsize], 0,
-        );
       });
 
       this.ws.call('pool.dataset.query', [[['id', '=', this.pk]]]).pipe(untilDestroyed(this)).subscribe(
@@ -1224,6 +1204,7 @@ export class DatasetFormComponent implements FormConfiguration {
             const sync = _.find(this.fieldConfig, { name: 'sync' }) as FormSelectConfig;
             const compression = _.find(this.fieldConfig, { name: 'compression' }) as FormSelectConfig;
             const deduplication = _.find(this.fieldConfig, { name: 'deduplication' }) as FormSelectConfig;
+            const checksum = _.find(this.fieldConfig, { name: 'checksum' }) as FormSelectConfig;
             const exec = _.find(this.fieldConfig, { name: 'exec' }) as FormSelectConfig;
             const readonly = _.find(this.fieldConfig, { name: 'readonly' }) as FormSelectConfig;
             const atime = _.find(this.fieldConfig, { name: 'atime' }) as FormSelectConfig;
@@ -1231,6 +1212,7 @@ export class DatasetFormComponent implements FormConfiguration {
             const syncInherit: Option[] = [{ label: `Inherit (${pkDataset[0].sync.rawvalue})`, value: inherit }];
             const compressionInherit: Option[] = [{ label: `Inherit (${pkDataset[0].compression.rawvalue})`, value: inherit }];
             const deduplicationInherit: Option[] = [{ label: `Inherit (${pkDataset[0].deduplication.rawvalue})`, value: inherit }];
+            const checksumInherit = [{ label: `Inherit (${pkDataset[0].checksum.rawvalue})`, value: 'INHERIT' }];
             const execInherit: Option[] = [{ label: `Inherit (${pkDataset[0].exec.rawvalue})`, value: inherit }];
             const readonlyInherit: Option[] = [{ label: `Inherit (${pkDataset[0].readonly.rawvalue})`, value: inherit }];
             const atimeInherit: Option[] = [{ label: `Inherit (${pkDataset[0].atime.rawvalue})`, value: inherit }];
@@ -1252,6 +1234,7 @@ export class DatasetFormComponent implements FormConfiguration {
             sync.options = syncInherit.concat(sync.options);
             compression.options = compressionInherit.concat(compression.options);
             deduplication.options = deduplicationInherit.concat(deduplication.options);
+            checksum.options = checksumInherit.concat(checksum.options);
             exec.options = execInherit.concat(exec.options);
             readonly.options = readonlyInherit.concat(readonly.options);
             atime.options = atimeInherit.concat(atime.options);
@@ -1260,6 +1243,7 @@ export class DatasetFormComponent implements FormConfiguration {
             entityForm.formGroup.controls['sync'].setValue(inherit);
             entityForm.formGroup.controls['compression'].setValue(inherit);
             entityForm.formGroup.controls['deduplication'].setValue(inherit);
+            entityForm.formGroup.controls['checksum'].setValue('INHERIT');
             entityForm.formGroup.controls['exec'].setValue(inherit);
             entityForm.formGroup.controls['readonly'].setValue(inherit);
             entityForm.formGroup.controls['atime'].setValue(inherit);
@@ -1279,6 +1263,7 @@ export class DatasetFormComponent implements FormConfiguration {
               const editReadonly = _.find(this.fieldConfig, { name: 'readonly' }) as FormSelectConfig;
               const editAtime = _.find(this.fieldConfig, { name: 'atime' }) as FormSelectConfig;
               const editRecordsize = _.find(this.fieldConfig, { name: 'recordsize' }) as FormSelectConfig;
+              const editChecksum = _.find(this.fieldConfig, { name: 'checksum' }) as FormSelectConfig;
 
               const editSyncCollection: Option[] = [{ label: `Inherit (${this.parentDataset.sync.rawvalue})`, value: inherit }];
               editSync.options = editSyncCollection.concat(editSync.options);
@@ -1291,6 +1276,9 @@ export class DatasetFormComponent implements FormConfiguration {
 
               const editExecCollection: Option[] = [{ label: `Inherit (${this.parentDataset.exec.rawvalue})`, value: inherit }];
               editExec.options = editExecCollection.concat(editExec.options);
+
+              const editChecksumCollection = [{ label: `Inherit (${this.parentDataset.deduplication.rawvalue})`, value: 'INHERIT' }];
+              editChecksum.options = editChecksumCollection.concat(editChecksum.options);
 
               const editReadonlyCollection: Option[] = [{ label: `Inherit (${this.parentDataset.readonly.rawvalue})`, value: inherit }];
               editReadonly.options = editReadonlyCollection.concat(editReadonly.options);
@@ -1322,6 +1310,10 @@ export class DatasetFormComponent implements FormConfiguration {
               ) {
                 deduplicationValue = inherit;
               }
+              let checksumValue = pkDataset[0].checksum.value;
+              if (pkDataset[0].checksum.source === 'DEFAULT' || pkDataset[0].checksum.source === 'INHERITED') {
+                checksumValue = 'INHERIT';
+              }
               let execValue = pkDataset[0].exec.value;
               if ([ZfsPropertySource.Inherited, ZfsPropertySource.Default].includes(pkDataset[0].exec.source)) {
                 execValue = inherit;
@@ -1341,6 +1333,7 @@ export class DatasetFormComponent implements FormConfiguration {
 
               entityForm.formGroup.controls['deduplication'].setValue(deduplicationValue);
               entityForm.formGroup.controls['exec'].setValue(execValue);
+              entityForm.formGroup.controls['checksum'].setValue(checksumValue);
               entityForm.formGroup.controls['readonly'].setValue(readonlyValue);
               entityForm.formGroup.controls['atime'].setValue(atimeValue);
               entityForm.formGroup.controls['recordsize'].setValue(recordsizeValue);
@@ -1382,6 +1375,7 @@ export class DatasetFormComponent implements FormConfiguration {
   }
 
   resourceTransformIncomingRestData(wsResponse: Dataset): DatasetFormData {
+    this.dataset = wsResponse;
     if (wsResponse.special_small_block_size && wsResponse.special_small_block_size.rawvalue === '0') {
       delete wsResponse.special_small_block_size;
     }
@@ -1424,6 +1418,7 @@ export class DatasetFormComponent implements FormConfiguration {
       compression: this.getFieldValueOrRaw(wsResponse.compression),
       copies: this.getFieldValueOrRaw(wsResponse.copies),
       deduplication: this.getFieldValueOrRaw(wsResponse.deduplication),
+      checksum: this.getFieldValueOrRaw(wsResponse.checksum),
       quota_warning: quotaWarning,
       quota_warning_inherit: quotaWarningInherit,
       quota_critical: quotaCritical,
@@ -1476,38 +1471,22 @@ export class DatasetFormComponent implements FormConfiguration {
       delete data.special_small_block_size;
     }
 
-    if (data.quota_warning_inherit) {
-      delete (data.quota_warning);
+    if (data.quota_warning_inherit && this.dataset?.quota_warning) {
+      data.quota_warning = 'INHERIT';
     }
-    if (data.quota_critical_inherit) {
-      delete (data.quota_critical);
+    if (data.quota_critical_inherit && this.dataset?.quota_critical) {
+      data.quota_critical = 'INHERIT';
     }
-    if (data.refquota_warning_inherit) {
-      delete (data.refquota_warning);
+    if (data.refquota_warning_inherit && this.dataset?.refquota_warning) {
+      data.refquota_warning = 'INHERIT';
     }
-    if (data.refquota_critical_inherit) {
-      delete (data.refquota_critical);
+    if (data.refquota_critical_inherit && this.dataset?.refquota_critical) {
+      data.refquota_critical = 'INHERIT';
     }
     delete (data.quota_warning_inherit);
     delete (data.quota_critical_inherit);
     delete (data.refquota_warning_inherit);
     delete (data.refquota_critical_inherit);
-    if (!data.quota_warning) {
-      delete data.quota_warning;
-    }
-    if (!data.quota_critical) {
-      delete data.quota_critical;
-    }
-    if (!data.refquota_warning) {
-      delete data.refquota_warning;
-    }
-    if (!data.refquota_critical) {
-      delete data.refquota_critical;
-    }
-
-    if ((data.recordsize as string) === '1M') {
-      data.recordsize = '1024K';
-    }
 
     if (data.acltype === DatasetAclType.Posix || data.acltype === DatasetAclType.Off) {
       data.aclmode = AclMode.Discard;
@@ -1561,8 +1540,8 @@ export class DatasetFormComponent implements FormConfiguration {
     if (data.deduplication === inherit) {
       delete (data.deduplication);
     }
-    if (data.recordsize === '1M') {
-      data.recordsize = '1024K';
+    if (data.checksum === 'INHERIT') {
+      delete data.checksum;
     }
     // encryption values
     if (data.inherit_encryption) {
@@ -1664,5 +1643,18 @@ export class DatasetFormComponent implements FormConfiguration {
 
   setTitle(title: string): void {
     this.title = this.translate.instant(title);
+  }
+
+  private showDedupChecksumWarning(): void {
+    this.wasDedupChecksumWarningShown = true;
+    this.dialogService.confirm({
+      hideCancel: true,
+      title: this.translate.instant('Default Checksum Warning'),
+      hideCheckBox: true,
+      message: this.translate.instant(`The default "Checksum" value for datasets with deduplication used to be SHA256.
+       Our testing has shown that SHA512 performs better for such datasets.
+       We've changed the checksum value from SHA256 to SHA512. You can change it back in "Advanced Options".`),
+      buttonMsg: this.translate.instant('OK'),
+    });
   }
 }

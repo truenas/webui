@@ -6,16 +6,15 @@ import {
   Router, NavigationEnd, NavigationCancel,
 } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { map } from 'rxjs/operators';
 import { customSvgIcons } from 'app/core/classes/custom-icons';
 import { WebSocketService } from 'app/services';
-import { SystemProfileService } from 'app/services/system-profile.service';
-import { ThemeService } from 'app/services/theme/theme.service';
 import productText from './helptext/product';
 import { SystemGeneralService } from './services';
 
 @UntilDestroy()
 @Component({
-  selector: 'app-root',
+  selector: 'ix-root',
   templateUrl: './app.component.html',
 })
 export class AppComponent {
@@ -24,13 +23,9 @@ export class AppComponent {
     private router: Router,
     public snackBar: MatSnackBar,
     private ws: WebSocketService,
-    public themeservice: ThemeService,
     public domSanitizer: DomSanitizer,
     public matIconRegistry: MatIconRegistry,
     private sysGeneralService: SystemGeneralService,
-    // TODO: Keep or do proper refactoring.
-    // Currently our code relies for SysInfo to be emitted by SystemProfileService constructor.
-    private sysInfo: SystemProfileService,
   ) {
     this.matIconRegistry.addSvgIconSetInNamespace(
       'mdi',
@@ -45,17 +40,21 @@ export class AppComponent {
     this.title.setTitle(product + ' - ' + window.location.hostname);
     const darkScheme = window.matchMedia('(prefers-color-scheme: dark)').matches;
     let path;
-    if (window.localStorage.product_type) {
-      const cachedType = window.localStorage['product_type'].toLowerCase();
-      path = 'assets/images/truenas_' + cachedType + '_favicon.png';
+    const savedProductType = window.localStorage.product_type;
+    if (savedProductType) {
+      const cachedType = savedProductType.toLowerCase();
+      path = `assets/images/truenas_${cachedType}_favicon.png`;
       if (darkScheme) {
-        path = 'assets/images/truenas_' + cachedType + '_ondark_favicon.png';
+        path = `assets/images/truenas_${cachedType}_ondark_favicon.png`;
       }
     } else {
-      this.sysGeneralService.getProductType$.pipe(untilDestroyed(this)).subscribe((res) => {
-        path = 'assets/images/truenas_' + res.toLowerCase() + '_favicon.png';
+      this.sysGeneralService.getProductType$.pipe(
+        map((productType) => productType.toLowerCase()),
+        untilDestroyed(this),
+      ).subscribe((productType) => {
+        path = `assets/images/truenas_${productType}_favicon.png`;
         if (darkScheme) {
-          path = 'assets/images/truenas_' + res.toLowerCase() + '_ondark_favicon.png';
+          path = `assets/images/truenas_${productType}_ondark_favicon.png`;
         }
       });
     }
@@ -65,7 +64,7 @@ export class AppComponent {
       document.body.className += ' safari-platform';
     }
 
-    router.events.pipe(untilDestroyed(this)).subscribe((event) => {
+    this.router.events.pipe(untilDestroyed(this)).subscribe((event) => {
       // save currenturl
       if (event instanceof NavigationEnd) {
         const navigation = this.router.getCurrentNavigation();
@@ -88,7 +87,7 @@ export class AppComponent {
       const chunkFailedMessage = /Loading chunk [\d]+ failed/;
 
       if (chunkFailedMessage.test(err.message)) {
-        window.location.reload(true);
+        window.location.reload();
       }
       console.error(err);
     };

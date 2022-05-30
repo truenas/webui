@@ -23,6 +23,7 @@ import { Wizard } from 'app/modules/entity/entity-form/models/wizard.interface';
 import { forbiddenValues } from 'app/modules/entity/entity-form/validators/forbidden-values-validation';
 import { EntityWizardComponent } from 'app/modules/entity/entity-wizard/entity-wizard.component';
 import { EntityUtils } from 'app/modules/entity/utils';
+import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
 import { StorageService, WebSocketService } from 'app/services';
 import { CoreService } from 'app/services/core-service/core.service';
 import { ModalService } from 'app/services/modal.service';
@@ -43,8 +44,7 @@ interface ZvolFormData {
 
 @UntilDestroy()
 @Component({
-  selector: 'app-zvol-wizard',
-  template: '<entity-wizard [conf]="this"></entity-wizard>',
+  template: '<ix-entity-wizard [conf]="this"></ix-entity-wizard>',
 })
 export class ZvolWizardComponent implements WizardConfiguration {
   addWsCall = 'pool.dataset.create' as const;
@@ -80,28 +80,6 @@ export class ZvolWizardComponent implements WizardConfiguration {
       function: () => { this.isBasicMode = !this.isBasicMode; },
     },
   ];
-
-  protected byteMap = {
-    T: 1099511627776,
-    G: 1073741824,
-    M: 1048576,
-    K: 1024,
-  };
-  protected reverseZvolBlockSizeMap = {
-    512: '512',
-    '1K': '1024',
-    '2K': '2048',
-    '4K': '4096',
-    '8K': '8192',
-    '16K': '16384',
-    '32K': '32768',
-    '64K': '65536',
-    '128K': '131072',
-    '256K': '262144',
-    '512K': '524288',
-    '1024K': '1048576',
-    '1M': '1048576',
-  };
 
   wizardConfig: Wizard[] = [
     {
@@ -302,6 +280,7 @@ export class ZvolWizardComponent implements WizardConfiguration {
     protected storageService: StorageService,
     private translate: TranslateService,
     protected modalService: ModalService,
+    private formatter: IxFormatterService,
   ) {}
 
   preInit(entityWizard: EntityWizardComponent): void {
@@ -482,18 +461,17 @@ export class ZvolWizardComponent implements WizardConfiguration {
     zvolEntityForm.controls['sparse'].valueChanges.pipe(untilDestroyed(this)).subscribe((sparse) => {
       this.summary[this.translate.instant('Sparse')] = sparse;
     });
-    zvolEntityForm.controls['volblocksize'].valueChanges.pipe(untilDestroyed(this)).subscribe((res: keyof ZvolWizardComponent['reverseZvolBlockSizeMap']) => {
-      const resNumber = parseInt(this.reverseZvolBlockSizeMap[res], 10);
-      if (this.minimumRecommendedZvolVolblocksize) {
-        const recommendedSize = parseInt(this.reverseZvolBlockSizeMap[this.minimumRecommendedZvolVolblocksize], 0);
-        if (resNumber < recommendedSize) {
-          const warnings = `${this.translate.instant(helptext.blocksize_warning.a)} ${this.minimumRecommendedZvolVolblocksize}. ${this.translate.instant(helptext.blocksize_warning.b)}`;
-          this.wizardConfig[1].fieldConfig.find((config) => config.name === 'volblocksize').warnings = warnings;
-        } else {
-          this.wizardConfig[1].fieldConfig.find((config) => config.name === 'volblocksize').warnings = null;
-        }
+    zvolEntityForm.controls['volblocksize'].valueChanges.pipe(untilDestroyed(this)).subscribe((recordSize: DatasetRecordSize) => {
+      const volBlockSizeField = this.wizardConfig[1].fieldConfig.find((config) => config.name === 'volblocksize');
+      const currentSize = this.formatter.convertHumanStringToNum(recordSize);
+      const minimumRecommendedSize = this.formatter.convertHumanStringToNum(this.minimumRecommendedZvolVolblocksize);
+      if (!currentSize || !minimumRecommendedSize || currentSize >= minimumRecommendedSize) {
+        volBlockSizeField.warnings = null;
+        return;
       }
-      this.summary[this.translate.instant('Block Size')] = res;
+      const warnings = `${this.translate.instant(helptext.blocksize_warning.a)} ${this.minimumRecommendedZvolVolblocksize}. ${this.translate.instant(helptext.blocksize_warning.b)}`;
+      this.wizardConfig[1].fieldConfig.find((config) => config.name === 'volblocksize').warnings = warnings;
+      this.summary[this.translate.instant('Block Size')] = recordSize;
     });
   }
 

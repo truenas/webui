@@ -197,7 +197,7 @@ import {
 } from 'app/interfaces/smart-test.interface';
 import { SmbConfig, SmbConfigUpdate } from 'app/interfaces/smb-config.interface';
 import {
-  SmbPresets, SmbShare, SmbSharesec, SmbSharesecAce, SmbShareUpdate,
+  SmbPresets, SmbShare, SmbSharesec, SmbSharesecAceUpdate, SmbShareUpdate,
 } from 'app/interfaces/smb-share.interface';
 import { SnmpConfig, SnmpConfigUpdate } from 'app/interfaces/snmp-config.interface';
 import { SshConfig, SshConfigUpdate } from 'app/interfaces/ssh-config.interface';
@@ -242,7 +242,7 @@ import {
   VmStopParams,
 } from 'app/interfaces/virtual-machine.interface';
 import {
-  VmDevice, VmDeviceDelete, VmDeviceUpdate, VmDisplayDevice,
+  VmDevice, VmDeviceDelete, VmDeviceUpdate, VmDisplayDevice, VmPassthroughDeviceChoice,
 } from 'app/interfaces/vm-device.interface';
 import {
   MatchDatastoresWithDatasets,
@@ -434,7 +434,7 @@ export type ApiDirectory = {
 
   // Disk
   'disk.query': { params: QueryParams<Disk, DiskQueryOptions>; response: Disk[] };
-  'disk.update': { params: [string, DiskUpdate]; response: Disk };
+  'disk.update': { params: [id: string, update: DiskUpdate]; response: Disk };
   'disk.get_unused': { params: [joinPartitions?: boolean]; response: UnusedDisk[] };
   'disk.temperatures': { params: [disks: string[]]; response: DiskTemperatures };
   'disk.wipe': { params: DiskWipeParams; response: void };
@@ -657,6 +657,7 @@ export type ApiDirectory = {
   'pool.dataset.attachments': { params: [datasetId: string]; response: DatasetAttachment[] };
   'pool.dataset.change_key': { params: [id: string, params: DatasetChangeKeyParams]; response: void };
   'pool.dataset.compression_choices': { params: void; response: Choices };
+  'pool.dataset.checksum_choices': { params: void; response: Choices };
   'pool.dataset.create': { params: [DatasetCreate]; response: Dataset };
   'pool.dataset.delete': { params: [path: string, params: { recursive: boolean; force?: boolean }]; response: boolean };
   'pool.dataset.encryption_algorithm_choices': { params: void; response: Choices };
@@ -679,6 +680,7 @@ export type ApiDirectory = {
   'pool.dataset.unlock': { params: [path: string, params: DatasetUnlockParams]; response: DatasetUnlockResult };
   'pool.dataset.unlock_services_restart_choices': { params: [id: string]; response: Choices };
   'pool.dataset.update': { params: [id: string, update: DatasetUpdate]; response: Dataset };
+  'pool.dataset.recordsize_choices': { params: void; response: string[] };
   'pool.detach': { params: [id: number, params: { label: string }]; response: boolean };
   'pool.download_encryption_key': { params: [volumeId: number, fileName?: string]; response: string };
   'pool.expand': { params: PoolExpandParams; response: null };
@@ -766,7 +768,7 @@ export type ApiDirectory = {
   'smb.update': { params: [SmbConfigUpdate]; response: SmbConfig };
   'smb.config': { params: void; response: SmbConfig };
   'smb.sharesec.query': { params: QueryParams<SmbSharesec>; response: SmbSharesec[] };
-  'smb.sharesec.update': { params: [id: number, update: { share_acl: SmbSharesecAce[] }]; response: SmbSharesec };
+  'smb.sharesec.update': { params: [id: number, update: { share_acl: SmbSharesecAceUpdate[] }]; response: SmbSharesec };
 
   // SSH
   'ssh.update': { params: [SshConfigUpdate]; response: SshConfig };
@@ -903,7 +905,7 @@ export type ApiDirectory = {
   'vm.delete': { params: VmDeleteParams; response: boolean };
   'vm.resolution_choices': { params: void; response: Choices };
   'vm.get_display_web_uri': { params: VmDisplayWebUriParams; response: { [id: number]: VmDisplayWebUri } };
-  'vm.device.passthrough_device_choices': { params: void; response: Choices };
+  'vm.device.passthrough_device_choices': { params: void; response: { [id: string]: VmPassthroughDeviceChoice } };
   'vm.device.create': { params: [VmDeviceUpdate]; response: VmDevice };
   'vm.device.delete': { params: [number, VmDeviceDelete]; response: boolean };
   'vm.random_mac': { params: void; response: string };

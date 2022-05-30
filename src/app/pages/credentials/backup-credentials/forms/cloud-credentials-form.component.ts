@@ -29,8 +29,7 @@ import { ModalService } from 'app/services/modal.service';
 
 @UntilDestroy()
 @Component({
-  selector: 'app-cloudcredentials-form',
-  template: '<entity-form [conf]="this"></entity-form>',
+  template: '<ix-entity-form [conf]="this"></ix-entity-form>',
   providers: [CloudCredentialService, ReplicationService],
 })
 export class CloudCredentialsFormComponent implements FormConfiguration {
@@ -56,7 +55,6 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
       name: helptext.fieldset_basic,
       label: true,
       class: 'basic',
-      width: '49%',
       config: [
         {
           type: 'input',
@@ -83,7 +81,6 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
       name: helptext.fieldset_oauth_authentication,
       label: true,
       class: 'oauth',
-      width: '100%',
       config: [
         {
           type: 'button',
@@ -117,7 +114,6 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
       name: helptext.fieldset_authentication,
       label: true,
       class: 'authentication',
-      width: '49%',
       config: [
         // Amazon_s3
         {
@@ -156,23 +152,6 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
             },
           ],
           togglePw: true,
-        },
-        {
-          type: 'input',
-          name: 'max_upload_parts-S3',
-          placeholder: helptext.max_upload_parts_s3.placeholder,
-          tooltip: helptext.max_upload_parts_s3.tooltip,
-          inputType: 'number',
-          validation: helptext.max_upload_parts_s3.validation,
-          relation: [
-            {
-              action: RelationAction.Show,
-              when: [{
-                name: 'provider',
-                value: 'S3',
-              }],
-            },
-          ],
         },
         // backblaze b2
         {
@@ -950,17 +929,17 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
     },
     { name: 'divider', divider: true },
     {
-      name: helptext.fieldset_authentication_advanced,
+      name: helptext.fieldset_advanced,
       label: true,
       class: 'authentication_advanced',
-      width: '49%',
       config: [
         {
-          type: 'checkbox',
-          name: 'advanced-S3',
-          placeholder: this.translate.instant('Advanced Settings'),
-          isHidden: true,
-          value: false,
+          type: 'input',
+          name: 'max_upload_parts-S3',
+          placeholder: helptext.max_upload_parts_s3.placeholder,
+          tooltip: helptext.max_upload_parts_s3.tooltip,
+          inputType: 'number',
+          validation: helptext.max_upload_parts_s3.validation,
           relation: [
             {
               action: RelationAction.Show,
@@ -1077,15 +1056,6 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
             },
           ],
         },
-      ],
-    },
-    { name: 'spacer', label: false, width: '2%' },
-    {
-      name: helptext.fieldset_endpoint_advanced_options,
-      label: true,
-      class: 'endpoint',
-      width: '49%',
-      config: [
         {
           type: 'input',
           name: 'endpoint-S3',
@@ -1099,9 +1069,6 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
               when: [{
                 name: 'provider',
                 value: 'S3',
-              }, {
-                name: 'advanced-S3',
-                value: true,
               }],
             },
           ],
@@ -1119,9 +1086,6 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
               when: [{
                 name: 'provider',
                 value: 'S3',
-              }, {
-                name: 'advanced-S3',
-                value: true,
               }],
             },
           ],
@@ -1139,9 +1103,6 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
               when: [{
                 name: 'provider',
                 value: 'S3',
-              }, {
-                name: 'advanced-S3',
-                value: true,
               }],
             },
           ],
@@ -1159,9 +1120,6 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
               when: [{
                 name: 'provider',
                 value: 'S3',
-              }, {
-                name: 'advanced-S3',
-                value: true,
               }],
             },
           ],
@@ -1550,10 +1508,6 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
 
   dataAttributeHandler(entityForm: EntityFormComponent): void {
     const provider = entityForm.formGroup.controls['provider'].value;
-    if (provider === 'S3'
-    && (entityForm.wsResponseIdx['endpoint'] || entityForm.wsResponseIdx['skip_region'] || entityForm.wsResponseIdx['signatures_v2'])) {
-      entityForm.formGroup.controls['advanced-S3'].setValue(true);
-    }
 
     for (const i in entityForm.wsResponseIdx) {
       let fieldName = i;
@@ -1574,7 +1528,6 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
     const allowEmptyStrings = ['pass-FTP'];
     const removedAttributes = [
       'preview-GOOGLE_CLOUD_STORAGE',
-      'advanced-S3',
       'drives-ONEDRIVE',
     ];
     const attributes: any = {};

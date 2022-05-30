@@ -9,7 +9,6 @@ export interface DialogData {
 }
 
 @Component({
-  selector: 'about-dialog',
   styleUrls: ['./about-dialog.component.scss'],
   templateUrl: './about-dialog.component.html',
 })
@@ -17,8 +16,6 @@ export class AboutDialogComponent {
   copyrightYear = this.localeService.getCopyrightYearFromBuildTime();
   systemType: ProductType;
   helptext = helptext;
-
-  readonly ProductType = ProductType;
 
   constructor(
     public dialogRef: MatDialogRef<AboutDialogComponent>,

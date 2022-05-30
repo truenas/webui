@@ -1,15 +1,15 @@
-.ix-blue catalog-summary-dialog div.mat-dialog-content {
+.ix-dark ix-catalog-summary-dialog div.mat-dialog-content {
   overflow: auto !important;
 }
 
-catalog-summary-dialog {
+ix-catalog-summary-dialog {
   font-size: 14px;
 
   .status-filter {
     align-items: center;
     display: flex;
 
-        
+
     .mat-form-field {
       margin: 0 0 0 10px;
       width: unset !important;
@@ -68,7 +68,7 @@ catalog-summary-dialog {
   .resource {
     width: 100%;
   }
-    
+
   .version-list {
     margin-top: 10px;
     width: 100%;
@@ -81,7 +81,7 @@ catalog-summary-dialog {
   .row-light {
     background: rgba(0, 0, 0, 0.1);
   }
-    
+
   .detail-row {
     padding: 5px 10px;
 
@@ -91,9 +91,9 @@ catalog-summary-dialog {
 
     .info-col {
       height: 20px;
-    }        
+    }
   }
-    
+
   .button-bar {
     margin-bottom: -8px;
   }

@@ -21,7 +21,6 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
 @Component({
-  selector: 'app-bootenv-form',
   templateUrl: './bootenv-form.component.html',
   styleUrls: ['./bootenv-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -138,7 +138,7 @@ describe('SshKeypairFormComponent', () => {
       const form = await loader.getHarness(IxFormHarness);
       await form.fillForm({
         Name: 'downloadname',
-        'Private Key': 'Downloaded public key',
+        'Public Key': 'Downloaded public key',
       });
 
       const actionsMenu = await loader.getHarness(MatMenuHarness.with({ selector: '[aria-label="Download actions"]' }));

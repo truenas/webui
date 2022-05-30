@@ -1,17 +1,17 @@
 <ix-modal-header [title]="'File Ticket' | translate" [loading]="isFormLoading$ | async"></ix-modal-header>
 <div class="ix-modal-subheader" *ngFor="let job$ of jobs$ | async">
-  <app-job-item *ngIf="job$ | async as job" [job]="job"></app-job-item>
+  <ix-job-item *ngIf="job$ | async as job" [job]="job"></ix-job-item>
 </div>
 <mat-card>
   <mat-card-content>
     <form [formGroup]="form" class="ix-form-container" (submit)="onSubmit()">
       <ix-fieldset>
-        <app-jira-oauth
+        <ix-jira-oauth
           formControlName="token"
           [label]="'Token' | translate"
           [tooltip]="tooltips.token | translate"
           [required]="true"
-        ></app-jira-oauth>
+        ></ix-jira-oauth>
         <ix-select
           formControlName="category"
           [label]="'Category' | translate"
@@ -51,7 +51,7 @@
           [label]="'Attach screenshots' | translate"
           [tooltip]="tooltips.screenshot | translate"
           [multiple]="true"
-          [acceptedFiles]="'image/png,image/jpeg,image/gif'"
+          [acceptedFiles]="acceptedFiles"
         ></ix-file-input>
       </ix-fieldset>
 

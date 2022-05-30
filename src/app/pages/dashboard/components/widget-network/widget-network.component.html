@@ -9,15 +9,20 @@
           <button
             fxHide.gt-xs
             class="mat-card-title-text primary-nav"
-            mat-icon-button color="default"
-            ix-auto ix-auto-type="button" ix-auto-identifier="goBack"
+            mat-icon-button
+            color="default"
+            ix-auto
+            ix-auto-type="button"
+            ix-auto-identifier="goBack"
+            (click)="goBack()"
           >
-            <mat-icon (click)="goBack()" class="back-arrow">chevron_left</mat-icon>
+            <mat-icon class="back-arrow">chevron_left</mat-icon>
           </button>
+
           <h3 class="mat-card-title-text">
             <div class="card-title-text" [class.drag-handle]="showReorderHandle">
               <span class="grip" *ngIf="showReorderHandle"></span>
-              {{title | translate}}
+              <span>{{ title | translate }}</span>
             </div>
           </h3>
 
@@ -28,24 +33,28 @@
               ix-auto-type="button"
               ix-auto-identifier="networkReports"
               [routerLink]="['/reportsdashboard/network']"
+              [matTooltip]="'Network Reports' | translate"
+              matTooltipPosition="above"
+              aria-label="Network Reports"
             >
-              <mat-icon role="img"
-                matTooltip="{{'Network Reports' | translate}}"
-                matTooltipPosition="above"
-                aria-label="Network Reports">
-                insert_chart
-              </mat-icon>
+              <mat-icon role="img">insert_chart</mat-icon>
             </a>
           </div>
         </mat-toolbar-row>
-        <div>
+        <ng-container *ngIf="!availableNics.length">
+          <div class="empty-state">
+            <h3>{{ 'No active interfaces are found' | translate }}</h3>
+            <a mat-button color="primary" routerLink="/network">{{ 'Open Network' | translate }}</a>
+          </div>
+        </ng-container>
+        <div *ngIf="availableNics.length">
           <div class="card-body" [style.padding]="paddingTop + 'px ' + paddingX + 'px ' + paddingBottom + 'px'">
             <mat-grid-list cols="6" [gutterSize]="gap + 'px'" [rowHeight]="rowHeight + 'px'"  [ngClass]="'nics-' + availableNics.length">
               <mat-grid-tile *ngFor="let nic of availableNics; let i=index" [colspan]="getColspan(i)" class="tile-{{ i }}">
                 <div class="tile" [fxLayout]="availableNics.length === 1 ? 'column' : 'row'" fxFlexFill fxLayoutAlign="start stretch">
                   <div class="nic-info" fxLayout="column" fxLayoutAlign="start stretch">
                     <div class="info-header" fxLayout="row" fxLayoutAlign="start start">
-                      <h4 class="info-header-title">{{nic.state.name}}</h4>
+                      <h4 class="info-header-title">{{ nic.state.name }}</h4>
                       <!-- TODO: Add pencil icon and open edit interface as slide-in form on click -->
                     </div>
                     <div class="info-body" fxLayout="row" fxFlex fxLayoutAlign="space-between center">
@@ -61,8 +70,18 @@
                         </li>
                         <li fxLayout="row" fxLayoutAlign="start center" class="line-state">
                           <span class="icon state">
-                            <mat-icon [id]="nic.state.name" class="state-info-icon" svgIcon="network-upload-download" *ngIf="getLinkState(nic) === LinkState.Up" [matTooltip]="showInOutInfo(nic)"></mat-icon>
-                            <mat-icon class="state-info-icon" svgIcon="network-upload-download-disabled" *ngIf="getLinkState(nic) !== LinkState.Up"></mat-icon>
+                            <mat-icon
+                              [id]="nic.state.name"
+                              class="state-info-icon"
+                              svgIcon="network-upload-download"
+                              *ngIf="getLinkState(nic) === LinkState.Up"
+                              [matTooltip]="showInOutInfo(nic)"
+                            ></mat-icon>
+                            <mat-icon
+                              *ngIf="getLinkState(nic) !== LinkState.Up"
+                              class="state-info-icon"
+                              svgIcon="network-upload-download-disabled"
+                            ></mat-icon>
                           </span>
                           <ul *ngIf="getLinkState(nic) === LinkState.Up">
                             <li><span class="label">{{ 'In' | translate }}:</span> {{ nicInfoMap[nic.state.name]?.in }}</li>
@@ -75,21 +94,31 @@
                           <span>{{ nicInfoMap[nic.state.name]?.ip }}</span>
                         </li>
                       </ul>
+                      <ng-template #unknown>{{ 'Unknown' | translate }}</ng-template>
                       <ul fxFlex="70" class="detail-info" *ngIf="availableNics.length === 1" fxLayout="column" fxLayoutAlign="space-between start">
-                        <li><span class="label">{{ 'Media Type' | translate }}:</span> {{ nic.state.active_media_type }}</li>
-                        <li><span class="label">{{ 'Media Subtype' | translate }}:</span> {{ nic.state.active_media_subtype }}</li>
-                        <li><span class="label">{{ 'IP Address' | translate }}:</span> {{ nicInfoMap[nic.state.name]?.ip }}</li>
+                        <li>
+                          <span class="label">{{ 'Media Type' | translate }}:</span>
+                          <ng-container *ngIf="nic.state.active_media_type; else unknown">{{ nic.state.active_media_type }}</ng-container>
+                        </li>
+                        <li>
+                          <span class="label">{{ 'Media Subtype' | translate }}:</span>
+                          <ng-container *ngIf="nic.state.active_media_subtype; else unknown">{{ nic.state.active_media_subtype }}</ng-container>
+                        </li>
+                        <li>
+                          <span class="label">{{ 'IP Address' | translate }}:</span>
+                          {{ nicInfoMap[nic.state.name]?.ip }}
+                        </li>
                       </ul>
                     </div>
                   </div>
                   <div class="nic-chart" fxFlex *ngIf="availableNics.length <= 3">
                     <div class="chart-body" [ngClass]="getChartBodyClassess(nic)">
-                      <view-chart-area *ngIf="nicInfoMap && nicInfoMap[nic.state.name].chartData; else emptychart"
+                      <ix-view-chart-area *ngIf="nicInfoMap && nicInfoMap[nic.state.name].chartData; else emptychart"
                         [data]="nicInfoMap[nic.state.name]?.chartData"
                         [options]="chartOptions">
-                      </view-chart-area>
+                      </ix-view-chart-area>
                       <ng-template #emptychart>
-                        <entity-empty [conf]="nicInfoMap[nic.state.name]?.emptyConfig"></entity-empty>
+                        <ix-entity-empty [conf]="nicInfoMap[nic.state.name]?.emptyConfig"></ix-entity-empty>
                       </ng-template>
                     </div>
                   </div>

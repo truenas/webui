@@ -32,9 +32,12 @@ interface PoolInfoMap {
 
 @UntilDestroy()
 @Component({
-  selector: 'widget-storage',
+  selector: 'ix-widget-storage',
   templateUrl: './widget-storage.component.html',
-  styleUrls: ['./widget-storage.component.scss'],
+  styleUrls: [
+    '../widget/widget.component.scss',
+    './widget-storage.component.scss',
+  ],
 })
 export class WidgetStorageComponent extends WidgetComponent implements AfterViewInit, OnChanges {
   @Input() pools: Pool[];

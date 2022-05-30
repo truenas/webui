@@ -5,7 +5,7 @@ import {
 } from 'app/pages/storage/volumes/permissions/interfaces/permission-item.interface';
 
 @Component({
-  selector: 'app-permissions-item',
+  selector: 'ix-permissions-item',
   templateUrl: 'permissions-item.component.html',
   styleUrls: ['./permissions-item.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -90,7 +90,7 @@ def wait_on_element(driver, xpath, timeout=120):
 
 def error_check(driver):
     title_xpath = "//h1[contains(.,'report_problem error')]"
-    dialog_xpath = '//error-dialog/div/span'
+    dialog_xpath = '//ix-error-dialog/div/span'
     tearDown_xpath = "//span[contains(.,'More info...')]"
     traceback_xpath = "//div[2]/textarea"
     closeButton = '//*[contains(text(), "Close")]'
@@ -169,7 +169,7 @@ def plugin_install(driver, action, name):
     print("index, delNum, num: " + str(x) + ", " + str(delNum) + "," + str(num))
     time.sleep(1)
     # click on the 3 dots
-    driver.find_element_by_xpath('//*[@id="entity-table-component"]/div[' + str(num) + ']/ngx-datatable/div/datatable-body/datatable-selection/datatable-scroller/datatable-row-wrapper[' + str(x) + ']/datatable-body-row/div[2]/datatable-body-cell[' + str(num) + ']/div/app-entity-table-actions/div/mat-icon').click()
+    driver.find_element_by_xpath('//*[@id="entity-table-component"]/div[' + str(num) + ']/ngx-datatable/div/datatable-body/datatable-selection/datatable-scroller/datatable-row-wrapper[' + str(x) + ']/datatable-body-row/div[2]/datatable-body-cell[' + str(num) + ']/div/ix-entity-table-actions/div/mat-icon').click()
     time.sleep(1)
     # click on install option
     driver.find_element_by_xpath('//*[@id="action_button_install"]').click()

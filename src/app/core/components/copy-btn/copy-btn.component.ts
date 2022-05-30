@@ -3,7 +3,7 @@ import {
 } from '@angular/core';
 
 @Component({
-  selector: 'copy-btn',
+  selector: 'ix-copy-btn',
   templateUrl: './copy-btn.component.html',
   styleUrls: ['./copy-btn.component.scss'],
 })

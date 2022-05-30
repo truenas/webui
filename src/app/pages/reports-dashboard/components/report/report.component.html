@@ -17,7 +17,6 @@
         <div fxFlex="calc(35%)" class="line-chart-tools-wrapper">
           <div class="line-chart-tools" *ngIf="localControls && !report?.errorConf">
             <button
-              class="tool-icon"
               mat-icon-button
               [disabled]="timeZoomIndex >= zoomLevels.length - 1"
               (click)="timeZoomIn()"
@@ -29,7 +28,6 @@
             </button>
 
             <button
-              class="tool-icon"
               mat-icon-button
               [disabled]="timeZoomIndex <= 0"
               (click)="timeZoomOut()"
@@ -41,7 +39,6 @@
             </button>
 
             <button
-              class="tool-icon"
               mat-icon-button
               (click)="stepBack()"
               ix-auto
@@ -52,7 +49,6 @@
             </button>
 
             <button
-              class="tool-icon"
               mat-icon-button
               (click)="stepForward()"
               [disabled]="stepForwardDisabled"
@@ -70,7 +66,7 @@
         <!-- Chart -->
         <div class="chart-wrapper-outer" fxFlex="calc(100% - 420px)">
           <div class="chart-wrapper">
-            <linechart
+            <ix-linechart
               *ngIf="report && data && chartColors"
               [chartId]="chartId"
               [chartColors]="chartColors"
@@ -82,42 +78,25 @@
               type="line"
               [interactive]="false"
               [isReversed]="isReversed"
-            ></linechart>
+            ></ix-linechart>
           </div>
 
-          <!-- Legend Section -->
-          <div class="legend-wrapper timestamps">
-            <!-- Time Stamps -->
-            <div class="legend-timestamp">
-              <div>
-                <span *ngIf="data && legendData">
-                  <h4>
-                    <strong>{{ 'Start' | translate }}:</strong>
-                    <span class="font-normal">&nbsp;&nbsp;{{ startTime }}</span>
-                    <br ngClass.gt-sm="hidden" />
-                    <span class="text-small m-0"> ({{ timezone }})</span>
-                  </h4>
-                </span>
-              </div>
-            </div>
-            <!-- <div class="legend-timestamp" fxFlex="calc(50% - 32px)"> -->
-            <div class="legend-timestamp">
-              <div>
-                <span *ngIf="data && legendData">
-                  <h4>
-                    <strong>{{ 'End' | translate }}:</strong>
-                    <span class="font-normal">&nbsp;&nbsp;{{ endTime }}</span>
-                    <br ngClass.gt-sm="hidden" />
-                    <span class="text-small text-invisible"> ({{ timezone }})</span>
-                  </h4>
-                </span>
-              </div>
-            </div>
+          <!-- Legend Section - Timestamps -->
+          <div class="legend-wrapper timestamps" *ngIf="data && legendData">
+            <h4 class="legend-timestamp">
+              <strong>{{ 'Start' | translate }}:</strong>
+              <span class="font-normal">{{ startTime }}</span>
+              <small>({{ timezone }})</small>
+            </h4>
+            <h4 class="legend-timestamp">
+              <strong>{{ 'End' | translate }}:</strong>
+              <span class="font-normal">{{ endTime }}</span>
+            </h4>
           </div>
         </div>
 
         <section class="legend" #legendElement fxFlex="420px" fxLayout="column" fxLayoutAlign="start">
-          <div *ngIf="report && data && data.legend" class="legend-timestamp" fxFlex="32px">
+          <div *ngIf="report && data?.legend" class="legend-timestamp" fxFlex="32px">
             <div>
               <span *ngIf="data && legendData && legendData.xHTML">
                 <h4>
@@ -150,13 +129,14 @@
                 <td class="legend-label">
                   <!--Legend Label-->
                   <div *ngIf="chartColors && legendItem" class="swatch" [style.background-color]="chartColors[i]"></div>
-                  <span class="legend-item"
-                    ><strong>{{ legendItem }}</strong></span
-                  >
+
+                  <span class="legend-item">
+                    <strong>{{ legendItem }}</strong>
+                  </span>
 
                   <span *ngIf="legendData && legendData.series">
                     <span class="tooltip-value">
-                      <span class="font-normal"> : {{ legendData.series[i].yHTML }}</span>
+                      <span class="font-normal">: {{ legendData.series[i].yHTML }}</span>
                     </span>
                   </span>
                 </td>
@@ -190,7 +170,7 @@
         fxLayoutAlign="space-between start"
         fxFlex="100"
       >
-        <entity-empty [conf]="report.errorConf"></entity-empty>
+        <ix-entity-empty [conf]="report.errorConf"></ix-entity-empty>
       </mat-card-content>
     </mat-card>
 

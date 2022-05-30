@@ -1,6 +1,6 @@
 <div fxLayout="column">
   <div class="mat-card-content" fxLayout="column">
-    <div id="top-row" class="container"
+    <div class="container"
       fxLayoutGap="16px"
       fxLayout.lt-lg="row wrap"
       [fxLayout.xs]="isProductImageRack ? 'column' : 'row wrap'"
@@ -26,7 +26,7 @@
         [class]="extraMargin ? 'extra-margin' : 'regular-margin'"
       >
 
-        <app-sys-info
+        <ix-sys-info
           *ngIf="!hasLicense; else licensedSysInfo"
           [version]='systemInfo.version'
           [model]="systemInfo.model"
@@ -34,9 +34,9 @@
           [memory]="systemInfo.memory"
           [serial]="systemInfo.serial"
           [hasLicense]="hasLicense"
-          ></app-sys-info>
+          ></ix-sys-info>
         <ng-template #licensedSysInfo>
-          <app-sys-info
+          <ix-sys-info
             [customer_name]='licenseInfo.customer_name'
             [features]='licenseInfo.features'
             [contract_type]='licenseInfo.contract_type'
@@ -47,17 +47,20 @@
             [daysLeftinContract]='licenseInfo.daysLeftinContract'
             [hasLicense]="hasLicense"
           >
-          </app-sys-info>
+          </ix-sys-info>
         </ng-template>
 
         <div class="links-wrapper">
           <div class="links" *ngFor="let link of links">
-            <div [innerHTML]=link></div>
+            <div [innerHTML]="link"></div>
           </div>
         </div>
         <div *ngIf="hasLicense">
-          <mat-checkbox color="primary" (change)="updateProductionStatus($event)" [(ngModel)]="isProduction">
-            {{ 'This is a production system' | translate}}</mat-checkbox>
+          <mat-checkbox
+            color="primary"
+            (change)="updateProductionStatus($event)"
+            [(ngModel)]="isProduction"
+          >{{ 'This is a production system' | translate}}</mat-checkbox>
         </div>
 
         <!-- ACTION BUTTONS -->

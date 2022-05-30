@@ -13,10 +13,11 @@ import { UntilDestroy } from '@ngneat/until-destroy';
 import { findKey } from 'lodash';
 import { Observable, of } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
+import { ExplorerNodeType } from 'app/enums/explorer-type.enum';
 import { TreeNode, ExplorerNodeData } from 'app/interfaces/tree-node.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 
-export type TreeNodeProvider = (parent: TreeNode<ExplorerNodeData>) => Observable<ExplorerNodeData[]>;
+export type TreeNodeProvider = (parent?: TreeNode<ExplorerNodeData>) => Observable<ExplorerNodeData[]>;
 
 @UntilDestroy()
 @Component({
@@ -42,6 +43,8 @@ export class IxExplorerComponent implements OnInit, ControlValueAccessor {
 
   onChange: (value: string) => void = (): void => {};
   onTouch: () => void = (): void => {};
+
+  readonly ExplorerNodeType = ExplorerNodeType;
 
   private readonly actionMapping: IActionMapping = {
     mouse: {
@@ -89,6 +92,7 @@ export class IxExplorerComponent implements OnInit, ControlValueAccessor {
         path: this.root,
         name: this.root,
         hasChildren: true,
+        type: ExplorerNodeType.Directory,
       },
     ];
   }
@@ -135,6 +139,11 @@ export class IxExplorerComponent implements OnInit, ControlValueAccessor {
 
     this.value = newValue;
     this.onChange(newValue);
+  }
+
+  valueChangedCustom(value: string): void {
+    this.value = value;
+    this.onChange(value);
   }
 
   /**

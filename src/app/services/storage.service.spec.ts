@@ -1,9 +1,11 @@
+import { HttpClient } from '@angular/common/http';
 import { StorageService } from 'app/services/storage.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 describe('StorageService', () => {
   const storageService = new StorageService(
     {} as WebSocketService,
+    {} as HttpClient,
   );
 
   describe('convertBytesToHumanReadable', () => {

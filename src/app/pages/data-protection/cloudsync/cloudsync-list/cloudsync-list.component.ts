@@ -2,16 +2,11 @@ import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { ExplorerType } from 'app/enums/explorer-type.enum';
 import { JobState } from 'app/enums/job-state.enum';
-import { TransferMode } from 'app/enums/transfer-mode.enum';
 import helptext from 'app/helptext/data-protection/cloudsync/cloudsync-form';
 import globalHelptext from 'app/helptext/global-helptext';
 import { CloudSyncTask, CloudSyncTaskUi } from 'app/interfaces/cloud-sync-task.interface';
 import { Job } from 'app/interfaces/job.interface';
-import { DialogFormConfiguration } from 'app/modules/entity/entity-dialog/dialog-form-configuration.interface';
-import { EntityDialogComponent } from 'app/modules/entity/entity-dialog/entity-dialog.component';
-import { FormParagraphConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import {
   EntityTableComponent,
@@ -19,6 +14,9 @@ import {
 import { EntityTableAction, EntityTableConfig } from 'app/modules/entity/entity-table/entity-table.interface';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { CloudsyncFormComponent } from 'app/pages/data-protection/cloudsync/cloudsync-form/cloudsync-form.component';
+import {
+  CloudsyncRestoreDialogComponent,
+} from 'app/pages/data-protection/cloudsync/cloudsync-restore-dialog/cloudsync-restore-dialog.component';
 import {
   AppLoaderService,
   CloudCredentialService,
@@ -31,8 +29,7 @@ import { ModalService } from 'app/services/modal.service';
 
 @UntilDestroy()
 @Component({
-  selector: 'app-cloudsync-list',
-  template: '<entity-table [title]="title" [conf]="this"></entity-table>',
+  template: '<ix-entity-table [title]="title" [conf]="this"></ix-entity-table>',
   providers: [JobService, TaskService, CloudCredentialService],
 })
 export class CloudsyncListComponent implements EntityTableConfig<CloudSyncTaskUi> {
@@ -228,79 +225,16 @@ export class CloudsyncListComponent implements EntityTableConfig<CloudSyncTaskUi
         label: this.translate.instant('Restore'),
         icon: 'restore',
         onClick: (row: CloudSyncTaskUi) => {
-          const conf: DialogFormConfiguration = {
-            title: this.translate.instant('Restore Cloud Sync Task'),
-            fieldConfig: [
-              {
-                type: 'input',
-                name: 'description',
-                placeholder: helptext.description_placeholder,
-                tooltip: helptext.description_tooltip,
-                validation: helptext.description_validation,
-                required: true,
-              },
-              {
-                type: 'select',
-                name: 'transfer_mode',
-                placeholder: helptext.transfer_mode_placeholder,
-                validation: helptext.transfer_mode_validation,
-                required: true,
-                options: [
-                  { label: this.translate.instant('SYNC'), value: TransferMode.Sync },
-                  { label: this.translate.instant('COPY'), value: TransferMode.Copy },
-                ],
-                value: TransferMode.Copy,
-              },
-              {
-                type: 'paragraph',
-                name: 'transfer_mode_warning',
-                paraText: helptext.transfer_mode_warning_copy,
-                isLargeText: true,
-                paragraphIcon: 'add_to_photos',
-              },
-              {
-                type: 'explorer',
-                explorerType: ExplorerType.Directory,
-                name: 'path',
-                placeholder: helptext.path_placeholder,
-                tooltip: helptext.path_tooltip,
-                validation: helptext.path_validation,
-                initial: '/mnt',
-                required: true,
-              },
-            ],
-            saveButtonText: this.translate.instant('Restore'),
-            afterInit(entityDialog: EntityDialogComponent) {
-              entityDialog.formGroup.get('transfer_mode').valueChanges.pipe(untilDestroyed(this)).subscribe((mode) => {
-                const paragraph = conf.fieldConfig.find((config) => {
-                  return config.name === 'transfer_mode_warning';
-                }) as FormParagraphConfig;
-                switch (mode) {
-                  case TransferMode.Sync:
-                    paragraph.paraText = helptext.transfer_mode_warning_sync;
-                    paragraph.paragraphIcon = 'sync';
-                    break;
-                  default:
-                    paragraph.paraText = helptext.transfer_mode_warning_copy;
-                    paragraph.paragraphIcon = 'add_to_photos';
-                }
-              });
-            },
-            customSubmit: (entityDialog: EntityDialogComponent) => {
-              this.loader.open();
-              this.ws.call('cloudsync.restore', [row.id, entityDialog.formValue]).pipe(untilDestroyed(this)).subscribe(
-                () => {
-                  entityDialog.dialogRef.close(true);
-                  this.entityList.getData();
-                },
-                (err) => {
-                  this.loader.close();
-                  new EntityUtils().handleWsError(entityDialog, err, this.dialog);
-                },
-              );
-            },
-          };
-          this.dialog.dialogFormWide(conf);
+          const dialog = this.matDialog.open(CloudsyncRestoreDialogComponent, {
+            data: row.id,
+          });
+          dialog
+            .afterClosed()
+            .pipe(untilDestroyed(this))
+            .subscribe(() => {
+              this.entityList.needRefreshTable = true;
+              this.entityList.getData();
+            });
         },
       },
       {

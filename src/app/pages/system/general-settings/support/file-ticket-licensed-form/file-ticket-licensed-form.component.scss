@@ -1,0 +1,40 @@
+:host ::ng-deep {
+  .ix-modal-subheader {
+    position: sticky;
+    top: 75px;
+    z-index: 20000;
+  }
+
+  ix-job-item {
+    background-color: var(--bg1);
+    border-bottom: 1px solid var(--lines);
+    color: var(--fg1);
+    margin: 0 -20px;
+
+    .job-item {
+      padding: 8px 20px 8px 30px;
+    }
+  }
+
+  .ix-form-container {
+    fieldset {
+      padding-top: 24px;
+    }
+  }
+}
+
+.columns {
+  display: flex;
+
+  .column {
+    flex: 1;
+  }
+}
+
+.form-actions {
+  margin: 8px 10px;
+
+  button {
+    margin-right: 5px;
+  }
+}

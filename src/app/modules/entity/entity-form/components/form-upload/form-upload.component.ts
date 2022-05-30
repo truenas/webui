@@ -12,7 +12,6 @@ import { WebSocketService, DialogService } from 'app/services';
 
 @UntilDestroy()
 @Component({
-  selector: 'app-form-upload',
   templateUrl: './form-upload.component.html',
   styleUrls: ['../dynamic-field/dynamic-field.scss', 'form-upload.component.scss'],
 })

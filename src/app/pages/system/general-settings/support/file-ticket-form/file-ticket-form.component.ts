@@ -12,8 +12,9 @@ import {
 import {
   filter, map, switchMap, debounceTime, tap, catchError, take,
 } from 'rxjs/operators';
+import { ticketAcceptedFiles, TicketType, ticketTypeLabels } from 'app/enums/file-ticket.enum';
 import { JobState } from 'app/enums/job-state.enum';
-import { NewTicketType } from 'app/enums/new-ticket-type.enum';
+import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextSystemSupport as helptext } from 'app/helptext/system/support';
 import { Job } from 'app/interfaces/job.interface';
 import { Option } from 'app/interfaces/option.interface';
@@ -40,16 +41,15 @@ export class FileTicketFormComponent implements OnInit {
   form = this.fb.group({
     token: ['', [Validators.required]],
     category: ['', [Validators.required]],
-    type: [NewTicketType.Bug, Validators.required],
+    type: [TicketType.Bug, Validators.required],
     attach_debug: [false],
     title: ['', Validators.required],
     body: ['', Validators.required],
-    screenshot: [null as FileList],
+    screenshot: [null as File[]],
   });
-  typeOptions$ = of([
-    { label: this.translate.instant('Bug'), value: NewTicketType.Bug },
-    { label: this.translate.instant('Suggestion'), value: NewTicketType.Suggestion },
-  ]);
+
+  readonly acceptedFiles = ticketAcceptedFiles;
+  readonly typeOptions$ = of(mapToOptions(ticketTypeLabels, this.translate));
   categoryOptions$: Observable<Option[]> = this.getCategories().pipe(
     tap((options) => this.form.get('category').setDisable(!options.length)),
   );
@@ -63,9 +63,6 @@ export class FileTicketFormComponent implements OnInit {
     screenshot: helptext.screenshot.tooltip,
   };
   private screenshots: File[] = [];
-  private get apiEndPoint(): string {
-    return '/_upload?auth_token=' + this.ws.token;
-  }
   jobs$: BehaviorSubject<Observable<Job>[]> = new BehaviorSubject([]);
   isFormDisabled$ = combineLatest([this.form.status$, this.isFormLoading$]).pipe(
     map(([status, loading]) => status === 'INVALID' || loading),
@@ -198,7 +195,7 @@ export class FileTicketFormComponent implements OnInit {
             ticket: job.result.ticket,
             filename: file.name,
             token: payload.token,
-          }], this.apiEndPoint);
+          }]);
         }
       } else {
         this.isFormLoading$.next(false);

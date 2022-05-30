@@ -48,15 +48,15 @@
               ix-auto ix-auto-type="link" ix-auto-identifier="goToHA"
               >{{helptext.go_to_ha | translate}}</span>).</div>
         </mat-card>
-        <app-table [conf]="interfaceTableConf" fxFlex></app-table>
+        <ix-conf-table [conf]="interfaceTableConf" fxFlex></ix-conf-table>
         <ix-network-configuration-card class="dashboard-card"></ix-network-configuration-card>
       </div>
     </div>
     <div class="left-column" fxFlex="100" fxFlex.lg="35">
       <div fxLayout="column" fxFlexFill fxLayoutGap="8px">
-        <app-table [conf]="staticRoutesTableConf" fxFlex></app-table>
-        <app-table [conf]="openvpnTableConf" fxFlex></app-table>
-        <app-table *ngIf="ipmiEnabled" [conf]="ipmiTableConf" fxFlex></app-table>
+        <ix-conf-table [conf]="staticRoutesTableConf" fxFlex></ix-conf-table>
+        <ix-conf-table [conf]="openvpnTableConf" fxFlex></ix-conf-table>
+        <ix-conf-table *ngIf="ipmiEnabled" [conf]="ipmiTableConf" fxFlex></ix-conf-table>
       </div>
     </div>
   </div>

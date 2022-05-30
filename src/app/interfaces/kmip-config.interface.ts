@@ -9,7 +9,7 @@ export interface KmipConfig {
   server: string;
 }
 
-export interface KmipConfigUpdate extends KmipConfig {
+export interface KmipConfigUpdate extends Omit<KmipConfig, 'id'> {
   force_clear?: boolean;
   change_server?: boolean;
   validate?: boolean;

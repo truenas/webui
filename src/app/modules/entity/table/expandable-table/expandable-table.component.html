@@ -28,7 +28,7 @@
         </div>
       </mat-panel-description>
     </mat-expansion-panel-header>
-    <app-table [conf]="tableConf"></app-table>
+    <ix-conf-table #tableComponent [conf]="tableConf"></ix-conf-table>
   </mat-expansion-panel>
   <div id="actions-row" [ngClass]="{'actions-row': isExpanded && tableConf.detailsHref}" *ngIf="isExpanded && tableConf.detailsHref">
     <div>

@@ -12,7 +12,7 @@
     <section>
       <h4>
         {{ config.hideMinutes ? ('Hours' | translate) : ('Minutes/Hours' | translate) }}
-        <tooltip [message]="tooltips.general | translate"></tooltip>
+        <ix-tooltip [message]="tooltips.general | translate"></ix-tooltip>
       </h4>
       <div class="no-spaces-hint">({{ 'Separate values with commas, and without spaces.' | translate }})</div>
 
@@ -48,7 +48,7 @@
         <div class="line"></div>
         <div class="or-label">
           {{ 'or' | translate }}
-          <tooltip [message]="tooltips.orTooltip | translate"></tooltip>
+          <ix-tooltip [message]="tooltips.orTooltip | translate"></ix-tooltip>
         </div>
         <div class="line"></div>
       </div>

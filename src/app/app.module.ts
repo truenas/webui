@@ -32,6 +32,7 @@ import { TerminalModule } from 'app/modules/terminal/terminal.module';
 import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
 import { IxFileUploadService } from 'app/services/ix-file-upload.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { ThemeService } from 'app/services/theme/theme.service';
 import { rootEffects, rootReducers } from 'app/store';
 import { CustomRouterStateSerializer } from 'app/store/router/custom-router-serializer';
 import { AppComponent } from './app.component';
@@ -41,6 +42,7 @@ import { AppLoaderService } from './modules/app-loader/app-loader.service';
 import { AppCommonModule } from './modules/common/app-common.module';
 import { EntityModule } from './modules/entity/entity.module';
 import { AuthService } from './services/auth/auth.service';
+import { EntityTableService } from './services/entity-table.service';
 import { NavigationService } from './services/navigation/navigation.service';
 import { RoutePartsService } from './services/route-parts/route-parts.service';
 import { WebSocketService } from './services/ws.service';
@@ -112,8 +114,10 @@ import { WebSocketService } from './services/ws.service';
     AuthService,
     WebSocketService,
     AppLoaderService,
+    EntityTableService,
     IxSlideInService,
     IxFileUploadService,
+    ThemeService,
     {
       provide: ErrorHandler,
       useValue: Sentry.createErrorHandler({

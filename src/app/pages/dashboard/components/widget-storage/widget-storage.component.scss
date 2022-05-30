@@ -1,17 +1,7 @@
 .widget {
-  height: 400px;
-  width: 600px;
-
   mat-card-content {
     width: 100%;
   }
-}
-
-.controls {
-  color: var(--fg2);
-  position: absolute;
-  right: 16px;
-  top: 2px;
 }
 
 mat-grid-tile {

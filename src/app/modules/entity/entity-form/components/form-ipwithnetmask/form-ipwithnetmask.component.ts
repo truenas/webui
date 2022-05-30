@@ -11,7 +11,6 @@ import { NetworkService } from 'app/services';
 
 @UntilDestroy()
 @Component({
-  selector: 'form-ipwithnetmask',
   templateUrl: './form-ipwithnetmask.component.html',
   styleUrls: ['../dynamic-field/dynamic-field.scss'],
 })

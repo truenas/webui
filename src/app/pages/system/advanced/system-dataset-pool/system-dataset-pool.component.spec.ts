@@ -6,6 +6,7 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
 import { MockWebsocketService } from 'app/core/testing/classes/mock-websocket.service';
+import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockCall, mockJob, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
@@ -41,7 +42,7 @@ describe('SystemDatasetPoolComponent', () => {
           'current-pool': 'current-pool',
           'new-pool': 'new-pool',
         }),
-        mockJob('systemdataset.update'),
+        mockJob('systemdataset.update', fakeSuccessfulJob()),
       ]),
       mockProvider(IxSlideInService),
       mockProvider(FormErrorHandlerService),
