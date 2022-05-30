@@ -24,6 +24,9 @@ export interface VirtualMachine {
     domain_state: string; // Enum? SHUTOFF
   };
   threads: number;
+  cpuset: string;
+  pin_vcpus: boolean;
+  nodeset: string;
   time: VmTime;
   vcpus: number;
   arch_type: string;
