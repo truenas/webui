@@ -1,5 +1,5 @@
 import {
-  Component, Output, EventEmitter, OnInit,
+  Component, Output, EventEmitter, OnInit, OnDestroy,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatDialogRef } from '@angular/material/dialog/dialog-ref';
@@ -7,6 +7,7 @@ import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
+import { Subscription } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { appImagePlaceholder, ixChartApp, officialCatalog } from 'app/constants/catalog.constants';
 import { CommonUtils } from 'app/core/classes/common-utils';
@@ -42,7 +43,7 @@ import { ChartFormComponent } from '../forms/chart-form.component';
   styleUrls: ['../applications.component.scss'],
 })
 
-export class ChartReleasesComponent implements OnInit {
+export class ChartReleasesComponent implements OnInit, OnDestroy {
   @Output() updateTab = new EventEmitter();
 
   filteredChartItems: ChartRelease[] = [];
@@ -63,6 +64,7 @@ export class ChartReleasesComponent implements OnInit {
   imagePlaceholder = appImagePlaceholder;
 
   readonly officialCatalog = officialCatalog;
+  chartsSubscription: Subscription;
 
   emptyPageConf: EmptyConfig = {
     type: EmptyType.Loading,
@@ -200,7 +202,7 @@ export class ChartReleasesComponent implements OnInit {
   }
 
   addChartReleaseChangedEventListner(): void {
-    this.ws.subscribe('chart.release.query').pipe(untilDestroyed(this)).subscribe((evt) => {
+    this.chartsSubscription = this.ws.subscribe('chart.release.query').pipe(untilDestroyed(this)).subscribe((evt) => {
       const app = this.chartItems[evt.id];
 
       if (app && evt && evt.fields) {
@@ -215,6 +217,12 @@ export class ChartReleasesComponent implements OnInit {
     this.filteredChartItems = this.getChartItems();
     this.showLoadStatus(EmptyType.Loading);
     this.updateChartReleases();
+  }
+
+  ngOnDestroy(): void {
+    if (this.chartsSubscription) {
+      this.ws.unsubscribe(this.chartsSubscription);
+    }
   }
 
   updateChartReleases(): void {

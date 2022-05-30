@@ -74,10 +74,19 @@ export class ApplicationsComponent implements OnInit, AfterViewInit {
         this.filterString = evt.data.filter;
       }
 
-      this.chartTab.onToolbarAction(evt);
-      this.catalogTab.onToolbarAction(evt);
-      this.manageCatalogTab.onToolbarAction(evt);
-      this.dockerImagesTab.onToolbarAction(evt);
+      switch (this.selectedTab) {
+        case ApplicationTab.InstalledApps:
+          this.chartTab.onToolbarAction(evt);
+          break;
+        case ApplicationTab.Catalogs:
+          this.manageCatalogTab.onToolbarAction(evt);
+          break;
+        case ApplicationTab.AvailableApps:
+          this.catalogTab.onToolbarAction(evt);
+          break;
+        case ApplicationTab.DockerImages:
+          this.dockerImagesTab.onToolbarAction(evt);
+      }
     });
 
     const controls = [
