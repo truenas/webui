@@ -28,7 +28,7 @@
   display: flex;
   flex-direction: row;
   font-size: 12px;
-  padding: 6px 8px;
+  padding: 4px 6px;
   position: relative;
 
   &:focus-within {
@@ -37,7 +37,7 @@
   }
 
   &.disabled {
-    opacity: 0.38;
+    opacity: 0.5;
 
     input {
       cursor: not-allowed;
@@ -49,11 +49,19 @@
 .chip {
   display: flex;
   font-size: 11px;
-  padding: 2px 12px 0 16px;
+  padding: 1px 16px 0;
 }
 
 .tooltip {
   margin-left: 8px;
-
   vertical-align: -4px;
 }
+
+.mat-standard-chip {
+  min-height: 25px;
+}
+
+.input-container.disabled {
+  background: var(--bg2);
+}
+
