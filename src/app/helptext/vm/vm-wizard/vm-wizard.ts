@@ -65,6 +65,27 @@ export default {
     tooltip: T('Specify the number of threads per core.'),
   },
 
+  cpuset: {
+    placeholder: T('Optional: CPU Set (Examples: 0-3,8-11)'),
+    tooltip: T('Specify the logical cores that VM is allowed to use. \
+Better cache locality can be achieved by setting CPU set base on CPU topology. \
+E.g. to assign cores: 0,1,2,5,9,10,11 you can write: 1-2,5,9-11'),
+  },
+
+  nodeset: {
+    placeholder: T('Optional: NUMA nodeset (Example: 0-1)'),
+    tooltip: T('Node set allows setting NUMA nodes for multi NUMA processors when CPU set was defined. \
+Better memory locality can be achieved by setting node set based on assigned CPU set. \
+E.g. if cpus 0,1 belong to NUMA node 0 then setting nodeset to 0 will improve memory locality'),
+  },
+
+  pin_vcpus: {
+    placeholder: T('Pin vcpus'),
+    tooltip: T('When number of vcpus is equal to number of cpus in CPU set vcpus can be automatically pinned into CPU set. \
+Pinning is done by mapping each vcpu into single cpu number in following the order in CPU set. \
+This will improve CPU cache locality and can reduce possible stutter in GPU passthrough VMs.'),
+  },
+
   shutdown_timeout: {
     placeholder: T('Shutdown Timeout'),
     tooltip: T('The time in seconds the system waits for the VM to cleanly shut down. \

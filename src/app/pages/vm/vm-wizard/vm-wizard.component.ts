@@ -230,6 +230,32 @@ export class VmWizardComponent implements WizardConfiguration {
           tooltip: helptext.threads.tooltip,
         },
         {
+          type: 'input',
+          name: 'cpuset',
+          placeholder: helptext.cpuset.placeholder,
+          tooltip: helptext.cpuset.tooltip,
+          validation: [Validators.pattern('^((\\d+)|(\\d+-\\d+))(,((\\d+)|(\\d+-\\d+)))*$')],
+          required: false,
+        },
+        {
+          type: 'checkbox',
+          name: 'pin_vcpus',
+          placeholder: helptext.pin_vcpus.placeholder,
+          tooltip: helptext.pin_vcpus.tooltip,
+          value: false,
+          disabled: true,
+          relation: [
+            {
+              action: RelationAction.Enable,
+              when: [{
+                name: 'cpuset',
+                operator: '>',
+                value: '',
+              }],
+            },
+          ],
+        },
+        {
           type: 'select',
           name: 'cpu_mode',
           placeholder: helptext.cpu_mode.placeholder,
@@ -292,6 +318,14 @@ export class VmWizardComponent implements WizardConfiguration {
           blurEvent: () => this.blurEventForMemory(),
           parent: this,
           tooltip: helptext.memory_tooltip,
+        },
+        {
+          type: 'input',
+          name: 'nodeset',
+          placeholder: helptext.nodeset.placeholder,
+          tooltip: helptext.nodeset.tooltip,
+          validation: [Validators.pattern('^((\\d+)|(\\d+-\\d+))(,((\\d+)|(\\d+-\\d+)))*$')],
+          required: false,
         },
         {
           type: 'paragraph',
@@ -977,8 +1011,11 @@ export class VmWizardComponent implements WizardConfiguration {
     vmPayload['vcpus'] = value.vcpus;
     vmPayload['cores'] = value.cores;
     vmPayload['threads'] = value.threads;
-    vmPayload['hyperv_enlightenments'] = value.hyperv_enlightenments;
+    vmPayload['cpuset'] = value.cpuset;
+    vmPayload['nodeset'] = value.nodeset;
+    vmPayload['pin_vcpus'] = value.pin_vcpus;
     vmPayload['memory'] = Math.ceil(this.storageService.convertHumanStringToNum(value.memory) / 1024 ** 2); // bytes -> mb
+    vmPayload['hyperv_enlightenments'] = value.hyperv_enlightenments;
     vmPayload['bootloader'] = value.bootloader;
     vmPayload['shutdown_timeout'] = value.shutdown_timeout;
     vmPayload['autoloader'] = value.autoloader;
