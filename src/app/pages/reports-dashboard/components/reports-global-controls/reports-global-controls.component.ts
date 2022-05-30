@@ -6,6 +6,7 @@ import { ToolbarConfig } from 'app/modules/entity/entity-toolbar/models/control-
 import { Tab } from 'app/pages/reports-dashboard/reports-dashboard.component';
 
 @Component({
+  selector: 'ix-reports-global-controls',
   templateUrl: './reports-global-controls.component.html',
   styleUrls: ['./reports-global-controls.component.scss'],
 })

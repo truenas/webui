@@ -1,14 +1,14 @@
 <ng-template #pageHeader>
-  <page-title-header>
-    <reports-global-controls
+  <ix-page-title-header>
+    <ix-reports-global-controls
       [toolbarConfig]="toolbarConfig"
       [activeTab]="activeTab"
       [activeTabVerified]="activeTabVerified"
       [allTabs]="allTabs"
       (showConfigForm)="showConfigForm()"
       (navigateToTab)="navigateToTab($event)"
-    ></reports-global-controls>
-  </page-title-header>
+    ></ix-reports-global-controls>
+  </ix-page-title-header>
 </ng-template>
 
 <div
