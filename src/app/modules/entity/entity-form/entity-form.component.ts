@@ -36,7 +36,7 @@ import { ModalService } from 'app/services/modal.service';
 
 @UntilDestroy()
 @Component({
-  selector: 'entity-form',
+  selector: 'ix-entity-form',
   templateUrl: './entity-form.component.html',
   styleUrls: ['./entity-form.component.scss'],
   providers: [EntityFormService, FieldRelationService],

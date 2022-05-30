@@ -16,7 +16,7 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
 @Component({
-  selector: 'group-details-row',
+  selector: 'ix-group-details-row',
   templateUrl: './group-details-row.component.html',
   styleUrls: ['./group-details-row.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

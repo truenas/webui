@@ -20,7 +20,7 @@
   </mat-tab-group>
 </div>
 
-<entity-empty *ngIf="isLoading$ | async; else loaded" [conf]="loadingConfig"></entity-empty>
+<ix-entity-empty *ngIf="isLoading$ | async; else loaded" [conf]="loadingConfig"></ix-entity-empty>
 
 <ng-template #loaded>
   <div class="jobs-container">
@@ -165,18 +165,18 @@
 
       <tr class="mat-row no-data-row" *matNoDataRow>
         <td class="mat-cell" [attr.colspan]="displayedColumns.length">
-          <entity-empty [conf]="emptyConfig"></entity-empty>
+          <ix-entity-empty [conf]="emptyConfig"></ix-entity-empty>
         </td>
       </tr>
     </table>
 
-    <app-job-logs-sidebar
+    <ix-job-logs-sidebar
       *ngIf="viewingLogsForJob"
       class="job-logs-sidebar"
       [job]="viewingLogsForJob"
       [viewType]="viewType"
       (closed)="onLogsSidebarClosed()"
-    ></app-job-logs-sidebar>
+    ></ix-job-logs-sidebar>
   </div>
 
   <ix-table-paginator [dataSource]="dataSource"></ix-table-paginator>

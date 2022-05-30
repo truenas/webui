@@ -6,7 +6,7 @@ import { ControlConfig } from 'app/modules/entity/entity-toolbar/models/control-
 import { Control } from 'app/modules/entity/entity-toolbar/models/control.interface';
 
 @Component({
-  selector: 'toolbar-input',
+  selector: 'ix-toolbar-input',
   styleUrls: ['toolbar-input.component.scss'],
   templateUrl: './toolbar-input.component.html',
   // eslint-disable-next-line @angular-eslint/use-component-view-encapsulation

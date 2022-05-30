@@ -8,7 +8,6 @@ import { FormTextareaConfig } from 'app/modules/entity/entity-form/models/field-
 import { Field } from 'app/modules/entity/entity-form/models/field.interface';
 
 @Component({
-  selector: 'form-textarea',
   templateUrl: './form-textarea.component.html',
   styleUrls: ['../dynamic-field/dynamic-field.scss'],
 })

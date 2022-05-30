@@ -32,7 +32,6 @@ interface PoolDiskInfo {
 
 @UntilDestroy()
 @Component({
-  selector: 'app-bootstatus-list',
   templateUrl: './bootenv-status.component.html',
 })
 export class BootStatusListComponent implements OnInit {

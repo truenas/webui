@@ -9,7 +9,7 @@ import { DialogService } from 'app/services';
 
 @UntilDestroy()
 @Component({
-  selector: 'simple-failover-button',
+  selector: 'ix-simple-failover-button',
   templateUrl: './simple-failover-btn.component.html',
   styleUrls: ['./simple-failover-btn.component.scss'],
 })

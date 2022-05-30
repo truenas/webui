@@ -14,7 +14,6 @@ import { LocaleService } from 'app/services/locale.service';
 
 @UntilDestroy()
 @Component({
-  selector: 'app-config-reset',
   templateUrl: './config-reset.component.html',
   styleUrls: ['./config-reset.component.scss'],
 })
@@ -38,7 +37,7 @@ export class ConfigResetComponent implements OnInit {
     private location: Location,
   ) {
     this.sysGeneralService.getProductType$.pipe(untilDestroyed(this)).subscribe((res) => {
-      this.productType = res as ProductType;
+      this.productType = res;
     });
   }
 

@@ -18,7 +18,7 @@ export interface DashConfigItem {
 
 @UntilDestroy()
 @Component({
-  selector: 'widget-controller',
+  selector: 'ix-widget-controller',
   templateUrl: './widget-controller.component.html',
   styleUrls: [
     '../widget/widget.component.scss',

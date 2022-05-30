@@ -7,7 +7,7 @@ import { NavigationService } from 'app/services/navigation/navigation.service';
 
 @UntilDestroy()
 @Component({
-  selector: 'navigation',
+  selector: 'ix-navigation',
   templateUrl: './navigation.component.html',
   styleUrls: ['./navigation.component.scss'],
 })

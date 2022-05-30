@@ -14,7 +14,7 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
 @Component({
-  selector: 'app-ntp-server-list',
+  selector: 'ix-ntp-server-list',
   templateUrl: './ntp-server-list.component.html',
   styleUrls: ['./ntp-server-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

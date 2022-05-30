@@ -49,7 +49,6 @@ type ShareTableRow = Partial<SmbShare> | Partial<WebDavShare> | Partial<NfsShare
 
 @UntilDestroy()
 @Component({
-  selector: 'app-shares-dashboard',
   templateUrl: './shares-dashboard.component.html',
   styleUrls: ['./shares-dashboard.component.scss'],
   providers: [IscsiService],

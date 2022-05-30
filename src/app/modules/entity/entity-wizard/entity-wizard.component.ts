@@ -21,7 +21,7 @@ import { WebSocketService, DialogService } from 'app/services';
 
 @UntilDestroy()
 @Component({
-  selector: 'entity-wizard',
+  selector: 'ix-entity-wizard',
   templateUrl: './entity-wizard.component.html',
   styleUrls: ['./entity-wizard.component.scss', '../entity-form/entity-form.component.scss'],
   providers: [EntityFormService, FieldRelationService],

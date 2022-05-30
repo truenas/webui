@@ -15,7 +15,6 @@ import { AppLoaderService, WebSocketService, DialogService } from 'app/services'
 
 @UntilDestroy()
 @Component({
-  selector: 'app-snapshot-rollback-dialog',
   templateUrl: './snapshot-rollback-dialog.component.html',
   styleUrls: ['./snapshot-rollback-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

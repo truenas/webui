@@ -37,10 +37,10 @@
         </a>
       </div>
 
-      <navigation (menuToggled)="toggleMenu($event)" (menuClosed)="toggleMenu()"></navigation>
+      <ix-navigation (menuToggled)="toggleMenu($event)" (menuClosed)="toggleMenu()"></ix-navigation>
 
       <div class="slidein-nav slidein-nav-sm" [class.slidein-open]="isOpen">
-        <app-secondary-menu [subMenuItems]="subs" [menuName]="menuName" (toggleMenu)="toggleMenu()"></app-secondary-menu>
+        <ix-secondary-menu [subMenuItems]="subs" [menuName]="menuName" (toggleMenu)="toggleMenu()"></ix-secondary-menu>
       </div>
 
       <div *ngIf="!isSidenavCollapsed" class="sidenav-copyright-txt">
@@ -63,16 +63,16 @@
 
   <mat-sidenav-content fxFlex="calc(100% - {{sidenavWidth}})" class="fn-maincontent" [style.margin-left]="sidenavWidth">
     <!-- Top Bar -->
-    <topbar [sidenav]="sidenav"></topbar>
+    <ix-topbar [sidenav]="sidenav"></ix-topbar>
 
     <div class="slidein-nav slidein-nav-md" [class.slidein-open]="isOpen">
-      <app-secondary-menu [subMenuItems]="subs" [menuName]="menuName" (toggleMenu)="toggleMenu()"></app-secondary-menu>
+      <ix-secondary-menu [subMenuItems]="subs" [menuName]="menuName" (toggleMenu)="toggleMenu()"></ix-secondary-menu>
     </div>
     <div class="overlay" [class.isdark]="isOpen" (click)="toggleMenu()"></div>
 
     <!-- App content -->
     <div class="rightside-content-hold" [class.has-footer]="isShowFooterConsole">
-      <pagetitle *ngIf="!headerPortalOutlet"></pagetitle>
+      <ix-pagetitle *ngIf="!headerPortalOutlet"></ix-pagetitle>
       <ng-template *ngIf="headerPortalOutlet" [cdkPortalOutlet]="headerPortalOutlet"></ng-template>
       <router-outlet></router-outlet>
     </div>
@@ -91,5 +91,5 @@
   </mat-sidenav>
 </mat-sidenav-container>
 
-<jw-modal id="slide-in-form"></jw-modal>
+<ix-jw-modal id="slide-in-form"></ix-jw-modal>
 <ix-slide-in id="ix-slide-in-form"></ix-slide-in>

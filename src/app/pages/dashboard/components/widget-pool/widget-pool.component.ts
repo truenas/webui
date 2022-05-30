@@ -47,7 +47,7 @@ enum PoolHealthLevel {
 
 @UntilDestroy()
 @Component({
-  selector: 'widget-pool',
+  selector: 'ix-widget-pool',
   templateUrl: './widget-pool.component.html',
   styleUrls: [
     '../widget/widget.component.scss',

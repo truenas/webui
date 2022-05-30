@@ -7,7 +7,7 @@ import { ControlConfig } from 'app/modules/entity/entity-toolbar/models/control-
 import { Control } from 'app/modules/entity/entity-toolbar/models/control.interface';
 
 @Component({
-  selector: 'toolbar-multimenu',
+  selector: 'ix-toolbar-multimenu',
   styleUrls: ['toolbar-multimenu.component.scss'],
   templateUrl: 'toolbar-multimenu.component.html',
 })

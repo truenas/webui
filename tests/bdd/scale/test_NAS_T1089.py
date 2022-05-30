@@ -63,8 +63,8 @@ def the_users_page_should_open_click_the_greaterthansign_right_of_the_users(driv
 @then('the User Field should expand down, click the Edit button')
 def the_user_field_should_expand_down_click_the_edit_button(driver):
     """the User Field should expand down, click the Edit button."""
-    assert wait_on_element(driver, 10, '(//tr[contains(.,"ericbsd")]/following-sibling::user-details-row)[1]//button[contains(.,"Edit")]', 'clickable')
-    driver.find_element_by_xpath('(//tr[contains(.,"ericbsd")]/following-sibling::user-details-row)[1]//button[contains(.,"Edit")]').click()
+    assert wait_on_element(driver, 10, '(//tr[contains(.,"ericbsd")]/following-sibling::ix-user-details-row)[1]//button[contains(.,"Edit")]', 'clickable')
+    driver.find_element_by_xpath('(//tr[contains(.,"ericbsd")]/following-sibling::ix-user-details-row)[1]//button[contains(.,"Edit")]').click()
 
 
 @then('the User Edit Page should open, add the root group and click save')
@@ -99,8 +99,8 @@ def change_should_be_saved_reopen_the_edit_page_root_group_value_should_be_visib
     assert wait_on_element(driver, 7, '//div[contains(.,"Users")]')
     assert wait_on_element(driver, 10, '//tr[contains(.,"ericbsd")]//mat-icon', 'clickable')
     driver.find_element_by_xpath('//tr[contains(.,"ericbsd")]//mat-icon').click()
-    assert wait_on_element(driver, 10, '(//tr[contains(.,"ericbsd")]/following-sibling::user-details-row)[1]//button[contains(.,"Edit")]', 'clickable')
-    driver.find_element_by_xpath('(//tr[contains(.,"ericbsd")]/following-sibling::user-details-row)[1]//button[contains(.,"Edit")]').click()
+    assert wait_on_element(driver, 10, '(//tr[contains(.,"ericbsd")]/following-sibling::ix-user-details-row)[1]//button[contains(.,"Edit")]', 'clickable')
+    driver.find_element_by_xpath('(//tr[contains(.,"ericbsd")]/following-sibling::ix-user-details-row)[1]//button[contains(.,"Edit")]').click()
     assert wait_on_element(driver, 10, '//h3[contains(.,"Edit User")]')
     assert wait_on_element_disappear(driver, 10, '//h6[contains(.,"Please wait")]')
     assert wait_on_element(driver, 7, '//ix-select[@formcontrolname="groups"]//mat-select', 'clickable')

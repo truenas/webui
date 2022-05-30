@@ -18,7 +18,6 @@ import { WebSocketService, ValidationService, DialogService } from 'app/services
 
 @UntilDestroy()
 @Component({
-  selector: 'webdav-edit',
   templateUrl: './service-webdav.component.html',
   styleUrls: ['./service-webdav.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -14,8 +14,7 @@ import { StorageService } from 'app/services/storage.service';
 
 @UntilDestroy()
 @Component({
-  selector: 'app-smart-list',
-  template: '<entity-table [title]="title" [conf]="this"></entity-table>',
+  template: '<ix-entity-table [title]="title" [conf]="this"></ix-entity-table>',
   providers: [TaskService, EntityFormService],
 })
 export class SmartTaskListComponent implements EntityTableConfig {

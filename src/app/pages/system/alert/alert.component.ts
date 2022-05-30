@@ -27,7 +27,7 @@ import { LayoutService } from 'app/services/layout.service';
  */
 @UntilDestroy()
 @Component({
-  selector: 'app-system-alert',
+  selector: 'ix-system-alert',
   templateUrl: './alert.component.html',
   styleUrls: ['../../../modules/entity/entity-form/entity-form.component.scss'],
   providers: [EntityFormService],

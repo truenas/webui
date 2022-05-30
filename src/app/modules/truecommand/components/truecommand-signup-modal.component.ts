@@ -16,7 +16,6 @@ export interface TruecommandSignupModalState {
 
 @UntilDestroy()
 @Component({
-  selector: 'truecommand-signup-modal',
   styleUrls: ['./truecommand-signup-modal.component.scss'],
   templateUrl: './truecommand-signup-modal.component.html',
 })

@@ -6,7 +6,7 @@ import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { EMPTY } from 'rxjs';
 import {
-  catchError, filter, switchMap,
+  catchError, filter, finalize, switchMap,
 } from 'rxjs/operators';
 import { helptextSystemAdvanced } from 'app/helptext/system/advanced';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
@@ -57,12 +57,14 @@ export class SaveDebugButtonComponent {
               });
               dialogRef.componentInstance.jobId = jobId;
               dialogRef.componentInstance.wsshow();
-              return dialogRef.componentInstance.success.pipe(
-                switchMap(() => {
-                  dialogRef.close();
-                  return this.storage.downloadUrl(url, fileName, mimeType);
-                }),
-              );
+              dialogRef.componentInstance.success
+                .pipe(
+                  switchMap(() => this.storage.downloadUrl(url, fileName, mimeType)),
+                  finalize(() => dialogRef.close()),
+                  untilDestroyed(this),
+                )
+                .subscribe();
+              return dialogRef.afterClosed();
             }),
           );
       }),

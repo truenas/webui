@@ -44,7 +44,6 @@ export const viewChartMetadata = {
 };
 
 @Component({
-  selector: 'viewchart',
   template: viewChartMetadata.template,
   styleUrls: ['./view-chart.component.scss'],
 })

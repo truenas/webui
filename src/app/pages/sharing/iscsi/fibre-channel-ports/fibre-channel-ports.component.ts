@@ -3,8 +3,8 @@ import { EntityTableConfig } from 'app/modules/entity/entity-table/entity-table.
 import { FibreChannelPortComponent } from './fibre-channel-port/fibre-channel-port.component';
 
 @Component({
-  selector: 'app-iscsi-fibre-channel-ports',
-  template: '<entity-table [title]="title" [conf]="this"></entity-table>',
+  selector: 'ix-iscsi-fibre-channel-ports',
+  template: '<ix-entity-table [title]="title" [conf]="this"></ix-entity-table>',
 })
 export class FibreChannelPortsComponent implements EntityTableConfig {
   title = 'Fibre Channel';

@@ -53,7 +53,7 @@
       <mat-step *ngIf="conf.summary">
         <ng-template matStepLabel>{{"Confirm Options" | translate}}</ng-template>
         <div> {{ conf.summaryTitle }}</div>
-        <wizard-summary [fieldConfigs]="summaryFieldConfigs" [value]="summaryValue" [isRoot]="true" [summary]="conf.summary"></wizard-summary>
+        <ix-wizard-summary [fieldConfigs]="summaryFieldConfigs" [value]="summaryValue" [isRoot]="true" [summary]="conf.summary"></ix-wizard-summary>
         {{"Confirm these settings." | translate}}
         <mat-card-actions class="wizard-action">
           <button id="secondary_cancel_button" color="accent" class="btn  btn-block btn-lg btn-primary" (click)="goBack()" mat-button color="accent"

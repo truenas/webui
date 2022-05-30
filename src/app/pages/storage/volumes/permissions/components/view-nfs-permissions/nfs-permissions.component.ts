@@ -25,7 +25,7 @@ interface PermissionDetails {
 }
 
 @Component({
-  selector: 'app-nfs-permissions',
+  selector: 'ix-nfs-permissions',
   templateUrl: 'nfs-permissions.component.html',
   styleUrls: ['./nfs-permissions.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
