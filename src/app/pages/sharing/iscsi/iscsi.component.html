@@ -10,14 +10,14 @@
   </nav>
   <router-outlet [ngSwitch]="activeTab">
     <ix-target-global-configuration *ngSwitchCase="'configuration'"></ix-target-global-configuration>
-    <app-iscsi-portal-list *ngSwitchCase="'portals'"></app-iscsi-portal-list>
-    <app-iscsi-initiator-list *ngSwitchCase="'initiator'"></app-iscsi-initiator-list>
-    <app-iscsi-authorizedaccess-list *ngSwitchCase="'auth'"></app-iscsi-authorizedaccess-list>
-    <app-iscsi-target-list *ngSwitchCase="'target'" [fcEnabled]="fcEnabled"></app-iscsi-target-list>
-    <app-iscsi-extent-list *ngSwitchCase="'extent'"></app-iscsi-extent-list>
-    <app-iscsi-associated-target-list *ngSwitchCase="'associatedtarget'"></app-iscsi-associated-target-list>
+    <ix-iscsi-portal-list *ngSwitchCase="'portals'"></ix-iscsi-portal-list>
+    <ix-iscsi-initiator-list *ngSwitchCase="'initiator'"></ix-iscsi-initiator-list>
+    <ix-iscsi-authorizedaccess-list *ngSwitchCase="'auth'"></ix-iscsi-authorizedaccess-list>
+    <ix-iscsi-target-list *ngSwitchCase="'target'" [fcEnabled]="fcEnabled"></ix-iscsi-target-list>
+    <ix-iscsi-extent-list *ngSwitchCase="'extent'"></ix-iscsi-extent-list>
+    <ix-iscsi-associated-target-list *ngSwitchCase="'associatedtarget'"></ix-iscsi-associated-target-list>
     <ng-container *ngSwitchCase="'fibrechannel'">
-      <app-iscsi-fibre-channel-ports *ngIf="fcEnabled"></app-iscsi-fibre-channel-ports>
+      <ix-iscsi-fibre-channel-ports *ngIf="fcEnabled"></ix-iscsi-fibre-channel-ports>
     </ng-container>
   </router-outlet>
 </mat-card>

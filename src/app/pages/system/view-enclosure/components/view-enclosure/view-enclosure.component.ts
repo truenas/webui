@@ -22,7 +22,6 @@ import { waitForSystemFeatures, waitForSystemInfo } from 'app/store/system-info/
 
 @UntilDestroy()
 @Component({
-  selector: 'view-enclosure',
   templateUrl: './view-enclosure.component.html',
   styleUrls: ['./view-enclosure.component.scss'],
 })

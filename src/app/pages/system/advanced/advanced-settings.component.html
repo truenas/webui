@@ -25,7 +25,7 @@
       </mat-toolbar-row>
 
       <mat-card-content>
-        <entity-empty [conf]="card.emptyConf" *ngIf="card.emptyConf; else data"></entity-empty>
+        <ix-entity-empty [conf]="card.emptyConf" *ngIf="card.emptyConf; else data"></ix-entity-empty>
         <ng-template #data>
           <mat-list>
             <mat-list-item *ngFor="let item of card.items" class="card-list-item">
@@ -37,9 +37,9 @@
       </mat-card-content>
     </mat-card>
 
-    <app-table
+    <ix-conf-table
       *ngIf="card.tableConf"
       [conf]="card.tableConf"
-    ></app-table>
+    ></ix-conf-table>
   </ng-container>
 </div>

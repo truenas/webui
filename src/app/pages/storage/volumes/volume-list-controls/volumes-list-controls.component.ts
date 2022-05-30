@@ -10,7 +10,6 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
 @Component({
-  selector: 'app-volumes-list-controls',
   templateUrl: './volumes-list-controls.component.html',
   styleUrls: ['./volumes-list-controls.component.scss'],
 })

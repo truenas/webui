@@ -31,7 +31,6 @@ import { AppState } from 'app/store';
 
 @UntilDestroy({ arrayName: 'subscriptions' })
 @Component({
-  selector: 'app-user-form',
   templateUrl: './user-form.component.html',
   styleUrls: ['./user-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

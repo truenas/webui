@@ -21,7 +21,7 @@ import { ProactiveComponent } from './proactive/proactive.component';
 
 @UntilDestroy()
 @Component({
-  selector: 'app-support',
+  selector: 'ix-support',
   templateUrl: './support.component.html',
   styleUrls: ['./support.component.scss'],
 })

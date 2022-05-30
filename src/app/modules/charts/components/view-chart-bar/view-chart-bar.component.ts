@@ -22,7 +22,6 @@ export interface BarDataSource {
 }
 
 @Component({
-  selector: 'viewchartbar',
   templateUrl: './view-chart-bar.component.html',
   styleUrls: ['./view-chart-bar.component.scss'],
 })

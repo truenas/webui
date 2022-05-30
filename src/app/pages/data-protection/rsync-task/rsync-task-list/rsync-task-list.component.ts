@@ -17,8 +17,7 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
 @Component({
-  selector: 'app-rsync-list',
-  template: '<entity-table [title]="title" [conf]="this"></entity-table>',
+  template: '<ix-entity-table [title]="title" [conf]="this"></ix-entity-table>',
   providers: [TaskService, JobService, UserService, EntityFormService],
 })
 export class RsyncTaskListComponent implements EntityTableConfig {

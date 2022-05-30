@@ -14,7 +14,7 @@ import { WebSocketService, DialogService, AppLoaderService } from 'app/services'
 
 @UntilDestroy()
 @Component({
-  selector: 'app-rsync-configure',
+  selector: 'ix-rsync-configure',
   templateUrl: './rsync-configure.component.html',
   styleUrls: ['./rsync-configure.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -8,7 +8,6 @@ import {
 import { Field } from 'app/modules/entity/entity-form/models/field.interface';
 
 @Component({
-  selector: 'form-colorpicker',
   templateUrl: './form-colorpicker.component.html',
   styleUrls: ['./form-colorpicker.component.scss'],
 })

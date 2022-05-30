@@ -13,7 +13,6 @@ import { Field } from 'app/modules/entity/entity-form/models/field.interface';
 
 @UntilDestroy()
 @Component({
-  selector: 'form-chip',
   templateUrl: './form-chip.component.html',
   styleUrls: ['../dynamic-field/dynamic-field.scss', './form-chip.component.scss'],
 })

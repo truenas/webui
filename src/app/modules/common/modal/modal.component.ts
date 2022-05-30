@@ -8,7 +8,7 @@ import {
 import { ModalService } from 'app/services/modal.service';
 
 @Component({
-  selector: 'jw-modal',
+  selector: 'ix-jw-modal',
   templateUrl: 'modal.component.html',
   styleUrls: ['./modal.component.scss'],
 })

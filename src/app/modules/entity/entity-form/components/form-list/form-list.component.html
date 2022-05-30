@@ -39,6 +39,6 @@
   <ng-template #empty>
     <span class="form-list-item">{{ "No items have been added yet." | translate }}</span>
   </ng-template>
-  <form-errors [control]="group.controls[config.name]" [config]="config"></form-errors>
+  <ix-form-errors [control]="group.controls[config.name]" [config]="config"></ix-form-errors>
   <mat-error *ngIf="config['hasErrors']"><div [innerHTML]="config['errors']"></div></mat-error>
 </div>

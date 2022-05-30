@@ -32,7 +32,7 @@ export interface Tab {
 
 @UntilDestroy()
 @Component({
-  selector: 'reportsdashboard',
+  selector: 'ix-reports-dashboard',
   styleUrls: ['./reports-dashboard.scss'],
   templateUrl: './reports-dashboard.component.html',
   providers: [SystemGeneralService],

@@ -34,8 +34,7 @@ import { UnlockDialogComponent } from './unlock-dialog/unlock-dialog.component';
 
 @UntilDestroy()
 @Component({
-  selector: 'app-dataset-unlock',
-  template: '<entity-form [conf]="this"></entity-form>',
+  template: '<ix-entity-form [conf]="this"></ix-entity-form>',
 })
 export class DatasetUnlockComponent implements FormConfiguration {
   queryCall = 'pool.dataset.encryption_summary' as const;

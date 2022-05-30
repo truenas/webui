@@ -41,7 +41,7 @@ interface CatalogSyncJob {
 
 @UntilDestroy()
 @Component({
-  selector: 'app-catalog',
+  selector: 'ix-catalog',
   templateUrl: './catalog.component.html',
   styleUrls: ['../applications.component.scss', 'catalog.component.scss'],
 })

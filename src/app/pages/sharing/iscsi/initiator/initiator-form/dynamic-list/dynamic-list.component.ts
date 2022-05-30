@@ -6,7 +6,7 @@ import { EntityFormService } from 'app/modules/entity/entity-form/services/entit
 
 @UntilDestroy()
 @Component({
-  selector: 'app-dynamic-list',
+  selector: 'ix-dynamic-list',
   templateUrl: './dynamic-list.component.html',
   styleUrls: ['./dynamic-list.component.scss'],
 })

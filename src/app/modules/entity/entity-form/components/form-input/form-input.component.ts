@@ -9,7 +9,6 @@ import { Field } from 'app/modules/entity/entity-form/models/field.interface';
 import { EntityFormService } from 'app/modules/entity/entity-form/services/entity-form.service';
 
 @Component({
-  selector: 'form-input',
   templateUrl: './form-input.component.html',
   styleUrls: ['./form-input.component.scss', '../dynamic-field/dynamic-field.scss'],
 })
