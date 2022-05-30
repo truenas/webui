@@ -144,6 +144,19 @@ export class VmFormComponent implements FormConfiguration {
           validation: [Validators.required, Validators.min(1), this.cpuValidator('threads')],
         },
         {
+          type: 'input',
+          name: 'cpuset',
+          inputType: 'string',
+          placeholder: helptext.cpuset.placeholder,
+          tooltip: helptext.cpuset.tooltip,
+        },
+        {
+          type: 'checkbox',
+          name: 'pin_vcpus',
+          placeholder: helptext.pin_vcpus.placeholder,
+          tooltip: helptext.pin_vcpus.tooltip,
+        },
+        {
           type: 'select',
           name: 'cpu_mode',
           placeholder: helptext.cpu_mode.placeholder,
@@ -169,6 +182,13 @@ export class VmFormComponent implements FormConfiguration {
           blurStatus: true,
           blurEvent: () => this.memoryBlur(),
           parent: this,
+        },
+        {
+          type: 'input',
+          name: 'nodeset',
+          inputType: 'string',
+          placeholder: helptext.nodeset.placeholder,
+          tooltip: helptext.nodeset.tooltip,
         },
 
       ],
@@ -222,7 +242,7 @@ export class VmFormComponent implements FormConfiguration {
     private translate: TranslateService,
     private dialogService: DialogService,
     private store$: Store<AppState>,
-  ) {}
+  ) { }
 
   preInit(entityForm: EntityFormComponent): void {
     this.entityForm = entityForm;
