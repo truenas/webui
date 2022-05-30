@@ -1,0 +1,16 @@
+.container {
+  display: flex;
+  flex-direction: row;
+}
+
+.table-container {
+  flex: 1;
+}
+
+.details-container {
+  color: white;
+  flex: 2;
+  margin-left: 16px;
+  padding: 5px;
+}
+
