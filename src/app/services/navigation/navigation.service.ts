@@ -33,6 +33,18 @@ export class NavigationService {
       state: 'storage',
     },
     {
+      name: T('Storage 2.0'),
+      type: MenuItemType.SlideOut,
+      tooltip: T('Storage'),
+      icon: 'dns',
+      state: 'storage2',
+      sub: [
+        { name: T('Dashboard'), state: 'dashboard' },
+        { name: T('Dataset Management'), state: 'datasets' },
+        { name: T('Device Management'), state: 'devices' },
+      ],
+    },
+    {
       name: T('Shares'),
       type: MenuItemType.Link,
       tooltip: T('Shares'),
