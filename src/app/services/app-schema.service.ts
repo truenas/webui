@@ -214,7 +214,7 @@ export class AppSchemaService {
       ChartSchemaType.Hostpath,
       ChartSchemaType.Ipaddr,
     ].includes(schema.type)) {
-      const newFormControl = new FormControl(schema.default, [
+      const newFormControl = new FormControl(schema.default || '', [
         schema.required ? Validators.required : Validators.nullValidator,
         schema.max ? Validators.max(schema.max) : Validators.nullValidator,
         schema.min ? Validators.min(schema.min) : Validators.nullValidator,
