@@ -1,7 +1,7 @@
 import { Component, Input } from '@angular/core';
 
 @Component({
-  selector: 'app-sys-info',
+  selector: 'ix-sys-info',
   templateUrl: './sys-info.component.html',
 })
 export class SysInfoComponent {

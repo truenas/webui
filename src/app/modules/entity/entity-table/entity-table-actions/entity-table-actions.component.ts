@@ -5,7 +5,7 @@ import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-tab
 import { EntityTableAction } from 'app/modules/entity/entity-table/entity-table.interface';
 
 @Component({
-  selector: 'app-entity-table-actions',
+  selector: 'ix-entity-table-actions',
   styleUrls: ['./entity-table-actions.component.scss'],
   templateUrl: './entity-table-actions.component.html',
 })

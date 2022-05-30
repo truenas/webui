@@ -35,7 +35,7 @@ import { AppState } from 'app/store';
 
 @UntilDestroy()
 @Component({
-  selector: 'app-volumes-list',
+  selector: 'ix-volumes-list',
   styleUrls: ['./volumes-list.component.scss'],
   templateUrl: './volumes-list.component.html',
 })

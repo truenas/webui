@@ -3,7 +3,7 @@ import {
 } from '@angular/core';
 
 @Component({
-  selector: 'disk-ui',
+  selector: 'ix-disk-ui',
   templateUrl: './disk.component.html',
   styleUrls: ['./disk.component.scss'],
 })

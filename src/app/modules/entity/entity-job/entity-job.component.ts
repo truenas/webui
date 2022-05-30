@@ -20,7 +20,6 @@ import { WebSocketService } from 'app/services';
 
 @UntilDestroy()
 @Component({
-  selector: 'entity-job',
   templateUrl: 'entity-job.component.html',
   styleUrls: ['./entity-job.component.scss'],
 })

@@ -105,7 +105,7 @@
                     ix-auto-type="button"
                     [ix-auto-identifier]="updateBtnLabel"
                   >{{ updateBtnLabel | translate }}</button>
-                  <simple-failover-button *ngIf="isPassive" [disabled]="!ha_status || ha_status !== 'HA Enabled'" ></simple-failover-button>
+                  <ix-simple-failover-button *ngIf="isPassive" [disabled]="!ha_status || ha_status !== 'HA Enabled'" ></ix-simple-failover-button>
                 </div>
               </ng-template>
             </div>
@@ -142,7 +142,7 @@
                       <div class="copy-version-text">
                         <span>{{ data.version }}</span>
                       </div>
-                      <copy-btn [text]="data.version" class="copy-version-button"></copy-btn>
+                      <ix-copy-btn [text]="data.version" class="copy-version-button"></ix-copy-btn>
                     </div>
                   </mat-list-item>
 
@@ -179,11 +179,11 @@
                     ix-auto-type="button"
                     [ix-auto-identifier]="updateBtnLabel"
                   >{{ updateBtnLabel | translate }}</button>
-                  <simple-failover-button
+                  <ix-simple-failover-button
                     *ngIf="isPassive"
                     [disabled]="!ha_status || ha_status !== 'HA Enabled'"
                     color="primary"
-                  ></simple-failover-button>
+                  ></ix-simple-failover-button>
                 </div>
 
               </div> <!-- END datacontainer -->

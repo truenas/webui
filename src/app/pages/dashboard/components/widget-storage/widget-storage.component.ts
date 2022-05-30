@@ -32,7 +32,7 @@ interface PoolInfoMap {
 
 @UntilDestroy()
 @Component({
-  selector: 'widget-storage',
+  selector: 'ix-widget-storage',
   templateUrl: './widget-storage.component.html',
   styleUrls: [
     '../widget/widget.component.scss',

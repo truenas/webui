@@ -7,7 +7,7 @@ import { ControlConfig } from 'app/modules/entity/entity-toolbar/models/control-
 import { Control } from 'app/modules/entity/entity-toolbar/models/control.interface';
 
 @Component({
-  selector: 'toolbar-checkbox',
+  selector: 'ix-toolbar-checkbox',
   styleUrls: ['toolbar-checkbox.component.scss'],
   templateUrl: './toolbar-checkbox.component.html',
 })

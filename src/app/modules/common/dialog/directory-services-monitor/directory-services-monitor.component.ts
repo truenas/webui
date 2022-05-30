@@ -14,7 +14,6 @@ interface DirectoryServicesMonitorRow {
 
 @UntilDestroy()
 @Component({
-  selector: 'app-directory-services-monitor',
   templateUrl: './directory-services-monitor.component.html',
   styleUrls: ['./directory-services-monitor.component.scss'],
 })

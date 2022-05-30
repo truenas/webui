@@ -5,7 +5,6 @@ import { DatasetQuotasUserlistComponent } from 'app/pages/storage/volumes/datase
 import { DatasetAclEditorComponent } from 'app/pages/storage/volumes/permissions/containers/dataset-acl-editor/dataset-acl-editor.component';
 import { DatasetTrivialPermissionsComponent } from 'app/pages/storage/volumes/permissions/containers/dataset-trivial-permissions/dataset-trivial-permissions.component';
 import { ViewEnclosureComponent } from 'app/pages/system/view-enclosure/components/view-enclosure/view-enclosure.component';
-import { DiskBulkEditComponent } from './disks/disk-bulk-edit/disk-bulk-edit.component';
 import { DiskListComponent } from './disks/disk-list/disk-list.component';
 import { SmartResultsComponent } from './disks/smart-results/smart-results.component';
 import { ImportDiskComponent } from './import-disk/import-disk.component';
@@ -122,11 +121,6 @@ export const routes: Routes = [
             path: '',
             component: DiskListComponent,
             data: { title: 'Disks', breadcrumb: 'Disks' },
-          },
-          {
-            path: 'bulk-edit',
-            component: DiskBulkEditComponent,
-            data: { title: 'Bulk Edit Disks', breadcrumb: 'Bulk Edit Disks' },
           },
           {
             path: 'smartresults/:pk',

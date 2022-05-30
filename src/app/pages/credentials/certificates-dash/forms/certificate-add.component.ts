@@ -23,8 +23,7 @@ import { ModalService } from 'app/services/modal.service';
 
 @UntilDestroy()
 @Component({
-  selector: 'system-certificate-add',
-  template: '<entity-wizard [conf]="this"></entity-wizard>',
+  template: '<ix-entity-wizard [conf]="this"></ix-entity-wizard>',
   providers: [SystemGeneralService],
 })
 export class CertificateAddComponent implements WizardConfiguration {

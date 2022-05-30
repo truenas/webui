@@ -16,7 +16,7 @@ import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
-  selector: 'app-entity-dialog',
+  selector: 'ix-entity-dialog',
   templateUrl: './entity-dialog.component.html',
   styleUrls: ['./entity-dialog.component.scss'],
   providers: [EntityFormService, DatePipe, FieldRelationService],

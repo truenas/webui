@@ -11,7 +11,6 @@ import { LocaleService } from 'app/services/locale.service';
 
 @UntilDestroy()
 @Component({
-  selector: 'system-reboot',
   templateUrl: './reboot.component.html',
   styleUrls: ['./reboot.component.scss'],
 })

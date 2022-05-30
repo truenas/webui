@@ -28,7 +28,7 @@ import { CoreService } from 'app/services/core-service/core.service';
  */
 @UntilDestroy()
 @Component({
-  selector: 'app-system-alert',
+  selector: 'ix-system-alert',
   templateUrl: './alert.component.html',
   styleUrls: ['../../../modules/entity/entity-form/entity-form.component.scss'],
   providers: [EntityFormService],

@@ -9,5 +9,5 @@
   {{ label }}
   <span *ngIf="required" class="required">*</span>
 </mat-checkbox>
-<tooltip *ngIf="tooltip" [header]="label" class="tooltip" [message]="tooltip"></tooltip>
+<ix-tooltip *ngIf="tooltip" [header]="label" class="tooltip" [message]="tooltip"></ix-tooltip>
 <ix-errors [control]="controlDirective.control" [label]="label"></ix-errors>

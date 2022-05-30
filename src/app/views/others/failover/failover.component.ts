@@ -11,7 +11,6 @@ import { LocaleService } from 'app/services/locale.service';
 
 @UntilDestroy()
 @Component({
-  selector: 'system-failover',
   templateUrl: './failover.component.html',
   styleUrls: ['./failover.component.scss'],
 })

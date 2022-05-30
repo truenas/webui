@@ -12,7 +12,6 @@ import { EntityTableService } from 'app/services/entity-table.service';
 
 @UntilDestroy()
 @Component({
-  selector: 'app-entity-table-add-actions',
   templateUrl: './entity-table-add-actions.component.html',
   styleUrls: ['./entity-table-add-actions.component.scss'],
 })

@@ -21,7 +21,6 @@ import { WebSocketService, DialogService, NetworkService } from 'app/services';
 
 @UntilDestroy()
 @Component({
-  selector: 'app-iscsi-initiator-form',
   templateUrl: './initiator-form.component.html',
   styleUrls: ['./initiator-form.component.scss', '../../../../../modules/entity/entity-form/entity-form.component.scss'],
   providers: [FieldRelationService, NetworkService],

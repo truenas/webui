@@ -4,7 +4,6 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
 @UntilDestroy()
 @Component({
-  selector: 'app-rsync',
   templateUrl: './service-rsync.component.html',
 })
 export class ServiceRsyncComponent implements OnInit {

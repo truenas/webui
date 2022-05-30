@@ -31,7 +31,7 @@ import { waitForSystemFeatures, waitForSystemInfo } from 'app/store/system-info/
 
 @UntilDestroy()
 @Component({
-  selector: 'app-update',
+  selector: 'ix-update',
   styleUrls: ['update.component.scss'],
   templateUrl: './update.component.html',
 })
