@@ -75,10 +75,4 @@ export class IxDynamicFormItemComponent implements OnInit {
   removeControlNext(event: DeleteListItemEvent): void {
     this.deleteListItem.emit(event);
   }
-
-  numberParsing: (val: string) => number = (value: string) => {
-    if (!Number.isNaN(Number(value)) && value) {
-      return Number(value);
-    }
-  };
 }
