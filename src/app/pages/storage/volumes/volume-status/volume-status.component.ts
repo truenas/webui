@@ -15,6 +15,7 @@ import helptext from 'app/helptext/storage/volumes/volume-status';
 import { CoreEvent } from 'app/interfaces/events';
 import { Job } from 'app/interfaces/job.interface';
 import { Option } from 'app/interfaces/option.interface';
+import { PoolDiskInfo } from 'app/interfaces/pool-disk-info';
 import { Pool, PoolScan, PoolTopologyCategory } from 'app/interfaces/pool.interface';
 import { QueryParams } from 'app/interfaces/query-api.interface';
 import {
@@ -39,17 +40,6 @@ import {
 import { CoreService } from 'app/services/core-service/core.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { ModalService } from 'app/services/modal.service';
-
-interface PoolDiskInfo {
-  name: string;
-  read: number;
-  write: number;
-  checksum: number;
-  status: any;
-  actions?: any;
-  path?: string;
-  guid: string;
-}
 
 @UntilDestroy()
 @Component({
