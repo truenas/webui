@@ -31,7 +31,7 @@ export class FailoverComponent implements OnInit {
     private location: Location,
   ) {
     this.sysGeneralService.getProductType$.pipe(untilDestroyed(this)).subscribe((productType) => {
-      this.productType = productType as ProductType;
+      this.productType = productType;
     });
   }
 

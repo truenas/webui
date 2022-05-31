@@ -32,7 +32,7 @@ export class RebootComponent implements OnInit {
     private location: Location,
   ) {
     this.sysGeneralService.getProductType$.pipe(untilDestroyed(this)).subscribe((res) => {
-      this.productType = res as ProductType;
+      this.productType = res;
     });
   }
 

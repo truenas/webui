@@ -1,0 +1,22 @@
+:host {
+  display: table-row;
+
+  .list-item {
+    display: flex;
+    flex-direction: column;
+    min-height: 48px;
+    padding: 15px 12px;
+
+    h4 {
+      margin-bottom: 8px;
+    }
+
+    &:not(:first-of-type) {
+      border-top: 1px solid var(--lines);
+    }
+  }
+
+  .text-formatted {
+    white-space: pre-line;
+  }
+}

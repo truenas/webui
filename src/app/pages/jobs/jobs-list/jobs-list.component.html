@@ -117,41 +117,22 @@
         }}</td>
       </ng-container>
 
-      <ng-container matColumnDef="arguments">
-        <th mat-header-cell *matHeaderCellDef ix-auto ix-auto-type="tab" ix-auto-identifier="Arguments">
-          {{ 'Arguments' | translate }}
+      <ng-container matColumnDef="arguments_logs">
+        <th mat-header-cell *matHeaderCellDef ix-auto ix-auto-type="tab" ix-auto-identifier="Arguments/Logs">
+          {{ 'Arguments/Logs' | translate }}
         </th>
         <td mat-cell *matCellDef="let job; dataSource: dataSource">
-          <button mat-button type="button" (click)="viewLogs(job, JobViewLogState.Arguments)">{{ 'View' | translate }}</button>
-        </td>
-      </ng-container>
-
-      <ng-container matColumnDef="logs_excerpt">
-        <th mat-header-cell *matHeaderCellDef ix-auto ix-auto-type="tab" ix-auto-identifier="LogsErrors">
-          {{ 'Logs/Errors' | translate }}
-        </th>
-        <td mat-cell *matCellDef="let job; dataSource: dataSource">
-          <ng-container
-            *ngIf="job.logs_excerpt || job.error; then viewLogsTemplate; else emptyLogsTemplate"
-          ></ng-container>
-
-          <ng-template #emptyLogsTemplate>
-            {{ 'None' | translate }}
-          </ng-template>
-
-          <ng-template #viewLogsTemplate>
-            <button mat-button type="button" (click)="viewLogs(job, JobViewLogState.Logs)">{{ 'View Logs' | translate }}</button>
-          </ng-template>
+          <button mat-button type="button">{{ expandedRow === job ? ('Close' | translate) : ('View' | translate) }}</button>
         </td>
       </ng-container>
 
       <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
       <tr mat-row
-        *matRowDef="let row; columns: displayedColumns"
-        class="job-row"
-        ix-auto
-        ix-auto-type="expander"
-        [ix-auto-identifier]="row.method"
+        *matRowDef="let job; columns: displayedColumns"
+        [ixDetailRow]="job"
+        [ixDetailRowOptions]="{ colspan: displayedColumns.length }"
+        [ixDetailRowTemplate]="expandedRowTemplate"
+        (toggle)="onToggle($event)"
       ></tr>
 
       <tr class="mat-row no-data-row" *matNoDataRow>
@@ -160,15 +141,11 @@
         </td>
       </tr>
     </table>
-
-    <ix-job-logs-sidebar
-      *ngIf="viewingLogsForJob"
-      class="job-logs-sidebar"
-      [job]="viewingLogsForJob"
-      [viewType]="viewType"
-      (closed)="onLogsSidebarClosed()"
-    ></ix-job-logs-sidebar>
   </div>
 
   <ix-table-paginator [dataSource]="dataSource"></ix-table-paginator>
+</ng-template>
+
+<ng-template #expandedRowTemplate let-job let-colspan="colspan">
+  <ix-job-logs-row [colspan]="colspan" [job]="job"></ix-job-logs-row>
 </ng-template>
