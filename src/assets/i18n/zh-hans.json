@@ -132,6 +132,7 @@
   "This field accepts human-readable input (Ex. 50 GiB, 500M, 2 TB).": "",
   "Total Down": "",
   "TrueNAS {product} is Free and <a href=\"https://github.com/truenas/\" target=\"_blank\"> Open Source</a> software, which is provided as-is with no warranty.": "",
+  "Unsupported Hardware": "",
   "Update 'Time Machine'": "",
   "Updated 'Use as Home Share'": "",
   "Use compressed WRITE records to make the  stream more efficient. The destination system must also support  compressed WRITE records. See  <a href=\"https://linux.die.net/man/8/zfs\"  target=\"_blank\">zfs(8)</a>.": "",

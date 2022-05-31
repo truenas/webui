@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { MediaObserver } from '@angular/flex-layout';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { ProductType } from 'app/enums/product-type.enum';
+import { ProductType, productTypeLabels } from 'app/enums/product-type.enum';
 import helptext from 'app/helptext/about';
 import { WidgetComponent } from 'app/pages/dashboard/components/widget/widget.component';
 import { SystemGeneralService } from 'app/services';
@@ -22,6 +22,7 @@ export class WidgetHelpComponent extends WidgetComponent implements OnInit {
   systemType: ProductType;
   helptext = helptext;
   readonly ProductType = ProductType;
+  readonly productTypeLabels = productTypeLabels;
   screenType = 'Desktop'; // Desktop || Mobile
 
   constructor(

@@ -40,10 +40,12 @@
             <div fxFlex="10%"><mat-icon class="bullet-icon">mail</mat-icon></div>
             <div fxFlex="90%" class="medium-font" [innerHtml]="helptext.newsLetter | translate"></div>
           </div>
-          <div id="open-source" [innerHtml]="helptext.opensource | translate: { product: systemType } "></div>
+          <ng-container *ngIf="systemType === ProductType.Scale">
+            <div id="open-source" *appLet="systemType | mapValue: productTypeLabels as product" [innerHtml]="helptext.opensource | translate: { product } "></div>
+          </ng-container>
         </div>
         <div id="footer">
-          <div fxFlex="45%" fxFlex.xs="100" class="copyright-txt">TrueNAS {{ systemType }}® © {{copyrightYear}} -
+          <div class="copyright-txt">TrueNAS {{ systemType | mapValue: productTypeLabels }}® © {{copyrightYear}} -
             <a href="http://www.ixsystems.com" target="_blank" title="iXsystems, Inc." class="external-link">
               iXsystems, Inc</a>.
           </div>

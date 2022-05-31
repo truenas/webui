@@ -70,10 +70,7 @@ export class GeneralSettingsComponent implements OnInit, AfterViewInit {
           title: helptext.guiTitle,
           id: GeneralCardId.Gui,
           items: [
-            {
-              label: this.translate.instant('Theme'),
-              value: this.themeService.getNormalizedThemeName(preferences.userTheme),
-            },
+            { label: this.translate.instant('Theme'), value: preferences.userTheme },
             { label: helptext.ui_certificate.label, value: config.ui_certificate.name },
             { label: helptext.ui_address.label, value: config.ui_address.join(', ') },
             { label: helptext.ui_v6address.label, value: config.ui_v6address.join(', ') },
