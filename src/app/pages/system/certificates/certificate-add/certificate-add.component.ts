@@ -934,6 +934,7 @@ export class CertificateAddComponent {
     // Addresses non-pristine field being mistaken for a passphrase of ''
     if (data.passphrase == '') {
       data.passphrase = undefined;
+      data.passphrase2 = undefined;
     }
 
     if (data.passphrase2) {
