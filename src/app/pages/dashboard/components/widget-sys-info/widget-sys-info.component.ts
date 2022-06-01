@@ -164,6 +164,9 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnDestroy
 
   ngOnDestroy(): void {
     this.core.unregister({ observerClass: this });
+    if (this.timeInterval) {
+      clearInterval(this.timeInterval);
+    }
   }
 
   get themeAccentColors(): string[] {
@@ -187,10 +190,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnDestroy
   }
 
   get timeDiffWarning(): string {
-    let nasTimeFormatted = format(this.nasDateTime, 'HH:mm:ss');
-    if (this.timeDiffInDays > 0) {
-      nasTimeFormatted = format(this.nasDateTime, 'MMM dd, HH:mm:ss');
-    }
+    const nasTimeFormatted = format(this.nasDateTime, 'MMM dd, HH:mm:ss, OOOO');
     return this.translate.instant('Your NAS time {datetime} does not match your computer time.', { datetime: nasTimeFormatted });
   }
 
@@ -212,7 +212,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnDestroy
 
     this.timeInterval = setInterval(() => {
       this.nasDateTime = addSeconds(this.nasDateTime, 1);
-    }, 1);
+    }, 1000);
 
     const build = new Date(this.data.buildtime['$date']);
     const year = build.getUTCFullYear();

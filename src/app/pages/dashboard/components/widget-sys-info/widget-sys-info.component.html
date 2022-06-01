@@ -123,8 +123,8 @@
                   </mat-list-item>
 
                   <mat-list-item><strong>{{"HostName" | translate}}:</strong> &nbsp;&nbsp;{{data.hostname}}</mat-list-item>
-                  <mat-list-item *ngIf="uptimeString"><strong>{{"Uptime" | translate}}:</strong> &nbsp;&nbsp;{{uptimeString}} as of {{ dateTime }}                </mat-list-item>
-                  <mat-list-item *ngIf="showTimeDiffWarning"><mat-icon>warn</mat-icon><strong>{{ timeDiffWarning }}</strong></mat-list-item>
+                  <mat-list-item *ngIf="uptimeString"><strong>{{"Uptime" | translate}}:</strong> &nbsp;&nbsp;{{uptimeString}} as of {{ dateTime }}  </mat-list-item>
+                  <mat-list-item *ngIf="showTimeDiffWarning"><mat-icon style="font-size: 16px; margin-right: 8px;">warning</mat-icon>{{ timeDiffWarning }}</mat-list-item>
 
                 </mat-list>
 
