@@ -6,7 +6,6 @@ import {
   ViewChildren, QueryList,
   AfterViewInit,
   TemplateRef,
-  ElementRef,
 } from '@angular/core';
 import { MatSort, Sort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
@@ -14,12 +13,9 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { select, Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import {
-  BehaviorSubject,
-  combineLatest, Observable, of, Subject,
+  combineLatest, Observable, of,
 } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
-import { CoreEvent } from 'app/interfaces/events';
-import { GlobalActionConfig } from 'app/interfaces/global-action.interface';
 import { User } from 'app/interfaces/user.interface';
 import { EmptyConfig, EmptyType } from 'app/modules/entity/entity-empty/entity-empty.component';
 import { IxDetailRowDirective } from 'app/modules/ix-tables/directives/ix-detail-row.directive';
@@ -41,11 +37,8 @@ import { waitForPreferences } from 'app/store/preferences/preferences.selectors'
 export class UserListComponent implements OnInit, AfterViewInit {
   @ViewChild(MatSort, { static: false }) sort: MatSort;
   @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
-  @ViewChild('filterInput') filterInput: ElementRef<HTMLInputElement>;
-  toolbarActionsConfig: GlobalActionConfig = null;
 
   displayedColumns: string[] = ['username', 'uid', 'builtin', 'full_name', 'actions'];
-  settingsEvent$: Subject<CoreEvent> = new Subject();
   filterString = '';
   dataSource: MatTableDataSource<User> = new MatTableDataSource([]);
   defaultSort: Sort = { active: 'uid', direction: 'asc' };
@@ -64,9 +57,6 @@ export class UserListComponent implements OnInit, AfterViewInit {
     large: true,
     title: this.translate.instant('Can not retrieve response'),
   };
-  readonly shouldShowResetInput$ = new BehaviorSubject<boolean>(false);
-  readonly shouldShowReset$ = this.shouldShowResetInput$.asObservable();
-  filterValue = '';
   expandedRow: User;
   @ViewChildren(IxDetailRowDirective) private detailRows: QueryList<IxDetailRowDirective>;
   isLoading$ = this.store$.select(selectUserState).pipe(map((state) => state.isLoading));
@@ -162,19 +152,7 @@ export class UserListComponent implements OnInit, AfterViewInit {
     });
   }
 
-  clearFilter(): void {
-    this.shouldShowResetInput$.next(false);
-    this.filterInput.nativeElement.value = '';
-    this.filter();
-  }
-
-  filter(): void {
-    if (!this.filterInput.nativeElement.value) {
-      this.shouldShowResetInput$.next(false);
-    } else {
-      this.shouldShowResetInput$.next(true);
-    }
-    this.filterString = this.filterInput.nativeElement.value;
-    this.dataSource.filter = this.filterInput.nativeElement.value;
+  onListFiltered(query: string): void {
+    this.dataSource.filter = query;
   }
 }

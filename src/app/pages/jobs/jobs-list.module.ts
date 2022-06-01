@@ -11,6 +11,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslateModule } from '@ngx-translate/core';
 import { CoreComponents } from 'app/core/core-components.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
+import { AppCommonModule } from 'app/modules/common/app-common.module';
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxTableModule } from 'app/modules/ix-tables/ix-table.module';
 import { JobLogsRowComponent } from 'app/pages/jobs/job-logs-row/job-logs-row.component';
@@ -35,6 +36,7 @@ import { JobsListComponent } from './jobs-list/jobs-list.component';
     routing,
     FlexLayoutModule,
     CommonDirectivesModule,
+    AppCommonModule,
   ],
   declarations: [JobsListComponent, JobLogsRowComponent],
 })

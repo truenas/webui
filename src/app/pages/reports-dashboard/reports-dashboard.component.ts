@@ -1,6 +1,6 @@
 import { CdkVirtualScrollViewport } from '@angular/cdk/scrolling';
 import {
-  Component, ElementRef, OnInit, OnDestroy, AfterViewInit, ViewChild, Type,
+  Component, ElementRef, OnInit, OnDestroy, AfterViewInit, ViewChild, TemplateRef,
 } from '@angular/core';
 import {
   Router, ActivatedRoute,
@@ -21,11 +21,11 @@ import {
 } from 'app/services';
 import { CoreService } from 'app/services/core-service/core.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { LayoutService } from 'app/services/layout.service';
 import { Report } from './components/report/report.component';
 import { ReportsConfigFormComponent } from './components/reports-config-form/reports-config-form.component';
-import { ReportsGlobalControlsComponent } from './components/reports-global-controls/reports-global-controls.component';
 
-interface Tab {
+export interface Tab {
   label: string;
   value: ReportTab;
 }
@@ -40,6 +40,8 @@ interface Tab {
 export class ReportsDashboardComponent implements OnInit, OnDestroy, AfterViewInit {
   @ViewChild(CdkVirtualScrollViewport, { static: false }) viewport: CdkVirtualScrollViewport;
   @ViewChild('container', { static: true }) container: ElementRef;
+  @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
+
   scrollContainer: HTMLElement;
   scrolledIndex = 0;
 
@@ -64,7 +66,6 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, AfterViewIn
   fieldConfig: FieldConfig[] = [];
   fieldSets: FieldSet[];
   diskReportConfigReady = false;
-  actionsConfig: { actionType: Type<ReportsGlobalControlsComponent>; actionConfig: ReportsDashboardComponent };
 
   constructor(
     private router: Router,
@@ -73,6 +74,7 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, AfterViewIn
     protected ws: WebSocketService,
     protected translate: TranslateService,
     private slideIn: IxSlideInService,
+    private layoutService: LayoutService,
   ) {}
 
   ngOnInit(): void {
@@ -114,8 +116,7 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, AfterViewIn
   ngAfterViewInit(): void {
     this.setupSubscriptions();
 
-    this.actionsConfig = { actionType: ReportsGlobalControlsComponent, actionConfig: this };
-    this.core.emit({ name: 'GlobalActions', data: this.actionsConfig, sender: this });
+    this.layoutService.pageHeaderUpdater$.next(this.pageHeader);
   }
 
   nextBatch(evt: number): void {

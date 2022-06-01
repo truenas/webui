@@ -19,7 +19,7 @@
 .actions-container {
   align-items: center;
   display: flex;
-  flex-direction: row-reverse;
   flex-grow: 1;
   gap: 0 8px;
+  justify-content: flex-end;
 }

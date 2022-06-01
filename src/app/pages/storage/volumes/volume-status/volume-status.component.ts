@@ -1,4 +1,6 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import {
+  AfterViewInit, Component, OnInit, TemplateRef, ViewChild,
+} from '@angular/core';
 import { Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute } from '@angular/router';
@@ -7,12 +9,10 @@ import { TranslateService } from '@ngx-translate/core';
 import * as filesize from 'filesize';
 import * as _ from 'lodash';
 import { TreeNode } from 'primeng/api';
-import { Subject } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { PoolScanState } from 'app/enums/pool-scan-state.enum';
 import { VDevType } from 'app/enums/v-dev-type.enum';
 import helptext from 'app/helptext/storage/volumes/volume-status';
-import { CoreEvent } from 'app/interfaces/events';
 import { Job } from 'app/interfaces/job.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { Pool, PoolScan, PoolTopologyCategory } from 'app/interfaces/pool.interface';
@@ -28,16 +28,14 @@ import { EntityDialogComponent } from 'app/modules/entity/entity-dialog/entity-d
 import { FieldConfig, FormSelectConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
 import { matchOtherValidator } from 'app/modules/entity/entity-form/validators/password-validation/password-validation';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
-import { EntityToolbarComponent } from 'app/modules/entity/entity-toolbar/entity-toolbar.component';
-import { ToolbarConfig } from 'app/modules/entity/entity-toolbar/models/control-config.interface';
 import { EntityTreeTable } from 'app/modules/entity/entity-tree-table/entity-tree-table.model';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { DiskFormComponent } from 'app/pages/storage/disks/disk-form/disk-form.component';
 import {
   WebSocketService, AppLoaderService, DialogService,
 } from 'app/services';
-import { CoreService } from 'app/services/core-service/core.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { LayoutService } from 'app/services/layout.service';
 import { ModalService } from 'app/services/modal.service';
 import {
   ReplaceDiskDialogData,
@@ -60,8 +58,7 @@ interface PoolDiskInfo {
   templateUrl: './volume-status.component.html',
   styleUrls: ['./volume-status.component.scss'],
 })
-export class VolumeStatusComponent implements OnInit, OnDestroy {
-  actionEvents$: Subject<CoreEvent>;
+export class VolumeStatusComponent implements OnInit, AfterViewInit {
   poolScan: PoolScan;
   timeRemaining = {
     days: 0,
@@ -80,6 +77,8 @@ export class VolumeStatusComponent implements OnInit, OnDestroy {
       { name: this.translate.instant('Actions'), prop: 'actions', hidden: false },
     ],
   };
+
+  @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
 
   protected pk: number;
 
@@ -125,7 +124,6 @@ export class VolumeStatusComponent implements OnInit, OnDestroy {
 
   constructor(
     protected aroute: ActivatedRoute,
-    protected core: CoreService,
     protected ws: WebSocketService,
     protected dialogService: DialogService,
     protected loader: AppLoaderService,
@@ -133,6 +131,7 @@ export class VolumeStatusComponent implements OnInit, OnDestroy {
     protected modalService: ModalService,
     protected translate: TranslateService,
     private slideIn: IxSlideInService,
+    private layoutService: LayoutService,
   ) {}
 
   getZfsPoolScan(poolName: string): void {
@@ -189,30 +188,6 @@ export class VolumeStatusComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    // Setup Global Actions
-    const actionId = 'refreshBtn';
-    this.actionEvents$ = new Subject();
-    this.actionEvents$.pipe(untilDestroyed(this)).subscribe((evt) => {
-      if (evt.data[actionId]) {
-        this.refresh();
-      }
-    });
-
-    const toolbarConfig: ToolbarConfig = {
-      target: this.actionEvents$,
-      controls: [
-        {
-          type: 'button',
-          name: actionId,
-          label: 'Refresh',
-          color: 'primary',
-        },
-      ],
-    };
-
-    const actionsConfig = { actionType: EntityToolbarComponent, actionConfig: toolbarConfig };
-    this.core.emit({ name: 'GlobalActions', data: actionsConfig, sender: this });
-
     this.aroute.params.pipe(untilDestroyed(this)).subscribe((params) => {
       this.pk = parseInt(params['pk'], 10);
       this.getData();
@@ -221,9 +196,8 @@ export class VolumeStatusComponent implements OnInit, OnDestroy {
     this.getUnusedDisk();
   }
 
-  ngOnDestroy(): void {
-    this.actionEvents$.complete();
-    this.core.unregister({ observerClass: this });
+  ngAfterViewInit(): void {
+    this.layoutService.pageHeaderUpdater$.next(this.pageHeader);
   }
 
   refresh(): void {

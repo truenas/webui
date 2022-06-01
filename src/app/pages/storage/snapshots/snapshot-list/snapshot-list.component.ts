@@ -1,5 +1,5 @@
 import {
-  Component, ChangeDetectionStrategy, ChangeDetectorRef, ViewChild, OnInit,
+  Component, ChangeDetectionStrategy, ChangeDetectorRef, ViewChild, OnInit, TemplateRef, AfterViewInit,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSort, Sort } from '@angular/material/sort';
@@ -7,21 +7,16 @@ import { MatTableDataSource } from '@angular/material/table';
 import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
 import { select, Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
-import {
-  Subject, combineLatest, of, Observable,
-} from 'rxjs';
+import { combineLatest, of, Observable } from 'rxjs';
 import {
   filter, map, switchMap, tap,
 } from 'rxjs/operators';
 import { FormatDateTimePipe } from 'app/core/pipes/format-datetime.pipe';
 import helptext from 'app/helptext/storage/snapshots/snapshots';
 import { ConfirmOptions } from 'app/interfaces/dialog.interface';
-import { CoreEvent } from 'app/interfaces/events';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { ZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
 import { EmptyConfig, EmptyType } from 'app/modules/entity/entity-empty/entity-empty.component';
-import { EntityToolbarComponent } from 'app/modules/entity/entity-toolbar/entity-toolbar.component';
-import { ToolbarConfig, ControlConfig } from 'app/modules/entity/entity-toolbar/models/control-config.interface';
 import { IxCheckboxColumnComponent } from 'app/modules/ix-tables/components/ix-checkbox-column/ix-checkbox-column.component';
 import { SnapshotAddFormComponent } from 'app/pages/storage/snapshots/snapshot-add-form/snapshot-add-form.component';
 import { SnapshotBatchDeleteDialogComponent } from 'app/pages/storage/snapshots/snapshot-batch-delete-dialog/snapshot-batch-delete-dialog.component';
@@ -32,8 +27,8 @@ import { selectSnapshotsTotal, selectSnapshots, selectSnapshotState } from 'app/
 import {
   DialogService, WebSocketService, AppLoaderService,
 } from 'app/services';
-import { CoreService } from 'app/services/core-service/core.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { LayoutService } from 'app/services/layout.service';
 import { AppState } from 'app/store';
 import { snapshotExtraColumnsToggled } from 'app/store/preferences/preferences.actions';
 import { waitForPreferences } from 'app/store/preferences/preferences.selectors';
@@ -45,7 +40,7 @@ import { waitForPreferences } from 'app/store/preferences/preferences.selectors'
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [FormatDateTimePipe],
 })
-export class SnapshotListComponent implements OnInit {
+export class SnapshotListComponent implements OnInit, AfterViewInit {
   isLoading$ = this.store$.select(selectSnapshotState).pipe(map((state) => state.isLoading));
   emptyOrErrorConfig$: Observable<EmptyConfig> = combineLatest([
     this.store$.select(selectSnapshotsTotal).pipe(map((total) => total === 0)),
@@ -62,11 +57,10 @@ export class SnapshotListComponent implements OnInit {
   showExtraColumns: boolean;
   @ViewChild(MatSort, { static: false }) sort: MatSort;
   @ViewChild(IxCheckboxColumnComponent, { static: false }) checkboxColumn: IxCheckboxColumnComponent<ZfsSnapshot>;
+  @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
+
   dataSource: MatTableDataSource<ZfsSnapshot> = new MatTableDataSource([]);
   defaultSort: Sort = { active: 'snapshot_name', direction: 'desc' };
-  filterString = '';
-  toolbarEvent$: Subject<CoreEvent> = new Subject();
-  toolbarConfig: ToolbarConfig;
   emptyConfig: EmptyConfig = {
     type: EmptyType.NoPageData,
     title: this.translate.instant('No snapshots are available.'),
@@ -91,18 +85,21 @@ export class SnapshotListComponent implements OnInit {
     private websocket: WebSocketService,
     private translate: TranslateService,
     private cdr: ChangeDetectorRef,
-    private core: CoreService,
     private loader: AppLoaderService,
     private matDialog: MatDialog,
     private store$: Store<AppState>,
     private slideIn: IxSlideInService,
+    private layoutService: LayoutService,
   ) {}
 
   ngOnInit(): void {
     this.store$.dispatch(snapshotPageEntered());
-    this.setupToolbar();
     this.getPreferences();
     this.getSnapshots();
+  }
+
+  ngAfterViewInit(): void {
+    this.layoutService.pageHeaderUpdater$.next(this.pageHeader);
   }
 
   getPreferences(): void {
@@ -114,7 +111,6 @@ export class SnapshotListComponent implements OnInit {
       this.store$.dispatch(snapshotPageEntered());
       this.showExtraColumns = showExtraColumns;
       this.displayedColumns = this.showExtraColumns ? this.defaultExtraColumns : this.defaultColumns;
-      this.setupToolbar();
       this.cdr.markForCheck();
     });
   }
@@ -168,75 +164,19 @@ export class SnapshotListComponent implements OnInit {
     };
     setTimeout(() => {
       // TODO: Figure out how to avoid setTimeout to make it work on first loading
-      if (this.filterString) {
-        this.dataSource.filter = this.filterString;
-      }
       this.dataSource.sort = this.sort;
       this.cdr.markForCheck();
     }, 0);
   }
 
-  toggleExtraColumns(): void {
-    this.store$.dispatch(snapshotExtraColumnsToggled());
-  }
-
-  getToolbarEvents(): void {
-    this.toolbarEvent$ = new Subject();
-    this.toolbarEvent$.pipe(
-      untilDestroyed(this),
-    ).subscribe((event: CoreEvent) => {
-      switch (event.data.event_control) {
-        case 'filter':
-          this.filterString = event.data.filter;
-          this.dataSource.filter = event.data.filter;
-          break;
-        case 'add':
-          this.doAdd();
-          break;
-        case 'extra-columns':
-          this.toggleExtraColumns();
-          break;
-        default:
-          break;
-      }
-    });
-  }
-  setupToolbar(): void {
-    this.getToolbarEvents();
-    const controls: ControlConfig[] = [
-      {
-        name: 'filter',
-        type: 'input',
-        value: this.filterString,
-        placeholder: this.translate.instant('Search'),
-      },
-      {
-        name: 'extra-columns',
-        type: 'slide-toggle',
-        label: this.translate.instant('Show extra columns'),
-        value: this.showExtraColumns,
-        confirmOptions: this.getConfirmOptions(),
-      },
-      {
-        name: 'add',
-        type: 'button',
-        label: this.translate.instant('Add'),
-        color: 'primary',
-        ixAutoIdentifier: 'Snapshots_ADD',
-      },
-    ];
-
-    const toolbarConfig: ToolbarConfig = {
-      target: this.toolbarEvent$,
-      controls,
-    };
-    const settingsConfig = {
-      actionType: EntityToolbarComponent,
-      actionConfig: toolbarConfig,
-    };
-
-    this.toolbarConfig = toolbarConfig;
-    this.core.emit({ name: 'GlobalActions', data: settingsConfig, sender: this });
+  toggleExtraColumns(event: MouseEvent): void {
+    event.preventDefault();
+    this.dialogService.confirm(this.getConfirmOptions())
+      .pipe(
+        filter(Boolean),
+        untilDestroyed(this),
+      )
+      .subscribe(() => this.store$.dispatch(snapshotExtraColumnsToggled()));
   }
 
   doAdd(): void {
@@ -285,5 +225,9 @@ export class SnapshotListComponent implements OnInit {
       this.checkboxColumn.clearSelection();
       this.cdr.markForCheck();
     });
+  }
+
+  onSearch(query: string): void {
+    this.dataSource.filter = query;
   }
 }

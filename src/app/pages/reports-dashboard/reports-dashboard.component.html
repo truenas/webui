@@ -1,3 +1,16 @@
+<ng-template #pageHeader>
+  <ix-page-title-header>
+    <ix-reports-global-controls
+      [toolbarConfig]="toolbarConfig"
+      [activeTab]="activeTab"
+      [activeTabVerified]="activeTabVerified"
+      [allTabs]="allTabs"
+      (showConfigForm)="showConfigForm()"
+      (navigateToTab)="navigateToTab($event)"
+    ></ix-reports-global-controls>
+  </ix-page-title-header>
+</ng-template>
+
 <div
   *ngIf="visibleReports && activeReports"
   class="master-container"
