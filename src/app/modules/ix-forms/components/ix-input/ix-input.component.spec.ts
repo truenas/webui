@@ -76,6 +76,7 @@ describe('IxInputComponent', () => {
 
     it('shows button that resets input when input is not empty', () => {
       formControl.setValue('test');
+      spectator.detectComponentChanges();
 
       spectator.click('.reset-input mat-icon');
 
