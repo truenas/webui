@@ -70,6 +70,7 @@ export class IxInputComponent implements ControlValueAccessor {
     }
     this.formatted = formatted;
     this.value = value;
+    this.cdr.detectChanges();
   }
 
   input(ixInput: HTMLInputElement): void {
