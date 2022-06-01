@@ -236,7 +236,7 @@ export class DatasetAclEditorStore extends ComponentStore<DatasetAclEditorState>
 
       // Prepare request
       withLatestFrom(saveParams$),
-      switchMap(([_, saveParams]) => this.prepareSetAcl(this.get(), saveParams)),
+      switchMap(([, saveParams]) => this.prepareSetAcl(this.get(), saveParams)),
 
       // Save
       tap((setAcl: SetAcl) => {
@@ -379,8 +379,8 @@ export class DatasetAclEditorStore extends ComponentStore<DatasetAclEditorState>
 
     return forkJoin(requests).pipe(
       withLatestFrom(this.state$),
-      filter(([_, currentState]) => currentState.acesWithError.length === 0),
-      map(([_, currentState]) => {
+      filter(([, currentState]) => currentState.acesWithError.length === 0),
+      map(([, currentState]) => {
         const convertedAces = (currentState.acl.acl as (NfsAclItem | PosixAclItem)[]).map((ace) => {
           const aceAttributes = omit(ace, ['who']);
           if ([NfsAclTag.User, PosixAclTag.User].includes(ace.tag)) {

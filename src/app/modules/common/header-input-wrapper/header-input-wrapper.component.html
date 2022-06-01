@@ -1,7 +1,0 @@
-<div #container class="header-input-wrapper" (click)="clicked()">
-    <span class="prefix-icon" *ngIf="prefixIcon"><mat-icon>{{ prefixIcon }}</mat-icon></span>
-    <ng-template [ngTemplateOutlet]="template"></ng-template>
-    <span class="reset-icon reset-input" *ngIf="shouldShowReset$ | async">
-      <mat-icon (click)="reset.emit()" role="img" fontSet="mdi-set" fontIcon="mdi-close-circle"></mat-icon>
-    </span>
-</div>

@@ -9,6 +9,9 @@ import { CoreService } from 'app/services/core-service/core.service';
 import { LocaleService } from 'app/services/locale.service';
 import { PageTitleService } from 'app/services/page-title.service';
 
+/**
+ * @deprecated Use <page-title-header>
+ */
 @UntilDestroy()
 @Component({
   selector: 'ix-pagetitle',
