@@ -28,6 +28,7 @@ export class IxSelectComponent implements ControlValueAccessor, OnChanges {
   @Input() tooltip: string;
   @Input() multiple: boolean;
   @Input() emptyValue: string = null;
+  @Input() hideEmpty = false;
 
   formControl = new FormControl(this).value as FormControl;
   isDisabled = false;
