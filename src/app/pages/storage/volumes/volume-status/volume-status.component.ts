@@ -454,11 +454,7 @@ export class VolumeStatusComponent implements OnInit, OnDestroy {
             dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((res: Job) => {
               dialogRef.close();
               entityDialog.dialogRef.close();
-              let err: string = helptext.extend_disk.err_msg;
-              if (res.error.startsWith('[EINVAL]')) {
-                err = res.error;
-              }
-              this.dialogService.errorReport(helptext.extend_disk.err_title, err, res.exception);
+              this.dialogService.errorReport(helptext.extend_disk.err_title, res.error, res.exception);
             });
           },
         };
