@@ -1548,6 +1548,7 @@
   "Mutual secret password. Required when Peer User is set. Must be different than the <i>Secret</i>.": "",
   "N/A": "",
   "NAA": "",
+  "NAS/browser time mismatch can lead to the reporting data display misbehavior.": "",
   "NETBIOS-NS": "",
   "NFS": "",
   "NFS Share": "",

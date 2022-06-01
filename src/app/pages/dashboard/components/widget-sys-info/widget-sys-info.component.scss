@@ -7,6 +7,15 @@
   width: 100%;
 }
 
+.time-warning {
+  color: var(--fg2);
+
+  mat-icon {
+    font-size: 16px;
+    margin-right: 10px;
+  }
+}
+
 .widget mat-toolbar-row {
   background: unset;
 

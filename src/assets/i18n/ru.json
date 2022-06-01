@@ -653,6 +653,7 @@
   "Must match Windows workgroup name.  When this is unconfigured and Active Directory or LDAP are active,  TrueNAS will detect and set the correct workgroup from these services.": "",
   "N/A": "",
   "NAA": "",
+  "NAS/browser time mismatch can lead to the reporting data display misbehavior.": "",
   "NETBIOS-NS": "",
   "NFS": "",
   "NFS Share": "",
