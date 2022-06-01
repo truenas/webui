@@ -73,6 +73,7 @@
   "WARNING: Based on the pool topology, {size} is the minimum recommended record size. Choosing a smaller size can reduce system performance.": "",
   "Warning: There are {n} USB disks available that have non-unique serial numbers. USB controllers may report disk serial incorrectly, making such disks indistinguishable from each other. Adding such disks to a pool can result in lost data.": "",
   "Warning: There are {n} disks available that have non-unique serial numbers. Non-unique serial numbers can be caused by a cabling issue and adding such disks to a pool can result in lost data.": "",
+  "Your NAS time {datetime} does not match your computer time.": "",
   "ZVol {zvolName} and all snapshots stored with it <b>will be permanently deleted</b>.": "",
   " Check Notifications for more details.": " 检查通知以获取更多详细信息。",
   " Download Updates": " 下载更新",

@@ -2610,6 +2610,7 @@
   "Xen initiator compat mode": "",
   "Yandex  <a href=\"https://tech.yandex.com/direct/doc/dg-v4/concepts/auth-token-docpage/\"  target=\"_blank\">Access Token</a>.": "",
   "You can join the ": "",
+  "Your NAS time {datetime} does not match your computer time.": "",
   "ZVol {zvolName} and all snapshots stored with it <b>will be permanently deleted</b>.": "",
   "boot": "",
   "close": "",

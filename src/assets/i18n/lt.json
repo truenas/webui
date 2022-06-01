@@ -4040,6 +4040,7 @@
   "You have successfully added credentials.": "",
   "You must agree to the terms and conditions": "",
   "Your Email": "",
+  "Your NAS time {datetime} does not match your computer time.": "",
   "Your query didn't return any results. Please try again.": "",
   "ZFS": "",
   "ZFS L2ARC read-cache that can be used with fast devices to accelerate read operations. Optional vdev that can be removed.": "",

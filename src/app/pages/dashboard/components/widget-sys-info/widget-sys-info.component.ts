@@ -5,6 +5,9 @@ import { MediaObserver } from '@angular/flex-layout';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+import {
+  differenceInSeconds, differenceInDays, addSeconds, format,
+} from 'date-fns';
 import { JobState } from 'app/enums/job-state.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { SystemUpdateStatus } from 'app/enums/system-update.enum';
@@ -12,6 +15,7 @@ import { HaStatusEvent } from 'app/interfaces/events/ha-status-event.interface';
 import { UpdateCheckedEvent } from 'app/interfaces/events/update-checked-event.interface';
 import { UserPreferencesChangedEvent } from 'app/interfaces/events/user-preferences-event.interface';
 import { SystemInfo } from 'app/interfaces/system-info.interface';
+import { Timeout } from 'app/interfaces/timeout.interface';
 import { WidgetComponent } from 'app/pages/dashboard/components/widget/widget.component';
 import { SystemGeneralService, WebSocketService } from 'app/services';
 import { LocaleService } from 'app/services/locale.service';
@@ -28,6 +32,11 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnDestroy
   @Input() isPassive = false;
   @Input() enclosureSupport = false;
   @Input() showReorderHandle = false;
+  showTimeDiffWarning = false;
+  timeInterval: Timeout;
+  timeDiffInSeconds: number;
+  timeDiffInDays: number;
+  nasDateTime: Date;
 
   title: string = this.translate.instant('System Info');
   data: SystemInfo;
@@ -177,9 +186,33 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnDestroy
     return this.translate.instant('Check for Updates');
   }
 
+  get timeDiffWarning(): string {
+    let nasTimeFormatted = format(this.nasDateTime, 'HH:mm:ss');
+    if (this.timeDiffInDays > 0) {
+      nasTimeFormatted = format(this.nasDateTime, 'MMM dd, HH:mm:ss');
+    }
+    return this.translate.instant('Your NAS time {datetime} does not match your computer time.', { datetime: nasTimeFormatted });
+  }
+
   processSysInfo(systemInfo: SystemInfo): void {
     this.loader = false;
     this.data = systemInfo;
+    const now = Date.now();
+    const datetime = systemInfo.datetime.$date;
+    this.nasDateTime = new Date(datetime);
+    this.timeDiffInSeconds = differenceInSeconds(datetime, now);
+    this.timeDiffInDays = differenceInDays(datetime, now);
+    if (this.timeDiffInSeconds > 300 || this.timeDiffInDays > 0) {
+      this.showTimeDiffWarning = true;
+    }
+
+    if (this.timeInterval) {
+      clearInterval(this.timeInterval);
+    }
+
+    this.timeInterval = setInterval(() => {
+      this.nasDateTime = addSeconds(this.nasDateTime, 1);
+    }, 1);
 
     const build = new Date(this.data.buildtime['$date']);
     const year = build.getUTCFullYear();

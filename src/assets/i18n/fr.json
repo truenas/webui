@@ -828,6 +828,7 @@
   "You have changed one of the settings that require Kubernetes cluster re-initialization. Please be aware that this will delete installed apps and their data.": "",
   "You must agree to the terms and conditions": "",
   "Your Email": "",
+  "Your NAS time {datetime} does not match your computer time.": "",
   "ZVol {zvolName} and all snapshots stored with it <b>will be permanently deleted</b>.": "",
   "boot": "",
   "createcomputer": "",

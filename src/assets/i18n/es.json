@@ -3735,6 +3735,7 @@
   "You have successfully added credentials.": "",
   "You must agree to the terms and conditions": "",
   "Your Email": "",
+  "Your NAS time {datetime} does not match your computer time.": "",
   "Your query didn't return any results. Please try again.": "",
   "ZFS": "",
   "ZFS Cache": "",
