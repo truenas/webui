@@ -18,12 +18,13 @@ import { Job } from 'app/interfaces/job.interface';
 import { EmptyConfig, EmptyType } from 'app/modules/entity/entity-empty/entity-empty.component';
 import { EntityToolbarComponent } from 'app/modules/entity/entity-toolbar/entity-toolbar.component';
 import { ToolbarConfig } from 'app/modules/entity/entity-toolbar/models/control-config.interface';
+import { EntityUtils } from 'app/modules/entity/utils';
 import { IxDetailRowDirective } from 'app/modules/ix-tables/directives/ix-detail-row.directive';
 import { abortJobPressed } from 'app/modules/jobs/store/job.actions';
 import {
   JobSlice, selectJobState, selectJobs, selectFailedJobs, selectRunningJobs,
 } from 'app/modules/jobs/store/job.selectors';
-import { DialogService } from 'app/services';
+import { DialogService, StorageService, WebSocketService } from 'app/services';
 import { CoreService } from 'app/services/core-service/core.service';
 import { JobTab } from './job-tab.enum';
 
@@ -62,6 +63,8 @@ export class JobsListComponent implements OnInit, AfterViewInit {
 
   constructor(
     private core: CoreService,
+    private ws: WebSocketService,
+    private storage: StorageService,
     private translate: TranslateService,
     private dialogService: DialogService,
     private store$: Store<JobSlice>,
@@ -168,5 +171,24 @@ export class JobsListComponent implements OnInit, AfterViewInit {
         this.emptyConfig.title = this.translate.instant('There are no tasks.');
         break;
     }
+  }
+
+  downloadLogs(job: Job): void {
+    const filename = job.id + '.log';
+    this.ws.call('core.download', ['filesystem.get', [job.logs_path], filename]).pipe(untilDestroyed(this)).subscribe(
+      ([_, url]) => {
+        const mimetype = 'text/plain';
+        this.storage.streamDownloadFile(url, filename, mimetype)
+          .pipe(untilDestroyed(this))
+          .subscribe((file) => {
+            this.storage.downloadBlob(file, filename);
+          }, (err) => {
+            new EntityUtils().handleWsError(this, err, this.dialogService);
+          });
+      },
+      (err) => {
+        new EntityUtils().handleWsError(this, err, this.dialogService);
+      },
+    );
   }
 }

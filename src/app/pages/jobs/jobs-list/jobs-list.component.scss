@@ -68,4 +68,8 @@
       overflow-x: hidden;
     }
   }
+
+  .mat-column-arguments_logs button:not(:first-of-type) {
+    margin-left: 5px;
+  }
 }
