@@ -6,7 +6,7 @@ import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { EMPTY } from 'rxjs';
 import {
-  catchError, filter, finalize, switchMap,
+  catchError, filter, switchMap, tap,
 } from 'rxjs/operators';
 import { helptextSystemAdvanced } from 'app/helptext/system/advanced';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
@@ -50,7 +50,7 @@ export class SaveDebugButtonComponent {
           .pipe(
             filter(Boolean),
             switchMap(() => this.ws.call('core.download', ['system.debug', [], fileName, true])),
-            switchMap(([jobId, url]) => {
+            tap(([jobId, url]) => {
               const dialogRef = this.matDialog.open(EntityJobComponent, {
                 data: { title: this.translate.instant('Saving Debug') },
                 disableClose: true,
@@ -59,12 +59,13 @@ export class SaveDebugButtonComponent {
               dialogRef.componentInstance.wsshow();
               dialogRef.componentInstance.success
                 .pipe(
-                  switchMap(() => this.storage.downloadUrl(url, fileName, mimeType)),
-                  finalize(() => dialogRef.close()),
+                  switchMap(() => this.storage.streamDownloadFile(url, fileName, mimeType)),
                   untilDestroyed(this),
                 )
-                .subscribe();
-              return dialogRef.afterClosed();
+                .subscribe((blob) => {
+                  this.storage.downloadBlob(blob, fileName);
+                  dialogRef.close();
+                });
             }),
           );
       }),
