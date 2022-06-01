@@ -31,7 +31,8 @@ describe('SaveDebugButtonComponent', () => {
       }),
       mockProvider(MatDialogRef),
       mockProvider(StorageService, {
-        downloadUrl: jest.fn(() => of(undefined)),
+        streamDownloadFile: jest.fn(() => of('')),
+        downloadBlob: jest.fn(),
       }),
       provideMockStore({
         selectors: [
@@ -58,10 +59,11 @@ describe('SaveDebugButtonComponent', () => {
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalled();
     expect(spectator.inject(WebSocketService).call)
       .toHaveBeenCalledWith('core.download', ['system.debug', [], 'debug-truenas-20220524160228.tgz', true]);
-    expect(spectator.inject(StorageService).downloadUrl).toHaveBeenCalledWith(
+    expect(spectator.inject(StorageService).streamDownloadFile).toHaveBeenCalledWith(
       'http://localhost/download/url',
       'debug-truenas-20220524160228.tgz',
       'application/gzip',
     );
+    expect(spectator.inject(StorageService).downloadBlob).toHaveBeenCalled();
   });
 });
