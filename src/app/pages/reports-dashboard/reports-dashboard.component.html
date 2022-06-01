@@ -6,7 +6,7 @@
   fxLayout="row wrap"
   fxLayoutAlign="space-evenly"
 >
-  <div class="time-warning">
+  <div class="time-warning" *ngIf="showTimeDiffWarning">
     <div>
       <mat-icon>warning</mat-icon>
     </div>

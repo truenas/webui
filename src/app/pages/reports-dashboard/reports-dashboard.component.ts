@@ -101,6 +101,9 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /* HandleCh
   ) {}
 
   get timeDiffWarning(): string {
+    if (!this.nasDateTime) {
+      return '';
+    }
     const nasTimeFormatted = format(this.nasDateTime, 'MMM dd, HH:mm:ss, OOOO');
     return this.translate.instant('Your NAS time {datetime} does not match your computer time.', { datetime: nasTimeFormatted });
   }
