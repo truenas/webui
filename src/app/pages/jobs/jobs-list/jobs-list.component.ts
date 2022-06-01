@@ -12,7 +12,6 @@ import {
   filter, map, switchMap,
 } from 'rxjs/operators';
 import { JobState } from 'app/enums/job-state.enum';
-import { JobViewLogState } from 'app/enums/job-view-log-state.enum';
 import { Job } from 'app/interfaces/job.interface';
 import { EmptyConfig, EmptyType } from 'app/modules/entity/entity-empty/entity-empty.component';
 import { abortJobPressed } from 'app/modules/jobs/store/job.actions';
@@ -35,16 +34,16 @@ export class JobsListComponent implements OnInit, AfterViewInit {
 
   @ViewChild(MatSort, { static: false }) sort: MatSort;
   @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
+  @ViewChildren(IxDetailRowDirective) private detailRows: QueryList<IxDetailRowDirective>;
 
   dataSource: MatTableDataSource<Job> = new MatTableDataSource([]);
-  displayedColumns = ['name', 'state', 'id', 'time_started', 'time_finished', 'arguments', 'logs_excerpt'];
-  viewingLogsForJob: Job;
-  viewType: JobViewLogState;
+  displayedColumns = ['name', 'state', 'id', 'time_started', 'time_finished', 'arguments_logs'];
+  expandedRow: Job;
   selectedIndex: JobTab = 0;
   emptyConfig: EmptyConfig = {
     type: EmptyType.NoPageData,
     large: true,
-    title: this.translate.instant('There are no tasks.'),
+    title: this.translate.instant('No tasks'),
   };
   loadingConfig: EmptyConfig = {
     type: EmptyType.Loading,
@@ -54,7 +53,6 @@ export class JobsListComponent implements OnInit, AfterViewInit {
   selector$ = new BehaviorSubject(selectJobs);
 
   readonly JobState = JobState;
-  readonly JobViewLogState = JobViewLogState;
   readonly trackByJobId: TrackByFunction<Job> = (_, job) => job.id;
 
   constructor(
@@ -97,13 +95,20 @@ export class JobsListComponent implements OnInit, AfterViewInit {
     this.layoutService.pageHeaderUpdater$.next(this.pageHeader);
   }
 
-  viewLogs(job: Job, viewType: JobViewLogState): void {
-    this.viewingLogsForJob = job;
-    this.viewType = viewType;
+  onToggle(job: Job): void {
+    this.expandedRow = this.expandedRow === job ? null : job;
+    this.toggleDetailRows();
+    this.cdr.markForCheck();
   }
 
-  onLogsSidebarClosed(): void {
-    this.viewingLogsForJob = null;
+  toggleDetailRows(): void {
+    this.detailRows.forEach((row) => {
+      if (row.expanded && row.ixDetailRow !== this.expandedRow) {
+        row.close();
+      } else if (!row.expanded && row.ixDetailRow === this.expandedRow) {
+        row.open();
+      }
+    });
   }
 
   onTabChange(tab: MatTabChangeEvent): void {
@@ -111,18 +116,18 @@ export class JobsListComponent implements OnInit, AfterViewInit {
     switch (this.selectedIndex) {
       case JobTab.Failed:
         this.selector$.next(selectFailedJobs);
-        this.onLogsSidebarClosed();
+        this.expandedRow = null;
         this.emptyConfig.title = this.translate.instant('There are no failed tasks.');
         break;
       case JobTab.Running:
         this.selector$.next(selectRunningJobs);
-        this.onLogsSidebarClosed();
+        this.expandedRow = null;
         this.emptyConfig.title = this.translate.instant('There are no active tasks.');
         break;
       case JobTab.All:
       default:
         this.selector$.next(selectJobs);
-        this.onLogsSidebarClosed();
+        this.expandedRow = null;
         this.emptyConfig.title = this.translate.instant('There are no tasks.');
         break;
     }

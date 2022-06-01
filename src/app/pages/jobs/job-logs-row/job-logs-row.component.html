@@ -1,0 +1,21 @@
+<td [attr.colspan]="colspan">
+  <div class="list-item">
+    <h4>{{ 'Arguments' | translate }}</h4>
+    <pre>{{ job.arguments.length > 0 ? (job.arguments | json) : ('No arguments are passed' | translate) }}</pre>
+  </div>
+
+  <div class="list-item">
+    <h4>{{ 'Log Path' | translate }}</h4>
+    <div>{{ job.logs_path ? job.logs_path : '–' }}</div>
+  </div>
+
+  <div class="list-item">
+    <h4>{{ 'Log Excerpt' | translate }}</h4>
+    <div class="text-formatted">{{ job.logs_excerpt ? job.logs_excerpt : ('No logs are available' | translate) }}</div>
+  </div>
+
+  <div class="list-item">
+    <h4>{{ 'Error' | translate }}</h4>
+    <div class="text-formatted">{{ job.error ? job.error : ('No errors' | translate) }}</div>
+  </div>
+</td>

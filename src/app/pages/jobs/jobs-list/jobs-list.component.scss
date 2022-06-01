@@ -67,14 +67,5 @@
       height: 100%;
       overflow-x: hidden;
     }
-
-    .job-logs-sidebar {
-      flex-grow: 0;
-      width: 320px;
-    }
-  }
-
-  ix-table-paginator {
-    border-top: 1px solid var(--lines);
   }
 }
