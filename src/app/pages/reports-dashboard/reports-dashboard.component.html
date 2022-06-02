@@ -6,6 +6,12 @@
   fxLayout="row wrap"
   fxLayoutAlign="space-evenly"
 >
+  <div class="time-warning" *ngIf="showTimeDiffWarning">
+    <div>
+      <mat-icon>warning</mat-icon>
+    </div>
+    <div>{{ timeDiffWarning }} {{ 'NAS/browser time mismatch can lead to the reporting data display misbehavior.' | translate }}</div>
+  </div>
   <!-- Cards Container -->
   <cdk-virtual-scroll-viewport itemSize="325" templateCacheSize="4" (scrolledIndexChange)="nextBatch($event)">
     <!-- Report Cards -->
