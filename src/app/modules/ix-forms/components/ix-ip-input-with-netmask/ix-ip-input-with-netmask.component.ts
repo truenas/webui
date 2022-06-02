@@ -72,6 +72,7 @@ export class IxIpInputWithNetmaskComponent implements ControlValueAccessor {
   }
 
   private setAddressAndNetmask(ipWithNetmask: string): void {
+    ipWithNetmask = ipWithNetmask || '';
     const [address, netmask] = ipWithNetmask.split('/');
     this.address = address;
     this.netmask = netmask;

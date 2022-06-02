@@ -1,5 +1,7 @@
 import { ChartReleaseStatus } from 'app/enums/chart-release-status.enum';
+import { ChartSchemaType } from 'app/enums/chart-schema-type.enum';
 import { ChartMetadata } from 'app/interfaces/catalog.interface';
+import { HierarchicalObjectMap } from 'app/interfaces/hierarhical-object-map.interface';
 import { QueryParams } from 'app/interfaces/query-api.interface';
 
 export interface UsedPort {
@@ -47,10 +49,17 @@ export interface ChartReleaseCreate {
   version: string;
 }
 
+export type ChartFormValue = string | number | boolean | Record<string, unknown>;
+
+export interface ChartFormValues extends HierarchicalObjectMap<ChartFormValue> {
+  release_name: string;
+  version?: string;
+}
+
 export interface ChartRelease {
   name: string;
   info: ChartInfo;
-  config: { [key: string]: any };
+  config: { [key: string]: ChartFormValue };
   hooks: unknown[];
   version: number;
   namespace: string;
@@ -67,7 +76,7 @@ export interface ChartRelease {
   human_version: string;
   human_latest_version: string;
   container_images_update_available: boolean;
-  portals: { [name: string]: string[] };
+  portals: { [portal: string]: string[] };
   chart_schema: ChartSchema;
   history: { [key: string]: string };
   resources?: ChartResources;
@@ -95,7 +104,7 @@ export interface ChartSchemaEnum {
 }
 
 export interface ChartSchemaNodeConf {
-  type: string;
+  type: ChartSchemaType;
   attrs?: ChartSchemaNode[];
   items?: ChartSchemaNode[];
   default?: any;
@@ -140,7 +149,7 @@ export interface ChartSchema {
     groups: ChartSchemaGroup[];
     questions: ChartSchemaNode[];
     portals: {
-      web_portal: {
+      [portal: string]: {
         host: string[];
         ports: string[];
         protocols: string[];

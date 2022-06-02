@@ -1,5 +1,12 @@
 <ng-template #pageHeader>
   <ix-page-title-header>
+    <ix-search-input (search)="onListFiltered($event)"></ix-search-input>
+    <mat-slide-toggle
+      (change)="toggleBuiltins()"
+      [checked]="!this.hideBuiltinUsers"
+    >
+      <label>{{ 'Show Built-in Users' | translate }}</label>
+    </mat-slide-toggle>
     <button
       (click)="doAdd()"
       [color]="'primary'"
@@ -7,25 +14,6 @@
     >
       {{ 'Add' | translate }}
     </button>
-    <mat-slide-toggle
-      (change)="toggleBuiltins()"
-      [checked]="!this.hideBuiltinUsers"
-    >
-      <label>{{ 'Show Built-in Users' | translate }}</label>
-    </mat-slide-toggle>
-    <ng-template
-      headerInput
-      [prefixIcon]="'search'"
-      (resetInput)="clearFilter()"
-      [shouldShowReset]="shouldShowReset$"
-    >
-      <input
-        #filterInput
-        matInput
-        placeholder="Search"
-        (input)="filter()"
-      >
-    </ng-template>
   </ix-page-title-header>
 </ng-template>
 

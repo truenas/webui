@@ -8,14 +8,12 @@ import { ZfsProperty } from './zfs-property.interface';
 
 // As returned by pool.query under topology[<vdevtype>]
 export interface VDev {
-  type: string; // 'DISK'
+  type: string; // TODO: Actually a VDevType
   path: string;
   guid: string;
   status: VDevStatus;
   children: this[];
   stats: VDevStats;
-
-  // TODO: These fields are not present in pool.query response
   device?: string;
   disk?: string;
 }

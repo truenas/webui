@@ -38,6 +38,7 @@ import { InitShutdownFormComponent } from 'app/pages/system/advanced/initshutdow
 import { InitshutdownListComponent } from 'app/pages/system/advanced/initshutdown/initshutdown-list/initshutdown-list.component';
 import { IsolatedGpuPcisFormComponent } from 'app/pages/system/advanced/isolated-gpu-pcis/isolated-gpu-pcis-form.component';
 import { KernelFormComponent } from 'app/pages/system/advanced/kernel-form/kernel-form.component';
+import { SaveDebugButtonComponent } from 'app/pages/system/advanced/save-debug-button/save-debug-button.component';
 import { SedFormComponent } from 'app/pages/system/advanced/sed-form/sed-form.component';
 import { SyslogFormComponent } from 'app/pages/system/advanced/syslog-form/syslog-form.component';
 import { SystemDatasetPoolComponent } from 'app/pages/system/advanced/system-dataset-pool/system-dataset-pool.component';
@@ -168,6 +169,7 @@ import { routing } from './system.routing';
     SaveConfigDialogComponent,
     UploadConfigDialogComponent,
     ManageConfigurationMenuComponent,
+    SaveDebugButtonComponent,
   ],
   providers: [
     TranslateService,

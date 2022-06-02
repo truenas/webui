@@ -20,6 +20,7 @@ import { SshKeypairFormComponent } from 'app/pages/credentials/backup-credential
 import {
   CertificateDetailsComponent,
 } from 'app/pages/credentials/certificates-dash/certificate-details/certificate-details.component';
+import { AcmednsFormComponent } from 'app/pages/credentials/certificates-dash/forms/acmedns-form/acmedns-form.component';
 import {
   SignCsrDialogComponent,
 } from 'app/pages/credentials/certificates-dash/sign-csr-dialog/sign-csr-dialog.component';
@@ -32,7 +33,6 @@ import { CloudCredentialsFormComponent } from './backup-credentials/forms/cloud-
 import { CertificateAuthorityEditComponent } from './certificates-dash/certificate-authority-edit/certificate-authority-edit.component';
 import { CertificateEditComponent } from './certificates-dash/certificate-edit/certificate-edit.component';
 import { CertificatesDashComponent } from './certificates-dash/certificates-dash.component';
-import { AcmednsFormComponent } from './certificates-dash/forms/acmedns-form.component';
 import { CertificateAuthorityAddComponent } from './certificates-dash/forms/ca-add.component';
 import { CertificateAcmeAddComponent } from './certificates-dash/forms/certificate-acme-add.component';
 import { CertificateAddComponent } from './certificates-dash/forms/certificate-add.component';
@@ -59,6 +59,7 @@ import { CertificateAddComponent } from './certificates-dash/forms/certificate-a
   imports: [
     CommonModule,
     MatCardModule,
+    MatButtonModule,
     FlexLayoutModule,
     MatDividerModule,
     TranslateModule,

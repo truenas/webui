@@ -50,12 +50,8 @@ export default {
     buttonMsg: T('Online'),
   },
   replace_disk: {
-    form_title: T('Replacing disk '),
-    saveButtonText: T('Replace Disk'),
     title: T('Replacing Disk'),
     description: T('Replacing disk...'),
-    err_title: T('Error Replacing Disk'),
-    err_msg: T('Could not replace disk.'),
   },
   remove_disk: {
     title: T('Remove Disk'),

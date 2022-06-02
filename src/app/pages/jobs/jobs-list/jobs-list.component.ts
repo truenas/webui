@@ -1,6 +1,13 @@
 import {
-  AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef,
-  Component, OnInit, QueryList, TrackByFunction, ViewChild, ViewChildren,
+  AfterViewInit,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  OnInit, QueryList,
+  TemplateRef,
+  TrackByFunction,
+  ViewChild,
+  ViewChildren,
 } from '@angular/core';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
@@ -8,16 +15,13 @@ import { MatTabChangeEvent } from '@angular/material/tabs';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
-import { Subject, BehaviorSubject } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 import {
   filter, map, switchMap,
 } from 'rxjs/operators';
 import { JobState } from 'app/enums/job-state.enum';
-import { CoreEvent } from 'app/interfaces/events';
 import { Job } from 'app/interfaces/job.interface';
 import { EmptyConfig, EmptyType } from 'app/modules/entity/entity-empty/entity-empty.component';
-import { EntityToolbarComponent } from 'app/modules/entity/entity-toolbar/entity-toolbar.component';
-import { ToolbarConfig } from 'app/modules/entity/entity-toolbar/models/control-config.interface';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { IxDetailRowDirective } from 'app/modules/ix-tables/directives/ix-detail-row.directive';
 import { abortJobPressed } from 'app/modules/jobs/store/job.actions';
@@ -25,7 +29,7 @@ import {
   JobSlice, selectJobState, selectJobs, selectFailedJobs, selectRunningJobs,
 } from 'app/modules/jobs/store/job.selectors';
 import { DialogService, StorageService, WebSocketService } from 'app/services';
-import { CoreService } from 'app/services/core-service/core.service';
+import { LayoutService } from 'app/services/layout.service';
 import { JobTab } from './job-tab.enum';
 
 @UntilDestroy()
@@ -37,14 +41,14 @@ import { JobTab } from './job-tab.enum';
 export class JobsListComponent implements OnInit, AfterViewInit {
   isLoading$ = this.store$.select(selectJobState).pipe(map((state) => state.isLoading));
   error$ = this.store$.select(selectJobState).pipe(map((state) => state.error));
+
   @ViewChild(MatSort, { static: false }) sort: MatSort;
+  @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
   @ViewChildren(IxDetailRowDirective) private detailRows: QueryList<IxDetailRowDirective>;
+
   dataSource: MatTableDataSource<Job> = new MatTableDataSource([]);
   displayedColumns = ['name', 'state', 'id', 'time_started', 'time_finished', 'arguments_logs'];
   expandedRow: Job;
-  toolbarConfig: ToolbarConfig;
-  settingsEvent$: Subject<CoreEvent> = new Subject();
-  filterString = '';
   selectedIndex: JobTab = 0;
   emptyConfig: EmptyConfig = {
     type: EmptyType.NoPageData,
@@ -62,13 +66,13 @@ export class JobsListComponent implements OnInit, AfterViewInit {
   readonly trackByJobId: TrackByFunction<Job> = (_, job) => job.id;
 
   constructor(
-    private core: CoreService,
     private ws: WebSocketService,
     private storage: StorageService,
     private translate: TranslateService,
     private dialogService: DialogService,
     private store$: Store<JobSlice>,
     private cdr: ChangeDetectorRef,
+    private layoutService: LayoutService,
   ) {}
 
   onAborted(job: Job): void {
@@ -88,8 +92,6 @@ export class JobsListComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit(): void {
-    this.setupToolbar();
-
     this.selector$.pipe(
       switchMap((selector) => this.store$.select(selector)),
       untilDestroyed(this),
@@ -102,37 +104,7 @@ export class JobsListComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit(): void {
     this.dataSource.sort = this.sort;
-  }
-
-  setupToolbar(): void {
-    this.settingsEvent$ = new Subject();
-    this.settingsEvent$.pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
-      if (evt.data.event_control === 'filter') {
-        this.filterString = evt.data.filter;
-        this.dataSource.filter = evt.data.filter;
-      }
-    });
-
-    const controls = [
-      {
-        name: 'filter',
-        type: 'input',
-        value: this.filterString,
-      },
-    ];
-
-    const toolbarConfig = {
-      target: this.settingsEvent$,
-      controls,
-    };
-    const settingsConfig = {
-      actionType: EntityToolbarComponent,
-      actionConfig: toolbarConfig,
-    };
-
-    this.toolbarConfig = toolbarConfig;
-
-    this.core.emit({ name: 'GlobalActions', data: settingsConfig, sender: this });
+    this.layoutService.pageHeaderUpdater$.next(this.pageHeader);
   }
 
   onToggle(job: Job): void {
@@ -190,5 +162,9 @@ export class JobsListComponent implements OnInit, AfterViewInit {
         new EntityUtils().handleWsError(this, err, this.dialogService);
       },
     );
+  }
+
+  onSearch(query: string): void {
+    this.dataSource.filter = query;
   }
 }

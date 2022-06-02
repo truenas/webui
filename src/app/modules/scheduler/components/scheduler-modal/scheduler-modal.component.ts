@@ -196,7 +196,7 @@ export class SchedulerModalComponent implements OnInit {
     } = this.form.value;
 
     const selectedMonths = Object.entries(months)
-      .filter(([_, isSelected]) => isSelected)
+      .filter(([, isSelected]) => isSelected)
       .map(([month]) => month);
     const areAllMonthsSelected = selectedMonths.length === 0 || selectedMonths.length === 12;
     const monthsPart = areAllMonthsSelected ? '*' : selectedMonths.join(',');
@@ -208,7 +208,7 @@ export class SchedulerModalComponent implements OnInit {
 
   private get selectedWeekdays(): string[] {
     return Object.entries(this.form.value.weekdays)
-      .filter(([_, isSelected]) => isSelected)
+      .filter(([, isSelected]) => isSelected)
       .map(([weekday]) => weekday);
   }
 

@@ -1,5 +1,9 @@
 <ng-template #pageHeader>
-  <ix-pagetitle [toolbarActionsConfig]="toolbarActionsConfig"></ix-pagetitle>
+  <ix-page-title-header>
+    <ix-search-input [disabled]="isLoading$ | async" (search)="onSearch($event)"></ix-search-input>
+    <a mat-button href="/api/docs" target="_blank">{{ 'API Docs' | translate }}</a>
+    <button mat-button color="primary" (click)="openApiKeyForm()">{{ 'Add' | translate }}</button>
+  </ix-page-title-header>
 </ng-template>
 
 <ix-entity-empty *ngIf="isLoading$ | async; else loaded" [conf]="loadingConfig"></ix-entity-empty>

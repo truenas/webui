@@ -1,7 +1,7 @@
 :host {
   border-bottom: solid 1px var(--lines);
   box-sizing: border-box;
-  color: var(--primary-txt);
+  color: var(--fg2);
   display: block;
   margin: 0 auto 32px;
   padding-bottom: 8px;
@@ -19,7 +19,7 @@
 .actions-container {
   align-items: center;
   display: flex;
-  flex-direction: row-reverse;
   flex-grow: 1;
   gap: 0 8px;
+  justify-content: flex-end;
 }
