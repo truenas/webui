@@ -139,6 +139,7 @@
   "Updated 'Use as Home Share'": "",
   "Use compressed WRITE records to make the  stream more efficient. The destination system must also support  compressed WRITE records. See  <a href=\"https://linux.die.net/man/8/zfs\"  target=\"_blank\">zfs(8)</a>.": "",
   "Widget data is not available": "",
+  "Wizard": "",
   "Would you like to restart the SMB Service?": "",
   "You are trying to open:<br>\n{url}<br><br>\nBecause HTTP to HTTPS redirect is enabled in settings your browser will force HTTPS connection for this URL.<br>\nThis may create issues if app does not support secure connections.<br>\n<br>\nYou can try opening app url in an incognito mode.<br>\nAlternatively you can disable redirect in Settings, clear browser cache and try again.": "",
   "You can join the <a href=\"https://www.truenas.com/newsletter/\" target=\"_blank\" class=\"external-link\">TrueNAS Newsletter</a> for monthly updates and latest developments.": "",

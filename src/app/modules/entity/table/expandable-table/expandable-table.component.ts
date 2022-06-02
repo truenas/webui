@@ -11,6 +11,7 @@ export interface InputExpandableTableConf extends AppTableConfig {
   limitRows?: number;
   configure?: () => void;
   limitRowsByMaxHeight?: boolean;
+  addButtonLabel?: string;
 }
 
 export enum ExpandableTableState {
