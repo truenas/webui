@@ -200,9 +200,14 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnDestroy
     const now = Date.now();
     const datetime = systemInfo.datetime.$date;
     this.nasDateTime = new Date(datetime);
+
     this.timeDiffInSeconds = differenceInSeconds(datetime, now);
+    this.timeDiffInSeconds = this.timeDiffInSeconds < 0 ? (this.timeDiffInSeconds * -1) : this.timeDiffInSeconds;
+
     this.timeDiffInDays = differenceInDays(datetime, now);
-    if (this.timeDiffInSeconds > 300 || this.timeDiffInDays > 0) {
+    this.timeDiffInDays = this.timeDiffInDays < 0 ? (this.timeDiffInDays * -1) : this.timeDiffInDays;
+
+    if (this.timeDiffInSeconds > 300) {
       this.showTimeDiffWarning = true;
     }
 
