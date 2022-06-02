@@ -23,6 +23,7 @@ import { T } from '../../../../translate-marker';
 import { EntityUtils } from '../utils';
 import { EntityTableRowDetailsComponent } from './entity-table-row-details/entity-table-row-details.component';
 import { EntityJobComponent } from '../entity-job/entity-job.component';
+import { DatatableComponent } from '@swimlane/ngx-datatable';
 
 export interface InputTableConf {
   prerequisite?: any;
@@ -109,7 +110,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
 
   @ViewChild('filter', { static: false }) filter: ElementRef;
   @ViewChild('defaultMultiActions', { static: false }) defaultMultiActions: ElementRef;
-  @ViewChild('entityTable', { static: false }) table: any;
+  @ViewChild('entityTable', { static: false }) table: DatatableComponent;
   tableMouseEvent: MouseEvent;
   // MdPaginator Inputs
   paginationPageSize = 8;
@@ -373,13 +374,15 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
         }
       });
     } else {
-      this.expandedRowIds = [];
-      setTimeout(() => {
-        if (this.table) {
-          this.table.rowDetail.collapseAllRows();
-        }
-      });
+      if (this.expandedRowIds.length) {
+        setTimeout(() => {
+          if (this.table) {
+            this.table.rowDetail.collapseAllRows();
+          }
+        });
+      }
 
+      this.expandedRowIds = [];
     }
 
     if (!this.fixedTableHight) {
@@ -390,9 +393,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
   ngAfterViewInit() {
     if (this.filter) {
       observableFromEvent(this.filter.nativeElement, 'keyup').pipe(
-        map((event: any) => {
-          return event.target.value;
-        }),
+        map((event: any) => event.target.value),
         debounceTime(150),
         distinctUntilChanged(),
       )
@@ -571,7 +572,6 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     this.setFilteredRows();
-
 
     if (!this.showDefaults) {
       this.paginationPageIndex = 0;
@@ -917,7 +917,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
       }
       const bodyElement = document.getElementsByClassName('datatable-body')[0];
       const offPage = this.oldPagesize - this.paginationPageSize;
-      const offHeight = offPage * this.table.rowHeight;
+      const offHeight = offPage * (this.table.rowHeight as number);
       // adjust scrollbar to make activated item into the view
       bodyElement.scroll({
         top: bodyElement.scrollTop + (this.activatedRowIndex <= viewPortIndex + offPage ? 0 : offHeight),
