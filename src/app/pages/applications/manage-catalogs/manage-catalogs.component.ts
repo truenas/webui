@@ -1,7 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatDialogRef } from '@angular/material/dialog/dialog-ref';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Subscription } from 'rxjs';
 import { JobState } from 'app/enums/job-state.enum';
 import helptext from 'app/helptext/apps/apps';
 import { Catalog, CatalogQueryParams } from 'app/interfaces/catalog.interface';
@@ -25,11 +26,12 @@ import { ManageCatalogSummaryDialogComponent } from '../dialogs/manage-catalog-s
   selector: 'app-manage-catalogs',
   template: '<entity-table [title]="title" [conf]="this"></entity-table>',
 })
-export class ManageCatalogsComponent implements EntityTableConfig<Catalog>, OnInit {
+export class ManageCatalogsComponent implements EntityTableConfig<Catalog>, OnInit, OnDestroy {
   title = 'Catalogs';
   queryCall = 'catalog.query' as const;
   wsDelete = 'catalog.delete' as const;
   queryCallOption: CatalogQueryParams = [[], { extra: { item_details: true } }];
+  jobsSubscription: Subscription;
   disableActionsConfig = true;
 
   columns = [
@@ -73,7 +75,7 @@ export class ManageCatalogsComponent implements EntityTableConfig<Catalog>, OnIn
   ) {}
 
   ngOnInit(): void {
-    this.ws.subscribe('core.get_jobs').pipe(untilDestroyed(this)).subscribe((event) => {
+    this.jobsSubscription = this.ws.subscribe('core.get_jobs').pipe(untilDestroyed(this)).subscribe((event) => {
       if (event.fields.method == 'catalog.sync') {
         const jobId = event.fields.id;
         if (!this.catalogSyncJobIds.includes(jobId) && event.fields.state === JobState.Running) {
@@ -90,6 +92,12 @@ export class ManageCatalogsComponent implements EntityTableConfig<Catalog>, OnIn
     this.slideInService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
       this.refresh();
     });
+  }
+
+  ngOnDestroy(): void {
+    if (this.jobsSubscription) {
+      this.ws.unsubscribe(this.jobsSubscription);
+    }
   }
 
   refresh(): void {

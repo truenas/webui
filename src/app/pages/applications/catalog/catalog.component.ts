@@ -1,10 +1,11 @@
 import {
-  Component, OnInit, Output, EventEmitter,
+  Component, OnInit, Output, EventEmitter, OnDestroy,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+import { Subscription } from 'rxjs';
 import {
   chartsTrain, ixChartApp, officialCatalog, appImagePlaceholder,
 } from 'app/constants/catalog.constants';
@@ -46,7 +47,7 @@ interface CatalogSyncJob {
   templateUrl: './catalog.component.html',
   styleUrls: ['../applications.component.scss', 'catalog.component.scss'],
 })
-export class CatalogComponent implements OnInit {
+export class CatalogComponent implements OnInit, OnDestroy {
   @Output() updateTab = new EventEmitter();
 
   catalogApps: CatalogApp[] = [];
@@ -57,6 +58,8 @@ export class CatalogComponent implements OnInit {
   catalogSyncJobs: CatalogSyncJob[] = [];
   selectedPool = '';
   private poolList: Option[] = [];
+
+  jobsSubscription: Subscription;
 
   protected utils: CommonUtils;
   imagePlaceholder = appImagePlaceholder;
@@ -110,7 +113,7 @@ export class CatalogComponent implements OnInit {
     this.loadCatalogs();
     this.checkForConfiguredPool();
 
-    this.ws.subscribe('core.get_jobs').pipe(untilDestroyed(this)).subscribe((event) => {
+    this.jobsSubscription = this.ws.subscribe('core.get_jobs').pipe(untilDestroyed(this)).subscribe((event) => {
       const catalogSyncJob = this.catalogSyncJobs.find((job) => job.id == event.fields.id);
       if (catalogSyncJob) {
         catalogSyncJob.progress = event.fields.progress.percent;
@@ -122,6 +125,12 @@ export class CatalogComponent implements OnInit {
         }
       }
     });
+  }
+
+  ngOnDestroy(): void {
+    if (this.jobsSubscription) {
+      this.ws.unsubscribe(this.jobsSubscription);
+    }
   }
 
   loadCatalogs(): void {
