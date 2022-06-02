@@ -442,6 +442,23 @@ export class CloudCredentialsFormComponent {
             },
           ],
         },
+        {
+          type: 'input',
+          name: 'endpoint-AZUREBLOB',
+          placeholder: helptext.endpoint_azureblob.placeholder,
+          tooltip: helptext.endpoint_azureblob.tooltip,
+          required: false,
+          isHidden: true,
+          relation: [
+            {
+              action: 'SHOW',
+              when: [{
+                name: 'provider',
+                value: 'AZUREBLOB',
+              }],
+            },
+          ],
+        },
         // microsoft onedrive
         {
           type: 'input',
