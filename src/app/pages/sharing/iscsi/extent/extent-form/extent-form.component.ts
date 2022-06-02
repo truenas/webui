@@ -4,6 +4,7 @@ import {
 } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 import { ExplorerType } from 'app/enums/explorer-type.enum';
 import { IscsiExtentType } from 'app/enums/iscsi.enum';
@@ -270,6 +271,7 @@ export class ExtentFormComponent implements FormConfiguration {
     protected ws: WebSocketService,
     protected loader: AppLoaderService,
     protected storageService: StorageService,
+    private translate: TranslateService,
   ) {}
 
   preInit(): void {
@@ -292,7 +294,9 @@ export class ExtentFormComponent implements FormConfiguration {
     this.fieldConfig = entityForm.fieldConfig;
     const extentDiskField = _.find(this.fieldConfig, { name: 'disk' }) as FormSelectConfig;
     // get device options
+    this.loader.open(this.translate.instant('Loading devices. Please wait.'));
     this.iscsiService.getExtentDevices().pipe(untilDestroyed(this)).subscribe((res) => {
+      this.loader.close();
       const options = [];
       for (const i in res) {
         options.push({ label: res[i], value: i });

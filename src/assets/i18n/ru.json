@@ -598,6 +598,7 @@
   "List any existing dataset properties to remove from the replicated files.": "",
   "List of chat IDs": "",
   "List of files and directories to exclude from sync.<br>  Separate entries by pressing <code>Enter</code>. See  <a href=\"https://rclone.org/filtering/\" target=\"_blank\">rclone filtering</a>  for more details about the <code>--exclude</code> option.": "",
+  "Loading devices. Please wait.": "",
   "Lock Dataset {datasetName}": "",
   "Lock Dataset {datasetName}?": "",
   "Locking dataset {datasetName}": "",
