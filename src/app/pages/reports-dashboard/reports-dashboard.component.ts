@@ -7,11 +7,15 @@ import {
 } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+import {
+  addSeconds, differenceInDays, differenceInSeconds, format,
+} from 'date-fns';
 import { Subject, forkJoin } from 'rxjs';
 import { ReportTab } from 'app/enums/report-tab.enum';
 import { CoreEvent } from 'app/interfaces/events';
 import { Option } from 'app/interfaces/option.interface';
 import { Disk } from 'app/interfaces/storage.interface';
+import { Timeout } from 'app/interfaces/timeout.interface';
 import { FieldConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/modules/entity/entity-form/models/fieldset.interface';
 import { ToolbarConfig } from 'app/modules/entity/entity-toolbar/models/control-config.interface';
@@ -44,6 +48,11 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, AfterViewIn
 
   scrollContainer: HTMLElement;
   scrolledIndex = 0;
+  nasDateTime: Date;
+  timeDiffInSeconds: number;
+  timeDiffInDays: number;
+  timeInterval: Timeout;
+  showTimeDiffWarning = false;
 
   diskReports: Report[];
   otherReports: Report[];
@@ -77,7 +86,35 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, AfterViewIn
     private layoutService: LayoutService,
   ) {}
 
+  get timeDiffWarning(): string {
+    if (!this.nasDateTime) {
+      return '';
+    }
+    const nasTimeFormatted = format(this.nasDateTime, 'MMM dd, HH:mm:ss, OOOO');
+    return this.translate.instant('Your NAS time {datetime} does not match your computer time.', { datetime: nasTimeFormatted });
+  }
+
   ngOnInit(): void {
+    this.ws.call('system.info').pipe(untilDestroyed(this)).subscribe(
+      (sysInfo) => {
+        const now = Date.now();
+        const datetime = sysInfo.datetime.$date;
+        this.nasDateTime = new Date(datetime);
+        this.timeDiffInSeconds = differenceInSeconds(datetime, now);
+        this.timeDiffInDays = differenceInDays(datetime, now);
+        if (this.timeDiffInSeconds > 300 || this.timeDiffInDays > 0) {
+          this.showTimeDiffWarning = true;
+        }
+
+        if (this.timeInterval) {
+          clearInterval(this.timeInterval);
+        }
+
+        this.timeInterval = setInterval(() => {
+          this.nasDateTime = addSeconds(this.nasDateTime, 1);
+        }, 1000);
+      },
+    );
     this.scrollContainer = document.querySelector('.rightside-content-hold ');
     this.scrollContainer.style.overflow = 'hidden';
 
@@ -111,6 +148,9 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, AfterViewIn
   ngOnDestroy(): void {
     this.scrollContainer.style.overflow = 'auto';
     this.core.unregister({ observerClass: this });
+    if (this.timeInterval) {
+      clearInterval(this.timeInterval);
+    }
   }
 
   ngAfterViewInit(): void {

@@ -165,7 +165,7 @@
                   <mat-list-item *ngIf="uptimeString">
                     <strong>{{ 'Uptime' | translate }}:</strong>
                     <span>{{ '{uptimeString} as of {dateTime}' | translate: { uptimeString, dateTime } }}</span>
-                  </mat-list-item>
+                  </mat-list-item><mat-list-item class="time-warning" *ngIf="showTimeDiffWarning"><mat-icon>warning</mat-icon>{{ timeDiffWarning }}</mat-list-item>
 
                 </mat-list>
 

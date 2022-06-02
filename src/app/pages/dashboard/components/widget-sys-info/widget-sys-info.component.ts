@@ -4,11 +4,15 @@ import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
+import {
+  differenceInSeconds, differenceInDays, addSeconds, format,
+} from 'date-fns';
 import { filter, take } from 'rxjs/operators';
 import { JobState } from 'app/enums/job-state.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { SystemUpdateStatus } from 'app/enums/system-update.enum';
 import { SystemInfo } from 'app/interfaces/system-info.interface';
+import { Timeout } from 'app/interfaces/timeout.interface';
 import { WidgetComponent } from 'app/pages/dashboard/components/widget/widget.component';
 import { SystemGeneralService, WebSocketService } from 'app/services';
 import { LocaleService } from 'app/services/locale.service';
@@ -25,13 +29,18 @@ import { selectHaStatus, waitForSystemInfo } from 'app/store/system-info/system-
     './widget-sys-info.component.scss',
   ],
 })
-export class WidgetSysInfoComponent extends WidgetComponent implements OnInit {
+export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, OnDestroy {
   // HA
   @Input() isHA = false;
   @Input() isPassive = false;
   @Input() enclosureSupport = false;
   @Input() showReorderHandle = false;
   @Input() systemInfo: SystemInfo;
+  showTimeDiffWarning = false;
+  timeInterval: Timeout;
+  timeDiffInSeconds: number;
+  timeDiffInDays: number;
+  nasDateTime: Date;
 
   title: string = this.translate.instant('System Info');
   data: SystemInfo;
@@ -128,6 +137,12 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit {
     );
   }
 
+  ngOnDestroy(): void {
+    if (this.timeInterval) {
+      clearInterval(this.timeInterval);
+    }
+  }
+
   get themeAccentColors(): string[] {
     const theme = this.themeService.currentTheme();
     this._themeAccentColors = theme.accentColors.map((color) => theme[color]);
@@ -148,9 +163,34 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit {
     return this.translate.instant('Check for Updates');
   }
 
+  get timeDiffWarning(): string {
+    const nasTimeFormatted = format(this.nasDateTime, 'MMM dd, HH:mm:ss, OOOO');
+    return this.translate.instant('Your NAS time {datetime} does not match your computer time.', { datetime: nasTimeFormatted });
+  }
+
   processSysInfo(systemInfo: SystemInfo): void {
     this.data = systemInfo;
-    this.loader = false;
+    const now = Date.now();
+    const datetime = systemInfo.datetime.$date;
+    this.nasDateTime = new Date(datetime);
+
+    this.timeDiffInSeconds = differenceInSeconds(datetime, now);
+    this.timeDiffInSeconds = this.timeDiffInSeconds < 0 ? (this.timeDiffInSeconds * -1) : this.timeDiffInSeconds;
+
+    this.timeDiffInDays = differenceInDays(datetime, now);
+    this.timeDiffInDays = this.timeDiffInDays < 0 ? (this.timeDiffInDays * -1) : this.timeDiffInDays;
+
+    if (this.timeDiffInSeconds > 300) {
+      this.showTimeDiffWarning = true;
+    }
+
+    if (this.timeInterval) {
+      clearInterval(this.timeInterval);
+    }
+
+    this.timeInterval = setInterval(() => {
+      this.nasDateTime = addSeconds(this.nasDateTime, 1);
+    }, 1000);
 
     const build = new Date(this.data.buildtime['$date']);
     const year = build.getUTCFullYear();
