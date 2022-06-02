@@ -87,6 +87,7 @@ describe('IxInputComponent', () => {
   describe('form control', () => {
     it('shows value provided in form control', () => {
       formControl.setValue('test');
+      spectator.detectComponentChanges();
 
       expect(spectator.query('input')).toHaveValue('test');
     });
