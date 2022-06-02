@@ -132,6 +132,11 @@
         </th>
         <td mat-cell *matCellDef="let job; dataSource: dataSource">
           <button mat-button type="button">{{ expandedRow === job ? ('Close' | translate) : ('View' | translate) }}</button>
+          <button
+            *ngIf="job.logs_path && job.logs_excerpt"
+            mat-button
+            type="button"
+            (click)="$event.stopPropagation(); downloadLogs(job)">{{ 'Download Logs' | translate }}</button>
         </td>
       </ng-container>
 
