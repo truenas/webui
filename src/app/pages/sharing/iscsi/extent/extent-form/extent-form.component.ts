@@ -302,6 +302,10 @@ export class ExtentFormComponent implements FormConfiguration {
         options.push({ label: res[i], value: i });
       }
       extentDiskField.options = _.sortBy(options, ['label']);
+    },
+    (res) => {
+      this.loader.close();
+      new EntityUtils().handleWsError(this.entityForm, res);
     });
 
     this.extentTypeControl = entityForm.formGroup.controls['type'];
