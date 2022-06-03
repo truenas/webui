@@ -15,6 +15,9 @@ import { CoreComponents } from 'app/core/core-components.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
+import {
+  CloudCredentialsFormComponent,
+} from 'app/pages/credentials/backup-credentials/cloud-credentials-form/cloud-credentials-form.component';
 import { SshConnectionFormComponent } from 'app/pages/credentials/backup-credentials/ssh-connection-form/ssh-connection-form.component';
 import { SshKeypairFormComponent } from 'app/pages/credentials/backup-credentials/ssh-keypair-form/ssh-keypair-form.component';
 import {
@@ -29,7 +32,6 @@ import {
 } from 'app/pages/credentials/certificates-dash/view-certificate-dialog/view-certificate-dialog.component';
 import { KmipComponent } from 'app/pages/credentials/kmip/kmip.component';
 import { BackupCredentialsComponent } from './backup-credentials/backup-credentials.component';
-import { CloudCredentialsFormComponent } from './backup-credentials/forms/cloud-credentials-form.component';
 import { CertificateAuthorityEditComponent } from './certificates-dash/certificate-authority-edit/certificate-authority-edit.component';
 import { CertificateEditComponent } from './certificates-dash/certificate-edit/certificate-edit.component';
 import { CertificatesDashComponent } from './certificates-dash/certificates-dash.component';
@@ -41,7 +43,6 @@ import { CertificateAddComponent } from './certificates-dash/forms/certificate-a
   declarations: [
     BackupCredentialsComponent,
     SshConnectionFormComponent,
-    CloudCredentialsFormComponent,
     SshKeypairFormComponent,
     CertificatesDashComponent,
     CertificateAcmeAddComponent,
@@ -55,6 +56,7 @@ import { CertificateAddComponent } from './certificates-dash/forms/certificate-a
     ViewCertificateDialogComponent,
     CertificateDetailsComponent,
     KmipComponent,
+    CloudCredentialsFormComponent,
   ],
   imports: [
     CommonModule,
