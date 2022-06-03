@@ -3,6 +3,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { CatalogApp } from 'app/interfaces/catalog.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { ChartFormComponent } from 'app/pages/applications/forms/chart-form/chart-form.component';
@@ -25,7 +26,7 @@ describe('ChartFormComponent', () => {
   const existingChartCreate = {
     name: 'ipfs',
     versions: {
-      '1.2.1': {
+      ['1.2.1' as string]: {
         healthy: true,
       },
     },
@@ -88,7 +89,7 @@ describe('ChartFormComponent', () => {
         },
       ],
     },
-  } as any;
+  } as CatalogApp;
 
   const existingChartEdit = {
     name: 'app_name',

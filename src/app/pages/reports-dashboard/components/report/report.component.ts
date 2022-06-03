@@ -13,6 +13,7 @@ import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { UUID } from 'angular2-uuid';
 import { add, sub } from 'date-fns';
+import { dygraphs } from 'dygraphs';
 import _ from 'lodash';
 import { filter, map, take } from 'rxjs/operators';
 import { ProductType } from 'app/enums/product-type.enum';
@@ -56,6 +57,11 @@ export interface Report extends ReportingGraph {
   errorConf?: EmptyConfig;
 }
 
+export type LegendDataWithStackedTotalHtml = dygraphs.LegendData & {
+  stackedTotalHTML: string;
+  stackedTotal?: number;
+};
+
 @UntilDestroy()
 @Component({
   selector: 'ix-report',
@@ -87,7 +93,7 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
     return Object.keys(this.data.aggregations) as ReportingAggregationKeys[];
   }
 
-  legendData: any = {};
+  legendData: LegendDataWithStackedTotalHtml = {} as LegendDataWithStackedTotalHtml;
   subtitle: string = this.translate.instant('% of all cores');
   altTitle = '';
   isActive = true;
@@ -147,7 +153,7 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
     return value;
   }
 
-  formatLegendSeries(series: any[], data: ReportingData): any[] {
+  formatLegendSeries(series: dygraphs.SeriesLegendData[], data: ReportingData): dygraphs.SeriesLegendData[] {
     switch (data.name) {
       case 'interface':
         series.forEach((element) => {

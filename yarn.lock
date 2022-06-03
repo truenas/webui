@@ -2729,10 +2729,12 @@
   dependencies:
     "@types/node" "*"
 
-"@types/chart.js@2.9.4":
-  version "2.9.4"
-  resolved "https://registry.yarnpkg.com/@types/chart.js/-/chart.js-2.9.4.tgz#19d12fae10536e7a2a6ea768c7a3811c626ca455"
-  integrity sha512-uKF7vOdTTAfrsKREKG4oojDqE/dQ5GkwdMRQGfk19aKmeC4wIF6eTWdN98PA8d+F4TPI8hy7oOTB6/JoWepEJw==
+"@types/chart.js@^2.9.37":
+  version "2.9.37"
+  resolved "https://registry.yarnpkg.com/@types/chart.js/-/chart.js-2.9.37.tgz#8af70862b154fedf938b5b87debdb3a70f6e3208"
+  integrity sha512-9bosRfHhkXxKYfrw94EmyDQcdjMaQPkU1fH2tDxu8DWXxf1mjzWQAV4laJF51ZbC2ycYwNDvIm1rGez8Bug0vg==
+  dependencies:
+    moment "^2.10.2"
 
 "@types/chartist@~0.9.47":
   version "0.9.48"

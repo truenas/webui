@@ -56,7 +56,7 @@ export class ToolbarMultiSelectComponent implements AfterViewInit {
 
   isAllSelected(): boolean {
     return this.config.options.every(
-      (option: Option) => this.values.find(((value) => value.value === option.value)),
+      (option) => this.values.find(((value) => value.value === option.value)),
     );
   }
 
@@ -70,20 +70,20 @@ export class ToolbarMultiSelectComponent implements AfterViewInit {
   }
 
   isOptionSelected(index: number): boolean {
-    const option = this.config.options[index] as Option;
+    const option = this.config.options[index];
 
     return Boolean(this.values.find((value) => value.value === option.value));
   }
 
   selectOption(index: number): void {
-    const option = this.config.options[index] as Option;
+    const option = this.config.options[index];
     this.values.push(option);
 
     this.triggerMatOptionSelectionUpdate([this.matSelectRef.options.get(index)], true);
   }
 
   deselectOption(index: number): void {
-    const option = this.config.options[index] as Option;
+    const option = this.config.options[index];
     this.values.splice(this.values.indexOf(option), 1);
 
     this.triggerMatOptionSelectionUpdate([this.matSelectRef.options.get(index)], false);
