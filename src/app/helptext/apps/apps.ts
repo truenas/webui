@@ -559,17 +559,15 @@ export default {
     btnMsg: T('Continue'),
     cancelMsg: T('Cancel'),
     title: T('Warning'),
-    message: T(`iXsystems does not check the contents of third-party charts repositories.
-    Extra caution is <br/>advised when adding third-party chart repositories.
-    Third-party charts repositories can result in
+    message: T(`iXsystems does not check the contents of third-party charts repositories. Use caution when <br/>\
+    adding third-party charts repositories: They can
     <ul>
-      <li>Malicious software</li>
-      <li>Breaking filesystem permissions</li>
-      <li>Changing ownership of files</li>
-      <li>Deleting data</li>
-      <li>Unsafe configuration defaults</li>
+      <li>Install malicious software</li>
+      <li>Break services</li>
+      <li>Break filesystem permissions</li>
+      <li>Erase data</li>
+      <li>Create unsafe configurations</li>
       <li>Degrade host performance and stability</li>
-      <li>Break system services</li>
     </ul>`),
   },
 
