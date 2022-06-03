@@ -76,6 +76,7 @@
   "Warning: There are {n} disks available that have non-unique serial numbers. Non-unique serial numbers can be caused by a cabling issue and adding such disks to a pool can result in lost data.": "",
   "Your NAS time {datetime} does not match your computer time.": "",
   "ZVol {zvolName} and all snapshots stored with it <b>will be permanently deleted</b>.": "",
+  "iXsystems does not check the contents of third-party charts repositories.\n    Extra caution is <br/>advised when adding third-party chart repositories.\n    Third-party charts repositories can result in\n    <ul>\n      <li>Malicious software</li>\n      <li>Breaking filesystem permissions</li>\n      <li>Changing ownership of files</li>\n      <li>Deleting data</li>\n      <li>Unsafe configuration defaults</li>\n      <li>Degrade host performance and stability</li>\n      <li>Break system services</li>\n    </ul>": "",
   " Check Notifications for more details.": " 检查通知以获取更多详细信息。",
   " Download Updates": " 下载更新",
   " KiB.": " KiB。",

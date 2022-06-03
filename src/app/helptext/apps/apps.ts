@@ -555,6 +555,23 @@ export default {
     },
     pulling: T('Pulling...'),
   },
+  thirdPartyRepoWarning: {
+    btnMsg: T('Continue'),
+    cancelMsg: T('Cancel'),
+    title: T('Warning'),
+    message: T(`iXsystems does not check the contents of third-party charts repositories.
+    Extra caution is <br/>advised when adding third-party chart repositories.
+    Third-party charts repositories can result in
+    <ul>
+      <li>Malicious software</li>
+      <li>Breaking filesystem permissions</li>
+      <li>Changing ownership of files</li>
+      <li>Deleting data</li>
+      <li>Unsafe configuration defaults</li>
+      <li>Degrade host performance and stability</li>
+      <li>Break system services</li>
+    </ul>`),
+  },
 
   catalogForm: {
     title: T('Add Catalog'),

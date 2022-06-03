@@ -3809,6 +3809,7 @@
   "iSCSI": "",
   "iSCSI Group": "",
   "iSCSI supports multiple  authentication methods that are used by the target to discover valid  devices. <i>None</i> allows anonymous discovery while <i>CHAP</i> and  <i>Mutual CHAP</i> require authentication.": "",
+  "iXsystems does not check the contents of third-party charts repositories.\n    Extra caution is <br/>advised when adding third-party chart repositories.\n    Third-party charts repositories can result in\n    <ul>\n      <li>Malicious software</li>\n      <li>Breaking filesystem permissions</li>\n      <li>Changing ownership of files</li>\n      <li>Deleting data</li>\n      <li>Unsafe configuration defaults</li>\n      <li>Degrade host performance and stability</li>\n      <li>Break system services</li>\n    </ul>": "",
   "iXsystems for more information.": "",
   "is Free and": "",
   "is a collaborative website     with helpful guides and information about your new storage system.": "",
