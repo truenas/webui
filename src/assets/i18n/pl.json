@@ -2623,7 +2623,7 @@
   "iSCSI": "",
   "iSCSI Group": "",
   "iSCSI supports multiple  authentication methods that are used by the target to discover valid  devices. <i>None</i> allows anonymous discovery while <i>CHAP</i> and  <i>Mutual CHAP</i> require authentication.": "",
-  "iXsystems does not check the contents of third-party charts repositories. Use caution when <br/>    adding third-party charts repositories: They can\n    <ul>\n      <li>Install malicious software</li>\n      <li>Break services</li>\n      <li>Break filesystem permissions</li>\n      <li>Erase data</li>\n      <li>Create unsafe configurations</li>\n      <li>Degrade host performance and stability</li>\n    </ul>": "",
+  "iXsystems does not check the contents of third-party charts repositories. Use caution when <br/>    adding third-party charts repositories. They can:\n    <ul>\n      <li>Install malicious software</li>\n      <li>Break services</li>\n      <li>Break filesystem permissions</li>\n      <li>Erase data</li>\n      <li>Create unsafe configurations</li>\n      <li>Degrade host performance and stability</li>\n    </ul>": "",
   "is Free and": "",
   "mountd(8) bind port": "",
   "on this enclosure": "",

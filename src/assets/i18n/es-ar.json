@@ -1074,7 +1074,7 @@
   "everyone@": "",
   "group@": "",
   "iSCSI": "",
-  "iXsystems does not check the contents of third-party charts repositories. Use caution when <br/>    adding third-party charts repositories: They can\n    <ul>\n      <li>Install malicious software</li>\n      <li>Break services</li>\n      <li>Break filesystem permissions</li>\n      <li>Erase data</li>\n      <li>Create unsafe configurations</li>\n      <li>Degrade host performance and stability</li>\n    </ul>": "",
+  "iXsystems does not check the contents of third-party charts repositories. Use caution when <br/>    adding third-party charts repositories. They can:\n    <ul>\n      <li>Install malicious software</li>\n      <li>Break services</li>\n      <li>Break filesystem permissions</li>\n      <li>Erase data</li>\n      <li>Create unsafe configurations</li>\n      <li>Degrade host performance and stability</li>\n    </ul>": "",
   "lz4 (fastest)": "",
   "mDNS": "",
   "on this enclosure": "",

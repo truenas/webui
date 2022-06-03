@@ -560,7 +560,7 @@ export default {
     cancelMsg: T('Cancel'),
     title: T('Warning'),
     message: T(`iXsystems does not check the contents of third-party charts repositories. Use caution when <br/>\
-    adding third-party charts repositories: They can
+    adding third-party charts repositories. They can:
     <ul>
       <li>Install malicious software</li>
       <li>Break services</li>
