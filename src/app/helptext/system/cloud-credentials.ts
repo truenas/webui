@@ -257,6 +257,11 @@ a new application key, log in to the Backblaze account, go to the \
     tooltip: T('Base64 encoded key for the Azure account.'),
   },
 
+  endpoint_azureblob: {
+    placeholder: T('Endpoint'),
+    tooltip: T('Example: blob.core.usgovcloudapi.net'),
+  },
+
   token_onedrive: {
     placeholder: T('Access Token'),
     tooltip: T(
