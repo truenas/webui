@@ -265,7 +265,7 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /* HandleCh
     this.activateTab(tab.label);
 
     if (tab.label == 'Disk') {
-      const selectedDisks = this.route.snapshot.queryParams.disks;
+      const selectedDisks = this.route.snapshot.queryParams.disks || [];
       this.diskReportBuilderSetup(selectedDisks);
     }
   }
@@ -456,10 +456,10 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /* HandleCh
 
   buildDiskReport(device: string | any[], metric: string | any[]) {
     let metricValue: string;
-    if (Array.isArray(metric)) {
+    if (Array.isArray(metric) && metric.length > 0) {
       metricValue = metric[0].value;
     } else {
-      metricValue = metric;
+      metricValue = metric as string;
     }
     // Convert strings to arrays
     if (typeof device == 'string') {
