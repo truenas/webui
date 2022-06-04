@@ -5,6 +5,7 @@ import { DeviceType } from 'app/enums/device-type.enum';
 import { EnclosureSlotStatus } from 'app/enums/enclosure-slot-status.enum';
 import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
 import { FailoverStatus } from 'app/enums/failover-status.enum';
+import { ImportDiskFilesystem } from 'app/enums/import-disk-filesystem-type.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { TransportMode } from 'app/enums/transport-mode.enum';
@@ -688,7 +689,7 @@ export type ApiDirectory = {
   'pool.filesystem_choices': { params: [DatasetType[]?]; response: string[] };
   'pool.get_disks': { params: [ids: string[]]; response: string[] };
   'pool.import_disk': { params: ImportDiskParams; response: void };
-  'pool.import_disk_autodetect_fs_type': { params: [path: string]; response: string };
+  'pool.import_disk_autodetect_fs_type': { params: [path: string]; response: ImportDiskFilesystem };
   'pool.import_disk_msdosfs_locales': { params: void; response: string[] };
   'pool.import_find': { params: void; response: PoolFindResult[] };
   'pool.import_pool': { params: [PoolImportParams]; response: boolean };
