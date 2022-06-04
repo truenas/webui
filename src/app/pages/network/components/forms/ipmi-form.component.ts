@@ -212,7 +212,7 @@ export class IpmiFormComponent implements FormConfiguration {
   }
 
   afterInit(entityEdit: EntityFormComponent): void {
-    this.channelValue = entityEdit.pk;
+    this.channelValue = entityEdit.pk as number;
     this.entityEdit = entityEdit;
 
     entityEdit.formGroup.controls['password'].statusChanges.pipe(untilDestroyed(this)).subscribe((status: string) => {

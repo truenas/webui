@@ -4,10 +4,8 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
-import { DiskBus } from 'app/enums/disk-bus.enum';
 import { DiskPowerLevel } from 'app/enums/disk-power-level.enum';
 import { DiskStandby } from 'app/enums/disk-standby.enum';
-import { DiskType } from 'app/enums/disk-type.enum';
 import { Disk } from 'app/interfaces/storage.interface';
 import { IxCheckboxHarness } from 'app/modules/ix-forms/components/ix-checkbox/ix-checkbox.harness';
 import { IxInputHarness } from 'app/modules/ix-forms/components/ix-input/ix-input.harness';
@@ -21,7 +19,7 @@ describe('DiskFormComponent', () => {
   let spectator: Spectator<DiskFormComponent>;
   let loader: HarnessLoader;
   let form: IxFormHarness;
-  const dataDisk: Disk = {
+  const dataDisk = {
     name: 'sdc',
     serial: 'VB9fbb6dfe-9cf26570',
     advpowermgmt: DiskPowerLevel.Level127,
@@ -33,24 +31,9 @@ describe('DiskFormComponent', () => {
     passwd: '123',
     smartoptions: 'smart options',
     togglesmart: false,
-    bus: DiskBus.Spi,
     devname: 'sdc',
-    enclosure: {} as any,
-    expiretime: '',
     identifier: '{serial}VB9fbb6dfe-9cf26570',
-    model: 'VBOX_HARDDISK',
-    number: 3,
-    pool: 'pool1',
-    rotationrate: 1,
-    size: 5368709120,
-    subsystem: 'scsi',
-    transfermode: 'Auto',
-    type: DiskType.Hdd,
-    zfs_guid: '12615153293172479823',
-    duplicate_serial: [''],
-    multipath_member: '',
-    multipath_name: '',
-  };
+  } as Disk;
   const createComponent = createComponentFactory({
     component: DiskFormComponent,
     imports: [

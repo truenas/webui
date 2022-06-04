@@ -629,7 +629,7 @@ export class CloudsyncFormComponent implements FormConfiguration {
   afterInit(entityForm: EntityFormComponent): void {
     this.entityForm = entityForm;
     this.formGroup = entityForm.formGroup;
-    this.pk = entityForm.pk;
+    this.pk = entityForm.pk as number;
 
     this.title = entityForm.isNew ? helptext.cloudsync_task_add : helptext.cloudsync_task_edit;
     this.credentialsField = this.fieldSets.config('credentials') as FormSelectConfig;

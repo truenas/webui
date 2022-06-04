@@ -176,7 +176,7 @@ export class NetworkComponent implements OnInit, OnDestroy {
     columns: [{ name: this.translate.instant('Channel'), prop: 'channelLabel' }],
     hideHeader: true,
     parent: this,
-    dataSourceHelper: (ipmi) => this.ipmiDataSourceHelper(ipmi),
+    dataSourceHelper: (ipmi: Ipmi[]) => this.ipmiDataSourceHelper(ipmi),
     getActions: this.getIpmiActions.bind(this),
     isActionVisible: this.isIpmiActionVisible,
     edit: (row: IpmiRow) => {

@@ -14,7 +14,7 @@ const maxDecimals = (input: number, max?: number): number => {
   }
   const decimals = str[1].length;
   const output = decimals > max ? input.toFixed(max) : input;
-  return parseFloat(output as any);
+  return parseFloat(output as string);
 };
 
 function arrayAvg(input: number[]): number {

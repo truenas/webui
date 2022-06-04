@@ -236,7 +236,7 @@ describe('SmbFormComponent', () => {
 
     const values = await form.getValues();
 
-    const existingShareWithLabels: { [key: string]: any } = {};
+    const existingShareWithLabels: { [key: string]: unknown } = {};
     for (const key in existingShare) {
       if (!formLabels[key]) {
         continue;
@@ -244,7 +244,9 @@ describe('SmbFormComponent', () => {
       existingShareWithLabels[formLabels[key]] = existingShare[key as keyof SmbShare];
     }
 
-    existingShareWithLabels[formLabels.purpose] = presets[existingShareWithLabels[formLabels.purpose]].verbose_name;
+    existingShareWithLabels[formLabels.purpose] = (
+      presets[existingShareWithLabels[formLabels.purpose] as string].verbose_name
+    );
     expect(values).toMatchObject(existingShareWithLabels);
   });
 

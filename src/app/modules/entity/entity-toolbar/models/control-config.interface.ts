@@ -11,7 +11,7 @@ export interface ControlConfig {
   type: string;
   disabled?: boolean;
   value?: any;
-  options?: any[];
+  options?: ToolbarOption[];
   placeholder?: string;
   customTriggerValue?: string;
   required?: boolean;
@@ -25,6 +25,21 @@ export interface ControlConfig {
   step?: number;
   ixAutoIdentifier?: string;
   confirmOptions?: ConfirmOptions;
+}
+
+/**
+ * Shared by multiple controls (menu, select, etc).
+ */
+export interface ToolbarOption {
+  label: string;
+  value: string | number;
+
+  disabled?: boolean;
+  disable?: boolean;
+  icon?: string;
+  labelIcon?: string;
+  labelIconType?: string;
+  hiddenFromDisplay?: boolean;
 }
 
 export interface ToolbarConfig {
