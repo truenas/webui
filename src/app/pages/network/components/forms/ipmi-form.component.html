@@ -3,14 +3,14 @@
   <mat-card-content>
 
     <form [formGroup]="form" class="ix-form-container" (submit)="onSubmit()">
-      <ng-container *ngIf="remoteContrOptions">
+      <ng-container *ngIf="remoteControllerOptions">
         <ix-fieldset
           [title]="helptext.ipmi_remote_controller | translate"
         >
           <!--        class ?-->
           <ix-radio-group
             [formControlName]="'remoteController'"
-            [options]="remoteContrOptions"
+            [options]="remoteControllerOptions"
           >
           </ix-radio-group>
         </ix-fieldset>
@@ -72,12 +72,15 @@
         <!--        // id-->
         <button
           mat-button
+          type='button'
           (click)="setFlashTime()"
         >{{ 'Identify Light' | translate }}</button>
         <!--        // id-->
         <button
           mat-button
+          type='button'
           (click)="openManageWindow()"
+          [disabled]="isDisabledManageBtn"
         >{{ 'Manage' | translate }}</button>
       </mat-card-actions>
     </form>

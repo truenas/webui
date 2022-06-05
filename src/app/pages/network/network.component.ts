@@ -181,7 +181,7 @@ export class NetworkComponent implements OnInit, OnDestroy {
     isActionVisible: this.isIpmiActionVisible,
     edit: (row: IpmiRow) => {
       const ipmiEditForm = this.slideInService.open(IpmiFormComponent);
-      ipmiEditForm.getId(row.id);
+      ipmiEditForm.setIpmiForm(row);
     },
   };
 
