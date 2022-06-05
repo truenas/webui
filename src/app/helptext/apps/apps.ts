@@ -559,15 +559,18 @@ export default {
     btnMsg: T('Continue'),
     cancelMsg: T('Cancel'),
     title: T('Warning'),
-    message: T(`iXsystems does not check the contents of third-party charts repositories. Use caution when <br/>\
-    adding third-party charts repositories. They can:
+    message: T(`iXsystems does not audit or otherwise validate the contents of third-party applications catalogs. \
+    It is incumbent on the user to verify that the new catalog is from a trusted source and that the third-party \
+    properly audits its chart contents. Failure to exercise due diligence can expose the user and their data to \
+    the some or all of the following:<br/>\
     <ul>
-      <li>Install malicious software</li>
-      <li>Break services</li>
-      <li>Break filesystem permissions</li>
-      <li>Erase data</li>
-      <li>Create unsafe configurations</li>
-      <li>Degrade host performance and stability</li>
+      <li>Malicious software</li>
+      <li>Broken services on TrueNAS host</li>
+      <li>Service disruption on TrueNAS host</li>
+      <li>Broken filesystem permissions on Host or within application</li>
+      <li>Unexpected deletion of user data</li>
+      <li>Unsafe service configuration in application</li>
+      <li>Degradation of TrueNAS host performance and stability</li>
     </ul>`),
   },
 
