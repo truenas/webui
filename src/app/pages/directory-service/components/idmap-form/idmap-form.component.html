@@ -1,0 +1,219 @@
+<ix-modal-header [title]="title" [loading]="isLoading"></ix-modal-header>
+<mat-card>
+  <mat-card-content>
+    <form [formGroup]="form" class="ix-form-container" (submit)="onSubmit()">
+      <ix-fieldset>
+        <ix-select
+          formControlName="name"
+          [label]="'Name' | translate"
+          [required]="true"
+          [options]="isNew ? createIdmapNames$ : editIdmapNames$"
+          [tooltip]="helptext.idmap.name.tooltip | translate"
+        ></ix-select>
+        <ix-input
+          *ngIf="isCustomName"
+          formControlName="custom_name"
+          [label]="'Custom Name' | translate"
+          [required]="true"
+          [tooltip]="helptext.idmap.custom_name.tooltip | translate"
+        ></ix-input>
+        <ix-select
+          *ngIf="hasBackendField$ | async"
+          formControlName="idmap_backend"
+          [label]="'Idmap Backend' | translate"
+          [required]="true"
+          [options]="backends$"
+          [tooltip]="helptext.idmap.idmap_backend.tooltip | translate"
+        ></ix-select>
+        <ix-input
+          formControlName="dns_domain_name"
+          [label]="'DNS Domain Name' | translate"
+          [tooltip]="helptext.idmap.dns_domain_name.tooltip | translate"
+        ></ix-input>
+        <ix-input
+          formControlName="range_low"
+          [label]="'Range Low' | translate"
+          type="number"
+          [required]="true"
+          [tooltip]="helptext.idmap.range_tooltip | translate"
+        ></ix-input>
+        <ix-input
+          formControlName="range_high"
+          [label]="'Range High' | translate"
+          type="number"
+          [required]="true"
+          [tooltip]="helptext.idmap.range_tooltip | translate"
+        ></ix-input>
+        <div *ngIf="hasCertificateField$ | async" class="linked-select">
+          <div class="link-wrapper">
+            <a class="link" (click)="certificatesLinkClicked()">
+              {{ 'Manage Certificates' | translate }}
+            </a>
+          </div>
+          <ix-select
+            formControlName="certificate"
+            [label]="'Certificate' | translate"
+            [options]="certificates$"
+            [tooltip]="helptext.idmap.certificate_id.tooltip | translate"
+          ></ix-select>
+        </div>
+      </ix-fieldset>
+      <ix-fieldset [title]="'Options' | translate">
+        <ix-select
+          *ngIf="isOptionVisible('schema_mode')"
+          formControlName="schema_mode"
+          [label]="'Schema Mode' | translate"
+          [options]="schemaModes$"
+          [required]="true"
+          [tooltip]="helptext.idmap.schema_mode.tooltip | translate"
+        ></ix-select>
+        <ix-checkbox
+          *ngIf="isOptionVisible('unix_primary_group')"
+          formControlName="unix_primary_group"
+          [label]="'Unix Primary Group' | translate"
+          [required]="isOptionRequired('unix_primary_group')"
+          [tooltip]="helptext.idmap.unix_primary_group.tooltip | translate"
+        ></ix-checkbox>
+        <ix-checkbox
+          *ngIf="isOptionVisible('unix_nss_info')"
+          formControlName="unix_nss_info"
+          [label]="'Unix NSS Info' | translate"
+          [required]="isOptionRequired('unix_nss_info')"
+          [tooltip]="helptext.idmap.unix_nss.tooltip | translate"
+        ></ix-checkbox>
+        <ix-input
+          *ngIf="isOptionVisible('rangesize')"
+          formControlName="rangesize"
+          [label]="'Range Size' | translate"
+          type="number"
+          [required]="isOptionRequired('rangesize')"
+          [tooltip]="helptext.idmap.rangesize.tooltip | translate"
+        ></ix-input>
+        <ix-checkbox
+          *ngIf="isOptionVisible('readonly')"
+          formControlName="readonly"
+          [label]="'Read Only' | translate"
+          [required]="isOptionRequired('readonly')"
+          [tooltip]="helptext.idmap.readonly.tooltip | translate"
+        ></ix-checkbox>
+        <ix-checkbox
+          *ngIf="isOptionVisible('ignore_builtin')"
+          formControlName="ignore_builtin"
+          [label]="'Ignore Builtin' | translate"
+          [required]="isOptionRequired('ignore_builtin')"
+          [tooltip]="helptext.idmap.ignore_builtin.tooltip | translate"
+        ></ix-checkbox>
+        <ix-input
+          *ngIf="isOptionVisible('ldap_base_dn')"
+          formControlName="ldap_base_dn"
+          [label]="'Base DN' | translate"
+          [required]="isOptionRequired('ldap_base_dn')"
+          [tooltip]="helptext.idmap.ldap_basedn.tooltip | translate"
+        ></ix-input>
+        <ix-input
+          *ngIf="isOptionVisible('ldap_user_dn')"
+          formControlName="ldap_user_dn"
+          [label]="'LDAP User DN' | translate"
+          [required]="isOptionRequired('ldap_user_dn')"
+          [tooltip]="helptext.idmap.ldap_userdn.tooltip | translate"
+        ></ix-input>
+        <ix-input
+          *ngIf="isOptionVisible('ldap_user_dn_password')"
+          formControlName="ldap_user_dn_password"
+          [label]="'LDAP User DN Password' | translate"
+          type="password"
+          [required]="isOptionRequired('ldap_user_dn_password')"
+          [tooltip]="helptext.idmap.ldap_user_dn_password.tooltip | translate"
+        ></ix-input>
+        <ix-input
+          *ngIf="isOptionVisible('ldap_url')"
+          formControlName="ldap_url"
+          [label]="'URL' | translate"
+          [required]="isOptionRequired('ldap_url')"
+          [tooltip]="helptext.idmap.ldap_url.tooltip | translate"
+        ></ix-input>
+        <ix-select
+          *ngIf="isOptionVisible('ssl')"
+          formControlName="ssl"
+          [label]="'Encryption Mode' | translate"
+          [options]="sslModes$"
+          [required]="true"
+          [tooltip]="helptext.idmap.ssl.tooltip | translate"
+        ></ix-select>
+        <ix-select
+          *ngIf="isOptionVisible('linked_service')"
+          formControlName="linked_service"
+          [label]="'Linked Service' | translate"
+          [options]="linkedServices$"
+          [required]="true"
+          [tooltip]="helptext.idmap.linked_service.tooltip | translate"
+        ></ix-select>
+        <ix-input
+          *ngIf="isOptionVisible('ldap_server')"
+          formControlName="ldap_server"
+          [label]="'LDAP Server' | translate"
+          [required]="isOptionRequired('ldap_server')"
+          [tooltip]="helptext.idmap.ldap_server.tooltip | translate"
+        ></ix-input>
+        <ix-input
+          *ngIf="isOptionVisible('ldap_realm')"
+          formControlName="ldap_realm"
+          [label]="'LDAP Realm' | translate"
+          [required]="isOptionRequired('ldap_realm')"
+          [tooltip]="helptext.idmap.ldap_realm.tooltip | translate"
+        ></ix-input>
+        <ix-input
+          *ngIf="isOptionVisible('bind_path_user')"
+          formControlName="bind_path_user"
+          [label]="'User Bind Path' | translate"
+          [required]="isOptionRequired('bind_path_user')"
+          [tooltip]="helptext.idmap.bind_path_user.tooltip | translate"
+        ></ix-input>
+        <ix-input
+          *ngIf="isOptionVisible('bind_path_group')"
+          formControlName="bind_path_group"
+          [label]="'Group Bind Path' | translate"
+          [required]="isOptionRequired('bind_path_group')"
+          [tooltip]="helptext.idmap.bind_path_group.tooltip | translate"
+        ></ix-input>
+        <ix-input
+          *ngIf="isOptionVisible('user_cn')"
+          formControlName="user_cn"
+          [label]="'User CN' | translate"
+          [required]="isOptionRequired('user_cn')"
+          [tooltip]="helptext.idmap.user_cn.tooltip | translate"
+        ></ix-input>
+        <ix-input
+          *ngIf="isOptionVisible('cn_realm')"
+          formControlName="cn_realm"
+          [label]="'CN Realm' | translate"
+          [required]="isOptionRequired('cn_realm')"
+          [tooltip]="helptext.idmap.cn_realm.tooltip | translate"
+        ></ix-input>
+        <ix-input
+          *ngIf="isOptionVisible('ldap_domain')"
+          formControlName="ldap_domain"
+          [label]="'LDAP Domain' | translate"
+          [required]="isOptionRequired('ldap_domain')"
+          [tooltip]="helptext.idmap.ldap_domain.tooltip | translate"
+        ></ix-input>
+        <ix-checkbox
+          *ngIf="isOptionVisible('sssd_compat')"
+          formControlName="sssd_compat"
+          [label]="'SSSD Compat' | translate"
+          [required]="isOptionRequired('sssd_compat')"
+          [tooltip]="helptext.idmap.sssd_compat.tooltip | translate"
+        ></ix-checkbox>
+      </ix-fieldset>
+      <div class="form-actions">
+        <button
+          type="submit"
+          mat-button
+          color="primary"
+          [disabled]="form.invalid || isLoading"
+        >{{ 'Save' | translate }}</button>
+      </div>
+    </form>
+  </mat-card-content>
+</mat-card>
+

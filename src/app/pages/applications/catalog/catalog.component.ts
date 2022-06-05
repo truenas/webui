@@ -27,7 +27,7 @@ import { ApplicationTab } from 'app/pages/applications/application-tab.enum';
 import { ApplicationToolbarControl } from 'app/pages/applications/application-toolbar-control.enum';
 import { ApplicationsService } from 'app/pages/applications/applications.service';
 import { CatalogSummaryDialogComponent } from 'app/pages/applications/dialogs/catalog-summary/catalog-summary-dialog.component';
-import { ChartWizardComponent } from 'app/pages/applications/forms/chart-wizard.component';
+import { ChartFormComponent } from 'app/pages/applications/forms/chart-form/chart-form.component';
 import { KubernetesSettingsComponent } from 'app/pages/applications/kubernetes-settings/kubernetes-settings.component';
 import { DialogService, WebSocketService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
@@ -41,7 +41,7 @@ interface CatalogSyncJob {
 
 @UntilDestroy()
 @Component({
-  selector: 'app-catalog',
+  selector: 'ix-catalog',
   templateUrl: './catalog.component.html',
   styleUrls: ['../applications.component.scss', 'catalog.component.scss'],
 })
@@ -351,8 +351,8 @@ export class CatalogComponent implements OnInit {
         };
         catalogAppInfo.schema = catalogApp.versions[catalogApp.latest_version].schema;
 
-        const chartWizard = this.modalService.openInSlideIn(ChartWizardComponent);
-        chartWizard.setCatalogApp(catalogAppInfo);
+        const chartWizard = this.slideInService.open(ChartFormComponent, { wide: true });
+        chartWizard.setChartCreate(catalogAppInfo);
       }
     });
   }

@@ -45,7 +45,7 @@ import { IpmiFormComponent } from './components/forms/ipmi-form.component';
 
 @UntilDestroy()
 @Component({
-  selector: 'app-interfaces-list',
+  selector: 'ix-interfaces-list',
   templateUrl: './network.component.html',
   styleUrls: ['./network.component.scss'],
 })
@@ -176,12 +176,12 @@ export class NetworkComponent implements OnInit, OnDestroy {
     columns: [{ name: this.translate.instant('Channel'), prop: 'channelLabel' }],
     hideHeader: true,
     parent: this,
-    dataSourceHelper: (ipmi) => this.ipmiDataSourceHelper(ipmi),
+    dataSourceHelper: (ipmi: Ipmi[]) => this.ipmiDataSourceHelper(ipmi),
     getActions: this.getIpmiActions.bind(this),
     isActionVisible: this.isIpmiActionVisible,
     edit: (row: IpmiRow) => {
       const ipmiEditForm = this.slideInService.open(IpmiFormComponent);
-      ipmiEditForm.setIpmiForm(row);
+      ipmiEditForm.setIdIpmi(row.id);
     },
   };
 

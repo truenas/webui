@@ -9,7 +9,7 @@ export interface JiraOauthHarnessFilters extends BaseHarnessFilters {
 }
 
 export class JiraOauthHarness extends ComponentHarness implements IxFormControlHarness {
-  static hostSelector = 'app-jira-oauth';
+  static hostSelector = 'ix-jira-oauth';
 
   static with(options: JiraOauthHarnessFilters): HarnessPredicate<JiraOauthHarness> {
     return new HarnessPredicate(JiraOauthHarness, options)

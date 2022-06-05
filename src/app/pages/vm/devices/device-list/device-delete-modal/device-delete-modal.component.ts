@@ -15,7 +15,6 @@ export interface DeviceDeleteModalState {
 
 @UntilDestroy()
 @Component({
-  selector: 'device-delete-modal',
   styleUrls: ['./device-delete-modal.component.scss'],
   templateUrl: './device-delete-modal.component.html',
 })

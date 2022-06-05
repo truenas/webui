@@ -16,8 +16,11 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { MatSortModule } from '@angular/material/sort';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterModule } from '@angular/router';
+import { StoreModule } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { NgxDatatableModule } from '@swimlane/ngx-datatable';
 import { NgxFilesizeModule } from 'ngx-filesize';
@@ -26,11 +29,14 @@ import { CoreComponents } from 'app/core/core-components.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { AppLoaderModule } from 'app/modules/app-loader/app-loader.module';
 import { CastModule } from 'app/modules/cast/cast.module';
+import { AppCommonModule } from 'app/modules/common/app-common.module';
 import { MessageService } from 'app/modules/entity/entity-form/services/message.service';
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxTableModule } from 'app/modules/ix-tables/ix-table.module';
 import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
+import { userReducer } from 'app/pages/account/users/store/user.reducer';
+import { userStateKey } from 'app/pages/account/users/store/user.selectors';
 import { DiskBulkEditComponent } from 'app/pages/storage/disks/disk-bulk-edit/disk-bulk-edit.component';
 import { DiskFormComponent } from 'app/pages/storage/disks/disk-form/disk-form.component';
 import { DiskListComponent } from 'app/pages/storage/disks/disk-list/disk-list.component';
@@ -42,10 +48,10 @@ import { SnapshotsModule } from 'app/pages/storage/snapshots/snapshots.module';
 import { VmwareSnapshotFormComponent } from 'app/pages/storage/vmware-snapshot/vmware-snapshot-form/vmware-snapshot-form.component';
 import { VmwareSnapshotListComponent } from 'app/pages/storage/vmware-snapshot/vmware-snapshot-list/vmware-snapshot-list.component';
 import { DatasetFormComponent } from 'app/pages/storage/volumes/datasets/dataset-form/dataset-form.component';
+import { DatasetQuotaAddFormComponent } from 'app/pages/storage/volumes/datasets/dataset-quotas/dataset-quota-add-form/dataset-quota-add-form.component';
+import { DatasetQuotaEditFormComponent } from 'app/pages/storage/volumes/datasets/dataset-quotas/dataset-quota-edit-form/dataset-quota-edit-form.component';
 import { DatasetQuotasGrouplistComponent } from 'app/pages/storage/volumes/datasets/dataset-quotas/dataset-quotas-grouplist/dataset-quotas-grouplist.component';
-import { GroupQuotaFormComponent } from 'app/pages/storage/volumes/datasets/dataset-quotas/dataset-quotas-grouplist/group-quota-form/group-quota-form.component';
 import { DatasetQuotasUserlistComponent } from 'app/pages/storage/volumes/datasets/dataset-quotas/dataset-quotas-userlist/dataset-quotas-userlist.component';
-import { UserQuotaFormComponent } from 'app/pages/storage/volumes/datasets/dataset-quotas/dataset-quotas-userlist/user-quota-form/user-quota-form.component';
 import { DatasetUnlockComponent } from 'app/pages/storage/volumes/datasets/dataset-unlock/dataset-unlock.component';
 import { UnlockDialogComponent } from 'app/pages/storage/volumes/datasets/dataset-unlock/unlock-dialog/unlock-dialog.component';
 import { DeleteDatasetDialogComponent } from 'app/pages/storage/volumes/delete-dataset-dialog/delete-dataset-dialog.component';
@@ -68,6 +74,9 @@ import { DatasetAclEditorStore } from 'app/pages/storage/volumes/permissions/sto
 import { PermissionsSidebarStore } from 'app/pages/storage/volumes/permissions/stores/permissions-sidebar.store';
 import { VolumeImportWizardComponent } from 'app/pages/storage/volumes/volume-import-wizard/volume-import-wizard.component';
 import { VolumesListControlsComponent } from 'app/pages/storage/volumes/volume-list-controls/volumes-list-controls.component';
+import {
+  ReplaceDiskDialogComponent,
+} from 'app/pages/storage/volumes/volume-status/components/replace-disk-dialog/replace-disk-dialog.component';
 import { VolumeStatusComponent } from 'app/pages/storage/volumes/volume-status/volume-status.component';
 import { ExportDisconnectModalComponent } from 'app/pages/storage/volumes/volumes-list/components/export-disconnect-modal.component';
 import { VolumesListComponent } from 'app/pages/storage/volumes/volumes-list/volumes-list.component';
@@ -75,10 +84,10 @@ import { ZvolFormComponent } from 'app/pages/storage/volumes/zvol/zvol-form/zvol
 import { ZvolWizardComponent } from 'app/pages/storage/volumes/zvol/zvol-wizard/zvol-wizard.component';
 import { UserService, StorageService, JobService } from 'app/services';
 import { routing } from './storage.routing';
-import { DatasetQuotaFormComponent } from './volumes/datasets/dataset-quotas/dataset-quota-form/dataset-quota-form.component';
 
 @NgModule({
   imports: [
+    AppCommonModule,
     AppLoaderModule,
     CastModule,
     CdkAccordionModule,
@@ -105,11 +114,14 @@ import { DatasetQuotaFormComponent } from './volumes/datasets/dataset-quotas/dat
     MatCheckboxModule,
     MatDialogModule,
     MatProgressSpinnerModule,
+    MatSlideToggleModule,
+    MatSortModule,
     NgxDatatableModule,
     NgxFilesizeModule,
     ReactiveFormsModule,
     RouterModule,
     routing,
+    StoreModule.forFeature(userStateKey, userReducer),
     TooltipModule,
     TranslateModule,
     TreeTableModule,
@@ -132,7 +144,6 @@ import { DatasetQuotaFormComponent } from './volumes/datasets/dataset-quotas/dat
     EditPosixAceComponent,
     EncryptionOptionsDialogComponent,
     ExportDisconnectModalComponent,
-    GroupQuotaFormComponent,
     ImportDiskComponent,
     ManagerComponent,
     NfsPermissionsComponent,
@@ -143,7 +154,6 @@ import { DatasetQuotaFormComponent } from './volumes/datasets/dataset-quotas/dat
     SmartResultsComponent,
     TrivialPermissionsComponent,
     UnlockDialogComponent,
-    UserQuotaFormComponent,
     VdevComponent,
     VmwareSnapshotFormComponent,
     VmwareSnapshotListComponent,
@@ -155,7 +165,9 @@ import { DatasetQuotaFormComponent } from './volumes/datasets/dataset-quotas/dat
     ZvolWizardComponent,
     DiskWipeDialogComponent,
     ManualTestDialogComponent,
-    DatasetQuotaFormComponent,
+    DatasetQuotaAddFormComponent,
+    DatasetQuotaEditFormComponent,
+    ReplaceDiskDialogComponent,
   ],
   exports: [VolumesListControlsComponent],
   providers: [

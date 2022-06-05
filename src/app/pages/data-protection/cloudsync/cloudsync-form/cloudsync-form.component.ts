@@ -43,8 +43,7 @@ import { ModalService } from 'app/services/modal.service';
 
 @UntilDestroy()
 @Component({
-  selector: 'app-cloudsync-add',
-  template: '<entity-form [conf]="this"></entity-form>',
+  template: '<ix-entity-form [conf]="this"></ix-entity-form>',
   providers: [CloudCredentialService, JobService],
 })
 export class CloudsyncFormComponent implements FormConfiguration {
@@ -630,7 +629,7 @@ export class CloudsyncFormComponent implements FormConfiguration {
   afterInit(entityForm: EntityFormComponent): void {
     this.entityForm = entityForm;
     this.formGroup = entityForm.formGroup;
-    this.pk = entityForm.pk;
+    this.pk = entityForm.pk as number;
 
     this.title = entityForm.isNew ? helptext.cloudsync_task_add : helptext.cloudsync_task_edit;
     this.credentialsField = this.fieldSets.config('credentials') as FormSelectConfig;

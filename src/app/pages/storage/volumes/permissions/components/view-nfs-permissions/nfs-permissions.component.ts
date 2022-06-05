@@ -25,7 +25,7 @@ interface PermissionDetails {
 }
 
 @Component({
-  selector: 'app-nfs-permissions',
+  selector: 'ix-nfs-permissions',
   templateUrl: 'nfs-permissions.component.html',
   styleUrls: ['./nfs-permissions.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -65,7 +65,7 @@ export class NfsPermissionsComponent implements OnChanges {
     } else {
       arePermissionsBasic = false;
       permissions = Object.entries(ace.perms)
-        .filter(([_, isOn]) => isOn)
+        .filter(([, isOn]) => isOn)
         .map(([permission]) => {
           return this.translate.instant(nfsAdvancedPermissionLabels.get(permission as NfsAdvancedPermission));
         });
@@ -81,7 +81,7 @@ export class NfsPermissionsComponent implements OnChanges {
     } else {
       areFlagsBasic = false;
       flags = Object.entries(ace.flags)
-        .filter(([_, isOn]) => isOn)
+        .filter(([, isOn]) => isOn)
         .map(([flag]) => {
           return this.translate.instant(nfsAdvancedFlagLabels.get(flag as NfsAdvancedFlag));
         });

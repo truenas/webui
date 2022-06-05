@@ -37,13 +37,13 @@
   <ng-template #loaded>
     <div *appLet="availableJobs$ | async as jobs">
       <div class="jobs-list" *ngIf="jobs.length">
-        <app-job-item
+        <ix-job-item
           *ngFor="let job of jobs; trackBy: trackByJobId"
           [job]="job"
           [clickable]="true"
           (aborted)="onAbort(job)"
           (opened)="openEntityJobDialog(job)"
-        ></app-job-item>
+        ></ix-job-item>
       </div>
 
       <div *ngIf="!jobs.length" class="no-jobs">

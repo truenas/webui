@@ -1,7 +1,6 @@
 import { Subject } from 'rxjs';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { WizardConfiguration } from 'app/interfaces/entity-wizard.interface';
-import { ControlConfig } from 'app/modules/entity/entity-toolbar/models/control-config.interface';
 import { Control } from 'app/modules/entity/entity-toolbar/models/control.interface';
 
 /**
@@ -28,6 +27,5 @@ export interface ModalSpecificConfiguration {
   title?: string;
   columnsOnForm?: number;
   isOneColumnForm?: boolean;
-  titleBarControls?: ControlConfig[];
   controller?: Subject<Control>;
 }

@@ -1,3 +1,12 @@
+<ng-template #pageHeader>
+  <ix-page-title-header>
+    <ix-search-input
+      [disabled]="loading"
+      (search)="onSearch($event)"
+    ></ix-search-input>
+  </ix-page-title-header>
+</ng-template>
+
 <mat-card>
   <mat-card-content>
     <table ix-table [dataSource]="dataSource">
@@ -58,7 +67,7 @@
 
       <tr class="mat-row no-data-row" *matNoDataRow>
         <td class="mat-cell" [attr.colspan]="displayedColumns.length">
-          <entity-empty [conf]="loadingConf"></entity-empty>
+          <ix-entity-empty [conf]="loadingConf"></ix-entity-empty>
         </td>
       </tr>
     </table>

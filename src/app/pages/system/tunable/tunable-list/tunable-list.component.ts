@@ -11,7 +11,7 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
 @Component({
-  template: '<entity-table [title]="title" [conf]="this"></entity-table>',
+  template: '<ix-entity-table [title]="title" [conf]="this"></ix-entity-table>',
 })
 export class TunableListComponent implements EntityTableConfig {
   title: string = this.translate.instant('Sysctl');

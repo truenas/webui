@@ -17,7 +17,7 @@ import { ThemeService } from 'app/services/theme/theme.service';
 import { AppState } from 'app/store/index';
 
 @Component({
-  selector: 'enclosure-disks-mini',
+  selector: 'ix-enclosure-disks-mini',
   templateUrl: './enclosure-disks-mini.component.html',
   styleUrls: ['../enclosure-disks/enclosure-disks.component.scss'],
 })

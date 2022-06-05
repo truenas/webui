@@ -20,7 +20,6 @@ import { WebSocketService } from 'app/services';
 
 @UntilDestroy()
 @Component({
-  selector: 'entity-job',
   templateUrl: 'entity-job.component.html',
   styleUrls: ['./entity-job.component.scss'],
 })
@@ -29,7 +28,7 @@ export class EntityJobComponent implements OnInit, AfterViewChecked {
   progressTotalPercent = 0;
   description: string;
   method: ApiMethod;
-  args: any[] = [];
+  args: ApiDirectory[keyof ApiDirectory]['params'] = [];
 
   title = '';
   showHttpProgress = false;

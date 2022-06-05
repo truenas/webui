@@ -1,4 +1,3 @@
-import { HttpClient } from '@angular/common/http';
 import { MatDialog } from '@angular/material/dialog';
 import { MatDialogRef } from '@angular/material/dialog/dialog-ref';
 import { Router } from '@angular/router';
@@ -55,6 +54,7 @@ import {
 
 export class VolumesListTableConfig implements EntityTableConfig {
   hideTopActions = true;
+  disableActionsConfig = true;
   tableData: TreeNode[] = [];
   columns = [
     { name: T('Name'), prop: 'name', always_display: true },
@@ -100,7 +100,6 @@ export class VolumesListTableConfig implements EntityTableConfig {
     protected translate: TranslateService,
     protected storageService: StorageService,
     protected volumeData: VolumesListPool,
-    protected http: HttpClient,
   ) {
     if (typeof (this.classId) !== 'undefined' && this.classId !== '' && volumeData && volumeData['children']) {
       this.tableData = volumeData['children'].map((child) => {
@@ -135,10 +134,10 @@ export class VolumesListTableConfig implements EntityTableConfig {
           this.ws.call('core.download', ['pool.dataset.export_keys', [row1.name], fileName]).pipe(untilDestroyed(this, 'destroy')).subscribe((res) => {
             this.loader.close();
             const url = res[1];
-            this.storageService.streamDownloadFile(this.http, url, fileName, mimetype)
+            this.storageService.streamDownloadFile(url, fileName, mimetype)
               .pipe(untilDestroyed(this, 'destroy'))
               .subscribe((file) => {
-                if (res !== null && (res as any) !== '') {
+                if (res !== null && (res[1]) !== '') {
                   this.storageService.downloadBlob(file, fileName);
                 }
               });
@@ -769,7 +768,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
                   this.ws.call('core.download', ['pool.dataset.export_key', [rowData.id, true], fileName]).pipe(untilDestroyed(this, 'destroy')).subscribe((res) => {
                     this.loader.close();
                     const url = res[1];
-                    this.storageService.streamDownloadFile(this.http, url, fileName, mimetype)
+                    this.storageService.streamDownloadFile(url, fileName, mimetype)
                       .pipe(untilDestroyed(this, 'destroy'))
                       .subscribe((file) => {
                         if (res !== null) {

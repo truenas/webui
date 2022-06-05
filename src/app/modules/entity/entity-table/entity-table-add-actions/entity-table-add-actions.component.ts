@@ -12,7 +12,6 @@ import { EntityTableService } from 'app/services/entity-table.service';
 
 @UntilDestroy()
 @Component({
-  selector: 'app-entity-table-add-actions',
   templateUrl: './entity-table-add-actions.component.html',
   styleUrls: ['./entity-table-add-actions.component.scss'],
 })
@@ -37,7 +36,7 @@ export class EntityTableAddActionsComponent implements GlobalAction, OnInit, Aft
   ngOnInit(): void {
     this.actions = this.entity.getAddActions();
 
-    this.entityTableService.addActionsUpdater$.pipe(untilDestroyed(this)).subscribe((actions: any) => {
+    this.entityTableService.addActionsUpdater$.pipe(untilDestroyed(this)).subscribe((actions: EntityTableAction[]) => {
       this.actions = actions;
     });
   }
@@ -48,7 +47,7 @@ export class EntityTableAddActionsComponent implements GlobalAction, OnInit, Aft
 
   applyConfig(entity: EntityTableComponent): void {
     this.entity = entity;
-    this.conf = entity.conf;
+    this.conf = entity.conf as EntityTableAddActionsConfig;
     this.filterInit();
   }
 

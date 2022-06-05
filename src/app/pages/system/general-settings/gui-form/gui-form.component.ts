@@ -224,7 +224,7 @@ export class GuiFormComponent {
     ).subscribe(([config, preferences]) => {
       this.configData = config;
       this.formGroup.patchValue({
-        theme: this.themeService.getNormalizedThemeName(preferences.userTheme),
+        theme: preferences.userTheme,
         ui_certificate: config.ui_certificate?.id.toString(),
         ui_address: config.ui_address,
         ui_v6address: config.ui_v6address,

@@ -14,7 +14,7 @@
   <div class="label-container" fxFlex="100" fxLayoutAlign="start center">
     <label class="label input-text">{{config.placeholder | translate}}</label>
     <span *ngIf="config.required">*</span>
-    <tooltip fxFlex="48px" *ngIf="config.tooltip" [header]="config.placeholder" [message]="config.tooltip"></tooltip>
+    <ix-tooltip fxFlex="48px" *ngIf="config.tooltip" [header]="config.placeholder" [message]="config.tooltip"></ix-tooltip>
   </div>
   <div fxFlex="100" fxLayout="row" fxLayoutGap="3px">
     <mat-form-field fxFlex="calc(100% - 72px - 16px)" class="display-none">

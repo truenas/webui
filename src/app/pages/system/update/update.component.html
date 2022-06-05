@@ -14,7 +14,7 @@
         (change)="toggleAutoCheck()"
         ix-auto ix-auto-type="checkbox" ix-auto-identifier="daily-updates"
       >{{"Check for Updates Daily and Download if Available" | translate}}</mat-checkbox>
-      <tooltip [message]=updatecheck_tooltip ix-auto ix-auto-type="tooltip-icon" ix-auto-identifier="update-check"></tooltip>
+      <ix-tooltip [message]=updatecheck_tooltip ix-auto ix-auto-type="tooltip-icon" ix-auto-identifier="update-check"></ix-tooltip>
     </div>
     <div class="train-card-row train-select-row" *ngIf="trains.length > 1; else trainName">
       <mat-label id="train-label">{{"Train" | translate}}</mat-label>

@@ -22,8 +22,7 @@ import { WebSocketService, AppLoaderService, DialogService } from 'app/services/
 
 @UntilDestroy()
 @Component({
-  selector: 'app-alertservice',
-  template: '<entity-form [conf]="this"></entity-form>',
+  template: '<ix-entity-form [conf]="this"></ix-entity-form>',
   providers: [EntityFormService],
 })
 export class AlertServiceComponent implements FormConfiguration {
@@ -796,7 +795,7 @@ export class AlertServiceComponent implements FormConfiguration {
         },
       );
     } else {
-      this.ws.call(this.editCall, [this.entityForm.pk, payload]).pipe(untilDestroyed(this)).subscribe(
+      this.ws.call(this.editCall, [this.entityForm.pk as number, payload]).pipe(untilDestroyed(this)).subscribe(
         () => {
           this.loader.close();
           this.router.navigate(new Array('/').concat(this.routeSuccess));

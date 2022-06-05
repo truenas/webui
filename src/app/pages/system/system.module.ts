@@ -1,10 +1,11 @@
-import { CommonModule } from '@angular/common';
+import { CommonModule, DatePipe } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatDialogModule } from '@angular/material/dialog';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
@@ -22,6 +23,7 @@ import { NgxUploaderModule } from 'ngx-uploader';
 import { CoreComponents } from 'app/core/core-components.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { CastModule } from 'app/modules/cast/cast.module';
+import { AppCommonModule } from 'app/modules/common/app-common.module';
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxTableModule } from 'app/modules/ix-tables/ix-table.module';
@@ -36,6 +38,7 @@ import { InitShutdownFormComponent } from 'app/pages/system/advanced/initshutdow
 import { InitshutdownListComponent } from 'app/pages/system/advanced/initshutdown/initshutdown-list/initshutdown-list.component';
 import { IsolatedGpuPcisFormComponent } from 'app/pages/system/advanced/isolated-gpu-pcis/isolated-gpu-pcis-form.component';
 import { KernelFormComponent } from 'app/pages/system/advanced/kernel-form/kernel-form.component';
+import { SaveDebugButtonComponent } from 'app/pages/system/advanced/save-debug-button/save-debug-button.component';
 import { SedFormComponent } from 'app/pages/system/advanced/sed-form/sed-form.component';
 import { SyslogFormComponent } from 'app/pages/system/advanced/syslog-form/syslog-form.component';
 import { SystemDatasetPoolComponent } from 'app/pages/system/advanced/system-dataset-pool/system-dataset-pool.component';
@@ -53,8 +56,14 @@ import { FailoverSettingsComponent } from 'app/pages/system/failover-settings/fa
 import { GeneralSettingsComponent } from 'app/pages/system/general-settings/general-settings.component';
 import { GuiFormComponent } from 'app/pages/system/general-settings/gui-form/gui-form.component';
 import { LocalizationFormComponent } from 'app/pages/system/general-settings/localization-form/localization-form.component';
+import {
+  ManageConfigurationMenuComponent,
+} from 'app/pages/system/general-settings/manage-configuration-menu/manage-configuration-menu.component';
 import { NtpServerFormComponent } from 'app/pages/system/general-settings/ntp-server/ntp-server-form/ntp-server-form.component';
 import { NtpServerListComponent } from 'app/pages/system/general-settings/ntp-server/ntp-server-list/ntp-server-list.component';
+import {
+  SaveConfigDialogComponent,
+} from 'app/pages/system/general-settings/save-config-dialog/save-config-dialog.component';
 import { EulaComponent } from 'app/pages/system/general-settings/support/eula/eula.component';
 import { JiraOauthComponent } from 'app/pages/system/general-settings/support/file-ticket-form/components/jira-oauth/jira-oauth.component';
 import { FileTicketFormComponent } from 'app/pages/system/general-settings/support/file-ticket-form/file-ticket-form.component';
@@ -63,11 +72,14 @@ import { LicenseComponent } from 'app/pages/system/general-settings/support/lice
 import { ProactiveComponent } from 'app/pages/system/general-settings/support/proactive/proactive.component';
 import { SupportComponent } from 'app/pages/system/general-settings/support/support.component';
 import { SysInfoComponent } from 'app/pages/system/general-settings/support/sys-info/sys-info.component';
+import {
+  UploadConfigDialogComponent,
+} from 'app/pages/system/general-settings/upload-config-dialog/upload-config-dialog.component';
 import { TunableFormComponent } from 'app/pages/system/tunable/tunable-form/tunable-form.component';
 import { TunableListComponent } from 'app/pages/system/tunable/tunable-list/tunable-list.component';
 import { QrDialogComponent } from 'app/pages/system/two-factor/qr-dialog/qr-dialog.component';
 import { TwoFactorComponent } from 'app/pages/system/two-factor/two-factor.component';
-import { ManualUpdateComponent } from 'app/pages/system/update/manual-update/manual-update.component';
+import { ManualUpdateFormComponent } from 'app/pages/system/update/manual-update-form/manual-update-form.component';
 import { UpdateComponent } from 'app/pages/system/update/update.component';
 import { EnclosureModule } from 'app/pages/system/view-enclosure/enclosure.module';
 import { ReplicationFormComponent } from './advanced/replication-form/replication-form.component';
@@ -107,6 +119,8 @@ import { routing } from './system.routing';
     TooltipModule,
     TranslateModule,
     NgxFilesizeModule,
+    MatDialogModule,
+    AppCommonModule,
   ],
   declarations: [
     AdvancedSettingsComponent,
@@ -135,7 +149,7 @@ import { routing } from './system.routing';
     KernelFormComponent,
     LicenseComponent,
     LocalizationFormComponent,
-    ManualUpdateComponent,
+    ManualUpdateFormComponent,
     NtpServerFormComponent,
     NtpServerListComponent,
     ProactiveComponent,
@@ -152,9 +166,14 @@ import { routing } from './system.routing';
     UpdateComponent,
     BootenvStatsDialogComponent,
     CronFormComponent,
+    SaveConfigDialogComponent,
+    UploadConfigDialogComponent,
+    ManageConfigurationMenuComponent,
+    SaveDebugButtonComponent,
   ],
   providers: [
     TranslateService,
+    DatePipe,
   ],
 })
 export class SystemModule {}

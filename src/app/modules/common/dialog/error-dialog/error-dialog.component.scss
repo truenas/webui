@@ -33,3 +33,12 @@
     white-space: pre-wrap;
   }
 }
+
+.scrolled-down {
+  display: flex;
+  flex-direction: column-reverse;
+}
+
+#err-md-content {
+  overflow-y: auto !important;
+}

@@ -1,40 +1,35 @@
 import {
-  Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef,
+  Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, ViewChild, TemplateRef, AfterViewInit,
 } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { NavigationExtras, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { Subject } from 'rxjs';
 import {
   filter, map, switchMap,
 } from 'rxjs/operators';
 import { ServiceName, serviceNames } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
-import { CoreEvent } from 'app/interfaces/events';
 import { Service, ServiceRow } from 'app/interfaces/service.interface';
 import { EmptyConfig, EmptyType } from 'app/modules/entity/entity-empty/entity-empty.component';
-import { EntityToolbarComponent } from 'app/modules/entity/entity-toolbar/entity-toolbar.component';
-import { ToolbarConfig } from 'app/modules/entity/entity-toolbar/models/control-config.interface';
 import { IscsiService } from 'app/services/';
-import { CoreService } from 'app/services/core-service/core.service';
 import { DialogService } from 'app/services/dialog.service';
+import { LayoutService } from 'app/services/layout.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
-  selector: 'services',
+  selector: 'ix-services',
   styleUrls: ['./services.component.scss'],
   templateUrl: './services.component.html',
   providers: [IscsiService],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ServicesComponent implements OnInit {
+export class ServicesComponent implements OnInit, AfterViewInit {
+  @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
+
   dataSource: MatTableDataSource<ServiceRow> = new MatTableDataSource([]);
   displayedColumns = ['name', 'state', 'enable', 'actions'];
-  toolbarConfig: ToolbarConfig;
-  settingsEvent$: Subject<CoreEvent> = new Subject();
-  filterString = '';
   error = false;
   loading = true;
   loadingConf: EmptyConfig = {
@@ -54,13 +49,16 @@ export class ServicesComponent implements OnInit {
     private dialog: DialogService,
     private iscsiService: IscsiService,
     private cdr: ChangeDetectorRef,
-    private core: CoreService,
+    private layoutService: LayoutService,
   ) {}
 
   ngOnInit(): void {
-    this.setupToolbar();
     this.getData();
     this.getUpdates();
+  }
+
+  ngAfterViewInit(): void {
+    this.layoutService.pageHeaderUpdater$.next(this.pageHeader);
   }
 
   getData(): void {
@@ -229,36 +227,7 @@ export class ServicesComponent implements OnInit {
     }
   }
 
-  setupToolbar(): void {
-    this.settingsEvent$ = new Subject();
-    this.settingsEvent$.pipe(
-      untilDestroyed(this),
-    ).subscribe((event: CoreEvent) => {
-      if (event.data.event_control === 'filter') {
-        this.filterString = event.data.filter;
-        this.dataSource.filter = event.data.filter;
-      }
-    });
-
-    const controls = [
-      {
-        name: 'filter',
-        type: 'input',
-        value: this.filterString,
-        placeholder: this.translate.instant('Search'),
-      },
-    ];
-
-    const toolbarConfig = {
-      target: this.settingsEvent$,
-      controls,
-    };
-    const settingsConfig = {
-      actionType: EntityToolbarComponent,
-      actionConfig: toolbarConfig,
-    };
-
-    this.toolbarConfig = toolbarConfig;
-    this.core.emit({ name: 'GlobalActions', data: settingsConfig, sender: this });
+  onSearch(query: string): void {
+    this.dataSource.filter = query;
   }
 }

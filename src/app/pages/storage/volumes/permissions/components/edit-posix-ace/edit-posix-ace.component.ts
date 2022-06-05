@@ -123,7 +123,7 @@ export class EditPosixAceComponent implements OnInit, OnChanges {
       group: this.ace.tag === PosixAclTag.Group ? this.ace.who : '',
       default: this.ace.default,
       permissions: Object.entries(this.ace.perms)
-        .filter(([_, isOn]) => isOn)
+        .filter(([, isOn]) => isOn)
         .map(([permission]) => permission as PosixPermission),
     };
 

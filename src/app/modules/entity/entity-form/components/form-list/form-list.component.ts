@@ -7,7 +7,7 @@ import { EntityFormService } from 'app/modules/entity/entity-form/services/entit
 import { FieldRelationService } from 'app/modules/entity/entity-form/services/field-relation.service';
 
 @Component({
-  selector: 'entity-form-list',
+  selector: 'ix-entity-form-list',
   templateUrl: './form-list.component.html',
   styleUrls: ['./form-list.component.scss', '../dynamic-field/dynamic-field.scss'],
 })

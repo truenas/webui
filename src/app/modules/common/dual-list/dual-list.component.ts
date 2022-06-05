@@ -14,7 +14,7 @@ const transfer = <T>(from: ListSelection<T>, to: ListSelection<T>): {
   });
 
 @Component({
-  selector: 'app-dual-listbox',
+  selector: 'ix-dual-listbox',
   styleUrls: ['./dual-list.component.scss'],
   templateUrl: 'dual-list.component.html',
 })

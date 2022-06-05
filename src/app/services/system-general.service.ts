@@ -1,10 +1,12 @@
-import { EventEmitter, Injectable } from '@angular/core';
+import { EventEmitter, Inject, Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
 import * as Sentry from '@sentry/angular';
 import { environment } from 'environments/environment';
 import * as _ from 'lodash';
 import { Subject, Observable, combineLatest } from 'rxjs';
 import { map, shareReplay } from 'rxjs/operators';
+import { ProductType } from 'app/enums/product-type.enum';
+import { WINDOW } from 'app/helpers/window.helper';
 import { CertificateAuthority } from 'app/interfaces/certificate-authority.interface';
 import { Certificate } from 'app/interfaces/certificate.interface';
 import { Choices } from 'app/interfaces/choices.interface';
@@ -22,6 +24,10 @@ export class SystemGeneralService {
   updateRunning = new EventEmitter<string>();
   updateRunningNoticeSent = new EventEmitter<string>();
   updateIsDone$ = new Subject();
+
+  get isEnterprise(): boolean {
+    return this.window.localStorage.getItem('product_type') === ProductType.ScaleEnterprise;
+  }
 
   toggleSentryInit(): void {
     combineLatest([
@@ -52,6 +58,7 @@ export class SystemGeneralService {
 
   constructor(
     protected ws: WebSocketService,
+    @Inject(WINDOW) private window: Window,
     private store$: Store<AppState>,
   ) {}
 

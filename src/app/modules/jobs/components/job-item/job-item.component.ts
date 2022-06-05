@@ -5,7 +5,7 @@ import { JobState } from 'app/enums/job-state.enum';
 import { Job } from 'app/interfaces/job.interface';
 
 @Component({
-  selector: 'app-job-item',
+  selector: 'ix-job-item',
   templateUrl: './job-item.component.html',
   styleUrls: ['./job-item.component.scss'],
 })

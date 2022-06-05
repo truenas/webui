@@ -28,15 +28,16 @@ import { ApplicationToolbarControl } from 'app/pages/applications/application-to
 import { ApplicationsService } from 'app/pages/applications/applications.service';
 import { ChartEventsDialogComponent } from 'app/pages/applications/dialogs/chart-events/chart-events-dialog.component';
 import { ChartUpgradeDialogComponent } from 'app/pages/applications/dialogs/chart-upgrade/chart-upgrade-dialog.component';
-import { ChartFormComponent } from 'app/pages/applications/forms/chart-form.component';
+import { ChartFormComponent } from 'app/pages/applications/forms/chart-form/chart-form.component';
 import { ChartUpgradeDialogConfig } from 'app/pages/applications/interfaces/chart-upgrade-dialog-config.interface';
 import { RedirectService } from 'app/services';
 import { DialogService, WebSocketService } from 'app/services/index';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { ModalService } from 'app/services/modal.service';
 
 @UntilDestroy()
 @Component({
-  selector: 'app-charts',
+  selector: 'ix-charts',
   templateUrl: './chart-releases.component.html',
   styleUrls: ['../applications.component.scss'],
 })
@@ -146,6 +147,7 @@ export class ChartReleasesComponent implements OnInit {
     private translate: TranslateService,
     public appService: ApplicationsService,
     private modalService: ModalService,
+    private slideInService: IxSlideInService,
     private router: Router,
     protected ws: WebSocketService,
     private redirect: RedirectService,
@@ -153,6 +155,10 @@ export class ChartReleasesComponent implements OnInit {
 
   ngOnInit(): void {
     this.addChartReleaseChangedEventListener();
+
+    this.slideInService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
+      this.refreshChartReleases();
+    });
   }
 
   onToolbarAction(evt: CoreEvent): void {
@@ -367,12 +373,22 @@ export class ChartReleasesComponent implements OnInit {
 
   edit(name: string): void {
     const catalogApp = this.chartItems[name];
-    const chartFormComponent = this.modalService.openInSlideIn(ChartFormComponent, name);
-    if (catalogApp.chart_metadata.name === ixChartApp) {
-      chartFormComponent.setTitle(helptext.launch);
-    } else {
-      chartFormComponent.setTitle(catalogApp.chart_metadata.name);
-    }
+    this.appLoaderService.open();
+    this.ws.call('chart.release.query', [
+      [['id', '=', name]],
+      { extra: { include_chart_schema: true } },
+    ]).pipe(untilDestroyed(this)).subscribe((res: ChartRelease[]) => {
+      this.appLoaderService.close();
+      const form = this.slideInService.open(ChartFormComponent, { wide: true });
+      if (catalogApp.chart_metadata.name === ixChartApp) {
+        form.setTitle(helptext.launch);
+      } else {
+        form.setTitle(catalogApp.chart_metadata.name);
+      }
+      if (res.length) {
+        form.setChartEdit(res[0]);
+      }
+    });
   }
 
   getSelectedItems(): string[] {

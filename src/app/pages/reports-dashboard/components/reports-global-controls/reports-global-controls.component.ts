@@ -1,21 +1,31 @@
 import {
-  Component,
+  Component, EventEmitter, Input, Output,
 } from '@angular/core';
 import { ReportTab } from 'app/enums/report-tab.enum';
-import { GlobalAction } from 'app/interfaces/global-action.interface';
-import { ReportsDashboardComponent } from 'app/pages/reports-dashboard/reports-dashboard.component';
+import { ToolbarConfig } from 'app/modules/entity/entity-toolbar/models/control-config.interface';
+import { Tab } from 'app/pages/reports-dashboard/reports-dashboard.component';
 
 @Component({
-  selector: 'reports-global-controls',
+  selector: 'ix-reports-global-controls',
   templateUrl: './reports-global-controls.component.html',
   styleUrls: ['./reports-global-controls.component.scss'],
 })
-export class ReportsGlobalControlsComponent implements GlobalAction {
+export class ReportsGlobalControlsComponent {
+  @Input() activeTab: Tab;
+  @Input() allTabs: Tab[];
+  @Input() activeTabVerified: boolean;
+  @Input() toolbarConfig: ToolbarConfig;
+
+  @Output() showConfigForm = new EventEmitter<void>();
+  @Output() navigateToTab = new EventEmitter<Tab>();
+
   readonly ReportTab = ReportTab;
 
-  config: ReportsDashboardComponent; // Reports page
+  onShowConfigForm(): void {
+    this.showConfigForm.emit();
+  }
 
-  applyConfig(conf: ReportsDashboardComponent): void {
-    this.config = conf;
+  onNavigateToTab(tab: Tab): void {
+    this.navigateToTab.emit(tab);
   }
 }

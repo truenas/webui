@@ -62,7 +62,7 @@ export class FileTicketLicensedFormComponent implements OnInit {
     title: ['', Validators.required],
     body: ['', Validators.required],
     attach_debug: [false],
-    screenshot: [null as FileList],
+    screenshot: [null as File[]],
   });
 
   readonly acceptedFiles = ticketAcceptedFiles;
@@ -85,9 +85,6 @@ export class FileTicketLicensedFormComponent implements OnInit {
   };
 
   private screenshots: File[] = [];
-  private get apiEndPoint(): string {
-    return '/_upload?auth_token=' + this.ws.token;
-  }
   jobs$: BehaviorSubject<Observable<Job>[]> = new BehaviorSubject([]);
 
   constructor(
@@ -172,7 +169,7 @@ export class FileTicketLicensedFormComponent implements OnInit {
           this.fileUpload.upload(file, 'support.attach_ticket', [{
             ticket: job.result.ticket,
             filename: file.name,
-          }], this.apiEndPoint);
+          }]);
         }
       } else {
         this.isFormLoading = false;

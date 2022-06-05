@@ -7,7 +7,7 @@ import { EntityTableAction, EntityTableColumn } from 'app/modules/entity/entity-
 import { TaskService } from 'app/services';
 
 @Component({
-  selector: 'app-entity-table-row-details',
+  selector: 'ix-entity-table-row-details',
   templateUrl: './entity-table-row-details.component.html',
   styleUrls: ['./entity-table-row-details.component.scss'],
 })

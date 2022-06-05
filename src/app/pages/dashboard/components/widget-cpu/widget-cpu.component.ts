@@ -30,7 +30,7 @@ import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 
 @UntilDestroy()
 @Component({
-  selector: 'widget-cpu',
+  selector: 'ix-widget-cpu',
   templateUrl: './widget-cpu.component.html',
   styleUrls: [
     '../widget/widget.component.scss',
@@ -335,8 +335,8 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
     // Create the data...
     data.forEach((item, index) => {
       const ds: ChartDataSets = {
-        label: item[0] as any,
-        data: data[index].slice(1) as any,
+        label: item[0] as string,
+        data: data[index].slice(1) as number[],
         backgroundColor: '',
         borderColor: '',
         borderWidth: 1,

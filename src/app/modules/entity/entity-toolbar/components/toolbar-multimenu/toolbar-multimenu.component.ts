@@ -3,11 +3,11 @@ import {
 } from '@angular/core';
 import { Subject } from 'rxjs';
 import { getUniqueId } from 'app/helpers/get-unique-id.helper';
-import { ControlConfig } from 'app/modules/entity/entity-toolbar/models/control-config.interface';
+import { ControlConfig, ToolbarOption } from 'app/modules/entity/entity-toolbar/models/control-config.interface';
 import { Control } from 'app/modules/entity/entity-toolbar/models/control.interface';
 
 @Component({
-  selector: 'toolbar-multimenu',
+  selector: 'ix-toolbar-multimenu',
   styleUrls: ['toolbar-multimenu.component.scss'],
   templateUrl: 'toolbar-multimenu.component.html',
 })
@@ -15,7 +15,7 @@ export class ToolbarMultimenuComponent implements OnInit {
   @Input() config?: ControlConfig;
   @Input() controller: Subject<Control>;
   allSelected = false;
-  values: any[] = [];
+  values: ToolbarOption[] = [];
   selectStates: boolean [] = [];
   id = getUniqueId();
 
@@ -42,7 +42,7 @@ export class ToolbarMultimenuComponent implements OnInit {
     this.updateController();
   }
 
-  onClick(value: any, index: number): void {
+  onClick(value: ToolbarOption, index: number): void {
     if (this.selectStates[index]) {
       if (this.checkLength()) { this.allSelected = false; }
       const vIndex = this.values.indexOf(value);

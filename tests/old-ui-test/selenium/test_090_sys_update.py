@@ -17,7 +17,7 @@ script_name = os.path.basename(__file__).partition('.')[0]
 xpaths = {
     'navSystem': "//*[@id='nav-2']/div/a[1]",
     'submenuUpdate': "//a[contains(text(),'Update')]",
-    'buttonChecknow': "/html/body/app-root/app-admin-layout/mat-sidenav-container/mat-sidenav-content/div/app-update/mat-card/div/div[3]/div/button[1]",
+    'buttonChecknow': "/html/body/ix-root/ix-admin-layout/mat-sidenav-container/mat-sidenav-content/div/ix-update/mat-card/div/div[3]/div/button[1]",
     'breadcrumbBar1': "//div[@id='breadcrumb-bar']/ul/li/a",
     'breadcrumbBar2': "//*[@id='breadcrumb-bar']/ul/li[2]/a",
     'toDashboard': "//span[contains(.,'Dashboard')]"
@@ -51,8 +51,8 @@ def test_02_check_update_now(browser):
     browser.find_element_by_xpath(xpaths['buttonChecknow']).click()
     time.sleep(1)
     # get the ui element, check if first element is present, if yes, check value text if as expected
-    if is_element_present(browser, "/html/body/app-root/app-admin-layout/mat-sidenav-container/mat-sidenav-content/div/app-update/mat-card[1]/div/div[4]/div/table/tbody/tr[1]/td[1]"):
-        ui_element = browser.find_element_by_xpath("/html/body/app-root/app-admin-layout/mat-sidenav-container/mat-sidenav-content/div/app-update/mat-card[1]/div/div[4]/div/table/tbody/tr[1]/td[1]")
+    if is_element_present(browser, "/html/body/ix-root/ix-admin-layout/mat-sidenav-container/mat-sidenav-content/div/ix-update/mat-card[1]/div/div[4]/div/table/tbody/tr[1]/td[1]"):
+        ui_element = browser.find_element_by_xpath("/html/body/ix-root/ix-admin-layout/mat-sidenav-container/mat-sidenav-content/div/ix-update/mat-card[1]/div/div[4]/div/table/tbody/tr[1]/td[1]")
         update_data = ui_element.text
         if update_data == "Upgrade":
             print("There is an available upgrade")
@@ -62,8 +62,8 @@ def test_02_check_update_now(browser):
         else:
             print("There is an unexpected issue: it is not an upgrade")
             error_check_sys()
-    elif is_element_present(browser, "/html/body/app-root/app-admin-layout/md-sidenav-container/div[6]/div/app-update/md-card/div/div[4]/div/div"):
-        ui_element2 = browser.find_element_by_xpath("/html/body/app-root/app-admin-layout/md-sidenav-container/div[6]/div/app-update/md-card/div/div[4]/div/div")
+    elif is_element_present(browser, "/html/body/ix-root/ix-admin-layout/md-sidenav-container/div[6]/div/ix-update/md-card/div/div[4]/div/div"):
+        ui_element2 = browser.find_element_by_xpath("/html/body/ix-root/ix-admin-layout/md-sidenav-container/div[6]/div/ix-update/md-card/div/div[4]/div/div")
         update_data2 = ui_element2.text
         if "No" in update_data2:
             print("There is no update available")

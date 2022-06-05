@@ -1,4 +1,22 @@
-<entity-empty *ngIf="isLoading$ | async; else loaded" [conf]="loadingConfig"></entity-empty>
+<ng-template #pageHeader>
+  <ix-page-title-header>
+    <ix-search-input [disabled]="isLoading$ | async" (search)="onSearch($event)"></ix-search-input>
+    <mat-slide-toggle
+      (change)="toggleBuiltins()"
+      [checked]="!hideBuiltinGroups"
+      [disabled]="isLoading$ | async"
+    >
+      <label>{{ 'Show Built-In Groups' | translate }}</label>
+    </mat-slide-toggle>
+    <button
+      mat-button
+      color="primary"
+      (click)="doAdd()"
+    >{{ 'Add' | translate }}</button>
+  </ix-page-title-header>
+</ng-template>
+
+<ix-entity-empty *ngIf="isLoading$ | async; else loaded" [conf]="loadingConfig"></ix-entity-empty>
 
 <ng-template #loaded>
   <mat-card>
@@ -52,7 +70,7 @@
 
         <tr class="mat-row no-data-row" *matNoDataRow>
           <td class="mat-cell" [attr.colspan]="displayedColumns.length">
-            <entity-empty [conf]="emptyOrErrorConfig$ | async"></entity-empty>
+            <ix-entity-empty [conf]="emptyOrErrorConfig$ | async"></ix-entity-empty>
           </td>
         </tr>
       </table>
@@ -63,5 +81,5 @@
 </ng-template>
 
 <ng-template #expandedRowTemplate let-group let-colspan="colspan">
-  <group-details-row [group]="group" [colspan]="colspan"></group-details-row>
+  <ix-group-details-row [group]="group" [colspan]="colspan"></ix-group-details-row>
 </ng-template>

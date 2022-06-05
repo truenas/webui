@@ -43,7 +43,7 @@ interface NicInfoMap {
 
 @UntilDestroy()
 @Component({
-  selector: 'widget-network',
+  selector: 'ix-widget-network',
   templateUrl: './widget-network.component.html',
   styleUrls: [
     '../widget/widget.component.scss',
@@ -121,7 +121,7 @@ export class WidgetNetworkComponent extends WidgetComponent implements OnInit, A
                 return 0;
               }
 
-              const converted = this.utils.convert(value);
+              const converted = this.utils.convert(value as number);
               return parseFloat(converted.value).toFixed(1) + converted.units.charAt(0);
             },
           },

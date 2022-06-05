@@ -32,7 +32,7 @@ export interface AppTableColumn {
   prop2?: string;
   checkbox?: boolean;
   slideToggle?: boolean;
-  onChange?(data: any): void;
+  onChange?(data: unknown): void;
   width?: string;
   state?: any;
   button?: boolean;
@@ -71,7 +71,7 @@ export interface AppTableConfig<P = any> {
     title: string;
     key_props: string[];
     id_prop?: string;
-    doubleConfirm?(item: any): Observable<boolean>;
+    doubleConfirm?(item: unknown): Observable<boolean>;
   }; //
   tableComponent?: TableComponent;
   emptyEntityLarge?: boolean;
@@ -87,11 +87,11 @@ export interface AppTableConfig<P = any> {
   afterDelete?(): void;
   edit?(any: unknown): void; // edit row
   delete?(item: unknown, table: TableComponent): void; // customize delete row method
-  dataSourceHelper?(any: any): any; // customise handle/modify dataSource
+  dataSourceHelper?(any: unknown[]): unknown[]; // customise handle/modify dataSource
   getInOutInfo?(any: unknown): void; // get in out info if has state column
   getActions?: () => AppTableAction[]; // actions for each row
   isActionVisible?(actionId: string, entity: unknown): boolean; // determine if action is visible
-  getDeleteCallParams?(row: any, id: any): any; // get delete Params
+  getDeleteCallParams?(row: unknown, id: string | number): unknown; // get delete Params
   onButtonClick?(row: unknown): void;
 
   expandable?: boolean; // field introduced by ExpandableTable, "fake" field
@@ -100,20 +100,20 @@ export interface AppTableConfig<P = any> {
 
 @UntilDestroy()
 @Component({
-  selector: 'app-table',
+  selector: 'ix-conf-table',
   templateUrl: './table.component.html',
   styleUrls: ['./table.component.scss'],
   providers: [TableService],
 })
-export class TableComponent implements OnInit, AfterViewInit, AfterViewChecked {
+export class TableComponent<Row = any> implements OnInit, AfterViewInit, AfterViewChecked {
   @ViewChild('table') table: ElementRef<HTMLElement>;
   LinkState = LinkState;
 
   _tableConf: AppTableConfig;
   title = '';
   titleHref: string;
-  dataSource: any[];
-  displayedDataSource: any[];
+  dataSource: Row[];
+  displayedDataSource: Row[];
   displayedColumns: string[];
   hideHeader = false;
   actions: AppTableAction[];
@@ -228,7 +228,7 @@ export class TableComponent implements OnInit, AfterViewInit, AfterViewChecked {
     this.displayedColumns = this._tableConf.columns
       .map((column) => {
         if (this.dataSource && column?.hiddenIfEmpty && !column?.hidden) {
-          const hasSomeData = this.dataSource.some((row) => row[column.prop]?.toString().trim());
+          const hasSomeData = this.dataSource.some((row) => (row as any)[column.prop]?.toString().trim());
           column.hidden = !hasSomeData;
         }
         return column;
@@ -242,19 +242,19 @@ export class TableComponent implements OnInit, AfterViewInit, AfterViewChecked {
     }
   }
 
-  editRow(row: any): void {
+  editRow(row: Row): void {
     if (this._tableConf.edit) {
       this._tableConf.edit(row);
     }
   }
 
-  onButtonClick(row: any): void {
+  onButtonClick(row: Row): void {
     if (this._tableConf.onButtonClick) {
       this._tableConf.onButtonClick(row);
     }
   }
 
-  deleteRow(row: any): void {
+  deleteRow(row: Row): void {
     if (this._tableConf.delete) {
       this._tableConf.delete(row, this);
     } else {

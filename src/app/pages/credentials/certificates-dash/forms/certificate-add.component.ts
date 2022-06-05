@@ -23,8 +23,7 @@ import { ModalService } from 'app/services/modal.service';
 
 @UntilDestroy()
 @Component({
-  selector: 'system-certificate-add',
-  template: '<entity-wizard [conf]="this"></entity-wizard>',
+  template: '<ix-entity-wizard [conf]="this"></ix-entity-wizard>',
   providers: [SystemGeneralService],
 })
 export class CertificateAddComponent implements WizardConfiguration {
@@ -975,6 +974,7 @@ export class CertificateAddComponent implements WizardConfiguration {
     // Addresses non-pristine field being mistaken for a passphrase of ''
     if (data.passphrase === '') {
       data.passphrase = undefined;
+      data.passphrase2 = undefined;
     }
 
     if (data.passphrase2) {

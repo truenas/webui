@@ -19,7 +19,6 @@ import IxValidatorsService from 'app/modules/ix-forms/services/ix-validators.ser
 import {
   IpmiIdentifyDialogComponent,
 } from 'app/pages/network/components/ipmi-identify-dialog/ipmi-identify-dialog.component';
-import { IpmiRow } from 'app/pages/network/interfaces/network-dashboard.interface';
 import { DialogService, RedirectService, WebSocketService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
@@ -32,10 +31,10 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
 })
 export class IpmiFormComponent implements OnInit {
   readonly controllerName = 'TrueNAS Controller';
-  readonly title = 'IPMI'; //
+  readonly title = 'IPMI';
   readonly helptext = helptext;
-  dataForm: Ipmi;
   remoteContrData: Ipmi;
+  defaultContrData: Ipmi;
   isDisabledManageBtn = false;
   currentControllerLabel: string;
   failoverControllerLabel: string;
@@ -85,7 +84,8 @@ export class IpmiFormComponent implements OnInit {
     private slideInService: IxSlideInService,
     private dialogService: DialogService,
     private errorHandler: FormErrorHandlerService,
-  ) {}
+  ) {
+  }
 
   ngOnInit(): void {
     this.prepareDataForm();
@@ -103,8 +103,8 @@ export class IpmiFormComponent implements OnInit {
       });
   }
 
-  setIpmiForm(dataForm: IpmiRow): void {
-    this.dataForm = { ...dataForm };
+  setIdIpmi(id: number): void {
+    this.idIpmi = id;
   }
 
   setFlashTime(): void {
@@ -112,7 +112,7 @@ export class IpmiFormComponent implements OnInit {
   }
 
   openManageWindow(): void {
-    this.redirect.openWindow(`http://${this.managementIp}`); // valuechange ipaddress
+    this.redirect.openWindow(`http://${this.managementIp}`);
   }
 
   prepareDataForm(): void {
@@ -124,22 +124,29 @@ export class IpmiFormComponent implements OnInit {
           if (isHa) {
             return this.ws.call('failover.node');
           }
-          return of(isHa);
+          return this.ws.call('ipmi.query');
         }),
         untilDestroyed(this),
       )
-        .subscribe((node) => {
-          if (node) {
-            this.createOptions(node as string);
+        .subscribe((data) => {
+          if (typeof data === 'string') {
+            this.createOptions(data);
             this.loadDataRemoteContr();
             this.form.controls['remoteController'].setValue(0);
             this.isLoading = false;
             this.cdr.markForCheck();
-          } else {
-            this.setFormValues(this.dataForm);
+          } else if (typeof data[0] === 'object') {
+            this.setFormValues(data[0]);
+            this.isLoading = false;
             this.cdr.markForCheck();
           }
         });
+    } else {
+      this.ws.call('ipmi.query').pipe(untilDestroyed(this)).subscribe((dataIpmi) => {
+        this.setFormValues(dataIpmi[0]); //
+        this.isLoading = false;
+        this.cdr.markForCheck();
+      });
     }
   }
 
@@ -161,42 +168,40 @@ export class IpmiFormComponent implements OnInit {
   }
 
   setFormValues(ipmi: Ipmi): void {
-    this.idIpmi = ipmi.id;
     this.form.controls['dhcp'].setValue(ipmi.dhcp);
     this.form.controls['ipaddress'].setValue(ipmi.ipaddress);
     this.form.controls['netmask'].setValue(ipmi.netmask);
     this.form.controls['gateway'].setValue(ipmi.gateway);
-    this.form.controls['vlan'].setValue(ipmi.vlan as number); // переписать с помощью цыкла
+    this.form.controls['vlan'].setValue(ipmi.vlan as number);
   }
 
   loadDataRemoteContr(): void {
-    if (this.remoteContrData) {
-      this.setFormValues(this.remoteContrData);
-      return;
-    }
-
-    const filterQuery: QueryParams<Ipmi> = [[['id', '=', this.dataForm.id]]];
+    let stateCtr: number;
+    const filterQuery: QueryParams<Ipmi> = [[['id', '=', this.idIpmi]]];
     this.form.controls['remoteController'].valueChanges
       .pipe(
         switchMap((state) => {
-          if (state && !this.remoteContrData) {
-            return this.ws.call('failover.call_remote', ['ipmi.query', filterQuery]) as Observable<Ipmi[]>;
+          stateCtr = state;
+
+          if (state) {
+            return this.remoteContrData
+              ? of([this.remoteContrData])
+              : this.ws.call('failover.call_remote', ['ipmi.query', filterQuery]) as Observable<Ipmi[]>;
           }
-          if (state && this.remoteContrData) {
-            return of([this.remoteContrData]);
-          }
-          return of(false);
+          return this.defaultContrData
+            ? of([this.defaultContrData])
+            : this.ws.call('ipmi.query');
         }),
         untilDestroyed(this),
       )
       .subscribe((data) => {
-        if (data && (Array.isArray(data))) {
-          this.remoteContrData = this.remoteContrData ? this.remoteContrData : data[0];
-          this.setFormValues(data[0]);
+        if (stateCtr) {
+          this.remoteContrData = data[0];
         } else {
-          this.setFormValues(this.dataForm);
+          this.defaultContrData = data[0];
         }
-        this.isLoading = false;
+
+        this.setFormValues(data[0]);
         this.cdr.markForCheck();
       });
   }
@@ -208,10 +213,10 @@ export class IpmiFormComponent implements OnInit {
     delete value.remoteController;
     const ipmiUpdate: IpmiUpdate = { ...value };
     let call$ = this.ws.call('ipmi.update', [this.idIpmi, ipmiUpdate]);
+
     if (this.form.controls['remoteController'].value) {
       call$ = this.ws.call('failover.call_remote', ['ipmi.update', [this.idIpmi, ipmiUpdate]]) as Observable<Ipmi>;
     }
-
     call$.pipe(untilDestroyed(this))
       .subscribe(
         () => {

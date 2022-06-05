@@ -85,8 +85,8 @@
                   <div class="generic alert" *ngIf="!product_image && isPassive && ha_status !== 'HA Enabled'">
                     <mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-alert"></mat-icon>
                   </div>
-                  <div *ngIf="product_image && isHA" class="ha-node-status">({{ isPassive ? "Standby" : "Active" | translate }})</div>
-                  <div *ngIf="ready && !product_image && product_type === ProductType.ScaleEnterprise" class="ha-node-status">(Unsupported Hardware)</div>
+                  <div *ngIf="product_image && isHA" class="ha-node-status">({{ (isPassive ? 'Standby' : 'Active') | translate }})</div>
+                  <div *ngIf="ready && !product_image && product_type === ProductType.ScaleEnterprise" class="ha-node-status">({{ 'Unsupported Hardware' | translate }})</div>
                 </div>
               </div>
 
@@ -105,7 +105,7 @@
                     ix-auto-type="button"
                     [ix-auto-identifier]="updateBtnLabel"
                   >{{ updateBtnLabel | translate }}</button>
-                  <simple-failover-button *ngIf="isPassive" [disabled]="!ha_status || ha_status !== 'HA Enabled'" ></simple-failover-button>
+                  <ix-simple-failover-button *ngIf="isPassive" [disabled]="!ha_status || ha_status !== 'HA Enabled'" ></ix-simple-failover-button>
                 </div>
               </ng-template>
             </div>
@@ -142,7 +142,7 @@
                       <div class="copy-version-text">
                         <span>{{ data.version }}</span>
                       </div>
-                      <copy-btn [text]="data.version" class="copy-version-button"></copy-btn>
+                      <ix-copy-btn [text]="data.version" class="copy-version-button"></ix-copy-btn>
                     </div>
                   </mat-list-item>
 
@@ -165,7 +165,7 @@
                   <mat-list-item *ngIf="uptimeString">
                     <strong>{{ 'Uptime' | translate }}:</strong>
                     <span>{{ '{uptimeString} as of {dateTime}' | translate: { uptimeString, dateTime } }}</span>
-                  </mat-list-item>
+                  </mat-list-item><mat-list-item class="time-warning" *ngIf="showTimeDiffWarning"><mat-icon>warning</mat-icon>{{ timeDiffWarning }}</mat-list-item>
 
                 </mat-list>
 
@@ -179,11 +179,11 @@
                     ix-auto-type="button"
                     [ix-auto-identifier]="updateBtnLabel"
                   >{{ updateBtnLabel | translate }}</button>
-                  <simple-failover-button
+                  <ix-simple-failover-button
                     *ngIf="isPassive"
                     [disabled]="!ha_status || ha_status !== 'HA Enabled'"
                     color="primary"
-                  ></simple-failover-button>
+                  ></ix-simple-failover-button>
                 </div>
 
               </div> <!-- END datacontainer -->

@@ -1,4 +1,6 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import {
+  AfterViewInit, Component, OnInit, TemplateRef, ViewChild,
+} from '@angular/core';
 import { Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute } from '@angular/router';
@@ -7,12 +9,10 @@ import { TranslateService } from '@ngx-translate/core';
 import * as filesize from 'filesize';
 import * as _ from 'lodash';
 import { TreeNode } from 'primeng/api';
-import { Subject } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { PoolScanState } from 'app/enums/pool-scan-state.enum';
 import { VDevType } from 'app/enums/v-dev-type.enum';
 import helptext from 'app/helptext/storage/volumes/volume-status';
-import { CoreEvent } from 'app/interfaces/events';
 import { Job } from 'app/interfaces/job.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { Pool, PoolScan, PoolTopologyCategory } from 'app/interfaces/pool.interface';
@@ -28,17 +28,19 @@ import { EntityDialogComponent } from 'app/modules/entity/entity-dialog/entity-d
 import { FieldConfig, FormSelectConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
 import { matchOtherValidator } from 'app/modules/entity/entity-form/validators/password-validation/password-validation';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
-import { EntityToolbarComponent } from 'app/modules/entity/entity-toolbar/entity-toolbar.component';
-import { ToolbarConfig } from 'app/modules/entity/entity-toolbar/models/control-config.interface';
 import { EntityTreeTable } from 'app/modules/entity/entity-tree-table/entity-tree-table.model';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { DiskFormComponent } from 'app/pages/storage/disks/disk-form/disk-form.component';
 import {
   WebSocketService, AppLoaderService, DialogService,
 } from 'app/services';
-import { CoreService } from 'app/services/core-service/core.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { LayoutService } from 'app/services/layout.service';
 import { ModalService } from 'app/services/modal.service';
+import {
+  ReplaceDiskDialogData,
+  ReplaceDiskDialogComponent,
+} from './components/replace-disk-dialog/replace-disk-dialog.component';
 
 interface PoolDiskInfo {
   name: string;
@@ -53,12 +55,10 @@ interface PoolDiskInfo {
 
 @UntilDestroy()
 @Component({
-  selector: 'volume-status',
   templateUrl: './volume-status.component.html',
   styleUrls: ['./volume-status.component.scss'],
 })
-export class VolumeStatusComponent implements OnInit, OnDestroy {
-  actionEvents$: Subject<CoreEvent>;
+export class VolumeStatusComponent implements OnInit, AfterViewInit {
   poolScan: PoolScan;
   timeRemaining = {
     days: 0,
@@ -78,47 +78,10 @@ export class VolumeStatusComponent implements OnInit, OnDestroy {
     ],
   };
 
-  protected pk: number;
-  expandRows: number[] = [1];
+  @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
 
-  protected replaceDiskFormFields: FieldConfig[] = [{
-    type: 'input',
-    name: 'label',
-    value: '',
-    isHidden: true,
-  }, {
-    type: 'select',
-    name: 'disk',
-    placeholder: helptext.dialogFormFields.disk.placeholder,
-    tooltip: helptext.dialogFormFields.disk.tooltip,
-    options: [],
-    required: true,
-    validation: [Validators.required],
-  }, {
-    type: 'input',
-    inputType: 'password',
-    name: 'passphrase',
-    placeholder: helptext.dialogFormFields.passphrase.placeholder,
-    tooltip: helptext.dialogFormFields.passphrase.tooltip,
-    required: true,
-    isHidden: true,
-    disabled: true,
-  }, {
-    type: 'input',
-    inputType: 'password',
-    name: 'passphrase2',
-    placeholder: helptext.dialogFormFields.passphrase2.placeholder,
-    tooltip: helptext.dialogFormFields.passphrase2.tooltip,
-    validation: [matchOtherValidator('passphrase')],
-    required: true,
-    isHidden: true,
-    disabled: true,
-  }, {
-    type: 'checkbox',
-    name: 'force',
-    placeholder: helptext.dialogFormFields.force.placeholder,
-    tooltip: helptext.dialogFormFields.force.tooltip,
-  }];
+  protected pk: number;
+
   protected extendVdevFormFields: FieldConfig[] = [{
     type: 'input',
     name: 'target_vdev',
@@ -161,7 +124,6 @@ export class VolumeStatusComponent implements OnInit, OnDestroy {
 
   constructor(
     protected aroute: ActivatedRoute,
-    protected core: CoreService,
     protected ws: WebSocketService,
     protected dialogService: DialogService,
     protected loader: AppLoaderService,
@@ -169,6 +131,7 @@ export class VolumeStatusComponent implements OnInit, OnDestroy {
     protected modalService: ModalService,
     protected translate: TranslateService,
     private slideIn: IxSlideInService,
+    private layoutService: LayoutService,
   ) {}
 
   getZfsPoolScan(poolName: string): void {
@@ -208,21 +171,14 @@ export class VolumeStatusComponent implements OnInit, OnDestroy {
   }
 
   getUnusedDisk(): void {
-    const availableDisks: Option[] = [];
     const availableDisksForExtend: Option[] = [];
     this.ws.call('disk.get_unused').pipe(untilDestroyed(this)).subscribe((disks) => {
       disks.forEach((disk) => {
-        availableDisks.push({
-          label: disk.devname,
-          value: disk.identifier,
-        });
         availableDisksForExtend.push({
           label: disk.devname + ' (' + filesize(disk.size, { standard: 'iec' }) + ')',
           value: disk.name,
         });
       });
-      const diskConfig = _.find(this.replaceDiskFormFields, { name: 'disk' }) as FormSelectConfig;
-      diskConfig.options = availableDisks;
 
       const newDiskConfig = _.find(this.extendVdevFormFields, { name: 'new_disk' }) as FormSelectConfig;
       newDiskConfig.options = availableDisksForExtend;
@@ -232,30 +188,6 @@ export class VolumeStatusComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    // Setup Global Actions
-    const actionId = 'refreshBtn';
-    this.actionEvents$ = new Subject();
-    this.actionEvents$.pipe(untilDestroyed(this)).subscribe((evt) => {
-      if (evt.data[actionId]) {
-        this.refresh();
-      }
-    });
-
-    const toolbarConfig: ToolbarConfig = {
-      target: this.actionEvents$,
-      controls: [
-        {
-          type: 'button',
-          name: actionId,
-          label: 'Refresh',
-          color: 'primary',
-        },
-      ],
-    };
-
-    const actionsConfig = { actionType: EntityToolbarComponent, actionConfig: toolbarConfig };
-    this.core.emit({ name: 'GlobalActions', data: actionsConfig, sender: this });
-
     this.aroute.params.pipe(untilDestroyed(this)).subscribe((params) => {
       this.pk = parseInt(params['pk'], 10);
       this.getData();
@@ -264,9 +196,8 @@ export class VolumeStatusComponent implements OnInit, OnDestroy {
     this.getUnusedDisk();
   }
 
-  ngOnDestroy(): void {
-    this.actionEvents$.complete();
-    this.core.unregister({ observerClass: this });
+  ngAfterViewInit(): void {
+    this.layoutService.pageHeaderUpdater$.next(this.pageHeader);
   }
 
   refresh(): void {
@@ -354,51 +285,26 @@ export class VolumeStatusComponent implements OnInit, OnDestroy {
     }, {
       id: 'replace',
       label: helptext.actions_label.replace,
-      onClick: (row: Pool) => {
+      onClick: (row: { guid: string; name: string }) => {
         let name = row.name;
         if (!_.startsWith(name, '/')) {
           const pIndex = name.lastIndexOf('p');
           name = pIndex > -1 ? name.substring(0, pIndex) : name;
         }
-        const pk = this.pk;
-        _.find(this.replaceDiskFormFields, { name: 'label' }).value = row.guid;
-
-        const conf: DialogFormConfiguration = {
-          title: this.translate.instant(helptext.replace_disk.form_title) + name,
-          fieldConfig: this.replaceDiskFormFields,
-          saveButtonText: helptext.replace_disk.saveButtonText,
-          customSubmit: (entityDialog: EntityDialogComponent) => {
-            delete entityDialog.formValue['passphrase2'];
-
-            const dialogRef = this.matDialog.open(EntityJobComponent, {
-              data: { title: helptext.replace_disk.title },
-              disableClose: true,
-            });
-            dialogRef.componentInstance.setDescription(helptext.replace_disk.description);
-            dialogRef.componentInstance.setCall('pool.replace', [pk, entityDialog.formValue]);
-            dialogRef.componentInstance.submit();
-            dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
-              dialogRef.close(true);
-              entityDialog.dialogRef.close(true);
-              this.getData();
-              this.getUnusedDisk();
-              this.dialogService.info(
-                helptext.replace_disk.title,
-                this.translate.instant('Successfully replaced disk {disk}.', { disk: name }),
-              );
-            });
-            dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((res: Job) => {
-              dialogRef.close();
-              entityDialog.dialogRef.close();
-              let err: string = helptext.replace_disk.err_msg;
-              if (res.error.startsWith('[EINVAL]')) {
-                err = res.error;
-              }
-              this.dialogService.errorReport(helptext.replace_disk.err_title, err, res.exception);
-            });
-          },
-        };
-        this.dialogService.dialogForm(conf);
+        this.matDialog
+          .open(ReplaceDiskDialogComponent, {
+            data: {
+              poolId: this.pk,
+              guid: row.guid,
+              diskName: name,
+            } as ReplaceDiskDialogData,
+          })
+          .afterClosed()
+          .pipe(untilDestroyed(this))
+          .subscribe(() => {
+            this.getData();
+            this.getUnusedDisk();
+          });
       },
       isHidden: false,
     }, {
@@ -522,11 +428,7 @@ export class VolumeStatusComponent implements OnInit, OnDestroy {
             dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((res: Job) => {
               dialogRef.close();
               entityDialog.dialogRef.close();
-              let err: string = helptext.extend_disk.err_msg;
-              if (res.error.startsWith('[EINVAL]')) {
-                err = res.error;
-              }
-              this.dialogService.errorReport(helptext.extend_disk.err_title, err, res.exception);
+              this.dialogService.errorReport(helptext.extend_disk.err_title, res.error, res.exception);
             });
           },
         };

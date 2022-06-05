@@ -9,7 +9,7 @@ import smoothPlotter from 'dygraphs/src/extras/smooth-plotter.js';
 import { ThemeUtils } from 'app/core/classes/theme-utils/theme-utils';
 import { ReportingData } from 'app/interfaces/reporting.interface';
 import { Theme } from 'app/interfaces/theme.interface';
-import { Report } from 'app/pages/reports-dashboard/components/report/report.component';
+import { LegendDataWithStackedTotalHtml, Report } from 'app/pages/reports-dashboard/components/report/report.component';
 import { CoreService } from 'app/services/core-service/core.service';
 import { ThemeService } from 'app/services/theme/theme.service';
 
@@ -21,7 +21,7 @@ interface Conversion {
 }
 
 @Component({
-  selector: 'linechart',
+  selector: 'ix-linechart',
   templateUrl: './line-chart.component.html',
   styleUrls: ['./line-chart.component.scss'],
 })
@@ -53,7 +53,6 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
   library = 'dygraph'; // dygraph or chart.js
 
   chart: Dygraph;
-  conf: any;
 
   units = '';
   yLabelPrefix: string;
@@ -127,7 +126,7 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
           return converted.suffix !== undefined ? converted.suffix : '';
         };
 
-        const clone = { ...data } as any;
+        const clone = { ...data } as LegendDataWithStackedTotalHtml;
         clone.series.forEach((item: dygraphs.SeriesLegendData, index: number) => {
           if (!item.y) { return; }
           const converted = this.formatLabelValue(item.y, this.inferUnits(this.labelY), 1, true);

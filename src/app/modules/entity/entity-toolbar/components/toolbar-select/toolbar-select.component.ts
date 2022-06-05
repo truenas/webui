@@ -5,7 +5,7 @@ import { ControlConfig } from 'app/modules/entity/entity-toolbar/models/control-
 import { Control } from 'app/modules/entity/entity-toolbar/models/control.interface';
 
 @Component({
-  selector: 'toolbar-select',
+  selector: 'ix-toolbar-select',
   styleUrls: ['toolbar-select.component.scss'],
   templateUrl: './toolbar-select.component.html',
 })

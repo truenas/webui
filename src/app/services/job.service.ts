@@ -1,9 +1,8 @@
-import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { Observable, Observer } from 'rxjs';
-import { filter } from 'rxjs/operators';
+import { EMPTY, Observable, Observer } from 'rxjs';
+import { catchError, filter, switchMap } from 'rxjs/operators';
 import { JobState } from 'app/enums/job-state.enum';
 import globalHelptext from 'app/helptext/global-helptext';
 import { Job } from 'app/interfaces/job.interface';
@@ -19,7 +18,6 @@ export class JobService {
     protected ws: WebSocketService,
     protected dialog: DialogService,
     protected storage: StorageService,
-    protected http: HttpClient,
   ) {}
 
   getJobStatus(jobId: number): Observable<Job> {
@@ -60,24 +58,16 @@ export class JobService {
           buttonMsg: T('Download Logs'),
           cancelMsg: cancelButtonMsg,
           disableClose: true,
-        }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
-          this.ws.call('core.download', ['filesystem.get', [targetJob.logs_path], targetJob.id + '.log']).pipe(untilDestroyed(this)).subscribe(
-            ([_, url]) => {
-              const mimetype = 'text/plain';
-              this.storage.streamDownloadFile(this.http, url, targetJob.id + '.log', mimetype).pipe(untilDestroyed(this)).subscribe(
-                (file) => {
-                  this.storage.downloadBlob(file, targetJob.id + '.log');
-                },
-                (err) => {
-                  new EntityUtils().handleWsError(this, err);
-                },
-              );
-            },
-            (error) => {
-              new EntityUtils().handleWsError(this, error);
-            },
-          );
-        });
+        }).pipe(
+          filter(Boolean),
+          switchMap(() => this.ws.call('core.download', ['filesystem.get', [targetJob.logs_path], targetJob.id + '.log'])),
+          switchMap(([, url]) => this.storage.downloadUrl(url, targetJob.id + '.log', 'text/plain')),
+          catchError((error) => {
+            new EntityUtils().handleWsError(this, error);
+            return EMPTY;
+          }),
+          untilDestroyed(this),
+        ).subscribe();
       }
     }
   }

@@ -80,7 +80,7 @@
           mat-button
           type='button'
           (click)="openManageWindow()"
-          [disabled]="isDisabledManageBtn"
+          [disabled]="isDisabledManageBtn || isLoading"
         >{{ 'Manage' | translate }}</button>
       </mat-card-actions>
     </form>

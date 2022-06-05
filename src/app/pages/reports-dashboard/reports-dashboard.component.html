@@ -1,3 +1,16 @@
+<ng-template #pageHeader>
+  <ix-page-title-header>
+    <ix-reports-global-controls
+      [toolbarConfig]="toolbarConfig"
+      [activeTab]="activeTab"
+      [activeTabVerified]="activeTabVerified"
+      [allTabs]="allTabs"
+      (showConfigForm)="showConfigForm()"
+      (navigateToTab)="navigateToTab($event)"
+    ></ix-reports-global-controls>
+  </ix-page-title-header>
+</ng-template>
+
 <div
   *ngIf="visibleReports && activeReports"
   class="master-container"
@@ -6,21 +19,27 @@
   fxLayout="row wrap"
   fxLayoutAlign="space-evenly"
 >
+  <div class="time-warning" *ngIf="showTimeDiffWarning">
+    <div>
+      <mat-icon>warning</mat-icon>
+    </div>
+    <div>{{ timeDiffWarning }} {{ 'NAS/browser time mismatch can lead to the reporting data display misbehavior.' | translate }}</div>
+  </div>
   <!-- Cards Container -->
   <cdk-virtual-scroll-viewport itemSize="325" templateCacheSize="4" (scrolledIndexChange)="nextBatch($event)">
     <!-- Report Cards -->
     <div class="report-container" *cdkVirtualFor="let key of visibleReports; let i = index;">
-      <report
+      <ix-report
         *ngIf="activeReports[key] && activeReports[key].identifiers.length > 0"
         [report]="activeReports[key]"
         [identifier]="activeReports[key].identifiers[0]"
         [isReversed]="isReportReversed(activeReports[key])"
-      ></report>
-      <report
+      ></ix-report>
+      <ix-report
         *ngIf="activeReports[key].identifiers.length == 0"
         [report]="activeReports[key]"
         [isReversed]="isReportReversed(activeReports[key])"
-      ></report>
+      ></ix-report>
     </div>
     <div class="bottom-spacer"></div>
   </cdk-virtual-scroll-viewport>

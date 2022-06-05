@@ -32,8 +32,7 @@ import { ManageCatalogSummaryDialogComponent } from 'app/pages/applications/dial
 import { DockerImagesComponent } from 'app/pages/applications/docker-images/docker-images.component';
 import { CatalogAddFormComponent } from 'app/pages/applications/forms/catalog-add-form/catalog-add-form.component';
 import { CatalogEditFormComponent } from 'app/pages/applications/forms/catalog-edit-form/catalog-edit-form.component';
-import { ChartFormComponent } from 'app/pages/applications/forms/chart-form.component';
-import { ChartWizardComponent } from 'app/pages/applications/forms/chart-wizard.component';
+import { ChartFormComponent } from 'app/pages/applications/forms/chart-form/chart-form.component';
 import { PullImageFormComponent } from 'app/pages/applications/forms/pull-image-form/pull-image-form.component';
 import { KubernetesSettingsComponent } from 'app/pages/applications/kubernetes-settings/kubernetes-settings.component';
 import { ManageCatalogsComponent } from 'app/pages/applications/manage-catalogs/manage-catalogs.component';
@@ -73,7 +72,6 @@ import { PodShellComponent } from 'app/pages/applications/pod-shell/pod-shell.co
     ChartReleasesComponent,
     DockerImagesComponent,
     ChartFormComponent,
-    ChartWizardComponent,
     PodShellComponent,
     PodLogsComponent,
     ChartEventsDialogComponent,

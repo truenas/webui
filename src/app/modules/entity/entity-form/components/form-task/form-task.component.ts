@@ -14,7 +14,6 @@ import { EntityFormService } from 'app/modules/entity/entity-form/services/entit
 
 @UntilDestroy()
 @Component({
-  selector: 'form-task',
   templateUrl: './form-task.component.html',
   styleUrls: ['./form-task.component.scss'],
 })

@@ -14,7 +14,6 @@ import { ApplicationsService } from 'app/pages/applications/applications.service
 
 @UntilDestroy()
 @Component({
-  selector: 'chart-events-dialog',
   styleUrls: ['./chart-events-dialog.component.scss'],
   templateUrl: './chart-events-dialog.component.html',
 })

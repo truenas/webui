@@ -9,7 +9,7 @@ import { DialogService } from 'app/services';
 
 @UntilDestroy()
 @Component({
-  selector: 'toolbar-slide-toggle',
+  selector: 'ix-toolbar-slide-toggle',
   templateUrl: './toolbar-slide-toggle.component.html',
   styleUrls: ['toolbar-slide-toggle.component.scss'],
 })

@@ -9,13 +9,13 @@
 }
 
 /* Navigation shorter and fixed to Top */
-topbar {
+ix-topbar {
   position: fixed;
   width: 100%;
   z-index: 5;
 }
 
-topbar {
+ix-topbar {
   top: 0;
 }
 
@@ -28,7 +28,7 @@ div.mat-toolbar {
   width: 100%;
 }
 
-topbar .mat-toolbar .mat-toolbar-row {
+ix-topbar .mat-toolbar .mat-toolbar-row {
   height: 48px !important;
 }
 

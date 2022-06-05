@@ -3,7 +3,7 @@ import {
 } from '@angular/core';
 
 @Component({
-  selector: 'display',
+  selector: 'ix-display',
   template: '<ng-container #wrapper></ng-container>',
 })
 export class DisplayComponent<T = unknown> {

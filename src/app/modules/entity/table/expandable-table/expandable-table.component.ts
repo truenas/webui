@@ -11,6 +11,7 @@ export interface InputExpandableTableConf extends AppTableConfig {
   limitRows?: number;
   configure?: () => void;
   limitRowsByMaxHeight?: boolean;
+  addButtonLabel?: string;
 }
 
 export enum ExpandableTableState {
@@ -19,7 +20,7 @@ export enum ExpandableTableState {
 }
 
 @Component({
-  selector: 'app-expandable-table',
+  selector: 'ix-expandable-table',
   templateUrl: './expandable-table.component.html',
   styleUrls: ['./expandable-table.component.scss'],
 })

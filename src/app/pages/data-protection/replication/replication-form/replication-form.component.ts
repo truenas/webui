@@ -41,8 +41,7 @@ import { ModalService } from 'app/services/modal.service';
 
 @UntilDestroy()
 @Component({
-  selector: 'app-replication-form',
-  template: '<entity-form [conf]="this"></entity-form>',
+  template: '<ix-entity-form [conf]="this"></ix-entity-form>',
   providers: [TaskService, KeychainCredentialService, ReplicationService, StorageService],
 })
 export class ReplicationFormComponent implements FormConfiguration {
@@ -1186,7 +1185,7 @@ export class ReplicationFormComponent implements FormConfiguration {
 
   afterInit(entityForm: EntityFormComponent): void {
     this.entityForm = entityForm;
-    this.pk = entityForm.pk;
+    this.pk = entityForm.pk as number;
     this.isNew = entityForm.isNew;
     this.title = entityForm.isNew ? helptext.replication_task_add : helptext.replication_task_edit;
 

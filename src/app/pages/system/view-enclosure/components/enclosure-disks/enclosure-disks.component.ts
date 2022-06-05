@@ -73,7 +73,7 @@ export interface DiskFailure {
 
 @UntilDestroy()
 @Component({
-  selector: 'enclosure-disks',
+  selector: 'ix-enclosure-disks',
   templateUrl: './enclosure-disks.component.html',
   styleUrls: ['./enclosure-disks.component.scss'],
 })

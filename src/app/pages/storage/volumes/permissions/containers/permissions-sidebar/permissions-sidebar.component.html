@@ -41,12 +41,12 @@
     </div>
 
     <div *ngIf="acl" class="permissions">
-      <app-trivial-permissions *ngIf="acl.trivial; else nonTrivial" [stat]="stat"></app-trivial-permissions>
+      <ix-trivial-permissions *ngIf="acl.trivial; else nonTrivial" [stat]="stat"></ix-trivial-permissions>
 
       <ng-template #nonTrivial>
         <ng-container [ngSwitch]="acl.acltype">
-          <app-posix-permissions *ngSwitchCase="AclType.Posix1e" [acl]="acl | cast"></app-posix-permissions>
-          <app-nfs-permissions *ngSwitchCase="AclType.Nfs4" [acl]="acl | cast"></app-nfs-permissions>
+          <ix-posix-permissions *ngSwitchCase="AclType.Posix1e" [acl]="acl | cast"></ix-posix-permissions>
+          <ix-nfs-permissions *ngSwitchCase="AclType.Nfs4" [acl]="acl | cast"></ix-nfs-permissions>
         </ng-container>
       </ng-template>
     </div>

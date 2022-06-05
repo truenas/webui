@@ -3,7 +3,7 @@
   flex: 1;
   flex-direction: column;
 
-  entity-empty {
+  ix-entity-empty {
     align-items: center;
     display: flex;
     justify-content: center;
@@ -67,14 +67,9 @@
       height: 100%;
       overflow-x: hidden;
     }
-
-    .job-logs-sidebar {
-      flex-grow: 0;
-      width: 320px;
-    }
   }
 
-  ix-table-paginator {
-    border-top: 1px solid var(--lines);
+  .mat-column-arguments_logs button:not(:first-of-type) {
+    margin-left: 5px;
   }
 }

@@ -1,3 +1,3 @@
 export interface ConfigResetParams {
-  reboot: true;
+  reboot: boolean;
 }
