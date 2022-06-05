@@ -1,5 +1,16 @@
-<div id="{{config.name}}" class="dynamic-field form-checkbox form-element" [formGroup]="group" [ngClass]="fieldShow" [class.has-tooltip]="config.tooltip" *ngIf="!config['isHidden']" [class.expanded-height]="config.expandedHeight">
+<div 
+  id="{{config.name}}"
+  class="dynamic-field form-checkbox form-element {{ config.inlineLabel ? 'inline-label' : 'not' }}"
+  [formGroup]="group" 
+  [ngClass]="fieldShow" 
+  [class.has-tooltip]="config.tooltip" 
+  *ngIf="!config['isHidden']" 
+  [class.expanded-height]="config.expandedHeight"
+>
 
+  <ng-container *ngIf="config.inlineLabel">
+    <div class="label half-width"></div>
+  </ng-container>
   <mat-checkbox
     *ngIf="!config.updater && !config.customEventMethod"
     color="primary"
@@ -7,15 +18,17 @@
     [required]="config.required"
     ix-auto ix-auto-type="checkbox" ix-auto-identifier="{{config.placeholder}}"
     (click)="(config.readonly && preventClick($event))"
+    class="{ 'full-width': !config.inlineLabel, 'half-width': config.inlineLabel }"
     (change)="onChangeCheckbox($event)"
   >
     {{ config.placeholder | translate }}
   </mat-checkbox>
 
   <mat-checkbox
+
     *ngIf="config.updater"
     color="primary"
-    class="updater"
+    class="updater { 'full-width': !config.inlineLabel, 'half-width': config.inlineLabel }"
     [formControlName]="config.name"
     [required]="config.required"
     (change)="onChangeCheckbox($event)"
@@ -27,7 +40,7 @@
   <mat-checkbox
     *ngIf="config.customEventMethod"
     color="primary"
-    class="custom-handler"
+    class="custom-handler { 'full-width': !config.inlineLabel, 'half-width': config.inlineLabel }"
     [formControlName]="config.name"
     [required]="config.required"
     (change)="onChangeCheckbox($event)"
