@@ -108,6 +108,7 @@ export class AlertConfigComponent implements OnInit {
             config.push(
               {
                 type: 'select',
+                class: 'new-line',
                 name: categoryClass.id + '_level',
                 inlineLabel: categoryClass.title,
                 placeholder: this.translate.instant('Set Warning Level'),

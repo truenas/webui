@@ -21,6 +21,11 @@
   max-width: 100%;
 }
 
+.break {
+  flex-basis: 100%;
+  height: 0;
+}
+
 .entity-form .form-line:last-child {
   margin-right: 24px;
 }
