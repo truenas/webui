@@ -7,6 +7,7 @@ import { Subject } from 'rxjs';
 import { CoreService } from 'app/core/services/core-service/core.service';
 import { AlertLevel } from 'app/enums/alert-level.enum';
 import { AlertPolicy } from 'app/enums/alert-policy.enum';
+import { ProductType } from 'app/enums/product-type.enum';
 import helptext from 'app/helptext/system/alert-settings';
 import { AlertCategory } from 'app/interfaces/alert.interface';
 import { CoreEvent } from 'app/interfaces/events';
@@ -39,6 +40,7 @@ export class AlertConfigComponent implements OnInit {
   protected editCall = 'alertclasses.update' as const;
   protected isEntity = true;
   fieldSets: FieldSets;
+  readonly productType = window.localStorage.getItem('product_type') as ProductType;
   fieldConfig: FieldConfig[] = [];
   protected settingOptions: Option[] = [];
   protected warningOptions: Option[] = [
@@ -106,6 +108,7 @@ export class AlertConfigComponent implements OnInit {
             config.push(
               {
                 type: 'select',
+                class: 'new-line',
                 name: categoryClass.id + '_level',
                 inlineLabel: categoryClass.title,
                 placeholder: this.translate.instant('Set Warning Level'),
@@ -124,11 +127,30 @@ export class AlertConfigComponent implements OnInit {
               },
             );
 
-            this.defaults.push({
-              id: categoryClass.id,
-              level: categoryClass.level,
-              policy: AlertPolicy.Immediately,
-            });
+            if (categoryClass.proactive_support && this.isEnterprise) {
+              config.push({
+                type: 'checkbox',
+                name: categoryClass.id + '_proactive_support',
+                value: true,
+                inlineLabel: ' ',
+                placeholder: this.translate.instant('Proactive Support'),
+              });
+            }
+
+            if (categoryClass.proactive_support && this.isEnterprise) {
+              this.defaults.push({
+                id: categoryClass.id,
+                level: categoryClass.level,
+                policy: AlertPolicy.Immediately,
+                proactive_support: true,
+              });
+            } else {
+              this.defaults.push({
+                id: categoryClass.id,
+                level: categoryClass.level,
+                policy: AlertPolicy.Immediately,
+              });
+            }
           }
 
           const fieldSet = {
@@ -211,15 +233,20 @@ export class AlertConfigComponent implements OnInit {
     this.core.emit({ name: 'GlobalActions', data: actionsConfig, sender: this });
   }
 
+  get isEnterprise(): boolean {
+    return this.productType === ProductType.ScaleEnterprise;
+  }
+
   onSubmit(): void {
     const payload: any = { classes: {} };
-
     for (const key in this.formGroup.value) {
       const keyValues = key.split('_');
-      const alertClass = keyValues[0];
-      const classKey = keyValues[1];
-      const def = _.find(this.defaults, { id: alertClass });
-      if (def[classKey as keyof AlertDefaults].toUpperCase() !== this.formGroup.value[key].toUpperCase()) {
+      const alertClass = keyValues.shift();
+      const classKey = keyValues.reduce((prev, current) => prev + '_' + current);
+      const defaultClassValues = _.find(this.defaults, { id: alertClass });
+      const defaultValueUpperCased = defaultClassValues[classKey as keyof AlertDefaults].toString().toUpperCase();
+      const formValueUpperCased = this.formGroup.value[key].toString().toUpperCase();
+      if (defaultValueUpperCased !== formValueUpperCased) {
         // do not submit defaults in the payload
         if (!payload.classes[alertClass]) {
           payload.classes[alertClass] = {};

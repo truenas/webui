@@ -29,6 +29,7 @@ export interface AlertClass {
   id: string;
   level: AlertLevel;
   title: string;
+  proactive_support?: boolean;
 }
 
 export interface AlertClasses {
