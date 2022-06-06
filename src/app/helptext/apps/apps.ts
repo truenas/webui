@@ -562,7 +562,7 @@ export default {
     message: T(`iXsystems does not audit or otherwise validate the contents of third-party applications catalogs. \
     It is incumbent on the user to verify that the new catalog is from a trusted source and that the third-party \
     properly audits its chart contents. Failure to exercise due diligence may expose the user and their data to \
-    the some or all of the following:<br/>\
+    some or all of the following:<br/>\
     <ul>
       <li>Malicious software</li>
       <li>Broken services on TrueNAS host</li>
