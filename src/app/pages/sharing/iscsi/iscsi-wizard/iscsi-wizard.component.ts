@@ -4,6 +4,7 @@ import {
 } from '@angular/forms';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 import { ExplorerType } from 'app/enums/explorer-type.enum';
 import { IscsiExtentType } from 'app/enums/iscsi.enum';
@@ -528,6 +529,7 @@ export class IscsiWizardComponent implements WizardConfiguration {
     private networkService: NetworkService,
     private router: Router,
     private storageService: StorageService,
+    private translate: TranslateService,
   ) {
     this.iscsiService.getExtents().pipe(untilDestroyed(this)).subscribe((extents) => {
       this.namesInUse.push(...extents.map((extent) => extent.name));
@@ -548,10 +550,16 @@ export class IscsiWizardComponent implements WizardConfiguration {
   step0Init(): void {
     const diskField = _.find(this.wizardConfig[0].fieldConfig, { name: 'disk' }) as FormSelectConfig;
     // get device options
+    this.loader.open(this.translate.instant('Loading devices. Please wait.'));
     this.iscsiService.getExtentDevices().pipe(untilDestroyed(this)).subscribe((res) => {
+      this.loader.close();
       for (const i in res) {
         diskField.options.push({ label: res[i], value: i });
       }
+    },
+    (res) => {
+      this.loader.close();
+      new EntityUtils().handleWsError(this.entityWizard, res);
     });
     const targetField = _.find(this.wizardConfig[0].fieldConfig, { name: 'target' }) as FormSelectConfig;
     this.iscsiService.getTargets().pipe(untilDestroyed(this)).subscribe((targets) => {
