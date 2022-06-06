@@ -12,7 +12,7 @@ import globalHelptext from 'app/helptext/global-helptext';
 import { helptextSharingIscsi } from 'app/helptext/sharing/iscsi/iscsi';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { WizardConfiguration } from 'app/interfaces/entity-wizard.interface';
-import { FormListConfig, FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FormComboboxConfig, FormListConfig, FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { Wizard } from 'app/pages/common/entity/entity-form/models/wizard.interface';
 import { forbiddenValues } from 'app/pages/common/entity/entity-form/validators/forbidden-values-validation';
 import { ipv4or6cidrValidator } from 'app/pages/common/entity/entity-form/validators/ip-validation';
@@ -138,7 +138,7 @@ export class IscsiWizardComponent implements WizardConfiguration {
         },
         // device options
         {
-          type: 'select',
+          type: 'combobox',
           name: 'disk',
           placeholder: helptextSharingIscsi.disk_placeholder,
           tooltip: helptextSharingIscsi.disk_tooltip,
@@ -548,7 +548,7 @@ export class IscsiWizardComponent implements WizardConfiguration {
   }
 
   step0Init(): void {
-    const diskField = _.find(this.wizardConfig[0].fieldConfig, { name: 'disk' }) as FormSelectConfig;
+    const diskField = _.find(this.wizardConfig[0].fieldConfig, { name: 'disk' }) as FormComboboxConfig;
     // get device options
     this.loader.open(this.translate.instant('Loading devices. Please wait.'));
     this.iscsiService.getExtentDevices().pipe(untilDestroyed(this)).subscribe((res) => {
