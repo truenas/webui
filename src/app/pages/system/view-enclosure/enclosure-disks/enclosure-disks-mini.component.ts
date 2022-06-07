@@ -49,11 +49,15 @@ export class EnclosureDisksMiniComponent extends EnclosureDisksComponent {
   createEnclosure(enclosure: EnclosureMetadata = this.selectedEnclosure): void {
     switch (enclosure.model) {
       case 'FREENAS-MINI-3.0-E':
+      case 'FREENAS-MINI-3.0-E+':
       case 'TRUENAS-MINI-3.0-E':
+      case 'TRUENAS-MINI-3.0-E+':
         this.chassis = new MINI();
         break;
       case 'FREENAS-MINI-3.0-X':
+      case 'FREENAS-MINI-3.0-X+':
       case 'TRUENAS-MINI-3.0-X':
+      case 'TRUENAS-MINI-3.0-X+':
         this.chassis = new MINIX();
         break;
       case 'FREENAS-MINI-3.0-XL+':
