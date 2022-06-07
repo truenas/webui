@@ -1054,7 +1054,7 @@ export class VolumesListTableConfig implements InputTableConf {
                     if (confirmResult === true) {
                       this.loader.open();
                       this.ws.call('pool.upgrade', [rowData.id]).subscribe(
-                        (res) => {
+                        () => {
                           this.translate.get(T('Successfully Upgraded ')).subscribe((success_upgrade) => {
                             this.dialogService
                               .report(
@@ -1062,19 +1062,19 @@ export class VolumesListTableConfig implements InputTableConf {
                                 success_upgrade + row1.name,
                                 '500px', 'info',
                               )
-                              .subscribe((infoResult) => {
+                              .subscribe(() => {
                                 this.parentVolumesListComponent.repaintMe();
                               });
                           });
                         },
-                        (res) => {
-                          this.translate.get(T('Error Upgrading Pool ')).subscribe((error_upgrade) => {
-                            this.dialogService.errorReport(
-                              error_upgrade + row1.name,
-                              res.message,
-                              res.stack,
-                            );
-                          });
+                        (err) => {
+                          if (err.hasOwnProperty('reason') && err.hasOwnProperty('trace')) {
+                            this.translate.get(T('Error Upgrading Pool ')).subscribe((error_upgrade) => {
+                              this.dialogService.errorReport(error_upgrade + row1.name, err.reason, err.trace.formatted);
+                            });
+                          } else {
+                            new EntityUtils().handleWSError(this, err, this.dialogService);
+                          }
                         },
                         () => this.loader.close(),
                       );
