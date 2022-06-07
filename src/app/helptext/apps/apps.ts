@@ -555,6 +555,24 @@ export default {
     },
     pulling: T('Pulling...'),
   },
+  thirdPartyRepoWarning: {
+    btnMsg: T('Continue'),
+    cancelMsg: T('Cancel'),
+    title: T('Warning'),
+    message: T(`iXsystems does not audit or otherwise validate the contents of third-party applications catalogs. \
+    It is incumbent on the user to verify that the new catalog is from a trusted source and that the third-party \
+    properly audits its chart contents. Failure to exercise due diligence may expose the user and their data to \
+    some or all of the following:<br/>\
+    <ul>
+      <li>Malicious software</li>
+      <li>Broken services on TrueNAS host</li>
+      <li>Service disruption on TrueNAS host</li>
+      <li>Broken filesystem permissions on Host or within application</li>
+      <li>Unexpected deletion of user data</li>
+      <li>Unsafe service configuration in application</li>
+      <li>Degradation of TrueNAS host performance and stability</li>
+    </ul>`),
+  },
 
   catalogForm: {
     title: T('Add Catalog'),

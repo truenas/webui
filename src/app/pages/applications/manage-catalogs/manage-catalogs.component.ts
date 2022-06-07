@@ -3,6 +3,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatDialogRef } from '@angular/material/dialog/dialog-ref';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Subscription } from 'rxjs';
+import { filter } from 'rxjs/operators';
 import { JobState } from 'app/enums/job-state.enum';
 import helptext from 'app/helptext/apps/apps';
 import { Catalog, CatalogQueryParams } from 'app/interfaces/catalog.interface';
@@ -152,7 +153,14 @@ export class ManageCatalogsComponent implements EntityTableConfig<Catalog>, OnIn
   }
 
   doAdd(): void {
-    this.slideInService.open(CatalogAddFormComponent);
+    this.dialogService.confirm({
+      title: helptext.thirdPartyRepoWarning.title,
+      message: helptext.thirdPartyRepoWarning.message,
+      buttonMsg: helptext.thirdPartyRepoWarning.btnMsg,
+      hideCheckBox: true,
+    }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(
+      () => this.slideInService.open(CatalogAddFormComponent),
+    );
   }
 
   edit(catalog: Catalog): void {
