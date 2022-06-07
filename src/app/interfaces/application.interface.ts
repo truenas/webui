@@ -20,13 +20,10 @@ export interface UpgradeSummary {
 
 export enum ApplicationUserEventName {
   SwitchTab = 'SwitchTab',
-  UpdateToolbar = 'UpdateToolbar',
-  CatalogToolbarChanged = 'catalogToolbarChanged',
+  RefreshTab = 'RefreshTab',
 }
 
 export interface ApplicationUserEvent {
   name: ApplicationUserEventName;
   value: boolean | /* tab index */ number;
-  catalogNames?: string[];
-  isSelectedAll?: boolean;
 }

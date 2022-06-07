@@ -1,5 +1,6 @@
 import {
-  Component, ElementRef, OnDestroy, OnInit, ViewChild, ViewEncapsulation,
+  AfterViewInit,
+  Component, ElementRef, OnDestroy, OnInit, TemplateRef, ViewChild, ViewEncapsulation,
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -8,17 +9,16 @@ import { UUID } from 'angular2-uuid';
 import * as _ from 'lodash';
 import { Subject, Subscription } from 'rxjs';
 import helptext from 'app/helptext/apps/apps';
-import { CoreEvent } from 'app/interfaces/events';
 import { Option } from 'app/interfaces/option.interface';
 import { AppLoaderService } from 'app/modules/app-loader/app-loader.service';
 import { DialogFormConfiguration } from 'app/modules/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/modules/entity/entity-dialog/entity-dialog.component';
 import { FormSelectConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
-import { EntityToolbarComponent } from 'app/modules/entity/entity-toolbar/entity-toolbar.component';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { ApplicationsService } from 'app/pages/applications/applications.service';
 import { DialogService, ShellService, WebSocketService } from 'app/services';
 import { CoreService } from 'app/services/core-service/core.service';
+import { LayoutService } from 'app/services/layout.service';
 import { StorageService } from 'app/services/storage.service';
 
 interface PodLogEvent {
@@ -34,11 +34,12 @@ interface PodLogEvent {
   // eslint-disable-next-line @angular-eslint/use-component-view-encapsulation
   encapsulation: ViewEncapsulation.None,
 })
-
-export class PodLogsComponent implements OnInit, OnDestroy {
+export class PodLogsComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('logContainer', { static: true }) logContainer: ElementRef;
+  @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
+
   fontSize = 14;
-  formEvent$: Subject<CoreEvent>;
+  fontSizeChanged = new Subject<{ name: string; value: number }>();
   chartReleaseName: string;
   podName: string;
   containerName: string;
@@ -54,6 +55,16 @@ export class PodLogsComponent implements OnInit, OnDestroy {
   private podLogsChangedListener: Subscription;
   podLogs: PodLogEvent[];
 
+  readonly sliderConfig = {
+    name: 'fontsize',
+    label: this.translate.instant('Set font size'),
+    type: 'slider',
+    min: 10,
+    max: 20,
+    step: 1,
+    value: this.fontSize,
+  };
+
   constructor(
     protected core: CoreService,
     private ws: WebSocketService,
@@ -63,6 +74,7 @@ export class PodLogsComponent implements OnInit, OnDestroy {
     protected aroute: ActivatedRoute,
     protected loader: AppLoaderService,
     protected storageService: StorageService,
+    private layoutService: LayoutService,
   ) {}
 
   ngOnInit(): void {
@@ -95,9 +107,14 @@ export class PodLogsComponent implements OnInit, OnDestroy {
         }
       });
 
-      this.setupToolbarButtons();
       this.reconnect();
     });
+
+    this.setupFontSizeSlider();
+  }
+
+  ngAfterViewInit(): void {
+    this.layoutService.pageHeaderUpdater$.next(this.pageHeader);
   }
 
   ngOnDestroy(): void {
@@ -137,52 +154,18 @@ export class PodLogsComponent implements OnInit, OnDestroy {
     }
   }
 
-  setupToolbarButtons(): void {
-    this.formEvent$ = new Subject();
-    this.formEvent$.pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
-      if (evt.data.event_control === 'download') {
-        this.showChooseLogsDialog(true);
-      } else if (evt.data.event_control === 'reconnect') {
-        this.showChooseLogsDialog(false);
-      } else if (evt.data.event_control === 'fontsize') {
-        this.fontSize = evt.data.fontsize;
-      }
-    });
+  setupFontSizeSlider(): void {
+    this.fontSizeChanged
+      .pipe(untilDestroyed(this))
+      .subscribe(() => this.fontSize = this.sliderConfig.value);
+  }
 
-    let controls = [];
-    controls = [
-      {
-        name: 'fontsize',
-        label: this.translate.instant('Set font size'),
-        type: 'slider',
-        min: 10,
-        max: 20,
-        step: 1,
-        value: this.fontSize,
-      },
-      {
-        name: 'reconnect',
-        label: this.translate.instant('Reconnect'),
-        type: 'button',
-        color: 'secondary',
-      },
-      {
-        name: 'download',
-        label: this.translate.instant('Download Logs'),
-        type: 'button',
-        color: 'primary',
-      },
-    ];
-    // Setup Global Actions
-    const actionsConfig = {
-      actionType: EntityToolbarComponent,
-      actionConfig: {
-        target: this.formEvent$,
-        controls,
-      },
-    };
+  onDownloadLogs(): void {
+    this.showChooseLogsDialog(true);
+  }
 
-    this.core.emit({ name: 'GlobalActions', data: actionsConfig, sender: this });
+  onReconnect(): void {
+    this.showChooseLogsDialog(false);
   }
 
   updateChooseLogsDialog(isDownload = false): void {

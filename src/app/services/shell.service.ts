@@ -10,7 +10,6 @@ export class ShellService {
   pendingMessages: string[] = [];
   socket: WebSocket;
   connected = false;
-  loggedIn = false;
   @LocalStorage() username: string;
   @LocalStorage() password: string;
   redirectUrl = '';

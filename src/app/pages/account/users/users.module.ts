@@ -29,6 +29,7 @@ import { AppCommonModule } from 'app/modules/common/app-common.module';
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxTableModule } from 'app/modules/ix-tables/ix-table.module';
+import { LayoutModule } from 'app/modules/layout/layout.module';
 import { UserEffects } from 'app/pages/account/users/store/user.effects';
 import { userReducer } from 'app/pages/account/users/store/user.reducer';
 import { userStateKey } from 'app/pages/account/users/store/user.selectors';
@@ -72,6 +73,7 @@ import { UserDetailsRowComponent } from './user-details-row/user-details-row.com
     TranslateModule,
     TranslateModule,
     NgxFilesizeModule,
+    LayoutModule,
   ],
   declarations: [
     UserListComponent,

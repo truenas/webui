@@ -1,30 +1,33 @@
-import { Component, OnInit } from '@angular/core';
+import {
+  AfterViewInit, Component, OnInit, TemplateRef, ViewChild,
+} from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatDialogRef } from '@angular/material/dialog/dialog-ref';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { JobState } from 'app/enums/job-state.enum';
 import helptext from 'app/helptext/apps/apps';
 import { Catalog, CatalogQueryParams } from 'app/interfaces/catalog.interface';
-import { CoreEvent } from 'app/interfaces/events';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import {
   EntityTableComponent,
 } from 'app/modules/entity/entity-table/entity-table.component';
 import { EntityTableAction, EntityTableConfig } from 'app/modules/entity/entity-table/entity-table.interface';
-import { ApplicationToolbarControl } from 'app/pages/applications/application-toolbar-control.enum';
 import { ManageCatalogSummaryDialogComponent } from 'app/pages/applications/dialogs/manage-catalog-summary/manage-catalog-summary-dialog.component';
 import { CatalogAddFormComponent } from 'app/pages/applications/forms/catalog-add-form/catalog-add-form.component';
 import { CatalogEditFormComponent } from 'app/pages/applications/forms/catalog-edit-form/catalog-edit-form.component';
 import { DialogService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { LayoutService } from 'app/services/layout.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
   selector: 'ix-manage-catalogs',
-  template: '<ix-entity-table [title]="title" [conf]="this"></ix-entity-table>',
+  templateUrl: './manage-catalogs.component.html',
 })
-export class ManageCatalogsComponent implements EntityTableConfig<Catalog>, OnInit {
+export class ManageCatalogsComponent implements EntityTableConfig<Catalog>, OnInit, AfterViewInit {
+  @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
+
   title = 'Catalogs';
   queryCall = 'catalog.query' as const;
   wsDelete = 'catalog.delete' as const;
@@ -61,13 +64,13 @@ export class ManageCatalogsComponent implements EntityTableConfig<Catalog>, OnIn
 
   private dialogRef: MatDialogRef<EntityJobComponent>;
   protected entityList: EntityTableComponent;
-  protected loaderOpen = false;
 
   constructor(
     private mdDialog: MatDialog,
     private dialogService: DialogService,
     private ws: WebSocketService,
     private slideInService: IxSlideInService,
+    private layoutService: LayoutService,
   ) {}
 
   ngOnInit(): void {
@@ -90,9 +93,15 @@ export class ManageCatalogsComponent implements EntityTableConfig<Catalog>, OnIn
     });
   }
 
+  ngAfterViewInit(): void {
+    this.layoutService.pageHeaderUpdater$.next(this.pageHeader);
+  }
+
   refresh(): void {
     this.entityList.getData();
-    this.entityList.filter(this.filterString);
+    if (this.filterString) {
+      this.entityList.filter(this.filterString);
+    }
   }
 
   afterInit(entityList: EntityTableComponent): void {
@@ -161,18 +170,12 @@ export class ManageCatalogsComponent implements EntityTableConfig<Catalog>, OnIn
     });
   }
 
-  onToolbarAction(evt: CoreEvent): void {
-    if (evt.data.event_control === ApplicationToolbarControl.Filter) {
-      this.filterString = evt.data.filter;
-      this.entityList.filter(this.filterString);
-    } else if (evt.data.event_control === ApplicationToolbarControl.RefreshCatalogs) {
-      this.syncAll();
-    } else if (evt.data.event_control === ApplicationToolbarControl.AddCatalog) {
-      this.doAdd();
-    }
+  onSearch(query: string): void {
+    this.filterString = query;
+    this.entityList.filter(this.filterString);
   }
 
-  syncAll(): void {
+  onRefreshAll(): void {
     this.dialogRef = this.mdDialog.open(EntityJobComponent, {
       data: {
         title: helptext.refreshing,

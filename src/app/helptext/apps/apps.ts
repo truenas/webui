@@ -1,6 +1,7 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
 export default {
+  // TODO
   choosePool: {
     title: T('Choose a pool for Apps'),
     placeholder: T('Pools'),
@@ -91,7 +92,7 @@ export default {
   availablePlaceholder: T('Search Available Applications'),
   installedPlaceholder: T('Search Installed Applications'),
   catalogPlaceholder: T('Search Catalogs'),
-  dockerPlaceholder: T('Search Docker Images'),
+  dockerPlaceholder: T('Search Docker Images'), // TODO: Clean
 
   noPool: {
     title: T('No Pools Found'),

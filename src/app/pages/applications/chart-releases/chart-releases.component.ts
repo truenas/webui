@@ -1,5 +1,5 @@
 import {
-  Component, Output, EventEmitter, OnInit,
+  Component, Output, EventEmitter, OnInit, AfterViewInit, ViewChild, TemplateRef,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatDialogRef } from '@angular/material/dialog/dialog-ref';
@@ -14,7 +14,6 @@ import helptext from 'app/helptext/apps/apps';
 import { ApplicationUserEventName, UpgradeSummary } from 'app/interfaces/application.interface';
 import { ChartRelease } from 'app/interfaces/chart-release.interface';
 import { CoreBulkResponse } from 'app/interfaces/core-bulk.interface';
-import { CoreEvent } from 'app/interfaces/events';
 import { Job } from 'app/interfaces/job.interface';
 import { AppLoaderService } from 'app/modules/app-loader/app-loader.service';
 import { DialogFormConfiguration } from 'app/modules/entity/entity-dialog/dialog-form-configuration.interface';
@@ -24,7 +23,6 @@ import { FormSelectConfig } from 'app/modules/entity/entity-form/models/field-co
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { ApplicationTab } from 'app/pages/applications/application-tab.enum';
-import { ApplicationToolbarControl } from 'app/pages/applications/application-toolbar-control.enum';
 import { ApplicationsService } from 'app/pages/applications/applications.service';
 import { ChartEventsDialogComponent } from 'app/pages/applications/dialogs/chart-events/chart-events-dialog.component';
 import { ChartUpgradeDialogComponent } from 'app/pages/applications/dialogs/chart-upgrade/chart-upgrade-dialog.component';
@@ -33,6 +31,7 @@ import { ChartUpgradeDialogConfig } from 'app/pages/applications/interfaces/char
 import { RedirectService } from 'app/services';
 import { DialogService, WebSocketService } from 'app/services/index';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { LayoutService } from 'app/services/layout.service';
 import { ModalService } from 'app/services/modal.service';
 
 @UntilDestroy()
@@ -41,8 +40,9 @@ import { ModalService } from 'app/services/modal.service';
   templateUrl: './chart-releases.component.html',
   styleUrls: ['../applications.component.scss'],
 })
+export class ChartReleasesComponent implements AfterViewInit, OnInit {
+  @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
 
-export class ChartReleasesComponent implements OnInit {
   @Output() updateTab = new EventEmitter();
 
   filteredChartItems: ChartRelease[] = [];
@@ -151,7 +151,16 @@ export class ChartReleasesComponent implements OnInit {
     private router: Router,
     protected ws: WebSocketService,
     private redirect: RedirectService,
+    private layoutService: LayoutService,
   ) { }
+
+  get isSomethingSelected(): boolean {
+    return this.getSelectedItems().length > 0;
+  }
+
+  get areAllAppsSelected(): boolean {
+    return this.filteredChartItems.every((chart) => chart.selected);
+  }
 
   ngOnInit(): void {
     this.addChartReleaseChangedEventListener();
@@ -161,13 +170,37 @@ export class ChartReleasesComponent implements OnInit {
     });
   }
 
-  onToolbarAction(evt: CoreEvent): void {
-    if (evt.data.event_control === ApplicationToolbarControl.Filter) {
-      this.filterString = evt.data.filter;
-      this.filerChartItems();
-    } else if (evt.data.event_control === ApplicationToolbarControl.Bulk) {
-      this.onBulkAction(evt.data.bulk.value);
-    }
+  ngAfterViewInit(): void {
+    this.layoutService.pageHeaderUpdater$.next(this.pageHeader);
+  }
+
+  onSearch(query: string): void {
+    this.filterString = query;
+    this.filerChartItems();
+  }
+
+  onSelectAll(): void {
+    this.filteredChartItems.forEach((item) => {
+      item.selected = true;
+    });
+  }
+
+  onUnselectAll(): void {
+    this.filteredChartItems.forEach((item) => {
+      item.selected = false;
+    });
+  }
+
+  onBulkStart(): void {
+    const checkedItems = this.getSelectedItems();
+    checkedItems.forEach((name) => this.start(name));
+    this.dialogService.info(helptext.bulkActions.success, this.translate.instant(helptext.bulkActions.finished));
+  }
+
+  onBulkStop(): void {
+    const checkedItems = this.getSelectedItems();
+    checkedItems.forEach((name) => this.stop(name));
+    this.dialogService.info(helptext.bulkActions.success, this.translate.instant(helptext.bulkActions.finished));
   }
 
   viewCatalog(): void {
@@ -401,49 +434,6 @@ export class ChartReleasesComponent implements OnInit {
     return selectedItems;
   }
 
-  checkAll(checkedItems: string[]): void {
-    let selectAll = true;
-    if (checkedItems.length === this.filteredChartItems.length) {
-      selectAll = false;
-    }
-
-    this.filteredChartItems.forEach((item) => {
-      item.selected = selectAll;
-    });
-
-    this.refreshToolbarMenus();
-  }
-
-  onBulkAction(actionName: string): void {
-    const checkedItems = this.getSelectedItems();
-
-    if (actionName === 'select_all') {
-      this.checkAll(checkedItems);
-    } else if (checkedItems.length > 0) {
-      if (actionName === 'delete') {
-        this.bulkDelete(checkedItems);
-      } else {
-        checkedItems.forEach((name) => {
-          switch (actionName) {
-            case 'start':
-              this.start(name);
-              break;
-            case 'stop':
-              this.stop(name);
-              break;
-          }
-        });
-
-        this.dialogService.info(helptext.bulkActions.success, this.translate.instant(helptext.bulkActions.finished));
-      }
-    } else {
-      this.dialogService.errorReport(
-        helptext.bulkActions.error,
-        this.translate.instant(helptext.bulkActions.no_selected),
-      );
-    }
-  }
-
   delete(name: string): void {
     const dialogConfirmation = this.dialogService.confirm({
       title: helptext.charts.delete_dialog.title,
@@ -510,8 +500,9 @@ export class ChartReleasesComponent implements OnInit {
     });
   }
 
-  bulkDelete(names: string[]): void {
-    const name = names.join(', ');
+  onBulkDelete(): void {
+    const checkedItems = this.getSelectedItems();
+    const name = checkedItems.join(', ');
     this.dialogService.confirm({
       title: helptext.charts.delete_dialog.title,
       message: this.translate.instant('Delete {name}?', { name }),
@@ -525,7 +516,7 @@ export class ChartReleasesComponent implements OnInit {
           title: helptext.charts.delete_dialog.job,
         },
       });
-      this.dialogRef.componentInstance.setCall('core.bulk', ['chart.release.delete', names.map((item) => [item])]);
+      this.dialogRef.componentInstance.setCall('core.bulk', ['chart.release.delete', checkedItems.map((item) => [item])]);
       this.dialogRef.componentInstance.submit();
       this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(
         (res: Job<CoreBulkResponse[]>) => {
@@ -564,8 +555,6 @@ export class ChartReleasesComponent implements OnInit {
         this.showLoadStatus(EmptyType.NoPageData);
       }
     }
-
-    this.refreshToolbarMenus();
   }
 
   openShell(name: string): void {
@@ -696,17 +685,5 @@ export class ChartReleasesComponent implements OnInit {
         data: catalogApp,
       });
     }
-  }
-
-  // On click checkbox
-  onChangeCheck(): void {
-    this.refreshToolbarMenus();
-  }
-
-  // Refresh Toolbar menus
-  refreshToolbarMenus(): void {
-    const isSelectedOneMore: boolean = this.getSelectedItems().length > 0;
-    const isSelectedAll = !this.filteredChartItems.find((item) => !item.selected);
-    this.updateTab.emit({ name: ApplicationUserEventName.UpdateToolbar, value: isSelectedOneMore, isSelectedAll });
   }
 }

@@ -14,6 +14,7 @@ import { CommonDirectivesModule } from 'app/directives/common/common-directives.
 import { AppCommonModule } from 'app/modules/common/app-common.module';
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
+import { LayoutModule } from 'app/modules/layout/layout.module';
 import { LineChartComponent } from 'app/pages/reports-dashboard/components/line-chart/line-chart.component';
 import { ReportsDashboardComponent } from 'app/pages/reports-dashboard/reports-dashboard.component';
 import { routing } from 'app/pages/reports-dashboard/reports-dashboard.routing';
@@ -41,6 +42,7 @@ import { ReportsGlobalControlsComponent } from './components/reports-global-cont
     FlexLayoutModule,
     CommonDirectivesModule,
     EntityModule,
+    LayoutModule,
   ],
   declarations: [
     LineChartComponent,

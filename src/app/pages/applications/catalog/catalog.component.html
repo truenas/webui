@@ -1,3 +1,21 @@
+<ng-template #pageHeader>
+  <ix-page-title-header>
+    <ix-search-input
+      (search)="onSearch($event)"
+    ></ix-search-input>
+
+    <button mat-button (click)="syncAll()">{{ 'Refresh All' | translate }}</button>
+
+    <ix-toolbar-multimenu
+      *ngIf="catalogMenu"
+      [config]="catalogMenu"
+      [controller]="catalogItemsChanged"
+    ></ix-toolbar-multimenu>
+
+    <ix-common-apps-toolbar-buttons></ix-common-apps-toolbar-buttons>
+  </ix-page-title-header>
+</ng-template>
+
 <div fxLayout="column" fxFill>
   <div class="bar" fxLayout="row wrap" fxLayoutAlign="center center" fxLayoutGap="30">
     <div *ngFor="let job of catalogSyncJobs" class="progress-item">
