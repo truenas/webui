@@ -428,9 +428,9 @@ def navigate_to_dashboard_wait_for_ha_to_be_online(driver):
     assert wait_on_element(driver, 180, '//mat-icon[@svgicon="ha_enabled"]')
 
 
-@then(parsers.parse('enter Hostname "{nost1}", Hostname (TrueNAS Controller 2) "{host2}"'))
+@then(parsers.parse('enter Hostname "{host1}", Hostname (TrueNAS Controller 2) "{host2}"'))
 def enter_hostname_hostname_truenas_controller_2(driver, host1, host2):
-    """enter Hostname "{nost1}", Hostname (TrueNAS Controller 2) "{host2}"."""
+    """enter Hostname "{host1}", Hostname (TrueNAS Controller 2) "{host2}"."""
     assert wait_on_element(driver, 7, '//input[@ix-auto="input__Hostname"]', 'inputable')
     driver.find_element_by_xpath('//input[@ix-auto="input__Hostname"]').clear()
     driver.find_element_by_xpath('//input[@ix-auto="input__Hostname"]').send_keys(host1)
