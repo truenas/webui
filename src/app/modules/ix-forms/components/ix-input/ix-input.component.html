@@ -1,0 +1,51 @@
+<div *ngIf="label" class="label-container">
+  <label class="label">
+    <span [innerHTML]="label"></span>
+    <span *ngIf="required" class="required">*</span>
+  </label>
+  <tooltip *ngIf="tooltip" [header]="label" class="tooltip" [message]="tooltip"></tooltip>
+</div>
+
+<div class="input-container" [class.disabled]="isDisabled" [class.readonly]="readonly">
+  <span *ngIf="prefixIcon" class="prefix-icon">
+    <mat-icon>{{prefixIcon}}</mat-icon>
+  </span>
+  <input
+    #ixInput
+    matInput
+    [class.prefix-padding]="prefixIcon"
+    [class.password-field]="isPasswordField()"
+    [class.has-reset-input-icon]="shouldShowResetInput()"
+    [required]="required"
+    [readonly]="readonly"
+    [disabled]="isDisabled"
+    [type]="getType()"
+    [value]="formatted"
+    (input)="input(ixInput)"
+    (focus)="focus(ixInput)"
+    (blur)="blurred()"
+    [autocomplete]="autocomplete"
+    [placeholder]="placeholder"
+  >
+  <span *ngIf="shouldShowResetInput()" class="reset-input">
+    <mat-icon (click)="resetInput(ixInput)" role="img" fontSet="mdi-set" fontIcon="mdi-close-circle"></mat-icon>
+  </span>
+  <button
+    *ngIf="type === 'password'"
+    mat-icon-button type="button"
+    class="toggle_pw"
+    (click)="onPasswordToggled()">
+    <i class="material-icons" matTooltip="Hide" *ngIf="showPassword">visibility</i>
+    <i class="material-icons" matTooltip="Show" *ngIf="!showPassword">visibility_off</i>
+  </button>
+</div>
+
+<div *ngIf="invalid">
+  <mat-error>
+    <div [innerHTML]="invalidMessage()"></div>
+  </mat-error>
+</div>
+
+<ix-errors [control]="controlDirective.control" [label]="label"></ix-errors>
+
+<mat-hint *ngIf="hint">{{hint}}</mat-hint>

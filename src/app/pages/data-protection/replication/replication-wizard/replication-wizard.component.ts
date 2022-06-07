@@ -7,7 +7,7 @@ import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 import { take } from 'rxjs/operators';
 import { CipherType } from 'app/enums/cipher-type.enum';
-import { DatasetSource } from 'app/enums/dataset-source.enum';
+import { DatasetSource } from 'app/enums/dataset.enum';
 import { Direction } from 'app/enums/direction.enum';
 import { ExplorerType } from 'app/enums/explorer-type.enum';
 import { KeychainCredentialType } from 'app/enums/keychain-credential-type.enum';
@@ -27,22 +27,23 @@ import { ListdirChild } from 'app/interfaces/listdir-child.interface';
 import { PeriodicSnapshotTask } from 'app/interfaces/periodic-snapshot-task.interface';
 import { ReplicationTask } from 'app/interfaces/replication-task.interface';
 import { Schedule } from 'app/interfaces/schedule.interface';
-import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
-import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
+import { DialogFormConfiguration } from 'app/modules/entity/entity-dialog/dialog-form-configuration.interface';
+import { EntityDialogComponent } from 'app/modules/entity/entity-dialog/entity-dialog.component';
 import {
   FieldConfig,
   FormExplorerConfig,
   FormParagraphConfig,
   FormSelectConfig,
-} from 'app/pages/common/entity/entity-form/models/field-config.interface';
-import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
-import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
-import { RelationConnection } from 'app/pages/common/entity/entity-form/models/relation-connection.enum';
-import { Wizard } from 'app/pages/common/entity/entity-form/models/wizard.interface';
-import { EntityFormService } from 'app/pages/common/entity/entity-form/services/entity-form.service';
-import { forbiddenValues } from 'app/pages/common/entity/entity-form/validators/forbidden-values-validation';
-import { EntityWizardComponent } from 'app/pages/common/entity/entity-wizard/entity-wizard.component';
-import { EntityUtils } from 'app/pages/common/entity/utils';
+} from 'app/modules/entity/entity-form/models/field-config.interface';
+import { FieldSet } from 'app/modules/entity/entity-form/models/fieldset.interface';
+import { RelationAction } from 'app/modules/entity/entity-form/models/relation-action.enum';
+import { RelationConnection } from 'app/modules/entity/entity-form/models/relation-connection.enum';
+import { Wizard } from 'app/modules/entity/entity-form/models/wizard.interface';
+import { EntityFormService } from 'app/modules/entity/entity-form/services/entity-form.service';
+import { forbiddenValues } from 'app/modules/entity/entity-form/validators/forbidden-values-validation';
+import { EntityWizardComponent } from 'app/modules/entity/entity-wizard/entity-wizard.component';
+import { EntityUtils } from 'app/modules/entity/utils';
+import { CronPresetValue } from 'app/modules/scheduler/utils/get-default-crontab-presets.utils';
 import {
   AppLoaderService,
   DialogService,
@@ -68,7 +69,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
   hideCancel = true;
 
   protected entityWizard: EntityWizardComponent;
-  custActions = [{
+  customActions = [{
     id: 'advanced_add',
     name: this.translate.instant('Advanced Replication Creation'),
     function: () => {
@@ -466,14 +467,14 @@ export class ReplicationWizardComponent implements WizardConfiguration {
               options: [
                 {
                   label: this.translate.instant('Encryption (more secure, but slower)'),
-                  value: TransportMode.SSH,
+                  value: TransportMode.Ssh,
                 },
                 {
                   label: this.translate.instant('No Encryption (less secure, but faster)'),
                   value: TransportMode.Netcat,
                 },
               ],
-              value: TransportMode.SSH,
+              value: TransportMode.Ssh,
               relation: [{
                 action: RelationAction.Show,
                 connective: RelationConnection.Or,
@@ -523,7 +524,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
           name: 'schedule_picker',
           placeholder: helptext.schedule_placeholder,
           tooltip: helptext.schedule_tooltip,
-          value: '0 0 * * *',
+          value: CronPresetValue.Daily,
           class: 'inline',
           width: '50%',
           relation: [{
@@ -570,7 +571,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
           width: '50%',
         },
         {
-          placeholder: helptext.lifetime_value_placeholder,
+          placeholder: '',
           type: 'input',
           name: 'lifetime_value',
           inputType: 'number',
@@ -591,7 +592,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
         {
           type: 'select',
           name: 'lifetime_unit',
-          tooltip: helptext.lifetime_unit_tooltip,
+          tooltip: '',
           options: [{
             label: this.translate.instant('Hours'),
             value: LifetimeUnit.Hour,
@@ -739,7 +740,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
       type: 'select',
       name: 'cipher',
       placeholder: helptext.cipher_placeholder,
-      tooltip: helptext.cipher_tooltip,
+      tooltip: '',
       options: [
         {
           label: this.translate.instant('Standard (Secure)'),
@@ -806,8 +807,8 @@ export class ReplicationWizardComponent implements WizardConfiguration {
     });
   }
 
-  isCustActionVisible(actionId: string, stepperIndex: number): boolean {
-    if (stepperIndex == 0) {
+  isCustomActionVisible(actionId: string, stepperIndex: number): boolean {
+    if (stepperIndex === 0) {
       return true;
     }
     return false;
@@ -818,7 +819,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
     this.preload_fieldSet = _.find(this.wizardConfig[0].fieldSets, { class: 'preload' });
     this.source_fieldSet = _.find(this.wizardConfig[0].fieldSets, { class: 'source' });
     this.target_fieldSet = _.find(this.wizardConfig[0].fieldSets, { class: 'target' });
-    this.snapshotsCountField = _.find(this.source_fieldSet.config, { name: 'snapshots_count' });
+    this.snapshotsCountField = _.find(this.source_fieldSet.config, { name: 'snapshots_count' }) as FormParagraphConfig;
 
     this.step0Init();
     this.step1Init();
@@ -881,9 +882,9 @@ export class ReplicationWizardComponent implements WizardConfiguration {
       this.genTaskName();
     });
 
-    for (const i of ['source', 'target']) {
-      const credentialName = 'ssh_credentials_' + i;
-      const datasetName = i === 'source' ? 'source_datasets' : 'target_dataset';
+    for (const destination of ['source', 'target']) {
+      const credentialName = 'ssh_credentials_' + destination;
+      const datasetName = destination === 'source' ? 'source_datasets' : 'target_dataset';
       const datasetFrom = datasetName + '_from';
       this.entityWizard.formArray.get([0]).get(datasetFrom).valueChanges
         .pipe(untilDestroyed(this))
@@ -915,7 +916,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
             this.createSshConnection(credentialName);
             this.setDisable(datasetName, false, false, 0);
           } else {
-            const fieldConfig = i === 'source' ? this.source_fieldSet.config : this.target_fieldSet.config;
+            const fieldConfig = destination === 'source' ? this.source_fieldSet.config : this.target_fieldSet.config;
             const explorerConfig = _.find(
               fieldConfig,
               { name: datasetName },
@@ -1004,7 +1005,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
       });
     }
     return new Promise((resolve) => {
-      this.replicationService.getRemoteDataset(TransportMode.SSH, sshCredentials, this).then(
+      this.replicationService.getRemoteDataset(TransportMode.Ssh, sshCredentials, this).then(
         (res) => {
           const sourceDatasetsFormControl = this.entityWizard.formArray.get([0]).get('source_datasets');
           const prevErrors = sourceDatasetsFormControl.errors;
@@ -1048,7 +1049,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
       });
     }
     return new Promise((resolve) => {
-      this.replicationService.getRemoteDataset(TransportMode.SSH, sshCredentials, this).then(
+      this.replicationService.getRemoteDataset(TransportMode.Ssh, sshCredentials, this).then(
         (res) => {
           const targetDatasetFormControl = this.entityWizard.formArray.get([0]).get('target_dataset');
           const prevErrors = targetDatasetFormControl.errors;
@@ -1115,10 +1116,10 @@ export class ReplicationWizardComponent implements WizardConfiguration {
       'source_datasets',
       'target_dataset',
     ];
-    for (const i of controls) {
-      const ctrl = this.entityWizard.formArray.get([0]).get(i);
+    for (const controlName of controls) {
+      const ctrl = this.entityWizard.formArray.get([0]).get(controlName);
       if (ctrl && !ctrl.disabled) {
-        ctrl.setValue(task[i]);
+        ctrl.setValue(task[controlName]);
       }
     }
 
@@ -1182,7 +1183,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
 
     if (item === 'ssh_credentials') {
       item += '_' + data['setup_method'];
-      if (data['setup_method'] == 'manual') {
+      if (data['setup_method'] === 'manual') {
         payload = {
           name: data['name'],
           type: KeychainCredentialType.SshCredentials,
@@ -1376,14 +1377,12 @@ export class ReplicationWizardComponent implements WizardConfiguration {
       }
     }
 
-    if (value['schedule_method'] === ScheduleMethod.Once && createdItems['replication'] != undefined) {
+    if (value['schedule_method'] === ScheduleMethod.Once && createdItems['replication'] !== undefined) {
       await this.ws.call('replication.run', [createdItems['replication']]).toPromise().then(
         () => {
           this.dialogService.info(
             this.translate.instant('Task started'),
             this.translate.instant('Replication <i>{name}</i> has started.', { name: value['name'] }),
-            '500px',
-            'info',
             true,
           );
         },
@@ -1399,7 +1398,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
   async rollBack(items: any): Promise<void> {
     const keys = Object.keys(items).reverse();
     for (const key of keys) {
-      if (items[key] != null) {
+      if (items[key] !== null) {
         await this.ws.call((this.deleteCalls as any)[key], [items[key]]).toPromise().then(
           () => {},
         );
@@ -1417,7 +1416,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
         let prerequisite = true;
         this.entityWizard.loader.open();
 
-        if (value['private_key'] == 'NEW') {
+        if (value['private_key'] === 'NEW') {
           await this.replicationService.genSshKeypair().then(
             (keyPair) => {
               value['sshkeypair'] = keyPair;
@@ -1428,7 +1427,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
             },
           );
         }
-        if (value['setup_method'] == 'manual') {
+        if (value['setup_method'] === 'manual') {
           await this.getRemoteHostKey(value).then(
             (res) => {
               value['remote_host_key'] = res;

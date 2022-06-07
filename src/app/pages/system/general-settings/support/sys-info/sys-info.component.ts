@@ -1,7 +1,4 @@
 import { Component, Input } from '@angular/core';
-import { WebSocketService } from 'app/services/';
-import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
-import { DialogService } from 'app/services/dialog.service';
 
 @Component({
   selector: 'app-sys-info',
@@ -23,7 +20,4 @@ export class SysInfoComponent {
   @Input() expiration_date: string;
   @Input() add_hardware: string;
   @Input() daysLeftinContract: number;
-
-  constructor(protected loader: AppLoaderService, protected dialogService: DialogService,
-    protected ws: WebSocketService) { }
 }

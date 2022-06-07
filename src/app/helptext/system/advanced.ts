@@ -1,4 +1,3 @@
-import { Validators } from '@angular/forms';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { SyslogLevel, SyslogTransport } from 'app/enums/syslog.enum';
 
@@ -8,6 +7,7 @@ export const helptextSystemAdvanced = {
   fieldset_ui: T('GUI'),
   fieldset_sed: T('Self-Encrypting Drive'),
   fieldset_kernel: T('Kernel'),
+  fieldset_replication: T('Replication'),
   fieldset_syslog: T('Syslog'),
   fieldset_sysctl: T('Sysctl'),
   fieldset_cron: T('Cron Jobs'),
@@ -22,19 +22,6 @@ export const helptextSystemAdvanced = {
 
   variable: T('Variable'),
 
-  deleteVariable: {
-    title: T('Variable'),
-    message: T('Delete'),
-  },
-
-  debug_dialog: {
-    failure_msg: T('Failed to generate debug file.'),
-    failure_title: T('Failed'),
-  },
-
-  snackbar_network_error_message: T('Check the network connection.'),
-  snackbar_network_error_action: T('Failed'),
-
   consolemenu_placeholder: T('Show Text Console without Password Prompt'),
   consolemenu_tooltip: T('Unset to add a login prompt to the system before\
  the console menu is shown.'),
@@ -48,26 +35,6 @@ export const helptextSystemAdvanced = {
   serialspeed_placeholder: T('Serial Speed'),
   serialspeed_tooltip: T('Choose the speed in bps used by the serial port.'),
 
-  swapondrive_placeholder: T('Swap Size in GiB'),
-  swapondrive_tooltip: T('By default, all data disks are created with the amount\
- of swap specified. Changing the value does not affect\
- the amount of swap on existing disks, only disks added\
- after the change. Does not affect log or cache\
- devices as they are created without swap. Setting to\
- <i>0</i> disables swap creation completely. <b>STRONGLY\
- DISCOURAGED</b>'),
-  swapondrive_validation: [Validators.required, Validators.min(0), Validators.max(99)],
-
-  overprovision: {
-    placeholder: T('LOG (Write Cache) Overprovision Size in GiB'),
-    tooltip: T('Overprovisioning a ZFS Log SSD can increase its performance and lifespan by \
- distributing writes and erases across more drive flash blocks. \
- Defining a number of GiB here overprovisions ZFS Log disks during pool creation or extension. \
- Examples: 50 GiB, 10g, 5GB'),
-    error: T('Invalid value. Valid values are numbers followed by optional unit letters \
- for GiB, like <code>256g</code> or <code>1 G</code> or <code>2 GiB</code>.'),
-  },
-
   autotune_placeholder: T('Enable Autotune'),
   autotune_tooltip: T('Activates a tuning script which attempts to optimize \
  the system depending on the installed hardware. <b>Warning:</b> Autotuning \
@@ -78,23 +45,17 @@ export const helptextSystemAdvanced = {
   debugkernel_tooltip: T('Set to boot a debug kernel after the next system\
   reboot.'),
 
+  max_parallel_replication_tasks_placeholder: T('Replication Tasks Limit'),
+  max_parallel_replication_tasks_tooltip: T('Maximum number of replication tasks being executed \
+simultaneously.'),
+
   motd_placeholder: T('MOTD Banner'),
   motd_tooltip: T('The message to show when a user logs in with SSH.'),
-
-  traceback_placeholder: T('Show Tracebacks in Case of Fatal Error'),
-  traceback_tooltip: T('Provides a pop-up window of diagnostic information if a\
- fatal error occurs.'),
-
-  advancedmode_placeholder: T('Show Advanced Fields by Default'),
-  advancedmode_tooltip: T('Set to always show advanced fields, when available.'),
 
   fqdn_placeholder: T('Use FQDN for Logging'),
   fqdn_tooltip: T('Set to include the Fully-Qualified Domain Name (FQDN)\
  in logs to precisely identify systems with similar\
  hostnames.'),
-
-  cpu_in_percentage_placeholder: T('Report CPU Usage in Percentage'),
-  cpu_in_percentage_tooltip: T('Set to display CPU usage as percentages in Reporting.'),
 
   sed_user_placeholder: T('ATA Security User'),
   sed_user_tooltip: T('User passed to <i>camcontrol security -u</i> to unlock\
@@ -104,10 +65,6 @@ export const helptextSystemAdvanced = {
   sed_passwd_tooltip: T('Global password to unlock SEDs.'),
 
   sed_passwd2_placeholder: T('Confirm SED Password'),
-  sed_passwd2_tooltip: T(''),
-
-  swapondrive_warning: T('A swap size of 0 is STRONGLY DISCOURAGED.'),
-  swapondrive_max_warning: T('Maximum swap size is 99 GiB'),
 
   debug_download_failed_title: T('Error Downloading File'),
   debug_download_failed_message: T('Debug could not be downloaded.'),

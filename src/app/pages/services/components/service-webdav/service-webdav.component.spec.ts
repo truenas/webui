@@ -3,16 +3,14 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { Observable, of } from 'rxjs';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
-import { Certificate } from 'app/interfaces/certificate.interface';
 import { WebdavConfig, WebdavProtocol } from 'app/interfaces/webdav-config.interface';
-import { IxFormsModule } from 'app/pages/common/ix-forms/ix-forms.module';
-import { FormErrorHandlerService } from 'app/pages/common/ix-forms/services/form-error-handler.service';
-import { IxFormHarness } from 'app/pages/common/ix-forms/testing/ix-form.harness';
+import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
+import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
+import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { ServiceWebdavComponent } from 'app/pages/services/components/service-webdav/service-webdav.component';
 import {
-  AppLoaderService, DialogService, SystemGeneralService, WebSocketService,
+  AppLoaderService, DialogService, WebSocketService,
 } from 'app/services';
 
 describe('ServiceWebdavComponent', () => {
@@ -38,18 +36,11 @@ describe('ServiceWebdavComponent', () => {
         } as WebdavConfig),
         mockCall('kerberos.update'),
         mockCall('webdav.update'),
+        mockCall('webdav.cert_choices', {
+          1: 'freenas_default',
+        }),
       ]),
       mockProvider(FormErrorHandlerService),
-      mockProvider(SystemGeneralService, {
-        getCertificates(): Observable<Pick<Certificate, 'id' | 'name'>[]> {
-          return of([
-            {
-              id: 1,
-              name: 'freenas_default',
-            },
-          ]);
-        },
-      }),
       mockProvider(AppLoaderService),
       mockProvider(DialogService),
     ],

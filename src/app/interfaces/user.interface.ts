@@ -1,3 +1,4 @@
+import { DashConfigItem } from 'app/pages/dashboard/components/widget-controller/widget-controller.component';
 import { Preferences } from './preferences.interface';
 
 export interface User {
@@ -17,10 +18,13 @@ export interface User {
   sudo_nopasswd: boolean;
   sudo_commands: string[];
   microsoft_account: boolean;
-  attributes: { preferences: Preferences };
+  attributes: {
+    preferences: Preferences;
+    dashState: DashConfigItem[];
+  };
   email: string;
   group: UserGroup;
-  groups: { [property: string]: any }[];
+  groups: number[];
   sshpubkey: string;
   local: boolean;
   id_type_both: boolean;
@@ -33,7 +37,7 @@ export interface UserGroup {
   bsdgrp_builtin: boolean;
   bsdgrp_sudo: boolean;
   bsdgrp_sudo_nopasswd: boolean;
-  bsdgrp_sudo_commands: { [property: string]: any }[];
+  bsdgrp_sudo_commands: { [property: string]: unknown }[];
   bsdgrp_smb: boolean;
 }
 
@@ -45,7 +49,7 @@ export type DeleteUserParams = [
 export interface UserUpdate {
   uid?: number;
   username?: string;
-  group?: string;
+  group?: number;
   home?: string;
   home_mode?: string;
   shell?: string;
@@ -60,6 +64,7 @@ export interface UserUpdate {
   sudo_nopasswd?: boolean;
   sudo_commands?: string[];
   sshpubkey?: string;
-  groups?: string;
+  groups?: number[];
+  group_create?: boolean;
   attributes?: Record<string, unknown>;
 }

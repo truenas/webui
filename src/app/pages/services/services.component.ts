@@ -9,15 +9,15 @@ import { Subject } from 'rxjs';
 import {
   filter, map, switchMap,
 } from 'rxjs/operators';
-import { CoreService } from 'app/core/services/core-service/core.service';
 import { ServiceName, serviceNames } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { CoreEvent } from 'app/interfaces/events';
 import { Service, ServiceRow } from 'app/interfaces/service.interface';
-import { EmptyConfig, EmptyType } from 'app/pages/common/entity/entity-empty/entity-empty.component';
-import { EntityToolbarComponent } from 'app/pages/common/entity/entity-toolbar/entity-toolbar.component';
-import { ToolbarConfig } from 'app/pages/common/entity/entity-toolbar/models/control-config.interface';
+import { EmptyConfig, EmptyType } from 'app/modules/entity/entity-empty/entity-empty.component';
+import { EntityToolbarComponent } from 'app/modules/entity/entity-toolbar/entity-toolbar.component';
+import { ToolbarConfig } from 'app/modules/entity/entity-toolbar/models/control-config.interface';
 import { IscsiService } from 'app/services/';
+import { CoreService } from 'app/services/core-service/core.service';
 import { DialogService } from 'app/services/dialog.service';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -123,7 +123,7 @@ export class ServicesComponent implements OnInit {
 
     const serviceName = this.serviceNames.get(service.service);
     if (rpc === 'service.stop') {
-      if (service.service == ServiceName.Iscsi) {
+      if (service.service === ServiceName.Iscsi) {
         this.iscsiService.getGlobalSessions().pipe(
           switchMap((sessions) => {
             let message = this.translate.instant('Stop {serviceName}?', { serviceName });
@@ -169,18 +169,18 @@ export class ServicesComponent implements OnInit {
     this.cdr.markForCheck();
 
     const serviceName = this.serviceNames.get(service.service);
-    this.ws.call(rpc, [service.service]).pipe(
+    this.ws.call(rpc, [service.service, { silent: false }]).pipe(
       untilDestroyed(this),
     ).subscribe((success) => {
       if (success) {
         if (service.state === ServiceStatus.Running && rpc === 'service.stop') {
-          this.dialog.info(
+          this.dialog.warn(
             this.translate.instant('Service failed to stop'),
             this.translate.instant('{serviceName} service failed to stop.', { serviceName }),
           );
         }
       } else if (service.state === ServiceStatus.Stopped && rpc === 'service.start') {
-        this.dialog.info(
+        this.dialog.warn(
           this.translate.instant('Service failed to start'),
           this.translate.instant('{serviceName} service failed to start.', { serviceName }),
         );
@@ -190,7 +190,7 @@ export class ServicesComponent implements OnInit {
       if (rpc === 'service.stop') {
         message = this.translate.instant('Error stopping service {serviceName}.', { serviceName });
       }
-      this.dialog.errorReport(message, error.message, error.stack);
+      this.dialog.errorReport(message, error.reason, error.trace.formatted);
       this.serviceLoadingMap.set(service.service, false);
       this.cdr.markForCheck();
     });
@@ -201,6 +201,8 @@ export class ServicesComponent implements OnInit {
       .pipe(untilDestroyed(this))
       .subscribe((res) => {
         if (!res) {
+          // To uncheck the checkbox
+          service.enable = false;
           // Middleware should return the service id
           throw new Error('Method service.update failed. No response from server');
         }
@@ -232,7 +234,7 @@ export class ServicesComponent implements OnInit {
     this.settingsEvent$.pipe(
       untilDestroyed(this),
     ).subscribe((event: CoreEvent) => {
-      if (event.data.event_control == 'filter') {
+      if (event.data.event_control === 'filter') {
         this.filterString = event.data.filter;
         this.dataSource.filter = event.data.filter;
       }

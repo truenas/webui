@@ -3,7 +3,6 @@ import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
 export const helptextSharingSmb = {
   fieldset_basic: T('Basic'),
-  fieldset_advanced: T('Advanced'),
   fieldset_access: T('Access'),
   fieldset_other: T('Other Options'),
 
@@ -50,11 +49,6 @@ export const helptextSharingSmb = {
   afpDialog_message: T('This option controls how metadata and alternate data streams read write to disks. Only enable this when the share configuration was migrated from the deprecated Apple Filing Protocol (AFP). Do not attempt to force a previous AFP share to behave like a pure SMB share or file corruption can occur.'),
   afpDialog_button: T('I understand'),
 
-  placeholder_default_permissions: T('Default Permissions'),
-  tooltip_default_permissions: T('When enabled, the ACLs grant read and \
- write access for owner or group and read-only for others. <b>Only</b> leave \
- unset when creating a share on a system that already has custom ACLs configured.'),
-
   placeholder_acl: T('Enable ACL'),
   tooltip_acl: T('Enable ACL support for the SMB share.'),
 
@@ -73,11 +67,7 @@ export const helptextSharingSmb = {
  </b>. When the files are in a different dataset or a child dataset, \
  they are copied to the dataset where the Recycle Bin is located. To \
  prevent excessive space usage, files larger than 20 MiB are deleted \
- rather than moved. Adjust the <i>Auxiliary Parameter</i> \
- <samp>crossrename:sizelimit=</samp> setting to allow larger files. \
- For example, <samp>crossrename:sizelimit=\'{\'50\'}\'</samp> allows moves of \
- files up to 50 MiB in size. This means files can be permanently \
- deleted or moved from the recycle bin. <b>This is not a replacement \
+ rather than moved. <b>This is not a replacement \
  for ZFS snapshots.</b>'),
 
   placeholder_guestok: T('Allow Guest Access'),
@@ -196,32 +186,17 @@ export const helptextSharingSmb = {
   },
 
   // share acl
-  share_acl_basic: T('Basic'),
-  share_acl_entries: T('ACL Entries'),
-
-  share_name_placeholder: T('Share Name'),
-  share_name_tooltip: T('Name that was created with the SMB share.'),
-
-  ae_who_sid_placeholder: T('SID'),
   ae_who_sid_tooltip: T('Who this ACL entry applies to, shown as a\
  <a href="https://docs.microsoft.com/en-us/windows/win32/secauthz/security-identifiers" target="_blank">Windows\
  Security Identifier</a>. Either a <i>SID</i> or a <i>Domain</i> and <i>Name</i> is required for this ACL.'),
-
-  ae_who_name_domain_placeholder: T('Domain'),
   ae_who_name_domain_tooltip: T('Domain for the user <i>Name</i>. Required when a <i>SID</i> is not entered.\
  Local users have the SMB server NetBIOS name: <code>freenas\\smbusers</code>.'),
-
-  ae_who_name_name_placeholder: T('Name'),
   ae_who_name_name_tooltip: T('Who this ACL entry applies to, shown as a user name. Requires adding the user <i>Domain</i>.'),
-
-  ae_perm_placeholder: T('Permission'),
   ae_perm_tooltip: T('Predefined permission combinations:<br><i>Read</i>:\
  Read access and Execute permission on the object (RX).<br><i>Change</i>: Read\
  access, Execute permission, Write access, and Delete object (RXWD).<br><i>Full</i>:\
  Read access, Execute permission, Write access, Delete object, change Permissions, and take Ownership (RXWDPO).<br><br>\
  For more details, see <a href="https://www.samba.org/samba/docs/current/man-html/smbcacls.1.html" target="_blank">smbacls(1)</a>.'),
-
-  ae_type_placeholder: T('Type'),
   ae_type_tooltip: T('How permissions are applied to the share.\
  <i>Allowed</i> denies all permissions by default except those that are manually defined.\
  <i>Denied</i> allows all permissions by default except those that are manually defined.'),
@@ -245,4 +220,6 @@ export const helptextSharingSmb = {
     action: T('I Understand'),
   },
 
+  restartPt1: T('The following changes to this SMB Share require the SMB Service to be restarted before they can take effect.'),
+  restartPt2: T('Would you like to restart the SMB Service?'),
 };

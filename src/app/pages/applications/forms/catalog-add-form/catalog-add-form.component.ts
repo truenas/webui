@@ -3,7 +3,7 @@ import { Validators } from '@angular/forms';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import helptext from 'app/helptext/apps/apps';
-import { FormErrorHandlerService } from 'app/pages/common/ix-forms/services/form-error-handler.service';
+import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { DialogService, WebSocketService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
@@ -51,7 +51,8 @@ export class CatalogAddFormComponent {
         this.isFormLoading = false;
         this.cdr.markForCheck();
         this.dialogService.info(
-          helptext.catalogForm.dialog.title, helptext.catalogForm.dialog.message, '500px', 'info', true,
+          helptext.catalogForm.dialog.title,
+          helptext.catalogForm.dialog.message,
         );
         this.slideInService.close();
       }, (error) => {

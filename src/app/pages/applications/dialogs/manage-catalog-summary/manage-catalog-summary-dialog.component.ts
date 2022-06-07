@@ -7,11 +7,10 @@ import { JobState } from 'app/enums/job-state.enum';
 import helptext from 'app/helptext/apps/apps';
 import { Catalog, CatalogAppVersion, CatalogItems } from 'app/interfaces/catalog.interface';
 import { Job } from 'app/interfaces/job.interface';
-import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
-import { EntityUtils } from 'app/pages/common/entity/utils';
+import { AppLoaderService } from 'app/modules/app-loader/app-loader.service';
+import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
+import { EntityUtils } from 'app/modules/entity/utils';
 import { DialogService, WebSocketService } from 'app/services';
-import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
-import { LocaleService } from 'app/services/locale.service';
 
 @UntilDestroy()
 @Component({
@@ -34,7 +33,6 @@ export class ManageCatalogSummaryDialogComponent implements OnInit {
   constructor(
     public dialogRef: MatDialogRef<EntityJobComponent>,
     @Inject(MAT_DIALOG_DATA) public data: Catalog,
-    protected localeService: LocaleService,
     private ws: WebSocketService,
     private loader: AppLoaderService,
     protected dialogService: DialogService,
@@ -76,15 +74,15 @@ export class ManageCatalogSummaryDialogComponent implements OnInit {
   onOptionChanged(): void {
     this.filteredItems = this.catalogItems.filter((item) => {
       let isSeletectedTrain = false;
-      if (this.selectedTrain == this.trainOptions[0]
-        || this.selectedTrain == item.train) {
+      if (this.selectedTrain === this.trainOptions[0]
+        || this.selectedTrain === item.train) {
         isSeletectedTrain = true;
       }
 
       let isSeletectedStatus = false;
-      if (this.selectedStatus == this.statusOptions[0]
-        || this.selectedStatus == this.statusOptions[1] && item.healthy
-        || this.selectedStatus == this.statusOptions[2] && !item.healthy) {
+      if (this.selectedStatus === this.statusOptions[0]
+        || (this.selectedStatus === this.statusOptions[1] && item.healthy)
+        || (this.selectedStatus === this.statusOptions[2] && !item.healthy)) {
         isSeletectedStatus = true;
       }
 
@@ -94,7 +92,7 @@ export class ManageCatalogSummaryDialogComponent implements OnInit {
 
   versionStatusLabel(item: CatalogAppVersion): string {
     let label = '';
-    if (this.selectedStatus == this.statusOptions[0]) {
+    if (this.selectedStatus === this.statusOptions[0]) {
       if (item.healthy) {
         label += '(Healthy)';
       } else {

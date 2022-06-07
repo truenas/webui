@@ -3,35 +3,27 @@ import {
 } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
-import { IxObject } from 'app/core/classes/ix-object';
-import { CoreServiceInjector } from 'app/core/services/core-service-injector';
-import { CoreService } from 'app/core/services/core-service/core.service';
-import { ThemeService } from 'app/services/theme/theme.service';
 
 @Component({
   selector: 'widget',
   templateUrl: './widget.component.html',
 })
-export class WidgetComponent extends IxObject {
-  protected core: CoreService;
-  themeService: ThemeService;
+export class WidgetComponent {
   @Input() widgetSize: string;
   @Input() rendered?: boolean = true;
   @Input() configurable = false;
+  @Input() showReorderHandle = false;
   @Output() back = new EventEmitter();
   title: string = this.translate.instant('Widget Base Class');
   chartSize: number;
 
-  // public configurable: boolean = true;
   flipAnimation = 'stop';
   flipDirection = 'vertical';
   isFlipped = false;
 
-  constructor(public translate: TranslateService) {
-    super();
-    this.core = CoreServiceInjector.get(CoreService);
-    this.themeService = CoreServiceInjector.get(ThemeService);
-  }
+  constructor(
+    public translate: TranslateService,
+  ) {}
 
   toggleConfig(): void {
     if (this.isFlipped) {
@@ -40,9 +32,9 @@ export class WidgetComponent extends IxObject {
       this.flipAnimation = 'flip';
     }
 
-    if (this.flipDirection == 'vertical') {
+    if (this.flipDirection === 'vertical') {
       this.flipAnimation += 'V';
-    } else if (this.flipDirection == 'horizontal') {
+    } else if (this.flipDirection === 'horizontal') {
       this.flipAnimation += 'H';
     }
 

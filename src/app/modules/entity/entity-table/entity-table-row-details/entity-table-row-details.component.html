@@ -1,0 +1,71 @@
+<section class="wrapper__details" *ngIf="this.columns?.length">
+  <div
+    *ngFor="let column of this.columns"
+    fxLayoutAlign="start center"
+    fxLayoutGap="16px"
+  >
+    <h4>{{ column.name | translate}}:</h4>
+    <div
+      fxLayoutAlign="start center"
+      fxLayoutGap="4px"
+    >
+      <ng-container *ngIf="column?.widget?.component; else notScheduleList">
+        <mat-icon
+          class="widget-icon"
+          [matMenuTriggerFor]="widget"
+          role="img"
+          fontSet="mdi-set"
+          fontIcon="mdi-{{ column.widget.icon }}"
+        ></mat-icon>
+        <mat-menu #widget="matMenu">
+          <!-- column widgets need to be registered with this switch case -->
+          <ng-container [ngSwitch]="column.widget.component">
+            <app-task-schedule-list
+              *ngSwitchCase="'TaskScheduleListComponent'"
+              [value]="getPropValue(column.prop)"
+              [config]="config"
+              [parent]="parent"
+            ></app-task-schedule-list>
+          </ng-container>
+        </mat-menu>
+        <p>{{ config.enabled ? getPropValue(column.prop, true) : getPropValue(column.prop) }}</p>
+      </ng-container>
+      <ng-template #notScheduleList>
+        <p>{{ getPropValue(column.prop) }}</p>
+      </ng-template>
+    </div>
+  </div>
+</section>
+
+<mat-divider *ngIf="this.columns?.length"></mat-divider>
+
+<div
+  fxLayoutAlign="start center"
+  fxLayoutGap="8px"
+  class="wrapper__action-buttons"
+  *ngIf="parent.hasActions"
+>
+  <div class="wrap-buttons-container">
+    <ng-container *ngFor="let action of actions">
+      <button
+        *ngIf="!parent.conf.isActionVisible || parent.conf.isActionVisible.bind(parent.conf)(action.id, this.config)"
+        mat-button
+        [disabled]="action.disabled"
+        id="action_button_{{ action?.name }}__{{action.id}}"
+        [ix-auto]="config.name"
+        ix-auto-type="button"
+        ix-auto-identifier="{{ action?.name | uppercase }}_{{action.id}}"
+        (click)="action.onClick(this.config)"
+      >
+        <div fxLayoutAlign="center center" fxLayoutGap="8px">
+          <mat-icon>{{ action.icon }}</mat-icon>
+          <p
+            [matTooltip]="action.matTooltip"
+            [matTooltipDisabled]="!action.disabled"
+            [matTooltipPosition]="action.ttposition ? action.ttposition : 'below'"
+          >{{ action.label | translate}}</p>
+        </div>
+      </button>
+    </ng-container>
+  </div>
+</div>

@@ -1,0 +1,50 @@
+:host {
+  display: block;
+
+  .mat-list {
+    max-height: 50vh;
+    overflow-y: auto;
+  }
+
+  .mat-expansion-panel-header-title {
+    span {
+      margin-left: 8px;
+    }
+  }
+
+  .mat-expansion-panel {
+    ul {
+      margin: 0;
+    }
+  }
+
+  .mat-accordion {
+    display: block;
+    margin-left: -24px;
+    margin-right: -24px;
+    max-height: 62vh;
+    overflow: auto;
+  }
+
+  .form-buttons {
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: flex-end;
+  }
+
+  .form-actions {
+    align-items: center;
+    border-top: 1px solid var(--lines);
+    display: flex;
+    justify-content: space-between;
+    padding-top: 16px;
+
+    ix-checkbox {
+      margin: 0;
+    }
+
+    button {
+      margin-left: 10px;
+    }
+  }
+}

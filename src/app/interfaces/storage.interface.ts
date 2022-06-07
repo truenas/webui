@@ -1,6 +1,9 @@
+import { DiskBus } from 'app/enums/disk-bus.enum';
 import { DiskPowerLevel } from 'app/enums/disk-power-level.enum';
 import { DiskStandby } from 'app/enums/disk-standby.enum';
+import { DiskType } from 'app/enums/disk-type.enum';
 import { DiskWipeMethod } from 'app/enums/disk-wipe-method.enum';
+import { VDevStatus } from 'app/enums/vdev-status.enum';
 import { ZfsProperty } from './zfs-property.interface';
 
 // As returned by pool.query under topology[<vdevtype>]
@@ -8,9 +11,8 @@ export interface VDev {
   type: string; // 'DISK'
   path: string;
   guid: string;
-  status: string;
+  status: VDevStatus;
   children: this[];
-  unavail_disk: any;
   stats: VDevStats;
 
   // TODO: These fields are not present in pool.query response
@@ -42,15 +44,17 @@ export interface EnclosureSlot {
 
 export interface Disk {
   advpowermgmt: DiskPowerLevel;
-  critical: string;
+  bus: DiskBus;
+  critical: number;
   description: string;
   devname: string;
-  difference: string;
+  difference: number;
+  duplicate_serial: string[];
   enclosure: EnclosureSlot;
   expiretime: string;
   hddstandby: DiskStandby;
   identifier: string;
-  informational: string;
+  informational: number;
   model: string;
   multipath_member: string;
   multipath_name: string;
@@ -65,7 +69,7 @@ export interface Disk {
   subsystem: string;
   togglesmart: boolean;
   transfermode: string;
-  type: string;
+  type: DiskType;
   zfs_guid: string;
 }
 
@@ -100,8 +104,8 @@ export interface DiskUpdate {
   difference?: number;
   informational?: number;
   enclosure?: EnclosureSlot;
-  number: number;
-  pool: string;
+  number?: number;
+  pool?: string;
 }
 
 export interface UnusedDisk extends Disk {

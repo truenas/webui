@@ -1,157 +1,103 @@
-import { ApplicationRef, Component, Injector } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import {
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
+} from '@angular/core';
+import { Router } from '@angular/router';
+import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { ExplorerType } from 'app/enums/explorer-type.enum';
 import { choicesToOptions } from 'app/helpers/options.helper';
 import helptext from 'app/helptext/services/components/service-tftp';
-import { FormConfiguration } from 'app/interfaces/entity-form.interface';
-import { TftpConfig } from 'app/interfaces/tftp-config.interface';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
-import { FormComboboxConfig, FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
-import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
-import { UserService, WebSocketService } from 'app/services';
+import { EntityUtils } from 'app/modules/entity/utils';
+import { UserComboboxProvider } from 'app/modules/ix-forms/classes/user-combobox-provider';
+import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
+import { DialogService, UserService, WebSocketService } from 'app/services';
+import { FilesystemService } from 'app/services/filesystem.service';
 
 @UntilDestroy()
 @Component({
-  selector: 'tftp-edit',
-  template: '<entity-form [conf]="this"></entity-form>',
+  templateUrl: './service-tftp.component.html',
+  styleUrls: ['./service-tftp.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ServiceTFTPComponent implements FormConfiguration {
-  queryCall = 'tftp.config' as const;
-  routeSuccess: string[] = ['services'];
-  title = helptext.formTitle;
+export class ServiceTftpComponent implements OnInit {
+  isFormLoading = false;
 
-  fieldSets: FieldSet[] = [
-    {
-      name: helptext.tftp_fieldset_path,
-      label: true,
-      width: '50%',
-      config: [{
-        type: 'explorer',
-        initial: '/mnt',
-        explorerType: ExplorerType.Directory,
-        name: 'directory',
-        placeholder: helptext.tftp_directory_placeholder,
-        tooltip: helptext.tftp_directory_tooltip,
-      }],
-    },
-    {
-      name: helptext.tftp_fieldset_conn,
-      label: true,
-      width: '50%',
-      config: [
-        {
-          type: 'select',
-          name: 'host',
-          placeholder: helptext.tftp_host_placeholder,
-          tooltip: helptext.tftp_host_tooltip,
-          options: [],
-        },
-        {
-          type: 'input',
-          name: 'port',
-          placeholder: helptext.tftp_port_placeholder,
-          tooltip: helptext.tftp_port_tooltip,
-        },
-        {
-          type: 'combobox',
-          name: 'username',
-          placeholder: helptext.tftp_username_placeholder,
-          tooltip: helptext.tftp_username_tooltip,
-          options: [],
-          searchOptions: [],
-          parent: this,
-          updater: (value: string) => this.updateUserSearchOptions(value),
-        },
-      ],
-    },
-    { name: 'divider', divider: true },
-    {
-      name: helptext.tftp_fieldset_access,
-      label: true,
-      width: '50%',
-      config: [
-        {
-          type: 'permissions',
-          name: 'umask',
-          hideOthersPermissions: true,
-          placeholder: helptext.tftp_umask_placeholder,
-          tooltip: helptext.tftp_umask_tooltip,
-        },
-        {
-          type: 'checkbox',
-          name: 'newfiles',
-          placeholder: helptext.tftp_newfiles_placeholder,
-          tooltip: helptext.tftp_newfiles_tooltip,
-        },
-      ],
-    },
-    {
-      name: helptext.tftp_fieldset_other,
-      label: true,
-      width: '50%',
-      config: [{
-        type: 'textarea',
-        name: 'options',
-        placeholder: helptext.tftp_options_placeholder,
-        tooltip: helptext.tftp_options_tooltip,
-      }],
-    },
-    { name: 'divider', divider: true },
-  ];
+  form = this.formBuilder.group({
+    directory: [''],
+    host: [''],
+    port: [null as number],
+    username: [''],
+    umask: [''],
+    newfiles: [false],
+    options: [''],
+  });
 
-  protected tftpUsernameField: FormComboboxConfig;
-  protected tftpHostField: FormSelectConfig;
+  readonly tooltips = {
+    directory: helptext.tftp_directory_tooltip,
+    host: helptext.tftp_host_tooltip,
+    port: helptext.tftp_port_tooltip,
+    username: helptext.tftp_username_tooltip,
+    umask: helptext.tftp_umask_tooltip,
+    newfiles: helptext.tftp_newfiles_tooltip,
+    options: helptext.tftp_options_tooltip,
+  };
+
+  readonly userProvider = new UserComboboxProvider(this.userService);
+  readonly treeNodeProvider = this.filesystemService.getFilesystemNodeProvider({ directoriesOnly: true });
+  readonly hosts$ = this.ws.call('tftp.host_choices').pipe(choicesToOptions());
 
   constructor(
-    protected router: Router,
-    protected route: ActivatedRoute,
-    protected ws: WebSocketService,
-    protected _injector: Injector,
-    protected _appRef: ApplicationRef,
-    protected userService: UserService,
+    private ws: WebSocketService,
+    private cdr: ChangeDetectorRef,
+    private router: Router,
+    private formBuilder: FormBuilder,
+    private errorHandler: FormErrorHandlerService,
+    private dialogService: DialogService,
+    private userService: UserService,
+    private filesystemService: FilesystemService,
   ) {}
 
-  resourceTransformIncomingRestData(data: TftpConfig): { umask: string } {
-    return invertUmask(data);
+  ngOnInit(): void {
+    this.isFormLoading = true;
+    this.ws.call('tftp.config')
+      .pipe(untilDestroyed(this))
+      .subscribe(
+        (config) => {
+          this.form.patchValue({
+            ...config,
+            umask: invertUmask(config.umask),
+          });
+          this.isFormLoading = false;
+          this.cdr.markForCheck();
+        },
+        (error) => {
+          new EntityUtils().handleWsError(null, error, this.dialogService);
+          this.isFormLoading = false;
+          this.cdr.markForCheck();
+        },
+      );
   }
 
-  beforeSubmit(data: any): { umask: string } {
-    return invertUmask(data);
-  }
+  onSubmit(): void {
+    const values = {
+      ...this.form.value,
+      umask: invertUmask(this.form.value.umask),
+    };
 
-  preInit(): void {
-    this.userService.userQueryDsCache().pipe(untilDestroyed(this)).subscribe((items) => {
-      this.tftpUsernameField = this.fieldSets
-        .find((set) => set.name === helptext.tftp_fieldset_conn)
-        .config.find((config) => config.name === 'username') as FormComboboxConfig;
-      this.tftpUsernameField.options = items.map((user) => {
-        return { label: user.username, value: user.username };
-      });
-    });
-
-    this.ws.call('tftp.host_choices').pipe(
-      choicesToOptions(),
-      untilDestroyed(this),
-    ).subscribe((options) => {
-      this.tftpHostField = this.fieldSets
-        .find((set) => set.name === helptext.tftp_fieldset_conn)
-        .config.find((config) => config.name === 'host') as FormSelectConfig;
-
-      this.tftpHostField.options = options;
-    });
-  }
-
-  afterInit(entityEdit: EntityFormComponent): void {
-    entityEdit.submitFunction = (body) => this.ws.call('tftp.update', [body]);
-  }
-
-  updateUserSearchOptions(value = ''): void {
-    this.userService.userQueryDsCache(value).pipe(untilDestroyed(this)).subscribe((items) => {
-      this.tftpUsernameField.searchOptions = items.map((user) => {
-        return { label: user.username, value: user.username };
-      });
-    });
+    this.isFormLoading = true;
+    this.ws.call('tftp.update', [values])
+      .pipe(untilDestroyed(this))
+      .subscribe(
+        () => {
+          this.isFormLoading = false;
+          this.cdr.markForCheck();
+          this.router.navigate(['/services']);
+        },
+        (error) => {
+          this.isFormLoading = false;
+          this.errorHandler.handleWsFormError(error, this.form);
+          this.cdr.markForCheck();
+        },
+      );
   }
 }
 
@@ -159,13 +105,12 @@ export class ServiceTFTPComponent implements FormConfiguration {
  * Need to invert the umask prop on the way in/out.
  * The 'permissions' FieldConfig and the MW expect opposite values.
  */
-function invertUmask(data: { umask: string }): { umask: string } {
-  const perm = parseInt(data['umask'], 8);
+function invertUmask(umask: string): string {
+  const perm = parseInt(umask, 8);
   let mask = (~perm & 0o666).toString(8);
   while (mask.length < 3) {
     mask = '0' + mask;
   }
-  data['umask'] = mask;
 
-  return data;
+  return mask;
 }

@@ -3,12 +3,12 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { JobState } from 'app/enums/job-state.enum';
 import { PeriodicSnapshotTask, PeriodicSnapshotTaskUi } from 'app/interfaces/periodic-snapshot-task.interface';
-import { EntityTableComponent } from 'app/pages/common/entity/entity-table/entity-table.component';
-import { EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
-import { EntityUtils } from 'app/pages/common/entity/utils';
-import { SnapshotFormComponent } from 'app/pages/data-protection/snapshot/snapshot-form/snapshot-form.component';
+import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-table.component';
+import { EntityTableConfig } from 'app/modules/entity/entity-table/entity-table.interface';
+import { EntityUtils } from 'app/modules/entity/utils';
+import { SnapshotTaskComponent } from 'app/pages/data-protection/snapshot/snapshot-task/snapshot-task.component';
 import { DialogService, StorageService, WebSocketService } from 'app/services';
-import { ModalService } from 'app/services/modal.service';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { TaskService } from 'app/services/task.service';
 
 @UntilDestroy()
@@ -57,13 +57,13 @@ export class SnapshotListComponent implements EntityTableConfig<PeriodicSnapshot
     private dialogService: DialogService,
     private ws: WebSocketService,
     private taskService: TaskService,
-    private modalService: ModalService,
     private translate: TranslateService,
+    private slideInService: IxSlideInService,
   ) {}
 
   afterInit(entityList: EntityTableComponent): void {
     this.entityList = entityList;
-    this.modalService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
+    this.slideInService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
       this.entityList.getData();
     });
   }
@@ -110,11 +110,13 @@ export class SnapshotListComponent implements EntityTableConfig<PeriodicSnapshot
     );
   }
 
-  doAdd(id?: number): void {
-    this.modalService.openInSlideIn(SnapshotFormComponent, id);
+  doAdd(): void {
+    this.slideInService.open(SnapshotTaskComponent, { wide: true });
   }
 
   doEdit(id: number): void {
-    this.doAdd(id);
+    const row = this.entityList.rows.find((row) => row.id === id);
+    const form = this.slideInService.open(SnapshotTaskComponent, { wide: true });
+    form.setTaskForEdit(row);
   }
 }

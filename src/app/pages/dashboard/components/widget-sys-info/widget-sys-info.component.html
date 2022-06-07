@@ -1,47 +1,67 @@
-<div class="widget" [ngClass]="{'double-height': true,'xs': screenType == 'Mobile', 'generic-hardware': !product_image, 'ix-hardware': product_image}" >
+<div class="widget" [ngClass]="{'double-height': true,'xs': screenType === 'Mobile', 'generic-hardware': !product_image, 'ix-hardware': product_image}">
   <div class="card-container front">
     <mat-card class="front" fxLayout="row" fxLayoutWrap fxLayoutAlign="space-between stretch">
       <mat-card-content fxLayout="row wrap" fxLayout.gt-xs="row wrap" fxLayoutAlign="space-between start" fxFlex="100">
 
-        <mat-toolbar-row fxHide.xs class="view-overview">
-          <span fxHide.xs class="mat-card-title-text">
-            <span class="card-title-text">
-              &nbsp;{{"System Information" | translate}}&nbsp;<span *ngIf="isPassive" class="passive">({{"Standby" | translate}})</span>
+        <mat-toolbar-row fxHide.xs class="view-overview" [class.drag-handle]="showReorderHandle">
+          <ng-content [select]="[cdkDragHandle]"></ng-content>
+          <span class="grip" *ngIf="showReorderHandle"></span>
+          <h3 fxHide.xs class="mat-card-title-text">
+            <span class="card-title-text" [class.drag-handle]="showReorderHandle">
+              <span>{{ 'System Information' | translate }}</span>
+              <span *ngIf="isPassive" class="passive">{{ 'Standby' | translate }}</span>
             </span>
-          </span>
+          </h3>
         </mat-toolbar-row>
 
         <div class="carousel">
           <div class="slide overview" fxFlex="100" fxLayout="row" fxLayout.xs="column" fxLayoutAlign="space-between">
 
             <!-- Summary Section -->
-            <div fxFlex.xs="250px" fxFlex="40"
-            [ngClass]="{'fn-theme-contrast-lighter': themeService.activeTheme == themeService.defaultTheme , 'fn-theme-primary': themeService.activeTheme != themeService.defaultTheme}"
-            class="left {{isPassive ? 'passive' : 'active'}}"
-            fxLayout="column" fxLayoutAlign="space-between center">
+            <div
+              fxFlex.xs="250px"
+              fxFlex="40"
+              class="left"
+              [class.fn-theme-primary]="themeService.activeTheme !== themeService.defaultTheme"
+              [class.fn-theme-contrast-lighter]="themeService.activeTheme === themeService.defaultTheme"
+              [class.passive]="isPassive"
+              [class.active]="!isPassive"
+              fxLayout="column"
+              fxLayoutAlign="space-between center">
 
               <!-- Mobile Only: Exit Widget -->
-              <button fxHide.gt-xs class="mat-card-title-text primary-nav" mat-icon-button color="default" >
-                <mat-icon (click)="goBack()" class="back-arrow">chevron_left</mat-icon>
+              <button
+                *ngIf="screenType === 'Mobile'"
+                class="mat-card-title-text primary-nav"
+                mat-icon-button
+                color="default"
+                ix-auto
+                ix-auto-type="button"
+                ix-auto-identifier="goBack"
+                (click)="goBack()"
+              >
+                <mat-icon class="back-arrow">chevron_left</mat-icon>
               </button>
 
               <div class="platform-logo-wrapper {{product_type.toLowerCase()}}" fxFlex="20">
                 <ng-container *ngIf="product_image || isPassive; else textOnly">
-                  <mat-icon *ngIf="retroLogo == 1" svgIcon="freenas_logo_full" class="retro" id="{{product_model}}"></mat-icon>
-                  <mat-icon *ngIf="retroLogo == 0 && product_type == ProductType.Core" svgIcon="truenas_core_logo_full" id="{{product_model}}"></mat-icon>
-                  <mat-icon *ngIf="retroLogo == 0 && product_type == ProductType.Enterprise" svgIcon="truenas_enterprise_logo_full" id="{{product_model}}"></mat-icon>
-                  <mat-icon *ngIf="retroLogo == 0 && product_type == ProductType.Scale || product_type == ProductType.ScaleEnterprise" svgIcon="truenas_scale_logo_full" id="{{product_model}}"></mat-icon>
+                  <mat-icon *ngIf="product_type == ProductType.Enterprise" svgIcon="truenas_enterprise_logo_full" id="{{product_model}}"></mat-icon>
+                  <mat-icon *ngIf="product_type == ProductType.Scale || product_type == ProductType.ScaleEnterprise" svgIcon="truenas_scale_logo_full" id="{{product_model}}"></mat-icon>
                 </ng-container>
 
                 <ng-template #textOnly>
-                  <mat-icon *ngIf="retroLogo == 1" svgIcon="freenas_logotype" class="retro" id="{{product_model}}"></mat-icon>
-                  <mat-icon *ngIf="retroLogo == 0 && product_type == ProductType.Core" svgIcon="truenas_core_logotype" id="{{product_model}}"></mat-icon>
-                  <mat-icon *ngIf="retroLogo == 0 && product_type == ProductType.Enterprise" svgIcon="truenas_enterprise_logotype" id="{{product_model}}"></mat-icon>
-                  <mat-icon *ngIf="retroLogo == 0 && product_type == ProductType.Scale || product_type == ProductType.ScaleEnterprise" svgIcon="truenas_scale_logotype" id="{{product_model}}"></mat-icon>
+                  <mat-icon *ngIf="product_type == ProductType.Enterprise" svgIcon="truenas_enterprise_logotype" id="{{product_model}}"></mat-icon>
+                  <mat-icon *ngIf="product_type == ProductType.Scale || product_type == ProductType.ScaleEnterprise" svgIcon="truenas_scale_logotype" id="{{product_model}}"></mat-icon>
                 </ng-template>
               </div>
 
-              <div class="content-left" [fxFlex.xs]="product_type === ProductType.Enterprise && product_image == 'X10'? 80 : 60" fxFlex.gt-xs="60"  fxLayout="column" fxLayoutAlign="center center">
+              <div
+                class="content-left"
+                [fxFlex.xs]="product_type === ProductType.Enterprise && product_image === 'X10' ? 80 : 100"
+                fxFlex.gt-xs="60"
+                fxLayout="column"
+                fxLayoutAlign="center center"
+              >
 
                 <div class="product-image {{product_enclosure}} {{product_type === ProductType.Enterprise ? 'truenas' : 'freenas'}} {{product_image == 'ix-original.svg' ? 'ix-logo' : ''}}">
                   <img
@@ -56,13 +76,9 @@
                   >
 
                   <ng-template #generic>
-                    <!--<mat-icon *ngIf="product_type === 'CORE' && !certified" class="generic" svgIcon="freenas_logomark"></mat-icon>-->
-                    <mat-icon *ngIf="retroLogo == 1 && !isPassive" class="generic" svgIcon="freenas_logomark"></mat-icon>
-                    <mat-icon *ngIf="product_type === ProductType.Core && !certified && retroLogo == 0" class="generic" svgIcon="truenas_core_logomark"></mat-icon>
-                    <mat-icon *ngIf="product_type === ProductType.Core && certified && retroLogo == 0" class="generic certified" svgIcon="freenas_certified"></mat-icon>
-                    <mat-icon *ngIf="ready && !isPassive && product_type === ProductType.Enterprise && !certified && retroLogo == 0" class="generic" svgIcon="truenas_enterprise_logomark"></mat-icon>
-                    <mat-icon *ngIf="(product_type === ProductType.Scale || product_type == ProductType.ScaleEnterprise) && !certified && retroLogo == 0 && !isHA" class="generic" svgIcon="truenas_scale_logomark"></mat-icon>
-                    <mat-icon *ngIf="(product_type === ProductType.Scale || product_type == ProductType.ScaleEnterprise) && certified && retroLogo == 0 && !isHA" class="generic" svgIcon="freenas_certified"></mat-icon>
+                    <mat-icon *ngIf="ready && !isPassive && product_type === ProductType.Enterprise && !certified" class="generic" svgIcon="truenas_enterprise_logomark"></mat-icon>
+                    <mat-icon *ngIf="(product_type === ProductType.Scale || product_type == ProductType.ScaleEnterprise) && !certified && !isHA" class="generic" svgIcon="truenas_scale_logomark"></mat-icon>
+                    <mat-icon *ngIf="(product_type === ProductType.Scale || product_type == ProductType.ScaleEnterprise) && certified && !isHA" class="generic" svgIcon="freenas_certified"></mat-icon>
                   </ng-template>
                   <div class="generic alert" *ngIf="!product_image && isPassive && ha_status !== 'HA Enabled'">
                     <mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-alert"></mat-icon>
@@ -78,8 +94,15 @@
 
               <ng-template #noUpdateRunning>
                 <div fxHide.xs fxFlex="18" class="update-action">
-                  <button *ngIf="!isPassive" mat-button color="{{updateBtnStatus}}" (click)="router.navigate(['system','update'])"
-                  ix-auto ix-auto-type="button" ix-auto-identifier="{{updateBtnLabel | uppercase}}">{{updateBtnLabel | translate}}</button>
+                  <button
+                    *ngIf="!isPassive"
+                    mat-button
+                    [color]="updateBtnStatus"
+                    (click)="router.navigate(['system','update'])"
+                    ix-auto
+                    ix-auto-type="button"
+                    [ix-auto-identifier]="updateBtnLabel"
+                  >{{ updateBtnLabel | translate }}</button>
                   <simple-failover-button *ngIf="isPassive" [disabled]="!ha_status || ha_status !== 'HA Enabled'" ></simple-failover-button>
                 </div>
               </ng-template>
@@ -88,47 +111,77 @@
             <!-- Details Section -->
             <div class="right" fxFlex.xs fxFlex.gt-xs="60" fxLayout="column">
 
-              <div  fxFlex *ngIf="!data && isHA && isPassive && !ha_status" class="data-container ha-status">
-                <div class="spinner-wrapper"><mat-spinner [diameter]="40" class="spinner"></mat-spinner></div>
+              <div *ngIf="!data && isHA && isPassive && !ha_status" class="data-container ha-status" fxFlex>
+                <div class="spinner-wrapper">
+                  <mat-spinner [diameter]="40" class="spinner"></mat-spinner>
+                </div>
               </div>
 
-              <div  fxFlex *ngIf="!data && isHA && isPassive && ha_status && ha_status !== 'HA Enabled'" class="data-container ha-status">
-                <h3>{{ha_status}}</h3>
+              <div *ngIf="!data && isHA && isPassive && ha_status && ha_status !== 'HA Enabled'" class="data-container ha-status" fxFlex>
+                <h3>{{ ha_status }}</h3>
               </div>
 
-              <div  fxFlex *ngIf="data" class="data-container">
-                <div fxHide.gt-xs class="list-subheader">{{isPassive ? 'System Information (Standby)' : 'System Information'}}</div>
+              <div *ngIf="!data && !isHA" class="loader">
+                <mat-spinner [diameter]="80" class="spinner"></mat-spinner>
+              </div>
+
+              <div *ngIf="data" class="data-container" fxFlex>
+                <div fxHide.gt-xs class="list-subheader">{{ (isPassive ? 'System Information (Standby)' : 'System Information') | translate }}</div>
                 <div fxHide.xs class="list-subheader">{{'Overview' | translate}}</div>
 
                 <mat-list>
-                  <mat-list-item><strong>{{'Platform' | translate}}:</strong> &nbsp;&nbsp;{{data.system_product && manufacturer == 'ixsystems' ? data.system_product : 'Generic'}}</mat-list-item>
                   <mat-list-item>
-                    <strong>{{"Version" | translate}}:</strong>
-                    &nbsp;&nbsp;
-                    <div>
-                      <span textLimiter [popup]="false" threshold="28" content="{{data.version}}"></span>
-                      <copy-btn [text]="data.version"></copy-btn>
+                    <strong>{{ 'Platform' | translate }}:</strong>
+                    <span>{{ data.system_product && manufacturer == 'ixsystems' ? data.system_product : 'Generic'}}</span>
+                  </mat-list-item>
+                  <mat-list-item>
+                    <strong>{{ 'Version' | translate }}:</strong>
+                    <div class="copy-version">
+                      <div class="copy-version-text">
+                        <span>{{ data.version }}</span>
+                      </div>
+                      <copy-btn [text]="data.version" class="copy-version-button"></copy-btn>
                     </div>
                   </mat-list-item>
 
                   <mat-list-item *ngIf="data.license">
-                    <strong>{{'License' | translate}}:</strong> &nbsp;&nbsp;
-                    <span>{{data.license.contract_type.toLowerCase() | titlecase}}</span> &nbsp;contract, &nbsp; expires {{data.license.contract_end.$value}}
+                    <strong>{{ 'License' | translate }}:</strong>
+                    <span>{{ data.license.contract_type.toLowerCase() | titlecase}}</span>
+                    &nbsp;contract, &nbsp; expires {{data.license.contract_end.$value}}
                   </mat-list-item>
 
-                  <mat-list-item  *ngIf="data.system_serial && manufacturer == 'ixsystems' ">
-                    <span><strong>{{"Serial Number" | translate}}:</strong>&nbsp;&nbsp;{{ data.system_serial}}</span>
+                  <mat-list-item *ngIf="data.system_serial && manufacturer == 'ixsystems'">
+                    <strong>{{ 'Serial Number' | translate }}:</strong>
+                    <span>{{ data.system_serial }}</span>
                   </mat-list-item>
 
-                  <mat-list-item><strong>{{"HostName" | translate}}:</strong> &nbsp;&nbsp;{{data.hostname}}</mat-list-item>
-                  <mat-list-item *ngIf="uptimeString"><strong>{{"Uptime" | translate}}:</strong> &nbsp;&nbsp;{{uptimeString}} as of {{ dateTime }}                </mat-list-item>
+                  <mat-list-item>
+                    <strong>{{ 'HostName' | translate }}:</strong>
+                    <span>{{ data.hostname }}</span>
+                  </mat-list-item>
+
+                  <mat-list-item *ngIf="uptimeString">
+                    <strong>{{ 'Uptime' | translate }}:</strong>
+                    <span>{{ '{uptimeString} as of {dateTime}' | translate: { uptimeString, dateTime } }}</span>
+                  </mat-list-item>
 
                 </mat-list>
 
-                <div fxHide.gt-xs class="mobile-update-action update-action" *ngIf="ready">
-                  <button *ngIf="!isPassive" mat-button color="primary" (click)="router.navigate(['system','update'])"
-                  ix-auto ix-auto-type="button" ix-auto-identifier="{{updateBtnLabel | uppercase}}">{{updateBtnLabel | translate}}</button>
-                  <simple-failover-button [disabled]="!ha_status || ha_status !== 'HA Enabled' " color="primary" *ngIf="isPassive"></simple-failover-button>
+                <div *ngIf="ready" fxHide.gt-xs class="mobile-update-action update-action">
+                  <button
+                    *ngIf="!isPassive"
+                    mat-button
+                    color="primary"
+                    (click)="router.navigate(['system','update'])"
+                    ix-auto
+                    ix-auto-type="button"
+                    [ix-auto-identifier]="updateBtnLabel"
+                  >{{ updateBtnLabel | translate }}</button>
+                  <simple-failover-button
+                    *ngIf="isPassive"
+                    [disabled]="!ha_status || ha_status !== 'HA Enabled'"
+                    color="primary"
+                  ></simple-failover-button>
                 </div>
 
               </div> <!-- END datacontainer -->
@@ -145,8 +198,16 @@
       <mat-card-content>
         <h3>Form goes here</h3>
       </mat-card-content>
-      <div class="widget-footer"><button mat-button color="primary" (click)="toggleConfig()"
-          ix-auto ix-auto-type="button" ix-auto-identifier="FLIP">{{"Flip" | translate}}</button></div>
+      <div class="widget-footer">
+        <button
+          mat-button
+          color="primary"
+          (click)="toggleConfig()"
+          ix-auto
+          ix-auto-type="button"
+          ix-auto-identifier="FLIP"
+        >{{ 'Flip' | translate }}</button>
+      </div>
     </mat-card>
   </div>
 </div>

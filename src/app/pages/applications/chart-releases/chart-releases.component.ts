@@ -9,8 +9,6 @@ import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 import { filter } from 'rxjs/operators';
 import { appImagePlaceholder, ixChartApp, officialCatalog } from 'app/constants/catalog.constants';
-import { CommonUtils } from 'app/core/classes/common-utils';
-import { CoreService } from 'app/core/services/core-service/core.service';
 import { ChartReleaseStatus } from 'app/enums/chart-release-status.enum';
 import helptext from 'app/helptext/apps/apps';
 import { ApplicationUserEventName, UpgradeSummary } from 'app/interfaces/application.interface';
@@ -18,22 +16,23 @@ import { ChartRelease } from 'app/interfaces/chart-release.interface';
 import { CoreBulkResponse } from 'app/interfaces/core-bulk.interface';
 import { CoreEvent } from 'app/interfaces/events';
 import { Job } from 'app/interfaces/job.interface';
+import { AppLoaderService } from 'app/modules/app-loader/app-loader.service';
+import { DialogFormConfiguration } from 'app/modules/entity/entity-dialog/dialog-form-configuration.interface';
+import { EntityDialogComponent } from 'app/modules/entity/entity-dialog/entity-dialog.component';
+import { EmptyConfig, EmptyType } from 'app/modules/entity/entity-empty/entity-empty.component';
+import { FormSelectConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
+import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
+import { EntityUtils } from 'app/modules/entity/utils';
 import { ApplicationTab } from 'app/pages/applications/application-tab.enum';
 import { ApplicationToolbarControl } from 'app/pages/applications/application-toolbar-control.enum';
+import { ApplicationsService } from 'app/pages/applications/applications.service';
+import { ChartEventsDialogComponent } from 'app/pages/applications/dialogs/chart-events/chart-events-dialog.component';
 import { ChartUpgradeDialogComponent } from 'app/pages/applications/dialogs/chart-upgrade/chart-upgrade-dialog.component';
+import { ChartFormComponent } from 'app/pages/applications/forms/chart-form.component';
 import { ChartUpgradeDialogConfig } from 'app/pages/applications/interfaces/chart-upgrade-dialog-config.interface';
-import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
-import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
-import { EmptyConfig, EmptyType } from 'app/pages/common/entity/entity-empty/entity-empty.component';
-import { FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
-import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
-import { EntityUtils } from 'app/pages/common/entity/utils';
-import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
-import { DialogService, SystemGeneralService, WebSocketService } from 'app/services/index';
+import { RedirectService } from 'app/services';
+import { DialogService, WebSocketService } from 'app/services/index';
 import { ModalService } from 'app/services/modal.service';
-import { ApplicationsService } from '../applications.service';
-import { ChartEventsDialogComponent } from '../dialogs/chart-events/chart-events-dialog.component';
-import { ChartFormComponent } from '../forms/chart-form.component';
 
 @UntilDestroy()
 @Component({
@@ -52,10 +51,7 @@ export class ChartReleasesComponent implements OnInit {
   @Output() switchTab = new EventEmitter<string>();
 
   private dialogRef: MatDialogRef<EntityJobComponent>;
-  ixIcon = 'assets/images/ix-original.png';
   private rollbackChartName: string;
-
-  protected utils: CommonUtils;
 
   private selectedAppName: string;
   private podList: string[] = [];
@@ -103,7 +99,7 @@ export class ChartReleasesComponent implements OnInit {
     }, {
       type: 'select',
       name: 'containers',
-      placeholder: helptext.podConsole.chooseConatiner.placeholder,
+      placeholder: helptext.podConsole.chooseContainer.placeholder,
       required: true,
     }, {
       type: 'input',
@@ -126,7 +122,7 @@ export class ChartReleasesComponent implements OnInit {
     }, {
       type: 'select',
       name: 'containers',
-      placeholder: helptext.podLogs.chooseConatiner.placeholder,
+      placeholder: helptext.podLogs.chooseContainer.placeholder,
       required: true,
     }, {
       type: 'input',
@@ -143,15 +139,20 @@ export class ChartReleasesComponent implements OnInit {
   readonly ChartReleaseStatus = ChartReleaseStatus;
   readonly isEmpty = _.isEmpty;
 
-  constructor(private mdDialog: MatDialog, private appLoaderService: AppLoaderService,
-    private dialogService: DialogService, private translate: TranslateService,
-    public appService: ApplicationsService, private modalService: ModalService,
-    private sysGeneralService: SystemGeneralService, private router: Router,
-    private core: CoreService, protected ws: WebSocketService) { }
+  constructor(
+    private mdDialog: MatDialog,
+    private appLoaderService: AppLoaderService,
+    private dialogService: DialogService,
+    private translate: TranslateService,
+    public appService: ApplicationsService,
+    private modalService: ModalService,
+    private router: Router,
+    protected ws: WebSocketService,
+    private redirect: RedirectService,
+  ) { }
 
   ngOnInit(): void {
-    this.utils = new CommonUtils();
-    this.addChartReleaseChangedEventListner();
+    this.addChartReleaseChangedEventListener();
   }
 
   onToolbarAction(evt: CoreEvent): void {
@@ -199,7 +200,7 @@ export class ChartReleasesComponent implements OnInit {
     return Object.values(this.chartItems);
   }
 
-  addChartReleaseChangedEventListner(): void {
+  addChartReleaseChangedEventListener(): void {
     this.ws.subscribe('chart.release.query').pipe(untilDestroyed(this)).subscribe((evt) => {
       const app = this.chartItems[evt.id];
 
@@ -281,13 +282,13 @@ export class ChartReleasesComponent implements OnInit {
     });
   }
 
-  portalName(name: string = 'web_portal'): string {
+  portalName(name = 'web_portal'): string {
     const humanName = new EntityUtils().snakeToHuman(name);
     return humanName;
   }
 
-  portalLink(chart: ChartRelease, name: string = 'web_portal'): void {
-    window.open(chart.portals[name][0]);
+  portalLink(chart: ChartRelease, name = 'web_portal'): void {
+    this.redirect.openWindow(chart.portals[name][0]);
   }
 
   update(name: string): void {
@@ -367,7 +368,7 @@ export class ChartReleasesComponent implements OnInit {
   edit(name: string): void {
     const catalogApp = this.chartItems[name];
     const chartFormComponent = this.modalService.openInSlideIn(ChartFormComponent, name);
-    if (catalogApp.chart_metadata.name == ixChartApp) {
+    if (catalogApp.chart_metadata.name === ixChartApp) {
       chartFormComponent.setTitle(helptext.launch);
     } else {
       chartFormComponent.setTitle(catalogApp.chart_metadata.name);
@@ -386,7 +387,7 @@ export class ChartReleasesComponent implements OnInit {
 
   checkAll(checkedItems: string[]): void {
     let selectAll = true;
-    if (checkedItems.length == this.filteredChartItems.length) {
+    if (checkedItems.length === this.filteredChartItems.length) {
       selectAll = false;
     }
 
@@ -417,7 +418,7 @@ export class ChartReleasesComponent implements OnInit {
           }
         });
 
-        this.dialogService.info(helptext.bulkActions.success, this.translate.instant(helptext.bulkActions.finished), '500px', 'info', true);
+        this.dialogService.info(helptext.bulkActions.success, this.translate.instant(helptext.bulkActions.finished));
       }
     } else {
       this.dialogService.errorReport(
@@ -428,21 +429,68 @@ export class ChartReleasesComponent implements OnInit {
   }
 
   delete(name: string): void {
-    this.dialogService.confirm({
+    const dialogConfirmation = this.dialogService.confirm({
       title: helptext.charts.delete_dialog.title,
       message: this.translate.instant('Delete {name}?', { name }),
-    }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
-      this.dialogRef = this.mdDialog.open(EntityJobComponent, {
-        data: {
-          title: helptext.charts.delete_dialog.job,
-        },
+      secondaryCheckBox: true,
+      secondaryCheckBoxMsg: this.translate.instant('Delete docker images used by the app'),
+      data: [{ delete_unused_images: false }],
+    });
+    let deleteUnusedImages = false;
+    dialogConfirmation.componentInstance.switchSelectionEmitter.pipe(
+      untilDestroyed(this),
+    ).subscribe((checked: boolean) => {
+      deleteUnusedImages = checked;
+    });
+    dialogConfirmation.afterClosed().pipe(
+      filter(Boolean),
+      untilDestroyed(this),
+    )
+      .subscribe(() => {
+        if (deleteUnusedImages) {
+          this.appLoaderService.open();
+          this.ws.call(
+            'chart.release.get_chart_releases_using_chart_release_images',
+            [name],
+          ).pipe(untilDestroyed(this)).subscribe((imagesNotTobeDeleted) => {
+            this.appLoaderService.close();
+            const imageNames = Object.keys(imagesNotTobeDeleted);
+            if (imageNames.length > 0) {
+              const imageMessage = imageNames.reduce((prev: string, current: string) => {
+                const imageNameIndexed = current;
+                return prev + '<li>' + imageNameIndexed + '</li>';
+              }, '<ul>') + '</ul>';
+              this.dialogService.confirm({
+                title: this.translate.instant('Images not to be deleted'),
+                message: this.translate.instant('These images will not be removed as there are other apps which are consuming them')
+              + imageMessage,
+                disableClose: true,
+                buttonMsg: this.translate.instant('OK'),
+              }).pipe(filter(Boolean), untilDestroyed(this))
+                .subscribe(() => {
+                  this.executeDelete(name, deleteUnusedImages);
+                });
+            } else {
+              this.executeDelete(name, deleteUnusedImages);
+            }
+          });
+        } else {
+          this.executeDelete(name, deleteUnusedImages);
+        }
       });
-      this.dialogRef.componentInstance.setCall('chart.release.delete', [name]);
-      this.dialogRef.componentInstance.submit();
-      this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
-        this.dialogService.closeAllDialogs();
-        this.refreshChartReleases();
-      });
+  }
+
+  executeDelete(name: string, deleteUnusedImages: boolean): void {
+    this.dialogRef = this.mdDialog.open(EntityJobComponent, {
+      data: {
+        title: helptext.charts.delete_dialog.job,
+      },
+    });
+    this.dialogRef.componentInstance.setCall('chart.release.delete', [name, { delete_unused_images: deleteUnusedImages }]);
+    this.dialogRef.componentInstance.submit();
+    this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
+      this.dialogService.closeAllDialogs();
+      this.refreshChartReleases();
     });
   }
 
@@ -468,7 +516,7 @@ export class ChartReleasesComponent implements OnInit {
           this.dialogService.closeAllDialogs();
           let message = '';
           res.result.forEach((item) => {
-            if (item.error != null) {
+            if (item.error !== null) {
               message = message + '<li>' + item.error + '</li>';
             }
           });
@@ -493,7 +541,7 @@ export class ChartReleasesComponent implements OnInit {
       this.filteredChartItems = this.getChartItems();
     }
 
-    if (this.filteredChartItems.length == 0) {
+    if (this.filteredChartItems.length === 0) {
       if (this.filterString) {
         this.showLoadStatus(EmptyType.NoSearchResults);
       } else {
@@ -513,7 +561,7 @@ export class ChartReleasesComponent implements OnInit {
       this.appLoaderService.close();
       this.podDetails = { ...res };
       this.podList = Object.keys(this.podDetails);
-      if (this.podList.length == 0) {
+      if (this.podList.length === 0) {
         this.dialogService.confirm({
           title: helptext.podConsole.nopod.title,
           message: helptext.podConsole.nopod.message,
@@ -552,7 +600,7 @@ export class ChartReleasesComponent implements OnInit {
       this.appLoaderService.close();
       this.podDetails = { ...res };
       this.podList = Object.keys(this.podDetails);
-      if (this.podList.length == 0) {
+      if (this.podList.length === 0) {
         this.dialogService.confirm({
           title: helptext.podConsole.nopod.title,
           message: helptext.podConsole.nopod.message,

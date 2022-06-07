@@ -1,5 +1,6 @@
-.copy-btn-trigger {
-  margin-left: 12px;
+:host {
+  align-items: center;
+  display: inline-flex;
 }
 
 .copy-btn-close-trigger {
@@ -51,7 +52,6 @@ div.text-limiter-tooltip::before {
   display: block;
   height: 20px;
   position: absolute;
-  /*left: calc(50% - 10px);*/
   right: 26px;
   transform: rotate(45deg);
   width: 20px;
@@ -60,7 +60,6 @@ div.text-limiter-tooltip::before {
 }
 
 .tooltip-container {
-  /*box-shadow: 0px 4px 6px 2px rgba(0,0,0,0.5);*/
   filter: drop-shadow(0 4px 4px rgba(0, 0, 0, 0.75));
 }
 
@@ -68,12 +67,4 @@ div.text-limiter-tooltip::before {
   left: 0;
   opacity: 0;
   position: fixed;
-}
-
-@media (max-width: 599px) {
-  .copy-btn-trigger {
-    position: absolute;
-    right: 26px;
-    top: 4px;
-  }
 }

@@ -1,12 +1,12 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { CoreService } from 'app/core/services/core-service/core.service';
 import { GlobalAction } from 'app/interfaces/global-action.interface';
-import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
+import { EntityTableAction, EntityTableConfig } from 'app/modules/entity/entity-table/entity-table.interface';
 import { VolumeImportWizardComponent } from 'app/pages/storage/volumes/volume-import-wizard/volume-import-wizard.component';
 import { VolumesListComponent } from 'app/pages/storage/volumes/volumes-list/volumes-list.component';
-import { ModalService } from 'app/services/modal.service';
+import { CoreService } from 'app/services/core-service/core.service';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
 @Component({
@@ -27,7 +27,7 @@ export class VolumesListControlsComponent implements GlobalAction, OnInit {
   constructor(
     private fb: FormBuilder,
     private core: CoreService,
-    private modalService: ModalService,
+    private slideInService: IxSlideInService,
   ) {}
 
   ngOnInit(): void {
@@ -57,6 +57,6 @@ export class VolumesListControlsComponent implements GlobalAction, OnInit {
   }
 
   onClickImport(): void {
-    this.modalService.openInSlideIn(VolumeImportWizardComponent);
+    this.slideInService.open(VolumeImportWizardComponent);
   }
 }

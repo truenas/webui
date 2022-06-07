@@ -1,16 +1,17 @@
 import { DatePipe } from '@angular/common';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { Component, OnInit, Type } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import * as cronParser from 'cron-parser';
-import { merge, Subject } from 'rxjs';
+import { formatDistanceToNowStrict } from 'date-fns';
+import { Subject } from 'rxjs';
 import {
   filter, switchMap, take, tap,
 } from 'rxjs/operators';
-import { CoreService } from 'app/core/services/core-service/core.service';
 import { DeviceType } from 'app/enums/device-type.enum';
 import { helptextSystemAdvanced } from 'app/helptext/system/advanced';
 import { helptextSystemGeneral as helptext } from 'app/helptext/system/general';
@@ -20,31 +21,36 @@ import { Device } from 'app/interfaces/device.interface';
 import { CoreEvent } from 'app/interfaces/events';
 import { GlobalActionConfig } from 'app/interfaces/global-action.interface';
 import { InitShutdownScript } from 'app/interfaces/init-shutdown-script.interface';
+import { ReplicationConfig } from 'app/interfaces/replication-config.interface';
 import { Tunable } from 'app/interfaces/tunable.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
-import { EmptyType } from 'app/pages/common/entity/entity-empty/entity-empty.component';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
-import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
-import { EntityToolbarComponent } from 'app/pages/common/entity/entity-toolbar/entity-toolbar.component';
-import { AppTableAction, AppTableConfig } from 'app/pages/common/entity/table/table.component';
-import { EntityUtils } from 'app/pages/common/entity/utils';
+import { AppLoaderService } from 'app/modules/app-loader/app-loader.service';
+import { EmptyType } from 'app/modules/entity/entity-empty/entity-empty.component';
+import { EntityFormComponent } from 'app/modules/entity/entity-form/entity-form.component';
+import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
+import { EntityToolbarComponent } from 'app/modules/entity/entity-toolbar/entity-toolbar.component';
+import { AppTableAction, AppTableConfig } from 'app/modules/entity/table/table.component';
+import { EntityUtils } from 'app/modules/entity/utils';
 import { CronFormComponent } from 'app/pages/system/advanced/cron/cron-form/cron-form.component';
 import { CronjobRow } from 'app/pages/system/advanced/cron/cron-list/cronjob-row.interface';
 import { InitShutdownFormComponent } from 'app/pages/system/advanced/initshutdown/init-shutdown-form/init-shutdown-form.component';
+import { ReplicationFormComponent } from 'app/pages/system/advanced/replication-form/replication-form.component';
+import { SedFormComponent } from 'app/pages/system/advanced/sed-form/sed-form.component';
 import { SystemDatasetPoolComponent } from 'app/pages/system/advanced/system-dataset-pool/system-dataset-pool.component';
 import { DataCard } from 'app/pages/system/interfaces/data-card.interface';
+import { TunableFormComponent } from 'app/pages/system/tunable/tunable-form/tunable-form.component';
 import {
   DialogService,
   LanguageService,
   StorageService,
-  SystemGeneralService,
   UserService,
   WebSocketService,
 } from 'app/services';
-import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
+import { CoreService } from 'app/services/core-service/core.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { ModalService } from 'app/services/modal.service';
-import { TunableFormComponent } from '../tunable/tunable-form/tunable-form.component';
+import { AppState } from 'app/store';
+import { waitForAdvancedConfig } from 'app/store/system-config/system-config.selectors';
+import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 import { ConsoleFormComponent } from './console-form/console-form.component';
 import { IsolatedGpuPcisFormComponent } from './isolated-gpu-pcis/isolated-gpu-pcis-form.component';
 import { KernelFormComponent } from './kernel-form/kernel-form.component';
@@ -54,11 +60,13 @@ enum AdvancedCardId {
   Console = 'console',
   Syslog = 'syslog',
   Kernel = 'kernel',
+  Replication = 'replication',
   Cron = 'cron',
   InitShutdown = 'initshutdown',
   Sysctl = 'sysctl',
   SystemDatasetPool = 'systemdatasetpool',
   Gpus = 'gpus',
+  Sed = 'sed',
 }
 
 @UntilDestroy()
@@ -70,10 +78,12 @@ enum AdvancedCardId {
 export class AdvancedSettingsComponent implements OnInit {
   dataCards: DataCard<AdvancedCardId>[] = [];
   configData: AdvancedConfig;
+  replicationConfig: ReplicationConfig;
   syslog: boolean;
   systemDatasetPool: string;
   entityForm: EntityFormComponent;
   isFirstTime = true;
+  sedPassword = '';
 
   isHa = false;
   formEvent$: Subject<CoreEvent>;
@@ -110,8 +120,6 @@ export class AdvancedSettingsComponent implements OnInit {
                   this.dialog.info(
                     this.translate.instant('Job {job} Completed Successfully', { job: row.description }),
                     message,
-                    '500px',
-                    'info',
                     true,
                   );
                 },
@@ -133,10 +141,14 @@ export class AdvancedSettingsComponent implements OnInit {
       { name: this.translate.instant('Next Run'), prop: 'next_run' },
     ],
     add: async () => {
-      await this.onSettingsPressed(AdvancedCardId.Cron);
+      await this.showFirstTimeWarningIfNeeded();
+      this.slideInService.open(CronFormComponent);
     },
-    edit: async (row) => {
-      await this.onSettingsPressed(AdvancedCardId.Cron, row.id);
+    edit: async (cron: CronjobRow) => {
+      await this.showFirstTimeWarningIfNeeded();
+
+      const modal = this.slideInService.open(CronFormComponent);
+      modal.setCronForEdit(cron);
     },
   };
 
@@ -162,18 +174,19 @@ export class AdvancedSettingsComponent implements OnInit {
     ],
     add: async () => {
       await this.showFirstTimeWarningIfNeeded();
-      this.ixModal.open(InitShutdownFormComponent);
+      this.slideInService.open(InitShutdownFormComponent);
     },
     edit: async (script: InitShutdownScript) => {
       await this.showFirstTimeWarningIfNeeded();
 
-      const modal = this.ixModal.open(InitShutdownFormComponent);
+      const modal = this.slideInService.open(InitShutdownFormComponent);
       modal.setScriptForEdit(script);
     },
   };
 
   sysctlTableConf: AppTableConfig = {
     title: helptextSystemAdvanced.fieldset_sysctl,
+    titleHref: '/system/sysctl',
     queryCall: 'tunable.query',
     deleteCall: 'tunable.delete',
     deleteMsg: {
@@ -190,21 +203,17 @@ export class AdvancedSettingsComponent implements OnInit {
     ],
     add: async () => {
       await this.showFirstTimeWarningIfNeeded();
-      this.ixModal.open(TunableFormComponent);
+      this.slideInService.open(TunableFormComponent);
     },
     edit: async (tunable: Tunable) => {
       await this.showFirstTimeWarningIfNeeded();
-      const dialog = this.ixModal.open(TunableFormComponent);
+      const dialog = this.slideInService.open(TunableFormComponent);
       dialog.setTunableForEdit(tunable);
     },
   };
 
-  readonly CardId = AdvancedCardId;
-
   constructor(
     private ws: WebSocketService,
-    private sysGeneralService: SystemGeneralService,
-    private modalService: ModalService,
     private language: LanguageService,
     private dialog: DialogService,
     private loader: AppLoaderService,
@@ -216,22 +225,17 @@ export class AdvancedSettingsComponent implements OnInit {
     public datePipe: DatePipe,
     protected userService: UserService,
     private translate: TranslateService,
-    private ixModal: IxSlideInService,
+    private slideInService: IxSlideInService,
+    private store$: Store<AppState>,
   ) {}
 
   ngOnInit(): void {
     this.getDatasetData();
-    this.getDataCardData();
-    this.sysGeneralService.refreshSysGeneral$.pipe(untilDestroyed(this)).subscribe(() => {
+    this.store$.pipe(waitForAdvancedConfig, untilDestroyed(this)).subscribe(() => {
       this.getDatasetData();
-      this.getDataCardData();
     });
 
-    merge(
-      this.modalService.refreshTable$,
-      this.modalService.onClose$,
-      this.ixModal.onClose$,
-    ).pipe(untilDestroyed(this)).subscribe(() => {
+    this.slideInService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
       this.refreshTables();
     });
 
@@ -270,7 +274,7 @@ export class AdvancedSettingsComponent implements OnInit {
     }
 
     return this.dialog
-      .info(helptextSystemAdvanced.first_time.title, helptextSystemAdvanced.first_time.message)
+      .warn(helptextSystemAdvanced.first_time.title, helptextSystemAdvanced.first_time.message)
       .pipe(tap(() => this.isFirstTime = false))
       .toPromise();
   }
@@ -288,14 +292,18 @@ export class AdvancedSettingsComponent implements OnInit {
   }
 
   getDatasetData(): void {
-    this.ws.call('systemdataset.config').pipe(untilDestroyed(this)).subscribe((config) => {
-      if (!config) {
-        return;
-      }
+    this.ws.call('systemdataset.config').pipe(
+      tap((config) => {
+        if (config) {
+          this.syslog = config.syslog;
+          this.systemDatasetPool = config.pool;
+        }
+      }),
+      switchMap(() => this.ws.call('replication.config.config')),
+      untilDestroyed(this),
+    ).subscribe((replicationConfig) => {
+      this.replicationConfig = replicationConfig;
 
-      this.syslog = config.syslog;
-      this.systemDatasetPool = config.pool;
-      this.modalService.refreshTable();
       this.getDataCardData();
     });
   }
@@ -357,20 +365,21 @@ export class AdvancedSettingsComponent implements OnInit {
             },
           ],
         },
-        {
-          title: helptextSystemAdvanced.fieldset_kernel,
-          id: AdvancedCardId.Kernel,
-          items: [
-            {
-              label: helptextSystemAdvanced.autotune_placeholder,
-              value: advancedConfig.autotune ? helptext.enabled : helptext.disabled,
-            },
-            {
-              label: helptextSystemAdvanced.debugkernel_placeholder,
-              value: advancedConfig.debugkernel ? helptext.enabled : helptext.disabled,
-            },
-          ],
-        },
+        // TODO: Supposedly temporarly disabled https://jira.ixsystems.com/browse/NAS-115361
+        // {
+        //   title: helptextSystemAdvanced.fieldset_kernel,
+        //   id: AdvancedCardId.Kernel,
+        //   items: [
+        //     {
+        //       label: helptextSystemAdvanced.autotune_placeholder,
+        //       value: advancedConfig.autotune ? helptext.enabled : helptext.disabled,
+        //     },
+        //     {
+        //       label: helptextSystemAdvanced.debugkernel_placeholder,
+        //       value: advancedConfig.debugkernel ? helptext.enabled : helptext.disabled,
+        //     },
+        //   ],
+        // },
         {
           id: AdvancedCardId.Cron,
           title: helptextSystemAdvanced.fieldset_cron,
@@ -396,7 +405,37 @@ export class AdvancedSettingsComponent implements OnInit {
             },
           ],
         },
+        {
+          title: helptextSystemAdvanced.fieldset_replication,
+          id: AdvancedCardId.Replication,
+          items: [
+            {
+              label: helptextSystemAdvanced.max_parallel_replication_tasks_placeholder,
+              value: this.replicationConfig.max_parallel_replication_tasks || '-',
+            },
+          ],
+        },
       ];
+
+      this.ws.call('system.advanced.sed_global_password').pipe(untilDestroyed(this)).subscribe(
+        (sedPassword) => {
+          this.sedPassword = sedPassword;
+          this.dataCards.push({
+            title: helptextSystemAdvanced.fieldset_sed,
+            id: AdvancedCardId.Sed,
+            items: [
+              {
+                label: helptextSystemAdvanced.sed_user_placeholder,
+                value: advancedConfig.sed_user,
+              },
+              {
+                label: this.translate.instant('Password'),
+                value: sedPassword ? '\*'.repeat(sedPassword.length) : '–',
+              },
+            ],
+          });
+        },
+      );
 
       this.ws.call('device.get_info', [DeviceType.Gpu]).pipe(untilDestroyed(this)).subscribe((gpus) => {
         const isolatedGpus = gpus.filter((gpu: Device) => advancedConfig.isolated_gpu_pci_ids.findIndex(
@@ -408,7 +447,7 @@ export class AdvancedSettingsComponent implements OnInit {
           items: [{ label: this.translate.instant('Isolated GPU Device(s)'), value: isolatedGpus }],
         } as DataCard<AdvancedCardId>;
 
-        if (isolatedGpus.length == 0) {
+        if (isolatedGpus.length === 0) {
           gpuCard.emptyConf = {
             type: EmptyType.NoPageData,
             title: this.translate.instant('No Isolated GPU Device(s) configured'),
@@ -421,66 +460,40 @@ export class AdvancedSettingsComponent implements OnInit {
     });
   }
 
-  async onSettingsPressed(name: AdvancedCardId, id?: number): Promise<void> {
-    let addComponent: Type<ConsoleFormComponent
-    | KernelFormComponent
-    | SyslogFormComponent
-    | TunableFormComponent
-    | CronFormComponent
-    | SystemDatasetPoolComponent
-    | IsolatedGpuPcisFormComponent
-    >;
-
+  async onSettingsPressed(name: AdvancedCardId): Promise<void> {
+    await this.showFirstTimeWarningIfNeeded();
     switch (name) {
       case AdvancedCardId.Console:
-        addComponent = ConsoleFormComponent;
+        this.slideInService.open(ConsoleFormComponent);
         break;
       case AdvancedCardId.Kernel:
-        addComponent = KernelFormComponent;
+        this.slideInService.open(KernelFormComponent).setupForm(this.configData);
+        break;
+      case AdvancedCardId.Replication:
+        this.slideInService.open(ReplicationFormComponent);
         break;
       case AdvancedCardId.Syslog:
-        addComponent = SyslogFormComponent;
+        this.slideInService.open(SyslogFormComponent);
         break;
       case AdvancedCardId.Sysctl:
-        addComponent = TunableFormComponent;
-        break;
-      case AdvancedCardId.Cron:
-        addComponent = CronFormComponent;
+        this.slideInService.open(TunableFormComponent);
         break;
       case AdvancedCardId.SystemDatasetPool:
-        addComponent = SystemDatasetPoolComponent;
+        this.slideInService.open(SystemDatasetPoolComponent);
         break;
       case AdvancedCardId.Gpus:
-        addComponent = IsolatedGpuPcisFormComponent;
+        this.slideInService.open(IsolatedGpuPcisFormComponent);
+        break;
+      case AdvancedCardId.Sed:
+        this.slideInService.open(SedFormComponent).setupForm(this.configData, this.sedPassword);
         break;
       default:
         break;
     }
-
-    await this.showFirstTimeWarningIfNeeded();
-    if ([AdvancedCardId.Console, AdvancedCardId.Kernel].includes(name)) {
-      this.sysGeneralService.sendConfigData(this.configData as any);
-    }
-
-    if ([AdvancedCardId.Kernel].includes(name)) {
-      const modal = this.ixModal.open(KernelFormComponent);
-      modal.setupForm(this.configData);
-    } else if (
-      [
-        AdvancedCardId.Console,
-        AdvancedCardId.Syslog,
-        AdvancedCardId.Gpus,
-        AdvancedCardId.SystemDatasetPool,
-      ].includes(name)
-    ) {
-      this.ixModal.open(addComponent);
-    } else {
-      this.modalService.openInSlideIn(addComponent, id);
-    }
   }
 
   saveDebug(): void {
-    this.ws.call('system.info').pipe(untilDestroyed(this)).subscribe((systemInfo) => {
+    this.store$.pipe(waitForSystemInfo, untilDestroyed(this)).subscribe((systemInfo) => {
       let fileName = '';
       let mimeType = 'application/gzip';
       if (systemInfo) {
@@ -568,10 +581,10 @@ export class AdvancedSettingsComponent implements OnInit {
         ...job,
         cron_schedule: schedule,
 
-        /* Weird type assertions are due to a type definition error in the cron-parser library */
-        next_run: ((cronParser.parseExpression(schedule, { iterator: true }).next() as unknown) as {
-          value: { _date: any };
-        }).value._date.fromNow(),
+        next_run: formatDistanceToNowStrict(
+          cronParser.parseExpression(schedule, { iterator: true }).next().value.toDate(),
+          { addSuffix: true },
+        ),
       };
     });
   }

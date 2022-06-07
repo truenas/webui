@@ -9,16 +9,16 @@ import { helptextSystemCertificates } from 'app/helptext/system/certificates';
 import { Certificate } from 'app/interfaces/certificate.interface';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { QueryFilter } from 'app/interfaces/query-api.interface';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
+import { AppLoaderService } from 'app/modules/app-loader/app-loader.service';
+import { EntityFormComponent } from 'app/modules/entity/entity-form/entity-form.component';
 import {
   FieldConfig, FormListConfig, FormParagraphConfig, FormSelectConfig,
-} from 'app/pages/common/entity/entity-form/models/field-config.interface';
-import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
-import { EntityFormService } from 'app/pages/common/entity/entity-form/services/entity-form.service';
-import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
-import { EntityUtils } from 'app/pages/common/entity/utils';
+} from 'app/modules/entity/entity-form/models/field-config.interface';
+import { FieldSet } from 'app/modules/entity/entity-form/models/fieldset.interface';
+import { EntityFormService } from 'app/modules/entity/entity-form/services/entity-form.service';
+import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
+import { EntityUtils } from 'app/modules/entity/utils';
 import { WebSocketService, DialogService } from 'app/services';
-import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { ModalService } from 'app/services/modal.service';
 
 @UntilDestroy()
@@ -133,8 +133,10 @@ export class CertificateAcmeAddComponent implements FormConfiguration {
 
   constructor(
     protected ws: WebSocketService,
-    protected loader: AppLoaderService, private dialog: MatDialog,
-    protected entityFormService: EntityFormService, protected dialogService: DialogService,
+    protected loader: AppLoaderService,
+    private dialog: MatDialog,
+    protected entityFormService: EntityFormService,
+    protected dialogService: DialogService,
     private modalService: ModalService,
   ) {
     this.getRow = this.modalService.getRow$.pipe(untilDestroyed(this)).subscribe((rowId: number) => {
@@ -186,7 +188,7 @@ export class CertificateAcmeAddComponent implements FormConfiguration {
             }
 
             const controls = listFields[i];
-            const nameTextConfig: FormParagraphConfig = _.find(controls, { name: 'name_text' });
+            const nameTextConfig = _.find(controls, { name: 'name_text' }) as FormParagraphConfig;
             const authConfig = _.find(controls, { name: 'authenticators' }) as FormSelectConfig;
             (this.domainList.controls[i] as FormGroup).controls['name_text'].setValue(domains[i]);
             nameTextConfig.paraText = '<b>' + domains[i] + '</b>';

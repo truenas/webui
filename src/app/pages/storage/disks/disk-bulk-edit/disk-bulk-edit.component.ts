@@ -4,10 +4,10 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { JobState } from 'app/enums/job-state.enum';
 import helptext from 'app/helptext/storage/disks/disks';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
-import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
-import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
+import { AppLoaderService } from 'app/modules/app-loader/app-loader.service';
+import { FieldConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
+import { FieldSet } from 'app/modules/entity/entity-form/models/fieldset.interface';
 import { WebSocketService } from 'app/services';
-import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { DialogService } from 'app/services/dialog.service';
 import { StorageService } from 'app/services/storage.service';
 
@@ -77,7 +77,7 @@ export class DiskBulkEditComponent implements FormConfiguration {
           type: 'input',
           name: 'disk_smartoptions',
           placeholder: helptext.disk_form_smartoptions_placeholder,
-          value: this.diskBucket.SMARToptions,
+          value: this.diskBucket.smartOptions,
           tooltip: helptext.disk_form_smartoptions_tooltip,
         },
       ],
@@ -130,7 +130,7 @@ export class DiskBulkEditComponent implements FormConfiguration {
             this.loader.close();
             let isSuccessful = true;
             for (const result of res.result) {
-              if (result.error != null) {
+              if (result.error !== null) {
                 this.dialogService.errorReport(helptext.dialog_error, result.error);
                 isSuccessful = false;
                 break;

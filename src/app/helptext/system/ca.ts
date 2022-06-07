@@ -1,6 +1,6 @@
 import { Validators } from '@angular/forms';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
-import { matchOtherValidator } from 'app/pages/common/entity/entity-form/validators/password-validation/password-validation';
+import { matchOtherValidator } from 'app/modules/entity/entity-form/validators/password-validation/password-validation';
 
 export const helptextSystemCa = {
   add: {
@@ -180,6 +180,10 @@ matches your certificate usage scenario.'),
 
     passphrase2: {
       placeholder: T('Confirm Passphrase'),
+    },
+
+    add_to_trusted_store: {
+      placeholder: T('Add To Trusted Store'),
     },
 
     basic_constraints: {
@@ -364,25 +368,10 @@ certificate still approved.'),
   },
 
   list: {
-    tooltip_route_add: T('Create CA'),
-
-    column_name: T('Name'),
-    column_internal: T('Internal'),
-    column_issuer: T('Issuer'),
-    column_distinguished_name: T('Distinguished Name'),
-    column_from: T('From'),
-    column_until: T('Until'),
-
-    action_view: T('View'),
     action_sign: T('Sign CSR'),
-    action_export_certificate: T('Export Certificate'),
-    action_export_private_key: T('Export Private Key'),
-
-    action_delete: T('Delete'),
   },
 
   sign: {
-    fieldset_certificate: T('Sign CSR'),
     ca_id: {
       placeholder: T('CA ID'),
     },

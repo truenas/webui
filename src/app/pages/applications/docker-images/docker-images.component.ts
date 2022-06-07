@@ -6,16 +6,16 @@ import { latestVersion } from 'app/constants/catalog.constants';
 import helptext from 'app/helptext/apps/apps';
 import { ContainerImage, PullContainerImageParams } from 'app/interfaces/container-image.interface';
 import { CoreEvent } from 'app/interfaces/events';
+import { DialogFormConfiguration } from 'app/modules/entity/entity-dialog/dialog-form-configuration.interface';
+import { EntityDialogComponent } from 'app/modules/entity/entity-dialog/entity-dialog.component';
+import { FormSelectConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
+import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
+import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-table.component';
+import { EntityTableAction, EntityTableConfig, EntityTableConfirmDialog } from 'app/modules/entity/entity-table/entity-table.interface';
 import { ApplicationToolbarControl } from 'app/pages/applications/application-toolbar-control.enum';
-import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
-import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
-import { FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
-import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
-import { EntityTableComponent } from 'app/pages/common/entity/entity-table/entity-table.component';
-import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
+import { PullImageFormComponent } from 'app/pages/applications/forms/pull-image-form/pull-image-form.component';
 import { DialogService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { PullImageFormComponent } from '../forms/pull-image-form/pull-image-form.component';
 
 @UntilDestroy()
 @Component({
@@ -30,6 +30,11 @@ export class DockerImagesComponent implements EntityTableConfig {
   queryCall = 'container.image.query' as const;
   wsDelete = 'container.image.delete' as const;
   disableActionsConfig = true;
+  confirmDeleteDialog: EntityTableConfirmDialog = {};
+
+  wsDeleteParams(_: unknown, id: string): unknown[] {
+    return [id, { force: this.forceDelete }];
+  }
 
   columns = [
     { name: helptext.dockerImages.columns.id, prop: 'id', always_display: true },
@@ -47,6 +52,7 @@ export class DockerImagesComponent implements EntityTableConfig {
     },
   };
 
+  forceDelete: boolean;
   filterString = '';
   constructor(
     protected dialogService: DialogService,
@@ -89,6 +95,8 @@ export class DockerImagesComponent implements EntityTableConfig {
       name: 'update',
       disabled: !row.update_available,
       onClick: (row: ContainerImage) => {
+        delete this.confirmDeleteDialog.title;
+        delete this.confirmDeleteDialog.button;
         this.onClickUpdateImage(row);
       },
     }, {
@@ -97,22 +105,36 @@ export class DockerImagesComponent implements EntityTableConfig {
       label: helptext.dockerImages.menu.delete,
       name: 'delete',
       onClick: (row: ContainerImage) => {
+        delete this.confirmDeleteDialog.title;
+        delete this.confirmDeleteDialog.button;
+        this.forceDelete = false;
         this.entityList.doDelete(row);
+      },
+    }, {
+      id: row.id,
+      icon: 'delete',
+      label: helptext.dockerImages.menu.forceDelete,
+      name: 'forceDelete',
+      onClick: (row: ContainerImage) => {
+        this.confirmDeleteDialog.title = this.translate.instant('Force delete');
+        this.confirmDeleteDialog.button = this.translate.instant('Force delete');
+        this.forceDelete = true;
+        this.entityList.doDelete(row, this.translate.instant('Force delete'));
       },
     });
 
     return actions as EntityTableAction[];
   }
 
-  resourceTransformIncomingRestData(d: ContainerImage[]): ContainerImage[] {
-    const data: ContainerImage[] = [];
-    d.forEach((row) => {
-      if (!row.system_image) {
-        row.state = row.update_available ? helptext.dockerImages.updateAvailable : '';
-        data.push(row);
+  resourceTransformIncomingRestData(images: ContainerImage[]): ContainerImage[] {
+    const transformedImage: ContainerImage[] = [];
+    images.forEach((image) => {
+      if (!image.system_image) {
+        image.state = image.update_available ? helptext.dockerImages.updateAvailable : '';
+        transformedImage.push(image);
       }
     });
-    return data;
+    return transformedImage;
   }
 
   doAdd(): void {

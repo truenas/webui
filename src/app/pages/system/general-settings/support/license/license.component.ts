@@ -3,12 +3,11 @@ import {
   ChangeDetectorRef, Component,
 } from '@angular/core';
 import { Validators } from '@angular/forms';
-import { Router } from '@angular/router';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { filter } from 'rxjs/operators';
 import { helptextSystemSupport as helptext } from 'app/helptext/system/support';
-import { FormErrorHandlerService } from 'app/pages/common/ix-forms/services/form-error-handler.service';
+import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { WebSocketService, DialogService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
@@ -33,7 +32,6 @@ export class LicenseComponent {
 
   constructor(
     private fb: FormBuilder,
-    protected router: Router,
     private dialogService: DialogService,
     private slideInService: IxSlideInService,
     protected ws: WebSocketService,

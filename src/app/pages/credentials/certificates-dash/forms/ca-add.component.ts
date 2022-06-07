@@ -7,12 +7,12 @@ import * as _ from 'lodash';
 import { helptextSystemCa } from 'app/helptext/system/ca';
 import { CertificateProfile } from 'app/interfaces/certificate.interface';
 import { WizardConfiguration } from 'app/interfaces/entity-wizard.interface';
-import { FieldConfig, FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
-import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
-import { Wizard } from 'app/pages/common/entity/entity-form/models/wizard.interface';
-import { EntityWizardComponent } from 'app/pages/common/entity/entity-wizard/entity-wizard.component';
+import { AppLoaderService } from 'app/modules/app-loader/app-loader.service';
+import { FieldConfig, FormSelectConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
+import { RelationAction } from 'app/modules/entity/entity-form/models/relation-action.enum';
+import { Wizard } from 'app/modules/entity/entity-form/models/wizard.interface';
+import { EntityWizardComponent } from 'app/modules/entity/entity-wizard/entity-wizard.component';
 import { SystemGeneralService, WebSocketService } from 'app/services';
-import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { DialogService } from 'app/services/dialog.service';
 import { ModalService } from 'app/services/modal.service';
 
@@ -89,9 +89,7 @@ export class CertificateAuthorityAddComponent implements WizardConfiguration {
           name: 'signedby',
           placeholder: helptextSystemCa.add.signedby.placeholder,
           tooltip: helptextSystemCa.add.signedby.tooltip,
-          options: [
-            { label: '---', value: null },
-          ],
+          options: [],
           isHidden: true,
           disabled: true,
           required: true,
@@ -265,6 +263,11 @@ export class CertificateAuthorityAddComponent implements WizardConfiguration {
     {
       label: helptextSystemCa.add.fieldset_extra,
       fieldConfig: [
+        {
+          type: 'checkbox',
+          name: 'add_to_trusted_store',
+          placeholder: helptextSystemCa.add.add_to_trusted_store.placeholder,
+        },
         {
           type: 'checkbox',
           name: 'BasicConstraints-enabled',
@@ -622,9 +625,8 @@ export class CertificateAuthorityAddComponent implements WizardConfiguration {
   }
 
   getSummaryValueLabel(fieldConfig: FieldConfig, value: any): any {
-    if (fieldConfig.type == 'select') {
-      const config = fieldConfig as FormSelectConfig;
-      const option = config.options.find((option) => option.value == value);
+    if (fieldConfig.type === 'select') {
+      const option = fieldConfig.options.find((option) => option.value === value);
       if (option) {
         value = option.label;
       }
@@ -644,11 +646,6 @@ export class CertificateAuthorityAddComponent implements WizardConfiguration {
         this.summary[fieldConfig.placeholder] = this.getSummaryValueLabel(fieldConfig, res);
       });
     }
-  }
-
-  removeFromSummary(fieldName: string): void {
-    const fieldConfig = this.getTarget(fieldName);
-    delete this.summary[fieldConfig.placeholder];
   }
 
   setSummary(): void {
@@ -673,7 +670,7 @@ export class CertificateAuthorityAddComponent implements WizardConfiguration {
       this.wizardConfig[1].skip = false;
       this.wizardConfig[2].skip = false;
 
-      if (res == 'CA_CREATE_INTERNAL') {
+      if (res === 'CA_CREATE_INTERNAL') {
         this.intermediatecaFields.forEach((field) => this.hideField(field, true));
         this.importcaFields.forEach((field) => this.hideField(field, true));
         this.internalcaFields.forEach((field) => this.hideField(field, false));
@@ -685,21 +682,34 @@ export class CertificateAuthorityAddComponent implements WizardConfiguration {
         } else if (this.getField('key_type').value === 'EC') {
           this.hideField('key_length', true);
         }
-      } else if (res == 'CA_CREATE_INTERMEDIATE') {
-        this.intermediatecaFields.forEach((field) => this.hideField(field, false));
+        this.hideField('add_to_trusted_store', false);
+        this.relationFields.forEach((field) => {
+          if (field.includes('-enabled')) {
+            this.getField(field).setValue(this.getField(field).value);
+          }
+        });
+      } else if (res === 'CA_CREATE_INTERMEDIATE') {
         this.importcaFields.forEach((field) => this.hideField(field, true));
         this.internalcaFields.forEach((field) => this.hideField(field, true));
+        this.intermediatecaFields.forEach((field) => this.hideField(field, false));
         this.extensionFields.forEach((field) => this.hideField(field, false));
         if (this.getField('key_type').value === 'RSA') {
           this.hideField('ec_curve', true);
         } else if (this.getField('key_type').value === 'EC') {
           this.hideField('key_length', true);
         }
-      } else if (res == 'CA_CREATE_IMPORTED') {
+        this.hideField('add_to_trusted_store', true);
+        this.relationFields.forEach((field) => {
+          if (field.includes('-enabled')) {
+            this.getField(field).setValue(this.getField(field).value);
+          }
+        });
+      } else if (res === 'CA_CREATE_IMPORTED') {
         this.intermediatecaFields.forEach((field) => this.hideField(field, true));
         this.importcaFields.forEach((field) => this.hideField(field, false));
         this.internalcaFields.forEach((field) => this.hideField(field, true));
         this.extensionFields.forEach((field) => this.hideField(field, true));
+        this.hideField('add_to_trusted_store', false);
 
         this.wizardConfig[1].skip = true;
         this.wizardConfig[2].skip = true;
@@ -787,7 +797,7 @@ export class CertificateAuthorityAddComponent implements WizardConfiguration {
         } else if (reset && this.entityForm.formGroup.controls[item].value === value[item]) {
           this.entityForm.formGroup.controls[item].setValue(undefined);
         } else if (!reset) {
-          this.entityForm.formGroup.controls[item].setValue(value[item]);
+          this.entityForm.formGroup.controls[item]?.setValue(value[item]);
         }
       });
     }
@@ -795,7 +805,7 @@ export class CertificateAuthorityAddComponent implements WizardConfiguration {
 
   getStep(fieldName: string): number {
     const stepNumber = this.wizardConfig.findIndex((step) => {
-      const index = step.fieldConfig.findIndex((field) => fieldName == field.name);
+      const index = step.fieldConfig.findIndex((field) => fieldName === field.name);
       return index > -1;
     });
 
@@ -820,9 +830,9 @@ export class CertificateAuthorityAddComponent implements WizardConfiguration {
     return null;
   }
 
-  hideField(fieldName: string, show: boolean): void {
-    this.getTarget(fieldName).isHidden = show;
-    this.setDisabled(fieldName, show);
+  hideField(fieldName: string, isHidden: boolean): void {
+    this.getTarget(fieldName).isHidden = isHidden;
+    this.setDisabled(fieldName, isHidden);
   }
 
   setDisabled(fieldName: string, disable: boolean): void {
@@ -836,7 +846,7 @@ export class CertificateAuthorityAddComponent implements WizardConfiguration {
 
   beforeSubmit(data: any): any {
     // Addresses non-pristine field being mistaken for a passphrase of ''
-    if (data.passphrase == '') {
+    if (data.passphrase === '') {
       data.passphrase = undefined;
     }
     if (data.passphrase2) {
@@ -870,6 +880,9 @@ export class CertificateAuthorityAddComponent implements WizardConfiguration {
       data['cert_extensions'] = certExtensions;
 
       delete data['profiles'];
+    }
+    if (data.create_type === 'CA_CREATE_INTERMEDIATE') {
+      delete data['add_to_trusted_store'];
     }
 
     return data;

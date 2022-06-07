@@ -1,0 +1,69 @@
+:host {
+  color: var(--fg1);
+  display: block;
+  margin-bottom: 12px;
+  margin-top: 18px;
+  padding: 8px 0;
+}
+
+.tooltip {
+  margin: 0 0 0 8px;
+}
+
+.input-container {
+  background: var(--bg1);
+  border: solid 1.5px var(--lines);
+  border-radius: 2px;
+  display: flex;
+  flex-direction: row;
+  font-size: 12px;
+  padding: 3px 8px;
+  position: relative;
+
+  input {
+    min-height: 26px;
+  }
+
+  &:focus-within {
+    border-color: var(--primary);
+  }
+
+  &.disabled {
+    opacity: 0.38;
+
+    input {
+      cursor: not-allowed;
+      opacity: 1;
+    }
+  }
+}
+
+.label-container {
+  align-items: center;
+  display: flex;
+  margin-bottom: 1px;
+  margin-left: 1px;
+  min-height: 24px;
+}
+
+.label {
+  font-size: x-small;
+}
+
+.tree-container {
+  border-bottom: solid 1px var(--lines);
+  border-left: solid 1px var(--lines);
+  border-right: solid 1px var(--lines);
+  font-size: 12px;
+  padding-top: 2px;
+
+  ::ng-deep .tree-node {
+    // Wrap long file names
+    word-break: break-all;
+  }
+}
+
+.loading-error {
+  font-size: 12px;
+  margin-top: 2px;
+}

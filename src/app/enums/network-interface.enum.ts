@@ -6,6 +6,12 @@ export enum NetworkInterfaceType {
   Unknown = 'UNKNOWN',
 }
 
+export enum CreateNetworkInterfaceType {
+  Bridge = 'BRIDGE',
+  LinkAggregation = 'LINK_AGGREGATION',
+  Vlan = 'VLAN',
+}
+
 export enum NetworkInterfaceAliasType {
   Inet = 'INET',
   Inet6 = 'INET6',
@@ -36,7 +42,7 @@ export enum LinkState {
   Down = 'LINK_STATE_DOWN',
 }
 
-export enum LACPDURate {
+export enum LacpduRate {
   Slow = 'SLOW',
   Fast = 'FAST',
 }

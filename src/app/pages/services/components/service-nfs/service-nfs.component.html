@@ -10,6 +10,12 @@
           [multiple]="true"
           [tooltip]="tooltips.bindip"
         ></ix-select>
+        <ix-input
+          formControlName="servers"
+          [label]="'Number of threads' | translate"
+          type="number"
+          [tooltip]="tooltips.servers"
+        ></ix-input>
       </ix-fieldset>
 
       <div class="two-columns">
@@ -57,6 +63,11 @@
           formControlName="udp"
           [label]="'Serve UDP NFS clients' | translate"
           [tooltip]="tooltips.udp"
+        ></ix-checkbox>
+        <ix-checkbox
+          formControlName="allow_nonroot"
+          [label]="'Allow non-root mount' | translate"
+          [tooltip]="tooltips.allow_nonroot"
         ></ix-checkbox>
         <ix-checkbox
           formControlName="userd_manage_gids"

@@ -1,5 +1,8 @@
 name: CI
-on: [pull_request]
+on:
+  push:
+  pull_request:
+    types: [synchronize]
 jobs:
   build:
     name: Build and Test
@@ -12,5 +15,9 @@ jobs:
           cache: 'yarn'
       - run: yarn install --frozen-lockfile
       - run: yarn run extract # Extracts messages again to make sure they are not broken
-      - run: yarn test:pr
       - run: yarn build:prod:aot
+      - run: yarn test:pr
+      - uses: codecov/codecov-action@v2
+        with:
+          name: webui
+          fail_ci_if_error: true

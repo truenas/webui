@@ -1,9 +1,8 @@
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { combineLatest, Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { DsUncachedGroup, DsUncachedUser } from 'app/interfaces/ds-cache.interface';
 import { Group } from 'app/interfaces/group.interface';
-import { Option } from 'app/interfaces/option.interface';
 import { QueryFilter } from 'app/interfaces/query-api.interface';
 import { User } from 'app/interfaces/user.interface';
 import { WebSocketService } from './ws.service';
@@ -19,6 +18,18 @@ export class UserService {
 
   constructor(protected ws: WebSocketService) {}
 
+  private groupQueryDsCacheByName(name: string): Observable<Group[]> {
+    if (!(name && name.length)) {
+      return of([]);
+    }
+    let queryArgs: QueryFilter<Group>[] = [];
+    name = name.trim();
+    if (name.length > 0) {
+      queryArgs = [['name', '=', name]];
+    }
+    return this.ws.call(this.groupQuery, [queryArgs, { ...this.queryOptions }]);
+  }
+
   groupQueryDsCache(search = '', hideBuiltIn = false, offset = 0): Observable<Group[]> {
     let queryArgs: QueryFilter<Group>[] = [];
     search = search.trim();
@@ -28,7 +39,18 @@ export class UserService {
     if (hideBuiltIn) {
       queryArgs = queryArgs.concat([['builtin', '=', false]]);
     }
-    return this.ws.call(this.groupQuery, [queryArgs, { ...this.queryOptions, offset }]);
+    return combineLatest([
+      this.groupQueryDsCacheByName(search),
+      this.ws.call(this.groupQuery, [queryArgs, { ...this.queryOptions, offset }]),
+    ]).pipe(map(([groupSearchedByName, groups]) => {
+      const groupIds = groupSearchedByName.map((groupsByName) => groupsByName.id);
+      groups = groups.filter(
+        (group) => {
+          return !groupIds.some((gid) => gid === group.id);
+        },
+      );
+      return [...groups, ...groupSearchedByName];
+    }));
   }
 
   getGroupByGid(gid: string): Observable<Group[]> {
@@ -54,37 +76,5 @@ export class UserService {
 
   getUserByName(username: string): Observable<DsUncachedUser> {
     return this.ws.call(this.uncachedUserQuery, [username]);
-  }
-
-  async getUserObject(userId: string | number): Promise<DsUncachedUser> {
-    let user;
-    await this.ws
-      .call('user.get_user_obj', [typeof userId === 'string' ? { username: userId } : { uid: userId }])
-      .toPromise()
-      .then((u) => (user = u), console.error);
-    return user;
-  }
-
-  async getGroupObject(groupId: string | number): Promise<DsUncachedGroup> {
-    let group;
-    await this.ws
-      .call('group.get_group_obj', [typeof groupId === 'string' ? { groupname: groupId } : { gid: groupId }])
-      .toPromise()
-      .then((g) => (group = g), console.error);
-    return group;
-  }
-
-  async shellChoices(userId?: number): Promise<Option[]> {
-    return this.ws
-      .call('user.shell_choices', userId ? [userId] : [])
-      .pipe(
-        map((choices) => {
-          return Object.keys(choices || {}).map((key) => ({
-            label: choices[key],
-            value: key,
-          }));
-        }),
-      )
-      .toPromise();
   }
 }

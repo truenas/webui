@@ -1,16 +1,17 @@
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
+import { Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { choicesToOptions } from 'app/helpers/options.helper';
 import helptext from 'app/helptext/services/components/service-nfs';
-import { portRangeValidator } from 'app/pages/common/entity/entity-form/validators/range-validation';
-import { FormErrorHandlerService } from 'app/pages/common/ix-forms/services/form-error-handler.service';
+import { rangeValidator, portRangeValidator } from 'app/modules/entity/entity-form/validators/range-validation';
+import { EntityUtils } from 'app/modules/entity/utils';
+import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { DialogService, WebSocketService } from 'app/services';
-import { EntityUtils } from '../../../common/entity/utils';
 
 @UntilDestroy()
 @Component({
@@ -22,19 +23,23 @@ export class ServiceNfsComponent implements OnInit {
   isFormLoading = false;
 
   form = this.fb.group({
+    allow_nonroot: [false],
     bindip: [[] as string[]],
+    servers: [4, [Validators.required, rangeValidator(1, 256)]],
     v4: [false],
     v4_v3owner: [false],
     v4_krb: [false],
-    mountd_port: [null as number, [portRangeValidator()]],
-    rpcstatd_port: [null as number, [portRangeValidator()]],
-    rpclockd_port: [null as number, [portRangeValidator()]],
+    mountd_port: [null as number, portRangeValidator()],
+    rpcstatd_port: [null as number, portRangeValidator()],
+    rpclockd_port: [null as number, portRangeValidator()],
     udp: [false],
     userd_manage_gids: [false],
   });
 
   readonly tooltips = {
+    allow_nonroot: helptext.nfs_srv_allow_nonroot_tooltip,
     bindip: helptext.nfs_srv_bindip_tooltip,
+    servers: helptext.nfs_srv_servers_tooltip,
     v4: helptext.nfs_srv_v4_tooltip,
     v4_v3owner: helptext.nfs_srv_v4_v3owner_tooltip,
     v4_krb: helptext.nfs_srv_v4_krb_tooltip,
@@ -64,13 +69,7 @@ export class ServiceNfsComponent implements OnInit {
   }
 
   onSubmit(): void {
-    const values = this.form.value;
-    const params = {
-      ...this.form.value,
-      mountd_port: values.mountd_port ? Number(values.mountd_port) : null,
-      rpcstatd_port: values.rpcstatd_port ? Number(values.rpcstatd_port) : null,
-      rpclockd_port: values.rpclockd_port ? Number(values.rpclockd_port) : null,
-    };
+    const params = this.form.value;
 
     this.isFormLoading = true;
     this.ws.call('nfs.update', [params])

@@ -10,12 +10,13 @@ import {
 import {
   catchError, filter, map, switchMap, tap,
 } from 'rxjs/operators';
+import { JobState } from 'app/enums/job-state.enum';
 import { choicesToOptions } from 'app/helpers/options.helper';
 import helptext from 'app/helptext/apps/apps';
 import { KubernetesConfig, KubernetesConfigUpdate } from 'app/interfaces/kubernetes-config.interface';
+import { EntityUtils } from 'app/modules/entity/utils';
+import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { ApplicationsService } from 'app/pages/applications/applications.service';
-import { EntityUtils } from 'app/pages/common/entity/utils';
-import { FormErrorHandlerService } from 'app/pages/common/ix-forms/services/form-error-handler.service';
 import {
   AppLoaderService, DialogService, WebSocketService,
 } from 'app/services';
@@ -58,15 +59,10 @@ export class KubernetesSettingsComponent implements OnInit {
 
   readonly routeInterfaceOptions$ = this.appService.getInterfaces().pipe(
     map((interfaces) => {
-      const options = interfaces.map((networkInterface) => ({
+      return interfaces.map((networkInterface) => ({
         label: networkInterface.name,
         value: networkInterface.name,
       }));
-
-      return [
-        { label: '---', value: null },
-        ...options,
-      ];
     }),
   );
 
@@ -125,7 +121,10 @@ export class KubernetesSettingsComponent implements OnInit {
           this.ws.job('kubernetes.update', [values]),
           this.appService.updateContainerConfig(enableContainerImageUpdate),
         ]).pipe(
-          tap(() => {
+          tap(([job]) => {
+            if (job.state !== JobState.Success) {
+              return;
+            }
             this.loader.close();
             this.slideInService.close();
           }),

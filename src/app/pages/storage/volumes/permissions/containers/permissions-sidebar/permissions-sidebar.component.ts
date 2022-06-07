@@ -58,10 +58,10 @@ export class PermissionsSidebarComponent implements OnInit, OnChanges {
         this.stat = state.stat;
         if (this.acl && this.acl.acl && this.acl.acltype === AclType.Nfs4) {
           for (const acl of this.acl.acl) {
-            if (acl.tag === NfsAclTag.Owner && acl.who == null) {
+            if (acl.tag === NfsAclTag.Owner && acl.who === null) {
               acl.who = this.acl.uid.toString();
             }
-            if ((acl.tag === NfsAclTag.Group || acl.tag === NfsAclTag.UserGroup) && acl.who == null) {
+            if ((acl.tag === NfsAclTag.Group || acl.tag === NfsAclTag.UserGroup) && acl.who === null) {
               acl.who = this.acl.gid.toString();
             }
           }

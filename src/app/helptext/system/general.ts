@@ -4,7 +4,6 @@ import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 export const helptextSystemGeneral = {
   fieldset_gui: T('GUI'),
   fieldset_other: T('Other Options'),
-  stg_fieldset_loc: T('Localization'),
 
   ui_certificate: {
     label: T('GUI SSL Certificate'),
@@ -173,6 +172,11 @@ export const helptextSystemGeneral = {
     message: T('Reset system configuration to default settings. The system \
  will restart to complete this operation. You will be required to reset your password.'),
   },
+
+  redirect_confirm_title: T('Enable HTTPS Redirect'),
+  redirect_confirm_message: T('Enabling redirect will require all URLs served from current\
+ host to be served via HTTPS regardless of port used. This may make some App portals\
+ inaccessible if they don\'t use HTTPS. Do you wish to continue?'),
 
   dialog_confirm_title: T('Restart Web Service'),
   dialog_confirm_message: T('The web service must restart for the protocol changes to take effect. The UI will be temporarily unavailable. Restart the service?'),

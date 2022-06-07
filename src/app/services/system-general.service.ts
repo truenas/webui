@@ -1,16 +1,17 @@
 import { EventEmitter, Injectable } from '@angular/core';
+import { Store } from '@ngrx/store';
 import * as Sentry from '@sentry/angular';
 import { environment } from 'environments/environment';
 import * as _ from 'lodash';
 import { Subject, Observable, combineLatest } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
 import { CertificateAuthority } from 'app/interfaces/certificate-authority.interface';
 import { Certificate } from 'app/interfaces/certificate.interface';
 import { Choices } from 'app/interfaces/choices.interface';
 import { Option } from 'app/interfaces/option.interface';
-import { SystemGeneralConfig } from 'app/interfaces/system-config.interface';
-import { SystemInfo } from 'app/interfaces/system-info.interface';
+import { AppState } from 'app/store';
+import { waitForGeneralConfig } from 'app/store/system-config/system-config.selectors';
+import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 import { WebSocketService } from './ws.service';
 
 @Injectable({ providedIn: 'root' })
@@ -21,44 +22,12 @@ export class SystemGeneralService {
   updateRunning = new EventEmitter<string>();
   updateRunningNoticeSent = new EventEmitter<string>();
   updateIsDone$ = new Subject();
-  sendConfigData$ = new Subject<SystemGeneralConfig>();
-  refreshSysGeneral$ = new Subject();
-
-  // Prevent repetitive api calls in a short time when data is already available
-  generalConfigInfo: SystemGeneralConfig | { waiting: true };
-  getGeneralConfig$ = new Observable<SystemGeneralConfig>((observer) => {
-    if (!this.ws.loggedIn) {
-      observer.next({} as SystemGeneralConfig);
-      return;
-    }
-    if ((!this.generalConfigInfo || _.isEmpty(this.generalConfigInfo))) {
-      // Since the api call can be made many times before the first response comes back,
-      // set waiting to true to make if condition false after the first call
-      this.generalConfigInfo = { waiting: true };
-      this.ws.call('system.general.config').subscribe((configInfo) => {
-        this.generalConfigInfo = configInfo;
-        observer.next(this.generalConfigInfo);
-      });
-    } else {
-      // Check every ten ms to see if the object is ready, then stop checking and send the obj
-      const wait = setInterval(() => {
-        if (this.generalConfigInfo && !(this.generalConfigInfo as { waiting?: true }).waiting) {
-          clearInterval(wait);
-          observer.next(this.generalConfigInfo as SystemGeneralConfig);
-        }
-      }, 10);
-    }
-    // After a pause, set object to empty so calls can be made
-    setTimeout(() => {
-      this.generalConfigInfo = {} as SystemGeneralConfig;
-    }, 2000);
-  });
 
   toggleSentryInit(): void {
     combineLatest([
       this.isStable(),
-      this.getSysInfo(),
-      this.getGeneralConfig$,
+      this.store$.pipe(waitForSystemInfo),
+      this.store$.pipe(waitForGeneralConfig),
     ]).subscribe(([isStable, sysInfo, generalConfig]) => {
       if (!isStable && generalConfig.crash_reporting) {
         Sentry.init({
@@ -72,27 +41,6 @@ export class SystemGeneralService {
       }
     });
   }
-
-  advancedConfigInfo: AdvancedConfig | { waiting: true };
-  getAdvancedConfig$ = new Observable<AdvancedConfig>((observer) => {
-    if ((!this.advancedConfigInfo || _.isEmpty(this.advancedConfigInfo))) {
-      this.advancedConfigInfo = { waiting: true };
-      this.ws.call('system.advanced.config').subscribe((advancedConfig) => {
-        this.advancedConfigInfo = advancedConfig;
-        observer.next(this.advancedConfigInfo);
-      });
-    } else {
-      const wait = setInterval(() => {
-        if (this.advancedConfigInfo && !(this.advancedConfigInfo as { waiting: true }).waiting) {
-          clearInterval(wait);
-          observer.next(this.advancedConfigInfo as AdvancedConfig);
-        }
-      }, 10);
-    }
-    setTimeout(() => {
-      this.advancedConfigInfo = {} as AdvancedConfig;
-    }, 2000);
-  });
 
   productType = '';
   getProductType$ = new Observable<string>((observer) => {
@@ -121,7 +69,10 @@ export class SystemGeneralService {
    */
   private jiraToken: string;
 
-  constructor(protected ws: WebSocketService) {}
+  constructor(
+    protected ws: WebSocketService,
+    private store$: Store<AppState>,
+  ) {}
 
   getCertificateAuthorities(): Observable<CertificateAuthority[]> {
     return this.ws.call(this.caList, []);
@@ -145,10 +96,6 @@ export class SystemGeneralService {
 
   isStable(): Observable<boolean> {
     return this.ws.call('system.is_stable');
-  }
-
-  getSysInfo(): Observable<SystemInfo> {
-    return this.ws.call('system.info');
   }
 
   ipChoicesv4(): Observable<Choices> {
@@ -217,18 +164,6 @@ export class SystemGeneralService {
     this.updateIsDone$.next();
   }
 
-  sendConfigData(data: SystemGeneralConfig): void {
-    this.sendConfigData$.next(data);
-  }
-
-  refreshSysGeneral(): void {
-    this.refreshSysGeneral$.next();
-  }
-
-  checkRootPassword(password: string): Observable<boolean> {
-    return this.ws.call('auth.check_user', ['root', password]);
-  }
-
   /**
    *
    * @returns OAuth Token for JIRA
@@ -239,7 +174,6 @@ export class SystemGeneralService {
 
   /**
    * Accepts string and set it as token
-   * @param token
    */
   setTokenForJira(token: string): void {
     this.jiraToken = token;

@@ -1,0 +1,49 @@
+<div *ngIf="label" class="label-container">
+  <label class="label">
+    {{label}}
+    <span *ngIf="required" class="required">*</span>
+  </label>
+  <tooltip *ngIf="tooltip" [header]="label" class="tooltip" [message]="tooltip"></tooltip>
+</div>
+
+<div class="input-container" [class.disabled]="isDisabled">
+  <mat-chip-list
+    [disabled]="isDisabled"
+    #chipList class="form-chip"
+    [required]="required"
+  >
+    <mat-chip
+      *ngFor="let item of values"
+      class="chip"
+      [selectable]="true"
+      [removable]="!isDisabled"
+      (removed)="onRemove(item)"
+    >
+      {{ item }}
+      <mat-icon matChipRemove *ngIf="!isDisabled">cancel</mat-icon>
+    </mat-chip>
+    <input
+      #chipInput
+      [placeholder]="placeholder"
+      [disabled]="isDisabled"
+      [matAutocomplete]="auto"
+      [matChipInputFor]="chipList"
+      [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+      (blur)="onInputBlur($event)"
+      (matChipInputTokenEnd)="onAdd($event.value)"
+    >
+  </mat-chip-list>
+  <mat-autocomplete
+    #auto="matAutocomplete"
+    (optionSelected)="onAdd($event.option.value)"
+  >
+    <ng-container *ngIf="suggestions$">
+      <mat-option *ngFor="let suggestion of suggestions$ | async" [value]="suggestion">
+        {{ suggestion }}
+      </mat-option>
+    </ng-container>
+  </mat-autocomplete>
+</div>
+<ix-errors [control]="controlDirective.control" [label]="label"></ix-errors>
+
+<mat-hint *ngIf="hint">{{hint}}</mat-hint>

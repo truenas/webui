@@ -4,7 +4,6 @@ import {
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import helptext from 'app/helptext/apps/apps';
 import { CatalogApp, CatalogAppVersion } from 'app/interfaces/catalog.interface';
-import { LocaleService } from 'app/services/locale.service';
 
 @Component({
   selector: 'catalog-summary-dialog',
@@ -24,7 +23,6 @@ export class CatalogSummaryDialogComponent implements OnInit {
   constructor(
     public dialogRef: MatDialogRef<CatalogSummaryDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: CatalogApp,
-    protected localeService: LocaleService,
   ) {
     this.catalogApp = data;
   }
@@ -38,11 +36,9 @@ export class CatalogSummaryDialogComponent implements OnInit {
     Object.keys(this.catalogApp.versions).forEach((key) => {
       const version = this.catalogApp.versions[key];
       if (
-        this.selectedStatus == this.statusOptions[0]
-        || this.selectedStatus == this.statusOptions[1]
-        && version.healthy
-        || this.selectedStatus == this.statusOptions[2]
-        && !version.healthy
+        this.selectedStatus === this.statusOptions[0]
+        || (this.selectedStatus === this.statusOptions[1] && version.healthy)
+        || (this.selectedStatus === this.statusOptions[2] && !version.healthy)
       ) {
         this.filteredVersions[key] = version;
       }
@@ -55,7 +51,7 @@ export class CatalogSummaryDialogComponent implements OnInit {
 
   versionStatusLabel(version: { value: CatalogAppVersion }): string {
     let label = '';
-    if (this.selectedStatus == this.statusOptions[0]) {
+    if (this.selectedStatus === this.statusOptions[0]) {
       if (version.value.healthy) {
         label += '(Healthy)';
       } else {

@@ -5,31 +5,32 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
 import { helptextSharingIscsi } from 'app/helptext/sharing';
 import { IscsiGlobalSession } from 'app/interfaces/iscsi-global-config.interface';
-import { IscsiInitiatorGroup } from 'app/interfaces/iscsi.interface';
+import { IscsiExtent, IscsiInitiatorGroup } from 'app/interfaces/iscsi.interface';
+import { QueryFilter } from 'app/interfaces/query-api.interface';
+import { AppLoaderService } from 'app/modules/app-loader/app-loader.service';
 import {
   FieldConfig,
-} from 'app/pages/common/entity/entity-form/models/field-config.interface';
-import { RelationGroup } from 'app/pages/common/entity/entity-form/models/field-relation.interface';
-import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
-import { EntityFormService } from 'app/pages/common/entity/entity-form/services/entity-form.service';
-import { FieldRelationService } from 'app/pages/common/entity/entity-form/services/field-relation.service';
-import { ipv4or6OptionalCidrValidator } from 'app/pages/common/entity/entity-form/validators/ip-validation';
-import { EntityUtils } from 'app/pages/common/entity/utils';
+} from 'app/modules/entity/entity-form/models/field-config.interface';
+import { RelationGroup } from 'app/modules/entity/entity-form/models/field-relation.interface';
+import { RelationAction } from 'app/modules/entity/entity-form/models/relation-action.enum';
+import { EntityFormService } from 'app/modules/entity/entity-form/services/entity-form.service';
+import { FieldRelationService } from 'app/modules/entity/entity-form/services/field-relation.service';
+import { ipv4or6OptionalCidrValidator } from 'app/modules/entity/entity-form/validators/ip-validation';
+import { EntityUtils } from 'app/modules/entity/utils';
 import { WebSocketService, DialogService, NetworkService } from 'app/services';
-import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 
 @UntilDestroy()
 @Component({
   selector: 'app-iscsi-initiator-form',
   templateUrl: './initiator-form.component.html',
-  styleUrls: ['./initiator-form.component.scss', '../../../../common/entity/entity-form/entity-form.component.scss'],
+  styleUrls: ['./initiator-form.component.scss', '../../../../../modules/entity/entity-form/entity-form.component.scss'],
   providers: [FieldRelationService, NetworkService],
 })
 export class InitiatorFormComponent implements OnInit {
   protected addCall = 'iscsi.initiator.create' as const;
   protected queryCall = 'iscsi.initiator.query' as const;
   protected editCall = 'iscsi.initiator.update' as const;
-  protected customFilter: any[] = [[['id', '=']]];
+  protected customFilter: [[Partial<QueryFilter<IscsiExtent>>]] = [[['id', '=']]];
   routeSuccess: string[] = ['sharing', 'iscsi', 'initiator'];
   protected pk: number;
 
@@ -101,7 +102,6 @@ export class InitiatorFormComponent implements OnInit {
     protected entityFormService: EntityFormService,
     protected fieldRelationService: FieldRelationService,
     protected dialog: DialogService,
-    protected networkService: NetworkService,
   ) { }
 
   getConnectedInitiators(): void {

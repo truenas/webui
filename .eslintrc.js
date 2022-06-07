@@ -26,13 +26,14 @@ module.exports = {
       "plugins": [
         "rxjs",
         "rxjs-angular",
-        "unicorn"
+        "unicorn",
+        "angular-file-naming"
       ],
       "rules": {
         // TODO: Conflicts with ngx-translate-extract
         "prefer-template": "off",
 
-        // Consciously altered from Airbnb
+        // Consciously altered
         "class-methods-use-this": "off",
         "import/prefer-default-export": "off",
         "no-continue": "off",
@@ -73,13 +74,29 @@ module.exports = {
           "ts": "never",
           "tsx": "never"
         }],
-
-        // TODO: Partially implemented
+        "@typescript-eslint/no-use-before-define": ["error", "nofunc"],
+        "no-prototype-builtins": "off",
+        "@typescript-eslint/unbound-method": "off",
+        "@typescript-eslint/explicit-module-boundary-types": "off",
+        "@typescript-eslint/no-misused-promises": ["error", { checksVoidReturn: false }],
         '@typescript-eslint/naming-convention': [
           'error',
           {
-            selector: ['typeLike', 'enumMember'],
+            selector: ['typeLike'],
+            format: ['StrictPascalCase'],
+            filter: {
+              // Allow two letter combinations at the start, like VDev
+              regex: '^[A-Z][A-Z]',
+              match: false,
+            }
+          },
+          {
+            selector: ['typeLike'],
             format: ['PascalCase'],
+          },
+          {
+            selector: ['enumMember'],
+            format: ['StrictPascalCase'],
           },
           {
             selector: 'function',
@@ -100,10 +117,10 @@ module.exports = {
             format: ['strictCamelCase']
           },
         ],
+        "@typescript-eslint/restrict-template-expressions": ["error", { allowNumber: true, allowAny: true }],
 
         // TODO: Aibnb rules that are disabled for now as they cannot be fixed automatically
         "no-underscore-dangle": "off",
-        "eqeqeq": "off",
         "consistent-return": "off",
         "no-plusplus": "off",
         "no-restricted-syntax": "off",
@@ -115,12 +132,18 @@ module.exports = {
         "@typescript-eslint/no-shadow": "off",
         "no-case-declarations": "off",
         "no-multi-str": "off",
-        "@typescript-eslint/no-use-before-define": "off",
         "no-useless-escape": "off",
-        "no-cond-assign": "off",
-        "no-mixed-operators": "off",
+        "no-mixed-operators": ["error", {
+          groups: [
+            // TODO: Some operators from default config not implemented.
+            ["&", "|", "^", "~", "<<", ">>", ">>>"],
+            ["==", "!=", "===", "!==", ">", ">=", "<", "<="],
+            ["&&", "||"],
+            ["in", "instanceof"]
+          ],
+          allowSamePrecedence: true
+        }],
         "default-case": "off",
-        "no-prototype-builtins": "off",
         "import/no-cycle": "off",
         "no-async-promise-executor": "off",
         "@typescript-eslint/member-ordering": "off",
@@ -130,21 +153,18 @@ module.exports = {
         "@typescript-eslint/no-unsafe-call": "off",
         "@typescript-eslint/no-unsafe-member-access": "off",
         "@typescript-eslint/restrict-plus-operands": "off",
-        "@typescript-eslint/unbound-method": "off",
-        "@typescript-eslint/restrict-template-expressions": "off",
         "@typescript-eslint/no-floating-promises": "off",
-        "@typescript-eslint/explicit-module-boundary-types": "off",
         "@typescript-eslint/prefer-regexp-exec": "off",
-        "@typescript-eslint/no-misused-promises": "off",
 
         // Other temporary disables
+        "@typescript-eslint/no-unsafe-argument": "off",
         "@typescript-eslint/dot-notation": ["off", { allowIndexSignaturePropertyAccess: true }],
 
         // Other overwrites
         "@typescript-eslint/lines-between-class-members": "off",
-        "@angular-eslint/use-lifecycle-interface": ["error"],
 
         // Extra rules
+        "@angular-eslint/use-lifecycle-interface": ["error"],
         "@typescript-eslint/array-type": "error",
         "@typescript-eslint/explicit-member-accessibility": ["error", { accessibility: "no-public" }],
         "@typescript-eslint/no-inferrable-types": "error",
@@ -173,6 +193,17 @@ module.exports = {
         "@angular-eslint/component-max-inline-declarations": ["error"],
         "@angular-eslint/contextual-decorator": ["error"],
         "@angular-eslint/contextual-lifecycle": ["error"],
+        "no-restricted-imports": ["error", {
+          "paths": [{
+            "name": "@ngneat/spectator",
+            "importNames": ["createComponentFactory", "createHostFactory", "createRoutingFactory", "mockProvider"],
+            "message": "Use imports from @ngneat/spectator/jest instead."
+          }],
+          "patterns": [{
+            "group": [ "../**"],
+            "message": "Use alias 'app' to replace part '../' of the path."
+          }],
+        }],
 
         // RxJS rules
         "rxjs/no-unsafe-takeuntil": ["error", {
@@ -190,6 +221,19 @@ module.exports = {
           "variables": true,
           "functions": false,
           "methods": false,
+        }],
+        "id-length": ["error", {
+          exceptions: ['a', 'b', 'x', 'y', '_', 'i', 'n'],
+          properties: 'never',
+        }],
+
+        // File Naming
+        "angular-file-naming/component-filename-suffix": "error",
+        "angular-file-naming/directive-filename-suffix": "error",
+        "angular-file-naming/module-filename-suffix": "error",
+        "angular-file-naming/pipe-filename-suffix": "error",
+        "angular-file-naming/service-filename-suffix": ["error", {
+          "suffixes": ["service", "effects", "store", "guard"]
         }],
       }
     },

@@ -1,3 +1,5 @@
+import { Optional } from 'utility-types';
+
 export interface IscsiGlobalConfig {
   alua: boolean;
   basename: string;
@@ -6,7 +8,7 @@ export interface IscsiGlobalConfig {
   pool_avail_threshold: number;
 }
 
-export type IscsiGlobalConfigUpdate = Omit<IscsiGlobalConfig, 'id'>;
+export type IscsiGlobalConfigUpdate = Optional<Omit<IscsiGlobalConfig, 'id'>, 'alua'>;
 
 export interface IscsiGlobalSession {
   initiator: string;

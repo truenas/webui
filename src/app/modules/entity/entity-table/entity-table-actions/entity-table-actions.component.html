@@ -1,0 +1,122 @@
+<div class="panel_container action-length-{{actions.length}}" [style.paddingTop]="inlineActions ? 0 : '4px'">
+  <ng-container *ngIf="actions && isSingleAction && singleAction">
+    <button
+      *ngIf="!entity.conf.isActionVisible || entity.conf.isActionVisible.bind(entity.conf)(actions[0].actions[0].id, row)"
+      [color]="actions[0].actions[0].color ? actions[0].actions[0].color : 'default' "
+      id="action_{{singleAction.name}}__{{singleAction.id}}"
+      mat-button
+      (click)="singleAction.onClick(this.row);"
+      [disabled]="singleAction.disabled"
+      [ix-auto]=""
+      ix-auto-type="button"
+      ix-auto-identifier="{{row.name}}_{{singleAction.id}}_{{singleAction.name}}"
+    >
+      {{actions[0].actions[0].label}}
+    </button>
+  </ng-container>
+
+  <ng-container *ngIf="!isSingleAction && !inlineActions; else inlineActionsTemplate">
+    <!-- Material Design Icon Set -->
+    <button
+      class="transparent-btn"
+      [attr.aria-label]="'Actionable Options' | translate"
+      *ngIf="icon_name.startsWith('mdi-')"
+      [matMenuTriggerFor]="appMenu"
+      (click)="noPropagate($event)"
+    >
+      <mat-icon
+        role="image" fontSet="mdi-set" [fontIcon]="icon_name"
+        id="{{row[entity?.conf?.rowIdentifier || 'name']}}_{{action}}_button"
+        [style.cursor]="'pointer'"
+        [style.font-size]="'24px'"
+      ></mat-icon>
+    </button>
+
+    <!-- Standard Material Icon Set -->
+    <button
+      *ngIf="!icon_name.startsWith('mdi-')"
+      class="transparent-btn"
+      [attr.aria-label]="'Actionable Options' | translate"
+      (click)="noPropagate($event)"
+      [matMenuTriggerFor]="appMenu"
+    >
+      <mat-icon
+        id="{{row[entity?.conf?.rowIdentifier || 'name']}}_{{action}}_button"
+        [style.cursor]="'pointer'"
+      >
+        {{icon_name}}
+      </mat-icon>
+    </button>
+
+    <mat-menu #appMenu="matMenu">
+      <span *ngIf="!groups;else groupMenu">
+        <span
+          *ngFor="let action of actions"
+          [matTooltip]="action.matTooltip"
+          [matTooltipDisabled]="!action.disabled"
+          [matTooltipPosition]="action.ttposition ? action.ttposition : 'left'"
+        >
+          <button
+            *ngIf="!entity.conf.isActionVisible || entity.conf.isActionVisible.bind(entity.conf)(action.id, row)"
+            id="action_button_{{ action?.name }}__{{action.id}}"
+            mat-menu-item
+            (click)="action.onClick(this.row);"
+            [disabled]="action.disabled"
+            [ix-auto]=""
+            ix-auto-type="action"
+            ix-auto-identifier="{{action.id}}_{{action.label}}"
+          >
+            <span>{{ action?.label | translate }}</span>
+          </button>
+        </span>
+      </span>
+      <ng-template #groupMenu>
+        <span *ngFor="let group of actions">
+          <div class="group-menu-header" *ngIf="group.actions && group.actions.length > 0">
+            <mat-divider></mat-divider>
+            <div class="title"><strong>{{group?.title | translate}}</strong></div>
+          </div>
+          <span
+            *ngFor="let action of group.actions"
+            [matTooltip]="action.matTooltip"
+            [matTooltipDisabled]="!action.disabled"
+            [matTooltipPosition]="action.ttposition ? action.ttposition : 'left'"
+          >
+            <button
+              *ngIf="!entity.conf.isActionVisible || entity.conf.isActionVisible.bind(entity.conf)(action.id, row)"
+              id="action_button_{{ action?.name }}__{{action.id}}"
+              mat-menu-item
+              (click)="action.onClick(this.row);"
+              [disabled]="action.disabled"
+              [ix-auto]=""
+              ix-auto-type="action"
+              ix-auto-identifier="{{action.id}}_{{action.label}}"
+            >
+              <span>{{ action?.label | translate }}</span>
+            </button>
+          </span>
+        </span>
+
+      </ng-template>
+    </mat-menu>
+  </ng-container>
+
+  <ng-template #inlineActionsTemplate>
+    <ng-container *ngFor="let action of actions">
+      <button
+        *ngIf="!entity.conf.isActionVisible || entity.conf.isActionVisible.bind(entity.conf)(action.id, row)"
+        mat-icon-button
+        id="action_button_{{ action?.name }}__{{action.id}}"
+        (click)="action.onClick(this.row);"
+        [disabled]="action.disabled"
+        [ix-auto]=""
+        ix-auto-type="action"
+        ix-auto-identifier="{{action.id}}_{{action.name.toUpperCase()}}"
+        [matTooltip]="action.label | translate"
+        [matTooltipPosition]="action.ttposition ? action.ttposition : 'left'"
+      >
+        <mat-icon>{{action.icon}}</mat-icon>
+      </button>
+    </ng-container>
+  </ng-template>
+</div>

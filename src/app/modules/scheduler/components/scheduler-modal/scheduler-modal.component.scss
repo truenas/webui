@@ -1,0 +1,110 @@
+::ng-deep .scheduler-modal .mat-dialog-container {
+  padding: 0;
+}
+
+:host {
+  display: flex;
+  // TODO: Make mixin
+  font-family: Roboto, 'Helvetica Neue', sans-serif;
+}
+
+.settings-column {
+  margin-bottom: 10px;
+  margin-top: 19px;
+
+  .no-spaces-hint {
+    font-size: 85%;
+    margin-bottom: 8px;
+  }
+
+  section {
+    border-bottom: 1px solid var(--lines);
+    margin-bottom: 16px;
+    padding-left: 20px;
+    padding-right: 24px;
+
+    h4 {
+      margin-bottom: 4px;
+    }
+  }
+
+  .input {
+    margin-bottom: 8px;
+    margin-top: 4px;
+
+    &:last-of-type {
+      margin-bottom: 12px;
+    }
+  }
+
+  .months {
+    display: grid;
+    grid-row-gap: 2px;
+    grid-template-columns: repeat(6, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    margin-bottom: 5px;
+    margin-top: 12px;
+  }
+
+  .weekdays {
+    display: grid;
+    grid-column-gap: 3px;
+    grid-template-columns: repeat(7, 1fr);
+    grid-template-rows: 1fr;
+    margin-bottom: 6px;
+    margin-top: 12px;
+  }
+
+  .months,
+  .weekdays {
+    ::ng-deep .mat-checkbox-layout {
+      align-items: center;
+      display: flex;
+      flex-direction: column;
+
+      .mat-checkbox-inner-container {
+        margin: 0;
+      }
+
+      .mat-checkbox-label {
+        margin-top: 4px;
+      }
+    }
+  }
+
+  .form-actions {
+    text-align: center;
+  }
+
+  .input.days-of-month-input {
+    margin-bottom: 0;
+  }
+
+  .or-condition-explanation {
+    align-items: center;
+    display: flex;
+    margin-bottom: 3px;
+    padding: 0 3px;
+
+    .line {
+      border-top: 1px solid var(--lines);
+      flex-grow: 1;
+    }
+
+    .or-label {
+      background-color: var(--bg2);
+      display: flex;
+      justify-items: center;
+      padding-left: 13px;
+      padding-right: 12px;
+
+      tooltip {
+        margin-left: 4px;
+      }
+    }
+  }
+
+  .days-of-week-header {
+    font-size: x-small;
+  }
+}

@@ -6,10 +6,10 @@ import { TreeNode } from 'primeng/api';
 import { ApiTimestamp } from 'app/interfaces/api-date.interface';
 import { BootPoolState } from 'app/interfaces/boot-pool-state.interface';
 import { VDev } from 'app/interfaces/storage.interface';
-import { EntityTreeTable } from 'app/pages/common/entity/entity-tree-table/entity-tree-table.model';
-import { EntityUtils } from 'app/pages/common/entity/utils';
+import { AppLoaderService } from 'app/modules/app-loader/app-loader.service';
+import { EntityTreeTable } from 'app/modules/entity/entity-tree-table/entity-tree-table.model';
+import { EntityUtils } from 'app/modules/entity/utils';
 import { DialogService } from 'app/services';
-import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 interface PoolDiskInfo {
@@ -93,8 +93,8 @@ export class BootStatusListComponent implements OnInit {
     });
   }
 
-  detach(disk: string): void {
-    disk = disk.substring(5, disk.length);
+  detach(diskPath: string): void {
+    const disk = diskPath.substring(5, diskPath.length);
     this.loader.open();
     this.ws.call('boot.detach', [disk]).pipe(untilDestroyed(this)).subscribe(
       () => {
@@ -103,9 +103,6 @@ export class BootStatusListComponent implements OnInit {
         this.dialog.info(
           this.translate.instant('Device detached'),
           this.translate.instant('<i>{disk}</i> has been detached.', { disk }),
-          '300px',
-          'info',
-          true,
         );
       },
       (res) => {
@@ -127,7 +124,7 @@ export class BootStatusListComponent implements OnInit {
     }
 
     let name = (data as BootPoolState).name;
-    if ('type' in data && data.type != 'disk') {
+    if ('type' in data && data.type !== 'disk') {
       name = data.type;
     }
     // use path as the device name if the device name is null

@@ -1,7 +1,7 @@
-export enum NSSInfoType {
-  SFU = 'SFU',
-  SFU20 = 'SFU20',
-  RFC2307 = 'RFC2307',
+export enum NssInfoType {
+  Sfu = 'SFU',
+  Sfu20 = 'SFU20',
+  Rfc2307 = 'RFC2307',
 }
 
 export interface ActiveDirectoryUpdate {
@@ -19,10 +19,10 @@ export interface ActiveDirectoryUpdate {
   kerberos_principal: string;
   timeout: number;
   dns_timeout: number;
-  nss_info: NSSInfoType;
+  nss_info: NssInfoType;
   createcomputer: string;
   netbiosname: string;
-  netbiosname_b: string;
+  netbiosname_b?: string;
   netbiosalias: string[];
   enable: boolean;
 }

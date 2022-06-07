@@ -18,11 +18,13 @@ import filesize from 'filesize';
 import { styler, tween } from 'popmotion';
 import { PoolStatus } from 'app/enums/pool-status.enum';
 import { VDevType } from 'app/enums/v-dev-type.enum';
-import { DisksDataEvent } from 'app/interfaces/events/disks-data-event.interface';
+import { VDevStatus } from 'app/enums/vdev-status.enum';
 import { Pool, PoolTopologyCategory } from 'app/interfaces/pool.interface';
 import { Disk, VDev } from 'app/interfaces/storage.interface';
 import { VolumeData } from 'app/interfaces/volume-data.interface';
 import { WidgetComponent } from 'app/pages/dashboard/components/widget/widget.component';
+import { WebSocketService } from 'app/services';
+import { CoreService } from 'app/services/core-service/core.service';
 
 interface Slide {
   name: string;
@@ -34,19 +36,26 @@ interface Slide {
 
 interface PoolDiagnosis {
   isHealthy: boolean;
-  warnings: string[];
-  errors: string[];
-  selector: string;
-  level: string;
+  level: PoolHealthLevel;
+}
+
+enum PoolHealthLevel {
+  Warn = 'warn',
+  Error = 'error',
+  Safe = 'safe',
 }
 
 @UntilDestroy()
 @Component({
   selector: 'widget-pool',
   templateUrl: './widget-pool.component.html',
-  styleUrls: ['./widget-pool.component.scss'],
+  styleUrls: [
+    '../widget/widget.component.scss',
+    './widget-pool.component.scss',
+  ],
 })
 export class WidgetPoolComponent extends WidgetComponent implements OnInit, AfterViewInit, OnDestroy, OnChanges {
+  readonly VDevStatus = VDevStatus;
   @Input() poolState: Pool;
   @Input() volumeData: VolumeData;
   @ViewChild('carousel', { static: true }) carousel: ElementRef;
@@ -78,7 +87,7 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
   }
 
   get previousSlide(): number {
-    return this.currentSlide == '0' ? 0 : parseInt(this.currentSlide) - 1;
+    return this.currentSlide === '0' ? 0 : parseInt(this.currentSlide) - 1;
   }
 
   path: Slide[] = [];
@@ -87,7 +96,7 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
     if (this.poolState && this.poolState.topology) {
       let total = 0;
       this.poolState.topology.data.forEach((item) => {
-        if (item.type == VDevType.Disk) {
+        if (item.type === VDevType.Disk) {
           total++;
         } else {
           total += item.children.length;
@@ -103,7 +112,7 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
       const unhealthy: string[] = []; // Disks with errors
       // TODO: Check if this `item.read_errors` and related should read from `stats`
       this.poolState.topology.data.forEach((item: any) => {
-        if (item.type == VDevType.Disk) {
+        if (item.type === VDevType.Disk) {
           const diskErrors = item.read_errors + item.write_errors + item.checksum_errors;
 
           if (diskErrors > 0) {
@@ -138,7 +147,7 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
       }
 
       category.forEach((item) => {
-        if (item.type == 'DISK' && item.disk) {
+        if (item.type === 'DISK' && item.disk) {
           allDiskNames.push(item.disk);
         } else {
           item.children.forEach((device) => {
@@ -162,10 +171,7 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
   diskSizeLabel: string;
   poolHealth: PoolDiagnosis = {
     isHealthy: true,
-    warnings: [],
-    errors: [],
-    selector: 'fn-theme-green',
-    level: 'safe',
+    level: PoolHealthLevel.Safe,
   };
 
   currentDiskDetails: Disk;
@@ -173,7 +179,13 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
     return this.currentDiskDetails ? Object.keys(this.currentDiskDetails) as (keyof Disk)[] : [];
   }
 
-  constructor(public router: Router, public translate: TranslateService, private cdr: ChangeDetectorRef) {
+  constructor(
+    public router: Router,
+    public translate: TranslateService,
+    private cdr: ChangeDetectorRef,
+    private core: CoreService,
+    private ws: WebSocketService,
+  ) {
     super(translate);
     this.configurable = false;
   }
@@ -211,24 +223,7 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
 
     this.cdr.detectChanges();
 
-    this.core.register({ observerClass: this, eventName: 'DisksData' }).pipe(untilDestroyed(this)).subscribe((evt: DisksDataEvent) => {
-      const currentPath = this.path[this.currentSlideIndex];
-      const currentName = currentPath?.dataSource?.disk || 'unknown';
-
-      if ((!currentName || currentName === 'unknown') && evt.data.length == 0) {
-        this.currentDiskDetails = null;
-      } else if (currentName && evt.data.length > 0 && currentName === evt.data[0].name) {
-        delete evt.data[0].enclosure;
-        delete evt.data[0].name;
-        delete evt.data[0].devname;
-        delete evt.data[0].multipath_name;
-        delete evt.data[0].multipath_member;
-        delete evt.data[0].zfs_guid;
-        this.currentDiskDetails = evt.data[0];
-      }
-    });
-
-    this.checkVolumeHealth();
+    this.checkVolumeHealth(this.poolState);
   }
 
   // TODO: Helps with template type checking. To be removed when 'strict' checks are enabled.
@@ -237,7 +232,7 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
   }
 
   getAvailableSpace(): number {
-    if (!this.volumeData || typeof this.volumeData.avail == undefined) {
+    if (!this.volumeData || typeof this.volumeData.avail === undefined) {
       this.displayValue = 'Unknown';
       return;
     }
@@ -249,7 +244,7 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
       usedValue = filesize(this.volumeData.used, { exponent: 3 });
     }
 
-    if (usedValue == 'Locked') {
+    if (usedValue === 'Locked') {
       // When Locked, Bail before we try to get details.
       // (errors start after this...)
       return 0;
@@ -258,8 +253,6 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
     if (!Number.isNaN(this.volumeData.avail)) {
       this.voldataavail = true;
     }
-
-    this.core.emit({ name: 'PoolDisksRequest', data: [this.poolState.id] });
 
     this.displayValue = filesize(this.volumeData.avail, { standard: 'iec' });
     if (this.displayValue.slice(-2) === ' B') {
@@ -273,18 +266,33 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
     if (this.diskSize.charAt(this.diskSize.length - 2) === '.' || this.diskSize.charAt(this.diskSize.length - 2) === ',') {
       this.diskSize = this.diskSize.concat('0');
     }
-    this.checkVolumeHealth();
+    this.checkVolumeHealth(this.poolState);
   }
 
   getDiskDetails(key: string, value: string): void {
-    this.core.emit({ name: 'DisksRequest', data: [[[key, '=', value]]] });
+    this.ws.call('disk.query', [[[key, '=', value]]]).pipe(untilDestroyed(this)).subscribe((disks) => {
+      const currentPath = this.path[this.currentSlideIndex];
+      const currentName = currentPath?.dataSource?.disk || 'unknown';
+
+      if ((!currentName || currentName === 'unknown') && disks.length === 0) {
+        this.currentDiskDetails = null;
+      } else if (currentName && disks.length > 0 && currentName === disks[0].name) {
+        delete disks[0].enclosure;
+        delete disks[0].name;
+        delete disks[0].devname;
+        delete disks[0].multipath_name;
+        delete disks[0].multipath_member;
+        delete disks[0].zfs_guid;
+        this.currentDiskDetails = disks[0];
+      }
+    });
   }
 
   /**
    * @deprecated Multipath is not supported
    */
   trimMultipath(disk: string): { name: string; fullName?: string } {
-    if (!disk || disk == null) {
+    if (!disk) {
       return { name: disk };
     }
 
@@ -311,7 +319,7 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
     if (name !== 'overview' && !verified) { return; }
     const dataSource = vdev || { children: this.poolState.topology[topology] };
     const direction = parseInt(this.currentSlide) < slideIndex ? 'forward' : 'back';
-    if (direction == 'forward') {
+    if (direction === 'forward') {
       // Setup next path segment
       const slide: Slide = {
         name,
@@ -322,7 +330,7 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
       };
 
       this.path[slideIndex] = slide;
-    } else if (direction == 'back') {
+    } else if (direction === 'back') {
       // empty the path segment
       this.path[parseInt(this.currentSlide)] = { name: 'empty', template: this.empty };
     }
@@ -331,7 +339,7 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
   }
 
   updateSlidePosition(value: number): void {
-    if (value.toString() == this.currentSlide) { return; }
+    if (value.toString() === this.currentSlide) { return; }
 
     const carousel = this.carouselParent.nativeElement.querySelector('.carousel');
     const slide = this.carouselParent.nativeElement.querySelector('.slide');
@@ -349,76 +357,48 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
     }).start(el.set);
 
     this.currentSlide = value.toString();
-    this.title = this.currentSlide == '0' ? 'Pool' : this.poolState.name;
+    this.title = this.currentSlide === '0' ? 'Pool' : this.poolState.name;
   }
 
-  checkVolumeHealth(): void {
-    switch (this.poolState.status) {
-      case PoolStatus.Healthy:
-        break;
-      case PoolStatus.Locked:
-        this.updateVolumeHealth('Pool status is ' + this.poolState.status, false, 'locked');
-        break;
-      case PoolStatus.Unknown:
-      case PoolStatus.Offline:
-        this.updateVolumeHealth('Pool status is ' + this.poolState.status, false, 'unknown');
-        break;
-      case PoolStatus.Degraded:
-        this.updateVolumeHealth('Pool status is ' + this.poolState.status, false, 'degraded');
-        break;
-      case PoolStatus.Faulted:
-      case PoolStatus.Unavailable:
-      case PoolStatus.Removed:
-        this.updateVolumeHealth('Pool status is ' + this.poolState.status, true, 'faulted');
-        break;
-    }
+  private isStatusError(poolState: Pool): boolean {
+    return [
+      PoolStatus.Faulted,
+      PoolStatus.Unavailable,
+      PoolStatus.Removed,
+    ].includes(poolState.status);
   }
 
-  updateVolumeHealth(symptom: string, isCritical?: boolean, condition?: string): void {
-    if (isCritical) {
-      this.poolHealth.errors.push(symptom);
-    } else {
-      this.poolHealth.warnings.push(symptom);
-    }
-    if (this.poolHealth.isHealthy) {
-      this.poolHealth.isHealthy = false;
-      this.poolHealth.level = this.translate.instant('warn');
+  private isStatusWarning(poolState: Pool): boolean {
+    return [
+      PoolStatus.Locked,
+      PoolStatus.Unknown,
+      PoolStatus.Offline,
+      PoolStatus.Degraded,
+    ].includes(poolState.status);
+  }
+
+  private checkVolumeHealth(poolState: Pool): void {
+    const isError = this.isStatusError(poolState);
+    const isWarning = this.isStatusWarning(poolState);
+
+    if (isError || isWarning || !poolState.healthy) {
+      if (this.poolHealth.isHealthy) {
+        this.poolHealth.isHealthy = false;
+        this.poolHealth.level = PoolHealthLevel.Warn;
+      }
     }
 
-    if (this.poolHealth.errors.length > 0) {
-      this.poolHealth.level = this.translate.instant('error');
-    } else if (this.poolHealth.warnings.length > 0) {
-      this.poolHealth.level = this.translate.instant('warn');
-    } else {
-      this.poolHealth.level = this.translate.instant('safe');
+    if (isError) {
+      this.poolHealth.level = PoolHealthLevel.Error;
     }
 
-    if (condition === 'locked') {
-      this.poolHealth.selector = 'fn-theme-yellow';
-    } else if (condition === 'unknown') {
-      this.poolHealth.selector = 'fn-theme-blue';
-    } else if (condition === 'degraded') {
-      this.poolHealth.selector = 'fn-theme-orange';
-    } else if (condition === 'faulted') {
-      this.poolHealth.selector = 'fn-theme-red';
-    } else {
-      this.poolHealth.selector = 'fn-theme-green';
+    if (isWarning) {
+      this.poolHealth.level = PoolHealthLevel.Warn;
     }
   }
 
   percentAsNumber(value: string): number {
     const spl = value.split('%');
     return parseInt(spl[0]);
-  }
-
-  isErrorStatus(status: string): boolean {
-    switch (status) {
-      case PoolStatus.Online:
-      case PoolStatus.Healthy:
-      case PoolStatus.Locked:
-        return false;
-      default:
-        return true;
-    }
   }
 }

@@ -1,19 +1,12 @@
 import { ModuleWithProviders } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { SharesDashboardComponent } from 'app/pages/sharing/components/shares-dashboard/shares-dashboard.component';
-import { AssociatedTargetFormComponent } from './iscsi/associated-target/associated-target-form/associated-target-form.component';
-import { AuthorizedAccessFormComponent } from './iscsi/authorizedaccess/authorizedaccess-form/authorizedaccess-form.component';
-import { ExtentFormComponent } from './iscsi/extent/extent-form/extent-form.component';
 import { InitiatorFormComponent } from './iscsi/initiator/initiator-form/initiator-form.component';
 import { IscsiWizardComponent } from './iscsi/iscsi-wizard/iscsi-wizard.component';
 import { IscsiComponent } from './iscsi/iscsi.component';
-import { PortalFormComponent } from './iscsi/portal/portal-form/portal-form.component';
-import { TargetFormComponent } from './iscsi/target/target-form/target-form.component';
-import { NFSListComponent } from './nfs/nfs-list/nfs-list.component';
-import { SMBAclComponent } from './smb/smb-acl/smb-acl.component';
-import { SMBFormComponent } from './smb/smb-form/smb-form.component';
-import { SMBListComponent } from './smb/smb-list/smb-list.component';
+import { NfsListComponent } from './nfs/nfs-list/nfs-list.component';
+import { SmbFormComponent } from './smb/smb-form/smb-form.component';
+import { SmbListComponent } from './smb/smb-list/smb-list.component';
 import { WebdavFormComponent } from './webdav/webdav-form/webdav-form.component';
 import { WebdavListComponent } from './webdav/webdav-list/webdav-list.component';
 
@@ -32,7 +25,7 @@ export const routes: Routes = [
         data: { title: 'NFS', breadcrumb: 'NFS', icon: 'share' },
         children: [{
           path: '',
-          component: NFSListComponent,
+          component: NfsListComponent,
           data: { title: 'NFS', breadcrumb: 'NFS' },
         }],
       },
@@ -57,20 +50,16 @@ export const routes: Routes = [
         data: { title: 'SMB', breadcrumb: 'SMB', icon: 'share' },
         children: [{
           path: '',
-          component: SMBListComponent,
+          component: SmbListComponent,
           data: { title: 'SMB', breadcrumb: 'SMB' },
         }, {
           path: 'add',
-          component: SMBFormComponent,
+          component: SmbFormComponent,
           data: { title: 'Add', breadcrumb: 'Add' },
         }, {
           path: 'edit/:pk',
-          component: SMBFormComponent,
+          component: SmbFormComponent,
           data: { title: 'Edit', breadcrumb: 'Edit' },
-        }, {
-          path: 'acl/:pk',
-          component: SMBAclComponent,
-          data: { title: T('Share ACL'), breadcrumb: T('Share ACL') },
         }],
       }, {
         path: 'iscsi',
@@ -97,15 +86,6 @@ export const routes: Routes = [
               {
                 path: 'portals',
                 data: { title: 'Portals', breadcrumb: 'Portals' },
-                children: [{
-                  path: 'add',
-                  component: PortalFormComponent,
-                  data: { title: 'Add', breadcrumb: 'Add' },
-                }, {
-                  path: 'edit/:pk',
-                  component: PortalFormComponent,
-                  data: { title: 'Edit', breadcrumb: 'Edit' },
-                }],
               }, {
                 path: 'initiators',
                 data: { title: 'Initiators', breadcrumb: 'Initiators' },
@@ -121,54 +101,18 @@ export const routes: Routes = [
               }, {
                 path: 'auth',
                 data: { title: 'Authorized Access', breadcrumb: 'Authorized Access' },
-                children: [{
-                  path: 'add',
-                  component: AuthorizedAccessFormComponent,
-                  data: { title: 'Add', breadcrumb: 'Add' },
-                }, {
-                  path: 'edit/:pk',
-                  component: AuthorizedAccessFormComponent,
-                  data: { title: 'Edit', breadcrumb: 'Edit' },
-                }],
               },
               {
                 path: 'target',
                 data: { title: 'Targets', breadcrumb: 'Targets' },
-                children: [{
-                  path: 'add',
-                  component: TargetFormComponent,
-                  data: { title: 'Add', breadcrumb: 'Add' },
-                }, {
-                  path: 'edit/:pk',
-                  component: TargetFormComponent,
-                  data: { title: 'Edit', breadcrumb: 'Edit' },
-                }],
               },
               {
                 path: 'extent',
                 data: { title: 'Extents', breadcrumb: 'Extents' },
-                children: [{
-                  path: 'add',
-                  component: ExtentFormComponent,
-                  data: { title: 'Add', breadcrumb: 'Add' },
-                }, {
-                  path: 'edit/:pk',
-                  component: ExtentFormComponent,
-                  data: { title: 'Edit', breadcrumb: 'Edit' },
-                }],
               },
               {
                 path: 'associatedtarget',
                 data: { title: 'Associated Targets', breadcrumb: 'Associated Targets' },
-                children: [{
-                  path: 'add',
-                  component: AssociatedTargetFormComponent,
-                  data: { title: 'Add', breadcrumb: 'Add' },
-                }, {
-                  path: 'edit/:pk',
-                  component: AssociatedTargetFormComponent,
-                  data: { title: 'Edit', breadcrumb: 'Edit' },
-                }],
               }],
           }],
       },

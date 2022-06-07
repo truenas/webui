@@ -2,10 +2,10 @@ import { Subject } from 'rxjs';
 import { ApiMethod } from 'app/interfaces/api-directory.interface';
 import { CoreEvent } from 'app/interfaces/events';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
-import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
-import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
-import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
+import { FieldSets } from 'app/modules/entity/entity-form/classes/field-sets';
+import { EntityFormComponent } from 'app/modules/entity/entity-form/entity-form.component';
+import { FieldConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
+import { FieldSet } from 'app/modules/entity/entity-form/models/fieldset.interface';
 
 export interface FormConfiguration {
   fieldSets?: FieldSets | FieldSet[];
@@ -29,7 +29,7 @@ export interface FormConfiguration {
   routeSuccess?: string[];
   // TODO: Broken
   routeDelete?: string[];
-  custActions?: FormCustomAction[];
+  customActions?: FormCustomAction[];
   compactCustomActions?: FormCompactCustomAction[];
   customFilter?: any[];
   confirmSubmit?: boolean;
@@ -55,12 +55,11 @@ export interface FormConfiguration {
   columnsOnForm?: number;
 
   prerequisite?(): Promise<boolean>;
-  customEditCall?: (value: any) => void;
-  preHandler?: (data: any[], formArray: any) => any[];
-  responseOnSubmit?: (value: any) => void;
-  clean?: (data: any) => any;
+  customEditCall?: (value: unknown) => void;
+  responseOnSubmit?: (value: unknown) => void;
+  clean?: (data: unknown) => unknown;
   errorReport?: (res: WebsocketError) => void;
-  resourceTransformIncomingRestData?: (data: any) => any;
+  resourceTransformIncomingRestData?: (data: unknown) => unknown;
   preInit?: (entityForm: EntityFormComponent) => void;
   afterInit?: (entityForm: EntityFormComponent) => void;
   initial?: (entityForm: EntityFormComponent) => void;
@@ -68,13 +67,13 @@ export interface FormConfiguration {
   dataAttributeHandler?: (entityForm: EntityFormComponent) => void;
   afterSave?: (entityForm: EntityFormComponent) => void;
   blurEvent?: (entityForm: EntityFormComponent) => void;
-  afterSubmit?: (value: any) => void;
-  beforeSubmit?: (value: any) => void;
-  customSubmit?: (value: any) => void;
+  afterSubmit?: (value: unknown) => void;
+  beforeSubmit?: (value: unknown) => void;
+  customSubmit?: (value: unknown) => void;
   closeModalForm?(): Promise<boolean>;
   afterModalFormClosed?(): void; // function will called once the modal form closed
-  isCustActionVisible?: (action: string) => boolean;
-  isCustActionDisabled?: (action: string) => boolean;
+  isCustomActionVisible?: (action: string) => boolean;
+  isCustomActionDisabled?: (action: string) => boolean;
 }
 
 export interface FormCustomAction {

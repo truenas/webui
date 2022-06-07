@@ -1,5 +1,7 @@
 import { Overwrite } from 'utility-types';
-import { VmDeviceType } from 'app/enums/vm.enum';
+import {
+  VmDeviceType, VmDiskMode, VmDisplayType, VmNicType,
+} from 'app/enums/vm.enum';
 
 interface VmPciPassthroughAttributes {
   pptdev: string;
@@ -12,7 +14,7 @@ export interface VmDisplayAttributes {
   password_configured?: false;
   port: number;
   resolution: string;
-  type: string;
+  type: VmDisplayType;
   wait: boolean;
   web: boolean;
 }
@@ -27,20 +29,20 @@ export interface VmRawFileAttributes {
   path: string;
   physical_sectorsize: number;
   size: number;
-  type: string;
+  type: VmDiskMode;
 }
 
 export interface VmNicAttributes {
   mac: string;
   nic_attach: string;
-  type: string;
+  type: VmNicType;
 }
 
 export interface VmDiskAttributes {
   logical_sectorsize: number;
   path: string;
   physical_sectorsize: number;
-  type: string;
+  type: VmDiskMode;
 }
 
 export interface BaseVmDevice {
@@ -92,3 +94,35 @@ export type VmDevice =
 export type VmDeviceUpdate = Overwrite<Partial<Omit<VmDevice, 'id'>>, {
   attributes?: Partial<VmDevice['attributes']>;
 }>;
+
+export interface VmDeviceDelete {
+  zvol: boolean;
+  raw_file: boolean;
+  force: boolean;
+}
+
+export interface VmPassthroughDeviceChoice {
+  capability: {
+    class: string;
+    domain: string;
+    bus: string;
+    slot: string;
+    function: string;
+    product: string;
+    vendor: string;
+  };
+  iommu_group: {
+    number: number;
+    addresses: {
+      domain: string;
+      bus: string;
+      slot: string;
+      function: string;
+    }[];
+  };
+  device_path: string;
+  drivers: string[];
+  available: boolean;
+  error: unknown;
+  reset_mechanism_defined: boolean;
+}

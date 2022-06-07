@@ -4,20 +4,18 @@ import { MatDialogRef } from '@angular/material/dialog/dialog-ref';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
-import { CommonUtils } from 'app/core/classes/common-utils';
 import helptext from 'app/helptext/apps/apps';
 import { CatalogQueryParams } from 'app/interfaces/catalog.interface';
 import { ChartRelease } from 'app/interfaces/chart-release.interface';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { FieldConfig, FormDictConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
+import { FieldSet } from 'app/modules/entity/entity-form/models/fieldset.interface';
+import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
+import { EntityUtils } from 'app/modules/entity/utils';
+import { remapAppConfigData } from 'app/pages/applications/utils/remap-app-config-data.utils';
 import { remapAppSubmitData } from 'app/pages/applications/utils/remap-app-submit-data.utils';
-import { FieldConfig, FormDictConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
-import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
-import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
-import { EntityUtils } from 'app/pages/common/entity/utils';
-import { DialogService } from 'app/services/index';
+import { DialogService } from 'app/services';
 import { ModalService } from 'app/services/modal.service';
-import { ApplicationsService } from '../applications.service';
-import { remapAppConfigData } from '../utils/remap-app-config-data.utils';
 
 @UntilDestroy()
 @Component({
@@ -30,7 +28,6 @@ export class ChartFormComponent implements FormConfiguration {
   addCall = 'chart.release.create' as const;
   editCall = 'chart.release.update' as const;
   isEntity = true;
-  protected utils: CommonUtils;
 
   title: string;
   private name: string;
@@ -60,13 +57,12 @@ export class ChartFormComponent implements FormConfiguration {
   private entityUtils = new EntityUtils();
 
   constructor(private mdDialog: MatDialog, private dialogService: DialogService,
-    private modalService: ModalService, private appService: ApplicationsService) {
+    private modalService: ModalService) {
     this.getRow = this.modalService.getRow$.pipe(untilDestroyed(this)).subscribe((rowName: string) => {
       this.rowName = rowName;
       this.customFilter = [[['id', '=', rowName]], { extra: { include_chart_schema: true } }];
       this.getRow.unsubscribe();
     });
-    this.utils = new CommonUtils();
   }
 
   setTitle(title: string): void {
@@ -88,7 +84,7 @@ export class ChartFormComponent implements FormConfiguration {
         });
       });
       this.catalogApp.chart_schema.schema.questions.forEach((question) => {
-        const fieldSet = fieldSets.find((fieldSet) => fieldSet.name == question.group);
+        const fieldSet = fieldSets.find((fieldSet) => fieldSet.name === question.group);
         if (fieldSet) {
           const fieldConfigs = this.entityUtils.parseSchemaFieldConfig(question);
 

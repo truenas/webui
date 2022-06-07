@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { when } from 'jest-when';
-import { of } from 'rxjs';
+import { Observable, of, Subject } from 'rxjs';
 import { ApiDirectory, ApiMethod } from 'app/interfaces/api-directory.interface';
+import { ApiEvent } from 'app/interfaces/api-event.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { WebSocketService } from 'app/services';
 
@@ -22,6 +23,8 @@ import { WebSocketService } from 'app/services';
 export class MockWebsocketService extends WebSocketService {
   private jobIdCounter = 1;
 
+  private subscribeStream$ = new Subject<ApiEvent<unknown>>();
+
   constructor(
     protected router: Router,
   ) {
@@ -29,9 +32,13 @@ export class MockWebsocketService extends WebSocketService {
 
     this.call = jest.fn();
     this.job = jest.fn();
-    this.subscribe = jest.fn(() => of());
-    this.socket.send = jest.fn();
-    this.socket.close = jest.fn();
+    this.logout = jest.fn();
+    this.subscribe = jest.fn(() => this.subscribeStream$ as Observable<ApiEvent<any>>);
+    this.sub = jest.fn(() => of());
+    this.socket = {
+      send: jest.fn(),
+      close: jest.fn(),
+    } as unknown as WebSocket;
     when(this.call).mockImplementation((method: ApiMethod, args: unknown[]) => {
       throw Error(`Unmocked websocket call ${method} with ${JSON.stringify(args)}`);
     });
@@ -54,7 +61,9 @@ export class MockWebsocketService extends WebSocketService {
       ...response,
       id: this.jobIdCounter,
     };
+    when(this.call).calledWith(method).mockReturnValue(of(this.jobIdCounter));
     when(this.call).calledWith(method, expect.anything()).mockReturnValue(of(this.jobIdCounter));
+    when(this.job).calledWith(method).mockReturnValue(of(responseWithJobId));
     when(this.job).calledWith(method, expect.anything()).mockReturnValue(of(responseWithJobId));
     when(this.call)
       .calledWith('core.get_jobs', [[['id', '=', this.jobIdCounter]]])
@@ -63,7 +72,15 @@ export class MockWebsocketService extends WebSocketService {
     this.jobIdCounter += 1;
   }
 
+  emitSubscribeEvent(event: ApiEvent<unknown>): void {
+    this.subscribeStream$.next(event);
+  }
+
   onclose(): void {
     // Noop to avoid calling redirect.
+  }
+
+  connect(): void {
+    // Noop
   }
 }

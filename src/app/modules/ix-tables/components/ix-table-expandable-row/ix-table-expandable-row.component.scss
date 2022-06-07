@@ -1,0 +1,40 @@
+:host {
+  display: block;
+
+  .mat-divider {
+    left: 0;
+    position: absolute;
+    width: 100%;
+  }
+
+  .details {
+    margin: 0;
+    padding: 16px 0;
+
+    dt {
+      display: inline-block;
+      font-weight: bold;
+      margin-right: 8px;
+    }
+
+    dd {
+      display: inline-block;
+      margin: 0;
+    }
+  }
+
+  .detail-label {
+    margin-right: 8px;
+  }
+
+  .actions {
+    flex: 1;
+    padding: 8px 0;
+
+    ::ng-deep {
+      .mat-button .mat-icon {
+        margin-right: 8px;
+      }
+    }
+  }
+}

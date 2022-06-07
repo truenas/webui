@@ -1,6 +1,6 @@
 import { Validators } from '@angular/forms';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
-import { matchOtherValidator } from 'app/pages/common/entity/entity-form/validators/password-validation/password-validation';
+import { matchOtherValidator } from 'app/modules/entity/entity-form/validators/password-validation/password-validation';
 
 export default {
   dataset_parent_name_placeholder: T('Parent path'),
@@ -86,7 +86,6 @@ export default {
   dataset_form_reservation_tooltip: T('<i>0</i> is unlimited. A specified value applies to\
  both this dataset and any child datasets.'),
 
-  dataset_form_deduplication_label: T('ZFS deduplication'),
   dataset_form_deduplication_placeholder: T('ZFS Deduplication'),
   dataset_form_deduplication_tooltip: T('Transparently reuse a single copy of duplicated \
  data to save space. Deduplication can improve storage capacity, but is RAM intensive. \
@@ -110,8 +109,9 @@ export default {
   dataset_form_recordsize_placeholder: T('Record Size'),
   dataset_form_recordsize_tooltip: T('Matching the fixed size of data, as in a database, may\
  result in better performance.'),
-  dataset_form_warning_1: T('WARNING: Based on the pool topology, '),
-  dataset_form_warning_2: T(' is the minimum recommended record size. Choosing a smaller size can reduce system performance.'),
+  dataset_form_warning: T(
+    'WARNING: Based on the pool topology, {size} is the minimum recommended record size. Choosing a smaller size can reduce system performance.',
+  ),
 
   dataset_form_casesensitivity_placeholder: T('Case Sensitivity'),
   dataset_form_casesensitivity_tooltip: T('<i>Sensitive</i> assumes filenames are case sensitive.\
@@ -180,7 +180,7 @@ export default {
     passphrase_validation: [Validators.minLength(8)],
     confirm_passphrase_placeholder: T('Confirm Passphrase'),
     confirm_passphrase_validation: [matchOtherValidator('passphrase')],
-    pbkdf2iters_placeholder: T('pbkdf2iters'),
+    pbkdf2iters_placeholder: 'pbkdf2iters',
     pbkdf2iters_tooltip: T('Number of password-based key derivation function 2 (PBKDF2) iterations to use for reducing vulnerability \
      to brute-force attacks. Entering a number larger than <i>100000</i> is required. See \
      <a href="https://en.wikipedia.org/wiki/PBKDF2" target="_blank">PBKDF2</a> for more details.'),

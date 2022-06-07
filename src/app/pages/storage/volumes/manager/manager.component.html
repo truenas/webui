@@ -4,9 +4,9 @@
   </div>
   <div class="mat-content p-1">
     <div class="manager">
-      <div fxLayout="column" class="fields m-3">
-        <ng-container *ngIf="isNew;else extend">
-          <div fxLayout="row wrap" fxLayoutAlign="baseline" class="TEST">
+      <div fxLayout="column" class="fields">
+        <ng-container *ngIf="isNew; else extend">
+          <div fxLayout="row wrap" fxLayoutAlign="baseline">
 
             <div fxFlex="40%" class="inline form-element">
               <div class="label-container">
@@ -320,6 +320,49 @@
                 </a>
               </ng-template>
             </ngx-datatable-column>
+
+            <ngx-datatable-footer>
+              <ng-template
+                ngx-datatable-footer-template
+                let-selectedCount="selectedCount"
+                let-rowCount="rowCount"
+                let-pageSize="pageSize"
+                let-curPage="curPage"
+                let-offset="offset"
+                let-isVisible="isVisible"
+              >
+                <div class="footer-div">
+                  <div *ngIf="availableNonUniqueSerialDisksCount">
+                    <p class="non-unique-serial-disks-warning">{{ nonUniqueSerialDisksWarning }}</p>
+
+                    <mat-checkbox
+                      color="primary"
+                      class="non-unique-serial-disks-checkbox"
+                      [checked]="includeNonUniqueSerialDisks"
+                      (change)="toggleNonUniqueSerialDisks()"
+                    >{{ 'Show disks with non-unique serial numbers' | translate }}</mat-checkbox>
+                  </div>
+
+                  <div class="footer-main">
+                    <div class="page-count">
+                      <div>{{ selectedCount }} {{ 'selected' | translate }} / {{ rowCount }} {{ 'total' | translate }}</div>
+                    </div>
+                    
+                    <datatable-pager
+                      [pagerLeftArrowIcon]="'datatable-icon-left'"
+                      [pagerRightArrowIcon]="'datatable-icon-right'"
+                      [pagerPreviousIcon]="'datatable-icon-prev'"
+                      [pagerNextIcon]="'datatable-icon-skip'"
+                      [page]="curPage"
+                      [size]="pageSize"
+                      [count]="rowCount"
+                      [hidden]="!((rowCount / pageSize) > 1)"
+                      (change)="table.onFooterPage($event)">
+                    </datatable-pager>
+                  </div>
+                </div>
+              </ng-template>
+            </ngx-datatable-footer>
           </ngx-datatable>
           <div id="filter-wrapper">
             <mat-form-field fxFlex="1 1 40%">

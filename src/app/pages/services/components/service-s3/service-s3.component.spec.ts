@@ -9,9 +9,9 @@ import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.u
 import helptext from 'app/helptext/services/components/service-s3';
 import { Certificate } from 'app/interfaces/certificate.interface';
 import { S3Config } from 'app/interfaces/s3-config.interface';
-import { IxFormsModule } from 'app/pages/common/ix-forms/ix-forms.module';
-import { FormErrorHandlerService } from 'app/pages/common/ix-forms/services/form-error-handler.service';
-import { IxFormHarness } from 'app/pages/common/ix-forms/testing/ix-form.harness';
+import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
+import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
+import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { DialogService, SystemGeneralService, WebSocketService } from 'app/services';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
@@ -86,7 +86,7 @@ describe('ServiceS3Component', () => {
       'Secret Key': '12345678',
       Certificate: 'Very Secure',
       'Console Port': '9001',
-      'TLS Server Uri': 'test',
+      'TLS Server Hostname': 'test',
     });
   });
 
@@ -115,7 +115,7 @@ describe('ServiceS3Component', () => {
       'Enable Browser': false,
       Certificate: 'Default',
       'Console Port': 9001,
-      'TLS Server Uri': 'test',
+      'TLS Server Hostname': 'test',
     });
 
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));

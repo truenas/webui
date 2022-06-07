@@ -11,7 +11,7 @@ import filesize from 'filesize';
 import { map } from 'rxjs/operators';
 import { JobState } from 'app/enums/job-state.enum';
 import { helptextSystemBootenv } from 'app/helptext/system/boot-env';
-import { FormErrorHandlerService } from 'app/pages/common/ix-forms/services/form-error-handler.service';
+import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { DialogService, WebSocketService } from 'app/services';
 
 @UntilDestroy()
@@ -34,15 +34,10 @@ export class BootPoolAttachFormComponent {
     tooltip: this.translate.instant(helptextSystemBootenv.dev_tooltip),
     options: this.ws.call('disk.get_unused').pipe(
       map((disks) => {
-        const options = disks.map((disk) => ({
+        return disks.map((disk) => ({
           label: `${disk.name} (${filesize(disk['size'], { standard: 'iec' })})`,
           value: disk.name,
         }));
-
-        return [
-          { label: '-', value: null },
-          ...options,
-        ];
       }),
     ),
   };
@@ -68,15 +63,20 @@ export class BootPoolAttachFormComponent {
 
     const { dev, expand } = this.form.value;
     this.ws.job('boot.attach', [dev, { expand }]).pipe(untilDestroyed(this)).subscribe((job) => {
-      if (job.state === JobState.Success) {
-        this.isFormLoading = false;
-        this.cdr.markForCheck();
-        this.dialogService.info(helptextSystemBootenv.attach_dialog.title,
-          `<i>${dev}</i> ${helptextSystemBootenv.attach_dialog.message}`, '300px', 'info', true)
-          .pipe(untilDestroyed(this)).subscribe(() => {
-            this.router.navigate(['system', 'boot']);
-          });
+      if (job.state !== JobState.Success) {
+        return;
       }
+
+      this.isFormLoading = false;
+      this.cdr.markForCheck();
+      this.dialogService.info(
+        helptextSystemBootenv.attach_dialog.title,
+        `<i>${dev}</i> ${helptextSystemBootenv.attach_dialog.message}`,
+        true,
+      )
+        .pipe(untilDestroyed(this)).subscribe(() => {
+          this.router.navigate(['system', 'boot']);
+        });
     }, (error) => {
       this.isFormLoading = false;
       this.errorHandler.handleWsFormError(error, this.form);

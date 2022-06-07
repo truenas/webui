@@ -1,0 +1,32 @@
+<div *ngIf="label" class="label-container">
+  <label class="label">
+    {{label}}
+    <span *ngIf="required" class="required">*</span>
+  </label>
+  <tooltip *ngIf="tooltip" [header]="label" class="tooltip" [message]="tooltip"></tooltip>
+</div>
+
+<div class="input-container" [class.disabled]="isDisabled">
+  <div>
+    <label>
+      {{ 'Choose File' | translate }}
+      <input
+        #ixFileInput
+        type="file"
+        [accept]="acceptedFiles"
+        [required]="required"
+        [disabled]="isDisabled"
+        [attr.multiple]="multiple"
+        (change)="onChanged(ixFileInput.files)"
+      />
+    </label>
+  </div>
+  <div *ngIf="value && value.length">
+    <p class="file" *ngFor="let file of value">
+      <span class="file-action" [matTooltip]="'Remove file' | translate" (click)="removeFile(file)"><mat-icon>close</mat-icon></span>
+      <span class="file-name">{{ file.name }}</span>
+      <span class="file-size">{{ formatSize(file.size) }}</span>
+    </p>
+  </div>
+</div>
+<ix-errors [control]="controlDirective.control" [label]="label"></ix-errors>

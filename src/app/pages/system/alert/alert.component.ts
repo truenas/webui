@@ -4,22 +4,22 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 import { Subject } from 'rxjs';
-import { CoreService } from 'app/core/services/core-service/core.service';
 import { AlertLevel } from 'app/enums/alert-level.enum';
 import { AlertPolicy } from 'app/enums/alert-policy.enum';
 import helptext from 'app/helptext/system/alert-settings';
-import { AlertCategory } from 'app/interfaces/alert.interface';
+import { AlertCategory, AlertClassesUpdate, AlertClassSettings } from 'app/interfaces/alert.interface';
 import { CoreEvent } from 'app/interfaces/events';
 import { Option } from 'app/interfaces/option.interface';
-import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
-import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
-import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
-import { EntityFormService } from 'app/pages/common/entity/entity-form/services/entity-form.service';
-import { EntityToolbarComponent } from 'app/pages/common/entity/entity-toolbar/entity-toolbar.component';
-import { EntityUtils } from 'app/pages/common/entity/utils';
+import { AppLoaderService } from 'app/modules/app-loader/app-loader.service';
+import { FieldSets } from 'app/modules/entity/entity-form/classes/field-sets';
+import { FieldConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
+import { FieldSet } from 'app/modules/entity/entity-form/models/fieldset.interface';
+import { EntityFormService } from 'app/modules/entity/entity-form/services/entity-form.service';
+import { EntityToolbarComponent } from 'app/modules/entity/entity-toolbar/entity-toolbar.component';
+import { EntityUtils } from 'app/modules/entity/utils';
 import { AlertDefaults } from 'app/pages/system/alert/alert-defaults.interface';
 import { DialogService, WebSocketService } from 'app/services/';
-import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
+import { CoreService } from 'app/services/core-service/core.service';
 
 /**
  * This form is unlike other forms in the app which make use of EntityForm.
@@ -30,7 +30,7 @@ import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 @Component({
   selector: 'app-system-alert',
   templateUrl: './alert.component.html',
-  styleUrls: ['../../common/entity/entity-form/entity-form.component.scss'],
+  styleUrls: ['../../../modules/entity/entity-form/entity-form.component.scss'],
   providers: [EntityFormService],
 })
 export class AlertConfigComponent implements OnInit {
@@ -51,7 +51,6 @@ export class AlertConfigComponent implements OnInit {
     { label: this.translate.instant('EMERGENCY'), value: AlertLevel.Emergency },
   ];
   formGroup: FormGroup;
-  isReady = false;
   protected defaults: AlertDefaults[] = [];
 
   selectedIndex = 0;
@@ -147,15 +146,16 @@ export class AlertConfigComponent implements OnInit {
         this.formGroup = this.entityFormService.createFormGroup(this.fieldConfig);
 
         this.ws.call(this.queryCall).pipe(untilDestroyed(this)).subscribe(
-          (res) => {
+          (alertConfig) => {
             this.loader.close();
-            for (const k in res.classes) {
-              for (const j in res.classes[k]) {
-                const prop = k + '_' + j;
-                if (this.formGroup.controls[prop]) {
-                  this.formGroup.controls[prop].setValue((res.classes as any)[k][j]);
+            for (const alertClass in alertConfig.classes) {
+              for (const levelOrPolicy in alertConfig.classes[alertClass]) {
+                const controlName = alertClass + '_' + levelOrPolicy;
+                const controlValue = alertConfig.classes[alertClass][levelOrPolicy as keyof AlertClassSettings];
+                if (this.formGroup.controls[controlName]) {
+                  this.formGroup.controls[controlName].setValue(controlValue);
                 } else {
-                  console.error('Missing prop: ' + prop); // some properties don't exist between both calls?
+                  console.error('Missing control: ' + controlName); // some properties don't exist between both calls?
                 }
               }
             }
@@ -179,7 +179,7 @@ export class AlertConfigComponent implements OnInit {
     });
     this.formEvent$ = new Subject();
     this.formEvent$.pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
-      if (evt.data.event_control == 'save') {
+      if (evt.data.event_control === 'save') {
         this.onSubmit();
       } else {
         this.selectedIndex = evt.data.category.value;
@@ -212,19 +212,22 @@ export class AlertConfigComponent implements OnInit {
   }
 
   onSubmit(): void {
-    const payload: any = { classes: {} };
+    const payload: AlertClassesUpdate = { classes: {} };
 
     for (const key in this.formGroup.value) {
       const keyValues = key.split('_');
       const alertClass = keyValues[0];
-      const classKey = keyValues[1];
+      const classKey = keyValues[1] as 'policy' | 'level';
       const def = _.find(this.defaults, { id: alertClass });
-      if (def[classKey as keyof AlertDefaults].toUpperCase() !== this.formGroup.value[key].toUpperCase()) {
+      if (def[classKey].toUpperCase() !== this.formGroup.value[key].toUpperCase()) {
         // do not submit defaults in the payload
         if (!payload.classes[alertClass]) {
           payload.classes[alertClass] = {};
         }
-        payload.classes[alertClass][classKey] = this.formGroup.value[key];
+
+        // Something wrong with Typescript typing or eslint rule.
+        // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
+        (payload.classes[alertClass][classKey] as AlertLevel | AlertPolicy) = this.formGroup.value[key];
       }
     }
 
@@ -233,7 +236,7 @@ export class AlertConfigComponent implements OnInit {
     this.ws
       .call(this.editCall, [payload])
       .pipe(untilDestroyed(this)).subscribe(
-        () => this.dialog.info(this.translate.instant('Settings saved'), '', '300px', 'info', true),
+        () => this.dialog.info(this.translate.instant('Settings saved'), ''),
         (error) => new EntityUtils().handleWsError(this, error, this.dialog),
       )
       .add(() => this.loader.close());

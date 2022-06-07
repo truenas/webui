@@ -1,0 +1,11 @@
+<div
+  *ngFor="let date of scheduleExamples | slice: 0: maxExamples"
+  class="schedule-example"
+>{{ date | formatDateTime: null }}</div>
+
+<div
+  *ngIf="scheduleExamples.length > maxExamples"
+  class="only-first-results-message"
+>
+  {{ 'Only first {number} examples are shown.' | translate: { number: maxExamples } }}
+</div>

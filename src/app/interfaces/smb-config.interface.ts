@@ -1,3 +1,5 @@
+import { LogLevel } from 'app/enums/log-level.enum';
+
 export interface SmbConfig {
   aapl_extensions: boolean;
   admin_group: string;
@@ -10,8 +12,8 @@ export interface SmbConfig {
   guest: string;
   id: number;
   localmaster: boolean;
-  loglevel: string; // enum MINIMUM
-  netbiosalias: unknown[];
+  loglevel: LogLevel;
+  netbiosalias: string[];
   netbiosname: string;
   netbiosname_b: string;
   netbiosname_local: string;

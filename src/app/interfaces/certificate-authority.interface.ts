@@ -1,8 +1,8 @@
-import { CACreateType } from '../enums/ca-create-type.enum';
-import { CertificateDigestAlgorithm } from '../enums/ca-digest-algorithm.enum';
-import { CertificateKeyType } from '../enums/ca-key-type.enum';
-import { EcCurve } from '../enums/ec-curve.enum';
-import { ExtendedKeyUsages } from '../enums/extended-key-usages.enum';
+import { CaCreateType } from 'app/enums/ca-create-type.enum';
+import { CertificateDigestAlgorithm } from 'app/enums/ca-digest-algorithm.enum';
+import { CertificateKeyType } from 'app/enums/ca-key-type.enum';
+import { EcCurve } from 'app/enums/ec-curve.enum';
+import { ExtendedKeyUsages } from 'app/enums/extended-key-usages.enum';
 
 export interface BasicConstraints {
   ca: boolean;
@@ -45,6 +45,7 @@ export interface CertificateExtensions {
 }
 
 export interface CertificateAuthorityUpdate {
+  add_to_trusted_store: boolean;
   tos: boolean;
   csr_id: number;
   signedby: number;
@@ -68,7 +69,7 @@ export interface CertificateAuthorityUpdate {
   passphrase: string;
   privatekey: string;
   state: string;
-  create_type: CACreateType;
+  create_type: CaCreateType;
   digest_algorithm: CertificateDigestAlgorithm;
   san: string[];
   cert_extensions: CertificateExtensions;
@@ -81,6 +82,7 @@ export interface CertificateAuthority {
   CA_type_internal: boolean;
   CSR: unknown;
   DN: string;
+  add_to_trusted_store: boolean;
   cert_type: string; // Enum?
   cert_type_CSR: boolean;
   cert_type_existing: boolean;
@@ -125,7 +127,7 @@ export interface CertificateAuthority {
   san: string[];
   serial: number;
   signed_certificates: number;
-  signedby: unknown;
+  signedby: null;
   state: string;
   subject_name_hash: number;
   type: number;

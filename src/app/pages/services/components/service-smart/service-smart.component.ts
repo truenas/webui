@@ -7,11 +7,12 @@ import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
+import { SmartPowerMode } from 'app/enums/smart-power.mode';
 import helptext from 'app/helptext/services/components/service-smart';
-import { FormErrorHandlerService } from 'app/pages/common/ix-forms/services/form-error-handler.service';
+import { numberValidator } from 'app/modules/entity/entity-form/validators/number-validation';
+import { EntityUtils } from 'app/modules/entity/utils';
+import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { DialogService, WebSocketService } from 'app/services';
-import { SmartPowerMode } from '../../../../enums/smart-power.mode';
-import { EntityUtils } from '../../../common/entity/utils';
 
 @UntilDestroy()
 @Component({
@@ -23,11 +24,11 @@ export class ServiceSmartComponent implements OnInit {
   isFormLoading = false;
 
   form = this.fb.group({
-    interval: [0, Validators.required],
+    interval: [0, [numberValidator(), Validators.required]],
     powermode: [null as SmartPowerMode, Validators.required],
-    difference: [0, Validators.required],
-    informational: [0, Validators.required],
-    critical: [0, Validators.required],
+    difference: [0, [numberValidator(), Validators.required]],
+    informational: [0, [numberValidator(), Validators.required]],
+    critical: [0, [numberValidator(), Validators.required]],
   });
 
   readonly tooltips = {
@@ -76,18 +77,8 @@ export class ServiceSmartComponent implements OnInit {
   onSubmit(): void {
     const values = this.form.value;
 
-    // Converting to numbers is only necessary for unit tests,
-    // which don't play nicely with numbers in inputs.
-    const params = {
-      interval: Number(values.interval),
-      powermode: values.powermode,
-      difference: Number(values.difference),
-      informational: Number(values.informational),
-      critical: Number(values.critical),
-    };
-
     this.isFormLoading = true;
-    this.ws.call('smart.update', [params])
+    this.ws.call('smart.update', [values])
       .pipe(untilDestroyed(this))
       .subscribe(
         () => {

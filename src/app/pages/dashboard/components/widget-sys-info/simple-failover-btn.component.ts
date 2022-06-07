@@ -1,11 +1,11 @@
 import {
   Component, Input,
 } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateService } from '@ngx-translate/core';
-import { SimpleFailoverBtnDialogComponent } from 'app/pages/dashboard/components/widget-sys-info/simple-failover-btn-dialog.component';
+import { filter } from 'rxjs/operators';
+import { helptextSystemFailover } from 'app/helptext/system/failover';
+import { DialogService } from 'app/services';
 
 @UntilDestroy()
 @Component({
@@ -17,22 +17,20 @@ export class SimpleFailoverBtnComponent {
   @Input() color = 'default';
   @Input() disabled?: boolean = false;
   constructor(
-    private dialog: MatDialog,
-    protected matDialog: MatDialog,
+    private dialog: DialogService,
     private router: Router,
-    public translate: TranslateService,
   ) {}
 
   openDialog(): void {
-    const dialogRef = this.dialog.open(SimpleFailoverBtnDialogComponent, {
-      width: '330px',
-      data: { agreed: true },
-    });
-
-    dialogRef.afterClosed().pipe(untilDestroyed(this)).subscribe((res) => {
-      if (res) {
-        this.router.navigate(['/others/reboot']);
-      }
+    this.dialog.confirm({
+      title: helptextSystemFailover.dialog_initiate_failover_title,
+      message: helptextSystemFailover.dialog_initiate_failover_message,
+      buttonMsg: helptextSystemFailover.dialog_initiate_action,
+    }).pipe(
+      filter(Boolean),
+      untilDestroyed(this),
+    ).subscribe(() => {
+      this.router.navigate(['/others/failover'], { skipLocationChange: true });
     });
   }
 }

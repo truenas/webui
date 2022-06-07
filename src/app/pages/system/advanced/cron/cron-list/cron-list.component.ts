@@ -1,22 +1,21 @@
 import { Component } from '@angular/core';
-import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { filter, switchMap } from 'rxjs/operators';
 import { Cronjob } from 'app/interfaces/cronjob.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
-import { EntityTableComponent } from 'app/pages/common/entity/entity-table/entity-table.component';
+import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-table.component';
 import {
   EntityTableAction,
   EntityTableConfig,
   EntityTableConfigConfig,
-} from 'app/pages/common/entity/entity-table/entity-table.interface';
-import { EntityUtils } from 'app/pages/common/entity/utils';
+} from 'app/modules/entity/entity-table/entity-table.interface';
+import { EntityUtils } from 'app/modules/entity/utils';
+import { CronFormComponent } from 'app/pages/system/advanced/cron/cron-form/cron-form.component';
 import { CronjobRow } from 'app/pages/system/advanced/cron/cron-list/cronjob-row.interface';
 import { DialogService, TaskService, WebSocketService } from 'app/services';
-import { ModalService } from 'app/services/modal.service';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { UserService } from 'app/services/user.service';
-import { CronFormComponent } from '../cron-form/cron-form.component';
 
 @UntilDestroy()
 @Component({
@@ -63,31 +62,30 @@ export class CronListComponent implements EntityTableConfig<CronjobRow> {
   };
 
   constructor(
-    public router: Router,
     protected ws: WebSocketService,
     public translate: TranslateService,
     protected taskService: TaskService,
     public dialog: DialogService,
-    public modalService: ModalService,
-    public userService: UserService,
+    public slideInService: IxSlideInService,
   ) {}
 
   afterInit(entityList: EntityTableComponent): void {
     this.entityList = entityList;
 
-    this.modalService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
+    this.slideInService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
       this.entityList.loaderOpen = true;
       this.entityList.needRefreshTable = true;
       this.entityList.getData();
     });
   }
 
-  doAdd(id?: number): void {
-    this.modalService.openInSlideIn(CronFormComponent, id);
+  doAdd(): void {
+    this.slideInService.open(CronFormComponent);
   }
 
-  doEdit(id: number): void {
-    this.doAdd(id);
+  openEditForm(row: CronjobRow): void {
+    const cronForm = this.slideInService.open(CronFormComponent);
+    cronForm.setCronForEdit(row);
   }
 
   getActions(tableRow: CronjobRow): EntityTableAction[] {
@@ -116,9 +114,6 @@ export class CronListComponent implements EntityTableConfig<CronjobRow> {
                 this.dialog.info(
                   this.translate.instant('Job {job} Completed Successfully', { job: row.description }),
                   message,
-                  '500px',
-                  'info',
-                  true,
                 );
               },
               (err: WebsocketError) => new EntityUtils().handleError(this, err),
@@ -130,7 +125,7 @@ export class CronListComponent implements EntityTableConfig<CronjobRow> {
         label: this.translate.instant('Edit'),
         icon: 'edit',
         id: 'edit',
-        onClick: (row: CronjobRow) => this.doEdit(row.id),
+        onClick: (row: CronjobRow) => this.openEditForm(row),
       },
       {
         id: tableRow.id,

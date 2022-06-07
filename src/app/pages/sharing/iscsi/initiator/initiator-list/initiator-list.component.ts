@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
-import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
-import { EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
+import { EntityTableConfig } from 'app/modules/entity/entity-table/entity-table.interface';
 
 @Component({
   selector: 'app-iscsi-initiator-list',
@@ -48,7 +47,6 @@ export class InitiatorListComponent implements EntityTableConfig {
   };
 
   constructor(
-    protected router: Router,
     protected translate: TranslateService,
   ) {}
 }

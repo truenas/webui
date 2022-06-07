@@ -1,15 +1,16 @@
 import { Component } from '@angular/core';
-import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { IscsiExtentType } from 'app/enums/iscsi.enum';
 import { IscsiExtent } from 'app/interfaces/iscsi.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
-import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
-import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
-import { EntityTableComponent } from 'app/pages/common/entity/entity-table/entity-table.component';
-import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
-import { EntityUtils } from 'app/pages/common/entity/utils';
+import { DialogFormConfiguration } from 'app/modules/entity/entity-dialog/dialog-form-configuration.interface';
+import { EntityDialogComponent } from 'app/modules/entity/entity-dialog/entity-dialog.component';
+import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-table.component';
+import { EntityTableAction, EntityTableConfig } from 'app/modules/entity/entity-table/entity-table.interface';
+import { EntityUtils } from 'app/modules/entity/utils';
+import { ExtentFormComponent } from 'app/pages/sharing/iscsi/extent/extent-form/extent-form.component';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
 @Component({
@@ -60,9 +61,26 @@ export class ExtentListComponent implements EntityTableConfig {
   };
 
   constructor(
-    protected router: Router,
+    private slideInService: IxSlideInService,
     protected translate: TranslateService,
   ) {}
+
+  afterInit(entityList: EntityTableComponent): void {
+    this.entityTable = entityList;
+    this.slideInService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
+      entityList.getData();
+    });
+  }
+
+  doAdd(): void {
+    this.slideInService.open(ExtentFormComponent, { wide: true });
+  }
+
+  doEdit(id: string): void {
+    const row = this.entityTable.rows.find((row) => row.id === id);
+    const form = this.slideInService.open(ExtentFormComponent, { wide: true });
+    form.setExtentForEdit(row);
+  }
 
   getActions(): EntityTableAction[] {
     return [{
@@ -126,9 +144,5 @@ export class ExtentListComponent implements EntityTableConfig {
       },
     };
     this.entityTable.dialogService.dialogForm(conf);
-  }
-
-  afterInit(entityList: EntityTableComponent): void {
-    this.entityTable = entityList;
   }
 }

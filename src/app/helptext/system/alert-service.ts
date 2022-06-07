@@ -22,7 +22,7 @@ export default {
  href="https://docs.aws.amazon.com/sns/latest/dg/sms_supported-countries.html"\
  target="_blank">AWS account region</a>.'),
 
-  AWSSNS_topic_arn_placeholder: T('ARN'),
+  AWSSNS_topic_arn_placeholder: 'ARN',
   AWSSNS_topic_arn_tooltip: T('Topic <a\
  href="https://docs.aws.amazon.com/sns/latest/dg/CreateTopic.html"\
  target="_blank">Amazon Resource Name (ARN)</a> for\
@@ -36,21 +36,6 @@ export default {
 
   Mail_email_placeholder: T('Email Address'),
   Mail_email_tooltip: T('Enter a valid email address to receive alerts from this system.'),
-
-  HipChat_hfrom_placeholder: T('From'),
-  HipChat_hfrom_tooltip: T('Enter a name to send alerts'),
-
-  HipChat_cluster_name_placeholder: T('Cluster Name'),
-  HipChat_cluster_name_tooltip: T('HipChat cluster name.'),
-
-  HipChat_base_url_placeholder: T('URL'),
-  HipChat_base_url_tooltip: T('HipChat base URL.'),
-
-  HipChat_room_id_placeholder: T('Room'),
-  HipChat_room_id_tooltip: T('Name of the room.'),
-
-  HipChat_auth_token_placeholder: T('Auth Token'),
-  HipChat_auth_token_tooltip: T('Enter or paste an Authentication token.'),
 
   InfluxDB_host_placeholder: T('Host'),
   InfluxDB_host_tooltip: T('Enter the <a\

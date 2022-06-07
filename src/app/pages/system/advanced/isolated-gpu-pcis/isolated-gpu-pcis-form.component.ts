@@ -3,15 +3,18 @@ import {
 } from '@angular/core';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
 import { DeviceType } from 'app/enums/device-type.enum';
 import { Device } from 'app/interfaces/device.interface';
 import { Option } from 'app/interfaces/option.interface';
-import { FormErrorHandlerService } from 'app/pages/common/ix-forms/services/form-error-handler.service';
-import { SystemGeneralService, WebSocketService } from 'app/services';
+import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
+import { WebSocketService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { AppState } from 'app/store';
+import { advancedConfigUpdated } from 'app/store/system-config/system-config.actions';
 
 @UntilDestroy()
 @Component({
@@ -33,12 +36,12 @@ export class IsolatedGpuPcisFormComponent implements OnInit {
 
   constructor(
     protected ws: WebSocketService,
-    private sysGeneralService: SystemGeneralService,
     private modal: IxSlideInService,
     private fb: FormBuilder,
     private errorHandler: FormErrorHandlerService,
     private translate: TranslateService,
     private cdr: ChangeDetectorRef,
+    private store$: Store<AppState>,
   ) { }
 
   ngOnInit(): void {
@@ -58,24 +61,23 @@ export class IsolatedGpuPcisFormComponent implements OnInit {
       if (selectedGpus.length >= this.availableGpus?.length) {
         const prevSelectedGpus = [];
         for (const gpu of this.availableGpus) {
-          if (this.isolatedGpuPciIds.findIndex((igpi) => igpi === gpu.addr.pci_slot) >= 0) {
+          if (this.isolatedGpuPciIds.find((igpi) => igpi === gpu.addr.pci_slot)) {
             prevSelectedGpus.push(gpu);
           }
         }
-        let manualValidateErrorMsg = '';
+        let message = '';
         const atLeastOneGpu = this.translate.instant('At least 1 GPU is required by the host for it’s functions.');
         const noGpuAvailable = this.translate.instant('With your selection, no GPU is available for the host to consume.');
         if (prevSelectedGpus.length > 0) {
-          const gpus = '<li>' + prevSelectedGpus.map((gpu, index) => (index + 1) + '. ' + gpu.description).join('</li><li>') + '</li>';
+          const gpus = '<li>' + prevSelectedGpus.map((gpu) => gpu.description).join('</li><li>') + '</li>';
 
           const selectedGpu = this.translate.instant('<p>Currently following GPU(s) have been isolated:<ol>{gpus}</ol></p>', { gpus });
-          manualValidateErrorMsg = `${atLeastOneGpu} ${selectedGpu} ${noGpuAvailable}`;
+          message = `${atLeastOneGpu} ${selectedGpu} ${noGpuAvailable}`;
         } else {
-          manualValidateErrorMsg = `${atLeastOneGpu} ${noGpuAvailable}`;
+          message = `${atLeastOneGpu} ${noGpuAvailable}`;
         }
         gpusFormControl.setErrors({
-          manualValidateError: true,
-          manualValidateErrorMsg,
+          manualValidateError: { message },
         });
       } else {
         gpusFormControl.setErrors(null);
@@ -92,7 +94,7 @@ export class IsolatedGpuPcisFormComponent implements OnInit {
     ).subscribe(() => {
       this.isFormLoading = false;
       this.cdr.markForCheck();
-      this.sysGeneralService.refreshSysGeneral();
+      this.store$.dispatch(advancedConfigUpdated());
       this.modal.close();
     }, (error) => {
       this.isFormLoading = false;

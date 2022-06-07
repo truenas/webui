@@ -7,7 +7,7 @@ import { filter } from 'rxjs/operators';
 import { JobState } from 'app/enums/job-state.enum';
 import globalHelptext from 'app/helptext/global-helptext';
 import { Job } from 'app/interfaces/job.interface';
-import { EntityUtils } from 'app/pages/common/entity/utils';
+import { EntityUtils } from 'app/modules/entity/utils';
 import { DialogService } from './dialog.service';
 import { StorageService } from './storage.service';
 import { WebSocketService } from './ws.service';
@@ -15,11 +15,6 @@ import { WebSocketService } from './ws.service';
 @UntilDestroy()
 @Injectable()
 export class JobService {
-  protected accountUserResource = 'account/users/';
-  protected accountGroupResource = 'account/groups/';
-  protected accountAllUsersResource = 'account/all_users/';
-  protected accountAllGroupsResource = 'account/all_groups/';
-
   constructor(
     protected ws: WebSocketService,
     protected dialog: DialogService,
@@ -30,7 +25,7 @@ export class JobService {
   getJobStatus(jobId: number): Observable<Job> {
     const source = Observable.create((observer: Observer<Job>) => {
       this.ws.subscribe('core.get_jobs').pipe(untilDestroyed(this)).subscribe((event) => {
-        if (event.id == jobId) {
+        if (event.id === jobId) {
           observer.next(event.fields);
           if (event.fields.state === JobState.Success || event.fields.state === JobState.Failed) {
             observer.complete();
@@ -55,7 +50,7 @@ export class JobService {
       const log = job && job.logs_excerpt ? job.logs_excerpt : null;
 
       if (!log) {
-        this.dialog.info(globalHelptext.noLogDilaog.title, globalHelptext.noLogDilaog.message);
+        this.dialog.warn(globalHelptext.noLogDialog.title, globalHelptext.noLogDialog.message);
       } else {
         const targetJob = job;
         this.dialog.confirm({

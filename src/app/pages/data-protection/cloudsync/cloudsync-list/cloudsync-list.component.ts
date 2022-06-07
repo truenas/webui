@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { ExplorerType } from 'app/enums/explorer-type.enum';
@@ -8,14 +9,15 @@ import helptext from 'app/helptext/data-protection/cloudsync/cloudsync-form';
 import globalHelptext from 'app/helptext/global-helptext';
 import { CloudSyncTask, CloudSyncTaskUi } from 'app/interfaces/cloud-sync-task.interface';
 import { Job } from 'app/interfaces/job.interface';
-import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
-import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
-import { FormParagraphConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { DialogFormConfiguration } from 'app/modules/entity/entity-dialog/dialog-form-configuration.interface';
+import { EntityDialogComponent } from 'app/modules/entity/entity-dialog/entity-dialog.component';
+import { FormParagraphConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
+import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import {
   EntityTableComponent,
-} from 'app/pages/common/entity/entity-table/entity-table.component';
-import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
-import { EntityUtils } from 'app/pages/common/entity/utils';
+} from 'app/modules/entity/entity-table/entity-table.component';
+import { EntityTableAction, EntityTableConfig } from 'app/modules/entity/entity-table/entity-table.interface';
+import { EntityUtils } from 'app/modules/entity/utils';
 import { CloudsyncFormComponent } from 'app/pages/data-protection/cloudsync/cloudsync-form/cloudsync-form.component';
 import {
   AppLoaderService,
@@ -86,6 +88,7 @@ export class CloudsyncListComponent implements EntityTableConfig<CloudSyncTaskUi
     protected modalService: ModalService,
     protected loader: AppLoaderService,
     protected taskService: TaskService,
+    private matDialog: MatDialog,
   ) {}
 
   afterInit(entityList: EntityTableComponent): void {
@@ -137,8 +140,6 @@ export class CloudsyncListComponent implements EntityTableConfig<CloudSyncTaskUi
                     this.dialog.info(
                       this.translate.instant('Task Started'),
                       this.translate.instant('Cloud sync <i>{taskName}</i> has started.', { taskName: row.description }),
-                      '500px',
-                      'info',
                       true,
                     );
                     this.job.getJobStatus(jobId).pipe(untilDestroyed(this)).subscribe((job: Job) => {
@@ -174,8 +175,6 @@ export class CloudsyncListComponent implements EntityTableConfig<CloudSyncTaskUi
                     this.dialog.info(
                       this.translate.instant('Task Stopped'),
                       this.translate.instant('Cloud sync <i>{taskName}</i> stopped.', { taskName: row.description }),
-                      '500px',
-                      'info',
                       true,
                     );
                   },
@@ -207,8 +206,6 @@ export class CloudsyncListComponent implements EntityTableConfig<CloudSyncTaskUi
                     this.dialog.info(
                       this.translate.instant('Task Started'),
                       this.translate.instant('Cloud sync <i>{taskName}</i> has started.', { taskName: row.description }),
-                      '500px',
-                      'info',
                       true,
                     );
                     this.job.getJobStatus(jobId).pipe(untilDestroyed(this)).subscribe((job: Job) => {
@@ -275,7 +272,9 @@ export class CloudsyncListComponent implements EntityTableConfig<CloudSyncTaskUi
             saveButtonText: this.translate.instant('Restore'),
             afterInit(entityDialog: EntityDialogComponent) {
               entityDialog.formGroup.get('transfer_mode').valueChanges.pipe(untilDestroyed(this)).subscribe((mode) => {
-                const paragraph: FormParagraphConfig = conf.fieldConfig.find((config) => config.name === 'transfer_mode_warning');
+                const paragraph = conf.fieldConfig.find((config) => {
+                  return config.name === 'transfer_mode_warning';
+                }) as FormParagraphConfig;
                 switch (mode) {
                   case TransferMode.Sync:
                     paragraph.paraText = helptext.transfer_mode_warning_sync;
@@ -344,12 +343,33 @@ export class CloudsyncListComponent implements EntityTableConfig<CloudSyncTaskUi
   stateButton(row: CloudSyncTaskUi): void {
     if (row.job) {
       if (row.state.state === JobState.Running) {
-        this.entityList.runningStateButton(row.job.id);
+        const dialogRef = this.matDialog.open(EntityJobComponent, { data: { title: this.translate.instant('Task is running') } });
+        dialogRef.componentInstance.jobId = row.job.id;
+        dialogRef.componentInstance.job = row.job;
+        dialogRef.componentInstance.enableRealtimeLogs(true);
+        const subId = dialogRef.componentInstance.getRealtimeLogs();
+        dialogRef.componentInstance.wsshow();
+        dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
+          dialogRef.close();
+          this.ws.unsubscribe('filesystem.file_tail_follow:' + row.job.logs_path);
+          this.ws.unsub('filesystem.file_tail_follow:' + row.job.logs_path, subId);
+        });
+        dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe(() => {
+          dialogRef.close();
+          this.ws.unsubscribe('filesystem.file_tail_follow:' + row.job.logs_path);
+          this.ws.unsub('filesystem.file_tail_follow:' + row.job.logs_path, subId);
+        });
+        dialogRef.componentInstance.aborted.pipe(untilDestroyed(this)).subscribe(() => {
+          dialogRef.close();
+          this.dialog.info(this.translate.instant('Task Aborted'), '');
+          this.ws.unsubscribe('filesystem.file_tail_follow:' + row.job.logs_path);
+          this.ws.unsub('filesystem.file_tail_follow:' + row.job.logs_path, subId);
+        });
       } else {
         this.job.showLogs(row.job);
       }
     } else {
-      this.dialog.info(globalHelptext.noLogDilaog.title, globalHelptext.noLogDilaog.message);
+      this.dialog.warn(globalHelptext.noLogDialog.title, globalHelptext.noLogDialog.message);
     }
   }
 

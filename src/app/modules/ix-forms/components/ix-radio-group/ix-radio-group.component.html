@@ -1,0 +1,28 @@
+<div *ngIf="label" class="label-container">
+  <label class="label">
+    <span [innerHTML]="label"></span>
+    <span *ngIf="required" class="required">*</span>
+  </label>
+  <tooltip *ngIf="tooltip" [header]="label" class="tooltip" [message]="tooltip"></tooltip>
+</div>
+
+<mat-radio-group
+  color="primary"
+  [fxLayout]="containerLayout"
+  [required]="required"
+  [disabled]="isDisabled"
+  [value]="value"
+  (change)="onRadiosChanged($event)"
+>
+  <div
+    *ngFor="let option of options | async"
+    fxFlex="100%"
+    [fxFlex.gt-md]="fieldFlex"
+  >
+    <mat-radio-button [value]="option.value">
+      {{option.label}}
+    </mat-radio-button>
+    <tooltip *ngIf="option.tooltip" [header]="option.label" class="tooltip" [message]="option.tooltip"></tooltip>
+  </div>
+</mat-radio-group>
+<ix-errors [control]="controlDirective.control" [label]="label"></ix-errors>

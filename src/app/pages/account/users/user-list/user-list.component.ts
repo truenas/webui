@@ -1,24 +1,36 @@
 import {
-  Component, OnInit, AfterViewInit, ChangeDetectorRef, ViewChild, ChangeDetectionStrategy,
+  Component,
+  OnInit,
+  ChangeDetectorRef,
+  ViewChild, ChangeDetectionStrategy,
+  ViewChildren, QueryList,
+  AfterViewInit,
+  TemplateRef,
+  ElementRef,
 } from '@angular/core';
 import { MatSort, Sort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { select, Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
-import { Subject } from 'rxjs';
-import { filter, map } from 'rxjs/operators';
-import { CoreService } from 'app/core/services/core-service/core.service';
-import { PreferencesService } from 'app/core/services/preferences.service';
-import { ConfirmOptions } from 'app/interfaces/dialog.interface';
+import {
+  BehaviorSubject,
+  combineLatest, Observable, of, Subject,
+} from 'rxjs';
+import { map, switchMap } from 'rxjs/operators';
 import { CoreEvent } from 'app/interfaces/events';
+import { GlobalActionConfig } from 'app/interfaces/global-action.interface';
 import { User } from 'app/interfaces/user.interface';
-import { EmptyConfig, EmptyType } from 'app/pages/common/entity/entity-empty/entity-empty.component';
-import { EntityToolbarComponent } from 'app/pages/common/entity/entity-toolbar/entity-toolbar.component';
-import { ControlConfig, ToolbarConfig } from 'app/pages/common/entity/entity-toolbar/models/control-config.interface';
-import { DialogService } from 'app/services';
-import { ModalService } from 'app/services/modal.service';
-import { WebSocketService } from 'app/services/ws.service';
-import { UserFormComponent } from '../user-form/user-form.component';
+import { EmptyConfig, EmptyType } from 'app/modules/entity/entity-empty/entity-empty.component';
+import { IxDetailRowDirective } from 'app/modules/ix-tables/directives/ix-detail-row.directive';
+import { userPageEntered } from 'app/pages/account/users/store/user.actions';
+import { selectUsers, selectUserState, selectUsersTotal } from 'app/pages/account/users/store/user.selectors';
+import { UserFormComponent } from 'app/pages/account/users/user-form/user-form.component';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { LayoutService } from 'app/services/layout.service';
+import { AppState } from 'app/store';
+import { builtinUsersToggled } from 'app/store/preferences/preferences.actions';
+import { waitForPreferences } from 'app/store/preferences/preferences.selectors';
 
 @UntilDestroy()
 @Component({
@@ -28,203 +40,142 @@ import { UserFormComponent } from '../user-form/user-form.component';
 })
 export class UserListComponent implements OnInit, AfterViewInit {
   @ViewChild(MatSort, { static: false }) sort: MatSort;
+  title$: BehaviorSubject<string> = new BehaviorSubject('Users');
+  @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
+  @ViewChild('filterInput') filterInput: ElementRef<HTMLInputElement>;
+  toolbarActionsConfig: GlobalActionConfig = null;
 
   displayedColumns: string[] = ['username', 'uid', 'builtin', 'full_name', 'actions'];
-  toolbarConfig: ToolbarConfig;
   settingsEvent$: Subject<CoreEvent> = new Subject();
   filterString = '';
   dataSource: MatTableDataSource<User> = new MatTableDataSource([]);
-  loading = false;
-  error = false;
   defaultSort: Sort = { active: 'uid', direction: 'asc' };
-  emptyConf: EmptyConfig = {
+  emptyConfig: EmptyConfig = {
     type: EmptyType.NoPageData,
     title: this.translate.instant('No Users'),
     large: true,
   };
-  loadingConf: EmptyConfig = {
+  loadingConfig: EmptyConfig = {
     type: EmptyType.Loading,
     large: false,
     title: this.translate.instant('Loading...'),
   };
-  errorConf: EmptyConfig = {
+  errorConfig: EmptyConfig = {
     type: EmptyType.Errors,
     large: true,
     title: this.translate.instant('Can not retrieve response'),
   };
+  readonly shouldShowResetInput$ = new BehaviorSubject<boolean>(false);
+  readonly shouldShowReset$ = this.shouldShowResetInput$.asObservable();
+  filterValue = '';
   expandedRow: User;
+  @ViewChildren(IxDetailRowDirective) private detailRows: QueryList<IxDetailRowDirective>;
+  isLoading$ = this.store$.select(selectUserState).pipe(map((state) => state.isLoading));
+  emptyOrErrorConfig$: Observable<EmptyConfig> = combineLatest([
+    this.store$.select(selectUsersTotal).pipe(map((total) => total === 0)),
+    this.store$.select(selectUserState).pipe(map((state) => state.error)),
+  ]).pipe(
+    switchMap(([, isError]) => {
+      if (isError) {
+        return of(this.errorConfig);
+      }
 
-  get currentEmptyConf(): EmptyConfig {
-    if (this.loading) {
-      return this.loadingConf;
-    }
-    if (this.error) {
-      return this.errorConf;
-    }
-    return this.emptyConf;
-  }
+      return of(this.emptyConfig);
+    }),
+  );
+  hideBuiltinUsers = true;
 
   constructor(
-    private dialogService: DialogService,
-    private ws: WebSocketService,
-    private prefService: PreferencesService,
     private translate: TranslateService,
-    private modalService: ModalService,
+    private slideIn: IxSlideInService,
     private cdr: ChangeDetectorRef,
-    private core: CoreService,
+    private store$: Store<AppState>,
+    private layoutService: LayoutService,
   ) { }
 
   ngOnInit(): void {
-    this.setupToolbar();
+    this.store$.dispatch(userPageEntered());
+    this.getPreferences();
     this.getUsers();
   }
 
   ngAfterViewInit(): void {
-    this.modalService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.getUsers();
-    });
+    this.layoutService.pageHeaderUpdater$.next(this.pageHeader);
+  }
 
-    if (this.prefService.preferences.showUserListMessage) {
-      setTimeout(() => {
-        this.showOneTimeBuiltinMsg();
-      }, 2000);
-    }
+  getPreferences(): void {
+    this.store$.pipe(
+      waitForPreferences,
+      untilDestroyed(this),
+    ).subscribe((preferences) => {
+      this.hideBuiltinUsers = preferences.hideBuiltinUsers;
+      this.cdr.markForCheck();
+    });
   }
 
   getUsers(): void {
-    this.loading = true;
-    this.ws.call('user.query').pipe(
-      map((users) => {
-        if (this.prefService.preferences.hide_builtin_users) {
-          // TODO: Use QueryParams and QueryFilter when it is possible
-          // [['OR', [['builtin', '=', false], ['username', '=', 'root']]]]
-          return users.filter((user) => !user.builtin || user.username === 'root');
-        }
-        return users;
-      }),
+    this.store$.pipe(
+      select(selectUsers),
       untilDestroyed(this),
-    ).subscribe(
-      (users) => {
-        this.createDataSource(users);
-        this.loading = false;
-        this.error = false;
-        this.cdr.markForCheck();
-      },
-      () => {
-        this.createDataSource();
-        this.loading = false;
-        this.error = true;
-        this.cdr.markForCheck();
-      },
-    );
+    ).subscribe((users) => {
+      this.createDataSource(users);
+      this.cdr.markForCheck();
+    }, () => {
+      this.createDataSource();
+      this.cdr.markForCheck();
+    });
   }
 
   createDataSource(users: User[] = []): void {
     this.dataSource = new MatTableDataSource(users);
-    this.dataSource.sort = this.sort;
+    setTimeout(() => {
+      // TODO: Figure out how to avoid setTimeout to make it work on first loading
+      if (this.filterString) {
+        this.dataSource.filter = this.filterString;
+      }
+      this.dataSource.sort = this.sort;
+      this.cdr.markForCheck();
+    }, 0);
   }
 
   toggleBuiltins(): void {
-    let dialogOptions: ConfirmOptions;
-    if (this.prefService.preferences.hide_builtin_users) {
-      dialogOptions = {
-        title: this.translate.instant('Show Built-in Users'),
-        message: this.translate.instant('Show built-in users (default setting is <i>hidden</i>).'),
-        hideCheckBox: true,
-        buttonMsg: this.translate.instant('Show'),
-      };
-    } else {
-      dialogOptions = {
-        title: this.translate.instant('Hide Built-in Users'),
-        message: this.translate.instant('Hide built-in users (default setting is <i>hidden</i>).'),
-        hideCheckBox: true,
-        buttonMsg: this.translate.instant('Hide'),
-      };
-    }
-
-    this.dialogService.confirm(dialogOptions).pipe(
-      filter(Boolean),
-      untilDestroyed(this),
-    ).subscribe(() => {
-      this.prefService.preferences.hide_builtin_users = !this.prefService.preferences.hide_builtin_users;
-      this.prefService.savePreferences();
-      this.getUsers();
-    });
-  }
-
-  showOneTimeBuiltinMsg(): void {
-    this.prefService.preferences.showUserListMessage = false;
-    this.prefService.savePreferences();
-    this.dialogService.confirm({
-      title: this.translate.instant('Display Note'),
-      message: this.translate.instant('All built-in users except <i>root</i> are hidden by default. Use the gear icon (top-right) to toggle the display of built-in users.'),
-      hideCheckBox: true,
-      hideCancel: true,
-      buttonMsg: this.translate.instant('Close'),
-    });
+    this.store$.dispatch(builtinUsersToggled());
   }
 
   doAdd(): void {
-    this.modalService.openInSlideIn(UserFormComponent);
+    const modal = this.slideIn.open(UserFormComponent, { wide: true });
+    modal.setupForm();
   }
 
-  expandRow(row: User): void {
+  onToggle(row: User): void {
     this.expandedRow = this.expandedRow === row ? null : row;
+    this.toggleDetailRows();
     this.cdr.markForCheck();
   }
 
-  setupToolbar(): void {
-    this.settingsEvent$ = new Subject();
-    this.settingsEvent$.pipe(
-      untilDestroyed(this),
-    ).subscribe((event: CoreEvent) => {
-      switch (event.data.event_control) {
-        case 'filter':
-          this.filterString = event.data.filter;
-          this.dataSource.filter = event.data.filter;
-          break;
-        case 'add':
-          this.doAdd();
-          break;
-        case 'config':
-          this.toggleBuiltins();
-          break;
-        default:
-          break;
+  toggleDetailRows(): void {
+    this.detailRows.forEach((row) => {
+      if (row.expanded && row.ixDetailRow !== this.expandedRow) {
+        row.close();
+      } else if (!row.expanded && row.ixDetailRow === this.expandedRow) {
+        row.open();
       }
     });
+  }
 
-    const controls: ControlConfig[] = [
-      {
-        name: 'filter',
-        type: 'input',
-        value: this.filterString,
-        placeholder: this.translate.instant('Search'),
-      },
-      {
-        name: 'config',
-        type: 'button',
-        label: this.translate.instant('Toggle built-in users'),
-      },
-      {
-        name: 'add',
-        type: 'button',
-        label: this.translate.instant('Add'),
-        color: 'primary',
-        ixAutoIdentifier: 'Users_ADD',
-      },
-    ];
+  clearFilter(): void {
+    this.shouldShowResetInput$.next(false);
+    this.filterInput.nativeElement.value = '';
+    this.filter();
+  }
 
-    const toolbarConfig: ToolbarConfig = {
-      target: this.settingsEvent$,
-      controls,
-    };
-    const settingsConfig = {
-      actionType: EntityToolbarComponent,
-      actionConfig: toolbarConfig,
-    };
-
-    this.toolbarConfig = toolbarConfig;
-    this.core.emit({ name: 'GlobalActions', data: settingsConfig, sender: this });
+  filter(): void {
+    if (!this.filterInput.nativeElement.value) {
+      this.shouldShowResetInput$.next(false);
+    } else {
+      this.shouldShowResetInput$.next(true);
+    }
+    this.filterString = this.filterInput.nativeElement.value;
+    this.dataSource.filter = this.filterInput.nativeElement.value;
   }
 }

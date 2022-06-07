@@ -1,0 +1,16 @@
+:host {
+  align-items: center;
+  color: var(--fg1);
+  display: flex;
+  flex-wrap: wrap;
+  font-size: 12px;
+  margin: 12px 0;
+
+  mat-slide-toggle {
+    margin: 0 8px 0 0;
+  }
+}
+
+.tooltip {
+  margin: 0 0 0 8px;
+}

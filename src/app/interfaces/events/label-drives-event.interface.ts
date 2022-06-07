@@ -1,4 +1,4 @@
-import { VDevMetadata } from 'app/core/classes/system-profiler';
+import { VDevMetadata } from 'app/pages/system/view-enclosure/classes/system-profiler';
 
 export interface LabelDrivesEvent {
   name: 'LabelDrives';

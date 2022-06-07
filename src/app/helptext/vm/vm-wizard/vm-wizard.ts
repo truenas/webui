@@ -2,39 +2,23 @@ import { Validators } from '@angular/forms';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { VmCpuMode } from 'app/enums/vm.enum';
 import globalHelptext from 'app/helptext/global-helptext';
-import { regexValidator } from 'app/pages/common/entity/entity-form/validators/regex-validation';
+import { regexValidator } from 'app/modules/entity/entity-form/validators/regex-validation';
 
 export default {
-  no_pools_dialog: {
-    title: T('No Pools'),
-    msg: T('Virtual Machines cannot be created or started without a pool to store them.'),
-    action: T('Create Pool'),
-  },
-
   formTitle: T('Create Virtual Machine'),
-
-  wizard_type_label: T('Select VM wizard type'),
-  wizard_type_placeholder: T('Virtual Machine (VM) Wizard type.'),
-  wizard_type_tooltip: T('Select the Virtual Machine (VM) Wizard type.'),
-  wizard_type_options: [
-    { label: T('Virtual Machine (VM)'), value: 'vm' },
-  ],
-  wizard_type_validation: [Validators.required],
-  wizard_type_value: 'vm',
 
   os_label: T('Operating System'),
   os_placeholder: T('Guest Operating System'),
   os_tooltip: T('Choose the VM operating system type.'),
   os_options: [
-    { label: T('Windows'), value: 'Windows' },
-    { label: T('Linux'), value: 'Linux' },
-    { label: T('FreeBSD'), value: 'FreeBSD' },
+    { label: 'Windows', value: 'Windows' },
+    { label: 'Linux', value: 'Linux' },
+    { label: 'FreeBSD', value: 'FreeBSD' },
   ],
   os_validation: [Validators.required],
 
   name_placeholder: T('Name'),
   name_tooltip: T('Enter an alphanumeric name for the virtual machine.'),
-  name_validation: [Validators.required],
 
   description_placeholder: T('Description'),
   description_tooltip: T('Description (optional).'),
@@ -66,7 +50,6 @@ export default {
   vcpus_label: T('CPU and Memory'),
   vcpus_warning: T('The product of vCPUs, cores and threads must not exceed {maxVCPUs} on this system.'),
   vcpus_placeholder: T('Virtual CPUs'),
-  vcpus_validation: [Validators.required, Validators.min(1), Validators.max(16)],
   vcpus_tooltip: T('Number of virtual CPUs to allocate to the virtual\
  machine. The VM operating system\
  might have operational or licensing\
@@ -88,7 +71,6 @@ export default {
  During system shutdown, the system initiates poweroff for the VM after the shutdown \
  timeout has expired.'),
     validation: [Validators.min(0)],
-
   },
 
   cpu_mode: {
@@ -172,14 +154,12 @@ export default {
   media_label: T('Installation Media'),
   iso_path_placeholder: T('Optional: Choose installation media image'),
   iso_path_tooltip: T('Browse to the operating system installer image file.'),
-  iso_path_validation: [Validators.required],
 
   upload_iso_checkbox_placeholder: T('Upload an installer image file'),
   upload_iso_checkbox_tooltip: T('Set to display image upload options.'),
 
   upload_iso_path_placeholder: T('ISO save location'),
   upload_iso_path_tooltip: T('Choose a location to store the installer image file.'),
-  upload_iso_path_validation: [],
 
   upload_iso_placeholder: T('ISO upload location'),
   upload_iso_tooltip: T('Browse to the installer image file and click <b>Upload</b>.'),
@@ -187,5 +167,4 @@ export default {
 
   vm_settings_title: T('General VM Settings'),
   vm_cpu_mem_title: T('CPUs and Memory'),
-
 };

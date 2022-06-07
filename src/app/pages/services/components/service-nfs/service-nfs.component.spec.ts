@@ -6,10 +6,10 @@ import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { NfsConfig } from 'app/interfaces/nfs-config.interface';
-import { IxCheckboxHarness } from 'app/pages/common/ix-forms/components/ix-checkbox/ix-checkbox.harness';
-import { IxFormsModule } from 'app/pages/common/ix-forms/ix-forms.module';
-import { FormErrorHandlerService } from 'app/pages/common/ix-forms/services/form-error-handler.service';
-import { IxFormHarness } from 'app/pages/common/ix-forms/testing/ix-form.harness';
+import { IxCheckboxHarness } from 'app/modules/ix-forms/components/ix-checkbox/ix-checkbox.harness';
+import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
+import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
+import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { ServiceNfsComponent } from 'app/pages/services/components/service-nfs/service-nfs.component';
 import { DialogService, WebSocketService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
@@ -27,6 +27,7 @@ describe('ServiceNfsComponent', () => {
     providers: [
       mockWebsocket([
         mockCall('nfs.config', {
+          allow_nonroot: false,
           bindip: ['192.168.1.117', '192.168.1.118'],
           v4: true,
           v4_v3owner: false,
@@ -34,6 +35,7 @@ describe('ServiceNfsComponent', () => {
           mountd_port: 123,
           rpcstatd_port: 124,
           rpclockd_port: 124,
+          servers: 3,
           udp: true,
           userd_manage_gids: false,
         } as NfsConfig),
@@ -64,6 +66,7 @@ describe('ServiceNfsComponent', () => {
     expect(ws.call).toHaveBeenCalledWith('nfs.config');
     expect(values).toEqual({
       'Bind IP Addresses': ['192.168.1.117', '192.168.1.118'],
+      'Number of threads': '3',
       'Enable NFSv4': true,
       'NFSv3 ownership model for NFSv4': false,
       'Require Kerberos for NFSv4': true,
@@ -71,6 +74,7 @@ describe('ServiceNfsComponent', () => {
       'rpc.lockd(8) bind port': '124',
       'rpc.statd(8) bind port': '124',
       'Serve UDP NFS clients': true,
+      'Allow non-root mount': false,
       'Support >16 groups': false,
     });
   });
@@ -79,8 +83,10 @@ describe('ServiceNfsComponent', () => {
     const form = await loader.getHarness(IxFormHarness);
     await form.fillForm({
       'Bind IP Addresses': ['192.168.1.119'],
+      'Number of threads': '4',
       'NFSv3 ownership model for NFSv4': false,
       'Serve UDP NFS clients': false,
+      'Allow non-root mount': true,
       'Support >16 groups': true,
       'mountd(8) bind port': 554,
       'rpc.statd(8) bind port': 562,
@@ -91,6 +97,7 @@ describe('ServiceNfsComponent', () => {
     await saveButton.click();
 
     expect(ws.call).toHaveBeenCalledWith('nfs.update', [{
+      allow_nonroot: true,
       bindip: ['192.168.1.119'],
       v4: true,
       v4_v3owner: false,
@@ -98,6 +105,7 @@ describe('ServiceNfsComponent', () => {
       mountd_port: 554,
       rpclockd_port: 510,
       rpcstatd_port: 562,
+      servers: 4,
       udp: false,
       userd_manage_gids: true,
     }]);

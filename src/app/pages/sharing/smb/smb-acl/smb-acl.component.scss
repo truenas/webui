@@ -1,0 +1,14 @@
+.entry-row {
+  column-gap: 10px;
+  display: flex;
+  padding-left: 10px;
+  padding-right: 10px;
+
+  > * {
+    flex: 1;
+  }
+}
+
+.form-actions {
+  margin: 8px 10px;
+}

@@ -3,19 +3,20 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { shared, helptextSharingNfs } from 'app/helptext/sharing';
 import { NfsShare } from 'app/interfaces/nfs-share.interface';
-import { EntityTableComponent } from 'app/pages/common/entity/entity-table/entity-table.component';
-import { EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
-import { EntityUtils } from 'app/pages/common/entity/utils';
-import { WebSocketService, ModalService } from 'app/services';
+import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-table.component';
+import { EntityTableConfig } from 'app/modules/entity/entity-table/entity-table.interface';
+import { EntityUtils } from 'app/modules/entity/utils';
+import { NfsFormComponent } from 'app/pages/sharing/nfs/nfs-form/nfs-form.component';
+import { WebSocketService } from 'app/services';
 import { DialogService } from 'app/services/dialog.service';
-import { NFSFormComponent } from '../nfs-form/nfs-form.component';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
 @Component({
   selector: 'app-nfs-list',
   template: '<entity-table [title]="title" [conf]="this"></entity-table>',
 })
-export class NFSListComponent implements EntityTableConfig<NfsShare> {
+export class NfsListComponent implements EntityTableConfig<NfsShare> {
   title = this.translate.instant('NFS');
   queryCall = 'sharing.nfs.query' as const;
   updateCall = 'sharing.nfs.update' as const;
@@ -25,10 +26,21 @@ export class NFSListComponent implements EntityTableConfig<NfsShare> {
   routeEdit: string[] = ['sharing', 'nfs', 'edit'];
   protected routeDelete: string[] = ['sharing', 'nfs', 'delete'];
   entityList: EntityTableComponent;
+  emptyTableConfigMessages = {
+    first_use: {
+      title: this.translate.instant('No NFS Shares have been configured yet'),
+      message: this.translate.instant('It seems you haven\'t setup any NFS Shares yet. Please click the button below to add an NFS Share.'),
+    },
+    no_page_data: {
+      title: this.translate.instant('No NFS Shares have been configured yet'),
+      message: this.translate.instant('The system could not retrieve any NFS Shares from the database. Please click the button below to add an NFS Share.'),
+    },
+    buttonText: this.translate.instant('Add NFS Share'),
+  };
 
   columns = [
     {
-      name: this.translate.instant(helptextSharingNfs.column_path), prop: 'paths', showLockedStatus: true, always_display: true,
+      name: this.translate.instant(helptextSharingNfs.column_path), prop: 'path', showLockedStatus: true, always_display: true,
     },
     { name: this.translate.instant(helptextSharingNfs.column_comment), prop: 'comment' },
     { name: this.translate.instant(helptextSharingNfs.column_enabled), prop: 'enabled', checkbox: true },
@@ -39,12 +51,12 @@ export class NFSListComponent implements EntityTableConfig<NfsShare> {
     sorting: { columns: this.columns },
     deleteMsg: {
       title: this.translate.instant('Unix (NFS) Share'),
-      key_props: ['paths'],
+      key_props: ['path'],
     },
   };
 
   constructor(
-    private modalService: ModalService,
+    private slideInService: IxSlideInService,
     protected ws: WebSocketService,
     private dialog: DialogService,
     private translate: TranslateService,
@@ -53,7 +65,7 @@ export class NFSListComponent implements EntityTableConfig<NfsShare> {
   afterInit(entityList: EntityTableComponent): void {
     this.entityList = entityList;
 
-    this.modalService.refreshTable$.pipe(untilDestroyed(this)).subscribe(() => {
+    this.slideInService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
       this.entityList.getData();
     });
   }
@@ -62,15 +74,17 @@ export class NFSListComponent implements EntityTableConfig<NfsShare> {
     message: shared.delete_share_message,
     isMessageComplete: true,
     button: this.translate.instant('Unshare'),
-    buildTitle: (share: NfsShare) => `${this.translate.instant('Unshare')} ${share.paths.join(', ')}`,
+    buildTitle: (share: NfsShare) => `${this.translate.instant('Unshare')} ${share.path}`,
   };
 
-  doAdd(id?: number): void {
-    this.modalService.openInSlideIn(NFSFormComponent, id);
+  doAdd(): void {
+    this.slideInService.open(NfsFormComponent);
   }
 
   doEdit(id: number): void {
-    this.doAdd(id);
+    const row = this.entityList.rows.find((row) => row.id === id);
+    const form = this.slideInService.open(NfsFormComponent);
+    form.setNfsShareForEdit(row);
   }
 
   onCheckboxChange(row: NfsShare): void {

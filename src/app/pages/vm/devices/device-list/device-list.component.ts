@@ -1,4 +1,5 @@
 import { Component, ChangeDetectorRef } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
@@ -6,16 +7,18 @@ import * as _ from 'lodash';
 import { filter } from 'rxjs/operators';
 import { QueryFilter } from 'app/interfaces/query-api.interface';
 import { VmDevice } from 'app/interfaces/vm-device.interface';
-import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
-import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
+import { AppLoaderService } from 'app/modules/app-loader/app-loader.service';
+import { DialogFormConfiguration } from 'app/modules/entity/entity-dialog/dialog-form-configuration.interface';
+import { EntityDialogComponent } from 'app/modules/entity/entity-dialog/entity-dialog.component';
 import {
   EntityTableComponent,
-} from 'app/pages/common/entity/entity-table/entity-table.component';
-import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
-import { EntityUtils } from 'app/pages/common/entity/utils';
+} from 'app/modules/entity/entity-table/entity-table.component';
+import { EntityTableAction, EntityTableConfig } from 'app/modules/entity/entity-table/entity-table.interface';
+import { DeviceFormComponent } from 'app/pages/vm/devices/device-form/device-form.component';
+import { DeviceDeleteModalComponent } from 'app/pages/vm/devices/device-list/device-delete-modal/device-delete-modal.component';
 import { WebSocketService } from 'app/services';
-import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { DialogService } from 'app/services/dialog.service';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
 @Component({
@@ -32,10 +35,8 @@ export class DeviceListComponent implements EntityTableConfig {
   protected pk: string;
   vm: string;
   private entityList: EntityTableComponent;
-  wsDelete = 'vm.device.delete' as const;
   queryCall = 'vm.device.query' as const;
   queryCallOption: [[Partial<QueryFilter<VmDevice>>]] = [[['vm', '=']]];
-  protected loaderOpen = false;
   columns = [
     { name: this.translate.instant('Device ID'), prop: 'id', always_display: true },
     { name: this.translate.instant('Device'), prop: 'dtype' },
@@ -63,8 +64,10 @@ export class DeviceListComponent implements EntityTableConfig {
     protected ws: WebSocketService,
     protected loader: AppLoaderService,
     public dialogService: DialogService,
+    private matDialog: MatDialog,
     private cdRef: ChangeDetectorRef,
     private translate: TranslateService,
+    private slideIn: IxSlideInService,
   ) {}
 
   isActionVisible(actionId: string, row: VmDevice): boolean {
@@ -79,7 +82,9 @@ export class DeviceListComponent implements EntityTableConfig {
       icon: 'edit',
       label: this.translate.instant('Edit'),
       onClick: (device: VmDevice) => {
-        this.router.navigate(['/', 'vm', this.pk, 'devices', this.vm, 'edit', String(device.id), device.dtype]);
+        const slideIn = this.slideIn.open(DeviceFormComponent);
+        slideIn.setVirtualMachineId(Number(this.pk));
+        slideIn.setDeviceForEdit(device);
       },
     });
     actions.push({
@@ -141,8 +146,7 @@ export class DeviceListComponent implements EntityTableConfig {
         this.dialogService.info(
           this.translate.instant('Change order for <b>{vmDevice}</b>', { vmDevice: `${row.dtype} ${row.id}` }),
           details,
-          '500px',
-          'info',
+          true,
         );
       },
     });
@@ -150,25 +154,20 @@ export class DeviceListComponent implements EntityTableConfig {
   }
 
   deviceDelete(row: VmDevice): void {
-    this.dialogService.confirm({
-      title: this.translate.instant('Delete'),
-      message: this.translate.instant('Delete <b>{vmDevice}</b>', { vmDevice: `${row.dtype} ${row.id}` }),
-      hideCheckBox: true,
-      buttonMsg: this.translate.instant('Delete Device'),
-    }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
-      this.loader.open();
-      this.loaderOpen = true;
-      this.ws.call(this.wsDelete, [row.id]).pipe(untilDestroyed(this)).subscribe(
-        () => {
-          this.loader.close();
-          this.entityList.getData();
+    this.matDialog
+      .open(
+        DeviceDeleteModalComponent,
+        {
+          disableClose: false,
+          width: '400px',
+          data: { row },
         },
-        (err) => {
-          this.loader.close();
-          new EntityUtils().handleWsError(this, err, this.dialogService);
-        },
+      )
+      .afterClosed()
+      .pipe(filter(Boolean), untilDestroyed(this))
+      .subscribe(
+        () => this.entityList.getData(),
       );
-    });
   }
 
   preInit(entityList: EntityTableComponent): void {
@@ -176,7 +175,6 @@ export class DeviceListComponent implements EntityTableConfig {
     this.aroute.params.pipe(untilDestroyed(this)).subscribe((params) => {
       this.pk = params['pk'];
       this.vm = params['name'];
-      this.routeAdd = ['vm', this.pk, 'devices', this.vm, 'add'];
       this.routeEdit = ['vm', this.pk, 'devices', this.vm, 'edit'];
       this.routeDelete = ['vm', this.pk, 'devices', this.vm, 'delete'];
       // this is filter by vm's id to show devices belonging to that VM
@@ -185,5 +183,14 @@ export class DeviceListComponent implements EntityTableConfig {
       this.cdRef.detectChanges();
       this.queryCallOption[0][0].push(parseInt(this.pk, 10));
     });
+
+    this.slideIn.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
+      this.entityList.getData();
+    });
+  }
+
+  doAdd(): void {
+    const slideIn = this.slideIn.open(DeviceFormComponent);
+    slideIn.setVirtualMachineId(Number(this.pk));
   }
 }

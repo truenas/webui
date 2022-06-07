@@ -1,0 +1,41 @@
+:host {
+  display: block;
+  position: relative;
+}
+
+mat-dialog-content.entity-job-dialog.mat-dialog-content {
+  overflow: auto !important;
+}
+
+.mat-dialog-close {
+  position: absolute;
+  right: -24px;
+  top: -24px;
+}
+
+.entity-job-progress {
+  margin: 3px 0;
+}
+
+.entity-job-description {
+  opacity: 0.75;
+}
+
+.entity-job-time {
+  opacity: 0.5;
+}
+
+.logs-container {
+  margin-bottom: 20px;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.logs {
+  background: rgba(0, 0, 0, 0.096);
+  color: white;
+  overflow-x: auto;
+  padding: 5px;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}

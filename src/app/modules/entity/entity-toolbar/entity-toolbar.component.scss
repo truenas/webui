@@ -1,0 +1,14 @@
+.control-group {
+  color: var(--fg2);
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.control-group > * {
+  display: inline-block;
+  max-height: 36px;
+
+  &:not(:last-child) {
+    margin-right: 8px;
+  }
+}

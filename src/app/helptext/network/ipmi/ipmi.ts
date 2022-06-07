@@ -10,7 +10,7 @@ export default {
 
   conf_password_placeholder: T('Confirm Password'),
 
-  dhcp_placeholder: T('DHCP'),
+  dhcp_placeholder: 'DHCP',
   dhcp_tooltip: T('Use DHCP. Unset to manually configure a static IPv4 connection.'),
 
   ipaddress_placeholder: T('IPv4 Address'),
@@ -32,15 +32,4 @@ export default {
   ipmi_password_reset: T('IPMI Password Reset'),
 
   ipmi_remote_controller: T('Remote Controller'),
-
-  ipmiOptions: [
-    { label: T('Indefinitely'), value: 'force' },
-    { label: T('15 seconds'), value: 15 },
-    { label: T('30 seconds'), value: 30 },
-    { label: T('1 minute'), value: 60 },
-    { label: T('2 minute'), value: 120 },
-    { label: T('3 minute'), value: 180 },
-    { label: T('4 minute'), value: 240 },
-    { label: T('Turn OFF'), value: 0 },
-  ],
 };

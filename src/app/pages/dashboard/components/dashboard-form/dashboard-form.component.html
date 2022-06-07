@@ -1,36 +1,36 @@
-<ix-modal-header [title]="title"></ix-modal-header>
+<ix-modal-header [title]="'Dashboard Configure' | translate" [loading]="isFormLoading"></ix-modal-header>
 <mat-card>
   <mat-card-content>
-    <form [formGroup]="formGroup" class="ix-form-container" (submit)="onSubmit()">
+    <form [formGroup]="form" class="ix-form-container" (submit)="onSubmit()">
       <ix-fieldset [title]="'System Widgets' | translate">
-        <ix-checkbox
+        <ix-slide-toggle
           *ngFor="let widget of systemWidgets"
           [formControlName]="extractName(widget)"
           [label]="extractName(widget) | translate"
-          ></ix-checkbox>
+          ></ix-slide-toggle>
       </ix-fieldset>
 
       <ix-fieldset [title]="'Storage Widgets' | translate">
-        <ix-checkbox
+        <ix-slide-toggle
           *ngFor="let widget of storageWidgets"
           [formControlName]="extractName(widget)"
           [label]="extractName(widget) | translate"
-          ></ix-checkbox>
+          ></ix-slide-toggle>
       </ix-fieldset>
 
       <ix-fieldset [title]="'Network Widgets' | translate">
-        <ix-checkbox
+        <ix-slide-toggle
           *ngFor="let widget of networkWidgets"
           [formControlName]="extractName(widget)"
           [label]="extractName(widget) | translate"
-          ></ix-checkbox>
+          ></ix-slide-toggle>
       </ix-fieldset>
 
       <div class="form-actions">
         <button
           mat-button
           type="submit"
-          [disabled]="formGroup.invalid"
+          [disabled]="form.invalid || isFormLoading"
           color="primary"
           >{{ 'Save' | translate }}</button>
       </div>

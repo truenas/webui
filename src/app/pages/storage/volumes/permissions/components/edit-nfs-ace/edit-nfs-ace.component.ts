@@ -1,14 +1,19 @@
 import {
-  ChangeDetectionStrategy, Component, Input, OnChanges,
+  ChangeDetectionStrategy, Component, Input, OnChanges, OnInit,
 } from '@angular/core';
-import { FormGroup } from '@angular/forms';
+import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
+import { of } from 'rxjs';
 import {
-  NfsAclTag,
-  NfsAdvancedFlag,
-  NfsAdvancedPermission,
+  NfsAclTag, nfsAclTagLabels, NfsAclType,
+  nfsAclTypeLabels, NfsAdvancedFlag, nfsAdvancedFlagLabels,
+  NfsAdvancedPermission, nfsAdvancedPermissionLabels,
+  NfsBasicFlag, nfsBasicFlagLabels, nfsBasicPermissionLabels,
 } from 'app/enums/nfs-acl.enum';
+import { mapToOptions } from 'app/helpers/options.helper';
+import helptext from 'app/helptext/storage/volumes/datasets/dataset-acl';
 import {
   AdvancedNfsFlags,
   AdvancedNfsPermissions,
@@ -18,80 +23,155 @@ import {
   BasicNfsPermissions,
   NfsAclItem,
 } from 'app/interfaces/acl.interface';
-import { FormConfiguration } from 'app/interfaces/entity-form.interface';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
-import { FieldConfig, FormComboboxConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
-import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
-import { FieldRelationService } from 'app/pages/common/entity/entity-form/services/field-relation.service';
-import { NULL_VALUE } from 'app/pages/common/entity/utils';
-import { getEditNfsAceFieldSet } from 'app/pages/storage/volumes/permissions/components/edit-nfs-ace/edit-nfs-ace-field-set';
+import { GroupComboboxProvider } from 'app/modules/ix-forms/classes/group-combobox-provider';
+import { UserComboboxProvider } from 'app/modules/ix-forms/classes/user-combobox-provider';
 import {
-  EditNfsAceFormValues,
   NfsFormFlagsType,
+  nfsFormFlagsTypeLabels,
   NfsFormPermsType,
-} from 'app/pages/storage/volumes/permissions/components/edit-nfs-ace/edit-nfs-ace-form-values.interface';
+  nfsFormPermsTypeLabels,
+} from 'app/pages/storage/volumes/permissions/components/edit-nfs-ace/edit-nfs-ace-form.types';
 import { DatasetAclEditorStore } from 'app/pages/storage/volumes/permissions/stores/dataset-acl-editor.store';
 import { newNfsAce } from 'app/pages/storage/volumes/permissions/utils/new-ace.utils';
 import { UserService } from 'app/services';
 
 @UntilDestroy()
 @Component({
-  selector: 'app-edit-nfs-ace',
-  template: '<entity-form [conf]="this"></entity-form>',
+  selector: 'ix-edit-nfs-ace',
+  templateUrl: './edit-nfs-ace.component.html',
+  styleUrls: ['./edit-nfs-ace.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class EditNfsAceComponent implements FormConfiguration, OnChanges {
+export class EditNfsAceComponent implements OnChanges, OnInit {
   @Input() ace: NfsAclItem;
 
-  formGroup: FormGroup;
-  fieldSets: FieldSet[] = [];
-  fieldConfig: FieldConfig[] = [];
-  hideSaveBtn = true;
+  form = this.formBuilder.group({
+    tag: [NfsAclTag.User as NfsAclTag],
+    user: [null as string],
+    group: [null as string],
+    type: [NfsAclType.Allow],
+    permissionType: [NfsFormPermsType.Basic],
+    basicPermission: [newNfsAce.perms.BASIC],
+    advancedPermissions: [[] as NfsAdvancedPermission[]],
+    flagsType: [NfsFormFlagsType.Basic],
+    basicFlag: [NfsBasicFlag.Inherit],
+    advancedFlags: [[] as NfsAdvancedFlag[]],
+  });
+
+  readonly tags$ = of(mapToOptions(nfsAclTagLabels, this.translate));
+  readonly aclTypes$ = of(mapToOptions(nfsAclTypeLabels, this.translate));
+  readonly permissionTypes$ = of(mapToOptions(nfsFormPermsTypeLabels, this.translate));
+  readonly basicPermissions$ = of(mapToOptions(nfsBasicPermissionLabels, this.translate));
+  readonly advancedPermissions$ = of(mapToOptions(nfsAdvancedPermissionLabels, this.translate));
+  readonly flagTypes$ = of(mapToOptions(nfsFormFlagsTypeLabels, this.translate));
+  readonly basicFlags$ = of(mapToOptions(nfsBasicFlagLabels, this.translate));
+  readonly advancedFlags$ = of(mapToOptions(nfsAdvancedFlagLabels, this.translate));
+
+  readonly tooltips = {
+    tag: helptext.dataset_acl_tag_tooltip,
+    user: helptext.dataset_acl_user_tooltip,
+    group: helptext.dataset_acl_group_tooltip,
+    type: helptext.dataset_acl_type_tooltip,
+    permissionType: helptext.dataset_acl_perms_type_tooltip,
+    basicPermission: helptext.dataset_acl_perms_tooltip,
+    advancedPermissions: helptext.dataset_acl_perms_tooltip,
+    flagsType: helptext.dataset_acl_flags_type_tooltip,
+    basicFlag: helptext.dataset_acl_flags_tooltip,
+    advancedFlags: helptext.dataset_acl_flags_tooltip,
+  };
+
+  readonly userProvider = new UserComboboxProvider(this.userService);
+  readonly groupProvider = new GroupComboboxProvider(this.userService);
 
   constructor(
-    private userService: UserService,
+    private formBuilder: FormBuilder,
     private store: DatasetAclEditorStore,
-    private relationService: FieldRelationService,
-  ) {
-    this.fieldSets = (getEditNfsAceFieldSet.bind(this))(userService);
+    private userService: UserService,
+    private translate: TranslateService,
+  ) {}
+
+  get isUserTag(): boolean {
+    return this.form.value.tag === NfsAclTag.User;
   }
 
-  ngOnChanges(): void {
-    if (this.formGroup) {
-      this.updateFormValues();
-    }
+  get isGroupTag(): boolean {
+    return this.form.value.tag === NfsAclTag.UserGroup;
   }
 
-  preInit(): void {
-    this.userService.userQueryDsCache().pipe(untilDestroyed(this)).subscribe((users) => {
-      const userOptions = users.map((user) => ({ label: user.username, value: user.username }));
-
-      const userControl = this.fieldConfig.find((config) => config.name === 'user') as FormComboboxConfig;
-      userControl.options = userOptions;
-    });
-
-    this.userService.groupQueryDsCache().pipe(untilDestroyed(this)).subscribe((groups) => {
-      const groupOptions = groups.map((group) => ({ label: group.group, value: group.group }));
-
-      const groupControl = this.fieldConfig.find((config) => config.name === 'group') as FormComboboxConfig;
-      groupControl.options = groupOptions;
-    });
+  get arePermissionsBasic(): boolean {
+    return this.form.value.permissionType === NfsFormPermsType.Basic;
   }
 
-  afterInit(entityForm: EntityFormComponent): void {
-    this.formGroup = entityForm.formGroup;
-    this.formGroup.valueChanges
-      .pipe(untilDestroyed(this))
-      .subscribe(() => this.onAceUpdated());
-    this.formGroup.statusChanges
-      .pipe(untilDestroyed(this))
-      .subscribe(() => this.onFormStatusUpdated());
+  get areFlagsBasic(): boolean {
+    return this.form.value.flagsType === NfsFormFlagsType.Basic;
+  }
 
+  ngOnInit(): void {
+    this.setFormListeners();
     this.updateFormValues();
   }
 
-  onFormStatusUpdated(): void {
-    this.store.updateSelectedAceValidation(this.formGroup.valid);
+  ngOnChanges(): void {
+    this.updateFormValues();
+  }
+
+  private setFormListeners(): void {
+    this.form.valueChanges
+      .pipe(untilDestroyed(this))
+      .subscribe(() => this.onAceUpdated());
+    this.form.statusChanges
+      .pipe(untilDestroyed(this))
+      .subscribe(() => this.onFormStatusUpdated());
+  }
+
+  private onFormStatusUpdated(): void {
+    this.store.updateSelectedAceValidation(this.form.valid);
+  }
+
+  private onAceUpdated(): void {
+    const updatedAce = this.formValuesToAce();
+
+    this.store.updateSelectedAce(updatedAce);
+  }
+
+  private formValuesToAce(): NfsAclItem {
+    const formValues = this.form.value;
+
+    const ace = {
+      tag: formValues.tag,
+      type: formValues.type,
+    } as NfsAclItem;
+
+    switch (formValues.tag) {
+      case NfsAclTag.User:
+        ace.who = formValues.user;
+        break;
+      case NfsAclTag.UserGroup:
+        ace.who = formValues.group;
+        break;
+    }
+
+    if (formValues.permissionType === NfsFormPermsType.Basic) {
+      if (!formValues.basicPermission) {
+        ace.perms = { BASIC: newNfsAce.perms.BASIC };
+      } else {
+        ace.perms = { BASIC: formValues.basicPermission } as BasicNfsPermissions;
+      }
+    } else if (Array.isArray(formValues.advancedPermissions)) {
+      ace.perms = _.fromPairs(formValues.advancedPermissions.map((key) => [key, true])) as AdvancedNfsPermissions;
+    }
+
+    if (formValues.flagsType === NfsFormFlagsType.Basic) {
+      if (!formValues.basicFlag) {
+        ace.flags = { BASIC: newNfsAce.flags.BASIC };
+      } else {
+        ace.flags = { BASIC: formValues.basicFlag } as BasicNfsFlags;
+      }
+    } else if (Array.isArray(formValues.advancedFlags)) {
+      ace.flags = _.fromPairs(formValues.advancedFlags.map((key) => [key, true])) as AdvancedNfsFlags;
+    }
+
+    return ace;
   }
 
   private updateFormValues(): void {
@@ -100,7 +180,7 @@ export class EditNfsAceComponent implements FormConfiguration, OnChanges {
       type: this.ace.type,
       user: this.ace.tag === NfsAclTag.User ? this.ace.who : '',
       group: this.ace.tag === NfsAclTag.UserGroup ? this.ace.who : '',
-    } as EditNfsAceFormValues;
+    } as EditNfsAceComponent['form']['value'];
 
     if (areNfsPermissionsBasic(this.ace.perms)) {
       formValues.permissionType = NfsFormPermsType.Basic;
@@ -124,66 +204,11 @@ export class EditNfsAceComponent implements FormConfiguration, OnChanges {
         .map(([flag]) => flag as NfsAdvancedFlag);
     }
 
-    this.formGroup.reset(formValues, { emitEvent: false });
-
-    // TODO: This is a workaround for form components relying on valueChanges instead of control-value-accessor.
-    this.formGroup.get('advancedPermissions').setValue(formValues.advancedPermissions, { onlySelf: true });
-    this.formGroup.get('advancedFlags').setValue(formValues.advancedFlags, { onlySelf: true });
-
-    this.fieldConfig.forEach((config) => {
-      this.relationService.refreshRelations(config, this.formGroup, { emitEvent: false });
-    });
-
-    this.formGroup.markAllAsTouched();
+    this.form.reset(formValues, { emitEvent: false });
+    this.form.markAllAsTouched();
 
     setTimeout(() => {
       this.onFormStatusUpdated();
     });
-  }
-
-  private onAceUpdated(): void {
-    const updatedAce = this.formValuesToAce();
-
-    this.store.updateSelectedAce(updatedAce);
-  }
-
-  private formValuesToAce(): NfsAclItem {
-    const formValues = this.formGroup.value as EditNfsAceFormValues;
-
-    const ace = {
-      tag: formValues.tag,
-      type: formValues.type,
-    } as NfsAclItem;
-
-    switch (formValues.tag) {
-      case NfsAclTag.User:
-        ace.who = formValues.user;
-        break;
-      case NfsAclTag.UserGroup:
-        ace.who = formValues.group;
-        break;
-    }
-
-    if (formValues.permissionType === NfsFormPermsType.Basic) {
-      if ((formValues.basicPermission as unknown) === NULL_VALUE) {
-        ace.perms = { BASIC: newNfsAce.perms.BASIC };
-      } else {
-        ace.perms = { BASIC: formValues.basicPermission } as BasicNfsPermissions;
-      }
-    } else if (Array.isArray(formValues.advancedPermissions)) {
-      ace.perms = _.fromPairs(formValues.advancedPermissions.map((key) => [key, true])) as AdvancedNfsPermissions;
-    }
-
-    if (formValues.flagsType === NfsFormFlagsType.Basic) {
-      if ((formValues.basicFlag as unknown) === NULL_VALUE) {
-        ace.flags = { BASIC: newNfsAce.flags.BASIC };
-      } else {
-        ace.flags = { BASIC: formValues.basicFlag } as BasicNfsFlags;
-      }
-    } else if (Array.isArray(formValues.advancedFlags)) {
-      ace.flags = _.fromPairs(formValues.advancedFlags.map((key) => [key, true])) as AdvancedNfsFlags;
-    }
-
-    return ace;
   }
 }

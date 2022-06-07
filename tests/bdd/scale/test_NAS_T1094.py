@@ -4,6 +4,7 @@
 import time
 from function import (
     wait_on_element,
+    attribute_value_exist,
     is_element_present,
     wait_on_element_disappear,
     ssh_cmd,
@@ -55,30 +56,37 @@ def you_should_be_on_the_dashboard_click_on_the_accounts_on_the_side_menu_click_
 def the_users_page_should_open_click_the_greaterthansign_the_user_field_should_expand_down_then_click_the_edit_button(driver):
     """the Users page should open, click the Greater-Than-Sign, the User Field should expand down, then click the Edit button."""
     assert wait_on_element(driver, 7, '//div[contains(.,"Users")]')
-    assert wait_on_element(driver, 10, '//tr[@ix-auto="expander__ericbsd"]/td', 'clickable')
-    driver.find_element_by_xpath('//tr[@ix-auto="expander__ericbsd"]/td').click()
-    assert wait_on_element(driver, 10, '//button[@ix-auto="button__EDIT_ericbsd"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__EDIT_ericbsd"]').click()
+    assert wait_on_element(driver, 10, '//tr[contains(.,"ericbsd")]//mat-icon', 'clickable')
+    driver.find_element_by_xpath('//tr[contains(.,"ericbsd")]//mat-icon').click()
+    assert wait_on_element(driver, 10, '(//tr[contains(.,"ericbsd")]/following-sibling::user-details-row)[1]//button[contains(.,"Edit")]', 'clickable')
+    driver.find_element_by_xpath('(//tr[contains(.,"ericbsd")]/following-sibling::user-details-row)[1]//button[contains(.,"Edit")]').click()
 
 
 @then('the User Edit Page should open, change "Disable Password" to No and click save')
 def the_user_edit_page_should_open_change_disable_password_to_no_and_click_save(driver):
     """the User Edit Page should open, change "Disable Password" to No and click save."""
-    assert wait_on_element(driver, 10, '//h3[contains(.,"Edit User")]')
     assert wait_on_element_disappear(driver, 10, '//h6[contains(.,"Please wait")]')
-    assert wait_on_element(driver, 3, '//mat-select[@ix-auto="select__Disable Password"]', 'clickable')
-    driver.find_element_by_xpath('//mat-select[@ix-auto="select__Disable Password"]').click()
-    assert wait_on_element(driver, 3, '//mat-option[@ix-auto="option__Disable Password_No"]', 'clickable')
-    driver.find_element_by_xpath('//mat-option[@ix-auto="option__Disable Password_No"]').click()
-    wait_on_element(driver, 10, '//button[@ix-auto="button__SAVE"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
-
+    assert wait_on_element(driver, 10, '//h3[contains(.,"Edit User")]')
+    assert wait_on_element(driver, 3, '//ix-slide-toggle[@formcontrolname="password_disabled"]//mat-slide-toggle/label', 'clickable')
+    driver.find_element_by_xpath('//ix-slide-toggle[@formcontrolname="password_disabled"]//mat-slide-toggle/label').click()
+    value_exist = attribute_value_exist(driver, '//ix-slide-toggle[@formcontrolname="password_disabled"]//mat-slide-toggle', 'class', 'mat-checked')
+    if value_exist:
+        driver.find_element_by_xpath('//ix-slide-toggle[@formcontrolname="password_disabled"]//mat-slide-toggle/label').click()
+    element = driver.find_element_by_xpath('//button[span[contains(.,"Save")]]')
+    driver.execute_script("arguments[0].scrollIntoView();", element)
+    assert wait_on_element(driver, 10, '//button[span[contains(.,"Save")]]', 'clickable')
+    driver.find_element_by_xpath('//button[span[contains(.,"Save")]]').click()
+    time.sleep(1)
 
 @then('change should be saved, open the user page and verify the user Disable Password is false')
 def change_should_be_saved_open_the_user_page_and_verify_the_user_disable_password_is_false(driver):
     """change should be saved, open the user page and verify the user Disable Password is false."""
     assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
-    assert wait_on_element(driver, 5, '//div[contains(.,"Users")]')
+    assert wait_on_element(driver, 5, '//h1[contains(.,"Users")]')
+    assert wait_on_element(driver, 10, '//tr[contains(.,"ericbsd")]//mat-icon', 'clickable')
+    driver.find_element_by_xpath('//tr[contains(.,"ericbsd")]//mat-icon').click()
+    element_text = driver.find_element_by_xpath('(//tr[contains(.,"ericbsd")]/following-sibling::user-details-row)[1]//dt[contains(.,"Password Disabled:")]/../dd').text
+    assert element_text == 'false'
 
 
 @then('try login with ssh, the user should be able to login')

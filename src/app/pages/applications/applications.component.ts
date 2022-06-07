@@ -2,21 +2,19 @@ import {
   Component, OnInit, ViewChild, ViewEncapsulation, AfterViewInit,
 } from '@angular/core';
 import { MatTabChangeEvent } from '@angular/material/tabs';
-import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Subject } from 'rxjs';
-import { CommonUtils } from 'app/core/classes/common-utils';
-import { CoreService } from 'app/core/services/core-service/core.service';
+import { capitalizeFirstLetter } from 'app/helpers/text.helpers';
 import helptext from 'app/helptext/apps/apps';
 import { ApplicationUserEvent, ApplicationUserEventName } from 'app/interfaces/application.interface';
 import { CoreEvent } from 'app/interfaces/events';
 import { Option } from 'app/interfaces/option.interface';
+import { EntityToolbarComponent } from 'app/modules/entity/entity-toolbar/entity-toolbar.component';
+import { ToolbarConfig } from 'app/modules/entity/entity-toolbar/models/control-config.interface';
 import { ApplicationTab } from 'app/pages/applications/application-tab.enum';
 import { ApplicationToolbarControl } from 'app/pages/applications/application-toolbar-control.enum';
-import { EntityToolbarComponent } from 'app/pages/common/entity/entity-toolbar/entity-toolbar.component';
-import { ToolbarConfig } from 'app/pages/common/entity/entity-toolbar/models/control-config.interface';
+import { CoreService } from 'app/services/core-service/core.service';
 import { ModalService } from 'app/services/modal.service';
-import { ApplicationsService } from './applications.service';
 import { CatalogComponent } from './catalog/catalog.component';
 import { ChartReleasesComponent } from './chart-releases/chart-releases.component';
 import { DockerImagesComponent } from './docker-images/docker-images.component';
@@ -44,16 +42,11 @@ export class ApplicationsComponent implements OnInit, AfterViewInit {
   toolbarConfig: ToolbarConfig;
   catalogOptions: Option[] = [];
   selectedCatalogOptions: Option[] = [];
-  protected utils: CommonUtils;
 
   constructor(
-    private appService: ApplicationsService,
     private core: CoreService,
-    private aroute: ActivatedRoute,
     private modalService: ModalService,
-  ) {
-    this.utils = new CommonUtils();
-  }
+  ) {}
 
   ngOnInit(): void {
     this.setupToolbar();
@@ -70,24 +63,14 @@ export class ApplicationsComponent implements OnInit, AfterViewInit {
   setupToolbar(): void {
     this.settingsEvent$ = new Subject();
     this.settingsEvent$.pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
-      if (evt.data.event_control == ApplicationToolbarControl.Filter) {
+      if (evt.data.event_control === ApplicationToolbarControl.Filter) {
         this.filterString = evt.data.filter;
       }
 
-      switch (this.selectedTab) {
-        case ApplicationTab.InstalledApps:
-          this.chartTab.onToolbarAction(evt);
-          break;
-        case ApplicationTab.AvailableApps:
-          this.catalogTab.onToolbarAction(evt);
-          break;
-        case ApplicationTab.Catalogs:
-          this.manageCatalogTab.onToolbarAction(evt);
-          break;
-        case ApplicationTab.DockerImages:
-          this.dockerImagesTab.onToolbarAction(evt);
-          break;
-      }
+      this.chartTab.onToolbarAction(evt);
+      this.catalogTab.onToolbarAction(evt);
+      this.manageCatalogTab.onToolbarAction(evt);
+      this.dockerImagesTab.onToolbarAction(evt);
     });
 
     const controls = [
@@ -131,7 +114,7 @@ export class ApplicationsComponent implements OnInit, AfterViewInit {
           bulk.options[0].label = helptext.bulkActions.selectAll;
         }
         bulk.options.forEach((option) => {
-          if (option.value != 'select_all') {
+          if (option.value !== 'select_all') {
             option.disabled = !this.isSelectedOneMore;
           }
         });
@@ -198,14 +181,14 @@ export class ApplicationsComponent implements OnInit, AfterViewInit {
     };
 
     if (this.isSelectedPool) {
-      if (setting.options.length == 2) {
+      if (setting.options.length === 2) {
         const unsetOption = {
           label: helptext.unset_pool,
           value: 'unset_pool',
         };
         setting.options.push(unsetOption);
       }
-    } else if (setting.options.length == 3) {
+    } else if (setting.options.length === 3) {
       setting.options = setting.options.filter((ctl) => ctl.label !== helptext.unset_pool);
     }
     this.toolbarConfig.controls.push(setting);
@@ -223,16 +206,16 @@ export class ApplicationsComponent implements OnInit, AfterViewInit {
   }
 
   updateTab(evt: ApplicationUserEvent): void {
-    if (evt.name == ApplicationUserEventName.SwitchTab) {
+    if (evt.name === ApplicationUserEventName.SwitchTab) {
       this.selectedTab = evt.value as ApplicationTab;
-    } else if (evt.name == ApplicationUserEventName.UpdateToolbar) {
+    } else if (evt.name === ApplicationUserEventName.UpdateToolbar) {
       this.isSelectedOneMore = evt.value as boolean;
       this.isSelectedAll = evt.isSelectedAll;
       this.updateToolbar();
-    } else if (evt.name == ApplicationUserEventName.CatalogToolbarChanged) {
+    } else if (evt.name === ApplicationUserEventName.CatalogToolbarChanged) {
       this.isSelectedPool = evt.value as boolean;
       this.catalogOptions = evt.catalogNames.map((catalogName: string) => ({
-        label: this.utils.capitalizeFirstLetter(catalogName),
+        label: capitalizeFirstLetter(catalogName),
         value: catalogName,
       }));
       this.selectedCatalogOptions = this.catalogOptions;
@@ -249,7 +232,7 @@ export class ApplicationsComponent implements OnInit, AfterViewInit {
       this.catalogTab.loadCatalogs();
     } else if (this.selectedTab === ApplicationTab.Catalogs) {
       this.manageCatalogTab.refresh();
-    } else if (this.selectedTab == ApplicationTab.DockerImages) {
+    } else if (this.selectedTab === ApplicationTab.DockerImages) {
       this.dockerImagesTab.refresh();
     }
   }

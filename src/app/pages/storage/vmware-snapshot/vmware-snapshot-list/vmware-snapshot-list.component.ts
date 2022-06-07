@@ -1,10 +1,13 @@
 import { Component } from '@angular/core';
-import { Router } from '@angular/router';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { VmwareSnapshot } from 'app/interfaces/vmware.interface';
-import { EntityTableComponent } from 'app/pages/common/entity/entity-table/entity-table.component';
-import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
+import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-table.component';
+import { EntityTableAction, EntityTableConfig } from 'app/modules/entity/entity-table/entity-table.interface';
+import { VmwareSnapshotFormComponent } from 'app/pages/storage/vmware-snapshot/vmware-snapshot-form/vmware-snapshot-form.component';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
+@UntilDestroy()
 @Component({
   selector: 'vmware-snapshot-list',
   template: '<entity-table [title]="title" [conf]="this"></entity-table>',
@@ -12,7 +15,6 @@ import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/en
 export class VmwareSnapshotListComponent implements EntityTableConfig {
   title = 'VMware Snapshots';
   queryCall = 'vmware.query' as const;
-  routeAdd: string[] = ['storage', 'vmware-snapshots', 'add'];
   routeAddTooltip = this.translate.instant('Add VMware Snapshot');
   protected entityList: EntityTableComponent;
   wsDelete = 'vmware.delete' as const;
@@ -34,15 +36,26 @@ export class VmwareSnapshotListComponent implements EntityTableConfig {
   };
 
   constructor(
-    private router: Router,
     protected translate: TranslateService,
+    private slideInService: IxSlideInService,
   ) {}
 
+  afterInit(entityList: EntityTableComponent): void {
+    this.entityList = entityList;
+    this.slideInService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
+      this.entityList.getData();
+    });
+  }
+
   isActionVisible(actionId: string): boolean {
-    if (actionId == 'edit' || actionId == 'add') {
+    if (actionId === 'edit' || actionId === 'add') {
       return false;
     }
     return true;
+  }
+
+  doAdd(): void {
+    this.slideInService.open(VmwareSnapshotFormComponent);
   }
 
   getActions(row: VmwareSnapshot): EntityTableAction[] {
@@ -62,13 +75,10 @@ export class VmwareSnapshotListComponent implements EntityTableConfig {
         name: 'edit',
         label: this.translate.instant('Edit'),
         onClick: (row: VmwareSnapshot) => {
-          this.router.navigate(['/', 'storage', 'vmware-snapshots', 'edit', row.id]);
+          const form = this.slideInService.open(VmwareSnapshotFormComponent);
+          form.setSnapshotForEdit(row);
         },
       },
     ] as EntityTableAction[];
-  }
-
-  afterInit(entityList: EntityTableComponent): void {
-    this.entityList = entityList;
   }
 }

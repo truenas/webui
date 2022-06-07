@@ -5,11 +5,10 @@ import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+import _ from 'lodash';
 import {
   chartsTrain, ixChartApp, officialCatalog, appImagePlaceholder,
 } from 'app/constants/catalog.constants';
-import { CommonUtils } from 'app/core/classes/common-utils';
-import { CoreService } from 'app/core/services/core-service/core.service';
 import { JobState } from 'app/enums/job-state.enum';
 import helptext from 'app/helptext/apps/apps';
 import { ApplicationUserEventName } from 'app/interfaces/application.interface';
@@ -18,21 +17,21 @@ import { CoreEvent } from 'app/interfaces/events';
 import { Job } from 'app/interfaces/job.interface';
 import { KubernetesConfig } from 'app/interfaces/kubernetes-config.interface';
 import { Option } from 'app/interfaces/option.interface';
+import { AppLoaderService } from 'app/modules/app-loader/app-loader.service';
+import { DialogFormConfiguration } from 'app/modules/entity/entity-dialog/dialog-form-configuration.interface';
+import { EntityDialogComponent } from 'app/modules/entity/entity-dialog/entity-dialog.component';
+import { EmptyConfig, EmptyType } from 'app/modules/entity/entity-empty/entity-empty.component';
+import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
+import { EntityUtils } from 'app/modules/entity/utils';
 import { ApplicationTab } from 'app/pages/applications/application-tab.enum';
 import { ApplicationToolbarControl } from 'app/pages/applications/application-toolbar-control.enum';
+import { ApplicationsService } from 'app/pages/applications/applications.service';
+import { CatalogSummaryDialogComponent } from 'app/pages/applications/dialogs/catalog-summary/catalog-summary-dialog.component';
+import { ChartWizardComponent } from 'app/pages/applications/forms/chart-wizard.component';
 import { KubernetesSettingsComponent } from 'app/pages/applications/kubernetes-settings/kubernetes-settings.component';
-import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
-import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
-import { EmptyConfig, EmptyType } from 'app/pages/common/entity/entity-empty/entity-empty.component';
-import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
-import { EntityUtils } from 'app/pages/common/entity/utils';
-import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
-import { DialogService, WebSocketService } from 'app/services/index';
+import { DialogService, WebSocketService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { ModalService } from 'app/services/modal.service';
-import { ApplicationsService } from '../applications.service';
-import { CatalogSummaryDialogComponent } from '../dialogs/catalog-summary/catalog-summary-dialog.component';
-import { ChartWizardComponent } from '../forms/chart-wizard.component';
 
 interface CatalogSyncJob {
   id: number;
@@ -58,7 +57,6 @@ export class CatalogComponent implements OnInit {
   selectedPool = '';
   private poolList: Option[] = [];
 
-  protected utils: CommonUtils;
   imagePlaceholder = appImagePlaceholder;
   private noAvailableCatalog = true;
   isLoading = false;
@@ -98,26 +96,23 @@ export class CatalogComponent implements OnInit {
     private translate: TranslateService,
     private ws: WebSocketService,
     private router: Router,
-    private core: CoreService,
     private modalService: ModalService,
     private appService: ApplicationsService,
     private slideInService: IxSlideInService,
-  ) {
-    this.utils = new CommonUtils();
-  }
+  ) {}
 
   ngOnInit(): void {
     this.loadCatalogs();
     this.checkForConfiguredPool();
 
     this.ws.subscribe('core.get_jobs').pipe(untilDestroyed(this)).subscribe((event) => {
-      const catalogSyncJob = this.catalogSyncJobs.find((job) => job.id == event.fields.id);
+      const catalogSyncJob = this.catalogSyncJobs.find((job) => job.id === event.fields.id);
       if (catalogSyncJob) {
         catalogSyncJob.progress = event.fields.progress.percent;
-        if (event.fields.state == JobState.Success) {
+        if (event.fields.state === JobState.Success) {
           this.catalogSyncJobs = this.catalogSyncJobs.filter((job) => job.id !== catalogSyncJob.id);
           this.loadCatalogs();
-        } else if (event.fields.state == JobState.Failed) {
+        } else if (event.fields.state === JobState.Failed) {
           this.catalogSyncJobs = this.catalogSyncJobs.filter((job) => job.id !== catalogSyncJob.id);
         }
       }
@@ -221,9 +216,11 @@ export class CatalogComponent implements OnInit {
     } else if (evt.data.event_control === ApplicationToolbarControl.RefreshAll) {
       this.syncAll();
     } else if (evt.data.event_control === ApplicationToolbarControl.Catalogs) {
-      this.filteredCatalogNames = evt.data.catalogs.map((catalog: Option) => catalog.value);
-
-      this.filterApps();
+      const catalogNames = evt.data.catalogs.map((catalog: Option) => catalog.value);
+      if (!_.isEqual(this.filteredCatalogNames.sort(), catalogNames.sort())) {
+        this.filteredCatalogNames = catalogNames;
+        this.filterApps();
+      }
     }
   }
 
@@ -307,9 +304,6 @@ export class CatalogComponent implements OnInit {
         this.dialogService.info(
           helptext.choosePool.success,
           this.translate.instant(helptext.choosePool.unsetPool.label),
-          '500px',
-          'info',
-          true,
         );
       });
 
@@ -340,9 +334,6 @@ export class CatalogComponent implements OnInit {
       this.dialogService.info(
         helptext.choosePool.success,
         this.translate.instant(helptext.choosePool.message) + res.result.pool,
-        '500px',
-        'info',
-        true,
       );
     });
   }
@@ -369,6 +360,14 @@ export class CatalogComponent implements OnInit {
   filterApps(): void {
     this.filteredCatalogApps = this.catalogApps.filter((app) => {
       if (this.filterString && !app.name.toLowerCase().includes(this.filterString.toLocaleLowerCase())) {
+        return false;
+      }
+
+      /**
+       * Below is a special check to remove 'ix-chart' from the list of apps shown. 'ix-chart' is the same thing
+       * as the button 'Launch Docker Image' in UI. Middleware advised UI to hide this option
+       */
+      if (app.name === ixChartApp) {
         return false;
       }
 
@@ -415,9 +414,5 @@ export class CatalogComponent implements OnInit {
       this.dialogService.closeAllDialogs();
       this.loadCatalogs();
     });
-  }
-
-  trackByApp(_: number, app: CatalogApp): string {
-    return `${app.name} - ${app.catalog.id}`;
   }
 }

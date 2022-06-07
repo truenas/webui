@@ -34,7 +34,10 @@ interface PoolInfoMap {
 @Component({
   selector: 'widget-storage',
   templateUrl: './widget-storage.component.html',
-  styleUrls: ['./widget-storage.component.scss'],
+  styleUrls: [
+    '../widget/widget.component.scss',
+    './widget-storage.component.scss',
+  ],
 })
 export class WidgetStorageComponent extends WidgetComponent implements AfterViewInit, OnChanges {
   @Input() pools: Pool[];
@@ -164,7 +167,7 @@ export class WidgetStorageComponent extends WidgetComponent implements AfterView
       level = 'warn';
       icon = 'mdi-alert-circle';
     } else {
-      if (this.cols == 1) {
+      if (this.cols === 1) {
         value = volume.used_pct;
       } else {
         value = this.translate.instant('{used} of {total} ({used_pct})', {
@@ -198,7 +201,7 @@ export class WidgetStorageComponent extends WidgetComponent implements AfterView
     if (pool && pool.topology) {
       const unhealthy: string[] = []; // Disks with errors
       pool.topology.data.forEach((item: VDev) => {
-        if (item.type == VDevType.Disk) {
+        if (item.type === VDevType.Disk) {
           const diskErrors = item.stats.read_errors + item.stats.write_errors + item.stats.checksum_errors;
 
           if (diskErrors > 0) {
@@ -214,7 +217,7 @@ export class WidgetStorageComponent extends WidgetComponent implements AfterView
           });
         }
       });
-      if (unhealthy.length == 0) {
+      if (unhealthy.length === 0) {
         value = '0';
         level = 'safe';
         icon = 'mdi-check-circle';
@@ -240,7 +243,7 @@ export class WidgetStorageComponent extends WidgetComponent implements AfterView
     if (pool && pool.topology) {
       let total = 0;
       pool.topology.data.forEach((item) => {
-        if (item.type == VDevType.Disk) {
+        if (item.type === VDevType.Disk) {
           total++;
         } else {
           total += item.children.length;
@@ -258,7 +261,7 @@ export class WidgetStorageComponent extends WidgetComponent implements AfterView
       if (Number.isNaN(volume.used) ? volume.used : filesize(volume.used, { exponent: 3 }) !== 'Locked') {
         return this.getSizeString(volume.avail);
       }
-    } else if (!volume || typeof volume.avail == undefined) {
+    } else if (!volume || typeof volume.avail === undefined) {
       return this.translate.instant('Unknown');
     } else {
       return this.translate.instant('Gathering data...');

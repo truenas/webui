@@ -1,8 +1,6 @@
 @import 'cssvars';
 
 .everything-disabled {
-  text-align: center;
-
   button {
     margin-right: 10px;
 
@@ -57,4 +55,8 @@
 .empty-message p {
   margin-bottom: 0.7rem;
   margin-top: 0.7rem;
+}
+
+entity-empty {
+  text-align: center;
 }

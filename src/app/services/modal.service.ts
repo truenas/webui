@@ -2,8 +2,8 @@ import {
   ComponentFactoryResolver, Injectable, Injector, Type,
 } from '@angular/core';
 import { Subject } from 'rxjs';
-import { ModalConfiguration } from 'app/components/common/modal/modal-configuration.interface';
-import { ModalComponent } from 'app/components/common/modal/modal.component';
+import { ModalConfiguration } from 'app/modules/common/modal/modal-configuration.interface';
+import { ModalComponent } from 'app/modules/common/modal/modal.component';
 
 export interface ModalServiceMessage {
   action: string;
@@ -45,7 +45,7 @@ export class ModalService {
 
   remove(id: string): void {
     // remove modal from array of active modals
-    this.modals = this.modals.filter((x) => x.id !== id);
+    this.modals = this.modals.filter((modal) => modal.id !== id);
   }
 
   openInSlideIn<T>(componentType: Type<T>, rowId?: string | number): T {
@@ -68,20 +68,14 @@ export class ModalService {
       this.getRow$.next(rowid);
     }
     // open modal specified by id
-    const modal = this.modals.find((x) => x.id === id);
+    const modal = this.modals.find((modal) => modal.id === id);
     modal.open(conf);
   }
 
-  private close(id: string, error?: any, response?: any): Promise<boolean> {
+  private close(id: string): Promise<boolean> {
     // close modal specified by id
-    const modal = this.modals.find((x) => x.id === id);
-    if (error) {
-      this.onClose$.error(error);
-    } else if (response) {
-      this.onClose$.next(response);
-    } else {
-      this.onClose$.next(true);
-    }
+    const modal = this.modals.find((modal) => modal.id === id);
+    this.onClose$.next(true);
     return modal.close();
   }
 }

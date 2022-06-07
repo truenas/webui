@@ -9,8 +9,6 @@ export interface ConfirmOptions {
   hideCancel?: boolean;
   cancelMsg?: string;
   disableClose?: boolean;
-  textToCopy?: string;
-  keyTextArea?: boolean;
 }
 
 export interface ConfirmOptionsWithSecondaryCheckbox extends ConfirmOptions {

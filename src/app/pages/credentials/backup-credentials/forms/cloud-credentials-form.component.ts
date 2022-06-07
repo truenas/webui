@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
 import { FormGroup, Validators } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
@@ -17,12 +16,12 @@ import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { OauthMessage } from 'app/interfaces/oauth-message.interface';
 import { QueryFilter } from 'app/interfaces/query-api.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
-import { FieldConfig, FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
-import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
-import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
-import { RelationConnection } from 'app/pages/common/entity/entity-form/models/relation-connection.enum';
-import { EntityUtils } from 'app/pages/common/entity/utils';
+import { EntityFormComponent } from 'app/modules/entity/entity-form/entity-form.component';
+import { FieldConfig, FormSelectConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
+import { FieldSet } from 'app/modules/entity/entity-form/models/fieldset.interface';
+import { RelationAction } from 'app/modules/entity/entity-form/models/relation-action.enum';
+import { RelationConnection } from 'app/modules/entity/entity-form/models/relation-connection.enum';
+import { EntityUtils } from 'app/modules/entity/utils';
 import {
   CloudCredentialService, DialogService, WebSocketService, ReplicationService,
 } from 'app/services';
@@ -1234,9 +1233,9 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
 
   protected providers: CloudsyncProvider[];
   protected providerField: FormSelectConfig;
-  protected entityForm: EntityFormComponent;
+  entityForm: EntityFormComponent;
 
-  custActions = [
+  customActions = [
     {
       id: 'validCredential',
       name: this.translate.instant('Verify Credential'),
@@ -1247,7 +1246,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
         const value = _.cloneDeep(this.entityForm.formGroup.value);
         this.beforeSubmit(value);
         for (const item in value) {
-          if (item != 'name' && item != 'provider') {
+          if (item !== 'name' && item !== 'provider') {
             if (!this.entityForm.formGroup.controls[item].valid) {
               this.entityForm.formGroup.controls[item].markAsTouched();
             }
@@ -1270,8 +1269,6 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
   ];
 
   constructor(
-    protected router: Router,
-    protected aroute: ActivatedRoute,
     protected ws: WebSocketService,
     protected cloudcredentialService: CloudCredentialService,
     protected dialog: DialogService,
@@ -1310,14 +1307,14 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
     );
   }
 
-  isCustActionVisible(actionname: string): boolean {
-    if (actionname === 'authenticate' && !this.credentialsOauth) {
+  isCustomActionVisible(actionName: string): boolean {
+    if (actionName === 'authenticate' && !this.credentialsOauth) {
       return false;
     }
     return true;
   }
 
-  isCustActionDisabled(actionId: string): boolean {
+  isCustomActionDisabled(actionId: string): boolean {
     if (actionId === 'validCredential' || actionId === 'customSave') {
       return this.entityForm.formGroup.invalid;
     }
@@ -1358,7 +1355,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
       this.selectedProvider = res;
 
       this.oauthUrl = _.find(this.providers, { name: res }).credentials_oauth;
-      this.credentialsOauth = this.oauthUrl != null;
+      this.credentialsOauth = this.oauthUrl !== null;
       entityForm.setDisabled('client_id', !this.credentialsOauth, !this.credentialsOauth);
       entityForm.setDisabled('client_secret', !this.credentialsOauth, !this.credentialsOauth);
       entityForm.setDisabled('oauth_signin_button', !this.credentialsOauth, !this.credentialsOauth);
@@ -1431,7 +1428,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
       (res) => {
         this.entityForm.loader.close();
         if (res.valid) {
-          this.dialog.info(this.translate.instant('Valid'), this.translate.instant('The Credential is valid.'), '500px', 'info');
+          this.dialog.info(this.translate.instant('Valid'), this.translate.instant('The Credential is valid.'));
         } else {
           this.dialog.errorReport('Error', res.excerpt, res.error);
         }
@@ -1461,7 +1458,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
         } else {
           for (const prop in message.data.result) {
             let targetProp = prop;
-            if (prop != 'client_id' && prop != 'client_secret') {
+            if (prop !== 'client_id' && prop !== 'client_secret') {
               targetProp += '-' + selectedProvider;
             }
             if (controls[targetProp]) {
@@ -1553,14 +1550,14 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
 
   dataAttributeHandler(entityForm: EntityFormComponent): void {
     const provider = entityForm.formGroup.controls['provider'].value;
-    if (provider == 'S3'
+    if (provider === 'S3'
     && (entityForm.wsResponseIdx['endpoint'] || entityForm.wsResponseIdx['skip_region'] || entityForm.wsResponseIdx['signatures_v2'])) {
       entityForm.formGroup.controls['advanced-S3'].setValue(true);
     }
 
     for (const i in entityForm.wsResponseIdx) {
       let fieldName = i;
-      if (fieldName != 'client_id' && fieldName != 'client_secret') {
+      if (fieldName !== 'client_id' && fieldName !== 'client_secret') {
         fieldName += '-' + provider;
       }
       if (entityForm.formGroup.controls[fieldName]) {
@@ -1587,7 +1584,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
         continue;
       }
 
-      if ((!removedAttributes.includes(item) && value[item] != '') || allowEmptyStrings.includes(item)) {
+      if ((!removedAttributes.includes(item) && value[item] !== '') || allowEmptyStrings.includes(item)) {
         attrName = item.split('-')[0];
         attributes[attrName] = attrName === 'auth_version' ? parseInt(value[item], 10) : value[item];
       }

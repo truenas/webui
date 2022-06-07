@@ -1,7 +1,9 @@
 import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatDialogRef } from '@angular/material/dialog/dialog-ref';
+import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
 import { filter } from 'rxjs/operators';
@@ -9,12 +11,12 @@ import { IdmapName } from 'app/enums/idmap-name.enum';
 import helptext from 'app/helptext/directory-service/idmap';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { IdmapBackendOptions } from 'app/interfaces/idmap-backend-options.interface';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
-import { FieldConfig, FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
-import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
-import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
-import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
-import { EntityUtils } from 'app/pages/common/entity/utils';
+import { EntityFormComponent } from 'app/modules/entity/entity-form/entity-form.component';
+import { FieldConfig, FormSelectConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
+import { FieldSet } from 'app/modules/entity/entity-form/models/fieldset.interface';
+import { RelationAction } from 'app/modules/entity/entity-form/models/relation-action.enum';
+import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
+import { EntityUtils } from 'app/modules/entity/utils';
 import { ValidationService, IdmapService, DialogService } from 'app/services';
 import { ModalService } from 'app/services/modal.service';
 
@@ -26,7 +28,6 @@ import { ModalService } from 'app/services/modal.service';
 export class IdmapFormComponent implements FormConfiguration {
   title: string;
   isEntity = true;
-  protected namesInUse: string[] = [];
   queryCall = 'idmap.query' as const;
   addCall = 'idmap.create' as const;
   editCall = 'idmap.update' as const;
@@ -123,9 +124,14 @@ export class IdmapFormComponent implements FormConfiguration {
           placeholder: helptext.idmap.certificate_id.placeholder,
           tooltip: helptext.idmap.certificate_id.tooltip,
           options: [],
+          linkText: this.translate.instant('Certificates'),
+          linkClicked: () => {
+            this.modalService.closeSlideIn().then(() => {
+              this.router.navigate(['/', 'credentials', 'certificates']);
+            });
+          },
           isHidden: true,
         },
-
       ],
     },
     {
@@ -288,9 +294,15 @@ export class IdmapFormComponent implements FormConfiguration {
     'sssd_compat',
   ];
 
-  constructor(protected idmapService: IdmapService, protected validationService: ValidationService,
+  constructor(
+    protected idmapService: IdmapService,
+    protected validationService: ValidationService,
     private modalService: ModalService,
-    protected dialogService: DialogService, protected dialog: MatDialog) {
+    private router: Router,
+    private translate: TranslateService,
+    protected dialogService: DialogService,
+    protected dialog: MatDialog,
+  ) {
     this.getRow = this.modalService.getRow$.pipe(untilDestroyed(this)).subscribe((rowId: number) => {
       this.pk = rowId;
       this.getRow.unsubscribe();
@@ -316,10 +328,10 @@ export class IdmapFormComponent implements FormConfiguration {
     });
 
     this.idmapService.getCerts().pipe(untilDestroyed(this)).subscribe((certificates) => {
-      const config = this.fieldConfig.find((c) => c.name === 'certificate') as FormSelectConfig;
-      config.options.push({ label: '---', value: null });
+      const certificateConfig = this.fieldConfig.find((config) => config.name === 'certificate') as FormSelectConfig;
+      certificateConfig.options.push({ label: '---', value: null });
       certificates.forEach((certificate) => {
-        config.options.push({ label: certificate.name, value: certificate.id });
+        certificateConfig.options.push({ label: certificate.name, value: certificate.id });
       });
     });
 
@@ -356,9 +368,9 @@ export class IdmapFormComponent implements FormConfiguration {
 
     this.idmapService.getBackendChoices().pipe(untilDestroyed(this)).subscribe((backendChoices) => {
       this.backendChoices = backendChoices;
-      const config = this.fieldConfig.find((c) => c.name === 'idmap_backend') as FormSelectConfig;
+      const idmapBackendConfig = this.fieldConfig.find((config) => config.name === 'idmap_backend') as FormSelectConfig;
       for (const item in backendChoices) {
-        config.options.push({ label: item, value: item });
+        idmapBackendConfig.options.push({ label: item, value: item });
       }
       entityEdit.formGroup.controls['idmap_backend'].setValue('AD');
     });
@@ -410,8 +422,10 @@ export class IdmapFormComponent implements FormConfiguration {
       this.dialogRef.componentInstance.submit();
       this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
         this.dialog.closeAll();
-        this.dialogService.info(helptext.idmap.clear_cache_dialog.success_title,
-          helptext.idmap.clear_cache_dialog.success_msg, '250px', '', true);
+        this.dialogService.info(
+          helptext.idmap.clear_cache_dialog.success_title,
+          helptext.idmap.clear_cache_dialog.success_msg,
+        );
       });
       this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((res) => {
         this.dialog.closeAll();

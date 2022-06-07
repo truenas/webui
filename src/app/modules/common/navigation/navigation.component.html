@@ -1,0 +1,64 @@
+<mat-nav-list role="list">
+  <div *ngFor="let item of menuItems; let i = index">
+    <ng-container *ngIf="!item.isVisible$ || (item.isVisible$ | async)">
+      <!-- links and submenus -->
+      <mat-list-item
+        *ngIf="item.type !== MenuItemType.Separator"
+        class="sidebar-list-item"
+        role="listitem"
+        [class.has-submenu]="item.type === MenuItemType.SlideOut"
+        [class.highlighted]="isHighlighted === item.state"
+        routerLinkActive="highlighted"
+        id="nav-{{ i }}"
+        ix-auto ix-auto-type="option" ix-auto-identifier="{{ item.name }}"
+        (click)="updateHighlightedClass(item.state)"
+      >
+        <a
+          *ngIf="item.type === MenuItemType.Link"
+          [routerLink]="['/', item.state]"
+          [name]="getItemName(item)"
+          class="sidenav-link"
+          (click)="closeMenu()"
+        >
+          <span class="menu-item-tooltip" [matTooltip]="item.tooltip" id="{{ item.name }}" matTooltipPosition="right"></span>
+          <mat-icon>{{ item.icon }}</mat-icon>
+          <span>{{ item.name | translate }}</span>
+        </a>
+        <a
+          *ngIf="item.type === MenuItemType.SlideOut"
+          [name]="getItemName(item)"
+          class="sidenav-link"
+          tabindex="0"
+          (click)="toggleMenu(item.state, item.sub)"
+          (keyup.enter)="toggleMenu(item.state, item.sub)"
+        >
+          <span class="menu-item-tooltip" [matTooltip]="item.tooltip" matTooltipPosition="right"></span>
+          <mat-icon>{{ item.icon }}</mat-icon>
+          <span>{{ item.name | translate }}</span>
+          <span fxFlex></span>
+          <mat-icon class="menu-caret">keyboard_arrow_right</mat-icon>
+        </a>
+
+        <a
+          *ngIf="item.type === MenuItemType.ExternalLink"
+          [href]="item.state"
+          target="_blank"
+          [name]="getItemName(item)"
+          class="sidenav-link"
+        >
+          <span class="menu-item-tooltip" [matTooltip]="item.tooltip" matTooltipPosition="right"></span>
+          <mat-icon>{{ item.icon }}</mat-icon>
+          <span>{{ item.name | translate }}</span>
+        </a>
+        <a mat-button class="absorbs-focus" [tabIndex]="-1">
+          <!-- 'absorbs' the focus behavior -->
+        </a>
+      </mat-list-item>
+
+      <div *ngIf="item.type === MenuItemType.Separator" class="mt-1 mb-1" >
+        <mat-divider></mat-divider>
+        <span *ngIf="item.name" class="nav-section-title text-muted">{{ item.name | translate }}</span>
+      </div>
+    </ng-container>
+  </div>
+</mat-nav-list>

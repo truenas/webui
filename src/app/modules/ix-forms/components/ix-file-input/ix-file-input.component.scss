@@ -1,0 +1,94 @@
+:host {
+  color: var(--fg1);
+  display: block;
+  margin-bottom: 12px;
+  margin-top: 18px;
+  padding: 8px 0;
+}
+
+.tooltip {
+  margin: 0 0 0 8px;
+}
+
+.label-container {
+  align-items: center;
+  display: flex;
+  margin-bottom: 1px;
+  margin-left: 1px;
+  min-height: 24px;
+
+  .label {
+    display: inline-flex;
+    font-size: x-small;
+  }
+}
+
+.input-container {
+  font-size: 12px;
+  position: relative;
+
+  label {
+    background-color: var(--btn-default-bg);
+    border: none;
+    border-radius: 0;
+    color: var(--fg2);
+    cursor: pointer;
+    display: inline-flex;
+    font-family: var(--font-family-body);
+    font-size: 13px;
+    font-weight: bold;
+    line-height: 36px;
+    margin: 0;
+    min-width: 64px;
+    outline: none;
+    overflow: visible;
+    padding: 0 16px;
+    -webkit-tap-highlight-color: transparent;
+    text-align: center;
+    text-decoration: none;
+    text-transform: capitalize;
+    user-select: none;
+    vertical-align: baseline;
+    white-space: nowrap;
+
+    &:hover {
+      background-color: var(--alt-bg1);
+      color: var(--fg2);
+    }
+
+    input {
+      height: 0;
+      opacity: 0;
+      overflow: hidden;
+      position: absolute;
+      width: 0;
+      z-index: -1;
+    }
+  }
+
+  .file {
+    align-items: center;
+    display: flex;
+    margin: 6px 0;
+  }
+
+  .file-action {
+    cursor: pointer;
+    display: inline-flex;
+    margin-right: 8px;
+    opacity: 0.5;
+
+    &:hover {
+      opacity: 1;
+    }
+  }
+
+  .file-size {
+    margin-left: 8px;
+    opacity: 0.65;
+  }
+
+  &.disabled {
+    opacity: 0.38;
+  }
+}

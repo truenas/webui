@@ -1,5 +1,4 @@
 import { AutofillMonitor } from '@angular/cdk/text-field';
-import { HttpClient } from '@angular/common/http';
 import {
   Component, OnInit, ViewChild, OnDestroy, ElementRef, AfterViewInit,
 } from '@angular/core';
@@ -13,18 +12,17 @@ import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
-import { ApiService } from 'app/core/services/api.service';
-import { CoreService } from 'app/core/services/core-service/core.service';
 import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
 import { FailoverStatus } from 'app/enums/failover-status.enum';
-import { ProductType, productTypeReadableText } from 'app/enums/product-type.enum';
+import { ProductType, productTypeLabels } from 'app/enums/product-type.enum';
 import globalHelptext from 'app/helptext/global-helptext';
 import productText from 'app/helptext/product';
 import helptext from 'app/helptext/topbar';
 import { ThemeChangedEvent } from 'app/interfaces/events/theme-events.interface';
 import { Interval } from 'app/interfaces/timeout.interface';
-import { matchOtherValidator } from 'app/pages/common/entity/entity-form/validators/password-validation/password-validation';
+import { matchOtherValidator } from 'app/modules/entity/entity-form/validators/password-validation/password-validation';
 import { SystemGeneralService } from 'app/services';
+import { CoreService } from 'app/services/core-service/core.service';
 import { DialogService } from 'app/services/dialog.service';
 import { LocaleService } from 'app/services/locale.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -41,8 +39,7 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
   @ViewChild('username', { read: ElementRef }) usernameInput: ElementRef<HTMLElement>;
 
   failed = false;
-  product_type: ProductType;
-  productTypeReadableText: string;
+  productType: ProductType;
   logo_ready = false;
   product = productText.product;
   ha_info_ready = false;
@@ -55,7 +52,7 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
 
   private interval: Interval;
   tokenObservable: Subscription;
-  HAInterval: Interval;
+  haInterval: Interval;
   isTwoFactor = false;
   private didSetFocus = false;
 
@@ -86,6 +83,7 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
 
   readonly ProductType = ProductType;
   readonly FailoverStatus = FailoverStatus;
+  readonly productTypeLabels = productTypeLabels;
 
   constructor(
     private ws: WebSocketService,
@@ -95,9 +93,7 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
     private dialogService: DialogService,
     private fb: FormBuilder,
     private core: CoreService,
-    private api: ApiService,
     private autofill: AutofillMonitor,
-    private http: HttpClient,
     private sysGeneralService: SystemGeneralService,
     private localeService: LocaleService,
   ) {
@@ -119,17 +115,16 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
     if (!this.logo_ready) {
       this.sysGeneralService.getProductType$.pipe(untilDestroyed(this)).subscribe((res) => {
         this.logo_ready = true;
-        this.product_type = res as ProductType;
-        this.productTypeReadableText = productTypeReadableText.get(this.product_type);
+        this.productType = res as ProductType;
         if (this.interval) {
           clearInterval(this.interval);
         }
-        if (this.product_type.includes(ProductType.Enterprise) || this.product_type === ProductType.Scale) {
-          if (this.HAInterval) {
-            clearInterval(this.HAInterval);
+        if (this.productType.includes(ProductType.Enterprise) || this.productType === ProductType.Scale) {
+          if (this.haInterval) {
+            clearInterval(this.haInterval);
           }
           this.getHaStatus();
-          this.HAInterval = setInterval(() => {
+          this.haInterval = setInterval(() => {
             this.getHaStatus();
           }, 6000);
         } else if (this.canLogin()) {
@@ -152,7 +147,7 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
 
   ngOnInit(): void {
     this.core.register({ observerClass: this, eventName: 'ThemeChanged' }).pipe(untilDestroyed(this)).subscribe((evt: ThemeChangedEvent) => {
-      if (this.router.url == '/sessions/signin' && evt.sender.userThemeLoaded) {
+      if (this.router.url === '/sessions/signin' && evt.sender.userThemeLoaded) {
         this.redirect();
       }
     });
@@ -185,8 +180,8 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
     if (this.interval) {
       clearInterval(this.interval);
     }
-    if (this.HAInterval) {
-      clearInterval(this.HAInterval);
+    if (this.haInterval) {
+      clearInterval(this.haInterval);
     }
     this.core.unregister({ observerClass: this });
     if (this.tokenObservable) {
@@ -211,7 +206,7 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
           this.loginCallback(result);
         });
     }
-    if (this.ws.token && this.ws.redirectUrl != undefined) {
+    if (this.ws.token && this.ws.redirectUrl !== undefined) {
       if (this.submitButton) {
         this.submitButton.disabled = true;
       }
@@ -219,7 +214,7 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
         this.progressBar.mode = 'indeterminate';
       }
 
-      if (sessionStorage.currentUrl != undefined) {
+      if (sessionStorage.currentUrl !== undefined) {
         this.ws.redirectUrl = sessionStorage.currentUrl;
       }
 
@@ -243,7 +238,7 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
     if (this.logo_ready && this.connected
        && (this.failover_status === FailoverStatus.Single
         || this.failover_status === FailoverStatus.Master
-        || this.product_type === ProductType.Core)) {
+        || this.productType === ProductType.Core)) {
       if (!this.didSetFocus && this.usernameInput) {
         setTimeout(() => {
           this.didSetFocus = true;
@@ -258,7 +253,7 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   get productSupportsHa(): boolean {
-    return this.product_type?.includes(ProductType.Enterprise) || this.product_type === ProductType.Scale;
+    return this.productType?.includes(ProductType.Enterprise) || this.productType === ProductType.Scale;
   }
 
   getHaStatus(): void {
@@ -273,7 +268,7 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
           }, (err) => {
             console.error(err);
           });
-          this.ws.call('failover.disabled_reasons').pipe(untilDestroyed(this)).subscribe((reasons) => {
+          this.ws.call('failover.disabled.reasons').pipe(untilDestroyed(this)).subscribe((reasons) => {
             this.checking_status = false;
             this.ha_disabled_reasons = reasons;
             this.show_reasons = false;
@@ -330,13 +325,11 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
     this.submitButton.disabled = true;
     this.progressBar.mode = 'indeterminate';
 
-    if (this.isTwoFactor) {
-      this.ws.login(this.signinData.username, this.signinData.password, this.signinData.otp)
-        .pipe(untilDestroyed(this)).subscribe((result) => { this.loginCallback(result); });
-    } else {
-      this.ws.login(this.signinData.username, this.signinData.password)
-        .pipe(untilDestroyed(this)).subscribe((result) => { this.loginCallback(result); });
-    }
+    const request$ = this.isTwoFactor
+      ? this.ws.login(this.signinData.username, this.signinData.password, this.signinData.otp)
+      : this.ws.login(this.signinData.username, this.signinData.password);
+
+    request$.pipe(untilDestroyed(this)).subscribe((result) => this.loginCallback(result));
   }
 
   setpassword(): void {
@@ -361,8 +354,8 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
       if (this.interval) {
         clearInterval(this.interval);
       }
-      if (this.HAInterval) {
-        clearInterval(this.HAInterval);
+      if (this.haInterval) {
+        clearInterval(this.haInterval);
       }
       if (this.ws.redirectUrl) {
         this.router.navigateByUrl(this.ws.redirectUrl);

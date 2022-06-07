@@ -1,3 +1,5 @@
+import { LinkState } from 'app/enums/network-interface.enum';
+
 export interface ReportingRealtimeUpdate {
   cpu: AllCpusUpdate;
   disks: DisksUpdate;
@@ -10,8 +12,8 @@ export interface ReportingRealtimeUpdate {
 export interface AllCpusUpdate {
   [cpuNumber: number]: CpuUpdate;
   average: CpuUpdate;
-  temperature: any;
-  temperature_celsius: any;
+  temperature: number[];
+  temperature_celsius: number[];
 }
 
 export interface CpuUpdate {
@@ -41,6 +43,7 @@ export interface AllNetworkInterfacesUpdate {
 }
 
 export interface NetworkInterfaceUpdate {
+  link_state: LinkState;
   received_bytes: number;
   received_bytes_rate: number;
   sent_bytes: number;
@@ -93,6 +96,7 @@ export interface ZfsUpdate {
 }
 
 export interface ReportingConfig {
+  confirm_rrd_destroy?: boolean;
   cpu_in_percentage: boolean;
   graph_age: number;
   graph_points: number;
@@ -113,6 +117,8 @@ export interface ReportingParams {
   identifier: string;
 }
 
+export type ReportingAggregationKeys = 'min' | 'mean' | 'max';
+
 export interface ReportingData {
   end: number;
   identifier: string;
@@ -122,8 +128,6 @@ export interface ReportingData {
   step: number;
   data: number[][];
   aggregations: {
-    min: number[];
-    mean: number[];
-    max: number[];
+    [key in ReportingAggregationKeys]: string[];
   };
 }

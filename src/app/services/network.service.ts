@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import * as isCidr from 'is-cidr';
 import { Observable } from 'rxjs';
 import { Choices } from 'app/interfaces/choices.interface';
 import { Option } from 'app/interfaces/option.interface';
@@ -7,6 +6,8 @@ import { WebSocketService } from './ws.service';
 
 @Injectable({ providedIn: 'root' })
 export class NetworkService {
+  macRegex = /\b([0-9A-F]{2}[:-]){5}([0-9A-F]){2}\b/i;
+
   ipv4Regex = /^((25[0-5]|2[0-4][0-9]|1?[0-9]{1,2})\.){3}(25[0-5]|2[0-4][0-9]|1?[0-9]{1,2})$/;
   ipv4CidrRegex = /^((25[0-5]|2[0-4][0-9]|1?[0-9]{1,2})\.){3}(25[0-5]|2[0-4][0-9]|1?[0-9]{1,2})(\/(3[0-2]|[1-2][0-9]|[0-9]))$/;
   ipv4CidrOptionalRegex = /^((25[0-5]|2[0-4][0-9]|1?[0-9]{1,2})\.){3}(25[0-5]|2[0-4][0-9]|1?[0-9]{1,2})(\/(3[0-2]|[1-2][0-9]|[0-9]))?$/;
@@ -46,8 +47,8 @@ export class NetworkService {
 
   getV4Netmasks(): Option[] {
     return Array(34).fill(0).map(
-      (x, i) => {
-        if (i == 0) {
+      (_, i) => {
+        if (i === 0) {
           return { label: '---------', value: '' };
         }
         return { label: String(33 - i), value: String(33 - i) };
@@ -57,19 +58,12 @@ export class NetworkService {
 
   getV6PrefixLength(): Option[] {
     return Array(34).fill(0).map(
-      (x, i) => {
-        if (i == 0) {
+      (_, i) => {
+        if (i === 0) {
           return { label: '---------', value: '' };
         }
         return { label: String((33 - i) * 4), value: String((33 - i) * 4) };
       },
     );
-  }
-
-  authNetworkValidator(str: string): boolean {
-    if (isCidr.v4(str) || isCidr.v6(str)) {
-      return true;
-    }
-    return false;
   }
 }

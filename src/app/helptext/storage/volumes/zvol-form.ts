@@ -1,6 +1,6 @@
 import { Validators } from '@angular/forms';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
-import { matchOtherValidator } from 'app/pages/common/entity/entity-form/validators/password-validation/password-validation';
+import { matchOtherValidator } from 'app/modules/entity/entity-form/validators/password-validation/password-validation';
 
 export default {
   zvol_title_add: T('Add Zvol'),
@@ -14,7 +14,6 @@ export default {
 
   zvol_volsize_placeholder: T('Size for this zvol'),
   zvol_volsize_tooltip: T('Specify a size and value such as <i>10 GiB</i>.'),
-  zvol_volsize_validation: [Validators.required, Validators.min(0)],
 
   zvol_forcesize_placeholder: T('Force size'),
   zvol_forcesize_tooltip: T('The system restricts creating a zvol that brings the\
@@ -103,7 +102,7 @@ export default {
     passphrase_validation: [Validators.minLength(8)],
     confirm_passphrase_placeholder: T('Confirm Passphrase'),
     confirm_passphrase_validation: [matchOtherValidator('passphrase')],
-    pbkdf2iters_placeholder: T('pbkdf2iters'),
+    pbkdf2iters_placeholder: 'pbkdf2iters',
     pbkdf2iters_tooltip: T('Number of password-based key derivation function 2 (PBKDF2) iterations to use for reducing vulnerability \
      to brute-force attacks. Entering a number larger than <i>100000</i> is required. See \
      <a href="https://en.wikipedia.org/wiki/PBKDF2" target="_blank">PBKDF2</a> for more details.'),

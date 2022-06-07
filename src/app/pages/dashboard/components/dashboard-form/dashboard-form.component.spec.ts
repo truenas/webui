@@ -3,12 +3,10 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { Subject } from 'rxjs';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
-import { CoreEvent } from 'app/interfaces/events';
-import { IxFormsModule } from 'app/pages/common/ix-forms/ix-forms.module';
-import { FormErrorHandlerService } from 'app/pages/common/ix-forms/services/form-error-handler.service';
-import { IxFormHarness } from 'app/pages/common/ix-forms/testing/ix-form.harness';
+import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
+import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
+import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { DashboardFormComponent } from 'app/pages/dashboard/components/dashboard-form/dashboard-form.component';
 import { DashConfigItem } from 'app/pages/dashboard/components/widget-controller/widget-controller.component';
 import { WebSocketService } from 'app/services';
@@ -18,7 +16,6 @@ describe('DashboardFormComponent', () => {
   let spectator: Spectator<DashboardFormComponent>;
   let loader: HarnessLoader;
   let ws: WebSocketService;
-  let formEvents$: Subject<CoreEvent>;
   let dashState: DashConfigItem[];
 
   const createComponent = createComponentFactory({
@@ -39,7 +36,6 @@ describe('DashboardFormComponent', () => {
   beforeEach(() => {
     spectator = createComponent();
     ws = spectator.inject(WebSocketService);
-    formEvents$ = new Subject();
     dashState = [
       {
         name: 'CPU',
@@ -54,7 +50,7 @@ describe('DashboardFormComponent', () => {
 
   describe('configure dashboard widget visibility', () => {
     beforeEach(() => {
-      spectator.component.setupForm(dashState, formEvents$);
+      spectator.component.setupForm(dashState);
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     });
 

@@ -1,22 +1,27 @@
 import { Component, OnDestroy } from '@angular/core';
 import { FormControl, ValidationErrors } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { filter } from 'rxjs/operators';
-import { DatasetQuotaType } from 'app/enums/dataset-quota-type.enum';
+import { DatasetQuotaType } from 'app/enums/dataset.enum';
 import globalHelptext from 'app/helptext/global-helptext';
 import helptext from 'app/helptext/storage/volumes/datasets/dataset-quotas';
-import { DatasetQuota } from 'app/interfaces/dataset-quota.interface';
+import { DatasetQuota, SetDatasetQuota } from 'app/interfaces/dataset-quota.interface';
 import { QueryFilter, QueryParams } from 'app/interfaces/query-api.interface';
-import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
-import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
-import { EntityTableComponent } from 'app/pages/common/entity/entity-table/entity-table.component';
-import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
+import { DialogFormConfiguration } from 'app/modules/entity/entity-dialog/dialog-form-configuration.interface';
+import { EntityDialogComponent } from 'app/modules/entity/entity-dialog/entity-dialog.component';
+import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-table.component';
+import { EntityTableAction, EntityTableConfig } from 'app/modules/entity/entity-table/entity-table.interface';
 import { DatasetQuotaRow } from 'app/pages/storage/volumes/datasets/dataset-quotas/dataset-quotas-grouplist/dataset-quota-row.interface';
+import {
+  GroupQuotaFormComponent,
+} from 'app/pages/storage/volumes/datasets/dataset-quotas/dataset-quotas-grouplist/group-quota-form/group-quota-form.component';
 import {
   AppLoaderService, DialogService, StorageService, WebSocketService,
 } from 'app/services';
+import { EntityTableService } from 'app/services/entity-table.service';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
 @Component({
@@ -31,7 +36,6 @@ export class DatasetQuotasGrouplistComponent implements EntityTableConfig, OnDes
   protected fullFilter: QueryParams<DatasetQuota> = [['OR', [['quota', '>', 0], ['obj_quota', '>', 0]]]];
   protected emptyFilter: QueryParams<DatasetQuota> = [];
   protected useFullFilter = true;
-  routeAdd: string[];
 
   columns = [
     {
@@ -55,19 +59,82 @@ export class DatasetQuotasGrouplistComponent implements EntityTableConfig, OnDes
     },
   };
 
-  constructor(protected ws: WebSocketService, protected storageService: StorageService,
-    protected dialogService: DialogService, protected loader: AppLoaderService,
-    protected router: Router, protected aroute: ActivatedRoute,
-    private translate: TranslateService) { }
+  readonly addActions = [{
+    label: this.translate.instant('Toggle Display'),
+    onClick: () => {
+      this.toggleDisplay();
+    },
+  }];
+
+  constructor(
+    protected ws: WebSocketService,
+    protected storageService: StorageService,
+    protected dialogService: DialogService,
+    protected loader: AppLoaderService,
+    protected aroute: ActivatedRoute,
+    private translate: TranslateService,
+    private tableService: EntityTableService,
+    private slideInService: IxSlideInService,
+  ) { }
+
+  getRemoveInvalidQuotasAction(invalidQuotas: DatasetQuota[]): EntityTableAction {
+    return {
+      label: this.translate.instant('Remove quotas for invalid groups'),
+      onClick: () => {
+        this.dialogService.confirm({
+          title: this.translate.instant('Remove invalid quotas'),
+          message: this.translate.instant('This action will set all dataset quotas for the removed or invalid groups to 0, \
+          virutally removing any dataset quota entires for such groups. \
+          Are you sure you want to proceed?'),
+          buttonMsg: this.translate.instant('Remove'),
+        }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
+          const payload: SetDatasetQuota[] = [];
+          for (const quota of invalidQuotas) {
+            payload.push({
+              id: quota.id.toString(),
+              quota_type: DatasetQuotaType.Group,
+              quota_value: 0,
+            });
+            payload.push({
+              id: quota.id.toString(),
+              quota_type: DatasetQuotaType.GroupObj,
+              quota_value: 0,
+            });
+          }
+          this.loader.open();
+          this.ws.call('pool.dataset.set_quota', [this.pk, payload]).pipe(untilDestroyed(this)).subscribe(() => {
+            this.loader.close();
+            this.entityList.getData();
+            this.updateAddActions();
+          }, (err) => {
+            this.loader.close();
+            this.dialogService.errorReport('Error', err.reason, err.trace.formatted);
+          });
+        });
+      },
+    } as unknown as EntityTableAction;
+  }
 
   getAddActions(): EntityTableAction[] {
-    return [{
-      label: this.translate.instant('Toggle Display'),
-      onClick: () => {
-        this.toggleDisplay();
-      },
-    },
-    ] as EntityTableAction[];
+    return [...this.addActions] as unknown as EntityTableAction[];
+  }
+
+  updateAddActions(): void {
+    const params = [['name', '=', null] as QueryFilter<DatasetQuota>] as QueryParams<DatasetQuota>;
+    this.ws.call(
+      'pool.dataset.get_quota',
+      [this.pk, DatasetQuotaType.Group, params],
+    ).pipe(untilDestroyed(this)).subscribe((quotas: DatasetQuota[]) => {
+      if (quotas && quotas.length) {
+        const newActions = [
+          ...this.addActions,
+          this.getRemoveInvalidQuotasAction(quotas),
+        ];
+        this.tableService.triggerActionsUpdate(newActions);
+      } else {
+        this.tableService.triggerActionsUpdate([...this.addActions]);
+      }
+    });
   }
 
   getActions(row: DatasetQuotaRow): EntityTableAction[] {
@@ -99,14 +166,14 @@ export class DatasetQuotasGrouplistComponent implements EntityTableConfig, OnDes
                 tooltip: this.translate.instant(helptext.groups.data_quota.tooltip)
                 + this.translate.instant(globalHelptext.human_readable.suggestion_tooltip)
                 + this.translate.instant(' bytes.'),
-                value: this.storageService.convertBytestoHumanReadable(res[0].quota, 0, null, true),
+                value: this.storageService.convertBytesToHumanReadable(res[0].quota, 0, null, true),
                 id: 'data-quota_input',
                 blurStatus: true,
                 blurEvent: () => this.blurEvent(),
                 parent: this,
                 validation: [
                   (control: FormControl): ValidationErrors => {
-                    const config = conf.fieldConfig.find((c) => c.name === 'data_quota');
+                    const dataQuotaConfig = conf.fieldConfig.find((config) => config.name === 'data_quota');
                     this.quotaValue = control.value;
                     const size = this.storageService.convertHumanStringToNum(control.value);
                     const errors = control.value && Number.isNaN(size)
@@ -114,11 +181,11 @@ export class DatasetQuotasGrouplistComponent implements EntityTableConfig, OnDes
                       : null;
 
                     if (errors) {
-                      config.hasErrors = true;
-                      config.errors = globalHelptext.human_readable.input_error;
+                      dataQuotaConfig.hasErrors = true;
+                      dataQuotaConfig.errors = globalHelptext.human_readable.input_error;
                     } else {
-                      config.hasErrors = false;
-                      config.errors = '';
+                      dataQuotaConfig.hasErrors = false;
+                      dataQuotaConfig.errors = '';
                     }
                     return errors;
                   },
@@ -173,8 +240,12 @@ export class DatasetQuotasGrouplistComponent implements EntityTableConfig, OnDes
     this.entityList = entityList;
     const paramMap = this.aroute.snapshot.params;
     this.pk = paramMap.pk;
-    this.routeAdd = ['storage', 'group-quotas-form', this.pk];
     this.useFullFilter = window.localStorage.getItem('useFullFilter') !== 'false';
+    this.updateAddActions();
+
+    this.slideInService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
+      entityList.getData();
+    });
   }
 
   callGetFunction(entityList: EntityTableComponent): void {
@@ -191,7 +262,7 @@ export class DatasetQuotasGrouplistComponent implements EntityTableConfig, OnDes
         name: row.name
           ? row.name
           : `*ERR* (${this.translate.instant(helptext.shared.nameErr)}), ID: ${row.id}`,
-        quota: this.storageService.convertBytestoHumanReadable(row.quota, 0),
+        quota: this.storageService.convertBytesToHumanReadable(row.quota, 0),
         used_percent: `${Math.round((row.used_percent) * 100) / 100}%`,
         obj_used_percent: `${Math.round((row.obj_used_percent) * 100) / 100}%`,
       };
@@ -225,6 +296,11 @@ export class DatasetQuotasGrouplistComponent implements EntityTableConfig, OnDes
       this.entityList.getData();
       this.loader.close();
     });
+  }
+
+  doAdd(): void {
+    const slideIn = this.slideInService.open(GroupQuotaFormComponent);
+    slideIn.setDatasetId(this.pk);
   }
 
   ngOnDestroy(): void {

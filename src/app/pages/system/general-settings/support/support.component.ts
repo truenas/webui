@@ -1,20 +1,22 @@
-import { Component, OnInit, Type } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { MatCheckboxChange } from '@angular/material/checkbox/checkbox';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Store } from '@ngrx/store';
 import { helptextSystemSupport as helptext } from 'app/helptext/system/support';
-import { EntityJobComponent } from 'app/pages//common/entity/entity-job/entity-job.component';
-import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
-import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
-import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { DialogFormConfiguration } from 'app/modules/entity/entity-dialog/dialog-form-configuration.interface';
+import { EntityDialogComponent } from 'app/modules/entity/entity-dialog/entity-dialog.component';
+import { FieldConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
+import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { LicenseInfoInSupport } from 'app/pages/system/general-settings/support/license-info-in-support.interface';
 import { SystemInfoInSupport } from 'app/pages/system/general-settings/support/system-info-in-support.interface';
 import { WebSocketService, AppLoaderService, DialogService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { ModalService } from 'app/services/modal.service';
+import { AppState } from 'app/store';
+import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
+import { FileTicketFormComponent } from './file-ticket-form/file-ticket-form.component';
+import { FileTicketLicensedFormComponent } from './file-ticket-licensed-form/file-ticket-licensed-form.component';
 import { LicenseComponent } from './license/license.component';
 import { ProactiveComponent } from './proactive/proactive.component';
-import { SupportFormLicensedComponent } from './support-licensed/support-form-licensed.component';
-import { SupportFormUnlicensedComponent } from './support-unlicensed/support-form-unlicensed.component';
 
 @UntilDestroy()
 @Component({
@@ -38,15 +40,15 @@ export class SupportComponent implements OnInit {
 
   constructor(
     protected ws: WebSocketService,
-    private modalService: ModalService,
     private loader: AppLoaderService,
     private dialog: DialogService,
     private slideInService: IxSlideInService,
+    private store$: Store<AppState>,
   ) {}
 
   ngOnInit(): void {
-    this.ws.call('system.info').pipe(untilDestroyed(this)).subscribe((systemInfo) => {
-      this.systemInfo = systemInfo;
+    this.store$.pipe(waitForSystemInfo, untilDestroyed(this)).subscribe((systemInfo) => {
+      this.systemInfo = { ...systemInfo };
       this.systemInfo.memory = (systemInfo.physmem / 1024 / 1024 / 1024).toFixed(0) + ' GiB';
       if (systemInfo.system_product.includes('MINI')) {
         this.getMiniImage(systemInfo.system_product);
@@ -146,27 +148,30 @@ export class SupportComponent implements OnInit {
   }
 
   fileTicket(): void {
-    const component: Type<SupportFormLicensedComponent | SupportFormUnlicensedComponent> = this.hasLicense
-      ? SupportFormLicensedComponent
-      : SupportFormUnlicensedComponent;
-    this.modalService.openInSlideIn(component);
+    if (this.hasLicense) {
+      this.slideInService.open(FileTicketLicensedFormComponent, { wide: true });
+    } else {
+      this.slideInService.open(FileTicketFormComponent);
+    }
   }
 
   openProactive(): void {
-    this.modalService.openInSlideIn(ProactiveComponent);
+    this.slideInService.open(ProactiveComponent, { wide: true });
   }
 
-  updateProductionStatus(e: MatCheckboxChange): void {
-    if (e.checked) {
+  updateProductionStatus(event: MatCheckboxChange): void {
+    if (event.checked) {
       this.dialog.dialogForm(this.updateProdStatusConf);
     } else {
       this.ws.call('truenas.set_production', [false, false]).pipe(untilDestroyed(this)).subscribe(() => {
-        this.dialog.info(helptext.is_production_dialog.title,
-          helptext.is_production_dialog.message, '300px', 'info', true);
+        this.dialog.info(helptext.is_production_dialog.title, helptext.is_production_dialog.message);
       }, (err) => {
         this.loader.close();
-        this.dialog.errorReport(helptext.is_production_error_dialog.title,
-          err.error.message, err.error.traceback);
+        this.dialog.errorReport(
+          helptext.is_production_error_dialog.title,
+          err.error.message,
+          err.error.traceback,
+        );
       });
     }
   }

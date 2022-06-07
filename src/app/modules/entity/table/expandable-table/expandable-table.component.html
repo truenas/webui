@@ -1,0 +1,38 @@
+<mat-card #appTable class="expanded-table-container">
+  <mat-expansion-panel class="expanded-table mat-elevation-z0" [ngClass]="{'expanded-height': isExpanded && tableConf.detailsHref}" hideToggle [disabled]="disabled"
+    [expanded]="expandableTableState === ExpandableTableState.Expanded" (opened)="isExpanded = true" (closed)="isExpanded = false">
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        <h5 class="title" *ngIf="title">
+          <ng-container *ngIf="titleHref; else plainTitle">
+            <a [routerLink]="titleHref">{{ title }} <mat-icon class="title-icon">open_in_new</mat-icon></a>
+          </ng-container>
+          <ng-template #plainTitle>{{ title }}</ng-template>
+        </h5>
+
+        <div class="header-custom-content">
+          <ng-content select="[headerCustomContent]"></ng-content>
+        </div>
+      </mat-panel-title>
+      <mat-panel-description class="description-panel">
+        <div class="actions">
+          <button mat-button color="default" class="action-icon action-button" *ngIf="tableConf.configure" (click)="tableConf.configure()"
+            ix-auto ix-auto-type="button" ix-auto-identifier="{{tableConf.name}}-configure"
+          >{{ 'Configure' | translate }}</button>
+
+          <button mat-button color="default" class="action-icon action-button" *ngIf="tableConf.add" (click)="tableConf.add()"
+            ix-auto ix-auto-type="button" ix-auto-identifier="{{tableConf.name}}-add"
+          >{{ 'Add' | translate }}</button>
+
+          <ng-content select="[headerCustomActions]"></ng-content>
+        </div>
+      </mat-panel-description>
+    </mat-expansion-panel-header>
+    <app-table #tableComponent [conf]="tableConf"></app-table>
+  </mat-expansion-panel>
+  <div id="actions-row" [ngClass]="{'actions-row': isExpanded && tableConf.detailsHref}" *ngIf="isExpanded && tableConf.detailsHref">
+    <div>
+      <a [routerLink]="tableConf.detailsHref.split('/')">{{ 'View Details' | translate }}</a>
+    </div>
+  </div>
+</mat-card>

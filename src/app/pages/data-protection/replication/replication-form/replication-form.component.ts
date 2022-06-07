@@ -10,7 +10,6 @@ import { ExplorerType } from 'app/enums/explorer-type.enum';
 import { LifetimeUnit } from 'app/enums/lifetime-unit.enum';
 import { LoggingLevel } from 'app/enums/logging-level.enum';
 import { NetcatMode } from 'app/enums/netcat-mode.enum';
-import { ProductType } from 'app/enums/product-type.enum';
 import { ReadOnlyMode } from 'app/enums/readonly-mode.enum';
 import { ReplicationEncryptionKeyFormat } from 'app/enums/replication-encryption-key-format.enum';
 import { RetentionPolicy } from 'app/enums/retention-policy.enum';
@@ -24,12 +23,13 @@ import { ListdirChild } from 'app/interfaces/listdir-child.interface';
 import { QueryFilter } from 'app/interfaces/query-api.interface';
 import { ReplicationTask } from 'app/interfaces/replication-task.interface';
 import { Schedule } from 'app/interfaces/schedule.interface';
-import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
-import { FormExplorerConfig, FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
-import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
-import { RelationConnection } from 'app/pages/common/entity/entity-form/models/relation-connection.enum';
-import { EntityUtils } from 'app/pages/common/entity/utils';
+import { FieldSets } from 'app/modules/entity/entity-form/classes/field-sets';
+import { EntityFormComponent } from 'app/modules/entity/entity-form/entity-form.component';
+import { FormExplorerConfig, FormSelectConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
+import { RelationAction } from 'app/modules/entity/entity-form/models/relation-action.enum';
+import { RelationConnection } from 'app/modules/entity/entity-form/models/relation-connection.enum';
+import { EntityUtils } from 'app/modules/entity/utils';
+import { CronPresetValue } from 'app/modules/scheduler/utils/get-default-crontab-presets.utils';
 import {
   WebSocketService,
   TaskService,
@@ -74,7 +74,7 @@ export class ReplicationFormComponent implements FormConfiguration {
       value: RetentionPolicy.None,
     },
   ];
-  custActions = [{
+  customActions = [{
     id: 'wizard_add',
     name: this.translate.instant('Switch to Wizard'),
     function: () => {
@@ -135,7 +135,7 @@ export class ReplicationFormComponent implements FormConfiguration {
           options: [
             {
               label: this.translate.instant('SSH'),
-              value: TransportMode.SSH,
+              value: TransportMode.Ssh,
             },
             {
               label: this.translate.instant('SSH+NETCAT'),
@@ -146,7 +146,7 @@ export class ReplicationFormComponent implements FormConfiguration {
               value: TransportMode.Local,
             },
           ],
-          value: TransportMode.SSH,
+          value: TransportMode.Ssh,
         },
         {
           type: 'input',
@@ -336,15 +336,15 @@ export class ReplicationFormComponent implements FormConfiguration {
             },
             {
               label: this.translate.instant('lz4 (fastest)'),
-              value: CompressionType.LZ4,
+              value: CompressionType.Lz4,
             },
             {
               label: this.translate.instant('pigz (all rounder)'),
-              value: CompressionType.PIGZ,
+              value: CompressionType.Pigz,
             },
             {
               label: this.translate.instant('plzip (best compression)'),
-              value: CompressionType.PLZIP,
+              value: CompressionType.PlZip,
             },
           ],
           value: CompressionType.Disabled,
@@ -354,7 +354,7 @@ export class ReplicationFormComponent implements FormConfiguration {
               when: [
                 {
                   name: 'transport',
-                  value: TransportMode.SSH,
+                  value: TransportMode.Ssh,
                 },
               ],
             },
@@ -373,7 +373,7 @@ export class ReplicationFormComponent implements FormConfiguration {
               when: [
                 {
                   name: 'transport',
-                  value: TransportMode.SSH,
+                  value: TransportMode.Ssh,
                 },
               ],
             },
@@ -413,7 +413,6 @@ export class ReplicationFormComponent implements FormConfiguration {
           name: 'source_datasets_PUSH',
           placeholder: helptext.source_datasets_placeholder,
           tooltip: helptext.source_datasets_tooltip,
-          options: [],
           required: true,
           validation: [Validators.required],
           isHidden: true,
@@ -602,7 +601,7 @@ export class ReplicationFormComponent implements FormConfiguration {
           name: 'restrict_schedule_picker',
           tooltip: helptext.restrict_schedule_picker_tooltip,
           options: ['restrict_schedule_begin', 'restrict_schedule_end'],
-          value: '0 0 * * *',
+          value: CronPresetValue.Daily,
           relation: [
             {
               action: RelationAction.Show,
@@ -674,8 +673,6 @@ export class ReplicationFormComponent implements FormConfiguration {
           name: 'also_include_naming_schema',
           placeholder: helptext.also_include_naming_schema_placeholder,
           tooltip: helptext.also_include_naming_schema_tooltip,
-          blurStatus: true,
-          blurEvent: () => this.blurEventCountSnapshots(),
           parent: this,
         },
         {
@@ -739,7 +736,6 @@ export class ReplicationFormComponent implements FormConfiguration {
           name: 'target_dataset_PULL',
           placeholder: helptext.target_dataset_placeholder,
           tooltip: helptext.target_dataset_placeholder,
-          options: [],
           required: true,
           validation: [Validators.required],
           isHidden: true,
@@ -762,15 +758,15 @@ export class ReplicationFormComponent implements FormConfiguration {
           tooltip: helptext.readonly_tooltip,
           options: [
             {
-              label: this.translate.instant('SET'),
+              label: 'SET',
               value: ReadOnlyMode.Set,
             },
             {
-              label: this.translate.instant('REQUIRE'),
+              label: 'REQUIRE',
               value: ReadOnlyMode.Require,
             },
             {
-              label: this.translate.instant('IGNORE'),
+              label: 'IGNORE',
               value: ReadOnlyMode.Ignore,
             },
           ],
@@ -1023,7 +1019,7 @@ export class ReplicationFormComponent implements FormConfiguration {
           placeholder: helptext.schedule_picker_placeholder,
           tooltip: helptext.schedule_picker_tooltip,
           options: ['schedule_begin', 'schedule_end'],
-          value: '0 0 * * *',
+          value: CronPresetValue.Daily,
           relation: [
             {
               action: RelationAction.Show,
@@ -1194,10 +1190,9 @@ export class ReplicationFormComponent implements FormConfiguration {
     this.isNew = entityForm.isNew;
     this.title = entityForm.isNew ? helptext.replication_task_add : helptext.replication_task_edit;
 
-    const isTruenasCore = window.localStorage.getItem('product_type') === ProductType.Core;
     const readonlyCtrl = this.entityForm.formGroup.controls['readonly'];
     if (this.pk === undefined) {
-      readonlyCtrl.setValue(isTruenasCore ? ReadOnlyMode.Set : ReadOnlyMode.Require);
+      readonlyCtrl.setValue(ReadOnlyMode.Require);
     }
 
     if (this.entityForm.formGroup.controls['speed_limit'].value) {
@@ -1264,7 +1259,7 @@ export class ReplicationFormComponent implements FormConfiguration {
     });
 
     entityForm.formGroup.controls['schedule_picker'].valueChanges.pipe(untilDestroyed(this)).subscribe((value) => {
-      if (value === '0 0 * * *' || value === '0 0 * * sun' || value === '0 0 1 * *') {
+      if (value === CronPresetValue.Daily || value === CronPresetValue.Weekly || value === CronPresetValue.Monthly) {
         entityForm.setDisabled('schedule_begin', true, true);
         entityForm.setDisabled('schedule_end', true, true);
       } else {
@@ -1274,7 +1269,7 @@ export class ReplicationFormComponent implements FormConfiguration {
     });
 
     entityForm.formGroup.controls['restrict_schedule_picker'].valueChanges.pipe(untilDestroyed(this)).subscribe((value) => {
-      if (value === '0 0 * * *' || value === '0 0 * * sun' || value === '0 0 1 * *') {
+      if (value === CronPresetValue.Daily || value === CronPresetValue.Weekly || value === CronPresetValue.Monthly) {
         entityForm.setDisabled('restrict_schedule_begin', true, true);
         entityForm.setDisabled('restrict_schedule_end', true, true);
       } else {
@@ -1361,7 +1356,7 @@ export class ReplicationFormComponent implements FormConfiguration {
       wsResponse['restrict_schedule'] = true;
     }
     wsResponse['speed_limit'] = wsResponse['speed_limit']
-      ? this.storageService.convertBytestoHumanReadable(wsResponse['speed_limit'], 0)
+      ? this.storageService.convertBytesToHumanReadable(wsResponse['speed_limit'], 0)
       : undefined;
     // block large_block changes if it is enabled
     if (this.entityForm.wsResponse.large_block) {
@@ -1371,6 +1366,7 @@ export class ReplicationFormComponent implements FormConfiguration {
     if (wsResponse.properties_override) {
       const propertiesExcludeList = [];
       for (const [key, value] of Object.entries(wsResponse['properties_override'])) {
+        // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
         propertiesExcludeList.push(`${key}=${value}`);
       }
       wsResponse['properties_override'] = propertiesExcludeList;
@@ -1398,9 +1394,9 @@ export class ReplicationFormComponent implements FormConfiguration {
   }
 
   parsePickerTime(
-    picker: any,
-    begin: any,
-    end: any,
+    picker: string,
+    begin: string,
+    end: string,
   ): Schedule {
     const spl = picker.split(' ');
     return {
@@ -1427,15 +1423,14 @@ export class ReplicationFormComponent implements FormConfiguration {
       data['properties'] = true;
       data['exclude'] = [];
     }
+    const propertiesExcludeObj: any = {};
     if (data['properties_override']) {
-      const propertiesExcludeObj: any = {};
       for (let item of data['properties_override']) {
         item = item.split('=');
         propertiesExcludeObj[item[0]] = item[1];
       }
-      data['properties_override'] = propertiesExcludeObj;
     }
-
+    data['properties_override'] = propertiesExcludeObj;
     if (data['speed_limit'] !== undefined && data['speed_limit'] !== null) {
       data['speed_limit'] = this.storageService.convertHumanStringToNum(data['speed_limit']);
     }
@@ -1589,7 +1584,7 @@ export class ReplicationFormComponent implements FormConfiguration {
     }
   }
 
-  isCustActionVisible(actionId: string): boolean {
+  isCustomActionVisible(actionId: string): boolean {
     return actionId === 'wizard_add' && this.pk === undefined;
   }
 

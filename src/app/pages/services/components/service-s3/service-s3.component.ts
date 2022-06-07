@@ -10,9 +10,10 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { map } from 'rxjs/operators';
 import { choicesToOptions } from 'app/helpers/options.helper';
 import helptext from 'app/helptext/services/components/service-s3';
-import { regexValidator } from 'app/pages/common/entity/entity-form/validators/regex-validation';
-import { EntityUtils } from 'app/pages/common/entity/utils';
-import { FormErrorHandlerService } from 'app/pages/common/ix-forms/services/form-error-handler.service';
+import { numberValidator } from 'app/modules/entity/entity-form/validators/number-validation';
+import { regexValidator } from 'app/modules/entity/entity-form/validators/regex-validation';
+import { EntityUtils } from 'app/modules/entity/utils';
+import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { DialogService, SystemGeneralService, WebSocketService } from 'app/services';
 import { FilesystemService } from 'app/services/filesystem.service';
 
@@ -46,7 +47,7 @@ export class ServiceS3Component implements OnInit {
     bindip: [''],
     bindport: [
       null as number,
-      [Validators.min(1), Validators.max(65535), Validators.required, Validators.pattern(/^[1-9]\d*$/)],
+      [numberValidator(), Validators.min(1), Validators.max(65535), Validators.required],
     ],
     access_key: [
       '',
@@ -61,7 +62,7 @@ export class ServiceS3Component implements OnInit {
     certificate: [null as number],
     console_bindport: [
       9001 as number,
-      [Validators.min(1), Validators.max(65535), Validators.required, Validators.pattern(/^[1-9]\d*$/)]],
+      [numberValidator(), Validators.min(1), Validators.max(65535), Validators.required]],
     tls_server_uri: [''],
   });
 
@@ -75,17 +76,14 @@ export class ServiceS3Component implements OnInit {
     certificate: helptext.certificate_tooltip,
   };
 
-  readonly treeNodeProvider = this.filesystemService.getFilesystemNodeProvider();
+  readonly treeNodeProvider = this.filesystemService.getFilesystemNodeProvider({ directoriesOnly: true });
   readonly bindIpOptions$ = this.ws.call('s3.bindip_choices').pipe(choicesToOptions());
   readonly certificateOptions$ = this.systemGeneralService.getCertificates().pipe(
     map((certificates) => {
-      return [
-        { label: '---', value: null },
-        ...certificates.map((certificate) => ({
-          label: certificate.name,
-          value: certificate.id,
-        })),
-      ];
+      return certificates.map((certificate) => ({
+        label: certificate.name,
+        value: certificate.id,
+      }));
     }),
   );
 
@@ -104,6 +102,7 @@ export class ServiceS3Component implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.isFormLoading = true;
     this.ws.call('s3.config').pipe(untilDestroyed(this)).subscribe(
       (config) => {
         this.form.patchValue(config, { emitEvent: false });
@@ -147,12 +146,12 @@ export class ServiceS3Component implements OnInit {
     });
   }
 
+  certificatesLinkClicked(): void {
+    this.router.navigate(['/', 'credentials', 'certificates']);
+  }
+
   onSubmit(): void {
-    const values = {
-      ...this.form.value,
-      bindport: Number(this.form.value.bindport),
-      console_bindport: Number(this.form.value.console_bindport),
-    };
+    const values = this.form.value;
 
     if (values.certificate === null) {
       delete values.tls_server_uri;

@@ -8,8 +8,9 @@ import { of } from 'rxjs';
 import { SshSftpLogFacility, SshSftpLogLevel, SshWeakCipher } from 'app/enums/ssh.enum';
 import { choicesToOptions } from 'app/helpers/options.helper';
 import helptext from 'app/helptext/services/components/service-ssh';
-import { EntityUtils } from 'app/pages/common/entity/utils';
-import { FormErrorHandlerService } from 'app/pages/common/ix-forms/services/form-error-handler.service';
+import { numberValidator } from 'app/modules/entity/entity-form/validators/number-validation';
+import { EntityUtils } from 'app/modules/entity/utils';
+import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { DialogService, WebSocketService } from 'app/services';
 
 @UntilDestroy()
@@ -23,7 +24,7 @@ export class ServiceSshComponent implements OnInit {
   isBasicMode = true;
 
   form = this.fb.group({
-    tcpport: [null as number],
+    tcpport: [null as number, numberValidator()],
     rootlogin: [false],
     passwordauth: [false],
     kerberosauth: [false],
@@ -85,10 +86,7 @@ export class ServiceSshComponent implements OnInit {
   }
 
   onSubmit(): void {
-    const values = {
-      ...this.form.value,
-      tcpport: Number(this.form.value.tcpport),
-    };
+    const values = this.form.value;
 
     this.isFormLoading = true;
     this.ws.call('ssh.update', [values])
