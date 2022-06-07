@@ -3757,7 +3757,6 @@
   "Users": "用户",
   "Users could not be loaded": "无法加载用户",
   "Uses the SMB Service <i>NetBIOS Name</i> to advertise  the server to WS-Discovery clients. This causes the computer appear in  the <i>Network Neighborhood</i> of modern Windows OSes.": "使用SMB服务<i> NetBIOS名称</i>将服务器通告给WS-Discovery客户端。这会导致计算机出现在Windows操作系统的<i>网上邻居</i>中。",
-  "Using pool ": "正在使用的池",
   "Using this option will replicate all snapshots  which names match specified regular expression. The  performance on the systems with large number of snapshots  will be lower, as snapshots metadata needs to be read in order  to determine snapshots creation order.": "使用此选项将复制名称与指定正则表达式匹配的所有快照。具有大量快照的系统的性能会降低，因为需要读取快照元数据以确定快照创建顺序。",
   "Using this option will replicate all snapshots which names match specified regular expression. The performance on the systems with large number of snapshots will be lower, as snapshots metadata needs to be read in order to determine snapshots creation order.": "使用此选项将复制名称与指定正则表达式匹配的所有快照。具有大量快照的系统的性能会降低，因为需要读取快照元数据以确定快照创建顺序。",
   "VLAN Addresses": "VLAN地址",

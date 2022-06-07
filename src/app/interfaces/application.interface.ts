@@ -20,7 +20,6 @@ export interface UpgradeSummary {
 
 export enum ApplicationUserEventName {
   SwitchTab = 'SwitchTab',
-  RefreshTab = 'RefreshTab',
 }
 
 export interface ApplicationUserEvent {

@@ -3891,7 +3891,6 @@
   "Usernames can be up to 16 characters long. When using NIS or other legacy software with limited username lengths, keep usernames to eight characters or less for compatibility.": "Имя пользователя может быть длиной до 16 символов. При использовании NIS или другого унаследованного программного обеспечения с ограниченной длиной имени пользователя для совместимости используйте имена пользователей не Эболее восьми символов.",
   "Usernames can be up to 16 characters long. When using NIS or other legacy software with limited username lengths, keep usernames to eight characters or less for compatibility. Usernames cannot begin with a hyphen (<i>-</i>) or contain a space, tab, or these characters: <i>, : + & # % ^ ( ) ! @ ~ * ? < > =</i>. <i>$</i> can only be used as the last character of the username.": "Имя пользователя может быть длиной до 16 символов. При использовании NIS или другого устаревшего программного обеспечения с ограниченной длиной имени пользователя для совместимости оставляйте имена пользователей не более восьми символов. Имена пользователей не могут начинаться с дефиса (<i>-</i>) или содержать пробел, символ табуляции или следующие символы: <i>, : + & \\# % ^ ( ) ! @ ~ * ? < > =</i>. <i>$</i> может использоваться только как последний символ имени пользователя.",
   "Users": "Пользователи",
-  "Using pool ": "Используется пул ",
   "VLANs": "VLANы",
   "VM Snapshot": "Снимок ВМ",
   "VM system time. Default is <i>Local</i>.": "Системное время ВМ. По умолчанию <i>Местное</i>.",

@@ -3900,7 +3900,6 @@
   "Username or Password is incorrect.": "Benutzername oder Passwort ist falsch.",
   "Usernames can be up to 16 characters long. When using NIS or other legacy software with limited username lengths, keep usernames to eight characters or less for compatibility. Usernames cannot begin with a hyphen (<i>-</i>) or contain a space, tab, or these characters: <i>, : + & # % ^ ( ) ! @ ~ * ? < > =</i>. <i>$</i> can only be used as the last character of the username.": "Usernames can be up to 16 characters long. When using NIS or other legacy software with limited username lengths, keep usernames to eight characters or less for compatibility. Usernames cannot begin with a hyphen (<i>-</i>) or contain a space, tab, or these characters: <i>, : + & \\# % ^ ( ) ! @ ~ * ? < > =</i>. <i>$</i> can only be used as the last character of the username.",
   "Users": "Benutzer",
-  "Using pool ": "Verwende Pool ",
   "VLAN Settings": "VLAN Einstellungen",
   "VM system time. Default is <i>Local</i>.": "VM-Systemzeit. Der Standardwert ist <i>Lokal</i>.",
   "Valid": "Gültig",

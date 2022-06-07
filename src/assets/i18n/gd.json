@@ -3700,7 +3700,6 @@
   "Users": "",
   "Users could not be loaded": "",
   "Uses the SMB Service <i>NetBIOS Name</i> to advertise  the server to WS-Discovery clients. This causes the computer appear in  the <i>Network Neighborhood</i> of modern Windows OSes.": "",
-  "Using pool ": "",
   "Using pool {name}": "",
   "Using this option will replicate all snapshots  which names match specified regular expression. The  performance on the systems with large number of snapshots  will be lower, as snapshots metadata needs to be read in order  to determine snapshots creation order.": "",
   "Using this option will replicate all snapshots which names match specified regular expression. The performance on the systems with large number of snapshots will be lower, as snapshots metadata needs to be read in order to determine snapshots creation order.": "",

@@ -1,7 +1,6 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
 export default {
-  // TODO
   choosePool: {
     title: T('Choose a pool for Apps'),
     placeholder: T('Pools'),
@@ -9,7 +8,6 @@ export default {
     action: T('Choose'),
     jobTitle: T('Configuring...'),
     success: T('Success'),
-    message: T('Using pool '),
     unsetPool: {
       label: T('Unset Pool'),
       confirm: {
