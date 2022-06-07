@@ -4,6 +4,7 @@ import {
 } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 import { ExplorerType } from 'app/enums/explorer-type.enum';
 import { IscsiExtentType } from 'app/enums/iscsi.enum';
@@ -12,7 +13,7 @@ import { helptextSharingIscsi } from 'app/helptext/sharing';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { IscsiExtent } from 'app/interfaces/iscsi.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
-import { FieldConfig, FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FieldConfig, FormComboboxConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import {
@@ -90,7 +91,7 @@ export class ExtentFormComponent implements FormConfiguration {
           ],
         },
         {
-          type: 'select',
+          type: 'combobox',
           name: 'disk',
           placeholder: helptextSharingIscsi.extent_placeholder_disk,
           tooltip: helptextSharingIscsi.extent_tooltip_disk,
@@ -270,6 +271,7 @@ export class ExtentFormComponent implements FormConfiguration {
     protected ws: WebSocketService,
     protected loader: AppLoaderService,
     protected storageService: StorageService,
+    private translate: TranslateService,
   ) {}
 
   preInit(): void {
@@ -290,14 +292,21 @@ export class ExtentFormComponent implements FormConfiguration {
   afterInit(entityForm: EntityFormComponent): void {
     this.entityForm = entityForm;
     this.fieldConfig = entityForm.fieldConfig;
-    const extentDiskField = _.find(this.fieldConfig, { name: 'disk' }) as FormSelectConfig;
+    const extentDiskField = _.find(this.fieldConfig, { name: 'disk' }) as FormComboboxConfig;
     // get device options
+    this.entityForm.keepLoaderOpen = true;
+    this.loader.open(this.translate.instant('Loading devices. Please wait.'));
     this.iscsiService.getExtentDevices().pipe(untilDestroyed(this)).subscribe((res) => {
+      this.loader.close();
       const options = [];
       for (const i in res) {
         options.push({ label: res[i], value: i });
       }
       extentDiskField.options = _.sortBy(options, ['label']);
+    },
+    (res) => {
+      this.loader.close();
+      new EntityUtils().handleWsError(this.entityForm, res);
     });
 
     this.extentTypeControl = entityForm.formGroup.controls['type'];
