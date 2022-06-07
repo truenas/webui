@@ -317,7 +317,7 @@ export class SshConnectionsFormComponent {
     return wsResponse;
   }
 
-  submitFunction(data) {
+  postSubmit(data) {
     if (data['setup_method'] === 'manual') {
       const attributes = {};
       for (const item in this.manualMethodFields) {
@@ -360,7 +360,7 @@ export class SshConnectionsFormComponent {
           this.ws.call('keychaincredential.create', [payload]).toPromise().then(
             (sshKey) => {
               data['private_key'] = sshKey.id;
-              this.submitFunction(data);
+              this.postSubmit(data);
             },
             (sshKey_err) => {
               this.loader.close();
@@ -374,7 +374,7 @@ export class SshConnectionsFormComponent {
         },
       );
     } else {
-      this.submitFunction(data);
+      this.postSubmit(data);
     }
   }
 }
