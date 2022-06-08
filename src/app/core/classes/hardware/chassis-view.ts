@@ -166,7 +166,7 @@ export class ChassisView {
 
     // Render DriveTrays
     if (!this.slotRange) {
-      this.slotRange = { start: 1, end: this.totalDriveTrays };
+      this.slotRange = { start: 0, end: this.totalDriveTrays };
     }
     for (let i = 0; i < this.totalDriveTrays; i++) {
       const slot: number = this.slotRange.start + i;
