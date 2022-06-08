@@ -7,7 +7,6 @@
         <ix-fieldset
           [title]="helptext.ipmi_remote_controller | translate"
         >
-          <!--        class ?-->
           <ix-radio-group
             [formControlName]="'remoteController'"
             [options]="remoteControllerOptions"
@@ -69,13 +68,11 @@
           [disabled]="form.invalid || isLoading"
           color="primary"
         >{{ 'Save' | translate }}</button>
-        <!--        // id-->
         <button
           mat-button
           type='button'
           (click)="setFlashTime()"
         >{{ 'Identify Light' | translate }}</button>
-        <!--        // id-->
         <button
           mat-button
           type='button'

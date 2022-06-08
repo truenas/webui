@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
 } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
@@ -9,6 +9,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { Observable, of } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { ProductType } from 'app/enums/product-type.enum';
+import { WINDOW } from 'app/helpers/window.helper';
 import helptext from 'app/helptext/network/ipmi/ipmi';
 import { Ipmi, IpmiUpdate } from 'app/interfaces/ipmi.interface';
 import { RadioOption } from 'app/interfaces/option.interface';
@@ -42,7 +43,7 @@ export class IpmiFormComponent implements OnInit {
   isLoading = false;
   managementIp: string;
   idIpmi: number;
-  queryFilter: QueryParams<Ipmi>;
+  filterQuery: QueryParams<Ipmi>;
   form = this.fb.group({
     remoteController: [null as number],
     dhcp: [false],
@@ -64,7 +65,7 @@ export class IpmiFormComponent implements OnInit {
         this.translate.instant(helptext.ip_error),
       ),
     ]],
-    vlan: [null as number], // unknown
+    vlan: [null as number],
     password: ['', [
       this.validatorsService.withMessage(
         Validators.maxLength(20),
@@ -84,10 +85,12 @@ export class IpmiFormComponent implements OnInit {
     private slideInService: IxSlideInService,
     private dialogService: DialogService,
     private errorHandler: FormErrorHandlerService,
+    @Inject(WINDOW) private window: Window,
   ) {
   }
 
   ngOnInit(): void {
+    this.filterQuery = [[['id', '=', this.idIpmi]]];
     this.prepareDataForm();
 
     const stateDhcp$ = this.form.controls['dhcp'].valueChanges;
@@ -118,13 +121,13 @@ export class IpmiFormComponent implements OnInit {
   prepareDataForm(): void {
     this.isLoading = true;
 
-    if (window.localStorage.getItem('product_type') === ProductType.ScaleEnterprise) {
+    if (this.window.localStorage.getItem('product_type') === ProductType.ScaleEnterprise) {
       this.ws.call('failover.licensed').pipe(
         switchMap((isHa) => {
           if (isHa) {
             return this.ws.call('failover.node');
           }
-          return this.ws.call('ipmi.query');
+          return this.ws.call('ipmi.query', this.filterQuery);
         }),
         untilDestroyed(this),
       )
@@ -142,8 +145,8 @@ export class IpmiFormComponent implements OnInit {
           }
         });
     } else {
-      this.ws.call('ipmi.query').pipe(untilDestroyed(this)).subscribe((dataIpmi) => {
-        this.setFormValues(dataIpmi[0]); //
+      this.ws.call('ipmi.query', this.filterQuery).pipe(untilDestroyed(this)).subscribe((dataIpmi) => {
+        this.setFormValues(dataIpmi[0]);
         this.isLoading = false;
         this.cdr.markForCheck();
       });
@@ -156,12 +159,12 @@ export class IpmiFormComponent implements OnInit {
     this.remoteControllerOptions = of([
       // value: 0 the same as false
       {
-        label: `Active: ${this.controllerName} ${this.currentControllerLabel}`,
+        label: this.translate.instant(`Active: ${this.controllerName} ${this.currentControllerLabel}`),
         value: 0,
       },
       // value: 1 the same as true
       {
-        label: `Standby: ${this.controllerName} ${this.failoverControllerLabel}`,
+        label: this.translate.instant(`Standby: ${this.controllerName} ${this.failoverControllerLabel}`),
         value: 1,
       },
     ]);
@@ -177,31 +180,33 @@ export class IpmiFormComponent implements OnInit {
 
   loadDataRemoteContr(): void {
     let stateCtr: number;
-    const filterQuery: QueryParams<Ipmi> = [[['id', '=', this.idIpmi]]];
+
     this.form.controls['remoteController'].valueChanges
       .pipe(
         switchMap((state) => {
+          this.isLoading = true;
           stateCtr = state;
 
           if (state) {
             return this.remoteContrData
               ? of([this.remoteContrData])
-              : this.ws.call('failover.call_remote', ['ipmi.query', filterQuery]) as Observable<Ipmi[]>;
+              : this.ws.call('failover.call_remote', ['ipmi.query', this.filterQuery]) as Observable<Ipmi[]>;
           }
           return this.defaultContrData
             ? of([this.defaultContrData])
-            : this.ws.call('ipmi.query');
+            : this.ws.call('ipmi.query', this.filterQuery);
         }),
         untilDestroyed(this),
       )
-      .subscribe((data) => {
+      .subscribe((dataIpma) => {
         if (stateCtr) {
-          this.remoteContrData = data[0];
+          this.remoteContrData = dataIpma[0];
         } else {
-          this.defaultContrData = data[0];
+          this.defaultContrData = dataIpma[0];
         }
 
-        this.setFormValues(data[0]);
+        this.setFormValues(dataIpma[0]);
+        this.isLoading = false;
         this.cdr.markForCheck();
       });
   }
@@ -212,10 +217,12 @@ export class IpmiFormComponent implements OnInit {
     const value = { ...this.form.value };
     delete value.remoteController;
     const ipmiUpdate: IpmiUpdate = { ...value };
-    let call$ = this.ws.call('ipmi.update', [this.idIpmi, ipmiUpdate]);
+    let call$: Observable<Ipmi>;
 
     if (this.form.controls['remoteController'].value) {
       call$ = this.ws.call('failover.call_remote', ['ipmi.update', [this.idIpmi, ipmiUpdate]]) as Observable<Ipmi>;
+    } else {
+      call$ = this.ws.call('ipmi.update', [this.idIpmi, ipmiUpdate]);
     }
     call$.pipe(untilDestroyed(this))
       .subscribe(
