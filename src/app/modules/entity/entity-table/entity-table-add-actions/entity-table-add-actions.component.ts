@@ -4,7 +4,6 @@ import {
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { fromEvent as observableFromEvent } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
-import { GlobalAction } from 'app/interfaces/global-action.interface';
 import { EntityTableAddActionsConfig } from 'app/modules/entity/entity-table/entity-table-add-actions/entity-table-add-actions-config.interface';
 import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-table.component';
 import { EntityTableAction } from 'app/modules/entity/entity-table/entity-table.interface';
@@ -12,13 +11,13 @@ import { EntityTableService } from 'app/services/entity-table.service';
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-entity-table-add-actions',
   templateUrl: './entity-table-add-actions.component.html',
   styleUrls: ['./entity-table-add-actions.component.scss'],
 })
-export class EntityTableAddActionsComponent implements GlobalAction, OnInit, AfterViewInit {
+export class EntityTableAddActionsComponent implements OnInit, AfterViewInit {
   @ViewChild('filter', { static: false }) filter: ElementRef;
   @Input() entity: EntityTableComponent;
-  conf: EntityTableAddActionsConfig;
   filterValue = '';
 
   actions: EntityTableAction[];
@@ -29,6 +28,10 @@ export class EntityTableAddActionsComponent implements GlobalAction, OnInit, Aft
   get totalActions(): number {
     const addAction = this.entity.conf.routeAdd || this.entity.conf.doAdd ? 1 : 0;
     return this.actions.length + addAction;
+  }
+
+  get conf(): EntityTableAddActionsConfig {
+    return this.entity.conf as EntityTableAddActionsConfig;
   }
 
   constructor(private entityTableService: EntityTableService) { }
@@ -42,12 +45,6 @@ export class EntityTableAddActionsComponent implements GlobalAction, OnInit, Aft
   }
 
   ngAfterViewInit(): void {
-    this.filterInit();
-  }
-
-  applyConfig(entity: EntityTableComponent): void {
-    this.entity = entity;
-    this.conf = entity.conf as EntityTableAddActionsConfig;
     this.filterInit();
   }
 

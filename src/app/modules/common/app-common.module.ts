@@ -30,7 +30,6 @@ import { CoreComponents } from 'app/core/core-components.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { AlertsModule } from 'app/modules/alerts/alerts.module';
 import { CastModule } from 'app/modules/cast/cast.module';
-import { BreadcrumbComponent } from 'app/modules/common/breadcrumb/breadcrumb.component';
 import { AboutDialogComponent } from 'app/modules/common/dialog/about/about-dialog.component';
 import { ConfirmDialogComponent } from 'app/modules/common/dialog/confirm-dialog/confirm-dialog.component';
 import { ConsolePanelDialogComponent } from 'app/modules/common/dialog/console-panel/console-panel-dialog.component';
@@ -43,11 +42,7 @@ import { ResilverProgressDialogComponent } from 'app/modules/common/dialog/resil
 import { AdminLayoutComponent } from 'app/modules/common/layouts/admin-layout/admin-layout.component';
 import { AuthLayoutComponent } from 'app/modules/common/layouts/auth-layout/auth-layout.component';
 import { ModalComponent } from 'app/modules/common/modal/modal.component';
-import { NavigationComponent } from 'app/modules/common/navigation/navigation.component';
-import { PageTitleHeaderComponent } from 'app/modules/common/page-title-header/page-title-header.component';
-import { PageTitleComponent } from 'app/modules/common/page-title/page-title.component';
 import { SearchInputComponent } from 'app/modules/common/search-input/search-input.component';
-import { SecondaryMenuComponent } from 'app/modules/common/secondary-menu/secondary-menu.component';
 import { TopbarComponent } from 'app/modules/common/topbar/topbar.component';
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
@@ -109,14 +104,9 @@ import { LocaleService } from 'app/services/locale.service';
     ErrorDialogComponent,
     AboutDialogComponent,
     RedirectDialogComponent,
-    NavigationComponent,
-    PageTitleHeaderComponent,
     ConsolePanelDialogComponent,
     DirectoryServicesMonitorComponent,
     ModalComponent,
-    BreadcrumbComponent,
-    PageTitleComponent,
-    SecondaryMenuComponent,
     SearchInputComponent,
   ],
   providers: [
@@ -125,8 +115,6 @@ import { LocaleService } from 'app/services/locale.service';
     SvgIconRegistryService,
   ],
   exports: [
-    PageTitleComponent,
-    PageTitleHeaderComponent,
     ViewControllerComponent,
     SearchInputComponent,
   ],

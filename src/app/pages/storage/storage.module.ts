@@ -34,6 +34,7 @@ import { MessageService } from 'app/modules/entity/entity-form/services/message.
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxTableModule } from 'app/modules/ix-tables/ix-table.module';
+import { LayoutModule } from 'app/modules/layout/layout.module';
 import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
 import { userReducer } from 'app/pages/account/users/store/user.reducer';
 import { userStateKey } from 'app/pages/account/users/store/user.selectors';
@@ -126,6 +127,7 @@ import { routing } from './storage.routing';
     TranslateModule,
     TreeTableModule,
     SnapshotsModule,
+    LayoutModule,
   ],
   declarations: [
     AclEditorListComponent,
