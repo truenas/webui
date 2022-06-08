@@ -8,7 +8,6 @@ export default {
     action: T('Choose'),
     jobTitle: T('Configuring...'),
     success: T('Success'),
-    message: T('Using pool '),
     unsetPool: {
       label: T('Unset Pool'),
       confirm: {
@@ -91,7 +90,7 @@ export default {
   availablePlaceholder: T('Search Available Applications'),
   installedPlaceholder: T('Search Installed Applications'),
   catalogPlaceholder: T('Search Catalogs'),
-  dockerPlaceholder: T('Search Docker Images'),
+  dockerPlaceholder: T('Search Docker Images'), // TODO: Clean
 
   noPool: {
     title: T('No Pools Found'),

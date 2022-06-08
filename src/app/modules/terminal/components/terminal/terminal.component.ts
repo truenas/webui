@@ -1,6 +1,7 @@
 import {
+  AfterViewInit,
   ChangeDetectionStrategy,
-  Component, ElementRef, Input, OnDestroy, OnInit, ViewChild,
+  Component, ElementRef, Input, OnDestroy, OnInit, TemplateRef, ViewChild,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -9,14 +10,13 @@ import * as FontFaceObserver from 'fontfaceobserver';
 import { Subject } from 'rxjs';
 import { Terminal } from 'xterm';
 import { FitAddon } from 'xterm-addon-fit';
-import { CoreEvent } from 'app/interfaces/events';
 import { ShellConnectedEvent } from 'app/interfaces/shell.interface';
 import { TerminalConfiguration } from 'app/interfaces/terminal.interface';
-import { EntityToolbarComponent } from 'app/modules/entity/entity-toolbar/entity-toolbar.component';
 import { CopyPasteMessageComponent } from 'app/modules/terminal/components/copy-paste-message/copy-paste-message.component';
 import { XtermAttachAddon } from 'app/modules/terminal/xterm-attach-addon';
 import { ShellService, WebSocketService } from 'app/services';
 import { CoreService } from 'app/services/core-service/core.service';
+import { LayoutService } from 'app/services/layout.service';
 
 @UntilDestroy()
 @Component({
@@ -26,19 +26,35 @@ import { CoreService } from 'app/services/core-service/core.service';
   providers: [ShellService],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class TerminalComponent implements OnInit, OnDestroy {
+export class TerminalComponent implements OnInit, AfterViewInit, OnDestroy {
   @Input() conf: TerminalConfiguration;
   @ViewChild('terminal', { static: true }) container: ElementRef;
+  @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
 
   fontSize = 14;
   fontName = 'Inconsolata';
   xterm: Terminal;
   private fitAddon: FitAddon;
-  formEvent$: Subject<CoreEvent>;
+  fontSizeChanged = new Subject<{ name: string; value: number }>();
 
   shellConnected = false;
   connectionId: string;
   private attachAddon: XtermAttachAddon;
+
+  readonly sliderConfig = {
+    name: 'fontsize',
+    label: this.translate.instant('Set font size'),
+    type: 'slider',
+    min: 10,
+    max: 20,
+    step: 1,
+    value: this.fontSize,
+  };
+
+  readonly toolbarTooltip = this.translate.instant(`<b>Copy & Paste</b> <br/>
+                  Context menu copy and paste operations are disabled in the Shell. Copy and paste shortcuts for Mac are <i>Command+C</i> and <i>Command+V</i>. For most operating systems, use <i>Ctrl+Insert</i> to copy and <i>Shift+Insert</i> to paste.<br/><br/>
+                  <b>Kill Process</b> <br/>
+                  Kill process shortcut is <i>Crtl+C</i>.`);
 
   constructor(
     private core: CoreService,
@@ -46,26 +62,11 @@ export class TerminalComponent implements OnInit, OnDestroy {
     private ss: ShellService,
     private dialog: MatDialog,
     private translate: TranslateService,
+    private layoutService: LayoutService,
   ) {}
 
   ngOnInit(): void {
-    this.formEvent$ = new Subject();
-    this.formEvent$.pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
-      if (evt.data.event_control === 'restore') {
-        this.resetDefault();
-        this.refreshToolbarButtons();
-      } else if (evt.data.event_control === 'reconnect') {
-        if (this.conf.customReconnectAction) {
-          this.conf.customReconnectAction();
-        } else {
-          this.reconnect();
-          this.refreshToolbarButtons();
-        }
-      } else if (evt.data.event_control === 'fontsize') {
-        this.fontSize = evt.data.fontsize;
-        this.resizeTerm();
-      }
-    });
+    this.setupFontSizeSlider();
 
     if (this.conf.preInit) {
       this.conf.preInit().pipe(untilDestroyed(this)).subscribe(() => {
@@ -90,59 +91,8 @@ export class TerminalComponent implements OnInit, OnDestroy {
     });
   }
 
-  refreshToolbarButtons(): void {
-    let controls = [];
-    if (this.shellConnected) {
-      controls.push({
-        name: 'fontsize',
-        label: this.translate.instant('Set font size'),
-        type: 'slider',
-        min: 10,
-        max: 20,
-        step: 1,
-        value: this.fontSize,
-      });
-
-      if (this.conf.customReconnectAction) {
-        controls.push({
-          name: 'reconnect',
-          label: this.translate.instant('Reconnect'),
-          type: 'button',
-          color: 'secondary',
-        });
-      }
-
-      controls.push({
-        name: 'restore',
-        label: this.translate.instant('Restore default'),
-        type: 'button',
-        color: 'primary',
-        placeholder: this.translate.instant('Shell Commands'),
-        tooltip: this.translate.instant(`<b>Copy & Paste</b> <br/>
-                  Context menu copy and paste operations are disabled in the Shell. Copy and paste shortcuts for Mac are <i>Command+C</i> and <i>Command+V</i>. For most operating systems, use <i>Ctrl+Insert</i> to copy and <i>Shift+Insert</i> to paste.<br/><br/>
-                  <b>Kill Process</b> <br/>
-                  Kill process shortcut is <i>Crtl+C</i>.`),
-      });
-    } else {
-      controls = [
-        {
-          name: 'reconnect',
-          label: this.translate.instant('Reconnect'),
-          type: 'button',
-          color: 'primary',
-        },
-      ];
-    }
-    // Setup Global Actions
-    const actionsConfig = {
-      actionType: EntityToolbarComponent,
-      actionConfig: {
-        target: this.formEvent$,
-        controls,
-      },
-    };
-
-    this.core.emit({ name: 'GlobalActions', data: actionsConfig, sender: this });
+  ngAfterViewInit(): void {
+    this.layoutService.pageHeaderUpdater$.next(this.pageHeader);
   }
 
   ngOnDestroy(): void {
@@ -220,19 +170,17 @@ export class TerminalComponent implements OnInit, OnDestroy {
     }
     this.ss.connect();
 
-    this.refreshToolbarButtons();
-
     this.ss.shellConnected.pipe(untilDestroyed(this)).subscribe((event: ShellConnectedEvent) => {
       this.shellConnected = event.connected;
       this.connectionId = event.id;
       this.updateTerminal();
-      this.refreshToolbarButtons();
       this.resizeTerm();
     });
   }
 
   resetDefault(): void {
     this.fontSize = 14;
+    this.sliderConfig.value = this.fontSize;
     this.resizeTerm();
   }
 
@@ -241,5 +189,14 @@ export class TerminalComponent implements OnInit, OnDestroy {
       this.conf.setShellConnectionData(this.ss);
     }
     this.ss.connect();
+  }
+
+  private setupFontSizeSlider(): void {
+    this.fontSizeChanged
+      .pipe(untilDestroyed(this))
+      .subscribe(() => {
+        this.fontSize = this.sliderConfig.value;
+        this.resizeTerm();
+      });
   }
 }

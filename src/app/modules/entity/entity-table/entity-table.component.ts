@@ -4,7 +4,6 @@ import {
 import { SelectionModel } from '@angular/cdk/collections';
 import {
   AfterViewInit,
-  AfterViewChecked,
   Component,
   Input,
   OnDestroy,
@@ -31,14 +30,12 @@ import {
   catchError, filter, switchMap, take, tap,
 } from 'rxjs/operators';
 import { JobState } from 'app/enums/job-state.enum';
-import { GlobalActionConfig } from 'app/interfaces/global-action.interface';
 import { TableDisplayedColumns } from 'app/interfaces/preferences.interface';
 import { Interval } from 'app/interfaces/timeout.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { AppLoaderService } from 'app/modules/app-loader/app-loader.service';
 import { EmptyConfig, EmptyType } from 'app/modules/entity/entity-empty/entity-empty.component';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
-import { EntityTableAddActionsComponent } from 'app/modules/entity/entity-table/entity-table-add-actions/entity-table-add-actions.component';
 import {
   EntityTableAction,
   EntityTableColumn, EntityTableColumnProp,
@@ -47,6 +44,7 @@ import {
 import { EntityUtils } from 'app/modules/entity/utils';
 import { DialogService, JobService } from 'app/services';
 import { CoreService } from 'app/services/core-service/core.service';
+import { LayoutService } from 'app/services/layout.service';
 import { ModalService } from 'app/services/modal.service';
 import { StorageService } from 'app/services/storage.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -78,14 +76,14 @@ interface SomeRow {
     ]),
   ],
 })
-export class EntityTableComponent<Row extends SomeRow = any>
-implements OnInit, AfterViewInit, AfterViewChecked, OnDestroy {
+export class EntityTableComponent<Row extends SomeRow = any> implements OnInit, AfterViewInit, OnDestroy {
   @Input() title = '';
   @Input() conf: EntityTableConfig;
 
   @ViewChild('newEntityTable', { static: false }) entitytable: TemplateRef<void>;
   @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
   @ViewChild(MatSort, { static: false }) sort: MatSort;
+  @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
 
   dataSourceStreamer$: Subject<Row[]> = new Subject();
   dataSource$: Observable<Row[]> = this.dataSourceStreamer$.asObservable();
@@ -137,7 +135,6 @@ implements OnInit, AfterViewInit, AfterViewChecked, OnDestroy {
    * The factory setting.
    */
   originalConfColumns: EntityTableColumn[] = [];
-  colMaxWidths: { name: string; maxWidth: number }[] = [];
 
   expandedRows = document.querySelectorAll('.expanded-row').length;
   expandedElement: Row | null = null;
@@ -159,8 +156,6 @@ implements OnInit, AfterViewInit, AfterViewChecked, OnDestroy {
   sortKey: keyof Row;
   filterValue = ''; // the filter string filled in search input.
   readonly EntityJobState = JobState;
-  // Global Actions in Page Title
-  protected actionsConfig: GlobalActionConfig;
   loaderOpen = false;
   protected toDeleteRow: Row;
   private interval: Interval;
@@ -211,7 +206,6 @@ implements OnInit, AfterViewInit, AfterViewChecked, OnDestroy {
   }
 
   isAllSelected = false;
-  globalActionsInit = false;
 
   constructor(
     protected core: CoreService,
@@ -226,6 +220,7 @@ implements OnInit, AfterViewInit, AfterViewChecked, OnDestroy {
     protected matDialog: MatDialog,
     public modalService: ModalService,
     public changeDetectorRef: ChangeDetectorRef,
+    protected layoutService: LayoutService,
   ) {
     // watch for navigation events as ngOnDestroy doesn't always trigger on these
     this.routeSub = this.router.events.pipe(untilDestroyed(this)).subscribe((event) => {
@@ -284,7 +279,6 @@ implements OnInit, AfterViewInit, AfterViewChecked, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.actionsConfig = { actionType: EntityTableAddActionsComponent, actionConfig: this };
     this.cardHeaderReady = !this.conf.cardHeaderComponent;
     this.hasActions = !this.conf.noActions;
   }
@@ -390,14 +384,10 @@ implements OnInit, AfterViewInit, AfterViewChecked, OnDestroy {
 
         this.changeDetectorRef.detectChanges();
       });
-  }
 
-  ngAfterViewChecked(): void {
     // If actionsConfig was disabled, don't show the default toolbar. like the Table is in a Tab.
-    if (!this.conf.disableActionsConfig && !this.globalActionsInit) {
-      // Setup Actions in Page Title Component
-      this.core.emit({ name: 'GlobalActions', data: this.actionsConfig, sender: this });
-      this.globalActionsInit = true;
+    if (!this.conf.disableActionsConfig) {
+      this.layoutService.pageHeaderUpdater$.next(this.pageHeader);
     }
   }
 
