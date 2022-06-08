@@ -7,7 +7,6 @@ import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as FontFaceObserver from 'fontfaceobserver';
-import { Subject } from 'rxjs';
 import { Terminal } from 'xterm';
 import { FitAddon } from 'xterm-addon-fit';
 import { ShellConnectedEvent } from 'app/interfaces/shell.interface';
@@ -35,21 +34,10 @@ export class TerminalComponent implements OnInit, AfterViewInit, OnDestroy {
   fontName = 'Inconsolata';
   xterm: Terminal;
   private fitAddon: FitAddon;
-  fontSizeChanged = new Subject<{ name: string; value: number }>();
 
   shellConnected = false;
   connectionId: string;
   private attachAddon: XtermAttachAddon;
-
-  readonly sliderConfig = {
-    name: 'fontsize',
-    label: this.translate.instant('Set font size'),
-    type: 'slider',
-    min: 10,
-    max: 20,
-    step: 1,
-    value: this.fontSize,
-  };
 
   readonly toolbarTooltip = this.translate.instant(`<b>Copy & Paste</b> <br/>
                   Context menu copy and paste operations are disabled in the Shell. Copy and paste shortcuts for Mac are <i>Command+C</i> and <i>Command+V</i>. For most operating systems, use <i>Ctrl+Insert</i> to copy and <i>Shift+Insert</i> to paste.<br/><br/>
@@ -66,8 +54,6 @@ export class TerminalComponent implements OnInit, AfterViewInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    this.setupFontSizeSlider();
-
     if (this.conf.preInit) {
       this.conf.preInit().pipe(untilDestroyed(this)).subscribe(() => {
         this.initShell();
@@ -180,7 +166,6 @@ export class TerminalComponent implements OnInit, AfterViewInit, OnDestroy {
 
   resetDefault(): void {
     this.fontSize = 14;
-    this.sliderConfig.value = this.fontSize;
     this.resizeTerm();
   }
 
@@ -191,12 +176,8 @@ export class TerminalComponent implements OnInit, AfterViewInit, OnDestroy {
     this.ss.connect();
   }
 
-  private setupFontSizeSlider(): void {
-    this.fontSizeChanged
-      .pipe(untilDestroyed(this))
-      .subscribe(() => {
-        this.fontSize = this.sliderConfig.value;
-        this.resizeTerm();
-      });
+  onFontSizeChanged(newSize: number): void {
+    this.fontSize = newSize;
+    this.resizeTerm();
   }
 }

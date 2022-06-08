@@ -7,7 +7,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { UUID } from 'angular2-uuid';
 import * as _ from 'lodash';
-import { Subject, Subscription } from 'rxjs';
+import { Subscription } from 'rxjs';
 import helptext from 'app/helptext/apps/apps';
 import { Option } from 'app/interfaces/option.interface';
 import { AppLoaderService } from 'app/modules/app-loader/app-loader.service';
@@ -39,7 +39,6 @@ export class PodLogsComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
 
   fontSize = 14;
-  fontSizeChanged = new Subject<{ name: string; value: number }>();
   chartReleaseName: string;
   podName: string;
   containerName: string;
@@ -54,16 +53,6 @@ export class PodLogsComponent implements OnInit, AfterViewInit, OnDestroy {
   choosePod: DialogFormConfiguration;
   private podLogsChangedListener: Subscription;
   podLogs: PodLogEvent[];
-
-  readonly sliderConfig = {
-    name: 'fontsize',
-    label: this.translate.instant('Set font size'),
-    type: 'slider',
-    min: 10,
-    max: 20,
-    step: 1,
-    value: this.fontSize,
-  };
 
   constructor(
     protected core: CoreService,
@@ -109,8 +98,6 @@ export class PodLogsComponent implements OnInit, AfterViewInit, OnDestroy {
 
       this.reconnect();
     });
-
-    this.setupFontSizeSlider();
   }
 
   ngAfterViewInit(): void {
@@ -154,10 +141,8 @@ export class PodLogsComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
-  setupFontSizeSlider(): void {
-    this.fontSizeChanged
-      .pipe(untilDestroyed(this))
-      .subscribe(() => this.fontSize = this.sliderConfig.value);
+  onFontSizeChanged(newSize: number): void {
+    this.fontSize = newSize;
   }
 
   onDownloadLogs(): void {

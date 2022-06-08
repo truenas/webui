@@ -11,7 +11,7 @@ import { Option } from 'app/interfaces/option.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { ApplicationsService } from 'app/pages/applications/applications.service';
-import { AppLoaderService, DialogService, WebSocketService } from 'app/services';
+import { AppLoaderService, DialogService } from 'app/services';
 
 @UntilDestroy()
 @Component({
@@ -30,7 +30,6 @@ export class SelectPoolDialogComponent implements OnInit {
 
   constructor(
     private formBuilder: FormBuilder,
-    private ws: WebSocketService,
     private dialogService: DialogService,
     private appService: ApplicationsService,
     private router: Router,

@@ -6,7 +6,6 @@ import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import _ from 'lodash';
-import { Subject } from 'rxjs';
 import {
   chartsTrain, ixChartApp, officialCatalog, appImagePlaceholder,
 } from 'app/constants/catalog.constants';
@@ -20,7 +19,6 @@ import { AppLoaderService } from 'app/modules/app-loader/app-loader.service';
 import { EmptyConfig, EmptyType } from 'app/modules/entity/entity-empty/entity-empty.component';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { ControlConfig, ToolbarOption } from 'app/modules/entity/entity-toolbar/models/control-config.interface';
-import { Control } from 'app/modules/entity/entity-toolbar/models/control.interface';
 import { ApplicationTab } from 'app/pages/applications/application-tab.enum';
 import { ApplicationsService } from 'app/pages/applications/applications.service';
 import { CatalogSummaryDialogComponent } from 'app/pages/applications/dialogs/catalog-summary/catalog-summary-dialog.component';
@@ -65,8 +63,6 @@ export class CatalogComponent implements OnInit, AfterViewInit {
     large: true,
     title: helptext.catalogMessage.loading,
   };
-
-  catalogItemsChanged = new Subject<Control>();
 
   catalogMenu: ControlConfig;
 
@@ -283,21 +279,19 @@ export class CatalogComponent implements OnInit, AfterViewInit {
 
   setupCatalogMenu(): void {
     this.catalogMenu = {
-      name: 'catalog',
-      type: 'multimenu',
       label: helptext.catalogs,
-      disabled: false,
       multiple: true,
       options: this.catalogOptions,
       value: this.selectedCatalogOptions,
       customTriggerValue: helptext.catalogs,
     };
-    this.catalogItemsChanged.pipe(untilDestroyed(this)).subscribe((event) => {
-      const catalogNames = (event.value as ToolbarOption[]).map((catalog) => catalog.value);
-      if (!_.isEqual(this.filteredCatalogNames.sort(), catalogNames.sort())) {
-        this.filteredCatalogNames = catalogNames as string[];
-        this.filterApps();
-      }
-    });
+  }
+
+  onCatalogsSelectionChanged(selected: ToolbarOption[]): void {
+    const catalogNames = selected.map((catalog) => catalog.value);
+    if (!_.isEqual(this.filteredCatalogNames.sort(), catalogNames.sort())) {
+      this.filteredCatalogNames = catalogNames as string[];
+      this.filterApps();
+    }
   }
 }
