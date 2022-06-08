@@ -116,8 +116,8 @@ export class SelectPoolDialogComponent implements OnInit {
       hideCheckBox: true,
       buttonMsg: helptext.noPool.action,
     }).pipe(untilDestroyed(this)).subscribe((confirmed) => {
+      this.dialogRef.close(false);
       if (!confirmed) {
-        this.dialogRef.close(false);
         return;
       }
       this.router.navigate(['storage', 'manager']);
