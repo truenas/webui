@@ -1,0 +1,12 @@
+<span class="prefix-icon"><mat-icon>search</mat-icon></span>
+<input
+  #searchInput
+  matInput
+  [value]="searchValue"
+  [disabled]="disabled"
+  [placeholder]="'Search' | translate"
+  (input)="onInput(searchInput.value)"
+>
+<span *ngIf="shouldShowReset" (click)="onResetInput()" class="reset-icon reset-input">
+  <mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-close-circle"></mat-icon>
+</span>

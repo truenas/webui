@@ -1,5 +1,6 @@
 import {
-  ChangeDetectorRef, Component, OnDestroy, OnInit,
+  AfterViewInit,
+  ChangeDetectorRef, Component, OnDestroy, OnInit, TemplateRef, ViewChild,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -18,7 +19,6 @@ import { EmptyConfig, EmptyType } from 'app/modules/entity/entity-empty/entity-e
 import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-table.component';
 import { EntityTableConfig } from 'app/modules/entity/entity-table/entity-table.interface';
 import { DatasetFormComponent } from 'app/pages/storage/volumes/datasets/dataset-form/dataset-form.component';
-import { VolumesListControlsComponent } from 'app/pages/storage/volumes/volume-list-controls/volumes-list-controls.component';
 import {
   VolumesListDataset,
   VolumesListPool,
@@ -28,6 +28,7 @@ import { ZvolFormComponent } from 'app/pages/storage/volumes/zvol/zvol-form/zvol
 import { JobService } from 'app/services';
 import { CoreService } from 'app/services/core-service/core.service';
 import { DialogService } from 'app/services/dialog.service';
+import { LayoutService } from 'app/services/layout.service';
 import { ModalService } from 'app/services/modal.service';
 import { StorageService } from 'app/services/storage.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -39,7 +40,9 @@ import { AppState } from 'app/store';
   styleUrls: ['./volumes-list.component.scss'],
   templateUrl: './volumes-list.component.html',
 })
-export class VolumesListComponent extends EntityTableComponent implements OnInit, OnDestroy {
+export class VolumesListComponent extends EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
+  @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
+
   title = this.translate.instant('Pools');
   zfsPoolRows: VolumesListPool[] = [];
   conf = new VolumesListTableConfig(
@@ -154,11 +157,23 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
     protected store$: Store<AppState>,
     modalService: ModalService,
     public cdr: ChangeDetectorRef,
+    layoutService: LayoutService,
   ) {
-    super(core, router, ws, dialogService, loader, translate, sorter, job, store$, mdDialog, modalService, cdr);
-
-    this.actionsConfig = { actionType: VolumesListControlsComponent, actionConfig: this };
-    this.core.emit({ name: 'GlobalActions', data: this.actionsConfig, sender: this });
+    super(
+      core,
+      router,
+      ws,
+      dialogService,
+      loader,
+      translate,
+      sorter,
+      job,
+      store$,
+      mdDialog,
+      modalService,
+      cdr,
+      layoutService,
+    );
   }
 
   repaintMe(): void {
@@ -286,6 +301,10 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
 
       this.dialogService.errorReport(this.translate.instant('Error getting pool data.'), res.message, res.stack);
     });
+  }
+
+  ngAfterViewInit(): void {
+    this.layoutService.pageHeaderUpdater$.next(this.pageHeader);
   }
 
   addZvol(id: string, isNew: boolean): void {

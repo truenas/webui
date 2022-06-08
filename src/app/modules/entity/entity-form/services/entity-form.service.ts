@@ -244,7 +244,7 @@ export class EntityFormService {
 
   getHumanReadableUnit(num: number, unit: string, type: UnitType): string {
     if (type === UnitType.Duration) {
-      let readableUnit = unit.length > 1 ? unit : (this.shortDurationUnit as any)[unit];
+      let readableUnit = unit.length > 1 ? unit : this.shortDurationUnit[unit as 'M' | 'h' | 'd' | 'w' | 'm' | 'y'];
       if (num <= 1 && _.endsWith(readableUnit, 'S')) {
         readableUnit = readableUnit.substring(0, readableUnit.length - 1);
       } else if (num > 1 && !_.endsWith(readableUnit, 'S')) {

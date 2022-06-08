@@ -28,7 +28,7 @@ export class EntityJobComponent implements OnInit, AfterViewChecked {
   progressTotalPercent = 0;
   description: string;
   method: ApiMethod;
-  args: any[] = [];
+  args: ApiDirectory[keyof ApiDirectory]['params'] = [];
 
   title = '';
   showHttpProgress = false;

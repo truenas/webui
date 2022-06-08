@@ -6,7 +6,6 @@ import {
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Subject } from 'rxjs';
 import { CoreEvent } from 'app/interfaces/events';
-import { GlobalAction } from 'app/interfaces/global-action.interface';
 import { ToolbarConfig } from 'app/modules/entity/entity-toolbar/models/control-config.interface';
 import { Control } from 'app/modules/entity/entity-toolbar/models/control.interface';
 
@@ -16,7 +15,7 @@ import { Control } from 'app/modules/entity/entity-toolbar/models/control.interf
   templateUrl: './entity-toolbar.component.html',
   styleUrls: ['./entity-toolbar.component.scss'],
 })
-export class EntityToolbarComponent implements OnChanges, GlobalAction {
+export class EntityToolbarComponent implements OnChanges {
   @Input() conf: ToolbarConfig;
   config: ToolbarConfig;
   controller$: Subject<Control>;
@@ -62,11 +61,5 @@ export class EntityToolbarComponent implements OnChanges, GlobalAction {
       this.config = changes.conf.currentValue; // For when config is provided via template
       this.init();
     }
-  }
-
-  // For when config is provided via JS
-  applyConfig(conf: ToolbarConfig): void {
-    this.config = conf;
-    this.init();
   }
 }

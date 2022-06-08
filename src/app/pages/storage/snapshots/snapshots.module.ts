@@ -10,6 +10,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatSortModule } from '@angular/material/sort';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterModule } from '@angular/router';
@@ -19,9 +20,11 @@ import { TranslateModule } from '@ngx-translate/core';
 import { NgxFilesizeModule } from 'ngx-filesize';
 import { CoreComponents } from 'app/core/core-components.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
+import { AppCommonModule } from 'app/modules/common/app-common.module';
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxTableModule } from 'app/modules/ix-tables/ix-table.module';
+import { LayoutModule } from 'app/modules/layout/layout.module';
 import { SnapshotCloneDialogComponent } from 'app/pages/storage/snapshots/snapshot-clone-dialog/snapshot-clone-dialog.component';
 import { SnapshotListComponent } from 'app/pages/storage/snapshots/snapshot-list/snapshot-list.component';
 import { SnapshotRollbackDialogComponent } from 'app/pages/storage/snapshots/snapshot-rollback-dialog/snapshot-rollback-dialog.component';
@@ -61,6 +64,9 @@ import { SnapshotBatchDeleteDialogComponent } from './snapshot-batch-delete-dial
     TranslateModule,
     TranslateModule,
     NgxFilesizeModule,
+    AppCommonModule,
+    MatSlideToggleModule,
+    LayoutModule,
   ],
   declarations: [
     SnapshotListComponent,

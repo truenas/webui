@@ -1,3 +1,21 @@
+<ng-template #pageHeader>
+  <ix-page-title-header>
+    <ix-search-input [disabled]="isLoading$ | async" (search)="onSearch($event)"></ix-search-input>
+    <mat-slide-toggle
+      (click)="toggleExtraColumns($event)"
+      [checked]="showExtraColumns"
+      [disabled]="isLoading$ | async"
+    >
+      <label>{{ 'Show extra columns' | translate }}</label>
+    </mat-slide-toggle>
+    <button
+      mat-button
+      color="primary"
+      (click)="doAdd()"
+    >{{ 'Add' | translate }}</button>
+  </ix-page-title-header>
+</ng-template>
+
 <ix-entity-empty *ngIf="isLoading$ | async; else loaded" [conf]="loadingConfig"></ix-entity-empty>
 
 <ng-template #loaded>

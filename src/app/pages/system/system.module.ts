@@ -28,6 +28,7 @@ import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxTableModule } from 'app/modules/ix-tables/ix-table.module';
 import { JobsModule } from 'app/modules/jobs/jobs.module';
+import { LayoutModule } from 'app/modules/layout/layout.module';
 import { SchedulerModule } from 'app/modules/scheduler/scheduler.module';
 import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
 import { AdvancedSettingsComponent } from 'app/pages/system/advanced/advanced-settings.component';
@@ -38,6 +39,7 @@ import { InitShutdownFormComponent } from 'app/pages/system/advanced/initshutdow
 import { InitshutdownListComponent } from 'app/pages/system/advanced/initshutdown/initshutdown-list/initshutdown-list.component';
 import { IsolatedGpuPcisFormComponent } from 'app/pages/system/advanced/isolated-gpu-pcis/isolated-gpu-pcis-form.component';
 import { KernelFormComponent } from 'app/pages/system/advanced/kernel-form/kernel-form.component';
+import { SaveDebugButtonComponent } from 'app/pages/system/advanced/save-debug-button/save-debug-button.component';
 import { SedFormComponent } from 'app/pages/system/advanced/sed-form/sed-form.component';
 import { SyslogFormComponent } from 'app/pages/system/advanced/syslog-form/syslog-form.component';
 import { SystemDatasetPoolComponent } from 'app/pages/system/advanced/system-dataset-pool/system-dataset-pool.component';
@@ -120,6 +122,7 @@ import { routing } from './system.routing';
     NgxFilesizeModule,
     MatDialogModule,
     AppCommonModule,
+    LayoutModule,
   ],
   declarations: [
     AdvancedSettingsComponent,
@@ -168,6 +171,7 @@ import { routing } from './system.routing';
     SaveConfigDialogComponent,
     UploadConfigDialogComponent,
     ManageConfigurationMenuComponent,
+    SaveDebugButtonComponent,
   ],
   providers: [
     TranslateService,

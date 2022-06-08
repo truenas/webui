@@ -19,17 +19,17 @@
       <div fxFlex="90%" class="medium-font" [innerHtml]="helptext.forums | translate"></div>
     </div>
 
-    <div id="open-source" [innerHtml]="helptext.opensource | translate: { product: systemType } "></div>
+    <div id="open-source" *appLet="systemType | mapValue: productTypeLabels as product" [innerHtml]="helptext.opensource | translate: { product } "></div>
   </div>
 
 </div>
 
 <div mat-dialog-actions id="actions">
-  <div fxFlex="45%" fxFlex.xs="100" class="copyright-txt">TrueNAS {{ systemType }}® © {{copyrightYear}} -
+  <div fxFlex="50%" fxFlex.xs="100" class="copyright-txt">TrueNAS {{ systemType | mapValue: productTypeLabels }}® © {{copyrightYear}} -
     <a href="http://www.ixsystems.com" target="_blank" title="iXsystems, Inc.">
       iXsystems, Inc</a>.
   </div>
-  <div id="button-wrapper" fxFlex="55%" fxFlex.xs="100">
+  <div id="button-wrapper" fxFlex="50%" fxFlex.xs="100">
     <button
       mat-button class="mat-button mat-primary"
       (click)="dialogRef.close(false)"

@@ -54,6 +54,7 @@ import {
 
 export class VolumesListTableConfig implements EntityTableConfig {
   hideTopActions = true;
+  disableActionsConfig = true;
   tableData: TreeNode[] = [];
   columns = [
     { name: T('Name'), prop: 'name', always_display: true },
@@ -136,7 +137,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
             this.storageService.streamDownloadFile(url, fileName, mimetype)
               .pipe(untilDestroyed(this, 'destroy'))
               .subscribe((file) => {
-                if (res !== null && (res as any) !== '') {
+                if (res !== null && (res[1]) !== '') {
                   this.storageService.downloadBlob(file, fileName);
                 }
               });

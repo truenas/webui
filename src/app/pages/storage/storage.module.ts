@@ -34,6 +34,7 @@ import { MessageService } from 'app/modules/entity/entity-form/services/message.
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxTableModule } from 'app/modules/ix-tables/ix-table.module';
+import { LayoutModule } from 'app/modules/layout/layout.module';
 import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
 import { userReducer } from 'app/pages/account/users/store/user.reducer';
 import { userStateKey } from 'app/pages/account/users/store/user.selectors';
@@ -74,6 +75,9 @@ import { DatasetAclEditorStore } from 'app/pages/storage/volumes/permissions/sto
 import { PermissionsSidebarStore } from 'app/pages/storage/volumes/permissions/stores/permissions-sidebar.store';
 import { VolumeImportWizardComponent } from 'app/pages/storage/volumes/volume-import-wizard/volume-import-wizard.component';
 import { VolumesListControlsComponent } from 'app/pages/storage/volumes/volume-list-controls/volumes-list-controls.component';
+import {
+  ReplaceDiskDialogComponent,
+} from 'app/pages/storage/volumes/volume-status/components/replace-disk-dialog/replace-disk-dialog.component';
 import { VolumeStatusComponent } from 'app/pages/storage/volumes/volume-status/volume-status.component';
 import { ExportDisconnectModalComponent } from 'app/pages/storage/volumes/volumes-list/components/export-disconnect-modal.component';
 import { VolumesListComponent } from 'app/pages/storage/volumes/volumes-list/volumes-list.component';
@@ -123,6 +127,7 @@ import { routing } from './storage.routing';
     TranslateModule,
     TreeTableModule,
     SnapshotsModule,
+    LayoutModule,
   ],
   declarations: [
     AclEditorListComponent,
@@ -164,6 +169,7 @@ import { routing } from './storage.routing';
     ManualTestDialogComponent,
     DatasetQuotaAddFormComponent,
     DatasetQuotaEditFormComponent,
+    ReplaceDiskDialogComponent,
   ],
   exports: [VolumesListControlsComponent],
   providers: [

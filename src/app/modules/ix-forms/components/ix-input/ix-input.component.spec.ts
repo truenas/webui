@@ -1,150 +1,178 @@
-import { NgControl, ReactiveFormsModule } from '@angular/forms';
-import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
+import { ReactiveFormsModule } from '@angular/forms';
+import { FormControl } from '@ngneat/reactive-forms';
+import { createHostFactory, Spectator } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
 import { IxErrorsComponent } from 'app/modules/ix-forms/components/ix-errors/ix-errors.component';
-import { IxInputComponent } from 'app/modules/ix-forms/components/ix-input/ix-input.component';
+import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
+import { IxInputComponent } from './ix-input.component';
 
 describe('IxInputComponent', () => {
   let spectator: Spectator<IxInputComponent>;
-  const createComponent = createComponentFactory({
+  const formControl = new FormControl<unknown>();
+  const createHost = createHostFactory({
     component: IxInputComponent,
     imports: [
       ReactiveFormsModule,
     ],
     declarations: [
       MockComponent(IxErrorsComponent),
+      MockComponent(TooltipComponent),
     ],
-    providers: [NgControl],
   });
 
   beforeEach(() => {
-    spectator = createComponent();
+    spectator = createHost('<ix-input [formControl]="formControl"></ix-input>', {
+      hostProps: { formControl },
+    });
   });
 
-  describe('setDisabledState()', () => {
-    it('when called with false, sets \'isDisabled\' to false', () => {
-      spectator.component.setDisabledState(false);
-      expect(spectator.component.isDisabled).toBeFalsy();
+  describe('rendering', () => {
+    it('renders a hint when it is provided', () => {
+      spectator.setInput('hint', 'Capital letters only');
+
+      expect(spectator.query('mat-hint')).toHaveText('Capital letters only');
     });
-    it('when called with true, sets \'isDisabled\' to true', () => {
-      spectator.component.setDisabledState(true);
-      expect(spectator.component.isDisabled).toBeTruthy();
+
+    it('renders a label when it is provided', () => {
+      spectator.setInput('label', 'First Name');
+
+      expect(spectator.query('.label')).toHaveText('First Name');
     });
-    it('when called with false, input is not disabled', () => {
-      spectator.component.setDisabledState(false);
-      spectator.detectChanges();
-      expect(spectator.query('input')).not.toBeDisabled();
+
+    it('renders a prefix icon when it is provided', () => {
+      spectator.setInput('prefixIcon', 'person');
+
+      expect(spectator.query('.prefix-icon')).toHaveText('person');
+      expect(spectator.query('input')).toHaveClass('prefix-padding');
     });
-    it('when called with true, input is disabled', () => {
-      spectator.component.setDisabledState(true);
-      spectator.detectChanges();
+
+    it('renders a tooltip next when it and the labels are provided', () => {
+      spectator.setInput('tooltip', 'Enter your first name');
+      spectator.setInput('label', 'First Name');
+
+      const tooltip = spectator.query(TooltipComponent);
+      expect(tooltip.header).toBe('First Name');
+      expect(tooltip.message).toBe('Enter your first name');
+    });
+
+    it('shows an asterisk when label is provided and required is true', () => {
+      spectator.setInput('label', 'First Name');
+      spectator.setInput('required', true);
+
+      expect(spectator.query('.label')).toHaveText('First Name*');
+    });
+
+    it('marks input element as readonly when readonly input is true', () => {
+      spectator.setInput('readonly', true);
+
+      expect(spectator.query('input')).toHaveAttribute('readonly');
+    });
+
+    it('passes autocomplete attribute to the input element', () => {
+      spectator.setInput('autocomplete', 'on');
+
+      expect(spectator.query('input')).toHaveAttribute('autocomplete', 'on');
+    });
+
+    it('shows button that resets input when input is not empty', () => {
+      formControl.setValue('test');
+      spectator.detectComponentChanges();
+
+      spectator.click('.reset-input mat-icon');
+
+      expect(formControl.value).toBe('');
+    });
+  });
+
+  describe('form control', () => {
+    it('shows value provided in form control', () => {
+      formControl.setValue('test');
+      spectator.detectComponentChanges();
+
+      expect(spectator.query('input')).toHaveValue('test');
+    });
+
+    it('updates form control value when user types in value in input element', () => {
+      spectator.typeInElement('new value', 'input');
+
+      expect(formControl.value).toBe('new value');
+    });
+
+    it('disables input when form control is disabled', () => {
+      formControl.disable();
+      spectator.detectComponentChanges();
+
       expect(spectator.query('input')).toBeDisabled();
     });
   });
 
-  describe('writeValue()', () => {
-    it('when called with some value, sets \'value\' and \'formatted\' to that value', () => {
-      spectator.component.writeValue('test value');
-      expect(spectator.component.value).toEqual('test value');
-      expect(spectator.component.formatted).toEqual('test value');
+  describe('types', () => {
+    it('passes type to input when it is not password', () => {
+      spectator.setInput('type', 'email');
+
+      expect(spectator.query('input')).toHaveAttribute('type', 'email');
     });
-    xit('when called with some value, input takes that value', () => {
-      spectator.component.writeValue('test value');
-      spectator.detectChanges();
-      expect(spectator.query('input')).toHaveValue('test value');
+
+    it('converts user input to a number when type is number', () => {
+      spectator.setInput('type', 'number');
+
+      spectator.typeInElement('123', 'input');
+
+      expect(formControl.value).toBe(123);
+    });
+
+    it('renders input element as pseudo-password field (via search input type) to disable password managers', () => {
+      formControl.setValue('test');
+      spectator.setInput('type', 'password');
+
+      expect(spectator.query('input')).toHaveAttribute('type', 'search');
+    });
+
+    it('shows button that toggles password visibility when type is password', () => {
+      formControl.setValue('test');
+      spectator.setInput('type', 'password');
+
+      expect(spectator.query('input')).toHaveClass('password-field');
+      expect(spectator.query('.toggle_pw')).toHaveExactText('visibility_off');
+
+      spectator.click('.toggle_pw');
+
+      expect(spectator.query('input')).not.toHaveClass('password-field');
+      expect(spectator.query('.toggle_pw')).toHaveExactText('visibility');
     });
   });
 
-  describe('hasValue()', () => {
-    it('return false if \'value\' is empty and \'invalid\' is false', () => {
-      spectator.component.invalid = false;
-      spectator.component.value = '';
-      expect(spectator.component.hasValue()).toBeFalsy();
-    });
-    it('return true if \'value\' isn\'t empty and \'invalid\' is true', () => {
-      spectator.component.invalid = true;
-      spectator.component.value = 'test value';
-      expect(spectator.component.hasValue()).toBeTruthy();
+  describe('validation', () => {
+    it('shows a validation message when native input type validation does not pass', () => {
+      spectator.setInput('type', 'email');
+
+      // jest doesn't support native validators
+      spectator.component.input({
+        validity: {
+          badInput: true,
+        },
+        value: 'invalid',
+      } as HTMLInputElement);
+      spectator.detectComponentChanges();
+
+      expect(spectator.query('.mat-error')).toHaveText('Value must be a email');
     });
   });
 
-  describe('shouldShowResetInput()', () => {
-    it('return true if \'isDisabled\' is false, \'hasValue()\' returned true and \'type\' isn\'t \"password\"', () => {
-      spectator.component.isDisabled = false;
-      spectator.component.invalid = true;
-      spectator.component.value = 'test value';
-      spectator.component.type = 'test type';
-      expect(spectator.component.shouldShowResetInput()).toBeTruthy();
-    });
-    it('return false if \'isDisabled\' is true, \'hasValue()\' returned true and \'type\' isn\'t \"password\"', () => {
-      spectator.component.isDisabled = true;
-      spectator.component.invalid = true;
-      spectator.component.value = 'test value';
-      spectator.component.type = 'test type';
-      expect(spectator.component.shouldShowResetInput()).toBeFalsy();
-    });
-    it('return false if \'isDisabled\' is false, \'hasValue()\' returned true and \'type\' is \"password\"', () => {
-      spectator.component.isDisabled = false;
-      spectator.component.invalid = true;
-      spectator.component.value = 'test value';
-      spectator.component.type = 'password';
-      expect(spectator.component.shouldShowResetInput()).toBeFalsy();
-    });
-  });
+  describe('parsing and formatting', () => {
+    it('uses parse function to transform user input when parse function is provided', () => {
+      spectator.setInput('parse', (value: string) => value.toUpperCase());
 
-  describe('resetInput()', () => {
-    it('when called, sets \'value\' and \'formatted\' to empty string', () => {
-      spectator.component.resetInput(spectator.query('input'));
-      expect(spectator.component.value).toEqual('');
-      expect(spectator.component.formatted).toEqual('');
-    });
-    it('when called, sets \'invalid\' to false', () => {
-      spectator.component.resetInput(spectator.query('input'));
-      expect(spectator.component.invalid).toBeFalsy();
-    });
-    it('when called, input takes empty value', () => {
-      spectator.component.resetInput(spectator.query('input'));
-      spectator.detectChanges();
-      expect(spectator.query('input')).toHaveValue('');
-    });
-    it('when called, input with \'number\' type sets to \'null\'', () => {
-      jest.spyOn(spectator.component, 'onChange').mockImplementation();
-      spectator.component.type = 'number';
-      spectator.component.resetInput(spectator.query('input'));
-      spectator.detectChanges();
-      expect(spectator.component.onChange).toHaveBeenCalledWith(null);
-    });
-  });
+      spectator.typeInElement('test', 'input');
 
-  describe('getType()', () => {
-    it('return \"search\" if \'type\' is \"password\"', () => {
-      spectator.component.type = 'password';
-      expect(spectator.component.getType()).toEqual('search');
+      expect(formControl.value).toBe('TEST');
     });
-    it('return \'type\' value if type isn\'t \"password\"', () => {
-      spectator.component.type = 'test value';
-      expect(spectator.component.getType()).toEqual('test value');
-    });
-  });
 
-  describe('isPasswordField()', () => {
-    it('return true if \'type\' is \"password\" and \'showPassword\' is false', () => {
-      spectator.component.showPassword = false;
-      spectator.component.type = 'password';
-      expect(spectator.component.isPasswordField()).toBeTruthy();
-    });
-  });
+    it('uses format function to transform form control value when format function is provided', () => {
+      spectator.setInput('format', (value: string) => value.toUpperCase());
+      formControl.setValue('test');
 
-  describe('onPasswordToggled()', () => {
-    it('when called and \'showPassword\' is false, sets \'showPassword\' to true', () => {
-      spectator.component.showPassword = false;
-      spectator.component.onPasswordToggled();
-      expect(spectator.component.showPassword).toBeTruthy();
-    });
-    it('when called and \'showPassword\' is true, sets \'showPassword\' to false', () => {
-      spectator.component.showPassword = true;
-      spectator.component.onPasswordToggled();
-      expect(spectator.component.showPassword).toBeFalsy();
+      expect(spectator.query('input')).toHaveValue('TEST');
     });
   });
 });

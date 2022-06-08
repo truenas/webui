@@ -20,6 +20,7 @@ import { AppCommonModule } from 'app/modules/common/app-common.module';
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxDropGridModule } from 'app/modules/ix-drop-grid/ix-drop-grid.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
+import { LayoutModule } from 'app/modules/layout/layout.module';
 import { DashboardFormComponent } from 'app/pages/dashboard/components/dashboard-form/dashboard-form.component';
 import { DashboardComponent } from 'app/pages/dashboard/components/dashboard/dashboard.component';
 import { WidgetControllerComponent } from 'app/pages/dashboard/components/widget-controller/widget-controller.component';
@@ -62,6 +63,7 @@ import { routing } from './dashboard.routing';
     CastModule,
     IxDropGridModule,
     ChartsModule,
+    LayoutModule,
   ],
   declarations: [
     DashboardComponent,

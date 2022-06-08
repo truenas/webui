@@ -15,8 +15,8 @@ import { selectTheme } from 'app/store/preferences/preferences.selectors';
   providedIn: 'root',
 })
 export class ThemeService {
-  activeTheme = 'default';
   defaultTheme = defaultTheme.name;
+  activeTheme = this.defaultTheme;
   allThemes: Theme[] = allThemes;
 
   private utils: ThemeUtils;
@@ -26,6 +26,7 @@ export class ThemeService {
     @Inject(WINDOW) private window: Window,
   ) {
     this.utils = new ThemeUtils();
+    this.onThemeChanged(this.activeTheme);
 
     const savedTheme = this.window.sessionStorage.getItem('theme');
     if (savedTheme) {
@@ -43,12 +44,8 @@ export class ThemeService {
   }
 
   onThemeChanged(theme: string): void {
-    this.activeTheme = this.getNormalizedThemeName(theme);
+    this.activeTheme = theme;
     this.setCssVars(this.findTheme(this.activeTheme, true));
-  }
-
-  getNormalizedThemeName(theme: string): string {
-    return theme === 'default' ? this.defaultTheme : theme;
   }
 
   resetToDefaultTheme(): void {
@@ -64,8 +61,6 @@ export class ThemeService {
   }
 
   findTheme(name: string, reset?: boolean): Theme {
-    name = this.getNormalizedThemeName(name);
-
     const theme = this.allThemes.find((theme) => theme.name === name);
     if (theme) {
       return theme;

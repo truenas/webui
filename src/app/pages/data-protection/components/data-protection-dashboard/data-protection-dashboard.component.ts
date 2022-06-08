@@ -136,7 +136,7 @@ export class DataProtectionDashboardComponent implements OnInit {
           titleHref: '/tasks/scrub',
           queryCall: 'pool.scrub.query',
           deleteCall: 'pool.scrub.delete',
-          dataSourceHelper: (data) => this.scrubDataSourceHelper(data),
+          dataSourceHelper: (data: ScrubTaskUi[]) => this.scrubDataSourceHelper(data),
           emptyEntityLarge: false,
           columns: [
             { name: this.translate.instant('Pool'), prop: 'pool_name' },
@@ -203,7 +203,7 @@ export class DataProtectionDashboardComponent implements OnInit {
               button: true,
             },
           ],
-          dataSourceHelper: (data) => this.snapshotDataSourceHelper(data),
+          dataSourceHelper: (data: PeriodicSnapshotTaskUi[]) => this.snapshotDataSourceHelper(data),
           isActionVisible: this.isActionVisible,
           parent: this,
           add: () => {
@@ -229,7 +229,7 @@ export class DataProtectionDashboardComponent implements OnInit {
             title: this.translate.instant('Replication Task'),
             key_props: ['name'],
           },
-          dataSourceHelper: (data) => this.replicationDataSourceHelper(data),
+          dataSourceHelper: (data: ReplicationTaskUi[]) => this.replicationDataSourceHelper(data),
           getActions: this.getReplicationActions.bind(this),
           isActionVisible: this.isActionVisible,
           columns: [
@@ -272,7 +272,7 @@ export class DataProtectionDashboardComponent implements OnInit {
             title: this.translate.instant('Cloud Sync Task'),
             key_props: ['description'],
           },
-          dataSourceHelper: (data) => this.cloudsyncDataSourceHelper(data),
+          dataSourceHelper: (data: CloudSyncTaskUi[]) => this.cloudsyncDataSourceHelper(data),
           getActions: this.getCloudsyncActions.bind(this),
           isActionVisible: this.isActionVisible,
           columns: [
@@ -339,7 +339,7 @@ export class DataProtectionDashboardComponent implements OnInit {
               button: true,
             },
           ],
-          dataSourceHelper: (data) => this.rsyncDataSourceHelper(data),
+          dataSourceHelper: (data: RsyncTaskUi[]) => this.rsyncDataSourceHelper(data),
           getActions: this.getRsyncActions.bind(this),
           isActionVisible: this.isActionVisible,
           parent: this,
@@ -366,7 +366,7 @@ export class DataProtectionDashboardComponent implements OnInit {
             title: this.translate.instant('S.M.A.R.T. Test'),
             key_props: ['type', 'desc'],
           },
-          dataSourceHelper: (data) => this.smartTestsDataSourceHelper(data),
+          dataSourceHelper: (data: SmartTestUi[]) => this.smartTestsDataSourceHelper(data),
           parent: this,
           columns: [
             {

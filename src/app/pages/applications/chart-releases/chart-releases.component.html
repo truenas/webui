@@ -1,3 +1,39 @@
+<ng-template #pageHeader>
+  <ix-page-title-header>
+    <ix-search-input
+      (search)="onSearch($event)"
+    ></ix-search-input>
+
+    <button mat-button [matMenuTriggerFor]="menu">
+      {{ 'Bulk Actions' | translate }} <mat-icon class="menu-caret">arrow_drop_down</mat-icon>
+    </button>
+    <mat-menu #menu="matMenu">
+      <button *ngIf="!areAllAppsSelected" mat-menu-item (click)="onSelectAll()">
+        <mat-icon>check_circle</mat-icon>
+        <span>{{ 'Select All' | translate }}</span>
+      </button>
+      <button *ngIf="areAllAppsSelected" mat-menu-item (click)="onUnselectAll()">
+        <mat-icon>check_circle</mat-icon>
+        <span>{{ 'Unselect All' | translate }}</span>
+      </button>
+      <button mat-menu-item [disabled]="!isSomethingSelected" (click)="onBulkStart()">
+        <mat-icon>play_arrow</mat-icon>
+        <span>{{ 'Start' | translate }}</span>
+      </button>
+      <button mat-menu-item [disabled]="!isSomethingSelected" (click)="onBulkStop()">
+        <mat-icon>stop</mat-icon>
+        <span>{{ 'Stop' | translate }}</span>
+      </button>
+      <button mat-menu-item [disabled]="!isSomethingSelected" (click)="onBulkDelete()">
+        <mat-icon>delete</mat-icon>
+        <span>{{ 'Delete' | translate }}</span>
+      </button>
+    </mat-menu>
+
+    <ix-common-apps-toolbar-buttons></ix-common-apps-toolbar-buttons>
+  </ix-page-title-header>
+</ng-template>
+
 <div fxLayout="row wrap" fxLayoutAlign="center center">
   <mat-card class="chart-item" *ngFor="let item of filteredChartItems">
     <div class="content-wrapper" fxLayout="row">
@@ -13,7 +49,7 @@
             {{ item.catalog_train }}
           </div>
         </div>
-        <mat-checkbox color="primary" class="bulk-checkbox" [(ngModel)]="item.selected" (change)="onChangeCheck()"></mat-checkbox>
+        <mat-checkbox color="primary" class="bulk-checkbox" [(ngModel)]="item.selected"></mat-checkbox>
       </div>
       <div class="content-box"  (click)="showChartEvents(item.name)">
         <div class="content">

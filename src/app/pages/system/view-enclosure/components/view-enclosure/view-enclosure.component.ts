@@ -1,21 +1,24 @@
 import {
-  Component, ElementRef, OnDestroy, ViewChild,
+  AfterViewInit,
+  Component, ElementRef, OnDestroy, TemplateRef, ViewChild,
 } from '@angular/core';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
+import { TranslateService } from '@ngx-translate/core';
 import { Subject } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { PoolScanState } from 'app/enums/pool-scan-state.enum';
 import { CoreEvent } from 'app/interfaces/events';
 import { EnclosureLabelChangedEvent } from 'app/interfaces/events/enclosure-events.interface';
 import { ResilveringEvent } from 'app/interfaces/events/resilvering-event.interface';
-import { EntityToolbarComponent } from 'app/modules/entity/entity-toolbar/entity-toolbar.component';
+import { ControlConfig } from 'app/modules/entity/entity-toolbar/models/control-config.interface';
 import { EnclosureMetadata, SystemProfiler } from 'app/pages/system/view-enclosure/classes/system-profiler';
 import { ErrorMessage } from 'app/pages/system/view-enclosure/interfaces/error-message.interface';
 import { ViewConfig } from 'app/pages/system/view-enclosure/interfaces/view.config';
 import { WebSocketService } from 'app/services';
 import { CoreService } from 'app/services/core-service/core.service';
+import { LayoutService } from 'app/services/layout.service';
 import { AppState } from 'app/store';
 import { selectTheme } from 'app/store/preferences/preferences.selectors';
 import { waitForSystemFeatures, waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
@@ -25,11 +28,11 @@ import { waitForSystemFeatures, waitForSystemInfo } from 'app/store/system-info/
   templateUrl: './view-enclosure.component.html',
   styleUrls: ['./view-enclosure.component.scss'],
 })
-export class ViewEnclosureComponent implements OnDestroy {
+export class ViewEnclosureComponent implements AfterViewInit, OnDestroy {
   errors: ErrorMessage[] = [];
   events: Subject<CoreEvent> ;
-  formEvent$: Subject<CoreEvent> ;
   @ViewChild('navigation', { static: false }) nav: ElementRef;
+  @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
 
   currentView: ViewConfig = {
     name: 'Disks',
@@ -39,13 +42,24 @@ export class ViewEnclosureComponent implements OnDestroy {
     showInNavbar: true,
   };
 
-  scrollContainer: HTMLElement;
   system: SystemProfiler;
   selectedEnclosure: EnclosureMetadata;
   views: ViewConfig[] = [];
   spinner = true;
 
   supportedHardware = false;
+
+  elementsMenuSelected = new Subject<{ name: string; value: { value: string } }>();
+
+  readonly elementsMenu: ControlConfig = {
+    name: 'configFiles',
+    label: this.translate.instant('Elements'),
+    type: 'menu',
+    color: 'primary',
+    options: this.views.map((view) => {
+      return { label: view.alias, value: view.alias };
+    }),
+  };
 
   get showEnclosureSelector(): boolean {
     if (
@@ -87,6 +101,8 @@ export class ViewEnclosureComponent implements OnDestroy {
     public router: Router,
     private ws: WebSocketService,
     private store$: Store<AppState>,
+    private layoutService: LayoutService,
+    private translate: TranslateService,
   ) {
     this.events = new Subject<CoreEvent>();
     this.events.pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
@@ -151,6 +167,10 @@ export class ViewEnclosureComponent implements OnDestroy {
 
   fetchData(): void {
     this.loadDiskData();
+  }
+
+  ngAfterViewInit(): void {
+    this.layoutService.pageHeaderUpdater$.next(this.pageHeader);
   }
 
   ngOnDestroy(): void {
@@ -233,46 +253,28 @@ export class ViewEnclosureComponent implements OnDestroy {
     });
 
     this.views = views;
+    this.setupElementsMenu();
 
     if (matchIndex && matchIndex > 0) {
       this.currentView = views[matchIndex];
     } else {
       this.currentView = disks;
     }
+  }
 
-    // Setup event listener
-    if (this.views.length > 0) {
-      this.formEvent$ = new Subject<CoreEvent>();
-      this.formEvent$.pipe(
-        untilDestroyed(this),
-      ).subscribe((evt: CoreEvent) => {
-        const nextView = this.views.find((view) => view.alias === evt.data.configFiles.value);
+  private setupElementsMenu(): void {
+    if (!this.views?.length) {
+      return;
+    }
+
+    this.elementsMenu.options = this.views.map((view) => ({ label: view.alias, value: view.alias }));
+
+    this.elementsMenuSelected
+      .pipe(untilDestroyed(this))
+      .subscribe((event) => {
+        const nextView = this.views.find((view) => view.alias === event.value.value);
         this.changeView(nextView.id);
       });
-    }
-
-    // Setup/update ViewActions that live in page title component
-    const actionsConfig = {
-      actionType: EntityToolbarComponent,
-      actionConfig: {
-        target: this.formEvent$,
-        controls: [
-          {
-            name: 'configFiles',
-            label: 'Elements',
-            type: 'menu',
-            color: 'primary',
-            options: this.views.map((view) => {
-              return { label: view.alias, value: view.alias };
-            }),
-          },
-        ],
-      },
-    };
-
-    if (this.views && this.views.length > 1) {
-      this.core.emit({ name: 'GlobalActions', data: actionsConfig, sender: this });
-    }
   }
 
   private loadEnclosureData(): void {

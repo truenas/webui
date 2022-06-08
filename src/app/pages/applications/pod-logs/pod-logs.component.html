@@ -1,3 +1,19 @@
+<ng-template #pageHeader>
+  <ix-page-title-header>
+    <ix-toolbar-slider [config]="sliderConfig" [controller]="fontSizeChanged"></ix-toolbar-slider>
+
+    <button
+      mat-button
+      (click)="onReconnect()"
+    >{{ 'Reconnect' | translate }}</button>
+    <button
+      mat-button
+      color="primary"
+      (click)="onDownloadLogs()"
+    >{{ 'Download Logs' | translate }}</button>
+  </ix-page-title-header>
+</ng-template>
+
 <div class="pod-logs-wrapper">
   <div class="meta-data">
     <label>{{ 'Application Name' | translate }}:</label> <span class="name">{{ chartReleaseName }}</span>

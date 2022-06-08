@@ -9,6 +9,7 @@ import { helptextSystemCa } from 'app/helptext/system/ca';
 import { helptextSystemCertificates } from 'app/helptext/system/certificates';
 import { CertificateAuthority } from 'app/interfaces/certificate-authority.interface';
 import { Certificate } from 'app/interfaces/certificate.interface';
+import { DnsAuthenticator } from 'app/interfaces/dns-authenticator.interface';
 import { EntityFormService } from 'app/modules/entity/entity-form/services/entity-form.service';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { AppTableAction, AppTableConfig, TableComponent } from 'app/modules/entity/table/table.component';
@@ -17,10 +18,8 @@ import { EntityUtils } from 'app/modules/entity/utils';
 import {
   CertificateAuthorityEditComponent,
 } from 'app/pages/credentials/certificates-dash/certificate-authority-edit/certificate-authority-edit.component';
-import { AcmednsFormComponent } from 'app/pages/credentials/certificates-dash/forms/acmedns-form.component';
-import {
-  SignCsrDialogComponent,
-} from 'app/pages/credentials/certificates-dash/sign-csr-dialog/sign-csr-dialog.component';
+import { AcmednsFormComponent } from 'app/pages/credentials/certificates-dash/forms/acmedns-form/acmedns-form.component';
+import { SignCsrDialogComponent } from 'app/pages/credentials/certificates-dash/sign-csr-dialog/sign-csr-dialog.component';
 import { WebSocketService, DialogService, StorageService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { ModalService } from 'app/services/modal.service';
@@ -207,10 +206,11 @@ export class CertificatesDashComponent implements OnInit {
           ],
           parent: this,
           add: () => {
-            this.modalService.openInSlideIn(AcmednsFormComponent);
+            this.slideInService.open(AcmednsFormComponent);
           },
-          edit: (row: CertificateAuthority) => {
-            this.modalService.openInSlideIn(AcmednsFormComponent, row.id);
+          edit: (row: DnsAuthenticator) => {
+            const form = this.slideInService.open(AcmednsFormComponent);
+            form.setAcmednsForEdit(row);
           },
         },
       },

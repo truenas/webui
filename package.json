@@ -151,7 +151,7 @@
     "@angular/compiler-cli": "~13.2.5",
     "@bartholomej/ngx-translate-extract": "~8.0.1",
     "@commitlint/cli": "~13.1.0",
-    "@types/chart.js": "2.9.4",
+    "@types/chart.js": "^2.9.37",
     "@types/chartist": "~0.9.47",
     "@types/d3": "~5.16.0",
     "@types/lodash": "4.14.160",

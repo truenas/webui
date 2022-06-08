@@ -189,7 +189,7 @@ export class EditNfsAceComponent implements OnChanges, OnInit {
     } else {
       formValues.permissionType = NfsFormPermsType.Advanced;
       formValues.advancedPermissions = Object.entries(this.ace.perms)
-        .filter(([_, isOn]) => isOn)
+        .filter(([, isOn]) => isOn)
         .map(([permission]) => permission as NfsAdvancedPermission);
     }
 
@@ -200,7 +200,7 @@ export class EditNfsAceComponent implements OnChanges, OnInit {
     } else {
       formValues.flagsType = NfsFormFlagsType.Advanced;
       formValues.advancedFlags = Object.entries(this.ace.flags)
-        .filter(([_, isOn]) => isOn)
+        .filter(([, isOn]) => isOn)
         .map(([flag]) => flag as NfsAdvancedFlag);
     }
 

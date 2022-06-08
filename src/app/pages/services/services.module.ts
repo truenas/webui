@@ -13,9 +13,11 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslateModule } from '@ngx-translate/core';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
+import { AppCommonModule } from 'app/modules/common/app-common.module';
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxTableModule } from 'app/modules/ix-tables/ix-table.module';
+import { LayoutModule } from 'app/modules/layout/layout.module';
 import { ServiceDynamicDnsComponent } from 'app/pages/services/components/service-dynamic-dns/service-dynamic-dns.component';
 import { ServiceFtpComponent } from 'app/pages/services/components/service-ftp/service-ftp.component';
 import { ServiceLldpComponent } from 'app/pages/services/components/service-lldp/service-lldp.component';
@@ -56,6 +58,8 @@ import { routing } from './services.routing';
     MatTableModule,
     MatCheckboxModule,
     MatButtonModule,
+    AppCommonModule,
+    LayoutModule,
   ],
   declarations: [
     ServicesComponent,

@@ -1,12 +1,14 @@
+<ng-template #pageHeader>
+  <ix-page-title-header>
+    <button
+      mat-button
+      color="primary"
+      (click)="refresh()"
+    >{{ 'Refresh' | translate }}</button>
+  </ix-page-title-header>
+</ng-template>
+
 <div class="material mat-card mat-card-table">
-  <!--<div class="mat-toolbar mat-card-toolbar" fxLayoutAlign="space-between center">
-    <div fxFlex="300px" class="mat-card-title-text">
-      {{"Pool Status" | translate}}
-    </div>
-    <div>
-      <button mat-button type="button" (click)="refresh()" mat-button color="primary">{{"Refresh" | translate}}</button>
-    </div>
-    </div>-->
   <div>
     <mat-list *ngIf="poolScan">
       <mat-list-item><b>{{poolScan.function || 'SCAN'}}</b></mat-list-item>

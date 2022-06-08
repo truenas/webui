@@ -6,6 +6,7 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
+import { of } from 'rxjs';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { SystemInfo } from 'app/interfaces/system-info.interface';
 import { AppLoaderModule } from 'app/modules/app-loader/app-loader.module';
@@ -45,7 +46,9 @@ describe('SaveConfigDialogComponent', () => {
       mockProvider(DatePipe, {
         transform: () => '20220524160228',
       }),
-      mockProvider(StorageService),
+      mockProvider(StorageService, {
+        downloadUrl: jest.fn(() => of(undefined)),
+      }),
       mockProvider(MatDialogRef),
     ],
   });

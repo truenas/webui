@@ -950,15 +950,17 @@ export class IscsiWizardComponent implements WizardConfiguration {
     return this.ws.call((this.createCalls as any)[item], [payload]).toPromise();
   }
 
-  rollBack(items: any[]): void {
-    items.forEach((item, i) => {
-      if (item !== null) {
-        this.ws.call((this.deleteCalls as any)[i], [item]).pipe(untilDestroyed(this)).subscribe(
-          (res) => {
-            console.info('rollback ' + i, res);
-          },
-        );
+  rollBack(items: Record<string, unknown>): void {
+    Object.entries(items).forEach(([type, id]) => {
+      if (id === null) {
+        return;
       }
+
+      this.ws.call((this.deleteCalls as any)[type], [id]).pipe(untilDestroyed(this)).subscribe(
+        (res) => {
+          console.info('rollback ' + type, res);
+        },
+      );
     });
   }
 

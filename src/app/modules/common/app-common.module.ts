@@ -11,6 +11,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
 import { MatListModule } from '@angular/material/list';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
@@ -29,7 +30,6 @@ import { CoreComponents } from 'app/core/core-components.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { AlertsModule } from 'app/modules/alerts/alerts.module';
 import { CastModule } from 'app/modules/cast/cast.module';
-import { BreadcrumbComponent } from 'app/modules/common/breadcrumb/breadcrumb.component';
 import { AboutDialogComponent } from 'app/modules/common/dialog/about/about-dialog.component';
 import { ConfirmDialogComponent } from 'app/modules/common/dialog/confirm-dialog/confirm-dialog.component';
 import { ConsolePanelDialogComponent } from 'app/modules/common/dialog/console-panel/console-panel-dialog.component';
@@ -39,15 +39,10 @@ import { GeneralDialogComponent } from 'app/modules/common/dialog/general-dialog
 import { InfoDialogComponent } from 'app/modules/common/dialog/info-dialog/info-dialog.component';
 import { RedirectDialogComponent } from 'app/modules/common/dialog/redirect-dialog/redirect-dialog.component';
 import { ResilverProgressDialogComponent } from 'app/modules/common/dialog/resilver-progress/resilver-progress.component';
-import { HeaderInputWrapperComponent } from 'app/modules/common/header-input-wrapper/header-input-wrapper.component';
-import { HeaderInputDirective } from 'app/modules/common/header-input-wrapper/header-input.directive';
 import { AdminLayoutComponent } from 'app/modules/common/layouts/admin-layout/admin-layout.component';
 import { AuthLayoutComponent } from 'app/modules/common/layouts/auth-layout/auth-layout.component';
 import { ModalComponent } from 'app/modules/common/modal/modal.component';
-import { NavigationComponent } from 'app/modules/common/navigation/navigation.component';
-import { PageTitleHeaderComponent } from 'app/modules/common/page-title-header/page-title-header.component';
-import { PageTitleComponent } from 'app/modules/common/page-title/page-title.component';
-import { SecondaryMenuComponent } from 'app/modules/common/secondary-menu/secondary-menu.component';
+import { SearchInputComponent } from 'app/modules/common/search-input/search-input.component';
 import { TopbarComponent } from 'app/modules/common/topbar/topbar.component';
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
@@ -55,7 +50,7 @@ import { JobsModule } from 'app/modules/jobs/jobs.module';
 import { LayoutModule } from 'app/modules/layout/layout.module';
 import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
 import { TruecommandModule } from 'app/modules/truecommand/truecommand.module';
-import { DialogService, LanguageService } from 'app/services';
+import { LanguageService } from 'app/services';
 import { LocaleService } from 'app/services/locale.service';
 
 @NgModule({
@@ -96,6 +91,7 @@ import { LocaleService } from 'app/services/locale.service';
     TruecommandModule,
     JobsModule,
     LayoutModule,
+    MatInputModule,
   ],
   declarations: [
     AdminLayoutComponent,
@@ -108,23 +104,19 @@ import { LocaleService } from 'app/services/locale.service';
     ErrorDialogComponent,
     AboutDialogComponent,
     RedirectDialogComponent,
-    NavigationComponent,
-    PageTitleHeaderComponent,
-    HeaderInputWrapperComponent,
-    HeaderInputDirective,
     ConsolePanelDialogComponent,
     DirectoryServicesMonitorComponent,
     ModalComponent,
-    BreadcrumbComponent,
-    PageTitleComponent,
-    SecondaryMenuComponent,
+    SearchInputComponent,
   ],
-  providers: [DialogService, LanguageService, LocaleService, SvgIconRegistryService],
+  providers: [
+    LanguageService,
+    LocaleService,
+    SvgIconRegistryService,
+  ],
   exports: [
-    PageTitleComponent,
-    PageTitleHeaderComponent,
     ViewControllerComponent,
-    HeaderInputDirective,
+    SearchInputComponent,
   ],
 })
 export class AppCommonModule {}

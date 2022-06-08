@@ -34,7 +34,8 @@
     *ngIf="type === 'password'"
     mat-icon-button type="button"
     class="toggle_pw"
-    (click)="onPasswordToggled()">
+    (click)="onPasswordToggled()"
+  >
     <i class="material-icons" matTooltip="Hide" *ngIf="showPassword">visibility</i>
     <i class="material-icons" matTooltip="Show" *ngIf="!showPassword">visibility_off</i>
   </button>

@@ -6,6 +6,7 @@ import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
+import { switchMap } from 'rxjs/operators';
 import { ProductType } from 'app/enums/product-type.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { VmBootloader, VmDeviceType } from 'app/enums/vm.enum';
@@ -570,21 +571,15 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow>, On
       onClick: (vm: VirtualMachineRow) => {
         const path = `/var/log/libvirt/bhyve/${vm.id}_${vm.name}.log`;
         const filename = `${vm.id}_${vm.name}.log`;
-        this.ws.call('core.download', ['filesystem.get', [path], filename]).pipe(untilDestroyed(this)).subscribe(
-          ([_, url]) => {
+        this.ws.call('core.download', ['filesystem.get', [path], filename]).pipe(
+          switchMap(([, url]) => {
             const mimetype = 'text/plain';
-            this.storageService.streamDownloadFile(url, filename, mimetype)
-              .pipe(untilDestroyed(this))
-              .subscribe((file) => {
-                this.storageService.downloadBlob(file, filename);
-              }, (err) => {
-                new EntityUtils().handleWsError(this, err, this.dialogService);
-              });
-          },
-          (err) => {
-            new EntityUtils().handleWsError(this, err, this.dialogService);
-          },
-        );
+            return this.storageService.downloadUrl(url, filename, mimetype);
+          }),
+          untilDestroyed(this),
+        ).subscribe({
+          error: (error) => new EntityUtils().handleWsError(this, error, this.dialogService),
+        });
       },
     }] as EntityTableAction[];
   }

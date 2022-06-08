@@ -4,7 +4,6 @@ import {
 import { SelectionModel } from '@angular/cdk/collections';
 import {
   AfterViewInit,
-  AfterViewChecked,
   Component,
   Input,
   OnDestroy,
@@ -31,13 +30,12 @@ import {
   catchError, filter, switchMap, take, tap,
 } from 'rxjs/operators';
 import { JobState } from 'app/enums/job-state.enum';
-import { GlobalActionConfig } from 'app/interfaces/global-action.interface';
 import { TableDisplayedColumns } from 'app/interfaces/preferences.interface';
 import { Interval } from 'app/interfaces/timeout.interface';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { AppLoaderService } from 'app/modules/app-loader/app-loader.service';
 import { EmptyConfig, EmptyType } from 'app/modules/entity/entity-empty/entity-empty.component';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
-import { EntityTableAddActionsComponent } from 'app/modules/entity/entity-table/entity-table-add-actions/entity-table-add-actions.component';
 import {
   EntityTableAction,
   EntityTableColumn, EntityTableColumnProp,
@@ -46,6 +44,7 @@ import {
 import { EntityUtils } from 'app/modules/entity/utils';
 import { DialogService, JobService } from 'app/services';
 import { CoreService } from 'app/services/core-service/core.service';
+import { LayoutService } from 'app/services/layout.service';
 import { ModalService } from 'app/services/modal.service';
 import { StorageService } from 'app/services/storage.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -55,6 +54,12 @@ import {
   selectPreferencesState,
   waitForPreferences,
 } from 'app/store/preferences/preferences.selectors';
+
+interface SomeRow {
+  id?: string | number;
+  multiselect_id?: string | number;
+  [key: string]: any;
+}
 
 @UntilDestroy()
 @Component({
@@ -71,17 +76,17 @@ import {
     ]),
   ],
 })
-export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, AfterViewChecked, OnDestroy {
+export class EntityTableComponent<Row extends SomeRow = any> implements OnInit, AfterViewInit, OnDestroy {
   @Input() title = '';
   @Input() conf: EntityTableConfig;
 
   @ViewChild('newEntityTable', { static: false }) entitytable: TemplateRef<void>;
   @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
   @ViewChild(MatSort, { static: false }) sort: MatSort;
+  @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
 
-  dataSourceStreamer$: Subject<any[]> = new Subject();
-  dataSource$: Observable<any[]> = this.dataSourceStreamer$.asObservable();
-  dataReady = false;
+  dataSourceStreamer$: Subject<Row[]> = new Subject();
+  dataSource$: Observable<Row[]> = this.dataSourceStreamer$.asObservable();
 
   // MdPaginator Inputs
   paginationPageSize = 10;
@@ -97,7 +102,7 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, A
     title: this.title,
   };
   isTableEmpty = true;
-  selection = new SelectionModel<any>(true, []);
+  selection = new SelectionModel<Row>(true, []);
   busy: Subscription;
   columns: any[] = [];
 
@@ -130,14 +135,13 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, A
    * The factory setting.
    */
   originalConfColumns: EntityTableColumn[] = [];
-  colMaxWidths: { name: string; maxWidth: number }[] = [];
 
   expandedRows = document.querySelectorAll('.expanded-row').length;
   expandedElement: Row | null = null;
 
-  dataSource: MatTableDataSource<any[]>;
+  dataSource: MatTableDataSource<Row>;
   rows: Row[] = [];
-  currentRows: any[] = []; // Rows applying filter
+  currentRows: Row[] = []; // Rows applying filter
   getFunction: Observable<any>;
   config: EntityTableConfigConfig = {
     paging: true,
@@ -152,8 +156,6 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, A
   sortKey: keyof Row;
   filterValue = ''; // the filter string filled in search input.
   readonly EntityJobState = JobState;
-  // Global Actions in Page Title
-  protected actionsConfig: GlobalActionConfig;
   loaderOpen = false;
   protected toDeleteRow: Row;
   private interval: Interval;
@@ -204,7 +206,6 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, A
   }
 
   isAllSelected = false;
-  globalActionsInit = false;
 
   constructor(
     protected core: CoreService,
@@ -219,6 +220,7 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, A
     protected matDialog: MatDialog,
     public modalService: ModalService,
     public changeDetectorRef: ChangeDetectorRef,
+    protected layoutService: LayoutService,
   ) {
     // watch for navigation events as ngOnDestroy doesn't always trigger on these
     this.routeSub = this.router.events.pipe(untilDestroyed(this)).subscribe((event) => {
@@ -246,7 +248,7 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, A
     this.selection.clear();
   }
 
-  get currentRowsThatAreOnScreenToo(): any[] {
+  get currentRowsThatAreOnScreenToo(): Row[] {
     let currentlyShowingRows = [...this.dataSource.filteredData];
     if (this.dataSource.paginator) {
       const start = this.dataSource.paginator.pageIndex * this.dataSource.paginator.pageSize;
@@ -256,14 +258,14 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, A
     }
     const showingRows = currentlyShowingRows;
     return this.currentRows.filter((row) => {
-      const index = showingRows.findIndex((showingRow: any) => {
+      const index = showingRows.findIndex((showingRow) => {
         return showingRow['multiselect_id'] === row['multiselect_id'];
       });
       return index >= 0;
     });
   }
 
-  toggleSelection(element: any): void {
+  toggleSelection(element: Row): void {
     this.selection.toggle(element);
 
     const allShown = this.currentRowsThatAreOnScreenToo;
@@ -277,7 +279,6 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, A
   }
 
   ngOnInit(): void {
-    this.actionsConfig = { actionType: EntityTableAddActionsComponent, actionConfig: this };
     this.cardHeaderReady = !this.conf.cardHeaderComponent;
     this.hasActions = !this.conf.noActions;
   }
@@ -383,14 +384,10 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, A
 
         this.changeDetectorRef.detectChanges();
       });
-  }
 
-  ngAfterViewChecked(): void {
     // If actionsConfig was disabled, don't show the default toolbar. like the Table is in a Tab.
-    if (!this.conf.disableActionsConfig && !this.globalActionsInit) {
-      // Setup Actions in Page Title Component
-      this.core.emit({ name: 'GlobalActions', data: this.actionsConfig, sender: this });
-      this.globalActionsInit = true;
+    if (!this.conf.disableActionsConfig) {
+      this.layoutService.pageHeaderUpdater$.next(this.pageHeader);
     }
   }
 
@@ -564,11 +561,6 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, A
       }
     });
 
-    const options: any = { limit: 0 };
-    if (sort.length > 0) {
-      options['sort'] = sort.join(',');
-    }
-
     if (this.conf.queryCall) {
       if (this.conf.queryCallJob) {
         if (this.conf.queryCallOption) {
@@ -604,12 +596,12 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, A
 
   callGetFunction(skipActions = false): void {
     this.getFunction.pipe(untilDestroyed(this)).subscribe(
-      (res: any) => {
+      (res) => {
         this.handleData(res, skipActions);
       },
-      (res: any) => {
+      (res: WebsocketError) => {
         this.isTableEmpty = true;
-        this.configureEmptyTable(EmptyType.Errors, res.error || res.reason);
+        this.configureEmptyTable(EmptyType.Errors, String(res.error) || res.reason);
         if (this.loaderOpen) {
           this.loader.close();
           this.loaderOpen = false;
@@ -700,9 +692,9 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, A
     return res;
   }
 
-  patchCurrentRows<T>(
-    rowSelector: (row: T) => boolean,
-    rowMutator: (row: T) => T,
+  patchCurrentRows(
+    rowSelector: (row: Row) => boolean,
+    rowMutator: (row: Row) => Row,
   ): void {
     this.currentRows = this.currentRows.map((row) => {
       if (rowSelector(row)) {
@@ -731,7 +723,7 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, A
     return hasHorizontalScrollbar;
   }
 
-  generateRows(res: any): any[] {
+  generateRows(res: any): Row[] {
     let rows: any[];
     if (this.loaderOpen) {
       this.loader.close();
@@ -765,14 +757,14 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, A
         const index = _.findIndex(rows, { id: row.id });
         if (index > -1) {
           for (const prop in rows[index]) {
-            row[prop] = rows[index][prop];
+            row[prop as keyof Row] = rows[index][prop];
           }
         }
       });
 
-      const newRows: any[] = [];
+      const newRows: Row[] = [];
       this.rows.forEach((row) => {
-        const index = _.findIndex(rows, { id: (row as any).id });
+        const index = _.findIndex(rows, { id: row.id });
         if (index < 0) {
           return;
         }
@@ -794,13 +786,13 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, A
       id: 'edit',
       icon: 'edit',
       label: this.translate.instant('Edit'),
-      onClick: (rowinner: any) => { this.doEdit(rowinner.id); },
+      onClick: (rowinner: Row) => { this.doEdit(rowinner.id); },
     }, {
       name: 'delete',
       id: 'delete',
       icon: 'delete',
       label: this.translate.instant('Delete'),
-      onClick: (rowinner: any) => { this.doDelete(rowinner); },
+      onClick: (rowinner: Row) => { this.doDelete(rowinner); },
     }] as EntityTableAction[];
   }
 
@@ -836,13 +828,13 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, A
       this.conf.doEdit(id, this);
     } else {
       this.router.navigate(
-        new Array('/').concat(this.conf.routeEdit).concat(id as any),
+        new Array('/').concat(this.conf.routeEdit).concat(String(id)),
       );
     }
   }
 
   // generate delete msg
-  getDeleteMessage(item: any, action: string = this.translate.instant('Delete')): string {
+  getDeleteMessage(item: Row, action: string = this.translate.instant('Delete')): string {
     let deleteMsg: string = this.translate.instant('Delete the selected item?');
     if (this.conf.config.deleteMsg) {
       deleteMsg = action + ' ' + this.conf.config.deleteMsg.title;
@@ -863,12 +855,12 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, A
     return deleteMsg;
   }
 
-  doDelete(item: any, action?: string): void {
+  doDelete(item: Row, action?: string): void {
     const deleteMsg = this.conf.confirmDeleteDialog && this.conf.confirmDeleteDialog.isMessageComplete
       ? ''
       : this.getDeleteMessage(item, action);
 
-    let id: string;
+    let id: string | number;
     if (this.conf.config.deleteMsg && this.conf.config.deleteMsg.id_prop) {
       id = item[this.conf.config.deleteMsg.id_prop];
     } else {
@@ -908,7 +900,7 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, A
     }
   }
 
-  delete(id: string): void {
+  delete(id: string | number): void {
     this.loader.open();
     this.loaderOpen = true;
     this.busy = this.ws.call(
@@ -929,9 +921,9 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, A
     );
   }
 
-  doDeleteJob(item: any): Observable<{ state: JobState } | boolean> {
+  doDeleteJob(item: Row): Observable<{ state: JobState } | boolean> {
     const deleteMsg = this.getDeleteMessage(item);
-    let id: string;
+    let id: string | number;
     if (this.conf.config.deleteMsg && this.conf.config.deleteMsg.id_prop) {
       id = item[this.conf.config.deleteMsg.id_prop];
     } else {
@@ -970,7 +962,7 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, A
       );
   }
 
-  getMultiDeleteMessage(items: any[]): string {
+  getMultiDeleteMessage(items: Row[]): string {
     let deleteMsg = 'Delete the selected items?';
     if (this.conf.config.deleteMsg) {
       deleteMsg = 'Delete selected ' + this.conf.config.deleteMsg.title + '(s)?';
@@ -1002,7 +994,7 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, A
     return deleteMsg;
   }
 
-  doMultiDelete(selected: any[]): void {
+  doMultiDelete(selected: Row[]): void {
     const multiDeleteMsg = this.getMultiDeleteMessage(selected);
     this.dialogService.confirm({
       title: 'Delete',
