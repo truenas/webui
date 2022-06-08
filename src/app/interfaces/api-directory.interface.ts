@@ -67,7 +67,9 @@ import {
 import { CloudsyncProvider, CloudsyncRestoreParams } from 'app/interfaces/cloudsync-provider.interface';
 import { ConfigResetParams } from 'app/interfaces/config-reset-params.interface';
 import { ContainerConfig, ContainerConfigUpdate } from 'app/interfaces/container-config.interface';
-import { ContainerImage, PullContainerImageParams } from 'app/interfaces/container-image.interface';
+import {
+  ContainerImage, DeleteContainerImageParams, PullContainerImageParams, PullContainerImageResponse,
+} from 'app/interfaces/container-image.interface';
 import { CoreBulkQuery, CoreBulkResponse } from 'app/interfaces/core-bulk.interface';
 import { CoreDownloadQuery, CoreDownloadResponse } from 'app/interfaces/core-download.interface';
 import {
@@ -420,9 +422,9 @@ export type ApiDirectory = {
   // Container
   'container.config': { params: void; response: ContainerConfig };
   'container.update': { params: [ContainerConfigUpdate]; response: ContainerConfig };
-  'container.image.query': { params: void; response: ContainerImage[] };
-  'container.image.pull': { params: [PullContainerImageParams]; response: { status: string } };
-  'container.image.delete': { params: [id: string, params?: { force: boolean }]; response: void };
+  'container.image.query': { params: QueryParams<ContainerImage>; response: ContainerImage[] };
+  'container.image.pull': { params: [PullContainerImageParams]; response: PullContainerImageResponse };
+  'container.image.delete': { params: DeleteContainerImageParams; response: void };
 
   // DynDNS
   'dyndns.provider_choices': { params: void; response: Choices };
