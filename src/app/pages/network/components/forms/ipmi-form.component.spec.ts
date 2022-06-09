@@ -81,15 +81,6 @@ describe('IpmiFormComponent', () => {
     });
 
     it('loads data with controller radio buttons in the form for ScaleEnterprise', async () => {
-      const getItem = {
-        getItem: () => ProductType.Scale,
-      };
-      Object.defineProperty(window, 'localStorage', {
-        value: getItem,
-        writable: true,
-        configurable: true,
-      });
-
       spectator.component.setIdIpmi(1);
       const formValue = await form.getValues();
 
