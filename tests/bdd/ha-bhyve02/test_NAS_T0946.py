@@ -434,7 +434,7 @@ def enter_hostname_hostname_truenas_controller_2(driver, host1, host2):
     assert wait_on_element(driver, 7, '//input[@ix-auto="input__Hostname"]', 'inputable')
     driver.find_element_by_xpath('//input[@ix-auto="input__Hostname"]').clear()
     driver.find_element_by_xpath('//input[@ix-auto="input__Hostname"]').send_keys(host1)
-    assert wait_on_element(driver, 7, '//input[@ix-auto="input__Hostname (TrueNAS Controller 2)"]', 'clickable')
+    assert wait_on_element(driver, 7, '//input[@ix-auto="input__Hostname (TrueNAS Controller 2)"]', 'inputable')
     driver.find_element_by_xpath('//input[@ix-auto="input__Hostname (TrueNAS Controller 2)"]').clear()
     driver.find_element_by_xpath('//input[@ix-auto="input__Hostname (TrueNAS Controller 2)"]').send_keys(host2)
 
