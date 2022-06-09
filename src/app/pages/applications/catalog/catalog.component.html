@@ -9,7 +9,7 @@
     <ix-toolbar-multimenu
       *ngIf="catalogMenu"
       [config]="catalogMenu"
-      [controller]="catalogItemsChanged"
+      (selectionChange)="onCatalogsSelectionChanged($event)"
     ></ix-toolbar-multimenu>
 
     <ix-common-apps-toolbar-buttons></ix-common-apps-toolbar-buttons>
