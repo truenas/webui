@@ -152,13 +152,13 @@ def navigate_to_network_and_on_the_network_page_click_on_global_configuration_se
     assert wait_on_element(driver, 7, '//button[contains(.,"Settings")]', 'clickable')
     driver.find_element_by_xpath('//button[contains(.,"Settings")]').click()
     assert wait_on_element(driver, 7, '//h3[contains(.,"Global Configuration")]')
-    time.sleep(0.5)
+    time.sleep(1)
 
 
 @then(parsers.parse('enter Hostname (Virtual) "{vhost}", IPv4 Default Gateway "{gatway}"'))
 def enter_hostname_Virtual_ipv4_default_gateway_(driver, vhost, gatway):
     """enter Hostname (Virtual) "vhost", IPv4 Default Gateway "{gatway}"."""
-    assert wait_on_element(driver, 7, '//input[@ix-auto="input__Hostname (Virtual)"]', 'clickable')
+    assert wait_on_element(driver, 7, '//input[@ix-auto="input__Hostname (Virtual)"]', 'inputable')
     driver.find_element_by_xpath('//input[@ix-auto="input__Hostname (Virtual)"]').clear()
     driver.find_element_by_xpath('//input[@ix-auto="input__Hostname (Virtual)"]').send_keys(vhost)
     assert wait_on_element(driver, 7, '//input[@ix-auto="input__IPv4 Default Gateway"]', 'clickable')
@@ -425,7 +425,10 @@ def navigate_to_dashboard_wait_for_ha_to_be_online(driver):
     assert wait_on_element(driver, 7, '//mat-list-item[@ix-auto="option__Dashboard"]', 'clickable')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
     assert wait_on_element(driver, 10, '//span[contains(.,"System Information")]')
+    assert wait_on_element(driver, 15, '//div[contains(.,"truenas")]')
+    assert wait_on_element(driver, 15, '//div[contains(.,"truenas-b")]')
     assert wait_on_element(driver, 180, '//mat-icon[@svgicon="ha_enabled"]')
+    time.sleep(5)
 
 
 @then(parsers.parse('enter Hostname "{host1}", Hostname (TrueNAS Controller 2) "{host2}"'))
