@@ -1,4 +1,6 @@
-export interface ReportingRealtimeUpdate {
+import { ApiEvent } from 'app/interfaces/api-event.interface';
+
+export interface ReportingRealtimeUpdate extends ApiEvent<void> {
   cpu: AllCpusUpdate;
   disks: DisksUpdate;
   interfaces: AllNetworkInterfacesUpdate;

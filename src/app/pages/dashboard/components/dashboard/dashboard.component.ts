@@ -7,6 +7,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { tween, styler } from 'popmotion';
 import { Subject } from 'rxjs';
 import { CoreService } from 'app/core/services/core-service/core.service';
+import { ApiEventMessage } from 'app/enums/api-event-message.enum';
 import { NetworkInterfaceAliasType, NetworkInterfaceType } from 'app/enums/network-interface.enum';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { CoreEvent } from 'app/interfaces/events';
@@ -32,6 +33,8 @@ import { DashConfigItem } from 'app/pages/dashboard/components/widget-controller
 import { WebSocketService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { ModalService } from 'app/services/modal.service';
+
+const maxAttempts = 3;
 
 // TODO: This adds additional fields. Unclear if vlan is coming from backend
 type DashboardNetworkInterface = NetworkInterface & {
@@ -359,8 +362,17 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       }
       this.dashStateReady = true;
     });
+    this.startReportingRealtimeListener();
+  }
 
+  startReportingRealtimeListener(attempt = 0): void {
     this.ws.sub<ReportingRealtimeUpdate>('reporting.realtime').pipe(untilDestroyed(this)).subscribe((update) => {
+      if (update.msg === ApiEventMessage.NoSub) {
+        if (attempt < maxAttempts) {
+          this.startReportingRealtimeListener(attempt++);
+        }
+      }
+
       if (update.cpu) {
         this.statsDataEvent$.next({ name: 'CpuStats', data: update.cpu });
       }
