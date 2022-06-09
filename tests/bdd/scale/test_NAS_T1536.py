@@ -13,7 +13,7 @@ from pytest_bdd import (
 )
 
 
-@scenario('features/NAS-T1536.feature', 'Apps Page - Validate adding TrueCharts')
+@scenario('features/NAS-T1536.feature', 'Apps Page - Validate adding a Catalog')
 def test_apps_page__validate__adding_truecharts():
     """Apps Page - Validate  adding TrueCharts."""
 
@@ -50,27 +50,37 @@ def when_the_apps_page_loads_open_manage_catalogs(driver):
     """when the Apps page loads, open manage catalogs."""
     assert wait_on_element(driver, 10, '//div[contains(text(),"Manage Catalogs")]', 'clickable')
     driver.find_element_by_xpath('//div[contains(text(),"Manage Catalogs")]').click()
-    assert wait_on_element(driver, 7, '//div[contains(.,"Manage Catalogs")]')
+    assert wait_on_element(driver, 7, '//div[contains(.,"Manage Catalogs") and @tabindex="0"]')
 
 
-@then('click add catalog')
+@then('click add catalog and confirm warning')
 def click_add_catalog(driver):
     """click add catalog."""
     assert wait_on_element(driver, 10, '//div[text()="OFFICIAL"]')
     assert wait_on_element(driver, 10, '//span[contains(.,"Add Catalog")]', 'clickable')
     driver.find_element_by_xpath('//span[contains(.,"Add Catalog")]').click()
+    assert wait_on_element(driver, 7, '//h1[text()="Warning")]')
+    assert wait_on_element(driver, 10, '//button[contains(.,"CONTINUE")]', 'clickable')
+    driver.find_element_by_xpath('//button[contains(.,"CONTINUE")]').click()
 
 
 @then('fill out the form')
 def fill_out_the_form(driver):
     """fill out the form."""
     assert wait_on_element(driver, 7, '//div[contains(.,"Add Catalog")]')
-    assert wait_on_element(driver, 7, '//div[contains(., " Catalog Name ")]/following-sibling::div//input')
-    driver.find_element_by_xpath('//div[contains(., " Catalog Name ")]/following-sibling::div//input').clear()
-    driver.find_element_by_xpath('//div[contains(., " Catalog Name ")]/following-sibling::div//input').send_keys('truecharts')
-    assert wait_on_element(driver, 7, '//div[contains(., " Repository ")]/following-sibling::div//input')
-    driver.find_element_by_xpath('//div[contains(., " Repository ")]/following-sibling::div//input').clear()
-    driver.find_element_by_xpath('//div[contains(., " Repository ")]/following-sibling::div//input').send_keys('https://github.com/truecharts/catalog')
+    assert wait_on_element(driver, 7, '//div[contains(., "Catalog Name")]/following-sibling::div//input', 'inputable')
+    driver.find_element_by_xpath('//div[contains(., "Catalog Name")]/following-sibling::div//input').clear()
+    driver.find_element_by_xpath('//div[contains(., "Catalog Name")]/following-sibling::div//input').send_keys('CustomChart')
+    assert wait_on_element(driver, 7, '//div[contains(., "Repository")]/following-sibling::div//input')
+    driver.find_element_by_xpath('//div[contains(., "Repository")]/following-sibling::div//input').clear()
+    driver.find_element_by_xpath('//div[contains(., "Repository")]/following-sibling::div//input').send_keys('https://github.com/ericbsd/charts-1')
+    assert wait_on_element(driver, 7, '//div[contains(., "Preferred Trains")]/following-sibling::div//input')
+    assert wait_on_element(driver, 10, '//mat-chip[contains(text(),"stable")]//mat-icon[text()="cancel"]', 'clickable')
+    driver.find_element_by_xpath('//mat-chip[contains(text(),"stable")]//mat-icon[text()="cancel"]').click()
+    driver.find_element_by_xpath('//div[contains(., "Preferred Trains")]/following-sibling::div//input').send_keys('charts')
+    assert wait_on_element(driver, 7, '//div[contains(., "Branch")]/following-sibling::div//input')
+    driver.find_element_by_xpath('//div[contains(., "Branch")]/following-sibling::div//input').clear()
+    driver.find_element_by_xpath('//div[contains(., "Branch")]/following-sibling::div//input').send_keys('master')
     assert wait_on_element(driver, 10, '//span[contains(.,"Save")]', 'clickable')
     driver.find_element_by_xpath('//span[contains(.,"Save")]').click()
 
