@@ -157,9 +157,23 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
     protected store$: Store<AppState>,
     modalService: ModalService,
     public cdr: ChangeDetectorRef,
-    private layoutService: LayoutService,
+    layoutService: LayoutService,
   ) {
-    super(core, router, ws, dialogService, loader, translate, sorter, job, store$, mdDialog, modalService, cdr);
+    super(
+      core,
+      router,
+      ws,
+      dialogService,
+      loader,
+      translate,
+      sorter,
+      job,
+      store$,
+      mdDialog,
+      modalService,
+      cdr,
+      layoutService,
+    );
   }
 
   repaintMe(): void {

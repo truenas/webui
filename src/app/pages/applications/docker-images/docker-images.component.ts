@@ -1,32 +1,34 @@
-import { Component } from '@angular/core';
+import {
+  AfterViewInit, Component, TemplateRef, ViewChild,
+} from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { latestVersion } from 'app/constants/catalog.constants';
 import helptext from 'app/helptext/apps/apps';
 import { ContainerImage, PullContainerImageParams } from 'app/interfaces/container-image.interface';
-import { CoreEvent } from 'app/interfaces/events';
 import { DialogFormConfiguration } from 'app/modules/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/modules/entity/entity-dialog/entity-dialog.component';
 import { FormSelectConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-table.component';
 import { EntityTableAction, EntityTableConfig, EntityTableConfirmDialog } from 'app/modules/entity/entity-table/entity-table.interface';
-import { ApplicationToolbarControl } from 'app/pages/applications/application-toolbar-control.enum';
 import { PullImageFormComponent } from 'app/pages/applications/forms/pull-image-form/pull-image-form.component';
 import { DialogService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { LayoutService } from 'app/services/layout.service';
 
 @UntilDestroy()
 @Component({
   selector: 'ix-docker-images',
-  template: '<ix-entity-table [title]="title" [conf]="this"></ix-entity-table>',
+  templateUrl: './docker-images.component.html',
 })
-export class DockerImagesComponent implements EntityTableConfig {
+export class DockerImagesComponent implements EntityTableConfig, AfterViewInit {
+  @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
+
   title = this.translate.instant('Docker Images');
 
   protected entityList: EntityTableComponent;
-  protected loaderOpen = false;
   queryCall = 'container.image.query' as const;
   wsDelete = 'container.image.delete' as const;
   disableActionsConfig = true;
@@ -59,6 +61,7 @@ export class DockerImagesComponent implements EntityTableConfig {
     private slideInService: IxSlideInService,
     private matDialog: MatDialog,
     private translate: TranslateService,
+    private layoutService: LayoutService,
   ) {}
 
   chooseTag: DialogFormConfiguration = {
@@ -75,7 +78,10 @@ export class DockerImagesComponent implements EntityTableConfig {
 
   refresh(): void {
     this.entityList.getData();
-    this.entityList.filter(this.filterString);
+
+    if (this.filterString) {
+      this.entityList.filter(this.filterString);
+    }
   }
 
   afterInit(entityList: EntityTableComponent): void {
@@ -84,6 +90,10 @@ export class DockerImagesComponent implements EntityTableConfig {
     this.slideInService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
       this.entityList.getData();
     });
+  }
+
+  ngAfterViewInit(): void {
+    this.layoutService.pageHeaderUpdater$.next(this.pageHeader);
   }
 
   getActions(row: ContainerImage): EntityTableAction[] {
@@ -126,6 +136,12 @@ export class DockerImagesComponent implements EntityTableConfig {
     return actions as EntityTableAction[];
   }
 
+  onSearch(query: string): void {
+    this.filterString = query;
+
+    this.entityList.filter(this.filterString);
+  }
+
   resourceTransformIncomingRestData(images: ContainerImage[]): ContainerImage[] {
     const transformedImage: ContainerImage[] = [];
     images.forEach((image) => {
@@ -139,15 +155,6 @@ export class DockerImagesComponent implements EntityTableConfig {
 
   doAdd(): void {
     this.slideInService.open(PullImageFormComponent);
-  }
-
-  onToolbarAction(evt: CoreEvent): void {
-    if (evt.data.event_control === ApplicationToolbarControl.Filter) {
-      this.filterString = evt.data.filter;
-      this.entityList.filter(this.filterString);
-    } else if (evt.data.event_control === ApplicationToolbarControl.PullImage) {
-      this.doAdd();
-    }
   }
 
   onClickUpdateImage(row: ContainerImage): void {

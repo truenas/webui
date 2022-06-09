@@ -1,20 +1,24 @@
 <div fxLayout=row>
   <mat-tab-group animationDuration="0ms" [selectedIndex]="selectedTab" (selectedTabChange)="onTabSelected($event)">
-    <mat-tab label="{{ 'Installed Applications' | translate}}"
-          ix-auto ix-auto-type="tab" ix-auto-identifier="charts">
-      <ix-charts (updateTab)="updateTab($event)"></ix-charts>
+    <mat-tab [label]="'Installed Applications' | translate" ix-auto ix-auto-type="tab" ix-auto-identifier="charts">
+      <ng-template matTabContent>
+        <ix-charts (updateTab)="updateTab($event)"></ix-charts>
+      </ng-template>
     </mat-tab>
-    <mat-tab label="{{ 'Available Applications' | translate}}"
-          ix-auto ix-auto-type="tab" ix-auto-identifier="catalog">
-      <ix-catalog (updateTab)="updateTab($event)"></ix-catalog>
+    <mat-tab [label]="'Available Applications' | translate" ix-auto ix-auto-type="tab" ix-auto-identifier="catalog">
+      <ng-template matTabContent>
+        <ix-catalog (updateTab)="updateTab($event)"></ix-catalog>
+      </ng-template>
     </mat-tab>
-    <mat-tab label="{{ 'Manage Catalogs' | translate}}"
-          ix-auto ix-auto-type="tab" ix-auto-identifier="manage-catalog">
-      <ix-manage-catalogs></ix-manage-catalogs>
+    <mat-tab [label]="'Manage Catalogs' | translate" ix-auto ix-auto-type="tab" ix-auto-identifier="manage-catalog">
+      <ng-template matTabContent>
+        <ix-manage-catalogs></ix-manage-catalogs>
+      </ng-template>
     </mat-tab>
-    <mat-tab label="{{ 'Manage Docker Images' | translate}}"
-          ix-auto ix-auto-type="tab" ix-auto-identifier="manage-docker-images">
-      <ix-docker-images></ix-docker-images>
+    <mat-tab [label]="'Manage Docker Images' | translate" ix-auto ix-auto-type="tab" ix-auto-identifier="manage-docker-images">
+      <ng-template matTabContent>
+        <ix-docker-images></ix-docker-images>
+      </ng-template>
     </mat-tab>
   </mat-tab-group>
 </div>

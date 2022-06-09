@@ -1,3 +1,21 @@
+<ng-template #pageHeader>
+  <ix-page-title-header>
+    <ix-search-input
+      (search)="onSearch($event)"
+    ></ix-search-input>
+
+    <button mat-button (click)="syncAll()">{{ 'Refresh All' | translate }}</button>
+
+    <ix-toolbar-multimenu
+      *ngIf="catalogMenu"
+      [config]="catalogMenu"
+      (selectionChange)="onCatalogsSelectionChanged($event)"
+    ></ix-toolbar-multimenu>
+
+    <ix-common-apps-toolbar-buttons></ix-common-apps-toolbar-buttons>
+  </ix-page-title-header>
+</ng-template>
+
 <div fxLayout="column" fxFill>
   <div class="bar" fxLayout="row wrap" fxLayoutAlign="center center" fxLayoutGap="30">
     <div *ngFor="let job of catalogSyncJobs" class="progress-item">
@@ -25,11 +43,10 @@
             </div>
           </div>
         </div>
-        <div class="content" fxLayout="column" fxLayoutAlign="center center">
+        <div class="content" fxLayout="column" fxLayoutAlign="space-between center">
           <div class="catalog-title">
-            <h3 textLimiter threshold="15" content="{{item.name}}"></h3>
-          </div>
-          <div class="catalog-version" textLimiter threshold="32" fxFlex="100%" content="{{ item.latest_human_version }}">
+            <h3>{{item.name}}</h3>
+            <div class="catalog-version">{{ item.latest_human_version }}</div>
           </div>
           <div class="button-row" (click)="$event.stopPropagation()">
             <button

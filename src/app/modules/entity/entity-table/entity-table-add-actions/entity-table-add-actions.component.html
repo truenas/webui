@@ -1,7 +1,6 @@
 <!-- START OF CONTROLS SECTION -->
 <div *ngIf="entity && conf" fxFlex class="entity-table-controls" fxLayout="row wrap" fxLayoutAlignGap="16px" fxLayoutAlign="end center">
 
-  <!-- TODO: Replace with ix-input when its ready -->
   <form class="form-element search-field" id="row-filter">
     <mat-form-field floatPlaceholder="never">
       <span matPrefix class="search-icon-wrapper"><mat-icon>search</mat-icon></span>
@@ -11,7 +10,7 @@
         placeholder="{{'Filter' | translate}} {{entity.title | translate}}"
         ix-auto
         ix-auto-type="input"
-        ix-auto-identifier="Filter {{entity.conf.title}}"
+        ix-auto-identifier="Filter {{conf.title}}"
         autocomplete="off"
       >
       <span

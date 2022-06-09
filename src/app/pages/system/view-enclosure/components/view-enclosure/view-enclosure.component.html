@@ -1,3 +1,16 @@
+<ng-template #pageHeader>
+  <ix-page-title-header>
+    <button mat-button [matMenuTriggerFor]="elementsMenu">
+      {{ 'Elements' | translate }} <mat-icon class="menu-caret">arrow_drop_down</mat-icon>
+    </button>
+    <mat-menu #elementsMenu="matMenu">
+      <button *ngFor="let view of views" mat-menu-item (click)="changeView(view.id)">
+        <span>{{ view.alias | translate }}</span>
+      </button>
+    </mat-menu>
+  </ix-page-title-header>
+</ng-template>
+
 <ng-container *ngIf="errors.length == 0">
   <div *ngIf="system && system.enclosures && system_manufacturer && system_manufacturer == 'ixsystems'" class="page-viewport" fxLayout="row wrap">
 

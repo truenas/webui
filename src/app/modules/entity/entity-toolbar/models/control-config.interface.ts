@@ -1,15 +1,5 @@
-import { Subject } from 'rxjs';
-import { ConfirmOptions } from 'app/interfaces/dialog.interface';
-import { CoreEvent } from 'app/interfaces/events';
-
 export interface ControlConfig {
-  name: string;
   label?: string;
-  labelIcon?: string;
-  labelIconType?: string;
-  color?: string;
-  type: string;
-  disabled?: boolean;
   value?: any;
   options?: ToolbarOption[];
   placeholder?: string;
@@ -17,14 +7,6 @@ export interface ControlConfig {
   required?: boolean;
   zeroStateMessage?: string;
   multiple?: boolean;
-  selectedValue?: any;
-  tooltip?: string;
-  class?: string;
-  min?: number;
-  max?: number;
-  step?: number;
-  ixAutoIdentifier?: string;
-  confirmOptions?: ConfirmOptions;
 }
 
 /**
@@ -40,9 +22,4 @@ export interface ToolbarOption {
   labelIcon?: string;
   labelIconType?: string;
   hiddenFromDisplay?: boolean;
-}
-
-export interface ToolbarConfig {
-  controls: ControlConfig[];
-  target: Subject<CoreEvent>;
 }

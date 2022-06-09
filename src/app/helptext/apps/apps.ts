@@ -8,7 +8,6 @@ export default {
     action: T('Choose'),
     jobTitle: T('Configuring...'),
     success: T('Success'),
-    message: T('Using pool '),
     unsetPool: {
       label: T('Unset Pool'),
       confirm: {
@@ -83,15 +82,7 @@ export default {
   },
 
   launch: T('Launch Docker Image'),
-  configure: T('Configure'),
-  refresh: T('Refresh All'),
   catalogs: T('Catalogs'),
-  addCatalog: T('Add Catalog'),
-  pullImage: T('Pull Image'),
-  availablePlaceholder: T('Search Available Applications'),
-  installedPlaceholder: T('Search Installed Applications'),
-  catalogPlaceholder: T('Search Catalogs'),
-  dockerPlaceholder: T('Search Docker Images'),
 
   noPool: {
     title: T('No Pools Found'),

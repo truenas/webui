@@ -28,6 +28,7 @@ import { NgxDualListboxModule } from 'app/modules/common/dual-list/dual-list.mod
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxTableModule } from 'app/modules/ix-tables/ix-table.module';
+import { LayoutModule } from 'app/modules/layout/layout.module';
 import { GroupDetailsRowComponent } from 'app/pages/account/groups/group-details-row/group-details-row.component';
 import { GroupFormComponent } from 'app/pages/account/groups/group-form/group-form.component';
 import { GroupListComponent } from 'app/pages/account/groups/group-list/group-list.component';
@@ -71,6 +72,7 @@ import { groupStateKey } from 'app/pages/account/groups/store/group.selectors';
     NgxDualListboxModule,
     AppCommonModule,
     MatSlideToggleModule,
+    LayoutModule,
   ],
   declarations: [
     GroupListComponent,
