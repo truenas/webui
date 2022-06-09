@@ -4,7 +4,6 @@
 import time
 from function import (
     wait_on_element,
-    is_element_present,
     wait_on_element_disappear,
     get
 )
@@ -32,6 +31,8 @@ def the_browser_is_open_navigate_to_nas_url(driver, nas_url):
         driver.get(f"http://{nas_url}/ui/sessions/signin")
         assert wait_on_element(driver, 5, '//input[@data-placeholder="Username"]')
         time.sleep(1)
+    else:
+        driver.refresh()
 
 
 @when(parsers.parse('the login page appears, enter "{user}" and "{password}"'))
@@ -39,7 +40,7 @@ def the_login_page_appear_enter_root_and_password(driver, user, password):
     """the login page appears, enter "{user}" and "{password}"."""
     global root_password
     root_password = password
-    if not is_element_present(driver, '//mat-list-item[@ix-auto="option__Dashboard"]'):
+    if not wait_on_element(driver, 3, '//mat-list-item[@ix-auto="option__Dashboard"]'):
         assert wait_on_element(driver, 5, '//input[@data-placeholder="Username"]')
         driver.find_element_by_xpath('//input[@data-placeholder="Username"]').clear()
         driver.find_element_by_xpath('//input[@data-placeholder="Username"]').send_keys(user)
@@ -47,7 +48,8 @@ def the_login_page_appear_enter_root_and_password(driver, user, password):
         driver.find_element_by_xpath('//input[@data-placeholder="Password"]').send_keys(password)
         assert wait_on_element(driver, 5, '//button[@name="signin_button"]', 'clickable')
         driver.find_element_by_xpath('//button[@name="signin_button"]').click()
-    else:
+    if not wait_on_element(driver, 2, '//h1[contains(.,"Dashboard")]'):
+        assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Dashboard"]', 'clickable')
         driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
 
 
