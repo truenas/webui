@@ -1,0 +1,13 @@
+@import '~assets/styles/mixins/cards';
+
+.cards {
+  > * {
+    display: block;
+    margin-bottom: 15px;
+    max-width: 615px;
+  }
+}
+
+.example-card {
+  @include details-card();
+}

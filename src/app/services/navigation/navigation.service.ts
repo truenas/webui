@@ -44,7 +44,7 @@ export class NavigationService {
       type: MenuItemType.Link,
       tooltip: T('Datasets'),
       icon: 'dns',
-      state: 'manage-datasets',
+      state: 'datasets',
     },
     {
       name: T('Shares'),

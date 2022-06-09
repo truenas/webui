@@ -4,7 +4,7 @@ import {
 import { MatTableDataSource } from '@angular/material/table';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Dataset } from 'app/interfaces/dataset.interface';
-import { WebSocketService } from 'app/services';
+import { AppLoaderService, WebSocketService } from 'app/services';
 
 @UntilDestroy()
 @Component({
@@ -21,11 +21,23 @@ export class DatasetsManagementComponent implements OnInit {
   constructor(
     private ws: WebSocketService,
     private cdr: ChangeDetectorRef,
+    private loader: AppLoaderService, // TODO: Replace with a better approach
   ) { }
 
   ngOnInit(): void {
-    this.ws.call('pool.dataset.query').pipe(untilDestroyed(this)).subscribe(
+    this.loader.open();
+    this.ws.call('pool.dataset.query', [[], {
+      extra: {
+        properties: [
+          'type',
+          'used',
+          'available',
+          'mountpoint',
+        ],
+      },
+    }]).pipe(untilDestroyed(this)).subscribe(
       (datasets: Dataset[]) => {
+        this.loader.close();
         this.dataSource = new MatTableDataSource(datasets);
         if (datasets.length && datasets.length > 0) {
           this.selectedDataset = datasets[0];
@@ -33,5 +45,9 @@ export class DatasetsManagementComponent implements OnInit {
         this.cdr.markForCheck();
       },
     );
+  }
+
+  onDatasetSelected(dataset: Dataset): void {
+    this.selectedDataset = dataset;
   }
 }

@@ -37,7 +37,7 @@ import { UserService } from 'app/services';
 
 @UntilDestroy()
 @Component({
-  selector: 'ix-edit-nfs-ace',
+  selector: 'ix-old-edit-nfs-ace',
   templateUrl: './edit-nfs-ace.component.html',
   styleUrls: ['./edit-nfs-ace.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
