@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormGroup } from '@angular/forms';
+import { UntypedFormGroup } from '@angular/forms';
 import { FormDictConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
 import { Field } from 'app/modules/entity/entity-form/models/field.interface';
 
@@ -9,12 +9,12 @@ import { Field } from 'app/modules/entity/entity-form/models/field.interface';
 })
 export class FormDictComponent implements Field, OnInit {
   config: FormDictConfig;
-  group: FormGroup;
+  group: UntypedFormGroup;
   fieldShow: string;
 
-  dictFormGroup: FormGroup;
+  dictFormGroup: UntypedFormGroup;
 
   ngOnInit(): void {
-    this.dictFormGroup = this.group.controls[this.config.name] as FormGroup;
+    this.dictFormGroup = this.group.controls[this.config.name] as UntypedFormGroup;
   }
 }

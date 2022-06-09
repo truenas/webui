@@ -1,7 +1,7 @@
 import {
   ChangeDetectionStrategy, Component, EventEmitter, Input, Output,
 } from '@angular/core';
-import { FormGroup } from '@angular/forms';
+import { UntypedFormGroup } from '@angular/forms';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { AddListItemEvent, DeleteListItemEvent, DynamicFormSchema } from 'app/interfaces/dynamic-form-schema.interface';
 
@@ -14,7 +14,7 @@ import { AddListItemEvent, DeleteListItemEvent, DynamicFormSchema } from 'app/in
 })
 
 export class IxDynamicFormComponent {
-  @Input() dynamicForm: FormGroup;
+  @Input() dynamicForm: UntypedFormGroup;
   @Input() dynamicSection: DynamicFormSchema[];
 
   @Output() addListItem = new EventEmitter<AddListItemEvent>();

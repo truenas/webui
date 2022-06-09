@@ -1,7 +1,7 @@
 import {
   Component, ViewChild, ElementRef,
 } from '@angular/core';
-import { FormGroup } from '@angular/forms';
+import { UntypedFormGroup } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
 import { FormTextareaButtonConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
 import { Field } from 'app/modules/entity/entity-form/models/field.interface';
@@ -12,7 +12,7 @@ import { Field } from 'app/modules/entity/entity-form/models/field.interface';
 })
 export class FormTextareaButtonComponent implements Field {
   config: FormTextareaButtonConfig;
-  group: FormGroup;
+  group: UntypedFormGroup;
   fieldShow: string;
 
   @ViewChild('textAreaSsh', { static: true })

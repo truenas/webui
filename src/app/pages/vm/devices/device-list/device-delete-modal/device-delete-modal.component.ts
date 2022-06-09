@@ -1,5 +1,5 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { AbstractControl, FormBuilder, Validators } from '@angular/forms';
+import { AbstractControl, UntypedFormBuilder, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
@@ -33,7 +33,7 @@ export class DeviceDeleteModalComponent implements OnInit {
   constructor(
     private loader: AppLoaderService,
     @Inject(MAT_DIALOG_DATA) public data: DeviceDeleteModalState,
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     private dialogRef: MatDialogRef<DeviceDeleteModalComponent>,
     private dialogService: DialogService,
     private translate: TranslateService,

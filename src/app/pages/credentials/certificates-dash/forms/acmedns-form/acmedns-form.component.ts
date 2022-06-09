@@ -1,7 +1,7 @@
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
-import { FormGroup, Validators } from '@angular/forms';
+import { UntypedFormGroup, Validators } from '@angular/forms';
 import { FormBuilder, FormControl } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
@@ -44,8 +44,8 @@ export class AcmednsFormComponent implements OnInit {
     attributes: this.formBuilder.group<Record<string, string>>({}),
   });
 
-  get formGroup(): FormGroup {
-    return this.form.controls['attributes'] as FormGroup;
+  get formGroup(): UntypedFormGroup {
+    return this.form.controls['attributes'] as UntypedFormGroup;
   }
 
   isLoading = false;

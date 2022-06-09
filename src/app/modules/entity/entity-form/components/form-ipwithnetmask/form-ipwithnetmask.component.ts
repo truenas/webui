@@ -1,7 +1,7 @@
 import {
   Component, OnInit,
 } from '@angular/core';
-import { AbstractControl, FormGroup } from '@angular/forms';
+import { AbstractControl, UntypedFormGroup } from '@angular/forms';
 import { MatSelectChange } from '@angular/material/select/select';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
@@ -16,7 +16,7 @@ import { NetworkService } from 'app/services';
 })
 export class FormIpWithNetmaskComponent implements Field, OnInit {
   config: FormIpWithNetmaskConfig;
-  group: FormGroup;
+  group: UntypedFormGroup;
   fieldShow: string;
 
   address = '';

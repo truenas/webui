@@ -1,5 +1,5 @@
 import { Component, OnDestroy } from '@angular/core';
-import { FormControl } from '@angular/forms';
+import { UntypedFormControl } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatDialogRef } from '@angular/material/dialog/dialog-ref';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -87,7 +87,7 @@ export class ImportDiskComponent implements OnDestroy, FormConfiguration {
   ];
 
   volume: FormSelectConfig;
-  fsTypeControl: FormControl;
+  fsTypeControl: UntypedFormControl;
   private fsTypeField: FormRadioConfig;
   msdosfsLocaleField: FormSelectConfig;
   private entityForm: EntityFormComponent;
@@ -113,7 +113,7 @@ export class ImportDiskComponent implements OnDestroy, FormConfiguration {
     this.volume = _.find(this.fieldConfig, { name: 'volume' }) as FormSelectConfig;
     this.fsTypeField = _.find(this.fieldConfig, { name: 'fs_type' }) as FormRadioConfig;
     this.msdosfsLocaleField = _.find(this.fieldConfig, { name: 'msdosfs_locale' }) as FormSelectConfig;
-    this.fsTypeControl = entityForm.formGroup.controls['fs_type'] as FormControl;
+    this.fsTypeControl = entityForm.formGroup.controls['fs_type'] as UntypedFormControl;
 
     this.ws.call('pool.import_disk_msdosfs_locales').pipe(untilDestroyed(this)).subscribe((locales) => {
       locales.forEach((locale) => {

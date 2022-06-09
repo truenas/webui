@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { FormGroup, Validators } from '@angular/forms';
+import { UntypedFormGroup, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
@@ -38,7 +38,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
   queryCall = 'cloudsync.credentials.query' as const;
   editCall = 'cloudsync.credentials.update' as const;
   queryCallOption: QueryFilter<CloudsyncCredential>[];
-  protected formGroup: FormGroup;
+  protected formGroup: UntypedFormGroup;
   protected id: number;
   protected keyId: number;
   protected isOneColumnForm = true;

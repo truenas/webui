@@ -1,6 +1,6 @@
 import { DatePipe } from '@angular/common';
 import { Component, Input, OnInit } from '@angular/core';
-import { FormGroup } from '@angular/forms';
+import { UntypedFormGroup } from '@angular/forms';
 import { MatCheckboxChange } from '@angular/material/checkbox/checkbox';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -27,7 +27,7 @@ export class EntityDialogComponent implements OnInit {
   title: string;
   warning: string;
   fieldConfig: FieldConfig[];
-  formGroup: FormGroup;
+  formGroup: UntypedFormGroup;
   saveButtonText: string;
   cancelButtonText = 'Cancel';
   error: string;

@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { FormControl, ValidationErrors, Validators } from '@angular/forms';
+import { UntypedFormControl, ValidationErrors, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
@@ -123,7 +123,7 @@ export class ZvolFormComponent implements FormConfiguration {
         blurStatus: true,
         parent: this,
         validation: [
-          (control: FormControl): ValidationErrors => {
+          (control: UntypedFormControl): ValidationErrors => {
             const volsizeConfig = this.fieldSets[0].config.find((config) => config.name === 'volsize');
 
             const size = control.value && typeof control.value === 'string' ? this.storageService.convertHumanStringToNum(control.value, true) : null;

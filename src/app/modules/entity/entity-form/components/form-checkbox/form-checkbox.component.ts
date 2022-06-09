@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { FormGroup } from '@angular/forms';
+import { UntypedFormGroup } from '@angular/forms';
 import { MatCheckboxChange } from '@angular/material/checkbox/checkbox';
 import { TranslateService } from '@ngx-translate/core';
 import { FormCheckboxConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
@@ -13,7 +13,7 @@ import { Field } from 'app/modules/entity/entity-form/models/field.interface';
 })
 export class FormCheckboxComponent implements Field {
   config: FormCheckboxConfig;
-  group: FormGroup;
+  group: UntypedFormGroup;
   fieldShow: string;
 
   constructor(public translate: TranslateService) {}

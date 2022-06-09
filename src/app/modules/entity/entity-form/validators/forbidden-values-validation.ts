@@ -1,9 +1,9 @@
-import { FormControl, ValidatorFn } from '@angular/forms';
+import { UntypedFormControl, ValidatorFn } from '@angular/forms';
 
 export function forbiddenValues(arrayOfValues: unknown[], caseInsensitive?: boolean): ValidatorFn {
-  let thisControl: FormControl;
+  let thisControl: UntypedFormControl;
 
-  return function forbiddenValuesValidate(control: FormControl) {
+  return function forbiddenValuesValidate(control: UntypedFormControl) {
     if (!control.parent) {
       return null;
     }

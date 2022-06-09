@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { FormGroup } from '@angular/forms';
+import { UntypedFormGroup } from '@angular/forms';
 import { MatRadioChange } from '@angular/material/radio/radio';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
@@ -14,7 +14,7 @@ import { Field } from 'app/modules/entity/entity-form/models/field.interface';
 })
 export class FormRadioComponent implements Field, OnInit, OnDestroy {
   config: FormRadioConfig;
-  group: FormGroup;
+  group: UntypedFormGroup;
   fieldShow: string;
   radioValue: string | number;
   valueChangesSubscription: Subscription;

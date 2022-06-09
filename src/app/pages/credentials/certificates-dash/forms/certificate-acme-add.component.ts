@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { FormArray, FormGroup } from '@angular/forms';
+import { UntypedFormArray, UntypedFormGroup } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatDialogRef } from '@angular/material/dialog/dialog-ref';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -33,7 +33,7 @@ export class CertificateAcmeAddComponent implements FormConfiguration {
   isEntity = true;
   isNew = true;
   private csrOrg: Certificate;
-  formArray: FormArray;
+  formArray: UntypedFormArray;
   commonName: string;
   private getRow = new Subscription();
   private rowNum: number;
@@ -128,7 +128,7 @@ export class CertificateAcmeAddComponent implements FormConfiguration {
   protected dialogRef: MatDialogRef<EntityJobComponent>;
   queryCallOption: [QueryFilter<Certificate>];
   initialCount = 1;
-  private domainList: FormArray;
+  private domainList: UntypedFormArray;
   private domainListField: FormListConfig;
 
   constructor(
@@ -168,7 +168,7 @@ export class CertificateAcmeAddComponent implements FormConfiguration {
     this.entityForm = entityEdit;
     this.fieldConfig = entityEdit.fieldConfig;
 
-    this.domainList = entityEdit.formGroup.controls['domains'] as FormArray;
+    this.domainList = entityEdit.formGroup.controls['domains'] as UntypedFormArray;
     this.domainListField = _.find(this.fieldConfig, { name: 'domains' }) as FormListConfig;
     const listFields = this.domainListField.listFields;
 
@@ -190,7 +190,7 @@ export class CertificateAcmeAddComponent implements FormConfiguration {
             const controls = listFields[i];
             const nameTextConfig = _.find(controls, { name: 'name_text' }) as FormParagraphConfig;
             const authConfig = _.find(controls, { name: 'authenticators' }) as FormSelectConfig;
-            (this.domainList.controls[i] as FormGroup).controls['name_text'].setValue(domains[i]);
+            (this.domainList.controls[i] as UntypedFormGroup).controls['name_text'].setValue(domains[i]);
             nameTextConfig.paraText = '<b>' + domains[i] + '</b>';
             authConfig.options = this.dnsMapField.options;
           }

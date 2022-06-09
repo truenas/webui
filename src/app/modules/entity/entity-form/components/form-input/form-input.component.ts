@@ -1,7 +1,7 @@
 import {
   Component, ViewChild,
 } from '@angular/core';
-import { FormGroup } from '@angular/forms';
+import { UntypedFormGroup } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
 import globalHelptext from 'app/helptext/global-helptext';
 import { FormInputConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
@@ -15,7 +15,7 @@ import { EntityFormService } from 'app/modules/entity/entity-form/services/entit
 export class FormInputComponent implements Field {
   @ViewChild('fileInput', { static: true }) fileInput: HTMLInputElement;
   config: FormInputConfig;
-  group: FormGroup;
+  group: UntypedFormGroup;
   fieldShow: string;
   fileString: string | ArrayBuffer;
   showPassword = false;

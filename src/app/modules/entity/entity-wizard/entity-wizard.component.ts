@@ -3,7 +3,7 @@ import {
   Component, Input, OnInit, ViewChild,
 } from '@angular/core';
 import {
-  AbstractControl, FormBuilder, FormGroup,
+  AbstractControl, UntypedFormBuilder, UntypedFormGroup,
 } from '@angular/forms';
 import { MatStep, MatStepper } from '@angular/material/stepper';
 import { Router, ActivatedRoute } from '@angular/router';
@@ -30,7 +30,7 @@ export class EntityWizardComponent implements OnInit {
   @Input() conf: WizardConfiguration;
   @ViewChild('stepper', { static: true }) stepper: MatStepper;
 
-  formGroup: FormGroup;
+  formGroup: UntypedFormGroup;
   showSpinner = false;
 
   summaryValue: any;
@@ -42,7 +42,7 @@ export class EntityWizardComponent implements OnInit {
 
   constructor(
     protected ws: WebSocketService,
-    private formBuilder: FormBuilder,
+    private formBuilder: UntypedFormBuilder,
     private entityFormService: EntityFormService,
     public loader: AppLoaderService,
     protected fieldRelationService: FieldRelationService,
@@ -111,7 +111,7 @@ export class EntityWizardComponent implements OnInit {
 
     this.conf.wizardConfig.forEach((config, i) => {
       this.summaryFieldConfigs = this.summaryFieldConfigs.concat(config.fieldConfig);
-      const formGroup = this.formArray.get(String(i)) as FormGroup;
+      const formGroup = this.formArray.get(String(i)) as UntypedFormGroup;
       config.fieldConfig.forEach((fieldConfig) => {
         this.fieldRelationService.setRelation(fieldConfig, formGroup);
       });
@@ -156,9 +156,9 @@ export class EntityWizardComponent implements OnInit {
       });
     });
 
-    if ((this.formArray.get([stepIndex]) as FormGroup).controls[name]) {
+    if ((this.formArray.get([stepIndex]) as UntypedFormGroup).controls[name]) {
       const method = disable ? 'disable' : 'enable';
-      (this.formArray.get([stepIndex]) as FormGroup).controls[name][method]();
+      (this.formArray.get([stepIndex]) as UntypedFormGroup).controls[name][method]();
     }
   }
 
