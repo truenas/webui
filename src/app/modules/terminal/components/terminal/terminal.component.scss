@@ -1,42 +1,15 @@
 :host ::ng-deep {
-  @import '../../../../../../node_modules/xterm/css/xterm.css';
+  @import '../../../../../../node_modules/xterm/css/xterm';
 }
 
 .terminal-wrapper {
   background: black;
-  height: 100%;
+  height: calc(100% - 85px);
   margin-left: 8px;
   margin-right: 8px;
   padding: 10px 0 10px 10px;
 }
 
-:host ::ng-deep #terminal {
+#terminal {
   height: 100%;
-  position: relative;
-  width: 100%;
-
-  .xterm-viewport {
-    bottom: 0;
-    left: 0;
-    overflow-y: auto;
-    position: absolute;
-    right: 0;
-    top: 0;
-  }
-
-  .xterm-screen {
-    overflow: hidden auto;
-
-    .xterm-helpers {
-      height: 0;
-      opacity: 0;
-    }
-
-    canvas {
-      left: 0;
-      max-width: 100%;
-      position: absolute;
-      top: 0;
-    }
-  }
 }
