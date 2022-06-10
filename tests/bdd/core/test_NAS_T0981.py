@@ -125,6 +125,7 @@ def click_the_start_automatically_ssh_checkbox_and_enable_the_ssh_service(driver
 @then('the service should be enabled with no errors')
 def the_service_should_be_enabled_with_no_errors(driver):
     """the service should be enabled with no errors."""
+    wait_on_element_disappear(driver, 15, '//mat-spinner[@role="progressbar"]')
     wait_for_value = wait_for_attribute_value(driver, 7, '//mat-slide-toggle[@ix-auto="slider__SSH_Running"]', 'class', 'mat-checked')
     assert wait_for_value
     # scroll back up the mat-list-item
