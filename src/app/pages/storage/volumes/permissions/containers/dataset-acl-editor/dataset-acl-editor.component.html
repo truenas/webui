@@ -34,13 +34,13 @@
     <div class="content">
       <div class="columns">
         <div class="column-left">
-          <ix-acl-editor-list
+          <ix-old-acl-editor-list
             [acl]="acl"
             [selectedAceIndex]="selectedAceIndex"
             [acesWithError]="acesWithError"
             [owner]="ownerFormGroup.get('owner').value"
             [ownerGroup]="ownerFormGroup.get('ownerGroup').value"
-          ></ix-acl-editor-list>
+          ></ix-old-acl-editor-list>
 
           <div class="controls-container">
             <div class="controls">
@@ -104,12 +104,12 @@
         </div>
         <div class="column-right">
           <ng-container *ngIf="acl.acl[selectedAceIndex] as selectedAce">
-            <ix-edit-nfs-ace
+            <ix-old-edit-nfs-ace
               *ngIf="isNfsAcl; else posixAcl"
               [ace]="selectedAce | cast"
-            ></ix-edit-nfs-ace>
+            ></ix-old-edit-nfs-ace>
             <ng-template #posixAcl>
-              <ix-edit-posix-ace [ace]="selectedAce | cast"></ix-edit-posix-ace>
+              <ix-old-edit-posix-ace [ace]="selectedAce | cast"></ix-old-edit-posix-ace>
             </ng-template>
           </ng-container>
         </div>

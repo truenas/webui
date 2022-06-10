@@ -1,0 +1,54 @@
+<mat-card>
+  <mat-card-content>
+    <form [formGroup]="form" (submit)="onSubmit()">
+      <ix-fieldset [title]="'Import'">
+        <ix-select
+          formControlName="volume"
+          [options]="volumes$"
+          [label]="'Disk' | translate"
+          [required]="true"
+          [tooltip]="helptext.import_disk_volume_tooltip | translate"
+        ></ix-select>
+
+        <ix-radio-group
+          formControlName="type"
+          [label]="'Filesystem Type' | translate"
+          [required]="true"
+          [options]="filesystemTypes$"
+          [tooltip]="helptext.import_disk_fs_type_tooltip | translate"
+        ></ix-radio-group>
+
+        <ix-select
+          *ngIf="isMsdosfs"
+          formControlName="msdosfs_locale"
+          [label]="'MSDOSFS Locale' | translate"
+          [options]="msdosfsLocales$"
+          [tooltip]="helptext.import_disk_msdosfs_locale_tooltip | translate"
+        ></ix-select>
+
+        <ix-explorer
+          formControlName="destination"
+          [label]="'Destination Path' | translate"
+          [required]="true"
+          [nodeProvider]="treeNodeProvider"
+          [tooltip]="helptext.import_disk_dst_path_tooltip | translate"
+        ></ix-explorer>
+      </ix-fieldset>
+
+      <div class="form-actions">
+        <button
+          mat-button
+          type="submit"
+          [disabled]="form.invalid"
+          color="primary"
+        >{{ 'Import' | translate }}</button>
+        <button
+          *ngIf="canViewImportLog"
+          mat-button
+          type="button"
+          (click)="viewImportLog()"
+        >{{ 'View Import Log' | translate }}</button>
+      </div>
+    </form>
+  </mat-card-content>
+</mat-card>
