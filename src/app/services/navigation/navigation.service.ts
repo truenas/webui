@@ -33,6 +33,20 @@ export class NavigationService {
       state: 'storage',
     },
     {
+      name: T('Storage 2.0 (WIP)'),
+      type: MenuItemType.Link,
+      tooltip: T('Storage'),
+      icon: 'dns',
+      state: 'storage2',
+    },
+    {
+      name: T('Datasets (WIP)'),
+      type: MenuItemType.Link,
+      tooltip: T('Datasets'),
+      icon: 'dns',
+      state: 'manage-datasets',
+    },
+    {
       name: T('Shares'),
       type: MenuItemType.Link,
       tooltip: T('Shares'),
