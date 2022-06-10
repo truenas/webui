@@ -1,11 +1,11 @@
 <div class="toolbar-slider">
-  {{ config.label | translate}}:
+  {{ label | translate}}:
   <mat-slider
-    [min]="config.min"
-    [max]="config.max"
-    [value]="config.value"
-    [step]="config.step"
+    [min]="min"
+    [max]="max"
+    [value]="value"
+    [step]="step"
     (change)="onChange($event)"
-    ix-auto ix-auto-type="slider" [ix-auto-identifier]="config.label"
+    ix-auto ix-auto-type="slider" [ix-auto-identifier]="label"
   ></mat-slider>
 </div>

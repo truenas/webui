@@ -44,7 +44,7 @@ import { DiskListComponent } from 'app/pages/storage/disks/disk-list/disk-list.c
 import { DiskWipeDialogComponent } from 'app/pages/storage/disks/disk-wipe-dialog/disk-wipe-dialog.component';
 import { ManualTestDialogComponent } from 'app/pages/storage/disks/manual-test-dialog/manual-test-dialog.component';
 import { SmartResultsComponent } from 'app/pages/storage/disks/smart-results/smart-results.component';
-import { ImportDiskComponent } from 'app/pages/storage/import-disk/import-disk.component';
+import { ImportDataComponent } from 'app/pages/storage/import-data/import-data.component';
 import { SnapshotsModule } from 'app/pages/storage/snapshots/snapshots.module';
 import { VmwareSnapshotFormComponent } from 'app/pages/storage/vmware-snapshot/vmware-snapshot-form/vmware-snapshot-form.component';
 import { VmwareSnapshotListComponent } from 'app/pages/storage/vmware-snapshot/vmware-snapshot-list/vmware-snapshot-list.component';
@@ -146,7 +146,7 @@ import { routing } from './storage.routing';
     EditPosixAceComponent,
     EncryptionOptionsDialogComponent,
     ExportDisconnectModalComponent,
-    ImportDiskComponent,
+    ImportDataComponent,
     ManagerComponent,
     NfsPermissionsComponent,
     PermissionsItemComponent,

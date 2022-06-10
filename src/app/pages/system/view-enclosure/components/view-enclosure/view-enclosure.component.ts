@@ -12,7 +12,6 @@ import { PoolScanState } from 'app/enums/pool-scan-state.enum';
 import { CoreEvent } from 'app/interfaces/events';
 import { EnclosureLabelChangedEvent } from 'app/interfaces/events/enclosure-events.interface';
 import { ResilveringEvent } from 'app/interfaces/events/resilvering-event.interface';
-import { ControlConfig } from 'app/modules/entity/entity-toolbar/models/control-config.interface';
 import { EnclosureMetadata, SystemProfiler } from 'app/pages/system/view-enclosure/classes/system-profiler';
 import { ErrorMessage } from 'app/pages/system/view-enclosure/interfaces/error-message.interface';
 import { ViewConfig } from 'app/pages/system/view-enclosure/interfaces/view.config';
@@ -48,18 +47,6 @@ export class ViewEnclosureComponent implements AfterViewInit, OnDestroy {
   spinner = true;
 
   supportedHardware = false;
-
-  elementsMenuSelected = new Subject<{ name: string; value: { value: string } }>();
-
-  readonly elementsMenu: ControlConfig = {
-    name: 'configFiles',
-    label: this.translate.instant('Elements'),
-    type: 'menu',
-    color: 'primary',
-    options: this.views.map((view) => {
-      return { label: view.alias, value: view.alias };
-    }),
-  };
 
   get showEnclosureSelector(): boolean {
     if (
@@ -253,28 +240,12 @@ export class ViewEnclosureComponent implements AfterViewInit, OnDestroy {
     });
 
     this.views = views;
-    this.setupElementsMenu();
 
     if (matchIndex && matchIndex > 0) {
       this.currentView = views[matchIndex];
     } else {
       this.currentView = disks;
     }
-  }
-
-  private setupElementsMenu(): void {
-    if (!this.views?.length) {
-      return;
-    }
-
-    this.elementsMenu.options = this.views.map((view) => ({ label: view.alias, value: view.alias }));
-
-    this.elementsMenuSelected
-      .pipe(untilDestroyed(this))
-      .subscribe((event) => {
-        const nextView = this.views.find((view) => view.alias === event.value.value);
-        this.changeView(nextView.id);
-      });
   }
 
   private loadEnclosureData(): void {

@@ -1,6 +1,13 @@
 <ng-template #pageHeader>
   <ix-page-title-header>
-    <ix-toolbar-menu [config]="elementsMenu" [controller]="elementsMenuSelected"></ix-toolbar-menu>
+    <button mat-button [matMenuTriggerFor]="elementsMenu">
+      {{ 'Elements' | translate }} <mat-icon class="menu-caret">arrow_drop_down</mat-icon>
+    </button>
+    <mat-menu #elementsMenu="matMenu">
+      <button *ngFor="let view of views" mat-menu-item (click)="changeView(view.id)">
+        <span>{{ view.alias | translate }}</span>
+      </button>
+    </mat-menu>
   </ix-page-title-header>
 </ng-template>
 
