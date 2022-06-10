@@ -67,6 +67,7 @@ def create_1st_dataset_rtacltest1(driver, dataset_name):
     driver.find_element_by_xpath('//mat-option[@ix-auto="option__Share Type_SMB"]').click()
     assert wait_on_element(driver, 5, '//button[@ix-auto="button__SAVE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
+    assert wait_on_element_disappear(driver, 15, '//h6[contains(.,"Please wait")]')
 
 
 @then(parsers.parse('Create 2nd dataset {dataset_name} under rt-acl-test-1'))
