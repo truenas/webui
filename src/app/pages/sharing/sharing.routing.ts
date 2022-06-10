@@ -72,6 +72,7 @@ export const routes: Routes = [
               {
                 path: '',
                 redirectTo: 'configuration',
+                pathMatch: 'full',
               },
               {
                 path: 'wizard',
@@ -84,9 +85,6 @@ export const routes: Routes = [
                 data: { title: '', breadcrumb: '' },
               },
               {
-                path: 'portals',
-                data: { title: 'Portals', breadcrumb: 'Portals' },
-              }, {
                 path: 'initiators',
                 data: { title: 'Initiators', breadcrumb: 'Initiators' },
                 children: [{
@@ -98,21 +96,6 @@ export const routes: Routes = [
                   component: InitiatorFormComponent,
                   data: { title: 'Edit', breadcrumb: 'Edit' },
                 }],
-              }, {
-                path: 'auth',
-                data: { title: 'Authorized Access', breadcrumb: 'Authorized Access' },
-              },
-              {
-                path: 'target',
-                data: { title: 'Targets', breadcrumb: 'Targets' },
-              },
-              {
-                path: 'extent',
-                data: { title: 'Extents', breadcrumb: 'Extents' },
-              },
-              {
-                path: 'associatedtarget',
-                data: { title: 'Associated Targets', breadcrumb: 'Associated Targets' },
               }],
           }],
       },

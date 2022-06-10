@@ -2,7 +2,7 @@ import {
   Component, OnInit,
 } from '@angular/core';
 import { AbstractControl, UntypedFormGroup } from '@angular/forms';
-import { MatSelectChange } from '@angular/material/select/select';
+import { MatSelectChange } from '@angular/material/select';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { FormIpWithNetmaskConfig } from 'app/modules/entity/entity-form/models/field-config.interface';

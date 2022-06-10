@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { UntypedFormGroup } from '@angular/forms';
-import { MatSliderChange } from '@angular/material/slider/slider';
+import { MatSliderChange } from '@angular/material/slider';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { FormSliderConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
