@@ -130,7 +130,7 @@ describe('DatasetAclEditorComponent', () => {
     });
 
     it('shows loaded acl', () => {
-      const items = spectator.queryAll('ix-permissions-item');
+      const items = spectator.queryAll('ix-old-permissions-item');
       expect(items).toHaveLength(3);
 
       expect(items[0]).toHaveText('User - john');
@@ -180,7 +180,7 @@ describe('DatasetAclEditorComponent', () => {
     it('adds another ace when Add item is pressed', () => {
       spectator.click(byButton('Add Item'));
 
-      const items = spectator.queryAll('ix-permissions-item');
+      const items = spectator.queryAll('ix-old-permissions-item');
       expect(items).toHaveLength(4);
       expect(items[3]).toHaveText('User - ?');
       expect(items[3]).toHaveText('Allow | Modify');

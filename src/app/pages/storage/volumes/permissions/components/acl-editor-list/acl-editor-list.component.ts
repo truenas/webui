@@ -12,7 +12,7 @@ import { nfsAceToPermissionItem } from 'app/pages/storage/volumes/permissions/ut
 import { posixAceToPermissionItem } from 'app/pages/storage/volumes/permissions/utils/posix-ace-to-permission-item.utils';
 
 @Component({
-  selector: 'ix-acl-editor-list',
+  selector: 'ix-old-acl-editor-list',
   templateUrl: 'acl-editor-list.component.html',
   styleUrls: ['./acl-editor-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

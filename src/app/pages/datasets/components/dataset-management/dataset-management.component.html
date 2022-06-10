@@ -1,9 +1,8 @@
 <mat-card><mat-card-content><div class="wip">
-  <h4>Note: This is a work in progress for the new 'Dataset Management' page. You can see what we are building and provide suggestions in <a href="https://github.com/truenas/webui/discussions/6768">Github discussions</a>.</h4>
+  <h4>Note: This is a work in progress for the new 'Dataset Management' page. You can see what we are building an provide suggestions in <a href="https://github.com/truenas/webui/discussions/6768">Github discussions</a>.</h4>
 </div></mat-card-content></mat-card>
 <div class="container">
   <div class="table-container">
-
     <mat-card>
       <mat-card-content>
         <table ix-table [dataSource]="dataSource" class="mat-elevation-z8">
@@ -17,15 +16,18 @@
             <td mat-cell *matCellDef="let dataset"> {{ dataset.locked ? 'Locked' : 'Unlocked' }} </td>
           </ng-container>
           <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+          <tr
+              *matRowDef="let row; columns: displayedColumns;"
+              mat-row
+              (click)="onDatasetSelected(row)"
+            ></tr>
         </table>
         <ix-table-paginator [dataSource]="dataSource"></ix-table-paginator>
-                
       </mat-card-content>
     </mat-card>
   </div>
-    
-  <div class="details-container">
-    <h3>Details for {{ selectedDataset?.name }}</h3>
+
+  <div *ngIf="selectedDataset" class="details-container">
+    <ix-dataset-details [dataset]="selectedDataset"></ix-dataset-details>
   </div>
 </div>

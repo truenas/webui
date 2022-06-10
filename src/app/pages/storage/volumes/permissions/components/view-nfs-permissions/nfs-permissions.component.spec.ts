@@ -59,7 +59,7 @@ describe('NfsPermissionsComponent', () => {
   });
 
   it('shows a list of NFS aces', () => {
-    const permissions = spectator.queryAll('ix-permissions-item');
+    const permissions = spectator.queryAll('ix-old-permissions-item');
 
     expect(permissions).toHaveLength(2);
     expect(permissions[0]).toHaveText('User - John');

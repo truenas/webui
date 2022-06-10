@@ -89,7 +89,7 @@ export const rootRouterConfig: Routes = [{
     data: { title: 'Storage', breadcrumb: 'Storage' },
   },
   {
-    path: 'manage-datasets',
+    path: 'datasets',
     loadChildren: () => import('./pages/datasets/datasets.module').then((module) => module.DatasetsModule),
     data: { title: 'Storage', breadcrumb: 'Storage' },
   },
