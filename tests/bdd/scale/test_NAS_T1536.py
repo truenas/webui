@@ -70,7 +70,7 @@ def fill_out_the_form(driver):
     assert wait_on_element(driver, 7, '//div[contains(.,"Add Catalog")]')
     assert wait_on_element(driver, 7, '//div[contains(., "Catalog Name")]/following-sibling::div//input', 'inputable')
     driver.find_element_by_xpath('//div[contains(., "Catalog Name")]/following-sibling::div//input').clear()
-    driver.find_element_by_xpath('//div[contains(., "Catalog Name")]/following-sibling::div//input').send_keys('CustomChart')
+    driver.find_element_by_xpath('//div[contains(., "Catalog Name")]/following-sibling::div//input').send_keys('customchart')
     assert wait_on_element(driver, 7, '//div[contains(., "Repository")]/following-sibling::div//input')
     driver.find_element_by_xpath('//div[contains(., "Repository")]/following-sibling::div//input').clear()
     driver.find_element_by_xpath('//div[contains(., "Repository")]/following-sibling::div//input').send_keys('https://github.com/ericbsd/charts-1')
@@ -96,4 +96,4 @@ def close_confirmation_dialog(driver):
 @then('confirm installation is successful')
 def confirm_installation_is_successful(driver):
     """confirm installation is successful."""
-    assert wait_on_element(driver, 1500, '//div[text()="TRUECHARTS"]')
+    assert wait_on_element(driver, 120, '//div[text()="CUSTOMCHART"]')
