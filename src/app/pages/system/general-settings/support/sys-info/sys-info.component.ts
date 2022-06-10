@@ -1,4 +1,6 @@
 import { Component, Input } from '@angular/core';
+import { LicenseInfoInSupport } from 'app/pages/system/general-settings/support/license-info-in-support.interface';
+import { SystemInfoInSupport } from 'app/pages/system/general-settings/support/system-info-in-support.interface';
 
 @Component({
   selector: 'ix-sys-info',
@@ -20,4 +22,7 @@ export class SysInfoComponent {
   @Input() expiration_date: string;
   @Input() add_hardware: string;
   @Input() daysLeftinContract: number;
+  //
+  @Input() sys_info: SystemInfoInSupport;
+  @Input() license_info: LicenseInfoInSupport;
 }

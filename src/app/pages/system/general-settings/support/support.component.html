@@ -25,16 +25,11 @@
         fxLayout="column" fxLayoutAlign="start stretch" fxLayoutGap="16px"
         [class]="extraMargin ? 'extra-margin' : 'regular-margin'"
       >
-
         <ix-sys-info
           *ngIf="!hasLicense; else licensedSysInfo"
-          [version]='systemInfo.version'
-          [model]="systemInfo.model"
-          [product]='systemInfo.system_product'
-          [memory]="systemInfo.memory"
-          [serial]="systemInfo.serial"
-          [hasLicense]="hasLicense"
+          [sys_info]="systemInfo"
           ></ix-sys-info>
+
         <ng-template #licensedSysInfo>
           <ix-sys-info
             [customer_name]='licenseInfo.customer_name'
@@ -46,7 +41,12 @@
             [add_hardware]='licenseInfo.add_hardware'
             [daysLeftinContract]='licenseInfo.daysLeftinContract'
             [hasLicense]="hasLicense"
+
+            [license_info]="licenseInfo"
           >
+            <!--            {
+           }-->
+
           </ix-sys-info>
         </ng-template>
 
