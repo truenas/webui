@@ -5,7 +5,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { JobState } from 'app/enums/job-state.enum';
 import helptext from 'app/helptext/apps/apps';
-import { Catalog, CatalogAppVersion, CatalogItems } from 'app/interfaces/catalog.interface';
+import { Catalog, CatalogItems } from 'app/interfaces/catalog.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
 import { EntityUtils } from 'app/pages/common/entity/utils';
@@ -28,8 +28,8 @@ export class ManageCatalogSummaryDialogComponent implements OnInit {
   helptext = helptext;
   selectedStatus: string = this.statusOptions[0];
   selectedTrain: string = this.trainOptions[0];
-  filteredItems: CatalogAppVersion[] = [];
-  catalogItems: CatalogAppVersion[] = [];
+  filteredItems: { train: string; app: string; healthy: boolean }[] = [];
+  catalogItems: { train: string; app: string; healthy: boolean }[] = [];
 
   constructor(
     public dialogRef: MatDialogRef<EntityJobComponent>,
@@ -44,7 +44,7 @@ export class ManageCatalogSummaryDialogComponent implements OnInit {
 
   ngOnInit(): void {
     this.loader.open();
-    this.ws.job('catalog.items', [this.catalog.label, { retrieve_versions: true }]).pipe(untilDestroyed(this)).subscribe((res: Job<CatalogItems>) => {
+    this.ws.job('catalog.items', [this.catalog.label]).pipe(untilDestroyed(this)).subscribe((res: Job<CatalogItems>) => {
       if (res.state === JobState.Success) {
         this.loader.close();
         const result = res.result;
@@ -56,11 +56,10 @@ export class ManageCatalogSummaryDialogComponent implements OnInit {
             this.trainOptions.push(trainKey);
             Object.keys(train).forEach((appKey) => {
               const app = train[appKey];
-              Object.keys(app.versions).forEach((versionKey) => {
-                const version = app.versions[versionKey];
-                version['train'] = trainKey;
-                version['app'] = appKey;
-                this.catalogItems.push(version);
+              this.catalogItems.push({
+                train: trainKey,
+                app: appKey,
+                healthy: app.healthy,
               });
             });
           });
@@ -90,18 +89,5 @@ export class ManageCatalogSummaryDialogComponent implements OnInit {
 
       return isSeletectedTrain && isSeletectedStatus;
     });
-  }
-
-  versionStatusLabel(item: CatalogAppVersion): string {
-    let label = '';
-    if (this.selectedStatus == this.statusOptions[0]) {
-      if (item.healthy) {
-        label += '(Healthy)';
-      } else {
-        label += '(Unhealthy)';
-      }
-    }
-
-    return label;
   }
 }
