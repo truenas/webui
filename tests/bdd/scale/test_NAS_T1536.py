@@ -59,7 +59,7 @@ def click_add_catalog(driver):
     assert wait_on_element(driver, 10, '//div[text()="OFFICIAL"]')
     assert wait_on_element(driver, 10, '//span[contains(.,"Add Catalog")]', 'clickable')
     driver.find_element_by_xpath('//span[contains(.,"Add Catalog")]').click()
-    assert wait_on_element(driver, 7, '//h1[text()="Warning")]')
+    assert wait_on_element(driver, 7, '//h1[text()="Warning"]')
     assert wait_on_element(driver, 10, '//button[contains(.,"CONTINUE")]', 'clickable')
     driver.find_element_by_xpath('//button[contains(.,"CONTINUE")]').click()
 
