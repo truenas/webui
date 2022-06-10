@@ -1,12 +1,15 @@
 <ng-template #pageHeader>
   <ix-page-title-header>
     <ix-reports-global-controls
-      [toolbarConfig]="toolbarConfig"
+      [diskMetrics]="diskMetrics"
+      [diskDevices]="diskDevices"
+      [selectedDisks]="selectedDisks"
       [activeTab]="activeTab"
       [activeTabVerified]="activeTabVerified"
       [allTabs]="allTabs"
       (showConfigForm)="showConfigForm()"
       (navigateToTab)="navigateToTab($event)"
+      (diskOptionsChanged)="buildDiskReport($event)"
     ></ix-reports-global-controls>
   </ix-page-title-header>
 </ng-template>
