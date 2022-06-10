@@ -4,7 +4,7 @@ import {
 import { MatTableDataSource } from '@angular/material/table';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Dataset } from 'app/interfaces/dataset.interface';
-import { WebSocketService } from 'app/services';
+import { AppLoaderService, WebSocketService } from 'app/services';
 
 @UntilDestroy()
 @Component({
