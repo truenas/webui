@@ -190,8 +190,6 @@
   "Error Promoting dataset ": "",
   "Error deleting dataset {datasetName}.": "",
   "Error deleting zvol {name}.": "",
-  "Error getting disk data": "",
-  "Error getting locales": "",
   "Error importing pool": "",
   "Error starting service {serviceName}.": "",
   "Error stopping service {serviceName}.": "",

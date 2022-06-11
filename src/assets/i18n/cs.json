@@ -1188,8 +1188,6 @@
   "Error exporting the Private Key": "",
   "Error exporting the certificate": "",
   "Error getting chart data": "",
-  "Error getting disk data": "",
-  "Error getting locales": "",
   "Error importing pool": "",
   "Error starting service OpenVPN {serviceLabel}": "",
   "Error starting service {serviceName}.": "",

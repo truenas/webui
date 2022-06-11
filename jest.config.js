@@ -15,8 +15,4 @@ module.exports = {
   coverageDirectory: 'coverage/webui',
   moduleDirectories: ['node_modules', 'src'],
   moduleNameMapper: pathsToModuleNameMapper(compilerOptions.paths || {}),
-  // testPathIgnorePatterns: [
-  //   "node_modules/(?!(date-fns-tz|date-fns))",
-  //   "<rootDir>/dist/"
-  // ],
 };

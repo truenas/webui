@@ -146,8 +146,6 @@
   "Error deleting zvol {name}.": "",
   "Error detected reading App": "",
   "Error getting chart data": "",
-  "Error getting disk data": "",
-  "Error getting locales": "",
   "Error importing pool": "",
   "Error starting service OpenVPN {serviceLabel}": "",
   "Error starting service {serviceName}.": "",
