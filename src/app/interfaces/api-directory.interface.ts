@@ -338,7 +338,7 @@ export type ApiDirectory = {
   'catalog.update': { params: [id: string, update: CatalogUpdate]; response: Catalog };
   'catalog.create': { params: [CatalogCreate]; response: Catalog };
   'catalog.delete': { params: [name: string]; response: boolean };
-  'catalog.items': { params: [label: string, params: CatalogItemsQueryParams]; response: CatalogItems };
+  'catalog.items': { params: [label: string, params?: CatalogItemsQueryParams]; response: CatalogItems };
   'catalog.sync': { params: [label: string]; response: void };
   'catalog.sync_all': { params: void; response: void };
   'catalog.get_item_details': { params: [name: string, params: GetItemDetailsParams]; response: CatalogApp };

@@ -4,6 +4,7 @@ import {
 } from '@angular/forms';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 import { ExplorerType } from 'app/enums/explorer-type.enum';
 import { IscsiExtentType } from 'app/enums/iscsi.enum';
@@ -12,7 +13,7 @@ import { helptextSharingIscsi } from 'app/helptext/sharing/iscsi/iscsi';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { WizardConfiguration } from 'app/interfaces/entity-wizard.interface';
 import { AppLoaderService } from 'app/modules/app-loader/app-loader.service';
-import { FormListConfig, FormSelectConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
+import { FormComboboxConfig, FormListConfig, FormSelectConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
 import { Wizard } from 'app/modules/entity/entity-form/models/wizard.interface';
 import { forbiddenValues } from 'app/modules/entity/entity-form/validators/forbidden-values-validation';
 import { ipv4or6cidrValidator } from 'app/modules/entity/entity-form/validators/ip-validation';
@@ -137,7 +138,7 @@ export class IscsiWizardComponent implements WizardConfiguration {
         },
         // device options
         {
-          type: 'select',
+          type: 'combobox',
           name: 'disk',
           placeholder: helptextSharingIscsi.disk_placeholder,
           tooltip: helptextSharingIscsi.disk_tooltip,
@@ -527,6 +528,7 @@ export class IscsiWizardComponent implements WizardConfiguration {
     private loader: AppLoaderService,
     private router: Router,
     private storageService: StorageService,
+    private translate: TranslateService,
   ) {
     this.iscsiService.getExtents().pipe(untilDestroyed(this)).subscribe((extents) => {
       this.namesInUse.push(...extents.map((extent) => extent.name));
@@ -545,12 +547,18 @@ export class IscsiWizardComponent implements WizardConfiguration {
   }
 
   step0Init(): void {
-    const diskField = _.find(this.wizardConfig[0].fieldConfig, { name: 'disk' }) as FormSelectConfig;
+    const diskField = _.find(this.wizardConfig[0].fieldConfig, { name: 'disk' }) as FormComboboxConfig;
     // get device options
+    this.loader.open(this.translate.instant('Loading devices. Please wait.'));
     this.iscsiService.getExtentDevices().pipe(untilDestroyed(this)).subscribe((res) => {
+      this.loader.close();
       for (const i in res) {
         diskField.options.push({ label: res[i], value: i });
       }
+    },
+    (res) => {
+      this.loader.close();
+      new EntityUtils().handleWsError(this.entityWizard, res);
     });
     const targetField = _.find(this.wizardConfig[0].fieldConfig, { name: 'target' }) as FormSelectConfig;
     this.iscsiService.getTargets().pipe(untilDestroyed(this)).subscribe((targets) => {

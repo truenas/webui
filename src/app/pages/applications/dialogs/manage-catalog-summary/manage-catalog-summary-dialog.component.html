@@ -35,7 +35,7 @@
     <div fxLayout="row" fxLayoutAlign="center start" class="detail-row row-light" >
       <span fxFlex="25%">{{'Train' | translate }}</span>
       <span fxFlex="25%">{{'App' | translate }}</span>
-      <span fxFlex="50%" >{{'Version' | translate }}</span>
+      <span fxFlex="50%" >{{'Status' | translate }}</span>
     </div>
     <div *ngIf="filteredItems.length > 0;else empty">
       <div *ngFor="let item of filteredItems; let i = index" class="detail-row value-row" [ngClass]="{'row-dark': i%2==0, 'row-light': i%2==1}">
@@ -47,7 +47,7 @@
             <span textLimiter threshold="15" content="{{ item.app }}"></span>
           </span>
           <span fxFlex="50%" class="info-col" >
-            <span textLimiter threshold="22" content="{{ item.human_version }}"></span><span>{{ versionStatusLabel(item) }}</span>
+            <span textLimiter threshold="22" content="{{ item.healthy ? 'Healthy' : 'Unhealthy' }}"></span>
           </span>
         </div>
       </div>
