@@ -1,5 +1,5 @@
 import {
-  Component, Output, EventEmitter, OnInit, AfterViewInit, ViewChild, TemplateRef,
+  Component, Output, EventEmitter, OnInit, AfterViewInit, ViewChild, TemplateRef, OnDestroy,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatDialogRef } from '@angular/material/dialog/dialog-ref';
@@ -7,6 +7,7 @@ import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
+import { Subscription } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { appImagePlaceholder, ixChartApp, officialCatalog } from 'app/constants/catalog.constants';
 import { ChartReleaseStatus } from 'app/enums/chart-release-status.enum';
@@ -40,7 +41,7 @@ import { ModalService } from 'app/services/modal.service';
   templateUrl: './chart-releases.component.html',
   styleUrls: ['../applications.component.scss'],
 })
-export class ChartReleasesComponent implements AfterViewInit, OnInit {
+export class ChartReleasesComponent implements AfterViewInit, OnInit, OnDestroy {
   @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
 
   @Output() updateTab = new EventEmitter();
@@ -60,6 +61,7 @@ export class ChartReleasesComponent implements AfterViewInit, OnInit {
   imagePlaceholder = appImagePlaceholder;
 
   readonly officialCatalog = officialCatalog;
+  chartsSubscription: Subscription;
 
   emptyPageConf: EmptyConfig = {
     type: EmptyType.Loading,
@@ -240,7 +242,7 @@ export class ChartReleasesComponent implements AfterViewInit, OnInit {
   }
 
   addChartReleaseChangedEventListener(): void {
-    this.ws.subscribe('chart.release.query').pipe(untilDestroyed(this)).subscribe((evt) => {
+    this.chartsSubscription = this.ws.subscribe('chart.release.query').pipe(untilDestroyed(this)).subscribe((evt) => {
       const app = this.chartItems[evt.id];
 
       if (app && evt && evt.fields) {
@@ -255,6 +257,12 @@ export class ChartReleasesComponent implements AfterViewInit, OnInit {
     this.filteredChartItems = this.getChartItems();
     this.showLoadStatus(EmptyType.Loading);
     this.updateChartReleases();
+  }
+
+  ngOnDestroy(): void {
+    if (this.chartsSubscription) {
+      this.ws.unsubscribe(this.chartsSubscription);
+    }
   }
 
   updateChartReleases(): void {

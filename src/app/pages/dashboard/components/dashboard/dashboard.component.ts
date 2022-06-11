@@ -305,6 +305,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     });
 
     this.volumeData = vd;
+    this.isDataReady();
   }
 
   getDisksData(): void {
@@ -330,7 +331,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   isDataReady(): void {
-    const isReady = Array.isArray(this.pools) && Array.isArray(this.nics);
+    const isReady = Array.isArray(this.pools) && Array.isArray(this.nics) && !!this.volumeData;
 
     if (!isReady) {
       return;

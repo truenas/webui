@@ -1,11 +1,12 @@
 import {
-  Component, OnInit, Output, EventEmitter, AfterViewInit, ViewChild, TemplateRef,
+  Component, OnInit, Output, EventEmitter, AfterViewInit, ViewChild, TemplateRef, OnDestroy,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import _ from 'lodash';
+import { Subscription } from 'rxjs';
 import {
   chartsTrain, ixChartApp, officialCatalog, appImagePlaceholder,
 } from 'app/constants/catalog.constants';
@@ -41,7 +42,7 @@ interface CatalogSyncJob {
   templateUrl: './catalog.component.html',
   styleUrls: ['../applications.component.scss', 'catalog.component.scss'],
 })
-export class CatalogComponent implements OnInit, AfterViewInit {
+export class CatalogComponent implements OnInit, AfterViewInit, OnDestroy {
   @Output() updateTab = new EventEmitter();
 
   @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
@@ -54,6 +55,8 @@ export class CatalogComponent implements OnInit, AfterViewInit {
   selectedPool = '';
   catalogOptions: Option[] = [];
   selectedCatalogOptions: Option[] = [];
+
+  jobsSubscription: Subscription;
 
   imagePlaceholder = appImagePlaceholder;
   private noAvailableCatalog = true;
@@ -85,7 +88,7 @@ export class CatalogComponent implements OnInit, AfterViewInit {
     this.loadCatalogs();
     this.checkForConfiguredPool();
 
-    this.ws.subscribe('core.get_jobs').pipe(untilDestroyed(this)).subscribe((event) => {
+    this.jobsSubscription = this.ws.subscribe('core.get_jobs').pipe(untilDestroyed(this)).subscribe((event) => {
       const catalogSyncJob = this.catalogSyncJobs.find((job) => job.id === event.fields.id);
       if (catalogSyncJob) {
         catalogSyncJob.progress = event.fields.progress.percent;
@@ -101,6 +104,12 @@ export class CatalogComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit(): void {
     this.layoutService.pageHeaderUpdater$.next(this.pageHeader);
+  }
+
+  ngOnDestroy(): void {
+    if (this.jobsSubscription) {
+      this.ws.unsubscribe(this.jobsSubscription);
+    }
   }
 
   loadCatalogs(): void {
