@@ -2390,10 +2390,10 @@
   resolved "https://registry.yarnpkg.com/@mattlewis92/dom-autoscroller/-/dom-autoscroller-2.4.2.tgz#ccb753fbcf6b3672b0273e0c3bda7924fe238013"
   integrity sha512-YbrUWREPGEjE/FU6foXcAT1YbVwqD/jkYnY1dFb0o4AxtP3s4xKBthlELjndZih8uwsDWgQZx1eNskRNe2BgZQ==
 
-"@ngneat/reactive-forms@~4.1.0":
-  version "4.1.0"
-  resolved "https://registry.yarnpkg.com/@ngneat/reactive-forms/-/reactive-forms-4.1.0.tgz#29f4a00a4ce7f9299f621a0193aee7aead23c332"
-  integrity sha512-4uovdd5gzYaqOwGBYsJVmwDzQEyuyqsovO+G3MRx1Dylkh3FTUBs58xQ+65yOliSHXDRph3DeFE8VxSm4vnhug==
+"@ngneat/reactive-forms@~5.0.0":
+  version "5.0.0"
+  resolved "https://registry.yarnpkg.com/@ngneat/reactive-forms/-/reactive-forms-5.0.0.tgz#2339a810a375d18087d946640363c9756ac14e24"
+  integrity sha512-1duAEvwC0gS8NVICuDOpGjyahAWoMgD084b5OfmJT7pRqlgD2EhkeloFmGAUjR+wNbtXK32t52bUjK6oE3HMbg==
   dependencies:
     tslib "^2.3.0"
 
