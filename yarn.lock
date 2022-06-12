@@ -9813,12 +9813,12 @@ ngx-popperjs@^12.1.2:
   dependencies:
     tslib "^2.2.0"
 
-ngx-translate-messageformat-compiler@~4.11.0:
-  version "4.11.0"
-  resolved "https://registry.yarnpkg.com/ngx-translate-messageformat-compiler/-/ngx-translate-messageformat-compiler-4.11.0.tgz#c9b71dd139ba5fcdcd809001e22622de589fd707"
-  integrity sha512-OdGfWV4fF3DhZqGIHcLmOnQDufugmZ+E90NYr1UPGRZgT10lilr9oLmIrisy3lW4THnZFNo9JXsX7+fX84LbDw==
+ngx-translate-messageformat-compiler@~5.0.1:
+  version "5.0.1"
+  resolved "https://registry.yarnpkg.com/ngx-translate-messageformat-compiler/-/ngx-translate-messageformat-compiler-5.0.1.tgz#c9304b83440f24d6dfa33c0413dbb93668ffd0e6"
+  integrity sha512-dtw0GgwmLzRCrAlkFOXYY2Ulz1ADXO/+EtvzInwK9vNgnI7VLHilqKVlWjkFetjk++WAsgnAzx7qjzdsdNch2g==
   dependencies:
-    tslib "^1.10.0"
+    tslib "^2.3.1"
 
 ngx-uploader@~11.0.0:
   version "11.0.0"
