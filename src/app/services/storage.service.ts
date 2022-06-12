@@ -177,7 +177,7 @@ export class StorageService {
       && !isNaN(Date.parse(tempArr[n]))) {
       let timeArr = [];
       for (const i of tempArr) {
-        timeArr.push(Date.parse(i));
+        timeArr.push(this.locale.getTimestamp(i));
       }
       timeArr = timeArr.sort();
 
