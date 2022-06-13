@@ -80,9 +80,9 @@ export class DatasetsManagementComponent implements OnInit {
 
   getDatasetIcon(dataset: Dataset): string {
     const level = dataset.name.split('/').length;
-    if (level === 0) {
+    if (level === 1) {
       return 'device_hub';
-    } if (level > 0 && dataset.children.length) {
+    } if (level > 1 && dataset.children.length) {
       return 'folder';
     }
     return 'mdi-database';

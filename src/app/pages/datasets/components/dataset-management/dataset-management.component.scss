@@ -103,6 +103,11 @@
       align-items: center;
       display: inline-flex;
       min-height: 48px;
+
+      &:first-child {
+        left: 0;
+        position: sticky;
+      }
     }
   }
 
