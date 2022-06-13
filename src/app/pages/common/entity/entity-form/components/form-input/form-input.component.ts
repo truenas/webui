@@ -74,8 +74,6 @@ export class FormInputComponent implements Field {
       if (phrasedValue) {
         this.group.controls[this.config.name].setValue(phrasedValue);
       }
-    } else if (this.config.inputType === 'number' && !this.group.controls[this.config.name].value) {
-      this.group.controls[this.config.name].setValue(null);
     }
   }
 

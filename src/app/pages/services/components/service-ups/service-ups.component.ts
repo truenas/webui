@@ -219,6 +219,7 @@ export class ServiceUPSComponent {
           name: 'nocommwarntime',
           placeholder: helptext.ups_nocommwarntime_placeholder,
           tooltip: helptext.ups_nocommwarntime_tooltip,
+          value: '300',
         },
         {
           type: 'input',
