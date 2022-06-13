@@ -1283,56 +1283,56 @@ export class VolumesListTableConfig implements InputTableConf {
         onClick: (row) => {
           this.ws.call('vmware.dataset_has_vms', [row.id, false]).subscribe((vmware_res) => {
             this.vmware_res_status = vmware_res;
-          });
-          this.dialogConf = {
-            title: 'One time snapshot of ' + row.id,
-            fieldConfig: [
-              {
-                type: 'input',
-                name: 'dataset',
-                placeholder: helptext.snapshotDialog_dataset_placeholder,
-                value: row.id,
-                isHidden: true,
-                readonly: true,
-              },
-              {
-                type: 'input',
-                name: 'name',
-                placeholder: helptext.snapshotDialog_name_placeholder,
-                tooltip: helptext.snapshotDialog_name_tooltip,
-                validation: helptext.snapshotDialog_name_validation,
-                required: true,
-                value: 'manual' + '-' + this.getTimestamp(),
-              },
-              {
-                type: 'checkbox',
-                name: 'recursive',
-                placeholder: helptext.snapshotDialog_recursive_placeholder,
-                tooltip: helptext.snapshotDialog_recursive_tooltip,
-                parent: this,
-                updater: (parent) => {
-                  parent.recursiveIsChecked = !parent.recursiveIsChecked;
-                  parent.ws.call('vmware.dataset_has_vms', [row.id, parent.recursiveIsChecked]).subscribe((vmware_res) => {
-                    parent.vmware_res_status = vmware_res;
-                    _.find(parent.dialogConf.fieldConfig, { name: 'vmware_sync' })['isHidden'] = !parent.vmware_res_status;
-                  });
+            this.dialogConf = {
+              title: 'One time snapshot of ' + row.id,
+              fieldConfig: [
+                {
+                  type: 'input',
+                  name: 'dataset',
+                  placeholder: helptext.snapshotDialog_dataset_placeholder,
+                  value: row.id,
+                  isHidden: true,
+                  readonly: true,
                 },
-              },
-              {
-                type: 'checkbox',
-                name: 'vmware_sync',
-                placeholder: helptext.vmware_sync_placeholder,
-                tooltip: helptext.vmware_sync_tooltip,
-                isHidden: !this.vmware_res_status,
-              },
-            ],
-            method_ws: 'zfs.snapshot.create',
-            saveButtonText: T('Create Snapshot'),
-          };
-          this.dialogService.dialogForm(this.dialogConf).subscribe((res) => {
-            if (res) {
-              this.dialogService.report(T('Create Snapshot'), T('Snapshot successfully taken.'), '500px', 'info');
-            }
+                {
+                  type: 'input',
+                  name: 'name',
+                  placeholder: helptext.snapshotDialog_name_placeholder,
+                  tooltip: helptext.snapshotDialog_name_tooltip,
+                  validation: helptext.snapshotDialog_name_validation,
+                  required: true,
+                  value: 'manual' + '-' + this.getTimestamp(),
+                },
+                {
+                  type: 'checkbox',
+                  name: 'recursive',
+                  placeholder: helptext.snapshotDialog_recursive_placeholder,
+                  tooltip: helptext.snapshotDialog_recursive_tooltip,
+                  parent: this,
+                  updater: (parent) => {
+                    parent.recursiveIsChecked = !parent.recursiveIsChecked;
+                    parent.ws.call('vmware.dataset_has_vms', [row.id, parent.recursiveIsChecked]).subscribe((vmware_res) => {
+                      parent.vmware_res_status = vmware_res;
+                      _.find(parent.dialogConf.fieldConfig, { name: 'vmware_sync' })['isHidden'] = !parent.vmware_res_status;
+                    });
+                  },
+                },
+                {
+                  type: 'checkbox',
+                  name: 'vmware_sync',
+                  placeholder: helptext.vmware_sync_placeholder,
+                  tooltip: helptext.vmware_sync_tooltip,
+                  isHidden: !this.vmware_res_status,
+                },
+              ],
+              method_ws: 'zfs.snapshot.create',
+              saveButtonText: T('Create Snapshot'),
+            };
+            this.dialogService.dialogForm(this.dialogConf).subscribe((res) => {
+              if (res) {
+                this.dialogService.report(T('Create Snapshot'), T('Snapshot successfully taken.'), '500px', 'info');
+              }
+            });
           });
         },
       });
