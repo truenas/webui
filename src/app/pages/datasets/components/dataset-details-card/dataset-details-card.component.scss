@@ -1,5 +1,6 @@
 @import '~assets/styles/mixins/cards';
 @import '~assets/styles/mixins/buttons';
+@import '~assets/styles/mixins/animations';
 
 .container-card {
   @include details-card();
@@ -8,7 +9,16 @@
 .stroked-btn {
   @include stroked-button();
 }
+
+.blink {
+  @include blink();
+}
   
 .header {
   font-weight: bold;
+}
+
+.loader {
+  @include loader-block();
+  display: inline-block;
 }

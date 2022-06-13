@@ -1,15 +1,18 @@
 <div>
     <mat-card class="container-card">
       <mat-card-header>
-        <h3 mat-card-title>Dataset Details</h3>
-        <button mat-button>Edit</button>
+        <h3 mat-card-title>{{ 'Dataset Details' | translate }}</h3>
+        <button mat-button (click)="editDataset()">{{ 'Edit' | translate }}</button>
       </mat-card-header>
       <mat-card-content>
         <ix-loading-card-content *ngIf="loading"></ix-loading-card-content>
         <div *ngIf="!loading">
           <p><span class="header">Type: </span>{{ dataset.type }}</p>
           <p><span class="header">Sync: </span>{{ dataset.sync?.value }}</p>
-          <p><span class="header">Compression Level: </span>{{ dataset.compression?.value }}</p>
+          <div>
+            <span class="header">Compression Level: </span>
+            <span>{{ dataset.compression?.source === 'INHERITED' ? 'Inherit (' + dataset.compression?.value + ')' : dataset.compression?.value }}</span>
+          </div>
           <p><span class="header">Enable Atime: </span>{{ dataset.atime?.value }}</p>
           <p><span class="header">ZFS Deduplication: </span>{{ dataset.deduplication?.value }}</p>
           <p><span class="header">Case Sensitivity: </span>{{ dataset.casesensitivity?.value }}</p>
@@ -17,7 +20,7 @@
       </mat-card-content>
       <mat-card-actions>
         <!-- TODO: Should be mat-stroked-button, but its styles are polluted -->
-        <button class="stroked-btn" mat-stroked-button>Delete</button>
+        <button class="stroked-btn" mat-stroked-button>{{ 'Delete' | translate }}</button>
       </mat-card-actions>
     </mat-card>
   </div>

@@ -771,6 +771,7 @@
   "Data transfer security. The connection is  authenticated with SSH. Data can be encrypted during transfer for  security or left unencrypted to maximize transfer speed. Encryption is  recommended, but can be disabled for increased speed on secure networks.": "",
   "Dataset": "",
   "Dataset Actions": "",
+  "Dataset Details": "",
   "Dataset Key": "",
   "Dataset Name": "",
   "Dataset Passphrase": "",

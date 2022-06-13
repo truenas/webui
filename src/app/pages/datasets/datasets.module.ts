@@ -6,11 +6,13 @@ import { MatRippleModule } from '@angular/material/core';
 import { MatIconModule } from '@angular/material/icon';
 import { TranslateModule } from '@ngx-translate/core';
 import { AppCommonModule } from 'app/modules/common/app-common.module';
+import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxTableModule } from 'app/modules/ix-tables/ix-table.module';
 import { IxTreeModule } from 'app/modules/ix-tree/ix-tree.module';
 import { DatasetDetailsCardComponent } from 'app/pages/datasets/components/dataset-details-card/dataset-details-card.component';
 import { DatasetDetailsPanelComponent } from 'app/pages/datasets/components/dataset-details-panel/dataset-details-panel.component';
+import { DatasetFormComponent } from 'app/pages/datasets/components/dataset-form/dataset-form.component';
 import { DatasetsManagementComponent } from 'app/pages/datasets/components/dataset-management/dataset-management.component';
 import { LoadingCardContentComponent } from 'app/pages/datasets/components/loading-card-content/loading-card-content.component';
 import { routing } from 'app/pages/datasets/datasets.routing';
@@ -30,11 +32,13 @@ import { PermissionsModule } from 'app/pages/datasets/modules/permissions/permis
     IxTableModule,
     IxFormsModule,
     IxTreeModule,
+    EntityModule,
   ],
   declarations: [
     DatasetsManagementComponent,
     LoadingCardContentComponent,
     DatasetDetailsCardComponent,
+    DatasetFormComponent,
     DatasetDetailsPanelComponent,
   ],
 })
