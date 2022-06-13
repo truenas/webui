@@ -50,52 +50,54 @@
     </div>
 
     <div class="ix-tree-wrapper">
-      <div class="ix-tree-header">
-        <div>{{ 'Dataset Name' | translate }}</div>
-        <div>{{ 'Used' | translate }}</div>
-        <div>{{ 'Encryption' | translate }}</div>
-        <div>{{ 'Roles' | translate }}</div>
-      </div>
+      <div class="ix-tree-inner">
+        <div class="ix-tree-header">
+          <div>{{ 'Dataset Name' | translate }}</div>
+          <div>{{ 'Used' | translate }}</div>
+          <div>{{ 'Encryption' | translate }}</div>
+          <div>{{ 'Roles' | translate }}</div>
+        </div>
 
-      <ix-tree [dataSource]="dataSource" [treeControl]="treeControl" [trackBy]="trackByFn">
-        <ix-tree-node
-          *ixTreeNodeDef="let node; dataSource: dataSource"
-          ixTreeNodeToggle
-          [ixTreeNodeToggleRecursive]="false"
-          [ixTreeNodeDefDataSource]="dataSource"
-          [class.selected]="node.item.name === selectedDataset?.name"
-          (click)="onDatasetSelected(node.item)"
-        >
-          <button mat-icon-button disabled></button>
-          <ng-container [ngTemplateOutlet]="nodeLabel" [ngTemplateOutletContext]="{ $implicit: node }"></ng-container>
-        </ix-tree-node>
-
-        <ix-nested-tree-node
-          *ixTreeNodeDef="let node; dataSource: dataSource, when: hasNestedChild"
-          [ixTreeNodeDefDataSource]="dataSource"
-        >
-          <div
-            class="ix-nested-tree-root-node"
-            (click)="onDatasetSelected(node.item)"
+        <ix-tree [dataSource]="dataSource" [treeControl]="treeControl" [trackBy]="trackByFn">
+          <ix-tree-node
+            *ixTreeNodeDef="let node; dataSource: dataSource"
+            ixTreeNodeToggle
+            [ixTreeNodeToggleRecursive]="false"
+            [ixTreeNodeDefDataSource]="dataSource"
             [class.selected]="node.item.name === selectedDataset?.name"
+            (click)="onDatasetSelected(node.item)"
           >
-            <button
-              mat-icon-button
-              ixTreeNodeToggle
-              (click)="$event.preventDefault()"
-              [attr.aria-label]="'toggle ' + node.label"
-            >
-              <mat-icon class="mat-icon-rtl-mirror">
-                {{ treeControl.isExpanded(node) ? 'expand_more' : 'chevron_right' }}
-              </mat-icon>
-            </button>
-
+            <button mat-icon-button disabled></button>
             <ng-container [ngTemplateOutlet]="nodeLabel" [ngTemplateOutletContext]="{ $implicit: node }"></ng-container>
-          </div>
+          </ix-tree-node>
 
-          <ng-container *ngIf="treeControl.isExpanded(node)" ixTreeNodeOutlet></ng-container>
-        </ix-nested-tree-node>
-      </ix-tree>
+          <ix-nested-tree-node
+            *ixTreeNodeDef="let node; dataSource: dataSource, when: hasNestedChild"
+            [ixTreeNodeDefDataSource]="dataSource"
+          >
+            <div
+              class="ix-nested-tree-root-node"
+              (click)="onDatasetSelected(node.item)"
+              [class.selected]="node.item.name === selectedDataset?.name"
+            >
+              <button
+                mat-icon-button
+                ixTreeNodeToggle
+                (click)="$event.preventDefault()"
+                [attr.aria-label]="'toggle ' + node.label"
+              >
+                <mat-icon class="mat-icon-rtl-mirror">
+                  {{ treeControl.isExpanded(node) ? 'expand_more' : 'chevron_right' }}
+                </mat-icon>
+              </button>
+
+              <ng-container [ngTemplateOutlet]="nodeLabel" [ngTemplateOutletContext]="{ $implicit: node }"></ng-container>
+            </div>
+
+            <ng-container *ngIf="treeControl.isExpanded(node)" ixTreeNodeOutlet></ng-container>
+          </ix-nested-tree-node>
+        </ix-tree>
+      </div>
     </div>
   </div>
 
