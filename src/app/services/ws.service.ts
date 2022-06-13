@@ -7,7 +7,7 @@ import { LocalStorage } from 'ngx-webstorage';
 import {
   Observable, Observer, Subject, Subscriber,
 } from 'rxjs';
-import { share } from 'rxjs/operators';
+import { filter, share, switchMap } from 'rxjs/operators';
 import { ApiEventMessage } from 'app/enums/api-event-message.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { ApiDirectory, ApiMethod } from 'app/interfaces/api-directory.interface';
@@ -263,18 +263,16 @@ export class WebSocketService {
   }
 
   job<K extends ApiMethod>(method: K, params?: ApiDirectory[K]['params']): Observable<Job<ApiDirectory[K]['response']>> {
-    const source = Observable.create((observer: Subscriber<Job<ApiDirectory[K]['response']>>) => {
-      this.call(method, params).pipe(untilDestroyed(this)).subscribe((jobId) => {
-        this.subscribe('core.get_jobs').pipe(untilDestroyed(this)).subscribe((event) => {
-          if (event.id === jobId) {
-            observer.next(event.fields);
-            if (event.fields.state === JobState.Success) observer.complete();
-            if (event.fields.state === JobState.Failed) observer.error(event.fields);
-          }
-        });
+    return new Observable((observer: Subscriber<Job<ApiDirectory[K]['response']>>) => {
+      this.call(method, params).pipe(
+        switchMap((jobId) => this.subscribe('core.get_jobs').pipe(filter((event) => event.id === jobId))),
+        untilDestroyed(this),
+      ).subscribe((event) => {
+        observer.next(event.fields);
+        if (event.fields.state === JobState.Success) observer.complete();
+        if (event.fields.state === JobState.Failed) observer.error(event.fields);
       });
     });
-    return source;
   }
 
   login(username: string, password: string, otpToken?: string): Observable<boolean> {
@@ -311,7 +309,7 @@ export class WebSocketService {
   }
 
   loginToken(token: string): Observable<boolean> {
-    return Observable.create((observer: Subscriber<boolean>) => {
+    return new Observable((observer: Subscriber<boolean>) => {
       if (token) {
         this.call('auth.token', [token]).pipe(untilDestroyed(this)).subscribe((result) => {
           this.loginCallback(result, observer);
