@@ -1,6 +1,7 @@
 import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
 import { Alert } from 'app/interfaces/alert.interface';
 import { ChartRelease } from 'app/interfaces/chart-release.interface';
+import { PullContainerImageResponse, PullContainerImageParams } from 'app/interfaces/container-image.interface';
 import { DirectoryServicesState } from 'app/interfaces/directory-services-state.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { ResilverData } from 'app/interfaces/resilver-job.interface';
@@ -22,4 +23,5 @@ export type ApiEventDirectory = {
   'zfs.snapshot.query': { response: ZfsSnapshot };
   'zfs.pool.scan': { response: ResilverData };
   'user.query': { response: User };
+  'container.image.pull': { response: Job<PullContainerImageResponse, PullContainerImageParams> };
 };

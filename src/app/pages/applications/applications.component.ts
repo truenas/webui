@@ -6,12 +6,12 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { merge } from 'rxjs';
 import { ApplicationUserEvent, ApplicationUserEventName } from 'app/interfaces/application.interface';
 import { ApplicationTab } from 'app/pages/applications/application-tab.enum';
+import { DockerImagesListComponent } from 'app/pages/applications/docker-images/docker-images-list/docker-images-list.component';
 import { CoreService } from 'app/services/core-service/core.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { ModalService } from 'app/services/modal.service';
 import { CatalogComponent } from './catalog/catalog.component';
 import { ChartReleasesComponent } from './chart-releases/chart-releases.component';
-import { DockerImagesComponent } from './docker-images/docker-images.component';
 import { ManageCatalogsComponent } from './manage-catalogs/manage-catalogs.component';
 
 @UntilDestroy()
@@ -25,7 +25,7 @@ export class ApplicationsComponent implements OnInit, AfterViewInit {
   @ViewChild(ChartReleasesComponent, { static: false }) private chartTab: ChartReleasesComponent;
   @ViewChild(CatalogComponent, { static: false }) private catalogTab: CatalogComponent;
   @ViewChild(ManageCatalogsComponent, { static: false }) private manageCatalogTab: ManageCatalogsComponent;
-  @ViewChild(DockerImagesComponent, { static: false }) private dockerImagesTab: DockerImagesComponent;
+  @ViewChild(DockerImagesListComponent, { static: false }) private dockerImagesTab: DockerImagesListComponent;
   selectedTab = ApplicationTab.InstalledApps;
 
   constructor(
@@ -55,14 +55,18 @@ export class ApplicationsComponent implements OnInit, AfterViewInit {
   }
 
   refreshTab(): void {
-    if (this.selectedTab === ApplicationTab.InstalledApps) {
-      this.chartTab.refreshChartReleases();
-    } else if (this.selectedTab === ApplicationTab.AvailableApps) {
-      this.catalogTab.loadCatalogs();
-    } else if (this.selectedTab === ApplicationTab.Catalogs) {
-      this.manageCatalogTab.refresh();
-    } else if (this.selectedTab === ApplicationTab.DockerImages) {
-      this.dockerImagesTab.refresh();
+    switch (this.selectedTab) {
+      case ApplicationTab.InstalledApps:
+        this.chartTab.refreshChartReleases();
+        break;
+      case ApplicationTab.AvailableApps:
+        this.catalogTab.loadCatalogs();
+        break;
+      case ApplicationTab.Catalogs:
+        this.manageCatalogTab.refresh();
+        break;
+      case ApplicationTab.DockerImages:
+        break;
     }
   }
 

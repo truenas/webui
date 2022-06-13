@@ -77,17 +77,18 @@ export class ManageCatalogsComponent implements EntityTableConfig<Catalog>, OnIn
   ) {}
 
   ngOnInit(): void {
-    this.jobsSubscription = this.ws.subscribe('core.get_jobs').pipe(untilDestroyed(this)).subscribe((event) => {
-      if (event.fields.method === 'catalog.sync') {
-        const jobId = event.fields.id;
-        if (!this.catalogSyncJobIds.includes(jobId) && event.fields.state === JobState.Running) {
-          this.refresh();
-          this.catalogSyncJobIds.push(jobId);
-        }
+    this.jobsSubscription = this.ws.subscribe('core.get_jobs').pipe(
+      filter((event) => event.fields.method === 'catalog.sync'),
+      untilDestroyed(this),
+    ).subscribe((event) => {
+      const jobId = event.fields.id;
+      if (!this.catalogSyncJobIds.includes(jobId) && event.fields.state === JobState.Running) {
+        this.refresh();
+        this.catalogSyncJobIds.push(jobId);
+      }
 
-        if (event.fields.state === JobState.Success || event.fields.state === JobState.Failed) {
-          this.catalogSyncJobIds.splice(this.catalogSyncJobIds.indexOf(jobId));
-        }
+      if (event.fields.state === JobState.Success || event.fields.state === JobState.Failed) {
+        this.catalogSyncJobIds.splice(this.catalogSyncJobIds.indexOf(jobId));
       }
     });
 

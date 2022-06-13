@@ -8,7 +8,7 @@ import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
-import { PullImageFormComponent } from 'app/pages/applications/forms/pull-image-form/pull-image-form.component';
+import { PullImageFormComponent } from 'app/pages/applications/docker-images/pull-image-form/pull-image-form.component';
 import { DialogService, WebSocketService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 

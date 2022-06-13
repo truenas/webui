@@ -1,4 +1,4 @@
-<div fxLayout=row>
+<div fxLayout="row">
   <mat-tab-group animationDuration="0ms" [selectedIndex]="selectedTab" (selectedTabChange)="onTabSelected($event)">
     <mat-tab [label]="'Installed Applications' | translate" ix-auto ix-auto-type="tab" ix-auto-identifier="charts">
       <ng-template matTabContent>
@@ -17,7 +17,7 @@
     </mat-tab>
     <mat-tab [label]="'Manage Docker Images' | translate" ix-auto ix-auto-type="tab" ix-auto-identifier="manage-docker-images">
       <ng-template matTabContent>
-        <ix-docker-images></ix-docker-images>
+        <ix-docker-images-list></ix-docker-images-list>
       </ng-template>
     </mat-tab>
   </mat-tab-group>
