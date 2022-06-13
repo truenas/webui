@@ -219,7 +219,6 @@ export class ServiceUPSComponent {
           name: 'nocommwarntime',
           placeholder: helptext.ups_nocommwarntime_placeholder,
           tooltip: helptext.ups_nocommwarntime_tooltip,
-          value: '300',
         },
         {
           type: 'input',
@@ -307,5 +306,14 @@ export class ServiceUPSComponent {
 
   beforeSubmit(data: any) {
     data.driver = this.ups_driver_key;
+    if (data.nocommwarntime === '') {
+      data.nocommwarntime = null;
+    }
+    if (data.hostsync === '') {
+      data.hostsync = null;
+    }
+    if (data.shutdowntimer === '') {
+      data.shutdowntimer = null;
+    }
   }
 }
