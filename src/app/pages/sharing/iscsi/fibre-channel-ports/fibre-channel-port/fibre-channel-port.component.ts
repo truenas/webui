@@ -1,5 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { FormGroup, Validators } from '@angular/forms';
+import { UntypedFormGroup, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
@@ -79,7 +79,7 @@ export class FibreChannelPortComponent implements OnInit {
     },
   ];
   fieldConfig: FieldConfig[] = [];
-  formGroup: FormGroup;
+  formGroup: UntypedFormGroup;
 
   constructor(
     private ws: WebSocketService,

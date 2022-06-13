@@ -1,7 +1,7 @@
 import {
   Component, AfterViewInit, OnInit, ViewChild,
 } from '@angular/core';
-import { AbstractControl, FormGroup } from '@angular/forms';
+import { AbstractControl, UntypedFormGroup } from '@angular/forms';
 import { MatTabGroup } from '@angular/material/tabs';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
@@ -19,10 +19,10 @@ import { EntityFormService } from 'app/modules/entity/entity-form/services/entit
 })
 export class FormTaskComponent implements Field, AfterViewInit, OnInit {
   config: FormTaskConfig;
-  group: FormGroup;
+  group: UntypedFormGroup;
   fieldShow: string;
 
-  tabFormGroup: FormGroup;
+  tabFormGroup: UntypedFormGroup;
   protected control: AbstractControl;
   protected activeTabField: FieldConfig;
   protected value: any;

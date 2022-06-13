@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import {
-  FormGroup, FormControl, Validators, FormArray, AbstractControl,
+  UntypedFormGroup, UntypedFormControl, Validators, UntypedFormArray, AbstractControl,
 } from '@angular/forms';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { of, Subscription } from 'rxjs';
@@ -197,7 +197,7 @@ export class AppSchemaService {
 
   addFormControls(
     chartSchemaNode: ChartSchemaNode,
-    formGroup: FormGroup,
+    formGroup: UntypedFormGroup,
     config: HierarchicalObjectMap<ChartFormValue>,
   ): Subscription {
     const subscription = new Subscription();
@@ -214,7 +214,7 @@ export class AppSchemaService {
       ChartSchemaType.Hostpath,
       ChartSchemaType.Ipaddr,
     ].includes(schema.type)) {
-      const newFormControl = new FormControl(schema.default || schema.type === ChartSchemaType.Int ? null : '', [
+      const newFormControl = new UntypedFormControl(schema.default || schema.type === ChartSchemaType.Int ? null : '', [
         schema.required ? Validators.required : Validators.nullValidator,
         schema.max ? Validators.max(schema.max) : Validators.nullValidator,
         schema.min ? Validators.min(schema.min) : Validators.nullValidator,
@@ -251,12 +251,14 @@ export class AppSchemaService {
         formGroup.controls[chartSchemaNode.variable].setValue(schema.default);
       }
     } else if (schema.type === ChartSchemaType.Dict) {
-      formGroup.addControl(chartSchemaNode.variable, new FormGroup({}));
+      formGroup.addControl(chartSchemaNode.variable, new UntypedFormGroup({}));
       for (const attr of schema.attrs) {
-        subscription.add(this.addFormControls(attr, formGroup.controls[chartSchemaNode.variable] as FormGroup, config));
+        subscription.add(
+          this.addFormControls(attr, formGroup.controls[chartSchemaNode.variable] as UntypedFormGroup, config),
+        );
       }
     } else if (schema.type === ChartSchemaType.List) {
-      formGroup.addControl(chartSchemaNode.variable, new FormArray([]));
+      formGroup.addControl(chartSchemaNode.variable, new UntypedFormArray([]));
 
       if (config) {
         let items: ChartSchemaNode[] = [];
@@ -281,7 +283,7 @@ export class AppSchemaService {
         if (Array.isArray(nextItem)) {
           for (const item of nextItem) {
             subscription.add(this.addFormListItem({
-              array: formGroup.controls[chartSchemaNode.variable] as FormArray,
+              array: formGroup.controls[chartSchemaNode.variable] as UntypedFormArray,
               schema: items,
             }, item));
           }
@@ -297,7 +299,7 @@ export class AppSchemaService {
       }));
       relations.forEach((relation) => {
         if (!formGroup.controls[relation.fieldName]) {
-          formGroup.addControl(relation.fieldName, new FormControl());
+          formGroup.addControl(relation.fieldName, new UntypedFormControl());
           formGroup.controls[relation.fieldName].disable();
         }
         switch (relation.operatorName) {
@@ -367,7 +369,7 @@ export class AppSchemaService {
 
   addFormListItem(event: AddListItemEvent, config?: HierarchicalObjectMap<ChartFormValue>): Subscription {
     const subscriptionEvent = new Subscription();
-    const itemFormGroup = new FormGroup({});
+    const itemFormGroup = new UntypedFormGroup({});
     event.schema.forEach((item) => {
       subscriptionEvent.add(this.addFormControls(item as ChartSchemaNode, itemFormGroup, config));
     });

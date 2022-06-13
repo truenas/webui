@@ -1,4 +1,4 @@
-import { FormArray } from '@angular/forms';
+import { UntypedFormArray } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { DynamicFormSchemaType } from 'app/enums/dynamic-form-schema-type.enum';
 import { Option } from 'app/interfaces/option.interface';
@@ -71,11 +71,11 @@ export interface DynamicFormSchemaDict extends DynamicFormSchemaBase {
 }
 
 export interface AddListItemEvent {
-  array: FormArray;
+  array: UntypedFormArray;
   schema: unknown[];
 }
 
 export interface DeleteListItemEvent {
-  array: FormArray;
+  array: UntypedFormArray;
   index: number;
 }

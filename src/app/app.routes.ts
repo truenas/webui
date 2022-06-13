@@ -47,6 +47,7 @@ export const rootRouterConfig: Routes = [{
   {
     path: 'tasks',
     redirectTo: 'data-protection',
+    pathMatch: 'prefix',
   },
   {
     path: 'network',

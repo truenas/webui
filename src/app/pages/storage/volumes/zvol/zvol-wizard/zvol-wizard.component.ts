@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import {
-  FormControl, FormGroup, ValidationErrors, Validators,
+  UntypedFormControl, UntypedFormGroup, ValidationErrors, Validators,
 } from '@angular/forms';
 import { MatStepper } from '@angular/material/stepper';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -130,7 +130,7 @@ export class ZvolWizardComponent implements WizardConfiguration {
           blurStatus: true,
           parent: this,
           validation: [
-            (control: FormControl): ValidationErrors => {
+            (control: UntypedFormControl): ValidationErrors => {
               const volsizeConfig = this.wizardConfig[1].fieldConfig.find((config) => config.name === 'volsize');
 
               const size = control.value && typeof control.value === 'string' ? this.storageService.convertHumanStringToNum(control.value, true) : null;
@@ -288,7 +288,7 @@ export class ZvolWizardComponent implements WizardConfiguration {
   }
 
   async preInitZvolForm(entityWizard: EntityWizardComponent): Promise<void> {
-    const zvolEntityForm = entityWizard.formArray.get([1]) as FormGroup;
+    const zvolEntityForm = entityWizard.formArray.get([1]) as UntypedFormGroup;
     if (!this.parent) return;
 
     const sparse = this.wizardConfig[1].fieldConfig.find((config) => config.name === 'sparse');
@@ -422,8 +422,8 @@ export class ZvolWizardComponent implements WizardConfiguration {
   }
 
   afterInit(entityWizard: EntityWizardComponent): void {
-    const zvolEntityForm = this.entityWizard.formArray.get([1]) as FormGroup;
-    (entityWizard.formArray.get([0]) as FormGroup).get('path').valueChanges.pipe(untilDestroyed(this)).subscribe((pool: string) => {
+    const zvolEntityForm = this.entityWizard.formArray.get([1]) as UntypedFormGroup;
+    (entityWizard.formArray.get([0]) as UntypedFormGroup).get('path').valueChanges.pipe(untilDestroyed(this)).subscribe((pool: string) => {
       if (pool.includes('mnt')) {
         const split = pool.split('/');
         this.parent = '';
@@ -434,7 +434,7 @@ export class ZvolWizardComponent implements WizardConfiguration {
           }
         }
         this.summary[this.translate.instant('Dataset Path')] = this.parent;
-        (entityWizard.formArray.get([0]) as FormGroup).controls['path'].setValue(this.parent);
+        (entityWizard.formArray.get([0]) as UntypedFormGroup).controls['path'].setValue(this.parent);
       }
     });
     zvolEntityForm.controls['name'].valueChanges.pipe(untilDestroyed(this)).subscribe((name) => {
@@ -476,7 +476,7 @@ export class ZvolWizardComponent implements WizardConfiguration {
   }
 
   blurVolsize(): void {
-    const zvolEntityForm = this.entityWizard.formArray.get([1]) as FormGroup;
+    const zvolEntityForm = this.entityWizard.formArray.get([1]) as UntypedFormGroup;
     if (zvolEntityForm) {
       zvolEntityForm.controls['volsize'].setValue(this.storageService.humanReadable);
     }

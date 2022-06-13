@@ -1,7 +1,7 @@
 import {
   AfterViewInit, Component, OnInit, TemplateRef, ViewChild,
 } from '@angular/core';
-import { FormGroup } from '@angular/forms';
+import { UntypedFormGroup } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
@@ -50,7 +50,7 @@ export class AlertConfigComponent implements OnInit, AfterViewInit {
     { label: this.translate.instant('ALERT'), value: AlertLevel.Alert },
     { label: this.translate.instant('EMERGENCY'), value: AlertLevel.Emergency },
   ];
-  formGroup: FormGroup;
+  formGroup: UntypedFormGroup;
   categories: AlertCategory[] = [];
   protected defaults: AlertDefaults[] = [];
 

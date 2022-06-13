@@ -1,5 +1,5 @@
 import { Component, ViewChild } from '@angular/core';
-import { FormGroup } from '@angular/forms';
+import { UntypedFormGroup } from '@angular/forms';
 import { MatAutocomplete, MatAutocompleteTrigger } from '@angular/material/autocomplete';
 import { MatMenu, MatMenuTrigger } from '@angular/material/menu';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -19,7 +19,7 @@ import { Field } from 'app/modules/entity/entity-form/models/field.interface';
 })
 export class FormComboboxComponent implements Field {
   config: FormComboboxConfig;
-  group: FormGroup;
+  group: UntypedFormGroup;
   fieldShow: string;
   searchText = '';
   searchTextChanged$ = new Subject<string>();

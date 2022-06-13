@@ -105,7 +105,6 @@
       }
     }
   },
-  "defaultProject": "truenas-scale-ui",
   "schematics": {
     "@ngneat/spectator:spectator-component": {
       "jest": true
