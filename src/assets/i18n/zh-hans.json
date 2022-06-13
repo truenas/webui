@@ -125,6 +125,7 @@
   "Start {service} Service": "",
   "Storage 2.0 (WIP)": "",
   "Successfully saved Disk settings.": "",
+  "Successfully saved IPMI settings.": "",
   "Successfully saved {n, plural, one {Disk} other {Disks}} settings.": "",
   "System Information (Standby)": "",
   "Testing": "",

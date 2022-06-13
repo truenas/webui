@@ -598,6 +598,7 @@
   "Successfully exported/disconnected {pool}.": "",
   "Successfully replaced disk {disk}.": "",
   "Successfully saved Disk settings.": "",
+  "Successfully saved IPMI settings.": "",
   "Successfully saved {n, plural, one {Disk} other {Disks}} settings.": "",
   "Switch to Wizard": "",
   "Sync From Peer": "",
