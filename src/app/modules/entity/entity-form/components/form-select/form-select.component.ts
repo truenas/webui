@@ -1,7 +1,7 @@
 import {
   Component, ViewChild, AfterViewInit, AfterViewChecked, ChangeDetectorRef,
 } from '@angular/core';
-import { AbstractControl, FormGroup } from '@angular/forms';
+import { AbstractControl, UntypedFormGroup } from '@angular/forms';
 import { MatFormField } from '@angular/material/form-field';
 import { MatSelect, MatSelectChange } from '@angular/material/select';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -20,7 +20,7 @@ import { EntityUtils, NULL_VALUE } from 'app/modules/entity/utils';
 })
 export class FormSelectComponent implements Field, AfterViewInit, AfterViewChecked {
   config: FormSelectConfig;
-  group: FormGroup;
+  group: UntypedFormGroup;
   fieldShow: string;
   control: AbstractControl;
 

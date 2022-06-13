@@ -1,7 +1,7 @@
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import { UntypedFormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { choicesToOptions } from 'app/helpers/options.helper';
@@ -64,7 +64,7 @@ export class ServiceLldpComponent implements OnInit {
     protected ws: WebSocketService,
     protected services: ServicesService,
     private cdr: ChangeDetectorRef,
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     private dialogService: DialogService,
     private errorHandler: FormErrorHandlerService,
   ) { }

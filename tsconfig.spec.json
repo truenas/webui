@@ -3,6 +3,7 @@
   "compilerOptions": {
     "outDir": "../out-tsc/spec",
     "esModuleInterop": true,
+    "module": "CommonJs",
     "types": [
       "jest",
       "node"

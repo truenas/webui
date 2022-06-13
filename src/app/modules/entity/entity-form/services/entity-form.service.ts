@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@angular/core';
 import {
-  AbstractControl, FormArray, FormBuilder, FormControl, FormGroup,
+  AbstractControl, UntypedFormArray, UntypedFormBuilder, UntypedFormControl, UntypedFormGroup,
 } from '@angular/forms';
 import { TreeNode } from '@circlon/angular-tree-component';
 import * as _ from 'lodash';
@@ -40,11 +40,11 @@ export class EntityFormService {
     duration: 'MINUTE',
   };
   constructor(
-    @Inject(FormBuilder) private formBuilder: FormBuilder,
+    @Inject(UntypedFormBuilder) private formBuilder: UntypedFormBuilder,
     protected ws: WebSocketService,
   ) {}
 
-  createFormGroup(controls: FieldConfig[]): FormGroup {
+  createFormGroup(controls: FieldConfig[]): UntypedFormGroup {
     const formGroup: { [id: string]: AbstractControl } = {};
 
     if (controls) {
@@ -80,12 +80,12 @@ export class EntityFormService {
       } else if (listConfig.listFields) {
         formControl = this.formBuilder.array([]);
         listConfig.listFields.forEach((listField) => {
-          (formControl as FormArray).push(this.createFormGroup(listField));
+          (formControl as UntypedFormArray).push(this.createFormGroup(listField));
         });
       } else if (dictConfig.subFields) {
         formControl = this.createFormGroup(dictConfig.subFields);
       } else if (fieldConfig.type !== 'label') {
-        formControl = new FormControl(
+        formControl = new UntypedFormControl(
           { value: fieldConfig.value, disabled: fieldConfig.disabled },
           fieldConfig.type === 'input-list' as FieldType ? [] : fieldConfig.validation,
           fieldConfig.asyncValidation,
@@ -96,7 +96,7 @@ export class EntityFormService {
     return formControl;
   }
 
-  createFormArray(controls: FieldConfig[], initialCount: number): FormArray {
+  createFormArray(controls: FieldConfig[], initialCount: number): UntypedFormArray {
     const formArray = this.formBuilder.array([]);
 
     for (let i = 0; i < initialCount; i++) {

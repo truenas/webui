@@ -6,7 +6,7 @@ import {
   OnInit,
   ViewChild,
 } from '@angular/core';
-import { ControlValueAccessor, FormControl, NgControl } from '@angular/forms';
+import { ControlValueAccessor, UntypedFormControl, NgControl } from '@angular/forms';
 import { MatAutocomplete, MatAutocompleteTrigger } from '@angular/material/autocomplete';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
@@ -46,7 +46,7 @@ export class IxComboboxComponent implements ControlValueAccessor, OnInit {
   @Input() provider: IxComboboxProvider;
 
   private filterChanged$ = new Subject<string>();
-  formControl = new FormControl(this);
+  formControl = new UntypedFormControl(this);
   value: string | number = '';
   isDisabled = false;
   filterValue: string;

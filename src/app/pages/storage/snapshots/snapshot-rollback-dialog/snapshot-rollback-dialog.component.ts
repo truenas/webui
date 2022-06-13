@@ -1,7 +1,7 @@
 import {
   Component, ChangeDetectionStrategy, Inject, ChangeDetectorRef, OnInit,
 } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import { UntypedFormBuilder, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
 import { of } from 'rxjs';
@@ -60,7 +60,7 @@ export class SnapshotRollbackDialogComponent implements OnInit {
   constructor(
     private websocket: WebSocketService,
     private loader: AppLoaderService,
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     private errorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,
     private dialogService: DialogService,
