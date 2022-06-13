@@ -6,10 +6,6 @@ $padding-left: 8px;
   margin-bottom: 0;
   margin-top: 0;
   min-width: fit-content;
-
-  ix-tree-node {
-    flex-direction: column;
-  }
 }
 
 ::ng-deep {
@@ -20,7 +16,7 @@ $padding-left: 8px;
         left: $padding-left + $level-offset * ($i - 1);
       }
 
-      .ix-tree-node-button {
+      .ix-tree-node-selectable {
         padding-left: $padding-left + $level-offset * ($i - 1);
       }
     }

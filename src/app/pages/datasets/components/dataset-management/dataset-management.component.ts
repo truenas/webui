@@ -50,8 +50,6 @@ export class DatasetsManagementComponent implements OnInit {
       (datasets: Dataset[]) => {
         this.createDataSource(datasets);
         this.loader.close();
-        console.info('datasets', datasets);
-        console.info(this.treeControl);
         if (this.treeControl?.dataNodes.length > 0) {
           const node = this.treeControl.dataNodes[0];
           this.treeControl.expand(node);
@@ -66,7 +64,15 @@ export class DatasetsManagementComponent implements OnInit {
     );
   }
 
-  getDatasetNode(dataset: Dataset): DatasetNode {
+  onSearch(query: string): void {
+    console.info('onSearch', query);
+  }
+
+  onDatasetSelected(dataset: Dataset): void {
+    this.selectedDataset = dataset;
+  }
+
+  private getDatasetNode(dataset: Dataset): DatasetNode {
     const nameSegments = dataset.name.split('/');
 
     return {
@@ -78,7 +84,7 @@ export class DatasetsManagementComponent implements OnInit {
     };
   }
 
-  getDatasetIcon(dataset: Dataset): string {
+  private getDatasetIcon(dataset: Dataset): string {
     const level = dataset.name.split('/').length;
     if (level === 1) {
       return 'device_hub';
@@ -88,22 +94,13 @@ export class DatasetsManagementComponent implements OnInit {
     return 'mdi-database';
   }
 
-  getDatasetTree(datasets: Dataset[]): DatasetNode[] {
+  private getDatasetTree(datasets: Dataset[]): DatasetNode[] {
     return datasets.map((dataset) => this.getDatasetNode(dataset));
   }
 
-  createDataSource(datasets: Dataset[]): void {
+  private createDataSource(datasets: Dataset[]): void {
     const dataNodes = this.getDatasetTree(datasets);
     this.dataSource = new IxNestedTreeDataSource<DatasetNode>(dataNodes);
     this.treeControl.dataNodes = dataNodes;
-  }
-
-  onSearch(query: string): void {
-    console.info('search', query);
-    // this.dataSource.filter = query;
-  }
-
-  onDatasetSelected(dataset: Dataset): void {
-    this.selectedDataset = dataset;
   }
 }

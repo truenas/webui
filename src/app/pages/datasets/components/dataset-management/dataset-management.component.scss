@@ -49,80 +49,86 @@
   padding: 0;
 }
 
-.ix-tree-search {
+.dataset-tree-search {
   background-color: var(--bg2);
   padding: 16px;
 }
 
-.ix-tree-wrapper {
+.dataset-tree-wrapper {
   display: flex;
   flex: 1;
   flex-direction: column;
   overflow: auto;
 }
 
-.ix-tree-inner {
+.dataset-tree-inner {
   display: flex;
   flex: 1;
   flex-direction: column;
   min-width: fit-content;
 }
 
-.ix-tree {
+.dataset-tree {
   border-top: 2px solid var(--lines);
 }
 
-.ix-tree-header {
+.dataset-tree-header {
   @include grid-layout();
   align-items: center;
   color: var(--fg2);
   min-height: 48px;
   padding-left: 48px;
 
-  div {
+  > div {
     font-weight: bold;
     padding: 4px 0;
+
+    &:first-child {
+      left: 8px;
+      position: sticky;
+    }
   }
 }
 
-.ix-tree-node-button {
+.tree-node-grid {
+  @include grid-layout();
   align-items: center;
-  background: transparent !important;
+
+  > div {
+    align-items: center;
+    display: inline-flex;
+    min-height: 48px;
+
+    &:first-child {
+      left: 0;
+      position: sticky;
+    }
+  }
+}
+
+.ix-tree-node-selectable {
+  align-items: center;
   display: flex;
   flex: 1;
   font-weight: 500;
   min-height: 48px;
   padding: 0;
-  text-transform: none !important;
 
-  .ix-tree-node-button-inner {
-    @include grid-layout();
+  .mat-icon {
     align-items: center;
+    display: inline-flex;
+    flex: 0 0 auto;
+    height: 40px;
+    justify-content: center;
+    width: 40px;
 
-    > div {
-      align-items: center;
-      display: inline-flex;
-      min-height: 48px;
-
-      &:first-child {
-        left: 0;
-        position: sticky;
-      }
+    &.mdi-set {
+      margin-top: 0;
     }
   }
-
-  .ix-tree-node-button-text {
-    font-weight: normal;
-  }
 }
 
-.mdi-set.mat-icon {
-  align-items: center;
-  display: inline-flex;
-  margin-top: 0;
-}
-
-.ix-nested-tree-root-node {
+.dataset-nested-tree-root-node {
   align-items: center;
   border-bottom: 1px solid var(--lines);
   cursor: pointer;
@@ -148,16 +154,5 @@
       top: 0;
       width: 6px;
     }
-  }
-}
-
-.ix-tree-node-button {
-  .mat-icon {
-    align-items: center;
-    display: inline-flex;
-    flex: 0 0 auto;
-    height: 40px;
-    justify-content: center;
-    width: 40px;
   }
 }

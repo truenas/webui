@@ -12,8 +12,8 @@
 </ng-template>
 
 <ng-template #nodeLabel let-node>
-  <div class="ix-tree-node-button">
-    <div class="ix-tree-node-button-inner">
+  <div class="ix-tree-node-selectable">
+    <div class="tree-node-grid">
       <div>
         <div fxLayout="row" fxLayoutAlign="start center">
           <mat-icon *ngIf="node.icon && !node.icon.startsWith('mdi')">{{ node.icon }}</mat-icon>
@@ -22,19 +22,19 @@
         </div>
       </div>
       <div>
-        <div fxLayout="row" fxLayoutAlign="start center" class="ix-tree-node-button-text">
-          <span>{{ node.item.used?.value }} used / {{ node.item.available?.value }} left</span>
+        <div fxLayout="row" fxLayoutAlign="start center">
+          <span>{{ node.item.used.value }} used / {{ node.item.available.value }} left</span>
         </div>
       </div>
       <div>
-        <div fxLayout="row" fxLayoutAlign="start center" class="ix-tree-node-button-text">
+        <div fxLayout="row" fxLayoutAlign="start center">
           <ng-container *ngIf="node.item.encrypted; else unlocked">
             <mat-icon>lock</mat-icon>
             <div>{{ 'Encrypted' | translate }}</div>
           </ng-container>
         </div>
       </div>
-      <div class="ix-tree-node-button-text">
+      <div>
         <div fxLayout="row" fxLayoutAlign="start center">
           {{ node.roles.join(', ') }}
         </div>
@@ -45,20 +45,20 @@
 
 <div class="container" fxLayoutGap="16px">
   <div class="table-container">
-    <div class="ix-tree-search">
+    <div class="dataset-tree-search">
       <ix-search-input [disabled]="!dataSource" (search)="onSearch($event)"></ix-search-input>
     </div>
 
-    <div class="ix-tree-wrapper">
-      <div class="ix-tree-inner">
-        <div class="ix-tree-header">
+    <div class="dataset-tree-wrapper">
+      <div class="dataset-tree-inner">
+        <div class="dataset-tree-header">
           <div>{{ 'Dataset Name' | translate }}</div>
           <div>{{ 'Used' | translate }}</div>
           <div>{{ 'Encryption' | translate }}</div>
           <div>{{ 'Roles' | translate }}</div>
         </div>
 
-        <ix-tree [dataSource]="dataSource" [treeControl]="treeControl" [trackBy]="trackByFn">
+        <ix-tree class="dataset-tree" [dataSource]="dataSource" [treeControl]="treeControl" [trackBy]="trackByFn">
           <ix-tree-node
             *ixTreeNodeDef="let node; dataSource: dataSource"
             ixTreeNodeToggle
@@ -76,7 +76,7 @@
             [ixTreeNodeDefDataSource]="dataSource"
           >
             <div
-              class="ix-nested-tree-root-node"
+              class="dataset-nested-tree-root-node"
               (click)="onDatasetSelected(node.item)"
               [class.selected]="node.item.name === selectedDataset?.name"
             >
