@@ -92,6 +92,14 @@ def set_storage(driver):
     driver.find_element_by_xpath('//button[@ix-auto="button__NEXT_Storage"]').click()
 
 
+@then('on CronJob configuration click next')
+def on_cronjob_configuration_click_next(driver):
+    """on CronJob configuration click next."""
+    wait_on_element(driver, 5, '//mat-step-header[contains(.,"CronJob configuration") and @tabindex="0"]')
+    assert wait_on_element(driver, 7, '//button[@ix-auto="button__NEXT_CronJob configuration"]', 'clickable')
+    driver.find_element_by_xpath('//button[@ix-auto="button__NEXT_CronJob configuration"]').click()
+
+
 @then('set Scaling Upgrade Policy')
 def set_scaling_upgrade_policy(driver):
     """set Scaling Upgrade Policy."""

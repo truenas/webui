@@ -44,6 +44,7 @@ def test_create_an_smb_share_with_the_tank_acl_dataset(driver):
     assert wait_on_element(driver, 5, '//span[contains(text(),"Save")]', 'clickable')
     driver.find_element_by_xpath('//span[contains(text(),"Save")]').click()
     assert wait_on_element_disappear(driver, 15, '//h6[contains(.,"Please wait")]')
+    assert wait_on_element_disappear(driver, 20, '//h1[text()="Start"]')
     assert wait_on_element(driver, 10, '//h3[text()="Active Directory and LDAP are disabled."]')
 
 
