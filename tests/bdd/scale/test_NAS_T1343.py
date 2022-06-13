@@ -48,9 +48,18 @@ def on_the_dashboard_click_on_apps(driver):
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Apps"]').click()
 
 
-@then('the Apps page load, select pool')
-def the_apps_page_load_select_pool(driver):
-    """the Apps page load, select pool."""
+@then('on the page click on View Catalog')
+def on_the_page_click_on_view_catalog(driver):
+    """on the page click on View Catalog."""
+    assert wait_on_element(driver, 10, '//h1[text()="Applications"]')
+    assert wait_on_element(driver, 10, '//h3[text()="Applications not configured"]')
+    assert wait_on_element(driver, 10, '//button[contains(.,"View Catalog")]')
+    driver.find_element_by_xpath('//button[contains(.,"View Catalog")]').click()
+
+
+@then('when Choose a pool for Apps appear, select pool')
+def when_choose_a_pool_for_apps_appear_select_pool(driver):
+    """when Choose a pool for Apps appear, select pool."""
     assert wait_on_element(driver, 7, '//h1[contains(.,"Choose a pool for Apps")]')
     assert wait_on_element(driver, 5, '//mat-select[@ix-auto="select__Pools"]', 'clickable')
     driver.find_element_by_xpath('//mat-select[@ix-auto="select__Pools"]').click()
