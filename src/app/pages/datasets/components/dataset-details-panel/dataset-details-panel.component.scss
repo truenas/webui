@@ -11,3 +11,7 @@
 .example-card {
   @include details-card();
 }
+
+.title {
+  color: var(--fg2);
+}

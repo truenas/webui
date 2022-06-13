@@ -1,0 +1,14 @@
+@import '~assets/styles/mixins/cards';
+@import '~assets/styles/mixins/buttons';
+
+.container-card {
+  @include details-card();
+}
+
+.stroked-btn {
+  @include stroked-button();
+}
+  
+.header {
+  font-weight: bold;
+}
