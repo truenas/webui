@@ -1,8 +1,7 @@
 import { Injectable } from '@angular/core';
 import { WebSocketService } from './ws.service';
 import { RestService } from './rest.service';
-
-import * as moment from 'moment';
+import { LocaleService } from 'app/services/locale.service';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { HttpClient } from '@angular/common/http';
@@ -21,7 +20,11 @@ export class StorageService {
   humanReadable: any;
   IECUnits = ['KiB', 'MiB', 'GiB', 'TiB', 'PiB'];
 
-  constructor(protected ws: WebSocketService, protected rest: RestService) {}
+  constructor(
+    protected ws: WebSocketService,
+    protected rest: RestService,
+    protected locale: LocaleService,
+  ) {}
 
   filesystemStat(path: string) {
     return this.ws.call('filesystem.stat', [path]);
@@ -174,13 +177,13 @@ export class StorageService {
       && !isNaN(Date.parse(tempArr[n]))) {
       let timeArr = [];
       for (const i of tempArr) {
-        timeArr.push(Date.parse(i));
+        timeArr.push(this.locale.getTimestamp(i));
       }
       timeArr = timeArr.sort();
 
       sorter = [];
       for (const elem of timeArr) {
-        sorter.push(moment(elem).format('YYYY-MM-DD HH:mm:ss')); // formate should matched locale service
+        sorter.push(this.locale.formatDateTime(elem));
       }
     } else {
       sorter = tempArr.sort(myCollator.compare);

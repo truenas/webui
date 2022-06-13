@@ -78,6 +78,10 @@ export class LocaleService {
     return moment(date).format(`${this.dateFormat} ${this.timeFormat}`);
   }
 
+  getTimestamp(dataTime: string) {
+    return moment(dataTime, `${this.dateFormat} ${this.timeFormat}`).valueOf();
+  }
+
   getTimeOnly(date, seconds = true, tz?) {
     tz ? moment.tz.setDefault(tz) : moment.tz.setDefault(this.timeZone);
     let format: string;
