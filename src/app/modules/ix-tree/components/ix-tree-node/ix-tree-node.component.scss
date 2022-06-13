@@ -1,0 +1,38 @@
+$level-offset: 40px;
+
+:host {
+  align-items: center;
+  border-bottom: 1px solid var(--lines);
+  cursor: pointer;
+  display: flex;
+  flex-direction: row;
+  min-height: 48px;
+  min-width: fit-content;
+  position: relative;
+
+  &:hover {
+    background-color: var(--hover-bg);
+  }
+
+  &.selected {
+    background-color: var(--hover-bg);
+    color: var(--fg2);
+
+    &::before {
+      background-color: var(--primary);
+      content: '';
+      height: 100%;
+      left: 0;
+      opacity: 1;
+      position: absolute;
+      top: 0;
+      width: 6px;
+    }
+  }
+
+  .mdi-set.mat-icon {
+    align-items: center;
+    display: inline-flex;
+    margin-top: 0;
+  }
+}
