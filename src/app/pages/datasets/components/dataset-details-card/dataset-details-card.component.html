@@ -5,17 +5,35 @@
         <button mat-button (click)="editDataset()">{{ 'Edit' | translate }}</button>
       </mat-card-header>
       <mat-card-content>
-        <ix-loading-card-content *ngIf="loading"></ix-loading-card-content>
-        <div *ngIf="!loading">
-          <p><span class="header">Type: </span>{{ dataset.type }}</p>
-          <p><span class="header">Sync: </span>{{ dataset.sync?.value }}</p>
-          <div>
-            <span class="header">Compression Level: </span>
-            <span>{{ dataset.compression?.source === 'INHERITED' ? 'Inherit (' + dataset.compression?.value + ')' : dataset.compression?.value }}</span>
-          </div>
-          <p><span class="header">Enable Atime: </span>{{ dataset.atime?.value }}</p>
-          <p><span class="header">ZFS Deduplication: </span>{{ dataset.deduplication?.value }}</p>
-          <p><span class="header">Case Sensitivity: </span>{{ dataset.casesensitivity?.value }}</p>
+        <div class="row">
+          <span class="header">Type: </span>
+          <span *ngIf="!loading">{{ dataset.type }}</span>
+          <div class="loader" *ngIf="loading"></div>
+        </div>
+        <div class="row">
+          <span class="header">Sync: </span>
+          <span *ngIf="!loading">{{ dataset.sync?.value }}</span>
+          <div class="loader" *ngIf="loading"></div>
+        </div>
+        <div class="row">
+          <span class="header">Compression Level: </span>
+          <span *ngIf="!loading">{{ dataset.compression?.source === 'INHERITED' ? 'Inherit (' + dataset.compression?.value + ')' : dataset.compression?.value }}</span>
+          <div class="loader" *ngIf="loading"></div>
+        </div>
+        <div class="row">
+          <span class="header">Enable Atime: </span>
+          <span *ngIf="!loading">{{ dataset.atime?.value }}</span>
+          <div class="loader" *ngIf="loading"></div>
+        </div>
+        <div class="row">
+          <span class="header">ZFS Deduplication: </span>
+          <span *ngIf="!loading">{{ dataset.deduplication?.value }}</span>
+          <div class="loader" *ngIf="loading"></div>
+        </div>
+        <div class="row">
+          <span class="header">Case Sensitivity: </span>
+          <span *ngIf="!loading">{{ dataset.casesensitivity?.value }}</span>
+          <div class="loader" *ngIf="loading"></div>
         </div>
       </mat-card-content>
       <mat-card-actions>

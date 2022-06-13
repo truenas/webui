@@ -9,16 +9,21 @@
 .stroked-btn {
   @include stroked-button();
 }
-
-.blink {
-  @include blink();
-}
   
 .header {
   font-weight: bold;
+  margin-right: 5px;
 }
 
 .loader {
   @include loader-block();
+  @include blink();
   display: inline-block;
+  width: 35%;
+}
+
+.row {
+  align-items: center;
+  display: flex;
+  flex-direction: row;
 }
