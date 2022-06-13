@@ -98,8 +98,8 @@ def the_ldapsmbshare_should_be_added_to_the_shares_list(driver):
         driver.find_element_by_xpath('//mat-expansion-panel-header[contains(.,"(SMB)")]//button[contains(.,"more_vert")]').click()
         wait_on_element(driver, 5, '//button[normalize-space(text())="Turn On Service"]', 'clickable')
         driver.find_element_by_xpath('//button[normalize-space(text())="Turn On Service"]').click()
-        time.sleep(0.5)
-    assert wait_on_element(driver, 7, '//mat-panel-title[contains(.,"(SMB)")]//button[contains(.,"RUNNING")]')
+        time.sleep(1)
+    assert wait_on_element(driver, 15, '//mat-panel-title[contains(.,"(SMB)")]//button[contains(.,"RUNNING")]')
 
 
 @then(parsers.parse('send a file to the share with ip/"{ldapsmbshare}" and "{ldap_user}" and "{ldap_password}"'))

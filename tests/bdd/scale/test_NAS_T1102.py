@@ -45,7 +45,7 @@ def you_should_be_on_the_dashboard_click_storage_on_the_side_menu(driver):
     assert wait_on_element(driver, 10, '//h1[contains(.,"Dashboard")]')
     assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Storage"]', 'clickable')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Storage"]').click()
-     
+
 
 @when('the pools page appears click create pool')
 def the_pools_page_appears_click_create_pool(driver):
@@ -118,7 +118,8 @@ def navigate_to_system_setting_and_click_advanced_to_open_the_advanced_page_shou
 def click_on_system_dataset_configure_button_and_close_the_popup(driver):
     """click on System Dataset Configure button and close the popup."""
     assert wait_on_element(driver, 7, '//h1[contains(.,"Advanced")]')
-    element = driver.find_element_by_xpath('//h3[contains(.,"System Dataset Pool")]')
+    assert wait_on_element(driver, 7, '//h3[contains(text(),"System Dataset Pool")]')
+    element = driver.find_element_by_xpath('//h3[contains(text(),"System Dataset Pool")]')
     driver.execute_script("arguments[0].scrollIntoView();", element)
     assert wait_on_element(driver, 7, '//mat-card[contains(.,"System Dataset Pool")]//button[contains(.,"Configure")]', 'clickable')
     driver.find_element_by_xpath('//mat-card[contains(.,"System Dataset Pool")]//button[contains(.,"Configure")]').click()
