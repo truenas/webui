@@ -17,7 +17,7 @@
         </div>
         <div class="row">
           <span class="header">Compression Level: </span>
-          <span *ngIf="!loading">{{ dataset.compression?.source === 'INHERITED' ? 'Inherit (' + dataset.compression?.value + ')' : dataset.compression?.value }}</span>
+          <span *ngIf="!loading">{{ datasetCompression }}</span>
           <div class="loader" *ngIf="loading"></div>
         </div>
         <div class="row">
@@ -38,7 +38,13 @@
       </mat-card-content>
       <mat-card-actions>
         <!-- TODO: Should be mat-stroked-button, but its styles are polluted -->
-        <button class="stroked-btn" mat-stroked-button>{{ 'Delete' | translate }}</button>
+        <button
+          class="stroked-btn" 
+          [class.disabled-btn]="dataset.id === dataset.pool" 
+          [disabled]="dataset.id === dataset.pool" 
+          mat-stroked-button 
+          (click)="deleteDataset()"
+        >{{ 'Delete' | translate }}</button>
       </mat-card-actions>
     </mat-card>
   </div>

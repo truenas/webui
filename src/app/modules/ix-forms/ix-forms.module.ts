@@ -99,6 +99,7 @@ import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
     IxDynamicFormItemComponent,
   ],
   exports: [
+    ReactiveFormsModule,
     IxErrorsComponent,
     IxInputComponent,
     IxSelectComponent,
