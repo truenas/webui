@@ -1,0 +1,119 @@
+<mat-card class="card card-square">
+  <mat-spinner
+    *ngIf="isLoading; else loaded"
+    [diameter]="40"
+    class="spinner"
+  ></mat-spinner>
+
+  <ng-template #loaded>
+    <mat-card-header class="header">
+      <mat-card-title class="header-title">{{ 'ACL Editor' | translate }}</mat-card-title>
+
+      <div class="dataset-path">
+        <label class="header-label">{{ 'Dataset' | translate }}:</label>
+        <div>{{ fullDatasetPath }}</div>
+      </div>
+
+      <div class="ownership-row" [formGroup]="ownerFormGroup">
+        <label class="header-label">{{ 'Owner' | translate }}:</label>
+        <ix-combobox
+          class="owner-combobox"
+          formControlName="owner"
+          [provider]="userProvider"
+        ></ix-combobox>
+
+        <label class="header-label">{{ 'Owner Group' | translate }}:</label>
+        <ix-combobox
+          class="owner-combobox"
+          formControlName="ownerGroup"
+          [provider]="groupProvider"
+        ></ix-combobox>
+      </div>
+    </mat-card-header>
+
+    <div class="content">
+      <div class="columns">
+        <div class="column-left">
+          <ix-acl-editor-list
+            [acl]="acl"
+            [selectedAceIndex]="selectedAceIndex"
+            [acesWithError]="acesWithError"
+            [owner]="ownerFormGroup.get('owner').value"
+            [ownerGroup]="ownerFormGroup.get('ownerGroup').value"
+          ></ix-acl-editor-list>
+
+          <div class="controls-container">
+            <div class="controls">
+              <div class="checkboxes" [formGroup]="saveParameters">
+                <ix-checkbox
+                  formControlName="recursive"
+                  [label]="helptext.dataset_acl_recursive_placeholder | translate"
+                  [tooltip]="helptext.dataset_acl_recursive_tooltip | translate"
+                ></ix-checkbox>
+                <ix-checkbox
+                  *ngIf="saveParameters.get('recursive').value"
+                  formControlName="traverse"
+                  [label]="helptext.dataset_acl_traverse_placeholder | translate"
+                  [tooltip]="helptext.dataset_acl_traverse_tooltip | translate"
+                ></ix-checkbox>
+              </div>
+
+              <div class="control-buttons">
+                <button mat-button class="action" (click)="onAddItemPressed()">
+                  {{ 'Add Item' | translate }}
+                </button>
+
+                <a
+                  *ngIf="acl.trivial; else stripButton"
+                  mat-button
+                  class="action"
+                  [routerLink]="['/datasets/permissions/edit', datasetPath]"
+                >
+                  {{ 'Permissions Editor' | translate }}
+                </a>
+                <ng-template #stripButton>
+                  <button mat-button color="warn" class="action" (click)="onStripAclPressed()">
+                    {{ 'Strip ACL' | translate }}
+                  </button>
+                </ng-template>
+              </div>
+
+              <div class="control-buttons">
+                <button
+                  mat-button
+                  class="action"
+                  (click)="onUsePresetPressed()"
+                >
+                  {{ 'Use ACL Preset' | translate }}
+                </button>
+              </div>
+
+              <div class="control-buttons">
+                <button
+                  mat-button
+                  color="primary"
+                  class="action"
+                  [disabled]="acesWithError.length > 0 || !acl.acl.length || ownerFormGroup.invalid"
+                  (click)="onSavePressed()"
+                >
+                  {{ 'Save Access Control List' | translate }}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="column-right">
+          <ng-container *ngIf="acl.acl[selectedAceIndex] as selectedAce">
+            <ix-edit-nfs-ace
+              *ngIf="isNfsAcl; else posixAcl"
+              [ace]="selectedAce | cast"
+            ></ix-edit-nfs-ace>
+            <ng-template #posixAcl>
+              <ix-edit-posix-ace [ace]="selectedAce | cast"></ix-edit-posix-ace>
+            </ng-template>
+          </ng-container>
+        </div>
+      </div>
+    </div>
+  </ng-template>
+</mat-card>

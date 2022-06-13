@@ -15,6 +15,7 @@ import { VDevType } from 'app/enums/v-dev-type.enum';
 import helptext from 'app/helptext/storage/volumes/volume-status';
 import { Job } from 'app/interfaces/job.interface';
 import { Option } from 'app/interfaces/option.interface';
+import { PoolDiskInfo } from 'app/interfaces/pool-disk-info';
 import { Pool, PoolScan, PoolTopologyCategory } from 'app/interfaces/pool.interface';
 import { QueryParams } from 'app/interfaces/query-api.interface';
 import {
@@ -41,17 +42,6 @@ import {
   ReplaceDiskDialogData,
   ReplaceDiskDialogComponent,
 } from './components/replace-disk-dialog/replace-disk-dialog.component';
-
-interface PoolDiskInfo {
-  name: string;
-  read: number;
-  write: number;
-  checksum: number;
-  status: any;
-  actions?: any;
-  path?: string;
-  guid: string;
-}
 
 @UntilDestroy()
 @Component({

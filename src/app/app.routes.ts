@@ -89,6 +89,16 @@ export const rootRouterConfig: Routes = [{
     data: { title: 'Storage', breadcrumb: 'Storage' },
   },
   {
+    path: 'datasets',
+    loadChildren: () => import('./pages/datasets/datasets.module').then((module) => module.DatasetsModule),
+    data: { title: 'Storage', breadcrumb: 'Storage' },
+  },
+  {
+    path: 'storage2',
+    loadChildren: () => import('./pages/storage2/storage2.module').then((module) => module.Storage2Module),
+    data: { title: 'Storage', breadcrumb: 'Storage' },
+  },
+  {
     path: 'reportsdashboard',
     loadChildren: () => import('app/pages/reports-dashboard/reports-dashboard.module').then((module) => module.ReportsDashboardModule),
     data: { title: 'Reporting', breadcrumb: 'Reporting', disabled: true },

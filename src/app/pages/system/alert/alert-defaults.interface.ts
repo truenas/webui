@@ -5,4 +5,5 @@ export interface AlertDefaults {
   id: string;
   level: AlertLevel;
   policy: AlertPolicy;
+  proactive_support?: boolean;
 }

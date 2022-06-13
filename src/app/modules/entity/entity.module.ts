@@ -88,16 +88,9 @@ import { EntityTableAddActionsComponent } from 'app/modules/entity/entity-table/
 import { EntityTableRowDetailsComponent } from 'app/modules/entity/entity-table/entity-table-row-details/entity-table-row-details.component';
 import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-table.component';
 import { EntityTemplateDirective } from 'app/modules/entity/entity-template.directive';
-import { ToolbarButtonComponent } from 'app/modules/entity/entity-toolbar/components/toolbar-button/toolbar-button.component';
-import { ToolbarCheckboxComponent } from 'app/modules/entity/entity-toolbar/components/toolbar-checkbox/toolbar-checkbox.component';
-import { ToolbarInputComponent } from 'app/modules/entity/entity-toolbar/components/toolbar-input/toolbar-input.component';
-import { ToolbarMenuComponent } from 'app/modules/entity/entity-toolbar/components/toolbar-menu/toolbar-menu.component';
 import { ToolbarMultimenuComponent } from 'app/modules/entity/entity-toolbar/components/toolbar-multimenu/toolbar-multimenu.component';
 import { ToolbarMultiSelectComponent } from 'app/modules/entity/entity-toolbar/components/toolbar-multiselect/toolbar-multiselect.component';
-import { ToolbarSelectComponent } from 'app/modules/entity/entity-toolbar/components/toolbar-select/toolbar-select.component';
-import { ToolbarSlideToggleComponent } from 'app/modules/entity/entity-toolbar/components/toolbar-slide-toggle/toolbar-slide-toggle.component';
 import { ToolbarSliderComponent } from 'app/modules/entity/entity-toolbar/components/toolbar-slider/toolbar-slider.component';
-import { EntityToolbarComponent } from 'app/modules/entity/entity-toolbar/entity-toolbar.component';
 import { EntityTreeTableComponent } from 'app/modules/entity/entity-tree-table/entity-tree-table.component';
 import { WizardSummaryComponent } from 'app/modules/entity/entity-wizard/components/wizard-summary/wizard-summary.component';
 import { EntityWizardComponent } from 'app/modules/entity/entity-wizard/entity-wizard.component';
@@ -206,16 +199,9 @@ import { AppLoaderService, DocsService, JobService } from 'app/services';
     FormParagraphComponent,
     EntityDialogComponent,
     EntitySnackbarComponent,
-    EntityToolbarComponent,
-    ToolbarButtonComponent,
-    ToolbarCheckboxComponent,
-    ToolbarInputComponent,
-    ToolbarMenuComponent,
     ToolbarMultimenuComponent,
     ToolbarMultiSelectComponent,
-    ToolbarSelectComponent,
     ToolbarSliderComponent,
-    ToolbarSlideToggleComponent,
     FormStatusComponent,
     TableComponent,
     ExpandableTableComponent,
@@ -235,14 +221,7 @@ import { AppLoaderService, DocsService, JobService } from 'app/services';
     EntityWizardComponent,
     EntityDialogComponent,
     EntitySnackbarComponent,
-    EntityToolbarComponent,
-    ToolbarButtonComponent,
     ToolbarSliderComponent,
-    ToolbarInputComponent,
-    ToolbarCheckboxComponent,
-    ToolbarSlideToggleComponent,
-    ToolbarSelectComponent,
-    ToolbarMenuComponent,
     ToolbarMultimenuComponent,
     ToolbarMultiSelectComponent,
     TableComponent,

@@ -13,11 +13,11 @@
       [class.fn-theme-red]="acesWithError.includes(i)"
       (click)="onAceSelected(i)"
     >
-      <ix-permissions-item
+      <ix-old-permissions-item
         class="permission-item"
         *ngIf="permissionItems[i]"
         [item]="permissionItems[i]"
-      ></ix-permissions-item>
+      ></ix-old-permissions-item>
 
       <span
         *ngIf="acesWithError.includes(i)"

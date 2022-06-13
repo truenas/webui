@@ -7,7 +7,7 @@ import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.com
  * Usage:
  *
  * mockProvider(MatDialog, {
- *   open: jest.fn(() => mockDialogRef),
+ *   open: jest.fn(() => mockEntityJobComponentRef),
  * }),
  */
 export const mockEntityJobComponentRef = {

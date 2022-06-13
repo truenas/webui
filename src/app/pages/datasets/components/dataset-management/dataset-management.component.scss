@@ -1,0 +1,23 @@
+.container {
+  display: flex;
+  flex-direction: row;
+}
+
+.table-container {
+  flex: 1;
+  max-width: 30%;
+  overflow: auto;
+}
+
+.details-container {
+  color: white;
+  flex: 2;
+  margin-left: 16px;
+  padding: 5px;
+}
+
+.wip {
+  color: var(--fg2);
+  margin-bottom: 20px;
+  padding: 5px;
+}

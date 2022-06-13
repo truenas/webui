@@ -4,6 +4,7 @@ import { FlexLayoutModule } from '@angular/flex-layout';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
+import { MatMenuModule } from '@angular/material/menu';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTableModule } from '@angular/material/table';
@@ -36,6 +37,7 @@ import { TemperatureMeterComponent } from './components/temperature-meter/temper
     MatToolbarModule,
     LayoutModule,
     MatButtonModule,
+    MatMenuModule,
   ],
   declarations: [
     ViewEnclosureComponent,

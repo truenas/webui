@@ -18,7 +18,7 @@ import { UserService } from 'app/services';
 
 @UntilDestroy()
 @Component({
-  selector: 'ix-edit-posix-ace',
+  selector: 'ix-old-edit-posix-ace',
   templateUrl: './edit-posix-ace.component.html',
   styleUrls: ['./edit-posix-ace.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
