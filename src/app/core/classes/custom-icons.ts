@@ -21,6 +21,7 @@ export const customSvgIcons = {
   'smb-share': 'assets/customicons/smb-share.svg',
   'webdav-share': 'assets/customicons/webdav-share.svg',
   'quota-fill': 'assets/customicons/quota-fill.svg',
+  'reservation-fill': 'assets/customicons/reservation-fill.svg',
   openzfs: 'assets/customicons/openzfs.svg',
   truenas_scale_logomark: 'assets/customicons/truenas_scale_logomark.svg',
   truenas_scale_logotype: 'assets/customicons/truenas_scale_logotype.svg',
