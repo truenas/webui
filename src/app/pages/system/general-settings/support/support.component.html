@@ -26,29 +26,10 @@
         [class]="extraMargin ? 'extra-margin' : 'regular-margin'"
       >
         <ix-sys-info
-          *ngIf="!hasLicense; else licensedSysInfo"
-          [sys_info]="systemInfo"
-          ></ix-sys-info>
-
-        <ng-template #licensedSysInfo>
-          <ix-sys-info
-            [customer_name]='licenseInfo.customer_name'
-            [features]='licenseInfo.features'
-            [contract_type]='licenseInfo.contract_type'
-            [expiration_date]='licenseInfo.expiration_date'
-            [model]='systemInfo.model'
-            [serial]='systemInfo.serial'
-            [add_hardware]='licenseInfo.add_hardware'
-            [daysLeftinContract]='licenseInfo.daysLeftinContract'
-            [hasLicense]="hasLicense"
-
-            [license_info]="licenseInfo"
-          >
-            <!--            {
-           }-->
-
-          </ix-sys-info>
-        </ng-template>
+          [has_license]="hasLicense"
+          [system_info]="systemInfo"
+          [license_info]="licenseInfo"
+        ></ix-sys-info>
 
         <div class="links-wrapper">
           <div class="links" *ngFor="let link of links">
