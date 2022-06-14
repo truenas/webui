@@ -148,8 +148,8 @@ def under_transfer_mode_select_copy_click_save(driver):
 @then('the Box tasks should save without error')
 def the_box_tasks_should_save_without_error(driver):
     """the Box tasks should save without error."""
-    assert wait_on_element(driver, 5, '//div[contains(.,"Cloud Sync Tasks")]')
-    assert wait_on_element(driver, 5, '//div[contains(text(),"My BOX Cloud task")]')
+    assert wait_on_element(driver, 7, '//div[contains(.,"Cloud Sync Tasks")]')
+    assert wait_on_element(driver, 10, '//div[contains(text(),"My BOX Cloud task")]')
 
 
 @then('expand the task on the NAS UI and click Run Now')
@@ -195,8 +195,8 @@ def on_the_nas_cloud_sync_task_tab_click_edit(driver):
     """on the NAS cloud sync task tab, click Edit."""
     driver.switch_to.window(driver.window_handles[0])
     time.sleep(1)
-    assert wait_on_element(driver, 5, '//div[contains(.,"Cloud Sync Tasks")]')
-    assert wait_on_element(driver, 5, '//div[contains(text(),"My BOX Cloud task")]')
+    assert wait_on_element(driver, 7, '//div[contains(.,"Cloud Sync Tasks")]')
+    assert wait_on_element(driver, 10, '//div[contains(text(),"My BOX Cloud task")]')
     assert wait_on_element(driver, 5, '//a[@ix-auto="expander__My BOX Cloud task"]', 'clickable')
     if not wait_on_element(driver, 2, '//button[@ix-auto="button___edit"]'):
         driver.find_element_by_xpath('//a[@ix-auto="expander__My BOX Cloud task"]').click()
@@ -317,8 +317,8 @@ def click_save_the_box_tasks_should_save_without_error(driver):
     assert wait_on_element(driver, 5, '//button[@id="save_button"]', 'clickable')
     driver.find_element_by_xpath('//button[@id="save_button"]').click()
     assert wait_on_element_disappear(driver, 30, '//h6[contains(.,"Please wait")]')
-    assert wait_on_element(driver, 5, '//div[contains(.,"Cloud Sync Tasks")]')
-    assert wait_on_element(driver, 5, '//div[contains(text(),"My BOX Cloud task")]')
+    assert wait_on_element(driver, 7, '//div[contains(.,"Cloud Sync Tasks")]')
+    assert wait_on_element(driver, 10, '//div[contains(text(),"My BOX Cloud task")]')
 
 
 @then('verify all files are moved from the Box test folder to the dataset')
@@ -473,8 +473,8 @@ def on_the_box_test_folder_tab_delete_one_file(driver):
 def on_the_nas_cloud_sync_task_tab_click_run_now(driver):
     """on the NAS cloud sync task tab, click Run Now."""
     driver.switch_to.window(driver.window_handles[0])
-    assert wait_on_element(driver, 5, '//div[contains(.,"Cloud Sync Tasks")]')
-    assert wait_on_element(driver, 5, '//div[contains(text(),"My BOX Cloud task")]')
+    assert wait_on_element(driver, 7, '//div[contains(.,"Cloud Sync Tasks")]')
+    assert wait_on_element(driver, 10, '//div[contains(text(),"My BOX Cloud task")]')
     assert wait_on_element(driver, 5, '//a[@ix-auto="expander__My BOX Cloud task"]', 'clickable')
     time.sleep(0.5)
     assert wait_on_element(driver, 5, '//button[@id="action_button___run_now"]', 'clickable')
