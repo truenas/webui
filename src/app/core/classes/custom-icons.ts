@@ -7,6 +7,7 @@
 */
 
 export const customSvgIcons = {
+  dataset: 'assets/customicons/dataset.svg',
   multipath: 'assets/customicons/multipath.svg',
   ha_disabled: 'assets/customicons/ha_disabled.svg',
   ha_enabled: 'assets/customicons/ha_enabled.svg',
@@ -15,6 +16,12 @@ export const customSvgIcons = {
   ix_full_logo_rgb: 'assets/customicons/ix_full_logo_rgb.svg',
   ix_logomark_rgb: 'assets/customicons/ix_logomark_rgb.svg',
   ha_reconnecting: 'assets/customicons/ha_reconnecting.svg',
+  'iscsi-share': 'assets/customicons/iscsi-share.svg',
+  'nfs-share': 'assets/customicons/nfs-share.svg',
+  'smb-share': 'assets/customicons/smb-share.svg',
+  'webdav-share': 'assets/customicons/webdav-share.svg',
+  'quota-fill': 'assets/customicons/quota-fill.svg',
+  openzfs: 'assets/customicons/openzfs.svg',
   truenas_scale_logomark: 'assets/customicons/truenas_scale_logomark.svg',
   truenas_scale_logotype: 'assets/customicons/truenas_scale_logotype.svg',
   truenas_scale_logo_full: 'assets/customicons/truenas_scale_logo_full.svg',
