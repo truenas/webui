@@ -448,9 +448,9 @@ def navigate_to_dashboard_and_verify_that_both_controllers_show(driver):
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
     assert wait_on_element(driver, 7, '//span[contains(.,"System Information")]')
     # need to wait for all controller to be online.
-    assert wait_on_element(driver, 300, '//mat-icon[@svgicon="ha_enabled"]')
-    assert wait_on_element(driver, 10, '//div[contains(.,"tn-bhyve03-nodea")]')
-    assert wait_on_element(driver, 20, '//div[contains(.,"tn-bhyve03-nodeb")]')
+    assert wait_on_element(driver, 60, '//div[contains(.,"truenas")]')
+    assert wait_on_element(driver, 300, '//div[contains(.,"truenas-b")]')
+    assert wait_on_element(driver, 60, '//mat-icon[@svgicon="ha_enabled"]')
     time.sleep(5)
 
 
