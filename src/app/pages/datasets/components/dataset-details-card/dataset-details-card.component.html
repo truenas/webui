@@ -11,6 +11,11 @@
           <div class="loader" *ngIf="loading"></div>
         </div>
         <div class="row">
+          <span class="header">Available: </span>
+          <span *ngIf="!loading">{{ datasetSpace }}</span>
+          <div class="loader" *ngIf="loading"></div>
+        </div>
+        <div class="row">
           <span class="header">Sync: </span>
           <span *ngIf="!loading">{{ dataset.sync?.value }}</span>
           <div class="loader" *ngIf="loading"></div>
@@ -44,6 +49,9 @@
           [disabled]="dataset.id === dataset.pool" 
           mat-stroked-button 
           (click)="deleteDataset()"
+          matTooltip="Can't delete root dataset"
+          [matTooltipPosition]="'before'"
+          [matTooltipDisabled]="dataset.id !== dataset.pool"
         >{{ 'Delete' | translate }}</button>
       </mat-card-actions>
     </mat-card>

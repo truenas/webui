@@ -4,6 +4,7 @@ import {
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+import { Subscription } from 'rxjs';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { DatasetFormComponent } from 'app/pages/datasets/components/dataset-form/dataset-form.component';
 import { DeleteDatasetDialogComponent } from 'app/pages/datasets/components/delete-dataset-dialog/delete-dataset-dialog.component';
@@ -20,6 +21,7 @@ import { ModalService } from 'app/services/modal.service';
 export class DatasetDetailsCardComponent implements OnChanges {
   @Input() dataset: Dataset;
   loading = false;
+  subscription: Subscription;
 
   constructor(
     private ws: WebSocketService,
@@ -35,10 +37,19 @@ export class DatasetDetailsCardComponent implements OnChanges {
       : this.dataset.compression?.value;
   }
 
+  get datasetSpace(): string {
+    return (this.dataset.quota.value !== null || this.dataset.quota.value !== '0')
+    || (this.dataset.refquota.value !== null || this.dataset.refquota.value !== '0')
+      ? this.dataset.available.value + ' (Quota set)' : this.dataset.available.value;
+  }
+
   ngOnChanges(): void {
     this.loading = true;
     this.cdr.markForCheck();
-    this.ws.call('pool.dataset.query', [[['id', '=', this.dataset.id]]]).pipe(untilDestroyed(this)).subscribe(
+    if (this.subscription) {
+      this.subscription.unsubscribe();
+    }
+    this.subscription = this.ws.call('pool.dataset.query', [[['id', '=', this.dataset.id]]]).pipe(untilDestroyed(this)).subscribe(
       (datasets) => {
         this.loading = false;
         this.dataset = datasets[0];
