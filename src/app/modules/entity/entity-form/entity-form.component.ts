@@ -12,7 +12,7 @@ import {
   AfterViewChecked,
 } from '@angular/core';
 import {
-  FormBuilder, FormControl, FormGroup, FormArray, AbstractControl,
+  UntypedFormBuilder, UntypedFormControl, UntypedFormGroup, UntypedFormArray, AbstractControl,
 } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -47,7 +47,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
   pk: string | number;
   fieldSetDisplay = 'default';
   fieldSets: FieldSet[];
-  formGroup: FormGroup;
+  formGroup: UntypedFormGroup;
   fieldConfig: FieldConfig[];
   resourceName: string;
   getFunction: any;
@@ -93,7 +93,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
     protected router: Router,
     protected route: ActivatedRoute,
     protected ws: WebSocketService,
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     protected entityFormService: EntityFormService,
     protected fieldRelationService: FieldRelationService,
     public loader: AppLoaderService,
@@ -293,9 +293,9 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
               if (fg) {
                 const currentField: FieldConfig = this.fieldConfig.find((control) => control.name === key);
                 if (currentField.type === 'array') {
-                  this.setArrayValue(this.data[key], fg as FormArray, key);
+                  this.setArrayValue(this.data[key], fg as UntypedFormArray, key);
                 } else if (currentField.type === 'list') {
-                  this.setListValue(this.data[key], fg as FormArray, key);
+                  this.setListValue(this.data[key], fg as UntypedFormArray, key);
                 } else if (currentField.type === 'dict') {
                   fg.patchValue(this.data[key]);
                 } else {
@@ -338,7 +338,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
                   const selectField: FormSelectConfig = currentField as FormSelectConfig;
 
                   if (currentField.type === 'array') {
-                    this.setArrayValue(this.wsResponse[key], this.wsfg as FormArray, key);
+                    this.setArrayValue(this.wsResponse[key], this.wsfg as UntypedFormArray, key);
                   } else if (currentField.type === 'list' || currentField.type === 'dict') {
                     this.setObjectListValue(this.wsResponse[key], this.wsfg, currentField);
                   } else if (!(selectField.type === 'select' && selectField.options.length === 0)) {
@@ -570,7 +570,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
     this.router.navigate(new Array('/').concat(route));
   }
 
-  createControl(config: FieldConfig): FormControl {
+  createControl(config: FieldConfig): UntypedFormControl {
     const { disabled, validation, value } = config;
     return this.fb.control({ disabled, value }, validation);
   }
@@ -586,7 +586,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
     this.formGroup.controls[name].setValue(value, { emitEvent: true });
   }
 
-  setArrayValue(data: any[], formArray: FormArray, name: string): void {
+  setArrayValue(data: any[], formArray: UntypedFormArray, name: string): void {
     let arrayFieldConfigs: FieldConfig[];
     this.fieldConfig.forEach((config) => {
       if (config.name === name) {
@@ -608,7 +608,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
     });
   }
 
-  setListValue(data: string[], formArray: FormArray, fieldName: string): void {
+  setListValue(data: string[], formArray: UntypedFormArray, fieldName: string): void {
     const fieldConfig = this.fieldConfig.find((conf) => conf.name === fieldName);
     const config: FormListConfig = fieldConfig as FormListConfig;
     const template: FieldConfig[] = config.templateListField;
@@ -663,11 +663,13 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
     if (listConfig.type === 'list' && listConfig.listFields) {
       listConfig.listFields.forEach((field) => {
         const formGroup = this.entityFormService.createFormGroup(field);
-        (formControl as FormArray).push(formGroup);
+        (formControl as UntypedFormArray).push(formGroup);
       });
       for (let i = 0; i < listConfig.listFields.length; i++) {
         listConfig.listFields[i].forEach((subFieldConfig) => {
-          this.fieldRelationService.setRelation(subFieldConfig, (formControl as FormArray).at(i) as FormGroup);
+          this.fieldRelationService.setRelation(
+            subFieldConfig, (formControl as UntypedFormArray).at(i) as UntypedFormGroup,
+          );
         });
       }
     } else if (dictConfig.type === 'dict' && dictConfig.subFields) {

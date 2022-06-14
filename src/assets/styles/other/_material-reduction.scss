@@ -339,6 +339,7 @@ ix-entity-form-list .list-action-block-wrapper .form-element select {
   width: 100% !important;
 }
 
+
 .login-form .form-element .mat-form-field-wrapper input {
   background: none;
   border: none;
@@ -355,11 +356,15 @@ ix-entity-form-list .list-action-block-wrapper .form-element select {
 }
 
 .login-form .form-element.username .mat-form-field-prefix {
-  top: -5px;
+  top: -6px;
+}
+
+.login-form .form-element.username .mat-form-field-flex {
+  align-items: flex-start;
 }
 
 .login-form .form-element.password .mat-form-field-prefix {
-  top: -16px;
+  top: -11px;
 }
 
 .login-form .form-element input[type = 'password'],

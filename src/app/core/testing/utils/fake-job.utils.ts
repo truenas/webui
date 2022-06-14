@@ -1,8 +1,12 @@
 import { JobState } from 'app/enums/job-state.enum';
 import { Job } from 'app/interfaces/job.interface';
 
-export function fakeSuccessfulJob<T = void>(jobResult: T = undefined): Job<T> {
+export function fakeSuccessfulJob<T = void, A = unknown[]>(
+  jobResult: T = undefined,
+  jobArguments: A = undefined,
+): Job<T, A> {
   return {
+    arguments: jobArguments || [],
     abortable: false,
     description: '',
     error: '',
@@ -10,5 +14,5 @@ export function fakeSuccessfulJob<T = void>(jobResult: T = undefined): Job<T> {
     id: 0,
     result: jobResult,
     state: JobState.Success,
-  } as Job<T>;
+  } as Job<T, A>;
 }

@@ -5,6 +5,7 @@ import { DeviceType } from 'app/enums/device-type.enum';
 import { EnclosureSlotStatus } from 'app/enums/enclosure-slot-status.enum';
 import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
 import { FailoverStatus } from 'app/enums/failover-status.enum';
+import { ImportDiskFilesystem } from 'app/enums/import-disk-filesystem-type.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { TransportMode } from 'app/enums/transport-mode.enum';
@@ -67,7 +68,9 @@ import {
 import { CloudsyncProvider, CloudsyncRestoreParams } from 'app/interfaces/cloudsync-provider.interface';
 import { ConfigResetParams } from 'app/interfaces/config-reset-params.interface';
 import { ContainerConfig, ContainerConfigUpdate } from 'app/interfaces/container-config.interface';
-import { ContainerImage, PullContainerImageParams } from 'app/interfaces/container-image.interface';
+import {
+  ContainerImage, DeleteContainerImageParams, PullContainerImageParams, PullContainerImageResponse,
+} from 'app/interfaces/container-image.interface';
 import { CoreBulkQuery, CoreBulkResponse } from 'app/interfaces/core-bulk.interface';
 import { CoreDownloadQuery, CoreDownloadResponse } from 'app/interfaces/core-download.interface';
 import {
@@ -337,7 +340,7 @@ export type ApiDirectory = {
   'catalog.update': { params: [id: string, update: CatalogUpdate]; response: Catalog };
   'catalog.create': { params: [CatalogCreate]; response: Catalog };
   'catalog.delete': { params: [name: string]; response: boolean };
-  'catalog.items': { params: [label: string, params: CatalogItemsQueryParams]; response: CatalogItems };
+  'catalog.items': { params: [label: string, params?: CatalogItemsQueryParams]; response: CatalogItems };
   'catalog.sync': { params: [label: string]; response: void };
   'catalog.sync_all': { params: void; response: void };
   'catalog.get_item_details': { params: [name: string, params: GetItemDetailsParams]; response: CatalogApp };
@@ -420,9 +423,9 @@ export type ApiDirectory = {
   // Container
   'container.config': { params: void; response: ContainerConfig };
   'container.update': { params: [ContainerConfigUpdate]; response: ContainerConfig };
-  'container.image.query': { params: void; response: ContainerImage[] };
-  'container.image.pull': { params: [PullContainerImageParams]; response: { status: string } };
-  'container.image.delete': { params: [id: string, params?: { force: boolean }]; response: void };
+  'container.image.query': { params: QueryParams<ContainerImage>; response: ContainerImage[] };
+  'container.image.pull': { params: [PullContainerImageParams]; response: PullContainerImageResponse };
+  'container.image.delete': { params: DeleteContainerImageParams; response: void };
 
   // DynDNS
   'dyndns.provider_choices': { params: void; response: Choices };
@@ -688,7 +691,7 @@ export type ApiDirectory = {
   'pool.filesystem_choices': { params: [DatasetType[]?]; response: string[] };
   'pool.get_disks': { params: [ids: string[]]; response: string[] };
   'pool.import_disk': { params: ImportDiskParams; response: void };
-  'pool.import_disk_autodetect_fs_type': { params: [path: string]; response: string };
+  'pool.import_disk_autodetect_fs_type': { params: [path: string]; response: ImportDiskFilesystem };
   'pool.import_disk_msdosfs_locales': { params: void; response: string[] };
   'pool.import_find': { params: void; response: PoolFindResult[] };
   'pool.import_pool': { params: [PoolImportParams]; response: boolean };

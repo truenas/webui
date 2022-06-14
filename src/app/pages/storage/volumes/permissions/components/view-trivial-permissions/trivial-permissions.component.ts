@@ -9,7 +9,7 @@ import {
 import { posixPermissionsToDescription } from 'app/pages/storage/volumes/permissions/utils/permissions-to-description.utils';
 
 @Component({
-  selector: 'ix-trivial-permissions',
+  selector: 'ix-old-trivial-permissions',
   templateUrl: 'trivial-permissions.component.html',
   styleUrls: ['./trivial-permissions.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

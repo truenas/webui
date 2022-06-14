@@ -1,9 +1,10 @@
 import {
-  AfterViewInit, Component, OnInit, TemplateRef, ViewChild,
+  AfterViewInit, Component, OnDestroy, OnInit, TemplateRef, ViewChild,
 } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
-import { MatDialogRef } from '@angular/material/dialog/dialog-ref';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Subscription } from 'rxjs';
+import { filter } from 'rxjs/operators';
 import { JobState } from 'app/enums/job-state.enum';
 import helptext from 'app/helptext/apps/apps';
 import { Catalog, CatalogQueryParams } from 'app/interfaces/catalog.interface';
@@ -25,13 +26,14 @@ import { WebSocketService } from 'app/services/ws.service';
   selector: 'ix-manage-catalogs',
   templateUrl: './manage-catalogs.component.html',
 })
-export class ManageCatalogsComponent implements EntityTableConfig<Catalog>, OnInit, AfterViewInit {
+export class ManageCatalogsComponent implements EntityTableConfig<Catalog>, OnInit, AfterViewInit, OnDestroy {
   @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
 
   title = 'Catalogs';
   queryCall = 'catalog.query' as const;
   wsDelete = 'catalog.delete' as const;
   queryCallOption: CatalogQueryParams = [[], { extra: { item_details: true } }];
+  jobsSubscription: Subscription;
   disableActionsConfig = true;
 
   columns = [
@@ -74,17 +76,18 @@ export class ManageCatalogsComponent implements EntityTableConfig<Catalog>, OnIn
   ) {}
 
   ngOnInit(): void {
-    this.ws.subscribe('core.get_jobs').pipe(untilDestroyed(this)).subscribe((event) => {
-      if (event.fields.method === 'catalog.sync') {
-        const jobId = event.fields.id;
-        if (!this.catalogSyncJobIds.includes(jobId) && event.fields.state === JobState.Running) {
-          this.refresh();
-          this.catalogSyncJobIds.push(jobId);
-        }
+    this.jobsSubscription = this.ws.subscribe('core.get_jobs').pipe(
+      filter((event) => event.fields.method === 'catalog.sync'),
+      untilDestroyed(this),
+    ).subscribe((event) => {
+      const jobId = event.fields.id;
+      if (!this.catalogSyncJobIds.includes(jobId) && event.fields.state === JobState.Running) {
+        this.refresh();
+        this.catalogSyncJobIds.push(jobId);
+      }
 
-        if (event.fields.state === JobState.Success || event.fields.state === JobState.Failed) {
-          this.catalogSyncJobIds.splice(this.catalogSyncJobIds.indexOf(jobId));
-        }
+      if (event.fields.state === JobState.Success || event.fields.state === JobState.Failed) {
+        this.catalogSyncJobIds.splice(this.catalogSyncJobIds.indexOf(jobId));
       }
     });
 
@@ -95,6 +98,12 @@ export class ManageCatalogsComponent implements EntityTableConfig<Catalog>, OnIn
 
   ngAfterViewInit(): void {
     this.layoutService.pageHeaderUpdater$.next(this.pageHeader);
+  }
+
+  ngOnDestroy(): void {
+    if (this.jobsSubscription) {
+      this.ws.unsubscribe(this.jobsSubscription);
+    }
   }
 
   refresh(): void {
@@ -151,7 +160,14 @@ export class ManageCatalogsComponent implements EntityTableConfig<Catalog>, OnIn
   }
 
   doAdd(): void {
-    this.slideInService.open(CatalogAddFormComponent);
+    this.dialogService.confirm({
+      title: helptext.thirdPartyRepoWarning.title,
+      message: helptext.thirdPartyRepoWarning.message,
+      buttonMsg: helptext.thirdPartyRepoWarning.btnMsg,
+      hideCheckBox: true,
+    }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(
+      () => this.slideInService.open(CatalogAddFormComponent),
+    );
   }
 
   edit(catalog: Catalog): void {

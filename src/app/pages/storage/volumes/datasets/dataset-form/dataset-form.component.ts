@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { FormControl, ValidationErrors, Validators } from '@angular/forms';
+import { UntypedFormControl, ValidationErrors, Validators } from '@angular/forms';
 import { MatSelectChange } from '@angular/material/select';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -65,9 +65,9 @@ export class DatasetFormComponent implements FormConfiguration {
   protected entityForm: EntityFormComponent;
   minimumRecommendedRecordsize: DatasetRecordSize = '128K' as DatasetRecordSize;
   protected recordsizeField: FormSelectConfig;
-  protected recordsizeControl: FormControl;
+  protected recordsizeControl: UntypedFormControl;
   protected dedupValue: string;
-  protected dedupControl: FormControl;
+  protected dedupControl: UntypedFormControl;
   protected dedupField: FieldConfig;
   protected isParentEncrypted = false;
   protected isEncryptionInherited = true;
@@ -194,7 +194,7 @@ export class DatasetFormComponent implements FormConfiguration {
           blurStatus: true,
           parent: this,
           validation: [
-            (control: FormControl): ValidationErrors => {
+            (control: UntypedFormControl): ValidationErrors => {
               const config = this.fieldConfig.find((config) => config.name === 'refquota');
 
               const size = this.convertHumanStringToNum(control.value, 'refquota');
@@ -292,7 +292,7 @@ export class DatasetFormComponent implements FormConfiguration {
           blurStatus: true,
           parent: this,
           validation: [
-            (control: FormControl): ValidationErrors => {
+            (control: UntypedFormControl): ValidationErrors => {
               const config = this.fieldConfig.find((config) => config.name === 'refreservation');
 
               const errors = control.value && Number.isNaN(this.convertHumanStringToNum(control.value, 'refreservation'))
@@ -329,7 +329,7 @@ export class DatasetFormComponent implements FormConfiguration {
           blurStatus: true,
           parent: this,
           validation: [
-            (control: FormControl): ValidationErrors => {
+            (control: UntypedFormControl): ValidationErrors => {
               const config = this.fieldConfig.find((config) => config.name === 'quota');
 
               const size = this.convertHumanStringToNum(control.value, 'quota');
@@ -427,7 +427,7 @@ export class DatasetFormComponent implements FormConfiguration {
           blurStatus: true,
           parent: this,
           validation: [
-            (control: FormControl): ValidationErrors => {
+            (control: UntypedFormControl): ValidationErrors => {
               const config = this.fieldConfig.find((config) => config.name === 'reservation');
 
               const errors = control.value && Number.isNaN(this.convertHumanStringToNum(control.value, 'reservation'))
@@ -630,7 +630,7 @@ export class DatasetFormComponent implements FormConfiguration {
           required: false,
           value: DatasetAclType.Inherit,
           onChangeOption: (event: { event: MatSelectChange }) => {
-            const aclModeFormControl = this.entityForm.formGroup.get('aclmode') as FormControl;
+            const aclModeFormControl = this.entityForm.formGroup.get('aclmode') as UntypedFormControl;
             const value = event.event.value;
             if (value === DatasetAclType.Nfsv4) {
               aclModeFormControl.setValue(AclMode.Passthrough);
@@ -688,7 +688,7 @@ export class DatasetFormComponent implements FormConfiguration {
           blurStatus: true,
           parent: this,
           validation: [
-            (control: FormControl): ValidationErrors => {
+            (control: UntypedFormControl): ValidationErrors => {
               const config = this.fieldConfig.find((config) => config.name === 'special_small_block_size');
 
               const size = this.convertHumanStringToNum(control.value, 'special_small_block_size');
@@ -900,7 +900,7 @@ export class DatasetFormComponent implements FormConfiguration {
   ) { }
 
   initial(entityForm: EntityFormComponent): void {
-    const aclModeFormControl = this.entityForm.formGroup.get('aclmode') as FormControl;
+    const aclModeFormControl = this.entityForm.formGroup.get('aclmode') as UntypedFormControl;
     const value = entityForm.formGroup.get('acltype').value;
     if (value === DatasetAclType.Nfsv4) {
       this.entityForm.setDisabled('aclmode', false, false);
@@ -927,7 +927,7 @@ export class DatasetFormComponent implements FormConfiguration {
       this.entityForm.setDisabled('deduplication', false, false);
     }
 
-    this.dedupControl = this.entityForm.formGroup.controls['deduplication'] as FormControl;
+    this.dedupControl = this.entityForm.formGroup.controls['deduplication'] as UntypedFormControl;
     this.dedupField = _.find(this.fieldConfig, { name: 'deduplication' });
     this.dedupValue = this.dedupControl.value;
     this.dedupControl.valueChanges.pipe(untilDestroyed(this)).subscribe((dedup: DeduplicationSetting) => {
@@ -985,7 +985,7 @@ export class DatasetFormComponent implements FormConfiguration {
       caseControl.updateValueAndValidity();
     });
 
-    this.recordsizeControl = this.entityForm.formGroup.controls['recordsize'] as FormControl;
+    this.recordsizeControl = this.entityForm.formGroup.controls['recordsize'] as UntypedFormControl;
     this.recordsizeField = _.find(this.fieldConfig, { name: 'recordsize' }) as FormSelectConfig;
 
     this.ws.call('pool.dataset.recordsize_choices')

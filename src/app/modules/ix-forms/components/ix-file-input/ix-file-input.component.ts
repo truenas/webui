@@ -2,7 +2,7 @@ import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, Input,
 } from '@angular/core';
 import {
-  ControlValueAccessor, NgControl, FormControl,
+  ControlValueAccessor, NgControl, UntypedFormControl,
 } from '@angular/forms';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
@@ -24,7 +24,7 @@ export class IxFileInputComponent implements ControlValueAccessor {
   value: FileList;
   isDisabled = false;
 
-  formControl = new FormControl(this).value as FormControl;
+  formControl = new UntypedFormControl(this).value as UntypedFormControl;
 
   onChange: (value: File[]) => void = (): void => {};
   onTouch: () => void = (): void => {};

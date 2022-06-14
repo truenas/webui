@@ -1,8 +1,8 @@
 import { ElementRef } from '@angular/core';
 import { ValidatorFn, AsyncValidatorFn } from '@angular/forms';
-import { MatCheckboxChange } from '@angular/material/checkbox/checkbox';
+import { MatCheckboxChange } from '@angular/material/checkbox';
 import { MatSelectionListChange } from '@angular/material/list';
-import { MatRadioChange } from '@angular/material/radio/radio';
+import { MatRadioChange } from '@angular/material/radio';
 import { MatSelectChange } from '@angular/material/select';
 import { ITreeOptions } from '@circlon/angular-tree-component';
 import { DatasetType } from 'app/enums/dataset.enum';
@@ -77,6 +77,7 @@ export interface FormCheckboxConfig<P = unknown> extends BaseFieldConfig<P> {
   expandedHeight?: boolean;
   onChange?(data: { event: MatCheckboxChange }): void;
   type: 'checkbox';
+  inlineLabel?: string;
   updater?: (parent: P) => void;
   customEventMethod?: () => void;
 }

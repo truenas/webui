@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import {
-  FormArray, FormControl, ValidationErrors, ValidatorFn, Validators,
+  UntypedFormArray, UntypedFormControl, ValidationErrors, ValidatorFn, Validators,
 } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
@@ -248,7 +248,7 @@ export class VmWizardComponent implements WizardConfiguration {
           validation: [
             ...helptext.memory_validation,
             this.memoryValidator('memory'),
-            (control: FormControl): ValidationErrors => {
+            (control: UntypedFormControl): ValidationErrors => {
               const memoryConfig = this.wizardConfig.find((wizardConfig) => wizardConfig.label === helptext.vcpus_label)
                 .fieldConfig.find((fieldConfig) => fieldConfig.name === 'memory');
               const errors = control.value && Number.isNaN(this.storageService.convertHumanStringToNum(control.value))
@@ -330,7 +330,7 @@ export class VmWizardComponent implements WizardConfiguration {
           validation: [
             ...helptext.volsize_validation,
             this.volSizeValidator('volsize'),
-            (control: FormControl): ValidationErrors => {
+            (control: UntypedFormControl): ValidationErrors => {
               const volsizeConfig = this.wizardConfig
                 .find((wizardConfig) => wizardConfig.label === helptext.disks_label)
                 .fieldConfig
@@ -832,7 +832,7 @@ export class VmWizardComponent implements WizardConfiguration {
   }
 
   memoryValidator(name: string): ValidatorFn {
-    return (control: FormControl) => {
+    return (control: UntypedFormControl) => {
       const memoryConfig = this.wizardConfig[1].fieldConfig.find((config) => config.name === name);
 
       const errors = this.storageService.convertHumanStringToNum(control.value) < 268435456
@@ -873,7 +873,7 @@ export class VmWizardComponent implements WizardConfiguration {
   }
 
   volSizeValidator(name: string): ValidatorFn {
-    return (control: FormControl) => {
+    return (control: UntypedFormControl) => {
       const sizeConfig = this.wizardConfig[2].fieldConfig.find((config) => config.name === name);
 
       if (control.value && this.statSize) {
@@ -911,7 +911,7 @@ export class VmWizardComponent implements WizardConfiguration {
   }
 
   blueEventForVolSize(): void {
-    const enteredVal = (this.entityWizard.formArray as FormArray).controls[2].value.volsize;
+    const enteredVal = (this.entityWizard.formArray as UntypedFormArray).controls[2].value.volsize;
     const volsize = this.storageService.convertHumanStringToNum(enteredVal, false, 'mgtp');
     if (volsize >= 1048576) {
       this.entityWizard.formArray.get([2]).get('volsize').setValue(this.storageService.humanReadable);
@@ -924,9 +924,9 @@ export class VmWizardComponent implements WizardConfiguration {
     }
   }
 
-  getFormControlFromFieldName(fieldName: string, parent: VmWizardComponent = this): FormControl {
+  getFormControlFromFieldName(fieldName: string, parent: VmWizardComponent = this): UntypedFormControl {
     return parent.entityWizard.formArray.get([parent.getFormArrayIndexFromFieldName(fieldName, parent)])
-      .get(fieldName) as FormControl;
+      .get(fieldName) as UntypedFormControl;
   }
 
   getFormArrayIndexFromFieldName(fieldName: string, parent: VmWizardComponent = this): number {

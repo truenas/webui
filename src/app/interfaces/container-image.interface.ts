@@ -9,6 +9,15 @@ export interface PullContainerImageParams {
   tag?: string;
 }
 
+export type DeleteContainerImageParams = [
+  id: string,
+  params?: { force: boolean },
+];
+
+export interface PullContainerImageResponse {
+  status: string;
+}
+
 export interface ContainerImage {
   created: ApiTimestamp;
   dangling: boolean;

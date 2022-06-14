@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, OnDestroy } from '@angular/core';
-import { FormControl, Validators } from '@angular/forms';
+import { UntypedFormControl, Validators } from '@angular/forms';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -65,7 +65,7 @@ export class ChartFormComponent implements OnDestroy {
     this.title = chart.name;
     this.config = chart.config;
 
-    this.form.addControl('release_name', new FormControl(this.title, [Validators.required]));
+    this.form.addControl('release_name', new UntypedFormControl(this.title, [Validators.required]));
 
     this.dynamicSection.push({
       name: 'Application name',
@@ -103,8 +103,8 @@ export class ChartFormComponent implements OnDestroy {
       this.selectedVersionKey = versionKeys[0];
     }
 
-    this.form.addControl('release_name', new FormControl('', [Validators.required]));
-    this.form.addControl('version', new FormControl(this.selectedVersionKey, [Validators.required]));
+    this.form.addControl('release_name', new UntypedFormControl('', [Validators.required]));
+    this.form.addControl('version', new UntypedFormControl(this.selectedVersionKey, [Validators.required]));
 
     this.dynamicSection.push({
       name: 'Application name',

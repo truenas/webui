@@ -9,6 +9,7 @@ import { JobState } from 'app/enums/job-state.enum';
 import helptext from 'app/helptext/storage/disks/disks';
 import { Option } from 'app/interfaces/option.interface';
 import { Disk } from 'app/interfaces/storage.interface';
+import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { WebSocketService } from 'app/services';
 import { DialogService } from 'app/services/dialog.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
@@ -40,6 +41,7 @@ export class DiskBulkEditComponent {
     private ws: WebSocketService,
     private translate: TranslateService,
     private slideInService: IxSlideInService,
+    private errorHandler: FormErrorHandlerService,
   ) {}
 
   private translateOptions(options: Option[]): Option[] {
@@ -144,7 +146,7 @@ export class DiskBulkEditComponent {
         (err) => {
           this.isLoading = false;
           this.slideInService.close();
-          this.dialogService.errorReport(helptext.dialog_error, err.reason, err.trace.formatted);
+          this.errorHandler.handleWsFormError(err, this.form);
         },
       );
   }

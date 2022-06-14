@@ -1,8 +1,8 @@
-import { FormGroup } from '@angular/forms';
+import { UntypedFormGroup } from '@angular/forms';
 import { FieldConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
 
 export interface Field {
   config: FieldConfig;
-  group: FormGroup;
+  group: UntypedFormGroup;
   fieldShow: string;
 }

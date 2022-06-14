@@ -6,8 +6,11 @@ import { FlexLayoutModule } from '@angular/flex-layout';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
+import { BulkListItemComponent } from 'app/core/components/bulk-list-item/bulk-list-item.component';
 import { CopyButtonComponent } from 'app/core/components/copy-btn/copy-btn.component';
 import { HtmlTooltipComponent } from 'app/core/components/directives/html-tooltip/html-tooltip.component';
 import { HtmlTooltipDirective } from 'app/core/components/directives/html-tooltip/html-tooltip.directive';
@@ -30,6 +33,8 @@ import { StorageService } from 'app/services/storage.service';
     TranslateModule,
     MatIconModule,
     MatButtonModule,
+    MatProgressSpinnerModule,
+    MatTooltipModule,
     RouterModule,
     CommonDirectivesModule,
   ],
@@ -43,6 +48,7 @@ import { StorageService } from 'app/services/storage.service';
     FormatDateTimePipe,
     CopyButtonComponent,
     MapValuePipe,
+    BulkListItemComponent,
   ],
   exports: [
     CommonModule,
@@ -57,6 +63,7 @@ import { StorageService } from 'app/services/storage.service';
     CopyButtonComponent,
     FormatDateTimePipe,
     MapValuePipe,
+    BulkListItemComponent,
   ],
   providers: [
     StorageService,

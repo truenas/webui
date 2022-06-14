@@ -34,3 +34,26 @@ input {
     }
   }
 }
+
+.inline-label div.label.half-width,
+.inline-label .mat-form-field {
+  display: inline-block;
+}
+
+.inline-label div.label.half-width {
+  width: calc(50% - 16px);
+}
+
+.inline-label .mat-form-field {
+  width: calc(40% - 16px);
+}
+
+.inline-label mat-checkbox {
+  padding: 8px;
+}
+
+:host-context(app-system-alert) {
+  .inline-label label.label.input-select {
+    padding: 8px !important;
+  }
+}

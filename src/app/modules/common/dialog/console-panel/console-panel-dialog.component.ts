@@ -1,7 +1,7 @@
 import {
   Component, ViewChild, ElementRef, EventEmitter, OnInit,
 } from '@angular/core';
-import { MatCheckboxChange } from '@angular/material/checkbox/checkbox';
+import { MatCheckboxChange } from '@angular/material/checkbox';
 import { MatDialogRef } from '@angular/material/dialog';
 import { TranslateService } from '@ngx-translate/core';
 import { Interval } from 'app/interfaces/timeout.interface';
