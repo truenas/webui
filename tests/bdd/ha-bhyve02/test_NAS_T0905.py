@@ -431,23 +431,6 @@ def navigate_to_dashboard_wait_for_ha_to_be_online(driver):
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
     assert wait_on_element(driver, 7, '//span[contains(.,"System Information")]')
     # need to wait for all controller to be online.
-    assert wait_on_element(driver, 60, '//div[contains(.,"tn-bhyve03-nodea")]')
-    assert wait_on_element(driver, 300, '//div[contains(.,"tn-bhyve03-nodeb")]')
-    assert wait_on_element(driver, 60, '//mat-icon[@svgicon="ha_enabled"]')
-
-
-@then('navigate to dashboard, and verify that both controllers show')
-def navigate_to_dashboard_and_verify_that_both_controllers_show(driver):
-    """navigate to dashboard, and verify that both controllers show."""
-    assert wait_on_element(driver, 7, '//h4[contains(.,"Failover Configuration")]')
-    # scroll up the mat-list-item
-    element = driver.find_element_by_xpath('//span[contains(.,"root")]')
-    driver.execute_script("arguments[0].scrollIntoView();", element)
-    time.sleep(0.5)
-    assert wait_on_element(driver, 7, '//mat-list-item[@ix-auto="option__Dashboard"]', 'clickable')
-    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
-    assert wait_on_element(driver, 7, '//span[contains(.,"System Information")]')
-    # need to wait for all controller to be online.
     assert wait_on_element(driver, 60, '//div[contains(.,"truenas")]')
     assert wait_on_element(driver, 300, '//div[contains(.,"truenas-b")]')
     assert wait_on_element(driver, 60, '//mat-icon[@svgicon="ha_enabled"]')
