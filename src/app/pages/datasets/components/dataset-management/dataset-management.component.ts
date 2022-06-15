@@ -87,7 +87,7 @@ export class DatasetsManagementComponent implements OnInit {
   private getDatasetIcon(dataset: Dataset): string {
     const level = dataset.name.split('/').length;
     if (level === 1) {
-      return 'ix-dataset';
+      return 'device_hub';
     } if (level > 1 && dataset.children.length) {
       return 'folder';
     }
