@@ -44,7 +44,6 @@ def you_should_see_the_dashboard_and_system_information(driver):
         assert wait_on_element(driver, 10, '//button[@ix-auto="button__CLOSE"]', 'clickable')
         driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
     assert wait_on_element(driver, 7, '//span[contains(text(),"System Information")]')
-    assert wait_on_element(driver, 10, '//div[contains(.,"truenas-b")]')
 
 
 @then('Click on the Accounts item in the left side menu')
