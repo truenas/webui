@@ -93,14 +93,15 @@ def open_a_new_tab_navigate_to_backblaze_url_click_sign_in(driver, backblaze_url
     driver.execute_script("window.open();")
     driver.switch_to.window(driver.window_handles[1])
     driver.get(backblaze_url)
-    assert wait_on_element(driver, 5, '//img[@src="/pics/backblaze-logo.gif"]')
-    assert wait_on_element(driver, 5, '//a[@id="signIn"]', 'clickable')
+    assert wait_on_element(driver, 7, '//img[@alt="Backblaze Logo"]')
+    assert wait_on_element(driver, 5, '//a[text()="Sign In"]', 'clickable')
 
 
 @then('enter the <user_name> click Next and enter the <password> click Next')
 def enter_the_user_name_click_Next_and_enter_the_password_click_Next(driver, user_name, password):
     """enter the <user_name> click Next and enter the <password> click Next."""
     assert wait_on_element(driver, 5, '//h3[text()="Sign in to your Backblaze account"]')
+    time.sleep(1)
     assert wait_on_element(driver, 5, '//input[@placeholder="Email"]', 'inputable')
     driver.find_element_by_xpath('//input[@placeholder="Email"]').send_keys(user_name)
     time.sleep(0.5)
@@ -123,9 +124,10 @@ def click_on_Browser_Files_click_on_bucket_then_click_on_the_test_folder(driver,
     assert wait_on_element(driver, 5, '//span[text()="Overview"]')
     assert wait_on_element(driver, 5, '//a[text()="Browse Files"]', 'clickable')
     driver.find_element_by_xpath('//a[text()="Browse Files"]').click()
+    assert wait_on_element(driver, 7, '//h1[text()="Browse Files"]')
     assert wait_on_element(driver, 5, '//div[@class="b2-browse-crumbs" and contains(.,"Buckets")]')
-    assert wait_on_element(driver, 5, f'//span[contains(text(),"{bucket}")]', 'clickable')
-    driver.find_element_by_xpath(f'//span[contains(text(),"{bucket}")]').click()
+    assert wait_on_element(driver, 5, f'//span[contains(text(),"{bucket} ")]', 'clickable')
+    driver.find_element_by_xpath(f'//span[contains(text(),"{bucket} ")]').click()
     assert wait_on_element(driver, 10, f'//a[text()="{bucket}"]', 'clickable')
     time.sleep(1)
 
@@ -158,8 +160,8 @@ def click_tasks_on_the_left_sidebar_then_click_on_cloud_sync_tasks(driver):
 @then('on the Cloud Sync Tasks, click ADD')
 def on_the_cloud_sync_tasks_click_add(driver):
     """on the Cloud Sync Tasks, click ADD."""
-    assert wait_on_element(driver, 5, '//div[contains(.,"Cloud Sync Tasks")]')
-    assert wait_on_element(driver, 5, '//button[@ix-auto="button__Cloud Sync Tasks_ADD"]', 'clickable')
+    assert wait_on_element(driver, 7, '//div[contains(.,"Cloud Sync Tasks")]')
+    assert wait_on_element(driver, 10, '//button[@ix-auto="button__Cloud Sync Tasks_ADD"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__Cloud Sync Tasks_ADD"]').click()
 
 
@@ -208,8 +210,8 @@ def under_directory_files_choose_backblaze_b2_and_under_transfer_mode_select_cop
 @then('the Backblaze B2 tasks should save without error')
 def the_backblaze_b2_tasks_should_save_without_error(driver):
     """the Backblaze B2 tasks should save without error."""
-    assert wait_on_element(driver, 5, '//div[contains(.,"Cloud Sync Tasks")]')
-    assert wait_on_element(driver, 5, '//div[contains(text(),"My Backblaze B2 task")]')
+    assert wait_on_element(driver, 7, '//div[contains(.,"Cloud Sync Tasks")]')
+    assert wait_on_element(driver, 10, '//div[contains(text(),"My Backblaze B2 task")]')
 
 
 @then('expand the task on the NAS UI and click Run Now')
@@ -254,13 +256,14 @@ def verify_all_files_are_copied_from_backblaze_b2_are_into_the_dataset(driver, n
 def on_the_nas_cloud_sync_task_tab_click_edit(driver):
     """on the NAS cloud sync task tab, click Edit."""
     driver.switch_to.window(driver.window_handles[0])
-    assert wait_on_element(driver, 5, '//div[contains(.,"Cloud Sync Tasks")]')
-    assert wait_on_element(driver, 5, '//div[contains(text(),"My Backblaze B2 task")]')
+    time.sleep(1)
+    assert wait_on_element(driver, 7, '//div[contains(.,"Cloud Sync Tasks")]')
+    assert wait_on_element(driver, 10, '//div[contains(text(),"My Backblaze B2 task")]')
     assert wait_on_element(driver, 5, '//a[@ix-auto="expander__My Backblaze B2 task"]', 'clickable')
-    if not wait_on_element(driver, 1, '//button[@ix-auto="button___edit"]', 'clickable'):
+    if not wait_on_element(driver, 2, '//button[@ix-auto="button___edit"]'):
         driver.find_element_by_xpath('//a[@ix-auto="expander__My Backblaze B2 task"]').click()
     time.sleep(1.5)
-    assert wait_on_element(driver, 5, '//p[contains(text(),"backblazecreds")]')
+    assert wait_on_element(driver, 7, '//p[contains(text(),"backblazecreds")]')
     assert wait_on_element(driver, 5, '//button[@ix-auto="button___edit"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button___edit"]').click()
     assert wait_on_element(driver, 5, '//h4[contains(.,"Transfer")]')
@@ -350,8 +353,8 @@ def click_save_the_backblaze_b2_tasks_should_save_without_error(driver):
     assert wait_on_element(driver, 5, '//button[@id="save_button"]', 'clickable')
     driver.find_element_by_xpath('//button[@id="save_button"]').click()
     assert wait_on_element_disappear(driver, 30, '//h6[contains(.,"Please wait")]')
-    assert wait_on_element(driver, 5, '//div[contains(.,"Cloud Sync Tasks")]')
-    assert wait_on_element(driver, 5, '//div[contains(text(),"My Backblaze B2 task")]')
+    assert wait_on_element(driver, 7, '//div[contains(.,"Cloud Sync Tasks")]')
+    assert wait_on_element(driver, 10, '//div[contains(text(),"My Backblaze B2 task")]')
 
 
 @then('verify all files are moved from the Backblaze B2 bucket to the dataset')
@@ -375,7 +378,7 @@ def verify_all_files_are_moved_from_the_backblaze_b2_test_folder_to_the_dataset(
     assert wait_on_element(driver, 5, '//a[@id="refreshButtonId"]', 'clickable')
     driver.find_element_by_xpath('//a[@id="refreshButtonId"]').click()
     time.sleep(1)
-    assert wait_on_element(driver, 5, f'//a[text()="{my_bucket}"]', 'clickable')
+    assert wait_on_element(driver, 7, f'//a[text()="{my_bucket}"]', 'clickable')
     assert wait_on_element(driver, 5, '//span[contains(text(),"music")]', 'clickable')
     assert wait_on_element(driver, 5, '//div[@class="b2-browse-name" and contains(.,"Explaining_BSD.pdf (2) *")]')
     assert wait_on_element(driver, 5, '//div[@class="b2-browse-name" and contains(.,"Gloomy_Forest_wallpaper_ForWallpapercom.jpg (2) *")]')
@@ -513,8 +516,8 @@ def on_the_backblaze_b2_test_folder_tab_delete_one_file(driver):
 def on_the_nas_cloud_sync_task_tab_click_run_now(driver):
     """on the NAS cloud sync task tab, click Run Now."""
     driver.switch_to.window(driver.window_handles[0])
-    assert wait_on_element(driver, 5, '//div[contains(.,"Cloud Sync Tasks")]')
-    assert wait_on_element(driver, 5, '//div[contains(text(),"My Backblaze B2 task")]')
+    assert wait_on_element(driver, 7, '//div[contains(.,"Cloud Sync Tasks")]')
+    assert wait_on_element(driver, 10, '//div[contains(text(),"My Backblaze B2 task")]')
     assert wait_on_element(driver, 5, '//a[@ix-auto="expander__My Backblaze B2 task"]', 'clickable')
     time.sleep(0.5)
     assert wait_on_element(driver, 5, '//button[@id="action_button___run_now"]', 'clickable')

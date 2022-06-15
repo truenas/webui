@@ -96,7 +96,8 @@ def click_on_the_settings_icon_in_the_upper_right_and_select_about(driver):
 @then('on the bottom of the About box, verify TrueNAS CORE exist')
 def on_the_bottom_of_the_about_box_verify_truenas_core(driver):
     """on the bottom of the About box, verify TrueNAS CORE exist."""
-    element = driver.find_element_by_xpath('//div[@class="copyright-txt"]')
+    assert wait_on_element(driver, 7, '//mat-dialog-container//div[@class="copyright-txt"]//a', 'clickable')
+    element = driver.find_element_by_xpath('//mat-dialog-container//div[@class="copyright-txt"]')
     assert 'TrueNAS CORE' in element.text, element.text
 
 
@@ -104,16 +105,16 @@ def on_the_bottom_of_the_about_box_verify_truenas_core(driver):
 def verify_the_copywrite_year_is_the_current_year(driver):
     """verify the Copywrite year is the current year."""
     current_year = str(datetime.date.today().year)
-    element = driver.find_element_by_xpath('//div[@class="copyright-txt"]')
+    element = driver.find_element_by_xpath('//mat-dialog-container//div[@class="copyright-txt"]')
     assert current_year in element.text, element.text
 
 
 @then('verify iXsystems, Inc goes to www.ixsystems.com')
 def verify_ixsystems_goes_to_wwwixsystemscom(driver):
     """verify iXsystems, Inc goes to www.ixsystems.com."""
-    element = driver.find_element_by_xpath('//div[@class="copyright-txt"]')
+    element = driver.find_element_by_xpath('//mat-dialog-container//div[@class="copyright-txt"]')
     assert 'iXsystems, Inc' in element.text, element.text
-    driver.find_element_by_xpath('//div[@class="copyright-txt"]/a').click()
+    driver.find_element_by_xpath('//mat-dialog-container//div[@class="copyright-txt"]//a').click()
     time.sleep(1)
     driver.switch_to.window(driver.window_handles[1])
     assert wait_on_element(driver, 7, '//img[contains(@title,"ix_logo")]')

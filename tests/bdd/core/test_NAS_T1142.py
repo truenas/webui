@@ -13,7 +13,6 @@ from pytest_bdd import (
     when,
     parsers
 )
-import pytest
 
 
 @scenario('features/NAS-T1142.feature', 'Verify Backblaze B2 credentials can be added')

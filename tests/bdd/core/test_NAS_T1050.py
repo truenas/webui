@@ -211,6 +211,8 @@ def click_submit_the_new_share_should_be_created_without_error(driver):
     if wait_on_element(driver, 3, '//h1[contains(.,"Enable service")]'):
         assert wait_on_element(driver, 7, '//button[@ix-auto="button__ENABLE SERVICE"]', 'clickable')
         driver.find_element_by_xpath('//button[@ix-auto="button__ENABLE SERVICE"]').click()
+        assert wait_on_element_disappear(driver, 15, '//h6[contains(.,"Please wait")]')
+        assert wait_on_element(driver, 7, '//h1[contains(text(),"NFS Service")]')
         assert wait_on_element(driver, 7, '//button[@ix-auto="button__CLOSE"]', 'clickable')
         driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
     assert wait_on_element(driver, 7, '//div[contains(.,"/mnt/tank/nfs")]')

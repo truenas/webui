@@ -151,8 +151,8 @@ def under_transfer_mode_select_copy_click_save(driver):
 @then('the Dropbox tasks should save without error')
 def the_dropbox_tasks_should_save_without_error(driver):
     """the Dropbox tasks should save without error."""
-    assert wait_on_element(driver, 5, '//div[contains(.,"Cloud Sync Tasks")]')
-    assert wait_on_element(driver, 5, '//div[contains(text(),"My Dropbox task")]')
+    assert wait_on_element(driver, 7, '//div[contains(.,"Cloud Sync Tasks")]')
+    assert wait_on_element(driver, 10, '//div[contains(text(),"My Dropbox task")]')
 
 
 @then('expand the task on the NAS UI and click Run Now')
@@ -198,13 +198,14 @@ def on_the_nas_cloud_sync_task_tab_click_edit(driver):
     """on the NAS cloud sync task tab, click Edit."""
     driver.switch_to.window(driver.window_handles[0])
     time.sleep(1)
-    assert wait_on_element(driver, 5, '//div[contains(.,"Cloud Sync Tasks")]')
-    assert wait_on_element(driver, 5, '//div[contains(text(),"My Dropbox task")]')
+    assert wait_on_element(driver, 7, '//div[contains(.,"Cloud Sync Tasks")]')
+    assert wait_on_element(driver, 10, '//div[contains(text(),"My Dropbox task")]')
     assert wait_on_element(driver, 5, '//a[@ix-auto="expander__My Dropbox task"]', 'clickable')
-    if not wait_on_element(driver, 2, '//button[@ix-auto="button___edit"]', 'clickable'):
+    if not wait_on_element(driver, 2, '//button[@ix-auto="button___edit"]'):
         driver.find_element_by_xpath('//a[@ix-auto="expander__My Dropbox task"]').click()
-    time.sleep(1)
-    assert wait_on_element(driver, 7, '//button[@ix-auto="button___edit"]', 'clickable')
+    time.sleep(1.5)
+    assert wait_on_element(driver, 7, '//p[contains(text(),"dropboxcredentials")]')
+    assert wait_on_element(driver, 5, '//button[@ix-auto="button___edit"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button___edit"]').click()
     assert wait_on_element(driver, 5, '//h4[contains(.,"Transfer")]')
 
@@ -268,7 +269,7 @@ def input_user_name_and_password_click_sign_in(driver, user_name, password):
             time.sleep(1)
         driver.switch_to.window(driver.window_handles[1])
     assert wait_on_element(driver, 15, '//nav[contains(.,"Dropbox")]//span[text()="Dropbox"]')
-    time.sleep(1)
+    time.sleep(2)
 
 
 @then(parsers.parse('click on {folder1} then click on the test folder'))
@@ -283,16 +284,16 @@ def click_on_folder1_then_click_on_the_test_folder(driver, folder1):
     assert wait_on_element(driver, 15, '//span[text()="test"]', 'clickable')
     time.sleep(1)
     driver.find_element_by_xpath('//span[text()="test"]').click()
-    time.sleep(1)
+    time.sleep(1.5)
 
 
 @then('verify all files are in the test folder')
 def verify_all_files_are_in_the_test_folder(driver):
     """verify all files are in the test folder."""
-    assert wait_on_element(driver, 7, '//nav[contains(.,"test")]//span[text()="test"]')
+    assert wait_on_element(driver, 10, '//nav[contains(.,"test")]//span[text()="test"]')
+    assert wait_on_element(driver, 10, '//span[text()="music"]', 'clickable')
     assert wait_on_element(driver, 7, '//span[text()="Explaining_BSD.pdf"]', 'clickable')
     assert wait_on_element(driver, 5, '//span[text()="Gloomy_Forest_wallpaper_ForWallpapercom.jpg"]', 'clickable')
-    assert wait_on_element(driver, 5, '//span[text()="music"]', 'clickable')
     driver.find_element_by_xpath('//span[text()="music"]').click()
     assert wait_on_element(driver, 7, '//nav[contains(.,"music")]//span[text()="music"]')
     assert wait_on_element(driver, 7, '//span[text()="Mr_Smith_Pequeñas_Guitarras.mp3"]', 'clickable')
@@ -338,8 +339,8 @@ def click_save_the_dropbox_tasks_should_save_without_error(driver):
     assert wait_on_element(driver, 5, '//button[@id="save_button"]', 'clickable')
     driver.find_element_by_xpath('//button[@id="save_button"]').click()
     assert wait_on_element_disappear(driver, 30, '//h6[contains(.,"Please wait")]')
-    assert wait_on_element(driver, 5, '//div[contains(.,"Cloud Sync Tasks")]')
-    assert wait_on_element(driver, 5, '//div[contains(text(),"My Dropbox task")]')
+    assert wait_on_element(driver, 7, '//div[contains(.,"Cloud Sync Tasks")]')
+    assert wait_on_element(driver, 10, '//div[contains(text(),"My Dropbox task")]')
 
 
 @then('verify all files are moved from the Dropbox test folder to the dataset')
@@ -362,7 +363,7 @@ def verify_all_files_are_moved_from_the_dropbox_test_folder_to_the_dataset(drive
     time.sleep(0.5)
     driver.refresh()
     time.sleep(1)
-    assert wait_on_element(driver, 5, '//nav[contains(.,"test")]//span[text()="test"]')
+    assert wait_on_element(driver, 7, '//nav[contains(.,"test")]//span[text()="test"]')
     assert wait_on_element(driver, 7, '//span[text()="music"]')
     assert not is_element_present(driver, '//span[text()="Explaining_BSD.pdf"]')
     assert not is_element_present(driver, '//span[text()="Gloomy_Forest_wallpaper_ForWallpapercom.jpg"]')
@@ -494,8 +495,8 @@ def on_the_dropbox_test_folder_tab_delete_one_file(driver):
 def on_the_nas_cloud_sync_task_tab_click_run_now(driver):
     """on the NAS cloud sync task tab, click Run Now."""
     driver.switch_to.window(driver.window_handles[0])
-    assert wait_on_element(driver, 5, '//div[contains(.,"Cloud Sync Tasks")]')
-    assert wait_on_element(driver, 5, '//div[contains(text(),"My Dropbox task")]')
+    assert wait_on_element(driver, 7, '//div[contains(.,"Cloud Sync Tasks")]')
+    assert wait_on_element(driver, 10, '//div[contains(text(),"My Dropbox task")]')
     assert wait_on_element(driver, 5, '//a[@ix-auto="expander__My Dropbox task"]', 'clickable')
     time.sleep(0.5)
     assert wait_on_element(driver, 5, '//button[@id="action_button___run_now"]', 'clickable')

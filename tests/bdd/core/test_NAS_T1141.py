@@ -149,8 +149,8 @@ def under_transfer_mode_select_copy_click_save(driver):
 @then('the Google Drive tasks should save without error')
 def the_google_drive_tasks_should_save_without_error(driver):
     """the Google Drive tasks should save without error."""
-    assert wait_on_element(driver, 5, '//div[contains(.,"Cloud Sync Tasks")]')
-    assert wait_on_element(driver, 5, '//div[contains(text(),"My Google Drive task")]')
+    assert wait_on_element(driver, 7, '//div[contains(.,"Cloud Sync Tasks")]')
+    assert wait_on_element(driver, 10, '//div[contains(text(),"My Google Drive task")]')
 
 
 @then('expand the task on the NAS UI and click Run Now')
@@ -196,12 +196,13 @@ def on_the_nas_cloud_sync_task_tab_click_edit(driver):
     """on the NAS cloud sync task tab, click Edit."""
     driver.switch_to.window(driver.window_handles[0])
     time.sleep(1)
-    assert wait_on_element(driver, 5, '//div[contains(.,"Cloud Sync Tasks")]')
-    assert wait_on_element(driver, 5, '//div[contains(text(),"My Google Drive task")]')
+    assert wait_on_element(driver, 7, '//div[contains(.,"Cloud Sync Tasks")]')
+    assert wait_on_element(driver, 10, '//div[contains(text(),"My Google Drive task")]')
     assert wait_on_element(driver, 5, '//a[@ix-auto="expander__My Google Drive task"]', 'clickable')
-    if not wait_on_element(driver, 1, '//button[@ix-auto="button___edit"]', 'clickable'):
+    if not wait_on_element(driver, 2, '//button[@ix-auto="button___edit"]'):
         driver.find_element_by_xpath('//a[@ix-auto="expander__My Google Drive task"]').click()
-    time.sleep(1)
+    time.sleep(1.5)
+    assert wait_on_element(driver, 7, '//p[contains(text(),"drivecredentials")]')
     assert wait_on_element(driver, 5, '//button[@ix-auto="button___edit"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button___edit"]').click()
     assert wait_on_element(driver, 5, '//h4[contains(.,"Transfer")]')
@@ -269,8 +270,9 @@ def click_on_folder1_then_click_on_the_test_folder(driver, folder1):
     assert wait_on_element(driver, 5, f'//div[text()="{folder1}"]', 'clickable')
     action = ActionChains(driver)
     action.double_click(driver.find_element_by_xpath(f'//div[text()="{folder1}"]')).perform()
-    # driver.find_element_by_xpath(f'//div[text()="{folder1}"]').click()
-    assert wait_on_element(driver, 5, f'//div[text()="{folder1}"]')
+    assert wait_on_element(driver, 7, f'//div[@aria-label="{folder1}"]')
+    time.sleep(0.5)
+    assert wait_on_element(driver, 7, '//div[text()="initial"]', 'clickable')
     assert wait_on_element(driver, 5, '//div[text()="test"]', 'clickable')
     action = ActionChains(driver)
     action.double_click(driver.find_element_by_xpath('//div[text()="test"]')).perform()
@@ -331,8 +333,8 @@ def click_save_the_google_drive_tasks_should_save_without_error(driver):
     assert wait_on_element(driver, 5, '//button[@id="save_button"]', 'clickable')
     driver.find_element_by_xpath('//button[@id="save_button"]').click()
     assert wait_on_element_disappear(driver, 30, '//h6[contains(.,"Please wait")]')
-    assert wait_on_element(driver, 5, '//div[contains(.,"Cloud Sync Tasks")]')
-    assert wait_on_element(driver, 5, '//div[contains(text(),"My Google Drive task")]')
+    assert wait_on_element(driver, 7, '//div[contains(.,"Cloud Sync Tasks")]')
+    assert wait_on_element(driver, 10, '//div[contains(text(),"My Google Drive task")]')
 
 
 @then('verify all files are moved from the Google Drive test folder to the dataset')
@@ -356,7 +358,7 @@ def verify_all_files_are_moved_from_the_google_drive_test_folder_to_the_dataset(
     time.sleep(1)
     driver.refresh()
     time.sleep(1)
-    assert wait_on_element(driver, 5, '//div[text()="test"]')
+    assert wait_on_element(driver, 7, '//div[text()="test"]')
     assert wait_on_element(driver, 5, '//div[text()="music"]', 'clickable')
     assert not is_element_present(driver, '//div[text()="Explaining_BSD.pdf"]')
     assert not is_element_present(driver, '//div[text()="Gloomy_Forest_wallpaper_ForWallpapercom.jpg"]')
@@ -413,7 +415,7 @@ def verify_all_files_are_moved_from_the_dataset_to_the_google_drive_test_folder(
     time.sleep(1)
     driver.refresh()
     time.sleep(1)
-    assert wait_on_element(driver, 5, '//div[text()="test"]')
+    assert wait_on_element(driver, 7, '//div[text()="test"]')
     assert wait_on_element(driver, 5, '//div[text()="Explaining_BSD.pdf"]', 'clickable')
     assert wait_on_element(driver, 5, '//div[text()="Gloomy_Forest_wallpaper_ForWallpapercom.jpg"]', 'clickable')
     assert wait_on_element(driver, 5, '//div[text()="music"]', 'clickable')
@@ -485,8 +487,8 @@ def on_the_google_drive_test_folder_tab_delete_one_file(driver):
 def on_the_nas_cloud_sync_task_tab_click_run_now(driver):
     """on the NAS cloud sync task tab, click Run Now."""
     driver.switch_to.window(driver.window_handles[0])
-    assert wait_on_element(driver, 5, '//div[contains(.,"Cloud Sync Tasks")]')
-    assert wait_on_element(driver, 5, '//div[contains(text(),"My Google Drive task")]')
+    assert wait_on_element(driver, 7, '//div[contains(.,"Cloud Sync Tasks")]')
+    assert wait_on_element(driver, 10, '//div[contains(text(),"My Google Drive task")]')
     assert wait_on_element(driver, 5, '//a[@ix-auto="expander__My Google Drive task"]', 'clickable')
     time.sleep(0.5)
     assert wait_on_element(driver, 5, '//button[@id="action_button___run_now"]', 'clickable')
