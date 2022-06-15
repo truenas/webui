@@ -16,8 +16,11 @@
     <div class="tree-node-grid">
       <div>
         <div fxLayout="row" fxLayoutAlign="start center">
-          <mat-icon *ngIf="node.icon && !node.icon.startsWith('mdi')">{{ node.icon }}</mat-icon>
-          <mat-icon *ngIf="node.icon && node.icon.startsWith('mdi')" fontSet="mdi-set" [fontIcon]="node.icon"></mat-icon>
+          <div class="node-label-icon">
+            <mat-icon *ngIf="node.icon && !node.icon.startsWith('mdi') && !node.icon.startsWith('ix')">{{ node.icon }}</mat-icon>
+            <mat-icon *ngIf="node.icon && node.icon.startsWith('mdi')" fontSet="mdi-set" [fontIcon]="node.icon"></mat-icon>
+            <mat-icon *ngIf="node.icon && node.icon.startsWith('ix')" [svgIcon]="node.icon.replace('ix-', '')"></mat-icon>
+          </div>
           <strong>{{ node.label }}</strong>
         </div>
       </div>
@@ -27,7 +30,7 @@
         </div>
       </div>
       <div>
-        <div fxLayout="row" fxLayoutAlign="start center">
+        <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="4px">
           <ng-container *ngIf="node.item.encrypted; else unlocked">
             <mat-icon>lock</mat-icon>
             <div>{{ 'Encrypted' | translate }}</div>
