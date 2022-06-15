@@ -5,6 +5,7 @@ import { DevicesComponent } from 'app/pages/storage2/modules/devices/components/
 export const routes: Routes = [
   {
     path: '',
+    pathMatch: 'full',
     data: { title: 'Devices' },
     component: DevicesComponent,
     children: [],

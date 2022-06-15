@@ -13,7 +13,7 @@ export const routes: Routes = [
         component: PoolsDashboardComponent,
       },
       {
-        path: 'devices/:poolId',
+        path: ':poolId/devices',
         loadChildren: () => import('./modules/devices/devices.module').then((module) => module.DevicesModule),
         data: { title: 'Devices', breadcrumb: 'Devices' },
       },

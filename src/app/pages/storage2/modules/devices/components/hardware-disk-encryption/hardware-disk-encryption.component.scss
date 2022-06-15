@@ -1,0 +1,19 @@
+@import '~assets/styles/mixins/cards';
+
+.card {
+  @include details-card();
+}
+
+.details-item {
+  display: flex;
+  flex-direction: row;
+
+  .label {
+    font-weight: bold;
+    margin-right: 5px;
+  }
+
+  .value {
+    font-weight: normal;
+  }
+}

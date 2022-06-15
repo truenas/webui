@@ -2,11 +2,13 @@ import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { untilDestroyed } from '@ngneat/until-destroy';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { VDevType } from 'app/enums/v-dev-type.enum';
 import { PoolTopology } from 'app/interfaces/pool.interface';
 import { VDev } from 'app/interfaces/storage.interface';
 import { AppLoaderService, WebSocketService } from 'app/services';
 
+@UntilDestroy()
 @Component({
   templateUrl: './devices.component.html',
   styleUrls: ['./devices.component.scss'],
@@ -23,10 +25,14 @@ export class DevicesComponent implements OnInit {
     private route: ActivatedRoute,
   ) { }
 
+  get isDiskSelected(): boolean {
+    return this.selectedItem.type === VDevType.Disk;
+  }
+
   ngOnInit(): void {
     this.loader.open();
     const poolId = this.route.snapshot.paramMap.get('poolId');
-    this.ws.call('pool.query', [[['id', '=', poolId]]]).pipe(untilDestroyed(this)).subscribe(
+    this.ws.call('pool.query', [[['id', '=', Number(poolId)]]]).pipe(untilDestroyed(this)).subscribe(
       (pools) => {
         this.topology = pools[0].topology;
         this.loader.close();
@@ -35,7 +41,8 @@ export class DevicesComponent implements OnInit {
     );
   }
 
-  onRowSelected(vdev: VDev): void {
+  onRowSelected(vdev: VDev, event: MouseEvent): void {
+    event.stopPropagation();
     this.selectedItem = vdev;
   }
 }

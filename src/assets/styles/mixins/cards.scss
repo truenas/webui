@@ -33,4 +33,11 @@
     margin: 0;
     padding: 15px;
   }
+
+  a {
+    color: var(--primary);
+    cursor: pointer;
+    margin-left: auto;
+    text-decoration: underline;
+  }
 }
