@@ -5,6 +5,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
+import { ZfsPropertySource } from 'app/enums/zfs-property-source.enum';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { DatasetFormComponent } from 'app/pages/datasets/components/dataset-form/dataset-form.component';
 import { DeleteDatasetDialogComponent } from 'app/pages/datasets/components/delete-dataset-dialog/delete-dataset-dialog.component';
@@ -32,7 +33,7 @@ export class DatasetDetailsCardComponent implements OnChanges {
   ) {}
 
   get datasetCompression(): string {
-    return this.dataset.compression?.source === 'INHERITED'
+    return this.dataset.compression?.source === ZfsPropertySource.Inherited
       ? 'Inherit (' + this.dataset.compression?.value + ')'
       : this.dataset.compression?.value;
   }
@@ -44,6 +45,10 @@ export class DatasetDetailsCardComponent implements OnChanges {
   }
 
   ngOnChanges(): void {
+    this.reloadDatasetDetails();
+  }
+
+  reloadDatasetDetails(): void {
     this.loading = true;
     this.cdr.markForCheck();
     if (this.subscription) {
@@ -64,7 +69,7 @@ export class DatasetDetailsCardComponent implements OnChanges {
       .pipe(untilDestroyed(this))
       .subscribe((shouldRefresh) => {
         if (shouldRefresh) {
-          this.ngOnChanges();
+          this.reloadDatasetDetails();
         }
       });
   }

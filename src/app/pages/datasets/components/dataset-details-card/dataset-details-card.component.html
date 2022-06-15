@@ -41,17 +41,12 @@
           <div class="loader" *ngIf="loading"></div>
         </div>
       </mat-card-content>
-      <mat-card-actions>
+      <mat-card-actions *ngIf="dataset.id !== dataset.pool" >
         <!-- TODO: Should be mat-stroked-button, but its styles are polluted -->
         <button
           class="stroked-btn" 
-          [class.disabled-btn]="dataset.id === dataset.pool" 
-          [disabled]="dataset.id === dataset.pool" 
           mat-stroked-button 
           (click)="deleteDataset()"
-          matTooltip="Can't delete root dataset"
-          [matTooltipPosition]="'before'"
-          [matTooltipDisabled]="dataset.id !== dataset.pool"
         >{{ 'Delete' | translate }}</button>
       </mat-card-actions>
     </mat-card>

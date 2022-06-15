@@ -10,12 +10,6 @@
   @include stroked-button();
 }
 
-.disabled-btn {
-  @include stroked-button();
-  color: var(--alt-fg2) !important;
-  opacity: 0.4;
-}
-  
 .header {
   font-weight: bold;
   margin-right: 5px;
