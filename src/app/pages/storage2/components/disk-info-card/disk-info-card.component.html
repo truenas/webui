@@ -1,0 +1,17 @@
+<mat-card class="disk-info-card">
+  <mat-card-header>
+    <h3 mat-card-title>{{ 'Disk Info' | translate }}</h3>
+    <button mat-button (click)="onEdit()">{{ 'Edit' | translate }}</button>
+  </mat-card-header>
+  <mat-card-content>
+    <mat-list>
+      <mat-list-item *ngFor="let item of diskInfo">
+        <strong>{{ item.label | translate }}:</strong>
+        <span>{{ item.value | translate }}</span>
+      </mat-list-item>
+    </mat-list>
+  </mat-card-content>
+  <mat-card-actions>
+    <button mat-stroked-button (click)="onReplace()">{{ 'Replace' | translate }}</button>
+  </mat-card-actions>
+</mat-card>
