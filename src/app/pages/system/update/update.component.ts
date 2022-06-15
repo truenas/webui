@@ -230,22 +230,29 @@ export class UpdateComponent implements OnInit, OnDestroy {
     });
   }
 
-  onTrainChanged(event) {
+  onTrainChanged(newTrain: string) {
     // For the case when the user switches away, then BACK to the train of the current OS
-    if (event === this.selectedTrain) {
+    if (newTrain === this.selectedTrain) {
       this.currentTrainDescription = this.trainDescriptionOnPageLoad;
       this.setTrainAndCheck();
       return;
     }
 
     let warning = '';
-    if (this.fullTrainList[event].description.includes('[nightly]')) {
+    if (newTrain.toLocaleLowerCase().includes('scale')) {
+      warning = helptext.scaleUpdate.warning;
+      if (this.isHA) {
+        warning += ' ' + helptext.scaleUpdate.haWarning;
+      }
+    }
+
+    if (this.fullTrainList[newTrain].description.includes('[nightly]')) {
       warning = T('Changing to a nightly train is one-way. Changing back to a stable train is not supported! ');
     }
 
-    this.dialogService.confirm(T('Switch Train'), warning + T('Switch update trains?')).subscribe((train_res) => {
+    this.dialogService.confirm(T('Switch Train'), warning + T('<p>Switch update trains?</p>')).subscribe((train_res) => {
       if (train_res) {
-        this.train = event;
+        this.train = newTrain;
         this.setTrainDescription();
         this.setTrainAndCheck();
       } else {
