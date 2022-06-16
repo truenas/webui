@@ -5,20 +5,5 @@
 }
 
 .details-item {
-  display: flex;
-  flex-direction: row;
-  margin-bottom: 4px;
-
-  &:last-child {
-    margin-bottom: 0;
-  }
-
-  .label {
-    font-weight: bold;
-    margin-right: 5px;
-  }
-
-  .value {
-    font-weight: normal;
-  }
+  @include details-card-item();
 }
