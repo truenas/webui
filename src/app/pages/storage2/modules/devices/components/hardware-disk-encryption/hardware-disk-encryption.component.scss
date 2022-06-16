@@ -7,6 +7,11 @@
 .details-item {
   display: flex;
   flex-direction: row;
+  margin-bottom: 4px;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
 
   .label {
     font-weight: bold;

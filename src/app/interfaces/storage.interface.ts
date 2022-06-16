@@ -7,7 +7,7 @@ import { VDevStatus } from 'app/enums/vdev-status.enum';
 import { ZfsProperty } from './zfs-property.interface';
 
 // As returned by pool.query under topology[<vdevtype>]
-// TODO: Name may be misleading for nested items.
+// TODO: Name may be misleading for nested items, where it's actually a Disk
 export interface VDev {
   type: string; // TODO: Actually a VDevType
   path: string;
