@@ -3,6 +3,7 @@ import { FormGroup } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
+import { FormUploadComponent } from 'app/pages/common/entity/entity-form/components/form-upload/form-upload.component';
 import { T } from '../../../../translate-marker';
 import { helptext_system_update as helptext } from 'app/helptext/system/update';
 import * as _ from 'lodash';
@@ -14,7 +15,7 @@ import { EntityJobComponent } from '../../../common/entity/entity-job/entity-job
 import { CoreEvent } from 'app/core/services/core.service';
 import { ViewControllerComponent } from 'app/core/components/viewcontroller/viewcontroller.component';
 import { EntityUtils } from '../../../common/entity/utils';
-import { take } from 'rxjs/operators';
+import { take, filter } from 'rxjs/operators';
 
 @Component({
   selector: 'app-manualupdate',
@@ -54,7 +55,7 @@ export class ManualUpdateComponent extends ViewControllerComponent {
       fileLocation: '',
       message: this.messageService,
       acceptedFiles: '.tar,.update',
-      updater: this.updater,
+      updater: (fileInput: FormUploadComponent) => this.updater(fileInput),
       parent: this,
       hideButton: true,
     },
@@ -198,25 +199,35 @@ export class ManualUpdateComponent extends ViewControllerComponent {
     });
   }
 
-  updater(file: any, parent: any) {
-    const fileBrowser = file.fileInput.nativeElement;
+  updater(fileInput: FormUploadComponent) {
+    const fileBrowser = fileInput.fileInput.nativeElement;
     if (fileBrowser.files && fileBrowser.files[0]) {
-      parent.save_button_enabled = true;
-      const formData: FormData = new FormData();
-      if (parent.isHA) {
-        formData.append('data', JSON.stringify({
-          method: 'failover.upgrade',
-        }));
-      } else {
-        formData.append('data', JSON.stringify({
-          method: 'update.file',
-          params: [{ destination: this.fileLocation }],
-        }));
+      const updateFile: File = fileBrowser.files[0];
+      const isScaleUpdate = updateFile.name.toLocaleLowerCase().includes('scale');
+
+      if (!isScaleUpdate) {
+        this.addUpdateFile(updateFile, fileInput.apiEndPoint);
+        return;
       }
-      formData.append('file', fileBrowser.files[0]);
-      parent.subs = { apiEndPoint: file.apiEndPoint, formData };
+
+      let scaleMessage = helptext.scaleUpdate.warning;
+      if (this.isHA) {
+        scaleMessage += ' ' + helptext.scaleUpdate.haWarning;
+      }
+
+      this.dialogService.confirm({
+        title: helptext.scaleUpdate.title,
+        message: scaleMessage,
+      })
+        .subscribe((confirmed) => {
+          if (confirmed) {
+            this.addUpdateFile(updateFile, fileInput.apiEndPoint);
+          } else {
+            fileBrowser.value = '';
+          }
+        });
     } else {
-      parent.save_button_enabled = false;
+      this.save_button_enabled = false;
     }
   }
 
@@ -247,5 +258,22 @@ export class ManualUpdateComponent extends ViewControllerComponent {
         console.error(err);
       },
     );
+  }
+
+  private addUpdateFile(file: File, apiEndPoint: string) {
+    this.save_button_enabled = true;
+    const formData: FormData = new FormData();
+    if (this.isHA) {
+      formData.append('data', JSON.stringify({
+        method: 'failover.upgrade',
+      }));
+    } else {
+      formData.append('data', JSON.stringify({
+        method: 'update.file',
+        params: [{ destination: this.fileLocation }],
+      }));
+    }
+    formData.append('file', file);
+    this.subs = { apiEndPoint, formData };
   }
 }
