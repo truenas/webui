@@ -75,8 +75,8 @@ export class SupportComponent implements OnInit {
     }
     const expDateConverted = new Date(this.licenseInfo.contract_end.$value);
     this.licenseInfo.expiration_date = this.licenseInfo.contract_end.$value;
-    if (this.systemInfo.system_serial_ha) {
-      this.systemInfo.serial = this.systemInfo.system_serial + ' / ' + this.systemInfo.system_serial_ha;
+    if (this.licenseInfo?.system_serial_ha) {
+      this.systemInfo.serial = this.systemInfo.system_serial + ' / ' + this.licenseInfo.system_serial_ha;
     } else {
       this.systemInfo.serial = this.systemInfo.system_serial;
     }
