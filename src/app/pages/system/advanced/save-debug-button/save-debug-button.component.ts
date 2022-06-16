@@ -66,6 +66,16 @@ export class SaveDebugButtonComponent {
                   this.storage.downloadBlob(blob, fileName);
                   dialogRef.close();
                 });
+              dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((error) => {
+                dialogRef.close();
+                this.dialogService.closeAllDialogs();
+                new EntityUtils().handleWsError(this, error, this.dialogService);
+              });
+              dialogRef.componentInstance.aborted.pipe(untilDestroyed(this)).subscribe(() => {
+                dialogRef.close();
+                this.dialogService.closeAllDialogs();
+                this.dialogService.info(this.translate.instant('Task Aborted'), '');
+              });
             }),
           );
       }),
