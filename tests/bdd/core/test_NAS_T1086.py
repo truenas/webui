@@ -219,7 +219,9 @@ def click_on_the_three_dots_button_of_a_nonencrypted_pool_select_add_dataset(dri
     """click on the three dots button of a non-encrypted pool, select Add Dataset."""
     assert wait_on_element(driver, 5, '//mat-icon[@id="actions_menu_button__system"]', 'clickable')
     driver.find_element_by_xpath('//mat-icon[@id="actions_menu_button__system"]').click()
-    assert wait_on_element(driver, 7, '//button[@ix-auto="action__system_Add Dataset"]', 'clickable')
+    assert wait_on_element(driver, 7, '//div[@class="title" and contains(.,"Dataset Actions")]')
+    assert wait_on_element(driver, 5, '//button[@ix-auto="action__system_Create Snapshot"]', 'clickable')
+    assert wait_on_element(driver, 5, '//button[@ix-auto="action__system_Add Dataset"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="action__system_Add Dataset"]').click()
 
 

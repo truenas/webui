@@ -70,9 +70,11 @@ def the_pools_page_should_open(driver):
 @then('click on the tank three dots button, select Add Dataset')
 def click_on_the_tank_three_dots_button_select_add_dataset(driver):
     """click on the tank three dots button, select Add Dataset."""
-    assert wait_on_element(driver, 7, '//mat-icon[@id="actions_menu_button__tank"]')
+    assert wait_on_element(driver, 7, '//mat-icon[@id="actions_menu_button__tank"]', 'clickable')
     driver.find_element_by_xpath('//mat-icon[@id="actions_menu_button__tank"]').click()
-    assert wait_on_element(driver, 7, '//button[@ix-auto="action__tank_Add Dataset"]')
+    assert wait_on_element(driver, 7, '//div[@class="title" and contains(.,"Dataset Actions")]')
+    assert wait_on_element(driver, 5, '//button[@ix-auto="action__tank_Create Snapshot"]', 'clickable')
+    assert wait_on_element(driver, 5, '//button[@ix-auto="action__tank_Add Dataset"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="action__tank_Add Dataset"]').click()
 
 

@@ -62,6 +62,8 @@ def click_on_the_system_pool_three_dots_button_select_add_dataset(driver):
     assert wait_on_element(driver, 5, '//div[contains(.,"Pools")]')
     assert wait_on_element(driver, 5, '//mat-icon[@id="actions_menu_button__system"]', 'clickable')
     driver.find_element_by_xpath('//mat-icon[@id="actions_menu_button__system"]').click()
+    assert wait_on_element(driver, 7, '//div[@class="title" and contains(.,"Dataset Actions")]')
+    assert wait_on_element(driver, 5, '//button[@ix-auto="action__system_Create Snapshot"]', 'clickable')
     assert wait_on_element(driver, 5, '//button[@ix-auto="action__system_Add Dataset"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="action__system_Add Dataset"]').click()
     assert wait_on_element(driver, 5, '//h4[contains(.,"Name and Options")]')
