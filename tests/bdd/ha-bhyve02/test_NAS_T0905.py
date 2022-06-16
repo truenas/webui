@@ -432,7 +432,7 @@ def navigate_to_dashboard_wait_for_ha_to_be_online(driver):
     assert wait_on_element(driver, 7, '//span[contains(.,"System Information")]')
     # need to wait for all controller to be online.
     assert wait_on_element(driver, 60, '//div[contains(.,"truenas")]')
-    assert wait_on_element(driver, 300, '//div[contains(.,"truenas-b")]')
+    assert wait_on_element(driver, 600, '//div[contains(.,"truenas-b")]')
     assert wait_on_element(driver, 60, '//mat-icon[@svgicon="ha_enabled"]')
     time.sleep(5)
 
