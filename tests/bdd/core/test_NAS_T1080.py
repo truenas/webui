@@ -327,6 +327,7 @@ def wait_for_the_login_ui_to_comeback_then_login(driver):
 def confirm_the_pool_is_locked_after_the_reboot(driver):
     """confirm the pool is locked after the reboot."""
     assert wait_on_element(driver, 10, '//li[contains(.,"Dashboard")]')
+    assert wait_on_element(driver, 30, '//span[contains(text(),"System Information")]')
     assert wait_on_element(driver, 5, '//mat-list-item[@ix-auto="option__Storage"]', 'clickable')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Storage"]').click()
     assert wait_on_element(driver, 5, '//mat-list-item[@ix-auto="option__Pools"]', 'clickable')
