@@ -18,6 +18,7 @@ export interface NetworkConfiguration extends NetworkConfigurationState {
 }
 
 export interface NetworkConfigurationConfig extends NetworkConfigurationState, NetworkServiceAnnouncement {
+  inherit_dhcp: boolean;
   domain: string;
   domains: string[];
   hostname: string;
