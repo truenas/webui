@@ -315,7 +315,8 @@ def on_the_cloud_sync_task_and_click_edit(driver):
     assert wait_on_element(driver, 5, '//button[@ix-auto="button___edit"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button___edit"]').click()
     assert wait_on_element(driver, 5, '//h4[contains(.,"Transfer")]')
-    time.sleep(1)
+    assert wait_on_element(driver, 5, '//h4[contains(.,"Advanced Options")]')
+    time.sleep(0.5)
 
 
 @then('under Transfer Mode, select MOVE, click Save')
