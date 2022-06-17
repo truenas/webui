@@ -23,41 +23,41 @@
 
         <ix-tree class="dataset-tree" [dataSource]="dataSource" [treeControl]="treeControl" [trackBy]="trackByFn">
           <ix-tree-node
-            *ixTreeNodeDef="let node; dataSource: dataSource"
+            *ixTreeNodeDef="let dataset; dataSource: dataSource"
             ixTreeNodeToggle
             [ixTreeNodeToggleRecursive]="false"
             [ixTreeNodeDefDataSource]="dataSource"
-            [class.selected]="node.item.name === selectedDataset?.name"
-            (click)="onDatasetSelected(node.item)"
+            [class.selected]="dataset.name === selectedDataset?.name"
+            (click)="onDatasetSelected(dataset)"
           >
             <button mat-icon-button disabled></button>
-            <ix-dataset-node [node]="node"></ix-dataset-node>
+            <ix-dataset-node [dataset]="dataset"></ix-dataset-node>
           </ix-tree-node>
 
           <ix-nested-tree-node
-            *ixTreeNodeDef="let node; dataSource: dataSource, when: hasNestedChild"
+            *ixTreeNodeDef="let dataset; dataSource: dataSource, when: hasNestedChild"
             [ixTreeNodeDefDataSource]="dataSource"
           >
             <div
               class="dataset-nested-tree-root-node"
-              (click)="onDatasetSelected(node.item)"
-              [class.selected]="node.item.name === selectedDataset?.name"
+              (click)="onDatasetSelected(dataset)"
+              [class.selected]="dataset.name === selectedDataset?.name"
             >
               <button
                 mat-icon-button
                 ixTreeNodeToggle
                 (click)="$event.preventDefault()"
-                [attr.aria-label]="'toggle ' + node.label"
+                [attr.aria-label]="'toggle ' + dataset.name"
               >
                 <mat-icon class="mat-icon-rtl-mirror">
-                  {{ treeControl.isExpanded(node) ? 'expand_more' : 'chevron_right' }}
+                  {{ treeControl.isExpanded(dataset) ? 'expand_more' : 'chevron_right' }}
                 </mat-icon>
               </button>
 
-              <ix-dataset-node [node]="node"></ix-dataset-node>
+              <ix-dataset-node [dataset]="dataset"></ix-dataset-node>
             </div>
 
-            <ng-container *ngIf="treeControl.isExpanded(node)" ixTreeNodeOutlet></ng-container>
+            <ng-container *ngIf="treeControl.isExpanded(dataset)" ixTreeNodeOutlet></ng-container>
           </ix-nested-tree-node>
         </ix-tree>
       </div>

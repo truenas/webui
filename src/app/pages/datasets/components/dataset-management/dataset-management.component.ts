@@ -4,9 +4,7 @@ import {
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Dataset } from 'app/interfaces/dataset.interface';
-import { IxTreeNode } from 'app/modules/ix-tree/interfaces/ix-tree-node.interface';
 import { IxNestedTreeDataSource } from 'app/modules/ix-tree/ix-tree-nested-datasource';
-import { DatasetNode } from 'app/pages/datasets/components/dataset-node/dataset-node.interface';
 import { AppLoaderService, WebSocketService } from 'app/services';
 
 @UntilDestroy()
@@ -18,10 +16,12 @@ import { AppLoaderService, WebSocketService } from 'app/services';
 })
 export class DatasetsManagementComponent implements OnInit {
   selectedDataset: Dataset; // Dataset to be passed as input for card components
-  dataSource: IxNestedTreeDataSource<DatasetNode>;
-  treeControl = new NestedTreeControl<IxTreeNode<Dataset>>((node) => node.children);
-  readonly trackByFn: TrackByFunction<IxTreeNode<Dataset>> = (_, node) => node.label;
-  readonly hasNestedChild = (_: number, nodeData: DatasetNode): boolean => !!nodeData.children?.length;
+  dataSource: IxNestedTreeDataSource<Dataset>;
+  treeControl = new NestedTreeControl<Dataset, string>((dataset) => dataset.children, {
+    trackBy: (dataset) => dataset.id,
+  });
+  readonly trackByFn: TrackByFunction<Dataset> = (_, node) => node.id;
+  readonly hasNestedChild = (_: number, dataset: Dataset): boolean => Boolean(dataset.children?.length);
 
   constructor(
     private ws: WebSocketService,
@@ -40,12 +40,13 @@ export class DatasetsManagementComponent implements OnInit {
       untilDestroyed(this),
     ).subscribe(
       (datasets: Dataset[]) => {
-        this.createDataSource(datasets);
+        this.dataSource = new IxNestedTreeDataSource<Dataset>(datasets);
+        this.treeControl.dataNodes = datasets;
         this.loader.close();
         if (this.treeControl?.dataNodes.length > 0) {
-          const node = this.treeControl.dataNodes[0];
-          this.treeControl.expand(node);
-          this.onDatasetSelected(node.item);
+          const dataset = this.treeControl.dataNodes[0];
+          this.treeControl.expand(dataset);
+          this.onDatasetSelected(dataset);
         }
         this.cdr.markForCheck();
       },
@@ -62,37 +63,5 @@ export class DatasetsManagementComponent implements OnInit {
 
   onDatasetSelected(dataset: Dataset): void {
     this.selectedDataset = dataset;
-  }
-
-  private getDatasetNode(dataset: Dataset): DatasetNode {
-    const nameSegments = dataset.name.split('/');
-
-    return {
-      label: nameSegments[nameSegments.length - 1],
-      children: dataset.children?.length ? dataset.children.map((child) => this.getDatasetNode(child)) : [],
-      item: dataset,
-      roles: ['Dataset', `L${nameSegments.length}`],
-      icon: this.getDatasetIcon(dataset),
-    };
-  }
-
-  private getDatasetIcon(dataset: Dataset): string {
-    const level = dataset.name.split('/').length;
-    if (level === 1) {
-      return 'device_hub';
-    } if (level > 1 && dataset.children.length) {
-      return 'folder';
-    }
-    return 'mdi-database';
-  }
-
-  private getDatasetTree(datasets: Dataset[]): DatasetNode[] {
-    return datasets.map((dataset) => this.getDatasetNode(dataset));
-  }
-
-  private createDataSource(datasets: Dataset[]): void {
-    const dataNodes = this.getDatasetTree(datasets);
-    this.dataSource = new IxNestedTreeDataSource<DatasetNode>(dataNodes);
-    this.treeControl.dataNodes = dataNodes;
   }
 }
