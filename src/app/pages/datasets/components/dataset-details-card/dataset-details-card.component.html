@@ -7,38 +7,63 @@
       <mat-card-content>
         <div class="row">
           <span class="header">Type: </span>
-          <span *ngIf="!loading">{{ dataset.type }}</span>
-          <div class="loader" *ngIf="loading"></div>
-        </div>
-        <div class="row">
-          <span class="header">Available: </span>
-          <span *ngIf="!loading">{{ datasetSpace }}</span>
-          <div class="loader" *ngIf="loading"></div>
+          <span *ngIf="!loading || !!dataset.type">{{ dataset.type }}</span>
+          <ngx-skeleton-loader
+            *ngIf="loading && !dataset.type"
+            class="loader-skel" 
+            animation="progress" 
+            [theme]="loadingTheme"
+          ></ngx-skeleton-loader>
         </div>
         <div class="row">
           <span class="header">Sync: </span>
-          <span *ngIf="!loading">{{ dataset.sync?.value }}</span>
-          <div class="loader" *ngIf="loading"></div>
+          <span *ngIf="!loading || !!dataset.sync?.value">{{ dataset.sync?.value }}</span>
+          <ngx-skeleton-loader
+            *ngIf="loading && !dataset.sync?.value"
+            class="loader-skel" 
+            animation="progress" 
+            [theme]="loadingTheme"
+          ></ngx-skeleton-loader>
         </div>
         <div class="row">
           <span class="header">Compression Level: </span>
-          <span *ngIf="!loading">{{ datasetCompression }}</span>
-          <div class="loader" *ngIf="loading"></div>
+          <span *ngIf="!loading || !!datasetCompression">{{ datasetCompression }}</span>
+          <ngx-skeleton-loader
+            *ngIf="loading && !datasetCompression"
+            class="loader-skel" 
+            animation="progress" 
+            [theme]="loadingTheme"
+          ></ngx-skeleton-loader>
         </div>
         <div class="row">
           <span class="header">Enable Atime: </span>
-          <span *ngIf="!loading">{{ dataset.atime?.value }}</span>
-          <div class="loader" *ngIf="loading"></div>
+          <span *ngIf="!loading || !!dataset.atime?.value">{{ dataset.atime?.value }}</span>
+          <ngx-skeleton-loader
+            *ngIf="loading && !dataset.atime?.value"
+            class="loader-skel" 
+            animation="progress" 
+            [theme]="loadingTheme"
+          ></ngx-skeleton-loader>
         </div>
         <div class="row">
           <span class="header">ZFS Deduplication: </span>
-          <span *ngIf="!loading">{{ dataset.deduplication?.value }}</span>
-          <div class="loader" *ngIf="loading"></div>
+          <span *ngIf="!loading || !!dataset.deduplication?.value">{{ dataset.deduplication?.value }}</span>
+          <ngx-skeleton-loader
+            *ngIf="loading && !dataset.deduplication?.value"
+            class="loader-skel" 
+            animation="progress" 
+            [theme]="loadingTheme"
+          ></ngx-skeleton-loader>
         </div>
         <div class="row">
           <span class="header">Case Sensitivity: </span>
-          <span *ngIf="!loading">{{ dataset.casesensitivity?.value }}</span>
-          <div class="loader" *ngIf="loading"></div>
+          <span *ngIf="!loading || !!dataset.casesensitivity?.value">{{ dataset.casesensitivity?.value }}</span>
+          <ngx-skeleton-loader
+            *ngIf="loading && !dataset.casesensitivity?.value"
+            class="loader-skel" 
+            animation="progress" 
+            [theme]="loadingTheme"
+          ></ngx-skeleton-loader>
         </div>
       </mat-card-content>
       <mat-card-actions *ngIf="dataset.id !== dataset.pool" >

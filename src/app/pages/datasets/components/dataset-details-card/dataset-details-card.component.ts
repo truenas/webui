@@ -11,6 +11,7 @@ import { DatasetFormComponent } from 'app/pages/datasets/components/dataset-form
 import { DeleteDatasetDialogComponent } from 'app/pages/datasets/components/delete-dataset-dialog/delete-dataset-dialog.component';
 import { WebSocketService } from 'app/services';
 import { ModalService } from 'app/services/modal.service';
+import { ThemeService } from 'app/services/theme/theme.service';
 
 @UntilDestroy()
 @Component({
@@ -23,14 +24,17 @@ export class DatasetDetailsCardComponent implements OnChanges {
   @Input() dataset: Dataset;
   loading = false;
   subscription: Subscription;
-
+  loadingTheme = {
+    'background-color': this.theme.findTheme(this.theme.activeTheme, false)['alt-bg2'],
+  };
   constructor(
     private ws: WebSocketService,
     private cdr: ChangeDetectorRef,
     private modalService: ModalService,
     private translate: TranslateService,
     private mdDialog: MatDialog,
-  ) {}
+    private theme: ThemeService,
+  ) { }
 
   get datasetCompression(): string {
     return this.dataset.compression?.source === ZfsPropertySource.Inherited
