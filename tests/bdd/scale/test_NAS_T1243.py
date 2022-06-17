@@ -1,12 +1,9 @@
 # coding=utf-8
 """SCALE UI: feature tests."""
 
-import time
-from function import(
+from function import (
     wait_on_element,
     is_element_present,
-    attribute_value_exist,
-    wait_for_attribute_value,
     wait_on_element_disappear,
 )
 from pytest_bdd import (
@@ -92,8 +89,8 @@ def enter_abcd1234_for_both_fields_and_confirm_and_save(driver):
     assert wait_on_element(driver, 5, '//input[@ix-auto="input__Confirm Passphrase"]', 'inputable')
     driver.find_element_by_xpath('//input[@ix-auto="input__Confirm Passphrase"]').clear()
     driver.find_element_by_xpath('//input[@ix-auto="input__Confirm Passphrase"]').send_keys("abcd1234")
-    assert wait_on_element(driver, 10, '//mat-error[contains(.,"The passwords do not match.")]') is False
-    
+    assert wait_on_element_disappear(driver, 10, '//mat-error[contains(.,"The passwords do not match.")]')
+
     assert wait_on_element(driver, 10, '//mat-checkbox[@ix-auto="checkbox__Confirm"]', 'clickable')
     driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__Confirm"]').click()   
     assert wait_on_element(driver, 5, '//button[@ix-auto="button__SAVE"]', 'clickable')
