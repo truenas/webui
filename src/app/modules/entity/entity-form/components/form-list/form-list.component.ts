@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormGroup, FormArray } from '@angular/forms';
+import { UntypedFormGroup, UntypedFormArray } from '@angular/forms';
 import * as _ from 'lodash';
 import { FormListConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
 import { Field } from 'app/modules/entity/entity-form/models/field.interface';
@@ -13,15 +13,15 @@ import { FieldRelationService } from 'app/modules/entity/entity-form/services/fi
 })
 export class FormListComponent implements Field, OnInit {
   config: FormListConfig;
-  group: FormGroup;
+  group: UntypedFormGroup;
   fieldShow: string;
 
-  listsFromArray: FormArray;
+  listsFromArray: UntypedFormArray;
 
   constructor(private entityFormService: EntityFormService, protected fieldRelationService: FieldRelationService) {}
 
   ngOnInit(): void {
-    this.listsFromArray = this.group.get(this.config.name) as FormArray;
+    this.listsFromArray = this.group.get(this.config.name) as UntypedFormArray;
     if (this.config.addInitialList && this.listsFromArray.length === 0) {
       this.add();
     }

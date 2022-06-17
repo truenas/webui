@@ -81,7 +81,6 @@ import { FormUploadComponent } from 'app/modules/entity/entity-form/components/f
 import { EntityFormComponent } from 'app/modules/entity/entity-form/entity-form.component';
 import { EntityFormService } from 'app/modules/entity/entity-form/services/entity-form.service';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
-import { EntitySnackbarComponent } from 'app/modules/entity/entity-snackbar/entity-snackbar.component';
 import { EntityRowDetailsComponent } from 'app/modules/entity/entity-table/entity-row-details/entity-row-details.component';
 import { EntityTableActionsComponent } from 'app/modules/entity/entity-table/entity-table-actions/entity-table-actions.component';
 import { EntityTableAddActionsComponent } from 'app/modules/entity/entity-table/entity-table-add-actions/entity-table-add-actions.component';
@@ -198,7 +197,6 @@ import { AppLoaderService, DocsService, JobService } from 'app/services';
     EntityWizardComponent,
     FormParagraphComponent,
     EntityDialogComponent,
-    EntitySnackbarComponent,
     ToolbarMultimenuComponent,
     ToolbarMultiSelectComponent,
     ToolbarSliderComponent,
@@ -220,7 +218,6 @@ import { AppLoaderService, DocsService, JobService } from 'app/services';
     DynamicFieldDirective,
     EntityWizardComponent,
     EntityDialogComponent,
-    EntitySnackbarComponent,
     ToolbarSliderComponent,
     ToolbarMultimenuComponent,
     ToolbarMultiSelectComponent,

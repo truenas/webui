@@ -1,5 +1,5 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { AbstractControl, FormBuilder, Validators } from '@angular/forms';
+import { AbstractControl, UntypedFormBuilder, Validators } from '@angular/forms';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
@@ -84,7 +84,7 @@ export class ExportDisconnectModalComponent implements OnInit {
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: ExportDisconnectModalState,
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     private dialogRef: MatDialogRef<ExportDisconnectModalComponent>,
     private translate: TranslateService,
     private validatorsService: IxValidatorsService,

@@ -25,7 +25,7 @@ const presetFieldName = 'preset';
 export class SelectPresetModalComponent implements OnInit {
   formGroup = new FormGroup({
     [presetFieldName]: new FormControl('', Validators.required),
-    [usePresetFieldName]: new FormControl('', Validators.required),
+    [usePresetFieldName]: new FormControl(false, Validators.required),
   });
 
   readonly helptext = helptext.type_dialog;

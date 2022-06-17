@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormGroup } from '@angular/forms';
+import { UntypedFormGroup } from '@angular/forms';
 import {
   TREE_ACTIONS, KEYS, IActionMapping, TreeNode, ITreeOptions,
 } from '@circlon/angular-tree-component';
@@ -19,7 +19,7 @@ import { EntityFormService } from 'app/modules/entity/entity-form/services/entit
 })
 export class FormExplorerComponent implements Field, OnInit {
   config: FormExplorerConfig;
-  group: FormGroup;
+  group: UntypedFormGroup;
   fieldShow: string;
   nodes: any; // TODO: Likely ListdirChild[]
 

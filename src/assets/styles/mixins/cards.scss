@@ -41,3 +41,28 @@
   height: 20px;
   opacity: 0.3;
 }
+@mixin details-card-item {
+  display: flex;
+  flex-direction: row;
+  margin-bottom: 4px;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+
+  .label {
+    font-weight: bold;
+    margin-right: 5px;
+  }
+
+  .value {
+    font-weight: normal;
+  }
+
+  a {
+    color: var(--primary);
+    cursor: pointer;
+    margin-left: auto;
+    text-decoration: underline;
+  }
+}

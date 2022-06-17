@@ -6,7 +6,6 @@ import { TranslateModule } from '@ngx-translate/core';
 import { AppCommonModule } from 'app/modules/common/app-common.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxTableModule } from 'app/modules/ix-tables/ix-table.module';
-import { DeviceManagementComponent } from 'app/pages/storage2/components/device-management/device-management.component';
 import { PoolsDashboardComponent } from 'app/pages/storage2/components/pools-dashboard/pools-dashboard.component';
 import { routing } from 'app/pages/storage2/storage2.routing';
 
@@ -22,7 +21,6 @@ import { routing } from 'app/pages/storage2/storage2.routing';
     RouterModule,
   ],
   declarations: [
-    DeviceManagementComponent,
     PoolsDashboardComponent,
   ],
 })

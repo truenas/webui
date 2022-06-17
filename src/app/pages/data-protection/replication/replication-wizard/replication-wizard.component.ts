@@ -1,6 +1,6 @@
 import { DatePipe } from '@angular/common';
 import { Component } from '@angular/core';
-import { FormArray, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormArray, UntypedFormGroup, Validators } from '@angular/forms';
 import { ITreeOptions, TreeNode } from '@circlon/angular-tree-component';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
@@ -1148,8 +1148,8 @@ export class ReplicationWizardComponent implements WizardConfiguration {
 
   clearReplicationTask(): void {
     this.entityWizard.formArray.reset();
-    for (let i = 0; i < (this.entityWizard.formArray as FormArray).length; i++) {
-      for (const item in (this.entityWizard.formArray.get([i]) as FormGroup).controls) {
+    for (let i = 0; i < (this.entityWizard.formArray as UntypedFormArray).length; i++) {
+      for (const item in (this.entityWizard.formArray.get([i]) as UntypedFormGroup).controls) {
         const itemConf = _.find(this.wizardConfig[i].fieldConfig, { name: item });
         if (itemConf.value !== undefined && item !== 'exist_replication') {
           this.entityWizard.formArray.get([i]).get(item).setValue(itemConf.value);

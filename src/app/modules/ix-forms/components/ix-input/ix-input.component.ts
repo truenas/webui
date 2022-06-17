@@ -1,7 +1,7 @@
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, Output,
 } from '@angular/core';
-import { ControlValueAccessor, FormControl, NgControl } from '@angular/forms';
+import { ControlValueAccessor, UntypedFormControl, NgControl } from '@angular/forms';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 
@@ -29,7 +29,7 @@ export class IxInputComponent implements ControlValueAccessor {
   @Input() format: (value: string | number) => string;
   @Input() parse: (value: string | number) => string | number;
 
-  formControl = new FormControl(this).value as FormControl;
+  formControl = new UntypedFormControl(this).value as UntypedFormControl;
 
   private _value: string | number = '';
   formatted: string | number = '';

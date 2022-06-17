@@ -1,11 +1,11 @@
 import { Injectable } from '@angular/core';
-import { AbstractControl, FormControl, ValidatorFn } from '@angular/forms';
+import { AbstractControl, UntypedFormControl, ValidatorFn } from '@angular/forms';
 
 @Injectable({ providedIn: 'root' })
 export class ValidationService {
   greaterThan(otherControlName: string, fieldPlaceholers: [string]): ValidatorFn {
     let thisControl: AbstractControl;
-    let otherControl: FormControl;
+    let otherControl: UntypedFormControl;
 
     return function greaterThanValidate(control: AbstractControl) {
       if (!control.parent) {
@@ -15,7 +15,7 @@ export class ValidationService {
       // Initializing the validator.
       if (!thisControl) {
         thisControl = control;
-        otherControl = control.parent.get(otherControlName) as FormControl;
+        otherControl = control.parent.get(otherControlName) as UntypedFormControl;
         if (!otherControl) {
           throw new Error(
             'greaterThanValidator(): other control is not found in parent group',
@@ -83,7 +83,7 @@ export class ValidationService {
 
   matchOtherValidator(otherControlName: string): ValidatorFn {
     let thisControl: AbstractControl;
-    let otherControl: FormControl;
+    let otherControl: UntypedFormControl;
 
     return function matchOtherValidate(control: AbstractControl) {
       if (!control.parent) {
@@ -93,7 +93,7 @@ export class ValidationService {
       // Initializing the validator.
       if (!thisControl) {
         thisControl = control;
-        otherControl = control.parent.get(otherControlName) as FormControl;
+        otherControl = control.parent.get(otherControlName) as UntypedFormControl;
         if (!otherControl) {
           throw new Error(
             'matchOtherValidator(): other control is not found in parent group',

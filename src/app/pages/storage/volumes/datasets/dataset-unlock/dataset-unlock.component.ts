@@ -2,7 +2,7 @@ import {
   Component,
 } from '@angular/core';
 import {
-  AbstractControl, FormArray, FormControl, FormGroup,
+  AbstractControl, UntypedFormArray, UntypedFormControl, UntypedFormGroup,
 } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -47,11 +47,11 @@ export class DatasetUnlockComponent implements FormConfiguration {
   protected path: string;
   protected entityForm: EntityFormComponent;
 
-  protected datasets: FormArray;
+  protected datasets: UntypedFormArray;
   protected datasetsField: FormListConfig;
   protected keyFileField: FormCheckboxConfig;
-  protected keyFileControl: FormControl;
-  protected unlockChildrenControl: FormControl;
+  protected keyFileControl: UntypedFormControl;
+  protected unlockChildrenControl: UntypedFormControl;
 
   subs: Subs;
 
@@ -202,7 +202,7 @@ export class DatasetUnlockComponent implements FormConfiguration {
 
   afterInit(entityEdit: EntityFormComponent): void {
     this.entityForm = entityEdit;
-    this.datasets = entityEdit.formGroup.controls['datasets'] as FormArray;
+    this.datasets = entityEdit.formGroup.controls['datasets'] as UntypedFormArray;
     this.datasetsField = _.find(this.fieldConfig, { name: 'datasets' }) as FormListConfig;
     this.keyFileField = _.find(this.fieldConfig, { name: 'key_file' }) as FormCheckboxConfig;
     const listFields = this.datasetsField.listFields;
@@ -235,7 +235,7 @@ export class DatasetUnlockComponent implements FormConfiguration {
           const nameTextConfig = _.find(controls, { name: 'name_text' }) as FormParagraphConfig;
           const result = res.result[i];
 
-          (this.datasets.controls[i] as FormGroup).controls['name'].setValue(result['name']);
+          (this.datasets.controls[i] as UntypedFormGroup).controls['name'].setValue(result['name']);
           nameTextConfig.paraText = helptext.dataset_name_paratext + result['name'];
           const isPassphrase = result.key_format === DatasetEncryptionType.Passphrase;
           if (!isPassphrase) { // hide key datasets by default
@@ -247,10 +247,10 @@ export class DatasetUnlockComponent implements FormConfiguration {
               this.keyFileField.width = '50%';
             }
           }
-          (this.datasets.controls[i] as FormGroup).controls['is_passphrase'].setValue(isPassphrase);
+          (this.datasets.controls[i] as UntypedFormGroup).controls['is_passphrase'].setValue(isPassphrase);
           this.setDisabled(
             passphraseConfig,
-            (this.datasets.controls[i] as FormGroup).controls['passphrase'] as FormControl,
+            (this.datasets.controls[i] as UntypedFormGroup).controls['passphrase'] as UntypedFormControl,
             !isPassphrase,
             !isPassphrase,
           );
@@ -264,12 +264,12 @@ export class DatasetUnlockComponent implements FormConfiguration {
       }
     });
 
-    this.keyFileControl = entityEdit.formGroup.controls['key_file'] as FormControl;
-    this.unlockChildrenControl = entityEdit.formGroup.controls['unlock_children'] as FormControl;
+    this.keyFileControl = entityEdit.formGroup.controls['key_file'] as UntypedFormControl;
+    this.unlockChildrenControl = entityEdit.formGroup.controls['unlock_children'] as UntypedFormControl;
 
     this.keyFileControl.valueChanges.pipe(untilDestroyed(this)).subscribe((hideKeyDatasets: boolean) => {
       for (let i = 0; i < this.datasets.controls.length; i++) {
-        const datasetControls = (this.datasets.controls[i] as FormGroup).controls;
+        const datasetControls = (this.datasets.controls[i] as UntypedFormGroup).controls;
         const controls = listFields[i];
         const keyConfig = _.find(controls, { name: 'key' });
         const nameTextConfig = _.find(controls, { name: 'name_text' });
@@ -292,7 +292,7 @@ export class DatasetUnlockComponent implements FormConfiguration {
       .subscribe((unlockChildren: boolean) => {
         for (let i = 0; i < this.datasets.controls.length; i++) {
           const controls = listFields[i];
-          const datasetControls = (this.datasets.controls[i] as FormGroup).controls;
+          const datasetControls = (this.datasets.controls[i] as UntypedFormGroup).controls;
           if (datasetControls['name'].value !== this.pk) {
             const keyConfig = _.find(controls, { name: 'key' });
             const passphraseConfig = _.find(controls, { name: 'passphrase' });

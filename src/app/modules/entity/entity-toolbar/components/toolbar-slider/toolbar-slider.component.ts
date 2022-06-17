@@ -1,7 +1,7 @@
 import {
   Component, EventEmitter, Input, Output,
 } from '@angular/core';
-import { MatSliderChange } from '@angular/material/slider/slider';
+import { MatSliderChange } from '@angular/material/slider';
 
 @Component({
   selector: 'ix-toolbar-slider',

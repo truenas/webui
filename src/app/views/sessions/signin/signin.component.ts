@@ -3,7 +3,7 @@ import {
   Component, OnInit, ViewChild, OnDestroy, ElementRef, AfterViewInit,
 } from '@angular/core';
 import {
-  FormBuilder, FormGroup, Validators, FormControl, AbstractControl,
+  UntypedFormBuilder, UntypedFormGroup, Validators, UntypedFormControl, AbstractControl,
 } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatProgressBar } from '@angular/material/progress-bar';
@@ -60,7 +60,7 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
     password: '',
     otp: '',
   };
-  setPasswordFormGroup: FormGroup;
+  setPasswordFormGroup: UntypedFormGroup;
   has_root_password = true;
   failover_status: FailoverStatus;
   failover_statuses = {
@@ -90,7 +90,7 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
     private snackBar: MatSnackBar,
     public translate: TranslateService,
     private dialogService: DialogService,
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     private core: CoreService,
     private autofill: AutofillMonitor,
     private sysGeneralService: SystemGeneralService,
@@ -150,8 +150,8 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
     });
 
     this.setPasswordFormGroup = this.fb.group({
-      password: new FormControl('', [Validators.required]),
-      password2: new FormControl('', [Validators.required, matchOtherValidator('password')]),
+      password: new UntypedFormControl('', [Validators.required]),
+      password2: new UntypedFormControl('', [Validators.required, matchOtherValidator('password')]),
     });
 
     this.ws.call('auth.two_factor_auth').pipe(untilDestroyed(this)).subscribe((res) => {
@@ -372,7 +372,11 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
       message = this.translate.instant('Token expired, please log back in.');
       this.ws.token = null;
     }
-    this.snackBar.open(this.translate.instant(message), this.translate.instant('close'), { duration: 4000 });
+    this.snackBar.open(
+      this.translate.instant(message),
+      this.translate.instant('close'),
+      { duration: 4000, verticalPosition: 'bottom' },
+    );
   }
 
   openIx(): void {

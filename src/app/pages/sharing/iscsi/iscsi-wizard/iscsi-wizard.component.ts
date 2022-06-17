@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import {
-  Validators, FormControl, ValidationErrors, FormGroup,
+  Validators, UntypedFormControl, ValidationErrors, UntypedFormGroup,
 } from '@angular/forms';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -116,7 +116,7 @@ export class IscsiWizardComponent implements WizardConfiguration {
           parent: this,
           value: 0,
           validation: [Validators.required,
-            (control: FormControl): ValidationErrors => {
+            (control: UntypedFormControl): ValidationErrors => {
               const filesizeConfig = this.wizardConfig[0].fieldConfig.find((config) => config.name === 'filesize');
               const size = this.storageService.convertHumanStringToNum(control.value, true);
 
@@ -676,9 +676,11 @@ export class IscsiWizardComponent implements WizardConfiguration {
 
   summaryInit(): void {
     for (let step = 0; step < 3; step++) {
-      Object.entries((this.entityWizard.formArray.get([step]) as FormGroup).controls).forEach(([name, control]) => {
+      Object.entries(
+        (this.entityWizard.formArray.get([step]) as UntypedFormGroup).controls,
+      ).forEach(([name, control]) => {
         if (name in this.summaryObj) {
-          (control as FormControl).valueChanges.pipe(untilDestroyed(this)).subscribe(((value) => {
+          (control as UntypedFormControl).valueChanges.pipe(untilDestroyed(this)).subscribe(((value) => {
             if (value === undefined) {
               this.summaryObj[name] = null;
             } else {

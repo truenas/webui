@@ -1,7 +1,7 @@
-import { ValidatorFn, FormControl } from '@angular/forms';
+import { ValidatorFn, UntypedFormControl } from '@angular/forms';
 
 export function requiredEmpty(): ValidatorFn {
-  return (control: FormControl) => {
+  return (control: UntypedFormControl) => {
     if (control.value) {
       return { requiredEmpty: true };
     }

@@ -2,7 +2,7 @@ import {
   HttpClient, HttpRequest, HttpEventType, HttpResponse,
 } from '@angular/common/http';
 import { Component, ViewChild, ElementRef } from '@angular/core';
-import { FormGroup } from '@angular/forms';
+import { UntypedFormGroup } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
@@ -18,7 +18,7 @@ import { WebSocketService, DialogService } from 'app/services';
 export class FormUploadComponent {
   @ViewChild('fileInput', { static: false }) fileInput: ElementRef<HTMLInputElement>;
   config: FormUploadConfig;
-  group: FormGroup;
+  group: UntypedFormGroup;
   fieldShow: string;
   busy: Subscription[] = [];
   sub: Subscription;
