@@ -20,20 +20,23 @@ export class DatasetNodeComponent {
     return this.nameSegments[this.nameSegments.length - 1];
   }
 
+  get level(): number {
+    return this.nameSegments.length;
+  }
+
   get icon(): string {
-    const level = this.nameSegments.length;
-    if (level === 1) {
+    if (this.level === 1) {
       return 'device_hub';
-    } if (level > 1 && this.dataset.children.length) {
+    } if (this.level > 1 && this.dataset.children.length) {
       return 'folder';
     }
     return 'mdi-database';
   }
 
   get roles(): string[] {
-    if (this.nameSegments.length === 1) {
+    if (this.level === 1) {
       return ['Root Dataset'];
     }
-    return ['Dataset', `L${this.nameSegments.length}`];
+    return ['Dataset', `L${this.level}`];
   }
 }
