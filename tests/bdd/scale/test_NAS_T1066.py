@@ -114,7 +114,7 @@ def please_wait_should_appear_while_settings_are_being_applied_when_the_interfac
     """"Please wait" should appear while settings are being applied, when the Interfaces page appears verify Nameservers do not list (DHCP)."""
     assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
     assert wait_on_element(driver, 10, '//h1[contains(.,"Network")]')
-    assert wait_on_element(driver, 10, '//span[contains(.,"DHCP")]') is False
+    assert wait_on_element_disappear(driver, 10, '//span[contains(.,"DHCP")]')
 
 
 @then('click Test Changes, check Confirm, click Test Changes again')
@@ -152,4 +152,4 @@ def on_the_save_changes_widget_click_save(driver):
 def on_the_interfaces_page_nameservers_do_not_list_dhcp(driver):
     """on the Interfaces page, Nameservers do not list (DHCP)."""
     assert wait_on_element(driver, 10, '//h1[contains(.,"Network")]')
-    assert wait_on_element(driver, 10, '//span[contains(.,"DHCP")]') is False
+    assert wait_on_element_disappear(driver, 10, '//span[contains(.,"DHCP")]')

@@ -247,7 +247,7 @@ def verify_that_the_acl_was_not_set_to_rtacltest3(driver):
     time.sleep(1)
     assert wait_on_element(driver, 5, '//button[normalize-space(text())="View Permissions"]')
     driver.find_element_by_xpath('//button[normalize-space(text())="View Permissions"]').click()
-    assert wait_on_element(driver, 5, '//div[contains(text(),"User - games")]') is False
+    assert wait_on_element_disappear(driver, 5, '//div[contains(text(),"User - games")]')
 
 
 @then('Verify the SMB Share Filesystem has the ACL that was applied to rt-acl-test-1')
