@@ -296,6 +296,7 @@ def click_the_power_button_and_click_restart_to_reboot_truenas(driver):
     """click the power button and click Restart to reboot TrueNAS."""
     assert wait_on_element(driver, 7, '//button[@ix-auto="button__power"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__power"]').click()
+    assert wait_on_element(driver, 7, '//button[@ix-auto="option__Shut Down"]', 'clickable')
     assert wait_on_element(driver, 7, '//button[@ix-auto="option__Restart"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="option__Restart"]').click()
     assert wait_on_element(driver, 7, '//h1[contains(.,"Restart")]')
