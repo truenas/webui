@@ -28,6 +28,6 @@ export class PoolsDashboardComponent implements OnInit {
   }
 
   navigateToDeviceManagement(): void {
-    this.router.navigate(['/', 'storage2', 'pools', this.selectedPool.id, 'manage-devices']);
+    this.router.navigate(['/', 'storage2', this.selectedPool.id, 'devices']);
   }
 }
