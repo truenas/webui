@@ -46,6 +46,7 @@ export class DatasetTrivialPermissionsComponent implements OnInit {
   isLoading = false;
   aclType: AclType;
   datasetPath: string;
+  datasetId: string;
 
   readonly userProvider = new UserComboboxProvider(this.userService);
   readonly groupProvider = new GroupComboboxProvider(this.userService);
@@ -62,7 +63,6 @@ export class DatasetTrivialPermissionsComponent implements OnInit {
 
   readonly isRecursive$ = this.form.select((values) => values.recursive);
 
-  private datasetId: string;
   private oldDatasetMode: string;
 
   constructor(
@@ -91,7 +91,7 @@ export class DatasetTrivialPermissionsComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.datasetId = this.activatedRoute.snapshot.params['path'];
+    this.datasetId = this.activatedRoute.snapshot.params['datasetId'];
     this.datasetPath = '/mnt/' + this.datasetId;
 
     this.loadPermissionsInformation();
@@ -99,7 +99,7 @@ export class DatasetTrivialPermissionsComponent implements OnInit {
   }
 
   onSetAclPressed(): void {
-    this.router.navigate(['/datasets/permissions/acl', this.datasetId]);
+    this.router.navigate(['/datasets', this.datasetId, 'permissions', 'acl']);
   }
 
   onSubmit(): void {
@@ -117,7 +117,7 @@ export class DatasetTrivialPermissionsComponent implements OnInit {
     jobComponent.submit();
     jobComponent.success.pipe(untilDestroyed(this)).subscribe(() => {
       dialogRef.close();
-      this.router.navigate(['/datasets']);
+      this.router.navigate(['/datasets', this.datasetId]);
     });
   }
 

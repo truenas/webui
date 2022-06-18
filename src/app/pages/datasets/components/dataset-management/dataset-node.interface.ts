@@ -3,4 +3,5 @@ import { IxTreeNode } from 'app/modules/ix-tree/interfaces/ix-tree-node.interfac
 
 export interface DatasetNode extends IxTreeNode<Dataset> {
   roles: string[];
+  parent?: DatasetNode;
 }

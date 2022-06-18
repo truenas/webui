@@ -9,4 +9,5 @@ import { Dataset } from 'app/interfaces/dataset.interface';
 })
 export class DatasetDetailsComponent {
   @Input() dataset: Dataset;
+  @Input() parentDataset: Dataset | undefined;
 }

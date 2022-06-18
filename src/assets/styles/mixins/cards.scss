@@ -53,10 +53,13 @@
     font-weight: normal;
   }
 
+  .action {
+    margin-left: auto;
+  }
+
   a {
     color: var(--primary);
     cursor: pointer;
-    margin-left: auto;
     text-decoration: underline;
   }
 }

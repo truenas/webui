@@ -1,6 +1,7 @@
 import { ModuleWithProviders } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { DatasetsManagementComponent } from 'app/pages/datasets/components/dataset-management/dataset-management.component';
+import { DatasetUnlockComponent } from 'app/pages/datasets/modules/encryption/components/dataset-unlock/dataset-unlock.component';
 import {
   DatasetAclEditorComponent,
 } from 'app/pages/datasets/modules/permissions/containers/dataset-acl-editor/dataset-acl-editor.component';
@@ -13,21 +14,32 @@ export const routes: Routes = [
     children: [
       {
         path: '',
-        component: DatasetsManagementComponent,
-        data: { title: 'Datasets Management', breadcrumb: 'Datasets Management' },
+        redirectTo: '/datasets/',
+        pathMatch: 'full',
       },
       {
-        path: 'permissions',
+        path: ':datasetId',
         children: [
           {
-            path: 'edit/:path',
+            path: '',
+            pathMatch: 'full',
+            component: DatasetsManagementComponent,
+            data: { title: 'Datasets Management', breadcrumb: 'Datasets Management' },
+          },
+          {
+            path: 'permissions/edit',
             component: DatasetTrivialPermissionsComponent,
             data: { title: 'Edit Permissions', breadcrumb: 'Edit Permissions' },
           },
           {
-            path: 'acl/:path',
+            path: 'permissions/acl',
             component: DatasetAclEditorComponent,
             data: { title: 'Edit ACL', breadcrumb: 'Edit ACL' },
+          },
+          {
+            path: 'unlock',
+            component: DatasetUnlockComponent,
+            data: { title: 'Unlock Datasets', breadcrumb: 'Unlock Datasets' },
           },
         ],
       },
