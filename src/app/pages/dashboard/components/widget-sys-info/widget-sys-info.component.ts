@@ -20,7 +20,7 @@ import { SystemGeneralService, WebSocketService } from 'app/services';
 import { LocaleService } from 'app/services/locale.service';
 import { ThemeService } from 'app/services/theme/theme.service';
 import { AppState } from 'app/store';
-import { selectHaStatus, waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
+import { selectHaStatus } from 'app/store/system-info/system-info.selectors';
 
 @UntilDestroy()
 @Component({
@@ -106,7 +106,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
         this.ha_status = haStatus.status;
       });
     } else {
-      this.store$.pipe(waitForSystemInfo, untilDestroyed(this)).subscribe(
+      this.ws.call('system.info').pipe(untilDestroyed(this)).subscribe(
         (systemInfo) => {
           this.processSysInfo(systemInfo);
         }, (error) => {
