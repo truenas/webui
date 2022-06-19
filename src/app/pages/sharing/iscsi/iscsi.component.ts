@@ -45,7 +45,7 @@ export class IscsiComponent implements OnInit {
     path: '/sharing/iscsi/associatedtarget',
   },
   ];
-  protected route_wizard = ['sharing', 'iscsi', 'wizard'];
+  protected wizardRoute = ['sharing', 'iscsi', 'wizard'];
   fcEnabled = false;
 
   constructor(
@@ -74,6 +74,6 @@ export class IscsiComponent implements OnInit {
   }
 
   gotoWizard(): void {
-    this.router.navigate(new Array('/').concat(this.route_wizard));
+    this.router.navigate(new Array('/').concat(this.wizardRoute));
   }
 }

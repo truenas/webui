@@ -19,7 +19,7 @@ import { WebSocketService } from 'app/services/ws.service';
   providedIn: 'root',
 })
 export class IxFileUploadService {
-  private readonly FILE_SIZE_LIMIT_50Mb = 52428800;
+  private readonly FILE_SIZE_LIMIT_50MB = 52428800;
   private fileUploadProgress$ = new Subject<HttpProgressEvent>();
   private fileUploadSuccess$ = new Subject<HttpResponse<unknown>>();
 
@@ -86,7 +86,7 @@ export class IxFileUploadService {
     const fileReader = new FileReader();
     const { type, name, size } = file;
     return new Observable((observer: Observer<ValidatedFile>) => {
-      const isValidSize = size <= this.FILE_SIZE_LIMIT_50Mb;
+      const isValidSize = size <= this.FILE_SIZE_LIMIT_50MB;
       if (!isValidSize) {
         observer.error({ error: { name, errorMessage: this.translate.instant('File size is limited to 50 MiB.') } });
       }

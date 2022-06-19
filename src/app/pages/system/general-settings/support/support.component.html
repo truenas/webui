@@ -37,13 +37,13 @@
           ></ix-sys-info>
         <ng-template #licensedSysInfo>
           <ix-sys-info
-            [customer_name]='licenseInfo.customer_name'
+            [customerName]='licenseInfo.customer_name'
             [features]='licenseInfo.features'
-            [contract_type]='licenseInfo.contract_type'
-            [expiration_date]='licenseInfo.expiration_date'
+            [contractType]='licenseInfo.contract_type'
+            [expirationDate]='licenseInfo.expiration_date'
             [model]='systemInfo.model'
             [serial]='systemInfo.serial'
-            [add_hardware]='licenseInfo.add_hardware'
+            [addHardware]='licenseInfo.add_hardware'
             [daysLeftinContract]='licenseInfo.daysLeftinContract'
             [hasLicense]="hasLicense"
           >

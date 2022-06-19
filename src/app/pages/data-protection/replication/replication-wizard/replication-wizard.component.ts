@@ -756,7 +756,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
     },
   ];
   protected selectedReplicationTask: ReplicationTask;
-  protected semiSSHFieldGroup: string[] = [
+  protected semiSshFieldGroup: string[] = [
     'url',
     'password',
   ];
@@ -780,9 +780,9 @@ export class ReplicationWizardComponent implements WizardConfiguration {
   protected snapshotsCountField: FormParagraphConfig;
   private existSnapshotTasks: number[] = [];
   private eligibleSnapshots = 0;
-  protected preload_fieldSet: FieldSet;
-  protected source_fieldSet: FieldSet;
-  protected target_fieldSet: FieldSet;
+  protected preloadFieldSet: FieldSet;
+  protected sourceFieldSet: FieldSet;
+  protected targetFieldSet: FieldSet;
 
   constructor(
     private keychainCredentialService: KeychainCredentialService,
@@ -815,10 +815,10 @@ export class ReplicationWizardComponent implements WizardConfiguration {
 
   afterInit(entityWizard: EntityWizardComponent): void {
     this.entityWizard = entityWizard;
-    this.preload_fieldSet = _.find(this.wizardConfig[0].fieldSets, { class: 'preload' });
-    this.source_fieldSet = _.find(this.wizardConfig[0].fieldSets, { class: 'source' });
-    this.target_fieldSet = _.find(this.wizardConfig[0].fieldSets, { class: 'target' });
-    this.snapshotsCountField = _.find(this.source_fieldSet.config, { name: 'snapshots_count' }) as FormParagraphConfig;
+    this.preloadFieldSet = _.find(this.wizardConfig[0].fieldSets, { class: 'preload' });
+    this.sourceFieldSet = _.find(this.wizardConfig[0].fieldSets, { class: 'source' });
+    this.targetFieldSet = _.find(this.wizardConfig[0].fieldSets, { class: 'target' });
+    this.snapshotsCountField = _.find(this.sourceFieldSet.config, { name: 'snapshots_count' }) as FormParagraphConfig;
 
     this.step0Init();
     this.step1Init();
@@ -826,7 +826,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
   }
 
   step0Init(): void {
-    const existReplicationField = _.find(this.preload_fieldSet.config, { name: 'exist_replication' }) as FormSelectConfig;
+    const existReplicationField = _.find(this.preloadFieldSet.config, { name: 'exist_replication' }) as FormSelectConfig;
     this.replicationService.getReplicationTasks().pipe(untilDestroyed(this)).subscribe(
       (res: ReplicationTask[]) => {
         for (const task of res) {
@@ -854,8 +854,8 @@ export class ReplicationWizardComponent implements WizardConfiguration {
       privateKeyField.options = privateKeyField.options.concat(keypairOptions);
     });
 
-    const sshCredentialsSourceField = _.find(this.source_fieldSet.config, { name: 'ssh_credentials_source' }) as FormSelectConfig;
-    const sshCredentialsTargetField = _.find(this.target_fieldSet.config, { name: 'ssh_credentials_target' }) as FormSelectConfig;
+    const sshCredentialsSourceField = _.find(this.sourceFieldSet.config, { name: 'ssh_credentials_source' }) as FormSelectConfig;
+    const sshCredentialsTargetField = _.find(this.targetFieldSet.config, { name: 'ssh_credentials_target' }) as FormSelectConfig;
     this.keychainCredentialService.getSshConnections().pipe(untilDestroyed(this)).subscribe((connections) => {
       connections.forEach((connection) => {
         sshCredentialsSourceField.options.push({ label: connection.name, value: connection.id });
@@ -915,7 +915,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
             this.createSshConnection(credentialName);
             this.setDisable(datasetName, false, false, 0);
           } else {
-            const fieldConfig = destination === 'source' ? this.source_fieldSet.config : this.target_fieldSet.config;
+            const fieldConfig = destination === 'source' ? this.sourceFieldSet.config : this.targetFieldSet.config;
             const explorerConfig = _.find(
               fieldConfig,
               { name: datasetName },
@@ -935,7 +935,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
     }
 
     this.entityWizard.formArray.get([0]).get('recursive').valueChanges.pipe(untilDestroyed(this)).subscribe((value: boolean) => {
-      const explorerConfig = _.find(this.source_fieldSet.config, { name: 'source_datasets' }) as FormExplorerConfig;
+      const explorerConfig = _.find(this.sourceFieldSet.config, { name: 'source_datasets' }) as FormExplorerConfig;
       const explorerComponent = explorerConfig.customTemplateStringOptions;
       if (explorerComponent) {
         explorerComponent.useTriState = value;
@@ -1201,7 +1201,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
           private_key: data['private_key'],
           cipher: data['cipher'],
         };
-        for (const i of this.semiSSHFieldGroup) {
+        for (const i of this.semiSshFieldGroup) {
           payload[i] = data[i];
         }
       }

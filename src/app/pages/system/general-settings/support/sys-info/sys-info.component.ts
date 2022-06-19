@@ -10,14 +10,14 @@ export class SysInfoComponent {
   @Input() product: string;
   @Input() memory: string;
   @Input() serial: string;
-  @Input() FN_instructions: string;
+  @Input() fnInstructions: string;
   @Input() hasLicense: boolean;
 
   // Additional fields for licensed customers
-  @Input() customer_name: string;
+  @Input() customerName: string;
   @Input() features: string[];
-  @Input() contract_type: string;
-  @Input() expiration_date: string;
-  @Input() add_hardware: string;
+  @Input() contractType: string;
+  @Input() expirationDate: string;
+  @Input() addHardware: string;
   @Input() daysLeftinContract: number;
 }

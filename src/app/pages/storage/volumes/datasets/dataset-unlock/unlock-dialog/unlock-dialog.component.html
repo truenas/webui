@@ -1,29 +1,29 @@
 <h1 mat-dialog-title>{{ title | translate }}</h1>
 <div mat-dialog-content id="unlock-msg">
   <div class="message-content">
-    <div class="errors-content" *ngIf="error_datasets.length > 0">
+    <div class="errors-content" *ngIf="errorDatasets.length > 0">
       <mat-divider></mat-divider>
-      <p>{{errors_message | translate}}</p>
-      <div *ngFor="let dataset of error_datasets" class="row">
+      <p>{{errorsMessage | translate}}</p>
+      <div *ngFor="let dataset of errorDatasets" class="row">
         <strong>{{dataset.name}}</strong>
         <span fxFlex></span>
         <a (click)="showError(dataset)"><u>{{"details" | translate}}</u></a>
         <i class="material-icons red-icon">cancel</i>
       </div>
     </div>
-    <div class="skipped-content" *ngIf="skipped_datasets.length > 0">
+    <div class="skipped-content" *ngIf="skippedDatasets.length > 0">
       <mat-divider></mat-divider>
-      <p>{{skipped_message | translate}}</p>
-      <div *ngFor="let dataset of skipped_datasets" class="row">
+      <p>{{skippedMessage | translate}}</p>
+      <div *ngFor="let dataset of skippedDatasets" class="row">
         <strong>{{dataset.name}}</strong>
         <span fxFlex></span>
         <i class="material-icons red-icon">cancel</i>
       </div>
     </div>
-    <div class="unlock-content" *ngIf="unlock_datasets.length > 0">
+    <div class="unlock-content" *ngIf="unlockDatasets.length > 0">
       <mat-divider></mat-divider>
-      <p>{{unlock_message | translate}}</p>
-      <div *ngFor="let dataset of unlock_datasets" class="row">
+      <p>{{unlockMessage | translate}}</p>
+      <div *ngFor="let dataset of unlockDatasets" class="row">
         <strong>{{dataset.name}}</strong>
         <span fxFlex></span>
         <i class="material-icons green-icon">check_circle</i>
