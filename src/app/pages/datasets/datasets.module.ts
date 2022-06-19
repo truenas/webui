@@ -8,6 +8,7 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { TranslateModule } from '@ngx-translate/core';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
+import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { AppCommonModule } from 'app/modules/common/app-common.module';
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
@@ -22,10 +23,12 @@ import { LoadingCardContentComponent } from 'app/pages/datasets/components/loadi
 import { routing } from 'app/pages/datasets/datasets.routing';
 import { PermissionsModule } from 'app/pages/datasets/modules/permissions/permissions.module';
 import { DatasetCapacityManagementCardComponent } from './components/dataset-capacity-management-card/dataset-capacity-management-card.component';
+import { DatasetNodeComponent } from './components/dataset-node/dataset-node.component';
 
 @NgModule({
   imports: [
     CommonModule,
+    CommonDirectivesModule,
     routing,
     TranslateModule,
     MatIconModule,
@@ -50,6 +53,7 @@ import { DatasetCapacityManagementCardComponent } from './components/dataset-cap
     DeleteDatasetDialogComponent,
     DatasetDetailsPanelComponent,
     DatasetCapacityManagementCardComponent,
+    DatasetNodeComponent,
   ],
 })
 export class DatasetsModule { }

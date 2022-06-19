@@ -1,0 +1,25 @@
+<div class="tree-node-grid">
+  <div>
+    <div fxLayout="row" fxLayoutAlign="start center">
+      <mat-icon *ngIf="node.icon && !node.icon.startsWith('mdi')">{{ node.icon }}</mat-icon>
+      <mat-icon *ngIf="node.icon && node.icon.startsWith('mdi')" fontSet="mdi-set" [fontIcon]="node.icon"></mat-icon>
+      <strong>{{ node.label }}</strong>
+    </div>
+  </div>
+  <div>
+    <div fxLayout="row" fxLayoutAlign="start center">
+      <span>{{ node.item.used.value }} used / {{ node.item.available.value }} left</span>
+    </div>
+  </div>
+  <div>
+    <div fxLayout="row" fxLayoutAlign="start center">
+      <mat-icon>{{ node.item.encrypted ? 'lock' : 'lock_open' }}</mat-icon>
+      <div>{{ (node.item.encrypted ? 'Encrypted' : 'Unlocked') | translate }}</div>
+    </div>
+  </div>
+  <div>
+    <div fxLayout="row" fxLayoutAlign="start center">
+      {{ node.roles.join(', ') }}
+    </div>
+  </div>
+</div>

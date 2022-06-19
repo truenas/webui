@@ -6,8 +6,8 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { IxTreeNode } from 'app/modules/ix-tree/interfaces/ix-tree-node.interface';
 import { IxNestedTreeDataSource } from 'app/modules/ix-tree/ix-tree-nested-datasource';
+import { DatasetNode } from 'app/pages/datasets/components/dataset-node/dataset-node.interface';
 import { AppLoaderService, WebSocketService } from 'app/services';
-import { DatasetNode } from './dataset-node.interface';
 
 @UntilDestroy()
 @Component({
@@ -34,14 +34,6 @@ export class DatasetsManagementComponent implements OnInit {
     this.ws.call('pool.dataset.query', [[], {
       extra: {
         flat: false,
-        properties: [
-          'name',
-          'type',
-          'used',
-          'available',
-          'mountpoint',
-          'encrypted',
-        ],
       },
       order_by: ['name'],
     }]).pipe(
