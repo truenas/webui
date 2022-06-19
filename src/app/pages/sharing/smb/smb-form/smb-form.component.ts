@@ -22,6 +22,7 @@ import { Service } from 'app/interfaces/service.interface';
 import { SmbPresets, SmbPresetType, SmbShare } from 'app/interfaces/smb-share.interface';
 import { forbiddenValues } from 'app/modules/entity/entity-form/validators/forbidden-values-validation';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { RestartSmbDialogComponent } from 'app/pages/sharing/smb/smb-form/restart-smb-dialog/restart-smb-dialog.component';
 import {
   AppLoaderService, DialogService, WebSocketService,
@@ -129,6 +130,7 @@ export class SmbFormComponent implements OnInit {
     protected loader: AppLoaderService,
     private errorHandler: FormErrorHandlerService,
     private filesystemService: FilesystemService,
+    private snackbar: SnackbarService,
   ) { }
 
   ngOnInit(): void {
@@ -368,7 +370,7 @@ export class SmbFormComponent implements OnInit {
     });
   }
 
-  restartCifsServiceIfNecessary(): Observable<boolean> {
+  restartCifsServiceIfNecessary(): Observable<unknown> {
     return this.promptIfRestartRequired().pipe(
       switchMap((shouldRestart) => {
         if (shouldRestart) {
@@ -395,17 +397,16 @@ export class SmbFormComponent implements OnInit {
     return of(false);
   }
 
-  restartCifsService = (): Observable<boolean> => {
+  restartCifsService = (): Observable<void> => {
     this.loader.open();
     return this.ws.call(
       'service.restart',
       [ServiceName.Cifs],
     ).pipe(
-      switchMap(() => {
+      tap(() => {
         this.loader.close();
-        return this.dialog.info(
-          helptextSharingSmb.restarted_smb_dialog.title,
-          helptextSharingSmb.restarted_smb_dialog.message,
+        this.snackbar.success(
+          this.translate.instant(helptextSharingSmb.restarted_smb_dialog.message),
         );
       }),
     );
@@ -451,12 +452,12 @@ export class SmbFormComponent implements OnInit {
         return of({});
       }),
       switchMap(() => (startNow ? this.ws.call('service.start', [cifsService.service, { silent: false }]) : of({}))),
-      switchMap(() => {
+      tap(() => {
         if (!startNow) {
-          return of({});
+          return;
         }
-        return this.dialog.info(
-          this.translate.instant('{service} Service', { service: 'SMB' }),
+
+        this.snackbar.success(
           this.translate.instant('The {service} service has been started.', { service: 'SMB' }),
         );
       }),

@@ -1,11 +1,10 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
-import { Validators } from '@angular/forms';
-import { FormBuilder } from '@ngneat/reactive-forms';
+import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable } from 'rxjs';
 import { helptextSharingIscsi } from 'app/helptext/sharing';
-import { IscsiAuthAccess } from 'app/interfaces/iscsi.interface';
+import { IscsiAuthAccess, IscsiAuthAccessUpdate } from 'app/interfaces/iscsi.interface';
 import {
   doesNotEqualValidator,
   matchOtherValidator,
@@ -104,11 +103,11 @@ export class AuthorizedAccessFormComponent {
     this.isLoading = true;
     let request$: Observable<unknown>;
     if (this.isNew) {
-      request$ = this.ws.call('iscsi.auth.create', [values]);
+      request$ = this.ws.call('iscsi.auth.create', [values as IscsiAuthAccessUpdate]);
     } else {
       request$ = this.ws.call('iscsi.auth.update', [
         this.editingAccess.id,
-        values,
+        values as IscsiAuthAccessUpdate,
       ]);
     }
 

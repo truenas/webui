@@ -9,6 +9,7 @@ import helptext from 'app/helptext/apps/apps';
 import { CatalogApp } from 'app/interfaces/catalog.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { EntityUtils } from 'app/modules/entity/utils';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApplicationsService } from 'app/pages/applications/applications.service';
 import { ChartFormComponent } from 'app/pages/applications/forms/chart-form/chart-form.component';
 import { KubernetesSettingsComponent } from 'app/pages/applications/kubernetes-settings/kubernetes-settings.component';
@@ -36,6 +37,7 @@ export class CommonAppsToolbarButtonsComponent implements OnInit {
     private translate: TranslateService,
     private core: CoreService,
     private cdr: ChangeDetectorRef,
+    private snackbar: SnackbarService,
   ) { }
 
   ngOnInit(): void {
@@ -75,9 +77,8 @@ export class CommonAppsToolbarButtonsComponent implements OnInit {
       dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
         dialogRef.close();
         this.core.emit({ name: 'RefreshAppsTab' });
-        this.dialogService.info(
-          helptext.choosePool.success,
-          this.translate.instant(helptext.choosePool.unsetPool.label),
+        this.snackbar.success(
+          this.translate.instant('Pool has been unset.'),
         );
       });
 
