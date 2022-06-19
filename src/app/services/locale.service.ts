@@ -38,11 +38,17 @@ export class LocaleService {
     });
   }
 
-  getDateFormatOptions(tz?: string): Option[] {
-    let date = new Date();
+  getDateWithTz(date: Date | number, tz?: string): Date {
     if (tz) {
-      date = utcToZonedTime(new Date().valueOf(), tz);
+      return utcToZonedTime(date.valueOf(), tz);
+    } if (this.timezone) {
+      return utcToZonedTime(date.valueOf(), this.timezone);
     }
+    return new Date(date);
+  }
+
+  getDateFormatOptions(tz?: string): Option[] {
+    const date = this.getDateWithTz(new Date(), tz);
 
     return [
       { label: format(date, 'yyyy-MM-dd'), value: 'yyyy-MM-dd' },
@@ -57,10 +63,8 @@ export class LocaleService {
   }
 
   getTimeFormatOptions(tz?: string): Option[] {
-    let date = new Date();
-    if (tz) {
-      date = utcToZonedTime(new Date().valueOf(), tz);
-    }
+    const date = this.getDateWithTz(new Date(), tz);
+
     return [
       { label: `${format(date, 'HH:mm:ss')} ${this.t24}`, value: 'HH:mm:ss' },
       { label: format(date, 'hh:mm:ss aaaaa\'m\''), value: 'hh:mm:ss aaaaa\'m\'' },
@@ -69,11 +73,7 @@ export class LocaleService {
   }
 
   formatDateTime(date: Date | number, tz?: string): string {
-    if (tz) {
-      date = utcToZonedTime(date.valueOf(), tz);
-    } else if (this.timezone) {
-      date = utcToZonedTime(date.valueOf(), this.timezone);
-    }
+    date = this.getDateWithTz(date, tz);
 
     return format(date, `${this.dateFormat} ${this.timeFormat}`);
   }
@@ -87,11 +87,7 @@ export class LocaleService {
   }
 
   getTimeOnly(date: Date | number, seconds = true, tz?: string): string {
-    if (tz) {
-      date = utcToZonedTime(date.valueOf(), tz);
-    } else if (this.timezone) {
-      date = utcToZonedTime(date.valueOf(), this.timezone);
-    }
+    date = this.getDateWithTz(date, tz);
     let formatStr: string;
     formatStr = this.timeFormat;
     if (!seconds) {
@@ -110,12 +106,8 @@ export class LocaleService {
   }
 
   getDateAndTime(tz?: string): [string, string] {
-    let date = new Date();
-    if (tz) {
-      date = utcToZonedTime(new Date().valueOf(), tz);
-    } else if (this.timezone) {
-      date = utcToZonedTime(new Date().valueOf(), this.timezone);
-    }
+    const date = this.getDateWithTz(new Date(), tz);
+
     return [format(date, `${this.dateFormat}`), format(date, `${this.timeFormat}`)];
   }
 
