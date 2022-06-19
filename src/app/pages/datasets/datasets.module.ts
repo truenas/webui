@@ -21,6 +21,7 @@ import { DeleteDatasetDialogComponent } from 'app/pages/datasets/components/dele
 import { LoadingCardContentComponent } from 'app/pages/datasets/components/loading-card-content/loading-card-content.component';
 import { routing } from 'app/pages/datasets/datasets.routing';
 import { PermissionsModule } from 'app/pages/datasets/modules/permissions/permissions.module';
+import { DatasetCapacityManagementCardComponent } from './components/dataset-capacity-management-card/dataset-capacity-management-card.component';
 
 @NgModule({
   imports: [
@@ -48,6 +49,7 @@ import { PermissionsModule } from 'app/pages/datasets/modules/permissions/permis
     DatasetFormComponent,
     DeleteDatasetDialogComponent,
     DatasetDetailsPanelComponent,
+    DatasetCapacityManagementCardComponent,
   ],
 })
 export class DatasetsModule { }
