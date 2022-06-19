@@ -14,23 +14,24 @@
       <div class="legend-placeholder" [class.loading]="loading"></div>
       <div class="legend-placeholder" [class.loading]="loading"></div>
     </div>
+
+    <div class="quotas" fxLayout="column" *ngIf="!dataset.encrypted">
+      <div class="row">
+        <span class="header">{{ 'User Quotas' | translate }}: </span>
+        <div fxFlex fxLayout="row" fxLayoutAlign="space-between center">
+          <span class="loader" *ngIf="loading"></span>
+          <span *ngIf="!loading">{{ 'Quotas set for {n} users' | translate: { n: userQuotas } }}</span>
+          <a [routerLink]="['user-quotas', dataset.id]">{{ 'Manage User Quotas' | translate }}</a>
+        </div>
+      </div>
+      <div class="row">
+        <span class="header">{{ 'Group Quotas' | translate }}: </span>
+        <div fxFlex fxLayout="row" fxLayoutAlign="space-between center">
+          <span class="loader" *ngIf="loading"></span>
+          <span *ngIf="!loading">{{ 'Quotas set for {n} groups' | translate: { n: groupQuotas } }}</span>
+          <a [routerLink]="['group-quotas', dataset.id]">{{ 'Manage Group Quotas' | translate }}</a>
+        </div>
+      </div>
+    </div>
   </mat-card-content>
-  <mat-card-actions fxLayout="column" *ngIf="!dataset.encrypted">
-    <div class="row">
-      <span class="header">{{ 'User Quotas' | translate }}: </span>
-      <div fxFlex fxLayout="row" fxLayoutAlign="space-between center">
-        <span class="loader" *ngIf="loading"></span>
-        <span *ngIf="!loading">{{ 'Quotas set for {n} users' | translate: { n: userQuotas } }}</span>
-        <a [routerLink]="['/storage/user-quotas', dataset.id]">{{ 'Manage User Quotas' | translate }}</a>
-      </div>
-    </div>
-    <div class="row">
-      <span class="header">{{ 'Group Quotas' | translate }}: </span>
-      <div fxFlex fxLayout="row" fxLayoutAlign="space-between center">
-        <span class="loader" *ngIf="loading"></span>
-        <span *ngIf="!loading">{{ 'Quotas set for {n} groups' | translate: { n: groupQuotas } }}</span>
-        <a [routerLink]="['/storage/group-quotas', dataset.id]">{{ 'Manage Group Quotas' | translate }}</a>
-      </div>
-    </div>
-  </mat-card-actions>
 </mat-card>

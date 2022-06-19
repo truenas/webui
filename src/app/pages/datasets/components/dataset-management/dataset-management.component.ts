@@ -20,7 +20,7 @@ export class DatasetsManagementComponent implements OnInit {
   treeControl = new NestedTreeControl<Dataset, string>((dataset) => dataset.children, {
     trackBy: (dataset) => dataset.id,
   });
-  readonly trackByFn: TrackByFunction<Dataset> = (_, node) => node.id;
+  readonly trackByFn: TrackByFunction<Dataset> = (_, dataset) => dataset.id;
   readonly hasNestedChild = (_: number, dataset: Dataset): boolean => Boolean(dataset.children?.length);
 
   constructor(

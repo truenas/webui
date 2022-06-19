@@ -3014,6 +3014,7 @@
   "To enable disable Active Directory first.": "",
   "To enable disable LDAP first.": "",
   "Toggle Collapse": "",
+  "Toggle {row}": "",
   "Token": "",
   "Token created with  <a href=\"https://developers.google.com/drive/api/v3/about-auth\" target=\"_blank\">Google Drive</a>.": "",
   "Token created with  <a href=\"https://developers.google.com/drive/api/v3/about-auth\" target=\"_blank\">Google Drive</a>. Access Tokens expire periodically and  must be refreshed.": "",

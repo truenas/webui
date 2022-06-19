@@ -47,7 +47,7 @@
                 mat-icon-button
                 ixTreeNodeToggle
                 (click)="$event.preventDefault()"
-                [attr.aria-label]="'toggle ' + dataset.name"
+                [attr.aria-label]="'Toggle {row}' | translate: { row: dataset.name }"
               >
                 <mat-icon class="mat-icon-rtl-mirror">
                   {{ treeControl.isExpanded(dataset) ? 'expand_more' : 'chevron_right' }}
