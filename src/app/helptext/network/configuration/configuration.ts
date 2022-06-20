@@ -14,7 +14,7 @@ export default {
  used as the Kerberos principal name.'),
 
   inherit_dhcp_placeholder: T('Inherit domain from DHCP'),
-  inherit_dhcp_tooltip: T('When this checkbox is checked, domain inherit from DHCP.'),
+  inherit_dhcp_tooltip: T('When this checkbox is checked, domain is inherited from DHCP.'),
 
   domain_placeholder: T('Domain'),
   domain_tooltip: T('System domain name, like <i>example.com</i>'),

@@ -167,7 +167,7 @@
   "View Import Log": "",
   "Warning: {n} of {total} docker images could not be deleted.": "",
   "Warning: {n} of {total} docker images could not be updated.": "",
-  "When this checkbox is checked, domain inherit from DHCP.": "",
+  "When this checkbox is checked, domain is inherited from DHCP.": "",
   "Widget data is not available": "",
   "Wizard": "",
   "Would you like to restart the SMB Service?": "",
