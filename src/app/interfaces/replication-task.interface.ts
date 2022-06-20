@@ -1,10 +1,10 @@
 import { CompressionType } from 'app/enums/compression-type.enum';
 import { Direction } from 'app/enums/direction.enum';
+import { EncryptionKeyFormat } from 'app/enums/encryption-key-format.enum';
 import { LifetimeUnit } from 'app/enums/lifetime-unit.enum';
 import { LoggingLevel } from 'app/enums/logging-level.enum';
 import { NetcatMode } from 'app/enums/netcat-mode.enum';
 import { ReadOnlyMode } from 'app/enums/readonly-mode.enum';
-import { ReplicationEncryptionKeyFormat } from 'app/enums/replication-encryption-key-format.enum';
 import { RetentionPolicy } from 'app/enums/retention-policy.enum';
 import { ScheduleMethod } from 'app/enums/schedule-method.enum';
 import { TransportMode } from 'app/enums/transport-mode.enum';
@@ -25,7 +25,7 @@ export interface ReplicationTask {
   enabled?: boolean;
   encryption?: boolean;
   encryption_key?: string;
-  encryption_key_format?: ReplicationEncryptionKeyFormat;
+  encryption_key_format?: EncryptionKeyFormat;
   encryption_key_location?: string;
   exclude?: string[];
   hold_pending_snapshots?: boolean;
@@ -91,7 +91,7 @@ export interface ReplicationCreate {
   replicate?: boolean;
   encryption?: boolean;
   encryption_key?: string;
-  encryption_key_format?: ReplicationEncryptionKeyFormat;
+  encryption_key_format?: EncryptionKeyFormat;
   encryption_key_location?: string;
   periodic_snapshot_tasks?: number[] | PeriodicSnapshotTask[];
   naming_schema?: string[];

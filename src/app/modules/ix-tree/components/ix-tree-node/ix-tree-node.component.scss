@@ -29,4 +29,9 @@ $level-offset: 40px;
       width: 6px;
     }
   }
+
+  ::ng-deep button[disabled] {
+    pointer-events: none;
+    z-index: -1;
+  }
 }

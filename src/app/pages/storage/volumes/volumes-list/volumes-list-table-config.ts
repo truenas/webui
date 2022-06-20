@@ -25,6 +25,10 @@ import { Pool, PoolExpandParams, UpdatePool } from 'app/interfaces/pool.interfac
 import { Process } from 'app/interfaces/process.interface';
 import { Subs } from 'app/interfaces/subs.interface';
 import { SystemDatasetConfig } from 'app/interfaces/system-dataset-config.interface';
+import {
+  VolumesListDataset,
+  VolumesListPool,
+} from 'app/interfaces/volumes-list-pool.interface';
 import { DialogFormConfiguration } from 'app/modules/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/modules/entity/entity-dialog/entity-dialog.component';
 import { FormUploadComponent } from 'app/modules/entity/entity-form/components/form-upload/form-upload.component';
@@ -42,10 +46,6 @@ import {
   EncryptionOptionsDialogComponent,
 } from 'app/pages/storage/volumes/encyption-options-dialog/encryption-options-dialog.component';
 import { ExportDisconnectModalComponent, ExportDisconnectModalState } from 'app/pages/storage/volumes/volumes-list/components/export-disconnect-modal.component';
-import {
-  VolumesListDataset,
-  VolumesListPool,
-} from 'app/pages/storage/volumes/volumes-list/volumes-list-pool.interface';
 import { VolumesListComponent } from 'app/pages/storage/volumes/volumes-list/volumes-list.component';
 import {
   AppLoaderService, DialogService, StorageService, WebSocketService,
