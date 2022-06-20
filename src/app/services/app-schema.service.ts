@@ -3,6 +3,7 @@ import {
   UntypedFormGroup, UntypedFormControl, Validators, UntypedFormArray, AbstractControl,
 } from '@angular/forms';
 import { UntilDestroy } from '@ngneat/until-destroy';
+import _ from 'lodash';
 import { of, Subscription } from 'rxjs';
 import { ChartSchemaType } from 'app/enums/chart-schema-type.enum';
 import { DynamicFormSchemaType } from 'app/enums/dynamic-form-schema-type.enum';
@@ -25,7 +26,7 @@ export class AppSchemaService {
     const schema = chartSchemaNode.schema;
     let newSchema: DynamicFormSchemaNode[] = [];
     if (schema.hidden) {
-      return;
+      return newSchema;
     }
 
     if ([
@@ -202,9 +203,6 @@ export class AppSchemaService {
   ): Subscription {
     const subscription = new Subscription();
     const schema = chartSchemaNode.schema;
-    if (schema.hidden) {
-      return;
-    }
 
     if ([
       ChartSchemaType.Int,
@@ -289,6 +287,13 @@ export class AppSchemaService {
           }
         }
       }
+    } else {
+      console.error('Unsupported type = ', schema.type);
+      return;
+    }
+
+    if (schema.hidden) {
+      formGroup.controls[chartSchemaNode.variable].disable();
     }
 
     if (schema.show_if) {
@@ -304,13 +309,13 @@ export class AppSchemaService {
         }
         switch (relation.operatorName) {
           case '=':
-            if (formGroup.controls[relation.fieldName].value !== relation.operatorValue) {
+            if (!_.isEqual(formGroup.controls[relation.fieldName].value, relation.operatorValue)) {
               formGroup.controls[chartSchemaNode.variable].disable();
             }
             subscription.add(formGroup.controls[relation.fieldName].valueChanges
               .subscribe((value) => {
                 if (value !== null && formGroup.controls[chartSchemaNode.variable].parent.enabled) {
-                  if (value === relation.operatorValue) {
+                  if (_.isEqual(value, relation.operatorValue)) {
                     formGroup.controls[chartSchemaNode.variable].enable();
                   } else {
                     formGroup.controls[chartSchemaNode.variable].disable();
@@ -319,13 +324,13 @@ export class AppSchemaService {
               }));
             break;
           case '!=':
-            if (formGroup.controls[relation.fieldName].value === relation.operatorValue) {
+            if (_.isEqual(formGroup.controls[relation.fieldName].value, relation.operatorValue)) {
               formGroup.controls[chartSchemaNode.variable].disable();
             }
             subscription.add(formGroup.controls[relation.fieldName].valueChanges
               .subscribe((value) => {
                 if (value !== null && formGroup.controls[chartSchemaNode.variable].parent.enabled) {
-                  if (value !== relation.operatorValue) {
+                  if (!_.isEqual(value, relation.operatorValue)) {
                     formGroup.controls[chartSchemaNode.variable].enable();
                   } else {
                     formGroup.controls[chartSchemaNode.variable].disable();
