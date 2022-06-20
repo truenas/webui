@@ -15,7 +15,7 @@
       <div class="legend-placeholder" [class.loading]="loading"></div>
     </div>
 
-    <div class="quotas" fxLayout="column" *ngIf="!dataset.encrypted">
+    <div class="quotas" fxLayout="column" *ngIf="!dataset.locked">
       <div class="row">
         <span class="header">{{ 'User Quotas' | translate }}: </span>
         <div fxFlex fxLayout="row" fxLayoutAlign="space-between center">
