@@ -9,11 +9,11 @@ import { MockWebsocketService } from 'app/core/testing/classes/mock-websocket.se
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { ZvolAttachment } from 'app/interfaces/pool-attachment.interface';
 import { Process } from 'app/interfaces/process.interface';
+import { VolumesListDataset } from 'app/interfaces/volumes-list-pool.interface';
 import { AppLoaderModule } from 'app/modules/app-loader/app-loader.module';
 import { IxCheckboxHarness } from 'app/modules/ix-forms/components/ix-checkbox/ix-checkbox.harness';
 import { IxInputHarness } from 'app/modules/ix-forms/components/ix-input/ix-input.harness';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
-import { VolumesListDataset } from 'app/pages/storage/volumes/volumes-list/volumes-list-pool.interface';
 import { DialogService, WebSocketService } from 'app/services';
 import { DeleteZvolDialogComponent } from './delete-zvol-dialog.component';
 

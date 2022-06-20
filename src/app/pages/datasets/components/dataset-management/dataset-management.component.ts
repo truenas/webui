@@ -6,11 +6,9 @@ import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { pluck } from 'rxjs/operators';
 import { Dataset } from 'app/interfaces/dataset.interface';
-import { IxTreeNode } from 'app/modules/ix-tree/interfaces/ix-tree-node.interface';
 import { IxNestedTreeDataSource } from 'app/modules/ix-tree/ix-tree-nested-datasource';
 import { findInTree } from 'app/pages/datasets/utils/find-in-tree.utils';
 import { AppLoaderService, WebSocketService } from 'app/services';
-import { DatasetNode } from './dataset-node.interface';
 
 @UntilDestroy()
 @Component({
@@ -21,10 +19,12 @@ import { DatasetNode } from './dataset-node.interface';
 })
 export class DatasetsManagementComponent implements OnInit {
   selectedNode: DatasetNode;
-  dataSource: IxNestedTreeDataSource<DatasetNode>;
-  treeControl = new NestedTreeControl<IxTreeNode<Dataset>>((node) => node.children);
-  readonly trackByFn: TrackByFunction<IxTreeNode<Dataset>> = (_, node) => node.label;
-  readonly hasNestedChild = (_: number, nodeData: DatasetNode): boolean => !!nodeData.children?.length;
+  dataSource: IxNestedTreeDataSource<Dataset>;
+  treeControl = new NestedTreeControl<Dataset, string>((dataset) => dataset.children, {
+    trackBy: (dataset) => dataset.id,
+  });
+  readonly trackByFn: TrackByFunction<Dataset> = (_, dataset) => dataset.id;
+  readonly hasNestedChild = (_: number, dataset: Dataset): boolean => Boolean(dataset.children?.length);
 
   constructor(
     private ws: WebSocketService,
@@ -63,7 +63,8 @@ export class DatasetsManagementComponent implements OnInit {
       untilDestroyed(this),
     ).subscribe(
       (datasets: Dataset[]) => {
-        this.createDataSource(datasets);
+        this.dataSource = new IxNestedTreeDataSource<Dataset>(datasets);
+        this.treeControl.dataNodes = datasets;
         this.loader.close();
         const routeDatasetId = this.activatedRoute.snapshot.paramMap.get('datasetId');
         if (routeDatasetId) {

@@ -1,0 +1,78 @@
+<div>
+    <mat-card class="container-card">
+      <mat-card-header>
+        <h3 mat-card-title>{{ 'Dataset Details' | translate }}</h3>
+        <button mat-button (click)="editDataset()">{{ 'Edit' | translate }}</button>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="row">
+          <span class="header">Type: </span>
+          <span *ngIf="!loading || !!dataset.type">{{ dataset.type }}</span>
+          <ngx-skeleton-loader
+            *ngIf="loading && !dataset.type"
+            class="loader-skel" 
+            animation="progress" 
+            [theme]="loadingTheme"
+          ></ngx-skeleton-loader>
+        </div>
+        <div class="row">
+          <span class="header">Sync: </span>
+          <span *ngIf="!loading || !!dataset.sync?.value">{{ dataset.sync?.value }}</span>
+          <ngx-skeleton-loader
+            *ngIf="loading && !dataset.sync?.value"
+            class="loader-skel" 
+            animation="progress" 
+            [theme]="loadingTheme"
+          ></ngx-skeleton-loader>
+        </div>
+        <div class="row">
+          <span class="header">Compression Level: </span>
+          <span *ngIf="!loading || !!datasetCompression">{{ datasetCompression }}</span>
+          <ngx-skeleton-loader
+            *ngIf="loading && !datasetCompression"
+            class="loader-skel" 
+            animation="progress" 
+            [theme]="loadingTheme"
+          ></ngx-skeleton-loader>
+        </div>
+        <div class="row">
+          <span class="header">Enable Atime: </span>
+          <span *ngIf="!loading || !!dataset.atime?.value">{{ dataset.atime?.value }}</span>
+          <ngx-skeleton-loader
+            *ngIf="loading && !dataset.atime?.value"
+            class="loader-skel" 
+            animation="progress" 
+            [theme]="loadingTheme"
+          ></ngx-skeleton-loader>
+        </div>
+        <div class="row">
+          <span class="header">ZFS Deduplication: </span>
+          <span *ngIf="!loading || !!dataset.deduplication?.value">{{ dataset.deduplication?.value }}</span>
+          <ngx-skeleton-loader
+            *ngIf="loading && !dataset.deduplication?.value"
+            class="loader-skel" 
+            animation="progress" 
+            [theme]="loadingTheme"
+          ></ngx-skeleton-loader>
+        </div>
+        <div class="row">
+          <span class="header">Case Sensitivity: </span>
+          <span *ngIf="!loading || !!dataset.casesensitivity?.value">{{ dataset.casesensitivity?.value }}</span>
+          <ngx-skeleton-loader
+            *ngIf="loading && !dataset.casesensitivity?.value"
+            class="loader-skel" 
+            animation="progress" 
+            [theme]="loadingTheme"
+          ></ngx-skeleton-loader>
+        </div>
+      </mat-card-content>
+      <mat-card-actions *ngIf="dataset.id !== dataset.pool" >
+        <!-- TODO: Should be mat-stroked-button, but its styles are polluted -->
+        <button
+          class="stroked-btn" 
+          mat-stroked-button 
+          (click)="deleteDataset()"
+        >{{ 'Delete' | translate }}</button>
+      </mat-card-actions>
+    </mat-card>
+  </div>
