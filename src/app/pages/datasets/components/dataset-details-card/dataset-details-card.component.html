@@ -10,9 +10,7 @@
           <span *ngIf="!loading || !!dataset.type">{{ dataset.type }}</span>
           <ngx-skeleton-loader
             *ngIf="loading && !dataset.type"
-            class="loader-skel" 
-            animation="progress" 
-            [theme]="loadingTheme"
+            class="loader-skel"
           ></ngx-skeleton-loader>
         </div>
         <div class="row">
@@ -20,9 +18,7 @@
           <span *ngIf="!loading || !!dataset.sync?.value">{{ dataset.sync?.value }}</span>
           <ngx-skeleton-loader
             *ngIf="loading && !dataset.sync?.value"
-            class="loader-skel" 
-            animation="progress" 
-            [theme]="loadingTheme"
+            class="loader-skel"
           ></ngx-skeleton-loader>
         </div>
         <div class="row">
@@ -30,9 +26,7 @@
           <span *ngIf="!loading || !!datasetCompression">{{ datasetCompression }}</span>
           <ngx-skeleton-loader
             *ngIf="loading && !datasetCompression"
-            class="loader-skel" 
-            animation="progress" 
-            [theme]="loadingTheme"
+            class="loader-skel"
           ></ngx-skeleton-loader>
         </div>
         <div class="row">
@@ -40,9 +34,7 @@
           <span *ngIf="!loading || !!dataset.atime?.value">{{ dataset.atime?.value }}</span>
           <ngx-skeleton-loader
             *ngIf="loading && !dataset.atime?.value"
-            class="loader-skel" 
-            animation="progress" 
-            [theme]="loadingTheme"
+            class="loader-skel"
           ></ngx-skeleton-loader>
         </div>
         <div class="row">
@@ -50,9 +42,7 @@
           <span *ngIf="!loading || !!dataset.deduplication?.value">{{ dataset.deduplication?.value }}</span>
           <ngx-skeleton-loader
             *ngIf="loading && !dataset.deduplication?.value"
-            class="loader-skel" 
-            animation="progress" 
-            [theme]="loadingTheme"
+            class="loader-skel"
           ></ngx-skeleton-loader>
         </div>
         <div class="row">
@@ -60,17 +50,15 @@
           <span *ngIf="!loading || !!dataset.casesensitivity?.value">{{ dataset.casesensitivity?.value }}</span>
           <ngx-skeleton-loader
             *ngIf="loading && !dataset.casesensitivity?.value"
-            class="loader-skel" 
-            animation="progress" 
-            [theme]="loadingTheme"
+            class="loader-skel"
           ></ngx-skeleton-loader>
         </div>
       </mat-card-content>
       <mat-card-actions *ngIf="dataset.id !== dataset.pool" >
         <!-- TODO: Should be mat-stroked-button, but its styles are polluted -->
         <button
-          class="stroked-btn" 
-          mat-stroked-button 
+          class="stroked-btn"
+          mat-stroked-button
           (click)="deleteDataset()"
         >{{ 'Delete' | translate }}</button>
       </mat-card-actions>

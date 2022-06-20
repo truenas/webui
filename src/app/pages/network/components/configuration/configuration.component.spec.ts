@@ -96,6 +96,7 @@ describe('NetworkConfigurationComponent', () => {
       'Nameserver 3': '',
       'IPv4 Default Gateway': '',
       'IPv6 Default Gateway': '',
+      'Inherit domain from DHCP': false,
       'Allow All': 'Allow All',
       'HTTP Proxy': '',
       'Enable Netwait Feature': false,

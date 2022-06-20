@@ -55,6 +55,16 @@ export const routes: Routes = [
           },
         ],
       },
+      {
+        path: 'user-quotas/:pk',
+        component: DatasetQuotasUserlistComponent,
+        data: { title: 'User Quotas', breadcrumb: 'User Quotas' },
+      },
+      {
+        path: 'group-quotas/:pk',
+        component: DatasetQuotasGrouplistComponent,
+        data: { title: 'Group Quotas', breadcrumb: 'Edit Group Quotas' },
+      },
     ],
   },
 ];
