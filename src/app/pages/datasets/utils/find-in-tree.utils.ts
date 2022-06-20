@@ -1,7 +1,9 @@
-export function findInTree<T extends { children?: T[] }>(
-  datasets: T[],
-  predicate: (node: T) => boolean,
-): T {
+import { Dataset } from 'app/interfaces/dataset.interface';
+
+export function findInTree(
+  datasets: Dataset[],
+  predicate: (dataset: Dataset) => boolean,
+): Dataset {
   if (!datasets?.length) {
     return;
   }

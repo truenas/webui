@@ -16,6 +16,7 @@ import {
 import {
   LockDatasetDialogComponent,
 } from 'app/pages/datasets/modules/encryption/components/lock-dataset-dialog/lock-dataset-dialog.component';
+import { DatasetStore } from 'app/pages/datasets/store/dataset-store.service';
 import { isEncryptionRoot, isPasswordEncrypted } from 'app/pages/datasets/utils/dataset.utils';
 
 // TODO: Add support for exporting all keys on root dataset.
@@ -34,6 +35,7 @@ export class ZfsEncryptionCardComponent {
   constructor(
     private matDialog: MatDialog,
     private translate: TranslateService,
+    private datasetStore: DatasetStore,
   ) { }
 
   get hasPassphrase(): boolean {
@@ -82,9 +84,7 @@ export class ZfsEncryptionCardComponent {
     dialog
       .afterClosed()
       .pipe(filter(Boolean), untilDestroyed(this))
-      .subscribe(() => {
-        // TODO: Refresh.
-      });
+      .subscribe(() => this.datasetStore.reloadList());
   }
 
   onLock(): void {
@@ -93,9 +93,7 @@ export class ZfsEncryptionCardComponent {
     })
       .afterClosed()
       .pipe(filter(Boolean), untilDestroyed(this))
-      .subscribe(() => {
-        // TODO: refresh table
-      });
+      .subscribe(() => this.datasetStore.reloadList());
   }
 
   onExportKey(): void {

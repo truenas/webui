@@ -15,6 +15,7 @@ import {
 import {
   LockDatasetDialogComponent,
 } from 'app/pages/datasets/modules/encryption/components/lock-dataset-dialog/lock-dataset-dialog.component';
+import { DatasetStore } from 'app/pages/datasets/store/dataset-store.service';
 import { ZfsEncryptionCardComponent } from './zfs-encryption-card.component';
 
 describe('ZfsEncryptionCardComponent', () => {
@@ -28,6 +29,7 @@ describe('ZfsEncryptionCardComponent', () => {
           afterClosed: () => of(true),
         })),
       }),
+      mockProvider(DatasetStore),
     ],
   });
 
@@ -192,8 +194,7 @@ describe('ZfsEncryptionCardComponent', () => {
         parent: lockedParent,
       },
     });
-
-    // TODO:
+    expect(spectator.inject(DatasetStore).reloadList).toHaveBeenCalled();
   });
 
   it('opens a lock dialog when Lock button is pressed and reloads dataset tree when it is closed', async () => {
@@ -207,7 +208,7 @@ describe('ZfsEncryptionCardComponent', () => {
     expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(LockDatasetDialogComponent, {
       data: passwordEncryptedRoot,
     });
-    // TODO:
+    expect(spectator.inject(DatasetStore).reloadList).toHaveBeenCalled();
   });
 
   it('opens an export key dialog when Export Key button is pressed', async () => {

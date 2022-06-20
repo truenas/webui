@@ -7,7 +7,8 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { pluck } from 'rxjs/operators';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { IxNestedTreeDataSource } from 'app/modules/ix-tree/ix-tree-nested-datasource';
-import { findInTree } from 'app/pages/datasets/utils/find-in-tree.utils';
+import { DatasetStore } from 'app/pages/datasets/store/dataset-store.service';
+import { getDatasetAndParentsById } from 'app/pages/datasets/utils/get-datasets-in-tree-by-id.utils';
 import { AppLoaderService, WebSocketService } from 'app/services';
 
 @UntilDestroy()
@@ -18,7 +19,9 @@ import { AppLoaderService, WebSocketService } from 'app/services';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DatasetsManagementComponent implements OnInit {
-  selectedNode: DatasetNode;
+  selectedDataset: Dataset;
+  selectedDatasetParent: Dataset | undefined;
+
   dataSource: IxNestedTreeDataSource<Dataset>;
   treeControl = new NestedTreeControl<Dataset, string>((dataset) => dataset.children, {
     trackBy: (dataset) => dataset.id,
@@ -31,10 +34,15 @@ export class DatasetsManagementComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private activatedRoute: ActivatedRoute,
     private loader: AppLoaderService, // TODO: Replace with a better approach
+    private datasetStore: DatasetStore,
   ) { }
 
   ngOnInit(): void {
     this.loadTree();
+
+    this.datasetStore.onReloadList
+      .pipe(untilDestroyed(this))
+      .subscribe(() => this.loadTree());
   }
 
   onSearch(query: string): void {
@@ -68,7 +76,7 @@ export class DatasetsManagementComponent implements OnInit {
         this.loader.close();
         const routeDatasetId = this.activatedRoute.snapshot.paramMap.get('datasetId');
         if (routeDatasetId) {
-          this.selectNodeById(routeDatasetId);
+          this.selectByDatasetId(routeDatasetId);
         } else {
           this.selectFirstNode();
         }
@@ -83,55 +91,16 @@ export class DatasetsManagementComponent implements OnInit {
     );
   }
 
-  private getDatasetNode(dataset: Dataset, parent?: DatasetNode): DatasetNode {
-    const nameSegments = dataset.name.split('/');
-
-    const node: DatasetNode = {
-      parent,
-      label: nameSegments[nameSegments.length - 1],
-      children: [],
-      item: dataset,
-      roles: ['Dataset', `L${nameSegments.length}`],
-      icon: this.getDatasetIcon(dataset),
-    };
-    node.children = dataset.children.map((child) => this.getDatasetNode(child, node));
-    return node;
-  }
-
-  private getDatasetIcon(dataset: Dataset): string {
-    const level = dataset.name.split('/').length;
-    if (level === 1) {
-      return 'device_hub';
-    } if (level > 1 && dataset.children.length) {
-      return 'folder';
-    }
-    return 'mdi-database';
-  }
-
-  private getDatasetTree(datasets: Dataset[]): DatasetNode[] {
-    return datasets.map((dataset) => this.getDatasetNode(dataset));
-  }
-
-  private createDataSource(datasets: Dataset[]): void {
-    const dataNodes = this.getDatasetTree(datasets);
-    this.dataSource = new IxNestedTreeDataSource<DatasetNode>(dataNodes);
-    this.treeControl.dataNodes = dataNodes;
-  }
-
-  private selectNodeById(datasetId: string): void {
-    const node = findInTree(this.treeControl.dataNodes, (node) => node.item.id === datasetId) as DatasetNode;
-    if (!node) {
+  private selectByDatasetId(selectedDatasetId: string): void {
+    const selectedBranch = getDatasetAndParentsById(this.treeControl.dataNodes, selectedDatasetId);
+    if (!selectedBranch) {
       return;
     }
 
-    this.selectedNode = node;
-    this.treeControl.expand(node);
+    this.selectedDataset = selectedBranch[selectedBranch.length - 1];
+    this.selectedDatasetParent = selectedBranch[selectedBranch.length - 2];
 
-    let parent = node.parent;
-    while (parent) {
-      this.treeControl.expand(parent);
-      parent = parent.parent;
-    }
+    selectedBranch.forEach((dataset) => this.treeControl.expand(dataset));
   }
 
   private selectFirstNode(): void {
@@ -139,9 +108,10 @@ export class DatasetsManagementComponent implements OnInit {
       return;
     }
 
-    const node = this.treeControl.dataNodes[0];
-    this.treeControl.expand(node);
-    this.selectedNode = node as DatasetNode;
+    const dataset = this.treeControl.dataNodes[0];
+    this.treeControl.expand(dataset);
+    this.selectedDataset = dataset;
+    this.selectedDatasetParent = undefined;
   }
 
   private listenForRouteChanges(): void {
@@ -149,7 +119,7 @@ export class DatasetsManagementComponent implements OnInit {
       pluck('datasetId'),
       untilDestroyed(this),
     ).subscribe(
-      (datasetId) => this.selectNodeById(datasetId),
+      (datasetId) => this.selectByDatasetId(datasetId),
     );
   }
 }

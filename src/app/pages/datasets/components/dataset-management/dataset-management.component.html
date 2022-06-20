@@ -64,7 +64,7 @@
     </div>
   </div>
 
-  <div *ngIf="selectedNode" class="details-container">
-    <ix-dataset-details-panel [dataset]="selectedNode.item" [parentDataset]="selectedNode.parent?.item"></ix-dataset-details-panel>
+  <div *ngIf="selectedDataset" class="details-container">
+    <ix-dataset-details-panel [dataset]="selectedDataset" [parentDataset]="selectedDatasetParent"></ix-dataset-details-panel>
   </div>
 </div>
