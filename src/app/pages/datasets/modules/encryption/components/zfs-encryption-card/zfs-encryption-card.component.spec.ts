@@ -29,7 +29,9 @@ describe('ZfsEncryptionCardComponent', () => {
           afterClosed: () => of(true),
         })),
       }),
-      mockProvider(DatasetStore),
+      mockProvider(DatasetStore, {
+        reloadList: jest.fn(),
+      }),
     ],
   });
 
