@@ -21,6 +21,11 @@
             [label]="hostname_virtual.label | translate"
             [tooltip]="hostname_virtual.tooltip | translate"
           ></ix-input>
+          <ix-checkbox
+            [formControlName]="inherit_dhcp.fcName"
+            [label]="inherit_dhcp.label | translate"
+            [tooltip]="inherit_dhcp.tooltip | translate"
+          ></ix-checkbox>
           <ix-input
             [formControlName]="domain.fcName"
             [label]="domain.label | translate"
