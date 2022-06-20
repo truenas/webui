@@ -80,7 +80,7 @@ export class DatasetQuotasUserlistComponent implements OnInit, AfterViewInit, On
 
   ngOnInit(): void {
     const paramMap = this.aroute.snapshot.params;
-    this.datasetId = paramMap.pk;
+    this.datasetId = paramMap.datasetId;
     this.useFullFilter = window.localStorage.getItem('useFullFilter') !== 'false';
     this.getUserQuotas();
 

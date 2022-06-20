@@ -1,4 +1,4 @@
-@import '../../../../../../../assets/styles/mixins/cards';
+@import '~assets/styles/mixins/cards';
 
 .card {
   @include details-card();

@@ -43,17 +43,17 @@ export const routes: Routes = [
             component: DatasetUnlockComponent,
             data: { title: 'Unlock Datasets', breadcrumb: 'Unlock Datasets' },
           },
+          {
+            path: 'user-quotas',
+            component: DatasetQuotasUserlistComponent,
+            data: { title: 'User Quotas', breadcrumb: 'User Quotas' },
+          },
+          {
+            path: 'group-quotas',
+            component: DatasetQuotasGrouplistComponent,
+            data: { title: 'Group Quotas', breadcrumb: 'Edit Group Quotas' },
+          },
         ],
-      },
-      {
-        path: 'user-quotas/:pk',
-        component: DatasetQuotasUserlistComponent,
-        data: { title: 'User Quotas', breadcrumb: 'User Quotas' },
-      },
-      {
-        path: 'group-quotas/:pk',
-        component: DatasetQuotasGrouplistComponent,
-        data: { title: 'Group Quotas', breadcrumb: 'Edit Group Quotas' },
       },
     ],
   },
