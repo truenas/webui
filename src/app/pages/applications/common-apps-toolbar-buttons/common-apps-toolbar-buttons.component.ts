@@ -96,11 +96,12 @@ export class CommonAppsToolbarButtonsComponent implements OnInit {
 
         const catalogAppInfo = {
           ...catalogApp,
-          id: ixChartApp,
-          train: officialCatalog,
+          catalog: {
+            id: officialCatalog,
+            train: chartsTrain,
+          },
           schema: catalogApp.versions[catalogApp.latest_version].schema,
         } as CatalogApp;
-
         const chartWizard = this.slideInService.open(ChartFormComponent, { wide: true });
         chartWizard.setChartCreate(catalogAppInfo);
       });

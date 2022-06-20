@@ -1,0 +1,49 @@
+<mat-card class="card">
+  <mat-card-header>
+    <h3 mat-card-title>{{ 'Hardware Disk Encryption' | translate }}</h3>
+  </mat-card-header>
+
+  <mat-card-content>
+    <div class="details-item">
+      <span class="label">{{ 'SED Password' | translate }}:</span>
+      <span *ngIf="hasDiskEncryption$ | async as diskEncryption" class="value">
+        <ng-container *ngIf="diskEncryption.isLoading">
+          <!-- TODO: Add loading indicator -->
+          Loading...
+        </ng-container>
+        <ng-container *ngIf="diskEncryption.value !== undefined">
+          {{ diskEncryption.value ? ('Password is set' | translate) : ('Password is not set' | translate) }}
+        </ng-container>
+        <ng-container *ngIf="diskEncryption.error">
+          <!-- TODO: Add error handler -->
+          Error
+        </ng-container>
+      </span>
+      <a
+        (click)="onManageSedPassword()"
+      >{{ 'Manage SED Password' | translate }}</a>
+    </div>
+
+
+    <div class="details-item">
+      <span class="label">{{ 'Global SED Password' | translate }}:</span>
+      <span *ngIf="hasGlobalEncryption$ | async as globalEncryption" class="value">
+        <ng-container *ngIf="globalEncryption.isLoading">
+          <!-- TODO: Add loading indicator -->
+          Loading...
+        </ng-container>
+        <ng-container *ngIf="globalEncryption.value !== undefined">
+          {{ globalEncryption.value ? ('Password is set' | translate) : ('Password is not set' | translate) }}
+        </ng-container>
+        <ng-container *ngIf="globalEncryption.error">
+          <!-- TODO: Add error handler -->
+          Error
+        </ng-container>
+      </span>
+      <a
+        [routerLink]="['/system/advanced']"
+      >{{ 'Manage Global SED Password' | translate }}</a>
+    </div>
+  </mat-card-content>
+</mat-card>
+
