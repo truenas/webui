@@ -30,7 +30,12 @@ import { PermissionsModule } from 'app/pages/datasets/modules/permissions/permis
     MatIconModule,
     MatCardModule,
     MatRippleModule,
-    NgxSkeletonLoaderModule,
+    NgxSkeletonLoaderModule.forRoot({
+      theme: {
+        'background-color': 'var(--alt-bg2)',
+        opacity: 0.25,
+      },
+    }),
     AppCommonModule,
     PermissionsModule,
     FlexLayoutModule,

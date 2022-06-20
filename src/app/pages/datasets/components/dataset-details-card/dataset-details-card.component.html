@@ -11,8 +11,6 @@
           <ngx-skeleton-loader
             *ngIf="loading && !dataset.type"
             class="loader-skel" 
-            animation="progress" 
-            [theme]="loadingTheme"
           ></ngx-skeleton-loader>
         </div>
         <div class="row">
@@ -21,8 +19,6 @@
           <ngx-skeleton-loader
             *ngIf="loading && !dataset.sync?.value"
             class="loader-skel" 
-            animation="progress" 
-            [theme]="loadingTheme"
           ></ngx-skeleton-loader>
         </div>
         <div class="row">
@@ -31,8 +27,6 @@
           <ngx-skeleton-loader
             *ngIf="loading && !datasetCompression"
             class="loader-skel" 
-            animation="progress" 
-            [theme]="loadingTheme"
           ></ngx-skeleton-loader>
         </div>
         <div class="row">
@@ -41,8 +35,6 @@
           <ngx-skeleton-loader
             *ngIf="loading && !dataset.atime?.value"
             class="loader-skel" 
-            animation="progress" 
-            [theme]="loadingTheme"
           ></ngx-skeleton-loader>
         </div>
         <div class="row">
@@ -51,8 +43,6 @@
           <ngx-skeleton-loader
             *ngIf="loading && !dataset.deduplication?.value"
             class="loader-skel" 
-            animation="progress" 
-            [theme]="loadingTheme"
           ></ngx-skeleton-loader>
         </div>
         <div class="row">
@@ -61,8 +51,6 @@
           <ngx-skeleton-loader
             *ngIf="loading && !dataset.casesensitivity?.value"
             class="loader-skel" 
-            animation="progress" 
-            [theme]="loadingTheme"
           ></ngx-skeleton-loader>
         </div>
       </mat-card-content>
