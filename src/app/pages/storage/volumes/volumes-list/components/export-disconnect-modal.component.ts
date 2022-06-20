@@ -9,9 +9,9 @@ import helptext from 'app/helptext/storage/volumes/volume-list';
 import { DatasetAttachment } from 'app/interfaces/pool-attachment.interface';
 import { Process } from 'app/interfaces/process.interface';
 import { SystemDatasetConfig } from 'app/interfaces/system-dataset-config.interface';
+import { VolumesListPool } from 'app/interfaces/volumes-list-pool.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import IxValidatorsService from 'app/modules/ix-forms/services/ix-validators.service';
-import { VolumesListPool } from 'app/pages/storage/volumes/volumes-list/volumes-list-pool.interface';
 import { DialogService } from 'app/services';
 
 export interface ExportDisconnectModalState {
