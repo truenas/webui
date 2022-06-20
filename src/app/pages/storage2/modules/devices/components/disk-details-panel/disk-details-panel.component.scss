@@ -1,0 +1,12 @@
+
+.cards {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+
+  > * {
+    flex: 1;
+    max-width: 620px;
+    min-width: 420px;
+  }
+}

@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
 import { MatIconRegistry } from '@angular/material/icon';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { Title, DomSanitizer } from '@angular/platform-browser';
 import {
   Router, NavigationEnd, NavigationCancel,
@@ -21,7 +20,6 @@ export class AppComponent {
   constructor(
     public title: Title,
     private router: Router,
-    public snackBar: MatSnackBar,
     private ws: WebSocketService,
     public domSanitizer: DomSanitizer,
     public matIconRegistry: MatIconRegistry,

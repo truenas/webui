@@ -372,7 +372,11 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
       message = this.translate.instant('Token expired, please log back in.');
       this.ws.token = null;
     }
-    this.snackBar.open(this.translate.instant(message), this.translate.instant('close'), { duration: 4000 });
+    this.snackBar.open(
+      this.translate.instant(message),
+      this.translate.instant('close'),
+      { duration: 4000, verticalPosition: 'bottom' },
+    );
   }
 
   openIx(): void {
