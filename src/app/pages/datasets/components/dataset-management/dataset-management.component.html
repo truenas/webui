@@ -2,45 +2,8 @@
   <h4 mat-card-title>Note: This is a work in progress for the new 'Dataset Management' page. You can see what we are building an provide suggestions in <a href="https://github.com/truenas/webui/discussions/6768">Github discussions</a>.</h4>
 </mat-card>
 
-<ng-template #unlocked>
-  <mat-icon>lock_open</mat-icon>
-  <div>{{ 'Unlocked' | translate }}</div>
-</ng-template>
-
 <ng-template #loading>
   <h3>{{ 'Loading...' | translate }}</h3>
-</ng-template>
-
-<ng-template #nodeLabel let-node>
-  <div class="ix-tree-node-selectable">
-    <div class="tree-node-grid">
-      <div>
-        <div fxLayout="row" fxLayoutAlign="start center">
-          <mat-icon *ngIf="node.icon && !node.icon.startsWith('mdi')">{{ node.icon }}</mat-icon>
-          <mat-icon *ngIf="node.icon && node.icon.startsWith('mdi')" fontSet="mdi-set" [fontIcon]="node.icon"></mat-icon>
-          <strong>{{ node.label }}</strong>
-        </div>
-      </div>
-      <div>
-        <div fxLayout="row" fxLayoutAlign="start center">
-          <span>{{ node.item.used.value }} used / {{ node.item.available.value }} left</span>
-        </div>
-      </div>
-      <div>
-        <div fxLayout="row" fxLayoutAlign="start center">
-          <ng-container *ngIf="node.item.encrypted; else unlocked">
-            <mat-icon>lock</mat-icon>
-            <div>{{ 'Encrypted' | translate }}</div>
-          </ng-container>
-        </div>
-      </div>
-      <div>
-        <div fxLayout="row" fxLayoutAlign="start center">
-          {{ node.roles.join(', ') }}
-        </div>
-      </div>
-    </div>
-  </div>
 </ng-template>
 
 <div class="container" fxLayoutGap="16px">
@@ -60,41 +23,41 @@
 
         <ix-tree class="dataset-tree" [dataSource]="dataSource" [treeControl]="treeControl" [trackBy]="trackByFn">
           <ix-tree-node
-            *ixTreeNodeDef="let node; dataSource: dataSource"
+            *ixTreeNodeDef="let dataset; dataSource: dataSource"
             ixTreeNodeToggle
             [ixTreeNodeToggleRecursive]="false"
             [ixTreeNodeDefDataSource]="dataSource"
-            [class.selected]="node.item.name === selectedDataset?.name"
-            (click)="onDatasetSelected(node.item)"
+            [class.selected]="dataset.name === selectedDataset?.name"
+            (click)="onDatasetSelected(dataset)"
           >
             <button mat-icon-button disabled></button>
-            <ng-container [ngTemplateOutlet]="nodeLabel" [ngTemplateOutletContext]="{ $implicit: node }"></ng-container>
+            <ix-dataset-node [dataset]="dataset"></ix-dataset-node>
           </ix-tree-node>
 
           <ix-nested-tree-node
-            *ixTreeNodeDef="let node; dataSource: dataSource, when: hasNestedChild"
+            *ixTreeNodeDef="let dataset; dataSource: dataSource, when: hasNestedChild"
             [ixTreeNodeDefDataSource]="dataSource"
           >
             <div
               class="dataset-nested-tree-root-node"
-              (click)="onDatasetSelected(node.item)"
-              [class.selected]="node.item.name === selectedDataset?.name"
+              (click)="onDatasetSelected(dataset)"
+              [class.selected]="dataset.name === selectedDataset?.name"
             >
               <button
                 mat-icon-button
                 ixTreeNodeToggle
                 (click)="$event.preventDefault()"
-                [attr.aria-label]="'toggle ' + node.label"
+                [attr.aria-label]="'Toggle {row}' | translate: { row: dataset.name }"
               >
                 <mat-icon class="mat-icon-rtl-mirror">
-                  {{ treeControl.isExpanded(node) ? 'expand_more' : 'chevron_right' }}
+                  {{ treeControl.isExpanded(dataset) ? 'expand_more' : 'chevron_right' }}
                 </mat-icon>
               </button>
 
-              <ng-container [ngTemplateOutlet]="nodeLabel" [ngTemplateOutletContext]="{ $implicit: node }"></ng-container>
+              <ix-dataset-node [dataset]="dataset"></ix-dataset-node>
             </div>
 
-            <ng-container *ngIf="treeControl.isExpanded(node)" ixTreeNodeOutlet></ng-container>
+            <ng-container *ngIf="treeControl.isExpanded(dataset)" ixTreeNodeOutlet></ng-container>
           </ix-nested-tree-node>
         </ix-tree>
       </div>

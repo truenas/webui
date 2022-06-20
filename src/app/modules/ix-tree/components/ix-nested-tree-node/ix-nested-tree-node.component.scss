@@ -1,24 +1,6 @@
-$level-offset: 40px;
-$padding-left: 8px;
-
 :host {
   display: block;
   margin-bottom: 0;
   margin-top: 0;
   min-width: fit-content;
-}
-
-::ng-deep {
-  @for $i from 1 through 10 {
-    .ix-tree-node[aria-level="#{$i}"],
-    .ix-nested-tree-node[aria-level="#{$i}"] {
-      .mat-icon-button:first-child {
-        left: $padding-left + $level-offset * ($i - 1);
-      }
-
-      .ix-tree-node-selectable {
-        padding-left: $padding-left + $level-offset * ($i - 1);
-      }
-    }
-  }
 }
