@@ -9,9 +9,7 @@ import { DatasetQuota } from 'app/interfaces/dataset-quota.interface';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
-import {
-  DatasetQuotaEditFormComponent,
-} from 'app/pages/storage/volumes/datasets/dataset-quotas/dataset-quota-edit-form/dataset-quota-edit-form.component';
+import { DatasetQuotaEditFormComponent } from 'app/pages/datasets/components/dataset-quotas/dataset-quota-edit-form/dataset-quota-edit-form.component';
 import { WebSocketService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 

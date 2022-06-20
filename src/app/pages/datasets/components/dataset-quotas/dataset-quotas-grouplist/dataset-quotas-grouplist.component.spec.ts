@@ -12,7 +12,7 @@ import { EntityModule } from 'app/modules/entity/entity.module';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxTableModule } from 'app/modules/ix-tables/ix-table.module';
 import { IxTableHarness } from 'app/modules/ix-tables/testing/ix-table.harness';
-import { DatasetQuotaEditFormComponent } from 'app/pages/storage/volumes/datasets/dataset-quotas/dataset-quota-edit-form/dataset-quota-edit-form.component';
+import { DatasetQuotaEditFormComponent } from 'app/pages/datasets/components/dataset-quotas/dataset-quota-edit-form/dataset-quota-edit-form.component';
 import {
   AppLoaderService, DialogService, StorageService, WebSocketService,
 } from 'app/services';
