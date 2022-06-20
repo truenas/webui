@@ -61,7 +61,7 @@ describe('DatasetQuotasUserlistComponent', () => {
         convertBytesToHumanReadable: jest.fn(() => '500 KiB'),
       }),
       mockProvider(ActivatedRoute, {
-        snapshot: { params: { pk: 'Test' } },
+        snapshot: { params: { datasetId: 'Test' } },
       }),
       mockProvider(LayoutService, {
         pageHeaderUpdater$: new ReplaySubject<TemplateRef<unknown>>(),

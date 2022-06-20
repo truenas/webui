@@ -30,7 +30,6 @@ enum EncryptionType {
   arrayName: 'subscriptions',
 })
 @Component({
-  selector: 'ix-encryption-options-dialog',
   templateUrl: './encryption-options-dialog.component.html',
   styleUrls: ['./encryption-options-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

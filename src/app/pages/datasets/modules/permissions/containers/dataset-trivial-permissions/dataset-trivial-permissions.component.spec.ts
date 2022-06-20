@@ -30,7 +30,7 @@ describe('DatasetTrivialPermissionsComponent', () => {
       EntityModule,
     ],
     params: {
-      path: 'pool/trivial',
+      datasetId: 'pool/trivial',
     },
     providers: [
       mockWebsocket([
@@ -181,6 +181,6 @@ describe('DatasetTrivialPermissionsComponent', () => {
     const setAclButton = await loader.getHarness(MatButtonHarness.with({ text: 'Set ACL' }));
     await setAclButton.click();
 
-    expect(router.navigate).toHaveBeenCalledWith(['/datasets/permissions/acl', 'pool/trivial']);
+    expect(router.navigate).toHaveBeenCalledWith(['/datasets', 'pool/trivial', 'permissions', 'acl']);
   });
 });

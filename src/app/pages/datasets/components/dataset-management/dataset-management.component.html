@@ -28,7 +28,7 @@
             [ixTreeNodeToggleRecursive]="false"
             [ixTreeNodeDefDataSource]="dataSource"
             [class.selected]="dataset.name === selectedDataset?.name"
-            (click)="onDatasetSelected(dataset)"
+            [routerLink]="['/datasets', dataset.id]"
           >
             <button mat-icon-button disabled></button>
             <ix-dataset-node [dataset]="dataset"></ix-dataset-node>
@@ -40,7 +40,7 @@
           >
             <div
               class="dataset-nested-tree-root-node"
-              (click)="onDatasetSelected(dataset)"
+              [routerLink]="['/datasets', dataset.id]"
               [class.selected]="dataset.name === selectedDataset?.name"
             >
               <button
@@ -65,6 +65,6 @@
   </div>
 
   <div *ngIf="selectedDataset" class="details-container">
-    <ix-dataset-details-panel [dataset]="selectedDataset"></ix-dataset-details-panel>
+    <ix-dataset-details-panel [dataset]="selectedDataset" [parentDataset]="selectedDatasetParent"></ix-dataset-details-panel>
   </div>
 </div>

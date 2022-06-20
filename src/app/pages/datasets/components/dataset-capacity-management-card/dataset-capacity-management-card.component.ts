@@ -1,7 +1,6 @@
 import {
   Component, ChangeDetectionStrategy, ChangeDetectorRef, Input, OnChanges,
 } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { Subscription, forkJoin } from 'rxjs';
@@ -33,7 +32,6 @@ export class DatasetCapacityManagementCardComponent implements OnChanges {
     private cdr: ChangeDetectorRef,
     private modalService: ModalService,
     private translate: TranslateService,
-    private mdDialog: MatDialog,
   ) {}
 
   ngOnChanges(): void {

@@ -2,9 +2,13 @@ import { NestedTreeControl } from '@angular/cdk/tree';
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, TrackByFunction,
 } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { pluck } from 'rxjs/operators';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { IxNestedTreeDataSource } from 'app/modules/ix-tree/ix-tree-nested-datasource';
+import { DatasetStore } from 'app/pages/datasets/store/dataset-store.service';
+import { getDatasetAndParentsById } from 'app/pages/datasets/utils/get-datasets-in-tree-by-id.utils';
 import { AppLoaderService, WebSocketService } from 'app/services';
 
 @UntilDestroy()
@@ -15,7 +19,9 @@ import { AppLoaderService, WebSocketService } from 'app/services';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DatasetsManagementComponent implements OnInit {
-  selectedDataset: Dataset; // Dataset to be passed as input for card components
+  selectedDataset: Dataset;
+  selectedDatasetParent: Dataset | undefined;
+
   dataSource: IxNestedTreeDataSource<Dataset>;
   treeControl = new NestedTreeControl<Dataset, string>((dataset) => dataset.children, {
     trackBy: (dataset) => dataset.id,
@@ -26,14 +32,39 @@ export class DatasetsManagementComponent implements OnInit {
   constructor(
     private ws: WebSocketService,
     private cdr: ChangeDetectorRef,
+    private activatedRoute: ActivatedRoute,
     private loader: AppLoaderService, // TODO: Replace with a better approach
+    private datasetStore: DatasetStore,
   ) { }
 
   ngOnInit(): void {
+    this.loadTree();
+
+    this.datasetStore.onReloadList
+      .pipe(untilDestroyed(this))
+      .subscribe(() => this.loadTree());
+  }
+
+  onSearch(query: string): void {
+    console.info('onSearch', query);
+  }
+
+  private loadTree(): void {
     this.loader.open();
     this.ws.call('pool.dataset.query', [[], {
       extra: {
         flat: false,
+        properties: [
+          'name',
+          'type',
+          'used',
+          'available',
+          'mountpoint',
+          'encryption',
+          'encryptionroot',
+          'keyformat',
+          'keystatus',
+        ],
       },
       order_by: ['name'],
     }]).pipe(
@@ -43,25 +74,52 @@ export class DatasetsManagementComponent implements OnInit {
         this.dataSource = new IxNestedTreeDataSource<Dataset>(datasets);
         this.treeControl.dataNodes = datasets;
         this.loader.close();
-        if (this.treeControl?.dataNodes.length > 0) {
-          const dataset = this.treeControl.dataNodes[0];
-          this.treeControl.expand(dataset);
-          this.onDatasetSelected(dataset);
+        const routeDatasetId = this.activatedRoute.snapshot.paramMap.get('datasetId');
+        if (routeDatasetId) {
+          this.selectByDatasetId(routeDatasetId);
+        } else {
+          this.selectFirstNode();
         }
+
+        this.listenForRouteChanges();
         this.cdr.markForCheck();
       },
       (err) => {
-        console.error(err);
+        console.error(err); // TODO: Handle error.
         this.loader.close();
       },
     );
   }
 
-  onSearch(query: string): void {
-    console.info('onSearch', query);
+  private selectByDatasetId(selectedDatasetId: string): void {
+    const selectedBranch = getDatasetAndParentsById(this.treeControl.dataNodes, selectedDatasetId);
+    if (!selectedBranch) {
+      return;
+    }
+
+    this.selectedDataset = selectedBranch[selectedBranch.length - 1];
+    this.selectedDatasetParent = selectedBranch[selectedBranch.length - 2];
+
+    selectedBranch.forEach((dataset) => this.treeControl.expand(dataset));
   }
 
-  onDatasetSelected(dataset: Dataset): void {
+  private selectFirstNode(): void {
+    if (!this.treeControl?.dataNodes.length) {
+      return;
+    }
+
+    const dataset = this.treeControl.dataNodes[0];
+    this.treeControl.expand(dataset);
     this.selectedDataset = dataset;
+    this.selectedDatasetParent = undefined;
+  }
+
+  private listenForRouteChanges(): void {
+    this.activatedRoute.params.pipe(
+      pluck('datasetId'),
+      untilDestroyed(this),
+    ).subscribe(
+      (datasetId) => this.selectByDatasetId(datasetId),
+    );
   }
 }

@@ -11,4 +11,5 @@ import { Dataset } from 'app/interfaces/dataset.interface';
 })
 export class DatasetDetailsPanelComponent {
   @Input() dataset: Dataset;
+  @Input() parentDataset: Dataset | undefined;
 }

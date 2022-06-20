@@ -8,7 +8,7 @@ import { Acl } from 'app/interfaces/acl.interface';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { FileSystemStat } from 'app/interfaces/filesystem-stat.interface';
 import { PermissionsCardStore } from 'app/pages/datasets/modules/permissions/stores/permissions-card.store';
-import { isRootDataset } from 'app/pages/datasets/utils/is-root-dataset.utils';
+import { isRootDataset } from 'app/pages/datasets/utils/dataset.utils';
 
 @UntilDestroy()
 @Component({
@@ -33,10 +33,10 @@ export class PermissionsCardComponent implements OnInit, OnChanges {
 
   get editPermissionsUrl(): string[] {
     if (this.acl.trivial) {
-      return ['/datasets/permissions/edit', this.dataset.id];
+      return ['/datasets', this.dataset.id, 'permissions', 'edit'];
     }
 
-    return ['/datasets/permissions/acl', this.dataset.id];
+    return ['/datasets', this.dataset.id, 'permissions', 'acl'];
   }
 
   get canEditPermissions(): boolean {
