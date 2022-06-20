@@ -46,7 +46,12 @@ import { DatasetNodeComponent } from './components/dataset-node/dataset-node.com
     MatSortModule,
     MatSlideToggleModule,
     MatRippleModule,
-    NgxSkeletonLoaderModule,
+    NgxSkeletonLoaderModule.forRoot({
+      theme: {
+        'background-color': 'var(--alt-bg2)',
+        opacity: 0.25,
+      },
+    }),
     AppCommonModule,
     PermissionsModule,
     FlexLayoutModule,
