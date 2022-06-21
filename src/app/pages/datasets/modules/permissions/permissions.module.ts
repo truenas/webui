@@ -56,7 +56,7 @@ import { PermissionsCardStore } from 'app/pages/datasets/modules/permissions/sto
     ReactiveFormsModule,
     CastModule,
     CommonModule,
-    TranslateModule.forChild(),
+    TranslateModule,
     MatCardModule,
     MatIconModule,
     MatProgressSpinnerModule,

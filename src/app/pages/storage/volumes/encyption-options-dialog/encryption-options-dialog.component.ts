@@ -11,6 +11,7 @@ import { map } from 'rxjs/operators';
 import { combineLatestIsAny } from 'app/helpers/combine-latest-is-any.helper';
 import dataset_helptext from 'app/helptext/storage/volumes/datasets/dataset-form';
 import { DatasetChangeKeyParams } from 'app/interfaces/dataset-change-key.interface';
+import { VolumesListDataset } from 'app/interfaces/volumes-list-pool.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { matchOtherValidator } from 'app/modules/entity/entity-form/validators/password-validation/password-validation';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
@@ -18,7 +19,6 @@ import IxValidatorsService from 'app/modules/ix-forms/services/ix-validators.ser
 import {
   EncryptionOptionsDialogData,
 } from 'app/pages/storage/volumes/encyption-options-dialog/encryption-options-dialog-data.interface';
-import { VolumesListDataset } from 'app/pages/storage/volumes/volumes-list/volumes-list-pool.interface';
 import { AppLoaderService, DialogService, WebSocketService } from 'app/services';
 
 enum EncryptionType {
@@ -30,7 +30,6 @@ enum EncryptionType {
   arrayName: 'subscriptions',
 })
 @Component({
-  selector: 'ix-encryption-options-dialog',
   templateUrl: './encryption-options-dialog.component.html',
   styleUrls: ['./encryption-options-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
