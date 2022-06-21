@@ -46,34 +46,34 @@ export class UpdateComponent implements OnInit {
   train: string;
   trains: { name: string; description: string }[] = [];
   selectedTrain: string;
-  general_update_error: string;
-  update_downloaded = false;
-  release_train: boolean;
-  pre_release_train: boolean;
-  nightly_train: boolean;
-  updates_available = false;
+  generalUpdateError: string;
+  updateDownloaded = false;
+  releaseTrain: boolean;
+  preReleaseTrain: boolean;
+  nightlyTrain: boolean;
+  updatesAvailable = false;
   currentTrainDescription: string;
   trainDescriptionOnPageLoad: string;
   fullTrainList: { [name: string]: SystemUpdateTrain };
   isUpdateRunning = false;
   updateMethod: ApiMethod = 'update.update';
-  is_ha = false;
-  product_type: ProductType;
+  isHa = false;
+  productType: ProductType;
   ds: MatDialogRef<ConfirmDialogComponent, boolean>;
-  failover_upgrade_pending = false;
+  failoverUpgradePending = false;
   showSpinner = false;
   singleDescription: string;
   updateType: string;
-  isHA: boolean;
+  isHaLicensed: boolean;
   sysUpdateMessage = globalHelptext.sysUpdateMessage;
   sysUpdateMsgPt2 = globalHelptext.sysUpdateMessagePt2;
-  updatecheck_tooltip = this.translate.instant('Check the update server daily for \
+  updatecheckTooltip = this.translate.instant('Check the update server daily for \
                                   any updates on the chosen train. \
                                   Automatically download an update if \
                                   one is available. Click \
                                   <i>APPLY PENDING UPDATE</i> to install \
                                   the downloaded update.');
-  train_version: string = null;
+  trainVersion: string = null;
   updateTitle = this.translate.instant('Update');
   private wasConfigurationSaved = false;
 
@@ -100,12 +100,12 @@ export class UpdateComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.product_type = window.localStorage.getItem('product_type') as ProductType;
+    this.productType = window.localStorage.getItem('product_type') as ProductType;
 
     this.store$.pipe(waitForSystemInfo)
       .pipe(untilDestroyed(this))
       .subscribe((sysInfo) => {
-        this.isHA = !!(sysInfo.license && sysInfo.license.system_serial_ha.length > 0);
+        this.isHaLicensed = !!(sysInfo.license && sysInfo.license.system_serial_ha.length > 0);
       });
 
     this.ws.call('update.get_auto_download').pipe(untilDestroyed(this)).subscribe((isAutoDownloadOn) => {
@@ -155,12 +155,12 @@ export class UpdateComponent implements OnInit {
       });
     });
 
-    if (this.product_type === ProductType.ScaleEnterprise) {
+    if (this.productType === ProductType.ScaleEnterprise) {
       setTimeout(() => { // To get around too many concurrent calls???
         this.ws.call('failover.licensed').pipe(untilDestroyed(this)).subscribe((res) => {
           if (res) {
             this.updateMethod = 'failover.upgrade';
-            this.is_ha = true;
+            this.isHa = true;
           }
           this.checkForUpdateRunning();
         });
@@ -186,7 +186,7 @@ export class UpdateComponent implements OnInit {
 
   checkUpgradePending(): void {
     this.ws.call('failover.upgrade_pending').pipe(untilDestroyed(this)).subscribe((res) => {
-      this.failover_upgrade_pending = res;
+      this.failoverUpgradePending = res;
     });
   }
 
@@ -202,7 +202,7 @@ export class UpdateComponent implements OnInit {
         dialogRef.componentInstance.setCall('failover.upgrade_finish');
         dialogRef.componentInstance.submit();
         dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
-          this.failover_upgrade_pending = false;
+          this.failoverUpgradePending = false;
           dialogRef.close(false);
         });
         dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((failure: any) => {
@@ -259,7 +259,7 @@ export class UpdateComponent implements OnInit {
   pendingupdates(): void {
     this.ws.call('update.get_pending').pipe(untilDestroyed(this)).subscribe((pending) => {
       if (pending.length !== 0) {
-        this.update_downloaded = true;
+        this.updateDownloaded = true;
       }
     });
   }
@@ -279,7 +279,7 @@ export class UpdateComponent implements OnInit {
 
   check(): void {
     // Reset the template
-    this.updates_available = false;
+    this.updatesAvailable = false;
     this.releaseNotes = '';
 
     this.showSpinner = true;
@@ -289,12 +289,12 @@ export class UpdateComponent implements OnInit {
     this.ws.call('update.check_available').pipe(untilDestroyed(this)).subscribe(
       (update) => {
         if (update.version) {
-          this.train_version = update.version;
+          this.trainVersion = update.version;
         }
         this.status = update.status;
         if (update.status === SystemUpdateStatus.Available) {
           sessionStorage.updateAvailable = 'true';
-          this.updates_available = true;
+          this.updatesAvailable = true;
           this.packages = [];
           update.changes.forEach((change) => {
             if (change.operation === SystemUpdateOperationType.Upgrade) {
@@ -334,22 +334,22 @@ export class UpdateComponent implements OnInit {
           }
         }
         if (this.currentTrainDescription && this.currentTrainDescription.includes('[release]')) {
-          this.release_train = true;
-          this.pre_release_train = false;
-          this.nightly_train = false;
+          this.releaseTrain = true;
+          this.preReleaseTrain = false;
+          this.nightlyTrain = false;
         } else if (this.currentTrainDescription.includes('[prerelease]')) {
-          this.release_train = false;
-          this.pre_release_train = true;
-          this.nightly_train = false;
+          this.releaseTrain = false;
+          this.preReleaseTrain = true;
+          this.nightlyTrain = false;
         } else {
-          this.release_train = false;
-          this.pre_release_train = false;
-          this.nightly_train = true;
+          this.releaseTrain = false;
+          this.preReleaseTrain = false;
+          this.nightlyTrain = true;
         }
         this.showSpinner = false;
       },
       (err) => {
-        this.general_update_error = `${err.reason.replace('>', '').replace('<', '')}: ${this.translate.instant('Automatic update check failed. Please check system network settings.')}`;
+        this.generalUpdateError = `${err.reason.replace('>', '').replace('<', '')}: ${this.translate.instant('Automatic update check failed. Please check system network settings.')}`;
         this.showSpinner = false;
       },
       () => {
@@ -361,7 +361,7 @@ export class UpdateComponent implements OnInit {
   // Shows an update in progress as a job dialog on the update page
   showRunningUpdate(jobId: number): void {
     const dialogRef = this.matDialog.open(EntityJobComponent, { data: { title: this.updateTitle } });
-    if (this.is_ha) {
+    if (this.isHa) {
       dialogRef.componentInstance.disableProgressValue(true);
     }
     dialogRef.componentInstance.jobId = jobId;
@@ -474,7 +474,7 @@ export class UpdateComponent implements OnInit {
     let downloadMsg;
     let confirmMsg;
 
-    if (!this.is_ha) {
+    if (!this.isHa) {
       downloadMsg = helptext.non_ha_download_msg;
       confirmMsg = helptext.non_ha_confirm_msg;
     } else {
@@ -520,7 +520,7 @@ export class UpdateComponent implements OnInit {
     window.sessionStorage.removeItem('updateAvailable');
     this.sysGenService.updateRunningNoticeSent.emit();
     const dialogRef = this.matDialog.open(EntityJobComponent, { data: { title: this.updateTitle } });
-    if (!this.is_ha) {
+    if (!this.isHa) {
       dialogRef.componentInstance.setCall('update.update', [{ reboot: true }]);
       dialogRef.componentInstance.submit();
 
@@ -556,7 +556,7 @@ export class UpdateComponent implements OnInit {
   continueUpdate(): void {
     switch (this.updateType) {
       case 'applyPending':
-        const message = this.isHA
+        const message = this.isHaLicensed
           ? this.translate.instant('The standby controller will be automatically restarted to finalize the update. Apply updates and restart the standby controller?')
           : this.translate.instant('The system will reboot and be briefly unavailable while applying updates. Apply updates and reboot?');
         this.dialogService.confirm({

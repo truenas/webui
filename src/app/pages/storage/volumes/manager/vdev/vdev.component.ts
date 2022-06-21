@@ -21,7 +21,7 @@ export class VdevComponent implements OnInit {
   @Input() index: number;
   @Input() group: string;
   @Input() manager: ManagerComponent;
-  @Input() initial_values: any = {};
+  @Input() initialValues: any = {};
   @ViewChild(DatatableComponent, { static: false }) table: DatatableComponent;
   type: string;
   removable = true;
@@ -33,11 +33,11 @@ export class VdevComponent implements OnInit {
   firstdisksize: number;
   error: string;
   diskSizeErrorMsg = helptext.vdev_diskSizeErrorMsg;
-  vdev_type_tooltip = helptext.vdev_type_tooltip;
-  vdev_disks_error: boolean;
+  vdevTypeTooltip = helptext.vdev_type_tooltip;
+  vdevDisksError: boolean;
   showDiskSizeError: boolean;
-  vdev_type_disabled = false;
-  private ten_mib = 10 * 1024 * 1024;
+  vdevTypeDisabled = false;
+  private tenMib = 10 * 1024 * 1024;
   protected mindisks: { [key: string]: number } = {
     stripe: 1, mirror: 2, raidz: 3, raidz2: 4, raidz3: 5,
   };
@@ -52,22 +52,22 @@ export class VdevComponent implements OnInit {
 
   ngOnInit(): void {
     if (this.group === 'data') {
-      this.vdev_type_disabled = !this.manager.isNew;
-      if (!this.vdev_type_disabled) {
+      this.vdevTypeDisabled = !this.manager.isNew;
+      if (!this.vdevTypeDisabled) {
         this.type = 'stripe';
       }
     } else {
       this.type = 'stripe';
     }
-    if (this.initial_values['disks']) {
-      this.initial_values['disks'].forEach((disk: ManagerDisk) => {
+    if (this.initialValues['disks']) {
+      this.initialValues['disks'].forEach((disk: ManagerDisk) => {
         this.addDisk(disk);
         this.manager.removeDisk(disk);
       });
-      this.initial_values['disks'] = [];
+      this.initialValues['disks'] = [];
     }
-    if (this.initial_values['type']) {
-      this.type = this.initial_values['type'];
+    if (this.initialValues['type']) {
+      this.type = this.initialValues['type'];
     }
     this.estimateSize();
   }
@@ -102,7 +102,7 @@ export class VdevComponent implements OnInit {
   }
 
   guessVdevType(): void {
-    if (this.group === 'data' && !this.vdev_type_disabled) {
+    if (this.group === 'data' && !this.vdevTypeDisabled) {
       if (this.disks.length === 2) {
         this.type = 'mirror';
       } else if (this.disks.length === 3) {
@@ -115,7 +115,7 @@ export class VdevComponent implements OnInit {
         this.type = 'stripe';
       }
     }
-    if (this.group === 'special' && !this.vdev_type_disabled) {
+    if (this.group === 'special' && !this.vdevTypeDisabled) {
       if (this.disks.length >= 2) {
         this.type = 'mirror';
       } else {
@@ -140,7 +140,7 @@ export class VdevComponent implements OnInit {
         smallestdisk = size;
         this.firstdisksize = size;
       }
-      if (size > smallestdisk + this.ten_mib || size < smallestdisk - this.ten_mib) {
+      if (size > smallestdisk + this.tenMib || size < smallestdisk - this.tenMib) {
         this.showDiskSizeError = true;
       }
       if (this.disks[i].real_capacity < smallestdisk) {
@@ -153,9 +153,9 @@ export class VdevComponent implements OnInit {
           'This type of VDEV requires at least {n, plural, one {# disk} other {# disks}}.',
           { n: this.mindisks[this.type] },
         );
-        this.vdev_disks_error = true;
+        this.vdevDisksError = true;
       } else {
-        this.vdev_disks_error = false;
+        this.vdevDisksError = false;
       }
     }
     totalsize = smallestdisk * this.disks.length;
