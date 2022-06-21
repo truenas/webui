@@ -31,6 +31,7 @@ export class NetworkConfigurationComponent implements OnInit {
     hostname: ['', Validators.required],
     hostname_b: [null as string],
     hostname_virtual: [null as string],
+    inherit_dhcp: [false],
     domain: [''],
     domains: [[] as string[]],
     netbios: [false],
@@ -69,6 +70,12 @@ export class NetworkConfigurationComponent implements OnInit {
     label: helptext.hostname_virtual_placeholder,
     tooltip: helptext.hostname_virtual_tooltip,
     hidden: true,
+  };
+
+  inheritDhcp = {
+    fcName: 'inherit_dhcp',
+    label: helptext.inherit_dhcp_placeholder,
+    tooltip: helptext.inherit_dhcp_tooltip,
   };
 
   domain = {
@@ -218,6 +225,16 @@ export class NetworkConfigurationComponent implements OnInit {
       },
     );
 
+    this.form.controls.inherit_dhcp.valueChanges.pipe(untilDestroyed(this)).subscribe(
+      (value: boolean) => {
+        if (value) {
+          this.form.controls.domain.disable();
+        } else {
+          this.form.controls.domain.enable();
+        }
+      },
+    );
+
     if (window.localStorage.getItem('product_type') === ProductType.ScaleEnterprise) {
       this.ws.call('failover.licensed').pipe(untilDestroyed(this)).subscribe((isHa) => {
         this.hostnameB.hidden = !isHa;
@@ -235,6 +252,7 @@ export class NetworkConfigurationComponent implements OnInit {
             hostname: config.hostname,
             hostname_b: config.hostname_b,
             hostname_virtual: config.hostname_virtual,
+            inherit_dhcp: config.domain === '',
             domain: config.domain,
             domains: config.domains,
             nameserver1: config.nameserver1,
@@ -288,6 +306,10 @@ export class NetworkConfigurationComponent implements OnInit {
       activity = { type: NetworkActivityType.Allow, activities: values.outbound_network_value };
     }
 
+    if (values.inherit_dhcp) {
+      values.domain = '';
+    }
+
     const serviceAnnouncement = {
       netbios: values.netbios as false,
       mdns: values.mdns as true,
@@ -299,6 +321,7 @@ export class NetworkConfigurationComponent implements OnInit {
 
     delete values.outbound_network_activity;
     delete values.outbound_network_value;
+    delete values.inherit_dhcp;
 
     const params = {
       ...values,

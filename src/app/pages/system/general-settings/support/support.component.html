@@ -25,30 +25,11 @@
         fxLayout="column" fxLayoutAlign="start stretch" fxLayoutGap="16px"
         [class]="extraMargin ? 'extra-margin' : 'regular-margin'"
       >
-
         <ix-sys-info
-          *ngIf="!hasLicense; else licensedSysInfo"
-          [version]='systemInfo.version'
-          [model]="systemInfo.model"
-          [product]='systemInfo.system_product'
-          [memory]="systemInfo.memory"
-          [serial]="systemInfo.serial"
           [hasLicense]="hasLicense"
-          ></ix-sys-info>
-        <ng-template #licensedSysInfo>
-          <ix-sys-info
-            [customerName]='licenseInfo.customer_name'
-            [features]='licenseInfo.features'
-            [contractType]='licenseInfo.contract_type'
-            [expirationDate]='licenseInfo.expiration_date'
-            [model]='systemInfo.model'
-            [serial]='systemInfo.serial'
-            [addHardware]='licenseInfo.add_hardware'
-            [daysLeftinContract]='licenseInfo.daysLeftinContract'
-            [hasLicense]="hasLicense"
-          >
-          </ix-sys-info>
-        </ng-template>
+          [systemInfo]="systemInfo"
+          [licenseInfo]="licenseInfo"
+        ></ix-sys-info>
 
         <div class="links-wrapper">
           <div class="links" *ngFor="let link of links">

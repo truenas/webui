@@ -9,11 +9,11 @@ import { take } from 'rxjs/operators';
 import { CipherType } from 'app/enums/cipher-type.enum';
 import { DatasetSource } from 'app/enums/dataset.enum';
 import { Direction } from 'app/enums/direction.enum';
+import { EncryptionKeyFormat } from 'app/enums/encryption-key-format.enum';
 import { ExplorerType } from 'app/enums/explorer-type.enum';
 import { KeychainCredentialType } from 'app/enums/keychain-credential-type.enum';
 import { LifetimeUnit } from 'app/enums/lifetime-unit.enum';
 import { NetcatMode } from 'app/enums/netcat-mode.enum';
-import { ReplicationEncryptionKeyFormat } from 'app/enums/replication-encryption-key-format.enum';
 import { RetentionPolicy } from 'app/enums/retention-policy.enum';
 import { ScheduleMethod } from 'app/enums/schedule-method.enum';
 import { SnapshotNamingOption } from 'app/enums/snapshot-naming-option.enum';
@@ -349,10 +349,10 @@ export class ReplicationWizardComponent implements WizardConfiguration {
               tooltip: helptext.encryption_key_format_tooltip,
               options: [{
                 label: this.translate.instant('HEX'),
-                value: ReplicationEncryptionKeyFormat.Hex,
+                value: EncryptionKeyFormat.Hex,
               }, {
                 label: this.translate.instant('PASSPHRASE'),
-                value: ReplicationEncryptionKeyFormat.Passphrase,
+                value: EncryptionKeyFormat.Passphrase,
               }],
               relation: [{
                 action: RelationAction.Show,
@@ -376,7 +376,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
                   value: true,
                 }, {
                   name: 'encryption_key_format',
-                  value: ReplicationEncryptionKeyFormat.Hex,
+                  value: EncryptionKeyFormat.Hex,
                 }],
               }],
             },
@@ -393,7 +393,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
                   value: true,
                 }, {
                   name: 'encryption_key_format',
-                  value: ReplicationEncryptionKeyFormat.Hex,
+                  value: EncryptionKeyFormat.Hex,
                 }, {
                   name: 'encryption_key_generate',
                   value: false,
@@ -415,7 +415,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
                   value: true,
                 }, {
                   name: 'encryption_key_format',
-                  value: ReplicationEncryptionKeyFormat.Passphrase,
+                  value: EncryptionKeyFormat.Passphrase,
                 }],
               }],
             },
@@ -1259,7 +1259,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
       };
       if (payload.encryption) {
         payload['encryption_key_format'] = data['encryption_key_format'];
-        if (data['encryption_key_format'] === ReplicationEncryptionKeyFormat.Passphrase) {
+        if (data['encryption_key_format'] === EncryptionKeyFormat.Passphrase) {
           payload['encryption_key'] = data['encryption_key_passphrase'];
         } else {
           payload['encryption_key'] = data['encryption_key_generate']
