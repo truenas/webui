@@ -1,0 +1,41 @@
+<div class="search">
+  <ix-search-input [disabled]="!dataSource.data" (search)="onSearch($event)"></ix-search-input>
+  <button mat-icon-button (click)="panel.toggle()">
+    <mat-icon>{{ panel.expanded ? 'expand_less' : 'expand_more' }} </mat-icon>
+  </button>
+</div>
+<mat-accordion>
+  <mat-expansion-panel class="mat-elevation-z0" #panel>
+    <form [formGroup]="form" (submit)="onSubmit()">
+      <ix-select
+        formControlName="properties"
+        [label]="'Select fields' | translate"
+        [options]="fields$"
+        [multiple]="true"
+      ></ix-select>
+
+      <div class="filters">
+        <ng-container
+          formArrayName="filters"
+          *ngFor="let filter of filters.value; trackBy: trackByFilters; let i = index"
+        >
+          <div [formGroupName]="i" class="filter-item">
+            <ix-select
+              formControlName="value"
+              [label]="filter.property.replace('_', ' ') | titlecase | translate"
+              [options]="options$.get(filter.property)"
+              [multiple]="true"
+            ></ix-select>
+          </div>
+        </ng-container>
+      </div>
+      <div class="form-actions">
+        <button
+          mat-button
+          type="submit"
+          [disabled]="!filters.value.length"
+        >{{ 'Apply Filters' | translate }}</button>
+      </div>
+    </form>
+  </mat-expansion-panel>
+</mat-accordion>

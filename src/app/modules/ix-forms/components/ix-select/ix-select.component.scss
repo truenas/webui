@@ -63,7 +63,7 @@
   font-size: x-small;
 }
 
-::ng-deep .mat-select-panel-wrap *:not(.mat-selection-list) {
+::ng-deep .mat-select-panel-wrap *:not(mat-selection-list) {
   /*
     Note: asterisk to ignore doubled icons on form-select
     TODO: remove that once form-select is updated
@@ -74,7 +74,6 @@
 
     background: transparent;
     border: 0;
-    display: none;
     height: 24px;
     margin-right: 16px;
     width: 24px;

@@ -1,3 +1,3 @@
-import { ArrayDataSource } from '@angular/cdk/collections';
+import { MatTreeNestedDataSource } from '@angular/material/tree';
 
-export class IxNestedTreeDataSource<T> extends ArrayDataSource<T> {}
+export class IxNestedTreeDataSource<T> extends MatTreeNestedDataSource<T> {}

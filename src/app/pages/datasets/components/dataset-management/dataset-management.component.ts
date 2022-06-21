@@ -22,7 +22,7 @@ export class DatasetsManagementComponent implements OnInit {
   selectedDataset: Dataset;
   selectedDatasetParent: Dataset | undefined;
 
-  dataSource: IxNestedTreeDataSource<Dataset>;
+  dataSource = new IxNestedTreeDataSource<Dataset>();
   treeControl = new NestedTreeControl<Dataset, string>((dataset) => dataset.children, {
     trackBy: (dataset) => dataset.id,
   });
@@ -45,8 +45,8 @@ export class DatasetsManagementComponent implements OnInit {
       .subscribe(() => this.loadTree());
   }
 
-  onSearch(query: string): void {
-    console.info('onSearch', query);
+  onFilter(event: unknown): void {
+    console.info('onFilter', event);
   }
 
   private loadTree(): void {
@@ -64,6 +64,7 @@ export class DatasetsManagementComponent implements OnInit {
           'encryptionroot',
           'keyformat',
           'keystatus',
+          'locked',
         ],
       },
       order_by: ['name'],
@@ -71,7 +72,7 @@ export class DatasetsManagementComponent implements OnInit {
       untilDestroyed(this),
     ).subscribe(
       (datasets: Dataset[]) => {
-        this.dataSource = new IxNestedTreeDataSource<Dataset>(datasets);
+        this.dataSource.data = datasets;
         this.treeControl.dataNodes = datasets;
         this.loader.close();
         const routeDatasetId = this.activatedRoute.snapshot.paramMap.get('datasetId');
