@@ -14,7 +14,7 @@ export const helptextSystemAdvanced = {
   fieldset_initshutdown: T('Init/Shutdown Scripts'),
 
   dialog_generate_debug_title: T('Generate Debug File'),
-  dialog_generate_debug_message: T('This operation might take a long time. Proceed?'),
+  dialog_generate_debug_message: T('This operation might take a long time. It cannot be aborted once started. Proceed?'),
   dialog_button_ok: T('Proceed'),
 
   system_dataset_placeholder: T('Use System Dataset'),
