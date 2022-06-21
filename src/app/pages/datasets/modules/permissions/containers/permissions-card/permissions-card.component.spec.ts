@@ -130,7 +130,7 @@ describe('PermissionsCardComponent', () => {
     const editLinkElement = await editLink.host();
 
     expect(await editLinkElement.getAttribute('href'))
-      .toEqual('/datasets/permissions/edit/' + encodeURIComponent('testpool/dataset'));
+      .toEqual('/datasets/' + encodeURIComponent('testpool/dataset') + '/permissions/edit');
   });
 
   it('does not show edit icon when dataset is root', () => {

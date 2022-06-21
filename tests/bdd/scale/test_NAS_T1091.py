@@ -78,4 +78,4 @@ def click_save_and_changes_should_be_saved_the_dropdown_details_pane_should_show
     assert wait_on_element(driver, 7, '//div[contains(.,"Users")]')
     assert wait_on_element(driver, 10, '//tr[contains(.,"ericbsd")]//mat-icon', 'clickable')
     driver.find_element_by_xpath('//tr[contains(.,"ericbsd")]//mat-icon').click()
-    assert wait_on_element(driver, 10, '//h4[contains(.,"/nonexistent")]') is False
+    assert wait_on_element_disappear(driver, 10, '//h4[contains(.,"/nonexistent")]')

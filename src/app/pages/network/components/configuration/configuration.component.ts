@@ -31,6 +31,7 @@ export class NetworkConfigurationComponent implements OnInit {
     hostname: ['', Validators.required],
     hostname_b: [null as string],
     hostname_virtual: [null as string],
+    inherit_dhcp: [false],
     domain: [''],
     domains: [[] as string[]],
     netbios: [false],
@@ -57,18 +58,24 @@ export class NetworkConfigurationComponent implements OnInit {
     tooltip: helptext.hostname_tooltip,
   };
 
-  hostname_b = {
+  hostnameB = {
     fcName: 'hostname_b',
     label: helptext.hostname_b_placeholder,
     tooltip: helptext.hostname_b_tooltip,
     hidden: true,
   };
 
-  hostname_virtual = {
+  hostnameVirtual = {
     fcName: 'hostname_virtual',
     label: helptext.hostname_virtual_placeholder,
     tooltip: helptext.hostname_virtual_tooltip,
     hidden: true,
+  };
+
+  inheritDhcp = {
+    fcName: 'inherit_dhcp',
+    label: helptext.inherit_dhcp_placeholder,
+    tooltip: helptext.inherit_dhcp_tooltip,
   };
 
   domain = {
@@ -131,7 +138,7 @@ export class NetworkConfigurationComponent implements OnInit {
     tooltip: helptext.ipv6gateway_tooltip,
   };
 
-  outbound_network_activity = {
+  outboundNetworkActivity = {
     fcName: 'outbound_network_activity',
     label: '',
     tooltip: '',
@@ -157,7 +164,7 @@ export class NetworkConfigurationComponent implements OnInit {
     ]),
   };
 
-  outbound_network_value = {
+  outboundNetworkValue = {
     fcName: 'outbound_network_value',
     label: '',
     tooltip: helptext.outbound_network_value.tooltip,
@@ -171,13 +178,13 @@ export class NetworkConfigurationComponent implements OnInit {
     tooltip: helptext.httpproxy_tooltip,
   };
 
-  netwait_enabled = {
+  netwaitEnabled = {
     fcName: 'netwait_enabled',
     label: helptext.netwait_enabled_placeholder,
     tooltip: helptext.netwait_enabled_tooltip,
   };
 
-  netwait_ip = {
+  netwaitIp = {
     fcName: 'netwait_ip',
     label: helptext.netwait_ip_placeholder,
     tooltip: helptext.netwait_ip_tooltip,
@@ -206,22 +213,32 @@ export class NetworkConfigurationComponent implements OnInit {
     this.form.controls.outbound_network_activity.valueChanges.pipe(untilDestroyed(this)).subscribe(
       (value: NetworkActivityType) => {
         if ([NetworkActivityType.Allow, NetworkActivityType.Deny].includes(value)) {
-          this.outbound_network_value.hidden = true;
+          this.outboundNetworkValue.hidden = true;
         } else {
-          this.outbound_network_value.hidden = false;
+          this.outboundNetworkValue.hidden = false;
         }
       },
     );
     this.form.controls.netwait_enabled.valueChanges.pipe(untilDestroyed(this)).subscribe(
       (value: boolean) => {
-        this.netwait_ip.hidden = !value;
+        this.netwaitIp.hidden = !value;
+      },
+    );
+
+    this.form.controls.inherit_dhcp.valueChanges.pipe(untilDestroyed(this)).subscribe(
+      (value: boolean) => {
+        if (value) {
+          this.form.controls.domain.disable();
+        } else {
+          this.form.controls.domain.enable();
+        }
       },
     );
 
     if (window.localStorage.getItem('product_type') === ProductType.ScaleEnterprise) {
       this.ws.call('failover.licensed').pipe(untilDestroyed(this)).subscribe((isHa) => {
-        this.hostname_b.hidden = !isHa;
-        this.hostname_virtual.hidden = !isHa;
+        this.hostnameB.hidden = !isHa;
+        this.hostnameVirtual.hidden = !isHa;
       });
     }
   }
@@ -235,6 +252,7 @@ export class NetworkConfigurationComponent implements OnInit {
             hostname: config.hostname,
             hostname_b: config.hostname_b,
             hostname_virtual: config.hostname_virtual,
+            inherit_dhcp: config.domain === '',
             domain: config.domain,
             domains: config.domains,
             nameserver1: config.nameserver1,
@@ -288,6 +306,10 @@ export class NetworkConfigurationComponent implements OnInit {
       activity = { type: NetworkActivityType.Allow, activities: values.outbound_network_value };
     }
 
+    if (values.inherit_dhcp) {
+      values.domain = '';
+    }
+
     const serviceAnnouncement = {
       netbios: values.netbios as false,
       mdns: values.mdns as true,
@@ -299,6 +321,7 @@ export class NetworkConfigurationComponent implements OnInit {
 
     delete values.outbound_network_activity;
     delete values.outbound_network_value;
+    delete values.inherit_dhcp;
 
     const params = {
       ...values,

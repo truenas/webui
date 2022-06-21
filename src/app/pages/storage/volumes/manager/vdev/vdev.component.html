@@ -71,7 +71,7 @@
   <div class="vdev-wrapper">
     <div class="vdev-type">
       <div *ngIf="(group === 'data' || group === 'log' || group === 'special' || group === 'dedup')" class="datainfo form-element">
-        <mat-form-field *ngIf="(group === 'data' || group === 'log' || group === 'special' || group === 'dedup') && !vdev_type_disabled">
+        <mat-form-field *ngIf="(group === 'data' || group === 'log' || group === 'special' || group === 'dedup') && !vdevTypeDisabled">
           <mat-select matSelect id="vdev__option-menu" [(ngModel)]="type" (ngModelChange)="onTypeChange()" class="form-control">
             <mat-option value="stripe">{{"Stripe" | translate}}</mat-option>
             <mat-option value="mirror" *ngIf="getDisks().length >= 2 && (group === 'data' || group === 'log' || group === 'special' || group === 'dedup')">{{"Mirror" | translate}}</mat-option>
@@ -81,9 +81,9 @@
           </mat-select>
         </mat-form-field>
         <div class="vdev-estimated">
-          <p *ngIf="group === 'data' && vdev_type_disabled">{{getType() | translate}}</p>
+          <p *ngIf="group === 'data' && vdevTypeDisabled">{{getType() | translate}}</p>
           <span>{{"Estimated raw capacity:" | translate}} {{size}}</span>
-          <ix-tooltip [message]="vdev_type_tooltip"></ix-tooltip>
+          <ix-tooltip [message]="vdevTypeTooltip"></ix-tooltip>
         </div>
       </div>
     </div>
