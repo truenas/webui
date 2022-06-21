@@ -16,7 +16,9 @@
     </div>
     <div class="row">
       <span class="header">{{ 'Transfer Mode' | translate }}:</span>
-      <span *ngIf="!loading || !!diskInfo?.transfermode">{{ diskInfo?.transfermode }}</span>
+      <span *ngIf="!loading || !!diskInfo?.transfermode">
+        {{ diskInfo?.transfermode ? diskInfo.transfermode : '--' }}
+      </span>
       <ngx-skeleton-loader
         *ngIf="loading && !diskInfo?.transfermode"
         class="loader-skel"
@@ -24,7 +26,9 @@
     </div>
     <div class="row">
       <span class="header">{{ 'Serial' | translate }}:</span>
-      <span *ngIf="!loading || !!diskInfo?.serial">{{ diskInfo?.serial }}</span>
+      <span *ngIf="!loading || !!diskInfo?.serial">
+        {{ diskInfo?.serial ? diskInfo.serial : '--' }}
+      </span>
       <ngx-skeleton-loader
         *ngIf="loading && !diskInfo?.serial"
         class="loader-skel"
@@ -32,7 +36,9 @@
     </div>
     <div class="row">
       <span class="header">{{ 'Model' | translate }}:</span>
-      <span *ngIf="!loading || !!diskInfo?.model">{{ diskInfo?.model }}</span>
+      <span *ngIf="!loading || !!diskInfo?.model">
+        {{ diskInfo?.model ? diskInfo.model : '--' }}
+      </span>
       <ngx-skeleton-loader
         *ngIf="loading && !diskInfo?.model"
         class="loader-skel"
@@ -41,7 +47,7 @@
     <div class="row">
       <span class="header">{{ 'Rotation Rate' | translate }}:</span>
       <span *ngIf="!loading || !!diskInfo?.rotationrate">
-        {{ diskInfo?.rotationrate ? diskInfo.rotationrate + ('RPM' | translate) : ('Not Available' | translate) }}
+        {{ diskInfo?.rotationrate ? diskInfo.rotationrate + ' ' + ('RPM' | translate) : ('Not Available' | translate) }}
       </span>
       <ngx-skeleton-loader
         *ngIf="loading && !diskInfo?.rotationrate"
@@ -50,7 +56,9 @@
     </div>
     <div class="row">
       <span class="header">{{ 'Type' | translate }}:</span>
-      <span *ngIf="!loading || !!diskInfo?.type">{{ diskInfo?.type }}</span>
+      <span *ngIf="!loading || !!diskInfo?.type">
+        {{ diskInfo?.type ? diskInfo.type : '--' }}
+      </span>
       <ngx-skeleton-loader
         *ngIf="loading && !diskInfo?.type"
         class="loader-skel"
@@ -58,7 +66,9 @@
     </div>
     <div class="row">
       <span class="header">{{ 'HDD Standby' | translate }}:</span>
-      <span *ngIf="!loading || !!diskInfo?.hddstandby">{{ diskInfo?.hddstandby }}</span>
+      <span *ngIf="!loading || !!diskInfo?.hddstandby">
+        {{ diskInfo?.hddstandby ? diskInfo.hddstandby : '--' }}
+      </span>
       <ngx-skeleton-loader
         *ngIf="loading && !diskInfo?.hddstandby"
         class="loader-skel"
