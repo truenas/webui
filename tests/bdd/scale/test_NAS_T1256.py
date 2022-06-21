@@ -5,8 +5,6 @@ import time
 from function import (
     wait_on_element,
     is_element_present,
-    attribute_value_exist,
-    wait_for_attribute_value,
     wait_on_element_disappear,
 )
 from pytest_bdd import (
@@ -56,7 +54,7 @@ def on_the_groups_page_click_to_expand_the_gidtestdupe_entry(driver):
     """on the Groups page click to expand the gidtestdupe entry."""
     assert wait_on_element(driver, 10, '//tr[@ix-auto="expander__gidtestdupe"]/td', 'clickable')
     driver.find_element_by_xpath('//tr[@ix-auto="expander__gidtestdupe"]/td').click()
-    
+
 
 @then('click delete, click the confirm checkbox, and click delete')
 def click_delete_click_the_confirm_checkbox_and_click_delete(driver):
@@ -76,4 +74,4 @@ def verify_the_group_was_deleted(driver):
     """verify the group was deleted."""
     assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
     assert wait_on_element(driver, 10, '//h1[contains(.,"Groups")]')
-    assert wait_on_element(driver, 10, '//div[contains(.,"gidtestdupe")]') is False
+    assert wait_on_element_disappear(driver, 10, '//div[contains(.,"gidtestdupe")]')
