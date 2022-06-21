@@ -137,8 +137,10 @@ def click_on_Browser_Files_click_on_bucket_then_click_on_the_test_folder(driver,
 @then('verify there is no file in the bucket if so delete it')
 def verify_there_is_no_file_in_the_bucket_if_so_delete_it(driver):
     """verify there is no file in the bucket if so delete it."""
-    if wait_on_element(driver, 5, '//span[text()="music"]'):
-        assert wait_on_element(driver, 5, '//div[@class="b2-browse-checkbox"]//img[@name="allSelected"]', 'clickable')
+    assert wait_on_element(driver, 7, '//div[@class="b2-browse-checkbox"]//img[@name="allSelected"]', 'clickable')
+    # Get the list of checkbox if there is more than one selected all and delete
+    checkboxs = driver.find_elements_by_xpath('//div[@class="b2-browse-checkbox"]')
+    if len(checkboxs) > 1:
         driver.find_element_by_xpath('//div[@class="b2-browse-checkbox"]//img[@name="allSelected"]').click()
         assert wait_on_element(driver, 5, '//a[@id="delete-button"]', 'clickable')
         driver.find_element_by_xpath('//a[@id="delete-button"]').click()
