@@ -3,4 +3,15 @@
         <h4>Note: This is a work in progress for new 'Pools Dashboard' page. You can see what we are building an provide suggestions in <a href="https://github.com/truenas/webui/discussions/6767">Github discussions</a>.</h4>
     </div></mat-card-content></mat-card>
   <button mat-button (click)="navigateToDeviceManagement()"> {{ 'Manage Devices' | translate }}</button>
+  <ix-widget-usage *ngIf="isLoading"></ix-widget-usage>
+  <ng-container *ngIf="!isLoading">
+    <ng-container *ngFor="let pool of pools">
+      <ix-widget-usage
+        *ngIf="volumeData[pool.name]"
+        [loading]="false"
+        [poolState]="pool"
+        [volumeData]="volumeData[pool.name]"
+      ></ix-widget-usage>
+    </ng-container>
+  </ng-container>
 </div>
