@@ -1,0 +1,85 @@
+<mat-card class="container-card">
+  <mat-card-header>
+    <h3 mat-card-title>{{ 'Disk Info' | translate }}</h3>
+    <button mat-button (click)="onEdit()">{{ 'Edit' | translate }}</button>
+  </mat-card-header>
+  <mat-card-content>
+    <div class="row">
+      <span class="header">{{ 'Disk Size' | translate }}:</span>
+      <span *ngIf="!loading || !!diskInfo?.size">
+        {{ diskInfo?.size ? formatter.convertBytesToHumanReadable(diskInfo.size) : ('Unknown' | translate) }}
+      </span>
+      <ngx-skeleton-loader
+        *ngIf="loading && !diskInfo?.size"
+        class="loader-skel"
+      ></ngx-skeleton-loader>
+    </div>
+    <div class="row">
+      <span class="header">{{ 'Transfer Mode' | translate }}:</span>
+      <span *ngIf="!loading || !!diskInfo?.transfermode">{{ diskInfo?.transfermode }}</span>
+      <ngx-skeleton-loader
+        *ngIf="loading && !diskInfo?.transfermode"
+        class="loader-skel"
+      ></ngx-skeleton-loader>
+    </div>
+    <div class="row">
+      <span class="header">{{ 'Serial' | translate }}:</span>
+      <span *ngIf="!loading || !!diskInfo?.serial">{{ diskInfo?.serial }}</span>
+      <ngx-skeleton-loader
+        *ngIf="loading && !diskInfo?.serial"
+        class="loader-skel"
+      ></ngx-skeleton-loader>
+    </div>
+    <div class="row">
+      <span class="header">{{ 'Model' | translate }}:</span>
+      <span *ngIf="!loading || !!diskInfo?.model">{{ diskInfo?.model }}</span>
+      <ngx-skeleton-loader
+        *ngIf="loading && !diskInfo?.model"
+        class="loader-skel"
+      ></ngx-skeleton-loader>
+    </div>
+    <div class="row">
+      <span class="header">{{ 'Rotation Rate' | translate }}:</span>
+      <span *ngIf="!loading || !!diskInfo?.rotationrate">
+        {{ diskInfo?.rotationrate ? diskInfo.rotationrate + ('RPM' | translate) : ('Not Available' | translate) }}
+      </span>
+      <ngx-skeleton-loader
+        *ngIf="loading && !diskInfo?.rotationrate"
+        class="loader-skel"
+      ></ngx-skeleton-loader>
+    </div>
+    <div class="row">
+      <span class="header">{{ 'Type' | translate }}:</span>
+      <span *ngIf="!loading || !!diskInfo?.type">{{ diskInfo?.type }}</span>
+      <ngx-skeleton-loader
+        *ngIf="loading && !diskInfo?.type"
+        class="loader-skel"
+      ></ngx-skeleton-loader>
+    </div>
+    <div class="row">
+      <span class="header">{{ 'HDD Standby' | translate }}:</span>
+      <span *ngIf="!loading || !!diskInfo?.hddstandby">{{ diskInfo?.hddstandby }}</span>
+      <ngx-skeleton-loader
+        *ngIf="loading && !diskInfo?.hddstandby"
+        class="loader-skel"
+      ></ngx-skeleton-loader>
+    </div>
+    <div class="row">
+      <span class="header">{{ 'Description' | translate }}:</span>
+      <span *ngIf="!loading || !!diskInfo?.description">
+        {{ diskInfo?.description ? diskInfo.description : ('None' | translate) }}
+      </span>
+      <ngx-skeleton-loader
+        *ngIf="loading && !diskInfo?.description"
+        class="loader-skel"
+      ></ngx-skeleton-loader>
+    </div>
+  </mat-card-content>
+  <mat-card-actions>
+    <button
+      class="stroked-btn"
+      mat-stroked-button
+      (click)="onReplace()"
+    >{{ 'Replace' | translate }}</button>
+  </mat-card-actions>
+</mat-card>

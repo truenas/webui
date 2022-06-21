@@ -60,7 +60,7 @@ export class ReplaceDiskDialogComponent {
     jobDialogRef.componentInstance.submit();
     jobDialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
       jobDialogRef.close(true);
-      this.dialogRef.close();
+      this.dialogRef.close(true);
       this.dialogService.info(
         helptext.replace_disk.title,
         this.translate.instant('Successfully replaced disk {disk}.', { disk: this.data.diskName }),
