@@ -77,7 +77,10 @@ export class DiskInfoCardComponent implements OnChanges {
         } as ReplaceDiskDialogData,
       })
       .afterClosed()
-      .pipe(filter(Boolean), untilDestroyed(this))
+      .pipe(
+        filter(Boolean),
+        untilDestroyed(this),
+      )
       .subscribe(() => {
         this.getDiskInfo();
       });
