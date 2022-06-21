@@ -9813,6 +9813,13 @@ ngx-popperjs@^12.1.2:
   dependencies:
     tslib "^2.2.0"
 
+ngx-skeleton-loader@~5.0.0:
+  version "5.0.0"
+  resolved "https://registry.yarnpkg.com/ngx-skeleton-loader/-/ngx-skeleton-loader-5.0.0.tgz#e0042de20b0159d3f97d03a696d68f39ceee383b"
+  integrity sha512-6cz8UAu4WcYnBp/LnU053LCIwjKNZWX8GX1v3bvqQVdDa1ubsEeJm+CZxk5B8W2jP9CcFhvWrBlmmVUyl1Yxug==
+  dependencies:
+    perf-marks "^1.13.4"
+    tslib "^2.0.0"
 ngx-translate-messageformat-compiler@~5.0.1:
   version "5.0.1"
   resolved "https://registry.yarnpkg.com/ngx-translate-messageformat-compiler/-/ngx-translate-messageformat-compiler-5.0.1.tgz#c9304b83440f24d6dfa33c0413dbb93668ffd0e6"
@@ -10422,6 +10429,13 @@ path@^0.12.7:
   dependencies:
     process "^0.11.1"
     util "^0.10.3"
+
+perf-marks@^1.13.4:
+  version "1.14.2"
+  resolved "https://registry.yarnpkg.com/perf-marks/-/perf-marks-1.14.2.tgz#7511c24239b9c2071717993a33ec3057f387b8c7"
+  integrity sha512-N0/bQcuTlETpgox/DsXS1voGjqaoamMoiyhncgeW3rSHy/qw8URVgmPRYfFDQns/+C6yFUHDbeSBGL7ixT6Y4A==
+  dependencies:
+    tslib "^2.1.0"
 
 picocolors@^0.2.1:
   version "0.2.1"

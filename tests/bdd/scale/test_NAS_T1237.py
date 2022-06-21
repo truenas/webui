@@ -68,6 +68,7 @@ def create_1st_dataset_rtacltest1(driver, dataset_name):
     driver.find_element_by_xpath('//mat-option[@ix-auto="option__Share Type_SMB"]').click()
     assert wait_on_element(driver, 5, '//button[@ix-auto="button__SAVE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
+    assert wait_on_element_disappear(driver, 15, '//h6[contains(.,"Please wait")]')
 
 
 @then(parsers.parse('Create 2nd dataset {dataset_name} under rt-acl-test-1'))
@@ -87,6 +88,7 @@ def create_2nd_dataset_rtacltest2_under_rtacltest1(driver, dataset_name):
     driver.find_element_by_xpath('//mat-option[@ix-auto="option__Share Type_SMB"]').click()
     assert wait_on_element(driver, 5, '//button[@ix-auto="button__SAVE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
+    assert wait_on_element_disappear(driver, 15, '//h6[contains(.,"Please wait")]')
     assert wait_on_element(driver, 5, '//span[contains(text(),"RETURN TO POOL LIST")]', 'clickable')
     driver.find_element_by_xpath('//span[contains(text(),"RETURN TO POOL LIST")]').click()
 
@@ -122,6 +124,7 @@ def apply_acl_with_both_recusrive_and_transverse_set_to_rtacltest1(driver):
     driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__Apply permissions to child datasets"]').click()
     assert wait_on_element(driver, 5, '//span[contains(text(),"Save Access Control List")]', 'clickable')
     driver.find_element_by_xpath('//span[contains(text(),"Save Access Control List")]').click()
+    assert wait_on_element_disappear(driver, 15, '//h1[contains(.,"Updating Dataset ACL")]')
 
 
 @then('Verify that the ACL was set to rt-acl-test-1')
@@ -163,6 +166,7 @@ def create_3rd_dataset_rtacltest3(driver, dataset_name):
     driver.find_element_by_xpath('//mat-option[@ix-auto="option__Share Type_SMB"]').click()
     assert wait_on_element(driver, 5, '//button[@ix-auto="button__SAVE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
+    assert wait_on_element_disappear(driver, 15, '//h6[contains(.,"Please wait")]')
     assert wait_on_element(driver, 5, '//span[contains(text(),"RETURN TO POOL LIST")]', 'clickable')
     driver.find_element_by_xpath('//span[contains(text(),"RETURN TO POOL LIST")]').click()
 
@@ -234,6 +238,7 @@ def apply_acl_to_rtacltest1_with_recusrive_checked(driver):
     driver.find_element_by_xpath('//button[@ix-auto="button__CONTINUE"]').click()
     assert wait_on_element(driver, 5, '//span[contains(text(),"Save Access Control List")]', 'clickable')
     driver.find_element_by_xpath('//span[contains(text(),"Save Access Control List")]').click()
+    assert wait_on_element_disappear(driver, 15, '//h1[contains(.,"Updating Dataset ACL")]')
 
 
 
@@ -248,7 +253,7 @@ def verify_that_the_acl_was_not_set_to_rtacltest3(driver):
     time.sleep(1)
     assert wait_on_element(driver, 5, '//button[normalize-space(text())="View Permissions"]')
     driver.find_element_by_xpath('//button[normalize-space(text())="View Permissions"]').click()
-    assert wait_on_element(driver, 5, '//div[contains(text(),"User - games")]') is False
+    assert wait_on_element_disappear(driver, 5, '//div[contains(text(),"User - games")]')
 
 
 @then('Verify the SMB Share Filesystem has the ACL that was applied to rt-acl-test-1')
