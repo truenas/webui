@@ -24,6 +24,8 @@ from pytest_bdd import (
     when,
     parsers
 )
+import pytest
+pytestmark = [pytest.mark.debug_test]
 
 
 @scenario('features/NAS-T1121.feature', 'Verify Amazon S3 Cloud Sync task works')
