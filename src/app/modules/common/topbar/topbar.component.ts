@@ -22,7 +22,7 @@ import { HaStatus } from 'app/interfaces/events/ha-status-event.interface';
 import { NetworkInterfacesChangedEvent } from 'app/interfaces/events/network-interfaces-changed-event.interface';
 import { ResilveringEvent } from 'app/interfaces/events/resilvering-event.interface';
 import { SidenavStatusData } from 'app/interfaces/events/sidenav-status-event.interface';
-import { ResilverData } from 'app/interfaces/resilver-job.interface';
+import { PoolScan } from 'app/interfaces/resilver-job.interface';
 import { Interval } from 'app/interfaces/timeout.interface';
 import { AlertSlice, selectImportantUnreadAlertsCount } from 'app/modules/alerts/store/alert.selectors';
 import { AppLoaderService } from 'app/modules/app-loader/app-loader.service';
@@ -62,7 +62,7 @@ export class TopbarComponent implements OnInit, OnDestroy {
   showResilvering = false;
   pendingNetworkChanges = false;
   waitingNetworkCheckin = false;
-  resilveringDetails: ResilverData;
+  resilveringDetails: PoolScan;
   isDirServicesMonitorOpened = false;
   taskDialogRef: MatDialogRef<JobsPanelComponent>;
   dirServicesMonitor: MatDialogRef<DirectoryServicesMonitorComponent>;

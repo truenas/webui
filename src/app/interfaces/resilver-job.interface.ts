@@ -1,12 +1,12 @@
-import { PoolScan } from 'app/interfaces/pool.interface';
+import { PoolScanUpdate } from 'app/interfaces/pool.interface';
 
-export interface ResilverData {
+export interface PoolScan {
   name: string;
-  scan: PoolScan;
+  scan: PoolScanUpdate;
 }
 
 export interface ResilverJob {
   collection: string;
-  fields: ResilverData;
+  fields: PoolScan;
   msg: string;
 }
