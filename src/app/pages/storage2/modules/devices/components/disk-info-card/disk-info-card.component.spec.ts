@@ -75,13 +75,13 @@ describe('DiskInfoCardComponent', () => {
     expect(transfermodeItem.nextElementSibling).toHaveText('Auto');
 
     const serialItem = spectator.query(byText('Serial:', { exact: true }));
-    expect(serialItem.nextElementSibling).toHaveText('');
+    expect(serialItem.nextElementSibling).toHaveText('N/A');
 
     const modelItem = spectator.query(byText('Model:', { exact: true }));
     expect(modelItem.nextElementSibling).toHaveText('VMware_Virtual_S');
 
     const rotationrateItem = spectator.query(byText('Rotation Rate:', { exact: true }));
-    expect(rotationrateItem.nextElementSibling).toHaveText('Not Available');
+    expect(rotationrateItem.nextElementSibling).toHaveText('N/A');
 
     const typeItem = spectator.query(byText('Type:', { exact: true }));
     expect(typeItem.nextElementSibling).toHaveText('HDD');
@@ -90,7 +90,7 @@ describe('DiskInfoCardComponent', () => {
     expect(hddstandbyItem.nextElementSibling).toHaveText('ALWAYS ON');
 
     const descriptionItem = spectator.query(byText('Description:', { exact: true }));
-    expect(descriptionItem.nextElementSibling).toHaveText('None');
+    expect(descriptionItem.nextElementSibling).toHaveText('N/A');
   });
 
   it('opens slide to edit Disk when clicks Edit button', async () => {
