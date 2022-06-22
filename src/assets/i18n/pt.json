@@ -3721,6 +3721,7 @@
   "{minute, plural, one {# minute} other {# minutes}}": "",
   "{n, plural, one {# docker image} other {# docker images}} has been deleted.": "",
   "{n, plural, one {# docker image} other {# docker images}} has been updated.": "",
+  "{n} RPM": "",
   "{serviceName} service failed to start.": "",
   "{serviceName} service failed to stop.": "",
   "{service} Service": "",

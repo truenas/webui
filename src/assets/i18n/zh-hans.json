@@ -211,6 +211,7 @@
   "iXsystems does not audit or otherwise validate the contents of third-party applications catalogs.     It is incumbent on the user to verify that the new catalog is from a trusted source and that the third-party     properly audits its chart contents. Failure to exercise due diligence may expose the user and their data to     some or all of the following:<br/>    <ul>\n      <li>Malicious software</li>\n      <li>Broken services on TrueNAS host</li>\n      <li>Service disruption on TrueNAS host</li>\n      <li>Broken filesystem permissions on Host or within application</li>\n      <li>Unexpected deletion of user data</li>\n      <li>Unsafe service configuration in application</li>\n      <li>Degradation of TrueNAS host performance and stability</li>\n    </ul>": "",
   "{n, plural, one {# docker image} other {# docker images}} has been deleted.": "",
   "{n, plural, one {# docker image} other {# docker images}} has been updated.": "",
+  "{n} RPM": "",
   "{uptimeString} as of {dateTime}": "",
   " Please click the button below to add {item}.": " 请点击下面的按钮来添加 {item}。",
   " When the <b>UPS Mode</b> is set to <i>slave</i>. Enter the open network port number of the UPS <i>Master</i> system. The default port is <i>3493</i>.": "当 <b>UPS 模式</b> 设置为 <i>附属</i> 时。输入 UPS <i>主</i> 系统的开放端口号。默认端口为 <i>3493</i>。",

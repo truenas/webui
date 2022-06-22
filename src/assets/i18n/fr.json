@@ -948,6 +948,7 @@
   "threads": "",
   "{n, plural, one {# docker image} other {# docker images}} has been deleted.": "",
   "{n, plural, one {# docker image} other {# docker images}} has been updated.": "",
+  "{n} RPM": "",
   "{service} Service": "",
   " Please click the button below to add {item}.": " Merci d'appuyer sur le bouton ci-dessous pour ajouter des {item}.",
   " When the <b>UPS Mode</b> is set to <i>slave</i>. Enter the open network port number of the UPS <i>Master</i> system. The default port is <i>3493</i>.": " Lorsque le <b>mode UPS</b> est réglé sur <i>Esclave</i>. Entrez le numéro de port réseau ouvert du système UPS <i>Maître</i> . Le port par défaut est <i>3493</i>.",
