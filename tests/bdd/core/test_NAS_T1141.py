@@ -160,7 +160,7 @@ def expand_the_task_on_the_nas_ui_and_click_run_now(driver):
     """expand the task on the NAS UI and click Run Now."""
     assert wait_on_element(driver, 5, '//a[@ix-auto="expander__My Google Drive task"]', 'clickable')
     driver.find_element_by_xpath('//a[@ix-auto="expander__My Google Drive task"]').click()
-    time.sleep(0.5)
+    time.sleep(1)
     assert wait_on_element(driver, 5, '//button[@id="action_button___run_now"]', 'clickable')
     driver.find_element_by_xpath('//button[@id="action_button___run_now"]').click()
     assert wait_on_element(driver, 5, '//h1[text()="Run Now"]')
@@ -209,7 +209,7 @@ def on_the_nas_cloud_sync_task_tab_click_edit(driver):
     driver.find_element_by_xpath('//button[@ix-auto="button___edit"]').click()
     assert wait_on_element(driver, 5, '//h4[contains(.,"Transfer")]')
     assert wait_on_element(driver, 5, '//h4[contains(.,"Advanced Options")]')
-    time.sleep(0.5)
+    time.sleep(1)
 
 
 @then('select PUSH as the Direction then under Transfer Mode, select COPY')
@@ -235,6 +235,7 @@ def select_the_path_folder_and_click_save(driver, path):
     assert wait_on_element(driver, 5, '//button[@id="save_button"]', 'clickable')
     driver.find_element_by_xpath('//button[@id="save_button"]').click()
     assert wait_on_element_disappear(driver, 30, '//h1[contains(.,"Please wait")]')
+    time.sleep(1)
 
 
 @then('open a new tab navigate to <driver_url>')
@@ -327,6 +328,7 @@ def select_pull_as_the_direction_then_under_transfer_mode_select_move(driver):
     driver.find_element_by_xpath('//mat-select[@ix-auto="select__Transfer Mode"]').click()
     assert wait_on_element(driver, 5, '//mat-option[@ix-auto="option__Transfer Mode_MOVE"]', 'clickable')
     driver.find_element_by_xpath('//mat-option[@ix-auto="option__Transfer Mode_MOVE"]').click()
+    assert wait_on_element(driver, 5, '//mat-select[contains(.,"PULL")]')
     assert wait_on_element(driver, 5, '//mat-select[contains(.,"MOVE")]')
 
 
@@ -393,6 +395,7 @@ def select_push_as_the_direction_then_under_transfer_mode_select_move(driver):
     driver.find_element_by_xpath('//mat-select[@ix-auto="select__Transfer Mode"]').click()
     assert wait_on_element(driver, 5, '//mat-option[@ix-auto="option__Transfer Mode_MOVE"]', 'clickable')
     driver.find_element_by_xpath('//mat-option[@ix-auto="option__Transfer Mode_MOVE"]').click()
+    assert wait_on_element(driver, 5, '//mat-select[contains(.,"PUSH")]')
     assert wait_on_element(driver, 5, '//mat-select[contains(.,"MOVE")]')
 
 
@@ -449,6 +452,7 @@ def select_pull_as_the_direction_then_under_transfer_mode_select_sync(driver):
     driver.find_element_by_xpath('//mat-select[@ix-auto="select__Transfer Mode"]').click()
     assert wait_on_element(driver, 5, '//mat-option[@ix-auto="option__Transfer Mode_SYNC"]', 'clickable')
     driver.find_element_by_xpath('//mat-option[@ix-auto="option__Transfer Mode_SYNC"]').click()
+    assert wait_on_element(driver, 5, '//mat-select[contains(.,"PULL")]')
     assert wait_on_element(driver, 5, '//mat-select[contains(.,"SYNC")]')
 
 
@@ -568,6 +572,7 @@ def select_push_as_the_direction_then_under_transfer_mode_select_sync(driver):
     driver.find_element_by_xpath('//mat-select[@ix-auto="select__Transfer Mode"]').click()
     assert wait_on_element(driver, 5, '//mat-option[@ix-auto="option__Transfer Mode_SYNC"]', 'clickable')
     driver.find_element_by_xpath('//mat-option[@ix-auto="option__Transfer Mode_SYNC"]').click()
+    assert wait_on_element(driver, 5, '//mat-select[contains(.,"PUSH")]')
     assert wait_on_element(driver, 5, '//mat-select[contains(.,"SYNC")]')
 
 
