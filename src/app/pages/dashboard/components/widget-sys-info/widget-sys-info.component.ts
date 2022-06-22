@@ -183,6 +183,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
     const now = Date.now();
     const datetime = this.addTimeDiff(this.data.datetime.$date);
     this.nasDateTime = new Date(datetime);
+    this.dateTime = this.locale.getTimeOnly(datetime, false, this.data.timezone);
 
     this.timeDiffInSeconds = differenceInSeconds(datetime, now);
     this.timeDiffInSeconds = this.timeDiffInSeconds < 0 ? (this.timeDiffInSeconds * -1) : this.timeDiffInSeconds;
@@ -229,7 +230,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
 
   parseUptime(): void {
     this.uptimeString = '';
-    const seconds = Math.round(this.data.uptime_seconds);
+    const seconds = Math.round(this.addTimeDiff(this.data.uptime_seconds * 1000) / 1000);
     const uptime = {
       days: Math.floor(seconds / (3600 * 24)),
       hrs: Math.floor(seconds % (3600 * 24) / 3600),
@@ -253,8 +254,6 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
     } else {
       this.uptimeString += this.translate.instant('{minute, plural, one {# minute} other {# minutes}}', { minute: min });
     }
-
-    this.dateTime = (this.locale.getTimeOnly(this.data.datetime.$date, false, this.data.timezone));
   }
 
   formatMemory(physmem: number, units: string): string {
