@@ -1,13 +1,13 @@
 import { ChangeDetectionStrategy, Component, Inject } from '@angular/core';
-import { Validators } from '@angular/forms';
+import { FormBuilder, Validators } from '@angular/forms';
 import { MatDialog, MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { map } from 'rxjs/operators';
 import helptext from 'app/helptext/storage/volumes/volume-status';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
-import { DialogService, WebSocketService } from 'app/services';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { WebSocketService } from 'app/services';
 
 export interface ReplaceDiskDialogData {
   diskName: string;
@@ -41,8 +41,8 @@ export class ReplaceDiskDialogComponent {
     private ws: WebSocketService,
     private matDialog: MatDialog,
     private translate: TranslateService,
-    private dialogService: DialogService,
     private dialogRef: MatDialogRef<ReplaceDiskDialogComponent>,
+    private snackbar: SnackbarService,
     @Inject(MAT_DIALOG_DATA) public data: ReplaceDiskDialogData,
   ) {}
 
@@ -61,8 +61,7 @@ export class ReplaceDiskDialogComponent {
     jobDialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
       jobDialogRef.close(true);
       this.dialogRef.close(true);
-      this.dialogService.info(
-        helptext.replace_disk.title,
+      this.snackbar.success(
         this.translate.instant('Successfully replaced disk {disk}.', { disk: this.data.diskName }),
       );
     });

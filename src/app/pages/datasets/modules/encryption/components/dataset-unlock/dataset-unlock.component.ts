@@ -392,8 +392,8 @@ export class DatasetUnlockComponent implements FormConfiguration {
         this.dialogOpen = true;
         const unlockDialogRef = this.dialog.open(UnlockDialogComponent, { disableClose: true });
         unlockDialogRef.componentInstance.parent = this;
-        unlockDialogRef.componentInstance.unlock_datasets = unlock;
-        unlockDialogRef.componentInstance.error_datasets = errors;
+        unlockDialogRef.componentInstance.unlockDatasets = unlock;
+        unlockDialogRef.componentInstance.errorDatasets = errors;
         unlockDialogRef.componentInstance.data = payload as DatasetUnlockParams;
       }
     });
@@ -449,9 +449,9 @@ export class DatasetUnlockComponent implements FormConfiguration {
           const unlockDialogRef = this.dialog.open(UnlockDialogComponent, { disableClose: true });
           unlockDialogRef.componentInstance.parent = this;
           unlockDialogRef.componentInstance.showFinalResults();
-          unlockDialogRef.componentInstance.unlock_datasets = unlock;
-          unlockDialogRef.componentInstance.error_datasets = errors;
-          unlockDialogRef.componentInstance.skipped_datasets = skipped;
+          unlockDialogRef.componentInstance.unlockDatasets = unlock;
+          unlockDialogRef.componentInstance.errorDatasets = errors;
+          unlockDialogRef.componentInstance.skippedDatasets = skipped;
           unlockDialogRef.componentInstance.data = payload;
         }
       }

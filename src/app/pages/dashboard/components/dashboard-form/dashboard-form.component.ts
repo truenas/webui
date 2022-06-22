@@ -3,8 +3,7 @@ import {
   Component,
   ChangeDetectorRef,
 } from '@angular/core';
-import { UntypedFormGroup } from '@angular/forms';
-import { FormBuilder, FormControl } from '@ngneat/reactive-forms';
+import { FormBuilder, FormControl, UntypedFormGroup } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Subject } from 'rxjs';
 import { rootUserId } from 'app/constants/root-user-id.contant';

@@ -107,6 +107,11 @@ module.exports = {
             format: ['strictCamelCase'],
           },
           {
+            selector: ['classProperty'],
+            format: ['strictCamelCase', 'StrictPascalCase', 'UPPER_CASE'],
+            leadingUnderscore: 'allow', // TODO: Remove later
+          },
+          {
             selector: ['variable', 'parameter'],
             modifiers: ['unused'],
             format: ['strictCamelCase'],

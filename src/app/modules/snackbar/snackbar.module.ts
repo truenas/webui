@@ -13,6 +13,7 @@ import { SnackbarComponent } from 'app/modules/snackbar/components/snackbar/snac
     MatSnackBarModule,
     TranslateModule,
     CommonModule,
+    MatSnackBarModule,
   ],
   exports: [],
   declarations: [

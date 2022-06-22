@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { FormBuilder } from '@angular/forms';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
-import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { forkJoin, Observable, of } from 'rxjs';
@@ -10,6 +10,7 @@ import { KubernetesConfigUpdate } from 'app/interfaces/kubernetes-config.interfa
 import { Option } from 'app/interfaces/option.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { EntityUtils } from 'app/modules/entity/utils';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApplicationsService } from 'app/pages/applications/applications.service';
 import { AppLoaderService, DialogService } from 'app/services';
 
@@ -37,6 +38,7 @@ export class SelectPoolDialogComponent implements OnInit {
     private loader: AppLoaderService,
     private translate: TranslateService,
     private dialogRef: MatDialogRef<SelectPoolDialogComponent>,
+    private snackbar: SnackbarService,
   ) {}
 
   get canMigrateApplications(): boolean {
@@ -65,8 +67,7 @@ export class SelectPoolDialogComponent implements OnInit {
     dialogRef.componentInstance.setCall('kubernetes.update', [params]);
     dialogRef.componentInstance.submit();
     dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
-      this.dialogService.info(
-        helptext.choosePool.success,
+      this.snackbar.success(
         this.translate.instant('Using pool {name}', { name: this.form.value.pool }),
       );
       dialogRef.close();

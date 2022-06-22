@@ -10,21 +10,21 @@
             [tooltip]="hostname.tooltip | translate"
           ></ix-input>
           <ix-input
-            *ngIf="!hostname_b.hidden"
-            [formControlName]="hostname_b.fcName"
-            [label]="hostname_b.label | translate"
-            [tooltip]="hostname_b.tooltip | translate"
+            *ngIf="!hostnameB.hidden"
+            [formControlName]="hostnameB.fcName"
+            [label]="hostnameB.label | translate"
+            [tooltip]="hostnameB.tooltip | translate"
           ></ix-input>
           <ix-input
-            *ngIf="!hostname_virtual.hidden"
-            [formControlName]="hostname_virtual.fcName"
-            [label]="hostname_virtual.label | translate"
-            [tooltip]="hostname_virtual.tooltip | translate"
+            *ngIf="!hostnameVirtual.hidden"
+            [formControlName]="hostnameVirtual.fcName"
+            [label]="hostnameVirtual.label | translate"
+            [tooltip]="hostnameVirtual.tooltip | translate"
           ></ix-input>
           <ix-checkbox
-            [formControlName]="inherit_dhcp.fcName"
-            [label]="inherit_dhcp.label | translate"
-            [tooltip]="inherit_dhcp.tooltip | translate"
+            [formControlName]="inheritDhcp.fcName"
+            [label]="inheritDhcp.label | translate"
+            [tooltip]="inheritDhcp.tooltip | translate"
           ></ix-checkbox>
           <ix-input
             [formControlName]="domain.fcName"
@@ -94,18 +94,18 @@
         <ix-fieldset [title]="helptext.outbound_network | translate">
           <ix-radio-group
             class="mt-field outbound-network-radio"
-            [formControlName]="outbound_network_activity.fcName"
-            [label]="outbound_network_activity.label | translate"
-            [tooltip]="outbound_network_activity.tooltip | translate"
-            [options]="outbound_network_activity.options"
+            [formControlName]="outboundNetworkActivity.fcName"
+            [label]="outboundNetworkActivity.label | translate"
+            [tooltip]="outboundNetworkActivity.tooltip | translate"
+            [options]="outboundNetworkActivity.options"
           ></ix-radio-group>
           <ix-select
-            *ngIf="!outbound_network_value.hidden"
+            *ngIf="!outboundNetworkValue.hidden"
             class="outbound-network-value"
-            [formControlName]="outbound_network_value.fcName"
-            [label]="outbound_network_value.label"
-            [tooltip]="outbound_network_value.tooltip"
-            [options]="outbound_network_value.options"
+            [formControlName]="outboundNetworkValue.fcName"
+            [label]="outboundNetworkValue.label"
+            [tooltip]="outboundNetworkValue.tooltip"
+            [options]="outboundNetworkValue.options"
             [multiple]="true"
           ></ix-select>
         </ix-fieldset>
@@ -116,16 +116,16 @@
             [tooltip]="httpproxy.tooltip | translate"
           ></ix-input>
           <ix-checkbox
-            [formControlName]="netwait_enabled.fcName"
-            [label]="netwait_enabled.label | translate"
-            [tooltip]="netwait_enabled.tooltip | translate"
+            [formControlName]="netwaitEnabled.fcName"
+            [label]="netwaitEnabled.label | translate"
+            [tooltip]="netwaitEnabled.tooltip | translate"
           ></ix-checkbox>
           <ix-chips
-            *ngIf="!netwait_ip.hidden"
-            [formControlName]="netwait_ip.fcName"
-            [label]="netwait_ip.label | translate"
-            [placeholder]="netwait_ip.label | translate"
-            [tooltip]="netwait_ip.tooltip | translate"
+            *ngIf="!netwaitIp.hidden"
+            [formControlName]="netwaitIp.fcName"
+            [label]="netwaitIp.label | translate"
+            [placeholder]="netwaitIp.label | translate"
+            [tooltip]="netwaitIp.tooltip | translate"
           ></ix-chips>
           <ix-chips
             [formControlName]="hosts.fcName"

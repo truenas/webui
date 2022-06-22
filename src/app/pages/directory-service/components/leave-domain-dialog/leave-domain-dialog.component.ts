@@ -1,12 +1,14 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { Validators } from '@angular/forms';
+import { FormBuilder, Validators } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
-import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
 import { JobState } from 'app/enums/job-state.enum';
 import helptext from 'app/helptext/directory-service/active-directory';
+import { LeaveActiveDirectory } from 'app/interfaces/active-directory-config.interface';
 import { AppLoaderService } from 'app/modules/app-loader/app-loader.service';
 import { EntityUtils } from 'app/modules/entity/utils';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { DialogService, WebSocketService } from 'app/services';
 
 @UntilDestroy()
@@ -27,13 +29,15 @@ export class LeaveDomainDialogComponent {
     private ws: WebSocketService,
     private dialogRef: MatDialogRef<LeaveDomainDialogComponent>,
     private dialogService: DialogService,
+    private snackbar: SnackbarService,
+    private translate: TranslateService,
   ) {}
 
   onSubmit(): void {
     const params = this.form.value;
     this.loader.open();
 
-    this.ws.job('activedirectory.leave', [params])
+    this.ws.job('activedirectory.leave', [params as LeaveActiveDirectory])
       .pipe(untilDestroyed(this))
       .subscribe(
         (job) => {
@@ -41,9 +45,8 @@ export class LeaveDomainDialogComponent {
             return;
           }
 
-          this.dialogService.info(
-            helptext.ad_leave_domain_dialog.success,
-            helptext.ad_leave_domain_dialog.success_msg,
+          this.snackbar.success(
+            this.translate.instant(helptext.ad_leave_domain_dialog.success_msg),
           );
 
           this.loader.close();

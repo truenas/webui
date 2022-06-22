@@ -1,11 +1,10 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
-import { Validators } from '@angular/forms';
-import { FormBuilder } from '@ngneat/reactive-forms';
+import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable } from 'rxjs';
 import helptext from 'app/helptext/directory-service/kerberos-realms-form-list';
-import { KerberosRealm } from 'app/interfaces/kerberos-realm.interface';
+import { KerberosRealm, KerberosRealmUpdate } from 'app/interfaces/kerberos-realm.interface';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { WebSocketService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
@@ -66,11 +65,11 @@ export class KerberosRealmsFormComponent {
     this.isFormLoading = true;
     let request$: Observable<unknown>;
     if (this.isNew) {
-      request$ = this.ws.call('kerberos.realm.create', [values]);
+      request$ = this.ws.call('kerberos.realm.create', [values as KerberosRealmUpdate]);
     } else {
       request$ = this.ws.call('kerberos.realm.update', [
         this.editingRealm.id,
-        values,
+        values as KerberosRealmUpdate,
       ]);
     }
 

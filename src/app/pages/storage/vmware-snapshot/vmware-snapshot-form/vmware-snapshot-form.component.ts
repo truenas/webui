@@ -1,8 +1,7 @@
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
-import { Validators } from '@angular/forms';
-import { FormBuilder } from '@ngneat/reactive-forms';
+import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable, of } from 'rxjs';
@@ -143,7 +142,7 @@ export class VmwareSnapshotFormComponent implements OnInit {
   }
 
   onSubmit(): void {
-    const values = this.form.value;
+    const values = this.form.value as VmwareSnapshotUpdate;
 
     this.isLoading = true;
     let request$: Observable<unknown>;
@@ -152,7 +151,7 @@ export class VmwareSnapshotFormComponent implements OnInit {
     } else {
       request$ = this.ws.call('vmware.update', [
         this.editingSnapshot.id,
-        values as VmwareSnapshotUpdate,
+        values,
       ]);
     }
 

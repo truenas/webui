@@ -67,14 +67,14 @@ export class ViewEnclosureComponent implements AfterViewInit, OnDestroy {
     return false;
   }
 
-  system_manufacturer: string;
-  private _system_product: string;
-  get system_product(): string {
-    return this._system_product;
+  systemManufacturer: string;
+  private _systemProduct: string;
+  get systemProduct(): string {
+    return this._systemProduct;
   }
-  set system_product(value) {
-    if (!this._system_product) {
-      this._system_product = value;
+  set systemProduct(value) {
+    if (!this._systemProduct) {
+      this._systemProduct = value;
       this.loadEnclosureData();
     }
   }
@@ -141,9 +141,9 @@ export class ViewEnclosureComponent implements AfterViewInit, OnDestroy {
 
     this.store$.pipe(waitForSystemInfo, untilDestroyed(this))
       .subscribe((sysInfo) => {
-        if (!this.system_product) {
-          this.system_product = sysInfo.system_product;
-          this.system_manufacturer = sysInfo.system_manufacturer.toLowerCase();
+        if (!this.systemProduct) {
+          this.systemProduct = sysInfo.system_product;
+          this.systemManufacturer = sysInfo.system_manufacturer.toLowerCase();
         }
       });
 
@@ -259,7 +259,7 @@ export class ViewEnclosureComponent implements AfterViewInit, OnDestroy {
         return;
       }
 
-      this.system = new SystemProfiler(this.system_product, enclosures);
+      this.system = new SystemProfiler(this.systemProduct, enclosures);
       this.selectedEnclosure = this.system.profile[this.system.headIndex];
       this.loadDiskData();
 

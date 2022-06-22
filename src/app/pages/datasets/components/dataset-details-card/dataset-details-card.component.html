@@ -6,7 +6,7 @@
       </mat-card-header>
       <mat-card-content>
         <div class="row">
-          <span class="header">Type: </span>
+          <span class="header">{{ 'Type:' | translate }} </span>
           <span *ngIf="!loading || !!dataset.type">{{ dataset.type }}</span>
           <ngx-skeleton-loader
             *ngIf="loading && !dataset.type"
@@ -14,7 +14,7 @@
           ></ngx-skeleton-loader>
         </div>
         <div class="row">
-          <span class="header">Sync: </span>
+          <span class="header">{{ 'Sync:' | translate }} </span>
           <span *ngIf="!loading || !!dataset.sync?.value">{{ dataset.sync?.value }}</span>
           <ngx-skeleton-loader
             *ngIf="loading && !dataset.sync?.value"
@@ -22,7 +22,7 @@
           ></ngx-skeleton-loader>
         </div>
         <div class="row">
-          <span class="header">Compression Level: </span>
+          <span class="header">{{ 'Compression Level:' | translate }} </span>
           <span *ngIf="!loading || !!datasetCompression">{{ datasetCompression }}</span>
           <ngx-skeleton-loader
             *ngIf="loading && !datasetCompression"
@@ -30,7 +30,7 @@
           ></ngx-skeleton-loader>
         </div>
         <div class="row">
-          <span class="header">Enable Atime: </span>
+          <span class="header">{{ 'Enable Atime:' | translate }} </span>
           <span *ngIf="!loading || !!dataset.atime?.value">{{ dataset.atime?.value }}</span>
           <ngx-skeleton-loader
             *ngIf="loading && !dataset.atime?.value"
@@ -38,7 +38,7 @@
           ></ngx-skeleton-loader>
         </div>
         <div class="row">
-          <span class="header">ZFS Deduplication: </span>
+          <span class="header">{{ 'ZFS Deduplication:' | translate }} </span>
           <span *ngIf="!loading || !!dataset.deduplication?.value">{{ dataset.deduplication?.value }}</span>
           <ngx-skeleton-loader
             *ngIf="loading && !dataset.deduplication?.value"
@@ -46,7 +46,7 @@
           ></ngx-skeleton-loader>
         </div>
         <div class="row">
-          <span class="header">Case Sensitivity: </span>
+          <span class="header">{{ 'Case Sensitivity:' | translate }} </span>
           <span *ngIf="!loading || !!dataset.casesensitivity?.value">{{ dataset.casesensitivity?.value }}</span>
           <ngx-skeleton-loader
             *ngIf="loading && !dataset.casesensitivity?.value"

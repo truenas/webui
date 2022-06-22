@@ -21,6 +21,7 @@ import { Interval } from 'app/interfaces/timeout.interface';
 import { AppTableAction, AppTableConfig, TableComponent } from 'app/modules/entity/table/table.component';
 import { TableService } from 'app/modules/entity/table/table.service';
 import { EntityUtils } from 'app/modules/entity/utils';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { InterfaceFormComponent } from 'app/pages/network/components/interface-form/interface-form.component';
 import {
   IpmiIdentifyDialogComponent,
@@ -200,6 +201,7 @@ export class NetworkComponent implements OnInit, OnDestroy {
     private matDialog: MatDialog,
     private slideInService: IxSlideInService,
     private core: CoreService,
+    private snackbar: SnackbarService,
   ) {
     this.navigation = this.router.getCurrentNavigation();
   }
@@ -404,7 +406,9 @@ export class NetworkComponent implements OnInit, OnDestroy {
         () => {
           this.core.emit({ name: 'NetworkInterfacesChanged', data: { commit: true, checkin: true }, sender: this });
           this.loader.close();
-          this.dialog.info(helptext.checkin_complete_title, helptext.checkin_complete_message);
+          this.snackbar.success(
+            this.translate.instant(helptext.checkin_complete_message),
+          );
           this.hasPendingChanges = false;
           this.checkinWaiting = false;
           clearInterval(this.checkinInterval);
@@ -439,7 +443,9 @@ export class NetworkComponent implements OnInit, OnDestroy {
                 this.hasPendingChanges = false;
                 this.checkinWaiting = false;
                 this.loader.close();
-                this.dialog.info(helptext.rollback_changes_title, helptext.changes_rolled_back);
+                this.snackbar.success(
+                  this.translate.instant(helptext.changes_rolled_back),
+                );
               },
               (err) => {
                 this.loader.close();

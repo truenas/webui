@@ -1,8 +1,7 @@
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
-import { Validators } from '@angular/forms';
-import { FormBuilder } from '@ngneat/reactive-forms';
+import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
@@ -14,8 +13,10 @@ import {
 } from 'rxjs/operators';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { helptextSharingIscsi, shared } from 'app/helptext/sharing';
+import { IscsiGlobalConfigUpdate } from 'app/interfaces/iscsi-global-config.interface';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { DialogService, WebSocketService } from 'app/services';
 
 @UntilDestroy()
@@ -49,6 +50,7 @@ export class TargetGlobalConfigurationComponent implements OnInit {
     private errorHandler: FormErrorHandlerService,
     private dialogService: DialogService,
     private translate: TranslateService,
+    private snackbar: SnackbarService,
   ) {}
 
   ngOnInit(): void {
@@ -58,7 +60,7 @@ export class TargetGlobalConfigurationComponent implements OnInit {
   onSubmit(): void {
     this.areSettingsSaved = false;
     this.setLoading(true);
-    const values = this.form.value;
+    const values = this.form.value as IscsiGlobalConfigUpdate;
 
     this.ws.call('iscsi.global.update', [values])
       .pipe(
@@ -114,8 +116,7 @@ export class TargetGlobalConfigurationComponent implements OnInit {
             this.ws.call('service.start', [service.service, { silent: false }]),
           ])),
           tap(() => {
-            this.dialogService.info(
-              this.translate.instant('{service} Service', { service: 'iSCSI' }),
+            this.snackbar.success(
               this.translate.instant('The {service} service has been enabled.', { service: 'iSCSI' }),
             );
           }),

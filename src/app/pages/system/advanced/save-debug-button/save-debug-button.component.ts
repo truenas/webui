@@ -1,4 +1,5 @@
 import { DatePipe } from '@angular/common';
+import { HttpErrorResponse } from '@angular/common/http';
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -65,7 +66,18 @@ export class SaveDebugButtonComponent {
                 .subscribe((blob) => {
                   this.storage.downloadBlob(blob, fileName);
                   dialogRef.close();
+                }, (error) => {
+                  dialogRef.close();
+                  if (error instanceof HttpErrorResponse) {
+                    this.dialogService.errorReport(error.name, error.message);
+                  } else {
+                    new EntityUtils().handleWsError(this, error, this.dialogService);
+                  }
                 });
+              dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((error) => {
+                this.matDialog.closeAll();
+                new EntityUtils().handleWsError(this, error, this.dialogService);
+              });
             }),
           );
       }),

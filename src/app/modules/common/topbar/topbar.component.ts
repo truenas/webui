@@ -37,6 +37,7 @@ import { selectRunningJobsCount, selectIsJobPanelOpen } from 'app/modules/jobs/s
 import {
   ChangePasswordDialogComponent,
 } from 'app/modules/layout/components/change-password-dialog/change-password-dialog.component';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { CoreService } from 'app/services/core-service/core.service';
 import { DialogService } from 'app/services/dialog.service';
 import { LayoutService } from 'app/services/layout.service';
@@ -68,20 +69,20 @@ export class TopbarComponent implements OnInit, OnDestroy {
   dirServicesMonitor: MatDialogRef<DirectoryServicesMonitorComponent>;
   dirServicesStatus: DirectoryServiceState[] = [];
   showDirServicesIcon = false;
-  ha_status_text: string;
-  ha_disabled_reasons: FailoverDisabledReason[] = [];
-  is_ha = false;
+  haStatusText: string;
+  haDisabledReasons: FailoverDisabledReason[] = [];
+  isHa = false;
   upgradeWaitingToFinish = false;
   pendingUpgradeChecked = false;
   sysName = 'TrueNAS CORE';
   hostname: string;
-  checkin_remaining: number;
-  checkin_interval: Interval;
+  checkinRemaining: number;
+  checkinInterval: Interval;
   updateIsRunning = false;
   systemWillRestart = false;
   updateNotificationSent = false;
-  private user_check_in_prompted = false;
-  mat_tooltips = helptext.mat_tooltips;
+  private userCheckInPrompted = false;
+  tooltips = helptext.mat_tooltips;
   screenSize = 'waiting';
   productType: ProductType;
 
@@ -106,6 +107,7 @@ export class TopbarComponent implements OnInit, OnDestroy {
     private layoutService: LayoutService,
     private store$: Store<AlertSlice>,
     private core: CoreService,
+    private snackbar: SnackbarService,
     @Inject(WINDOW) private window: Window,
   ) {
     this.systemGeneralService.getProductType$.pipe(untilDestroyed(this)).subscribe((productType) => {
@@ -126,7 +128,7 @@ export class TopbarComponent implements OnInit, OnDestroy {
       this.checkEula();
 
       this.ws.call('failover.licensed').pipe(untilDestroyed(this)).subscribe((isHa) => {
-        this.is_ha = isHa;
+        this.isHa = isHa;
         this.getHaStatus();
       });
       this.sysName = 'TrueNAS ENTERPRISE';
@@ -140,13 +142,13 @@ export class TopbarComponent implements OnInit, OnDestroy {
         }
 
         // When update starts on HA system, listen for 'finish', then quit listening
-        if (this.is_ha) {
+        if (this.isHa) {
           this.updateIsDone = this.systemGeneralService.updateIsDone$.pipe(untilDestroyed(this)).subscribe(() => {
             this.updateIsRunning = false;
             this.updateIsDone.unsubscribe();
           });
         }
-        if (!this.is_ha) {
+        if (!this.isHa) {
           if (event && event.fields && event.fields.arguments[0] && (event.fields.arguments[0] as any).reboot) {
             this.systemWillRestart = true;
             if (event.fields.state === JobState.Success) {
@@ -173,8 +175,8 @@ export class TopbarComponent implements OnInit, OnDestroy {
         this.checkNetworkChangesPending();
       }
       if (evt && evt.data.checkin) {
-        if (this.checkin_interval) {
-          clearInterval(this.checkin_interval);
+        if (this.checkinInterval) {
+          clearInterval(this.checkinInterval);
         }
       }
     });
@@ -352,27 +354,27 @@ export class TopbarComponent implements OnInit, OnDestroy {
     this.ws.call('interface.checkin_waiting').pipe(untilDestroyed(this)).subscribe((res) => {
       if (res !== null) {
         const seconds = res;
-        if (seconds > 0 && this.checkin_remaining === null) {
-          this.checkin_remaining = seconds;
-          this.checkin_interval = setInterval(() => {
-            if (this.checkin_remaining > 0) {
-              this.checkin_remaining -= 1;
+        if (seconds > 0 && this.checkinRemaining === null) {
+          this.checkinRemaining = seconds;
+          this.checkinInterval = setInterval(() => {
+            if (this.checkinRemaining > 0) {
+              this.checkinRemaining -= 1;
             } else {
-              this.checkin_remaining = null;
-              clearInterval(this.checkin_interval);
+              this.checkinRemaining = null;
+              clearInterval(this.checkinInterval);
               window.location.reload(); // should just refresh after the timer goes off
             }
           }, 1000);
         }
         this.waitingNetworkCheckin = true;
-        if (!this.user_check_in_prompted) {
-          this.user_check_in_prompted = true;
+        if (!this.userCheckInPrompted) {
+          this.userCheckInPrompted = true;
           this.showNetworkCheckinWaiting();
         }
       } else {
         this.waitingNetworkCheckin = false;
-        if (this.checkin_interval) {
-          clearInterval(this.checkin_interval);
+        if (this.checkinInterval) {
+          clearInterval(this.checkinInterval);
         }
       }
     });
@@ -390,14 +392,13 @@ export class TopbarComponent implements OnInit, OnDestroy {
       hideCheckBox: true,
       buttonMsg: network_interfaces_helptext.checkin_button,
     }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
-      this.user_check_in_prompted = false;
+      this.userCheckInPrompted = false;
       this.loader.open();
       this.ws.call('interface.checkin').pipe(untilDestroyed(this)).subscribe(() => {
         this.core.emit({ name: 'NetworkInterfacesChanged', data: { commit: true, checkin: true }, sender: this });
         this.loader.close();
-        this.dialogService.info(
-          network_interfaces_helptext.checkin_complete_title,
-          network_interfaces_helptext.checkin_complete_message,
+        this.snackbar.success(
+          this.translate.instant(network_interfaces_helptext.checkin_complete_message),
         );
         this.waitingNetworkCheckin = false;
       }, (err) => {
@@ -450,14 +451,14 @@ export class TopbarComponent implements OnInit, OnDestroy {
   }
 
   updateHaInfo(info: HaStatus): void {
-    this.ha_disabled_reasons = info.reasons;
+    this.haDisabledReasons = info.reasons;
     if (info.status === 'HA Enabled') {
-      this.ha_status_text = helptext.ha_status_text_enabled;
+      this.haStatusText = helptext.ha_status_text_enabled;
       if (!this.pendingUpgradeChecked) {
         this.checkUpgradePending();
       }
     } else {
-      this.ha_status_text = helptext.ha_status_text_disabled;
+      this.haStatusText = helptext.ha_status_text_disabled;
     }
   }
 
@@ -474,10 +475,10 @@ export class TopbarComponent implements OnInit, OnDestroy {
     let reasons = '<ul>\n';
     let isWarning = false;
     let haStatus: string;
-    if (this.ha_disabled_reasons.length > 0) {
+    if (this.haDisabledReasons.length > 0) {
       haStatus = helptext.ha_status_text_disabled;
       isWarning = true;
-      this.ha_disabled_reasons.forEach((reason) => {
+      this.haDisabledReasons.forEach((reason) => {
         const reasonText = helptext.ha_disabled_reasons[reason];
         reasons = reasons + '<li>' + this.translate.instant(reasonText) + '</li>\n';
       });
@@ -554,7 +555,7 @@ export class TopbarComponent implements OnInit, OnDestroy {
   }
 
   showUpdateDialog(): void {
-    const message = this.is_ha || !this.systemWillRestart
+    const message = this.isHa || !this.systemWillRestart
       ? helptext.updateRunning_dialog.message
       : helptext.updateRunning_dialog.message + helptext.updateRunning_dialog.message_pt2;
 

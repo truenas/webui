@@ -14,6 +14,7 @@ import { LdapConfig, LdapConfigUpdateResult } from 'app/interfaces/ldap-config.i
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { LdapComponent } from 'app/pages/directory-service/components/ldap/ldap.component';
 import {
   DialogService, ModalService, SystemGeneralService, WebSocketService,
@@ -72,6 +73,7 @@ describe('LdapComponent', () => {
         ]),
       }),
       mockProvider(DialogService),
+      mockProvider(SnackbarService),
       mockProvider(ModalService),
       mockProvider(MatDialog),
     ],
@@ -132,8 +134,7 @@ describe('LdapComponent', () => {
     await rebuildCacheButton.click();
 
     expect(spectator.inject(SystemGeneralService).refreshDirServicesCache).toHaveBeenCalled();
-    expect(spectator.inject(DialogService).info).toHaveBeenCalledWith(
-      helptext.ldap_custactions_clearcache_dialog_title,
+    expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith(
       helptext.ldap_custactions_clearcache_dialog_message,
     );
   });

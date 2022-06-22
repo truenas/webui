@@ -1,16 +1,18 @@
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
+import { FormBuilder } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
-import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { forkJoin } from 'rxjs';
 import { idNameArrayToOptions } from 'app/helpers/options.helper';
 import { helptextSystemKmip } from 'app/helptext/system/kmip';
+import { KmipConfigUpdate } from 'app/interfaces/kmip-config.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { DialogService, SystemGeneralService, WebSocketService } from 'app/services';
 
 @UntilDestroy()
@@ -50,6 +52,7 @@ export class KmipComponent implements OnInit {
     private dialogService: DialogService,
     private errorHandler: FormErrorHandlerService,
     private systemGeneralService: SystemGeneralService,
+    private snackbar: SnackbarService,
   ) {}
 
   ngOnInit(): void {
@@ -99,10 +102,10 @@ export class KmipComponent implements OnInit {
       data: { title: helptextSystemKmip.jobDialog.title },
       disableClose: true,
     });
-    dialogRef.componentInstance.setCall('kmip.update', [this.form.value]);
+    dialogRef.componentInstance.setCall('kmip.update', [this.form.value as KmipConfigUpdate]);
     dialogRef.componentInstance.submit();
     dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
-      this.dialogService.info('KMIP', this.translate.instant('Settings saved.'));
+      this.snackbar.success(this.translate.instant('Settings saved.'));
       dialogRef.close(true);
     });
   }

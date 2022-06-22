@@ -59,7 +59,7 @@ export class AcmednsFormComponent implements OnInit {
     return this.ws.call('acme.dns.authenticator.authenticator_schemas');
   }
 
-  authenticator_options$: Observable<Option[]>;
+  authenticatorOptions$: Observable<Option[]>;
   private editingAcmedns: DnsAuthenticator;
 
   constructor(
@@ -95,7 +95,7 @@ export class AcmednsFormComponent implements OnInit {
   }
 
   private setAuthenticatorOptions(schemas: AuthenticatorSchema[]): void {
-    this.authenticator_options$ = of(schemas.map((schema) => ({ label: schema.key, value: schema.key })));
+    this.authenticatorOptions$ = of(schemas.map((schema) => ({ label: schema.key, value: schema.key })));
   }
 
   private createAuthenticatorControls(schemas: AuthenticatorSchema[]): void {

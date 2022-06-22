@@ -3,13 +3,13 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatCheckboxHarness } from '@angular/material/checkbox/testing';
-import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
-import { of } from 'rxjs';
+import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { helptextSystemFailover } from 'app/helptext/system/failover';
 import { ConfirmDialogComponent } from 'app/modules/common/dialog/confirm-dialog/confirm-dialog.component';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { FailoverSettingsComponent } from 'app/pages/system/failover-settings/failover-settings.component';
 import { DialogService, WebSocketService } from 'app/services';
 
@@ -39,6 +39,7 @@ describe('FailoverComponent', () => {
           timeout: 0,
         }),
       ]),
+      mockProvider(SnackbarService),
     ],
   });
 
@@ -48,7 +49,6 @@ describe('FailoverComponent', () => {
     rootLoader = TestbedHarnessEnvironment.documentRootLoader(spectator.fixture);
     form = await loader.getHarness(IxFormHarness);
     jest.spyOn(spectator.inject(DialogService), 'confirm');
-    jest.spyOn(spectator.inject(DialogService), 'info').mockImplementation(() => of(undefined));
   });
 
   it('loads and shows current failover settings', async () => {
@@ -88,8 +88,7 @@ describe('FailoverComponent', () => {
     await proceedButton.click();
 
     expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('failover.sync_to_peer', [{ reboot: true }]);
-    expect(spectator.inject(DialogService).info).toHaveBeenCalledWith(
-      helptextSystemFailover.confirm_dialogs.sync_title,
+    expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith(
       helptextSystemFailover.confirm_dialogs.sync_to_message,
     );
   });
@@ -105,8 +104,7 @@ describe('FailoverComponent', () => {
     await proceedButton.click();
 
     expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('failover.sync_from_peer');
-    expect(spectator.inject(DialogService).info).toHaveBeenCalledWith(
-      helptextSystemFailover.confirm_dialogs.sync_title,
+    expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith(
       helptextSystemFailover.confirm_dialogs.sync_from_message,
     );
   });

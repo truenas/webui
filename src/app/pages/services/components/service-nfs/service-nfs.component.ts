@@ -1,9 +1,8 @@
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
-import { Validators } from '@angular/forms';
+import { FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { choicesToOptions } from 'app/helpers/options.helper';
@@ -115,14 +114,23 @@ export class ServiceNfsComponent implements OnInit {
         this.form.patchValue({ v4_v3owner: false });
       }
 
-      this.form.controls['v4_v3owner'].setEnable(nsf4Enabled);
+      if (nsf4Enabled) {
+        this.form.controls['v4_v3owner'].enable();
+      } else {
+        this.form.controls['v4_v3owner'].disable();
+      }
     });
 
     this.form.controls['v4_v3owner'].valueChanges.pipe(untilDestroyed(this)).subscribe((v3Owner) => {
       if (v3Owner) {
         this.form.patchValue({ userd_manage_gids: false });
       }
-      this.form.controls['userd_manage_gids'].setEnable(!v3Owner);
+
+      if (v3Owner) {
+        this.form.controls['userd_manage_gids'].disable();
+      } else {
+        this.form.controls['userd_manage_gids'].enable();
+      }
     });
   }
 }

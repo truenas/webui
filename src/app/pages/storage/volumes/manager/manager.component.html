@@ -395,7 +395,7 @@
               <div class="data-title"><h4 class="vdev-h4">{{"Data VDevs" | translate}}</h4></div>
               <div class="duplicate-button"><button id="pool-manager__create-data-vdevs-button" mat-button class="btn btn-accent mat-accent" [disabled]="!canDuplicate" (click)="duplicate()">{{"Repeat" | translate}}</button></div>
             </div>
-            <ix-vdev *ngFor="let vdev of vdevs.data; let i = index" [group]="'data'" [manager]="this" [index]="i" [initial_values]="vdev"></ix-vdev>
+            <ix-vdev *ngFor="let vdev of vdevs.data; let i = index" [group]="'data'" [manager]="this" [index]="i" [initialValues]="vdev"></ix-vdev>
           </div>
           <div *ngIf="vdevs.cache.length > 0">
             <h4 class="vdev-h4">{{"Cache VDev" | translate}}</h4>

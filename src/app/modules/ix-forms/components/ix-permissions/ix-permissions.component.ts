@@ -1,8 +1,7 @@
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, Input,
 } from '@angular/core';
-import { NgControl } from '@angular/forms';
-import { ControlValueAccessor } from '@ngneat/reactive-forms';
+import { ControlValueAccessor, NgControl } from '@angular/forms';
 import { PosixPermission } from 'app/enums/posix-acl.enum';
 import { parseMode } from 'app/helpers/mode.helper';
 
