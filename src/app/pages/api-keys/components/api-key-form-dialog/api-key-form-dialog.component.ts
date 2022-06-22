@@ -1,12 +1,11 @@
 import {
   ChangeDetectionStrategy, Component, Inject, OnInit,
 } from '@angular/core';
-import { Validators } from '@angular/forms';
+import { FormBuilder, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import helptext from 'app/helptext/api-keys';
-import { ApiKey } from 'app/interfaces/api-key.interface';
+import { ApiKey, UpdateApiKeyRequest } from 'app/interfaces/api-key.interface';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import {
   KeyCreatedDialogComponent,
@@ -57,7 +56,7 @@ export class ApiKeyFormDialogComponent implements OnInit {
     const values = this.form.value;
     const request$ = this.isNew
       ? this.ws.call('api_key.create', [{ name: values.name }])
-      : this.ws.call('api_key.update', [this.editingRow.id, values]);
+      : this.ws.call('api_key.update', [this.editingRow.id, values] as UpdateApiKeyRequest);
 
     request$
       .pipe(untilDestroyed(this))

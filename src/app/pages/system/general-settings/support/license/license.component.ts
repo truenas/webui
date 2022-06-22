@@ -2,8 +2,7 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef, Component,
 } from '@angular/core';
-import { Validators } from '@angular/forms';
-import { FormBuilder } from '@ngneat/reactive-forms';
+import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { filter } from 'rxjs/operators';
 import { helptextSystemSupport as helptext } from 'app/helptext/system/support';

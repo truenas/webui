@@ -11,6 +11,7 @@ import { IscsiGlobalConfig } from 'app/interfaces/iscsi-global-config.interface'
 import { Service } from 'app/interfaces/service.interface';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { DialogService, WebSocketService } from 'app/services';
 import { TargetGlobalConfigurationComponent } from './target-global-configuration.component';
 
@@ -42,6 +43,7 @@ describe('TargetGlobalConfigurationComponent', () => {
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),
+      mockProvider(SnackbarService),
     ],
   });
 
@@ -106,6 +108,6 @@ describe('TargetGlobalConfigurationComponent', () => {
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalled();
     expect(ws.call).toHaveBeenCalledWith('service.update', [13, { enable: true }]);
     expect(ws.call).toHaveBeenCalledWith('service.start', [ServiceName.Iscsi, { silent: false }]);
-    expect(spectator.inject(DialogService).info).toHaveBeenCalled();
+    expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
   });
 });

@@ -1,6 +1,7 @@
 import { FlexLayoutModule } from '@angular/flex-layout';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { FormArray, FormControl, FormGroup } from '@ngneat/reactive-forms';
+import {
+  FormArray, FormControl, FormGroup, FormsModule, ReactiveFormsModule,
+} from '@angular/forms';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';

@@ -1,7 +1,6 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { Validators } from '@angular/forms';
+import { FormBuilder, Validators } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
-import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { filter, switchMap, tap } from 'rxjs/operators';
@@ -10,6 +9,7 @@ import { AppLoaderService } from 'app/modules/app-loader/app-loader.service';
 import { matchOtherValidator } from 'app/modules/entity/entity-form/validators/password-validation/password-validation';
 import { EntityUtils } from 'app/modules/entity/utils';
 import IxValidatorsService from 'app/modules/ix-forms/services/ix-validators.service';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { DialogService, WebSocketService } from 'app/services';
 
 @UntilDestroy()
@@ -44,6 +44,7 @@ export class ChangePasswordDialogComponent {
     private ws: WebSocketService,
     private loader: AppLoaderService,
     private validatorsService: IxValidatorsService,
+    private snackbar: SnackbarService,
   ) {}
 
   onSubmit(): void {
@@ -65,9 +66,8 @@ export class ChangePasswordDialogComponent {
       switchMap(() => this.ws.call('user.update', [1, { password }])),
       untilDestroyed(this),
     ).subscribe(() => {
-      this.dialogService.info(
-        this.translate.instant('Success'),
-        helptext.changePasswordDialog.pw_updated,
+      this.snackbar.success(
+        this.translate.instant(helptext.changePasswordDialog.pw_updated),
       );
       this.loader.close();
       this.dialogRef.close();

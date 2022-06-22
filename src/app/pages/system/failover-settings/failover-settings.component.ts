@@ -9,6 +9,7 @@ import { filter, switchMap, take } from 'rxjs/operators';
 import { helptextSystemFailover } from 'app/helptext/system/failover';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { DialogService, WebSocketService } from 'app/services';
 
 @UntilDestroy({
@@ -45,6 +46,7 @@ export class FailoverSettingsComponent implements OnInit {
     private dialogService: DialogService,
     private errorHandler: FormErrorHandlerService,
     private translate: TranslateService,
+    private snackbar: SnackbarService,
   ) {}
 
   ngOnInit(): void {
@@ -107,8 +109,7 @@ export class FailoverSettingsComponent implements OnInit {
         () => {
           this.isLoading = false;
           this.cdr.markForCheck();
-          this.dialogService.info(
-            helptextSystemFailover.confirm_dialogs.sync_title,
+          this.snackbar.success(
             helptextSystemFailover.confirm_dialogs.sync_to_message,
           );
         },
@@ -139,9 +140,8 @@ export class FailoverSettingsComponent implements OnInit {
         () => {
           this.isLoading = false;
           this.cdr.markForCheck();
-          this.dialogService.info(
-            helptextSystemFailover.confirm_dialogs.sync_title,
-            helptextSystemFailover.confirm_dialogs.sync_from_message,
+          this.snackbar.success(
+            this.translate.instant(helptextSystemFailover.confirm_dialogs.sync_from_message),
           );
         },
         (error) => {

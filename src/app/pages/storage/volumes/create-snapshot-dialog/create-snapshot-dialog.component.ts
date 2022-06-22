@@ -1,15 +1,15 @@
 import {
   ChangeDetectionStrategy, Component, Inject, OnInit,
 } from '@angular/core';
-import { Validators } from '@angular/forms';
+import { FormBuilder, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { format } from 'date-fns';
 import helptext from 'app/helptext/storage/volumes/volume-list';
 import { CreateZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { AppLoaderService, DialogService, WebSocketService } from 'app/services';
 
 @UntilDestroy()
@@ -40,6 +40,7 @@ export class CreateSnapshotDialogComponent implements OnInit {
     private translate: TranslateService,
     private loader: AppLoaderService,
     private dialog: DialogService,
+    private snackbar: SnackbarService,
     @Inject(MAT_DIALOG_DATA) public rowId: string,
   ) {}
 
@@ -67,8 +68,7 @@ export class CreateSnapshotDialogComponent implements OnInit {
     this.ws.call('zfs.snapshot.create', [params])
       .pipe(untilDestroyed(this))
       .subscribe(() => {
-        this.dialog.info(
-          this.translate.instant('Create Snapshot'),
+        this.snackbar.success(
           this.translate.instant('Snapshot successfully taken.'),
         );
         this.loader.close();

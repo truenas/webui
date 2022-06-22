@@ -16,6 +16,7 @@ import { OauthMessage } from 'app/interfaces/oauth-message.interface';
 import { User } from 'app/interfaces/user.interface';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { DialogService, WebSocketService } from 'app/services';
 import { selectSystemInfo } from 'app/store/system-info/system-info.selectors';
 import { EmailComponent } from './email.component';
@@ -58,6 +59,7 @@ describe('EmailComponent', () => {
         mockJob('mail.send'),
       ]),
       mockProvider(DialogService),
+      mockProvider(SnackbarService),
       mockProvider(MatDialog, {
         open: jest.fn(() => mockEntityJobComponentRef),
       }),
@@ -136,8 +138,7 @@ describe('EmailComponent', () => {
         security: MailSecurity.Ssl,
         smtp: false,
       }]);
-      expect(spectator.inject(DialogService).info).toHaveBeenCalledWith(
-        'Email',
+      expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith(
         'Email settings updated.',
       );
     });
@@ -183,9 +184,8 @@ describe('EmailComponent', () => {
           },
         ],
       );
-      expect(spectator.inject(DialogService).info).toHaveBeenCalledWith(
-        'Email',
-        'Test email sent!',
+      expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith(
+        'Test email sent.',
       );
     });
   });
@@ -251,8 +251,7 @@ describe('EmailComponent', () => {
           refresh_token: 'new_token',
         },
       }]);
-      expect(spectator.inject(DialogService).info).toHaveBeenCalledWith(
-        'Email',
+      expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith(
         'Email settings updated.',
       );
     });
@@ -286,9 +285,8 @@ describe('EmailComponent', () => {
           },
         ],
       );
-      expect(spectator.inject(DialogService).info).toHaveBeenCalledWith(
-        'Email',
-        'Test email sent!',
+      expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith(
+        'Test email sent.',
       );
     });
   });

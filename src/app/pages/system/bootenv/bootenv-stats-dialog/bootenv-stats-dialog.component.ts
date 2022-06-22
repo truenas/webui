@@ -1,9 +1,8 @@
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
-import { Validators } from '@angular/forms';
+import { FormBuilder, Validators } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
-import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
@@ -11,6 +10,7 @@ import { getPoolStatusLabels, PoolStatus } from 'app/enums/pool-status.enum';
 import { BootPoolState } from 'app/interfaces/boot-pool-state.interface';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { AppLoaderService, DialogService, WebSocketService } from 'app/services';
 import { AppState } from 'app/store';
 import { waitForAdvancedConfig } from 'app/store/system-config/system-config.selectors';
@@ -41,6 +41,7 @@ export class BootenvStatsDialogComponent implements OnInit {
     private dialog: DialogService,
     private errorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,
+    private snackbar: SnackbarService,
   ) {}
 
   get condition(): PoolStatus {
@@ -60,8 +61,7 @@ export class BootenvStatsDialogComponent implements OnInit {
       .subscribe(() => {
         this.loader.close();
         this.dialogRef.close();
-        this.dialog.info(
-          this.translate.instant('Scrub Interval Set'),
+        this.snackbar.success(
           this.translate.instant('Scrub interval set to {scrubIntervalValue} days', { scrubIntervalValue: interval }),
         );
       }, (error) => {
