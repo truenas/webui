@@ -132,10 +132,7 @@ def on_the_dashboard_click_on_system_on_the_side_menu_click_on_boot(driver):
     assert wait_on_element(driver, 180, '//span[contains(.,"System Information")]')
     assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__System"]', 'clickable')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__System"]').click()
-    assert wait_on_element(driver, 7, '//mat-list-item[@ix-auto="option__Boot"]')
-    element = driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__System"]')
-    class_attribute = element.get_attribute('class')
-    assert 'open' in class_attribute, class_attribute
+    assert wait_on_element(driver, 7, '//mat-list-item[@ix-auto="option__Boot"]', 'clickable')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Boot"]').click()
     assert wait_on_element(driver, 7, '//li[contains(.,"Boot")]')
 
