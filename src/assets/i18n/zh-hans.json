@@ -84,6 +84,7 @@
   "IPMI Flash Duration": "",
   "Image Size": "",
   "Inherit domain from DHCP": "",
+  "Inherit from DHCP": "",
   "Initial Deployment/Setup": "",
   "Inquiry": "",
   "Keys Synced": "",

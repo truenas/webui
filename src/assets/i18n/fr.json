@@ -271,6 +271,7 @@
   "Info": "",
   "Inherit Only": "",
   "Inherit domain from DHCP": "",
+  "Inherit from DHCP": "",
   "Inherited": "",
   "Initial Deployment/Setup": "",
   "Inquiry": "",

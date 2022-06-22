@@ -1486,6 +1486,7 @@
   "Inherit Only": "",
   "Inherit domain from DHCP": "",
   "Inherit encryption properties from parent": "",
+  "Inherit from DHCP": "",
   "Inherited": "",
   "Inherits": "",
   "Init/Shutdown Script": "",

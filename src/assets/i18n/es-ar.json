@@ -224,6 +224,7 @@
   "Info": "",
   "Inherit Only": "",
   "Inherit domain from DHCP": "",
+  "Inherit from DHCP": "",
   "Inherited": "",
   "Init/Shutdown Scripts": "",
   "Initial Deployment/Setup": "",
