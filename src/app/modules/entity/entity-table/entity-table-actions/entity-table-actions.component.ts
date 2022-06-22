@@ -12,13 +12,13 @@ import { EntityTableAction } from 'app/modules/entity/entity-table/entity-table.
 export class EntityTableActionsComponent implements OnInit, OnChanges {
   @Input() entity: EntityTableComponent;
   @Input() row: any;
-  @Input() icon_name = 'more_vert';
+  @Input() iconName = 'more_vert';
   @Input() action: string;
   @Input() groups = false;
 
   actions: EntityTableAction[];
 
-  key_prop: string;
+  keyProp: string;
 
   get isSingleAction(): boolean {
     if (!this.actions) return;
@@ -36,9 +36,9 @@ export class EntityTableActionsComponent implements OnInit, OnChanges {
 
   ngOnInit(): void {
     if (this.entity.conf.config && this.entity.conf.config.deleteMsg) {
-      this.key_prop = this.entity.conf.config.deleteMsg.key_props[0];
+      this.keyProp = this.entity.conf.config.deleteMsg.key_props[0];
     } else if (this.entity.filterColumns) {
-      this.key_prop = this.entity.filterColumns[0].prop;
+      this.keyProp = this.entity.filterColumns[0].prop;
     }
     this.getActions();
   }

@@ -25,7 +25,7 @@ import { WebSocketService } from 'app/services/ws.service';
 })
 export class TruecommandButtonComponent extends ViewControllerComponent implements OnInit, OnDestroy {
   readonly TrueCommandStatus = TrueCommandStatus;
-  mat_tooltips = helptext.mat_tooltips;
+  tooltips = helptext.mat_tooltips;
 
   tcStatus: TrueCommandConfig;
 

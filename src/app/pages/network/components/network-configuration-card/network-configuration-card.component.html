@@ -43,7 +43,7 @@
             </li>
             <li>
               <span class="label">{{ 'Domain:' | translate }}</span>
-              <span class="value">{{ config.domain }}</span>
+              <span class="value">{{ config.domain || ('Inherit from DHCP' | translate) }}</span>
             </li>
             <li>
               <span class="label">{{ 'Netwait:' | translate }}</span>

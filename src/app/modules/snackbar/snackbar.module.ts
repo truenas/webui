@@ -10,6 +10,7 @@ import { SnackbarComponent } from 'app/modules/snackbar/components/snackbar/snac
   imports: [
     MatIconModule,
     MatButtonModule,
+    MatSnackBarModule,
     TranslateModule,
     CommonModule,
     MatSnackBarModule,

@@ -67,7 +67,7 @@ export class DatasetAclEditorComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.datasetPath = this.route.snapshot.params['path'];
+    this.datasetPath = this.route.snapshot.params['datasetId'];
     this.fullDatasetPath = `/mnt/${this.datasetPath}`;
     this.store.loadAcl(this.fullDatasetPath);
 

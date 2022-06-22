@@ -1,4 +1,4 @@
-import { VolumesListDataset } from 'app/pages/storage/volumes/volumes-list/volumes-list-pool.interface';
+import { VolumesListDataset } from 'app/interfaces/volumes-list-pool.interface';
 
 export interface EncryptionOptionsDialogData {
   row: VolumesListDataset;

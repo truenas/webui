@@ -55,6 +55,7 @@ enum PoolHealthLevel {
   ],
 })
 export class WidgetPoolComponent extends WidgetComponent implements OnInit, AfterViewInit, OnDestroy, OnChanges {
+  // eslint-disable-next-line @typescript-eslint/naming-convention
   readonly VDevStatus = VDevStatus;
   @Input() poolState: Pool;
   @Input() volumeData: VolumeData;

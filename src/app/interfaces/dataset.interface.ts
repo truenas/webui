@@ -22,7 +22,7 @@ export interface Dataset {
   deduplication: ZfsProperty<string>;
   encrypted: boolean;
   encryption_algorithm: ZfsProperty<string>;
-  encryption_root: unknown;
+  encryption_root: string;
   id: string;
   key_format: ZfsProperty<string>;
   key_loaded: boolean;

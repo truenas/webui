@@ -466,7 +466,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
       } else if (vdev.disks.length > 0) {
         wereAnyDisksFound = true;
       }
-      if (vdev.vdev_disks_error) {
+      if (vdev.vdevDisksError) {
         this.vdevdisksError = true;
       }
       if (vdev.showDiskSizeError) {

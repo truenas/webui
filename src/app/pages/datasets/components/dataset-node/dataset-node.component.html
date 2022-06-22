@@ -1,0 +1,17 @@
+<div class="tree-node-grid">
+  <div fxLayout="row" fxLayoutAlign="start center">
+    <mat-icon *ngIf="!icon.startsWith('mdi')">{{ icon }}</mat-icon>
+    <mat-icon *ngIf="icon.startsWith('mdi')" fontSet="mdi-set" [fontIcon]="icon"></mat-icon>
+    <strong>{{ label }}</strong>
+  </div>
+  <div fxLayout="row" fxLayoutAlign="start center">
+    <span>{{ dataset.used.value }} used / {{ dataset.available.value }} left</span>
+  </div>
+  <div fxLayout="row" fxLayoutAlign="start center">
+    <mat-icon>{{ dataset.encrypted ? 'lock' : 'lock_open' }}</mat-icon>
+    <div>{{ (dataset.encrypted ? 'Encrypted' : 'Unlocked') | translate }}</div>
+  </div>
+  <div fxLayout="row" fxLayoutAlign="start center">
+    {{ roles.join(', ') }}
+  </div>
+</div>

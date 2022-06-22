@@ -13,14 +13,14 @@ import { DialogService } from 'app/services';
 })
 export class UnlockDialogComponent {
   title: string = helptext.unlock_dataset_dialog.title;
-  errors_message: string = helptext.unlock_dataset_dialog.errors_message;
-  unlock_message: string = helptext.unlock_dataset_dialog.unlock_message;
+  errorsMessage: string = helptext.unlock_dataset_dialog.errors_message;
+  unlockMessage: string = helptext.unlock_dataset_dialog.unlock_message;
   buttonMsg: string = helptext.unlock_dataset_dialog.ok_button;
   cancelMsg: string = helptext.unlock_dataset_dialog.cancel_button;
-  skipped_message: string = helptext.unlock_result_dialog.skipped_message;
-  unlock_datasets: { name: string }[] = [];
-  error_datasets: { name: string; unlock_error?: string }[] = [];
-  skipped_datasets: { name: string }[] = [];
+  skippedMessage: string = helptext.unlock_result_dialog.skipped_message;
+  unlockDatasets: { name: string }[] = [];
+  errorDatasets: { name: string; unlock_error?: string }[] = [];
+  skippedDatasets: { name: string }[] = [];
   tooltip: string;
   hideCancel = false;
   final = false;
@@ -44,8 +44,8 @@ export class UnlockDialogComponent {
 
   showFinalResults(): void {
     this.final = true;
-    this.errors_message = helptext.unlock_result_dialog.errors_message;
-    this.unlock_message = helptext.unlock_result_dialog.unlock_message;
+    this.errorsMessage = helptext.unlock_result_dialog.errors_message;
+    this.unlockMessage = helptext.unlock_result_dialog.unlock_message;
   }
 
   cancel(): void {
