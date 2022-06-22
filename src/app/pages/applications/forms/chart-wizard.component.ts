@@ -110,7 +110,7 @@ export class ChartWizardComponent implements OnDestroy, WizardConfiguration {
       selectedVersion.schema.questions.forEach((question) => {
         const wizard = this.wizardConfig.find((wizard) => wizard.label == question.group);
         if (wizard) {
-          const wizardFieldConfigs = new EntityUtils().parseSchemaFieldConfig(question);
+          const wizardFieldConfigs = new EntityUtils().parseSchemaFieldConfig(question, true);
           wizard.fieldConfig = wizard.fieldConfig.concat(wizardFieldConfigs);
         }
       });

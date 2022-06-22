@@ -299,7 +299,64 @@ export class EntityUtils {
     return result;
   }
 
-  parseSchemaFieldConfig(schemaConfig: ChartSchemaNode): FieldConfig[] {
+  parseSchemaAndCopyOldData(
+    schemaConfig: ChartSchemaNode,
+    isParentImmutable: boolean = false,
+    prevData: any,
+    objPath: string[] = [],
+    copiedAttrsList: { path: string[]; data: any }[] = [],
+  ): void {
+    if (isParentImmutable) {
+      return;
+    }
+    if (schemaConfig.schema.immutable) {
+      copiedAttrsList.push({
+        path: [...objPath],
+        data: _.get(prevData, [...objPath]),
+      });
+    }
+
+    if (schemaConfig.schema.type === 'list') {
+      schemaConfig.schema.items.forEach((item) => {
+        this.parseSchemaAndCopyOldData(
+          item,
+          !!item.schema.immutable || isParentImmutable,
+          prevData, [...objPath, item.variable], copiedAttrsList,
+        );
+      });
+    } else if (schemaConfig.schema.type === 'dict') {
+      if (schemaConfig.schema.attrs.length > 0) {
+        schemaConfig.schema.attrs.forEach((dictConfig) => {
+          this.parseSchemaAndCopyOldData(
+            dictConfig,
+            !!dictConfig.schema.immutable || isParentImmutable,
+            prevData,
+            [...objPath, dictConfig.variable],
+            copiedAttrsList,
+          );
+        });
+      }
+    }
+
+    if (schemaConfig.schema.subquestions) {
+      schemaConfig.schema.subquestions.forEach((subquestion) => {
+        objPath.pop();
+        this.parseSchemaAndCopyOldData(
+          subquestion,
+          !!subquestion.schema.immutable || isParentImmutable,
+          prevData,
+          [...objPath, subquestion.variable],
+          copiedAttrsList,
+        );
+      });
+    }
+  }
+
+  parseSchemaFieldConfig(
+    schemaConfig: ChartSchemaNode,
+    isNew: boolean = false,
+    isParentImmutable: boolean = false,
+  ): FieldConfig[] {
     let results: FieldConfig[] = [];
 
     if (schemaConfig.schema.hidden) {
@@ -323,6 +380,10 @@ export class EntityUtils {
     }
     if (schemaConfig.label !== undefined) {
       fieldConfig.placeholder = schemaConfig.label;
+    }
+
+    if ((schemaConfig.schema.immutable || isParentImmutable) && !isNew) {
+      fieldConfig['readonly'] = true;
     }
 
     let relations: Relation[] = null;
@@ -404,7 +465,7 @@ export class EntityUtils {
 
       let listFields: FieldConfig[] = [];
       schemaConfig.schema.items.forEach((item) => {
-        const fields = this.parseSchemaFieldConfig(item);
+        const fields = this.parseSchemaFieldConfig(item, isNew, !!item.schema.immutable || isParentImmutable);
         listFields = listFields.concat(fields);
       });
 
@@ -422,7 +483,11 @@ export class EntityUtils {
 
         let subFields: FieldConfig[] = [];
         schemaConfig.schema.attrs.forEach((dictConfig) => {
-          const fields = this.parseSchemaFieldConfig(dictConfig);
+          const fields = this.parseSchemaFieldConfig(
+            dictConfig,
+            isNew,
+            !!dictConfig.schema.immutable || isParentImmutable,
+          );
           subFields = subFields.concat(fields);
         });
         dictConfig['subFields'] = subFields;
@@ -439,7 +504,11 @@ export class EntityUtils {
 
         if (schemaConfig.schema.subquestions) {
           schemaConfig.schema.subquestions.forEach((subquestion) => {
-            const subResults = this.parseSchemaFieldConfig(subquestion);
+            const subResults = this.parseSchemaFieldConfig(
+              subquestion,
+              isNew,
+              !!subquestion.schema.immutable || isParentImmutable,
+            );
 
             if (schemaConfig.schema.show_subquestions_if !== undefined) {
               subResults.forEach((subFieldConfig) => {

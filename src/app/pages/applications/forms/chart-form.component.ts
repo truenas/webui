@@ -10,6 +10,7 @@ import { CatalogQueryParams } from 'app/interfaces/catalog.interface';
 import { ChartRelease } from 'app/interfaces/chart-release.interface';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { remapAppSubmitData } from 'app/pages/applications/utils/remap-app-submit-data.utils';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
 import { FieldConfig, FormDictConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
@@ -32,7 +33,10 @@ export class ChartFormComponent implements FormConfiguration {
   isEntity = true;
   protected utils: CommonUtils;
 
+  entityForm: EntityFormComponent;
+
   title: string;
+  dataToBeCopied: { path: string[]; data: any }[] = [];
   private name: string;
   private getRow = new Subscription();
   private rowName: string;
@@ -69,6 +73,10 @@ export class ChartFormComponent implements FormConfiguration {
     this.utils = new CommonUtils();
   }
 
+  preInit(entityForm: EntityFormComponent): void {
+    this.entityForm = entityForm;
+  }
+
   setTitle(title: string): void {
     this.title = title;
   }
@@ -90,7 +98,30 @@ export class ChartFormComponent implements FormConfiguration {
       this.catalogApp.chart_schema.schema.questions.forEach((question) => {
         const fieldSet = fieldSets.find((fieldSet) => fieldSet.name == question.group);
         if (fieldSet) {
-          const fieldConfigs = this.entityUtils.parseSchemaFieldConfig(question);
+          const fieldConfigs = this.entityUtils.parseSchemaFieldConfig(
+            question,
+            this.entityForm.isNew,
+            !!question.schema.immutable,
+          );
+
+          const copiedAttrsList: { path: string[]; data: any }[] = [];
+
+          if (!this.entityForm.isNew) {
+            if (question.schema.immutable) {
+              copiedAttrsList.push({
+                path: [question.variable],
+                data: this.catalogApp.config[question.variable],
+              });
+            } else {
+              this.entityUtils.parseSchemaAndCopyOldData(
+                question,
+                !!question.schema.immutable,
+                this.catalogApp.config, [question.variable],
+                copiedAttrsList,
+              );
+            }
+            this.dataToBeCopied.push(...copiedAttrsList);
+          }
 
           const imageConfig = _.find(fieldConfigs, { name: 'image' }) as FormDictConfig;
           if (imageConfig) {
@@ -131,6 +162,11 @@ export class ChartFormComponent implements FormConfiguration {
 
   customSubmit(data: any): void {
     data = remapAppSubmitData(data);
+    if (!this.entityForm.isNew) {
+      for (const copiedData of this.dataToBeCopied) {
+        _.set(data, [...copiedData.path], copiedData.data);
+      }
+    }
     const payload = [];
     payload.push({
       values: data,

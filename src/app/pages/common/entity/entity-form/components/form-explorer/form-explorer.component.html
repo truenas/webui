@@ -25,6 +25,7 @@
           [formControlName]="config.name"
           [required]="config.required"
           cdkTextareaAutosize
+          [disabled]="shouldBeDisabled()"
           #autosize="cdkTextareaAutosize"
           cdkAutosizeMinRows="1"
           cdkAutosizeMaxRows="4"></textarea>
@@ -35,6 +36,8 @@
               [placeholder]="config.placeholder | translate"
               [formControlName]="config.name"
               [required]="config.required"
+              [disabled]="shouldBeDisabled()"
+              [readonly]="shouldBeDisabled()"
               ix-auto
               ix-auto-type="input"
               ix-auto-identifier="{{config.name}}"
@@ -47,7 +50,7 @@
   </div>
 
   <div class="tree-container">
-    <tree-root #tree id="form-ex-input" *ngIf="!config.disabled" [nodes]="nodes" [options]="customTemplateStringOptions" [focused]="true" id="box3" (select)="onClick($event)" (deselect)="onClick($event)" (toggleExpanded)="onToggle($event)" (loadNodeChildren)="loadNodeChildren($event)">
+    <tree-root #tree id="form-ex-input" *ngIf="!shouldBeDisabled()" [nodes]="nodes" [options]="customTemplateStringOptions" [focused]="true" id="box3" (select)="onClick($event)" (deselect)="onClick($event)" (toggleExpanded)="onToggle($event)" (loadNodeChildren)="loadNodeChildren($event)">
       <ng-template #treeNodeTemplate let-node *ngIf="(config.explorerType == ExplorerType.Directory) || (config.explorerType == ExplorerType.Dataset) || (config.explorerType == ExplorerType.File) || !config.explorerType">
         <mat-icon *ngIf="node.data.hasChildren || node.data.children; else fileIcon">folder</mat-icon>
         <ng-template #fileIcon><mat-icon>insert_drive_file</mat-icon></ng-template>
