@@ -5,7 +5,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import helptext from 'app/helptext/data-protection/scrub/scrub-form';
-import { PoolScrubTask } from 'app/interfaces/pool-scrub.interface';
+import { CreatePoolScrubTask, PoolScrubTask } from 'app/interfaces/pool-scrub.interface';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import {
   crontabToSchedule,
@@ -83,11 +83,11 @@ export class ScrubTaskFormComponent {
     this.isLoading = true;
     let request$: Observable<unknown>;
     if (this.isNew) {
-      request$ = this.ws.call('pool.scrub.create', [values as CreatePoolScrub]);
+      request$ = this.ws.call('pool.scrub.create', [values as CreatePoolScrubTask]);
     } else {
       request$ = this.ws.call('pool.scrub.update', [
         this.editingTask.id,
-        values as CreatePoolScrub,
+        values as CreatePoolScrubTask,
       ]);
     }
 

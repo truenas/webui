@@ -457,7 +457,6 @@ export class VolumeStatusComponent implements OnInit, AfterViewInit {
 
     if ('stats' in data) {
       stats = data.stats;
-      stats.read_errors = Math.random() * 100;
     }
     if ('type' in data && data.type !== VDevType.Disk) {
       (data as any).name = data.type;

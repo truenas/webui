@@ -35,7 +35,7 @@ export class MockWebsocketService extends WebSocketService {
     this.logout = jest.fn();
     this.subscribe = jest.fn(() => this.subscribeStream$ as Observable<ApiEvent<any>>);
     this.sub = jest.fn(() => of());
-    this.sub = jest.fn();
+    this.unsub = jest.fn();
     this.socket = {
       send: jest.fn(),
       close: jest.fn(),
