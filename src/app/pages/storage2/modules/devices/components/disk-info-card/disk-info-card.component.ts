@@ -45,6 +45,7 @@ export class DiskInfoCardComponent implements OnChanges {
 
   getDiskInfo(): void {
     this.loading = true;
+    this.diskInfo = null;
     this.cdr.markForCheck();
     this.ws.call('disk.query', [[['devname', '=', this.disk.disk]]])
       .pipe(untilDestroyed(this))
@@ -56,6 +57,7 @@ export class DiskInfoCardComponent implements OnChanges {
         },
         (error) => {
           this.loading = false;
+          this.cdr.markForCheck();
           new EntityUtils().handleWsError(this, error, this.dialogService);
         },
       );

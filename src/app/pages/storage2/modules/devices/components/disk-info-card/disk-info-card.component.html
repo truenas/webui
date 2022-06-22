@@ -6,83 +6,51 @@
   <mat-card-content>
     <div class="row">
       <span class="header">{{ 'Disk Size' | translate }}:</span>
-      <span *ngIf="!loading || !!diskInfo?.size">
-        {{ diskInfo?.size ? formatter.convertBytesToHumanReadable(diskInfo.size) : ('Unknown' | translate) }}
+      <span *ngIf="!loading; else loaderSkel">
+        {{ diskInfo?.size ? formatter.convertBytesToHumanReadable(diskInfo.size) : 'N/A' }}
       </span>
-      <ngx-skeleton-loader
-        *ngIf="loading && !diskInfo?.size"
-        class="loader-skel"
-      ></ngx-skeleton-loader>
     </div>
     <div class="row">
       <span class="header">{{ 'Transfer Mode' | translate }}:</span>
-      <span *ngIf="!loading || !!diskInfo?.transfermode">
-        {{ diskInfo?.transfermode ? diskInfo.transfermode : '--' }}
+      <span *ngIf="!loading; else loaderSkel">
+        {{ diskInfo?.transfermode || 'N/A' }}
       </span>
-      <ngx-skeleton-loader
-        *ngIf="loading && !diskInfo?.transfermode"
-        class="loader-skel"
-      ></ngx-skeleton-loader>
     </div>
     <div class="row">
       <span class="header">{{ 'Serial' | translate }}:</span>
-      <span *ngIf="!loading || !!diskInfo?.serial">
-        {{ diskInfo?.serial ? diskInfo.serial : '--' }}
+      <span *ngIf="!loading; else loaderSkel">
+        {{ diskInfo?.serial || 'N/A' }}
       </span>
-      <ngx-skeleton-loader
-        *ngIf="loading && !diskInfo?.serial"
-        class="loader-skel"
-      ></ngx-skeleton-loader>
     </div>
     <div class="row">
       <span class="header">{{ 'Model' | translate }}:</span>
-      <span *ngIf="!loading || !!diskInfo?.model">
-        {{ diskInfo?.model ? diskInfo.model : '--' }}
+      <span *ngIf="!loading; else loaderSkel">
+        {{ diskInfo?.model || 'N/A' }}
       </span>
-      <ngx-skeleton-loader
-        *ngIf="loading && !diskInfo?.model"
-        class="loader-skel"
-      ></ngx-skeleton-loader>
     </div>
     <div class="row">
       <span class="header">{{ 'Rotation Rate' | translate }}:</span>
-      <span *ngIf="!loading || !!diskInfo?.rotationrate">
-        {{ diskInfo?.rotationrate ? diskInfo.rotationrate + ' ' + ('RPM' | translate) : ('Not Available' | translate) }}
+      <span *ngIf="!loading; else loaderSkel">
+        {{ diskInfo?.rotationrate ? diskInfo.rotationrate + ' ' + ('RPM' | translate) : 'N/A' }}
       </span>
-      <ngx-skeleton-loader
-        *ngIf="loading && !diskInfo?.rotationrate"
-        class="loader-skel"
-      ></ngx-skeleton-loader>
     </div>
     <div class="row">
       <span class="header">{{ 'Type' | translate }}:</span>
-      <span *ngIf="!loading || !!diskInfo?.type">
-        {{ diskInfo?.type ? diskInfo.type : '--' }}
+      <span *ngIf="!loading; else loaderSkel">
+        {{ diskInfo?.type || 'N/A' }}
       </span>
-      <ngx-skeleton-loader
-        *ngIf="loading && !diskInfo?.type"
-        class="loader-skel"
-      ></ngx-skeleton-loader>
     </div>
     <div class="row">
       <span class="header">{{ 'HDD Standby' | translate }}:</span>
-      <span *ngIf="!loading || !!diskInfo?.hddstandby">
-        {{ diskInfo?.hddstandby ? diskInfo.hddstandby : '--' }}
+      <span *ngIf="!loading; else loaderSkel">
+        {{ diskInfo?.hddstandby || 'N/A' }}
       </span>
-      <ngx-skeleton-loader
-        *ngIf="loading && !diskInfo?.hddstandby"
-        class="loader-skel"
-      ></ngx-skeleton-loader>
     </div>
     <div class="row">
       <span class="header">{{ 'Description' | translate }}:</span>
-      <span *ngIf="!loading || !!diskInfo?.description">
-        {{ diskInfo?.description ? diskInfo.description : ('None' | translate) }}
+      <span *ngIf="!loading; else loaderSkel">
+        {{ diskInfo?.description || 'N/A' }}
       </span>
-      <ngx-skeleton-loader
-        *ngIf="loading && !diskInfo?.description"
-        class="loader-skel"
-      ></ngx-skeleton-loader>
     </div>
   </mat-card-content>
   <mat-card-actions>
@@ -93,3 +61,6 @@
     >{{ 'Replace' | translate }}</button>
   </mat-card-actions>
 </mat-card>
+<ng-template #loaderSkel>
+  <ngx-skeleton-loader class="loader-skel"></ngx-skeleton-loader>
+</ng-template>
