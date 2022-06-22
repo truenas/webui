@@ -7,6 +7,7 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
+import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { DevicesComponent } from 'app/pages/storage2/modules/devices/components/devices/devices.component';
 import {
@@ -37,6 +38,7 @@ import { routes } from 'app/pages/storage2/modules/devices/devices.routing';
     ReactiveFormsModule,
     IxFormsModule,
     MatButtonModule,
+    EntityModule,
   ],
   exports: [],
   declarations: [

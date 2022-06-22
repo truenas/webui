@@ -4,8 +4,10 @@ import {
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
 import { filter } from 'rxjs/operators';
 import { Disk, VDev } from 'app/interfaces/storage.interface';
+import { EmptyConfig, EmptyType } from 'app/modules/entity/entity-empty/entity-empty.component';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
 import { DiskFormComponent } from 'app/pages/storage/disks/disk-form/disk-form.component';
@@ -24,6 +26,12 @@ export class DiskInfoCardComponent implements OnChanges {
   @Input() disk: VDev;
   loading = false;
   diskInfo: Disk;
+  emptyInfoConf: EmptyConfig = {
+    type: EmptyType.NoPageData,
+    large: false,
+    title: this.translate.instant('No Disk Info'),
+    message: this.translate.instant('To load Disk Info reselect from the list.'),
+  };
 
   constructor(
     public formatter: IxFormatterService,
@@ -33,6 +41,7 @@ export class DiskInfoCardComponent implements OnChanges {
     private matDialog: MatDialog,
     private slideInService: IxSlideInService,
     private route: ActivatedRoute,
+    private translate: TranslateService,
   ) {}
 
   ngOnChanges(): void {
@@ -51,8 +60,8 @@ export class DiskInfoCardComponent implements OnChanges {
       .pipe(untilDestroyed(this))
       .subscribe(
         (disks) => {
-          this.loading = false;
           this.diskInfo = disks[0];
+          this.loading = false;
           this.cdr.markForCheck();
         },
         (error) => {
