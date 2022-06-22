@@ -3,10 +3,10 @@ import {
   ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
 import {
+  FormBuilder,
   Validators,
 } from '@angular/forms';
 import { Router } from '@angular/router';
-import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { of } from 'rxjs';
 import { map } from 'rxjs/operators';

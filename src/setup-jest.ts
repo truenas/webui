@@ -29,6 +29,7 @@ import { TranslateMessageFormatCompiler } from 'ngx-translate-messageformat-comp
 import { IcuMissingTranslationHandler } from 'app/core/classes/icu-missing-translation-handler';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { CastModule } from 'app/modules/cast/cast.module';
+import { SnackbarModule } from 'app/modules/snackbar/snackbar.module';
 
 jest.setTimeout(30 * 1000);
 
@@ -57,6 +58,7 @@ defineGlobalsInjections({
     CommonDirectivesModule,
     NgxFilesizeModule,
     CastModule,
+    SnackbarModule,
     TranslateModule.forRoot({
       defaultLanguage: 'en',
       loader: {

@@ -1,12 +1,12 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { Validators } from '@angular/forms';
+import { FormBuilder, Validators } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
-import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { IpmiIdentify } from 'app/interfaces/ipmi.interface';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { AppLoaderService, DialogService, WebSocketService } from 'app/services';
 
 const indefinitelyOption = 'indefinitely' as const;
@@ -41,6 +41,7 @@ export class IpmiIdentifyDialogComponent {
     private errorHandler: FormErrorHandlerService,
     private dialogService: DialogService,
     private dialogRef: MatDialogRef<IpmiIdentifyDialogComponent>,
+    private snackbar: SnackbarService,
   ) {}
 
   onSubmit(): void {
@@ -63,10 +64,7 @@ export class IpmiIdentifyDialogComponent {
         () => {
           this.loader.close();
           this.dialogRef.close();
-          this.dialogService.info(
-            this.translate.instant('IPMI Identify'),
-            successMessage,
-          );
+          this.snackbar.success(successMessage);
         },
         (error) => {
           this.loader.close();

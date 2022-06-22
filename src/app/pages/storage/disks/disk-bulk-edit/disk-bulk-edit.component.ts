@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { FormBuilder } from '@ngneat/reactive-forms';
+import { FormBuilder } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
@@ -93,7 +93,7 @@ export class DiskBulkEditComponent {
     }
 
     this.form.patchValue({ ...setForm });
-    this.form.controls['disknames'].setDisable(true);
+    this.form.controls['disknames'].disable();
   }
 
   prepareDataSubmit(): any[][] {
@@ -138,8 +138,7 @@ export class DiskBulkEditComponent {
             }
             if (isSuccessful) {
               this.slideInService.close();
-              this.dialogService.info(helptext.dialog_title,
-                succcessText, true);
+              this.dialogService.info(helptext.dialog_title, succcessText, true);
             }
           }
         },

@@ -11,6 +11,7 @@ import { mockCall, mockJob, mockWebsocket } from 'app/core/testing/utils/mock-we
 import { helptextSystemKmip } from 'app/helptext/system/kmip';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { DialogService, SystemGeneralService, WebSocketService } from 'app/services';
 import { KmipComponent } from './kmip.component';
 
@@ -45,6 +46,7 @@ describe('KmipComponent', () => {
         open: () => mockEntityJobComponentRef,
       }),
       mockProvider(DialogService),
+      mockProvider(SnackbarService),
       mockProvider(SystemGeneralService, {
         getCertificates: () => of([
           { id: 1, name: 'Main Certificate' },
@@ -112,8 +114,8 @@ describe('KmipComponent', () => {
         force_clear: false,
       }],
     );
-    expect(spectator.inject(DialogService).info).toHaveBeenCalledWith(
-      'KMIP', 'Settings saved.',
+    expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith(
+      'Settings saved.',
     );
   });
 

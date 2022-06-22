@@ -1,12 +1,11 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
-import { Validators } from '@angular/forms';
-import { FormBuilder } from '@ngneat/reactive-forms';
+import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable } from 'rxjs';
 import { idNameArrayToOptions } from 'app/helpers/options.helper';
 import { helptextSharingIscsi } from 'app/helptext/sharing';
-import { IscsiTargetExtent } from 'app/interfaces/iscsi.interface';
+import { IscsiTargetExtent, IscsiTargetExtentUpdate } from 'app/interfaces/iscsi.interface';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IscsiService, WebSocketService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
@@ -66,7 +65,7 @@ export class AssociatedTargetFormComponent {
   }
 
   onSubmit(): void {
-    const values = this.form.value;
+    const values = this.form.value as IscsiTargetExtentUpdate;
 
     this.isLoading = true;
     let request$: Observable<unknown>;

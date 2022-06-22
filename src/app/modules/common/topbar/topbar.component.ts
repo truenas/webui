@@ -37,6 +37,7 @@ import { selectRunningJobsCount, selectIsJobPanelOpen } from 'app/modules/jobs/s
 import {
   ChangePasswordDialogComponent,
 } from 'app/modules/layout/components/change-password-dialog/change-password-dialog.component';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { CoreService } from 'app/services/core-service/core.service';
 import { DialogService } from 'app/services/dialog.service';
 import { LayoutService } from 'app/services/layout.service';
@@ -106,6 +107,7 @@ export class TopbarComponent implements OnInit, OnDestroy {
     private layoutService: LayoutService,
     private store$: Store<AlertSlice>,
     private core: CoreService,
+    private snackbar: SnackbarService,
     @Inject(WINDOW) private window: Window,
   ) {
     this.systemGeneralService.getProductType$.pipe(untilDestroyed(this)).subscribe((productType) => {
@@ -395,9 +397,8 @@ export class TopbarComponent implements OnInit, OnDestroy {
       this.ws.call('interface.checkin').pipe(untilDestroyed(this)).subscribe(() => {
         this.core.emit({ name: 'NetworkInterfacesChanged', data: { commit: true, checkin: true }, sender: this });
         this.loader.close();
-        this.dialogService.info(
-          network_interfaces_helptext.checkin_complete_title,
-          network_interfaces_helptext.checkin_complete_message,
+        this.snackbar.success(
+          this.translate.instant(network_interfaces_helptext.checkin_complete_message),
         );
         this.waitingNetworkCheckin = false;
       }, (err) => {

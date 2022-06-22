@@ -1,14 +1,14 @@
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
-import { Validators } from '@angular/forms';
+import { FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { idNameArrayToOptions } from 'app/helpers/options.helper';
 import helptext from 'app/helptext/services/components/service-openvpn';
+import { OpenvpnClientConfigUpdate } from 'app/interfaces/openvpn-client-config.interface';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { DialogService, ServicesService, WebSocketService } from 'app/services';
@@ -106,7 +106,7 @@ export class OpenVpnClientConfigComponent implements OnInit {
   onSubmit(): void {
     this.isLoading = true;
 
-    this.ws.call('openvpn.client.update', [this.form.value])
+    this.ws.call('openvpn.client.update', [this.form.value as OpenvpnClientConfigUpdate])
       .pipe(untilDestroyed(this))
       .subscribe(
         () => {

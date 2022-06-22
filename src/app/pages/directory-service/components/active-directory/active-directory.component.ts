@@ -15,6 +15,7 @@ import { NssInfoType } from 'app/interfaces/active-directory.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import {
   LeaveDomainDialogComponent,
 } from 'app/pages/directory-service/components/leave-domain-dialog/leave-domain-dialog.component';
@@ -81,6 +82,7 @@ export class ActiveDirectoryComponent implements OnInit {
     private translate: TranslateService,
     private slideInService: IxSlideInService,
     private modalService: ModalService,
+    private snackbarService: SnackbarService,
   ) {}
 
   ngOnInit(): void {
@@ -96,9 +98,8 @@ export class ActiveDirectoryComponent implements OnInit {
     this.systemGeneralService.refreshDirServicesCache().pipe(untilDestroyed(this)).subscribe(
       () => {
         this.isLoading = false;
-        this.dialogService.info(
-          helptext.activedirectory_custactions_clearcache_dialog_title,
-          helptext.activedirectory_custactions_clearcache_dialog_message,
+        this.snackbarService.success(
+          this.translate.instant(helptext.activedirectory_custactions_clearcache_dialog_message),
         );
         this.cdr.markForCheck();
       },

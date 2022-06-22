@@ -1,10 +1,10 @@
 import { ChangeDetectionStrategy, Component, Inject } from '@angular/core';
-import { Validators } from '@angular/forms';
+import { FormBuilder, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { idNameArrayToOptions } from 'app/helpers/options.helper';
 import { helptextSystemCa } from 'app/helptext/system/ca';
+import { CertificateAuthoritySignRequest } from 'app/interfaces/certificate-authority.interface';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import {
   AppLoaderService, SystemGeneralService, WebSocketService,
@@ -43,7 +43,7 @@ export class SignCsrDialogComponent {
       ca_id: this.caId,
     };
 
-    this.ws.call('certificateauthority.ca_sign_csr', [params])
+    this.ws.call('certificateauthority.ca_sign_csr', [params as CertificateAuthoritySignRequest])
       .pipe(untilDestroyed(this))
       .subscribe(
         () => {

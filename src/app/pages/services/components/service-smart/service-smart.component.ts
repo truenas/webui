@@ -1,14 +1,14 @@
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
-import { Validators } from '@angular/forms';
+import { FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { SmartPowerMode } from 'app/enums/smart-power.mode';
 import helptext from 'app/helptext/services/components/service-smart';
+import { SmartConfigUpdate } from 'app/interfaces/smart-test.interface';
 import { numberValidator } from 'app/modules/entity/entity-form/validators/number-validation';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
@@ -78,7 +78,7 @@ export class ServiceSmartComponent implements OnInit {
     const values = this.form.value;
 
     this.isFormLoading = true;
-    this.ws.call('smart.update', [values])
+    this.ws.call('smart.update', [values as SmartConfigUpdate])
       .pipe(untilDestroyed(this))
       .subscribe(
         () => {

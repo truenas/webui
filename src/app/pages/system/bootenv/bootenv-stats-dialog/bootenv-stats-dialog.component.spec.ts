@@ -16,6 +16,7 @@ import { BootPoolState } from 'app/interfaces/boot-pool-state.interface';
 import { AppLoaderModule } from 'app/modules/app-loader/app-loader.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { DialogService, WebSocketService } from 'app/services';
 import { selectAdvancedConfig } from 'app/store/system-config/system-config.selectors';
 import { BootenvStatsDialogComponent } from './bootenv-stats-dialog.component';
@@ -34,6 +35,7 @@ describe('BootenvStatsDialogComponent', () => {
     ],
     providers: [
       mockProvider(DialogService),
+      mockProvider(SnackbarService),
       mockProvider(MatDialogRef),
       mockWebsocket([
         mockCall('boot.get_state', {
@@ -106,7 +108,6 @@ describe('BootenvStatsDialogComponent', () => {
   });
 
   it('saves new scrub interval and closes modal when form is submitted', async () => {
-    const dialogService = spectator.inject(DialogService);
     const form = await loader.getHarness(IxFormHarness);
     await form.fillForm({
       'Scrub interval (in days)': 3,
@@ -116,7 +117,7 @@ describe('BootenvStatsDialogComponent', () => {
     await saveButton.click();
 
     expect(websocket.call).toHaveBeenCalledWith('boot.set_scrub_interval', [3]);
-    expect(dialogService.info.mock.calls[0][0]).toEqual('Scrub Interval Set');
+    expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Scrub interval set to 3 days');
     expect(spectator.inject(MatDialogRef).close).toHaveBeenCalled();
   });
 

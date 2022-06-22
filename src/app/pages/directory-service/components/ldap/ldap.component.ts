@@ -14,6 +14,7 @@ import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.com
 import { EntityUtils } from 'app/modules/entity/utils';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import IxValidatorsService from 'app/modules/ix-forms/services/ix-validators.service';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import {
   DialogService, ModalService, SystemGeneralService, WebSocketService,
 } from 'app/services';
@@ -80,6 +81,7 @@ export class LdapComponent implements OnInit {
     private router: Router,
     private translate: TranslateService,
     private modalService: ModalService,
+    private snackbar: SnackbarService,
   ) {}
 
   ngOnInit(): void {
@@ -95,9 +97,8 @@ export class LdapComponent implements OnInit {
     this.systemGeneralService.refreshDirServicesCache().pipe(untilDestroyed(this)).subscribe(
       () => {
         this.isLoading = false;
-        this.dialogService.info(
-          helptext.ldap_custactions_clearcache_dialog_title,
-          helptext.ldap_custactions_clearcache_dialog_message,
+        this.snackbar.success(
+          this.translate.instant(helptext.ldap_custactions_clearcache_dialog_message),
         );
         this.cdr.markForCheck();
       },
