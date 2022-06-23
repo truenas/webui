@@ -1,20 +1,51 @@
-<mat-card><mat-card-content><div class="wip">
-  <h4>Note: This is a work in progress for new 'Device Management' page. You can see what we are building an provide suggestions in <a href="https://github.com/truenas/webui/discussions/6771">Github discussions</a>.</h4>
-</div></mat-card-content></mat-card>
+<mat-card class="wip">
+  <h4 mat-card-title>Note: This is a work in progress for new 'Device Management' page. You can see what we are building an provide suggestions in <a href="https://github.com/truenas/webui/discussions/6771">Github discussions</a>.</h4>
+</mat-card>
 
-<div *ngIf="topology" class="container">
+<div *ngIf="topology" class="container" fxLayoutGap="16px">
   <div class="table-container">
-    <div>Select disk</div>
-    <div>DATA</div>
-    <div
-      *ngFor="let vdev of topology.data"
-      (click)="onRowSelected(vdev, $event)"
-    >
-      {{ vdev.type }}
-      <div
-        *ngFor="let disk of vdev.children"
-        (click)="onRowSelected(disk, $event)"
-      >{{ disk.disk || disk.guid }}</div>
+    <div class="disk-search">
+      <ix-search-input [disabled]="!dataSource" (search)="onSearch($event)"></ix-search-input>
+    </div>
+
+    <div class="disk-tree-wrapper">
+      <ix-tree class="disk-tree" [dataSource]="dataSource" [treeControl]="treeControl" [trackBy]="trackByFn">
+        <ix-tree-node
+          *ixTreeNodeDef="let disk; dataSource: dataSource"
+          ixTreeNodeToggle
+          [ixTreeNodeToggleRecursive]="false"
+          [ixTreeNodeDefDataSource]="dataSource"
+          (click)="onRowSelected(disk, $event)"
+        >
+          <button mat-icon-button disabled></button>
+          {{ disk.disk || disk.guid }}
+        </ix-tree-node>
+
+        <ix-nested-tree-node
+          *ixTreeNodeDef="let disk; dataSource: dataSource, when: hasNestedChild"
+          [ixTreeNodeDefDataSource]="dataSource"
+        >
+          <div
+            class="disk-nested-tree-root-node"
+            (click)="onRowSelected(disk, $event)"
+          >
+            <button
+              mat-icon-button
+              ixTreeNodeToggle
+              (click)="$event.preventDefault()"
+              [attr.aria-label]="'Toggle {row}' | translate: { row: disk.guid }"
+            >
+              <mat-icon class="mat-icon-rtl-mirror">
+                {{ treeControl.isExpanded(disk) ? 'expand_more' : 'chevron_right' }}
+              </mat-icon>
+            </button>
+
+            {{ disk.disk || disk.guid }}
+          </div>
+
+          <ng-container *ngIf="treeControl.isExpanded(disk)" ixTreeNodeOutlet></ng-container>
+        </ix-nested-tree-node>
+      </ix-tree>
     </div>
   </div>
   <div class="details-container">
