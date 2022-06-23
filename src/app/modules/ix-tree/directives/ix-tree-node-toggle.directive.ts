@@ -16,6 +16,11 @@ export class IxTreeNodeToggleDirective<T, K = T> extends CdkTreeNodeToggle<T, K>
     super(_tree, _treeNode);
   }
 
+  /**
+   * Toggle tree node state on click.
+   * Supports recursive expanding/collapsing on alt+click
+   * @param event
+   */
   // eslint-disable-next-line @typescript-eslint/naming-convention
   override _toggle(event: PointerEvent): void {
     if (this.recursive || event.altKey) {
