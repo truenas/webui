@@ -59,7 +59,7 @@
       <a class="action" [routerLink]="['/data-protection/scrub']">{{ 'View All Scrub Tasks' | translate }}</a>
     </div>
 
-    <ng-container *ngIf="scan">
+    <ng-container *ngIf="scan?.function">
       <div *ngIf="isScanRunning; else scanResults" class="scan-in-progress">
         <div class="scan-description">
           <span class="scan-label">
