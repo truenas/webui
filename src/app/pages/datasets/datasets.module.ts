@@ -48,12 +48,6 @@ import { DatasetNodeComponent } from './components/dataset-node/dataset-node.com
     MatSortModule,
     MatSlideToggleModule,
     MatRippleModule,
-    NgxSkeletonLoaderModule.forRoot({
-      theme: {
-        'background-color': 'var(--alt-bg2)',
-        opacity: 0.25,
-      },
-    }),
     AppCommonModule,
     PermissionsModule,
     EncryptionModule,
@@ -68,6 +62,7 @@ import { DatasetNodeComponent } from './components/dataset-node/dataset-node.com
     MatDialogModule,
     ReactiveFormsModule,
     EntityModule,
+    NgxSkeletonLoaderModule,
   ],
   declarations: [
     DatasetsManagementComponent,

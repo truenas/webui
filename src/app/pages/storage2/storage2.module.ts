@@ -10,10 +10,14 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatMenuModule } from '@angular/material/menu';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatSelectModule } from '@angular/material/select';
 import { RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { NgxDatatableModule } from '@swimlane/ngx-datatable';
+import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
+import { CoreComponents } from 'app/core/core-components.module';
+import { FormatDateTimePipe } from 'app/core/pipes/format-datetime.pipe';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { CastModule } from 'app/modules/cast/cast.module';
 import { AppCommonModule } from 'app/modules/common/app-common.module';
@@ -26,6 +30,7 @@ import { ManagerComponent } from 'app/pages/storage2/components/manager/manager.
 import { VdevComponent } from 'app/pages/storage2/components/manager/vdev/vdev.component';
 import { PoolsDashboardComponent } from 'app/pages/storage2/components/pools-dashboard/pools-dashboard.component';
 import { routing } from 'app/pages/storage2/storage2.routing';
+import { ZfsHealthCardComponent } from './components/zfs-health-card/zfs-health-card.component';
 
 @NgModule({
   imports: [
@@ -53,12 +58,19 @@ import { routing } from 'app/pages/storage2/storage2.routing';
     CommonModule,
     MatInputModule,
     CommonDirectivesModule,
+    CoreComponents,
+    MatProgressBarModule,
+    NgxSkeletonLoaderModule,
   ],
   declarations: [
     PoolsDashboardComponent,
     ImportPoolComponent,
     VdevComponent,
     ManagerComponent,
+    ZfsHealthCardComponent,
+  ],
+  providers: [
+    FormatDateTimePipe,
   ],
 })
 export class Storage2Module { }

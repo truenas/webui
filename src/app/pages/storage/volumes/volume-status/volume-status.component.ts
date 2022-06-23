@@ -16,7 +16,7 @@ import helptext from 'app/helptext/storage/volumes/volume-status';
 import { Job } from 'app/interfaces/job.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { PoolDiskInfo } from 'app/interfaces/pool-disk-info';
-import { Pool, PoolScan, PoolTopologyCategory } from 'app/interfaces/pool.interface';
+import { Pool, PoolScanUpdate, PoolTopologyCategory } from 'app/interfaces/pool.interface';
 import { QueryParams } from 'app/interfaces/query-api.interface';
 import {
   VDev,
@@ -49,7 +49,7 @@ import {
   styleUrls: ['./volume-status.component.scss'],
 })
 export class VolumeStatusComponent implements OnInit, AfterViewInit {
-  poolScan: PoolScan;
+  poolScan: PoolScanUpdate;
   timeRemaining = {
     days: 0,
     hours: 0,
