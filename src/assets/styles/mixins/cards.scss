@@ -69,3 +69,34 @@
     text-decoration: underline;
   }
 }
+
+@mixin resource-card {
+  border: none;
+  border-radius: 0;
+
+  mat-card-header {
+    align-items: center;
+    justify-content: space-between;
+    min-height: 40px;
+    padding: 15px 15px 15px 0;
+  }
+
+  .mat-card-title {
+    font-size: 1.65rem;
+    margin-bottom: 0;
+    margin-left: 14px;
+  }
+
+  mat-card-content {
+    align-items: center;
+    box-sizing: border-box;
+    display: flex;
+    justify-content: space-between;
+    margin: 0;
+    padding: 15px 15px 15px 30px;
+  }
+
+  .value {
+    font-size: 3.5em;
+  }
+}

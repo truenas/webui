@@ -1,0 +1,41 @@
+<h1 matDialogTitle>{{ 'Add To Pool' | translate }}</h1>
+<div mat-dialog-content>
+  <div class="content">
+    <div>
+      <h4>{{ 'Unassigned Disks' | translate }}</h4>
+      <div
+        *ngFor="let disk of resource.unusedDisks"
+        class="list-item"
+      >
+        <span>{{ disk.devname }}</span>
+      </div>
+    </div>
+    <mat-divider [vertical]="true"></mat-divider>
+    <div>
+      <h4>{{ 'Pools' | translate }}</h4>
+      <div
+        *ngFor="let pool of resource.pools"
+        class="list-item"
+      >
+        <span>{{ pool.name }}</span>
+        <button
+          mat-button
+          (click)="onAddDisk(pool.id)"
+          color="primary"
+        >{{ 'Add Disks' | translate }}</button>
+      </div>
+    </div>
+  </div>
+</div>
+<mat-divider></mat-divider>
+<div mat-dialog-actions>
+  <button
+    mat-button
+    [matDialogClose]="false"
+  >{{ 'Cancel' | translate }}</button>
+  <button
+    mat-button
+    (click)="onCreatePool()"
+    color="primary"
+  >{{ 'Create Pool' | translate }}</button>
+</div>

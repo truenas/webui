@@ -4,9 +4,11 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatDialogModule } from '@angular/material/dialog';
+import { MatDividerModule } from '@angular/material/divider';
 import { RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
+import { ManageUnassignedDiskDialogComponent } from 'app/pages/storage2/components/unassigned-disk/manage-unassigned-disk-dialog/manage-unassigned-disk-dialog.component';
 import { DevicesComponent } from 'app/pages/storage2/modules/devices/components/devices/devices.component';
 import {
   DiskDetailsPanelComponent,
@@ -29,6 +31,7 @@ import { routes } from 'app/pages/storage2/modules/devices/devices.routing';
     ReactiveFormsModule,
     IxFormsModule,
     MatButtonModule,
+    MatDividerModule,
   ],
   exports: [],
   declarations: [
@@ -36,6 +39,7 @@ import { routes } from 'app/pages/storage2/modules/devices/devices.routing';
     DiskDetailsPanelComponent,
     HardwareDiskEncryptionComponent,
     ManageDiskSedDialogComponent,
+    ManageUnassignedDiskDialogComponent,
   ],
   providers: [],
 })

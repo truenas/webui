@@ -1,0 +1,27 @@
+.content {
+  display: flex;
+  padding-bottom: 8px;
+  width: 600px;
+
+  > div {
+    flex: 1;
+    padding: 0 8px;
+
+    > h4 {
+      margin-bottom: 1rem;
+    }
+  }
+}
+
+.list-item {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+  min-height: 44px;
+  padding: 4px 0;
+}
+
+.mat-dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+}

@@ -1,6 +1,35 @@
-
 .wip {
   color: var(--fg2);
   margin-bottom: 20px;
   padding: 5px;
+}
+
+.cards {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+
+  > * {
+    flex: 1;
+    max-width: 620px;
+    min-width: 420px;
+  }
+}
+
+.resource-section {
+  color: var(--fg2);
+  padding: 1rem 0;
+  
+  .title {
+    margin-bottom: 0.5rem;
+  }
+
+  .cards {
+    gap: 16px;
+
+    > * {
+      max-width: 360px;
+      min-width: 360px;
+    }
+  }
 }
