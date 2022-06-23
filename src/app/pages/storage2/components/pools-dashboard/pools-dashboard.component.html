@@ -9,7 +9,7 @@
 
   <div class="pool-cards">
     <mat-card>
-      <button mat-button [routerLink]="[]"> {{ 'Manage Devices' | translate }}</button>
+      <button mat-button [routerLink]="['/storage2', pool.id, 'devices']"> {{ 'Manage Devices' | translate }}</button>
     </mat-card>
 
     <ix-zfs-health-card [pool]="pool"></ix-zfs-health-card>

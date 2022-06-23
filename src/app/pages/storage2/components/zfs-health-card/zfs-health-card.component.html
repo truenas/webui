@@ -74,7 +74,7 @@
       </div>
 
       <ng-template #scanResults>
-        <div class="details-item">
+        <div *ngIf="scan.end_time?.$date" class="details-item">
           <div class="label">{{ 'Last Scan' | translate }}:</div>
           <div class="value">
             {{ scanExplanation | translate: { date: (scan.end_time.$date | formatDateTime) } }}
