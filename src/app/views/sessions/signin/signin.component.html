@@ -3,7 +3,7 @@
     <mat-progress-bar [mode]="connected() ? 'determinate' : 'indeterminate'" value="0" class="session-progress"></mat-progress-bar>
     <mat-card>
       <mat-card-content>
-        <div [hidden]="!(connected() && logo_ready)">
+        <div [hidden]="!(connected() && isLogoReady)">
           <div class="text-center logo-wrapper">
             <img
               class="logo-bg"
@@ -16,7 +16,7 @@
 
           <div class="card-bottom">
             <div class="form-container" [hidden]="!canLogin()">
-              <form #signinForm="ngForm" (ngSubmit)="signin()" [hidden]="!has_root_password">
+              <form #signinForm="ngForm" (ngSubmit)="signin()" [hidden]="!hasRootPassword">
                 <div class="form-element username">
                   <div class="label-container">
                     <label class="label input-text">{{ 'Username' | translate }}</label>
@@ -76,7 +76,7 @@
                   [disabled]="username.invalid || password.invalid"
                 >{{"Log in" | translate}}</button>
               </form>
-              <div [hidden]="has_root_password">
+              <div [hidden]="hasRootPassword">
                 <form (ngSubmit)="setpassword()" [formGroup]="setPasswordFormGroup" #setPasswordForm="ngForm">
                   <div>
                     <span>{{"Set new root account password:" | translate}}</span>
@@ -108,28 +108,28 @@
               </div>
             </div>
 
-            <span *ngIf="productSupportsHa && failover_status != FailoverStatus.Single">
+            <span *ngIf="productSupportsHa && failoverStatus != FailoverStatus.Single">
               <div class="ha-status">
                 <div class="ha-status-txt">
-                  <p>{{ha_status_text}}</p>
-                  <span *ngIf="show_reasons">
-                    <p *ngFor="let reason of ha_disabled_reasons">
-                      {{reason_text[disabledReason(reason)] | translate}}
+                  <p>{{haStatusText}}</p>
+                  <span *ngIf="showReasons">
+                    <p *ngFor="let reason of haDisabledReasons">
+                      {{reasonText[disabledReason(reason)] | translate}}
                     </p>
                   </span>
-                  <span *ngIf="ha_info_ready">
-                    <p>{{failover_statuses[failover_status]}}</p>
-                    <span *ngIf="failover_ips.length > 0">
-                      <p>{{ 'Active IP Addresses' | translate }}: {{failover_ips.join(", ")}}</p>
+                  <span *ngIf="isHaInfoReady">
+                    <p>{{failoverStatuses[failoverStatus]}}</p>
+                    <span *ngIf="failoverIps.length > 0">
+                      <p>{{ 'Active IP Addresses' | translate }}: {{failoverIps.join(", ")}}</p>
                     </span>
                   </span>
                 </div>
               </div>
             </span>
 
-            <div class="truecommand" *ngIf="tc_ip" (click)="goToTrueCommand()">
+            <div class="truecommand" *ngIf="truecommandIp" (click)="goToTrueCommand()">
               <img id="truecommand-logo" src="assets/images/truecommand/truecommand-logo-mark-full-color-rgb.svg">
-              <span class="truecommand-txt">{{ 'TrueCommand IP' | translate }}: {{tc_ip}}</span>
+              <span class="truecommand-txt">{{ 'TrueCommand IP' | translate }}: {{truecommandIp}}</span>
             </div>
 
             <div class="copyright-line">
@@ -138,14 +138,14 @@
             </div>
           </div>
         </div>
-        <div class="disconnected" [hidden]="connected() && logo_ready">
+        <div class="disconnected" [hidden]="connected() && isLogoReady">
           <div *ngIf="product" class="disconnected-content">
             <div class="fake-icon">?</div>
-            <p *ngIf="!ha_status">
+            <p *ngIf="!haStatus">
               {{ 'Connecting to {product}' | translate: { product } }}
               {{ '... Make sure the {product} system is powered on and connected to the network.' | translate: { product } }}
             </p>
-            <p *ngIf="ha_status">
+            <p *ngIf="haStatus">
               {{ 'Waiting for Active TrueNAS controller to come up...' | translate }}
             </p>
           </div>

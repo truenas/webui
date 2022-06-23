@@ -106,7 +106,7 @@ describe('DatasetAclEditorComponent', () => {
       }),
     ],
     params: {
-      path: 'pool/dataset',
+      datasetId: 'pool/dataset',
     },
   });
 

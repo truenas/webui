@@ -2,8 +2,7 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef, Component,
 } from '@angular/core';
-import { Validators } from '@angular/forms';
-import { FormBuilder } from '@ngneat/reactive-forms';
+import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import _ from 'lodash';
@@ -13,8 +12,9 @@ import {
 } from 'rxjs/operators';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { helptextSharingWebdav, shared } from 'app/helptext/sharing';
-import { WebDavShare } from 'app/interfaces/web-dav-share.interface';
+import { WebDavShare, WebDavShareUpdate } from 'app/interfaces/web-dav-share.interface';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { WebSocketService, DialogService, AppLoaderService } from 'app/services';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
@@ -75,6 +75,7 @@ export class WebdavFormComponent {
     private errorHandler: FormErrorHandlerService,
     private loader: AppLoaderService,
     private filesystemService: FilesystemService,
+    private snackbar: SnackbarService,
   ) {
     this.form.controls.perm.valueChanges.pipe(untilDestroyed(this)).subscribe((value: boolean) => {
       this.confirmSubmit = value;
@@ -101,7 +102,7 @@ export class WebdavFormComponent {
   }
 
   saveConfig(): void {
-    const values = this.form.value;
+    const values = this.form.value as WebDavShareUpdate;
 
     this.isFormLoading = true;
     this.cdr.detectChanges();
@@ -155,8 +156,7 @@ export class WebdavFormComponent {
           ])),
           tap(() => {
             this.loader.close();
-            this.dialog.info(
-              this.translate.instant('{service} Service', { service: 'WebDAV' }),
+            this.snackbar.success(
               this.translate.instant('The {service} service has been enabled.', { service: 'WebDAV' }),
             );
           }),

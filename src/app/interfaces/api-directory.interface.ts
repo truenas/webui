@@ -211,7 +211,7 @@ import {
 } from 'app/interfaces/ssh-connection-setup.interface';
 import { StaticRoute, UpdateStaticRoute } from 'app/interfaces/static-route.interface';
 import {
-  Disk, DiskQueryOptions, DiskTemperatures, DiskUpdate, DiskWipeParams, UnusedDisk,
+  Disk, ExtraDiskQueryOptions, DiskTemperatures, DiskUpdate, DiskWipeParams, UnusedDisk,
 } from 'app/interfaces/storage.interface';
 import {
   FetchSupportParams,
@@ -436,7 +436,7 @@ export type ApiDirectory = {
   'device.get_info': { params: [DeviceType]; response: Device[] };
 
   // Disk
-  'disk.query': { params: QueryParams<Disk, DiskQueryOptions>; response: Disk[] };
+  'disk.query': { params: QueryParams<Disk, ExtraDiskQueryOptions>; response: Disk[] };
   'disk.update': { params: [id: string, update: DiskUpdate]; response: Disk };
   'disk.get_unused': { params: [joinPartitions?: boolean]; response: UnusedDisk[] };
   'disk.temperatures': { params: [disks: string[]]; response: DiskTemperatures };

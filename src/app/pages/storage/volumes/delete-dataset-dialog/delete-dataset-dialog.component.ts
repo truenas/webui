@@ -1,9 +1,8 @@
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
 } from '@angular/core';
-import { Validators } from '@angular/forms';
+import { FormBuilder, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import {
@@ -12,11 +11,11 @@ import {
 import { catchError, switchMap } from 'rxjs/operators';
 import { DatasetAttachment } from 'app/interfaces/pool-attachment.interface';
 import { Process } from 'app/interfaces/process.interface';
+import { VolumesListDataset } from 'app/interfaces/volumes-list-pool.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { AppLoaderService } from 'app/modules/app-loader/app-loader.service';
 import { EntityUtils } from 'app/modules/entity/utils';
 import IxValidatorsService from 'app/modules/ix-forms/services/ix-validators.service';
-import { VolumesListDataset } from 'app/pages/storage/volumes/volumes-list/volumes-list-pool.interface';
 import { DialogService, WebSocketService } from 'app/services';
 
 @UntilDestroy()

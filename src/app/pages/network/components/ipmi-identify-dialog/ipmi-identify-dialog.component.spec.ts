@@ -8,6 +8,7 @@ import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.u
 import { AppLoaderModule } from 'app/modules/app-loader/app-loader.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import {
   IpmiIdentifyDialogComponent,
 } from 'app/pages/network/components/ipmi-identify-dialog/ipmi-identify-dialog.component';
@@ -30,6 +31,7 @@ describe('IpmiIdentifyDialogComponent', () => {
       ]),
       mockProvider(MatDialogRef),
       mockProvider(DialogService),
+      mockProvider(SnackbarService),
     ],
   });
 
@@ -49,7 +51,7 @@ describe('IpmiIdentifyDialogComponent', () => {
 
     expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('ipmi.identify', [{ seconds: 180 }]);
     expect(spectator.inject(MatDialogRef).close).toHaveBeenCalled();
-    expect(spectator.inject(DialogService).info).toHaveBeenCalled();
+    expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
   });
 
   it('flashes with force flag when duration is set to Indefinitely', async () => {

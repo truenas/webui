@@ -22,7 +22,7 @@ import {
   VDev,
   VDevStats,
   UnusedDisk,
-  Disk,
+  Disk, ExtraDiskQueryOptions,
 } from 'app/interfaces/storage.interface';
 import { DialogFormConfiguration } from 'app/modules/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/modules/entity/entity-dialog/entity-dialog.component';
@@ -203,7 +203,7 @@ export class VolumeStatusComponent implements OnInit, AfterViewInit {
       onClick: (row: Pool) => {
         const pIndex = row.name.lastIndexOf('p');
         const diskName = pIndex > -1 ? row.name.substring(0, pIndex) : row.name;
-        const queryCallOption: QueryParams<Disk, { extra: { passwords: boolean } }> = [[['devname', '=', diskName]], { extra: { passwords: true } }];
+        const queryCallOption: QueryParams<Disk, ExtraDiskQueryOptions> = [[['devname', '=', diskName]], { extra: { passwords: true } }];
         this.ws.call('disk.query', queryCallOption).pipe(untilDestroyed(this)).subscribe((disks) => {
           this.onClickEdit(disks[0]);
         });

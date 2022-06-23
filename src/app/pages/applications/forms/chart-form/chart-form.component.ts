@@ -1,7 +1,6 @@
 import { ChangeDetectionStrategy, Component, OnDestroy } from '@angular/core';
-import { UntypedFormControl, Validators } from '@angular/forms';
+import { FormBuilder, UntypedFormControl, Validators } from '@angular/forms';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { of, Subscription } from 'rxjs';
 import { ixChartApp } from 'app/constants/catalog.constants';
@@ -84,8 +83,8 @@ export class ChartFormComponent implements OnDestroy {
     this.buildDynamicForm(chart.chart_schema.schema);
   }
 
-  setChartCreate(chart: CatalogApp): void {
-    this.catalogApp = chart;
+  setChartCreate(catalogApp: CatalogApp): void {
+    this.catalogApp = catalogApp;
     this.title = this.catalogApp.name;
     let hideVersion = false;
     if (this.catalogApp.name === ixChartApp) {
@@ -121,13 +120,13 @@ export class ChartFormComponent implements OnDestroy {
           type: DynamicFormSchemaType.Select,
           title: helptext.chartWizard.nameGroup.version,
           required: true,
-          options: of(versionKeys.map((option) => ({ value: option, label: option }))),
+          options: of(versionKeys.map((version) => ({ value: version, label: version }))),
           hidden: hideVersion,
         },
       ],
     });
 
-    this.buildDynamicForm(chart.schema);
+    this.buildDynamicForm(catalogApp.schema);
   }
 
   buildDynamicForm(schema: ChartSchema['schema']): void {
@@ -136,11 +135,12 @@ export class ChartFormComponent implements OnDestroy {
         this.dynamicSection.push({ ...group, schema: [] });
       });
       schema.questions.forEach((question) => {
-        if (this.dynamicSection.find((schema) => schema.name === question.group)) {
+        if (this.dynamicSection.find((section) => section.name === question.group)) {
           this.addFormControls(question);
           this.addFormSchema(question, question.group);
         }
       });
+      this.dynamicSection = this.dynamicSection.filter((section) => section.schema.length > 0);
       if (!this.isNew) {
         this.form.patchValue(this.config);
       }
@@ -149,8 +149,8 @@ export class ChartFormComponent implements OnDestroy {
     }
   }
 
-  addFormControls(question: ChartSchemaNode): void {
-    this.subscription.add(this.appSchemaService.addFormControls(question, this.form, this.config));
+  addFormControls(chartSchemaNode: ChartSchemaNode): void {
+    this.subscription.add(this.appSchemaService.addFormControls(chartSchemaNode, this.form, this.config));
   }
 
   addFormSchema(chartSchemaNode: ChartSchemaNode, group: string): void {

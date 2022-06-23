@@ -5,6 +5,7 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { VolumesListDataset } from 'app/interfaces/volumes-list-pool.interface';
 import { AppLoaderModule } from 'app/modules/app-loader/app-loader.module';
 import { IxSelectHarness } from 'app/modules/ix-forms/components/ix-select/ix-select.harness';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
@@ -12,7 +13,6 @@ import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import {
   EncryptionOptionsDialogData,
 } from 'app/pages/storage/volumes/encyption-options-dialog/encryption-options-dialog-data.interface';
-import { VolumesListDataset } from 'app/pages/storage/volumes/volumes-list/volumes-list-pool.interface';
 import { DialogService, WebSocketService } from 'app/services';
 import { EncryptionOptionsDialogComponent } from './encryption-options-dialog.component';
 

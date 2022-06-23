@@ -1,0 +1,24 @@
+<h1 matDialogTitle>{{ 'Lock Dataset' | translate }}</h1>
+<form class="ix-form-container" (submit)="onSubmit($event)">
+  <p>
+    {{ 'Lock Dataset {datasetName}?' | translate:{ datasetName: dataset.name } }}
+  </p>
+
+  <ix-checkbox
+    [formControl]="forceCheckbox"
+    [label]="'Force unmount' | translate"
+  ></ix-checkbox>
+
+  <div class="form-actions">
+    <button
+      mat-button
+      type="submit"
+      color="primary"
+    >{{ 'Lock' | translate }}</button>
+    <button
+      mat-button
+      type="button"
+      [matDialogClose]="false"
+    >{{ 'Cancel' | translate }}</button>
+  </div>
+</form>

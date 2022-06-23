@@ -1,7 +1,7 @@
 import {
   ChangeDetectionStrategy, Component, OnInit, ChangeDetectorRef,
 } from '@angular/core';
-import { FormBuilder } from '@ngneat/reactive-forms';
+import { FormBuilder } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';

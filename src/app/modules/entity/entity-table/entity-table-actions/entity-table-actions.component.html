@@ -20,12 +20,12 @@
     <button
       class="transparent-btn"
       [attr.aria-label]="'Actionable Options' | translate"
-      *ngIf="icon_name.startsWith('mdi-')"
+      *ngIf="iconName.startsWith('mdi-')"
       [matMenuTriggerFor]="appMenu"
       (click)="noPropagate($event)"
     >
       <mat-icon
-        role="image" fontSet="mdi-set" [fontIcon]="icon_name"
+        role="image" fontSet="mdi-set" [fontIcon]="iconName"
         id="{{row[entity?.conf?.rowIdentifier || 'name']}}_{{action}}_button"
         [style.cursor]="'pointer'"
         [style.font-size]="'24px'"
@@ -34,7 +34,7 @@
 
     <!-- Standard Material Icon Set -->
     <button
-      *ngIf="!icon_name.startsWith('mdi-')"
+      *ngIf="!iconName.startsWith('mdi-')"
       class="transparent-btn"
       [attr.aria-label]="'Actionable Options' | translate"
       (click)="noPropagate($event)"
@@ -44,7 +44,7 @@
         id="{{row[entity?.conf?.rowIdentifier || 'name']}}_{{action}}_button"
         [style.cursor]="'pointer'"
       >
-        {{icon_name}}
+        {{iconName}}
       </mat-icon>
     </button>
 

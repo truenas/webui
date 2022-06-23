@@ -80,7 +80,7 @@ describe('AcmednsFormComponent', () => {
     spectator.component.ngOnInit();
 
     let authenticator: Option[];
-    spectator.component.authenticator_options$.subscribe((options) => authenticator = options);
+    spectator.component.authenticatorOptions$.subscribe((options) => authenticator = options);
 
     expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('acme.dns.authenticator.authenticator_schemas');
 

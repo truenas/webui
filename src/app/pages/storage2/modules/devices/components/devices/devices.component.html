@@ -1,0 +1,26 @@
+<mat-card><mat-card-content><div class="wip">
+  <h4>Note: This is a work in progress for new 'Device Management' page. You can see what we are building an provide suggestions in <a href="https://github.com/truenas/webui/discussions/6771">Github discussions</a>.</h4>
+</div></mat-card-content></mat-card>
+
+<div *ngIf="topology" class="container">
+  <div class="table-container">
+    <div>Select disk</div>
+    <div>DATA</div>
+    <div
+      *ngFor="let vdev of topology.data"
+      (click)="onRowSelected(vdev, $event)"
+    >
+      {{ vdev.type }}
+      <div
+        *ngFor="let disk of vdev.children"
+        (click)="onRowSelected(disk, $event)"
+      >{{ disk.disk || disk.guid }}</div>
+    </div>
+  </div>
+  <div class="details-container">
+    <ix-disk-details-panel
+      *ngIf="selectedItem && isDiskSelected"
+      [disk]="selectedItem"
+    ></ix-disk-details-panel>
+  </div>
+</div>

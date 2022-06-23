@@ -13,6 +13,7 @@ import { IxInputHarness } from 'app/modules/ix-forms/components/ix-input/ix-inpu
 import { IxRadioGroupHarness } from 'app/modules/ix-forms/components/ix-radio-group/ix-radio-group.harness';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { IpmiFormComponent } from 'app/pages/network/components/forms/ipmi-form.component';
 import { DialogService, RedirectService, WebSocketService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
@@ -47,6 +48,7 @@ describe('IpmiFormComponent', () => {
       mockProvider(RedirectService),
       mockProvider(IxSlideInService),
       mockProvider(DialogService),
+      mockProvider(SnackbarService),
       mockWebsocket([
         mockCall('failover.licensed', true),
         mockCall('failover.call_remote', [{
@@ -149,7 +151,7 @@ describe('IpmiFormComponent', () => {
         password: '',
       }]]);
       expect(spectator.inject(IxSlideInService).close).toHaveBeenCalled();
-      expect(spectator.inject(DialogService).info).toHaveBeenCalledWith('Settings saved.', 'Successfully saved IPMI settings.', true);
+      expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Successfully saved IPMI settings.');
     });
   });
 

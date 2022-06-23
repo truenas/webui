@@ -17,6 +17,7 @@ import { QueryParams } from 'app/interfaces/query-api.interface';
 import { ipv4Validator } from 'app/modules/entity/entity-form/validators/ip-validation';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import IxValidatorsService from 'app/modules/ix-forms/services/ix-validators.service';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import {
   IpmiIdentifyDialogComponent,
 } from 'app/pages/network/components/ipmi-identify-dialog/ipmi-identify-dialog.component';
@@ -86,6 +87,7 @@ export class IpmiFormComponent implements OnInit {
     private dialogService: DialogService,
     private errorHandler: FormErrorHandlerService,
     @Inject(WINDOW) private window: Window,
+    private snackbar: SnackbarService,
   ) {
   }
 
@@ -229,9 +231,8 @@ export class IpmiFormComponent implements OnInit {
         () => {
           this.isLoading = false;
           this.slideInService.close();
-          this.dialogService.info(
-            this.translate.instant('Settings saved.'),
-            this.translate.instant('Successfully saved IPMI settings.'), true,
+          this.snackbar.success(
+            this.translate.instant('Successfully saved IPMI settings.'),
           );
         },
         (error) => {

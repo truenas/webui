@@ -1,15 +1,4 @@
-@mixin grid-layout() {
-  $column-count: 4;
-  border-collapse: collapse;
-  display: grid;
-  gap: 8px;
-  grid-template-columns:
-    minmax(150px, 5fr)
-    minmax(150px, 1fr)
-    minmax(100px, 1fr)
-    minmax(100px, 1fr);
-  min-width: fit-content;
-}
+@import '~assets/styles/mixins/grid';
 
 :host {
   $page-header-height: 81px;
@@ -58,6 +47,7 @@
   display: flex;
   flex: 1;
   flex-direction: column;
+  margin-bottom: 0.333rem;
   overflow: auto;
 }
 
@@ -73,7 +63,7 @@
 }
 
 .dataset-tree-header {
-  @include grid-layout();
+  @include grid-row();
   align-items: center;
   color: var(--fg2);
   min-height: 48px;
@@ -86,44 +76,6 @@
     &:first-child {
       left: 8px;
       position: sticky;
-    }
-  }
-}
-
-.tree-node-grid {
-  @include grid-layout();
-  align-items: center;
-
-  > div {
-    align-items: center;
-    display: inline-flex;
-    min-height: 48px;
-
-    &:first-child {
-      left: 0;
-      position: sticky;
-    }
-  }
-}
-
-.ix-tree-node-selectable {
-  align-items: center;
-  display: flex;
-  flex: 1;
-  font-weight: 500;
-  min-height: 48px;
-  padding: 0;
-
-  .mat-icon {
-    align-items: center;
-    display: inline-flex;
-    flex: 0 0 auto;
-    height: 40px;
-    justify-content: center;
-    width: 40px;
-
-    &.mdi-set {
-      margin-top: 0;
     }
   }
 }

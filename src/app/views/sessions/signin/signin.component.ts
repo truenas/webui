@@ -40,10 +40,10 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
 
   failed = false;
   productType: ProductType;
-  logo_ready = false;
+  isLogoReady = false;
   product = productText.product;
-  ha_info_ready = false;
-  checking_status = false;
+  isHaInfoReady = false;
+  checkingStatus = false;
 
   _copyrightYear = '';
   get copyrightYear(): string {
@@ -61,9 +61,9 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
     otp: '',
   };
   setPasswordFormGroup: UntypedFormGroup;
-  has_root_password = true;
-  failover_status: FailoverStatus;
-  failover_statuses = {
+  hasRootPassword = true;
+  failoverStatus: FailoverStatus;
+  failoverStatuses = {
     [FailoverStatus.Single]: '',
     [FailoverStatus.Master]: this.translate.instant('Active {controller}.', { controller: globalHelptext.Ctrlr }),
     [FailoverStatus.Backup]: this.translate.instant('Standby {controller}.', { controller: globalHelptext.Ctrlr }),
@@ -71,14 +71,14 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
     [FailoverStatus.Importing]: this.translate.instant('Importing pools.'),
     [FailoverStatus.Error]: this.translate.instant('Failover is in an error state.'),
   };
-  failover_ips: string[] = [];
-  ha_disabled_reasons: FailoverDisabledReason[] = [];
-  show_reasons = false;
-  reason_text = helptext.ha_disabled_reasons;
-  ha_status_text = this.translate.instant('Checking HA status');
-  ha_status = false;
-  tc_ip: string;
-  protected tc_url: string;
+  failoverIps: string[] = [];
+  haDisabledReasons: FailoverDisabledReason[] = [];
+  showReasons = false;
+  reasonText = helptext.ha_disabled_reasons;
+  haStatusText = this.translate.instant('Checking HA status');
+  haStatus = false;
+  truecommandIp: string;
+  protected truecommandUrl: string;
 
   readonly ProductType = ProductType;
   readonly FailoverStatus = FailoverStatus;
@@ -98,14 +98,14 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
   ) {
     const haStatus = window.sessionStorage.getItem('ha_status');
     if (haStatus && haStatus === 'true') {
-      this.ha_status = true;
+      this.haStatus = true;
     }
     this.sysGeneralService.getProductType$.pipe(
       filter(Boolean),
       untilDestroyed(this),
     ).subscribe((productType) => {
       this.productType = productType as ProductType;
-      this.logo_ready = true;
+      this.isLogoReady = true;
       if ([ProductType.Scale, ProductType.ScaleEnterprise].includes(this.productType)) {
         if (this.haInterval) {
           clearInterval(this.haInterval);
@@ -125,8 +125,8 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
       filter((res) => res.connected),
       untilDestroyed(this),
     ).subscribe((res) => {
-      this.tc_ip = res.truecommand_ip;
-      this.tc_url = res.truecommand_url;
+      this.truecommandIp = res.truecommand_ip;
+      this.truecommandUrl = res.truecommand_url;
     });
   }
 
@@ -146,7 +146,7 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
     }
 
     this.ws.call('user.has_root_password').pipe(untilDestroyed(this)).subscribe((res) => {
-      this.has_root_password = res;
+      this.hasRootPassword = res;
     });
 
     this.setPasswordFormGroup = this.fb.group({
@@ -215,8 +215,8 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   canLogin(): boolean {
-    if (this.logo_ready && this.connected()
-      && [FailoverStatus.Single, FailoverStatus.Master].includes(this.failover_status)
+    if (this.isLogoReady && this.connected()
+      && [FailoverStatus.Single, FailoverStatus.Master].includes(this.failoverStatus)
     ) {
       if (!this.didSetFocus && this.usernameInput) {
         setTimeout(() => {
@@ -236,54 +236,54 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   getHaStatus(): void {
-    if (this.productSupportsHa && !this.checking_status) {
-      this.checking_status = true;
+    if (this.productSupportsHa && !this.checkingStatus) {
+      this.checkingStatus = true;
       this.ws.call('failover.status').pipe(untilDestroyed(this)).subscribe((failoverStatus) => {
-        this.failover_status = failoverStatus;
-        this.ha_info_ready = true;
+        this.failoverStatus = failoverStatus;
+        this.isHaInfoReady = true;
         if (failoverStatus !== FailoverStatus.Single) {
           this.ws.call('failover.get_ips').pipe(untilDestroyed(this)).subscribe((ips) => {
-            this.failover_ips = ips;
+            this.failoverIps = ips;
           }, (err) => {
             console.error(err);
           });
           this.ws.call('failover.disabled.reasons').pipe(untilDestroyed(this)).subscribe((reasons) => {
-            this.checking_status = false;
-            this.ha_disabled_reasons = reasons;
-            this.show_reasons = false;
+            this.checkingStatus = false;
+            this.haDisabledReasons = reasons;
+            this.showReasons = false;
             if (reasons.length === 0) {
-              this.ha_status_text = this.translate.instant('HA is enabled.');
-              this.ha_status = true;
+              this.haStatusText = this.translate.instant('HA is enabled.');
+              this.haStatus = true;
             } else if (reasons.length === 1) {
               if (reasons[0] === FailoverDisabledReason.NoSystemReady) {
-                this.ha_status_text = this.translate.instant('HA is reconnecting.');
+                this.haStatusText = this.translate.instant('HA is reconnecting.');
               } else if (reasons[0] === FailoverDisabledReason.NoFailover) {
-                this.ha_status_text = this.translate.instant('HA is administratively disabled.');
+                this.haStatusText = this.translate.instant('HA is administratively disabled.');
               }
-              this.ha_status = false;
+              this.haStatus = false;
             } else {
-              this.ha_status_text = this.translate.instant('HA is in a faulted state');
-              this.show_reasons = true;
-              this.ha_status = false;
+              this.haStatusText = this.translate.instant('HA is in a faulted state');
+              this.showReasons = true;
+              this.haStatus = false;
             }
-            window.sessionStorage.setItem('ha_status', this.ha_status.toString());
+            window.sessionStorage.setItem('ha_status', this.haStatus.toString());
             if (this.canLogin()) {
               this.checkBuildtime();
               this.loginToken();
             }
           }, (err) => {
-            this.checking_status = false;
+            this.checkingStatus = false;
             console.error(err);
           },
           () => {
-            this.checking_status = false;
+            this.checkingStatus = false;
           });
         } else if (this.canLogin()) {
           this.checkBuildtime();
           this.loginToken();
         }
       }, (err) => {
-        this.checking_status = false;
+        this.checkingStatus = false;
         console.error(err);
       });
     }
@@ -372,7 +372,11 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
       message = this.translate.instant('Token expired, please log back in.');
       this.ws.token = null;
     }
-    this.snackBar.open(this.translate.instant(message), this.translate.instant('close'), { duration: 4000 });
+    this.snackBar.open(
+      this.translate.instant(message),
+      this.translate.instant('close'),
+      { duration: 4000, verticalPosition: 'bottom' },
+    );
   }
 
   openIx(): void {
@@ -387,7 +391,7 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
       confirmBtnMsg: helptext.tcDialog.confirmBtnMsg,
     }).pipe(untilDestroyed(this)).subscribe((res) => {
       if (res) {
-        window.open(this.tc_url);
+        window.open(this.truecommandUrl);
       }
     });
   }

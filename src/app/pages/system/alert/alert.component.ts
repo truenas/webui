@@ -17,6 +17,7 @@ import { FieldConfig } from 'app/modules/entity/entity-form/models/field-config.
 import { FieldSet } from 'app/modules/entity/entity-form/models/fieldset.interface';
 import { EntityFormService } from 'app/modules/entity/entity-form/services/entity-form.service';
 import { EntityUtils } from 'app/modules/entity/utils';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { AlertDefaults } from 'app/pages/system/alert/alert-defaults.interface';
 import { DialogService, WebSocketService } from 'app/services/';
 import { LayoutService } from 'app/services/layout.service';
@@ -65,6 +66,7 @@ export class AlertConfigComponent implements OnInit, AfterViewInit {
     public dialog: DialogService,
     protected translate: TranslateService,
     private layoutService: LayoutService,
+    private snackbarService: SnackbarService,
   ) {}
 
   ngOnInit(): void {
@@ -233,7 +235,7 @@ export class AlertConfigComponent implements OnInit, AfterViewInit {
     this.ws
       .call(this.editCall, [payload])
       .pipe(untilDestroyed(this)).subscribe(
-        () => this.dialog.info(this.translate.instant('Settings saved'), ''),
+        () => this.snackbarService.success(this.translate.instant('Settings saved')),
         (error) => new EntityUtils().handleWsError(this, error, this.dialog),
       )
       .add(() => this.loader.close());

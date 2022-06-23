@@ -2,12 +2,14 @@ import { Component, OnInit } from '@angular/core';
 import { MatCheckboxChange } from '@angular/material/checkbox';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
+import { TranslateService } from '@ngx-translate/core';
 import { delay } from 'rxjs/operators';
 import { helptextSystemSupport as helptext } from 'app/helptext/system/support';
 import { DialogFormConfiguration } from 'app/modules/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/modules/entity/entity-dialog/entity-dialog.component';
 import { FieldConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { LicenseInfoInSupport } from 'app/pages/system/general-settings/support/license-info-in-support.interface';
 import { SystemInfoInSupport } from 'app/pages/system/general-settings/support/system-info-in-support.interface';
 import { WebSocketService, AppLoaderService, DialogService } from 'app/services';
@@ -30,7 +32,7 @@ export class SupportComponent implements OnInit {
   productImage = 'ix-original-cropped.png';
   isProductImageRack = false;
   extraMargin = true;
-  serverList = ['M40', 'M50', 'X10', 'X20', 'Z20', 'Z30', 'Z35', 'Z50'];
+  serverList = ['M30', 'M40', 'M50', 'X10', 'X20', 'Z20', 'Z30', 'Z35', 'Z50', 'R10', 'R20', 'R40', 'R50'];
   systemInfo: SystemInfoInSupport;
   hasLicense = false;
   licenseInfo: LicenseInfoInSupport = null;
@@ -48,6 +50,8 @@ export class SupportComponent implements OnInit {
     private dialog: DialogService,
     private slideInService: IxSlideInService,
     private store$: Store<AppState>,
+    private snackbar: SnackbarService,
+    private translate: TranslateService,
   ) {}
 
   ngOnInit(): void {
@@ -81,8 +85,8 @@ export class SupportComponent implements OnInit {
     }
     const expDateConverted = new Date(this.licenseInfo.contract_end.$value);
     this.licenseInfo.expiration_date = this.licenseInfo.contract_end.$value;
-    if (this.systemInfo.system_serial_ha) {
-      this.systemInfo.serial = this.systemInfo.system_serial + ' / ' + this.systemInfo.system_serial_ha;
+    if (this.licenseInfo?.system_serial_ha) {
+      this.systemInfo.serial = this.systemInfo.system_serial + ' / ' + this.licenseInfo.system_serial_ha;
     } else {
       this.systemInfo.serial = this.systemInfo.system_serial;
     }
@@ -168,7 +172,9 @@ export class SupportComponent implements OnInit {
       this.dialog.dialogForm(this.updateProdStatusConf);
     } else {
       this.ws.call('truenas.set_production', [false, false]).pipe(untilDestroyed(this)).subscribe(() => {
-        this.dialog.info(helptext.is_production_dialog.title, helptext.is_production_dialog.message);
+        this.snackbar.success(
+          this.translate.instant(helptext.is_production_dialog.message),
+        );
       }, (err) => {
         this.loader.close();
         this.dialog.errorReport(

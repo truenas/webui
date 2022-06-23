@@ -21,6 +21,7 @@ import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.com
 import { EntityUtils } from 'app/modules/entity/utils';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import IxValidatorsService from 'app/modules/ix-forms/services/ix-validators.service';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { requiredIdmapDomains } from 'app/pages/directory-service/utils/required-idmap-domains.utils';
 import {
   DialogService, IdmapService, ValidationService, WebSocketService,
@@ -153,6 +154,7 @@ export class IdmapFormComponent implements OnInit {
     private errorHandler: FormErrorHandlerService,
     private slideInService: IxSlideInService,
     private router: Router,
+    private snackbar: SnackbarService,
   ) {}
 
   ngOnInit(): void {
@@ -312,9 +314,8 @@ export class IdmapFormComponent implements OnInit {
         dialog.componentInstance.setCall('idmap.clear_idmap_cache');
         dialog.componentInstance.submit();
         dialog.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
-          this.dialogService.info(
-            helptext.idmap.clear_cache_dialog.success_title,
-            helptext.idmap.clear_cache_dialog.success_msg,
+          this.snackbar.success(
+            this.translate.instant(helptext.idmap.clear_cache_dialog.success_msg),
           );
           dialog.close();
         });

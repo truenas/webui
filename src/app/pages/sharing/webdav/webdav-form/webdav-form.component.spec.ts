@@ -11,6 +11,7 @@ import { WebDavShare } from 'app/interfaces/web-dav-share.interface';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { AppLoaderService, DialogService, WebSocketService } from 'app/services';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
@@ -58,6 +59,7 @@ describe('WebdavFormComponent', () => {
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),
+      mockProvider(SnackbarService),
     ],
   });
 
@@ -143,8 +145,7 @@ describe('WebdavFormComponent', () => {
     expect(ws.call).toHaveBeenCalledWith('service.update', [7, { enable: true }]);
     expect(ws.call).toHaveBeenCalledWith('service.start', [ServiceName.WebDav, { silent: false }]);
 
-    expect(spectator.inject(DialogService).info).toHaveBeenCalledWith(
-      'WebDAV Service',
+    expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith(
       'The WebDAV service has been enabled.',
     );
 

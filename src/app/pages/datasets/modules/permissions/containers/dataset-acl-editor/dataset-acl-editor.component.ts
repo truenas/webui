@@ -1,10 +1,9 @@
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
-import { Validators } from '@angular/forms';
+import { FormBuilder, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute } from '@angular/router';
-import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { filter } from 'rxjs/operators';
 import { AclType, DefaultAclType } from 'app/enums/acl-type.enum';
@@ -68,7 +67,7 @@ export class DatasetAclEditorComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.datasetPath = this.route.snapshot.params['path'];
+    this.datasetPath = this.route.snapshot.params['datasetId'];
     this.fullDatasetPath = `/mnt/${this.datasetPath}`;
     this.store.loadAcl(this.fullDatasetPath);
 

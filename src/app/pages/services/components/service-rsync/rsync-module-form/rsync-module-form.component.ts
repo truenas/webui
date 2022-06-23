@@ -1,14 +1,13 @@
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component,
 } from '@angular/core';
-import { Validators } from '@angular/forms';
-import { FormBuilder } from '@ngneat/reactive-forms';
+import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable, of } from 'rxjs';
 import { RsyncModuleMode } from 'app/enums/rsync-mode.enum';
 import helptext from 'app/helptext/services/components/service-rsync';
-import { RsyncModule } from 'app/interfaces/rsync-module.interface';
+import { RsyncModule, RsyncModuleCreate } from 'app/interfaces/rsync-module.interface';
 import { GroupComboboxProvider } from 'app/modules/ix-forms/classes/group-combobox-provider';
 import { UserComboboxProvider } from 'app/modules/ix-forms/classes/user-combobox-provider';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
@@ -91,11 +90,11 @@ export class RsyncModuleFormComponent {
     this.isLoading = true;
     let request$: Observable<unknown>;
     if (this.isNew) {
-      request$ = this.ws.call('rsyncmod.create', [values]);
+      request$ = this.ws.call('rsyncmod.create', [values as RsyncModuleCreate]);
     } else {
       request$ = this.ws.call('rsyncmod.update', [
         this.editingModule.id,
-        values,
+        values as RsyncModuleCreate,
       ]);
     }
 
