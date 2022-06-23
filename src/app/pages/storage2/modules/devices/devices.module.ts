@@ -30,14 +30,12 @@ import { routes } from 'app/pages/storage2/modules/devices/devices.routing';
     IxFormsModule,
     MatButtonModule,
   ],
-  exports: [],
   declarations: [
     DevicesComponent,
     DiskDetailsPanelComponent,
     HardwareDiskEncryptionComponent,
     ManageDiskSedDialogComponent,
   ],
-  providers: [],
 })
 export class DevicesModule {
 }
