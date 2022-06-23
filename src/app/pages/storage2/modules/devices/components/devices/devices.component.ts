@@ -44,10 +44,22 @@ export class DevicesComponent implements OnInit {
       (pools) => {
         this.topology = pools[0].topology;
         this.dataSource = new IxNestedTreeDataSource(this.topology.data);
+        this.treeControl.dataNodes = this.topology.data;
+        this.selectFirstNode();
         this.loader.close();
         this.cdr.markForCheck();
       },
     );
+  }
+
+  private selectFirstNode(): void {
+    if (!this.treeControl?.dataNodes?.length) {
+      return;
+    }
+
+    const disk = this.treeControl.dataNodes[0];
+    this.treeControl.expand(disk);
+    this.selectedItem = disk;
   }
 
   onRowSelected(vdev: VDev, event: MouseEvent): void {

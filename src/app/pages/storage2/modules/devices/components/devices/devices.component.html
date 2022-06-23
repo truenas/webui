@@ -16,6 +16,7 @@
           [ixTreeNodeToggleRecursive]="false"
           [ixTreeNodeDefDataSource]="dataSource"
           (click)="onRowSelected(disk, $event)"
+          [class.selected]="disk.guid === selectedItem?.guid"
         >
           <button mat-icon-button disabled></button>
           {{ disk.disk || disk.guid }}
@@ -28,6 +29,7 @@
           <div
             class="disk-nested-tree-root-node"
             (click)="onRowSelected(disk, $event)"
+            [class.selected]="disk.guid === selectedItem?.guid"
           >
             <button
               mat-icon-button
