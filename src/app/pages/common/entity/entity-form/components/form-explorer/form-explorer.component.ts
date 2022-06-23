@@ -112,6 +112,10 @@ export class FormExplorerComponent implements Field, OnInit {
     }
   }
 
+  shouldBeDisabled(): boolean {
+    return this.config.disabled || this.config.readonly;
+  }
+
   setPath(node: TreeNode): void {
     this.group.controls[this.config.name].setValue(node.data.name);
   }
