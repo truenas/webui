@@ -1,6 +1,30 @@
-<div>
+<ng-template #pageHeader>
+  <ix-page-title-header>
+    <button
+      mat-button
+      (click)="onImportPool()"
+    >{{ 'Import Pool' | translate }}</button>
+
+    <a
+      mat-button
+      color="primary"
+      [routerLink]="['/storage2/create']"
+    >{{ 'Create Pool' | translate }}</a>
+  </ix-page-title-header>
+</ng-template>
+
+<div style="margin-bottom: 20px;">
   <mat-card><mat-card-content><div class="wip">
         <h4>Note: This is a work in progress for new 'Pools Dashboard' page. You can see what we are building an provide suggestions in <a href="https://github.com/truenas/webui/discussions/6767">Github discussions</a>.</h4>
     </div></mat-card-content></mat-card>
-  <button mat-button (click)="navigateToDeviceManagement()"> {{ 'Manage Devices' | translate }}</button>
+</div>
+
+<div *ngFor="let pool of pools" class="pool">
+  <h2 class="pool-name">{{ pool.name }}</h2>
+
+  <div class="pool-cards">
+    <mat-card>
+      <button mat-button [routerLink]="[]"> {{ 'Manage Devices' | translate }}</button>
+    </mat-card>
+  </div>
 </div>
