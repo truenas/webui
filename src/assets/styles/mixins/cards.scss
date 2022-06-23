@@ -41,9 +41,11 @@
   height: 20px;
   opacity: 0.3;
 }
+
 @mixin details-card-item {
   display: flex;
   flex-direction: row;
+  flex-wrap: wrap;
   margin-bottom: 4px;
 
   &:last-child {
@@ -53,10 +55,12 @@
   .label {
     font-weight: bold;
     margin-right: 5px;
+    white-space: nowrap;
   }
 
   .value {
     font-weight: normal;
+    white-space: nowrap;
   }
 
   .action {
@@ -67,5 +71,6 @@
     color: var(--primary);
     cursor: pointer;
     text-decoration: underline;
+    white-space: nowrap;
   }
 }
