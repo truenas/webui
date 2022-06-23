@@ -8,11 +8,10 @@
 
 <div class="container" fxLayoutGap="16px">
   <div class="table-container">
-    <ix-tree-search
-      [dataSource]="dataSource"
-      [treeControl]="treeControl"
-      (filter)="onFilter($event)"
-    ></ix-tree-search>
+    <div class="dataset-search">
+      <ix-search-input [disabled]="!dataSource.data" (search)="onSearch($event)"></ix-search-input>
+    </div>
+    <ix-filters [data]="dataSource.data" (filter)="onFilter($event)"></ix-filters>
 
     <div class="dataset-tree-wrapper">
       <div class="dataset-tree-inner">

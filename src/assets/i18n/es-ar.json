@@ -166,6 +166,7 @@
   "Example: blob.core.usgovcloudapi.net": "",
   "Files that are deleted from the same  dataset are moved to the Recycle Bin and do not take any additional  space. <b>Deleting files over NFS will remove the files permanently  </b>. When the files are in a different dataset or a child dataset,  they are copied to the dataset where the Recycle Bin is located. To  prevent excessive space usage, files larger than 20 MiB are deleted  rather than moved. <b>This is not a replacement  for ZFS snapshots.</b>": "",
   "Filesystem Type": "",
+  "Filters": "",
   "Fix database": "",
   "Flags Advanced": "",
   "Flags Basic": "",

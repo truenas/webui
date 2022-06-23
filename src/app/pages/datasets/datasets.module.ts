@@ -14,6 +14,7 @@ import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { AppCommonModule } from 'app/modules/common/app-common.module';
 import { EntityModule } from 'app/modules/entity/entity.module';
+import { IxFiltersModule } from 'app/modules/ix-filters/ix-filters.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxTableModule } from 'app/modules/ix-tables/ix-table.module';
 import { IxTreeModule } from 'app/modules/ix-tree/ix-tree.module';
@@ -68,6 +69,7 @@ import { DatasetNodeComponent } from './components/dataset-node/dataset-node.com
     MatDialogModule,
     ReactiveFormsModule,
     EntityModule,
+    IxFiltersModule,
   ],
   declarations: [
     DatasetsManagementComponent,

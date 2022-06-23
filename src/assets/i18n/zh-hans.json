@@ -73,6 +73,7 @@
   "Enter the name of the sysctl variable to configure. <i>sysctl</i> tunables are used to configure kernel parameters while the system is running and generally take effect immediately.": "",
   "Example: blob.core.usgovcloudapi.net": "",
   "Filesystem Type": "",
+  "Filters": "",
   "Generate": "",
   "Global SED Password": "",
   "Go To Encryption Root": "",

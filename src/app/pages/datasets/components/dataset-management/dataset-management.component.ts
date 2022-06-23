@@ -6,6 +6,7 @@ import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { pluck } from 'rxjs/operators';
 import { Dataset } from 'app/interfaces/dataset.interface';
+import { IxFilter } from 'app/modules/ix-filters/ix-filters.interface';
 import { IxNestedTreeDataSource } from 'app/modules/ix-tree/ix-tree-nested-datasource';
 import { DatasetStore } from 'app/pages/datasets/store/dataset-store.service';
 import { getDatasetAndParentsById } from 'app/pages/datasets/utils/get-datasets-in-tree-by-id.utils';
@@ -45,8 +46,12 @@ export class DatasetsManagementComponent implements OnInit {
       .subscribe(() => this.loadTree());
   }
 
-  onFilter(event: unknown): void {
-    console.info('onFilter', event);
+  onFilter(filters: IxFilter[]): void {
+    this.dataSource.filter(filters);
+  }
+
+  onSearch(query: string): void {
+    this.dataSource.search(query);
   }
 
   private loadTree(): void {

@@ -1,11 +1,9 @@
-<div class="search">
-  <ix-search-input [disabled]="!dataSource.data" (search)="onSearch($event)"></ix-search-input>
-  <button mat-icon-button (click)="panel.toggle()">
-    <mat-icon>{{ panel.expanded ? 'expand_less' : 'expand_more' }} </mat-icon>
-  </button>
-</div>
 <mat-accordion>
-  <mat-expansion-panel class="mat-elevation-z0" #panel>
+  <mat-expansion-panel class="mat-elevation-z0">
+    <mat-expansion-panel-header>
+      {{ 'Filters' | translate }}
+    </mat-expansion-panel-header>
+
     <form [formGroup]="form" (submit)="onSubmit()">
       <ix-select
         formControlName="properties"
@@ -17,7 +15,7 @@
       <div class="filters">
         <ng-container
           formArrayName="filters"
-          *ngFor="let filter of filters.value; trackBy: trackByFilters; let i = index"
+          *ngFor="let filter of filters.value; trackBy: trackByFn; let i = index"
         >
           <div [formGroupName]="i" class="filter-item">
             <ix-select

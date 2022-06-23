@@ -38,6 +38,20 @@
   padding: 0;
 }
 
+.dataset-search {
+  align-items: center;
+  background-color: var(--bg2);
+  color: var(--fg2);
+  display: flex;
+  gap: 8px;
+  padding: 16px;
+
+  ix-search-input {
+    flex: 1;
+  }
+}
+
+
 .dataset-tree-wrapper {
   display: flex;
   flex: 1;

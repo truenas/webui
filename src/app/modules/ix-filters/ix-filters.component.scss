@@ -1,0 +1,21 @@
+.mat-accordion .mat-expansion-panel {
+  border-radius: 0;
+}
+
+.filters {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  margin-left: -8px;
+  margin-right: -8px;
+
+  .filter-item {
+    flex: 1 0 33.33%;
+    padding: 0 8px;
+  }
+}
+
+.form-actions {
+  padding-bottom: 16px;
+  padding-top: 16px;
+}
