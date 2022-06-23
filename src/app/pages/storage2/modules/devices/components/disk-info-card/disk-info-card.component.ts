@@ -9,7 +9,6 @@ import { filter } from 'rxjs/operators';
 import { Disk, VDev } from 'app/interfaces/storage.interface';
 import { EmptyConfig, EmptyType } from 'app/modules/entity/entity-empty/entity-empty.component';
 import { EntityUtils } from 'app/modules/entity/utils';
-import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
 import { DiskFormComponent } from 'app/pages/storage/disks/disk-form/disk-form.component';
 import { ReplaceDiskDialogComponent, ReplaceDiskDialogData } from 'app/pages/storage/volumes/volume-status/components/replace-disk-dialog/replace-disk-dialog.component';
 import { DialogService, WebSocketService } from 'app/services';
@@ -34,7 +33,6 @@ export class DiskInfoCardComponent implements OnChanges {
   };
 
   constructor(
-    public formatter: IxFormatterService,
     private ws: WebSocketService,
     private cdr: ChangeDetectorRef,
     private dialogService: DialogService,

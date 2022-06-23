@@ -11,7 +11,6 @@ import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.u
 import { DiskStandby } from 'app/enums/disk-standby.enum';
 import { DiskType } from 'app/enums/disk-type.enum';
 import { Disk, VDev } from 'app/interfaces/storage.interface';
-import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
 import { DiskFormComponent } from 'app/pages/storage/disks/disk-form/disk-form.component';
 import { ReplaceDiskDialogComponent } from 'app/pages/storage/volumes/volume-status/components/replace-disk-dialog/replace-disk-dialog.component';
 import { WebSocketService } from 'app/services';
@@ -47,9 +46,6 @@ describe('DiskInfoCardComponent', () => {
           afterClosed: () => of(),
         })),
       }),
-      mockProvider(IxFormatterService, {
-        convertBytesToHumanReadable: jest.fn(() => '10.00 GiB'),
-      }),
     ],
   });
 
@@ -69,7 +65,7 @@ describe('DiskInfoCardComponent', () => {
       .toHaveBeenCalledWith('disk.query', [[['devname', '=', 'sda']]]);
 
     const sizeItem = spectator.query(byText('Disk Size:', { exact: true }));
-    expect(sizeItem.nextElementSibling).toHaveText('10.00 GiB');
+    expect(sizeItem.nextElementSibling).toHaveText('10 GiB');
 
     const transfermodeItem = spectator.query(byText('Transfer Mode:', { exact: true }));
     expect(transfermodeItem.nextElementSibling).toHaveText('Auto');
