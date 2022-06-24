@@ -1,5 +1,5 @@
 import { PoolStatus } from 'app/enums/pool-status.enum';
-import { PoolScan, PoolTopology } from 'app/interfaces/pool.interface';
+import { PoolScanUpdate, PoolTopology } from 'app/interfaces/pool.interface';
 import { VDev } from 'app/interfaces/storage.interface';
 import { ZfsProperty } from 'app/interfaces/zfs-property.interface';
 
@@ -20,7 +20,7 @@ export interface BootPoolState {
   };
   root_dataset: BootPoolRootDataset;
   root_vdev: VDev;
-  scan: PoolScan;
+  scan: PoolScanUpdate;
   status: string; // ONLINE
   status_code: string; // FEAT_DISABLED
   status_detail: string;

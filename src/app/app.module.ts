@@ -18,6 +18,7 @@ import * as Sentry from '@sentry/angular';
 import { environment } from 'environments/environment';
 import { MarkdownModule } from 'ngx-markdown';
 import { NgxPopperjsModule } from 'ngx-popperjs';
+import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import {
   TranslateMessageFormatCompiler,
 } from 'ngx-translate-messageformat-compiler';
@@ -105,6 +106,12 @@ import { WebSocketService } from './services/ws.service';
     EffectsModule.forRoot(rootEffects),
     MatDialogModule,
     SnackbarModule,
+    NgxSkeletonLoaderModule.forRoot({
+      theme: {
+        'background-color': 'var(--alt-bg2)',
+        opacity: 0.25,
+      },
+    }),
   ],
   declarations: [
     AppComponent,
