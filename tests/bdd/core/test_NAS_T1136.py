@@ -203,7 +203,7 @@ def verify_all_files_are_copied_from_dropbox_are_into_the_dataset(driver, nas_ip
 def on_the_nas_cloud_sync_task_tab_click_edit(driver):
     """on the NAS cloud sync task tab, click Edit."""
     driver.switch_to.window(driver.window_handles[0])
-    time.sleep(1)
+    time.sleep(2)
     assert wait_on_element(driver, 7, '//div[contains(.,"Cloud Sync Tasks")]')
     assert wait_on_element(driver, 10, '//div[contains(text(),"My Dropbox task")]')
     assert wait_on_element(driver, 5, '//a[@ix-auto="expander__My Dropbox task"]', 'clickable')
