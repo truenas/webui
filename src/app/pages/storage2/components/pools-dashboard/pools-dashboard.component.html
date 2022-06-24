@@ -1,29 +1,39 @@
 <ng-template #pageHeader>
   <ix-page-title-header>
+    <button
+      mat-button
+      (click)="onImportPool()"
+    >{{ 'Import Pool' | translate }}</button>
+
     <a
       mat-button
       color="primary"
-      [matTooltip]="'Create a new pool.' | translate"
-      ix-auto
-      ix-auto-type="button"
-      ix-auto-identifier="_POOL_CREATE"
-      [routerLink]="['/storage/manager']"
-    >
-      {{ 'Create Pool' | translate }}
-    </a>
+      [routerLink]="['/storage2/create']"
+    >{{ 'Create Pool' | translate }}</a>
   </ix-page-title-header>
 </ng-template>
 
-<div>
+<div style="margin-bottom: 20px;">
   <mat-card><mat-card-content><div class="wip">
-        <h4>Note: This is a work in progress for new 'Pools Dashboard' page. You can see what we are building an provide suggestions in <a href="https://github.com/truenas/webui/discussions/6767">Github discussions</a>.</h4>
+    <h4>Note: This is a work in progress for new 'Pools Dashboard' page. You can see what we are building an provide suggestions in <a href="https://github.com/truenas/webui/discussions/6767">Github discussions</a>.</h4>
     </div></mat-card-content></mat-card>
-  <button mat-button (click)="navigateToDeviceManagement()"> {{ 'Manage Devices' | translate }}</button>
 </div>
 
 <div class="resource-section">
   <h2 class="title">{{ 'Unused Resources' | translate }}</h2>
   <div class="cards">
     <ix-unassigned-disk [pools]="pools"></ix-unassigned-disk>
+  </div>
+</div>
+
+<div *ngFor="let pool of pools" class="pool">
+  <h2 class="pool-name">{{ pool.name }}</h2>
+
+  <div class="cards">
+    <mat-card>
+      <button mat-button [routerLink]="['/storage2', pool.id, 'devices']"> {{ 'Manage Devices' | translate }}</button>
+    </mat-card>
+
+    <ix-zfs-health-card [pool]="pool"></ix-zfs-health-card>
   </div>
 </div>

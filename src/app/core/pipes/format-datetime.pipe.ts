@@ -1,4 +1,4 @@
-import { Pipe, PipeTransform } from '@angular/core';
+import { ChangeDetectorRef, Pipe, PipeTransform } from '@angular/core';
 import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { format, utcToZonedTime } from 'date-fns-tz';
@@ -15,9 +15,13 @@ export class FormatDateTimePipe implements PipeTransform {
   dateFormat = 'yyyy-MM-dd';
   timeFormat = 'HH:mm:ss';
 
-  constructor(private store$: Store<AppState>) {
+  constructor(
+    private store$: Store<AppState>,
+    private cdr: ChangeDetectorRef,
+  ) {
     this.store$.select(selectTimezone).pipe(untilDestroyed(this)).subscribe((timezone) => {
       this.timezone = timezone;
+      this.cdr.markForCheck();
     });
     if (window.localStorage.dateFormat) {
       this.dateFormat = window.localStorage.getItem('dateFormat');
@@ -48,7 +52,7 @@ export class FormatDateTimePipe implements PipeTransform {
       }
     }
 
-    // Reason for below repalcements: https://github.com/date-fns/date-fns/blob/master/docs/unicodeTokens.md
+    // Reason for below replacements: https://github.com/date-fns/date-fns/blob/master/docs/unicodeTokens.md
     this.dateFormat = this.dateFormat
       .replace('YYYY', 'yyyy')
       .replace('YY', 'y')

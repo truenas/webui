@@ -1,0 +1,99 @@
+<mat-card class="container-card">
+  <mat-card-header>
+    <h3 mat-card-title>{{ 'Disk Info' | translate }}</h3>
+    <button
+      mat-button
+      *ngIf="loading || diskInfo"
+      [disabled]="!diskInfo"
+      (click)="onEdit()"
+    >{{ 'Edit' | translate }}</button>
+  </mat-card-header>
+  <mat-card-content>
+    <ng-container *ngIf="loading || diskInfo; else noDiskInfo">
+      <div class="row">
+        <span class="header">{{ 'Disk Size' | translate }}:</span>
+        <span *ngIf="!loading; else loaderSkel">
+          <ng-container *ngIf="diskInfo?.size; else notAvailable">
+            {{ diskInfo.size | filesize: { standard: 'iec' } }}
+          </ng-container>
+        </span>
+      </div>
+      <div class="row">
+        <span class="header">{{ 'Transfer Mode' | translate }}:</span>
+        <span *ngIf="!loading; else loaderSkel">
+          <ng-container *ngIf="diskInfo?.transfermode; else notAvailable">
+            {{ diskInfo.transfermode }}
+          </ng-container>
+        </span>
+      </div>
+      <div class="row">
+        <span class="header">{{ 'Serial' | translate }}:</span>
+        <span *ngIf="!loading; else loaderSkel">
+          <ng-container *ngIf="diskInfo?.serial; else notAvailable">
+            {{ diskInfo.serial }}
+          </ng-container>
+        </span>
+      </div>
+      <div class="row">
+        <span class="header">{{ 'Model' | translate }}:</span>
+        <span *ngIf="!loading; else loaderSkel">
+          <ng-container *ngIf="diskInfo?.model; else notAvailable">
+            {{ diskInfo.model }}
+          </ng-container>
+        </span>
+      </div>
+      <div class="row">
+        <span class="header">{{ 'Rotation Rate' | translate }}:</span>
+        <span *ngIf="!loading; else loaderSkel">
+          <ng-container *ngIf="diskInfo?.rotationrate; else notAvailable">
+            {{ '{n} RPM' | translate: { n: diskInfo.rotationrate } }}
+          </ng-container>
+        </span>
+      </div>
+      <div class="row">
+        <span class="header">{{ 'Type' | translate }}:</span>
+        <span *ngIf="!loading; else loaderSkel">
+          <ng-container *ngIf="diskInfo?.type; else notAvailable">
+            {{ diskInfo.type }}
+          </ng-container>
+        </span>
+      </div>
+      <div class="row">
+        <span class="header">{{ 'HDD Standby' | translate }}:</span>
+        <span *ngIf="!loading; else loaderSkel">
+          <ng-container *ngIf="diskInfo?.hddstandby; else notAvailable">
+            {{ diskInfo.hddstandby }}
+          </ng-container>
+        </span>
+      </div>
+      <div class="row">
+        <span class="header">{{ 'Description' | translate }}:</span>
+        <span *ngIf="!loading; else loaderSkel">
+          <ng-container *ngIf="diskInfo?.description; else notAvailable">
+            {{ diskInfo.description }}
+          </ng-container>
+        </span>
+      </div>
+    </ng-container>
+  </mat-card-content>
+  <mat-card-actions *ngIf="loading || diskInfo">
+    <button
+      class="stroked-btn"
+      mat-stroked-button
+      [disabled]="!diskInfo"
+      (click)="onReplace()"
+    >{{ 'Replace' | translate }}</button>
+  </mat-card-actions>
+</mat-card>
+
+<ng-template #noDiskInfo>
+  <ix-entity-empty [conf]="emptyInfoConf"></ix-entity-empty>
+</ng-template>
+
+<ng-template #loaderSkel>
+  <ngx-skeleton-loader class="loader-skel"></ngx-skeleton-loader>
+</ng-template>
+
+<ng-template #notAvailable> 
+  {{ 'N/A' | translate }} 
+</ng-template>

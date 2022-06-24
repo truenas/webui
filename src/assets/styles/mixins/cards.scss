@@ -68,6 +68,15 @@
     cursor: pointer;
     text-decoration: underline;
   }
+
+  ngx-skeleton-loader {
+    display: inline-block;
+    width: 30%;
+
+    ::ng-deep .loader {
+      margin-bottom: 0;
+    }
+  }
 }
 
 @mixin resource-card {

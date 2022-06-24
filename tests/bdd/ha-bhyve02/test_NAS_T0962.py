@@ -207,8 +207,8 @@ def click_initiate_failover_click_the_confirm_checkbox_and_press_failover(driver
     assert wait_on_element(driver, 5, '//h1[text()="Initiate Failover"]')
     assert wait_on_element(driver, 5, '//mat-checkbox[contains(@class,"confirm-checkbox")]', 'clickable')
     driver.find_element_by_xpath('//mat-checkbox[contains(@class,"confirm-checkbox")]').click()
-    assert wait_on_element(driver, 5, '//button[.//text()="Failover"]', 'clickable')
-    driver.find_element_by_xpath('//button[.//text()="Failover"]').click()
+    assert wait_on_element(driver, 5, '//button[.//text()="FAILOVER"]', 'clickable')
+    driver.find_element_by_xpath('//button[.//text()="FAILOVER"]').click()
 
 
 @then('wait for the login page to appear')
@@ -245,9 +245,6 @@ def on_the_dashboard_wait_for_the_active_directory_service(driver):
     assert wait_on_element(driver, 180, '//button[@id="dirservices-manager"]')
     # Verify HA enabled again
     assert wait_on_element(driver, 120, '//mat-icon[@svgicon="ha_enabled"]')
-    # Wait for the badge of the task-manager to go away before going forward
-    no_badge = '//span[contains(@id,"mat-badge-content") and not(contains(text(),"0"))]'
-    assert wait_on_element_disappear(driver, 120, f'//button[@id="task-manager"]{no_badge}')
 
 
 @then('after click Storage on the left sidebar Storage')
