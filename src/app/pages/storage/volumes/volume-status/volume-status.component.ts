@@ -290,7 +290,10 @@ export class VolumeStatusComponent implements OnInit, AfterViewInit {
             } as ReplaceDiskDialogData,
           })
           .afterClosed()
-          .pipe(untilDestroyed(this))
+          .pipe(
+            filter(Boolean),
+            untilDestroyed(this),
+          )
           .subscribe(() => {
             this.getData();
             this.getUnusedDisk();

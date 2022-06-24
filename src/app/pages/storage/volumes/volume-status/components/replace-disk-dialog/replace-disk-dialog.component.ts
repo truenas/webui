@@ -7,7 +7,7 @@ import { map } from 'rxjs/operators';
 import helptext from 'app/helptext/storage/volumes/volume-status';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { DialogService, WebSocketService } from 'app/services';
+import { WebSocketService } from 'app/services';
 
 export interface ReplaceDiskDialogData {
   diskName: string;
@@ -41,7 +41,6 @@ export class ReplaceDiskDialogComponent {
     private ws: WebSocketService,
     private matDialog: MatDialog,
     private translate: TranslateService,
-    private dialogService: DialogService,
     private dialogRef: MatDialogRef<ReplaceDiskDialogComponent>,
     private snackbar: SnackbarService,
     @Inject(MAT_DIALOG_DATA) public data: ReplaceDiskDialogData,
@@ -61,7 +60,7 @@ export class ReplaceDiskDialogComponent {
     jobDialogRef.componentInstance.submit();
     jobDialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
       jobDialogRef.close(true);
-      this.dialogRef.close();
+      this.dialogRef.close(true);
       this.snackbar.success(
         this.translate.instant('Successfully replaced disk {disk}.', { disk: this.data.diskName }),
       );
