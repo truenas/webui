@@ -82,21 +82,20 @@ def the_users_page_should_open(driver):
 @then('On the right side of the table, click the Greater-Than-Sign for one of the users.')
 def on_the_right_side_of_the_table_click_the_greaterthansign_for_one_of_the_users(driver):
     """On the right side of the table, click the Greater-Than-Sign for one of the users.."""
-    assert wait_on_element(driver, 7, '//tr[@ix-auto="expander__ericbsd"]/td')
-    driver.find_element_by_xpath('//tr[@ix-auto="expander__ericbsd"]/td').click()
+    assert wait_on_element(driver, 7, '//tr[contains(.,"ericbsd")]/td', 'clickable')
+    driver.find_element_by_xpath('//tr[contains(.,"ericbsd")]/td').click()
 
 
 @then('The User Field should expand down to list further details.')
 def the_user_field_should_expand_down_to_list_further_details(driver):
     """The User Field should expand down to list further details.."""
-    assert wait_on_element(driver, 7, '//button[@ix-auto="button__EDIT_ericbsd"]')
-    driver.find_element_by_xpath('//button[@ix-auto="button__EDIT_ericbsd"]')
+    assert wait_on_element(driver, 7, '(//tr[contains(.,"ericbsd")]/following-sibling::tr)[1]//button[contains(.,"Edit")]', 'clickable')
 
 
 @then('Click the Edit button that appears')
 def click_the_edit_button_that_appears(driver):
     """Click the Edit button that appears."""
-    driver.find_element_by_xpath('//button[@ix-auto="button__EDIT_ericbsd"]').click()
+    driver.find_element_by_xpath('(//tr[contains(.,"ericbsd")]/following-sibling::tr)[1]//button[contains(.,"Edit")]').click()
 
 
 @then('The User Edit Page should open')
@@ -109,9 +108,8 @@ def the_user_edit_page_should_open(driver):
 @then('Enable Permit Sudo and click save')
 def enable_permit_sudo_and_click_save(driver):
     """Enable Permit Sudo and click save."""
-    element = driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]')
-    driver.execute_script("arguments[0].scrollIntoView();", element)
-    time.sleep(0.5)
+    assert wait_on_element(driver, 7, '//h4[contains(text(),"Identification")]')
+    assert wait_on_element(driver, 7, '//h4[contains(text(),"Authentication")]')
     assert wait_on_element(driver, 7, '//mat-checkbox[@ix-auto="checkbox__Permit Sudo"]', 'clickable')
     driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__Permit Sudo"]').click()
     assert wait_on_element(driver, 7, '//button[@ix-auto="button__SAVE"]', 'clickable')
@@ -128,17 +126,17 @@ def change_should_be_saved(driver):
 @then('Open the user drop down to verify the value has been changed')
 def open_the_user_drop_down_to_verify_the_value_has_been_changed(driver):
     """Open the user drop down to verify the value has been changed."""
-    assert wait_on_element(driver, 7, '//tr[@ix-auto="expander__ericbsd"]/td', 'clickable')
-    driver.find_element_by_xpath('//tr[@ix-auto="expander__ericbsd"]/td').click()
-    assert wait_on_element(driver, 7, '//button[@ix-auto="button__EDIT_ericbsd"]')
-    driver.find_element_by_xpath('//h4[contains(.,"Permit Sudo:")]')
+    assert wait_on_element(driver, 7, '//tr[contains(.,"ericbsd")]/td', 'clickable')
+    driver.find_element_by_xpath('//tr[contains(.,"ericbsd")]/td').click()
+    assert wait_on_element(driver, 7, '(//tr[contains(.,"ericbsd")]/following-sibling::tr)[1]//button[contains(.,"Edit")]')
+    assert wait_on_element(driver, 7, '//tr[contains(.,"ericbsd")]/following-sibling::tr//dt[contains(.,"Permit Sudo:")]')
 
 
 @then('Updated value should be visible')
 def updated_value_should_be_visible(driver):
     """Updated value should be visible."""
-    assert wait_on_element(driver, 7, '//h4[contains(.,"Permit Sudo:")]/../div/p')
-    element_text = driver.find_element_by_xpath('//h4[contains(.,"Permit Sudo:")]/../div/p').text
+    assert wait_on_element(driver, 7, '//tr[contains(.,"ericbsd")]/following-sibling::tr//dt[contains(.,"Permit Sudo:")]/../dd')
+    element_text = driver.find_element_by_xpath('//tr[contains(.,"ericbsd")]/following-sibling::tr//dt[contains(.,"Permit Sudo:")]/../dd').text
     assert element_text == 'true'
 
 
