@@ -5,7 +5,7 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
-import { PoolScrub } from 'app/interfaces/pool-scrub.interface';
+import { PoolScrubTask } from 'app/interfaces/pool-scrub.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
@@ -29,7 +29,7 @@ describe('ScrubTaskFormComponent', () => {
       dow: '7',
       month: '*',
     },
-  } as PoolScrub;
+  } as PoolScrubTask;
 
   let spectator: Spectator<ScrubTaskFormComponent>;
   let loader: HarnessLoader;

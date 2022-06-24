@@ -79,20 +79,20 @@ def the_users_page_should_open(driver):
 @then('On the right side of the table, click the Greater-Than-Sign for one of the users')
 def on_the_right_side_of_the_table_click_the_greaterthansign_for_one_of_the_users(driver):
     """On the right side of the table, click the Greater-Than-Sign for one of the users."""
-    assert wait_on_element(driver, 7, '//tr[@ix-auto="expander__ericbsd"]/td', 'clickable')
-    driver.find_element_by_xpath('//tr[@ix-auto="expander__ericbsd"]/td').click()
+    assert wait_on_element(driver, 7, '//tr[contains(.,"ericbsd")]/td', 'clickable')
+    driver.find_element_by_xpath('//tr[contains(.,"ericbsd")]/td').click()
 
 
 @then('The User Field should expand down to list further details')
 def the_user_field_should_expand_down_to_list_further_details(driver):
     """The User Field should expand down to list further details."""
-    assert wait_on_element(driver, 7, '//button[@ix-auto="button__EDIT_ericbsd"]', 'clickable')
+    assert wait_on_element(driver, 7, '(//tr[contains(.,"ericbsd")]/following-sibling::tr)[1]//button[contains(.,"Edit")]', 'clickable')
 
 
 @then('Click the Edit button that appears')
 def click_the_edit_button_that_appears(driver):
     """Click the Edit button that appears."""
-    driver.find_element_by_xpath('//button[@ix-auto="button__EDIT_ericbsd"]').click()
+    driver.find_element_by_xpath('(//tr[contains(.,"ericbsd")]/following-sibling::tr)[1]//button[contains(.,"Edit")]').click()
 
 
 @then('The User Edit Page should open')
@@ -126,13 +126,13 @@ def change_should_be_saved(driver):
 @then('Open the user drop down to verify the shell was changed')
 def open_the_user_drop_down_to_verify_the_shell_was_changed(driver):
     """Open the user drop down to verify the shell was changed."""
-    assert wait_on_element(driver, 7, '//tr[@ix-auto="expander__ericbsd"]/td', 'clickable')
-    driver.find_element_by_xpath('//tr[@ix-auto="expander__ericbsd"]/td').click()
-    assert wait_on_element(driver, 7, '//button[@ix-auto="button__EDIT_ericbsd"]')
-    driver.find_element_by_xpath('//h4[contains(.,"Shell:")]')
+    assert wait_on_element(driver, 7, '//tr[contains(.,"ericbsd")]/td', 'clickable')
+    driver.find_element_by_xpath('//tr[contains(.,"ericbsd")]/td').click()
+    assert wait_on_element(driver, 7, '(//tr[contains(.,"ericbsd")]/following-sibling::tr)[1]//button[contains(.,"Edit")]')
+    driver.find_element_by_xpath('//dt[contains(.,"Shell:")]')
 
 
 @then('Updated value should be visible')
 def updated_value_should_be_visible(driver):
     """Updated value should be visible."""
-    driver.find_element_by_xpath('//p[contains(.,"/bin/sh")]')
+    driver.find_element_by_xpath('//dd[contains(.,"/bin/sh")]')

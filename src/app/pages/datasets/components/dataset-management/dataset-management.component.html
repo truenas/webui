@@ -27,8 +27,8 @@
             ixTreeNodeToggle
             [ixTreeNodeToggleRecursive]="false"
             [ixTreeNodeDefDataSource]="dataSource"
-            [class.selected]="dataset.name === selectedDataset?.name"
             [routerLink]="['/datasets', dataset.id]"
+            routerLinkActive="selected"
           >
             <button mat-icon-button disabled></button>
             <ix-dataset-node [dataset]="dataset"></ix-dataset-node>
@@ -41,7 +41,7 @@
             <div
               class="dataset-nested-tree-root-node"
               [routerLink]="['/datasets', dataset.id]"
-              [class.selected]="dataset.name === selectedDataset?.name"
+              routerLinkActive="selected"
             >
               <button
                 mat-icon-button
