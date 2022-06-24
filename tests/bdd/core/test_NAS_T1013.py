@@ -60,9 +60,9 @@ def you_should_be_on_the_dashboard(driver):
 @then('click on Sharing on the side menu and click Windows Shares')
 def click_on_sharing_on_the_side_menu_and_click_windows_shares(driver):
     """click on Sharing on the side menu and click Windows Shares."""
-    assert wait_on_element(driver, 7, '//mat-list-item[@ix-auto="option__Sharing"]')
+    assert wait_on_element(driver, 7, '//mat-list-item[@ix-auto="option__Sharing"]', 'clickable')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Sharing"]').click()
-    assert wait_on_element(driver, 7, '//mat-list-item[@ix-auto="option__Windows Shares (SMB)"]')
+    assert wait_on_element(driver, 7, '//mat-list-item[@ix-auto="option__Windows Shares (SMB)"]', 'clickable')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Windows Shares (SMB)"]').click()
 
 
@@ -70,7 +70,7 @@ def click_on_sharing_on_the_side_menu_and_click_windows_shares(driver):
 def when_the_windows_shares_page_appears_click_add(driver):
     """when the Windows Shares page appears, click Add."""
     assert wait_on_element(driver, 7, '//div[contains(.,"Samba")]')
-    assert wait_on_element(driver, 7, '//button[@ix-auto="button__Samba_ADD"]')
+    assert wait_on_element(driver, 7, '//button[@ix-auto="button__Samba_ADD"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__Samba_ADD"]').click()
     assert wait_on_element(driver, 7, '//h4[contains(.,"Basic")]')
 
@@ -80,7 +80,7 @@ def set_path_to_the_ldap_dataset_at_mntdozermy_ldap_dataset(driver, path):
     """set Path to the LDAP dataset at /mnt/dozer/my_ldap_dataset."""
     global smb_path
     smb_path = path
-    assert wait_on_element(driver, 7, '//input[@ix-auto="input__path"]')
+    assert wait_on_element(driver, 7, '//input[@ix-auto="input__path"]', 'inputable')
     driver.find_element_by_xpath('//input[@ix-auto="input__path"]').clear()
     driver.find_element_by_xpath('//input[@ix-auto="input__path"]').send_keys(path)
 
@@ -88,9 +88,10 @@ def set_path_to_the_ldap_dataset_at_mntdozermy_ldap_dataset(driver, path):
 @then(parsers.parse('input {smbname} as name, click to enable'))
 def input_ldapsmbshare_as_name_click_to_enable(driver, smbname):
     """input ldapsmbshare as name, click to enable."""
-    assert wait_on_element(driver, 7, '//input[@ix-auto="input__Name"]')
+    assert wait_on_element(driver, 7, '//input[@ix-auto="input__Name"]', 'clickable')
     driver.find_element_by_xpath('//input[@ix-auto="input__Name"]').clear()
     driver.find_element_by_xpath('//input[@ix-auto="input__Name"]').send_keys(smbname)
+    assert wait_on_element(driver, 7, '//mat-checkbox[@ix-auto="checkbox__Enabled"]', 'clickable')
     checkbox_checked = attribute_value_exist(driver, '//mat-checkbox[@ix-auto="checkbox__Enabled"]', 'class', 'mat-checkbox-checked')
     if not checkbox_checked:
         driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__Enabled"]').click()
@@ -100,7 +101,7 @@ def input_ldapsmbshare_as_name_click_to_enable(driver, smbname):
 @then(parsers.parse('input "{description}" as the description, click Summit'))
 def input_my_ldap_smb_test_share_as_the_description_click_summit(driver, description):
     """input "My LDAP smb test share" as the description, click Summit."""
-    assert wait_on_element(driver, 7, '//input[@ix-auto="input__Description"]')
+    assert wait_on_element(driver, 7, '//input[@ix-auto="input__Description"]', 'clickable')
     driver.find_element_by_xpath('//input[@ix-auto="input__Description"]').clear()
     driver.find_element_by_xpath('//input[@ix-auto="input__Description"]').send_keys(description)
     assert wait_on_element(driver, 7, '//button[@ix-auto="button__SUBMIT"]', 'clickable')
@@ -148,7 +149,7 @@ def if_the_smb_service_is_not_started_start_the_service(driver):
 def send_a_file_to_the_share_with_ip_ldapsmbshare_and_ldap_user_ldap_password(driver, nas_ip, smbname, ldap_user, ldap_password):
     """send a file to the share with ip/ldapsmbshare and ldap_user%ldap_password."""
     run_cmd('touch testfile.txt')
-    results = run_cmd(f'smbclient //{nas_ip}/{smbname} -W AD01 -U {ldap_user}%{ldap_password} -c "put testfile.txt testfile.txt"')
+    results = run_cmd(f'smbclient //{nas_ip}/{smbname} -U {ldap_user}%{ldap_password} -c "put testfile.txt testfile.txt"')
     assert results['result'], results['output']
     run_cmd('rm testfile.txt')
 

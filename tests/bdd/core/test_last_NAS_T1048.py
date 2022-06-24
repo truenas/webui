@@ -102,6 +102,7 @@ def reboot_the_system_wait_for_login_and_login(driver):
     """reboot the system, wait for login, and login."""
     assert wait_on_element(driver, 7, '//button[@ix-auto="button__power"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__power"]').click()
+    assert wait_on_element(driver, 7, '//button[@ix-auto="option__Shut Down"]', 'clickable')
     assert wait_on_element(driver, 7, '//button[@ix-auto="option__Restart"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="option__Restart"]').click()
     assert wait_on_element(driver, 7, '//h1[contains(.,"Restart")]')
@@ -131,10 +132,7 @@ def on_the_dashboard_click_on_system_on_the_side_menu_click_on_boot(driver):
     assert wait_on_element(driver, 180, '//span[contains(.,"System Information")]')
     assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__System"]', 'clickable')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__System"]').click()
-    assert wait_on_element(driver, 7, '//mat-list-item[@ix-auto="option__Boot"]')
-    element = driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__System"]')
-    class_attribute = element.get_attribute('class')
-    assert 'open' in class_attribute, class_attribute
+    assert wait_on_element(driver, 7, '//mat-list-item[@ix-auto="option__Boot"]', 'clickable')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Boot"]').click()
     assert wait_on_element(driver, 7, '//li[contains(.,"Boot")]')
 

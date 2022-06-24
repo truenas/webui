@@ -15,6 +15,8 @@ from pytest_bdd import (
     when,
     parsers
 )
+import pytest
+pytestmark = [pytest.mark.debug_test]
 
 
 @scenario('features/NAS-T1143.feature', 'Verify Backblaze B2 Cloud Sync task works')
@@ -41,6 +43,7 @@ def the_browser_is_open_on_the_truenas_url_and_logged_in(driver, nas_ip, root_pa
         assert wait_on_element(driver, 10, '//span[contains(.,"root")]')
         element = driver.find_element_by_xpath('//span[contains(.,"root")]')
         driver.execute_script("arguments[0].scrollIntoView();", element)
+        time.sleep(0.5)
         assert wait_on_element(driver, 5, '//mat-list-item[@ix-auto="option__Dashboard"]', 'clickable')
         driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
 
@@ -61,6 +64,8 @@ def click_on_the_system_pool_three_dots_button_select_add_dataset(driver):
     assert wait_on_element(driver, 5, '//div[contains(.,"Pools")]')
     assert wait_on_element(driver, 5, '//mat-icon[@id="actions_menu_button__system"]', 'clickable')
     driver.find_element_by_xpath('//mat-icon[@id="actions_menu_button__system"]').click()
+    assert wait_on_element(driver, 7, '//div[@class="title" and contains(.,"Dataset Actions")]')
+    assert wait_on_element(driver, 5, '//button[@ix-auto="action__system_Create Snapshot"]', 'clickable')
     assert wait_on_element(driver, 5, '//button[@ix-auto="action__system_Add Dataset"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="action__system_Add Dataset"]').click()
     assert wait_on_element(driver, 5, '//h4[contains(.,"Name and Options")]')
@@ -135,8 +140,10 @@ def click_on_Browser_Files_click_on_bucket_then_click_on_the_test_folder(driver,
 @then('verify there is no file in the bucket if so delete it')
 def verify_there_is_no_file_in_the_bucket_if_so_delete_it(driver):
     """verify there is no file in the bucket if so delete it."""
-    if wait_on_element(driver, 5, '//span[text()="music"]'):
-        assert wait_on_element(driver, 5, '//div[@class="b2-browse-checkbox"]//img[@name="allSelected"]', 'clickable')
+    assert wait_on_element(driver, 7, '//div[@class="b2-browse-checkbox"]//img[@name="allSelected"]', 'clickable')
+    # Get the list of checkbox if there is more than one selected all and delete
+    checkboxs = driver.find_elements_by_xpath('//div[@class="b2-browse-checkbox"]')
+    if len(checkboxs) > 1:
         driver.find_element_by_xpath('//div[@class="b2-browse-checkbox"]//img[@name="allSelected"]').click()
         assert wait_on_element(driver, 5, '//a[@id="delete-button"]', 'clickable')
         driver.find_element_by_xpath('//a[@id="delete-button"]').click()
@@ -225,7 +232,7 @@ def expand_the_task_on_the_nas_ui_and_click_run_now(driver):
     assert wait_on_element(driver, 5, '//h1[text()="Run Now"]')
     assert wait_on_element(driver, 5, '//button[@ix-auto="button__CONTINUE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__CONTINUE"]').click()
-    assert wait_on_element(driver, 5, '//h1[contains(text(),"Task Started")]')
+    assert wait_on_element(driver, 7, '//h1[contains(text(),"Task Started")]')
     assert wait_on_element(driver, 5, '//button[@ix-auto="button__CLOSE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
     assert wait_on_element_disappear(driver, 30, '//h1[contains(text(),"Task Started")]')
@@ -267,7 +274,8 @@ def on_the_nas_cloud_sync_task_tab_click_edit(driver):
     assert wait_on_element(driver, 5, '//button[@ix-auto="button___edit"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button___edit"]').click()
     assert wait_on_element(driver, 5, '//h4[contains(.,"Transfer")]')
-    time.sleep(1)
+    assert wait_on_element(driver, 5, '//h4[contains(.,"Advanced Options")]')
+    time.sleep(0.5)
 
 
 @then('select PUSH as the Direction then under Transfer Mode, select COPY')
@@ -525,7 +533,7 @@ def on_the_nas_cloud_sync_task_tab_click_run_now(driver):
     assert wait_on_element(driver, 5, '//h1[text()="Run Now"]')
     assert wait_on_element(driver, 5, '//button[@ix-auto="button__CONTINUE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__CONTINUE"]').click()
-    assert wait_on_element(driver, 5, '//h1[contains(text(),"Task Started")]')
+    assert wait_on_element(driver, 7, '//h1[contains(text(),"Task Started")]')
     assert wait_on_element(driver, 5, '//button[@ix-auto="button__CLOSE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
     assert wait_on_element_disappear(driver, 30, '//h1[contains(text(),"Task Started")]')

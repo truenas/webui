@@ -14,9 +14,6 @@ from pytest_bdd import (
     then,
     when
 )
-import pytest
-
-pytestmark = [pytest.mark.debug_test]
 
 
 @scenario('features/NAS-T1105.feature', 'Verify the Nextcloud plugin functions')

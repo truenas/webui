@@ -15,6 +15,9 @@ from pytest_bdd import (
     parsers
 )
 
+import pytest
+pytestmark = [pytest.mark.debug_test]
+
 
 @scenario('features/NAS-T1135.feature', 'Verify Dropbox credentials can be added')
 def test_verify_dropbox_credentials_can_be_added(driver):
@@ -40,6 +43,7 @@ def the_browser_is_open_on_the_truenas_url_and_logged_in(driver, nas_ip, root_pa
         assert wait_on_element(driver, 10, '//span[contains(.,"root")]')
         element = driver.find_element_by_xpath('//span[contains(.,"root")]')
         driver.execute_script("arguments[0].scrollIntoView();", element)
+        time.sleep(0.5)
         assert wait_on_element(driver, 5, '//mat-list-item[@ix-auto="option__Dashboard"]', 'clickable')
         driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
 

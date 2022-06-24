@@ -145,6 +145,7 @@ def reboot_the_system_and_try_to_login_using_the_previous_password_testing(drive
     assert wait_on_element(driver, 10, '//span[contains(.,"System Information")]')
     assert wait_on_element(driver, 7, '//button[@ix-auto="button__power"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__power"]').click()
+    assert wait_on_element(driver, 7, '//button[@ix-auto="option__Shut Down"]', 'clickable')
     assert wait_on_element(driver, 7, '//button[@ix-auto="option__Restart"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="option__Restart"]').click()
     assert wait_on_element(driver, 7, '//h1[contains(.,"Restart")]')

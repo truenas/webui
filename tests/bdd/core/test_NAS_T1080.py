@@ -63,6 +63,7 @@ def the_browser_is_open_the_freenas_url_and_logged_in(driver, nas_ip, root_passw
         assert wait_on_element(driver, 10, '//span[contains(.,"root")]')
         element = driver.find_element_by_xpath('//span[contains(.,"root")]')
         driver.execute_script("arguments[0].scrollIntoView();", element)
+        time.sleep(0.5)
         assert wait_on_element(driver, 5, '//mat-list-item[@ix-auto="option__Dashboard"]', 'clickable')
         driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
 
@@ -210,6 +211,8 @@ def click_on_the_three_dots_button_for_the_encrypted_pool_select_add_dataset(dri
     """click on the three dots button for the encrypted pool, select Add Dataset."""
     assert wait_on_element(driver, 7, '//mat-icon[@id="actions_menu_button__encrypted"]', 'clickable')
     driver.find_element_by_xpath('//mat-icon[@id="actions_menu_button__encrypted"]').click()
+    assert wait_on_element(driver, 7, '//div[@class="title" and contains(.,"Dataset Actions")]')
+    assert wait_on_element(driver, 5, '//button[@ix-auto="action__encrypted_Create Snapshot"]', 'clickable')
     assert wait_on_element(driver, 7, '//button[@ix-auto="action__encrypted_Add Dataset"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="action__encrypted_Add Dataset"]').click()
 
@@ -294,6 +297,7 @@ def click_the_power_button_and_click_restart_to_reboot_truenas(driver):
     """click the power button and click Restart to reboot TrueNAS."""
     assert wait_on_element(driver, 7, '//button[@ix-auto="button__power"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__power"]').click()
+    assert wait_on_element(driver, 7, '//button[@ix-auto="option__Shut Down"]', 'clickable')
     assert wait_on_element(driver, 7, '//button[@ix-auto="option__Restart"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="option__Restart"]').click()
     assert wait_on_element(driver, 7, '//h1[contains(.,"Restart")]')
@@ -324,6 +328,7 @@ def wait_for_the_login_ui_to_comeback_then_login(driver):
 def confirm_the_pool_is_locked_after_the_reboot(driver):
     """confirm the pool is locked after the reboot."""
     assert wait_on_element(driver, 10, '//li[contains(.,"Dashboard")]')
+    assert wait_on_element(driver, 30, '//span[contains(text(),"System Information")]')
     assert wait_on_element(driver, 5, '//mat-list-item[@ix-auto="option__Storage"]', 'clickable')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Storage"]').click()
     assert wait_on_element(driver, 5, '//mat-list-item[@ix-auto="option__Pools"]', 'clickable')

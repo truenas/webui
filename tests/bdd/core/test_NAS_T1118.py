@@ -1,6 +1,7 @@
 # coding=utf-8
 """Core UI feature tests."""
 
+import time
 from selenium.webdriver.common.keys import Keys
 from function import (
     wait_on_element,
@@ -14,6 +15,8 @@ from pytest_bdd import (
     when,
     parsers
 )
+import pytest
+pytestmark = [pytest.mark.debug_test]
 
 
 @scenario('features/NAS-T1118.feature', 'Verify Amazon S3 credentials can be added')
@@ -40,6 +43,7 @@ def the_browser_is_open_on_the_truenas_url_and_logged_in(driver, nas_ip, root_pa
         assert wait_on_element(driver, 10, '//span[contains(.,"root")]')
         element = driver.find_element_by_xpath('//span[contains(.,"root")]')
         driver.execute_script("arguments[0].scrollIntoView();", element)
+        time.sleep(0.5)
         assert wait_on_element(driver, 5, '//mat-list-item[@ix-auto="option__Dashboard"]', 'clickable')
         driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
 

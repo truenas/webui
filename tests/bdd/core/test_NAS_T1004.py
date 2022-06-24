@@ -76,9 +76,11 @@ def the_pools_page_should_appear(driver):
 @then('click on the system 3 dots button, and select Add Dataset')
 def click_on_the_system_3_dots_button_and_select_add_dataset(driver):
     """click on the system 3 dots button, and select Add Dataset."""
-    assert wait_on_element(driver, 7, '//mat-icon[@id="actions_menu_button__system"]')
+    assert wait_on_element(driver, 7, '//mat-icon[@id="actions_menu_button__system"]', 'clickable')
     driver.find_element_by_xpath('//mat-icon[@id="actions_menu_button__system"]').click()
-    assert wait_on_element(driver, 7, '//button[@ix-auto="action__system_Add Dataset"]')
+    assert wait_on_element(driver, 7, '//div[@class="title" and contains(.,"Dataset Actions")]')
+    assert wait_on_element(driver, 5, '//button[@ix-auto="action__system_Create Snapshot"]', 'clickable')
+    assert wait_on_element(driver, 5, '//button[@ix-auto="action__system_Add Dataset"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="action__system_Add Dataset"]').click()
 
 

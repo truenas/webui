@@ -24,6 +24,8 @@ from pytest_bdd import (
     when,
     parsers
 )
+import pytest
+pytestmark = [pytest.mark.debug_test]
 
 
 @scenario('features/NAS-T1121.feature', 'Verify Amazon S3 Cloud Sync task works')
@@ -50,6 +52,7 @@ def the_browser_is_open_on_the_truenas_url_and_logged_in(driver, nas_ip, root_pa
         assert wait_on_element(driver, 10, '//span[contains(.,"root")]')
         element = driver.find_element_by_xpath('//span[contains(.,"root")]')
         driver.execute_script("arguments[0].scrollIntoView();", element)
+        time.sleep(0.5)
         assert wait_on_element(driver, 5, '//mat-list-item[@ix-auto="option__Dashboard"]', 'clickable')
         driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
 
@@ -70,6 +73,8 @@ def click_on_the_tank_pool_three_dots_button_select_add_dataset(driver):
     assert wait_on_element(driver, 5, '//div[contains(.,"Pools")]')
     assert wait_on_element(driver, 5, '//mat-icon[@id="actions_menu_button__tank"]', 'clickable')
     driver.find_element_by_xpath('//mat-icon[@id="actions_menu_button__tank"]').click()
+    assert wait_on_element(driver, 7, '//div[@class="title" and contains(.,"Dataset Actions")]')
+    assert wait_on_element(driver, 5, '//button[@ix-auto="action__tank_Create Snapshot"]', 'clickable')
     assert wait_on_element(driver, 5, '//button[@ix-auto="action__tank_Add Dataset"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="action__tank_Add Dataset"]').click()
     assert wait_on_element(driver, 5, '//h4[contains(.,"Name and Options")]')
@@ -219,7 +224,7 @@ def on_the_nas_tab_expand_the_task_on_the_nas_ui_and_click_run_now(driver):
     assert wait_on_element(driver, 5, '//h1[text()="Test Cloud Sync" or text()="Run Now"]')
     assert wait_on_element(driver, 5, '//button[@ix-auto="button__CONTINUE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__CONTINUE"]').click()
-    assert wait_on_element(driver, 5, '//h1[contains(text(),"Task Started")]')
+    assert wait_on_element(driver, 7, '//h1[contains(text(),"Task Started")]')
     assert wait_on_element(driver, 5, '//button[@ix-auto="button__CLOSE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
     assert wait_on_element_disappear(driver, 30, '//h1[contains(text(),"Task Started")]')
@@ -273,7 +278,7 @@ def on_the_nas_tad_on_the_cloud_sync_task_click_run_now(driver):
     assert wait_on_element(driver, 5, '//h1[text()="Run Now"]')
     assert wait_on_element(driver, 5, '//button[@ix-auto="button__CONTINUE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__CONTINUE"]').click()
-    assert wait_on_element(driver, 5, '//h1[contains(text(),"Task Started")]')
+    assert wait_on_element(driver, 7, '//h1[contains(text(),"Task Started")]')
     assert wait_on_element(driver, 5, '//button[@ix-auto="button__CLOSE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
     assert wait_on_element_disappear(driver, 30, '//h1[contains(text(),"Task Started")]')
@@ -313,7 +318,8 @@ def on_the_cloud_sync_task_and_click_edit(driver):
     assert wait_on_element(driver, 5, '//button[@ix-auto="button___edit"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button___edit"]').click()
     assert wait_on_element(driver, 5, '//h4[contains(.,"Transfer")]')
-    time.sleep(1)
+    assert wait_on_element(driver, 5, '//h4[contains(.,"Advanced Options")]')
+    time.sleep(0.5)
 
 
 @then('under Transfer Mode, select MOVE, click Save')
@@ -560,7 +566,7 @@ def on_the_nas_tab_expand_the_task_and_click_run_now(driver):
     assert wait_on_element(driver, 5, '//h1[text()="Run Now"]')
     assert wait_on_element(driver, 5, '//button[@ix-auto="button__CONTINUE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__CONTINUE"]').click()
-    assert wait_on_element(driver, 5, '//h1[contains(text(),"Task Started")]')
+    assert wait_on_element(driver, 7, '//h1[contains(text(),"Task Started")]')
     assert wait_on_element(driver, 5, '//button[@ix-auto="button__CLOSE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
     assert wait_on_element_disappear(driver, 30, '//h1[contains(text(),"Task Started")]')
@@ -641,7 +647,7 @@ def delete_the_file_from_the_dataset_and_click_run_now(driver, nas_ip):
     assert wait_on_element(driver, 5, '//h1[text()="Run Now"]')
     assert wait_on_element(driver, 5, '//button[@ix-auto="button__CONTINUE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__CONTINUE"]').click()
-    assert wait_on_element(driver, 5, '//h1[contains(text(),"Task Started")]')
+    assert wait_on_element(driver, 7, '//h1[contains(text(),"Task Started")]')
     assert wait_on_element(driver, 5, '//button[@ix-auto="button__CLOSE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
     assert wait_on_element_disappear(driver, 30, '//h1[contains(text(),"Task Started")]')
@@ -676,7 +682,7 @@ def delete_the_folder_from_the_dataset_then_click_run_now(driver, nas_ip):
     assert wait_on_element(driver, 5, '//h1[text()="Run Now"]')
     assert wait_on_element(driver, 5, '//button[@ix-auto="button__CONTINUE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__CONTINUE"]').click()
-    assert wait_on_element(driver, 5, '//h1[contains(text(),"Task Started")]')
+    assert wait_on_element(driver, 7, '//h1[contains(text(),"Task Started")]')
     assert wait_on_element(driver, 5, '//button[@ix-auto="button__CLOSE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
     assert wait_on_element_disappear(driver, 30, '//h1[contains(text(),"Task Started")]')
