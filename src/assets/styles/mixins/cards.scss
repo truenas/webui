@@ -43,6 +43,7 @@
 }
 
 @mixin details-card-item {
+  align-items: center;
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
@@ -60,6 +61,7 @@
 
   .value {
     font-weight: normal;
+    margin-right: 5px;
     white-space: nowrap;
   }
 
@@ -76,6 +78,7 @@
 
   ngx-skeleton-loader {
     display: inline-block;
+    height: 20px;
     width: 30%;
 
     ::ng-deep .loader {
