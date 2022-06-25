@@ -19,12 +19,7 @@
     </div></mat-card-content></mat-card>
 </div>
 
-<div class="resource-section">
-  <h2 class="title">{{ 'Unused Resources' | translate }}</h2>
-  <div class="cards">
-    <ix-unassigned-disk [pools]="pools"></ix-unassigned-disk>
-  </div>
-</div>
+<ix-unused-resources [pools]="pools"></ix-unused-resources>
 
 <div *ngFor="let pool of pools" class="pool">
   <h2 class="pool-name">{{ pool.name }}</h2>

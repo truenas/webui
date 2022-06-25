@@ -16,24 +16,6 @@
   }
 }
 
-.resource-section {
-  color: var(--fg2);
-  padding: 1rem 0;
-  
-  .title {
-    margin-bottom: 0.5rem;
-  }
-
-  .cards {
-    gap: 16px;
-
-    > * {
-      max-width: 360px;
-      min-width: 360px;
-    }
-  }
-}
-
 .pool {
   margin-bottom: 20px;
 

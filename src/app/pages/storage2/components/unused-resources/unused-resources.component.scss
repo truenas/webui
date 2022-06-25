@@ -1,0 +1,20 @@
+.resource-section {
+  color: var(--fg2);
+  padding: 1rem 0;
+  
+  .title {
+    margin-bottom: 0.5rem;
+  }
+}
+
+.cards {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+
+  > * {
+    flex: 1;
+    max-width: 360px;
+    min-width: 360px;
+  }
+}

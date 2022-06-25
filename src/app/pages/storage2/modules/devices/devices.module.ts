@@ -5,7 +5,6 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatDialogModule } from '@angular/material/dialog';
-import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
 import { RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
@@ -15,9 +14,6 @@ import { AppCommonModule } from 'app/modules/common/app-common.module';
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxTreeModule } from 'app/modules/ix-tree/ix-tree.module';
-import {
-  ManageUnassignedDiskDialogComponent,
-} from 'app/pages/storage2/components/unassigned-disk/manage-unassigned-disk-dialog/manage-unassigned-disk-dialog.component';
 import { DevicesComponent } from 'app/pages/storage2/modules/devices/components/devices/devices.component';
 import {
   DiskDetailsPanelComponent,
@@ -42,7 +38,6 @@ import { routes } from 'app/pages/storage2/modules/devices/devices.routing';
     MatButtonModule,
     MatCardModule,
     MatDialogModule,
-    MatDividerModule,
     MatIconModule,
     NgxFilesizeModule,
     NgxSkeletonLoaderModule.forRoot({
@@ -61,7 +56,6 @@ import { routes } from 'app/pages/storage2/modules/devices/devices.routing';
     DiskInfoCardComponent,
     HardwareDiskEncryptionComponent,
     ManageDiskSedDialogComponent,
-    ManageUnassignedDiskDialogComponent,
   ],
 })
 export class DevicesModule {

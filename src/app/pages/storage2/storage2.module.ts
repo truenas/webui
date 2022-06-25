@@ -6,6 +6,8 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatOptionModule } from '@angular/material/core';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatDividerModule } from '@angular/material/divider';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
@@ -30,7 +32,11 @@ import { ImportPoolComponent } from 'app/pages/storage2/components/import-pool/i
 import { ManagerComponent } from 'app/pages/storage2/components/manager/manager.component';
 import { VdevComponent } from 'app/pages/storage2/components/manager/vdev/vdev.component';
 import { PoolsDashboardComponent } from 'app/pages/storage2/components/pools-dashboard/pools-dashboard.component';
-import { UnassignedDiskComponent } from 'app/pages/storage2/components/unassigned-disk/unassigned-disk.component';
+import {
+  ManageUnusedDiskDialogComponent,
+} from 'app/pages/storage2/components/unused-disk-card/manage-unused-disk-dialog/manage-unused-disk-dialog.component';
+import { UnusedDiskCardComponent } from 'app/pages/storage2/components/unused-disk-card/unused-disk-card.component';
+import { UnusedResourcesComponent } from 'app/pages/storage2/components/unused-resources/unused-resources.component';
 import { routing } from 'app/pages/storage2/storage2.routing';
 import { ZfsHealthCardComponent } from './components/zfs-health-card/zfs-health-card.component';
 
@@ -57,6 +63,8 @@ import { ZfsHealthCardComponent } from './components/zfs-health-card/zfs-health-
     MatCheckboxModule,
     MatSelectModule,
     MatMenuModule,
+    MatDialogModule,
+    MatDividerModule,
     CastModule,
     CommonModule,
     MatInputModule,
@@ -71,8 +79,10 @@ import { ZfsHealthCardComponent } from './components/zfs-health-card/zfs-health-
     ImportPoolComponent,
     VdevComponent,
     ManagerComponent,
+    ManageUnusedDiskDialogComponent,
     ZfsHealthCardComponent,
-    UnassignedDiskComponent,
+    UnusedDiskCardComponent,
+    UnusedResourcesComponent,
   ],
   providers: [
     FormatDateTimePipe,
