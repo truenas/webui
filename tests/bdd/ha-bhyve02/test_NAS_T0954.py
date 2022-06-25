@@ -82,20 +82,20 @@ def the_users_page_should_open(driver):
 @then('On the right side of the table, click the expand arrow for one of the users')
 def on_the_right_side_of_the_table_click_the_expand_arrow_for_one_of_the_users(driver):
     """On the right side of the table, click the expand arrow for one of the users."""
-    assert wait_on_element(driver, 7, '//tr[@ix-auto="expander__ericbsd"]/td', 'clickable')
-    driver.find_element_by_xpath('//tr[@ix-auto="expander__ericbsd"]/td').click()
+    assert wait_on_element(driver, 7, '//tr[contains(.,"ericbsd")]/td', 'clickable')
+    driver.find_element_by_xpath('//tr[contains(.,"ericbsd")]/td').click()
 
 
 @then('The User Field should expand down to list further details')
 def the_user_field_should_expand_down_to_list_further_details(driver):
     """The User Field should expand down to list further details."""
-    assert wait_on_element(driver, 7, '//button[@ix-auto="button__EDIT_ericbsd"]', 'clickable')
+    assert wait_on_element(driver, 7, '(//tr[contains(.,"ericbsd")]/following-sibling::tr)[1]//button[contains(.,"Edit")]', 'clickable')
 
 
 @then('Click the Edit button that appears')
 def click_the_edit_button_that_appears(driver):
     """Click the Edit button that appears."""
-    driver.find_element_by_xpath('//button[@ix-auto="button__EDIT_ericbsd"]').click()
+    driver.find_element_by_xpath('(//tr[contains(.,"ericbsd")]/following-sibling::tr)[1]//button[contains(.,"Edit")]').click()
 
 
 @then('The User Edit Page should open')
@@ -108,6 +108,7 @@ def the_user_edit_page_should_open(driver):
 @then('Change "Disable Password" to No and click save')
 def change_disable_password_to_no_and_click_save(driver):
     """Change "Disable Password" to No and click save."""
+    assert wait_on_element(driver, 7, '//h4[contains(.,"Identification")]')
     assert wait_on_element(driver, 7, '//label[contains(.,"Auxiliary Groups")]')
     element = driver.find_element_by_xpath('//label[contains(.,"Auxiliary Groups")]')
     driver.execute_script("arguments[0].scrollIntoView();", element)
@@ -130,16 +131,16 @@ def change_should_be_saved(driver):
 @then('Open the user drop down to verify the user Disable Password is false')
 def open_the_user_drop_down_to_verify_the_user_disable_password_is_false(driver):
     """Open the user drop down to verify the user Disable Password is false."""
-    assert wait_on_element(driver, 5, '//tr[@ix-auto="expander__ericbsd"]/td', 'clickable')
-    driver.find_element_by_xpath('//tr[@ix-auto="expander__ericbsd"]/td').click()
-    assert wait_on_element(driver, 7, '//button[@ix-auto="button__EDIT_ericbsd"]')
-    driver.find_element_by_xpath('//h4[contains(.,"Password Disabled:")]')
+    assert wait_on_element(driver, 5, '//tr[contains(.,"ericbsd")]/td', 'clickable')
+    driver.find_element_by_xpath('//tr[contains(.,"ericbsd")]/td').click()
+    assert wait_on_element(driver, 7, '(//tr[contains(.,"ericbsd")]/following-sibling::tr)[1]//button[contains(.,"Edit")]')
+    assert wait_on_element(driver, 7, '(//tr[contains(.,"ericbsd")]/following-sibling::tr)[1]//dt[contains(.,"Password Disabled:")]')
 
 
 @then('Updated value should be visible')
 def updated_value_should_be_visible(driver):
     """Updated value should be visible."""
-    element_text = driver.find_element_by_xpath('//h4[contains(.,"Password Disabled:")]/../div/p').text
+    element_text = driver.find_element_by_xpath('(//tr[contains(.,"ericbsd")]/following-sibling::tr)[1]//dt[contains(.,"Password Disabled:")]/../dd').text
     assert element_text == 'false'
 
 
