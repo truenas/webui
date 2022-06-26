@@ -1,5 +1,6 @@
 import { ModuleWithProviders } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { ImportDataComponent } from 'app/pages/storage/import-data/import-data.component';
 import { DatasetQuotasGrouplistComponent } from 'app/pages/storage/volumes/datasets/dataset-quotas/dataset-quotas-grouplist/dataset-quotas-grouplist.component';
 import { DatasetQuotasUserlistComponent } from 'app/pages/storage/volumes/datasets/dataset-quotas/dataset-quotas-userlist/dataset-quotas-userlist.component';
 import { DatasetAclEditorComponent } from 'app/pages/storage/volumes/permissions/containers/dataset-acl-editor/dataset-acl-editor.component';
@@ -7,7 +8,6 @@ import { DatasetTrivialPermissionsComponent } from 'app/pages/storage/volumes/pe
 import { ViewEnclosureComponent } from 'app/pages/system/view-enclosure/components/view-enclosure/view-enclosure.component';
 import { DiskListComponent } from './disks/disk-list/disk-list.component';
 import { SmartResultsComponent } from './disks/smart-results/smart-results.component';
-import { ImportDiskComponent } from './import-disk/import-disk.component';
 import { VmwareSnapshotListComponent } from './vmware-snapshot/vmware-snapshot-list/vmware-snapshot-list.component';
 import { DatasetFormComponent } from './volumes/datasets/dataset-form/dataset-form.component';
 import { DatasetUnlockComponent } from './volumes/datasets/dataset-unlock/dataset-unlock.component';
@@ -131,7 +131,7 @@ export const routes: Routes = [
       },
       {
         path: 'import-disk',
-        component: ImportDiskComponent,
+        component: ImportDataComponent,
         data: { title: 'Import Disk', breadcrumb: 'Import Disk', icon: 'view_stream' },
       },
       {

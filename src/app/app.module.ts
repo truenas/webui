@@ -18,6 +18,7 @@ import * as Sentry from '@sentry/angular';
 import { environment } from 'environments/environment';
 import { MarkdownModule } from 'ngx-markdown';
 import { NgxPopperjsModule } from 'ngx-popperjs';
+import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import {
   TranslateMessageFormatCompiler,
 } from 'ngx-translate-messageformat-compiler';
@@ -28,6 +29,7 @@ import { CoreComponents } from 'app/core/core-components.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { getWindow, WINDOW } from 'app/helpers/window.helper';
 import { DownloadKeyDialogComponent } from 'app/modules/common/dialog/download-key/download-key-dialog.component';
+import { SnackbarModule } from 'app/modules/snackbar/snackbar.module';
 import { TerminalModule } from 'app/modules/terminal/terminal.module';
 import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
 import { IxFileUploadService } from 'app/services/ix-file-upload.service';
@@ -103,6 +105,13 @@ import { WebSocketService } from './services/ws.service';
     }),
     EffectsModule.forRoot(rootEffects),
     MatDialogModule,
+    SnackbarModule,
+    NgxSkeletonLoaderModule.forRoot({
+      theme: {
+        'background-color': 'var(--alt-bg2)',
+        opacity: 0.25,
+      },
+    }),
   ],
   declarations: [
     AppComponent,

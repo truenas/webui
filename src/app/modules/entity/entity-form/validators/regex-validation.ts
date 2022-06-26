@@ -1,9 +1,9 @@
-import { ValidatorFn, FormControl } from '@angular/forms';
+import { ValidatorFn, UntypedFormControl } from '@angular/forms';
 
 export function regexValidator(regexString: RegExp): ValidatorFn {
-  let thisControl: FormControl;
+  let thisControl: UntypedFormControl;
 
-  return function regexValidate(control: FormControl) {
+  return function regexValidate(control: UntypedFormControl) {
     if (!control.parent) {
       return null;
     }

@@ -1,0 +1,110 @@
+@import '~assets/styles/mixins/grid';
+
+:host {
+  $page-header-height: 81px;
+  display: block;
+  height: calc(100% - $page-header-height);
+}
+
+.container {
+  display: flex;
+  flex-direction: row;
+  min-height: 100%;
+}
+
+.table-container {
+  box-sizing: border-box;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  max-width: 40%;
+  min-width: 30%;
+  overflow: hidden;
+  position: relative;
+}
+
+.wip {
+  color: var(--fg2);
+  margin-bottom: 20px;
+  margin-top: -20px;
+  padding: 8px !important;
+}
+
+.details-container {
+  color: var(--fg2);
+  flex: 1;
+  max-width: 70%;
+  min-width: 60%;
+  padding: 0;
+}
+
+.dataset-tree-search {
+  background-color: var(--bg2);
+  padding: 16px;
+}
+
+.dataset-tree-wrapper {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  margin-bottom: 0.333rem;
+  overflow: auto;
+}
+
+.dataset-tree-inner {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: fit-content;
+}
+
+.dataset-tree {
+  border-top: 2px solid var(--lines);
+}
+
+.dataset-tree-header {
+  @include grid-row();
+  align-items: center;
+  color: var(--fg2);
+  min-height: 48px;
+  padding-left: 48px;
+
+  > div {
+    font-weight: bold;
+    padding: 4px 0;
+
+    &:first-child {
+      left: 8px;
+      position: sticky;
+    }
+  }
+}
+
+.dataset-nested-tree-root-node {
+  align-items: center;
+  border-bottom: 1px solid var(--lines);
+  cursor: pointer;
+  display: flex;
+  min-width: fit-content;
+  position: relative;
+
+  &:hover {
+    background-color: var(--hover-bg);
+  }
+
+  &.selected {
+    background-color: var(--hover-bg);
+    color: var(--fg2);
+
+    &::before {
+      background-color: var(--primary);
+      content: '';
+      height: 100%;
+      left: 0;
+      opacity: 1;
+      position: absolute;
+      top: 0;
+      width: 6px;
+    }
+  }
+}

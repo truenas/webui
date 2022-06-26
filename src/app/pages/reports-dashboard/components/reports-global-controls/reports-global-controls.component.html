@@ -1,7 +1,17 @@
 <div class="reports-toolbar">
   <div class="reports-dash-global-controls" fxLayout="row" fxLayoutAlign="center center">
     <ng-container *ngIf="activeTab?.value === ReportTab.Disk">
-      <ix-entity-toolbar class="disks-selects" fxFlex [conf]="toolbarConfig"></ix-entity-toolbar>
+      <ix-toolbar-multiselect
+        class="toolbar-control"
+        [config]="devicesControl"
+        (selectionChange)="onDiskOptionsChanged()"
+      ></ix-toolbar-multiselect>
+
+      <ix-toolbar-multiselect
+        class="toolbar-control"
+        [config]="metricsControl"
+        (selectionChange)="onDiskOptionsChanged()"
+      ></ix-toolbar-multiselect>
     </ng-container>
 
     <div *ngIf="activeTab">

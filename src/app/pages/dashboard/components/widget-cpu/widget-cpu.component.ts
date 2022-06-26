@@ -335,8 +335,8 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
     // Create the data...
     data.forEach((item, index) => {
       const ds: ChartDataSets = {
-        label: item[0] as any,
-        data: data[index].slice(1) as any,
+        label: item[0] as string,
+        data: data[index].slice(1) as number[],
         backgroundColor: '',
         borderColor: '',
         borderWidth: 1,

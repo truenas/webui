@@ -105,17 +105,17 @@
       }
     }
   },
-  "defaultProject": "truenas-scale-ui",
   "schematics": {
     "@ngneat/spectator:spectator-component": {
       "jest": true
     },
     "@schematics/angular:component": {
-      "prefix": "app",
-      "style": "scss"
+      "prefix": "ix",
+      "style": "scss",
+      "changeDetection": "OnPush"
     },
     "@schematics/angular:directive": {
-      "prefix": "app"
+      "prefix": "ix"
     }
   },
   "cli": {

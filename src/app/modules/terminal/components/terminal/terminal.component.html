@@ -1,3 +1,41 @@
+<ng-template #pageHeader>
+  <ix-page-title-header>
+    <ng-container *ngIf="shellConnected; else reconnectControls">
+      <ix-toolbar-slider
+        [label]="'Set font size' | translate"
+        [min]="10"
+        [max]="20"
+        [value]="fontSize"
+        (valueChange)="onFontSizeChanged($event)"
+      ></ix-toolbar-slider>
+
+      <button
+        *ngIf="conf.customReconnectAction"
+        mat-button
+        (click)="conf.customReconnectAction()"
+      >{{ 'Reconnect' | translate }}</button>
+
+      <button
+        mat-button
+        color="primary"
+        (click)="resetDefault()"
+      >{{ 'Restore Default' | translate }}</button>
+
+      <ix-tooltip
+        [header]="'Shell Commands' | translate"
+        [message]="toolbarTooltip | translate"
+      ></ix-tooltip>
+    </ng-container>
+    <ng-template #reconnectControls>
+      <button
+        mat-button
+        color="primary"
+        (click)="reconnect()"
+      >{{ 'Reconnect' | translate }}</button>
+    </ng-template>
+  </ix-page-title-header>
+</ng-template>
+
 <div class="terminal-wrapper">
   <div
 		id="terminal"

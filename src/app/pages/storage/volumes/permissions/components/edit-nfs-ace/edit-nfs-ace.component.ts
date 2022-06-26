@@ -1,7 +1,7 @@
 import {
   ChangeDetectionStrategy, Component, Input, OnChanges, OnInit,
 } from '@angular/core';
-import { FormBuilder } from '@ngneat/reactive-forms';
+import { FormBuilder } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
@@ -37,7 +37,7 @@ import { UserService } from 'app/services';
 
 @UntilDestroy()
 @Component({
-  selector: 'ix-edit-nfs-ace',
+  selector: 'ix-old-edit-nfs-ace',
   templateUrl: './edit-nfs-ace.component.html',
   styleUrls: ['./edit-nfs-ace.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

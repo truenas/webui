@@ -12,6 +12,22 @@ $ix-theme: mat.define-light-theme($ix-primary, $ix-accent);
 
 $primary-dark: darken(map-get($md-primary, 500), 8%);
 
+@mixin ix-tree-theme($theme) {
+  $primary: map-get($theme, primary);
+  $background: map-get($theme, background);
+  $foreground: map-get($theme, foreground);
+
+  .ix-tree {
+    background: var(--bg2);
+    color: var(--fg2);
+  }
+
+  .ix-tree-node,
+  .ix-nested-tree-node {
+    color: var(--fg2);
+  }
+}
+
 // Bring theme colors to various ripple effects
 @mixin mat-ripple-theme($theme) {
   .mat-checkbox .mat-ripple-element,
@@ -40,6 +56,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
 // include the custom theme object into the angular material theme
 .ix-dark {
   @include mat.all-component-themes($ix-theme);
+  @include ix-tree-theme($ix-theme);
 
   // UI SHELL
   .mat-sidenav-container {
@@ -121,6 +138,11 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
 
   .mat-sidenav-container {
     @include variable(background, --bg1, $bg1);
+  }
+
+  .mat-snack-bar-container {
+    background-color: var(--bg1);
+    color: var(--fg1);
   }
 
   /////////////////// Typography (egret overrides)

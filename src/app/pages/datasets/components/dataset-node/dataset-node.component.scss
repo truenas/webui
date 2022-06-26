@@ -1,0 +1,57 @@
+@import '~assets/styles/mixins/grid';
+
+:host {
+  align-items: center;
+  display: flex;
+  flex: 1;
+  font-weight: 500;
+  min-height: 48px;
+  padding: 0;
+
+  .mat-icon {
+    align-items: center;
+    display: inline-flex;
+    flex: 0 0 auto;
+    height: 40px;
+    justify-content: center;
+    width: 40px;
+
+    &.mdi-set {
+      margin-top: 0;
+    }
+  }
+}
+
+.tree-node-grid {
+  @include grid-row();
+  align-items: center;
+
+  > div {
+    align-items: center;
+    display: inline-flex;
+    min-height: 48px;
+
+    &:first-child {
+      left: 0;
+      position: sticky;
+    }
+  }
+}
+
+$level-offset: 40px;
+$padding-left: 8px;
+
+::ng-deep {
+  @for $i from 1 through 10 {
+    ix-tree-node[aria-level="#{$i}"],
+    ix-nested-tree-node[aria-level="#{$i}"] {
+      .mat-icon-button:first-child {
+        left: $padding-left + $level-offset * ($i - 1);
+      }
+
+      ix-dataset-node {
+        padding-left: $padding-left + $level-offset * ($i - 1);
+      }
+    }
+  }
+}

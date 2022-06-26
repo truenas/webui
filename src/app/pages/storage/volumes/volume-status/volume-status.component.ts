@@ -15,13 +15,14 @@ import { VDevType } from 'app/enums/v-dev-type.enum';
 import helptext from 'app/helptext/storage/volumes/volume-status';
 import { Job } from 'app/interfaces/job.interface';
 import { Option } from 'app/interfaces/option.interface';
-import { Pool, PoolScan, PoolTopologyCategory } from 'app/interfaces/pool.interface';
+import { PoolDiskInfo } from 'app/interfaces/pool-disk-info';
+import { Pool, PoolScanUpdate, PoolTopologyCategory } from 'app/interfaces/pool.interface';
 import { QueryParams } from 'app/interfaces/query-api.interface';
 import {
   VDev,
   VDevStats,
   UnusedDisk,
-  Disk,
+  Disk, ExtraDiskQueryOptions,
 } from 'app/interfaces/storage.interface';
 import { DialogFormConfiguration } from 'app/modules/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/modules/entity/entity-dialog/entity-dialog.component';
@@ -42,24 +43,13 @@ import {
   ReplaceDiskDialogComponent,
 } from './components/replace-disk-dialog/replace-disk-dialog.component';
 
-interface PoolDiskInfo {
-  name: string;
-  read: number;
-  write: number;
-  checksum: number;
-  status: any;
-  actions?: any;
-  path?: string;
-  guid: string;
-}
-
 @UntilDestroy()
 @Component({
   templateUrl: './volume-status.component.html',
   styleUrls: ['./volume-status.component.scss'],
 })
 export class VolumeStatusComponent implements OnInit, AfterViewInit {
-  poolScan: PoolScan;
+  poolScan: PoolScanUpdate;
   timeRemaining = {
     days: 0,
     hours: 0,
@@ -213,7 +203,7 @@ export class VolumeStatusComponent implements OnInit, AfterViewInit {
       onClick: (row: Pool) => {
         const pIndex = row.name.lastIndexOf('p');
         const diskName = pIndex > -1 ? row.name.substring(0, pIndex) : row.name;
-        const queryCallOption: QueryParams<Disk, { extra: { passwords: boolean } }> = [[['devname', '=', diskName]], { extra: { passwords: true } }];
+        const queryCallOption: QueryParams<Disk, ExtraDiskQueryOptions> = [[['devname', '=', diskName]], { extra: { passwords: true } }];
         this.ws.call('disk.query', queryCallOption).pipe(untilDestroyed(this)).subscribe((disks) => {
           this.onClickEdit(disks[0]);
         });
@@ -300,7 +290,10 @@ export class VolumeStatusComponent implements OnInit, AfterViewInit {
             } as ReplaceDiskDialogData,
           })
           .afterClosed()
-          .pipe(untilDestroyed(this))
+          .pipe(
+            filter(Boolean),
+            untilDestroyed(this),
+          )
           .subscribe(() => {
             this.getData();
             this.getUnusedDisk();

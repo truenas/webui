@@ -1,0 +1,32 @@
+.wip {
+  color: var(--fg2);
+  margin-bottom: 20px;
+  padding: 5px;
+}
+
+.pool-cards {
+  column-gap: 5px;
+  display: flex;
+  row-gap: 5px;
+
+  > * {
+    // TODO: Potentially duplicates numbers on other pages
+    flex: 1;
+    max-width: 620px;
+    min-width: 420px;
+  }
+}
+
+.pool {
+  margin-bottom: 20px;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+
+  .pool-name {
+    color: var(--fg2);
+    margin-bottom: 4px;
+    margin-left: 5px;
+  }
+}

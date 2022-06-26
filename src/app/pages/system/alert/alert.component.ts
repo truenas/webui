@@ -1,12 +1,13 @@
 import {
   AfterViewInit, Component, OnInit, TemplateRef, ViewChild,
 } from '@angular/core';
-import { FormGroup } from '@angular/forms';
+import { UntypedFormGroup } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 import { AlertLevel } from 'app/enums/alert-level.enum';
 import { AlertPolicy } from 'app/enums/alert-policy.enum';
+import { ProductType } from 'app/enums/product-type.enum';
 import helptext from 'app/helptext/system/alert-settings';
 import { AlertCategory, AlertClassesUpdate, AlertClassSettings } from 'app/interfaces/alert.interface';
 import { Option } from 'app/interfaces/option.interface';
@@ -16,6 +17,7 @@ import { FieldConfig } from 'app/modules/entity/entity-form/models/field-config.
 import { FieldSet } from 'app/modules/entity/entity-form/models/fieldset.interface';
 import { EntityFormService } from 'app/modules/entity/entity-form/services/entity-form.service';
 import { EntityUtils } from 'app/modules/entity/utils';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { AlertDefaults } from 'app/pages/system/alert/alert-defaults.interface';
 import { DialogService, WebSocketService } from 'app/services/';
 import { LayoutService } from 'app/services/layout.service';
@@ -37,6 +39,7 @@ export class AlertConfigComponent implements OnInit, AfterViewInit {
   protected editCall = 'alertclasses.update' as const;
   protected isEntity = true;
   fieldSets: FieldSets;
+  readonly productType = window.localStorage.getItem('product_type') as ProductType;
   fieldConfig: FieldConfig[] = [];
   protected settingOptions: Option[] = [];
   protected warningOptions: Option[] = [
@@ -48,7 +51,7 @@ export class AlertConfigComponent implements OnInit, AfterViewInit {
     { label: this.translate.instant('ALERT'), value: AlertLevel.Alert },
     { label: this.translate.instant('EMERGENCY'), value: AlertLevel.Emergency },
   ];
-  formGroup: FormGroup;
+  formGroup: UntypedFormGroup;
   categories: AlertCategory[] = [];
   protected defaults: AlertDefaults[] = [];
 
@@ -63,6 +66,7 @@ export class AlertConfigComponent implements OnInit, AfterViewInit {
     public dialog: DialogService,
     protected translate: TranslateService,
     private layoutService: LayoutService,
+    private snackbarService: SnackbarService,
   ) {}
 
   ngOnInit(): void {
@@ -106,6 +110,7 @@ export class AlertConfigComponent implements OnInit, AfterViewInit {
             config.push(
               {
                 type: 'select',
+                class: 'new-line',
                 name: categoryClass.id + '_level',
                 inlineLabel: categoryClass.title,
                 placeholder: this.translate.instant('Set Warning Level'),
@@ -124,11 +129,30 @@ export class AlertConfigComponent implements OnInit, AfterViewInit {
               },
             );
 
-            this.defaults.push({
-              id: categoryClass.id,
-              level: categoryClass.level,
-              policy: AlertPolicy.Immediately,
-            });
+            if (categoryClass.proactive_support && this.isEnterprise) {
+              config.push({
+                type: 'checkbox',
+                name: categoryClass.id + '_proactive_support',
+                value: true,
+                inlineLabel: ' ',
+                placeholder: this.translate.instant('Proactive Support'),
+              });
+            }
+
+            if (categoryClass.proactive_support && this.isEnterprise) {
+              this.defaults.push({
+                id: categoryClass.id,
+                level: categoryClass.level,
+                policy: AlertPolicy.Immediately,
+                proactive_support: true,
+              });
+            } else {
+              this.defaults.push({
+                id: categoryClass.id,
+                level: categoryClass.level,
+                policy: AlertPolicy.Immediately,
+              });
+            }
           }
 
           const fieldSet = {
@@ -181,15 +205,20 @@ export class AlertConfigComponent implements OnInit, AfterViewInit {
     this.selectedIndex = index;
   }
 
+  get isEnterprise(): boolean {
+    return this.productType === ProductType.ScaleEnterprise;
+  }
+
   onSubmit(): void {
     const payload: AlertClassesUpdate = { classes: {} };
-
     for (const key in this.formGroup.value) {
       const keyValues = key.split('_');
-      const alertClass = keyValues[0];
-      const classKey = keyValues[1] as 'policy' | 'level';
-      const def = _.find(this.defaults, { id: alertClass });
-      if (def[classKey].toUpperCase() !== this.formGroup.value[key].toUpperCase()) {
+      const alertClass = keyValues.shift();
+      const classKey = keyValues.reduce((prev, current) => prev + '_' + current);
+      const defaultClassValues = _.find(this.defaults, { id: alertClass });
+      const defaultValueUpperCased = defaultClassValues[classKey as keyof AlertDefaults].toString().toUpperCase();
+      const formValueUpperCased = this.formGroup.value[key].toString().toUpperCase();
+      if (defaultValueUpperCased !== formValueUpperCased) {
         // do not submit defaults in the payload
         if (!payload.classes[alertClass]) {
           payload.classes[alertClass] = {};
@@ -197,7 +226,7 @@ export class AlertConfigComponent implements OnInit, AfterViewInit {
 
         // Something wrong with Typescript typing or eslint rule.
         // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
-        (payload.classes[alertClass][classKey] as AlertLevel | AlertPolicy) = this.formGroup.value[key];
+        ((payload.classes[alertClass] as any)[classKey] as AlertLevel | AlertPolicy) = this.formGroup.value[key];
       }
     }
 
@@ -206,7 +235,7 @@ export class AlertConfigComponent implements OnInit, AfterViewInit {
     this.ws
       .call(this.editCall, [payload])
       .pipe(untilDestroyed(this)).subscribe(
-        () => this.dialog.info(this.translate.instant('Settings saved'), ''),
+        () => this.snackbarService.success(this.translate.instant('Settings saved')),
         (error) => new EntityUtils().handleWsError(this, error, this.dialog),
       )
       .add(() => this.loader.close());

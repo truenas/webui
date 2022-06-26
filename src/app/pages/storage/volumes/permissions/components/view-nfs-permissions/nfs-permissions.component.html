@@ -7,11 +7,11 @@
     class="accordion-item"
     [class.expanded]="accordionItem.expanded"
   >
-    <ix-permissions-item
+    <ix-old-permissions-item
       class="accordion-item-header"
       [item]="permissionItems[i]"
       (click)="accordionItem.toggle()"
-    ></ix-permissions-item>
+    ></ix-old-permissions-item>
     <div
       *ngIf="permissionDetails[i] as details"
       class="permission-details"

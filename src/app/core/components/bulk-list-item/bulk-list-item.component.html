@@ -1,0 +1,30 @@
+<div class="bulk-list-item" fxLayout="row" fxLayoutAlign="start center">
+  <div class="bulk-list-item-state" fxLayout="row" fxLayoutAlign="center center">
+    <ng-container [ngSwitch]="item.state">
+      <mat-icon
+        *ngSwitchCase="State.Initial"
+        class="initial"
+        [matTooltip]="item.message || 'Pending' | translate"
+      >radio_button_checked</mat-icon>
+      <mat-spinner
+        *ngSwitchCase="State.Running"
+        class="running"
+        [diameter]="20"
+        [matTooltip]="item.message || 'Running' | translate"
+      ></mat-spinner>
+      <mat-icon
+        *ngSwitchCase="State.Success"
+        class="success"
+        [matTooltip]="item.message || 'Success' | translate"
+      >check_circle</mat-icon>
+      <mat-icon
+        *ngSwitchCase="State.Error"
+        class="error"
+        [matTooltip]="item.message || 'Error' | translate"
+      >error</mat-icon>
+    </ng-container>
+  </div>
+  <div class="bulk-list-item-title">
+    <ng-content></ng-content>
+  </div>
+</div>

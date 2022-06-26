@@ -9,6 +9,7 @@ import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.u
 import { UnusedDisk } from 'app/interfaces/storage.interface';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import {
   ReplaceDiskDialogData,
   ReplaceDiskDialogComponent,
@@ -32,6 +33,7 @@ describe('ReplaceDiskDialogComponent', () => {
       ]),
       mockProvider(MatDialogRef),
       mockProvider(DialogService),
+      mockProvider(SnackbarService),
       mockProvider(MatDialog, {
         open: () => mockEntityJobComponentRef,
       }),
@@ -76,6 +78,6 @@ describe('ReplaceDiskDialogComponent', () => {
       },
     ]);
     expect(spectator.inject(MatDialogRef).close).toHaveBeenCalled();
-    expect(spectator.inject(DialogService).info).toHaveBeenCalled();
+    expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
   });
 });

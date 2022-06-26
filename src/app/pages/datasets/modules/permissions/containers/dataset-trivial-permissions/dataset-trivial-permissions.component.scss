@@ -1,0 +1,52 @@
+.header {
+  align-items: baseline;
+}
+
+.card {
+  margin: 0 auto;
+  max-width: 850px;
+}
+
+.dataset-path {
+  display: flex;
+  margin-left: 10%;
+
+  .dataset-path-label {
+    font-weight: 500;
+    margin-right: 6px;
+  }
+}
+
+.form {
+  display: block;
+  padding: 5px 10px;
+}
+
+.owner-and-access {
+  border-bottom: 1px solid var(--lines);
+  display: flex;
+
+  .owner-fields,
+  .access-fields {
+    flex: 1;
+    margin: 4px 0 0 15px;
+  }
+}
+
+.advanced-fields {
+  border-bottom: 1px solid var(--lines);
+  padding-left: 15px;
+}
+
+.set-acl-button {
+  margin-left: auto;
+}
+
+.form-actions {
+  display: flex;
+  padding: 25px;
+
+  .save-button {
+    margin-right: 10px;
+  }
+}

@@ -15,6 +15,7 @@ import { AppCommonModule } from 'app/modules/common/app-common.module';
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxTableModule } from 'app/modules/ix-tables/ix-table.module';
+import { LayoutModule } from 'app/modules/layout/layout.module';
 import {
   ApiKeyFormDialogComponent,
 } from 'app/pages/api-keys/components/api-key-form-dialog/api-key-form-dialog.component';
@@ -46,6 +47,7 @@ import { ApiKeyComponentStore } from './store/api-key.store';
     MatDialogModule,
     routing,
     TranslateModule,
+    LayoutModule,
   ],
   declarations: [
     ApiKeyListComponent,

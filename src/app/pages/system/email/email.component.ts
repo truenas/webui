@@ -1,9 +1,8 @@
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
 } from '@angular/core';
-import { Validators } from '@angular/forms';
+import { FormBuilder, FormControl, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
-import { FormBuilder, FormControl } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
@@ -19,6 +18,7 @@ import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.com
 import { EntityUtils } from 'app/modules/entity/utils';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import IxValidatorsService from 'app/modules/ix-forms/services/ix-validators.service';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { DialogService, WebSocketService } from 'app/services';
 import { AppState } from 'app/store';
 import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
@@ -88,6 +88,7 @@ export class EmailComponent implements OnInit {
     private validatorService: IxValidatorsService,
     @Inject(WINDOW) private window: Window,
     private store$: Store<AppState>,
+    private snackbar: SnackbarService,
   ) {}
 
   get hasSmtpAuthentication(): boolean {
@@ -159,10 +160,7 @@ export class EmailComponent implements OnInit {
       .subscribe(
         () => {
           this.isLoading = false;
-          this.dialogService.info(
-            this.translate.instant('Email'),
-            this.translate.instant('Email settings updated.'),
-          );
+          this.snackbar.success(this.translate.instant('Email settings updated.'));
           this.cdr.markForCheck();
         },
         (error) => {
@@ -216,10 +214,7 @@ export class EmailComponent implements OnInit {
       dialogRef.componentInstance.submit();
       dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
         dialogRef.close(false);
-        this.dialogService.info(
-          this.translate.instant('Email'),
-          this.translate.instant('Test email sent!'),
-        );
+        this.snackbar.success(this.translate.instant('Test email sent.'));
       });
     });
   }
@@ -230,7 +225,7 @@ export class EmailComponent implements OnInit {
       update = {
         ...this.form.value,
         oauth: null,
-      };
+      } as MailConfigUpdate;
 
       if (!this.hasSmtpAuthentication) {
         delete update.user;

@@ -1,0 +1,62 @@
+@import '~assets/styles/mixins/cards';
+@import '~assets/styles/mixins/animations';
+
+.card {
+  @include details-card();
+}
+
+.details-item {
+  @include details-card-item();
+  @include fade-in();
+
+  .scrub-task-loader {
+    width: 20px;
+  }
+}
+
+.card-title {
+  align-items: center;
+  column-gap: 5px;
+  display: flex;
+}
+
+.pool-icon {
+  &.icon-online {
+    color: var(--green);
+  }
+
+  &.icon-warning {
+    color: var(--orange);
+  }
+
+  &.icon-faulted {
+    color: var(--blue);
+  }
+
+  &.icon-error {
+    color: var(--red);
+  }
+}
+
+.scan-in-progress {
+  @include fade-in();
+  margin-top: 25px;
+
+  .scan-description {
+    text-align: center;
+  }
+
+  .scan-label {
+    font-weight: bold;
+  }
+
+  .time-left {
+    font-size: 0.9rem;
+    text-align: center;
+  }
+
+  .progress {
+    margin-bottom: 8px;
+    margin-top: 8px;
+  }
+}

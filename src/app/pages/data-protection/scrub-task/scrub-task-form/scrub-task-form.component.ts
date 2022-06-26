@@ -1,12 +1,11 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
-import { Validators } from '@angular/forms';
-import { FormBuilder } from '@ngneat/reactive-forms';
+import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import helptext from 'app/helptext/data-protection/scrub/scrub-form';
-import { PoolScrub } from 'app/interfaces/pool-scrub.interface';
+import { CreatePoolScrubTask, PoolScrubTask } from 'app/interfaces/pool-scrub.interface';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import {
   crontabToSchedule,
@@ -56,7 +55,7 @@ export class ScrubTaskFormComponent {
     enabled: helptext.scrub_enabled_tooltip,
   };
 
-  private editingTask: PoolScrub;
+  private editingTask: PoolScrubTask;
 
   constructor(
     private translate: TranslateService,
@@ -67,7 +66,7 @@ export class ScrubTaskFormComponent {
     private errorHandler: FormErrorHandlerService,
   ) {}
 
-  setTaskForEdit(task: PoolScrub): void {
+  setTaskForEdit(task: PoolScrubTask): void {
     this.editingTask = task;
     this.form.patchValue({
       ...task,
@@ -84,11 +83,11 @@ export class ScrubTaskFormComponent {
     this.isLoading = true;
     let request$: Observable<unknown>;
     if (this.isNew) {
-      request$ = this.ws.call('pool.scrub.create', [values]);
+      request$ = this.ws.call('pool.scrub.create', [values as CreatePoolScrubTask]);
     } else {
       request$ = this.ws.call('pool.scrub.update', [
         this.editingTask.id,
-        values,
+        values as CreatePoolScrubTask,
       ]);
     }
 

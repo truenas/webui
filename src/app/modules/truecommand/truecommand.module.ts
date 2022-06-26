@@ -39,9 +39,5 @@ import { TruecommandButtonComponent } from 'app/modules/truecommand/truecommand-
   exports: [
     TruecommandButtonComponent,
   ],
-  entryComponents: [
-    TruecommandStatusModalComponent,
-    TruecommandSignupModalComponent,
-  ],
 })
 export class TruecommandModule { }

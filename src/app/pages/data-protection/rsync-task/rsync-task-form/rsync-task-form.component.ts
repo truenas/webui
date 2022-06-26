@@ -10,7 +10,7 @@ import { map } from 'rxjs/operators';
 import { Direction } from 'app/enums/direction.enum';
 import { RsyncMode, RsyncSshConnectMode } from 'app/enums/rsync-mode.enum';
 import helptext from 'app/helptext/data-protection/resync/resync-form';
-import { RsyncTask } from 'app/interfaces/rsync-task.interface';
+import { RsyncTask, RsyncTaskUpdate } from 'app/interfaces/rsync-task.interface';
 import { portRangeValidator } from 'app/modules/entity/entity-form/validators/range-validation';
 import { UserComboboxProvider } from 'app/modules/ix-forms/classes/user-combobox-provider';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
@@ -160,11 +160,11 @@ export class RsyncTaskFormComponent implements OnInit {
     this.isLoading = true;
     let request$: Observable<unknown>;
     if (this.isNew) {
-      request$ = this.ws.call('rsynctask.create', [values]);
+      request$ = this.ws.call('rsynctask.create', [values as RsyncTaskUpdate]);
     } else {
       request$ = this.ws.call('rsynctask.update', [
         this.editingTask.id,
-        values,
+        values as RsyncTaskUpdate,
       ]);
     }
 

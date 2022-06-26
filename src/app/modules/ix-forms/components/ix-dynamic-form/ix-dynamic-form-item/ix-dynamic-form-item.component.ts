@@ -1,7 +1,7 @@
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output,
 } from '@angular/core';
-import { FormArray, FormGroup } from '@angular/forms';
+import { UntypedFormArray, UntypedFormGroup } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { distinctUntilChanged, filter, map } from 'rxjs/operators';
 import { DynamicFormSchemaType } from 'app/enums/dynamic-form-schema-type.enum';
@@ -15,7 +15,7 @@ import { AddListItemEvent, DeleteListItemEvent, DynamicFormSchemaNode } from 'ap
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class IxDynamicFormItemComponent implements OnInit {
-  @Input() dynamicForm: FormGroup;
+  @Input() dynamicForm: UntypedFormGroup;
   @Input() dynamicSchema: DynamicFormSchemaNode;
 
   @Output() addListItem = new EventEmitter<AddListItemEvent>();
@@ -44,8 +44,8 @@ export class IxDynamicFormItemComponent implements OnInit {
     });
   }
 
-  get getFormArray(): FormArray {
-    return this.dynamicForm.controls[this.dynamicSchema.controlName] as FormArray;
+  get getFormArray(): UntypedFormArray {
+    return this.dynamicForm.controls[this.dynamicSchema.controlName] as UntypedFormArray;
   }
 
   get isHidden(): boolean {

@@ -1,3 +1,11 @@
+<ng-template #pageHeader>
+  <ix-page-title-header>
+    <ix-entity-table-add-actions
+      [entity]="this"
+    ></ix-entity-table-add-actions>
+  </ix-page-title-header>
+</ng-template>
+
 <div fxLayout="column" id="entity-table-component" class="material mat-card mat-card-table" [class.is-empty]="isTableEmpty">
 
   <ng-container>

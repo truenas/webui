@@ -1,4 +1,4 @@
-<div class="widget" [ngClass]="{'double-height': true,'xs': screenType === 'Mobile', 'generic-hardware': !product_image, 'ix-hardware': product_image}">
+<div class="widget" [ngClass]="{'double-height': true,'xs': screenType === 'Mobile', 'generic-hardware': !productImage, 'ix-hardware': productImage}">
   <div class="card-container front">
     <mat-card class="front" fxLayout="row" fxLayoutWrap fxLayoutAlign="space-between stretch">
       <mat-card-content fxLayout="row wrap" fxLayout.gt-xs="row wrap" fxLayoutAlign="space-between start" fxFlex="100">
@@ -43,50 +43,50 @@
                 <mat-icon class="back-arrow">chevron_left</mat-icon>
               </button>
 
-              <div class="platform-logo-wrapper {{product_type.toLowerCase()}}" fxFlex="20">
-                <ng-container *ngIf="product_image || isPassive; else textOnly">
-                  <mat-icon svgIcon="truenas_scale_logo_full" id="{{product_model}}"></mat-icon>
+              <div class="platform-logo-wrapper {{productType.toLowerCase()}}" fxFlex="20">
+                <ng-container *ngIf="productImage || isPassive; else textOnly">
+                  <mat-icon svgIcon="truenas_scale_logo_full" id="{{productModel}}"></mat-icon>
                 </ng-container>
 
                 <ng-template #textOnly>
-                  <mat-icon svgIcon="truenas_scale_logotype" id="{{product_model}}"></mat-icon>
+                  <mat-icon svgIcon="truenas_scale_logotype" id="{{productModel}}"></mat-icon>
                 </ng-template>
               </div>
 
               <div
                 class="content-left"
-                [fxFlex.xs]="product_type === ProductType.ScaleEnterprise && product_image === 'X10' ? 80 : 100"
+                [fxFlex.xs]="productType === ProductType.ScaleEnterprise && productImage === 'X10' ? 80 : 100"
                 fxFlex.gt-xs="60"
                 fxLayout="column"
                 fxLayoutAlign="center center"
               >
 
                 <div
-                  class="product-image {{product_enclosure}}"
-                  [class.truenas]="product_type === ProductType.ScaleEnterprise"
-                  [class.freenas]="product_type !== ProductType.ScaleEnterprise"
-                  [class.ix-logo]="product_image == 'ix-original.svg'"
+                  class="product-image {{productEnclosure}}"
+                  [class.truenas]="productType === ProductType.ScaleEnterprise"
+                  [class.freenas]="productType !== ProductType.ScaleEnterprise"
+                  [class.ix-logo]="productImage == 'ix-original.svg'"
                 >
                   <img
-                    *ngIf="product_image; else generic"
-                    id="{{product_model}}"
+                    *ngIf="productImage; else generic"
+                    id="{{productModel}}"
                     [class.clickable]="enclosureSupport"
                     matTooltip="View Enclosure"
                     matTooltipPosition="above"
                     [matTooltipDisabled]="!enclosureSupport"
                     (click)="goToEnclosure();"
-                    [src]="'assets/images/' + product_image"
+                    [src]="'assets/images/' + productImage"
                   >
 
                   <ng-template #generic>
-                    <mat-icon *ngIf="!certified && !isHA" class="generic" svgIcon="truenas_scale_logomark"></mat-icon>
-                    <mat-icon *ngIf="certified && !isHA" class="generic" svgIcon="freenas_certified"></mat-icon>
+                    <mat-icon *ngIf="!certified && !isHa" class="generic" svgIcon="truenas_scale_logomark"></mat-icon>
+                    <mat-icon *ngIf="certified && !isHa" class="generic" svgIcon="freenas_certified"></mat-icon>
                   </ng-template>
-                  <div class="generic alert" *ngIf="!product_image && isPassive && ha_status !== 'HA Enabled'">
+                  <div class="generic alert" *ngIf="!productImage && isPassive && haStatus !== 'HA Enabled'">
                     <mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-alert"></mat-icon>
                   </div>
-                  <div *ngIf="product_image && isHA" class="ha-node-status">({{ (isPassive ? 'Standby' : 'Active') | translate }})</div>
-                  <div *ngIf="ready && !product_image && product_type === ProductType.ScaleEnterprise" class="ha-node-status">({{ 'Unsupported Hardware' | translate }})</div>
+                  <div *ngIf="productImage && isHa" class="ha-node-status">({{ (isPassive ? 'Standby' : 'Active') | translate }})</div>
+                  <div *ngIf="ready && !productImage && productType === ProductType.ScaleEnterprise" class="ha-node-status">({{ 'Unsupported Hardware' | translate }})</div>
                 </div>
               </div>
 
@@ -105,7 +105,7 @@
                     ix-auto-type="button"
                     [ix-auto-identifier]="updateBtnLabel"
                   >{{ updateBtnLabel | translate }}</button>
-                  <ix-simple-failover-button *ngIf="isPassive" [disabled]="!ha_status || ha_status !== 'HA Enabled'" ></ix-simple-failover-button>
+                  <ix-simple-failover-button *ngIf="isPassive" [disabled]="!haStatus || haStatus !== 'HA Enabled'" ></ix-simple-failover-button>
                 </div>
               </ng-template>
             </div>
@@ -113,17 +113,17 @@
             <!-- Details Section -->
             <div class="right" fxFlex.xs fxFlex.gt-xs="60" fxLayout="column">
 
-              <div *ngIf="!data && isHA && isPassive && !ha_status" class="data-container ha-status" fxFlex>
+              <div *ngIf="!data && isHa && isPassive && !haStatus" class="data-container ha-status" fxFlex>
                 <div class="spinner-wrapper">
                   <mat-spinner [diameter]="40" class="spinner"></mat-spinner>
                 </div>
               </div>
 
-              <div *ngIf="!data && isHA && isPassive && ha_status && ha_status !== 'HA Enabled'" class="data-container ha-status" fxFlex>
-                <h3>{{ ha_status }}</h3>
+              <div *ngIf="!data && isHa && isPassive && haStatus && haStatus !== 'HA Enabled'" class="data-container ha-status" fxFlex>
+                <h3>{{ haStatus }}</h3>
               </div>
 
-              <div *ngIf="!data && !isHA" class="loader">
+              <div *ngIf="!data && !isHa" class="loader">
                 <mat-spinner [diameter]="80" class="spinner"></mat-spinner>
               </div>
 
@@ -181,7 +181,7 @@
                   >{{ updateBtnLabel | translate }}</button>
                   <ix-simple-failover-button
                     *ngIf="isPassive"
-                    [disabled]="!ha_status || ha_status !== 'HA Enabled'"
+                    [disabled]="!haStatus || haStatus !== 'HA Enabled'"
                     color="primary"
                   ></ix-simple-failover-button>
                 </div>

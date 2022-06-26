@@ -3,7 +3,7 @@ import {
   Component, Input, OnChanges,
 } from '@angular/core';
 import {
-  ControlValueAccessor, FormControl, NgControl,
+  ControlValueAccessor, UntypedFormControl, NgControl,
 } from '@angular/forms';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { EMPTY, Observable } from 'rxjs';
@@ -30,7 +30,7 @@ export class IxSelectComponent implements ControlValueAccessor, OnChanges {
   @Input() emptyValue: string = null;
   @Input() hideEmpty = false;
 
-  formControl = new FormControl(this).value as FormControl;
+  formControl = new UntypedFormControl(this).value as UntypedFormControl;
   isDisabled = false;
   hasErrorInOptions = false;
   opts$: Observable<Option[]>;

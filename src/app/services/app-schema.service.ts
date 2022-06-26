@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
 import {
-  FormGroup, FormControl, Validators, FormArray, AbstractControl,
+  UntypedFormGroup, UntypedFormControl, Validators, UntypedFormArray, AbstractControl,
 } from '@angular/forms';
 import { UntilDestroy } from '@ngneat/until-destroy';
+import _ from 'lodash';
 import { of, Subscription } from 'rxjs';
 import { ChartSchemaType } from 'app/enums/chart-schema-type.enum';
 import { DynamicFormSchemaType } from 'app/enums/dynamic-form-schema-type.enum';
@@ -25,7 +26,7 @@ export class AppSchemaService {
     const schema = chartSchemaNode.schema;
     let newSchema: DynamicFormSchemaNode[] = [];
     if (schema.hidden) {
-      return;
+      return newSchema;
     }
 
     if ([
@@ -197,14 +198,11 @@ export class AppSchemaService {
 
   addFormControls(
     chartSchemaNode: ChartSchemaNode,
-    formGroup: FormGroup,
+    formGroup: UntypedFormGroup,
     config: HierarchicalObjectMap<ChartFormValue>,
   ): Subscription {
     const subscription = new Subscription();
     const schema = chartSchemaNode.schema;
-    if (schema.hidden) {
-      return;
-    }
 
     if ([
       ChartSchemaType.Int,
@@ -214,7 +212,7 @@ export class AppSchemaService {
       ChartSchemaType.Hostpath,
       ChartSchemaType.Ipaddr,
     ].includes(schema.type)) {
-      const newFormControl = new FormControl(schema.default || '', [
+      const newFormControl = new UntypedFormControl(schema.default || schema.type === ChartSchemaType.Int ? null : '', [
         schema.required ? Validators.required : Validators.nullValidator,
         schema.max ? Validators.max(schema.max) : Validators.nullValidator,
         schema.min ? Validators.min(schema.min) : Validators.nullValidator,
@@ -251,12 +249,14 @@ export class AppSchemaService {
         formGroup.controls[chartSchemaNode.variable].setValue(schema.default);
       }
     } else if (schema.type === ChartSchemaType.Dict) {
-      formGroup.addControl(chartSchemaNode.variable, new FormGroup({}));
+      formGroup.addControl(chartSchemaNode.variable, new UntypedFormGroup({}));
       for (const attr of schema.attrs) {
-        subscription.add(this.addFormControls(attr, formGroup.controls[chartSchemaNode.variable] as FormGroup, config));
+        subscription.add(
+          this.addFormControls(attr, formGroup.controls[chartSchemaNode.variable] as UntypedFormGroup, config),
+        );
       }
     } else if (schema.type === ChartSchemaType.List) {
-      formGroup.addControl(chartSchemaNode.variable, new FormArray([]));
+      formGroup.addControl(chartSchemaNode.variable, new UntypedFormArray([]));
 
       if (config) {
         let items: ChartSchemaNode[] = [];
@@ -281,12 +281,19 @@ export class AppSchemaService {
         if (Array.isArray(nextItem)) {
           for (const item of nextItem) {
             subscription.add(this.addFormListItem({
-              array: formGroup.controls[chartSchemaNode.variable] as FormArray,
+              array: formGroup.controls[chartSchemaNode.variable] as UntypedFormArray,
               schema: items,
             }, item));
           }
         }
       }
+    } else {
+      console.error('Unsupported type = ', schema.type);
+      return;
+    }
+
+    if (schema.hidden) {
+      formGroup.controls[chartSchemaNode.variable].disable();
     }
 
     if (schema.show_if) {
@@ -297,18 +304,18 @@ export class AppSchemaService {
       }));
       relations.forEach((relation) => {
         if (!formGroup.controls[relation.fieldName]) {
-          formGroup.addControl(relation.fieldName, new FormControl());
+          formGroup.addControl(relation.fieldName, new UntypedFormControl());
           formGroup.controls[relation.fieldName].disable();
         }
         switch (relation.operatorName) {
           case '=':
-            if (formGroup.controls[relation.fieldName].value !== relation.operatorValue) {
+            if (!_.isEqual(formGroup.controls[relation.fieldName].value, relation.operatorValue)) {
               formGroup.controls[chartSchemaNode.variable].disable();
             }
             subscription.add(formGroup.controls[relation.fieldName].valueChanges
               .subscribe((value) => {
                 if (value !== null && formGroup.controls[chartSchemaNode.variable].parent.enabled) {
-                  if (value === relation.operatorValue) {
+                  if (_.isEqual(value, relation.operatorValue)) {
                     formGroup.controls[chartSchemaNode.variable].enable();
                   } else {
                     formGroup.controls[chartSchemaNode.variable].disable();
@@ -317,13 +324,13 @@ export class AppSchemaService {
               }));
             break;
           case '!=':
-            if (formGroup.controls[relation.fieldName].value === relation.operatorValue) {
+            if (_.isEqual(formGroup.controls[relation.fieldName].value, relation.operatorValue)) {
               formGroup.controls[chartSchemaNode.variable].disable();
             }
             subscription.add(formGroup.controls[relation.fieldName].valueChanges
               .subscribe((value) => {
                 if (value !== null && formGroup.controls[chartSchemaNode.variable].parent.enabled) {
-                  if (value !== relation.operatorValue) {
+                  if (!_.isEqual(value, relation.operatorValue)) {
                     formGroup.controls[chartSchemaNode.variable].enable();
                   } else {
                     formGroup.controls[chartSchemaNode.variable].disable();
@@ -367,7 +374,7 @@ export class AppSchemaService {
 
   addFormListItem(event: AddListItemEvent, config?: HierarchicalObjectMap<ChartFormValue>): Subscription {
     const subscriptionEvent = new Subscription();
-    const itemFormGroup = new FormGroup({});
+    const itemFormGroup = new UntypedFormGroup({});
     event.schema.forEach((item) => {
       subscriptionEvent.add(this.addFormControls(item as ChartSchemaNode, itemFormGroup, config));
     });

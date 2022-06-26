@@ -5,6 +5,7 @@ import { DeviceType } from 'app/enums/device-type.enum';
 import { EnclosureSlotStatus } from 'app/enums/enclosure-slot-status.enum';
 import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
 import { FailoverStatus } from 'app/enums/failover-status.enum';
+import { ImportDiskFilesystem } from 'app/enums/import-disk-filesystem-type.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { TransportMode } from 'app/enums/transport-mode.enum';
@@ -67,7 +68,9 @@ import {
 import { CloudsyncProvider, CloudsyncRestoreParams } from 'app/interfaces/cloudsync-provider.interface';
 import { ConfigResetParams } from 'app/interfaces/config-reset-params.interface';
 import { ContainerConfig, ContainerConfigUpdate } from 'app/interfaces/container-config.interface';
-import { ContainerImage, PullContainerImageParams } from 'app/interfaces/container-image.interface';
+import {
+  ContainerImage, DeleteContainerImageParams, PullContainerImageParams, PullContainerImageResponse,
+} from 'app/interfaces/container-image.interface';
 import { CoreBulkQuery, CoreBulkResponse } from 'app/interfaces/core-bulk.interface';
 import { CoreDownloadQuery, CoreDownloadResponse } from 'app/interfaces/core-download.interface';
 import {
@@ -164,7 +167,7 @@ import { PeriodicSnapshotTask, PeriodSnapshotTaskUpdate } from 'app/interfaces/p
 import { DatasetAttachment, PoolAttachment } from 'app/interfaces/pool-attachment.interface';
 import { PoolExportParams } from 'app/interfaces/pool-export.interface';
 import { ImportDiskParams, PoolFindResult, PoolImportParams } from 'app/interfaces/pool-import.interface';
-import { CreatePoolScrub, PoolScrub, PoolScrubParams } from 'app/interfaces/pool-scrub.interface';
+import { CreatePoolScrubTask, PoolScrubTask, PoolScrubTaskParams } from 'app/interfaces/pool-scrub.interface';
 import { PoolUnlockQuery, PoolUnlockResult } from 'app/interfaces/pool-unlock-query.interface';
 import {
   CreatePool, Pool, PoolAttachParams, PoolExpandParams, PoolReplaceParams, UpdatePool,
@@ -208,7 +211,7 @@ import {
 } from 'app/interfaces/ssh-connection-setup.interface';
 import { StaticRoute, UpdateStaticRoute } from 'app/interfaces/static-route.interface';
 import {
-  Disk, DiskQueryOptions, DiskTemperatures, DiskUpdate, DiskWipeParams, UnusedDisk,
+  Disk, ExtraDiskQueryOptions, DiskTemperatures, DiskUpdate, DiskWipeParams, UnusedDisk,
 } from 'app/interfaces/storage.interface';
 import {
   FetchSupportParams,
@@ -337,7 +340,7 @@ export type ApiDirectory = {
   'catalog.update': { params: [id: string, update: CatalogUpdate]; response: Catalog };
   'catalog.create': { params: [CatalogCreate]; response: Catalog };
   'catalog.delete': { params: [name: string]; response: boolean };
-  'catalog.items': { params: [label: string, params: CatalogItemsQueryParams]; response: CatalogItems };
+  'catalog.items': { params: [label: string, params?: CatalogItemsQueryParams]; response: CatalogItems };
   'catalog.sync': { params: [label: string]; response: void };
   'catalog.sync_all': { params: void; response: void };
   'catalog.get_item_details': { params: [name: string, params: GetItemDetailsParams]; response: CatalogApp };
@@ -420,9 +423,9 @@ export type ApiDirectory = {
   // Container
   'container.config': { params: void; response: ContainerConfig };
   'container.update': { params: [ContainerConfigUpdate]; response: ContainerConfig };
-  'container.image.query': { params: void; response: ContainerImage[] };
-  'container.image.pull': { params: [PullContainerImageParams]; response: { status: string } };
-  'container.image.delete': { params: [id: string, params?: { force: boolean }]; response: void };
+  'container.image.query': { params: QueryParams<ContainerImage>; response: ContainerImage[] };
+  'container.image.pull': { params: [PullContainerImageParams]; response: PullContainerImageResponse };
+  'container.image.delete': { params: DeleteContainerImageParams; response: void };
 
   // DynDNS
   'dyndns.provider_choices': { params: void; response: Choices };
@@ -433,7 +436,7 @@ export type ApiDirectory = {
   'device.get_info': { params: [DeviceType]; response: Device[] };
 
   // Disk
-  'disk.query': { params: QueryParams<Disk, DiskQueryOptions>; response: Disk[] };
+  'disk.query': { params: QueryParams<Disk, ExtraDiskQueryOptions>; response: Disk[] };
   'disk.update': { params: [id: string, update: DiskUpdate]; response: Disk };
   'disk.get_unused': { params: [joinPartitions?: boolean]; response: UnusedDisk[] };
   'disk.temperatures': { params: [disks: string[]]; response: DiskTemperatures };
@@ -688,7 +691,7 @@ export type ApiDirectory = {
   'pool.filesystem_choices': { params: [DatasetType[]?]; response: string[] };
   'pool.get_disks': { params: [ids: string[]]; response: string[] };
   'pool.import_disk': { params: ImportDiskParams; response: void };
-  'pool.import_disk_autodetect_fs_type': { params: [path: string]; response: string };
+  'pool.import_disk_autodetect_fs_type': { params: [path: string]; response: ImportDiskFilesystem };
   'pool.import_disk_msdosfs_locales': { params: void; response: string[] };
   'pool.import_find': { params: void; response: PoolFindResult[] };
   'pool.import_pool': { params: [PoolImportParams]; response: boolean };
@@ -703,11 +706,11 @@ export type ApiDirectory = {
   'pool.replace': { params: [id: number, params: PoolReplaceParams]; response: boolean };
   'pool.resilver.config': { params: void; response: ResilverConfig };
   'pool.resilver.update': { params: [ResilverConfigUpdate]; response: ResilverConfig };
-  'pool.scrub': { params: PoolScrubParams; response: void };
-  'pool.scrub.create': { params: [CreatePoolScrub]; response: PoolScrub };
+  'pool.scrub': { params: PoolScrubTaskParams; response: void };
+  'pool.scrub.create': { params: [CreatePoolScrubTask]; response: PoolScrubTask };
   'pool.scrub.delete': { params: [id: number]; response: boolean };
-  'pool.scrub.query': { params: QueryParams<PoolScrub>; response: PoolScrub[] };
-  'pool.scrub.update': { params: [id: number, params: CreatePoolScrub]; response: PoolScrub };
+  'pool.scrub.query': { params: QueryParams<PoolScrubTask>; response: PoolScrubTask[] };
+  'pool.scrub.update': { params: [id: number, params: CreatePoolScrubTask]; response: PoolScrubTask };
   'pool.snapshottask.create': { params: [PeriodSnapshotTaskUpdate]; response: PeriodicSnapshotTask };
   'pool.snapshottask.delete': { params: [id: number]; response: boolean };
   'pool.snapshottask.query': { params: QueryParams<PeriodicSnapshotTask>; response: PeriodicSnapshotTask[] };

@@ -19,6 +19,7 @@ import { IxInputHarness } from 'app/modules/ix-forms/components/ix-input/ix-inpu
 import { IxSelectHarness } from 'app/modules/ix-forms/components/ix-select/ix-select.harness';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { RestartSmbDialogComponent } from 'app/pages/sharing/smb/smb-form/restart-smb-dialog/restart-smb-dialog.component';
 import { AppLoaderService, DialogService, WebSocketService } from 'app/services';
 import { FilesystemService } from 'app/services/filesystem.service';
@@ -152,6 +153,7 @@ describe('SmbFormComponent', () => {
         confirm: jest.fn(() => of(true)),
         info: jest.fn(() => of(true)),
       }),
+      mockProvider(SnackbarService),
     ],
   });
 
@@ -236,7 +238,7 @@ describe('SmbFormComponent', () => {
 
     const values = await form.getValues();
 
-    const existingShareWithLabels: { [key: string]: any } = {};
+    const existingShareWithLabels: { [key: string]: unknown } = {};
     for (const key in existingShare) {
       if (!formLabels[key]) {
         continue;
@@ -244,7 +246,9 @@ describe('SmbFormComponent', () => {
       existingShareWithLabels[formLabels[key]] = existingShare[key as keyof SmbShare];
     }
 
-    existingShareWithLabels[formLabels.purpose] = presets[existingShareWithLabels[formLabels.purpose]].verbose_name;
+    existingShareWithLabels[formLabels.purpose] = (
+      presets[existingShareWithLabels[formLabels.purpose] as string].verbose_name
+    );
     expect(values).toMatchObject(existingShareWithLabels);
   });
 
@@ -405,8 +409,7 @@ describe('SmbFormComponent', () => {
 
     expect(websocket.call).toHaveBeenCalledWith('service.restart', [ServiceName.Cifs]);
 
-    expect(spectator.inject(DialogService).info).toHaveBeenCalledWith(
-      helptextSharingSmb.restarted_smb_dialog.title,
+    expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith(
       helptextSharingSmb.restarted_smb_dialog.message,
     );
 

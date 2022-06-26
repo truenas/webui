@@ -1,21 +1,23 @@
 import {
-  Component, ElementRef, OnDestroy, ViewChild,
+  AfterViewInit,
+  Component, ElementRef, OnDestroy, TemplateRef, ViewChild,
 } from '@angular/core';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
+import { TranslateService } from '@ngx-translate/core';
 import { Subject } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { PoolScanState } from 'app/enums/pool-scan-state.enum';
 import { CoreEvent } from 'app/interfaces/events';
 import { EnclosureLabelChangedEvent } from 'app/interfaces/events/enclosure-events.interface';
 import { ResilveringEvent } from 'app/interfaces/events/resilvering-event.interface';
-import { EntityToolbarComponent } from 'app/modules/entity/entity-toolbar/entity-toolbar.component';
 import { EnclosureMetadata, SystemProfiler } from 'app/pages/system/view-enclosure/classes/system-profiler';
 import { ErrorMessage } from 'app/pages/system/view-enclosure/interfaces/error-message.interface';
 import { ViewConfig } from 'app/pages/system/view-enclosure/interfaces/view.config';
 import { WebSocketService } from 'app/services';
 import { CoreService } from 'app/services/core-service/core.service';
+import { LayoutService } from 'app/services/layout.service';
 import { AppState } from 'app/store';
 import { selectTheme } from 'app/store/preferences/preferences.selectors';
 import { waitForSystemFeatures, waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
@@ -25,11 +27,11 @@ import { waitForSystemFeatures, waitForSystemInfo } from 'app/store/system-info/
   templateUrl: './view-enclosure.component.html',
   styleUrls: ['./view-enclosure.component.scss'],
 })
-export class ViewEnclosureComponent implements OnDestroy {
+export class ViewEnclosureComponent implements AfterViewInit, OnDestroy {
   errors: ErrorMessage[] = [];
   events: Subject<CoreEvent> ;
-  formEvent$: Subject<CoreEvent> ;
   @ViewChild('navigation', { static: false }) nav: ElementRef;
+  @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
 
   currentView: ViewConfig = {
     name: 'Disks',
@@ -39,7 +41,6 @@ export class ViewEnclosureComponent implements OnDestroy {
     showInNavbar: true,
   };
 
-  scrollContainer: HTMLElement;
   system: SystemProfiler;
   selectedEnclosure: EnclosureMetadata;
   views: ViewConfig[] = [];
@@ -66,14 +67,14 @@ export class ViewEnclosureComponent implements OnDestroy {
     return false;
   }
 
-  system_manufacturer: string;
-  private _system_product: string;
-  get system_product(): string {
-    return this._system_product;
+  systemManufacturer: string;
+  private _systemProduct: string;
+  get systemProduct(): string {
+    return this._systemProduct;
   }
-  set system_product(value) {
-    if (!this._system_product) {
-      this._system_product = value;
+  set systemProduct(value) {
+    if (!this._systemProduct) {
+      this._systemProduct = value;
       this.loadEnclosureData();
     }
   }
@@ -87,6 +88,8 @@ export class ViewEnclosureComponent implements OnDestroy {
     public router: Router,
     private ws: WebSocketService,
     private store$: Store<AppState>,
+    private layoutService: LayoutService,
+    private translate: TranslateService,
   ) {
     this.events = new Subject<CoreEvent>();
     this.events.pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
@@ -138,9 +141,9 @@ export class ViewEnclosureComponent implements OnDestroy {
 
     this.store$.pipe(waitForSystemInfo, untilDestroyed(this))
       .subscribe((sysInfo) => {
-        if (!this.system_product) {
-          this.system_product = sysInfo.system_product;
-          this.system_manufacturer = sysInfo.system_manufacturer.toLowerCase();
+        if (!this.systemProduct) {
+          this.systemProduct = sysInfo.system_product;
+          this.systemManufacturer = sysInfo.system_manufacturer.toLowerCase();
         }
       });
 
@@ -151,6 +154,10 @@ export class ViewEnclosureComponent implements OnDestroy {
 
   fetchData(): void {
     this.loadDiskData();
+  }
+
+  ngAfterViewInit(): void {
+    this.layoutService.pageHeaderUpdater$.next(this.pageHeader);
   }
 
   ngOnDestroy(): void {
@@ -239,40 +246,6 @@ export class ViewEnclosureComponent implements OnDestroy {
     } else {
       this.currentView = disks;
     }
-
-    // Setup event listener
-    if (this.views.length > 0) {
-      this.formEvent$ = new Subject<CoreEvent>();
-      this.formEvent$.pipe(
-        untilDestroyed(this),
-      ).subscribe((evt: CoreEvent) => {
-        const nextView = this.views.find((view) => view.alias === evt.data.configFiles.value);
-        this.changeView(nextView.id);
-      });
-    }
-
-    // Setup/update ViewActions that live in page title component
-    const actionsConfig = {
-      actionType: EntityToolbarComponent,
-      actionConfig: {
-        target: this.formEvent$,
-        controls: [
-          {
-            name: 'configFiles',
-            label: 'Elements',
-            type: 'menu',
-            color: 'primary',
-            options: this.views.map((view) => {
-              return { label: view.alias, value: view.alias };
-            }),
-          },
-        ],
-      },
-    };
-
-    if (this.views && this.views.length > 1) {
-      this.core.emit({ name: 'GlobalActions', data: actionsConfig, sender: this });
-    }
   }
 
   private loadEnclosureData(): void {
@@ -286,7 +259,7 @@ export class ViewEnclosureComponent implements OnDestroy {
         return;
       }
 
-      this.system = new SystemProfiler(this.system_product, enclosures);
+      this.system = new SystemProfiler(this.systemProduct, enclosures);
       this.selectedEnclosure = this.system.profile[this.system.headIndex];
       this.loadDiskData();
 

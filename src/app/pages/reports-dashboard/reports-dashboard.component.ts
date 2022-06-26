@@ -10,17 +10,12 @@ import { TranslateService } from '@ngx-translate/core';
 import {
   addSeconds, differenceInDays, differenceInSeconds, format,
 } from 'date-fns';
-import { Subject, forkJoin } from 'rxjs';
+import { forkJoin } from 'rxjs';
 import { ReportTab } from 'app/enums/report-tab.enum';
-import { CoreEvent } from 'app/interfaces/events';
 import { Option } from 'app/interfaces/option.interface';
 import { Disk } from 'app/interfaces/storage.interface';
 import { Timeout } from 'app/interfaces/timeout.interface';
-import { FieldConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
-import { FieldSet } from 'app/modules/entity/entity-form/models/fieldset.interface';
-import { ToolbarConfig } from 'app/modules/entity/entity-toolbar/models/control-config.interface';
 import {
-  SystemGeneralService,
   WebSocketService,
 } from 'app/services';
 import { CoreService } from 'app/services/core-service/core.service';
@@ -39,7 +34,6 @@ export interface Tab {
   selector: 'ix-reports-dashboard',
   styleUrls: ['./reports-dashboard.scss'],
   templateUrl: './reports-dashboard.component.html',
-  providers: [SystemGeneralService],
 })
 export class ReportsDashboardComponent implements OnInit, OnDestroy, AfterViewInit {
   @ViewChild(CdkVirtualScrollViewport, { static: false }) viewport: CdkVirtualScrollViewport;
@@ -64,17 +58,9 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, AfterViewIn
 
   visibleReports: number[] = [];
 
-  // Report Builder Options (entity-form-embedded)
-  target: Subject<CoreEvent> = new Subject();
-  values: any[] = [];
-  toolbarConfig: ToolbarConfig;
-  protected isEntity = true;
   diskDevices: Option[] = [];
   diskMetrics: Option[] = [];
-  saveSubmitText = this.translate.instant('Generate Reports');
-  fieldConfig: FieldConfig[] = [];
-  fieldSets: FieldSet[];
-  diskReportConfigReady = false;
+  selectedDisks: string[] = [];
 
   constructor(
     private router: Router,
@@ -145,18 +131,16 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, AfterViewIn
     });
   }
 
+  ngAfterViewInit(): void {
+    this.layoutService.pageHeaderUpdater$.next(this.pageHeader);
+  }
+
   ngOnDestroy(): void {
     this.scrollContainer.style.overflow = 'auto';
     this.core.unregister({ observerClass: this });
     if (this.timeInterval) {
       clearInterval(this.timeInterval);
     }
-  }
-
-  ngAfterViewInit(): void {
-    this.setupSubscriptions();
-
-    this.layoutService.pageHeaderUpdater$.next(this.pageHeader);
   }
 
   nextBatch(evt: number): void {
@@ -210,8 +194,8 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, AfterViewIn
     this.activateTab(tab);
 
     if (tab.value === ReportTab.Disk) {
-      const selectedDisks = this.route.snapshot.queryParams.disks;
-      this.diskReportBuilderSetup(selectedDisks);
+      this.selectedDisks = this.route.snapshot.queryParams.disks;
+      this.buildDiskMetrics();
     }
   }
 
@@ -299,83 +283,7 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, AfterViewIn
     return result;
   }
 
-  // Disk Report Filtering
-
-  diskReportBuilderSetup(selectedDisks: string[]): void {
-    this.generateValues();
-
-    // Entity-Toolbar Config
-    this.toolbarConfig = {
-      target: this.target,
-      controls: [
-        {
-          // type: 'multimenu',
-          type: 'multiselect',
-          name: 'devices',
-          label: this.translate.instant('Devices'),
-          placeholder: this.translate.instant('Devices'),
-          disabled: false,
-          multiple: true,
-          options: this.diskDevices, // eg. [{label:'ada0',value:'ada0'},{label:'ada1', value:'ada1'}],
-          customTriggerValue: this.translate.instant('Select Disks'),
-          value: this.diskDevices?.length && selectedDisks
-            ? this.diskDevices.filter((device) => selectedDisks.includes(device.value as string))
-            : null,
-        },
-        {
-          type: 'multiselect',
-          name: 'metrics',
-          label: this.translate.instant('Metrics'),
-          placeholder: this.translate.instant('Metrics'),
-          customTriggerValue: this.translate.instant('Select Reports'),
-          disabled: false,
-          multiple: true,
-          options: this.diskMetrics ? this.diskMetrics : [this.translate.instant('Not Available')], // eg. [{label:'temperature',value:'temperature'},{label:'operations', value:'disk_ops'}],
-          value: selectedDisks ? this.diskMetrics : undefined,
-        },
-      ],
-    };
-
-    // Entity-Form Config
-    this.fieldSets = [
-      {
-        name: 'Report Options',
-        class: 'preferences',
-        label: false,
-        width: '600px',
-        config: [
-          {
-            type: 'select',
-            name: 'devices',
-            width: 'calc(50% - 16px)',
-            placeholder: this.translate.instant('Choose a Device'),
-            options: this.diskDevices, // eg. [{label:'ada0',value:'ada0'},{label:'ada1', value:'ada1'}],
-            required: true,
-            multiple: true,
-            tooltip: this.translate.instant('Choose a device for your report.'),
-            class: 'inline',
-          },
-          {
-            type: 'select',
-            name: 'metrics',
-            width: 'calc(50% - 16px)',
-            placeholder: this.translate.instant('Choose a metric'),
-
-            // eg. [{label:'temperature',value:'temperature'},{label:'operations', value:'disk_ops'}],
-            options: this.diskMetrics ? this.diskMetrics : [{ label: 'None available', value: 'negative' }],
-            required: true,
-            multiple: true,
-            tooltip: this.translate.instant('Choose a metric to display.'),
-            class: 'inline',
-          },
-        ],
-      },
-    ];
-
-    this.generateFieldConfig();
-  }
-
-  generateValues(): void {
+  buildDiskMetrics(): void {
     const metrics: Option[] = [];
 
     this.diskReports.forEach((item) => {
@@ -389,45 +297,9 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, AfterViewIn
     this.diskMetrics = metrics;
   }
 
-  generateFieldConfig(): void {
-    this.fieldSets.forEach((fieldSet) => {
-      fieldSet.config.forEach((config) => {
-        this.fieldConfig.push(config);
-      });
-    });
-    this.diskReportConfigReady = true;
-  }
-
-  setupSubscriptions(): void {
-    this.target.pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
-      switch (evt.name) {
-        case 'FormSubmitted':
-          this.buildDiskReport(evt.data.devices, evt.data.metrics);
-          break;
-        case 'ToolbarChanged':
-          if (evt.data.devices && evt.data.metrics) {
-            this.buildDiskReport(evt.data.devices, evt.data.metrics);
-          }
-          break;
-      }
-    });
-
-    this.target.next({ name: 'Refresh' });
-  }
-
-  buildDiskReport(devices: string | any[], metrics: string | any[]): void {
-    // Convert strings to arrays
-    if (typeof devices === 'string') {
-      devices = [devices];
-    } else {
-      devices = devices.map((device) => device.value);
-    }
-
-    if (typeof metrics === 'string') {
-      metrics = [metrics];
-    } else {
-      metrics = metrics.map((metric) => metric.value);
-    }
+  buildDiskReport(event: { devices: Option[]; metrics: Option[] }): void {
+    const metrics = event.metrics.map((metric) => metric.value);
+    const devices = event.devices.map((device) => device.value);
 
     const visible: number[] = [];
     this.activeReports.forEach((item, index) => {

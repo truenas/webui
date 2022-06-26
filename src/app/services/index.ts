@@ -15,7 +15,6 @@ export * from 'app/services/cloud-credential.service';
 export * from './job.service';
 export * from 'app/services/boot-env.service';
 export * from './docs.service';
-export * from './snackbar.service';
 export * from 'app/services/keychain-credential.service';
 export * from './replication.service';
 export * from './services.service';

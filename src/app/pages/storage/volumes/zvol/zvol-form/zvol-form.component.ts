@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { FormControl, ValidationErrors, Validators } from '@angular/forms';
+import { UntypedFormControl, ValidationErrors, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
@@ -62,7 +62,7 @@ export class ZvolFormComponent implements FormConfiguration {
   parent: string;
   volid: string;
   customFilter: [[QueryFilter<unknown>]?] = [];
-  edit_data: any;
+  editData: any;
   protected entityForm: EntityFormComponent;
   minimumRecommendedBlockSize: DatasetRecordSize;
   namesInUse: string[] = [];
@@ -71,13 +71,13 @@ export class ZvolFormComponent implements FormConfiguration {
   protected origVolSize: number;
   protected origHuman: string | number;
 
-  protected non_encrypted_warned = false;
-  protected encrypted_parent = false;
-  protected inherit_encryption = true;
-  protected passphrase_parent = false;
-  protected encryption_type: 'key' | 'passphrase' = 'key';
-  protected generate_key = true;
-  protected encryption_algorithm: string;
+  protected nonEncryptedWarned = false;
+  protected encryptedParent = false;
+  protected inheritEncryption = true;
+  protected passphraseParent = false;
+  protected encryptionType: 'key' | 'passphrase' = 'key';
+  protected generateKey = true;
+  protected encryptionAlgorithm: string;
 
   customActions = [
     {
@@ -123,7 +123,7 @@ export class ZvolFormComponent implements FormConfiguration {
         blurStatus: true,
         parent: this,
         validation: [
-          (control: FormControl): ValidationErrors => {
+          (control: UntypedFormControl): ValidationErrors => {
             const volsizeConfig = this.fieldSets[0].config.find((config) => config.name === 'volsize');
 
             const size = control.value && typeof control.value === 'string' ? this.storageService.convertHumanStringToNum(control.value, true) : null;
@@ -337,19 +337,19 @@ export class ZvolFormComponent implements FormConfiguration {
     ],
   }];
 
-  encryption_fields = [
+  encryptionFields = [
     'encryption_type',
     'generate_key',
     'algorithm',
   ];
 
-  passphrase_fields = [
+  passphraseFields = [
     'passphrase',
     'confirm_passphrase',
     'pbkdf2iters',
   ];
 
-  key_fields = [
+  keyFields = [
     'key',
   ];
 
@@ -397,7 +397,7 @@ export class ZvolFormComponent implements FormConfiguration {
     this.entityForm = entityForm;
     if (!this.parent) return;
     if (!entityForm.isNew) {
-      this.encryption_fields.forEach((field) => {
+      this.encryptionFields.forEach((field) => {
         this.entityForm.setDisabled(field, true, true);
       });
       _.find(this.fieldSets, { name: 'encryption_divider' }).divider = false;
@@ -412,8 +412,8 @@ export class ZvolFormComponent implements FormConfiguration {
     }
 
     this.ws.call('pool.dataset.query', [[['id', '=', this.parent]]]).pipe(untilDestroyed(this)).subscribe((pkDatasets) => {
-      this.encrypted_parent = pkDatasets[0].encrypted;
-      this.encryption_algorithm = pkDatasets[0].encryption_algorithm.value;
+      this.encryptedParent = pkDatasets[0].encrypted;
+      this.encryptionAlgorithm = pkDatasets[0].encryption_algorithm.value;
       const children = (pkDatasets[0].children);
       if (children.length > 0) {
         children.forEach((child) => {
@@ -422,11 +422,11 @@ export class ZvolFormComponent implements FormConfiguration {
       }
 
       let inheritEncryptPlaceholder: string = helptext.dataset_form_encryption.inherit_checkbox_notencrypted;
-      if (this.encrypted_parent) {
+      if (this.encryptedParent) {
         if (pkDatasets[0].key_format.value === DatasetEncryptionType.Passphrase) {
-          this.passphrase_parent = true;
+          this.passphraseParent = true;
           // if parent is passphrase this dataset cannot be a key type
-          this.encryption_type = 'passphrase';
+          this.encryptionType = 'passphrase';
           _.find(this.fieldConfig, { name: 'encryption_type' }).isHidden = true;
         }
         inheritEncryptPlaceholder = helptext.dataset_form_encryption.inherit_checkbox_encrypted;
@@ -437,7 +437,7 @@ export class ZvolFormComponent implements FormConfiguration {
         const encryptionAlgorithmConfig = _.find(this.fieldConfig, { name: 'algorithm' }) as FormSelectConfig;
         const encryptionAlgorithmControl = this.entityForm.formGroup.controls['algorithm'];
         let parentAlgorithm;
-        if (this.encrypted_parent && pkDatasets[0].encryption_algorithm) {
+        if (this.encryptedParent && pkDatasets[0].encryption_algorithm) {
           parentAlgorithm = pkDatasets[0].encryption_algorithm.value;
           encryptionAlgorithmControl.setValue(parentAlgorithm);
         }
@@ -452,15 +452,15 @@ export class ZvolFormComponent implements FormConfiguration {
         const inheritEncryptionControl = this.entityForm.formGroup.controls['inherit_encryption'];
         const encryptionControl = this.entityForm.formGroup.controls['encryption'];
         const encryptionTypeControl = this.entityForm.formGroup.controls['encryption_type'];
-        const allEncryptionFields = this.encryption_fields.concat(this.key_fields, this.passphrase_fields);
-        if (this.passphrase_parent) {
+        const allEncryptionFields = this.encryptionFields.concat(this.keyFields, this.passphraseFields);
+        if (this.passphraseParent) {
           encryptionTypeControl.setValue('passphrase');
         }
-        this.encryption_fields.forEach((field) => {
+        this.encryptionFields.forEach((field) => {
           this.entityForm.setDisabled(field, true, true);
         });
         inheritEncryptionControl.valueChanges.pipe(untilDestroyed(this)).subscribe((inherit: boolean) => {
-          this.inherit_encryption = inherit;
+          this.inheritEncryption = inherit;
           if (inherit) {
             allEncryptionFields.forEach((field) => {
               this.entityForm.setDisabled(field, inherit, inherit);
@@ -470,15 +470,15 @@ export class ZvolFormComponent implements FormConfiguration {
           if (!inherit) {
             this.entityForm.setDisabled('encryption_type', inherit, inherit);
             this.entityForm.setDisabled('algorithm', inherit, inherit);
-            if (this.passphrase_parent) { // keep it hidden if it passphrase
+            if (this.passphraseParent) { // keep it hidden if it passphrase
               _.find(this.fieldConfig, { name: 'encryption_type' }).isHidden = true;
             }
-            const key = (this.encryption_type === 'key');
+            const key = (this.encryptionType === 'key');
             this.entityForm.setDisabled('passphrase', key, key);
             this.entityForm.setDisabled('confirm_passphrase', key, key);
             this.entityForm.setDisabled('pbkdf2iters', key, key);
             this.entityForm.setDisabled('generate_key', !key, !key);
-            if (this.encrypted_parent) {
+            if (this.encryptedParent) {
               _.find(this.fieldConfig, { name: 'encryption' }).isHidden = this.isBasicMode;
             } else {
               _.find(this.fieldConfig, { name: 'encryption' }).isHidden = inherit;
@@ -487,7 +487,7 @@ export class ZvolFormComponent implements FormConfiguration {
         });
         encryptionControl.valueChanges.pipe(untilDestroyed(this)).subscribe((encryption: boolean) => {
           // if on an encrypted parent we should warn the user, otherwise just disable the fields
-          if (this.encrypted_parent && !encryption && !this.non_encrypted_warned) {
+          if (this.encryptedParent && !encryption && !this.nonEncryptedWarned) {
             this.dialogService.confirm({
               title: helptext.dataset_form_encryption.non_encrypted_warning_title,
               message: helptext.dataset_form_encryption.non_encrypted_warning_warning,
@@ -495,7 +495,7 @@ export class ZvolFormComponent implements FormConfiguration {
               filter(Boolean),
               untilDestroyed(this),
             ).subscribe(() => {
-              this.non_encrypted_warned = true;
+              this.nonEncryptedWarned = true;
               allEncryptionFields.forEach((field) => {
                 if (field !== 'encryption') {
                   this.entityForm.setDisabled(field, true, true);
@@ -503,43 +503,43 @@ export class ZvolFormComponent implements FormConfiguration {
               });
             });
           } else {
-            this.encryption_fields.forEach((field) => {
+            this.encryptionFields.forEach((field) => {
               if (field !== 'encryption') {
-                if (field === 'generate_key' && this.encryption_type !== 'key') {
+                if (field === 'generate_key' && this.encryptionType !== 'key') {
                   return;
                 }
 
                 this.entityForm.setDisabled(field, !encryption, !encryption);
               }
             });
-            if (this.encryption_type === 'key' && !this.generate_key) {
+            if (this.encryptionType === 'key' && !this.generateKey) {
               this.entityForm.setDisabled('key', !encryption, !encryption);
             }
-            if (this.encryption_type === 'passphrase') {
-              this.passphrase_fields.forEach((field) => {
+            if (this.encryptionType === 'passphrase') {
+              this.passphraseFields.forEach((field) => {
                 this.entityForm.setDisabled(field, !encryption, !encryption);
               });
             }
-            if (this.passphrase_parent) { // keep this field hidden if parent has a passphrase
+            if (this.passphraseParent) { // keep this field hidden if parent has a passphrase
               _.find(this.fieldConfig, { name: 'encryption_type' }).isHidden = true;
             }
           }
         });
         encryptionTypeControl.valueChanges.pipe(untilDestroyed(this)).subscribe((type: 'key' | 'passphrase') => {
-          this.encryption_type = type;
+          this.encryptionType = type;
           const key = (type === 'key');
           this.entityForm.setDisabled('passphrase', key, key);
           this.entityForm.setDisabled('confirm_passphrase', key, key);
           this.entityForm.setDisabled('pbkdf2iters', key, key);
           this.entityForm.setDisabled('generate_key', !key, !key);
           if (key) {
-            this.entityForm.setDisabled('key', this.generate_key, this.generate_key);
+            this.entityForm.setDisabled('key', this.generateKey, this.generateKey);
           } else {
             this.entityForm.setDisabled('key', true, true);
           }
         });
         this.entityForm.formGroup.controls['generate_key'].valueChanges.pipe(untilDestroyed(this)).subscribe((generateKey: boolean) => {
-          this.generate_key = generateKey;
+          this.generateKey = generateKey;
           this.entityForm.setDisabled('key', generateKey, generateKey);
         });
       } else {
@@ -748,32 +748,32 @@ export class ZvolFormComponent implements FormConfiguration {
 
   editSubmit(body: any): void {
     this.ws.call('pool.dataset.query', [[['id', '=', this.parent]]]).pipe(untilDestroyed(this)).subscribe((datasets) => {
-      this.edit_data = this.sendAsBasicOrAdvanced(body);
+      this.editData = this.sendAsBasicOrAdvanced(body);
 
-      if (this.edit_data.inherit_encryption) {
-        delete this.edit_data.encryption;
-      } else if (this.edit_data.encryption) {
-        this.edit_data['encryption_options'] = {};
-        if (this.edit_data.encryption_type === 'key') {
-          this.edit_data.encryption_options.generate_key = this.edit_data.generate_key;
-          if (!this.edit_data.generate_key) {
-            this.edit_data.encryption_options.key = this.edit_data.key;
+      if (this.editData.inherit_encryption) {
+        delete this.editData.encryption;
+      } else if (this.editData.encryption) {
+        this.editData['encryption_options'] = {};
+        if (this.editData.encryption_type === 'key') {
+          this.editData.encryption_options.generate_key = this.editData.generate_key;
+          if (!this.editData.generate_key) {
+            this.editData.encryption_options.key = this.editData.key;
           }
-        } else if (this.edit_data.encryption_type === 'passphrase') {
-          this.edit_data.encryption_options.passphrase = this.edit_data.passphrase;
-          this.edit_data.encryption_options.pbkdf2iters = this.edit_data.pbkdf2iters;
+        } else if (this.editData.encryption_type === 'passphrase') {
+          this.editData.encryption_options.passphrase = this.editData.passphrase;
+          this.editData.encryption_options.pbkdf2iters = this.editData.pbkdf2iters;
         }
-        this.edit_data.encryption_options.algorithm = this.edit_data.algorithm;
+        this.editData.encryption_options.algorithm = this.editData.algorithm;
       }
 
-      delete this.edit_data.inherit_encryption;
-      delete this.edit_data.key;
-      delete this.edit_data.generate_key;
-      delete this.edit_data.passphrase;
-      delete this.edit_data.confirm_passphrase;
-      delete this.edit_data.pbkdf2iters;
-      delete this.edit_data.encryption_type;
-      delete this.edit_data.algorithm;
+      delete this.editData.inherit_encryption;
+      delete this.editData.key;
+      delete this.editData.generate_key;
+      delete this.editData.passphrase;
+      delete this.editData.confirm_passphrase;
+      delete this.editData.pbkdf2iters;
+      delete this.editData.encryption_type;
+      delete this.editData.algorithm;
 
       let volblocksizeIntegerValue: number | string = datasets[0].volblocksize.value.match(/[a-zA-Z]+|[+-]?([0-9]+([.][0-9]*)?|[.][0-9]+)+/g)[0];
       volblocksizeIntegerValue = parseInt(volblocksizeIntegerValue, 10);
@@ -782,9 +782,9 @@ export class ZvolFormComponent implements FormConfiguration {
       } else {
         volblocksizeIntegerValue = volblocksizeIntegerValue * 1024;
       }
-      if (this.edit_data.volsize && this.edit_data.volsize % volblocksizeIntegerValue !== 0) {
-        this.edit_data.volsize = this.edit_data.volsize
-          + (volblocksizeIntegerValue - this.edit_data.volsize % volblocksizeIntegerValue);
+      if (this.editData.volsize && this.editData.volsize % volblocksizeIntegerValue !== 0) {
+        this.editData.volsize = this.editData.volsize
+          + (volblocksizeIntegerValue - this.editData.volsize % volblocksizeIntegerValue);
       }
       let roundedVolSize = datasets[0].volsize.parsed;
 
@@ -793,8 +793,8 @@ export class ZvolFormComponent implements FormConfiguration {
           + (volblocksizeIntegerValue - datasets[0].volsize.parsed % volblocksizeIntegerValue);
       }
 
-      if (!this.edit_data.volsize || this.edit_data.volsize >= roundedVolSize) {
-        this.ws.call('pool.dataset.update', [this.parent, this.edit_data]).pipe(untilDestroyed(this)).subscribe(() => {
+      if (!this.editData.volsize || this.editData.volsize >= roundedVolSize) {
+        this.ws.call('pool.dataset.update', [this.parent, this.editData]).pipe(untilDestroyed(this)).subscribe(() => {
           this.loader.close();
           this.modalService.closeSlideIn();
           this.modalService.refreshTable();

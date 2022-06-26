@@ -14,7 +14,7 @@
         (change)="toggleAutoCheck()"
         ix-auto ix-auto-type="checkbox" ix-auto-identifier="daily-updates"
       >{{"Check for Updates Daily and Download if Available" | translate}}</mat-checkbox>
-      <ix-tooltip [message]=updatecheck_tooltip ix-auto ix-auto-type="tooltip-icon" ix-auto-identifier="update-check"></ix-tooltip>
+      <ix-tooltip [message]=updatecheckTooltip ix-auto ix-auto-type="tooltip-icon" ix-auto-identifier="update-check"></ix-tooltip>
     </div>
     <div class="train-card-row train-select-row" *ngIf="trains.length > 1; else trainName">
       <mat-label id="train-label">{{"Train" | translate}}</mat-label>
@@ -115,7 +115,7 @@
   </mat-card-content>
 </mat-card>
 
-<mat-card class="p-0" id="changelog-card" *ngIf="changeLog && nightly_train">
+<mat-card class="p-0" id="changelog-card" *ngIf="changeLog && nightlyTrain">
   <mat-card-title id="changelog-title">
     <div >{{"Change log" | translate}}</div>
   </mat-card-title>
@@ -124,7 +124,7 @@
   </mat-card-content>
 </mat-card>
 
-<mat-card *ngIf="updates_available && pre_release_train && product_type === ProductType.ScaleEnterprise" class="train-info-card">
+<mat-card *ngIf="updatesAvailable && preReleaseTrain && productType === ProductType.ScaleEnterprise" class="train-info-card">
   <h4 class="stable-warning"><i class="material-icons">info</i>
     <a href="https://www.truenas.com/docs/hub/intro/release-notes/" target="_blank">
       {{"Before updating, please read the release notes." | translate}}
@@ -132,7 +132,7 @@
   </h4>
 </mat-card>
 
-<mat-card *ngIf="updates_available && release_train && product_type === ProductType.ScaleEnterprise" class="train-info-card">
+<mat-card *ngIf="updatesAvailable && releaseTrain && productType === ProductType.ScaleEnterprise" class="train-info-card">
   <h4 class="stable-warning"><i class="material-icons">info</i>
     <a href="https://www.truenas.com/docs/hub/intro/release-notes/" target="_blank">
       {{"Before updating, please read the release notes." | translate}}
@@ -140,13 +140,13 @@
   </h4>
 </mat-card>
 
-<mat-card *ngIf="updates_available && pre_release_train && product_type === ProductType.Scale" class="train-info-card">
+<mat-card *ngIf="updatesAvailable && preReleaseTrain && productType === ProductType.Scale" class="train-info-card">
   <h4 class="stable-warning"><i class="material-icons">info</i>
     <strong>{{"This is not a production release, and should only be used for testing." | translate}}</strong>
   </h4>
 </mat-card>
 
-<mat-card *ngIf="updates_available && nightly_train" class="train-info-card">
+<mat-card *ngIf="updatesAvailable && nightlyTrain" class="train-info-card">
   <h4 class="stable-warning"><i class="material-icons">info</i>
     <strong>{{"This is not a production release, and should only be used for testing." | translate}}</strong>
   </h4>
@@ -156,7 +156,7 @@
   <div class="row">
     <div class="col-md-12">
       <button
-        *ngIf="updates_available"
+        *ngIf="updatesAvailable"
         mat-button
         class="btn btn-success update-button mat-basic"
         (click)="downloadUpdate()"
@@ -164,7 +164,7 @@
         ix-auto ix-auto-type="button" ix-auto-identifier="DOWNLOAD UPDATES"
       >{{ "Download Updates" | translate }}</button>
       <button
-        *ngIf="update_downloaded && status !== SystemUpdateStatus.Unavailable"
+        *ngIf="updateDownloaded && status !== SystemUpdateStatus.Unavailable"
         mat-button
         class="btn btn-success update-button mat-basic"
         (click)="applyPendingUpdate()"
@@ -176,7 +176,7 @@
         (click)="manualUpdate()"
         ix-auto ix-auto-type="button" ix-auto-identifier="INSTALL MANUAL UPDATE FILE"
       >{{"Install Manual Update File" | translate}}</button>
-      <p><font color="red">{{general_update_error}}</font></p>
+      <p><font color="red">{{generalUpdateError}}</font></p>
     </div>
   </div>
 </mat-card>
@@ -185,7 +185,7 @@
     <div class="col-md-12">
       <p>
         <i class="material-icons">warning</i>
-        <span id="update-running-msg">{{ is_ha? sysUpdateMessage : sysUpdateMessage + sysUpdateMsgPt2 }}</span>
+        <span id="update-running-msg">{{ isHa? sysUpdateMessage : sysUpdateMessage + sysUpdateMsgPt2 }}</span>
       </p>
     </div>
   </div>

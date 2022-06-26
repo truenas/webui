@@ -1,0 +1,23 @@
+
+@import 'cssvars';
+
+@mixin blink {
+  animation: blinker 0.75s linear infinite;
+}
+
+@keyframes blinker {
+  50% {
+    opacity: 0.1;
+  }
+}
+
+@mixin fade-in {
+  animation-duration: 0.35s;
+  animation-fill-mode: backwards;
+  animation-name: fade-in-animation;
+}
+
+@keyframes fade-in-animation {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}

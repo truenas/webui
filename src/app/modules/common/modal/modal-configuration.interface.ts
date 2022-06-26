@@ -1,7 +1,5 @@
-import { Subject } from 'rxjs';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { WizardConfiguration } from 'app/interfaces/entity-wizard.interface';
-import { Control } from 'app/modules/entity/entity-toolbar/models/control.interface';
 
 /**
  * Modal configuration is a complicated object that supports one of:
@@ -27,5 +25,4 @@ export interface ModalSpecificConfiguration {
   title?: string;
   columnsOnForm?: number;
   isOneColumnForm?: boolean;
-  controller?: Subject<Control>;
 }

@@ -1,10 +1,8 @@
 import {
-  Component, Input, OnInit,
+  Component, EventEmitter, Input, OnInit, Output,
 } from '@angular/core';
-import { Subject } from 'rxjs';
 import { getUniqueId } from 'app/helpers/get-unique-id.helper';
-import { ControlConfig } from 'app/modules/entity/entity-toolbar/models/control-config.interface';
-import { Control } from 'app/modules/entity/entity-toolbar/models/control.interface';
+import { ControlConfig, ToolbarOption } from 'app/modules/entity/entity-toolbar/models/control-config.interface';
 
 @Component({
   selector: 'ix-toolbar-multimenu',
@@ -13,9 +11,10 @@ import { Control } from 'app/modules/entity/entity-toolbar/models/control.interf
 })
 export class ToolbarMultimenuComponent implements OnInit {
   @Input() config?: ControlConfig;
-  @Input() controller: Subject<Control>;
+  @Output() selectionChange = new EventEmitter<ToolbarOption[]>();
+
   allSelected = false;
-  values: any[] = [];
+  values: ToolbarOption[] = [];
   selectStates: boolean [] = [];
   id = getUniqueId();
 
@@ -42,11 +41,12 @@ export class ToolbarMultimenuComponent implements OnInit {
     this.updateController();
   }
 
-  onClick(value: any, index: number): void {
+  onClick(value: ToolbarOption, index: number): void {
     if (this.selectStates[index]) {
-      if (this.checkLength()) { this.allSelected = false; }
-      const vIndex = this.values.indexOf(value);
-      this.values.splice(vIndex, 1);
+      if (this.checkLength()) {
+        this.allSelected = false;
+      }
+      this.values = this.values.filter((option) => option.value !== value.value);
     } else {
       this.values.push(value);
     }
@@ -56,12 +56,10 @@ export class ToolbarMultimenuComponent implements OnInit {
 
   updateController(): void {
     this.config.value = this.values;
-    const message: Control = { name: this.config.name, value: this.values };
-    this.controller.next(message);
+    this.selectionChange.next(this.values);
   }
 
   checkLength(): boolean {
-    // return true;
     return this.values.length === this.selectStates.length;
   }
 
@@ -75,9 +73,5 @@ export class ToolbarMultimenuComponent implements OnInit {
       this.values = [];
     }
     this.updateController();
-  }
-
-  isChecked(): boolean {
-    return true;
   }
 }

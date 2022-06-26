@@ -6,6 +6,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatSortModule } from '@angular/material/sort';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslateModule } from '@ngx-translate/core';
@@ -14,6 +15,7 @@ import { CommonDirectivesModule } from 'app/directives/common/common-directives.
 import { AppCommonModule } from 'app/modules/common/app-common.module';
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxTableModule } from 'app/modules/ix-tables/ix-table.module';
+import { LayoutModule } from 'app/modules/layout/layout.module';
 import { JobLogsRowComponent } from 'app/pages/jobs/job-logs-row/job-logs-row.component';
 import { routing } from 'app/pages/jobs/jobs-list.routing';
 import { JobsListComponent } from './jobs-list/jobs-list.component';
@@ -37,6 +39,8 @@ import { JobsListComponent } from './jobs-list/jobs-list.component';
     FlexLayoutModule,
     CommonDirectivesModule,
     AppCommonModule,
+    LayoutModule,
+    MatSortModule,
   ],
   declarations: [JobsListComponent, JobLogsRowComponent],
 })

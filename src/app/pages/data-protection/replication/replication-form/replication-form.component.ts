@@ -6,12 +6,12 @@ import * as _ from 'lodash';
 import { take } from 'rxjs/operators';
 import { CompressionType } from 'app/enums/compression-type.enum';
 import { Direction } from 'app/enums/direction.enum';
+import { EncryptionKeyFormat } from 'app/enums/encryption-key-format.enum';
 import { ExplorerType } from 'app/enums/explorer-type.enum';
 import { LifetimeUnit } from 'app/enums/lifetime-unit.enum';
 import { LoggingLevel } from 'app/enums/logging-level.enum';
 import { NetcatMode } from 'app/enums/netcat-mode.enum';
 import { ReadOnlyMode } from 'app/enums/readonly-mode.enum';
-import { ReplicationEncryptionKeyFormat } from 'app/enums/replication-encryption-key-format.enum';
 import { RetentionPolicy } from 'app/enums/retention-policy.enum';
 import { SnapshotNamingOption } from 'app/enums/snapshot-naming-option.enum';
 import { TransportMode } from 'app/enums/transport-mode.enum';
@@ -785,11 +785,11 @@ export class ReplicationFormComponent implements FormConfiguration {
           options: [
             {
               label: this.translate.instant('HEX'),
-              value: ReplicationEncryptionKeyFormat.Hex,
+              value: EncryptionKeyFormat.Hex,
             },
             {
               label: this.translate.instant('PASSPHRASE'),
-              value: ReplicationEncryptionKeyFormat.Passphrase,
+              value: EncryptionKeyFormat.Passphrase,
             },
           ],
           relation: [
@@ -821,7 +821,7 @@ export class ReplicationFormComponent implements FormConfiguration {
                 },
                 {
                   name: 'encryption_key_format',
-                  value: ReplicationEncryptionKeyFormat.Hex,
+                  value: EncryptionKeyFormat.Hex,
                 },
               ],
             },
@@ -843,7 +843,7 @@ export class ReplicationFormComponent implements FormConfiguration {
                 },
                 {
                   name: 'encryption_key_format',
-                  value: ReplicationEncryptionKeyFormat.Hex,
+                  value: EncryptionKeyFormat.Hex,
                 },
                 {
                   name: 'encryption_key_generate',
@@ -871,7 +871,7 @@ export class ReplicationFormComponent implements FormConfiguration {
                 },
                 {
                   name: 'encryption_key_format',
-                  value: ReplicationEncryptionKeyFormat.Passphrase,
+                  value: EncryptionKeyFormat.Passphrase,
                 },
               ],
             },
@@ -1185,7 +1185,7 @@ export class ReplicationFormComponent implements FormConfiguration {
 
   afterInit(entityForm: EntityFormComponent): void {
     this.entityForm = entityForm;
-    this.pk = entityForm.pk;
+    this.pk = entityForm.pk as number;
     this.isNew = entityForm.isNew;
     this.title = entityForm.isNew ? helptext.replication_task_add : helptext.replication_task_edit;
 
@@ -1376,7 +1376,7 @@ export class ReplicationFormComponent implements FormConfiguration {
       delete wsResponse.encryption_key_location;
     }
 
-    if (wsResponse.encryption_key_format === ReplicationEncryptionKeyFormat.Hex) {
+    if (wsResponse.encryption_key_format === EncryptionKeyFormat.Hex) {
       wsResponse.encryption_key_generate = false;
       wsResponse.encryption_key_hex = wsResponse.encryption_key;
     } else {
@@ -1501,7 +1501,7 @@ export class ReplicationFormComponent implements FormConfiguration {
     }
     delete data['encryption_key_location_truenasdb'];
 
-    if (data['encryption_key_format'] === ReplicationEncryptionKeyFormat.Passphrase) {
+    if (data['encryption_key_format'] === EncryptionKeyFormat.Passphrase) {
       data['encryption_key'] = data['encryption_key_passphrase'];
     } else {
       data['encryption_key'] = data['encryption_key_generate']

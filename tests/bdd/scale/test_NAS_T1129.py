@@ -90,6 +90,13 @@ def input_my_ldap_smb_test_share_as_the_description_and_click_summit(driver, des
 def the_ldapsmbshare_should_be_added_to_the_shares_list(driver):
     """the ldapsmbshare should be added to the Shares list."""
     assert wait_on_element(driver, 5, '//div[contains(.,"ldapsmbshare")]')
+    if wait_on_element(driver, 2, '//mat-panel-title[contains(.,"(SMB)")]//button[contains(.,"STOPPED")]'):
+        wait_on_element(driver, 5, '//mat-expansion-panel-header[contains(.,"(SMB)")]//button[contains(.,"more_vert")]')
+        driver.find_element_by_xpath('//mat-expansion-panel-header[contains(.,"(SMB)")]//button[contains(.,"more_vert")]').click()
+        wait_on_element(driver, 5, '//button[normalize-space(text())="Turn On Service"]', 'clickable')
+        driver.find_element_by_xpath('//button[normalize-space(text())="Turn On Service"]').click()
+        time.sleep(1)
+    assert wait_on_element(driver, 15, '//mat-panel-title[contains(.,"(SMB)")]//button[contains(.,"RUNNING")]')
 
 
 @then(parsers.parse('send a file to the share with ip/"{ldapsmbshare}" and "{ldap_user}" and "{ldap_password}"'))

@@ -1,0 +1,35 @@
+import { ModuleWithProviders } from '@angular/core';
+import { RouterModule, Routes } from '@angular/router';
+import { PoolsDashboardComponent } from 'app/pages/storage2/components/pools-dashboard/pools-dashboard.component';
+import { ManagerComponent } from './components/manager/manager.component';
+
+export const routes: Routes = [
+  {
+    path: '',
+    data: { title: 'Storage' },
+    children: [
+      {
+        path: '',
+        data: { title: 'Storage Dashboard', breadcrumb: 'Storage Dashboard' },
+        component: PoolsDashboardComponent,
+      },
+      {
+        path: 'create',
+        component: ManagerComponent,
+        data: { title: 'Create Pool', breadcrumb: 'Create Pool' },
+      },
+      {
+        path: ':poolId/devices',
+        loadChildren: () => import('./modules/devices/devices.module').then((module) => module.DevicesModule),
+        data: { title: 'Devices', breadcrumb: 'Devices' },
+      },
+      {
+        path: ':poolId/add-vdevs',
+        component: ManagerComponent,
+        data: { title: 'Add Vdevs to Pool', breadcrumb: 'Add Vdevs to Pool' },
+      },
+    ],
+  },
+];
+
+export const routing: ModuleWithProviders<RouterModule> = RouterModule.forChild(routes);
