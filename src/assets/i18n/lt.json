@@ -212,7 +212,6 @@
   "Add one or more disks to be used for data.": "",
   "Add one or more disks to extend the pool.": "",
   "Add this user to additional groups.": "",
-  "Add to Pool": "",
   "Added disks are erased, then the pool is extended onto the new disks with the chosen topology. Existing data on the pool is kept intact.": "",
   "Adding Vdevs to an encrypted pool resets the passphrase and recovery key!": "",
   "Adding data vdevs of different types is not supported.": "",

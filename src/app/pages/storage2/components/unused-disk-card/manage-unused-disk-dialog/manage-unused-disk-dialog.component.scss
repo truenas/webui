@@ -1,17 +1,19 @@
 .content {
   display: flex;
-  height: 65vh;
   padding-bottom: 8px;
   width: 600px;
 
   > div {
     flex: 1;
-    max-height: 100%;
-    overflow-y: auto;
     padding: 0 8px;
 
+    .list {
+      max-height: calc(65vh - 30px);
+      overflow-y: auto;
+    }
+
     > h4 {
-      margin-bottom: 1rem;
+      margin-bottom: 12px;
     }
   }
 }

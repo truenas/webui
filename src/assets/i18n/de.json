@@ -149,7 +149,6 @@
   "Add groups": "",
   "Add listen": "",
   "Add more options from <a href=\"https://linux.die.net/man/8/tftpd\" target=\"_blank\">tftpd(8)</a>. Add one option on each line.": "",
-  "Add to Pool": "",
   "Adding Vdevs to an encrypted pool resets the passphrase and recovery key!": "",
   "Adding data vdevs of different types is not supported.": "",
   "Additional  <a href=\"https://www.samba.org/samba/docs/current/man-html/smb.conf.5.html\" target=\"_blank\">smb.conf</a>  parameters.": "",

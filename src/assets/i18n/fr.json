@@ -13,7 +13,6 @@
   "Add To Pool": "",
   "Add User Quotas": "",
   "Add any more <a href=\"https://man7.org/linux/man-pages/man5/sshd_config.5.html\" target=\"_blank\">sshd_config(5)</a> options not covered in this screen. Enter one option per line. These options are case-sensitive. Misspellings can prevent the SSH service from starting.": "",
-  "Add to Pool": "",
   "Adv. Power Mgmt.": "",
   "Allow non-root mount": "",
   "Allow this replication to send large data blocks. The  destination system must also support large blocks. This setting cannot be changed  after it has been enabled and the replication task is created. For more details, see  <a href=\"https://linux.die.net/man/8/zfs\"  target=\"_blank\">zfs(8)</a>.": "",
