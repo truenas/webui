@@ -248,6 +248,7 @@ describe('RsyncTaskFormComponent', () => {
 
     await form.fillForm({
       'SSH Connection': 'ssh01',
+      'Remote Path': '/mnt/path',
     });
 
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
@@ -264,6 +265,8 @@ describe('RsyncTaskFormComponent', () => {
         ...existingTaskWithoutModule,
         mode: RsyncMode.Ssh,
         ssh_credentials: 1,
+        remotepath: '/mnt/path',
+        validate_rpath: true,
       },
     ]);
   });

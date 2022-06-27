@@ -40,15 +40,28 @@
             [options]="rsyncModes$"
             [hideEmpty]="true"
           ></ix-select>
-          <ix-select
-            *ngIf="isSshMode"
-            formControlName="connectmode"
-            [label]="'Connect using:' | translate"
-            [tooltip]="helptext.rsync_ssh_connect_mode_tooltip | translate"
-            [options]="connectModes$"
-            [hideEmpty]="true"
-          ></ix-select>
-          <ng-container *ngIf="isSshMode; else moduleFields">
+          <ng-container *ngIf="isModuleMode; else sshFields">
+            <ix-input
+              formControlName="remotehost"
+              [label]="'Remote Host' | translate"
+              [required]="true"
+              [tooltip]="helptext.rsync_remotehost_tooltip | translate"
+            ></ix-input>
+            <ix-input
+              formControlName="remotemodule"
+              [label]="'Remote Module Name' | translate"
+              [tooltip]="helptext.rsync_remotemodule_tooltip"
+              [required]="true"
+            ></ix-input>
+          </ng-container>
+          <ng-template #sshFields>
+            <ix-select
+              formControlName="sshconnectmode"
+              [label]="'Connect using:' | translate"
+              [tooltip]="helptext.rsync_ssh_connect_mode_tooltip | translate"
+              [options]="sshConnectModes$"
+              [hideEmpty]="true"
+            ></ix-select>
             <ng-container *ngIf="isSshConnectionPrivateMode; else keyChainFields">
               <ix-input
                 formControlName="remotehost"
@@ -63,41 +76,27 @@
                 type="number"
                 [tooltip]="helptext.rsync_remoteport_tooltip"
               ></ix-input>
-              <ix-explorer
-                formControlName="remotepath"
-                [label]="'Remote Path' | translate"
-                [nodeProvider]="treeNodeProvider"
-                [tooltip]="helptext.rsync_mode_tooltip"
-              ></ix-explorer>
-              <ix-checkbox
-                formControlName="validate_rpath"
-                [label]="'Validate Remote Path' | translate"
-                [tooltip]="helptext.rsync_validate_rpath_tooltip"
-              ></ix-checkbox>
             </ng-container>
-          </ng-container>
-          <ng-template #moduleFields>
-            <ix-input
-              formControlName="remotehost"
-              [label]="'Remote Host' | translate"
-              [required]="true"
-              [tooltip]="helptext.rsync_remotehost_tooltip | translate"
-            ></ix-input>
-            <ix-input
-              formControlName="remotemodule"
-              [label]="'Remote Module Name' | translate"
-              [tooltip]="helptext.rsync_remotemodule_tooltip"
-              [required]="true"
-            ></ix-input>
-          </ng-template>
-          <ng-template #keyChainFields>
-            <ix-select
-              formControlName="ssh_credentials"
-              [label]="'SSH Connection' | translate"
-              [tooltip]="helptext.rsync_ssh_credentials_tooltip | translate"
-              [options]="sshConnections$"
-              [required]="true"
-            ></ix-select>
+            <ng-template #keyChainFields>
+              <ix-select
+                formControlName="ssh_credentials"
+                [label]="'SSH Connection' | translate"
+                [tooltip]="helptext.rsync_ssh_credentials_tooltip | translate"
+                [options]="sshConnections$"
+                [required]="true"
+              ></ix-select>
+            </ng-template>
+            <ix-explorer
+              formControlName="remotepath"
+              [label]="'Remote Path' | translate"
+              [nodeProvider]="treeNodeProvider"
+              [tooltip]="helptext.rsync_mode_tooltip"
+            ></ix-explorer>
+            <ix-checkbox
+              formControlName="validate_rpath"
+              [label]="'Validate Remote Path' | translate"
+              [tooltip]="helptext.rsync_validate_rpath_tooltip"
+            ></ix-checkbox>
           </ng-template>
         </ix-fieldset>
 

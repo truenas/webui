@@ -44,9 +44,9 @@ export class RsyncTaskFormComponent implements OnInit {
     direction: [null as Direction, Validators.required],
     desc: [''],
     mode: [RsyncMode.Module],
-    remotehost: ['', Validators.required],
-    remoteport: [22, [portRangeValidator(), Validators.required]],
-    remotemodule: ['', Validators.required],
+    remotehost: [''],
+    remoteport: [22, portRangeValidator()],
+    remotemodule: [''],
     remotepath: ['/mnt'],
     validate_rpath: [true],
     schedule: ['', Validators.required],
@@ -61,7 +61,7 @@ export class RsyncTaskFormComponent implements OnInit {
     delayupdates: [true],
     extra: [[] as string[]],
     enabled: [true],
-    connectmode: [RsyncSshConnectMode.PrivateKey],
+    sshconnectmode: [RsyncSshConnectMode.PrivateKey],
     ssh_credentials: [null as number],
   });
 
@@ -79,7 +79,7 @@ export class RsyncTaskFormComponent implements OnInit {
     { label: 'SSH', value: RsyncMode.Ssh },
   ]);
 
-  readonly connectModes$ = of([
+  readonly sshConnectModes$ = of([
     { label: this.translate.instant('SSH private key stored in user\'s home directory'), value: RsyncSshConnectMode.PrivateKey },
     { label: this.translate.instant('SSH connection from the keychain'), value: RsyncSshConnectMode.KeyChain },
   ]);
@@ -108,12 +108,12 @@ export class RsyncTaskFormComponent implements OnInit {
     protected keychainCredentialService: KeychainCredentialService,
   ) {}
 
-  get isSshMode(): boolean {
-    return this.form.value.mode === RsyncMode.Ssh;
+  get isModuleMode(): boolean {
+    return this.form.value.mode === RsyncMode.Module;
   }
 
   get isSshConnectionPrivateMode(): boolean {
-    return this.form.value.connectmode === RsyncSshConnectMode.PrivateKey;
+    return this.form.value.sshconnectmode === RsyncSshConnectMode.PrivateKey;
   }
 
   ngOnInit(): void {
@@ -129,7 +129,7 @@ export class RsyncTaskFormComponent implements OnInit {
     this.form.patchValue({
       ...task,
       schedule: scheduleToCrontab(task.schedule),
-      connectmode: task.ssh_credentials ? RsyncSshConnectMode.KeyChain : RsyncSshConnectMode.PrivateKey,
+      sshconnectmode: task.ssh_credentials ? RsyncSshConnectMode.KeyChain : RsyncSshConnectMode.PrivateKey,
     });
   }
 
@@ -146,16 +146,14 @@ export class RsyncTaskFormComponent implements OnInit {
       delete values.ssh_credentials;
     } else {
       delete values.remotemodule;
-      if (values.connectmode === RsyncSshConnectMode.PrivateKey) {
+      if (values.sshconnectmode === RsyncSshConnectMode.PrivateKey) {
         delete values.ssh_credentials;
       } else {
         delete values.remotehost;
         delete values.remoteport;
-        delete values.remotepath;
-        delete values.validate_rpath;
       }
     }
-    delete values.connectmode;
+    delete values.sshconnectmode;
 
     this.isLoading = true;
     let request$: Observable<unknown>;
