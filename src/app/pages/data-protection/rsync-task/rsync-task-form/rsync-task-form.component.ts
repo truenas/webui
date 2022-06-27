@@ -2,6 +2,7 @@ import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
 import { Validators } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
@@ -10,6 +11,7 @@ import { map } from 'rxjs/operators';
 import { Direction } from 'app/enums/direction.enum';
 import { RsyncMode, RsyncSshConnectMode } from 'app/enums/rsync-mode.enum';
 import helptext from 'app/helptext/data-protection/resync/resync-form';
+import { KeychainSshCredentials } from 'app/interfaces/keychain-credential.interface';
 import { RsyncTask, RsyncTaskUpdate } from 'app/interfaces/rsync-task.interface';
 import { portRangeValidator } from 'app/modules/entity/entity-form/validators/range-validation';
 import { UserComboboxProvider } from 'app/modules/ix-forms/classes/user-combobox-provider';
@@ -66,6 +68,7 @@ export class RsyncTaskFormComponent implements OnInit {
   });
 
   isLoading = false;
+  sshCredentials: KeychainSshCredentials[];
 
   readonly helptext = helptext;
 
@@ -84,9 +87,10 @@ export class RsyncTaskFormComponent implements OnInit {
     { label: this.translate.instant('SSH connection from the keychain'), value: RsyncSshConnectMode.KeyChain },
   ]);
 
-  readonly sshConnections$ = this.keychainCredentialService.getSshConnections().pipe(map((options) => {
+  sshConnections$ = this.keychainCredentialService.getSshConnections().pipe(map((options) => {
+    this.sshCredentials = options;
     return [
-      { label: this.translate.instant('Create New'), value: -1 },
+      { label: this.translate.instant('Create New'), value: '' },
       ...options.map((option) => ({ label: option.name, value: option.id })),
     ];
   }));
@@ -106,6 +110,7 @@ export class RsyncTaskFormComponent implements OnInit {
     private userService: UserService,
     private filesystemService: FilesystemService,
     protected keychainCredentialService: KeychainCredentialService,
+    protected matDialog: MatDialog,
   ) {}
 
   get isModuleMode(): boolean {
@@ -117,9 +122,33 @@ export class RsyncTaskFormComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.form.controls.ssh_credentials.valueChanges.pipe(untilDestroyed(this)).subscribe((value: number) => {
-      if (value === -1) {
-        this.slideInService.open(SshConnectionFormComponent);
+    this.form.controls.ssh_credentials.valueChanges.pipe(untilDestroyed(this)).subscribe((value: number | '') => {
+      if (value === '') {
+        const dialogRef = this.matDialog.open(SshConnectionFormComponent, {
+          data: { dialog: true },
+          width: '600px',
+          panelClass: 'ix-overflow-dialog',
+        });
+
+        dialogRef.afterClosed().pipe(untilDestroyed(this)).subscribe(() => {
+          this.keychainCredentialService.getSshConnections().pipe(untilDestroyed(this)).subscribe((credentials) => {
+            const newCredential = credentials.find((credential) => {
+              return !this.sshCredentials.find((existingCredential) => existingCredential.id === credential.id);
+            });
+
+            if (!newCredential) {
+              this.form.controls.ssh_credentials.setValue(null);
+              return;
+            }
+
+            this.sshConnections$ = of([
+              { label: this.translate.instant('Create New'), value: '' },
+              ...credentials.map((credential) => ({ label: credential.name, value: credential.id })),
+            ]);
+            this.form.controls.ssh_credentials.setValue(newCredential.id);
+            this.sshCredentials = credentials;
+          });
+        });
       }
     });
   }
