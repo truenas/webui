@@ -35,11 +35,18 @@ the system dataset transfers back to the TrueNAS operating system device.'),
  Data on the pool will not be available after export.\
  Data on the pool disks can be destroyed by setting the <b>Destroy data</b> option.\
  Back up critical data <b>before</b> exporting/disconnecting the pool.'),
+    warning: T('WARNING: Exporting/disconnecting pool <i>{pool}</i>.\
+ Data on the pool will not be available after export.\
+ Data on the pool disks can be destroyed by setting the <b>Destroy data</b> option.\
+ Back up critical data <b>before</b> exporting/disconnecting the pool.'),
     unknownStateA: T('The pool <i>'),
     unknownStateB: T('</i>is in the database but not connected to the machine. If it was exported by \
     mistake, reconnect the hardware and use <b>Import Pool</b>.<br /><br />'),
+    unknownState: T('The pool <i>{pool}</i>is in the database but not connected to the machine. If it was exported by \
+    mistake, reconnect the hardware and use <b>Import Pool</b>.<br /><br />'),
     destroy: T('Destroy data on this pool?'),
     cascade: T('Delete configuration of shares that used this pool?'),
+    enterName: T('Enter <strong>{pool}</strong> below to confirm'),
     confirm: T('Confirm Export/Disconnect'),
     unknown_status_alt_text: T('(Remove pool from database)'),
     saveButton: T('Export/Disconnect'),
