@@ -1,17 +1,19 @@
 <div class="tree-node-grid">
-  <div fxLayout="row" fxLayoutAlign="start center">
-    <mat-icon *ngIf="!icon.startsWith('mdi')">{{ icon }}</mat-icon>
-    <mat-icon *ngIf="icon.startsWith('mdi')" fontSet="mdi-set" [fontIcon]="icon"></mat-icon>
-    <strong>{{ label }}</strong>
+  <div class="cell cell-name">
+    <div class="icon-container">
+      <ix-dataset-icon [dataset]="dataset"></ix-dataset-icon>
+    </div>
+    <span class="name">{{ label }}</span>
   </div>
-  <div fxLayout="row" fxLayoutAlign="start center">
-    <span>{{ dataset.used.value }} used / {{ dataset.available.value }} left</span>
+  <div class="cell">
+    {{ '{value} Used' | translate: { value: dataset.used.parsed | filesize: { standard: 'iec' } } }}
+    /
+    {{ '{value} Left' | translate: { value: dataset.available.parsed | filesize: { standard: 'iec' } } }}
   </div>
-  <div fxLayout="row" fxLayoutAlign="start center">
-    <mat-icon>{{ dataset.encrypted ? 'lock' : 'lock_open' }}</mat-icon>
-    <div>{{ (dataset.encrypted ? 'Encrypted' : 'Unlocked') | translate }}</div>
+  <div class="cell cell-encryption">
+    <ix-dataset-encryption-cell [dataset]="dataset"></ix-dataset-encryption-cell>
   </div>
-  <div fxLayout="row" fxLayoutAlign="start center">
+  <div class="cell cell-roles">
     {{ roles.join(', ') }}
   </div>
 </div>

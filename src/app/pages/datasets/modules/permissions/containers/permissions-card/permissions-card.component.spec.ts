@@ -36,6 +36,7 @@ describe('PermissionsCardComponent', () => {
 
   const dataset = {
     id: 'testpool/dataset',
+    name: 'testpool/dataset',
     mountpoint: '/mnt/testpool/dataset',
     pool: 'testpool',
   } as Dataset;

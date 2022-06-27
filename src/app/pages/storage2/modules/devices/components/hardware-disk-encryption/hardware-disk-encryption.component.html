@@ -6,41 +6,34 @@
   <mat-card-content>
     <div class="details-item">
       <span class="label">{{ 'SED Password' | translate }}:</span>
-      <span *ngIf="hasDiskEncryption$ | async as diskEncryption" class="value">
-        <ng-container *ngIf="diskEncryption.isLoading">
-          <!-- TODO: Add loading indicator -->
-          Loading...
-        </ng-container>
-        <ng-container *ngIf="diskEncryption.value !== undefined">
+      <ng-container *ngIf="hasDiskEncryption$ | async as diskEncryption">
+        <ngx-skeleton-loader *ngIf="diskEncryption.isLoading"></ngx-skeleton-loader>
+        <span *ngIf="diskEncryption.value !== undefined" class="value">
           {{ diskEncryption.value ? ('Password is set' | translate) : ('Password is not set' | translate) }}
-        </ng-container>
+        </span>
         <ng-container *ngIf="diskEncryption.error">
           <!-- TODO: Add error handler -->
           Error
         </ng-container>
-      </span>
+      </ng-container>
       <a
         class="action"
         (click)="onManageSedPassword()"
       >{{ 'Manage SED Password' | translate }}</a>
     </div>
 
-
     <div class="details-item">
       <span class="label">{{ 'Global SED Password' | translate }}:</span>
-      <span *ngIf="hasGlobalEncryption$ | async as globalEncryption" class="value">
-        <ng-container *ngIf="globalEncryption.isLoading">
-          <!-- TODO: Add loading indicator -->
-          Loading...
-        </ng-container>
-        <ng-container *ngIf="globalEncryption.value !== undefined">
+      <ng-container *ngIf="hasGlobalEncryption$ | async as globalEncryption">
+        <ngx-skeleton-loader *ngIf="globalEncryption.isLoading"></ngx-skeleton-loader>
+        <span *ngIf="globalEncryption.value !== undefined" class="value">
           {{ globalEncryption.value ? ('Password is set' | translate) : ('Password is not set' | translate) }}
-        </ng-container>
+        </span>
         <ng-container *ngIf="globalEncryption.error">
           <!-- TODO: Add error handler -->
           Error
         </ng-container>
-      </span>
+      </ng-container>
       <a
         class="action"
         [routerLink]="['/system/advanced']"

@@ -8,6 +8,7 @@
 
   .mat-chip-list {
     display: block;
+    min-height: 23px;
     width: 100%;
   }
 }
@@ -33,7 +34,7 @@
 
   &:focus-within {
     border-color: var(--primary);
-    border-width: 1px;
+    border-width: 1.5px;
   }
 
   &.disabled {
@@ -58,7 +59,8 @@
 }
 
 .mat-standard-chip {
-  min-height: 25px;
+  line-height: 1;
+  min-height: 23px;
 }
 
 .input-container.disabled {

@@ -1,4 +1,11 @@
-<h3 class="title">Details for /{{ dataset.name }}</h3>
+<h3 class="title">
+  {{ 'Details for' | translate }}
+  <ng-container *ngIf="!isRoot">
+    {{ parentPath }}
+  </ng-container>
+  <ix-dataset-icon [dataset]="dataset"></ix-dataset-icon>
+  <span>{{ ownName }}</span>
+</h3>
 
 <div class="cards">
   <ix-dataset-details-card [dataset]="dataset"></ix-dataset-details-card>

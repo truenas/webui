@@ -1,8 +1,8 @@
 import { EncryptionKeyFormat } from 'app/enums/encryption-key-format.enum';
 import { Dataset } from 'app/interfaces/dataset.interface';
 
-export function isRootDataset(dataset: { mountpoint: string }): boolean {
-  return (dataset.mountpoint.match(/\//g) || []).length <= 2;
+export function isRootDataset(dataset: Dataset): boolean {
+  return dataset.name.split('/').length === 1;
 }
 
 export function isEncryptionRoot(dataset: Dataset): boolean {

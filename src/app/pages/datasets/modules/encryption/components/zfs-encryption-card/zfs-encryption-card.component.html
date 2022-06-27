@@ -44,15 +44,15 @@
       </div>
     </ng-container>
   </mat-card-content>
-  <mat-card-actions *ngIf="dataset.encrypted && isEncryptionRoot && !this.dataset.locked">
+  <mat-card-actions *ngIf="dataset.encrypted && isEncryptionRoot && !this.dataset.locked" class="secondary-actions">
     <button
       *ngIf="canExportKey"
-      mat-button
+      mat-stroked-button
       (click)="onExportKey()"
     >{{ 'Export Key' | translate }}</button>
     <button
       *ngIf="hasPassphrase"
-      mat-button
+      mat-stroked-button
       (click)="onLock()"
     >{{ 'Lock' | translate }}</button>
   </mat-card-actions>
