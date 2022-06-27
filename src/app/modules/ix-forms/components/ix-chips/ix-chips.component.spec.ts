@@ -161,8 +161,8 @@ describe('IxChipsComponent', () => {
       expect(optionsAutocomplete).toEqual(['sys', 'staff']);
     }));
 
-    it('it sets value when user selects it from autocomplete'
-      + 'after autocomplete should be closed', fakeAsync(async () => {
+    it('it sets value when user selects it from autocomplete,'
+      + ' after autocomplete should be closed', fakeAsync(async () => {
       spectator.setInput('autocompleteProvider', jest.fn(() => of(['ssl-cert', 'staff'])));
       spectator.tick(100);
       const input = await matChipList.getInput();
