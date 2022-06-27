@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, Optional,
 } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
@@ -129,8 +129,8 @@ export class SshConnectionFormComponent {
     private loader: AppLoaderService,
     private validatorsService: IxValidatorsService,
     private slideIn: IxSlideInService,
-    private dialogRef: MatDialogRef<SshConnectionFormComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: { dialog: boolean },
+    @Optional() public dialogRef: MatDialogRef<SshConnectionFormComponent>,
+    @Optional() @Inject(MAT_DIALOG_DATA) public data: { dialog: boolean },
   ) {}
 
   get isManualAuthFormValid(): boolean {
@@ -185,7 +185,7 @@ export class SshConnectionFormComponent {
     ).subscribe(
       () => {
         this.isLoading = false;
-        if (this.data.dialog) {
+        if (this.data?.dialog) {
           if (this.dialogRef) {
             this.dialogRef.close();
           }
