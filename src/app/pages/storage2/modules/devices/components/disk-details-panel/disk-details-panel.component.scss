@@ -1,3 +1,9 @@
+@import '~assets/styles/mixins/cards';
+
+h3 {
+  margin-bottom: 16px;
+  margin-left: 4px;
+}
 
 .cards {
   display: flex;
@@ -9,4 +15,12 @@
     max-width: 620px;
     min-width: 420px;
   }
+}
+
+.title {
+  color: var(--fg2);
+}
+
+.title {
+  color: var(--fg2);
 }

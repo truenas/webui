@@ -167,7 +167,7 @@ import { PeriodicSnapshotTask, PeriodSnapshotTaskUpdate } from 'app/interfaces/p
 import { DatasetAttachment, PoolAttachment } from 'app/interfaces/pool-attachment.interface';
 import { PoolExportParams } from 'app/interfaces/pool-export.interface';
 import { ImportDiskParams, PoolFindResult, PoolImportParams } from 'app/interfaces/pool-import.interface';
-import { CreatePoolScrub, PoolScrub, PoolScrubParams } from 'app/interfaces/pool-scrub.interface';
+import { CreatePoolScrubTask, PoolScrubTask, PoolScrubTaskParams } from 'app/interfaces/pool-scrub.interface';
 import { PoolUnlockQuery, PoolUnlockResult } from 'app/interfaces/pool-unlock-query.interface';
 import {
   CreatePool, Pool, PoolAttachParams, PoolExpandParams, PoolReplaceParams, UpdatePool,
@@ -706,11 +706,11 @@ export type ApiDirectory = {
   'pool.replace': { params: [id: number, params: PoolReplaceParams]; response: boolean };
   'pool.resilver.config': { params: void; response: ResilverConfig };
   'pool.resilver.update': { params: [ResilverConfigUpdate]; response: ResilverConfig };
-  'pool.scrub': { params: PoolScrubParams; response: void };
-  'pool.scrub.create': { params: [CreatePoolScrub]; response: PoolScrub };
+  'pool.scrub': { params: PoolScrubTaskParams; response: void };
+  'pool.scrub.create': { params: [CreatePoolScrubTask]; response: PoolScrubTask };
   'pool.scrub.delete': { params: [id: number]; response: boolean };
-  'pool.scrub.query': { params: QueryParams<PoolScrub>; response: PoolScrub[] };
-  'pool.scrub.update': { params: [id: number, params: CreatePoolScrub]; response: PoolScrub };
+  'pool.scrub.query': { params: QueryParams<PoolScrubTask>; response: PoolScrubTask[] };
+  'pool.scrub.update': { params: [id: number, params: CreatePoolScrubTask]; response: PoolScrubTask };
   'pool.snapshottask.create': { params: [PeriodSnapshotTaskUpdate]; response: PeriodicSnapshotTask };
   'pool.snapshottask.delete': { params: [id: number]; response: boolean };
   'pool.snapshottask.query': { params: QueryParams<PeriodicSnapshotTask>; response: PeriodicSnapshotTask[] };
