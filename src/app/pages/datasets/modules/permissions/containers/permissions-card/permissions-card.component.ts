@@ -18,7 +18,7 @@ import { isRootDataset } from 'app/pages/datasets/utils/dataset.utils';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PermissionsCardComponent implements OnInit, OnChanges {
-  @Input() dataset: Pick<Dataset, 'id' | 'pool' | 'mountpoint'>;
+  @Input() dataset: Dataset;
 
   isLoading: boolean;
   stat: FileSystemStat;

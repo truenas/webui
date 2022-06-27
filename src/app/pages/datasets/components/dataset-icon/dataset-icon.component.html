@@ -1,0 +1,4 @@
+<!-- TODO: https://jira.ixsystems.com/browse/NAS-116793 -->
+<mat-icon *ngIf="isRoot" svgIcon="dataset" class="root-dataset-icon"></mat-icon>
+<mat-icon *ngIf="!isRoot && !isZvol">folder</mat-icon>
+<mat-icon *ngIf="!isRoot && isZvol" fontSet="mdi-set" fontIcon="mdi-database"></mat-icon>

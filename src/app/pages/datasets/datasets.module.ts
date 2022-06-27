@@ -10,6 +10,7 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatSortModule } from '@angular/material/sort';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslateModule } from '@ngx-translate/core';
+import { NgxFilesizeModule } from 'ngx-filesize';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { AppCommonModule } from 'app/modules/common/app-common.module';
@@ -33,6 +34,8 @@ import { EncryptionModule } from 'app/pages/datasets/modules/encryption/encrypti
 import { PermissionsModule } from 'app/pages/datasets/modules/permissions/permissions.module';
 import { DatasetStore } from 'app/pages/datasets/store/dataset-store.service';
 import { DatasetCapacityManagementCardComponent } from './components/dataset-capacity-management-card/dataset-capacity-management-card.component';
+import { DatasetIconComponent } from './components/dataset-icon/dataset-icon.component';
+import { DatasetEncryptionCellComponent } from './components/dataset-node/dataset-encryption-cell/dataset-encryption-cell.component';
 import { DatasetNodeComponent } from './components/dataset-node/dataset-node.component';
 
 @NgModule({
@@ -63,6 +66,7 @@ import { DatasetNodeComponent } from './components/dataset-node/dataset-node.com
     ReactiveFormsModule,
     EntityModule,
     NgxSkeletonLoaderModule,
+    NgxFilesizeModule,
   ],
   declarations: [
     DatasetsManagementComponent,
@@ -77,6 +81,8 @@ import { DatasetNodeComponent } from './components/dataset-node/dataset-node.com
     DatasetQuotaEditFormComponent,
     DatasetQuotasUserlistComponent,
     DatasetQuotasGrouplistComponent,
+    DatasetIconComponent,
+    DatasetEncryptionCellComponent,
   ],
   providers: [
     DatasetStore,

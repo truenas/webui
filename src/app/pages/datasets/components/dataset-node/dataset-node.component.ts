@@ -1,6 +1,4 @@
-import {
-  Component, ChangeDetectionStrategy, Input,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { Dataset } from 'app/interfaces/dataset.interface';
 
 @Component({
@@ -24,19 +22,14 @@ export class DatasetNodeComponent {
     return this.nameSegments.length;
   }
 
-  get icon(): string {
-    if (this.level === 1) {
-      return 'device_hub';
-    } if (this.level > 1 && this.dataset.children.length) {
-      return 'folder';
-    }
-    return 'mdi-database';
+  get isRoot(): boolean {
+    return this.level === 1;
   }
 
   get roles(): string[] {
-    if (this.level === 1) {
+    if (this.isRoot) {
       return ['Root Dataset'];
     }
-    return ['Dataset', `L${this.level}`];
+    return [];
   }
 }

@@ -1,0 +1,18 @@
+<div class="encryption-description" *ngIf="!dataset.encrypted; else encryptedCell">{{ 'Unencrypted' | translate }}</div>
+<ng-template #encryptedCell>
+  <ng-container *ngIf="dataset.locked; else unlockedCell">
+    <mat-icon>{{ isEncryptionRoot ? 'lock' : 'lock_outline' }}</mat-icon>
+    <div class="encryption-description">
+      <div>{{ 'Locked' | translate }}</div>
+      <div *ngIf="!isEncryptionRoot" class="by-ancestor">{{ 'by ancestor' | translate }}</div>
+    </div>
+  </ng-container>
+  <ng-template #unlockedCell>
+    <!-- TODO: Missing an outlined icon -->
+    <mat-icon>lock_open</mat-icon>
+    <div class="encryption-description">
+      <div>{{ 'Unlocked' | translate }}</div>
+      <div *ngIf="!isEncryptionRoot" class="by-ancestor">{{ 'by ancestor' | translate }}</div>
+    </div>
+  </ng-template>
+</ng-template>
