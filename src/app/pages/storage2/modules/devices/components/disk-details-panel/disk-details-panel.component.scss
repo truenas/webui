@@ -1,9 +1,15 @@
 @import '~assets/styles/mixins/cards';
 
 .title {
+  align-items: center;
   color: var(--fg2);
+  display: flex;
   margin-bottom: 16px;
   margin-left: 4px;
+
+  ix-device-icon {
+    margin-left: 8px;
+  }
 }
 
 .cards {

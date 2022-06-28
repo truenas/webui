@@ -1,4 +1,5 @@
 @import '~assets/styles/mixins/grid';
+@import '~app/modules/ix-tree/components/ix-nested-tree-node/ix-nested-tree-node.component';
 
 :host {
   $page-header-height: 81px;
@@ -63,54 +64,9 @@
 }
 
 .dataset-tree-header {
-  @include grid-row();
-  align-items: center;
-  color: var(--fg2);
-  min-height: 48px;
-  padding-left: 48px;
-
-  > div {
-    font-weight: bold;
-    padding: 4px 0;
-
-    &:first-child {
-      left: 0;
-      position: sticky;
-    }
-  }
-
-  .dataset-name-header {
-    background: linear-gradient(90deg, var(--bg1) 0%, var(--bg1) calc(100% - 13px), transparent 100%);
-    padding-left: 8px;
-    padding-right: 15px;
-  }
+  @include grid-header-row();
 }
 
 .dataset-nested-tree-root-node {
-  align-items: center;
-  border-bottom: 1px solid var(--lines);
-  cursor: pointer;
-  display: flex;
-  min-width: fit-content;
-  position: relative;
-
-  &:hover {
-    background-color: var(--hover-bg);
-  }
-
-  &.selected {
-    background-color: var(--hover-bg);
-    color: var(--fg2);
-
-    &::before {
-      background-color: var(--primary);
-      content: '';
-      height: 100%;
-      left: 0;
-      opacity: 1;
-      position: absolute;
-      top: 0;
-      width: 6px;
-    }
-  }
+  @include nested-tree-root-node();
 }

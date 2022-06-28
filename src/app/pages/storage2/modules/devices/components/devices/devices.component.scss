@@ -1,3 +1,6 @@
+@import '~assets/styles/mixins/grid';
+@import '~app/modules/ix-tree/components/ix-nested-tree-node/ix-nested-tree-node.component';
+
 :host {
   $page-header-height: 81px;
   display: block;
@@ -36,12 +39,12 @@
   padding: 0;
 }
 
-.disk-search {
+.device-search {
   background-color: var(--bg2);
   padding: 16px;
 }
 
-.disk-tree-wrapper {
+.device-tree-wrapper {
   display: flex;
   flex: 1;
   flex-direction: column;
@@ -49,35 +52,30 @@
   overflow: auto;
 }
 
-.disk-tree {
+.device-tree-inner {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: fit-content;
+}
+
+.device-tree {
   border-top: 2px solid var(--lines);
 }
 
-.disk-nested-tree-root-node {
+.device-tree-header {
+  @include grid-header-row();
+}
+
+.empty-tree-node {
   align-items: center;
-  border-bottom: 1px solid var(--lines);
-  cursor: pointer;
+  color: var(--fg2);
   display: flex;
-  min-width: fit-content;
-  position: relative;
+  font-weight: 500;
+  justify-content: center;
+  min-height: 48px;
+}
 
-  &:hover {
-    background-color: var(--hover-bg);
-  }
-
-  &.selected {
-    background-color: var(--hover-bg);
-    color: var(--fg2);
-
-    &::before {
-      background-color: var(--primary);
-      content: '';
-      height: 100%;
-      left: 0;
-      opacity: 1;
-      position: absolute;
-      top: 0;
-      width: 6px;
-    }
-  }
+.device-nested-tree-root-node {
+  @include nested-tree-root-node();
 }

@@ -4,3 +4,32 @@
   margin-top: 0;
   min-width: fit-content;
 }
+
+@mixin nested-tree-root-node() {
+  align-items: center;
+  border-bottom: 1px solid var(--lines);
+  cursor: pointer;
+  display: flex;
+  min-width: fit-content;
+  position: relative;
+
+  &:hover {
+    background-color: var(--hover-bg);
+  }
+
+  &.selected {
+    background-color: var(--hover-bg);
+    color: var(--fg2);
+
+    &::before {
+      background-color: var(--primary);
+      content: '';
+      height: 100%;
+      left: 0;
+      opacity: 1;
+      position: absolute;
+      top: 0;
+      width: 6px;
+    }
+  }
+}

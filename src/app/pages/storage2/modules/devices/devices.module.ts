@@ -25,7 +25,10 @@ import {
 import {
   ManageDiskSedDialogComponent,
 } from 'app/pages/storage2/modules/devices/components/hardware-disk-encryption/manage-disk-sed-dialog/manage-disk-sed-dialog.component';
+import { ZfsInfoCardComponent } from 'app/pages/storage2/modules/devices/components/zfs-info-card/zfs-info-card.component';
 import { routes } from 'app/pages/storage2/modules/devices/devices.routing';
+import { DeviceIconComponent } from './components/device-icon/device-icon.component';
+import { DeviceNodeComponent } from './components/device-node/device-node.component';
 
 @NgModule({
   imports: [
@@ -56,6 +59,9 @@ import { routes } from 'app/pages/storage2/modules/devices/devices.routing';
     DiskInfoCardComponent,
     HardwareDiskEncryptionComponent,
     ManageDiskSedDialogComponent,
+    ZfsInfoCardComponent,
+    DeviceNodeComponent,
+    DeviceIconComponent,
   ],
 })
 export class DevicesModule {

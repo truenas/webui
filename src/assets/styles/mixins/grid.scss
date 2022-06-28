@@ -8,3 +8,40 @@
     minmax(100px, 1fr);
   min-width: fit-content;
 }
+
+@mixin grid-header-row() {
+  @include grid-row();
+  align-items: center;
+  border-left: 1px solid var(--lines);
+  border-right: 1px solid var(--lines);
+  color: var(--fg2);
+  min-height: 48px;
+  padding-left: 40px;
+
+  > div {
+    font-weight: bold;
+    padding: 4px 0;
+
+    &:first-child {
+      left: 0;
+      position: sticky;
+
+      span {
+        background: linear-gradient(90deg, var(--bg1) 0%, var(--bg1) calc(100% - 13px), transparent 100%);
+        padding-left: 8px;
+        padding-right: 15px;
+      }
+    }
+  }
+}
+
+@mixin grid-cell() {
+  align-items: center;
+  display: inline-flex;
+  min-height: 48px;
+
+  &:first-child {
+    left: 0;
+    position: sticky;
+  }
+}

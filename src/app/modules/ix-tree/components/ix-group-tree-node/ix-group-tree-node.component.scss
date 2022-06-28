@@ -1,0 +1,31 @@
+@import '~assets/styles/mixins/grid';
+
+:host {
+  @include grid-header-row();
+  align-items: center;
+
+  background-color: var(--bg1);
+  border-bottom: 1px solid var(--lines);
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  min-height: 32px;
+  padding-left: 48px;
+  user-select: none;
+
+  &:hover {
+    background-color: var(--hover-bg);
+  }
+
+  ::ng-deep {
+    .name {
+      left: 8px;
+      position: sticky;
+    }
+
+    .mat-icon {
+      position: sticky;
+      right: 8px;
+    }
+  }
+}

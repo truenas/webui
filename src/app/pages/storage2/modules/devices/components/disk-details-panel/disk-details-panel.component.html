@@ -1,6 +1,11 @@
-<h3 class="title">Details for {{ disk.disk || disk.guid }}</h3>
+<h3 class="title">
+  {{ 'Details for' | translate }}
+  <ix-device-icon [device]="disk"></ix-device-icon>
+  <span>{{ ownName }}</span>
+</h3>
 
 <div class="cards">
-  <ix-hardware-disk-encryption [disk]="disk"></ix-hardware-disk-encryption>
-  <ix-disk-info-card [disk]="disk"></ix-disk-info-card>
+  <ix-zfs-info-card [disk]="disk"></ix-zfs-info-card>
+  <ix-hardware-disk-encryption *ngIf="isDisk" [disk]="disk"></ix-hardware-disk-encryption>
+  <ix-disk-info-card *ngIf="isDisk" [disk]="disk"></ix-disk-info-card>
 </div>

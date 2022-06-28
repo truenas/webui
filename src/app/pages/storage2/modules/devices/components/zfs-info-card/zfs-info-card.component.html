@@ -1,0 +1,31 @@
+<mat-card class="card">
+  <mat-card-header>
+    <h3 mat-card-title>{{ 'ZFS Info' | translate }}</h3>
+    <button mat-button (click)="onEdit()">Edit</button>
+  </mat-card-header>
+  <mat-card-content>
+    <div>
+      <div class="details-item" *ngIf="isDisk">
+        <span class="label">{{ 'Parent' | translate }}:</span>
+        <span class="value">{{ 'N/A' | translate }}</span>
+      </div>
+      <div class="details-item">
+        <span class="label">{{ 'Read Errors' | translate }}:</span>
+        <span class="value">{{ readErrors }}</span>
+      </div>
+      <div class="details-item">
+        <span class="label">{{ 'Write Errors' | translate }}:</span>
+        <span class="value">{{ writeErrors }}</span>
+      </div>
+      <div class="details-item">
+        <span class="label">{{ 'Checksum Errors' | translate }}:</span>
+        <span class="value">{{ checksumErrors }}</span>
+      </div>
+    </div>
+  </mat-card-content>
+  <mat-card-actions>
+    <button *ngIf="isDisk || isMirror" mat-stroked-button (click)="onRemove()">{{ 'Remove' | translate }}</button>
+    <button *ngIf="isDisk" mat-stroked-button (click)="onDetach()">{{ 'Detach' | translate }}</button>
+    <button *ngIf="isDisk" mat-stroked-button (click)="onOffline()">{{ 'Offline' | translate }}</button>
+  </mat-card-actions>
+</mat-card>

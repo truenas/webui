@@ -1,0 +1,23 @@
+<div class="tree-node-grid" *ngIf="!isDeviceGroup">
+  <div class="cell cell-name">
+    <div class="icon-container">
+      <ix-device-icon [device]="device"></ix-device-icon>
+    </div>
+    <span class="name">{{ name }}</span>
+  </div>
+  <div class="cell">
+    {{ device?.status }}
+  </div>
+  <div class="cell cell-capacity">
+    {{ device?.stats?.size | filesize: { standard: 'iec' } }}
+  </div>
+  <div class="cell cell-roles">
+    {{ '{n, plural, one {# error } other {# errors} }' | translate: { n: errors } }}
+  </div>
+</div>
+
+<div class="tree-node-grid" *ngIf="isDeviceGroup">
+  <div class="cell cell-name">
+    <span class="name">{{ name }}</span>
+  </div>
+</div>

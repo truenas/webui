@@ -3,6 +3,7 @@
 @mixin stroked-button {
   border: 1px solid var(--alt-fg2);
   border-radius: 0;
+  margin: 0;
   opacity: 0.8;
 
   &:hover {
