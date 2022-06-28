@@ -1,59 +1,23 @@
 @import '~assets/styles/mixins/cards';
-@import '~assets/styles/mixins/buttons';
-@import '~assets/styles/mixins/animations';
 
-.container-card {
+.card {
   @include details-card();
 }
 
-.header {
-  font-weight: bold;
-  margin-right: 5px;
-}
-
-.loader {
-  @include loader-block();
-  @include blink();
-  display: inline-block;
-  width: 35%;
-}
-
-.row {
+.legend-placeholder {
   align-items: center;
   display: flex;
-  flex-direction: row;
-  margin-bottom: 5px;
+  gap: 12px;
 }
 
 .chart-placeholder {
-  @include loader-block();
-  display: block;
-  height: 64px;
-  width: 100%;
+  align-items: center;
+  display: flex;
+  gap: 12px;
 
-  &.loading {
-    @include blink();
-  }
-}
-
-.legend-placeholder {
-  @include loader-block();
-  display: inline-block;
-  margin: 16px 0;
-  width: 25%;
-
-  &.loading {
-    @include blink();
-  }
-}
-
-.quotas {
-  border-top: 1px solid var(--lines);
-  margin: 20px -25px 0;
-  padding: 20px 25px 0 !important;
-
-  a {
-    color: var(--primary);
-    text-decoration: underline;
+  ngx-skeleton-loader {
+    ::ng-deep .loader {
+      height: 64px;
+    }
   }
 }
