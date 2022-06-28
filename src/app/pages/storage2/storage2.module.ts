@@ -6,6 +6,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatOptionModule } from '@angular/material/core';
+import { MatDialogModule } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
@@ -30,6 +31,8 @@ import { ManagerComponent } from 'app/pages/storage2/components/manager/manager.
 import { VdevComponent } from 'app/pages/storage2/components/manager/vdev/vdev.component';
 import { PoolsDashboardComponent } from 'app/pages/storage2/components/pools-dashboard/pools-dashboard.component';
 import { routing } from 'app/pages/storage2/storage2.routing';
+import { DashboardPoolComponent } from './components/dashboard-pool/dashboard-pool.component';
+import { ExportDisconnectModalComponent } from './components/dashboard-pool/export-disconnect-modal/export-disconnect-modal.component';
 import { DiskHealthCardComponent } from './components/disk-health-card/disk-health-card.component';
 import { ZfsHealthCardComponent } from './components/zfs-health-card/zfs-health-card.component';
 
@@ -62,6 +65,7 @@ import { ZfsHealthCardComponent } from './components/zfs-health-card/zfs-health-
     CoreComponents,
     MatProgressBarModule,
     NgxSkeletonLoaderModule,
+    MatDialogModule,
   ],
   declarations: [
     PoolsDashboardComponent,
@@ -69,6 +73,8 @@ import { ZfsHealthCardComponent } from './components/zfs-health-card/zfs-health-
     VdevComponent,
     ManagerComponent,
     ZfsHealthCardComponent,
+    DashboardPoolComponent,
+    ExportDisconnectModalComponent,
     DiskHealthCardComponent,
   ],
   providers: [
