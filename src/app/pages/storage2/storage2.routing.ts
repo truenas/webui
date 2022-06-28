@@ -28,6 +28,11 @@ export const routes: Routes = [
         component: ManagerComponent,
         data: { title: 'Add Vdevs to Pool', breadcrumb: 'Add Vdevs to Pool' },
       },
+      {
+        path: 'disks',
+        loadChildren: () => import('./modules/disks/disks.module').then((module) => module.DisksModule),
+        data: { title: 'Disks', breadcrumb: 'Disks' },
+      },
     ],
   },
 ];

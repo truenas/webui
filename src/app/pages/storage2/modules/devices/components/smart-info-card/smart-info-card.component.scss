@@ -1,0 +1,15 @@
+@import '~assets/styles/mixins/cards';
+
+.card {
+  @include details-card();
+}
+
+.details-item {
+  @include details-card-item();
+}
+
+.header {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+}

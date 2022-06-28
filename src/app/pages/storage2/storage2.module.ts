@@ -30,6 +30,7 @@ import { ManagerComponent } from 'app/pages/storage2/components/manager/manager.
 import { VdevComponent } from 'app/pages/storage2/components/manager/vdev/vdev.component';
 import { PoolsDashboardComponent } from 'app/pages/storage2/components/pools-dashboard/pools-dashboard.component';
 import { routing } from 'app/pages/storage2/storage2.routing';
+import { DiskHealthCardComponent } from './components/disk-health-card/disk-health-card.component';
 import { ZfsHealthCardComponent } from './components/zfs-health-card/zfs-health-card.component';
 
 @NgModule({
@@ -68,6 +69,7 @@ import { ZfsHealthCardComponent } from './components/zfs-health-card/zfs-health-
     VdevComponent,
     ManagerComponent,
     ZfsHealthCardComponent,
+    DiskHealthCardComponent,
   ],
   providers: [
     FormatDateTimePipe,
