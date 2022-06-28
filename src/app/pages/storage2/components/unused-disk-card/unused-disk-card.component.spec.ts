@@ -51,17 +51,20 @@ describe('UnusedDiskCardComponent', () => {
     const addToPoolButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add To Pool' }));
     await addToPoolButton.click();
 
-    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(ManageUnusedDiskDialogComponent, {
-      data: {
-        pools: [
-          { id: 1, name: 'DEV' },
-          { id: 2, name: 'TEST' },
-        ] as Pool[],
-        unusedDisks: [
-          { devname: 'sdb', identifier: '{serial_lunid}BBBBB1' },
-          { devname: 'sdc', identifier: '{uuid}7ad07324-f0e9-49a4-a7a4-92edd82a4929' },
-        ] as UnusedDisk[],
-      },
-    });
+    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(
+      ManageUnusedDiskDialogComponent,
+      expect.objectContaining({
+        data: {
+          pools: [
+            { id: 1, name: 'DEV' },
+            { id: 2, name: 'TEST' },
+          ] as Pool[],
+          unusedDisks: [
+            { devname: 'sdb', identifier: '{serial_lunid}BBBBB1' },
+            { devname: 'sdc', identifier: '{uuid}7ad07324-f0e9-49a4-a7a4-92edd82a4929' },
+          ] as UnusedDisk[],
+        },
+      }),
+    );
   });
 });
