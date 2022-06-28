@@ -51,6 +51,9 @@ def on_the_dashboard_click_on_apps(driver):
 @then('the Apps page load, select pool')
 def the_apps_page_load_select_pool(driver):
     """the Apps page load, select pool."""
+    assert wait_on_element(driver, 10, '//div[contains(text(),"Available Applications")]', 'clickable')
+    driver.find_element_by_xpath('//div[contains(text(),"Available Applications")]').click()
+    assert wait_on_element(driver, 7, '//div[contains(.,"Available Applications")]')
     assert wait_on_element(driver, 7, '//h1[contains(.,"Choose a pool for Apps")]')
     assert wait_on_element(driver, 5, '//mat-select[@ix-auto="select__Pools"]', 'clickable')
     driver.find_element_by_xpath('//mat-select[@ix-auto="select__Pools"]').click()
@@ -69,7 +72,6 @@ def the_available_applications_tab_loads(driver):
     # used for local testing, so you dont have to unset and reset the pool every time 
     # assert wait_on_element(driver, 10, '//div[contains(text(),"Available Applications")]', 'clickable')
     # driver.find_element_by_xpath('//div[contains(text(),"Available Applications")]').click()
-    assert wait_on_element(driver, 7, '//div[contains(.,"Available Applications")]')
     assert wait_on_element(driver, 7, '//h3[contains(.,"minio")]')
 
 
@@ -91,6 +93,20 @@ def open_the_installed_applications_page(driver):
     assert wait_on_element(driver, 10, '//div[contains(text(),"Installed Applications")]', 'clickable')
     driver.find_element_by_xpath('//div[contains(text(),"Installed Applications")]').click()
     assert wait_on_element(driver, 7, '//h3[contains(.,"No Applications Installed")]')
+    # test the buttons
+    assert wait_on_element(driver, 10, '//span[contains(.,"Launch Docker Image")]', 'clickable')
+    driver.find_element_by_xpath('//span[contains(.,"Launch Docker Image")]').click()
+    if wait_on_element(driver, 3, '//*[contains(.,"Please wait")]'):
+        assert wait_on_element_disappear(driver, 120, '//*[contains(.,"Please wait")]')
+    assert wait_on_element(driver, 10, '//div[@class="ix-slidein-title-bar"]//mat-icon[contains(.,"cancel")]', 'clickable')
+    driver.find_element_by_xpath('//div[@class="ix-slidein-title-bar"]//mat-icon[contains(.,"cancel")]').click()
+    assert wait_on_element(driver, 10, '//button[@ix-auto-type="button"]//span[contains(text(),"Settings")]', 'clickable')
+    driver.find_element_by_xpath('//button[@ix-auto-type="button"]//span[contains(text(),"Settings")]').click()
+    assert wait_on_element(driver, 10, '//span[contains(text(),"Advanced Settings")]', 'clickable')
+    driver.find_element_by_xpath('//span[contains(text(),"Advanced Settings")]').click()
+    assert wait_on_element(driver, 7, '//h3[contains(.,"Kubernetes Settings")]')
+    assert wait_on_element(driver, 10, '//div[@class="ix-slidein-title-bar"]//mat-icon[contains(.,"cancel")]', 'clickable')
+    driver.find_element_by_xpath('//div[@class="ix-slidein-title-bar"]//mat-icon[contains(.,"cancel")]').click()
 
 
 @then('open the Manage Docker Images Page')
@@ -100,6 +116,20 @@ def open_the_manage_docker_images_page(driver):
     driver.find_element_by_xpath('//div[contains(text(),"Manage Docker Images")]').click()
     # seems like sometimes zfs-driver is present.
     assert wait_on_element(driver, 5, '//h3[contains(.,"No Docker Images")]') or wait_on_element(driver, 5, '//div[contains(.,"rancher")]')
+    # test the buttons
+    assert wait_on_element(driver, 10, '//span[contains(.,"Launch Docker Image")]', 'clickable')
+    driver.find_element_by_xpath('//span[contains(.,"Launch Docker Image")]').click()
+    if wait_on_element(driver, 3, '//*[contains(.,"Please wait")]'):
+        assert wait_on_element_disappear(driver, 120, '//*[contains(.,"Please wait")]')
+    assert wait_on_element(driver, 10, '//div[@class="ix-slidein-title-bar"]//mat-icon[contains(.,"cancel")]', 'clickable')
+    driver.find_element_by_xpath('//div[@class="ix-slidein-title-bar"]//mat-icon[contains(.,"cancel")]').click()
+    assert wait_on_element(driver, 10, '//button[@ix-auto-type="button"]//span[contains(text(),"Settings")]', 'clickable')
+    driver.find_element_by_xpath('//button[@ix-auto-type="button"]//span[contains(text(),"Settings")]').click()
+    assert wait_on_element(driver, 10, '//span[contains(text(),"Advanced Settings")]', 'clickable')
+    driver.find_element_by_xpath('//span[contains(text(),"Advanced Settings")]').click()
+    assert wait_on_element(driver, 7, '//h3[contains(.,"Kubernetes Settings")]')
+    assert wait_on_element(driver, 10, '//div[@class="ix-slidein-title-bar"]//mat-icon[contains(.,"cancel")]', 'clickable')
+    driver.find_element_by_xpath('//div[@class="ix-slidein-title-bar"]//mat-icon[contains(.,"cancel")]').click()
 
 
 @then('open the Manage Catalogs Page')
@@ -108,3 +138,17 @@ def open_the_manage_catalogs_page(driver):
     assert wait_on_element(driver, 10, '//div[contains(text(),"Manage Catalogs")]', 'clickable')
     driver.find_element_by_xpath('//div[contains(text(),"Manage Catalogs")]').click()
     assert wait_on_element(driver, 7, '//div[contains(.,"https://github.com/truenas/charts.git")]')
+    # test the buttons
+    assert wait_on_element(driver, 10, '//span[contains(.,"Launch Docker Image")]', 'clickable')
+    driver.find_element_by_xpath('//span[contains(.,"Launch Docker Image")]').click()
+    if wait_on_element(driver, 3, '//*[contains(.,"Please wait")]'):
+        assert wait_on_element_disappear(driver, 120, '//*[contains(.,"Please wait")]')
+    assert wait_on_element(driver, 10, '//div[@class="ix-slidein-title-bar"]//mat-icon[contains(.,"cancel")]', 'clickable')
+    driver.find_element_by_xpath('//div[@class="ix-slidein-title-bar"]//mat-icon[contains(.,"cancel")]').click()
+    assert wait_on_element(driver, 10, '//button[@ix-auto-type="button"]//span[contains(text(),"Settings")]', 'clickable')
+    driver.find_element_by_xpath('//button[@ix-auto-type="button"]//span[contains(text(),"Settings")]').click()
+    assert wait_on_element(driver, 10, '//span[contains(text(),"Advanced Settings")]', 'clickable')
+    driver.find_element_by_xpath('//span[contains(text(),"Advanced Settings")]').click()
+    assert wait_on_element(driver, 7, '//h3[contains(.,"Kubernetes Settings")]')
+    assert wait_on_element(driver, 10, '//div[@class="ix-slidein-title-bar"]//mat-icon[contains(.,"cancel")]', 'clickable')
+    driver.find_element_by_xpath('//div[@class="ix-slidein-title-bar"]//mat-icon[contains(.,"cancel")]').click()

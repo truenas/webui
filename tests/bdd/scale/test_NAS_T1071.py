@@ -16,7 +16,7 @@ import pytest
 pytestmark = [pytest.mark.debug_test]
 
 
-@scenario('features/NAS-T1071.feature', 'Create pool with 1 disk')
+@scenario('features/NAS-T1071.feature', 'SCALE UI: Create pool with 1 disk')
 def test_create_pool_with_1_disk():
     """Create pool with 2 disks."""
 
