@@ -1,22 +1,21 @@
 import { CollectionViewer, DataSource } from '@angular/cdk/collections';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import {
-  Observable, BehaviorSubject, merge,
+  Observable, BehaviorSubject, merge, Subject,
 } from 'rxjs';
 import {
-  map, distinctUntilChanged, debounceTime,
+  map, distinctUntilChanged, debounceTime, takeUntil,
 } from 'rxjs/operators';
 
 /**
  * Data source for nested tree.
  */
-@UntilDestroy()
 export class IxNestedTreeDataSource<T extends { children?: T[] }> extends DataSource<T> {
   filterPredicate: (data: T[], query: string) => T[];
   private filterValue: string;
   private readonly filterChanged$ = new BehaviorSubject<string>('');
   private readonly _data = new BehaviorSubject<T[]>([]);
   private readonly _filteredData = new BehaviorSubject<T[]>([]);
+  private readonly disconnect$ = new Subject<void>();
 
   get data(): T[] {
     return this._data.value;
@@ -38,7 +37,10 @@ export class IxNestedTreeDataSource<T extends { children?: T[] }> extends DataSo
     );
   }
 
-  disconnect(): void {}
+  disconnect(): void {
+    this.disconnect$.next();
+    this.disconnect$.complete();
+  }
 
   constructor(private initialData: T[]) {
     super();
@@ -59,7 +61,7 @@ export class IxNestedTreeDataSource<T extends { children?: T[] }> extends DataSo
     this.filterChanged$.pipe(
       debounceTime(200),
       distinctUntilChanged(),
-      untilDestroyed(this),
+      takeUntil(this.disconnect$),
     ).subscribe((changedValue: string) => {
       if (this.filterValue === changedValue) {
         return;
