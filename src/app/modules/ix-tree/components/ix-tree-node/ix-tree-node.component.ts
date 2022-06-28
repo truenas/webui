@@ -5,7 +5,7 @@ import {
 import {
   mixinTabIndex, mixinDisabled, CanDisable, HasTabIndex,
 } from '@angular/material/core';
-import { IxNestedTreeDataSource } from 'app/modules/ix-tree/ix-tree-nested-datasource';
+import { IxNestedTreeDataSource } from 'app/modules/ix-tree/ix-nested-tree-datasource';
 
 const ixTreeNodeBase = mixinTabIndex(mixinDisabled(CdkTreeNode));
 
