@@ -54,7 +54,10 @@ export class ExportDisconnectModalComponent implements OnInit {
     cascade: [true],
     confirm: [false, [Validators.requiredTrue]],
     nameInput: ['', [
-      this.nameInputRequired,
+      this.validatorsService.validateOnCondition(
+        (control: AbstractControl) => control.parent?.get('destroy').value,
+        this.nameInputRequired,
+      ),
       this.validatorsService.validateOnCondition(
         (control: AbstractControl) => control.parent?.get('destroy').value,
         this.nameInputMustMatch,
@@ -87,20 +90,6 @@ export class ExportDisconnectModalComponent implements OnInit {
 
   cancel(): void {
     this.dialogRef.close(false);
-  }
-
-  // TODO: change to reactive forms
-  onDestroyCheckedStateChanged($event: unknown): void {
-    if (!$event) {
-      this.resetNameInputValidState();
-    }
-  }
-
-  // TODO: Reactive
-  onConfirmCheckedStateChanged(): void {
-    if (!this.form.get('destroy').value) {
-      this.resetNameInputValidState();
-    }
   }
 
   // TODO: Break apart into smaller methods
@@ -235,6 +224,10 @@ export class ExportDisconnectModalComponent implements OnInit {
         this.process.unknownProcesses.push(process);
       }
     });
+
+    this.form.get('destroy').valueChanges
+      .pipe(untilDestroyed(this))
+      .subscribe(() => this.resetNameInputValidState());
   }
 
   private resetNameInputValidState(): void {

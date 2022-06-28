@@ -65,7 +65,6 @@
       <ix-checkbox
         formControlName="destroy"
         [label]="helptext.exportDialog.destroy | translate"
-        (ngModelChange)="onDestroyCheckedStateChanged($event)"
       ></ix-checkbox>
       <ix-checkbox
         formControlName="cascade"
@@ -75,7 +74,6 @@
         formControlName="confirm"
         [label]="confirmLabelText"
         [required]="true"
-        (ngModelChange)="onConfirmCheckedStateChanged()"
       ></ix-checkbox>
       <ix-input
         *ngIf="form.value.destroy"
