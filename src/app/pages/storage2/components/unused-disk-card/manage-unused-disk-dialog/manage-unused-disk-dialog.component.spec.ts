@@ -1,20 +1,30 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { Pool } from 'app/interfaces/pool.interface';
 import { UnusedDisk } from 'app/interfaces/storage.interface';
-import { ManageUnusedDiskDialogResource } from 'app/pages/storage2/components/unused-disk-card/manage-unused-disk-dialog/manage-unused-disk-dialog.interface';
+import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
+import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
+import {
+  ManageUnusedDiskDialogResource,
+} from 'app/pages/storage2/components/unused-disk-card/manage-unused-disk-dialog/manage-unused-disk-dialog.interface';
 import { ManageUnusedDiskDialogComponent } from './manage-unused-disk-dialog.component';
 
 describe('ManageUnusedDiskDialogComponent', () => {
   let spectator: Spectator<ManageUnusedDiskDialogComponent>;
   let loader: HarnessLoader;
+  let form: IxFormHarness;
 
   const createComponent = createComponentFactory({
     component: ManageUnusedDiskDialogComponent,
+    imports: [
+      ReactiveFormsModule,
+      IxFormsModule,
+    ],
     providers: [
       {
         provide: MAT_DIALOG_DATA,
@@ -33,41 +43,47 @@ describe('ManageUnusedDiskDialogComponent', () => {
     ],
   });
 
-  beforeEach(() => {
-    spectator = createComponent({
-    });
+  beforeEach(async () => {
+    spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    form = await loader.getHarness(IxFormHarness);
+    jest.spyOn(spectator.inject(Router), 'navigate').mockImplementation();
   });
 
   it('shows a title', () => {
     expect(spectator.query('.mat-dialog-title')).toHaveText('Add To Pool');
   });
 
-  it('shows the list of unused disks and pools', () => {
-    const unusedDiskItems = spectator.queryAll('.list.unassigned-disks .list-item');
+  it('shows the list of unused disks', () => {
+    const unusedDiskItems = spectator.queryAll('.list-item');
     expect(unusedDiskItems).toHaveLength(2);
-
-    const poolItems = spectator.queryAll('.list.pools .list-item');
-    expect(poolItems).toHaveLength(2);
   });
 
-  it('redirects to add disks to pool page when clicks Add Disks button', async () => {
-    jest.spyOn(spectator.inject(Router), 'navigate').mockImplementation();
+  it('redirects to create pool page when choosing Add Disks To New Pool', async () => {
+    await form.fillForm({
+      'Add Disks To:': 'New Pool',
+    });
 
-    const [, secondPoolButton] = await loader.getAllHarnesses(MatButtonHarness.with({ text: 'Add Disks' }));
-    await secondPoolButton.click();
-
-    expect(spectator.inject(MatDialogRef).close).toHaveBeenCalled();
-    expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/', 'storage', 'manager', 2]);
-  });
-
-  it('redirects to create pool page when clicks Create Pool button', async () => {
-    jest.spyOn(spectator.inject(Router), 'navigate').mockImplementation();
-
-    const createPoolButton = await loader.getHarness(MatButtonHarness.with({ text: 'Create Pool' }));
-    await createPoolButton.click();
+    const addDisksButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add Disks' }));
+    await addDisksButton.click();
 
     expect(spectator.inject(MatDialogRef).close).toHaveBeenCalled();
     expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/', 'storage', 'manager']);
+  });
+
+  it('redirects to add disks to pool page when choosing Add Disks To Existing Pool', async () => {
+    await form.fillForm({
+      'Add Disks To:': 'Existing Pool',
+    });
+
+    await form.fillForm({
+      'Existing Pools:': 'TEST',
+    });
+
+    const addDisksButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add Disks' }));
+    await addDisksButton.click();
+
+    expect(spectator.inject(MatDialogRef).close).toHaveBeenCalled();
+    expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/', 'storage', 'manager', 2]);
   });
 });

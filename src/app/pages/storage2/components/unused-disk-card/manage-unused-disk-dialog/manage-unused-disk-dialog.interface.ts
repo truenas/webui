@@ -5,3 +5,8 @@ export interface ManageUnusedDiskDialogResource {
   unusedDisks: UnusedDisk[];
   pools: Pool[];
 }
+
+export enum AddToPoolType {
+  New = 'NEW',
+  Existing = 'EXISTING',
+}

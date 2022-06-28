@@ -1,29 +1,6 @@
 .content {
-  display: flex;
-  padding-bottom: 8px;
-  width: 600px;
-
-  > div {
-    flex: 1;
-    padding: 0 8px;
-
-    .list {
-      max-height: calc(65vh - 30px);
-      overflow-y: auto;
-    }
-
-    > h4 {
-      margin-bottom: 12px;
-    }
-  }
-}
-
-.list-item {
-  align-items: center;
-  display: flex;
-  justify-content: space-between;
-  min-height: 44px;
-  padding: 4px 0;
+  max-height: calc(65vh - 30px);
+  overflow-y: auto !important;
 }
 
 .mat-dialog-actions {

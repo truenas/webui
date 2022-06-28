@@ -26,6 +26,7 @@ export class UnusedDiskCardComponent {
         pools: this.pools,
         unusedDisks: this.unusedDisks,
       },
+      width: '600px',
     });
   }
 }
