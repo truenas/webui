@@ -1,29 +1,5 @@
 @import '~assets/styles/mixins/cards';
-@import '~assets/styles/mixins/buttons';
-@import '~assets/styles/mixins/animations';
 
-.container-card {
+.card {
   @include details-card();
-}
-
-.stroked-btn {
-  @include stroked-button();
-}
-
-.row {
-  align-items: center;
-  display: flex;
-  flex-direction: row;
-  margin-bottom: 5px;
-}
-
-.header {
-  font-weight: bold;
-  margin-right: 5px;
-}
-
-.loader-skel {
-  display: inline-block;
-  height: 20px;
-  width: 35%;
 }

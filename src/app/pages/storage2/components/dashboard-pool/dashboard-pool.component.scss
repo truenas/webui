@@ -1,3 +1,5 @@
+@import '~assets/styles/mixins/cards';
+
 :host {
   display: block;
 }
@@ -16,15 +18,5 @@
 }
 
 .pool-cards {
-  column-gap: 5px;
-  display: flex;
-  row-gap: 5px;
-
-  > * {
-    // TODO: Potentially duplicates numbers on other pages
-    flex: 1;
-    max-width: 620px;
-    min-width: 420px;
-  }
+  @include details-cards();
 }
-
