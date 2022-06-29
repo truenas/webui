@@ -63,7 +63,7 @@ export class ChartFormComponent implements OnDestroy {
     this.isNew = false;
     this.title = chart.name;
     this.config = chart.config;
-    this.config.release_name = this.config.release_name ? this.config.release_name : chart.id;
+    this.config.release_name = chart.id;
 
     this.form.addControl('release_name', new UntypedFormControl(this.title, [Validators.required]));
 
