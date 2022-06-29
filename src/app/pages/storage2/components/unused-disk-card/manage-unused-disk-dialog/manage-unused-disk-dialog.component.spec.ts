@@ -77,7 +77,7 @@ describe('ManageUnusedDiskDialogComponent', () => {
     });
 
     await form.fillForm({
-      'Existing Pools:': 'TEST',
+      'Existing Pool': 'TEST',
     });
 
     const addDisksButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add Disks' }));

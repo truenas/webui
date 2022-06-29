@@ -82,7 +82,6 @@
   "Enter the name of the sysctl variable to configure. <i>sysctl</i> tunables are used to configure kernel parameters while the system is running and generally take effect immediately.": "",
   "Example: blob.core.usgovcloudapi.net": "",
   "Existing Pool": "",
-  "Existing Pools:": "",
   "Export/disconnect pool: {pool}": "",
   "Filesystem Type": "",
   "Finished Resilver on {date}": "",

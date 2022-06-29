@@ -1,13 +1,13 @@
 <h1 mat-dialog-title>{{ 'Add To Pool' | translate }}</h1>
 
 <form [formGroup]="form" class="ix-form-container" (submit)="onSubmit()">
-  <div mat-dialog-content class="content">
-    <div>
-      <h4>{{ 'Unassigned Disks' | translate }}</h4>
-      <p *ngFor="let disk of resource.unusedDisks" class="list-item">
+  <div mat-dialog-content>
+    <h4>{{ 'Unassigned Disks' | translate }}</h4>
+    <ul class="unused-disks">
+      <li *ngFor="let disk of resource.unusedDisks">
         {{ disk.devname }}
-      </p>
-    </div>
+      </li>
+    </ul>
     
     <ix-fieldset>
       <ix-radio-group
@@ -16,13 +16,13 @@
         [options]="toPoolOptions$"
       >
       </ix-radio-group>
-      <ix-radio-group
+      <ix-select
         *ngIf="isExistingMode"
         formControlName="pool"
-        [label]="'Existing Pools:' | translate"
+        [label]="'Existing Pool' | translate"
         [options]="poolOptions$"
       >
-      </ix-radio-group>
+      </ix-select>
     </ix-fieldset>
   </div>
 
