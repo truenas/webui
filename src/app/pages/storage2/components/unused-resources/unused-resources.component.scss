@@ -1,20 +1,18 @@
-.resource-section {
-  color: var(--fg2);
-  padding: 1rem 0;
+@import '~assets/styles/mixins/cards';
+
+.header {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 5px;
+  margin-left: 5px;
+  margin-right: 5px;
   
   .title {
-    margin-bottom: 0.5rem;
+    color: var(--fg2);
   }
 }
 
 .cards {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 16px;
-
-  > * {
-    flex: 1;
-    max-width: 360px;
-    min-width: 360px;
-  }
+  @include resource-cards();
 }
