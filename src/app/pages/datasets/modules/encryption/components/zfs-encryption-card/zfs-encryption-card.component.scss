@@ -1,16 +1,5 @@
 @import '~assets/styles/mixins/cards';
-@import '~assets/styles/mixins/buttons';
 
 .card {
   @include details-card();
-}
-
-.details-item {
-  @include details-card-item();
-}
-
-.secondary-actions {
-  button {
-    @include stroked-button();
-  }
 }

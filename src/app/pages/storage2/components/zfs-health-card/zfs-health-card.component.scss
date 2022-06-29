@@ -5,21 +5,6 @@
   @include details-card();
 }
 
-.details-item {
-  @include details-card-item();
-  @include fade-in();
-
-  .scrub-task-loader {
-    width: 20px;
-  }
-}
-
-.card-title {
-  align-items: center;
-  column-gap: 5px;
-  display: flex;
-}
-
 .pool-icon {
   &.icon-online {
     color: var(--green);
