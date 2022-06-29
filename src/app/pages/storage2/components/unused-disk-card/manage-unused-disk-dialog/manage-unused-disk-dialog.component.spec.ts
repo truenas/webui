@@ -55,7 +55,7 @@ describe('ManageUnusedDiskDialogComponent', () => {
   });
 
   it('shows the list of unused disks', () => {
-    const unusedDiskItems = spectator.queryAll('.list-item');
+    const unusedDiskItems = spectator.queryAll('.unused-disks li');
     expect(unusedDiskItems).toHaveLength(2);
   });
 
