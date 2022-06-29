@@ -7,9 +7,10 @@ import { Subscription, forkJoin } from 'rxjs';
 import {
   map,
 } from 'rxjs/operators';
-import { DatasetQuotaType } from 'app/enums/dataset.enum';
+import { DatasetQuotaType, DatasetType } from 'app/enums/dataset.enum';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { DatasetFormComponent } from 'app/pages/datasets/components/dataset-form/dataset-form.component';
+import { isIocageMounted } from 'app/pages/datasets/utils/dataset.utils';
 import { WebSocketService, ModalService } from 'app/services';
 
 @UntilDestroy()
@@ -26,6 +27,10 @@ export class DatasetCapacityManagementCardComponent implements OnChanges {
   quotasSubscription: Subscription;
   userQuotas: number;
   groupQuotas: number;
+
+  get hasQuotas(): boolean {
+    return this.dataset.type === DatasetType.Filesystem && !isIocageMounted(this.dataset) && !this.dataset.locked;
+  }
 
   constructor(
     private ws: WebSocketService,
@@ -48,7 +53,7 @@ export class DatasetCapacityManagementCardComponent implements OnChanges {
     ).subscribe(
       (dataset) => {
         this.dataset = dataset;
-        if (!dataset.encrypted) {
+        if (this.hasQuotas) {
           this.getQuotas();
         } else {
           this.loading = false;
