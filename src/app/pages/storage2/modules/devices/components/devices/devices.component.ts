@@ -12,6 +12,7 @@ import { PoolTopology } from 'app/interfaces/pool.interface';
 import { Disk, VDev } from 'app/interfaces/storage.interface';
 import { IxNestedTreeDataSource } from 'app/modules/ix-tree/ix-nested-tree-datasource';
 import { findInTree } from 'app/modules/ix-tree/utils/find-in-tree.utils';
+import { DevicesStore } from 'app/pages/storage2/modules/devices/stores/devices-store.service';
 import { AppLoaderService, WebSocketService } from 'app/services';
 
 @UntilDestroy()
@@ -37,6 +38,7 @@ export class DevicesComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private loader: AppLoaderService, // TODO: Replace with a better approach
     private route: ActivatedRoute,
+    private devicesStore: DevicesStore,
   ) { }
 
   get isDiskSelected(): boolean {
@@ -45,6 +47,10 @@ export class DevicesComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadTopologyAndDisks();
+
+    this.devicesStore.onReloadList
+      .pipe(untilDestroyed(this))
+      .subscribe(() => this.loadTopologyAndDisks());
   }
 
   private createDataSource(disks: VDev[]): void {

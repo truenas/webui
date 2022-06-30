@@ -12,6 +12,7 @@ import {
   ReplaceDiskDialogComponent,
   ReplaceDiskDialogData,
 } from 'app/pages/storage/volumes/volume-status/components/replace-disk-dialog/replace-disk-dialog.component';
+import { DevicesStore } from 'app/pages/storage2/modules/devices/stores/devices-store.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
@@ -29,6 +30,7 @@ export class DiskInfoCardComponent implements OnInit {
     private matDialog: MatDialog,
     private slideInService: IxSlideInService,
     private route: ActivatedRoute,
+    private devicesStore: DevicesStore,
   ) {}
 
   get isHdd(): boolean {
@@ -37,7 +39,7 @@ export class DiskInfoCardComponent implements OnInit {
 
   ngOnInit(): void {
     this.slideInService.onClose$?.pipe(untilDestroyed(this)).subscribe(() => {
-      // TODO: Inform parent to reload tree.
+      this.devicesStore.reloadList();
     });
   }
 
@@ -62,7 +64,7 @@ export class DiskInfoCardComponent implements OnInit {
         untilDestroyed(this),
       )
       .subscribe(() => {
-        // TODO: Reload tree (or at least current disk).
+        this.devicesStore.reloadList();
       });
   }
 }
