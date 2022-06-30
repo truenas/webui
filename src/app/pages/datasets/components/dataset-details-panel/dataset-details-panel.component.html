@@ -1,11 +1,27 @@
-<h3 class="title">
-  {{ 'Details for' | translate }}
-  <ng-container *ngIf="!isRoot">
-    {{ parentPath }}
-  </ng-container>
-  <ix-dataset-icon [dataset]="dataset"></ix-dataset-icon>
-  <span>{{ ownName }}</span>
-</h3>
+<div class="header">
+  <h3 class="title">
+    {{ 'Details for' | translate }}
+    <ng-container *ngIf="!isRoot">
+      {{ parentPath }}
+    </ng-container>
+    <span class="own-name-and-icon">
+      <ix-dataset-icon [dataset]="dataset"></ix-dataset-icon>
+      {{ ownName }}
+    </span>
+  </h3>
+
+  <div *ngIf="!dataset.locked" class="add-buttons">
+    <button
+      mat-button
+      color="primary"
+      (click)="onAddDataset()"
+    >{{ 'Add Dataset' | translate }}</button>
+    <button
+      mat-button
+      (click)="onAddZvol()"
+    >{{ 'Add Zvol' | translate }}</button>
+  </div>
+</div>
 
 <div class="cards">
   <ix-dataset-details-card [dataset]="dataset"></ix-dataset-details-card>
