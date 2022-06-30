@@ -14,4 +14,10 @@
   </mat-card>
 
   <ix-zfs-health-card [pool]="pool"></ix-zfs-health-card>
+
+  <ix-widget-usage
+    [loading]="isVolumeDataLoading"
+    [poolState]="pool"
+    [volumeData]="volumeData"
+  ></ix-widget-usage>
 </div>
