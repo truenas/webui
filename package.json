@@ -116,6 +116,7 @@
     "moment-timezone": "~0.5.33",
     "ng-chartist": "~4.1.0",
     "ng-mocks": "~13.5.2",
+    "ng2-charts": "~2.4.1",
     "ng2-dragula": "~2.1.1",
     "ngx-color-picker": "~11.0.0",
     "ngx-filesize": "~2.0.16",
