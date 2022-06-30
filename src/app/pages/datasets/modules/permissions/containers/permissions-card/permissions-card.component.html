@@ -3,12 +3,10 @@
     <h3 mat-card-title>{{ 'Permissions' | translate }}</h3>
 
     <a
-        *ngIf="canEditPermissions"
-        mat-button
-        [routerLink]="editPermissionsUrl"
-      >
-      {{ 'Edit' | translate }}
-    </a>
+      *ngIf="canEditPermissions"
+      mat-button
+      [routerLink]="editPermissionsUrl"
+    >{{ 'Edit' | translate }}</a>
   </mat-card-header>
 
   <mat-card-content>
@@ -21,18 +19,18 @@
     <ng-template #loaded>
       <div class="file-information">
         <ng-container *ngIf="stat">
-          <div class="item item-owner">
-            <div class="item-label">{{ 'Owner:' | translate }}</div>
-            <div class="item-value">{{ stat.user }}</div>
+          <div class="details-item">
+            <div class="label">{{ 'Owner:' | translate }}</div>
+            <div class="value">{{ stat.user }}</div>
           </div>
-          <div class="item item-group">
-            <div class="item-label">{{ 'Group:' | translate }}</div>
-            <div class="item-value">{{ stat.group }}</div>
+          <div class="details-item">
+            <div class="label">{{ 'Group:' | translate }}</div>
+            <div class="value">{{ stat.group }}</div>
           </div>
         </ng-container>
-        <div class="item item-path">
-          <div class="item-label">{{ 'Path:' | translate }}</div>
-          <div class="item-value">{{ dataset.mountpoint }}</div>
+        <div class="details-item">
+          <div class="label">{{ 'Path:' | translate }}</div>
+          <div class="value">{{ dataset.mountpoint }}</div>
         </div>
       </div>
 

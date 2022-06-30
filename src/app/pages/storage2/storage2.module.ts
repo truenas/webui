@@ -6,6 +6,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatOptionModule } from '@angular/material/core';
+import { MatDialogModule } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
@@ -35,6 +36,8 @@ import { PoolsDashboardComponent } from 'app/pages/storage2/components/pools-das
 import { GaugeChartComponent } from 'app/pages/storage2/components/pools-dashboard/widget-usage/gauge-chart/gauge-chart.component';
 import { WidgetUsageComponent } from 'app/pages/storage2/components/pools-dashboard/widget-usage/widget-usage.component';
 import { routing } from 'app/pages/storage2/storage2.routing';
+import { DashboardPoolComponent } from './components/dashboard-pool/dashboard-pool.component';
+import { ExportDisconnectModalComponent } from './components/dashboard-pool/export-disconnect-modal/export-disconnect-modal.component';
 import { ZfsHealthCardComponent } from './components/zfs-health-card/zfs-health-card.component';
 
 @NgModule({
@@ -70,6 +73,7 @@ import { ZfsHealthCardComponent } from './components/zfs-health-card/zfs-health-
     CoreComponents,
     MatProgressBarModule,
     NgxSkeletonLoaderModule,
+    MatDialogModule,
   ],
   declarations: [
     PoolsDashboardComponent,
@@ -79,6 +83,8 @@ import { ZfsHealthCardComponent } from './components/zfs-health-card/zfs-health-
     VdevComponent,
     ManagerComponent,
     ZfsHealthCardComponent,
+    DashboardPoolComponent,
+    ExportDisconnectModalComponent,
   ],
   providers: [
     FormatDateTimePipe,

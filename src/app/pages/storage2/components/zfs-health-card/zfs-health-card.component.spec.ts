@@ -87,7 +87,7 @@ describe('ZfsHealthCardComponent', () => {
   });
 
   it('shows an icon for pool status', async () => {
-    const icon = await loader.getHarness(MatIconHarness.with({ ancestor: '.card-title' }));
+    const icon = await loader.getHarness(MatIconHarness.with({ ancestor: '.mat-card-title' }));
     expect(await icon.getName()).toBe('check_circle');
   });
 

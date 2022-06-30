@@ -36,6 +36,7 @@ describe('PermissionsCardComponent', () => {
 
   const dataset = {
     id: 'testpool/dataset',
+    name: 'testpool/dataset',
     mountpoint: '/mnt/testpool/dataset',
     pool: 'testpool',
   } as Dataset;
@@ -76,9 +77,11 @@ describe('PermissionsCardComponent', () => {
   });
 
   it('shows dataset ownership information', () => {
-    expect(spectator.query('.item-owner')).toHaveText('Owner:john');
-    expect(spectator.query('.item-group')).toHaveText('Group:johns');
-    expect(spectator.query('.item-path')).toHaveText('Path:/mnt/testpool/dataset');
+    const [ownerItem, groupItem, pathItem] = spectator.queryAll('.details-item');
+
+    expect(ownerItem).toHaveText('Owner:john');
+    expect(groupItem).toHaveText('Group:johns');
+    expect(pathItem).toHaveText('Path:/mnt/testpool/dataset');
   });
 
   it('shows trivial permissions when acl is trivial', () => {

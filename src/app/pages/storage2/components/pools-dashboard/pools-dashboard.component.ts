@@ -59,7 +59,7 @@ export class PoolsDashboardComponent implements OnInit, AfterViewInit {
     this.slideIn.open(ImportPoolComponent);
   }
 
-  private loadPools(): void {
+  loadPools(): void {
     // TODO: Add loading indicator
     // TODO: Handle error
     this.isPoolsLoading = true;

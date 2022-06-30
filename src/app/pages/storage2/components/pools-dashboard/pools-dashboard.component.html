@@ -18,23 +18,10 @@
     <h4>Note: This is a work in progress for new 'Pools Dashboard' page. You can see what we are building an provide suggestions in <a href="https://github.com/truenas/webui/discussions/6767">Github discussions</a>.</h4>
     </div></mat-card-content></mat-card>
 </div>
-<ix-widget-usage *ngIf="isLoading"></ix-widget-usage>
 
-<div *ngFor="let pool of pools" class="pool">
-  <h2 class="pool-name">{{ pool.name }}</h2>
-
-  <div class="pool-cards">
-    <mat-card>
-      <button mat-button [routerLink]="['/storage2', pool.id, 'devices']"> {{ 'Manage Devices' | translate }}</button>
-    </mat-card>
-
-    <ix-zfs-health-card [pool]="pool"></ix-zfs-health-card>
-  </div>
-
-  <ix-widget-usage
-    *ngIf="!isLoading && volumeData[pool.name]"
-    [loading]="false"
-    [poolState]="pool"
-    [volumeData]="volumeData[pool.name]"
-  ></ix-widget-usage>
-</div>
+<ix-dashboard-pool
+  *ngFor="let pool of pools"
+  [pool]="pool"
+  class="pool"
+  (poolsUpdated)="loadPools()"
+></ix-dashboard-pool>
