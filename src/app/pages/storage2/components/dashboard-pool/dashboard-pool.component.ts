@@ -3,13 +3,22 @@ import {
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
+import { EMPTY } from 'rxjs';
+import {
+  catchError, filter, switchMap, tap,
+} from 'rxjs/operators';
+import { JobState } from 'app/enums/job-state.enum';
+import helptext from 'app/helptext/storage/volumes/volume-list';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { VolumeData, VolumesData } from 'app/interfaces/volume-data.interface';
+import { EntityUtils } from 'app/modules/entity/utils';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import {
   ExportDisconnectModalComponent,
 } from 'app/pages/storage2/components/dashboard-pool/export-disconnect-modal/export-disconnect-modal.component';
-import { WebSocketService } from 'app/services';
+import { AppLoaderService, DialogService, WebSocketService } from 'app/services';
 
 @UntilDestroy()
 @Component({
@@ -28,7 +37,11 @@ export class DashboardPoolComponent implements OnInit {
 
   constructor(
     private matDialog: MatDialog,
+    private dialogService: DialogService,
+    private translate: TranslateService,
+    private loader: AppLoaderService,
     private ws: WebSocketService,
+    private snackbar: SnackbarService,
     private cdr: ChangeDetectorRef,
   ) {}
 
@@ -75,5 +88,34 @@ export class DashboardPoolComponent implements OnInit {
 
         this.poolsUpdated.emit();
       });
+  }
+
+  onExpand(): void {
+    this.dialogService.confirm({
+      title: this.translate.instant(helptext.expand_pool_dialog.title),
+      message: this.translate.instant(helptext.expand_pool_dialog.message),
+    })
+      .pipe(
+        filter(Boolean),
+        switchMap(() => {
+          this.loader.open();
+          return this.ws.job('pool.expand', [this.pool.id]);
+        }),
+        filter((job) => job.state === JobState.Success),
+        tap(() => {
+          this.loader.close();
+          this.snackbar.success(
+            this.translate.instant('Successfully expanded pool {name}.', { name: this.pool.name }),
+          );
+          this.poolsUpdated.emit();
+        }),
+        catchError((error) => {
+          this.loader.close();
+          new EntityUtils().handleWsError(this, error, this.dialogService);
+          return EMPTY;
+        }),
+        untilDestroyed(this),
+      )
+      .subscribe();
   }
 }
