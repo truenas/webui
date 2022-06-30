@@ -6,7 +6,7 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
-import { mockJob, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockJob, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import helptext from 'app/helptext/storage/volumes/volume-list';
 import { Pool } from 'app/interfaces/pool.interface';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -14,6 +14,9 @@ import { DashboardPoolComponent } from 'app/pages/storage2/components/dashboard-
 import {
   ExportDisconnectModalComponent,
 } from 'app/pages/storage2/components/dashboard-pool/export-disconnect-modal/export-disconnect-modal.component';
+import {
+  WidgetUsageComponent,
+} from 'app/pages/storage2/components/pools-dashboard/widget-usage/widget-usage.component';
 import { ZfsHealthCardComponent } from 'app/pages/storage2/components/zfs-health-card/zfs-health-card.component';
 import { AppLoaderService, DialogService, WebSocketService } from 'app/services';
 
@@ -29,6 +32,7 @@ describe('DashboardPoolComponent', () => {
     declarations: [
       MockComponent(ZfsHealthCardComponent),
       MockComponent(ExportDisconnectModalComponent),
+      MockComponent(WidgetUsageComponent),
     ],
     providers: [
       mockProvider(MatDialog),
@@ -38,6 +42,7 @@ describe('DashboardPoolComponent', () => {
         confirm: jest.fn(() => of(true)),
       }),
       mockWebsocket([
+        mockCall('pool.dataset.query', []),
         mockJob('pool.expand', fakeSuccessfulJob()),
       ]),
     ],
