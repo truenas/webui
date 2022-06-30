@@ -29,6 +29,7 @@ export interface RsyncTask {
   schedule: Schedule;
   times: boolean;
   user: string;
+  ssh_credentials: number;
 }
 
 export type RsyncTaskUpdate = {
