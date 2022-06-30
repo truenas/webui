@@ -10,7 +10,8 @@ import { catchError, switchMap, tap } from 'rxjs/operators';
 import { VDevType } from 'app/enums/v-dev-type.enum';
 import { PoolTopology } from 'app/interfaces/pool.interface';
 import { Disk, VDev } from 'app/interfaces/storage.interface';
-import { IxNestedTreeDataSource } from 'app/modules/ix-tree/ix-tree-nested-datasource';
+import { IxNestedTreeDataSource } from 'app/modules/ix-tree/ix-nested-tree-datasource';
+import { findInTree } from 'app/modules/ix-tree/utils/find-in-tree.utils';
 import { AppLoaderService, WebSocketService } from 'app/services';
 
 @UntilDestroy()
@@ -46,6 +47,15 @@ export class DevicesComponent implements OnInit {
     this.loadTopologyAndDisks();
   }
 
+  private createDataSource(disks: VDev[]): void {
+    this.dataSource = new IxNestedTreeDataSource(disks);
+    this.dataSource.filterPredicate = (disks, query = '') => {
+      return disks.map((disk) => {
+        return findInTree([disk], (vdev) => vdev.disk.toLowerCase().includes(query.toLowerCase()));
+      }).filter(Boolean);
+    };
+  }
+
   private selectFirstNode(): void {
     if (!this.treeControl?.dataNodes?.length) {
       return;
@@ -62,7 +72,7 @@ export class DevicesComponent implements OnInit {
   }
 
   onSearch(query: string): void {
-    console.info('onSearch', query);
+    this.dataSource.filter(query);
   }
 
   private loadTopologyAndDisks(): void {
@@ -75,8 +85,8 @@ export class DevicesComponent implements OnInit {
           tap((disks) => {
             this.diskDictionary = _.keyBy(disks, (disk) => disk.devname);
             this.topology = pools[0].topology;
-            this.dataSource = new IxNestedTreeDataSource(this.topology.data);
             this.treeControl.dataNodes = this.topology.data;
+            this.createDataSource(this.topology.data);
             this.selectFirstNode();
             this.loader.close();
             this.cdr.markForCheck();

@@ -18,9 +18,9 @@ import { matchOtherValidator } from 'app/modules/entity/entity-form/validators/p
 import { EntityUtils } from 'app/modules/entity/utils';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import IxValidatorsService from 'app/modules/ix-forms/services/ix-validators.service';
+import { findInTree } from 'app/modules/ix-tree/utils/find-in-tree.utils';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { isPasswordEncrypted, isEncryptionRoot } from 'app/pages/datasets/utils/dataset.utils';
-import { findInTree } from 'app/pages/datasets/utils/find-in-tree.utils';
 import { AppLoaderService, DialogService, WebSocketService } from 'app/services';
 import { EncryptionOptionsDialogData } from './encryption-options-dialog-data.interface';
 
