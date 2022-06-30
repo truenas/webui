@@ -46,7 +46,7 @@ describe('SmartInfoCardComponent', () => {
   beforeEach(() => {
     spectator = createComponent({
       props: {
-        disk: {
+        topologyItem: {
           disk: 'sdc',
         } as VDev,
       },

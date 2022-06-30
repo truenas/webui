@@ -19,7 +19,7 @@ import { WebSocketService } from 'app/services';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SmartInfoCardComponent implements OnChanges {
-  @Input() disk: VDev;
+  @Input() topologyItem: VDev;
 
   totalResults$: Observable<LoadingState<number>>;
 
@@ -35,7 +35,7 @@ export class SmartInfoCardComponent implements OnChanges {
   }
 
   private loadTestResults(): void {
-    this.results$ = this.ws.call('smart.test.results', [[['disk', '=', this.disk.disk]]])
+    this.results$ = this.ws.call('smart.test.results', [[['disk', '=', this.topologyItem.disk]]])
       .pipe(map((results) => results[0]?.tests ?? []));
     this.totalResults$ = this.results$.pipe(
       map((results) => {

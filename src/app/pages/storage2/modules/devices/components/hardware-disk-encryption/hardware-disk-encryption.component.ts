@@ -20,7 +20,7 @@ import { WebSocketService } from 'app/services';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HardwareDiskEncryptionComponent implements OnChanges {
-  @Input() disk: VDev;
+  @Input() topologyItem: VDev;
 
   hasGlobalEncryption$ = this.ws.call('system.advanced.sed_global_password').pipe(toLoadingState());
   hasDiskEncryption$: Observable<LoadingState<boolean>>;
@@ -37,7 +37,7 @@ export class HardwareDiskEncryptionComponent implements OnChanges {
 
   onManageSedPassword(): void {
     const dialog = this.matDialog.open(ManageDiskSedDialogComponent, {
-      data: this.disk.disk,
+      data: this.topologyItem.disk,
     });
     dialog
       .afterClosed()
@@ -53,7 +53,7 @@ export class HardwareDiskEncryptionComponent implements OnChanges {
   }
 
   private loadDiskEncryption(): void {
-    this.hasDiskEncryption$ = this.ws.call('disk.query', [[['devname', '=', this.disk.disk]], { extra: { passwords: true } }])
+    this.hasDiskEncryption$ = this.ws.call('disk.query', [[['devname', '=', this.topologyItem.disk]], { extra: { passwords: true } }])
       .pipe(
         map((disks) => disks[0].passwd !== ''),
         toLoadingState(),

@@ -4,9 +4,12 @@ import {
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import _ from 'lodash';
+import { EMPTY } from 'rxjs';
+import { catchError, switchMap, tap } from 'rxjs/operators';
 import { VDevType } from 'app/enums/v-dev-type.enum';
 import { PoolTopology } from 'app/interfaces/pool.interface';
-import { VDev } from 'app/interfaces/storage.interface';
+import { Disk, VDev } from 'app/interfaces/storage.interface';
 import { IxNestedTreeDataSource } from 'app/modules/ix-tree/ix-tree-nested-datasource';
 import { AppLoaderService, WebSocketService } from 'app/services';
 
@@ -23,6 +26,8 @@ export class DevicesComponent implements OnInit {
   treeControl = new NestedTreeControl<VDev, string>((vdev) => vdev.children, {
     trackBy: (vdev) => vdev.guid,
   });
+  diskDictionary: { [key: string]: Disk } = {};
+
   readonly trackByFn: TrackByFunction<VDev> = (_, vdev) => vdev.guid;
   readonly hasNestedChild = (_: number, vdev: VDev): boolean => Boolean(vdev.children?.length);
 
@@ -38,18 +43,7 @@ export class DevicesComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.loader.open();
-    const poolId = this.route.snapshot.paramMap.get('poolId');
-    this.ws.call('pool.query', [[['id', '=', Number(poolId)]]]).pipe(untilDestroyed(this)).subscribe(
-      (pools) => {
-        this.topology = pools[0].topology;
-        this.dataSource = new IxNestedTreeDataSource(this.topology.data);
-        this.treeControl.dataNodes = this.topology.data;
-        this.selectFirstNode();
-        this.loader.close();
-        this.cdr.markForCheck();
-      },
-    );
+    this.loadTopologyAndDisks();
   }
 
   private selectFirstNode(): void {
@@ -69,5 +63,32 @@ export class DevicesComponent implements OnInit {
 
   onSearch(query: string): void {
     console.info('onSearch', query);
+  }
+
+  private loadTopologyAndDisks(): void {
+    this.loader.open();
+    const poolId = Number(this.route.snapshot.paramMap.get('poolId'));
+    this.ws.call('pool.query', [[['id', '=', poolId]]]).pipe(
+      switchMap((pools) => {
+        // TODO: Handle pool not found.
+        return this.ws.call('disk.query', [[['pool', '=', pools[0].name]], { extra: { pools: true } }]).pipe(
+          tap((disks) => {
+            this.diskDictionary = _.keyBy(disks, (disk) => disk.devname);
+            this.topology = pools[0].topology;
+            this.dataSource = new IxNestedTreeDataSource(this.topology.data);
+            this.treeControl.dataNodes = this.topology.data;
+            this.selectFirstNode();
+            this.loader.close();
+            this.cdr.markForCheck();
+          }),
+        );
+      }),
+      catchError(() => {
+        // TODO: Handle error.
+        return EMPTY;
+      }),
+      untilDestroyed(this),
+    )
+      .subscribe();
   }
 }
