@@ -1,6 +1,6 @@
 import { CdkTreeNodeDef } from '@angular/cdk/tree';
 import { Directive, Input } from '@angular/core';
-import { IxNestedTreeDataSource } from 'app/modules/ix-tree/ix-tree-nested-datasource';
+import { IxNestedTreeDataSource } from 'app/modules/ix-tree/ix-nested-tree-datasource';
 
 @Directive({
   selector: '[ixTreeNodeDef]',

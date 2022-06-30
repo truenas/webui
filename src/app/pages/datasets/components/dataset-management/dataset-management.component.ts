@@ -6,7 +6,8 @@ import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { pluck } from 'rxjs/operators';
 import { Dataset } from 'app/interfaces/dataset.interface';
-import { IxNestedTreeDataSource } from 'app/modules/ix-tree/ix-tree-nested-datasource';
+import { IxNestedTreeDataSource } from 'app/modules/ix-tree/ix-nested-tree-datasource';
+import { findInTree } from 'app/modules/ix-tree/utils/find-in-tree.utils';
 import { DatasetStore } from 'app/pages/datasets/store/dataset-store.service';
 import { getDatasetAndParentsById } from 'app/pages/datasets/utils/get-datasets-in-tree-by-id.utils';
 import { AppLoaderService, WebSocketService } from 'app/services';
@@ -46,7 +47,7 @@ export class DatasetsManagementComponent implements OnInit {
   }
 
   onSearch(query: string): void {
-    console.info('onSearch', query);
+    this.dataSource.filter(query);
   }
 
   private loadTree(): void {
@@ -71,7 +72,7 @@ export class DatasetsManagementComponent implements OnInit {
       untilDestroyed(this),
     ).subscribe(
       (datasets: Dataset[]) => {
-        this.dataSource = new IxNestedTreeDataSource<Dataset>(datasets);
+        this.createDataSource(datasets);
         this.treeControl.dataNodes = datasets;
         this.loader.close();
         const routeDatasetId = this.activatedRoute.snapshot.paramMap.get('datasetId');
@@ -121,5 +122,14 @@ export class DatasetsManagementComponent implements OnInit {
     ).subscribe(
       (datasetId) => this.selectByDatasetId(datasetId),
     );
+  }
+
+  private createDataSource(datasets: Dataset[]): void {
+    this.dataSource = new IxNestedTreeDataSource<Dataset>(datasets);
+    this.dataSource.filterPredicate = (datasets, query = '') => {
+      return datasets.map((datasetRoot) => {
+        return findInTree([datasetRoot], (dataset) => dataset.id.toLowerCase().includes(query.toLowerCase()));
+      }).filter(Boolean);
+    };
   }
 }
