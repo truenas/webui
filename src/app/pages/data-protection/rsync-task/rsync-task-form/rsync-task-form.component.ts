@@ -1,18 +1,25 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import {
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
+} from '@angular/core';
+import { Validators } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
+import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable, of } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { Direction } from 'app/enums/direction.enum';
-import { RsyncMode } from 'app/enums/rsync-mode.enum';
+import { RsyncMode, RsyncSshConnectMode } from 'app/enums/rsync-mode.enum';
 import helptext from 'app/helptext/data-protection/resync/resync-form';
+import { KeychainSshCredentials } from 'app/interfaces/keychain-credential.interface';
 import { RsyncTask, RsyncTaskUpdate } from 'app/interfaces/rsync-task.interface';
 import { portRangeValidator } from 'app/modules/entity/entity-form/validators/range-validation';
 import { UserComboboxProvider } from 'app/modules/ix-forms/classes/user-combobox-provider';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { crontabToSchedule } from 'app/modules/scheduler/utils/crontab-to-schedule.utils';
 import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
-import { UserService, WebSocketService } from 'app/services';
+import { SshConnectionFormComponent } from 'app/pages/credentials/backup-credentials/ssh-connection-form/ssh-connection-form.component';
+import { KeychainCredentialService, UserService, WebSocketService } from 'app/services';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
@@ -22,7 +29,7 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
   styleUrls: ['./rsync-task-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class RsyncTaskFormComponent {
+export class RsyncTaskFormComponent implements OnInit {
   get isNew(): boolean {
     return !this.editingTask;
   }
@@ -38,10 +45,10 @@ export class RsyncTaskFormComponent {
     user: ['', Validators.required],
     direction: [null as Direction, Validators.required],
     desc: [''],
-    remotehost: ['', Validators.required],
     mode: [RsyncMode.Module],
-    remoteport: [22, [portRangeValidator(), Validators.required]],
-    remotemodule: ['', Validators.required],
+    remotehost: [''],
+    remoteport: [22, portRangeValidator()],
+    remotemodule: [''],
     remotepath: ['/mnt'],
     validate_rpath: [true],
     schedule: ['', Validators.required],
@@ -56,9 +63,12 @@ export class RsyncTaskFormComponent {
     delayupdates: [true],
     extra: [[] as string[]],
     enabled: [true],
+    sshconnectmode: [RsyncSshConnectMode.PrivateKey],
+    ssh_credentials: [null as number],
   });
 
   isLoading = false;
+  sshCredentials: KeychainSshCredentials[];
 
   readonly helptext = helptext;
 
@@ -71,6 +81,20 @@ export class RsyncTaskFormComponent {
     { label: 'Module', value: RsyncMode.Module },
     { label: 'SSH', value: RsyncMode.Ssh },
   ]);
+
+  readonly sshConnectModes$ = of([
+    { label: this.translate.instant('SSH private key stored in user\'s home directory'), value: RsyncSshConnectMode.PrivateKey },
+    { label: this.translate.instant('SSH connection from the keychain'), value: RsyncSshConnectMode.KeyChain },
+  ]);
+
+  sshConnections$ = this.keychainCredentialService.getSshConnections().pipe(map((options) => {
+    this.sshCredentials = options;
+    return [
+      { label: this.translate.instant('Create New'), value: '' },
+      ...options.map((option) => ({ label: option.name, value: option.id })),
+    ];
+  }));
+
   readonly userProvider = new UserComboboxProvider(this.userService);
   readonly treeNodeProvider = this.filesystemService.getFilesystemNodeProvider({ directoriesOnly: true });
 
@@ -85,10 +109,48 @@ export class RsyncTaskFormComponent {
     private errorHandler: FormErrorHandlerService,
     private userService: UserService,
     private filesystemService: FilesystemService,
+    protected keychainCredentialService: KeychainCredentialService,
+    protected matDialog: MatDialog,
   ) {}
 
-  get isSshMode(): boolean {
-    return this.form.value.mode === RsyncMode.Ssh;
+  get isModuleMode(): boolean {
+    return this.form.value.mode === RsyncMode.Module;
+  }
+
+  get isSshConnectionPrivateMode(): boolean {
+    return this.form.value.sshconnectmode === RsyncSshConnectMode.PrivateKey;
+  }
+
+  ngOnInit(): void {
+    this.form.controls.ssh_credentials.valueChanges.pipe(untilDestroyed(this)).subscribe((value: number | '') => {
+      if (value === '') {
+        const dialogRef = this.matDialog.open(SshConnectionFormComponent, {
+          data: { dialog: true },
+          width: '600px',
+          panelClass: 'ix-overflow-dialog',
+        });
+
+        dialogRef.afterClosed().pipe(untilDestroyed(this)).subscribe(() => {
+          this.keychainCredentialService.getSshConnections().pipe(untilDestroyed(this)).subscribe((credentials) => {
+            const newCredential = credentials.find((credential) => {
+              return !this.sshCredentials.find((existingCredential) => existingCredential.id === credential.id);
+            });
+
+            if (!newCredential) {
+              this.form.controls.ssh_credentials.setValue(null);
+              return;
+            }
+
+            this.sshConnections$ = of([
+              { label: this.translate.instant('Create New'), value: '' },
+              ...credentials.map((credential) => ({ label: credential.name, value: credential.id })),
+            ]);
+            this.form.controls.ssh_credentials.setValue(newCredential.id);
+            this.sshCredentials = credentials;
+          });
+        });
+      }
+    });
   }
 
   setTaskForEdit(task: RsyncTask): void {
@@ -96,6 +158,7 @@ export class RsyncTaskFormComponent {
     this.form.patchValue({
       ...task,
       schedule: scheduleToCrontab(task.schedule),
+      sshconnectmode: task.ssh_credentials ? RsyncSshConnectMode.KeyChain : RsyncSshConnectMode.PrivateKey,
     });
   }
 
@@ -109,9 +172,17 @@ export class RsyncTaskFormComponent {
       delete values.remoteport;
       delete values.remotepath;
       delete values.validate_rpath;
+      delete values.ssh_credentials;
     } else {
       delete values.remotemodule;
+      if (values.sshconnectmode === RsyncSshConnectMode.PrivateKey) {
+        delete values.ssh_credentials;
+      } else {
+        delete values.remotehost;
+        delete values.remoteport;
+      }
     }
+    delete values.sshconnectmode;
 
     this.isLoading = true;
     let request$: Observable<unknown>;

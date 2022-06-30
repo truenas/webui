@@ -3,7 +3,3 @@
 .card {
   @include details-card();
 }
-
-.details-item {
-  @include details-card-item();
-}

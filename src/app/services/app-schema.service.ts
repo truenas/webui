@@ -212,7 +212,15 @@ export class AppSchemaService {
       ChartSchemaType.Hostpath,
       ChartSchemaType.Ipaddr,
     ].includes(schema.type)) {
-      const newFormControl = new UntypedFormControl(schema.default || schema.type === ChartSchemaType.Int ? null : '', [
+      let altDefault: string | boolean | number = '';
+      if (schema.type === ChartSchemaType.Int) {
+        altDefault = null;
+      } else
+      if (schema.type === ChartSchemaType.Boolean) {
+        altDefault = false;
+      }
+
+      const newFormControl = new UntypedFormControl(schema.default || altDefault, [
         schema.required ? Validators.required : Validators.nullValidator,
         schema.max ? Validators.max(schema.max) : Validators.nullValidator,
         schema.min ? Validators.min(schema.min) : Validators.nullValidator,
@@ -296,7 +304,7 @@ export class AppSchemaService {
       formGroup.controls[chartSchemaNode.variable].disable();
     }
 
-    if (schema.show_if) {
+    if (schema.show_if && !schema.hidden) {
       const relations: Relation[] = schema.show_if.map((item) => ({
         fieldName: item[0],
         operatorName: item[1],

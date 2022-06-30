@@ -1,5 +1,8 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
+import {
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, Optional,
+} from '@angular/core';
 import { Validators } from '@angular/forms';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
@@ -126,6 +129,8 @@ export class SshConnectionFormComponent {
     private loader: AppLoaderService,
     private validatorsService: IxValidatorsService,
     private slideIn: IxSlideInService,
+    @Optional() public dialogRef: MatDialogRef<SshConnectionFormComponent>,
+    @Optional() @Inject(MAT_DIALOG_DATA) public data: { dialog: boolean },
   ) {}
 
   get isManualAuthFormValid(): boolean {
@@ -180,7 +185,13 @@ export class SshConnectionFormComponent {
     ).subscribe(
       () => {
         this.isLoading = false;
-        this.slideIn.close();
+        if (this.data?.dialog) {
+          if (this.dialogRef) {
+            this.dialogRef.close();
+          }
+        } else {
+          this.slideIn.close();
+        }
       },
       (error) => {
         this.isLoading = false;

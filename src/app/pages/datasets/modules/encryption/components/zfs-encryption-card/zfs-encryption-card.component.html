@@ -44,7 +44,7 @@
       </div>
     </ng-container>
   </mat-card-content>
-  <mat-card-actions *ngIf="dataset.encrypted && isEncryptionRoot && !this.dataset.locked" class="secondary-actions">
+  <mat-card-actions *ngIf="dataset.encrypted && isEncryptionRoot && !this.dataset.locked">
     <button
       *ngIf="canExportKey"
       mat-stroked-button

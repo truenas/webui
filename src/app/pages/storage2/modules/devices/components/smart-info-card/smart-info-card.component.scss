@@ -4,10 +4,6 @@
   @include details-card();
 }
 
-.details-item {
-  @include details-card-item();
-}
-
 .header {
   align-items: center;
   display: flex;

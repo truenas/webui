@@ -1,4 +1,4 @@
-<mat-card class="container-card">
+<mat-card class="card">
   <mat-card-header>
     <h3 mat-card-title>{{ 'Disk Info' | translate }}</h3>
     <button
@@ -7,58 +7,57 @@
     >{{ 'Edit' | translate }}</button>
   </mat-card-header>
   <mat-card-content>
-    <div class="row">
-      <span class="header">{{ 'Disk Size' | translate }}:</span>
-      <span *ngIf="disk?.size; else notAvailable">
+    <div class="details-item">
+      <span class="label">{{ 'Disk Size' | translate }}:</span>
+      <span *ngIf="disk?.size; else notAvailable" class="value">
         {{ disk.size | filesize: { standard: 'iec' } }}
       </span>
     </div>
-    <div class="row">
-      <span class="header">{{ 'Transfer Mode' | translate }}:</span>
-      <span *ngIf="disk?.transfermode; else notAvailable">
+    <div class="details-item">
+      <span class="label">{{ 'Transfer Mode' | translate }}:</span>
+      <span *ngIf="disk?.transfermode; else notAvailable" class="value">
         {{ disk.transfermode }}
       </span>
     </div>
-    <div class="row">
-      <span class="header">{{ 'Serial' | translate }}:</span>
-      <span *ngIf="disk?.serial; else notAvailable">
+    <div class="details-item">
+      <span class="label">{{ 'Serial' | translate }}:</span>
+      <span *ngIf="disk?.serial; else notAvailable" class="value">
         {{ disk.serial }}
       </span>
     </div>
-    <div class="row">
-      <span class="header">{{ 'Model' | translate }}:</span>
-      <span *ngIf="disk?.model; else notAvailable">
+    <div class="details-item">
+      <span class="label">{{ 'Model' | translate }}:</span>
+      <span *ngIf="disk?.model; else notAvailable" class="value">
         {{ disk.model }}
       </span>
     </div>
-    <div class="row">
-      <span class="header">{{ 'Rotation Rate' | translate }}:</span>
-      <span *ngIf="disk?.rotationrate; else notAvailable">
+    <div class="details-item">
+      <span class="label">{{ 'Rotation Rate' | translate }}:</span>
+      <span *ngIf="disk?.rotationrate; else notAvailable" class="value">
         {{ '{n} RPM' | translate: { n: disk.rotationrate } }}
       </span>
     </div>
-    <div class="row">
+    <div class="details-item">
       <span class="header">{{ 'Type' | translate }}:</span>
-      <span *ngIf="disk?.type; else notAvailable">
+      <span *ngIf="disk?.type; else notAvailable" class="value">
         {{ disk.type }}
       </span>
     </div>
-    <div class="row">
-      <span class="header">{{ 'HDD Standby' | translate }}:</span>
-      <span *ngIf="disk?.hddstandby; else notAvailable">
+    <div class="details-item">
+      <span class="label">{{ 'HDD Standby' | translate }}:</span>
+      <span *ngIf="disk?.hddstandby; else notAvailable" class="value">
         {{ disk.hddstandby }}
       </span>
     </div>
-    <div class="row">
-      <span class="header">{{ 'Description' | translate }}:</span>
-      <span *ngIf="disk?.description; else notAvailable">
+    <div class="details-item">
+      <span class="label">{{ 'Description' | translate }}:</span>
+      <span *ngIf="disk?.description; else notAvailable" class="value">
         {{ disk.description }}
       </span>
     </div>
   </mat-card-content>
   <mat-card-actions>
     <button
-      class="stroked-btn"
       mat-stroked-button
       (click)="onReplace()"
     >{{ 'Replace' | translate }}</button>
