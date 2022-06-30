@@ -13,7 +13,7 @@ import { User } from 'app/interfaces/user.interface';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { SchedulerModule } from 'app/modules/scheduler/scheduler.module';
-import { UserService, WebSocketService } from 'app/services';
+import { KeychainCredentialService, UserService, WebSocketService } from 'app/services';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { selectTimezone } from 'app/store/system-config/system-config.selectors';
@@ -69,6 +69,12 @@ describe('RsyncTaskFormComponent', () => {
           { username: 'root' },
           { username: 'steven' },
         ] as User[]),
+      }),
+      mockProvider(KeychainCredentialService, {
+        getSshConnections: () => of([
+          { id: 1, name: 'ssh01' },
+          { id: 2, name: 'ssh02' },
+        ]),
       }),
       provideMockStore({
         selectors: [
@@ -200,7 +206,7 @@ describe('RsyncTaskFormComponent', () => {
     expect(spectator.inject(IxSlideInService).close).toHaveBeenCalled();
   });
 
-  it('shows SSH fields and saves them when Rsync Mode is SSH', async () => {
+  it('shows SSH fields and saves them when Rsync Mode is SSH and Connect using SSH private key stored in user\'s home directory', async () => {
     spectator.component.setTaskForEdit({ ...existingTask, id: 1 });
     await form.fillForm({
       'Rsync Mode': 'SSH',
@@ -224,6 +230,41 @@ describe('RsyncTaskFormComponent', () => {
         ...existingTaskWithoutModule,
         mode: RsyncMode.Ssh,
         remoteport: 45,
+        remotepath: '/mnt/path',
+        validate_rpath: true,
+      },
+    ]);
+  });
+
+  it('shows SSH fields and saves them when Rsync Mode is SSH and Connect using SSH connection from the keychain', async () => {
+    spectator.component.setTaskForEdit({ ...existingTask, id: 1 });
+    await form.fillForm({
+      'Rsync Mode': 'SSH',
+    });
+
+    await form.fillForm({
+      'Connect using:': 'SSH connection from the keychain',
+    });
+
+    await form.fillForm({
+      'SSH Connection': 'ssh01',
+      'Remote Path': '/mnt/path',
+    });
+
+    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+    await saveButton.click();
+
+    const existingTaskWithoutModule = { ...existingTask };
+    delete existingTaskWithoutModule['remotemodule'];
+    delete existingTaskWithoutModule['remotehost'];
+    delete existingTaskWithoutModule['remoteport'];
+
+    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('rsynctask.update', [
+      1,
+      {
+        ...existingTaskWithoutModule,
+        mode: RsyncMode.Ssh,
+        ssh_credentials: 1,
         remotepath: '/mnt/path',
         validate_rpath: true,
       },

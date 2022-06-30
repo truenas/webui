@@ -240,7 +240,7 @@ export class DataProtectionDashboardComponent implements OnInit {
               prop: 'enabled',
               width: '50px',
               checkbox: true,
-              onChange: (row: ReplicationTaskUi) => this.onCheckboxToggle(TaskCardId.Replication, row, 'enabled'),
+              onChange: (row: ReplicationTaskUi) => this.onCheckboxToggle(TaskCardId.Replication, row as TaskTableRow, 'enabled'),
             },
             {
               name: this.translate.instant('State'),
@@ -330,7 +330,7 @@ export class DataProtectionDashboardComponent implements OnInit {
               prop: 'enabled',
               width: '50px',
               checkbox: true,
-              onChange: (row: RsyncTaskUi) => this.onCheckboxToggle(TaskCardId.Rsync, row, 'enabled'),
+              onChange: (row: RsyncTaskUi) => this.onCheckboxToggle(TaskCardId.Rsync, row as TaskTableRow, 'enabled'),
             },
             {
               name: this.translate.instant('State'),
@@ -351,7 +351,7 @@ export class DataProtectionDashboardComponent implements OnInit {
             form.setTaskForEdit(row);
           },
           onButtonClick: (row: RsyncTaskUi) => {
-            this.stateButton(row);
+            this.stateButton(row as TaskTableRow);
           },
         },
       },
