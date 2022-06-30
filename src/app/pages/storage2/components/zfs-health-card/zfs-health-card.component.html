@@ -1,6 +1,6 @@
 <mat-card class="card">
   <mat-card-header>
-    <h3 mat-card-title class="card-title">
+    <h3 mat-card-title>
       {{ 'ZFS Health' | translate }}
 
       <ng-container [ngSwitch]="true">
@@ -47,7 +47,7 @@
     <div *ngIf="(hasScrubTask$ | async) as hasScrubTask" class="details-item">
       <div class="label">{{ 'Scheduled Scrub Task' | translate }}:</div>
       <div class="value">
-        <ngx-skeleton-loader *ngIf="hasScrubTask.isLoading" class="scrub-task-loader"></ngx-skeleton-loader>
+        <ngx-skeleton-loader *ngIf="hasScrubTask.isLoading"></ngx-skeleton-loader>
         <ng-container *ngIf="hasScrubTask.value !== undefined">
           {{ hasScrubTask.value ? ('Set' | translate) : ('Not Set' | translate) }}
         </ng-container>
@@ -56,7 +56,7 @@
           Error
         </ng-container>
       </div>
-      <a class="action" [routerLink]="['/data-protection/scrub']">{{ 'View All Scrub Tasks' | translate }}</a>
+      <a [routerLink]="['/data-protection/scrub']">{{ 'View All Scrub Tasks' | translate }}</a>
     </div>
 
     <ng-container *ngIf="scan?.function">

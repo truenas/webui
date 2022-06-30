@@ -16,10 +16,7 @@
           Error
         </ng-container>
       </ng-container>
-      <a
-        class="action"
-        (click)="onManageSedPassword()"
-      >{{ 'Manage SED Password' | translate }}</a>
+      <a (click)="onManageSedPassword()">{{ 'Manage SED Password' | translate }}</a>
     </div>
 
     <div class="details-item">
@@ -34,10 +31,7 @@
           Error
         </ng-container>
       </ng-container>
-      <a
-        class="action"
-        [routerLink]="['/system/advanced']"
-      >{{ 'Manage Global SED Password' | translate }}</a>
+      <a [routerLink]="['/system/advanced']">{{ 'Manage Global SED Password' | translate }}</a>
     </div>
   </mat-card-content>
 </mat-card>

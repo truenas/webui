@@ -25,6 +25,8 @@ export class PoolsDashboardComponent implements OnInit, AfterViewInit {
   @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
 
   pools: Pool[];
+  isPoolsLoading = false;
+
   constructor(
     private ws: WebSocketService,
     private router: Router,
@@ -52,9 +54,11 @@ export class PoolsDashboardComponent implements OnInit, AfterViewInit {
   loadPools(): void {
     // TODO: Add loading indicator
     // TODO: Handle error
+    this.isPoolsLoading = true;
     this.ws.call('pool.query').pipe(untilDestroyed(this)).subscribe(
       (pools: Pool[]) => {
         this.pools = pools;
+        this.isPoolsLoading = false;
         this.cdr.markForCheck();
       },
     );
