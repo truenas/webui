@@ -7,7 +7,8 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { VDevType } from 'app/enums/v-dev-type.enum';
 import { PoolTopology } from 'app/interfaces/pool.interface';
 import { VDev } from 'app/interfaces/storage.interface';
-import { IxNestedTreeDataSource } from 'app/modules/ix-tree/ix-tree-nested-datasource';
+import { IxNestedTreeDataSource } from 'app/modules/ix-tree/ix-nested-tree-datasource';
+import { findInTree } from 'app/modules/ix-tree/utils/find-in-tree.utils';
 import { AppLoaderService, WebSocketService } from 'app/services';
 
 @UntilDestroy()
@@ -43,13 +44,22 @@ export class DevicesComponent implements OnInit {
     this.ws.call('pool.query', [[['id', '=', Number(poolId)]]]).pipe(untilDestroyed(this)).subscribe(
       (pools) => {
         this.topology = pools[0].topology;
-        this.dataSource = new IxNestedTreeDataSource(this.topology.data);
         this.treeControl.dataNodes = this.topology.data;
+        this.createDataSource(this.topology.data);
         this.selectFirstNode();
         this.loader.close();
         this.cdr.markForCheck();
       },
     );
+  }
+
+  private createDataSource(disks: VDev[]): void {
+    this.dataSource = new IxNestedTreeDataSource(disks);
+    this.dataSource.filterPredicate = (disks, query = '') => {
+      return disks.map((disk) => {
+        return findInTree([disk], (vdev) => vdev.disk.toLowerCase().includes(query.toLowerCase()));
+      }).filter(Boolean);
+    };
   }
 
   private selectFirstNode(): void {
@@ -68,6 +78,6 @@ export class DevicesComponent implements OnInit {
   }
 
   onSearch(query: string): void {
-    console.info('onSearch', query);
+    this.dataSource.filter(query);
   }
 }

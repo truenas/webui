@@ -5,6 +5,11 @@
       mat-button
       (click)="onExport()"
     >{{ 'Export/Disconnect' | translate }}</button>
+
+    <button
+      mat-button
+      (click)="onExpand()"
+    >{{ 'Expand' | translate }}</button>
   </div>
 </div>
 
@@ -14,4 +19,10 @@
   </mat-card>
 
   <ix-zfs-health-card [pool]="pool"></ix-zfs-health-card>
+
+  <ix-widget-usage
+    [loading]="isVolumeDataLoading"
+    [poolState]="pool"
+    [volumeData]="volumeData"
+  ></ix-widget-usage>
 </div>

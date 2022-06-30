@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
-import { FlexModule } from '@angular/flex-layout';
+import { FlexLayoutModule, FlexModule } from '@angular/flex-layout';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -12,10 +12,13 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
+import { MatToolbarModule } from '@angular/material/toolbar';
 import { RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { NgxDatatableModule } from '@swimlane/ngx-datatable';
+import { ChartsModule } from 'ng2-charts';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { CoreComponents } from 'app/core/core-components.module';
 import { FormatDateTimePipe } from 'app/core/pipes/format-datetime.pipe';
@@ -30,6 +33,8 @@ import { ImportPoolComponent } from 'app/pages/storage2/components/import-pool/i
 import { ManagerComponent } from 'app/pages/storage2/components/manager/manager.component';
 import { VdevComponent } from 'app/pages/storage2/components/manager/vdev/vdev.component';
 import { PoolsDashboardComponent } from 'app/pages/storage2/components/pools-dashboard/pools-dashboard.component';
+import { GaugeChartComponent } from 'app/pages/storage2/components/pools-dashboard/widget-usage/gauge-chart/gauge-chart.component';
+import { WidgetUsageComponent } from 'app/pages/storage2/components/pools-dashboard/widget-usage/widget-usage.component';
 import { routing } from 'app/pages/storage2/storage2.routing';
 import { DashboardPoolComponent } from './components/dashboard-pool/dashboard-pool.component';
 import { ExportDisconnectModalComponent } from './components/dashboard-pool/export-disconnect-modal/export-disconnect-modal.component';
@@ -45,9 +50,14 @@ import { ZfsHealthCardComponent } from './components/zfs-health-card/zfs-health-
     AppCommonModule,
     MatButtonModule,
     RouterModule,
+    CommonModule,
+    MatIconModule,
+    MatProgressSpinnerModule,
+    MatToolbarModule,
+    ChartsModule,
+    FlexLayoutModule,
     ReactiveFormsModule,
     LayoutModule,
-    MatIconModule,
     NgxDatatableModule,
     MatFormFieldModule,
     MatOptionModule,
@@ -58,7 +68,6 @@ import { ZfsHealthCardComponent } from './components/zfs-health-card/zfs-health-
     MatSelectModule,
     MatMenuModule,
     CastModule,
-    CommonModule,
     MatInputModule,
     CommonDirectivesModule,
     CoreComponents,
@@ -68,6 +77,8 @@ import { ZfsHealthCardComponent } from './components/zfs-health-card/zfs-health-
   ],
   declarations: [
     PoolsDashboardComponent,
+    WidgetUsageComponent,
+    GaugeChartComponent,
     ImportPoolComponent,
     VdevComponent,
     ManagerComponent,

@@ -8,3 +8,8 @@ export enum RsyncModuleMode {
   WriteOnly = 'WO',
   ReadAndWrite = 'RW',
 }
+
+export enum RsyncSshConnectMode {
+  PrivateKey,
+  KeyChain,
+}
