@@ -15,7 +15,9 @@ import {
 import {
   DatasetDetailsPanelComponent,
 } from 'app/pages/datasets/components/dataset-details-panel/dataset-details-panel.component';
+import { DatasetFormComponent } from 'app/pages/datasets/components/dataset-form/dataset-form.component';
 import { DatasetIconComponent } from 'app/pages/datasets/components/dataset-icon/dataset-icon.component';
+import { ZvolFormComponent } from 'app/pages/datasets/components/zvol-form/zvol-form.component';
 import {
   ZfsEncryptionCardComponent,
 } from 'app/pages/datasets/modules/encryption/components/zfs-encryption-card/zfs-encryption-card.component';
@@ -28,7 +30,15 @@ import { ModalService } from 'app/services';
 describe('DatasetDetailsPanelComponent', () => {
   let spectator: Spectator<DatasetDetailsPanelComponent>;
   let loader: HarnessLoader;
+  const fakeModalRef = {
+    setParent: jest.fn(),
+    setVolId: jest.fn(),
+    setTitle: jest.fn(),
+    isNew: undefined as boolean,
+  };
   const dataset = {
+    id: 'root/parent/child',
+    pool: 'my-pool',
     name: 'root/parent/child',
     type: DatasetType.Filesystem,
   } as Dataset;
@@ -46,6 +56,7 @@ describe('DatasetDetailsPanelComponent', () => {
     ],
     providers: [
       mockProvider(ModalService, {
+        openInSlideIn: jest.fn(() => fakeModalRef),
         onClose$: of(),
       }),
       mockProvider(DatasetStore),
@@ -70,13 +81,17 @@ describe('DatasetDetailsPanelComponent', () => {
   it('opens a dataset form when Add Dataset is pressed', async () => {
     const addDatasetButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add Dataset' }));
     await addDatasetButton.click();
-    expect(spectator.inject(ModalService).openInSlideIn).toHaveBeenCalledWith(2);
+    expect(spectator.inject(ModalService).openInSlideIn).toHaveBeenCalledWith(DatasetFormComponent);
+    expect(fakeModalRef.setParent).toHaveBeenCalledWith('root/parent/child');
+    expect(fakeModalRef.setVolId).toHaveBeenCalledWith('my-pool');
   });
 
   it('opens a zvol form when Add Zvol is pressed', async () => {
     const addZvolButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add Zvol' }));
     await addZvolButton.click();
-    expect(spectator.inject(ModalService).openInSlideIn).toHaveBeenCalledWith(2);
+    expect(spectator.inject(ModalService).openInSlideIn).toHaveBeenCalledWith(ZvolFormComponent);
+    expect(fakeModalRef.setParent).toHaveBeenCalledWith('root/parent/child');
+    expect(fakeModalRef.isNew).toBe(true);
   });
 
   it('shows a details card for the dataset', () => {
