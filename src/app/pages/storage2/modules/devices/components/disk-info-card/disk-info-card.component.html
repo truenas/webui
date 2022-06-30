@@ -31,14 +31,14 @@
         {{ disk.model }}
       </span>
     </div>
-    <div class="details-item">
+    <div *ngIf="isHdd" class="details-item">
       <span class="label">{{ 'Rotation Rate' | translate }}:</span>
       <span *ngIf="disk?.rotationrate; else notAvailable" class="value">
         {{ '{n} RPM' | translate: { n: disk.rotationrate } }}
       </span>
     </div>
     <div class="details-item">
-      <span class="header">{{ 'Type' | translate }}:</span>
+      <span class="label">{{ 'Type' | translate }}:</span>
       <span *ngIf="disk?.type; else notAvailable" class="value">
         {{ disk.type }}
       </span>
@@ -65,5 +65,5 @@
 </mat-card>
 
 <ng-template #notAvailable>
-  {{ 'N/A' | translate }}
+  <span class="value">{{ 'N/A' | translate }}</span>
 </ng-template>

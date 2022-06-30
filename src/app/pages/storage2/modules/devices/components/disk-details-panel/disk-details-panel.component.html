@@ -2,9 +2,9 @@
 
 <div class="cards">
   <ix-hardware-disk-encryption [topologyItem]="topologyItem"></ix-hardware-disk-encryption>
-  <ix-disk-info-card
+  <ix-disk-info-card [disk]="disk"></ix-disk-info-card>
+  <ix-smart-info-card
     [topologyItem]="topologyItem"
     [disk]="disk"
-  ></ix-disk-info-card>
-  <ix-smart-info-card [topologyItem]="topologyItem"></ix-smart-info-card>
+  ></ix-smart-info-card>
 </div>

@@ -7,13 +7,11 @@ import {
   byText, createComponentFactory, Spectator, mockProvider,
 } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { DiskStandby } from 'app/enums/disk-standby.enum';
 import { DiskType } from 'app/enums/disk-type.enum';
-import { Disk, VDev } from 'app/interfaces/storage.interface';
+import { Disk } from 'app/interfaces/storage.interface';
 import { DiskFormComponent } from 'app/pages/storage/disks/disk-form/disk-form.component';
 import { ReplaceDiskDialogComponent } from 'app/pages/storage/volumes/volume-status/components/replace-disk-dialog/replace-disk-dialog.component';
-import { WebSocketService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { DiskInfoCardComponent } from './disk-info-card.component';
 
@@ -23,20 +21,6 @@ describe('DiskInfoCardComponent', () => {
   const createComponent = createComponentFactory({
     component: DiskInfoCardComponent,
     providers: [
-      mockWebsocket([
-        mockCall('disk.query', [{
-          description: '',
-          hddstandby: DiskStandby.AlwaysOn,
-          model: 'VMware_Virtual_S',
-          name: 'sda',
-          rotationrate: null,
-          serial: '',
-          size: 10737418240,
-          transfermode: 'Auto',
-          type: DiskType.Hdd,
-          zfs_guid: '11254578662959974657',
-        } as Disk]),
-      ]),
       mockProvider(IxSlideInService),
       mockProvider(ActivatedRoute, {
         snapshot: { params: { poolId: '1' } },
@@ -52,18 +36,24 @@ describe('DiskInfoCardComponent', () => {
   beforeEach(() => {
     spectator = createComponent({
       props: {
-        topologyItem: {
-          disk: 'sda',
-        } as VDev,
+        disk: {
+          description: '',
+          hddstandby: DiskStandby.AlwaysOn,
+          model: 'VMware_Virtual_S',
+          name: 'sda',
+          rotationrate: null,
+          serial: 'ABCD1',
+          size: 10737418240,
+          transfermode: 'Auto',
+          type: DiskType.Hdd,
+          zfs_guid: '11254578662959974657',
+        } as Disk,
       },
     });
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
-  it('loads and shows info of the current disk', () => {
-    expect(spectator.inject(WebSocketService).call)
-      .toHaveBeenCalledWith('disk.query', [[['devname', '=', 'sda']]]);
-
+  it('shows info of the current disk', () => {
     const sizeItem = spectator.query(byText('Disk Size:', { exact: true }));
     expect(sizeItem.nextElementSibling).toHaveText('10 GiB');
 
@@ -71,7 +61,7 @@ describe('DiskInfoCardComponent', () => {
     expect(transfermodeItem.nextElementSibling).toHaveText('Auto');
 
     const serialItem = spectator.query(byText('Serial:', { exact: true }));
-    expect(serialItem.nextElementSibling).toHaveText('N/A');
+    expect(serialItem.nextElementSibling).toHaveText('ABCD1');
 
     const modelItem = spectator.query(byText('Model:', { exact: true }));
     expect(modelItem.nextElementSibling).toHaveText('VMware_Virtual_S');

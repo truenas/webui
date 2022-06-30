@@ -2,13 +2,16 @@ import {
   ChangeDetectionStrategy, Component, Input, OnChanges,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { UntilDestroy } from '@ngneat/until-destroy';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { filter, map } from 'rxjs/operators';
 import { SmartTestResultStatus } from 'app/enums/smart-test-result-status.enum';
 import { LoadingState, toLoadingState } from 'app/helpers/to-loading-state.helper';
 import { SmartTestResult } from 'app/interfaces/smart-test.interface';
-import { VDev } from 'app/interfaces/storage.interface';
+import { Disk, VDev } from 'app/interfaces/storage.interface';
+import {
+  ManualTestDialogComponent, ManualTestDialogParams,
+} from 'app/pages/storage2/modules/disks/components/manual-test-dialog/manual-test-dialog.component';
 import { WebSocketService } from 'app/services';
 
 @UntilDestroy()
@@ -20,6 +23,7 @@ import { WebSocketService } from 'app/services';
 })
 export class SmartInfoCardComponent implements OnChanges {
   @Input() topologyItem: VDev;
+  @Input() disk: Disk;
 
   totalResults$: Observable<LoadingState<number>>;
 
@@ -32,6 +36,21 @@ export class SmartInfoCardComponent implements OnChanges {
 
   ngOnChanges(): void {
     this.loadTestResults();
+  }
+
+  onManualTest(): void {
+    const testDialog = this.matDialog.open(ManualTestDialogComponent, {
+      data: {
+        selectedDisks: [this.disk],
+        diskIdsWithSmart: [this.disk.identifier],
+      } as ManualTestDialogParams,
+    });
+    testDialog
+      .afterClosed()
+      .pipe(filter(Boolean), untilDestroyed(this))
+      .subscribe(() => {
+        this.loadTestResults();
+      });
   }
 
   private loadTestResults(): void {
