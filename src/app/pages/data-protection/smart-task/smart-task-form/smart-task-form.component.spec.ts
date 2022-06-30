@@ -6,7 +6,7 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { provideMockStore } from '@ngrx/store/testing';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { SmartTestType } from 'app/enums/smart-test-type.enum';
-import { SmartTest } from 'app/interfaces/smart-test.interface';
+import { SmartTestTask } from 'app/interfaces/smart-test.interface';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { SchedulerModule } from 'app/modules/scheduler/scheduler.module';
@@ -28,7 +28,7 @@ describe('SmartTaskFormComponent', () => {
     },
     desc: 'Existing task',
     type: SmartTestType.Short,
-  } as SmartTest;
+  } as SmartTestTask;
 
   let spectator: Spectator<SmartTaskFormComponent>;
   let loader: HarnessLoader;

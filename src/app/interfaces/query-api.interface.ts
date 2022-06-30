@@ -2,7 +2,10 @@
  * If you are typing query API, you probably just need this, i.e. QueryParams<User>
  * https://github.com/truenas/middleware/blob/master/src/middlewared/middlewared/apidocs/templates/websocket/query.md
  */
-export type QueryParams<T, ExtraOptions = Record<string, unknown>> = [(QueryFilter<T>[] | ['OR', QueryFilter<T>[]])?, (QueryOptions<T> & ExtraOptions)?];
+export type QueryParams<T, ExtraOptions = Record<string, unknown>> = [
+  (QueryFilter<T>[] | ['OR', QueryFilter<T>[]])?,
+  (QueryOptions<T> & ExtraOptions)?,
+];
 
 /**
  * TODO: First element is not a string, but a property path of T.
