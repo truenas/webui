@@ -12,6 +12,7 @@ import { PageTitleService } from 'app/services/page-title.service';
   template: '<ix-entity-table [conf]="this"></ix-entity-table>',
 })
 export class SmartResultsComponent implements EntityTableConfig {
+  title = 'SMART test results';
   queryCall = 'smart.test.results' as const;
   queryCallOption: QueryParams<SmartTestResults> = [];
 
