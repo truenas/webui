@@ -4,7 +4,6 @@ import {
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { Subscription } from 'rxjs';
 import { ZfsPropertySource } from 'app/enums/zfs-property-source.enum';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { DatasetFormComponent } from 'app/pages/datasets/components/dataset-form/dataset-form.component';
@@ -21,7 +20,7 @@ import { ModalService } from 'app/services/modal.service';
 })
 export class DatasetDetailsCardComponent {
   @Input() dataset: Dataset;
-  subscription: Subscription;
+
   constructor(
     private modalService: ModalService,
     private translate: TranslateService,
