@@ -9,6 +9,7 @@ import { ZfsPropertySource } from 'app/enums/zfs-property-source.enum';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { DatasetFormComponent } from 'app/pages/datasets/components/dataset-form/dataset-form.component';
 import { DeleteDatasetDialogComponent } from 'app/pages/datasets/components/delete-dataset-dialog/delete-dataset-dialog.component';
+import { DatasetStore } from 'app/pages/datasets/store/dataset-store.service';
 import { WebSocketService } from 'app/services';
 import { ModalService } from 'app/services/modal.service';
 
@@ -29,6 +30,7 @@ export class DatasetDetailsCardComponent implements OnChanges {
     private modalService: ModalService,
     private translate: TranslateService,
     private mdDialog: MatDialog,
+    private datasetStore: DatasetStore,
   ) { }
 
   get datasetCompression(): string {
@@ -68,7 +70,7 @@ export class DatasetDetailsCardComponent implements OnChanges {
       .pipe(untilDestroyed(this))
       .subscribe((shouldRefresh) => {
         if (shouldRefresh) {
-          this.reloadDatasetDetails();
+          this.datasetStore.reloadList();
         }
       });
   }

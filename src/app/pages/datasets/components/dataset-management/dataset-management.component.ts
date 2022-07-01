@@ -1,6 +1,6 @@
 import { NestedTreeControl } from '@angular/cdk/tree';
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, TrackByFunction,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -26,7 +26,6 @@ export class DatasetsManagementComponent implements OnInit {
   treeControl = new NestedTreeControl<Dataset, string>((dataset) => dataset.children, {
     trackBy: (dataset) => dataset.id,
   });
-  readonly trackByFn: TrackByFunction<Dataset> = (_, dataset) => dataset.id;
   readonly hasNestedChild = (_: number, dataset: Dataset): boolean => Boolean(dataset.children?.length);
 
   constructor(
@@ -94,6 +93,8 @@ export class DatasetsManagementComponent implements OnInit {
   private selectByDatasetId(selectedDatasetId: string): void {
     const selectedBranch = getDatasetAndParentsById(this.treeControl.dataNodes, selectedDatasetId);
     if (!selectedBranch) {
+      this.selectedDataset = null;
+      this.selectedDatasetParent = undefined;
       return;
     }
 
@@ -105,6 +106,8 @@ export class DatasetsManagementComponent implements OnInit {
 
   private selectFirstNode(): void {
     if (!this.treeControl?.dataNodes.length) {
+      this.selectedDataset = null;
+      this.selectedDatasetParent = undefined;
       return;
     }
 
@@ -118,8 +121,10 @@ export class DatasetsManagementComponent implements OnInit {
     this.activatedRoute.params.pipe(
       pluck('datasetId'),
       untilDestroyed(this),
-    ).subscribe(
-      (datasetId) => this.selectByDatasetId(datasetId),
-    );
+    ).subscribe((datasetId) => {
+      if (datasetId) {
+        this.selectByDatasetId(datasetId);
+      }
+    });
   }
 }
