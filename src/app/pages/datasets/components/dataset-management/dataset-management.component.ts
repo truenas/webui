@@ -51,20 +51,7 @@ export class DatasetsManagementComponent implements OnInit {
   private loadTree(): void {
     this.loader.open();
     this.ws.call('pool.dataset.query', [[], {
-      extra: {
-        flat: false,
-        properties: [
-          'name',
-          'type',
-          'used',
-          'available',
-          'mountpoint',
-          'encryption',
-          'encryptionroot',
-          'keyformat',
-          'keystatus',
-        ],
-      },
+      extra: { flat: false },
       order_by: ['name'],
     }]).pipe(
       untilDestroyed(this),
