@@ -9,6 +9,7 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
 export class IxModalHeaderComponent {
   @Input() title: string;
   @Input() loading: boolean;
+  @Input() disableClose = false;
 
   constructor(public slideInService: IxSlideInService) {}
 }

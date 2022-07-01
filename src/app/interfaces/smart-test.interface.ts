@@ -1,9 +1,10 @@
 import { SmartPowerMode } from 'app/enums/smart-power.mode';
+import { SmartTestResultStatus } from 'app/enums/smart-test-result-status.enum';
 import { SmartTestType } from 'app/enums/smart-test-type.enum';
 import { ApiTimestamp } from 'app/interfaces/api-date.interface';
 import { Schedule } from 'app/interfaces/schedule.interface';
 
-export interface SmartTest {
+export interface SmartTestTask {
   all_disks: boolean;
   desc: string;
   disks: string[];
@@ -12,9 +13,9 @@ export interface SmartTest {
   type: SmartTestType;
 }
 
-export type SmartTestUpdate = Omit<SmartTest, 'id'>;
+export type SmartTestTaskUpdate = Omit<SmartTestTask, 'id'>;
 
-export interface SmartTestUi extends SmartTest {
+export interface SmartTestTaskUi extends SmartTestTask {
   cron_schedule: string;
   frequency: string;
   next_run: string;
@@ -48,7 +49,7 @@ export interface SmartTestResult {
   lifetime: number;
   num: number;
   remaining: number;
-  status: string; // Enum: SUCCESS,
+  status: SmartTestResultStatus;
   status_verbose: string;
 }
 

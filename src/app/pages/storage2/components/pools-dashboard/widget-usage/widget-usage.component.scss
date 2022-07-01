@@ -1,0 +1,95 @@
+@import '~assets/styles/mixins/cards';
+@import '~assets/styles/mixins/buttons';
+@import '~assets/styles/mixins/animations';
+
+.healthy {
+  color: var(--green);
+}
+
+.warning {
+  color: var(--magenta);
+}
+
+.error {
+  color: var(--red);
+}
+
+.error,
+.warning ,
+.healthy {
+  display: flex;
+  margin-left: 8px;
+}
+
+mat-card-content {
+  display: flex;
+  flex-direction: column;
+  min-width: 550px;
+  width: 100%;
+}
+
+.content-container {
+  padding: 20px 30px 50px !important;
+}
+
+.mat-toolbar-row {
+  border-bottom: 2px solid var(--contrast-lighter);
+  padding: 36px 20px;
+}
+
+.warning-container {
+  display: flex;
+}
+
+.captions {
+  padding-top: 25px;
+}
+
+.capacity-caption {
+  border-bottom: 2px solid var(--contrast-lighter);
+  font-size: 140%;
+}
+
+.list-caption {
+  margin: 0;
+}
+
+.item-caption {
+  margin: 10px -10px;
+}
+
+.value-caption {
+  margin-left: 5px;
+}
+
+.link {
+  color: var(--primary);
+  cursor: pointer;
+  margin-top: 25px;
+  text-decoration: underline;
+}
+
+.loader-caption {
+  @include loader-block();
+  @include blink();
+  display: inline-block;
+  margin-left: 5px;
+  width: 50px;
+}
+
+.loader-state {
+  @include loader-block();
+  @include blink();
+  display: inline-block;
+  height: 25px;
+  margin-left: 8px;
+  width: 25px;
+}
+
+.loader-chart {
+  @include loader-block();
+  @include blink();
+  display: inline-block;
+  height: 200px;
+  width: 200px;
+}

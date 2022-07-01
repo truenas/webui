@@ -365,30 +365,6 @@ export class VolumesListTableConfig implements EntityTableConfig {
           name: T('Expand Pool'),
           label: T('Expand Pool'),
           onClick: (row1: VolumesListPool) => {
-            const conf: DialogFormConfiguration = {
-              title: helptext.expand_pool_dialog.title + row1.name,
-              fieldConfig: [
-                {
-                  type: 'paragraph',
-                  name: 'expand_description',
-                  paraText: helptext.expand_pool_dialog.message,
-                },
-                {
-                  type: 'input',
-                  inputType: 'password',
-                  name: 'passphrase',
-                  placeholder: helptext.expand_pool_dialog.passphrase_placeholder,
-                  togglePw: true,
-                  required: true,
-                },
-              ],
-              saveButtonText: helptext.expand_pool_dialog.save_button,
-              customSubmit(entityDialog: EntityDialogComponent) {
-                // eslint-disable-next-line @typescript-eslint/no-use-before-define
-                doExpand(entityDialog);
-              },
-            };
-
             const doExpand = (entityDialog?: EntityDialogComponent): void => {
               this.loader.open();
               const payload: PoolExpandParams = [row1.id];
@@ -402,7 +378,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
                     if (res.exc_info && res.exc_info.extra) {
                       (res as any).extra = res.exc_info.extra;
                     }
-                    new EntityUtils().handleWsError(this, res, this.dialogService, conf.fieldConfig);
+                    new EntityUtils().handleWsError(this, res, this.dialogService);
                   }
                   if (res.state === JobState.Success) {
                     if (entityDialog) {

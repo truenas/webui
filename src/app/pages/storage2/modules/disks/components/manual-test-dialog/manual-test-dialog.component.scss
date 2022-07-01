@@ -1,0 +1,34 @@
+:host {
+  display: block;
+}
+
+.disks-list {
+  max-height: 50vh;
+  overflow: auto;
+  width: 320px;
+}
+
+.started-tests {
+  max-height: 60vh;
+  max-width: 600px;
+  min-width: 320px;
+  overflow: auto;
+
+  .test {
+    margin-bottom: 15px;
+  }
+
+  .error {
+    font-family: monospace;
+    white-space: pre-line;
+  }
+}
+
+.form-actions {
+  display: flex;
+  flex-direction: row-reverse;
+
+  > button {
+    margin-left: 10px;
+  }
+}

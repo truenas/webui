@@ -7,7 +7,7 @@ import { Observable, of } from 'rxjs';
 import { SmartTestType, smartTestTypeLabels } from 'app/enums/smart-test-type.enum';
 import { choicesToOptions, mapToOptions } from 'app/helpers/options.helper';
 import helptext from 'app/helptext/data-protection/smart/smart';
-import { SmartTest } from 'app/interfaces/smart-test.interface';
+import { SmartTestTask } from 'app/interfaces/smart-test.interface';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import {
   crontabToScheduleWithoutMinutes,
@@ -55,7 +55,7 @@ export class SmartTaskFormComponent {
   readonly diskOptions$ = this.ws.call('smart.test.disk_choices').pipe(choicesToOptions());
   readonly typeOptions$ = of(mapToOptions(smartTestTypeLabels, this.translate));
 
-  private editingTest: SmartTest;
+  private editingTest: SmartTestTask;
 
   constructor(
     private fb: FormBuilder,
@@ -66,7 +66,7 @@ export class SmartTaskFormComponent {
     private errorHandler: FormErrorHandlerService,
   ) {}
 
-  setTestForEdit(test: SmartTest): void {
+  setTestForEdit(test: SmartTestTask): void {
     this.editingTest = test;
     this.form.patchValue({
       ...test,
