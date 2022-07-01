@@ -17,7 +17,7 @@
       <ng-container *ngIf="loading; else loaderSkel"></ng-container>
     </div>
 
-    <div *ngIf="hasQuotas">
+    <div *ngIf="!dataset.locked">
       <div class="details-item">
         <span class="label">
           {{ 'User Quotas' | translate }}:
