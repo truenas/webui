@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, Input, OnInit,
+  ChangeDetectionStrategy, Component, Input,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -20,7 +20,7 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
   styleUrls: ['./zfs-info-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ZfsInfoCardComponent implements OnInit {
+export class ZfsInfoCardComponent {
   @Input() disk: VDev;
   poolId = 1;
   loading = false;
@@ -67,10 +67,6 @@ export class ZfsInfoCardComponent implements OnInit {
     private matDialog: MatDialog,
     private translate: TranslateService,
   ) {}
-
-  ngOnInit(): void {
-    console.info('Zfs Info Card', this.disk);
-  }
 
   onEdit(): void {
     this.slideIn.open(DiskFormComponent, { wide: true });

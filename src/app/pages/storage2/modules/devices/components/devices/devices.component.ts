@@ -41,17 +41,13 @@ export class DevicesComponent implements OnInit {
     this.ws.call('pool.query', [[['id', '=', Number(poolId)]], { extra: { pools: true } }]).pipe(untilDestroyed(this)).subscribe(
       (pools) => {
         this.topology = pools[0].topology;
-        const tolopogyEntries = Array.from(Object.entries(this.topology)).map(([key, value]) => {
-          console.info(pools);
-          return {
-            guid: key,
-            children: value,
-          } as VDev;
-        });
+        const tolopogyEntries = Array.from(Object.entries(this.topology)).map(([key, value]) => ({
+          guid: key,
+          children: value,
+        } as VDev));
 
         this.treeControl.dataNodes = tolopogyEntries;
         this.createDataSource(tolopogyEntries);
-        console.info(this.dataSource.data);
         this.selectFirstNode();
         this.loader.close();
         this.cdr.markForCheck();
