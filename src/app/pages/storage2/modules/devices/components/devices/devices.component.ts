@@ -38,7 +38,7 @@ export class DevicesComponent implements OnInit {
   ngOnInit(): void {
     this.loader.open();
     const poolId = this.route.snapshot.paramMap.get('poolId');
-    this.ws.call('pool.query', [[['id', '=', Number(poolId)]], { extra: { pools: true } }]).pipe(untilDestroyed(this)).subscribe(
+    this.ws.call('pool.query', [[['id', '=', Number(poolId)]]]).pipe(untilDestroyed(this)).subscribe(
       (pools) => {
         this.topology = pools[0].topology;
         const tolopogyEntries = Array.from(Object.entries(this.topology)).map(([key, value]) => ({
