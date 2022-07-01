@@ -1,3 +1,4 @@
+import { FormControl } from '@angular/forms';
 import { FormGroup } from '@ngneat/reactive-forms';
 import { ChartSchemaNode } from 'app/interfaces/chart-release.interface';
 import {
@@ -186,7 +187,6 @@ const beforeBoolean = [{
   label: 'Label Boolean',
   schema: {
     type: 'boolean',
-    default: false,
     show_subquestions_if: true,
     subquestions: [
       {
@@ -308,6 +308,19 @@ const afterIpaddr = [[{
   type: 'ipaddr',
 }]] as DynamicFormSchemaIpaddr[][];
 
+const beforeHidden = [{
+  variable: 'hidden_field',
+  label: 'Hidden Field',
+  schema: {
+    type: 'string',
+    default: 'hidden_field',
+    hidden: true,
+    show_if: [['if_field', '=', true]],
+  },
+}] as ChartSchemaNode[];
+
+const afterHidden = [[]] as DynamicFormSchemaIpaddr[][];
+
 const dynamicForm = new FormGroup<Record<string, any>>({});
 
 describe('AppSchemaService', () => {
@@ -349,6 +362,12 @@ describe('AppSchemaService', () => {
         expect(transformed).toEqual(afterIpaddr[idx]);
       });
     });
+    beforeHidden.forEach((item, idx) => {
+      it('converts schema for hidden field', () => {
+        const transformed = service.transformNode(item);
+        expect(transformed).toEqual(afterHidden[idx]);
+      });
+    });
   });
   describe('addFormControls()', () => {
     beforeIntString.forEach((item) => {
@@ -361,11 +380,17 @@ describe('AppSchemaService', () => {
     it('creates form for "string" with default value', () => {
       expect(dynamicForm.controls['variable_dict'].controls['variable_input_string_with_default'].value).toEqual('test input string');
     });
+    it('creates form for "boolean" with default value', () => {
+      expect(dynamicForm.controls['variable_subquestion_boolean'].value).toEqual(true);
+    });
     it('creates form for "int" without default value', () => {
       expect(dynamicForm.controls['variable_dict'].controls['variable_input_int_without_default'].value).toEqual(null);
     });
     it('creates form for "string" without default value', () => {
       expect(dynamicForm.controls['variable_dict'].controls['variable_input_string_without_default'].value).toEqual('');
+    });
+    it('creates form for "boolean" without default value', () => {
+      expect(dynamicForm.controls['variable_boolean'].value).toEqual(false);
     });
 
     beforeBoolean.forEach((item) => {
@@ -383,6 +408,16 @@ describe('AppSchemaService', () => {
 
     it('creates form for "list"', () => {
       expect(dynamicForm.controls['variable_list'].value).toEqual([]);
+    });
+
+    beforeHidden.forEach((item) => {
+      service.addFormControls(item, dynamicForm, null);
+    });
+
+    it('creates form for hidden field', () => {
+      expect(dynamicForm.controls['hidden_field'].value).toEqual('hidden_field');
+      expect((dynamicForm.controls['hidden_field'] as FormControl).disabled).toEqual(true);
+      expect((dynamicForm.controls['if_field'])).toEqual(undefined);
     });
   });
   describe('serializeFormValue()', () => {
