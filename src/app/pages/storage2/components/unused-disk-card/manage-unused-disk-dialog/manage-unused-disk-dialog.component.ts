@@ -76,9 +76,9 @@ export class ManageUnusedDiskDialogComponent implements OnInit {
 
     const { toPool, pool } = this.form.value;
     if (toPool === AddToPoolType.Existing) {
-      this.router.navigate(['/', 'storage', 'manager', pool]);
+      this.router.navigate(['/', 'storage2', pool, 'add-vdevs']);
     } else {
-      this.router.navigate(['/', 'storage', 'manager']);
+      this.router.navigate(['/', 'storage2', 'create']);
     }
   }
 }
