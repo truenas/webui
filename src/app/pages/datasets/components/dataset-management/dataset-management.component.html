@@ -33,6 +33,26 @@
           </ix-tree-node>
 
           <ix-nested-tree-node
+            *ixTreeNodeDef="let dataset; dataSource: dataSource, when: isDatasetGroup"
+            [ixTreeNodeDefDataSource]="dataSource"
+          >
+            <ix-group-tree-node
+              ixTreeNodeToggle
+              [attr.aria-label]="'Toggle group {row}' | translate: { row: dataset.name }"
+            >
+              <div class="name">
+                {{ 'Pool: {name}' | translate: { name: dataset.name | titlecase } }}
+              </div>
+
+              <mat-icon class="mat-icon-rtl-mirror">
+                {{ treeControl.isExpanded(dataset) ? 'expand_less' : 'expand_more' }}
+              </mat-icon>
+            </ix-group-tree-node>
+
+            <ng-container *ngIf="treeControl.isExpanded(dataset)" ixTreeNodeOutlet></ng-container>
+          </ix-nested-tree-node>
+
+          <ix-nested-tree-node
             *ixTreeNodeDef="let dataset; dataSource: dataSource, when: hasNestedChild"
             [ixTreeNodeDefDataSource]="dataSource"
           >

@@ -29,6 +29,7 @@ export class DatasetsManagementComponent implements OnInit {
   });
   readonly trackByFn: TrackByFunction<Dataset> = (_, dataset) => dataset.id;
   readonly hasNestedChild = (_: number, dataset: Dataset): boolean => Boolean(dataset.children?.length);
+  readonly isDatasetGroup = (_: number, dataset: Dataset): boolean => dataset.id.startsWith('group');
 
   constructor(
     private ws: WebSocketService,
@@ -72,8 +73,9 @@ export class DatasetsManagementComponent implements OnInit {
       untilDestroyed(this),
     ).subscribe(
       (datasets: Dataset[]) => {
-        this.createDataSource(datasets);
-        this.treeControl.dataNodes = datasets;
+        const datasetGroups = this.createGroups(datasets);
+        this.createDataSource(datasetGroups);
+        this.treeControl.dataNodes = datasetGroups;
         this.loader.close();
         const routeDatasetId = this.activatedRoute.snapshot.paramMap.get('datasetId');
         if (routeDatasetId) {
@@ -92,8 +94,27 @@ export class DatasetsManagementComponent implements OnInit {
     );
   }
 
+  private createGroups(datasets: Dataset[]): Dataset[] {
+    return datasets.map((dataset) => ({
+      id: `group-${dataset.id}`,
+      name: dataset.name,
+      children: [dataset],
+    } as Dataset));
+  }
+
   private selectByDatasetId(selectedDatasetId: string): void {
-    const selectedBranch = getDatasetAndParentsById(this.treeControl.dataNodes, selectedDatasetId);
+    if (!this.treeControl.dataNodes.length) {
+      return;
+    }
+
+    const datasetGroup = this.treeControl.dataNodes[0];
+    this.treeControl.expand(datasetGroup);
+
+    if (!datasetGroup.children.length) {
+      return;
+    }
+
+    const selectedBranch = getDatasetAndParentsById(datasetGroup.children, selectedDatasetId);
     if (!selectedBranch) {
       return;
     }
@@ -109,10 +130,13 @@ export class DatasetsManagementComponent implements OnInit {
       return;
     }
 
-    const dataset = this.treeControl.dataNodes[0];
-    this.treeControl.expand(dataset);
-    this.selectedDataset = dataset;
-    this.selectedDatasetParent = undefined;
+    const datasetGroup = this.treeControl.dataNodes[0];
+    this.treeControl.expand(datasetGroup);
+    if (datasetGroup.children.length) {
+      this.treeControl.expand(datasetGroup.children[0]);
+      this.selectedDataset = datasetGroup.children[0];
+      this.selectedDatasetParent = undefined;
+    }
   }
 
   private listenForRouteChanges(): void {
