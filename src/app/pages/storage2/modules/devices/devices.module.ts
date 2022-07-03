@@ -14,6 +14,8 @@ import { AppCommonModule } from 'app/modules/common/app-common.module';
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxTreeModule } from 'app/modules/ix-tree/ix-tree.module';
+import { DeviceIconComponent } from 'app/pages/storage2/modules/devices/components/device-icon/device-icon.component';
+import { DeviceNodeComponent } from 'app/pages/storage2/modules/devices/components/device-node/device-node.component';
 import { DevicesComponent } from 'app/pages/storage2/modules/devices/components/devices/devices.component';
 import {
   DiskDetailsPanelComponent,
@@ -25,10 +27,9 @@ import {
 import {
   ManageDiskSedDialogComponent,
 } from 'app/pages/storage2/modules/devices/components/hardware-disk-encryption/manage-disk-sed-dialog/manage-disk-sed-dialog.component';
+import { SmartInfoCardComponent } from 'app/pages/storage2/modules/devices/components/smart-info-card/smart-info-card.component';
 import { ZfsInfoCardComponent } from 'app/pages/storage2/modules/devices/components/zfs-info-card/zfs-info-card.component';
 import { routes } from 'app/pages/storage2/modules/devices/devices.routing';
-import { DeviceIconComponent } from './components/device-icon/device-icon.component';
-import { DeviceNodeComponent } from './components/device-node/device-node.component';
 
 @NgModule({
   imports: [
@@ -62,6 +63,7 @@ import { DeviceNodeComponent } from './components/device-node/device-node.compon
     ZfsInfoCardComponent,
     DeviceNodeComponent,
     DeviceIconComponent,
+    SmartInfoCardComponent,
   ],
 })
 export class DevicesModule {
