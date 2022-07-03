@@ -2,6 +2,13 @@
   <h2 class="pool-name">{{ pool.name }}</h2>
   <div class="pool-actions">
     <button
+      *ngIf="!pool.is_upgraded"
+      mat-button
+      color="primary"
+      (click)="onUpgrade()"
+    >{{ 'Upgrade' | translate }}</button>
+
+    <button
       mat-button
       (click)="onExport()"
     >{{ 'Export/Disconnect' | translate }}</button>
