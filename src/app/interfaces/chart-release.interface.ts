@@ -122,7 +122,6 @@ export interface ChartSchemaNodeConf {
   show_subquestions_if?: any;
   editable?: boolean;
   subquestions?: ChartSchemaNode[];
-  immutable?: boolean;
 }
 
 export interface ChartSchemaGroup {
