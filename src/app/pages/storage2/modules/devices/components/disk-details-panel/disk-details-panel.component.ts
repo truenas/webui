@@ -9,5 +9,6 @@ import { Disk, VDev } from 'app/interfaces/storage.interface';
 })
 export class DiskDetailsPanelComponent {
   @Input() topologyItem: VDev;
+  @Input() topologyParentItem: VDev;
   @Input() disk: Disk;
 }
