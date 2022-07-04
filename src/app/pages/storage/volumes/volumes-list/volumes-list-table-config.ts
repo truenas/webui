@@ -760,7 +760,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
                       this.translate.instant('Successfully Upgraded {poolName}.', { poolName: row1.name }),
                       '500px',
                       'info',
-                    ).pipe(untilDestroyed(this)).subscribe(() => {
+                    ).pipe(untilDestroyed(this, 'destroy')).subscribe(() => {
                       this.parentVolumesListComponent.repaintMe();
                     });
                   },
