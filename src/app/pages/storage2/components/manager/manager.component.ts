@@ -318,6 +318,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
         this.isNew = false;
       }
     });
+    this.size = filesize(0, { standard: 'iec' });
     if (!this.isNew) {
       this.submitTitle = this.extendedSubmitTitle;
       this.sizeMessage = this.extendedSizeMessage;
