@@ -1,5 +1,9 @@
-import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
+import { HarnessLoader } from '@angular/cdk/testing';
+import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { MatButtonHarness } from '@angular/material/button/testing';
+import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockComponents } from 'ng-mocks';
+import { of } from 'rxjs';
 import { DatasetType } from 'app/enums/dataset.enum';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import {
@@ -7,9 +11,13 @@ import {
 } from 'app/pages/datasets/components/dataset-capacity-management-card/dataset-capacity-management-card.component';
 import { DatasetDetailsCardComponent } from 'app/pages/datasets/components/dataset-details-card/dataset-details-card.component';
 import { DatasetDetailsPanelComponent } from 'app/pages/datasets/components/dataset-details-panel/dataset-details-panel.component';
+import { DatasetFormComponent } from 'app/pages/datasets/components/dataset-form/dataset-form.component';
 import { DatasetIconComponent } from 'app/pages/datasets/components/dataset-icon/dataset-icon.component';
+import { ZvolFormComponent } from 'app/pages/datasets/components/zvol-form/zvol-form.component';
 import { ZfsEncryptionCardComponent } from 'app/pages/datasets/modules/encryption/components/zfs-encryption-card/zfs-encryption-card.component';
 import { PermissionsCardComponent } from 'app/pages/datasets/modules/permissions/containers/permissions-card/permissions-card.component';
+import { DatasetStore } from 'app/pages/datasets/store/dataset-store.service';
+import { ModalService } from 'app/services';
 
 describe('DatasetDetailsPanelComponent', () => {
   let spectator: Spectator<DatasetDetailsPanelComponent>;
@@ -24,6 +32,7 @@ describe('DatasetDetailsPanelComponent', () => {
     id: 'root/parent/child',
     pool: 'my-pool',
     name: 'root/parent/child',
+    mountpoint: '/mnt/root/parent/child',
     type: DatasetType.Filesystem,
   } as Dataset;
   const parentDataset = {
@@ -60,7 +69,7 @@ describe('DatasetDetailsPanelComponent', () => {
   });
 
   it('shows a title of current dataset', () => {
-    expect(spectator.query('.title')).toHaveText('Details for  /root/dataset/ child');
+    expect(spectator.query('.title')).toHaveText('Details for  /root/parent/  child');
   });
 
   it('opens a dataset form when Add Dataset is pressed', async () => {
