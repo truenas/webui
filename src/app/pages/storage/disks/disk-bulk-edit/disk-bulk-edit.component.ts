@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { FormBuilder } from '@ngneat/reactive-forms';
+import { FormBuilder } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
@@ -9,6 +9,7 @@ import { JobState } from 'app/enums/job-state.enum';
 import helptext from 'app/helptext/storage/disks/disks';
 import { Option } from 'app/interfaces/option.interface';
 import { Disk } from 'app/interfaces/storage.interface';
+import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { WebSocketService } from 'app/services';
 import { DialogService } from 'app/services/dialog.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
@@ -40,6 +41,7 @@ export class DiskBulkEditComponent {
     private ws: WebSocketService,
     private translate: TranslateService,
     private slideInService: IxSlideInService,
+    private errorHandler: FormErrorHandlerService,
   ) {}
 
   private translateOptions(options: Option[]): Option[] {
@@ -91,7 +93,7 @@ export class DiskBulkEditComponent {
     }
 
     this.form.patchValue({ ...setForm });
-    this.form.controls['disknames'].setDisable(true);
+    this.form.controls['disknames'].disable();
   }
 
   prepareDataSubmit(): any[][] {
@@ -136,15 +138,14 @@ export class DiskBulkEditComponent {
             }
             if (isSuccessful) {
               this.slideInService.close();
-              this.dialogService.info(helptext.dialog_title,
-                succcessText, true);
+              this.dialogService.info(helptext.dialog_title, succcessText, true);
             }
           }
         },
         (err) => {
           this.isLoading = false;
           this.slideInService.close();
-          this.dialogService.errorReport(helptext.dialog_error, err.reason, err.trace.formatted);
+          this.errorHandler.handleWsFormError(err, this.form);
         },
       );
   }

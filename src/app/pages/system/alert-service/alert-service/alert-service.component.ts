@@ -18,6 +18,7 @@ import { RelationAction } from 'app/modules/entity/entity-form/models/relation-a
 import { RelationConnection } from 'app/modules/entity/entity-form/models/relation-connection.enum';
 import { EntityFormService } from 'app/modules/entity/entity-form/services/entity-form.service';
 import { EntityUtils } from 'app/modules/entity/utils';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { WebSocketService, AppLoaderService, DialogService } from 'app/services/';
 
 @UntilDestroy()
@@ -686,7 +687,7 @@ export class AlertServiceComponent implements FormConfiguration {
           (wasAlertSent) => {
             this.loader.close();
             if (wasAlertSent) {
-              this.dialogService.info(this.translate.instant('Succeeded'), this.translate.instant('Test alert sent!'));
+              this.snackbarService.success(this.translate.instant('Test alert sent'));
             } else {
               this.dialogService.warn(this.translate.instant('Failed'), this.translate.instant('Failed sending test alert!'));
             }
@@ -708,6 +709,7 @@ export class AlertServiceComponent implements FormConfiguration {
     protected loader: AppLoaderService,
     protected dialogService: DialogService,
     protected translate: TranslateService,
+    private snackbarService: SnackbarService,
   ) { }
 
   preInit(): void {
@@ -795,7 +797,7 @@ export class AlertServiceComponent implements FormConfiguration {
         },
       );
     } else {
-      this.ws.call(this.editCall, [this.entityForm.pk, payload]).pipe(untilDestroyed(this)).subscribe(
+      this.ws.call(this.editCall, [this.entityForm.pk as number, payload]).pipe(untilDestroyed(this)).subscribe(
         () => {
           this.loader.close();
           this.router.navigate(new Array('/').concat(this.routeSuccess));

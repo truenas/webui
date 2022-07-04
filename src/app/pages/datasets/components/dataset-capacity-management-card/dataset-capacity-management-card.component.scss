@@ -1,0 +1,23 @@
+@import '~assets/styles/mixins/cards';
+
+.card {
+  @include details-card();
+}
+
+.legend-placeholder {
+  align-items: center;
+  display: flex;
+  gap: 12px;
+}
+
+.chart-placeholder {
+  align-items: center;
+  display: flex;
+  gap: 12px;
+
+  ngx-skeleton-loader {
+    ::ng-deep .loader {
+      height: 64px;
+    }
+  }
+}

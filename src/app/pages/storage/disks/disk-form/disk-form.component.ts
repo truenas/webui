@@ -4,8 +4,7 @@ import {
   Component,
   OnInit,
 } from '@angular/core';
-import { Validators } from '@angular/forms';
-import { FormBuilder } from '@ngneat/reactive-forms';
+import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
@@ -121,8 +120,7 @@ export class DiskFormComponent implements OnInit {
           this.isLoading = false;
           this.cdr.markForCheck();
           this.slideInService.close();
-          this.dialogService.info(helptext.dialog_title,
-            helptext.dialog_msg_save_success, true);
+          this.dialogService.info(helptext.dialog_title, helptext.dialog_msg_save_success, true);
         },
         (error) => {
           this.isLoading = false;

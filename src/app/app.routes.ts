@@ -47,6 +47,7 @@ export const rootRouterConfig: Routes = [{
   {
     path: 'tasks',
     redirectTo: 'data-protection',
+    pathMatch: 'prefix',
   },
   {
     path: 'network',
@@ -86,6 +87,16 @@ export const rootRouterConfig: Routes = [{
   {
     path: 'storage',
     loadChildren: () => import('./pages/storage/storage.module').then((module) => module.StorageModule),
+    data: { title: 'Storage', breadcrumb: 'Storage' },
+  },
+  {
+    path: 'datasets',
+    loadChildren: () => import('./pages/datasets/datasets.module').then((module) => module.DatasetsModule),
+    data: { title: 'Storage', breadcrumb: 'Storage' },
+  },
+  {
+    path: 'storage2',
+    loadChildren: () => import('./pages/storage2/storage2.module').then((module) => module.Storage2Module),
     data: { title: 'Storage', breadcrumb: 'Storage' },
   },
   {

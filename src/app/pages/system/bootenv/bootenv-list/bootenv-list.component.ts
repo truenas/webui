@@ -15,6 +15,7 @@ import { AppLoaderService } from 'app/modules/app-loader/app-loader.service';
 import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-table.component';
 import { EntityTableAction, EntityTableConfig } from 'app/modules/entity/entity-table/entity-table.interface';
 import { EntityUtils } from 'app/modules/entity/utils';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { BootEnvironmentFormComponent } from 'app/pages/system/bootenv/bootenv-form/bootenv-form.component';
 import {
   BootenvStatsDialogComponent,
@@ -50,6 +51,7 @@ export class BootEnvironmentListComponent implements EntityTableConfig {
     protected localeService: LocaleService,
     protected translate: TranslateService,
     private slideInService: IxSlideInService,
+    private snackbar: SnackbarService,
   ) {}
 
   columns = [
@@ -319,7 +321,7 @@ export class BootEnvironmentListComponent implements EntityTableConfig {
       this.loader.open();
       this.ws.call('boot.scrub').pipe(untilDestroyed(this)).subscribe(() => {
         this.loader.close();
-        this.dialog.info(this.translate.instant('Scrub Started'), '');
+        this.snackbar.success(this.translate.instant('Scrub Started'));
       },
       (res: WebsocketError) => {
         new EntityUtils().handleWsError(this, res, this.dialog);

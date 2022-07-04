@@ -42,7 +42,7 @@ describe('PosixPermissionsComponent', () => {
   });
 
   it('shows a list of POSIX permissions', () => {
-    const permissions = spectator.queryAll('ix-permissions-item');
+    const permissions = spectator.queryAll('ix-old-permissions-item');
 
     expect(permissions[0]).toHaveText('User – john');
     expect(permissions[0]).toHaveText('Execute');

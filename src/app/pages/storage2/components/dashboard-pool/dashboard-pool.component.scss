@@ -1,0 +1,28 @@
+@import '~assets/styles/mixins/cards';
+
+:host {
+  display: block;
+}
+
+.pool-header {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 5px;
+  margin-left: 5px;
+  margin-right: 5px;
+}
+
+.pool-name {
+  color: var(--fg2);
+}
+
+.pool-cards {
+  @include details-cards();
+}
+
+.pool-actions {
+  button {
+    margin-left: 6px;
+  }
+}

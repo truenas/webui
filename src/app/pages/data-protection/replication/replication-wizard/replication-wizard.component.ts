@@ -1,6 +1,6 @@
 import { DatePipe } from '@angular/common';
 import { Component } from '@angular/core';
-import { FormArray, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormArray, UntypedFormGroup, Validators } from '@angular/forms';
 import { ITreeOptions, TreeNode } from '@circlon/angular-tree-component';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
@@ -9,11 +9,11 @@ import { take } from 'rxjs/operators';
 import { CipherType } from 'app/enums/cipher-type.enum';
 import { DatasetSource } from 'app/enums/dataset.enum';
 import { Direction } from 'app/enums/direction.enum';
+import { EncryptionKeyFormat } from 'app/enums/encryption-key-format.enum';
 import { ExplorerType } from 'app/enums/explorer-type.enum';
 import { KeychainCredentialType } from 'app/enums/keychain-credential-type.enum';
 import { LifetimeUnit } from 'app/enums/lifetime-unit.enum';
 import { NetcatMode } from 'app/enums/netcat-mode.enum';
-import { ReplicationEncryptionKeyFormat } from 'app/enums/replication-encryption-key-format.enum';
 import { RetentionPolicy } from 'app/enums/retention-policy.enum';
 import { ScheduleMethod } from 'app/enums/schedule-method.enum';
 import { SnapshotNamingOption } from 'app/enums/snapshot-naming-option.enum';
@@ -349,10 +349,10 @@ export class ReplicationWizardComponent implements WizardConfiguration {
               tooltip: helptext.encryption_key_format_tooltip,
               options: [{
                 label: this.translate.instant('HEX'),
-                value: ReplicationEncryptionKeyFormat.Hex,
+                value: EncryptionKeyFormat.Hex,
               }, {
                 label: this.translate.instant('PASSPHRASE'),
-                value: ReplicationEncryptionKeyFormat.Passphrase,
+                value: EncryptionKeyFormat.Passphrase,
               }],
               relation: [{
                 action: RelationAction.Show,
@@ -376,7 +376,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
                   value: true,
                 }, {
                   name: 'encryption_key_format',
-                  value: ReplicationEncryptionKeyFormat.Hex,
+                  value: EncryptionKeyFormat.Hex,
                 }],
               }],
             },
@@ -393,7 +393,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
                   value: true,
                 }, {
                   name: 'encryption_key_format',
-                  value: ReplicationEncryptionKeyFormat.Hex,
+                  value: EncryptionKeyFormat.Hex,
                 }, {
                   name: 'encryption_key_generate',
                   value: false,
@@ -415,7 +415,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
                   value: true,
                 }, {
                   name: 'encryption_key_format',
-                  value: ReplicationEncryptionKeyFormat.Passphrase,
+                  value: EncryptionKeyFormat.Passphrase,
                 }],
               }],
             },
@@ -756,7 +756,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
     },
   ];
   protected selectedReplicationTask: ReplicationTask;
-  protected semiSSHFieldGroup: string[] = [
+  protected semiSshFieldGroup: string[] = [
     'url',
     'password',
   ];
@@ -780,9 +780,9 @@ export class ReplicationWizardComponent implements WizardConfiguration {
   protected snapshotsCountField: FormParagraphConfig;
   private existSnapshotTasks: number[] = [];
   private eligibleSnapshots = 0;
-  protected preload_fieldSet: FieldSet;
-  protected source_fieldSet: FieldSet;
-  protected target_fieldSet: FieldSet;
+  protected preloadFieldSet: FieldSet;
+  protected sourceFieldSet: FieldSet;
+  protected targetFieldSet: FieldSet;
 
   constructor(
     private keychainCredentialService: KeychainCredentialService,
@@ -815,10 +815,10 @@ export class ReplicationWizardComponent implements WizardConfiguration {
 
   afterInit(entityWizard: EntityWizardComponent): void {
     this.entityWizard = entityWizard;
-    this.preload_fieldSet = _.find(this.wizardConfig[0].fieldSets, { class: 'preload' });
-    this.source_fieldSet = _.find(this.wizardConfig[0].fieldSets, { class: 'source' });
-    this.target_fieldSet = _.find(this.wizardConfig[0].fieldSets, { class: 'target' });
-    this.snapshotsCountField = _.find(this.source_fieldSet.config, { name: 'snapshots_count' }) as FormParagraphConfig;
+    this.preloadFieldSet = _.find(this.wizardConfig[0].fieldSets, { class: 'preload' });
+    this.sourceFieldSet = _.find(this.wizardConfig[0].fieldSets, { class: 'source' });
+    this.targetFieldSet = _.find(this.wizardConfig[0].fieldSets, { class: 'target' });
+    this.snapshotsCountField = _.find(this.sourceFieldSet.config, { name: 'snapshots_count' }) as FormParagraphConfig;
 
     this.step0Init();
     this.step1Init();
@@ -826,7 +826,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
   }
 
   step0Init(): void {
-    const existReplicationField = _.find(this.preload_fieldSet.config, { name: 'exist_replication' }) as FormSelectConfig;
+    const existReplicationField = _.find(this.preloadFieldSet.config, { name: 'exist_replication' }) as FormSelectConfig;
     this.replicationService.getReplicationTasks().pipe(untilDestroyed(this)).subscribe(
       (res: ReplicationTask[]) => {
         for (const task of res) {
@@ -854,8 +854,8 @@ export class ReplicationWizardComponent implements WizardConfiguration {
       privateKeyField.options = privateKeyField.options.concat(keypairOptions);
     });
 
-    const sshCredentialsSourceField = _.find(this.source_fieldSet.config, { name: 'ssh_credentials_source' }) as FormSelectConfig;
-    const sshCredentialsTargetField = _.find(this.target_fieldSet.config, { name: 'ssh_credentials_target' }) as FormSelectConfig;
+    const sshCredentialsSourceField = _.find(this.sourceFieldSet.config, { name: 'ssh_credentials_source' }) as FormSelectConfig;
+    const sshCredentialsTargetField = _.find(this.targetFieldSet.config, { name: 'ssh_credentials_target' }) as FormSelectConfig;
     this.keychainCredentialService.getSshConnections().pipe(untilDestroyed(this)).subscribe((connections) => {
       connections.forEach((connection) => {
         sshCredentialsSourceField.options.push({ label: connection.name, value: connection.id });
@@ -915,7 +915,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
             this.createSshConnection(credentialName);
             this.setDisable(datasetName, false, false, 0);
           } else {
-            const fieldConfig = destination === 'source' ? this.source_fieldSet.config : this.target_fieldSet.config;
+            const fieldConfig = destination === 'source' ? this.sourceFieldSet.config : this.targetFieldSet.config;
             const explorerConfig = _.find(
               fieldConfig,
               { name: datasetName },
@@ -935,7 +935,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
     }
 
     this.entityWizard.formArray.get([0]).get('recursive').valueChanges.pipe(untilDestroyed(this)).subscribe((value: boolean) => {
-      const explorerConfig = _.find(this.source_fieldSet.config, { name: 'source_datasets' }) as FormExplorerConfig;
+      const explorerConfig = _.find(this.sourceFieldSet.config, { name: 'source_datasets' }) as FormExplorerConfig;
       const explorerComponent = explorerConfig.customTemplateStringOptions;
       if (explorerComponent) {
         explorerComponent.useTriState = value;
@@ -1148,8 +1148,8 @@ export class ReplicationWizardComponent implements WizardConfiguration {
 
   clearReplicationTask(): void {
     this.entityWizard.formArray.reset();
-    for (let i = 0; i < (this.entityWizard.formArray as FormArray).length; i++) {
-      for (const item in (this.entityWizard.formArray.get([i]) as FormGroup).controls) {
+    for (let i = 0; i < (this.entityWizard.formArray as UntypedFormArray).length; i++) {
+      for (const item in (this.entityWizard.formArray.get([i]) as UntypedFormGroup).controls) {
         const itemConf = _.find(this.wizardConfig[i].fieldConfig, { name: item });
         if (itemConf.value !== undefined && item !== 'exist_replication') {
           this.entityWizard.formArray.get([i]).get(item).setValue(itemConf.value);
@@ -1201,7 +1201,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
           private_key: data['private_key'],
           cipher: data['cipher'],
         };
-        for (const i of this.semiSSHFieldGroup) {
+        for (const i of this.semiSshFieldGroup) {
           payload[i] = data[i];
         }
       }
@@ -1259,7 +1259,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
       };
       if (payload.encryption) {
         payload['encryption_key_format'] = data['encryption_key_format'];
-        if (data['encryption_key_format'] === ReplicationEncryptionKeyFormat.Passphrase) {
+        if (data['encryption_key_format'] === EncryptionKeyFormat.Passphrase) {
           payload['encryption_key'] = data['encryption_key_passphrase'];
         } else {
           payload['encryption_key'] = data['encryption_key_generate']

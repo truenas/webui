@@ -1,0 +1,59 @@
+<mat-card class="card">
+  <mat-card-header>
+    <h3 mat-card-title>{{ 'ZFS Encryption' | translate }}</h3>
+
+    <a
+      *ngIf="canEdit"
+      mat-button
+      (click)="onEditPressed()"
+    >
+      {{ 'Edit' | translate }}
+    </a>
+    <a
+      *ngIf="canUnlock"
+      mat-button
+      color="primary"
+      [routerLink]="['/datasets', dataset.id, 'unlock']"
+    >{{ 'Unlock' | translate }}</a>
+  </mat-card-header>
+  <mat-card-content>
+    <div class="details-item">
+      <div class="label">{{ 'Current State' | translate }}:</div>
+      <div class="value">{{ currentStateLabel }}</div>
+    </div>
+    <ng-container *ngIf="dataset.encrypted">
+      <div class="details-item">
+        <div class="label">{{ 'Encryption Root' | translate }}:</div>
+
+        <div *ngIf="isEncryptionRoot; else notEncryptionRoot" class="value">{{ 'Yes' | translate }}</div>
+        <ng-template #notEncryptionRoot>
+          <div class="value">/{{ dataset.encryption_root }}</div>
+          <a
+            class="action"
+            [routerLink]="['/datasets', dataset.encryption_root]"
+          >{{ 'Go To Encryption Root' | translate }}</a>
+        </ng-template>
+      </div>
+      <div class="details-item">
+        <div class="label">{{ 'Type' | translate }}:</div>
+        <div class="value">{{ hasPassphrase ? ('Passphrase' | translate) : ('Key' | translate) }}</div>
+      </div>
+      <div class="details-item">
+        <div class="label">{{ 'Algorithm' | translate }}:</div>
+        <div class="value">{{ dataset.encryption_algorithm?.value }}</div>
+      </div>
+    </ng-container>
+  </mat-card-content>
+  <mat-card-actions *ngIf="dataset.encrypted && isEncryptionRoot && !this.dataset.locked">
+    <button
+      *ngIf="canExportKey"
+      mat-stroked-button
+      (click)="onExportKey()"
+    >{{ 'Export Key' | translate }}</button>
+    <button
+      *ngIf="hasPassphrase"
+      mat-stroked-button
+      (click)="onLock()"
+    >{{ 'Lock' | translate }}</button>
+  </mat-card-actions>
+</mat-card>

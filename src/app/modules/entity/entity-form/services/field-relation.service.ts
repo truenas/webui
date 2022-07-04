@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import {
-  AbstractControl, FormArray, FormControl, FormGroup,
+  AbstractControl, UntypedFormArray, UntypedFormControl, UntypedFormGroup,
 } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import {
@@ -27,21 +27,21 @@ export class FieldRelationService {
   }
 
   getRelatedFormControls(config: FieldConfig,
-    controlGroup: FormGroup): FormControl[] {
-    const controls: FormControl[] = [];
+    controlGroup: UntypedFormGroup): UntypedFormControl[] {
+    const controls: UntypedFormControl[] = [];
 
     config.relation.forEach((relGroup) => relGroup.when.forEach((rel) => {
       if (config.name === rel.name) {
         throw new Error(`FormControl ${config.name} cannot depend on itself`);
       }
-      const control = controlGroup.get(rel.name) as FormControl;
+      const control = controlGroup.get(rel.name) as UntypedFormControl;
       if (control
           && !controls.some((controlElement) => controlElement === control)) {
         controls.push(control);
       } else {
         const subControlKeys = Object.keys(controlGroup.controls).filter((key) => key.startsWith(`${rel.name}_`));
         subControlKeys.forEach((key) => {
-          const control = controlGroup.get(key) as FormControl;
+          const control = controlGroup.get(key) as UntypedFormControl;
           if (control
               && !controls.some((controlElement) => controlElement === control)) {
             controls.push(control);
@@ -52,17 +52,17 @@ export class FieldRelationService {
     return controls;
   }
 
-  isFormControlToBeDisabled(relGroup: RelationGroup, formGroup: FormGroup): boolean {
+  isFormControlToBeDisabled(relGroup: RelationGroup, formGroup: UntypedFormGroup): boolean {
     return this.isFormControlToBe(relGroup, formGroup, true);
   }
 
-  isFormControlToBeHide(relGroup: RelationGroup, formGroup: FormGroup): boolean {
+  isFormControlToBeHide(relGroup: RelationGroup, formGroup: UntypedFormGroup): boolean {
     return this.isFormControlToBe(relGroup, formGroup, false);
   }
 
   isFormControlToBe(
     relGroup: RelationGroup,
-    formGroup: FormGroup,
+    formGroup: UntypedFormGroup,
     isDisable: boolean,
   ): boolean {
     return relGroup.when.reduce(
@@ -171,7 +171,7 @@ export class FieldRelationService {
     return control && condition.status === control.status;
   }
 
-  setRelation(config: FieldConfig, formGroup: FormGroup): void {
+  setRelation(config: FieldConfig, formGroup: UntypedFormGroup): void {
     if (config.relation && config.relation.length > 0) {
       const activations = this.findActivationRelation(config.relation);
       if (activations) {
@@ -189,17 +189,17 @@ export class FieldRelationService {
 
     const listConfig: FormListConfig = config as FormListConfig;
     if (listConfig.listFields) {
-      const formArray = formGroup.get(config.name) as FormArray;
+      const formArray = formGroup.get(config.name) as UntypedFormArray;
       for (let i = 0; i < listConfig.listFields.length; i++) {
         listConfig.listFields[i].forEach((subFieldConfig) => {
-          this.setRelation(subFieldConfig, formArray.at(i) as FormGroup);
+          this.setRelation(subFieldConfig, formArray.at(i) as UntypedFormGroup);
         });
       }
     }
 
     const dictConfig: FormDictConfig = config as FormDictConfig;
     if (dictConfig.subFields) {
-      const dictFormGroup = formGroup.get(config.name) as FormGroup;
+      const dictFormGroup = formGroup.get(config.name) as UntypedFormGroup;
       dictConfig.subFields.forEach((subFieldConfig) => {
         this.setRelation(subFieldConfig, dictFormGroup);
       });
@@ -214,7 +214,7 @@ export class FieldRelationService {
    */
   refreshRelations(
     config: FieldConfig,
-    formGroup: FormGroup,
+    formGroup: UntypedFormGroup,
     options: { emitEvent: boolean } = { emitEvent: true },
   ): void {
     if (config.relation && config.relation.length > 0) {
@@ -228,17 +228,17 @@ export class FieldRelationService {
 
     const listConfig: FormListConfig = config as FormListConfig;
     if (listConfig.listFields) {
-      const formArray = formGroup.get(listConfig.name) as FormArray;
+      const formArray = formGroup.get(listConfig.name) as UntypedFormArray;
       for (let i = 0; i < listConfig.listFields.length; i++) {
         listConfig.listFields[i].forEach((subFieldConfig) => {
-          this.refreshRelations(subFieldConfig, formArray.at(i) as FormGroup);
+          this.refreshRelations(subFieldConfig, formArray.at(i) as UntypedFormGroup);
         });
       }
     }
 
     const dictConfig: FormDictConfig = config as FormDictConfig;
     if (dictConfig.subFields) {
-      const dictFormGroup = formGroup.get(config.name) as FormGroup;
+      const dictFormGroup = formGroup.get(config.name) as UntypedFormGroup;
       dictConfig.subFields.forEach((subFieldConfig) => {
         this.refreshRelations(subFieldConfig, dictFormGroup);
       });
@@ -247,7 +247,7 @@ export class FieldRelationService {
 
   setDisabled(
     fieldConfig: FieldConfig,
-    formGroup: FormGroup,
+    formGroup: UntypedFormGroup,
     disable: boolean,
     hide?: boolean,
     options: { emitEvent: boolean } = { emitEvent: true },
@@ -271,7 +271,7 @@ export class FieldRelationService {
     }
   }
 
-  relationUpdate(config: FieldConfig, activations: RelationGroup, formGroup: FormGroup): void {
+  relationUpdate(config: FieldConfig, activations: RelationGroup, formGroup: UntypedFormGroup): void {
     const tobeDisabled = this.isFormControlToBeDisabled(activations, formGroup);
     const tobeHide = this.isFormControlToBeHide(activations, formGroup);
     this.setDisabled(config, formGroup, tobeDisabled, tobeHide);

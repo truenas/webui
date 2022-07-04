@@ -1,0 +1,11 @@
+@import '~assets/styles/mixins/cards';
+
+.card {
+  @include details-card();
+}
+
+.header {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+}

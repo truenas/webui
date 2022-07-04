@@ -1,3 +1,5 @@
+import { FormControl } from '@angular/forms';
+import { FormGroup } from '@ngneat/reactive-forms';
 import { ChartSchemaNode } from 'app/interfaces/chart-release.interface';
 import {
   DynamicFormSchemaCheckbox,
@@ -20,8 +22,8 @@ const beforeIntString = [{
     required: true,
     attrs: [
       {
-        variable: 'variable_input_int',
-        label: 'Label Input Int',
+        variable: 'variable_input_int_with_default',
+        label: 'Label Input Int With Default',
         schema: {
           type: 'int',
           min: 9000,
@@ -31,13 +33,27 @@ const beforeIntString = [{
         },
       },
       {
-        variable: 'variable_input_string',
-        label: 'Label Input String',
+        variable: 'variable_input_string_with_default',
+        label: 'Label Input String With Default',
         schema: {
           type: 'string',
-          default: 'test_input string',
+          default: 'test input string',
           required: false,
           private: true,
+        },
+      },
+      {
+        variable: 'variable_input_int_without_default',
+        label: 'Label Input Int Without Default',
+        schema: {
+          type: 'int',
+        },
+      },
+      {
+        variable: 'variable_input_string_without_default',
+        label: 'Label Input String Without Default',
+        schema: {
+          type: 'string',
         },
       },
     ],
@@ -46,19 +62,34 @@ const beforeIntString = [{
 
 const afterIntString = [[{
   attrs: [{
-    controlName: 'variable_input_int',
+    controlName: 'variable_input_int_with_default',
     editable: undefined,
     inputType: 'number',
     required: true,
-    title: 'Label Input Int',
+    title: 'Label Input Int With Default',
     tooltip: undefined,
     type: 'input',
   }, {
-    controlName: 'variable_input_string',
+    controlName: 'variable_input_string_with_default',
     editable: undefined,
     inputType: 'password',
     required: false,
-    title: 'Label Input String',
+    title: 'Label Input String With Default',
+    tooltip: undefined,
+    type: 'input',
+  }, {
+    controlName: 'variable_input_int_without_default',
+    editable: undefined,
+    inputType: 'number',
+    required: undefined,
+    title: 'Label Input Int Without Default',
+    tooltip: undefined,
+    type: 'input',
+  }, {
+    controlName: 'variable_input_string_without_default',
+    editable: undefined,
+    required: undefined,
+    title: 'Label Input String Without Default',
     tooltip: undefined,
     type: 'input',
   }] as DynamicFormSchemaInput[],
@@ -156,7 +187,6 @@ const beforeBoolean = [{
   label: 'Label Boolean',
   schema: {
     type: 'boolean',
-    default: false,
     show_subquestions_if: true,
     subquestions: [
       {
@@ -278,6 +308,21 @@ const afterIpaddr = [[{
   type: 'ipaddr',
 }]] as DynamicFormSchemaIpaddr[][];
 
+const beforeHidden = [{
+  variable: 'hidden_field',
+  label: 'Hidden Field',
+  schema: {
+    type: 'string',
+    default: 'hidden_field',
+    hidden: true,
+    show_if: [['if_field', '=', true]],
+  },
+}] as ChartSchemaNode[];
+
+const afterHidden = [[]] as DynamicFormSchemaIpaddr[][];
+
+const dynamicForm = new FormGroup<Record<string, any>>({});
+
 describe('AppSchemaService', () => {
   const service = new AppSchemaService({} as FilesystemService);
   describe('transformNode()', () => {
@@ -316,6 +361,63 @@ describe('AppSchemaService', () => {
         const transformed = service.transformNode(item);
         expect(transformed).toEqual(afterIpaddr[idx]);
       });
+    });
+    beforeHidden.forEach((item, idx) => {
+      it('converts schema for hidden field', () => {
+        const transformed = service.transformNode(item);
+        expect(transformed).toEqual(afterHidden[idx]);
+      });
+    });
+  });
+  describe('addFormControls()', () => {
+    beforeIntString.forEach((item) => {
+      service.addFormControls(item, dynamicForm, null);
+    });
+
+    it('creates form for "int" with default value', () => {
+      expect(dynamicForm.controls['variable_dict'].controls['variable_input_int_with_default'].value).toEqual(9401);
+    });
+    it('creates form for "string" with default value', () => {
+      expect(dynamicForm.controls['variable_dict'].controls['variable_input_string_with_default'].value).toEqual('test input string');
+    });
+    it('creates form for "boolean" with default value', () => {
+      expect(dynamicForm.controls['variable_subquestion_boolean'].value).toEqual(true);
+    });
+    it('creates form for "int" without default value', () => {
+      expect(dynamicForm.controls['variable_dict'].controls['variable_input_int_without_default'].value).toEqual(null);
+    });
+    it('creates form for "string" without default value', () => {
+      expect(dynamicForm.controls['variable_dict'].controls['variable_input_string_without_default'].value).toEqual('');
+    });
+    it('creates form for "boolean" without default value', () => {
+      expect(dynamicForm.controls['variable_boolean'].value).toEqual(false);
+    });
+
+    beforeBoolean.forEach((item) => {
+      service.addFormControls(item, dynamicForm, null);
+    });
+
+    it('creates form for "boolean"', () => {
+      expect(dynamicForm.controls['variable_boolean'].value).toEqual(false);
+      expect(dynamicForm.controls['variable_subquestion_boolean'].value).toEqual(true);
+    });
+
+    beforeList.forEach((item) => {
+      service.addFormControls(item, dynamicForm, null);
+    });
+
+    it('creates form for "list"', () => {
+      expect(dynamicForm.controls['variable_list'].value).toEqual([]);
+    });
+
+    beforeHidden.forEach((item) => {
+      service.addFormControls(item, dynamicForm, null);
+    });
+
+    it('creates form for hidden field', () => {
+      expect(dynamicForm.controls['hidden_field'].value).toEqual('hidden_field');
+      expect((dynamicForm.controls['hidden_field'] as FormControl).disabled).toEqual(true);
+      expect((dynamicForm.controls['if_field'])).toEqual(undefined);
     });
   });
   describe('serializeFormValue()', () => {

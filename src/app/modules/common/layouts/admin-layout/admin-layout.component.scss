@@ -53,7 +53,8 @@
 
 .branding .app-logo-text {
   height: auto;
-  top: 11px;
+  margin-right: 8px;
+  top: 24px;
   width: 96px;
 }
 
@@ -151,7 +152,6 @@ ix-jw-modal {
 
   &.has-footer {
     height: calc(100% - 95px);
-    padding-bottom: 95px;
   }
 }
 

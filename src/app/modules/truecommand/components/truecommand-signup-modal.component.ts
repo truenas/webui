@@ -1,7 +1,7 @@
 import {
   ChangeDetectorRef, Component, Inject, OnInit,
 } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { UntypedFormBuilder } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import helptext from 'app/helptext/topbar';
@@ -37,7 +37,7 @@ export class TruecommandSignupModalComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) private data: TruecommandSignupModalState,
     private dialogService: DialogService,
     private dialogRef: MatDialogRef<TruecommandSignupModalComponent>,
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     private loader: AppLoaderService,
     private ws: WebSocketService,
   ) {}

@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { AbstractControl, FormGroup, Validators } from '@angular/forms';
+import { AbstractControl, UntypedFormGroup, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatStepper } from '@angular/material/stepper';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -29,7 +29,7 @@ import { ModalService } from 'app/services/modal.service';
 export class CertificateAddComponent implements WizardConfiguration {
   addWsCall = 'certificate.create' as const;
   private entityForm: EntityWizardComponent;
-  private CSRList: Certificate[] = [];
+  private csrList: Certificate[] = [];
   title: string = helptextSystemCertificates.add.title;
   private getType = new Subscription();
   private type: string;
@@ -678,7 +678,7 @@ export class CertificateAddComponent implements WizardConfiguration {
       this.csrlist = this.getTarget('csrlist') as FormSelectConfig;
       certificates.forEach((certificate) => {
         if (certificate.CSR !== null) {
-          this.CSRList.push(certificate);
+          this.csrList.push(certificate);
           this.csrlist.options.push(
             { label: certificate.name, value: certificate.id },
           );
@@ -920,7 +920,7 @@ export class CertificateAddComponent implements WizardConfiguration {
   getField(fieldName: string): AbstractControl {
     const stepNumber = this.getStep(fieldName);
     if (stepNumber > -1) {
-      const target = (this.entityWizard.formArray.get([stepNumber]) as FormGroup).controls[fieldName];
+      const target = (this.entityWizard.formArray.get([stepNumber]) as UntypedFormGroup).controls[fieldName];
       return target;
     }
     return null;
@@ -960,7 +960,7 @@ export class CertificateAddComponent implements WizardConfiguration {
       }
     }
     if (data.csronsys) {
-      this.CSRList.forEach((item) => {
+      this.csrList.forEach((item) => {
         if (item.id === data.csrlist) {
           data.privatekey = item.privatekey;
           data.passphrase = (item as any).passphrase;

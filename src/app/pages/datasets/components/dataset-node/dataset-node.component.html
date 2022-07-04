@@ -1,0 +1,19 @@
+<div class="tree-node-grid">
+  <div class="cell cell-name">
+    <div class="icon-container">
+      <ix-dataset-icon [dataset]="dataset"></ix-dataset-icon>
+    </div>
+    <span class="name">{{ label }}</span>
+  </div>
+  <div class="cell">
+    {{ '{value} Used' | translate: { value: dataset.used.parsed | filesize: { standard: 'iec' } } }}
+    /
+    {{ '{value} Left' | translate: { value: dataset.available.parsed | filesize: { standard: 'iec' } } }}
+  </div>
+  <div class="cell cell-encryption">
+    <ix-dataset-encryption-cell [dataset]="dataset"></ix-dataset-encryption-cell>
+  </div>
+  <div class="cell cell-roles">
+    {{ roles.join(', ') }}
+  </div>
+</div>

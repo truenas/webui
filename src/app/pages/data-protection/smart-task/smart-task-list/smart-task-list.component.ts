@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import helptext from 'app/helptext/data-protection/smart/smart';
-import { SmartTestUi } from 'app/interfaces/smart-test.interface';
+import { SmartTestTaskUi } from 'app/interfaces/smart-test.interface';
 import { Disk } from 'app/interfaces/storage.interface';
 import { EntityFormService } from 'app/modules/entity/entity-form/services/entity-form.service';
 import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-table.component';
@@ -75,7 +75,7 @@ export class SmartTaskListComponent implements EntityTableConfig {
     });
   }
 
-  resourceTransformIncomingRestData(data: SmartTestUi[]): SmartTestUi[] {
+  resourceTransformIncomingRestData(data: SmartTestTaskUi[]): SmartTestTaskUi[] {
     return data.map((test) => {
       test.cron_schedule = `0 ${test.schedule.hour} ${test.schedule.dom} ${test.schedule.month} ${test.schedule.dow}`;
       test.next_run = this.taskService.getTaskNextRun(test.cron_schedule);
@@ -97,12 +97,12 @@ export class SmartTaskListComponent implements EntityTableConfig {
     this.slideInService.open(SmartTaskFormComponent);
   }
 
-  getActions(): EntityTableAction<SmartTestUi>[] {
+  getActions(): EntityTableAction<SmartTestTaskUi>[] {
     return [{
       id: 'edit',
       icon: 'edit',
       label: 'Edit',
-      onClick: (row: SmartTestUi) => {
+      onClick: (row: SmartTestTaskUi) => {
         const slideIn = this.slideInService.open(SmartTaskFormComponent);
         slideIn.setTestForEdit(row);
       },
@@ -110,7 +110,7 @@ export class SmartTaskListComponent implements EntityTableConfig {
       id: 'delete',
       icon: 'delete',
       label: 'Delete',
-      onClick: (rowinner: SmartTestUi) => {
+      onClick: (rowinner: SmartTestTaskUi) => {
         this.entityList.doDelete(rowinner);
       },
     }] as EntityTableAction[];

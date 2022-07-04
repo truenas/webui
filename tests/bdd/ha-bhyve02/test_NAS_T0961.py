@@ -4,7 +4,6 @@
 import time
 from function import (
     wait_on_element,
-    is_element_present,
     wait_on_element_disappear,
     get
 )
@@ -32,6 +31,8 @@ def the_browser_is_open_navigate_to_nas_url(driver, nas_url):
         driver.get(f"http://{nas_url}/ui/sessions/signin")
         assert wait_on_element(driver, 5, '//input[@data-placeholder="Username"]')
         time.sleep(1)
+    else:
+        driver.refresh()
 
 
 @when(parsers.parse('the login page appears, enter "{user}" and "{password}"'))
@@ -39,7 +40,7 @@ def the_login_page_appear_enter_root_and_password(driver, user, password):
     """the login page appears, enter "{user}" and "{password}"."""
     global root_password
     root_password = password
-    if not is_element_present(driver, '//mat-list-item[@ix-auto="option__Dashboard"]'):
+    if not wait_on_element(driver, 3, '//mat-list-item[@ix-auto="option__Dashboard"]'):
         assert wait_on_element(driver, 5, '//input[@data-placeholder="Username"]')
         driver.find_element_by_xpath('//input[@data-placeholder="Username"]').clear()
         driver.find_element_by_xpath('//input[@data-placeholder="Username"]').send_keys(user)
@@ -47,7 +48,8 @@ def the_login_page_appear_enter_root_and_password(driver, user, password):
         driver.find_element_by_xpath('//input[@data-placeholder="Password"]').send_keys(password)
         assert wait_on_element(driver, 5, '//button[@name="signin_button"]', 'clickable')
         driver.find_element_by_xpath('//button[@name="signin_button"]').click()
-    else:
+    if not wait_on_element(driver, 2, '//h1[contains(.,"Dashboard")]'):
+        assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Dashboard"]', 'clickable')
         driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
 
 
@@ -181,23 +183,27 @@ def the_system_dataset_page_should_open(driver):
 @then(parsers.parse('click on System Dataset Pool select {pool_name}, click Save'))
 def click_on_system_dataser_pool_select_dozer_click_Save(driver, pool_name):
     """click on System Dataset Pool select dozer, click Save."""
-    assert wait_on_element(driver, 5, '//mat-select[@ix-auto="select__Select Pool"]', 'clickable')
-    driver.find_element_by_xpath('//mat-select[@ix-auto="select__Select Pool"]').click()
-    assert wait_on_element(driver, 5, f'//mat-option[@ix-auto="option__Select Pool_{pool_name}"]')
-    driver.find_element_by_xpath(f'//mat-option[@ix-auto="option__Select Pool_{pool_name}"]').click()
-    assert wait_on_element(driver, 30, '//button[@ix-auto="button__SAVE"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
+    assert wait_on_element(driver, 5, '//mat-select', 'clickable')
+    driver.find_element_by_xpath('//mat-select').click()
+    assert wait_on_element(driver, 5, f'//mat-option[contains(.,"{pool_name}")]')
+    driver.find_element_by_xpath(f'//mat-option[contains(.,"{pool_name}")]').click()
+    assert wait_on_element(driver, 30, '//button[contains(.,"Save") and @type="submit"]', 'clickable')
+    driver.find_element_by_xpath('//button[contains(.,"Save") and @type="submit"]').click()
 
 
 @then('Please wait should appear while settings are being applied')
 def Please_wait_should_appear_while_settings_are_being_applied(driver):
     """Please wait should appear while settings are being applied."""
-    assert wait_on_element_disappear(driver, 90, '//h6[contains(.,"Please wait")]')
+    # assert need to be added after the UI get fix.
+    assert wait_on_element_disappear(driver, 30, '//mat-progress-bar')
+    assert wait_on_element_disappear(driver, 20, '//div[contains(.,"System Dataset Pool:")]//span[text()="tank"]')
+    assert wait_on_element(driver, 5, '//div[contains(.,"System Dataset Pool:")]//span[text()="dozer"]')
 
 
 @then('navigate to the dashboard')
 def navigate_to_dashboard(driver):
     """navigate to The dashboard."""
+    assert wait_on_element(driver, 5, '//mat-list-item[@ix-auto="option__Dashboard"]', 'clickable')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
     assert wait_on_element(driver, 10, '//span[contains(.,"System Information")]')
 
@@ -229,8 +235,8 @@ def press_Initiate_Failover_and_confirm(driver):
     assert wait_on_element(driver, 5, '//h1[text()="Initiate Failover"]')
     assert wait_on_element(driver, 5, '//mat-checkbox[contains(@class,"confirm-checkbox")]', 'clickable')
     driver.find_element_by_xpath('//mat-checkbox[contains(@class,"confirm-checkbox")]').click()
-    assert wait_on_element(driver, 5, '//button[.//text()="Failover"]', 'clickable')
-    driver.find_element_by_xpath('//button[.//text()="Failover"]').click()
+    assert wait_on_element(driver, 5, '//button[.//text()="FAILOVER"]', 'clickable')
+    driver.find_element_by_xpath('//button[.//text()="FAILOVER"]').click()
 
 
 @then('wait for the login and the HA enabled status and login')
@@ -250,6 +256,7 @@ def wait_for_the_login_and_the_HA_enabled_status_and_login(driver):
         driver.find_element_by_xpath('//button[@ix-auto="button__I AGREE"]').click()
     # Make sure HA is enable before going forward
     assert wait_on_element(driver, 60, '//mat-icon[@svgicon="ha_enabled"]')
+    time.sleep(5)
 
 
 @then('verify the system dataset is dozer on the active node after failover')

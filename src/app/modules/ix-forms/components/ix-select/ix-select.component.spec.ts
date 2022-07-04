@@ -1,8 +1,9 @@
 import { HarnessLoader, parallel } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { FormsModule, NgControl, ReactiveFormsModule } from '@angular/forms';
+import {
+  FormControl, FormsModule, NgControl, ReactiveFormsModule,
+} from '@angular/forms';
 import { MatSelectHarness } from '@angular/material/select/testing';
-import { FormControl } from '@ngneat/reactive-forms';
 import {
   createHostFactory,
   Spectator,
@@ -35,7 +36,7 @@ describe('IxSelectComponent', () => {
 
   describe('ix-select', () => {
     beforeEach(() => {
-      control = new FormControl<string>();
+      control = new FormControl('');
       options$ = of([
         { label: 'GBR', value: 'Great Britain' },
         { label: 'GRL', value: 'Greenland' },
@@ -126,7 +127,7 @@ describe('IxSelectComponent', () => {
         { label: 'GRL', value: 'Greenland' },
         { label: 'FRA', value: 'France' },
       ]);
-      control = new FormControl<string>();
+      control = new FormControl('');
       spectator = createHost(
         '<ix-select [formControl]="control" [multiple]="true" [options]="options$"></ix-select>',
         { hostProps: { control, options$ } },

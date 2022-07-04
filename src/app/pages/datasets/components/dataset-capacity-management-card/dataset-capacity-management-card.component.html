@@ -1,0 +1,49 @@
+<mat-card class="card">
+  <mat-card-header>
+    <h3 mat-card-title>{{ 'Capacity Management' | translate }}</h3>
+    <button mat-button (click)="editDataset()">{{ 'Edit' | translate }}</button>
+  </mat-card-header>
+  <mat-card-content>
+    <div class="legend-placeholder">
+      <ng-container *ngIf="loading; else loaderSkel"></ng-container>
+      <ng-container *ngIf="loading; else loaderSkel"></ng-container>
+    </div>
+    <div class="chart-placeholder">
+      <ng-container *ngIf="loading; else loaderSkel"></ng-container>
+    </div>
+    <div class="legend-placeholder">
+      <ng-container *ngIf="loading; else loaderSkel"></ng-container>
+      <ng-container *ngIf="loading; else loaderSkel"></ng-container>
+      <ng-container *ngIf="loading; else loaderSkel"></ng-container>
+    </div>
+
+    <div *ngIf="!dataset.locked">
+      <div class="details-item">
+        <span class="label">
+          {{ 'User Quotas' | translate }}:
+        </span>
+        <span *ngIf="!loading; else loaderSkel" class="value">
+          {{ 'Quotas set for {n} users' | translate: { n: userQuotas } }}
+        </span>
+        <a [routerLink]="['/', 'datasets', dataset.id, 'user-quotas']">
+          {{ 'Manage User Quotas' | translate }}
+        </a>
+      </div>
+      <div class="details-item">
+        <span class="label">
+          {{ 'Group Quotas' | translate }}:
+        </span>
+        <span *ngIf="!loading; else loaderSkel" class="value">
+          {{ 'Quotas set for {n} groups' | translate: { n: groupQuotas } }}
+        </span>
+        <a [routerLink]="['/', 'datasets', dataset.id, 'group-quotas']">
+          {{ 'Manage Group Quotas' | translate }}
+        </a>
+      </div>
+    </div>
+  </mat-card-content>
+</mat-card>
+
+<ng-template #loaderSkel>
+  <ngx-skeleton-loader></ngx-skeleton-loader>
+</ng-template>

@@ -3,7 +3,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { PoolScanFunction } from 'app/enums/pool-scan-function.enum';
 import { PoolScanState } from 'app/enums/pool-scan-state.enum';
-import { ResilverData } from 'app/interfaces/resilver-job.interface';
+import { PoolScan } from 'app/interfaces/resilver-job.interface';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
@@ -17,7 +17,7 @@ export class ResilverProgressDialogComponent implements OnInit {
   final = false;
   progressTotalPercent = 0;
   state: PoolScanState;
-  resilveringDetails: ResilverData;
+  resilveringDetails: PoolScan;
   title = this.translate.instant('Resilvering Status');
   description = this.translate.instant('Resilvering pool: ');
   statusLabel = this.translate.instant('Status: ');

@@ -34,10 +34,15 @@ export interface Pool {
   is_decrypted: boolean;
   name: string;
   path: string;
-  scan: PoolScan;
+  scan: PoolScanUpdate;
   status: PoolStatus;
   status_detail: string;
   topology: PoolTopology;
+
+  /**
+   * Available with extra is_upgraded=true
+   */
+  is_upgraded?: boolean;
 }
 
 export interface PoolTopology {
@@ -51,7 +56,7 @@ export interface PoolTopology {
 
 export type PoolTopologyCategory = keyof PoolTopology;
 
-export interface PoolScan {
+export interface PoolScanUpdate {
   bytes_issued: number;
   bytes_processed: number;
   bytes_to_process: number;

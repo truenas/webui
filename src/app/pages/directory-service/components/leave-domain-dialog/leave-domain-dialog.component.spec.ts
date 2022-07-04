@@ -9,6 +9,7 @@ import { mockJob, mockWebsocket } from 'app/core/testing/utils/mock-websocket.ut
 import { AppLoaderModule } from 'app/modules/app-loader/app-loader.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { DialogService, WebSocketService } from 'app/services';
 import { LeaveDomainDialogComponent } from './leave-domain-dialog.component';
 
@@ -27,6 +28,7 @@ describe('LeaveDomainDialogComponent', () => {
         mockJob('activedirectory.leave', fakeSuccessfulJob()),
       ]),
       mockProvider(DialogService),
+      mockProvider(SnackbarService),
       mockProvider(MatDialogRef),
     ],
   });
@@ -50,7 +52,7 @@ describe('LeaveDomainDialogComponent', () => {
       username: 'Administrator',
       password: '12345678',
     }]);
-    expect(spectator.inject(DialogService).info).toHaveBeenCalled();
+    expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
     expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith(true);
   });
 });

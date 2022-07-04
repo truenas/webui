@@ -1,0 +1,11 @@
+@import '~assets/styles/mixins/cards';
+
+.title {
+  color: var(--fg2);
+  margin-bottom: 16px;
+  margin-left: 4px;
+}
+
+.cards {
+  @include details-cards();
+}

@@ -106,20 +106,20 @@ def the_users_page_should_open(driver):
 @then('On the right side of the table, click the expand arrow for the root user')
 def on_the_right_side_of_the_table_click_the_expand_arrow_for_the_root_user(driver):
     """On the right side of the table, click the expand arrow for the root user."""
-    assert wait_on_element(driver, 7, '//tr[@ix-auto="expander__root"]/td', 'clickable')
-    driver.find_element_by_xpath('//tr[@ix-auto="expander__root"]/td').click()
+    assert wait_on_element(driver, 5, '//tr[contains(.,"root")]/td', 'clickable')
+    driver.find_element_by_xpath('//tr[contains(.,"root")]/td').click()
 
 
 @then('The User Field should expand down to list further details')
 def the_user_field_should_expand_down_to_list_further_details(driver):
     """The User Field should expand down to list further details."""
-    assert wait_on_element(driver, 5, '//button[@ix-auto="button__EDIT_root"]', 'clickable')
+    assert wait_on_element(driver, 5, '(//tr[contains(.,"root")]/following-sibling::tr)[1]//button[contains(.,"Edit")]', 'clickable')
 
 
 @then('Click the Edit button that appears')
 def click_the_edit_button_that_appears(driver):
     """Click the Edit button that appears."""
-    driver.find_element_by_xpath('//button[@ix-auto="button__EDIT_root"]').click()
+    driver.find_element_by_xpath('(//tr[contains(.,"root")]/following-sibling::tr)[1]//button[contains(.,"Edit")]').click()
 
 
 @then('The User Edit Page should open')
@@ -150,10 +150,10 @@ def change_should_be_saved(driver):
 @then('Reopen the user edit page and ensure that the key was saved')
 def reopen_the_user_edit_page_and_ensure_that_the_key_was_saved(driver):
     """Reopen the user edit page and ensure that the key was saved."""
-    assert wait_on_element(driver, 7, '//tr[@ix-auto="expander__root"]/td', 'clickable')
-    driver.find_element_by_xpath('//tr[@ix-auto="expander__root"]/td').click()
-    assert wait_on_element(driver, 5, '//button[@ix-auto="button__EDIT_root"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__EDIT_root"]').click()
+    assert wait_on_element(driver, 5, '//tr[contains(.,"root")]/td', 'clickable')
+    driver.find_element_by_xpath('//tr[contains(.,"root")]/td').click()
+    assert wait_on_element(driver, 5, '(//tr[contains(.,"root")]/following-sibling::tr)[1]//button[contains(.,"Edit")]', 'clickable')
+    driver.find_element_by_xpath('(//tr[contains(.,"root")]/following-sibling::tr)[1]//button[contains(.,"Edit")]').click()
     assert wait_on_element(driver, 5, '//h3[contains(.,"Edit User")]')
     assert wait_on_element(driver, 5, '//h4[contains(.,"Identification")]')
     time.sleep(0.5)
@@ -162,6 +162,8 @@ def reopen_the_user_edit_page_and_ensure_that_the_key_was_saved(driver):
 @then('Public key should be on the root user page')
 def public_key_should_be_on_the_root_user_page(driver, ssh_key):
     """Public key should be on the root user page."""
+    assert wait_on_element(driver, 7, '//h4[contains(text(),"Authentication")]')
+    assert wait_on_element(driver, 7, '//label[contains(text(),"SSH Public Key")]')
     assert wait_on_element(driver, 5, '//div[@ix-auto="textarea__SSH Public Key"]/div/textarea', 'inputable')
     assert attribute_value_exist(driver, '//div[@ix-auto="textarea__SSH Public Key"]/div/textarea', 'value', ssh_key)
     assert wait_on_element(driver, 5, '//mat-icon[contains(.,"cancel")]', 'clickable')

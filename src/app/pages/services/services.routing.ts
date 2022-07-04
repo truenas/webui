@@ -47,6 +47,7 @@ export const routes: Routes = [
           {
             path: '',
             redirectTo: 'configure',
+            pathMatch: 'full',
           },
           {
             path: ':pk',

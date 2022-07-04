@@ -16,6 +16,7 @@ import { KerberosRealm } from 'app/interfaces/kerberos-realm.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import {
   ActiveDirectoryComponent,
 } from 'app/pages/directory-service/components/active-directory/active-directory.component';
@@ -80,6 +81,7 @@ describe('ActiveDirectoryComponent', () => {
         refreshDirServicesCache: jest.fn(() => of(null)),
       }),
       mockProvider(DialogService),
+      mockProvider(SnackbarService),
       mockProvider(IxSlideInService),
       mockProvider(ModalService),
     ],
@@ -156,8 +158,7 @@ describe('ActiveDirectoryComponent', () => {
     await rebuildButton.click();
 
     expect(spectator.inject(SystemGeneralService).refreshDirServicesCache).toHaveBeenCalled();
-    expect(spectator.inject(DialogService).info).toHaveBeenCalledWith(
-      helptext.activedirectory_custactions_clearcache_dialog_title,
+    expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith(
       helptext.activedirectory_custactions_clearcache_dialog_message,
     );
   });

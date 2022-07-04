@@ -1,7 +1,7 @@
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component,
 } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import _ from 'lodash';
@@ -33,7 +33,7 @@ export class LocalizationFormComponent {
 
   sortLanguagesByName = true;
 
-  formGroup: FormGroup = this.fb.group({
+  formGroup: UntypedFormGroup = this.fb.group({
     language: ['', [Validators.required]],
     kbdmap: [''],
     timezone: ['', [Validators.required]],
@@ -103,7 +103,7 @@ export class LocalizationFormComponent {
 
   constructor(
     private sysGeneralService: SystemGeneralService,
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     public localeService: LocaleService,
     protected ws: WebSocketService,
     protected langService: LanguageService,

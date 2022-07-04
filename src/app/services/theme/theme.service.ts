@@ -26,6 +26,7 @@ export class ThemeService {
     @Inject(WINDOW) private window: Window,
   ) {
     this.utils = new ThemeUtils();
+    this.onThemeChanged(this.activeTheme);
 
     const savedTheme = this.window.sessionStorage.getItem('theme');
     if (savedTheme) {

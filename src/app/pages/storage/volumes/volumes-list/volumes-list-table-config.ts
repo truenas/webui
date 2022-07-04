@@ -1,5 +1,4 @@
-import { MatDialog } from '@angular/material/dialog';
-import { MatDialogRef } from '@angular/material/dialog/dialog-ref';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { untilDestroyed } from '@ngneat/until-destroy';
@@ -26,6 +25,10 @@ import { Pool, PoolExpandParams, UpdatePool } from 'app/interfaces/pool.interfac
 import { Process } from 'app/interfaces/process.interface';
 import { Subs } from 'app/interfaces/subs.interface';
 import { SystemDatasetConfig } from 'app/interfaces/system-dataset-config.interface';
+import {
+  VolumesListDataset,
+  VolumesListPool,
+} from 'app/interfaces/volumes-list-pool.interface';
 import { DialogFormConfiguration } from 'app/modules/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/modules/entity/entity-dialog/entity-dialog.component';
 import { FormUploadComponent } from 'app/modules/entity/entity-form/components/form-upload/form-upload.component';
@@ -43,10 +46,6 @@ import {
   EncryptionOptionsDialogComponent,
 } from 'app/pages/storage/volumes/encyption-options-dialog/encryption-options-dialog.component';
 import { ExportDisconnectModalComponent, ExportDisconnectModalState } from 'app/pages/storage/volumes/volumes-list/components/export-disconnect-modal.component';
-import {
-  VolumesListDataset,
-  VolumesListPool,
-} from 'app/pages/storage/volumes/volumes-list/volumes-list-pool.interface';
 import { VolumesListComponent } from 'app/pages/storage/volumes/volumes-list/volumes-list.component';
 import {
   AppLoaderService, DialogService, StorageService, WebSocketService,
@@ -137,7 +136,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
             this.storageService.streamDownloadFile(url, fileName, mimetype)
               .pipe(untilDestroyed(this, 'destroy'))
               .subscribe((file) => {
-                if (res !== null && (res as any) !== '') {
+                if (res !== null && (res[1]) !== '') {
                   this.storageService.downloadBlob(file, fileName);
                 }
               });
@@ -366,30 +365,6 @@ export class VolumesListTableConfig implements EntityTableConfig {
           name: T('Expand Pool'),
           label: T('Expand Pool'),
           onClick: (row1: VolumesListPool) => {
-            const conf: DialogFormConfiguration = {
-              title: helptext.expand_pool_dialog.title + row1.name,
-              fieldConfig: [
-                {
-                  type: 'paragraph',
-                  name: 'expand_description',
-                  paraText: helptext.expand_pool_dialog.message,
-                },
-                {
-                  type: 'input',
-                  inputType: 'password',
-                  name: 'passphrase',
-                  placeholder: helptext.expand_pool_dialog.passphrase_placeholder,
-                  togglePw: true,
-                  required: true,
-                },
-              ],
-              saveButtonText: helptext.expand_pool_dialog.save_button,
-              customSubmit(entityDialog: EntityDialogComponent) {
-                // eslint-disable-next-line @typescript-eslint/no-use-before-define
-                doExpand(entityDialog);
-              },
-            };
-
             const doExpand = (entityDialog?: EntityDialogComponent): void => {
               this.loader.open();
               const payload: PoolExpandParams = [row1.id];
@@ -403,7 +378,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
                     if (res.exc_info && res.exc_info.extra) {
                       (res as any).extra = res.exc_info.extra;
                     }
-                    new EntityUtils().handleWsError(this, res, this.dialogService, conf.fieldConfig);
+                    new EntityUtils().handleWsError(this, res, this.dialogService);
                   }
                   if (res.state === JobState.Success) {
                     if (entityDialog) {
@@ -455,7 +430,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
                     this.dialogService.info(
                       this.translate.instant('Upgraded'),
                       this.translate.instant('Successfully Upgraded {poolName}.', { poolName: row1.name }),
-                    ).pipe(untilDestroyed(this)).subscribe(() => {
+                    ).pipe(untilDestroyed(this, 'destroy')).subscribe(() => {
                       this.parentVolumesListComponent.repaintMe();
                     });
                   },

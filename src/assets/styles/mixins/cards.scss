@@ -1,0 +1,114 @@
+@import '~assets/styles/mixins/animations';
+@import '~assets/styles/mixins/buttons';
+
+@mixin details-cards {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+
+  > * {
+    flex: 1;
+    max-width: 620px;
+    min-width: 420px;
+  }
+}
+
+@mixin details-card {
+  border: none;
+  border-radius: 0;
+
+  mat-card-header {
+    align-items: center;
+    border-bottom: 1px solid var(--lines);
+    justify-content: space-between;
+    min-height: 40px;
+    padding: 15px 15px 15px 0;
+  }
+
+  .mat-card-title {
+    align-items: center;
+    column-gap: 5px;
+    display: flex;
+    font-size: 1.65rem;
+    margin-bottom: 0;
+  }
+
+  mat-card-content {
+    margin: 0;
+    padding: 20px 25px;
+
+    > div {
+      padding: 0;
+    }
+  }
+  
+  ngx-skeleton-loader {
+    flex: 1;
+  }
+
+  .details-item {
+    @include fade-in();
+
+    align-items: center;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    margin-bottom: 4px;
+  
+    &:last-child {
+      margin-bottom: 0;
+    }
+  
+    .label {
+      font-weight: bold;
+      margin-right: 5px;
+      white-space: nowrap;
+    }
+  
+    .value {
+      font-weight: normal;
+      margin-right: 5px;
+      white-space: nowrap;
+    }
+  
+    a {
+      color: var(--primary);
+      cursor: pointer;
+      margin-left: auto;
+      text-decoration: underline;
+      white-space: nowrap;
+    }
+  
+    ngx-skeleton-loader {
+      display: inline-block;
+      flex: 0;
+      height: 20px;
+      min-width: 30px;
+      width: 30%;
+  
+      ::ng-deep .loader {
+        margin-bottom: 0;
+      }
+    }
+  }
+
+  mat-card-actions {
+    border-top: 1px solid var(--lines);
+    box-sizing: border-box;
+    display: flex;
+    justify-content: flex-end;
+    margin: 0;
+    padding: 15px;
+
+    .mat-stroked-button {
+      @include stroked-button();
+    }
+  }
+}
+
+@mixin loader-block {
+  background: var(--fg2);
+  border-radius: 3px;
+  height: 20px;
+  opacity: 0.3;
+}

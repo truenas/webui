@@ -4,14 +4,15 @@ import {
   Component,
   OnInit,
 } from '@angular/core';
-import { Validators } from '@angular/forms';
-import { FormBuilder } from '@ngneat/reactive-forms';
+import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
 import { forkJoin } from 'rxjs';
 import { helptextSystemSupport as helptext } from 'app/helptext/system/support';
 import { SupportConfigUpdate } from 'app/interfaces/support.interface';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { DialogService, WebSocketService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
@@ -47,6 +48,8 @@ export class ProactiveComponent implements OnInit {
     private dialogService: DialogService,
     private slideInService: IxSlideInService,
     private errorHandler: FormErrorHandlerService,
+    private translate: TranslateService,
+    private snackbar: SnackbarService,
   ) {}
 
   ngOnInit(): void {
@@ -65,9 +68,8 @@ export class ProactiveComponent implements OnInit {
           this.cdr.markForCheck();
           this.slideInService.close();
 
-          this.dialogService.info(
-            helptext.proactive.dialog_title,
-            helptext.proactive.dialog_mesage,
+          this.snackbar.success(
+            this.translate.instant(helptext.proactive.dialog_mesage),
           );
         }, (error) => {
           this.isLoading = false;

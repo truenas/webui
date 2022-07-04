@@ -16,7 +16,7 @@ import { PeriodicSnapshotTaskUi } from 'app/interfaces/periodic-snapshot-task.in
 import { ReplicationTaskUi } from 'app/interfaces/replication-task.interface';
 import { RsyncTaskUi } from 'app/interfaces/rsync-task.interface';
 import { ScrubTaskUi } from 'app/interfaces/scrub-task.interface';
-import { SmartTestUi } from 'app/interfaces/smart-test.interface';
+import { SmartTestTaskUi } from 'app/interfaces/smart-test.interface';
 import { Disk } from 'app/interfaces/storage.interface';
 import { AppLoaderService } from 'app/modules/app-loader/app-loader.service';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
@@ -65,7 +65,7 @@ Omit<PeriodicSnapshotTaskUi, 'naming_schema'> &
 Omit<ReplicationTaskUi, 'naming_schema'> &
 CloudSyncTaskUi &
 RsyncTaskUi &
-SmartTestUi
+SmartTestTaskUi
 >;
 
 @UntilDestroy()
@@ -136,7 +136,7 @@ export class DataProtectionDashboardComponent implements OnInit {
           titleHref: '/tasks/scrub',
           queryCall: 'pool.scrub.query',
           deleteCall: 'pool.scrub.delete',
-          dataSourceHelper: (data) => this.scrubDataSourceHelper(data),
+          dataSourceHelper: (data: ScrubTaskUi[]) => this.scrubDataSourceHelper(data),
           emptyEntityLarge: false,
           columns: [
             { name: this.translate.instant('Pool'), prop: 'pool_name' },
@@ -203,7 +203,7 @@ export class DataProtectionDashboardComponent implements OnInit {
               button: true,
             },
           ],
-          dataSourceHelper: (data) => this.snapshotDataSourceHelper(data),
+          dataSourceHelper: (data: PeriodicSnapshotTaskUi[]) => this.snapshotDataSourceHelper(data),
           isActionVisible: this.isActionVisible,
           parent: this,
           add: () => {
@@ -229,7 +229,7 @@ export class DataProtectionDashboardComponent implements OnInit {
             title: this.translate.instant('Replication Task'),
             key_props: ['name'],
           },
-          dataSourceHelper: (data) => this.replicationDataSourceHelper(data),
+          dataSourceHelper: (data: ReplicationTaskUi[]) => this.replicationDataSourceHelper(data),
           getActions: this.getReplicationActions.bind(this),
           isActionVisible: this.isActionVisible,
           columns: [
@@ -240,7 +240,7 @@ export class DataProtectionDashboardComponent implements OnInit {
               prop: 'enabled',
               width: '50px',
               checkbox: true,
-              onChange: (row: ReplicationTaskUi) => this.onCheckboxToggle(TaskCardId.Replication, row, 'enabled'),
+              onChange: (row: ReplicationTaskUi) => this.onCheckboxToggle(TaskCardId.Replication, row as TaskTableRow, 'enabled'),
             },
             {
               name: this.translate.instant('State'),
@@ -272,7 +272,7 @@ export class DataProtectionDashboardComponent implements OnInit {
             title: this.translate.instant('Cloud Sync Task'),
             key_props: ['description'],
           },
-          dataSourceHelper: (data) => this.cloudsyncDataSourceHelper(data),
+          dataSourceHelper: (data: CloudSyncTaskUi[]) => this.cloudsyncDataSourceHelper(data),
           getActions: this.getCloudsyncActions.bind(this),
           isActionVisible: this.isActionVisible,
           columns: [
@@ -330,7 +330,7 @@ export class DataProtectionDashboardComponent implements OnInit {
               prop: 'enabled',
               width: '50px',
               checkbox: true,
-              onChange: (row: RsyncTaskUi) => this.onCheckboxToggle(TaskCardId.Rsync, row, 'enabled'),
+              onChange: (row: RsyncTaskUi) => this.onCheckboxToggle(TaskCardId.Rsync, row as TaskTableRow, 'enabled'),
             },
             {
               name: this.translate.instant('State'),
@@ -339,7 +339,7 @@ export class DataProtectionDashboardComponent implements OnInit {
               button: true,
             },
           ],
-          dataSourceHelper: (data) => this.rsyncDataSourceHelper(data),
+          dataSourceHelper: (data: RsyncTaskUi[]) => this.rsyncDataSourceHelper(data),
           getActions: this.getRsyncActions.bind(this),
           isActionVisible: this.isActionVisible,
           parent: this,
@@ -351,7 +351,7 @@ export class DataProtectionDashboardComponent implements OnInit {
             form.setTaskForEdit(row);
           },
           onButtonClick: (row: RsyncTaskUi) => {
-            this.stateButton(row);
+            this.stateButton(row as TaskTableRow);
           },
         },
       },
@@ -366,7 +366,7 @@ export class DataProtectionDashboardComponent implements OnInit {
             title: this.translate.instant('S.M.A.R.T. Test'),
             key_props: ['type', 'desc'],
           },
-          dataSourceHelper: (data) => this.smartTestsDataSourceHelper(data),
+          dataSourceHelper: (data: SmartTestTaskUi[]) => this.smartTestsDataSourceHelper(data),
           parent: this,
           columns: [
             {
@@ -391,7 +391,7 @@ export class DataProtectionDashboardComponent implements OnInit {
           add: () => {
             this.slideInService.open(SmartTaskFormComponent);
           },
-          edit: (row: SmartTestUi) => {
+          edit: (row: SmartTestTaskUi) => {
             const slideIn = this.slideInService.open(SmartTaskFormComponent);
             slideIn.setTestForEdit(row);
           },
@@ -472,7 +472,7 @@ export class DataProtectionDashboardComponent implements OnInit {
     });
   }
 
-  smartTestsDataSourceHelper(data: SmartTestUi[]): SmartTestUi[] {
+  smartTestsDataSourceHelper(data: SmartTestTaskUi[]): SmartTestTaskUi[] {
     return data.map((test) => {
       test.cron_schedule = `0 ${test.schedule.hour} ${test.schedule.dom} ${test.schedule.month} ${test.schedule.dow}`;
       test.frequency = this.taskService.getTaskCronDescription(test.cron_schedule);

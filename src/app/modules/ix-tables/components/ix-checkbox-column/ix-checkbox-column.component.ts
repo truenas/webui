@@ -2,7 +2,7 @@ import { SelectionModel } from '@angular/cdk/collections';
 import {
   Component, OnInit, ChangeDetectionStrategy, OnDestroy, ViewChild, ChangeDetectorRef,
 } from '@angular/core';
-import { MatCheckboxChange } from '@angular/material/checkbox/checkbox';
+import { MatCheckboxChange } from '@angular/material/checkbox';
 import { MatColumnDef, MatTableDataSource } from '@angular/material/table';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { BehaviorSubject } from 'rxjs';

@@ -1,0 +1,25 @@
+@import '~assets/styles/mixins/cards';
+
+:host .spinner {
+  margin: 30px auto;
+}
+
+.card {
+  @include details-card();
+
+  mat-card-content {
+    padding: 0;
+
+    .file-information {
+      border-bottom: 1px solid var(--lines);
+      display: flex;
+      flex-wrap: wrap;
+      padding: 20px 25px;
+
+      .details-item:not(:last-child) {
+        margin-bottom: 15px;
+        width: 50%;
+      }
+    }
+  }
+}

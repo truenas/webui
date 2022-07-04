@@ -1,0 +1,32 @@
+@import '~assets/styles/mixins/cards';
+
+.title {
+  color: var(--fg2);
+  margin-bottom: 16px;
+  margin-left: 4px;
+}
+
+.cards {
+  @include details-cards();
+}
+
+.own-name-and-icon {
+  display: inline-flex;
+  margin-left: -1px;
+  vertical-align: text-bottom;
+}
+
+.header {
+  align-items: baseline;
+  display: flex;
+  justify-content: space-between;
+  margin-right: 5px;
+
+  .add-buttons {
+    flex-shrink: 0;
+
+    button {
+      margin-left: 6px;
+    }
+  }
+}

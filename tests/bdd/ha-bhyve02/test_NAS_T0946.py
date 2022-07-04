@@ -91,8 +91,8 @@ def enter_license(driver, License):
 @then('click Save')
 def click_save(driver):
     """click Save."""
-    assert wait_on_element(driver, 7, '//button[@ix-auto="button__SAVE"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
+    assert wait_on_element(driver, 7, '//button[contains(.,"Save")]', 'clickable')
+    driver.find_element_by_xpath('//button[contains(.,"Save")]').click()
 
 
 @then('The following should appear "Reload the page for the license to take effect"')
@@ -148,21 +148,35 @@ def navigate_to_network_and_on_the_network_page_click_on_global_configuration_se
     """navigate to Network and on the Network page click on Global Configuration Settings."""
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Network"]').click()
     assert wait_on_element(driver, 7, '//h1[contains(.,"Network")]')
+    assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
     assert wait_on_element(driver, 7, '//button[contains(.,"Settings")]', 'clickable')
     driver.find_element_by_xpath('//button[contains(.,"Settings")]').click()
     assert wait_on_element(driver, 7, '//h3[contains(.,"Global Configuration")]')
-    time.sleep(0.5)
+    time.sleep(1)
 
 
 @then(parsers.parse('enter Hostname (Virtual) "{vhost}", IPv4 Default Gateway "{gatway}"'))
 def enter_hostname_Virtual_ipv4_default_gateway_(driver, vhost, gatway):
     """enter Hostname (Virtual) "vhost", IPv4 Default Gateway "{gatway}"."""
-    assert wait_on_element(driver, 7, '//input[@ix-auto="input__Hostname (Virtual)"]', 'clickable')
+    assert wait_on_element(driver, 7, '//input[@ix-auto="input__Hostname (Virtual)"]', 'inputable')
     driver.find_element_by_xpath('//input[@ix-auto="input__Hostname (Virtual)"]').clear()
     driver.find_element_by_xpath('//input[@ix-auto="input__Hostname (Virtual)"]').send_keys(vhost)
     assert wait_on_element(driver, 7, '//input[@ix-auto="input__IPv4 Default Gateway"]', 'clickable')
     driver.find_element_by_xpath('//input[@ix-auto="input__IPv4 Default Gateway"]').clear()
     driver.find_element_by_xpath('//input[@ix-auto="input__IPv4 Default Gateway"]').send_keys(gatway)
+
+
+@then(parsers.parse('enter Domain "{domain}", Nameserver1 "{nameserver1}", Nameserver2 "{nameserver2}", Nameserver3 "{nameserver3}"'))
+def enter_domain_nameserver1_nameserver2_nameserver3(driver, domain, nameserver1, nameserver2, nameserver3):
+    """enter Domain "{domain}", Nameserver1 "{nameserver1}", Nameserver2 "{nameserver2}", Nameserver3 "{nameserver3}"."""
+    driver.find_element_by_xpath('//input[@ix-auto="input__Domain"]').clear()
+    driver.find_element_by_xpath('//input[@ix-auto="input__Domain"]').send_keys(domain)
+    driver.find_element_by_xpath('//input[@ix-auto="input__Nameserver 1"]').clear()
+    driver.find_element_by_xpath('//input[@ix-auto="input__Nameserver 1"]').send_keys(nameserver1)
+    driver.find_element_by_xpath('//input[@ix-auto="input__Nameserver 2"]').clear()
+    driver.find_element_by_xpath('//input[@ix-auto="input__Nameserver 2"]').send_keys(nameserver2)
+    driver.find_element_by_xpath('//input[@ix-auto="input__Nameserver 3"]').clear()
+    driver.find_element_by_xpath('//input[@ix-auto="input__Nameserver 3"]').send_keys(nameserver3)
 
 
 @then('click save when finished')
@@ -175,7 +189,7 @@ def click_save_when_finished(driver):
 @then('"Please wait" should appear while settings are being applied and You should be returned to Network page')
 def please_wait_should_appear_while_settings_are_being_applied_you_should_be_returned_to_network_page(driver):
     """"Please wait" should appear while settings are being applied and You should be returned to Network page."""
-    assert wait_on_element_disappear(driver, 15, '//h6[contains(.,"Please wait")]')
+    assert wait_on_element_disappear(driver, 60, '//h6[contains(.,"Please wait")]')
     assert wait_on_element(driver, 7, '//h1[contains(.,"Network")]')
 
 
@@ -405,35 +419,38 @@ def click_disable_failover_to_uncheck_it_click_save_and_confirm_changes(driver):
     assert wait_on_element(driver, 7, '//h4[contains(.,"Failover Configuration")]')
 
 
-@then(parsers.parse('enter Hostname "{host1}", Hostname (TrueNAS Controller 2) "{host2}", Hostname (Virtual) "{vhost}", Domain "{domain}", Nameserver1 "{nameserver1}", Nameserver2 "{nameserver2}"'))
-def enter_hostname_hostname_truenas_controller_2_hostname_virtual_domain_nameserver1_nameserver2(driver, host1, host2, vhost, domain, nameserver1, nameserver2):
-    """enter Hostname "{host1}", Hostname (TrueNAS Controller 2) "{host2}", Hostname (Virtual) "{vhost}", Domain "{domain}", Nameserver1 "{nameserver1}", Nameserver2 "{nameserver2}"."""
-    assert wait_on_element(driver, 7, '//input[@ix-auto="input__Hostname"]', 'clickable')
-    driver.find_element_by_xpath('//input[@ix-auto="input__Hostname"]').clear()
-    driver.find_element_by_xpath('//input[@ix-auto="input__Hostname"]').send_keys(host1)
-    assert wait_on_element(driver, 7, '//input[@ix-auto="input__Hostname (TrueNAS Controller 2)"]', 'clickable')
-    driver.find_element_by_xpath('//input[@ix-auto="input__Hostname (TrueNAS Controller 2)"]').clear()
-    driver.find_element_by_xpath('//input[@ix-auto="input__Hostname (TrueNAS Controller 2)"]').send_keys(host2)
-    assert wait_on_element(driver, 7, '//input[@ix-auto="input__Hostname (Virtual)"]', 'clickable')
-    driver.find_element_by_xpath('//input[@ix-auto="input__Hostname (Virtual)"]').clear()
-    driver.find_element_by_xpath('//input[@ix-auto="input__Hostname (Virtual)"]').send_keys(vhost)
-    driver.find_element_by_xpath('//input[@ix-auto="input__Domain"]').clear()
-    driver.find_element_by_xpath('//input[@ix-auto="input__Domain"]').send_keys(domain)
-    driver.find_element_by_xpath('//input[@ix-auto="input__Nameserver 1"]').clear()
-    driver.find_element_by_xpath('//input[@ix-auto="input__Nameserver 1"]').send_keys(nameserver1)
-    driver.find_element_by_xpath('//input[@ix-auto="input__Nameserver 2"]').clear()
-    driver.find_element_by_xpath('//input[@ix-auto="input__Nameserver 2"]').send_keys(nameserver2)
-
-
-@then('navigate to dashboard, and verify that both controllers show')
-def navigate_to_dashboard_and_verify_that_both_controllers_show(driver):
-    """navigate to dashboard, and verify that both controllers show."""
+@then('navigate to dashboard, wait for HA to be online')
+def navigate_to_dashboard_wait_for_ha_to_be_online(driver):
+    """navigate to dashboard, wait for HA to be online."""
     assert wait_on_element(driver, 7, '//mat-list-item[@ix-auto="option__Dashboard"]', 'clickable')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
     assert wait_on_element(driver, 10, '//span[contains(.,"System Information")]')
-    # need to wait for the passive controller to be online.
-    assert wait_on_element(driver, 120, '//div[contains(.,"tn-bhyve01-nodeb")]')
-    assert wait_on_element(driver, 10, '//mat-icon[@svgicon="ha_enabled"]')
+    assert wait_on_element(driver, 15, '//div[contains(.,"truenas")]')
+    assert wait_on_element(driver, 15, '//div[contains(.,"truenas-b")]')
+    assert wait_on_element(driver, 180, '//mat-icon[@svgicon="ha_enabled"]')
+    time.sleep(5)
+
+
+@then(parsers.parse('enter Hostname "{host1}", Hostname (TrueNAS Controller 2) "{host2}"'))
+def enter_hostname_hostname_truenas_controller_2(driver, host1, host2):
+    """enter Hostname "{host1}", Hostname (TrueNAS Controller 2) "{host2}"."""
+    assert wait_on_element(driver, 7, '//input[@ix-auto="input__Hostname"]', 'inputable')
+    driver.find_element_by_xpath('//input[@ix-auto="input__Hostname"]').clear()
+    driver.find_element_by_xpath('//input[@ix-auto="input__Hostname"]').send_keys(host1)
+    assert wait_on_element(driver, 7, '//input[@ix-auto="input__Hostname (TrueNAS Controller 2)"]', 'inputable')
+    driver.find_element_by_xpath('//input[@ix-auto="input__Hostname (TrueNAS Controller 2)"]').clear()
+    driver.find_element_by_xpath('//input[@ix-auto="input__Hostname (TrueNAS Controller 2)"]').send_keys(host2)
+
+
+@then('navigate to dashboard, verify both contorler hostname')
+def navigate_to_dashboard_verify_both_contorler_hostname(driver):
+    """navigate to dashboard, verify both contorler hostname."""
+    assert wait_on_element(driver, 7, '//mat-list-item[@ix-auto="option__Dashboard"]', 'clickable')
+    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
+    assert wait_on_element(driver, 10, '//span[contains(.,"System Information")]')
+    assert wait_on_element(driver, 15, '//mat-icon[@svgicon="ha_enabled"]')
+    assert wait_on_element(driver, 15, '//div[contains(.,"tn-bhyve01-nodea")]')
+    assert wait_on_element(driver, 15, '//div[contains(.,"tn-bhyve01-nodeb")]')
 
 
 @then('both controllers should show version and license on the dashboard')

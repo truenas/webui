@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { FormGroup, Validators } from '@angular/forms';
+import { UntypedFormGroup, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { NavigationExtras, Router } from '@angular/router';
 import { TreeNode } from '@circlon/angular-tree-component';
@@ -424,7 +424,7 @@ export class CloudsyncFormComponent implements FormConfiguration {
   protected folderSourceField: FormExplorerConfig;
   credentials: CloudsyncCredential[] = [];
 
-  formGroup: FormGroup;
+  formGroup: UntypedFormGroup;
   error: string;
   pk: number;
   isNew = false;
@@ -629,7 +629,7 @@ export class CloudsyncFormComponent implements FormConfiguration {
   afterInit(entityForm: EntityFormComponent): void {
     this.entityForm = entityForm;
     this.formGroup = entityForm.formGroup;
-    this.pk = entityForm.pk;
+    this.pk = entityForm.pk as number;
 
     this.title = entityForm.isNew ? helptext.cloudsync_task_add : helptext.cloudsync_task_edit;
     this.credentialsField = this.fieldSets.config('credentials') as FormSelectConfig;

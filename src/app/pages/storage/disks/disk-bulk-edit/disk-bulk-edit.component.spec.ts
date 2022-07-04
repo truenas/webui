@@ -9,6 +9,7 @@ import { mockJob, mockWebsocket } from 'app/core/testing/utils/mock-websocket.ut
 import { DiskPowerLevel } from 'app/enums/disk-power-level.enum';
 import { DiskStandby } from 'app/enums/disk-standby.enum';
 import { CoreBulkQuery, CoreBulkResponse } from 'app/interfaces/core-bulk.interface';
+import { Disk } from 'app/interfaces/storage.interface';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
@@ -29,22 +30,22 @@ describe('DiskBulkEditComponent', () => {
   let loader: HarnessLoader;
   let form: IxFormHarness;
   let ws: WebSocketService;
-  const dataDisk1: any = {
+  const dataDisk1 = {
     name: 'sda',
     identifier: '{serial}VB76b9dd9d-4e5d8cf2',
     hddstandby: DiskStandby.AlwaysOn,
     advpowermgmt: DiskPowerLevel.Disabled,
     togglesmart: false,
     smartoptions: '',
-  };
-  const dataDisk2: any = {
+  } as Disk;
+  const dataDisk2 = {
     name: 'sdc',
     identifier: '{serial}VB5a315293-ea077d3d',
     hddstandby: DiskStandby.Minutes10,
     advpowermgmt: DiskPowerLevel.Level64,
     togglesmart: true,
     smartoptions: '/dev/hd[at], /dev/sd[az]',
-  };
+  } as Disk;
   const createComponent = createComponentFactory({
     component: DiskBulkEditComponent,
     imports: [

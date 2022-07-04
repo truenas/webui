@@ -1,13 +1,12 @@
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component,
 } from '@angular/core';
-import { Validators } from '@angular/forms';
-import { FormBuilder } from '@ngneat/reactive-forms';
+import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable } from 'rxjs';
 import helptext from 'app/helptext/system/cron-form';
-import { Cronjob } from 'app/interfaces/cronjob.interface';
+import { Cronjob, CronjobUpdate } from 'app/interfaces/cronjob.interface';
 import { UserComboboxProvider } from 'app/modules/ix-forms/classes/user-combobox-provider';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { crontabToSchedule } from 'app/modules/scheduler/utils/crontab-to-schedule.utils';
@@ -81,7 +80,7 @@ export class CronFormComponent {
     const values = {
       ...this.form.value,
       schedule: crontabToSchedule(this.form.value.schedule),
-    };
+    } as CronjobUpdate;
 
     this.isLoading = true;
     let request$: Observable<unknown>;

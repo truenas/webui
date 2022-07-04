@@ -1,14 +1,14 @@
 import {
   ChangeDetectionStrategy, Component, Inject,
 } from '@angular/core';
-import { Validators } from '@angular/forms';
+import { FormBuilder, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { TransferMode } from 'app/enums/transfer-mode.enum';
 import helptext_cloudsync from 'app/helptext/data-protection/cloudsync/cloudsync-form';
+import { CloudsyncRestoreParams } from 'app/interfaces/cloudsync-provider.interface';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { AppLoaderService, WebSocketService } from 'app/services';
 import { FilesystemService } from 'app/services/filesystem.service';
@@ -53,7 +53,7 @@ export class CloudsyncRestoreDialogComponent {
   onSubmit(): void {
     this.loader.open();
 
-    this.ws.call('cloudsync.restore', [this.parentTaskId, this.form.value])
+    this.ws.call('cloudsync.restore', [this.parentTaskId, this.form.value] as CloudsyncRestoreParams)
       .pipe(untilDestroyed(this))
       .subscribe(
         () => {

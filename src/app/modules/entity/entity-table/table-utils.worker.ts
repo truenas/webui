@@ -5,7 +5,7 @@
 
 const tableUtils = {
   debug: true,
-  maxDecimals: (input: any, max?: number) => {
+  maxDecimals: (input: number, max?: number) => {
     if (!max) {
       max = 2;
     }
@@ -16,7 +16,7 @@ const tableUtils = {
     }
     const decimals = str[1].length;
     const output = decimals > max ? input.toFixed(max) : input;
-    return parseFloat(output);
+    return parseFloat(output as string);
   },
   arrayAvg: (input: number[]) => {
     const sum = input.reduce((acc, cv) => acc + cv);

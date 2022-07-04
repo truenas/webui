@@ -18,6 +18,7 @@ import { Timeout } from 'app/interfaces/timeout.interface';
 import { WidgetComponent } from 'app/pages/dashboard/components/widget/widget.component';
 import { SystemGeneralService, WebSocketService } from 'app/services';
 import { LocaleService } from 'app/services/locale.service';
+import { ProductImageService } from 'app/services/product-image.service';
 import { ThemeService } from 'app/services/theme/theme.service';
 import { AppState } from 'app/store';
 import { selectHaStatus, waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
@@ -33,7 +34,7 @@ import { selectHaStatus, waitForSystemInfo } from 'app/store/system-info/system-
 })
 export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, OnDestroy {
   // HA
-  @Input() isHA = false;
+  @Input() isHa = false;
   @Input() isPassive = false;
   @Input() enclosureSupport = false;
   @Input() showReorderHandle = false;
@@ -49,9 +50,9 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
   memory: string;
   imagePath = 'assets/images/';
   ready = false;
-  product_image = '';
-  product_model = '';
-  product_enclosure = ''; // rackmount || tower
+  productImage = '';
+  productModel = '';
+  productEnclosure = ''; // rackmount || tower
   certified = false;
   updateAvailable = false;
   private _updateBtnStatus = 'default';
@@ -59,10 +60,9 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
   manufacturer = '';
   buildDate: string;
   loader = false;
-  product_type = window.localStorage['product_type'] as ProductType;
-  isFN = false;
+  productType = window.localStorage['product_type'] as ProductType;
   isUpdateRunning = false;
-  ha_status: string;
+  haStatus: string;
   updateMethod = 'update.update';
   screenType = 'Desktop';
   uptimeString: string;
@@ -79,6 +79,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
     private locale: LocaleService,
     public themeService: ThemeService,
     private store$: Store<AppState>,
+    private productImgServ: ProductImageService,
   ) {
     super(translate);
     this.configurable = false;
@@ -93,7 +94,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
   }
 
   ngOnInit(): void {
-    if (this.isHA && this.isPassive) {
+    if (this.isHa && this.isPassive) {
       this.store$.select(selectHaStatus).pipe(
         filter((haStatus) => !!haStatus),
         untilDestroyed(this),
@@ -103,7 +104,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
             this.processSysInfo(systemInfo);
           });
         }
-        this.ha_status = haStatus.status;
+        this.haStatus = haStatus.status;
       });
     } else {
       this.store$.pipe(waitForSystemInfo, untilDestroyed(this)).subscribe(
@@ -170,11 +171,20 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
     return this.translate.instant('Your NAS time {datetime} does not match your computer time.', { datetime: nasTimeFormatted });
   }
 
+  addTimeDiff(timestamp: number): number {
+    if (sessionStorage.systemInfoLoaded) {
+      const now = Date.now();
+      return timestamp + now - Number(sessionStorage.systemInfoLoaded);
+    }
+    return timestamp;
+  }
+
   processSysInfo(systemInfo: SystemInfo): void {
     this.data = systemInfo;
     const now = Date.now();
-    const datetime = systemInfo.datetime.$date;
+    const datetime = this.addTimeDiff(this.data.datetime.$date);
     this.nasDateTime = new Date(datetime);
+    this.dateTime = this.locale.getTimeOnly(datetime, false, this.data.timezone);
 
     this.timeDiffInSeconds = differenceInSeconds(datetime, now);
     this.timeDiffInSeconds = this.timeDiffInSeconds < 0 ? (this.timeDiffInSeconds * -1) : this.timeDiffInSeconds;
@@ -221,7 +231,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
 
   parseUptime(): void {
     this.uptimeString = '';
-    const seconds = Math.round(this.data.uptime_seconds);
+    const seconds = Math.round(this.addTimeDiff(this.data.uptime_seconds * 1000) / 1000);
     const uptime = {
       days: Math.floor(seconds / (3600 * 24)),
       hrs: Math.floor(seconds % (3600 * 24) / 3600),
@@ -245,8 +255,6 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
     } else {
       this.uptimeString += this.translate.instant('{minute, plural, one {# minute} other {# minutes}}', { minute: min });
     }
-
-    this.dateTime = (this.locale.getTimeOnly(this.data.datetime.$date, false, this.data.timezone));
   }
 
   formatMemory(physmem: number, units: string): string {
@@ -267,89 +275,22 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
     } else if (data.system_product.includes('CERTIFIED')) {
       this.certified = true;
     } else {
-      this.setTrueNasImage(data.system_product);
-    }
-  }
-
-  setTrueNasImage(sysProduct: string): void {
-    this.product_enclosure = 'rackmount';
-
-    if (sysProduct.includes('X10')) {
-      this.product_image = '/servers/X10.png';
-      this.product_model = 'X10';
-    } else if (sysProduct.includes('X20')) {
-      this.product_image = '/servers/X20.png';
-      this.product_model = 'X20';
-    } else if (sysProduct.includes('M30')) {
-      this.product_image = '/servers/M30.png';
-      this.product_model = 'M30';
-    } else if (sysProduct.includes('M40')) {
-      this.product_image = '/servers/M40.png';
-      this.product_model = 'M40';
-    } else if (sysProduct.includes('M50')) {
-      this.product_image = '/servers/M50.png';
-      this.product_model = 'M50';
-    } else if (sysProduct.includes('M60')) {
-      this.product_image = '/servers/M50.png';
-      this.product_model = 'M50';
-    } else if (sysProduct.includes('Z20')) {
-      this.product_image = '/servers/Z20.png';
-      this.product_model = 'Z20';
-    } else if (sysProduct.includes('Z35')) {
-      this.product_image = '/servers/Z35.png';
-      this.product_model = 'Z35';
-    } else if (sysProduct.includes('Z50')) {
-      this.product_image = '/servers/Z50.png';
-      this.product_model = 'Z50';
-    } else if (sysProduct.includes('R10')) {
-      this.product_image = '/servers/R10.png';
-      this.product_model = 'R10';
-    } else if (sysProduct.includes('R20')) {
-      this.product_image = '/servers/R20.png';
-      this.product_model = 'R20';
-    } else if (sysProduct.includes('R40')) {
-      this.product_image = '/servers/R40.png';
-      this.product_model = 'R40';
-    } else if (sysProduct.includes('R50')) {
-      this.product_image = '/servers/R50.png';
-      this.product_model = 'R50';
-    } else {
-      this.product_image = 'ix-original.svg';
+      const product = this.productImgServ.getServerProduct(data.system_product);
+      this.productImage = product ? `/servers/${product}.png` : 'ix-original.svg';
+      this.productModel = product || '';
+      this.productEnclosure = 'rackmount';
     }
   }
 
   setMiniImage(sysProduct: string): void {
-    this.product_enclosure = 'tower';
+    this.productEnclosure = 'tower';
 
     if (sysProduct && sysProduct.includes('CERTIFIED')) {
-      this.product_image = '';
+      this.productImage = '';
       this.certified = true;
       return;
     }
-
-    switch (sysProduct) {
-      case 'FREENAS-MINI-2.0':
-      case 'FREENAS-MINI-3.0-E':
-      case 'FREENAS-MINI-3.0-E+':
-      case 'TRUENAS-MINI-3.0-E':
-      case 'TRUENAS-MINI-3.0-E+':
-        this.product_image = 'freenas_mini_cropped.png';
-        break;
-      case 'FREENAS-MINI-3.0-X':
-      case 'FREENAS-MINI-3.0-X+':
-      case 'TRUENAS-MINI-3.0-X':
-      case 'TRUENAS-MINI-3.0-X+':
-        this.product_image = 'freenas_mini_x_cropped.png';
-        break;
-      case 'FREENAS-MINI-XL':
-      case 'FREENAS-MINI-3.0-XL+':
-      case 'TRUENAS-MINI-3.0-XL+':
-        this.product_image = 'freenas_mini_xl_cropped.png';
-        break;
-      default:
-        this.product_image = '';
-        break;
-    }
+    this.productImage = this.productImgServ.getMiniImagePath(sysProduct) || '';
   }
 
   goToEnclosure(): void {

@@ -1,0 +1,68 @@
+<div>
+  <mat-card class="card">
+    <mat-card-header>
+      <h3 mat-card-title>{{ 'Dataset Details' | translate }}</h3>
+      <button mat-button (click)="editDataset()">{{ 'Edit' | translate }}</button>
+    </mat-card-header>
+    <mat-card-content>
+      <div class="details-item">
+        <span class="label">{{ 'Type:' | translate }} </span>
+        <span class="value">
+          <ng-container *ngIf="dataset.type; else notAvailable">
+            {{ dataset.type }}
+          </ng-container>
+        </span>
+      </div>
+      <div class="details-item">
+        <span class="label">{{ 'Sync:' | translate }} </span>
+        <span class="value">
+          <ng-container *ngIf="dataset.sync?.value; else notAvailable">
+            {{ dataset.sync.value }}
+          </ng-container>
+        </span>
+      </div>
+      <div class="details-item">
+        <span class="label">{{ 'Compression Level:' | translate }} </span>
+        <span class="value">
+          <ng-container *ngIf="datasetCompression; else notAvailable">
+            {{ datasetCompression }}
+          </ng-container>
+        </span>
+      </div>
+      <div class="details-item">
+        <span class="label">{{ 'Enable Atime:' | translate }} </span>
+        <span class="value">
+          <ng-container *ngIf="dataset.atime?.value; else notAvailable">
+            {{ dataset.atime.value }}
+          </ng-container>
+        </span>
+      </div>
+      <div class="details-item">
+        <span class="label">{{ 'ZFS Deduplication:' | translate }} </span>
+        <span class="value">
+          <ng-container *ngIf="dataset.deduplication?.value; else notAvailable">
+            {{ dataset.deduplication.value }}
+          </ng-container>
+        </span>
+      </div>
+      <div class="details-item">
+        <span class="label">{{ 'Case Sensitivity:' | translate }} </span>
+        <span class="value">
+          <ng-container *ngIf="dataset.casesensitivity?.value; else notAvailable">
+            {{ dataset.casesensitivity.value }}
+          </ng-container>
+        </span>
+      </div>
+    </mat-card-content>
+    <mat-card-actions *ngIf="dataset.id !== dataset.pool" >
+      <button
+        mat-stroked-button
+        (click)="deleteDataset()"
+      >{{ 'Delete' | translate }}</button>
+    </mat-card-actions>
+  </mat-card>
+</div>
+
+<ng-template #notAvailable> 
+  {{ 'N/A' | translate }} 
+</ng-template>

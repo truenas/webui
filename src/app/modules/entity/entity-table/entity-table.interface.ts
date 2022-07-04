@@ -19,10 +19,10 @@ export interface EntityTableConfig<Row = any> {
   resourceName?: string;
   routeEdit?: string | string[];
   routeAdd?: string[];
-  queryRes?: any[];
+  queryRes?: unknown[];
   showActions?: boolean;
   isActionVisible?: (actionId: string, row: Row) => boolean;
-  customActions?: any[];
+  customActions?: unknown[];
   multiActions?: EntityTableMultiAction<Row>[];
   noActions?: boolean;
   config: EntityTableConfigConfig;
@@ -42,7 +42,6 @@ export interface EntityTableConfig<Row = any> {
     no_search_results?: { title: string; message: string };
     buttonText?: string;
   };
-  actionsConfig?: { actionType: any; actionConfig: any };
   rowIdentifier?: string;
   disableActionsConfig?: boolean;
   inlineActions?: boolean;
@@ -53,7 +52,7 @@ export interface EntityTableConfig<Row = any> {
    * Returns EmptyConfig for EmptyType or returns null if default behavior is acceptable for that EmptyType
    */
   getCustomEmptyConfig?: (emptyType: EmptyType) => EmptyConfig;
-  wsDeleteParams?: (row: Row, id: string) => any;
+  wsDeleteParams?: (row: Row, id: string | number) => any;
   addRows?: (entity: EntityTableComponent) => void;
   changeEvent?: (entity: EntityTableComponent) => void;
   preInit?: (entity: EntityTableComponent) => void;

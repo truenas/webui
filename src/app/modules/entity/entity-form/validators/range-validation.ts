@@ -1,7 +1,7 @@
-import { ValidatorFn, FormControl } from '@angular/forms';
+import { ValidatorFn, UntypedFormControl } from '@angular/forms';
 
 export function rangeValidator(min: number, max?: number): ValidatorFn {
-  return function rangeValidate(control: FormControl) {
+  return function rangeValidate(control: UntypedFormControl) {
     let regex;
     if (min === 0) {
       regex = /^(0|[1-9]\d*)$/;

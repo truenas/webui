@@ -7,7 +7,7 @@ import {
   OnInit,
   ViewContainerRef,
 } from '@angular/core';
-import { FormGroup } from '@angular/forms';
+import { UntypedFormGroup } from '@angular/forms';
 import { FormArrayComponent } from 'app/modules/entity/entity-form/components/form-array/form-array.component';
 import { FormButtonComponent } from 'app/modules/entity/entity-form/components/form-button/form-button.component';
 import { FormCheckboxComponent } from 'app/modules/entity/entity-form/components/form-checkbox/form-checkbox.component';
@@ -75,7 +75,7 @@ export class DynamicFieldDirective implements Field, OnChanges, OnInit {
   config: FieldConfig;
 
   @Input()
-  group: FormGroup;
+  group: UntypedFormGroup;
 
   @Input()
   fieldShow: string;

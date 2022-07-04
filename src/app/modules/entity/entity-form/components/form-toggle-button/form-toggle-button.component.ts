@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { AbstractControl, FormGroup } from '@angular/forms';
+import { AbstractControl, UntypedFormGroup } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
@@ -16,7 +16,7 @@ import { Field } from 'app/modules/entity/entity-form/models/field.interface';
 })
 export class FormToggleButtonComponent implements Field, OnInit {
   config: FormToggleButtonConfig;
-  group: FormGroup;
+  group: UntypedFormGroup;
   fieldShow: string;
   groupValue: any[] = [];
   protected init: boolean;

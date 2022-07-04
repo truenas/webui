@@ -1,7 +1,7 @@
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
-import { FormGroup, Validators } from '@angular/forms';
+import { UntypedFormGroup, Validators } from '@angular/forms';
 import { FormBuilder, FormControl } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
@@ -44,8 +44,8 @@ export class AcmednsFormComponent implements OnInit {
     attributes: this.formBuilder.group<Record<string, string>>({}),
   });
 
-  get formGroup(): FormGroup {
-    return this.form.controls['attributes'] as FormGroup;
+  get formGroup(): UntypedFormGroup {
+    return this.form.controls['attributes'] as UntypedFormGroup;
   }
 
   isLoading = false;
@@ -59,7 +59,7 @@ export class AcmednsFormComponent implements OnInit {
     return this.ws.call('acme.dns.authenticator.authenticator_schemas');
   }
 
-  authenticator_options$: Observable<Option[]>;
+  authenticatorOptions$: Observable<Option[]>;
   private editingAcmedns: DnsAuthenticator;
 
   constructor(
@@ -95,7 +95,7 @@ export class AcmednsFormComponent implements OnInit {
   }
 
   private setAuthenticatorOptions(schemas: AuthenticatorSchema[]): void {
-    this.authenticator_options$ = of(schemas.map((schema) => ({ label: schema.key, value: schema.key })));
+    this.authenticatorOptions$ = of(schemas.map((schema) => ({ label: schema.key, value: schema.key })));
   }
 
   private createAuthenticatorControls(schemas: AuthenticatorSchema[]): void {

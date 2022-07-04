@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormGroup } from '@angular/forms';
+import { UntypedFormGroup } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
@@ -87,7 +87,7 @@ export class InitiatorFormComponent implements OnInit {
     },
   ];
 
-  formGroup: FormGroup;
+  formGroup: UntypedFormGroup;
   connectedInitiators: IscsiGlobalSession[];
   connectedInitiatorsDisabled = false;
   connectedInitiatorsTooltip = helptextSharingIscsi.initiator_form_tooltip_connected_initiators;

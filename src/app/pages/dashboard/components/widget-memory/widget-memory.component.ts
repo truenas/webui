@@ -40,12 +40,6 @@ export class WidgetMemoryComponent extends WidgetComponent implements AfterViewI
   get memData(): WidgetMemoryData { return this._memData; }
   set memData(value) {
     this._memData = value;
-    if (this.legendData && typeof this.legendIndex !== 'undefined') {
-      // C3 does not have a way to update tooltip when new data is loaded.
-      // So this is the workaround
-      this.legendData[0].value = this.memData.data[0][this.legendIndex + 1];
-      this.legendData[1].value = this.memData.data[1][this.legendIndex + 1];
-    }
   }
 
   isReady = false;
@@ -53,11 +47,9 @@ export class WidgetMemoryComponent extends WidgetComponent implements AfterViewI
   subtitle: string = this.translate.instant('% of all cores');
   configurable = false;
   chartId = UUID.UUID();
-  legendData: any;
   colorPattern: string[];
   currentTheme: Theme;
 
-  private legendIndex: number;
   labels: string[] = [this.translate.instant('Free'), this.translate.instant('ZFS Cache'), this.translate.instant('Services')];
 
   screenType = 'Desktop';
