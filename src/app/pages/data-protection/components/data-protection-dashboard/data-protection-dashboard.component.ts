@@ -16,7 +16,7 @@ import { PeriodicSnapshotTaskUi } from 'app/interfaces/periodic-snapshot-task.in
 import { ReplicationTaskUi } from 'app/interfaces/replication-task.interface';
 import { RsyncTaskUi } from 'app/interfaces/rsync-task.interface';
 import { ScrubTaskUi } from 'app/interfaces/scrub-task.interface';
-import { SmartTestUi } from 'app/interfaces/smart-test.interface';
+import { SmartTestTaskUi } from 'app/interfaces/smart-test.interface';
 import { Disk } from 'app/interfaces/storage.interface';
 import { AppLoaderService } from 'app/modules/app-loader/app-loader.service';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
@@ -65,7 +65,7 @@ Omit<PeriodicSnapshotTaskUi, 'naming_schema'> &
 Omit<ReplicationTaskUi, 'naming_schema'> &
 CloudSyncTaskUi &
 RsyncTaskUi &
-SmartTestUi
+SmartTestTaskUi
 >;
 
 @UntilDestroy()
@@ -366,7 +366,7 @@ export class DataProtectionDashboardComponent implements OnInit {
             title: this.translate.instant('S.M.A.R.T. Test'),
             key_props: ['type', 'desc'],
           },
-          dataSourceHelper: (data: SmartTestUi[]) => this.smartTestsDataSourceHelper(data),
+          dataSourceHelper: (data: SmartTestTaskUi[]) => this.smartTestsDataSourceHelper(data),
           parent: this,
           columns: [
             {
@@ -391,7 +391,7 @@ export class DataProtectionDashboardComponent implements OnInit {
           add: () => {
             this.slideInService.open(SmartTaskFormComponent);
           },
-          edit: (row: SmartTestUi) => {
+          edit: (row: SmartTestTaskUi) => {
             const slideIn = this.slideInService.open(SmartTaskFormComponent);
             slideIn.setTestForEdit(row);
           },
@@ -472,7 +472,7 @@ export class DataProtectionDashboardComponent implements OnInit {
     });
   }
 
-  smartTestsDataSourceHelper(data: SmartTestUi[]): SmartTestUi[] {
+  smartTestsDataSourceHelper(data: SmartTestTaskUi[]): SmartTestTaskUi[] {
     return data.map((test) => {
       test.cron_schedule = `0 ${test.schedule.hour} ${test.schedule.dom} ${test.schedule.month} ${test.schedule.dow}`;
       test.frequency = this.taskService.getTaskCronDescription(test.cron_schedule);

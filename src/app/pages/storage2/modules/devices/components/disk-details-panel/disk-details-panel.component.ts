@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
-import { VDev } from 'app/interfaces/storage.interface';
+import { Disk, VDev } from 'app/interfaces/storage.interface';
 
 @Component({
   selector: 'ix-disk-details-panel',
@@ -8,5 +8,6 @@ import { VDev } from 'app/interfaces/storage.interface';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DiskDetailsPanelComponent {
-  @Input() disk: VDev;
+  @Input() topologyItem: VDev;
+  @Input() disk: Disk;
 }

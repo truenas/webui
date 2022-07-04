@@ -1,6 +1,10 @@
-<h3 class="title">Details for {{ disk.disk || disk.guid }}</h3>
+<h3 class="title">Details for {{ topologyItem.disk || topologyItem.guid }}</h3>
 
 <div class="cards">
-  <ix-hardware-disk-encryption [disk]="disk"></ix-hardware-disk-encryption>
+  <ix-hardware-disk-encryption [topologyItem]="topologyItem"></ix-hardware-disk-encryption>
   <ix-disk-info-card [disk]="disk"></ix-disk-info-card>
+  <ix-smart-info-card
+    [topologyItem]="topologyItem"
+    [disk]="disk"
+  ></ix-smart-info-card>
 </div>

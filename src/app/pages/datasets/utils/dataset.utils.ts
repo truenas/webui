@@ -12,3 +12,7 @@ export function isEncryptionRoot(dataset: Dataset): boolean {
 export function isPasswordEncrypted(dataset: Dataset): boolean {
   return dataset.key_format?.value === EncryptionKeyFormat.Passphrase;
 }
+
+export function isIocageMounted(dataset: Dataset): boolean {
+  return dataset.mountpoint.split('/')[1] === 'iocage';
+}

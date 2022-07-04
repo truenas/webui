@@ -40,7 +40,7 @@ export class PermissionsCardComponent implements OnInit, OnChanges {
   }
 
   get canEditPermissions(): boolean {
-    return this.acl && !isRootDataset(this.dataset);
+    return this.acl && !isRootDataset(this.dataset) && !this.dataset.locked;
   }
 
   ngOnInit(): void {

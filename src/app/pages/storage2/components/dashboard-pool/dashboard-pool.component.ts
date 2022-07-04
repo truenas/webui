@@ -118,4 +118,30 @@ export class DashboardPoolComponent implements OnInit {
       )
       .subscribe();
   }
+
+  onUpgrade(): void {
+    this.dialogService.confirm({
+      title: this.translate.instant('Upgrade Pool'),
+      message: this.translate.instant(helptext.upgradePoolDialog_warning) + this.pool.name,
+    }).pipe(
+      filter(Boolean),
+      switchMap(() => {
+        this.loader.open();
+        return this.ws.call('pool.upgrade', [this.pool.id]);
+      }),
+      tap(() => {
+        this.loader.close();
+        this.snackbar.success(
+          this.translate.instant('Pool {name} successfully upgraded.', { name: this.pool.name }),
+        );
+        this.poolsUpdated.emit();
+      }),
+      catchError((error) => {
+        this.loader.close();
+        new EntityUtils().handleWsError(this, error, this.dialogService);
+        return EMPTY;
+      }),
+      untilDestroyed(this),
+    ).subscribe();
+  }
 }

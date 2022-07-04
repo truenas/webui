@@ -196,7 +196,8 @@ import { Sensor } from 'app/interfaces/sensor.interface';
 import { Service } from 'app/interfaces/service.interface';
 import { ResizeShellRequest } from 'app/interfaces/shell.interface';
 import {
-  SmartManualTestParams, SmartConfig, SmartConfigUpdate, SmartTest, SmartTestResults, ManualSmartTest, SmartTestUpdate,
+  SmartManualTestParams, SmartConfig, SmartConfigUpdate, SmartTestTask, SmartTestResults, ManualSmartTest,
+  SmartTestTaskUpdate,
 } from 'app/interfaces/smart-test.interface';
 import { SmbConfig, SmbConfigUpdate } from 'app/interfaces/smb-config.interface';
 import {
@@ -827,10 +828,10 @@ export type ApiDirectory = {
   'smart.update': { params: [SmartConfigUpdate]; response: SmartConfig };
   'smart.config': { params: void; response: SmartConfig };
   'smart.test.manual_test': { params: [SmartManualTestParams[]]; response: ManualSmartTest[] };
-  'smart.test.query': { params: QueryParams<SmartTest>; response: SmartTest[] };
-  'smart.test.create': { params: [SmartTestUpdate]; response: SmartTest };
+  'smart.test.query': { params: QueryParams<SmartTestTask>; response: SmartTestTask[] };
+  'smart.test.create': { params: [SmartTestTaskUpdate]; response: SmartTestTask };
   'smart.test.results': { params: QueryParams<SmartTestResults>; response: SmartTestResults[] };
-  'smart.test.update': { params: [id: number, update: SmartTestUpdate]; response: SmartTest };
+  'smart.test.update': { params: [id: number, update: SmartTestTaskUpdate]; response: SmartTestTask };
   'smart.test.delete': { params: [id: number]; response: boolean };
 
   // SystemDataset

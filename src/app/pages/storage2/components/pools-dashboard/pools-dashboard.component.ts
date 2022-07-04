@@ -55,7 +55,7 @@ export class PoolsDashboardComponent implements OnInit, AfterViewInit {
     // TODO: Add loading indicator
     // TODO: Handle error
     this.isPoolsLoading = true;
-    this.ws.call('pool.query').pipe(untilDestroyed(this)).subscribe(
+    this.ws.call('pool.query', [[], { extra: { is_upgraded: true } }]).pipe(untilDestroyed(this)).subscribe(
       (pools: Pool[]) => {
         this.pools = pools;
         this.isPoolsLoading = false;

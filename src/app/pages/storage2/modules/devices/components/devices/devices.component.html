@@ -52,8 +52,9 @@
   </div>
   <div class="details-container">
     <ix-disk-details-panel
-      *ngIf="selectedItem && isDiskSelected"
-      [disk]="selectedItem"
+      *ngIf="selectedItem && isDiskSelected && diskDictionary[selectedItem.disk]"
+      [topologyItem]="selectedItem"
+      [disk]="diskDictionary[selectedItem.disk]"
     ></ix-disk-details-panel>
   </div>
 </div>

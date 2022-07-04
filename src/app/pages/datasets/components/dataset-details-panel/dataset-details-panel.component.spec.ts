@@ -1,31 +1,15 @@
-import { HarnessLoader } from '@angular/cdk/testing';
-import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatButtonHarness } from '@angular/material/button/testing';
-import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { MockComponent } from 'ng-mocks';
-import { of } from 'rxjs';
+import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
+import { MockComponents } from 'ng-mocks';
 import { DatasetType } from 'app/enums/dataset.enum';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import {
   DatasetCapacityManagementCardComponent,
 } from 'app/pages/datasets/components/dataset-capacity-management-card/dataset-capacity-management-card.component';
-import {
-  DatasetDetailsCardComponent,
-} from 'app/pages/datasets/components/dataset-details-card/dataset-details-card.component';
-import {
-  DatasetDetailsPanelComponent,
-} from 'app/pages/datasets/components/dataset-details-panel/dataset-details-panel.component';
-import { DatasetFormComponent } from 'app/pages/datasets/components/dataset-form/dataset-form.component';
+import { DatasetDetailsCardComponent } from 'app/pages/datasets/components/dataset-details-card/dataset-details-card.component';
+import { DatasetDetailsPanelComponent } from 'app/pages/datasets/components/dataset-details-panel/dataset-details-panel.component';
 import { DatasetIconComponent } from 'app/pages/datasets/components/dataset-icon/dataset-icon.component';
-import { ZvolFormComponent } from 'app/pages/datasets/components/zvol-form/zvol-form.component';
-import {
-  ZfsEncryptionCardComponent,
-} from 'app/pages/datasets/modules/encryption/components/zfs-encryption-card/zfs-encryption-card.component';
-import {
-  PermissionsCardComponent,
-} from 'app/pages/datasets/modules/permissions/containers/permissions-card/permissions-card.component';
-import { DatasetStore } from 'app/pages/datasets/store/dataset-store.service';
-import { ModalService } from 'app/services';
+import { ZfsEncryptionCardComponent } from 'app/pages/datasets/modules/encryption/components/zfs-encryption-card/zfs-encryption-card.component';
+import { PermissionsCardComponent } from 'app/pages/datasets/modules/permissions/containers/permissions-card/permissions-card.component';
 
 describe('DatasetDetailsPanelComponent', () => {
   let spectator: Spectator<DatasetDetailsPanelComponent>;
@@ -48,11 +32,13 @@ describe('DatasetDetailsPanelComponent', () => {
   const createComponent = createComponentFactory({
     component: DatasetDetailsPanelComponent,
     declarations: [
-      MockComponent(DatasetIconComponent),
-      MockComponent(DatasetDetailsCardComponent),
-      MockComponent(PermissionsCardComponent),
-      MockComponent(ZfsEncryptionCardComponent),
-      MockComponent(DatasetCapacityManagementCardComponent),
+      MockComponents(
+        DatasetIconComponent,
+        DatasetDetailsCardComponent,
+        PermissionsCardComponent,
+        ZfsEncryptionCardComponent,
+        DatasetCapacityManagementCardComponent,
+      ),
     ],
     providers: [
       mockProvider(ModalService, {
@@ -73,9 +59,8 @@ describe('DatasetDetailsPanelComponent', () => {
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
-  it('shows dataset path and name in the header', () => {
-    const title = spectator.query('.title');
-    expect(title).toHaveText('Details for');
+  it('shows a title of current dataset', () => {
+    expect(spectator.query('.title')).toHaveText('Details for  /root/dataset/ child');
   });
 
   it('opens a dataset form when Add Dataset is pressed', async () => {
@@ -94,28 +79,29 @@ describe('DatasetDetailsPanelComponent', () => {
     expect(fakeModalRef.isNew).toBe(true);
   });
 
-  it('shows a details card for the dataset', () => {
-    const card = spectator.query(DatasetDetailsCardComponent);
-    expect(card).toExist();
-    expect(card.dataset).toEqual(dataset);
+  it('shows all the cards', () => {
+    const datasetDetailsCard = spectator.query(DatasetDetailsCardComponent);
+    expect(datasetDetailsCard).toBeTruthy();
+    expect(datasetDetailsCard.dataset).toBe(dataset);
+
+    const permissionsCard = spectator.query(PermissionsCardComponent);
+    expect(permissionsCard).toBeTruthy();
+    expect(permissionsCard.dataset).toBe(dataset);
+
+    const zfsEncryptionCard = spectator.query(ZfsEncryptionCardComponent);
+    expect(zfsEncryptionCard).toBeTruthy();
+    expect(zfsEncryptionCard.dataset).toBe(dataset);
+
+    const datasetCapacityManagementCard = spectator.query(DatasetCapacityManagementCardComponent);
+    expect(datasetCapacityManagementCard).toBeTruthy();
+    expect(datasetCapacityManagementCard.dataset).toBe(dataset);
   });
 
-  it('shows a permissions card for the dataset', () => {
-    const card = spectator.query(PermissionsCardComponent);
-    expect(card).toExist();
-    expect(card.dataset).toEqual(dataset);
-  });
-
-  it('shows a ZFS encryption card for the dataset', () => {
-    const card = spectator.query(ZfsEncryptionCardComponent);
-    expect(card).toExist();
-    expect(card.dataset).toEqual(dataset);
-    expect(card.parentDataset).toEqual(parentDataset);
-  });
-
-  it('shows a capacity management card for the dataset', () => {
-    const card = spectator.query(DatasetCapacityManagementCardComponent);
-    expect(card).toExist();
-    expect(card.dataset).toEqual(dataset);
+  it('hides "Permissions Card" if dataset type is Volume', () => {
+    spectator.setInput('dataset', {
+      ...dataset,
+      type: DatasetType.Volume,
+    });
+    expect(spectator.query('ix-permissions-card')).not.toBeVisible();
   });
 });
