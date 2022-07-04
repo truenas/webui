@@ -1,12 +1,16 @@
 <h3 class="title">
   {{ 'Details for' | translate }}
-  <ix-device-icon [device]="disk"></ix-device-icon>
+  <ix-device-icon [device]="topologyItem"></ix-device-icon>
   <span>{{ ownName }}</span>
 </h3>
 
 <div class="cards">
-  <ix-zfs-info-card [disk]="disk"></ix-zfs-info-card>
-  <ix-hardware-disk-encryption *ngIf="isDisk" [disk]="disk"></ix-hardware-disk-encryption>
+  <ix-zfs-info-card [disk]="topologyItem"></ix-zfs-info-card>
+  <ix-hardware-disk-encryption *ngIf="isDisk" [topologyItem]="topologyItem"></ix-hardware-disk-encryption>
   <ix-disk-info-card *ngIf="isDisk" [disk]="disk"></ix-disk-info-card>
-  <ix-smart-info-card *ngIf="isDisk" [disk]="disk"></ix-smart-info-card>
+  <ix-smart-info-card
+    *ngIf="isDisk"
+    [topologyItem]="topologyItem"
+    [disk]="disk"
+  ></ix-smart-info-card>
 </div>

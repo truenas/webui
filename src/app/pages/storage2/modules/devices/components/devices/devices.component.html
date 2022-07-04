@@ -83,6 +83,10 @@
     </div>
   </div>
   <div class="details-container">
-    <ix-disk-details-panel [disk]="selectedDevice" [parentDisk]="selectedDeviceParent"></ix-disk-details-panel>
+    <ix-disk-details-panel
+      *ngIf="selectedDevice && diskDictionary[selectedDevice.disk]"
+      [topologyItem]="selectedDevice"
+      [disk]="diskDictionary[selectedDevice.disk]"
+    ></ix-disk-details-panel>
   </div>
 </div>

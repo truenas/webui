@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { VDevType } from 'app/enums/v-dev-type.enum';
-import { VDev } from 'app/interfaces/storage.interface';
+import { Disk, VDev } from 'app/interfaces/storage.interface';
 
 @Component({
   selector: 'ix-disk-details-panel',
@@ -9,30 +9,30 @@ import { VDev } from 'app/interfaces/storage.interface';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DiskDetailsPanelComponent {
-  @Input() disk: VDev;
-  @Input() parentDisk: VDev;
+  @Input() topologyItem: VDev;
+  @Input() disk: Disk;
 
   get ownName(): string {
     if (this.isDisk) {
-      return this.disk.disk;
+      return this.topologyItem.disk;
     }
 
     if (this.isMirror) {
-      return this.disk.name;
+      return this.topologyItem.name;
     }
 
-    return this.disk.guid;
+    return this.topologyItem.guid;
   }
 
   get isDisk(): boolean {
-    return this.disk.type === VDevType.Disk;
+    return this.topologyItem.type === VDevType.Disk;
   }
 
   get isMirror(): boolean {
-    return this.disk.type === VDevType.Mirror;
+    return this.topologyItem.type === VDevType.Mirror;
   }
 
   get isDeviceGroup(): boolean {
-    return !this.disk?.type;
+    return !this.topologyItem?.type;
   }
 }

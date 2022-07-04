@@ -4,11 +4,15 @@ import {
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import _ from 'lodash';
+import { EMPTY } from 'rxjs';
+import { catchError, switchMap, tap } from 'rxjs/operators';
 import { VDevType } from 'app/enums/v-dev-type.enum';
 import { PoolTopology } from 'app/interfaces/pool.interface';
-import { VDev } from 'app/interfaces/storage.interface';
+import { Disk, VDev } from 'app/interfaces/storage.interface';
 import { IxNestedTreeDataSource } from 'app/modules/ix-tree/ix-nested-tree-datasource';
 import { findInTree } from 'app/modules/ix-tree/utils/find-in-tree.utils';
+import { DevicesStore } from 'app/pages/storage2/modules/devices/stores/devices-store.service';
 import { AppLoaderService, WebSocketService } from 'app/services';
 
 @UntilDestroy()
@@ -26,6 +30,8 @@ export class DevicesComponent implements OnInit {
   treeControl = new NestedTreeControl<VDev, string>((device) => device.children, {
     trackBy: (device) => device.guid,
   });
+  diskDictionary: { [key: string]: Disk } = {};
+
   readonly trackByFn: TrackByFunction<VDev> = (_, vdev) => vdev.guid;
   readonly hasNestedChild = (_: number, device: VDev): boolean => Boolean(device.children?.length);
   readonly isDeviceGroup = (_: number, device: VDev): boolean => !device.type;
@@ -35,28 +41,15 @@ export class DevicesComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private loader: AppLoaderService, // TODO: Replace with a better approach
     private route: ActivatedRoute,
+    private devicesStore: DevicesStore,
   ) { }
 
   ngOnInit(): void {
-    this.loader.open();
-    const poolId = this.route.snapshot.paramMap.get('poolId');
-    this.ws.call('pool.query', [[['id', '=', Number(poolId)]]]).pipe(untilDestroyed(this)).subscribe(
-      (pools) => {
-        this.topology = pools[0].topology;
-        const tolopogyEntries = Array.from(Object.entries(this.topology))
-          .filter(([, value]) => value.length)
-          .map(([key, value]) => ({
-            guid: key,
-            children: value,
-          } as VDev));
+    this.loadTopologyAndDisks();
 
-        this.treeControl.dataNodes = tolopogyEntries;
-        this.createDataSource(tolopogyEntries);
-        this.selectFirstNode();
-        this.loader.close();
-        this.cdr.markForCheck();
-      },
-    );
+    this.devicesStore.onReloadList
+      .pipe(untilDestroyed(this))
+      .subscribe(() => this.loadTopologyAndDisks());
   }
 
   private createDataSource(devices: VDev[]): void {
@@ -95,5 +88,41 @@ export class DevicesComponent implements OnInit {
 
   onSearch(query: string): void {
     this.dataSource.filter(query);
+  }
+
+  private transformTopologyIntoTree(tolopogy: PoolTopology): VDev[] {
+    return Array.from(Object.entries(tolopogy))
+      .filter(([, value]) => value.length)
+      .map(([key, value]) => ({
+        guid: key,
+        children: value,
+      } as VDev));
+  }
+
+  private loadTopologyAndDisks(): void {
+    this.loader.open();
+    const poolId = Number(this.route.snapshot.paramMap.get('poolId'));
+    this.ws.call('pool.query', [[['id', '=', poolId]]]).pipe(
+      switchMap((pools) => {
+        // TODO: Handle pool not found.
+        return this.ws.call('disk.query', [[['pool', '=', pools[0].name]], { extra: { pools: true } }]).pipe(
+          tap((disks) => {
+            this.diskDictionary = _.keyBy(disks, (disk) => disk.devname);
+            this.topology = pools[0].topology;
+            const nodes = this.transformTopologyIntoTree(this.topology);
+            this.treeControl.dataNodes = nodes;
+            this.createDataSource(nodes);
+            this.selectFirstNode();
+            this.loader.close();
+            this.cdr.markForCheck();
+          }),
+        );
+      }),
+      catchError(() => {
+        // TODO: Handle error.
+        return EMPTY;
+      }),
+      untilDestroyed(this),
+    ).subscribe();
   }
 }

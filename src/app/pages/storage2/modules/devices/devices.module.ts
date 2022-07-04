@@ -30,6 +30,7 @@ import {
 import { SmartInfoCardComponent } from 'app/pages/storage2/modules/devices/components/smart-info-card/smart-info-card.component';
 import { ZfsInfoCardComponent } from 'app/pages/storage2/modules/devices/components/zfs-info-card/zfs-info-card.component';
 import { routes } from 'app/pages/storage2/modules/devices/devices.routing';
+import { DevicesStore } from 'app/pages/storage2/modules/devices/stores/devices-store.service';
 
 @NgModule({
   imports: [
@@ -64,6 +65,9 @@ import { routes } from 'app/pages/storage2/modules/devices/devices.routing';
     DeviceNodeComponent,
     DeviceIconComponent,
     SmartInfoCardComponent,
+  ],
+  providers: [
+    DevicesStore,
   ],
 })
 export class DevicesModule {
