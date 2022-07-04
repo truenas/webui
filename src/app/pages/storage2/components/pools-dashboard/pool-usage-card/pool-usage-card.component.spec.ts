@@ -4,14 +4,14 @@ import { MockComponent } from 'ng-mocks';
 import { Pool } from 'app/interfaces/pool.interface';
 import { VolumeData } from 'app/interfaces/volume-data.interface';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
-import { GaugeChartComponent } from 'app/pages/storage2/components/pools-dashboard/widget-usage/gauge-chart/gauge-chart.component';
-import { WidgetUsageComponent } from 'app/pages/storage2/components/pools-dashboard/widget-usage/widget-usage.component';
+import { GaugeChartComponent } from 'app/pages/storage2/components/pools-dashboard/pool-usage-card/gauge-chart/gauge-chart.component';
+import { PoolUsageCardComponent } from 'app/pages/storage2/components/pools-dashboard/pool-usage-card/pool-usage-card.component';
 
-describe('WidgetUsageComponent', () => {
-  let spectator: Spectator<WidgetUsageComponent>;
+describe('PoolUsageCardComponent', () => {
+  let spectator: Spectator<PoolUsageCardComponent>;
 
   const createComponent = createComponentFactory({
-    component: WidgetUsageComponent,
+    component: PoolUsageCardComponent,
     imports: [
       IxFormsModule,
       ReactiveFormsModule,
