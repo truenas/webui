@@ -1,11 +1,13 @@
 import {
-  ChangeDetectionStrategy, Component, Input,
+  ChangeDetectionStrategy, Component, Input, OnInit,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { filter } from 'rxjs/operators';
 import { VDevType } from 'app/enums/v-dev-type.enum';
+import { VDevStatus } from 'app/enums/vdev-status.enum';
 import { VDev } from 'app/interfaces/storage.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { EntityUtils } from 'app/modules/entity/utils';
@@ -20,10 +22,10 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
   styleUrls: ['./zfs-info-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ZfsInfoCardComponent {
+export class ZfsInfoCardComponent implements OnInit {
   @Input() disk: VDev;
-  poolId = 1;
-  loading = false;
+  @Input() parentDisk: VDev;
+  poolId: number;
 
   get readErrors(): number {
     if (this.isMirror) {
@@ -60,13 +62,22 @@ export class ZfsInfoCardComponent {
     return this.disk.type === VDevType.Disk;
   }
 
+  get isOnline(): boolean {
+    return this.disk.status === VDevStatus.Online;
+  }
+
   constructor(
+    private route: ActivatedRoute,
     private ws: WebSocketService,
     private slideIn: IxSlideInService,
     private dialogService: DialogService,
     private matDialog: MatDialog,
     private translate: TranslateService,
   ) {}
+
+  ngOnInit(): void {
+    this.poolId = +this.route.snapshot.paramMap.get('poolId');
+  }
 
   onEdit(): void {
     this.slideIn.open(DiskFormComponent, { wide: true });
@@ -81,8 +92,25 @@ export class ZfsInfoCardComponent {
       filter(Boolean),
       untilDestroyed(this),
     ).subscribe(() => {
-      const value = { label: this.disk.guid };
-      this.ws.call('pool.offline', [this.poolId, value]).pipe(untilDestroyed(this)).subscribe(
+      this.ws.call('pool.offline', [this.poolId, { label: this.disk.guid }]).pipe(untilDestroyed(this)).subscribe(
+        () => {},
+        (err) => {
+          new EntityUtils().handleWsError(this, err, this.dialogService);
+        },
+      );
+    });
+  }
+
+  onOnline(): void {
+    this.dialogService.confirm({
+      title: this.translate.instant('Online Disk'),
+      message: this.translate.instant('Online disk {name}?', { name: this.disk.disk || this.disk.guid }),
+      buttonMsg: this.translate.instant('Online'),
+    }).pipe(
+      filter(Boolean),
+      untilDestroyed(this),
+    ).subscribe(() => {
+      this.ws.call('pool.online', [this.poolId, { label: this.disk.guid }]).pipe(untilDestroyed(this)).subscribe(
         () => {},
         (err) => {
           new EntityUtils().handleWsError(this, err, this.dialogService);

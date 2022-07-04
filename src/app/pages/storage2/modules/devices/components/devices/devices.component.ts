@@ -18,8 +18,10 @@ import { AppLoaderService, WebSocketService } from 'app/services';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DevicesComponent implements OnInit {
-  topology: PoolTopology;
   selectedDevice: VDev;
+  selectedDeviceParent: VDev | undefined;
+
+  topology: PoolTopology;
   dataSource: IxNestedTreeDataSource<VDev>;
   treeControl = new NestedTreeControl<VDev, string>((device) => device.children, {
     trackBy: (device) => device.guid,

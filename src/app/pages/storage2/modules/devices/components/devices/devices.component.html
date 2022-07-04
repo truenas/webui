@@ -50,11 +50,7 @@
               </mat-icon>
             </ix-group-tree-node>
 
-            <ng-container *ngIf="treeControl.isExpanded(group)" ixTreeNodeOutlet>
-              <div *ngIf="!group.children.length" class="empty-tree-node">
-                {{ 'No devices found' | translate }}
-              </div>
-            </ng-container>
+            <ng-container *ngIf="treeControl.isExpanded(group)" ixTreeNodeOutlet></ng-container>
           </ix-nested-tree-node>
 
           <ix-nested-tree-node
@@ -87,6 +83,6 @@
     </div>
   </div>
   <div class="details-container">
-    <ix-disk-details-panel [disk]="selectedDevice"></ix-disk-details-panel>
+    <ix-disk-details-panel [disk]="selectedDevice" [parentDisk]="selectedDeviceParent"></ix-disk-details-panel>
   </div>
 </div>

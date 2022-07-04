@@ -10,6 +10,7 @@ import { VDev } from 'app/interfaces/storage.interface';
 })
 export class DiskDetailsPanelComponent {
   @Input() disk: VDev;
+  @Input() parentDisk: VDev;
 
   get ownName(): string {
     if (this.isDisk) {
