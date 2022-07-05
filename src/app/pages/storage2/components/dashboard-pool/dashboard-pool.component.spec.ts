@@ -16,8 +16,8 @@ import {
 } from 'app/pages/storage2/components/dashboard-pool/export-disconnect-modal/export-disconnect-modal.component';
 import { DiskHealthCardComponent } from 'app/pages/storage2/components/disk-health-card/disk-health-card.component';
 import {
-  WidgetUsageComponent,
-} from 'app/pages/storage2/components/pools-dashboard/widget-usage/widget-usage.component';
+  PoolUsageCardComponent,
+} from 'app/pages/storage2/components/pools-dashboard/pool-usage-card/pool-usage-card.component';
 import { ZfsHealthCardComponent } from 'app/pages/storage2/components/zfs-health-card/zfs-health-card.component';
 import { AppLoaderService, DialogService, WebSocketService } from 'app/services';
 
@@ -33,7 +33,7 @@ describe('DashboardPoolComponent', () => {
     declarations: [
       MockComponent(ZfsHealthCardComponent),
       MockComponent(ExportDisconnectModalComponent),
-      MockComponent(WidgetUsageComponent),
+      MockComponent(PoolUsageCardComponent),
       MockComponent(DiskHealthCardComponent),
     ],
     providers: [
