@@ -938,7 +938,7 @@
   "Common Name": "通用名",
   "Common: ": "常见的：",
   "Community": "社区",
-  "Compatability": "兼容性",
+  "Compatibility": "兼容性",
   "Complete the Upgrade": "完成升级",
   "Completed": "完成",
   "Completely replicate the selected dataset. The target dataset will have all of the source dataset's properties, child datasets, clones and snapshots that match the specified naming schema. Set Snapshot Name Regular Expression to .* to replicate all snapshots.": "完全复制所选数据集。 目标数据集将具有与指定命名模式匹配的所有源数据集的属性、子数据集、克隆和快照。 将快照名称正则表达式设置为 .* 以复制所有快照。",
