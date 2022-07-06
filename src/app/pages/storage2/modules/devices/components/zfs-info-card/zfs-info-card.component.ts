@@ -9,10 +9,11 @@ import { filter } from 'rxjs/operators';
 import { VDevType } from 'app/enums/v-dev-type.enum';
 import { VDevStatus } from 'app/enums/vdev-status.enum';
 import { Disk, VDev } from 'app/interfaces/storage.interface';
+import { AppLoaderService } from 'app/modules/app-loader/app-loader.service';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { EntityUtils } from 'app/modules/entity/utils';
-import { DiskFormComponent } from 'app/pages/storage/disks/disk-form/disk-form.component';
 import { DevicesStore } from 'app/pages/storage2/modules/devices/stores/devices-store.service';
+import { DiskFormComponent } from 'app/pages/storage2/modules/disks/components/disk-form/disk-form.component';
 import { WebSocketService, DialogService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
@@ -69,6 +70,7 @@ export class ZfsInfoCardComponent implements OnInit {
   }
 
   constructor(
+    private loader: AppLoaderService,
     private route: ActivatedRoute,
     private ws: WebSocketService,
     private slideInService: IxSlideInService,
@@ -80,7 +82,7 @@ export class ZfsInfoCardComponent implements OnInit {
 
   ngOnInit(): void {
     this.poolId = +this.route.snapshot.paramMap.get('poolId');
-    this.slideInService.onClose$?.pipe(untilDestroyed(this)).subscribe(() => {
+    this.slideInService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
       this.devicesStore.reloadList();
     });
   }
@@ -99,14 +101,17 @@ export class ZfsInfoCardComponent implements OnInit {
       filter(Boolean),
       untilDestroyed(this),
     ).subscribe(() => {
-      this.ws.call('pool.offline', [this.poolId, { label: this.topologyItem.guid }]).pipe(untilDestroyed(this)).subscribe(
-        () => {
-          this.devicesStore.reloadList();
-        },
-        (err) => {
-          new EntityUtils().handleWsError(this, err, this.dialogService);
-        },
-      );
+      this.loader.open();
+      this.ws.call('pool.offline', [this.poolId, { label: this.topologyItem.guid }]).pipe(
+        untilDestroyed(this),
+      ).subscribe(() => {
+        this.devicesStore.reloadList();
+        this.loader.close();
+      },
+      (err) => {
+        this.loader.close();
+        new EntityUtils().handleWsError(this, err, this.dialogService);
+      });
     });
   }
 
@@ -119,16 +124,17 @@ export class ZfsInfoCardComponent implements OnInit {
       filter(Boolean),
       untilDestroyed(this),
     ).subscribe(() => {
+      this.loader.open();
       this.ws.call('pool.online', [this.poolId, { label: this.topologyItem.guid }]).pipe(
         untilDestroyed(this),
-      ).subscribe(
-        () => {
-          this.devicesStore.reloadList();
-        },
-        (err) => {
-          new EntityUtils().handleWsError(this, err, this.dialogService);
-        },
-      );
+      ).subscribe(() => {
+        this.devicesStore.reloadList();
+        this.loader.close();
+      },
+      (err) => {
+        this.loader.close();
+        new EntityUtils().handleWsError(this, err, this.dialogService);
+      });
     });
   }
 
@@ -141,14 +147,17 @@ export class ZfsInfoCardComponent implements OnInit {
       filter(Boolean),
       untilDestroyed(this),
     ).subscribe(() => {
-      this.ws.call('pool.detach', [this.poolId, { label: this.topologyItem.guid }]).pipe(untilDestroyed(this)).subscribe(
-        () => {
-          this.devicesStore.reloadList();
-        },
-        (err) => {
-          new EntityUtils().handleWsError(this, err, this.dialogService);
-        },
-      );
+      this.loader.open();
+      this.ws.call('pool.detach', [this.poolId, { label: this.topologyItem.guid }]).pipe(
+        untilDestroyed(this),
+      ).subscribe(() => {
+        this.devicesStore.reloadList();
+        this.loader.close();
+      },
+      (err) => {
+        this.loader.close();
+        new EntityUtils().handleWsError(this, err, this.dialogService);
+      });
     });
   }
 
@@ -168,6 +177,7 @@ export class ZfsInfoCardComponent implements OnInit {
       dialogRef.componentInstance.setCall('pool.remove', [this.poolId, { label: this.topologyItem.guid }]);
       dialogRef.componentInstance.submit();
       dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
+        this.devicesStore.reloadList();
         this.dialogService.closeAllDialogs();
       });
       dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((error) => {
