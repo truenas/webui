@@ -2295,6 +2295,7 @@
   "Pool Status": "",
   "Pool has been unset.": "",
   "Pool options for {poolName} successfully saved.": "",
+  "Pool {name} successfully upgraded.": "",
   "Pool/Dataset": "",
   "Pools": "",
   "Pools in Enclosure": "",
