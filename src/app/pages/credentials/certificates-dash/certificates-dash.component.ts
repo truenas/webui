@@ -16,6 +16,9 @@ import { AppTableAction, AppTableConfig, TableComponent } from 'app/modules/enti
 import { TableService } from 'app/modules/entity/table/table.service';
 import { EntityUtils } from 'app/modules/entity/utils';
 import {
+  CertificateAcmeAddComponent,
+} from 'app/pages/credentials/certificates-dash/certificate-acme-add/certificate-acme-add.component';
+import {
   CertificateAuthorityEditComponent,
 } from 'app/pages/credentials/certificates-dash/certificate-authority-edit/certificate-authority-edit.component';
 import { AcmednsFormComponent } from 'app/pages/credentials/certificates-dash/forms/acmedns-form/acmedns-form.component';
@@ -25,7 +28,6 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { ModalService } from 'app/services/modal.service';
 import { CertificateEditComponent } from './certificate-edit/certificate-edit.component';
 import { CertificateAuthorityAddComponent } from './forms/ca-add.component';
-import { CertificateAcmeAddComponent } from './forms/certificate-acme-add.component';
 import { CertificateAddComponent } from './forms/certificate-add.component';
 
 @UntilDestroy()
@@ -323,8 +325,9 @@ export class CertificatesDashComponent implements OnInit {
       icon: 'build',
       name: 'create_ACME',
       matTooltip: this.translate.instant('Create ACME Certificate'),
-      onClick: (rowinner: Certificate) => {
-        this.modalService.openInSlideIn(CertificateAcmeAddComponent, rowinner.id);
+      onClick: (csr: Certificate) => {
+        const acmeForm = this.slideInService.open(CertificateAcmeAddComponent);
+        acmeForm.setCsr(csr);
       },
     };
 

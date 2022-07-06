@@ -6,7 +6,7 @@
     </label>
     <ix-tooltip *ngIf="tooltip" [header]="label" class="tooltip" [message]="tooltip"></ix-tooltip>
     <button
-      *ngIf="!hideButton"
+      *ngIf="canAdd"
       mat-button
       type="button"
       class="add-btn"
