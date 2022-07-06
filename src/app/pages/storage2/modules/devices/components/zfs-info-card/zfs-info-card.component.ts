@@ -82,7 +82,10 @@ export class ZfsInfoCardComponent implements OnInit {
 
   ngOnInit(): void {
     this.poolId = Number(this.route.snapshot.params.poolId);
-    this.slideInService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
+    this.slideInService.onClose$.pipe(
+      filter((value) => !!value.response && value.modalType === DiskFormComponent),
+      untilDestroyed(this),
+    ).subscribe(() => {
       this.devicesStore.reloadList();
     });
   }
