@@ -1,6 +1,6 @@
 import { NestedTreeControl } from '@angular/cdk/tree';
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, TrackByFunction,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -31,7 +31,6 @@ export class DevicesComponent implements OnInit {
   });
   diskDictionary: { [key: string]: Disk } = {};
 
-  readonly trackByFn: TrackByFunction<VDev> = (_, vdev) => vdev.guid;
   readonly hasNestedChild = (_: number, vdev: VDev): boolean => Boolean(vdev.children?.length);
 
   constructor(
