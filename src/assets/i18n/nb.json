@@ -700,7 +700,7 @@
   "Common Name": "",
   "Common: ": "",
   "Community": "",
-  "Compatability": "",
+  "Compatibility": "",
   "Complete the Upgrade": "",
   "Completed": "",
   "Completely replicate the selected dataset. The target dataset will have all of the source dataset's properties, child datasets, clones and snapshots that match the specified naming schema. Set Snapshot Name Regular Expression to .* to replicate all snapshots.": "",

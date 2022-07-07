@@ -1642,7 +1642,7 @@
   "Common Name": "Nom commun",
   "Common: ": "Commun: ",
   "Community": "Communauté",
-  "Compatability": "Compatibilité",
+  "Compatibility": "Compatibilité",
   "Complete the Upgrade": "Terminer la mise à niveau",
   "Completed": "Terminé",
   "Completely replicate the selected dataset. The target dataset will have all of the source dataset's properties, child datasets, clones and snapshots that match the specified naming schema. Set Snapshot Name Regular Expression to .* to replicate all snapshots.": "Répliquer complètement le dataset sélectionné. Le dataset cible aura toutes les propriétés du dataset source, les datasets enfants, les clones et les instantanés qui correspondent au schéma de nommage spécifié. Définissez l'expression régulière du nom de l'instantané sur .* pour répliquer tous les instantanés.",
