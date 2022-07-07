@@ -20,7 +20,6 @@ export class DatasetCapacityManagementCardComponent implements OnChanges {
   @Input() dataset: DatasetInTree;
 
   loading = false;
-  datasetSubscription: Subscription;
   quotasSubscription: Subscription;
   userQuotas: number;
   groupQuotas: number;
@@ -33,7 +32,7 @@ export class DatasetCapacityManagementCardComponent implements OnChanges {
   ) {}
 
   ngOnChanges(): void {
-    if (!this.dataset.encrypted) {
+    if (!this.dataset.locked) {
       this.getQuotas();
     }
   }
