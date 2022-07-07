@@ -23,7 +23,6 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
-import { AngularSvgIconModule, SvgIconRegistryService } from 'angular-svg-icon';
 import { ChartistModule } from 'ng-chartist';
 import { ViewControllerComponent } from 'app/core/components/view-controller/view-controller.component';
 import { CoreComponents } from 'app/core/core-components.module';
@@ -86,7 +85,6 @@ import { LocaleService } from 'app/services/locale.service';
     EntityModule,
     CoreComponents,
     ScrollingModule,
-    AngularSvgIconModule.forRoot(),
     CastModule,
     AlertsModule,
     TruecommandModule,
@@ -114,7 +112,6 @@ import { LocaleService } from 'app/services/locale.service';
   providers: [
     LanguageService,
     LocaleService,
-    SvgIconRegistryService,
   ],
   exports: [
     ViewControllerComponent,

@@ -4083,11 +4083,6 @@ angular-resizable-element@~3.3.0:
   dependencies:
     tslib "^1.9.0"
 
-angular-svg-icon@~9.0.0:
-  version "9.0.0"
-  resolved "https://registry.yarnpkg.com/angular-svg-icon/-/angular-svg-icon-9.0.0.tgz#2713a0fb223c40c0735b4f1311958bca56fbf119"
-  integrity sha512-qnVuoNcbxoX6vbuiDcyQ9S84xu6cdNbqZ86sy8srY+SmyJRSfDnDHc7E++8IaT9/M7VY16JXQsUATqM70vU8/g==
-
 angular2-qrcode@~2.0.3:
   version "2.0.3"
   resolved "https://registry.yarnpkg.com/angular2-qrcode/-/angular2-qrcode-2.0.3.tgz#8a44d8035bc7d5bdc2e53473877d8378912f4db7"
@@ -9834,6 +9829,7 @@ ngx-skeleton-loader@~5.0.0:
   dependencies:
     perf-marks "^1.13.4"
     tslib "^2.0.0"
+
 ngx-translate-messageformat-compiler@~5.0.1:
   version "5.0.1"
   resolved "https://registry.yarnpkg.com/ngx-translate-messageformat-compiler/-/ngx-translate-messageformat-compiler-5.0.1.tgz#c9304b83440f24d6dfa33c0413dbb93668ffd0e6"
