@@ -51,8 +51,6 @@ def on_the_dashboard_click_on_apps(driver):
 @then('the Apps page load, select pool')
 def the_apps_page_load_select_pool(driver):
     """the Apps page load, select pool."""
-    assert wait_on_element(driver, 10, '//div[contains(text(),"Available Applications")]', 'clickable')
-    driver.find_element_by_xpath('//div[contains(text(),"Available Applications")]').click()
     assert wait_on_element(driver, 7, '//div[contains(.,"Available Applications")]')
     assert wait_on_element(driver, 7, '//h1[contains(.,"Choose a pool for Apps")]')
     assert wait_on_element(driver, 5, '//mat-select[@ix-auto="select__Pools"]', 'clickable')
@@ -98,8 +96,8 @@ def open_the_installed_applications_page(driver):
     driver.find_element_by_xpath('//span[contains(.,"Launch Docker Image")]').click()
     if wait_on_element(driver, 3, '//*[contains(.,"Please wait")]'):
         assert wait_on_element_disappear(driver, 120, '//*[contains(.,"Please wait")]')
-    assert wait_on_element(driver, 10, '//div[@class="ix-slidein-title-bar"]//mat-icon[contains(.,"cancel")]', 'clickable')
-    driver.find_element_by_xpath('//div[@class="ix-slidein-title-bar"]//mat-icon[contains(.,"cancel")]').click()
+    assert wait_on_element(driver, 10, '//mat-icon[contains(.,"cancel")]', 'clickable')
+    driver.find_element_by_xpath('//mat-icon[contains(.,"cancel")]').click()
     assert wait_on_element(driver, 10, '//button[@ix-auto-type="button"]//span[contains(text(),"Settings")]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto-type="button"]//span[contains(text(),"Settings")]').click()
     assert wait_on_element(driver, 10, '//span[contains(text(),"Advanced Settings")]', 'clickable')
@@ -121,8 +119,8 @@ def open_the_manage_docker_images_page(driver):
     driver.find_element_by_xpath('//span[contains(.,"Launch Docker Image")]').click()
     if wait_on_element(driver, 3, '//*[contains(.,"Please wait")]'):
         assert wait_on_element_disappear(driver, 120, '//*[contains(.,"Please wait")]')
-    assert wait_on_element(driver, 10, '//div[@class="ix-slidein-title-bar"]//mat-icon[contains(.,"cancel")]', 'clickable')
-    driver.find_element_by_xpath('//div[@class="ix-slidein-title-bar"]//mat-icon[contains(.,"cancel")]').click()
+    assert wait_on_element(driver, 10, '//mat-icon[contains(.,"cancel")]', 'clickable')
+    driver.find_element_by_xpath('//mat-icon[contains(.,"cancel")]').click()
     assert wait_on_element(driver, 10, '//button[@ix-auto-type="button"]//span[contains(text(),"Settings")]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto-type="button"]//span[contains(text(),"Settings")]').click()
     assert wait_on_element(driver, 10, '//span[contains(text(),"Advanced Settings")]', 'clickable')
@@ -143,8 +141,8 @@ def open_the_manage_catalogs_page(driver):
     driver.find_element_by_xpath('//span[contains(.,"Launch Docker Image")]').click()
     if wait_on_element(driver, 3, '//*[contains(.,"Please wait")]'):
         assert wait_on_element_disappear(driver, 120, '//*[contains(.,"Please wait")]')
-    assert wait_on_element(driver, 10, '//div[@class="ix-slidein-title-bar"]//mat-icon[contains(.,"cancel")]', 'clickable')
-    driver.find_element_by_xpath('//div[@class="ix-slidein-title-bar"]//mat-icon[contains(.,"cancel")]').click()
+    assert wait_on_element(driver, 10, '//mat-icon[contains(.,"cancel")]', 'clickable')
+    driver.find_element_by_xpath('//mat-icon[contains(.,"cancel")]').click()
     assert wait_on_element(driver, 10, '//button[@ix-auto-type="button"]//span[contains(text(),"Settings")]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto-type="button"]//span[contains(text(),"Settings")]').click()
     assert wait_on_element(driver, 10, '//span[contains(text(),"Advanced Settings")]', 'clickable')
