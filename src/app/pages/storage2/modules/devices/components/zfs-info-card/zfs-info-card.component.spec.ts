@@ -83,7 +83,7 @@ describe('ZfsInfoCardComponent', () => {
 
   it('shows errors of the current disk', () => {
     const parent = spectator.query(byText('Parent:', { exact: true }));
-    expect(parent.nextElementSibling).toHaveText('Mirror-0');
+    expect(parent.nextElementSibling).toHaveText('MIRROR-0');
 
     const readErrors = spectator.query(byText('Read Errors:', { exact: true }));
     expect(readErrors.nextElementSibling).toHaveText('3');
