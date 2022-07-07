@@ -7,7 +7,7 @@
     <div>
       <div class="details-item" *ngIf="topologyParentItem">
         <span class="label">{{ 'Parent' | translate }}:</span>
-        <span class="value">{{ topologyParentItem.name }}</span>
+        <span class="value">{{ topologyParentItem.name | titlecase }}</span>
       </div>
       <div class="details-item">
         <span class="label">{{ 'Read Errors' | translate }}:</span>
