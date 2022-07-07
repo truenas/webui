@@ -2,14 +2,12 @@
 @import '~assets/styles/mixins/buttons';
 
 @mixin details-cards {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
+  display: grid;
+  grid-gap: 8px;
+  grid-template-columns: repeat(auto-fill, minmax(450px, 1fr));
 
-  > * {
-    flex: 1;
-    max-width: 620px;
-    min-width: 420px;
+  @media #{$media-gt-lg} {
+    grid-template-columns: repeat(auto-fill, minmax(600px, 1fr));
   }
 }
 
