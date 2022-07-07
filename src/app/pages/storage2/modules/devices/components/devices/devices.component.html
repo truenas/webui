@@ -17,6 +17,8 @@
           [ixTreeNodeDefDataSource]="dataSource"
           (click)="onRowSelected(disk, $event)"
           [class.selected]="disk.guid === selectedItem?.guid"
+          [routerLink]="['/storage2', poolId, 'devices', disk.guid]"
+          routerLinkActive="selected"
         >
           <button mat-icon-button disabled></button>
           {{ disk.disk || disk.guid }}
@@ -30,6 +32,8 @@
             class="disk-nested-tree-root-node"
             (click)="onRowSelected(disk, $event)"
             [class.selected]="disk.guid === selectedItem?.guid"
+            [routerLink]="['/storage2', poolId, 'devices', disk.guid]"
+            routerLinkActive="selected"
           >
             <button
               mat-icon-button

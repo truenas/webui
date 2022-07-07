@@ -131,9 +131,9 @@ export const rootRouterConfig: Routes = [{
   },
   ],
 },
-{
-  path: '**',
-  redirectTo: 'dashboard',
-  pathMatch: 'full',
-},
+// {
+//   path: '**',
+//   redirectTo: 'dashboard',
+//   pathMatch: 'full',
+// },
 ];

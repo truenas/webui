@@ -21,6 +21,7 @@ export class DevicesComponent implements OnInit {
   topology: PoolTopology;
   selectedItem: VDev;
   dataSource: IxNestedTreeDataSource<VDev>;
+  poolId: string | null;
   treeControl = new NestedTreeControl<VDev, string>((vdev) => vdev.children, {
     trackBy: (vdev) => vdev.guid,
   });
@@ -40,8 +41,8 @@ export class DevicesComponent implements OnInit {
 
   ngOnInit(): void {
     this.loader.open();
-    const poolId = this.route.snapshot.paramMap.get('poolId');
-    this.ws.call('pool.query', [[['id', '=', Number(poolId)]]]).pipe(untilDestroyed(this)).subscribe(
+    this.poolId = this.route.snapshot.paramMap.get('poolId');
+    this.ws.call('pool.query', [[['id', '=', Number(this.poolId)]]]).pipe(untilDestroyed(this)).subscribe(
       (pools) => {
         this.topology = pools[0].topology;
         this.treeControl.dataNodes = this.topology.data;

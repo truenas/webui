@@ -8,7 +8,10 @@ export const routes: Routes = [
     pathMatch: 'full',
     data: { title: 'Devices' },
     component: DevicesComponent,
-    children: [],
+  },
+  {
+    path: ':guid',
+    component: DevicesComponent,
   },
 ];
 
