@@ -15,11 +15,11 @@
 
   <ix-zfs-health-card [pool]="pool"></ix-zfs-health-card>
 
-  <ix-widget-usage
+  <ix-pool-usage-card
     [loading]="isVolumeDataLoading"
     [poolState]="pool"
     [volumeData]="volumeData"
-  ></ix-widget-usage>
+  ></ix-pool-usage-card>
   <ix-widget-topology
     [poolState]="pool"
     [loading]="false"
