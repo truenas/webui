@@ -4,6 +4,7 @@ import {
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { pluck } from 'rxjs/operators';
 import { VDevType } from 'app/enums/v-dev-type.enum';
 import { PoolTopology } from 'app/interfaces/pool.interface';
 import { VDev } from 'app/interfaces/storage.interface';
@@ -50,6 +51,15 @@ export class DevicesComponent implements OnInit {
         this.selectFirstNode();
         this.loader.close();
         this.cdr.markForCheck();
+
+        this.route.params.pipe(
+          pluck('guid'),
+          untilDestroyed(this),
+        ).subscribe((guid) => {
+          this.selectedItem = this.treeControl.dataNodes[0].children.find((child) => {
+            return child.guid === guid;
+          });
+        });
       },
     );
   }
@@ -71,11 +81,6 @@ export class DevicesComponent implements OnInit {
     const disk = this.treeControl.dataNodes[0];
     this.treeControl.expand(disk);
     this.selectedItem = disk;
-  }
-
-  onRowSelected(vdev: VDev, event: MouseEvent): void {
-    event.stopPropagation();
-    this.selectedItem = vdev;
   }
 
   onSearch(query: string): void {

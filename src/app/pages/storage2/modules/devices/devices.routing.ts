@@ -5,13 +5,14 @@ import { DevicesComponent } from 'app/pages/storage2/modules/devices/components/
 export const routes: Routes = [
   {
     path: '',
-    pathMatch: 'full',
     data: { title: 'Devices' },
-    component: DevicesComponent,
-  },
-  {
-    path: ':guid',
-    component: DevicesComponent,
+    children: [
+      {
+        path: ':guid',
+        pathMatch: 'full',
+        component: DevicesComponent,
+      },
+    ],
   },
 ];
 
