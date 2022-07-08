@@ -29,15 +29,14 @@ const maxPct = 80;
 
 @UntilDestroy()
 @Component({
-  selector: 'ix-pool-usage-card',
-  templateUrl: './pool-usage-card.component.html',
-  styleUrls: ['./pool-usage-card.component.scss'],
+  selector: 'ix-widget-usage',
+  templateUrl: './widget-usage.component.html',
+  styleUrls: ['./widget-usage.component.scss'],
 })
-export class PoolUsageCardComponent implements OnInit, OnChanges {
+export class WidgetUsageComponent implements OnInit, OnChanges {
   @Input() poolState: Pool;
   @Input() volumeData: VolumeData;
   @Input() loading = true;
-
   private utils: WidgetUtils;
   readonly usageHealthLevel = UsageHealthLevel;
 

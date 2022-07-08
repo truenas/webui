@@ -1,46 +1,32 @@
 @import '~assets/styles/mixins/cards';
-@import '~assets/styles/mixins/buttons';
 @import '~assets/styles/mixins/animations';
 
-.healthy {
-  color: var(--green);
+.card {
+  @include details-card();
 }
 
-.warning {
-  color: var(--magenta);
-}
+.pool-icon {
+  &.icon-online {
+    color: var(--green);
+  }
 
-.error {
-  color: var(--red);
-}
+  &.icon-warning {
+    color: var(--orange);
+  }
 
-.error,
-.warning ,
-.healthy {
-  display: flex;
-  margin: 0 8px;
-}
+  &.icon-faulted {
+    color: var(--blue);
+  }
 
-mat-card-content {
-  display: flex;
-  flex-direction: column;
-  min-width: 550px;
-  width: 100%;
-}
-
-.content-container {
-  min-height: 300px;
+  &.icon-error {
+    color: var(--red);
+  }
 }
 
 .vdev-line {
   display: flex;
   justify-content: space-between;
-  margin: 15px;
-}
-
-.mat-toolbar-row {
-  border-bottom: 2px solid var(--contrast-lighter);
-  padding: 36px 20px;
+  margin: 12px 0;
 }
 
 .loader-caption {

@@ -144,27 +144,27 @@ describe('WidgetTopologyComponent', () => {
   });
 
   it('rendering status icon', () => {
-    expect(spectator.query('.healthy mat-icon')).toHaveText('check_circle');
+    expect(spectator.query('mat-card-header mat-icon')).toHaveText('check_circle');
 
     spectator.setInput('poolState', { healthy: false, status: 'ONLINE' } as unknown as Pool);
-    expect(spectator.query('.warning mat-icon')).toHaveText('warning');
+    expect(spectator.query('mat-card-header mat-icon')).toHaveText('warning');
 
     spectator.setInput('poolState', { healthy: true, status: 'OFFLINE' } as unknown as Pool);
-    expect(spectator.query('.warning mat-icon')).toHaveText('warning');
+    expect(spectator.query('mat-card-header mat-icon')).toHaveText('warning');
 
     spectator.setInput('poolState', { healthy: true, status: 'REMOVED' } as unknown as Pool);
-    expect(spectator.query('.error mat-icon')).toHaveText('cancel');
+    expect(spectator.query('mat-card-header mat-icon')).toHaveText('cancel');
 
     spectator.setInput('poolState', { healthy: true, status: 'FAULTED' } as unknown as Pool);
-    expect(spectator.query('.error mat-icon')).toHaveText('cancel');
+    expect(spectator.query('mat-card-header mat-icon')).toHaveText('cancel');
   });
 
   it('rendering component when change "loading"', () => {
     spectator.setInput('loading', true);
     expect(spectator.queryAll('.vdev-value').length).toEqual(0);
-    expect(spectator.queryAll('mat-toolbar-row mat-icon').length).toEqual(0);
+    expect(spectator.queryAll('mat-card-header mat-icon').length).toEqual(0);
     spectator.setInput('loading', false);
     expect(spectator.queryAll('.vdev-value').length).toEqual(6);
-    expect(spectator.queryAll('mat-toolbar-row mat-icon').length).toEqual(1);
+    expect(spectator.queryAll('mat-card-header mat-icon').length).toEqual(1);
   });
 });

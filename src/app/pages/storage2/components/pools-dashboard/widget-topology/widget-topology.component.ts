@@ -7,7 +7,6 @@ import { TranslateService } from '@ngx-translate/core';
 import { PoolStatus } from 'app/enums/pool-status.enum';
 import { Pool, PoolTopology } from 'app/interfaces/pool.interface';
 import { VDev } from 'app/interfaces/storage.interface';
-import { WidgetComponent } from 'app/pages/dashboard/components/widget/widget.component';
 import { WidgetUtils } from 'app/pages/dashboard/utils/widget-utils';
 
 interface TopologyState {
@@ -35,7 +34,7 @@ const mixedDev = 'Mixed Capacity VDEVs';
   templateUrl: './widget-topology.component.html',
   styleUrls: ['./widget-topology.component.scss'],
 })
-export class WidgetTopologyComponent extends WidgetComponent implements OnInit, OnChanges {
+export class WidgetTopologyComponent implements OnInit, OnChanges {
   @Input() poolState: Pool;
   @Input() loading = true;
   readonly topologyHealthLevel = TopologyHealthLevel;
@@ -59,7 +58,6 @@ export class WidgetTopologyComponent extends WidgetComponent implements OnInit, 
     public router: Router,
     public translate: TranslateService,
   ) {
-    super(translate);
     this.utils = new WidgetUtils();
   }
 
