@@ -1,0 +1,107 @@
+<div *ngIf="rendered" class="widget" fxLayout="row" fxLayoutAlign="center center">
+  <div class="card-container">
+    <mat-card fxLayout="row" fxLayoutAlign="center center">
+      <mat-card-content #carouselparent>
+        <mat-toolbar-row [class.drag-handle]="showReorderHandle" fxLayout="row" fxLayoutAlign="space-between center">
+          <ng-content [select]="[cdkDragHandle]"></ng-content>
+          <div fxLayout="row" fxLayoutAlign="start center">
+            <h3 class="mat-card-title-text">
+              <div class="card-title-text" [class.drag-handle]="showReorderHandle">
+                <span class="grip" *ngIf="showReorderHandle"></span>
+                <span>{{ 'Topology' | translate }}</span>
+              </div>
+            </h3>
+  
+            <span class="loader-state" *ngIf="loading"></span>
+            <ng-container *ngIf="!loading" [ngSwitch]="topologyState.health">
+              <span *ngSwitchCase="topologyHealthLevel.Safe" class="healthy">
+                <mat-icon>check_circle</mat-icon>
+              </span>
+              <span *ngSwitchCase="topologyHealthLevel.Warn" class="warning">
+                <mat-icon>warning</mat-icon>
+              </span>
+              <span *ngSwitchCase="topologyHealthLevel.Error" class="error">
+                <mat-icon>cancel</mat-icon>
+              </span>
+              <span *ngSwitchDefault class="error">
+                <mat-icon>cancel</mat-icon>
+              </span>
+            </ng-container>
+          </div>
+          <div class="controls">
+            <span class="loader-button" *ngIf="loading"></span>
+            <button
+              *ngIf="!loading"
+              mat-button
+              ix-auto-type="button"
+              (click)="router.navigate(['/', 'storage2', this.poolState.id, 'devices'])"
+            >{{ 'Manage Devices' | translate }}</button>
+          </div>
+        </mat-toolbar-row>
+        <div class="content-container">
+          <div class="vdev-line">
+            <b>{{'Data VDEVs' | translate}}</b>
+            <span class="loader-caption" *ngIf="loading"></span>
+            <div *ngIf="!loading" fxLayout="row" fxLayoutAlign="center center">
+              <span *ngIf="topologyState.data === mixedDev" class="warning">
+                <mat-icon>warning</mat-icon>
+              </span>
+              <span class="vdev-value">{{topologyState.data}}</span>
+            </div>
+          </div>
+          <div class="vdev-line">
+            <b>{{'Metadata VDEVs' | translate}}</b>
+            <span class="loader-caption" *ngIf="loading"></span>
+            <div *ngIf="!loading" fxLayout="row" fxLayoutAlign="center center">
+              <span *ngIf="topologyState.metadata === mixedDev" class="warning">
+                <mat-icon>warning</mat-icon>
+              </span>
+              <span class="vdev-value">{{topologyState.metadata}}</span>
+            </div>
+          </div>
+          <div class="vdev-line">
+            <b>{{'Log VDEVs' | translate}}</b>
+            <span class="loader-caption" *ngIf="loading"></span>
+            <div *ngIf="!loading" fxLayout="row" fxLayoutAlign="center center">
+              <span *ngIf="topologyState.log === mixedDev" class="warning">
+                <mat-icon>warning</mat-icon>
+              </span>
+              <span class="vdev-value">{{topologyState.log}}</span>
+            </div>
+          </div>
+          <div class="vdev-line">
+            <b>{{'Cache VDEVs' | translate}}</b>
+            <span class="loader-caption" *ngIf="loading"></span>
+            <div *ngIf="!loading" fxLayout="row" fxLayoutAlign="center center">
+              <span *ngIf="topologyState.cache === mixedDev" class="warning">
+                <mat-icon>warning</mat-icon>
+              </span>
+              <span class="vdev-value">{{topologyState.cache}}</span>
+            </div>
+          </div>
+          <div class="vdev-line">
+            <b>{{'Spare VDEVs' | translate}}</b>
+            <span class="loader-caption" *ngIf="loading"></span>
+            <div *ngIf="!loading" fxLayout="row" fxLayoutAlign="center center">
+              <span *ngIf="topologyState.spare === mixedDev" class="warning">
+                <mat-icon>warning</mat-icon>
+              </span>
+              <span class="vdev-value">{{topologyState.spare}}</span>
+            </div>
+          </div>
+          <div class="vdev-line">
+            <b>{{'Dedup VDEVs' | translate}}</b>
+            <span class="loader-caption" *ngIf="loading"></span>
+            <div *ngIf="!loading" fxLayout="row" fxLayoutAlign="center center">
+              <span *ngIf="topologyState.dedup === mixedDev" class="warning">
+                <mat-icon>warning</mat-icon>
+              </span>
+              <span class="vdev-value">{{topologyState.dedup}}</span>
+            </div>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>
+

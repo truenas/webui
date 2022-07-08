@@ -2,21 +2,9 @@
   <h2 class="pool-name">{{ pool.name }}</h2>
   <div class="pool-actions">
     <button
-      *ngIf="!pool.is_upgraded"
-      mat-button
-      color="primary"
-      (click)="onUpgrade()"
-    >{{ 'Upgrade' | translate }}</button>
-
-    <button
       mat-button
       (click)="onExport()"
     >{{ 'Export/Disconnect' | translate }}</button>
-
-    <button
-      mat-button
-      (click)="onExpand()"
-    >{{ 'Expand' | translate }}</button>
   </div>
 </div>
 
@@ -27,11 +15,13 @@
 
   <ix-zfs-health-card [pool]="pool"></ix-zfs-health-card>
 
-  <ix-pool-usage-card
+  <ix-widget-usage
     [loading]="isVolumeDataLoading"
     [poolState]="pool"
     [volumeData]="volumeData"
-  ></ix-pool-usage-card>
-
-  <ix-disk-health-card [pool]="pool"></ix-disk-health-card>
+  ></ix-widget-usage>
+  <ix-widget-topology
+    [poolState]="pool"
+    [loading]="false"
+  ></ix-widget-topology>
 </div>

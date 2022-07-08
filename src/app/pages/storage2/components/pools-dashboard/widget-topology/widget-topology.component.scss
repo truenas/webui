@@ -2,14 +2,6 @@
 @import '~assets/styles/mixins/buttons';
 @import '~assets/styles/mixins/animations';
 
-:host {
-  display: flex;
-}
-
-.card-container {
-  flex: 1;
-}
-
 .healthy {
   color: var(--green);
 }
@@ -26,18 +18,24 @@
 .warning ,
 .healthy {
   display: flex;
-  margin-left: 8px;
+  margin: 0 8px;
 }
 
 mat-card-content {
   display: flex;
   flex-direction: column;
+  min-width: 550px;
   width: 100%;
 }
 
 .content-container {
   min-height: 300px;
-  padding: 20px 30px 50px !important;
+}
+
+.vdev-line {
+  display: flex;
+  justify-content: space-between;
+  margin: 15px;
 }
 
 .mat-toolbar-row {
@@ -45,44 +43,11 @@ mat-card-content {
   padding: 36px 20px;
 }
 
-.warning-container {
-  display: flex;
-}
-
-.captions {
-  padding-top: 25px;
-}
-
-.capacity-caption {
-  border-bottom: 2px solid var(--contrast-lighter);
-  font-size: 140%;
-}
-
-.list-caption {
-  margin: 0;
-}
-
-.item-caption {
-  margin: 10px -10px;
-}
-
-.value-caption {
-  margin-left: 5px;
-}
-
-.link {
-  color: var(--primary);
-  cursor: pointer;
-  margin-top: 25px;
-  text-decoration: underline;
-}
-
 .loader-caption {
   @include loader-block();
   @include blink();
   display: inline-block;
-  margin-left: 5px;
-  width: 50px;
+  width: 150px;
 }
 
 .loader-state {
@@ -94,10 +59,10 @@ mat-card-content {
   width: 25px;
 }
 
-.loader-chart {
+.loader-button {
   @include loader-block();
   @include blink();
   display: inline-block;
-  height: 200px;
-  width: 200px;
+  height: 35px;
+  width: 140px;
 }
