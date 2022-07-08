@@ -39,6 +39,7 @@ import { WidgetTopologyComponent } from 'app/pages/storage2/components/pools-das
 import { routing } from 'app/pages/storage2/storage2.routing';
 import { DashboardPoolComponent } from './components/dashboard-pool/dashboard-pool.component';
 import { ExportDisconnectModalComponent } from './components/dashboard-pool/export-disconnect-modal/export-disconnect-modal.component';
+import { DiskHealthCardComponent } from './components/disk-health-card/disk-health-card.component';
 import { ZfsHealthCardComponent } from './components/zfs-health-card/zfs-health-card.component';
 
 @NgModule({
@@ -87,6 +88,7 @@ import { ZfsHealthCardComponent } from './components/zfs-health-card/zfs-health-
     ZfsHealthCardComponent,
     DashboardPoolComponent,
     ExportDisconnectModalComponent,
+    DiskHealthCardComponent,
   ],
   providers: [
     FormatDateTimePipe,

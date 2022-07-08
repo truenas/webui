@@ -37,6 +37,7 @@ export class PoolUsageCardComponent implements OnInit, OnChanges {
   @Input() poolState: Pool;
   @Input() volumeData: VolumeData;
   @Input() loading = true;
+
   private utils: WidgetUtils;
   readonly usageHealthLevel = UsageHealthLevel;
 
