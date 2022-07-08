@@ -6,7 +6,7 @@ import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { PoolStatus } from 'app/enums/pool-status.enum';
 import { Pool, PoolTopology } from 'app/interfaces/pool.interface';
-import { VDev } from 'app/interfaces/storage.interface';
+import { Disk, VDev } from 'app/interfaces/storage.interface';
 import { WidgetUtils } from 'app/pages/dashboard/utils/widget-utils';
 
 interface TopologyState {
@@ -36,6 +36,7 @@ const mixedDev = 'Mixed Capacity VDEVs';
 })
 export class WidgetTopologyComponent implements OnInit, OnChanges {
   @Input() poolState: Pool;
+  @Input() diskDictionary: { [key: string]: Disk } = {};
   @Input() loading = true;
   readonly topologyHealthLevel = TopologyHealthLevel;
   private utils: WidgetUtils;
@@ -101,18 +102,20 @@ export class WidgetTopologyComponent implements OnInit, OnChanges {
     let isMix = false;
     let wide = 0;
     const type = devs[0]?.type;
-    const size = devs[0]?.children.length ? devs[0]?.children[0]?.stats?.bytes[2] : devs[0]?.stats?.bytes[2];
+    const size = devs[0]?.children.length
+      ? this.diskDictionary[devs[0]?.children[0]?.disk]?.size
+      : this.diskDictionary[devs[0]?.disk]?.size;
 
     devs.forEach((dev) => {
       if (dev.type && dev.type !== type) {
         isMix = true;
       }
-      if (!dev.children.length && dev.stats.bytes[2] && dev.stats.bytes[2] !== size) {
+      if (!dev.children.length && this.diskDictionary[dev.disk]?.size !== size) {
         isMix = true;
       }
       dev.children.forEach((child) => {
         wide += 1;
-        if (child.stats.bytes[2] && child.stats.bytes[2] !== size) {
+        if (this.diskDictionary[child.disk]?.size !== size) {
           isMix = true;
         }
       });

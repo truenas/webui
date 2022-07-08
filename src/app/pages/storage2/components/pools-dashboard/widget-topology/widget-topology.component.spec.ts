@@ -1,6 +1,7 @@
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { Pool } from 'app/interfaces/pool.interface';
+import { Disk } from 'app/interfaces/storage.interface';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { WidgetTopologyComponent } from 'app/pages/storage2/components/pools-dashboard/widget-topology/widget-topology.component';
 
@@ -28,96 +29,51 @@ describe('WidgetTopologyComponent', () => {
             data: [
               {
                 type: 'RAIDZ1',
-                stats: { bytes: [0, 73728, 4694016, 0, 0, 0, 0] },
-                children: [
-                  {
-                    type: 'DISK',
-                    stats: { bytes: [0, 24576, 1564672, 0, 0, 0, 0] },
-                  },
-                  {
-                    type: 'DISK',
-                    stats: { bytes: [0, 24576, 1564672, 0, 0, 0, 0] },
-                  },
-                  {
-                    type: 'DISK',
-                    stats: { bytes: [0, 24576, 1564672, 0, 0, 0, 0] },
-                  },
-                ],
+                children: [{ type: 'DISK', disk: 'sda' }, { type: 'DISK', disk: 'sdb' }, { type: 'DISK', disk: 'sdc' }],
               },
               {
                 type: 'RAIDZ1',
-                stats: { bytes: [0, 73728, 3031040, 0, 0, 0, 0] },
-                children: [
-                  {
-                    type: 'DISK',
-                    stats: { bytes: [0, 24576, 1564672, 0, 0, 0, 0] },
-                  },
-                  {
-                    type: 'DISK',
-                    stats: { bytes: [0, 24576, 1564672, 0, 0, 0, 0] },
-                  },
-                ],
+                children: [{ type: 'DISK', disk: 'sdd' }, { type: 'DISK', disk: 'sde' }],
               },
             ],
             log: [
               {
                 type: 'MIRROR',
-                stats: { bytes: [0, 49152, 3031040, 0, 0, 0, 0] },
-                children: [
-                  {
-                    type: 'DISK',
-                    stats: { bytes: [0, 24576, 1515520, 0, 0, 0, 0] },
-                  },
-                  {
-                    type: 'DISK',
-                    stats: { bytes: [0, 24576, 1515520, 0, 0, 0, 0] },
-                  },
-                ],
+                children: [{ type: 'DISK', disk: 'sdf' }, { type: 'DISK', disk: 'sdg' }],
               },
             ],
             cache: [
-              {
-                type: 'DISK',
-                stats: { bytes: [0, 483328, 28672, 0, 0, 0, 0] },
-                children: [],
-              },
-              {
-                type: 'DISK',
-                stats: { bytes: [0, 483328, 28672, 0, 0, 0, 0] },
-                children: [],
-              },
+              { type: 'DISK', disk: 'sdh', children: [] },
+              { type: 'DISK', disk: 'sdi', children: [] },
             ],
             spare: [
-              {
-                type: 'DISK',
-                stats: { bytes: [0, 483328, 28672, 0, 0, 0, 0] },
-                children: [],
-              },
-              {
-                type: 'DISK',
-                stats: { bytes: [0, 483328, 14336, 0, 0, 0, 0] },
-                children: [],
-              },
+              { type: 'DISK', disk: 'sdj', children: [] },
+              { type: 'DISK', disk: 'sdk', children: [] },
             ],
             special: [
               {
                 type: 'MIRROR',
-                stats: { bytes: [0, 49152, 6250496, 0, 0, 0, 0] },
-                children: [
-                  {
-                    type: 'DISK',
-                    stats: { bytes: [0, 24576, 3125248, 0, 0, 0, 0] },
-                  },
-                  {
-                    type: 'DISK',
-                    stats: { bytes: [0, 24576, 1562624, 0, 0, 0, 0] },
-                  },
-                ],
+                children: [{ type: 'DISK', disk: 'sdl' }, { type: 'DISK', disk: 'sdm' }],
               },
             ],
             dedup: [],
           },
         } as unknown as Pool,
+        diskDictionary: {
+          sda: { size: 1073741824 * 2 },
+          sdb: { size: 1073741824 * 2 },
+          sdc: { size: 1073741824 * 2 },
+          sdd: { size: 1073741824 * 2 },
+          sde: { size: 1073741824 * 2 },
+          sdf: { size: 1048576 * 5 },
+          sdg: { size: 1048576 * 5 },
+          sdh: { size: 1048576 * 6 },
+          sdi: { size: 1048576 * 6 },
+          sdj: { size: 1048576 * 4 },
+          sdk: { size: 1048576 * 3 },
+          sdl: { size: 1073741824 * 2 },
+          sdm: { size: 1073741824 * 1 },
+        } as unknown as { [key: string]: Disk },
       },
     });
   });
@@ -130,13 +86,13 @@ describe('WidgetTopologyComponent', () => {
     expect(values.length).toEqual(6);
 
     expect(captions[0]).toHaveText('Data VDEVs');
-    expect(values[0]).toHaveText('2 x RAIDZ1 | 5 wide | 1.49MiB');
+    expect(values[0]).toHaveText('2 x RAIDZ1 | 5 wide | 2.00GiB');
     expect(captions[1]).toHaveText('Metadata');
     expect(values[1]).toHaveText('Mixed Capacity VDEVs');
     expect(captions[2]).toHaveText('Log VDEVs');
-    expect(values[2]).toHaveText('1 x MIRROR | 2 wide | 1.45MiB');
+    expect(values[2]).toHaveText('1 x MIRROR | 2 wide | 5.00MiB');
     expect(captions[3]).toHaveText('Cache VDEVs');
-    expect(values[3]).toHaveText('2 x 28.00KiB');
+    expect(values[3]).toHaveText('2 x 6.00MiB');
     expect(captions[4]).toHaveText('Spare VDEVs');
     expect(values[4]).toHaveText('Mixed Capacity VDEVs');
     expect(captions[5]).toHaveText('Dedup VDEVs');
