@@ -69,7 +69,6 @@ export class DashboardPoolComponent implements OnInit {
         });
         this.volumeData = vd[this.pool.name];
         this.isVolumeDataLoading = false;
-        this.cdr.detectChanges();
         this.cdr.markForCheck();
       });
   }
