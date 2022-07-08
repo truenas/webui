@@ -1,0 +1,73 @@
+@import '~assets/styles/mixins/grid';
+
+:host {
+  align-items: center;
+  display: flex;
+  flex: 1;
+  font-weight: 500;
+  min-height: 48px;
+  padding: 0;
+}
+
+.tree-node-grid {
+  @include grid-row();
+  align-items: center;
+
+  .cell {
+    align-items: center;
+    display: inline-flex;
+    min-height: 48px;
+
+    &:first-child {
+      left: 0;
+      position: sticky;
+    }
+  }
+
+  .cell-status {
+    justify-content: center;
+    width: 70%;
+
+    span {
+      padding: 10px 20px;
+    }
+  }
+
+  .cell-name {
+    mat-icon {
+      padding: 5px;
+    }
+  }
+}
+
+// TODO: Fragile (at least with css selectors)
+:host-context(ix-tree-node:hover),
+:host-context(ix-tree-node.selected),
+:host-context(.disk-nested-tree-root-node:hover),
+:host-context(.disk-nested-tree-root-node.selected) {
+  .tree-node-grid {
+    background: linear-gradient(90deg, var(--hover-bg) 0%, var(--hover-bg) calc(100% - 11px), transparent 100%);
+  }
+
+  .tree-node-grid .icon-container {
+    background-color: var(--hover-bg);
+  }
+}
+
+$level-offset: 40px;
+$padding-left: 8px;
+
+::ng-deep {
+  @for $i from 1 through 10 {
+    ix-tree-node[aria-level="#{$i}"],
+    ix-nested-tree-node[aria-level="#{$i}"] {
+      .mat-icon-button:first-child {
+        left: $padding-left + $level-offset * ($i - 1);
+      }
+
+      ix-disk-node {
+        padding-left: $padding-left + $level-offset * ($i - 1);
+      }
+    }
+  }
+}

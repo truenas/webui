@@ -60,9 +60,9 @@ export class DevicesComponent implements OnInit {
         return findInTree([disk], (vdev) => {
           switch (vdev.type) {
             case VDevType.Disk:
-              return vdev.disk.toLowerCase().includes(query.toLowerCase());
+              return vdev.disk?.toLowerCase().includes(query.toLowerCase());
             case VDevType.Mirror:
-              return vdev.name.toLowerCase().includes(query.toLowerCase());
+              return vdev.name?.toLowerCase().includes(query.toLowerCase());
           }
         });
       }).filter(Boolean);
@@ -104,8 +104,22 @@ export class DevicesComponent implements OnInit {
           tap((disks) => {
             this.diskDictionary = _.keyBy(disks, (disk) => disk.devname);
             this.topology = pools[0].topology;
-            this.treeControl.dataNodes = this.topology.data;
-            this.createDataSource(this.topology.data);
+            const data = { children: this.topology.data, type: 'Data VDEVs', guid: 'data' } as unknown as VDev;
+            const cache = { children: this.topology.cache, type: 'Cache', guid: 'cache' } as unknown as VDev;
+            const log = { children: this.topology.log, type: 'Log', guid: 'log' } as unknown as VDev;
+            const spare = { children: this.topology.spare, type: 'Spare', guid: 'spare' } as unknown as VDev;
+            const special = { children: this.topology.special, type: 'Metadata', guid: 'special' } as unknown as VDev;
+            const dedup = { children: this.topology.dedup, type: 'Dedup', guid: 'dedup' } as unknown as VDev;
+            const devs = [];
+            if (data.children.length) devs.push(data);
+            if (cache.children.length) devs.push(cache);
+            if (log.children.length) devs.push(log);
+            if (spare.children.length) devs.push(spare);
+            if (special.children.length) devs.push(special);
+            if (dedup.children.length) devs.push(dedup);
+
+            this.treeControl.dataNodes = devs;
+            this.createDataSource(devs);
             this.selectFirstNode();
             this.loader.close();
             this.cdr.markForCheck();

@@ -19,6 +19,7 @@ import {
   DiskDetailsPanelComponent,
 } from 'app/pages/storage2/modules/devices/components/disk-details-panel/disk-details-panel.component';
 import { DiskInfoCardComponent } from 'app/pages/storage2/modules/devices/components/disk-info-card/disk-info-card.component';
+import { DiskNodeComponent } from 'app/pages/storage2/modules/devices/components/disk-node/disk-node.component';
 import {
   HardwareDiskEncryptionComponent,
 } from 'app/pages/storage2/modules/devices/components/hardware-disk-encryption/hardware-disk-encryption.component';
@@ -60,6 +61,7 @@ import { SmartInfoCardComponent } from './components/smart-info-card/smart-info-
     HardwareDiskEncryptionComponent,
     ManageDiskSedDialogComponent,
     SmartInfoCardComponent,
+    DiskNodeComponent,
     ZfsInfoCardComponent,
   ],
   providers: [

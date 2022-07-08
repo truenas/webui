@@ -9,45 +9,55 @@
     </div>
 
     <div class="disk-tree-wrapper">
-      <ix-tree class="disk-tree" [dataSource]="dataSource" [treeControl]="treeControl">
-        <ix-tree-node
-          *ixTreeNodeDef="let disk; dataSource: dataSource"
-          ixTreeNodeToggle
-          [ixTreeNodeToggleRecursive]="false"
-          [ixTreeNodeDefDataSource]="dataSource"
-          (click)="onRowSelected(disk, $event)"
-          [class.selected]="disk.guid === selectedItem?.guid"
-        >
-          <button mat-icon-button disabled></button>
-          {{ disk.disk || disk.guid }}
-        </ix-tree-node>
-
-        <ix-nested-tree-node
-          *ixTreeNodeDef="let disk; dataSource: dataSource, when: hasNestedChild"
-          [ixTreeNodeDefDataSource]="dataSource"
-        >
-          <div
-            class="disk-nested-tree-root-node"
+      <div class="disk-tree-inner">
+        <div class="disk-tree-header">
+          <div>
+            <span class="disk-name-header">{{ 'Device Name' | translate }}</span>
+          </div>
+          <div>{{ 'Status' | translate }}</div>
+          <div>{{ 'Capacity' | translate }}</div>
+          <div>{{ 'Errors' | translate }}</div>
+        </div>
+        <ix-tree class="disk-tree" [dataSource]="dataSource" [treeControl]="treeControl">
+          <ix-tree-node
+            *ixTreeNodeDef="let disk; dataSource: dataSource"
+            ixTreeNodeToggle
+            [ixTreeNodeToggleRecursive]="false"
+            [ixTreeNodeDefDataSource]="dataSource"
             (click)="onRowSelected(disk, $event)"
             [class.selected]="disk.guid === selectedItem?.guid"
           >
-            <button
-              mat-icon-button
-              ixTreeNodeToggle
-              (click)="$event.preventDefault()"
-              [attr.aria-label]="'Toggle {row}' | translate: { row: disk.guid }"
+            <button mat-icon-button disabled></button>
+            <ix-disk-node [disk]="disk" [size]="diskDictionary[disk.disk]?.size" [type]="diskDictionary[disk.disk]?.type"></ix-disk-node>
+          </ix-tree-node>
+
+          <ix-nested-tree-node
+            *ixTreeNodeDef="let disk; dataSource: dataSource, when: hasNestedChild"
+            [ixTreeNodeDefDataSource]="dataSource"
+          >
+            <div
+              class="disk-nested-tree-root-node"
+              (click)="onRowSelected(disk, $event)"
+              [class.selected]="disk.guid === selectedItem?.guid"
             >
-              <mat-icon class="mat-icon-rtl-mirror">
-                {{ treeControl.isExpanded(disk) ? 'expand_more' : 'chevron_right' }}
-              </mat-icon>
-            </button>
+              <button
+                mat-icon-button
+                ixTreeNodeToggle
+                (click)="$event.preventDefault()"
+                [attr.aria-label]="'Toggle {row}' | translate: { row: disk.guid }"
+              >
+                <mat-icon>
+                  {{ treeControl.isExpanded(disk) ? 'expand_more' : 'chevron_right' }}
+                </mat-icon>
+              </button>
+              <ix-disk-node [disk]="disk" [size]="diskDictionary[disk.disk]?.size" [type]="diskDictionary[disk.children[0].disk]?.type"></ix-disk-node>
 
-            {{ disk.disk || disk.guid }}
-          </div>
+            </div>
 
-          <ng-container *ngIf="treeControl.isExpanded(disk)" ixTreeNodeOutlet></ng-container>
-        </ix-nested-tree-node>
-      </ix-tree>
+            <ng-container *ngIf="treeControl.isExpanded(disk)" ixTreeNodeOutlet></ng-container>
+          </ix-nested-tree-node>
+        </ix-tree>
+      </div>
     </div>
   </div>
   <div class="details-container">
