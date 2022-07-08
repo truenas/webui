@@ -18,6 +18,7 @@ import { Timeout } from 'app/interfaces/timeout.interface';
 import { WidgetComponent } from 'app/pages/dashboard/components/widget/widget.component';
 import { SystemGeneralService, WebSocketService } from 'app/services';
 import { LocaleService } from 'app/services/locale.service';
+import { ProductImageService } from 'app/services/product-image.service';
 import { ThemeService } from 'app/services/theme/theme.service';
 import { AppState } from 'app/store';
 import { selectHaStatus, waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
@@ -78,6 +79,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
     private locale: LocaleService,
     public themeService: ThemeService,
     private store$: Store<AppState>,
+    private productImgServ: ProductImageService,
   ) {
     super(translate);
     this.configurable = false;
@@ -273,54 +275,10 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
     } else if (data.system_product.includes('CERTIFIED')) {
       this.certified = true;
     } else {
-      this.setTrueNasImage(data.system_product);
-    }
-  }
-
-  setTrueNasImage(sysProduct: string): void {
-    this.productEnclosure = 'rackmount';
-
-    if (sysProduct.includes('X10')) {
-      this.productImage = '/servers/X10.png';
-      this.productModel = 'X10';
-    } else if (sysProduct.includes('X20')) {
-      this.productImage = '/servers/X20.png';
-      this.productModel = 'X20';
-    } else if (sysProduct.includes('M30')) {
-      this.productImage = '/servers/M30.png';
-      this.productModel = 'M30';
-    } else if (sysProduct.includes('M40')) {
-      this.productImage = '/servers/M40.png';
-      this.productModel = 'M40';
-    } else if (sysProduct.includes('M50')) {
-      this.productImage = '/servers/M50.png';
-      this.productModel = 'M50';
-    } else if (sysProduct.includes('M60')) {
-      this.productImage = '/servers/M50.png';
-      this.productModel = 'M50';
-    } else if (sysProduct.includes('Z20')) {
-      this.productImage = '/servers/Z20.png';
-      this.productModel = 'Z20';
-    } else if (sysProduct.includes('Z35')) {
-      this.productImage = '/servers/Z35.png';
-      this.productModel = 'Z35';
-    } else if (sysProduct.includes('Z50')) {
-      this.productImage = '/servers/Z50.png';
-      this.productModel = 'Z50';
-    } else if (sysProduct.includes('R10')) {
-      this.productImage = '/servers/R10.png';
-      this.productModel = 'R10';
-    } else if (sysProduct.includes('R20')) {
-      this.productImage = '/servers/R20.png';
-      this.productModel = 'R20';
-    } else if (sysProduct.includes('R40')) {
-      this.productImage = '/servers/R40.png';
-      this.productModel = 'R40';
-    } else if (sysProduct.includes('R50')) {
-      this.productImage = '/servers/R50.png';
-      this.productModel = 'R50';
-    } else {
-      this.productImage = 'ix-original.svg';
+      const product = this.productImgServ.getServerProduct(data.system_product);
+      this.productImage = product ? `/servers/${product}.png` : 'ix-original.svg';
+      this.productModel = product || '';
+      this.productEnclosure = 'rackmount';
     }
   }
 
@@ -332,30 +290,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
       this.certified = true;
       return;
     }
-
-    switch (sysProduct) {
-      case 'FREENAS-MINI-2.0':
-      case 'FREENAS-MINI-3.0-E':
-      case 'FREENAS-MINI-3.0-E+':
-      case 'TRUENAS-MINI-3.0-E':
-      case 'TRUENAS-MINI-3.0-E+':
-        this.productImage = 'freenas_mini_cropped.png';
-        break;
-      case 'FREENAS-MINI-3.0-X':
-      case 'FREENAS-MINI-3.0-X+':
-      case 'TRUENAS-MINI-3.0-X':
-      case 'TRUENAS-MINI-3.0-X+':
-        this.productImage = 'freenas_mini_x_cropped.png';
-        break;
-      case 'FREENAS-MINI-XL':
-      case 'FREENAS-MINI-3.0-XL+':
-      case 'TRUENAS-MINI-3.0-XL+':
-        this.productImage = 'freenas_mini_xl_cropped.png';
-        break;
-      default:
-        this.productImage = '';
-        break;
-    }
+    this.productImage = this.productImgServ.getMiniImagePath(sysProduct) || '';
   }
 
   goToEnclosure(): void {

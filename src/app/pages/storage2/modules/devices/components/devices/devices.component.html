@@ -9,7 +9,7 @@
     </div>
 
     <div class="disk-tree-wrapper">
-      <ix-tree class="disk-tree" [dataSource]="dataSource" [treeControl]="treeControl" [trackBy]="trackByFn">
+      <ix-tree class="disk-tree" [dataSource]="dataSource" [treeControl]="treeControl">
         <ix-tree-node
           *ixTreeNodeDef="let disk; dataSource: dataSource"
           ixTreeNodeToggle
@@ -52,8 +52,10 @@
   </div>
   <div class="details-container">
     <ix-disk-details-panel
-      *ngIf="selectedItem && isDiskSelected"
-      [disk]="selectedItem"
+      *ngIf="selectedItem && isDiskSelected && diskDictionary[selectedItem.disk]"
+      [topologyItem]="selectedItem"
+      [topologyParentItem]="selectedParentItem"
+      [disk]="diskDictionary[selectedItem.disk]"
     ></ix-disk-details-panel>
   </div>
 </div>

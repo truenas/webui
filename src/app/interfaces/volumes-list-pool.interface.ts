@@ -3,7 +3,6 @@ import { Pool } from 'app/interfaces/pool.interface';
 import { VolumesListTableConfig } from 'app/pages/storage/volumes/volumes-list/volumes-list-table-config';
 
 export interface VolumesListPool extends Pool {
-  is_upgraded: boolean;
   children: VolumesListDataset[];
   volumesListTableConfig: VolumesListTableConfig;
   type: 'zpool';

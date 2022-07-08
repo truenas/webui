@@ -38,6 +38,11 @@ export interface Pool {
   status: PoolStatus;
   status_detail: string;
   topology: PoolTopology;
+
+  /**
+   * Available with extra is_upgraded=true
+   */
+  is_upgraded?: boolean;
 }
 
 export interface PoolTopology {

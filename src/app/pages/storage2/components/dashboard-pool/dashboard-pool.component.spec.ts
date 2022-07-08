@@ -14,9 +14,10 @@ import { DashboardPoolComponent } from 'app/pages/storage2/components/dashboard-
 import {
   ExportDisconnectModalComponent,
 } from 'app/pages/storage2/components/dashboard-pool/export-disconnect-modal/export-disconnect-modal.component';
+import { DiskHealthCardComponent } from 'app/pages/storage2/components/disk-health-card/disk-health-card.component';
 import {
-  WidgetUsageComponent,
-} from 'app/pages/storage2/components/pools-dashboard/widget-usage/widget-usage.component';
+  PoolUsageCardComponent,
+} from 'app/pages/storage2/components/pools-dashboard/pool-usage-card/pool-usage-card.component';
 import { ZfsHealthCardComponent } from 'app/pages/storage2/components/zfs-health-card/zfs-health-card.component';
 import { AppLoaderService, DialogService, WebSocketService } from 'app/services';
 
@@ -32,7 +33,8 @@ describe('DashboardPoolComponent', () => {
     declarations: [
       MockComponent(ZfsHealthCardComponent),
       MockComponent(ExportDisconnectModalComponent),
-      MockComponent(WidgetUsageComponent),
+      MockComponent(PoolUsageCardComponent),
+      MockComponent(DiskHealthCardComponent),
     ],
     providers: [
       mockProvider(MatDialog),
@@ -43,6 +45,7 @@ describe('DashboardPoolComponent', () => {
       }),
       mockWebsocket([
         mockCall('pool.dataset.query', []),
+        mockCall('pool.upgrade'),
         mockJob('pool.expand', fakeSuccessfulJob()),
       ]),
     ],
@@ -81,8 +84,24 @@ describe('DashboardPoolComponent', () => {
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
   });
 
+  it('shows an Upgrade button that upgrades pool with confirmation when pool is not upgraded', async () => {
+    const upgradeButton = await loader.getHarness(MatButtonHarness.with({ text: 'Upgrade' }));
+    await upgradeButton.click();
+
+    expect(spectator.inject(DialogService).confirm).toHaveBeenCalled();
+    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('pool.upgrade', [pool.id]);
+
+    expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
+  });
+
   it('shows a ZFS Health card for the pool', () => {
     const card = spectator.query(ZfsHealthCardComponent);
+    expect(card).toBeTruthy();
+    expect(card.pool).toBe(pool);
+  });
+
+  it('shows a disk health card for the pool', () => {
+    const card = spectator.query(DiskHealthCardComponent);
     expect(card).toBeTruthy();
     expect(card.pool).toBe(pool);
   });

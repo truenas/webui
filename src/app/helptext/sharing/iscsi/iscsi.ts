@@ -149,7 +149,7 @@ export const helptextSharingIscsi = {
 
   fieldset_extent_basic: T('Basic Info'),
   fieldset_extent_type: T('Type'),
-  fieldset_extent_options: T('Compatability'),
+  fieldset_extent_options: T('Compatibility'),
 
   extent_placeholder_name: T('Name'),
   extent_tooltip_name: T(

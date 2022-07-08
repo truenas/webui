@@ -2,7 +2,7 @@ import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject,
 } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
@@ -59,7 +59,6 @@ export class ManualTestDialogComponent {
     private ws: WebSocketService,
     private formBuilder: FormBuilder,
     private translate: TranslateService,
-    private dialogRef: MatDialogRef<ManualTestDialogComponent>,
     private dialogService: DialogService,
     private cdr: ChangeDetectorRef,
     @Inject(MAT_DIALOG_DATA) private params: ManualTestDialogParams,

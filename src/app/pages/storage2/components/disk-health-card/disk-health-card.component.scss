@@ -1,7 +1,12 @@
 @import '~assets/styles/mixins/cards';
 
+:host {
+  display: flex;
+}
+
 .card {
   @include details-card();
+  flex: 1;
 }
 
 .header {

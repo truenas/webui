@@ -1,5 +1,5 @@
 import {
-  Component, EventEmitter, Output,
+  Component, EventEmitter, Input, Output,
 } from '@angular/core';
 
 @Component({
@@ -8,6 +8,7 @@ import {
   styleUrls: ['./ix-list-item.component.scss'],
 })
 export class IxListItemComponent {
+  @Input() canDelete = true;
   @Output() delete = new EventEmitter<void>();
 
   deleteItem(): void {

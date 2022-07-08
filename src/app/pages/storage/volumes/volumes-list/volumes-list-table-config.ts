@@ -430,7 +430,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
                     this.dialogService.info(
                       this.translate.instant('Upgraded'),
                       this.translate.instant('Successfully Upgraded {poolName}.', { poolName: row1.name }),
-                    ).pipe(untilDestroyed(this)).subscribe(() => {
+                    ).pipe(untilDestroyed(this, 'destroy')).subscribe(() => {
                       this.parentVolumesListComponent.repaintMe();
                     });
                   },

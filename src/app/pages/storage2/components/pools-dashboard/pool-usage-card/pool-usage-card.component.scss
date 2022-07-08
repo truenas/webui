@@ -2,6 +2,14 @@
 @import '~assets/styles/mixins/buttons';
 @import '~assets/styles/mixins/animations';
 
+:host {
+  display: flex;
+}
+
+.card-container {
+  flex: 1;
+}
+
 .healthy {
   color: var(--green);
 }
@@ -24,7 +32,6 @@
 mat-card-content {
   display: flex;
   flex-direction: column;
-  min-width: 550px;
   width: 100%;
 }
 

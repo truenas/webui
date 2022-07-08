@@ -23,6 +23,7 @@
 
   <ix-select
     formControlName="type"
+    [required]="true"
     [label]="'Type' | translate"
     [options]="testTypes$"
   ></ix-select>
@@ -37,7 +38,7 @@
     <button
       mat-button
       type="button"
-      matDialogClose
+      [matDialogClose]="false"
     >{{ 'Cancel' | translate }}</button>
   </div>
 </form>
@@ -58,7 +59,7 @@
     <button
       mat-button
       type="button"
-      matDialogClose
+      [matDialogClose]="true"
     >{{ 'Close' | translate }}</button>
   </div>
 </ng-template>

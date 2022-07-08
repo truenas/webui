@@ -31,7 +31,7 @@ describe('HardwareDiskEncryptionComponent', () => {
   beforeEach(() => {
     spectator = createComponent({
       props: {
-        disk: {
+        topologyItem: {
           disk: 'sda',
         } as VDev,
       },
