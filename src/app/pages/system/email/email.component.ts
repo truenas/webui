@@ -59,23 +59,20 @@ export class EmailComponent implements FormConfiguration {
 
         const productType = window.localStorage.getItem('product_type') as ProductType;
         const mailObj = {
-          subject: 'TrueNAS Test Message',
+          subject: 'Test Message',
           text: `This is a test message from TrueNAS ${productType}.`,
         };
-        this.ws.call('system.info').pipe(untilDestroyed(this)).subscribe((systemInfo) => {
-          value.pass = value.pass || this.entityEdit.data.pass;
+        value.pass = value.pass || this.entityEdit.data.pass;
 
-          mailObj['subject'] += ' hostname: ' + systemInfo.hostname;
-          this.dialogRef = this.dialog.open(EntityJobComponent, { data: { title: this.translate.instant('EMAIL') }, disableClose: true });
-          this.dialogRef.componentInstance.setCall('mail.send', [mailObj, value]);
-          this.dialogRef.componentInstance.submit();
-          this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
-            this.dialogRef.close(false);
-            this.dialogservice.info(this.translate.instant('Email'), this.translate.instant('Test email sent!'), '500px', 'info');
-          });
-          this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((job) => {
-            this.dialogRef.componentInstance.setDescription(job.error);
-          });
+        this.dialogRef = this.dialog.open(EntityJobComponent, { data: { title: this.translate.instant('EMAIL') }, disableClose: true });
+        this.dialogRef.componentInstance.setCall('mail.send', [mailObj, value]);
+        this.dialogRef.componentInstance.submit();
+        this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
+          this.dialogRef.close(false);
+          this.dialogservice.info(this.translate.instant('Email'), this.translate.instant('Test email sent!'), '500px', 'info');
+        });
+        this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((job) => {
+          this.dialogRef.componentInstance.setDescription(job.error);
         });
       } else {
         this.dialogservice.info(this.translate.instant('email'), this.translate.instant('Configure the root user email address.'));
