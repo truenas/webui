@@ -1,0 +1,18 @@
+@import '~assets/styles/mixins/cards';
+
+.header {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 5px;
+  margin-left: 5px;
+  margin-right: 5px;
+  
+  .title {
+    color: var(--fg2);
+  }
+}
+
+.cards {
+  @include resource-cards();
+}
