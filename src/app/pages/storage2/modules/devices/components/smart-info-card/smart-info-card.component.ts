@@ -31,7 +31,7 @@ export class SmartInfoCardComponent implements OnChanges {
   lastResultsInCategory$: Observable<SmartTestResult[]>;
   smartTasksCount$: Observable<LoadingState<number>>;
 
-  readonly tasksMessage = T('{n, plural, one {# Task} other {# Tasks}} Configured');
+  readonly tasksMessage = T('{n, plural, =0 {No Tasks} one {# Task} other {# Tasks}} Configured');
 
   private readonly maxResultCategories = 4;
 

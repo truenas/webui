@@ -3468,7 +3468,7 @@
   "{field} is required": "",
   "{field} is required.": "",
   "{minute, plural, one {# minute} other {# minutes}}": "",
-  "{n, plural, one {# Task} other {# Tasks}} Configured": "",
+  "{n, plural, =0 {No Tasks} one {# Task} other {# Tasks}} Configured": "",
   "{n, plural, one {# docker image} other {# docker images}} has been deleted.": "",
   "{n, plural, one {# docker image} other {# docker images}} has been updated.": "",
   "{n} RPM": "",
