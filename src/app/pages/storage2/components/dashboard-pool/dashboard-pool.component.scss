@@ -20,11 +20,7 @@
 .pool-cards {
   display: grid;
   grid-gap: 8px;
-  grid-template-columns: repeat(auto-fill, minmax(450px, 1fr));
-
-  @media #{$media-gt-lg} {
-    grid-template-columns: repeat(auto-fill, minmax(600px, 1fr));
-  }
+  grid-template-columns: repeat(auto-fill, minmax(390px, 1fr));
 }
 
 .pool-actions {
