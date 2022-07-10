@@ -106,6 +106,36 @@
   }
 }
 
+@mixin resource-cards {
+  @include details-cards();
+
+  gap: 16px;
+
+  > * {
+    max-width: 360px;
+    min-width: 360px;
+  }
+}
+
+@mixin resource-card {
+  @include details-card();
+
+  mat-card-header {
+    border-bottom: none;
+  }
+
+  mat-card-content {
+    align-items: center;
+    display: flex;
+    justify-content: space-between;
+
+    .value {
+      font-size: 3.5em;
+      white-space: nowrap;
+    }
+  }
+}
+
 @mixin loader-block {
   background: var(--fg2);
   border-radius: 3px;
