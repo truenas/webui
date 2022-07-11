@@ -1,6 +1,3 @@
-@import 'assets/iconfont/variables';
-@import 'assets/iconfont/mixins';
-
 :host {
   display: block;
   margin-bottom: 12px;
@@ -69,8 +66,8 @@
     TODO: remove that once form-select is updated
    */
   .mat-option-pseudo-checkbox.mat-pseudo-checkbox {
-    @include material-icons();
-    @include material-icon('remove', 'after');
+    // @include material-icons();
+    // @include material-icon('remove', 'after');
 
     background: transparent;
     border: 0;
@@ -91,7 +88,7 @@
     }
 
     &.mat-pseudo-checkbox-checked {
-      @include material-icon('check_circle', 'after');
+      // @include material-icon('check_circle', 'after');
     }
   }
 
