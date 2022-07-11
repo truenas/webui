@@ -24,11 +24,15 @@
 </div>
 
 <div class="cards">
-  <ix-dataset-details-card [dataset]="dataset"></ix-dataset-details-card>
-  <ix-permissions-card [dataset]="dataset" *ngIf="hasPermissions"></ix-permissions-card>
-  <ix-zfs-encryption-card
-    [dataset]="dataset"
-    [parentDataset]="parentDataset"
-  ></ix-zfs-encryption-card>
-  <ix-dataset-capacity-management-card [dataset]="dataset"></ix-dataset-capacity-management-card>
+  <div class="cards-column">
+    <ix-dataset-details-card [dataset]="dataset"></ix-dataset-details-card>
+    <ix-permissions-card [dataset]="dataset" *ngIf="hasPermissions"></ix-permissions-card>
+  </div>
+  <div class="cards-column">
+    <ix-zfs-encryption-card
+      [dataset]="dataset"
+      [parentDataset]="parentDataset"
+    ></ix-zfs-encryption-card>
+    <ix-dataset-capacity-management-card [dataset]="dataset"></ix-dataset-capacity-management-card>
+  </div>
 </div>

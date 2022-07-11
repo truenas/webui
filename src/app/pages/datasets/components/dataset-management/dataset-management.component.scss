@@ -1,9 +1,9 @@
 @import '~assets/styles/mixins/grid';
 
 :host {
-  $page-header-height: 81px;
-  display: block;
-  height: calc(100% - $page-header-height);
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 230px);
 }
 
 .container {
@@ -32,10 +32,18 @@
 
 .details-container {
   color: var(--fg2);
+  display: flex;
   flex: 1;
   max-width: 70%;
   min-width: 60%;
+  overflow: hidden;
   padding: 0;
+}
+
+ix-dataset-details-panel {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
 }
 
 .dataset-tree-search {

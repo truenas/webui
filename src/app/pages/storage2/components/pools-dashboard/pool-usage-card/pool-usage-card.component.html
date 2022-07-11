@@ -37,7 +37,7 @@
           <span class="loader-chart" *ngIf="loading"></span>
           <ng-container *ngIf="!loading">
             <ix-gauge-chart
-              [colorFill]="usageState.usedPct === 0 ? '#1E1E1E' : isLowCapacity ? 'red' : '#0095D5'"
+              [colorFill]="isLowCapacity ? 'red' :'#0095D5'"
               [colorBlank]="'#1E1E1E'"
               [width]="200"
               [height]="200"
