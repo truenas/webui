@@ -4,12 +4,9 @@ import {
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { Subscription, forkJoin } from 'rxjs';
-import {
-  map,
-} from 'rxjs/operators';
 import { DatasetQuotaType } from 'app/enums/dataset.enum';
-import { Dataset } from 'app/interfaces/dataset.interface';
 import { DatasetFormComponent } from 'app/pages/datasets/components/dataset-form/dataset-form.component';
+import { DatasetInTree } from 'app/pages/datasets/store/dataset-in-tree.interface';
 import { WebSocketService, ModalService } from 'app/services';
 
 @UntilDestroy()
@@ -20,9 +17,9 @@ import { WebSocketService, ModalService } from 'app/services';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DatasetCapacityManagementCardComponent implements OnChanges {
-  @Input() dataset: Dataset;
+  @Input() dataset: DatasetInTree;
+
   loading = false;
-  datasetSubscription: Subscription;
   quotasSubscription: Subscription;
   userQuotas: number;
   groupQuotas: number;
@@ -35,35 +32,14 @@ export class DatasetCapacityManagementCardComponent implements OnChanges {
   ) {}
 
   ngOnChanges(): void {
-    this.loading = true;
-    this.cdr.markForCheck();
-    this.getDataset();
-  }
-
-  getDataset(): void {
-    this.datasetSubscription?.unsubscribe();
-    this.datasetSubscription = this.ws.call('pool.dataset.query', [[['id', '=', this.dataset.id]]]).pipe(
-      map((datasets) => datasets[0]),
-      untilDestroyed(this),
-    ).subscribe(
-      (dataset) => {
-        this.dataset = dataset;
-        if (!dataset.encrypted) {
-          this.getQuotas();
-        } else {
-          this.loading = false;
-          this.cdr.markForCheck();
-        }
-      },
-      (error) => {
-        console.error(error);
-        this.loading = false;
-        this.cdr.markForCheck();
-      },
-    );
+    if (!this.dataset.locked) {
+      this.getQuotas();
+    }
   }
 
   getQuotas(): void {
+    this.loading = true;
+    this.cdr.markForCheck();
     this.quotasSubscription?.unsubscribe();
     this.quotasSubscription = forkJoin([
       this.ws.call('pool.dataset.get_quota', [this.dataset.id, DatasetQuotaType.User, []]),
@@ -75,6 +51,7 @@ export class DatasetCapacityManagementCardComponent implements OnChanges {
       this.groupQuotas = groupQuotas.length;
       this.loading = false;
       this.cdr.markForCheck();
+      // TODO: Handle error.
     });
   }
 
