@@ -3,3 +3,9 @@
 .card {
   @include details-card();
 }
+
+.loader-skel {
+  display: inline-block;
+  height: 20px;
+  width: 35%;
+}

@@ -1,6 +1,10 @@
+:host {
+  display: block;
+}
+
 .title {
   font-size: 1rem;
-  margin: 8px 12px 6px;
+  margin: 8px 24px 6px;
   opacity: 0.75;
 }
 
@@ -31,7 +35,8 @@
   background-color: var(--contrast-lighter);
   border-left: 4px solid transparent;
   cursor: pointer;
-  padding-left: 8px;
+  padding-left: 17px;
+  padding-right: 17px;
 }
 
 .permission-details {
