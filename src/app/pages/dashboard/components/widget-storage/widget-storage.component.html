@@ -39,9 +39,7 @@
                 matTooltip="{{ 'Disk Reports' | translate }}"
                 matTooltipPosition="above"
                 aria-label="Disk Reports"
-              >
-                insert_chart
-              </mat-icon>
+              >insert_chart</mat-icon>
             </a>
           </div>
         </mat-toolbar-row>
@@ -88,37 +86,28 @@
                     <ul fxLayout="column" [fxFlex]="cols === 1 ? 31 : 100">
                       <li fxLayout="row">
                         <span class="icon {{ poolInfoMap[pool.name]?.status?.level }}">
-                          <mat-icon
-                            fontSet="mdi-set"
-                            fontIcon="{{ poolInfoMap[pool.name]?.status?.icon }}"
-                          ></mat-icon
+                          <mat-icon>{{ poolInfoMap[pool.name]?.status?.icon }}</mat-icon
                         ></span>
                         <span class="label">{{ 'Pool Status' | translate }}:</span>
                         <span class="storage-value">{{ poolInfoMap[pool.name]?.status?.value }}</span>
                       </li>
                       <li fxLayout="row">
                         <span class="icon {{ poolInfoMap[pool.name]?.usedSpace?.level }}">
-                          <mat-icon
-                            fontSet="mdi-set"
-                            fontIcon="{{ poolInfoMap[pool.name]?.usedSpace?.icon }}"
-                          ></mat-icon
+                          <mat-icon>{{ poolInfoMap[pool.name]?.usedSpace?.icon }}</mat-icon
                         ></span>
                         <span class="label">{{ 'Used Space' | translate }}:</span>
                         <span class="storage-value" textLimiter threshold="25" [content]="poolInfoMap[pool.name]?.usedSpace?.value"></span>
                       </li>
                       <li fxLayout="row">
                         <span class="icon {{ poolInfoMap[pool.name]?.disksWithError?.level }}">
-                          <mat-icon
-                            fontSet="mdi-set"
-                            fontIcon="{{ poolInfoMap[pool.name]?.disksWithError?.icon }}"
-                          ></mat-icon>
+                          <mat-icon>{{ poolInfoMap[pool.name]?.disksWithError?.icon }}</mat-icon>
                         </span>
                         <span class="label">{{ 'Disks with Errors' | translate }}:</span>
                         <span class="storage-value">{{ poolInfoMap[pool.name]?.disksWithError?.value }}</span>
                       </li>
                       <li fxLayout="row" *ngIf="cols === 2 && rows === 2">
                         <span class="icon safe">
-                          <mat-icon fontSet="mdi-set" fontIcon="mdi-arrow-right-circle"></mat-icon>
+                          <mat-icon>arrow_circle_right</mat-icon>
                         </span>
                         <span class="label">{{ 'Path' | translate }}:</span>
                         <span class="storage-value" textLimiter threshold="32" content="{{ pool.path }}"></span>

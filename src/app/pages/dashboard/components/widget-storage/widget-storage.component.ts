@@ -116,7 +116,7 @@ export class WidgetStorageComponent extends WidgetComponent implements AfterView
 
   getStatusItemInfo(pool: Pool): ItemInfo {
     let level = 'safe';
-    let icon = 'mdi-check-circle';
+    let icon = 'check_circle';
     let value = pool.status;
 
     switch (pool.status) {
@@ -134,7 +134,7 @@ export class WidgetStorageComponent extends WidgetComponent implements AfterView
       case PoolStatus.Offline:
       case PoolStatus.Degraded:
         level = 'warn';
-        icon = 'mdi-alert-circle';
+        icon = 'error';
         break;
       case PoolStatus.Faulted:
       case PoolStatus.Unavailable:
@@ -159,13 +159,13 @@ export class WidgetStorageComponent extends WidgetComponent implements AfterView
   getUsedSpaceItemInfo(pool: Pool): ItemInfo {
     const volume = this.volumeData[pool.name];
     let level = 'safe';
-    let icon = 'mdi-check-circle';
+    let icon = 'check_circle';
     let value;
 
     if (!volume || !volume.used_pct) {
       value = this.translate.instant('Unknown');
       level = 'warn';
-      icon = 'mdi-alert-circle';
+      icon = 'error';
     } else {
       if (this.cols === 1) {
         value = volume.used_pct;
@@ -179,10 +179,10 @@ export class WidgetStorageComponent extends WidgetComponent implements AfterView
 
       if (this.percentAsNumber(volume.used_pct) >= 80) {
         level = 'warn';
-        icon = 'mdi-alert-circle';
+        icon = 'error';
       } else {
         level = 'safe';
-        icon = 'mdi-check-circle';
+        icon = 'check_circle';
       }
     }
 
@@ -195,7 +195,7 @@ export class WidgetStorageComponent extends WidgetComponent implements AfterView
 
   getDiskWithErrorsItemInfo(pool: Pool): ItemInfo {
     let level = 'warn';
-    let icon = 'mdi-alert-circle';
+    let icon = 'error';
     let value: string = this.translate.instant('Unknown');
 
     if (pool && pool.topology) {
@@ -220,10 +220,10 @@ export class WidgetStorageComponent extends WidgetComponent implements AfterView
       if (unhealthy.length === 0) {
         value = '0';
         level = 'safe';
-        icon = 'mdi-check-circle';
+        icon = 'check_circle';
       } else {
         level = 'warn';
-        icon = 'mdi-alert-circle';
+        icon = 'error';
         value = unhealthy.length.toString();
       }
 

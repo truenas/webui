@@ -95,6 +95,7 @@ mat-grid-tile {
     }
 
     span.icon {
+      align-items: center;
       cursor: default;
       display: inline-flex;
       height: 20px;
@@ -117,12 +118,7 @@ mat-grid-tile {
       .mat-icon {
         font-size: 16px;
         height: 16px;
-        width: 14px;
-
-        &.mdi-set {
-          font-size: 14px;
-          margin-top: 0;
-        }
+        width: 16px;
       }
     }
   }

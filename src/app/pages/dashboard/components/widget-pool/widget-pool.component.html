@@ -58,11 +58,10 @@
               [queryParams]="{ disks: allDiskNames }"
             >
               <mat-icon
-                  matTooltip="{{'Disk Reports' | translate}}"
-                  matTooltipPosition="above"
-                  aria-label="Disk Reports">
-                insert_chart
-              </mat-icon>
+                matTooltip="{{'Disk Reports' | translate}}"
+                matTooltipPosition="above"
+                aria-label="Disk Reports"
+              >insert_chart</mat-icon>
             </a>
           </div>
 
@@ -109,12 +108,12 @@
                         <ng-container [ngSwitch]="poolState.status">
                           <span *ngSwitchCase="PoolStatus.Locked" class="lock-icon-wrapper icon"><mat-icon>lock</mat-icon></span>
                           <span *ngSwitchCase="PoolStatus.Online" class="{{poolHealth.level}} icon">
-                            <mat-icon fontSet="mdi-set" [fontIcon]="poolHealth.isHealthy ? 'mdi-check-circle' : 'mdi-alert'"></mat-icon>
+                            <mat-icon>{{ poolHealth.isHealthy ? 'check_circle' : 'warning' }}</mat-icon>
                           </span>
                           <span *ngSwitchCase="PoolStatus.Healthy" class="{{poolHealth.level}} icon">
-                            <mat-icon fontSet="mdi-set" [fontIcon]="poolHealth.isHealthy ? 'mdi-check-circle' : 'mdi-alert'"></mat-icon>
+                            <mat-icon>{{ poolHealth.isHealthy ? 'check_circle' : 'warning' }}</mat-icon>
                           </span>
-                          <span *ngSwitchDefault class="error icon"><mat-icon fontSet="mdi-set" fontIcon="mdi-close-circle"></mat-icon></span>
+                          <span *ngSwitchDefault class="error icon"><mat-icon>cancel</mat-icon></span>
                         </ng-container>
 
                       </div>
@@ -237,15 +236,15 @@
                 <strong>{{vdev.type}}:</strong>&nbsp;&nbsp; {{vdev.status}}
                 <!-- STATUS ICONS -->
                 <span *ngIf="vdev.status === VDevStatus.Online" class="{{poolHealth.level}} healthy" >
-                  <mat-icon fontSet="mdi-set" fontIcon="mdi-check-circle"></mat-icon>
+                  <mat-icon>check_circle</mat-icon>
                   &nbsp;&nbsp;
                 </span>
                 <span *ngIf="vdev.status !== VDevStatus.Online" class="{{poolHealth.level}} healthy" >
-                  <mat-icon fontSet="mdi-set" fontIcon="mdi-alert"></mat-icon>
+                  <mat-icon>warning</mat-icon>
                   &nbsp;&nbsp;
                 </span>
 
-                <span *ngIf="vdev.type == 'DISK'" class="vdev" >
+                <span *ngIf="vdev.type == 'DISK'" class="vdev">
                   <span>
                     {{trimMultipath(vdev.disk).name}}
                   </span>
@@ -298,11 +297,11 @@
                 &nbsp;&nbsp; {{disk.status | translate}}
 
                 <!-- STATUS ICONS -->
-                <span *ngIf="disk.status === VDevStatus.Online" class="{{poolHealth.level}} healthy" >
-                  <mat-icon fontSet="mdi-set" fontIcon="mdi-check-circle"></mat-icon>
+                <span *ngIf="disk.status === VDevStatus.Online" class="{{poolHealth.level}} healthy">
+                  <mat-icon>check_circle</mat-icon>
                 </span>
-                <span *ngIf="disk.status !== VDevStatus.Online" class="{{poolHealth.level}} healthy" >
-                  <mat-icon fontSet="mdi-set" fontIcon="mdi-alert"></mat-icon>
+                <span *ngIf="disk.status !== VDevStatus.Online" class="{{poolHealth.level}} healthy">
+                  <mat-icon>warning</mat-icon>
                 </span>
 
                 <!-- CHEVRON -->
@@ -323,8 +322,8 @@
                   :
                 </strong>
                 &nbsp;&nbsp; {{path[2].dataSource.status | translate}}
-                <span *ngIf="path[2].dataSource.status === VDevStatus.Online" class="{{poolHealth.level}} healthy" >
-                  <mat-icon fontSet="mdi-set" fontIcon="mdi-check-circle"></mat-icon>
+                <span *ngIf="path[2].dataSource.status === VDevStatus.Online" class="{{poolHealth.level}} healthy">
+                  <mat-icon>check_circle</mat-icon>
                 </span>
                 <mat-icon class="next-slide" ix-auto ix-auto-type="button" ix-auto-identifier="nextSlide">chevron_right</mat-icon>
               </mat-list-item>
