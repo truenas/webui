@@ -55,16 +55,16 @@
                   <div class="nic-info" fxLayout="column" fxLayoutAlign="start stretch">
                     <div class="info-header" fxLayout="row" fxLayoutAlign="start start">
                       <h4 class="info-header-title">{{ nic.state.name }}</h4>
-                      <!-- TODO: Add pencil icon and open edit interface as slide-in form on click -->
+                      <!-- TODO: NAS-117157 - Add pencil icon and open edit interface as slide-in form on click -->
                     </div>
                     <div class="info-body" fxLayout="row" fxFlex fxLayoutAlign="space-between center">
                       <ul>
                         <li fxLayout="row" fxLayoutAlign="start center">
                           <span class="icon up" *ngIf="getLinkState(nic) === LinkState.Up">
-                            <mat-icon fontSet="mdi-set" fontIcon="mdi-check-circle" [matTooltip]="getLinkStateLabel(nic)"></mat-icon>
+                            <mat-icon [matTooltip]="getLinkStateLabel(nic)">check_circle</mat-icon>
                           </span>
                           <span class="icon down" *ngIf="getLinkState(nic) !== LinkState.Up">
-                            <mat-icon fontSet="mdi-set" fontIcon="mdi-close-circle" [matTooltip]="getLinkStateLabel(nic)"></mat-icon>
+                            <mat-icon [matTooltip]="getLinkStateLabel(nic)">cancel</mat-icon>
                           </span>
                           <span>{{ getLinkStateLabel(nic) }}</span>
                         </li>
