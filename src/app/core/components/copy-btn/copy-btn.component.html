@@ -4,12 +4,12 @@
 
       <div class="copy-btn-header">
         <div class="copy-btn-header-txt">
-          (Copied to clipboard)
+          ({{ 'Copied to clipboard' | translate }})
         </div>
 
         <div class="copy-btn-close-trigger">
           <button mat-icon-button (click)="onPopupClose()">
-            <mat-icon class="copy-btn-icon" fontSet="mdi-set" fontIcon="mdi-close"></mat-icon>
+            <mat-icon class="copy-btn-icon">close</mat-icon>
           </button>
         </div>
 
@@ -22,6 +22,6 @@
 </ng-container>
 
 <button class="copy-btn-trigger" mat-icon-button (click)="onIconClick()">
-  <mat-icon class="copy-btn-icon" fontSet="mdi-set" fontIcon="mdi-clipboard-text"></mat-icon>
+  <mat-icon class="copy-btn-icon">assignment</mat-icon>
   <input #el class="invisible" [value]="text" type="text">
 </button>
