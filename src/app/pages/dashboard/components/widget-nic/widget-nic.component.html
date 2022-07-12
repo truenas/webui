@@ -52,7 +52,6 @@
               ix-auto-identifier="configure"
             >
               <mat-icon
-                role="img"
                 fontSet="mdi-set"
                 fontIcon="mdi-pencil"
                 [matTooltip]="'Configure {name}' | translate: { name: nicState.name }"
@@ -69,7 +68,6 @@
               ix-auto-identifier="networkReports"
             >
               <mat-icon
-                role="img"
                 [matTooltip]="'Network Reports' | translate"
                 matTooltipPosition="above"
                 aria-label="Network Reports"
@@ -92,8 +90,8 @@
 
                   <div class="link-state" [class.up]="linkState === LinkState.Up" [class.down]="linkState !== LinkState.Up">
                     {{ linkStateLabel | translate }}
-                    <mat-icon *ngIf="linkState === LinkState.Up" role="img" fontSet="mdi-set" fontIcon="mdi-check-circle"></mat-icon>
-                    <mat-icon *ngIf="linkState !== LinkState.Up" role="img" fontSet="mdi-set" fontIcon="mdi-close-circle"></mat-icon>
+                    <mat-icon *ngIf="linkState === LinkState.Up" fontSet="mdi-set" fontIcon="mdi-check-circle"></mat-icon>
+                    <mat-icon *ngIf="linkState !== LinkState.Up" fontSet="mdi-set" fontIcon="mdi-close-circle"></mat-icon>
 
                     <div *ngIf="traffic && linkState == LinkState.Up" class="nic-traffic">
                       <div class="tr">

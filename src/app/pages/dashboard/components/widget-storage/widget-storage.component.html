@@ -36,7 +36,6 @@
               [routerLink]="['/reportsdashboard/disk']"
             >
               <mat-icon
-                role="img"
                 matTooltip="{{ 'Disk Reports' | translate }}"
                 matTooltipPosition="above"
                 aria-label="Disk Reports"
@@ -75,7 +74,6 @@
                         ix-auto-identifier="poolStatus"
                       >
                         <mat-icon
-                          role="img"
                           fontSet="mdi-set"
                           fontIcon="mdi-database"
                           matTooltip="{{ 'Pool Status' | translate }}"
@@ -91,7 +89,6 @@
                       <li fxLayout="row">
                         <span class="icon {{ poolInfoMap[pool.name]?.status?.level }}">
                           <mat-icon
-                            role="img"
                             fontSet="mdi-set"
                             fontIcon="{{ poolInfoMap[pool.name]?.status?.icon }}"
                           ></mat-icon
@@ -102,7 +99,6 @@
                       <li fxLayout="row">
                         <span class="icon {{ poolInfoMap[pool.name]?.usedSpace?.level }}">
                           <mat-icon
-                            role="img"
                             fontSet="mdi-set"
                             fontIcon="{{ poolInfoMap[pool.name]?.usedSpace?.icon }}"
                           ></mat-icon
@@ -113,7 +109,6 @@
                       <li fxLayout="row">
                         <span class="icon {{ poolInfoMap[pool.name]?.disksWithError?.level }}">
                           <mat-icon
-                            role="img"
                             fontSet="mdi-set"
                             fontIcon="{{ poolInfoMap[pool.name]?.disksWithError?.icon }}"
                           ></mat-icon>
@@ -123,7 +118,7 @@
                       </li>
                       <li fxLayout="row" *ngIf="cols === 2 && rows === 2">
                         <span class="icon safe">
-                          <mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-arrow-right-circle"></mat-icon>
+                          <mat-icon fontSet="mdi-set" fontIcon="mdi-arrow-right-circle"></mat-icon>
                         </span>
                         <span class="label">{{ 'Path' | translate }}:</span>
                         <span class="storage-value" textLimiter threshold="32" content="{{ pool.path }}"></span>

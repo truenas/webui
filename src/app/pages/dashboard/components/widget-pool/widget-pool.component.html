@@ -40,7 +40,6 @@
               [ix-auto]="poolState.name" ix-auto-type="button" ix-auto-identifier="poolStatus"
             >
               <mat-icon
-                role="img"
                 fontSet="mdi-set"
                 fontIcon="mdi-database"
                 matTooltip="{{'Pool Status' | translate}}"
@@ -58,7 +57,7 @@
               [routerLink]="['/reportsdashboard/disk']"
               [queryParams]="{ disks: allDiskNames }"
             >
-              <mat-icon role="img"
+              <mat-icon
                   matTooltip="{{'Disk Reports' | translate}}"
                   matTooltipPosition="above"
                   aria-label="Disk Reports">
@@ -75,7 +74,7 @@
 
           <ng-template #locked>
             <div fxFlex="40" class="locked offline">
-              <mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-alert"></mat-icon>
+              <mat-icon fontSet="mdi-set" fontIcon="mdi-alert"></mat-icon>
               <h4>{{"Data not available" | translate}}.</h4>
             </div>
           </ng-template>
@@ -110,12 +109,12 @@
                         <ng-container [ngSwitch]="poolState.status">
                           <span *ngSwitchCase="PoolStatus.Locked" class="lock-icon-wrapper icon"><mat-icon>lock</mat-icon></span>
                           <span *ngSwitchCase="PoolStatus.Online" class="{{poolHealth.level}} icon">
-                            <mat-icon role="img" fontSet="mdi-set" [fontIcon]="poolHealth.isHealthy ? 'mdi-check-circle' : 'mdi-alert'"></mat-icon>
+                            <mat-icon fontSet="mdi-set" [fontIcon]="poolHealth.isHealthy ? 'mdi-check-circle' : 'mdi-alert'"></mat-icon>
                           </span>
                           <span *ngSwitchCase="PoolStatus.Healthy" class="{{poolHealth.level}} icon">
-                            <mat-icon role="img" fontSet="mdi-set" [fontIcon]="poolHealth.isHealthy ? 'mdi-check-circle' : 'mdi-alert'"></mat-icon>
+                            <mat-icon fontSet="mdi-set" [fontIcon]="poolHealth.isHealthy ? 'mdi-check-circle' : 'mdi-alert'"></mat-icon>
                           </span>
-                          <span *ngSwitchDefault class="error icon"><mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-close-circle"></mat-icon></span>
+                          <span *ngSwitchDefault class="error icon"><mat-icon fontSet="mdi-set" fontIcon="mdi-close-circle"></mat-icon></span>
                         </ng-container>
 
                       </div>
@@ -140,7 +139,7 @@
                         <div class="td" *ngIf="percentAsNumber(volumeData.used_pct) >= 80; else safeSpace">
                           &nbsp;<span class="value-used">{{volumeData.used_pct}}</span>
                           <span class="error icon">
-                            &nbsp;<mat-icon class="disk-errors" role="img" fontSet="mdi-set" fontIcon="mdi-alert"></mat-icon>
+                            &nbsp;<mat-icon class="disk-errors" fontSet="mdi-set" fontIcon="mdi-alert"></mat-icon>
                           </span>
                         </div>
 
@@ -148,7 +147,7 @@
                           <div class="td">
                             <span class="value-used">{{volumeData.used_pct}}</span>
                             <span class="safe icon">
-                              &nbsp;<mat-icon class="healthy" role="img">check_circle</mat-icon>
+                              &nbsp;<mat-icon class="healthy">check_circle</mat-icon>
                             </span>
                           </div>
                         </ng-template>
@@ -166,10 +165,10 @@
                           Disks
                         </span>
                         <span class="error icon" *ngIf="unhealthyDisks.totalErrors != '0' && unhealthyDisks.totalErrors != 'Unknown'">
-                          &nbsp;<mat-icon class="disk-errors" role="img" fontSet="mdi-set" fontIcon="mdi-alert"></mat-icon>
+                          &nbsp;<mat-icon class="disk-errors" fontSet="mdi-set" fontIcon="mdi-alert"></mat-icon>
                         </span>
                         <span class="safe icon" *ngIf="unhealthyDisks.totalErrors == '0'">
-                          &nbsp;<mat-icon class="healthy" role="img">check_circle</mat-icon>
+                          &nbsp;<mat-icon class="healthy">check_circle</mat-icon>
                         </span>
                       </div>
                     </div>
@@ -238,11 +237,11 @@
                 <strong>{{vdev.type}}:</strong>&nbsp;&nbsp; {{vdev.status}}
                 <!-- STATUS ICONS -->
                 <span *ngIf="vdev.status === VDevStatus.Online" class="{{poolHealth.level}} healthy" >
-                  <mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-check-circle"></mat-icon>
+                  <mat-icon fontSet="mdi-set" fontIcon="mdi-check-circle"></mat-icon>
                   &nbsp;&nbsp;
                 </span>
                 <span *ngIf="vdev.status !== VDevStatus.Online" class="{{poolHealth.level}} healthy" >
-                  <mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-alert"></mat-icon>
+                  <mat-icon fontSet="mdi-set" fontIcon="mdi-alert"></mat-icon>
                   &nbsp;&nbsp;
                 </span>
 
@@ -300,10 +299,10 @@
 
                 <!-- STATUS ICONS -->
                 <span *ngIf="disk.status === VDevStatus.Online" class="{{poolHealth.level}} healthy" >
-                  <mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-check-circle"></mat-icon>
+                  <mat-icon fontSet="mdi-set" fontIcon="mdi-check-circle"></mat-icon>
                 </span>
                 <span *ngIf="disk.status !== VDevStatus.Online" class="{{poolHealth.level}} healthy" >
-                  <mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-alert"></mat-icon>
+                  <mat-icon fontSet="mdi-set" fontIcon="mdi-alert"></mat-icon>
                 </span>
 
                 <!-- CHEVRON -->
@@ -325,7 +324,7 @@
                 </strong>
                 &nbsp;&nbsp; {{path[2].dataSource.status | translate}}
                 <span *ngIf="path[2].dataSource.status === VDevStatus.Online" class="{{poolHealth.level}} healthy" >
-                  <mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-check-circle"></mat-icon>
+                  <mat-icon fontSet="mdi-set" fontIcon="mdi-check-circle"></mat-icon>
                 </span>
                 <mat-icon class="next-slide" ix-auto ix-auto-type="button" ix-auto-identifier="nextSlide">chevron_right</mat-icon>
               </mat-list-item>

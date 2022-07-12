@@ -37,7 +37,7 @@
               matTooltipPosition="above"
               aria-label="Network Reports"
             >
-              <mat-icon role="img">insert_chart</mat-icon>
+              <mat-icon>insert_chart</mat-icon>
             </a>
           </div>
         </mat-toolbar-row>
@@ -61,10 +61,10 @@
                       <ul>
                         <li fxLayout="row" fxLayoutAlign="start center">
                           <span class="icon up" *ngIf="getLinkState(nic) === LinkState.Up">
-                            <mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-check-circle" [matTooltip]="getLinkStateLabel(nic)"></mat-icon>
+                            <mat-icon fontSet="mdi-set" fontIcon="mdi-check-circle" [matTooltip]="getLinkStateLabel(nic)"></mat-icon>
                           </span>
                           <span class="icon down" *ngIf="getLinkState(nic) !== LinkState.Up">
-                            <mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-close-circle" [matTooltip]="getLinkStateLabel(nic)"></mat-icon>
+                            <mat-icon fontSet="mdi-set" fontIcon="mdi-close-circle" [matTooltip]="getLinkStateLabel(nic)"></mat-icon>
                           </span>
                           <span>{{ getLinkStateLabel(nic) }}</span>
                         </li>
