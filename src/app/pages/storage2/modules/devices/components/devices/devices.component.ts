@@ -1,6 +1,6 @@
 import { NestedTreeControl } from '@angular/cdk/tree';
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, TrackByFunction,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -24,13 +24,13 @@ import { AppLoaderService, WebSocketService } from 'app/services';
 export class DevicesComponent implements OnInit {
   topology: PoolTopology;
   selectedItem: VDev;
+  selectedParentItem: VDev | undefined;
   dataSource: IxNestedTreeDataSource<VDev>;
   treeControl = new NestedTreeControl<VDev, string>((vdev) => vdev.children, {
     trackBy: (vdev) => vdev.guid,
   });
   diskDictionary: { [key: string]: Disk } = {};
 
-  readonly trackByFn: TrackByFunction<VDev> = (_, vdev) => vdev.guid;
   readonly hasNestedChild = (_: number, vdev: VDev): boolean => Boolean(vdev.children?.length);
 
   constructor(
@@ -57,7 +57,14 @@ export class DevicesComponent implements OnInit {
     this.dataSource = new IxNestedTreeDataSource(disks);
     this.dataSource.filterPredicate = (disks, query = '') => {
       return disks.map((disk) => {
-        return findInTree([disk], (vdev) => vdev.disk.toLowerCase().includes(query.toLowerCase()));
+        return findInTree([disk], (vdev) => {
+          switch (vdev.type) {
+            case VDevType.Disk:
+              return vdev.disk.toLowerCase().includes(query.toLowerCase());
+            case VDevType.Mirror:
+              return vdev.name.toLowerCase().includes(query.toLowerCase());
+          }
+        });
       }).filter(Boolean);
     };
   }
@@ -70,11 +77,17 @@ export class DevicesComponent implements OnInit {
     const disk = this.treeControl.dataNodes[0];
     this.treeControl.expand(disk);
     this.selectedItem = disk;
+    this.selectedParentItem = undefined;
   }
 
   onRowSelected(vdev: VDev, event: MouseEvent): void {
     event.stopPropagation();
     this.selectedItem = vdev;
+    this.selectedParentItem = [...Object.values(this.topology.data)].find((group: VDev) => {
+      return group?.children.find((child) => {
+        return child.guid === vdev.guid;
+      });
+    });
   }
 
   onSearch(query: string): void {

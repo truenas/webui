@@ -3,7 +3,6 @@ import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { filter } from 'rxjs/operators';
-import { Dataset } from 'app/interfaces/dataset.interface';
 import {
   EncryptionOptionsDialogData,
 } from 'app/pages/datasets/modules/encryption/components/encyption-options-dialog/encryption-options-dialog-data.interface';
@@ -16,7 +15,8 @@ import {
 import {
   LockDatasetDialogComponent,
 } from 'app/pages/datasets/modules/encryption/components/lock-dataset-dialog/lock-dataset-dialog.component';
-import { DatasetStore } from 'app/pages/datasets/store/dataset-store.service';
+import { DatasetInTree } from 'app/pages/datasets/store/dataset-in-tree.interface';
+import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
 import { isEncryptionRoot, isPasswordEncrypted } from 'app/pages/datasets/utils/dataset.utils';
 
 // TODO: Add support for exporting all keys on root dataset.
@@ -29,13 +29,13 @@ import { isEncryptionRoot, isPasswordEncrypted } from 'app/pages/datasets/utils/
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ZfsEncryptionCardComponent {
-  @Input() dataset: Dataset;
-  @Input() parentDataset: Dataset | undefined;
+  @Input() dataset: DatasetInTree;
+  @Input() parentDataset: DatasetInTree | undefined;
 
   constructor(
     private matDialog: MatDialog,
     private translate: TranslateService,
-    private datasetStore: DatasetStore,
+    private datasetStore: DatasetTreeStore,
   ) { }
 
   get hasPassphrase(): boolean {
@@ -84,7 +84,7 @@ export class ZfsEncryptionCardComponent {
     dialog
       .afterClosed()
       .pipe(filter(Boolean), untilDestroyed(this))
-      .subscribe(() => this.datasetStore.reloadList());
+      .subscribe(() => this.datasetStore.datasetUpdated());
   }
 
   onLock(): void {
@@ -93,7 +93,7 @@ export class ZfsEncryptionCardComponent {
     })
       .afterClosed()
       .pipe(filter(Boolean), untilDestroyed(this))
-      .subscribe(() => this.datasetStore.reloadList());
+      .subscribe(() => this.datasetStore.datasetUpdated());
   }
 
   onExportKey(): void {

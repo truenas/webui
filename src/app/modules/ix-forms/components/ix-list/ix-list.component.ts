@@ -12,7 +12,7 @@ export class IxListComponent {
   @Input() tooltip: string;
   @Input() empty: boolean;
   @Input() required: boolean;
-  @Input() hideButton: boolean;
+  @Input() canAdd = true;
 
   @Output() add = new EventEmitter<void>();
 

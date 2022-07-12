@@ -17,6 +17,7 @@ export interface VDev {
   stats: VDevStats;
   device?: string;
   disk?: string;
+  name?: string;
 }
 
 export interface VDevStats {

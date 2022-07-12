@@ -33,7 +33,7 @@ import { ZvolFormComponent } from 'app/pages/datasets/components/zvol-form/zvol-
 import { routing } from 'app/pages/datasets/datasets.routing';
 import { EncryptionModule } from 'app/pages/datasets/modules/encryption/encryption.module';
 import { PermissionsModule } from 'app/pages/datasets/modules/permissions/permissions.module';
-import { DatasetStore } from 'app/pages/datasets/store/dataset-store.service';
+import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
 import { DatasetCapacityManagementCardComponent } from './components/dataset-capacity-management-card/dataset-capacity-management-card.component';
 import { DatasetIconComponent } from './components/dataset-icon/dataset-icon.component';
 import { DatasetEncryptionCellComponent } from './components/dataset-node/dataset-encryption-cell/dataset-encryption-cell.component';
@@ -87,7 +87,7 @@ import { DatasetNodeComponent } from './components/dataset-node/dataset-node.com
     ZvolFormComponent,
   ],
   providers: [
-    DatasetStore,
+    DatasetTreeStore,
   ],
 })
 export class DatasetsModule { }
