@@ -106,7 +106,7 @@
     "is-cidr": "~3.1.0",
     "jest-canvas-mock": "^2.3.1",
     "jest-preset-angular": "~12.1.0",
-    "jest-when": "^3.3.1",
+    "jest-when": "~3.5.1",
     "lodash": "~4.17.21",
     "markuplint": "~1.11.3",
     "markuplint-angular-parser": "~0.3.4",

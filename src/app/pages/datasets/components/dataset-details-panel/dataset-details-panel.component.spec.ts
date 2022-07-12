@@ -16,7 +16,7 @@ import { DatasetIconComponent } from 'app/pages/datasets/components/dataset-icon
 import { ZvolFormComponent } from 'app/pages/datasets/components/zvol-form/zvol-form.component';
 import { ZfsEncryptionCardComponent } from 'app/pages/datasets/modules/encryption/components/zfs-encryption-card/zfs-encryption-card.component';
 import { PermissionsCardComponent } from 'app/pages/datasets/modules/permissions/containers/permissions-card/permissions-card.component';
-import { DatasetStore } from 'app/pages/datasets/store/dataset-store.service';
+import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
 import { ModalService } from 'app/services';
 
 describe('DatasetDetailsPanelComponent', () => {
@@ -54,7 +54,7 @@ describe('DatasetDetailsPanelComponent', () => {
         openInSlideIn: jest.fn(() => fakeModalRef),
         onClose$: of(),
       }),
-      mockProvider(DatasetStore),
+      mockProvider(DatasetTreeStore),
     ],
   });
 

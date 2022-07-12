@@ -62,7 +62,11 @@
     </div>
   </div>
 
-  <div *ngIf="selectedDataset" class="details-container">
-    <ix-dataset-details-panel [dataset]="selectedDataset" [parentDataset]="selectedDatasetParent"></ix-dataset-details-panel>
+  <div class="details-container">
+    <ix-dataset-details-panel
+      *ngIf="selectedDataset$ | async as selectedDataset"
+      [dataset]="selectedDataset"
+      [parentDataset]="selectedParentDataset$ | async"
+    ></ix-dataset-details-panel>
   </div>
 </div>

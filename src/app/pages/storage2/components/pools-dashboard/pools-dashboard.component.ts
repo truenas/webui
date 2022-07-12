@@ -7,7 +7,6 @@ import {
   TemplateRef,
   ViewChild,
 } from '@angular/core';
-import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Pool } from 'app/interfaces/pool.interface';
 import { ImportPoolComponent } from 'app/pages/storage2/components/import-pool/import-pool.component';
@@ -29,7 +28,6 @@ export class PoolsDashboardComponent implements OnInit, AfterViewInit {
 
   constructor(
     private ws: WebSocketService,
-    private router: Router,
     private layoutService: LayoutService,
     private slideIn: IxSlideInService,
     private cdr: ChangeDetectorRef,

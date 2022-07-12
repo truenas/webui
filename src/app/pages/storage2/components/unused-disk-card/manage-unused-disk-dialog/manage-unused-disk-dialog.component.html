@@ -1,0 +1,42 @@
+<h1 mat-dialog-title>{{ 'Add To Pool' | translate }}</h1>
+
+<form [formGroup]="form" class="ix-form-container" (submit)="onSubmit()">
+  <div mat-dialog-content>
+    <h4>{{ 'Unassigned Disks' | translate }}</h4>
+    <ul class="unused-disks">
+      <li *ngFor="let disk of resource.unusedDisks">
+        {{ disk.devname }}
+      </li>
+    </ul>
+    
+    <ix-fieldset>
+      <ix-radio-group
+        formControlName="toPool"
+        [label]="'Add Disks To:' | translate"
+        [options]="toPoolOptions$"
+      >
+      </ix-radio-group>
+      <ix-select
+        *ngIf="isExistingMode"
+        formControlName="pool"
+        [label]="'Existing Pool' | translate"
+        [options]="poolOptions$"
+      >
+      </ix-select>
+    </ix-fieldset>
+  </div>
+
+  <div mat-dialog-actions>
+    <button
+      mat-button
+      type="button"
+      [matDialogClose]="false"
+    >{{ 'Cancel' | translate }}</button>
+    <button
+      mat-button
+      type="submit"
+      color="primary"
+      [disabled]="form.invalid"
+    >{{ 'Add Disks' | translate }}</button>
+  </div>
+</form>
