@@ -1,5 +1,4 @@
-@import '@material-design'
-  :host {
+:host {
   display: block;
   margin-bottom: 12px;
   margin-top: 12px;
@@ -59,43 +58,4 @@
 .label {
   display: inline-flex;
   font-size: x-small;
-}
-
-::ng-deep .mat-select-panel-wrap *:not(.mat-selection-list) {
-  /*
-    Note: asterisk to ignore doubled icons on form-select
-    TODO: remove that once form-select is updated
-   */
-  .mat-option-pseudo-checkbox.mat-pseudo-checkbox {
-    // @include material-icons();
-    // @include material-icon('remove', 'after');
-
-    background: transparent;
-    border: 0;
-    display: none;
-    height: 24px;
-    margin-right: 16px;
-    width: 24px;
-
-    &::after {
-      /* reset pseudo checkbox styles */
-      border: unset;
-      height: unset;
-      left: unset;
-      opacity: 1;
-      top: unset;
-      transform: unset;
-      width: unset;
-    }
-
-    &.mat-pseudo-checkbox-checked {
-      // @include material-icon('check_circle', 'after');
-    }
-  }
-
-  .mat-option {
-    &[aria-disabled=true] {
-      opacity: 0.5;
-    }
-  }
 }
