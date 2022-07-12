@@ -36,6 +36,7 @@ import { VdevComponent } from 'app/pages/storage2/components/manager/vdev/vdev.c
 import { GaugeChartComponent } from 'app/pages/storage2/components/pools-dashboard/pool-usage-card/gauge-chart/gauge-chart.component';
 import { PoolUsageCardComponent } from 'app/pages/storage2/components/pools-dashboard/pool-usage-card/pool-usage-card.component';
 import { PoolsDashboardComponent } from 'app/pages/storage2/components/pools-dashboard/pools-dashboard.component';
+import { WidgetTopologyComponent } from 'app/pages/storage2/components/pools-dashboard/widget-topology/widget-topology.component';
 import {
   ManageUnusedDiskDialogComponent,
 } from 'app/pages/storage2/components/unused-disk-card/manage-unused-disk-dialog/manage-unused-disk-dialog.component';
@@ -89,6 +90,7 @@ import { ZfsHealthCardComponent } from './components/zfs-health-card/zfs-health-
     PoolsDashboardComponent,
     PoolUsageCardComponent,
     GaugeChartComponent,
+    WidgetTopologyComponent,
     ImportPoolComponent,
     VdevComponent,
     ManagerComponent,
