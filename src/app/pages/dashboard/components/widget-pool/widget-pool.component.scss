@@ -31,7 +31,7 @@
   display: inline-block;
   font-weight: 500;
   position: relative;
-  top: 2px;
+  top: 2px; // TODO: Remove magic number
   vertical-align: middle;
 }
 
@@ -166,17 +166,17 @@ span.safe {
   height: auto;
   margin-left: 4px;
   position: relative;
-  top: 2px;
-  width: 14px;
+  top: 2px; // TODO: Remove magic number
+  width: 16px;
 }
 
 .used-space span.safe .mat-icon,
 .disk-errors span.safe .mat-icon {
-  top: 4px;
+  top: 4px; // TODO: Remove magic number
 }
 
 .pool-status span.safe.lock-icon-wrapper {
-  top: 1px;
+  top: 1px; // TODO: Remove magic number
 }
 
 .carousel-nav {
@@ -202,7 +202,7 @@ span.safe {
 }
 
 .carousel-nav .back-arrow.mat-icon {
-  margin-top: -3px;
+  margin-top: -3px; // TODO: Remove magic number
 }
 
 .carousel-nav .btn.active {
