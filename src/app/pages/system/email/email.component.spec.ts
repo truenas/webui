@@ -168,7 +168,7 @@ describe('EmailComponent', () => {
         'mail.send',
         [
           {
-            subject: 'TrueNAS Test Message hostname: host.truenas.com',
+            subject: 'Test Message',
             text: 'This is a test message from TrueNAS SCALE.',
           },
           {
@@ -271,7 +271,7 @@ describe('EmailComponent', () => {
         'mail.send',
         [
           {
-            subject: 'TrueNAS Test Message hostname: host.truenas.com',
+            subject: 'Test Message',
             text: 'This is a test message from TrueNAS SCALE.',
           },
           {
