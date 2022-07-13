@@ -50,7 +50,11 @@
                   {{ treeControl.isExpanded(disk) ? 'expand_more' : 'chevron_right' }}
                 </mat-icon>
               </button>
-              <ix-disk-node [disk]="disk" [size]="diskDictionary[disk.disk]?.size" [type]="diskDictionary[disk.children[0].disk]?.type"></ix-disk-node>
+              <ix-disk-node
+                [disk]="disk"
+                [size]="disk.type ? diskDictionary[disk.children[0].disk]?.size : null"
+                [type]="disk.type ? diskDictionary[disk.children[0].disk]?.type : null">
+              </ix-disk-node>
 
             </div>
 

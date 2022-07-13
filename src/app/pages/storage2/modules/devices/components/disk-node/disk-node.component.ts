@@ -51,23 +51,22 @@ export class DiskNodeComponent {
   }
 
   get diskIcon(): string {
-    let icon = '';
     if (this.disk.children.length) {
       if (this.type === DiskType.Hdd) {
-        icon = 'ix-hdd-mirror';
+        return 'ix-hdd-mirror';
       }
       if (this.type === DiskType.Ssd) {
-        icon = 'ix-ssd-mirror';
+        return 'ix-ssd-mirror';
       }
     } else {
       if (this.type === DiskType.Hdd) {
-        icon = 'ix-hdd';
+        return 'ix-hdd';
       }
       if (this.type === DiskType.Ssd) {
-        icon = 'ix-ssd';
+        return 'ix-ssd';
       }
     }
-    return icon;
+    return '';
   }
 
   get statusColor(): string {

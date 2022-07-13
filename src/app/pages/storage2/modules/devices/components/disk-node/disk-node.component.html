@@ -1,15 +1,17 @@
 <div class="tree-node-grid">
   <div class="cell cell-name">
-    <mat-icon *ngIf="diskIcon" [svgIcon]="diskIcon"></mat-icon>
-    <span>{{ diskName }}</span>
+    <div class="icon-container">
+      <mat-icon *ngIf="diskIcon" [svgIcon]="diskIcon"></mat-icon>
+    </div>
+    <span class="name">{{ diskName }}</span>
   </div>
   <div class="cell cell-status">
     <span [style.background-color]="statusColor">{{ diskStatus }}</span>
   </div>
-  <div class="cell">
+  <div class="cell cell-capacity">
     <span>{{ diskCapacity }}</span>
   </div>
-  <div class="cell">
+  <div class="cell cell-errors">
     <span>{{ diskErrors }}</span>
   </div>
 </div>

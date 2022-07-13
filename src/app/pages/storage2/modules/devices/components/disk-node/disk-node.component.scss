@@ -34,8 +34,21 @@
   }
 
   .cell-name {
-    mat-icon {
+    align-items: stretch;
+    font-weight: bold;
+
+    .icon-container {
+      align-items: center;
+      background-color: var(--bg2);
+      display: flex;
       padding: 5px;
+    }
+
+    .name {
+      align-items: center;
+      background: linear-gradient(90deg, var(--bg2) 0%, var(--bg2) calc(100% - 11px), transparent 100%);
+      display: inline-flex;
+      padding-right: 15px;
     }
   }
 }
@@ -45,11 +58,11 @@
 :host-context(ix-tree-node.selected),
 :host-context(.disk-nested-tree-root-node:hover),
 :host-context(.disk-nested-tree-root-node.selected) {
-  .tree-node-grid {
+  .tree-node-grid .cell-name .name {
     background: linear-gradient(90deg, var(--hover-bg) 0%, var(--hover-bg) calc(100% - 11px), transparent 100%);
   }
 
-  .tree-node-grid .icon-container {
+  .tree-node-grid .cell-name .icon-container {
     background-color: var(--hover-bg);
   }
 }
