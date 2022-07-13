@@ -4,6 +4,7 @@ import { MatStepper } from '@angular/material/stepper';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
+import { CaCreateType } from 'app/enums/ca-create-type.enum';
 import { helptextSystemCa } from 'app/helptext/system/ca';
 import { CertificateProfile } from 'app/interfaces/certificate.interface';
 import { WizardConfiguration } from 'app/interfaces/entity-wizard.interface';
@@ -51,11 +52,11 @@ export class CertificateAuthorityAddComponent implements WizardConfiguration {
           tooltip: helptextSystemCa.add.create_type.tooltip,
           placeholder: helptextSystemCa.add.create_type.placeholder,
           options: [
-            { label: 'Internal CA', value: 'CA_CREATE_INTERNAL' },
-            { label: 'Intermediate CA', value: 'CA_CREATE_INTERMEDIATE' },
-            { label: 'Import CA', value: 'CA_CREATE_IMPORTED' },
+            { label: 'Internal CA', value: CaCreateType.CaCreateInternal },
+            { label: 'Intermediate CA', value: CaCreateType.CaCreateIntermediate },
+            { label: 'Import CA', value: CaCreateType.CaCreateImported },
           ],
-          value: 'CA_CREATE_INTERNAL',
+          value: CaCreateType.CaCreateInternal,
         },
         {
           type: 'select',
@@ -73,7 +74,7 @@ export class CertificateAuthorityAddComponent implements WizardConfiguration {
               action: RelationAction.Hide,
               when: [{
                 name: 'create_type',
-                value: 'CA_CREATE_IMPORTED',
+                value: CaCreateType.CaCreateImported,
               }],
             },
           ],
@@ -669,7 +670,7 @@ export class CertificateAuthorityAddComponent implements WizardConfiguration {
       this.wizardConfig[1].skip = false;
       this.wizardConfig[2].skip = false;
 
-      if (res === 'CA_CREATE_INTERNAL') {
+      if (res === CaCreateType.CaCreateInternal) {
         this.intermediatecaFields.forEach((field) => this.hideField(field, true));
         this.importcaFields.forEach((field) => this.hideField(field, true));
         this.internalcaFields.forEach((field) => this.hideField(field, false));
@@ -687,7 +688,7 @@ export class CertificateAuthorityAddComponent implements WizardConfiguration {
             this.getField(field).setValue(this.getField(field).value);
           }
         });
-      } else if (res === 'CA_CREATE_INTERMEDIATE') {
+      } else if (res === CaCreateType.CaCreateIntermediate) {
         this.importcaFields.forEach((field) => this.hideField(field, true));
         this.internalcaFields.forEach((field) => this.hideField(field, true));
         this.intermediatecaFields.forEach((field) => this.hideField(field, false));
@@ -703,7 +704,7 @@ export class CertificateAuthorityAddComponent implements WizardConfiguration {
             this.getField(field).setValue(this.getField(field).value);
           }
         });
-      } else if (res === 'CA_CREATE_IMPORTED') {
+      } else if (res === CaCreateType.CaCreateImported) {
         this.intermediatecaFields.forEach((field) => this.hideField(field, true));
         this.importcaFields.forEach((field) => this.hideField(field, false));
         this.internalcaFields.forEach((field) => this.hideField(field, true));
@@ -851,7 +852,7 @@ export class CertificateAuthorityAddComponent implements WizardConfiguration {
     if (data.passphrase2) {
       delete data.passphrase2;
     }
-    if (data.create_type === 'CA_CREATE_INTERNAL' || data.create_type === 'CA_CREATE_INTERMEDIATE') {
+    if (data.create_type === CaCreateType.CaCreateInternal || data.create_type === CaCreateType.CaCreateIntermediate) {
       const certExtensions = {
         BasicConstraints: {},
         AuthorityKeyIdentifier: {},
@@ -880,7 +881,7 @@ export class CertificateAuthorityAddComponent implements WizardConfiguration {
 
       delete data['profiles'];
     }
-    if (data.create_type === 'CA_CREATE_INTERMEDIATE') {
+    if (data.create_type === CaCreateType.CaCreateIntermediate) {
       delete data['add_to_trusted_store'];
     }
 

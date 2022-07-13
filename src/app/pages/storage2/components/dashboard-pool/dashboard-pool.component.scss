@@ -18,7 +18,9 @@
 }
 
 .pool-cards {
-  @include details-cards();
+  display: grid;
+  grid-gap: 8px;
+  grid-template-columns: repeat(auto-fill, minmax(390px, 1fr));
 }
 
 .pool-actions {

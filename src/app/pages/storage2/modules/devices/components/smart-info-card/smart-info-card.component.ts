@@ -2,13 +2,18 @@ import {
   ChangeDetectionStrategy, Component, Input, OnChanges,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { UntilDestroy } from '@ngneat/until-destroy';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import _ from 'lodash';
 import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { filter, map } from 'rxjs/operators';
 import { SmartTestResultStatus } from 'app/enums/smart-test-result-status.enum';
 import { LoadingState, toLoadingState } from 'app/helpers/to-loading-state.helper';
 import { SmartTestResult } from 'app/interfaces/smart-test.interface';
-import { VDev } from 'app/interfaces/storage.interface';
+import { Disk, VDev } from 'app/interfaces/storage.interface';
+import {
+  ManualTestDialogComponent, ManualTestDialogParams,
+} from 'app/pages/storage2/modules/disks/components/manual-test-dialog/manual-test-dialog.component';
 import { WebSocketService } from 'app/services';
 
 @UntilDestroy()
@@ -19,11 +24,16 @@ import { WebSocketService } from 'app/services';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SmartInfoCardComponent implements OnChanges {
-  @Input() disk: VDev;
+  @Input() topologyItem: VDev;
+  @Input() disk: Disk;
 
   totalResults$: Observable<LoadingState<number>>;
+  lastResultsInCategory$: Observable<SmartTestResult[]>;
+  smartTasksCount$: Observable<LoadingState<number>>;
 
-  private results$: Observable<SmartTestResult[]>;
+  readonly tasksMessage = T('{n, plural, =0 {No Tasks} one {# Task} other {# Tasks}} Configured');
+
+  private readonly maxResultCategories = 4;
 
   constructor(
     private ws: WebSocketService,
@@ -32,15 +42,48 @@ export class SmartInfoCardComponent implements OnChanges {
 
   ngOnChanges(): void {
     this.loadTestResults();
+    this.loadSmartTasks();
+  }
+
+  onManualTest(): void {
+    const testDialog = this.matDialog.open(ManualTestDialogComponent, {
+      data: {
+        selectedDisks: [this.disk],
+        diskIdsWithSmart: [this.disk.identifier],
+      } as ManualTestDialogParams,
+    });
+    testDialog
+      .afterClosed()
+      .pipe(filter(Boolean), untilDestroyed(this))
+      .subscribe(() => {
+        this.loadTestResults();
+      });
   }
 
   private loadTestResults(): void {
-    this.results$ = this.ws.call('smart.test.results', [[['disk', '=', this.disk.disk]]])
-      .pipe(map((results) => results[0]?.tests ?? []));
-    this.totalResults$ = this.results$.pipe(
-      map((results) => {
-        return results.filter((result) => result.status !== SmartTestResultStatus.Running).length;
+    const results$ = this.ws.call('smart.test.results', [[['disk', '=', this.topologyItem.disk]]]).pipe(
+      map((testResults) => {
+        const results = testResults[0]?.tests ?? [];
+        return results.filter((result) => result.status !== SmartTestResultStatus.Running);
       }),
+    );
+
+    this.totalResults$ = results$.pipe(
+      map((results) => results.length),
+      toLoadingState(),
+    );
+
+    this.lastResultsInCategory$ = results$.pipe(
+      map((results) => {
+        const lastResultsInCategories = _.uniqBy(results, (result) => result.description);
+        return lastResultsInCategories.slice(0, this.maxResultCategories);
+      }),
+    );
+  }
+
+  private loadSmartTasks(): void {
+    this.smartTasksCount$ = this.ws.call('smart.test.query_for_disk', [this.topologyItem.disk]).pipe(
+      map((tasks) => tasks.length),
       toLoadingState(),
     );
   }

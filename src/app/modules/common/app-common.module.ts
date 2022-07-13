@@ -39,6 +39,7 @@ import { GeneralDialogComponent } from 'app/modules/common/dialog/general-dialog
 import { InfoDialogComponent } from 'app/modules/common/dialog/info-dialog/info-dialog.component';
 import { RedirectDialogComponent } from 'app/modules/common/dialog/redirect-dialog/redirect-dialog.component';
 import { ResilverProgressDialogComponent } from 'app/modules/common/dialog/resilver-progress/resilver-progress.component';
+import { UpdateDialogComponent } from 'app/modules/common/dialog/update-dialog/update-dialog.component';
 import { AdminLayoutComponent } from 'app/modules/common/layouts/admin-layout/admin-layout.component';
 import { AuthLayoutComponent } from 'app/modules/common/layouts/auth-layout/auth-layout.component';
 import { ModalComponent } from 'app/modules/common/modal/modal.component';
@@ -108,6 +109,7 @@ import { LocaleService } from 'app/services/locale.service';
     DirectoryServicesMonitorComponent,
     ModalComponent,
     SearchInputComponent,
+    UpdateDialogComponent,
   ],
   providers: [
     LanguageService,

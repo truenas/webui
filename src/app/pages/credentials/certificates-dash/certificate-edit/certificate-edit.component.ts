@@ -7,14 +7,13 @@ import { Certificate } from 'app/interfaces/certificate.interface';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import {
   CertificateAcmeAddComponent,
-} from 'app/pages/credentials/certificates-dash/forms/certificate-acme-add.component';
+} from 'app/pages/credentials/certificates-dash/certificate-acme-add/certificate-acme-add.component';
 import {
   ViewCertificateDialogData,
 } from 'app/pages/credentials/certificates-dash/view-certificate-dialog/view-certificate-dialog-data.interface';
 import {
   ViewCertificateDialogComponent,
 } from 'app/pages/credentials/certificates-dash/view-certificate-dialog/view-certificate-dialog.component';
-import { ModalService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -41,7 +40,6 @@ export class CertificateEditComponent {
     private cdr: ChangeDetectorRef,
     private slideInService: IxSlideInService,
     private errorHandler: FormErrorHandlerService,
-    private modalService: ModalService,
     private matDialog: MatDialog,
   ) {}
 
@@ -77,9 +75,8 @@ export class CertificateEditComponent {
 
   onCreateAcmePressed(): void {
     this.slideInService.close();
-    setTimeout(() => {
-      this.modalService.openInSlideIn(CertificateAcmeAddComponent, this.certificate.id);
-    }, 300);
+    const acmeForm = this.slideInService.open(CertificateAcmeAddComponent);
+    acmeForm.setCsr(this.certificate);
   }
 
   onSubmit(): void {

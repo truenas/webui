@@ -15,6 +15,7 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
 import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { NgxDatatableModule } from '@swimlane/ngx-datatable';
@@ -32,9 +33,15 @@ import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
 import { ImportPoolComponent } from 'app/pages/storage2/components/import-pool/import-pool.component';
 import { ManagerComponent } from 'app/pages/storage2/components/manager/manager.component';
 import { VdevComponent } from 'app/pages/storage2/components/manager/vdev/vdev.component';
+import { GaugeChartComponent } from 'app/pages/storage2/components/pools-dashboard/pool-usage-card/gauge-chart/gauge-chart.component';
+import { PoolUsageCardComponent } from 'app/pages/storage2/components/pools-dashboard/pool-usage-card/pool-usage-card.component';
 import { PoolsDashboardComponent } from 'app/pages/storage2/components/pools-dashboard/pools-dashboard.component';
-import { GaugeChartComponent } from 'app/pages/storage2/components/pools-dashboard/widget-usage/gauge-chart/gauge-chart.component';
-import { WidgetUsageComponent } from 'app/pages/storage2/components/pools-dashboard/widget-usage/widget-usage.component';
+import { WidgetTopologyComponent } from 'app/pages/storage2/components/pools-dashboard/widget-topology/widget-topology.component';
+import {
+  ManageUnusedDiskDialogComponent,
+} from 'app/pages/storage2/components/unused-disk-card/manage-unused-disk-dialog/manage-unused-disk-dialog.component';
+import { UnusedDiskCardComponent } from 'app/pages/storage2/components/unused-disk-card/unused-disk-card.component';
+import { UnusedResourcesComponent } from 'app/pages/storage2/components/unused-resources/unused-resources.component';
 import { routing } from 'app/pages/storage2/storage2.routing';
 import { DashboardPoolComponent } from './components/dashboard-pool/dashboard-pool.component';
 import { ExportDisconnectModalComponent } from './components/dashboard-pool/export-disconnect-modal/export-disconnect-modal.component';
@@ -48,6 +55,7 @@ import { ZfsHealthCardComponent } from './components/zfs-health-card/zfs-health-
     IxFormsModule,
     TranslateModule,
     MatCardModule,
+    MatTooltipModule,
     AppCommonModule,
     MatButtonModule,
     RouterModule,
@@ -68,22 +76,28 @@ import { ZfsHealthCardComponent } from './components/zfs-health-card/zfs-health-
     MatCheckboxModule,
     MatSelectModule,
     MatMenuModule,
+    MatDialogModule,
     CastModule,
     MatInputModule,
     CommonDirectivesModule,
     CoreComponents,
     MatProgressBarModule,
     NgxSkeletonLoaderModule,
+    LayoutModule,
     MatDialogModule,
   ],
   declarations: [
     PoolsDashboardComponent,
-    WidgetUsageComponent,
+    PoolUsageCardComponent,
     GaugeChartComponent,
+    WidgetTopologyComponent,
     ImportPoolComponent,
     VdevComponent,
     ManagerComponent,
+    ManageUnusedDiskDialogComponent,
     ZfsHealthCardComponent,
+    UnusedDiskCardComponent,
+    UnusedResourcesComponent,
     DashboardPoolComponent,
     ExportDisconnectModalComponent,
     DiskHealthCardComponent,

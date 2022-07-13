@@ -29,10 +29,11 @@ import { DatasetQuotasGrouplistComponent } from 'app/pages/datasets/components/d
 import { DatasetQuotasUserlistComponent } from 'app/pages/datasets/components/dataset-quotas/dataset-quotas-userlist/dataset-quotas-userlist.component';
 import { DeleteDatasetDialogComponent } from 'app/pages/datasets/components/delete-dataset-dialog/delete-dataset-dialog.component';
 import { LoadingCardContentComponent } from 'app/pages/datasets/components/loading-card-content/loading-card-content.component';
+import { ZvolFormComponent } from 'app/pages/datasets/components/zvol-form/zvol-form.component';
 import { routing } from 'app/pages/datasets/datasets.routing';
 import { EncryptionModule } from 'app/pages/datasets/modules/encryption/encryption.module';
 import { PermissionsModule } from 'app/pages/datasets/modules/permissions/permissions.module';
-import { DatasetStore } from 'app/pages/datasets/store/dataset-store.service';
+import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
 import { DatasetCapacityManagementCardComponent } from './components/dataset-capacity-management-card/dataset-capacity-management-card.component';
 import { DatasetIconComponent } from './components/dataset-icon/dataset-icon.component';
 import { DatasetEncryptionCellComponent } from './components/dataset-node/dataset-encryption-cell/dataset-encryption-cell.component';
@@ -83,9 +84,10 @@ import { DatasetNodeComponent } from './components/dataset-node/dataset-node.com
     DatasetQuotasGrouplistComponent,
     DatasetIconComponent,
     DatasetEncryptionCellComponent,
+    ZvolFormComponent,
   ],
   providers: [
-    DatasetStore,
+    DatasetTreeStore,
   ],
 })
 export class DatasetsModule { }

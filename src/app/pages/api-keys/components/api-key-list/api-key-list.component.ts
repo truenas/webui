@@ -73,6 +73,7 @@ export class ApiKeyListComponent implements OnInit, AfterViewInit {
   }
 
   getApiKeys(): void {
+    this.store.loadApiKeys();
     this.store.apiKeys$.pipe(
       untilDestroyed(this),
     ).subscribe((apiKeys) => {

@@ -1,5 +1,6 @@
 import { Validators } from '@angular/forms';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
+import { CertificateCreateType } from 'app/enums/certificate-create-type.enum';
 import { matchOtherValidator } from 'app/modules/entity/entity-form/validators/password-validation/password-validation';
 
 export const helptextSystemCertificates = {
@@ -23,10 +24,10 @@ export const helptextSystemCertificates = {
       tooltip: T('<i>Internal Certificates</i> use system-managed CAs for certificate issuance. \
  <i>Import Certificate</i> lets you import an existing certificate onto the system.'),
       options: [
-        { label: T('Internal Certificate'), value: 'CERTIFICATE_CREATE_INTERNAL' },
-        { label: T('Import Certificate'), value: 'CERTIFICATE_CREATE_IMPORTED' },
+        { label: T('Internal Certificate'), value: CertificateCreateType.CreateInternal },
+        { label: T('Import Certificate'), value: CertificateCreateType.CreateImported },
       ],
-      value: 'CERTIFICATE_CREATE_INTERNAL',
+      value: CertificateCreateType.CreateInternal,
     },
 
     csr_create_type: {
@@ -34,10 +35,10 @@ export const helptextSystemCertificates = {
       tooltip: T('<i>Certificate Signing Requests</i> control when an external CA will issue (sign) the certificate. Typically used with ACME or other CAs that most popular browsers trust by default \
  <i>Import Certificate Signing Request</i> lets you import an existing CSR onto the system. Typically used with ACME or internal CAs.'),
       options: [
-        { label: T('Certificate Signing Request'), value: 'CERTIFICATE_CREATE_CSR' },
-        { label: T('Import Certificate Signing Request'), value: 'CERTIFICATE_CREATE_IMPORTED_CSR' },
+        { label: T('Certificate Signing Request'), value: CertificateCreateType.CreateCsr },
+        { label: T('Import Certificate Signing Request'), value: CertificateCreateType.CreateImportedCsr },
       ],
-      value: 'CERTIFICATE_CREATE_CSR',
+      value: CertificateCreateType.CreateCsr,
     },
 
     profiles: {

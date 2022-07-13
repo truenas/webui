@@ -18,6 +18,9 @@ import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { SshConnectionFormComponent } from 'app/pages/credentials/backup-credentials/ssh-connection-form/ssh-connection-form.component';
 import { SshKeypairFormComponent } from 'app/pages/credentials/backup-credentials/ssh-keypair-form/ssh-keypair-form.component';
 import {
+  CertificateAcmeAddComponent,
+} from 'app/pages/credentials/certificates-dash/certificate-acme-add/certificate-acme-add.component';
+import {
   CertificateDetailsComponent,
 } from 'app/pages/credentials/certificates-dash/certificate-details/certificate-details.component';
 import { AcmednsFormComponent } from 'app/pages/credentials/certificates-dash/forms/acmedns-form/acmedns-form.component';
@@ -34,7 +37,6 @@ import { CertificateAuthorityEditComponent } from './certificates-dash/certifica
 import { CertificateEditComponent } from './certificates-dash/certificate-edit/certificate-edit.component';
 import { CertificatesDashComponent } from './certificates-dash/certificates-dash.component';
 import { CertificateAuthorityAddComponent } from './certificates-dash/forms/ca-add.component';
-import { CertificateAcmeAddComponent } from './certificates-dash/forms/certificate-acme-add.component';
 import { CertificateAddComponent } from './certificates-dash/forms/certificate-add.component';
 
 @NgModule({
@@ -44,17 +46,16 @@ import { CertificateAddComponent } from './certificates-dash/forms/certificate-a
     CloudCredentialsFormComponent,
     SshKeypairFormComponent,
     CertificatesDashComponent,
-    CertificateAcmeAddComponent,
     CertificateAddComponent,
     CertificateAuthorityAddComponent,
     CertificateAuthorityEditComponent,
-    CertificateAcmeAddComponent,
     CertificateEditComponent,
     AcmednsFormComponent,
     SignCsrDialogComponent,
     ViewCertificateDialogComponent,
     CertificateDetailsComponent,
     KmipComponent,
+    CertificateAcmeAddComponent,
   ],
   imports: [
     CommonModule,
