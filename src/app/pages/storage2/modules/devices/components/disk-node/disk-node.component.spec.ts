@@ -1,6 +1,7 @@
 import { MatIcon } from '@angular/material/icon';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { DiskType } from 'app/enums/disk-type.enum';
+import { VDevStatus } from 'app/enums/vdev-status.enum';
 import { VDev } from 'app/interfaces/storage.interface';
 import { DiskNodeComponent } from 'app/pages/storage2/modules/devices/components/disk-node/disk-node.component';
 
@@ -10,7 +11,7 @@ describe('DiskNodeComponent', () => {
     type: 'DISK',
     path: null,
     guid: '123',
-    status: 'OFFLINE',
+    status: VDevStatus.Offline,
     stats: {
       read_errors: 1,
       write_errors: 2,
