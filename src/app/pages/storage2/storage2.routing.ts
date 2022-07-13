@@ -27,18 +27,6 @@ export const routes: Routes = [
         path: ':poolId/devices',
         data: { title: 'Devices', breadcrumb: 'Devices' },
         loadChildren: () => import('./modules/devices/devices.module').then((module) => module.DevicesModule),
-
-        // children: [
-        //   {
-        //     path: '',
-        //     redirectTo: ':poolId/devices/',
-        //     pathMatch: 'full',
-        //   },
-        //   {
-        //     path: ':guid',
-        //     loadChildren: () => import('./modules/devices/devices.module').then((module) => module.DevicesModule),
-        //   },
-        // ],
       },
       {
         path: ':poolId/add-vdevs',

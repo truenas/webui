@@ -28,7 +28,7 @@ export class DevicesComponent implements OnInit {
   selectedItem: VDev;
   selectedParentItem: VDev | undefined;
   dataSource: IxNestedTreeDataSource<VDev>;
-  poolId: string | null;
+  poolId: number | null;
   treeControl = new NestedTreeControl<VDev, string>((vdev) => vdev.children, {
     trackBy: (vdev) => vdev.guid,
   });
@@ -99,8 +99,8 @@ export class DevicesComponent implements OnInit {
 
   private loadTopologyAndDisks(): void {
     this.loader.open();
-    const poolId = Number(this.route.snapshot.paramMap.get('poolId'));
-    this.ws.call('pool.query', [[['id', '=', poolId]]]).pipe(
+    this.poolId = Number(this.route.snapshot.paramMap.get('poolId'));
+    this.ws.call('pool.query', [[['id', '=', this.poolId]]]).pipe(
       switchMap((pools) => {
         // TODO: Handle pool not found.
         return this.ws.call('disk.query', [[['pool', '=', pools[0].name]], { extra: { pools: true } }]).pipe(
