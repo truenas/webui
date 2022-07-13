@@ -147,9 +147,6 @@ export class GaugeChartComponent implements OnChanges, AfterViewInit {
   }
 
   ngOnChanges(): void {
-    if (!this.canvasRef) {
-      return;
-    }
     this.refresh();
   }
 

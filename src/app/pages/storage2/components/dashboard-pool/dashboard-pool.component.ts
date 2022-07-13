@@ -4,6 +4,7 @@ import {
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+import _ from 'lodash';
 import { EMPTY } from 'rxjs';
 import {
   catchError, filter, switchMap, tap,
@@ -12,6 +13,7 @@ import { JobState } from 'app/enums/job-state.enum';
 import helptext from 'app/helptext/storage/volumes/volume-list';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { Pool } from 'app/interfaces/pool.interface';
+import { Disk } from 'app/interfaces/storage.interface';
 import { VolumeData, VolumesData } from 'app/interfaces/volume-data.interface';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -35,6 +37,9 @@ export class DashboardPoolComponent implements OnInit {
   volumeData: VolumeData;
   isVolumeDataLoading = false;
 
+  diskDictionary: { [key: string]: Disk } = {};
+  isDisksLoading = false;
+
   constructor(
     private matDialog: MatDialog,
     private dialogService: DialogService,
@@ -47,6 +52,7 @@ export class DashboardPoolComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadVolumeData();
+    this.loadDisks();
   }
 
   loadVolumeData(): void {
@@ -69,7 +75,16 @@ export class DashboardPoolComponent implements OnInit {
         });
         this.volumeData = vd[this.pool.name];
         this.isVolumeDataLoading = false;
-        this.cdr.detectChanges();
+        this.cdr.markForCheck();
+      });
+  }
+
+  loadDisks(): void {
+    this.isDisksLoading = true;
+    this.ws.call('disk.query', [[['pool', '=', this.pool.name]], { extra: { pools: true } }])
+      .pipe(untilDestroyed(this)).subscribe((disks) => {
+        this.diskDictionary = _.keyBy(disks, (disk) => disk.devname);
+        this.isDisksLoading = false;
         this.cdr.markForCheck();
       });
   }

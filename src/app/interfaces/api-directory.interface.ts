@@ -829,6 +829,7 @@ export type ApiDirectory = {
   'smart.config': { params: void; response: SmartConfig };
   'smart.test.manual_test': { params: [SmartManualTestParams[]]; response: ManualSmartTest[] };
   'smart.test.query': { params: QueryParams<SmartTestTask>; response: SmartTestTask[] };
+  'smart.test.query_for_disk': { params: [disk: string]; response: SmartTestTask[] };
   'smart.test.create': { params: [SmartTestTaskUpdate]; response: SmartTestTask };
   'smart.test.results': { params: QueryParams<SmartTestResults>; response: SmartTestResults[] };
   'smart.test.update': { params: [id: number, update: SmartTestTaskUpdate]; response: SmartTestTask };

@@ -5,9 +5,9 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { AclType } from 'app/enums/acl-type.enum';
 import { NfsAclTag } from 'app/enums/nfs-acl.enum';
 import { Acl } from 'app/interfaces/acl.interface';
-import { Dataset } from 'app/interfaces/dataset.interface';
 import { FileSystemStat } from 'app/interfaces/filesystem-stat.interface';
 import { PermissionsCardStore } from 'app/pages/datasets/modules/permissions/stores/permissions-card.store';
+import { DatasetInTree } from 'app/pages/datasets/store/dataset-in-tree.interface';
 import { isRootDataset } from 'app/pages/datasets/utils/dataset.utils';
 
 @UntilDestroy()
@@ -18,7 +18,7 @@ import { isRootDataset } from 'app/pages/datasets/utils/dataset.utils';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PermissionsCardComponent implements OnInit, OnChanges {
-  @Input() dataset: Dataset;
+  @Input() dataset: DatasetInTree;
 
   isLoading: boolean;
   stat: FileSystemStat;

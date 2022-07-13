@@ -1,94 +1,80 @@
-<div class="card-container">
-  <mat-card fxLayout="row" fxLayoutAlign="center center">
-    <mat-card-content>
-      <mat-toolbar-row fxLayout="row" fxLayoutAlign="space-between center">
-        <div fxLayout="row" fxLayoutAlign="start center">
-          <h3 class="mat-card-title-text">
-            <div class="card-title-text">
-              <span>{{ 'Usage' | translate }}</span>
-            </div>
-          </h3>
+<mat-card class="card">
+  <mat-card-header>
+    <h3 mat-card-title>
+      {{ 'Usage' | translate }}
 
-          <span class="loader-state" *ngIf="loading"></span>
-          <ng-container *ngIf="!loading" [ngSwitch]="usageState.health">
-            <span *ngSwitchCase="usageHealthLevel.Safe" class="healthy">
-              <mat-icon>check_circle</mat-icon>
-            </span>
-            <span *ngSwitchCase="usageHealthLevel.Warn" class="warning">
-              <mat-icon>warning</mat-icon>
-            </span>
-            <span *ngSwitchCase="usageHealthLevel.Error" class="error">
-              <mat-icon>cancel</mat-icon>
-            </span>
-            <span *ngSwitchDefault class="error">
-              <mat-icon>cancel</mat-icon>
-            </span>
-          </ng-container>
-        </div>
-        <div class="controls">
-          <button
-            mat-button
-            (click)="router.navigate(['datasets/'])"
-          >{{ 'Manage Datasets' | translate }}</button>
-        </div>
-      </mat-toolbar-row>
-      <div class="content-container" fxFlex="100" fxLayout="row" fxLayoutAlign="space-around center">
-        <div class="left" fxLayout="column" fxLayoutAlign="center center">
-          <span class="loader-chart" *ngIf="loading"></span>
-          <ng-container *ngIf="!loading">
-            <ix-gauge-chart
-              [colorFill]="usageState.usedPct === 0 ? '#1E1E1E' : isLowCapacity ? 'red' : '#0095D5'"
-              [colorBlank]="'#1E1E1E'"
-              [width]="200"
-              [height]="200"
-              [label]="usageState.usedPct + '%'"
-              [value]="usageState.usedPct > 100 ? 100 : usageState.usedPct"
-              [style]="isLowCapacity ? 'color: red;' : ''"
-            ></ix-gauge-chart>
-            <div class="warning-container" *ngIf="isLowCapacity">
-              <!-- <span class="warning"><mat-icon>warning</mat-icon></span> -->
-              <span> <b>{{ 'Warning' | translate }}:</b> {{ 'Low Capacity' | translate }} </span>
-            </div>
-          </ng-container>
-        </div>
+      <span class="loader-state" *ngIf="loading"></span>
+      <ng-container *ngIf="!loading" [ngSwitch]="usageState.health">
+        <mat-icon *ngSwitchCase="usageHealthLevel.Safe" class="pool-icon icon-online">check_circle</mat-icon>
+        <mat-icon *ngSwitchCase="usageHealthLevel.Warn" class="pool-icon icon-warning">warning</mat-icon>
+        <mat-icon *ngSwitchCase="usageHealthLevel.Error" class="pool-icon icon-faulted">cancel</mat-icon>
+        <mat-icon *ngSwitchDefault class="pool-icon icon-error">cancel</mat-icon>
+      </ng-container>
+    </h3>
 
-        <div class="right" fxLayout="column" fxLayoutAlign="center center">
-          <div class="captions" fxLayout="column">
-            <span class="capacity-caption" fxLayoutAlign="start center">
-              <b>{{ 'Usable Capacity' | translate }}:</b>
-              <span class="loader-caption" *ngIf="loading"></span>
-              <span class="value-caption" *ngIf="!loading">{{ usageState.capacity }}</span>
-            </span>
-            <ul class="list-caption">
-              <li class="item-caption">
-                <span class="used-caption" fxLayoutAlign="start center">
-                  <b>{{ 'Used' | translate }}:</b>
-                  <span class="loader-caption" *ngIf="loading"></span>
-                  <span class="value-caption" *ngIf="!loading">{{ usageState.used }}</span>
-                </span>
-              </li>
-              <li class="item-caption">
-                <span class="available-caption" fxLayoutAlign="start center">
-                  <b>{{ 'Available' | translate }}:</b>
-                  <span class="loader-caption" *ngIf="loading"></span>
-                  <span class="value-caption" *ngIf="!loading">{{ usageState.avail }}</span>
-                </span>
-              </li>
-              <li class="item-caption">
-                <span class="snapshots-caption" fxLayoutAlign="start center">
-                  <b>{{ 'Used by Snapshots' | translate }}:</b>
-                  <span class="loader-caption" *ngIf="loading"></span>
-                  <span class="value-caption" *ngIf="!loading">{{ usageState.snapshots }}</span>
-                </span>
-              </li>
-            </ul>
+    <button
+      mat-button
+      ix-auto-type="button"
+      (click)="router.navigate(['datasets/'])"
+    >{{ 'Manage Datasets' | translate }}</button>
+  </mat-card-header>
+
+  <mat-card-content>
+    <div class="content-container" fxFlex="100" fxLayout="row" fxLayoutAlign="space-around center">
+      <div class="left" fxLayout="column" fxLayoutAlign="center center">
+        <span class="loader-chart" *ngIf="loading"></span>
+        <ng-container *ngIf="!loading">
+          <ix-gauge-chart
+            [colorFill]="usageState.usedPct === 0 ? '#1E1E1E' : isLowCapacity ? 'red' : '#0095D5'"
+            [colorBlank]="'#1E1E1E'"
+            [width]="160"
+            [height]="160"
+            [label]="usageState.usedPct + '%'"
+            [value]="usageState.usedPct > 100 ? 100 : usageState.usedPct"
+            [style]="isLowCapacity ? 'color: red;' : ''"
+          ></ix-gauge-chart>
+          <div fxLayout="row" class="warning-container" *ngIf="isLowCapacity">
+            <!-- <mat-icon class="pool-icon icon-warning">warning</mat-icon> -->
+            <span> <b>{{ 'Warning' | translate }}:</b> {{ 'Low Capacity' | translate }} </span>
           </div>
-          <a class="link" (click)="router.navigate(['reportsdashboard/cpu/'])">
-            {{ 'View Disk Space Reports' | translate }}
-          </a>
-        </div>
+        </ng-container>
       </div>
-    </mat-card-content>
-  </mat-card>
 
-</div>
+      <div class="right" fxLayout="column" fxLayoutAlign="center center">
+        <div class="captions" fxLayout="column">
+          <span class="capacity-caption" fxLayoutAlign="start center">
+            <b>{{ 'Usable Capacity' | translate }}:</b>
+            <span class="loader-caption" *ngIf="loading"></span>
+            <span class="value-caption" *ngIf="!loading">{{ usageState.capacity }}</span>
+          </span>
+          <ul class="list-caption">
+            <li class="item-caption">
+              <span class="used-caption" fxLayoutAlign="start center">
+                <b>{{ 'Used' | translate }}:</b>
+                <span class="loader-caption" *ngIf="loading"></span>
+                <span class="value-caption" *ngIf="!loading">{{ usageState.used }}</span>
+              </span>
+            </li>
+            <li class="item-caption">
+              <span class="available-caption" fxLayoutAlign="start center">
+                <b>{{ 'Available' | translate }}:</b>
+                <span class="loader-caption" *ngIf="loading"></span>
+                <span class="value-caption" *ngIf="!loading">{{ usageState.avail }}</span>
+              </span>
+            </li>
+            <li class="item-caption">
+              <span class="snapshots-caption" fxLayoutAlign="start center">
+                <b>{{ 'Used by Snapshots' | translate }}:</b>
+                <span class="loader-caption" *ngIf="loading"></span>
+                <span class="value-caption" *ngIf="!loading">{{ usageState.snapshots }}</span>
+              </span>
+            </li>
+          </ul>
+        </div>
+        <a class="link" (click)="router.navigate(['reportsdashboard/cpu/'])">
+          {{ 'View Disk Space Reports' | translate }}
+        </a>
+      </div>
+    </div>
+  </mat-card-content>
+</mat-card>
