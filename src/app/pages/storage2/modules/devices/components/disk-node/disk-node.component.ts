@@ -45,7 +45,7 @@ export class DiskNodeComponent {
   get diskErrors(): string {
     if (this.disk.stats) {
       const errors = this.disk.stats?.checksum_errors + this.disk.stats?.read_errors + this.disk.stats?.write_errors;
-      return errors ? `${errors} Errors` : this.translate.instant('No Errors');
+      return this.translate.instant('{n, plural, =0 {No Errors} other {# Errors}}', { n: errors });
     }
     return '';
   }
