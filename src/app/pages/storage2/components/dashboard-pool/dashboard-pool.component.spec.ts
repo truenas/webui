@@ -45,6 +45,7 @@ describe('DashboardPoolComponent', () => {
       }),
       mockWebsocket([
         mockCall('pool.dataset.query', []),
+        mockCall('disk.query', []),
         mockCall('pool.upgrade'),
         mockJob('pool.expand', fakeSuccessfulJob()),
       ]),

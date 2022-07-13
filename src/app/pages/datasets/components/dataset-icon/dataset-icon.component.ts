@@ -2,7 +2,7 @@ import {
   ChangeDetectionStrategy, Component, Input,
 } from '@angular/core';
 import { DatasetType } from 'app/enums/dataset.enum';
-import { Dataset } from 'app/interfaces/dataset.interface';
+import { DatasetInTree } from 'app/pages/datasets/store/dataset-in-tree.interface';
 import { isRootDataset } from 'app/pages/datasets/utils/dataset.utils';
 
 @Component({
@@ -12,7 +12,7 @@ import { isRootDataset } from 'app/pages/datasets/utils/dataset.utils';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DatasetIconComponent {
-  @Input() dataset: Dataset;
+  @Input() dataset: DatasetInTree;
 
   get isRoot(): boolean {
     return isRootDataset(this.dataset);

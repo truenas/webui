@@ -15,4 +15,5 @@
 
 .cards {
   @include resource-cards();
+  margin-bottom: 30px;
 }

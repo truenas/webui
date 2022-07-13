@@ -27,8 +27,8 @@
           <ix-gauge-chart
             [colorFill]="usageState.usedPct === 0 ? '#1E1E1E' : isLowCapacity ? 'red' : '#0095D5'"
             [colorBlank]="'#1E1E1E'"
-            [width]="200"
-            [height]="200"
+            [width]="160"
+            [height]="160"
             [label]="usageState.usedPct + '%'"
             [value]="usageState.usedPct > 100 ? 100 : usageState.usedPct"
             [style]="isLowCapacity ? 'color: red;' : ''"
