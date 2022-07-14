@@ -13,6 +13,7 @@ import { ImportPoolComponent } from 'app/pages/storage2/components/import-pool/i
 import { WebSocketService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LayoutService } from 'app/services/layout.service';
+import { StorageService } from 'app/services/storage.service';
 
 @UntilDestroy()
 @Component({
@@ -31,6 +32,7 @@ export class PoolsDashboardComponent implements OnInit, AfterViewInit {
     private layoutService: LayoutService,
     private slideIn: IxSlideInService,
     private cdr: ChangeDetectorRef,
+    public sorter: StorageService,
   ) {}
 
   ngOnInit(): void {
@@ -55,7 +57,7 @@ export class PoolsDashboardComponent implements OnInit, AfterViewInit {
     this.isPoolsLoading = true;
     this.ws.call('pool.query', [[], { extra: { is_upgraded: true } }]).pipe(untilDestroyed(this)).subscribe(
       (pools: Pool[]) => {
-        this.pools = pools;
+        this.pools = this.sorter.tableSorter(pools, 'name', 'asc');
         this.isPoolsLoading = false;
         this.cdr.markForCheck();
       },
