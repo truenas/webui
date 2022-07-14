@@ -1,9 +1,7 @@
 @import '~assets/styles/mixins/grid';
 
 :host {
-  display: flex;
-  flex-direction: column;
-  height: calc(100vh - 230px);
+  display: block;
 }
 
 .container {
@@ -19,7 +17,6 @@
   flex-direction: column;
   max-width: 40%;
   min-width: 30%;
-  overflow: hidden;
   position: relative;
 }
 
@@ -34,10 +31,13 @@
   color: var(--fg2);
   display: flex;
   flex: 1;
+  height: calc(100vh - 230px);
   max-width: 70%;
   min-width: 60%;
   overflow: hidden;
   padding: 0;
+  position: sticky;
+  top: 0;
 }
 
 ix-dataset-details-panel {
@@ -49,6 +49,9 @@ ix-dataset-details-panel {
 .dataset-tree-search {
   background-color: var(--bg2);
   padding: 16px;
+  position: sticky;
+  top: 0;
+  z-index: 1;
 }
 
 .dataset-tree-wrapper {

@@ -6,6 +6,9 @@
   overflow: auto;
 
   .cards-column {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
     width: 50%;
   }
 }
