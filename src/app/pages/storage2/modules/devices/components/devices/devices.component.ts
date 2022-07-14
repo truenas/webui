@@ -4,6 +4,7 @@ import {
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
 import _ from 'lodash';
 import { EMPTY } from 'rxjs';
 import { catchError, switchMap, tap } from 'rxjs/operators';
@@ -40,6 +41,7 @@ export class DevicesComponent implements OnInit {
     private loader: AppLoaderService, // TODO: Replace with a better approach
     private route: ActivatedRoute,
     private devicesStore: DevicesStore,
+    private translate: TranslateService,
   ) { }
 
   get isDiskSelected(): boolean {
@@ -73,22 +75,22 @@ export class DevicesComponent implements OnInit {
   private createDataNodes(topology: PoolTopology): DeviceNestedDataNode[] {
     const dataNodes: DeviceNestedDataNode[] = [];
     if (topology.data.length) {
-      dataNodes.push({ children: topology.data, disk: 'Data VDEVs', guid: 'data' } as DeviceNestedDataNode);
+      dataNodes.push({ children: topology.data, disk: this.translate.instant('Data VDEVs'), guid: 'data' } as DeviceNestedDataNode);
     }
     if (topology.cache.length) {
-      dataNodes.push({ children: topology.cache, disk: 'Cache', guid: 'cache' } as DeviceNestedDataNode);
+      dataNodes.push({ children: topology.cache, disk: this.translate.instant('Cache'), guid: 'cache' } as DeviceNestedDataNode);
     }
     if (topology.log.length) {
-      dataNodes.push({ children: topology.log, disk: 'Log', guid: 'log' } as DeviceNestedDataNode);
+      dataNodes.push({ children: topology.log, disk: this.translate.instant('Log'), guid: 'log' } as DeviceNestedDataNode);
     }
     if (topology.spare.length) {
-      dataNodes.push({ children: topology.spare, disk: 'Spare', guid: 'spare' } as DeviceNestedDataNode);
+      dataNodes.push({ children: topology.spare, disk: this.translate.instant('Spare'), guid: 'spare' } as DeviceNestedDataNode);
     }
     if (topology.special.length) {
-      dataNodes.push({ children: topology.special, disk: 'Metadata', guid: 'special' } as DeviceNestedDataNode);
+      dataNodes.push({ children: topology.special, disk: this.translate.instant('Metadata'), guid: 'special' } as DeviceNestedDataNode);
     }
     if (topology.dedup.length) {
-      dataNodes.push({ children: topology.dedup, disk: 'Dedup', guid: 'dedup' } as DeviceNestedDataNode);
+      dataNodes.push({ children: topology.dedup, disk: this.translate.instant('Dedup'), guid: 'dedup' } as DeviceNestedDataNode);
     }
     return dataNodes;
   }

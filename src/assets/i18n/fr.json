@@ -767,6 +767,7 @@
   "Snapshots could not be loaded": "",
   "Source": "",
   "Source Dataset": "",
+  "Spare": "",
   "Spare VDEVs": "",
   "Sparse": "",
   "Specify this certificate's valid Key Usages. Web certificates           typically need at least Digital Signature and possibly Key Encipherment           or Key Agreement, while other applications may need other usages.": "",

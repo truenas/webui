@@ -1288,6 +1288,7 @@
   "Source Dataset": "",
   "Source Location": "",
   "Space": "",
+  "Spare": "",
   "Spare VDEVs": "",
   "Special Allocation class, used to create Fusion pools. Optional vdev type which is used to speed up metadata and small block IO.": "",
   "Specifies the auxiliary directory service ID provider.": "",

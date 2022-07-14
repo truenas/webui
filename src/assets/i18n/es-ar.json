@@ -654,6 +654,7 @@
   "Snapshots could not be loaded": "",
   "Something went wrong": "",
   "Source Dataset": "",
+  "Spare": "",
   "Spare VDEVs": "",
   "Specify this certificate's valid Key Usages. Web certificates           typically need at least Digital Signature and possibly Key Encipherment           or Key Agreement, while other applications may need other usages.": "",
   "Specify whether the issued certificate should include Authority Key Identifier information,          and whether the extension is critical. Critical extensions must be recognized by the client or be rejected.": "",
