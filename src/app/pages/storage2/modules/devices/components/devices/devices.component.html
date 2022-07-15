@@ -20,45 +20,51 @@
         </div>
         <ix-tree class="disk-tree" [dataSource]="dataSource" [treeControl]="treeControl">
           <ix-tree-node
-            *ixTreeNodeDef="let disk; dataSource: dataSource"
+            *ixTreeNodeDef="let vdev; dataSource: dataSource"
             ixTreeNodeToggle
             [ixTreeNodeToggleRecursive]="false"
             [ixTreeNodeDefDataSource]="dataSource"
-            (click)="onRowSelected(disk, $event)"
-            [class.selected]="disk.guid === selectedItem?.guid"
+            (click)="onRowSelected(vdev, $event)"
+            [class.selected]="vdev.guid === selectedItem?.guid"
           >
             <button mat-icon-button disabled></button>
-            <ix-disk-node [disk]="disk" [size]="diskDictionary[disk.disk]?.size" [type]="diskDictionary[disk.disk]?.type"></ix-disk-node>
+            <ix-disk-node [vdev]="vdev | cast" [disk]="diskDictionary[vdev.disk]"></ix-disk-node>
           </ix-tree-node>
 
           <ix-nested-tree-node
-            *ixTreeNodeDef="let disk; dataSource: dataSource, when: hasNestedChild"
+            *ixTreeNodeDef="let vdev; dataSource: dataSource, when: isVdevGroup"
+            [ixTreeNodeDefDataSource]="dataSource"
+          >
+            <div class="disk-nested-tree-root-node">
+              <ix-vdev-group-node [vdev]="vdev | cast"></ix-vdev-group-node>
+            </div>
+
+            <ng-container *ngIf="treeControl.isExpanded(vdev)" ixTreeNodeOutlet></ng-container>
+          </ix-nested-tree-node>
+
+          <ix-nested-tree-node
+            *ixTreeNodeDef="let vdev; dataSource: dataSource, when: hasNestedChild"
             [ixTreeNodeDefDataSource]="dataSource"
           >
             <div
               class="disk-nested-tree-root-node"
-              (click)="onRowSelected(disk, $event)"
-              [class.selected]="disk.guid === selectedItem?.guid"
+              (click)="onRowSelected(vdev, $event)"
+              [class.selected]="vdev.guid === selectedItem?.guid"
             >
               <button
                 mat-icon-button
                 ixTreeNodeToggle
                 (click)="$event.preventDefault()"
-                [attr.aria-label]="'Toggle {row}' | translate: { row: disk.guid }"
+                [attr.aria-label]="'Toggle {row}' | translate: { row: vdev.guid }"
               >
                 <mat-icon>
-                  {{ treeControl.isExpanded(disk) ? 'expand_more' : 'chevron_right' }}
+                  {{ treeControl.isExpanded(vdev) ? 'expand_more' : 'chevron_right' }}
                 </mat-icon>
               </button>
-              <ix-disk-node
-                [disk]="disk"
-                [size]="disk.type ? diskDictionary[disk.children[0].disk]?.size : null"
-                [type]="disk.type ? diskDictionary[disk.children[0].disk]?.type : null">
-              </ix-disk-node>
-
+              <ix-disk-node [vdev]="vdev | cast" [disk]="diskDictionary[vdev.children[0].disk]"></ix-disk-node>
             </div>
 
-            <ng-container *ngIf="treeControl.isExpanded(disk)" ixTreeNodeOutlet></ng-container>
+            <ng-container *ngIf="treeControl.isExpanded(vdev)" ixTreeNodeOutlet></ng-container>
           </ix-nested-tree-node>
         </ix-tree>
       </div>
@@ -67,8 +73,8 @@
   <div class="details-container">
     <ix-disk-details-panel
       *ngIf="selectedItem && isDiskSelected && diskDictionary[selectedItem.disk]"
-      [topologyItem]="selectedItem"
-      [topologyParentItem]="selectedParentItem"
+      [topologyItem]="selectedItem | cast"
+      [topologyParentItem]="selectedParentItem | cast"
       [disk]="diskDictionary[selectedItem.disk]"
     ></ix-disk-details-panel>
   </div>

@@ -6,4 +6,8 @@ export interface VDevGroup {
   children: VDev[];
 }
 
-export type DeviceNestedDataNode = VDev & VDevGroup;
+export type DeviceNestedDataNode = VDev | VDevGroup;
+
+export function isVDev(obj: DeviceNestedDataNode): obj is VDev {
+  return 'stats' in obj;
+}

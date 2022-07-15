@@ -9,7 +9,7 @@ import _ from 'lodash';
 import { EMPTY } from 'rxjs';
 import { catchError, switchMap, tap } from 'rxjs/operators';
 import { VDevType } from 'app/enums/v-dev-type.enum';
-import { DeviceNestedDataNode } from 'app/interfaces/device-nested-data-node.interface';
+import { DeviceNestedDataNode, isVDev } from 'app/interfaces/device-nested-data-node.interface';
 import { PoolTopology } from 'app/interfaces/pool.interface';
 import { Disk } from 'app/interfaces/storage.interface';
 import { IxNestedTreeDataSource } from 'app/modules/ix-tree/ix-nested-tree-datasource';
@@ -34,6 +34,7 @@ export class DevicesComponent implements OnInit {
   diskDictionary: { [key: string]: Disk } = {};
 
   readonly hasNestedChild = (_: number, vdev: DeviceNestedDataNode): boolean => Boolean(vdev.children?.length);
+  readonly isVdevGroup = (_: number, vdev: DeviceNestedDataNode): boolean => !isVDev(vdev);
 
   constructor(
     private ws: WebSocketService,
@@ -45,7 +46,7 @@ export class DevicesComponent implements OnInit {
   ) { }
 
   get isDiskSelected(): boolean {
-    return this.selectedItem.type === VDevType.Disk;
+    return isVDev(this.selectedItem) && this.selectedItem.type === VDevType.Disk;
   }
 
   ngOnInit(): void {
@@ -61,11 +62,15 @@ export class DevicesComponent implements OnInit {
     this.dataSource.filterPredicate = (dataNodes, query = '') => {
       return dataNodes.map((dataNode) => {
         return findInTree([dataNode], (dataNode) => {
-          switch (dataNode.type) {
-            case VDevType.Disk:
-              return dataNode.disk?.toLowerCase().includes(query.toLowerCase());
-            case VDevType.Mirror:
-              return dataNode.name?.toLowerCase().includes(query.toLowerCase());
+          if (isVDev(dataNode)) {
+            switch (dataNode.type) {
+              case VDevType.Disk:
+                return dataNode.disk?.toLowerCase().includes(query.toLowerCase());
+              case VDevType.Mirror:
+                return dataNode.name?.toLowerCase().includes(query.toLowerCase());
+            }
+          } else {
+            return true;
           }
         });
       }).filter(Boolean);
@@ -95,14 +100,8 @@ export class DevicesComponent implements OnInit {
     return dataNodes;
   }
 
-  private selectFirstNode(): void {
-    if (!this.treeControl?.dataNodes?.length) {
-      return;
-    }
-
-    const dataNode = this.treeControl.dataNodes[0];
-    this.treeControl.expand(dataNode);
-    this.selectedItem = dataNode;
+  private selectVdevGroupNode(): void {
+    this.treeControl?.dataNodes?.forEach((node) => this.treeControl.expand(node));
     this.selectedParentItem = undefined;
   }
 
@@ -131,7 +130,7 @@ export class DevicesComponent implements OnInit {
             const dataNodes = this.createDataNodes(pools[0].topology);
             this.treeControl.dataNodes = dataNodes;
             this.createDataSource(dataNodes);
-            this.selectFirstNode();
+            this.selectVdevGroupNode();
             this.loader.close();
             this.cdr.markForCheck();
           }),

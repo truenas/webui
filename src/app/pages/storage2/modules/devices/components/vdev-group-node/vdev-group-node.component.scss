@@ -1,0 +1,26 @@
+@import '~assets/styles/mixins/grid';
+
+.caption {
+  @include grid-row();
+  align-items: center;
+  background: var(--bg1);
+  color: var(--fg2);
+  min-height: 26px;
+  padding-left: 48px;
+
+  > div {
+    font-weight: bold;
+    padding: 4px 0;
+
+    &:first-child {
+      left: 0;
+      position: sticky;
+    }
+  }
+
+  .caption-name {
+    background: linear-gradient(90deg, var(--bg1) 0%, var(--bg1) calc(100% - 13px), transparent 100%);
+    padding-left: 8px;
+    padding-right: 15px;
+  }
+}

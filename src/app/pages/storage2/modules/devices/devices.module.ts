@@ -10,6 +10,7 @@ import { RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { NgxFilesizeModule } from 'ngx-filesize';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
+import { CastModule } from 'app/modules/cast/cast.module';
 import { AppCommonModule } from 'app/modules/common/app-common.module';
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
@@ -18,6 +19,7 @@ import { DevicesComponent } from 'app/pages/storage2/modules/devices/components/
 import {
   DiskDetailsPanelComponent,
 } from 'app/pages/storage2/modules/devices/components/disk-details-panel/disk-details-panel.component';
+import { DiskIconComponent } from 'app/pages/storage2/modules/devices/components/disk-icon/disk-icon.component';
 import { DiskInfoCardComponent } from 'app/pages/storage2/modules/devices/components/disk-info-card/disk-info-card.component';
 import { DiskNodeComponent } from 'app/pages/storage2/modules/devices/components/disk-node/disk-node.component';
 import {
@@ -26,6 +28,7 @@ import {
 import {
   ManageDiskSedDialogComponent,
 } from 'app/pages/storage2/modules/devices/components/hardware-disk-encryption/manage-disk-sed-dialog/manage-disk-sed-dialog.component';
+import { VDevGroupNodeComponent } from 'app/pages/storage2/modules/devices/components/vdev-group-node/vdev-group-node.component';
 import { ZfsInfoCardComponent } from 'app/pages/storage2/modules/devices/components/zfs-info-card/zfs-info-card.component';
 import { routes } from 'app/pages/storage2/modules/devices/devices.routing';
 import { DevicesStore } from 'app/pages/storage2/modules/devices/stores/devices-store.service';
@@ -53,6 +56,7 @@ import { SmartInfoCardComponent } from './components/smart-info-card/smart-info-
     ReactiveFormsModule,
     RouterModule.forChild(routes),
     TranslateModule,
+    CastModule,
   ],
   declarations: [
     DevicesComponent,
@@ -63,6 +67,8 @@ import { SmartInfoCardComponent } from './components/smart-info-card/smart-info-
     SmartInfoCardComponent,
     DiskNodeComponent,
     ZfsInfoCardComponent,
+    VDevGroupNodeComponent,
+    DiskIconComponent,
   ],
   providers: [
     DevicesStore,

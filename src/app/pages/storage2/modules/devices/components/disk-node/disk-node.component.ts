@@ -3,10 +3,9 @@ import {
 } from '@angular/core';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { DiskType } from 'app/enums/disk-type.enum';
 import { PoolStatus } from 'app/enums/pool-status.enum';
 import { VDevStatus } from 'app/enums/vdev-status.enum';
-import { VDev } from 'app/interfaces/storage.interface';
+import { Disk, VDev } from 'app/interfaces/storage.interface';
 import { WidgetUtils } from 'app/pages/dashboard/utils/widget-utils';
 
 @UntilDestroy()
@@ -17,9 +16,8 @@ import { WidgetUtils } from 'app/pages/dashboard/utils/widget-utils';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DiskNodeComponent {
-  @Input() disk: VDev;
-  @Input() type: DiskType;
-  @Input() size: number;
+  @Input() vdev: VDev;
+  @Input() disk: Disk;
 
   private utils: WidgetUtils;
 
@@ -30,47 +28,28 @@ export class DiskNodeComponent {
   }
 
   get diskName(): string {
-    return this.disk.disk || this.disk.type;
+    return this.vdev.disk || this.vdev.type;
   }
 
   get diskStatus(): string {
-    return this.disk?.status ? this.disk.status : '';
+    return this.vdev?.status ? this.vdev.status : '';
   }
 
   get diskCapacity(): string {
-    return this.size !== null && this.size !== undefined ? this.utils.convert(this.size).value
-      + this.utils.convert(this.size).units : '';
+    return this.disk && this.disk?.size ? this.utils.convert(this.disk.size).value
+      + this.utils.convert(this.disk.size).units : '';
   }
 
   get diskErrors(): string {
-    if (this.disk.stats) {
-      const errors = this.disk.stats?.checksum_errors + this.disk.stats?.read_errors + this.disk.stats?.write_errors;
+    if (this.vdev.stats) {
+      const errors = this.vdev.stats?.checksum_errors + this.vdev.stats?.read_errors + this.vdev.stats?.write_errors;
       return this.translate.instant('{n, plural, =0 {No Errors} one {# Error} other {# Errors}}', { n: errors });
     }
     return '';
   }
 
-  get diskIcon(): string {
-    if (this.disk.children.length) {
-      if (this.type === DiskType.Hdd) {
-        return 'ix-hdd-mirror';
-      }
-      if (this.type === DiskType.Ssd) {
-        return 'ix-ssd-mirror';
-      }
-    } else {
-      if (this.type === DiskType.Hdd) {
-        return 'ix-hdd';
-      }
-      if (this.type === DiskType.Ssd) {
-        return 'ix-ssd';
-      }
-    }
-    return '';
-  }
-
   get statusColor(): string {
-    switch (this.disk.status as PoolStatus | VDevStatus) {
+    switch (this.vdev.status as PoolStatus | VDevStatus) {
       case PoolStatus.Faulted:
         return 'var(--red)';
       case PoolStatus.Offline:
