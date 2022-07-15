@@ -70,7 +70,7 @@ export class DevicesComponent implements OnInit {
                 return dataNode.name?.toLowerCase().includes(query.toLowerCase());
             }
           } else {
-            return true;
+            return false;
           }
         });
       }).filter(Boolean);
