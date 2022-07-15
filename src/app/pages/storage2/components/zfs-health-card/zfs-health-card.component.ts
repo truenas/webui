@@ -1,6 +1,7 @@
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnChanges, OnDestroy,
 } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
@@ -19,6 +20,10 @@ import { Pool, PoolScanUpdate } from 'app/interfaces/pool.interface';
 import { PoolScan } from 'app/interfaces/resilver-job.interface';
 import { VDev } from 'app/interfaces/storage.interface';
 import { EntityUtils } from 'app/modules/entity/utils';
+import {
+  AutotrimDialogComponent,
+} from 'app/pages/storage2/components/zfs-health-card/autotrim-dialog/autotrim-dialog.component';
+import { PoolsDashboardStore } from 'app/pages/storage2/stores/pools-dashboard-store.service';
 import { DialogService, WebSocketService } from 'app/services';
 
 @UntilDestroy()
@@ -45,6 +50,8 @@ export class ZfsHealthCardComponent implements OnChanges, OnDestroy {
     private cdr: ChangeDetectorRef,
     private translate: TranslateService,
     private dialogService: DialogService,
+    private dialog: MatDialog,
+    private store: PoolsDashboardStore,
   ) { }
 
   get isScanRunning(): boolean {
@@ -126,6 +133,14 @@ export class ZfsHealthCardComponent implements OnChanges, OnDestroy {
       }),
       untilDestroyed(this),
     ).subscribe();
+  }
+
+  onEditAutotrim(): void {
+    this.dialog
+      .open(AutotrimDialogComponent, { data: this.pool })
+      .afterClosed()
+      .pipe(filter(Boolean), untilDestroyed(this))
+      .subscribe(() => this.store.loadDashboard());
   }
 
   ngOnDestroy(): void {
