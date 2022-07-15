@@ -21,7 +21,13 @@ import { FakeProgressBarComponent } from './components/fake-progress-bar/fake-pr
     MatProgressBarModule,
   ],
   providers: [AppLoaderService],
-  declarations: [AppLoaderComponent, FakeProgressBarComponent],
-  exports: [AppLoaderComponent, FakeProgressBarComponent],
+  declarations: [
+    AppLoaderComponent,
+    FakeProgressBarComponent,
+  ],
+  exports: [
+    AppLoaderComponent,
+    FakeProgressBarComponent,
+  ],
 })
 export class AppLoaderModule { }

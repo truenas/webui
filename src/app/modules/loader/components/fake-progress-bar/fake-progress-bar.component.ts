@@ -13,7 +13,6 @@ import {
 import { interval, Subject } from 'rxjs';
 import { map, takeUntil } from 'rxjs/operators';
 
-// TODO: Handle disappearance
 /**
  * Show a bar that will show like it's doing something
  * and never complete until [loading] is set to false again.
