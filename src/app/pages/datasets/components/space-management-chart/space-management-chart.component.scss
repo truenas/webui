@@ -1,0 +1,77 @@
+$chart-size: 180px !default;
+
+:host {
+  display: flex;
+  gap: 24px;
+  min-height: $chart-size;
+}
+
+.chart-wrapper {
+  height: $chart-size;
+  width: $chart-size;
+}
+
+.chart-description {
+  flex: 1;
+}
+
+.chart-header {
+  align-items: center;
+  border-bottom: 1px solid var(--lines);
+  box-sizing: border-box;
+  display: flex;
+  font-size: 18px;
+  font-weight: normal;
+  gap: 8px;
+  margin-bottom: 16px;
+  padding: 16px 8px;
+  white-space: nowrap;
+}
+
+.chart-placeholder {
+  align-items: center;
+  display: flex;
+  height: $chart-size;
+  width: $chart-size;
+
+  ::ng-deep .loader {
+    border-radius: 50%;
+    height: $chart-size;
+    margin: 0;
+  }
+}
+
+.value-placeholder {
+  align-items: center;
+  display: inline-flex;
+  flex: 1;
+
+  ::ng-deep .loader {
+    margin: 0;
+  }
+}
+
+.legend-list-item {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+
+  .legend-label {
+    align-items: center;
+    display: flex;
+    gap: 8px;
+  }
+
+  .legend-swatch {
+    background-color: var(--lines);
+    border-radius: 50%;
+    display: inline-block;
+    height: 12px;
+    width: 12px;
+  }
+
+  .value-placeholder {
+    flex: 1;
+  }
+}

@@ -354,17 +354,12 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
 
       const bgRgb = this.utils.convertToRgb((this.currentTheme[color as keyof Theme]) as string).rgb;
 
-      ds.backgroundColor = this.rgbToString(bgRgb as any, 0.85);
-      ds.borderColor = this.rgbToString(bgRgb as any);
+      ds.backgroundColor = this.utils.rgbToString(bgRgb as any, 0.85);
+      ds.borderColor = this.utils.rgbToString(bgRgb as any);
       datasets.push(ds);
     });
 
     return datasets;
-  }
-
-  rgbToString(rgb: string[], alpha?: number): string {
-    const a = alpha ? alpha.toString() : '1';
-    return 'rgba(' + rgb.join(',') + ',' + a + ')';
   }
 
   stripVar(str: string): string {

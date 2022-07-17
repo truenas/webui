@@ -1,0 +1,80 @@
+<div class="chart-wrapper" *ngIf="!isFirstLoading; else chartPlaceholder">
+  <canvas
+    #canvas
+    baseChart
+    chartType="doughnut"
+    [datasets]="chartData"
+    [options]="chartOptions"
+    [width]="160"
+    [height]="160"
+  ></canvas>
+</div>
+
+<div class="chart-description">
+  <h3 class="chart-header">
+    <span class="chart-title">{{ 'Total Allocation' | translate }}:</span>
+    <span *ngIf="!isLoading; else valueLoader">
+      {{ totalAllocation | filesize: { standard: 'iec', round: 0 } }}
+    </span>
+  </h3>
+  <div class="legend-wrapper">
+    <div class="legend-list-item">
+      <ng-container *ngIf="!isLoading; else valueLoader">
+        <span class="legend-label">
+          <span class="legend-swatch" [style.background-color]="legendColors[0]"></span>
+          {{ 'Data Written' | translate }}
+        </span>
+        <span class="legend-value">
+          {{ extraProperties.usedbydataset.parsed | filesize: { standard: 'iec', round: 0 } }}
+        </span>
+      </ng-container>
+    </div>
+    <ng-container *ngIf="!isZvol">
+      <div class="legend-list-item">
+        <ng-container *ngIf="!isLoading; else valueLoader">
+          <span class="legend-label">
+            <span class="legend-swatch" [style.background-color]="legendColors[1]"></span>
+            {{ 'Snapshots' | translate }}
+          </span>
+          <span class="legend-value">
+            {{ extraProperties.usedbysnapshots.parsed | filesize: { standard: 'iec', round: 0 } }}
+          </span>
+        </ng-container>
+      </div>
+    </ng-container>
+    <ng-container *ngIf="isZvol">
+      <div class="legend-list-item">
+        <ng-container *ngIf="!isLoading; else valueLoader">
+          <span class="legend-label">
+            <span class="legend-swatch" [style.background-color]="legendColors[1]"></span>
+            {{ 'Used by Snapshots' | translate }}
+          </span>
+          <span class="legend-value">
+            {{ extraProperties.usedbysnapshots.parsed | filesize: { standard: 'iec', round: 0 } }}
+          </span>
+        </ng-container>
+      </div>
+    </ng-container>
+    <ng-container *ngIf="!isZvol">
+      <div class="legend-list-item">
+        <ng-container *ngIf="!isLoading; else valueLoader">
+          <span class="legend-label">
+            <span class="legend-swatch" [style.background-color]="legendColors[2]"></span>
+            {{ 'Children' | translate }}
+          </span>
+          <span class="legend-value">
+            {{ extraProperties.usedbychildren.parsed | filesize: { standard: 'iec', round: 0 } }}
+          </span>
+        </ng-container>
+      </div>
+    </ng-container>
+  </div>
+</div>
+
+<ng-template #chartPlaceholder>
+  <ngx-skeleton-loader class="chart-placeholder"></ngx-skeleton-loader>
+</ng-template>
+
+<ng-template #valueLoader>
+  <ngx-skeleton-loader class="value-placeholder"></ngx-skeleton-loader>
+</ng-template>

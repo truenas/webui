@@ -2,22 +2,35 @@
 
 .card {
   @include details-card();
-}
 
-.legend-placeholder {
-  align-items: center;
-  display: flex;
-  gap: 12px;
-}
+  .details-item .value-placeholder {
+    align-items: center;
+    display: inline-flex;
 
-.chart-placeholder {
-  align-items: center;
-  display: flex;
-  gap: 12px;
-
-  ngx-skeleton-loader {
     ::ng-deep .loader {
-      height: 64px;
+      margin: 0;
     }
   }
+
+  .chart-extra {
+    align-items: center;
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+
+    .details-item {
+      margin: 0;
+    }
+  }
+}
+
+.details {
+  border-top: 1px solid var(--lines);
+  box-sizing: border-box;
+  margin: 20px -25px 0; // Fragile. Rely on external styles
+  padding: 20px 25px 0 !important; // Fragile. Rely on external styles
+}
+
+ix-space-management-chart {
+  padding: 0 0 0 8px;
 }
