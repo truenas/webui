@@ -84,6 +84,12 @@
     padding-left: 8px;
     padding-right: 15px;
   }
+
+  .disk-status-header {
+    display: flex;
+    justify-content: center;
+    width: 70%;
+  }
 }
 
 .disk-nested-tree-root-node {
