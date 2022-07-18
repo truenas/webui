@@ -14,6 +14,7 @@ import { PoolTopology } from 'app/interfaces/pool.interface';
 import { Disk } from 'app/interfaces/storage.interface';
 import { IxNestedTreeDataSource } from 'app/modules/ix-tree/ix-nested-tree-datasource';
 import { findInTree } from 'app/modules/ix-tree/utils/find-in-tree.utils';
+import { flattenTreeWithFilter } from 'app/modules/ix-tree/utils/flattern-tree-with-filter';
 import { DevicesStore } from 'app/pages/storage2/modules/devices/stores/devices-store.service';
 import { AppLoaderService, WebSocketService } from 'app/services';
 
@@ -60,20 +61,18 @@ export class DevicesComponent implements OnInit {
   private createDataSource(dataNodes: DeviceNestedDataNode[]): void {
     this.dataSource = new IxNestedTreeDataSource(dataNodes);
     this.dataSource.filterPredicate = (dataNodes, query = '') => {
-      return dataNodes.map((dataNode) => {
-        return findInTree([dataNode], (dataNode) => {
-          if (isVDev(dataNode)) {
-            switch (dataNode.type) {
-              case VDevType.Disk:
-                return dataNode.disk?.toLowerCase().includes(query.toLowerCase());
-              case VDevType.Mirror:
-                return dataNode.name?.toLowerCase().includes(query.toLowerCase());
-            }
-          } else {
-            return false;
+      return flattenTreeWithFilter(dataNodes, (dataNode) => {
+        if (isVDev(dataNode)) {
+          switch (dataNode.type) {
+            case VDevType.Disk:
+              return dataNode.disk?.toLowerCase().includes(query.toLowerCase());
+            case VDevType.Mirror:
+              return dataNode.name?.toLowerCase().includes(query.toLowerCase());
           }
-        });
-      }).filter(Boolean);
+        } else {
+          return false;
+        }
+      });
     };
   }
 
