@@ -31,7 +31,6 @@
   color: var(--fg2);
   display: flex;
   flex: 1;
-  height: calc(100vh - 230px);
   max-width: 70%;
   min-width: 60%;
   overflow: hidden;
@@ -50,7 +49,7 @@ ix-dataset-details-panel {
   background-color: var(--bg2);
   padding: 16px;
   position: sticky;
-  top: 0;
+  top: -15px;
   z-index: 1;
 }
 

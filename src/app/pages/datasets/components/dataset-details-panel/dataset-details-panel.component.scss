@@ -8,6 +8,7 @@
 
 .cards {
   @include details-cards();
+  height: 100%;
 }
 
 .own-name-and-icon {

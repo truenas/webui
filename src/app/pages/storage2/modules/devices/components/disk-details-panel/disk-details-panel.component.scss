@@ -8,4 +8,5 @@
 
 .cards {
   @include details-cards();
+  height: 100%;
 }

@@ -12,6 +12,7 @@ import { RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { BulkListItemComponent } from 'app/core/components/bulk-list-item/bulk-list-item.component';
 import { CopyButtonComponent } from 'app/core/components/copy-btn/copy-btn.component';
+import { IxDetailsHeightDirective } from 'app/core/components/directives/details-height/details-height.directive';
 import { HtmlTooltipComponent } from 'app/core/components/directives/html-tooltip/html-tooltip.component';
 import { HtmlTooltipDirective } from 'app/core/components/directives/html-tooltip/html-tooltip.directive';
 import { TextLimiterTooltipComponent } from 'app/core/components/directives/text-limiter/text-limiter-tooltip/text-limiter-tooltip.component';
@@ -43,6 +44,7 @@ import { StorageService } from 'app/services/storage.service';
     DisplayComponent,
     TextLimiterDirective,
     HtmlTooltipDirective,
+    IxDetailsHeightDirective,
     HtmlTooltipComponent,
     TextLimiterTooltipComponent,
     FormatDateTimePipe,
@@ -58,6 +60,7 @@ import { StorageService } from 'app/services/storage.service';
     DisplayComponent,
     ViewControllerComponent,
     TextLimiterDirective,
+    IxDetailsHeightDirective,
     HtmlTooltipDirective,
     TextLimiterTooltipComponent,
     CopyButtonComponent,
