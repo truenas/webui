@@ -43,9 +43,11 @@ import {
 import { UnusedDiskCardComponent } from 'app/pages/storage2/components/unused-disk-card/unused-disk-card.component';
 import { UnusedResourcesComponent } from 'app/pages/storage2/components/unused-resources/unused-resources.component';
 import { routing } from 'app/pages/storage2/storage2.routing';
+import { PoolsDashboardStore } from 'app/pages/storage2/stores/pools-dashboard-store.service';
 import { DashboardPoolComponent } from './components/dashboard-pool/dashboard-pool.component';
 import { ExportDisconnectModalComponent } from './components/dashboard-pool/export-disconnect-modal/export-disconnect-modal.component';
 import { DiskHealthCardComponent } from './components/disk-health-card/disk-health-card.component';
+import { AutotrimDialogComponent } from './components/zfs-health-card/autotrim-dialog/autotrim-dialog.component';
 import { ZfsHealthCardComponent } from './components/zfs-health-card/zfs-health-card.component';
 
 @NgModule({
@@ -101,9 +103,11 @@ import { ZfsHealthCardComponent } from './components/zfs-health-card/zfs-health-
     DashboardPoolComponent,
     ExportDisconnectModalComponent,
     DiskHealthCardComponent,
+    AutotrimDialogComponent,
   ],
   providers: [
     FormatDateTimePipe,
+    PoolsDashboardStore,
   ],
 })
 export class Storage2Module { }

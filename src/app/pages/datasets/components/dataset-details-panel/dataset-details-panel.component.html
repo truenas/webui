@@ -13,13 +13,13 @@
   <div *ngIf="!dataset.locked" class="add-buttons">
     <button
       mat-button
+      (click)="onAddZvol()"
+    >{{ 'Add Zvol' | translate }}</button>
+    <button
+      mat-button
       color="primary"
       (click)="onAddDataset()"
     >{{ 'Add Dataset' | translate }}</button>
-    <button
-      mat-button
-      (click)="onAddZvol()"
-    >{{ 'Add Zvol' | translate }}</button>
   </div>
 </div>
 
@@ -30,6 +30,7 @@
   </div>
   <div class="cards-column">
     <ix-zfs-encryption-card
+    *ngIf="dataset.encrypted"
       [dataset]="dataset"
       [parentDataset]="parentDataset"
     ></ix-zfs-encryption-card>

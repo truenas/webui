@@ -106,7 +106,6 @@
                     class="transparent-btn"
                   >
                     <mat-icon
-                      role="img"
                       fontSet="mdi-set"
                       fontIcon="mdi-chevron-up"
                       (mouseover)="onHover($event,true)"
@@ -120,7 +119,6 @@
                     class="transparent-btn"
                   >
                     <mat-icon
-                      role="img"
                       fontSet="mdi-set"
                       fontIcon="mdi-chevron-down"
                       (mouseover)="onHover($event, true)"
@@ -205,7 +203,7 @@
                 ix-auto ix-auto-type="slider" ix-auto-identifier="{{column}}__{{element.name}}">
                   {{element[column].state}}
                   <div class="label-warning-icon" *ngIf="element[column].warnings?.length > 0">
-                    <mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-alert"></mat-icon>
+                    <mat-icon fontSet="mdi-set" fontIcon="mdi-alert"></mat-icon>
                   </div>
                 </button>
               </ng-template>
