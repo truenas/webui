@@ -19,6 +19,7 @@ import {
   PoolUsageCardComponent,
 } from 'app/pages/storage2/components/pools-dashboard/pool-usage-card/pool-usage-card.component';
 import { ZfsHealthCardComponent } from 'app/pages/storage2/components/zfs-health-card/zfs-health-card.component';
+import { PoolsDashboardStore } from 'app/pages/storage2/stores/pools-dashboard-store.service';
 import { AppLoaderService, DialogService, WebSocketService } from 'app/services';
 
 describe('DashboardPoolComponent', () => {
@@ -40,6 +41,7 @@ describe('DashboardPoolComponent', () => {
       mockProvider(MatDialog),
       mockProvider(SnackbarService),
       mockProvider(AppLoaderService),
+      mockProvider(PoolsDashboardStore),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),
@@ -81,7 +83,6 @@ describe('DashboardPoolComponent', () => {
       message: helptext.expand_pool_dialog.message,
     });
     expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('pool.expand', [pool.id]);
-
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
   });
 
@@ -91,7 +92,6 @@ describe('DashboardPoolComponent', () => {
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalled();
     expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('pool.upgrade', [pool.id]);
-
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
   });
 

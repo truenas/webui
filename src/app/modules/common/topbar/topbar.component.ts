@@ -405,7 +405,7 @@ export class TopbarComponent implements OnInit, OnDestroy {
         this.waitingNetworkCheckin = false;
       }, (err) => {
         this.loader.close();
-        new EntityUtils().handleWsError(null, err, this.dialogService);
+        new EntityUtils().handleWsError(this, err, this.dialogService);
       });
     });
   }

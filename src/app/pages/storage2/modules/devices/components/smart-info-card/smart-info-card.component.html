@@ -11,7 +11,7 @@
 
   <mat-card-content>
     <div class="details-item">
-      <span class="label">{{ 'Total S.M.A.R.T. Test Results' | translate }}:</span>
+      <span class="label">{{ 'Completed S.M.A.R.T. Tests' | translate }}:</span>
       <ng-container *ngIf="totalResults$ | async as totalResults">
         <ngx-skeleton-loader *ngIf="totalResults.isLoading"></ngx-skeleton-loader>
         <span *ngIf="totalResults.value !== undefined" class="value">
@@ -35,7 +35,7 @@
         class="details-item"
       >
         <span class="label">
-          {{ 'Last {result}' | translate: { result: resultInCategory.description } }}:
+          {{ 'Last {result} Test' | translate: { result: resultInCategory.description } }}:
         </span>
         <span class="value">{{ resultInCategory.status }}</span>
       </div>

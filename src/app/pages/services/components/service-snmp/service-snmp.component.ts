@@ -110,7 +110,7 @@ export class ServiceSnmpComponent implements OnInit {
       this.form.patchValue(config);
       this.cdr.markForCheck();
     }, (error) => {
-      new EntityUtils().handleWsError(null, error, this.dialogService);
+      new EntityUtils().handleWsError(this, error, this.dialogService);
       this.isFormLoading = false;
       this.cdr.markForCheck();
     });

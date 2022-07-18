@@ -115,7 +115,7 @@ export class CertificateAcmeAddComponent {
         (error) => {
           this.isLoading = false;
           this.cdr.markForCheck();
-          new EntityUtils().handleWsError(null, error, this.dialogService);
+          new EntityUtils().handleWsError(this, error, this.dialogService);
         },
       );
   }
