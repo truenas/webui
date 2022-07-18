@@ -29,12 +29,11 @@
 }
 
 .warning {
+  display: flex;
   padding: 0 6px;
 }
 
 .vdev-line {
-  display: flex;
-  justify-content: space-between;
   margin: 12px 0;
 }
 

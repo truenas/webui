@@ -23,7 +23,7 @@
 
   <mat-card-content>
     <div class="content-container">
-      <div class="vdev-line">
+      <div class="vdev-line" fxLayoutAlign="space-between center">
         <b>{{'Data VDEVs' | translate}}</b>
         <span class="loader-caption" *ngIf="loading"></span>
         <div *ngIf="!loading" fxLayout="row" fxLayoutAlign="center center">
@@ -33,7 +33,7 @@
           <span class="vdev-value">{{topologyState.data}}</span>
         </div>
       </div>
-      <div class="vdev-line">
+      <div class="vdev-line" fxLayoutAlign="space-between center">
         <b>{{'Metadata VDEVs' | translate}}</b>
         <span class="loader-caption" *ngIf="loading"></span>
         <div *ngIf="!loading" fxLayout="row" fxLayoutAlign="center center">
@@ -43,7 +43,7 @@
           <span class="vdev-value">{{topologyState.metadata}}</span>
         </div>
       </div>
-      <div class="vdev-line">
+      <div class="vdev-line" fxLayoutAlign="space-between center">
         <b>{{'Log VDEVs' | translate}}</b>
         <span class="loader-caption" *ngIf="loading"></span>
         <div *ngIf="!loading" fxLayout="row" fxLayoutAlign="center center">
@@ -53,7 +53,7 @@
           <span class="vdev-value">{{topologyState.log}}</span>
         </div>
       </div>
-      <div class="vdev-line">
+      <div class="vdev-line" fxLayoutAlign="space-between center">
         <b>{{'Cache VDEVs' | translate}}</b>
         <span class="loader-caption" *ngIf="loading"></span>
         <div *ngIf="!loading" fxLayout="row" fxLayoutAlign="center center">
@@ -63,7 +63,7 @@
           <span class="vdev-value">{{topologyState.cache}}</span>
         </div>
       </div>
-      <div class="vdev-line">
+      <div class="vdev-line" fxLayoutAlign="space-between center">
         <b>{{'Spare VDEVs' | translate}}</b>
         <span class="loader-caption" *ngIf="loading"></span>
         <div *ngIf="!loading" fxLayout="row" fxLayoutAlign="center center">
@@ -73,7 +73,7 @@
           <span class="vdev-value">{{topologyState.spare}}</span>
         </div>
       </div>
-      <div class="vdev-line">
+      <div class="vdev-line" fxLayoutAlign="space-between center">
         <b>{{'Dedup VDEVs' | translate}}</b>
         <span class="loader-caption" *ngIf="loading"></span>
         <div *ngIf="!loading" fxLayout="row" fxLayoutAlign="center center">
