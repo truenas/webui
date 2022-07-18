@@ -35,8 +35,24 @@
             *ixTreeNodeDef="let vdev; dataSource: dataSource, when: isVdevGroup"
             [ixTreeNodeDefDataSource]="dataSource"
           >
-            <div class="disk-nested-tree-root-node">
-              <ix-vdev-group-node [vdev]="vdev | cast"></ix-vdev-group-node>
+            <div
+              class="disk-nested-tree-root-node"
+              (click)="onRowSelected(vdev, $event)"
+              [class.selected]="vdev.guid === selectedItem?.guid"
+            >
+              <ix-vdev-group-node [vdev]="vdev | cast">
+                <button
+                  mat-icon-button
+                  ixTreeNodeToggle
+                  (click)="$event.preventDefault()"
+                  [attr.aria-label]="'Toggle {row}' | translate: { row: vdev.guid }"
+                  class="vdev-group-toggle"
+                >
+                  <mat-icon>
+                    {{ treeControl.isExpanded(vdev) ? 'expand_more' : 'chevron_right' }}
+                  </mat-icon>
+                </button>
+              </ix-vdev-group-node>
             </div>
 
             <ng-container *ngIf="treeControl.isExpanded(vdev)" ixTreeNodeOutlet></ng-container>
