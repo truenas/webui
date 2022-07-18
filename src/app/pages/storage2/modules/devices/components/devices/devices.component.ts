@@ -28,7 +28,7 @@ export class DevicesComponent implements OnInit {
   selectedItem: VDev;
   selectedParentItem: VDev | undefined;
   dataSource: IxNestedTreeDataSource<VDev>;
-  poolId: number | null;
+  poolId: number;
   treeControl = new NestedTreeControl<VDev, string>((vdev) => vdev.children, {
     trackBy: (vdev) => vdev.guid,
   });
