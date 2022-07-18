@@ -110,7 +110,7 @@ export class ZfsHealthCardComponent implements OnChanges, OnDestroy {
         filter(Boolean),
         switchMap(() => this.ws.call('pool.scrub', [this.pool.id, PoolScrubAction.Start])),
         catchError((error) => {
-          new EntityUtils().handleWsError(null, error, this.dialogService);
+          new EntityUtils().handleWsError(this, error, this.dialogService);
           return EMPTY;
         }),
         untilDestroyed(this),
@@ -128,7 +128,7 @@ export class ZfsHealthCardComponent implements OnChanges, OnDestroy {
       filter(Boolean),
       switchMap(() => this.ws.call('pool.scrub', [this.pool.id, PoolScrubAction.Stop])),
       catchError((error) => {
-        new EntityUtils().handleWsError(null, error, this.dialogService);
+        new EntityUtils().handleWsError(this, error, this.dialogService);
         return EMPTY;
       }),
       untilDestroyed(this),

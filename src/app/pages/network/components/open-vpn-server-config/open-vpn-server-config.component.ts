@@ -143,7 +143,7 @@ export class OpenVpnServerConfigComponent implements OnInit {
       this.storageService.downloadText(download, 'openVPNStatic.key');
     }, (error) => {
       this.loader.close();
-      new EntityUtils().handleWsError(null, error, this.dialogService);
+      new EntityUtils().handleWsError(this, error, this.dialogService);
     });
   }
 
@@ -167,7 +167,7 @@ export class OpenVpnServerConfigComponent implements OnInit {
         (error) => {
           this.isLoading = false;
           this.cdr.markForCheck();
-          new EntityUtils().handleWsError(null, error, this.dialogService);
+          new EntityUtils().handleWsError(this, error, this.dialogService);
         },
       );
   }
