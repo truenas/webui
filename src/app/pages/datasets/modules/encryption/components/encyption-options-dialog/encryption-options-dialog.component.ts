@@ -184,7 +184,7 @@ export class EncryptionOptionsDialogComponent implements OnInit {
         },
         (error: WebsocketError) => {
           this.loader.close();
-          new EntityUtils().handleWsError(null, error, this.dialog);
+          new EntityUtils().handleWsError(this, error, this.dialog);
         },
       );
   }

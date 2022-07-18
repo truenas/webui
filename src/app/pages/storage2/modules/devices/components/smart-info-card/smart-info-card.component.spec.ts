@@ -55,7 +55,7 @@ describe('SmartInfoCardComponent', () => {
               {
                 num: 5,
                 status: SmartTestResultStatus.Success,
-                description: 'Foreground short',
+                description: 'Conveyance',
               },
             ],
           } as SmartTestResults,
@@ -86,7 +86,7 @@ describe('SmartInfoCardComponent', () => {
   });
 
   it('loads and shows total number of SMART test results', () => {
-    const detailsItem = spectator.query(byText('Total S.M.A.R.T. Test Results:')).parentElement;
+    const detailsItem = spectator.query(byText('Completed S.M.A.R.T. Tests:')).parentElement;
     expect(detailsItem).toHaveDescendantWithText({
       selector: '.value',
       text: '4',
@@ -120,19 +120,19 @@ describe('SmartInfoCardComponent', () => {
     const resultsByCategory = spectator.query('.results-by-category').children;
     expect(resultsByCategory).toHaveLength(3);
 
-    const category1 = spectator.query(byText('Last Background short:')).parentElement;
+    const category1 = spectator.query(byText('Last Short Test:')).parentElement;
     expect(category1).toHaveDescendantWithText({
       selector: '.value',
       text: 'SUCCESS',
     });
 
-    const category2 = spectator.query(byText('Last Background long:')).parentElement;
+    const category2 = spectator.query(byText('Last Long Test:')).parentElement;
     expect(category2).toHaveDescendantWithText({
       selector: '.value',
       text: 'FAILED',
     });
 
-    const category3 = spectator.query(byText('Last Foreground short:')).parentElement;
+    const category3 = spectator.query(byText('Last Conveyance Test:')).parentElement;
     expect(category3).toHaveDescendantWithText({
       selector: '.value',
       text: 'SUCCESS',
