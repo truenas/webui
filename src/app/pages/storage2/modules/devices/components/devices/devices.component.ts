@@ -54,6 +54,13 @@ export class DevicesComponent implements OnInit {
     this.devicesStore.onReloadList
       .pipe(untilDestroyed(this))
       .subscribe(() => this.loadTopologyAndDisks());
+
+    this.route.params.pipe(
+      pluck('guid'),
+      untilDestroyed(this),
+    ).subscribe((guid) => {
+      this.listenForRouteChanges(guid);
+    });
   }
 
   private createDataSource(disks: VDev[]): void {
@@ -83,14 +90,24 @@ export class DevicesComponent implements OnInit {
     this.selectedParentItem = undefined;
   }
 
-  onRowSelected(vdev: VDev, event: MouseEvent): void {
-    event.stopPropagation();
-    this.selectedItem = vdev;
-    this.selectedParentItem = [...Object.values(this.topology.data)].find((group: VDev) => {
-      return group?.children.find((child) => {
-        return child.guid === vdev.guid;
-      });
-    });
+  private listenForRouteChanges(id: string): void {
+    if (id && this.dataSource?.data) {
+      const traverseTree = (children: VDev[], parent?: VDev): { item: VDev; parent: VDev } => {
+        for (const item of children) {
+          if (item.guid !== id && item.children?.length) {
+            const dataDisk = traverseTree(item.children, item);
+            if (dataDisk) { return dataDisk; }
+          }
+          if (item.guid === id) {
+            return { item, parent };
+          }
+        }
+        return { item: undefined, parent: undefined };
+      };
+
+      this.selectedItem = traverseTree(this.dataSource.data).item;
+      this.selectedParentItem = traverseTree(this.dataSource.data).parent;
+    }
   }
 
   onSearch(query: string): void {
@@ -111,16 +128,10 @@ export class DevicesComponent implements OnInit {
             this.createDataSource(this.topology.data);
             this.selectFirstNode();
             this.loader.close();
-            this.cdr.markForCheck();
 
-            this.route.params.pipe(
-              pluck('guid'),
-              untilDestroyed(this),
-            ).subscribe((guid) => {
-              this.selectedItem = this.treeControl.dataNodes[0].children.find((child) => {
-                return child.guid === guid;
-              });
-            });
+            const routeDatasetId = this.route.snapshot.paramMap.get('guid');
+            this.listenForRouteChanges(routeDatasetId);
+            this.cdr.markForCheck();
           }),
         );
       }),
