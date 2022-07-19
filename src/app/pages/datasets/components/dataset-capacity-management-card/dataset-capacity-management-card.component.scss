@@ -15,11 +15,10 @@
   .chart-extra {
     align-items: center;
     display: flex;
-    justify-content: space-between;
-    margin-top: 20px;
+    justify-content: space-around;
 
     .details-item {
-      margin: 0;
+      margin: 20px 0 0;
     }
   }
 }

@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, Input, OnChanges, ViewChild,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnChanges,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { ChartColor, ChartDataSets, ChartOptions } from 'chart.js';
@@ -22,26 +22,22 @@ export class SpaceManagementChartComponent implements OnChanges {
   @Input() dataset: DatasetInTree;
 
   isLoading = false;
-  isFirstLoading = true;
   extraProperties: Dataset;
   subscription: Subscription;
-  legendColors: string[] = [];
-
-  @ViewChild('canvas') canvasRef: ElementRef;
   chartData: ChartDataSets[] = [{ data: [] }];
   chartOptions: ChartOptions = {
     tooltips: {
       enabled: false,
     },
-    responsive: true,
+    responsive: false,
     maintainAspectRatio: true,
     legend: {
       display: false,
     },
     responsiveAnimationDuration: 0,
     animation: {
-      duration: 1000,
-      animateRotate: true,
+      duration: 0,
+      animateRotate: false,
       animateScale: false,
     },
     hover: {
@@ -51,10 +47,6 @@ export class SpaceManagementChartComponent implements OnChanges {
 
   get isZvol(): boolean {
     return this.dataset.type === DatasetType.Volume;
-  }
-
-  get totalAllocation(): number {
-    return this.dataset.available.parsed + this.dataset.used.parsed;
   }
 
   constructor(
@@ -76,10 +68,8 @@ export class SpaceManagementChartComponent implements OnChanges {
       untilDestroyed(this),
     ).subscribe((dataset) => {
       this.extraProperties = dataset;
-      this.legendColors = this.themeService.getColorPattern();
       this.updateChartData();
       this.isLoading = false;
-      this.isFirstLoading = false;
       this.cdr.markForCheck();
     });
   }
@@ -103,16 +93,16 @@ export class SpaceManagementChartComponent implements OnChanges {
 
   private makeDatasets(data: number[]): ChartDataSets[] {
     const datasets: ChartDataSets[] = [];
-
+    const filteredData = data.filter(Boolean);
     const ds: ChartDataSets = {
-      data,
+      data: filteredData,
       backgroundColor: [],
       borderColor: [],
       borderWidth: 1,
       type: 'doughnut',
     };
 
-    data.forEach((_, index) => {
+    filteredData.forEach((_, index) => {
       const bgRgb = this.themeService.getRgbBackgroundColorByIndex(index);
       (ds.backgroundColor as ChartColor[]).push(this.themeService.getUtils().rgbToString(bgRgb, 0.85));
       (ds.borderColor as ChartColor[]).push(this.themeService.getUtils().rgbToString(bgRgb));

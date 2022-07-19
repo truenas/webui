@@ -23,14 +23,15 @@ $chart-size: 180px !default;
   font-size: 18px;
   font-weight: normal;
   gap: 8px;
-  margin-bottom: 16px;
-  padding: 16px 8px;
+  margin-bottom: 12px;
+  padding: 16px 8px 12px;
   white-space: nowrap;
 }
 
 .chart-placeholder {
   align-items: center;
   display: flex;
+  flex: 0 0 auto;
   height: $chart-size;
   width: $chart-size;
 
@@ -38,6 +39,7 @@ $chart-size: 180px !default;
     border-radius: 50%;
     height: $chart-size;
     margin: 0;
+    width: $chart-size;
   }
 }
 
@@ -45,6 +47,17 @@ $chart-size: 180px !default;
   align-items: center;
   display: inline-flex;
   flex: 1;
+
+  ::ng-deep .loader {
+    margin: 0;
+  }
+}
+
+.legend-placeholder {
+  align-items: center;
+  display: flex;
+  flex: 1;
+  margin-bottom: 8px;
 
   ::ng-deep .loader {
     margin: 0;
@@ -71,7 +84,19 @@ $chart-size: 180px !default;
     width: 12px;
   }
 
-  .value-placeholder {
-    flex: 1;
+  &:nth-child(1) .legend-swatch {
+    background-color: var(--blue);
+  }
+
+  &:nth-child(2) .legend-swatch {
+    background-color: var(--magenta);
+  }
+
+  &:nth-child(3) .legend-swatch {
+    background-color: var(--orange);
+  }
+
+  &:nth-child(4) .legend-swatch {
+    background-color: var(--orange);
   }
 }

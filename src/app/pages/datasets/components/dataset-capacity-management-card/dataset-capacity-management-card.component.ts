@@ -3,12 +3,14 @@ import {
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+import { maxBy } from 'lodash';
 import { Subscription, forkJoin } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { map, take } from 'rxjs/operators';
 import { DatasetQuotaType, DatasetType } from 'app/enums/dataset.enum';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { DatasetFormComponent } from 'app/pages/datasets/components/dataset-form/dataset-form.component';
 import { DatasetInTree } from 'app/pages/datasets/store/dataset-in-tree.interface';
+import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
 import { WebSocketService, ModalService } from 'app/services';
 
 @UntilDestroy()
@@ -21,14 +23,13 @@ import { WebSocketService, ModalService } from 'app/services';
 export class DatasetCapacityManagementCardComponent implements OnChanges {
   @Input() dataset: DatasetInTree;
 
+  inheritedQuotasDataset: DatasetInTree;
   extraProperties: Dataset;
   extraPropertiesSubscription: Subscription;
   isLoading = false;
   quotasSubscription: Subscription;
   userQuotas: number;
   groupQuotas: number;
-  inheritedQuotas = 0;
-  appliedQuotas = 0;
 
   get isFilesystem(): boolean {
     return this.dataset.type === DatasetType.Filesystem;
@@ -42,20 +43,12 @@ export class DatasetCapacityManagementCardComponent implements OnChanges {
     return !this.dataset.locked && this.isFilesystem;
   }
 
-  get nameSegments(): string[] {
-    return this.dataset.name.split('/');
-  }
-
-  get datasetLabel(): string {
-    return this.nameSegments[this.nameSegments.length - 1];
-  }
-
   get hasQuota(): boolean {
-    return this.extraProperties.quota.value !== null || this.extraProperties.quota.value !== '0';
+    return Boolean(this.extraProperties.quota.parsed);
   }
 
-  get hasRefQuota(): boolean {
-    return this.extraProperties.refquota.value !== null || this.extraProperties.refquota.value !== '0';
+  get hasInheritedQuotas(): boolean {
+    return this.inheritedQuotasDataset?.quota?.parsed && this.inheritedQuotasDataset?.id !== this.dataset?.id;
   }
 
   constructor(
@@ -63,23 +56,26 @@ export class DatasetCapacityManagementCardComponent implements OnChanges {
     private cdr: ChangeDetectorRef,
     private modalService: ModalService,
     private translate: TranslateService,
+    private datasetStore: DatasetTreeStore,
   ) {}
 
   ngOnChanges(): void {
     this.loadExtraProperties();
+    this.getInheritedQuotas();
     if (this.checkQuotas) {
       this.getQuotas();
     }
   }
 
   loadExtraProperties(): void {
-    this.cdr.markForCheck();
+    this.isLoading = true;
     this.extraPropertiesSubscription?.unsubscribe();
     this.extraPropertiesSubscription = this.ws.call('pool.dataset.query', [[['id', '=', this.dataset.id]]]).pipe(
       map((datasets) => datasets[0]),
       untilDestroyed(this),
     ).subscribe((dataset) => {
       this.extraProperties = dataset;
+      this.isLoading = false;
       this.cdr.markForCheck();
     });
   }
@@ -91,17 +87,28 @@ export class DatasetCapacityManagementCardComponent implements OnChanges {
     this.quotasSubscription = forkJoin([
       this.ws.call('pool.dataset.get_quota', [this.dataset.id, DatasetQuotaType.User, []]),
       this.ws.call('pool.dataset.get_quota', [this.dataset.id, DatasetQuotaType.Group, []]),
-      this.ws.call('pool.dataset.get_quota', [this.dataset.id, DatasetQuotaType.Dataset, []]),
     ]).pipe(
       untilDestroyed(this),
-    ).subscribe(([userQuotas, groupQuotas, datasetQuotas]) => {
+    ).subscribe(([userQuotas, groupQuotas]) => {
       this.userQuotas = userQuotas.length;
       this.groupQuotas = groupQuotas.length;
-      // TODO: Show real values
-      this.appliedQuotas = datasetQuotas.length ? datasetQuotas[0].used_bytes : 0;
       this.isLoading = false;
       this.cdr.markForCheck();
       // TODO: Handle error.
+    });
+  }
+
+  getInheritedQuotas(): void {
+    this.datasetStore.selectedBranch$.pipe(
+      map((datasets) => {
+        const datasetWithQuotas = datasets.filter((dataset) => Boolean(dataset?.quota?.parsed));
+        return maxBy(datasetWithQuotas, (dataset) => dataset.quota.parsed);
+      }),
+      take(1),
+      untilDestroyed(this),
+    ).subscribe((dataset) => {
+      this.inheritedQuotasDataset = dataset;
+      this.cdr.markForCheck();
     });
   }
 
