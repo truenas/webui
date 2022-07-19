@@ -3397,6 +3397,7 @@
   "{n, plural, one {# docker image} other {# docker images}} has been deleted.": "",
   "{n, plural, one {# docker image} other {# docker images}} has been updated.": "",
   "{n} RPM": "",
+  "{n} from {dataset}": "",
   "{n} more": "",
   "{serviceName} service failed to start.": "",
   "{serviceName} service failed to stop.": "",

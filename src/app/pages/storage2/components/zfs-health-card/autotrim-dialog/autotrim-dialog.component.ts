@@ -8,10 +8,9 @@ import { TranslateService } from '@ngx-translate/core';
 import { OnOff } from 'app/enums/on-off.enum';
 import helptext from 'app/helptext/storage/volumes/volume-list';
 import { Pool } from 'app/interfaces/pool.interface';
-import { AppLoaderService } from 'app/modules/app-loader/app-loader.service';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { DialogService, WebSocketService } from 'app/services';
+import { AppLoaderService, DialogService, WebSocketService } from 'app/services';
 
 @UntilDestroy()
 @Component({
