@@ -71,7 +71,7 @@ export interface FormCheckboxConfig<P = any> extends BaseFieldConfig<P> {
   expandedHeight?: boolean;
   onChange?(data: { event: MatCheckboxChange }): void;
   type: 'checkbox';
-  inlineLabel?: string;
+  inlineLabel?: boolean;
   updater?: (parent: P) => void;
   customEventMethod?: () => void;
 }

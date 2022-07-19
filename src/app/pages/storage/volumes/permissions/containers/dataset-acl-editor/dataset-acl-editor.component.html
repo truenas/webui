@@ -15,14 +15,24 @@
       </div>
 
       <div class="ownership-row">
-        <div class="control">
-          <label class="header-label">{{ 'Owner' | translate }}:</label>
-          <div dynamicField [config]="ownerFieldConfig" [group]="ownerFormGroup"></div>
+        <div class="control-group">
+          <div class="control">
+            <label class="header-label">{{ 'Owner' | translate }}:</label>
+            <div dynamicField [config]="ownerFieldConfig" [group]="ownerFormGroup"></div>
+          </div>
+          <div class="control">
+            <div dynamicField [config]="applyOwnerFieldConfig" [group]="ownerFormGroup"></div>
+          </div>
         </div>
 
-        <div class="control">
-          <label class="header-label">{{ 'Owner Group' | translate }}:</label>
-          <div dynamicField [config]="ownerGroupFieldConfig" [group]="ownerFormGroup"></div>
+        <div class="control-group">
+          <div class="control">
+            <label class="header-label">{{ 'Owner Group' | translate }}:</label>
+            <div dynamicField [config]="ownerGroupFieldConfig" [group]="ownerFormGroup"></div>
+          </div>
+          <div class="control">
+            <div dynamicField [config]="applyGroupFieldConfig" [group]="ownerFormGroup"></div>
+          </div>
         </div>
       </div>
     </mat-card-header>

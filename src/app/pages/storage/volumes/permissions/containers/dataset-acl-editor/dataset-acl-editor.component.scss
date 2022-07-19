@@ -21,6 +21,12 @@
     display: flex;
     padding-left: 25px;
     width: 100%;
+
+    ::ng-deep .form-checkbox {
+
+      margin-bottom: 5px;
+      margin-top: -10px;
+    }
   }
 
   .control {
