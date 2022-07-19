@@ -9,7 +9,7 @@ import { appImagePlaceholder } from 'app/constants/catalog.constants';
 import helptext from 'app/helptext/apps/apps';
 import { ChartReleaseEvent } from 'app/interfaces/chart-release-event.interface';
 import { ChartContainerImage, ChartRelease } from 'app/interfaces/chart-release.interface';
-import { AppLoaderService } from 'app/modules/app-loader/app-loader.service';
+import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { ApplicationsService } from 'app/pages/applications/applications.service';
 
 @UntilDestroy()

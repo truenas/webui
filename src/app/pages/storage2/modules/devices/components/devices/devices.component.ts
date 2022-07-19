@@ -13,7 +13,7 @@ import { Disk, VDev } from 'app/interfaces/storage.interface';
 import { IxNestedTreeDataSource } from 'app/modules/ix-tree/ix-nested-tree-datasource';
 import { findInTree } from 'app/modules/ix-tree/utils/find-in-tree.utils';
 import { DevicesStore } from 'app/pages/storage2/modules/devices/stores/devices-store.service';
-import { AppLoaderService, WebSocketService } from 'app/services';
+import { WebSocketService } from 'app/services';
 
 @UntilDestroy()
 @Component({
@@ -30,13 +30,13 @@ export class DevicesComponent implements OnInit {
     trackBy: (vdev) => vdev.guid,
   });
   diskDictionary: { [key: string]: Disk } = {};
+  isLoading = false;
 
   readonly hasNestedChild = (_: number, vdev: VDev): boolean => Boolean(vdev.children?.length);
 
   constructor(
     private ws: WebSocketService,
     private cdr: ChangeDetectorRef,
-    private loader: AppLoaderService, // TODO: Replace with a better approach
     private route: ActivatedRoute,
     private devicesStore: DevicesStore,
   ) { }
@@ -95,7 +95,8 @@ export class DevicesComponent implements OnInit {
   }
 
   private loadTopologyAndDisks(): void {
-    this.loader.open();
+    this.isLoading = true;
+    this.cdr.markForCheck();
     const poolId = Number(this.route.snapshot.paramMap.get('poolId'));
     this.ws.call('pool.query', [[['id', '=', poolId]]]).pipe(
       switchMap((pools) => {
@@ -107,13 +108,15 @@ export class DevicesComponent implements OnInit {
             this.treeControl.dataNodes = this.topology.data;
             this.createDataSource(this.topology.data);
             this.selectFirstNode();
-            this.loader.close();
+            this.isLoading = false;
             this.cdr.markForCheck();
           }),
         );
       }),
       catchError(() => {
         // TODO: Handle error.
+        this.isLoading = false;
+        this.cdr.markForCheck();
         return EMPTY;
       }),
       untilDestroyed(this),

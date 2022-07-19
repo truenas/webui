@@ -7,7 +7,6 @@ import { helptextSharingIscsi } from 'app/helptext/sharing';
 import { IscsiGlobalSession } from 'app/interfaces/iscsi-global-config.interface';
 import { IscsiExtent, IscsiInitiatorGroup } from 'app/interfaces/iscsi.interface';
 import { QueryFilter } from 'app/interfaces/query-api.interface';
-import { AppLoaderService } from 'app/modules/app-loader/app-loader.service';
 import {
   FieldConfig,
 } from 'app/modules/entity/entity-form/models/field-config.interface';
@@ -17,6 +16,7 @@ import { EntityFormService } from 'app/modules/entity/entity-form/services/entit
 import { FieldRelationService } from 'app/modules/entity/entity-form/services/field-relation.service';
 import { ipv4or6OptionalCidrValidator } from 'app/modules/entity/entity-form/validators/ip-validation';
 import { EntityUtils } from 'app/modules/entity/utils';
+import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { WebSocketService, DialogService, NetworkService } from 'app/services';
 
 @UntilDestroy()
