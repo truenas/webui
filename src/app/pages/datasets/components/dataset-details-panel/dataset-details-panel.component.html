@@ -14,13 +14,13 @@
     <button
       *ngIf="!isZvol"
       mat-button
+      (click)="onAddZvol()"
+    >{{ 'Add Zvol' | translate }}</button>
+    <button
+      mat-button
       color="primary"
       (click)="onAddDataset()"
     >{{ 'Add Dataset' | translate }}</button>
-    <button
-      mat-button
-      (click)="onAddZvol()"
-    >{{ 'Add Zvol' | translate }}</button>
   </div>
 </div>
 
@@ -28,6 +28,7 @@
   <ix-dataset-details-card [dataset]="dataset"></ix-dataset-details-card>
   <ix-permissions-card [dataset]="dataset" *ngIf="hasPermissions"></ix-permissions-card>
   <ix-zfs-encryption-card
+    *ngIf="dataset.encrypted"
     [dataset]="dataset"
     [parentDataset]="parentDataset"
   ></ix-zfs-encryption-card>

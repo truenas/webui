@@ -18,10 +18,10 @@ import {
   VolumesListDataset,
   VolumesListPool,
 } from 'app/interfaces/volumes-list-pool.interface';
-import { AppLoaderService } from 'app/modules/app-loader/app-loader.service';
 import { EmptyConfig, EmptyType } from 'app/modules/entity/entity-empty/entity-empty.component';
 import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-table.component';
 import { EntityTableConfig } from 'app/modules/entity/entity-table/entity-table.interface';
+import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { DatasetFormComponent } from 'app/pages/storage/volumes/datasets/dataset-form/dataset-form.component';
 import { VolumesListTableConfig } from 'app/pages/storage/volumes/volumes-list/volumes-list-table-config';
 import { ZvolFormComponent } from 'app/pages/storage/volumes/zvol/zvol-form/zvol-form.component';

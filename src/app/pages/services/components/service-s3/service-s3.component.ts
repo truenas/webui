@@ -112,7 +112,7 @@ export class ServiceS3Component implements OnInit {
       },
       (error) => {
         this.isFormLoading = false;
-        new EntityUtils().handleWsError(null, error, this.dialog);
+        new EntityUtils().handleWsError(this, error, this.dialog);
         this.cdr.markForCheck();
       },
     );

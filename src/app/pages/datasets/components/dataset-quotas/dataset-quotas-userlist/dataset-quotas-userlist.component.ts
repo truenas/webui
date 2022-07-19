@@ -213,7 +213,7 @@ export class DatasetQuotasUserlistComponent implements OnInit, AfterViewInit, On
           this.getUserQuotas();
         }, (err) => {
           this.loader.close();
-          new EntityUtils().handleWsError(null, err, this.dialogService);
+          new EntityUtils().handleWsError(this, err, this.dialogService);
         });
     });
   }
@@ -246,7 +246,7 @@ export class DatasetQuotasUserlistComponent implements OnInit, AfterViewInit, On
       },
       (err) => {
         this.loader.close();
-        new EntityUtils().handleWsError(null, err, this.dialogService);
+        new EntityUtils().handleWsError(this, err, this.dialogService);
       },
     );
   }

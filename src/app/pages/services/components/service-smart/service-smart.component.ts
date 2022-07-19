@@ -67,7 +67,7 @@ export class ServiceSmartComponent implements OnInit {
           this.cdr.markForCheck();
         },
         (error) => {
-          new EntityUtils().handleWsError(null, error, this.dialogService);
+          new EntityUtils().handleWsError(this, error, this.dialogService);
           this.isFormLoading = false;
           this.cdr.markForCheck();
         },
