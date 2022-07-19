@@ -7,6 +7,7 @@
 .card {
   @include details-card();
   flex: 1;
+  min-height: 390px;
 }
 
 .header {

@@ -5,7 +5,6 @@ import {
 import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { filter, pluck } from 'rxjs/operators';
-import { DatasetType } from 'app/enums/dataset.enum';
 import { IxNestedTreeDataSource } from 'app/modules/ix-tree/ix-nested-tree-datasource';
 import { findInTree } from 'app/modules/ix-tree/utils/find-in-tree.utils';
 import { DatasetInTree } from 'app/pages/datasets/store/dataset-in-tree.interface';
@@ -87,22 +86,11 @@ export class DatasetsManagementComponent implements OnInit {
   }
 
   private createDataSource(datasets: DatasetInTree[]): void {
-    const filteredDatasets = this.initFilterDataSource(datasets);
-    this.dataSource = new IxNestedTreeDataSource<DatasetInTree>(filteredDatasets);
-    this.dataSource.filterPredicate = (filteredDatasets, query = '') => {
-      return filteredDatasets.map((datasetRoot) => {
+    this.dataSource = new IxNestedTreeDataSource<DatasetInTree>(datasets);
+    this.dataSource.filterPredicate = (datasets, query = '') => {
+      return datasets.map((datasetRoot) => {
         return findInTree([datasetRoot], (dataset) => dataset.id.toLowerCase().includes(query.toLowerCase()));
       }).filter(Boolean);
     };
-  }
-
-  private initFilterDataSource(datasets: DatasetInTree[]): DatasetInTree[] {
-    const filtered = (datasets: DatasetInTree[]): DatasetInTree[] => {
-      return datasets.filter((dataset) => dataset.type === DatasetType.Filesystem && !dataset.locked).map((dataset) => {
-        const children: any[] = dataset.children ? filtered(dataset.children) : [];
-        return { ...dataset, children };
-      });
-    };
-    return filtered(datasets);
   }
 }
