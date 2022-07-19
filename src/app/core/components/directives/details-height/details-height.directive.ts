@@ -3,6 +3,9 @@ import {
 } from '@angular/core';
 import { WINDOW } from 'app/helpers/window.helper';
 
+const headingHeightInitialDefault = 213;
+const headingHeightDefault = 137;
+
 ///
 /// This directive is used to dynamically adjust height of the "details" block in a "master-details" layout
 /// to fill the bottom space, which becomes available when user scrolls the page down,
@@ -13,11 +16,11 @@ import { WINDOW } from 'app/helpers/window.helper';
 })
 export class IxDetailsHeightDirective implements OnInit, OnDestroy {
   @Input() ixDetailsHeightParentClass: string;
-  @Input() hiddenHeight = 230;
-  @Input() maxShowHeight = 150;
+  @Input() headingHeightInitial = headingHeightInitialDefault;
+  @Input() headingHeight = headingHeightDefault;
 
   readonly onScrollHandler = this.onScroll.bind(this);
-  heightDetails = `calc(100vh - ${this.hiddenHeight}px)`;
+  heightDetails = `calc(100vh - ${this.headingHeightInitial}px)`;
 
   constructor(
     @Inject(WINDOW) private window: Window,
@@ -38,10 +41,10 @@ export class IxDetailsHeightDirective implements OnInit, OnDestroy {
       return;
     }
 
-    if ((event.target as HTMLElement).scrollTop < this.maxShowHeight) {
-      this.heightDetails = `calc(100vh - ${this.hiddenHeight}px + ${(event.target as HTMLElement).scrollTop}px)`;
+    if ((event.target as HTMLElement).scrollTop < this.headingHeight) {
+      this.heightDetails = `calc(100vh - ${this.headingHeightInitial}px + ${(event.target as HTMLElement).scrollTop}px)`;
     } else {
-      this.heightDetails = `calc(100vh - ${this.hiddenHeight}px + ${this.maxShowHeight}px)`;
+      this.heightDetails = `calc(100vh - ${this.headingHeightInitial}px + ${this.headingHeight}px)`;
     }
 
     this.el.nativeElement.style.height = this.heightDetails;
