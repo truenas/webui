@@ -38,6 +38,14 @@ export class DatasetDetailsPanelComponent implements OnInit {
     return this.dataset.type === DatasetType.Filesystem && !isIocageMounted(this.dataset);
   }
 
+  get isAllowCapacity(): boolean {
+    return this.dataset.type === DatasetType.Filesystem && !this.dataset.locked;
+  }
+
+  get isAllowEncryption(): boolean {
+    return this.dataset.encrypted && !this.dataset.locked;
+  }
+
   get parentPath(): string {
     const parentPath = this.dataset.name.split('/').slice(0, -1).join('/');
     return `/${parentPath}/`;
