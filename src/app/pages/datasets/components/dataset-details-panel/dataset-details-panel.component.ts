@@ -38,12 +38,12 @@ export class DatasetDetailsPanelComponent implements OnInit {
     return this.dataset.type === DatasetType.Filesystem && !isIocageMounted(this.dataset);
   }
 
-  get isAllowCapacity(): boolean {
-    return this.dataset.type === DatasetType.Filesystem && !this.dataset.locked;
+  get isCapacityAllowed(): boolean {
+    return !this.dataset.locked;
   }
 
-  get isAllowEncryption(): boolean {
-    return this.dataset.encrypted && !this.dataset.locked;
+  get isEncryptionAllowed(): boolean {
+    return this.dataset.encrypted;
   }
 
   get parentPath(): string {

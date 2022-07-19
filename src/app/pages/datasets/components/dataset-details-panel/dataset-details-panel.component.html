@@ -27,9 +27,9 @@
   <ix-dataset-details-card [dataset]="dataset"></ix-dataset-details-card>
   <ix-permissions-card [dataset]="dataset" *ngIf="hasPermissions && !dataset.locked"></ix-permissions-card>
   <ix-zfs-encryption-card
-    *ngIf="isAllowEncryption"
+    *ngIf="isEncryptionAllowed"
     [dataset]="dataset"
     [parentDataset]="parentDataset"
   ></ix-zfs-encryption-card>
-  <ix-dataset-capacity-management-card [dataset]="dataset" *ngIf="isAllowCapacity"></ix-dataset-capacity-management-card>
+  <ix-dataset-capacity-management-card [dataset]="dataset" *ngIf="isCapacityAllowed"></ix-dataset-capacity-management-card>
 </div>
