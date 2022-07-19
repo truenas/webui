@@ -403,8 +403,10 @@ export class DatasetAclEditorStore extends ComponentStore<DatasetAclEditorState>
             recursive: options.recursive,
             traverse: options.traverse,
           },
-          uid: userWhoToIds.has(options.owner) ? userWhoToIds.get(options.owner) : null,
-          gid: groupWhoToIds.has(options.ownerGroup) ? groupWhoToIds.get(options.ownerGroup) : null,
+          uid: userWhoToIds.has(options.owner) && options.applyOwner ? userWhoToIds.get(options.owner) : null,
+          gid: groupWhoToIds.has(options.ownerGroup) && options.applyGroup
+            ? groupWhoToIds.get(options.ownerGroup)
+            : null,
           acltype: editorState.acl.acltype,
           path: editorState.mountpoint,
           dacl: convertedAces as NfsAclItem[] | PosixAclItem[],
