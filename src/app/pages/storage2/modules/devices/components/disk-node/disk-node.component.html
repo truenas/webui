@@ -1,0 +1,17 @@
+<div class="tree-node-grid">
+  <div class="cell cell-name">
+    <div class="icon-container">
+      <ix-disk-icon [vdev]="vdev" [disk]="disk"></ix-disk-icon>
+    </div>
+    <span class="name">{{ diskName }}</span>
+  </div>
+  <div class="cell cell-status">
+    <span [style.background-color]="statusColor">{{ diskStatus }}</span>
+  </div>
+  <div class="cell cell-capacity">
+    <span>{{ diskCapacity }}</span>
+  </div>
+  <div class="cell cell-errors">
+    <span>{{ diskErrors }}</span>
+  </div>
+</div>

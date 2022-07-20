@@ -1,3 +1,5 @@
+@import '~assets/styles/mixins/grid';
+
 :host {
   $page-header-height: 81px;
   display: block;
@@ -55,8 +57,45 @@
   overflow: auto;
 }
 
+.disk-tree-inner {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: fit-content;
+}
+
 .disk-tree {
   border-top: 2px solid var(--lines);
+}
+
+.disk-tree-header {
+  @include grid-row();
+  align-items: center;
+  color: var(--fg2);
+  min-height: 48px;
+  padding-left: 48px;
+
+  > div {
+    font-weight: bold;
+    padding: 4px 0;
+
+    &:first-child {
+      left: 0;
+      position: sticky;
+    }
+  }
+
+  .disk-name-header {
+    background: linear-gradient(90deg, var(--bg1) 0%, var(--bg1) calc(100% - 13px), transparent 100%);
+    padding-left: 8px;
+    padding-right: 15px;
+  }
+
+  .disk-status-header {
+    display: flex;
+    justify-content: center;
+    width: 70%;
+  }
 }
 
 .disk-nested-tree-root-node {
@@ -86,4 +125,11 @@
       width: 6px;
     }
   }
+}
+
+.vdev-group-toggle {
+  height: 25px;
+  line-height: 0;
+  margin-right: 10px;
+  width: 25px;
 }
