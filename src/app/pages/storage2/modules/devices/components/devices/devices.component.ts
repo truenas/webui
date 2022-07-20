@@ -112,6 +112,14 @@ export class DevicesComponent implements OnInit {
     });
   }
 
+  onRowGroupSelected(dataNodeSelected: DeviceNestedDataNode, _: MouseEvent): void {
+    if (this.treeControl.isExpanded(dataNodeSelected)) {
+      this.treeControl.collapse(dataNodeSelected);
+    } else {
+      this.treeControl.expand(dataNodeSelected);
+    }
+  }
+
   onSearch(query: string): void {
     this.dataSource.filter(query);
   }

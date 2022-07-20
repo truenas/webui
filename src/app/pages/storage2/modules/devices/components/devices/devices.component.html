@@ -37,8 +37,7 @@
           >
             <div
               class="disk-nested-tree-root-node"
-              (click)="onRowSelected(vdev, $event)"
-              [class.selected]="vdev.guid === selectedItem?.guid"
+              (click)="onRowGroupSelected(vdev, $event)"
             >
               <ix-vdev-group-node [vdev]="vdev | cast">
                 <button
