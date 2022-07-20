@@ -26,7 +26,7 @@ export class DatasetDetailsPanelComponent implements OnInit {
     private modalService: ModalService,
     private translate: TranslateService,
     private datasetStore: DatasetTreeStore,
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.modalService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
