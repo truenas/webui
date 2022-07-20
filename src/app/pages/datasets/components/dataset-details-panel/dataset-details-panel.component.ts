@@ -26,7 +26,7 @@ export class DatasetDetailsPanelComponent implements OnInit {
     private modalService: ModalService,
     private translate: TranslateService,
     private datasetStore: DatasetTreeStore,
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.modalService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
@@ -36,6 +36,14 @@ export class DatasetDetailsPanelComponent implements OnInit {
 
   get hasPermissions(): boolean {
     return this.dataset.type === DatasetType.Filesystem && !isIocageMounted(this.dataset);
+  }
+
+  get isCapacityAllowed(): boolean {
+    return !this.dataset.locked;
+  }
+
+  get isEncryptionAllowed(): boolean {
+    return this.dataset.encrypted;
   }
 
   get parentPath(): string {
