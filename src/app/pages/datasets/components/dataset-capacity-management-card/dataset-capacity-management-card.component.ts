@@ -1,17 +1,18 @@
 import {
-  Component, ChangeDetectionStrategy, ChangeDetectorRef, Input, OnChanges,
+  Component, ChangeDetectionStrategy, ChangeDetectorRef, Input, OnChanges, OnInit,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { maxBy } from 'lodash';
 import { Subscription, forkJoin } from 'rxjs';
 import { map, take } from 'rxjs/operators';
-import { DatasetQuotaType, DatasetType } from 'app/enums/dataset.enum';
+import { DatasetType, DatasetQuotaType } from 'app/enums/dataset.enum';
 import { Dataset } from 'app/interfaces/dataset.interface';
-import { DatasetFormComponent } from 'app/pages/datasets/components/dataset-form/dataset-form.component';
+import { DatasetCapacitySettingsComponent } from 'app/pages/datasets/components/dataset-capacity-management-card/dataset-capacity-settings/dataset-capacity-settings.component';
 import { DatasetInTree } from 'app/pages/datasets/store/dataset-in-tree.interface';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
 import { WebSocketService, ModalService } from 'app/services';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
 @Component({
@@ -20,7 +21,7 @@ import { WebSocketService, ModalService } from 'app/services';
   styleUrls: ['./dataset-capacity-management-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class DatasetCapacityManagementCardComponent implements OnChanges {
+export class DatasetCapacityManagementCardComponent implements OnInit, OnChanges {
   @Input() dataset: DatasetInTree;
 
   inheritedQuotasDataset: DatasetInTree;
@@ -58,7 +59,14 @@ export class DatasetCapacityManagementCardComponent implements OnChanges {
     private modalService: ModalService,
     private translate: TranslateService,
     private datasetStore: DatasetTreeStore,
+    private slideInService: IxSlideInService,
   ) {}
+
+  ngOnInit(): void {
+    this.slideInService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
+      this.loadExtraProperties();
+    });
+  }
 
   ngOnChanges(): void {
     this.loadExtraProperties();
@@ -70,7 +78,9 @@ export class DatasetCapacityManagementCardComponent implements OnChanges {
 
   loadExtraProperties(): void {
     this.isLoadingProperties = true;
+    this.cdr.markForCheck();
     this.extraPropertiesSubscription?.unsubscribe();
+    // TODO: Consider limiting to only the properties we need.
     this.extraPropertiesSubscription = this.ws.call('pool.dataset.query', [[['id', '=', this.dataset.id]]]).pipe(
       map((datasets) => datasets[0]),
       untilDestroyed(this),
@@ -114,9 +124,7 @@ export class DatasetCapacityManagementCardComponent implements OnChanges {
   }
 
   editDataset(): void {
-    const editDatasetComponent = this.modalService.openInSlideIn(DatasetFormComponent, this.dataset.id);
-    editDatasetComponent.setPk(this.dataset.id);
-    editDatasetComponent.setVolId(this.dataset.pool);
-    editDatasetComponent.setTitle(this.translate.instant('Edit Dataset'));
+    const editDatasetComponent = this.slideInService.open(DatasetCapacitySettingsComponent, { wide: true });
+    editDatasetComponent.setDatasetForEdit(this.extraProperties);
   }
 }

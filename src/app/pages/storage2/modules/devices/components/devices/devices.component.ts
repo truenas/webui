@@ -4,14 +4,17 @@ import {
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
 import _ from 'lodash';
 import { EMPTY } from 'rxjs';
 import { catchError, switchMap, tap } from 'rxjs/operators';
 import { VDevType } from 'app/enums/v-dev-type.enum';
+import { DeviceNestedDataNode, isVDev } from 'app/interfaces/device-nested-data-node.interface';
 import { PoolTopology } from 'app/interfaces/pool.interface';
-import { Disk, VDev } from 'app/interfaces/storage.interface';
+import { Disk } from 'app/interfaces/storage.interface';
 import { IxNestedTreeDataSource } from 'app/modules/ix-tree/ix-nested-tree-datasource';
 import { findInTree } from 'app/modules/ix-tree/utils/find-in-tree.utils';
+import { flattenTreeWithFilter } from 'app/modules/ix-tree/utils/flattern-tree-with-filter';
 import { DevicesStore } from 'app/pages/storage2/modules/devices/stores/devices-store.service';
 import { WebSocketService } from 'app/services';
 
@@ -23,26 +26,28 @@ import { WebSocketService } from 'app/services';
 })
 export class DevicesComponent implements OnInit {
   topology: PoolTopology;
-  selectedItem: VDev;
-  selectedParentItem: VDev | undefined;
-  dataSource: IxNestedTreeDataSource<VDev>;
-  treeControl = new NestedTreeControl<VDev, string>((vdev) => vdev.children, {
+  selectedItem: DeviceNestedDataNode;
+  selectedParentItem: DeviceNestedDataNode | undefined;
+  dataSource: IxNestedTreeDataSource<DeviceNestedDataNode>;
+  treeControl = new NestedTreeControl<DeviceNestedDataNode, string>((vdev) => vdev.children, {
     trackBy: (vdev) => vdev.guid,
   });
   diskDictionary: { [key: string]: Disk } = {};
   isLoading = false;
 
-  readonly hasNestedChild = (_: number, vdev: VDev): boolean => Boolean(vdev.children?.length);
+  readonly hasNestedChild = (_: number, vdev: DeviceNestedDataNode): boolean => Boolean(vdev.children?.length);
+  readonly isVdevGroup = (_: number, vdev: DeviceNestedDataNode): boolean => !isVDev(vdev);
 
   constructor(
     private ws: WebSocketService,
     private cdr: ChangeDetectorRef,
     private route: ActivatedRoute,
     private devicesStore: DevicesStore,
+    private translate: TranslateService,
   ) { }
 
   get isDiskSelected(): boolean {
-    return this.selectedItem.type === VDevType.Disk;
+    return isVDev(this.selectedItem) && this.selectedItem.type === VDevType.Disk;
   }
 
   ngOnInit(): void {
@@ -53,41 +58,66 @@ export class DevicesComponent implements OnInit {
       .subscribe(() => this.loadTopologyAndDisks());
   }
 
-  private createDataSource(disks: VDev[]): void {
-    this.dataSource = new IxNestedTreeDataSource(disks);
-    this.dataSource.filterPredicate = (disks, query = '') => {
-      return disks.map((disk) => {
-        return findInTree([disk], (vdev) => {
-          switch (vdev.type) {
+  private createDataSource(dataNodes: DeviceNestedDataNode[]): void {
+    this.dataSource = new IxNestedTreeDataSource(dataNodes);
+    this.dataSource.filterPredicate = (dataNodes, query = '') => {
+      return flattenTreeWithFilter(dataNodes, (dataNode) => {
+        if (isVDev(dataNode)) {
+          switch (dataNode.type) {
             case VDevType.Disk:
-              return vdev.disk.toLowerCase().includes(query.toLowerCase());
+              return dataNode.disk?.toLowerCase().includes(query.toLowerCase());
             case VDevType.Mirror:
-              return vdev.name.toLowerCase().includes(query.toLowerCase());
+              return dataNode.name?.toLowerCase().includes(query.toLowerCase());
           }
-        });
-      }).filter(Boolean);
+        } else {
+          return false;
+        }
+      });
     };
   }
 
-  private selectFirstNode(): void {
-    if (!this.treeControl?.dataNodes?.length) {
-      return;
+  private createDataNodes(topology: PoolTopology): DeviceNestedDataNode[] {
+    const dataNodes: DeviceNestedDataNode[] = [];
+    if (topology.data.length) {
+      dataNodes.push({ children: topology.data, disk: this.translate.instant('Data VDEVs'), guid: 'data' } as DeviceNestedDataNode);
     }
+    if (topology.cache.length) {
+      dataNodes.push({ children: topology.cache, disk: this.translate.instant('Cache'), guid: 'cache' } as DeviceNestedDataNode);
+    }
+    if (topology.log.length) {
+      dataNodes.push({ children: topology.log, disk: this.translate.instant('Log'), guid: 'log' } as DeviceNestedDataNode);
+    }
+    if (topology.spare.length) {
+      dataNodes.push({ children: topology.spare, disk: this.translate.instant('Spare'), guid: 'spare' } as DeviceNestedDataNode);
+    }
+    if (topology.special.length) {
+      dataNodes.push({ children: topology.special, disk: this.translate.instant('Metadata'), guid: 'special' } as DeviceNestedDataNode);
+    }
+    if (topology.dedup.length) {
+      dataNodes.push({ children: topology.dedup, disk: this.translate.instant('Dedup'), guid: 'dedup' } as DeviceNestedDataNode);
+    }
+    return dataNodes;
+  }
 
-    const disk = this.treeControl.dataNodes[0];
-    this.treeControl.expand(disk);
-    this.selectedItem = disk;
+  private selectVdevGroupNode(): void {
+    this.treeControl?.dataNodes?.forEach((node) => this.treeControl.expand(node));
     this.selectedParentItem = undefined;
   }
 
-  onRowSelected(vdev: VDev, event: MouseEvent): void {
+  onRowSelected(dataNodeSelected: DeviceNestedDataNode, event: MouseEvent): void {
     event.stopPropagation();
-    this.selectedItem = vdev;
-    this.selectedParentItem = [...Object.values(this.topology.data)].find((group: VDev) => {
-      return group?.children.find((child) => {
-        return child.guid === vdev.guid;
-      });
+    this.selectedItem = dataNodeSelected;
+    this.selectedParentItem = findInTree(this.treeControl.dataNodes, (dataNode: DeviceNestedDataNode) => {
+      return dataNode.guid === dataNodeSelected.guid;
     });
+  }
+
+  onRowGroupSelected(dataNodeSelected: DeviceNestedDataNode, _: MouseEvent): void {
+    if (this.treeControl.isExpanded(dataNodeSelected)) {
+      this.treeControl.collapse(dataNodeSelected);
+    } else {
+      this.treeControl.expand(dataNodeSelected);
+    }
   }
 
   onSearch(query: string): void {
@@ -105,9 +135,10 @@ export class DevicesComponent implements OnInit {
           tap((disks) => {
             this.diskDictionary = _.keyBy(disks, (disk) => disk.devname);
             this.topology = pools[0].topology;
-            this.treeControl.dataNodes = this.topology.data;
-            this.createDataSource(this.topology.data);
-            this.selectFirstNode();
+            const dataNodes = this.createDataNodes(pools[0].topology);
+            this.treeControl.dataNodes = dataNodes;
+            this.createDataSource(dataNodes);
+            this.selectVdevGroupNode();
             this.isLoading = false;
             this.cdr.markForCheck();
           }),
