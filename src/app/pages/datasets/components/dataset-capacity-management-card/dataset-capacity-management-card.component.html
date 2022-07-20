@@ -11,13 +11,13 @@
 
     <div class="chart-extra">
       <ng-container *ngIf="!isZvol">
-        <div class="details-item" *ngIf="extraProperties?.refreservation?.parsed">
+        <div class="details-item" *ngIf="!isLoading && extraProperties?.refreservation?.parsed">
           <span class="label">{{ 'Reserved for Dataset' | translate }}:</span>
           <span class="value">
             {{ extraProperties.refreservation.parsed | filesize: { standard: 'iec', round: 0 } }}
           </span>
         </div>
-        <div class="details-item" *ngIf="extraProperties?.reservation?.parsed">
+        <div class="details-item" *ngIf="!isLoading && extraProperties?.reservation?.parsed">
           <span class="label">{{ 'Reserved for Dataset & Children' | translate }}:</span>
           <span class="value">
             {{ extraProperties.reservation.parsed | filesize: { standard: 'iec', round: 0 } }}
