@@ -170,7 +170,7 @@ import { ImportDiskParams, PoolFindResult, PoolImportParams } from 'app/interfac
 import { CreatePoolScrubTask, PoolScrubTask, PoolScrubTaskParams } from 'app/interfaces/pool-scrub.interface';
 import { PoolUnlockQuery, PoolUnlockResult } from 'app/interfaces/pool-unlock-query.interface';
 import {
-  CreatePool, Pool, PoolAttachParams, PoolExpandParams, PoolReplaceParams, UpdatePool,
+  CreatePool, Pool, PoolAttachParams, PoolExpandParams, PoolInstance, PoolInstanceParams, PoolReplaceParams, UpdatePool,
 } from 'app/interfaces/pool.interface';
 import { Process } from 'app/interfaces/process.interface';
 import { QueryParams } from 'app/interfaces/query-api.interface';
@@ -720,6 +720,7 @@ export type ApiDirectory = {
   'pool.unlock_services_restart_choices': { params: [id: number]; response: Choices };
   'pool.update': { params: [id: number, update: UpdatePool]; response: Pool };
   'pool.upgrade': { params: [id: number]; response: boolean };
+  'pool.get_instance_by_name': { params: PoolInstanceParams; response: PoolInstance };
 
   // Replication
   'replication.list_datasets': { params: [transport: TransportMode, credentials?: number]; response: string[] };

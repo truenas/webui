@@ -2,14 +2,14 @@ import {
   Component, ChangeDetectionStrategy, ChangeDetectorRef, Input, OnChanges, OnInit,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { maxBy } from 'lodash';
 import { Subscription, forkJoin } from 'rxjs';
-import { map } from 'rxjs/operators';
-import { DatasetQuotaType } from 'app/enums/dataset.enum';
+import { map, take } from 'rxjs/operators';
+import { DatasetType, DatasetQuotaType } from 'app/enums/dataset.enum';
 import { Dataset } from 'app/interfaces/dataset.interface';
-import {
-  DatasetCapacitySettingsComponent,
-} from 'app/pages/datasets/components/dataset-capacity-management-card/dataset-capacity-settings/dataset-capacity-settings.component';
+import { DatasetCapacitySettingsComponent } from 'app/pages/datasets/components/dataset-capacity-management-card/dataset-capacity-settings/dataset-capacity-settings.component';
 import { DatasetInTree } from 'app/pages/datasets/store/dataset-in-tree.interface';
+import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
 import { WebSocketService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
@@ -23,17 +23,39 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
 export class DatasetCapacityManagementCardComponent implements OnInit, OnChanges {
   @Input() dataset: DatasetInTree;
 
+  inheritedQuotasDataset: DatasetInTree;
   extraProperties: Dataset;
   extraPropertiesSubscription: Subscription;
-  isLoadingQuotas = false;
   isLoadingProperties = false;
+  isLoadingQuotas = false;
   quotasSubscription: Subscription;
   userQuotas: number;
   groupQuotas: number;
 
+  get isFilesystem(): boolean {
+    return this.dataset.type === DatasetType.Filesystem;
+  }
+
+  get isZvol(): boolean {
+    return this.dataset.type === DatasetType.Volume;
+  }
+
+  get checkQuotas(): boolean {
+    return !this.dataset.locked && this.isFilesystem;
+  }
+
+  get hasQuota(): boolean {
+    return Boolean(this.extraProperties?.quota?.parsed);
+  }
+
+  get hasInheritedQuotas(): boolean {
+    return this.inheritedQuotasDataset?.quota?.parsed && this.inheritedQuotasDataset?.id !== this.dataset?.id;
+  }
+
   constructor(
     private ws: WebSocketService,
     private cdr: ChangeDetectorRef,
+    private datasetStore: DatasetTreeStore,
     private slideInService: IxSlideInService,
   ) {}
 
@@ -45,7 +67,8 @@ export class DatasetCapacityManagementCardComponent implements OnInit, OnChanges
 
   ngOnChanges(): void {
     this.loadExtraProperties();
-    if (!this.dataset.locked) {
+    this.getInheritedQuotas();
+    if (this.checkQuotas) {
       this.getQuotas();
     }
   }
@@ -80,6 +103,20 @@ export class DatasetCapacityManagementCardComponent implements OnInit, OnChanges
       this.isLoadingQuotas = false;
       this.cdr.markForCheck();
       // TODO: Handle error.
+    });
+  }
+
+  getInheritedQuotas(): void {
+    this.datasetStore.selectedBranch$.pipe(
+      map((datasets) => {
+        const datasetWithQuotas = datasets.filter((dataset) => Boolean(dataset?.quota?.parsed));
+        return maxBy(datasetWithQuotas, (dataset) => dataset.quota.parsed);
+      }),
+      take(1),
+      untilDestroyed(this),
+    ).subscribe((dataset) => {
+      this.inheritedQuotasDataset = dataset;
+      this.cdr.markForCheck();
     });
   }
 

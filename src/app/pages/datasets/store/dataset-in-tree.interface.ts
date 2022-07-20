@@ -18,4 +18,5 @@ export type DatasetInTree = Pick<Dataset,
 | 'pool'
 | 'type'
 | 'used'
+| 'quota'
 >;
