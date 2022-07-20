@@ -3,15 +3,6 @@
 .card {
   @include details-card();
 
-  .details-item .value-placeholder {
-    align-items: center;
-    display: inline-flex;
-
-    ::ng-deep .loader {
-      margin: 0;
-    }
-  }
-
   .chart-extra {
     align-items: center;
     display: flex;

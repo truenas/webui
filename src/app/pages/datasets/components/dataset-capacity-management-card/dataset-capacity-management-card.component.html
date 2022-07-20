@@ -11,78 +11,58 @@
 
     <div class="chart-extra">
       <ng-container *ngIf="!isZvol">
-        <div class="details-item" *ngIf="!isLoading && extraProperties?.refreservation?.parsed">
+        <div class="details-item" *ngIf="!isLoadingProperties && extraProperties?.refreservation?.parsed">
           <span class="label">{{ 'Reserved for Dataset' | translate }}:</span>
-          <span class="value">
-            {{ extraProperties.refreservation.parsed | filesize: { standard: 'iec', round: 0 } }}
-          </span>
+          <span class="value">{{ extraProperties.refreservation.parsed | filesize: { standard: 'iec', round: 0 } }}</span>
         </div>
-        <div class="details-item" *ngIf="!isLoading && extraProperties?.reservation?.parsed">
+        <div class="details-item" *ngIf="!isLoadingProperties && extraProperties?.reservation?.parsed">
           <span class="label">{{ 'Reserved for Dataset & Children' | translate }}:</span>
-          <span class="value">
-            {{ extraProperties.reservation.parsed | filesize: { standard: 'iec', round: 0 } }}
-          </span>
+          <span class="value">{{ extraProperties.reservation.parsed | filesize: { standard: 'iec', round: 0 } }}</span>
         </div>
       </ng-container>
       <ng-container *ngIf="isZvol">
-        <div class="details-item">
+        <!-- TODO: Fix me please after NAS-117254 is done -->
+        <div class="details-item" *ngIf="false">
           <span class="label">{{ 'Provisioning Type' | translate }}:</span>
-          <!-- TODO: Show real value -->
-          <span class="value" *ngIf="!isLoading; else loaderSkel">{{ 'Thick' | translate }}</span>
+          <span class="value">{{ 'Thick' | translate }}</span>
         </div>
         <div class="details-item">
           <span class="label">{{ 'Volume Size' | translate }}:</span>
-          <span class="value" *ngIf="!isLoading; else loaderSkel">
+          <span class="value" *ngIf="!isLoadingProperties; else valuePlaceholder">
             {{ extraProperties.volsize.parsed | filesize: { standard: 'iec', round: 0 } }}
           </span>
         </div>
       </ng-container>
     </div>
 
-    <div class="details">
+    <div class="details" *ngIf="!isLoadingProperties; else detailPlaceholder">
       <div class="details-item">
         <span class="label">
           <ng-container *ngIf="isFilesystem">{{ 'Space Available to Dataset' | translate }}</ng-container>
           <ng-container *ngIf="isZvol">{{ 'Space Available to Zvol' | translate }}</ng-container>:
         </span>
-        <span class="value" *ngIf="!isLoading; else loaderSkel">
-          {{ dataset.available.parsed | filesize: { standard: 'iec', round: 0 } }}
+        <span class="value">{{ dataset.available.parsed | filesize: { standard: 'iec', round: 0 } }}</span>
+      </div>
+      <div class="details-item" *ngIf="isFilesystem && hasQuota">
+        <span class="label">{{ 'Applied Dataset Quotas' | translate }}:</span>
+        <span class="value">
+          {{ '{n} (applies to descendants)' | translate: { n: extraProperties.quota.parsed | filesize: { standard: 'iec', round: 0 } } }}
         </span>
       </div>
-      <div class="details-item" *ngIf="isFilesystem">
-        <span class="label">
-          {{ 'Applied Dataset Quotas' | translate }}:
+      <div class="details-item" *ngIf="hasInheritedQuotas">
+        <span class="label">{{ 'Inherited Quotas' | translate }}:</span>
+        <span class="value">
+          {{ '{n} from {dataset}' | translate: { n: inheritedQuotasDataset.quota.parsed | filesize: { standard: 'iec', round: 0 }, dataset: inheritedQuotasDataset.name } }}
         </span>
-        <span class="value" *ngIf="!isLoading; else loaderSkel">
-          <ng-container *ngIf="hasQuota; else noneTemplate">
-            {{ '{n} (applies to descendants)' | translate: { n: extraProperties.quota.parsed | filesize: { standard: 'iec', round: 0 } } }}
-          </ng-container>
-        </span>
-      </div>
-      <div class="details-item">
-        <span class="label">
-          {{ 'Inherited Quotas' | translate }}:
-        </span>
-        <ng-container *ngIf="!isLoading; else loaderSkel">
-          <span class="value">
-            <ng-container *ngIf="hasInheritedQuotas; else noneTemplate">
-              {{ '{n} from {dataset}' | translate: { n: inheritedQuotasDataset.quota.parsed | filesize: { standard: 'iec', round: 0 }, dataset: inheritedQuotasDataset.name } }}
-            </ng-container>
-          </span>
-          <a *ngIf="hasInheritedQuotas" [routerLink]="['/', 'datasets', inheritedQuotasDataset.id]">
-            {{ 'Manage Dataset' }}
-          </a>
-        </ng-container>
+        <a [routerLink]="['/', 'datasets', inheritedQuotasDataset.id]">{{ 'Go To Dataset' }}</a>
       </div>
     </div>
 
     <div class="details">
       <div class="details-item">
-        <span class="label">
-          {{ 'User Quotas' | translate }}:
-        </span>
+        <span class="label">{{ 'User Quotas' | translate }}:</span>
         <ng-container *ngIf="checkQuotas; else noneTemplate">
-          <span class="value" *ngIf="!isLoading; else loaderSkel">
+          <span class="value" *ngIf="!isLoadingQuotas; else valuePlaceholder">
             {{ 'Quotas set for {n} users' | translate: { n: userQuotas } }}
           </span>
         </ng-container>
@@ -91,11 +71,9 @@
         </a>
       </div>
       <div class="details-item">
-        <span class="label">
-          {{ 'Group Quotas' | translate }}:
-        </span>
+        <span class="label">{{ 'Group Quotas' | translate }}:</span>
         <ng-container *ngIf="checkQuotas; else noneTemplate">
-          <span class="value" *ngIf="!isLoading; else loaderSkel">
+          <span class="value" *ngIf="!isLoadingQuotas; else valuePlaceholder">
             {{ 'Quotas set for {n} groups' | translate: { n: groupQuotas } }}
           </span>
         </ng-container>
@@ -107,7 +85,13 @@
   </mat-card-content>
 </mat-card>
 
-<ng-template #loaderSkel>
+<ng-template #detailPlaceholder>
+  <ngx-skeleton-loader class="value-placeholder"></ngx-skeleton-loader>
+  <ngx-skeleton-loader class="value-placeholder"></ngx-skeleton-loader>
+  <ngx-skeleton-loader class="value-placeholder"></ngx-skeleton-loader>
+</ng-template>
+
+<ng-template #valuePlaceholder>
   <ngx-skeleton-loader class="value-placeholder"></ngx-skeleton-loader>
 </ng-template>
 

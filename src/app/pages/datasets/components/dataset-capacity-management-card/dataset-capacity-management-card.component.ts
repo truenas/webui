@@ -26,7 +26,8 @@ export class DatasetCapacityManagementCardComponent implements OnChanges {
   inheritedQuotasDataset: DatasetInTree;
   extraProperties: Dataset;
   extraPropertiesSubscription: Subscription;
-  isLoading = false;
+  isLoadingProperties = false;
+  isLoadingQuotas = false;
   quotasSubscription: Subscription;
   userQuotas: number;
   groupQuotas: number;
@@ -68,20 +69,20 @@ export class DatasetCapacityManagementCardComponent implements OnChanges {
   }
 
   loadExtraProperties(): void {
-    this.isLoading = true;
+    this.isLoadingProperties = true;
     this.extraPropertiesSubscription?.unsubscribe();
     this.extraPropertiesSubscription = this.ws.call('pool.dataset.query', [[['id', '=', this.dataset.id]]]).pipe(
       map((datasets) => datasets[0]),
       untilDestroyed(this),
     ).subscribe((dataset) => {
       this.extraProperties = dataset;
-      this.isLoading = false;
+      this.isLoadingProperties = false;
       this.cdr.markForCheck();
     });
   }
 
   getQuotas(): void {
-    this.isLoading = true;
+    this.isLoadingQuotas = true;
     this.cdr.markForCheck();
     this.quotasSubscription?.unsubscribe();
     this.quotasSubscription = forkJoin([
@@ -92,7 +93,7 @@ export class DatasetCapacityManagementCardComponent implements OnChanges {
     ).subscribe(([userQuotas, groupQuotas]) => {
       this.userQuotas = userQuotas.length;
       this.groupQuotas = groupQuotas.length;
-      this.isLoading = false;
+      this.isLoadingQuotas = false;
       this.cdr.markForCheck();
       // TODO: Handle error.
     });
