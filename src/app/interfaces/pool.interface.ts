@@ -88,10 +88,10 @@ export interface CreatePool {
 }
 
 export interface UpdatePool {
-  topology: {
+  topology?: {
     [key in PoolTopologyCategory]: { type: string; disks?: string[] }[];
   };
-  autotrim: OnOff;
+  autotrim?: OnOff;
   allow_duplicate_serials?: boolean;
 }
 

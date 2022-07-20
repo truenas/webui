@@ -35,7 +35,6 @@
               ix-auto-identifier="cpuReports"
             >
               <mat-icon
-                role="img"
                 matTooltip="CPU Reports"
                 matTooltipPosition="above"
                 aria-label="CPU Reports"
@@ -68,14 +67,14 @@
               </mat-list-item>
               <mat-list-item>
                 <div class="label-icon" *ngIf="usageMax >= 70" [ngClass]="{'warn': usageMax < 90, 'danger': usageMax > 89 }">
-                  <mat-icon fontSet="mdi-set" fontIcon="mdi-alert" role="img"></mat-icon>
+                  <mat-icon fontSet="mdi-set" fontIcon="mdi-alert"></mat-icon>
                 </div>
                 <span class="label"><strong>{{"Highest Usage" | translate}}:</strong></span> &nbsp;&nbsp;{{usageMax}}% &nbsp;
                 <span class="subtext">({{usageMaxThreads.length < 2 ? 'Thread #' + usageMaxThreads.toString(): usageMaxThreads.length + ' threads at ' + usageMax + '%'}})</span>
               </mat-list-item>
               <mat-list-item>
                 <div class="label-icon" *ngIf="tempMax >= 70" [ngClass]="{'warn': tempMax < 80, 'danger': tempMax > 79 }">
-                  <mat-icon fontSet="mdi-set" fontIcon="mdi-alert" role="img"></mat-icon>
+                  <mat-icon fontSet="mdi-set" fontIcon="mdi-alert"></mat-icon>
                 </div>
                 <span class="label"><strong>{{"Hottest" | translate}}:</strong></span> &nbsp;&nbsp;
                 <ng-container *ngIf="tempAvailable; else notemps">

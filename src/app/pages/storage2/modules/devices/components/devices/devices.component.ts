@@ -16,7 +16,7 @@ import { IxNestedTreeDataSource } from 'app/modules/ix-tree/ix-nested-tree-datas
 import { findInTree } from 'app/modules/ix-tree/utils/find-in-tree.utils';
 import { flattenTreeWithFilter } from 'app/modules/ix-tree/utils/flattern-tree-with-filter';
 import { DevicesStore } from 'app/pages/storage2/modules/devices/stores/devices-store.service';
-import { AppLoaderService, WebSocketService } from 'app/services';
+import { WebSocketService } from 'app/services';
 
 @UntilDestroy()
 @Component({
@@ -33,6 +33,7 @@ export class DevicesComponent implements OnInit {
     trackBy: (vdev) => vdev.guid,
   });
   diskDictionary: { [key: string]: Disk } = {};
+  isLoading = false;
 
   readonly hasNestedChild = (_: number, vdev: DeviceNestedDataNode): boolean => Boolean(vdev.children?.length);
   readonly isVdevGroup = (_: number, vdev: DeviceNestedDataNode): boolean => !isVDev(vdev);
@@ -40,7 +41,6 @@ export class DevicesComponent implements OnInit {
   constructor(
     private ws: WebSocketService,
     private cdr: ChangeDetectorRef,
-    private loader: AppLoaderService, // TODO: Replace with a better approach
     private route: ActivatedRoute,
     private devicesStore: DevicesStore,
     private translate: TranslateService,
@@ -125,7 +125,8 @@ export class DevicesComponent implements OnInit {
   }
 
   private loadTopologyAndDisks(): void {
-    this.loader.open();
+    this.isLoading = true;
+    this.cdr.markForCheck();
     const poolId = Number(this.route.snapshot.paramMap.get('poolId'));
     this.ws.call('pool.query', [[['id', '=', poolId]]]).pipe(
       switchMap((pools) => {
@@ -138,13 +139,15 @@ export class DevicesComponent implements OnInit {
             this.treeControl.dataNodes = dataNodes;
             this.createDataSource(dataNodes);
             this.selectVdevGroupNode();
-            this.loader.close();
+            this.isLoading = false;
             this.cdr.markForCheck();
           }),
         );
       }),
       catchError(() => {
         // TODO: Handle error.
+        this.isLoading = false;
+        this.cdr.markForCheck();
         return EMPTY;
       }),
       untilDestroyed(this),

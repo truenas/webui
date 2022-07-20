@@ -7,10 +7,10 @@ import { ViewControllerComponent } from 'app/core/components/view-controller/vie
 import { TrueCommandStatus } from 'app/enums/true-command-status.enum';
 import helptext from 'app/helptext/topbar';
 import { TrueCommandConfig } from 'app/interfaces/true-command-config.interface';
-import { AppLoaderService } from 'app/modules/app-loader/app-loader.service';
 import { DialogFormConfiguration } from 'app/modules/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/modules/entity/entity-dialog/entity-dialog.component';
 import { EntityUtils } from 'app/modules/entity/utils';
+import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { TruecommandSignupModalComponent, TruecommandSignupModalState } from 'app/modules/truecommand/components/truecommand-signup-modal.component';
 import { TruecommandStatusModalComponent } from 'app/modules/truecommand/components/truecommand-status-modal.component';
 import { CoreService } from 'app/services/core-service/core.service';

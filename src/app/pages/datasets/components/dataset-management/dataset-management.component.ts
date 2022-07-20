@@ -18,6 +18,7 @@ import { WebSocketService } from 'app/services';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DatasetsManagementComponent implements OnInit {
+  isLoading$ = this.datasetStore.isLoading$;
   selectedDataset$ = this.datasetStore.selectedDataset$;
   selectedParentDataset$ = this.datasetStore.selectedParentDataset$;
 

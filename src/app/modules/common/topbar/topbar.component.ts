@@ -25,7 +25,6 @@ import { SidenavStatusData } from 'app/interfaces/events/sidenav-status-event.in
 import { PoolScan } from 'app/interfaces/resilver-job.interface';
 import { Interval } from 'app/interfaces/timeout.interface';
 import { AlertSlice, selectImportantUnreadAlertsCount } from 'app/modules/alerts/store/alert.selectors';
-import { AppLoaderService } from 'app/modules/app-loader/app-loader.service';
 import { AboutDialogComponent } from 'app/modules/common/dialog/about/about-dialog.component';
 import { DirectoryServicesMonitorComponent } from 'app/modules/common/dialog/directory-services-monitor/directory-services-monitor.component';
 import { ResilverProgressDialogComponent } from 'app/modules/common/dialog/resilver-progress/resilver-progress.component';
@@ -38,6 +37,7 @@ import { selectRunningJobsCount, selectIsJobPanelOpen } from 'app/modules/jobs/s
 import {
   ChangePasswordDialogComponent,
 } from 'app/modules/layout/components/change-password-dialog/change-password-dialog.component';
+import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { CoreService } from 'app/services/core-service/core.service';
 import { DialogService } from 'app/services/dialog.service';
@@ -405,7 +405,7 @@ export class TopbarComponent implements OnInit, OnDestroy {
         this.waitingNetworkCheckin = false;
       }, (err) => {
         this.loader.close();
-        new EntityUtils().handleWsError(null, err, this.dialogService);
+        new EntityUtils().handleWsError(this, err, this.dialogService);
       });
     });
   }

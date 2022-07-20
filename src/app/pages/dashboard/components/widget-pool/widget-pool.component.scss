@@ -31,7 +31,7 @@
   display: inline-block;
   font-weight: 500;
   position: relative;
-  top: 2px;
+  top: 2px; // TODO: Remove magic number
   vertical-align: middle;
 }
 
@@ -135,7 +135,7 @@
   display: inline-block;
   font-size: 175%;
   position: relative;
-  top: 3px;
+  top: 3px; // TODO: Remove magic number
 }
 
 .pool-name .icon-wrapper {
@@ -166,17 +166,17 @@ span.safe {
   height: auto;
   margin-left: 4px;
   position: relative;
-  top: 2px;
-  width: 14px;
+  top: 2px; // TODO: Remove magic number
+  width: 16px;
 }
 
 .used-space span.safe .mat-icon,
 .disk-errors span.safe .mat-icon {
-  top: 4px;
+  top: 4px; // TODO: Remove magic number
 }
 
 .pool-status span.safe.lock-icon-wrapper {
-  top: 1px;
+  top: 1px; // TODO: Remove magic number
 }
 
 .carousel-nav {
@@ -202,7 +202,7 @@ span.safe {
 }
 
 .carousel-nav .back-arrow.mat-icon {
-  margin-top: -3px;
+  margin-top: -3px; // TODO: Remove magic number
 }
 
 .carousel-nav .btn.active {
@@ -225,7 +225,7 @@ span.safe {
 }
 
 .slide .locked.offline .mat-icon {
-  font-size: 444%;
+  font-size: 444%; /* TODO: Check it. Looks weird */
   height: auto;
   width: auto;
 }
@@ -280,18 +280,19 @@ span.capitalize {
   color: var(--red);
 }
 
-.error,
-.warning ,
-.healthy {
-  font-size: 120%;
-}
-
 .mat-list-item .error,
 .mat-list-item .warning,
 .mat-list-item .healthy {
-  font-size: 120%;
+  align-items: center;
+  display: inline-flex;
+  justify-content: center;
   margin-left: 5px;
-  margin-top: -5px;
+
+  .mat-icon {
+    font-size: 20px;
+    height: 20px;
+    width: 20px;
+  }
 }
 
 /* NARROW SCREENS */
