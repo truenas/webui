@@ -7,7 +7,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { filter, pluck } from 'rxjs/operators';
 import { DatasetNestedDataNode, isDatasetInTree } from 'app/interfaces/dataset-nested-data-node.interface';
 import { IxNestedTreeDataSource } from 'app/modules/ix-tree/ix-nested-tree-datasource';
-import { findInTree } from 'app/modules/ix-tree/utils/find-in-tree.utils';
+import { flattenTreeWithFilter } from 'app/modules/ix-tree/utils/flattern-tree-with-filter';
 import { DatasetInTree } from 'app/pages/datasets/store/dataset-in-tree.interface';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
 import { WebSocketService } from 'app/services';
@@ -19,6 +19,7 @@ import { WebSocketService } from 'app/services';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DatasetsManagementComponent implements OnInit {
+  isLoading$ = this.datasetStore.isLoading$;
   selectedDataset$ = this.datasetStore.selectedDataset$;
   selectedParentDataset$ = this.datasetStore.selectedParentDataset$;
 
@@ -117,9 +118,9 @@ export class DatasetsManagementComponent implements OnInit {
   private createDataSource(datasets: DatasetNestedDataNode[]): void {
     this.dataSource = new IxNestedTreeDataSource<DatasetNestedDataNode>(datasets);
     this.dataSource.filterPredicate = (datasets, query = '') => {
-      return datasets.map((datasetRoot) => {
-        return findInTree([datasetRoot], (dataset) => dataset.id.toLowerCase().includes(query.toLowerCase()));
-      }).filter(Boolean);
+      return flattenTreeWithFilter(datasets, (dataset: DatasetInTree) => {
+        return dataset.id.toLowerCase().includes(query.toLowerCase());
+      });
     };
   }
 }
