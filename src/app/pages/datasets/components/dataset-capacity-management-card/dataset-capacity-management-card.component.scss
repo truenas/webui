@@ -12,6 +12,12 @@
       margin: 20px 0 0;
     }
   }
+
+  .details-item {
+    .value-placeholder {
+      flex: 1;
+    }
+  }
 }
 
 .details {

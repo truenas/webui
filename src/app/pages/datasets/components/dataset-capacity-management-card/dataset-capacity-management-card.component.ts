@@ -2,7 +2,6 @@ import {
   Component, ChangeDetectionStrategy, ChangeDetectorRef, Input, OnChanges, OnInit,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateService } from '@ngx-translate/core';
 import { maxBy } from 'lodash';
 import { Subscription, forkJoin } from 'rxjs';
 import { map, take } from 'rxjs/operators';
@@ -11,7 +10,7 @@ import { Dataset } from 'app/interfaces/dataset.interface';
 import { DatasetCapacitySettingsComponent } from 'app/pages/datasets/components/dataset-capacity-management-card/dataset-capacity-settings/dataset-capacity-settings.component';
 import { DatasetInTree } from 'app/pages/datasets/store/dataset-in-tree.interface';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
-import { WebSocketService, ModalService } from 'app/services';
+import { WebSocketService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
@@ -46,7 +45,7 @@ export class DatasetCapacityManagementCardComponent implements OnInit, OnChanges
   }
 
   get hasQuota(): boolean {
-    return Boolean(this.extraProperties.quota.parsed);
+    return Boolean(this.extraProperties?.quota?.parsed);
   }
 
   get hasInheritedQuotas(): boolean {
@@ -56,8 +55,6 @@ export class DatasetCapacityManagementCardComponent implements OnInit, OnChanges
   constructor(
     private ws: WebSocketService,
     private cdr: ChangeDetectorRef,
-    private modalService: ModalService,
-    private translate: TranslateService,
     private datasetStore: DatasetTreeStore,
     private slideInService: IxSlideInService,
   ) {}
