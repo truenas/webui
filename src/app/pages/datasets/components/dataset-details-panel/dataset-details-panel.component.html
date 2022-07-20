@@ -12,6 +12,7 @@
 
   <div *ngIf="!dataset.locked" class="add-buttons">
     <button
+      *ngIf="!isZvol"
       mat-button
       (click)="onAddZvol()"
     >{{ 'Add Zvol' | translate }}</button>

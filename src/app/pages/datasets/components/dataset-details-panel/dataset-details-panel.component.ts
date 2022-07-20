@@ -51,6 +51,10 @@ export class DatasetDetailsPanelComponent implements OnInit {
     return isRootDataset(this.dataset);
   }
 
+  get isZvol(): boolean {
+    return this.dataset.type === DatasetType.Volume;
+  }
+
   onAddDataset(): void {
     const addDatasetComponent = this.modalService.openInSlideIn(DatasetFormComponent);
     addDatasetComponent.setParent(this.dataset.id);

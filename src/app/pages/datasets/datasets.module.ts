@@ -10,6 +10,7 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatSortModule } from '@angular/material/sort';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslateModule } from '@ngx-translate/core';
+import { ChartsModule } from 'ng2-charts';
 import { NgxFilesizeModule } from 'ngx-filesize';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
@@ -39,11 +40,13 @@ import { DatasetCapacitySettingsComponent } from './components/dataset-capacity-
 import { DatasetIconComponent } from './components/dataset-icon/dataset-icon.component';
 import { DatasetEncryptionCellComponent } from './components/dataset-node/dataset-encryption-cell/dataset-encryption-cell.component';
 import { DatasetNodeComponent } from './components/dataset-node/dataset-node.component';
+import { SpaceManagementChartComponent } from './components/space-management-chart/space-management-chart.component';
 
 @NgModule({
   imports: [
     CommonModule,
     CommonDirectivesModule,
+    ChartsModule,
     LayoutModule,
     routing,
     TranslateModule,
@@ -86,6 +89,7 @@ import { DatasetNodeComponent } from './components/dataset-node/dataset-node.com
     DatasetIconComponent,
     DatasetEncryptionCellComponent,
     ZvolFormComponent,
+    SpaceManagementChartComponent,
     DatasetCapacitySettingsComponent,
   ],
   providers: [
