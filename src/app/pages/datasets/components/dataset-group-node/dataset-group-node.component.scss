@@ -24,6 +24,13 @@
     background: linear-gradient(90deg, var(--bg1) 0%, var(--bg1) calc(100% - 13px), transparent 100%);
     padding-left: 8px;
     padding-right: 15px;
+    display: flex;
+
+    .pool-icon {
+      height: 15px;
+      width: 14px;
+      margin: 3px 5px 0 5px;
+    }
   }
 
   .toggle-container {
