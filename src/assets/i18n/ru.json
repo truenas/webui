@@ -2280,7 +2280,6 @@
   "Close": "Закрыть",
   "Cloud Credentials": "Облачные учетные данные",
   "Columns": "Столбцы",
-  "Com Port": "Com порт",
   "Combine multiple, critical-for-failover  interfaces into a group. Groups apply to single systems. A failover  occurs when every interface in the group fails. Groups with a single  interface trigger a failover when that interface fails. Configuring the  system to failover when any interface fails requires marking each  interface as critical and placing them in separate groups.": "Объедините несколько критических для аварийного переключения интерфейсов в группу. Группы применяются к отдельным системам. Аварийное переключение происходит, когда происходит сбой каждого интерфейса в группе. Группы с одним интерфейсом вызывают аварийное переключение при сбое этого интерфейса. Настройка системы на аварийное переключение при сбое любого интерфейса требует пометить каждый интерфейс как критический и поместить их в отдельные группы.",
   "Command": "Команда",
   "Comment": "Комментарий",
