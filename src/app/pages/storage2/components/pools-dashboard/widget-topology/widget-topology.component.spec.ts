@@ -96,7 +96,7 @@ describe('WidgetTopologyComponent', () => {
     expect(captions[4]).toHaveText('Spare VDEVs');
     expect(values[4]).toHaveText('Mixed Capacity VDEVs');
     expect(captions[5]).toHaveText('Dedup VDEVs');
-    expect(values[5]).toHaveText('VDEVs are missing');
+    expect(values[5]).toHaveText('VDEVs not assigned');
   });
 
   it('rendering status icon', () => {

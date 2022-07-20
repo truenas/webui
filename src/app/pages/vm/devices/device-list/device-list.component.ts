@@ -7,13 +7,13 @@ import * as _ from 'lodash';
 import { filter } from 'rxjs/operators';
 import { QueryFilter } from 'app/interfaces/query-api.interface';
 import { VmDevice } from 'app/interfaces/vm-device.interface';
-import { AppLoaderService } from 'app/modules/app-loader/app-loader.service';
 import { DialogFormConfiguration } from 'app/modules/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/modules/entity/entity-dialog/entity-dialog.component';
 import {
   EntityTableComponent,
 } from 'app/modules/entity/entity-table/entity-table.component';
 import { EntityTableAction, EntityTableConfig } from 'app/modules/entity/entity-table/entity-table.interface';
+import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { DeviceFormComponent } from 'app/pages/vm/devices/device-form/device-form.component';
 import { DeviceDeleteModalComponent } from 'app/pages/vm/devices/device-list/device-delete-modal/device-delete-modal.component';
 import { WebSocketService } from 'app/services';

@@ -12,7 +12,7 @@ import { DatasetTrivialPermissionsComponent } from './modules/permissions/contai
 export const routes: Routes = [
   {
     path: '',
-    data: { title: 'Dataset Management' },
+    data: { title: 'Datasets' },
     children: [
       {
         path: '',
@@ -26,7 +26,7 @@ export const routes: Routes = [
             path: '',
             pathMatch: 'full',
             component: DatasetsManagementComponent,
-            data: { title: 'Datasets Management', breadcrumb: 'Datasets Management' },
+            data: { title: 'Datasets', breadcrumb: 'Datasets' },
           },
           {
             path: 'permissions/edit',

@@ -2,61 +2,103 @@
   <h4 mat-card-title>Note: This is a work in progress for new 'Device Management' page. You can see what we are building an provide suggestions in <a href="https://github.com/truenas/webui/discussions/6771">Github discussions</a>.</h4>
 </mat-card>
 
-<div *ngIf="topology" class="container" fxLayoutGap="16px">
+<div class="container" fxLayoutGap="16px">
   <div class="table-container">
+    <ix-fake-progress-bar
+      class="loader-bar"
+      [loading]="isLoading"
+    ></ix-fake-progress-bar>
+
     <div class="disk-search">
       <ix-search-input [disabled]="!dataSource" (search)="onSearch($event)"></ix-search-input>
     </div>
 
     <div class="disk-tree-wrapper">
-      <ix-tree class="disk-tree" [dataSource]="dataSource" [treeControl]="treeControl">
-        <ix-tree-node
-          *ixTreeNodeDef="let disk; dataSource: dataSource"
-          ixTreeNodeToggle
-          [ixTreeNodeToggleRecursive]="false"
-          [ixTreeNodeDefDataSource]="dataSource"
-          [class.selected]="disk.guid === selectedItem?.guid"
-          [routerLink]="['/storage2', poolId, 'devices', disk.guid]"
-          routerLinkActive="selected"
-        >
-          <button mat-icon-button disabled></button>
-          {{ disk.disk || disk.guid }}
-        </ix-tree-node>
+      <div class="disk-tree-inner">
+        <div class="disk-tree-header">
+          <div>
+            <span class="disk-name-header">{{ 'Device Name' | translate }}</span>
+          </div>
+          <div class="disk-status-header">{{ 'Status' | translate }}</div>
+          <div>{{ 'Capacity' | translate }}</div>
+          <div>{{ 'Errors' | translate }}</div>
+        </div>
+        <ix-tree class="disk-tree" [dataSource]="dataSource" [treeControl]="treeControl">
+          <ix-tree-node
+            *ixTreeNodeDef="let vdev; dataSource: dataSource"
+            ixTreeNodeToggle
+            [ixTreeNodeToggleRecursive]="false"
+            [ixTreeNodeDefDataSource]="dataSource"
 
-        <ix-nested-tree-node
-          *ixTreeNodeDef="let disk; dataSource: dataSource, when: hasNestedChild"
-          [ixTreeNodeDefDataSource]="dataSource"
-        >
-          <div
-            class="disk-nested-tree-root-node"
-            [class.selected]="disk.guid === selectedItem?.guid"
-            [routerLink]="['/storage2', poolId, 'devices', disk.guid]"
+            [class.selected]="vdev.guid === selectedItem?.guid"
+            [routerLink]="['/storage2', poolId, 'devices', vdev.guid]"
             routerLinkActive="selected"
           >
-            <button
-              mat-icon-button
-              ixTreeNodeToggle
-              (click)="$event.preventDefault()"
-              [attr.aria-label]="'Toggle {row}' | translate: { row: disk.guid }"
+            <button mat-icon-button disabled></button>
+            <ix-disk-node [vdev]="vdev | cast" [disk]="diskDictionary[vdev.disk]"></ix-disk-node>
+          </ix-tree-node>
+
+          <ix-nested-tree-node
+            *ixTreeNodeDef="let vdev; dataSource: dataSource, when: isVdevGroup"
+            [ixTreeNodeDefDataSource]="dataSource"
+          >
+            <div
+              class="disk-nested-tree-root-node"
+              (click)="onRowGroupSelected(vdev, $event)"
+              [routerLink]="['/storage2', poolId, 'devices', vdev.guid]"
+              routerLinkActive="selected"
             >
-              <mat-icon class="mat-icon-rtl-mirror">
-                {{ treeControl.isExpanded(disk) ? 'expand_more' : 'chevron_right' }}
-              </mat-icon>
-            </button>
+              <ix-vdev-group-node [vdev]="vdev | cast">
+                <button
+                  mat-icon-button
+                  ixTreeNodeToggle
+                  (click)="$event.preventDefault()"
+                  [attr.aria-label]="'Toggle {row}' | translate: { row: vdev.guid }"
+                  class="vdev-group-toggle"
+                >
+                  <mat-icon>
+                    {{ treeControl.isExpanded(vdev) ? 'expand_more' : 'chevron_right' }}
+                  </mat-icon>
+                </button>
+              </ix-vdev-group-node>
+            </div>
 
-            {{ disk.disk || disk.guid }}
-          </div>
+            <ng-container *ngIf="treeControl.isExpanded(vdev)" ixTreeNodeOutlet></ng-container>
+          </ix-nested-tree-node>
 
-          <ng-container *ngIf="treeControl.isExpanded(disk)" ixTreeNodeOutlet></ng-container>
-        </ix-nested-tree-node>
-      </ix-tree>
+          <ix-nested-tree-node
+            *ixTreeNodeDef="let vdev; dataSource: dataSource, when: hasNestedChild"
+            [ixTreeNodeDefDataSource]="dataSource"
+          >
+            <div
+              class="disk-nested-tree-root-node"
+
+              [class.selected]="vdev.guid === selectedItem?.guid"
+            >
+              <button
+                mat-icon-button
+                ixTreeNodeToggle
+                (click)="$event.preventDefault()"
+                [attr.aria-label]="'Toggle {row}' | translate: { row: vdev.guid }"
+              >
+                <mat-icon>
+                  {{ treeControl.isExpanded(vdev) ? 'expand_more' : 'chevron_right' }}
+                </mat-icon>
+              </button>
+              <ix-disk-node [vdev]="vdev | cast" [disk]="diskDictionary[vdev.children[0].disk]"></ix-disk-node>
+            </div>
+
+            <ng-container *ngIf="treeControl.isExpanded(vdev)" ixTreeNodeOutlet></ng-container>
+          </ix-nested-tree-node>
+        </ix-tree>
+      </div>
     </div>
   </div>
   <div class="details-container">
     <ix-disk-details-panel
       *ngIf="selectedItem && isDiskSelected && diskDictionary[selectedItem.disk]"
-      [topologyItem]="selectedItem"
-      [topologyParentItem]="selectedParentItem"
+      [topologyItem]="selectedItem | cast"
+      [topologyParentItem]="selectedParentItem | cast"
       [disk]="diskDictionary[selectedItem.disk]"
     ></ix-disk-details-panel>
   </div>

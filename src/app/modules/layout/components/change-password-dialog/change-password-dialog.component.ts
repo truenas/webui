@@ -5,10 +5,10 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { filter, switchMap, tap } from 'rxjs/operators';
 import helptext from 'app/helptext/topbar';
-import { AppLoaderService } from 'app/modules/app-loader/app-loader.service';
 import { matchOtherValidator } from 'app/modules/entity/entity-form/validators/password-validation/password-validation';
 import { EntityUtils } from 'app/modules/entity/utils';
 import IxValidatorsService from 'app/modules/ix-forms/services/ix-validators.service';
+import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { DialogService, WebSocketService } from 'app/services';
 

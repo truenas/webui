@@ -1,0 +1,18 @@
+export function flattenTreeWithFilter<T extends { children?: T[] }>(
+  items: T[],
+  filterFunction: (item: T) => boolean,
+  foundItems: T[] = [],
+): T[] {
+  if (!items?.length) {
+    return;
+  }
+
+  for (const item of items) {
+    if (filterFunction(item)) {
+      foundItems.push(item);
+    }
+    flattenTreeWithFilter(item.children, filterFunction, foundItems);
+  }
+
+  return foundItems;
+}

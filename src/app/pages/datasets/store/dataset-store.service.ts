@@ -1,7 +1,9 @@
 import { Injectable } from '@angular/core';
 import { ComponentStore } from '@ngrx/component-store';
 import { EMPTY, Observable } from 'rxjs';
-import { catchError, switchMap, tap } from 'rxjs/operators';
+import {
+  catchError, switchMap, tap,
+} from 'rxjs/operators';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { DatasetInTree } from 'app/pages/datasets/store/dataset-in-tree.interface';
@@ -25,6 +27,7 @@ const initialState: DatasetTreeState = {
 @Injectable()
 export class DatasetTreeStore extends ComponentStore<DatasetTreeState> {
   readonly isLoading$ = this.select((state) => state.isLoading);
+  // TODO
   readonly error$ = this.select((state) => state.error);
   readonly datasets$ = this.select((state) => state.datasets);
   readonly selectedBranch$ = this.select((state) => {

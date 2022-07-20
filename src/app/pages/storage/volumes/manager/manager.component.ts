@@ -19,13 +19,13 @@ import { Job } from 'app/interfaces/job.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { CreatePool, Pool, UpdatePool } from 'app/interfaces/pool.interface';
 import { VDev } from 'app/interfaces/storage.interface';
-import { AppLoaderService } from 'app/modules/app-loader/app-loader.service';
 import { DownloadKeyDialogComponent } from 'app/modules/common/dialog/download-key/download-key-dialog.component';
 import { DialogFormConfiguration } from 'app/modules/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/modules/entity/entity-dialog/entity-dialog.component';
 import { FormParagraphConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { EntityUtils } from 'app/modules/entity/utils';
+import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { ManagerDisk } from 'app/pages/storage/volumes/manager/manager-disk.interface';
 import { DialogService, WebSocketService } from 'app/services';
 import { StorageService } from 'app/services/storage.service';
@@ -625,7 +625,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
         if (this.isNew) {
           body = { name: this.name, encryption: this.isEncrypted, topology: layout } as CreatePool;
           if (this.isEncrypted) {
-            body['encryption_options'] = { generate_key: true, algorithm: this.encryptionAlgorithm };
+            (body as CreatePool)['encryption_options'] = { generate_key: true, algorithm: this.encryptionAlgorithm };
           }
         } else {
           body = { topology: layout } as UpdatePool;

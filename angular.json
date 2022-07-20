@@ -42,7 +42,6 @@
               "node_modules/chartist/dist/chartist.min.css",
               "node_modules/@swimlane/ngx-datatable/assets/icons.css",
               "node_modules/@circlon/angular-tree-component/css/angular-tree-component.css",
-              "node_modules/primeicons/primeicons.css",
               "node_modules/primeng/resources/primeng.min.css",
               "src/assets/styles/index.scss"
             ],

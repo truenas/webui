@@ -101,6 +101,11 @@ module.exports = {
           {
             selector: 'function',
             format: ['strictCamelCase'],
+            filter: {
+              // Allow two letter combinations at the start, like VDev
+              regex: '^[A-Z][A-Z]',
+              match: true,
+            }
           },
           {
             selector: ['classMethod', 'objectLiteralMethod', 'typeMethod'],
