@@ -5,6 +5,7 @@ import {
 import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { filter, pluck } from 'rxjs/operators';
+import { DatasetNestedDataNode, isDatasetInTree } from 'app/interfaces/dataset-nested-data-node.interface';
 import { IxNestedTreeDataSource } from 'app/modules/ix-tree/ix-nested-tree-datasource';
 import { findInTree } from 'app/modules/ix-tree/utils/find-in-tree.utils';
 import { DatasetInTree } from 'app/pages/datasets/store/dataset-in-tree.interface';
@@ -21,11 +22,12 @@ export class DatasetsManagementComponent implements OnInit {
   selectedDataset$ = this.datasetStore.selectedDataset$;
   selectedParentDataset$ = this.datasetStore.selectedParentDataset$;
 
-  dataSource: IxNestedTreeDataSource<DatasetInTree>;
-  treeControl = new NestedTreeControl<DatasetInTree, string>((dataset) => dataset.children, {
+  dataSource: IxNestedTreeDataSource<DatasetNestedDataNode>;
+  treeControl = new NestedTreeControl<DatasetNestedDataNode, string>((dataset) => dataset.children, {
     trackBy: (dataset) => dataset.id,
   });
-  readonly hasNestedChild = (_: number, dataset: DatasetInTree): boolean => Boolean(dataset.children?.length);
+  readonly hasNestedChild = (_: number, dataset: DatasetNestedDataNode): boolean => Boolean(dataset.children?.length);
+  readonly isDatasetRoot = (_: number, dataset: DatasetNestedDataNode): boolean => !isDatasetInTree(dataset);
 
   constructor(
     private ws: WebSocketService,
@@ -49,11 +51,13 @@ export class DatasetsManagementComponent implements OnInit {
       .pipe(untilDestroyed(this))
       .subscribe(
         (datasets) => {
-          this.createDataSource(datasets);
-          this.treeControl.dataNodes = datasets;
+          const dataNodes = this.createDataNodes(datasets);
+          this.createDataSource(dataNodes);
+          this.treeControl.dataNodes = dataNodes;
+          this.selectGroupNodes();
           this.cdr.markForCheck();
 
-          if (!datasets.length) {
+          if (!dataNodes.length) {
             return;
           }
 
@@ -85,8 +89,33 @@ export class DatasetsManagementComponent implements OnInit {
     });
   }
 
-  private createDataSource(datasets: DatasetInTree[]): void {
-    this.dataSource = new IxNestedTreeDataSource<DatasetInTree>(datasets);
+  onRowGroupSelected(nodeSelected: DatasetNestedDataNode, _: MouseEvent): void {
+    if (this.treeControl.isExpanded(nodeSelected)) {
+      this.treeControl.collapse(nodeSelected);
+    } else {
+      this.treeControl.expand(nodeSelected);
+    }
+  }
+
+  private selectGroupNodes(): void {
+    this.treeControl?.dataNodes?.forEach((node) => this.treeControl.expand(node));
+  }
+
+  private createDataNodes(datasets: DatasetInTree[]): DatasetNestedDataNode[] {
+    const dataNodes: DatasetNestedDataNode[] = [];
+    datasets.forEach((dataset) => {
+      dataNodes.push({
+        children: [dataset],
+        id: '_' + dataset.id,
+        pool: dataset.pool,
+        name: dataset.name,
+      });
+    });
+    return dataNodes;
+  }
+
+  private createDataSource(datasets: DatasetNestedDataNode[]): void {
+    this.dataSource = new IxNestedTreeDataSource<DatasetNestedDataNode>(datasets);
     this.dataSource.filterPredicate = (datasets, query = '') => {
       return datasets.map((datasetRoot) => {
         return findInTree([datasetRoot], (dataset) => dataset.id.toLowerCase().includes(query.toLowerCase()));

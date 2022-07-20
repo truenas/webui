@@ -13,6 +13,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { NgxFilesizeModule } from 'ngx-filesize';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
+import { CastModule } from 'app/modules/cast/cast.module';
 import { AppCommonModule } from 'app/modules/common/app-common.module';
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
@@ -22,6 +23,7 @@ import { LayoutModule } from 'app/modules/layout/layout.module';
 import { DatasetDetailsCardComponent } from 'app/pages/datasets/components/dataset-details-card/dataset-details-card.component';
 import { DatasetDetailsPanelComponent } from 'app/pages/datasets/components/dataset-details-panel/dataset-details-panel.component';
 import { DatasetFormComponent } from 'app/pages/datasets/components/dataset-form/dataset-form.component';
+import { DatasetGroupNodeComponent } from 'app/pages/datasets/components/dataset-group-node/dataset-group-node.component';
 import { DatasetsManagementComponent } from 'app/pages/datasets/components/dataset-management/dataset-management.component';
 import { DatasetQuotaAddFormComponent } from 'app/pages/datasets/components/dataset-quotas/dataset-quota-add-form/dataset-quota-add-form.component';
 import { DatasetQuotaEditFormComponent } from 'app/pages/datasets/components/dataset-quotas/dataset-quota-edit-form/dataset-quota-edit-form.component';
@@ -68,6 +70,7 @@ import { DatasetNodeComponent } from './components/dataset-node/dataset-node.com
     EntityModule,
     NgxSkeletonLoaderModule,
     NgxFilesizeModule,
+    CastModule,
   ],
   declarations: [
     DatasetsManagementComponent,
@@ -85,6 +88,7 @@ import { DatasetNodeComponent } from './components/dataset-node/dataset-node.com
     DatasetIconComponent,
     DatasetEncryptionCellComponent,
     ZvolFormComponent,
+    DatasetGroupNodeComponent,
   ],
   providers: [
     DatasetTreeStore,

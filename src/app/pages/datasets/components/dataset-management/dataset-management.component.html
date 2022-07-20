@@ -29,8 +29,34 @@
             routerLinkActive="selected"
           >
             <button mat-icon-button disabled></button>
-            <ix-dataset-node [dataset]="dataset"></ix-dataset-node>
+            <ix-dataset-node [dataset]="dataset | cast"></ix-dataset-node>
           </ix-tree-node>
+
+          <ix-nested-tree-node
+            *ixTreeNodeDef="let dataset; dataSource: dataSource, when: isDatasetRoot"
+            [ixTreeNodeDefDataSource]="dataSource"
+          >
+            <div
+              class="dataset-nested-tree-root-node"
+              (click)="onRowGroupSelected(dataset, $event)"
+            >
+              <ix-dataset-group-node [dataset]="dataset | cast">
+                <button
+                  mat-icon-button
+                  ixTreeNodeToggle
+                  (click)="$event.preventDefault()"
+                  [attr.aria-label]="'Toggle {row}' | translate: { row: dataset.name }"
+                  class="dataset-group-toggle"
+                >
+                  <mat-icon class="mat-icon-rtl-mirror">
+                    {{ treeControl.isExpanded(dataset) ? 'expand_more' : 'chevron_right' }}
+                  </mat-icon>
+                </button>
+              </ix-dataset-group-node>
+            </div>
+
+            <ng-container *ngIf="treeControl.isExpanded(dataset)" ixTreeNodeOutlet></ng-container>
+          </ix-nested-tree-node>
 
           <ix-nested-tree-node
             *ixTreeNodeDef="let dataset; dataSource: dataSource, when: hasNestedChild"
@@ -52,7 +78,7 @@
                 </mat-icon>
               </button>
 
-              <ix-dataset-node [dataset]="dataset"></ix-dataset-node>
+              <ix-dataset-node [dataset]="dataset | cast"></ix-dataset-node>
             </div>
 
             <ng-container *ngIf="treeControl.isExpanded(dataset)" ixTreeNodeOutlet></ng-container>
