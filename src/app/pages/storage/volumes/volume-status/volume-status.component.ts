@@ -55,7 +55,7 @@ export class VolumeStatusComponent implements OnInit, AfterViewInit {
     hours: 0,
     minutes: 0,
     seconds: 0,
-  } ;
+  };
   treeTableConfig: EntityTreeTable = {
     tableData: [],
     columns: [
