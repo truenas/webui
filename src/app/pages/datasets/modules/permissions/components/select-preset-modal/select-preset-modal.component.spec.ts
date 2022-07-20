@@ -6,8 +6,8 @@ import { byButton } from 'app/core/testing/utils/by-button.utils';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { DefaultAclType } from 'app/enums/acl-type.enum';
 import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
-import { AppLoaderModule } from 'app/modules/app-loader/app-loader.module';
 import { EntityModule } from 'app/modules/entity/entity.module';
+import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import {
   SelectPresetModalConfig,
 } from 'app/pages/datasets/modules/permissions/interfaces/select-preset-modal-config.interface';

@@ -2,8 +2,13 @@
   <h4 mat-card-title>Note: This is a work in progress for new 'Device Management' page. You can see what we are building an provide suggestions in <a href="https://github.com/truenas/webui/discussions/6771">Github discussions</a>.</h4>
 </mat-card>
 
-<div *ngIf="topology" class="container" fxLayoutGap="16px">
+<div class="container" fxLayoutGap="16px">
   <div class="table-container">
+    <ix-fake-progress-bar
+      class="loader-bar"
+      [loading]="isLoading"
+    ></ix-fake-progress-bar>
+
     <div class="disk-search">
       <ix-search-input [disabled]="!dataSource" (search)="onSearch($event)"></ix-search-input>
     </div>

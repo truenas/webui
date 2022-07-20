@@ -2,6 +2,12 @@
   display: block;
 }
 
+.loader-bar {
+  height: 2px;
+  position: absolute;
+  top: 0;
+}
+
 .container {
   display: flex;
   flex-direction: row;

@@ -1,0 +1,6 @@
+<mat-progress-bar
+  *ngIf="isAnimating || !hideOnComplete"
+  @fadeOut
+  mode="determinate"
+  [value]="progress"
+></mat-progress-bar>

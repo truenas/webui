@@ -20,6 +20,7 @@ import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxTableModule } from 'app/modules/ix-tables/ix-table.module';
 import { IxTreeModule } from 'app/modules/ix-tree/ix-tree.module';
 import { LayoutModule } from 'app/modules/layout/layout.module';
+import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { DatasetDetailsCardComponent } from 'app/pages/datasets/components/dataset-details-card/dataset-details-card.component';
 import { DatasetDetailsPanelComponent } from 'app/pages/datasets/components/dataset-details-panel/dataset-details-panel.component';
 import { DatasetFormComponent } from 'app/pages/datasets/components/dataset-form/dataset-form.component';
@@ -70,6 +71,7 @@ import { DatasetNodeComponent } from './components/dataset-node/dataset-node.com
     NgxSkeletonLoaderModule,
     NgxFilesizeModule,
     CoreComponents,
+    AppLoaderModule,
   ],
   declarations: [
     DatasetsManagementComponent,

@@ -12,10 +12,10 @@ import { DatasetAttachment, PoolAttachment } from 'app/interfaces/pool-attachmen
 import { Pool } from 'app/interfaces/pool.interface';
 import { Process } from 'app/interfaces/process.interface';
 import { SystemDatasetConfig } from 'app/interfaces/system-dataset-config.interface';
-import { AppLoaderModule } from 'app/modules/app-loader/app-loader.module';
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
+import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { DialogService, WebSocketService } from 'app/services';
 import { ExportDisconnectModalComponent } from './export-disconnect-modal.component';
 
