@@ -6,11 +6,11 @@ import { WINDOW } from 'app/helpers/window.helper';
 const headingHeightInitialDefault = 213;
 const headingHeightDefault = 137;
 
-///
-/// This directive is used to dynamically adjust height of the "details" block in a "master-details" layout
-/// to fill the bottom space, which becomes available when user scrolls the page down,
-/// so the page's heading is shifted off the screen
-///
+/**
+ * This directive is used to dynamically adjust height of the "details" block in a "master-details" layout
+ * to fill the bottom space, which becomes available when user scrolls the page down,
+ * so the page's heading is shifted off the screen
+ */
 @Directive({
   selector: '[ixDetailsHeight]',
 })
