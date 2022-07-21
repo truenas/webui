@@ -10,8 +10,6 @@ export default {
   nfs_srv_allow_nonroot_tooltip: T('Set only if required by the NFS client. Set to allow\
  serving non-root mount requests.'),
 
-  nfs_srv_servers_placeholder: T('Number of servers'),
-
   nfs_srv_servers_tooltip: T('Specify how many servers to create. Increase if NFS\
  client responses are slow. Keep this less than or\
  equal to the number of CPUs reported by <b>sysctl -n\
