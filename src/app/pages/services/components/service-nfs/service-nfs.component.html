@@ -3,13 +3,6 @@
     <mat-progress-bar *ngIf="isFormLoading" mode="indeterminate"></mat-progress-bar>
     <form [formGroup]="form" class="ix-form-container" (submit)="onSubmit()">
       <ix-fieldset [title]="'General Options' | translate">
-        <ix-input
-          formControlName="servers"
-          [label]="'Number of servers' | translate"
-          [tooltip]="tooltips.servers"
-          [required]="true"
-          type="number"
-        ></ix-input>
         <ix-select
           formControlName="bindip"
           [label]="'Bind IP Addresses' | translate"
@@ -21,6 +14,7 @@
           formControlName="servers"
           [label]="'Number of threads' | translate"
           type="number"
+          [required]="true"
           [tooltip]="tooltips.servers"
         ></ix-input>
       </ix-fieldset>

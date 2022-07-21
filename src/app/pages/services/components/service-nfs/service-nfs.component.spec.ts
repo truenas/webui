@@ -28,7 +28,7 @@ describe('ServiceNfsComponent', () => {
       mockWebsocket([
         mockCall('nfs.config', {
           allow_nonroot: false,
-          servers: 16,
+          servers: 3,
           bindip: ['192.168.1.117', '192.168.1.118'],
           v4: true,
           v4_v3owner: false,
@@ -36,7 +36,6 @@ describe('ServiceNfsComponent', () => {
           mountd_port: 123,
           rpcstatd_port: 124,
           rpclockd_port: 124,
-          servers: 3,
           udp: true,
           userd_manage_gids: false,
         } as NfsConfig),
@@ -66,7 +65,6 @@ describe('ServiceNfsComponent', () => {
 
     expect(ws.call).toHaveBeenCalledWith('nfs.config');
     expect(values).toEqual({
-      'Number of servers': '16',
       'Bind IP Addresses': ['192.168.1.117', '192.168.1.118'],
       'Number of threads': '3',
       'Enable NFSv4': true,
@@ -84,7 +82,6 @@ describe('ServiceNfsComponent', () => {
   it('sends an update payload to websocket when form is saved', async () => {
     const form = await loader.getHarness(IxFormHarness);
     await form.fillForm({
-      'Number of servers': 16,
       'Bind IP Addresses': ['192.168.1.119'],
       'Number of threads': '4',
       'NFSv3 ownership model for NFSv4': false,
@@ -101,7 +98,6 @@ describe('ServiceNfsComponent', () => {
 
     expect(ws.call).toHaveBeenCalledWith('nfs.update', [{
       allow_nonroot: true,
-      servers: '16',
       bindip: ['192.168.1.119'],
       v4: true,
       v4_v3owner: false,
