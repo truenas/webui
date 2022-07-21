@@ -38,6 +38,8 @@ export class DatasetAclEditorComponent implements OnInit {
   ownerFormGroup = new FormGroup({
     owner: new FormControl(),
     ownerGroup: new FormControl(),
+    applyOwner: new FormControl(false),
+    applyGroup: new FormControl(false),
   });
 
   readonly recursiveFieldConfig: FormCheckboxConfig = {
@@ -74,6 +76,20 @@ export class DatasetAclEditorComponent implements OnInit {
     updateLocal: true,
   };
 
+  readonly applyOwnerFieldConfig: FormCheckboxConfig = {
+    type: 'checkbox',
+    name: 'applyOwner',
+    placeholder: helptext.apply_user.placeholder,
+    tooltip: helptext.apply_user.tooltip,
+  };
+
+  readonly applyGroupFieldConfig: FormCheckboxConfig = {
+    type: 'checkbox',
+    name: 'applyGroup',
+    placeholder: helptext.apply_group.placeholder,
+    tooltip: helptext.apply_group.tooltip,
+  };
+
   get isNfsAcl(): boolean {
     return this.acl.acltype === AclType.Nfs4;
   }
@@ -108,7 +124,7 @@ export class DatasetAclEditorComponent implements OnInit {
         if (isFirstLoad) {
           this.onFirstLoad();
 
-          this.ownerFormGroup.setValue({
+          this.ownerFormGroup.patchValue({
             owner: state.stat.user,
             ownerGroup: state.stat.group,
           });
@@ -164,6 +180,8 @@ export class DatasetAclEditorComponent implements OnInit {
       traverse: !!(this.saveParameters.get('recursive').value && this.saveParameters.get('traverse').value),
       owner: this.ownerFormGroup.get('owner').value,
       ownerGroup: this.ownerFormGroup.get('ownerGroup').value,
+      applyOwner: this.ownerFormGroup.get('applyOwner').value,
+      applyGroup: this.ownerFormGroup.get('applyGroup').value,
     });
   }
 

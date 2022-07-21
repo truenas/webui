@@ -203,6 +203,8 @@ describe('DatasetAclEditorComponent', () => {
         traverse: false,
         owner: 'john',
         ownerGroup: 'johns',
+        applyGroup: false,
+        applyOwner: false,
       });
     });
 
