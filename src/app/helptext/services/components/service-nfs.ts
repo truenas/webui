@@ -13,6 +13,11 @@ export default {
   nfs_srv_allow_nonroot_tooltip: T('Set only if required by the NFS client. Set to allow\
  serving non-root mount requests.'),
 
+  nfs_srv_servers_tooltip: T('Specify how many servers to create. Increase if NFS\
+ client responses are slow. Keep this less than or\
+ equal to the number of CPUs reported by <b>sysctl -n\
+ kern.smp.cpus</b> to limit CPU context switching.'),
+
   nfs_srv_v4_tooltip: T('Set to switch from NFSv3 to NFSv4.'),
 
   nfs_srv_v4_v3owner_tooltip: T('Set when NFSv4 ACL support is needed without requiring\
