@@ -45,7 +45,9 @@ export class ChartEventsDialogComponent implements OnInit {
         this.catalogApp = charts[0];
       }
       if (events) {
-        this.chartEvents = events.reverse();
+        this.chartEvents = [...events].sort((a, b) => {
+          return b.metadata.creation_timestamp?.$date - a.metadata.creation_timestamp?.$date;
+        });
       }
     });
   }
@@ -88,7 +90,9 @@ export class ChartEventsDialogComponent implements OnInit {
     this.loader.open();
     this.appService.getChartReleaseEvents(this.catalogApp.name).pipe(untilDestroyed(this)).subscribe((evt) => {
       this.loader.close();
-      this.chartEvents = evt.reverse();
+      this.chartEvents = [...evt].sort((a, b) => {
+        return b.metadata.creation_timestamp?.$date - a.metadata.creation_timestamp?.$date;
+      });
       this.eventsPanel.open();
     });
   }
