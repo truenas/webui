@@ -115,6 +115,9 @@ export class DevicesComponent implements OnInit {
   }
 
   private listenForRouteChanges(id: string): void {
+    this.selectedItem = undefined;
+    this.selectedParentItem = undefined;
+
     if (id && this.dataSource?.data) {
       findInTree(this.dataSource.data, (dataNode) => {
         if (dataNode.children?.length && dataNode.guid !== id) {
