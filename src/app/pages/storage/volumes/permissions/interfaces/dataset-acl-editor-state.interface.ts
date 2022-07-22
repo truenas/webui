@@ -15,5 +15,7 @@ export interface AclSaveFormParams {
   recursive: boolean;
   traverse: boolean;
   owner: string;
+  applyOwner: boolean;
   ownerGroup: string;
+  applyGroup: boolean;
 }
