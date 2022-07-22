@@ -212,6 +212,15 @@ export class CloudsyncFormComponent implements FormConfiguration {
           isHidden: true,
           disabled: true,
         },
+        {
+          type: 'checkbox',
+          name: 'bucket_policy_only',
+          placeholder: helptext.bucket_policy_only_placeholder,
+          tooltip: helptext.bucket_policy_only_tooltip,
+          value: true,
+          isHidden: true,
+          disabled: true,
+        },
       ],
     },
     {
@@ -522,6 +531,7 @@ export class CloudsyncFormComponent implements FormConfiguration {
       attributes: {
         bucket,
         folder: node.data.name,
+        bucket_policy_only: true,
       },
       args: '',
     };
@@ -789,13 +799,16 @@ export class CloudsyncFormComponent implements FormConfiguration {
         if (this.formGroup.get('direction').value === Direction.Pull) {
           this.setDisabled('folder_source', false, false);
           this.setDisabled('folder_destination', true, true);
+          this.setDisabled('bucket_policy_only', false, false);
         } else {
           this.setDisabled('folder_source', true, true);
           this.setDisabled('folder_destination', false, false);
+          this.setDisabled('bucket_policy_only', false, false);
         }
       } else {
         this.setDisabled('folder_source', true, true);
         this.setDisabled('folder_destination', true, true);
+        this.setDisabled('bucket_policy_only', true, true);
       }
 
       if (res !== null) {
@@ -915,16 +928,19 @@ export class CloudsyncFormComponent implements FormConfiguration {
           if (this.formGroup.get('credentials').value && this.formGroup.get('credentials').value !== NULL_VALUE) {
             this.setDisabled('folder_source', false, false);
             this.setDisabled('folder_destination', true, true);
+            this.setDisabled('bucket_policy_only', false, false);
           } // we don't have an else here because in that case both are
           // hidden by the relation rule defined in the field config
           this.setDisabled('path_destination', false, false);
           this.setDisabled('path_source', true, true);
+          this.setDisabled('bucket_policy_only', false, false);
         } else {
           this.setDisabled('path_source', false, false);
           this.setDisabled('path_destination', true, true);
           if (this.formGroup.get('credentials').value && this.formGroup.get('credentials').value !== NULL_VALUE) {
             this.setDisabled('folder_source', true, true);
             this.setDisabled('folder_destination', false, false);
+            this.setDisabled('bucket_policy_only', false, false);
           } // we don't have an else here because in that case both are
           // hidden by the relation rule defined in the field config
         }
@@ -1065,6 +1081,11 @@ export class CloudsyncFormComponent implements FormConfiguration {
     if (value.bucket_input !== undefined) {
       attributes['bucket'] = value.bucket_input;
       delete value.bucket_input;
+    }
+
+    if (value.bucket_policy_only !== undefined) {
+      attributes['bucket_policy_only'] = value.bucket_policy_only;
+      delete value.bucket_policy_only;
     }
 
     if (value.task_encryption !== undefined) {
