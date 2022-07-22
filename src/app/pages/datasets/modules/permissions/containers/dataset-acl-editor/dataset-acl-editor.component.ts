@@ -6,7 +6,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { filter } from 'rxjs/operators';
-import { AclType, DefaultAclType } from 'app/enums/acl-type.enum';
+import { AclType } from 'app/enums/acl-type.enum';
 import helptext from 'app/helptext/storage/volumes/datasets/dataset-acl';
 import { Acl } from 'app/interfaces/acl.interface';
 import { GroupComboboxProvider } from 'app/modules/ix-forms/classes/group-combobox-provider';
@@ -137,7 +137,7 @@ export class DatasetAclEditorComponent implements OnInit {
 
   private onFirstLoad(): void {
     if (this.isHomeShare) {
-      this.store.usePreset(this.isNfsAcl ? DefaultAclType.Nfs4Home : DefaultAclType.PosixHome);
+      this.store.loadHomeSharePreset();
     } else {
       this.showPresetModalIfNeeded();
     }

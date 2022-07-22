@@ -3,8 +3,8 @@ import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { ComponentStore } from '@ngrx/component-store';
 import { TranslateService } from '@ngx-translate/core';
-import { omit } from 'lodash';
 import * as _ from 'lodash';
+import { omit } from 'lodash';
 import {
   EMPTY, forkJoin, Observable, of,
 } from 'rxjs';
@@ -16,7 +16,7 @@ import { NfsAclTag } from 'app/enums/nfs-acl.enum';
 import { PosixAclTag } from 'app/enums/posix-acl.enum';
 import helptext from 'app/helptext/storage/volumes/datasets/dataset-acl';
 import {
-  Acl, NfsAclItem, PosixAclItem, SetAcl,
+  Acl, AclTemplateByPath, NfsAclItem, PosixAclItem, SetAcl,
 } from 'app/interfaces/acl.interface';
 import { DialogFormConfiguration } from 'app/modules/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/modules/entity/entity-dialog/entity-dialog.component';
@@ -257,51 +257,50 @@ export class DatasetAclEditorStore extends ComponentStore<DatasetAclEditorState>
     );
   });
 
-  usePreset = this.effect((preset$: Observable<DefaultAclType>) => {
-    return preset$.pipe(
+  readonly usePreset = this.updater((state: DatasetAclEditorState, preset: AclTemplateByPath) => {
+    return {
+      ...state,
+      acl: {
+        ...state.acl,
+        acl: preset.acl,
+      } as Acl,
+      isLoading: false,
+      acesWithError: [],
+      selectedAceIndex: 0,
+    };
+  });
+
+  readonly loadHomeSharePreset = this.effect((trigger$: Observable<void>) => {
+    return trigger$.pipe(
       tap(() => {
-        this.patchState({
+        this.setState({
+          ...initialState,
           isLoading: true,
         });
       }),
-      switchMap((preset) => {
-        return this.ws.call('filesystem.get_default_acl', [preset]).pipe(
-          map((aclItems) => {
-            const state = this.get();
-            // TODO: Working around backend https://jira.ixsystems.com/browse/NAS-111464
-            const newAclItems = (aclItems as (NfsAclItem | PosixAclItem)[]).map((ace) => {
-              let who = '';
-              if ([NfsAclTag.Owner, PosixAclTag.UserObject].includes(ace.tag)) {
-                who = state.stat.user;
-              } else if ([NfsAclTag.Group, PosixAclTag.GroupObject].includes(ace.tag)) {
-                who = state.stat.group;
-              }
-
-              return {
-                ...ace,
-                who,
-              };
-            });
-
-            this.patchState({
-              ...state,
-              acl: {
-                ...state.acl,
-                acl: newAclItems,
-              } as Acl,
-              isLoading: false,
-              acesWithError: [],
-              selectedAceIndex: 0,
-            });
-          }),
-          catchError((error) => {
-            new EntityUtils().errorReport(error, this.dialog);
-
+      switchMap(() => {
+        return this.ws.call('filesystem.acltemplate.by_path', [{
+          path: this.get().mountpoint,
+          'format-options': {
+            ensure_builtins: true,
+            resolve_names: true,
+          },
+        }]).pipe(
+          tap((presets) => {
             this.patchState({
               isLoading: false,
             });
+            const homePresetName = this.get().acl.acltype === AclType.Nfs4
+              ? DefaultAclType.Nfs4Home
+              : DefaultAclType.PosixHome;
 
-            return EMPTY;
+            const homePreset = presets.find((preset) => preset.name === homePresetName);
+            if (!homePreset) {
+              console.error(`Home preset ${homePresetName} not found`);
+              return;
+            }
+
+            this.usePreset(homePreset);
           }),
         );
       }),

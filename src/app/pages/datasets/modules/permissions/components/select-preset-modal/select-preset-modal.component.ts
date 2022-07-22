@@ -1,110 +1,110 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, Inject, OnInit,
+} from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { DefaultAclType } from 'app/enums/acl-type.enum';
+import { Observable, of } from 'rxjs';
 import helptext from 'app/helptext/storage/volumes/datasets/dataset-acl';
+import { AclTemplateByPath } from 'app/interfaces/acl.interface';
 import { Option } from 'app/interfaces/option.interface';
-import { FormRadioConfig, FormSelectConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
-import { RelationAction } from 'app/modules/entity/entity-form/models/relation-action.enum';
-import { FieldRelationService } from 'app/modules/entity/entity-form/services/field-relation.service';
+import { EntityUtils } from 'app/modules/entity/utils';
+import IxValidatorsService from 'app/modules/ix-forms/services/ix-validators.service';
 import {
   SelectPresetModalConfig,
 } from 'app/pages/datasets/modules/permissions/interfaces/select-preset-modal-config.interface';
 import { DatasetAclEditorStore } from 'app/pages/datasets/modules/permissions/stores/dataset-acl-editor.store';
-import { AppLoaderService, WebSocketService } from 'app/services';
-
-const usePresetFieldName = 'usePreset';
-const presetFieldName = 'preset';
+import { AppLoaderService, DialogService, WebSocketService } from 'app/services';
 
 @UntilDestroy()
 @Component({
   templateUrl: 'select-preset-modal.component.html',
   styleUrls: ['./select-preset-modal.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SelectPresetModalComponent implements OnInit {
-  formGroup = new FormGroup({
-    [presetFieldName]: new FormControl('', Validators.required),
-    [usePresetFieldName]: new FormControl(false, Validators.required),
+  form = new FormGroup({
+    presetName: new FormControl('', this.validatorsService.validateOnCondition(
+      (control) => control.parent && control.parent.get('usePreset').value,
+      Validators.required,
+    )),
+    usePreset: new FormControl(true),
   });
 
+  presetOptions$: Observable<Option[]> = of([]);
+  presets: AclTemplateByPath[] = [];
+
+  readonly usePresetOptions$ = of([
+    {
+      label: helptext.type_dialog.radio_preset,
+      tooltip: helptext.type_dialog.radio_preset_tooltip,
+      value: true,
+    },
+    {
+      label: helptext.type_dialog.radio_custom,
+      value: false,
+    },
+  ]);
+
   readonly helptext = helptext.type_dialog;
-
-  readonly usePresetFieldConfig: FormRadioConfig = {
-    type: 'radio',
-    name: usePresetFieldName,
-    options: [
-      {
-        label: helptext.type_dialog.radio_preset,
-        tooltip: helptext.type_dialog.radio_preset_tooltip,
-        value: true,
-      },
-      {
-        label: helptext.type_dialog.radio_custom,
-        value: false,
-      },
-    ],
-    value: true,
-  };
-
-  readonly presetFieldConfig: FormSelectConfig = {
-    type: 'select',
-    name: presetFieldName,
-    placeholder: helptext.type_dialog.input.placeholder,
-    options: [] as Option[],
-    relation: [
-      {
-        action: RelationAction.Show,
-        when: [{
-          name: usePresetFieldName,
-          value: true,
-        }],
-      },
-    ],
-    required: true,
-  };
 
   constructor(
     private dialogRef: MatDialogRef<SelectPresetModalComponent>,
     private ws: WebSocketService,
     private loader: AppLoaderService,
     private aclEditorStore: DatasetAclEditorStore,
-    private fieldRelationService: FieldRelationService,
+    private dialogService: DialogService,
+    private validatorsService: IxValidatorsService,
     @Inject(MAT_DIALOG_DATA) public data: SelectPresetModalConfig,
   ) {}
 
   ngOnInit(): void {
+    this.setFormRelations();
     this.loadOptions();
-    this.initForm();
   }
 
-  private initForm(): void {
-    this.usePresetFieldConfig.isHidden = !this.data.allowCustom;
-    this.formGroup.patchValue({
-      [usePresetFieldName]: true,
+  private setFormRelations(): void {
+    this.form.get('usePreset').valueChanges.pipe(untilDestroyed(this)).subscribe(() => {
+      this.form.get('presetName').updateValueAndValidity();
     });
-
-    this.fieldRelationService.setRelation(this.presetFieldConfig, this.formGroup);
   }
 
   private loadOptions(): void {
     this.loader.open();
-    this.ws.call('filesystem.default_acl_choices', [this.data.datasetPath])
+    this.ws.call('filesystem.acltemplate.by_path', [{
+      path: this.data.datasetPath,
+      'format-options': {
+        ensure_builtins: true,
+        resolve_names: true,
+      },
+    }])
       .pipe(untilDestroyed(this))
-      .subscribe((choices) => {
-        this.presetFieldConfig.options = choices.map((choice) => ({ label: choice, value: choice }));
-        this.loader.close();
-      });
+      .subscribe(
+        (presets) => {
+          this.presets = presets;
+          this.presetOptions$ = of(presets.map((preset) => ({
+            label: preset.name,
+            value: preset.name,
+          })));
+          this.loader.close();
+        },
+        (error) => {
+          this.loader.close();
+          new EntityUtils().handleWsError(this, error, this.dialogService);
+        },
+      );
   }
 
   onContinuePressed(): void {
-    const { usePreset, preset } = this.formGroup.value as { usePreset: boolean; preset: DefaultAclType };
+    const { usePreset, presetName } = this.form.value;
     if (this.data.allowCustom && !usePreset) {
       this.dialogRef.close();
       return;
     }
 
-    this.aclEditorStore.usePreset(preset);
+    const selectedPreset = this.presets.find((preset) => preset.name === presetName);
+
+    this.aclEditorStore.usePreset(selectedPreset);
     this.dialogRef.close();
   }
 }

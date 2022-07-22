@@ -2071,6 +2071,7 @@
   "Preferred Trains": "",
   "Preserve Extended Attributes": "",
   "Preserve Permissions": "",
+  "Preset": "",
   "Presets": "",
   "Prevent source system snapshots  that have failed replication from being automatically removed by the  <b>Snapshot Retention Policy</b>.": "",
   "Prevent the user from logging in or  using password-based services until this option is unset. Locking an  account is only possible when <b>Disable Password</b> is <i>No</i> and  a <b>Password</b> has been created for the account.": "",

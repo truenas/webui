@@ -11,6 +11,7 @@ import {
   NfsBasicPermission,
 } from 'app/enums/nfs-acl.enum';
 import { PosixAclTag, PosixPermission } from 'app/enums/posix-acl.enum';
+import { QueryFilter, QueryOptions } from 'app/interfaces/query-api.interface';
 
 export type Acl = NfsAcl | PosixAcl;
 
@@ -122,4 +123,29 @@ export interface SetAcl {
   nfs41_flags?: Nfs41Flags;
   acltype?: AclType;
   options: SetAclOptions;
+}
+
+export interface AclTemplateByPathParams {
+  path?: string;
+  'query-filters'?: QueryFilter<unknown>[];
+  'query-options'?: QueryOptions<unknown>;
+  'format-options'?: {
+    canonicalize?: boolean;
+    ensure_builtins?: boolean;
+    resolve_names?: boolean;
+  };
+}
+
+export type AclTemplateByPath = NfsAclTemplateByPath | PosixAclTemplateByPath;
+
+export interface NfsAclTemplateByPath {
+  name: string;
+  acltype: AclType.Nfs4;
+  acl: NfsAclItem[];
+}
+
+export interface PosixAclTemplateByPath {
+  name: string;
+  acltype: AclType.Posix1e;
+  acl: PosixAclItem[];
 }
