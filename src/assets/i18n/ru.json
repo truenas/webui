@@ -227,7 +227,6 @@
   "Click for information on    <a href=\"https://www.truenas.com/docs/truenasupgrades/\" target=\"_blank\">TrueNAS SCALE Migration, Nightly trains    and other upgrade options.</a>": "",
   "Clicking Continue allows TrueNAS to finish the update in the background while  Abort stops the process and reverts the dataset ACL to the previously active ACL.": "",
   "Clone To New Dataset": "",
-  "Close (return to VM list)": "",
   "Close expanded row": "",
   "Close panel": "",
   "Cloud Sync Task": "",

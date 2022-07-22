@@ -488,7 +488,6 @@
   "Clicking Continue allows TrueNAS to finish the update in the background while  Abort stops the process and reverts the dataset ACL to the previously active ACL.": "",
   "Client Certificate": "",
   "Clone To New Dataset": "",
-  "Close (return to VM list)": "",
   "Close expanded row": "",
   "Close panel": "",
   "Cloud Sync Task": "",
