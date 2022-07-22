@@ -1679,7 +1679,6 @@
   "Collapse": "Réduire",
   "Collapse Row": "Réduire la ligne",
   "Columns": "Colonnes",
-  "Com Port": "Port Com",
   "Combine multiple, critical-for-failover  interfaces into a group. Groups apply to single systems. A failover  occurs when every interface in the group fails. Groups with a single  interface trigger a failover when that interface fails. Configuring the  system to failover when any interface fails requires marking each  interface as critical and placing them in separate groups.": "Combinez plusieurs interfaces critiques pour le basculement (failover) dans un groupe. Les groupes s'appliquent à des systèmes individuels. Un basculement (failover) se produit lorsque chaque interface du groupe tombe en panne. Les groupes avec une seule interface déclenchent un basculement (failover) en cas de défaillance de cette interface. Pour configurer le système afin qu'il bascule en cas de défaillance d'une interface, il faut marquer chaque interface comme critique et les placer dans des groupes distincts.",
   "Command": "Commande",
   "Commands": "Commandes",

@@ -1,4 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import {
+  AfterViewInit, Component, OnInit, TemplateRef, ViewChild,
+} from '@angular/core';
 import { Validators } from '@angular/forms';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
@@ -29,6 +31,7 @@ import { VmWizardComponent } from 'app/pages/vm/vm-wizard/vm-wizard.component';
 import {
   WebSocketService, StorageService, AppLoaderService, DialogService, VmService,
 } from 'app/services';
+import { LayoutService } from 'app/services/layout.service';
 import { ModalService } from 'app/services/modal.service';
 
 @UntilDestroy()
@@ -37,7 +40,9 @@ import { ModalService } from 'app/services/modal.service';
   styleUrls: ['./vm-list.component.scss'],
   providers: [VmService, MessageService],
 })
-export class VmListComponent implements EntityTableConfig<VirtualMachineRow>, OnInit {
+export class VmListComponent implements EntityTableConfig<VirtualMachineRow>, OnInit, AfterViewInit {
+  @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
+
   title = this.translate.instant('Virtual Machines');
   queryCall = 'vm.query' as const;
   wsDelete = 'vm.delete' as const;
@@ -48,6 +53,7 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow>, On
   hasVirtualizationSupport = false;
   disableActionsConfig = true;
   virtualizationDetails: VirtualizationDetails = null;
+  canAdd = false;
 
   entityList: EntityTableComponent<VirtualMachineRow>;
   columns = [
@@ -87,7 +93,7 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow>, On
     getAvailableMemory: 'vm.get_available_memory',
   };
 
-  availMem: string;
+  availableMemory: string;
   memTitle = wizardHelptext.vm_mem_title;
   memWarning = wizardHelptext.memory_warning;
 
@@ -101,12 +107,8 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow>, On
     private modalService: ModalService,
     private vmService: VmService,
     private translate: TranslateService,
-  ) {
-    if (this.productType !== ProductType.Scale) {
-      // TODO: Check if it can be removed
-      this.columns.push({ name: this.translate.instant('Com Port'), prop: 'com_port', hidden: true });
-    }
-  }
+    private layoutService: LayoutService,
+  ) {}
 
   ngOnInit(): void {
     this.modalService.onClose$.pipe(untilDestroyed(this)).subscribe(
@@ -123,10 +125,10 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow>, On
     this.vmService.getVirtualizationDetails().pipe(untilDestroyed(this)).subscribe((virtualization) => {
       this.virtualizationDetails = virtualization;
       this.hasVirtualizationSupport = virtualization.supported;
-      this.disableActionsConfig = !virtualization.supported;
+      this.canAdd = virtualization.supported;
     }, () => {
       /* fallback when endpoint is unavailable */
-      this.disableActionsConfig = false;
+      this.canAdd = true;
     });
 
     this.ws.subscribe('vm.query').pipe(untilDestroyed(this)).subscribe((event) => {
@@ -146,6 +148,10 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow>, On
         },
       );
     });
+  }
+
+  ngAfterViewInit(): void {
+    this.layoutService.pageHeaderUpdater$.next(this.pageHeader);
   }
 
   getCustomEmptyConfig(emptyType: EmptyType): EmptyConfig {
@@ -645,7 +651,7 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow>, On
 
   checkMemory(): void {
     this.ws.call(this.wsMethods.getAvailableMemory).pipe(untilDestroyed(this)).subscribe((res) => {
-      this.availMem = this.storageService.convertBytesToHumanReadable(res);
+      this.availableMemory = this.storageService.convertBytesToHumanReadable(res);
     });
   }
 
