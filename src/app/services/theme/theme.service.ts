@@ -162,4 +162,31 @@ export class ThemeService {
     const theme = this.findTheme(name);
     return this.darkTest(theme.bg2);
   }
+
+  /**
+   * Gets color pattern for active theme
+   * @returns array of colors
+   */
+  getColorPattern(): string[] {
+    return this.currentTheme().accentColors.map((color) => this.currentTheme()[color]);
+  }
+
+  getUtils(): ThemeUtils {
+    return this.utils;
+  }
+
+  /**
+   * Gets rgb background color by index
+   * @param index
+   * @returns rgb background color
+   */
+  getRgbBackgroundColorByIndex(index: number): number[] {
+    const bgColor = this.getColorPattern()[index];
+    const bgColorType = this.utils.getValueType(bgColor);
+
+    if (bgColorType === 'hex') {
+      return this.utils.hexToRgb(bgColor).rgb;
+    }
+    return this.utils.rgbToArray(bgColor);
+  }
 }
