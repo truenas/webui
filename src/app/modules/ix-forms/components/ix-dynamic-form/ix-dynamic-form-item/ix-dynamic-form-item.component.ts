@@ -6,6 +6,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { distinctUntilChanged, filter, map } from 'rxjs/operators';
 import { DynamicFormSchemaType } from 'app/enums/dynamic-form-schema-type.enum';
 import { AddListItemEvent, DeleteListItemEvent, DynamicFormSchemaNode } from 'app/interfaces/dynamic-form-schema.interface';
+import { CustomUntypedFormField } from 'app/modules/ix-forms/components/ix-dynamic-form/classes/custom-untyped-form-field';
 
 @UntilDestroy()
 @Component({
@@ -49,7 +50,7 @@ export class IxDynamicFormItemComponent implements OnInit {
   }
 
   get isHidden(): boolean {
-    return this.dynamicForm.controls[this.dynamicSchema.controlName].disabled;
+    return !!(this.dynamicForm.controls[this.dynamicSchema.controlName] as CustomUntypedFormField).hidden;
   }
 
   addControl(): void {
