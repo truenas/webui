@@ -45,8 +45,6 @@
             <div
               class="disk-nested-tree-root-node"
               (click)="onRowGroupSelected(vdev, $event)"
-              [routerLink]="['/storage2', poolId, 'devices', vdev.guid]"
-              routerLinkActive="selected"
             >
               <ix-vdev-group-node [vdev]="vdev | cast">
                 <button
@@ -74,6 +72,8 @@
               class="disk-nested-tree-root-node"
 
               [class.selected]="vdev.guid === selectedItem?.guid"
+              [routerLink]="['/storage2', poolId, 'devices', vdev.guid]"
+              routerLinkActive="selected"
             >
               <button
                 mat-icon-button

@@ -8,13 +8,14 @@ import { TranslateService } from '@ngx-translate/core';
 import _ from 'lodash';
 import { EMPTY } from 'rxjs';
 import {
-  pluck, catchError, switchMap, tap,
+  catchError, pluck, switchMap, tap,
 } from 'rxjs/operators';
 import { VDevType } from 'app/enums/v-dev-type.enum';
 import { DeviceNestedDataNode, isVDev } from 'app/interfaces/device-nested-data-node.interface';
 import { PoolTopology } from 'app/interfaces/pool.interface';
 import { Disk } from 'app/interfaces/storage.interface';
 import { IxNestedTreeDataSource } from 'app/modules/ix-tree/ix-nested-tree-datasource';
+import { findInTree } from 'app/modules/ix-tree/utils/find-in-tree.utils';
 import { flattenTreeWithFilter } from 'app/modules/ix-tree/utils/flattern-tree-with-filter';
 import { DevicesStore } from 'app/pages/storage2/modules/devices/stores/devices-store.service';
 import { WebSocketService } from 'app/services';
@@ -115,23 +116,24 @@ export class DevicesComponent implements OnInit {
 
   private listenForRouteChanges(id: string): void {
     if (id && this.dataSource?.data) {
-      const traverseTree = (children: DeviceNestedDataNode[], parent?: DeviceNestedDataNode):
-      { item: DeviceNestedDataNode; parent: DeviceNestedDataNode } => {
-        for (const item of children) {
-          if (item.guid !== id && item.children?.length) {
-            const dataDisk = traverseTree(item.children, item);
-            if (dataDisk) { return dataDisk; }
+      findInTree(this.dataSource.data, (dataNode) => {
+        if (dataNode.children?.length && dataNode.guid !== id) {
+          const item = dataNode.children.find((child) => child.guid === id);
+          if (item) {
+            this.selectedItem = item;
+            this.selectedParentItem = dataNode;
+            return true;
           }
-          if (item.guid === id) {
-            return { item, parent };
-          }
+          return false;
         }
-        return { item: undefined, parent: undefined };
-      };
 
-      this.selectedItem = traverseTree(this.dataSource.data).item;
-      this.selectedParentItem = traverseTree(this.dataSource.data).parent;
-      // let x = findInTree()
+        if (dataNode.guid === id) {
+          this.selectedItem = dataNode;
+          this.selectedParentItem = undefined;
+          return true;
+        }
+        return false;
+      });
     }
   }
 
