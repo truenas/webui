@@ -8,7 +8,7 @@ program
 
 var proxy_config_json = './proxy.config.json';
 var environment_ts = './src/environments/environment.ts';
-var hostname = (program.ip || '').match(/^(?:https?:\/\/)?(?:[^@\n]+@)?([^:\/\n?]+)(?::([0-9]+))/);
+var hostname = (program.ip || '').match(/^(?:https?:\/\/)?(?:[^@\n]+@)?([^:\/\n?]+)(?::([0-9]+))?/);
 
 if (!hostname || !hostname[0]) {
   program.outputHelp();
