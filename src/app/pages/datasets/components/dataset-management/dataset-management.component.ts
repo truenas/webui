@@ -11,6 +11,9 @@ import { DatasetInTree } from 'app/pages/datasets/store/dataset-in-tree.interfac
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
 import { WebSocketService } from 'app/services';
 
+const headerHeight = 48;
+const footerHeight = 45;
+
 @UntilDestroy()
 @Component({
   templateUrl: './dataset-management.component.html',
@@ -27,6 +30,9 @@ export class DatasetsManagementComponent implements OnInit {
     trackBy: (dataset) => dataset.id,
   });
   readonly hasNestedChild = (_: number, dataset: DatasetInTree): boolean => Boolean(dataset.children?.length);
+  hasConsoleFooter = false;
+  headerHeight = headerHeight;
+  footerHeight = footerHeight;
 
   constructor(
     private ws: WebSocketService,
@@ -39,6 +45,13 @@ export class DatasetsManagementComponent implements OnInit {
     this.datasetStore.loadDatasets();
     this.listenForRouteChanges();
     this.setupTree();
+
+    this.ws
+      .call('system.advanced.config')
+      .pipe(untilDestroyed(this))
+      .subscribe((advancedConfig) => {
+        this.hasConsoleFooter = advancedConfig.consolemsg;
+      });
   }
 
   onSearch(query: string): void {

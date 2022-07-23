@@ -18,6 +18,9 @@ import { flattenTreeWithFilter } from 'app/modules/ix-tree/utils/flattern-tree-w
 import { DevicesStore } from 'app/pages/storage2/modules/devices/stores/devices-store.service';
 import { WebSocketService } from 'app/services';
 
+const headerHeight = 48;
+const footerHeight = 45;
+
 @UntilDestroy()
 @Component({
   templateUrl: './devices.component.html',
@@ -34,6 +37,9 @@ export class DevicesComponent implements OnInit {
   });
   diskDictionary: { [key: string]: Disk } = {};
   isLoading = false;
+  hasConsoleFooter = false;
+  headerHeight = headerHeight;
+  footerHeight = footerHeight;
 
   readonly hasNestedChild = (_: number, vdev: DeviceNestedDataNode): boolean => Boolean(vdev.children?.length);
   readonly isVdevGroup = (_: number, vdev: DeviceNestedDataNode): boolean => !isVDev(vdev);
@@ -56,6 +62,13 @@ export class DevicesComponent implements OnInit {
     this.devicesStore.onReloadList
       .pipe(untilDestroyed(this))
       .subscribe(() => this.loadTopologyAndDisks());
+
+    this.ws
+      .call('system.advanced.config')
+      .pipe(untilDestroyed(this))
+      .subscribe((advancedConfig) => {
+        this.hasConsoleFooter = advancedConfig.consolemsg;
+      });
   }
 
   private createDataSource(dataNodes: DeviceNestedDataNode[]): void {

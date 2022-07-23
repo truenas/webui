@@ -1,10 +1,7 @@
 import {
-  Directive, ElementRef, Inject, Input, OnDestroy, OnInit,
+  Directive, ElementRef, Inject, Input, OnChanges, OnDestroy, OnInit, SimpleChanges,
 } from '@angular/core';
 import { WINDOW } from 'app/helpers/window.helper';
-
-const headingHeightInitialDefault = 213;
-const headingHeightDefault = 137;
 
 /**
  * This directive is used to dynamically adjust height of the "details" block in a "master-details" layout
@@ -14,22 +11,33 @@ const headingHeightDefault = 137;
 @Directive({
   selector: '[ixDetailsHeight]',
 })
-export class IxDetailsHeightDirective implements OnInit, OnDestroy {
+export class IxDetailsHeightDirective implements OnInit, OnDestroy, OnChanges {
   @Input() ixDetailsHeightParentClass: string;
-  @Input() headingHeightInitial = headingHeightInitialDefault;
-  @Input() headingHeight = headingHeightDefault;
+  @Input() hasConsoleFooter = false;
+  @Input() headerHeight = 0;
+  @Input() footerHeight = 0;
 
-  readonly onScrollHandler = this.onScroll.bind(this);
-  heightDetails = `calc(100vh - ${this.headingHeightInitial}px)`;
+  private readonly onScrollHandler = this.onScroll.bind(this);
+
+  private parentPadding = 0;
+  private heightBaseOffset = 0;
+  private scrollBreakingPoint = 0;
+  private heightCssValue = `calc(100vh - ${this.heightBaseOffset}px)`;
 
   constructor(
     @Inject(WINDOW) private window: Window,
-    private el: ElementRef,
+    private element: ElementRef,
   ) {}
 
   ngOnInit(): void {
-    this.el.nativeElement.style.height = this.heightDetails;
+    this.element.nativeElement.style.height = this.heightCssValue;
     this.window.addEventListener('scroll', this.onScrollHandler, true);
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if ('hasConsoleFooter' in changes) {
+      delete this.heightBaseOffset;
+    }
   }
 
   ngOnDestroy(): void {
@@ -37,16 +45,55 @@ export class IxDetailsHeightDirective implements OnInit, OnDestroy {
   }
 
   onScroll(event: Event): void {
-    if ((event.target as HTMLElement).className !== this.ixDetailsHeightParentClass) {
+    const eventTarget = event.target as HTMLElement;
+    if (!eventTarget.className.includes(this.ixDetailsHeightParentClass)) {
       return;
     }
 
-    if ((event.target as HTMLElement).scrollTop < this.headingHeight) {
-      this.heightDetails = `calc(100vh - ${this.headingHeightInitial}px + ${(event.target as HTMLElement).scrollTop}px)`;
-    } else {
-      this.heightDetails = `calc(100vh - ${this.headingHeightInitial}px + ${this.headingHeight}px)`;
+    if (!this.parentPadding) {
+      this.parentPadding = parseFloat(
+        this.window
+          .getComputedStyle(eventTarget, null)
+          .getPropertyValue('padding-bottom'),
+      );
     }
 
-    this.el.nativeElement.style.height = this.heightDetails;
+    if (!this.heightBaseOffset) {
+      this.heightBaseOffset = this.getBaseOffset();
+    }
+
+    if (!this.scrollBreakingPoint) {
+      this.scrollBreakingPoint = this.getScrollBreakingPoint();
+    }
+
+    if ((event.target as HTMLElement).scrollTop < this.scrollBreakingPoint) {
+      this.heightCssValue = `calc(100vh - ${this.heightBaseOffset}px + ${eventTarget.scrollTop}px)`;
+    } else {
+      this.heightCssValue = `calc(100vh - ${this.heightBaseOffset}px + ${this.scrollBreakingPoint}px)`;
+    }
+
+    this.element.nativeElement.style.height = this.heightCssValue;
+  }
+
+  private getInitialTopPosition(element: HTMLElement): number {
+    return element.getBoundingClientRect().top;
+  }
+
+  private getBaseOffset(): number {
+    let result = this.getInitialTopPosition(this.element.nativeElement);
+    result += this.parentPadding;
+    if (this.hasConsoleFooter) {
+      result += this.footerHeight;
+    } else {
+      result += this.parentPadding;
+    }
+    return result;
+  }
+
+  private getScrollBreakingPoint(): number {
+    let result = this.getInitialTopPosition(this.element.nativeElement);
+    result -= this.parentPadding;
+    result -= this.headerHeight;
+    return result;
   }
 }
