@@ -17,6 +17,7 @@ export default {
     [FailoverDisabledReason.DisagreeVip]: T('Nodes Virtual IP states do not agree.'),
     [FailoverDisabledReason.MismatchDisks]: T('The TrueNAS controllers do not have the same quantity of disks.'),
     [FailoverDisabledReason.NoCriticalInterfaces]: T('No network interfaces are marked critical for failover.'),
+    [FailoverDisabledReason.NoFenced]: T('Fenced is not running.'),
   },
   updateRunning_dialog: {
     title: T('Update in Progress'),

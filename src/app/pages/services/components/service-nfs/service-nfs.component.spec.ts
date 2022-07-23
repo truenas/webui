@@ -28,6 +28,7 @@ describe('ServiceNfsComponent', () => {
       mockWebsocket([
         mockCall('nfs.config', {
           allow_nonroot: false,
+          servers: 3,
           bindip: ['192.168.1.117', '192.168.1.118'],
           v4: true,
           v4_v3owner: false,
@@ -35,7 +36,6 @@ describe('ServiceNfsComponent', () => {
           mountd_port: 123,
           rpcstatd_port: 124,
           rpclockd_port: 124,
-          servers: 3,
           udp: true,
           userd_manage_gids: false,
         } as NfsConfig),

@@ -1,42 +1,85 @@
 <mat-card class="card">
   <mat-card-header>
-    <h3 mat-card-title>{{ 'Capacity Management' | translate }}</h3>
+    <h3 mat-card-title>
+      <ng-container *ngIf="isFilesystem">{{ 'Dataset Space Management' | translate }}</ng-container>
+      <ng-container *ngIf="isZvol">{{ 'Zvol Space Management' | translate }}</ng-container>
+    </h3>
     <button mat-button (click)="editDataset()">{{ 'Edit' | translate }}</button>
   </mat-card-header>
   <mat-card-content>
-    <div class="legend-placeholder">
-      <ng-container *ngIf="loading; else loaderSkel"></ng-container>
-      <ng-container *ngIf="loading; else loaderSkel"></ng-container>
-    </div>
-    <div class="chart-placeholder">
-      <ng-container *ngIf="loading; else loaderSkel"></ng-container>
-    </div>
-    <div class="legend-placeholder">
-      <ng-container *ngIf="loading; else loaderSkel"></ng-container>
-      <ng-container *ngIf="loading; else loaderSkel"></ng-container>
-      <ng-container *ngIf="loading; else loaderSkel"></ng-container>
+    <ix-space-management-chart [dataset]="dataset"></ix-space-management-chart>
+
+    <div class="chart-extra">
+      <ng-container *ngIf="!isZvol">
+        <div class="details-item" *ngIf="!isLoadingProperties && extraProperties?.refreservation?.parsed">
+          <span class="label">{{ 'Reserved for Dataset' | translate }}:</span>
+          <span class="value">{{ extraProperties.refreservation.parsed | filesize: { standard: 'iec', round: 0 } }}</span>
+        </div>
+        <div class="details-item" *ngIf="!isLoadingProperties && extraProperties?.reservation?.parsed">
+          <span class="label">{{ 'Reserved for Dataset & Children' | translate }}:</span>
+          <span class="value">{{ extraProperties.reservation.parsed | filesize: { standard: 'iec', round: 0 } }}</span>
+        </div>
+      </ng-container>
+      <ng-container *ngIf="isZvol">
+        <!-- TODO: Fix me please after NAS-117254 is done -->
+        <div class="details-item" *ngIf="false">
+          <span class="label">{{ 'Provisioning Type' | translate }}:</span>
+          <span class="value">{{ 'Thick' | translate }}</span>
+        </div>
+        <div class="details-item">
+          <span class="label">{{ 'Volume Size' | translate }}:</span>
+          <span class="value" *ngIf="!isLoadingProperties; else valuePlaceholder">
+            {{ extraProperties.volsize.parsed | filesize: { standard: 'iec', round: 0 } }}
+          </span>
+        </div>
+      </ng-container>
     </div>
 
-    <div *ngIf="!dataset.locked">
+    <div class="details">
       <div class="details-item">
-        <span class="label">
-          {{ 'User Quotas' | translate }}:
+        <ng-container *ngIf="!isLoadingProperties; else valuePlaceholder">
+          <span class="label">
+            <ng-container *ngIf="isFilesystem">{{ 'Space Available to Dataset' | translate }}</ng-container>
+            <ng-container *ngIf="isZvol">{{ 'Space Available to Zvol' | translate }}</ng-container>:
+          </span>
+          <span class="value">{{ dataset.available.parsed | filesize: { standard: 'iec', round: 0 } }}</span>
+        </ng-container>
+      </div>
+      <div class="details-item" *ngIf="isFilesystem && hasQuota">
+        <span class="label">{{ 'Applied Dataset Quotas' | translate }}:</span>
+        <span class="value">
+          {{ '{n} (applies to descendants)' | translate: { n: extraProperties.quota.parsed | filesize: { standard: 'iec', round: 0 } } }}
         </span>
-        <span *ngIf="!loading; else loaderSkel" class="value">
-          {{ 'Quotas set for {n} users' | translate: { n: userQuotas } }}
+      </div>
+      <div class="details-item" *ngIf="hasInheritedQuotas">
+        <span class="label">{{ 'Inherited Quotas' | translate }}:</span>
+        <span class="value">
+          {{ '{n} from {dataset}' | translate: { n: inheritedQuotasDataset.quota.parsed | filesize: { standard: 'iec', round: 0 }, dataset: inheritedQuotasDataset.name } }}
         </span>
-        <a [routerLink]="['/', 'datasets', dataset.id, 'user-quotas']">
+        <a [routerLink]="['/', 'datasets', inheritedQuotasDataset.id]">{{ 'Go To Dataset' }}</a>
+      </div>
+    </div>
+
+    <div class="details">
+      <div class="details-item">
+        <span class="label">{{ 'User Quotas' | translate }}:</span>
+        <ng-container *ngIf="checkQuotas; else noneTemplate">
+          <span class="value" *ngIf="!isLoadingQuotas; else valuePlaceholder">
+            {{ 'Quotas set for {n} users' | translate: { n: userQuotas } }}
+          </span>
+        </ng-container>
+        <a *ngIf="checkQuotas" [routerLink]="['/', 'datasets', dataset.id, 'user-quotas']">
           {{ 'Manage User Quotas' | translate }}
         </a>
       </div>
       <div class="details-item">
-        <span class="label">
-          {{ 'Group Quotas' | translate }}:
-        </span>
-        <span *ngIf="!loading; else loaderSkel" class="value">
-          {{ 'Quotas set for {n} groups' | translate: { n: groupQuotas } }}
-        </span>
-        <a [routerLink]="['/', 'datasets', dataset.id, 'group-quotas']">
+        <span class="label">{{ 'Group Quotas' | translate }}:</span>
+        <ng-container *ngIf="checkQuotas; else noneTemplate">
+          <span class="value" *ngIf="!isLoadingQuotas; else valuePlaceholder">
+            {{ 'Quotas set for {n} groups' | translate: { n: groupQuotas } }}
+          </span>
+        </ng-container>
+        <a *ngIf="checkQuotas" [routerLink]="['/', 'datasets', dataset.id, 'group-quotas']">
           {{ 'Manage Group Quotas' | translate }}
         </a>
       </div>
@@ -44,6 +87,10 @@
   </mat-card-content>
 </mat-card>
 
-<ng-template #loaderSkel>
-  <ngx-skeleton-loader></ngx-skeleton-loader>
+<ng-template #valuePlaceholder>
+  <ngx-skeleton-loader class="value-placeholder"></ngx-skeleton-loader>
+</ng-template>
+
+<ng-template #noneTemplate>
+  {{ 'None' | translate }}
 </ng-template>
