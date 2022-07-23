@@ -647,6 +647,7 @@ export class CloudsyncFormComponent implements FormConfiguration {
     this.bucketInputField = this.fieldSets.config('bucket_input') as FormInputConfig;
     this.setDisabled('bucket', true, true);
     this.setDisabled('bucket_input', true, true);
+    this.setDisabled('bucket_policy_only', true, true);
     this.cloudcredentialService.getCloudsyncCredentials().then((credentials) => {
       credentials.forEach((item) => {
         this.credentialsField.options.push({ label: item.name + ' (' + item.provider + ')', value: item.id });
@@ -783,6 +784,7 @@ export class CloudsyncFormComponent implements FormConfiguration {
       }
       this.setDisabled('bucket', true, true);
       this.setDisabled('bucket_input', true, true);
+      this.setDisabled('bucket_policy_only', true, true);
       // reset folder tree view
       if (!this.folderDestinationField.disabled) {
         if (this.folderDestinationField.customTemplateStringOptions.explorer) {
@@ -799,16 +801,13 @@ export class CloudsyncFormComponent implements FormConfiguration {
         if (this.formGroup.get('direction').value === Direction.Pull) {
           this.setDisabled('folder_source', false, false);
           this.setDisabled('folder_destination', true, true);
-          this.setDisabled('bucket_policy_only', false, false);
         } else {
           this.setDisabled('folder_source', true, true);
           this.setDisabled('folder_destination', false, false);
-          this.setDisabled('bucket_policy_only', false, false);
         }
       } else {
         this.setDisabled('folder_source', true, true);
         this.setDisabled('folder_destination', true, true);
-        this.setDisabled('bucket_policy_only', true, true);
       }
 
       if (res !== null) {
@@ -878,6 +877,12 @@ export class CloudsyncFormComponent implements FormConfiguration {
               this.setDisabled('bucket_input', true, true);
             }
 
+            if (targetProvider && targetProvider.name === 'GOOGLE_CLOUD_STORAGE') {
+              this.setDisabled('bucket_policy_only', false, false);
+            } else {
+              this.setDisabled('bucket_policy_only', true, true);
+            }
+
             const taskSchema = _.find(this.providers, { name: item.provider }) ? _.find(this.providers, { name: item.provider })['task_schema'] : [];
 
             for (const i of this.taskSchemas) {
@@ -928,19 +933,16 @@ export class CloudsyncFormComponent implements FormConfiguration {
           if (this.formGroup.get('credentials').value && this.formGroup.get('credentials').value !== NULL_VALUE) {
             this.setDisabled('folder_source', false, false);
             this.setDisabled('folder_destination', true, true);
-            this.setDisabled('bucket_policy_only', false, false);
           } // we don't have an else here because in that case both are
           // hidden by the relation rule defined in the field config
           this.setDisabled('path_destination', false, false);
           this.setDisabled('path_source', true, true);
-          this.setDisabled('bucket_policy_only', false, false);
         } else {
           this.setDisabled('path_source', false, false);
           this.setDisabled('path_destination', true, true);
           if (this.formGroup.get('credentials').value && this.formGroup.get('credentials').value !== NULL_VALUE) {
             this.setDisabled('folder_source', true, true);
             this.setDisabled('folder_destination', false, false);
-            this.setDisabled('bucket_policy_only', false, false);
           } // we don't have an else here because in that case both are
           // hidden by the relation rule defined in the field config
         }
