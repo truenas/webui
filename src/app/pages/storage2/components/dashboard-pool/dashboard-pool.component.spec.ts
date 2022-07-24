@@ -104,6 +104,6 @@ describe('DashboardPoolComponent', () => {
   it('shows a disk health card for the pool', () => {
     const card = spectator.query(DiskHealthCardComponent);
     expect(card).toBeTruthy();
-    expect(card.pool).toBe(pool);
+    expect(card.poolState).toBe(pool);
   });
 });
