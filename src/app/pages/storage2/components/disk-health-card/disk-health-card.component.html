@@ -1,7 +1,14 @@
 <mat-card class="card">
-  <mat-card-header class="header">
-    <h3 mat-card-title class="card-title">
+  <mat-card-header>
+    <h3 mat-card-title>
       {{ 'Disk Health' | translate }}
+
+      <ng-container [ngSwitch]="diskState.health">
+        <mat-icon *ngSwitchCase="diskHealthLevel.Safe" class="pool-icon icon-online">check_circle</mat-icon>
+        <mat-icon *ngSwitchCase="diskHealthLevel.Warn" class="pool-icon icon-warning">warning</mat-icon>
+        <mat-icon *ngSwitchCase="diskHealthLevel.Error" class="pool-icon icon-error">cancel</mat-icon>
+        <mat-icon *ngSwitchDefault class="pool-icon icon-error">cancel</mat-icon>
+      </ng-container>
     </h3>
 
     <a
@@ -11,5 +18,41 @@
   </mat-card-header>
 
   <mat-card-content>
+    <div class="details-item">
+      <div class="label">{{ 'Disks temperature related alerts' | translate }}:</div>
+      <ngx-skeleton-loader *ngIf="isStarting"></ngx-skeleton-loader>
+      <div class="value" *ngIf="!isStarting">{{ diskState.alters | number }}</div>
+    </div>
+    <div class="details-item">
+      <div class="label">{{ 'Highest Temperature' | translate }}:</div>
+      <ngx-skeleton-loader *ngIf="isStarting"></ngx-skeleton-loader>
+      <div class="value" *ngIf="!isStarting">
+        {{ diskState.highestTemperature | number }}
+        {{ diskState.symbolText }}{{ diskState.unit }}
+      </div>
+    </div>
+    <div class="details-item">
+      <div class="label">{{ 'Lowest Temperature' | translate }}:</div>
+      <ngx-skeleton-loader *ngIf="isStarting"></ngx-skeleton-loader>
+      <div class="value" *ngIf="!isStarting">
+        {{ diskState.lowestTemperature | number }}
+        {{ diskState.symbolText }}{{ diskState.unit }}
+      </div>
+    </div>
+    <div class="details-item">
+      <div class="label">{{ 'Average Disk Temperature' | translate }}:</div>
+      <ngx-skeleton-loader *ngIf="isStarting"></ngx-skeleton-loader>
+      <div class="value" *ngIf="!isStarting">
+        {{ diskState.averageTemperature | number }}
+        {{ diskState.symbolText }}{{ diskState.unit }}
+      </div>
+      <a [routerLink]="['/reportsdashboard/disk']">{{ 'View Reports' | translate }}</a>
+    </div>
+    <div class="details-item">
+      <div class="label">{{ 'Failed S.M.A.R.T. Tests' | translate }}:</div>
+      <ngx-skeleton-loader *ngIf="isStarting"></ngx-skeleton-loader>
+      <div class="value" *ngIf="!isStarting">{{ diskState.smartTests | number }}</div>
+      <a [routerLink]="['/data-protection/smart']">{{ 'View All S.M.A.R.T. Tests' | translate }}</a>
+    </div>
   </mat-card-content>
 </mat-card>
