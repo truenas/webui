@@ -3,7 +3,6 @@
 
 .card {
   @include details-card();
-  min-height: 390px;
 }
 
 .pool-icon {
