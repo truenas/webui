@@ -5,7 +5,10 @@
  "rules": {
    "attr-equal-space-after": "never",
    "attr-equal-space-before": "never",
-   "indentation": 2
+   "indentation": {
+    "value": 2,
+    "severity": "error"
+   }
  },
- "excludeFiles": ["./src/index.html"],
+ "excludeFiles": ["./src/index.html"]
 }
