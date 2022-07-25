@@ -134,7 +134,7 @@ export class AlertConfigComponent implements OnInit, AfterViewInit {
                 type: 'checkbox',
                 name: categoryClass.id + '_proactive_support',
                 value: true,
-                inlineLabel: ' ',
+                inlineLabel: true,
                 placeholder: this.translate.instant('Proactive Support'),
               });
             }

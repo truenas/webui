@@ -76,6 +76,7 @@ module.exports = {
         }],
         "@typescript-eslint/no-use-before-define": ["error", "nofunc"],
         "no-prototype-builtins": "off",
+        "no-trailing-spaces": ["error"],
         "@typescript-eslint/unbound-method": "off",
         "@typescript-eslint/explicit-module-boundary-types": "off",
         "@typescript-eslint/no-misused-promises": ["error", { checksVoidReturn: false }],
