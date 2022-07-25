@@ -48,15 +48,6 @@ export class DeviceListComponent implements EntityTableConfig {
     sorting: { columns: this.columns },
   };
 
-  globalConfig = {
-    id: 'config',
-    tooltip: this.translate.instant('Close (return to VM list)'),
-    icon: 'highlight_off',
-    onClick: () => {
-      this.router.navigate(['/', 'vm']);
-    },
-  };
-
   constructor(
     protected router: Router,
     protected aroute: ActivatedRoute,

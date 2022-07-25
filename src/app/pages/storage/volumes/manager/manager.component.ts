@@ -49,7 +49,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
   originalDisks: ManagerDisk[] = [];
   originalSuggestableDisks: ManagerDisk[] = [];
   error: string;
-  @ViewChildren(VdevComponent) vdevComponents: QueryList<VdevComponent> ;
+  @ViewChildren(VdevComponent) vdevComponents: QueryList<VdevComponent>;
   @ViewChild(DatatableComponent, { static: false }) table: DatatableComponent;
   // TODO: Rename to something more readable
   temp: ManagerDisk[] = [];
