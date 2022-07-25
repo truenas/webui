@@ -5,14 +5,12 @@ import {
 import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { filter, pluck } from 'rxjs/operators';
+import { footerHeight, headerHeight } from 'app/modules/common/layouts/admin-layout/admin-layout.component.const';
 import { IxNestedTreeDataSource } from 'app/modules/ix-tree/ix-nested-tree-datasource';
 import { flattenTreeWithFilter } from 'app/modules/ix-tree/utils/flattern-tree-with-filter';
 import { DatasetInTree } from 'app/pages/datasets/store/dataset-in-tree.interface';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
 import { WebSocketService } from 'app/services';
-
-const headerHeight = 48;
-const footerHeight = 45;
 
 @UntilDestroy()
 @Component({

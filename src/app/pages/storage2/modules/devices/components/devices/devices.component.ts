@@ -12,14 +12,12 @@ import { VDevType } from 'app/enums/v-dev-type.enum';
 import { DeviceNestedDataNode, isVDev } from 'app/interfaces/device-nested-data-node.interface';
 import { PoolTopology } from 'app/interfaces/pool.interface';
 import { Disk } from 'app/interfaces/storage.interface';
+import { footerHeight, headerHeight } from 'app/modules/common/layouts/admin-layout/admin-layout.component.const';
 import { IxNestedTreeDataSource } from 'app/modules/ix-tree/ix-nested-tree-datasource';
 import { findInTree } from 'app/modules/ix-tree/utils/find-in-tree.utils';
 import { flattenTreeWithFilter } from 'app/modules/ix-tree/utils/flattern-tree-with-filter';
 import { DevicesStore } from 'app/pages/storage2/modules/devices/stores/devices-store.service';
 import { WebSocketService } from 'app/services';
-
-const headerHeight = 48;
-const footerHeight = 45;
 
 @UntilDestroy()
 @Component({
