@@ -48,6 +48,7 @@ export class DiskHealthCardComponent implements OnInit, OnChanges, OnDestroy {
   @Input() loading = true;
   @Input() diskDictionary: { [key: string]: Disk } = {};
 
+  // Disks temperature related alerts
   private alterts: Alert[];
   private broadcast: Interval;
   private subscribers = 0;
@@ -123,6 +124,7 @@ export class DiskHealthCardComponent implements OnInit, OnChanges, OnDestroy {
 
   private loadAlerts(): void {
     this.ws.call('alert.list').pipe(untilDestroyed(this)).subscribe((res) => {
+      // Should filter with disks temperature category
       this.alterts = res;
     });
   }

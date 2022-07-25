@@ -20,8 +20,9 @@
   <mat-card-content>
     <div class="details-item">
       <div class="label">{{ 'Disks temperature related alerts' | translate }}:</div>
-      <ngx-skeleton-loader *ngIf="isStarting"></ngx-skeleton-loader>
-      <div class="value" *ngIf="!isStarting">{{ diskState.alters | number }}</div>
+      <!-- This should be updated by the Disks temperature related alerts API -->
+      <div class="value" *ngIf="false">{{ diskState.alters | number }}</div>
+      <ngx-skeleton-loader></ngx-skeleton-loader>
     </div>
     <div class="details-item">
       <div class="label">{{ 'Highest Temperature' | translate }}:</div>
