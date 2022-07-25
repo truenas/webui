@@ -44,16 +44,15 @@ export class IxDetailsHeightDirective implements OnInit, OnDestroy, OnChanges {
     this.window.removeEventListener('scroll', this.onScrollHandler, true);
   }
 
-  onScroll(event: Event): void {
-    const eventTarget = event.target as HTMLElement;
-    if (!eventTarget.className.includes(this.ixDetailsHeightParentClass)) {
-      return;
-    }
+  onScroll(): void {
+    const parentElement = this.window.document.getElementsByClassName(
+      this.ixDetailsHeightParentClass,
+    )[0] as HTMLElement;
 
     if (!this.parentPadding) {
       this.parentPadding = parseFloat(
         this.window
-          .getComputedStyle(eventTarget, null)
+          .getComputedStyle(parentElement, null)
           .getPropertyValue('padding-bottom'),
       );
     }
@@ -66,8 +65,8 @@ export class IxDetailsHeightDirective implements OnInit, OnDestroy, OnChanges {
       this.scrollBreakingPoint = this.getScrollBreakingPoint();
     }
 
-    if ((event.target as HTMLElement).scrollTop < this.scrollBreakingPoint) {
-      this.heightCssValue = `calc(100vh - ${this.heightBaseOffset}px + ${eventTarget.scrollTop}px)`;
+    if (parentElement.scrollTop < this.scrollBreakingPoint) {
+      this.heightCssValue = `calc(100vh - ${this.heightBaseOffset}px + ${parentElement.scrollTop}px)`;
     } else {
       this.heightCssValue = `calc(100vh - ${this.heightBaseOffset}px + ${this.scrollBreakingPoint}px)`;
     }
