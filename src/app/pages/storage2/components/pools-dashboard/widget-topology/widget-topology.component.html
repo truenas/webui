@@ -1,4 +1,4 @@
-<mat-card class="card">
+<mat-card class="card" fxLayout="column">
   <mat-card-header>
     <h3 mat-card-title>
       {{ 'Topology' | translate }}
@@ -21,8 +21,8 @@
     >{{ 'Manage Devices' | translate }}</button>
   </mat-card-header>
 
-  <mat-card-content>
-    <div class="content-container">
+  <mat-card-content fxFlex="100">
+    <div class="content-container" fxLayout="column" fxLayoutAlign="space-between">
       <div class="vdev-line">
         <b>{{'Data VDEVs' | translate}}</b>
         <span class="loader-caption" *ngIf="loading"></span>
