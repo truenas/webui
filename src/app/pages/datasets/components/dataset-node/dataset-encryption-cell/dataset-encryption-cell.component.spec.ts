@@ -29,13 +29,15 @@ describe('DatasetEncryptionCellComponent', () => {
           encrypted: true,
           locked: false,
           name: 'root/dataset',
+          id: 'root/dataset',
           encryption_root: 'root/dataset',
         } as Dataset,
       },
     });
 
+    expect(spectator.component.isEncryptionRoot).toEqual(true);
     expect(spectator.query('.encryption-description')).toHaveText('Unlocked');
-    expect(spectator.query('mat-icon')).toHaveText('lock_open');
+    expect(spectator.query('mat-icon')).toHaveAttribute('data-mat-icon-name', 'mdi-lock-open-variant');
   });
 
   it('shows "Unlocked by ancestor" and an icon when ancestor dataset is unlocked and encryption is inherited', () => {
@@ -45,6 +47,7 @@ describe('DatasetEncryptionCellComponent', () => {
           encrypted: true,
           locked: false,
           name: 'root/dataset',
+          id: 'root/dataset',
           encryption_root: 'root',
         } as Dataset,
       },
@@ -52,7 +55,7 @@ describe('DatasetEncryptionCellComponent', () => {
 
     expect(spectator.query('.encryption-description')).toHaveText('Unlocked');
     expect(spectator.query('.encryption-description')).toHaveText('by ancestor');
-    expect(spectator.query('mat-icon')).toHaveText('lock_open'); // TODO: Different icon
+    expect(spectator.query('mat-icon')).toHaveAttribute('data-mat-icon-name', 'mdi-lock-open-variant-outline');
   });
 
   it('shows "Locked" and an icon when dataset is locked', () => {
@@ -62,13 +65,14 @@ describe('DatasetEncryptionCellComponent', () => {
           encrypted: true,
           locked: true,
           name: 'root/dataset',
+          id: 'root/dataset',
           encryption_root: 'root/dataset',
         } as Dataset,
       },
     });
 
     expect(spectator.query('.encryption-description')).toHaveText('Locked');
-    expect(spectator.query('mat-icon')).toHaveText('lock_outline');
+    expect(spectator.query('mat-icon')).toHaveAttribute('data-mat-icon-name', 'mdi-lock');
   });
 
   it('shows "Locked by ancestor" and an icon when ancestor dataset is locked and encryption is inherited', () => {
@@ -78,13 +82,14 @@ describe('DatasetEncryptionCellComponent', () => {
           encrypted: true,
           locked: true,
           name: 'root/dataset',
-          encryption_root: 'root/dataset',
+          id: 'root/dataset',
+          encryption_root: 'root',
         } as Dataset,
       },
     });
 
     expect(spectator.query('.encryption-description')).toHaveText('Locked');
     expect(spectator.query('.encryption-description')).toHaveText('by ancestor');
-    expect(spectator.query('mat-icon')).toHaveText('lock');
+    expect(spectator.query('mat-icon')).toHaveAttribute('data-mat-icon-name', 'mdi-lock-outline');
   });
 });
