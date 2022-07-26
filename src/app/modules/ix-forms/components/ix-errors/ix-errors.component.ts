@@ -16,7 +16,7 @@ import { DefaultValidationErrors } from 'app/enums/default-validation-errors.enu
 })
 export class IxErrorsComponent implements OnChanges {
   @Input() control: AbstractControl;
-  @Input() label: string ;
+  @Input() label: string;
 
   private statusChangeSubscription: Subscription;
   messages: string[] = [];

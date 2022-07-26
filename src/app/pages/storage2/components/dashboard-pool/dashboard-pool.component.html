@@ -24,7 +24,7 @@
   <ix-widget-topology
     [poolState]="pool"
     [loading]="isDisksLoading"
-    [diskDictionary]="diskDictionary" 
+    [diskDictionary]="diskDictionary"
   ></ix-widget-topology>
   <ix-pool-usage-card
     [loading]="isVolumeDataLoading"
@@ -32,5 +32,9 @@
     [volumeData]="volumeData"
   ></ix-pool-usage-card>
   <ix-zfs-health-card [pool]="pool"></ix-zfs-health-card>
-  <ix-disk-health-card [pool]="pool"></ix-disk-health-card>
+  <ix-disk-health-card
+    [poolState]="pool"
+    [loading]="isDisksLoading"
+    [diskDictionary]="diskDictionary"
+  ></ix-disk-health-card>
 </div>
