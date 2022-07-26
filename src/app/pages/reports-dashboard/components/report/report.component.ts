@@ -20,7 +20,6 @@ import { ProductType } from 'app/enums/product-type.enum';
 import { CoreEvent } from 'app/interfaces/events';
 import { ReportingGraph } from 'app/interfaces/reporting-graph.interface';
 import { ReportingAggregationKeys, ReportingData } from 'app/interfaces/reporting.interface';
-import { Theme } from 'app/interfaces/theme.interface';
 import { EmptyConfig, EmptyType } from 'app/modules/entity/entity-empty/entity-empty.component';
 import { WidgetComponent } from 'app/pages/dashboard/components/widget/widget.component';
 import { LineChartComponent } from 'app/pages/reports-dashboard/components/line-chart/line-chart.component';
@@ -213,8 +212,8 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
       filter(Boolean),
       map(() => this.themeService.currentTheme()),
       untilDestroyed(this),
-    ).subscribe((theme: Theme) => {
-      this.chartColors = this.processThemeColors(theme);
+    ).subscribe(() => {
+      this.chartColors = this.themeService.getColorPattern();
     });
 
     this.store$.select(selectTimezone).pipe(untilDestroyed(this)).subscribe((timezone) => {
@@ -254,10 +253,6 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
     const rrdOptions = await this.convertTimespan(zoom.timespan);
     const identifier = changes.report.currentValue.identifiers ? changes.report.currentValue.identifiers[0] : null;
     this.fetchReportData(rrdOptions, changes.report.currentValue, identifier);
-  }
-
-  private processThemeColors(theme: Theme): string[] {
-    return theme.accentColors.map((color) => theme[color]);
   }
 
   setChartInteractive(value: boolean): void {

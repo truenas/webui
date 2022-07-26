@@ -114,3 +114,31 @@ export type PoolExpandParams = [
   id: number,
   params?: { geli: { passphrase: string } },
 ];
+
+export type PoolInstanceParams = [
+  name: string,
+];
+
+export interface PoolInstance {
+  id: number;
+  name: string;
+  guid: string;
+  encrypt: number;
+  encryptkey: string;
+  encryptkey_path: string;
+  is_decrypted: boolean;
+  status: string;
+  path: string;
+  scan: PoolScanUpdate;
+  is_upgraded: boolean;
+  healthy: boolean;
+  warning: boolean;
+  status_detail: string;
+  size: number;
+  allocated: number;
+  free: number;
+  freeing: number;
+  fragmentation: string;
+  autotrim: ZfsProperty<string>;
+  topology: PoolTopology;
+}

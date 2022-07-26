@@ -17,7 +17,6 @@ import {
 import { ThemeUtils } from 'app/core/classes/theme-utils/theme-utils';
 import { CoreEvent } from 'app/interfaces/events';
 import { MemoryStatsEventData } from 'app/interfaces/events/memory-stats-event.interface';
-import { Theme } from 'app/interfaces/theme.interface';
 import { WidgetComponent } from 'app/pages/dashboard/components/widget/widget.component';
 import { WidgetMemoryData } from 'app/pages/dashboard/interfaces/widget-data.interface';
 import { CoreService } from 'app/services/core-service/core.service';
@@ -48,7 +47,6 @@ export class WidgetMemoryComponent extends WidgetComponent implements AfterViewI
   configurable = false;
   chartId = UUID.UUID();
   colorPattern: string[];
-  currentTheme: Theme;
 
   labels: string[] = [this.translate.instant('Free'), this.translate.instant('ZFS Cache'), this.translate.instant('Services')];
 
@@ -136,8 +134,7 @@ export class WidgetMemoryComponent extends WidgetComponent implements AfterViewI
       data: this.parseMemData(data),
     };
     this.memData = config;
-    this.currentTheme = this.themeService.currentTheme();
-    this.colorPattern = this.processThemeColors(this.currentTheme);
+    this.colorPattern = this.themeService.getColorPattern();
     this.isReady = true;
     this.renderChart();
   }
@@ -218,26 +215,14 @@ export class WidgetMemoryComponent extends WidgetComponent implements AfterViewI
 
     // Create the data...
     data.forEach((item, index) => {
-      const bgColor = this.colorPattern[index];
-      const bgColorType = this.utils.getValueType(bgColor);
+      const bgRgb = this.themeService.getRgbBackgroundColorByIndex(index);
 
-      const bgRgb = bgColorType === 'hex' ? this.utils.hexToRgb(bgColor).rgb : this.utils.rgbToArray(bgColor);
-
-      (ds.backgroundColor as ChartColor[]).push(this.rgbToString(bgRgb, 0.85));
-      (ds.borderColor as ChartColor[]).push(this.rgbToString(bgRgb));
+      (ds.backgroundColor as ChartColor[]).push(this.utils.rgbToString(bgRgb, 0.85));
+      (ds.borderColor as ChartColor[]).push(this.utils.rgbToString(bgRgb));
     });
 
     datasets.push(ds);
 
     return datasets;
-  }
-
-  private processThemeColors(theme: Theme): string[] {
-    return theme.accentColors.map((color) => theme[color]);
-  }
-
-  rgbToString(rgb: number[], alpha?: number): string {
-    const a = alpha ? alpha.toString() : '1';
-    return 'rgba(' + rgb.join(',') + ',' + a + ')';
   }
 }

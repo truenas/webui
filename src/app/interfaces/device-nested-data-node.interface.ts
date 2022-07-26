@@ -8,6 +8,7 @@ export interface VDevGroup {
 
 export type DeviceNestedDataNode = VDev | VDevGroup;
 
+// eslint-disable-next-line @typescript-eslint/naming-convention
 export function isVDev(obj: DeviceNestedDataNode): obj is VDev {
   return 'stats' in obj;
 }

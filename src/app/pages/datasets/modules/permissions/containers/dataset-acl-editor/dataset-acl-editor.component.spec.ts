@@ -217,6 +217,8 @@ describe('DatasetAclEditorComponent', () => {
       expect(store.saveAcl).toHaveBeenCalledWith({
         recursive: false,
         traverse: false,
+        applyGroup: false,
+        applyOwner: false,
         owner: 'john',
         ownerGroup: 'johns',
       });

@@ -80,6 +80,7 @@ export class DatasetTreeStore extends ComponentStore<DatasetTreeState> {
               'encryptionroot',
               'keyformat',
               'keystatus',
+              'quota',
             ],
           },
           order_by: ['name'],

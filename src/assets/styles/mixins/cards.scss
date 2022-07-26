@@ -41,7 +41,7 @@
       padding: 0;
     }
   }
-  
+
   ngx-skeleton-loader {
     flex: 1;
   }
@@ -54,38 +54,41 @@
     flex-direction: row;
     flex-wrap: wrap;
     margin-bottom: 4px;
-  
+
     &:last-child {
       margin-bottom: 0;
     }
-  
+
     .label {
       font-weight: bold;
       margin-right: 5px;
       white-space: nowrap;
     }
-  
+
     .value {
       font-weight: normal;
       margin-right: 5px;
       white-space: nowrap;
     }
-  
+
     a {
       color: var(--primary);
       cursor: pointer;
       margin-left: auto;
+      max-width: 50%;
+      overflow: hidden;
       text-decoration: underline;
+      text-overflow: ellipsis;
       white-space: nowrap;
     }
-  
+
     ngx-skeleton-loader {
       display: inline-block;
       flex: 0;
       height: 20px;
       min-width: 30px;
       width: 30%;
-  
+
       ::ng-deep .loader {
         margin-bottom: 0;
       }

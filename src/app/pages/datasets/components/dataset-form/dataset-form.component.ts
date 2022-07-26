@@ -262,14 +262,6 @@ export class DatasetFormComponent implements FormConfiguration {
           value: this.critical,
           min: 0,
           validation: helptext.dataset_form_refquota_critical_validation,
-          relation: [
-            {
-              action: RelationAction.Disable,
-              when: [{
-                name: 'refquota_critical_inherit',
-                value: true,
-              }],
-            }],
         },
         {
           type: 'checkbox',
@@ -368,14 +360,6 @@ export class DatasetFormComponent implements FormConfiguration {
           min: 0,
           value: this.warning,
           validation: helptext.dataset_form_quota_warning_validation,
-          relation: [
-            {
-              action: RelationAction.Disable,
-              when: [{
-                name: 'quota_warning_inherit',
-                value: true,
-              }],
-            }],
         },
         {
           type: 'checkbox',
@@ -397,14 +381,6 @@ export class DatasetFormComponent implements FormConfiguration {
           min: 0,
           value: this.critical,
           validation: helptext.dataset_form_quota_critical_validation,
-          relation: [
-            {
-              action: RelationAction.Disable,
-              when: [{
-                name: 'quota_critical_inherit',
-                value: true,
-              }],
-            }],
         },
         {
           type: 'checkbox',
@@ -755,6 +731,21 @@ export class DatasetFormComponent implements FormConfiguration {
     'algorithm',
   ];
 
+  addOnlyFields = [
+    'refquota',
+    'refquota_warning',
+    'refquota_warning_inherit',
+    'refquota_critical',
+    'refquota_critical_inherit',
+    'refreservation',
+    'quota',
+    'quota_warning',
+    'quota_warning_inherit',
+    'quota_critical',
+    'quota_critical_inherit',
+    'reservation',
+  ];
+
   keyFields = [
     'key',
   ];
@@ -1012,6 +1003,38 @@ export class DatasetFormComponent implements FormConfiguration {
       this.isBasicMode = false;
     });
     this.setBasicMode(this.isBasicMode);
+
+    if (!this.isNew) {
+      // Use separate form when editing
+      this.addOnlyFields.forEach((field) => {
+        this.entityForm.setDisabled(field, true, true);
+      });
+    } else {
+      // If relation is specified in fieldSet, it prevents fields from being hidden.
+      const refquotaWarningInherit = this.entityForm.formGroup.controls['refquota_warning_inherit'];
+      refquotaWarningInherit.valueChanges.pipe(untilDestroyed(this)).subscribe((isChecked) => {
+        this.entityForm.setDisabled('refquota_warning', isChecked);
+      });
+      this.entityForm.setDisabled('refquota_warning', refquotaWarningInherit.value);
+
+      const refquotaCritical = this.entityForm.formGroup.controls['refquota_critical_inherit'];
+      refquotaCritical.valueChanges.pipe(untilDestroyed(this)).subscribe((isChecked) => {
+        this.entityForm.setDisabled('refquota_critical', isChecked);
+      });
+      this.entityForm.setDisabled('refquota_critical', refquotaCritical.value);
+
+      const quotaWarning = this.entityForm.formGroup.controls['quota_warning_inherit'];
+      quotaWarning.valueChanges.pipe(untilDestroyed(this)).subscribe((isChecked) => {
+        this.entityForm.setDisabled('quota_warning', isChecked);
+      });
+      this.entityForm.setDisabled('quota_warning', quotaWarning.value);
+
+      const quotaCritical = this.entityForm.formGroup.controls['quota_critical_inherit'];
+      this.entityForm.formGroup.controls['quota_critical_inherit'].valueChanges.pipe(untilDestroyed(this)).subscribe((isChecked) => {
+        this.entityForm.setDisabled('quota_critical', isChecked);
+      });
+      this.entityForm.setDisabled('quota_critical', quotaCritical.value);
+    }
   }
 
   paramMap: {
@@ -1471,18 +1494,6 @@ export class DatasetFormComponent implements FormConfiguration {
       delete data.special_small_block_size;
     }
 
-    if (data.quota_warning_inherit && this.dataset?.quota_warning) {
-      data.quota_warning = 'INHERIT';
-    }
-    if (data.quota_critical_inherit && this.dataset?.quota_critical) {
-      data.quota_critical = 'INHERIT';
-    }
-    if (data.refquota_warning_inherit && this.dataset?.refquota_warning) {
-      data.refquota_warning = 'INHERIT';
-    }
-    if (data.refquota_critical_inherit && this.dataset?.refquota_critical) {
-      data.refquota_critical = 'INHERIT';
-    }
     delete (data.quota_warning_inherit);
     delete (data.quota_critical_inherit);
     delete (data.refquota_warning_inherit);
