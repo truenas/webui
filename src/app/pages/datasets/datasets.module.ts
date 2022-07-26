@@ -13,6 +13,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { ChartsModule } from 'ng2-charts';
 import { NgxFilesizeModule } from 'ngx-filesize';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
+import { CoreComponents } from 'app/core/core-components.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { CastModule } from 'app/modules/cast/cast.module';
 import { AppCommonModule } from 'app/modules/common/app-common.module';
@@ -75,6 +76,7 @@ import { SpaceManagementChartComponent } from './components/space-management-cha
     NgxSkeletonLoaderModule,
     NgxFilesizeModule,
     CastModule,
+    CoreComponents,
     AppLoaderModule,
   ],
   declarations: [
