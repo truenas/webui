@@ -3,13 +3,13 @@
 
 @mixin details-cards {
   display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
+  overflow: auto;
 
-  > * {
-    flex: 1;
-    max-width: 620px;
-    min-width: 420px;
+  .cards-column {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 50%;
   }
 }
 

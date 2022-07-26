@@ -8,4 +8,6 @@
 
 .cards {
   @include details-cards();
+  height: 100%;
+  overscroll-behavior: contain;
 }
