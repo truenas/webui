@@ -32,6 +32,7 @@ import { AppLoaderService, DialogService, WebSocketService } from 'app/services'
 })
 export class DashboardPoolComponent implements OnInit {
   @Input() pool: Pool;
+  @Input() isLoading: boolean;
 
   volumeData: VolumeData;
   isVolumeDataLoading = false;
@@ -158,5 +159,9 @@ export class DashboardPoolComponent implements OnInit {
       }),
       untilDestroyed(this),
     ).subscribe();
+  }
+
+  counter(i: number): number[] {
+    return new Array(i);
   }
 }
