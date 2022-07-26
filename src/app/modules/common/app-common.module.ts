@@ -10,7 +10,6 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatDividerModule } from '@angular/material/divider';
-import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatListModule } from '@angular/material/list';
 import { MatMenuModule } from '@angular/material/menu';
@@ -46,6 +45,7 @@ import { SearchInputComponent } from 'app/modules/common/search-input/search-inp
 import { TopbarComponent } from 'app/modules/common/topbar/topbar.component';
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
+import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { JobsModule } from 'app/modules/jobs/jobs.module';
 import { LayoutModule } from 'app/modules/layout/layout.module';
 import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
@@ -73,7 +73,7 @@ import { LocaleService } from 'app/services/locale.service';
     MatCheckboxModule,
     MatDialogModule,
     MatDividerModule,
-    MatIconModule,
+    IxIconModule,
     MatInputModule,
     MatListModule,
     MatMenuModule,

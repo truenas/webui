@@ -17,17 +17,17 @@ export class DiskIconComponent {
   get diskIcon(): string {
     if (this.vdev.children.length) {
       if (this.disk.type === DiskType.Hdd) {
-        return 'ix-hdd-mirror';
+        return 'ix:hdd_mirror';
       }
       if (this.disk.type === DiskType.Ssd) {
-        return 'ix-ssd-mirror';
+        return 'ix:ssd_mirror';
       }
     } else {
       if (this.disk.type === DiskType.Hdd) {
-        return 'ix-hdd';
+        return 'ix:hdd';
       }
       if (this.disk.type === DiskType.Ssd) {
-        return 'ix-ssd';
+        return 'ix:ssd';
       }
     }
     return '';

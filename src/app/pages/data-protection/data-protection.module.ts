@@ -5,12 +5,12 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatDialogModule } from '@angular/material/dialog';
-import { MatIconModule } from '@angular/material/icon';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
+import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { SchedulerModule } from 'app/modules/scheduler/scheduler.module';
 import {
   CloudsyncRestoreDialogComponent,
@@ -55,7 +55,7 @@ import { SnapshotTaskComponent } from './snapshot/snapshot-task/snapshot-task.co
     SchedulerModule,
     MatButtonModule,
     MatDialogModule,
-    MatIconModule,
+    IxIconModule,
   ],
   declarations: [
     SnapshotListComponent,

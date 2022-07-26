@@ -71,16 +71,16 @@
                         <li fxLayout="row" fxLayoutAlign="start center" class="line-state">
                           <span class="icon state">
                             <mat-icon
+                              *ngIf="getLinkState(nic) === LinkState.Up"
+                              svgIcon="ix:network_upload_download"
                               [id]="nic.state.name"
                               class="state-info-icon"
-                              svgIcon="network-upload-download"
-                              *ngIf="getLinkState(nic) === LinkState.Up"
                               [matTooltip]="showInOutInfo(nic)"
                             ></mat-icon>
                             <mat-icon
                               *ngIf="getLinkState(nic) !== LinkState.Up"
+                              svgIcon="ix:network_upload_download_disabled"
                               class="state-info-icon"
-                              svgIcon="network-upload-download-disabled"
                             ></mat-icon>
                           </span>
                           <ul *ngIf="getLinkState(nic) === LinkState.Up">
