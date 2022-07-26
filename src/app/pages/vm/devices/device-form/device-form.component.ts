@@ -6,7 +6,6 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { BehaviorSubject, of } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { DatasetType } from 'app/enums/dataset.enum';
 import {
   VmDeviceType, VmDiskMode, VmDisplayType, VmNicType,
 } from 'app/enums/vm.enum';
@@ -103,9 +102,7 @@ export class DeviceFormComponent implements OnInit {
     ),
   );
   readonly zvolProvider = new SimpleAsyncComboboxProvider(
-    this.ws.call('pool.dataset.query', [[['type', '=', DatasetType.Volume]]]).pipe(
-      map((zvols) => zvols.map((zvol) => ({ label: zvol.id, value: `/dev/zvol/${zvol.id}` }))),
-    ),
+    this.ws.call('vm.device.disk_choices').pipe(choicesToOptions()),
   );
 
   readonly fileNodeProvider = this.filesystemService.getFilesystemNodeProvider();

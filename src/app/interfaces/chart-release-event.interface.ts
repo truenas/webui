@@ -10,7 +10,7 @@ export interface ChartReleaseEvent {
   kind: unknown;
   last_timestamp: ApiTimestamp;
   message: string;
-  metadata: unknown;
+  metadata: ChartEventMetadata;
   reason: string;
   related: unknown;
   reporting_component: string;
@@ -43,4 +43,13 @@ export interface ChartRollbackParams {
   recreate_resources?: boolean;
   rollback_snapshot?: boolean;
   item_version: string;
+}
+
+export interface ChartEventMetadata {
+  creation_timestamp?: {
+    $date?: number;
+  };
+  namespace: string;
+  name: string;
+  uid: string;
 }

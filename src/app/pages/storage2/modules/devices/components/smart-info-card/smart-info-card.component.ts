@@ -4,6 +4,7 @@ import {
 import { MatDialog } from '@angular/material/dialog';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
 import _ from 'lodash';
 import { Observable } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
@@ -38,6 +39,7 @@ export class SmartInfoCardComponent implements OnChanges {
   constructor(
     private ws: WebSocketService,
     private matDialog: MatDialog,
+    private translate: TranslateService,
   ) { }
 
   ngOnChanges(): void {
@@ -75,7 +77,11 @@ export class SmartInfoCardComponent implements OnChanges {
 
     this.lastResultsInCategory$ = results$.pipe(
       map((results) => {
-        const lastResultsInCategories = _.uniqBy(results, (result) => result.description);
+        const normalizedResults = results.map((result) => ({
+          ...result,
+          description: this.normalizeDescription(result.description),
+        }));
+        const lastResultsInCategories = _.uniqBy(normalizedResults, (result) => result.description);
         return lastResultsInCategories.slice(0, this.maxResultCategories);
       }),
     );
@@ -86,5 +92,16 @@ export class SmartInfoCardComponent implements OnChanges {
       map((tasks) => tasks.length),
       toLoadingState(),
     );
+  }
+
+  private normalizeDescription(description: string): string {
+    if (description.toLowerCase().includes('short')) {
+      return this.translate.instant('Short');
+    }
+    if (description.toLowerCase().includes('long')) {
+      return this.translate.instant('Long');
+    }
+
+    return description;
   }
 }

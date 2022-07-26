@@ -50,6 +50,7 @@ describe('DatasetTreeStore', () => {
             'encryptionroot',
             'keyformat',
             'keystatus',
+            'quota',
           ],
         },
         order_by: ['name'],

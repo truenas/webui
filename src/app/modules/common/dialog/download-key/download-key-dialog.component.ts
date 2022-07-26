@@ -2,8 +2,8 @@ import { Component } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import helptext from 'app/helptext/storage/volumes/download-key';
-import { AppLoaderService } from 'app/modules/app-loader/app-loader.service';
 import { EntityUtils } from 'app/modules/entity/utils';
+import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import {
   WebSocketService,
   StorageService, DialogService,

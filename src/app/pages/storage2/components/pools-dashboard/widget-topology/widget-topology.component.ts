@@ -25,7 +25,7 @@ export enum TopologyHealthLevel {
   Safe = 'safe',
 }
 
-const missingDev = 'VDEVs are missing';
+const notAssignedDev = 'VDEVs not assigned';
 const mixedDev = 'Mixed Capacity VDEVs';
 
 @UntilDestroy()
@@ -43,12 +43,12 @@ export class WidgetTopologyComponent implements OnInit, OnChanges {
 
   topologyState: TopologyState = {
     health: TopologyHealthLevel.Safe,
-    data: missingDev,
-    metadata: missingDev,
-    log: missingDev,
-    cache: missingDev,
-    spare: missingDev,
-    dedup: missingDev,
+    data: notAssignedDev,
+    metadata: notAssignedDev,
+    log: notAssignedDev,
+    cache: notAssignedDev,
+    spare: notAssignedDev,
+    dedup: notAssignedDev,
   };
 
   get mixedDev(): string {
@@ -98,7 +98,7 @@ export class WidgetTopologyComponent implements OnInit, OnChanges {
   }
 
   private parseDevs(devs: VDev[]): string {
-    let outputString = missingDev;
+    let outputString = notAssignedDev;
     let isMix = false;
     let wide = 0;
     const type = devs[0]?.type;

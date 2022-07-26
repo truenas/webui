@@ -106,7 +106,7 @@ export class ProactiveComponent implements OnInit {
           this.isFormDisabled = true;
           this.form.disable();
           this.cdr.markForCheck();
-          new EntityUtils().handleWsError(null, error, this.dialogService);
+          new EntityUtils().handleWsError(this, error, this.dialogService);
         },
       );
   }

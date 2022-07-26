@@ -311,7 +311,7 @@ export class CertificatesDashComponent implements OnInit {
             });
             this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((res) => {
               this.dialog.closeAll();
-              new EntityUtils().handleWsError(null, res, this.dialogService);
+              new EntityUtils().handleWsError(this, res, this.dialogService);
             });
           });
       },
@@ -373,7 +373,7 @@ export class CertificatesDashComponent implements OnInit {
             });
             this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((res) => {
               this.dialog.closeAll();
-              new EntityUtils().handleWsError(null, res, this.dialogService);
+              new EntityUtils().handleWsError(this, res, this.dialogService);
             });
           });
       },

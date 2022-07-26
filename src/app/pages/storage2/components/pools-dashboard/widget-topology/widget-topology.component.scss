@@ -24,7 +24,7 @@
   }
 
   &.icon-warning {
-    color: var(--orange);
+    color: var(--magenta);
   }
 
   &.icon-faulted {
@@ -36,9 +36,12 @@
   }
 }
 
-.vdev-line {
+.warning {
   display: flex;
-  justify-content: space-between;
+  padding: 0 6px;
+}
+
+.vdev-line {
   margin: 12px 0;
 }
 

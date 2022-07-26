@@ -4,7 +4,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { ProductType, productTypeLabels } from 'app/enums/product-type.enum';
-import { AppLoaderService } from 'app/modules/app-loader/app-loader.service';
+import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { WebSocketService, SystemGeneralService } from 'app/services';
 import { DialogService } from 'app/services/dialog.service';
 import { LocaleService } from 'app/services/locale.service';

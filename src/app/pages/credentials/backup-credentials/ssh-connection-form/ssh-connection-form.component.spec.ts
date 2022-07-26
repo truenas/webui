@@ -9,9 +9,9 @@ import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.u
 import { CipherType } from 'app/enums/cipher-type.enum';
 import { SshConnectionsSetupMethod } from 'app/enums/ssh-connections-setup-method.enum';
 import { KeychainSshCredentials } from 'app/interfaces/keychain-credential.interface';
-import { AppLoaderModule } from 'app/modules/app-loader/app-loader.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
+import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { KeychainCredentialService, WebSocketService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { SshConnectionFormComponent } from './ssh-connection-form.component';

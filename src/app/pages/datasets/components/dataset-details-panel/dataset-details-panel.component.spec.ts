@@ -34,6 +34,7 @@ describe('DatasetDetailsPanelComponent', () => {
     name: 'root/parent/child',
     mountpoint: '/mnt/root/parent/child',
     type: DatasetType.Filesystem,
+    encrypted: true,
   } as Dataset;
   const parentDataset = {
     name: 'root/parent',

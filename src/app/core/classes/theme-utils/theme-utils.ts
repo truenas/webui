@@ -102,6 +102,11 @@ export class ThemeUtils {
     return output.map((str) => parseFloat(str));
   }
 
+  rgbToString(rgb: number[], alpha?: number): string {
+    const a = alpha ? alpha.toString() : '1';
+    return 'rgba(' + rgb.join(',') + ',' + a + ')';
+  }
+
   colorFromMeta(meta: string): string {
     const trimFront = meta.replace('var(--', '');
     const trimmed = trimFront.replace(')', '');

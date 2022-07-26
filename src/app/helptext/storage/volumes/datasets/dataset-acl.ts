@@ -34,11 +34,21 @@ export default {
  attributes. Users created manually or imported from a directory service\
  appear in the drop-down menu.'),
 
+  apply_user: {
+    tooltip: T('Confirm changes to <i>User</i>. To prevent errors, changes to the <i>User</i> \
+are submitted only when this box is set.'),
+  },
+
   dataset_acl_gid_placeholder: T('Group'),
   dataset_acl_gid_tooltip: T('The group which controls the dataset. This\
  group has the same permissions as granted to the <i>group@</i>\
  <i>Who</i>. Groups created manually or imported from a directory\
  service appear in the drop-down menu.'),
+
+  apply_group: {
+    tooltip: T('Confirm changes to <i>Group</i>. To prevent errors, changes to the <i>Group</i> \
+are submitted only when this box is set.'),
+  },
 
   dataset_acl_perms_placeholder: T('Permissions'),
   dataset_acl_perms_tooltip: T('Select permissions to apply to the chosen\

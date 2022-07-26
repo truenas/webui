@@ -31,7 +31,6 @@ import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { QueryParams } from 'app/interfaces/query-api.interface';
 import { ZfsProperty } from 'app/interfaces/zfs-property.interface';
-import { AppLoaderService } from 'app/modules/app-loader/app-loader.service';
 import { EntityFormComponent } from 'app/modules/entity/entity-form/entity-form.component';
 import { FieldConfig, FormSelectConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/modules/entity/entity-form/models/fieldset.interface';
@@ -39,6 +38,7 @@ import { RelationAction } from 'app/modules/entity/entity-form/models/relation-a
 import { forbiddenValues } from 'app/modules/entity/entity-form/validators/forbidden-values-validation';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
+import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { DatasetFormData } from 'app/pages/storage/volumes/datasets/dataset-form/dataset-form-data.interface';
 import { StorageService, WebSocketService } from 'app/services';
 import { DialogService } from 'app/services/dialog.service';

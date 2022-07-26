@@ -57,7 +57,7 @@ export class RsyncConfigureComponent implements OnInit {
       },
       (error) => {
         this.loader.close();
-        new EntityUtils().handleWsError(null, error, this.dialogService);
+        new EntityUtils().handleWsError(this, error, this.dialogService);
       },
     );
   }

@@ -6,7 +6,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { appImagePlaceholder } from 'app/constants/catalog.constants';
 import helptext from 'app/helptext/apps/apps';
 import { UpgradeSummary } from 'app/interfaces/application.interface';
-import { AppLoaderService } from 'app/modules/app-loader/app-loader.service';
+import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { ApplicationsService } from 'app/pages/applications/applications.service';
 import { ChartUpgradeDialogConfig } from 'app/pages/applications/interfaces/chart-upgrade-dialog-config.interface';
 import { DialogService } from 'app/services';

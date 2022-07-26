@@ -18,10 +18,10 @@ import { choicesToOptions } from 'app/helpers/options.helper';
 import { helptextSystemGeneral as helptext } from 'app/helptext/system/general';
 import { SystemGeneralConfig, SystemGeneralConfigUpdate } from 'app/interfaces/system-config.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
-import { AppLoaderService } from 'app/modules/app-loader/app-loader.service';
 import { ipValidator } from 'app/modules/entity/entity-form/validators/ip-validation';
 import { numberValidator } from 'app/modules/entity/entity-form/validators/number-validation';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
+import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import {
   DialogService, SystemGeneralService, WebSocketService,
 } from 'app/services';

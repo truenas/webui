@@ -4,6 +4,11 @@
 
 <div class="container" fxLayoutGap="16px">
   <div class="table-container">
+    <ix-fake-progress-bar
+      class="loader-bar"
+      [loading]="isLoading$ | async"
+    ></ix-fake-progress-bar>
+
     <div class="dataset-tree-search">
       <ix-search-input [disabled]="!dataSource" (search)="onSearch($event)"></ix-search-input>
     </div>

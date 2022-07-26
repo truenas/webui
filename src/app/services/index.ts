@@ -10,7 +10,7 @@ export * from './shell.service';
 export * from './storage.service';
 export * from './task.service';
 export * from './language.service';
-export * from 'app/modules/app-loader/app-loader.service';
+export * from 'app/modules/loader/app-loader.service';
 export * from 'app/services/cloud-credential.service';
 export * from './job.service';
 export * from 'app/services/boot-env.service';
