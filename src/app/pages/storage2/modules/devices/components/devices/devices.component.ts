@@ -118,26 +118,30 @@ export class DevicesComponent implements OnInit {
     this.selectedItem = undefined;
     this.selectedParentItem = undefined;
 
-    if (id && this.dataSource?.data) {
-      findInTree(this.dataSource.data, (dataNode) => {
-        if (dataNode.children?.length && dataNode.guid !== id) {
-          const item = dataNode.children.find((child) => child.guid === id);
-          if (item) {
-            this.selectedItem = item;
-            this.selectedParentItem = dataNode;
-            return true;
-          }
-          return false;
-        }
-
-        if (dataNode.guid === id) {
-          this.selectedItem = dataNode;
-          this.selectedParentItem = undefined;
+    if (!id || !this.treeControl.dataNodes) {
+      return;
+    }
+    findInTree(this.treeControl.dataNodes, (dataNode) => {
+      if (dataNode.children?.length && dataNode.guid !== id) {
+        const item = dataNode.children.find((child) => child.guid === id);
+        if (item) {
+          this.selectedItem = item;
+          this.selectedParentItem = dataNode;
           return true;
         }
         return false;
-      });
-    }
+      }
+
+      if (dataNode.guid === id) {
+        this.selectedItem = dataNode;
+        this.selectedParentItem = undefined;
+        return true;
+      }
+      return false;
+    });
+
+    this.treeControl.expand(this.selectedParentItem);
+    this.cdr.markForCheck();
   }
 
   onRowGroupSelected(dataNodeSelected: DeviceNestedDataNode, _: MouseEvent): void {
