@@ -5,6 +5,7 @@ import {
 import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { filter, pluck } from 'rxjs/operators';
+import { footerHeight, headerHeight } from 'app/modules/common/layouts/admin-layout/admin-layout.component.const';
 import { IxNestedTreeDataSource } from 'app/modules/ix-tree/ix-nested-tree-datasource';
 import { flattenTreeWithFilter } from 'app/modules/ix-tree/utils/flattern-tree-with-filter';
 import { DatasetInTree } from 'app/pages/datasets/store/dataset-in-tree.interface';
@@ -27,6 +28,9 @@ export class DatasetsManagementComponent implements OnInit {
     trackBy: (dataset) => dataset.id,
   });
   readonly hasNestedChild = (_: number, dataset: DatasetInTree): boolean => Boolean(dataset.children?.length);
+  hasConsoleFooter = false;
+  headerHeight = headerHeight;
+  footerHeight = footerHeight;
 
   constructor(
     private ws: WebSocketService,
@@ -39,6 +43,13 @@ export class DatasetsManagementComponent implements OnInit {
     this.datasetStore.loadDatasets();
     this.listenForRouteChanges();
     this.setupTree();
+
+    this.ws
+      .call('system.advanced.config')
+      .pipe(untilDestroyed(this))
+      .subscribe((advancedConfig) => {
+        this.hasConsoleFooter = advancedConfig.consolemsg;
+      });
   }
 
   onSearch(query: string): void {
