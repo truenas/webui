@@ -9,6 +9,7 @@ import * as filesize from 'filesize';
 import * as _ from 'lodash';
 import { Observable } from 'rxjs';
 import { filter, take, tap } from 'rxjs/operators';
+import { CloudsyncProviderName } from 'app/enums/cloudsync-provider-name.enum';
 import { Direction } from 'app/enums/direction.enum';
 import { ExplorerType } from 'app/enums/explorer-type.enum';
 import { TransferMode } from 'app/enums/transfer-mode.enum';
@@ -822,7 +823,9 @@ export class CloudsyncFormComponent implements FormConfiguration {
               }
 
               // update bucket fields name and tooltips based on provider
-              if (item.provider === 'AZUREBLOB' || item.provider === 'HUBIC') {
+              if (
+                item.provider === CloudsyncProviderName.MicrosoftAzure || item.provider === CloudsyncProviderName.Hubic
+              ) {
                 this.bucketField.placeholder = this.translate.instant('Container');
                 this.bucketField.tooltip = this.translate.instant('Select the pre-defined container to use.');
                 this.bucketInputField.placeholder = this.translate.instant('Container');
@@ -877,7 +880,7 @@ export class CloudsyncFormComponent implements FormConfiguration {
               this.setDisabled('bucket_input', true, true);
             }
 
-            if (targetProvider && targetProvider.name === 'GOOGLE_CLOUD_STORAGE') {
+            if (targetProvider && targetProvider.name === CloudsyncProviderName.GoogleCloudStorage) {
               this.setDisabled('bucket_policy_only', false, false);
             } else {
               this.setDisabled('bucket_policy_only', true, true);
