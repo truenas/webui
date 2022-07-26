@@ -4,7 +4,7 @@ import { EMPTY, Observable } from 'rxjs';
 import {
   catchError, switchMap, tap,
 } from 'rxjs/operators';
-import { Dataset } from 'app/interfaces/dataset.interface';
+import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { DatasetInTree } from 'app/pages/datasets/store/dataset-in-tree.interface';
 import { getDatasetAndParentsById } from 'app/pages/datasets/utils/get-datasets-in-tree-by-id.utils';
@@ -35,7 +35,7 @@ export class DatasetTreeStore extends ComponentStore<DatasetTreeState> {
       return null;
     }
 
-    const selectedBranch = getDatasetAndParentsById(state.datasets as Dataset[], state.selectedDatasetId);
+    const selectedBranch = getDatasetAndParentsById(state.datasets as DatasetDetails[], state.selectedDatasetId);
     if (!selectedBranch) {
       return null;
     }
@@ -65,26 +65,7 @@ export class DatasetTreeStore extends ComponentStore<DatasetTreeState> {
         // We don't load every property to improve performance.
         // If you need something for details card, consider loading it there.
         // Otherwise, don't forget to update DatasetInTree interface
-        return this.ws.call('pool.dataset.query', [[], {
-          extra: {
-            flat: false,
-            properties: [
-              'id',
-              'pool',
-              'name',
-              'type',
-              'used',
-              'available',
-              'mountpoint',
-              'encryption',
-              'encryptionroot',
-              'keyformat',
-              'keystatus',
-              'quota',
-            ],
-          },
-          order_by: ['name'],
-        }])
+        return this.ws.call('pool.dataset.details')
           .pipe(
             tap((datasets: DatasetInTree[]) => {
               this.patchState({
