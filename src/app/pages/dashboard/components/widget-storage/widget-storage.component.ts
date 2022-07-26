@@ -6,9 +6,9 @@ import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import filesize from 'filesize';
 import { PoolStatus } from 'app/enums/pool-status.enum';
-import { VDevType } from 'app/enums/v-dev-type.enum';
+import { TopologyItemType } from 'app/enums/v-dev-type.enum';
 import { Pool } from 'app/interfaces/pool.interface';
-import { VDev } from 'app/interfaces/storage.interface';
+import { TopologyItem } from 'app/interfaces/storage.interface';
 import { VolumesData } from 'app/interfaces/volume-data.interface';
 import { WidgetComponent } from 'app/pages/dashboard/components/widget/widget.component';
 
@@ -200,15 +200,15 @@ export class WidgetStorageComponent extends WidgetComponent implements AfterView
 
     if (pool && pool.topology) {
       const unhealthy: string[] = []; // Disks with errors
-      pool.topology.data.forEach((item: VDev) => {
-        if (item.type === VDevType.Disk) {
+      pool.topology.data.forEach((item: TopologyItem) => {
+        if (item.type === TopologyItemType.Disk) {
           const diskErrors = item.stats.read_errors + item.stats.write_errors + item.stats.checksum_errors;
 
           if (diskErrors > 0) {
             unhealthy.push(item.disk);
           }
         } else {
-          item.children.forEach((device: VDev) => {
+          item.children.forEach((device) => {
             const diskErrors = device.stats.read_errors + device.stats.write_errors + device.stats.checksum_errors;
 
             if (diskErrors > 0) {
@@ -243,7 +243,7 @@ export class WidgetStorageComponent extends WidgetComponent implements AfterView
     if (pool && pool.topology) {
       let total = 0;
       pool.topology.data.forEach((item) => {
-        if (item.type === VDevType.Disk) {
+        if (item.type === TopologyItemType.Disk) {
           total++;
         } else {
           total += item.children.length;

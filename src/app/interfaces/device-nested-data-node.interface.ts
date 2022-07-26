@@ -1,14 +1,13 @@
-import { VDev } from 'app/interfaces/storage.interface';
+import { TopologyItem } from 'app/interfaces/storage.interface';
 
 export interface VDevGroup {
-  disk: string;
+  group: string;
   guid: string;
-  children: VDev[];
+  children: TopologyItem[];
 }
 
-export type DeviceNestedDataNode = VDev | VDevGroup;
+export type DeviceNestedDataNode = TopologyItem | VDevGroup;
 
-// eslint-disable-next-line @typescript-eslint/naming-convention
-export function isVDev(obj: DeviceNestedDataNode): obj is VDev {
-  return 'stats' in obj;
+export function isVdevGroup(node: DeviceNestedDataNode): node is VDevGroup {
+  return 'group' in node;
 }

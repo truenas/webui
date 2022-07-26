@@ -17,10 +17,10 @@ import { TranslateService } from '@ngx-translate/core';
 import filesize from 'filesize';
 import { styler, tween } from 'popmotion';
 import { PoolStatus } from 'app/enums/pool-status.enum';
-import { VDevType } from 'app/enums/v-dev-type.enum';
-import { VDevStatus } from 'app/enums/vdev-status.enum';
+import { TopologyItemType } from 'app/enums/v-dev-type.enum';
+import { TopologyItemStatus } from 'app/enums/vdev-status.enum';
 import { Pool, PoolTopologyCategory } from 'app/interfaces/pool.interface';
-import { Disk, VDev } from 'app/interfaces/storage.interface';
+import { Disk, TopologyItem } from 'app/interfaces/storage.interface';
 import { VolumeData } from 'app/interfaces/volume-data.interface';
 import { WidgetComponent } from 'app/pages/dashboard/components/widget/widget.component';
 import { WebSocketService } from 'app/services';
@@ -55,13 +55,12 @@ enum PoolHealthLevel {
   ],
 })
 export class WidgetPoolComponent extends WidgetComponent implements OnInit, AfterViewInit, OnDestroy, OnChanges {
-  // eslint-disable-next-line @typescript-eslint/naming-convention
-  readonly VDevStatus = VDevStatus;
+  readonly TopologyItemStatus = TopologyItemStatus;
   @Input() poolState: Pool;
   @Input() volumeData: VolumeData;
+
   @ViewChild('carousel', { static: true }) carousel: ElementRef;
   @ViewChild('carouselparent', { static: false }) carouselParent: ElementRef;
-
   @ViewChild('overview', { static: false }) overview: TemplateRef<void>;
   @ViewChild('data', { static: false }) data: TemplateRef<void>;
   @ViewChild('disks', { static: false }) disks: TemplateRef<void>;
@@ -97,7 +96,7 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
     if (this.poolState && this.poolState.topology) {
       let total = 0;
       this.poolState.topology.data.forEach((item) => {
-        if (item.type === VDevType.Disk) {
+        if (item.type === TopologyItemType.Disk) {
           total++;
         } else {
           total += item.children.length;
@@ -113,7 +112,7 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
       const unhealthy: string[] = []; // Disks with errors
       // TODO: Check if this `item.read_errors` and related should read from `stats`
       this.poolState.topology.data.forEach((item: any) => {
-        if (item.type === VDevType.Disk) {
+        if (item.type === TopologyItemType.Disk) {
           const diskErrors = item.read_errors + item.write_errors + item.checksum_errors;
 
           if (diskErrors > 0) {
@@ -315,7 +314,7 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
     slideIndex: number,
     dataIndex?: number,
     topology?: PoolTopologyCategory,
-    vdev?: VDev,
+    vdev?: TopologyItem,
   ): void {
     if (name !== 'overview' && !verified) { return; }
     const dataSource = vdev || { children: this.poolState.topology[topology] };

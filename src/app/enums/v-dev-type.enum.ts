@@ -1,6 +1,8 @@
-export enum VDevType {
+export enum TopologyItemType {
   Disk = 'DISK',
   Mirror = 'MIRROR',
   Spare = 'SPARE',
-  Replacing = 'REPLACING',
+  Raidz1 = 'RAIDZ1',
+  Raidz2 = 'RAIDZ2',
+  Raidz3 = 'RAIDZ3',
 }

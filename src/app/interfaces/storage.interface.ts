@@ -3,24 +3,50 @@ import { DiskPowerLevel } from 'app/enums/disk-power-level.enum';
 import { DiskStandby } from 'app/enums/disk-standby.enum';
 import { DiskType } from 'app/enums/disk-type.enum';
 import { DiskWipeMethod } from 'app/enums/disk-wipe-method.enum';
-import { VDevStatus } from 'app/enums/vdev-status.enum';
+import { TopologyItemType } from 'app/enums/v-dev-type.enum';
+import { TopologyItemStatus } from 'app/enums/vdev-status.enum';
 import { ZfsProperty } from './zfs-property.interface';
 
 // As returned by pool.query under topology[<vdevtype>]
-// TODO: Name may be misleading for nested items, where it's actually a Disk
+export type TopologyItem = VDev | TopologyDisk;
+
 export interface VDev {
-  type: string; // TODO: Actually a VDevType
-  path: string;
+  type: TopologyItemType.Spare
+  | TopologyItemType.Mirror
+  | TopologyItemType.Raidz1
+  | TopologyItemType.Raidz2
+  | TopologyItemType.Raidz3;
+  children: TopologyDisk[];
   guid: string;
-  status: VDevStatus;
-  children: this[];
-  stats: VDevStats;
-  device?: string;
-  disk?: string;
-  name?: string;
+  name: string;
+  path: string;
+  stats: TopologyItemStats;
+  status: TopologyItemStatus;
+  unavail_disk: unknown;
 }
 
-export interface VDevStats {
+export interface TopologyDisk {
+  type: TopologyItemType.Disk;
+  children: TopologyDisk[];
+  device: string;
+  disk: string;
+  guid: string;
+  name: string;
+  path: string;
+  stats: TopologyItemStats;
+  status: TopologyItemStatus;
+  unavail_disk: unknown;
+}
+
+export function isTopologyDisk(topologyItem: TopologyItem): topologyItem is TopologyDisk {
+  return topologyItem.type === TopologyItemType.Disk;
+}
+
+export function isVdev(topologyItem: TopologyItem): topologyItem is VDev {
+  return topologyItem.type !== TopologyItemType.Disk;
+}
+
+export interface TopologyItemStats {
   timestamp: number;
   read_errors: number;
   write_errors: number;

@@ -21,15 +21,15 @@ import { DevicesComponent } from 'app/pages/storage2/modules/devices/components/
 import {
   DiskDetailsPanelComponent,
 } from 'app/pages/storage2/modules/devices/components/disk-details-panel/disk-details-panel.component';
-import { DiskIconComponent } from 'app/pages/storage2/modules/devices/components/disk-icon/disk-icon.component';
 import { DiskInfoCardComponent } from 'app/pages/storage2/modules/devices/components/disk-info-card/disk-info-card.component';
-import { DiskNodeComponent } from 'app/pages/storage2/modules/devices/components/disk-node/disk-node.component';
 import {
   HardwareDiskEncryptionComponent,
 } from 'app/pages/storage2/modules/devices/components/hardware-disk-encryption/hardware-disk-encryption.component';
 import {
   ManageDiskSedDialogComponent,
 } from 'app/pages/storage2/modules/devices/components/hardware-disk-encryption/manage-disk-sed-dialog/manage-disk-sed-dialog.component';
+import { TopologyItemIconComponent } from 'app/pages/storage2/modules/devices/components/topology-item-icon/topology-item-icon.component';
+import { TopologyItemNodeComponent } from 'app/pages/storage2/modules/devices/components/topology-item-node/topology-item-node.component';
 import { VDevGroupNodeComponent } from 'app/pages/storage2/modules/devices/components/vdev-group-node/vdev-group-node.component';
 import { ZfsInfoCardComponent } from 'app/pages/storage2/modules/devices/components/zfs-info-card/zfs-info-card.component';
 import { routes } from 'app/pages/storage2/modules/devices/devices.routing';
@@ -69,10 +69,10 @@ import { SmartInfoCardComponent } from './components/smart-info-card/smart-info-
     HardwareDiskEncryptionComponent,
     ManageDiskSedDialogComponent,
     SmartInfoCardComponent,
-    DiskNodeComponent,
+    TopologyItemNodeComponent,
     ZfsInfoCardComponent,
     VDevGroupNodeComponent,
-    DiskIconComponent,
+    TopologyItemIconComponent,
   ],
   providers: [
     DevicesStore,

@@ -1,12 +1,20 @@
 import { PoolStatus } from 'app/enums/pool-status.enum';
-import { PoolScanUpdate, PoolTopology } from 'app/interfaces/pool.interface';
-import { VDev } from 'app/interfaces/storage.interface';
+import { TopologyItemStatus } from 'app/enums/vdev-status.enum';
+import { PoolScanUpdate } from 'app/interfaces/pool.interface';
+import { TopologyItemStats } from 'app/interfaces/storage.interface';
 import { ZfsProperty } from 'app/interfaces/zfs-property.interface';
 
 export interface BootPoolState {
   error_count: number;
   features: BootPoolFeatureItem[];
-  groups: PoolTopology;
+  groups: {
+    cache: BoolPoolTopologyItem[];
+    data: BoolPoolTopologyItem[];
+    dedup: BoolPoolTopologyItem[];
+    log: BoolPoolTopologyItem[];
+    spare: BoolPoolTopologyItem[];
+    special: BoolPoolTopologyItem[];
+  };
   guid: string;
   healthy: true;
   hostname: string;
@@ -19,11 +27,22 @@ export interface BootPoolState {
     health: ZfsProperty<PoolStatus>;
   };
   root_dataset: BootPoolRootDataset;
-  root_vdev: VDev;
+  root_vdev: BoolPoolTopologyItem;
   scan: PoolScanUpdate;
   status: string; // ONLINE
   status_code: string; // FEAT_DISABLED
   status_detail: string;
+}
+
+// This is very similar to a TopologyItem, but middleware returns lowercase `type` for some reason.
+export interface BoolPoolTopologyItem {
+  children: BoolPoolTopologyItem[];
+  guid: string;
+  name: string;
+  path: string;
+  stats: TopologyItemStats;
+  status: TopologyItemStatus;
+  type: string;
 }
 
 export interface BootPoolRootDataset {

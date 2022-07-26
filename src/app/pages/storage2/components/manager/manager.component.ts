@@ -18,7 +18,7 @@ import helptext from 'app/helptext/storage/volumes/manager/manager';
 import { Job } from 'app/interfaces/job.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { CreatePool, Pool, UpdatePool } from 'app/interfaces/pool.interface';
-import { VDev } from 'app/interfaces/storage.interface';
+import { TopologyDisk } from 'app/interfaces/storage.interface';
 import { DownloadKeyDialogComponent } from 'app/modules/common/dialog/download-key/download-key-dialog.component';
 import { DialogFormConfiguration } from 'app/modules/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/modules/entity/entity-dialog/entity-dialog.component';
@@ -271,11 +271,11 @@ export class ManagerComponent implements OnInit, AfterViewInit {
         }
         this.firstDataVdevDisknum = res[0].topology.data[0].children.length;
 
-        let firstDisk: VDev;
+        let firstDisk: TopologyDisk;
         if (this.firstDataVdevDisknum === 0 && this.firstDataVdevType === 'disk') {
           this.firstDataVdevDisknum = 1;
           this.firstDataVdevType = 'stripe';
-          firstDisk = res[0].topology.data[0];
+          firstDisk = res[0].topology.data[0] as TopologyDisk;
         } else {
           firstDisk = res[0].topology.data[0].children[0];
         }

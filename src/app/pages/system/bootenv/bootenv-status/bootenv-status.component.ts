@@ -4,8 +4,8 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { TreeNode } from 'primeng/api';
 import { ApiTimestamp } from 'app/interfaces/api-date.interface';
-import { BootPoolState } from 'app/interfaces/boot-pool-state.interface';
-import { VDev } from 'app/interfaces/storage.interface';
+import { BoolPoolTopologyItem, BootPoolState } from 'app/interfaces/boot-pool-state.interface';
+import { TopologyDisk, TopologyItem } from 'app/interfaces/storage.interface';
 import { EntityTreeTable } from 'app/modules/entity/entity-tree-table/entity-tree-table.model';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
@@ -111,7 +111,7 @@ export class BootStatusListComponent implements OnInit {
     );
   }
 
-  parseData(data: VDev | BootPoolState, category?: string, bootPool?: VDev): PoolDiskInfo {
+  parseData(data: BoolPoolTopologyItem | BootPoolState, bootPool?: BoolPoolTopologyItem): PoolDiskInfo {
     let stats = {
       read_errors: 0,
       write_errors: 0,
@@ -123,21 +123,21 @@ export class BootStatusListComponent implements OnInit {
     }
 
     let name = (data as BootPoolState).name;
-    if ('type' in data && data.type !== 'disk') {
+    if ('type' in data && (data as any).type !== 'disk') {
       name = data.type;
     }
     // use path as the device name if the device name is null
-    if (!(data as VDev).device) {
-      (data as VDev).device = (data as VDev).path;
+    if (!(data as TopologyDisk).device) {
+      (data as TopologyDisk).device = (data as TopologyItem).path;
     }
 
     const item: PoolDiskInfo = {
-      name: name || (data as VDev).device,
+      name: name || (data as TopologyDisk).device,
       read: stats.read_errors ? stats.read_errors : 0,
       write: stats.write_errors ? stats.write_errors : 0,
       checksum: stats.checksum_errors ? stats.checksum_errors : 0,
       status: data.status,
-      path: (data as VDev).path,
+      path: (data as TopologyItem).path,
     };
 
     let actions: {
@@ -201,15 +201,15 @@ export class BootStatusListComponent implements OnInit {
     return item;
   }
 
-  parseTopology(data: VDev, category: string, parent?: VDev): TreeNode {
+  parseTopology(data: BoolPoolTopologyItem, parent?: BoolPoolTopologyItem): TreeNode {
     const node: TreeNode = {};
-    node.data = this.parseData(data, category, parent);
+    node.data = this.parseData(data, parent);
     node.expanded = true;
     node.children = [];
 
     if (data.children) {
       node.children = data.children.map((vdev) => {
-        return this.parseTopology(vdev, category, parent);
+        return this.parseTopology(vdev, parent);
       });
     }
     delete node.data.children;
@@ -224,7 +224,7 @@ export class BootStatusListComponent implements OnInit {
     node.children = [];
 
     node.children = pool.groups.data.map((vdev) => {
-      return this.parseTopology(vdev, 'data', vdev);
+      return this.parseTopology(vdev, vdev);
     });
 
     delete node.data.children;
