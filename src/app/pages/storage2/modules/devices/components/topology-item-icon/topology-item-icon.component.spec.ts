@@ -1,15 +1,18 @@
 import { MatIcon } from '@angular/material/icon';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { DiskType } from 'app/enums/disk-type.enum';
-import { Disk, TopologyItem } from 'app/interfaces/storage.interface';
-import { TopologyItemIconComponent } from 'app/pages/storage2/modules/devices/components/topology-item-icon/topology-item-icon.component';
+import { TopologyItemType } from 'app/enums/v-dev-type.enum';
+import { Disk, TopologyDisk, VDev } from 'app/interfaces/storage.interface';
+import {
+  TopologyItemIconComponent,
+} from 'app/pages/storage2/modules/devices/components/topology-item-icon/topology-item-icon.component';
 
 describe('TopologyItemIconComponent', () => {
   let spectator: Spectator<TopologyItemIconComponent>;
   const diskSsd = { type: DiskType.Ssd } as Disk;
   const diskHdd = { type: DiskType.Hdd } as Disk;
-  const vdevDisk = { children: [] } as TopologyItem;
-  const vdevMirror = { children: [{}] } as TopologyItem;
+  const vdevDisk = { type: TopologyItemType.Disk, children: [] } as TopologyDisk;
+  const vdevMirror = { type: TopologyItemType.Mirror, children: [{}] } as VDev;
 
   const createComponent = createComponentFactory({
     component: TopologyItemIconComponent,
