@@ -239,8 +239,10 @@ export class AppSchemaService {
           subscription.add(this.addFormControls(subquestion, formGroup, config));
           if (subquestion.schema.default === schema.show_subquestions_if) {
             (formGroup.controls[subquestion.variable] as CustomUntypedFormField).hidden = false;
+            formGroup.controls[subquestion.variable].enable();
           } else {
             (formGroup.controls[subquestion.variable] as CustomUntypedFormField).hidden = true;
+            formGroup.controls[subquestion.variable].disable();
           }
         });
         subscription.add(newFormControl.valueChanges
@@ -249,8 +251,10 @@ export class AppSchemaService {
               if (formGroup.controls[subquestion.variable].parent.enabled) {
                 if (value === schema.show_subquestions_if) {
                   (formGroup.controls[subquestion.variable] as CustomUntypedFormField).hidden = false;
+                  formGroup.controls[subquestion.variable].enable();
                 } else {
                   (formGroup.controls[subquestion.variable] as CustomUntypedFormField).hidden = true;
+                  formGroup.controls[subquestion.variable].disable();
                 }
               }
             });
@@ -308,6 +312,7 @@ export class AppSchemaService {
 
     if (schema.hidden) {
       (formGroup.controls[chartSchemaNode.variable] as CustomUntypedFormField).hidden = true;
+      formGroup.controls[chartSchemaNode.variable].disable();
     }
 
     if (schema.show_if && !schema.hidden) {
@@ -320,19 +325,23 @@ export class AppSchemaService {
         if (!formGroup.controls[relation.fieldName]) {
           formGroup.addControl(relation.fieldName, new CustomUntypedFormControl());
           (formGroup.controls[relation.fieldName] as CustomUntypedFormField).hidden = true;
+          formGroup.controls[relation.fieldName].disable();
         }
         switch (relation.operatorName) {
           case '=':
             if (!_.isEqual(formGroup.controls[relation.fieldName].value, relation.operatorValue)) {
               (formGroup.controls[chartSchemaNode.variable] as CustomUntypedFormField).hidden = true;
+              formGroup.controls[chartSchemaNode.variable].disable();
             }
             subscription.add(formGroup.controls[relation.fieldName].valueChanges
               .subscribe((value) => {
                 if (value !== null && formGroup.controls[chartSchemaNode.variable].parent.enabled) {
                   if (_.isEqual(value, relation.operatorValue)) {
                     (formGroup.controls[chartSchemaNode.variable] as CustomUntypedFormField).hidden = false;
+                    formGroup.controls[chartSchemaNode.variable].enable();
                   } else {
                     (formGroup.controls[chartSchemaNode.variable] as CustomUntypedFormField).hidden = true;
+                    formGroup.controls[chartSchemaNode.variable].disable();
                   }
                 }
               }));
@@ -340,14 +349,17 @@ export class AppSchemaService {
           case '!=':
             if (_.isEqual(formGroup.controls[relation.fieldName].value, relation.operatorValue)) {
               (formGroup.controls[chartSchemaNode.variable] as CustomUntypedFormField).hidden = true;
+              formGroup.controls[chartSchemaNode.variable].disable();
             }
             subscription.add(formGroup.controls[relation.fieldName].valueChanges
               .subscribe((value) => {
                 if (value !== null && formGroup.controls[chartSchemaNode.variable].parent.enabled) {
                   if (!_.isEqual(value, relation.operatorValue)) {
                     (formGroup.controls[chartSchemaNode.variable] as CustomUntypedFormField).hidden = false;
+                    formGroup.controls[chartSchemaNode.variable].enable();
                   } else {
                     (formGroup.controls[chartSchemaNode.variable] as CustomUntypedFormField).hidden = true;
+                    formGroup.controls[chartSchemaNode.variable].disable();
                   }
                 }
               }));
