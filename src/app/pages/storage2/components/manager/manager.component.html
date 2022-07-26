@@ -17,7 +17,14 @@
               </div>
 
               <div class="full-width">
-                <input matInput type="text" name="poolname" id="pool-manager__name-input-field" [(ngModel)]="name" (input)="checkPoolName()" required>
+                <input
+                  matInput
+                  type="text"
+                  name="poolname"
+                  id="pool-manager__name-input-field"
+                  [formControl]="nameControl"
+                  (input)="checkPoolName()"
+                >
               </div>
             </div>
 
@@ -25,7 +32,7 @@
               <mat-checkbox
                 color="primary"
                 id="pool-manager__encryption-checkbox"
-                [(ngModel)]="isEncrypted"
+                [formControl]="isEncryptedControl"
                 class="form-control"
                 (change)="isEncryptedChecked()"
               >
@@ -34,7 +41,7 @@
               <ix-tooltip class="volumeTooltip" [message]="encryptionTooltip | translate"></ix-tooltip>
             </div>
 
-            <div *ngIf="isEncrypted" fxFlex="30%" class="inline form-element encryption-select">
+            <div *ngIf="isEncryptedControl.value" fxFlex="30%" class="inline form-element encryption-select">
               <div class="label-container">
                 <label class="label input-text">
                   {{ 'Encryption Standard' | translate }}*
@@ -44,7 +51,7 @@
               <mat-form-field class="full-width">
                 <mat-select
                   id="pool-manager__encryption_algorithm-select"
-                  [(ngModel)]="encryptionAlgorithm"
+                  [formControl]="encryptionAlgorithmControl"
                   class="form-control"
                   [placeholder]="'Encryption Algorithm' | translate"
                 >
@@ -155,9 +162,9 @@
         <ng-template #extend>
           <div>
             <mat-form-field>
-              <input id="pool-manager__extend-name-input-field" matInput [placeholder]="'Name' | translate" [value]="name" disabled>
+              <input id="pool-manager__extend-name-input-field" matInput [placeholder]="'Name' | translate" [value]="nameControl.value" disabled>
             </mat-form-field>
-            <mat-error *ngIf="isEncrypted" class="adjust-upward">{{"Adding Vdevs to an encrypted pool resets the passphrase and recovery key!" | translate }}</mat-error>
+            <mat-error *ngIf="isEncryptedControl.value" class="adjust-upward">{{"Adding Vdevs to an encrypted pool resets the passphrase and recovery key!" | translate }}</mat-error>
             <div>
               <div class="button-bar">
                 <div><button id="pool-manager__reset-layout-button" mat-button class="btn btn-accent mat-accent" [disabled]="!dirty" (click)="resetLayout()">{{"Reset Layout" | translate}}</button></div>
@@ -370,7 +377,7 @@
                 matInput
                 id="pool-manager__nameFilter"
                 type="text"
-                [(ngModel)]="nameFilterField"
+                [formControl]="nameFilterControl"
                 [placeholder]="'Filter disks by name' | translate"
                 (keyup)="updateFilter($event)"
               />
@@ -381,7 +388,7 @@
                 matInput
                 id="pool-manager__capacityFilter"
                 type="text"
-                [(ngModel)]="capacityFilterField"
+                [formControl]="capacityFilterControl"
                 [placeholder]="'Filter disks by capacity' | translate"
                 (keyup)="updateFilter($event)"
               />
@@ -426,7 +433,7 @@
       <div *ngIf="logVdevTypeWarning" class="size-message orange" [innerHTML]="logVdevTypeWarning"></div>
       <div *ngIf="error" class="size-message red" [innerHTML]="error"></div>
       <div class="forceCreateCheckbox" *ngIf="hasSavableErrors">
-        <mat-checkbox color="primary" id="pool-manager__force-submit-checkbox" [(ngModel)]="force" (click)="forceCheckboxChecked()">{{'Force' | translate}}</mat-checkbox>
+        <mat-checkbox color="primary" id="pool-manager__force-submit-checkbox" [formControl]="forceControl" (click)="forceCheckboxChecked()">{{'Force' | translate}}</mat-checkbox>
       </div>
       <div class="buttons" id="pool-manager__button-group">
         <button id="pool-manager__create-button" mat-button name="create-button" class="btn btn-primary" (click)="checkSubmit()" color="primary" [disabled]="!canSave()">{{submitTitle | translate }}</button>

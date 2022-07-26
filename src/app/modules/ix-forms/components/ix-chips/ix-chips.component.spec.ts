@@ -1,9 +1,7 @@
 import { HarnessLoader, parallel, TestKey } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { fakeAsync } from '@angular/core/testing';
-import {
-  FormsModule, NgControl, ReactiveFormsModule, Validators,
-} from '@angular/forms';
+import { NgControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatAutocompleteHarness } from '@angular/material/autocomplete/testing';
 import { MatChipsModule } from '@angular/material/chips';
@@ -26,7 +24,6 @@ describe('IxChipsComponent', () => {
     component: IxChipsComponent,
     imports: [
       ReactiveFormsModule,
-      FormsModule,
       MatAutocompleteModule,
       MatChipsModule,
       TooltipModule,
