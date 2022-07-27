@@ -9,6 +9,7 @@ import * as filesize from 'filesize';
 import * as _ from 'lodash';
 import { Observable } from 'rxjs';
 import { filter, take, tap } from 'rxjs/operators';
+import { CloudsyncProviderName } from 'app/enums/cloudsync-provider-name.enum';
 import { Direction } from 'app/enums/direction.enum';
 import { ExplorerType } from 'app/enums/explorer-type.enum';
 import { TransferMode } from 'app/enums/transfer-mode.enum';
@@ -209,6 +210,15 @@ export class CloudsyncFormComponent implements FormConfiguration {
             allowDrag: true,
             useVirtualScroll: false,
           },
+          isHidden: true,
+          disabled: true,
+        },
+        {
+          type: 'checkbox',
+          name: 'bucket_policy_only',
+          placeholder: helptext.bucket_policy_only_placeholder,
+          tooltip: helptext.bucket_policy_only_tooltip,
+          value: false,
           isHidden: true,
           disabled: true,
         },
@@ -521,6 +531,7 @@ export class CloudsyncFormComponent implements FormConfiguration {
       attributes: {
         bucket,
         folder: node.data.name,
+        bucket_policy_only: true,
       },
       args: '',
     };
@@ -635,6 +646,7 @@ export class CloudsyncFormComponent implements FormConfiguration {
     this.bucketInputField = this.fieldSets.config('bucket_input') as FormInputConfig;
     this.setDisabled('bucket', true, true);
     this.setDisabled('bucket_input', true, true);
+    this.setDisabled('bucket_policy_only', true, true);
     this.cloudcredentialService.getCloudsyncCredentials().then((credentials) => {
       credentials.forEach((item) => {
         this.credentialsField.options.push({ label: item.name + ' (' + item.provider + ')', value: item.id });
@@ -769,6 +781,7 @@ export class CloudsyncFormComponent implements FormConfiguration {
       }
       this.setDisabled('bucket', true, true);
       this.setDisabled('bucket_input', true, true);
+      this.setDisabled('bucket_policy_only', true, true);
       // reset folder tree view
       if (!this.folderDestinationField.disabled) {
         if (this.folderDestinationField.customTemplateStringOptions.explorer) {
@@ -806,7 +819,9 @@ export class CloudsyncFormComponent implements FormConfiguration {
               }
 
               // update bucket fields name and tooltips based on provider
-              if (item.provider == 'AZUREBLOB' || item.provider == 'HUBIC') {
+              if (
+                item.provider === CloudsyncProviderName.MicrosoftAzure || item.provider === CloudsyncProviderName.Hubic
+              ) {
                 this.bucketField.placeholder = this.translate.instant('Container');
                 this.bucketField.tooltip = this.translate.instant('Select the pre-defined container to use.');
                 this.bucketInputField.placeholder = this.translate.instant('Container');
@@ -859,6 +874,12 @@ export class CloudsyncFormComponent implements FormConfiguration {
             } else {
               this.setDisabled('bucket', true, true);
               this.setDisabled('bucket_input', true, true);
+            }
+
+            if (targetProvider && targetProvider.name === CloudsyncProviderName.GoogleCloudStorage) {
+              this.setDisabled('bucket_policy_only', false, false);
+            } else {
+              this.setDisabled('bucket_policy_only', true, true);
             }
 
             const taskSchema = _.find(this.providers, { name: item.provider }) ? _.find(this.providers, { name: item.provider })['task_schema'] : [];
@@ -1060,6 +1081,11 @@ export class CloudsyncFormComponent implements FormConfiguration {
     if (value.bucket_input != undefined) {
       attributes['bucket'] = value.bucket_input;
       delete value.bucket_input;
+    }
+
+    if (value.bucket_policy_only !== undefined) {
+      attributes['bucket_policy_only'] = value.bucket_policy_only;
+      delete value.bucket_policy_only;
     }
 
     if (value.task_encryption != undefined) {
