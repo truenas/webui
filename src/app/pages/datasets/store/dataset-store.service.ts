@@ -62,9 +62,6 @@ export class DatasetTreeStore extends ComponentStore<DatasetTreeState> {
         });
       }),
       switchMap(() => {
-        // We don't load every property to improve performance.
-        // If you need something for details card, consider loading it there.
-        // Otherwise, don't forget to update DatasetInTree interface
         return this.ws.call('pool.dataset.details')
           .pipe(
             tap((datasets: DatasetInTree[]) => {
