@@ -175,4 +175,6 @@ export default {
 
   cloudsync_task_add: T('Add Cloud Sync Task'),
   cloudsync_task_edit: T('Edit Cloud Sync Task'),
+
+  empty_src_dirs_placeholder: T('Create empty source dirs on destination after sync'),
 };
