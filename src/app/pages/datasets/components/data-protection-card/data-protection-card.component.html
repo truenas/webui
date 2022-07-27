@@ -1,0 +1,53 @@
+<mat-card class="card">
+  <mat-card-header>
+    <h3 mat-card-title>{{ 'Data Protection' | translate }}</h3>
+    <a
+      mat-button
+      (click)="addSnapshot()"
+    >
+      {{ 'Create Snapshot' | translate }}
+    </a>
+  </mat-card-header>
+  <mat-card-content>
+    <div class="details-item">
+      <div class="label">{{ 'Total Snapshots' | translate }}:</div>
+      <div class="value">{{ dataset.snapshot_count }}</div>
+      <a
+        class="action"
+        [routerLink]="['/datasets/snapshots']"
+      >{{ 'Manage Snapshots' | translate }}</a>
+    </div>
+    <div class="details-item">
+      <div class="label">{{ 'Snapshot Tasks' | translate }}:</div>
+      <div class="value">{{ dataset.snapshot_tasks_count }}</div>
+      <a
+        class="action"
+        [routerLink]="['/data-protection/snapshot']"
+      >{{ 'Manage Snapshot Tasks' | translate }}</a>
+    </div>
+    <div class="details-item">
+      <div class="label">{{ 'Replication Tasks' | translate }}:</div>
+      <div class="value">{{ dataset.replication_tasks_count }}</div>
+      <a
+        class="action"
+        [routerLink]="['/data-protection/replication']"
+      >{{ 'Manage Replication Tasks' | translate }}</a>
+    </div>
+    <div class="details-item">
+      <div class="label">{{ 'Cloud Sync Tasks' | translate }}:</div>
+      <div class="value">{{ dataset.cloudsync_tasks_count }}</div>
+      <a
+        class="action"
+        [routerLink]="['/data-protection/cloudsync']"
+      >{{ 'Manage Cloud Sync Tasks' | translate }}</a>
+    </div>
+    <div class="details-item">
+      <div class="label">{{ 'Rsync Tasks' | translate }}:</div>
+      <div class="value">{{ dataset.rsync_tasks_count }}</div>
+      <a
+        class="action"
+        [routerLink]="['/data-protection/rsync']"
+      >{{ 'Manage Rsync Tasks' | translate }}</a>
+    </div>
+  </mat-card-content>
+</mat-card>

@@ -22,6 +22,7 @@ import { IxTableModule } from 'app/modules/ix-tables/ix-table.module';
 import { IxTreeModule } from 'app/modules/ix-tree/ix-tree.module';
 import { LayoutModule } from 'app/modules/layout/layout.module';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
+import { DataProtectionCardComponent } from 'app/pages/datasets/components/data-protection-card/data-protection-card.component';
 import { DatasetDetailsCardComponent } from 'app/pages/datasets/components/dataset-details-card/dataset-details-card.component';
 import { DatasetDetailsPanelComponent } from 'app/pages/datasets/components/dataset-details-panel/dataset-details-panel.component';
 import { DatasetFormComponent } from 'app/pages/datasets/components/dataset-form/dataset-form.component';
@@ -35,6 +36,7 @@ import { ZvolFormComponent } from 'app/pages/datasets/components/zvol-form/zvol-
 import { routing } from 'app/pages/datasets/datasets.routing';
 import { EncryptionModule } from 'app/pages/datasets/modules/encryption/encryption.module';
 import { PermissionsModule } from 'app/pages/datasets/modules/permissions/permissions.module';
+import { SnapshotsModule } from 'app/pages/datasets/modules/snapshots/snapshots.module';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
 import { DatasetCapacityManagementCardComponent } from './components/dataset-capacity-management-card/dataset-capacity-management-card.component';
 import { DatasetCapacitySettingsComponent } from './components/dataset-capacity-management-card/dataset-capacity-settings/dataset-capacity-settings.component';
@@ -75,6 +77,7 @@ import { SpaceManagementChartComponent } from './components/space-management-cha
     NgxFilesizeModule,
     CoreComponents,
     AppLoaderModule,
+    SnapshotsModule,
   ],
   declarations: [
     DatasetsManagementComponent,
@@ -82,6 +85,7 @@ import { SpaceManagementChartComponent } from './components/space-management-cha
     DatasetFormComponent,
     DeleteDatasetDialogComponent,
     DatasetDetailsPanelComponent,
+    DataProtectionCardComponent,
     DatasetCapacityManagementCardComponent,
     DatasetNodeComponent,
     DatasetQuotaAddFormComponent,
