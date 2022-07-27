@@ -218,7 +218,7 @@ export class CloudsyncFormComponent implements FormConfiguration {
           name: 'bucket_policy_only',
           placeholder: helptext.bucket_policy_only_placeholder,
           tooltip: helptext.bucket_policy_only_tooltip,
-          value: true,
+          value: false,
           isHidden: true,
           disabled: true,
         },
