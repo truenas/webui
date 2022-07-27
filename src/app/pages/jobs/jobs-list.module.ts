@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FlexLayoutModule } from '@angular/flex-layout';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { ReactiveFormsModule } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
@@ -31,7 +31,6 @@ import { JobsListComponent } from './jobs-list/jobs-list.component';
     MatProgressSpinnerModule,
     MatTabsModule,
     MatCardModule,
-    FormsModule,
     IxTableModule,
     TranslateModule,
     ReactiveFormsModule,
