@@ -1,6 +1,6 @@
 import { FlexLayoutModule } from '@angular/flex-layout';
 import {
-  FormArray, FormControl, FormGroup, FormsModule, ReactiveFormsModule,
+  FormArray, FormControl, FormGroup, ReactiveFormsModule,
 } from '@angular/forms';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
@@ -117,7 +117,6 @@ describe('IxDynamicFormItemComponent', () => {
   const createComponent = createComponentFactory({
     component: IxDynamicFormItemComponent,
     imports: [
-      FormsModule,
       ReactiveFormsModule,
       FlexLayoutModule,
     ],
