@@ -35,26 +35,7 @@ describe('DatasetTreeStore', () => {
 
       spectator.service.loadDatasets();
 
-      expect(mockWebsocket.call).toHaveBeenCalledWith('pool.dataset.query', [[], {
-        extra: {
-          flat: false,
-          properties: [
-            'id',
-            'pool',
-            'name',
-            'type',
-            'used',
-            'available',
-            'mountpoint',
-            'encryption',
-            'encryptionroot',
-            'keyformat',
-            'keystatus',
-            'quota',
-          ],
-        },
-        order_by: ['name'],
-      }]);
+      expect(mockWebsocket.call).toHaveBeenCalledWith('pool.dataset.details');
       expectObservable(spectator.service.state$).toBe('ab', {
         a: {
           error: null,
