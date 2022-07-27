@@ -1,0 +1,39 @@
+# coding=utf-8
+"""SCALE UI feature tests."""
+
+import time
+from function import (
+    wait_on_element,
+    is_element_present,
+    attribute_value_exist,
+    wait_on_element_disappear,
+)
+from selenium.webdriver.common.keys import (Keys)
+
+def test_add_home_dir():
+    """add home dir"""
+
+    # the Users page should open, click the down carat sign right of the users
+    assert wait_on_element(driver, 7, '//div[contains(.,"Users")]')
+    assert wait_on_element(driver, 10, '//tr[contains(.,"ericbsd")]//mat-icon', 'clickable')
+    driver.find_element_by_xpath('//tr[contains(.,"ericbsd")]//mat-icon').click()
+    assert wait_on_element(driver, 10, '(//tr[contains(.,"ericbsd")]/following-sibling::ix-user-details-row)[1]//button[contains(.,"Edit")]', 'clickable')
+    driver.find_element_by_xpath('(//tr[contains(.,"ericbsd")]/following-sibling::ix-user-details-row)[1]//button[contains(.,"Edit")]').click()
+
+
+    # the User Edit Page should open, change the path of the users Home Directory
+    assert wait_on_element(driver, 10, '//h3[contains(.,"Edit User")]')
+    assert wait_on_element_disappear(driver, 10, '//h6[contains(.,"Please wait")]')
+    assert wait_on_element(driver, 7, '//ix-explorer[@formcontrolname="home"]//input', 'inputable')
+    driver.find_element_by_xpath('//ix-explorer[@formcontrolname="home"]//input').clear()
+    driver.find_element_by_xpath('//ix-explorer[@formcontrolname="home"]//input').send_keys('/mnt/tank/ericbsd')
+
+
+    # click save and changes should be saved, the drop-down details pane should show the home directory has changed
+    assert wait_on_element(driver, 2, '//button[span[contains(.,"Save")]]')
+    driver.find_element_by_xpath('//button[span[contains(.,"Save")]]').click()
+    assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
+    assert wait_on_element(driver, 7, '//div[contains(.,"Users")]')
+    assert wait_on_element(driver, 10, '//tr[contains(.,"ericbsd")]//mat-icon', 'clickable')
+    driver.find_element_by_xpath('//tr[contains(.,"ericbsd")]//mat-icon').click()
+    assert wait_on_element_disappear(driver, 10, '//h4[contains(.,"/nonexistent")]')
