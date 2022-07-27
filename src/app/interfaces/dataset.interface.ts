@@ -160,7 +160,21 @@ export interface DatasetUpdate {
   user_properties_update?: { key: string; value: string; remove?: boolean }[];
 }
 
-export interface DatasetDetails extends Omit<Dataset, 'children'> {
+export interface DatasetDetails {
+  id: string;
+  encrypted: boolean;
+  available: ZfsProperty<number>;
+  encryption_algorithm: ZfsProperty<string>;
+  encryption_root: string;
+  key_format: ZfsProperty<string>;
+  key_loaded: boolean;
+  locked: boolean;
+  mountpoint: string;
+  name: string;
+  pool: string;
+  type: DatasetType;
+  used: ZfsProperty<number>;
+  quota: ZfsProperty<number>;
   snapshot_count?: number;
   replication_tasks_count?: number;
   snapshot_tasks_count?: number;

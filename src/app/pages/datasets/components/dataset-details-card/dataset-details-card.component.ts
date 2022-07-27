@@ -6,10 +6,9 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
 import { ZfsPropertySource } from 'app/enums/zfs-property-source.enum';
-import { Dataset } from 'app/interfaces/dataset.interface';
+import { Dataset, DatasetDetails } from 'app/interfaces/dataset.interface';
 import { DatasetFormComponent } from 'app/pages/datasets/components/dataset-form/dataset-form.component';
 import { DeleteDatasetDialogComponent } from 'app/pages/datasets/components/delete-dataset-dialog/delete-dataset-dialog.component';
-import { DatasetInTree } from 'app/pages/datasets/store/dataset-in-tree.interface';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
 import { WebSocketService } from 'app/services';
 import { ModalService } from 'app/services/modal.service';
@@ -22,7 +21,7 @@ import { ModalService } from 'app/services/modal.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DatasetDetailsCardComponent implements OnChanges {
-  @Input() dataset: DatasetInTree;
+  @Input() dataset: DatasetDetails;
 
   isLoading = false;
   extraProperties: Dataset;
