@@ -1,3 +1,6 @@
+import { HarnessLoader } from '@angular/cdk/testing';
+import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockComponents } from 'ng-mocks';
 import { NgxSkeletonLoaderComponent } from 'ngx-skeleton-loader';
@@ -7,9 +10,11 @@ import { DatasetType } from 'app/enums/dataset.enum';
 import { DatasetQuota } from 'app/interfaces/dataset-quota.interface';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { DatasetCapacityManagementCardComponent } from 'app/pages/datasets/components/dataset-capacity-management-card/dataset-capacity-management-card.component';
+import { DatasetCapacitySettingsComponent } from 'app/pages/datasets/components/dataset-capacity-management-card/dataset-capacity-settings/dataset-capacity-settings.component';
 import { SpaceManagementChartComponent } from 'app/pages/datasets/components/space-management-chart/space-management-chart.component';
 import { DatasetInTree } from 'app/pages/datasets/store/dataset-in-tree.interface';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 const datasetFilesystem = {
   id: 'filesystem pool',
@@ -29,6 +34,7 @@ const datasetZvol = {
 
 describe('DatasetCapacityManagementCardComponent', () => {
   let spectator: Spectator<DatasetCapacityManagementCardComponent>;
+  let loader: HarnessLoader;
   const createComponent = createComponentFactory({
     component: DatasetCapacityManagementCardComponent,
     declarations: [
@@ -80,7 +86,8 @@ describe('DatasetCapacityManagementCardComponent', () => {
     });
 
     it('shows header', () => {
-      expect(spectator.query('mat-card-header')).toHaveText('Dataset Space ManagementEdit');
+      expect(spectator.query('mat-card-header h3')).toHaveText('Dataset Space Management');
+      expect(spectator.query('mat-card-header button')).toHaveText('Edit');
     });
 
     it('shows SpaceManagementChartComponent', () => {
@@ -128,7 +135,8 @@ describe('DatasetCapacityManagementCardComponent', () => {
     });
 
     it('shows header', () => {
-      expect(spectator.query('mat-card-header')).toHaveText('Zvol Space ManagementEdit');
+      expect(spectator.query('mat-card-header h3')).toHaveText('Zvol Space Management');
+      expect(spectator.query('mat-card-header button')).toHaveText('Edit');
     });
 
     it('shows SpaceManagementChartComponent', () => {
@@ -158,5 +166,24 @@ describe('DatasetCapacityManagementCardComponent', () => {
       expect(items[0]).toHaveText('User Quotas: None');
       expect(items[1]).toHaveText('Group Quotas: None');
     });
+  });
+
+  beforeEach(() => {
+    spectator = createComponent({
+      props: {
+        dataset: datasetZvol,
+      },
+    });
+    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+  });
+
+  it('opens capacity settings form when Edit button is clicked', async () => {
+    const ixSlideInService = spectator.inject(IxSlideInService);
+    jest.spyOn(ixSlideInService, 'open').mockImplementation();
+
+    const editButton = await loader.getHarness(MatButtonHarness.with({ text: 'Edit' }));
+    await editButton.click();
+
+    expect(ixSlideInService.open).toHaveBeenCalledWith(DatasetCapacitySettingsComponent, { wide: true });
   });
 });
