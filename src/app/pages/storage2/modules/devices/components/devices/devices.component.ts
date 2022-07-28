@@ -14,6 +14,7 @@ import { VDevType } from 'app/enums/v-dev-type.enum';
 import { DeviceNestedDataNode, isVDev } from 'app/interfaces/device-nested-data-node.interface';
 import { PoolTopology } from 'app/interfaces/pool.interface';
 import { Disk } from 'app/interfaces/storage.interface';
+import { footerHeight, headerHeight } from 'app/modules/common/layouts/admin-layout/admin-layout.component.const';
 import { IxNestedTreeDataSource } from 'app/modules/ix-tree/ix-nested-tree-datasource';
 import { findInTree } from 'app/modules/ix-tree/utils/find-in-tree.utils';
 import { flattenTreeWithFilter } from 'app/modules/ix-tree/utils/flattern-tree-with-filter';
@@ -37,6 +38,9 @@ export class DevicesComponent implements OnInit {
   });
   diskDictionary: { [key: string]: Disk } = {};
   isLoading = false;
+  hasConsoleFooter = false;
+  headerHeight = headerHeight;
+  footerHeight = footerHeight;
 
   readonly hasNestedChild = (_: number, vdev: DeviceNestedDataNode): boolean => Boolean(vdev.children?.length);
   readonly isVdevGroup = (_: number, vdev: DeviceNestedDataNode): boolean => !isVDev(vdev);
@@ -59,6 +63,13 @@ export class DevicesComponent implements OnInit {
     this.devicesStore.onReloadList
       .pipe(untilDestroyed(this))
       .subscribe(() => this.loadTopologyAndDisks());
+
+    this.ws
+      .call('system.advanced.config')
+      .pipe(untilDestroyed(this))
+      .subscribe((advancedConfig) => {
+        this.hasConsoleFooter = advancedConfig.consolemsg;
+      });
 
     this.route.params.pipe(
       pluck('guid'),

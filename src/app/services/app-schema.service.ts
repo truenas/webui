@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import {
-  UntypedFormGroup, UntypedFormControl, Validators, UntypedFormArray, AbstractControl,
+  Validators, AbstractControl,
 } from '@angular/forms';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import _ from 'lodash';
@@ -11,6 +11,12 @@ import { ChartFormValue, ChartSchemaNode } from 'app/interfaces/chart-release.in
 import { AddListItemEvent, DeleteListItemEvent, DynamicFormSchemaNode } from 'app/interfaces/dynamic-form-schema.interface';
 import { HierarchicalObjectMap } from 'app/interfaces/hierarhical-object-map.interface';
 import { Relation } from 'app/modules/entity/entity-form/models/field-relation.interface';
+import { CustomUntypedFormArray } from 'app/modules/ix-forms/components/ix-dynamic-form/classes/custom-untped-form-array';
+import { CustomUntypedFormControl } from 'app/modules/ix-forms/components/ix-dynamic-form/classes/custom-untped-form-control';
+import {
+  CustomUntypedFormField,
+} from 'app/modules/ix-forms/components/ix-dynamic-form/classes/custom-untyped-form-field';
+import { CustomUntypedFormGroup } from 'app/modules/ix-forms/components/ix-dynamic-form/classes/custom-untyped-form-group';
 import { FilesystemService } from 'app/services/filesystem.service';
 
 @UntilDestroy()
@@ -198,7 +204,7 @@ export class AppSchemaService {
 
   addFormControls(
     chartSchemaNode: ChartSchemaNode,
-    formGroup: UntypedFormGroup,
+    formGroup: CustomUntypedFormGroup,
     config: HierarchicalObjectMap<ChartFormValue>,
   ): Subscription {
     const subscription = new Subscription();
@@ -220,7 +226,7 @@ export class AppSchemaService {
         altDefault = false;
       }
 
-      const newFormControl = new UntypedFormControl(schema.default || altDefault, [
+      const newFormControl = new CustomUntypedFormControl(schema.default || altDefault, [
         schema.required ? Validators.required : Validators.nullValidator,
         schema.max ? Validators.max(schema.max) : Validators.nullValidator,
         schema.min ? Validators.min(schema.min) : Validators.nullValidator,
@@ -232,8 +238,10 @@ export class AppSchemaService {
         schema.subquestions.forEach((subquestion) => {
           subscription.add(this.addFormControls(subquestion, formGroup, config));
           if (subquestion.schema.default === schema.show_subquestions_if) {
+            (formGroup.controls[subquestion.variable] as CustomUntypedFormField).hidden = false;
             formGroup.controls[subquestion.variable].enable();
           } else {
+            (formGroup.controls[subquestion.variable] as CustomUntypedFormField).hidden = true;
             formGroup.controls[subquestion.variable].disable();
           }
         });
@@ -242,8 +250,10 @@ export class AppSchemaService {
             schema.subquestions.forEach((subquestion) => {
               if (formGroup.controls[subquestion.variable].parent.enabled) {
                 if (value === schema.show_subquestions_if) {
+                  (formGroup.controls[subquestion.variable] as CustomUntypedFormField).hidden = false;
                   formGroup.controls[subquestion.variable].enable();
                 } else {
+                  (formGroup.controls[subquestion.variable] as CustomUntypedFormField).hidden = true;
                   formGroup.controls[subquestion.variable].disable();
                 }
               }
@@ -257,14 +267,14 @@ export class AppSchemaService {
         formGroup.controls[chartSchemaNode.variable].setValue(schema.default);
       }
     } else if (schema.type === ChartSchemaType.Dict) {
-      formGroup.addControl(chartSchemaNode.variable, new UntypedFormGroup({}));
+      formGroup.addControl(chartSchemaNode.variable, new CustomUntypedFormGroup({}));
       for (const attr of schema.attrs) {
         subscription.add(
-          this.addFormControls(attr, formGroup.controls[chartSchemaNode.variable] as UntypedFormGroup, config),
+          this.addFormControls(attr, formGroup.controls[chartSchemaNode.variable] as CustomUntypedFormGroup, config),
         );
       }
     } else if (schema.type === ChartSchemaType.List) {
-      formGroup.addControl(chartSchemaNode.variable, new UntypedFormArray([]));
+      formGroup.addControl(chartSchemaNode.variable, new CustomUntypedFormArray([]));
 
       if (config) {
         let items: ChartSchemaNode[] = [];
@@ -289,7 +299,7 @@ export class AppSchemaService {
         if (Array.isArray(nextItem)) {
           for (const item of nextItem) {
             subscription.add(this.addFormListItem({
-              array: formGroup.controls[chartSchemaNode.variable] as UntypedFormArray,
+              array: formGroup.controls[chartSchemaNode.variable] as CustomUntypedFormArray,
               schema: items,
             }, item));
           }
@@ -301,6 +311,7 @@ export class AppSchemaService {
     }
 
     if (schema.hidden) {
+      (formGroup.controls[chartSchemaNode.variable] as CustomUntypedFormField).hidden = true;
       formGroup.controls[chartSchemaNode.variable].disable();
     }
 
@@ -312,20 +323,24 @@ export class AppSchemaService {
       }));
       relations.forEach((relation) => {
         if (!formGroup.controls[relation.fieldName]) {
-          formGroup.addControl(relation.fieldName, new UntypedFormControl());
+          formGroup.addControl(relation.fieldName, new CustomUntypedFormControl());
+          (formGroup.controls[relation.fieldName] as CustomUntypedFormField).hidden = true;
           formGroup.controls[relation.fieldName].disable();
         }
         switch (relation.operatorName) {
           case '=':
             if (!_.isEqual(formGroup.controls[relation.fieldName].value, relation.operatorValue)) {
+              (formGroup.controls[chartSchemaNode.variable] as CustomUntypedFormField).hidden = true;
               formGroup.controls[chartSchemaNode.variable].disable();
             }
             subscription.add(formGroup.controls[relation.fieldName].valueChanges
               .subscribe((value) => {
                 if (value !== null && formGroup.controls[chartSchemaNode.variable].parent.enabled) {
                   if (_.isEqual(value, relation.operatorValue)) {
+                    (formGroup.controls[chartSchemaNode.variable] as CustomUntypedFormField).hidden = false;
                     formGroup.controls[chartSchemaNode.variable].enable();
                   } else {
+                    (formGroup.controls[chartSchemaNode.variable] as CustomUntypedFormField).hidden = true;
                     formGroup.controls[chartSchemaNode.variable].disable();
                   }
                 }
@@ -333,14 +348,17 @@ export class AppSchemaService {
             break;
           case '!=':
             if (_.isEqual(formGroup.controls[relation.fieldName].value, relation.operatorValue)) {
+              (formGroup.controls[chartSchemaNode.variable] as CustomUntypedFormField).hidden = true;
               formGroup.controls[chartSchemaNode.variable].disable();
             }
             subscription.add(formGroup.controls[relation.fieldName].valueChanges
               .subscribe((value) => {
                 if (value !== null && formGroup.controls[chartSchemaNode.variable].parent.enabled) {
                   if (!_.isEqual(value, relation.operatorValue)) {
+                    (formGroup.controls[chartSchemaNode.variable] as CustomUntypedFormField).hidden = false;
                     formGroup.controls[chartSchemaNode.variable].enable();
                   } else {
+                    (formGroup.controls[chartSchemaNode.variable] as CustomUntypedFormField).hidden = true;
                     formGroup.controls[chartSchemaNode.variable].disable();
                   }
                 }
@@ -382,7 +400,7 @@ export class AppSchemaService {
 
   addFormListItem(event: AddListItemEvent, config?: HierarchicalObjectMap<ChartFormValue>): Subscription {
     const subscriptionEvent = new Subscription();
-    const itemFormGroup = new UntypedFormGroup({});
+    const itemFormGroup = new CustomUntypedFormGroup({});
     event.schema.forEach((item) => {
       subscriptionEvent.add(this.addFormControls(item as ChartSchemaNode, itemFormGroup, config));
     });

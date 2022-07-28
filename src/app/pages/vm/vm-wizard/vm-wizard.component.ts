@@ -15,6 +15,7 @@ import { ProductType } from 'app/enums/product-type.enum';
 import {
   VmBootloader, VmCpuMode, VmDeviceType, VmTime,
 } from 'app/enums/vm.enum';
+import { choicesToOptions } from 'app/helpers/options.helper';
 import globalHelptext from 'app/helptext/global-helptext';
 import add_edit_helptext from 'app/helptext/vm/devices/device-add-edit';
 import helptext from 'app/helptext/vm/vm-wizard/vm-wizard';
@@ -546,15 +547,9 @@ export class VmWizardComponent implements WizardConfiguration {
         config.options = options;
       });
 
-    this.ws.call('pool.dataset.query', [[['type', '=', DatasetType.Volume]]]).pipe(untilDestroyed(this)).subscribe((zvols) => {
-      zvols.forEach((zvol) => {
-        const config = _.find(this.wizardConfig[2].fieldConfig, { name: 'hdd_path' }) as FormSelectConfig;
-        config.options.push(
-          {
-            label: zvol.id, value: zvol.id,
-          },
-        );
-      });
+    const diskConfig = _.find(this.wizardConfig[2].fieldConfig, { name: 'hdd_path' }) as FormSelectConfig;
+    this.ws.call('vm.device.disk_choices').pipe(choicesToOptions(), untilDestroyed(this)).subscribe((zvols) => {
+      diskConfig.options = zvols;
     });
 
     this.getFormControlFromFieldName('bootloader').valueChanges.pipe(untilDestroyed(this)).subscribe((bootloader) => {
@@ -1053,7 +1048,7 @@ export class VmWizardComponent implements WizardConfiguration {
     if (value.hdd_path) {
       for (const device of vmPayload['devices']) {
         if (device.dtype === VmDeviceType.Disk) {
-          device.attributes.path = '/dev/zvol/' + value.hdd_path;
+          device.attributes.path = value.hdd_path;
         }
       }
 
@@ -1094,7 +1089,7 @@ export class VmWizardComponent implements WizardConfiguration {
           const zvolName = zvolPayload['zvol_name'];
           const zvolVolsize = zvolPayload['zvol_volsize'];
 
-          device.attributes.path = '/dev/zvol/' + origHdd;
+          device.attributes.path = origHdd;
           device.attributes.type = value.hdd_type;
           device.attributes.create_zvol = createZvol;
           device.attributes.zvol_name = zvolName;

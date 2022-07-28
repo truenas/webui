@@ -38,6 +38,8 @@ export class DatasetAclEditorComponent implements OnInit {
   ownerFormGroup = this.formBuilder.group({
     owner: ['', Validators.required],
     ownerGroup: ['', Validators.required],
+    applyOwner: [false],
+    applyGroup: [false],
   });
 
   get isNfsAcl(): boolean {
@@ -79,7 +81,7 @@ export class DatasetAclEditorComponent implements OnInit {
         if (isFirstLoad) {
           this.onFirstLoad();
 
-          this.ownerFormGroup.setValue({
+          this.ownerFormGroup.patchValue({
             owner: state.stat.user,
             ownerGroup: state.stat.group,
           });
@@ -119,6 +121,8 @@ export class DatasetAclEditorComponent implements OnInit {
       traverse: !!(this.saveParameters.get('recursive').value && this.saveParameters.get('traverse').value),
       owner: this.ownerFormGroup.get('owner').value,
       ownerGroup: this.ownerFormGroup.get('ownerGroup').value,
+      applyOwner: this.ownerFormGroup.get('applyOwner').value,
+      applyGroup: this.ownerFormGroup.get('applyGroup').value,
     });
   }
 

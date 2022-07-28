@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FlexLayoutModule, FlexModule } from '@angular/flex-layout';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatCheckboxModule } from '@angular/material/checkbox';
@@ -73,7 +73,6 @@ import { ZfsHealthCardComponent } from './components/zfs-health-card/zfs-health-
     MatFormFieldModule,
     MatOptionModule,
     TooltipModule,
-    FormsModule,
     FlexModule,
     MatCheckboxModule,
     MatSelectModule,

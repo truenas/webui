@@ -5,11 +5,9 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockWebsocketService } from 'app/core/testing/classes/mock-websocket.service';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
-import { DatasetType } from 'app/enums/dataset.enum';
 import {
   VmDeviceType, VmDiskMode, VmDisplayType, VmNicType,
 } from 'app/enums/vm.enum';
-import { Dataset } from 'app/interfaces/dataset.interface';
 import {
   VmDevice,
   VmDiskDevice,
@@ -61,18 +59,10 @@ describe('DeviceFormComponent', () => {
           enp0s3: 'enp0s3',
           enp0s4: 'enp0s4',
         }),
-        mockCall('pool.dataset.query', [
-          {
-            id: 'bassein/zvol1',
-            type: DatasetType.Volume,
-            name: 'bassein/zvol1',
-          },
-          {
-            id: 'bassein/zvol2',
-            type: DatasetType.Volume,
-            name: 'bassein/zvol2',
-          },
-        ] as Dataset[]),
+        mockCall('vm.device.disk_choices', {
+          '/dev/zvol/bassein/zvol1': 'bassein/zvol1',
+          '/dev/zvol/bassein/zvol+with+spaces': 'bassein/zvol with spaces',
+        }),
       ]),
       mockProvider(IxSlideInService),
       mockProvider(FilesystemService),

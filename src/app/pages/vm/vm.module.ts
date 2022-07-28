@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FlexLayoutModule } from '@angular/flex-layout';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatDividerModule } from '@angular/material/divider';
@@ -15,6 +15,7 @@ import { EntityFormService } from 'app/modules/entity/entity-form/services/entit
 import { MessageService } from 'app/modules/entity/entity-form/services/message.service';
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
+import { LayoutModule } from 'app/modules/layout/layout.module';
 import { TerminalModule } from 'app/modules/terminal/terminal.module';
 import { DeviceFormComponent } from 'app/pages/vm/devices/device-form/device-form.component';
 import { DeviceDeleteModalComponent } from 'app/pages/vm/devices/device-list/device-delete-modal/device-delete-modal.component';
@@ -34,7 +35,6 @@ import { routing } from './vm.routing';
     CommonDirectivesModule,
     EntityModule,
     CommonModule,
-    FormsModule,
     TranslateModule,
     ReactiveFormsModule,
     MatButtonModule,
@@ -47,6 +47,7 @@ import { routing } from './vm.routing';
     TerminalModule,
     IxFormsModule,
     CastModule,
+    LayoutModule,
   ],
   declarations: [
     VmListComponent,

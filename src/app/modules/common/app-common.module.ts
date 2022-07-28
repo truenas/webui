@@ -4,7 +4,6 @@ import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { FlexLayoutModule } from '@angular/flex-layout';
-import { FormsModule } from '@angular/forms';
 import { MatBadgeModule } from '@angular/material/badge';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
@@ -63,7 +62,6 @@ import { LocaleService } from 'app/services/locale.service';
     CoreComponents,
     EntityModule,
     FlexLayoutModule,
-    FormsModule,
     HttpClientModule,
     IxFormsModule,
     JobsModule,

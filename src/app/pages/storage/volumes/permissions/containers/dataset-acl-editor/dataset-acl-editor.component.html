@@ -15,19 +15,33 @@
       </div>
 
       <div class="ownership-row" [formGroup]="ownerFormGroup">
-        <label class="header-label">{{ 'Owner' | translate }}:</label>
-        <ix-combobox
-          class="owner-combobox"
-          formControlName="owner"
-          [provider]="userProvider"
-        ></ix-combobox>
+        <div class="control">
+          <label class="header-label">{{ 'Owner' | translate }}:</label>
+          <ix-combobox
+            class="owner-combobox"
+            formControlName="owner"
+            [provider]="userProvider"
+          ></ix-combobox>
+          <ix-checkbox
+            formControlName="applyOwner"
+            [label]="'Apply Owner' | translate"
+            [tooltip]="helptext.apply_user.tooltip | translate"
+          ></ix-checkbox>
+        </div>
 
-        <label class="header-label">{{ 'Owner Group' | translate }}:</label>
-        <ix-combobox
-          class="owner-combobox"
-          formControlName="ownerGroup"
-          [provider]="groupProvider"
-        ></ix-combobox>
+        <div class="control">
+          <label class="header-label">{{ 'Owner Group' | translate }}:</label>
+          <ix-combobox
+            class="owner-combobox"
+            formControlName="ownerGroup"
+            [provider]="groupProvider"
+          ></ix-combobox>
+          <ix-checkbox
+            formControlName="applyGroup"
+            [label]="'Apply Group' | translate"
+            [tooltip]="helptext.apply_group.tooltip | translate"
+          ></ix-checkbox>
+        </div>
       </div>
     </mat-card-header>
 

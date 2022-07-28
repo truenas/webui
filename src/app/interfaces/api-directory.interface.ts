@@ -89,7 +89,7 @@ import { DatasetLockParams, DatasetUnlockParams, DatasetUnlockResult } from 'app
 import { DatasetPermissionsUpdate } from 'app/interfaces/dataset-permissions.interface';
 import { DatasetQuota, DatasetQuotaQueryParams, SetDatasetQuota } from 'app/interfaces/dataset-quota.interface';
 import {
-  Dataset, DatasetCreate, DatasetUpdate, ExtraDatasetQueryOptions,
+  Dataset, DatasetCreate, DatasetDetails, DatasetUpdate, ExtraDatasetQueryOptions,
 } from 'app/interfaces/dataset.interface';
 import { Device } from 'app/interfaces/device.interface';
 import { DirectoryServicesState } from 'app/interfaces/directory-services-state.interface';
@@ -678,6 +678,7 @@ export type ApiDirectory = {
   'pool.dataset.processes': { params: [datasetId: string]; response: Process[] };
   'pool.dataset.promote': { params: [id: string]; response: void };
   'pool.dataset.query': { params: QueryParams<Dataset, ExtraDatasetQueryOptions>; response: Dataset[] };
+  'pool.dataset.details': { params: void; response: DatasetDetails[] };
   'pool.dataset.query_encrypted_roots_keys': { params: void; response: DatasetEncryptedRootKeys };
   'pool.dataset.recommended_zvol_blocksize': { params: [name: string]; response: DatasetRecordSize };
   'pool.dataset.set_quota': { params: [dataset: string, quotas: SetDatasetQuota[]]; response: void };
@@ -914,6 +915,7 @@ export type ApiDirectory = {
   'vm.device.passthrough_device_choices': { params: void; response: { [id: string]: VmPassthroughDeviceChoice } };
   'vm.device.create': { params: [VmDeviceUpdate]; response: VmDevice };
   'vm.device.delete': { params: [number, VmDeviceDelete]; response: boolean };
+  'vm.device.disk_choices': { params: void; response: Choices };
   'vm.random_mac': { params: void; response: string };
   'vm.device.query': { params: QueryParams<VmDevice>; response: VmDevice[] };
   'vm.stop': { params: VmStopParams; response: void };

@@ -94,7 +94,13 @@
       </div>
     </div>
   </div>
-  <div class="details-container">
+  <div class="details-container"
+    ixDetailsHeight
+    ixDetailsHeightParentClass="rightside-content-hold"
+    [hasConsoleFooter]="hasConsoleFooter"
+    [headerHeight]="headerHeight"
+    [footerHeight]="footerHeight"
+    >
     <ix-disk-details-panel
       *ngIf="selectedItem && isDiskSelected && diskDictionary[selectedItem.disk]"
       [topologyItem]="selectedItem | cast"
