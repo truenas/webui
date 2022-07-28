@@ -1,14 +1,14 @@
-import { DatasetInTree } from 'app/pages/datasets/store/dataset-in-tree.interface';
+import { DatasetDetails } from 'app/interfaces/dataset.interface';
 
 export interface DatasetRoot {
-  children: DatasetInTree[];
+  children: DatasetDetails[];
   id: string;
   name: string;
   pool: string;
 }
 
-export type DatasetNestedDataNode = DatasetInTree | DatasetRoot;
+export type DatasetNestedDataNode = DatasetDetails | DatasetRoot;
 
-export function isDatasetInTree(obj: DatasetNestedDataNode): obj is DatasetInTree {
+export function isDatasetInTree(obj: DatasetNestedDataNode): obj is DatasetDetails {
   return 'encrypted' in obj;
 }

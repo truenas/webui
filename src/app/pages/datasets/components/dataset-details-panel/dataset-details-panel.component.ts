@@ -4,9 +4,9 @@ import {
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { DatasetType } from 'app/enums/dataset.enum';
+import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { DatasetFormComponent } from 'app/pages/datasets/components/dataset-form/dataset-form.component';
 import { ZvolFormComponent } from 'app/pages/datasets/components/zvol-form/zvol-form.component';
-import { DatasetInTree } from 'app/pages/datasets/store/dataset-in-tree.interface';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
 import { isIocageMounted, isRootDataset } from 'app/pages/datasets/utils/dataset.utils';
 import { ModalService } from 'app/services';
@@ -19,8 +19,8 @@ import { ModalService } from 'app/services';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DatasetDetailsPanelComponent implements OnInit {
-  @Input() dataset: DatasetInTree;
-  @Input() parentDataset: DatasetInTree | undefined;
+  @Input() dataset: DatasetDetails;
+  @Input() parentDataset: DatasetDetails | undefined;
 
   constructor(
     private modalService: ModalService,

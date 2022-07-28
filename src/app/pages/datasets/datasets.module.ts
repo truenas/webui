@@ -71,7 +71,6 @@ import { SpaceManagementChartComponent } from './components/space-management-cha
     MatDialogModule,
     EntityModule,
     MatDialogModule,
-    ReactiveFormsModule,
     EntityModule,
     NgxSkeletonLoaderModule,
     NgxFilesizeModule,

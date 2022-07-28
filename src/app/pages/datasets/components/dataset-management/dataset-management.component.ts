@@ -6,10 +6,10 @@ import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { filter, pluck } from 'rxjs/operators';
 import { DatasetNestedDataNode, isDatasetInTree } from 'app/interfaces/dataset-nested-data-node.interface';
+import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { footerHeight, headerHeight } from 'app/modules/common/layouts/admin-layout/admin-layout.component.const';
 import { IxNestedTreeDataSource } from 'app/modules/ix-tree/ix-nested-tree-datasource';
 import { flattenTreeWithFilter } from 'app/modules/ix-tree/utils/flattern-tree-with-filter';
-import { DatasetInTree } from 'app/pages/datasets/store/dataset-in-tree.interface';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
 import { WebSocketService } from 'app/services';
 
@@ -86,7 +86,7 @@ export class DatasetsManagementComponent implements OnInit {
 
     this.datasetStore.selectedBranch$
       .pipe(filter(Boolean), untilDestroyed(this))
-      .subscribe((selectedBranch: DatasetInTree[]) => {
+      .subscribe((selectedBranch: DatasetNestedDataNode[]) => {
         selectedBranch.forEach((dataset) => this.treeControl.expand(dataset));
       });
   }
@@ -114,7 +114,7 @@ export class DatasetsManagementComponent implements OnInit {
     this.treeControl?.dataNodes?.forEach((node) => this.treeControl.expand(node));
   }
 
-  private createDataNodes(datasets: DatasetInTree[]): DatasetNestedDataNode[] {
+  private createDataNodes(datasets: DatasetDetails[]): DatasetNestedDataNode[] {
     const dataNodes: DatasetNestedDataNode[] = [];
     datasets.forEach((dataset) => {
       dataNodes.push({
@@ -130,7 +130,7 @@ export class DatasetsManagementComponent implements OnInit {
   private createDataSource(datasets: DatasetNestedDataNode[]): void {
     this.dataSource = new IxNestedTreeDataSource<DatasetNestedDataNode>(datasets);
     this.dataSource.filterPredicate = (datasets, query = '') => {
-      return flattenTreeWithFilter(datasets, (dataset: DatasetInTree) => {
+      return flattenTreeWithFilter(datasets, (dataset: DatasetNestedDataNode) => {
         return dataset.id.toLowerCase().includes(query.toLowerCase());
       });
     };

@@ -33,7 +33,7 @@ export class CertificateAcmeAddComponent {
     ]],
     tos: [false, Validators.requiredTrue],
     renew_days: [10, [Validators.required, Validators.min(0)]],
-    acme_directory_uri: [''],
+    acme_directory_uri: ['', Validators.required],
     domains: this.formBuilder.array<string>([]),
   });
 
