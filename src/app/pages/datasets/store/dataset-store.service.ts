@@ -4,6 +4,7 @@ import { EMPTY, Observable } from 'rxjs';
 import {
   catchError, switchMap, tap,
 } from 'rxjs/operators';
+import { DatasetDetails } from 'app/interfaces/dataset-details.interface';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { DatasetInTree } from 'app/pages/datasets/store/dataset-in-tree.interface';
@@ -12,15 +13,21 @@ import { WebSocketService } from 'app/services';
 
 export interface DatasetTreeState {
   isLoading: boolean;
+  isLoadingDetails: boolean;
   error: WebsocketError | null;
+  errorDetails: WebsocketError | null;
   datasets: DatasetInTree[];
+  datasetDetails: DatasetDetails[];
   selectedDatasetId: string | null;
 }
 
 const initialState: DatasetTreeState = {
   isLoading: false,
+  isLoadingDetails: false,
   error: null,
+  errorDetails: null,
   datasets: [],
+  datasetDetails: [],
   selectedDatasetId: null,
 };
 
@@ -52,6 +59,14 @@ export class DatasetTreeStore extends ComponentStore<DatasetTreeState> {
     this.selectedBranch$,
     (selectedBranch) => (selectedBranch ? selectedBranch[selectedBranch.length - 2] : null),
   );
+
+  readonly selectedDatasetDetails$ = this.select((state) => {
+    const selectedBranch = getDatasetAndParentsById(state.datasets as Dataset[], state.selectedDatasetId);
+    if (!selectedBranch) {
+      return null;
+    }
+    return state.datasetDetails.find((details) => details.pool === selectedBranch[selectedBranch.length - 1].pool);
+  });
 
   readonly loadDatasets = this.effect((triggers$: Observable<void>) => {
     return triggers$.pipe(
@@ -105,9 +120,41 @@ export class DatasetTreeStore extends ComponentStore<DatasetTreeState> {
     );
   });
 
+  readonly loadDatasetDetails = this.effect((triggers$: Observable<void>) => {
+    return triggers$.pipe(
+      tap(() => {
+        this.patchState({
+          errorDetails: null,
+          isLoadingDetails: true,
+        });
+      }),
+      switchMap(() => {
+        return this.ws.call('pool.dataset.details').pipe(
+          tap((datasetDetails: DatasetDetails[]) => {
+            this.patchState({
+              isLoadingDetails: false,
+              datasetDetails,
+            });
+          }),
+          catchError((errorDetails) => {
+            this.patchState({
+              isLoadingDetails: false,
+              errorDetails,
+            });
+
+            return EMPTY;
+          }),
+        );
+      }),
+    );
+  });
+
   readonly datasetUpdated = this.effect((triggers$: Observable<void>) => {
     return triggers$.pipe(
-      tap(() => this.loadDatasets()),
+      tap(() => {
+        this.loadDatasets();
+        this.loadDatasetDetails();
+      }),
     );
   });
 

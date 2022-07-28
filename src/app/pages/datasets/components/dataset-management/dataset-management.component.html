@@ -78,6 +78,7 @@
       *ngIf="selectedDataset$ | async as selectedDataset"
       [dataset]="selectedDataset"
       [parentDataset]="selectedParentDataset$ | async"
+      [datasetDetails]="selectedDatasetDetails$ | async"
     ></ix-dataset-details-panel>
   </div>
 </div>

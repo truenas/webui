@@ -11,6 +11,18 @@ $chart-size: 180px !default;
   width: $chart-size;
 }
 
+.provision-wrapper {
+  display: flex;
+  justify-content: center;
+  padding-top: 10px;
+  white-space: nowrap;
+
+  .provision-label {
+    font-weight: bold;
+    padding-right: 5px;
+  }
+}
+
 .chart-description {
   flex: 1;
 }

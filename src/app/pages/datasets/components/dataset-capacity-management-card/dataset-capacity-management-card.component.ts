@@ -6,6 +6,7 @@ import { maxBy } from 'lodash';
 import { Subscription, forkJoin } from 'rxjs';
 import { map, take } from 'rxjs/operators';
 import { DatasetType, DatasetQuotaType } from 'app/enums/dataset.enum';
+import { DatasetDetails } from 'app/interfaces/dataset-details.interface';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { DatasetCapacitySettingsComponent } from 'app/pages/datasets/components/dataset-capacity-management-card/dataset-capacity-settings/dataset-capacity-settings.component';
 import { DatasetInTree } from 'app/pages/datasets/store/dataset-in-tree.interface';
@@ -22,6 +23,7 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
 })
 export class DatasetCapacityManagementCardComponent implements OnInit, OnChanges {
   @Input() dataset: DatasetInTree;
+  @Input() datasetDetails: DatasetDetails;
 
   inheritedQuotasDataset: DatasetInTree;
   extraProperties: Dataset;

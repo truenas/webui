@@ -4,6 +4,7 @@ import {
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { DatasetType } from 'app/enums/dataset.enum';
+import { DatasetDetails } from 'app/interfaces/dataset-details.interface';
 import { DatasetFormComponent } from 'app/pages/datasets/components/dataset-form/dataset-form.component';
 import { ZvolFormComponent } from 'app/pages/datasets/components/zvol-form/zvol-form.component';
 import { DatasetInTree } from 'app/pages/datasets/store/dataset-in-tree.interface';
@@ -21,6 +22,7 @@ import { ModalService } from 'app/services';
 export class DatasetDetailsPanelComponent implements OnInit {
   @Input() dataset: DatasetInTree;
   @Input() parentDataset: DatasetInTree | undefined;
+  @Input() datasetDetails: DatasetDetails;
 
   constructor(
     private modalService: ModalService,

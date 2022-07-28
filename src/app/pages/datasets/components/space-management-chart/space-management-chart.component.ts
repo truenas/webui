@@ -6,6 +6,7 @@ import { ChartColor, ChartDataSets, ChartOptions } from 'chart.js';
 import { Subscription } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { DatasetType } from 'app/enums/dataset.enum';
+import { DatasetDetails } from 'app/interfaces/dataset-details.interface';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { DatasetInTree } from 'app/pages/datasets/store/dataset-in-tree.interface';
 import { WebSocketService } from 'app/services';
@@ -20,6 +21,7 @@ import { ThemeService } from 'app/services/theme/theme.service';
 })
 export class SpaceManagementChartComponent implements OnChanges {
   @Input() dataset: DatasetInTree;
+  @Input() datasetDetails: DatasetDetails;
 
   isLoading = false;
   extraProperties: Dataset;
@@ -47,6 +49,10 @@ export class SpaceManagementChartComponent implements OnChanges {
 
   get isZvol(): boolean {
     return this.dataset.type === DatasetType.Volume;
+  }
+
+  get isThick(): boolean {
+    return this.datasetDetails?.iscsi_shares?.find((share) => share?.thick_provisioned)?.thick_provisioned;
   }
 
   constructor(

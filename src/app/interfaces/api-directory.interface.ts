@@ -80,6 +80,7 @@ import {
 } from 'app/interfaces/count-manual-snapshots.interface';
 import { Cronjob, CronjobUpdate } from 'app/interfaces/cronjob.interface';
 import { DatasetChangeKeyParams } from 'app/interfaces/dataset-change-key.interface';
+import { DatasetDetails } from 'app/interfaces/dataset-details.interface';
 import {
   DatasetEncryptedRootKeys,
   DatasetEncryptionSummary, DatasetEncryptionSummaryQueryParams,
@@ -678,6 +679,7 @@ export type ApiDirectory = {
   'pool.dataset.processes': { params: [datasetId: string]; response: Process[] };
   'pool.dataset.promote': { params: [id: string]; response: void };
   'pool.dataset.query': { params: QueryParams<Dataset, ExtraDatasetQueryOptions>; response: Dataset[] };
+  'pool.dataset.details': { params: void; response: DatasetDetails[] };
   'pool.dataset.query_encrypted_roots_keys': { params: void; response: DatasetEncryptedRootKeys };
   'pool.dataset.recommended_zvol_blocksize': { params: [name: string]; response: DatasetRecordSize };
   'pool.dataset.set_quota': { params: [dataset: string, quotas: SetDatasetQuota[]]; response: void };

@@ -7,7 +7,7 @@
     <button mat-button (click)="editDataset()">{{ 'Edit' | translate }}</button>
   </mat-card-header>
   <mat-card-content>
-    <ix-space-management-chart [dataset]="dataset"></ix-space-management-chart>
+    <ix-space-management-chart [dataset]="dataset" [datasetDetails]="datasetDetails"></ix-space-management-chart>
 
     <div class="chart-extra">
       <ng-container *ngIf="!isZvol">
