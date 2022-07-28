@@ -17,6 +17,7 @@ export class DataProtectionCardComponent {
   ) {}
 
   addSnapshot(): void {
-    this.slideIn.open(SnapshotAddFormComponent);
+    const addForm = this.slideIn.open(SnapshotAddFormComponent);
+    addForm.setDataset(this.dataset.id);
   }
 }

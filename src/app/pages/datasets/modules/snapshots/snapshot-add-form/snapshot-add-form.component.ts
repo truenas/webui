@@ -82,6 +82,10 @@ export class SnapshotAddFormComponent implements OnInit {
     );
   }
 
+  setDataset(datasetId: string): void {
+    this.form.get('dataset').setValue(datasetId);
+  }
+
   onSubmit(): void {
     const values = this.form.value;
     const params: CreateZfsSnapshot = {
@@ -116,7 +120,7 @@ export class SnapshotAddFormComponent implements OnInit {
   private getDatasetOptions(): Observable<Option[]> {
     return this.ws.call('pool.dataset.query', [
       snapshotExcludeBootQueryFilter,
-      { extra: { flat: false } },
+      { extra: { flat: true } },
     ]).pipe(
       map((datasets) => datasets.map((dataset) => ({ label: dataset.name, value: dataset.name }))),
     );
