@@ -1,7 +1,7 @@
 import {
   ChangeDetectionStrategy, Component, Input,
 } from '@angular/core';
-import { DatasetInTree } from 'app/pages/datasets/store/dataset-in-tree.interface';
+import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { isEncryptionRoot } from 'app/pages/datasets/utils/dataset.utils';
 
 @Component({
@@ -11,7 +11,7 @@ import { isEncryptionRoot } from 'app/pages/datasets/utils/dataset.utils';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DatasetEncryptionCellComponent {
-  @Input() dataset: DatasetInTree;
+  @Input() dataset: DatasetDetails;
 
   get isEncryptionRoot(): boolean {
     return isEncryptionRoot(this.dataset);

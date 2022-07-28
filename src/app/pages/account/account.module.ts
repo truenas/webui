@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FlexLayoutModule } from '@angular/flex-layout';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { ReactiveFormsModule } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
 import { MatListModule } from '@angular/material/list';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
@@ -20,7 +20,6 @@ import { UsersModule } from './users/users.module';
   imports: [
     EntityModule,
     CommonModule,
-    FormsModule,
     ReactiveFormsModule,
     routing,
     TranslateModule,

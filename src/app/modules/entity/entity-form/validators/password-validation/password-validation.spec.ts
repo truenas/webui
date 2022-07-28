@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import {
   AbstractControl,
-  FormBuilder, FormGroup, FormsModule,
+  FormBuilder, FormGroup,
 } from '@angular/forms';
 import { doesNotEqualValidator, matchOtherValidator } from 'app/modules/entity/entity-form/validators/password-validation/password-validation';
 
@@ -13,7 +13,7 @@ describe('PasswordValidation', () => {
 
     beforeEach(() => {
       TestBed.configureTestingModule({
-        imports: [FormsModule, FormBuilder],
+        imports: [FormBuilder],
         declarations: [matchOtherValidator],
       });
 
@@ -55,7 +55,7 @@ describe('PasswordValidation', () => {
 
     beforeEach(() => {
       TestBed.configureTestingModule({
-        imports: [FormsModule, FormBuilder],
+        imports: [FormBuilder],
       });
 
       const formBuilder = new FormBuilder();

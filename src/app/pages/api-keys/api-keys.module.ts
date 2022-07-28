@@ -1,7 +1,7 @@
 import { ClipboardModule } from '@angular/cdk/clipboard';
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { ReactiveFormsModule } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatMenuModule } from '@angular/material/menu';
@@ -30,7 +30,6 @@ import { ApiKeyComponentStore } from './store/api-key.store';
   imports: [
     AppCommonModule,
     CommonModule,
-    FormsModule,
     ReactiveFormsModule,
     ClipboardModule,
     EntityModule,

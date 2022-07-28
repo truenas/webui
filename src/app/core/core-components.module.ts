@@ -3,7 +3,6 @@ import { PortalModule } from '@angular/cdk/portal';
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FlexLayoutModule } from '@angular/flex-layout';
-import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTooltipModule } from '@angular/material/tooltip';
@@ -30,7 +29,6 @@ import { StorageService } from 'app/services/storage.service';
     OverlayModule,
     PortalModule,
     FlexLayoutModule,
-    FormsModule,
     TranslateModule,
     IxIconModule,
     MatButtonModule,
