@@ -15,6 +15,7 @@ import {
   DynamicFormSchemaDict,
 } from 'app/interfaces/dynamic-form-schema.interface';
 import { IxCheckboxComponent } from 'app/modules/ix-forms/components/ix-checkbox/ix-checkbox.component';
+import { CustomUntypedFormField } from 'app/modules/ix-forms/components/ix-dynamic-form/classes/custom-untyped-form-field';
 import { IxDynamicFormItemComponent } from 'app/modules/ix-forms/components/ix-dynamic-form/ix-dynamic-form-item/ix-dynamic-form-item.component';
 import { IxExplorerComponent } from 'app/modules/ix-forms/components/ix-explorer/ix-explorer.component';
 import { IxInputComponent } from 'app/modules/ix-forms/components/ix-input/ix-input.component';
@@ -149,7 +150,7 @@ describe('IxDynamicFormItemComponent', () => {
       expect(spectator.query(IxInputComponent).tooltip).toBe(inputSchema.tooltip);
 
       expect(spectator.query('ix-input')).not.toBeHidden();
-      spectator.component.dynamicForm.controls.input.disable();
+      (spectator.component.dynamicForm.controls.input as CustomUntypedFormField).hidden = true;
       spectator.detectComponentChanges();
       expect(spectator.query('ix-input')).toBeHidden();
     });
@@ -167,7 +168,7 @@ describe('IxDynamicFormItemComponent', () => {
       expect(spectator.query(IxSelectComponent).tooltip).toBe(selectSchema.tooltip);
 
       expect(spectator.query('ix-select')).not.toBeHidden();
-      spectator.component.dynamicForm.controls.select.disable();
+      (spectator.component.dynamicForm.controls.select as CustomUntypedFormField).hidden = true;
       spectator.detectComponentChanges();
       expect(spectator.query('ix-select')).toBeHidden();
     });
@@ -184,7 +185,7 @@ describe('IxDynamicFormItemComponent', () => {
       expect(spectator.query(IxCheckboxComponent).tooltip).toBe(checkboxSchema.tooltip);
 
       expect(spectator.query('ix-checkbox')).not.toBeHidden();
-      spectator.component.dynamicForm.controls.checkbox.disable();
+      (spectator.component.dynamicForm.controls.checkbox as CustomUntypedFormField).hidden = true;
       spectator.detectComponentChanges();
       expect(spectator.query('ix-checkbox')).toBeHidden();
     });
@@ -201,7 +202,7 @@ describe('IxDynamicFormItemComponent', () => {
       expect(spectator.query(IxIpInputWithNetmaskComponent).tooltip).toBe(ipaddrSchema.tooltip);
 
       expect(spectator.query('ix-ip-input-with-netmask')).not.toBeHidden();
-      spectator.component.dynamicForm.controls.ipaddr.disable();
+      (spectator.component.dynamicForm.controls.ipaddr as CustomUntypedFormField).hidden = true;
       spectator.detectComponentChanges();
       expect(spectator.query('ix-ip-input-with-netmask')).toBeHidden();
     });
@@ -218,7 +219,7 @@ describe('IxDynamicFormItemComponent', () => {
       expect(spectator.query(IxExplorerComponent).tooltip).toBe(explorerSchema.tooltip);
 
       expect(spectator.query('ix-explorer')).not.toBeHidden();
-      spectator.component.dynamicForm.controls.explorer.disable();
+      (spectator.component.dynamicForm.controls.explorer as CustomUntypedFormField).hidden = true;
       spectator.detectComponentChanges();
       expect(spectator.query('ix-explorer')).toBeHidden();
     });
@@ -237,7 +238,7 @@ describe('IxDynamicFormItemComponent', () => {
       expect(spectator.query(IxListComponent).label).toBe(listSchema.title);
 
       expect(spectator.query('ix-list')).not.toBeHidden();
-      spectator.component.dynamicForm.controls.list.disable();
+      (spectator.component.dynamicForm.controls.list as CustomUntypedFormField).hidden = true;
       spectator.detectComponentChanges();
       expect(spectator.query('ix-list')).toBeHidden();
     });
@@ -256,7 +257,7 @@ describe('IxDynamicFormItemComponent', () => {
         expect(item).not.toBeHidden();
       });
 
-      spectator.component.dynamicForm.controls.dict.disable();
+      (spectator.component.dynamicForm.controls.dict as CustomUntypedFormField).hidden = true;
       spectator.detectComponentChanges();
 
       spectator.queryAll('ix-dynamic-form-item').forEach((item) => {
@@ -267,7 +268,7 @@ describe('IxDynamicFormItemComponent', () => {
 
   describe('Component methods', () => {
     it('isHidden()', () => {
-      dynamicForm.controls.list.disable();
+      (dynamicForm.controls.list as CustomUntypedFormField).hidden = true;
       spectator = createComponent({
         props: {
           dynamicForm,
