@@ -31,7 +31,6 @@ export const fakeUserDataSource: User[] = [{
   sudo: false,
   sudo_nopasswd: false,
   sudo_commands: [],
-  microsoft_account: false,
   email: 'root@root.root',
   group: {
     id: 41,
@@ -53,7 +52,6 @@ export const fakeUserDataSource: User[] = [{
   sudo: false,
   sudo_nopasswd: false,
   sudo_commands: [],
-  microsoft_account: false,
   email: null,
   group: {
     id: 101,
