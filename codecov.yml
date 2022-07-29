@@ -1,6 +1,10 @@
 github_checks:
   annotations: false
 coverage:
-  patch:
-    default:
-      informational: true
+  status:
+    patch:
+      default:
+        informational: true
+    project:
+      default:
+        informational: true
