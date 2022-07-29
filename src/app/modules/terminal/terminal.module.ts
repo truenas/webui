@@ -1,6 +1,5 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
-import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { TranslateModule } from '@ngx-translate/core';
 import { CoreComponents } from 'app/core/core-components.module';
@@ -14,7 +13,6 @@ import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
 @NgModule({
   imports: [
     CommonModule,
-    FormsModule,
     EntityModule,
     TranslateModule,
     CoreComponents,

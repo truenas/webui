@@ -1,6 +1,5 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
-import { FormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 import { CoreComponents } from 'app/core/core-components.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
@@ -12,7 +11,6 @@ import { routing } from './shell.routing';
 @NgModule({
   imports: [
     CommonModule,
-    FormsModule,
     EntityModule,
     routing,
     TranslateModule,

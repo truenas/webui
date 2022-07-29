@@ -3,6 +3,7 @@
 
 .card {
   @include details-card();
+  flex: 1;
 }
 
 .pool-icon {
@@ -21,10 +22,6 @@
   &.icon-error {
     color: var(--red);
   }
-}
-
-.content-container {
-  padding: 30px 0 !important;
 }
 
 .capacity-caption {

@@ -1,40 +1,68 @@
-<div class="pool-header">
-  <h2 class="pool-name">{{ pool.name }}</h2>
-  <div class="pool-actions">
-    <button
-      *ngIf="!pool.is_upgraded"
-      mat-button
-      color="primary"
-      (click)="onUpgrade()"
-    >{{ 'Upgrade' | translate }}</button>
-
-    <button
-      mat-button
-      (click)="onExport()"
-    >{{ 'Export/Disconnect' | translate }}</button>
-
-    <button
-      mat-button
-      (click)="onExpand()"
-    >{{ 'Expand' | translate }}</button>
+<div *ngIf="!isLoading && !isDisksLoading && !isVolumeDataLoading; else loadingSkeleton">
+  <div class="pool-header">
+    <h2 class="pool-name">{{ pool.name }}</h2>
+    <div class="pool-actions">
+      <button
+        *ngIf="!pool.is_upgraded"
+        mat-button
+        color="primary"
+        (click)="onUpgrade()"
+      >{{ 'Upgrade' | translate }}</button>
+  
+      <button
+        mat-button
+        (click)="onExport()"
+      >{{ 'Export/Disconnect' | translate }}</button>
+  
+      <button
+        mat-button
+        (click)="onExpand()"
+      >{{ 'Expand' | translate }}</button>
+    </div>
+  </div>
+  
+  <div
+    gdGap="8px"
+    gdColumns="calc(25% - 6px) calc(25% - 6px) calc(25% - 6px) calc(25% - 6px)"
+    gdColumns.lt-xl="calc(50% - 4px) calc(50% - 4px)"
+    gdColumns.lt-md="auto"
+  >
+    <ix-widget-topology
+      [poolState]="pool"
+      [loading]="isDisksLoading"
+      [diskDictionary]="diskDictionary"
+    ></ix-widget-topology>
+    <ix-pool-usage-card
+      [loading]="isVolumeDataLoading"
+      [poolState]="pool"
+      [volumeData]="volumeData"
+    ></ix-pool-usage-card>
+    <ix-zfs-health-card [pool]="pool"></ix-zfs-health-card>
+    <ix-disk-health-card
+      [poolState]="pool"
+      [loading]="isDisksLoading"
+      [diskDictionary]="diskDictionary"
+    ></ix-disk-health-card>
   </div>
 </div>
 
-<div class="pool-cards">
-  <ix-widget-topology
-    [poolState]="pool"
-    [loading]="isDisksLoading"
-    [diskDictionary]="diskDictionary"
-  ></ix-widget-topology>
-  <ix-pool-usage-card
-    [loading]="isVolumeDataLoading"
-    [poolState]="pool"
-    [volumeData]="volumeData"
-  ></ix-pool-usage-card>
-  <ix-zfs-health-card [pool]="pool"></ix-zfs-health-card>
-  <ix-disk-health-card
-    [poolState]="pool"
-    [loading]="isDisksLoading"
-    [diskDictionary]="diskDictionary"
-  ></ix-disk-health-card>
-</div>
+
+<ng-template #loadingSkeleton>
+  <div class="skeleton-content">
+    <div class="pool-header">
+      <ngx-skeleton-loader></ngx-skeleton-loader>
+    </div>
+    <div
+      gdGap="8px"
+      gdColumns="calc(25% - 6px) calc(25% - 6px) calc(25% - 6px) calc(25% - 6px)"
+      gdColumns.lt-xl="calc(50% - 4px) calc(50% - 4px)"
+      gdColumns.lt-md="auto"
+    >
+      <mat-card class="card" *ngFor="let in of counter(4)">
+        <mat-card-content>
+          <ngx-skeleton-loader *ngFor="let in of counter(5)" fxLayout="column" fxLayoutAlign="center"></ngx-skeleton-loader>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+</ng-template>
