@@ -5,6 +5,7 @@ import { VmDevice } from 'app/interfaces/vm-device.interface';
 export interface VirtualMachine {
   autostart: boolean;
   bootloader: VmBootloader;
+  hyperv_enlightenments: boolean;
   cores: number;
   cpu_mode: VmCpuMode;
   cpu_model: string;
