@@ -20,7 +20,7 @@ export class DiskDetailsPanelComponent {
     return this.topologyItem.type;
   }
 
-  get isVdevDisk(): boolean {
+  get isTopologyDisk(): boolean {
     return isTopologyDisk(this.topologyItem);
   }
 }

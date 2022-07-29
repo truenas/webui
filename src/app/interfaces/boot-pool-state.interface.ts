@@ -8,12 +8,12 @@ export interface BootPoolState {
   error_count: number;
   features: BootPoolFeatureItem[];
   groups: {
-    cache: BoolPoolTopologyItem[];
-    data: BoolPoolTopologyItem[];
-    dedup: BoolPoolTopologyItem[];
-    log: BoolPoolTopologyItem[];
-    spare: BoolPoolTopologyItem[];
-    special: BoolPoolTopologyItem[];
+    cache: BootPoolTopologyItem[];
+    data: BootPoolTopologyItem[];
+    dedup: BootPoolTopologyItem[];
+    log: BootPoolTopologyItem[];
+    spare: BootPoolTopologyItem[];
+    special: BootPoolTopologyItem[];
   };
   guid: string;
   healthy: true;
@@ -27,7 +27,7 @@ export interface BootPoolState {
     health: ZfsProperty<PoolStatus>;
   };
   root_dataset: BootPoolRootDataset;
-  root_vdev: BoolPoolTopologyItem;
+  root_vdev: BootPoolTopologyItem;
   scan: PoolScanUpdate;
   status: string; // ONLINE
   status_code: string; // FEAT_DISABLED
@@ -35,8 +35,8 @@ export interface BootPoolState {
 }
 
 // This is very similar to a TopologyItem, but middleware returns lowercase `type` for some reason.
-export interface BoolPoolTopologyItem {
-  children: BoolPoolTopologyItem[];
+export interface BootPoolTopologyItem {
+  children: BootPoolTopologyItem[];
   guid: string;
   name: string;
   path: string;

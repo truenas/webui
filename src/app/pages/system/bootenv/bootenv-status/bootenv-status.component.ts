@@ -4,7 +4,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { TreeNode } from 'primeng/api';
 import { ApiTimestamp } from 'app/interfaces/api-date.interface';
-import { BoolPoolTopologyItem, BootPoolState } from 'app/interfaces/boot-pool-state.interface';
+import { BootPoolTopologyItem, BootPoolState } from 'app/interfaces/boot-pool-state.interface';
 import { TopologyDisk, TopologyItem } from 'app/interfaces/storage.interface';
 import { EntityTreeTable } from 'app/modules/entity/entity-tree-table/entity-tree-table.model';
 import { EntityUtils } from 'app/modules/entity/utils';
@@ -111,7 +111,7 @@ export class BootStatusListComponent implements OnInit {
     );
   }
 
-  parseData(data: BoolPoolTopologyItem | BootPoolState, bootPool?: BoolPoolTopologyItem): PoolDiskInfo {
+  parseData(data: BootPoolTopologyItem | BootPoolState, bootPool?: BootPoolTopologyItem): PoolDiskInfo {
     let stats = {
       read_errors: 0,
       write_errors: 0,
@@ -201,7 +201,7 @@ export class BootStatusListComponent implements OnInit {
     return item;
   }
 
-  parseTopology(data: BoolPoolTopologyItem, parent?: BoolPoolTopologyItem): TreeNode {
+  parseTopology(data: BootPoolTopologyItem, parent?: BootPoolTopologyItem): TreeNode {
     const node: TreeNode = {};
     node.data = this.parseData(data, parent);
     node.expanded = true;

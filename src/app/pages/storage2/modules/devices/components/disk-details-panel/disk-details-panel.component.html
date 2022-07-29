@@ -16,7 +16,7 @@
       [topologyParentItem]="topologyParentItem"
     ></ix-zfs-info-card>
 
-    <ng-container *ngIf="isVdevDisk">
+    <ng-container *ngIf="isTopologyDisk">
       <ix-hardware-disk-encryption [topologyDisk]="topologyItem | cast"></ix-hardware-disk-encryption>
       <ix-smart-info-card
         [topologyDisk]="topologyItem | cast"
@@ -25,7 +25,7 @@
     </ng-container>
   </div>
 
-  <div *ngIf="isVdevDisk" class="cards-column">
+  <div *ngIf="isTopologyDisk" class="cards-column">
     <ix-disk-info-card [disk]="disk"></ix-disk-info-card>
   </div>
 </div>
