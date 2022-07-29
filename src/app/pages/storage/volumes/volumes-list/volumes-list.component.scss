@@ -119,3 +119,19 @@
 .divider {
   opacity: 0.5;
 }
+
+.mat-card.deprecated {
+  margin-bottom: 16px;
+  margin-top: -16px;
+  padding: 8px !important;
+
+  .mat-card-title {
+    align-items: center;
+    display: flex;
+    gap: 8px;
+
+    .mat-icon {
+      color: var(--yellow);
+    }
+  }
+}

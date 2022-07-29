@@ -15,7 +15,7 @@ import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { JobItemComponent } from 'app/modules/jobs/components/job-item/job-item.component';
-import { FileTicketLicensedFormComponent } from 'app/pages/system/general-settings/support/file-ticket-licensed-form/file-ticket-licensed-form.component';
+import { FileTicketLicensedFormComponent } from 'app/pages/system/file-ticket/file-ticket-licensed-form/file-ticket-licensed-form.component';
 import { WebSocketService, DialogService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 

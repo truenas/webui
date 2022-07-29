@@ -10,6 +10,8 @@ import { EntityDialogComponent } from 'app/modules/entity/entity-dialog/entity-d
 import { FieldConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { FileTicketFormComponent } from 'app/pages/system/file-ticket/file-ticket-form/file-ticket-form.component';
+import { FileTicketLicensedFormComponent } from 'app/pages/system/file-ticket/file-ticket-licensed-form/file-ticket-licensed-form.component';
 import { LicenseInfoInSupport } from 'app/pages/system/general-settings/support/license-info-in-support.interface';
 import { SystemInfoInSupport } from 'app/pages/system/general-settings/support/system-info-in-support.interface';
 import { WebSocketService, AppLoaderService, DialogService } from 'app/services';
@@ -17,8 +19,6 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { ProductImageService } from 'app/services/product-image.service';
 import { AppState } from 'app/store';
 import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
-import { FileTicketFormComponent } from './file-ticket-form/file-ticket-form.component';
-import { FileTicketLicensedFormComponent } from './file-ticket-licensed-form/file-ticket-licensed-form.component';
 import { LicenseComponent } from './license/license.component';
 import { ProactiveComponent } from './proactive/proactive.component';
 

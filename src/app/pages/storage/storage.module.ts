@@ -83,6 +83,7 @@ import { ExportDisconnectModalComponent } from 'app/pages/storage/volumes/volume
 import { VolumesListComponent } from 'app/pages/storage/volumes/volumes-list/volumes-list.component';
 import { ZvolFormComponent } from 'app/pages/storage/volumes/zvol/zvol-form/zvol-form.component';
 import { ZvolWizardComponent } from 'app/pages/storage/volumes/zvol/zvol-wizard/zvol-wizard.component';
+import { FileTicketModule } from 'app/pages/system/file-ticket/file-ticket.module';
 import { UserService, StorageService, JobService } from 'app/services';
 import { routing } from './storage.routing';
 
@@ -128,6 +129,7 @@ import { routing } from './storage.routing';
     TreeTableModule,
     SnapshotsModule,
     LayoutModule,
+    FileTicketModule,
   ],
   declarations: [
     AclEditorListComponent,
