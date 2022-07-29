@@ -29,8 +29,10 @@
             ixTreeNodeToggle
             [ixTreeNodeToggleRecursive]="false"
             [ixTreeNodeDefDataSource]="dataSource"
-            (click)="onRowSelected(vdev, $event)"
+
             [class.selected]="vdev.guid === selectedItem?.guid"
+            [routerLink]="['/storage2', poolId, 'devices', vdev.guid]"
+            routerLinkActive="selected"
           >
             <button mat-icon-button disabled></button>
             <ix-disk-node [vdev]="vdev | cast" [disk]="diskDictionary[vdev.disk]"></ix-disk-node>
@@ -68,8 +70,10 @@
           >
             <div
               class="disk-nested-tree-root-node"
-              (click)="onRowSelected(vdev, $event)"
+
               [class.selected]="vdev.guid === selectedItem?.guid"
+              [routerLink]="['/storage2', poolId, 'devices', vdev.guid]"
+              routerLinkActive="selected"
             >
               <button
                 mat-icon-button
@@ -90,7 +94,13 @@
       </div>
     </div>
   </div>
-  <div class="details-container">
+  <div class="details-container"
+    ixDetailsHeight
+    ixDetailsHeightParentClass="rightside-content-hold"
+    [hasConsoleFooter]="hasConsoleFooter"
+    [headerHeight]="headerHeight"
+    [footerHeight]="footerHeight"
+    >
     <ix-disk-details-panel
       *ngIf="selectedItem && isDiskSelected && diskDictionary[selectedItem.disk]"
       [topologyItem]="selectedItem | cast"

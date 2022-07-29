@@ -4,6 +4,10 @@
   display: block;
 }
 
+.card {
+  @include details-card();
+}
+
 .pool-header {
   align-items: center;
   display: flex;
@@ -20,5 +24,33 @@
 .pool-actions {
   button {
     margin-left: 6px;
+  }
+}
+
+.skeleton-content {
+  .pool-header {
+    ngx-skeleton-loader {
+      display: inline-block;
+      height: 40px;
+      margin-bottom: 8px;
+      width: 100%;
+    }
+    
+    ::ng-deep .loader {
+      height: 40px;
+    }
+  }
+
+  .card {
+    ngx-skeleton-loader {
+      display: inline-block;
+      height: 20px;
+      margin: 10px 0;
+      width: 100%;
+  
+      ::ng-deep .loader {
+        margin: 0;
+      }
+    }
   }
 }

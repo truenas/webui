@@ -64,8 +64,10 @@ export class PoolsDashboardComponent implements OnInit, AfterViewInit {
     this.ws.call('pool.query', [[], { extra: { is_upgraded: true } }]).pipe(untilDestroyed(this)).subscribe(
       (pools: Pool[]) => {
         this.pools = this.sorter.tableSorter(pools, 'name', 'asc');
-        this.isPoolsLoading = false;
-        this.cdr.markForCheck();
+        setTimeout(() => {
+          this.isPoolsLoading = false;
+          this.cdr.markForCheck();
+        }, 2000);
       },
     );
   }
