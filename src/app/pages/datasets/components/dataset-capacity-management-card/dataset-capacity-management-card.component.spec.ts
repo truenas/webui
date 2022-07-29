@@ -8,11 +8,10 @@ import { of } from 'rxjs';
 import { mockWebsocket, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
 import { DatasetType } from 'app/enums/dataset.enum';
 import { DatasetQuota } from 'app/interfaces/dataset-quota.interface';
-import { Dataset } from 'app/interfaces/dataset.interface';
+import { Dataset, DatasetDetails } from 'app/interfaces/dataset.interface';
 import { DatasetCapacityManagementCardComponent } from 'app/pages/datasets/components/dataset-capacity-management-card/dataset-capacity-management-card.component';
 import { DatasetCapacitySettingsComponent } from 'app/pages/datasets/components/dataset-capacity-management-card/dataset-capacity-settings/dataset-capacity-settings.component';
 import { SpaceManagementChartComponent } from 'app/pages/datasets/components/space-management-chart/space-management-chart.component';
-import { DatasetInTree } from 'app/pages/datasets/store/dataset-in-tree.interface';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
@@ -22,7 +21,7 @@ const datasetFilesystem = {
   available: {
     parsed: 1395752960,
   },
-} as DatasetInTree;
+} as DatasetDetails;
 
 const datasetZvol = {
   id: 'zvol pool',
@@ -30,7 +29,7 @@ const datasetZvol = {
   available: {
     parsed: 1395752960 * 2,
   },
-} as DatasetInTree;
+} as DatasetDetails;
 
 describe('DatasetCapacityManagementCardComponent', () => {
   let spectator: Spectator<DatasetCapacityManagementCardComponent>;
