@@ -8,12 +8,13 @@
     <ix-tooltip *ngIf="tooltip" [header]="label" class="tooltip" [message]="tooltip"></ix-tooltip>
   </div>
 
-  <div class="input-container" [class.disabled]="isDisabled">
+  <div class="input-container" [class.disabled]="isDisabled" [class.readonly]="readonly">
     <textarea
       matInput
       [rows]="rows"
       [required]="required"
       [disabled]="isDisabled"
+      [readonly]="readonly"
       [(ngModel)]="value"
       (ngModelChange)="onChange($event)"
       (blur)="onTouch()"

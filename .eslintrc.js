@@ -190,7 +190,8 @@ module.exports = {
         "unused-imports/no-unused-vars": ["error", {
           vars: "local",
           args: "after-used",
-          argsIgnorePattern: "^_$"
+          argsIgnorePattern: "^_$",
+          ignoreRestSiblings: true,
         }],
         "@typescript-eslint/ban-types": ["error"],
         "unicorn/filename-case": ["error", { case: "kebabCase"}],

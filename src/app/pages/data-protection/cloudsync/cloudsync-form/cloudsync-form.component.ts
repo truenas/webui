@@ -35,11 +35,11 @@ import { RelationConnection } from 'app/modules/entity/entity-form/models/relati
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { EntityUtils, NULL_VALUE } from 'app/modules/entity/utils';
 import { CronPresetValue } from 'app/modules/scheduler/utils/get-default-crontab-presets.utils';
-import { CloudCredentialsFormComponent } from 'app/pages/credentials/backup-credentials/forms/cloud-credentials-form.component';
 import {
   AppLoaderService, CloudCredentialService, DialogService, JobService, WebSocketService,
 } from 'app/services';
 import { ModalService } from 'app/services/modal.service';
+import { CloudCredentialsFormComponent } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/cloud-credentials-form.component';
 
 @UntilDestroy()
 @Component({
@@ -735,35 +735,36 @@ export class CloudsyncFormComponent implements FormConfiguration {
           width: '600px',
           panelClass: 'overflow-dialog',
         });
-        dialogRef.componentInstance.finishSubmit = (value) => {
-          dialogRef.componentInstance.prepareAttributes(value);
-          dialogRef.componentInstance.entityForm.submitFunction(value).pipe(untilDestroyed(this)).subscribe(
-            () => {
-              dialogRef.close();
-              this.cloudcredentialService.getCloudsyncCredentials().then((credentials) => {
-                const newCredential = credentials.find((credential) => {
-                  return !this.credentials.find((existingCredential) => existingCredential.id === credential.id);
-                });
-                if (newCredential) {
-                  this.credentialsField.options.push({ label: newCredential.name + ' (' + newCredential.provider + ')', value: newCredential.id });
-                  this.credentials.push(newCredential);
-                  this.formGroup.controls['credentials'].setValue(newCredential.id);
-                } else {
-                  this.formGroup.controls['credentials'].setValue(null);
-                }
-              });
-            },
-            (err: WebsocketError) => {
-              dialogRef.close();
-              if (err.hasOwnProperty('reason') && (err.hasOwnProperty('trace'))) {
-                new EntityUtils().handleWsError(this, err, this.dialog);
-              } else {
-                new EntityUtils().handleError(this, err);
-              }
-              this.formGroup.controls['credentials'].setValue(null);
-            },
-          );
-        };
+        // TODO: Borked
+        // dialogRef.componentInstance.finishSubmit = (value) => {
+        //   dialogRef.componentInstance.prepareAttributes(value);
+        //   dialogRef.componentInstance.entityForm.submitFunction(value).pipe(untilDestroyed(this)).subscribe(
+        //     () => {
+        //       dialogRef.close();
+        //       this.cloudcredentialService.getCloudsyncCredentials().then((credentials) => {
+        //         const newCredential = credentials.find((credential) => {
+        //           return !this.credentials.find((existingCredential) => existingCredential.id === credential.id);
+        //         });
+        //         if (newCredential) {
+        //           this.credentialsField.options.push({ label: newCredential.name + ' (' + newCredential.provider + ')', value: newCredential.id });
+        //           this.credentials.push(newCredential);
+        //           this.formGroup.controls['credentials'].setValue(newCredential.id);
+        //         } else {
+        //           this.formGroup.controls['credentials'].setValue(null);
+        //         }
+        //       });
+        //     },
+        //     (err: WebsocketError) => {
+        //       dialogRef.close();
+        //       if (err.hasOwnProperty('reason') && (err.hasOwnProperty('trace'))) {
+        //         new EntityUtils().handleWsError(this, err, this.dialog);
+        //       } else {
+        //         new EntityUtils().handleError(this, err);
+        //       }
+        //       this.formGroup.controls['credentials'].setValue(null);
+        //     },
+        //   );
+        // };
         dialogRef.afterClosed().pipe(untilDestroyed(this)).subscribe(() => {
           if (!this.formGroup.controls['credentials'].value) {
             this.formGroup.controls['credentials'].setValue(null);

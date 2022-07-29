@@ -2,6 +2,8 @@ import { Validators } from '@angular/forms';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { regexValidator } from 'app/modules/entity/entity-form/validators/regex-validation';
 
+// TODO: Cleanup
+// TODO: Unify with provider enum added by Boris
 export const helptextSystemCloudcredentials = {
   fieldset_basic: T('Name and Provider'),
   fieldset_authentication: T('Authentication'),
