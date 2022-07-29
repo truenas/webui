@@ -38,7 +38,10 @@ export class DiskInfoCardComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.slideInService.onClose$?.pipe(untilDestroyed(this)).subscribe(() => {
+    this.slideInService.onClose$?.pipe(
+      filter((value) => !!value.response && value.modalType === DiskFormComponent),
+      untilDestroyed(this),
+    ).subscribe(() => {
       this.devicesStore.reloadList();
     });
   }

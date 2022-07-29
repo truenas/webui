@@ -6,7 +6,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { filter } from 'rxjs/operators';
-import { AclType, DefaultAclType } from 'app/enums/acl-type.enum';
+import { AclType } from 'app/enums/acl-type.enum';
 import helptext from 'app/helptext/storage/volumes/datasets/dataset-acl';
 import { Acl } from 'app/interfaces/acl.interface';
 import { GroupComboboxProvider } from 'app/modules/ix-forms/classes/group-combobox-provider';
@@ -42,6 +42,8 @@ export class DatasetAclEditorComponent implements OnInit {
   ownerFormGroup = this.formBuilder.group({
     owner: ['', Validators.required],
     ownerGroup: ['', Validators.required],
+    applyOwner: [false],
+    applyGroup: [false],
   });
 
   get isNfsAcl(): boolean {
@@ -83,7 +85,7 @@ export class DatasetAclEditorComponent implements OnInit {
         if (isFirstLoad) {
           this.onFirstLoad();
 
-          this.ownerFormGroup.setValue({
+          this.ownerFormGroup.patchValue({
             owner: state.stat.user,
             ownerGroup: state.stat.group,
           });
@@ -123,6 +125,8 @@ export class DatasetAclEditorComponent implements OnInit {
       traverse: !!(this.saveParameters.get('recursive').value && this.saveParameters.get('traverse').value),
       owner: this.ownerFormGroup.get('owner').value,
       ownerGroup: this.ownerFormGroup.get('ownerGroup').value,
+      applyOwner: this.ownerFormGroup.get('applyOwner').value,
+      applyGroup: this.ownerFormGroup.get('applyGroup').value,
     });
   }
 
@@ -137,7 +141,7 @@ export class DatasetAclEditorComponent implements OnInit {
 
   private onFirstLoad(): void {
     if (this.isHomeShare) {
-      this.store.usePreset(this.isNfsAcl ? DefaultAclType.Nfs4Home : DefaultAclType.PosixHome);
+      this.store.loadHomeSharePreset();
     } else {
       this.showPresetModalIfNeeded();
     }

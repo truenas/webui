@@ -4,10 +4,10 @@ import {
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { DatasetType } from 'app/enums/dataset.enum';
-import { Dataset } from 'app/interfaces/dataset.interface';
+import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { DatasetFormComponent } from 'app/pages/datasets/components/dataset-form/dataset-form.component';
 import { ZvolFormComponent } from 'app/pages/datasets/components/zvol-form/zvol-form.component';
-import { DatasetStore } from 'app/pages/datasets/store/dataset-store.service';
+import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
 import { isIocageMounted, isRootDataset } from 'app/pages/datasets/utils/dataset.utils';
 import { ModalService } from 'app/services';
 
@@ -19,23 +19,31 @@ import { ModalService } from 'app/services';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DatasetDetailsPanelComponent implements OnInit {
-  @Input() dataset: Dataset;
-  @Input() parentDataset: Dataset | undefined;
+  @Input() dataset: DatasetDetails;
+  @Input() parentDataset: DatasetDetails | undefined;
 
   constructor(
     private modalService: ModalService,
     private translate: TranslateService,
-    private datasetStore: DatasetStore,
-  ) {}
+    private datasetStore: DatasetTreeStore,
+  ) { }
 
   ngOnInit(): void {
     this.modalService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.datasetStore.reloadList();
+      this.datasetStore.datasetUpdated();
     });
   }
 
   get hasPermissions(): boolean {
     return this.dataset.type === DatasetType.Filesystem && !isIocageMounted(this.dataset);
+  }
+
+  get isCapacityAllowed(): boolean {
+    return !this.dataset.locked;
+  }
+
+  get isEncryptionAllowed(): boolean {
+    return this.dataset.encrypted;
   }
 
   get parentPath(): string {
@@ -49,6 +57,10 @@ export class DatasetDetailsPanelComponent implements OnInit {
 
   get isRoot(): boolean {
     return isRootDataset(this.dataset);
+  }
+
+  get isZvol(): boolean {
+    return this.dataset.type === DatasetType.Volume;
   }
 
   onAddDataset(): void {

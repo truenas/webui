@@ -15,15 +15,15 @@
       </div>
       <div class="details-item">
         <span class="label">{{ 'Sync:' | translate }} </span>
-        <span class="value">
-          <ng-container *ngIf="dataset.sync?.value; else notAvailable">
-            {{ dataset.sync.value }}
+        <span *ngIf="!isLoading; else loaderSkel" class="value">
+          <ng-container *ngIf="extraProperties?.sync?.value; else notAvailable">
+            {{ extraProperties.sync.value }}
           </ng-container>
         </span>
       </div>
       <div class="details-item">
         <span class="label">{{ 'Compression Level:' | translate }} </span>
-        <span class="value">
+        <span *ngIf="!isLoading; else loaderSkel" class="value">
           <ng-container *ngIf="datasetCompression; else notAvailable">
             {{ datasetCompression }}
           </ng-container>
@@ -31,25 +31,25 @@
       </div>
       <div class="details-item">
         <span class="label">{{ 'Enable Atime:' | translate }} </span>
-        <span class="value">
-          <ng-container *ngIf="dataset.atime?.value; else notAvailable">
-            {{ dataset.atime.value }}
+        <span *ngIf="!isLoading; else loaderSkel" class="value">
+          <ng-container *ngIf="extraProperties?.atime?.value; else notAvailable">
+            {{ extraProperties.atime.value }}
           </ng-container>
         </span>
       </div>
       <div class="details-item">
         <span class="label">{{ 'ZFS Deduplication:' | translate }} </span>
-        <span class="value">
-          <ng-container *ngIf="dataset.deduplication?.value; else notAvailable">
-            {{ dataset.deduplication.value }}
+        <span *ngIf="!isLoading; else loaderSkel" class="value">
+          <ng-container *ngIf="extraProperties?.deduplication?.value; else notAvailable">
+            {{ extraProperties.deduplication.value }}
           </ng-container>
         </span>
       </div>
       <div class="details-item">
         <span class="label">{{ 'Case Sensitivity:' | translate }} </span>
-        <span class="value">
-          <ng-container *ngIf="dataset.casesensitivity?.value; else notAvailable">
-            {{ dataset.casesensitivity.value }}
+        <span *ngIf="!isLoading; else loaderSkel" class="value">
+          <ng-container *ngIf="extraProperties?.casesensitivity?.value; else notAvailable">
+            {{ extraProperties.casesensitivity.value }}
           </ng-container>
         </span>
       </div>
@@ -63,6 +63,10 @@
   </mat-card>
 </div>
 
-<ng-template #notAvailable> 
-  {{ 'N/A' | translate }} 
+<ng-template #loaderSkel>
+  <ngx-skeleton-loader class="loader-skel"></ngx-skeleton-loader>
+</ng-template>
+
+<ng-template #notAvailable>
+  {{ 'N/A' | translate }}
 </ng-template>

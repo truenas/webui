@@ -7,13 +7,14 @@ import {
   TemplateRef,
   ViewChild,
 } from '@angular/core';
-import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Pool } from 'app/interfaces/pool.interface';
 import { ImportPoolComponent } from 'app/pages/storage2/components/import-pool/import-pool.component';
+import { PoolsDashboardStore } from 'app/pages/storage2/stores/pools-dashboard-store.service';
 import { WebSocketService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LayoutService } from 'app/services/layout.service';
+import { StorageService } from 'app/services/storage.service';
 
 @UntilDestroy()
 @Component({
@@ -29,16 +30,21 @@ export class PoolsDashboardComponent implements OnInit, AfterViewInit {
 
   constructor(
     private ws: WebSocketService,
-    private router: Router,
     private layoutService: LayoutService,
     private slideIn: IxSlideInService,
     private cdr: ChangeDetectorRef,
+    private sorter: StorageService,
+    private store: PoolsDashboardStore,
   ) {}
 
   ngOnInit(): void {
     this.loadPools();
 
     this.slideIn.onClose$
+      .pipe(untilDestroyed(this))
+      .subscribe(() => this.loadPools());
+
+    this.store.dashboardReloaded$
       .pipe(untilDestroyed(this))
       .subscribe(() => this.loadPools());
   }
@@ -57,9 +63,11 @@ export class PoolsDashboardComponent implements OnInit, AfterViewInit {
     this.isPoolsLoading = true;
     this.ws.call('pool.query', [[], { extra: { is_upgraded: true } }]).pipe(untilDestroyed(this)).subscribe(
       (pools: Pool[]) => {
-        this.pools = pools;
-        this.isPoolsLoading = false;
-        this.cdr.markForCheck();
+        this.pools = this.sorter.tableSorter(pools, 'name', 'asc');
+        setTimeout(() => {
+          this.isPoolsLoading = false;
+          this.cdr.markForCheck();
+        }, 2000);
       },
     );
   }

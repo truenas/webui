@@ -97,7 +97,7 @@ export class KubernetesSettingsComponent implements OnInit {
       (error) => {
         this.isFormLoading = false;
         this.cdr.markForCheck();
-        new EntityUtils().handleWsError(null, error, this.dialogService);
+        new EntityUtils().handleWsError(this, error, this.dialogService);
       },
     );
   }

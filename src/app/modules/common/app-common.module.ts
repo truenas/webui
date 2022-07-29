@@ -4,7 +4,6 @@ import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { FlexLayoutModule } from '@angular/flex-layout';
-import { FormsModule } from '@angular/forms';
 import { MatBadgeModule } from '@angular/material/badge';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
@@ -23,7 +22,6 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
-import { AngularSvgIconModule, SvgIconRegistryService } from 'angular-svg-icon';
 import { ChartistModule } from 'ng-chartist';
 import { ViewControllerComponent } from 'app/core/components/view-controller/view-controller.component';
 import { CoreComponents } from 'app/core/core-components.module';
@@ -39,6 +37,7 @@ import { GeneralDialogComponent } from 'app/modules/common/dialog/general-dialog
 import { InfoDialogComponent } from 'app/modules/common/dialog/info-dialog/info-dialog.component';
 import { RedirectDialogComponent } from 'app/modules/common/dialog/redirect-dialog/redirect-dialog.component';
 import { ResilverProgressDialogComponent } from 'app/modules/common/dialog/resilver-progress/resilver-progress.component';
+import { UpdateDialogComponent } from 'app/modules/common/dialog/update-dialog/update-dialog.component';
 import { AdminLayoutComponent } from 'app/modules/common/layouts/admin-layout/admin-layout.component';
 import { AuthLayoutComponent } from 'app/modules/common/layouts/auth-layout/auth-layout.component';
 import { ModalComponent } from 'app/modules/common/modal/modal.component';
@@ -55,64 +54,61 @@ import { LocaleService } from 'app/services/locale.service';
 
 @NgModule({
   imports: [
-    CommonModule,
-    FormsModule,
-    RouterModule,
-    FlexLayoutModule,
-    CommonDirectivesModule,
-    TranslateModule,
-    PortalModule,
-    IxFormsModule,
-    MatIconModule,
-    MatMenuModule,
-    MatTooltipModule,
-    MatBadgeModule,
-    MatToolbarModule,
-    MatListModule,
-    MatButtonModule,
-    MatDividerModule,
-    MatProgressSpinnerModule,
-    MatSidenavModule,
-    MatProgressBarModule,
-    MatTableModule,
-    MatDialogModule,
-    MatCheckboxModule,
-    MatIconModule,
-    TooltipModule,
-    MatSelectModule,
-    ChartistModule,
-    HttpClientModule,
-    EntityModule,
-    CoreComponents,
-    ScrollingModule,
-    AngularSvgIconModule.forRoot(),
-    CastModule,
     AlertsModule,
-    TruecommandModule,
+    CastModule,
+    ChartistModule,
+    CommonDirectivesModule,
+    CommonModule,
+    CoreComponents,
+    EntityModule,
+    FlexLayoutModule,
+    HttpClientModule,
+    IxFormsModule,
     JobsModule,
     LayoutModule,
+    MatBadgeModule,
+    MatButtonModule,
+    MatCheckboxModule,
+    MatDialogModule,
+    MatDividerModule,
+    MatIconModule,
     MatInputModule,
+    MatListModule,
+    MatMenuModule,
+    MatProgressBarModule,
+    MatProgressSpinnerModule,
+    MatSelectModule,
+    MatSidenavModule,
+    MatTableModule,
+    MatToolbarModule,
+    MatTooltipModule,
+    PortalModule,
+    RouterModule,
+    ScrollingModule,
+    TooltipModule,
+    TranslateModule,
+    TruecommandModule,
   ],
   declarations: [
+    AboutDialogComponent,
     AdminLayoutComponent,
     AuthLayoutComponent,
-    TopbarComponent,
-    ResilverProgressDialogComponent,
     ConfirmDialogComponent,
-    InfoDialogComponent,
-    GeneralDialogComponent,
-    ErrorDialogComponent,
-    AboutDialogComponent,
-    RedirectDialogComponent,
     ConsolePanelDialogComponent,
     DirectoryServicesMonitorComponent,
+    ErrorDialogComponent,
+    GeneralDialogComponent,
+    InfoDialogComponent,
     ModalComponent,
+    RedirectDialogComponent,
+    ResilverProgressDialogComponent,
     SearchInputComponent,
+    TopbarComponent,
+    UpdateDialogComponent,
   ],
   providers: [
     LanguageService,
     LocaleService,
-    SvgIconRegistryService,
   ],
   exports: [
     ViewControllerComponent,

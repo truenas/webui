@@ -16,9 +16,10 @@ import {
 } from 'app/pages/storage2/components/dashboard-pool/export-disconnect-modal/export-disconnect-modal.component';
 import { DiskHealthCardComponent } from 'app/pages/storage2/components/disk-health-card/disk-health-card.component';
 import {
-  WidgetUsageComponent,
-} from 'app/pages/storage2/components/pools-dashboard/widget-usage/widget-usage.component';
+  PoolUsageCardComponent,
+} from 'app/pages/storage2/components/pools-dashboard/pool-usage-card/pool-usage-card.component';
 import { ZfsHealthCardComponent } from 'app/pages/storage2/components/zfs-health-card/zfs-health-card.component';
+import { PoolsDashboardStore } from 'app/pages/storage2/stores/pools-dashboard-store.service';
 import { AppLoaderService, DialogService, WebSocketService } from 'app/services';
 
 describe('DashboardPoolComponent', () => {
@@ -33,18 +34,20 @@ describe('DashboardPoolComponent', () => {
     declarations: [
       MockComponent(ZfsHealthCardComponent),
       MockComponent(ExportDisconnectModalComponent),
-      MockComponent(WidgetUsageComponent),
+      MockComponent(PoolUsageCardComponent),
       MockComponent(DiskHealthCardComponent),
     ],
     providers: [
       mockProvider(MatDialog),
       mockProvider(SnackbarService),
       mockProvider(AppLoaderService),
+      mockProvider(PoolsDashboardStore),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),
       mockWebsocket([
         mockCall('pool.dataset.query', []),
+        mockCall('disk.query', []),
         mockCall('pool.upgrade'),
         mockJob('pool.expand', fakeSuccessfulJob()),
       ]),
@@ -80,7 +83,6 @@ describe('DashboardPoolComponent', () => {
       message: helptext.expand_pool_dialog.message,
     });
     expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('pool.expand', [pool.id]);
-
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
   });
 
@@ -90,7 +92,6 @@ describe('DashboardPoolComponent', () => {
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalled();
     expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('pool.upgrade', [pool.id]);
-
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
   });
 
@@ -103,6 +104,6 @@ describe('DashboardPoolComponent', () => {
   it('shows a disk health card for the pool', () => {
     const card = spectator.query(DiskHealthCardComponent);
     expect(card).toBeTruthy();
-    expect(card.pool).toBe(pool);
+    expect(card.poolState).toBe(pool);
   });
 });

@@ -234,6 +234,7 @@ describe('ChartFormComponent', () => {
 
   const existingChartEdit = {
     name: 'app_name',
+    id: 'app_name',
     config: {
       apiPort: 8927,
       maize: {

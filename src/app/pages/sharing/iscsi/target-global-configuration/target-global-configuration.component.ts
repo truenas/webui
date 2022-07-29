@@ -90,7 +90,7 @@ export class TargetGlobalConfigurationComponent implements OnInit {
         this.setLoading(false);
       },
       (error) => {
-        new EntityUtils().handleWsError(null, error, this.dialog);
+        new EntityUtils().handleWsError(this, error, this.dialog);
         this.setLoading(false);
       },
     );

@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { Navigation, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { CloudsyncProviderName } from 'app/enums/cloudsync-provider.enum';
 import { KeychainCredentialType } from 'app/enums/keychain-credential-type.enum';
 import { CloudsyncCredential } from 'app/interfaces/cloudsync-credential.interface';
 import { CloudsyncProvider } from 'app/interfaces/cloudsync-provider.interface';
@@ -13,7 +12,7 @@ import {
 } from 'app/interfaces/keychain-credential.interface';
 import { AppTableAction, AppTableConfig } from 'app/modules/entity/table/table.component';
 import {
-  CloudCredentialsFormComponent
+  CloudCredentialsFormComponent,
 } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/cloud-credentials-form.component';
 import {
   SshConnectionFormComponent,
@@ -23,7 +22,6 @@ import {
   KeychainCredentialService, ReplicationService, StorageService, CloudCredentialService,
 } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { ModalService } from 'app/services/modal.service';
 
 @UntilDestroy()
 @Component({

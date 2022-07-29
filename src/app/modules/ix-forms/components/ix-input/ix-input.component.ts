@@ -22,6 +22,10 @@ export class IxInputComponent implements ControlValueAccessor {
   @Input() readonly: boolean;
   @Input() type: string;
   @Input() autocomplete = 'off';
+
+  /**
+   * @deprecated Avoid using. Use valueChanges.
+   */
   @Output() inputBlur: EventEmitter<unknown> = new EventEmitter();
 
   /** If formatted value returned by parseAndFormatInput has non-numeric letters

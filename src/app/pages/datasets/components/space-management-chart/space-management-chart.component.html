@@ -1,0 +1,75 @@
+<div class="chart-wrapper" *ngIf="!isLoading; else chartPlaceholder">
+  <canvas
+    #canvas
+    baseChart
+    chartType="doughnut"
+    [datasets]="chartData"
+    [options]="chartOptions"
+    [width]="180"
+    [height]="180"
+  ></canvas>
+</div>
+
+<div class="chart-description">
+  <h3 class="chart-header">
+    <span class="chart-title">{{ 'Total Allocation' | translate }}:</span>
+    <span *ngIf="!isLoading; else valueLoader">
+      {{ extraProperties.used.parsed | filesize: { standard: 'iec', round: 0 } }}
+    </span>
+  </h3>
+  <div class="legend-wrapper" *ngIf="!isLoading; else legendPlaceholder">
+    <div class="legend-list-item" *ngIf="extraProperties.usedbydataset.parsed">
+      <span class="legend-label">
+        <span class="legend-swatch"></span>
+        {{ 'Data Written' | translate }}
+      </span>
+      <span class="legend-value">
+        {{ extraProperties.usedbydataset.parsed | filesize: { standard: 'iec', round: 0 } }}
+        <ng-container *ngIf="extraProperties.usedbydataset.parsed">
+          ({{ extraProperties.usedbydataset.parsed / extraProperties.used.parsed | percent }})
+        </ng-container>
+      </span>
+    </div>
+    <div class="legend-list-item" *ngIf="extraProperties.usedbysnapshots.parsed">
+      <span class="legend-label">
+        <span class="legend-swatch"></span>
+        <ng-container *ngIf="!isZvol">{{ 'Snapshots' | translate }}</ng-container>
+        <ng-container *ngIf="isZvol">{{ 'Used by Snapshots' | translate }}</ng-container>
+      </span>
+      <span class="legend-value">
+        {{ extraProperties.usedbysnapshots.parsed | filesize: { standard: 'iec', round: 0 } }}
+        <ng-container *ngIf="extraProperties.usedbysnapshots.parsed">
+          ({{ extraProperties.usedbysnapshots.parsed / extraProperties.used.parsed | percent }})
+        </ng-container>
+      </span>
+    </div>
+    <ng-container *ngIf="!isZvol">
+      <div class="legend-list-item" *ngIf="extraProperties.usedbychildren.parsed">
+        <span class="legend-label">
+          <span class="legend-swatch"></span>
+          {{ 'Children' | translate }}
+        </span>
+        <span class="legend-value">
+          {{ extraProperties.usedbychildren.parsed | filesize: { standard: 'iec', round: 0 } }}
+          <ng-container *ngIf="extraProperties.usedbychildren.parsed">
+            ({{ extraProperties.usedbychildren.parsed / extraProperties.used.parsed | percent }})
+          </ng-container>
+        </span>
+      </div>
+    </ng-container>
+  </div>
+</div>
+
+<ng-template #legendPlaceholder>
+  <ngx-skeleton-loader class="legend-placeholder"></ngx-skeleton-loader>
+  <ngx-skeleton-loader class="legend-placeholder"></ngx-skeleton-loader>
+  <ngx-skeleton-loader class="legend-placeholder"></ngx-skeleton-loader>
+</ng-template>
+
+<ng-template #chartPlaceholder>
+  <ngx-skeleton-loader class="chart-placeholder"></ngx-skeleton-loader>
+</ng-template>
+
+<ng-template #valueLoader>
+  <ngx-skeleton-loader class="value-placeholder"></ngx-skeleton-loader>
+</ng-template>

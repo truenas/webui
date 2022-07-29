@@ -25,10 +25,10 @@ import { SidenavStatusData } from 'app/interfaces/events/sidenav-status-event.in
 import { PoolScan } from 'app/interfaces/resilver-job.interface';
 import { Interval } from 'app/interfaces/timeout.interface';
 import { AlertSlice, selectImportantUnreadAlertsCount } from 'app/modules/alerts/store/alert.selectors';
-import { AppLoaderService } from 'app/modules/app-loader/app-loader.service';
 import { AboutDialogComponent } from 'app/modules/common/dialog/about/about-dialog.component';
 import { DirectoryServicesMonitorComponent } from 'app/modules/common/dialog/directory-services-monitor/directory-services-monitor.component';
 import { ResilverProgressDialogComponent } from 'app/modules/common/dialog/resilver-progress/resilver-progress.component';
+import { UpdateDialogComponent } from 'app/modules/common/dialog/update-dialog/update-dialog.component';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { JobsPanelComponent } from 'app/modules/jobs/components/jobs-panel/jobs-panel.component';
@@ -37,6 +37,7 @@ import { selectRunningJobsCount, selectIsJobPanelOpen } from 'app/modules/jobs/s
 import {
   ChangePasswordDialogComponent,
 } from 'app/modules/layout/components/change-password-dialog/change-password-dialog.component';
+import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { CoreService } from 'app/services/core-service/core.service';
 import { DialogService } from 'app/services/dialog.service';
@@ -67,6 +68,7 @@ export class TopbarComponent implements OnInit, OnDestroy {
   isDirServicesMonitorOpened = false;
   taskDialogRef: MatDialogRef<JobsPanelComponent>;
   dirServicesMonitor: MatDialogRef<DirectoryServicesMonitorComponent>;
+  updateDialog: MatDialogRef<UpdateDialogComponent>;
   dirServicesStatus: DirectoryServiceState[] = [];
   showDirServicesIcon = false;
   haStatusText: string;
@@ -403,7 +405,7 @@ export class TopbarComponent implements OnInit, OnDestroy {
         this.waitingNetworkCheckin = false;
       }, (err) => {
         this.loader.close();
-        new EntityUtils().handleWsError(null, err, this.dialogService);
+        new EntityUtils().handleWsError(this, err, this.dialogService);
       });
     });
   }
@@ -558,14 +560,18 @@ export class TopbarComponent implements OnInit, OnDestroy {
     const message = this.isHa || !this.systemWillRestart
       ? helptext.updateRunning_dialog.message
       : helptext.updateRunning_dialog.message + helptext.updateRunning_dialog.message_pt2;
+    const title = helptext.updateRunning_dialog.title;
 
-    this.dialogService.confirm({
-      message: this.translate.instant(message),
-      title: this.translate.instant(helptext.updateRunning_dialog.title),
-      hideCheckBox: true,
-      buttonMsg: this.translate.instant('Close'),
-      hideCancel: true,
+    this.updateDialog = this.dialog.open(UpdateDialogComponent, {
+      width: '400px',
+      hasBackdrop: true,
+      panelClass: 'topbar-panel',
+      position: {
+        top: '48px',
+        right: '16px',
+      },
     });
+    this.updateDialog.componentInstance.setMessage({ title, message });
   }
 
   openIx(): void {

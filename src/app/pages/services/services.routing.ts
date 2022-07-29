@@ -42,23 +42,13 @@ export const routes: Routes = [
     children: [
       {
         path: '',
+        redirectTo: 'configure',
+        pathMatch: 'full',
+      },
+      {
+        path: ':pk',
+        component: ServiceRsyncComponent,
         data: { title: 'Rsync', breadcrumb: 'Rsync' },
-        children: [
-          {
-            path: '',
-            redirectTo: 'configure',
-            pathMatch: 'full',
-          },
-          {
-            path: ':pk',
-            component: ServiceRsyncComponent,
-            data: { title: 'Rsync', breadcrumb: 'Rsync' },
-          },
-          {
-            path: 'rsync-module',
-            data: { title: 'Rsync Module', breadcrumb: 'Rsync Module' },
-          },
-        ],
       },
     ],
   },

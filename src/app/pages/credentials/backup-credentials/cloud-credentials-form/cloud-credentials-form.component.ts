@@ -1,5 +1,4 @@
 import {
-  AfterViewInit,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
@@ -8,9 +7,10 @@ import {
   ViewChild,
   ViewContainerRef,
 } from '@angular/core';
-import { FormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
+import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+import { Observable, of } from 'rxjs';
 import { CloudsyncProviderName } from 'app/enums/cloudsync-provider.enum';
 import { helptextSystemCloudcredentials as helptext } from 'app/helptext/system/cloud-credentials';
 import { CloudsyncCredential, CloudsyncCredentialUpdate } from 'app/interfaces/cloudsync-credential.interface';
@@ -20,53 +20,52 @@ import { EntityUtils } from 'app/modules/entity/utils';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import {
-  AzureProviderFormComponent
+  AzureProviderFormComponent,
 } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/provider-forms/azure-provider-form/azure-provider-form.component';
 import {
-  BackblazeB2ProviderFormComponent
+  BackblazeB2ProviderFormComponent,
 } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/provider-forms/backblaze-b2-provider-form/backblaze-b2-provider-form.component';
 import {
-  BaseProviderFormComponent
+  BaseProviderFormComponent,
 } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/provider-forms/base-provider-form';
 import {
-  FtpProviderFormComponent
+  FtpProviderFormComponent,
 } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/provider-forms/ftp-provider-form/ftp-provider-form.component';
 import {
-  GoogleCloudProviderFormComponent
+  GoogleCloudProviderFormComponent,
 } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/provider-forms/google-cloud-provider-form/google-cloud-provider-form.component';
 import {
-  GoogleDriveProviderFormComponent
+  GoogleDriveProviderFormComponent,
 } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/provider-forms/google-drive-provider-form/google-drive-provider-form.component';
 import {
-  HttpProviderFormComponent
+  HttpProviderFormComponent,
 } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/provider-forms/http-provider-form/http-provider-form.component';
 import {
-  MegaProviderFormComponent
+  MegaProviderFormComponent,
 } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/provider-forms/mega-provider-form/mega-provider-form.component';
 import {
-  OneDriveProviderFormComponent
+  OneDriveProviderFormComponent,
 } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/provider-forms/one-drive-provider-form/one-drive-provider-form.component';
 import {
-  OpenstackSwiftProviderFormComponent
+  OpenstackSwiftProviderFormComponent,
 } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/provider-forms/openstack-swift-provider-form/openstack-swift-provider-form.component';
 import {
-  PcloudProviderFormComponent
+  PcloudProviderFormComponent,
 } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/provider-forms/pcloud-provider-form/pcloud-provider-form.component';
 import {
-  S3ProviderFormComponent
+  S3ProviderFormComponent,
 } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/provider-forms/s3-provider-form/s3-provider-form.component';
 import {
-  SftpProviderFormComponent
+  SftpProviderFormComponent,
 } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/provider-forms/sftp-provider-form/sftp-provider-form.component';
 import {
-  TokenProviderFormComponent
+  TokenProviderFormComponent,
 } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/provider-forms/token-provider-form/token-provider-form.component';
 import {
-  WebdavProviderFormComponent
+  WebdavProviderFormComponent,
 } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/provider-forms/webdav-provider-form/webdav-provider-form.component';
 import { DialogService, WebSocketService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { Observable, of } from 'rxjs';
 
 // TODO: Form is partially backend driven and partially hardcoded on the frontend.
 @UntilDestroy()
@@ -266,17 +265,17 @@ export class CloudCredentialsFormComponent implements OnInit {
     }
 
     const formMapping = new Map<CloudsyncProviderName, Type<BaseProviderFormComponent>>([
-      [CloudsyncProviderName.AzureBlob, AzureProviderFormComponent],
-      [CloudsyncProviderName.B2, BackblazeB2ProviderFormComponent],
+      [CloudsyncProviderName.MicrosoftAzure, AzureProviderFormComponent],
+      [CloudsyncProviderName.BackblazeB2, BackblazeB2ProviderFormComponent],
       [CloudsyncProviderName.Ftp, FtpProviderFormComponent],
       [CloudsyncProviderName.GoogleCloudStorage, GoogleCloudProviderFormComponent],
       [CloudsyncProviderName.GoogleDrive, GoogleDriveProviderFormComponent],
       [CloudsyncProviderName.Http, HttpProviderFormComponent],
       [CloudsyncProviderName.Mega, MegaProviderFormComponent],
-      [CloudsyncProviderName.OneDrive, OneDriveProviderFormComponent],
-      [CloudsyncProviderName.OpenStackSwift, OpenstackSwiftProviderFormComponent],
+      [CloudsyncProviderName.MicrosoftOnedrive, OneDriveProviderFormComponent],
+      [CloudsyncProviderName.OpenstackSwift, OpenstackSwiftProviderFormComponent],
       [CloudsyncProviderName.Pcloud, PcloudProviderFormComponent],
-      [CloudsyncProviderName.S3, S3ProviderFormComponent],
+      [CloudsyncProviderName.AmazonS3, S3ProviderFormComponent],
       [CloudsyncProviderName.Sftp, SftpProviderFormComponent],
       [CloudsyncProviderName.Webdav, WebdavProviderFormComponent],
     ]);

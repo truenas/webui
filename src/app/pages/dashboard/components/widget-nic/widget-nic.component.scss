@@ -134,8 +134,8 @@
 
 .link-state .mat-icon {
   font-size: 18px;
-  position: relative;
-  top: 2px;
+  height: 18px;
+  width: 18px;
 }
 
 .carousel-nav {
@@ -230,5 +230,9 @@
 }
 
 .xs.widget .nic-traffic {
+  margin-left: 4px;
+}
+
+.more-addresses {
   margin-left: 4px;
 }

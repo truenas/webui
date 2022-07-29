@@ -15,6 +15,7 @@ import { ProductType } from 'app/enums/product-type.enum';
 import {
   VmBootloader, VmCpuMode, VmDeviceType, VmTime,
 } from 'app/enums/vm.enum';
+import { choicesToOptions } from 'app/helpers/options.helper';
 import globalHelptext from 'app/helptext/global-helptext';
 import add_edit_helptext from 'app/helptext/vm/devices/device-add-edit';
 import helptext from 'app/helptext/vm/vm-wizard/vm-wizard';
@@ -24,7 +25,6 @@ import { WizardConfiguration } from 'app/interfaces/entity-wizard.interface';
 import { Statfs } from 'app/interfaces/filesystem-stat.interface';
 import { VmDevice } from 'app/interfaces/vm-device.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
-import { AppLoaderService } from 'app/modules/app-loader/app-loader.service';
 import {
   FieldConfig, FormParagraphConfig, FormSelectConfig, FormUploadConfig,
 } from 'app/modules/entity/entity-form/models/field-config.interface';
@@ -34,6 +34,7 @@ import { MessageService } from 'app/modules/entity/entity-form/services/message.
 import { forbiddenValues } from 'app/modules/entity/entity-form/validators/forbidden-values-validation';
 import { EntityWizardComponent } from 'app/modules/entity/entity-wizard/entity-wizard.component';
 import { EntityUtils } from 'app/modules/entity/utils';
+import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import {
   NetworkService, StorageService, WebSocketService,
 } from 'app/services';
@@ -83,6 +84,25 @@ export class VmWizardComponent implements WizardConfiguration {
           tooltip: helptext.os_tooltip,
           options: helptext.os_options,
           validation: helptext.os_validation,
+        },
+        {
+          type: 'checkbox',
+          name: 'hyperv_enlightenments',
+          placeholder: helptext.hyperv_enlightenments_placeholder,
+          tooltip: helptext.hyperv_enlightenments_tooltip,
+          value: false,
+          isHidden: false,
+          relation: [
+            {
+              action: RelationAction.Show,
+              when: [
+                {
+                  name: 'os',
+                  value: 'Windows',
+                },
+              ],
+            },
+          ],
         },
         {
           type: 'input',
@@ -210,6 +230,32 @@ export class VmWizardComponent implements WizardConfiguration {
           tooltip: helptext.threads.tooltip,
         },
         {
+          type: 'input',
+          name: 'cpuset',
+          placeholder: helptext.cpuset.placeholder,
+          tooltip: helptext.cpuset.tooltip,
+          validation: [Validators.pattern('^((\\d+)|(\\d+-\\d+))(,((\\d+)|(\\d+-\\d+)))*$')],
+          required: false,
+        },
+        {
+          type: 'checkbox',
+          name: 'pin_vcpus',
+          placeholder: helptext.pin_vcpus.placeholder,
+          tooltip: helptext.pin_vcpus.tooltip,
+          value: false,
+          disabled: true,
+          relation: [
+            {
+              action: RelationAction.Enable,
+              when: [{
+                name: 'cpuset',
+                operator: '>',
+                value: '',
+              }],
+            },
+          ],
+        },
+        {
           type: 'select',
           name: 'cpu_mode',
           placeholder: helptext.cpu_mode.placeholder,
@@ -272,6 +318,14 @@ export class VmWizardComponent implements WizardConfiguration {
           blurEvent: () => this.blurEventForMemory(),
           parent: this,
           tooltip: helptext.memory_tooltip,
+        },
+        {
+          type: 'input',
+          name: 'nodeset',
+          placeholder: helptext.nodeset.placeholder,
+          tooltip: helptext.nodeset.tooltip,
+          validation: [Validators.pattern('^((\\d+)|(\\d+-\\d+))(,((\\d+)|(\\d+-\\d+)))*$')],
+          required: false,
         },
         {
           type: 'paragraph',
@@ -484,7 +538,7 @@ export class VmWizardComponent implements WizardConfiguration {
     private translate: TranslateService,
     protected modalService: ModalService,
     private store$: Store<AppState>,
-  ) {}
+  ) { }
 
   preInit(entityWizard: EntityWizardComponent): void {
     this.entityWizard = entityWizard;
@@ -546,15 +600,9 @@ export class VmWizardComponent implements WizardConfiguration {
         config.options = options;
       });
 
-    this.ws.call('pool.dataset.query', [[['type', '=', DatasetType.Volume]]]).pipe(untilDestroyed(this)).subscribe((zvols) => {
-      zvols.forEach((zvol) => {
-        const config = _.find(this.wizardConfig[2].fieldConfig, { name: 'hdd_path' }) as FormSelectConfig;
-        config.options.push(
-          {
-            label: zvol.id, value: zvol.id,
-          },
-        );
-      });
+    const diskConfig = _.find(this.wizardConfig[2].fieldConfig, { name: 'hdd_path' }) as FormSelectConfig;
+    this.ws.call('vm.device.disk_choices').pipe(choicesToOptions(), untilDestroyed(this)).subscribe((zvols) => {
+      diskConfig.options = zvols;
     });
 
     this.getFormControlFromFieldName('bootloader').valueChanges.pipe(untilDestroyed(this)).subscribe((bootloader) => {
@@ -963,7 +1011,11 @@ export class VmWizardComponent implements WizardConfiguration {
     vmPayload['vcpus'] = value.vcpus;
     vmPayload['cores'] = value.cores;
     vmPayload['threads'] = value.threads;
+    vmPayload['cpuset'] = value.cpuset;
+    vmPayload['nodeset'] = value.nodeset;
+    vmPayload['pin_vcpus'] = value.pin_vcpus;
     vmPayload['memory'] = Math.ceil(this.storageService.convertHumanStringToNum(value.memory) / 1024 ** 2); // bytes -> mb
+    vmPayload['hyperv_enlightenments'] = value.hyperv_enlightenments;
     vmPayload['bootloader'] = value.bootloader;
     vmPayload['shutdown_timeout'] = value.shutdown_timeout;
     vmPayload['autoloader'] = value.autoloader;
@@ -1053,7 +1105,7 @@ export class VmWizardComponent implements WizardConfiguration {
     if (value.hdd_path) {
       for (const device of vmPayload['devices']) {
         if (device.dtype === VmDeviceType.Disk) {
-          device.attributes.path = '/dev/zvol/' + value.hdd_path;
+          device.attributes.path = value.hdd_path;
         }
       }
 
@@ -1094,7 +1146,7 @@ export class VmWizardComponent implements WizardConfiguration {
           const zvolName = zvolPayload['zvol_name'];
           const zvolVolsize = zvolPayload['zvol_volsize'];
 
-          device.attributes.path = '/dev/zvol/' + origHdd;
+          device.attributes.path = origHdd;
           device.attributes.type = value.hdd_type;
           device.attributes.create_zvol = createZvol;
           device.attributes.zvol_name = zvolName;

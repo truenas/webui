@@ -55,7 +55,7 @@
                 </div>
                 {{pool}}
                 <span *ngIf="!system.pools[selectedEnclosure.poolKeys[pool]] || !system.pools[selectedEnclosure.poolKeys[pool]].healthy">
-                  <mat-icon fontSet="mdi-set" role="img" fontIcon="mdi-alert"></mat-icon>
+                  <mat-icon fontSet="mdi-set" fontIcon="mdi-alert"></mat-icon>
                 </span>
               </div>
 
@@ -166,7 +166,7 @@
 
     <!-- DETAILS/TITLE -->
     <div id="disks-details-header" [class]="currentView">
-      <a class="btn-default back fn-theme-primary" (click)="clearDisk()" *ngIf="currentView == 'details'"><mat-icon role="img">chevron_left</mat-icon></a>
+      <a class="btn-default back fn-theme-primary" (click)="clearDisk()" *ngIf="currentView == 'details'"><mat-icon>chevron_left</mat-icon></a>
       {{selectedDisk ? 'Disk Details for ' + selectedDisk.name : 'Disks Overview'}}
     </div>
 

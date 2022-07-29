@@ -10,11 +10,11 @@ import { Certificate } from 'app/interfaces/certificate.interface';
 import { IxInputHarness } from 'app/modules/ix-forms/components/ix-input/ix-input.harness';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import {
+  CertificateAcmeAddComponent,
+} from 'app/pages/credentials/certificates-dash/certificate-acme-add/certificate-acme-add.component';
+import {
   CertificateDetailsComponent,
 } from 'app/pages/credentials/certificates-dash/certificate-details/certificate-details.component';
-import {
-  CertificateAcmeAddComponent,
-} from 'app/pages/credentials/certificates-dash/forms/certificate-acme-add.component';
 import {
   ViewCertificateDialogData,
 } from 'app/pages/credentials/certificates-dash/view-certificate-dialog/view-certificate-dialog-data.interface';
@@ -123,12 +123,21 @@ describe('CertificateEditComponent', () => {
     });
 
     it('opens slidein for creating ACME certificates when Create ACME Certificate is pressed', async () => {
+      const slideInService = spectator.inject(IxSlideInService);
+      const mockSetCsr = jest.fn();
+      slideInService.open.mockReturnValue({
+        setCsr: mockSetCsr,
+      });
       const createButton = await loader.getHarness(MatButtonHarness.with({ text: 'Create ACME Certificate' }));
       await createButton.click();
 
-      expect(spectator.inject(IxSlideInService).close).toHaveBeenCalled();
-      await spectator.fixture.whenStable();
-      expect(spectator.inject(ModalService).openInSlideIn).toHaveBeenCalledWith(CertificateAcmeAddComponent, 1);
+      expect(slideInService.close).toHaveBeenCalled();
+      expect(slideInService.open).toHaveBeenCalledWith(CertificateAcmeAddComponent);
+      expect(mockSetCsr).toHaveBeenCalledWith({
+        ...certificate,
+        cert_type_CSR: true,
+        CSR: '--BEGIN CERTIFICATE REQUEST--',
+      });
     });
   });
 });

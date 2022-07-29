@@ -9,6 +9,7 @@ import * as filesize from 'filesize';
 import * as _ from 'lodash';
 import { Observable } from 'rxjs';
 import { filter, take, tap } from 'rxjs/operators';
+import { CloudsyncProviderName } from 'app/enums/cloudsync-provider.enum';
 import { Direction } from 'app/enums/direction.enum';
 import { ExplorerType } from 'app/enums/explorer-type.enum';
 import { TransferMode } from 'app/enums/transfer-mode.enum';
@@ -20,7 +21,6 @@ import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { ListdirChild } from 'app/interfaces/listdir-child.interface';
 import { QueryParams } from 'app/interfaces/query-api.interface';
 import { Schedule } from 'app/interfaces/schedule.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { FieldSets } from 'app/modules/entity/entity-form/classes/field-sets';
 import { EntityFormComponent } from 'app/modules/entity/entity-form/entity-form.component';
 import {
@@ -35,11 +35,11 @@ import { RelationConnection } from 'app/modules/entity/entity-form/models/relati
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { EntityUtils, NULL_VALUE } from 'app/modules/entity/utils';
 import { CronPresetValue } from 'app/modules/scheduler/utils/get-default-crontab-presets.utils';
+import { CloudCredentialsFormComponent } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/cloud-credentials-form.component';
 import {
   AppLoaderService, CloudCredentialService, DialogService, JobService, WebSocketService,
 } from 'app/services';
 import { ModalService } from 'app/services/modal.service';
-import { CloudCredentialsFormComponent } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/cloud-credentials-form.component';
 
 @UntilDestroy()
 @Component({
@@ -209,6 +209,15 @@ export class CloudsyncFormComponent implements FormConfiguration {
             allowDrag: true,
             useVirtualScroll: false,
           },
+          isHidden: true,
+          disabled: true,
+        },
+        {
+          type: 'checkbox',
+          name: 'bucket_policy_only',
+          placeholder: helptext.bucket_policy_only_placeholder,
+          tooltip: helptext.bucket_policy_only_tooltip,
+          value: false,
           isHidden: true,
           disabled: true,
         },
@@ -522,6 +531,7 @@ export class CloudsyncFormComponent implements FormConfiguration {
       attributes: {
         bucket,
         folder: node.data.name,
+        bucket_policy_only: true,
       },
       args: '',
     };
@@ -637,6 +647,7 @@ export class CloudsyncFormComponent implements FormConfiguration {
     this.bucketInputField = this.fieldSets.config('bucket_input') as FormInputConfig;
     this.setDisabled('bucket', true, true);
     this.setDisabled('bucket_input', true, true);
+    this.setDisabled('bucket_policy_only', true, true);
     this.cloudcredentialService.getCloudsyncCredentials().then((credentials) => {
       credentials.forEach((item) => {
         this.credentialsField.options.push({ label: item.name + ' (' + item.provider + ')', value: item.id });
@@ -746,7 +757,8 @@ export class CloudsyncFormComponent implements FormConfiguration {
         //           return !this.credentials.find((existingCredential) => existingCredential.id === credential.id);
         //         });
         //         if (newCredential) {
-        //           this.credentialsField.options.push({ label: newCredential.name + ' (' + newCredential.provider + ')', value: newCredential.id });
+        //         this.credentialsField.options.push({ label: newCredential.name + ' ('
+        //         + newCredential.provider + ')', value: newCredential.id });
         //           this.credentials.push(newCredential);
         //           this.formGroup.controls['credentials'].setValue(newCredential.id);
         //         } else {
@@ -774,6 +786,7 @@ export class CloudsyncFormComponent implements FormConfiguration {
       }
       this.setDisabled('bucket', true, true);
       this.setDisabled('bucket_input', true, true);
+      this.setDisabled('bucket_policy_only', true, true);
       // reset folder tree view
       if (!this.folderDestinationField.disabled) {
         if (this.folderDestinationField.customTemplateStringOptions.explorer) {
@@ -811,7 +824,9 @@ export class CloudsyncFormComponent implements FormConfiguration {
               }
 
               // update bucket fields name and tooltips based on provider
-              if (item.provider === 'AZUREBLOB' || item.provider === 'HUBIC') {
+              if (
+                item.provider === CloudsyncProviderName.MicrosoftAzure || item.provider === CloudsyncProviderName.Hubic
+              ) {
                 this.bucketField.placeholder = this.translate.instant('Container');
                 this.bucketField.tooltip = this.translate.instant('Select the pre-defined container to use.');
                 this.bucketInputField.placeholder = this.translate.instant('Container');
@@ -864,6 +879,12 @@ export class CloudsyncFormComponent implements FormConfiguration {
             } else {
               this.setDisabled('bucket', true, true);
               this.setDisabled('bucket_input', true, true);
+            }
+
+            if (targetProvider && targetProvider.name === CloudsyncProviderName.GoogleCloudStorage) {
+              this.setDisabled('bucket_policy_only', false, false);
+            } else {
+              this.setDisabled('bucket_policy_only', true, true);
             }
 
             const taskSchema = _.find(this.providers, { name: item.provider }) ? _.find(this.providers, { name: item.provider })['task_schema'] : [];
@@ -1066,6 +1087,11 @@ export class CloudsyncFormComponent implements FormConfiguration {
     if (value.bucket_input !== undefined) {
       attributes['bucket'] = value.bucket_input;
       delete value.bucket_input;
+    }
+
+    if (value.bucket_policy_only !== undefined) {
+      attributes['bucket_policy_only'] = value.bucket_policy_only;
+      delete value.bucket_policy_only;
     }
 
     if (value.task_encryption !== undefined) {

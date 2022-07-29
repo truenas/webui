@@ -9,3 +9,11 @@
   display: flex;
   justify-content: space-between;
 }
+
+.results-by-category {
+  margin-bottom: 4px;
+
+  .label {
+    text-transform: capitalize;
+  }
+}

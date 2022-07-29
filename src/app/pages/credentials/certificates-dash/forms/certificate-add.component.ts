@@ -6,6 +6,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
+import { CertificateCreateType } from 'app/enums/certificate-create-type.enum';
 import { helptextSystemCa } from 'app/helptext/system/ca';
 import { helptextSystemCertificates } from 'app/helptext/system/certificates';
 import { Certificate, CertificateProfile } from 'app/interfaces/certificate.interface';
@@ -77,10 +78,10 @@ export class CertificateAddComponent implements WizardConfiguration {
               connective: RelationConnection.Or,
               when: [{
                 name: 'create_type',
-                value: 'CERTIFICATE_CREATE_IMPORTED',
+                value: CertificateCreateType.CreateImported,
               }, {
                 name: 'create_type',
-                value: 'CERTIFICATE_CREATE_IMPORTED_CSR',
+                value: CertificateCreateType.CreateImportedCsr,
               }],
             },
           ],
@@ -753,7 +754,7 @@ export class CertificateAddComponent implements WizardConfiguration {
     this.getField('create_type').valueChanges.pipe(untilDestroyed(this)).subscribe((res) => {
       this.wizardConfig[2].skip = false;
 
-      if (res === 'CERTIFICATE_CREATE_INTERNAL') {
+      if (res === CertificateCreateType.CreateInternal) {
         this.csrFields.forEach((field) => this.hideField(field, true));
         this.importFields.forEach((field) => this.hideField(field, true));
         this.importCsrFields.forEach((field) => this.hideField(field, true));
@@ -768,7 +769,7 @@ export class CertificateAddComponent implements WizardConfiguration {
           this.setDisabled('key_length', true);
           this.hideField('ec_curve', false);
         }
-      } else if (res === 'CERTIFICATE_CREATE_CSR') {
+      } else if (res === CertificateCreateType.CreateCsr) {
         this.importFields.forEach((field) => this.hideField(field, true));
         this.importCsrFields.forEach((field) => this.hideField(field, true));
         this.internalFields.forEach((field) => this.hideField(field, true));
@@ -786,7 +787,7 @@ export class CertificateAddComponent implements WizardConfiguration {
           this.setDisabled('key_length', true);
           this.hideField('ec_curve', false);
         }
-      } else if (res === 'CERTIFICATE_CREATE_IMPORTED') {
+      } else if (res === CertificateCreateType.CreateImported) {
         this.csrFields.forEach((field) => this.hideField(field, true));
         this.importCsrFields.forEach((field) => this.hideField(field, true));
         this.internalFields.forEach((field) => this.hideField(field, true));
@@ -803,7 +804,7 @@ export class CertificateAddComponent implements WizardConfiguration {
         }
 
         this.wizardConfig[2].skip = true;
-      } else if (res === 'CERTIFICATE_CREATE_IMPORTED_CSR') {
+      } else if (res === CertificateCreateType.CreateImportedCsr) {
         this.csrFields.forEach((field) => this.hideField(field, true));
         this.importFields.forEach((field) => this.hideField(field, true));
         this.internalFields.forEach((field) => this.hideField(field, true));
@@ -980,7 +981,7 @@ export class CertificateAddComponent implements WizardConfiguration {
     if (data.passphrase2) {
       delete data.passphrase2;
     }
-    if (data.create_type === 'CERTIFICATE_CREATE_INTERNAL' || data.create_type === 'CERTIFICATE_CREATE_CSR') {
+    if ([CertificateCreateType.CreateInternal, CertificateCreateType.CreateCsr].includes(data.create_type)) {
       const certExtensions = {
         BasicConstraints: {},
         AuthorityKeyIdentifier: {},
@@ -1005,7 +1006,7 @@ export class CertificateAddComponent implements WizardConfiguration {
           delete data[key];
         }
       });
-      if (data.create_type === 'CERTIFICATE_CREATE_CSR') {
+      if (data.create_type === CertificateCreateType.CreateCsr) {
         delete certExtensions['AuthorityKeyIdentifier'];
       }
       data['cert_extensions'] = certExtensions;

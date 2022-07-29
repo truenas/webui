@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { ComponentStore } from '@ngrx/component-store';
 import { EMPTY } from 'rxjs';
 import {
-  catchError, tap,
+  catchError, switchMap, tap,
 } from 'rxjs/operators';
 import { ApiKey } from 'app/interfaces/api-key.interface';
 import { EntityUtils } from 'app/modules/entity/utils';
@@ -32,29 +32,33 @@ export class ApiKeyComponentStore extends ComponentStore<ApiKeysState> {
   readonly isLoading$ = this.select((state) => state.isLoading);
   readonly isError$ = this.select((state) => state.error);
   readonly apiKeys$ = this.select((state) => state.entities);
-  readonly apiKeysTotal$ = this.select((state) => state.entities.length);
 
-  readonly loadApiKeys = this.effect(() => {
-    this.setState({
-      ...initialState,
-      isLoading: true,
-    });
-
-    return this.ws.call('api_key.query').pipe(
-      tap((keys) => {
-        this.patchState({
-          entities: keys,
+  readonly loadApiKeys = this.effect((triggers$) => {
+    return triggers$.pipe(
+      tap(() => {
+        this.setState({
+          ...initialState,
+          isLoading: true,
         });
       }),
-      catchError((error) => {
-        new EntityUtils().errorReport(error, this.dialog);
+      switchMap(() => {
+        return this.ws.call('api_key.query').pipe(
+          tap((keys) => {
+            this.patchState({
+              entities: keys,
+            });
+          }),
+          catchError((error) => {
+            new EntityUtils().errorReport(error, this.dialog);
 
-        this.patchState({
-          isLoading: false,
-          error: 'API Keys could not be loaded',
-        });
+            this.patchState({
+              isLoading: false,
+              error: 'API Keys could not be loaded',
+            });
 
-        return EMPTY;
+            return EMPTY;
+          }),
+        );
       }),
     );
   });

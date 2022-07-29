@@ -26,6 +26,11 @@ export const selectRunningJobs = createSelector(
   (jobs) => jobs.filter((job) => job.state === JobState.Running),
 );
 
+export const selectUpdateJob = createSelector(
+  selectRunningJobs,
+  (jobs) => jobs.filter((job) => job.method === 'update.update' || job.method === 'failover.upgrade'),
+);
+
 export const selectFailedJobs = createSelector(
   selectJobs,
   (jobs) => jobs.filter((job) => job.state === JobState.Failed),

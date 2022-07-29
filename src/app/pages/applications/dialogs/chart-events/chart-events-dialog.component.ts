@@ -9,7 +9,7 @@ import { appImagePlaceholder } from 'app/constants/catalog.constants';
 import helptext from 'app/helptext/apps/apps';
 import { ChartReleaseEvent } from 'app/interfaces/chart-release-event.interface';
 import { ChartContainerImage, ChartRelease } from 'app/interfaces/chart-release.interface';
-import { AppLoaderService } from 'app/modules/app-loader/app-loader.service';
+import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { ApplicationsService } from 'app/pages/applications/applications.service';
 
 @UntilDestroy()
@@ -45,7 +45,9 @@ export class ChartEventsDialogComponent implements OnInit {
         this.catalogApp = charts[0];
       }
       if (events) {
-        this.chartEvents = events.reverse();
+        this.chartEvents = [...events].sort((a, b) => {
+          return b.metadata.creation_timestamp?.$date - a.metadata.creation_timestamp?.$date;
+        });
       }
     });
   }
@@ -88,7 +90,9 @@ export class ChartEventsDialogComponent implements OnInit {
     this.loader.open();
     this.appService.getChartReleaseEvents(this.catalogApp.name).pipe(untilDestroyed(this)).subscribe((evt) => {
       this.loader.close();
-      this.chartEvents = evt.reverse();
+      this.chartEvents = [...evt].sort((a, b) => {
+        return b.metadata.creation_timestamp?.$date - a.metadata.creation_timestamp?.$date;
+      });
       this.eventsPanel.open();
     });
   }

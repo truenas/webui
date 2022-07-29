@@ -134,7 +134,7 @@ export class VmwareSnapshotFormComponent implements OnInit {
         if (error.reason && error.reason.includes('[ETIMEDOUT]')) {
           this.dialogService.errorReport(helptext.connect_err_dialog.title, helptext.connect_err_dialog.msg);
         } else {
-          new EntityUtils().handleWsError(null, error, this.dialogService);
+          new EntityUtils().handleWsError(this, error, this.dialogService);
         }
         this.cdr.markForCheck();
       },

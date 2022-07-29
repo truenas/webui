@@ -29,7 +29,7 @@
         <div *ngIf="enclosurePools.length > 0; else noPools" class="legend">
           <div class="legend-item" *ngFor="let pool of enclosurePools; let i=index">
             <div class="swatch" [style.background]="theme[themeKey(theme.accentColors[selectedEnclosure.poolKeys[pool]])]">
-            </div>{{pool}} <span *ngIf="!system.pools[selectedEnclosure.poolKeys[pool]].healthy"><mat-icon fontSet="mdi-set" role="img" fontIcon="mdi-alert"></mat-icon></span></div>
+            </div>{{pool}} <span *ngIf="!system.pools[selectedEnclosure.poolKeys[pool]].healthy"><mat-icon fontSet="mdi-set" fontIcon="mdi-alert"></mat-icon></span></div>
         </div>
 
         <ng-template #noPools>
@@ -70,7 +70,7 @@
               <div class="status-icon">
                 <mat-icon
                   [ngClass]="{'online': findDiskBySlotNumber(i + 1).status == 'ONLINE', 'alert':findDiskBySlotNumber(i + 1).status !== 'ONLINE' && findDiskBySlotNumber(i + 1).status !== 'AVAILABLE'}"
-                  role="img">
+                >
                   check_circle
                 </mat-icon>
               </div>
@@ -88,7 +88,7 @@
       <ng-container *ngIf="selectedDisk && currentView == 'details'" #details>
         <!-- DISK SELECTED -->
         <div class="header-container"  #disksdetails id="details">
-          <button class="back-btn" mat-button (click)="clearDisk()"><mat-icon role="img">close</mat-icon></button>
+          <button class="back-btn" mat-button (click)="clearDisk()"><mat-icon>close</mat-icon></button>
           <h3 class="header">{{ 'Drive Details' | translate }} {{selectedDisk.name}}</h3>
           <div>
             <ul>
@@ -130,7 +130,7 @@
                 </ul>
                 <ng-template #nostats>
                   <div class="nostats">
-                    <mat-icon role="img">info_icon</mat-icon>
+                    <mat-icon>info_icon</mat-icon>
                     <strong>{{ 'Must be part of a pool to check errors' | translate }}</strong>
                   </div>
                 </ng-template>

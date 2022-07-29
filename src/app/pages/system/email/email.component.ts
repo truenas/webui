@@ -4,7 +4,6 @@ import {
 import { FormBuilder, FormControl, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { MailSecurity } from 'app/enums/mail-security.enum';
@@ -20,8 +19,6 @@ import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-erro
 import IxValidatorsService from 'app/modules/ix-forms/services/ix-validators.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { DialogService, WebSocketService } from 'app/services';
-import { AppState } from 'app/store';
-import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 
 enum SendMethod {
   Smtp = 'smtp',
@@ -87,7 +84,6 @@ export class EmailComponent implements OnInit {
     private matDialog: MatDialog,
     private validatorService: IxValidatorsService,
     @Inject(WINDOW) private window: Window,
-    private store$: Store<AppState>,
     private snackbar: SnackbarService,
   ) {}
 
@@ -196,26 +192,24 @@ export class EmailComponent implements OnInit {
   }
 
   private sendTestEmail(): void {
-    this.store$.pipe(waitForSystemInfo, untilDestroyed(this)).subscribe((systemInfo) => {
-      const productType = this.window.localStorage.getItem('product_type') as ProductType;
-      const email = {
-        subject: `TrueNAS Test Message hostname: ${systemInfo.hostname}`,
-        text: `This is a test message from TrueNAS ${productType}.`,
-      };
-      const config = this.prepareConfigUpdate();
+    const productType = this.window.localStorage.getItem('product_type') as ProductType;
+    const email = {
+      subject: 'Test Message',
+      text: `This is a test message from TrueNAS ${productType}.`,
+    };
+    const config = this.prepareConfigUpdate();
 
-      const dialogRef = this.matDialog.open(EntityJobComponent, {
-        data: {
-          title: this.translate.instant('Email'),
-        },
-        disableClose: true,
-      });
-      dialogRef.componentInstance.setCall('mail.send', [email, config]);
-      dialogRef.componentInstance.submit();
-      dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
-        dialogRef.close(false);
-        this.snackbar.success(this.translate.instant('Test email sent.'));
-      });
+    const dialogRef = this.matDialog.open(EntityJobComponent, {
+      data: {
+        title: this.translate.instant('Email'),
+      },
+      disableClose: true,
+    });
+    dialogRef.componentInstance.setCall('mail.send', [email, config]);
+    dialogRef.componentInstance.submit();
+    dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
+      dialogRef.close(false);
+      this.snackbar.success(this.translate.instant('Test email sent.'));
     });
   }
 

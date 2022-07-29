@@ -1,7 +1,6 @@
 import { HttpClientModule, HttpClient } from '@angular/common/http';
 import { NgModule, ErrorHandler } from '@angular/core';
 import { FlexLayoutModule } from '@angular/flex-layout';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { BrowserModule } from '@angular/platform-browser';
@@ -39,10 +38,10 @@ import { rootEffects, rootReducers } from 'app/store';
 import { CustomRouterStateSerializer } from 'app/store/router/custom-router-serializer';
 import { AppComponent } from './app.component';
 import { rootRouterConfig } from './app.routes';
-import { AppLoaderModule } from './modules/app-loader/app-loader.module';
-import { AppLoaderService } from './modules/app-loader/app-loader.service';
 import { AppCommonModule } from './modules/common/app-common.module';
 import { EntityModule } from './modules/entity/entity.module';
+import { AppLoaderModule } from './modules/loader/app-loader.module';
+import { AppLoaderService } from './modules/loader/app-loader.service';
 import { AuthService } from './services/auth/auth.service';
 import { EntityTableService } from './services/entity-table.service';
 import { NavigationService } from './services/navigation/navigation.service';
@@ -79,8 +78,6 @@ import { WebSocketService } from './services/ws.service';
     NgxPopperjsModule.forRoot({ appendTo: 'body' }),
     MarkdownModule.forRoot(),
     CoreComponents,
-    FormsModule,
-    ReactiveFormsModule,
     EntityModule,
     MatSnackBarModule,
     TerminalModule,

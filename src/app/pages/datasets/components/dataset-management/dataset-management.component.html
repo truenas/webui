@@ -4,6 +4,11 @@
 
 <div class="container" fxLayoutGap="16px">
   <div class="table-container">
+    <ix-fake-progress-bar
+      class="loader-bar"
+      [loading]="isLoading$ | async"
+    ></ix-fake-progress-bar>
+
     <div class="dataset-tree-search">
       <ix-search-input [disabled]="!dataSource" (search)="onSearch($event)"></ix-search-input>
     </div>
@@ -62,7 +67,17 @@
     </div>
   </div>
 
-  <div *ngIf="selectedDataset" class="details-container">
-    <ix-dataset-details-panel [dataset]="selectedDataset" [parentDataset]="selectedDatasetParent"></ix-dataset-details-panel>
+  <div class="details-container" 
+    ixDetailsHeight 
+    ixDetailsHeightParentClass="rightside-content-hold"
+    [hasConsoleFooter]="hasConsoleFooter"
+    [headerHeight]="headerHeight"
+    [footerHeight]="footerHeight"
+  >
+    <ix-dataset-details-panel
+      *ngIf="selectedDataset$ | async as selectedDataset"
+      [dataset]="selectedDataset"
+      [parentDataset]="selectedParentDataset$ | async"
+    ></ix-dataset-details-panel>
   </div>
 </div>

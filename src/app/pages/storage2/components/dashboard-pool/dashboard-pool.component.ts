@@ -1,9 +1,10 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnInit,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+import _ from 'lodash';
 import { EMPTY } from 'rxjs';
 import {
   catchError, filter, switchMap, tap,
@@ -12,12 +13,14 @@ import { JobState } from 'app/enums/job-state.enum';
 import helptext from 'app/helptext/storage/volumes/volume-list';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { Pool } from 'app/interfaces/pool.interface';
+import { Disk } from 'app/interfaces/storage.interface';
 import { VolumeData, VolumesData } from 'app/interfaces/volume-data.interface';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import {
   ExportDisconnectModalComponent,
 } from 'app/pages/storage2/components/dashboard-pool/export-disconnect-modal/export-disconnect-modal.component';
+import { PoolsDashboardStore } from 'app/pages/storage2/stores/pools-dashboard-store.service';
 import { AppLoaderService, DialogService, WebSocketService } from 'app/services';
 
 @UntilDestroy()
@@ -29,11 +32,13 @@ import { AppLoaderService, DialogService, WebSocketService } from 'app/services'
 })
 export class DashboardPoolComponent implements OnInit {
   @Input() pool: Pool;
-
-  @Output() poolsUpdated = new EventEmitter<void>();
+  @Input() isLoading: boolean;
 
   volumeData: VolumeData;
   isVolumeDataLoading = false;
+
+  diskDictionary: { [key: string]: Disk } = {};
+  isDisksLoading = false;
 
   constructor(
     private matDialog: MatDialog,
@@ -43,10 +48,12 @@ export class DashboardPoolComponent implements OnInit {
     private ws: WebSocketService,
     private snackbar: SnackbarService,
     private cdr: ChangeDetectorRef,
+    private store: PoolsDashboardStore,
   ) {}
 
   ngOnInit(): void {
     this.loadVolumeData();
+    this.loadDisks();
   }
 
   loadVolumeData(): void {
@@ -69,7 +76,16 @@ export class DashboardPoolComponent implements OnInit {
         });
         this.volumeData = vd[this.pool.name];
         this.isVolumeDataLoading = false;
-        this.cdr.detectChanges();
+        this.cdr.markForCheck();
+      });
+  }
+
+  loadDisks(): void {
+    this.isDisksLoading = true;
+    this.ws.call('disk.query', [[['pool', '=', this.pool.name]], { extra: { pools: true } }])
+      .pipe(untilDestroyed(this)).subscribe((disks) => {
+        this.diskDictionary = _.keyBy(disks, (disk) => disk.devname);
+        this.isDisksLoading = false;
         this.cdr.markForCheck();
       });
   }
@@ -86,7 +102,7 @@ export class DashboardPoolComponent implements OnInit {
           return;
         }
 
-        this.poolsUpdated.emit();
+        this.store.loadDashboard();
       });
   }
 
@@ -107,7 +123,7 @@ export class DashboardPoolComponent implements OnInit {
           this.snackbar.success(
             this.translate.instant('Successfully expanded pool {name}.', { name: this.pool.name }),
           );
-          this.poolsUpdated.emit();
+          this.store.loadDashboard();
         }),
         catchError((error) => {
           this.loader.close();
@@ -134,7 +150,7 @@ export class DashboardPoolComponent implements OnInit {
         this.snackbar.success(
           this.translate.instant('Pool {name} successfully upgraded.', { name: this.pool.name }),
         );
-        this.poolsUpdated.emit();
+        this.store.loadDashboard();
       }),
       catchError((error) => {
         this.loader.close();
@@ -143,5 +159,9 @@ export class DashboardPoolComponent implements OnInit {
       }),
       untilDestroyed(this),
     ).subscribe();
+  }
+
+  counter(i: number): number[] {
+    return new Array(i);
   }
 }

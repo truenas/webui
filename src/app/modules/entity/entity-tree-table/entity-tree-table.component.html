@@ -16,8 +16,8 @@
             <ng-container *ngIf="i == 0">
               <div [style.margin-left]="((element.indexPath.length - 1) * 16).toString() + 'px'" [ngClass]="{ 'invisible': element.children.length == 0 }">
                 <button mat-icon-button (click)="expandNode(element)">
-                  <mat-icon *ngIf="element.expanded == true" class="mat-icon-rtl-mirror expansion-trigger" role="img" fontSet="mdi-set" fontIcon="mdi-chevron-down"></mat-icon>
-                  <mat-icon *ngIf="element.expanded !== true" class="mat-icon-rtl-mirror expansion-trigger" role="img" fontSet="mdi-set" fontIcon="mdi-chevron-right"></mat-icon>
+                  <mat-icon *ngIf="element.expanded == true" class="mat-icon-rtl-mirror expansion-trigger" fontSet="mdi-set" fontIcon="mdi-chevron-down"></mat-icon>
+                  <mat-icon *ngIf="element.expanded !== true" class="mat-icon-rtl-mirror expansion-trigger" fontSet="mdi-set" fontIcon="mdi-chevron-right"></mat-icon>
                 </button>
               </div>
             </ng-container>
@@ -28,14 +28,12 @@
               <span *ngIf="column.prop === 'name' && element.data.hasOwnProperty('is_encrypted_root') && element.data.hasOwnProperty('non_encrypted_on_encrypted')">
                 &nbsp;
                 <mat-icon
-                  role="img"
                   fontSet="mdi-set"
                   fontIcon="mdi-lock-open-variant"
                   *ngIf="element.data.is_encrypted_root && !element.data.locked"
                   [matTooltip]="'This dataset is an encryption root which is unlocked. Data from this dataset or it\'s children datasets which inherit it\'s encryption properties is accessible.' | translate"
                 ></mat-icon>
                 <mat-icon
-                  role="img"
                   fontSet="mdi-set"
                   [matTooltip]="'This dataset is an encryption root which is locked. Data from this dataset or it\'s children datasets which inherit it\'s encryption properties is not accessible.' | translate"
                   fontIcon="mdi-lock"

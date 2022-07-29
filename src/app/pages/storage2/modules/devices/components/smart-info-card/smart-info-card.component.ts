@@ -2,7 +2,10 @@ import {
   ChangeDetectionStrategy, Component, Input, OnChanges,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
+import _ from 'lodash';
 import { Observable } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
 import { SmartTestResultStatus } from 'app/enums/smart-test-result-status.enum';
@@ -26,16 +29,22 @@ export class SmartInfoCardComponent implements OnChanges {
   @Input() disk: Disk;
 
   totalResults$: Observable<LoadingState<number>>;
+  lastResultsInCategory$: Observable<SmartTestResult[]>;
+  smartTasksCount$: Observable<LoadingState<number>>;
 
-  private results$: Observable<SmartTestResult[]>;
+  readonly tasksMessage = T('{n, plural, =0 {No Tasks} one {# Task} other {# Tasks}} Configured');
+
+  private readonly maxResultCategories = 4;
 
   constructor(
     private ws: WebSocketService,
     private matDialog: MatDialog,
+    private translate: TranslateService,
   ) { }
 
   ngOnChanges(): void {
     this.loadTestResults();
+    this.loadSmartTasks();
   }
 
   onManualTest(): void {
@@ -54,13 +63,45 @@ export class SmartInfoCardComponent implements OnChanges {
   }
 
   private loadTestResults(): void {
-    this.results$ = this.ws.call('smart.test.results', [[['disk', '=', this.topologyItem.disk]]])
-      .pipe(map((results) => results[0]?.tests ?? []));
-    this.totalResults$ = this.results$.pipe(
-      map((results) => {
-        return results.filter((result) => result.status !== SmartTestResultStatus.Running).length;
+    const results$ = this.ws.call('smart.test.results', [[['disk', '=', this.topologyItem.disk]]]).pipe(
+      map((testResults) => {
+        const results = testResults[0]?.tests ?? [];
+        return results.filter((result) => result.status !== SmartTestResultStatus.Running);
       }),
+    );
+
+    this.totalResults$ = results$.pipe(
+      map((results) => results.length),
       toLoadingState(),
     );
+
+    this.lastResultsInCategory$ = results$.pipe(
+      map((results) => {
+        const normalizedResults = results.map((result) => ({
+          ...result,
+          description: this.normalizeDescription(result.description),
+        }));
+        const lastResultsInCategories = _.uniqBy(normalizedResults, (result) => result.description);
+        return lastResultsInCategories.slice(0, this.maxResultCategories);
+      }),
+    );
+  }
+
+  private loadSmartTasks(): void {
+    this.smartTasksCount$ = this.ws.call('smart.test.query_for_disk', [this.topologyItem.disk]).pipe(
+      map((tasks) => tasks.length),
+      toLoadingState(),
+    );
+  }
+
+  private normalizeDescription(description: string): string {
+    if (description.toLowerCase().includes('short')) {
+      return this.translate.instant('Short');
+    }
+    if (description.toLowerCase().includes('long')) {
+      return this.translate.instant('Long');
+    }
+
+    return description;
   }
 }

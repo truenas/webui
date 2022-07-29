@@ -45,7 +45,7 @@ export class ReplicationFormComponent implements OnInit {
         },
         (error) => {
           this.isFormLoading = false;
-          new EntityUtils().handleWsError(null, error, this.dialogService);
+          new EntityUtils().handleWsError(this, error, this.dialogService);
           this.cdr.markForCheck();
         },
       );

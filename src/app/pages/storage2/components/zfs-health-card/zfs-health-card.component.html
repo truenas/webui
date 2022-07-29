@@ -1,4 +1,4 @@
-<mat-card class="card">
+<mat-card class="card" fxLayout="column">
   <mat-card-header>
     <h3 mat-card-title>
       {{ 'ZFS Health' | translate }}
@@ -33,7 +33,7 @@
     </ng-template>
   </mat-card-header>
 
-  <mat-card-content>
+  <mat-card-content fxLayout="column" fxFlex="100" fxLayoutAlign="space-between">
     <div class="details-item">
       <div class="label">{{ 'Pool Status' | translate }}:</div>
       <div class="value">{{ pool.status | mapValue: poolStatusLabels }}</div>
@@ -57,6 +57,12 @@
         </ng-container>
       </div>
       <a [routerLink]="['/data-protection/scrub']">{{ 'View All Scrub Tasks' | translate }}</a>
+    </div>
+
+    <div class="details-item">
+      <div class="label">{{ 'Auto TRIM' | translate }}:</div>
+      <div class="value">{{ pool.autotrim.value === 'on' ? ('On' | translate) : ('Off' | translate) }}</div>
+      <a class="action" (click)="onEditAutotrim()">{{ 'Edit Auto TRIM' | translate }}</a>
     </div>
 
     <ng-container *ngIf="scan?.function">

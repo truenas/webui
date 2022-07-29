@@ -21,7 +21,7 @@
     >
     <span *ngIf="shouldShowResetInput() || loading" class="reset-input">
       <mat-progress-spinner *ngIf="loading" class="loader" mode="indeterminate" [diameter]="15"></mat-progress-spinner>
-      <mat-icon (click)="resetInput()" *ngIf="shouldShowResetInput()" role="img" fontSet="mdi-set" fontIcon="mdi-close-circle"></mat-icon>
+      <mat-icon (click)="resetInput()" *ngIf="shouldShowResetInput()" fontSet="mdi-set" fontIcon="mdi-close-circle"></mat-icon>
     </span>
     <mat-autocomplete #auto="matAutocomplete" [displayWith]="getDisplayWith"
       (optionSelected)="optionSelected($event.option.value)" (opened)="onOpenDropdown()">
