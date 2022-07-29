@@ -6,7 +6,24 @@
 
 .card {
   @include details-card();
+  display: flex;
   flex: 1;
+  flex-direction: column;
+
+  .content-container {
+    height: 100%;
+  }
+  
+  .mat-card-content {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  .details-item {
+    margin: 0;
+  }
 }
 
 .header {

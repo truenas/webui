@@ -29,8 +29,9 @@
             ixTreeNodeToggle
             [ixTreeNodeToggleRecursive]="false"
             [ixTreeNodeDefDataSource]="dataSource"
-            (click)="onRowSelected(topologyItem, $event)"
             [class.selected]="topologyItem.guid === selectedItem?.guid"
+            [routerLink]="['/storage2', poolId, 'devices', topologyItem.guid]"
+            routerLinkActive="selected"
           >
             <button mat-icon-button disabled></button>
             <ix-topology-item-node [topologyItem]="topologyItem | cast" [disk]="getDisk(topologyItem)"></ix-topology-item-node>
@@ -68,8 +69,10 @@
           >
             <div
               class="disk-nested-tree-root-node"
-              (click)="onRowSelected(vdev, $event)"
+
               [class.selected]="vdev.guid === selectedItem?.guid"
+              [routerLink]="['/storage2', poolId, 'devices', vdev.guid]"
+              routerLinkActive="selected"
             >
               <button
                 mat-icon-button

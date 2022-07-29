@@ -22,5 +22,6 @@
 <ix-dashboard-pool
   *ngFor="let pool of pools"
   [pool]="pool"
+  [isLoading]="isPoolsLoading"
   class="pool"
 ></ix-dashboard-pool>

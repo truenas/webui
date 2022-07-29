@@ -20,8 +20,13 @@ export const routes: Routes = [
       },
       {
         path: ':poolId/devices',
-        loadChildren: () => import('./modules/devices/devices.module').then((module) => module.DevicesModule),
+        redirectTo: ':poolId/devices/',
+        pathMatch: 'full',
+      },
+      {
+        path: ':poolId/devices',
         data: { title: 'Devices', breadcrumb: 'Devices' },
+        loadChildren: () => import('./modules/devices/devices.module').then((module) => module.DevicesModule),
       },
       {
         path: ':poolId/add-vdevs',

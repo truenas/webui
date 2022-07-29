@@ -2,7 +2,7 @@ import {
   ChangeDetectionStrategy, Component, Input,
 } from '@angular/core';
 import { UntilDestroy } from '@ngneat/until-destroy';
-import { DatasetInTree } from 'app/pages/datasets/store/dataset-in-tree.interface';
+import { DatasetDetails } from 'app/interfaces/dataset.interface';
 
 @UntilDestroy()
 @Component({
@@ -12,7 +12,7 @@ import { DatasetInTree } from 'app/pages/datasets/store/dataset-in-tree.interfac
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DatasetNodeComponent {
-  @Input() dataset: DatasetInTree;
+  @Input() dataset: DatasetDetails;
 
   get nameSegments(): string[] {
     return this.dataset.name.split('/');
