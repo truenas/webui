@@ -63,9 +63,9 @@ describe('OauthProviderComponent', () => {
     await loginButton.click();
 
     expect(spectator.inject<Window>(WINDOW).open).toHaveBeenCalledWith(
-      "https://oauth.example.com?origin=http%3A%2F%2Flocalhost%2F",
-      "_blank",
-      "width=640,height=480"
+      'https://oauth.example.com?origin=http%3A%2F%2Flocalhost%2F',
+      '_blank',
+      'width=640,height=480',
     );
     expect(spectator.inject<Window>(WINDOW).addEventListener).toHaveBeenCalledWith(
       'message',
@@ -82,8 +82,8 @@ describe('OauthProviderComponent', () => {
     const values = await form.getValues();
 
     expect(values).toEqual({
-      "OAuth Client ID": "id1234",
-      "OAuth Client Secret": "secret1234"
+      'OAuth Client ID': 'id1234',
+      'OAuth Client Secret': 'secret1234',
     });
   });
 
@@ -95,9 +95,9 @@ describe('OauthProviderComponent', () => {
     await loginButton.click();
 
     expect(authenticatedOutput).toHaveBeenCalledWith({
-      "client_id": "id1234",
-      "client_secret": "secret1234",
-      "token": "token1234"
+      client_id: 'id1234',
+      client_secret: 'secret1234',
+      token: 'token1234',
     });
   });
 

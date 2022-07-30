@@ -1,19 +1,17 @@
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { WINDOW } from 'app/helpers/window.helper';
 import { CloudsyncProvider } from 'app/interfaces/cloudsync-provider.interface';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import {
-  OauthProviderComponent
+  OauthProviderComponent,
 } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/oauth-provider/oauth-provider.component';
 import {
   TokenProviderFormComponent,
 } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/provider-forms/token-provider-form/token-provider-form.component';
 import { DialogService } from 'app/services';
-import { MockComponent } from 'ng-mocks';
 
 describe('TokenProviderFormComponent', () => {
   let spectator: Spectator<TokenProviderFormComponent>;
@@ -48,23 +46,23 @@ describe('TokenProviderFormComponent', () => {
   describe('without credentials_oauth set provider', () => {
     it('show existing provider attributes when they are set as form values', async () => {
       spectator.component.setValues({
-        "token": "token1234",
+        token: 'token1234',
       });
 
       const values = await form.getValues();
       expect(values).toEqual({
-        "Token": "token1234"
+        Token: 'token1234',
       });
     });
 
     it('returns form attributes for submission when getSubmitAttributes() is called', async () => {
       await form.fillForm({
-        "Token": "newtoken1234"
+        Token: 'newtoken1234',
       });
 
       const values = spectator.component.getSubmitAttributes();
       expect(values).toEqual({
-        "token": 'newtoken1234',
+        token: 'newtoken1234',
       });
     });
   });
@@ -79,31 +77,31 @@ describe('TokenProviderFormComponent', () => {
 
     it('show existing provider attributes when they are set as form values', async () => {
       spectator.component.setValues({
-        "client_id": "client1234",
-        "client_secret": "secret1234",
-        "token": "token1234",
+        client_id: 'client1234',
+        client_secret: 'secret1234',
+        token: 'token1234',
       });
 
       const values = await form.getValues();
       expect(values).toEqual({
-        "OAuth Client ID": "client1234",
-        "OAuth Client Secret": "secret1234",
-        "Token": "token1234",
+        'OAuth Client ID': 'client1234',
+        'OAuth Client Secret': 'secret1234',
+        Token: 'token1234',
       });
     });
 
     it('returns form attributes for submission when getSubmitAttributes() is called', async () => {
       await form.fillForm({
-        "OAuth Client ID": "client1234",
-        "OAuth Client Secret": "secret1234",
-        "Token": "newtoken1234",
+        'OAuth Client ID': 'client1234',
+        'OAuth Client Secret': 'secret1234',
+        Token: 'newtoken1234',
       });
 
       const values = spectator.component.getSubmitAttributes();
       expect(values).toEqual({
-        "client_id": "client1234",
-        "client_secret": "secret1234",
-        "token": "newtoken1234",
+        client_id: 'client1234',
+        client_secret: 'secret1234',
+        token: 'newtoken1234',
       });
     });
   });

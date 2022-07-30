@@ -4,14 +4,8 @@ import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import {
-  AzureProviderFormComponent
+  AzureProviderFormComponent,
 } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/provider-forms/azure-provider-form/azure-provider-form.component';
-import {
-  BackblazeB2ProviderFormComponent
-} from 'app/pages/credentials/backup-credentials/cloud-credentials-form/provider-forms/backblaze-b2-provider-form/backblaze-b2-provider-form.component';
-import {
-  S3ProviderFormComponent,
-} from 'app/pages/credentials/backup-credentials/cloud-credentials-form/provider-forms/s3-provider-form/s3-provider-form.component';
 
 describe('AzureProviderFormComponent', () => {
   let spectator: Spectator<AzureProviderFormComponent>;
@@ -31,31 +25,31 @@ describe('AzureProviderFormComponent', () => {
 
   it('show existing provider attributes when they are set as form values', async () => {
     spectator.component.setValues({
-      account: "azure",
-      endpoint: "blob.core.usgovcloudapi.net",
-      key: "key-1"
+      account: 'azure',
+      endpoint: 'blob.core.usgovcloudapi.net',
+      key: 'key-1',
     });
 
     const values = await form.getValues();
     expect(values).toEqual({
-      "Account Key": "key-1",
-      "Account Name": "azure",
-      "Endpoint": "blob.core.usgovcloudapi.net"
+      'Account Key': 'key-1',
+      'Account Name': 'azure',
+      Endpoint: 'blob.core.usgovcloudapi.net',
     });
   });
 
   it('returns form attributes for submission when getSubmitAttributes() is called', async () => {
     await form.fillForm({
-      "Account Key": "new-key",
-      "Account Name": "azure2",
-      "Endpoint": "b-lob.usgovcloudapi.net"
+      'Account Key': 'new-key',
+      'Account Name': 'azure2',
+      Endpoint: 'b-lob.usgovcloudapi.net',
     });
 
     const values = spectator.component.getSubmitAttributes();
     expect(values).toEqual({
-      "account": "azure2",
-      "endpoint": "b-lob.usgovcloudapi.net",
-      "key": "new-key"
+      account: 'azure2',
+      endpoint: 'b-lob.usgovcloudapi.net',
+      key: 'new-key',
     });
   });
 });

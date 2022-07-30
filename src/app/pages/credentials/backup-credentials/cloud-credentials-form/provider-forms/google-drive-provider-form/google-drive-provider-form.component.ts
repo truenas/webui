@@ -1,13 +1,13 @@
-import { ChangeDetectionStrategy, Component, OnInit, ViewChild } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
-import { helptextSystemCloudcredentials as helptext } from 'app/helptext/system/cloud-credentials';
-import { CloudCredential } from 'app/interfaces/cloud-sync-task.interface';
-import { CloudsyncProvider } from 'app/interfaces/cloudsync-provider.interface';
 import {
-  OauthProviderComponent
+  ChangeDetectionStrategy, Component, ViewChild,
+} from '@angular/core';
+import { FormBuilder, Validators } from '@angular/forms';
+import { CloudCredential } from 'app/interfaces/cloud-sync-task.interface';
+import {
+  OauthProviderComponent,
 } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/oauth-provider/oauth-provider.component';
 import {
-  BaseProviderFormComponent
+  BaseProviderFormComponent,
 } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/provider-forms/base-provider-form';
 
 @Component({

@@ -1,19 +1,18 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { CloudCredential } from 'app/interfaces/cloud-sync-task.interface';
-import { CloudsyncProvider } from 'app/interfaces/cloudsync-provider.interface';
-import {
-  BaseProviderFormComponent,
-} from 'app/pages/credentials/backup-credentials/cloud-credentials-form/provider-forms/base-provider-form';
 import { of } from 'rxjs';
 import { fromPromise } from 'rxjs/internal-compatibility';
 import { switchMap } from 'rxjs/operators';
+import { CloudCredential } from 'app/interfaces/cloud-sync-task.interface';
+import {
+  BaseProviderFormComponent,
+} from 'app/pages/credentials/backup-credentials/cloud-credentials-form/provider-forms/base-provider-form';
 
 @UntilDestroy()
 @Component({
   templateUrl: './google-cloud-provider-form.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class GoogleCloudProviderFormComponent extends BaseProviderFormComponent implements OnInit {
   form = this.formBuilder.group({
@@ -46,9 +45,9 @@ export class GoogleCloudProviderFormComponent extends BaseProviderFormComponent 
     this.form.patchValue(values);
   }
 
-  getSubmitAttributes(): CloudCredential["attributes"] {
+  getSubmitAttributes(): CloudCredential['attributes'] {
     return {
-      service_account_credentials: this.form.value.service_account_credentials
+      service_account_credentials: this.form.value.service_account_credentials,
     };
   }
 }

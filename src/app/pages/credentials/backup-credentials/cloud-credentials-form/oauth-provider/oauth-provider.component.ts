@@ -1,4 +1,6 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Inject, Input, OnInit, Output } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, EventEmitter, Inject, Input, Output,
+} from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
 import { WINDOW } from 'app/helpers/window.helper';
@@ -50,5 +52,5 @@ export class OauthProviderComponent {
 
     this.form.patchValue(message.data.result);
     this.authenticated.emit(message.data.result);
-  }
+  };
 }

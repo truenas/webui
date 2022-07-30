@@ -33,6 +33,7 @@ export class BackupCredentialsComponent implements OnInit {
 
   private navigation: Navigation;
   protected providers: CloudsyncProvider[];
+  private isFirstCredentialsLoad = true;
 
   constructor(
     private router: Router,
@@ -80,14 +81,20 @@ export class BackupCredentialsComponent implements OnInit {
             form.setCredentialsForEdit(credential);
           },
           dataSourceHelper: this.cloudCredentialsDataSourceHelper.bind(this),
-          afterGetData: () => {
+          afterGetData: (credentials: CloudsyncCredential[]) => {
             const state = this.navigation.extras.state as { editCredential: string; id: string };
-            if (state && state.editCredential) {
-              if (state.editCredential === 'cloudcredentials') {
-                this.slideInService.open(CloudCredentialsFormComponent);
-                // TODO: Old code sets state id
-              }
+            if (!state || state.editCredential !== 'cloudcredentials' || !this.isFirstCredentialsLoad) {
+              return;
             }
+
+            const credentialToEdit = credentials.find((credential) => credential.id === Number(state.id));
+            if (!credentialToEdit) {
+              return;
+            }
+
+            const form = this.slideInService.open(CloudCredentialsFormComponent);
+            form.setCredentialsForEdit(credentialToEdit);
+            this.isFirstCredentialsLoad = false;
           },
         },
       }, {

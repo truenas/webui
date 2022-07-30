@@ -1,12 +1,10 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
-import { helptextSystemCloudcredentials as helptext } from 'app/helptext/system/cloud-credentials';
-import { CloudCredential } from 'app/interfaces/cloud-sync-task.interface';
-import { CloudsyncProvider } from 'app/interfaces/cloudsync-provider.interface';
-import {
-  BaseProviderFormComponent
-} from 'app/pages/credentials/backup-credentials/cloud-credentials-form/provider-forms/base-provider-form';
 import { of } from 'rxjs';
+import { CloudCredential } from 'app/interfaces/cloud-sync-task.interface';
+import {
+  BaseProviderFormComponent,
+} from 'app/pages/credentials/backup-credentials/cloud-credentials-form/provider-forms/base-provider-form';
 
 @Component({
   templateUrl: './openstack-swift-provider-form.component.html',
@@ -74,7 +72,7 @@ export class OpenstackSwiftProviderFormComponent extends BaseProviderFormCompone
     return this.form.value.auth_version === 3;
   }
 
-  getSubmitAttributes(): CloudCredential["attributes"] {
+  getSubmitAttributes(): CloudCredential['attributes'] {
     const values = super.getSubmitAttributes();
 
     if (!this.isVersion3) {

@@ -1,16 +1,14 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
-import { helptextSystemCloudcredentials as helptext } from 'app/helptext/system/cloud-credentials';
-import { CloudsyncProvider } from 'app/interfaces/cloudsync-provider.interface';
-import {
-  BaseProviderFormComponent
-} from 'app/pages/credentials/backup-credentials/cloud-credentials-form/provider-forms/base-provider-form';
 import { of } from 'rxjs';
+import {
+  BaseProviderFormComponent,
+} from 'app/pages/credentials/backup-credentials/cloud-credentials-form/provider-forms/base-provider-form';
 
 @Component({
   templateUrl: './webdav-provider-form.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class WebdavProviderFormComponent extends BaseProviderFormComponent {
   form = this.formBuilder.group({

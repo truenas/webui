@@ -100,16 +100,16 @@ describe('OpenstackSwiftProviderFormComponent', () => {
     });
 
     await form.fillForm({
-      "User ID": "johny-user",
+      'User ID': 'johny-user',
       'User Domain': 'accountants',
       'Tenant Domain': 'tenant-domain',
     });
 
     const values = spectator.component.getSubmitAttributes();
     expect(values).toMatchObject({
-      "domain": "accountants",
-      "tenant_domain": "tenant-domain",
-      "user_id": "johny-user"
+      domain: 'accountants',
+      tenant_domain: 'tenant-domain',
+      user_id: 'johny-user',
     });
   });
 });

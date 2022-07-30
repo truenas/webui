@@ -1,23 +1,21 @@
-import { ChangeDetectionStrategy, Component, OnInit, ViewChild } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, OnInit, ViewChild,
+} from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Observable, of } from 'rxjs';
 import { OneDriveType } from 'app/enums/cloudsync-provider.enum';
-import { helptextSystemCloudcredentials as helptext } from 'app/helptext/system/cloud-credentials';
 import { CloudCredential } from 'app/interfaces/cloud-sync-task.interface';
 import { CloudsyncOneDriveDrive } from 'app/interfaces/cloudsync-credential.interface';
-import { CloudsyncProvider } from 'app/interfaces/cloudsync-provider.interface';
 import { Option } from 'app/interfaces/option.interface';
-import { FormSelectConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
 import { EntityUtils } from 'app/modules/entity/utils';
 import {
-  OauthProviderComponent
+  OauthProviderComponent,
 } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/oauth-provider/oauth-provider.component';
 import {
-  BaseProviderFormComponent
+  BaseProviderFormComponent,
 } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/provider-forms/base-provider-form';
 import { DialogService, WebSocketService } from 'app/services';
-import * as _ from 'lodash';
-import { Observable, of } from 'rxjs';
 
 @UntilDestroy()
 @Component({
