@@ -11,6 +11,7 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable, of } from 'rxjs';
+import { switchMap } from 'rxjs/operators';
 import { CloudsyncProviderName } from 'app/enums/cloudsync-provider.enum';
 import { helptextSystemCloudcredentials as helptext } from 'app/helptext/system/cloud-credentials';
 import { CloudsyncCredential, CloudsyncCredentialUpdate } from 'app/interfaces/cloudsync-credential.interface';
@@ -127,36 +128,42 @@ export class CloudCredentialsFormComponent implements OnInit {
   setCredentialsForEdit(credential: CloudsyncCredential): void {
     this.existingCredential = credential;
     this.commonForm.patchValue(credential);
+
+    if (this.providerForm) {
+      this.providerForm.setValues(this.existingCredential.attributes);
+    }
   }
 
   onSubmit(): boolean {
     this.isLoading = true;
 
-    // TODO:?
-    // this.providerForm.beforeSubmit?.();
+    const beforeSubmit$ = this.providerForm.beforeSubmit();
 
-    const payload = this.preparePayload();
-    const request$ = this.isNew
-      ? this.ws.call('cloudsync.credentials.create', [payload])
-      : this.ws.call('cloudsync.credentials.update', [this.existingCredential.id, payload]);
-
-    request$
-      .pipe(untilDestroyed(this))
+    beforeSubmit$
+      .pipe(
+        switchMap(() => {
+          const payload = this.preparePayload();
+          return this.isNew
+            ? this.ws.call('cloudsync.credentials.create', [payload])
+            : this.ws.call('cloudsync.credentials.update', [this.existingCredential.id, payload]);
+        }),
+        untilDestroyed(this),
+      )
       .subscribe(
         () => {
           this.isLoading = false;
-          this.slideInService.close();
           this.snackbarService.success(
             this.isNew
-              ? this.translate.instant('Cloud credentials added.')
-              : this.translate.instant('Cloud credentials updated.'),
+              ? this.translate.instant('Cloud credential added.')
+              : this.translate.instant('Cloud credential updated.'),
           );
+          this.slideInService.close();
           this.cdr.markForCheck();
         },
         (error) => {
           // TODO: Errors for nested provider form will be shown in a modal. Can be improved.
           this.isLoading = false;
-          this.errorHandler.handleWsFormError(error, this.providerForm.form);
+          this.errorHandler.handleWsFormError(error, this.commonForm);
           this.cdr.markForCheck();
         },
       );
@@ -167,9 +174,17 @@ export class CloudCredentialsFormComponent implements OnInit {
   onVerify(): void {
     this.isLoading = true;
 
-    const { name, ...payload } = this.preparePayload();
-    this.ws.call('cloudsync.credentials.verify', [payload])
-      .pipe(untilDestroyed(this))
+    const beforeSubmit$ = this.providerForm.beforeSubmit();
+
+    beforeSubmit$
+      .pipe(
+        switchMap(() => {
+          const { name, ...payload } = this.preparePayload();
+
+          return this.ws.call('cloudsync.credentials.verify', [payload]);
+        }),
+        untilDestroyed(this),
+      )
       .subscribe(
         (response) => {
           if (response.valid) {
@@ -186,7 +201,7 @@ export class CloudCredentialsFormComponent implements OnInit {
         },
         (error) => {
           this.isLoading = false;
-          this.errorHandler.handleWsFormError(error, this.providerForm.form);
+          this.errorHandler.handleWsFormError(error, this.commonForm);
           this.cdr.markForCheck();
         },
       );
