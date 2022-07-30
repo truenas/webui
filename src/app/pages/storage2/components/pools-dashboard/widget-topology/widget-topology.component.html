@@ -24,7 +24,7 @@
   <mat-card-content fxFlex="100">
     <ng-container *ngIf="!loading">
       <div class="content-container" fxLayout="column">
-        <div class="vdev-line">
+        <div class="vdev-line" fxLayoutAlign="space-between center">
           <b>{{'Data VDEVs' | translate}}</b>
           <span class="loader-caption" *ngIf="loading"></span>
           <div *ngIf="!loading" fxLayout="row" fxLayoutAlign="center center">
