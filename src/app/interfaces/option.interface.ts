@@ -8,6 +8,8 @@ export type MapOption = [
   label: string,
 ];
 
-export interface RadioOption extends Option {
+export interface RadioOption {
+  label: string;
+  value: string | number | boolean;
   tooltip?: string;
 }
