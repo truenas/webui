@@ -21,7 +21,7 @@
           (click)="closeMenu()"
         >
           <span class="menu-item-tooltip" [matTooltip]="item.tooltip" id="{{ item.name }}" matTooltipPosition="right"></span>
-          <mat-icon>{{ item.icon }}</mat-icon>
+          <mat-icon *ngIf="item.isSVGIcon; else matIcon" svgIcon="{{ item.icon }}" class="svg-icon"></mat-icon>
           <span>{{ item.name | translate }}</span>
         </a>
         <a
@@ -33,7 +33,7 @@
           (keyup.enter)="toggleMenu(item.state, item.sub)"
         >
           <span class="menu-item-tooltip" [matTooltip]="item.tooltip" matTooltipPosition="right"></span>
-          <mat-icon>{{ item.icon }}</mat-icon>
+          <mat-icon *ngIf="item.isSVGIcon; else matIcon" svgIcon="{{ item.icon }}" class="svg-icon"></mat-icon>
           <span>{{ item.name | translate }}</span>
           <span fxFlex></span>
           <mat-icon class="menu-caret">keyboard_arrow_right</mat-icon>
@@ -47,9 +47,12 @@
           class="sidenav-link"
         >
           <span class="menu-item-tooltip" [matTooltip]="item.tooltip" matTooltipPosition="right"></span>
-          <mat-icon>{{ item.icon }}</mat-icon>
+          <mat-icon *ngIf="item.isSVGIcon; else matIcon" svgIcon="{{ item.icon }}" class="svg-icon"></mat-icon>
           <span>{{ item.name | translate }}</span>
         </a>
+        <ng-template #matIcon>
+          <mat-icon *ngIf="!item.isSVGIcon">{{ item.icon }}</mat-icon>
+        </ng-template>
       </mat-list-item>
 
       <div *ngIf="item.type === MenuItemType.Separator" class="mt-1 mb-1" >

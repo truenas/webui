@@ -5,6 +5,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
+import { DatasetType } from 'app/enums/dataset.enum';
 import { ZfsPropertySource } from 'app/enums/zfs-property-source.enum';
 import { Dataset, DatasetDetails } from 'app/interfaces/dataset.interface';
 import { DatasetFormComponent } from 'app/pages/datasets/components/dataset-form/dataset-form.component';
@@ -46,6 +47,14 @@ export class DatasetDetailsCardComponent implements OnChanges {
     return (this.extraProperties.quota.value !== null || this.extraProperties.quota.value !== '0')
     || (this.extraProperties.refquota.value !== null || this.extraProperties.refquota.value !== '0')
       ? this.extraProperties.available.value + ' (Quota set)' : this.extraProperties.available.value;
+  }
+
+  get isFilesystem(): boolean {
+    return this.dataset.type === DatasetType.Filesystem;
+  }
+
+  get isZvol(): boolean {
+    return this.dataset.type === DatasetType.Volume;
   }
 
   ngOnChanges(): void {
