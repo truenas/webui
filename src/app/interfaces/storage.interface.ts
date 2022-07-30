@@ -11,11 +11,7 @@ import { ZfsProperty } from './zfs-property.interface';
 export type TopologyItem = VDev | TopologyDisk;
 
 export interface VDev {
-  type: TopologyItemType.Spare
-  | TopologyItemType.Mirror
-  | TopologyItemType.Raidz1
-  | TopologyItemType.Raidz2
-  | TopologyItemType.Raidz3;
+  type: Exclude<TopologyItemType, TopologyItemType.Disk>;
   children: TopologyDisk[];
   guid: string;
   name: string;

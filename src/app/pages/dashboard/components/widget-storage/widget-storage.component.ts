@@ -8,7 +8,7 @@ import filesize from 'filesize';
 import { PoolStatus } from 'app/enums/pool-status.enum';
 import { TopologyItemType } from 'app/enums/v-dev-type.enum';
 import { Pool } from 'app/interfaces/pool.interface';
-import { TopologyItem } from 'app/interfaces/storage.interface';
+import { isTopologyDisk, TopologyItem } from 'app/interfaces/storage.interface';
 import { VolumesData } from 'app/interfaces/volume-data.interface';
 import { WidgetComponent } from 'app/pages/dashboard/components/widget/widget.component';
 
@@ -201,7 +201,7 @@ export class WidgetStorageComponent extends WidgetComponent implements AfterView
     if (pool && pool.topology) {
       const unhealthy: string[] = []; // Disks with errors
       pool.topology.data.forEach((item: TopologyItem) => {
-        if (item.type === TopologyItemType.Disk) {
+        if (isTopologyDisk(item)) {
           const diskErrors = item.stats.read_errors + item.stats.write_errors + item.stats.checksum_errors;
 
           if (diskErrors > 0) {

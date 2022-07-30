@@ -365,7 +365,7 @@ export class VolumeStatusComponent implements OnInit, AfterViewInit {
       _.find(actions, { id: 'offline' }).isHidden = true;
     }
 
-    if (vdevType === TopologyItemType.Mirror || (vdevType as any) === 'REPLACING' || vdevType === TopologyItemType.Spare) {
+    if ([TopologyItemType.Mirror, TopologyItemType.Replacing, TopologyItemType.Spare].includes(vdevType)) {
       _.find(actions, { id: 'detach' }).isHidden = false;
     }
 

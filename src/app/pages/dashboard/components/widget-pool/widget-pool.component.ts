@@ -20,7 +20,7 @@ import { PoolStatus } from 'app/enums/pool-status.enum';
 import { TopologyItemType } from 'app/enums/v-dev-type.enum';
 import { TopologyItemStatus } from 'app/enums/vdev-status.enum';
 import { Pool, PoolTopologyCategory } from 'app/interfaces/pool.interface';
-import { Disk, TopologyItem } from 'app/interfaces/storage.interface';
+import { Disk, isTopologyDisk, TopologyItem } from 'app/interfaces/storage.interface';
 import { VolumeData } from 'app/interfaces/volume-data.interface';
 import { WidgetComponent } from 'app/pages/dashboard/components/widget/widget.component';
 import { WebSocketService } from 'app/services';
@@ -147,7 +147,7 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
       }
 
       category.forEach((item) => {
-        if (item.type === 'DISK' && item.disk) {
+        if (isTopologyDisk(item) && item.disk) {
           allDiskNames.push(item.disk);
         } else {
           item.children.forEach((device) => {
