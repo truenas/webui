@@ -103,7 +103,7 @@ export class SnapshotAddFormComponent implements OnInit {
       untilDestroyed(this),
     ).subscribe(() => {
       this.isFormLoading = false;
-      this.slideIn.close();
+      this.slideIn.close(null, true);
       this.cdr.markForCheck();
     }, (error) => {
       this.isFormLoading = false;

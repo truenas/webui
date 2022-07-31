@@ -2,9 +2,9 @@ import { Component, Input, OnInit } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { filter } from 'rxjs/operators';
+import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { SnapshotAddFormComponent } from 'app/pages/datasets/modules/snapshots/snapshot-add-form/snapshot-add-form.component';
-import { DatasetInTree } from 'app/pages/datasets/store/dataset-in-tree.interface';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
@@ -15,7 +15,7 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
 })
 export class DataProtectionCardComponent implements OnInit {
   readonly console = console;
-  @Input() dataset: DatasetInTree;
+  @Input() dataset: DatasetDetails;
 
   constructor(
     private slideIn: IxSlideInService,
@@ -25,7 +25,7 @@ export class DataProtectionCardComponent implements OnInit {
 
   ngOnInit(): void {
     this.slideIn.onClose$.pipe(
-      filter((value) => value.modalType === SnapshotAddFormComponent),
+      filter((value) => value.modalType === SnapshotAddFormComponent && value.response === true),
       untilDestroyed(this),
     ).subscribe(() => {
       this.snackbarService.success(this.translate.instant('Snapshot added successfully.'));
