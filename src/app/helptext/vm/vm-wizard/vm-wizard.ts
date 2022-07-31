@@ -157,6 +157,8 @@ export default {
  the VM.'),
   nic_attach_validation: [Validators.required],
 
+  trust_guest_rx_filters_placeholder: T('Trust Guest Filters'),
+
   media_label: T('Installation Media'),
   iso_path_placeholder: T('Optional: Choose installation media image'),
   iso_path_tooltip: T('Browse to the operating system installer image file.'),

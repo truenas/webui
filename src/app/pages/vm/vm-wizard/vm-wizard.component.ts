@@ -420,6 +420,12 @@ export class VmWizardComponent implements WizardConfiguration {
           validation: helptext.nic_attach_validation,
           required: true,
         },
+        {
+          name: 'trust_guest_rx_filters',
+          placeholder: helptext.trust_guest_rx_filters_placeholder,
+          type: 'checkbox',
+          value: false,
+        },
       ],
     },
     {
@@ -987,7 +993,12 @@ export class VmWizardComponent implements WizardConfiguration {
       vmPayload['devices'] = [
         {
           dtype: VmDeviceType.Nic,
-          attributes: { type: value.NIC_type, mac: value.NIC_mac, nic_attach: value.nic_attach },
+          attributes: {
+            type: value.NIC_type,
+            mac: value.NIC_mac,
+            nic_attach: value.nic_attach,
+            trust_guest_rx_filters: value.trust_guest_rx_filters,
+          },
         },
         {
           dtype: VmDeviceType.Disk,
@@ -1001,7 +1012,12 @@ export class VmWizardComponent implements WizardConfiguration {
       vmPayload['devices'] = [
         {
           dtype: VmDeviceType.Nic,
-          attributes: { type: value.NIC_type, mac: value.NIC_mac, nic_attach: value.nic_attach },
+          attributes: {
+            type: value.NIC_type,
+            mac: value.NIC_mac,
+            nic_attach: value.nic_attach,
+            trust_guest_rx_filters: value.trust_guest_rx_filters,
+          },
         },
         {
           dtype: VmDeviceType.Disk,
