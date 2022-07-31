@@ -21,9 +21,11 @@
   display: flex;
   flex: 1;
   flex-direction: column;
-  max-width: 40%;
-  min-width: 30%;
+  max-width: 700px;
   position: relative;
+  //max-width: 40%;
+  //min-width: 30%;
+  width: 700px;
 }
 
 .wip {
