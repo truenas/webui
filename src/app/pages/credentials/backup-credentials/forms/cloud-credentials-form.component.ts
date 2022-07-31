@@ -4,6 +4,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 import { take } from 'rxjs/operators';
+import { CloudsyncProviderName } from 'app/enums/cloudsync-provider-name.enum';
 import { KeychainCredentialType } from 'app/enums/keychain-credential-type.enum';
 import { helptextSystemCloudcredentials as helptext } from 'app/helptext/system/cloud-credentials';
 import {
@@ -45,7 +46,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
   private rowNum: number;
   title = helptext.formTitle;
 
-  protected selectedProvider = 'S3';
+  protected selectedProvider = CloudsyncProviderName.AmazonS3;
   protected credentialsOauth = false;
   protected oauthUrl: string;
   hideSaveBtn = true;
@@ -128,7 +129,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
               action: RelationAction.Show,
               when: [{
                 name: 'provider',
-                value: 'S3',
+                value: CloudsyncProviderName.AmazonS3,
               }],
             },
           ],
@@ -147,7 +148,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
               action: RelationAction.Show,
               when: [{
                 name: 'provider',
-                value: 'S3',
+                value: CloudsyncProviderName.AmazonS3,
               }],
             },
           ],
@@ -166,7 +167,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
               action: RelationAction.Show,
               when: [{
                 name: 'provider',
-                value: 'B2',
+                value: CloudsyncProviderName.BackblazeB2,
               }],
             },
           ],
@@ -185,7 +186,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
               action: RelationAction.Show,
               when: [{
                 name: 'provider',
-                value: 'B2',
+                value: CloudsyncProviderName.BackblazeB2,
               }],
             },
           ],
@@ -205,7 +206,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
               action: RelationAction.Show,
               when: [{
                 name: 'provider',
-                value: 'BOX',
+                value: CloudsyncProviderName.Box,
               }],
             },
           ],
@@ -225,7 +226,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
               action: RelationAction.Show,
               when: [{
                 name: 'provider',
-                value: 'DROPBOX',
+                value: CloudsyncProviderName.Dropbox,
               }],
             },
           ],
@@ -243,7 +244,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
               action: RelationAction.Show,
               when: [{
                 name: 'provider',
-                value: 'FTP',
+                value: CloudsyncProviderName.Ftp,
               }],
             },
           ],
@@ -259,7 +260,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
               action: RelationAction.Show,
               when: [{
                 name: 'provider',
-                value: 'FTP',
+                value: CloudsyncProviderName.Ftp,
               }],
             },
           ],
@@ -276,7 +277,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
               action: RelationAction.Show,
               when: [{
                 name: 'provider',
-                value: 'FTP',
+                value: CloudsyncProviderName.Ftp,
               }],
             },
           ],
@@ -295,7 +296,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
               action: RelationAction.Show,
               when: [{
                 name: 'provider',
-                value: 'FTP',
+                value: CloudsyncProviderName.Ftp,
               }],
             },
           ],
@@ -313,7 +314,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
               action: RelationAction.Show,
               when: [{
                 name: 'provider',
-                value: 'GOOGLE_CLOUD_STORAGE',
+                value: CloudsyncProviderName.GoogleCloudStorage,
               }],
             },
           ],
@@ -331,7 +332,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
               action: RelationAction.Show,
               when: [{
                 name: 'provider',
-                value: 'GOOGLE_CLOUD_STORAGE',
+                value: CloudsyncProviderName.GoogleCloudStorage,
               }],
             },
           ],
@@ -351,7 +352,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
               action: RelationAction.Show,
               when: [{
                 name: 'provider',
-                value: 'GOOGLE_DRIVE',
+                value: CloudsyncProviderName.GoogleDrive,
               }],
             },
           ],
@@ -368,7 +369,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
               action: RelationAction.Show,
               when: [{
                 name: 'provider',
-                value: 'GOOGLE_DRIVE',
+                value: CloudsyncProviderName.GoogleDrive,
               }],
             },
           ],
@@ -388,7 +389,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
               action: RelationAction.Show,
               when: [{
                 name: 'provider',
-                value: 'GOOGLE_PHOTOS',
+                value: CloudsyncProviderName.GooglePhotos,
               }],
             },
           ],
@@ -406,7 +407,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
               action: RelationAction.Show,
               when: [{
                 name: 'provider',
-                value: 'HTTP',
+                value: CloudsyncProviderName.Http,
               }],
             },
           ],
@@ -426,7 +427,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
               action: RelationAction.Show,
               when: [{
                 name: 'provider',
-                value: 'HUBIC',
+                value: CloudsyncProviderName.Hubic,
               }],
             },
           ],
@@ -444,7 +445,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
               action: RelationAction.Show,
               when: [{
                 name: 'provider',
-                value: 'MEGA',
+                value: CloudsyncProviderName.Mega,
               }],
             },
           ],
@@ -463,7 +464,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
               action: RelationAction.Show,
               when: [{
                 name: 'provider',
-                value: 'MEGA',
+                value: CloudsyncProviderName.Mega,
               }],
             },
           ],
@@ -481,7 +482,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
               action: RelationAction.Show,
               when: [{
                 name: 'provider',
-                value: 'AZUREBLOB',
+                value: CloudsyncProviderName.MicrosoftAzure,
               }],
             },
           ],
@@ -500,7 +501,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
               action: RelationAction.Show,
               when: [{
                 name: 'provider',
-                value: 'AZUREBLOB',
+                value: CloudsyncProviderName.MicrosoftAzure,
               }],
             },
           ],
@@ -517,7 +518,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
               action: RelationAction.Show,
               when: [{
                 name: 'provider',
-                value: 'AZUREBLOB',
+                value: CloudsyncProviderName.MicrosoftAzure,
               }],
             },
           ],
@@ -537,7 +538,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
               action: RelationAction.Show,
               when: [{
                 name: 'provider',
-                value: 'ONEDRIVE',
+                value: CloudsyncProviderName.MicrosoftOnedrive,
               }],
             },
           ],
@@ -558,7 +559,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
               action: RelationAction.Show,
               when: [{
                 name: 'provider',
-                value: 'ONEDRIVE',
+                value: CloudsyncProviderName.MicrosoftOnedrive,
               }],
             },
           ],
@@ -590,7 +591,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
               action: RelationAction.Show,
               when: [{
                 name: 'provider',
-                value: 'ONEDRIVE',
+                value: CloudsyncProviderName.MicrosoftOnedrive,
               }],
             },
           ],
@@ -607,7 +608,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
               action: RelationAction.Show,
               when: [{
                 name: 'provider',
-                value: 'ONEDRIVE',
+                value: CloudsyncProviderName.MicrosoftOnedrive,
               }],
             },
           ],
@@ -624,7 +625,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
               action: RelationAction.Show,
               when: [{
                 name: 'provider',
-                value: 'OPENSTACK_SWIFT',
+                value: CloudsyncProviderName.OpenstackSwift,
               }],
             },
           ],
@@ -642,7 +643,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
               action: RelationAction.Show,
               when: [{
                 name: 'provider',
-                value: 'OPENSTACK_SWIFT',
+                value: CloudsyncProviderName.OpenstackSwift,
               }],
             },
           ],
@@ -658,7 +659,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
               action: RelationAction.Show,
               when: [{
                 name: 'provider',
-                value: 'OPENSTACK_SWIFT',
+                value: CloudsyncProviderName.OpenstackSwift,
               }],
             },
           ],
@@ -692,7 +693,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
               action: RelationAction.Show,
               when: [{
                 name: 'provider',
-                value: 'OPENSTACK_SWIFT',
+                value: CloudsyncProviderName.OpenstackSwift,
               }],
             },
           ],
@@ -712,7 +713,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
               action: RelationAction.Show,
               when: [{
                 name: 'provider',
-                value: 'PCLOUD',
+                value: CloudsyncProviderName.Pcloud,
               }],
             },
           ],
@@ -728,7 +729,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
               action: RelationAction.Show,
               when: [{
                 name: 'provider',
-                value: 'PCLOUD',
+                value: CloudsyncProviderName.Pcloud,
               }],
             },
           ],
@@ -746,7 +747,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
               action: RelationAction.Show,
               when: [{
                 name: 'provider',
-                value: 'SFTP',
+                value: CloudsyncProviderName.Sftp,
               }],
             },
           ],
@@ -763,7 +764,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
               action: RelationAction.Show,
               when: [{
                 name: 'provider',
-                value: 'SFTP',
+                value: CloudsyncProviderName.Sftp,
               }],
             },
           ],
@@ -780,7 +781,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
               action: RelationAction.Show,
               when: [{
                 name: 'provider',
-                value: 'SFTP',
+                value: CloudsyncProviderName.Sftp,
               }],
             },
           ],
@@ -799,7 +800,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
               action: RelationAction.Show,
               when: [{
                 name: 'provider',
-                value: 'SFTP',
+                value: CloudsyncProviderName.Sftp,
               }],
             },
           ],
@@ -827,7 +828,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
               action: RelationAction.Show,
               when: [{
                 name: 'provider',
-                value: 'SFTP',
+                value: CloudsyncProviderName.Sftp,
               }],
             },
           ],
@@ -845,7 +846,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
               action: RelationAction.Show,
               when: [{
                 name: 'provider',
-                value: 'WEBDAV',
+                value: CloudsyncProviderName.Webdav,
               }],
             },
           ],
@@ -881,7 +882,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
               action: RelationAction.Show,
               when: [{
                 name: 'provider',
-                value: 'WEBDAV',
+                value: CloudsyncProviderName.Webdav,
               }],
             },
           ],
@@ -898,7 +899,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
               action: RelationAction.Show,
               when: [{
                 name: 'provider',
-                value: 'WEBDAV',
+                value: CloudsyncProviderName.Webdav,
               }],
             },
           ],
@@ -917,7 +918,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
               action: RelationAction.Show,
               when: [{
                 name: 'provider',
-                value: 'WEBDAV',
+                value: CloudsyncProviderName.Webdav,
               }],
             },
           ],
@@ -937,7 +938,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
               action: RelationAction.Show,
               when: [{
                 name: 'provider',
-                value: 'YANDEX',
+                value: CloudsyncProviderName.Yandex,
               }],
             },
           ],
@@ -962,7 +963,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
               action: RelationAction.Show,
               when: [{
                 name: 'provider',
-                value: 'S3',
+                value: CloudsyncProviderName.AmazonS3,
               }],
             },
           ],
@@ -978,7 +979,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
               connective: RelationConnection.And,
               when: [{
                 name: 'provider',
-                value: 'OPENSTACK_SWIFT',
+                value: CloudsyncProviderName.OpenstackSwift,
               }, {
                 name: 'auth_version-OPENSTACK_SWIFT',
                 value: 3,
@@ -997,7 +998,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
               connective: RelationConnection.And,
               when: [{
                 name: 'provider',
-                value: 'OPENSTACK_SWIFT',
+                value: CloudsyncProviderName.OpenstackSwift,
               }, {
                 name: 'auth_version-OPENSTACK_SWIFT',
                 value: 3,
@@ -1016,7 +1017,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
               action: RelationAction.Show,
               when: [{
                 name: 'provider',
-                value: 'OPENSTACK_SWIFT',
+                value: CloudsyncProviderName.OpenstackSwift,
               }],
             },
           ],
@@ -1032,7 +1033,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
               action: RelationAction.Show,
               when: [{
                 name: 'provider',
-                value: 'OPENSTACK_SWIFT',
+                value: CloudsyncProviderName.OpenstackSwift,
               }],
             },
           ],
@@ -1048,7 +1049,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
               connective: RelationConnection.And,
               when: [{
                 name: 'provider',
-                value: 'OPENSTACK_SWIFT',
+                value: CloudsyncProviderName.OpenstackSwift,
               }, {
                 name: 'auth_version-OPENSTACK_SWIFT',
                 value: 3,
@@ -1068,7 +1069,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
               action: RelationAction.Show,
               when: [{
                 name: 'provider',
-                value: 'OPENSTACK_SWIFT',
+                value: CloudsyncProviderName.OpenstackSwift,
               }],
             },
           ],
@@ -1085,7 +1086,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
               connective: RelationConnection.And,
               when: [{
                 name: 'provider',
-                value: 'S3',
+                value: CloudsyncProviderName.AmazonS3,
               }],
             },
           ],
@@ -1102,7 +1103,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
               connective: RelationConnection.And,
               when: [{
                 name: 'provider',
-                value: 'S3',
+                value: CloudsyncProviderName.AmazonS3,
               }],
             },
           ],
@@ -1119,7 +1120,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
               connective: RelationConnection.And,
               when: [{
                 name: 'provider',
-                value: 'S3',
+                value: CloudsyncProviderName.AmazonS3,
               }],
             },
           ],
@@ -1136,7 +1137,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
               connective: RelationConnection.And,
               when: [{
                 name: 'provider',
-                value: 'S3',
+                value: CloudsyncProviderName.AmazonS3,
               }],
             },
           ],
@@ -1151,7 +1152,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
               action: RelationAction.Show,
               when: [{
                 name: 'provider',
-                value: 'OPENSTACK_SWIFT',
+                value: CloudsyncProviderName.OpenstackSwift,
               }],
             },
           ],
@@ -1166,7 +1167,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
               action: RelationAction.Show,
               when: [{
                 name: 'provider',
-                value: 'OPENSTACK_SWIFT',
+                value: CloudsyncProviderName.OpenstackSwift,
               }],
             },
           ],
@@ -1195,7 +1196,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
               action: RelationAction.Show,
               when: [{
                 name: 'provider',
-                value: 'OPENSTACK_SWIFT',
+                value: CloudsyncProviderName.OpenstackSwift,
               }],
             },
           ],
@@ -1321,7 +1322,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
     this.entityForm = entityForm;
     this.fieldConfig = entityForm.fieldConfig;
 
-    entityForm.formGroup.controls['provider'].valueChanges.pipe(untilDestroyed(this)).subscribe((res: string) => {
+    entityForm.formGroup.controls['provider'].valueChanges.pipe(untilDestroyed(this)).subscribe((res: CloudsyncProviderName) => {
       if (this.providerField.hasErrors) {
         this.providerField.hasErrors = false;
         this.providerField.errors = '';
@@ -1426,7 +1427,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
 
     window.addEventListener('message', method, false);
 
-    function doAuth(message: OauthMessage, selectedProvider: string): void {
+    function doAuth(message: OauthMessage, selectedProvider: CloudsyncProviderName): void {
       if ('oauth_portal' in message.data) {
         if (message.data.error) {
           dialogService.errorReport(translate.instant('Error'), message.data.error);
@@ -1441,7 +1442,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
             }
           }
         }
-        if (selectedProvider === 'ONEDRIVE') {
+        if (selectedProvider === CloudsyncProviderName.MicrosoftOnedrive) {
           getOnedriveList(message.data);
         }
 

@@ -4,6 +4,8 @@ import {
   OnInit,
   ViewChild,
 } from '@angular/core';
+import { FormControl } from '@angular/forms';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { DatatableComponent } from '@swimlane/ngx-datatable';
 import * as filesize from 'filesize';
@@ -12,6 +14,7 @@ import { ManagerDisk } from 'app/pages/storage2/components/manager/manager-disk.
 import { ManagerComponent } from 'app/pages/storage2/components/manager/manager.component';
 import { StorageService } from 'app/services/storage.service';
 
+@UntilDestroy()
 @Component({
   selector: 'ix-vdev',
   templateUrl: 'vdev.component.html',
@@ -23,7 +26,7 @@ export class VdevComponent implements OnInit {
   @Input() manager: ManagerComponent;
   @Input() initialValues: any = {};
   @ViewChild(DatatableComponent, { static: false }) table: DatatableComponent;
-  type: string;
+  typeControl = new FormControl(undefined as string);
   removable = true;
   disks: ManagerDisk[] = [];
   selected: ManagerDisk[] = [];
@@ -54,10 +57,10 @@ export class VdevComponent implements OnInit {
     if (this.group === 'data') {
       this.vdevTypeDisabled = !this.manager.isNew;
       if (!this.vdevTypeDisabled) {
-        this.type = 'stripe';
+        this.typeControl.setValue('stripe');
       }
     } else {
-      this.type = 'stripe';
+      this.typeControl.setValue('stripe');
     }
     if (this.initialValues['disks']) {
       this.initialValues['disks'].forEach((disk: ManagerDisk) => {
@@ -67,22 +70,26 @@ export class VdevComponent implements OnInit {
       this.initialValues['disks'] = [];
     }
     if (this.initialValues['type']) {
-      this.type = this.initialValues['type'];
+      this.typeControl.setValue(this.initialValues['type']);
     }
     this.estimateSize();
+
+    this.typeControl.valueChanges.pipe(untilDestroyed(this)).subscribe(() => {
+      this.onTypeChange();
+    });
   }
 
   getType(): string {
-    if (this.type === undefined) {
-      this.type = this.manager.firstDataVdevType;
+    if (this.typeControl.value === undefined || this.typeControl.value === null) {
+      this.typeControl.setValue(this.manager.firstDataVdevType);
     }
 
     // TODO: Enum
-    return helptext.vdev_types[this.type as keyof typeof helptext.vdev_types];
+    return helptext.vdev_types[this.typeControl.value as keyof typeof helptext.vdev_types];
   }
 
   getTitle(): string {
-    return 'Vdev ' + (this.index + 1) + ': ' + this.type.charAt(0).toUpperCase() + this.type.slice(1);
+    return 'Vdev ' + (this.index + 1) + ': ' + this.typeControl.value.charAt(0).toUpperCase() + this.typeControl.value.slice(1);
   }
 
   addDisk(disk: ManagerDisk): void {
@@ -104,22 +111,22 @@ export class VdevComponent implements OnInit {
   guessVdevType(): void {
     if (this.group === 'data' && !this.vdevTypeDisabled) {
       if (this.disks.length === 2) {
-        this.type = 'mirror';
+        this.typeControl.setValue('mirror');
       } else if (this.disks.length === 3) {
-        this.type = 'raidz';
+        this.typeControl.setValue('raidz');
       } else if (this.disks.length >= 4 && this.disks.length <= 8) {
-        this.type = 'raidz2';
+        this.typeControl.setValue('raidz2');
       } else if (this.disks.length >= 9) {
-        this.type = 'raidz3';
+        this.typeControl.setValue('raidz3');
       } else {
-        this.type = 'stripe';
+        this.typeControl.setValue('stripe');
       }
     }
     if (this.group === 'special' && !this.vdevTypeDisabled) {
       if (this.disks.length >= 2) {
-        this.type = 'mirror';
+        this.typeControl.setValue('mirror');
       } else {
-        this.type = 'stripe';
+        this.typeControl.setValue('stripe');
       }
     }
   }
@@ -148,10 +155,10 @@ export class VdevComponent implements OnInit {
       }
     }
     if (this.group === 'data') {
-      if (this.disks.length > 0 && this.disks.length < this.mindisks[this.type]) {
+      if (this.disks.length > 0 && this.disks.length < this.mindisks[this.typeControl.value]) {
         this.error = this.translate.instant(
           'This type of VDEV requires at least {n, plural, one {# disk} other {# disks}}.',
-          { n: this.mindisks[this.type] },
+          { n: this.mindisks[this.typeControl.value] },
         );
         this.vdevDisksError = true;
       } else {
@@ -160,16 +167,17 @@ export class VdevComponent implements OnInit {
     }
     totalsize = smallestdisk * this.disks.length;
 
-    if (this.type === undefined) { // do the same as getType() to prevent issues while repeating
-      this.type = this.manager.firstDataVdevType;
+    // do the same as getType() to prevent issues while repeating
+    if (this.typeControl.value === undefined || this.typeControl.value === null) {
+      this.typeControl.setValue(this.manager.firstDataVdevType);
     }
-    if (this.type === 'mirror') {
+    if (this.typeControl.value === 'mirror') {
       estimate = smallestdisk;
-    } else if (this.type === 'raidz') {
+    } else if (this.typeControl.value === 'raidz') {
       estimate = totalsize - smallestdisk;
-    } else if (this.type === 'raidz2') {
+    } else if (this.typeControl.value === 'raidz2') {
       estimate = totalsize - 2 * smallestdisk;
-    } else if (this.type === 'raidz3') {
+    } else if (this.typeControl.value === 'raidz3') {
       estimate = totalsize - 3 * smallestdisk;
     } else {
       estimate = stripeSize; // stripe

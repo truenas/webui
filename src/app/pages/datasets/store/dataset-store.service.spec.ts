@@ -2,8 +2,7 @@ import { createServiceFactory, SpectatorService } from '@ngneat/spectator';
 import { mockProvider } from '@ngneat/spectator/jest';
 import { take } from 'rxjs/operators';
 import { TestScheduler } from 'rxjs/testing';
-import { Dataset } from 'app/interfaces/dataset.interface';
-import { DatasetInTree } from 'app/pages/datasets/store/dataset-in-tree.interface';
+import { Dataset, DatasetDetails } from 'app/interfaces/dataset.interface';
 import { DatasetTreeState, DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
 import { WebSocketService } from 'app/services';
 
@@ -85,7 +84,7 @@ describe('DatasetTreeStore', () => {
               },
             ],
           },
-        ] as DatasetInTree[],
+        ] as DatasetDetails[],
         selectedDatasetId: 'parent1/child2/child1',
       } as DatasetTreeState);
 

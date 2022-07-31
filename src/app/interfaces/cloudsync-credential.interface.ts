@@ -1,10 +1,12 @@
+import { CloudsyncProviderName } from 'app/enums/cloudsync-provider-name.enum';
+
 export interface CloudsyncCredential {
   attributes: {
     [attribute: string]: string;
   };
   id: number;
   name: string;
-  provider: string;
+  provider: CloudsyncProviderName;
 }
 
 export type CloudsyncCredentialUpdate = Omit<CloudsyncCredential, 'id'>;

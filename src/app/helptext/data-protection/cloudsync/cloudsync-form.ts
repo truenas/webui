@@ -35,6 +35,9 @@ export default {
   folder_placeholder: T('Folder'),
   folder_tooltip: T('Enter or select the cloud storage location to use for this task.'),
 
+  bucket_policy_only_placeholder: T('Bucket Policy Only'),
+  bucket_policy_only_tooltip: T('Access checks should use bucket-level IAM policies.'),
+
   encryption_placeholder: T('Server Side Encryption'),
   encryption_tooltip: T('Choose <i>AES-256</i> or <i>None</i>.'),
 
@@ -175,4 +178,6 @@ export default {
 
   cloudsync_task_add: T('Add Cloud Sync Task'),
   cloudsync_task_edit: T('Edit Cloud Sync Task'),
+
+  empty_src_dirs_placeholder: T('Create empty source dirs on destination after sync'),
 };

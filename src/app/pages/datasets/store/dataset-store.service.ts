@@ -6,14 +6,13 @@ import {
 } from 'rxjs/operators';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
-import { DatasetInTree } from 'app/pages/datasets/store/dataset-in-tree.interface';
 import { getDatasetAndParentsById } from 'app/pages/datasets/utils/get-datasets-in-tree-by-id.utils';
 import { WebSocketService } from 'app/services';
 
 export interface DatasetTreeState {
   isLoading: boolean;
   error: WebsocketError | null;
-  datasets: DatasetInTree[];
+  datasets: DatasetDetails[];
   selectedDatasetId: string | null;
 }
 
@@ -35,7 +34,7 @@ export class DatasetTreeStore extends ComponentStore<DatasetTreeState> {
       return null;
     }
 
-    const selectedBranch = getDatasetAndParentsById(state.datasets as DatasetDetails[], state.selectedDatasetId);
+    const selectedBranch = getDatasetAndParentsById(state.datasets, state.selectedDatasetId);
     if (!selectedBranch) {
       return null;
     }
@@ -64,7 +63,7 @@ export class DatasetTreeStore extends ComponentStore<DatasetTreeState> {
       switchMap(() => {
         return this.ws.call('pool.dataset.details')
           .pipe(
-            tap((datasets: DatasetInTree[]) => {
+            tap((datasets: DatasetDetails[]) => {
               this.patchState({
                 isLoading: false,
                 datasets,
