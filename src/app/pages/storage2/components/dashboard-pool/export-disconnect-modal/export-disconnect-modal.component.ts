@@ -12,7 +12,7 @@ import { Pool } from 'app/interfaces/pool.interface';
 import { Process } from 'app/interfaces/process.interface';
 import { SystemDatasetConfig } from 'app/interfaces/system-dataset-config.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
-import IxValidatorsService from 'app/modules/ix-forms/services/ix-validators.service';
+import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { AppLoaderService, DialogService, WebSocketService } from 'app/services';
 
 @UntilDestroy()

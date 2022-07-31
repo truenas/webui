@@ -5,8 +5,10 @@ import {
 import { TranslateService } from '@ngx-translate/core';
 import isCidr from 'is-cidr';
 
-@Injectable()
-export default class IxValidatorsService {
+@Injectable({
+  providedIn: 'root',
+})
+export class IxValidatorsService {
   constructor(protected translate: TranslateService) {}
 
   withMessage(validatorFn: ValidatorFn, errorMessage: string): ValidatorFn {
