@@ -2,7 +2,6 @@
   <mat-card-header>
     <h3 mat-card-title>
       {{ 'Disk Health' | translate }}
-
       <ng-container [ngSwitch]="diskState.health">
         <mat-icon *ngSwitchCase="diskHealthLevel.Safe" class="pool-icon icon-online">check_circle</mat-icon>
         <mat-icon *ngSwitchCase="diskHealthLevel.Warn" class="pool-icon icon-warning">warning</mat-icon>
