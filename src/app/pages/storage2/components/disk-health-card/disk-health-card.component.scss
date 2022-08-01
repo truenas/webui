@@ -6,7 +6,17 @@
 
 .card {
   @include details-card();
+  display: flex;
   flex: 1;
+  flex-direction: column;
+
+  .content-container {
+    height: 100%;
+  }
+  
+  .details-item {
+    margin: 8px 0;
+  }
 }
 
 .header {
