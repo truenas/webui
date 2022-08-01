@@ -243,7 +243,7 @@
   "Specify whether to use the certificate for a Certificate Authority           and whether this extension is critical. Clients must recognize critical extensions           to prevent rejection. Web certificates typically require you to disable           CA and enable Critical Extension.": "",
   "Staging": "",
   "Start {service} Service": "",
-  "Storage Deprecated": "",
+  "Storage (Deprecated)": "",
   "Successfully expanded pool {name}.": "",
   "Successfully saved Disk settings.": "",
   "Successfully saved IPMI settings.": "",

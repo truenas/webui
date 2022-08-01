@@ -130,8 +130,13 @@
     display: flex;
     gap: 8px;
 
+    .mat-button {
+      flex: 0 0 auto;
+    }
+
     .mat-icon {
       color: var(--yellow);
+      flex: 0 0 auto;
     }
   }
 }

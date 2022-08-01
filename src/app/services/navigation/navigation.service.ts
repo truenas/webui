@@ -40,9 +40,9 @@ export class NavigationService {
       state: 'datasets',
     },
     {
-      name: T('Storage Deprecated'),
+      name: T('Storage (Deprecated)'),
       type: MenuItemType.Link,
-      tooltip: T('Storage Deprecated'),
+      tooltip: T('Storage (Deprecated)'),
       icon: 'dns',
       state: 'storage',
     },
