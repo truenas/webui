@@ -6,18 +6,18 @@ import { ActivatedRoute } from '@angular/router';
 import {
   byText, createComponentFactory, Spectator, mockProvider,
 } from '@ngneat/spectator/jest';
-import { of, Subject } from 'rxjs';
+import { of } from 'rxjs';
 import { mockWebsocket, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
 import { DiskStandby } from 'app/enums/disk-standby.enum';
 import { DiskType } from 'app/enums/disk-type.enum';
-import { VDevType } from 'app/enums/v-dev-type.enum';
-import { VDevStatus } from 'app/enums/vdev-status.enum';
-import { Disk, VDev } from 'app/interfaces/storage.interface';
+import { TopologyItemType } from 'app/enums/v-dev-type.enum';
+import { TopologyItemStatus } from 'app/enums/vdev-status.enum';
+import {
+  Disk, TopologyDisk, VDev,
+} from 'app/interfaces/storage.interface';
 import { ConfirmDialogComponent } from 'app/modules/common/dialog/confirm-dialog/confirm-dialog.component';
 import { ZfsInfoCardComponent } from 'app/pages/storage2/modules/devices/components/zfs-info-card/zfs-info-card.component';
 import { DevicesStore } from 'app/pages/storage2/modules/devices/stores/devices-store.service';
-import { DiskFormComponent } from 'app/pages/storage2/modules/disks/components/disk-form/disk-form.component';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 describe('ZfsInfoCardComponent', () => {
   let spectator: Spectator<ZfsInfoCardComponent>;
@@ -31,10 +31,6 @@ describe('ZfsInfoCardComponent', () => {
         mockCall('pool.offline'),
         mockCall('pool.online'),
       ]),
-      mockProvider(IxSlideInService, {
-        onClose$: new Subject<unknown>(),
-        open: jest.fn(),
-      }),
       mockProvider(ActivatedRoute, {
         snapshot: { params: { poolId: '1' } },
       }),
@@ -52,15 +48,15 @@ describe('ZfsInfoCardComponent', () => {
       props: {
         topologyItem: {
           disk: 'ix-disk-1',
-          type: VDevType.Disk,
+          type: TopologyItemType.Disk,
           children: [],
-          status: VDevStatus.Online,
+          status: TopologyItemStatus.Online,
           stats: {
             read_errors: 3,
             write_errors: 2,
             checksum_errors: 1,
           },
-        } as VDev,
+        } as TopologyDisk,
         topologyParentItem: {
           name: 'mirror-0',
         } as VDev,
@@ -93,13 +89,6 @@ describe('ZfsInfoCardComponent', () => {
 
     const checksumErrors = spectator.query(byText('Checksum Errors:', { exact: true }));
     expect(checksumErrors.nextElementSibling).toHaveText('1');
-  });
-
-  it('opens slide to edit Disk when clicks Edit button', async () => {
-    const editButton = await loader.getHarness(MatButtonHarness.with({ text: 'Edit' }));
-    await editButton.click();
-
-    expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(DiskFormComponent, { wide: true });
   });
 
   it('shows confirmation when clicks Remove button', async () => {

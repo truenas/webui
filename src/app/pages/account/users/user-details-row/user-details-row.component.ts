@@ -44,7 +44,6 @@ export class UserDetailsRowComponent {
       { label: this.translate.instant('Password Disabled'), value: user.password_disabled.toString() },
       { label: this.translate.instant('Lock User'), value: user.locked.toString() },
       { label: this.translate.instant('Permit Sudo'), value: user.sudo.toString() },
-      { label: this.translate.instant('Microsoft Account'), value: user.microsoft_account.toString() },
       { label: this.translate.instant('Samba Authentication'), value: user.smb.toString() },
     ];
   }

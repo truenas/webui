@@ -41,6 +41,7 @@ export interface CloudSyncTask {
   snapshot: boolean;
   transfer_mode: TransferMode;
   transfers: number;
+  create_empty_src_dirs: boolean;
 }
 
 export type CloudSyncTaskUpdate = Omit<CloudSyncTask, 'id' | 'job' | 'locked'>;

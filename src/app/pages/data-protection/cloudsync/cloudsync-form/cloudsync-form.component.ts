@@ -274,6 +274,12 @@ export class CloudsyncFormComponent implements FormConfiguration {
         },
         {
           type: 'checkbox',
+          name: 'create_empty_src_dirs',
+          placeholder: helptext.empty_src_dirs_placeholder,
+          value: false,
+        },
+        {
+          type: 'checkbox',
           name: 'follow_symlinks',
           placeholder: helptext.follow_symlinks_placeholder,
           tooltip: helptext.follow_symlinks_tooltip,

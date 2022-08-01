@@ -210,6 +210,10 @@ module.exports = {
             "name": "@ngneat/spectator",
             "importNames": ["createComponentFactory", "createHostFactory", "createRoutingFactory", "mockProvider"],
             "message": "Use imports from @ngneat/spectator/jest instead."
+          }, {
+            "name": "@angular/material/icon",
+            "importNames": ["MatIconModule"],
+            "message": "Use IxIconModule instead."
           }],
           "patterns": [{
             "group": [ "../**"],

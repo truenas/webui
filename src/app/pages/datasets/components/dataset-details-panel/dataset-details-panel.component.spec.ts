@@ -5,7 +5,8 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { MockComponents } from 'ng-mocks';
 import { of } from 'rxjs';
 import { DatasetType } from 'app/enums/dataset.enum';
-import { Dataset } from 'app/interfaces/dataset.interface';
+import { Dataset, DatasetDetails } from 'app/interfaces/dataset.interface';
+import { DataProtectionCardComponent } from 'app/pages/datasets/components/data-protection-card/data-protection-card.component';
 import {
   DatasetCapacityManagementCardComponent,
 } from 'app/pages/datasets/components/dataset-capacity-management-card/dataset-capacity-management-card.component';
@@ -35,7 +36,7 @@ describe('DatasetDetailsPanelComponent', () => {
     mountpoint: '/mnt/root/parent/child',
     type: DatasetType.Filesystem,
     encrypted: true,
-  } as Dataset;
+  } as DatasetDetails;
   const parentDataset = {
     name: 'root/parent',
   } as Dataset;
@@ -48,6 +49,7 @@ describe('DatasetDetailsPanelComponent', () => {
         PermissionsCardComponent,
         ZfsEncryptionCardComponent,
         DatasetCapacityManagementCardComponent,
+        DataProtectionCardComponent,
       ),
     ],
     providers: [

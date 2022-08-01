@@ -7,7 +7,6 @@ import { MatCardModule } from '@angular/material/card';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatDividerModule } from '@angular/material/divider';
-import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
@@ -26,6 +25,7 @@ import { CastModule } from 'app/modules/cast/cast.module';
 import { AppCommonModule } from 'app/modules/common/app-common.module';
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
+import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { IxTableModule } from 'app/modules/ix-tables/ix-table.module';
 import { JobsModule } from 'app/modules/jobs/jobs.module';
 import { LayoutModule } from 'app/modules/layout/layout.module';
@@ -66,9 +66,6 @@ import {
   SaveConfigDialogComponent,
 } from 'app/pages/system/general-settings/save-config-dialog/save-config-dialog.component';
 import { EulaComponent } from 'app/pages/system/general-settings/support/eula/eula.component';
-import { JiraOauthComponent } from 'app/pages/system/general-settings/support/file-ticket-form/components/jira-oauth/jira-oauth.component';
-import { FileTicketFormComponent } from 'app/pages/system/general-settings/support/file-ticket-form/file-ticket-form.component';
-import { FileTicketLicensedFormComponent } from 'app/pages/system/general-settings/support/file-ticket-licensed-form/file-ticket-licensed-form.component';
 import { LicenseComponent } from 'app/pages/system/general-settings/support/license/license.component';
 import { ProactiveComponent } from 'app/pages/system/general-settings/support/proactive/proactive.component';
 import { SupportComponent } from 'app/pages/system/general-settings/support/support.component';
@@ -84,6 +81,7 @@ import { ManualUpdateFormComponent } from 'app/pages/system/update/manual-update
 import { UpdateComponent } from 'app/pages/system/update/update.component';
 import { EnclosureModule } from 'app/pages/system/view-enclosure/enclosure.module';
 import { ReplicationFormComponent } from './advanced/replication-form/replication-form.component';
+import { FileTicketModule } from './file-ticket/file-ticket.module';
 import { routing } from './system.routing';
 
 @NgModule({
@@ -102,7 +100,7 @@ import { routing } from './system.routing';
     JobsModule,
     MarkdownModule.forRoot(),
     MatCardModule,
-    MatIconModule,
+    IxIconModule,
     MatSelectModule,
     MatProgressSpinnerModule,
     MatProgressBarModule,
@@ -123,6 +121,7 @@ import { routing } from './system.routing';
     MatDialogModule,
     AppCommonModule,
     LayoutModule,
+    FileTicketModule,
   ],
   declarations: [
     AdvancedSettingsComponent,
@@ -140,14 +139,11 @@ import { routing } from './system.routing';
     EmailComponent,
     EulaComponent,
     FailoverSettingsComponent,
-    FileTicketFormComponent,
-    FileTicketLicensedFormComponent,
     GeneralSettingsComponent,
     GuiFormComponent,
     InitShutdownFormComponent,
     InitshutdownListComponent,
     IsolatedGpuPcisFormComponent,
-    JiraOauthComponent,
     KernelFormComponent,
     LicenseComponent,
     LocalizationFormComponent,
