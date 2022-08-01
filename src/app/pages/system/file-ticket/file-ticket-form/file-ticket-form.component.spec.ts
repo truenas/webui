@@ -98,6 +98,7 @@ describe('FileTicketFormComponent', () => {
     expect(values).toEqual(
       {
         Token: 'token.is.mocked',
+        'Attach screenshots': [],
         Category: '',
         Subject: '',
         Body: '',

@@ -18,3 +18,9 @@ export enum CloudsyncProviderName {
   Webdav = 'WEBDAV',
   Yandex = 'YANDEX',
 }
+
+export enum OneDriveType {
+  Personal = 'PERSONAL',
+  Business = 'BUSINESS',
+  DocumentLibrary = 'DOCUMENT_LIBRARY',
+}
