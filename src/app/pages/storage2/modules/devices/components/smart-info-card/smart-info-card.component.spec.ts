@@ -9,7 +9,7 @@ import { of } from 'rxjs';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { SmartTestResultStatus } from 'app/enums/smart-test-result-status.enum';
 import { SmartTestResults, SmartTestTask } from 'app/interfaces/smart-test.interface';
-import { Disk, VDev } from 'app/interfaces/storage.interface';
+import { Disk, TopologyDisk } from 'app/interfaces/storage.interface';
 import {
   ManualTestDialogComponent,
 } from 'app/pages/storage2/modules/disks/components/manual-test-dialog/manual-test-dialog.component';
@@ -76,9 +76,9 @@ describe('SmartInfoCardComponent', () => {
   beforeEach(() => {
     spectator = createComponent({
       props: {
-        topologyItem: {
+        topologyDisk: {
           disk: 'sdc',
-        } as VDev,
+        } as TopologyDisk,
         disk,
       },
     });
