@@ -4,13 +4,13 @@ import { FlexLayoutModule } from '@angular/flex-layout';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatGridListModule } from '@angular/material/grid-list';
-import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { CoreComponents } from 'app/core/core-components.module';
+import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { ConfigResetComponent } from './config-reset/config-reset.component';
 import { FailoverComponent } from './failover/failover.component';
 import { othersRoutes } from './others.routing';
@@ -21,7 +21,7 @@ import { ShutdownComponent } from './shutdown/shutdown.component';
   imports: [
     CommonModule,
     MatListModule,
-    MatIconModule,
+    IxIconModule,
     MatButtonModule,
     MatCardModule,
     MatMenuModule,

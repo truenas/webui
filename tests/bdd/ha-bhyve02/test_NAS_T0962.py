@@ -200,7 +200,7 @@ def after_go_to_the_dashboard(driver):
 @then('click INITIATE FAILOVER, click the confirm checkbox, and press FAILOVER')
 def click_initiate_failover_click_the_confirm_checkbox_and_press_failover(driver):
     """click INITIATE FAILOVER, click the confirm checkbox, and press FAILOVER."""
-    assert wait_on_element(driver, 60, '//mat-icon[@svgicon="ha_enabled"]')
+    assert wait_on_element(driver, 60, '//mat-icon[@svgicon="ix:ha_enabled"]')
     assert wait_on_element(driver, 10, '//span[text()="(Standby)"]')
     assert wait_on_element(driver, 10, '//button[.//text()="Initiate Failover" and contains(@class,"mat-default")]', 'clickable')
     driver.find_element_by_xpath('//button[.//text()="Initiate Failover" and contains(@class,"mat-default")]').click()
@@ -238,13 +238,13 @@ def on_the_dashboard_wait_for_the_active_directory_service(driver):
     assert wait_on_element(driver, 60, '//h1[text()="Dashboard"]')
     assert wait_on_element(driver, 120, '//span[contains(.,"System Information")]')
     # Make sure HA is enable before going forward
-    assert wait_on_element(driver, 180, '//mat-icon[@svgicon="ha_enabled"]')
+    assert wait_on_element(driver, 180, '//mat-icon[@svgicon="ix:ha_enabled"]')
     if wait_on_element(driver, 3, '//button[@ix-auto="button__I AGREE"]', 'clickable'):
         driver.find_element_by_xpath('//button[@ix-auto="button__I AGREE"]').click()
     # Wait for the directories service manager button
     assert wait_on_element(driver, 180, '//button[@id="dirservices-manager"]')
     # Verify HA enabled again
-    assert wait_on_element(driver, 120, '//mat-icon[@svgicon="ha_enabled"]')
+    assert wait_on_element(driver, 120, '//mat-icon[@svgicon="ix:ha_enabled"]')
 
 
 @then('after click Storage on the left sidebar Storage')

@@ -1,8 +1,8 @@
-import { MatIcon } from '@angular/material/icon';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { DiskType } from 'app/enums/disk-type.enum';
 import { TopologyItemType } from 'app/enums/v-dev-type.enum';
 import { Disk, TopologyDisk, VDev } from 'app/interfaces/storage.interface';
+import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import {
   TopologyItemIconComponent,
 } from 'app/pages/storage2/modules/devices/components/topology-item-icon/topology-item-icon.component';
@@ -22,27 +22,27 @@ describe('TopologyItemIconComponent', () => {
     spectator = createComponent({
       props: { disk: diskHdd, topologyItem: vdevDisk },
     });
-    expect(spectator.query(MatIcon).svgIcon).toBe('ix-hdd');
+    expect(spectator.query(IxIconComponent).svgIcon).toBe('ix:hdd');
   });
 
   it('shows ssd disk icon', () => {
     spectator = createComponent({
       props: { disk: diskSsd, topologyItem: vdevDisk },
     });
-    expect(spectator.query(MatIcon).svgIcon).toBe('ix-ssd');
+    expect(spectator.query(IxIconComponent).svgIcon).toBe('ix:ssd');
   });
 
   it('shows hdd mirror icon', () => {
     spectator = createComponent({
       props: { disk: diskHdd, topologyItem: vdevMirror },
     });
-    expect(spectator.query(MatIcon).svgIcon).toBe('ix-hdd-mirror');
+    expect(spectator.query(IxIconComponent).svgIcon).toBe('ix:hdd_mirror');
   });
 
   it('shows ssd mirror icon', () => {
     spectator = createComponent({
       props: { disk: diskSsd, topologyItem: vdevMirror },
     });
-    expect(spectator.query(MatIcon).svgIcon).toBe('ix-ssd-mirror');
+    expect(spectator.query(IxIconComponent).svgIcon).toBe('ix:ssd_mirror');
   });
 });

@@ -3,7 +3,6 @@ import { NgModule } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatRippleModule } from '@angular/material/core';
-import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
@@ -19,6 +18,7 @@ import { AlertsPanelComponent } from 'app/modules/alerts/components/alerts-panel
 import { AlertEffects } from 'app/modules/alerts/store/alert.effects';
 import { alertReducer } from 'app/modules/alerts/store/alert.reducer';
 import { alertStateKey } from 'app/modules/alerts/store/alert.selectors';
+import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 
 @NgModule({
   imports: [
@@ -28,7 +28,7 @@ import { alertStateKey } from 'app/modules/alerts/store/alert.selectors';
     TranslateModule,
     MatButtonModule,
     MatMenuModule,
-    MatIconModule,
+    IxIconModule,
     RouterModule,
     MatCheckboxModule,
     MatProgressBarModule,

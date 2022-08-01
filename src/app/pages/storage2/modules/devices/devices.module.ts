@@ -5,7 +5,6 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatDialogModule } from '@angular/material/dialog';
-import { MatIconModule } from '@angular/material/icon';
 import { RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { NgxFilesizeModule } from 'ngx-filesize';
@@ -15,6 +14,7 @@ import { CastModule } from 'app/modules/cast/cast.module';
 import { AppCommonModule } from 'app/modules/common/app-common.module';
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
+import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { IxTreeModule } from 'app/modules/ix-tree/ix-tree.module';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { DevicesComponent } from 'app/pages/storage2/modules/devices/components/devices/devices.component';
@@ -47,7 +47,7 @@ import { SmartInfoCardComponent } from './components/smart-info-card/smart-info-
     MatButtonModule,
     MatCardModule,
     MatDialogModule,
-    MatIconModule,
+    IxIconModule,
     NgxFilesizeModule,
     NgxSkeletonLoaderModule.forRoot({
       theme: {
