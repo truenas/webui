@@ -52,7 +52,7 @@ export class SpaceManagementChartComponent implements OnChanges {
   }
 
   get isThick(): boolean {
-    return this.datasetDetails?.iscsi_shares?.find((share) => share?.thick_provisioned)?.thick_provisioned;
+    return this.datasetDetails?.thick_provisioned;
   }
 
   constructor(

@@ -13,6 +13,7 @@ export interface DatasetDetails extends Dataset {
   iscsi_shares: DatasetDetailsIscsiShares[];
   vms: DatasetDetailsVms[];
   apps: DatasetDetailsApps[];
+  thick_provisioned: boolean;
 }
 
 export interface DatasetDetailsSmbShares {
@@ -30,7 +31,6 @@ export interface DatasetDetailsIscsiShares {
   enabled: boolean;
   type: IscsiExtentType;
   path: string;
-  thick_provisioned: boolean;
 }
 
 export interface DatasetDetailsVms {
