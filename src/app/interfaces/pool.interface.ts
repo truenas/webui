@@ -4,7 +4,7 @@ import { PoolScanFunction } from 'app/enums/pool-scan-function.enum';
 import { PoolScanState } from 'app/enums/pool-scan-state.enum';
 import { PoolStatus } from 'app/enums/pool-status.enum';
 import { ApiTimestamp } from 'app/interfaces/api-date.interface';
-import { VDev } from 'app/interfaces/storage.interface';
+import { TopologyItem } from 'app/interfaces/storage.interface';
 import { ZfsProperty } from 'app/interfaces/zfs-property.interface';
 
 export interface Pool {
@@ -46,12 +46,12 @@ export interface Pool {
 }
 
 export interface PoolTopology {
-  cache: VDev[];
-  data: VDev[];
-  dedup: VDev[];
-  log: VDev[];
-  spare: VDev[];
-  special: VDev[];
+  cache: TopologyItem[];
+  data: TopologyItem[];
+  dedup: TopologyItem[];
+  log: TopologyItem[];
+  spare: TopologyItem[];
+  special: TopologyItem[];
 }
 
 export type PoolTopologyCategory = keyof PoolTopology;

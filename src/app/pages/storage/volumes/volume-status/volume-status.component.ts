@@ -11,7 +11,7 @@ import * as _ from 'lodash';
 import { TreeNode } from 'primeng/api';
 import { filter } from 'rxjs/operators';
 import { PoolScanState } from 'app/enums/pool-scan-state.enum';
-import { VDevType } from 'app/enums/v-dev-type.enum';
+import { TopologyItemType } from 'app/enums/v-dev-type.enum';
 import helptext from 'app/helptext/storage/volumes/volume-status';
 import { Job } from 'app/interfaces/job.interface';
 import { Option } from 'app/interfaces/option.interface';
@@ -19,10 +19,10 @@ import { PoolDiskInfo } from 'app/interfaces/pool-disk-info';
 import { Pool, PoolScanUpdate, PoolTopologyCategory } from 'app/interfaces/pool.interface';
 import { QueryParams } from 'app/interfaces/query-api.interface';
 import {
-  VDev,
-  VDevStats,
+  TopologyItem,
+  TopologyItemStats,
   UnusedDisk,
-  Disk, ExtraDiskQueryOptions,
+  Disk, ExtraDiskQueryOptions, TopologyDisk,
 } from 'app/interfaces/storage.interface';
 import { DialogFormConfiguration } from 'app/modules/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/modules/entity/entity-dialog/entity-dialog.component';
@@ -196,7 +196,7 @@ export class VolumeStatusComponent implements OnInit, AfterViewInit {
     this.loader.close();
   }
 
-  getAction(data: VDev, category: PoolTopologyCategory, vdevType: VDevType): any {
+  getAction(data: TopologyItem, category: PoolTopologyCategory, vdevType: TopologyItemType): any {
     const actions = [{
       id: 'edit',
       label: helptext.actions_label.edit,
@@ -365,11 +365,11 @@ export class VolumeStatusComponent implements OnInit, AfterViewInit {
       _.find(actions, { id: 'offline' }).isHidden = true;
     }
 
-    if (vdevType === VDevType.Mirror || vdevType === VDevType.Replacing || vdevType === VDevType.Spare) {
+    if ([TopologyItemType.Mirror, TopologyItemType.Replacing, TopologyItemType.Spare].includes(vdevType)) {
       _.find(actions, { id: 'detach' }).isHidden = false;
     }
 
-    if (vdevType === VDevType.Mirror) {
+    if (vdevType === TopologyItemType.Mirror) {
       _.find(actions, { id: 'remove' }).isHidden = true;
     }
 
@@ -451,26 +451,26 @@ export class VolumeStatusComponent implements OnInit, AfterViewInit {
     }];
   }
 
-  parseData(data: Pool | VDev, category?: PoolTopologyCategory, vdevType?: VDevType): PoolDiskInfo {
+  parseData(data: Pool | TopologyItem, category?: PoolTopologyCategory, vdevType?: TopologyItemType): PoolDiskInfo {
     let stats = {
       read_errors: 0,
       write_errors: 0,
       checksum_errors: 0,
-    } as VDevStats;
+    } as TopologyItemStats;
 
     if ('stats' in data) {
       stats = data.stats;
     }
-    if ('type' in data && data.type !== VDevType.Disk) {
+    if ('type' in data && data.type !== TopologyItemType.Disk) {
       (data as any).name = data.type;
     }
     // use path as the device name if the device name is null
-    if (!(data as VDev).disk || (data as VDev).disk === null) {
+    if (!(data as TopologyDisk).disk || (data as TopologyDisk).disk === null) {
       (data as any).disk = data.path;
     }
 
     const item: PoolDiskInfo = {
-      name: 'name' in data ? data.name : data.disk,
+      name: 'name' in data ? data.name : (data as TopologyDisk).disk,
       read: stats.read_errors ? stats.read_errors : 0,
       write: stats.write_errors ? stats.write_errors : 0,
       checksum: stats.checksum_errors ? stats.checksum_errors : 0,
@@ -481,16 +481,16 @@ export class VolumeStatusComponent implements OnInit, AfterViewInit {
 
     // add actions
     if (category && 'type' in data) {
-      if (data.type === VDevType.Disk) {
+      if (data.type === TopologyItemType.Disk) {
         item.actions = [{ title: 'Disk Actions', actions: this.getAction(data, category, vdevType) }];
-      } else if (data.type === VDevType.Mirror) {
+      } else if (data.type === TopologyItemType.Mirror) {
         item.actions = [{ title: 'Mirror Actions', actions: this.extendAction() }];
       }
     }
     return item;
   }
 
-  parseTopolgy(data: VDev, category: PoolTopologyCategory, vdevType?: VDevType): TreeNode {
+  parseTopolgy(data: TopologyItem, category: PoolTopologyCategory, vdevType?: TopologyItemType): TreeNode {
     const node: TreeNode = {};
     node.data = this.parseData(data, category, vdevType);
     node.expanded = true;

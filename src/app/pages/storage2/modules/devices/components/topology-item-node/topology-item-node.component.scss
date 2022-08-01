@@ -78,7 +78,7 @@ $padding-left: 8px;
         left: $padding-left + $level-offset * ($i - 2);
       }
 
-      ix-disk-node {
+      ix-topology-item-node {
         padding-left: $padding-left + $level-offset * ($i - 2);
       }
     }

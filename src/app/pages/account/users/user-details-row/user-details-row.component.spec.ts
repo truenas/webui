@@ -33,7 +33,6 @@ const dummyUser = {
   sudo: false,
   sudo_nopasswd: false,
   sudo_commands: [],
-  microsoft_account: false,
   email: 'test-user@test-user.com',
   group: {
     id: 41,
