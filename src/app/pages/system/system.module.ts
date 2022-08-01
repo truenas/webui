@@ -66,9 +66,6 @@ import {
   SaveConfigDialogComponent,
 } from 'app/pages/system/general-settings/save-config-dialog/save-config-dialog.component';
 import { EulaComponent } from 'app/pages/system/general-settings/support/eula/eula.component';
-import { JiraOauthComponent } from 'app/pages/system/general-settings/support/file-ticket-form/components/jira-oauth/jira-oauth.component';
-import { FileTicketFormComponent } from 'app/pages/system/general-settings/support/file-ticket-form/file-ticket-form.component';
-import { FileTicketLicensedFormComponent } from 'app/pages/system/general-settings/support/file-ticket-licensed-form/file-ticket-licensed-form.component';
 import { LicenseComponent } from 'app/pages/system/general-settings/support/license/license.component';
 import { ProactiveComponent } from 'app/pages/system/general-settings/support/proactive/proactive.component';
 import { SupportComponent } from 'app/pages/system/general-settings/support/support.component';
@@ -84,6 +81,7 @@ import { ManualUpdateFormComponent } from 'app/pages/system/update/manual-update
 import { UpdateComponent } from 'app/pages/system/update/update.component';
 import { EnclosureModule } from 'app/pages/system/view-enclosure/enclosure.module';
 import { ReplicationFormComponent } from './advanced/replication-form/replication-form.component';
+import { FileTicketModule } from './file-ticket/file-ticket.module';
 import { routing } from './system.routing';
 
 @NgModule({
@@ -123,6 +121,7 @@ import { routing } from './system.routing';
     MatDialogModule,
     AppCommonModule,
     LayoutModule,
+    FileTicketModule,
   ],
   declarations: [
     AdvancedSettingsComponent,
@@ -140,14 +139,11 @@ import { routing } from './system.routing';
     EmailComponent,
     EulaComponent,
     FailoverSettingsComponent,
-    FileTicketFormComponent,
-    FileTicketLicensedFormComponent,
     GeneralSettingsComponent,
     GuiFormComponent,
     InitShutdownFormComponent,
     InitshutdownListComponent,
     IsolatedGpuPcisFormComponent,
-    JiraOauthComponent,
     KernelFormComponent,
     LicenseComponent,
     LocalizationFormComponent,
