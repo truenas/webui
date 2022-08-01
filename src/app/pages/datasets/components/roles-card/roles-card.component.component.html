@@ -1,0 +1,43 @@
+<mat-card class="card">
+  <mat-card-header>
+    <h3 mat-card-title>{{ 'Roles' | translate }}</h3>
+  </mat-card-header>
+  <mat-card-content>
+    <div class="details-item" *ngIf="dataset.apps?.length">
+      <div class="label">{{ 'Apps' | translate }}:</div>
+      <div class="value">{{ 'This dataset is used by one or more apps' | translate }}</div>
+      <a
+        class="action"
+        [routerLink]="['/apps']"
+      >{{ 'Manage Apps Settings' | translate }}</a>
+    </div>
+    <div class="details-item" *ngIf="hasChildrenWithShares">
+      <div class="label">{{ 'Child Shares' | translate }}:</div>
+      <div class="value">{{ 'This dataset has children with shares' | translate }}</div>
+    </div>
+    <div class="details-item" *ngIf="dataset.smb_shares?.length">
+      <div class="label">{{ 'Share Attached' | translate }}:</div>
+      <div class="value">{{ 'Dataset is shared via SMB as ' + smbSharesNames | translate }}</div>
+      <a
+        class="action"
+        [routerLink]="['/sharing/smb']"
+      >{{ 'Manage SMB Shares' | translate }}</a>
+    </div>
+    <div class="details-item" *ngIf="dataset.nfs_shares?.length">
+      <div class="label">{{ 'Share Attached' | translate }}:</div>
+      <div class="value">{{ 'Dataset is shared via NFS' | translate }}</div>
+      <a
+        class="action"
+        [routerLink]="['/sharing/nfs']"
+      >{{ 'Manage NFS Shares' | translate }}</a>
+    </div>
+    <div class="details-item" *ngIf="dataset.iscsi_shares?.length">
+      <div class="label">{{ 'Share Attached' | translate }}:</div>
+      <div class="value">{{ 'Dataset is shared via iSCSI' | translate }}</div>
+      <a
+        class="action"
+        [routerLink]="['/sharing/iscsi']"
+      >{{ 'Manage iSCSI Shares' | translate }}</a>
+    </div>
+  </mat-card-content>
+</mat-card>
