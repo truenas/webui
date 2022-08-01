@@ -36,6 +36,7 @@ export interface VmNicAttributes {
   mac: string;
   nic_attach: string;
   type: VmNicType;
+  trust_guest_rx_filters: boolean;
 }
 
 export interface VmDiskAttributes {
