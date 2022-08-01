@@ -36,7 +36,7 @@ export class NavigationService {
       name: T('Datasets'),
       type: MenuItemType.Link,
       tooltip: T('Datasets'),
-      icon: 'dns',
+      icon: 'ix:dataset',
       state: 'datasets',
     },
     {

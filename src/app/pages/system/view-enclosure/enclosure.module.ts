@@ -3,7 +3,6 @@ import { NgModule } from '@angular/core';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
-import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
@@ -12,6 +11,7 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { TranslateModule } from '@ngx-translate/core';
 import { CastModule } from 'app/modules/cast/cast.module';
 import { EntityModule } from 'app/modules/entity/entity.module';
+import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { LayoutModule } from 'app/modules/layout/layout.module';
 import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
 import { DiskComponent } from 'app/pages/system/view-enclosure/components/disk-component/disk.component';
@@ -29,7 +29,7 @@ import { TemperatureMeterComponent } from './components/temperature-meter/temper
     EntityModule,
     TooltipModule,
     CastModule,
-    MatIconModule,
+    IxIconModule,
     MatProgressSpinnerModule,
     MatProgressBarModule,
     MatTableModule,

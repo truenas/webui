@@ -2,6 +2,7 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, Spectator, mockProvider } from '@ngneat/spectator/jest';
+import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { DiskHealthCardComponent } from 'app/pages/storage2/components/disk-health-card/disk-health-card.component';
@@ -11,6 +12,7 @@ describe('DiskHealthCardComponent', () => {
   let loader: HarnessLoader;
   const createComponent = createComponentFactory({
     component: DiskHealthCardComponent,
+    imports: [NgxSkeletonLoaderModule],
     providers: [
       mockProvider(SnackbarService),
       mockWebsocket([

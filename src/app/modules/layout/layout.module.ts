@@ -5,13 +5,13 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatDividerModule } from '@angular/material/divider';
-import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
+import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { BreadcrumbComponent } from 'app/modules/layout/components/breadcrumb/breadcrumb.component';
 import {
   ChangePasswordDialogComponent,
@@ -25,13 +25,13 @@ import { SecondaryMenuComponent } from 'app/modules/layout/components/secondary-
     CommonModule,
     TranslateModule,
     IxFormsModule,
+    IxIconModule,
     ReactiveFormsModule,
     MatButtonModule,
     FlexModule,
     RouterModule,
     CommonDirectivesModule,
     MatTooltipModule,
-    MatIconModule,
     MatDividerModule,
     MatListModule,
     MatDialogModule,

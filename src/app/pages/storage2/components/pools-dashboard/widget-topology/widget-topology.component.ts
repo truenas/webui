@@ -6,7 +6,7 @@ import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { PoolStatus } from 'app/enums/pool-status.enum';
 import { Pool, PoolTopology } from 'app/interfaces/pool.interface';
-import { Disk, VDev } from 'app/interfaces/storage.interface';
+import { Disk, TopologyDisk, TopologyItem } from 'app/interfaces/storage.interface';
 import { WidgetUtils } from 'app/pages/dashboard/utils/widget-utils';
 
 interface TopologyState {
@@ -97,20 +97,20 @@ export class WidgetTopologyComponent implements OnInit, OnChanges {
     }
   }
 
-  private parseDevs(devs: VDev[]): string {
+  private parseDevs(devs: TopologyItem[]): string {
     let outputString = notAssignedDev;
     let isMix = false;
     let wide = 0;
     const type = devs[0]?.type;
     const size = devs[0]?.children.length
       ? this.diskDictionary[devs[0]?.children[0]?.disk]?.size
-      : this.diskDictionary[devs[0]?.disk]?.size;
+      : this.diskDictionary[(devs[0] as TopologyDisk)?.disk]?.size;
 
     devs.forEach((dev) => {
       if (dev.type && dev.type !== type) {
         isMix = true;
       }
-      if (!dev.children.length && this.diskDictionary[dev.disk]?.size !== size) {
+      if (!dev.children.length && this.diskDictionary[(dev as TopologyDisk).disk]?.size !== size) {
         isMix = true;
       }
       dev.children.forEach((child) => {
