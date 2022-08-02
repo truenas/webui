@@ -116,7 +116,7 @@ export class SnapshotAddFormComponent implements OnInit {
   private getDatasetOptions(): Observable<Option[]> {
     return this.ws.call('pool.dataset.query', [
       snapshotExcludeBootQueryFilter,
-      { extra: { flat: false } },
+      { extra: { flat: true } },
     ]).pipe(
       map((datasets) => datasets.map((dataset) => ({ label: dataset.name, value: dataset.name }))),
     );

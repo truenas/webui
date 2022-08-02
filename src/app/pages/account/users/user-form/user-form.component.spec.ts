@@ -36,7 +36,6 @@ const mockUser = {
   sudo: false,
   sudo_nopasswd: false,
   sudo_commands: [],
-  microsoft_account: false,
   email: null,
   sshpubkey: null,
   group: {
@@ -202,7 +201,6 @@ describe('UserFormComponent', () => {
         'Home Directory Permissions': '700',
         'Home Directory': '/home/test',
         'Lock User': false,
-        'Microsoft Account': false,
         'Permit Sudo': false,
         'Primary Group': 'test-group',
         'Samba Authentication': true,
@@ -222,7 +220,6 @@ describe('UserFormComponent', () => {
         'Full Name': 'updated',
         'Home Directory Permissions': '755',
         'Home Directory': '/home/updated',
-        'Microsoft Account': true,
         'Permit Sudo': true,
         'Primary Group': 'mock-group',
         'Samba Authentication': false,
@@ -244,7 +241,6 @@ describe('UserFormComponent', () => {
           home_mode: '755',
           home: '/home/updated',
           locked: true,
-          microsoft_account: true,
           password_disabled: false,
           shell: '/usr/bin/zsh',
           smb: false,
@@ -285,7 +281,6 @@ describe('UserFormComponent', () => {
         'Home Directory': true,
         'Primary Group': true,
         Username: true,
-        'Microsoft Account': true,
       }));
     });
   });

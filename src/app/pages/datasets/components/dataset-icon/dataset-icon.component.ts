@@ -21,4 +21,18 @@ export class DatasetIconComponent {
   get isZvol(): boolean {
     return this.dataset.type === DatasetType.Volume;
   }
+
+  get name(): string {
+    if (this.isRoot) {
+      return 'ix:dataset';
+    }
+    if (!this.isRoot && !this.isZvol) {
+      return 'folder';
+    }
+    if (!this.isRoot && this.isZvol) {
+      return 'mdi-database';
+    }
+
+    return undefined;
+  }
 }

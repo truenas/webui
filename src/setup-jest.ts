@@ -9,7 +9,6 @@ import { MATERIAL_SANITY_CHECKS, MatNativeDateModule } from '@angular/material/c
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatExpansionModule } from '@angular/material/expansion';
-import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
@@ -29,6 +28,7 @@ import { TranslateMessageFormatCompiler } from 'ngx-translate-messageformat-comp
 import { IcuMissingTranslationHandler } from 'app/core/classes/icu-missing-translation-handler';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { CastModule } from 'app/modules/cast/cast.module';
+import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { SnackbarModule } from 'app/modules/snackbar/snackbar.module';
 
 jest.setTimeout(30 * 1000);
@@ -39,7 +39,7 @@ defineGlobalsInjections({
     MatCheckboxModule,
     MatSlideToggleModule,
     MatMenuModule,
-    MatIconModule,
+    IxIconModule,
     MatDatepickerModule,
     MatNativeDateModule,
     MatSelectModule,

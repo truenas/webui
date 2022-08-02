@@ -8,7 +8,7 @@ export interface CloudCredential {
   id: number;
   name: string;
   provider: string;
-  attributes: { [key: string]: string };
+  attributes: { [key: string]: string | number | boolean };
 }
 
 export interface BwLimit {
@@ -41,6 +41,7 @@ export interface CloudSyncTask {
   snapshot: boolean;
   transfer_mode: TransferMode;
   transfers: number;
+  create_empty_src_dirs: boolean;
 }
 
 export type CloudSyncTaskUpdate = Omit<CloudSyncTask, 'id' | 'job' | 'locked'>;

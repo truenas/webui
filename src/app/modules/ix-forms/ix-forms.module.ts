@@ -8,7 +8,6 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatListModule } from '@angular/material/list';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
@@ -45,6 +44,7 @@ import { IxSlideToggleComponent } from 'app/modules/ix-forms/components/ix-slide
 import { IxTextareaComponent } from 'app/modules/ix-forms/components/ix-textarea/ix-textarea.component';
 import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
+import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
 
 @NgModule({
@@ -59,7 +59,7 @@ import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
     MatSelectModule,
     MatButtonModule,
     MatAutocompleteModule,
-    MatIconModule,
+    IxIconModule,
     MatSlideToggleModule,
     MatProgressBarModule,
     MatRadioModule,

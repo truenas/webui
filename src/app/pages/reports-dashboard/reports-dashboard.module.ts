@@ -5,7 +5,6 @@ import { FlexLayoutModule } from '@angular/flex-layout';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
-import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
@@ -14,6 +13,7 @@ import { CommonDirectivesModule } from 'app/directives/common/common-directives.
 import { AppCommonModule } from 'app/modules/common/app-common.module';
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
+import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { LayoutModule } from 'app/modules/layout/layout.module';
 import { LineChartComponent } from 'app/pages/reports-dashboard/components/line-chart/line-chart.component';
 import { ReportsDashboardComponent } from 'app/pages/reports-dashboard/reports-dashboard.component';
@@ -35,7 +35,7 @@ import { ReportsGlobalControlsComponent } from './components/reports-global-cont
     TranslateModule,
     EntityModule,
     MatTooltipModule,
-    MatIconModule,
+    IxIconModule,
     MatMenuModule,
     MatCardModule,
     FlexLayoutModule,

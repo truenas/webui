@@ -9,7 +9,6 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatListModule } from '@angular/material/list';
 import { MatMenuModule } from '@angular/material/menu';
@@ -32,6 +31,7 @@ import { AppCommonModule } from 'app/modules/common/app-common.module';
 import { MessageService } from 'app/modules/entity/entity-form/services/message.service';
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
+import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { IxTableModule } from 'app/modules/ix-tables/ix-table.module';
 import { LayoutModule } from 'app/modules/layout/layout.module';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
@@ -83,6 +83,7 @@ import { ExportDisconnectModalComponent } from 'app/pages/storage/volumes/volume
 import { VolumesListComponent } from 'app/pages/storage/volumes/volumes-list/volumes-list.component';
 import { ZvolFormComponent } from 'app/pages/storage/volumes/zvol/zvol-form/zvol-form.component';
 import { ZvolWizardComponent } from 'app/pages/storage/volumes/zvol/zvol-wizard/zvol-wizard.component';
+import { FileTicketModule } from 'app/pages/system/file-ticket/file-ticket.module';
 import { UserService, StorageService, JobService } from 'app/services';
 import { routing } from './storage.routing';
 
@@ -105,7 +106,7 @@ import { routing } from './storage.routing';
     MatProgressBarModule,
     MatListModule,
     MatMenuModule,
-    MatIconModule,
+    IxIconModule,
     MatInputModule,
     MatTooltipModule,
     MatButtonModule,
@@ -128,6 +129,7 @@ import { routing } from './storage.routing';
     TreeTableModule,
     SnapshotsModule,
     LayoutModule,
+    FileTicketModule,
   ],
   declarations: [
     AclEditorListComponent,
