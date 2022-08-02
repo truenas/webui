@@ -1,27 +1,12 @@
 @import '~assets/styles/mixins/animations';
 @import '~assets/styles/mixins/buttons';
-
-$card-width: 520px;
-$gap: 12px;
-$breakpoint-hidden: 1220px; // Anything narrower than this, we hide details
-$breakpoint-singlecolumn: 1221px; // Use Grid
-$breakpoint-dualcolumn: 2027px; // Use Grid
-$breakpoint-flex: 2600px; // Switch to Flexbox and spill to the right
+@import '~assets/styles/mixins/breakpoints';
 
 @mixin details-cards {
   height: 100%;
-  overflow-x: hidden;
   overflow-y: auto;
   overscroll-behavior: contain;
-  width: calc(100% / ($card-width + $gap));
-
-  /*.cards-column {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    width: 50%;
-  }*/
-
+  width: 100%;
 
   .scroll-window {
 
@@ -36,34 +21,40 @@ $breakpoint-flex: 2600px; // Switch to Flexbox and spill to the right
 
     // One Column
     @media (min-width: $breakpoint-singlecolumn) and (max-width: calc($breakpoint-dualcolumn - 1px)) {
-      border: solid 1px red;
       display: grid;
       grid-template-columns: auto;
       place-content: start;
     }
 
-    // Two Columns Tall
+    // Two Columns 
     @media (min-width: $breakpoint-dualcolumn) and (max-width: calc($breakpoint-flex - 1px)) {
-      border: solid 1px green;
-      //display: grid;
-      //grid-template-columns: auto auto;
-
       display: flex;
       flex-direction: column;
       flex-wrap: wrap;
       gap: $gap;
       height: 100%;
-      //overflow-y: auto;
 
-      min-height: 1600px;
+      min-height: 1240px;
       place-content: flex-start;
       width: calc(2 * ($card-width + $gap));
+    }
+
+    // Three Columns 
+    @media (min-width: $breakpoint-triplecolumn) and (max-width: calc($breakpoint-flex - 1px)) {
+      display: flex;
+      flex-direction: column;
+      flex-wrap: wrap;
+      gap: $gap;
+      height: 100%;
+
+      min-height: 1140px;
+      place-content: flex-start;
+      width: calc(3 * ($card-width + $gap));
     }
 
     // Switch to Flexbox wrapping columns
     @media  (min-width: $breakpoint-flex) {
       align-items: flex-start;
-      border: solid 1px violet;
       display: flex;
       flex-direction: column;
       flex-wrap: wrap;
@@ -71,12 +62,12 @@ $breakpoint-flex: 2600px; // Switch to Flexbox and spill to the right
       place-content: flex-start;
     }
 
-    @media  (min-width: $breakpoint-flex) and (min-height: 1000px) {
+    @media  (min-width: $breakpoint-flex) and (min-height: 1200px) {
       height: calc(100vh - 260px);
       min-height: unset;
     }
 
-    @media  (min-width: $breakpoint-flex) and (max-height: 999px) {
+    @media  (min-width: $breakpoint-flex) and (max-height: 1199px) {
       height: 900px;
     }
 

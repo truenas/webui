@@ -1,4 +1,5 @@
 @import '~assets/styles/mixins/grid';
+@import '~assets/styles/mixins/breakpoints';
 
 :host {
   display: block;
@@ -23,9 +24,38 @@
   flex-direction: column;
   max-width: 700px;
   position: relative;
-  //max-width: 40%;
-  //min-width: 30%;
-  width: 700px;
+
+  // Hide Details and stop compressing table width
+  @media (max-width: $table-width) {
+    min-width: $table-width;
+    overflow-x: auto;
+  }
+
+  // Hide Details and stretch table
+  @media (min-width: $table-width) and (max-width: $breakpoint-hidden) {
+    min-width: 100%;
+  }
+
+  // One Cards Column
+  @media (min-width: $breakpoint-singlecolumn) and (max-width: calc($breakpoint-dualcolumn - 1px)) {
+    min-width: calc(100% - ($card-width + $gap));
+  }
+
+  // Two Cards Columns
+  @media (min-width: $breakpoint-dualcolumn) and (max-width: calc($breakpoint-flex - 1px)) {
+    min-width: calc(80% - 2 * ($card-width + $gap) - 100px);
+  }
+
+  // Three Cards Columns
+  @media (min-width: $breakpoint-triplecolumn) and (max-width: calc($breakpoint-flex - 1px)) {
+    min-width: calc(100% - 3 * ($card-width + $gap));
+  }
+
+  // Cards spill to the right
+  @media (min-width: $breakpoint-flex) {
+    max-width: 1200px;
+    width: 50%;
+  }
 }
 
 .wip {
@@ -40,11 +70,16 @@
   display: flex;
   flex: 1;
   max-width: 70%;
-  min-width: 60%;
+  mid-width: inherit;
   overflow: hidden;
   padding: 0;
   position: sticky;
   top: 0;
+
+  // Hide Details
+  @media (max-width: $breakpoint-hidden) {
+    display: none;
+  }
 }
 
 ix-dataset-details-panel {
