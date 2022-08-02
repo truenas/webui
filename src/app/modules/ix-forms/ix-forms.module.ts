@@ -43,7 +43,7 @@ import { IxSlideInComponent } from 'app/modules/ix-forms/components/ix-slide-in/
 import { IxSlideToggleComponent } from 'app/modules/ix-forms/components/ix-slide-toggle/ix-slide-toggle.component';
 import { IxTextareaComponent } from 'app/modules/ix-forms/components/ix-textarea/ix-textarea.component';
 import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
-import IxValidatorsService from 'app/modules/ix-forms/services/ix-validators.service';
+import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
 
