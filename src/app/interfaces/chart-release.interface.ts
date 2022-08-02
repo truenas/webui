@@ -121,6 +121,7 @@ export interface ChartSchemaNodeConf {
   show_if?: string[][];
   show_subquestions_if?: any;
   editable?: boolean;
+  immutable?: boolean;
   subquestions?: ChartSchemaNode[];
 }
 

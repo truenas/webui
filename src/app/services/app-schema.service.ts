@@ -8,7 +8,9 @@ import { of, Subscription } from 'rxjs';
 import { ChartSchemaType } from 'app/enums/chart-schema-type.enum';
 import { DynamicFormSchemaType } from 'app/enums/dynamic-form-schema-type.enum';
 import { ChartFormValue, ChartSchemaNode } from 'app/interfaces/chart-release.interface';
-import { AddListItemEvent, DeleteListItemEvent, DynamicFormSchemaNode } from 'app/interfaces/dynamic-form-schema.interface';
+import {
+  AddListItemEvent, DeleteListItemEvent, DynamicFormSchemaInput, DynamicFormSchemaNode,
+} from 'app/interfaces/dynamic-form-schema.interface';
 import { HierarchicalObjectMap } from 'app/interfaces/hierarhical-object-map.interface';
 import { Relation } from 'app/modules/entity/entity-form/models/field-relation.interface';
 import { CustomUntypedFormArray } from 'app/modules/ix-forms/components/ix-dynamic-form/classes/custom-untped-form-array';
@@ -28,7 +30,7 @@ export class AppSchemaService {
     protected filesystemService: FilesystemService,
   ) {}
 
-  transformNode(chartSchemaNode: ChartSchemaNode): DynamicFormSchemaNode[] {
+  transformNode(chartSchemaNode: ChartSchemaNode, isNew: boolean, isParentImmutable: boolean): DynamicFormSchemaNode[] {
     const schema = chartSchemaNode.schema;
     let newSchema: DynamicFormSchemaNode[] = [];
     if (schema.hidden) {
@@ -46,7 +48,7 @@ export class AppSchemaService {
       switch (schema.type) {
         case ChartSchemaType.Int:
           if (schema.enum) {
-            newSchema.push({
+            const inputSchema = {
               controlName: chartSchemaNode.variable,
               type: DynamicFormSchemaType.Select,
               title: chartSchemaNode.label,
@@ -58,9 +60,13 @@ export class AppSchemaService {
               hideEmpty: true,
               editable: schema.editable,
               tooltip: chartSchemaNode.description,
-            });
+            };
+            if (!isNew && (!!schema.immutable || isParentImmutable)) {
+              inputSchema.editable = false;
+            }
+            newSchema.push(inputSchema);
           } else {
-            newSchema.push({
+            const inputSchema: DynamicFormSchemaInput = {
               controlName: chartSchemaNode.variable,
               type: DynamicFormSchemaType.Input,
               title: chartSchemaNode.label,
@@ -68,12 +74,16 @@ export class AppSchemaService {
               tooltip: chartSchemaNode.description,
               editable: schema.editable,
               inputType: 'number',
-            });
+            };
+            if (!isNew && (!!schema.immutable || isParentImmutable)) {
+              inputSchema.editable = false;
+            }
+            newSchema.push(inputSchema);
           }
           break;
         case ChartSchemaType.String:
           if (schema.enum) {
-            newSchema.push({
+            const inputSchema = {
               controlName: chartSchemaNode.variable,
               type: DynamicFormSchemaType.Select,
               title: chartSchemaNode.label,
@@ -85,9 +95,13 @@ export class AppSchemaService {
               hideEmpty: true,
               editable: schema.editable,
               tooltip: chartSchemaNode.description,
-            });
+            };
+            if (!isNew && (!!schema.immutable || isParentImmutable)) {
+              inputSchema.editable = false;
+            }
+            newSchema.push(inputSchema);
           } else {
-            newSchema.push({
+            const inputSchema: DynamicFormSchemaInput = {
               controlName: chartSchemaNode.variable,
               type: DynamicFormSchemaType.Input,
               title: chartSchemaNode.label,
@@ -95,21 +109,32 @@ export class AppSchemaService {
               editable: schema.editable,
               tooltip: chartSchemaNode.description,
               inputType: schema.private ? 'password' : undefined,
-            });
+            };
+            if (!isNew && (!!schema.immutable || isParentImmutable)) {
+              inputSchema.editable = false;
+            }
+            newSchema.push(inputSchema);
           }
           break;
         case ChartSchemaType.Path:
-          newSchema.push({
+        {
+          const inputSchema = {
             controlName: chartSchemaNode.variable,
             type: DynamicFormSchemaType.Input,
             title: chartSchemaNode.label,
             required: schema.required,
             editable: schema.editable,
             tooltip: chartSchemaNode.description,
-          });
+          };
+          if (!isNew && (!!schema.immutable || isParentImmutable)) {
+            inputSchema.editable = false;
+          }
+          newSchema.push(inputSchema);
           break;
+        }
         case ChartSchemaType.Hostpath:
-          newSchema.push({
+        {
+          const inputSchema = {
             controlName: chartSchemaNode.variable,
             type: DynamicFormSchemaType.Explorer,
             title: chartSchemaNode.label,
@@ -117,43 +142,62 @@ export class AppSchemaService {
             required: schema.required,
             editable: schema.editable,
             tooltip: chartSchemaNode.description,
-          });
+          };
+          if (!isNew && (!!schema.immutable || isParentImmutable)) {
+            inputSchema.editable = false;
+          }
+          newSchema.push(inputSchema);
           break;
+        }
         case ChartSchemaType.Boolean:
-          newSchema.push({
+        {
+          const inputSchema = {
             controlName: chartSchemaNode.variable,
             type: DynamicFormSchemaType.Checkbox,
             title: chartSchemaNode.label,
             required: schema.required,
             editable: schema.editable,
             tooltip: chartSchemaNode.description,
-          });
+          };
+          if (!isNew && (!!schema.immutable || isParentImmutable)) {
+            inputSchema.editable = false;
+          }
+          newSchema.push();
           break;
+        }
         case ChartSchemaType.Ipaddr:
           if (schema.cidr) {
-            newSchema.push({
+            const inputSchema = {
               controlName: chartSchemaNode.variable,
               type: DynamicFormSchemaType.Ipaddr,
               title: chartSchemaNode.label,
               required: schema.required,
               editable: schema.editable,
               tooltip: chartSchemaNode.description,
-            });
+            };
+            if (!isNew && (!!schema.immutable || isParentImmutable)) {
+              inputSchema.editable = false;
+            }
+            newSchema.push(inputSchema);
           } else {
-            newSchema.push({
+            const inputSchema = {
               controlName: chartSchemaNode.variable,
               type: DynamicFormSchemaType.Input,
               title: chartSchemaNode.label,
               required: schema.required,
               tooltip: chartSchemaNode.description,
               editable: schema.editable,
-            });
+            };
+            if (!isNew && (!!schema.immutable || isParentImmutable)) {
+              inputSchema.editable = false;
+            }
+            newSchema.push(inputSchema);
           }
           break;
       }
       if (schema.subquestions) {
         schema.subquestions.forEach((subquestion) => {
-          const objs = this.transformNode(subquestion);
+          const objs = this.transformNode(subquestion, isNew, !!schema.immutable || isParentImmutable);
           objs.forEach((obj) => {
             obj.indent = true;
             obj.dependsOn = [chartSchemaNode.variable];
@@ -164,30 +208,34 @@ export class AppSchemaService {
     } else if (schema.type === ChartSchemaType.Dict) {
       let attrs: DynamicFormSchemaNode[] = [];
       schema.attrs.forEach((attr) => {
-        attrs = attrs.concat(this.transformNode(attr));
+        attrs = attrs.concat(this.transformNode(attr, isNew, !!schema.immutable || isParentImmutable));
       });
-      newSchema.push({
+      const inputSchema = {
         controlName: chartSchemaNode.variable,
         type: DynamicFormSchemaType.Dict,
         title: chartSchemaNode.label,
         attrs,
         editable: schema.editable,
-      });
+      };
+      if (!isNew && (!!schema.immutable || isParentImmutable)) {
+        inputSchema.editable = false;
+      }
+      newSchema.push(inputSchema);
     } else if (schema.type === ChartSchemaType.List) {
       let items: DynamicFormSchemaNode[] = [];
       let itemsSchema: ChartSchemaNode[] = [];
       schema.items.forEach((item) => {
         if (item.schema.attrs) {
           item.schema.attrs.forEach((attr) => {
-            items = items.concat(this.transformNode(attr));
+            items = items.concat(this.transformNode(attr, isNew, !!schema.immutable || isParentImmutable));
             itemsSchema = itemsSchema.concat(attr);
           });
         } else {
-          items = items.concat(this.transformNode(item));
+          items = items.concat(this.transformNode(item, isNew, !!schema.immutable || isParentImmutable));
           itemsSchema = itemsSchema.concat(item);
         }
       });
-      newSchema.push({
+      const inputSchema = {
         controlName: chartSchemaNode.variable,
         type: DynamicFormSchemaType.List,
         title: chartSchemaNode.label,
@@ -195,7 +243,11 @@ export class AppSchemaService {
         itemsSchema,
         editable: schema.editable,
         dependsOn: schema.show_if?.map((conditional) => conditional[0]),
-      });
+      };
+      if (!isNew && (!!schema.immutable || isParentImmutable)) {
+        inputSchema.editable = false;
+      }
+      newSchema.push(inputSchema);
     } else {
       console.error('Unsupported type = ', schema.type);
     }
