@@ -151,21 +151,29 @@ export class ChartFormComponent implements OnDestroy {
   }
 
   addFormControls(chartSchemaNode: ChartSchemaNode): void {
-    this.subscription.add(this.appSchemaService.addFormControls(chartSchemaNode, this.form, this.config));
+    this.subscription.add(
+      this.appSchemaService.addFormControls(
+        chartSchemaNode,
+        this.form,
+        this.config,
+        this.isNew,
+        false,
+      ),
+    );
   }
 
   addFormSchema(chartSchemaNode: ChartSchemaNode, group: string): void {
     this.dynamicSection.forEach((section) => {
       if (section.name === group) {
         section.schema = section.schema.concat(
-          this.appSchemaService.transformNode(chartSchemaNode),
+          this.appSchemaService.transformNode(chartSchemaNode, this.isNew, false),
         );
       }
     });
   }
 
   addItem(event: AddListItemEvent): void {
-    this.appSchemaService.addFormListItem(event);
+    this.appSchemaService.addFormListItem(event, this.isNew, false);
   }
 
   deleteItem(event: DeleteListItemEvent): void {

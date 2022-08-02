@@ -258,6 +258,8 @@ export class AppSchemaService {
     chartSchemaNode: ChartSchemaNode,
     formGroup: CustomUntypedFormGroup,
     config: HierarchicalObjectMap<ChartFormValue>,
+    isNew: boolean,
+    isParentImmutable: boolean,
   ): Subscription {
     const subscription = new Subscription();
     const schema = chartSchemaNode.schema;
@@ -288,7 +290,15 @@ export class AppSchemaService {
 
       if (schema.subquestions) {
         schema.subquestions.forEach((subquestion) => {
-          subscription.add(this.addFormControls(subquestion, formGroup, config));
+          subscription.add(
+            this.addFormControls(
+              subquestion,
+              formGroup,
+              config,
+              isNew,
+              !!schema.immutable || isParentImmutable,
+            ),
+          );
           if (subquestion.schema.default === schema.show_subquestions_if) {
             (formGroup.controls[subquestion.variable] as CustomUntypedFormField).hidden = false;
             formGroup.controls[subquestion.variable].enable();
@@ -315,6 +325,9 @@ export class AppSchemaService {
 
       formGroup.addControl(chartSchemaNode.variable, newFormControl);
 
+      if (!isNew && (isParentImmutable || !!schema.immutable)) {
+        newFormControl.disable();
+      }
       if (schema.default !== undefined) {
         formGroup.controls[chartSchemaNode.variable].setValue(schema.default);
       }
@@ -322,7 +335,13 @@ export class AppSchemaService {
       formGroup.addControl(chartSchemaNode.variable, new CustomUntypedFormGroup({}));
       for (const attr of schema.attrs) {
         subscription.add(
-          this.addFormControls(attr, formGroup.controls[chartSchemaNode.variable] as CustomUntypedFormGroup, config),
+          this.addFormControls(
+            attr,
+            formGroup.controls[chartSchemaNode.variable] as CustomUntypedFormGroup,
+            config,
+            isNew,
+            isParentImmutable || !!schema.immutable,
+          ),
         );
       }
     } else if (schema.type === ChartSchemaType.List) {
@@ -350,10 +369,17 @@ export class AppSchemaService {
 
         if (Array.isArray(nextItem)) {
           for (const item of nextItem) {
-            subscription.add(this.addFormListItem({
-              array: formGroup.controls[chartSchemaNode.variable] as CustomUntypedFormArray,
-              schema: items,
-            }, item));
+            subscription.add(
+              this.addFormListItem(
+                {
+                  array: formGroup.controls[chartSchemaNode.variable] as CustomUntypedFormArray,
+                  schema: items,
+                },
+                isNew,
+                isParentImmutable || !!schema.immutable,
+                item,
+              ),
+            );
           }
         }
       }
@@ -450,11 +476,24 @@ export class AppSchemaService {
     return path;
   }
 
-  addFormListItem(event: AddListItemEvent, config?: HierarchicalObjectMap<ChartFormValue>): Subscription {
+  addFormListItem(
+    event: AddListItemEvent,
+    isNew: boolean,
+    isParentImmutable: boolean,
+    config?: HierarchicalObjectMap<ChartFormValue>,
+  ): Subscription {
     const subscriptionEvent = new Subscription();
     const itemFormGroup = new CustomUntypedFormGroup({});
-    event.schema.forEach((item) => {
-      subscriptionEvent.add(this.addFormControls(item as ChartSchemaNode, itemFormGroup, config));
+    event.schema.forEach((item: ChartSchemaNode) => {
+      subscriptionEvent.add(
+        this.addFormControls(
+          item,
+          itemFormGroup,
+          config,
+          isNew,
+          isParentImmutable || !!item.schema.immutable,
+        ),
+      );
     });
     event.array.push(itemFormGroup);
 
