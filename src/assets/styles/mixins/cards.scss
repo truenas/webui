@@ -14,7 +14,7 @@
     display: grid;
     grid-template-columns: auto;
 
-    // Too Narrow
+    // Hide Details
     @media (max-width: $breakpoint-hidden) {
       display: none;
     }
@@ -90,6 +90,11 @@
     justify-content: space-between;
     min-height: 40px;
     padding: 15px 15px 15px 0;
+
+    // Smaller text for smaller screens
+    @media (max-width: $breakpoint-flex) {
+      padding: 8px 8px 8px 0;
+    }
   }
 
   .mat-card-title {
@@ -98,6 +103,11 @@
     display: flex;
     font-size: 1.65rem;
     margin-bottom: 0;
+
+    // Smaller text for smaller screens
+    @media (max-width: $breakpoint-flex) {
+      font-size: 1.728em;
+    }
   }
 
   mat-card-content {
