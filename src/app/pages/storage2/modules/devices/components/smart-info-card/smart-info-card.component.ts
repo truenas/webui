@@ -11,7 +11,7 @@ import { filter, map } from 'rxjs/operators';
 import { SmartTestResultStatus } from 'app/enums/smart-test-result-status.enum';
 import { LoadingState, toLoadingState } from 'app/helpers/to-loading-state.helper';
 import { SmartTestResult } from 'app/interfaces/smart-test.interface';
-import { Disk, VDev } from 'app/interfaces/storage.interface';
+import { Disk, TopologyDisk } from 'app/interfaces/storage.interface';
 import {
   ManualTestDialogComponent, ManualTestDialogParams,
 } from 'app/pages/storage2/modules/disks/components/manual-test-dialog/manual-test-dialog.component';
@@ -25,7 +25,7 @@ import { WebSocketService } from 'app/services';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SmartInfoCardComponent implements OnChanges {
-  @Input() topologyItem: VDev;
+  @Input() topologyDisk: TopologyDisk;
   @Input() disk: Disk;
 
   totalResults$: Observable<LoadingState<number>>;
@@ -63,7 +63,7 @@ export class SmartInfoCardComponent implements OnChanges {
   }
 
   private loadTestResults(): void {
-    const results$ = this.ws.call('smart.test.results', [[['disk', '=', this.topologyItem.disk]]]).pipe(
+    const results$ = this.ws.call('smart.test.results', [[['disk', '=', this.topologyDisk.disk]]]).pipe(
       map((testResults) => {
         const results = testResults[0]?.tests ?? [];
         return results.filter((result) => result.status !== SmartTestResultStatus.Running);
@@ -88,7 +88,7 @@ export class SmartInfoCardComponent implements OnChanges {
   }
 
   private loadSmartTasks(): void {
-    this.smartTasksCount$ = this.ws.call('smart.test.query_for_disk', [this.topologyItem.disk]).pipe(
+    this.smartTasksCount$ = this.ws.call('smart.test.query_for_disk', [this.topologyDisk.disk]).pipe(
       map((tasks) => tasks.length),
       toLoadingState(),
     );

@@ -7,12 +7,12 @@ import {
 import { Pool, PoolTopologyCategory } from 'app/interfaces/pool.interface';
 import { Sensor } from 'app/interfaces/sensor.interface';
 import {
-  Disk, VDev, VDevStats,
+  Disk, isTopologyDisk, TopologyItem, TopologyItemStats,
 } from 'app/interfaces/storage.interface';
 
 export interface EnclosureDisk extends Disk {
   vdev: VDevMetadata;
-  stats: VDevStats;
+  stats: TopologyItemStats;
   status: string;
 }
 
@@ -194,9 +194,9 @@ export class SystemProfiler {
         disks: {},
       };
 
-      const stats: { [name: string]: VDevStats } = {}; // Store stats from pool.query disk info
+      const stats: { [name: string]: TopologyItemStats } = {}; // Store stats from pool.query disk info
 
-      if (vdev.children.length === 0 && vdev.device) {
+      if (vdev.children.length === 0 && isTopologyDisk(vdev)) {
         const name = vdev.disk;
         metadata.disks[name] = -1; // no children so we use this as placeholder
       } else if (vdev.children.length > 0) {
@@ -212,17 +212,17 @@ export class SystemProfiler {
     });
   }
 
-  getVdev(alias: VDevMetadata): VDev {
+  getVdev(alias: VDevMetadata): TopologyItem {
     return this.pools[alias.poolIndex].topology.data[alias.vdevIndex];
   }
 
-  storeVdevInfo(vdev: VDevMetadata, stats: { [name: string]: VDevStats }): void {
+  storeVdevInfo(vdev: VDevMetadata, stats: { [name: string]: TopologyItemStats }): void {
     for (const diskName in vdev.disks) {
       this.addVdevToDiskInfo(diskName, vdev, stats[diskName]);
     }
   }
 
-  addVdevToDiskInfo(diskName: string, vdev: VDevMetadata, stats?: VDevStats): void {
+  addVdevToDiskInfo(diskName: string, vdev: VDevMetadata, stats?: TopologyItemStats): void {
     const enclosureIndex = this.getEnclosureNumber(diskName);
     const enclosure: EnclosureMetadata = this.profile[enclosureIndex];
     if (!enclosure) {

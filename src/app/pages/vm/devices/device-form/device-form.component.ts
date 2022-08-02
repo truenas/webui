@@ -60,6 +60,7 @@ export class DeviceFormComponent implements OnInit {
     type: [null as VmNicType, Validators.required],
     mac: ['', regexValidator(this.networkService.macRegex)],
     nic_attach: ['', Validators.required],
+    trust_guest_rx_filters: [false],
   });
 
   rawFileForm = this.formBuilder.group({

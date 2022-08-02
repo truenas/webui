@@ -1,12 +1,10 @@
 import { Component } from '@angular/core';
-import { MatIconRegistry } from '@angular/material/icon';
-import { Title, DomSanitizer } from '@angular/platform-browser';
+import { Title } from '@angular/platform-browser';
 import {
   Router, NavigationEnd, NavigationCancel,
 } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { map } from 'rxjs/operators';
-import { customSvgIcons } from 'app/core/classes/custom-icons';
 import { WebSocketService } from 'app/services';
 import productText from './helptext/product';
 import { SystemGeneralService } from './services';
@@ -21,19 +19,8 @@ export class AppComponent {
     public title: Title,
     private router: Router,
     private ws: WebSocketService,
-    public domSanitizer: DomSanitizer,
-    public matIconRegistry: MatIconRegistry,
     private sysGeneralService: SystemGeneralService,
   ) {
-    this.matIconRegistry.addSvgIconSetInNamespace(
-      'mdi',
-      this.domSanitizer.bypassSecurityTrustResourceUrl('assets/iconfont/mdi/mdi.svg'),
-    );
-
-    for (const [name, path] of Object.entries(customSvgIcons)) {
-      this.matIconRegistry.addSvgIcon(name, this.domSanitizer.bypassSecurityTrustResourceUrl(path));
-    }
-
     const product = productText.product.trim();
     this.title.setTitle(product + ' - ' + window.location.hostname);
     const darkScheme = window.matchMedia('(prefers-color-scheme: dark)').matches;

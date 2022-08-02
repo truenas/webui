@@ -9,7 +9,7 @@ import * as filesize from 'filesize';
 import * as _ from 'lodash';
 import { Observable } from 'rxjs';
 import { filter, take, tap } from 'rxjs/operators';
-import { CloudsyncProviderName } from 'app/enums/cloudsync-provider-name.enum';
+import { CloudsyncProviderName } from 'app/enums/cloudsync-provider.enum';
 import { Direction } from 'app/enums/direction.enum';
 import { ExplorerType } from 'app/enums/explorer-type.enum';
 import { TransferMode } from 'app/enums/transfer-mode.enum';
@@ -21,7 +21,6 @@ import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { ListdirChild } from 'app/interfaces/listdir-child.interface';
 import { QueryParams } from 'app/interfaces/query-api.interface';
 import { Schedule } from 'app/interfaces/schedule.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { FieldSets } from 'app/modules/entity/entity-form/classes/field-sets';
 import { EntityFormComponent } from 'app/modules/entity/entity-form/entity-form.component';
 import {
@@ -36,7 +35,6 @@ import { RelationConnection } from 'app/modules/entity/entity-form/models/relati
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { EntityUtils, NULL_VALUE } from 'app/modules/entity/utils';
 import { CronPresetValue } from 'app/modules/scheduler/utils/get-default-crontab-presets.utils';
-import { CloudCredentialsFormComponent } from 'app/pages/credentials/backup-credentials/forms/cloud-credentials-form.component';
 import {
   AppLoaderService, CloudCredentialService, DialogService, JobService, WebSocketService,
 } from 'app/services';
@@ -141,12 +139,15 @@ export class CloudsyncFormComponent implements FormConfiguration {
           name: 'credentials',
           placeholder: helptext.credentials_placeholder,
           tooltip: helptext.credentials_tooltip,
-          options: [{
-            label: helptext.credentials_add_option, value: '',
-          }],
+          options: [],
           value: null,
           required: true,
           validation: helptext.credentials_validation,
+          linkText: this.translate.instant('Manage Credentials'),
+          linkClicked: () => {
+            this.modalService.closeSlideIn();
+            this.router.navigate(['/', 'credentials', 'backup-credentials']);
+          },
         }, {
           type: 'select',
           name: 'bucket',
@@ -748,47 +749,6 @@ export class CloudsyncFormComponent implements FormConfiguration {
     this.folderDestinationField = this.fieldSets.config('folder_destination') as FormExplorerConfig;
     this.folderSourceField = this.fieldSets.config('folder_source') as FormExplorerConfig;
     this.formGroup.controls['credentials'].valueChanges.pipe(untilDestroyed(this)).subscribe((res: number | typeof NULL_VALUE | '') => {
-      if (res === '') {
-        const dialogRef = this.matDialog.open(CloudCredentialsFormComponent, {
-          width: '600px',
-          panelClass: 'overflow-dialog',
-        });
-        dialogRef.componentInstance.finishSubmit = (value) => {
-          dialogRef.componentInstance.prepareAttributes(value);
-          dialogRef.componentInstance.entityForm.submitFunction(value).pipe(untilDestroyed(this)).subscribe(
-            () => {
-              dialogRef.close();
-              this.cloudcredentialService.getCloudsyncCredentials().then((credentials) => {
-                const newCredential = credentials.find((credential) => {
-                  return !this.credentials.find((existingCredential) => existingCredential.id === credential.id);
-                });
-                if (newCredential) {
-                  this.credentialsField.options.push({ label: newCredential.name + ' (' + newCredential.provider + ')', value: newCredential.id });
-                  this.credentials.push(newCredential);
-                  this.formGroup.controls['credentials'].setValue(newCredential.id);
-                } else {
-                  this.formGroup.controls['credentials'].setValue(null);
-                }
-              });
-            },
-            (err: WebsocketError) => {
-              dialogRef.close();
-              if (err.hasOwnProperty('reason') && (err.hasOwnProperty('trace'))) {
-                new EntityUtils().handleWsError(this, err, this.dialog);
-              } else {
-                new EntityUtils().handleError(this, err);
-              }
-              this.formGroup.controls['credentials'].setValue(null);
-            },
-          );
-        };
-        dialogRef.afterClosed().pipe(untilDestroyed(this)).subscribe(() => {
-          if (!this.formGroup.controls['credentials'].value) {
-            this.formGroup.controls['credentials'].setValue(null);
-          }
-        });
-        return;
-      }
       this.setDisabled('bucket', true, true);
       this.setDisabled('bucket_input', true, true);
       this.setDisabled('bucket_policy_only', true, true);

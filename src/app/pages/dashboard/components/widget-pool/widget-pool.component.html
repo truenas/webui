@@ -234,11 +234,11 @@
               >
                 <strong>{{vdev.type}}:</strong>&nbsp;&nbsp; {{vdev.status}}
                 <!-- STATUS ICONS -->
-                <span *ngIf="vdev.status === VDevStatus.Online" class="{{poolHealth.level}} healthy">
+                <span *ngIf="vdev.status === TopologyItemStatus.Online" class="{{poolHealth.level}} healthy">
                   <mat-icon>check_circle</mat-icon>
                   &nbsp;&nbsp;
                 </span>
-                <span *ngIf="vdev.status !== VDevStatus.Online" class="{{poolHealth.level}} healthy">
+                <span *ngIf="vdev.status !== TopologyItemStatus.Online" class="{{poolHealth.level}} healthy">
                   <mat-icon>warning</mat-icon>
                   &nbsp;&nbsp;
                 </span>
@@ -296,10 +296,10 @@
                 &nbsp;&nbsp; {{disk.status | translate}}
 
                 <!-- STATUS ICONS -->
-                <span *ngIf="disk.status === VDevStatus.Online" class="{{poolHealth.level}} healthy">
+                <span *ngIf="disk.status === TopologyItemStatus.Online" class="{{poolHealth.level}} healthy">
                   <mat-icon>check_circle</mat-icon>
                 </span>
-                <span *ngIf="disk.status !== VDevStatus.Online" class="{{poolHealth.level}} healthy">
+                <span *ngIf="disk.status !== TopologyItemStatus.Online" class="{{poolHealth.level}} healthy">
                   <mat-icon>warning</mat-icon>
                 </span>
 
@@ -321,7 +321,7 @@
                   :
                 </strong>
                 &nbsp;&nbsp; {{path[2].dataSource.status | translate}}
-                <span *ngIf="path[2].dataSource.status === VDevStatus.Online" class="{{poolHealth.level}} healthy">
+                <span *ngIf="path[2].dataSource.status === TopologyItemStatus.Online" class="{{poolHealth.level}} healthy">
                   <mat-icon>check_circle</mat-icon>
                 </span>
                 <mat-icon class="next-slide" ix-auto ix-auto-type="button" ix-auto-identifier="nextSlide">chevron_right</mat-icon>

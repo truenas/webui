@@ -18,6 +18,7 @@ export class IxTextareaComponent implements ControlValueAccessor {
   @Input() tooltip: string;
   @Input() required: boolean;
   @Input() rows = 4;
+  @Input() readonly: boolean;
 
   formControl = new UntypedFormControl(this).value as UntypedFormControl;
 

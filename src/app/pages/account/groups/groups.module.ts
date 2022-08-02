@@ -8,7 +8,6 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatRippleModule } from '@angular/material/core';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatExpansionModule } from '@angular/material/expansion';
-import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
@@ -27,6 +26,7 @@ import { AppCommonModule } from 'app/modules/common/app-common.module';
 import { NgxDualListboxModule } from 'app/modules/common/dual-list/dual-list.module';
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
+import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { IxTableModule } from 'app/modules/ix-tables/ix-table.module';
 import { LayoutModule } from 'app/modules/layout/layout.module';
 import { GroupDetailsRowComponent } from 'app/pages/account/groups/group-details-row/group-details-row.component';
@@ -50,7 +50,7 @@ import { groupStateKey } from 'app/pages/account/groups/store/group.selectors';
     IxTableModule,
     FlexLayoutModule,
     MatButtonModule,
-    MatIconModule,
+    IxIconModule,
     MatListModule,
     MatMenuModule,
     MatRippleModule,

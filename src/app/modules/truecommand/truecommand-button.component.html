@@ -5,7 +5,7 @@
   (click)="stopTrueCommandConnecting()"
 >
   <mat-icon class="truecommand-button-connecting-animation"
-    svgIcon="truecommand_logo_white"
+    svgIcon="ix:truecommand_logo_white"
   ></mat-icon>
 </button>
 
@@ -16,7 +16,7 @@
   (click)="handleClick()"
 >
   <mat-icon class="truecommand-icon" [class]="tcStatus.status"
-    svgIcon="truecommand_logo_white"
+    svgIcon="ix:truecommand_logo_white"
     matBadgeSize="small"
     [matBadge]="tcStatus.status === TrueCommandStatus.Connected ? 'check' : tcStatus.status === TrueCommandStatus.Failed ? 'priority_high' : ''"
   ></mat-icon>
