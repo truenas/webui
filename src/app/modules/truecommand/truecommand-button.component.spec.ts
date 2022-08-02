@@ -70,7 +70,7 @@ describe('TruecommandButtonComponent', () => {
 
       it(`shows ${expectedButtonId} button with trueconnect icon`, () => {
         expect(spectator.query(expectedButtonId)).toBeVisible();
-        expect(spectator.query(`${expectedButtonId} [svgIcon="truecommand_logo_white"]`)).toBeVisible();
+        expect(spectator.query(`${expectedButtonId} [svgIcon="ix:truecommand_logo_white"]`)).toBeVisible();
       });
 
       it(`shows correct message when user clicks on the ${expectedButtonId} button`, () => {
@@ -122,7 +122,7 @@ describe('TruecommandButtonComponent', () => {
 
       it(`shows ${expectedButtonId} button with trueconnect icon`, () => {
         expect(spectator.query(expectedButtonId)).toBeVisible();
-        expect(spectator.query(`${expectedButtonId} [svgIcon="truecommand_logo_white"]`)).toBeVisible();
+        expect(spectator.query(`${expectedButtonId} [svgIcon="ix:truecommand_logo_white"]`)).toBeVisible();
       });
 
       it(`shows status modal when user clicks on the ${expectedButtonId} button`, () => {

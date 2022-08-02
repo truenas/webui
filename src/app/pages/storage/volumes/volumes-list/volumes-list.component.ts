@@ -9,7 +9,7 @@ import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import * as filesize from 'filesize';
 import { combineLatest, Subscription } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { filter, map } from 'rxjs/operators';
 import { PoolStatus } from 'app/enums/pool-status.enum';
 import helptext from 'app/helptext/storage/volumes/volume-list';
 import { Dataset, ExtraDatasetQueryOptions } from 'app/interfaces/dataset.interface';
@@ -25,14 +25,18 @@ import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { DatasetFormComponent } from 'app/pages/storage/volumes/datasets/dataset-form/dataset-form.component';
 import { VolumesListTableConfig } from 'app/pages/storage/volumes/volumes-list/volumes-list-table-config';
 import { ZvolFormComponent } from 'app/pages/storage/volumes/zvol/zvol-form/zvol-form.component';
+import { FileTicketFormComponent } from 'app/pages/system/file-ticket/file-ticket-form/file-ticket-form.component';
+import { FileTicketLicensedFormComponent } from 'app/pages/system/file-ticket/file-ticket-licensed-form/file-ticket-licensed-form.component';
 import { JobService } from 'app/services';
 import { CoreService } from 'app/services/core-service/core.service';
 import { DialogService } from 'app/services/dialog.service';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LayoutService } from 'app/services/layout.service';
 import { ModalService } from 'app/services/modal.service';
 import { StorageService } from 'app/services/storage.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
+import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 
 @UntilDestroy()
 @Component({
@@ -100,6 +104,7 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
   expanded = false;
   paintMe = true;
   systemdatasetPool: string;
+  hasLicense = false;
   hasEncryptedRoot: { [pool: string]: boolean } = {};
   hasKeyDataset: { [pool: string]: boolean } = {};
   entityEmptyConf: EmptyConfig = {
@@ -158,6 +163,7 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
     modalService: ModalService,
     public cdr: ChangeDetectorRef,
     layoutService: LayoutService,
+    slideIn: IxSlideInService,
   ) {
     super(
       core,
@@ -173,6 +179,7 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
       modalService,
       cdr,
       layoutService,
+      slideIn,
     );
   }
 
@@ -192,6 +199,14 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
     this.showSpinner = true;
 
     this.systemdatasetPool = await this.ws.call('systemdataset.config').pipe(map((res) => res.pool)).toPromise();
+
+    this.store$.pipe(
+      waitForSystemInfo,
+      filter((sysInfo) => !!sysInfo.license),
+      untilDestroyed(this),
+    ).subscribe(() => {
+      this.hasLicense = true;
+    });
 
     while (this.zfsPoolRows.length > 0) {
       this.zfsPoolRows.pop();
@@ -331,5 +346,13 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
 
   onPermissionsSidebarClosed(): void {
     this.viewingPermissionsForDataset = null;
+  }
+
+  onFileTicketPressed(): void {
+    if (this.hasLicense) {
+      this.slideIn.open(FileTicketLicensedFormComponent, { wide: true });
+    } else {
+      this.slideIn.open(FileTicketFormComponent);
+    }
   }
 }

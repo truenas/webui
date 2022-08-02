@@ -45,11 +45,11 @@
 
               <div class="platform-logo-wrapper {{productType.toLowerCase()}}" fxFlex="20">
                 <ng-container *ngIf="productImage || isPassive; else textOnly">
-                  <mat-icon svgIcon="truenas_scale_logo_full" id="{{productModel}}"></mat-icon>
+                  <mat-icon svgIcon="ix:truenas_scale_logo_full" id="{{productModel}}"></mat-icon>
                 </ng-container>
 
                 <ng-template #textOnly>
-                  <mat-icon svgIcon="truenas_scale_logotype" id="{{productModel}}"></mat-icon>
+                  <mat-icon svgIcon="ix:truenas_scale_logotype" id="{{productModel}}"></mat-icon>
                 </ng-template>
               </div>
 
@@ -79,8 +79,8 @@
                   >
 
                   <ng-template #generic>
-                    <mat-icon *ngIf="!certified && !isHa" class="generic" svgIcon="truenas_scale_logomark"></mat-icon>
-                    <mat-icon *ngIf="certified && !isHa" class="generic" svgIcon="freenas_certified"></mat-icon>
+                    <mat-icon *ngIf="!certified && !isHa" class="generic" svgIcon="ix:truenas_scale_logomark"></mat-icon>
+                    <mat-icon *ngIf="certified && !isHa" class="generic" svgIcon="ix:freenas_certified"></mat-icon>
                   </ng-template>
                   <div class="generic alert" *ngIf="!productImage && isPassive && haStatus !== 'HA Enabled'">
                     <mat-icon fontSet="mdi-set" fontIcon="mdi-alert"></mat-icon>

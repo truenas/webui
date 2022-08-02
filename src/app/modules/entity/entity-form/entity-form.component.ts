@@ -80,7 +80,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
 
   templateTop: TemplateRef<unknown>;
   @ContentChildren(EntityTemplateDirective)
-  templates: QueryList<EntityTemplateDirective>;
+    templates: QueryList<EntityTemplateDirective>;
 
   sub: Subscription;
   error: string;

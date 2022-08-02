@@ -16,7 +16,7 @@ import { atLeastOne } from 'app/modules/entity/entity-form/validators/at-least-o
 import { requiredEmpty } from 'app/modules/entity/entity-form/validators/required-empty-validation';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
-import IxValidatorsService from 'app/modules/ix-forms/services/ix-validators.service';
+import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { snapshotExcludeBootQueryFilter } from 'app/pages/storage/snapshots/constants/snapshot-exclude-boot.constant';
 import { WebSocketService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
@@ -116,7 +116,7 @@ export class SnapshotAddFormComponent implements OnInit {
   private getDatasetOptions(): Observable<Option[]> {
     return this.ws.call('pool.dataset.query', [
       snapshotExcludeBootQueryFilter,
-      { extra: { flat: false } },
+      { extra: { flat: true } },
     ]).pipe(
       map((datasets) => datasets.map((dataset) => ({ label: dataset.name, value: dataset.name }))),
     );

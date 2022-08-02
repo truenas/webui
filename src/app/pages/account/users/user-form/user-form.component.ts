@@ -20,7 +20,7 @@ import { forbiddenValues } from 'app/modules/entity/entity-form/validators/forbi
 import { matchOtherValidator } from 'app/modules/entity/entity-form/validators/password-validation/password-validation';
 import { SimpleAsyncComboboxProvider } from 'app/modules/ix-forms/classes/simple-async-combobox-provider';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
-import IxValidatorsService from 'app/modules/ix-forms/services/ix-validators.service';
+import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { userAdded, userChanged } from 'app/pages/account/users/store/user.actions';
 import { selectUsers } from 'app/pages/account/users/store/user.selectors';
 import { WebSocketService, UserService } from 'app/services';
@@ -81,7 +81,6 @@ export class UserFormComponent {
     shell: [null as string],
     locked: [false],
     sudo: [false],
-    microsoft_account: [false],
     smb: [true],
   });
 
@@ -103,7 +102,6 @@ export class UserFormComponent {
     shell: helptext.user_form_shell_tooltip,
     locked: helptext.user_form_lockuser_tooltip,
     sudo: helptext.user_form_sudo_tooltip,
-    microsoft_account: helptext.user_form_microsoft_tooltip,
     smb: helptext.user_form_smb_tooltip,
   };
 
@@ -166,7 +164,6 @@ export class UserFormComponent {
       home_mode: values.home_mode,
       home: values.home,
       locked: values.password_disabled ? false : values.locked,
-      microsoft_account: values.microsoft_account,
       password_disabled: values.password_disabled,
       shell: values.shell,
       smb: values.smb,
@@ -250,7 +247,6 @@ export class UserFormComponent {
       groups: user.groups,
       home: user.home,
       locked: user.locked,
-      microsoft_account: user.builtin ? false : user.microsoft_account,
       password_disabled: user.password_disabled,
       shell: user.shell,
       smb: user.smb,
@@ -268,7 +264,6 @@ export class UserFormComponent {
       this.form.get('home_mode').disable();
       this.form.get('home').disable();
       this.form.get('username').disable();
-      this.form.get('microsoft_account').disable();
     }
 
     this.setNamesInUseValidator(user.username);

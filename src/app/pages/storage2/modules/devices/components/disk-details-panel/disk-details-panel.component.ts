@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
-import { Disk, VDev } from 'app/interfaces/storage.interface';
+import { Disk, isTopologyDisk, TopologyItem } from 'app/interfaces/storage.interface';
 
 @Component({
   selector: 'ix-disk-details-panel',
@@ -8,7 +8,19 @@ import { Disk, VDev } from 'app/interfaces/storage.interface';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DiskDetailsPanelComponent {
-  @Input() topologyItem: VDev;
-  @Input() topologyParentItem: VDev;
+  @Input() topologyItem: TopologyItem;
+  @Input() topologyParentItem: TopologyItem;
   @Input() disk: Disk;
+
+  get title(): string {
+    if (isTopologyDisk(this.topologyItem)) {
+      return this.topologyItem.disk || this.topologyItem.guid;
+    }
+
+    return this.topologyItem.type;
+  }
+
+  get isTopologyDisk(): boolean {
+    return isTopologyDisk(this.topologyItem);
+  }
 }

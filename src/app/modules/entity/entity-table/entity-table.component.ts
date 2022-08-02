@@ -44,6 +44,7 @@ import { EntityUtils } from 'app/modules/entity/utils';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { DialogService, JobService } from 'app/services';
 import { CoreService } from 'app/services/core-service/core.service';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LayoutService } from 'app/services/layout.service';
 import { ModalService } from 'app/services/modal.service';
 import { StorageService } from 'app/services/storage.service';
@@ -221,6 +222,7 @@ export class EntityTableComponent<Row extends SomeRow = any> implements OnInit, 
     public modalService: ModalService,
     public changeDetectorRef: ChangeDetectorRef,
     protected layoutService: LayoutService,
+    protected slideIn: IxSlideInService,
   ) {
     // watch for navigation events as ngOnDestroy doesn't always trigger on these
     this.routeSub = this.router.events.pipe(untilDestroyed(this)).subscribe((event) => {

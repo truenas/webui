@@ -48,6 +48,7 @@ describe('KerberosKeytabsFormComponent', () => {
     const values = await form.getValues();
     expect(values).toEqual({
       Name: '',
+      'Kerberos Keytab': [],
     });
   });
 
@@ -57,6 +58,7 @@ describe('KerberosKeytabsFormComponent', () => {
     const values = await form.getValues();
     expect(values).toEqual({
       Name: 'test_name',
+      'Kerberos Keytab': [],
     });
   });
 });

@@ -86,21 +86,21 @@
                     <ul fxLayout="column" [fxFlex]="cols === 1 ? 31 : 100">
                       <li fxLayout="row">
                         <span class="icon {{ poolInfoMap[pool.name]?.status?.level }}">
-                          <mat-icon>{{ poolInfoMap[pool.name]?.status?.icon }}</mat-icon
+                          <ix-icon [name]="poolInfoMap[pool.name]?.status?.icon"></ix-icon
                         ></span>
                         <span class="label">{{ 'Pool Status' | translate }}:</span>
                         <span class="storage-value">{{ poolInfoMap[pool.name]?.status?.value }}</span>
                       </li>
                       <li fxLayout="row">
                         <span class="icon {{ poolInfoMap[pool.name]?.usedSpace?.level }}">
-                          <mat-icon>{{ poolInfoMap[pool.name]?.usedSpace?.icon }}</mat-icon
+                          <ix-icon [name]="poolInfoMap[pool.name]?.usedSpace?.icon"></ix-icon
                         ></span>
                         <span class="label">{{ 'Used Space' | translate }}:</span>
                         <span class="storage-value" textLimiter threshold="25" [content]="poolInfoMap[pool.name]?.usedSpace?.value"></span>
                       </li>
                       <li fxLayout="row">
                         <span class="icon {{ poolInfoMap[pool.name]?.disksWithError?.level }}">
-                          <mat-icon>{{ poolInfoMap[pool.name]?.disksWithError?.icon }}</mat-icon>
+                          <ix-icon [name]="poolInfoMap[pool.name]?.disksWithError?.icon"></ix-icon>
                         </span>
                         <span class="label">{{ 'Disks with Errors' | translate }}:</span>
                         <span class="storage-value">{{ poolInfoMap[pool.name]?.disksWithError?.value }}</span>

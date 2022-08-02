@@ -4,7 +4,7 @@ import {
 } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
-import { Disk, VDev } from 'app/interfaces/storage.interface';
+import { Disk, TopologyDisk } from 'app/interfaces/storage.interface';
 import {
   ManageDiskSedDialogComponent,
 } from 'app/pages/storage2/modules/devices/components/hardware-disk-encryption/manage-disk-sed-dialog/manage-disk-sed-dialog.component';
@@ -31,9 +31,9 @@ describe('HardwareDiskEncryptionComponent', () => {
   beforeEach(() => {
     spectator = createComponent({
       props: {
-        topologyItem: {
+        topologyDisk: {
           disk: 'sda',
-        } as VDev,
+        } as TopologyDisk,
       },
     });
   });

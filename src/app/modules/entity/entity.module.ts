@@ -20,7 +20,6 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatListModule } from '@angular/material/list';
 import { MatMenuModule } from '@angular/material/menu';
@@ -96,6 +95,7 @@ import { EntityWizardComponent } from 'app/modules/entity/entity-wizard/entity-w
 import { ExpandableTableComponent } from 'app/modules/entity/table/expandable-table/expandable-table.component';
 import { TableComponent } from 'app/modules/entity/table/table.component';
 import { TableService } from 'app/modules/entity/table/table.service';
+import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { LayoutModule } from 'app/modules/layout/layout.module';
 import { SchedulerModule } from 'app/modules/scheduler/scheduler.module';
 import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
@@ -115,7 +115,7 @@ import { AppLoaderService, DocsService, JobService } from 'app/services';
     TreeModule,
     MatListModule,
     MatDividerModule,
-    MatIconModule,
+    IxIconModule,
     MatTooltipModule,
     MatProgressSpinnerModule,
     MatTableModule,
