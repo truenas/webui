@@ -103,6 +103,14 @@
                       </mat-error>
                     </mat-form-field>
                   </div>
+                  <div class="form-element" [hidden]="!hasInstanceId">
+                    <div class="label-container">
+                      <label class="label input-text">{{'EC2 Instance ID' | translate}}</label>
+                    </div>
+                    <mat-form-field class="full-width">
+                      <input matInput name="instanceId" formControlName="instanceId" required [placeholder]="'EC2 Instance ID' | translate">
+                    </mat-form-field>
+                  </div>
                   <button name="signin_button2" mat-button color="primary" class="mat-accent full-width mb-1" type="submit" [disabled]="!setPasswordForm.form.valid">{{"Sign in" | translate}}</button>
                 </form>
               </div>
