@@ -9,7 +9,7 @@ import helptext from 'app/helptext/storage/volumes/datasets/dataset-form';
 import { Dataset, DatasetUpdate } from 'app/interfaces/dataset.interface';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
-import IxValidatorsService from 'app/modules/ix-forms/services/ix-validators.service';
+import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { isPropertyInherited, isRootDataset } from 'app/pages/datasets/utils/dataset.utils';
 import { WebSocketService } from 'app/services';
