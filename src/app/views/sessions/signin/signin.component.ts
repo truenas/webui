@@ -16,6 +16,7 @@ import { filter } from 'rxjs/operators';
 import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
 import { FailoverStatus } from 'app/enums/failover-status.enum';
 import { ProductType, productTypeLabels } from 'app/enums/product-type.enum';
+import { SystemEnvironment } from 'app/enums/system-environment.enum';
 import globalHelptext from 'app/helptext/global-helptext';
 import productText from 'app/helptext/product';
 import helptext from 'app/helptext/topbar';
@@ -146,12 +147,12 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
       this.loginToken();
     }
 
-    this.ws.call('user.has_root_password').pipe(untilDestroyed(this)).subscribe((res) => {
-      this.hasRootPassword = res;
+    this.ws.call('user.has_root_password').pipe(untilDestroyed(this)).subscribe((hasRootPassword) => {
+      this.hasRootPassword = hasRootPassword;
     });
 
-    this.ws.call('system.environment').pipe(untilDestroyed(this)).subscribe((res) => {
-      this.hasInstanceId = res === 'EC2';
+    this.ws.call('system.environment').pipe(untilDestroyed(this)).subscribe((env) => {
+      this.hasInstanceId = env === SystemEnvironment.Ec2;
       if (this.hasInstanceId) {
         this.instanceId.enable();
       } else {
