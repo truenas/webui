@@ -7,7 +7,7 @@ import { Validators } from '@angular/forms';
 import { FormBuilder, FormControl } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { BootEnvironmentActions } from 'app/enums/bootenv-actions.enum';
+import { BootEnvironmentAction } from 'app/enums/boot-environment-action.enum';
 import { helptextSystemBootenv } from 'app/helptext/system/boot-env';
 import {
   BootenvTooltip,
@@ -26,8 +26,8 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class BootEnvironmentFormComponent {
-  Operations = BootEnvironmentActions;
-  operation: BootEnvironmentActions = BootEnvironmentActions.Create;
+  Operations = BootEnvironmentAction;
+  operation: BootEnvironmentAction = BootEnvironmentAction.Create;
   currentName?: string;
   title: string;
 
@@ -51,7 +51,7 @@ export class BootEnvironmentFormComponent {
     private changeDetectorRef: ChangeDetectorRef,
   ) {}
 
-  setupForm(operation: BootEnvironmentActions, name?: string): void {
+  setupForm(operation: BootEnvironmentAction, name?: string): void {
     this.operation = operation;
 
     switch (this.operation) {

@@ -136,33 +136,34 @@ export class TopbarComponent implements OnInit, OnDestroy {
       this.sysName = 'TrueNAS ENTERPRISE';
     }
     this.ws.subscribe('core.get_jobs').pipe(untilDestroyed(this)).subscribe((event) => {
-      if (event && (event.fields.method === 'update.update' || event.fields.method === 'failover.upgrade')) {
-        this.updateIsRunning = true;
-        if (event.fields.state === JobState.Failed || event.fields.state === JobState.Aborted) {
-          this.updateIsRunning = false;
-          this.systemWillRestart = false;
-        }
+      if (!event || (event.fields.method !== 'update.update' && event.fields.method !== 'failover.upgrade')) {
+        return;
+      }
+      this.updateIsRunning = true;
+      if (event.fields.state === JobState.Failed || event.fields.state === JobState.Aborted) {
+        this.updateIsRunning = false;
+        this.systemWillRestart = false;
+      }
 
-        // When update starts on HA system, listen for 'finish', then quit listening
-        if (this.isHa) {
-          this.updateIsDone = this.systemGeneralService.updateIsDone$.pipe(untilDestroyed(this)).subscribe(() => {
-            this.updateIsRunning = false;
-            this.updateIsDone.unsubscribe();
-          });
-        }
-        if (!this.isHa) {
-          if (event && event.fields && event.fields.arguments[0] && (event.fields.arguments[0] as any).reboot) {
-            this.systemWillRestart = true;
-            if (event.fields.state === JobState.Success) {
-              this.router.navigate(['/others/reboot']);
-            }
+      // When update starts on HA system, listen for 'finish', then quit listening
+      if (this.isHa) {
+        this.updateIsDone = this.systemGeneralService.updateIsDone$.pipe(untilDestroyed(this)).subscribe(() => {
+          this.updateIsRunning = false;
+          this.updateIsDone.unsubscribe();
+        });
+      }
+      if (!this.isHa) {
+        if (event && event.fields && event.fields.arguments[0] && (event.fields.arguments[0] as any).reboot) {
+          this.systemWillRestart = true;
+          if (event.fields.state === JobState.Success) {
+            this.router.navigate(['/others/reboot']);
           }
         }
+      }
 
-        if (!this.updateNotificationSent) {
-          this.updateInProgress();
-          this.updateNotificationSent = true;
-        }
+      if (!this.updateNotificationSent) {
+        this.updateInProgress();
+        this.updateNotificationSent = true;
       }
     });
 
