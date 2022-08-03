@@ -16,7 +16,7 @@ import { SmbConfigUpdate } from 'app/interfaces/smb-config.interface';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { SimpleAsyncComboboxProvider } from 'app/modules/ix-forms/classes/simple-async-combobox-provider';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
-import IxValidatorsService from 'app/modules/ix-forms/services/ix-validators.service';
+import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { WebSocketService, DialogService } from 'app/services';
 import { UserService } from 'app/services/user.service';
 

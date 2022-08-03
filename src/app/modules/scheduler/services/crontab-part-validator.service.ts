@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
 import * as cronParser from 'cron-parser';
-import IxValidatorsService from 'app/modules/ix-forms/services/ix-validators.service';
+import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 
 export enum CrontabPart {
   Minutes = 0,

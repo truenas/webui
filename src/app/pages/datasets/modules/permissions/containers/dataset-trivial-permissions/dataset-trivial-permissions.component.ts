@@ -14,7 +14,7 @@ import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.com
 import { EntityUtils } from 'app/modules/entity/utils';
 import { GroupComboboxProvider } from 'app/modules/ix-forms/classes/group-combobox-provider';
 import { UserComboboxProvider } from 'app/modules/ix-forms/classes/user-combobox-provider';
-import IxValidatorsService from 'app/modules/ix-forms/services/ix-validators.service';
+import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import {
   DialogService, StorageService, UserService, WebSocketService,
 } from 'app/services';

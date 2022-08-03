@@ -9,7 +9,7 @@ import helptext from 'app/helptext/services/components/service-snmp';
 import { SnmpConfigUpdate } from 'app/interfaces/snmp-config.interface';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
-import IxValidatorsService from 'app/modules/ix-forms/services/ix-validators.service';
+import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { DialogService, WebSocketService } from 'app/services';
 
 @UntilDestroy()
