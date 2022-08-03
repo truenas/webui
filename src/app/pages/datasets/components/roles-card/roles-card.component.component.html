@@ -4,6 +4,7 @@
   </mat-card-header>
   <mat-card-content>
     <div class="details-item" *ngIf="dataset.apps?.length">
+      <mat-icon class="icon">apps</mat-icon>
       <div class="label">{{ 'Apps' | translate }}:</div>
       <div class="value">{{ 'This dataset is used by one or more apps' | translate }}</div>
       <a
@@ -12,6 +13,7 @@
       >{{ 'Manage Apps Settings' | translate }}</a>
     </div>
     <div class="details-item" *ngIf="hasChildrenWithShares">
+      <mat-icon class="icon">share</mat-icon>
       <div class="label">{{ 'Child Shares' | translate }}:</div>
       <div class="value">{{ 'This dataset has children with shares' | translate }}</div>
     </div>
