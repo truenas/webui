@@ -63,13 +63,13 @@
       place-content: flex-start;
     }
 
-    @media  (min-width: $breakpoint-flex) and (min-height: 1200px) {
-      height: calc(100vh - 260px);
+    @media  (min-width: $breakpoint-flex) and (min-height: 1160px) {
+      height: 960px;
       min-height: unset;
     }
 
-    @media  (min-width: $breakpoint-flex) and (max-height: 1199px) {
-      height: 900px;
+    @media  (min-width: $breakpoint-flex) and (max-height: 1159px) {
+      height: 830px;
     }
 
     > * {
