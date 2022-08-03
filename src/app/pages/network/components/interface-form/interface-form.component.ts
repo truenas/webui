@@ -26,7 +26,10 @@ import {
 import { ipv4or6cidrValidator, ipv4or6Validator } from 'app/modules/entity/entity-form/validators/ip-validation';
 import { rangeValidator } from 'app/modules/entity/entity-form/validators/range-validation';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
-import IxValidatorsService from 'app/modules/ix-forms/services/ix-validators.service';
+import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
+import {
+  InterfaceNameValidatorService,
+} from 'app/pages/network/components/interface-form/interface-name-validator.service';
 import {
   formAliasesToInterfaceAliases,
   interfaceAliasesToFormAliases,
@@ -41,6 +44,7 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
   templateUrl: './interface-form.component.html',
   styleUrls: ['./interface-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  providers: [InterfaceNameValidatorService],
 })
 export class InterfaceFormComponent implements OnInit {
   readonly defaultMtu = 1500;
@@ -52,7 +56,10 @@ export class InterfaceFormComponent implements OnInit {
 
   form = this.formBuilder.group({
     type: [null as NetworkInterfaceType, Validators.required],
-    name: [''],
+    name: ['', [
+      Validators.required,
+      this.interfaceFormValidator.validate,
+    ]],
     description: [''],
     ipv4_dhcp: [false],
     ipv6_auto: [false],
@@ -123,6 +130,7 @@ export class InterfaceFormComponent implements OnInit {
     private slideInService: IxSlideInService,
     private core: CoreService,
     private validatorsService: IxValidatorsService,
+    private interfaceFormValidator: InterfaceNameValidatorService,
     @Inject(WINDOW) private window: Window,
   ) {}
 
@@ -156,6 +164,7 @@ export class InterfaceFormComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadFailoverStatus();
+    this.validateNameOnTypeChange();
   }
 
   setInterfaceForEdit(interfaceToEdit: NetworkInterface): void {
@@ -216,6 +225,14 @@ export class InterfaceFormComponent implements OnInit {
         this.errorHandler.handleWsFormError(error, this.form);
       },
     );
+  }
+
+  private validateNameOnTypeChange(): void {
+    this.form.controls.type.valueChanges.pipe(untilDestroyed(this)).subscribe(() => {
+      setTimeout(() => {
+        this.form.controls.name.updateValueAndValidity();
+      });
+    });
   }
 
   private setOptionsForEdit(): void {
