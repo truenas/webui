@@ -1,14 +1,14 @@
 import {
-  ChangeDetectionStrategy, Component, Input, OnInit,
+  ChangeDetectionStrategy, Component, Input,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { filter } from 'rxjs/operators';
+import { PoolTopologyCategory } from 'app/enums/pool-topology-category.enum';
 import { TopologyItemType } from 'app/enums/v-dev-type.enum';
 import { TopologyItemStatus } from 'app/enums/vdev-status.enum';
-import { Disk, TopologyItem } from 'app/interfaces/storage.interface';
+import { Disk, isTopologyDisk, TopologyItem } from 'app/interfaces/storage.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
@@ -22,11 +22,12 @@ import { WebSocketService, DialogService } from 'app/services';
   styleUrls: ['./zfs-info-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ZfsInfoCardComponent implements OnInit {
+export class ZfsInfoCardComponent {
   @Input() topologyItem: TopologyItem;
   @Input() topologyParentItem: TopologyItem;
   @Input() disk: Disk;
-  private poolId: number;
+  @Input() topologyCategory: PoolTopologyCategory;
+  @Input() poolId: number;
 
   get readErrors(): number {
     if (this.isMirror) {
@@ -47,6 +48,7 @@ export class ZfsInfoCardComponent implements OnInit {
   }
 
   get checksumErrors(): number {
+    // TODO: Replace with normal stats
     if (this.isMirror) {
       return this.topologyItem.children.reduce((errors, vdev) => {
         return errors + (vdev.stats?.checksum_errors || 0);
@@ -60,26 +62,47 @@ export class ZfsInfoCardComponent implements OnInit {
   }
 
   get isDisk(): boolean {
-    return this.topologyItem.type === TopologyItemType.Disk;
+    return isTopologyDisk(this.topologyItem);
   }
 
-  get isOnline(): boolean {
-    return this.topologyItem.status === TopologyItemStatus.Online;
+  get canRemoveDisk(): boolean {
+    // TODO: hide for data disks
+    return this.topologyParentItem.type !== TopologyItemType.Mirror;
+  }
+
+  get canDetachDisk(): boolean {
+    return [
+      TopologyItemType.Mirror,
+      TopologyItemType.Replacing,
+      TopologyItemType.Spare,
+    ].includes(this.topologyParentItem.type);
+  }
+
+  get canReplaceDisk(): boolean {
+    // TODO: Hide for spare disks
+    // TODO: Add action
+    // TODO: Add task
+    return false;
+  }
+
+  get canOfflineDisk(): boolean {
+    return this.topologyItem.status !== TopologyItemStatus.Offline;
+    // TODO: hide for spares and cache
+  }
+
+  get canOnlineDisk(): boolean {
+    return this.topologyItem.status !== TopologyItemStatus.Online;
+    // TODO: hide for sapres and caches
   }
 
   constructor(
     private loader: AppLoaderService,
-    private route: ActivatedRoute,
     private ws: WebSocketService,
     private dialogService: DialogService,
     private matDialog: MatDialog,
     private translate: TranslateService,
     private devicesStore: DevicesStore,
   ) {}
-
-  ngOnInit(): void {
-    this.poolId = Number(this.route.snapshot.params.poolId);
-  }
 
   onOffline(): void {
     this.dialogService.confirm({
@@ -150,6 +173,8 @@ export class ZfsInfoCardComponent implements OnInit {
     });
   }
 
+  // TODO: Is this even working for mirrors?
+  // TODO: If so, replace messaging.
   onRemove(): void {
     this.dialogService.confirm({
       title: this.translate.instant('Remove Disk'),
@@ -173,5 +198,13 @@ export class ZfsInfoCardComponent implements OnInit {
         new EntityUtils().handleWsError(this, error, this.dialogService);
       });
     });
+  }
+
+  onExtend(): void {
+
+  }
+
+  onReplace(): void {
+
   }
 }
