@@ -1,4 +1,4 @@
-import { Dataset } from 'app/interfaces/dataset.interface';
+import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { getDatasetAndParentsById } from 'app/pages/datasets/utils/get-datasets-in-tree-by-id.utils';
 
 describe('getDatasetAndParentsById', () => {
@@ -20,7 +20,7 @@ describe('getDatasetAndParentsById', () => {
     {
       id: 'root2',
     },
-  ] as Dataset[];
+  ] as DatasetDetails[];
 
   it('returns an array of parent and children datasets from the tree for the given id', () => {
     const result = getDatasetAndParentsById(tree, 'root/parent/child');

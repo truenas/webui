@@ -19,7 +19,6 @@ import { ThemeService } from 'app/services/theme/theme.service';
 })
 export class SpaceManagementChartComponent implements OnChanges {
   @Input() dataset: DatasetDetails;
-  @Input() datasetDetails: DatasetDetails;
 
   isLoading = false;
   extraProperties: Dataset;
@@ -47,10 +46,6 @@ export class SpaceManagementChartComponent implements OnChanges {
 
   get isZvol(): boolean {
     return this.dataset.type === DatasetType.Volume;
-  }
-
-  get isThick(): boolean {
-    return this.datasetDetails?.thick_provisioned;
   }
 
   constructor(

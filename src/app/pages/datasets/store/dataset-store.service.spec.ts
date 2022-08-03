@@ -13,10 +13,6 @@ describe('DatasetTreeStore', () => {
     { id: 'parent' },
     { id: 'parent/child' },
   ] as Dataset[];
-  const datasetDetails = [
-    { id: 'pool1' },
-    { id: 'pool2' },
-  ] as DatasetDetails[];
   const createService = createServiceFactory({
     service: DatasetTreeStore,
     providers: [
@@ -42,52 +38,15 @@ describe('DatasetTreeStore', () => {
       expectObservable(spectator.service.state$).toBe('ab', {
         a: {
           error: null,
-          errorDetails: null,
           isLoading: true,
-          isLoadingDetails: false,
           selectedDatasetId: null,
           datasets: [],
-          datasetDetails: [],
         },
         b: {
           error: null,
-          errorDetails: null,
           isLoading: false,
-          isLoadingDetails: false,
           selectedDatasetId: null,
           datasets,
-          datasetDetails: [],
-        },
-      });
-    });
-  });
-
-  it('loads datasets details and sets loading indicators when loadDatasetDetails is called', () => {
-    testScheduler.run(({ cold, expectObservable }) => {
-      const mockWebsocket = spectator.inject(WebSocketService);
-      jest.spyOn(mockWebsocket, 'call').mockReturnValue(cold('-b|', { b: datasetDetails }));
-
-      spectator.service.loadDatasetDetails();
-
-      expect(mockWebsocket.call).toHaveBeenCalledWith('pool.dataset.details');
-      expectObservable(spectator.service.state$).toBe('ab', {
-        a: {
-          error: null,
-          errorDetails: null,
-          isLoading: false,
-          isLoadingDetails: true,
-          selectedDatasetId: null,
-          datasets: [],
-          datasetDetails: [],
-        },
-        b: {
-          error: null,
-          errorDetails: null,
-          isLoading: false,
-          isLoadingDetails: false,
-          selectedDatasetId: null,
-          datasets: [],
-          datasetDetails,
         },
       });
     });
@@ -100,12 +59,9 @@ describe('DatasetTreeStore', () => {
         expectObservable(spectator.service.state$).toBe('a', {
           a: {
             error: null,
-            errorDetails: null,
             isLoading: false,
-            isLoadingDetails: false,
             selectedDatasetId: 'parent/child',
             datasets: [],
-            datasetDetails: [],
           },
         });
       });

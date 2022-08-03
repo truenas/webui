@@ -1,5 +1,5 @@
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
-import { Dataset } from 'app/interfaces/dataset.interface';
+import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import {
   DatasetEncryptionCellComponent,
 } from 'app/pages/datasets/components/dataset-node/dataset-encryption-cell/dataset-encryption-cell.component';
@@ -15,7 +15,7 @@ describe('DatasetEncryptionCellComponent', () => {
       props: {
         dataset: {
           encrypted: false,
-        } as Dataset,
+        } as DatasetDetails,
       },
     });
 
@@ -31,7 +31,7 @@ describe('DatasetEncryptionCellComponent', () => {
           name: 'root/dataset',
           id: 'root/dataset',
           encryption_root: 'root/dataset',
-        } as Dataset,
+        } as DatasetDetails,
       },
     });
 
@@ -49,7 +49,7 @@ describe('DatasetEncryptionCellComponent', () => {
           name: 'root/dataset',
           id: 'root/dataset',
           encryption_root: 'root',
-        } as Dataset,
+        } as DatasetDetails,
       },
     });
 
@@ -68,7 +68,7 @@ describe('DatasetEncryptionCellComponent', () => {
           name: 'root/dataset',
           id: 'root/dataset',
           encryption_root: 'root/dataset',
-        } as Dataset,
+        } as DatasetDetails,
       },
     });
 
@@ -86,7 +86,7 @@ describe('DatasetEncryptionCellComponent', () => {
           name: 'root/dataset',
           id: 'root/dataset',
           encryption_root: 'root',
-        } as Dataset,
+        } as DatasetDetails,
       },
     });
 

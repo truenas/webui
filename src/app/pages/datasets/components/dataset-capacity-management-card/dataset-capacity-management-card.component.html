@@ -7,7 +7,7 @@
     <button mat-button (click)="editDataset()">{{ 'Edit' | translate }}</button>
   </mat-card-header>
   <mat-card-content>
-    <ix-space-management-chart [dataset]="dataset" [datasetDetails]="datasetDetails"></ix-space-management-chart>
+    <ix-space-management-chart [dataset]="dataset"></ix-space-management-chart>
 
     <div class="chart-extra">
       <ng-container *ngIf="!isZvol">
@@ -21,10 +21,10 @@
         </div>
       </ng-container>
       <ng-container *ngIf="isZvol">
-        <!-- TODO: Fix me please after NAS-117254 is done -->
-        <div class="details-item" *ngIf="false">
+        <div class="details-item">
           <span class="label">{{ 'Provisioning Type' | translate }}:</span>
-          <span class="value">{{ 'Thick' | translate }}</span>
+          <span class="value" *ngIf="dataset.thick_provisioned">{{ 'Thick' | translate }}</span>
+          <span class="value" *ngIf="!dataset.thick_provisioned">{{ 'Sparse' | translate }}</span>
         </div>
         <div class="details-item">
           <span class="label">{{ 'Volume Size' | translate }}:</span>

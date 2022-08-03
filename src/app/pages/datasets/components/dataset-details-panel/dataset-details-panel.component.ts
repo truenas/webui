@@ -21,7 +21,6 @@ import { ModalService } from 'app/services';
 export class DatasetDetailsPanelComponent implements OnInit {
   @Input() dataset: DatasetDetails;
   @Input() parentDataset: DatasetDetails | undefined;
-  @Input() datasetDetails: DatasetDetails;
 
   constructor(
     private modalService: ModalService,

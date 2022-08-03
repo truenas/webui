@@ -22,7 +22,6 @@ export class DatasetsManagementComponent implements OnInit {
   isLoading$ = this.datasetStore.isLoading$;
   selectedDataset$ = this.datasetStore.selectedDataset$;
   selectedParentDataset$ = this.datasetStore.selectedParentDataset$;
-  selectedDatasetDetails$ = this.datasetStore.selectedDatasetDetails$;
 
   dataSource: IxNestedTreeDataSource<DatasetDetails>;
   treeControl = new NestedTreeControl<DatasetDetails, string>((dataset) => dataset.children, {
@@ -42,7 +41,6 @@ export class DatasetsManagementComponent implements OnInit {
 
   ngOnInit(): void {
     this.datasetStore.loadDatasets();
-    this.datasetStore.loadDatasetDetails();
     this.listenForRouteChanges();
     this.setupTree();
 

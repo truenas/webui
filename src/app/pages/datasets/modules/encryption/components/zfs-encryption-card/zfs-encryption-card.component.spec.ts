@@ -5,7 +5,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { EncryptionKeyFormat } from 'app/enums/encryption-key-format.enum';
-import { Dataset } from 'app/interfaces/dataset.interface';
+import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import {
   EncryptionOptionsDialogComponent,
 } from 'app/pages/datasets/modules/encryption/components/encyption-options-dialog/encryption-options-dialog.component';
@@ -46,7 +46,7 @@ describe('ZfsEncryptionCardComponent', () => {
     encryption_algorithm: {
       value: 'aes-256-cbc',
     },
-  } as Dataset;
+  } as DatasetDetails;
 
   const keyEncryptedRoot = {
     ...passwordEncryptedRoot,
@@ -54,11 +54,11 @@ describe('ZfsEncryptionCardComponent', () => {
       value: EncryptionKeyFormat.Hex,
     },
     key_loaded: true,
-  } as Dataset;
+  } as DatasetDetails;
 
   const lockedParent = {
     locked: true,
-  } as Dataset;
+  } as DatasetDetails;
 
   function setupTest(props: Partial<ZfsEncryptionCardComponent> = {}): void {
     spectator = createComponent({ props });

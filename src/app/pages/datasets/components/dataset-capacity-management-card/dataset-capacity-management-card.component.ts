@@ -21,7 +21,6 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
 })
 export class DatasetCapacityManagementCardComponent implements OnInit, OnChanges {
   @Input() dataset: DatasetDetails;
-  @Input() datasetDetails: DatasetDetails;
 
   inheritedQuotasDataset: DatasetDetails;
   extraProperties: Dataset;

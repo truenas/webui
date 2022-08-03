@@ -5,7 +5,7 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { MockComponents } from 'ng-mocks';
 import { of } from 'rxjs';
 import { DatasetType } from 'app/enums/dataset.enum';
-import { Dataset, DatasetDetails } from 'app/interfaces/dataset.interface';
+import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { DataProtectionCardComponent } from 'app/pages/datasets/components/data-protection-card/data-protection-card.component';
 import {
   DatasetCapacityManagementCardComponent,
@@ -39,7 +39,7 @@ describe('DatasetDetailsPanelComponent', () => {
   } as DatasetDetails;
   const parentDataset = {
     name: 'root/parent',
-  } as Dataset;
+  } as DatasetDetails;
   const createComponent = createComponentFactory({
     component: DatasetDetailsPanelComponent,
     declarations: [

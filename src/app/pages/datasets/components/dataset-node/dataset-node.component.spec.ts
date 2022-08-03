@@ -1,6 +1,6 @@
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { DatasetType } from 'app/enums/dataset.enum';
-import { Dataset } from 'app/interfaces/dataset.interface';
+import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { DatasetIconComponent } from 'app/pages/datasets/components/dataset-icon/dataset-icon.component';
 import {
   DatasetEncryptionCellComponent,
@@ -20,7 +20,7 @@ describe('DatasetNodeComponent', () => {
       parsed: 12344848,
     },
     locked: false,
-  } as Dataset;
+  } as DatasetDetails;
   const createComponent = createComponentFactory({
     component: DatasetNodeComponent,
     declarations: [
