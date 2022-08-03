@@ -25,6 +25,7 @@ export class DevicesComponent implements OnInit {
   isLoading$ = this.devicesStore.isLoading$;
   selectedNode$ = this.devicesStore.selectedNode$;
   selectedParentNode$ = this.devicesStore.selectedParentNode$;
+  selectedTopologyCategory$ = this.devicesStore.selectedTopologyCategory$;
 
   diskDictionary: { [guid: string]: Disk } = {};
   dataSource: IxNestedTreeDataSource<DeviceNestedDataNode>;

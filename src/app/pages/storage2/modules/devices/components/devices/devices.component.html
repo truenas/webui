@@ -106,7 +106,7 @@
       [topologyParentItem]="selectedParentNode$ | async | cast"
       [disk]="getDisk(selectedNode)"
       [poolId]="poolId"
-      [topologyCategory]=""
+      [topologyCategory]="selectedTopologyCategory$ | async"
     ></ix-disk-details-panel>
   </div>
 </div>

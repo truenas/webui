@@ -12,6 +12,9 @@ import { Disk, isTopologyDisk, TopologyItem } from 'app/interfaces/storage.inter
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import {
+  ExtendDialogComponent, ExtendDialogParams,
+} from 'app/pages/storage2/modules/devices/components/zfs-info-card/extend-dialog/extend-dialog.component';
 import { DevicesStore } from 'app/pages/storage2/modules/devices/stores/devices-store.service';
 import { WebSocketService, DialogService } from 'app/services';
 
@@ -29,34 +32,6 @@ export class ZfsInfoCardComponent {
   @Input() topologyCategory: PoolTopologyCategory;
   @Input() poolId: number;
 
-  get readErrors(): number {
-    if (this.isMirror) {
-      return this.topologyItem.children.reduce((errors, vdev) => {
-        return errors + (vdev.stats?.read_errors || 0);
-      }, 0);
-    }
-    return this.topologyItem.stats.read_errors;
-  }
-
-  get writeErrors(): number {
-    if (this.isMirror) {
-      return this.topologyItem.children.reduce((errors, vdev) => {
-        return errors + (vdev.stats?.write_errors || 0);
-      }, 0);
-    }
-    return this.topologyItem.stats.write_errors;
-  }
-
-  get checksumErrors(): number {
-    // TODO: Replace with normal stats
-    if (this.isMirror) {
-      return this.topologyItem.children.reduce((errors, vdev) => {
-        return errors + (vdev.stats?.checksum_errors || 0);
-      }, 0);
-    }
-    return this.topologyItem.stats.checksum_errors;
-  }
-
   get isMirror(): boolean {
     return this.topologyItem.type === TopologyItemType.Mirror;
   }
@@ -66,8 +41,8 @@ export class ZfsInfoCardComponent {
   }
 
   get canRemoveDisk(): boolean {
-    // TODO: hide for data disks
-    return this.topologyParentItem.type !== TopologyItemType.Mirror;
+    return this.topologyParentItem.type !== TopologyItemType.Mirror
+      && this.topologyCategory !== PoolTopologyCategory.Data;
   }
 
   get canDetachDisk(): boolean {
@@ -78,21 +53,14 @@ export class ZfsInfoCardComponent {
     ].includes(this.topologyParentItem.type);
   }
 
-  get canReplaceDisk(): boolean {
-    // TODO: Hide for spare disks
-    // TODO: Add action
-    // TODO: Add task
-    return false;
-  }
-
   get canOfflineDisk(): boolean {
-    return this.topologyItem.status !== TopologyItemStatus.Offline;
-    // TODO: hide for spares and cache
+    return this.topologyItem.status !== TopologyItemStatus.Offline
+      && ![PoolTopologyCategory.Spare, PoolTopologyCategory.Cache].includes(this.topologyCategory);
   }
 
   get canOnlineDisk(): boolean {
-    return this.topologyItem.status !== TopologyItemStatus.Online;
-    // TODO: hide for sapres and caches
+    return this.topologyItem.status !== TopologyItemStatus.Online
+      && ![PoolTopologyCategory.Spare, PoolTopologyCategory.Cache].includes(this.topologyCategory);
   }
 
   constructor(
@@ -201,10 +169,19 @@ export class ZfsInfoCardComponent {
   }
 
   onExtend(): void {
-
-  }
-
-  onReplace(): void {
-
+    this.matDialog.open(ExtendDialogComponent, {
+      data: {
+        poolId: this.poolId,
+        targetVdevGuid: this.topologyItem.guid,
+      } as ExtendDialogParams,
+    })
+      .afterClosed()
+      .pipe(
+        filter(Boolean),
+        untilDestroyed(this),
+      )
+      .subscribe(() => {
+        this.devicesStore.reloadList();
+      });
   }
 }
