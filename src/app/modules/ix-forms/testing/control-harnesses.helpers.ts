@@ -3,6 +3,7 @@ import { IxCheckboxHarness } from 'app/modules/ix-forms/components/ix-checkbox/i
 import { IxChipsHarness } from 'app/modules/ix-forms/components/ix-chips/ix-chips.harness';
 import { IxComboboxHarness } from 'app/modules/ix-forms/components/ix-combobox/ix-combobox.harness';
 import { IxExplorerHarness } from 'app/modules/ix-forms/components/ix-explorer/ix-explorer.harness';
+import { IxFileInputHarness } from 'app/modules/ix-forms/components/ix-file-input/ix-file-input.harness';
 import { IxInputHarness } from 'app/modules/ix-forms/components/ix-input/ix-input.harness';
 import {
   IxIpInputWithNetmaskHarness,
@@ -31,6 +32,7 @@ export const supportedFormControlSelectors = [
   JiraOauthHarness,
   SchedulerHarness,
   IxIpInputWithNetmaskHarness,
+  IxFileInputHarness,
 ] as const;
 
 export type SupportedFormControlHarness = InstanceType<(typeof supportedFormControlSelectors)[number]>;

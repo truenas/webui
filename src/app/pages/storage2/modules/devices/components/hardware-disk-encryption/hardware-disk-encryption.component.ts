@@ -6,7 +6,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { LoadingState, toLoadingState } from 'app/helpers/to-loading-state.helper';
-import { VDev } from 'app/interfaces/storage.interface';
+import { TopologyDisk } from 'app/interfaces/storage.interface';
 import {
   ManageDiskSedDialogComponent,
 } from 'app/pages/storage2/modules/devices/components/hardware-disk-encryption/manage-disk-sed-dialog/manage-disk-sed-dialog.component';
@@ -20,7 +20,7 @@ import { WebSocketService } from 'app/services';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HardwareDiskEncryptionComponent implements OnChanges {
-  @Input() topologyItem: VDev;
+  @Input() topologyDisk: TopologyDisk;
 
   hasGlobalEncryption$ = this.ws.call('system.advanced.sed_global_password').pipe(toLoadingState());
   hasDiskEncryption$: Observable<LoadingState<boolean>>;
@@ -37,7 +37,7 @@ export class HardwareDiskEncryptionComponent implements OnChanges {
 
   onManageSedPassword(): void {
     const dialog = this.matDialog.open(ManageDiskSedDialogComponent, {
-      data: this.topologyItem.disk,
+      data: this.topologyDisk.disk,
     });
     dialog
       .afterClosed()
@@ -53,7 +53,7 @@ export class HardwareDiskEncryptionComponent implements OnChanges {
   }
 
   private loadDiskEncryption(): void {
-    this.hasDiskEncryption$ = this.ws.call('disk.query', [[['devname', '=', this.topologyItem.disk]], { extra: { passwords: true } }])
+    this.hasDiskEncryption$ = this.ws.call('disk.query', [[['devname', '=', this.topologyDisk.disk]], { extra: { passwords: true } }])
       .pipe(
         map((disks) => disks[0].passwd !== ''),
         toLoadingState(),

@@ -19,6 +19,13 @@
       [header]="config.placeholder"
       [message]="config.tooltip"
     ></ix-tooltip>
+
+    <a
+      *ngIf="config.linkText"
+      (click)="linkClicked()"
+      class="link"
+    >{{ config.linkText | translate }}<mat-icon style="font-size: x-small;">open_in_new</mat-icon>
+    </a>
   </div>
 
   <ng-container *ngIf="config.inlineLabel">
@@ -109,10 +116,6 @@
       </ng-container>
     </mat-select>
   </mat-form-field>
-
-  <div *ngIf="config.linkText">
-    <a (click)="linkClicked()" class="link">{{ config.linkText | translate }}<mat-icon style="font-size: x-small;">open_in_new</mat-icon></a>
-  </div>
 
   <div class="margin-for-error">
     <ix-form-errors [control]="group.controls[config.name]" [config]="config"></ix-form-errors>

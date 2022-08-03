@@ -34,11 +34,11 @@ export class VolumeImportWizardComponent implements OnInit {
     tooltip: string;
     options: Observable<Option[]>;
   } = {
-    fcName: 'guid',
-    label: helptext.guid_placeholder,
-    tooltip: helptext.guid_tooltip,
-    options: of([]),
-  };
+      fcName: 'guid',
+      label: helptext.guid_placeholder,
+      tooltip: helptext.guid_tooltip,
+      options: of([]),
+    };
 
   constructor(
     private fb: FormBuilder,

@@ -212,7 +212,7 @@ def navigate_to_dashboard(driver):
 def refresh_and_wait_for_the_second_node_to_be_up(driver):
     """refresh and wait for the second node to be up"""
     assert wait_on_element(driver, 120, '//div[contains(.,"tn-bhyve01-nodeb")]')
-    assert wait_on_element(driver, 120, '//mat-icon[@svgicon="ha_enabled"]')
+    assert wait_on_element(driver, 120, '//mat-icon[@svgicon="ix:ha_enabled"]')
     # 5 second to let the system get ready for the next step.
     time.sleep(5)
 
@@ -228,7 +228,7 @@ def verify_the_system_dataset_is_dozer_on_the_active_node(driver):
 @then('press Initiate Failover and confirm')
 def press_Initiate_Failover_and_confirm(driver):
     """press Initiate Failover and confirm."""
-    assert wait_on_element(driver, 60, '//mat-icon[@svgicon="ha_enabled"]')
+    assert wait_on_element(driver, 60, '//mat-icon[@svgicon="ix:ha_enabled"]')
     assert wait_on_element(driver, 10, '//span[text()="(Standby)"]')
     assert wait_on_element(driver, 10, '//button[.//text()="Initiate Failover" and contains(@class,"mat-default")]', 'clickable')
     driver.find_element_by_xpath('//button[.//text()="Initiate Failover" and contains(@class,"mat-default")]').click()
@@ -255,7 +255,7 @@ def wait_for_the_login_and_the_HA_enabled_status_and_login(driver):
     if wait_on_element(driver, 2, '//button[@ix-auto="button__I AGREE"]', 'clickable'):
         driver.find_element_by_xpath('//button[@ix-auto="button__I AGREE"]').click()
     # Make sure HA is enable before going forward
-    assert wait_on_element(driver, 60, '//mat-icon[@svgicon="ha_enabled"]')
+    assert wait_on_element(driver, 60, '//mat-icon[@svgicon="ix:ha_enabled"]')
     time.sleep(5)
 
 

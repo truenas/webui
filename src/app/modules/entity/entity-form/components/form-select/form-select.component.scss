@@ -19,10 +19,24 @@
   padding: 8px;
 }
 
+.label-container {
+  align-items: flex-end;
+  display: flex;
+}
+
 .link {
   color: var(--primary);
   cursor: pointer;
+  display: block;
   font-size: x-small;
+  margin-left: auto;
+
+  mat-icon {
+    line-height: 40px;
+    margin-left: 3px;
+    margin-right: 1px;
+    width: unset;
+  }
 }
 
 :host-context(ix-system-alert) {

@@ -14,7 +14,11 @@
   }
 
   .vdev-line {
-    margin: 0;
+    margin: 8px 0;
+    
+    &:first-child {
+      margin-top: 0;
+    }
   }
 }
 

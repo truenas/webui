@@ -10,5 +10,5 @@ import { VDevGroup } from 'app/interfaces/device-nested-data-node.interface';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class VDevGroupNodeComponent {
-  @Input() vdev: VDevGroup;
+  @Input() vdevGroup: VDevGroup;
 }

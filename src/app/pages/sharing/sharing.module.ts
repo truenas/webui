@@ -6,7 +6,6 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
@@ -19,6 +18,7 @@ import { CastModule } from 'app/modules/cast/cast.module';
 import { EntityFormService } from 'app/modules/entity/entity-form/services/entity-form.service';
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
+import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
 import { AuthorizedAccessFormComponent } from 'app/pages/sharing/iscsi/authorized-access/authorized-access-form/authorized-access-form.component';
 import { AuthorizedAccessListComponent } from 'app/pages/sharing/iscsi/authorized-access/authorized-access-list/authorized-access-list.component';
@@ -60,7 +60,7 @@ import { WebdavListComponent } from './webdav/webdav-list/webdav-list.component'
     MatProgressBarModule,
     MatTabsModule,
     MatCardModule,
-    MatIconModule,
+    IxIconModule,
     FlexLayoutModule,
     MatListModule,
     MatDialogModule,

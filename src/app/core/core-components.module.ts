@@ -4,7 +4,6 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterModule } from '@angular/router';
@@ -21,6 +20,7 @@ import { ViewControllerComponent } from 'app/core/components/view-controller/vie
 import { FormatDateTimePipe } from 'app/core/pipes/format-datetime.pipe';
 import { MapValuePipe } from 'app/core/pipes/map-value.pipe';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
+import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { StorageService } from 'app/services/storage.service';
 
 @NgModule({
@@ -30,7 +30,7 @@ import { StorageService } from 'app/services/storage.service';
     PortalModule,
     FlexLayoutModule,
     TranslateModule,
-    MatIconModule,
+    IxIconModule,
     MatButtonModule,
     MatProgressSpinnerModule,
     MatTooltipModule,

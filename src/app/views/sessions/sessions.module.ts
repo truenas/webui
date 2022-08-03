@@ -5,7 +5,6 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatCheckboxModule } from '@angular/material/checkbox';
-import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
@@ -13,6 +12,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { CoreComponents } from 'app/core/core-components.module';
+import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { sessionsRoutes } from './sessions.routing';
 import { SigninComponent } from './signin/signin.component';
 
@@ -27,7 +27,7 @@ import { SigninComponent } from './signin/signin.component';
     MatCardModule,
     MatCheckboxModule,
     MatSnackBarModule,
-    MatIconModule,
+    IxIconModule,
     MatTooltipModule,
     FlexLayoutModule,
     TranslateModule,
