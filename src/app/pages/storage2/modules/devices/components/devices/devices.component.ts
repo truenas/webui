@@ -115,6 +115,9 @@ export class DevicesComponent implements OnInit {
   }
 
   private createDataSource(dataNodes: DeviceNestedDataNode[]): void {
+    dataNodes.forEach((dataNode) => {
+      this.sortDataNodesByDiskName(dataNode.children);
+    });
     this.dataSource = new IxNestedTreeDataSource(dataNodes);
     this.dataSource.filterPredicate = (dataNodes, query = '') => {
       return flattenTreeWithFilter(dataNodes, (dataNode) => {
@@ -146,6 +149,23 @@ export class DevicesComponent implements OnInit {
       untilDestroyed(this),
     ).subscribe((guid: string) => {
       this.devicesStore.selectNodeByGuid(guid);
+    });
+  }
+
+  private sortDataNodesByDiskName(dataNodes: DeviceNestedDataNode[]): void {
+    dataNodes.forEach((dataNodes) => {
+      if (dataNodes.children.length > 0) {
+        dataNodes.children.sort((a, b) => {
+          const na = a.disk.toLowerCase();
+          const nb = b.disk.toLowerCase();
+
+          if (na < nb) return -1;
+          if (na > nb) return 1;
+
+          return 0;
+        });
+        this.sortDataNodesByDiskName(dataNodes.children);
+      }
     });
   }
 }

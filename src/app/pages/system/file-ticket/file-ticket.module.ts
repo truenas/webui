@@ -4,10 +4,10 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslateModule } from '@ngx-translate/core';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
+import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { JobsModule } from 'app/modules/jobs/jobs.module';
 import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
 import { JiraOauthComponent } from 'app/pages/system/file-ticket/file-ticket-form/components/jira-oauth/jira-oauth.component';
@@ -18,7 +18,6 @@ import { FileTicketLicensedFormComponent } from 'app/pages/system/file-ticket/fi
   imports: [
     CommonModule,
     MatButtonModule,
-    MatIconModule,
     MatCardModule,
     MatTooltipModule,
     MatFormFieldModule,
@@ -27,6 +26,7 @@ import { FileTicketLicensedFormComponent } from 'app/pages/system/file-ticket/fi
     JobsModule,
     TranslateModule,
     TooltipModule,
+    IxIconModule,
   ],
   declarations: [
     FileTicketFormComponent,
