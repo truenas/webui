@@ -16,6 +16,7 @@
       <div class="value">{{ 'This dataset has children with shares' | translate }}</div>
     </div>
     <div class="details-item" *ngIf="dataset.smb_shares?.length">
+      <mat-icon svgIcon="ix:smb_share" class="icon"></mat-icon>
       <div class="label">{{ 'Share Attached' | translate }}:</div>
       <div class="value">{{ 'Dataset is shared via SMB as ' + smbSharesNames | translate }}</div>
       <a
@@ -24,6 +25,7 @@
       >{{ 'Manage SMB Shares' | translate }}</a>
     </div>
     <div class="details-item" *ngIf="dataset.nfs_shares?.length">
+      <mat-icon svgIcon="ix:nfs_share" class="icon"></mat-icon>
       <div class="label">{{ 'Share Attached' | translate }}:</div>
       <div class="value">{{ 'Dataset is shared via NFS' | translate }}</div>
       <a
@@ -32,6 +34,7 @@
       >{{ 'Manage NFS Shares' | translate }}</a>
     </div>
     <div class="details-item" *ngIf="dataset.iscsi_shares?.length">
+      <mat-icon svgIcon="ix:iscsi_share" class="icon"></mat-icon>
       <div class="label">{{ 'Share Attached' | translate }}:</div>
       <div class="value">{{ 'Dataset is shared via iSCSI' | translate }}</div>
       <a
