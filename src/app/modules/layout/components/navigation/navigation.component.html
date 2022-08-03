@@ -21,7 +21,7 @@
           (click)="closeMenu()"
         >
           <span class="menu-item-tooltip" [matTooltip]="item.tooltip" id="{{ item.name }}" matTooltipPosition="right"></span>
-          <mat-icon>{{ item.icon }}</mat-icon>
+          <ix-icon [name]="item.icon"></ix-icon>
           <span>{{ item.name | translate }}</span>
         </a>
         <a
@@ -33,7 +33,7 @@
           (keyup.enter)="toggleMenu(item.state, item.sub)"
         >
           <span class="menu-item-tooltip" [matTooltip]="item.tooltip" matTooltipPosition="right"></span>
-          <mat-icon>{{ item.icon }}</mat-icon>
+          <ix-icon [name]="item.icon"></ix-icon>
           <span>{{ item.name | translate }}</span>
           <span fxFlex></span>
           <mat-icon class="menu-caret">keyboard_arrow_right</mat-icon>
@@ -47,7 +47,7 @@
           class="sidenav-link"
         >
           <span class="menu-item-tooltip" [matTooltip]="item.tooltip" matTooltipPosition="right"></span>
-          <mat-icon>{{ item.icon }}</mat-icon>
+          <ix-icon [name]="item.icon"></ix-icon>
           <span>{{ item.name | translate }}</span>
         </a>
       </mat-list-item>

@@ -64,9 +64,11 @@
       <div class="details-item">
         <span class="label">{{ 'User Quotas' | translate }}:</span>
         <ng-container *ngIf="checkQuotas; else noneTemplate">
-          <span class="value" *ngIf="!isLoadingQuotas; else valuePlaceholder">
-            {{ 'Quotas set for {n} users' | translate: { n: userQuotas } }}
-          </span>
+          <div *ngIf="!isLoadingQuotas; else valuePlaceholder">
+            <span class="value">
+              {{ 'Quotas set for {n, plural, one {# user} other {# users}}' | translate: { n: userQuotas } }}
+            </span>
+          </div>
         </ng-container>
         <a *ngIf="checkQuotas" [routerLink]="['/', 'datasets', dataset.id, 'user-quotas']">
           {{ 'Manage User Quotas' | translate }}
@@ -75,9 +77,11 @@
       <div class="details-item">
         <span class="label">{{ 'Group Quotas' | translate }}:</span>
         <ng-container *ngIf="checkQuotas; else noneTemplate">
-          <span class="value" *ngIf="!isLoadingQuotas; else valuePlaceholder">
-            {{ 'Quotas set for {n} groups' | translate: { n: groupQuotas } }}
-          </span>
+          <div *ngIf="!isLoadingQuotas; else valuePlaceholder">
+            <span class="value">
+              {{ 'Quotas set for {n, plural, one {# group} other {# groups}}' | translate: { n: groupQuotas } }}
+            </span>
+          </div>
         </ng-container>
         <a *ngIf="checkQuotas" [routerLink]="['/', 'datasets', dataset.id, 'group-quotas']">
           {{ 'Manage Group Quotas' | translate }}
