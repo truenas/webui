@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
 
 @Component({
@@ -6,46 +6,15 @@ import { DatasetDetails } from 'app/interfaces/dataset.interface';
   templateUrl: './roles-card.component.component.html',
   styleUrls: ['./roles-card.component.component.scss'],
 })
-export class RolesCardComponent implements OnChanges {
+export class RolesCardComponent {
   @Input() dataset: DatasetDetails;
 
-  hasChildrenWithShares = false;
+  @Input() hasChildrenWithShares = false;
 
   get smbSharesNames(): string {
     if (!this.dataset.smb_shares?.length) {
       return '';
     }
     return '\'' + this.dataset.smb_shares.map((item) => item.share_name).join('\', \'') + '\'';
-  }
-
-  ngOnChanges(): void {
-    this.hasChildrenWithShares = this.checkDatasetForChildrenWithShares(this.dataset);
-  }
-
-  checkDatasetForChildrenWithShares(dataset: DatasetDetails): boolean {
-    if (!dataset.children?.length) {
-      return false;
-    }
-    for (const child of dataset.children) {
-      if (this.datasetOrChildrenHaveShares(child)) {
-        return true;
-      }
-    }
-    return false;
-  }
-
-  datasetOrChildrenHaveShares(dataset: DatasetDetails): boolean {
-    if (dataset.nfs_shares?.length
-            || dataset.smb_shares?.length
-            || dataset.iscsi_shares?.length
-    ) {
-      return true;
-    }
-    for (const child of dataset.children) {
-      if (this.datasetOrChildrenHaveShares(child)) {
-        return true;
-      }
-    }
-    return false;
   }
 }
