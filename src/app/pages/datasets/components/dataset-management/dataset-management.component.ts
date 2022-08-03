@@ -89,11 +89,10 @@ export class DatasetsManagementComponent implements OnInit {
   private listenForRouteChanges(): void {
     this.activatedRoute.params.pipe(
       pluck('datasetId'),
+      filter(Boolean),
       untilDestroyed(this),
-    ).subscribe((datasetId) => {
-      if (datasetId) {
-        this.datasetStore.selectDatasetById(datasetId);
-      }
+    ).subscribe((datasetId: string) => {
+      this.datasetStore.selectDatasetById(datasetId);
     });
   }
 
