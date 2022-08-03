@@ -2,9 +2,7 @@ import { createServiceFactory, SpectatorService } from '@ngneat/spectator';
 import { mockProvider } from '@ngneat/spectator/jest';
 import { take } from 'rxjs/operators';
 import { TestScheduler } from 'rxjs/testing';
-import { DatasetDetails } from 'app/interfaces/dataset-details.interface';
-import { Dataset } from 'app/interfaces/dataset.interface';
-import { DatasetInTree } from 'app/pages/datasets/store/dataset-in-tree.interface';
+import { Dataset, DatasetDetails } from 'app/interfaces/dataset.interface';
 import { DatasetTreeState, DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
 import { WebSocketService } from 'app/services';
 
@@ -40,26 +38,7 @@ describe('DatasetTreeStore', () => {
 
       spectator.service.loadDatasets();
 
-      expect(mockWebsocket.call).toHaveBeenCalledWith('pool.dataset.query', [[], {
-        extra: {
-          flat: false,
-          properties: [
-            'id',
-            'pool',
-            'name',
-            'type',
-            'used',
-            'available',
-            'mountpoint',
-            'encryption',
-            'encryptionroot',
-            'keyformat',
-            'keystatus',
-            'quota',
-          ],
-        },
-        order_by: ['name'],
-      }]);
+      expect(mockWebsocket.call).toHaveBeenCalledWith('pool.dataset.details');
       expectObservable(spectator.service.state$).toBe('ab', {
         a: {
           error: null,
@@ -149,7 +128,7 @@ describe('DatasetTreeStore', () => {
               },
             ],
           },
-        ] as DatasetInTree[],
+        ] as DatasetDetails[],
         selectedDatasetId: 'parent1/child2/child1',
       } as DatasetTreeState);
 

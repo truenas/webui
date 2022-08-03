@@ -86,6 +86,25 @@ export class VmWizardComponent implements WizardConfiguration {
           validation: helptext.os_validation,
         },
         {
+          type: 'checkbox',
+          name: 'hyperv_enlightenments',
+          placeholder: helptext.hyperv_enlightenments_placeholder,
+          tooltip: helptext.hyperv_enlightenments_tooltip,
+          value: false,
+          isHidden: false,
+          relation: [
+            {
+              action: RelationAction.Show,
+              when: [
+                {
+                  name: 'os',
+                  value: 'Windows',
+                },
+              ],
+            },
+          ],
+        },
+        {
           type: 'input',
           name: 'name',
           placeholder: helptext.name_placeholder,
@@ -211,6 +230,32 @@ export class VmWizardComponent implements WizardConfiguration {
           tooltip: helptext.threads.tooltip,
         },
         {
+          type: 'input',
+          name: 'cpuset',
+          placeholder: helptext.cpuset.placeholder,
+          tooltip: helptext.cpuset.tooltip,
+          validation: [Validators.pattern('^((\\d+)|(\\d+-\\d+))(,((\\d+)|(\\d+-\\d+)))*$')],
+          required: false,
+        },
+        {
+          type: 'checkbox',
+          name: 'pin_vcpus',
+          placeholder: helptext.pin_vcpus.placeholder,
+          tooltip: helptext.pin_vcpus.tooltip,
+          value: false,
+          disabled: true,
+          relation: [
+            {
+              action: RelationAction.Enable,
+              when: [{
+                name: 'cpuset',
+                operator: '>',
+                value: '',
+              }],
+            },
+          ],
+        },
+        {
           type: 'select',
           name: 'cpu_mode',
           placeholder: helptext.cpu_mode.placeholder,
@@ -273,6 +318,14 @@ export class VmWizardComponent implements WizardConfiguration {
           blurEvent: () => this.blurEventForMemory(),
           parent: this,
           tooltip: helptext.memory_tooltip,
+        },
+        {
+          type: 'input',
+          name: 'nodeset',
+          placeholder: helptext.nodeset.placeholder,
+          tooltip: helptext.nodeset.tooltip,
+          validation: [Validators.pattern('^((\\d+)|(\\d+-\\d+))(,((\\d+)|(\\d+-\\d+)))*$')],
+          required: false,
         },
         {
           type: 'paragraph',
@@ -401,6 +454,12 @@ export class VmWizardComponent implements WizardConfiguration {
           validation: helptext.nic_attach_validation,
           required: true,
         },
+        {
+          name: 'trust_guest_rx_filters',
+          placeholder: helptext.trust_guest_rx_filters_placeholder,
+          type: 'checkbox',
+          value: false,
+        },
       ],
     },
     {
@@ -485,7 +544,7 @@ export class VmWizardComponent implements WizardConfiguration {
     private translate: TranslateService,
     protected modalService: ModalService,
     private store$: Store<AppState>,
-  ) {}
+  ) { }
 
   preInit(entityWizard: EntityWizardComponent): void {
     this.entityWizard = entityWizard;
@@ -958,7 +1017,11 @@ export class VmWizardComponent implements WizardConfiguration {
     vmPayload['vcpus'] = value.vcpus;
     vmPayload['cores'] = value.cores;
     vmPayload['threads'] = value.threads;
+    vmPayload['cpuset'] = value.cpuset;
+    vmPayload['nodeset'] = value.nodeset;
+    vmPayload['pin_vcpus'] = value.pin_vcpus;
     vmPayload['memory'] = Math.ceil(this.storageService.convertHumanStringToNum(value.memory) / 1024 ** 2); // bytes -> mb
+    vmPayload['hyperv_enlightenments'] = value.hyperv_enlightenments;
     vmPayload['bootloader'] = value.bootloader;
     vmPayload['shutdown_timeout'] = value.shutdown_timeout;
     vmPayload['autoloader'] = value.autoloader;
@@ -967,7 +1030,12 @@ export class VmWizardComponent implements WizardConfiguration {
       vmPayload['devices'] = [
         {
           dtype: VmDeviceType.Nic,
-          attributes: { type: value.NIC_type, mac: value.NIC_mac, nic_attach: value.nic_attach },
+          attributes: {
+            type: value.NIC_type,
+            mac: value.NIC_mac,
+            nic_attach: value.nic_attach,
+            trust_guest_rx_filters: value.trust_guest_rx_filters,
+          },
         },
         {
           dtype: VmDeviceType.Disk,
@@ -981,7 +1049,12 @@ export class VmWizardComponent implements WizardConfiguration {
       vmPayload['devices'] = [
         {
           dtype: VmDeviceType.Nic,
-          attributes: { type: value.NIC_type, mac: value.NIC_mac, nic_attach: value.nic_attach },
+          attributes: {
+            type: value.NIC_type,
+            mac: value.NIC_mac,
+            nic_attach: value.nic_attach,
+            trust_guest_rx_filters: value.trust_guest_rx_filters,
+          },
         },
         {
           dtype: VmDeviceType.Disk,

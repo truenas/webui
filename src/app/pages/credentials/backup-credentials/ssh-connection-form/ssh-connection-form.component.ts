@@ -40,7 +40,10 @@ export class SshConnectionFormComponent {
       (control) => control.parent && this.isManualSetup,
       Validators.required,
     )],
-    port: [22],
+    port: [22, this.validatorsService.validateOnCondition(
+      (control) => control.parent && this.isManualSetup,
+      Validators.required,
+    )],
     remote_host_key: [''],
 
     url: ['', this.validatorsService.validateOnCondition(

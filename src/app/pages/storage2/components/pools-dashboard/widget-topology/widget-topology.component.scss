@@ -8,6 +8,18 @@
 .card {
   @include details-card();
   flex: 1;
+
+  .content-container {
+    height: 100%;
+  }
+
+  .vdev-line {
+    margin: 8px 0;
+    
+    &:first-child {
+      margin-top: 0;
+    }
+  }
 }
 
 .pool-icon {

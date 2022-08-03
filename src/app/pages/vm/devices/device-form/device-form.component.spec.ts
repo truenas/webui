@@ -141,6 +141,7 @@ describe('DeviceFormComponent', () => {
         type: 'E1000',
         mac: '00:a0:98:53:a5:ac',
         nic_attach: 'enp0s3',
+        trust_guest_rx_filters: false,
       },
       order: 1002,
       vm: 1,
@@ -154,6 +155,7 @@ describe('DeviceFormComponent', () => {
         'Adapter Type': 'VirtIO',
         'NIC To Attach': 'enp0s4',
         'Device Order': 1006,
+        'Trust Guest Filters': true,
       });
 
       await saveButton.click();
@@ -163,6 +165,7 @@ describe('DeviceFormComponent', () => {
           mac: '00:a0:98:30:09:90',
           nic_attach: 'enp0s4',
           type: VmNicType.Virtio,
+          trust_guest_rx_filters: true,
         },
         dtype: VmDeviceType.Nic,
         order: 1006,
@@ -179,6 +182,7 @@ describe('DeviceFormComponent', () => {
         'Device Order': '1002',
         'MAC Address': '00:a0:98:53:a5:ac',
         'NIC To Attach': 'enp0s3',
+        'Trust Guest Filters': false,
       });
     });
 
@@ -196,6 +200,7 @@ describe('DeviceFormComponent', () => {
           type: 'E1000',
           mac: '00:a0:98:53:a5:ac',
           nic_attach: 'enp0s3',
+          trust_guest_rx_filters: false,
         },
         dtype: VmDeviceType.Nic,
         order: 1002,

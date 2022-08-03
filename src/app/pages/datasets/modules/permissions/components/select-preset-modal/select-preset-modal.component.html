@@ -4,8 +4,20 @@
 
   <p *ngIf="!data.allowCustom" [innerHTML]="helptext.message | translate"></p>
 
-  <div dynamicField [config]="this.usePresetFieldConfig" [group]="formGroup"></div>
-  <div dynamicField [config]="this.presetFieldConfig" [group]="formGroup"></div>
+  <form [formGroup]="form">
+    <ix-radio-group
+      *ngIf="data.allowCustom"
+      formControlName="usePreset"
+      [options]="usePresetOptions$"
+    ></ix-radio-group>
+    <!-- TODO: Add [required]="true" once FormsModule is removed -->
+    <ix-select
+      *ngIf="form.value.usePreset"
+      formControlName="presetName"
+      [label]="'Preset' | translate"
+      [options]="presetOptions$"
+    ></ix-select>
+  </form>
 </div>
 <div mat-dialog-actions class="buttons">
   <button
@@ -16,7 +28,7 @@
     mat-button
     color="primary"
     matDialogClose
-    [disabled]="formGroup.invalid"
+    [disabled]="form.invalid"
     (click)="onContinuePressed()"
   >{{ 'Continue' | translate }}</button>
 </div>

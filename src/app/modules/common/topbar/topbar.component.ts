@@ -276,15 +276,15 @@ export class TopbarComponent implements OnInit, OnDestroy {
   toggleLogo(): string {
     const isBlueTheme = this.themeService.activeTheme === 'ix-blue' || this.themeService.activeTheme === 'midnight';
     if (isBlueTheme && this.screenSize === 'xs') {
-      return 'ix_logomark';
+      return 'ix:logomark';
     }
     if (!isBlueTheme && this.screenSize === 'xs') {
-      return 'ix_logomark_rgb';
+      return 'ix:logomark_rgb';
     }
     if (isBlueTheme && this.screenSize !== 'xs') {
-      return 'ix_full_logo';
+      return 'ix:full_logo';
     }
-    return 'ix_full_logo_rgb';
+    return 'ix:full_logo_rgb';
   }
 
   onShowAbout(): void {

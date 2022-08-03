@@ -1,15 +1,31 @@
-<h3 class="title">Details for {{ topologyItem.disk || topologyItem.guid }}</h3>
+<h3 class="title">
+  {{ 'Details for' | translate }}
+  <ix-topology-item-icon
+    class="title-icon"
+    [topologyItem]="topologyItem"
+    [disk]="disk"
+  ></ix-topology-item-icon>
+  {{ title }}
+</h3>
 
 <div class="cards">
   <div class="cards-column">
-    <ix-zfs-info-card [topologyItem]="topologyItem" [disk]="disk" [topologyParentItem]="topologyParentItem"></ix-zfs-info-card>
-    <ix-hardware-disk-encryption [topologyItem]="topologyItem"></ix-hardware-disk-encryption>
-    <ix-smart-info-card
+    <ix-zfs-info-card
       [topologyItem]="topologyItem"
       [disk]="disk"
-    ></ix-smart-info-card>
+      [topologyParentItem]="topologyParentItem"
+    ></ix-zfs-info-card>
+
+    <ng-container *ngIf="isTopologyDisk">
+      <ix-hardware-disk-encryption [topologyDisk]="topologyItem | cast"></ix-hardware-disk-encryption>
+      <ix-smart-info-card
+        [topologyDisk]="topologyItem | cast"
+        [disk]="disk"
+      ></ix-smart-info-card>
+    </ng-container>
   </div>
-  <div class="cards-column">
+
+  <div *ngIf="isTopologyDisk" class="cards-column">
     <ix-disk-info-card [disk]="disk"></ix-disk-info-card>
   </div>
 </div>

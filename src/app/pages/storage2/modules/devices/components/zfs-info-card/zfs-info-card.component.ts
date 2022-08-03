@@ -6,16 +6,14 @@ import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { filter } from 'rxjs/operators';
-import { VDevType } from 'app/enums/v-dev-type.enum';
-import { VDevStatus } from 'app/enums/vdev-status.enum';
-import { Disk, VDev } from 'app/interfaces/storage.interface';
+import { TopologyItemType } from 'app/enums/v-dev-type.enum';
+import { TopologyItemStatus } from 'app/enums/vdev-status.enum';
+import { Disk, TopologyItem } from 'app/interfaces/storage.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { DevicesStore } from 'app/pages/storage2/modules/devices/stores/devices-store.service';
-import { DiskFormComponent } from 'app/pages/storage2/modules/disks/components/disk-form/disk-form.component';
 import { WebSocketService, DialogService } from 'app/services';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
 @Component({
@@ -25,8 +23,8 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ZfsInfoCardComponent implements OnInit {
-  @Input() topologyItem: VDev;
-  @Input() topologyParentItem: VDev;
+  @Input() topologyItem: TopologyItem;
+  @Input() topologyParentItem: TopologyItem;
   @Input() disk: Disk;
   private poolId: number;
 
@@ -58,22 +56,21 @@ export class ZfsInfoCardComponent implements OnInit {
   }
 
   get isMirror(): boolean {
-    return this.topologyItem.type === VDevType.Mirror;
+    return this.topologyItem.type === TopologyItemType.Mirror;
   }
 
   get isDisk(): boolean {
-    return this.topologyItem.type === VDevType.Disk;
+    return this.topologyItem.type === TopologyItemType.Disk;
   }
 
   get isOnline(): boolean {
-    return this.topologyItem.status === VDevStatus.Online;
+    return this.topologyItem.status === TopologyItemStatus.Online;
   }
 
   constructor(
     private loader: AppLoaderService,
     private route: ActivatedRoute,
     private ws: WebSocketService,
-    private slideInService: IxSlideInService,
     private dialogService: DialogService,
     private matDialog: MatDialog,
     private translate: TranslateService,
@@ -82,17 +79,6 @@ export class ZfsInfoCardComponent implements OnInit {
 
   ngOnInit(): void {
     this.poolId = Number(this.route.snapshot.params.poolId);
-    this.slideInService.onClose$.pipe(
-      filter((value) => !!value.response && value.modalType === DiskFormComponent),
-      untilDestroyed(this),
-    ).subscribe(() => {
-      this.devicesStore.reloadList();
-    });
-  }
-
-  onEdit(): void {
-    const editForm = this.slideInService.open(DiskFormComponent, { wide: true });
-    editForm.setFormDisk(this.disk);
   }
 
   onOffline(): void {

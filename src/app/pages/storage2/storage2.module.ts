@@ -1,14 +1,13 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FlexLayoutModule, FlexModule } from '@angular/flex-layout';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatOptionModule } from '@angular/material/core';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
@@ -27,6 +26,7 @@ import { CommonDirectivesModule } from 'app/directives/common/common-directives.
 import { CastModule } from 'app/modules/cast/cast.module';
 import { AppCommonModule } from 'app/modules/common/app-common.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
+import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { IxTableModule } from 'app/modules/ix-tables/ix-table.module';
 import { LayoutModule } from 'app/modules/layout/layout.module';
 import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
@@ -62,7 +62,7 @@ import { ZfsHealthCardComponent } from './components/zfs-health-card/zfs-health-
     MatButtonModule,
     RouterModule,
     CommonModule,
-    MatIconModule,
+    IxIconModule,
     MatProgressSpinnerModule,
     MatToolbarModule,
     ChartsModule,
@@ -73,7 +73,6 @@ import { ZfsHealthCardComponent } from './components/zfs-health-card/zfs-health-
     MatFormFieldModule,
     MatOptionModule,
     TooltipModule,
-    FormsModule,
     FlexModule,
     MatCheckboxModule,
     MatSelectModule,

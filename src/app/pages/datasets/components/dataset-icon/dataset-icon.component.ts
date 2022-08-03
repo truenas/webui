@@ -2,7 +2,7 @@ import {
   ChangeDetectionStrategy, Component, Input,
 } from '@angular/core';
 import { DatasetType } from 'app/enums/dataset.enum';
-import { DatasetInTree } from 'app/pages/datasets/store/dataset-in-tree.interface';
+import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { isRootDataset } from 'app/pages/datasets/utils/dataset.utils';
 
 @Component({
@@ -12,7 +12,7 @@ import { isRootDataset } from 'app/pages/datasets/utils/dataset.utils';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DatasetIconComponent {
-  @Input() dataset: DatasetInTree;
+  @Input() dataset: DatasetDetails;
 
   get isRoot(): boolean {
     return isRootDataset(this.dataset);
@@ -20,5 +20,19 @@ export class DatasetIconComponent {
 
   get isZvol(): boolean {
     return this.dataset.type === DatasetType.Volume;
+  }
+
+  get name(): string {
+    if (this.isRoot) {
+      return 'ix:dataset';
+    }
+    if (!this.isRoot && !this.isZvol) {
+      return 'folder';
+    }
+    if (!this.isRoot && this.isZvol) {
+      return 'mdi-database';
+    }
+
+    return undefined;
   }
 }

@@ -1,8 +1,17 @@
 @import '~assets/styles/mixins/cards';
 @import '~assets/styles/mixins/animations';
 
+:host {
+  display: flex;
+}
+
 .card {
   @include details-card();
+  flex: 1;
+
+  .content-container {
+    height: 100%;
+  }
 }
 
 .pool-icon {
@@ -21,10 +30,6 @@
   &.icon-error {
     color: var(--red);
   }
-}
-
-.content-container {
-  padding: 30px 0 !important;
 }
 
 .capacity-caption {

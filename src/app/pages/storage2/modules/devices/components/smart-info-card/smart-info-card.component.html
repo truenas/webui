@@ -1,6 +1,6 @@
 <mat-card class="card">
   <mat-card-header class="header">
-    <h3 mat-card-title>{{ 'S.M.A.R.T. Info for {disk}' | translate: { disk: topologyItem.disk } }}</h3>
+    <h3 mat-card-title>{{ 'S.M.A.R.T. Info for {disk}' | translate: { disk: topologyDisk.disk } }}</h3>
 
     <!-- TODO: Hide for disks with no SMART support after https://jira.ixsystems.com/browse/NAS-116969 -->
     <button
@@ -24,7 +24,7 @@
         <a
           *ngIf="totalResults.value"
           class="action"
-          [routerLink]="['/storage2', 'disks', 'smartresults', topologyItem.disk]"
+          [routerLink]="['/storage2', 'disks', 'smartresults', topologyDisk.disk]"
         >{{ 'View All Test Results' | translate }}</a>
       </ng-container>
     </div>

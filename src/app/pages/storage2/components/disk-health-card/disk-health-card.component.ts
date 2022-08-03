@@ -2,6 +2,8 @@ import {
   ChangeDetectionStrategy, Component, Input, ChangeDetectorRef, OnChanges, OnInit, OnDestroy,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { EMPTY } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 import { PoolStatus } from 'app/enums/pool-status.enum';
 import { SmartTestResultStatus } from 'app/enums/smart-test-result-status.enum';
 import { Alert } from 'app/interfaces/alert.interface';
@@ -183,7 +185,13 @@ export class DiskHealthCardComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   private fetch(): void {
-    this.ws.call('disk.temperatures', [Object.keys(this.diskDictionary)]).pipe(untilDestroyed(this)).subscribe((res) => {
+    this.ws.call('disk.temperatures', [Object.keys(this.diskDictionary)]).pipe(
+      catchError(() => {
+        this.stop();
+        return EMPTY;
+      }),
+      untilDestroyed(this),
+    ).subscribe((res) => {
       const data: Temperature = {
         keys: Object.keys(res),
         values: res,

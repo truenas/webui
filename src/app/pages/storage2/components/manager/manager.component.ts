@@ -1,6 +1,7 @@
 import {
   AfterViewInit, Component, OnInit, QueryList, ViewChild, ViewChildren,
 } from '@angular/core';
+import { FormControl, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { SortDirection } from '@angular/material/sort';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -18,7 +19,7 @@ import helptext from 'app/helptext/storage/volumes/manager/manager';
 import { Job } from 'app/interfaces/job.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { CreatePool, Pool, UpdatePool } from 'app/interfaces/pool.interface';
-import { VDev } from 'app/interfaces/storage.interface';
+import { TopologyDisk } from 'app/interfaces/storage.interface';
 import { DownloadKeyDialogComponent } from 'app/modules/common/dialog/download-key/download-key-dialog.component';
 import { DialogFormConfiguration } from 'app/modules/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/modules/entity/entity-dialog/entity-dialog.component';
@@ -54,7 +55,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
   // TODO: Rename to something more readable
   temp: ManagerDisk[] = [];
 
-  name: string;
+  nameControl = new FormControl('', Validators.required);
   addCall = 'pool.create' as const;
   editCall = 'pool.update' as const;
   queryCall = 'pool.query' as const;
@@ -62,14 +63,14 @@ export class ManagerComponent implements OnInit, AfterViewInit {
   pk: number;
   isNew = true;
   volEncrypt = 0;
-  isEncrypted = false;
-  encryptionAlgorithm = 'AES-256-GCM';
+  isEncryptedControl = new FormControl(false);
+  encryptionAlgorithmControl = new FormControl('AES-256-GCM');
   encryptionAlgorithmOptions: Option[] = [];
   regExpHasErrors = false;
   nameFilter: RegExp;
   capacityFilter: RegExp;
-  nameFilterField: string;
-  capacityFilterField: string;
+  nameFilterControl = new FormControl('');
+  capacityFilterControl = new FormControl('');
   dirty = false;
   protected existingPools: Pool[] = [];
   poolError: string = null;
@@ -126,7 +127,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
   swapondrive = 2;
 
   hasSavableErrors = false;
-  force = false;
+  forceControl = new FormControl(false);
 
   protected mindisks = {
     stripe: 1, mirror: 2, raidz: 3, raidz2: 4, raidz3: 5,
@@ -271,11 +272,11 @@ export class ManagerComponent implements OnInit, AfterViewInit {
         }
         this.firstDataVdevDisknum = res[0].topology.data[0].children.length;
 
-        let firstDisk: VDev;
+        let firstDisk: TopologyDisk;
         if (this.firstDataVdevDisknum === 0 && this.firstDataVdevType === 'disk') {
           this.firstDataVdevDisknum = 1;
           this.firstDataVdevType = 'stripe';
-          firstDisk = res[0].topology.data[0];
+          firstDisk = res[0].topology.data[0] as TopologyDisk;
         } else {
           firstDisk = res[0].topology.data[0].children[0];
         }
@@ -286,7 +287,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
           }
           this.getDuplicableDisks();
         });
-        this.name = res[0].name;
+        this.nameControl.setValue(res[0].name);
         this.volEncrypt = res[0].encrypt;
         this.ws.call(this.datasetQueryCall, [[['id', '=', res[0].name]]]).pipe(untilDestroyed(this)).subscribe((datasets) => {
           if (datasets[0]) {
@@ -415,7 +416,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
   getCurrentLayout(): void {
     let sizeEstimate = 0;
     if (!this.isNew) {
-      sizeEstimate = this.extendedAvailable;
+      sizeEstimate = this.extendedAvailable || 0;
     }
     let dataVdevDisknum = 0;
     let wasDataDiskFound = false;
@@ -430,11 +431,11 @@ export class ManagerComponent implements OnInit, AfterViewInit {
     this.hasSavableErrors = false;
     this.emptyDataVdev = false;
 
-    this.vdevComponents.forEach((vdev, i) => {
+    (this.vdevComponents || []).forEach((vdev, i) => {
       if (vdev.group === 'data') {
         if (i === 0 && this.isNew) {
-          this.firstDataVdevType = vdev.type;
-          dataVdevType = vdev.type;
+          this.firstDataVdevType = vdev.typeControl.value;
+          dataVdevType = vdev.typeControl.value;
           if (vdev.disks.length > 0) {
             this.firstDataVdevDisknum = vdev.disks.length;
             this.firstDataVdevDisksize = vdev.disks[0].size;
@@ -450,7 +451,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
         if (vdev.disks.length > 0) {
           wasDataDiskFound = true;
           dataVdevDisknum = vdev.disks.length;
-          dataVdevType = vdev.type;
+          dataVdevType = vdev.typeControl.value;
         } else {
           this.emptyDataVdev = true;
           dataVdevDisknum = 0;
@@ -475,7 +476,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
         this.hasSavableErrors = true;
       }
       if (['dedup', 'log', 'special', 'data'].includes(vdev.group)) {
-        if (vdev.disks.length >= 1 && vdev.type.toLowerCase() === 'stripe') {
+        if (vdev.disks.length >= 1 && vdev.typeControl.value.toLowerCase() === 'stripe') {
           if (vdev.group === 'log') {
             this.getLogVdevTypeWarningMsg();
           } else {
@@ -513,7 +514,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
   }
 
   canSave(): boolean {
-    if (this.isNew && !this.name) {
+    if (this.isNew && !this.nameControl.value) {
       return false;
     }
     if (this.vdevtypeError) {
@@ -528,7 +529,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
     if (this.vdevdisksError) {
       return false;
     }
-    if (this.hasSavableErrors && !this.force) {
+    if (this.hasSavableErrors && !this.forceControl.value) {
       return false;
     }
     return true;
@@ -562,7 +563,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
   }
 
   forceCheckboxChecked(): void {
-    if (!this.force) {
+    if (!this.forceControl.value) {
       let warnings: string = helptext.force_warning;
       if (this.hasVdevDiskSizeError) {
         warnings = warnings + '<br/><br/>' + helptext.force_warnings['diskSizeWarning'];
@@ -574,7 +575,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
         title: helptext.force_title,
         message: warnings,
       }).pipe(untilDestroyed(this)).subscribe((force) => {
-        this.force = force;
+        this.forceControl.setValue(force);
       });
     }
   }
@@ -607,7 +608,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
             disks.push(disk.devname);
           });
           if (disks.length > 0) {
-            let type = vdev.type.toUpperCase();
+            let type = vdev.typeControl.value.toUpperCase();
             type = type === 'RAIDZ' ? 'RAIDZ1' : type;
             const group = vdev.group;
             if (!layout[group]) {
@@ -623,9 +624,14 @@ export class ManagerComponent implements OnInit, AfterViewInit {
 
         let body: CreatePool | UpdatePool;
         if (this.isNew) {
-          body = { name: this.name, encryption: this.isEncrypted, topology: layout } as CreatePool;
-          if (this.isEncrypted) {
-            (body as CreatePool)['encryption_options'] = { generate_key: true, algorithm: this.encryptionAlgorithm };
+          body = {
+            name: this.nameControl.value,
+            encryption: this.isEncryptedControl.value,
+            topology: layout,
+          } as CreatePool;
+
+          if (this.isEncryptedControl.value) {
+            (body as CreatePool)['encryption_options'] = { generate_key: true, algorithm: this.encryptionAlgorithmControl.value };
           }
         } else {
           body = { topology: layout } as UpdatePool;
@@ -646,7 +652,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
         dialogRef.componentInstance.success
           .pipe(
             switchMap((job: Job<Pool>) => {
-              if (this.isEncrypted) {
+              if (this.isEncryptedControl.value) {
                 const downloadDialogRef = this.mdDialog.open(DownloadKeyDialogComponent, { disableClose: true });
                 downloadDialogRef.componentInstance.new = true;
                 downloadDialogRef.componentInstance.volumeId = job.result.id;
@@ -681,22 +687,22 @@ export class ManagerComponent implements OnInit, AfterViewInit {
   }
 
   openDialog(): void {
-    if (this.isEncrypted) {
+    if (this.isEncryptedControl.value) {
       this.dialog.confirm({
         title: this.translate.instant('Warning'),
         message: this.encryptionMessage,
         buttonMsg: this.translate.instant('I Understand'),
       }).pipe(untilDestroyed(this)).subscribe((res) => {
         if (res) {
-          this.isEncrypted = true;
+          this.isEncryptedControl.setValue(true);
           this.volEncrypt = 1;
         } else {
-          this.isEncrypted = false;
+          this.isEncryptedControl.setValue(false);
           this.volEncrypt = 0;
         }
       });
     } else {
-      this.isEncrypted = false;
+      this.isEncryptedControl.setValue(false);
       this.volEncrypt = 0;
     }
   }
@@ -772,8 +778,6 @@ export class ManagerComponent implements OnInit, AfterViewInit {
         }
       }
     }
-    this.nameFilterField = '';
-    this.capacityFilterField = '';
     this.nameFilter = new RegExp('');
     this.capacityFilter = new RegExp('');
     this.vdevs['data'].push({});
@@ -798,7 +802,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
   }
 
   checkPoolName(): void {
-    if (_.find(this.existingPools, { name: this.name })) {
+    if (_.find(this.existingPools, { name: this.nameControl.value })) {
       this.poolError = this.translate.instant('A pool with this name already exists.');
     } else {
       this.poolError = null;

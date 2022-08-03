@@ -6,9 +6,7 @@ import { ChartColor, ChartDataSets, ChartOptions } from 'chart.js';
 import { Subscription } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { DatasetType } from 'app/enums/dataset.enum';
-import { DatasetDetails } from 'app/interfaces/dataset-details.interface';
-import { Dataset } from 'app/interfaces/dataset.interface';
-import { DatasetInTree } from 'app/pages/datasets/store/dataset-in-tree.interface';
+import { Dataset, DatasetDetails } from 'app/interfaces/dataset.interface';
 import { WebSocketService } from 'app/services';
 import { ThemeService } from 'app/services/theme/theme.service';
 
@@ -20,7 +18,7 @@ import { ThemeService } from 'app/services/theme/theme.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SpaceManagementChartComponent implements OnChanges {
-  @Input() dataset: DatasetInTree;
+  @Input() dataset: DatasetDetails;
   @Input() datasetDetails: DatasetDetails;
 
   isLoading = false;

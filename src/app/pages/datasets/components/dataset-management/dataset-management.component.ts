@@ -5,10 +5,10 @@ import {
 import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { filter, pluck } from 'rxjs/operators';
+import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { footerHeight, headerHeight } from 'app/modules/common/layouts/admin-layout/admin-layout.component.const';
 import { IxNestedTreeDataSource } from 'app/modules/ix-tree/ix-nested-tree-datasource';
 import { flattenTreeWithFilter } from 'app/modules/ix-tree/utils/flattern-tree-with-filter';
-import { DatasetInTree } from 'app/pages/datasets/store/dataset-in-tree.interface';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
 import { WebSocketService } from 'app/services';
 
@@ -24,11 +24,11 @@ export class DatasetsManagementComponent implements OnInit {
   selectedParentDataset$ = this.datasetStore.selectedParentDataset$;
   selectedDatasetDetails$ = this.datasetStore.selectedDatasetDetails$;
 
-  dataSource: IxNestedTreeDataSource<DatasetInTree>;
-  treeControl = new NestedTreeControl<DatasetInTree, string>((dataset) => dataset.children, {
+  dataSource: IxNestedTreeDataSource<DatasetDetails>;
+  treeControl = new NestedTreeControl<DatasetDetails, string>((dataset) => dataset.children, {
     trackBy: (dataset) => dataset.id,
   });
-  readonly hasNestedChild = (_: number, dataset: DatasetInTree): boolean => Boolean(dataset.children?.length);
+  readonly hasNestedChild = (_: number, dataset: DatasetDetails): boolean => Boolean(dataset.children?.length);
   hasConsoleFooter = false;
   headerHeight = headerHeight;
   footerHeight = footerHeight;
@@ -83,7 +83,7 @@ export class DatasetsManagementComponent implements OnInit {
 
     this.datasetStore.selectedBranch$
       .pipe(filter(Boolean), untilDestroyed(this))
-      .subscribe((selectedBranch: DatasetInTree[]) => {
+      .subscribe((selectedBranch: DatasetDetails[]) => {
         selectedBranch.forEach((dataset) => this.treeControl.expand(dataset));
       });
   }
@@ -99,10 +99,10 @@ export class DatasetsManagementComponent implements OnInit {
     });
   }
 
-  private createDataSource(datasets: DatasetInTree[]): void {
-    this.dataSource = new IxNestedTreeDataSource<DatasetInTree>(datasets);
+  private createDataSource(datasets: DatasetDetails[]): void {
+    this.dataSource = new IxNestedTreeDataSource<DatasetDetails>(datasets);
     this.dataSource.filterPredicate = (datasets, query = '') => {
-      return flattenTreeWithFilter(datasets, (dataset: DatasetInTree) => {
+      return flattenTreeWithFilter(datasets, (dataset: DatasetDetails) => {
         return dataset.id.toLowerCase().includes(query.toLowerCase());
       });
     };
