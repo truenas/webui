@@ -16,6 +16,7 @@ import { filter } from 'rxjs/operators';
 import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
 import { FailoverStatus } from 'app/enums/failover-status.enum';
 import { ProductType, productTypeLabels } from 'app/enums/product-type.enum';
+import { SystemEnvironment } from 'app/enums/system-environment.enum';
 import globalHelptext from 'app/helptext/global-helptext';
 import productText from 'app/helptext/product';
 import helptext from 'app/helptext/topbar';
@@ -62,6 +63,7 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
   };
   setPasswordFormGroup: UntypedFormGroup;
   hasRootPassword = true;
+  hasInstanceId = false;
   failoverStatus: FailoverStatus;
   failoverStatuses = {
     [FailoverStatus.Single]: '',
@@ -145,13 +147,23 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
       this.loginToken();
     }
 
-    this.ws.call('user.has_root_password').pipe(untilDestroyed(this)).subscribe((res) => {
-      this.hasRootPassword = res;
+    this.ws.call('user.has_root_password').pipe(untilDestroyed(this)).subscribe((hasRootPassword) => {
+      this.hasRootPassword = hasRootPassword;
+    });
+
+    this.ws.call('system.environment').pipe(untilDestroyed(this)).subscribe((env) => {
+      this.hasInstanceId = env === SystemEnvironment.Ec2;
+      if (this.hasInstanceId) {
+        this.instanceId.enable();
+      } else {
+        this.instanceId.disable();
+      }
     });
 
     this.setPasswordFormGroup = this.fb.group({
       password: new UntypedFormControl('', [Validators.required]),
       password2: new UntypedFormControl('', [Validators.required, matchOtherValidator('password')]),
+      instanceId: new UntypedFormControl('', [Validators.required]),
     });
 
     this.ws.call('auth.two_factor_auth').pipe(untilDestroyed(this)).subscribe((res) => {
@@ -295,6 +307,9 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
   get password2(): AbstractControl {
     return this.setPasswordFormGroup.get('password2');
   }
+  get instanceId(): AbstractControl {
+    return this.setPasswordFormGroup.get('instanceId');
+  }
 
   connected(): boolean {
     return this.ws.connected;
@@ -312,7 +327,11 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   setpassword(): void {
-    this.ws.call('user.set_root_password', [this.password.value]).pipe(untilDestroyed(this)).subscribe(
+    const request$ = this.hasInstanceId
+      ? this.ws.call('user.set_root_password', [this.password.value, { instance_id: this.instanceId.value }])
+      : this.ws.call('user.set_root_password', [this.password.value]);
+
+    request$.pipe(untilDestroyed(this)).subscribe(
       () => {
         this.ws.login('root', this.password.value)
           .pipe(untilDestroyed(this)).subscribe((result) => { this.loginCallback(result); });
