@@ -1,4 +1,4 @@
-$chart-size: 180px !default;
+$chart-size: 150px !default;
 
 :host {
   display: flex;
@@ -9,6 +9,11 @@ $chart-size: 180px !default;
 .chart-wrapper {
   height: $chart-size;
   width: $chart-size;
+}
+
+.chart-wrapper canvas {
+  height: $chart-size !important;
+  width: $chart-size !important;
 }
 
 .chart-description {
