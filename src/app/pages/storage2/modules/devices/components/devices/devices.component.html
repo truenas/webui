@@ -1,8 +1,12 @@
-<div class="container" fxLayoutGap="16px">
+<div
+  *appLet="selectedNode$ | async as selectedNode"
+  class="container"
+  fxLayoutGap="16px"
+>
   <div class="table-container">
     <ix-fake-progress-bar
       class="loader-bar"
-      [loading]="isLoading"
+      [loading]="isLoading$ | async"
     ></ix-fake-progress-bar>
 
     <div class="disk-search">
@@ -25,7 +29,7 @@
             ixTreeNodeToggle
             [ixTreeNodeToggleRecursive]="false"
             [ixTreeNodeDefDataSource]="dataSource"
-            [class.selected]="topologyItem.guid === selectedItem?.guid"
+            [class.selected]="topologyItem.guid === selectedNode?.guid"
             [routerLink]="['/storage2', poolId, 'devices', topologyItem.guid]"
             routerLinkActive="selected"
           >
@@ -66,7 +70,7 @@
             <div
               class="disk-nested-tree-root-node"
 
-              [class.selected]="vdev.guid === selectedItem?.guid"
+              [class.selected]="vdev.guid === selectedNode?.guid"
               [routerLink]="['/storage2', poolId, 'devices', vdev.guid]"
               routerLinkActive="selected"
             >
@@ -97,10 +101,10 @@
     [footerHeight]="footerHeight"
     >
     <ix-disk-details-panel
-      *ngIf="selectedItem"
-      [topologyItem]="selectedItem | cast"
-      [topologyParentItem]="selectedParentItem | cast"
-      [disk]="getDisk(selectedItem)"
+      *ngIf="selectedNode"
+      [topologyItem]="selectedNode | cast"
+      [topologyParentItem]="selectedParentNode$ | async | cast"
+      [disk]="getDisk(selectedNode)"
       [poolId]="poolId"
       [topologyCategory]=""
     ></ix-disk-details-panel>
