@@ -110,8 +110,12 @@ ix-dataset-details-panel {
 
 .dataset-tree-header {
   @include grid-row();
+
   align-items: center;
   color: var(--fg2);
+
+  // Override default fraction based values to avoid misaligned columns
+  grid-template-columns: auto 150px 150px 150px;
   min-height: 48px;
   padding-left: 48px;
 
