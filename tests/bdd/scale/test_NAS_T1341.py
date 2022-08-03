@@ -106,6 +106,13 @@ def advanced_dns_settings(driver):
     driver.find_element_by_xpath('//button[@ix-auto="button__NEXT_Advanced DNS Settings"]').click()
 
 
+@then('set Resource Limits')
+def set_resource_limits(driver):
+    """set Resource Limits."""
+    assert wait_on_element(driver, 7, '//button[@ix-auto="button__NEXT_Resource Limits"]', 'clickable')
+    driver.find_element_by_xpath('//button[@ix-auto="button__NEXT_Resource Limits"]').click()
+
+
 @then('confirm options')
 def confirm_options(driver):
     """confirm options."""
