@@ -38,17 +38,17 @@
 
   // One Cards Column
   @media (min-width: $breakpoint-singlecolumn) and (max-width: calc($breakpoint-dualcolumn - 1px)) {
-    min-width: calc(100% - ($card-width + $gap));
+    min-width: calc(98% - ($card-width + $gap));
   }
 
   // Two Cards Columns
   @media (min-width: $breakpoint-dualcolumn) and (max-width: calc($breakpoint-flex - 1px)) {
-    min-width: calc(80% - 2 * ($card-width + $gap) - 100px);
+    min-width: calc(98% - 2 * ($card-width + $gap));
   }
 
   // Three Cards Columns
   @media (min-width: $breakpoint-triplecolumn) and (max-width: calc($breakpoint-flex - 1px)) {
-    min-width: calc(100% - 3 * ($card-width + $gap));
+    min-width: calc(98% - 3 * ($card-width + $gap));
   }
 
   // Cards spill to the right

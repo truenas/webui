@@ -1,10 +1,10 @@
 $sidenav-width: 240px;
 $table-min-width: 700px;
-$table-width: 800px;
-$card-width: 520px;
+$table-width: 700px;
+$card-width: 455px;
 $gap: 8px;
-$breakpoint-singlecolumn: calc($card-width + $table-width + $sidenav-width);
-$breakpoint-dualcolumn: 2027px;
-$breakpoint-triplecolumn: 2560px;
+$breakpoint-singlecolumn: 1420px; //calc($card-width + $table-width + $sidenav-width);
+$breakpoint-dualcolumn: 1920px;
+$breakpoint-triplecolumn: 2500px;
 $breakpoint-flex: 3132px;
 $breakpoint-hidden: calc($breakpoint-singlecolumn - 1px);
