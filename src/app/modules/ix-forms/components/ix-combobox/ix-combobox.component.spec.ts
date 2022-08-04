@@ -139,7 +139,7 @@ describe('IxComboboxComponent', () => {
     });
   });
 
-  describe('spinner', () => {
+  describe('loader', () => {
     it('loader should be rendered if the provider receives async data', async () => {
       spectator.setInput('provider', new SimpleAsyncComboboxProvider(of([]).pipe(delay(300))));
       await new Promise((smth) => setTimeout(smth, 300));
