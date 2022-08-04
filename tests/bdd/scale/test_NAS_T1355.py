@@ -61,8 +61,8 @@ def click_three_dots_icon_for_chia_and_select_delete(driver):
     """click three dots icon for Chia and select delete."""
     assert wait_on_element(driver, 60, '//mat-card[contains(.,"chia-test")]//mat-icon[contains(.,"more_vert")]', 'clickable')
     driver.find_element_by_xpath('//mat-card[contains(.,"chia-test")]//mat-icon[contains(.,"more_vert")]').click()
-    assert wait_on_element(driver, 10, '//span[contains(.,"Delete")]', 'clickable')
-    driver.find_element_by_xpath('//span[contains(.,"Delete")]').click()
+    assert wait_on_element(driver, 10, '//button[contains(.,"Delete")]', 'clickable')
+    driver.find_element_by_xpath('//button[contains(.,"Delete")]').click()
 
 
 @then('confirm the delete confirmation')
