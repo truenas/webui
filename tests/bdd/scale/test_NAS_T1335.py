@@ -63,8 +63,8 @@ def click_the_three_dots_icon_and_select_delete(driver):
     """click the three dots icon and select delete."""
     assert wait_on_element(driver, 20, '//mat-card[contains(.,"collabora")]//mat-icon[contains(.,"more_vert")]', 'clickable')
     driver.find_element_by_xpath('//mat-card[contains(.,"collabora")]//mat-icon[contains(.,"more_vert")]').click()
-    assert wait_on_element(driver, 20, '//span[contains(.,"Delete")]', 'clickable')
-    driver.find_element_by_xpath('//span[contains(.,"Delete")]').click()
+    assert wait_on_element(driver, 20, '//button[contains(.,"Delete")]', 'clickable')
+    driver.find_element_by_xpath('//button[contains(.,"Delete")]').click()
 
 
 @then('confirm that you want to delete')
