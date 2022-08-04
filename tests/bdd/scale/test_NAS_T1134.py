@@ -93,6 +93,7 @@ def the_edit_permissions_page_should_open_select_ericbsd_for_user_click_on_the_a
     assert wait_on_element(driver, 5, '//div[contains(.,"Group - builtin_administrators") and contains(@class,"ace")]//mat-icon[text()="cancel"]', 'clickable')
     driver.find_element_by_xpath('//div[contains(.,"Group - builtin_administrators") and contains(@class,"ace")]//mat-icon[text()="cancel"]').click()
     time.sleep(0.5)
+    assert wait_on_element(driver, 5, '//div[contains(.,"Owner:") and contains(@class,"control")]//input', 'inputable')
     driver.find_element_by_xpath('//div[contains(.,"Owner:") and contains(@class,"control")]//input').clear()
     driver.find_element_by_xpath('//div[contains(.,"Owner:") and contains(@class,"control")]//input').send_keys(user)
     assert wait_on_element(driver, 5, '//div[contains(.,"Owner Group:") and contains(@class,"control")]//input', 'inputable')
