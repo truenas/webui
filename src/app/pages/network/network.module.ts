@@ -71,7 +71,12 @@ import { routing } from './network.routing';
     DownloadClientConfigModalComponent,
     IpmiIdentifyDialogComponent,
   ],
-  providers: [NetworkService, EntityFormService, CoreService, TranslateService],
+  providers: [
+    NetworkService,
+    EntityFormService,
+    CoreService,
+    TranslateService,
+  ],
 })
 export class NetworkModule {
 }

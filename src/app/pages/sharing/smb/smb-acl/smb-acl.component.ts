@@ -9,7 +9,7 @@ import { SmbSharesecPermission, SmbSharesecType } from 'app/enums/smb-sharesec.e
 import { helptextSharingSmb } from 'app/helptext/sharing';
 import { SmbSharesecAceUpdate } from 'app/interfaces/smb-share.interface';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
-import IxValidatorsService from 'app/modules/ix-forms/services/ix-validators.service';
+import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { WebSocketService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 

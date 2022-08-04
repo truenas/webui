@@ -1,7 +1,7 @@
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
-import { getDatasetAndParentsById } from 'app/pages/datasets/utils/get-datasets-in-tree-by-id.utils';
+import { getTreeBranchToNode } from 'app/pages/datasets/utils/get-tree-branch-to-node.utils';
 
-describe('getDatasetAndParentsById', () => {
+describe('getTreeBranchToNode', () => {
   const tree = [
     {
       id: 'root',
@@ -22,8 +22,8 @@ describe('getDatasetAndParentsById', () => {
     },
   ] as DatasetDetails[];
 
-  it('returns an array of parent and children datasets from the tree for the given id', () => {
-    const result = getDatasetAndParentsById(tree, 'root/parent/child');
+  it('returns an array of parent and children datasets from the tree by the predicate', () => {
+    const result = getTreeBranchToNode(tree, (dataset) => dataset.id === 'root/parent/child');
 
     expect(result.length).toBe(3);
     expect(result[0].id).toBe('root');
@@ -31,8 +31,8 @@ describe('getDatasetAndParentsById', () => {
     expect(result[2].id).toBe('root/parent/child');
   });
 
-  it('returns null when path cannot be fully resolved', () => {
-    const result = getDatasetAndParentsById(tree, 'non/existent');
+  it('returns null when none of the nodes matches predicate', () => {
+    const result = getTreeBranchToNode(tree, (dataset) => dataset.id === 'non/existent');
 
     expect(result).toBeNull();
   });

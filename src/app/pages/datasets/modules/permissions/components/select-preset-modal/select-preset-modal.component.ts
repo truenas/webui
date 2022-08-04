@@ -9,7 +9,7 @@ import helptext from 'app/helptext/storage/volumes/datasets/dataset-acl';
 import { AclTemplateByPath } from 'app/interfaces/acl.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { EntityUtils } from 'app/modules/entity/utils';
-import IxValidatorsService from 'app/modules/ix-forms/services/ix-validators.service';
+import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import {
   SelectPresetModalConfig,
 } from 'app/pages/datasets/modules/permissions/interfaces/select-preset-modal-config.interface';
