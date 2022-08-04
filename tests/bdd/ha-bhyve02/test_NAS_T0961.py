@@ -31,8 +31,6 @@ def the_browser_is_open_navigate_to_nas_url(driver, nas_url):
         driver.get(f"http://{nas_url}/ui/sessions/signin")
         assert wait_on_element(driver, 5, '//input[@data-placeholder="Username"]')
         time.sleep(1)
-    else:
-        driver.refresh()
 
 
 @when(parsers.parse('the login page appears, enter "{user}" and "{password}"'))
