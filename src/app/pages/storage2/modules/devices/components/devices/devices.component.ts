@@ -1,6 +1,6 @@
 import { NestedTreeControl } from '@angular/cdk/tree';
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, AfterViewInit, TemplateRef, ViewChild,
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -21,6 +21,7 @@ import { findInTree } from 'app/modules/ix-tree/utils/find-in-tree.utils';
 import { flattenTreeWithFilter } from 'app/modules/ix-tree/utils/flattern-tree-with-filter';
 import { DevicesStore } from 'app/pages/storage2/modules/devices/stores/devices-store.service';
 import { WebSocketService } from 'app/services';
+import { LayoutService } from 'app/services/layout.service';
 
 @UntilDestroy()
 @Component({
@@ -28,7 +29,8 @@ import { WebSocketService } from 'app/services';
   styleUrls: ['./devices.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class DevicesComponent implements OnInit {
+export class DevicesComponent implements OnInit, AfterViewInit {
+  @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
   topology: PoolTopology;
   selectedItem: TopologyItem;
   selectedParentItem: DeviceNestedDataNode | undefined;
@@ -47,6 +49,7 @@ export class DevicesComponent implements OnInit {
   readonly isVdevGroup = (_: number, node: DeviceNestedDataNode): boolean => isVdevGroup(node);
 
   constructor(
+    private layoutService: LayoutService,
     private ws: WebSocketService,
     private cdr: ChangeDetectorRef,
     private route: ActivatedRoute,
@@ -81,6 +84,10 @@ export class DevicesComponent implements OnInit {
     ).subscribe((guid) => {
       this.listenForRouteChanges(guid);
     });
+  }
+
+  ngAfterViewInit(): void {
+    this.layoutService.pageHeaderUpdater$.next(this.pageHeader);
   }
 
   private createDataSource(dataNodes: DeviceNestedDataNode[]): void {
@@ -159,6 +166,7 @@ export class DevicesComponent implements OnInit {
     });
 
     this.treeControl.expand(this.selectedParentItem);
+    this.layoutService.pageHeaderUpdater$.next(this.pageHeader);
     this.cdr.markForCheck();
   }
 
