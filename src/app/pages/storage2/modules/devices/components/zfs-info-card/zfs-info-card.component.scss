@@ -3,3 +3,8 @@
 .card {
   @include details-card();
 }
+
+mat-card-actions button {
+  margin-left: 8px;
+  margin-right: 0;
+}
