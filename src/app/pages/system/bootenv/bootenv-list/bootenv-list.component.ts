@@ -7,7 +7,7 @@ import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { filter } from 'rxjs/operators';
-import { BootEnvironmentActions } from 'app/enums/bootenv-actions.enum';
+import { BootEnvironmentAction } from 'app/enums/boot-environment-action.enum';
 import { helptextSystemBootenv } from 'app/helptext/system/boot-env';
 import { Bootenv } from 'app/interfaces/bootenv.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
@@ -130,7 +130,7 @@ export class BootEnvironmentListComponent implements EntityTableConfig {
       id: 'clone',
       onClick: (row: BootenvRow) => {
         const modal = this.slideInService.open(BootEnvironmentFormComponent);
-        modal.setupForm(BootEnvironmentActions.Clone, row.id);
+        modal.setupForm(BootEnvironmentAction.Clone, row.id);
       },
     });
 
@@ -139,7 +139,7 @@ export class BootEnvironmentListComponent implements EntityTableConfig {
       id: 'rename',
       onClick: (row: BootenvRow) => {
         const modal = this.slideInService.open(BootEnvironmentFormComponent);
-        modal.setupForm(BootEnvironmentActions.Rename, row.id);
+        modal.setupForm(BootEnvironmentAction.Rename, row.id);
       },
     });
 
@@ -288,7 +288,7 @@ export class BootEnvironmentListComponent implements EntityTableConfig {
       label: this.translate.instant('Add'),
       onClick: () => {
         const modal = this.slideInService.open(BootEnvironmentFormComponent);
-        modal.setupForm(BootEnvironmentActions.Create);
+        modal.setupForm(BootEnvironmentAction.Create);
       },
     }, {
       label: this.translate.instant('Stats/Settings'),

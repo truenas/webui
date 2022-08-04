@@ -32,12 +32,14 @@ export class ResilverProgressDialogComponent implements OnInit {
 
   ngOnInit(): void {
     this.ws.subscribe('zfs.pool.scan').pipe(untilDestroyed(this)).subscribe((res) => {
-      if (res && res.fields.scan.function.includes(PoolScanFunction.Resilver)) {
-        this.resilveringDetails = res.fields;
-        this.diskName = this.resilveringDetails.name;
-        this.progressTotalPercent = this.resilveringDetails.scan.percentage;
-        this.state = this.resilveringDetails.scan.state;
+      if (!res || !res.fields.scan.function.includes(PoolScanFunction.Resilver)) {
+        return;
       }
+
+      this.resilveringDetails = res.fields;
+      this.diskName = this.resilveringDetails.name;
+      this.progressTotalPercent = this.resilveringDetails.scan.percentage;
+      this.state = this.resilveringDetails.scan.state;
     });
   }
 }

@@ -4,7 +4,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
-import { BootEnvironmentActions } from 'app/enums/bootenv-actions.enum';
+import { BootEnvironmentAction } from 'app/enums/boot-environment-action.enum';
 import { IxInputHarness } from 'app/modules/ix-forms/components/ix-input/ix-input.harness';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
@@ -43,7 +43,7 @@ describe('BootEnvironmentFormComponent', () => {
   */
   describe('creating a boot environment', () => {
     beforeEach(() => {
-      spectator.component.setupForm(BootEnvironmentActions.Create);
+      spectator.component.setupForm(BootEnvironmentAction.Create);
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     });
 
@@ -68,7 +68,7 @@ describe('BootEnvironmentFormComponent', () => {
   describe('cloning a boot environment', () => {
     const cloneSource = 'original';
     beforeEach(() => {
-      spectator.component.setupForm(BootEnvironmentActions.Clone, cloneSource);
+      spectator.component.setupForm(BootEnvironmentAction.Clone, cloneSource);
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     });
 
@@ -102,7 +102,7 @@ describe('BootEnvironmentFormComponent', () => {
   */
   describe('renaming a boot environment', () => {
     beforeEach(() => {
-      spectator.component.setupForm(BootEnvironmentActions.Rename, 'myBootEnv');
+      spectator.component.setupForm(BootEnvironmentAction.Rename, 'myBootEnv');
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     });
 

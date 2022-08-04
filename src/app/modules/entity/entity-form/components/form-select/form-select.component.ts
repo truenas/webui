@@ -114,13 +114,15 @@ export class FormSelectComponent implements Field, AfterViewInit, AfterViewCheck
   }
 
   ngAfterViewChecked(): void {
-    if (!this.formReady && typeof this.config.options !== 'undefined' && this.config.options && this.config.options.length > 0) {
-      const newStates = this.config.options.map((item) => item && this.selectedValues.includes(item.value));
-      this.selectStates = newStates;
-      this.updateValues();
-      this.formReady = true;
-      this.cd.detectChanges();
+    if (this.formReady || typeof this.config.options === 'undefined' || !this.config.options || this.config.options.length <= 0) {
+      return;
     }
+
+    const newStates = this.config.options.map((item) => item && this.selectedValues.includes(item.value));
+    this.selectStates = newStates;
+    this.updateValues();
+    this.formReady = true;
+    this.cd.detectChanges();
   }
 
   onChangeOption($event: MatSelectChange): void {
