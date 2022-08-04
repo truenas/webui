@@ -224,14 +224,16 @@ export class NetworkComponent implements OnInit, OnDestroy {
       .register({ observerClass: this, eventName: 'NetworkInterfacesChanged' })
       .pipe(untilDestroyed(this))
       .subscribe((evt: NetworkInterfacesChangedEvent) => {
-        if (evt && evt.data.checkin) {
-          this.checkinRemaining = null;
-          this.checkinWaiting = false;
-          if (this.checkinInterval) {
-            clearInterval(this.checkinInterval);
-          }
-          this.hasPendingChanges = false;
+        if (!evt || !evt.data.checkin) {
+          return;
         }
+
+        this.checkinRemaining = null;
+        this.checkinWaiting = false;
+        if (this.checkinInterval) {
+          clearInterval(this.checkinInterval);
+        }
+        this.hasPendingChanges = false;
       });
 
     if (window.localStorage.getItem('product_type') === ProductType.ScaleEnterprise) {

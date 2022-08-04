@@ -205,15 +205,17 @@ export class VolumesListTableConfig implements EntityTableConfig {
                 ]);
                 dialogRef.componentInstance.submit();
                 dialogRef.componentInstance.success.pipe(untilDestroyed(this, 'destroy')).subscribe((res: Job<Pool>) => {
-                  if (res) {
-                    dialogRef.close();
-                    entityDialog.dialogRef.close();
-                    this.dialogService.info(
-                      helptext.pool_options_dialog.dialog_saved_title,
-                      this.translate.instant('Pool options for {poolName} successfully saved.', { poolName: row.name }),
-                    );
-                    this.parentVolumesListComponent.repaintMe();
+                  if (!res) {
+                    return;
                   }
+
+                  dialogRef.close();
+                  entityDialog.dialogRef.close();
+                  this.dialogService.info(
+                    helptext.pool_options_dialog.dialog_saved_title,
+                    this.translate.instant('Pool options for {poolName} successfully saved.', { poolName: row.name }),
+                  );
+                  this.parentVolumesListComponent.repaintMe();
                 });
                 dialogRef.componentInstance.failure.pipe(untilDestroyed(this, 'destroy')).subscribe((err) => {
                   if (err) {

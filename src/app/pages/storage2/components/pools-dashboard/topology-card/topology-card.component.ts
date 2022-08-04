@@ -87,14 +87,16 @@ export class TopologyCardComponent implements OnInit, OnChanges {
   }
 
   parseTopology(topology: PoolTopology): void {
-    if (topology) {
-      this.topologyState.data = this.parseDevs(topology.data);
-      this.topologyState.metadata = this.parseDevs(topology.special);
-      this.topologyState.log = this.parseDevs(topology.log);
-      this.topologyState.cache = this.parseDevs(topology.cache);
-      this.topologyState.spare = this.parseDevs(topology.spare);
-      this.topologyState.dedup = this.parseDevs(topology.dedup);
+    if (!topology) {
+      return;
     }
+
+    this.topologyState.data = this.parseDevs(topology.data);
+    this.topologyState.metadata = this.parseDevs(topology.special);
+    this.topologyState.log = this.parseDevs(topology.log);
+    this.topologyState.cache = this.parseDevs(topology.cache);
+    this.topologyState.spare = this.parseDevs(topology.spare);
+    this.topologyState.dedup = this.parseDevs(topology.dedup);
   }
 
   private parseDevs(devs: TopologyItem[]): string {

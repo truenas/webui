@@ -17,7 +17,7 @@ export enum NetworkInterfaceAliasType {
   Inet6 = 'INET6',
 }
 
-export enum NetworkInterfaceFlags {
+export enum NetworkInterfaceFlag {
   Multicast = 'MULTICAST',
   Up = 'UP',
   Broadcast = 'BROADCAST',

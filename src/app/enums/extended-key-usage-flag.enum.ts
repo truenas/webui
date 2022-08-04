@@ -1,4 +1,4 @@
-export enum ExtendedKeyUsages {
+export enum ExtendedKeyUsageFlag {
   AnyExtendedKeyUsage = 'ANY_EXTENDED_KEY_USAGE',
   ClientAuth = 'CLIENT_AUTH',
   CodeSigning = 'CODE_SIGNING',

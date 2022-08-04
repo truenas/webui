@@ -125,21 +125,23 @@ export class DiskBulkEditComponent {
     this.ws.job('core.bulk', ['disk.update', req])
       .pipe(untilDestroyed(this)).subscribe(
         (res) => {
-          if (res.state === JobState.Success) {
-            this.isLoading = false;
-            let isSuccessful = true;
-            for (const result of res.result) {
-              if (result.error !== null) {
-                this.slideInService.close();
-                this.dialogService.errorReport(helptext.dialog_error, result.error);
-                isSuccessful = false;
-                break;
-              }
-            }
-            if (isSuccessful) {
+          if (res.state !== JobState.Success) {
+            return;
+          }
+
+          this.isLoading = false;
+          let isSuccessful = true;
+          for (const result of res.result) {
+            if (result.error !== null) {
               this.slideInService.close();
-              this.dialogService.info(helptext.dialog_title, succcessText, true);
+              this.dialogService.errorReport(helptext.dialog_error, result.error);
+              isSuccessful = false;
+              break;
             }
+          }
+          if (isSuccessful) {
+            this.slideInService.close();
+            this.dialogService.info(helptext.dialog_title, succcessText, true);
           }
         },
         (err) => {
