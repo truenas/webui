@@ -3,10 +3,29 @@ import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { FormControl } from '@ngneat/reactive-forms';
 import { createHostFactory, Spectator } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
+import { Observable, of } from 'rxjs';
+import { delay } from 'rxjs/operators';
+import { Option } from 'app/interfaces/option.interface';
+import { SimpleAsyncComboboxProvider } from 'app/modules/ix-forms/classes/simple-async-combobox-provider';
 import { SimpleComboboxProvider } from 'app/modules/ix-forms/classes/simple-combobox-provider';
+import { IxComboboxProvider } from 'app/modules/ix-forms/components/ix-combobox/ix-combobox-provider';
 import { IxComboboxComponent } from 'app/modules/ix-forms/components/ix-combobox/ix-combobox.component';
 import { IxErrorsComponent } from 'app/modules/ix-forms/components/ix-errors/ix-errors.component';
 import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
+
+class FakeProvider implements IxComboboxProvider {
+  constructor(private options: Option[]) { }
+
+  fetch(filterValue: string): Observable<Option[]> {
+    this.options[0].label = filterValue;
+    return of(this.options)
+      .pipe(delay(100));
+  }
+
+  nextPage(filterValue: string): Observable<Option[]> {
+    return this.fetch(filterValue);
+  }
+}
 
 describe('IxComboboxComponent', () => {
   let spectator: Spectator<IxComboboxComponent>;
@@ -117,6 +136,36 @@ describe('IxComboboxComponent', () => {
       spectator.detectComponentChanges();
 
       expect(spectator.query('input')).toBeDisabled();
+    });
+  });
+
+  describe('spinner', () => {
+    it('loader should be rendered if the provider receives async data', async () => {
+      spectator.setInput('provider', new SimpleAsyncComboboxProvider(of([]).pipe(delay(300))));
+      await new Promise((smth) => setTimeout(smth, 300));
+      spectator.detectChanges();
+
+      expect(spectator.query('mat-progress-spinner')).toBeVisible();
+    });
+
+    it('loader should be rendered during the loading of options after type in input', async () => {
+      const provider = [{ label: 'test1', value: 'value1' }];
+      spectator.setInput('provider', new FakeProvider(provider));
+      await new Promise((smth) => setTimeout(smth, 300));
+      await new Promise((smth) => setTimeout(smth, 100));
+      spectator.typeInElement('test', 'input');
+      await new Promise((smth) => setTimeout(smth, 300));
+      spectator.detectChanges();
+
+      expect(spectator.query('mat-progress-spinner')).toBeVisible();
+    });
+
+    it('loader should be removed after loading options', async () => {
+      spectator.setInput('provider', new SimpleAsyncComboboxProvider(of([])));
+      await new Promise((smth) => setTimeout(smth, 300));
+      spectator.detectChanges();
+
+      expect(spectator.query('mat-progress-spinner')).not.toBeVisible();
     });
   });
 });

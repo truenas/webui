@@ -16,19 +16,19 @@
       (blur)="onTouch()"
       (ngModelChange)="onChange($event)"
     >
-      <ng-container *ngIf="opts$ | async as opts; else errorTemplate">
+      <ng-container *ngIf="opts$ | async as opts; else loadingOrError">
         <mat-option *ngIf="opts.length === 0" [value]="null" [disabled]="true">{{ 'No options' | translate  }}</mat-option>
         <mat-option *ngIf="opts.length > 0 && !multiple && !required && !hideEmpty" [value]="emptyValue">--</mat-option>
         <mat-option *ngFor="let option of opts" [value]="option.value">{{ option.label }}</mat-option>
       </ng-container>
 
-      <ng-template #errorTemplate>
+      <ng-template #loadingOrError>
         <ng-container *ngIf="hasErrorInOptions">
           <mat-option [disabled]="true">{{ 'Options cannot be loaded' | translate }}</mat-option>
         </ng-container>
       </ng-template>
     </mat-select>
-    <mat-progress-spinner *ngIf="isLoad" class="loader" mode="indeterminate" [diameter]="15"></mat-progress-spinner>
+    <mat-progress-spinner *ngIf="isLoading" class="loader" mode="indeterminate" [diameter]="15"></mat-progress-spinner>
   </div>
 
   <ix-errors [control]="controlDirective.control" [label]="label"></ix-errors>

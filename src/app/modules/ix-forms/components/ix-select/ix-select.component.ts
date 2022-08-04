@@ -34,7 +34,7 @@ export class IxSelectComponent implements ControlValueAccessor, OnChanges {
   isDisabled = false;
   hasErrorInOptions = false;
   opts$: Observable<Option[]>;
-  isLoad = false;
+  isLoading = false;
 
   constructor(
     public controlDirective: NgControl,
@@ -48,13 +48,16 @@ export class IxSelectComponent implements ControlValueAccessor, OnChanges {
       this.hasErrorInOptions = true;
     } else {
       this.hasErrorInOptions = false;
-      this.isLoad = true;
+      this.isLoading = true;
       this.opts$ = this.options.pipe(
         catchError(() => {
           this.hasErrorInOptions = true;
           return EMPTY;
         }),
-        tap(() => { this.isLoad = false; }),
+        tap(() => {
+          this.isLoading = false;
+          this.cdr.markForCheck();
+        }),
       );
     }
   }
