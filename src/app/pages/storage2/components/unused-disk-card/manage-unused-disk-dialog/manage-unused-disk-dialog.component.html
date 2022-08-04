@@ -4,8 +4,8 @@
   <div mat-dialog-content>
     <h4>{{ 'Unassigned Disks' | translate }}</h4>
     <ul class="unused-disks">
-      <li *ngFor="let disk of resource.unusedDisks">
-        {{ disk.devname }}
+      <li *ngFor="let disk of groupedDisks">
+        {{ disk }}
       </li>
     </ul>
 
