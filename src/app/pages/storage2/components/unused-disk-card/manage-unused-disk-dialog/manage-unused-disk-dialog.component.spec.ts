@@ -34,8 +34,8 @@ describe('ManageUnusedDiskDialogComponent', () => {
             { id: 2, name: 'TEST' },
           ] as Pool[],
           unusedDisks: [
-            { devname: 'sdb', identifier: '{serial_lunid}BBBBB1' },
-            { devname: 'sdc', identifier: '{uuid}7ad07324-f0e9-49a4-a7a4-92edd82a4929' },
+            { devname: 'sdb', size: 102400000, identifier: '{serial_lunid}BBBBB1' },
+            { devname: 'sdc', size: 204800000, identifier: '{uuid}7ad07324-f0e9-49a4-a7a4-92edd82a4929' },
           ] as UnusedDisk[],
         } as ManageUnusedDiskDialogResource,
       },
