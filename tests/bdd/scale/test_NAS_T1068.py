@@ -6,7 +6,7 @@ from function import (
     wait_on_element,
     is_element_present,
     wait_on_element_disappear,
-)    
+)
 from pytest_bdd import (
     given,
     scenario,
@@ -60,7 +60,7 @@ def the_users_page_should_open_click_the_down_carat_sign_right_of_the_users(driv
 @when('the User Field should expand down, then click the Edit button')
 def the_user_field_should_expand_down_then_click_the_edit_button(driver):
     """the User Field should expand down, then click the Edit button."""
-    #time.sleep(1)
+    # time.sleep(1)
     assert wait_on_element(driver, 10, '(//tr[contains(.,"ericbsd")]/following-sibling::tr)[1]//button[contains(.,"Edit")]', 'clickable')
     driver.find_element_by_xpath('(//tr[contains(.,"ericbsd")]/following-sibling::tr)[1]//button[contains(.,"Edit")]').click()
 
