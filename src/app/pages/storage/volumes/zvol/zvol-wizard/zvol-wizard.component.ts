@@ -424,18 +424,20 @@ export class ZvolWizardComponent implements WizardConfiguration {
   afterInit(entityWizard: EntityWizardComponent): void {
     const zvolEntityForm = this.entityWizard.formArray.get([1]) as UntypedFormGroup;
     (entityWizard.formArray.get([0]) as UntypedFormGroup).get('path').valueChanges.pipe(untilDestroyed(this)).subscribe((pool: string) => {
-      if (pool.includes('mnt')) {
-        const split = pool.split('/');
-        this.parent = '';
-        for (let i = 2; i < split.length; i++) {
-          this.parent += split[i];
-          if (i + 1 < split.length) {
-            this.parent += '/';
-          }
-        }
-        this.summary[this.translate.instant('Dataset Path')] = this.parent;
-        (entityWizard.formArray.get([0]) as UntypedFormGroup).controls['path'].setValue(this.parent);
+      if (!pool.includes('mnt')) {
+        return;
       }
+
+      const split = pool.split('/');
+      this.parent = '';
+      for (let i = 2; i < split.length; i++) {
+        this.parent += split[i];
+        if (i + 1 < split.length) {
+          this.parent += '/';
+        }
+      }
+      this.summary[this.translate.instant('Dataset Path')] = this.parent;
+      (entityWizard.formArray.get([0]) as UntypedFormGroup).controls['path'].setValue(this.parent);
     });
     zvolEntityForm.controls['name'].valueChanges.pipe(untilDestroyed(this)).subscribe((name) => {
       this.summary[this.translate.instant('Zvol Name')] = name;

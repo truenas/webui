@@ -348,15 +348,17 @@ export class VmFormComponent implements FormConfiguration {
   }
 
   memoryBlur(): void {
-    if (this.entityForm) {
-      this.entityForm.formGroup.controls['memory'].setValue(this.storageService.humanReadable);
-      const valString = (this.entityForm.formGroup.controls['memory'].value);
-      const valBytes = Math.round(this.storageService.convertHumanStringToNum(valString) / 1048576);
-      if (valBytes < 256) {
-        const mem = _.find(this.fieldConfig, { name: 'memory' });
-        mem['hasErrors'] = true;
-        mem['errors'] = helptext.memory_size_err;
-      }
+    if (!this.entityForm) {
+      return;
+    }
+
+    this.entityForm.formGroup.controls['memory'].setValue(this.storageService.humanReadable);
+    const valString = (this.entityForm.formGroup.controls['memory'].value);
+    const valBytes = Math.round(this.storageService.convertHumanStringToNum(valString) / 1048576);
+    if (valBytes < 256) {
+      const mem = _.find(this.fieldConfig, { name: 'memory' });
+      mem['hasErrors'] = true;
+      mem['errors'] = helptext.memory_size_err;
     }
   }
 

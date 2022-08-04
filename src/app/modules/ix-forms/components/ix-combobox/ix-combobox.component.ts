@@ -102,6 +102,8 @@ export class IxComboboxComponent implements ControlValueAccessor, OnInit {
       untilDestroyed(this),
     ).subscribe((options: Option[]) => {
       this.loading = false;
+      this.cdr.markForCheck();
+
       this.options = options;
       const selectedOptionFromLabel = this.options.find((option: Option) => option.label === filterValue);
       if (selectedOptionFromLabel) {
@@ -161,6 +163,7 @@ export class IxComboboxComponent implements ControlValueAccessor, OnInit {
           this.provider?.nextPage(this.filterValue !== null || this.filterValue !== undefined ? this.filterValue : '')
             .pipe(untilDestroyed(this)).subscribe((options: Option[]) => {
               this.loading = false;
+              this.cdr.markForCheck();
               /**
                * The following logic checks if we used a fake option to show value for an option that exists
                * on one of the following pages of the list of options for this combobox. If we have done so

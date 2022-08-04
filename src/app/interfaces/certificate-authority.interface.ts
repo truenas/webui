@@ -2,7 +2,7 @@ import { CaCreateType } from 'app/enums/ca-create-type.enum';
 import { CertificateDigestAlgorithm } from 'app/enums/ca-digest-algorithm.enum';
 import { CertificateKeyType } from 'app/enums/ca-key-type.enum';
 import { EcCurve } from 'app/enums/ec-curve.enum';
-import { ExtendedKeyUsages } from 'app/enums/extended-key-usages.enum';
+import { ExtendedKeyUsageFlag } from 'app/enums/extended-key-usage-flag.enum';
 
 export interface BasicConstraints {
   ca: boolean;
@@ -18,7 +18,7 @@ export interface AuthorityKeyIdentifier {
 }
 
 export interface ExtendedKeyUsage {
-  usages: ExtendedKeyUsages;
+  usages: ExtendedKeyUsageFlag;
   enabled: boolean;
   extension_critical: boolean;
 }

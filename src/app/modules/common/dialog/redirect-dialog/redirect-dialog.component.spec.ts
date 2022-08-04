@@ -35,13 +35,15 @@ describe('RedirectDialogComponent', () => {
   });
 
   it('copies URL when Copy URL is pressed', async () => {
-    if (document.execCommand) {
-      jest.spyOn(document, 'execCommand').mockImplementation();
-      const loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-      const button = await loader.getHarness(MatButtonHarness.with({ text: 'Copy URL' }));
-      await button.click();
-
-      expect(document.execCommand).toHaveBeenCalledWith('copy');
+    if (!document.execCommand) {
+      return;
     }
+
+    jest.spyOn(document, 'execCommand').mockImplementation();
+    const loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    const button = await loader.getHarness(MatButtonHarness.with({ text: 'Copy URL' }));
+    await button.click();
+
+    expect(document.execCommand).toHaveBeenCalledWith('copy');
   });
 });
