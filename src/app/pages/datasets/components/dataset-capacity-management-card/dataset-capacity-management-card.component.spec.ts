@@ -8,28 +8,45 @@ import { of } from 'rxjs';
 import { mockWebsocket, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
 import { DatasetType } from 'app/enums/dataset.enum';
 import { DatasetQuota } from 'app/interfaces/dataset-quota.interface';
-import { Dataset, DatasetDetails } from 'app/interfaces/dataset.interface';
+import { Dataset } from 'app/interfaces/dataset.interface';
 import { DatasetCapacityManagementCardComponent } from 'app/pages/datasets/components/dataset-capacity-management-card/dataset-capacity-management-card.component';
 import { DatasetCapacitySettingsComponent } from 'app/pages/datasets/components/dataset-capacity-management-card/dataset-capacity-settings/dataset-capacity-settings.component';
 import { SpaceManagementChartComponent } from 'app/pages/datasets/components/space-management-chart/space-management-chart.component';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
+const dataset = {
+  refreservation: {
+    parsed: 1024,
+  },
+  reservation: {
+    parsed: 4096,
+  },
+  volsize: {
+    parsed: 2048,
+  },
+  quota: {
+    parsed: 8388608,
+  },
+} as Dataset;
+
 const datasetFilesystem = {
+  ...dataset,
   id: 'filesystem pool',
   type: DatasetType.Filesystem,
   available: {
     parsed: 1395752960,
   },
-} as DatasetDetails;
+} as Dataset;
 
 const datasetZvol = {
+  ...dataset,
   id: 'zvol pool',
   type: DatasetType.Volume,
   available: {
     parsed: 1395752960 * 2,
   },
-} as DatasetDetails;
+} as Dataset;
 
 describe('DatasetCapacityManagementCardComponent', () => {
   let spectator: Spectator<DatasetCapacityManagementCardComponent>;
@@ -44,20 +61,6 @@ describe('DatasetCapacityManagementCardComponent', () => {
     ],
     providers: [
       mockWebsocket([
-        mockCall('pool.dataset.query', [{
-          refreservation: {
-            parsed: 1024,
-          },
-          reservation: {
-            parsed: 4096,
-          },
-          volsize: {
-            parsed: 2048,
-          },
-          quota: {
-            parsed: 8388608,
-          },
-        } as Dataset]),
         mockCall('pool.dataset.get_quota', [
           { id: 1 },
           { id: 2 },

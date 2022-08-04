@@ -73,7 +73,7 @@
     <ix-dataset-details-panel
       *ngIf="selectedDataset$ | async as selectedDataset"
       [dataset]="selectedDataset"
-      [parentDataset]="selectedParentDataset$ | async"
+      [isLoading]="isLoadingDataset"
     ></ix-dataset-details-panel>
   </div>
 </div>

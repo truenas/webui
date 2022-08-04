@@ -36,10 +36,13 @@ describe('DatasetDetailsPanelComponent', () => {
     mountpoint: '/mnt/root/parent/child',
     type: DatasetType.Filesystem,
     encrypted: true,
-  } as DatasetDetails;
-  const parentDataset = {
-    name: 'root/parent',
   } as Dataset;
+  const datasetDetails = {
+    ...dataset,
+  } as DatasetDetails;
+  const parentDatasetDetails = {
+    name: 'root/parent',
+  } as DatasetDetails;
   const createComponent = createComponentFactory({
     component: DatasetDetailsPanelComponent,
     declarations: [
@@ -57,7 +60,10 @@ describe('DatasetDetailsPanelComponent', () => {
         openInSlideIn: jest.fn(() => fakeModalRef),
         onClose$: of(),
       }),
-      mockProvider(DatasetTreeStore),
+      mockProvider(DatasetTreeStore, {
+        selectedDataset$: of(datasetDetails),
+        selectedParentDataset$: of(parentDatasetDetails),
+      }),
     ],
   });
 
@@ -65,7 +71,6 @@ describe('DatasetDetailsPanelComponent', () => {
     spectator = createComponent({
       props: {
         dataset,
-        parentDataset,
       },
     });
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
@@ -96,13 +101,17 @@ describe('DatasetDetailsPanelComponent', () => {
     expect(datasetDetailsCard).toBeTruthy();
     expect(datasetDetailsCard.dataset).toBe(dataset);
 
+    const dataProtectionCard = spectator.query(DataProtectionCardComponent);
+    expect(dataProtectionCard).toBeTruthy();
+    expect(dataProtectionCard.dataset).toBe(datasetDetails);
+
     const permissionsCard = spectator.query(PermissionsCardComponent);
     expect(permissionsCard).toBeTruthy();
-    expect(permissionsCard.dataset).toBe(dataset);
+    expect(permissionsCard.dataset).toBe(datasetDetails);
 
     const zfsEncryptionCard = spectator.query(ZfsEncryptionCardComponent);
     expect(zfsEncryptionCard).toBeTruthy();
-    expect(zfsEncryptionCard.dataset).toBe(dataset);
+    expect(zfsEncryptionCard.dataset).toBe(datasetDetails);
 
     const datasetCapacityManagementCard = spectator.query(DatasetCapacityManagementCardComponent);
     expect(datasetCapacityManagementCard).toBeTruthy();

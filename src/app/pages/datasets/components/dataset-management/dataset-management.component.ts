@@ -4,7 +4,11 @@ import {
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { filter, pluck } from 'rxjs/operators';
+import { EMPTY } from 'rxjs';
+import {
+  catchError,
+  filter, map, pluck, switchMap, tap,
+} from 'rxjs/operators';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { footerHeight, headerHeight } from 'app/modules/common/layouts/admin-layout/admin-layout.component.const';
 import { IxNestedTreeDataSource } from 'app/modules/ix-tree/ix-nested-tree-datasource';
@@ -20,7 +24,26 @@ import { WebSocketService } from 'app/services';
 })
 export class DatasetsManagementComponent implements OnInit {
   isLoading$ = this.datasetStore.isLoading$;
-  selectedDataset$ = this.datasetStore.selectedDataset$;
+  isLoadingDataset = false;
+  selectedDataset$ = this.datasetStore.selectedDataset$.pipe(
+    tap(() => {
+      this.isLoadingDataset = true;
+      this.cdr.markForCheck();
+    }),
+    filter((dataset) => !!dataset?.id),
+    switchMap((dataset) => this.ws.call('pool.dataset.query', [[['id', '=', dataset.id]]]).pipe(
+      map((datasets) => datasets[0]),
+      tap((dataset) => console.info('query', dataset)),
+      catchError((error) => {
+        console.error(error);
+        return EMPTY;
+      }),
+    )),
+    tap(() => {
+      this.isLoadingDataset = false;
+      this.cdr.markForCheck();
+    }),
+  );
   selectedParentDataset$ = this.datasetStore.selectedParentDataset$;
 
   dataSource: IxNestedTreeDataSource<DatasetDetails>;
