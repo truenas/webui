@@ -18,7 +18,6 @@ import { FileTicketLicensedFormComponent } from 'app/pages/system/file-ticket/fi
   imports: [
     CommonModule,
     MatButtonModule,
-    IxIconModule,
     MatCardModule,
     MatTooltipModule,
     MatFormFieldModule,
@@ -27,6 +26,7 @@ import { FileTicketLicensedFormComponent } from 'app/pages/system/file-ticket/fi
     JobsModule,
     TranslateModule,
     TooltipModule,
+    IxIconModule,
   ],
   declarations: [
     FileTicketFormComponent,
