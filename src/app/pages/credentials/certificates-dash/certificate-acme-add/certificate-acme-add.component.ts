@@ -12,7 +12,7 @@ import { helptextSystemCertificates } from 'app/helptext/system/certificates';
 import { Certificate } from 'app/interfaces/certificate.interface';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
-import IxValidatorsService from 'app/modules/ix-forms/services/ix-validators.service';
+import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { DialogService, WebSocketService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
@@ -33,7 +33,7 @@ export class CertificateAcmeAddComponent {
     ]],
     tos: [false, Validators.requiredTrue],
     renew_days: [10, [Validators.required, Validators.min(0)]],
-    acme_directory_uri: [''],
+    acme_directory_uri: ['', Validators.required],
     domains: this.formBuilder.array<string>([]),
   });
 

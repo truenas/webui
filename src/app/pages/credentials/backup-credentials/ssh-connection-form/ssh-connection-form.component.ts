@@ -19,7 +19,7 @@ import {
 import { SshConnectionSetup } from 'app/interfaces/ssh-connection-setup.interface';
 import { SshCredentials } from 'app/interfaces/ssh-credentials.interface';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
-import IxValidatorsService from 'app/modules/ix-forms/services/ix-validators.service';
+import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { AppLoaderService, KeychainCredentialService, WebSocketService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
@@ -40,7 +40,10 @@ export class SshConnectionFormComponent {
       (control) => control.parent && this.isManualSetup,
       Validators.required,
     )],
-    port: [22],
+    port: [22, this.validatorsService.validateOnCondition(
+      (control) => control.parent && this.isManualSetup,
+      Validators.required,
+    )],
     remote_host_key: [''],
 
     url: ['', this.validatorsService.validateOnCondition(

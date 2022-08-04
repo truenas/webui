@@ -153,7 +153,7 @@ describe('InterfaceFormComponent', () => {
         Type: 'Link Aggregation',
       });
       await form.fillForm({
-        Name: 'br0',
+        Name: 'bond0',
         Description: 'LAG',
         DHCP: true,
         'Link Aggregation Protocol': 'LACP',
@@ -170,7 +170,7 @@ describe('InterfaceFormComponent', () => {
 
       expect(ws.call).toHaveBeenLastCalledWith('interface.create', [{
         type: NetworkInterfaceType.LinkAggregation,
-        name: 'br0',
+        name: 'bond0',
         description: 'LAG',
         aliases: [],
         ipv4_dhcp: true,

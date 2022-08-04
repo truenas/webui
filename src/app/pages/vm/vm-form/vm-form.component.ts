@@ -103,6 +103,12 @@ export class VmFormComponent implements FormConfiguration {
           placeholder: helptext.autostart_placeholder,
           tooltip: helptext.autostart_tooltip,
         },
+        {
+          type: 'checkbox',
+          name: 'hyperv_enlightenments',
+          placeholder: helptext.hyperv_enlightenments_placeholder,
+          tooltip: helptext.hyperv_enlightenments_tooltip,
+        },
       ],
     },
     {
@@ -143,6 +149,19 @@ export class VmFormComponent implements FormConfiguration {
           validation: [Validators.required, Validators.min(1), this.cpuValidator('threads')],
         },
         {
+          type: 'input',
+          name: 'cpuset',
+          placeholder: helptext.cpuset.placeholder,
+          tooltip: helptext.cpuset.tooltip,
+          validation: [Validators.pattern('^((\\d+)|(\\d+-\\d+))(,((\\d+)|(\\d+-\\d+)))*$')],
+        },
+        {
+          type: 'checkbox',
+          name: 'pin_vcpus',
+          placeholder: helptext.pin_vcpus.placeholder,
+          tooltip: helptext.pin_vcpus.tooltip,
+        },
+        {
           type: 'select',
           name: 'cpu_mode',
           placeholder: helptext.cpu_mode.placeholder,
@@ -168,6 +187,13 @@ export class VmFormComponent implements FormConfiguration {
           blurStatus: true,
           blurEvent: () => this.memoryBlur(),
           parent: this,
+        },
+        {
+          type: 'input',
+          name: 'nodeset',
+          placeholder: helptext.nodeset.placeholder,
+          tooltip: helptext.nodeset.tooltip,
+          validation: [Validators.pattern('^((\\d+)|(\\d+-\\d+))(,((\\d+)|(\\d+-\\d+)))*$')],
         },
 
       ],
@@ -221,7 +247,7 @@ export class VmFormComponent implements FormConfiguration {
     private translate: TranslateService,
     private dialogService: DialogService,
     private store$: Store<AppState>,
-  ) {}
+  ) { }
 
   preInit(entityForm: EntityFormComponent): void {
     this.entityForm = entityForm;

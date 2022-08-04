@@ -17,7 +17,6 @@ export interface User {
   sudo: boolean;
   sudo_nopasswd: boolean;
   sudo_commands: string[];
-  microsoft_account: boolean;
   attributes: {
     preferences: Preferences;
     dashState: DashConfigItem[];
@@ -58,7 +57,6 @@ export interface UserUpdate {
   password?: string;
   password_disabled?: boolean;
   locked?: boolean;
-  microsoft_account?: boolean;
   smb?: boolean;
   sudo?: boolean;
   sudo_nopasswd?: boolean;

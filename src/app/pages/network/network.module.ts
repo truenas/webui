@@ -6,7 +6,6 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatListModule } from '@angular/material/list';
 import { MatToolbarModule } from '@angular/material/toolbar';
@@ -17,6 +16,7 @@ import { CastModule } from 'app/modules/cast/cast.module';
 import { EntityFormService } from 'app/modules/entity/entity-form/services/entity-form.service';
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
+import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { NetworkConfigurationComponent } from 'app/pages/network/components/configuration/configuration.component';
 import {
   DownloadClientConfigModalComponent,
@@ -47,7 +47,7 @@ import { routing } from './network.routing';
     routing,
     MatCardModule,
     MatListModule,
-    MatIconModule,
+    IxIconModule,
     MatFormFieldModule,
     MatInputModule,
     MatButtonModule,
@@ -71,7 +71,12 @@ import { routing } from './network.routing';
     DownloadClientConfigModalComponent,
     IpmiIdentifyDialogComponent,
   ],
-  providers: [NetworkService, EntityFormService, CoreService, TranslateService],
+  providers: [
+    NetworkService,
+    EntityFormService,
+    CoreService,
+    TranslateService,
+  ],
 })
 export class NetworkModule {
 }

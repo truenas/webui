@@ -10,7 +10,7 @@ import { ProductType } from 'app/enums/product-type.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { TransportMode } from 'app/enums/transport-mode.enum';
 import {
-  Acl, AclQueryParams, NfsAclItem, PosixAclItem, SetAcl,
+  Acl, AclQueryParams, AclTemplateByPath, AclTemplateByPathParams, NfsAclItem, PosixAclItem, SetAcl,
 } from 'app/interfaces/acl.interface';
 import { ActiveDirectoryConfig, LeaveActiveDirectory } from 'app/interfaces/active-directory-config.interface';
 import { ActiveDirectoryUpdate } from 'app/interfaces/active-directory.interface';
@@ -89,7 +89,7 @@ import { DatasetLockParams, DatasetUnlockParams, DatasetUnlockResult } from 'app
 import { DatasetPermissionsUpdate } from 'app/interfaces/dataset-permissions.interface';
 import { DatasetQuota, DatasetQuotaQueryParams, SetDatasetQuota } from 'app/interfaces/dataset-quota.interface';
 import {
-  Dataset, DatasetCreate, DatasetUpdate, ExtraDatasetQueryOptions,
+  Dataset, DatasetCreate, DatasetDetails, DatasetUpdate, ExtraDatasetQueryOptions,
 } from 'app/interfaces/dataset.interface';
 import { Device } from 'app/interfaces/device.interface';
 import { DirectoryServicesState } from 'app/interfaces/directory-services-state.interface';
@@ -468,6 +468,7 @@ export type ApiDirectory = {
   'filesystem.statfs': { params: [path: string]; response: Statfs };
   'filesystem.getacl': { params: AclQueryParams; response: Acl };
   'filesystem.setacl': { params: [SetAcl]; response: void };
+  'filesystem.acltemplate.by_path': { params: [AclTemplateByPathParams]; response: AclTemplateByPath[] };
 
   // Failover
   'failover.become_passive': { params: void; response: void };
@@ -678,6 +679,7 @@ export type ApiDirectory = {
   'pool.dataset.processes': { params: [datasetId: string]; response: Process[] };
   'pool.dataset.promote': { params: [id: string]; response: void };
   'pool.dataset.query': { params: QueryParams<Dataset, ExtraDatasetQueryOptions>; response: Dataset[] };
+  'pool.dataset.details': { params: void; response: DatasetDetails[] };
   'pool.dataset.query_encrypted_roots_keys': { params: void; response: DatasetEncryptedRootKeys };
   'pool.dataset.recommended_zvol_blocksize': { params: [name: string]; response: DatasetRecordSize };
   'pool.dataset.set_quota': { params: [dataset: string, quotas: SetDatasetQuota[]]; response: void };
@@ -809,6 +811,7 @@ export type ApiDirectory = {
   'system.advanced.syslog_certificate_authority_choices': { params: void; response: Choices };
   'system.advanced.sed_global_password': { params: void; response: string };
   'system.is_stable': { params: void; response: boolean };
+  'system.environment': { params: void; response: string };
 
   // Replication
   'replication.config.config': { params: void; response: ReplicationConfig };
@@ -945,7 +948,7 @@ export type ApiDirectory = {
   'user.update': { params: [id: number, update: UserUpdate]; response: number };
   'user.create': { params: [UserUpdate]; response: number };
   'user.query': { params: QueryParams<User>; response: User[] };
-  'user.set_root_password': { params: [password: string]; response: void };
+  'user.set_root_password': { params: [password: string, ec2?: { instance_id: string }]; response: void };
   'user.delete': { params: DeleteUserParams; response: number };
   'user.get_user_obj': { params: [{ username?: string; uid?: number }]; response: DsUncachedUser };
   'user.shell_choices': { params: [userId?: number]; response: Choices };

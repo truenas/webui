@@ -18,7 +18,7 @@ import { secondsToDuration } from 'app/helpers/time.helpters';
 import { LoadingState, toLoadingState } from 'app/helpers/to-loading-state.helper';
 import { Pool, PoolScanUpdate } from 'app/interfaces/pool.interface';
 import { PoolScan } from 'app/interfaces/resilver-job.interface';
-import { VDev } from 'app/interfaces/storage.interface';
+import { TopologyItem } from 'app/interfaces/storage.interface';
 import { EntityUtils } from 'app/modules/entity/utils';
 import {
   AutotrimDialogComponent,
@@ -169,7 +169,7 @@ export class ZfsHealthCardComponent implements OnChanges, OnDestroy {
   }
 
   private calculateTotalZfsErrors(): void {
-    this.totalZfsErrors = Object.values(this.pool.topology).reduce((errors: number, vdevs: VDev[]) => {
+    this.totalZfsErrors = Object.values(this.pool.topology).reduce((errors: number, vdevs: TopologyItem[]) => {
       return errors + vdevs.reduce((errors, vdev) => {
         return errors
           + (vdev.stats?.read_errors || 0)

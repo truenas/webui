@@ -4,16 +4,15 @@ import { EMPTY, Observable } from 'rxjs';
 import {
   catchError, switchMap, tap,
 } from 'rxjs/operators';
-import { Dataset } from 'app/interfaces/dataset.interface';
+import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
-import { DatasetInTree } from 'app/pages/datasets/store/dataset-in-tree.interface';
-import { getDatasetAndParentsById } from 'app/pages/datasets/utils/get-datasets-in-tree-by-id.utils';
+import { getTreeBranchToNode } from 'app/pages/datasets/utils/get-tree-branch-to-node.utils';
 import { WebSocketService } from 'app/services';
 
 export interface DatasetTreeState {
   isLoading: boolean;
   error: WebsocketError | null;
-  datasets: DatasetInTree[];
+  datasets: DatasetDetails[];
   selectedDatasetId: string | null;
 }
 
@@ -35,7 +34,7 @@ export class DatasetTreeStore extends ComponentStore<DatasetTreeState> {
       return null;
     }
 
-    const selectedBranch = getDatasetAndParentsById(state.datasets as Dataset[], state.selectedDatasetId);
+    const selectedBranch = getTreeBranchToNode(state.datasets, (dataset) => dataset.id === state.selectedDatasetId);
     if (!selectedBranch) {
       return null;
     }
@@ -56,37 +55,16 @@ export class DatasetTreeStore extends ComponentStore<DatasetTreeState> {
   readonly loadDatasets = this.effect((triggers$: Observable<void>) => {
     return triggers$.pipe(
       tap(() => {
+        // Not clearing the state on reload on purpose.
         this.patchState({
           error: null,
           isLoading: true,
         });
       }),
       switchMap(() => {
-        // We don't load every property to improve performance.
-        // If you need something for details card, consider loading it there.
-        // Otherwise, don't forget to update DatasetInTree interface
-        return this.ws.call('pool.dataset.query', [[], {
-          extra: {
-            flat: false,
-            properties: [
-              'id',
-              'pool',
-              'name',
-              'type',
-              'used',
-              'available',
-              'mountpoint',
-              'encryption',
-              'encryptionroot',
-              'keyformat',
-              'keystatus',
-              'quota',
-            ],
-          },
-          order_by: ['name'],
-        }])
+        return this.ws.call('pool.dataset.details')
           .pipe(
-            tap((datasets: DatasetInTree[]) => {
+            tap((datasets: DatasetDetails[]) => {
               this.patchState({
                 isLoading: false,
                 datasets,

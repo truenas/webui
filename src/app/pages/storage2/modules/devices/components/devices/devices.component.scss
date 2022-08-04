@@ -26,13 +26,6 @@
   position: relative;
 }
 
-.wip {
-  color: var(--fg2);
-  margin-bottom: 20px;
-  margin-top: -20px;
-  padding: 8px !important;
-}
-
 .details-container {
   color: var(--fg2);
   display: flex;
@@ -63,7 +56,7 @@ ix-disk-details-panel {
   display: flex;
   flex: 1;
   flex-direction: column;
-  margin-bottom: 0.333rem;
+  margin-bottom: 1.5rem;
   overflow: auto;
 }
 

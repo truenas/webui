@@ -4,8 +4,8 @@ import { VDevGroupNodeComponent } from 'app/pages/storage2/modules/devices/compo
 
 describe('VDevGroupNodeComponent', () => {
   let spectator: Spectator<VDevGroupNodeComponent>;
-  const vdev = {
-    disk: 'Data VDEVs',
+  const vdevGroup = {
+    group: 'Data VDEVs',
     guid: 'data',
     children: [],
   } as VDevGroup;
@@ -15,11 +15,11 @@ describe('VDevGroupNodeComponent', () => {
 
   beforeEach(() => {
     spectator = createComponent({
-      props: { vdev },
+      props: { vdevGroup },
     });
   });
 
   it('shows caption', () => {
-    expect(spectator.query('.caption-name')).toHaveText(vdev.disk);
+    expect(spectator.query('.caption-name')).toHaveText(vdevGroup.group);
   });
 });

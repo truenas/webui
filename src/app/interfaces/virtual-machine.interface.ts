@@ -5,6 +5,7 @@ import { VmDevice } from 'app/interfaces/vm-device.interface';
 export interface VirtualMachine {
   autostart: boolean;
   bootloader: VmBootloader;
+  hyperv_enlightenments: boolean;
   cores: number;
   cpu_mode: VmCpuMode;
   cpu_model: string;
@@ -23,6 +24,9 @@ export interface VirtualMachine {
     domain_state: string; // Enum? SHUTOFF
   };
   threads: number;
+  cpuset: string;
+  pin_vcpus: boolean;
+  nodeset: string;
   time: VmTime;
   vcpus: number;
   arch_type: string;

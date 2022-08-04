@@ -72,6 +72,11 @@
               [required]="true"
               [options]="nicOptions$"
             ></ix-select>
+            <ix-checkbox
+              formControlName="trust_guest_rx_filters"
+              [label]="'Trust Guest Filters' | translate"
+            ></ix-checkbox>
+            
           </ng-container>
           <ng-container *ngSwitchCase="VmDeviceType.Raw">
             <ix-explorer
