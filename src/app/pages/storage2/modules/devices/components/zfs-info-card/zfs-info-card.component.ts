@@ -141,19 +141,20 @@ export class ZfsInfoCardComponent {
     });
   }
 
-  // TODO: Is this even working for mirrors?
-  // TODO: If so, replace messaging.
   onRemove(): void {
     this.dialogService.confirm({
-      title: this.translate.instant('Remove Disk'),
-      message: this.translate.instant('Remove disk {name}?', { name: this.disk.devname }),
+      title: this.translate.instant('Remove device'),
+      message: this.translate.instant(
+        'Remove device {name}?',
+        { name: this.isDisk ? this.disk.devname : this.topologyItem.name },
+      ),
       buttonMsg: this.translate.instant('Remove'),
     }).pipe(
       filter(Boolean),
       untilDestroyed(this),
     ).subscribe(() => {
       const dialogRef = this.matDialog.open(EntityJobComponent, {
-        data: { title: this.translate.instant('Remove Disk') },
+        data: { title: this.translate.instant('Remove device') },
         disableClose: true,
       });
       dialogRef.componentInstance.setCall('pool.remove', [this.poolId, { label: this.topologyItem.guid }]);
@@ -161,9 +162,6 @@ export class ZfsInfoCardComponent {
       dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
         this.devicesStore.reloadList();
         this.dialogService.closeAllDialogs();
-      });
-      dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((error) => {
-        new EntityUtils().handleWsError(this, error, this.dialogService);
       });
     });
   }
