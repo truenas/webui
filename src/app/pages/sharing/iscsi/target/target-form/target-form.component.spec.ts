@@ -5,7 +5,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
-import { IscsiAuthMethod } from 'app/enums/iscsi.enum';
+import { IscsiAuthMethod, IscsiTargetMode } from 'app/enums/iscsi.enum';
 import {
   IscsiAuthAccess, IscsiInitiatorGroup, IscsiPortal, IscsiTarget,
 } from 'app/interfaces/iscsi.interface';
@@ -111,10 +111,28 @@ describe('TargetFormComponent', () => {
   });
 
   it('add new target when form is submitted', async () => {
-    await form.fillForm({
-      'Target Name': 'name_new',
-      'Target Alias': 'alias_new',
-      'Target Mode': 'iSCSI',
+    const addButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add' }));
+    await addButton.click();
+    await addButton.click();
+
+    spectator.component.form.patchValue({
+      name: 'name_new',
+      alias: 'alias_new',
+      mode: IscsiTargetMode.Iscsi,
+      groups: [
+        {
+          portal: 11,
+          initiator: 12,
+          authmethod: IscsiAuthMethod.ChapMutual,
+          auth: 13,
+        },
+        {
+          portal: 21,
+          initiator: 22,
+          authmethod: IscsiAuthMethod.Chap,
+          auth: 23,
+        },
+      ],
     });
 
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
@@ -124,7 +142,17 @@ describe('TargetFormComponent', () => {
       name: 'name_new',
       alias: 'alias_new',
       mode: 'ISCSI',
-      groups: [],
+      groups: [{
+        portal: 11,
+        initiator: 12,
+        authmethod: 'CHAP_MUTUAL',
+        auth: 13,
+      }, {
+        portal: 21,
+        initiator: 22,
+        authmethod: 'CHAP',
+        auth: 23,
+      }],
     }]);
     expect(spectator.inject(IxSlideInService).close).toHaveBeenCalled();
   });
@@ -182,19 +210,16 @@ describe('TargetFormComponent', () => {
     expect(spectator.inject(WebSocketService).call).toHaveBeenNthCalledWith(3, 'iscsi.auth.query', []);
 
     expect(portal).toEqual([
-      { label: '---', value: null },
       { label: '11 (comment_1)', value: 1 },
       { label: '22 (comment_2)', value: 2 },
     ]);
 
     expect(initiator).toEqual([
-      { label: 'None', value: null },
       { label: '3 (initiator_1)', value: 3 },
       { label: '4 (initiator_2)', value: 4 },
     ]);
 
     expect(auth).toEqual([
-      { label: 'None', value: null },
       { label: '55', value: 55 },
       { label: '66', value: 66 },
     ]);
