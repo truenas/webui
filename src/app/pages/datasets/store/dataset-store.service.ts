@@ -84,9 +84,7 @@ export class DatasetTreeStore extends ComponentStore<DatasetTreeState> {
 
   readonly datasetUpdated = this.effect((triggers$: Observable<void>) => {
     return triggers$.pipe(
-      tap(() => {
-        this.loadDatasets();
-      }),
+      tap(() => this.loadDatasets()),
     );
   });
 

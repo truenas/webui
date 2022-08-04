@@ -1,15 +1,13 @@
-<div>
-  <div class="chart-wrapper" *ngIf="!isLoading; else chartPlaceholder">
-    <canvas
-      #canvas
-      baseChart
-      chartType="doughnut"
-      [datasets]="chartData"
-      [options]="chartOptions"
-      [width]="180"
-      [height]="180"
-    ></canvas>
-  </div>
+<div class="chart-wrapper" *ngIf="!isLoading; else chartPlaceholder">
+  <canvas
+    #canvas
+    baseChart
+    chartType="doughnut"
+    [datasets]="chartData"
+    [options]="chartOptions"
+    [width]="180"
+    [height]="180"
+  ></canvas>
 </div>
 
 <div class="chart-description">
