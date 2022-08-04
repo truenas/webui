@@ -175,12 +175,13 @@ def click_on_system_dataset(driver):
 @then('the System Dataset page should open')
 def the_system_dataset_page_should_open(driver):
     """the System Dataset page should open."""
-    assert wait_on_element(driver, 5, '//h3[contains(.,"System Dataset Pool")]')
+    assert wait_on_element(driver, 5, '//h3[contains(.,"System Dataset Pool") and @class="ix-formtitle"]')
 
 
 @then(parsers.parse('click on System Dataset Pool select {pool_name}, click Save'))
 def click_on_system_dataser_pool_select_dozer_click_Save(driver, pool_name):
     """click on System Dataset Pool select dozer, click Save."""
+    assert wait_on_element(driver, 5, '//label[contains(text(),"Select Pool")]')
     assert wait_on_element(driver, 5, '//mat-select', 'clickable')
     driver.find_element_by_xpath('//mat-select').click()
     assert wait_on_element(driver, 5, f'//mat-option[contains(.,"{pool_name}")]')
