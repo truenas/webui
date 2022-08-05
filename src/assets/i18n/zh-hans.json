@@ -227,6 +227,7 @@
   "SED password updated.": "",
   "SID": "",
   "SMB Service is not currently running. Start the service now?": "",
+  "SMB/NFSv4": "",
   "SSH connection from the keychain": "",
   "SSH private key stored in user's home directory": "",
   "Scheduled Scrub Task": "",
