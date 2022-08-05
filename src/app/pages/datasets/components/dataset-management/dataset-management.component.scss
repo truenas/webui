@@ -69,6 +69,10 @@ ix-dataset-details-panel {
 
 .dataset-tree {
   border-top: 2px solid var(--lines);
+
+  ix-nested-tree-node:not(:last-child) {
+    border-bottom: 10px solid var(--bg1);
+  }
 }
 
 .dataset-tree-header {
