@@ -8,7 +8,7 @@ from platform import system
 from subprocess import run
 major_v = sys.version_info.major
 minor_v = sys.version_info.minor
-version = f"{major_v}" if system() == "Linux" else f"{major_v}.{minor_v}"
+version = f"-{major_v}" if system() == "Linux" else ""
 cwd = str(os.getcwd())
 screenshot_path = f"{cwd}/screenshot"
 argument = sys.argv
@@ -167,8 +167,8 @@ def run_testing():
 
     convert_jira_feature_file(test_suite)
     pytest_cmd = [
-        f"pytest-{version}",
-        "-v",
+        f"pytest{version}",
+        "-vs",
         test_suite,
         "--junitxml=results/junit/webui_test.xml",
         "--cucumber-json=results/cucumber/webui_test.json"

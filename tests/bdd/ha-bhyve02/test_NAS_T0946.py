@@ -1,6 +1,7 @@
 # coding=utf-8
 """High Availability (tn-bhyve01) feature tests."""
 
+import pytest
 import time
 from function import (
     wait_on_element,
@@ -14,6 +15,7 @@ from pytest_bdd import (
     when,
     parsers
 )
+pytestmark = [pytest.mark.debug_test]
 
 
 @scenario('features/NAS-T946.feature', 'Verify setting up HA works with a single failover group')
@@ -425,8 +427,8 @@ def navigate_to_dashboard_wait_for_ha_to_be_online(driver):
     assert wait_on_element(driver, 7, '//mat-list-item[@ix-auto="option__Dashboard"]', 'clickable')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
     assert wait_on_element(driver, 10, '//span[contains(.,"System Information")]')
-    assert wait_on_element(driver, 15, '//div[contains(.,"truenas")]')
-    assert wait_on_element(driver, 15, '//div[contains(.,"truenas-b")]')
+    assert wait_on_element(driver, 15, '//div[contains(text(),"truenas") and @class="mat-list-item-content"]')
+    assert wait_on_element(driver, 15, '//div[contains(text(),"truenas-b") and @class="mat-list-item-content"]')
     assert wait_on_element(driver, 180, '//mat-icon[@svgicon="ha_enabled"]')
     time.sleep(5)
 
@@ -449,8 +451,8 @@ def navigate_to_dashboard_verify_both_contorler_hostname(driver):
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
     assert wait_on_element(driver, 10, '//span[contains(.,"System Information")]')
     assert wait_on_element(driver, 15, '//mat-icon[@svgicon="ha_enabled"]')
-    assert wait_on_element(driver, 15, '//div[contains(.,"tn-bhyve01-nodea")]')
-    assert wait_on_element(driver, 15, '//div[contains(.,"tn-bhyve01-nodeb")]')
+    assert wait_on_element(driver, 15, '//div[contains(text(),"tn-bhyve01-nodea") and @class="mat-list-item-content"]')
+    assert wait_on_element(driver, 15, '//div[contains(text(),"tn-bhyve01-nodeb") and @class="mat-list-item-content"]')
 
 
 @then('both controllers should show version and license on the dashboard')

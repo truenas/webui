@@ -1,6 +1,7 @@
 # coding=utf-8
 """High Availability (tn09) feature tests."""
 
+import pytest
 import time
 from selenium.common.exceptions import ElementClickInterceptedException
 from function import (
@@ -18,6 +19,7 @@ from pytest_bdd import (
     when,
     parsers
 )
+pytestmark = [pytest.mark.debug_test]
 
 
 @scenario('features/NAS-T945.feature', 'Verify SSH Access with Root works')

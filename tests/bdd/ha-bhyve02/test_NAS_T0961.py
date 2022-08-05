@@ -1,6 +1,7 @@
 # coding=utf-8
 """High Availability (tn-bhyve01) feature tests."""
 
+import pytest
 import time
 from function import (
     wait_on_element,
@@ -14,6 +15,7 @@ from pytest_bdd import (
     when,
     parsers
 )
+pytestmark = [pytest.mark.debug_test]
 
 
 @scenario('features/NAS-T961.feature', 'Creating new pool and set it as System Dataset')
@@ -182,6 +184,7 @@ def the_system_dataset_page_should_open(driver):
 def click_on_system_dataser_pool_select_dozer_click_Save(driver, pool_name):
     """click on System Dataset Pool select dozer, click Save."""
     assert wait_on_element(driver, 5, '//label[contains(text(),"Select Pool")]')
+    time.sleep(0.5)  # needed on my local machine or the test fails.
     assert wait_on_element(driver, 5, '//mat-select', 'clickable')
     driver.find_element_by_xpath('//mat-select').click()
     assert wait_on_element(driver, 5, f'//mat-option[contains(.,"{pool_name}")]')
@@ -211,10 +214,12 @@ def navigate_to_dashboard(driver):
 def refresh_and_wait_for_the_second_node_to_be_up(driver):
     """refresh and wait for the second node to be up"""
     driver.refresh()
-    assert wait_on_element(driver, 120, '//div[contains(.,"tn-bhyve01-nodeb")]')
+    assert wait_on_element(driver, 120, '//div[contains(text(),"tn-bhyve01-nodeb") and @class="mat-list-item-content"]')
     assert wait_on_element(driver, 120, '//mat-icon[@svgicon="ha_enabled"]')
-    # 5 second to let the system get ready for the next step.
-    time.sleep(5)
+    # 30 second to let the system get ready for the next step.
+    # ALso triggering a failover directly after chaning a system dataset is
+    # not real world scenario
+    time.sleep(60)
 
 
 @then('verify the system dataset is dozer on the active node')
@@ -242,7 +247,9 @@ def press_Initiate_Failover_and_confirm(driver):
 @then('wait for the login and the HA enabled status and login')
 def wait_for_the_login_and_the_HA_enabled_status_and_login(driver):
     """wait for the login and the HA enabled status and login."""
-    assert wait_on_element(driver, 240, '//input[@data-placeholder="Username"]')
+    assert wait_on_element(driver, 120, '//input[@data-placeholder="Username"]')
+    # Wait for HA is enable before login in. The UI will act up if HA is not enable.
+    assert wait_on_element(driver, 180, '//p[text()="HA is enabled."]')
     assert wait_on_element(driver, 10, '//input[@data-placeholder="Username"]')
     driver.find_element_by_xpath('//input[@data-placeholder="Username"]').clear()
     driver.find_element_by_xpath('//input[@data-placeholder="Username"]').send_keys('root')
@@ -254,6 +261,7 @@ def wait_for_the_login_and_the_HA_enabled_status_and_login(driver):
     assert wait_on_element(driver, 120, '//span[contains(.,"System Information")]')
     if wait_on_element(driver, 2, '//button[@ix-auto="button__I AGREE"]', 'clickable'):
         driver.find_element_by_xpath('//button[@ix-auto="button__I AGREE"]').click()
+    assert wait_on_element(driver, 120, '//div[contains(text(),"tn-bhyve01-nodea") and @class="mat-list-item-content"]')
     # Make sure HA is enable before going forward
     assert wait_on_element(driver, 60, '//mat-icon[@svgicon="ha_enabled"]')
     time.sleep(5)
