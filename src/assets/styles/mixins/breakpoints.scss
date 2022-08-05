@@ -1,4 +1,10 @@
+// Global Breakpoints
+$breakpoint-laptop: 1024px;
+$breakpoint-tablet: 768px;
+$breakpoint-min-mobile: 320px;
 $sidenav-width: 240px;
+
+// TreeTable - Cards Splitview Breakpoints
 $table-min-width: 700px;
 $table-width: 700px;
 $card-width: 455px;
@@ -7,4 +13,5 @@ $breakpoint-singlecolumn: 1420px;
 $breakpoint-dualcolumn: 1920px;
 $breakpoint-triplecolumn: 2500px;
 $breakpoint-flex: 3132px;
-$breakpoint-hidden: calc($breakpoint-singlecolumn - 1px);
+$breakpoint-hidden: calc($breakpoint-singlecolumn - 1px); 
+

@@ -1,3 +1,5 @@
+@import '~assets/styles/mixins/breakpoints';
+
 /* Universal Overrides for Egret */
 
 .hidden {
@@ -17,6 +19,34 @@ ix-topbar {
 
 ix-topbar {
   top: 0;
+
+  @media (min-width: $breakpoint-min-mobile) and (max-width: $breakpoint-tablet) {
+    //top: unset;
+    //bottom: 0;
+
+    .topbar-mobile-footer {
+      background-color: var(--topbar);
+      bottom: 0;
+      display: flex;
+      height: 48px;
+      left: 0;
+      padding: 0 16px;
+      place-content: space-around;
+      //display: none;
+      position: fixed;
+      width: 100%;
+    }
+
+    .topbar-button-right {
+      margin: 4px;
+    }
+
+    .ix-systems-logo-icon {
+      bottom: 4px;
+      position: relative;
+    }
+
+  }
 }
 
 div.mat-toolbar {
