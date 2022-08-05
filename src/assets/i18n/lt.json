@@ -868,6 +868,7 @@
   "Dataset Space Management": "",
   "Dataset is currently locked": "",
   "Dataset is shared via NFS": "",
+  "Dataset is shared via SMB as {shares}": "",
   "Dataset is shared via iSCSI": "",
   "Dataset name (read-only).": "",
   "Dataset rolled back to snapshot {name}.": "",

@@ -20,7 +20,7 @@
     <div class="details-item" *ngIf="dataset.smb_shares?.length">
       <mat-icon svgIcon="ix:smb_share" class="icon"></mat-icon>
       <div class="label">{{ 'Share Attached' | translate }}:</div>
-      <div class="value">{{ 'Dataset is shared via SMB as ' + smbSharesNames | translate }}</div>
+      <div class="value">{{ 'Dataset is shared via SMB as {shares}' | translate: { shares: smbSharesNames } }}</div>
       <a
         class="action"
         [routerLink]="['/sharing/smb']"
