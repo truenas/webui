@@ -37,7 +37,8 @@ export class AutotrimDialogComponent implements OnInit {
     this.autotrimControl.setValue(this.pool.autotrim.value === 'on');
   }
 
-  onSubmit(): void {
+  onSubmit(event: SubmitEvent): void {
+    event.preventDefault();
     this.loader.open();
     this.ws.job('pool.update', [this.pool.id, { autotrim: this.autotrimControl.value ? OnOff.On : OnOff.Off }])
       .pipe(untilDestroyed(this))

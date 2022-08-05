@@ -13,11 +13,11 @@
   </ix-page-title-header>
 </ng-template>
 
-<ix-unused-resources [pools]="pools"></ix-unused-resources>
+<ix-unused-resources [pools]="pools$ | async"></ix-unused-resources>
 
 <ix-dashboard-pool
-  *ngFor="let pool of pools"
+  *ngFor="let pool of pools$ | async"
   [pool]="pool"
-  [isLoading]="isPoolsLoading"
+  [isLoading]="arePoolsLoading$ | async"
   class="pool"
 ></ix-dashboard-pool>
