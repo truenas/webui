@@ -162,7 +162,7 @@ export class AppSchemaService {
           if (!isNew && (!!schema.immutable || isParentImmutable)) {
             inputSchema.editable = false;
           }
-          newSchema.push();
+          newSchema.push(inputSchema);
           break;
         }
         case ChartSchemaType.Ipaddr:
@@ -260,7 +260,9 @@ export class AppSchemaService {
     config: HierarchicalObjectMap<ChartFormValue>,
     isNew: boolean,
     isParentImmutable: boolean,
+    path = '',
   ): Subscription {
+    path = path ? path + '.' + chartSchemaNode.variable : chartSchemaNode.variable;
     const subscription = new Subscription();
     const schema = chartSchemaNode.schema;
 
@@ -297,9 +299,10 @@ export class AppSchemaService {
               config,
               isNew,
               !!schema.immutable || isParentImmutable,
+              path,
             ),
           );
-          if (subquestion.schema.default === schema.show_subquestions_if) {
+          if (newFormControl.value === schema.show_subquestions_if) {
             (formGroup.controls[subquestion.variable] as CustomUntypedFormField).hidden = false;
             formGroup.controls[subquestion.variable].enable();
           } else {
@@ -310,7 +313,7 @@ export class AppSchemaService {
         subscription.add(newFormControl.valueChanges
           .subscribe((value) => {
             schema.subquestions.forEach((subquestion) => {
-              if (formGroup.controls[subquestion.variable].parent.enabled) {
+              if (!(formGroup.controls[subquestion.variable].parent as CustomUntypedFormField).hidden) {
                 if (value === schema.show_subquestions_if) {
                   (formGroup.controls[subquestion.variable] as CustomUntypedFormField).hidden = false;
                   formGroup.controls[subquestion.variable].enable();
@@ -328,9 +331,6 @@ export class AppSchemaService {
       if (!isNew && (isParentImmutable || !!schema.immutable)) {
         newFormControl.disable();
       }
-      if (schema.default !== undefined) {
-        formGroup.controls[chartSchemaNode.variable].setValue(schema.default);
-      }
     } else if (schema.type === ChartSchemaType.Dict) {
       formGroup.addControl(chartSchemaNode.variable, new CustomUntypedFormGroup({}));
       for (const attr of schema.attrs) {
@@ -341,6 +341,7 @@ export class AppSchemaService {
             config,
             isNew,
             isParentImmutable || !!schema.immutable,
+            path,
           ),
         );
       }
