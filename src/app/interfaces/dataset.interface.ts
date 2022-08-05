@@ -186,4 +186,5 @@ export interface DatasetDetails {
   vms?: { name: string; path: string }[];
   apps?: { name: string; path: string }[];
   children?: DatasetDetails[];
+  thick_provisioned: boolean;
 }
