@@ -1397,7 +1397,18 @@ export class ReplicationWizardComponent implements WizardConfiguration {
   async rollBack(items: any): Promise<void> {
     const keys = Object.keys(items).reverse();
     for (const key of keys) {
-      if (items[key] !== null) {
+      if (key === 'periodic_snapshot_tasks') {
+        if (!items[key].length) {
+          continue;
+        }
+        for (const task of items[key]) {
+          await this.ws.call('pool.snapshottask.delete', [task]).toPromise();
+        }
+
+        continue;
+      }
+
+      if (items[key] !== null && items[key] !== undefined) {
         await this.ws.call((this.deleteCalls as any)[key], [items[key]]).toPromise().then(
           () => {},
         );
