@@ -1,5 +1,5 @@
 # coding=utf-8
-"""SCALE UI feature tests."""
+"""BLUEFIN UI feature tests."""
 
 from pytest_bdd import (
     given,
@@ -11,7 +11,7 @@ import pytest
 pytestmark = [pytest.mark.debug_test]
 
 
-@scenario('features/NAS-T1062.feature', 'Bootstrap Tests')
+@scenario('features/NAS-T1556.feature', 'Bootstrap Tests')
 def bootstrap_tests(driver):
     """bootstrap_test"""
     pass
@@ -50,11 +50,11 @@ def enable_root_ssh(driver):
     test_000_1_root_ssh.test_root_ssh(nas_ip, driver, root_password)
 
 
-@then('set interface')
+@then('set interface with {nameserver1} {nameserver2} {nameserver3} {gateway}')
 def set_interface(driver):
     """set interface"""
     import test_000_2_set_interface
-    test_000_2_set_interface.test_interface(nameserver1, nameserver2, nameserver3, nas_hostname, gateway)
+    test_000_2_set_interface.test_interface(driver, nas_ip, nas_hostname, nameserver1, nameserver2, nameserver3, gateway)
 
 
 @then('create pool')

@@ -1,5 +1,5 @@
 # coding=utf-8
-"""SCALE UI feature tests."""
+"""BLUEFIN UI feature tests."""
 
 from pytest_bdd import (
     given,
@@ -11,7 +11,7 @@ import pytest
 pytestmark = [pytest.mark.debug_test]
 
 
-@scenario('features/NAS-T1063.feature', 'System Tests')
+@scenario('features/NAS-T1559.feature', 'System Tests')
 def system_tests(driver):
     """system tests."""
     pass

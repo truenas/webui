@@ -16,7 +16,7 @@ from function import (
 def test_root_ssh(nas_ip, driver, root_password):
     """test root ssh."""
     #    """the browser is open, navigate to the SCALE URL."""
-        assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__System Settings"]', 'clickable')
+    assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__System Settings"]', 'clickable')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__System Settings"]').click()
     assert wait_on_element(driver, 10, '//*[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Services"]', 'clickable')
     driver.find_element_by_xpath('//*[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Services"]').click()

@@ -1,5 +1,5 @@
 # coding=utf-8
-"""SCALE UI feature tests."""
+"""BLUEFIN UI feature tests."""
 
 from pytest_bdd import (
     given,
@@ -11,7 +11,7 @@ import pytest
 pytestmark = [pytest.mark.debug_test]
 
 
-@scenario('features/NAS-T1063.feature', 'Storage Tests')
+@scenario('features/NAS-T1558.feature', 'Storage Tests')
 def storage_tests(driver):
     """storage tests."""
     pass
@@ -57,11 +57,11 @@ def test_create_pool_for_system_dataset(driver):
     test_002_2_create_pool_for_system_dataset.test_create_pool_for_system_dataset(driver)
 
 
-@then(parsers.parse('setup ad with {nameserver1} {ad_domain} {ad_user} {ad_password} {ca_ou} {cmd1} {ad_object1}  {cmd3} {dataset_name} {group_name}'))
+@then(parsers.parse('setup ad with {nameserver1} {ad_domain} {ad_user} {ad_password} {ca_ou} {cmd1} {ad_object1} {cmd2} {dataset_name} {group_name}'))
 def test_setup_ad(driver):
     """setup ad"""
     import test_002_3_setup_ad
-    test_002_3_setup_ad.test_setup_ad(driver, nameserver1, ad_domain, ad_user, ad_password, ca_ou, cmd1, ad_object1, cmd3, dataset_name, group_name)
+    test_002_3_setup_ad.test_setup_ad(driver, nameserver1, ad_domain, ad_user, ad_password, ca_ou, cmd1, ad_object1, cmd2, dataset_name, group_name)
 
 
 @then(parsers.parse('create ad dataset with {dataset_name} {group_name}'))
@@ -141,7 +141,7 @@ def test_create_wheel_smb_share(driver):
     test_002_14_create_wheel_smb_share.test_create_wheel_smb_share(driver, nas_ip, root_password, path, smbname, description, wheelname, user, password)
 
 
-@then(parsers.parse('create ericbsd dataset with {dataset_name} {user} {group}'))
+@then(parsers.parse('create ericbsd dataset with {dataset_name} {user}'))
 def test_create_ericbsd_dataset(driver):
     """create ericbsd dataset"""
     import test_002_15_test_create_ericbsd_dataset
@@ -169,7 +169,7 @@ def test_kerberos_keytab(driver):
     test_002_18_kerberos_keytab.test_kerberos_keytab(driver, tabfile_string)
 
 
-@then(parsers.parse('recursive and transverse acls with {dataset_name} {path}'))
+@then(parsers.parse('recursive and transverse acls with {path}'))
 def test_recursive_and_transverse_acls(driver):
     """recursive and transverse acls"""
     import test_002_19_test_recursive_and_transverse_acls

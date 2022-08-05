@@ -1,5 +1,5 @@
 # coding=utf-8
-"""SCALE UI feature tests."""
+"""BLUEFIN UI feature tests."""
 
 from pytest_bdd import (
     given,
@@ -11,7 +11,7 @@ import pytest
 pytestmark = [pytest.mark.debug_test]
 
 
-@scenario('features/NAS-T1063.feature', 'Group Tests')
+@scenario('features/NAS-T1560.feature', 'Group Tests')
 def group_tests(driver):
     """group tests."""
     pass
@@ -44,7 +44,7 @@ def the_browser_is_open_navigate_to_the_scale_url(driver, nas_ip, root_password)
         assert wait_on_element(driver, 10, '//span[contains(.,"Dashboard")]')
 
 @then('create a group')
-def create_a_group(driver:
+def create_a_group(driver):
     """create_a_group"""
     import test_004_1_create_a_group
     test_004_1_create_a_group.test_create_a_group(driver)

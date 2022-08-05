@@ -1,5 +1,5 @@
 # coding=utf-8
-"""SCALE UI feature tests."""
+"""BLUEFIN UI feature tests."""
 
 from pytest_bdd import (
     given,
@@ -11,7 +11,7 @@ import pytest
 pytestmark = [pytest.mark.debug_test]
 
 
-@scenario('features/NAS-T1063.feature', 'User Tests')
+@scenario('features/NAS-T1557.feature', 'User Tests')
 def user_tests(driver):
     """user tests."""
     pass
@@ -118,8 +118,16 @@ def test_invalid_email(driver):
     import test_001_11_invalid_email
     test_001_11_invalid_email.test_invalid_email(driver)
 
+
+@then('change permissions on user home dir')
+def test_change_permissions_on_user_home_dir(driver):
+    """change permissions on user home dir"""
+    import test_001_12_change_permissions_on_user_home_dir
+    test_001_12_change_permissions_on_user_home_dir.test_change_permissions_on_user_home_dir(driver)
+
+
 @then('user ssh key')
 def test_user_ssh_key(driver):
     """user ssh key"""
-    import test_001_12_test_user_ssh_key
-    test_001_12_user_ssh_key.test_test_user_ssh_key(driver)
+    import test_001_13_user_ssh_key
+    test_001_13_user_ssh_key.test_user_ssh_key(driver)

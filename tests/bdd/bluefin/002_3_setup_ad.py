@@ -109,9 +109,9 @@ def test_setup_ad(driver):
     assert ad_object1 in ssh_result['output'], ssh_result['output']
 
 
-    # Run "{cmd3}"
+    # Run "{cmd2}"
     global ssh_result
-    ssh_result = ssh_cmd(cmd3, 'root', root_password, nas_ip)
+    ssh_result = ssh_cmd(cmd2, 'root', root_password, nas_ip)
     assert ssh_result['result'], ssh_result['output']
     assert "succeeded" in ssh_result['output'], ssh_result['output']
 

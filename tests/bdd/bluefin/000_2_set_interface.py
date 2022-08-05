@@ -10,7 +10,7 @@ from function import (
 )
 
 
-def test_interface():
+def test_interface(driver, nas_ip, nas_hostname, nameserver1, nameserver2, nameserver3, gateway):
     """test interface."""
 
     assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Network"]', 'clickable')
