@@ -6,7 +6,7 @@
     <div class="details-item" *ngIf="dataset.apps?.length">
       <mat-icon class="icon">apps</mat-icon>
       <div class="label">{{ 'Apps' | translate }}:</div>
-      <div class="value">{{ 'This dataset is used by one or more apps' | translate }}</div>
+      <div class="apps value">{{ 'This dataset is used by one or more apps' | translate }}</div>
       <a
         class="action"
         [routerLink]="['/apps']"
@@ -15,12 +15,12 @@
     <div class="details-item" *ngIf="hasChildrenWithShares">
       <mat-icon class="icon">share</mat-icon>
       <div class="label">{{ 'Child Shares' | translate }}:</div>
-      <div class="value">{{ 'This dataset has children with shares' | translate }}</div>
+      <div class="children-with-shares value">{{ 'This dataset has children with shares' | translate }}</div>
     </div>
     <div class="details-item" *ngIf="dataset.smb_shares?.length">
       <mat-icon svgIcon="ix:smb_share" class="icon"></mat-icon>
       <div class="label">{{ 'Share Attached' | translate }}:</div>
-      <div class="value">{{ 'Dataset is shared via SMB as {shares}' | translate: { shares: smbSharesNames } }}</div>
+      <div class="smb-shares value">{{ 'Dataset is shared via SMB as {shares}' | translate: { shares: smbSharesNames } }}</div>
       <a
         class="action"
         [routerLink]="['/sharing/smb']"
@@ -29,7 +29,7 @@
     <div class="details-item" *ngIf="dataset.nfs_shares?.length">
       <mat-icon svgIcon="ix:nfs_share" class="icon"></mat-icon>
       <div class="label">{{ 'Share Attached' | translate }}:</div>
-      <div class="value">{{ 'Dataset is shared via NFS' | translate }}</div>
+      <div class="nfs-shares value">{{ 'Dataset is shared via NFS' | translate }}</div>
       <a
         class="action"
         [routerLink]="['/sharing/nfs']"
@@ -38,7 +38,7 @@
     <div class="details-item" *ngIf="dataset.iscsi_shares?.length">
       <mat-icon svgIcon="ix:iscsi_share" class="icon"></mat-icon>
       <div class="label">{{ 'Share Attached' | translate }}:</div>
-      <div class="value">{{ 'Dataset is shared via iSCSI' | translate }}</div>
+      <div class="iscsi-shares value">{{ 'Dataset is shared via iSCSI' | translate }}</div>
       <a
         class="action"
         [routerLink]="['/sharing/iscsi']"
