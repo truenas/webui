@@ -155,25 +155,27 @@ export class TableComponent<Row = any> implements OnInit, AfterViewInit, AfterVi
   ) {}
 
   calculateLimitRows(): void {
-    if (this.table) {
-      this.tableHeight = this.table.nativeElement.offsetHeight;
-      if (this.enableViewMore) {
-        return;
-      }
-      this.limitRows = Math.floor(
-        (this.tableHeight - (this._tableConf.hideHeader ? 0 : this.TABLE_HEADER_HEIGHT)) / this.TABLE_ROW_HEIGHT,
-      );
-      this.limitRows = Math.max(this.limitRows, this.TABLE_MIN_ROWS);
+    if (!this.table) {
+      return;
+    }
 
-      if (this.dataSource) {
-        if (this.tableConf.alwaysHideViewMore) {
-          this.limitRows = this.dataSource.length;
-        }
-        this.displayedDataSource = this.dataSource.slice(0, this.limitRows);
-        this.showViewMore = this.dataSource.length !== this.displayedDataSource.length;
-        if (this.showCollapse) {
-          this.showCollapse = this.dataSource.length !== this.displayedDataSource.length;
-        }
+    this.tableHeight = this.table.nativeElement.offsetHeight;
+    if (this.enableViewMore) {
+      return;
+    }
+    this.limitRows = Math.floor(
+      (this.tableHeight - (this._tableConf.hideHeader ? 0 : this.TABLE_HEADER_HEIGHT)) / this.TABLE_ROW_HEIGHT,
+    );
+    this.limitRows = Math.max(this.limitRows, this.TABLE_MIN_ROWS);
+
+    if (this.dataSource) {
+      if (this.tableConf.alwaysHideViewMore) {
+        this.limitRows = this.dataSource.length;
+      }
+      this.displayedDataSource = this.dataSource.slice(0, this.limitRows);
+      this.showViewMore = this.dataSource.length !== this.displayedDataSource.length;
+      if (this.showCollapse) {
+        this.showCollapse = this.dataSource.length !== this.displayedDataSource.length;
       }
     }
   }

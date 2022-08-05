@@ -3,7 +3,7 @@ import {
   LinkAggregationProtocol,
   LinkState,
   NetworkInterfaceAliasType,
-  NetworkInterfaceFlags,
+  NetworkInterfaceFlag,
   NetworkInterfaceType, XmitHashPolicy,
 } from 'app/enums/network-interface.enum';
 
@@ -72,7 +72,7 @@ export interface NetworkInterfaceState {
   capabilities: string[]; // May be a enum: "LRO", "RXCSUM", "RXCSUM_IPV6"
   cloned: boolean;
   description: string;
-  flags: NetworkInterfaceFlags[];
+  flags: NetworkInterfaceFlag[];
   link_address: string;
   link_state: LinkState;
   media_options: unknown;

@@ -11,6 +11,7 @@ import {
 } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
 import { Observable, of, throwError } from 'rxjs';
+import { delay } from 'rxjs/operators';
 import { Option } from 'app/interfaces/option.interface';
 import { IxErrorsComponent } from 'app/modules/ix-forms/components/ix-errors/ix-errors.component';
 import { IxSelectComponent } from './ix-select.component';
@@ -67,6 +68,17 @@ describe('IxSelectComponent', () => {
       const state = await select.isDisabled();
 
       expect(state).toBeTruthy();
+    });
+
+    it('loader will be rendered only while options are loading', async () => {
+      const opt$ = options$.pipe(delay(100));
+      spectator.setInput({ options: opt$ });
+
+      expect(spectator.query('mat-progress-spinner')).toBeVisible();
+      await new Promise((smth) => setTimeout(smth, 100));
+      spectator.detectChanges();
+
+      expect(spectator.query('mat-progress-spinner')).not.toBeVisible();
     });
 
     it('shows a list of labels', async () => {

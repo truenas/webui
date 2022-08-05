@@ -59,3 +59,10 @@
   display: inline-flex;
   font-size: x-small;
 }
+
+.loader {
+  display: inline-block;
+  margin-left: -35px;
+  opacity: 0.5;
+  vertical-align: middle;
+}

@@ -29,6 +29,7 @@ const datasetZvol = {
   available: {
     parsed: 1395752960 * 2,
   },
+  thick_provisioned: true,
 } as DatasetDetails;
 
 describe('DatasetCapacityManagementCardComponent', () => {
@@ -144,9 +145,11 @@ describe('DatasetCapacityManagementCardComponent', () => {
 
     it('shows chart block', () => {
       const chartExtra = spectator.query('.chart-extra').querySelectorAll('.details-item');
-      expect(chartExtra.length).toEqual(1);
-      expect(chartExtra[0].querySelector('.label')).toHaveText('Volume Size:');
-      expect(chartExtra[0].querySelector('.value')).toHaveText('2 KiB');
+      expect(chartExtra.length).toEqual(2);
+      expect(chartExtra[0].querySelector('.label')).toHaveText('Provisioning Type:');
+      expect(chartExtra[0].querySelector('.value')).toHaveText('Thick');
+      expect(chartExtra[1].querySelector('.label')).toHaveText('Volume Size:');
+      expect(chartExtra[1].querySelector('.value')).toHaveText('2 KiB');
     });
 
     it('shows details block', () => {
