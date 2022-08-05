@@ -3,8 +3,8 @@ import { DatasetDetails } from 'app/interfaces/dataset.interface';
 
 @Component({
   selector: 'ix-roles-card',
-  templateUrl: './roles-card.component.component.html',
-  styleUrls: ['./roles-card.component.component.scss'],
+  templateUrl: './roles-card.component.html',
+  styleUrls: ['./roles-card.component.scss'],
 })
 export class RolesCardComponent {
   @Input() dataset: DatasetDetails;

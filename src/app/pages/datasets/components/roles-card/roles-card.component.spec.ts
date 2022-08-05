@@ -2,7 +2,7 @@ import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { IscsiExtentType } from 'app/enums/iscsi.enum';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
-import { RolesCardComponent } from 'app/pages/datasets/components/roles-card/roles-card.component.component';
+import { RolesCardComponent } from 'app/pages/datasets/components/roles-card/roles-card.component';
 
 const datasetDummy: DatasetDetails = {
   id: '/mnt/pool/ds',
