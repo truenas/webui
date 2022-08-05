@@ -316,10 +316,18 @@ export class AppSchemaService {
               if (!(formGroup.controls[subquestion.variable].parent as CustomUntypedFormField).hidden) {
                 if (value === schema.show_subquestions_if) {
                   (formGroup.controls[subquestion.variable] as CustomUntypedFormField).hidden = false;
-                  formGroup.controls[subquestion.variable].enable();
+                  if (!isNew && (isParentImmutable || !!schema.immutable || !!subquestion.schema.immutable)) {
+                    formGroup.controls[subquestion.variable].disable();
+                  } else {
+                    formGroup.controls[subquestion.variable].enable();
+                  }
                 } else {
                   (formGroup.controls[subquestion.variable] as CustomUntypedFormField).hidden = true;
-                  formGroup.controls[subquestion.variable].disable();
+                  if (!isNew && (isParentImmutable || !!schema.immutable || !!subquestion.schema.immutable)) {
+                    formGroup.controls[subquestion.variable].disable();
+                  } else {
+                    formGroup.controls[subquestion.variable].enable();
+                  }
                 }
               }
             });
@@ -414,13 +422,24 @@ export class AppSchemaService {
             }
             subscription.add(formGroup.controls[relation.fieldName].valueChanges
               .subscribe((value) => {
-                if (value !== null && formGroup.controls[chartSchemaNode.variable].parent.enabled) {
+                if (
+                  value !== null
+                  && !(formGroup.controls[chartSchemaNode.variable].parent as CustomUntypedFormField).hidden
+                ) {
                   if (_.isEqual(value, relation.operatorValue)) {
                     (formGroup.controls[chartSchemaNode.variable] as CustomUntypedFormField).hidden = false;
-                    formGroup.controls[chartSchemaNode.variable].enable();
+                    if (!isNew && (isParentImmutable || !!schema.immutable)) {
+                      formGroup.controls[chartSchemaNode.variable].disable();
+                    } else {
+                      formGroup.controls[chartSchemaNode.variable].enable();
+                    }
                   } else {
                     (formGroup.controls[chartSchemaNode.variable] as CustomUntypedFormField).hidden = true;
-                    formGroup.controls[chartSchemaNode.variable].disable();
+                    if (!isNew && (isParentImmutable || !!schema.immutable)) {
+                      formGroup.controls[chartSchemaNode.variable].disable();
+                    } else {
+                      formGroup.controls[chartSchemaNode.variable].enable();
+                    }
                   }
                 }
               }));
@@ -432,13 +451,24 @@ export class AppSchemaService {
             }
             subscription.add(formGroup.controls[relation.fieldName].valueChanges
               .subscribe((value) => {
-                if (value !== null && formGroup.controls[chartSchemaNode.variable].parent.enabled) {
+                if (
+                  value !== null
+                  && !(formGroup.controls[chartSchemaNode.variable].parent as CustomUntypedFormField).hidden
+                ) {
                   if (!_.isEqual(value, relation.operatorValue)) {
                     (formGroup.controls[chartSchemaNode.variable] as CustomUntypedFormField).hidden = false;
-                    formGroup.controls[chartSchemaNode.variable].enable();
+                    if (!isNew && (isParentImmutable || !!schema.immutable)) {
+                      formGroup.controls[chartSchemaNode.variable].disable();
+                    } else {
+                      formGroup.controls[chartSchemaNode.variable].enable();
+                    }
                   } else {
                     (formGroup.controls[chartSchemaNode.variable] as CustomUntypedFormField).hidden = true;
-                    formGroup.controls[chartSchemaNode.variable].disable();
+                    if (!isNew && (isParentImmutable || !!schema.immutable)) {
+                      formGroup.controls[chartSchemaNode.variable].disable();
+                    } else {
+                      formGroup.controls[chartSchemaNode.variable].enable();
+                    }
                   }
                 }
               }));

@@ -50,7 +50,10 @@ export class IxDynamicFormItemComponent implements OnInit {
   }
 
   get isHidden(): boolean {
-    return !!(this.dynamicForm.controls[this.dynamicSchema.controlName] as CustomUntypedFormField).hidden;
+    return (
+      !!(this.dynamicForm.controls[this.dynamicSchema.controlName] as CustomUntypedFormField).hidden
+    )
+      || this.dynamicSchema.hidden;
   }
 
   addControl(): void {
