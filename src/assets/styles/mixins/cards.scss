@@ -24,7 +24,7 @@
       display: grid;
       grid-template-columns: auto;
       place-content: start;
-      width: calc($card-width + $gap);
+      width: inherit;
     }
 
     // Two Columns 
@@ -37,7 +37,7 @@
 
       min-height: 1240px;
       place-content: flex-start;
-      width: calc(2 * ($card-width + $gap));
+      width: inherit;
     }
 
     // Three Columns 
