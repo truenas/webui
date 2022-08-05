@@ -14,6 +14,7 @@ import { DatasetDetailsCardComponent } from 'app/pages/datasets/components/datas
 import { DatasetDetailsPanelComponent } from 'app/pages/datasets/components/dataset-details-panel/dataset-details-panel.component';
 import { DatasetFormComponent } from 'app/pages/datasets/components/dataset-form/dataset-form.component';
 import { DatasetIconComponent } from 'app/pages/datasets/components/dataset-icon/dataset-icon.component';
+import { RolesCardComponent } from 'app/pages/datasets/components/roles-card/roles-card.component.component';
 import { ZvolFormComponent } from 'app/pages/datasets/components/zvol-form/zvol-form.component';
 import { ZfsEncryptionCardComponent } from 'app/pages/datasets/modules/encryption/components/zfs-encryption-card/zfs-encryption-card.component';
 import { PermissionsCardComponent } from 'app/pages/datasets/modules/permissions/containers/permissions-card/permissions-card.component';
@@ -50,6 +51,7 @@ describe('DatasetDetailsPanelComponent', () => {
         ZfsEncryptionCardComponent,
         DatasetCapacityManagementCardComponent,
         DataProtectionCardComponent,
+        RolesCardComponent,
       ),
     ],
     providers: [
