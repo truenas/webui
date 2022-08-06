@@ -49,7 +49,7 @@ export interface ChartReleaseCreate {
   version: string;
 }
 
-export type ChartFormValue = string | number | boolean | Record<string, unknown>;
+export type ChartFormValue = string | number | boolean | Record<string, unknown> | ChartFormValue[];
 
 export interface ChartFormValues extends HierarchicalObjectMap<ChartFormValue> {
   release_name: string;

@@ -191,10 +191,10 @@ export class ChartFormComponent implements OnDestroy {
     }
     if (_.isPlainObject(data)) {
       for (const key in data) {
-        fieldsTobeDeleted = this.getFieldsHiddenOnForm(data[key], path ? path + '.' + key : key, fieldsTobeDeleted);
+        fieldsTobeDeleted.concat(this.getFieldsHiddenOnForm(data[key], path ? path + '.' + key : key, fieldsTobeDeleted));
       }
+      return fieldsTobeDeleted;
     }
-    return fieldsTobeDeleted;
   }
 
   cleanData(data: ChartFormValues): ChartFormValues {
@@ -206,9 +206,16 @@ export class ChartFormComponent implements OnDestroy {
       for (let i = 0; i < keys.length - 1; i++) {
         value = value[keys[i]];
         configValue = configValue[keys[i]];
+        if (value === undefined || value === null) {
+          break;
+        }
       }
-      if (!configValue[keys[keys.length - 1]]) {
-        delete value[keys[keys.length - 1]];
+      if (value !== undefined && value !== null) {
+        if (this.isNew) {
+          delete value[keys[keys.length - 1]];
+        } else if (!configValue[keys[keys.length - 1]]) {
+          delete value[keys[keys.length - 1]];
+        }
       }
     }
     return data;

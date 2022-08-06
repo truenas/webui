@@ -383,6 +383,8 @@ describe('ChartFormComponent', () => {
         gatewayPort: 9880,
         swarmPort: 9401,
       },
+      externalInterfaces: [],
+      portForwardingList: [],
       version: '1.2.1',
       updateStrategy: 'Recreate',
       hostNetwork: true,
