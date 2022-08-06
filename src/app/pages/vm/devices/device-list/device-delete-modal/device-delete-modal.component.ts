@@ -6,7 +6,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { VmDeviceType } from 'app/enums/vm.enum';
 import { VmDevice, VmDeviceDelete, VmDiskDevice } from 'app/interfaces/vm-device.interface';
 import { EntityUtils } from 'app/modules/entity/utils';
-import IxValidatorsService from 'app/modules/ix-forms/services/ix-validators.service';
+import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { AppLoaderService, DialogService, WebSocketService } from 'app/services';
 
 export interface DeviceDeleteModalState {
@@ -40,33 +40,35 @@ export class DeviceDeleteModalComponent implements OnInit {
     private validatorsService: IxValidatorsService,
     private ws: WebSocketService,
   ) {
-    if (this.data.row.dtype === VmDeviceType.Disk) {
-      const zvolConfirmRequired = this.validatorsService.withMessage(
-        Validators.required,
-        this.translate.instant('Name of the zvol is required'),
-      );
-
-      const zvolName = this.getZvolName(this.data.row);
-
-      const zvolConfirmMustMatch = this.validatorsService.withMessage(
-        Validators.pattern(new RegExp(`^${zvolName}$`)),
-        this.translate.instant('Name of the zvol must be correct'),
-      );
-
-      this.form.controls['zvolConfirm'].setValidators([
-        this.validatorsService.validateOnCondition(
-          (control: AbstractControl) => control.parent.get('zvol').value,
-          Validators.compose([
-            zvolConfirmRequired,
-            zvolConfirmMustMatch,
-          ]),
-        ),
-      ]);
-
-      this.form.updateValueAndValidity();
-
-      this.zvolConfirmLabelText = this.translate.instant('Enter <strong>{zvolName}</strong> below to confirm.', { zvolName });
+    if (this.data.row.dtype !== VmDeviceType.Disk) {
+      return;
     }
+
+    const zvolConfirmRequired = this.validatorsService.withMessage(
+      Validators.required,
+      this.translate.instant('Name of the zvol is required'),
+    );
+
+    const zvolName = this.getZvolName(this.data.row);
+
+    const zvolConfirmMustMatch = this.validatorsService.withMessage(
+      Validators.pattern(new RegExp(`^${zvolName}$`)),
+      this.translate.instant('Name of the zvol must be correct'),
+    );
+
+    this.form.controls['zvolConfirm'].setValidators([
+      this.validatorsService.validateOnCondition(
+        (control: AbstractControl) => control.parent.get('zvol').value,
+        Validators.compose([
+          zvolConfirmRequired,
+          zvolConfirmMustMatch,
+        ]),
+      ),
+    ]);
+
+    this.form.updateValueAndValidity();
+
+    this.zvolConfirmLabelText = this.translate.instant('Enter <strong>{zvolName}</strong> below to confirm.', { zvolName });
   }
 
   ngOnInit(): void {

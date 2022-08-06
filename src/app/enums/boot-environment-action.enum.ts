@@ -1,4 +1,4 @@
-export enum BootEnvironmentActions {
+export enum BootEnvironmentAction {
   Create = 'create',
   Rename = 'update',
   Clone = 'clone',

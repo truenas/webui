@@ -539,7 +539,6 @@ export class CloudsyncFormComponent implements FormConfiguration {
       attributes: {
         bucket,
         folder: node.data.name,
-        bucket_policy_only: true,
       },
       args: '',
     };
@@ -779,85 +778,87 @@ export class CloudsyncFormComponent implements FormConfiguration {
 
       if (res !== null) {
         this.credentials.forEach((item) => {
-          if (item.id === res) {
-            const targetProvider = _.find(this.providers, { name: item.provider });
-            if (targetProvider && targetProvider['buckets']) {
+          if (item.id !== res) {
+            return;
+          }
+
+          const targetProvider = _.find(this.providers, { name: item.provider });
+          if (targetProvider && targetProvider['buckets']) {
+            if (!entityForm.loaderOpen) {
+              this.loader.open();
+            } else {
+              entityForm.keepLoaderOpen = true;
+            }
+
+            // update bucket fields name and tooltips based on provider
+            if (
+              item.provider === CloudsyncProviderName.MicrosoftAzure || item.provider === CloudsyncProviderName.Hubic
+            ) {
+              this.bucketField.placeholder = this.translate.instant('Container');
+              this.bucketField.tooltip = this.translate.instant('Select the pre-defined container to use.');
+              this.bucketInputField.placeholder = this.translate.instant('Container');
+              this.bucketInputField.tooltip = this.translate.instant('Input the pre-defined container to use.');
+            } else {
+              this.bucketField.placeholder = this.translate.instant('Bucket');
+              this.bucketField.tooltip = this.translate.instant('Select the pre-defined S3 bucket to use.');
+              this.bucketInputField.placeholder = this.translate.instant('Bucket');
+              this.bucketInputField.tooltip = this.translate.instant('Input the pre-defined S3 bucket to use.');
+            }
+
+            this.getBuckets(item).pipe(untilDestroyed(this)).subscribe((res) => {
               if (!entityForm.loaderOpen) {
-                this.loader.open();
+                this.loader.close();
               } else {
-                entityForm.keepLoaderOpen = true;
+                entityForm.loader.close();
+                entityForm.loaderOpen = false;
+                entityForm.keepLoaderOpen = false;
               }
-
-              // update bucket fields name and tooltips based on provider
-              if (
-                item.provider === CloudsyncProviderName.MicrosoftAzure || item.provider === CloudsyncProviderName.Hubic
-              ) {
-                this.bucketField.placeholder = this.translate.instant('Container');
-                this.bucketField.tooltip = this.translate.instant('Select the pre-defined container to use.');
-                this.bucketInputField.placeholder = this.translate.instant('Container');
-                this.bucketInputField.tooltip = this.translate.instant('Input the pre-defined container to use.');
-              } else {
-                this.bucketField.placeholder = this.translate.instant('Bucket');
-                this.bucketField.tooltip = this.translate.instant('Select the pre-defined S3 bucket to use.');
-                this.bucketInputField.placeholder = this.translate.instant('Bucket');
-                this.bucketInputField.tooltip = this.translate.instant('Input the pre-defined S3 bucket to use.');
-              }
-
-              this.getBuckets(item).pipe(untilDestroyed(this)).subscribe((res) => {
-                if (!entityForm.loaderOpen) {
-                  this.loader.close();
-                } else {
-                  entityForm.loader.close();
-                  entityForm.loaderOpen = false;
-                  entityForm.keepLoaderOpen = false;
-                }
-                this.bucketField.options = [{ label: '----------', value: '' }];
-                if (res) {
-                  res.forEach((subitem) => {
-                    this.bucketField.options.push({ label: subitem.Name, value: subitem.Path });
-                  });
-                }
-                this.setDisabled('bucket', false, false);
-                this.setDisabled('bucket_input', true, true);
-              },
-              (err) => {
-                if (!entityForm.loaderOpen) {
-                  this.loader.close();
-                } else {
-                  entityForm.loader.close();
-                  entityForm.loaderOpen = false;
-                  entityForm.keepLoaderOpen = false;
-                }
-                this.setDisabled('bucket', true, true);
-                this.setDisabled('bucket_input', false, false);
-                this.dialog.confirm({
-                  title: err.extra ? err.extra.excerpt : (this.translate.instant('Error: ') + err.error),
-                  message: err.reason,
-                  hideCheckBox: true,
-                  buttonMsg: this.translate.instant('Fix Credential'),
-                }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
-                  this.modalService.closeSlideIn();
-                  const navigationExtras: NavigationExtras = { state: { editCredential: 'cloudcredentials', id: item.id } };
-                  this.router.navigate(['/', 'credentials', 'backup-credentials'], navigationExtras);
+              this.bucketField.options = [{ label: '----------', value: '' }];
+              if (res) {
+                res.forEach((subitem) => {
+                  this.bucketField.options.push({ label: subitem.Name, value: subitem.Path });
                 });
-              });
-            } else {
-              this.setDisabled('bucket', true, true);
+              }
+              this.setDisabled('bucket', false, false);
               this.setDisabled('bucket_input', true, true);
-            }
+            },
+            (err) => {
+              if (!entityForm.loaderOpen) {
+                this.loader.close();
+              } else {
+                entityForm.loader.close();
+                entityForm.loaderOpen = false;
+                entityForm.keepLoaderOpen = false;
+              }
+              this.setDisabled('bucket', true, true);
+              this.setDisabled('bucket_input', false, false);
+              this.dialog.confirm({
+                title: err.extra ? err.extra.excerpt : (this.translate.instant('Error: ') + err.error),
+                message: err.reason,
+                hideCheckBox: true,
+                buttonMsg: this.translate.instant('Fix Credential'),
+              }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
+                this.modalService.closeSlideIn();
+                const navigationExtras: NavigationExtras = { state: { editCredential: 'cloudcredentials', id: item.id } };
+                this.router.navigate(['/', 'credentials', 'backup-credentials'], navigationExtras);
+              });
+            });
+          } else {
+            this.setDisabled('bucket', true, true);
+            this.setDisabled('bucket_input', true, true);
+          }
 
-            if (targetProvider && targetProvider.name === CloudsyncProviderName.GoogleCloudStorage) {
-              this.setDisabled('bucket_policy_only', false, false);
-            } else {
-              this.setDisabled('bucket_policy_only', true, true);
-            }
+          if (targetProvider && targetProvider.name === CloudsyncProviderName.GoogleCloudStorage) {
+            this.setDisabled('bucket_policy_only', false, false);
+          } else {
+            this.setDisabled('bucket_policy_only', true, true);
+          }
 
-            const taskSchema = _.find(this.providers, { name: item.provider }) ? _.find(this.providers, { name: item.provider })['task_schema'] : [];
+          const taskSchema = _.find(this.providers, { name: item.provider }) ? _.find(this.providers, { name: item.provider })['task_schema'] : [];
 
-            for (const i of this.taskSchemas) {
-              const tobeDisable = !(_.findIndex(taskSchema, { property: i }) > -1);
-              this.setDisabled(i === 'encryption' ? 'task_encryption' : i, tobeDisable, tobeDisable);
-            }
+          for (const i of this.taskSchemas) {
+            const tobeDisable = !(_.findIndex(taskSchema, { property: i }) > -1);
+            this.setDisabled(i === 'encryption' ? 'task_encryption' : i, tobeDisable, tobeDisable);
           }
         });
       } else {

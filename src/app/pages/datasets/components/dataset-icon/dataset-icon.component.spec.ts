@@ -2,7 +2,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatIconHarness } from '@angular/material/icon/testing';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { DatasetType } from 'app/enums/dataset.enum';
-import { Dataset } from 'app/interfaces/dataset.interface';
+import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { DatasetIconComponent } from 'app/pages/datasets/components/dataset-icon/dataset-icon.component';
 
 describe('DatasetIconComponent', () => {
@@ -12,7 +12,7 @@ describe('DatasetIconComponent', () => {
     component: DatasetIconComponent,
   });
 
-  async function setupTest(dataset: Dataset): Promise<void> {
+  async function setupTest(dataset: DatasetDetails): Promise<void> {
     spectator = createComponent({
       props: {
         dataset,
@@ -26,7 +26,7 @@ describe('DatasetIconComponent', () => {
   it('shows an icon for a root dataset', async () => {
     await setupTest({
       name: 'root',
-    } as Dataset);
+    } as DatasetDetails);
 
     expect(await matIcon.getName()).toBe('dataset');
   });
@@ -35,7 +35,7 @@ describe('DatasetIconComponent', () => {
     await setupTest({
       name: '/root/child',
       type: DatasetType.Filesystem,
-    } as Dataset);
+    } as DatasetDetails);
 
     expect(await matIcon.getName()).toBe('folder');
   });
@@ -44,7 +44,7 @@ describe('DatasetIconComponent', () => {
     await setupTest({
       name: '/root/child',
       type: DatasetType.Volume,
-    } as Dataset);
+    } as DatasetDetails);
 
     expect(await matIcon.getName()).toBe('mdi-database');
   });

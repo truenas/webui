@@ -6,7 +6,7 @@ import {
 } from 'rxjs/operators';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
-import { getDatasetAndParentsById } from 'app/pages/datasets/utils/get-datasets-in-tree-by-id.utils';
+import { getTreeBranchToNode } from 'app/pages/datasets/utils/get-tree-branch-to-node.utils';
 import { WebSocketService } from 'app/services';
 
 export interface DatasetTreeState {
@@ -34,7 +34,7 @@ export class DatasetTreeStore extends ComponentStore<DatasetTreeState> {
       return null;
     }
 
-    const selectedBranch = getDatasetAndParentsById(state.datasets, state.selectedDatasetId);
+    const selectedBranch = getTreeBranchToNode(state.datasets, (dataset) => dataset.id === state.selectedDatasetId);
     if (!selectedBranch) {
       return null;
     }
@@ -55,6 +55,7 @@ export class DatasetTreeStore extends ComponentStore<DatasetTreeState> {
   readonly loadDatasets = this.effect((triggers$: Observable<void>) => {
     return triggers$.pipe(
       tap(() => {
+        // Not clearing the state on reload on purpose.
         this.patchState({
           error: null,
           isLoading: true,

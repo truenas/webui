@@ -811,6 +811,7 @@ export type ApiDirectory = {
   'system.advanced.syslog_certificate_authority_choices': { params: void; response: Choices };
   'system.advanced.sed_global_password': { params: void; response: string };
   'system.is_stable': { params: void; response: boolean };
+  'system.environment': { params: void; response: string };
 
   // Replication
   'replication.config.config': { params: void; response: ReplicationConfig };
@@ -947,7 +948,7 @@ export type ApiDirectory = {
   'user.update': { params: [id: number, update: UserUpdate]; response: number };
   'user.create': { params: [UserUpdate]; response: number };
   'user.query': { params: QueryParams<User>; response: User[] };
-  'user.set_root_password': { params: [password: string]; response: void };
+  'user.set_root_password': { params: [password: string, ec2?: { instance_id: string }]; response: void };
   'user.delete': { params: DeleteUserParams; response: number };
   'user.get_user_obj': { params: [{ username?: string; uid?: number }]; response: DsUncachedUser };
   'user.shell_choices': { params: [userId?: number]; response: Choices };

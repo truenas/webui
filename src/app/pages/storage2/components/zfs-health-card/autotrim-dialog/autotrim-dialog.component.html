@@ -2,7 +2,7 @@
   {{ 'Pool Options for {pool}' | translate: { pool: pool.name } }}
 </h1>
 
-<form class="ix-form-container" (submit)="onSubmit()">
+<form class="ix-form-container" (submit)="onSubmit($event)">
   <ix-checkbox
     [formControl]="autotrimControl"
     [label]="'Auto TRIM' | translate"
