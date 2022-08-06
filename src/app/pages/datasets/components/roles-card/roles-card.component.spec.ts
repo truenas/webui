@@ -24,6 +24,7 @@ const datasetDummy: DatasetDetails = {
   type: null,
   used: null,
   quota: null,
+  thick_provisioned: null,
 };
 
 describe('RolesCardComponent', () => {
