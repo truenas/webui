@@ -31,13 +31,18 @@
     <ix-permissions-card [dataset]="dataset" *ngIf="hasPermissions && !dataset.locked"></ix-permissions-card>
   </div>
   <div class="cards-column">
+    <ix-roles-card
+      *ngIf="datasetHasRoles" 
+      [dataset]="dataset" 
+      [hasChildrenWithShares]="datasetHasChildrenWithShares"
+    ></ix-roles-card>
     <ix-zfs-encryption-card
       *ngIf="isEncryptionAllowed"
       [dataset]="dataset"
       [parentDataset]="parentDataset"
     ></ix-zfs-encryption-card>
-    <ix-dataset-capacity-management-card
+    <ix-dataset-capacity-management-card 
+      [dataset]="dataset" 
       *ngIf="isCapacityAllowed"
-      [dataset]="dataset"
     ></ix-dataset-capacity-management-card>
   </div>
