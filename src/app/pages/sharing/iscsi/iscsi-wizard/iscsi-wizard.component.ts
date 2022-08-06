@@ -770,18 +770,20 @@ export class IscsiWizardComponent implements WizardConfiguration {
 
   disablefieldGroup(fieldGroup: string[], disabled: boolean, stepIndex: number): void {
     fieldGroup.forEach((field) => {
-      if (_.indexOf(this.hiddenFieldGroup, field) < 0) {
-        const control = _.find(this.wizardConfig[stepIndex].fieldConfig, { name: field });
-        control['isHidden'] = disabled;
-        control.disabled = disabled;
-        if (disabled) {
-          this.entityWizard.formArray.get([stepIndex]).get(field).disable();
-        } else {
-          this.entityWizard.formArray.get([stepIndex]).get(field).enable();
-        }
-        if (disabled) {
-          this.summaryObj[field] = null;
-        }
+      if (_.indexOf(this.hiddenFieldGroup, field) >= 0) {
+        return;
+      }
+
+      const control = _.find(this.wizardConfig[stepIndex].fieldConfig, { name: field });
+      control['isHidden'] = disabled;
+      control.disabled = disabled;
+      if (disabled) {
+        this.entityWizard.formArray.get([stepIndex]).get(field).disable();
+      } else {
+        this.entityWizard.formArray.get([stepIndex]).get(field).enable();
+      }
+      if (disabled) {
+        this.summaryObj[field] = null;
       }
     });
   }

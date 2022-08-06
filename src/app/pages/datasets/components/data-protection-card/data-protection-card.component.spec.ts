@@ -36,6 +36,7 @@ describe('DataProtectionComponent', () => {
           type: null,
           used: null,
           quota: null,
+          thick_provisioned: false,
         },
       },
     });

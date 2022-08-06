@@ -76,12 +76,14 @@ export class DiskHealthCardComponent implements OnInit, OnChanges, OnDestroy {
   ) { }
 
   ngOnInit(): void {
-    if (!this.loading) {
-      this.checkVolumeHealth(this.poolState);
-      this.loadAlerts();
-      this.loadSmartTasks();
-      this.loadTemperatures();
+    if (this.loading) {
+      return;
     }
+
+    this.checkVolumeHealth(this.poolState);
+    this.loadAlerts();
+    this.loadSmartTasks();
+    this.loadTemperatures();
   }
 
   ngOnChanges(): void {

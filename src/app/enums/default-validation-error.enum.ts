@@ -1,4 +1,4 @@
-export enum DefaultValidationErrors {
+export enum DefaultValidationError {
   Min = 'min',
   Max = 'max',
   Required = 'required',

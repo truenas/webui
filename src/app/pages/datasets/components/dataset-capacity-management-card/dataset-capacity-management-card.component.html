@@ -21,10 +21,10 @@
         </div>
       </ng-container>
       <ng-container *ngIf="isZvol">
-        <!-- TODO: Fix me please after NAS-117254 is done -->
-        <div class="details-item" *ngIf="false">
+        <div class="details-item">
           <span class="label">{{ 'Provisioning Type' | translate }}:</span>
-          <span class="value">{{ 'Thick' | translate }}</span>
+          <span class="value" *ngIf="dataset.thick_provisioned">{{ 'Thick' | translate }}</span>
+          <span class="value" *ngIf="!dataset.thick_provisioned">{{ 'Sparse' | translate }}</span>
         </div>
         <div class="details-item">
           <span class="label">{{ 'Volume Size' | translate }}:</span>
@@ -65,7 +65,7 @@
         <span class="label">{{ 'User Quotas' | translate }}:</span>
         <ng-container *ngIf="checkQuotas; else noneTemplate">
           <span class="value" *ngIf="!isLoadingQuotas; else valuePlaceholder">
-            {{ 'Quotas set for {n} users' | translate: { n: userQuotas } }}
+            {{ 'Quotas set for {n, plural, one {# user} other {# users}}' | translate: { n: userQuotas } }}
           </span>
         </ng-container>
         <a *ngIf="checkQuotas" [routerLink]="['/', 'datasets', dataset.id, 'user-quotas']">
@@ -76,7 +76,7 @@
         <span class="label">{{ 'Group Quotas' | translate }}:</span>
         <ng-container *ngIf="checkQuotas; else noneTemplate">
           <span class="value" *ngIf="!isLoadingQuotas; else valuePlaceholder">
-            {{ 'Quotas set for {n} groups' | translate: { n: groupQuotas } }}
+            {{ 'Quotas set for {n, plural, one {# group} other {# groups}}' | translate: { n: groupQuotas } }}
           </span>
         </ng-container>
         <a *ngIf="checkQuotas" [routerLink]="['/', 'datasets', dataset.id, 'group-quotas']">

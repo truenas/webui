@@ -1,3 +1,5 @@
+const { rules: airbnbRules } = require('eslint-config-airbnb-typescript/lib/shared');
+
 module.exports = {
   "root": true,
   "ignorePatterns": [
@@ -21,13 +23,14 @@ module.exports = {
         "airbnb-typescript/base",
         "plugin:@angular-eslint/recommended",
         "plugin:@typescript-eslint/recommended",
-        "plugin:@typescript-eslint/recommended-requiring-type-checking"
+        "plugin:@typescript-eslint/recommended-requiring-type-checking",
       ],
       "plugins": [
         "rxjs",
         "rxjs-angular",
         "unicorn",
-        "angular-file-naming"
+        "angular-file-naming",
+        "@shopify"
       ],
       "rules": {
         // TODO: Conflicts with ngx-translate-extract
@@ -168,6 +171,13 @@ module.exports = {
 
         // Other overwrites
         "@typescript-eslint/lines-between-class-members": "off",
+        "@typescript-eslint/indent": ["error", 2, {
+          ...airbnbRules['@typescript-eslint/indent'][2],
+          ignoredNodes: [
+            ...airbnbRules['@typescript-eslint/indent'][2]['ignoredNodes'],
+            "PropertyDefinition[decorators]",
+          ]
+        }],
 
         // Extra rules
         "@angular-eslint/use-lifecycle-interface": ["error"],
@@ -220,6 +230,8 @@ module.exports = {
             "message": "Use alias 'app' to replace part '../' of the path."
           }],
         }],
+        "@shopify/typescript/prefer-singular-enums": "error",
+        "@shopify/prefer-early-return": ["error", { maximumStatements: 3 }],
 
         // RxJS rules
         "rxjs/no-unsafe-takeuntil": ["error", {

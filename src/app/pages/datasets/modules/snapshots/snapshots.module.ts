@@ -6,7 +6,6 @@ import { MatCardModule } from '@angular/material/card';
 import { MatRippleModule } from '@angular/material/core';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatExpansionModule } from '@angular/material/expansion';
-import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
@@ -23,6 +22,7 @@ import { CommonDirectivesModule } from 'app/directives/common/common-directives.
 import { AppCommonModule } from 'app/modules/common/app-common.module';
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
+import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { IxTableModule } from 'app/modules/ix-tables/ix-table.module';
 import { LayoutModule } from 'app/modules/layout/layout.module';
 import { CreateSnapshotDialogComponent } from 'app/pages/datasets/modules/snapshots/create-snapshot-dialog/create-snapshot-dialog.component';
@@ -46,8 +46,8 @@ import { SnapshotBatchDeleteDialogComponent } from './snapshot-batch-delete-dial
     EntityModule,
     IxFormsModule,
     IxTableModule,
+    IxIconModule,
     MatButtonModule,
-    MatIconModule,
     MatListModule,
     MatMenuModule,
     MatRippleModule,

@@ -196,19 +196,21 @@ export class UpdateComponent implements OnInit {
       message: '',
       hideCheckBox: true,
       buttonMsg: this.translate.instant('Continue'),
-    }).pipe(untilDestroyed(this)).subscribe((res: boolean) => {
-      if (res) {
-        const dialogRef = this.matDialog.open(EntityJobComponent, { data: { title: this.updateTitle } });
-        dialogRef.componentInstance.setCall('failover.upgrade_finish');
-        dialogRef.componentInstance.submit();
-        dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
-          this.failoverUpgradePending = false;
-          dialogRef.close(false);
-        });
-        dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((failure: any) => {
-          this.dialogService.errorReport(failure.error, failure.reason, failure.trace.formatted);
-        });
+    }).pipe(untilDestroyed(this)).subscribe((confirmed: boolean) => {
+      if (!confirmed) {
+        return;
       }
+
+      const dialogRef = this.matDialog.open(EntityJobComponent, { data: { title: this.updateTitle } });
+      dialogRef.componentInstance.setCall('failover.upgrade_finish');
+      dialogRef.componentInstance.submit();
+      dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
+        this.failoverUpgradePending = false;
+        dialogRef.close(false);
+      });
+      dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((failure: any) => {
+        this.dialogService.errorReport(failure.error, failure.reason, failure.trace.formatted);
+      });
     });
   }
 

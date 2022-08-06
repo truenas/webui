@@ -6,8 +6,10 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+import * as _ from 'lodash';
 import { of } from 'rxjs';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
+import { WidgetUtils } from 'app/pages/dashboard/utils/widget-utils';
 import { AddToPoolType, ManageUnusedDiskDialogResource } from './manage-unused-disk-dialog.interface';
 
 @UntilDestroy()
@@ -17,6 +19,8 @@ import { AddToPoolType, ManageUnusedDiskDialogResource } from './manage-unused-d
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ManageUnusedDiskDialogComponent implements OnInit {
+  private utils: WidgetUtils;
+
   readonly toPoolOptions$ = of([
     {
       label: this.translate.instant('New Pool'),
@@ -33,10 +37,6 @@ export class ManageUnusedDiskDialogComponent implements OnInit {
       value: pool.id,
     })),
   );
-
-  get isExistingMode(): boolean {
-    return this.form.controls.toPool.value === AddToPoolType.Existing;
-  }
 
   form = this.fb.group({
     toPool: [AddToPoolType.New],
@@ -59,7 +59,20 @@ export class ManageUnusedDiskDialogComponent implements OnInit {
     public cdr: ChangeDetectorRef,
     private dialogRef: MatDialogRef<ManageUnusedDiskDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public resource: ManageUnusedDiskDialogResource,
-  ) { }
+  ) {
+    this.utils = new WidgetUtils();
+  }
+
+  get groupedDisks(): string[] {
+    const diskInfoFormats = this.resource.unusedDisks.map((disk) => `${this.utils.convert(disk.size).value} ${this.utils.convert(disk.size).units} ${disk.subsystem === 'nvme' ? disk.subsystem.toUpperCase() : disk.type}`);
+    const groupDisks = _.groupBy(diskInfoFormats);
+    const groupDiskFormats = Object.keys(groupDisks).map((format: string) => `${format} x ${groupDisks[format].length}`);
+    return groupDiskFormats;
+  }
+
+  get isExistingMode(): boolean {
+    return this.form.controls.toPool.value === AddToPoolType.Existing;
+  }
 
   ngOnInit(): void {
     this.form.controls.toPool.valueChanges.pipe(untilDestroyed(this)).subscribe((value) => {
