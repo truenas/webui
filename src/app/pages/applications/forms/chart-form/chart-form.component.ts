@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, OnDestroy } from '@angular/core';
 import { FormBuilder, UntypedFormControl, Validators } from '@angular/forms';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import _ from 'lodash';
 import { of, Subscription } from 'rxjs';
 import { ixChartApp } from 'app/constants/catalog.constants';
 import { DynamicFormSchemaType } from 'app/enums/dynamic-form-schema-type.enum';
@@ -15,6 +16,7 @@ import {
 import { AddListItemEvent, DeleteListItemEvent, DynamicFormSchema } from 'app/interfaces/dynamic-form-schema.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { EntityUtils } from 'app/modules/entity/utils';
+import { CustomUntypedFormField } from 'app/modules/ix-forms/components/ix-dynamic-form/classes/custom-untyped-form-field';
 import { DialogService } from 'app/services';
 import { AppSchemaService } from 'app/services/app-schema.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
@@ -180,8 +182,43 @@ export class ChartFormComponent implements OnDestroy {
     this.appSchemaService.deleteFormListItem(event);
   }
 
+  getFieldsHiddenOnForm(data: any, path = '', fieldsTobeDeleted: string[] = []): string[] {
+    if (path) {
+      if ((this.form.get(path) as CustomUntypedFormField).hidden) {
+        fieldsTobeDeleted.push(path);
+        return fieldsTobeDeleted;
+      }
+    }
+    if (_.isPlainObject(data)) {
+      for (const key in data) {
+        fieldsTobeDeleted = this.getFieldsHiddenOnForm(data[key], path ? path + '.' + key : key, fieldsTobeDeleted);
+      }
+    }
+    return fieldsTobeDeleted;
+  }
+
+  cleanData(data: ChartFormValues): ChartFormValues {
+    const fieldsTobeDeleted: string[] = this.getFieldsHiddenOnForm(data);
+    for (const field of fieldsTobeDeleted) {
+      const keys = field.split('.');
+      let value: any = data;
+      let configValue: any = this.config;
+      for (let i = 0; i < keys.length - 1; i++) {
+        value = value[keys[i]];
+        configValue = configValue[keys[i]];
+      }
+      if (!configValue[keys[keys.length - 1]]) {
+        delete value[keys[keys.length - 1]];
+      }
+    }
+    return data;
+  }
+
   onSubmit(): void {
-    const data = this.appSchemaService.serializeFormValue(this.form.getRawValue()) as ChartFormValues;
+    const data = this.cleanData(
+      this.appSchemaService.serializeFormValue(this.form.getRawValue()) as ChartFormValues,
+    );
+
     this.dialogRef = this.mdDialog.open(EntityJobComponent, {
       data: {
         title: this.isNew ? helptext.installing : helptext.updating,
