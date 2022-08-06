@@ -286,6 +286,9 @@ describe('IxDynamicFormItemComponent', () => {
         },
       });
 
+      (spectator.component.dynamicForm.controls.list as CustomUntypedFormField).hidden = false;
+      spectator.detectComponentChanges();
+
       jest.spyOn(spectator.component.addListItem, 'emit').mockImplementation();
       spectator.query(IxListComponent).add.emit();
 
@@ -302,6 +305,9 @@ describe('IxDynamicFormItemComponent', () => {
           dynamicSchema: listSchema,
         },
       });
+
+      (spectator.component.dynamicForm.controls.list as CustomUntypedFormField).hidden = false;
+      spectator.detectComponentChanges();
 
       jest.spyOn(spectator.component.deleteListItem, 'emit').mockImplementation();
       expect(spectator.queryAll(IxListItemComponent).length).toEqual(1);
