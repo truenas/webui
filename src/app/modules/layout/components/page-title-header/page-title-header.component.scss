@@ -1,3 +1,5 @@
+@import '~assets/styles/mixins/breakpoints';
+
 :host {
   border-bottom: solid 1px var(--lines);
   box-sizing: border-box;
@@ -6,6 +8,13 @@
   margin: 0 auto 32px;
   padding-bottom: 8px;
   width: calc(100% - 16px);
+
+  @media (max-width: $breakpoint-tablet) {
+    margin: 8px auto 32px;
+    padding-bottom: unset;
+    transform: scale(0.95);
+    width: 100%;
+  }
 }
 
 .title-container {
@@ -14,6 +23,14 @@
   flex-direction: row;
   flex-grow: 1;
   min-height: 40px;
+
+  @media (max-width: $breakpoint-tablet) {
+    flex-wrap: wrap;
+    
+    h1 {
+      margin-bottom: 12px;
+    }
+  }
 }
 
 .actions-container {
@@ -22,4 +39,38 @@
   flex-grow: 1;
   gap: 0 8px;
   justify-content: flex-end;
+
+  @media (max-width: $breakpoint-tablet) {
+    border-top: solid 1px var(--lines);
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+    padding: 14px 0;
+    width: 100%;
+    //margin-top: 12px;
+  }
 }
+
+.actions-container:empty {
+  display: none;
+  opacity: 0;
+}
+
+.actions-container > ::ng-deep * {
+  @media (max-width: $breakpoint-tablet) {
+    margin: 0 8px;
+  }
+}
+
+.actions-container > ::ng-deep .mat-button {
+  @media (max-width: $breakpoint-tablet) {
+    min-width: 40%;
+  }
+}
+
+.actions-container > ::ng-deep ix-search-input {
+  @media (max-width: $breakpoint-tablet) {
+    width: 80%;
+  }
+}
+

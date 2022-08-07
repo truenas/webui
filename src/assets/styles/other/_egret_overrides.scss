@@ -75,6 +75,11 @@ ix-topbar .mat-toolbar .mat-toolbar-row {
 
 .xs .rightside-content-hold {
   padding: 0 !important;
+
+  @media (max-width: $breakpoint-tablet) {
+    padding-bottom: 96px !important;
+  }
+
 }
 
 @keyframes silde_to_top {
