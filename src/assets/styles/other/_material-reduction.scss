@@ -945,3 +945,17 @@ ul.nested-list li {
 .form-list-item .form-element {
   margin: 8px 0;
 }
+
+.mat-tab-header-pagination-chevron {
+  border-color: unset !important;
+  color: var(--fg2); 
+}
+
+.mat-tab-header-pagination {
+  background-color: var(--lines);
+  opacity: 0.6;
+}
+
+.mat-tab-header-pagination-disabled {
+  opacity: 0.2;
+}
