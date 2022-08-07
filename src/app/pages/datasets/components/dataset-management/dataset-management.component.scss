@@ -82,6 +82,35 @@
   }
 }
 
+.details-container.details-container-mobile {
+  // Hide Details
+  @media (max-width: $breakpoint-hidden) {
+    background: var(--bg1);
+    display: flex;
+    height: 100% !important;
+    left: 0;
+    max-width: 100%;
+    padding-top: 64px;
+    position: absolute;
+    top: 0;
+    width: 100%;
+    z-index: 3;
+  }
+
+  ::ng-deep .cards .scroll-window {
+    display: grid;
+  }
+
+  ::ng-deep .cards .scroll-window > * {
+    margin: 0 auto;
+    max-width: 455px;
+    //min-width: 99% !important;
+    min-width: unset !important;
+    width: 99% !important;
+  }
+
+}
+
 ix-dataset-details-panel {
   display: flex;
   flex-direction: column;
@@ -129,12 +158,12 @@ ix-dataset-details-panel {
   color: var(--fg2);
 
   // Override default fraction based values to avoid misaligned columns
-  grid-template-columns: auto 150px 150px 150px 24px;
+  grid-template-columns: auto 150px 150px 150px;
   min-height: 48px;
   padding-left: 48px;
 
   @media (max-width: $breakpoint-tablet) {
-    grid-template-columns: auto 0 0 0 0;
+    grid-template-columns: auto 0 0 0;
     //border: solid 1px cyan;
     width: auto;
   }
@@ -189,5 +218,17 @@ ix-dataset-details-panel {
       top: 0;
       width: 6px;
     }
+  }
+}
+
+.dataset-nested-tree-root-node ix-icon.mobile-actions,
+.ix-nested-tree-node ix-icon.mobile-actions {
+  display: none;
+
+  @media (max-width: $breakpoint-hidden) {
+    display: flex;
+    margin: 12px;
+    position: relative;
+    right: 8px;
   }
 }

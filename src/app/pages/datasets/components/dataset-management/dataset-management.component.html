@@ -35,6 +35,7 @@
           >
             <button mat-icon-button disabled></button>
             <ix-dataset-node [dataset]="dataset"></ix-dataset-node>
+            <ix-icon name="mdi-dots-vertical" class="mobile-actions" (click)="toggleDetails()"></ix-icon>
           </ix-tree-node>
 
           <ix-nested-tree-node
@@ -58,6 +59,7 @@
               </button>
 
               <ix-dataset-node [dataset]="dataset"></ix-dataset-node>
+              <ix-icon name="mdi-dots-vertical" class="mobile-actions"></ix-icon>
             </div>
 
             <ng-container *ngIf="treeControl.isExpanded(dataset)" ixTreeNodeOutlet></ng-container>
@@ -67,7 +69,7 @@
     </div>
   </div>
 
-  <div class="details-container"
+  <div class="details-container details-container-mobile"
     ixDetailsHeight
     ixDetailsHeightParentClass="rightside-content-hold"
     [hasConsoleFooter]="hasConsoleFooter"

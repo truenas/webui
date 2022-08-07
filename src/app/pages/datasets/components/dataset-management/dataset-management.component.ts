@@ -104,4 +104,9 @@ export class DatasetsManagementComponent implements OnInit {
       });
     };
   }
+
+  // Expose hidden details on mobile
+  toggleDetails(): void {
+    // console.log("Toggling Details");
+  }
 }
