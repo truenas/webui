@@ -1795,6 +1795,7 @@
   "SMB - Primary Domain": "",
   "SMB Service is not currently running. Start the service now?": "",
   "SMB Share": "",
+  "SMB/NFSv4": "",
   "SMTP Authentication": "",
   "SNMP Community": "",
   "SNMP v3 Support": "",

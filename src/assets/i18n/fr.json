@@ -733,6 +733,7 @@
   "SID": "",
   "SMB Service is not currently running. Start the service now?": "",
   "SMB Share": "",
+  "SMB/NFSv4": "",
   "SSH": "",
   "SSH connection from the keychain": "",
   "SSH private key stored in user's home directory": "",
