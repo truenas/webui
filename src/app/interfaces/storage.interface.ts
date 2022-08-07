@@ -207,3 +207,13 @@ export type DiskWipeParams = [
 export interface DiskTemperatures {
   [disk: string]: number | null;
 }
+
+export interface DiskTemperatureAgg {
+  [disk: string]: TemperatureAgg;
+}
+
+export interface TemperatureAgg {
+  min: number | 0;
+  max: number | 0;
+  avg: number | 0;
+}
