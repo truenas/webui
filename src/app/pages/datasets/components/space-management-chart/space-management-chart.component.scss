@@ -1,19 +1,36 @@
-$chart-size: 150px !default;
+@import '~assets/styles/mixins/breakpoints';
+$chart-size: 150px; // !default;
+$chart-size-mobile: 280px;
 
 :host {
   display: flex;
   gap: 24px;
   min-height: $chart-size;
+
+  @media (max-width: $breakpoint-tablet) {
+    flex-wrap: wrap;
+  }
 }
 
 .chart-wrapper {
   height: $chart-size;
   width: $chart-size;
+
+  @media (max-width: $breakpoint-tablet) {
+    height: $chart-size-mobile;
+    margin: 0 auto;
+    width: $chart-size-mobile;
+  }
 }
 
 .chart-wrapper canvas {
   height: $chart-size !important;
   width: $chart-size !important;
+
+  @media (max-width: $breakpoint-tablet) {
+    height: $chart-size-mobile !important;
+    width: $chart-size-mobile !important;
+  }
 }
 
 .chart-description {
