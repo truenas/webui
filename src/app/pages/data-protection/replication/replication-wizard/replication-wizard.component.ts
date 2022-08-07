@@ -1398,7 +1398,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
     const keys = Object.keys(items).reverse();
     for (const key of keys) {
       if (key === 'periodic_snapshot_tasks') {
-        if (!items[key].length) {
+        if (!items[key]?.length) {
           continue;
         }
         for (const task of items[key]) {
