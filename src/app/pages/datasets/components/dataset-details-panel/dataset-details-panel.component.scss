@@ -1,13 +1,22 @@
 @import '~assets/styles/mixins/cards';
+@import '~assets/styles/mixins/breakpoints';
 
 .title {
   color: var(--fg2);
   margin-bottom: 16px;
   margin-left: 4px;
+
+  @media (max-width: $breakpoint-tablet) {
+    width: 100%;
+  }
 }
 
 .cards {
   @include details-cards();
+
+  @media (max-width: $breakpoint-tablet) {
+    overflow: hidden;
+  }
 }
 
 .own-name-and-icon {
@@ -22,11 +31,31 @@
   justify-content: space-between;
   margin-right: 5px;
 
+  @media (max-width: $breakpoint-tablet) {
+    flex-wrap: wrap;
+    margin-bottom: 8px;
+  }
+
   .add-buttons {
     flex-shrink: 0;
 
+
+    @media (max-width: $breakpoint-tablet) {
+      border-bottom: solid 1px var(--lines);
+      border-top: solid 1px var(--lines);
+      display: flex;
+      padding: 14px 0;
+      place-content: center;
+      width: 98%;
+    }
+
     button {
       margin-left: 6px;
+
+      @media (max-width: $breakpoint-tablet) {
+        width: 40%;
+      }
+
     }
   }
 }

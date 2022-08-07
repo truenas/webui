@@ -97,6 +97,12 @@
     z-index: 3;
   }
 
+  @media (max-width: $breakpoint-tablet) {
+    display: block;
+    overflow-y: auto;
+    padding-bottom: 96px;
+  }
+
   ::ng-deep .cards .scroll-window {
     display: grid;
   }
