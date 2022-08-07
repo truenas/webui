@@ -1,4 +1,5 @@
 @import '~assets/styles/mixins/cards';
+@import '~assets/styles/mixins/breakpoints';
 
 .header {
   align-items: center;
@@ -15,5 +16,16 @@
 
 .cards {
   @include resource-cards();
+  height: unset;
   margin-bottom: 30px;
+  
+  @media (min-width: calc($breakpoint-tablet + 1px)) {
+    display: flex;
+    gap: 16px;
+    overflow: auto;
+  }
+}
+
+.cards > .unused-resources {
+  width: unset;
 }
