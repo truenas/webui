@@ -1,4 +1,5 @@
 @import '~assets/styles/mixins/grid';
+@import '~assets/styles/mixins/breakpoints';
 
 :host {
   align-items: center;
@@ -7,6 +8,10 @@
   font-weight: 500;
   min-height: 48px;
   padding: 0;
+
+  @media (max-width: $breakpoint-hidden) {
+    //border: solid 1px violet;
+  }
 }
 
 .tree-node-grid {
@@ -14,17 +19,46 @@
   align-items: center;
 
   // Override default fraction based values to avoid misaligned columns
-  grid-template-columns: auto 150px 150px 150px;
+  grid-template-columns: auto 150px 150px 150px 24px;
+
+  @media (max-width: $breakpoint-tablet) {
+    // Override default fraction based values to avoid misaligned columns
+    grid-template-columns: auto 0 0 0 24px;
+    width: 100%;
+  }
 
   .cell {
     align-items: center;
     display: inline-flex;
     min-height: 48px;
 
+    @media (max-width: $breakpoint-tablet) {
+      //border: solid 1px red;
+      display: none;
+    }
+
     &:first-child {
       left: 0;
       position: sticky;
+
+      @media (max-width: $breakpoint-tablet) {
+        display: inline-flex;
+      }
+
     }
+
+    &:last-child {
+      display: none;
+      position: sticky;
+      right: 0;
+      text-align: center;
+
+      @media (max-width: $breakpoint-tablet) {
+        display: inline-flex;
+      }
+
+    }
+
   }
 
   .cell-name {
@@ -44,6 +78,7 @@
       padding-right: 15px;
     }
   }
+
 }
 
 // TODO: Fragile (at least with css selectors)

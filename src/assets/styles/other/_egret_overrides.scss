@@ -20,14 +20,16 @@ ix-topbar {
 ix-topbar {
   top: 0;
 
-  @media (min-width: $breakpoint-min-mobile) and (max-width: $breakpoint-tablet) {
-    //top: unset;
-    //bottom: 0;
+  .topbar-mobile-footer {
+    align-items: center;
+    display: inline-flex;
+    place-content: end;
+    width: inherit;
 
-    .topbar-mobile-footer {
+    @media (min-width: $breakpoint-min-mobile) and (max-width: $breakpoint-tablet) {
       background-color: var(--topbar);
       bottom: 0;
-      display: flex;
+      //display: flex;
       height: 48px;
       left: 0;
       padding: 0 16px;
@@ -37,16 +39,25 @@ ix-topbar {
       width: 100%;
     }
 
-    .topbar-button-right {
-      margin: 4px;
-    }
-
     .ix-systems-logo-icon {
-      bottom: 4px;
-      position: relative;
+      //display: inline-block;
+
+      @media (min-width: $breakpoint-min-mobile) and (max-width: $breakpoint-tablet) {
+        //bottom: 4px;
+        //position: relative;
+      }
+    }
+  
+    .topbar-button-right {
+      margin: 0;
+      
+      @media (min-width: $breakpoint-min-mobile) and (max-width: $breakpoint-tablet) {
+        margin: 4px;
+      }
     }
 
   }
+
 }
 
 div.mat-toolbar {

@@ -26,13 +26,20 @@
   position: relative;
 
   // Hide Details and stop compressing table width
-  @media (max-width: $table-width) {
-    min-width: $table-width;
-    overflow-x: auto;
+  @media (min-width: $breakpoint-min-mobile) and (max-width: $breakpoint-tablet) {
+    min-width: $breakpoint-min-mobile;
+    overflow-x: hidden;
+    width: 100%;
   }
 
+  // Hide Details and stop compressing table width
+  /*@media (max-width: $table-width) {
+    min-width: $table-width;
+    overflow-x: auto;
+  }*/
+
   // Hide Details and stretch table
-  @media (min-width: $table-width) and (max-width: $breakpoint-hidden) {
+  @media (min-width: $breakpoint-tablet) and (max-width: $breakpoint-hidden) {
     min-width: 100%;
   }
 
@@ -102,6 +109,13 @@ ix-dataset-details-panel {
   flex: 1;
   flex-direction: column;
   min-width: fit-content;
+
+  @media (max-width: $breakpoint-tablet) {
+    min-height: fit-content; // calc(100vh - 220px);
+    min-width: unset;
+    overflow-x: auto;
+    padding-bottom: 96px;
+  }
 }
 
 .dataset-tree {
@@ -115,17 +129,30 @@ ix-dataset-details-panel {
   color: var(--fg2);
 
   // Override default fraction based values to avoid misaligned columns
-  grid-template-columns: auto 150px 150px 150px;
+  grid-template-columns: auto 150px 150px 150px 24px;
   min-height: 48px;
   padding-left: 48px;
+
+  @media (max-width: $breakpoint-tablet) {
+    grid-template-columns: auto 0 0 0 0;
+    //border: solid 1px cyan;
+    width: auto;
+  }
 
   > div {
     font-weight: bold;
     padding: 4px 0;
 
+    @media (max-width: $breakpoint-tablet) {
+      display: none;
+    }
+
     &:first-child {
       left: 0;
       position: sticky;
+      @media (max-width: $breakpoint-tablet) {
+        display: block;
+      }
     }
   }
 
