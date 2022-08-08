@@ -1,3 +1,5 @@
+@import '~assets/styles/mixins/breakpoints';
+
 .fa-spin {
   animation: fa-spin 2s infinite linear;
 }
@@ -52,4 +54,35 @@
   &.overflow-visible {
     overflow: visible;
   }
+}
+
+.mobile-logo {
+  display: none;
+  width: 100%;
+  
+  @media (max-width: $breakpoint-tablet) {
+    display: flex;
+    place-content: center;
+  }
+
+  .mobile-logo-container {
+    height: 48px;
+    position: relative;
+    width: 200px;
+  }
+
+  .logomark {
+    left: 10px;
+    position: absolute;
+    top: 10px;
+    transform: scale(1.7); 
+  }
+
+  .logotype {
+    left: 85px;
+    position: absolute;
+    top: 13px;
+    transform: scale(4.2);
+  }
+
 }
