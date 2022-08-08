@@ -45,7 +45,7 @@ export class SupportComponent implements OnInit {
       }
 
       // Always try to show product image for iX Systems hardware regardless of platform or license
-      if (res.system_manufacturer.toLowerCase() == 'ixsystems' && res.system_product.includes('MINI')) {
+      if (res.system_manufacturer && res.system_manufacturer.toLowerCase() == 'ixsystems' && res.system_product.includes('MINI')) {
         this.getFreeNASImage(res.system_product);
       } else {
         this.getTrueNASImage(res.system_product);

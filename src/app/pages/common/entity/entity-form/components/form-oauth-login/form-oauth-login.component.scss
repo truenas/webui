@@ -1,0 +1,7 @@
+.form-oauth-login {
+  margin-bottom: 16px;
+
+  button:disabled {
+    pointer-events: none;
+  }
+}

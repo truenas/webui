@@ -1,6 +1,9 @@
 import { CommonModule } from '@angular/common';
 import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import {
+  FormOauthLoginComponent,
+} from 'app/pages/common/entity/entity-form/components/form-oauth-login/form-oauth-login.component';
 import { MaterialModule } from '../../../appMaterial.module';
 import { ColorPickerModule } from 'ngx-color-picker';
 import { MatSortHeader, MatSort } from '@angular/material/sort';
@@ -120,6 +123,7 @@ import { EntityTableService } from './entity-table/entity-table.service';
     FormExplorerComponent,
     FormPermissionsComponent,
     FormIpWithNetmaskComponent,
+    FormOauthLoginComponent,
     TooltipComponent,
     TooltipDocReplacePipe,
     FormSliderComponent,
