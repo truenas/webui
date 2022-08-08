@@ -531,7 +531,6 @@ export class CloudsyncFormComponent implements FormConfiguration {
       attributes: {
         bucket,
         folder: node.data.name,
-        bucket_policy_only: true,
       },
       args: '',
     };
