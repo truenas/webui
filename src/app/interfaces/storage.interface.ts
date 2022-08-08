@@ -213,7 +213,7 @@ export interface DiskTemperatureAgg {
 }
 
 export interface TemperatureAgg {
-  min: number | 0;
-  max: number | 0;
-  avg: number | 0;
+  min: number;
+  max: number;
+  avg: number;
 }
