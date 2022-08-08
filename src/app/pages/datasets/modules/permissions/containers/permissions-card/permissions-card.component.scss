@@ -1,9 +1,5 @@
 @import '~assets/styles/mixins/cards';
 
-:host .spinner {
-  margin: 30px auto;
-}
-
 .card {
   @include details-card();
 
@@ -19,6 +15,31 @@
       .details-item:not(:last-child) {
         margin-bottom: 15px;
         width: 50%;
+      }
+    }
+
+    .skeleton-content {
+      ngx-skeleton-loader {
+        min-width: 100%;
+      }
+
+      .permissions {
+        padding: 17px 10px 3px;
+
+        .permissions-item {
+          padding: 10px 15px;
+        }
+      }
+
+      .file-information {
+        justify-content: space-between;
+        padding-bottom: 0;
+
+        .details-item {
+          margin: 0;
+          margin-bottom: 23px;
+          width: 47%;
+        }
       }
     }
   }

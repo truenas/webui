@@ -10,11 +10,19 @@
   </mat-card-header>
 
   <mat-card-content>
-    <mat-spinner
-      *ngIf="isLoading; else loaded"
-      [diameter]="40"
-      class="spinner"
-    ></mat-spinner>
+
+    <div class="skeleton-content" *ngIf="isLoading; else loaded">
+      <div class="file-information">
+        <div class="details-item" *ngFor="let in of counter(3)">
+          <ngx-skeleton-loader></ngx-skeleton-loader>
+        </div>
+      </div>
+      <div class="permissions">
+        <div class="permissions-item" *ngFor="let in of counter(3)">
+          <ngx-skeleton-loader></ngx-skeleton-loader>
+        </div>
+      </div>
+    </div>
 
     <ng-template #loaded>
       <div class="file-information">

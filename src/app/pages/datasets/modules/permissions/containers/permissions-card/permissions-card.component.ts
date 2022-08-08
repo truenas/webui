@@ -70,4 +70,8 @@ export class PermissionsCardComponent implements OnInit, OnChanges {
   ngOnChanges(): void {
     this.store.loadPermissions(this.dataset.mountpoint);
   }
+
+  counter(i: number): number[] {
+    return new Array(i);
+  }
 }
