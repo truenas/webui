@@ -26,26 +26,21 @@ ix-topbar {
     place-content: end;
     width: inherit;
 
-    @media (min-width: $breakpoint-min-mobile) and (max-width: $breakpoint-tablet) {
+    @media (min-width: $breakpoint-min-mobile) and (max-width: $breakpoint-min-mobile) {
+      display: flex;
+      flex-wrap: wrap;
+      height: auto;
+    }
+
+    @media (max-width: $breakpoint-tablet) {
       background-color: var(--topbar);
       bottom: 0;
-      //display: flex;
       height: 48px;
       left: 0;
       padding: 0 16px;
       place-content: space-around;
-      //display: none;
       position: fixed;
       width: 100%;
-    }
-
-    .ix-systems-logo-icon {
-      //display: inline-block;
-
-      @media (min-width: $breakpoint-min-mobile) and (max-width: $breakpoint-tablet) {
-        //bottom: 4px;
-        //position: relative;
-      }
     }
   
     .topbar-button-right {
