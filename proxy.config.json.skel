@@ -8,7 +8,7 @@
     },
     "/_upload": {
         "target": "http://$SERVER$",
-        "secure": false,
+        "secure": true,
         "changeOrigin": true,
         "pathRewrite": {"^/_upload" : "http://$SERVER$:6000/_upload"},
         "loglevel": "debug"
