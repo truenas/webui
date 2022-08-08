@@ -1,6 +1,6 @@
 import { NestedTreeControl } from '@angular/cdk/tree';
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, AfterViewInit, TemplateRef, ViewChild,
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -14,6 +14,7 @@ import { IxNestedTreeDataSource } from 'app/modules/ix-tree/ix-nested-tree-datas
 import { flattenTreeWithFilter } from 'app/modules/ix-tree/utils/flattern-tree-with-filter';
 import { DevicesStore } from 'app/pages/storage2/modules/devices/stores/devices-store.service';
 import { WebSocketService } from 'app/services';
+import { LayoutService } from 'app/services/layout.service';
 
 @UntilDestroy()
 @Component({
@@ -21,7 +22,8 @@ import { WebSocketService } from 'app/services';
   styleUrls: ['./devices.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class DevicesComponent implements OnInit {
+export class DevicesComponent implements OnInit, AfterViewInit {
+  @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
   isLoading$ = this.devicesStore.isLoading$;
   selectedNode$ = this.devicesStore.selectedNode$;
   selectedParentNode$ = this.devicesStore.selectedParentNode$;
@@ -41,6 +43,7 @@ export class DevicesComponent implements OnInit {
   readonly isVdevGroup = (_: number, node: DeviceNestedDataNode): boolean => isVdevGroup(node);
 
   constructor(
+    private layoutService: LayoutService,
     private ws: WebSocketService,
     private cdr: ChangeDetectorRef,
     private route: ActivatedRoute,
@@ -66,6 +69,10 @@ export class DevicesComponent implements OnInit {
       .subscribe((advancedConfig) => {
         this.hasConsoleFooter = advancedConfig.consolemsg;
       });
+  }
+
+  ngAfterViewInit(): void {
+    this.layoutService.pageHeaderUpdater$.next(this.pageHeader);
   }
 
   onRowGroupSelected(dataNodeSelected: DeviceNestedDataNode, _: MouseEvent): void {
@@ -148,6 +155,7 @@ export class DevicesComponent implements OnInit {
       filter(Boolean),
       untilDestroyed(this),
     ).subscribe((guid: string) => {
+      this.layoutService.pageHeaderUpdater$.next(this.pageHeader);
       this.devicesStore.selectNodeByGuid(guid);
     });
   }

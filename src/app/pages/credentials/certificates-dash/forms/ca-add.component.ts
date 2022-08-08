@@ -860,22 +860,24 @@ export class CertificateAuthorityAddComponent implements WizardConfiguration {
         KeyUsage: {},
       };
       Object.keys(data).forEach((key) => {
-        if (key.startsWith('BasicConstraints') || key.startsWith('AuthorityKeyIdentifier') || key.startsWith('ExtendedKeyUsage') || key.startsWith('KeyUsage')) {
-          const typeProp = key.split('-');
-          if (data[key] === '') {
-            data[key] = null;
-          }
-          if (data[key]) {
-            if (typeProp.length === 1) {
-              for (const item of data[key]) {
-                (certExtensions as any)[typeProp[0]][item] = true;
-              }
-            } else {
-              (certExtensions as any)[typeProp[0]][typeProp[1]] = data[key];
-            }
-          }
-          delete data[key];
+        if (!key.startsWith('BasicConstraints') && !key.startsWith('AuthorityKeyIdentifier') && !key.startsWith('ExtendedKeyUsage') && !key.startsWith('KeyUsage')) {
+          return;
         }
+
+        const typeProp = key.split('-');
+        if (data[key] === '') {
+          data[key] = null;
+        }
+        if (data[key]) {
+          if (typeProp.length === 1) {
+            for (const item of data[key]) {
+              (certExtensions as any)[typeProp[0]][item] = true;
+            }
+          } else {
+            (certExtensions as any)[typeProp[0]][typeProp[1]] = data[key];
+          }
+        }
+        delete data[key];
       });
       data['cert_extensions'] = certExtensions;
 

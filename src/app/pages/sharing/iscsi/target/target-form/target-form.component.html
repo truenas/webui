@@ -30,39 +30,43 @@
         <div class="column">
           <ix-fieldset [title]="helptext.fieldset_target_group | translate">
             <ix-list
-              [empty]="groups.length === 0"
+              [empty]="form.controls.groups.length === 0"
               [label]="'Add groups' | translate"
+              formArrayName="groups"
               (add)="addGroup()"
             >
-              <ng-container *ngFor="let item of groups; let i = index">
-                <ix-list-item (delete)="deleteGroup(i)">
-                  <ix-select
-                    [formControlName]="'portal' + listPrefix + i"
-                    [label]="helptext.target_form_placeholder_portal | translate"
-                    [options]="portals$"
-                    [tooltip]="helptext.target_form_tooltip_portal | translate"
-                    [required]="true"
-                  ></ix-select>
-                  <ix-select
-                    [formControlName]="'initiator' + listPrefix + i"
-                    [label]="helptext.target_form_placeholder_initiator | translate"
-                    [options]="initiators$"
-                    [tooltip]="helptext.target_form_tooltip_initiator | translate"
-                  ></ix-select>
-                  <ix-select
-                    [formControlName]="'authmethod' + listPrefix + i"
-                    [label]="helptext.target_form_placeholder_authmethod | translate"
-                    [options]="authmethods$"
-                    [tooltip]="helptext.target_form_tooltip_authmethod | translate"
-                  ></ix-select>
-                  <ix-select
-                    [formControlName]="'auth' + listPrefix + i"
-                    [label]="helptext.target_form_placeholder_auth | translate"
-                    [options]="auths$"
-                    [tooltip]="helptext.target_form_tooltip_auth | translate"
-                  ></ix-select>
-                </ix-list-item>
-              </ng-container>
+              <ix-list-item
+                *ngFor="let entry of form.controls.groups.controls; let i = index"
+                [formGroupName]="i"
+                (delete)="deleteGroup(i)"
+              >
+                <ix-select
+                  formControlName="portal"
+                  [label]="helptext.target_form_placeholder_portal | translate"
+                  [options]="portals$"
+                  [tooltip]="helptext.target_form_tooltip_portal | translate"
+                  [required]="true"
+                ></ix-select>
+                <ix-select
+                  formControlName="initiator"
+                  [label]="helptext.target_form_placeholder_initiator | translate"
+                  [options]="initiators$"
+                  [tooltip]="helptext.target_form_tooltip_initiator | translate"
+                ></ix-select>
+                <ix-select
+                  formControlName="authmethod"
+                  [label]="helptext.target_form_placeholder_authmethod | translate"
+                  [options]="authmethods$"
+                  [tooltip]="helptext.target_form_tooltip_authmethod | translate"
+                  [required]="true"
+                ></ix-select>
+                <ix-select
+                  formControlName="auth"
+                  [label]="helptext.target_form_placeholder_auth | translate"
+                  [options]="auths$"
+                  [tooltip]="helptext.target_form_tooltip_auth | translate"
+                ></ix-select>
+              </ix-list-item>
             </ix-list>
           </ix-fieldset>
         </div>

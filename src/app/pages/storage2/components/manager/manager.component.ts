@@ -265,37 +265,39 @@ export class ManagerComponent implements OnInit, AfterViewInit {
 
   getPoolData(): void {
     this.ws.call(this.queryCall, [[['id', '=', this.pk]]]).pipe(untilDestroyed(this)).subscribe((res) => {
-      if (res[0]) {
-        this.firstDataVdevType = res[0].topology.data[0].type.toLowerCase();
-        if (this.firstDataVdevType === 'raidz1') {
-          this.firstDataVdevType = 'raidz';
-        }
-        this.firstDataVdevDisknum = res[0].topology.data[0].children.length;
-
-        let firstDisk: TopologyDisk;
-        if (this.firstDataVdevDisknum === 0 && this.firstDataVdevType === 'disk') {
-          this.firstDataVdevDisknum = 1;
-          this.firstDataVdevType = 'stripe';
-          firstDisk = res[0].topology.data[0] as TopologyDisk;
-        } else {
-          firstDisk = res[0].topology.data[0].children[0];
-        }
-        this.ws.call('disk.query', [[['name', '=', firstDisk.disk]]]).pipe(untilDestroyed(this)).subscribe((disk) => {
-          if (disk[0]) {
-            this.firstDataVdevDisksize = disk[0].size;
-            this.firstDataVdevDisktype = disk[0].type;
-          }
-          this.getDuplicableDisks();
-        });
-        this.nameControl.setValue(res[0].name);
-        this.volEncrypt = res[0].encrypt;
-        this.ws.call(this.datasetQueryCall, [[['id', '=', res[0].name]]]).pipe(untilDestroyed(this)).subscribe((datasets) => {
-          if (datasets[0]) {
-            this.extendedAvailable = datasets[0].available.parsed;
-            this.size = filesize(this.extendedAvailable, { standard: 'iec' });
-          }
-        });
+      if (!res[0]) {
+        return;
       }
+
+      this.firstDataVdevType = res[0].topology.data[0].type.toLowerCase();
+      if (this.firstDataVdevType === 'raidz1') {
+        this.firstDataVdevType = 'raidz';
+      }
+      this.firstDataVdevDisknum = res[0].topology.data[0].children.length;
+
+      let firstDisk: TopologyDisk;
+      if (this.firstDataVdevDisknum === 0 && this.firstDataVdevType === 'disk') {
+        this.firstDataVdevDisknum = 1;
+        this.firstDataVdevType = 'stripe';
+        firstDisk = res[0].topology.data[0] as TopologyDisk;
+      } else {
+        firstDisk = res[0].topology.data[0].children[0];
+      }
+      this.ws.call('disk.query', [[['name', '=', firstDisk.disk]]]).pipe(untilDestroyed(this)).subscribe((disk) => {
+        if (disk[0]) {
+          this.firstDataVdevDisksize = disk[0].size;
+          this.firstDataVdevDisktype = disk[0].type;
+        }
+        this.getDuplicableDisks();
+      });
+      this.nameControl.setValue(res[0].name);
+      this.volEncrypt = res[0].encrypt;
+      this.ws.call(this.datasetQueryCall, [[['id', '=', res[0].name]]]).pipe(untilDestroyed(this)).subscribe((datasets) => {
+        if (datasets[0]) {
+          this.extendedAvailable = datasets[0].available.parsed;
+          this.size = filesize(this.extendedAvailable, { standard: 'iec' });
+        }
+      });
     },
     (err) => {
       new EntityUtils().handleWsError(this, err, this.dialog);
@@ -563,21 +565,23 @@ export class ManagerComponent implements OnInit, AfterViewInit {
   }
 
   forceCheckboxChecked(): void {
-    if (!this.forceControl.value) {
-      let warnings: string = helptext.force_warning;
-      if (this.hasVdevDiskSizeError) {
-        warnings = warnings + '<br/><br/>' + helptext.force_warnings['diskSizeWarning'];
-      }
-      if (this.stripeVdevTypeError) {
-        warnings = warnings + '<br/><br/>' + this.stripeVdevTypeError;
-      }
-      this.dialog.confirm({
-        title: helptext.force_title,
-        message: warnings,
-      }).pipe(untilDestroyed(this)).subscribe((force) => {
-        this.forceControl.setValue(force);
-      });
+    if (this.forceControl.value) {
+      return;
     }
+
+    let warnings: string = helptext.force_warning;
+    if (this.hasVdevDiskSizeError) {
+      warnings = warnings + '<br/><br/>' + helptext.force_warnings['diskSizeWarning'];
+    }
+    if (this.stripeVdevTypeError) {
+      warnings = warnings + '<br/><br/>' + this.stripeVdevTypeError;
+    }
+    this.dialog.confirm({
+      title: helptext.force_title,
+      message: warnings,
+    }).pipe(untilDestroyed(this)).subscribe((force) => {
+      this.forceControl.setValue(force);
+    });
   }
 
   doSubmit(): void {

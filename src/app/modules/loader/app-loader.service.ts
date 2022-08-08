@@ -11,12 +11,14 @@ export class AppLoaderService {
   constructor(private dialog: MatDialog) { }
 
   open(title: string = T('Please wait')): Observable<boolean> {
-    if (this.dialogRef === undefined) {
-      this.dialogRef = this.dialog.open(AppLoaderComponent, { disableClose: true });
-      this.dialogRef.updateSize('200px', '200px');
-      this.dialogRef.componentInstance.title = title;
-      return this.dialogRef.afterClosed();
+    if (this.dialogRef !== undefined) {
+      return;
     }
+
+    this.dialogRef = this.dialog.open(AppLoaderComponent, { disableClose: true });
+    this.dialogRef.updateSize('200px', '200px');
+    this.dialogRef.componentInstance.title = title;
+    return this.dialogRef.afterClosed();
   }
 
   close(): void {
