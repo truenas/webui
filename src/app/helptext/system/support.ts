@@ -30,22 +30,6 @@ export const helptext_system_support = {
     dialog_err: T('Error Saving Proactive Support Settings'),
   },
 
-  username: {
-    placeholder: T('Username'),
-    tooltip: T(
-      'Enter a valid username for the <a\
- href="https://jira.ixsystems.com/projects/NAS/issues/"\
- target="_blank">TrueNAS bug tracking system</a>',
-    ),
-    validation: [Validators.required],
-  },
-
-  password: {
-    placeholder: T('Password'),
-    tooltip: T('Enter the bug tracker account password.'),
-    validation: [Validators.required],
-  },
-
   type: {
     placeholder: T('Type'),
     tooltip: T(
@@ -182,7 +166,7 @@ export const helptext_system_support = {
     message: T('Production status successfully updated'),
   },
 
-  FN_instructions: T('Search the <a href="https://jira.ixsystems.com/projects/NAS/issues/" \
+  FN_instructions: T('Search the <a href="https://ixsystems.atlassian.net/jira/software/c/projects/NAS/issues/" \
    target="_blank">TrueNAS issue tracker</a> \
    to ensure the issue has not already been reported before \
    filing a bug report or feature request. If an issue has \
@@ -190,10 +174,6 @@ export const helptext_system_support = {
    Please visit the <a href="http://www.ixsystems.com/storage/" target="_blank"> \
    iXsystems storage page</a> \
    for enterprise-grade storage solutions and support.'),
-
-  FN_Jira_message: T('<a href="https://jira.ixsystems.com/secure/Signup!default.jspa" target="_blank">\
-   Create a Jira account</a> to file an issue. Use a valid \
-   email address when registering to receive issue status updates.'),
 
   submitBtn: T('Submit'),
 
