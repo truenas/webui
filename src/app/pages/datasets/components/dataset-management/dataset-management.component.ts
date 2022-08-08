@@ -31,6 +31,7 @@ export class DatasetsManagementComponent implements OnInit {
   hasConsoleFooter = false;
   headerHeight = headerHeight;
   footerHeight = footerHeight;
+  showMobileDetails = false;
 
   constructor(
     private ws: WebSocketService,
@@ -106,7 +107,7 @@ export class DatasetsManagementComponent implements OnInit {
   }
 
   // Expose hidden details on mobile
-  toggleDetails(): void {
-    // console.log("Toggling Details");
+  toggleMobileDetails(): void {
+    this.showMobileDetails = !this.showMobileDetails;
   }
 }

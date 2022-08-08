@@ -35,7 +35,7 @@
           >
             <button mat-icon-button disabled></button>
             <ix-dataset-node [dataset]="dataset"></ix-dataset-node>
-            <ix-icon name="mdi-dots-vertical" class="mobile-actions" (click)="toggleDetails()"></ix-icon>
+            <ix-icon name="mdi-dots-vertical" class="mobile-actions" (click)="toggleMobileDetails()"></ix-icon>
           </ix-tree-node>
 
           <ix-nested-tree-node
@@ -59,7 +59,7 @@
               </button>
 
               <ix-dataset-node [dataset]="dataset"></ix-dataset-node>
-              <ix-icon name="mdi-dots-vertical" class="mobile-actions"></ix-icon>
+              <ix-icon name="mdi-dots-vertical" class="mobile-actions" (click)="toggleMobileDetails()"></ix-icon>
             </div>
 
             <ng-container *ngIf="treeControl.isExpanded(dataset)" ixTreeNodeOutlet></ng-container>
@@ -69,13 +69,21 @@
     </div>
   </div>
 
-  <div class="details-container details-container-mobile"
+  <div class="details-container" [ngClass]="{ 'details-container-mobile': showMobileDetails }"
     ixDetailsHeight
     ixDetailsHeightParentClass="rightside-content-hold"
     [hasConsoleFooter]="hasConsoleFooter"
     [headerHeight]="headerHeight"
     [footerHeight]="footerHeight"
   >
+    <div class="close-details-container-mobile">
+      <!--<ix-icon name="mdi-close-circle" (click)="toggleMobileDetails()"></ix-icon>-->
+      <div class="breadcrumb-bar" (click)="toggleMobileDetails()">
+        <ul class="breadcrumb">
+          <li><a alt="Back ot datasets list">Datasets</a></li>
+        </ul>
+      </div>
+    </div>
     <ix-dataset-details-panel
       *ngIf="selectedDataset$ | async as selectedDataset"
       [dataset]="selectedDataset"

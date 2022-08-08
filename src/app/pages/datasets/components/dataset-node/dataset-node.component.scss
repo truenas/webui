@@ -15,7 +15,7 @@
   align-items: center;
 
   // Override default fraction based values to avoid misaligned columns
-  grid-template-columns: auto 150px 150px 150px;
+  grid-template-columns: auto 125px 125px 125px;
 
   @media (max-width: $breakpoint-tablet) {
     // Override default fraction based values to avoid misaligned columns

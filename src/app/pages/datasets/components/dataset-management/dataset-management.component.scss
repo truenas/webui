@@ -1,5 +1,6 @@
 @import '~assets/styles/mixins/grid';
 @import '~assets/styles/mixins/breakpoints';
+@import 'app/modules/layout/components/breadcrumb/breadcrumb.component';
 
 :host {
   display: block;
@@ -31,12 +32,6 @@
     overflow-x: hidden;
     width: 100%;
   }
-
-  // Hide Details and stop compressing table width
-  /*@media (max-width: $table-width) {
-    min-width: $table-width;
-    overflow-x: auto;
-  }*/
 
   // Hide Details and stretch table
   @media (min-width: $breakpoint-tablet) and (max-width: $breakpoint-hidden) {
@@ -82,6 +77,20 @@
   }
 }
 
+.close-details-container-mobile {
+  display: none;
+
+  @media (max-width: $breakpoint-hidden) {
+    display: block;
+    left: 0;
+    padding: 8px 16px 0;
+    position: absolute;
+    text-align: right;
+    top: 0;
+    z-index: 4;
+  }
+}
+
 .details-container.details-container-mobile {
   // Hide Details
   @media (max-width: $breakpoint-hidden) {
@@ -90,7 +99,7 @@
     height: 100% !important;
     left: 0;
     max-width: 100%;
-    padding-top: 64px;
+    padding-top: 40px;
     position: absolute;
     top: 0;
     width: 100%;
@@ -107,12 +116,20 @@
     display: grid;
   }
 
+  ::ng-deep .header h3.title {
+    margin: 0 0 16px 16px;
+    width: calc(100% - 16px);
+  }
+
   ::ng-deep .cards .scroll-window > * {
     margin: 0 auto;
     max-width: 455px;
-    //min-width: 99% !important;
     min-width: unset !important;
     width: 99% !important;
+  }
+
+  ix-dataset-details-panel {
+    margin-top: -12px;
   }
 
 }
@@ -146,10 +163,9 @@ ix-dataset-details-panel {
   min-width: fit-content;
 
   @media (max-width: $breakpoint-tablet) {
-    min-height: fit-content; // calc(100vh - 220px);
+    min-height: fit-content;
     min-width: unset;
     overflow-x: auto;
-    //padding-bottom: 96px;
   }
 }
 
@@ -164,13 +180,12 @@ ix-dataset-details-panel {
   color: var(--fg2);
 
   // Override default fraction based values to avoid misaligned columns
-  grid-template-columns: auto 150px 150px 150px;
+  grid-template-columns: auto 125px 125px 125px 40px;
   min-height: 48px;
   padding-left: 48px;
 
   @media (max-width: $breakpoint-tablet) {
-    grid-template-columns: auto 0 0 0;
-    //border: solid 1px cyan;
+    grid-template-columns: auto 0 0 0 0;
     width: auto;
   }
 
