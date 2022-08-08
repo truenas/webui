@@ -70,7 +70,7 @@ describe('PoolUsageCardComponent', () => {
     // expect(spectator.query('.warning-container mat-icon')).toHaveText('warning');
     expect(spectator.query(GaugeChartComponent).label).toBe('81%');
     expect(spectator.query(GaugeChartComponent).value).toBe(81);
-    expect(spectator.query(GaugeChartComponent).colorFill).toBe('red');
+    expect(spectator.query(GaugeChartComponent).colorFill).toBe('#CE2929');
   });
 
   it('rendering status icon', () => {
