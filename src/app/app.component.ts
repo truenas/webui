@@ -76,11 +76,13 @@ export class AppComponent {
       document.body.className += ' safari-platform';
     }
 
-    router.events.subscribe((s) => {
+    router.events.subscribe((event) => {
       // save currenturl
-      if (s instanceof NavigationEnd) {
-        if (this.ws.loggedIn && s.url != '/sessions/signin') {
-          sessionStorage.currentUrl = s.url;
+      if (event instanceof NavigationEnd) {
+        const navigation = this.router.getCurrentNavigation();
+        const skipLocationChange = navigation && navigation.extras && navigation.extras.skipLocationChange;
+        if (this.ws.loggedIn && event.url != '/sessions/signin' && !skipLocationChange) {
+          sessionStorage.currentUrl = event.url;
         }
       }
 
@@ -88,8 +90,8 @@ export class AppComponent {
         // Only for globally applied theme preview
         this.globalPreviewControl();
       }
-      if (s instanceof NavigationCancel) {
-        const params = new URLSearchParams(s.url.split('#')[1]);
+      if (event instanceof NavigationCancel) {
+        const params = new URLSearchParams(event.url.split('#')[1]);
         const isEmbedded = params.get('embedded');
 
         if (isEmbedded) {
