@@ -19,7 +19,6 @@ import { IxTableModule } from 'app/modules/ix-tables/ix-table.module';
 import { IxTableHarness } from 'app/modules/ix-tables/testing/ix-table.harness';
 import { ServicesComponent } from 'app/pages/services/services.component';
 import { DialogService, IscsiService, WebSocketService } from 'app/services';
-import { CoreService } from 'app/services/core-service/core.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 const hiddenServices = [ServiceName.Gluster, ServiceName.Afp];
@@ -57,7 +56,6 @@ describe('ServicesComponent', () => {
       ]),
       mockProvider(DialogService),
       mockProvider(IxSlideInService),
-      mockProvider(CoreService),
       mockProvider(IscsiService),
     ],
   });

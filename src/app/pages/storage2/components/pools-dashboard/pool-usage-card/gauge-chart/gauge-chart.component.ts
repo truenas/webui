@@ -15,7 +15,7 @@ Chart.controllers.roundedDoughnut = Chart.controllers.doughnut.extend({
     const ctx = this.chart.chart.ctx;
 
     const easingDecimal = ease || 1;
-    let tmpView: any;
+    let tmpView: { [attribute: string]: string | number };
     Chart.helpers.each(this.getMeta().data, (chartElem: any, index: number) => {
       if (index === 2) {
         return;

@@ -18,7 +18,6 @@ import { Timeout } from 'app/interfaces/timeout.interface';
 import {
   WebSocketService,
 } from 'app/services';
-import { CoreService } from 'app/services/core-service/core.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LayoutService } from 'app/services/layout.service';
 import { Report } from './components/report/report.component';
@@ -64,7 +63,6 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, AfterViewIn
 
   constructor(
     private router: Router,
-    private core: CoreService,
     private route: ActivatedRoute,
     protected ws: WebSocketService,
     protected translate: TranslateService,
@@ -137,7 +135,6 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, AfterViewIn
 
   ngOnDestroy(): void {
     this.scrollContainer.style.overflow = 'auto';
-    this.core.unregister({ observerClass: this });
     if (this.timeInterval) {
       clearInterval(this.timeInterval);
     }
@@ -173,23 +170,6 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, AfterViewIn
     // Change the URL without reloading page/component
     // the old fashioned way
     window.history.replaceState({}, '', '/reportsdashboard/' + tab.value);
-
-    const pseudoRouteEvent = [
-      {
-        url: '/reportsdashboard/' + tab.value,
-        title: 'Reporting',
-        breadcrumb: 'Reporting',
-        disabled: true,
-      },
-      {
-        url: '',
-        title: tab.label,
-        breadcrumb: tab.label,
-        disabled: true,
-      },
-    ];
-
-    this.core.emit({ name: 'PseudoRouteChange', data: pseudoRouteEvent });
 
     this.activateTab(tab);
 

@@ -53,14 +53,6 @@ export class ApplicationsService {
     return this.ws.call('chart.release.query', [[], { select: ['name'] }]);
   }
 
-  getPodConsoleChoices(name: string): Observable<Record<string, string[]>> {
-    return this.ws.call('chart.release.pod_console_choices', [name]);
-  }
-
-  getNicChoices(): Observable<Choices> {
-    return this.ws.call('chart.release.nic_choices');
-  }
-
   getInterfaces(): Observable<NetworkInterface[]> {
     return this.ws.call('interface.query');
   }

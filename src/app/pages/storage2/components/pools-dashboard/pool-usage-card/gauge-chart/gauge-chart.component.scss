@@ -6,9 +6,9 @@
 }
 
 .label {
+  font-family: 'Epilogue', var(--font-family-body);
   font-size: 40px;
   font-weight: bold;
-  font-family: "Epilogue", var(--font-family-body);
   left: 50%;
   letter-spacing: -1px;
   position: absolute;
