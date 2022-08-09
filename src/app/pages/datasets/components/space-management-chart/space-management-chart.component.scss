@@ -1,6 +1,6 @@
 @import '~assets/styles/mixins/breakpoints';
-$chart-size: 150px; // !default;
-$chart-size-mobile: 280px;
+$chart-size: 150px;
+$chart-size-mobile: 240px;
 
 :host {
   display: flex;

@@ -16,12 +16,41 @@
     }
   }
 
+  .mobile-prefix::after {
+    @media (min-width: $breakpoint-hidden) and (max-width: calc($breakpoint-dualcolumn-slim - 1px)) {
+      //content: '\A';
+      //white-space: pre;
+    }
+  }
+
   .prefix {
     opacity: 0.85;
     
     @media (max-width: $breakpoint-hidden) {
       display: none;
     }
+  }
+
+  .full-path {
+    display: inline;
+    max-width: calc(100vw - 64px);
+
+    @media (min-width: $breakpoint-tablet) and (max-width: $breakpoint-hidden) {
+      display: inline;
+      max-width: calc(100vw - 64px);
+    }
+
+    @media (min-width: $breakpoint-singlecolumn) and (max-width: calc($breakpoint-dualcolumn-slim - 1px)) {
+      display: block;
+      margin: 8px 0 0;
+    }
+
+    @media  (max-width: $breakpoint-tablet) {
+      display: block;
+      margin: 8px 0 0 48px;
+      max-width: unset;
+    }
+
   }
 
   .parent-path {
@@ -63,6 +92,13 @@
     margin-bottom: 8px;
   }
 
+  @media (min-width: $breakpoint-hidden) and (max-width: calc($breakpoint-dualcolumn-slim - 1px)) {
+    border-bottom: solid 1px var(--lines);
+    flex-wrap: wrap;
+    margin-bottom: 8px;
+    padding-bottom: 0;
+  }
+
   @media (min-width: $breakpoint-singlecolumn) {
     align-items: center;
   }
@@ -77,11 +113,25 @@
     }
   }
 
+  .add-buttons:empty {
+    @media (max-width: $breakpoint-tablet) {
+      border-top: unset;
+      margin: 0;
+      padding-bottom: 0;
+    }
+
+    @media (min-width: $breakpoint-hidden) and (max-width: calc($breakpoint-dualcolumn-slim - 1px)) {
+      border-top: unset;
+      margin: 0;
+      padding-bottom: 0;
+    }
+  }
+
   .add-buttons {
     flex-shrink: 0;
 
 
-    @media (max-width: $breakpoint-hidden) {
+    @media (max-width: $breakpoint-tablet) {
       border-bottom: solid 1px var(--lines);
     }
 
@@ -94,11 +144,25 @@
       width: 98%;
     }
 
+    @media (min-width: $breakpoint-hidden) and (max-width: calc($breakpoint-dualcolumn-slim - 1px)) {
+      border-top: solid 1px var(--lines);
+      display: flex;
+      margin-top: 16px;
+      padding: 14px 0;
+      place-content: center;
+      width: 98%;
+    }
+
     button {
       margin-left: 6px;
 
       @media (max-width: $breakpoint-tablet) {
+        flex: 1;
         width: 40%;
+      }
+
+      @media (min-width: $breakpoint-hidden) and (max-width: calc($breakpoint-dualcolumn-slim - 1px)) {
+        flex: 1;
       }
 
     }

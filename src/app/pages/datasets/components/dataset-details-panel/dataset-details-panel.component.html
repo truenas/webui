@@ -15,7 +15,7 @@
       {{ 'Details for' | translate }}
     </span>
 
-    <span class="full-path">
+    <div class="full-path">
       <ng-container *ngIf="!isRoot">
         <span class="parent-path">{{ parentPath }}</span>
       </ng-container>
@@ -23,20 +23,22 @@
         <ix-dataset-icon [dataset]="dataset"></ix-dataset-icon>
         {{ ownName }}
       </span>
-    </span>
+    </div>
   </h3>
 
-  <div *ngIf="!dataset.locked" class="add-buttons">
-    <button
-      *ngIf="!isZvol"
-      mat-button
-      (click)="onAddZvol()"
-    >{{ 'Add Zvol' | translate }}</button>
-    <button
-      mat-button
-      color="primary"
-      (click)="onAddDataset()"
-    >{{ 'Add Dataset' | translate }}</button>
+  <div class="add-buttons">
+    <ng-container *ngIf="!dataset.locked" >
+      <button
+        *ngIf="!isZvol"
+        mat-button
+        (click)="onAddZvol()"
+      >{{ 'Add Zvol' | translate }}</button>
+      <button
+        mat-button
+        color="primary"
+        (click)="onAddDataset()"
+      >{{ 'Add Dataset' | translate }}</button>
+    </ng-container>
   </div>
 </div>
 
