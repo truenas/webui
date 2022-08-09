@@ -15,7 +15,7 @@
     <button
       mat-button
       ix-auto-type="button"
-      (click)="router.navigate(['datasets/'])"
+      (click)="router.navigate(['datasets', poolState.name])"
     >{{ 'Manage Datasets' | translate }}</button>
   </mat-card-header>
 
