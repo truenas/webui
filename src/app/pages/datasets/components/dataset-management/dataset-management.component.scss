@@ -18,29 +18,45 @@
   min-height: 100%;
 }
 
+$singlecolumn-max-width: ($card-width-slim + $gap * 2);
+$dualcolumn-slim-max-width: ($card-width-slim * 2 + $gap * 2);
+
 .table-container {
   box-sizing: border-box;
   display: flex;
   flex: 1;
   flex-direction: column;
-  max-width: 700px;
+  margin-right: 16px;
+  max-width: $table-width; //700px;
+  min-width: $table-min-width;
   position: relative;
 
   // Hide Details and stop compressing table width
   @media (min-width: $breakpoint-min-mobile) and (max-width: $breakpoint-tablet) {
+    margin-right: unset;
     min-width: $breakpoint-min-mobile;
-    overflow-x: hidden;
+    //overflow-x: hidden;
     width: 100%;
   }
 
   // Hide Details and stretch table
   @media (min-width: $breakpoint-tablet) and (max-width: $breakpoint-hidden) {
+    margin-right: unset;
     min-width: 100%;
   }
 
   // One Cards Column
-  @media (min-width: $breakpoint-singlecolumn) and (max-width: calc($breakpoint-dualcolumn - 1px)) {
-    min-width: calc(98% - ($card-width + $gap));
+  @media (min-width: $breakpoint-singlecolumn) and (max-width: calc($breakpoint-dualcolumn-slim - 1px)) {
+    max-width: calc(100% - $singlecolumn-max-width - 16px);
+    //min-width: calc(90% - ($card-width-slim + $gap));
+    min-width: calc($table-min-width + 0px);
+  }
+
+  // Two Cards Slim Columns
+  @media (min-width: $breakpoint-dualcolumn-slim) and (max-width: calc($breakpoint-dualcolumn - 1px)) {
+    max-width: calc(100% - $dualcolumn-slim-max-width - 16px);
+    //min-width: calc(90% - 2 * ($card-width-slim + $gap));
+    min-width: calc($table-min-width + 0px);
   }
 
   // Two Cards Columns
@@ -64,7 +80,7 @@
   color: var(--fg2);
   display: flex;
   flex: 1;
-  max-width: 70%;
+  //max-width: 70%;
   min-width: inherit;
   overflow: hidden;
   padding: 0;
@@ -75,6 +91,34 @@
   @media (max-width: $breakpoint-hidden) {
     display: none;
   }
+
+  // One Card Column
+  /*@media (min-width: $breakpoint-hidden) and (max-width: calc($breakpoint-singlecolumn - 1px)) {
+    border: solid 1px red;
+    $singlecolumn-max-width: ($card-width-slim + $gap * 2);
+    //min-width: $singlecolumn-max-width; //calc($card-width-slim - 2 * $gap);
+    max-width: $singlecolumn-max-width; //calc($card-width-slim + $gap + $gap);
+  }*/
+
+  // One Card Column
+  @media (min-width: $breakpoint-singlecolumn) and (max-width: calc($breakpoint-dualcolumn-slim - 1px)) {
+    //border: solid 1px green;
+    //max-width: 35%; 
+    max-width: $singlecolumn-max-width; //calc($card-width-slim + $gap + $gap);
+  }
+
+  // Two Cards Columns
+  @media (min-width: $breakpoint-dualcolumn-slim) and (max-width: calc($breakpoint-dualcolumn - 1px)) {
+    //border: solid 1px red;
+    //min-width: $singlecolumn-max-width; //calc($card-width-slim - 2 * $gap);
+    max-width: $dualcolumn-slim-max-width; //calc($card-width-slim + $gap + $gap);
+  }
+
+  // Two Cards Columns
+  @media (min-width: $breakpoint-dualcolumn) {
+    max-width: 70%;
+  }
+
 }
 
 .close-details-container-mobile {
@@ -112,17 +156,19 @@
     padding-bottom: 96px;
   }
 
-  ::ng-deep .cards .scroll-window {
-    display: grid;
-  }
-
   ::ng-deep .header h3.title {
     width: calc(100% - 16px);
   }
 
+  ::ng-deep .cards .scroll-window {
+    display: block;
+    padding-bottom: 96px;
+  }
+
   ::ng-deep .cards .scroll-window > * {
+    display: grid;
     margin: 0 auto;
-    max-width: 455px;
+    max-width: $card-width;
     min-width: unset !important;
     width: 99% !important;
   }
@@ -186,6 +232,11 @@ ix-dataset-details-panel {
   @media (max-width: $breakpoint-tablet) {
     grid-template-columns: auto 0 0 0 0;
     width: auto;
+  }
+
+  @media (min-width: $breakpoint-singlecolumn) {
+    grid-template-columns: auto 125px 125px 125px;
+    overflow-x: hidden;
   }
 
   > div {

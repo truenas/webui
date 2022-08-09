@@ -5,11 +5,13 @@ $breakpoint-min-mobile: 320px;
 $sidenav-width: 240px;
 
 // TreeTable - Cards Splitview Breakpoints
-$table-min-width: 700px;
+$table-min-width: 620px;
 $table-width: 700px;
 $card-width: 455px;
+$card-width-slim: 365px;
 $gap: 8px;
-$breakpoint-singlecolumn: 1420px;
+$breakpoint-singlecolumn: 1280px;
+$breakpoint-dualcolumn-slim: 1680px;
 $breakpoint-dualcolumn: 1920px;
 $breakpoint-triplecolumn: 2500px;
 $breakpoint-flex: 3132px;
