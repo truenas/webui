@@ -40,7 +40,6 @@ export type CatalogQueryParams = QueryParams<Catalog, {
   extra: {
     item_details?: boolean;
     cache?: boolean;
-    retrieve_versions?: boolean;
     include_chart_schema?: boolean;
   };
 }>;
