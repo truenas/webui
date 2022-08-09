@@ -20,30 +20,27 @@
   <mat-card-content fxLayout="column" fxFlex="100">
     <div class="details-item">
       <div class="label">{{ 'Disks temperature related alerts' | translate }}:</div>
-      <!-- This should be updated by the Disks temperature related alerts API -->
-      <div class="value" *ngIf="false">{{ diskState.alters | number }}</div>
-      <ngx-skeleton-loader></ngx-skeleton-loader>
+      <div class="value" *ngIf="!loading; else skeletonLoader">
+        {{ diskState.alters | number }}
+      </div>
     </div>
     <div class="details-item">
       <div class="label">{{ 'Highest Temperature' | translate }}:</div>
-      <ngx-skeleton-loader *ngIf="isStarting"></ngx-skeleton-loader>
-      <div class="value" *ngIf="!isStarting">
+      <div class="value" *ngIf="!loading; else skeletonLoader">
         {{ diskState.highestTemperature | number }}
         {{ diskState.symbolText }}{{ diskState.unit }}
       </div>
     </div>
     <div class="details-item">
       <div class="label">{{ 'Lowest Temperature' | translate }}:</div>
-      <ngx-skeleton-loader *ngIf="isStarting"></ngx-skeleton-loader>
-      <div class="value" *ngIf="!isStarting">
+      <div class="value" *ngIf="!loading; else skeletonLoader">
         {{ diskState.lowestTemperature | number }}
         {{ diskState.symbolText }}{{ diskState.unit }}
       </div>
     </div>
     <div class="details-item">
       <div class="label">{{ 'Average Disk Temperature' | translate }}:</div>
-      <ngx-skeleton-loader *ngIf="isStarting"></ngx-skeleton-loader>
-      <div class="value" *ngIf="!isStarting">
+      <div class="value" *ngIf="!loading; else skeletonLoader">
         {{ diskState.averageTemperature | number }}
         {{ diskState.symbolText }}{{ diskState.unit }}
       </div>
@@ -51,9 +48,13 @@
     </div>
     <div class="details-item">
       <div class="label">{{ 'Failed S.M.A.R.T. Tests' | translate }}:</div>
-      <ngx-skeleton-loader *ngIf="isStarting"></ngx-skeleton-loader>
-      <div class="value" *ngIf="!isStarting">{{ diskState.smartTests | number }}</div>
+      <div class="value" *ngIf="!loading; else skeletonLoader">
+        {{ diskState.smartTests | number }}
+      </div>
       <a [routerLink]="['/data-protection/smart']">{{ 'View All S.M.A.R.T. Tests' | translate }}</a>
     </div>
+    <ng-template #skeletonLoader>
+      <ngx-skeleton-loader></ngx-skeleton-loader>
+    </ng-template>
   </mat-card-content>
 </mat-card>

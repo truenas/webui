@@ -37,6 +37,45 @@ export class DatasetDetailsPanelComponent implements OnInit {
     });
   }
 
+  get datasetHasRoles(): boolean {
+    return !!this.dataset.apps?.length
+    || this.datasetHasChildrenWithShares
+    || !!this.dataset.smb_shares?.length
+    || !!this.dataset.nfs_shares?.length
+    || !!this.dataset.iscsi_shares?.length;
+  }
+
+  get datasetHasChildrenWithShares(): boolean {
+    return this.checkDatasetForChildrenWithShares(this.dataset);
+  }
+
+  checkDatasetForChildrenWithShares(dataset: DatasetDetails): boolean {
+    if (!dataset.children?.length) {
+      return false;
+    }
+    for (const child of dataset.children) {
+      if (this.datasetOrChildrenHaveShares(child)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  datasetOrChildrenHaveShares(dataset: DatasetDetails): boolean {
+    if (dataset.nfs_shares?.length
+            || dataset.smb_shares?.length
+            || dataset.iscsi_shares?.length
+    ) {
+      return true;
+    }
+    for (const child of dataset.children) {
+      if (this.datasetOrChildrenHaveShares(child)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   get hasPermissions(): boolean {
     return this.dataset.type === DatasetType.Filesystem && !isIocageMounted(this.dataset);
   }

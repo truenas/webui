@@ -600,7 +600,7 @@ export class DatasetFormComponent implements FormConfiguration {
           options: [
             { label: this.translate.instant('Inherit'), value: DatasetAclType.Inherit },
             { label: this.translate.instant('Off'), value: DatasetAclType.Off },
-            { label: this.translate.instant('NFSv4'), value: DatasetAclType.Nfsv4 },
+            { label: this.translate.instant('SMB/NFSv4'), value: DatasetAclType.Nfsv4 },
             { label: this.translate.instant('POSIX'), value: DatasetAclType.Posix },
           ],
           required: false,

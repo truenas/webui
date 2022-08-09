@@ -1,4 +1,4 @@
-import { Dataset } from 'app/interfaces/dataset.interface';
+import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { getTreeBranchToNode } from 'app/pages/datasets/utils/get-tree-branch-to-node.utils';
 
 describe('getTreeBranchToNode', () => {
@@ -20,7 +20,7 @@ describe('getTreeBranchToNode', () => {
     {
       id: 'root2',
     },
-  ] as Dataset[];
+  ] as DatasetDetails[];
 
   it('returns an array of parent and children datasets from the tree by the predicate', () => {
     const result = getTreeBranchToNode(tree, (dataset) => dataset.id === 'root/parent/child');

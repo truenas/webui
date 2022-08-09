@@ -40,6 +40,11 @@
     ></ix-permissions-card>
   </div>
   <div class="cards-column">
+    <ix-roles-card
+      *ngIf="datasetHasRoles"
+      [dataset]="dataset"
+      [hasChildrenWithShares]="datasetHasChildrenWithShares"
+    ></ix-roles-card>
     <ix-zfs-encryption-card
       *ngIf="isEncryptionAllowed"
       [dataset]="dataset"

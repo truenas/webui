@@ -10,7 +10,7 @@ import { MockWebsocketService } from 'app/core/testing/classes/mock-websocket.se
 import { mockWebsocket, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
 import { AclType } from 'app/enums/acl-type.enum';
 import { Acl, NfsAcl, PosixAcl } from 'app/interfaces/acl.interface';
-import { Dataset } from 'app/interfaces/dataset.interface';
+import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { FileSystemStat } from 'app/interfaces/filesystem-stat.interface';
 import {
   ViewNfsPermissionsComponent,
@@ -39,7 +39,7 @@ describe('PermissionsCardComponent', () => {
     name: 'testpool/dataset',
     mountpoint: '/mnt/testpool/dataset',
     pool: 'testpool',
-  } as Dataset;
+  } as DatasetDetails;
 
   let spectator: Spectator<PermissionsCardComponent>;
   let loader: HarnessLoader;
@@ -140,7 +140,7 @@ describe('PermissionsCardComponent', () => {
     spectator.setInput('dataset', {
       ...dataset,
       mountpoint: '/mnt/root',
-    } as Dataset);
+    } as DatasetDetails);
 
     expect(spectator.query(byTitle('Edit permissions'))).not.toExist();
   });

@@ -169,6 +169,9 @@ export class ZfsHealthCardComponent implements OnChanges, OnDestroy {
   }
 
   private calculateTotalZfsErrors(): void {
+    if (!this.pool.topology) {
+      return;
+    }
     this.totalZfsErrors = Object.values(this.pool.topology).reduce((errors: number, vdevs: TopologyItem[]) => {
       return errors + vdevs.reduce((errors, vdev) => {
         return errors
