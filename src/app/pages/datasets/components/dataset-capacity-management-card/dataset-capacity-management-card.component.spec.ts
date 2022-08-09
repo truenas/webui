@@ -15,7 +15,7 @@ import { SpaceManagementChartComponent } from 'app/pages/datasets/components/spa
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
-const dataset = {
+const datasetQuotas = {
   refreservation: {
     parsed: 1024,
   },
@@ -28,7 +28,7 @@ const dataset = {
 } as DatasetDetails;
 
 const datasetFilesystem = {
-  ...dataset,
+  ...datasetQuotas,
   id: 'filesystem pool',
   type: DatasetType.Filesystem,
   available: {
@@ -36,8 +36,13 @@ const datasetFilesystem = {
   },
 } as DatasetDetails;
 
+const datasetFilesystemFull = {
+  ...datasetQuotas,
+  ...datasetFilesystem,
+} as unknown as Dataset;
+
 const datasetZvol = {
-  ...dataset,
+  ...datasetQuotas,
   id: 'zvol pool',
   type: DatasetType.Volume,
   available: {
@@ -85,7 +90,7 @@ describe('DatasetCapacityManagementCardComponent', () => {
       spectator = createComponent({
         props: {
           dataset: datasetFilesystem,
-          datasetFull: datasetFilesystem as Dataset,
+          datasetFull: datasetFilesystemFull,
         },
       });
     });

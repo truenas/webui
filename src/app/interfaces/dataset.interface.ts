@@ -194,4 +194,9 @@ export interface DatasetDetails {
   children?: DatasetDetails[];
   volsize?: ZfsProperty<number>; // Present for type === DatasetType.Volume
   thick_provisioned?: boolean; // Present for type === DatasetType.Volume
+  atime: boolean;
+  casesensitive: boolean;
+  sync: ZfsProperty<string>;
+  compression: ZfsProperty<string>;
+  deduplication: ZfsProperty<string>;
 }

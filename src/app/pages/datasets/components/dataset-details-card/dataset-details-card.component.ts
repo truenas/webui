@@ -6,8 +6,9 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { filter } from 'rxjs/operators';
 import { DatasetType } from 'app/enums/dataset.enum';
+import { OnOff } from 'app/enums/on-off.enum';
 import { ZfsPropertySource } from 'app/enums/zfs-property-source.enum';
-import { Dataset } from 'app/interfaces/dataset.interface';
+import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { DatasetFormComponent } from 'app/pages/datasets/components/dataset-form/dataset-form.component';
 import { DeleteDatasetDialogComponent } from 'app/pages/datasets/components/delete-dataset-dialog/delete-dataset-dialog.component';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
@@ -21,8 +22,9 @@ import { ModalService } from 'app/services/modal.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DatasetDetailsCardComponent {
-  @Input() dataset: Dataset;
+  @Input() dataset: DatasetDetails;
   @Input() isLoading: boolean;
+  OnOff = OnOff;
 
   constructor(
     private modalService: ModalService,

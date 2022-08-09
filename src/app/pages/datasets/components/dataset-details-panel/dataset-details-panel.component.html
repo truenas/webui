@@ -26,16 +26,10 @@
 
 <div class="cards">
   <div class="cards-column">
-    <ix-dataset-details-card
-      [dataset]="datasetFull$ | async"
-      [isLoading]="isLoadingDatasetFull$ | async"
-    ></ix-dataset-details-card>
-    <ix-data-protection-card
-      *ngIf="!isLoading"
-      [dataset]="dataset"
-    ></ix-data-protection-card>
+    <ix-dataset-details-card [dataset]="dataset"></ix-dataset-details-card>
+    <ix-data-protection-card [dataset]="dataset"></ix-data-protection-card>
     <ix-permissions-card
-      *ngIf="!isLoading && hasPermissions && !dataset.locked"
+      *ngIf="hasPermissions && !dataset.locked"
       [dataset]="dataset"
     ></ix-permissions-card>
   </div>
