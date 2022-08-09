@@ -199,4 +199,8 @@ export interface DatasetDetails {
   sync: ZfsProperty<string>;
   compression: ZfsProperty<string>;
   deduplication: ZfsProperty<string>;
+  refquota_critical?: ZfsProperty<number>;
+  refquota_warning?: ZfsProperty<number>;
+  quota_critical?: ZfsProperty<number>;
+  quota_warning?: ZfsProperty<number>;
 }

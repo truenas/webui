@@ -8,7 +8,7 @@ import { of } from 'rxjs';
 import { mockWebsocket, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
 import { DatasetType } from 'app/enums/dataset.enum';
 import { DatasetQuota } from 'app/interfaces/dataset-quota.interface';
-import { Dataset, DatasetDetails } from 'app/interfaces/dataset.interface';
+import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { DatasetCapacityManagementCardComponent } from 'app/pages/datasets/components/dataset-capacity-management-card/dataset-capacity-management-card.component';
 import { DatasetCapacitySettingsComponent } from 'app/pages/datasets/components/dataset-capacity-management-card/dataset-capacity-settings/dataset-capacity-settings.component';
 import { SpaceManagementChartComponent } from 'app/pages/datasets/components/space-management-chart/space-management-chart.component';
@@ -35,11 +35,6 @@ const datasetFilesystem = {
     parsed: 1395752960,
   },
 } as DatasetDetails;
-
-const datasetFilesystemFull = {
-  ...datasetQuotas,
-  ...datasetFilesystem,
-} as unknown as Dataset;
 
 const datasetZvol = {
   ...datasetQuotas,
@@ -90,7 +85,6 @@ describe('DatasetCapacityManagementCardComponent', () => {
       spectator = createComponent({
         props: {
           dataset: datasetFilesystem,
-          datasetFull: datasetFilesystemFull,
         },
       });
     });

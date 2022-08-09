@@ -5,7 +5,7 @@ import {
 import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import {
-  filter, pluck, debounceTime,
+  filter, pluck,
 } from 'rxjs/operators';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { footerHeight, headerHeight } from 'app/modules/common/layouts/admin-layout/admin-layout.component.const';
@@ -84,16 +84,6 @@ export class DatasetsManagementComponent implements OnInit {
       .pipe(filter(Boolean), untilDestroyed(this))
       .subscribe((selectedBranch: DatasetDetails[]) => {
         selectedBranch.forEach((dataset) => this.treeControl.expand(dataset));
-      });
-
-    this.datasetStore.selectedDatasetId$
-      .pipe(
-        filter(Boolean),
-        debounceTime(300),
-        untilDestroyed(this),
-      )
-      .subscribe((datasetId: string) => {
-        this.datasetStore.loadDataset(datasetId);
       });
   }
 

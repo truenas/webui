@@ -20,9 +20,6 @@ import { ModalService } from 'app/services';
 })
 export class DatasetDetailsPanelComponent implements OnInit {
   @Input() dataset: DatasetDetails;
-  @Input() isLoading: boolean;
-  datasetFull$ = this.datasetStore.selectedDatasetFull$;
-  isLoadingDatasetFull$ = this.datasetStore.isLoadingDatasetFull$;
   selectedParentDataset$ = this.datasetStore.selectedParentDataset$;
 
   constructor(

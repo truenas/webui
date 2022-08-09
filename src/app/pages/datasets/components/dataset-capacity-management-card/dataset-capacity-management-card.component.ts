@@ -8,7 +8,7 @@ import {
   map, take, switchMap, tap, catchError,
 } from 'rxjs/operators';
 import { DatasetType, DatasetQuotaType } from 'app/enums/dataset.enum';
-import { Dataset, DatasetDetails } from 'app/interfaces/dataset.interface';
+import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { DatasetCapacitySettingsComponent } from 'app/pages/datasets/components/dataset-capacity-management-card/dataset-capacity-settings/dataset-capacity-settings.component';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
 import { WebSocketService } from 'app/services';
@@ -23,8 +23,6 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
 })
 export class DatasetCapacityManagementCardComponent implements OnChanges, OnInit {
   @Input() dataset: DatasetDetails;
-  @Input() datasetFull: Dataset;
-  @Input() isLoading: boolean;
 
   refreshQuotas$ = new Subject<void>();
   inheritedQuotasDataset: DatasetDetails;
@@ -111,6 +109,6 @@ export class DatasetCapacityManagementCardComponent implements OnChanges, OnInit
 
   editDataset(): void {
     const editDatasetComponent = this.slideInService.open(DatasetCapacitySettingsComponent, { wide: true });
-    editDatasetComponent.setDatasetForEdit(this.datasetFull);
+    editDatasetComponent.setDatasetForEdit(this.dataset);
   }
 }

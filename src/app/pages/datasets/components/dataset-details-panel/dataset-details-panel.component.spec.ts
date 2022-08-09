@@ -65,7 +65,6 @@ describe('DatasetDetailsPanelComponent', () => {
       mockProvider(DatasetTreeStore, {
         selectedDataset$: of(datasetDetails),
         selectedParentDataset$: of(parentDatasetDetails),
-        selectedDatasetFull$: of(dataset),
       }),
     ],
   });
@@ -119,7 +118,6 @@ describe('DatasetDetailsPanelComponent', () => {
     const datasetCapacityManagementCard = spectator.query(DatasetCapacityManagementCardComponent);
     expect(datasetCapacityManagementCard).toBeTruthy();
     expect(datasetCapacityManagementCard.dataset).toStrictEqual(datasetDetails);
-    expect(datasetCapacityManagementCard.datasetFull).toStrictEqual(dataset);
   });
 
   it('hides "Permissions Card" if dataset type is Volume', () => {

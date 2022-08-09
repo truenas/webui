@@ -41,18 +41,12 @@ describe('DatasetTreeStore', () => {
           isLoading: true,
           selectedDatasetId: null,
           datasets: [],
-          errorDatasetFull: null,
-          isLoadingDatasetFull: false,
-          selectedDatasetFull: null,
         },
         b: {
           error: null,
           isLoading: false,
           selectedDatasetId: null,
           datasets,
-          errorDatasetFull: null,
-          isLoadingDatasetFull: false,
-          selectedDatasetFull: null,
         },
       });
     });
@@ -68,9 +62,6 @@ describe('DatasetTreeStore', () => {
             isLoading: false,
             selectedDatasetId: 'parent/child',
             datasets: [],
-            errorDatasetFull: null,
-            isLoadingDatasetFull: false,
-            selectedDatasetFull: null,
           },
         });
       });
