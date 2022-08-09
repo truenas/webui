@@ -183,17 +183,20 @@ export class ChartFormComponent implements OnDestroy {
   }
 
   getFieldsHiddenOnForm(data: any, path = '', fieldsTobeDeleted: string[] = []): string[] {
-    if (path) {
-      if ((this.form.get(path) as CustomUntypedFormField).hidden) {
-        fieldsTobeDeleted.push(path);
-        return fieldsTobeDeleted;
-      }
+    if (Boolean(path) && Boolean((this.form.get(path) as CustomUntypedFormField).hidden)) {
+      fieldsTobeDeleted.push(path);
+      return fieldsTobeDeleted;
     }
     if (_.isPlainObject(data)) {
       for (const key in data) {
         fieldsTobeDeleted.concat(this.getFieldsHiddenOnForm(data[key], path ? path + '.' + key : key, fieldsTobeDeleted));
       }
       return fieldsTobeDeleted;
+    }
+    if (_.isArray(data)) {
+      for (let i = 0; i < data.length; i++) {
+        fieldsTobeDeleted.concat(this.getFieldsHiddenOnForm(data[i], path + '.' + i, fieldsTobeDeleted));
+      }
     }
   }
 
@@ -202,10 +205,8 @@ export class ChartFormComponent implements OnDestroy {
     for (const field of fieldsTobeDeleted) {
       const keys = field.split('.');
       let value: any = data;
-      let configValue: any = this.config;
       for (let i = 0; i < keys.length - 1; i++) {
         value = value[keys[i]];
-        configValue = configValue[keys[i]];
         if (value === undefined || value === null) {
           break;
         }
@@ -213,8 +214,17 @@ export class ChartFormComponent implements OnDestroy {
       if (value !== undefined && value !== null) {
         if (this.isNew) {
           delete value[keys[keys.length - 1]];
-        } else if (!configValue[keys[keys.length - 1]]) {
-          delete value[keys[keys.length - 1]];
+        } else {
+          let configValue: any = this.config;
+          for (let i = 0; i < keys.length - 1; i++) {
+            configValue = configValue[keys[i]];
+            if (configValue === undefined || configValue === null) {
+              break;
+            }
+          }
+          if (!configValue || !configValue[keys[keys.length - 1]]) {
+            delete value[keys[keys.length - 1]];
+          }
         }
       }
     }
