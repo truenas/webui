@@ -11,7 +11,7 @@ import { DatasetQuota } from 'app/interfaces/dataset-quota.interface';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { DatasetCapacityManagementCardComponent } from 'app/pages/datasets/components/dataset-capacity-management-card/dataset-capacity-management-card.component';
 import { DatasetCapacitySettingsComponent } from 'app/pages/datasets/components/dataset-capacity-management-card/dataset-capacity-settings/dataset-capacity-settings.component';
-import { SpaceManagementChartComponent } from 'app/pages/datasets/components/space-management-chart/space-management-chart.component';
+import { SpaceManagementChartComponent } from 'app/pages/datasets/components/dataset-capacity-management-card/space-management-chart/space-management-chart.component';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
