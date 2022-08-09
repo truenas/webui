@@ -10,37 +10,19 @@
       border-bottom: 1px solid var(--lines);
       display: flex;
       flex-wrap: wrap;
-      padding: 20px 25px;
+      padding: 20px 25px 10px;
 
       .details-item:not(:last-child) {
-        margin-bottom: 15px;
         width: 50%;
+      }
+
+      .details-item {
+        margin-bottom: 10px;
       }
     }
 
-    .skeleton-content {
-      ngx-skeleton-loader {
-        min-width: 100%;
-      }
-
-      .permissions {
-        padding: 17px 10px 3px;
-
-        .permissions-item {
-          padding: 10px 15px;
-        }
-      }
-
-      .file-information {
-        justify-content: space-between;
-        padding-bottom: 0;
-
-        .details-item {
-          margin: 0;
-          margin-bottom: 23px;
-          width: 47%;
-        }
-      }
+    .loader-permissions {
+      padding: 50px 20px 20px;
     }
   }
 }
