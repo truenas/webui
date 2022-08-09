@@ -7,7 +7,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { filter, pluck } from 'rxjs/operators';
 import { DeviceNestedDataNode, isVdevGroup } from 'app/interfaces/device-nested-data-node.interface';
 import {
-  Disk, isTopologyDisk, isVdev,
+  Disk, isTopologyDisk, isVdev, TopologyDisk,
 } from 'app/interfaces/storage.interface';
 import { footerHeight, headerHeight } from 'app/modules/common/layouts/admin-layout/admin-layout.component.const';
 import { IxNestedTreeDataSource } from 'app/modules/ix-tree/ix-nested-tree-datasource';
@@ -160,20 +160,20 @@ export class DevicesComponent implements OnInit, AfterViewInit {
     });
   }
 
+  // TODO: Likely belongs to DevicesStore
   private sortDataNodesByDiskName(dataNodes: DeviceNestedDataNode[]): void {
     dataNodes.forEach((dataNodes) => {
-      if (dataNodes.children.length > 0) {
-        dataNodes.children.sort((a, b) => {
-          const na = a.disk.toLowerCase();
-          const nb = b.disk.toLowerCase();
-
-          if (na < nb) return -1;
-          if (na > nb) return 1;
-
-          return 0;
-        });
-        this.sortDataNodesByDiskName(dataNodes.children);
+      if (dataNodes.children.length === 0) {
+        return;
       }
+
+      dataNodes.children.sort((a: TopologyDisk, b: TopologyDisk) => {
+        const nameA = a.disk.toLowerCase();
+        const nameB = b.disk.toLowerCase();
+
+        return nameA.localeCompare(nameB);
+      });
+      this.sortDataNodesByDiskName(dataNodes.children);
     });
   }
 }
