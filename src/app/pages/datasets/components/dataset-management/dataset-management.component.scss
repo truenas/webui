@@ -99,7 +99,8 @@
     height: 100% !important;
     left: 0;
     max-width: 100%;
-    padding-top: 40px;
+    //padding-top: 40px;
+    padding-top: 24px;
     position: absolute;
     top: 0;
     width: 100%;
@@ -110,6 +111,7 @@
     display: block;
     overflow-y: auto;
     padding-bottom: 96px;
+    //padding-top: 24px;
   }
 
   ::ng-deep .cards .scroll-window {
@@ -117,7 +119,8 @@
   }
 
   ::ng-deep .header h3.title {
-    margin: 0 0 16px 16px;
+    //margin: 0 0 16px 16px;
+    //margin: 24px 0 28px 8px;
     width: calc(100% - 16px);
   }
 

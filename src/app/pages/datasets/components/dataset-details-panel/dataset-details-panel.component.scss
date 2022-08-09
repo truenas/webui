@@ -3,12 +3,36 @@
 
 .title {
   color: var(--fg2);
-  margin-bottom: 16px;
-  margin-left: 4px;
 
   @media (max-width: $breakpoint-tablet) {
     width: 100%;
   }
+
+  .mobile-prefix {
+    display: none;
+    @media (max-width: $breakpoint-hidden) {
+      display: contents;
+      opacity: 0.85;
+    }
+  }
+
+  .prefix {
+    opacity: 0.85;
+    
+    @media (max-width: $breakpoint-hidden) {
+      display: none;
+    }
+  }
+
+  .parent-path {
+    font-weight: 300;
+    opacity: 0.85;
+  }
+
+  .own-name-and-icon {
+    font-weight: 500;
+  }
+
 }
 
 .cards {
@@ -21,29 +45,49 @@
 
 .own-name-and-icon {
   display: inline-flex;
-  margin-left: -1px;
-  vertical-align: text-bottom;
 }
 
 .header {
-  align-items: baseline;
   display: flex;
-  justify-content: space-between;
-  margin-right: 5px;
+  margin-bottom: 16px;
+  padding: 12px 12px 12px 0;
+  place-content: space-between;
+
+
+  @media (min-width: calc($breakpoint-tablet + 1px)) and (max-width: $breakpoint-hidden) {
+    border-bottom: solid 1px var(--lines);
+  }
 
   @media (max-width: $breakpoint-tablet) {
     flex-wrap: wrap;
     margin-bottom: 8px;
   }
 
+  @media (min-width: $breakpoint-singlecolumn) {
+    align-items: center;
+  }
+
+  a.mobile-back-button {
+    display: none;
+    @media (max-width: $breakpoint-hidden) {
+      display: inline-block;
+      position: relative;
+      top: 3px;
+    }
+  }
+
   .add-buttons {
     flex-shrink: 0;
 
 
-    @media (max-width: $breakpoint-tablet) {
+    @media (max-width: $breakpoint-hidden) {
       border-bottom: solid 1px var(--lines);
+    }
+
+    @media (max-width: $breakpoint-tablet) {
       border-top: solid 1px var(--lines);
       display: flex;
+      margin-top: 16px;
       padding: 14px 0;
       place-content: center;
       width: 98%;

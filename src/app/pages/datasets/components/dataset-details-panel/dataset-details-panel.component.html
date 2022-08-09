@@ -1,12 +1,28 @@
 <div class="header">
   <h3 class="title">
-    {{ 'Details for' | translate }}
-    <ng-container *ngIf="!isRoot">
-      {{ parentPath }}
-    </ng-container>
-    <span class="own-name-and-icon">
-      <ix-dataset-icon [dataset]="dataset"></ix-dataset-icon>
-      {{ ownName }}
+    <!-- Only for narrow mobile screens -->
+    <div class="mobile-prefix">
+      <a [routerLink]="['/datasets']" class="mobile-back-button">
+        <ix-icon 
+        name="mdi-chevron-left"
+        (click)="onCloseMobileDetails()"
+        ></ix-icon>
+      </a>
+      {{ 'Details for' | translate }}
+    </div>
+
+    <span class="prefix">
+      {{ 'Details for' | translate }}
+    </span>
+
+    <span class="full-path">
+      <ng-container *ngIf="!isRoot">
+        <span class="parent-path">{{ parentPath }}</span>
+      </ng-container>
+      <span class="own-name-and-icon">
+        <ix-dataset-icon [dataset]="dataset"></ix-dataset-icon>
+        {{ ownName }}
+      </span>
     </span>
   </h3>
 
