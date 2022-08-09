@@ -4,6 +4,7 @@ import {
   ChangeDetectorRef,
   Component,
   OnInit,
+  AfterViewInit,
   HostListener,
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
@@ -22,7 +23,7 @@ import { WebSocketService } from 'app/services';
   styleUrls: ['./dataset-management.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class DatasetsManagementComponent implements OnInit {
+export class DatasetsManagementComponent implements OnInit, AfterViewInit {
   @HostListener('window:resize', ['$event'])
   onResize(event: Event): void {
     const target: Window = event.target as Window;
@@ -65,6 +66,12 @@ export class DatasetsManagementComponent implements OnInit {
       .subscribe((advancedConfig) => {
         this.hasConsoleFooter = advancedConfig.consolemsg;
       });
+  }
+
+  ngAfterViewInit(): void {
+    if (window.innerWidth < 1280) {
+      this.isMobileView = true;
+    }
   }
 
   onSearch(query: string): void {
