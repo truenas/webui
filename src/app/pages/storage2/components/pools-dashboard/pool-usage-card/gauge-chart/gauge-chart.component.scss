@@ -8,9 +8,10 @@
 .label {
   font-size: 40px;
   font-weight: bold;
+  font-family: "Epilogue", var(--font-family-body);
   left: 50%;
   letter-spacing: -1px;
   position: absolute;
   top: 50%;
-  transform: translate(-50%, -50%);
+  transform: translate(-50%, -42%);
 }
