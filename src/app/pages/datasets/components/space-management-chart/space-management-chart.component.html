@@ -1,4 +1,4 @@
-<div class="chart-wrapper" *ngIf="!isLoading; else chartPlaceholder">
+<div class="chart-wrapper">
   <canvas
     #canvas
     baseChart
@@ -13,11 +13,11 @@
 <div class="chart-description">
   <h3 class="chart-header">
     <span class="chart-title">{{ 'Total Allocation' | translate }}:</span>
-    <span *ngIf="!isLoading; else valueLoader">
+    <span>
       {{ dataset.used.parsed | filesize: { standard: 'iec', round: 0 } }}
     </span>
   </h3>
-  <div class="legend-wrapper" *ngIf="!isLoading; else legendPlaceholder">
+  <div class="legend-wrapper">
     <div class="legend-list-item" *ngIf="dataset.usedbydataset.parsed">
       <span class="legend-label">
         <span class="legend-swatch"></span>
@@ -59,17 +59,3 @@
     </ng-container>
   </div>
 </div>
-
-<ng-template #legendPlaceholder>
-  <ngx-skeleton-loader class="legend-placeholder"></ngx-skeleton-loader>
-  <ngx-skeleton-loader class="legend-placeholder"></ngx-skeleton-loader>
-  <ngx-skeleton-loader class="legend-placeholder"></ngx-skeleton-loader>
-</ng-template>
-
-<ng-template #chartPlaceholder>
-  <ngx-skeleton-loader class="chart-placeholder"></ngx-skeleton-loader>
-</ng-template>
-
-<ng-template #valueLoader>
-  <ngx-skeleton-loader class="value-placeholder"></ngx-skeleton-loader>
-</ng-template>

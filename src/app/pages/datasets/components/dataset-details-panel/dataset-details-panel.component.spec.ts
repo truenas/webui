@@ -63,6 +63,7 @@ describe('DatasetDetailsPanelComponent', () => {
       mockProvider(DatasetTreeStore, {
         selectedDataset$: of(datasetDetails),
         selectedParentDataset$: of(parentDatasetDetails),
+        selectedDatasetFull$: of(dataset),
       }),
     ],
   });
@@ -103,19 +104,20 @@ describe('DatasetDetailsPanelComponent', () => {
 
     const dataProtectionCard = spectator.query(DataProtectionCardComponent);
     expect(dataProtectionCard).toBeTruthy();
-    expect(dataProtectionCard.dataset).toBe(datasetDetails);
+    expect(dataProtectionCard.dataset).toStrictEqual(datasetDetails);
 
     const permissionsCard = spectator.query(PermissionsCardComponent);
     expect(permissionsCard).toBeTruthy();
-    expect(permissionsCard.dataset).toBe(datasetDetails);
+    expect(permissionsCard.dataset).toStrictEqual(datasetDetails);
 
     const zfsEncryptionCard = spectator.query(ZfsEncryptionCardComponent);
     expect(zfsEncryptionCard).toBeTruthy();
-    expect(zfsEncryptionCard.dataset).toBe(datasetDetails);
+    expect(zfsEncryptionCard.dataset).toStrictEqual(datasetDetails);
 
     const datasetCapacityManagementCard = spectator.query(DatasetCapacityManagementCardComponent);
     expect(datasetCapacityManagementCard).toBeTruthy();
-    expect(datasetCapacityManagementCard.dataset).toBe(dataset);
+    expect(datasetCapacityManagementCard.dataset).toStrictEqual(datasetDetails);
+    expect(datasetCapacityManagementCard.datasetFull).toStrictEqual(dataset);
   });
 
   it('hides "Permissions Card" if dataset type is Volume', () => {

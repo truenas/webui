@@ -5,7 +5,7 @@ import {
 import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import {
-  filter, map, pluck, switchMap, tap,
+  filter, pluck, debounceTime,
 } from 'rxjs/operators';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { footerHeight, headerHeight } from 'app/modules/common/layouts/admin-layout/admin-layout.component.const';
@@ -22,22 +22,7 @@ import { WebSocketService } from 'app/services';
 })
 export class DatasetsManagementComponent implements OnInit {
   isLoading$ = this.datasetStore.isLoading$;
-  isLoadingDataset = false;
-  selectedDataset$ = this.datasetStore.selectedDataset$.pipe(
-    filter((dataset) => !!dataset?.id),
-    tap(() => {
-      this.isLoadingDataset = true;
-      this.cdr.markForCheck();
-    }),
-    switchMap((dataset) => this.ws.call('pool.dataset.query', [[['id', '=', dataset.id]]])),
-    map((datasets) => datasets[0]),
-    tap(() => {
-      this.isLoadingDataset = false;
-      this.cdr.markForCheck();
-    }),
-  );
-  selectedParentDataset$ = this.datasetStore.selectedParentDataset$;
-
+  selectedDataset$ = this.datasetStore.selectedDataset$;
   dataSource: IxNestedTreeDataSource<DatasetDetails>;
   treeControl = new NestedTreeControl<DatasetDetails, string>((dataset) => dataset.children, {
     trackBy: (dataset) => dataset.id,
@@ -99,6 +84,16 @@ export class DatasetsManagementComponent implements OnInit {
       .pipe(filter(Boolean), untilDestroyed(this))
       .subscribe((selectedBranch: DatasetDetails[]) => {
         selectedBranch.forEach((dataset) => this.treeControl.expand(dataset));
+      });
+
+    this.datasetStore.selectedDatasetId$
+      .pipe(
+        filter(Boolean),
+        debounceTime(300),
+        untilDestroyed(this),
+      )
+      .subscribe((datasetId: string) => {
+        this.datasetStore.loadDataset(datasetId);
       });
   }
 

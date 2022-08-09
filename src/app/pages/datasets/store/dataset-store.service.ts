@@ -2,9 +2,9 @@ import { Injectable } from '@angular/core';
 import { ComponentStore } from '@ngrx/component-store';
 import { EMPTY, Observable } from 'rxjs';
 import {
-  catchError, switchMap, tap,
+  catchError, map, switchMap, tap,
 } from 'rxjs/operators';
-import { DatasetDetails } from 'app/interfaces/dataset.interface';
+import { Dataset, DatasetDetails } from 'app/interfaces/dataset.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { getTreeBranchToNode } from 'app/pages/datasets/utils/get-tree-branch-to-node.utils';
 import { WebSocketService } from 'app/services';
@@ -14,6 +14,9 @@ export interface DatasetTreeState {
   error: WebsocketError | null;
   datasets: DatasetDetails[];
   selectedDatasetId: string | null;
+  isLoadingDatasetFull: boolean;
+  selectedDatasetFull: Dataset | null;
+  errorDatasetFull: WebsocketError | null;
 }
 
 const initialState: DatasetTreeState = {
@@ -21,6 +24,9 @@ const initialState: DatasetTreeState = {
   error: null,
   datasets: [],
   selectedDatasetId: null,
+  isLoadingDatasetFull: false,
+  errorDatasetFull: null,
+  selectedDatasetFull: null,
 };
 
 @Injectable()
@@ -51,6 +57,41 @@ export class DatasetTreeStore extends ComponentStore<DatasetTreeState> {
     this.selectedBranch$,
     (selectedBranch) => (selectedBranch ? selectedBranch[selectedBranch.length - 2] : null),
   );
+
+  readonly selectedDatasetId$ = this.select((state) => state.selectedDatasetId);
+  readonly isLoadingDatasetFull$ = this.select((state) => state.isLoadingDatasetFull);
+  readonly errorDatasetFull$ = this.select((state) => state.errorDatasetFull);
+  readonly selectedDatasetFull$ = this.select((state) => state.selectedDatasetFull);
+
+  readonly loadDataset = this.effect((selectedDatasetId$: Observable<string>) => {
+    return selectedDatasetId$.pipe(
+      tap(() => {
+        this.patchState({
+          isLoadingDatasetFull: true,
+          errorDatasetFull: null,
+        });
+      }),
+      switchMap((datasetId) => {
+        return this.ws.call('pool.dataset.query', [[['id', '=', datasetId]], { extra: { retrieve_children: false } }]).pipe(
+          map((datasets) => datasets[0]),
+          tap((dataset: Dataset) => {
+            this.patchState({
+              isLoadingDatasetFull: false,
+              selectedDatasetFull: dataset,
+            });
+          }),
+          catchError((error) => {
+            this.patchState({
+              isLoadingDatasetFull: false,
+              errorDatasetFull: error,
+            });
+
+            return EMPTY;
+          }),
+        );
+      }),
+    );
+  });
 
   readonly loadDatasets = this.effect((triggers$: Observable<void>) => {
     return triggers$.pipe(

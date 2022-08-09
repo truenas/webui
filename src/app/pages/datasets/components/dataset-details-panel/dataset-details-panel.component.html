@@ -26,18 +26,29 @@
 
 <div class="cards">
   <div class="cards-column">
-    <ix-dataset-details-card [dataset]="dataset" [isLoading]="isLoading"></ix-dataset-details-card>
-    <ix-data-protection-card [dataset]="datasetDetails$ | async"></ix-data-protection-card>
+    <ix-dataset-details-card
+      [dataset]="datasetFull$ | async"
+      [isLoading]="isLoadingDatasetFull$ | async"
+    ></ix-dataset-details-card>
+    <ix-data-protection-card
+      *ngIf="!isLoading"
+      [dataset]="dataset"
+    ></ix-data-protection-card>
     <ix-permissions-card
       *ngIf="!isLoading && hasPermissions && !dataset.locked"
-      [dataset]="datasetDetails$ | async"
+      [dataset]="dataset"
     ></ix-permissions-card>
   </div>
   <div class="cards-column">
     <ix-zfs-encryption-card
       *ngIf="isEncryptionAllowed"
-      [dataset]="datasetDetails$ | async"
-      [parentDataset]="parentDatasetDetails$ | async"
+      [dataset]="dataset"
+      [parentDataset]="selectedParentDataset$ | async"
     ></ix-zfs-encryption-card>
-    <ix-dataset-capacity-management-card [dataset]="dataset" [isLoading]="isLoading" *ngIf="isCapacityAllowed"></ix-dataset-capacity-management-card>
+    <ix-dataset-capacity-management-card
+      *ngIf="isCapacityAllowed"
+      [dataset]="dataset"
+      [datasetFull]="datasetFull$ | async"
+      [isLoading]="isLoading"
+    ></ix-dataset-capacity-management-card>
   </div>

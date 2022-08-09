@@ -1,10 +1,10 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnChanges,
+  ChangeDetectionStrategy, Component, Input, OnChanges,
 } from '@angular/core';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { ChartColor, ChartDataSets, ChartOptions } from 'chart.js';
 import { DatasetType } from 'app/enums/dataset.enum';
-import { Dataset } from 'app/interfaces/dataset.interface';
+import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { ThemeService } from 'app/services/theme/theme.service';
 
 @UntilDestroy()
@@ -15,8 +15,7 @@ import { ThemeService } from 'app/services/theme/theme.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SpaceManagementChartComponent implements OnChanges {
-  @Input() dataset: Dataset;
-  @Input() isLoading: boolean;
+  @Input() dataset: DatasetDetails;
 
   chartData: ChartDataSets[] = [{ data: [] }];
   chartOptions: ChartOptions = {
@@ -44,7 +43,6 @@ export class SpaceManagementChartComponent implements OnChanges {
   }
 
   constructor(
-    private cdr: ChangeDetectorRef,
     private themeService: ThemeService,
   ) {}
 
