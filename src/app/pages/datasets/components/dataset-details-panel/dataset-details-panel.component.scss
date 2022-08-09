@@ -71,8 +71,9 @@
     display: none;
     @media (max-width: $breakpoint-hidden) {
       display: inline-block;
+      padding: 0 4px 0 16px;
       position: relative;
-      top: 3px;
+      top: 1px;
     }
   }
 
