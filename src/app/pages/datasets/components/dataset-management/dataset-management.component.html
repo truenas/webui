@@ -32,7 +32,7 @@
             [ixTreeNodeDefDataSource]="dataSource"
             [routerLink]="['/datasets', dataset.id]"
             routerLinkActive="selected"
-            (click)="toggleMobileDetails()"
+            (click)="openMobileDetails()"
           >
             <button mat-icon-button disabled></button>
             <ix-dataset-node [dataset]="dataset"></ix-dataset-node>
@@ -47,7 +47,7 @@
               class="dataset-nested-tree-root-node"
               [routerLink]="['/datasets', dataset.id]"
               routerLinkActive="selected"
-              (click)="toggleMobileDetails()"
+              (click)="openMobileDetails()"
             >
               <button
                 mat-icon-button
@@ -61,7 +61,7 @@
               </button>
 
               <ix-dataset-node [dataset]="dataset"></ix-dataset-node>
-              <ix-icon name="mdi-chevron-right" class="mobile-actions" (click)="toggleMobileDetails()"></ix-icon>
+              <ix-icon name="mdi-chevron-right" class="mobile-actions"></ix-icon>
             </div>
 
             <ng-container *ngIf="treeControl.isExpanded(dataset)" ixTreeNodeOutlet></ng-container>
@@ -78,14 +78,11 @@
     [headerHeight]="headerHeight"
     [footerHeight]="footerHeight"
   >
-    <!--<div class="close-details-container-mobile">
-      <ix-icon name="mdi-chevron-left" (click)="toggleMobileDetails()"></ix-icon>
-      </div>-->
     <ix-dataset-details-panel
       *ngIf="selectedDataset$ | async as selectedDataset"
       [dataset]="selectedDataset"
       [parentDataset]="selectedParentDataset$ | async"
-      (CloseMobileDetails)="toggleMobileDetails()"
+      (CloseMobileDetails)="closeMobileDetails()"
     ></ix-dataset-details-panel>
   </div>
 </div>

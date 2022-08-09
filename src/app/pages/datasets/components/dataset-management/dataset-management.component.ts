@@ -1,6 +1,10 @@
 import { NestedTreeControl } from '@angular/cdk/tree';
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  OnInit,
+  HostListener,
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -19,6 +23,15 @@ import { WebSocketService } from 'app/services';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DatasetsManagementComponent implements OnInit {
+  @HostListener('window:resize', ['$event'])
+  onResize(event: Event): void {
+    const target: Window = event.target as Window;
+    this.isMobileView = target.innerWidth < 1280;
+    if (target.innerWidth >= 1280) {
+      this.closeMobileDetails();
+    }
+  }
+
   isLoading$ = this.datasetStore.isLoading$;
   selectedDataset$ = this.datasetStore.selectedDataset$;
   selectedParentDataset$ = this.datasetStore.selectedParentDataset$;
@@ -32,6 +45,7 @@ export class DatasetsManagementComponent implements OnInit {
   headerHeight = headerHeight;
   footerHeight = footerHeight;
   showMobileDetails = false;
+  isMobileView = false;
 
   constructor(
     private ws: WebSocketService,
@@ -107,7 +121,13 @@ export class DatasetsManagementComponent implements OnInit {
   }
 
   // Expose hidden details on mobile
-  toggleMobileDetails(): void {
-    this.showMobileDetails = !this.showMobileDetails;
+  openMobileDetails(): void {
+    if (this.isMobileView) {
+      this.showMobileDetails = true;
+    }
+  }
+
+  closeMobileDetails(): void {
+    this.showMobileDetails = false;
   }
 }
