@@ -85,11 +85,13 @@
 
   @media (min-width: calc($breakpoint-tablet + 1px)) and (max-width: $breakpoint-hidden) {
     border-bottom: solid 1px var(--lines);
+    place-content: center;
   }
 
   @media (max-width: $breakpoint-tablet) {
     flex-wrap: wrap;
     margin-bottom: 8px;
+    place-content: center;
   }
 
   @media (min-width: $breakpoint-hidden) and (max-width: calc($breakpoint-dualcolumn-slim - 1px)) {
