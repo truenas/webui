@@ -11,12 +11,13 @@ import * as _ from 'lodash';
 import { TreeNode } from 'primeng/api';
 import { filter } from 'rxjs/operators';
 import { PoolScanState } from 'app/enums/pool-scan-state.enum';
+import { PoolTopologyCategory } from 'app/enums/pool-topology-category.enum';
 import { TopologyItemType } from 'app/enums/v-dev-type.enum';
 import helptext from 'app/helptext/storage/volumes/volume-status';
 import { Job } from 'app/interfaces/job.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { PoolDiskInfo } from 'app/interfaces/pool-disk-info';
-import { Pool, PoolScanUpdate, PoolTopologyCategory } from 'app/interfaces/pool.interface';
+import { Pool, PoolScanUpdate } from 'app/interfaces/pool.interface';
 import { QueryParams } from 'app/interfaces/query-api.interface';
 import {
   TopologyItem,

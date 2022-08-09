@@ -4,7 +4,8 @@ import { TranslateService } from '@ngx-translate/core';
 import _ from 'lodash';
 import { EMPTY, Observable } from 'rxjs';
 import { catchError, switchMap, tap } from 'rxjs/operators';
-import { DeviceNestedDataNode } from 'app/interfaces/device-nested-data-node.interface';
+import { PoolTopologyCategory } from 'app/enums/pool-topology-category.enum';
+import { DeviceNestedDataNode, VDevGroup } from 'app/interfaces/device-nested-data-node.interface';
 import { PoolTopology } from 'app/interfaces/pool.interface';
 import { Disk } from 'app/interfaces/storage.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
@@ -57,6 +58,11 @@ export class DevicesStore extends ComponentStore<DevicesState> {
   readonly selectedParentNode$ = this.select(
     this.selectedBranch$,
     (selectedBranch) => (selectedBranch ? selectedBranch[selectedBranch.length - 2] : null),
+  );
+
+  readonly selectedTopologyCategory$ = this.select(
+    this.selectedBranch$,
+    (selectedBranch) => (selectedBranch ? (selectedBranch[0] as VDevGroup).guid : null),
   );
 
   readonly loadNodes = this.effect((poolIds$: Observable<number>) => {
@@ -122,22 +128,46 @@ export class DevicesStore extends ComponentStore<DevicesState> {
   private createDataNodes(topology: PoolTopology): DeviceNestedDataNode[] {
     const dataNodes: DeviceNestedDataNode[] = [];
     if (topology.data.length) {
-      dataNodes.push({ children: topology.data, group: this.translate.instant('Data VDEVs'), guid: 'data' });
+      dataNodes.push({
+        children: topology.data,
+        group: this.translate.instant('Data VDEVs'),
+        guid: PoolTopologyCategory.Data,
+      });
     }
     if (topology.cache.length) {
-      dataNodes.push({ children: topology.cache, group: this.translate.instant('Cache'), guid: 'cache' });
+      dataNodes.push({
+        children: topology.cache,
+        group: this.translate.instant('Cache'),
+        guid: PoolTopologyCategory.Cache,
+      });
     }
     if (topology.log.length) {
-      dataNodes.push({ children: topology.log, group: this.translate.instant('Log'), guid: 'log' });
+      dataNodes.push({
+        children: topology.log,
+        group: this.translate.instant('Log'),
+        guid: PoolTopologyCategory.Log,
+      });
     }
     if (topology.spare.length) {
-      dataNodes.push({ children: topology.spare, group: this.translate.instant('Spare'), guid: 'spare' });
+      dataNodes.push({
+        children: topology.spare,
+        group: this.translate.instant('Spare'),
+        guid: PoolTopologyCategory.Spare,
+      });
     }
     if (topology.special.length) {
-      dataNodes.push({ children: topology.special, group: this.translate.instant('Metadata'), guid: 'special' });
+      dataNodes.push({
+        children: topology.special,
+        group: this.translate.instant('Metadata'),
+        guid: PoolTopologyCategory.Special,
+      });
     }
     if (topology.dedup.length) {
-      dataNodes.push({ children: topology.dedup, group: this.translate.instant('Dedup'), guid: 'dedup' });
+      dataNodes.push({
+        children: topology.dedup,
+        group: this.translate.instant('Dedup'),
+        guid: PoolTopologyCategory.Dedup,
+      });
     }
     return dataNodes;
   }
