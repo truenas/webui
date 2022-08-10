@@ -64,7 +64,6 @@ describe('PortalFormComponent', () => {
         'Discovery Authentication Method': 'Mutual CHAP',
         'Discovery Authentication Group': '1',
         'IP Address': ['192.168.1.3'],
-        Port: '33',
       });
 
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
@@ -74,10 +73,7 @@ describe('PortalFormComponent', () => {
         comment: 'work',
         discovery_authgroup: 1,
         discovery_authmethod: IscsiAuthMethod.ChapMutual,
-        listen: [{
-          ip: '192.168.1.3',
-          port: 33,
-        }],
+        listen: [{ ip: '192.168.1.3' }],
       }]);
     });
   });
@@ -88,10 +84,7 @@ describe('PortalFormComponent', () => {
         comment: 'test',
         discovery_authgroup: 1,
         discovery_authmethod: IscsiAuthMethod.None,
-        listen: [{
-          ip: '0.0.0.0',
-          port: 2360,
-        }],
+        listen: [{ ip: '0.0.0.0' }],
         id: 1,
         tag: 1,
       } as IscsiPortal);
@@ -106,7 +99,6 @@ describe('PortalFormComponent', () => {
         'Discovery Authentication Method': 'NONE',
         'Discovery Authentication Group': '1',
         'IP Address': ['0.0.0.0'],
-        Port: '2360',
       });
     });
 
@@ -117,7 +109,6 @@ describe('PortalFormComponent', () => {
         'Discovery Authentication Method': 'CHAP',
         'Discovery Authentication Group': '1',
         'IP Address': ['0.0.0.0'],
-        Port: '2250',
       });
 
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
@@ -127,10 +118,7 @@ describe('PortalFormComponent', () => {
         comment: 'good',
         discovery_authgroup: 1,
         discovery_authmethod: IscsiAuthMethod.Chap,
-        listen: [{
-          ip: '0.0.0.0',
-          port: 2250,
-        }],
+        listen: [{ ip: '0.0.0.0' }],
       }]);
     });
   });

@@ -31,23 +31,14 @@
         >
           <ng-container *ngFor="let item of listen; let i = index">
             <ix-list-item (delete)="onDelete(i)">
-              <div class="two-columns">
-                <ix-select
-                  [formControlName]="'ip' + listPrefix + i"
-                  [label]="labels.ip | translate"
-                  [tooltip]="tooltips.ip | translate"
-                  [options]="listenOptions$"
-                  [multiple]="true"
-                  [required]="true"
-                ></ix-select>
-                <ix-input
-                  [formControlName]="'port' + listPrefix + i"
-                  [label]="labels.port | translate"
-                  [tooltip]="tooltips.port | translate"
-                  type="number"
-                  [required]="true"
-                ></ix-input>
-              </div>
+              <ix-select
+                [formControlName]="'ip' + listPrefix + i"
+                [label]="labels.ip | translate"
+                [tooltip]="tooltips.ip | translate"
+                [options]="listenOptions$"
+                [multiple]="true"
+                [required]="true"
+              ></ix-select>
             </ix-list-item>
           </ng-container>
         </ix-list>

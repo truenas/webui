@@ -28,10 +28,6 @@ export class InitiatorListComponent implements EntityTableConfig {
       prop: 'initiators',
     },
     {
-      name: this.translate.instant('Authorized Networks'),
-      prop: 'auth_network',
-    },
-    {
       name: this.translate.instant('Description'),
       prop: 'comment',
     },

@@ -156,14 +156,8 @@ export class PortalFormComponent {
 
     Object.values(_.groupBy(tempListen, 'index')).forEach((item) => {
       const ip = item.find((ele) => ele.name === 'ip')?.value as string[];
-      const port = item.find((ele) => ele.name === 'port')?.value;
-      if (ip && port) {
-        ip.forEach((sip) => {
-          listen.push({
-            ip: sip,
-            port: Number(port),
-          });
-        });
+      if (ip) {
+        ip.forEach((sip) => listen.push({ ip: sip }));
       }
     });
 

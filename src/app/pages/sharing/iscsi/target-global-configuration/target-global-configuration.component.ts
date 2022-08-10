@@ -34,6 +34,7 @@ export class TargetGlobalConfigurationComponent implements OnInit {
     basename: ['', Validators.required],
     isns_servers: [[] as string[]],
     pool_avail_threshold: [null as number],
+    listen_port: [null as number],
   });
 
   readonly tooltips = {

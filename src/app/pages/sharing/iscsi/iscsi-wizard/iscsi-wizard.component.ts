@@ -626,7 +626,7 @@ export class IscsiWizardComponent implements WizardConfiguration {
     this.iscsiService.listPortals().pipe(untilDestroyed(this)).subscribe((portals) => {
       const field = _.find(this.wizardConfig[1].fieldConfig, { name: 'portal' }) as FormSelectConfig;
       for (const portal of portals) {
-        const ips = portal.listen.map((ip) => ip.ip + ':' + ip.port);
+        const ips = portal.listen.map((ip) => ip.ip);
         field.options.push({ label: portal.tag + ' (' + ips + ')', value: portal.id });
       }
     });
