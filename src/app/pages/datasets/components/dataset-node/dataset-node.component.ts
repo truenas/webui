@@ -22,8 +22,4 @@ export class DatasetNodeComponent {
   get label(): string {
     return this.nameSegments[this.nameSegments.length - 1];
   }
-
-  get level(): number {
-    return this.nameSegments.length;
-  }
 }
