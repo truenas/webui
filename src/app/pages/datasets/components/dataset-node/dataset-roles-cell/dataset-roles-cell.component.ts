@@ -2,7 +2,7 @@ import {
   ChangeDetectionStrategy, Component, Input,
 } from '@angular/core';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
-import { isDatasetHasShares, isEncryptionRoot, isRootDataset } from 'app/pages/datasets/utils/dataset.utils';
+import { isDatasetHasShares, isRootDataset } from 'app/pages/datasets/utils/dataset.utils';
 
 @Component({
   selector: 'ix-dataset-roles-cell',
@@ -13,10 +13,6 @@ import { isDatasetHasShares, isEncryptionRoot, isRootDataset } from 'app/pages/d
 export class DatasetRolesCellComponent {
   @Input() dataset: DatasetDetails;
   @Input() isSystemDataset: boolean;
-
-  get isEncryptionRoot(): boolean {
-    return isEncryptionRoot(this.dataset);
-  }
 
   get isRoot(): boolean {
     return isRootDataset(this.dataset);

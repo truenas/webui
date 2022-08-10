@@ -54,6 +54,19 @@ describe('DatasetRolesCellComponent', () => {
     expect(await ixIcon.getName()).toBe('apps');
   });
 
+  it('shows "Share" icon when dataset or children has shares', async () => {
+    await setupTest({
+      name: 'root/shares',
+      children: [{
+        name: 'root/shares/sub',
+        smb_shares: [{}],
+      }],
+    } as DatasetDetails, false);
+
+    expect(spectator.component.hasShares).toBeTruthy();
+    expect(await ixIcon.getName()).toBe('share');
+  });
+
   it('shows "VM" icon when dataset has VMs', async () => {
     await setupTest({ name: 'root', vms: [{}] } as DatasetDetails, false);
 
@@ -88,5 +101,14 @@ describe('DatasetRolesCellComponent', () => {
 
     expect(await ixIcon.getNamespace()).toBe('ix');
     expect(await ixIcon.getName()).toBe('iscsi_share');
+  });
+
+  it('shows "SMB/NFS/iSCSI" icons when dataset all shares', async () => {
+    await setupTest({
+      name: 'root/shares',
+      smb_shares: [{}],
+      nfs_shares: [{}],
+      iscsi_shares: [{}],
+    } as DatasetDetails, false);
   });
 });

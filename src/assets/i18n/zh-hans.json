@@ -68,6 +68,7 @@
   "Dataset Details": "",
   "Dataset Space Management": "",
   "Dataset is shared via NFS": "",
+  "Dataset is shared via SMB": "",
   "Dataset is shared via SMB as {shares}": "",
   "Dataset is shared via iSCSI": "",
   "Dataset settings updated.": "",
