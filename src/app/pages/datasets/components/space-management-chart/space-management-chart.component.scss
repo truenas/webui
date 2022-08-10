@@ -7,7 +7,7 @@ $chart-size-mobile: 240px;
   gap: 24px;
   min-height: $chart-size;
 
-  @media (max-width: $breakpoint-dualcolumn) {
+  @media (max-width: calc($breakpoint-dualcolumn - 1px)) {
     flex-wrap: wrap;
   }
 }
@@ -16,7 +16,7 @@ $chart-size-mobile: 240px;
   height: $chart-size;
   width: $chart-size;
 
-  @media (max-width: $breakpoint-dualcolumn) {
+  @media (max-width: calc($breakpoint-dualcolumn - 1px)) {
     height: $chart-size-mobile;
     margin: 0 auto;
     width: $chart-size-mobile;
@@ -27,7 +27,7 @@ $chart-size-mobile: 240px;
   height: $chart-size !important;
   width: $chart-size !important;
 
-  @media (max-width: $breakpoint-dualcolumn) {
+  @media (max-width: calc($breakpoint-dualcolumn - 1px)) {
     height: $chart-size-mobile !important;
     width: $chart-size-mobile !important;
   }

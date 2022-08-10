@@ -92,7 +92,7 @@
       min-width: $card-width;
       width: $card-width;
 
-      @media (max-width: $breakpoint-dualcolumn) {
+      @media (max-width: calc($breakpoint-dualcolumn - 1px)) {
         min-width: $card-width-slim;
         width: $card-width-slim;
       }

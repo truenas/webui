@@ -22,7 +22,7 @@
   }
 
   .details .label {
-    @media (max-width: $breakpoint-dualcolumn) {
+    @media (max-width: calc($breakpoint-dualcolumn - 1px)) {
       display: block;
       margin-top: 6px;
       padding: 0;
