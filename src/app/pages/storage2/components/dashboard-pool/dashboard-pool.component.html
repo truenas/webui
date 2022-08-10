@@ -8,30 +8,30 @@
         color="primary"
         (click)="onUpgrade()"
       >{{ 'Upgrade' | translate }}</button>
-  
+
       <button
         mat-button
         (click)="onExport()"
       >{{ 'Export/Disconnect' | translate }}</button>
-  
+
       <button
         mat-button
         (click)="onExpand()"
       >{{ 'Expand' | translate }}</button>
     </div>
   </div>
-  
+
   <div
     gdGap="8px"
     gdColumns="calc(25% - 6px) calc(25% - 6px) calc(25% - 6px) calc(25% - 6px)"
     gdColumns.lt-xl="calc(50% - 4px) calc(50% - 4px)"
     gdColumns.lt-md="auto"
   >
-    <ix-widget-topology
+    <ix-topology-card
       [poolState]="pool"
       [loading]="isDisksLoading"
       [diskDictionary]="diskDictionary"
-    ></ix-widget-topology>
+    ></ix-topology-card>
     <ix-pool-usage-card
       [loading]="isVolumeDataLoading"
       [poolState]="pool"

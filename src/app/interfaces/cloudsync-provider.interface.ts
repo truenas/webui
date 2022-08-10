@@ -8,7 +8,7 @@ export interface CloudsyncProvider {
   credentials_schema: any[];
   name: CloudsyncProviderName;
   task_schema: unknown[]; // Not really used
-  title: string;
+  title: CloudsyncProviderName;
 }
 
 export type CloudsyncRestoreParams = [
