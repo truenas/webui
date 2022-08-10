@@ -1,0 +1,8 @@
+<span *ngIf="isRoot && !isSystemDataset">{{ 'Root Dataset' | translate }}</span>
+<span *ngIf="isSystemDataset && !isRoot">{{ 'System Dataset' | translate }}</span>
+<span *ngIf="isRoot && isSystemDataset">{{ 'Root & System Dataset' | translate }}</span>
+<ng-container *ngIf="dataset.apps?.length || isApplications"><ix-icon name="apps"></ix-icon></ng-container>
+<ng-container *ngIf="dataset.vms?.length"><ix-icon name="computer"></ix-icon></ng-container>
+<ng-container *ngIf="dataset.smb_shares?.length"><ix-icon name="ix:smb_share"></ix-icon></ng-container>
+<ng-container *ngIf="dataset.nfs_shares?.length"><ix-icon name="ix:nfs_share"></ix-icon></ng-container>
+<ng-container *ngIf="dataset.iscsi_shares?.length"><ix-icon name="ix:iscsi_share"></ix-icon></ng-container>

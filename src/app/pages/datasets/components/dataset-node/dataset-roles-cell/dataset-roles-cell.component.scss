@@ -1,0 +1,12 @@
+:host {
+  align-items: center;
+  display: flex;
+  gap: 8px;
+
+  span:not(:last-child) {
+    &::after {
+      content: ',';
+      display: inline-block;
+    }
+  }
+}

@@ -13,6 +13,7 @@ import { DatasetDetails } from 'app/interfaces/dataset.interface';
 })
 export class DatasetNodeComponent {
   @Input() dataset: DatasetDetails;
+  @Input() isSystemDataset: boolean;
 
   get nameSegments(): string[] {
     return this.dataset.name.split('/');
@@ -24,16 +25,5 @@ export class DatasetNodeComponent {
 
   get level(): number {
     return this.nameSegments.length;
-  }
-
-  get isRoot(): boolean {
-    return this.level === 1;
-  }
-
-  get roles(): string[] {
-    if (this.isRoot) {
-      return ['Root Dataset'];
-    }
-    return [];
   }
 }

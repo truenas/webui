@@ -1,6 +1,6 @@
 import { EncryptionKeyFormat } from 'app/enums/encryption-key-format.enum';
 import { ZfsPropertySource } from 'app/enums/zfs-property-source.enum';
-import { Dataset } from 'app/interfaces/dataset.interface';
+import { Dataset, DatasetDetails } from 'app/interfaces/dataset.interface';
 import { ZfsProperty } from 'app/interfaces/zfs-property.interface';
 
 export function isRootDataset(dataset: Pick<Dataset, 'name'>): boolean {
@@ -24,4 +24,28 @@ export function isPropertyInherited(property: ZfsProperty<unknown>): boolean {
     || !property.source
     || property.source === ZfsPropertySource.Inherited
     || property.source === ZfsPropertySource.Default;
+}
+
+export function isDatasetOrChildrenHasShares(dataset: DatasetDetails): boolean {
+  if (dataset.nfs_shares?.length || dataset.smb_shares?.length || dataset.iscsi_shares?.length) {
+    return true;
+  }
+  for (const child of dataset.children) {
+    if (isDatasetOrChildrenHasShares(child)) {
+      return true;
+    }
+  }
+  return false;
+}
+
+export function isDatasetHasShares(dataset: DatasetDetails): boolean {
+  if (!dataset.children?.length) {
+    return false;
+  }
+  for (const child of dataset.children) {
+    if (isDatasetOrChildrenHasShares(child)) {
+      return true;
+    }
+  }
+  return false;
 }
