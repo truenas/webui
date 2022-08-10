@@ -21,6 +21,7 @@ from pytest_bdd import (
 def test_verify_that_storage_import_disks_page_opens():
     """Verify that Storage Import Disks Page Opens."""
 
+
 @given('the browser is open, the FreeNAS URL and logged in')
 def the_browser_is_open_the_freenas_url_and_logged_in(driver, nas_ip, root_password):
     """the browser is open, the FreeNAS URL and logged in."""
@@ -51,8 +52,8 @@ def you_are_on_the_dashboard_click_on_storage_in_the_side_menu(driver):
 @then('Click on dropdown and import disk.')
 def click_on_dropdown_and_import_disk(driver):
     """Click on dropdown and import disk.."""
-    assert wait_on_element(driver, 10, '//span[contains(.,"Disks")]', 'clickable')
-    driver.find_element_by_xpath('//span[contains(.,"Disks")]').click()
+    assert wait_on_element(driver, 10, '//button[contains(.,"Disks")]', 'clickable')
+    driver.find_element_by_xpath('//button[contains(.,"Disks")]').click()
     assert wait_on_element(driver, 10, '//a[@ix-auto="button__STORAGE_IMPORT_DISK"]', 'clickable')
     driver.find_element_by_xpath('//a[@ix-auto="button__STORAGE_IMPORT_DISK"]').click()
 

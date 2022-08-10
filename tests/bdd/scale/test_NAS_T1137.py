@@ -59,7 +59,7 @@ def the_windows_sharessmb_page_should_open_click_add(driver):
     assert wait_on_element(driver, 7, '//mat-card[contains(.,"Windows (SMB) Shares")]//button[contains(.,"Add")]', 'clickable')
     driver.find_element_by_xpath('//mat-card[contains(.,"Windows (SMB) Shares")]//button[contains(.,"Add")]').click()
     assert wait_on_element(driver, 5, '//h3[contains(text(),"Add SMB")]')
-    assert wait_on_element(driver, 5, '//h4[contains(.,"Basic")]')  
+    assert wait_on_element(driver, 5, '//h4[contains(.,"Basic")]')
 
 
 @then(parsers.parse('Set Path to the LDAP dataset "{path}", Input "{smbname}" as name, Click to enable, Input "{description}" as description, and Click Summit'))
@@ -92,7 +92,7 @@ def sharename_should_be_added_start_service_if_its_not_running(driver, sharename
     assert wait_on_element(driver, 5, '//div[contains(.,"SMB")]')
     assert wait_on_element(driver, 5, f'//div[contains(.,"{sharename}")]')
     if not is_element_present(driver, '//mat-card[contains(.,"Windows (SMB) Shares")]//span[contains(.,"RUNNING")]'):
-        assert wait_on_element(driver, 10, '//mat-card[contains(.,"Windows (SMB) Shares")]//mat-icon[text()="more_vert"]', 'clickable')      
+        assert wait_on_element(driver, 10, '//mat-card[contains(.,"Windows (SMB) Shares")]//mat-icon[text()="more_vert"]', 'clickable')
         driver.find_element_by_xpath('//mat-card[contains(.,"Windows (SMB) Shares")]//mat-icon[text()="more_vert"]').click()
         assert wait_on_element(driver, 10, '//button[normalize-space(text())="Turn On Service"]', 'clickable')
         driver.find_element_by_xpath('//button[normalize-space(text())="Turn On Service"]').click()
