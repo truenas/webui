@@ -7,6 +7,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { range } from 'lodash';
 import { forkJoin, of } from 'rxjs';
+import { MatDialog } from '@angular/material/dialog';
 import {
   CreateNetworkInterfaceType,
   LacpduRate,
@@ -38,6 +39,9 @@ import {
 import { NetworkService, WebSocketService } from 'app/services';
 import { CoreService } from 'app/services/core-service/core.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import {
+  DefaultGatewayDialogComponent,
+} from 'app/pages/network/components/default-gateway-dialog/default-gateway-dialog.component';
 
 @UntilDestroy()
 @Component({
@@ -131,6 +135,7 @@ export class InterfaceFormComponent implements OnInit {
     private core: CoreService,
     private validatorsService: IxValidatorsService,
     private interfaceFormValidator: InterfaceNameValidatorService,
+    private matDialog: MatDialog,
     @Inject(WINDOW) private window: Window,
   ) {}
 
@@ -217,6 +222,15 @@ export class InterfaceFormComponent implements OnInit {
         this.isLoading = false;
         this.core.emit({ name: 'NetworkInterfacesChanged', data: { commit: false, checkin: false }, sender: this });
         this.slideInService.close();
+
+        this.ws.call('interface.default_route_will_be_removed').pipe(untilDestroyed(this)).subscribe((res) => {
+          if (res) {
+            this.matDialog.open(DefaultGatewayDialogComponent, {
+              width: '600px',
+            });
+          }
+        });
+
         this.cdr.markForCheck();
       },
       (error) => {

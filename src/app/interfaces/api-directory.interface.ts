@@ -547,7 +547,9 @@ export type ApiDirectory = {
   'interface.checkin': { params: void; response: void };
   'interface.xmit_hash_policy_choices': { params: void; response: Choices };
   'interface.lacpdu_rate_choices': { params: void; response: Choices };
-
+  'interface.default_route_will_be_removed': { params: void; response: boolean };
+  'interface.save_default_route': { params: string[]; response: void };
+  
   // iSCSI
   'iscsi.initiator.query': { params: QueryParams<IscsiInitiatorGroup>; response: IscsiInitiatorGroup[] };
   'iscsi.initiator.delete': { params: [id: number]; response: boolean };

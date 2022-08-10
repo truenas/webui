@@ -26,6 +26,9 @@ import {
   IpmiIdentifyDialogComponent,
 } from 'app/pages/network/components/ipmi-identify-dialog/ipmi-identify-dialog.component';
 import {
+  DefaultGatewayDialogComponent,
+} from 'app/pages/network/components/default-gateway-dialog/default-gateway-dialog.component';
+import {
   NetworkConfigurationCardComponent,
 } from 'app/pages/network/components/network-configuration-card/network-configuration-card.component';
 import { OpenVpnClientConfigComponent } from 'app/pages/network/components/open-vpn-client-config/open-vpn-client-config.component';
@@ -70,6 +73,7 @@ import { routing } from './network.routing';
     NetworkConfigurationCardComponent,
     DownloadClientConfigModalComponent,
     IpmiIdentifyDialogComponent,
+    DefaultGatewayDialogComponent,
   ],
   providers: [
     NetworkService,
