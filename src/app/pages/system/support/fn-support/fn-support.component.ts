@@ -1,6 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { TranslateService } from '@ngx-translate/core';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { EntityUtils } from 'app/pages/common/entity/utils';
 import { T } from 'app/translate-marker';
 import * as _ from 'lodash';
 import { EntityJobComponent } from 'app/pages//common/entity/entity-job/entity-job.component';
@@ -8,19 +10,16 @@ import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-co
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { WebSocketService } from 'app/services/';
 import { helptext_system_support as helptext } from 'app/helptext/system/support';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-fn-support',
   template: '<entity-form [conf]="this"></entity-form>',
 })
-export class FnSupportComponent {
-  entityEdit: any;
-  password: any;
-  username: any;
+export class FnSupportComponent implements OnDestroy {
+  entityEdit: EntityFormComponent;
   category: any;
   screenshot: any;
-  password_fc: any;
-  username_fc: any;
   subs: any;
   saveSubmitText = helptext.submitBtn;
   isEntity = true;
@@ -37,35 +36,9 @@ export class FnSupportComponent {
           paraText: '<i class="material-icons">mail</i>' + helptext.contactUs,
         },
         {
-          type: 'paragraph',
-          name: 'FN_jira-info',
-          paraText: helptext.FN_Jira_message,
-        },
-        {
-          type: 'input',
-          name: 'username',
-          placeholder: helptext.username.placeholder,
-          tooltip: helptext.username.tooltip,
-          required: true,
-          validation: helptext.username.validation,
-          blurStatus: true,
-          blurEvent: this.blurEvent,
-          parent: this,
-          value: '',
-        },
-        {
-          type: 'input',
-          name: 'password',
-          inputType: 'password',
-          placeholder: helptext.password.placeholder,
-          tooltip: helptext.password.tooltip,
-          required: true,
-          validation: helptext.password.validation,
-          blurStatus: true,
-          blurEvent: this.blurEvent,
-          parent: this,
-          togglePw: true,
-          value: '',
+          type: 'oauth-login',
+          name: 'token',
+          label: this.translate.instant('Login to Jira'),
         },
         {
           type: 'select',
@@ -145,6 +118,8 @@ export class FnSupportComponent {
     },
   ];
 
+  private categoriesSubscription: Subscription;
+
   constructor(protected ws: WebSocketService, protected dialog: MatDialog,
     protected translate: TranslateService) { }
 
@@ -155,60 +130,27 @@ export class FnSupportComponent {
         _.find(this.fieldConfig, { name: 'FN_col2' }).paraText = '<i class="material-icons">mail</i>' + res;
       });
     }, 2000);
+
+    this.category = _.find(this.fieldConfig, { name: 'category' });
+    this.loadCategoriesOnAuth();
   }
 
-  blurEvent(parent) {
-    this.password_fc = _.find(parent.fieldConfig, { name: 'password' });
-    this.username_fc = _.find(parent.fieldConfig, { name: 'username' });
-    this.category = _.find(parent.fieldConfig, { name: 'category' });
-    if (parent.entityEdit) {
-      this.username = parent.entityEdit.formGroup.controls['username'].value;
-      this.password = parent.entityEdit.formGroup.controls['password'].value;
-      this.password_fc['hasErrors'] = false;
-      this.password_fc['errors'] = '';
-      this.username_fc['hasErrors'] = false;
-      this.username_fc['errors'] = '';
-
-      if (this.category.options.length > 0) {
-        this.category.options = [];
-      }
-      if (this.category.options.length === 0 && this.username !== '' && this.password !== '') {
-        this.category.isLoading = true;
-        parent.ws.call('support.fetch_categories', [this.username, this.password]).subscribe((res) => {
-          this.category.isLoading = false;
-          parent.entityEdit.setDisabled('category', false);
-          const options = [];
-          for (const property in res) {
-            if (res.hasOwnProperty(property)) {
-              options.push({ label: property, value: res[property] });
-            }
-            this.category.options = _.sortBy(options, ['label']);
-          }
-        }, (error) => {
-          if (error.reason[0] === '[') {
-            while (error.reason[0] !== ' ') {
-              error.reason = error.reason.slice(1);
-            }
-          }
-          parent.entityEdit.setDisabled('category', true);
-          this.category.isLoading = false;
-          this.password_fc['hasErrors'] = true;
-          this.password_fc['errors'] = error.reason;
-        });
-      }
+  ngOnDestroy(): void {
+    if (this.categoriesSubscription) {
+      this.categoriesSubscription.unsubscribe();
     }
   }
 
-  customSubmit(entityEdit): void {
-    const payload = {};
-    payload['username'] = entityEdit.username;
-    payload['password'] = entityEdit.password;
-    payload['category'] = entityEdit.category;
-    payload['title'] = entityEdit.title;
-    payload['body'] = entityEdit.body;
-    payload['type'] = entityEdit.type;
-    if (entityEdit.attach_debug) {
-      payload['attach_debug'] = entityEdit.attach_debug;
+  customSubmit(values): void {
+    const payload = {
+      category: values.category,
+      title: values.title,
+      body: values.body,
+      type: values.type,
+      token: values.token,
+    };
+    if (values.attach_debug) {
+      payload['attach_debug'] = values.attach_debug;
     }
     this.openDialog(payload);
   }
@@ -228,14 +170,16 @@ export class FnSupportComponent {
           formData.append('data', JSON.stringify({
             method: 'support.attach_ticket',
             params: [{
-              ticket: (res.result.ticket), filename: item.file.name, username: payload['username'], password: payload['password'],
+              ticket: (res.result.ticket),
+              filename: item.file.name,
+              token: payload.token,
             }],
           }));
           formData.append('file', item.file, item.apiEndPoint);
           dialogRef.componentInstance.wspost(item.apiEndPoint, formData);
-          dialogRef.componentInstance.success.subscribe((res) => {
+          dialogRef.componentInstance.success.subscribe(() => {
             this.resetForm();
-          }),
+          });
           dialogRef.componentInstance.failure.subscribe((res) => {
             dialogRef.componentInstance.setDescription(res.error);
           });
@@ -272,5 +216,30 @@ export class FnSupportComponent {
         }
       }
     }
+  }
+
+  private loadCategoriesOnAuth(): void {
+    this.entityEdit.formGroup.controls['token'].valueChanges.subscribe((token) => {
+      if (!token) {
+        return;
+      }
+
+      this.category.isLoading = true;
+      this.ws.call('support.fetch_categories', [token]).subscribe((res) => {
+        this.category.isLoading = false;
+        this.entityEdit.setDisabled('category', false);
+        const options = [];
+        for (const property in res) {
+          if (res.hasOwnProperty(property)) {
+            options.push({ label: property, value: res[property] });
+          }
+          this.category.options = _.sortBy(options, ['label']);
+        }
+      }, (error) => {
+        this.entityEdit.setDisabled('category', true);
+        this.category.isLoading = false;
+        new EntityUtils().handleWSError(this, error, this.dialog);
+      });
+    });
   }
 }

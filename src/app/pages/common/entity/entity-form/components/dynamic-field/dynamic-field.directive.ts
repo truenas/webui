@@ -9,6 +9,9 @@ import {
   ViewContainerRef,
 } from '@angular/core';
 import { FormGroup } from '@angular/forms';
+import {
+  FormOauthLoginComponent,
+} from 'app/pages/common/entity/entity-form/components/form-oauth-login/form-oauth-login.component';
 
 import { FieldConfig } from '../../models/field-config.interface';
 import { Field } from '../../models/field.interface';
@@ -39,6 +42,7 @@ import { FormChipComponent } from '../form-chip/form-chip.component';
 const components: { [type: string]: Type<Field> } = {
   button: FormButtonComponent,
   input: FormInputComponent,
+  'oauth-login': FormOauthLoginComponent,
   select: FormSelectComponent,
   checkbox: FormCheckboxComponent,
   textarea: FormTextareaComponent,

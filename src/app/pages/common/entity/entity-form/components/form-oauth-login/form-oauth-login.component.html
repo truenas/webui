@@ -1,0 +1,18 @@
+<div
+  id="{{config.name}}"
+  class="dynamic-field form-oauth-login"
+  [formGroup]="group"
+  [ngClass]="fieldShow"
+  [class.has-tooltip]="config.tooltip"
+  *ngIf="!config['isHidden']"
+  ix-auto ix-auto-type="button" ix-auto-identifier="{{config.label}}"
+>
+  <button
+    mat-button
+    type="button"
+    (click)="initSession()"
+    class="action-button"
+    [disabled]="hasValue"
+    [color]="hasValue ? 'accent' : 'primary'"
+  >{{ (hasValue ? 'Logged In To Jira' : 'Login to Jira') | translate }}</button>
+</div>
