@@ -168,20 +168,6 @@ def set_resource_reservation(driver):
     driver.find_element_by_xpath('//button[@ix-auto="button__NEXT_Resource Reservation"]').click()
 
 
-@then('set Resource Limits')
-def set_resource_limits(driver):
-    """set Resource Limits."""
-    assert wait_on_element(driver, 7, '//button[@ix-auto="button__NEXT_Resource Limits"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__NEXT_Resource Limits"]').click()
-
-
-@then('set Portal Configuration')
-def set_portal_configuration(driver):
-    """set Resource Limits."""
-    assert wait_on_element(driver, 7, '//button[@ix-auto="button__NEXT_Portal Configuration"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__NEXT_Portal Configuration"]').click()
-
-
 @then('Confirm Options')
 def confirm_options(driver):
     """Confirm Options."""
