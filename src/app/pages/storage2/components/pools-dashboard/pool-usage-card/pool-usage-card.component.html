@@ -70,7 +70,7 @@
           </li>
         </ul>
       </div>
-      <a class="link" (click)="router.navigate(['reportsdashboard/cpu/'])">
+      <a class="link" [routerLink]="['/reportsdashboard/disk']" [queryParams]="{ disks: allDiskNames }">
         {{ 'View Disk Space Reports' | translate }}
       </a>
     </div>
