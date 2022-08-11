@@ -10,7 +10,6 @@ import {
   Component,
   OnInit,
   AfterViewInit,
-  // HostListener,
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
