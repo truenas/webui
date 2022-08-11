@@ -1,6 +1,6 @@
 @import '~assets/styles/mixins/animations';
 @import '~assets/styles/mixins/buttons';
-@import '~assets/styles/mixins/breakpoints';
+@import '~assets/styles/scss-imports/splitview';
 
 @mixin details-cards {
   height: 94%;
