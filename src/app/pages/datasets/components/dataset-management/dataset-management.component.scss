@@ -35,7 +35,6 @@ $dualcolumn-slim-max-width: ($card-width-slim * 2 + $gap * 2);
   @media (min-width: $breakpoint-min-mobile) and (max-width: $breakpoint-tablet) {
     margin-right: unset;
     min-width: $breakpoint-min-mobile;
-    //overflow-x: hidden;
     width: 100%;
   }
 
@@ -48,14 +47,12 @@ $dualcolumn-slim-max-width: ($card-width-slim * 2 + $gap * 2);
   // One Cards Column
   @media (min-width: $breakpoint-singlecolumn) and (max-width: calc($breakpoint-dualcolumn-slim - 1px)) {
     max-width: calc(100% - $singlecolumn-max-width - 16px);
-    //min-width: calc(90% - ($card-width-slim + $gap));
     min-width: calc($table-min-width + 0px);
   }
 
   // Two Cards Slim Columns
   @media (min-width: $breakpoint-dualcolumn-slim) and (max-width: calc($breakpoint-dualcolumn - 1px)) {
     max-width: calc(100% - $dualcolumn-slim-max-width - 16px);
-    //min-width: calc(90% - 2 * ($card-width-slim + $gap));
     min-width: calc($table-min-width + 0px);
   }
 
@@ -80,7 +77,6 @@ $dualcolumn-slim-max-width: ($card-width-slim * 2 + $gap * 2);
   color: var(--fg2);
   display: flex;
   flex: 1;
-  //max-width: 70%;
   min-width: inherit;
   overflow: hidden;
   padding: 0;
@@ -93,25 +89,13 @@ $dualcolumn-slim-max-width: ($card-width-slim * 2 + $gap * 2);
   }
 
   // One Card Column
-  /*@media (min-width: $breakpoint-hidden) and (max-width: calc($breakpoint-singlecolumn - 1px)) {
-    border: solid 1px red;
-    $singlecolumn-max-width: ($card-width-slim + $gap * 2);
-    //min-width: $singlecolumn-max-width; //calc($card-width-slim - 2 * $gap);
-    max-width: $singlecolumn-max-width; //calc($card-width-slim + $gap + $gap);
-  }*/
-
-  // One Card Column
   @media (min-width: $breakpoint-singlecolumn) and (max-width: calc($breakpoint-dualcolumn-slim - 1px)) {
-    //border: solid 1px green;
-    //max-width: 35%; 
-    max-width: $singlecolumn-max-width; //calc($card-width-slim + $gap + $gap);
+    max-width: $singlecolumn-max-width;
   }
 
   // Two Cards Columns
   @media (min-width: $breakpoint-dualcolumn-slim) and (max-width: calc($breakpoint-dualcolumn - 1px)) {
-    //border: solid 1px red;
-    //min-width: $singlecolumn-max-width; //calc($card-width-slim - 2 * $gap);
-    max-width: $dualcolumn-slim-max-width; //calc($card-width-slim + $gap + $gap);
+    max-width: $dualcolumn-slim-max-width;
   }
 
   // Two Cards Columns
