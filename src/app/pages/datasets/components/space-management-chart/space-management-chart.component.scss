@@ -1,5 +1,6 @@
 @import '~assets/styles/scss-imports/splitview';
 $chart-size: 150px;
+$chart-size-singlecolumn: 190px;
 $chart-size-mobile: 240px;
 
 :host {
@@ -17,9 +18,17 @@ $chart-size-mobile: 240px;
   width: $chart-size;
 
   @media (max-width: calc($breakpoint-dualcolumn - 1px)) {
-    height: $chart-size-mobile;
     margin: 0 auto;
+  }
+
+  @media (max-width: calc($breakpoint-tablet - 1px)) {
+    height: $chart-size-mobile;
     width: $chart-size-mobile;
+  }
+
+  @media (min-width: $breakpoint-tablet) and (max-width: calc($breakpoint-dualcolumn - 1px)) {
+    height: $chart-size-singlecolumn;
+    width: $chart-size-singlecolumn;
   }
 }
 
@@ -27,9 +36,14 @@ $chart-size-mobile: 240px;
   height: $chart-size !important;
   width: $chart-size !important;
 
-  @media (max-width: calc($breakpoint-dualcolumn - 1px)) {
+  @media (max-width: calc($breakpoint-tablet - 1px)) {
     height: $chart-size-mobile !important;
     width: $chart-size-mobile !important;
+  }
+
+  @media (min-width: $breakpoint-tablet) and (max-width: calc($breakpoint-dualcolumn - 1px)) {
+    height: $chart-size-singlecolumn !important;
+    width: $chart-size-singlecolumn !important;
   }
 }
 

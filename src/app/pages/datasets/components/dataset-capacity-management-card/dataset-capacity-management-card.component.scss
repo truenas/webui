@@ -41,4 +41,8 @@
 
 ix-space-management-chart {
   padding: 0 0 0 8px;
+
+  @media (max-width: $breakpoint-dualcolumn) {
+    padding-left: 0;
+  }
 }
