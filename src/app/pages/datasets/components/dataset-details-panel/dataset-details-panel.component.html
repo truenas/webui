@@ -10,9 +10,8 @@
     </span>
   </h3>
 
-  <div *ngIf="!dataset.locked" class="add-buttons">
+  <div *ngIf="!dataset.locked && !isZvol" class="add-buttons">
     <button
-      *ngIf="!isZvol"
       mat-button
       (click)="onAddZvol()"
     >{{ 'Add Zvol' | translate }}</button>
@@ -32,8 +31,8 @@
   </div>
   <div class="cards-column">
     <ix-roles-card
-      *ngIf="datasetHasRoles" 
-      [dataset]="dataset" 
+      *ngIf="datasetHasRoles"
+      [dataset]="dataset"
       [hasChildrenWithShares]="datasetHasChildrenWithShares"
     ></ix-roles-card>
     <ix-zfs-encryption-card
@@ -41,8 +40,8 @@
       [dataset]="dataset"
       [parentDataset]="parentDataset"
     ></ix-zfs-encryption-card>
-    <ix-dataset-capacity-management-card 
-      [dataset]="dataset" 
+    <ix-dataset-capacity-management-card
+      [dataset]="dataset"
       *ngIf="isCapacityAllowed"
     ></ix-dataset-capacity-management-card>
   </div>
