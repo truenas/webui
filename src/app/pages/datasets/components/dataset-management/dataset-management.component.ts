@@ -1,3 +1,8 @@
+import {
+  Breakpoints,
+  BreakpointState,
+  BreakpointObserver,
+} from '@angular/cdk/layout';
 import { NestedTreeControl } from '@angular/cdk/tree';
 import {
   ChangeDetectionStrategy,
@@ -5,7 +10,7 @@ import {
   Component,
   OnInit,
   AfterViewInit,
-  HostListener,
+  // HostListener,
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -24,15 +29,6 @@ import { WebSocketService } from 'app/services';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DatasetsManagementComponent implements OnInit, AfterViewInit {
-  @HostListener('window:resize', ['$event'])
-  onResize(event: Event): void {
-    const target: Window = event.target as Window;
-    this.isMobileView = target.innerWidth < 1280;
-    if (target.innerWidth >= 1280) {
-      this.closeMobileDetails();
-    }
-  }
-
   isLoading$ = this.datasetStore.isLoading$;
   selectedDataset$ = this.datasetStore.selectedDataset$;
   selectedParentDataset$ = this.datasetStore.selectedParentDataset$;
@@ -53,6 +49,7 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit {
     private cdr: ChangeDetectorRef,
     private activatedRoute: ActivatedRoute,
     private datasetStore: DatasetTreeStore,
+    private breakpointObserver: BreakpointObserver,
   ) { }
 
   ngOnInit(): void {
@@ -69,9 +66,18 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    if (window.innerWidth < 1280) {
-      this.isMobileView = true;
-    }
+    this.breakpointObserver
+      .observe([Breakpoints.XSmall, Breakpoints.Small, Breakpoints.Medium])
+      .pipe(untilDestroyed(this))
+      .subscribe((state: BreakpointState) => {
+        if (state.matches) {
+          this.isMobileView = true;
+        } else {
+          this.closeMobileDetails();
+          this.isMobileView = false;
+        }
+        this.cdr.detectChanges();
+      });
   }
 
   onSearch(query: string): void {
