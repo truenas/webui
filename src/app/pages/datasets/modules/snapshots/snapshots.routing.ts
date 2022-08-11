@@ -12,6 +12,11 @@ export const routes: Routes = [
         component: SnapshotListComponent,
         data: { title: 'Snapshots', breadcrumb: 'Snapshots' },
       },
+      {
+        path: ':dataset',
+        component: SnapshotListComponent,
+        data: { title: 'Snapshots', breadcrumb: 'Snapshots' },
+      },
     ],
   },
 ];
