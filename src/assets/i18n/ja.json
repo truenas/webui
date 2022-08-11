@@ -216,6 +216,7 @@
   "Allow Password Authentication": "",
   "Allow Specific": "",
   "Allow TCP Port Forwarding": "",
+  "Allow all initiators": "",
   "Allow different groups to be configured with different authentication profiles. Example: all users with a group ID of <i>1</i> will inherit the authentication profile associated with Group <i>1</i>.": "",
   "Allow encrypted connections. Requires a certificate  created or imported with the <b>System > Certificates</b> menu.": "",
   "Allow group members to use <a href=\"https://man7.org/linux/man-pages/man8/sudo.8.html\" target=\"_blank\">sudo</a>. Group members are prompted for their password when using <b>sudo</b>.": "",

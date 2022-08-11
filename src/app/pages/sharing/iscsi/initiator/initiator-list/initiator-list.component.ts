@@ -26,6 +26,7 @@ export class InitiatorListComponent implements EntityTableConfig {
     {
       name: this.translate.instant('Initiators'),
       prop: 'initiators',
+      emptyText: this.translate.instant('Allow all initiators'),
     },
     {
       name: this.translate.instant('Description'),

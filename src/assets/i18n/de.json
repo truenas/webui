@@ -180,6 +180,7 @@
   "Allow Compressed WRITE Records": "",
   "Allow DNS Updates": "",
   "Allow Specific": "",
+  "Allow all initiators": "",
   "Allow configuring a non-standard port to access the GUI over <i>HTTP</i>. Changing this setting might require changing a <a href=\"https://www.redbrick.dcu.ie/~d_fens/articles/Firefox:_This_Address_is_Restricted\" target=\"_blank\">Firefox configuration setting</a>.": "",
   "Allow configuring a non-standard port to access the GUI over <i>HTTPS</i>.": "",
   "Allow different groups to be configured with different authentication profiles. Example: all users with a group ID of <i>1</i> will inherit the authentication profile associated with Group <i>1</i>.": "",
