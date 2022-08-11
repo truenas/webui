@@ -71,7 +71,7 @@
     </div>
   </div>
 
-  <div class="details-container" [ngClass]="{ 'details-container-mobile': showMobileDetails }"
+  <div class="details-container" [class.details-container-mobile]="showMobileDetails"
     ixDetailsHeight
     ixDetailsHeightParentClass="rightside-content-hold"
     [hasConsoleFooter]="hasConsoleFooter"
