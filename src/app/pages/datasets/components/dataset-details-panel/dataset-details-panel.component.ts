@@ -22,7 +22,7 @@ export class DatasetDetailsPanelComponent implements OnInit {
   @Input() dataset: DatasetDetails;
   @Input() parentDataset: DatasetDetails | undefined;
 
-  @Output() CloseMobileDetails: EventEmitter<void> = new EventEmitter<void>();
+  @Output() closeMobileDetails: EventEmitter<void> = new EventEmitter<void>();
 
   constructor(
     private modalService: ModalService,
@@ -79,6 +79,6 @@ export class DatasetDetailsPanelComponent implements OnInit {
   }
 
   onCloseMobileDetails(): void {
-    this.CloseMobileDetails.emit();
+    this.closeMobileDetails.emit();
   }
 }

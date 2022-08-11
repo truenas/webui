@@ -82,7 +82,7 @@
       *ngIf="selectedDataset$ | async as selectedDataset"
       [dataset]="selectedDataset"
       [parentDataset]="selectedParentDataset$ | async"
-      (CloseMobileDetails)="closeMobileDetails()"
+      (closeMobileDetails)="closeMobileDetails()"
     ></ix-dataset-details-panel>
   </div>
 </div>
