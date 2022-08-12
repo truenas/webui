@@ -38,7 +38,10 @@ describe('DatasetDetailsPanelComponent', () => {
     type: DatasetType.Filesystem,
     encrypted: true,
   } as DatasetDetails;
-  const parentDataset = {
+  const datasetDetails = {
+    ...dataset,
+  } as DatasetDetails;
+  const parentDatasetDetails = {
     name: 'root/parent',
   } as DatasetDetails;
   const createComponent = createComponentFactory({
@@ -59,7 +62,10 @@ describe('DatasetDetailsPanelComponent', () => {
         openInSlideIn: jest.fn(() => fakeModalRef),
         onClose$: of(),
       }),
-      mockProvider(DatasetTreeStore),
+      mockProvider(DatasetTreeStore, {
+        selectedDataset$: of(datasetDetails),
+        selectedParentDataset$: of(parentDatasetDetails),
+      }),
     ],
   });
 
@@ -67,7 +73,6 @@ describe('DatasetDetailsPanelComponent', () => {
     spectator = createComponent({
       props: {
         dataset,
-        parentDataset,
       },
     });
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
@@ -98,17 +103,21 @@ describe('DatasetDetailsPanelComponent', () => {
     expect(datasetDetailsCard).toBeTruthy();
     expect(datasetDetailsCard.dataset).toBe(dataset);
 
+    const dataProtectionCard = spectator.query(DataProtectionCardComponent);
+    expect(dataProtectionCard).toBeTruthy();
+    expect(dataProtectionCard.dataset).toStrictEqual(datasetDetails);
+
     const permissionsCard = spectator.query(PermissionsCardComponent);
     expect(permissionsCard).toBeTruthy();
-    expect(permissionsCard.dataset).toBe(dataset);
+    expect(permissionsCard.dataset).toStrictEqual(datasetDetails);
 
     const zfsEncryptionCard = spectator.query(ZfsEncryptionCardComponent);
     expect(zfsEncryptionCard).toBeTruthy();
-    expect(zfsEncryptionCard.dataset).toBe(dataset);
+    expect(zfsEncryptionCard.dataset).toStrictEqual(datasetDetails);
 
     const datasetCapacityManagementCard = spectator.query(DatasetCapacityManagementCardComponent);
     expect(datasetCapacityManagementCard).toBeTruthy();
-    expect(datasetCapacityManagementCard.dataset).toBe(dataset);
+    expect(datasetCapacityManagementCard.dataset).toStrictEqual(datasetDetails);
   });
 
   it('hides "Permissions Card" if dataset type is Volume', () => {

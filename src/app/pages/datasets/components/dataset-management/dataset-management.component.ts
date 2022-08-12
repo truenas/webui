@@ -2,9 +2,11 @@ import { NestedTreeControl } from '@angular/cdk/tree';
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { filter, pluck } from 'rxjs/operators';
+import {
+  filter, pluck,
+} from 'rxjs/operators';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { footerHeight, headerHeight } from 'app/modules/common/layouts/admin-layout/admin-layout.component.const';
 import { IxNestedTreeDataSource } from 'app/modules/ix-tree/ix-nested-tree-datasource';
@@ -21,8 +23,6 @@ import { WebSocketService } from 'app/services';
 export class DatasetsManagementComponent implements OnInit {
   isLoading$ = this.datasetStore.isLoading$;
   selectedDataset$ = this.datasetStore.selectedDataset$;
-  selectedParentDataset$ = this.datasetStore.selectedParentDataset$;
-
   dataSource: IxNestedTreeDataSource<DatasetDetails>;
   treeControl = new NestedTreeControl<DatasetDetails, string>((dataset) => dataset.children, {
     trackBy: (dataset) => dataset.id,
@@ -37,6 +37,7 @@ export class DatasetsManagementComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private activatedRoute: ActivatedRoute,
     private datasetStore: DatasetTreeStore,
+    private router: Router,
   ) { }
 
   ngOnInit(): void {
@@ -75,7 +76,7 @@ export class DatasetsManagementComponent implements OnInit {
             this.datasetStore.selectDatasetById(routeDatasetId);
           } else {
             const firstNode = this.treeControl.dataNodes[0];
-            this.datasetStore.selectDatasetById(firstNode.id);
+            this.router.navigate(['/datasets', firstNode.id]);
           }
         },
       );

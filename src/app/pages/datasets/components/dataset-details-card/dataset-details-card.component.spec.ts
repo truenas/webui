@@ -6,10 +6,9 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { MockComponents } from 'ng-mocks';
 import { NgxSkeletonLoaderComponent } from 'ngx-skeleton-loader';
 import { of } from 'rxjs';
-import { mockWebsocket, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
 import { DatasetType } from 'app/enums/dataset.enum';
 import { ZfsPropertySource } from 'app/enums/zfs-property-source.enum';
-import { Dataset, DatasetDetails } from 'app/interfaces/dataset.interface';
+import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { DatasetDetailsCardComponent } from 'app/pages/datasets/components/dataset-details-card/dataset-details-card.component';
 import { DatasetFormComponent } from 'app/pages/datasets/components/dataset-form/dataset-form.component';
 import { DeleteDatasetDialogComponent } from 'app/pages/datasets/components/delete-dataset-dialog/delete-dataset-dialog.component';
@@ -20,6 +19,11 @@ const dataset = {
   id: 'pool/child',
   pool: 'pool',
   type: DatasetType.Filesystem,
+  sync: { value: 'STANDARD' },
+  compression: { source: ZfsPropertySource.Inherited, value: 'LZ4' },
+  atime: false,
+  deduplication: { value: 'OFF' },
+  casesensitive: false,
 } as DatasetDetails;
 
 describe('DatasetDetailsCardComponent', () => {
@@ -52,15 +56,6 @@ describe('DatasetDetailsCardComponent', () => {
           afterClosed: () => of(true),
         })),
       }),
-      mockWebsocket([
-        mockCall('pool.dataset.query', [{
-          sync: { value: 'STANDARD' },
-          compression: { source: ZfsPropertySource.Inherited, value: 'LZ4' },
-          atime: { value: 'OFF' },
-          deduplication: { value: 'OFF' },
-          casesensitivity: { value: 'SENSITIVE' },
-        } as Dataset]),
-      ]),
     ],
   });
 
@@ -98,7 +93,7 @@ describe('DatasetDetailsCardComponent', () => {
     expect(details[4].querySelector('.value')).toHaveText('OFF');
 
     expect(details[5].querySelector('.label')).toHaveText('Case Sensitivity:');
-    expect(details[5].querySelector('.value')).toHaveText('SENSITIVE');
+    expect(details[5].querySelector('.value')).toHaveText('OFF');
   });
 
   it('opens edit dataset form when Edit button is clicked', async () => {
