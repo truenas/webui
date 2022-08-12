@@ -4,7 +4,9 @@ import {
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { filter, pluck } from 'rxjs/operators';
+import {
+  filter, pluck,
+} from 'rxjs/operators';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { footerHeight, headerHeight } from 'app/modules/common/layouts/admin-layout/admin-layout.component.const';
 import { IxNestedTreeDataSource } from 'app/modules/ix-tree/ix-nested-tree-datasource';
@@ -21,8 +23,6 @@ import { WebSocketService } from 'app/services';
 export class DatasetsManagementComponent implements OnInit {
   isLoading$ = this.datasetStore.isLoading$;
   selectedDataset$ = this.datasetStore.selectedDataset$;
-  selectedParentDataset$ = this.datasetStore.selectedParentDataset$;
-
   dataSource: IxNestedTreeDataSource<DatasetDetails>;
   treeControl = new NestedTreeControl<DatasetDetails, string>((dataset) => dataset.children, {
     trackBy: (dataset) => dataset.id,

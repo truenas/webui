@@ -2,6 +2,7 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
+import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { SnapshotAddFormComponent } from 'app/pages/datasets/modules/snapshots/snapshot-add-form/snapshot-add-form.component';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { DataProtectionCardComponent } from './data-protection-card.component';
@@ -37,7 +38,7 @@ describe('DataProtectionComponent', () => {
           used: null,
           quota: null,
           thick_provisioned: false,
-        },
+        } as DatasetDetails,
       },
     });
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
