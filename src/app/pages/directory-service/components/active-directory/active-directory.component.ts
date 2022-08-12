@@ -339,6 +339,10 @@ export class ActiveDirectoryComponent implements FormConfiguration {
     }
     this.ws.call('directoryservices.get_state').pipe(untilDestroyed(this)).subscribe((res) => {
       this.adStatus = res.activedirectory === DirectoryServiceState.Healthy;
+      if (res.activedirectory !== DirectoryServiceState.Disabled) {
+        entityForm.setDisabled(helptext.activedirectory_netbiosname_a_name, true, false);
+        entityForm.setDisabled(helptext.activedirectory_netbiosalias_name, true, false);
+      }
     });
   }
 
