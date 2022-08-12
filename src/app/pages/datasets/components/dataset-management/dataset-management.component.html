@@ -71,9 +71,8 @@
     [footerHeight]="footerHeight"
   >
     <ix-dataset-details-panel
-      *ngIf="selectedDataset$ | async as selectedDataset"
-      [dataset]="selectedDataset"
-      [parentDataset]="selectedParentDataset$ | async"
+      *ngIf="selectedDataset$ | async as dataset"
+      [dataset]="dataset"
     ></ix-dataset-details-panel>
   </div>
 </div>

@@ -41,10 +41,10 @@ import { SnapshotsModule } from 'app/pages/datasets/modules/snapshots/snapshots.
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
 import { DatasetCapacityManagementCardComponent } from './components/dataset-capacity-management-card/dataset-capacity-management-card.component';
 import { DatasetCapacitySettingsComponent } from './components/dataset-capacity-management-card/dataset-capacity-settings/dataset-capacity-settings.component';
+import { SpaceManagementChartComponent } from './components/dataset-capacity-management-card/space-management-chart/space-management-chart.component';
 import { DatasetIconComponent } from './components/dataset-icon/dataset-icon.component';
 import { DatasetEncryptionCellComponent } from './components/dataset-node/dataset-encryption-cell/dataset-encryption-cell.component';
 import { DatasetNodeComponent } from './components/dataset-node/dataset-node.component';
-import { SpaceManagementChartComponent } from './components/space-management-chart/space-management-chart.component';
 
 @NgModule({
   imports: [

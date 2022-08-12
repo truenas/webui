@@ -16,9 +16,10 @@ import { TranslateService } from '@ngx-translate/core';
 import filesize from 'filesize';
 import { styler, tween } from 'popmotion';
 import { PoolStatus } from 'app/enums/pool-status.enum';
+import { PoolTopologyCategory } from 'app/enums/pool-topology-category.enum';
 import { TopologyItemType } from 'app/enums/v-dev-type.enum';
 import { TopologyItemStatus } from 'app/enums/vdev-status.enum';
-import { Pool, PoolTopologyCategory } from 'app/interfaces/pool.interface';
+import { Pool } from 'app/interfaces/pool.interface';
 import { Disk, isTopologyDisk, TopologyItem } from 'app/interfaces/storage.interface';
 import { VolumeData } from 'app/interfaces/volume-data.interface';
 import { WidgetComponent } from 'app/pages/dashboard/components/widget/widget.component';
@@ -68,6 +69,7 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
   tpl: TemplateRef<void>;
 
   readonly PoolStatus = PoolStatus;
+  readonly PoolTopologyCategory = PoolTopologyCategory;
 
   // NAVIGATION
   currentSlide = '0';

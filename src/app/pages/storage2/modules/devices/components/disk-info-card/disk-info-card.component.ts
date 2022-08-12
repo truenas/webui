@@ -34,7 +34,7 @@ export class DiskInfoCardComponent implements OnInit {
   ) {}
 
   get isHdd(): boolean {
-    return this.disk.type === DiskType.Hdd;
+    return this.disk?.type === DiskType.Hdd;
   }
 
   ngOnInit(): void {
