@@ -29,7 +29,7 @@ export class ApplicationsService {
   }
 
   getAllCatalogItems(): Observable<Catalog[]> {
-    return this.ws.call('catalog.query', [[], { extra: { cache: true, retrieve_versions: false, item_details: true } }]);
+    return this.ws.call('catalog.query', [[], { extra: { cache: true, item_details: true } }]);
   }
 
   getCatalogItem(name: string, catalog: string, train: string): Observable<CatalogApp> {
