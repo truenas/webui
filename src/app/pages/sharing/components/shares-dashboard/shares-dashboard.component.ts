@@ -205,12 +205,12 @@ export class SharesDashboardComponent implements AfterViewInit {
             },
           ],
           detailsHref: '/sharing/nfs',
-          add() {
-            this.parent.slideInService.open(NfsFormComponent);
+          add: () => {
+            this.slideInService.open(NfsFormComponent);
           },
-          edit(row: NfsShare) {
-            const form = this.parent.slideInService.open(NfsFormComponent);
-            (form as NfsFormComponent).setNfsShareForEdit(row);
+          edit: (row: NfsShare): void => {
+            const form = this.slideInService.open(NfsFormComponent);
+            form.setNfsShareForEdit(row);
           },
           afterGetData: (data: NfsShare[]) => {
             this.nfsHasItems = 0;
@@ -252,8 +252,8 @@ export class SharesDashboardComponent implements AfterViewInit {
             this.router.navigate(['/', 'sharing', 'iscsi', 'wizard']);
           },
           addButtonLabel: this.translate.instant('Wizard'),
-          edit(row: IscsiTarget) {
-            const targetForm = this.parent.slideInService.open(TargetFormComponent, { wide: true });
+          edit: (row: IscsiTarget) => {
+            const targetForm = this.slideInService.open(TargetFormComponent, { wide: true });
             targetForm.setTargetForEdit(row);
           },
           afterGetData: (data: IscsiTarget[]) => {
@@ -309,13 +309,13 @@ export class SharesDashboardComponent implements AfterViewInit {
               onChange: (row: WebDavShare) => this.onSlideToggle(ShareType.WebDav, row, 'enabled'),
             },
           ],
-          add() {
-            this.parent.slideInService.open(WebdavFormComponent);
+          add: () => {
+            this.slideInService.open(WebdavFormComponent);
           },
           limitRowsByMaxHeight: true,
-          edit(row: WebDavShare) {
-            const form = this.parent.slideInService.open(WebdavFormComponent);
-            (form as WebdavFormComponent).setWebdavForEdit(row);
+          edit: (row: WebDavShare) => {
+            const form = this.slideInService.open(WebdavFormComponent);
+            form.setWebdavForEdit(row);
           },
           afterGetData: (data: WebDavShare[]) => {
             this.webdavHasItems = 0;
@@ -356,12 +356,12 @@ export class SharesDashboardComponent implements AfterViewInit {
             },
           ],
           limitRowsByMaxHeight: true,
-          add() {
-            this.parent.slideInService.open(SmbFormComponent);
+          add: () => {
+            this.slideInService.open(SmbFormComponent);
           },
-          edit(row: SmbShare) {
-            const form = this.parent.slideInService.open(SmbFormComponent);
-            (form as SmbFormComponent).setSmbShareForEdit(row);
+          edit: (row: SmbShare) => {
+            const form = this.slideInService.open(SmbFormComponent);
+            form.setSmbShareForEdit(row);
           },
           afterGetData: (data: SmbShare[]) => {
             this.smbHasItems = 0;

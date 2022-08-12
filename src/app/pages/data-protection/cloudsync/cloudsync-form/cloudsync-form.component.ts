@@ -9,12 +9,13 @@ import * as filesize from 'filesize';
 import * as _ from 'lodash';
 import { Observable } from 'rxjs';
 import { filter, take, tap } from 'rxjs/operators';
+import { Overwrite } from 'utility-types';
 import { CloudsyncProviderName } from 'app/enums/cloudsync-provider.enum';
 import { Direction } from 'app/enums/direction.enum';
 import { ExplorerType } from 'app/enums/explorer-type.enum';
 import { TransferMode } from 'app/enums/transfer-mode.enum';
 import helptext from 'app/helptext/data-protection/cloudsync/cloudsync-form';
-import { CloudSyncTask } from 'app/interfaces/cloud-sync-task.interface';
+import { BwLimit, CloudSyncTask, CloudSyncTaskUpdate } from 'app/interfaces/cloud-sync-task.interface';
 import { CloudsyncBucket, CloudsyncCredential } from 'app/interfaces/cloudsync-credential.interface';
 import { CloudsyncProvider } from 'app/interfaces/cloudsync-provider.interface';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
@@ -39,6 +40,12 @@ import {
   AppLoaderService, CloudCredentialService, DialogService, JobService, WebSocketService,
 } from 'app/services';
 import { ModalService } from 'app/services/modal.service';
+
+type CloudSyncFormTask = Overwrite<CloudSyncTask, {
+  bwlimit: string[] | BwLimit[];
+}> & {
+  cloudsync_picker: string;
+};
 
 @UntilDestroy()
 @Component({
@@ -943,8 +950,8 @@ export class CloudsyncFormComponent implements FormConfiguration {
     });
   }
 
-  resourceTransformIncomingRestData(data: CloudSyncTask): any {
-    const transformed: any = { ...data };
+  resourceTransformIncomingRestData(data: CloudSyncTask): CloudSyncFormTask {
+    const transformed = { ...data } as CloudSyncFormTask;
     transformed.cloudsync_picker = [
       data.schedule.minute,
       data.schedule.hour,
@@ -1000,9 +1007,9 @@ export class CloudsyncFormComponent implements FormConfiguration {
     return bwlimtArr;
   }
 
-  submitDataHandler(formValue: any): any {
+  submitDataHandler(formValue: any): CloudSyncTaskUpdate {
     const value = _.cloneDeep(formValue);
-    const attributes: any = {};
+    const attributes: CloudSyncTaskUpdate['attributes'] = {};
     const schedule: Schedule = {};
 
     if (value.direction === Direction.Pull) {

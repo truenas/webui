@@ -45,10 +45,8 @@ export class DownloadKeyDialogComponent {
         this.storage.streamDownloadFile(url, this.fileName, mimetype)
           .pipe(untilDestroyed(this))
           .subscribe((file) => {
-            if (res !== null && (res as any) !== '') {
-              this.storage.downloadBlob(file, this.fileName);
-              this.isDownloaded = true;
-            }
+            this.storage.downloadBlob(file, this.fileName);
+            this.isDownloaded = true;
           });
       }, (error) => {
         this.loader.close();

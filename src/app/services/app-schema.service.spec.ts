@@ -1,4 +1,4 @@
-import { FormControl } from '@angular/forms';
+import { UntypedFormGroup } from '@angular/forms';
 import { FormGroup } from '@ngneat/reactive-forms';
 import { ChartSchemaNode } from 'app/interfaces/chart-release.interface';
 import {
@@ -321,7 +321,7 @@ const beforeHidden = [{
 
 const afterHidden = [[]] as DynamicFormSchemaIpaddr[][];
 
-const dynamicForm = new FormGroup<Record<string, any>>({});
+const dynamicForm = new FormGroup<Record<string, UntypedFormGroup>>({});
 
 describe('AppSchemaService', () => {
   const service = new AppSchemaService({} as FilesystemService);
@@ -416,7 +416,7 @@ describe('AppSchemaService', () => {
 
     it('creates form for hidden field', () => {
       expect(dynamicForm.controls['hidden_field'].value).toEqual('hidden_field');
-      expect((dynamicForm.controls['hidden_field'] as FormControl).disabled).toEqual(true);
+      expect(dynamicForm.controls['hidden_field'].disabled).toEqual(true);
       expect((dynamicForm.controls['if_field'])).toEqual(undefined);
     });
   });

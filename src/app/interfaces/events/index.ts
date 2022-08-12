@@ -12,7 +12,7 @@ import { TreeTableGlobalFilterEvent } from 'app/interfaces/events/tree-table-glo
 
 export interface UntypedEvent {
   name: string;
-  sender?: any;
+  sender?: unknown;
   data?: any;
 }
 

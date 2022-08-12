@@ -187,7 +187,7 @@ export class StorageService {
       sorter = [];
       for (const elem of timeArr) {
         try {
-          sorter.push(format(elem, 'yyyy-MM-dd HH:mm:ss')); // formate should matched locale service
+          sorter.push(format(elem, 'yyyy-MM-dd HH:mm:ss')); // format should match locale service
         } catch (error: unknown) {
           console.error(error);
         }

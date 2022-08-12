@@ -700,7 +700,7 @@ export class IscsiWizardComponent implements WizardConfiguration {
     }
   }
 
-  getSummary(): { [key: string]: any } {
+  getSummary(): { [key: string]: string | { [key: string]: string } } {
     const summary = {
       Name: this.summaryObj.name,
       Extent: {
