@@ -8,7 +8,7 @@ import { OauthMessage } from 'app/interfaces/oauth-message.interface';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import {
-  OauthProviderComponent,
+  OauthProviderComponent, OauthProviderData,
 } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/oauth-provider/oauth-provider.component';
 import { DialogService } from 'app/services';
 
@@ -29,7 +29,7 @@ describe('OauthProviderComponent', () => {
             toString: () => 'http://localhost',
           },
           open: jest.fn() as Window['open'],
-          addEventListener: jest.fn((_, oAuthCallback: (message: OauthMessage) => void) => {
+          addEventListener: jest.fn((_, oAuthCallback: (message: OauthMessage<OauthProviderData>) => void) => {
             oAuthCallback({
               data: {
                 oauth_portal: true,
@@ -39,7 +39,7 @@ describe('OauthProviderComponent', () => {
                   token: 'token1234',
                 },
               },
-            } as OauthMessage);
+            } as OauthMessage<OauthProviderData>);
           }) as Window['addEventListener'],
           removeEventListener: jest.fn() as Window['removeEventListener'],
         } as Window,
