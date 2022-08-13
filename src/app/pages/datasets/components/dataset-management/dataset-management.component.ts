@@ -13,6 +13,8 @@ import { IxNestedTreeDataSource } from 'app/modules/ix-tree/ix-nested-tree-datas
 import { flattenTreeWithFilter } from 'app/modules/ix-tree/utils/flattern-tree-with-filter';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
 import { WebSocketService } from 'app/services';
+import { EmptyConfig, EmptyType } from 'app/modules/entity/entity-empty/entity-empty.component';
+import { TranslateService } from '@ngx-translate/core';
 
 @UntilDestroy()
 @Component({
@@ -31,6 +33,20 @@ export class DatasetsManagementComponent implements OnInit {
   hasConsoleFooter = false;
   headerHeight = headerHeight;
   footerHeight = footerHeight;
+  entityEmptyConf: EmptyConfig = {
+    type: EmptyType.NoPageData,
+    large: true,
+    title: this.translate.instant('No Datasets'),
+    message: `${this.translate.instant(
+      'It seems you haven\'t configured pools yet.'
+    )} ${this.translate.instant(
+      'Please click the button below to create a pool.'
+    )}`,
+    button: {
+      label: this.translate.instant('Create pool'),
+      action: () => this.createPool(),
+    },
+  };
 
   constructor(
     private ws: WebSocketService,
@@ -38,6 +54,7 @@ export class DatasetsManagementComponent implements OnInit {
     private activatedRoute: ActivatedRoute,
     private datasetStore: DatasetTreeStore,
     private router: Router,
+    protected translate: TranslateService,
   ) { }
 
   ngOnInit(): void {
@@ -122,5 +139,9 @@ export class DatasetsManagementComponent implements OnInit {
         this.sortDatasetsByName(dataset.children);
       }
     });
+  }
+
+  createPool(): void {
+    this.router.navigate(['/storage2/create']);
   }
 }
