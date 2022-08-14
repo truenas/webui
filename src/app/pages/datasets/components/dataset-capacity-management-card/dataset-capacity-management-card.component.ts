@@ -1,12 +1,14 @@
 import {
-  Component, ChangeDetectionStrategy, ChangeDetectorRef, Input, OnChanges, OnInit,
+  Component, ChangeDetectionStrategy, ChangeDetectorRef, Input, OnChanges, SimpleChanges, OnInit,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { maxBy } from 'lodash';
-import { Subscription, forkJoin } from 'rxjs';
-import { map, take } from 'rxjs/operators';
+import { forkJoin, Subject, EMPTY } from 'rxjs';
+import {
+  map, take, switchMap, tap, catchError,
+} from 'rxjs/operators';
 import { DatasetType, DatasetQuotaType } from 'app/enums/dataset.enum';
-import { Dataset, DatasetDetails } from 'app/interfaces/dataset.interface';
+import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { DatasetCapacitySettingsComponent } from 'app/pages/datasets/components/dataset-capacity-management-card/dataset-capacity-settings/dataset-capacity-settings.component';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
 import { WebSocketService } from 'app/services';
@@ -19,15 +21,12 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
   styleUrls: ['./dataset-capacity-management-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class DatasetCapacityManagementCardComponent implements OnInit, OnChanges {
+export class DatasetCapacityManagementCardComponent implements OnChanges, OnInit {
   @Input() dataset: DatasetDetails;
 
+  refreshQuotas$ = new Subject<void>();
   inheritedQuotasDataset: DatasetDetails;
-  extraProperties: Dataset;
-  extraPropertiesSubscription: Subscription;
-  isLoadingProperties = false;
   isLoadingQuotas = false;
-  quotasSubscription: Subscription;
   userQuotas: number;
   groupQuotas: number;
 
@@ -44,7 +43,7 @@ export class DatasetCapacityManagementCardComponent implements OnInit, OnChanges
   }
 
   get hasQuota(): boolean {
-    return Boolean(this.extraProperties?.quota?.parsed);
+    return Boolean(this.dataset?.quota?.parsed);
   }
 
   get hasInheritedQuotas(): boolean {
@@ -59,42 +58,31 @@ export class DatasetCapacityManagementCardComponent implements OnInit, OnChanges
   ) {}
 
   ngOnInit(): void {
-    this.slideInService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.loadExtraProperties();
-    });
-  }
-
-  ngOnChanges(): void {
-    this.loadExtraProperties();
-    this.getInheritedQuotas();
     if (this.checkQuotas) {
-      this.getQuotas();
+      this.initQuotas();
+      this.refreshQuotas$.next();
     }
   }
 
-  loadExtraProperties(): void {
-    this.isLoadingProperties = true;
-    this.cdr.markForCheck();
-    this.extraPropertiesSubscription?.unsubscribe();
-    // TODO: Consider limiting to only the properties we need.
-    this.extraPropertiesSubscription = this.ws.call('pool.dataset.query', [[['id', '=', this.dataset.id]]]).pipe(
-      map((datasets) => datasets[0]),
-      untilDestroyed(this),
-    ).subscribe((dataset) => {
-      this.extraProperties = dataset;
-      this.isLoadingProperties = false;
-      this.cdr.markForCheck();
-    });
+  ngOnChanges(changes: SimpleChanges): void {
+    this.getInheritedQuotas();
+    const selectedDatasetHasChanged = changes?.dataset?.previousValue?.id !== changes?.dataset?.currentValue?.id;
+    if (selectedDatasetHasChanged && this.checkQuotas) {
+      this.refreshQuotas$.next();
+    }
   }
 
-  getQuotas(): void {
-    this.isLoadingQuotas = true;
-    this.cdr.markForCheck();
-    this.quotasSubscription?.unsubscribe();
-    this.quotasSubscription = forkJoin([
-      this.ws.call('pool.dataset.get_quota', [this.dataset.id, DatasetQuotaType.User, []]),
-      this.ws.call('pool.dataset.get_quota', [this.dataset.id, DatasetQuotaType.Group, []]),
-    ]).pipe(
+  initQuotas(): void {
+    this.refreshQuotas$.pipe(
+      tap(() => {
+        this.isLoadingQuotas = true;
+        this.cdr.markForCheck();
+      }),
+      switchMap(() => forkJoin([
+        this.ws.call('pool.dataset.get_quota', [this.dataset.id, DatasetQuotaType.User, []]),
+        this.ws.call('pool.dataset.get_quota', [this.dataset.id, DatasetQuotaType.Group, []]),
+      ])),
+      catchError(() => EMPTY),
       untilDestroyed(this),
     ).subscribe(([userQuotas, groupQuotas]) => {
       this.userQuotas = userQuotas.length;
@@ -121,6 +109,6 @@ export class DatasetCapacityManagementCardComponent implements OnInit, OnChanges
 
   editDataset(): void {
     const editDatasetComponent = this.slideInService.open(DatasetCapacitySettingsComponent, { wide: true });
-    editDatasetComponent.setDatasetForEdit(this.extraProperties);
+    editDatasetComponent.setDatasetForEdit(this.dataset);
   }
 }

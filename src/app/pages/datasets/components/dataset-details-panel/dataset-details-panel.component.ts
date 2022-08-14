@@ -20,7 +20,7 @@ import { ModalService } from 'app/services';
 })
 export class DatasetDetailsPanelComponent implements OnInit {
   @Input() dataset: DatasetDetails;
-  @Input() parentDataset: DatasetDetails | undefined;
+  selectedParentDataset$ = this.datasetStore.selectedParentDataset$;
 
   constructor(
     private modalService: ModalService,

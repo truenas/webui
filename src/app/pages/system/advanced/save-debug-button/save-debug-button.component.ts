@@ -7,7 +7,7 @@ import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { EMPTY } from 'rxjs';
 import {
-  catchError, filter, switchMap, tap,
+  catchError, filter, switchMap, take, tap,
 } from 'rxjs/operators';
 import { helptextSystemAdvanced } from 'app/helptext/system/advanced';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
@@ -60,6 +60,7 @@ export class SaveDebugButtonComponent {
               dialogRef.componentInstance.wsshow();
               dialogRef.componentInstance.success
                 .pipe(
+                  take(1), // TODO: Only needed because of https://ixsystems.atlassian.net/browse/NAS-117633
                   switchMap(() => this.storage.streamDownloadFile(url, fileName, mimeType)),
                   untilDestroyed(this),
                 )

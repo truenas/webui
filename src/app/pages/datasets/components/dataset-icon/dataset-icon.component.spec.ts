@@ -1,15 +1,19 @@
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatIconHarness } from '@angular/material/icon/testing';
+import { MatIconTestingModule } from '@angular/material/icon/testing';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { DatasetType } from 'app/enums/dataset.enum';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
+import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { DatasetIconComponent } from 'app/pages/datasets/components/dataset-icon/dataset-icon.component';
 
 describe('DatasetIconComponent', () => {
   let spectator: Spectator<DatasetIconComponent>;
-  let matIcon: MatIconHarness;
+  let ixIcon: IxIconHarness;
   const createComponent = createComponentFactory({
     component: DatasetIconComponent,
+    imports: [
+      MatIconTestingModule,
+    ],
   });
 
   async function setupTest(dataset: DatasetDetails): Promise<void> {
@@ -20,7 +24,7 @@ describe('DatasetIconComponent', () => {
     });
 
     const loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    matIcon = await loader.getHarness(MatIconHarness);
+    ixIcon = await loader.getHarness(IxIconHarness);
   }
 
   it('shows an icon for a root dataset', async () => {
@@ -28,7 +32,8 @@ describe('DatasetIconComponent', () => {
       name: 'root',
     } as DatasetDetails);
 
-    expect(await matIcon.getName()).toBe('dataset');
+    expect(await ixIcon.getNamespace()).toBe('ix');
+    expect(await ixIcon.getName()).toBe('dataset');
   });
 
   it('shows an icon for an ordinary datasets', async () => {
@@ -37,7 +42,7 @@ describe('DatasetIconComponent', () => {
       type: DatasetType.Filesystem,
     } as DatasetDetails);
 
-    expect(await matIcon.getName()).toBe('folder');
+    expect(await ixIcon.getName()).toBe('folder');
   });
 
   it('shows an icon for a zvol', async () => {
@@ -46,6 +51,6 @@ describe('DatasetIconComponent', () => {
       type: DatasetType.Volume,
     } as DatasetDetails);
 
-    expect(await matIcon.getName()).toBe('mdi-database');
+    expect(await ixIcon.getName()).toBe('mdi-database');
   });
 });
