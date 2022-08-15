@@ -27,6 +27,7 @@ import { DatasetDetailsCardComponent } from 'app/pages/datasets/components/datas
 import { DatasetDetailsPanelComponent } from 'app/pages/datasets/components/dataset-details-panel/dataset-details-panel.component';
 import { DatasetFormComponent } from 'app/pages/datasets/components/dataset-form/dataset-form.component';
 import { DatasetsManagementComponent } from 'app/pages/datasets/components/dataset-management/dataset-management.component';
+import { DatasetRolesCellComponent } from 'app/pages/datasets/components/dataset-node/dataset-roles-cell/dataset-roles-cell.component';
 import { DatasetQuotaAddFormComponent } from 'app/pages/datasets/components/dataset-quotas/dataset-quota-add-form/dataset-quota-add-form.component';
 import { DatasetQuotaEditFormComponent } from 'app/pages/datasets/components/dataset-quotas/dataset-quota-edit-form/dataset-quota-edit-form.component';
 import { DatasetQuotasGrouplistComponent } from 'app/pages/datasets/components/dataset-quotas/dataset-quotas-grouplist/dataset-quotas-grouplist.component';
@@ -94,6 +95,7 @@ import { DatasetNodeComponent } from './components/dataset-node/dataset-node.com
     DatasetQuotasUserlistComponent,
     DatasetQuotasGrouplistComponent,
     DatasetIconComponent,
+    DatasetRolesCellComponent,
     DatasetEncryptionCellComponent,
     ZvolFormComponent,
     SpaceManagementChartComponent,
