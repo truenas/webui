@@ -43,8 +43,8 @@ export class IxDynamicFormItemComponent implements OnInit {
         this.changeDetectorRef.markForCheck();
       });
     });
-    if (!this.dynamicSchema.editable) {
-      this.dynamicForm.get(this.dynamicSchema.controlName).disable();
+    if (!this.dynamicSchema?.editable) {
+      this.dynamicForm?.get(this.dynamicSchema.controlName).disable();
     }
   }
 
