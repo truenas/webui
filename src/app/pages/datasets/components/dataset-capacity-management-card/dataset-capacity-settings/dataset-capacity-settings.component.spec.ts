@@ -6,7 +6,7 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { inherit } from 'app/enums/with-inherit.enum';
 import { ZfsPropertySource } from 'app/enums/zfs-property-source.enum';
-import { Dataset } from 'app/interfaces/dataset.interface';
+import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { IxCheckboxHarness } from 'app/modules/ix-forms/components/ix-checkbox/ix-checkbox.harness';
 import { IxInputHarness } from 'app/modules/ix-forms/components/ix-input/ix-input.harness';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
@@ -50,7 +50,7 @@ describe('DatasetCapacitySettingsComponent', () => {
       quota_critical: { parsed: 0, source: ZfsPropertySource.Inherited },
       refreservation: { parsed: 10 * gbs },
       reservation: { parsed: 20 * gbs },
-    } as Dataset);
+    } as DatasetDetails);
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 

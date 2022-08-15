@@ -1,6 +1,7 @@
 import { ReactiveFormsModule } from '@angular/forms';
-import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
+import { byText, createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
+import { TopologyItemType } from 'app/enums/v-dev-type.enum';
 import { Pool } from 'app/interfaces/pool.interface';
 import { VolumeData } from 'app/interfaces/volume-data.interface';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
@@ -28,6 +29,15 @@ describe('PoolUsageCardComponent', () => {
         poolState: {
           healthy: true,
           status: 'ONLINE',
+          topology: {
+            data: [{
+              disk: 'sda',
+              type: TopologyItemType.Disk,
+            }, {
+              disk: 'sdb',
+              type: TopologyItemType.Disk,
+            }],
+          },
         } as unknown as Pool,
         volumeData: {
           avail: 162570240,
@@ -70,7 +80,7 @@ describe('PoolUsageCardComponent', () => {
     // expect(spectator.query('.warning-container mat-icon')).toHaveText('warning');
     expect(spectator.query(GaugeChartComponent).label).toBe('81%');
     expect(spectator.query(GaugeChartComponent).value).toBe(81);
-    expect(spectator.query(GaugeChartComponent).colorFill).toBe('red');
+    expect(spectator.query(GaugeChartComponent).colorFill).toBe('#CE2929');
   });
 
   it('rendering status icon', () => {
@@ -98,5 +108,10 @@ describe('PoolUsageCardComponent', () => {
     expect(spectator.queryAll('.value-caption').length).toEqual(4);
     expect(spectator.queryAll(GaugeChartComponent).length).toEqual(1);
     expect(spectator.queryAll('mat-card-header mat-icon').length).toEqual(1);
+  });
+
+  it('should pre-select disks when user click "View Disk Space Reports" link', () => {
+    const href = spectator.query(byText('View Disk Space Reports')).getAttribute('href');
+    expect(href).toBe('/reportsdashboard/disk?disks=sda&disks=sdb');
   });
 });

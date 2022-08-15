@@ -14,6 +14,7 @@ import { DatasetDetailsCardComponent } from 'app/pages/datasets/components/datas
 import { DatasetDetailsPanelComponent } from 'app/pages/datasets/components/dataset-details-panel/dataset-details-panel.component';
 import { DatasetFormComponent } from 'app/pages/datasets/components/dataset-form/dataset-form.component';
 import { DatasetIconComponent } from 'app/pages/datasets/components/dataset-icon/dataset-icon.component';
+import { RolesCardComponent } from 'app/pages/datasets/components/roles-card/roles-card.component';
 import { ZvolFormComponent } from 'app/pages/datasets/components/zvol-form/zvol-form.component';
 import { ZfsEncryptionCardComponent } from 'app/pages/datasets/modules/encryption/components/zfs-encryption-card/zfs-encryption-card.component';
 import { PermissionsCardComponent } from 'app/pages/datasets/modules/permissions/containers/permissions-card/permissions-card.component';
@@ -37,7 +38,10 @@ describe('DatasetDetailsPanelComponent', () => {
     type: DatasetType.Filesystem,
     encrypted: true,
   } as DatasetDetails;
-  const parentDataset = {
+  const datasetDetails = {
+    ...dataset,
+  } as DatasetDetails;
+  const parentDatasetDetails = {
     name: 'root/parent',
   } as DatasetDetails;
   const createComponent = createComponentFactory({
@@ -50,6 +54,7 @@ describe('DatasetDetailsPanelComponent', () => {
         ZfsEncryptionCardComponent,
         DatasetCapacityManagementCardComponent,
         DataProtectionCardComponent,
+        RolesCardComponent,
       ),
     ],
     providers: [
@@ -57,7 +62,10 @@ describe('DatasetDetailsPanelComponent', () => {
         openInSlideIn: jest.fn(() => fakeModalRef),
         onClose$: of(),
       }),
-      mockProvider(DatasetTreeStore),
+      mockProvider(DatasetTreeStore, {
+        selectedDataset$: of(datasetDetails),
+        selectedParentDataset$: of(parentDatasetDetails),
+      }),
     ],
   });
 
@@ -65,7 +73,6 @@ describe('DatasetDetailsPanelComponent', () => {
     spectator = createComponent({
       props: {
         dataset,
-        parentDataset,
       },
     });
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
@@ -96,17 +103,21 @@ describe('DatasetDetailsPanelComponent', () => {
     expect(datasetDetailsCard).toBeTruthy();
     expect(datasetDetailsCard.dataset).toBe(dataset);
 
+    const dataProtectionCard = spectator.query(DataProtectionCardComponent);
+    expect(dataProtectionCard).toBeTruthy();
+    expect(dataProtectionCard.dataset).toStrictEqual(datasetDetails);
+
     const permissionsCard = spectator.query(PermissionsCardComponent);
     expect(permissionsCard).toBeTruthy();
-    expect(permissionsCard.dataset).toBe(dataset);
+    expect(permissionsCard.dataset).toStrictEqual(datasetDetails);
 
     const zfsEncryptionCard = spectator.query(ZfsEncryptionCardComponent);
     expect(zfsEncryptionCard).toBeTruthy();
-    expect(zfsEncryptionCard.dataset).toBe(dataset);
+    expect(zfsEncryptionCard.dataset).toStrictEqual(datasetDetails);
 
     const datasetCapacityManagementCard = spectator.query(DatasetCapacityManagementCardComponent);
     expect(datasetCapacityManagementCard).toBeTruthy();
-    expect(datasetCapacityManagementCard.dataset).toBe(dataset);
+    expect(datasetCapacityManagementCard.dataset).toStrictEqual(datasetDetails);
   });
 
   it('hides "Permissions Card" if dataset type is Volume', () => {

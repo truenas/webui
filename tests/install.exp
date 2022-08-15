@@ -7,6 +7,20 @@ set timeout 1800
 set PID [spawn vm console "$vm"]
 send_user "Spawned PID: $PID \n"
 
+# boot serial at grub
+expect {
+  "Press enter to boot" {
+    sleep .5
+    send "j"
+  }
+
+  timeout {
+    send_user "Grub timeout\n"
+    exit 1
+  }
+}
+
+
 # ┌───────────FreeNAS 11.3-MASTER-201810170704 Console Setup──────────────┐
 # │ ┌───────────────────────────────────────────────────────────────────┐ │
 # │ │                        1  Install/Upgrade                         │ │

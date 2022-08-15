@@ -1,0 +1,9 @@
+@import '~assets/styles/mixins/cards';
+
+.card {
+  @include details-card();
+}
+
+.icon {
+  margin-right: 8px;
+}

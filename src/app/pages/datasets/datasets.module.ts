@@ -27,11 +27,13 @@ import { DatasetDetailsCardComponent } from 'app/pages/datasets/components/datas
 import { DatasetDetailsPanelComponent } from 'app/pages/datasets/components/dataset-details-panel/dataset-details-panel.component';
 import { DatasetFormComponent } from 'app/pages/datasets/components/dataset-form/dataset-form.component';
 import { DatasetsManagementComponent } from 'app/pages/datasets/components/dataset-management/dataset-management.component';
+import { DatasetRolesCellComponent } from 'app/pages/datasets/components/dataset-node/dataset-roles-cell/dataset-roles-cell.component';
 import { DatasetQuotaAddFormComponent } from 'app/pages/datasets/components/dataset-quotas/dataset-quota-add-form/dataset-quota-add-form.component';
 import { DatasetQuotaEditFormComponent } from 'app/pages/datasets/components/dataset-quotas/dataset-quota-edit-form/dataset-quota-edit-form.component';
 import { DatasetQuotasGrouplistComponent } from 'app/pages/datasets/components/dataset-quotas/dataset-quotas-grouplist/dataset-quotas-grouplist.component';
 import { DatasetQuotasUserlistComponent } from 'app/pages/datasets/components/dataset-quotas/dataset-quotas-userlist/dataset-quotas-userlist.component';
 import { DeleteDatasetDialogComponent } from 'app/pages/datasets/components/delete-dataset-dialog/delete-dataset-dialog.component';
+import { RolesCardComponent } from 'app/pages/datasets/components/roles-card/roles-card.component';
 import { ZvolFormComponent } from 'app/pages/datasets/components/zvol-form/zvol-form.component';
 import { routing } from 'app/pages/datasets/datasets.routing';
 import { EncryptionModule } from 'app/pages/datasets/modules/encryption/encryption.module';
@@ -40,10 +42,10 @@ import { SnapshotsModule } from 'app/pages/datasets/modules/snapshots/snapshots.
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
 import { DatasetCapacityManagementCardComponent } from './components/dataset-capacity-management-card/dataset-capacity-management-card.component';
 import { DatasetCapacitySettingsComponent } from './components/dataset-capacity-management-card/dataset-capacity-settings/dataset-capacity-settings.component';
+import { SpaceManagementChartComponent } from './components/dataset-capacity-management-card/space-management-chart/space-management-chart.component';
 import { DatasetIconComponent } from './components/dataset-icon/dataset-icon.component';
 import { DatasetEncryptionCellComponent } from './components/dataset-node/dataset-encryption-cell/dataset-encryption-cell.component';
 import { DatasetNodeComponent } from './components/dataset-node/dataset-node.component';
-import { SpaceManagementChartComponent } from './components/space-management-chart/space-management-chart.component';
 
 @NgModule({
   imports: [
@@ -87,11 +89,13 @@ import { SpaceManagementChartComponent } from './components/space-management-cha
     DataProtectionCardComponent,
     DatasetCapacityManagementCardComponent,
     DatasetNodeComponent,
+    RolesCardComponent,
     DatasetQuotaAddFormComponent,
     DatasetQuotaEditFormComponent,
     DatasetQuotasUserlistComponent,
     DatasetQuotasGrouplistComponent,
     DatasetIconComponent,
+    DatasetRolesCellComponent,
     DatasetEncryptionCellComponent,
     ZvolFormComponent,
     SpaceManagementChartComponent,

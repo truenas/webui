@@ -2,7 +2,6 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialog } from '@angular/material/dialog';
-import { ActivatedRoute } from '@angular/router';
 import {
   byText, createComponentFactory, Spectator, mockProvider,
 } from '@ngneat/spectator/jest';
@@ -15,9 +14,12 @@ import { TopologyItemStatus } from 'app/enums/vdev-status.enum';
 import {
   Disk, TopologyDisk, VDev,
 } from 'app/interfaces/storage.interface';
-import { ConfirmDialogComponent } from 'app/modules/common/dialog/confirm-dialog/confirm-dialog.component';
+import {
+  ExtendDialogComponent,
+} from 'app/pages/storage2/modules/devices/components/zfs-info-card/extend-dialog/extend-dialog.component';
 import { ZfsInfoCardComponent } from 'app/pages/storage2/modules/devices/components/zfs-info-card/zfs-info-card.component';
 import { DevicesStore } from 'app/pages/storage2/modules/devices/stores/devices-store.service';
+import { DialogService } from 'app/services';
 
 describe('ZfsInfoCardComponent', () => {
   let spectator: Spectator<ZfsInfoCardComponent>;
@@ -31,8 +33,8 @@ describe('ZfsInfoCardComponent', () => {
         mockCall('pool.offline'),
         mockCall('pool.online'),
       ]),
-      mockProvider(ActivatedRoute, {
-        snapshot: { params: { poolId: '1' } },
+      mockProvider(DialogService, {
+        confirm: jest.fn(() => of()),
       }),
       mockProvider(MatDialog, {
         open: jest.fn(() => ({
@@ -46,6 +48,7 @@ describe('ZfsInfoCardComponent', () => {
   beforeEach(() => {
     spectator = createComponent({
       props: {
+        poolId: 1,
         topologyItem: {
           disk: 'ix-disk-1',
           type: TopologyItemType.Disk,
@@ -59,6 +62,7 @@ describe('ZfsInfoCardComponent', () => {
         } as TopologyDisk,
         topologyParentItem: {
           name: 'mirror-0',
+          type: TopologyItemType.Mirror,
         } as VDev,
         disk: {
           description: '',
@@ -77,44 +81,89 @@ describe('ZfsInfoCardComponent', () => {
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
-  it('shows errors of the current disk', () => {
-    const parent = spectator.query(byText('Parent:', { exact: true }));
-    expect(parent.nextElementSibling).toHaveText('MIRROR-0');
+  describe('disks', () => {
+    it('shows errors of the current disk', () => {
+      const parent = spectator.query(byText('Parent:', { exact: true }));
+      expect(parent.nextElementSibling).toHaveText('MIRROR-0');
 
-    const readErrors = spectator.query(byText('Read Errors:', { exact: true }));
-    expect(readErrors.nextElementSibling).toHaveText('3');
+      const readErrors = spectator.query(byText('Read Errors:', { exact: true }));
+      expect(readErrors.nextElementSibling).toHaveText('3');
 
-    const writeErrors = spectator.query(byText('Write Errors:', { exact: true }));
-    expect(writeErrors.nextElementSibling).toHaveText('2');
+      const writeErrors = spectator.query(byText('Write Errors:', { exact: true }));
+      expect(writeErrors.nextElementSibling).toHaveText('2');
 
-    const checksumErrors = spectator.query(byText('Checksum Errors:', { exact: true }));
-    expect(checksumErrors.nextElementSibling).toHaveText('1');
-  });
+      const checksumErrors = spectator.query(byText('Checksum Errors:', { exact: true }));
+      expect(checksumErrors.nextElementSibling).toHaveText('1');
+    });
 
-  it('shows confirmation when clicks Remove button', async () => {
-    const replaceButton = await loader.getHarness(MatButtonHarness.with({ text: 'Remove' }));
-    await replaceButton.click();
+    // TODO: https://ixsystems.atlassian.net/browse/NAS-117094
+    it('shows confirmation when clicks Remove button', async () => {
+      spectator.setInput('topologyParentItem', {
+        name: 'mirror-0',
+        type: TopologyItemType.Spare,
+      } as VDev);
+      const replaceButton = await loader.getHarness(MatButtonHarness.with({ text: 'Remove' }));
+      await replaceButton.click();
 
-    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(ConfirmDialogComponent, {
-      disableClose: false,
+      expect(spectator.inject(DialogService).confirm).toHaveBeenCalled();
+    });
+
+    it('shows confirmation when clicks Detach button', async () => {
+      const detachButton = await loader.getHarness(MatButtonHarness.with({ text: 'Detach' }));
+      await detachButton.click();
+
+      expect(spectator.inject(DialogService).confirm).toHaveBeenCalled();
+    });
+
+    it('shows confirmation when clicks Offline button', async () => {
+      const offlineButton = await loader.getHarness(MatButtonHarness.with({ text: 'Offline' }));
+      await offlineButton.click();
+
+      expect(spectator.inject(DialogService).confirm).toHaveBeenCalled();
     });
   });
 
-  it('shows confirmation when clicks Detach button', async () => {
-    const replaceButton = await loader.getHarness(MatButtonHarness.with({ text: 'Detach' }));
-    await replaceButton.click();
-
-    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(ConfirmDialogComponent, {
-      disableClose: false,
+  describe('vdev', () => {
+    beforeEach(() => {
+      spectator.setInput({
+        poolId: 1,
+        topologyItem: {
+          name: 'mirror-1',
+          type: TopologyItemType.Mirror,
+          path: null,
+          guid: '1296356085009973566',
+          stats: {
+            timestamp: 336344468118275,
+            read_errors: 1,
+            write_errors: 2,
+            checksum_errors: 3,
+          },
+          children: [],
+        } as VDev,
+      });
     });
-  });
 
-  it('shows confirmation when clicks Offline button', async () => {
-    const replaceButton = await loader.getHarness(MatButtonHarness.with({ text: 'Offline' }));
-    await replaceButton.click();
+    it('shows error summary for a vdev', () => {
+      const readErrors = spectator.query(byText('Read Errors:', { exact: true }));
+      expect(readErrors.nextElementSibling).toHaveText('1');
 
-    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(ConfirmDialogComponent, {
-      disableClose: false,
+      const writeErrors = spectator.query(byText('Write Errors:', { exact: true }));
+      expect(writeErrors.nextElementSibling).toHaveText('2');
+
+      const checksumErrors = spectator.query(byText('Checksum Errors:', { exact: true }));
+      expect(checksumErrors.nextElementSibling).toHaveText('3');
+    });
+
+    it('opens an expand dialog when Extend is pressed on a Mirror', async () => {
+      const expandButton = await loader.getHarness(MatButtonHarness.with({ text: 'Extend' }));
+      await expandButton.click();
+
+      expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(ExtendDialogComponent, {
+        data: {
+          poolId: 1,
+          targetVdevGuid: '1296356085009973566',
+        },
+      });
     });
   });
 });

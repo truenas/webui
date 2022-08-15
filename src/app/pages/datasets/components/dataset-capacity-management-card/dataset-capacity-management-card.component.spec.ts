@@ -8,14 +8,27 @@ import { of } from 'rxjs';
 import { mockWebsocket, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
 import { DatasetType } from 'app/enums/dataset.enum';
 import { DatasetQuota } from 'app/interfaces/dataset-quota.interface';
-import { Dataset, DatasetDetails } from 'app/interfaces/dataset.interface';
+import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { DatasetCapacityManagementCardComponent } from 'app/pages/datasets/components/dataset-capacity-management-card/dataset-capacity-management-card.component';
 import { DatasetCapacitySettingsComponent } from 'app/pages/datasets/components/dataset-capacity-management-card/dataset-capacity-settings/dataset-capacity-settings.component';
-import { SpaceManagementChartComponent } from 'app/pages/datasets/components/space-management-chart/space-management-chart.component';
+import { SpaceManagementChartComponent } from 'app/pages/datasets/components/dataset-capacity-management-card/space-management-chart/space-management-chart.component';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
+const datasetQuotas = {
+  refreservation: {
+    parsed: 1024,
+  },
+  reservation: {
+    parsed: 4096,
+  },
+  quota: {
+    parsed: 8388608,
+  },
+} as DatasetDetails;
+
 const datasetFilesystem = {
+  ...datasetQuotas,
   id: 'filesystem pool',
   type: DatasetType.Filesystem,
   available: {
@@ -24,10 +37,14 @@ const datasetFilesystem = {
 } as DatasetDetails;
 
 const datasetZvol = {
+  ...datasetQuotas,
   id: 'zvol pool',
   type: DatasetType.Volume,
   available: {
     parsed: 1395752960 * 2,
+  },
+  volsize: {
+    parsed: 2048,
   },
   thick_provisioned: true,
 } as DatasetDetails;
@@ -45,20 +62,6 @@ describe('DatasetCapacityManagementCardComponent', () => {
     ],
     providers: [
       mockWebsocket([
-        mockCall('pool.dataset.query', [{
-          refreservation: {
-            parsed: 1024,
-          },
-          reservation: {
-            parsed: 4096,
-          },
-          volsize: {
-            parsed: 2048,
-          },
-          quota: {
-            parsed: 8388608,
-          },
-        } as Dataset]),
         mockCall('pool.dataset.get_quota', [
           { id: 1 },
           { id: 2 },
@@ -68,6 +71,7 @@ describe('DatasetCapacityManagementCardComponent', () => {
         datasetUpdated: jest.fn(),
         selectedBranch$: of([{
           id: 'quota',
+          name: 'quota',
           quota: {
             parsed: 16777216,
           },
