@@ -21,55 +21,25 @@ def test_enable_user_permit_sudo(driver):
     """Enable user Permit Sudo."""
 
 
-@given('the browser is open, the FreeNAS URL and logged in')
-def the_browser_is_open_the_freenas_url_and_logged_in(driver, nas_ip, root_password):
-    """the browser is open, the FreeNAS URL and logged in."""
-    if nas_ip not in driver.current_url:
-        driver.get(f"http://{nas_ip}")
-        assert wait_on_element(driver, 10, '//input[@placeholder="Username"]')
+@given('the browser is open on the Users page')
+def the_browser_is_open_on_the_users_page(driver, nas_ip, root_password):
+    """the browser is open on the Users page."""
+    if f"{nas_ip}/ui/account/users" not in driver.current_url:
+        driver.get(f"http://{nas_ip}/ui/account/users")
         time.sleep(1)
-    if not is_element_present(driver, '//mat-list-item[@ix-auto="option__Dashboard"]'):
-        assert wait_on_element(driver, 10, '//input[@placeholder="Username"]')
+    if wait_on_element(driver, 5, '//input[@placeholder="Username"]'):
         driver.find_element_by_xpath('//input[@placeholder="Username"]').clear()
         driver.find_element_by_xpath('//input[@placeholder="Username"]').send_keys('root')
         driver.find_element_by_xpath('//input[@placeholder="Password"]').clear()
         driver.find_element_by_xpath('//input[@placeholder="Password"]').send_keys(root_password)
         assert wait_on_element(driver, 4, '//button[@name="signin_button"]')
         driver.find_element_by_xpath('//button[@name="signin_button"]').click()
-    if not is_element_present(driver, '//li[contains(.,"Dashboard")]'):
-        assert wait_on_element(driver, 10, '//span[contains(.,"root")]')
-        element = driver.find_element_by_xpath('//span[contains(.,"root")]')
-        driver.execute_script("arguments[0].scrollIntoView();", element)
-        time.sleep(0.5)
-        assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Dashboard"]', 'clickable')
-        driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
+    assert wait_on_element(driver, 7, '//li[contains(.,"Users")]')
 
 
-@when('you should be on the dashboard')
-def you_should_be_on_the_dashboard(driver):
-    """you should be on the dashboard."""
-    assert wait_on_element(driver, 10, '//li[contains(.,"Dashboard")]')
-    assert wait_on_element(driver, 10, '//span[contains(.,"System Information")]')
-
-
-@then('click on the Accounts on the side menu, click on Users')
-def click_on_the_accounts_on_the_side_menu_click_on_users(driver):
-    """click on the Accounts on the side menu, click on Users."""
-    assert wait_on_element(driver, 7, '//mat-list-item[@ix-auto="option__Accounts"]', 'clickable')
-    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Accounts"]').click()
-    assert wait_on_element(driver, 7, '//mat-list-item[@ix-auto="option__Users"]', 'clickable')
-    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Users"]').click()
-
-
-@then('the Users page should open')
-def the_users_page_should_open(driver):
-    """the Users page should open."""
-    assert wait_on_element(driver, 7, '//div[contains(.,"Users")]')
-
-
-@then('click the Greater-Than-Sign right of the users')
-def click_the_greaterthansign_right_of_the_users(driver):
-    """click the Greater-Than-Sign right of the users."""
+@when('users are visible click the Greater-Than-Sign right of the users')
+def users_are_visible_click_the_greaterthansign_right_of_the_users(driver):
+    """users are visible click the Greater-Than-Sign right of the users."""
     assert wait_on_element(driver, 7, '//div[@id="ericbsd_Username"]')
     assert wait_on_element(driver, 7, '//a[@ix-auto="expander__ericbsd"]', 'clickable')
     driver.find_element_by_xpath('//a[@ix-auto="expander__ericbsd"]').click()
