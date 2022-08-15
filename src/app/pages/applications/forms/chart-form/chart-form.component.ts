@@ -197,6 +197,7 @@ export class ChartFormComponent implements OnDestroy {
       for (let i = 0; i < data.length; i++) {
         fieldsTobeDeleted.concat(this.getFieldsHiddenOnForm(data[i], path + '.' + i, fieldsTobeDeleted));
       }
+      return fieldsTobeDeleted;
     }
   }
 
