@@ -38,7 +38,6 @@
     [placeholder]="dynamicSchema.placeholder | translate"
     [tooltip]="dynamicSchema.tooltip | translate"
     [required]="dynamicSchema.required"
-    [disabled]="dynamicSchema.editable === false"
     [type]="dynamicSchema.inputType"
   ></ix-input>
   <ix-select
@@ -49,7 +48,6 @@
     [tooltip]="dynamicSchema.tooltip | translate"
     [required]="dynamicSchema.required"
     [hideEmpty]="dynamicSchema.hideEmpty"
-    [disabled]="dynamicSchema.editable === false"
   ></ix-select>
   <ix-explorer
     *ngIf="dynamicSchema.type === DynamicFormSchemaType.Explorer && !isHidden"
@@ -58,7 +56,6 @@
     [tooltip]="dynamicSchema.tooltip | translate"
     [required]="dynamicSchema.required"
     [nodeProvider]="dynamicSchema.nodeProvider"
-    [disabled]="dynamicSchema.editable === false"
   ></ix-explorer>
   <ix-checkbox
     *ngIf="dynamicSchema.type === DynamicFormSchemaType.Checkbox && !isHidden"
@@ -66,7 +63,6 @@
     [label]="dynamicSchema.title | translate"
     [tooltip]="dynamicSchema.tooltip | translate"
     [required]="dynamicSchema.required"
-    [disabled]="dynamicSchema.editable === false"
   ></ix-checkbox>
   <ix-ip-input-with-netmask
     *ngIf="dynamicSchema.type === DynamicFormSchemaType.Ipaddr && !isHidden"
@@ -74,6 +70,5 @@
     [label]="dynamicSchema.title | translate"
     [tooltip]="dynamicSchema.tooltip | translate"
     [required]="dynamicSchema.required"
-    [disabled]="dynamicSchema.editable === false"
   ></ix-ip-input-with-netmask>
 </div>

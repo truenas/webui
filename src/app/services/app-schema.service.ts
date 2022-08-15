@@ -323,11 +323,7 @@ export class AppSchemaService {
                   }
                 } else {
                   (formGroup.controls[subquestion.variable] as CustomUntypedFormField).hidden = true;
-                  if (!isNew && (isParentImmutable || !!schema.immutable || !!subquestion.schema.immutable)) {
-                    formGroup.controls[subquestion.variable].disable();
-                  } else {
-                    formGroup.controls[subquestion.variable].enable();
-                  }
+                  formGroup.controls[subquestion.variable].disable();
                 }
               }
             });
@@ -435,11 +431,7 @@ export class AppSchemaService {
                     }
                   } else {
                     (formGroup.controls[chartSchemaNode.variable] as CustomUntypedFormField).hidden = true;
-                    if (!isNew && (isParentImmutable || !!schema.immutable)) {
-                      formGroup.controls[chartSchemaNode.variable].disable();
-                    } else {
-                      formGroup.controls[chartSchemaNode.variable].enable();
-                    }
+                    formGroup.controls[chartSchemaNode.variable].disable();
                   }
                 }
               }));
@@ -464,11 +456,7 @@ export class AppSchemaService {
                     }
                   } else {
                     (formGroup.controls[chartSchemaNode.variable] as CustomUntypedFormField).hidden = true;
-                    if (!isNew && (isParentImmutable || !!schema.immutable)) {
-                      formGroup.controls[chartSchemaNode.variable].disable();
-                    } else {
-                      formGroup.controls[chartSchemaNode.variable].enable();
-                    }
+                    formGroup.controls[chartSchemaNode.variable].disable();
                   }
                 }
               }));
