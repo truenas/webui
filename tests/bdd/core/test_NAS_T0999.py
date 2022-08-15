@@ -6,7 +6,6 @@ import pytest
 import time
 from function import (
     wait_on_element,
-    is_element_present,
     wait_on_element_disappear,
     attribute_value_exist,
     setup_ssh_agent,

@@ -5,7 +5,6 @@ import time
 from selenium.webdriver.common.keys import Keys
 from function import (
     wait_on_element,
-    is_element_present,
     wait_on_element_disappear
 )
 from pytest_bdd import (
