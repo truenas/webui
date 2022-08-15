@@ -93,4 +93,5 @@ def verify_wheel_group_should_be_visible(driver):
     assert wait_on_element(driver, 7, '//span[contains(.,"wheel,")]')
     assert wait_on_element(driver, 7, '//button[@ix-auto="button__CANCEL"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__CANCEL"]').click()
-    time.sleep(1)
+    assert wait_on_element(driver, 7, '//div[contains(.,"Users")]')
+    assert wait_on_element(driver, 7, '//div[@id="ericbsd_Username"]')

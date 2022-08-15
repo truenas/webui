@@ -114,6 +114,10 @@ def verify_the_public_key_save_properly(driver, ssh_key):
     """verify the public key save properly."""
     assert wait_on_element(driver, 5, '//textarea[@placeholder="SSH Public Key"]')
     assert wait_for_attribute_value(driver, 5, '//textarea[@placeholder="SSH Public Key"]', 'value', ssh_key)
+    assert wait_on_element(driver, 7, '//button[@ix-auto="button__CANCEL"]', 'clickable')
+    driver.find_element_by_xpath('//button[@ix-auto="button__CANCEL"]').click()
+    assert wait_on_element(driver, 7, '//div[contains(.,"Users")]')
+    assert wait_on_element(driver, 7, '//div[@id="ericbsd_Username"]')
 
 
 @then('try to ssh in with the ssh-key')
