@@ -22,6 +22,7 @@ import {
   CloudCredentialService,
   DialogService,
   JobService,
+  SystemGeneralService,
   TaskService,
   WebSocketService,
 } from 'app/services';
@@ -86,6 +87,7 @@ export class CloudsyncListComponent implements EntityTableConfig<CloudSyncTaskUi
     protected modalService: ModalService,
     protected loader: AppLoaderService,
     protected taskService: TaskService,
+    protected systemGeneralService: SystemGeneralService,
   ) {}
 
   afterInit(entityList: EntityTableComponent): void {
@@ -102,7 +104,10 @@ export class CloudsyncListComponent implements EntityTableConfig<CloudSyncTaskUi
       transformed.credential = task.credentials.name;
       transformed.cron_schedule = task.enabled ? formattedCronSchedule : this.translate.instant('Disabled');
       transformed.frequency = this.taskService.getTaskCronDescription(formattedCronSchedule);
-      transformed.next_run = task.enabled ? this.taskService.getTaskNextRun(formattedCronSchedule) : this.translate.instant('Disabled');
+
+      this.systemGeneralService.getGeneralConfig$.pipe(untilDestroyed(this)).subscribe((config) => {
+        transformed.next_run = task.enabled ? this.taskService.getTaskNextRun(formattedCronSchedule, config.timezone) : this.translate.instant('Disabled');
+      });
 
       if (task.job === null) {
         transformed.state = { state: transformed.locked ? JobState.Locked : JobState.Pending };

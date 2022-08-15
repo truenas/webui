@@ -140,8 +140,8 @@ export class TaskService {
       .map(() => ((schedule.next() as unknown) as { value: { _date: any } }).value._date.toDate());
   }
 
-  getTaskNextRun(scheduleExpression: string): string {
-    const schedule = cronParser.parseExpression(scheduleExpression, { iterator: true });
+  getTaskNextRun(scheduleExpression: string, timeZone: string): string {
+    const schedule = cronParser.parseExpression(scheduleExpression, { iterator: true, tz: timeZone });
 
     return formatDistanceToNow(
       ((schedule.next() as unknown) as { value: { _date: any } }).value._date.toDate(),
