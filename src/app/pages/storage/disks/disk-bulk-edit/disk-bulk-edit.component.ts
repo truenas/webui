@@ -6,8 +6,8 @@ import { of } from 'rxjs';
 import { DiskPowerLevel } from 'app/enums/disk-power-level.enum';
 import { DiskStandby } from 'app/enums/disk-standby.enum';
 import { JobState } from 'app/enums/job-state.enum';
+import { translateOptions } from 'app/helpers/translate.helper';
 import helptext from 'app/helptext/storage/disks/disks';
-import { Option } from 'app/interfaces/option.interface';
 import { Disk } from 'app/interfaces/storage.interface';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { WebSocketService } from 'app/services';
@@ -33,7 +33,7 @@ export class DiskBulkEditComponent {
   readonly helptext = helptext;
   readonly helptextBulkEdit = helptext.bulk_edit;
   readonly hddstandbyOptions$ = of(helptext.disk_form_hddstandby_options);
-  readonly advpowermgmtOptions$ = of(this.translateOptions(this.helptext.disk_form_advpowermgmt_options));
+  readonly advpowermgmtOptions$ = of(translateOptions(this.translate, this.helptext.disk_form_advpowermgmt_options));
 
   constructor(
     private fb: FormBuilder,
@@ -43,12 +43,6 @@ export class DiskBulkEditComponent {
     private slideInService: IxSlideInService,
     private errorHandler: FormErrorHandlerService,
   ) {}
-
-  private translateOptions(options: Option[]): Option[] {
-    return options.map((option) => {
-      return { label: this.translate.instant(option.label), value: option.value };
-    });
-  }
 
   setFormDiskBulk(selectedDisks: Disk[]): void {
     const setForm: DiskBulkEditComponent['form']['value'] = {
