@@ -6,6 +6,7 @@ import {
   DatasetEncryptionCellComponent,
 } from 'app/pages/datasets/components/dataset-node/dataset-encryption-cell/dataset-encryption-cell.component';
 import { DatasetNodeComponent } from 'app/pages/datasets/components/dataset-node/dataset-node.component';
+import { DatasetRolesCellComponent } from 'app/pages/datasets/components/dataset-node/dataset-roles-cell/dataset-roles-cell.component';
 
 describe('DatasetNodeComponent', () => {
   let spectator: Spectator<DatasetNodeComponent>;
@@ -26,6 +27,7 @@ describe('DatasetNodeComponent', () => {
     declarations: [
       DatasetIconComponent,
       DatasetEncryptionCellComponent,
+      DatasetRolesCellComponent,
     ],
   });
 
@@ -51,13 +53,15 @@ describe('DatasetNodeComponent', () => {
     expect(cell.dataset).toBe(dataset);
   });
 
-  describe('roles', () => {
-    it('says "Root Dataset" for a root dataset', () => {
-      spectator.setInput('dataset', {
-        ...dataset,
-        name: 'root',
-      });
-      expect(spectator.query('.cell-roles')).toHaveText('Root Dataset');
+  it('shows a dataset roles cell', () => {
+    spectator.setInput('dataset', {
+      ...dataset,
+      name: 'root',
     });
+
+    const cell = spectator.query(DatasetRolesCellComponent);
+    expect(cell).toBeTruthy();
+    expect(cell.isRoot).toBeTruthy();
+    expect(cell.isSystemDataset).toBeFalsy();
   });
 });
