@@ -15,7 +15,6 @@ import { WizardConfiguration } from 'app/interfaces/entity-wizard.interface';
 import { FormComboboxConfig, FormListConfig, FormSelectConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
 import { Wizard } from 'app/modules/entity/entity-form/models/wizard.interface';
 import { forbiddenValues } from 'app/modules/entity/entity-form/validators/forbidden-values-validation';
-import { ipv4or6cidrValidator } from 'app/modules/entity/entity-form/validators/ip-validation';
 import { matchOtherValidator } from 'app/modules/entity/entity-form/validators/password-validation/password-validation';
 import { EntityWizardComponent } from 'app/modules/entity/entity-wizard/entity-wizard.component';
 import { EntityUtils } from 'app/modules/entity/utils';
@@ -52,7 +51,6 @@ export class IscsiWizardComponent implements WizardConfiguration {
     tag: null,
     user: null,
     initiators: null,
-    auth_network: null,
     comment: null,
     target: null,
   };
@@ -410,14 +408,6 @@ export class IscsiWizardComponent implements WizardConfiguration {
           placeholder: helptextSharingIscsi.initiators_placeholder,
           tooltip: helptextSharingIscsi.initiators_tooltip,
         },
-        {
-          type: 'chip',
-          name: 'auth_network',
-          placeholder: helptextSharingIscsi.auth_network.placeholder,
-          tooltip: helptextSharingIscsi.auth_network.tooltip,
-          hasErrors: false,
-          validation: [ipv4or6cidrValidator()],
-        },
       ],
       skip: false,
     },
@@ -576,20 +566,6 @@ export class IscsiWizardComponent implements WizardConfiguration {
       this.disablefieldGroup(this.zvolFieldGroup, disableZvolGroup, 0);
     });
 
-    const authNetworkControl = this.entityWizard.formArray.get([2]).get('auth_network');
-    authNetworkControl.valueChanges.pipe(untilDestroyed(this)).subscribe(() => {
-      const authNetworkConfig = _.find(this.wizardConfig[2].fieldConfig, { name: 'auth_network' }) as FormSelectConfig;
-
-      if (authNetworkControl.hasError('ip2')) {
-        authNetworkControl.errors.ip2 = null;
-        authNetworkConfig.hasErrors = true;
-        authNetworkConfig.warnings = helptextSharingIscsi['auth_network'].error;
-      } else {
-        authNetworkConfig.hasErrors = false;
-        authNetworkConfig.warnings = '';
-      }
-    });
-
     this.entityWizard.formArray.get([0]).get('dataset').valueChanges.pipe(untilDestroyed(this)).subscribe((value: string) => {
       if (value) {
         this.getDatasetValue(value);
@@ -626,7 +602,7 @@ export class IscsiWizardComponent implements WizardConfiguration {
     this.iscsiService.listPortals().pipe(untilDestroyed(this)).subscribe((portals) => {
       const field = _.find(this.wizardConfig[1].fieldConfig, { name: 'portal' }) as FormSelectConfig;
       for (const portal of portals) {
-        const ips = portal.listen.map((ip) => ip.ip);
+        const ips = portal.listen.map((ip) => ip.ip + ':' + ip.port);
         field.options.push({ label: portal.tag + ' (' + ips + ')', value: portal.id });
       }
     });
@@ -723,7 +699,6 @@ export class IscsiWizardComponent implements WizardConfiguration {
       },
       Initiator: {
         Initiators: this.summaryObj.initiators,
-        'Authorized Networks': this.summaryObj.auth_network,
         Comment: this.summaryObj.comment,
       },
       Target: this.summaryObj.target,
@@ -752,12 +727,10 @@ export class IscsiWizardComponent implements WizardConfiguration {
       delete summary['New Authorized Access'];
     }
 
-    if (!this.summaryObj.initiators && !this.summaryObj.auth_network && !this.summaryObj.comment) {
+    if (!this.summaryObj.initiators && !this.summaryObj.comment) {
       delete summary['Initiator'];
     } else if (!this.summaryObj.initiators) {
       delete summary['Initiator']['Initiators'];
-    } else if (!this.summaryObj.auth_network) {
-      delete summary['Initiator']['Authorized Networks'];
     } else if (!this.summaryObj.comment) {
       delete summary['Initiator']['Comment'];
     }
@@ -936,7 +909,6 @@ export class IscsiWizardComponent implements WizardConfiguration {
     if (item === 'initiator') {
       payload = {
         initiators: value['initiators'],
-        auth_network: value['auth_network'],
         comment: value['name'],
       };
     }

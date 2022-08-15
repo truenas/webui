@@ -63,7 +63,7 @@ describe('PortalFormComponent', () => {
         Description: 'work',
         'Discovery Authentication Method': 'Mutual CHAP',
         'Discovery Authentication Group': '1',
-        'IP Address': ['192.168.1.3'],
+        'IP Address': '192.168.1.3',
       });
 
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
@@ -98,7 +98,7 @@ describe('PortalFormComponent', () => {
         Description: 'test',
         'Discovery Authentication Method': 'NONE',
         'Discovery Authentication Group': '1',
-        'IP Address': ['0.0.0.0'],
+        'IP Address': '0.0.0.0',
       });
     });
 
@@ -108,7 +108,7 @@ describe('PortalFormComponent', () => {
         Description: 'good',
         'Discovery Authentication Method': 'CHAP',
         'Discovery Authentication Group': '1',
-        'IP Address': ['0.0.0.0'],
+        'IP Address': '0.0.0.0',
       });
 
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
