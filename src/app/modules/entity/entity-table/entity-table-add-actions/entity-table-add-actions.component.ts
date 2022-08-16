@@ -22,7 +22,6 @@ export class EntityTableAddActionsComponent implements OnInit, AfterViewInit {
 
   actions: EntityTableAction[];
   menuTriggerMessage = 'Click for options';
-  spin = true;
   direction = 'left';
 
   get totalActions(): number {

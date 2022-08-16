@@ -17,7 +17,6 @@ import { EntityUtils } from 'app/modules/entity/utils';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { ApplicationsService } from 'app/pages/applications/applications.service';
 import { DialogService, ShellService, WebSocketService } from 'app/services';
-import { CoreService } from 'app/services/core-service/core.service';
 import { LayoutService } from 'app/services/layout.service';
 import { StorageService } from 'app/services/storage.service';
 
@@ -54,18 +53,7 @@ export class PodLogsComponent implements OnInit, AfterViewInit, OnDestroy {
   private podLogsChangedListener: Subscription;
   podLogs: PodLogEvent[];
 
-  readonly sliderConfig = {
-    name: 'fontsize',
-    label: this.translate.instant('Set font size'),
-    type: 'slider',
-    min: 10,
-    max: 20,
-    step: 1,
-    value: this.fontSize,
-  };
-
   constructor(
-    protected core: CoreService,
     private ws: WebSocketService,
     private appService: ApplicationsService,
     private dialogService: DialogService,

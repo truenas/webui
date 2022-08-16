@@ -5,7 +5,6 @@ import {
   ElementRef,
   Input,
   OnChanges,
-  OnDestroy,
   OnInit,
   SimpleChanges,
   TemplateRef,
@@ -25,7 +24,6 @@ import { Disk, isTopologyDisk, TopologyItem } from 'app/interfaces/storage.inter
 import { VolumeData } from 'app/interfaces/volume-data.interface';
 import { WidgetComponent } from 'app/pages/dashboard/components/widget/widget.component';
 import { WebSocketService } from 'app/services';
-import { CoreService } from 'app/services/core-service/core.service';
 
 interface Slide {
   name: string;
@@ -55,7 +53,7 @@ enum PoolHealthLevel {
     './widget-pool.component.scss',
   ],
 })
-export class WidgetPoolComponent extends WidgetComponent implements OnInit, AfterViewInit, OnDestroy, OnChanges {
+export class WidgetPoolComponent extends WidgetComponent implements OnInit, AfterViewInit, OnChanges {
   readonly TopologyItemStatus = TopologyItemStatus;
   @Input() poolState: Pool;
   @Input() volumeData: VolumeData;
@@ -112,17 +110,16 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
   get unhealthyDisks(): { totalErrors: number | string; disks: string[] } {
     if (this.poolState && this.poolState.topology) {
       const unhealthy: string[] = []; // Disks with errors
-      // TODO: Check if this `item.read_errors` and related should read from `stats`
-      this.poolState.topology.data.forEach((item: any) => {
+      this.poolState.topology.data.forEach((item) => {
         if (item.type === TopologyItemType.Disk) {
-          const diskErrors = item.read_errors + item.write_errors + item.checksum_errors;
+          const diskErrors = item.stats.read_errors + item.stats.write_errors + item.stats.checksum_errors;
 
           if (diskErrors > 0) {
             unhealthy.push(item.disk);
           }
         } else {
-          item.children.forEach((device: any) => {
-            const diskErrors = device.read_errors + device.write_errors + device.checksum_errors;
+          item.children.forEach((device) => {
+            const diskErrors = device.stats.read_errors + device.stats.write_errors + device.stats.checksum_errors;
 
             if (diskErrors > 0) {
               unhealthy.push(device.disk);
@@ -185,7 +182,6 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
     public router: Router,
     public translate: TranslateService,
     private cdr: ChangeDetectorRef,
-    private core: CoreService,
     private ws: WebSocketService,
   ) {
     super(translate);
@@ -195,10 +191,6 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
   ngOnInit(): void {
     this.title = this.path.length > 0 && this.poolState && this.currentSlide !== '0' ? this.poolState.name : 'Pool';
     this.tpl = this.overview;
-  }
-
-  ngOnDestroy(): void {
-    this.core.unregister({ observerClass: this });
   }
 
   ngOnChanges(changes: SimpleChanges): void {

@@ -1,5 +1,5 @@
 import {
-  Component, AfterViewInit, Input, OnDestroy, ElementRef,
+  Component, Input, ElementRef, OnChanges,
 } from '@angular/core';
 import { MediaObserver } from '@angular/flex-layout';
 import {
@@ -10,16 +10,15 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { UUID } from 'angular2-uuid';
 import { Chart, ChartColor, ChartDataSets } from 'chart.js';
-import { Subject } from 'rxjs';
+import { Subject, Subscription } from 'rxjs';
 import {
-  filter, map, switchMap, throttleTime,
+  filter, map, throttleTime,
 } from 'rxjs/operators';
 import { ThemeUtils } from 'app/core/classes/theme-utils/theme-utils';
 import { CoreEvent } from 'app/interfaces/events';
 import { MemoryStatsEventData } from 'app/interfaces/events/memory-stats-event.interface';
 import { WidgetComponent } from 'app/pages/dashboard/components/widget/widget.component';
 import { WidgetMemoryData } from 'app/pages/dashboard/interfaces/widget-data.interface';
-import { CoreService } from 'app/services/core-service/core.service';
 import { ThemeService } from 'app/services/theme/theme.service';
 
 @UntilDestroy()
@@ -31,7 +30,7 @@ import { ThemeService } from 'app/services/theme/theme.service';
     './widget-memory.component.scss',
   ],
 })
-export class WidgetMemoryComponent extends WidgetComponent implements AfterViewInit, OnDestroy {
+export class WidgetMemoryComponent extends WidgetComponent implements OnChanges {
   @Input() data: Subject<CoreEvent>;
   @Input() ecc = false;
   chart: Chart;// chart instance
@@ -53,6 +52,7 @@ export class WidgetMemoryComponent extends WidgetComponent implements AfterViewI
   screenType = 'Desktop';
 
   private utils: ThemeUtils;
+  private dataSubscription: Subscription;
 
   constructor(
     public router: Router,
@@ -60,7 +60,6 @@ export class WidgetMemoryComponent extends WidgetComponent implements AfterViewI
     private sanitizer: DomSanitizer,
     public mediaObserver: MediaObserver,
     private el: ElementRef<HTMLElement>,
-    private core: CoreService,
     public themeService: ThemeService,
   ) {
     super(translate);
@@ -73,24 +72,25 @@ export class WidgetMemoryComponent extends WidgetComponent implements AfterViewI
     });
   }
 
-  ngOnDestroy(): void {
-    this.core.unregister({ observerClass: this });
-  }
+  ngOnChanges(): void {
+    if (!this.data) {
+      return;
+    }
 
-  ngAfterViewInit(): void {
-    this.core.register({ observerClass: this })
-      .pipe(
-        switchMap(() => this.data),
-        filter((evt) => evt.name === 'MemoryStats'),
-        map((evt) => evt.data as MemoryStatsEventData),
-        throttleTime(500),
-        untilDestroyed(this),
-      ).subscribe((data: MemoryStatsEventData) => {
-        if (data.used) {
-          this.setMemData(data);
-          this.renderChart();
-        }
-      });
+    this.dataSubscription?.unsubscribe();
+    this.dataSubscription = this.data.pipe(
+      filter((evt) => evt.name === 'MemoryStats'),
+      map((evt) => evt.data as MemoryStatsEventData),
+      throttleTime(500),
+      untilDestroyed(this),
+    ).subscribe((data: MemoryStatsEventData) => {
+      if (!data.used) {
+        return;
+      }
+
+      this.setMemData(data);
+      this.renderChart();
+    });
   }
 
   bytesToGigabytes(value: number): number {

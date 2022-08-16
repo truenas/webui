@@ -93,18 +93,6 @@ export class ReportsService implements OnDestroy {
     this.reportsUtils.terminate();
   }
 
-  prepReport(): void {
-    const pipeLine: Command[] = [
-      {
-        command: 'maxDecimals',
-        input: 3.145679156,
-        options: [3],
-      },
-    ];
-
-    this.reportsUtils.postMessage({ name: 'ProcessCommands', data: pipeLine, sender: 'chartID' });
-  }
-
   truncateData(data: number[][]): number[][] {
     let finished = false;
     let index = data.length - 1;

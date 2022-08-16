@@ -5,10 +5,12 @@ import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { delay } from 'rxjs/operators';
 import { helptextSystemSupport as helptext } from 'app/helptext/system/support';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { DialogFormConfiguration } from 'app/modules/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/modules/entity/entity-dialog/entity-dialog.component';
 import { FieldConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
+import { EntityUtils } from 'app/modules/entity/utils';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { FileTicketFormComponent } from 'app/pages/system/file-ticket/file-ticket-form/file-ticket-form.component';
 import { FileTicketLicensedFormComponent } from 'app/pages/system/file-ticket/file-ticket-licensed-form/file-ticket-licensed-form.component';
@@ -188,11 +190,10 @@ export class SupportComponent implements OnInit {
       dialogRef.componentInstance.setTitle(helptext.is_production_dialog.title);
       dialogRef.componentInstance.setDescription(helptext.is_production_dialog.message);
     },
-    (err: any) => {
+    (error: WebsocketError) => {
       self.loader.close();
       self.dialogRef.close();
-      this.dialog.errorReport(helptext.is_production_error_dialog.title,
-        err.error.message, err.error.traceback);
+      new EntityUtils().handleWsError(this, error, this.dialog);
     });
   }
 }
