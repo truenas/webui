@@ -10,7 +10,7 @@ import { ApiDirectory } from 'app/interfaces/api-directory.interface';
 import { EmptyConfig, EmptyType } from 'app/modules/entity/entity-empty/entity-empty.component';
 import { TableService } from 'app/modules/entity/table/table.service';
 
-export interface AppTableAction<Row = any> {
+export interface AppTableAction<Row = unknown> {
   name: string;
   icon: string;
   matTooltip?: string;
@@ -56,12 +56,12 @@ export interface AppTableConfirmDeleteDialog {
   hideCheckbox?: boolean;
 }
 
-export interface AppTableConfig<P = any> {
+export interface AppTableConfig<P = unknown> {
   title?: string;
   titleHref?: string;
   columns: AppTableColumn[];
   queryCall: keyof ApiDirectory;
-  queryCallOption?: any;
+  queryCallOption?: unknown;
   deleteCall?: keyof ApiDirectory;
   deleteCallIsJob?: boolean;
   complex?: boolean;
@@ -77,6 +77,9 @@ export interface AppTableConfig<P = any> {
   emptyEntityLarge?: boolean;
   hideEntityEmpty?: boolean;
   alwaysHideViewMore?: boolean;
+  /**
+   * @deprecated Use arrow functions
+   */
   parent: P;
   tableActions?: AppTableHeaderAction[];
   tableExtraActions?: AppTableHeaderAction[];

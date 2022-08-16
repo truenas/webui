@@ -1569,7 +1569,11 @@ export class ReplicationWizardComponent implements WizardConfiguration {
     }
   }
 
-  async isSnapshotTaskExist(payload: any): Promise<PeriodicSnapshotTask[]> {
+  async isSnapshotTaskExist(payload: {
+    dataset: string;
+    schedule: Schedule;
+    naming_schema?: string;
+  }): Promise<PeriodicSnapshotTask[]> {
     return this.ws.call('pool.snapshottask.query', [[
       ['dataset', '=', payload['dataset']],
       ['schedule.minute', '=', payload['schedule']['minute']],

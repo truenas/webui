@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { map, take } from 'rxjs/operators';
 import { CoreEvent } from 'app/interfaces/events';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
+import { ReportComponent } from 'app/pages/reports-dashboard/components/report/report.component';
 import { CoreService } from 'app/services/core-service/core.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
@@ -39,6 +40,7 @@ export class ReportsService implements OnDestroy {
     this.reportsUtils = new Worker(new URL('./reports-utils.worker', import.meta.url), { type: 'module' });
 
     this.core.register({ observerClass: this, eventName: 'ReportDataRequest' }).subscribe((evt: CoreEvent) => {
+      const chartId = (evt.sender as ReportComponent).chartId;
       this.ws.call('reporting.get_data', [[evt.data.params], evt.data.timeFrame]).subscribe((reportingData) => {
         let res;
 
@@ -72,12 +74,12 @@ export class ReportsService implements OnDestroy {
             input: res[0],
           }];
 
-          this.reportsUtils.postMessage({ name: 'ProcessCommandsAsReportData', data: repl, sender: evt.sender.chartId });
+          this.reportsUtils.postMessage({ name: 'ProcessCommandsAsReportData', data: repl, sender: chartId });
         } else {
-          this.reportsUtils.postMessage({ name: 'ProcessCommandsAsReportData', data: commands, sender: evt.sender.chartId });
+          this.reportsUtils.postMessage({ name: 'ProcessCommandsAsReportData', data: commands, sender: chartId });
         }
       }, (err: WebsocketError) => {
-        this.reportsUtils.postMessage({ name: 'FetchingError', data: err, sender: evt.sender.chartId });
+        this.reportsUtils.postMessage({ name: 'FetchingError', data: err, sender: chartId });
       });
     });
 

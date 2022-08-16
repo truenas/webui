@@ -1,6 +1,6 @@
 import { FieldConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
 
-export interface FieldSet<P = any> {
+export interface FieldSet<P = unknown> {
   name: string;
   label?: boolean;
   class?: string;

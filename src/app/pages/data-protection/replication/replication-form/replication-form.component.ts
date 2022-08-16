@@ -18,6 +18,7 @@ import { TransportMode } from 'app/enums/transport-mode.enum';
 import helptext from 'app/helptext/data-protection/replication/replication';
 import repwizardhelptext from 'app/helptext/data-protection/replication/replication-wizard';
 import globalHelptext from 'app/helptext/global-helptext';
+import { CountManualSnapshotsParams } from 'app/interfaces/count-manual-snapshots.interface';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { ListdirChild } from 'app/interfaces/listdir-child.interface';
 import { QueryFilter } from 'app/interfaces/query-api.interface';
@@ -1150,7 +1151,7 @@ export class ReplicationFormComponent implements FormConfiguration {
     }
 
     const datasets = this.entityForm.formGroup.controls['target_dataset_PUSH'].value;
-    const payload: any = {
+    const payload: CountManualSnapshotsParams = {
       datasets: (Array.isArray(datasets) ? datasets : [datasets]) || [],
       transport: this.entityForm.formGroup.controls['transport'].value,
       ssh_credentials: this.entityForm.formGroup.controls['ssh_credentials'].value,
