@@ -1,6 +1,7 @@
 import {
   Component, ChangeDetectionStrategy, ChangeDetectorRef, ViewChild, OnInit, TemplateRef, AfterViewInit,
 } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSort, Sort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
@@ -79,6 +80,7 @@ export class SnapshotListComponent implements OnInit, AfterViewInit {
   readonly defaultColumns: string[] = ['select', 'dataset', 'snapshot_name', 'actions'];
   readonly defaultExtraColumns: string[] = ['select', 'dataset', 'snapshot_name', 'used', 'created', 'referenced', 'actions'];
   displayedColumns: string[] = this.defaultColumns;
+  private dataset: string = '';
 
   constructor(
     private dialogService: DialogService,
@@ -90,7 +92,10 @@ export class SnapshotListComponent implements OnInit, AfterViewInit {
     private store$: Store<AppState>,
     private slideIn: IxSlideInService,
     private layoutService: LayoutService,
-  ) {}
+    private route: ActivatedRoute,
+  ) {
+    this.dataset = this.route.snapshot.paramMap.get('dataset') || '';
+  }
 
   ngOnInit(): void {
     this.store$.dispatch(snapshotPageEntered());
@@ -120,7 +125,11 @@ export class SnapshotListComponent implements OnInit, AfterViewInit {
       select(selectSnapshots),
       untilDestroyed(this),
     ).subscribe((snapshots) => {
-      this.createDataSource(snapshots);
+      const _snapshots = snapshots.filter((snapshot) =>
+        snapshot.dataset === this.dataset ||
+        snapshot.dataset.includes(`${this.dataset}/`)
+      );
+      this.createDataSource(_snapshots);
       this.cdr.markForCheck();
     }, () => {
       this.createDataSource();

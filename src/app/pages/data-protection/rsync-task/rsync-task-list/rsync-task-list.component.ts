@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { JobState } from 'app/enums/job-state.enum';
@@ -66,6 +67,8 @@ export class RsyncTaskListComponent implements EntityTableConfig {
     },
   };
 
+  private dataset: string = '';
+
   constructor(
     protected ws: WebSocketService,
     protected taskService: TaskService,
@@ -73,7 +76,10 @@ export class RsyncTaskListComponent implements EntityTableConfig {
     protected job: JobService,
     private slideInService: IxSlideInService,
     protected translate: TranslateService,
-  ) {}
+    private route: ActivatedRoute,
+  ) {
+    this.dataset = this.route.snapshot.paramMap.get('dataset') || '';
+  }
 
   afterInit(entityList: EntityTableComponent): void {
     this.entityList = entityList;
@@ -140,7 +146,11 @@ export class RsyncTaskListComponent implements EntityTableConfig {
   }
 
   resourceTransformIncomingRestData(data: RsyncTaskUi[]): RsyncTaskUi[] {
-    return data.map((task) => {
+    const _data = data.filter((task) =>
+      task.path.replace('/mnt/', '') === this.dataset ||
+      task.path.includes(`${this.dataset}/`)
+    );
+    return _data.map((task) => {
       task.cron_schedule = `${task.schedule.minute} ${task.schedule.hour} ${task.schedule.dom} ${task.schedule.month} ${task.schedule.dow}`;
       task.next_run = this.taskService.getTaskNextRun(task.cron_schedule);
       task.frequency = this.taskService.getTaskCronDescription(task.cron_schedule);
