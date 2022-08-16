@@ -67,16 +67,17 @@ export class SnapshotListComponent implements EntityTableConfig<PeriodicSnapshot
   }
 
   afterInit(entityList: EntityTableComponent): void {
-    // TODO: Deliberate error
-    this.entityList=entityList;
+    this.entityList = entityList;
     this.slideInService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
       this.entityList.getData();
     });
   }
 
   resourceTransformIncomingRestData(tasks: PeriodicSnapshotTask[]): PeriodicSnapshotTaskUi[] {
-    const tasksToShow = tasks.filter((row) => row.dataset === this.dataset
-      || row.dataset.includes(`${this.dataset}/`));
+    const tasksToShow = tasks.filter((row) => {
+      return row.dataset === this.dataset
+        || row.dataset.includes(`${this.dataset}/`)
+    });
     return tasksToShow.map((task) => {
       const transformedTask = {
         ...task,
