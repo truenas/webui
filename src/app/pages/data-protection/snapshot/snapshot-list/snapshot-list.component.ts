@@ -76,7 +76,7 @@ export class SnapshotListComponent implements EntityTableConfig<PeriodicSnapshot
   resourceTransformIncomingRestData(tasks: PeriodicSnapshotTask[]): PeriodicSnapshotTaskUi[] {
     const tasksToShow = tasks.filter((row) => {
       return row.dataset === this.dataset
-        || row.dataset.includes(`${this.dataset}/`)
+        || row.dataset.includes(`${this.dataset}/`);
     });
     return tasksToShow.map((task) => {
       const transformedTask = {
