@@ -15,9 +15,10 @@ from pytest_bdd import (
 )
 
 
-@scenario('features/NAS-T1057.feature', 'Verify the Register link in System Support works')
-def test_verify_the_register_link_in_system_support_works(driver):
-    """Verify the Register link in System Support works."""
+@scenario('features/NAS-T1057.feature', 'Verify the Login to Jira button in System Support works')
+def test_verify_the_login_to_jira_button_in_system_support_works():
+    """Verify the Login to Jira button in System Support works."""
+    pass
 
 
 @given('the browser is open on the TrueNAS URL and logged in')
@@ -57,20 +58,22 @@ def on_the_dashboard_click_on_system_on_the_side_menu_click_on_support(driver):
     assert wait_on_element(driver, 7, '//div[contains(.,"Support")]')
 
 
-@then(parsers.parse('on the Support page, click on "{anchor}"'))
-def on_the_support_page_click_on_create_a_jira_account(driver, anchor):
-    """on the Support page, click on "Create a Jira account"."""
-    assert wait_on_element(driver, 7, f'//a[contains(.,"{anchor}")]')
-    driver.find_element_by_xpath(f'//a[contains(.,"{anchor}")]').click()
+@then(parsers.parse('on the Support page, click on "{button_text}" button'))
+def on_the_support_page_click_on_login_to_jira_button(driver, button_text):
+    """on the Support page, click on "Login to Jira" button."""
+    assert wait_on_element(driver, 7, f'//button[contains(.,"{button_text}")]')
+    driver.find_element_by_xpath(f'//button[contains(.,"{button_text}")]').click()
     time.sleep(1)
 
 
-@then('Verify that the Jira sign up web page comes up')
-def verify_that_the_jira_sign_up_web_page_comes_up(driver):
-    """Verify that the Jira sign up web page comes up."""
+@then('verify that the Login popup appears')
+def verify_that_the_login_popup_appears(driver):
+    """verify that the Login popup appears."""
     driver.switch_to.window(driver.window_handles[1])
-    assert wait_on_element(driver, 10, '//img[@alt="iX - Bug Tracker (Jira)"]')
-    assert wait_on_element(driver, 7, '//h2[contains(.,"Sign up")]')
-    assert wait_on_element(driver, 7, '//input[@id="signup-email"]', 'clickable')
+    assert wait_on_element(driver, 7, '(//span[@aria-label="Jira"])[2]')
+    assert wait_on_element(driver, 5, '//h5[text()="Log in to your account"]')
+    assert wait_on_element(driver, 5, '//input[@placeholder="Enter email"]')
+    assert wait_on_element(driver, 5, '//button[@id="login-submit"]', 'clickable')
+    assert wait_on_element(driver, 5, '//button[contains(.,"Continue with Google")]', 'clickable')
     driver.close()
     driver.switch_to.window(driver.window_handles[0])
