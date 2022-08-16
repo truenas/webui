@@ -21,6 +21,7 @@ import {
 import {
   CertificateAuthorityEditComponent,
 } from 'app/pages/credentials/certificates-dash/certificate-authority-edit/certificate-authority-edit.component';
+import { ConfirmForceDeleteCertificateComponent } from 'app/pages/credentials/certificates-dash/confirm-force-delete-dialog/confirm-force-delete-dialog.component';
 import { AcmednsFormComponent } from 'app/pages/credentials/certificates-dash/forms/acmedns-form/acmedns-form.component';
 import { SignCsrDialogComponent } from 'app/pages/credentials/certificates-dash/sign-csr-dialog/sign-csr-dialog.component';
 import { WebSocketService, DialogService, StorageService } from 'app/services';
@@ -110,6 +111,30 @@ export class CertificatesDashComponent implements OnInit {
           edit: (certificate: Certificate) => {
             const slideIn = this.slideInService.open(CertificateEditComponent, { wide: true });
             slideIn.setCertificate(certificate);
+          },
+          delete: (item: Certificate, table: TableComponent) => {
+            const dialogRef = this.dialog.open(ConfirmForceDeleteCertificateComponent, { data: { cert: item } });
+            dialogRef.afterClosed()
+              .pipe(untilDestroyed(this))
+              .subscribe((result: unknown) => {
+                if (!result) {
+                  return;
+                }
+                this.dialogRef = this.dialog.open(EntityJobComponent, { data: { title: this.translate.instant('Deleting...') } });
+                this.dialogRef.componentInstance.setCall(
+                  table.tableConf.deleteCall,
+                  [item.id, (result as { force: boolean }).force],
+                );
+                this.dialogRef.componentInstance.submit();
+                this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
+                  this.dialogRef.close(true);
+                  this.tableService.getData(table);
+                });
+                this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((err) => {
+                  table.loaderOpen = false;
+                  new EntityUtils().handleWsError(this, err, this.dialogService);
+                });
+              });
           },
         },
       },
