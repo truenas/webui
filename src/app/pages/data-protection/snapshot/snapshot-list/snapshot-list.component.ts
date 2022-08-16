@@ -53,7 +53,7 @@ export class SnapshotListComponent implements EntityTableConfig<PeriodicSnapshot
     },
   };
 
-  private dataset: string = '';
+  private dataset = '';
 
   constructor(
     private dialogService: DialogService,
@@ -67,18 +67,17 @@ export class SnapshotListComponent implements EntityTableConfig<PeriodicSnapshot
   }
 
   afterInit(entityList: EntityTableComponent): void {
-    this.entityList = entityList;
+    // TODO: Deliberate error
+    this.entityList=entityList;
     this.slideInService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
       this.entityList.getData();
     });
   }
 
-  resourceTransformIncomingRestData(data: PeriodicSnapshotTask[]): PeriodicSnapshotTaskUi[] {
-    const _data = data.filter((row) =>
-      row.dataset === this.dataset ||
-      row.dataset.includes(`${this.dataset}/`)
-    );
-    return _data.map((task) => {
+  resourceTransformIncomingRestData(tasks: PeriodicSnapshotTask[]): PeriodicSnapshotTaskUi[] {
+    const tasksToShow = tasks.filter((row) => row.dataset === this.dataset
+      || row.dataset.includes(`${this.dataset}/`));
+    return tasksToShow.map((task) => {
       const transformedTask = {
         ...task,
         keepfor: `${task.lifetime_value} ${task.lifetime_unit}(S)`,

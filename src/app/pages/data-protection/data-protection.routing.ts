@@ -55,7 +55,7 @@ export const dataProtectionRoutes: Routes = [{
         component: SnapshotListComponent,
         data: { title: 'Periodic Snapshot Tasks', breadcrumb: 'Periodic Snapshot Tasks' },
       }],
-    },{
+    }, {
       path: 'replication',
       data: { title: 'Replication Tasks', breadcrumb: 'Replication Tasks', icon: 'event_note' },
       children: [{
@@ -87,7 +87,7 @@ export const dataProtectionRoutes: Routes = [{
         path: '',
         component: RsyncTaskListComponent,
         data: { title: 'Rsync Tasks', breadcrumb: 'Rsync Tasks' },
-      },{
+      }, {
         path: ':dataset',
         component: RsyncTaskListComponent,
         data: { title: 'Rsync Tasks', breadcrumb: 'Rsync Tasks' },
