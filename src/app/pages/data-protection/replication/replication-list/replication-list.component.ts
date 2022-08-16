@@ -1,7 +1,7 @@
 import { DatePipe } from '@angular/common';
 import { Component } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
+import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { filter } from 'rxjs/operators';
@@ -79,7 +79,7 @@ export class ReplicationListComponent implements EntityTableConfig {
     },
   };
 
-  private dataset: string = '';
+  private dataset: string;
 
   constructor(
     private ws: WebSocketService,
@@ -102,12 +102,10 @@ export class ReplicationListComponent implements EntityTableConfig {
   }
 
   resourceTransformIncomingRestData(tasks: ReplicationTask[]): ReplicationTaskUi[] {
-    const _tasks = tasks.filter((task) =>
-      task.target_dataset === this.dataset ||
-      task.source_datasets.includes(this.dataset) ||
-      task.name.includes(`${this.dataset}/`)
-    );
-    return _tasks.map((task) => {
+    const data = tasks.filter((task) => task.target_dataset === this.dataset
+      || task.source_datasets.includes(this.dataset)
+      || task.name.includes(`${this.dataset}/`));
+    return data.map((task) => {
       return {
         ...task,
         ssh_connection: task.ssh_credentials ? (task.ssh_credentials as any).name : '-',
