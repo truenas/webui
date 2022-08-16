@@ -5,8 +5,8 @@ import { helptextSystemCloudcredentials as helptext } from 'app/helptext/system/
 import { CloudCredential } from 'app/interfaces/cloud-sync-task.interface';
 import { CloudsyncProvider } from 'app/interfaces/cloudsync-provider.interface';
 
-export class BaseProviderFormComponent<T = CloudCredential['attributes']> {
-  readonly form: FormGroup;
+export abstract class BaseProviderFormComponent<T = CloudCredential['attributes']> {
+  abstract readonly form: FormGroup;
   provider: CloudsyncProvider;
 
   readonly helptext = helptext;
