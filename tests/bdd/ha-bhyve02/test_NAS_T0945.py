@@ -45,15 +45,13 @@ def login_appear_enter_root_and_password(driver, user, password):
         driver.find_element_by_xpath('//input[@data-placeholder="Password"]').send_keys(password)
         assert wait_on_element(driver, 4, '//button[@name="signin_button"]', 'clickable')
         driver.find_element_by_xpath('//button[@name="signin_button"]').click()
-    else:
-        driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
 
 
 @then('you should see the dashboard')
 def you_should_see_the_dashboard(driver):
     """you should see the dashboard."""
     assert wait_on_element(driver, 5, '//h1[contains(.,"Dashboard")]')
-    assert wait_on_element(driver, 5, '//span[contains(.,"System Information")]')
+    # assert wait_on_element(driver, 10, f'//span[contains(.,"{information}")]')
     if wait_on_element(driver, 2, '//h1[contains(.,"End User License Agreement - TrueNAS")]'):
         try:
             assert wait_on_element(driver, 2, '//button[@ix-auto="button__I AGREE"]', 'clickable')
@@ -79,7 +77,7 @@ def go_to_system_settings_click_services(driver):
 @then('the service page should open')
 def the_service_page_should_open(driver):
     """the service page should open."""
-    assert wait_on_element(driver, 5, '//services')
+    assert wait_on_element(driver, 5, '//h1[text()="Services"]')
 
 
 @then('press on configure(pencil) SSH')
