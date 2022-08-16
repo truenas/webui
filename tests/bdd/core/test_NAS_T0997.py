@@ -6,7 +6,8 @@ from function import (
     wait_on_element,
     wait_on_element_disappear,
     attribute_value_exist,
-    wait_for_attribute_value
+    wait_for_attribute_value,
+    is_element_present
 )
 from pytest_bdd import (
     given,
@@ -42,7 +43,8 @@ def users_are_visible_click_the_greaterthansign_right_of_the_users(driver):
     """users are visible click the Greater-Than-Sign right of the users."""
     assert wait_on_element(driver, 7, '//div[@id="ericbsd_Username"]')
     assert wait_on_element(driver, 7, '//a[@ix-auto="expander__ericbsd"]', 'clickable')
-    driver.find_element_by_xpath('//a[@ix-auto="expander__ericbsd"]').click()
+    if is_element_present(driver, '//a[@ix-auto="expander__ericbsd" and contains(@class,"datatable-icon-right")]'):
+        driver.find_element_by_xpath('//a[@ix-auto="expander__ericbsd"]').click()
 
 
 @then('the User Field should expand down, then click the Edit button')
