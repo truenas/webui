@@ -10,7 +10,7 @@ import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { ConfirmForceDeleteCertificateComponent } from 'app/pages/credentials/certificates-dash/confirm-force-delete-dialog/confirm-force-delete-dialog.component';
 import { DialogService } from 'app/services';
 
-describe('LockDatasetDialogComponent', () => {
+describe('ConfirmForceDeleteCertificateComponent', () => {
   let spectator: Spectator<ConfirmForceDeleteCertificateComponent>;
   let loader: HarnessLoader;
   const createComponent = createComponentFactory({
