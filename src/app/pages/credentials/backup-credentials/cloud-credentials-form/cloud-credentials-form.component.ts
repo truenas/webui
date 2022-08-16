@@ -60,6 +60,9 @@ import {
   SftpProviderFormComponent,
 } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/provider-forms/sftp-provider-form/sftp-provider-form.component';
 import {
+  StorjProviderFormComponent,
+} from 'app/pages/credentials/backup-credentials/cloud-credentials-form/provider-forms/storj-provider-form/storj-provider-form.component';
+import {
   TokenProviderFormComponent,
 } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/provider-forms/token-provider-form/token-provider-form.component';
 import {
@@ -292,6 +295,7 @@ export class CloudCredentialsFormComponent implements OnInit {
       [CloudsyncProviderName.Pcloud, PcloudProviderFormComponent],
       [CloudsyncProviderName.AmazonS3, S3ProviderFormComponent],
       [CloudsyncProviderName.Sftp, SftpProviderFormComponent],
+      [CloudsyncProviderName.Storj, StorjProviderFormComponent],
       [CloudsyncProviderName.Webdav, WebdavProviderFormComponent],
     ]);
 
