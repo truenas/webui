@@ -30,7 +30,7 @@
             routerLinkActive="selected"
           >
             <button mat-icon-button disabled></button>
-            <ix-dataset-node [dataset]="dataset"></ix-dataset-node>
+            <ix-dataset-node [dataset]="dataset" [isSystemDataset]="isSystemDataset(dataset)"></ix-dataset-node>
           </ix-tree-node>
 
           <ix-nested-tree-node
@@ -53,7 +53,7 @@
                 </mat-icon>
               </button>
 
-              <ix-dataset-node [dataset]="dataset"></ix-dataset-node>
+              <ix-dataset-node [dataset]="dataset" [isSystemDataset]="isSystemDataset(dataset)"></ix-dataset-node>
             </div>
 
             <ng-container *ngIf="treeControl.isExpanded(dataset)" ixTreeNodeOutlet></ng-container>
@@ -71,9 +71,8 @@
     [footerHeight]="footerHeight"
   >
     <ix-dataset-details-panel
-      *ngIf="selectedDataset$ | async as selectedDataset"
-      [dataset]="selectedDataset"
-      [parentDataset]="selectedParentDataset$ | async"
+      *ngIf="selectedDataset$ | async as dataset"
+      [dataset]="dataset"
     ></ix-dataset-details-panel>
   </div>
 </div>

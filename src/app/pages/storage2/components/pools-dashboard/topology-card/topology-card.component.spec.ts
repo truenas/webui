@@ -3,13 +3,13 @@ import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { Pool } from 'app/interfaces/pool.interface';
 import { Disk } from 'app/interfaces/storage.interface';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
-import { WidgetTopologyComponent } from 'app/pages/storage2/components/pools-dashboard/widget-topology/widget-topology.component';
+import { TopologyCardComponent } from 'app/pages/storage2/components/pools-dashboard/topology-card/topology-card.component';
 
-describe('WidgetTopologyComponent', () => {
-  let spectator: Spectator<WidgetTopologyComponent>;
+describe('TopologyCardComponent', () => {
+  let spectator: Spectator<TopologyCardComponent>;
 
   const createComponent = createComponentFactory({
-    component: WidgetTopologyComponent,
+    component: TopologyCardComponent,
     imports: [
       IxFormsModule,
       ReactiveFormsModule,

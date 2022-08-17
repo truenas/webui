@@ -37,6 +37,7 @@ import { ZfsInfoCardComponent } from 'app/pages/storage2/modules/devices/compone
 import { routes } from 'app/pages/storage2/modules/devices/devices.routing';
 import { DevicesStore } from 'app/pages/storage2/modules/devices/stores/devices-store.service';
 import { SmartInfoCardComponent } from './components/smart-info-card/smart-info-card.component';
+import { ExtendDialogComponent } from './components/zfs-info-card/extend-dialog/extend-dialog.component';
 
 @NgModule({
   imports: [
@@ -77,6 +78,7 @@ import { SmartInfoCardComponent } from './components/smart-info-card/smart-info-
     ZfsInfoCardComponent,
     VDevGroupNodeComponent,
     TopologyItemIconComponent,
+    ExtendDialogComponent,
   ],
   providers: [
     DevicesStore,

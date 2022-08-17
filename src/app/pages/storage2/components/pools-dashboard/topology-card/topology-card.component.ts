@@ -30,11 +30,11 @@ const mixedDev = 'Mixed Capacity VDEVs';
 
 @UntilDestroy()
 @Component({
-  selector: 'ix-widget-topology',
-  templateUrl: './widget-topology.component.html',
-  styleUrls: ['./widget-topology.component.scss'],
+  selector: 'ix-topology-card',
+  templateUrl: './topology-card.component.html',
+  styleUrls: ['./topology-card.component.scss'],
 })
-export class WidgetTopologyComponent implements OnInit, OnChanges {
+export class TopologyCardComponent implements OnInit, OnChanges {
   @Input() poolState: Pool;
   @Input() diskDictionary: { [key: string]: Disk } = {};
   @Input() loading = true;
