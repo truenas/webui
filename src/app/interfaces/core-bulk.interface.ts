@@ -1,6 +1,6 @@
 export type CoreBulkQuery = [
   method: string,
-  arguments: any[][],
+  arguments: unknown[][],
 ];
 
 export interface CoreBulkResponse<T = unknown> {

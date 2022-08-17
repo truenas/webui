@@ -6,7 +6,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { inherit } from 'app/enums/with-inherit.enum';
 import helptext from 'app/helptext/storage/volumes/datasets/dataset-form';
-import { Dataset, DatasetUpdate } from 'app/interfaces/dataset.interface';
+import { DatasetDetails, DatasetUpdate } from 'app/interfaces/dataset.interface';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
@@ -57,7 +57,7 @@ export class DatasetCapacitySettingsComponent {
   });
 
   isLoading = false;
-  dataset: Dataset;
+  dataset: DatasetDetails;
 
   readonly helptext = helptext;
 
@@ -87,7 +87,7 @@ export class DatasetCapacitySettingsComponent {
     return isRootDataset(this.dataset);
   }
 
-  setDatasetForEdit(dataset: Dataset): void {
+  setDatasetForEdit(dataset: DatasetDetails): void {
     this.dataset = dataset;
     this.oldValues = {
       refquota: dataset.refquota.parsed,

@@ -1,4 +1,4 @@
-export type OauthMessage<T = any> = MessageEvent<{
+export type OauthMessage<T> = MessageEvent<{
   oauth_portal: boolean;
   error?: string;
   result?: T;

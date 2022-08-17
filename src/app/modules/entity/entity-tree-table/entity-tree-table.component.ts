@@ -25,7 +25,7 @@ interface FilterValue {
   providers: [EntityTreeTableService],
 })
 export class EntityTreeTableComponent implements OnInit, AfterViewInit {
-  @ViewChild(MatTable, { static: false }) table: MatTable<any>;
+  @ViewChild(MatTable, { static: false }) table: MatTable<unknown>;
   _conf: EntityTreeTable;
   @Input()
   set conf(conf: EntityTreeTable) {

@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { JobState } from 'app/enums/job-state.enum';
@@ -77,6 +78,8 @@ export class CloudsyncListComponent implements EntityTableConfig<CloudSyncTaskUi
     },
   };
 
+  private dataset: string;
+
   constructor(
     protected ws: WebSocketService,
     protected translate: TranslateService,
@@ -86,7 +89,10 @@ export class CloudsyncListComponent implements EntityTableConfig<CloudSyncTaskUi
     protected loader: AppLoaderService,
     protected taskService: TaskService,
     private matDialog: MatDialog,
-  ) {}
+    private route: ActivatedRoute,
+  ) {
+    this.dataset = this.route.snapshot.paramMap.get('dataset') || '';
+  }
 
   afterInit(entityList: EntityTableComponent): void {
     this.entityList = entityList;
@@ -95,8 +101,11 @@ export class CloudsyncListComponent implements EntityTableConfig<CloudSyncTaskUi
     });
   }
 
-  resourceTransformIncomingRestData(data: CloudSyncTask[]): CloudSyncTaskUi[] {
-    return data.map((task) => {
+  resourceTransformIncomingRestData(tasks: CloudSyncTask[]): CloudSyncTaskUi[] {
+    const tasksToShow = tasks.filter((cloud) => {
+      return cloud.path.replace('/mnt/', '') === this.dataset || cloud.path.includes(`${this.dataset}/`);
+    });
+    return tasksToShow.map((task) => {
       const transformed = { ...task } as CloudSyncTaskUi;
       const formattedCronSchedule = `${task.schedule.minute} ${task.schedule.hour} ${task.schedule.dom} ${task.schedule.month} ${task.schedule.dow}`;
       transformed.credential = task.credentials.name;

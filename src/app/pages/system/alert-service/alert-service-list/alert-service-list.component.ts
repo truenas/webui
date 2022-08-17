@@ -4,9 +4,12 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { AlertServiceType } from 'app/enums/alert-service-type.enum';
 import { AlertService } from 'app/interfaces/alert-service.interface';
+import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-table.component';
 import { EntityTableConfig } from 'app/modules/entity/entity-table/entity-table.interface';
 import { EntityUtils } from 'app/modules/entity/utils';
+import { AlertServiceComponent } from 'app/pages/system/alert-service/alert-service/alert-service.component';
 import { WebSocketService, DialogService } from 'app/services';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
 @Component({
@@ -55,6 +58,7 @@ export class AlertServiceListComponent implements EntityTableConfig<AlertService
     protected ws: WebSocketService,
     protected dialogService: DialogService,
     private translate: TranslateService,
+    private slideInService: IxSlideInService,
   ) { }
 
   isActionVisible(actionId: string, row: AlertService): boolean {
@@ -62,6 +66,23 @@ export class AlertServiceListComponent implements EntityTableConfig<AlertService
       return false;
     }
     return true;
+  }
+
+  afterInit(entityTable: EntityTableComponent): void {
+    this.slideInService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
+      entityTable.getData();
+    });
+  }
+
+  doAdd(): void {
+    this.slideInService.open(AlertServiceComponent);
+  }
+
+  doEdit(id: number, entityTable: EntityTableComponent): void {
+    const row = entityTable.rows.find((row) => row.id === id);
+
+    const form = this.slideInService.open(AlertServiceComponent);
+    form.setAlertServiceForEdit(row);
   }
 
   onCheckboxChange(row: AlertService): void {

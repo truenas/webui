@@ -1,79 +1,85 @@
-<div class="container" fxLayoutGap="16px">
-  <div class="table-container">
-    <ix-fake-progress-bar
-      class="loader-bar"
-      [loading]="isLoading$ | async"
-    ></ix-fake-progress-bar>
+<div *ngIf="dataSource.data.length === 0; else datasetContainer" class="entity-empty-wrapper" fxFlex="100%" fxLayout="row" fxLayoutAlign="center center" fxLayoutGap="32px">
+  <ix-entity-empty [conf]="entityEmptyConf"></ix-entity-empty>
+</div>
 
-    <div class="dataset-tree-search">
-      <ix-search-input [disabled]="!dataSource" (search)="onSearch($event)"></ix-search-input>
-    </div>
-
-    <div class="dataset-tree-wrapper">
-      <div class="dataset-tree-inner">
-        <div class="dataset-tree-header">
-          <div>
-            <span class="dataset-name-header">{{ 'Dataset Name' | translate }}</span>
+<ng-template #datasetContainer>
+  <div class="container" fxLayoutGap="16px">
+    <div class="table-container">
+      <ix-fake-progress-bar
+        class="loader-bar"
+        [loading]="isLoading$ | async"
+      ></ix-fake-progress-bar>
+  
+      <div class="dataset-tree-search">
+        <ix-search-input [disabled]="!dataSource" (search)="onSearch($event)"></ix-search-input>
+      </div>
+  
+      <div class="dataset-tree-wrapper">
+        <div class="dataset-tree-inner">
+          <div class="dataset-tree-header">
+            <div>
+              <span class="dataset-name-header">{{ 'Dataset Name' | translate }}</span>
+            </div>
+            <div>{{ 'Used' | translate }}</div>
+            <div>{{ 'Encryption' | translate }}</div>
+            <div>{{ 'Roles' | translate }}</div>
           </div>
-          <div>{{ 'Used' | translate }}</div>
-          <div>{{ 'Encryption' | translate }}</div>
-          <div>{{ 'Roles' | translate }}</div>
-        </div>
-
-        <ix-tree class="dataset-tree" [dataSource]="dataSource" [treeControl]="treeControl">
-          <ix-tree-node
-            *ixTreeNodeDef="let dataset; dataSource: dataSource"
-            ixTreeNodeToggle
-            [ixTreeNodeToggleRecursive]="false"
-            [ixTreeNodeDefDataSource]="dataSource"
-            [routerLink]="['/datasets', dataset.id]"
-            routerLinkActive="selected"
-          >
-            <button mat-icon-button disabled></button>
-            <ix-dataset-node [dataset]="dataset"></ix-dataset-node>
-          </ix-tree-node>
-
-          <ix-nested-tree-node
-            *ixTreeNodeDef="let dataset; dataSource: dataSource, when: hasNestedChild"
-            [ixTreeNodeDefDataSource]="dataSource"
-          >
-            <div
-              class="dataset-nested-tree-root-node"
+  
+          <ix-tree class="dataset-tree" [dataSource]="dataSource" [treeControl]="treeControl">
+            <ix-tree-node
+              *ixTreeNodeDef="let dataset; dataSource: dataSource"
+              ixTreeNodeToggle
+              [ixTreeNodeToggleRecursive]="false"
+              [ixTreeNodeDefDataSource]="dataSource"
               [routerLink]="['/datasets', dataset.id]"
               routerLinkActive="selected"
             >
-              <button
-                mat-icon-button
-                ixTreeNodeToggle
-                (click)="$event.preventDefault()"
-                [attr.aria-label]="'Toggle {row}' | translate: { row: dataset.name }"
+              <button mat-icon-button disabled></button>
+              <ix-dataset-node [dataset]="dataset" [isSystemDataset]="isSystemDataset(dataset)"></ix-dataset-node>
+
+            </ix-tree-node>
+  
+            <ix-nested-tree-node
+              *ixTreeNodeDef="let dataset; dataSource: dataSource, when: hasNestedChild"
+              [ixTreeNodeDefDataSource]="dataSource"
+            >
+              <div
+                class="dataset-nested-tree-root-node"
+                [routerLink]="['/datasets', dataset.id]"
+                routerLinkActive="selected"
               >
-                <mat-icon class="mat-icon-rtl-mirror">
-                  {{ treeControl.isExpanded(dataset) ? 'expand_more' : 'chevron_right' }}
-                </mat-icon>
-              </button>
+                <button
+                  mat-icon-button
+                  ixTreeNodeToggle
+                  (click)="$event.preventDefault()"
+                  [attr.aria-label]="'Toggle {row}' | translate: { row: dataset.name }"
+                >
+                  <mat-icon class="mat-icon-rtl-mirror">
+                    {{ treeControl.isExpanded(dataset) ? 'expand_more' : 'chevron_right' }}
+                  </mat-icon>
+                </button>
+                <ix-dataset-node [dataset]="dataset" [isSystemDataset]="isSystemDataset(dataset)"></ix-dataset-node>
 
-              <ix-dataset-node [dataset]="dataset"></ix-dataset-node>
-            </div>
-
-            <ng-container *ngIf="treeControl.isExpanded(dataset)" ixTreeNodeOutlet></ng-container>
-          </ix-nested-tree-node>
-        </ix-tree>
+              </div>
+  
+              <ng-container *ngIf="treeControl.isExpanded(dataset)" ixTreeNodeOutlet></ng-container>
+            </ix-nested-tree-node>
+          </ix-tree>
+        </div>
       </div>
     </div>
+  
+    <div class="details-container"
+      ixDetailsHeight
+      ixDetailsHeightParentClass="rightside-content-hold"
+      [hasConsoleFooter]="hasConsoleFooter"
+      [headerHeight]="headerHeight"
+      [footerHeight]="footerHeight"
+    >
+      <ix-dataset-details-panel
+        *ngIf="selectedDataset$ | async as dataset"
+        [dataset]="dataset"
+      ></ix-dataset-details-panel>
+    </div>
   </div>
-
-  <div class="details-container"
-    ixDetailsHeight
-    ixDetailsHeightParentClass="rightside-content-hold"
-    [hasConsoleFooter]="hasConsoleFooter"
-    [headerHeight]="headerHeight"
-    [footerHeight]="footerHeight"
-  >
-    <ix-dataset-details-panel
-      *ngIf="selectedDataset$ | async as selectedDataset"
-      [dataset]="selectedDataset"
-      [parentDataset]="selectedParentDataset$ | async"
-    ></ix-dataset-details-panel>
-  </div>
-</div>
+</ng-template>

@@ -53,10 +53,6 @@ export class UserService {
     }));
   }
 
-  getGroupByGid(gid: string): Observable<Group[]> {
-    return this.ws.call(this.groupQuery, [[['gid', '=', gid]], this.queryOptions]);
-  }
-
   getGroupByName(group: string): Observable<DsUncachedGroup> {
     return this.ws.call(this.uncachedGroupQuery, [group]);
   }
@@ -68,10 +64,6 @@ export class UserService {
       queryArgs = [['username', '^', search]];
     }
     return this.ws.call(this.userQuery, [queryArgs, { ...this.queryOptions, offset }]);
-  }
-
-  getUserByUid(uid: string): Observable<User[]> {
-    return this.ws.call(this.userQuery, [[['uid', '=', uid]], this.queryOptions]);
   }
 
   getUserByName(username: string): Observable<DsUncachedUser> {

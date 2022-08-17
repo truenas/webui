@@ -43,7 +43,6 @@ import {
 import { EntityUtils } from 'app/modules/entity/utils';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { DialogService, JobService } from 'app/services';
-import { CoreService } from 'app/services/core-service/core.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LayoutService } from 'app/services/layout.service';
 import { ModalService } from 'app/services/modal.service';
@@ -189,27 +188,9 @@ export class EntityTableComponent<Row extends SomeRow = any> implements OnInit, 
       || (this.allColumns.length > 0 && this.conf.columns.length !== this.allColumns.length);
   };
 
-  resetColumns(): void {
-    this.displayedColumns = [];
-    this.allColumns = [];
-    this.alwaysDisplayedCols = [];
-    this.conf.columns.forEach((column) => {
-      this.displayedColumns.push(column.prop);
-      if (!column.always_display) {
-        this.allColumns.push(column); // Make array of optionally-displayed cols
-      } else {
-        this.alwaysDisplayedCols.push(column); // Make an array of required cols
-      }
-    });
-    this.columnFilter = this.conf.columnFilter === undefined ? true : this.conf.columnFilter;
-    // Remove any alwaysDisplayed cols from the official list
-    this.conf.columns = this.conf.columns.filter((column) => !column.always_display);
-  }
-
   isAllSelected = false;
 
   constructor(
-    protected core: CoreService,
     protected router: Router,
     public ws: WebSocketService,
     public dialogService: DialogService,
@@ -237,7 +218,6 @@ export class EntityTableComponent<Row extends SomeRow = any> implements OnInit, 
   }
 
   cleanup(): void {
-    this.core.unregister({ observerClass: this });
     if (this.interval) {
       clearInterval(this.interval);
     }

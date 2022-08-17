@@ -1,0 +1,47 @@
+import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { ReactiveFormsModule } from '@angular/forms';
+import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
+import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
+import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
+import {
+  SlackServiceComponent,
+} from 'app/pages/system/alert-service/alert-service/alert-services/slack-service/slack-service.component';
+
+describe('SlackServiceComponent', () => {
+  let spectator: Spectator<SlackServiceComponent>;
+  let form: IxFormHarness;
+  const createComponent = createComponentFactory({
+    component: SlackServiceComponent,
+    imports: [
+      IxFormsModule,
+      ReactiveFormsModule,
+    ],
+  });
+
+  beforeEach(async () => {
+    spectator = createComponent();
+    form = await TestbedHarnessEnvironment.harnessForFixture(spectator.fixture, IxFormHarness);
+  });
+
+  it('renders a form with alert service values', async () => {
+    spectator.component.form.patchValue({
+      url: 'https://hooks.slack.com/services/T00000000/B00000000/XXXXXXXXXXXXXXXXXXXXXXXX',
+    });
+
+    const values = await form.getValues();
+    expect(values).toEqual({
+      'Webhook URL': 'https://hooks.slack.com/services/T00000000/B00000000/XXXXXXXXXXXXXXXXXXXXXXXX',
+    });
+  });
+
+  it('returns alert service form values when getSubmitAttributes is called', async () => {
+    await form.fillForm({
+      'Webhook URL': 'https://hooks.slack.com/services/T00000000/A11111111/XXXXXXXXXXXXXXXXXXXXXXXX',
+    });
+
+    const submittedValues = spectator.component.getSubmitAttributes();
+    expect(submittedValues).toEqual({
+      url: 'https://hooks.slack.com/services/T00000000/A11111111/XXXXXXXXXXXXXXXXXXXXXXXX',
+    });
+  });
+});

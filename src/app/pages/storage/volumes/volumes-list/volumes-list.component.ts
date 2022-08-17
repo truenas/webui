@@ -28,7 +28,6 @@ import { ZvolFormComponent } from 'app/pages/storage/volumes/zvol/zvol-form/zvol
 import { FileTicketFormComponent } from 'app/pages/system/file-ticket/file-ticket-form/file-ticket-form.component';
 import { FileTicketLicensedFormComponent } from 'app/pages/system/file-ticket/file-ticket-licensed-form/file-ticket-licensed-form.component';
 import { JobService } from 'app/services';
-import { CoreService } from 'app/services/core-service/core.service';
 import { DialogService } from 'app/services/dialog.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LayoutService } from 'app/services/layout.service';
@@ -149,7 +148,6 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
   readonly PoolStatus = PoolStatus;
 
   constructor(
-    protected core: CoreService,
     protected router: Router,
     public ws: WebSocketService,
     public dialogService: DialogService,
@@ -166,7 +164,6 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
     slideIn: IxSlideInService,
   ) {
     super(
-      core,
       router,
       ws,
       dialogService,

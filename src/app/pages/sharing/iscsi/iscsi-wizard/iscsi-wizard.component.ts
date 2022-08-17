@@ -700,7 +700,7 @@ export class IscsiWizardComponent implements WizardConfiguration {
     }
   }
 
-  getSummary(): { [key: string]: any } {
+  getSummary(): { [key: string]: string | { [key: string]: string } } {
     const summary = {
       Name: this.summaryObj.name,
       Extent: {
@@ -880,7 +880,7 @@ export class IscsiWizardComponent implements WizardConfiguration {
     }
   }
 
-  getRoundVolsize(value: any): number {
+  getRoundVolsize(value: { volsize: string; volsize_unit: string; volblocksize: string }): number {
     const volsize = this.cloudcredentialService.getByte(value['volsize'] + value['volsize_unit']);
     const volblocksize = this.cloudcredentialService.getByte(value['volblocksize']);
     return volsize + (volblocksize - volsize % volblocksize);

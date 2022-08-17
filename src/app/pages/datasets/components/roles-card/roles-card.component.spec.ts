@@ -1,10 +1,11 @@
+import { MatIconTestingModule } from '@angular/material/icon/testing';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { IscsiExtentType } from 'app/enums/iscsi.enum';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { RolesCardComponent } from 'app/pages/datasets/components/roles-card/roles-card.component';
 
-const datasetDummy: DatasetDetails = {
+const datasetDummy = {
   id: '/mnt/pool/ds',
   encrypted: false,
   available: null,
@@ -24,8 +25,8 @@ const datasetDummy: DatasetDetails = {
   type: null,
   used: null,
   quota: null,
-  thick_provisioned: null,
-};
+  thick_provisioned: false,
+} as DatasetDetails;
 
 describe('RolesCardComponent', () => {
   let spectator: Spectator<RolesCardComponent>;
@@ -33,6 +34,7 @@ describe('RolesCardComponent', () => {
   const createComponent = createComponentFactory({
     imports: [
       IxIconModule,
+      MatIconTestingModule,
     ],
     component: RolesCardComponent,
   });
@@ -48,16 +50,18 @@ describe('RolesCardComponent', () => {
             { share_name: 'smb2', path: 'smbpath2', enabled: true },
           ],
           nfs_shares: [{ enabled: true, path: 'nfspath' }],
+          thick_provisioned: true,
           iscsi_shares: [{
-            enabled: true, type: IscsiExtentType.Disk, path: 'iscsipath', thick_provisioned: true,
+            enabled: true, type: IscsiExtentType.Disk, path: 'iscsipath',
           }],
           children: [{
             ...datasetDummy,
             smb_shares: [{ share_name: 'smb', path: 'smbpath', enabled: true }],
             nfs_shares: [{ enabled: true, path: 'nfspath' }],
+            thick_provisioned: true,
             iscsi_shares: [
               {
-                enabled: true, type: IscsiExtentType.Disk, path: 'iscsipath', thick_provisioned: true,
+                enabled: true, type: IscsiExtentType.Disk, path: 'iscsipath',
               },
             ],
           }],

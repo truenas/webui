@@ -59,7 +59,6 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
   wsResponseIdx: any;
   queryResponse: any;
   saveSubmitText: string = this.translate.instant('Save');
-  showPassword = false;
   successMessage: string = this.translate.instant('Settings saved.');
 
   loaderOpen = false;
@@ -68,13 +67,13 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
   get controls(): FieldConfig[] {
     return this.fieldConfig.filter(({ type }) => type !== 'button');
   }
-  get changes(): Observable<any> {
+  get changes(): Observable<unknown> {
     return this.formGroup.valueChanges;
   }
   get valid(): boolean {
     return this.formGroup.valid;
   }
-  get value(): any {
+  get value(): unknown {
     return this.formGroup.value;
   }
 

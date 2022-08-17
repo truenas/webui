@@ -1,6 +1,7 @@
 import { DatePipe } from '@angular/common';
 import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { filter } from 'rxjs/operators';
@@ -78,6 +79,8 @@ export class ReplicationListComponent implements EntityTableConfig {
     },
   };
 
+  private dataset: string;
+
   constructor(
     private ws: WebSocketService,
     private dialog: DialogService,
@@ -86,7 +89,10 @@ export class ReplicationListComponent implements EntityTableConfig {
     protected loader: AppLoaderService,
     private translate: TranslateService,
     private matDialog: MatDialog,
-  ) {}
+    private route: ActivatedRoute,
+  ) {
+    this.dataset = this.route.snapshot.paramMap.get('dataset') || '';
+  }
 
   afterInit(entityList: EntityTableComponent): void {
     this.entityList = entityList;
@@ -96,7 +102,10 @@ export class ReplicationListComponent implements EntityTableConfig {
   }
 
   resourceTransformIncomingRestData(tasks: ReplicationTask[]): ReplicationTaskUi[] {
-    return tasks.map((task) => {
+    const tasksToShow = tasks.filter((task) => task.target_dataset === this.dataset
+      || task.source_datasets.includes(this.dataset)
+      || task.name.includes(`${this.dataset}/`));
+    return tasksToShow.map((task) => {
       return {
         ...task,
         ssh_connection: task.ssh_credentials ? (task.ssh_credentials as any).name : '-',
