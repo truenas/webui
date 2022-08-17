@@ -96,7 +96,7 @@ export const routes: Routes = [
           {
             path: 'id/:pk/dataset/posix-acl/:path',
             component: DatasetAclEditorComponent,
-            data: { title: 'Edit POSIX.1e ACL', breadcrumb: 'Edit POSIX.1e ACL' },
+            data: { title: 'Edit ACL', breadcrumb: 'Edit ACL' },
           },
           {
             path: 'id/:pk/dataset/unlock/:path',
