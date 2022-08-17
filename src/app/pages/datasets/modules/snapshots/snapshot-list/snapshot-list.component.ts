@@ -125,9 +125,11 @@ export class SnapshotListComponent implements OnInit, AfterViewInit {
       select(selectSnapshots),
       untilDestroyed(this),
     ).subscribe((snapshots) => {
-      const data = snapshots.filter((snapshot) => snapshot.dataset === this.dataset
-        || snapshot.dataset.includes(`${this.dataset}/`));
-      this.createDataSource(data);
+      const snapshotsToShow = snapshots.filter((snapshot) => {
+        return snapshot.dataset === this.dataset
+        || snapshot.dataset.includes(`${this.dataset}/`);
+      });
+      this.createDataSource(snapshotsToShow);
       this.cdr.markForCheck();
     }, () => {
       this.createDataSource();

@@ -21,7 +21,6 @@ import {
   SaveConfigDialogComponent, SaveConfigDialogMessages,
 } from 'app/pages/system/general-settings/save-config-dialog/save-config-dialog.component';
 import { StorageService, SystemGeneralService, WebSocketService } from 'app/services';
-import { CoreService } from 'app/services/core-service/core.service';
 import { DialogService } from 'app/services/dialog.service';
 import { AppState } from 'app/store';
 import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
@@ -91,7 +90,6 @@ export class UpdateComponent implements OnInit {
     protected dialogService: DialogService,
     public translate: TranslateService,
     protected storage: StorageService,
-    public core: CoreService,
     private store$: Store<AppState>,
   ) {
     this.sysGenService.updateRunning.pipe(untilDestroyed(this)).subscribe((isUpdating: string) => {
@@ -207,9 +205,6 @@ export class UpdateComponent implements OnInit {
       dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
         this.failoverUpgradePending = false;
         dialogRef.close(false);
-      });
-      dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((failure: any) => {
-        this.dialogService.errorReport(failure.error, failure.reason, failure.trace.formatted);
       });
     });
   }

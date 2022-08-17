@@ -18,7 +18,7 @@ export interface BwLimit {
 
 export interface CloudSyncTask {
   args: string;
-  attributes: { [key: string]: any };
+  attributes: { [key: string]: string | number | boolean };
   bwlimit: BwLimit[];
   credentials: CloudCredential;
   description: string;

@@ -25,7 +25,6 @@ import { EmptyConfig, EmptyType } from 'app/modules/entity/entity-empty/entity-e
 import { DashboardFormComponent } from 'app/pages/dashboard/components/dashboard-form/dashboard-form.component';
 import { DashConfigItem } from 'app/pages/dashboard/components/widget-controller/widget-controller.component';
 import { WebSocketService } from 'app/services';
-import { CoreService } from 'app/services/core-service/core.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LayoutService } from 'app/services/layout.service';
 import { AppState } from 'app/store';
@@ -117,7 +116,6 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   initialLoading = true;
 
   constructor(
-    protected core: CoreService,
     protected ws: WebSocketService,
     private el: ElementRef,
     private translate: TranslateService,
@@ -157,7 +155,6 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     if (this.interval) {
       clearInterval(this.interval);
     }
-    this.core.unregister({ observerClass: this });
 
     // Restore top level scrolling
     const wrapper = document.querySelector<HTMLElement>('.fn-maincontent');

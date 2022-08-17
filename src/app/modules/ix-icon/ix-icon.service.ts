@@ -12,7 +12,7 @@ export class IxIconRegistry extends MatIconRegistry {
   constructor(
     @Optional() private httpClient: HttpClient,
     private sanitizer: DomSanitizer,
-    @Optional() @Inject(DOCUMENT) document: any,
+    @Optional() @Inject(DOCUMENT) document: Document,
     private readonly errorHandler: ErrorHandler,
   ) {
     super(httpClient, sanitizer, document, errorHandler);

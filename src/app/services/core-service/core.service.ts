@@ -28,6 +28,9 @@ export interface Registration {
   sender?: unknown; // Only listen for events from a specific sender
 }
 
+/**
+ * @deprecated Prefer ngrx component stores or ngrx store + ngrx actions.
+ */
 @Injectable({
   providedIn: 'root',
 })

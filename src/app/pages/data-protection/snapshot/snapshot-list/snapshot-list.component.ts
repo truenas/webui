@@ -73,10 +73,12 @@ export class SnapshotListComponent implements EntityTableConfig<PeriodicSnapshot
     });
   }
 
-  resourceTransformIncomingRestData(data: PeriodicSnapshotTask[]): PeriodicSnapshotTaskUi[] {
-    const tasks = data.filter((row) => row.dataset === this.dataset
-      || row.dataset.includes(`${this.dataset}/`));
-    return tasks.map((task) => {
+  resourceTransformIncomingRestData(tasks: PeriodicSnapshotTask[]): PeriodicSnapshotTaskUi[] {
+    const tasksToShow = tasks.filter((row) => {
+      return row.dataset === this.dataset
+        || row.dataset.includes(`${this.dataset}/`);
+    });
+    return tasksToShow.map((task) => {
       const transformedTask = {
         ...task,
         keepfor: `${task.lifetime_value} ${task.lifetime_unit}(S)`,

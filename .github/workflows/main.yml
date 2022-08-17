@@ -1,23 +1,70 @@
-name: CI
+name: WebUI
 on:
   push:
+    branches:
+      - main
   pull_request:
-    types: [synchronize]
+    branches:
+      - '**'
 jobs:
-  build:
-    name: Build and Test
+  install:
+    name: Checkout and Install
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
-        with:
-          node-version: '16'
-          cache: 'yarn'
-      - run: yarn install --frozen-lockfile
-      - run: yarn run extract # Extracts messages again to make sure they are not broken
-      - run: yarn build:prod:aot
-      - run: yarn test:pr
-      - uses: codecov/codecov-action@v3
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Install
+        uses: ./.github/actions/prepare
+
+  build:
+    name: Build
+    needs: [install]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Install
+        uses: ./.github/actions/prepare
+      - name: Build
+        run: yarn build:prod:aot
+
+  lint:
+    name: Validate code style
+    needs: [install]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Install
+        uses: ./.github/actions/prepare
+      - name: Build
+        run: yarn lint
+
+  lint-translations:
+    name: Validate translation strings
+    needs: [install]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Install
+        uses: ./.github/actions/prepare
+      - name: Build
+        run: yarn run extract
+
+  test:
+    name: Run tests
+    needs: [install]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Install
+        uses: ./.github/actions/prepare
+      - name: Run tests
+        run: yarn test:pr
+      - name: Upload coverage to codecov
+        uses: codecov/codecov-action@v3
         with:
           name: webui
           fail_ci_if_error: true

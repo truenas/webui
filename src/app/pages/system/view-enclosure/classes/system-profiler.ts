@@ -325,8 +325,4 @@ export class SystemProfiler {
     });
     return capacity;
   }
-
-  getDiskById(id: string): Disk {
-    return this.diskData ? this.diskData.find((disk) => disk.identifier === id) : null;
-  }
 }

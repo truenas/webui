@@ -25,7 +25,6 @@ import { EntityUtils } from 'app/modules/entity/utils';
 import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { StorageService, WebSocketService } from 'app/services';
-import { CoreService } from 'app/services/core-service/core.service';
 import { ModalService } from 'app/services/modal.service';
 
 interface ZvolFormData {
@@ -274,7 +273,6 @@ export class ZvolWizardComponent implements WizardConfiguration {
   }
 
   constructor(
-    protected core: CoreService,
     protected ws: WebSocketService,
     protected loader: AppLoaderService,
     protected storageService: StorageService,
@@ -531,14 +529,13 @@ export class ZvolWizardComponent implements WizardConfiguration {
     this.loader.open();
 
     if (this.isNew) {
-      this.addSubmit(body).pipe(untilDestroyed(this)).subscribe((restPostResp) => {
+      this.addSubmit(body).pipe(untilDestroyed(this)).subscribe(() => {
         this.loader.close();
         this.modalService.closeSlideIn().then((closed) => {
           if (closed) {
             this.parent = null;
           }
         });
-        this.core.emit({ name: 'zvolCreated', sender: this, data: restPostResp });
         this.modalService.refreshTable();
       }, (res) => {
         this.loader.close();

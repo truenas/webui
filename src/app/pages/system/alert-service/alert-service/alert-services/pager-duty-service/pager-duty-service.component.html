@@ -1,0 +1,14 @@
+<ng-container [formGroup]="form">
+  <ix-input
+    [label]="'Service Key' | translate"
+    formControlName="service_key"
+    [required]="true"
+    [tooltip]="helptext.PagerDuty_service_key_tooltip | translate"
+  ></ix-input>
+  <ix-input
+    [label]="'Client Name' | translate"
+    formControlName="client_name"
+    [required]="true"
+    [tooltip]="helptext.PagerDuty_client_name_tooltip | translate"
+  ></ix-input>
+</ng-container>

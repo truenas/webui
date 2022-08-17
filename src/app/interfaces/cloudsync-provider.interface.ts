@@ -5,7 +5,7 @@ export interface CloudsyncProvider {
   bucket_title: string;
   buckets: boolean;
   credentials_oauth: string;
-  credentials_schema: any[];
+  credentials_schema: unknown[];
   name: CloudsyncProviderName;
   task_schema: unknown[]; // Not really used
   title: string;

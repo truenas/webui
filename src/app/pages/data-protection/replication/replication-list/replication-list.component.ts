@@ -102,10 +102,10 @@ export class ReplicationListComponent implements EntityTableConfig {
   }
 
   resourceTransformIncomingRestData(tasks: ReplicationTask[]): ReplicationTaskUi[] {
-    const data = tasks.filter((task) => task.target_dataset === this.dataset
+    const tasksToShow = tasks.filter((task) => task.target_dataset === this.dataset
       || task.source_datasets.includes(this.dataset)
       || task.name.includes(`${this.dataset}/`));
-    return data.map((task) => {
+    return tasksToShow.map((task) => {
       return {
         ...task,
         ssh_connection: task.ssh_credentials ? (task.ssh_credentials as any).name : '-',

@@ -1,9 +1,8 @@
 import {
-  Component, OnDestroy, OnInit,
+  Component, OnInit,
 } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { ViewControllerComponent } from 'app/core/components/view-controller/view-controller.component';
 import { TrueCommandStatus } from 'app/enums/true-command-status.enum';
 import helptext from 'app/helptext/topbar';
 import { TrueCommandConfig } from 'app/interfaces/true-command-config.interface';
@@ -13,7 +12,6 @@ import { EntityUtils } from 'app/modules/entity/utils';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { TruecommandSignupModalComponent, TruecommandSignupModalState } from 'app/modules/truecommand/components/truecommand-signup-modal.component';
 import { TruecommandStatusModalComponent } from 'app/modules/truecommand/components/truecommand-status-modal.component';
-import { CoreService } from 'app/services/core-service/core.service';
 import { DialogService } from 'app/services/dialog.service';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -23,7 +21,7 @@ import { WebSocketService } from 'app/services/ws.service';
   styleUrls: ['./truecommand-button.component.scss'],
   templateUrl: './truecommand-button.component.html',
 })
-export class TruecommandButtonComponent extends ViewControllerComponent implements OnInit, OnDestroy {
+export class TruecommandButtonComponent implements OnInit {
   readonly TrueCommandStatus = TrueCommandStatus;
   tooltips = helptext.mat_tooltips;
 
@@ -38,10 +36,7 @@ export class TruecommandButtonComponent extends ViewControllerComponent implemen
     private dialogService: DialogService,
     private dialog: MatDialog,
     private loader: AppLoaderService,
-    core: CoreService,
-  ) {
-    super(core);
-  }
+  ) {}
 
   ngOnInit(): void {
     this.ws.call('truecommand.config').pipe(untilDestroyed(this)).subscribe((config) => {

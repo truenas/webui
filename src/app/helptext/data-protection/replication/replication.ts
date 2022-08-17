@@ -25,7 +25,7 @@ export default {
  destination system, then uses \
  <a href="https://github.com/truenas/py-libzfs" \
  target="_blank">py-libzfs</a> to send an unencrypted data stream for \
- higher transfer speeds. This only works when replicating to a FreeNAS, \
+ higher transfer speeds. This only works when replicating to a \
  TrueNAS, or other system with <i>py-libzfs</i> installed.</li> \
  <li><i>LOCAL</i> efficiently replicates snapshots to another dataset on \
  the same system without using the network.</li> \
@@ -221,7 +221,7 @@ to determine snapshots creation order.'),
   encryption_key_location_placeholder: T('Encryption Key Location in Target System'),
   encryption_key_location_tooltip: T(''),
 
-  allow_from_scratch_placeholder: T('Synchronize Destination Snapshots With Source'),
+  allow_from_scratch_placeholder: T('Replication from scratch'),
   allow_from_scratch_tooltip: T('If the destination system has \
  snapshots but they do not have any data in common with the source \
  snapshots, destroy all destination snapshots and do a full replication. \

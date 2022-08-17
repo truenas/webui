@@ -101,10 +101,11 @@ export class CloudsyncListComponent implements EntityTableConfig<CloudSyncTaskUi
     });
   }
 
-  resourceTransformIncomingRestData(data: CloudSyncTask[]): CloudSyncTaskUi[] {
-    const tasks = data.filter((cloud) => cloud.path.replace('/mnt/', '') === this.dataset
-      || cloud.path.includes(`${this.dataset}/`));
-    return tasks.map((task) => {
+  resourceTransformIncomingRestData(tasks: CloudSyncTask[]): CloudSyncTaskUi[] {
+    const tasksToShow = tasks.filter((cloud) => {
+      return cloud.path.replace('/mnt/', '') === this.dataset || cloud.path.includes(`${this.dataset}/`);
+    });
+    return tasksToShow.map((task) => {
       const transformed = { ...task } as CloudSyncTaskUi;
       const formattedCronSchedule = `${task.schedule.minute} ${task.schedule.hour} ${task.schedule.dom} ${task.schedule.month} ${task.schedule.dow}`;
       transformed.credential = task.credentials.name;

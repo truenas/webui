@@ -174,7 +174,13 @@ export interface DatasetDetails {
   pool: string;
   type: DatasetType;
   used: ZfsProperty<number>;
+  usedbychildren: ZfsProperty<number>;
+  usedbydataset: ZfsProperty<number>;
+  usedbysnapshots: ZfsProperty<number>;
   quota: ZfsProperty<number>;
+  refquota: ZfsProperty<number>;
+  refreservation: ZfsProperty<number>;
+  reservation: ZfsProperty<number>;
   snapshot_count?: number;
   replication_tasks_count?: number;
   snapshot_tasks_count?: number;
@@ -182,9 +188,19 @@ export interface DatasetDetails {
   rsync_tasks_count?: number;
   smb_shares?: { enabled: boolean; path: string; share_name: string }[];
   nfs_shares?: { enabled: boolean; path: string }[];
-  iscsi_shares?: { enabled: boolean; type: IscsiExtentType; path: string; thick_provisioned: boolean }[];
+  iscsi_shares?: { enabled: boolean; type: IscsiExtentType; path: string }[];
   vms?: { name: string; path: string }[];
   apps?: { name: string; path: string }[];
   children?: DatasetDetails[];
-  thick_provisioned: boolean;
+  volsize?: ZfsProperty<number>; // Present for type === DatasetType.Volume
+  thick_provisioned?: boolean; // Present for type === DatasetType.Volume
+  atime: boolean;
+  casesensitive: boolean;
+  sync: ZfsProperty<string>;
+  compression: ZfsProperty<string>;
+  deduplication: ZfsProperty<string>;
+  refquota_critical?: ZfsProperty<number>;
+  refquota_warning?: ZfsProperty<number>;
+  quota_critical?: ZfsProperty<number>;
+  quota_warning?: ZfsProperty<number>;
 }

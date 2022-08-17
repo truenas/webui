@@ -1,5 +1,5 @@
 import {
-  Component, AfterViewInit, OnDestroy, Input, ViewChild, ElementRef, OnChanges, SimpleChanges,
+  Component, AfterViewInit, Input, ViewChild, ElementRef, OnChanges, SimpleChanges,
 } from '@angular/core';
 import { NavigationExtras, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -16,7 +16,6 @@ import { NetworkInterfaceAlias } from 'app/interfaces/network-interface.interfac
 import { DashboardNicState } from 'app/pages/dashboard/components/dashboard/dashboard.component';
 import { WidgetComponent } from 'app/pages/dashboard/components/widget/widget.component';
 import { WidgetUtils } from 'app/pages/dashboard/utils/widget-utils';
-import { CoreService } from 'app/services/core-service/core.service';
 
 interface NetTraffic {
   sent: string;
@@ -49,7 +48,7 @@ enum Path {
     './widget-nic.component.scss',
   ],
 })
-export class WidgetNicComponent extends WidgetComponent implements AfterViewInit, OnDestroy, OnChanges {
+export class WidgetNicComponent extends WidgetComponent implements AfterViewInit, OnChanges {
   @Input() stats: Subject<CoreEvent>;
   @Input() nicState: DashboardNicState;
   @ViewChild('carousel', { static: true }) carousel: ElementRef;
@@ -103,16 +102,10 @@ export class WidgetNicComponent extends WidgetComponent implements AfterViewInit
   constructor(
     public router: Router,
     public translate: TranslateService,
-    private core: CoreService,
   ) {
     super(translate);
     this.configurable = false;
     this.utils = new WidgetUtils();
-  }
-
-  ngOnDestroy(): void {
-    this.core.emit({ name: 'StatsRemoveListener', data: { name: 'NIC', obj: this } });
-    this.core.unregister({ observerClass: this });
   }
 
   ngOnChanges(changes: SimpleChanges): void {
