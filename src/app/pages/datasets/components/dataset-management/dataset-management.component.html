@@ -36,6 +36,7 @@
             >
               <button mat-icon-button disabled></button>
               <ix-dataset-node [dataset]="dataset" [isSystemDataset]="isSystemDataset(dataset)"></ix-dataset-node>
+
             </ix-tree-node>
   
             <ix-nested-tree-node
@@ -57,8 +58,8 @@
                     {{ treeControl.isExpanded(dataset) ? 'expand_more' : 'chevron_right' }}
                   </mat-icon>
                 </button>
-  
                 <ix-dataset-node [dataset]="dataset" [isSystemDataset]="isSystemDataset(dataset)"></ix-dataset-node>
+
               </div>
   
               <ng-container *ngIf="treeControl.isExpanded(dataset)" ixTreeNodeOutlet></ng-container>
