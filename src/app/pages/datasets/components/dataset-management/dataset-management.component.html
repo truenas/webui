@@ -1,7 +1,5 @@
-<div fxLayout="column" class="material mat-card" [class.is-empty]="dataSource.data.length === 0" *ngIf="dataSource.data.length === 0; else datasetContainer">
-  <div class="entity-empty-wrapper" fxFlex="100%" fxLayout="row" fxLayoutAlign="center center" fxLayoutGap="32px">
-    <ix-entity-empty [conf]="entityEmptyConf"></ix-entity-empty>
-  </div>
+<div *ngIf="dataSource.data.length === 0; else datasetContainer" class="entity-empty-wrapper" fxFlex="100%" fxLayout="row" fxLayoutAlign="center center" fxLayoutGap="32px">
+  <ix-entity-empty [conf]="entityEmptyConf"></ix-entity-empty>
 </div>
 
 <ng-template #datasetContainer>
