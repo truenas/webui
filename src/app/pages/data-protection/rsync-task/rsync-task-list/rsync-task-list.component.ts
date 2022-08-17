@@ -67,7 +67,7 @@ export class RsyncTaskListComponent implements EntityTableConfig {
     },
   };
 
-  private dataset = '';
+  private dataset: string;
 
   constructor(
     protected ws: WebSocketService,

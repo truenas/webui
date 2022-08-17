@@ -78,7 +78,7 @@ export class CloudsyncListComponent implements EntityTableConfig<CloudSyncTaskUi
     },
   };
 
-  private dataset = '';
+  private dataset: string;
 
   constructor(
     protected ws: WebSocketService,

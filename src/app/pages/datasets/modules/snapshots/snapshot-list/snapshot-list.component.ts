@@ -80,7 +80,7 @@ export class SnapshotListComponent implements OnInit, AfterViewInit {
   readonly defaultColumns: string[] = ['select', 'dataset', 'snapshot_name', 'actions'];
   readonly defaultExtraColumns: string[] = ['select', 'dataset', 'snapshot_name', 'used', 'created', 'referenced', 'actions'];
   displayedColumns: string[] = this.defaultColumns;
-  private dataset = '';
+  private dataset: string;
 
   constructor(
     private dialogService: DialogService,

@@ -79,7 +79,7 @@ export class ReplicationListComponent implements EntityTableConfig {
     },
   };
 
-  private dataset = '';
+  private dataset: string;
 
   constructor(
     private ws: WebSocketService,

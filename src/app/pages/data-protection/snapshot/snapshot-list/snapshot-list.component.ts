@@ -53,7 +53,7 @@ export class SnapshotListComponent implements EntityTableConfig<PeriodicSnapshot
     },
   };
 
-  private dataset = '';
+  private dataset: string;
 
   constructor(
     private dialogService: DialogService,
