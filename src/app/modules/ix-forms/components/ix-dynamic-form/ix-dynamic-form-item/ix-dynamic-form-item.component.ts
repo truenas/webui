@@ -3,6 +3,7 @@ import {
 } from '@angular/core';
 import { UntypedFormArray, UntypedFormGroup } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Subject } from 'rxjs';
 import { distinctUntilChanged, filter, map } from 'rxjs/operators';
 import { DynamicFormSchemaType } from 'app/enums/dynamic-form-schema-type.enum';
 import { AddListItemEvent, DeleteListItemEvent, DynamicFormSchemaNode } from 'app/interfaces/dynamic-form-schema.interface';
@@ -50,17 +51,18 @@ export class IxDynamicFormItemComponent implements OnInit {
     ) {
       this.dynamicForm?.get(this.dynamicSchema.controlName).disable();
     }
+
+    if (this.dynamicSchema.hidden) {
+      (this.dynamicForm.controls[this.dynamicSchema.controlName] as CustomUntypedFormField).hidden$.next(true);
+    }
   }
 
   get getFormArray(): UntypedFormArray {
     return this.dynamicForm.controls[this.dynamicSchema.controlName] as UntypedFormArray;
   }
 
-  get isHidden(): boolean {
-    return (
-      !!(this.dynamicForm.controls[this.dynamicSchema.controlName] as CustomUntypedFormField).hidden
-    )
-      || this.dynamicSchema.hidden;
+  get isHidden$(): Subject<boolean> {
+    return (this.dynamicForm.controls[this.dynamicSchema.controlName] as CustomUntypedFormField).hidden$;
   }
 
   addControl(): void {

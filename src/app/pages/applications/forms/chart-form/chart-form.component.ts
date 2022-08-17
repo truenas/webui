@@ -3,7 +3,10 @@ import { FormBuilder, UntypedFormControl, Validators } from '@angular/forms';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import _ from 'lodash';
-import { of, Subscription } from 'rxjs';
+import {
+  noop, of, Subject, Subscription,
+} from 'rxjs';
+import { take } from 'rxjs/operators';
 import { ixChartApp } from 'app/constants/catalog.constants';
 import { DynamicFormSchemaType } from 'app/enums/dynamic-form-schema-type.enum';
 import helptext from 'app/helptext/apps/apps';
@@ -182,61 +185,82 @@ export class ChartFormComponent implements OnDestroy {
     this.appSchemaService.deleteFormListItem(event);
   }
 
-  getFieldsHiddenOnForm(data: any, path = '', fieldsTobeDeleted: string[] = []): string[] {
-    if (Boolean(path) && Boolean((this.form.get(path) as CustomUntypedFormField).hidden)) {
-      fieldsTobeDeleted.push(path);
-      return fieldsTobeDeleted;
+  getFieldsHiddenOnForm(
+    data: any,
+    deleteField$: Subject<string>,
+    path = '',
+  ): void {
+    if (path) {
+      const formField = (this.form.get(path) as CustomUntypedFormField);
+      formField?.hidden$?.pipe(
+        take(1),
+        untilDestroyed(this),
+      ).subscribe((hidden) => {
+        if (hidden) {
+          deleteField$.next(path);
+        }
+      });
     }
     if (_.isPlainObject(data)) {
       for (const key in data) {
-        fieldsTobeDeleted.concat(this.getFieldsHiddenOnForm(data[key], path ? path + '.' + key : key, fieldsTobeDeleted));
+        this.getFieldsHiddenOnForm(data[key], deleteField$, path ? path + '.' + key : key);
       }
-      return fieldsTobeDeleted;
     }
     if (_.isArray(data)) {
       for (let i = 0; i < data.length; i++) {
-        fieldsTobeDeleted.concat(this.getFieldsHiddenOnForm(data[i], path + '.' + i, fieldsTobeDeleted));
+        this.getFieldsHiddenOnForm(data[i], deleteField$, path + '.' + i);
       }
-      return fieldsTobeDeleted;
     }
   }
 
-  cleanData(data: ChartFormValues): ChartFormValues {
-    const fieldsTobeDeleted: string[] = this.getFieldsHiddenOnForm(data);
-    for (const field of fieldsTobeDeleted) {
-      const keys = field.split('.');
-      let value: any = data;
-      for (let i = 0; i < keys.length - 1; i++) {
-        value = value[keys[i]];
-        if (value === undefined || value === null) {
-          break;
-        }
+  deleteFieldFromData(
+    data: any,
+    fieldTobeDeleted: string,
+  ): void {
+    const keys = fieldTobeDeleted.split('.');
+    let value: any = data;
+    for (let i = 0; i < keys.length - 1; i++) {
+      value = value[keys[i]];
+      if (value === undefined || value === null) {
+        break;
       }
-      if (value !== undefined && value !== null) {
-        if (this.isNew) {
+    }
+    if (value !== undefined && value !== null) {
+      if (this.isNew) {
+        delete value[keys[keys.length - 1]];
+      } else {
+        let configValue: any = this.config;
+        for (let i = 0; i < keys.length - 1; i++) {
+          configValue = configValue[keys[i]];
+          if (configValue === undefined || configValue === null) {
+            break;
+          }
+        }
+        if (!configValue || !configValue[keys[keys.length - 1]]) {
           delete value[keys[keys.length - 1]];
-        } else {
-          let configValue: any = this.config;
-          for (let i = 0; i < keys.length - 1; i++) {
-            configValue = configValue[keys[i]];
-            if (configValue === undefined || configValue === null) {
-              break;
-            }
-          }
-          if (!configValue || !configValue[keys[keys.length - 1]]) {
-            delete value[keys[keys.length - 1]];
-          }
         }
       }
     }
-    return data;
   }
 
   onSubmit(): void {
-    const data = this.cleanData(
-      this.appSchemaService.serializeFormValue(this.form.getRawValue()) as ChartFormValues,
+    const data = this.appSchemaService.serializeFormValue(this.form.getRawValue()) as ChartFormValues;
+    const deleteField$: Subject<string> = new Subject();
+    deleteField$.pipe(untilDestroyed(this)).subscribe(
+      (fieldTobeDeleted) => {
+        this.deleteFieldFromData(data, fieldTobeDeleted);
+      },
+      noop,
+      () => {
+        this.saveData(data);
+      },
     );
 
+    this.getFieldsHiddenOnForm(data, deleteField$);
+    deleteField$.complete();
+  }
+
+  saveData(data: any): void {
     this.dialogRef = this.mdDialog.open(EntityJobComponent, {
       data: {
         title: this.isNew ? helptext.installing : helptext.updating,
