@@ -4,7 +4,7 @@ import {
 } from '@angular/forms';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
-import { of } from 'rxjs';
+import { BehaviorSubject, of } from 'rxjs';
 import {
   DynamicFormSchemaInput,
   DynamicFormSchemaList,
@@ -150,7 +150,11 @@ describe('IxDynamicFormItemComponent', () => {
       expect(spectator.query(IxInputComponent).tooltip).toBe(inputSchema.tooltip);
 
       expect(spectator.query('ix-input')).not.toBeHidden();
-      (spectator.component.dynamicForm.controls.input as CustomUntypedFormField).hidden = true;
+      const field = (spectator.component.dynamicForm.controls.input as CustomUntypedFormField);
+      if (!field.hidden$) {
+        field.hidden$ = new BehaviorSubject<boolean>(false);
+      }
+      field.hidden$.next(true);
       spectator.detectComponentChanges();
       expect(spectator.query('ix-input')).toBeHidden();
     });
@@ -168,7 +172,11 @@ describe('IxDynamicFormItemComponent', () => {
       expect(spectator.query(IxSelectComponent).tooltip).toBe(selectSchema.tooltip);
 
       expect(spectator.query('ix-select')).not.toBeHidden();
-      (spectator.component.dynamicForm.controls.select as CustomUntypedFormField).hidden = true;
+      const field = (spectator.component.dynamicForm.controls.select as CustomUntypedFormField);
+      if (!field.hidden$) {
+        field.hidden$ = new BehaviorSubject<boolean>(false);
+      }
+      field.hidden$.next(true);
       spectator.detectComponentChanges();
       expect(spectator.query('ix-select')).toBeHidden();
     });
@@ -185,7 +193,11 @@ describe('IxDynamicFormItemComponent', () => {
       expect(spectator.query(IxCheckboxComponent).tooltip).toBe(checkboxSchema.tooltip);
 
       expect(spectator.query('ix-checkbox')).not.toBeHidden();
-      (spectator.component.dynamicForm.controls.checkbox as CustomUntypedFormField).hidden = true;
+      const field = (spectator.component.dynamicForm.controls.checkbox as CustomUntypedFormField);
+      if (!field.hidden$) {
+        field.hidden$ = new BehaviorSubject<boolean>(false);
+      }
+      field.hidden$.next(true);
       spectator.detectComponentChanges();
       expect(spectator.query('ix-checkbox')).toBeHidden();
     });
@@ -202,7 +214,11 @@ describe('IxDynamicFormItemComponent', () => {
       expect(spectator.query(IxIpInputWithNetmaskComponent).tooltip).toBe(ipaddrSchema.tooltip);
 
       expect(spectator.query('ix-ip-input-with-netmask')).not.toBeHidden();
-      (spectator.component.dynamicForm.controls.ipaddr as CustomUntypedFormField).hidden = true;
+      const field = (spectator.component.dynamicForm.controls.ipaddr as CustomUntypedFormField);
+      if (!field.hidden$) {
+        field.hidden$ = new BehaviorSubject<boolean>(false);
+      }
+      field.hidden$.next(true);
       spectator.detectComponentChanges();
       expect(spectator.query('ix-ip-input-with-netmask')).toBeHidden();
     });
@@ -219,7 +235,11 @@ describe('IxDynamicFormItemComponent', () => {
       expect(spectator.query(IxExplorerComponent).tooltip).toBe(explorerSchema.tooltip);
 
       expect(spectator.query('ix-explorer')).not.toBeHidden();
-      (spectator.component.dynamicForm.controls.explorer as CustomUntypedFormField).hidden = true;
+      const field = (spectator.component.dynamicForm.controls.explorer as CustomUntypedFormField);
+      if (!field.hidden$) {
+        field.hidden$ = new BehaviorSubject<boolean>(false);
+      }
+      field.hidden$.next(true);
       spectator.detectComponentChanges();
       expect(spectator.query('ix-explorer')).toBeHidden();
     });
@@ -238,7 +258,11 @@ describe('IxDynamicFormItemComponent', () => {
       expect(spectator.query(IxListComponent).label).toBe(listSchema.title);
 
       expect(spectator.query('ix-list')).not.toBeHidden();
-      (spectator.component.dynamicForm.controls.list as CustomUntypedFormField).hidden = true;
+      const field = (spectator.component.dynamicForm.controls.list as CustomUntypedFormField);
+      if (!field.hidden$) {
+        field.hidden$ = new BehaviorSubject<boolean>(false);
+      }
+      field.hidden$.next(true);
       spectator.detectComponentChanges();
       expect(spectator.query('ix-list')).toBeHidden();
     });
@@ -257,7 +281,11 @@ describe('IxDynamicFormItemComponent', () => {
         expect(item).not.toBeHidden();
       });
 
-      (spectator.component.dynamicForm.controls.dict as CustomUntypedFormField).hidden = true;
+      const field = (spectator.component.dynamicForm.controls.dict as CustomUntypedFormField);
+      if (!field.hidden$) {
+        field.hidden$ = new BehaviorSubject<boolean>(false);
+      }
+      field.hidden$.next(true);
       spectator.detectComponentChanges();
 
       spectator.queryAll('ix-dynamic-form-item').forEach((item) => {
@@ -267,17 +295,6 @@ describe('IxDynamicFormItemComponent', () => {
   });
 
   describe('Component methods', () => {
-    it('isHidden()', () => {
-      (dynamicForm.controls.list as CustomUntypedFormField).hidden = true;
-      spectator = createComponent({
-        props: {
-          dynamicForm,
-          dynamicSchema: listSchema,
-        },
-      });
-      expect(spectator.component.isHidden).toBeTruthy();
-    });
-
     it('emits "addListItem" when "(add)" is emitted by a list control', () => {
       spectator = createComponent({
         props: {
@@ -286,7 +303,11 @@ describe('IxDynamicFormItemComponent', () => {
         },
       });
 
-      (spectator.component.dynamicForm.controls.list as CustomUntypedFormField).hidden = false;
+      const field = (spectator.component.dynamicForm.controls.list as CustomUntypedFormField);
+      if (!field.hidden$) {
+        field.hidden$ = new BehaviorSubject<boolean>(false);
+      }
+      field.hidden$.next(false);
       spectator.detectComponentChanges();
 
       jest.spyOn(spectator.component.addListItem, 'emit').mockImplementation();
@@ -306,7 +327,11 @@ describe('IxDynamicFormItemComponent', () => {
         },
       });
 
-      (spectator.component.dynamicForm.controls.list as CustomUntypedFormField).hidden = false;
+      const field = (spectator.component.dynamicForm.controls.list as CustomUntypedFormField);
+      if (!field.hidden$) {
+        field.hidden$ = new BehaviorSubject<boolean>(false);
+      }
+      field.hidden$.next(false);
       spectator.detectComponentChanges();
 
       jest.spyOn(spectator.component.deleteListItem, 'emit').mockImplementation();

@@ -52,7 +52,7 @@ export class IxDynamicFormItemComponent implements OnInit {
       this.dynamicForm?.get(this.dynamicSchema.controlName).disable();
     }
 
-    if (this.dynamicSchema.hidden) {
+    if (this.dynamicSchema?.hidden) {
       (this.dynamicForm.controls[this.dynamicSchema.controlName] as CustomUntypedFormField).hidden$.next(true);
     }
   }
