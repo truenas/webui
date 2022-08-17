@@ -52,6 +52,7 @@ export interface Dataset {
   refquota: ZfsProperty<number>;
   refreservation: ZfsProperty<number>;
   reservation: ZfsProperty<number>;
+  snapdev: ZfsProperty<string>;
   snapdir: ZfsProperty<number>;
   share_type: ZfsProperty<string>;
   special_small_block_size: ZfsProperty<string>;
@@ -106,6 +107,7 @@ export interface DatasetCreate {
   special_small_block_size?: WithInherit<number>;
   copies?: WithInherit<number>;
   snapdir?: DatasetSnapdir;
+  snapdev?: string;
   deduplication?: string;
   checksum?: DatasetChecksum;
   readonly?: WithInherit<OnOff>;
@@ -148,6 +150,7 @@ export interface DatasetUpdate {
   special_small_block_size?: number;
   copies?: WithInherit<number>;
   snapdir?: DatasetSnapdir;
+  snapdev?: string;
   deduplication?: DeduplicationSetting;
   checksum?: WithInherit<DatasetChecksum>;
   readonly?: WithInherit<OnOff>;

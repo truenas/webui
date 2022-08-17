@@ -28,6 +28,7 @@ export interface DatasetFormData {
   exec: WithInherit<OnOff>;
   readonly: WithInherit<OnOff>;
   snapdir: DatasetSnapdir;
+  snapdev: string;
   copies: WithInherit<number>;
   recordsize: WithInherit<DatasetRecordSize>;
   casesensitivity: string;

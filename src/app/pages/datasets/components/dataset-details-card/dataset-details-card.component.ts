@@ -10,6 +10,7 @@ import { ZfsPropertySource } from 'app/enums/zfs-property-source.enum';
 import { Dataset, DatasetDetails } from 'app/interfaces/dataset.interface';
 import { DatasetFormComponent } from 'app/pages/datasets/components/dataset-form/dataset-form.component';
 import { DeleteDatasetDialogComponent } from 'app/pages/datasets/components/delete-dataset-dialog/delete-dataset-dialog.component';
+import { ZvolFormComponent } from 'app/pages/datasets/components/zvol-form/zvol-form.component';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
 import { WebSocketService } from 'app/services';
 import { ModalService } from 'app/services/modal.service';
@@ -92,5 +93,13 @@ export class DatasetDetailsCardComponent implements OnChanges {
     editDatasetComponent.setPk(this.dataset.id);
     editDatasetComponent.setVolId(this.dataset.pool);
     editDatasetComponent.setTitle(this.translate.instant('Edit Dataset'));
+  }
+
+  editZvol(): void {
+    const addZvolComponent = this.modalService.openInSlideIn(ZvolFormComponent, this.dataset.id);
+    addZvolComponent.setParent(this.dataset.id);
+    addZvolComponent.isNew = false;
+    // form doesnt work without cdr.markForCheck
+    this.cdr.markForCheck();
   }
 }
