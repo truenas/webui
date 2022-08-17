@@ -48,7 +48,8 @@ def login_appear_enter_root_and_password(driver, password):
 @then(parsers.parse('you should see the dashboard and "{information}"'))
 def you_should_see_the_dashboard_and_information(driver, information):
     """you should see the dashboard and "information"."""
-    assert wait_on_element(driver, 10, f'//span[contains(.,"{information}")]')
+    assert wait_on_element(driver, 5, '//h1[contains(.,"Dashboard")]')
+    # assert wait_on_element(driver, 10, f'//span[contains(.,"{information}")]')
 
 
 @then('navigate to System Settings and click General')
@@ -158,38 +159,38 @@ def navigate_to_network_and_on_the_network_page_click_on_global_configuration_se
 @then(parsers.parse('enter Hostname (Virtual) "{vhost}", IPv4 Default Gateway "{gatway}"'))
 def enter_hostname_Virtual_ipv4_default_gateway_(driver, vhost, gatway):
     """enter Hostname (Virtual) "vhost", IPv4 Default Gateway "{gatway}"."""
-    assert wait_on_element(driver, 7, '//input[@ix-auto="input__Hostname (Virtual)"]', 'inputable')
-    driver.find_element_by_xpath('//input[@ix-auto="input__Hostname (Virtual)"]').clear()
-    driver.find_element_by_xpath('//input[@ix-auto="input__Hostname (Virtual)"]').send_keys(vhost)
-    assert wait_on_element(driver, 7, '//input[@ix-auto="input__IPv4 Default Gateway"]', 'clickable')
-    driver.find_element_by_xpath('//input[@ix-auto="input__IPv4 Default Gateway"]').clear()
-    driver.find_element_by_xpath('//input[@ix-auto="input__IPv4 Default Gateway"]').send_keys(gatway)
+    assert wait_on_element(driver, 7, '//ix-input[contains(.,"Hostname (Virtual)")]//input', 'inputable')
+    driver.find_element_by_xpath('//ix-input[contains(.,"Hostname (Virtual)")]//input').clear()
+    driver.find_element_by_xpath('//ix-input[contains(.,"Hostname (Virtual)")]//input').send_keys(vhost)
+    assert wait_on_element(driver, 7, '//ix-input[contains(.,"IPv4 Default Gateway")]//input', 'clickable')
+    driver.find_element_by_xpath('//ix-input[contains(.,"IPv4 Default Gateway")]//input').clear()
+    driver.find_element_by_xpath('//ix-input[contains(.,"IPv4 Default Gateway")]//input').send_keys(gatway)
 
 
 @then(parsers.parse('enter Domain "{domain}", Nameserver1 "{nameserver1}", Nameserver2 "{nameserver2}", Nameserver3 "{nameserver3}"'))
 def enter_domain_nameserver1_nameserver2_nameserver3(driver, domain, nameserver1, nameserver2, nameserver3):
     """enter Domain "{domain}", Nameserver1 "{nameserver1}", Nameserver2 "{nameserver2}", Nameserver3 "{nameserver3}"."""
-    driver.find_element_by_xpath('//input[@ix-auto="input__Domain"]').clear()
-    driver.find_element_by_xpath('//input[@ix-auto="input__Domain"]').send_keys(domain)
-    driver.find_element_by_xpath('//input[@ix-auto="input__Nameserver 1"]').clear()
-    driver.find_element_by_xpath('//input[@ix-auto="input__Nameserver 1"]').send_keys(nameserver1)
-    driver.find_element_by_xpath('//input[@ix-auto="input__Nameserver 2"]').clear()
-    driver.find_element_by_xpath('//input[@ix-auto="input__Nameserver 2"]').send_keys(nameserver2)
-    driver.find_element_by_xpath('//input[@ix-auto="input__Nameserver 3"]').clear()
-    driver.find_element_by_xpath('//input[@ix-auto="input__Nameserver 3"]').send_keys(nameserver3)
+    driver.find_element_by_xpath('//ix-input[contains(.,"Domain")]//input').clear()
+    driver.find_element_by_xpath('//ix-input[contains(.,"Domain")]//input').send_keys(domain)
+    driver.find_element_by_xpath('//ix-input[contains(.,"Nameserver 1")]//input').clear()
+    driver.find_element_by_xpath('//ix-input[contains(.,"Nameserver 1")]//input').send_keys(nameserver1)
+    driver.find_element_by_xpath('//ix-input[contains(.,"Nameserver 2")]//input').clear()
+    driver.find_element_by_xpath('//ix-input[contains(.,"Nameserver 2")]//input').send_keys(nameserver2)
+    driver.find_element_by_xpath('//ix-input[contains(.,"Nameserver 3")]//input').clear()
+    driver.find_element_by_xpath('//ix-input[contains(.,"Nameserver 3")]//input').send_keys(nameserver3)
 
 
 @then('click save when finished')
 def click_save_when_finished(driver):
     """click save when finished."""
-    assert wait_on_element(driver, 7, '//button[@ix-auto="button__SAVE"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
+    assert wait_on_element(driver, 7, '//button[contains(.,"Save")]', 'clickable')
+    driver.find_element_by_xpath('//button[contains(.,"Save")]').click()
 
 
 @then('"Please wait" should appear while settings are being applied and You should be returned to Network page')
 def please_wait_should_appear_while_settings_are_being_applied_you_should_be_returned_to_network_page(driver):
     """"Please wait" should appear while settings are being applied and You should be returned to Network page."""
-    assert wait_on_element_disappear(driver, 60, '//h6[contains(.,"Please wait")]')
+    assert wait_on_element_disappear(driver, 60, '//mat-progress-bar')
     assert wait_on_element(driver, 7, '//h1[contains(.,"Network")]')
 
 
@@ -205,26 +206,27 @@ def navigate_to_system_then_click_failover(driver):
 @then('the Failover page should open')
 def the_failover_page_should_open(driver):
     """the Failover page should open."""
-    assert wait_on_element(driver, 7, '//h1[contains(.,"Failover")]')
+    assert wait_on_element(driver, 7, '//h1[text()="Failover"]')
 
 
 @then('click the disable failover checkbox, click save and confirm changes')
 def click_the_disable_failover_checkbox_click_save_and_confirm_changes(driver):
     """click the disable failover checkbox, click save and confirm changes."""
-    assert wait_on_element(driver, 7, '//mat-checkbox[@ix-auto="checkbox__Disable Failover"]', 'clickable')
-    element = driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__Disable Failover"]')
+    assert wait_on_element(driver, 7, '//mat-checkbox[contains(.,"Disable Failover")]', 'clickable')
+    element = driver.find_element_by_xpath('//mat-checkbox[contains(.,"Disable Failover")]')
     global class_attribute
     class_attribute = element.get_attribute('class')
     if 'mat-checkbox-checked' not in class_attribute:
-        driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__Disable Failover"]').click()
-        assert wait_on_element(driver, 7, '//button[@ix-auto="button__SAVE"]', 'clickable')
-        driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
-        assert wait_on_element(driver, 7, '//h1[contains(.,"Disable Failover")]', 'clickable')
-        driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__CONFIRM"]').click()
-        driver.find_element_by_xpath('//button[@ix-auto="button__OK"]').click()
+        driver.find_element_by_xpath('//mat-checkbox[contains(.,"Disable Failover")]').click()
+        assert wait_on_element(driver, 7, '//button[contains(.,"Save")]', 'clickable')
+        driver.find_element_by_xpath('//button[contains(.,"Save")]').click()
+        assert wait_on_element(driver, 7, '//span[text()="Failover"]')
+        assert wait_on_element(driver, 7, '//div[text()="Settings saved."]')
+        assert wait_on_element(driver, 7, '//button[contains(.,"Close")]', 'clickable')
+        driver.find_element_by_xpath('//button[contains(.,"Close")]').click()
     else:
-        assert wait_on_element(driver, 7, '//button[@ix-auto="button__SAVE"]', 'clickable')
-        driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
+        assert wait_on_element(driver, 7, '//button[contains(.,"Save")]', 'clickable')
+        driver.find_element_by_xpath('//button[contains(.,"Save")]').click()
 
 
 @then('after settings are applied you should see "Settings applied"')
