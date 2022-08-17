@@ -17,6 +17,7 @@ import {
   ChartRelease, ChartReleaseCreate, ChartSchema, ChartSchemaNode,
 } from 'app/interfaces/chart-release.interface';
 import { AddListItemEvent, DeleteListItemEvent, DynamicFormSchema } from 'app/interfaces/dynamic-form-schema.interface';
+import { Job } from 'app/interfaces/job.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { CustomUntypedFormField } from 'app/modules/ix-forms/components/ix-dynamic-form/classes/custom-untyped-form-field';
@@ -283,17 +284,21 @@ export class ChartFormComponent implements OnDestroy {
     }
 
     this.dialogRef.componentInstance.submit();
-    this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
-      this.dialogService.closeAllDialogs();
-      this.slideInService.close();
-    });
+    this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(this.onSuccess);
 
-    this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((res) => {
-      if (res.exc_info && res.exc_info.extra) {
-        new EntityUtils().handleWsError(this, res);
-      } else {
-        this.dialogService.errorReport('Error', res.error, res.exception);
-      }
-    });
+    this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe(this.onFailure);
   }
+
+  onFailure = (res: Job<null, unknown[]>): void => {
+    if (res.exc_info && res.exc_info.extra) {
+      new EntityUtils().handleWsError(this, res);
+    } else {
+      this.dialogService.errorReport('Error', res.error, res.exception);
+    }
+  };
+
+  onSuccess = (): void => {
+    this.dialogService.closeAllDialogs();
+    this.slideInService.close();
+  };
 }
