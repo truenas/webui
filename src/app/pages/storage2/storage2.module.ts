@@ -30,6 +30,7 @@ import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { IxTableModule } from 'app/modules/ix-tables/ix-table.module';
 import { LayoutModule } from 'app/modules/layout/layout.module';
 import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
+import { EntityModule } from 'app/modules/entity/entity.module';
 import { ImportPoolComponent } from 'app/pages/storage2/components/import-pool/import-pool.component';
 import { ManagerComponent } from 'app/pages/storage2/components/manager/manager.component';
 import { VdevComponent } from 'app/pages/storage2/components/manager/vdev/vdev.component';
@@ -85,7 +86,7 @@ import { ZfsHealthCardComponent } from './components/zfs-health-card/zfs-health-
     MatProgressBarModule,
     NgxSkeletonLoaderModule,
     LayoutModule,
-    MatDialogModule,
+    EntityModule,
   ],
   declarations: [
     PoolsDashboardComponent,
