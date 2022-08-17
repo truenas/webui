@@ -31,7 +31,7 @@ export class FailoverSettingsComponent implements OnInit {
   subscriptions: Subscription[] = [];
 
   submitButtonText$ = this.form.select((values) => {
-    if (!values.master && !values.disabled) {
+    if (!values.master) {
       return this.translate.instant('Save And Failover');
     }
     return this.translate.instant('Save');
@@ -55,7 +55,7 @@ export class FailoverSettingsComponent implements OnInit {
 
   onSubmit(): void {
     this.isLoading = true;
-    const values = this.form.value;
+    const values = this.form.getRawValue();
 
     this.ws.call('failover.update', [values])
       .pipe(
@@ -201,7 +201,7 @@ export class FailoverSettingsComponent implements OnInit {
   private setFormRelations(): void {
     this.subscriptions.push(
       this.form.controls.master.disabledWhile(
-        this.form.select((values) => values.disabled),
+        this.form.select((values) => !values.disabled),
       ),
     );
   }
