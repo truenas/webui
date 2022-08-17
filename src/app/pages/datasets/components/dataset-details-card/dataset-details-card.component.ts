@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, Input,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, Input,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -32,6 +32,7 @@ export class DatasetDetailsCardComponent {
     private translate: TranslateService,
     private mdDialog: MatDialog,
     private datasetStore: DatasetTreeStore,
+    private cdr: ChangeDetectorRef,
   ) { }
 
   get datasetCompression(): string {
