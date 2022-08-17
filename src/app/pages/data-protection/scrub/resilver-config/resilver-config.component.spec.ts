@@ -11,6 +11,7 @@ import { FormErrorHandlerService } from 'app/pages/common/ix-forms/services/form
 import { IxFormHarness } from 'app/pages/common/ix-forms/testing/ix-form.harness';
 import { DialogService, LanguageService, WebSocketService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { LocaleService } from 'app/services/locale.service';
 import { ResilverConfigComponent } from './resilver-config.component';
 
 describe('ResilverConfigComponent', () => {
@@ -38,6 +39,7 @@ describe('ResilverConfigComponent', () => {
       mockProvider(DialogService),
       mockProvider(Router),
       mockProvider(LanguageService),
+      mockProvider(LocaleService),
     ],
   });
 
