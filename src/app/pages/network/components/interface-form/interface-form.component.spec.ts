@@ -2,6 +2,7 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
+import { MatDialog } from '@angular/material/dialog';
 import { createComponentFactory, Spectator, mockProvider } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { MockWebsocketService } from 'app/core/testing/classes/mock-websocket.service';
@@ -19,6 +20,9 @@ import { IxListHarness } from 'app/modules/ix-forms/components/ix-list/ix-list.h
 import { IxSelectHarness } from 'app/modules/ix-forms/components/ix-select/ix-select.harness';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
+import {
+  DefaultGatewayDialogComponent,
+} from 'app/pages/network/components/default-gateway-dialog/default-gateway-dialog.component';
 import { InterfaceFormComponent } from 'app/pages/network/components/interface-form/interface-form.component';
 import { NetworkService, WebSocketService } from 'app/services';
 import { CoreService } from 'app/services/core-service/core.service';
@@ -51,6 +55,9 @@ describe('InterfaceFormComponent', () => {
       ReactiveFormsModule,
       IxFormsModule,
     ],
+    declarations: [
+      DefaultGatewayDialogComponent,
+    ],
     providers: [
       mockWebsocket([
         mockCall('interface.xmit_hash_policy_choices', {
@@ -63,6 +70,7 @@ describe('InterfaceFormComponent', () => {
         }),
         mockCall('interface.create'),
         mockCall('interface.update'),
+        mockCall('interface.default_route_will_be_removed', true),
         mockCall('failover.licensed', false),
         mockCall('failover.node', 'A'),
       ]),
@@ -111,6 +119,8 @@ describe('InterfaceFormComponent', () => {
 
   describe('creation', () => {
     it('saves a new bridge interface when form is submitted for bridge interface', async () => {
+      jest.spyOn(spectator.inject(MatDialog), 'open');
+
       await form.fillForm({
         Type: 'Bridge',
       });
@@ -126,7 +136,7 @@ describe('InterfaceFormComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(ws.call).toHaveBeenLastCalledWith('interface.create', [{
+      expect(ws.call).toHaveBeenCalledWith('interface.create', [{
         type: NetworkInterfaceType.Bridge,
         name: 'br0',
         description: 'Bridge interface',
@@ -146,9 +156,18 @@ describe('InterfaceFormComponent', () => {
         data: { commit: false, checkin: false },
         sender: expect.any(InterfaceFormComponent),
       });
+      expect(ws.call).toHaveBeenCalledWith('interface.default_route_will_be_removed');
+
+      expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(
+        DefaultGatewayDialogComponent,
+        { width: '600px' },
+      );
+      jest.spyOn(spectator.inject(MatDialog), 'closeAll');
     });
 
     it('saves a new link aggregation interface when form is submitted for LAG', async () => {
+      jest.spyOn(spectator.inject(MatDialog), 'open');
+
       await form.fillForm({
         Type: 'Link Aggregation',
       });
@@ -168,7 +187,7 @@ describe('InterfaceFormComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(ws.call).toHaveBeenLastCalledWith('interface.create', [{
+      expect(ws.call).toHaveBeenCalledWith('interface.create', [{
         type: NetworkInterfaceType.LinkAggregation,
         name: 'bond0',
         description: 'LAG',
@@ -181,9 +200,23 @@ describe('InterfaceFormComponent', () => {
         mtu: 1600,
         xmit_hash_policy: XmitHashPolicy.Layer2Plus3,
       }]);
+      expect(spectator.inject(CoreService).emit).toHaveBeenCalledWith({
+        name: 'NetworkInterfacesChanged',
+        data: { commit: false, checkin: false },
+        sender: expect.any(InterfaceFormComponent),
+      });
+      expect(spectator.inject(IxSlideInService).close).toHaveBeenCalled();
+      expect(ws.call).toHaveBeenCalledWith('interface.default_route_will_be_removed');
+
+      expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(
+        DefaultGatewayDialogComponent,
+        { width: '600px' },
+      );
     });
 
     it('saves a new VLAN interface when form is submitted for a VLAN', async () => {
+      jest.spyOn(spectator.inject(MatDialog), 'open');
+
       await form.fillForm({
         Type: 'VLAN',
       });
@@ -199,7 +232,7 @@ describe('InterfaceFormComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(ws.call).toHaveBeenLastCalledWith('interface.create', [{
+      expect(ws.call).toHaveBeenCalledWith('interface.create', [{
         type: NetworkInterfaceType.Vlan,
         name: 'vlan1',
         description: 'New VLAN',
@@ -211,6 +244,12 @@ describe('InterfaceFormComponent', () => {
         mtu: 1500,
         aliases: [],
       }]);
+      expect(ws.call).toHaveBeenCalledWith('interface.default_route_will_be_removed');
+
+      expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(
+        DefaultGatewayDialogComponent,
+        { width: '600px' },
+      );
     });
   });
 
@@ -274,6 +313,8 @@ describe('InterfaceFormComponent', () => {
     });
 
     it('shows and saves additional fields in Aliases when failover is licensed', async () => {
+      jest.spyOn(spectator.inject(MatDialog), 'open');
+
       await form.fillForm({
         Type: 'Bridge',
         Name: 'br0',
@@ -284,15 +325,23 @@ describe('InterfaceFormComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(ws.call).toHaveBeenLastCalledWith('interface.create', [
+      expect(ws.call).toHaveBeenCalledWith('interface.create', [
         expect.objectContaining({
           failover_critical: true,
           failover_group: 1,
         }),
       ]);
+      expect(ws.call).toHaveBeenCalledWith('interface.default_route_will_be_removed');
+
+      expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(
+        DefaultGatewayDialogComponent,
+        { width: '600px' },
+      );
     });
 
     it('shows Failover Critical and Failover Group when failover is enabled', async () => {
+      jest.spyOn(spectator.inject(MatDialog), 'open');
+
       await aliasesList.pressAddButton();
       await form.fillForm({
         Type: 'Bridge',
@@ -305,7 +354,7 @@ describe('InterfaceFormComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(ws.call).toHaveBeenLastCalledWith('interface.create', [
+      expect(ws.call).toHaveBeenCalledWith('interface.create', [
         expect.objectContaining({
           aliases: [{
             address: '10.2.3.4',
@@ -316,6 +365,12 @@ describe('InterfaceFormComponent', () => {
           failover_virtual_aliases: [{ address: '192.168.1.3' }],
         }),
       ]);
+      expect(ws.call).toHaveBeenCalledWith('interface.default_route_will_be_removed');
+
+      expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(
+        DefaultGatewayDialogComponent,
+        { width: '600px' },
+      );
     });
   });
 });
