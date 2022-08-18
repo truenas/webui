@@ -4,19 +4,22 @@ import { MatDialogRef } from '@angular/material/dialog/dialog-ref';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Subscription } from 'rxjs';
 import { filter } from 'rxjs/operators';
+import { chartsTrain, ixChartApp, officialCatalog } from 'app/constants/catalog.constants';
 import { JobState } from 'app/enums/job-state.enum';
 import helptext from 'app/helptext/apps/apps';
-import { Catalog, CatalogQueryParams } from 'app/interfaces/catalog.interface';
+import { Catalog, CatalogApp, CatalogQueryParams } from 'app/interfaces/catalog.interface';
 import { CoreEvent } from 'app/interfaces/events';
 import { ApplicationToolbarControl } from 'app/pages/applications/application-toolbar-control.enum';
+import { ApplicationsService } from 'app/pages/applications/applications.service';
 import { CatalogAddFormComponent } from 'app/pages/applications/forms/catalog-add-form/catalog-add-form.component';
 import { CatalogEditFormComponent } from 'app/pages/applications/forms/catalog-edit-form/catalog-edit-form.component';
+import { ChartWizardComponent } from 'app/pages/applications/forms/chart-wizard.component';
 import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
 import {
   EntityTableComponent,
 } from 'app/pages/common/entity/entity-table/entity-table.component';
 import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
-import { DialogService } from 'app/services';
+import { DialogService, ModalService } from 'app/services';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -70,9 +73,11 @@ export class ManageCatalogsComponent implements EntityTableConfig<Catalog>, OnIn
   constructor(
     private mdDialog: MatDialog,
     private dialogService: DialogService,
-    private loader: AppLoaderService,
     private ws: WebSocketService,
     private slideInService: IxSlideInService,
+    private appLoaderService: AppLoaderService,
+    private appService: ApplicationsService,
+    private modalService: ModalService,
   ) {}
 
   ngOnInit(): void {
@@ -163,6 +168,25 @@ export class ManageCatalogsComponent implements EntityTableConfig<Catalog>, OnIn
     );
   }
 
+  doInstall(name: string, catalog = officialCatalog, train = chartsTrain): void {
+    this.appLoaderService.open();
+    this.appService.getCatalogItem(name, catalog, train).pipe(untilDestroyed(this)).subscribe((catalogApp) => {
+      this.appLoaderService.close();
+
+      if (catalogApp) {
+        const catalogAppInfo = { ...catalogApp } as CatalogApp;
+        catalogAppInfo.catalog = {
+          id: catalog,
+          train,
+        };
+        catalogAppInfo.schema = catalogApp.versions[catalogApp.latest_version].schema;
+
+        const chartWizard = this.modalService.openInSlideIn(ChartWizardComponent);
+        chartWizard.setCatalogApp(catalogAppInfo);
+      }
+    });
+  }
+
   edit(catalog: Catalog): void {
     const modal = this.slideInService.open(CatalogEditFormComponent);
     modal.setCatalogForEdit(catalog);
@@ -187,6 +211,8 @@ export class ManageCatalogsComponent implements EntityTableConfig<Catalog>, OnIn
       this.syncAll();
     } else if (evt.data.event_control === ApplicationToolbarControl.AddCatalog) {
       this.doAdd();
+    } else if (evt.data.event_control === ApplicationToolbarControl.Launch) {
+      this.doInstall(ixChartApp);
     }
   }
 

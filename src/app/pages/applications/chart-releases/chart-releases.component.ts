@@ -9,12 +9,15 @@ import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
 import { filter } from 'rxjs/operators';
-import { appImagePlaceholder, ixChartApp, officialCatalog } from 'app/constants/catalog.constants';
+import {
+  appImagePlaceholder, chartsTrain, ixChartApp, officialCatalog,
+} from 'app/constants/catalog.constants';
 import { CommonUtils } from 'app/core/classes/common-utils';
 import { CoreService } from 'app/core/services/core-service/core.service';
 import { ChartReleaseStatus } from 'app/enums/chart-release-status.enum';
 import helptext from 'app/helptext/apps/apps';
 import { ApplicationUserEventName, UpgradeSummary } from 'app/interfaces/application.interface';
+import { CatalogApp } from 'app/interfaces/catalog.interface';
 import { ChartRelease } from 'app/interfaces/chart-release.interface';
 import { CoreBulkResponse } from 'app/interfaces/core-bulk.interface';
 import { CoreEvent } from 'app/interfaces/events';
@@ -22,6 +25,7 @@ import { Job } from 'app/interfaces/job.interface';
 import { ApplicationTab } from 'app/pages/applications/application-tab.enum';
 import { ApplicationToolbarControl } from 'app/pages/applications/application-toolbar-control.enum';
 import { ChartUpgradeDialogComponent } from 'app/pages/applications/dialogs/chart-upgrade/chart-upgrade-dialog.component';
+import { ChartWizardComponent } from 'app/pages/applications/forms/chart-wizard.component';
 import { ChartUpgradeDialogConfig } from 'app/pages/applications/interfaces/chart-upgrade-dialog-config.interface';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
@@ -162,6 +166,8 @@ export class ChartReleasesComponent implements OnInit, OnDestroy {
       this.filerChartItems();
     } else if (evt.data.event_control === ApplicationToolbarControl.Bulk) {
       this.onBulkAction(evt.data.bulk.value);
+    } else if (evt.data.event_control === ApplicationToolbarControl.Launch) {
+      this.doInstall(ixChartApp);
     }
   }
 
@@ -289,12 +295,12 @@ export class ChartReleasesComponent implements OnInit, OnDestroy {
     });
   }
 
-  portalName(name: string = 'web_portal'): string {
+  portalName(name = 'web_portal'): string {
     const humanName = new EntityUtils().snakeToHuman(name);
     return humanName;
   }
 
-  portalLink(chart: ChartRelease, name: string = 'web_portal'): void {
+  portalLink(chart: ChartRelease, name = 'web_portal'): void {
     window.open(chart.portals[name][0]);
   }
 
@@ -433,6 +439,25 @@ export class ChartReleasesComponent implements OnInit, OnDestroy {
         this.translate.instant(helptext.bulkActions.no_selected),
       );
     }
+  }
+
+  doInstall(name: string, catalog = officialCatalog, train = chartsTrain): void {
+    this.appLoaderService.open();
+    this.appService.getCatalogItem(name, catalog, train).pipe(untilDestroyed(this)).subscribe((catalogApp) => {
+      this.appLoaderService.close();
+
+      if (catalogApp) {
+        const catalogAppInfo = { ...catalogApp } as CatalogApp;
+        catalogAppInfo.catalog = {
+          id: catalog,
+          train,
+        };
+        catalogAppInfo.schema = catalogApp.versions[catalogApp.latest_version].schema;
+
+        const chartWizard = this.modalService.openInSlideIn(ChartWizardComponent);
+        chartWizard.setCatalogApp(catalogAppInfo);
+      }
+    });
   }
 
   delete(name: string): void {

@@ -2,18 +2,24 @@ import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { latestVersion } from 'app/constants/catalog.constants';
+import {
+  chartsTrain, ixChartApp, latestVersion, officialCatalog,
+} from 'app/constants/catalog.constants';
 import helptext from 'app/helptext/apps/apps';
+import { CatalogApp } from 'app/interfaces/catalog.interface';
 import { ContainerImage, PullContainerImageParams } from 'app/interfaces/container-image.interface';
 import { CoreEvent } from 'app/interfaces/events';
 import { ApplicationToolbarControl } from 'app/pages/applications/application-toolbar-control.enum';
+import { ApplicationsService } from 'app/pages/applications/applications.service';
+import { ChartWizardComponent } from 'app/pages/applications/forms/chart-wizard.component';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import { FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
 import { EntityTableComponent } from 'app/pages/common/entity/entity-table/entity-table.component';
 import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
-import { DialogService } from 'app/services';
+import { DialogService, ModalService } from 'app/services';
+import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { PullImageFormComponent } from '../forms/pull-image-form/pull-image-form.component';
 
@@ -53,6 +59,9 @@ export class DockerImagesComponent implements EntityTableConfig {
     private slideInService: IxSlideInService,
     private matDialog: MatDialog,
     private translate: TranslateService,
+    private appLoaderService: AppLoaderService,
+    private appService: ApplicationsService,
+    private modalService: ModalService,
   ) {}
 
   chooseTag: DialogFormConfiguration = {
@@ -119,12 +128,33 @@ export class DockerImagesComponent implements EntityTableConfig {
     this.slideInService.open(PullImageFormComponent);
   }
 
+  doInstall(name: string, catalog = officialCatalog, train = chartsTrain): void {
+    this.appLoaderService.open();
+    this.appService.getCatalogItem(name, catalog, train).pipe(untilDestroyed(this)).subscribe((catalogApp) => {
+      this.appLoaderService.close();
+
+      if (catalogApp) {
+        const catalogAppInfo = { ...catalogApp } as CatalogApp;
+        catalogAppInfo.catalog = {
+          id: catalog,
+          train,
+        };
+        catalogAppInfo.schema = catalogApp.versions[catalogApp.latest_version].schema;
+
+        const chartWizard = this.modalService.openInSlideIn(ChartWizardComponent);
+        chartWizard.setCatalogApp(catalogAppInfo);
+      }
+    });
+  }
+
   onToolbarAction(evt: CoreEvent): void {
     if (evt.data.event_control === ApplicationToolbarControl.Filter) {
       this.filterString = evt.data.filter;
       this.entityList.filter(this.filterString);
     } else if (evt.data.event_control === ApplicationToolbarControl.PullImage) {
       this.doAdd();
+    } else if (evt.data.event_control === ApplicationToolbarControl.Launch) {
+      this.doInstall(ixChartApp);
     }
   }
 
