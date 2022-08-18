@@ -27,6 +27,7 @@ export class SnapshotListComponent implements EntityTableConfig<PeriodicSnapshot
   routeEdit: string[] = ['tasks', 'snapshot', 'edit'];
   entityList: EntityTableComponent;
   asyncView = true;
+  filterValue = '';
 
   columns = [
     { name: this.translate.instant('Pool/Dataset'), prop: 'dataset', always_display: true },
@@ -53,8 +54,6 @@ export class SnapshotListComponent implements EntityTableConfig<PeriodicSnapshot
     },
   };
 
-  private dataset: string;
-
   constructor(
     private dialogService: DialogService,
     private ws: WebSocketService,
@@ -63,7 +62,7 @@ export class SnapshotListComponent implements EntityTableConfig<PeriodicSnapshot
     private slideInService: IxSlideInService,
     private route: ActivatedRoute,
   ) {
-    this.dataset = this.route.snapshot.paramMap.get('dataset') || '';
+    this.filterValue = this.route.snapshot.paramMap.get('dataset') || '';
   }
 
   afterInit(entityList: EntityTableComponent): void {
@@ -74,11 +73,7 @@ export class SnapshotListComponent implements EntityTableConfig<PeriodicSnapshot
   }
 
   resourceTransformIncomingRestData(tasks: PeriodicSnapshotTask[]): PeriodicSnapshotTaskUi[] {
-    const tasksToShow = tasks.filter((row) => {
-      return row.dataset === this.dataset
-        || row.dataset.includes(`${this.dataset}/`);
-    });
-    return tasksToShow.map((task) => {
+    return tasks.map((task) => {
       const transformedTask = {
         ...task,
         keepfor: `${task.lifetime_value} ${task.lifetime_unit}(S)`,
