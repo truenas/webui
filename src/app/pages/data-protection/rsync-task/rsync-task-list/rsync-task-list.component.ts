@@ -67,7 +67,7 @@ export class RsyncTaskListComponent implements EntityTableConfig {
     },
   };
 
-  private dataset: string = '';
+  private dataset: string;
 
   constructor(
     protected ws: WebSocketService,
@@ -145,12 +145,12 @@ export class RsyncTaskListComponent implements EntityTableConfig {
     }];
   }
 
-  resourceTransformIncomingRestData(data: RsyncTaskUi[]): RsyncTaskUi[] {
-    const _data = data.filter((task) =>
-      task.path.replace('/mnt/', '') === this.dataset ||
-      task.path.includes(`${this.dataset}/`)
-    );
-    return _data.map((task) => {
+  resourceTransformIncomingRestData(tasks: RsyncTaskUi[]): RsyncTaskUi[] {
+    const tasksToShow = tasks.filter((task) => {
+      return task.path.replace('/mnt/', '') === this.dataset
+        || task.path.includes(`${this.dataset}/`);
+    });
+    return tasksToShow.map((task) => {
       task.cron_schedule = `${task.schedule.minute} ${task.schedule.hour} ${task.schedule.dom} ${task.schedule.month} ${task.schedule.dow}`;
       task.next_run = this.taskService.getTaskNextRun(task.cron_schedule);
       task.frequency = this.taskService.getTaskCronDescription(task.cron_schedule);

@@ -28,6 +28,7 @@ import { WebSocketService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LayoutService } from 'app/services/layout.service';
 import { AppState } from 'app/store';
+import { dashboardStateLoaded } from 'app/store/preferences/preferences.actions';
 import { waitForDashboardState } from 'app/store/preferences/preferences.selectors';
 import { waitForSystemFeatures, waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 
@@ -458,6 +459,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     const modal = this.slideInService.open(DashboardFormComponent);
     modal.setupForm(this.dashState);
     modal.onSubmit$.pipe(take(1), untilDestroyed(this)).subscribe((dashState) => {
+      this.store$.dispatch(dashboardStateLoaded({ dashboardState: dashState }));
       this.setDashState(dashState);
     });
   }
