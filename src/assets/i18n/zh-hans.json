@@ -225,6 +225,8 @@
   "Quotas set for {n, plural, one {# group} other {# groups}}": "",
   "Quotas set for {n, plural, one {# user} other {# users}}": "",
   "Raw Filesize": "",
+  "Register": "",
+  "Register Default Gateway": "",
   "Remove Invalid Quotas": "",
   "Remove device": "",
   "Remove device {name}?": "",

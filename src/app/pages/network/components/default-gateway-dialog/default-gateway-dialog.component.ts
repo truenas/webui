@@ -1,16 +1,16 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { FormBuilder, Validators } from '@angular/forms';
+import { MatDialogRef } from '@angular/material/dialog';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { EMPTY } from 'rxjs';
 import { catchError } from 'rxjs/operators';
-import { MatDialogRef } from '@angular/material/dialog';
-import { ipv4Validator } from 'app/modules/entity/entity-form/validators/ip-validation';
-import { DialogService, WebSocketService } from 'app/services';
-import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
-import { EntityUtils } from 'app/modules/entity/utils';
 import helptext from 'app/helptext/network/configuration/configuration';
 import helptextIpmi from 'app/helptext/network/ipmi/ipmi';
+import { ipv4Validator } from 'app/modules/entity/entity-form/validators/ip-validation';
+import { EntityUtils } from 'app/modules/entity/utils';
+import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
+import { DialogService, WebSocketService } from 'app/services';
 
 @UntilDestroy()
 @Component({
@@ -19,7 +19,6 @@ import helptextIpmi from 'app/helptext/network/ipmi/ipmi';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DefaultGatewayDialogComponent {
-
   form = this.fb.group({
     defaultGateway: [
       null as string,

@@ -2,13 +2,13 @@ import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
 } from '@angular/core';
 import { Validators } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { range } from 'lodash';
 import { forkJoin, of } from 'rxjs';
 import { filter } from 'rxjs/operators';
-import { MatDialog } from '@angular/material/dialog';
 import {
   CreateNetworkInterfaceType,
   LacpduRate,
@@ -30,6 +30,9 @@ import { rangeValidator } from 'app/modules/entity/entity-form/validators/range-
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import {
+  DefaultGatewayDialogComponent,
+} from 'app/pages/network/components/default-gateway-dialog/default-gateway-dialog.component';
+import {
   InterfaceNameValidatorService,
 } from 'app/pages/network/components/interface-form/interface-name-validator.service';
 import {
@@ -40,9 +43,6 @@ import {
 import { NetworkService, WebSocketService } from 'app/services';
 import { CoreService } from 'app/services/core-service/core.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import {
-  DefaultGatewayDialogComponent,
-} from 'app/pages/network/components/default-gateway-dialog/default-gateway-dialog.component';
 
 @UntilDestroy()
 @Component({
@@ -226,7 +226,7 @@ export class InterfaceFormComponent implements OnInit {
 
         this.ws.call('interface.default_route_will_be_removed').pipe(
           filter(Boolean),
-          untilDestroyed(this)
+          untilDestroyed(this),
         ).subscribe(() => {
           this.matDialog.open(DefaultGatewayDialogComponent, {
             width: '600px',

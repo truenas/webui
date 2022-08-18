@@ -2,9 +2,9 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
+import { MatDialog } from '@angular/material/dialog';
 import { createComponentFactory, Spectator, mockProvider } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
-import { MatDialog } from '@angular/material/dialog';
 import { MockWebsocketService } from 'app/core/testing/classes/mock-websocket.service';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import {
@@ -20,13 +20,13 @@ import { IxListHarness } from 'app/modules/ix-forms/components/ix-list/ix-list.h
 import { IxSelectHarness } from 'app/modules/ix-forms/components/ix-select/ix-select.harness';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
+import {
+  DefaultGatewayDialogComponent,
+} from 'app/pages/network/components/default-gateway-dialog/default-gateway-dialog.component';
 import { InterfaceFormComponent } from 'app/pages/network/components/interface-form/interface-form.component';
 import { NetworkService, WebSocketService } from 'app/services';
 import { CoreService } from 'app/services/core-service/core.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import {
-  DefaultGatewayDialogComponent,
-} from 'app/pages/network/components/default-gateway-dialog/default-gateway-dialog.component';
 
 describe('InterfaceFormComponent', () => {
   let spectator: Spectator<InterfaceFormComponent>;
@@ -160,7 +160,7 @@ describe('InterfaceFormComponent', () => {
 
       expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(
         DefaultGatewayDialogComponent,
-        { width: '600px', },
+        { width: '600px' },
       );
       jest.spyOn(spectator.inject(MatDialog), 'closeAll');
     });
@@ -210,7 +210,7 @@ describe('InterfaceFormComponent', () => {
 
       expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(
         DefaultGatewayDialogComponent,
-        { width: '600px', },
+        { width: '600px' },
       );
     });
 
@@ -248,7 +248,7 @@ describe('InterfaceFormComponent', () => {
 
       expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(
         DefaultGatewayDialogComponent,
-        { width: '600px', },
+        { width: '600px' },
       );
     });
   });
@@ -335,7 +335,7 @@ describe('InterfaceFormComponent', () => {
 
       expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(
         DefaultGatewayDialogComponent,
-        { width: '600px', }
+        { width: '600px' },
       );
     });
 
@@ -369,7 +369,7 @@ describe('InterfaceFormComponent', () => {
 
       expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(
         DefaultGatewayDialogComponent,
-        { width: '600px', }
+        { width: '600px' },
       );
     });
   });
