@@ -239,7 +239,8 @@ def select_the_path_folder_and_click_save(driver, path):
     assert wait_on_element(driver, 5, '//button[@id="save_button"]', 'clickable')
     driver.find_element_by_xpath('//button[@id="save_button"]').click()
     assert wait_on_element_disappear(driver, 30, '//h1[contains(.,"Please wait")]')
-    time.sleep(1)
+    # give time to the system to handle changes
+    time.sleep(2)
 
 
 @then('open a new tab navigate to <driver_url>')
@@ -344,6 +345,8 @@ def click_save_the_google_drive_tasks_should_save_without_error(driver):
     assert wait_on_element_disappear(driver, 30, '//h6[contains(.,"Please wait")]')
     assert wait_on_element(driver, 7, '//div[contains(.,"Cloud Sync Tasks")]')
     assert wait_on_element(driver, 10, '//div[contains(text(),"My Google Drive task")]')
+    # give time to the system to handle changes
+    time.sleep(2)
 
 
 @then('verify all files are moved from the Google Drive test folder to the dataset')

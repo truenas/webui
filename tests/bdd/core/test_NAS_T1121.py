@@ -335,6 +335,8 @@ def under_transfer_mode_select_move_click_save(driver):
     assert wait_on_element(driver, 5, '//button[@id="save_button"]', 'clickable')
     driver.find_element_by_xpath('//button[@id="save_button"]').click()
     assert wait_on_element_disappear(driver, 30, '//h6[contains(.,"Please wait")]')
+    # give time to the system to handle changes
+    time.sleep(2)
 
 
 @then('on the bucket add a file in the folder')
@@ -389,6 +391,8 @@ def under_transfer_mode_select_sync_then_click_save(driver):
     assert wait_on_element(driver, 5, '//button[@id="save_button"]', 'clickable')
     driver.find_element_by_xpath('//button[@id="save_button"]').click()
     assert wait_on_element_disappear(driver, 30, '//h6[contains(.,"Please wait")]')
+    # give time to the system to handle changes
+    time.sleep(2)
 
 
 @then('on the bucket tab, upload a file')
@@ -538,6 +542,8 @@ def click_save_the_cloud_sync_tasks_should_save_without_error(driver):
     assert wait_on_element(driver, 5, '//button[@id="save_button"]', 'clickable')
     driver.find_element_by_xpath('//button[@id="save_button"]').click()
     assert wait_on_element_disappear(driver, 30, '//h1[contains(.,"Please wait")]')
+    # give time to the system to handle changes
+    time.sleep(2)
 
 
 @then('create a file in the directory of the dataset')

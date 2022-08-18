@@ -302,6 +302,8 @@ def under_bucket_select_the_bucket_and_click_save(driver, bucket):
     assert wait_on_element(driver, 5, '//button[@id="save_button"]', 'clickable')
     driver.find_element_by_xpath('//button[@id="save_button"]').click()
     assert wait_on_element_disappear(driver, 30, '//h1[contains(.,"Please wait")]')
+    # give time to the system to handle changes
+    time.sleep(2)
 
 
 @then('on Backblaze B2 verify all files are in the bucket')
@@ -363,6 +365,8 @@ def click_save_the_backblaze_b2_tasks_should_save_without_error(driver):
     assert wait_on_element_disappear(driver, 30, '//h6[contains(.,"Please wait")]')
     assert wait_on_element(driver, 7, '//div[contains(.,"Cloud Sync Tasks")]')
     assert wait_on_element(driver, 10, '//div[contains(text(),"My Backblaze B2 task")]')
+    # give time to the system to handle changes
+    time.sleep(2)
 
 
 @then('verify all files are moved from the Backblaze B2 bucket to the dataset')
