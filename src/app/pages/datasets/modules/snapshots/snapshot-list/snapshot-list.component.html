@@ -1,6 +1,6 @@
 <ng-template #pageHeader>
   <ix-page-title-header>
-    <ix-search-input [disabled]="isLoading$ | async" (search)="onSearch($event)"></ix-search-input>
+    <ix-search-input [disabled]="isLoading$ | async" [value]="dataset" (search)="onSearch($event)"></ix-search-input>
     <mat-slide-toggle
       (click)="toggleExtraColumns($event)"
       [checked]="showExtraColumns"
