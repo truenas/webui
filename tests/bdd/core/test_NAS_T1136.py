@@ -215,7 +215,7 @@ def on_the_nas_cloud_sync_task_tab_click_edit(driver):
     driver.find_element_by_xpath('//button[@ix-auto="button___edit"]').click()
     assert wait_on_element(driver, 5, '//h4[contains(.,"Transfer")]')
     assert wait_on_element(driver, 5, '//h4[contains(.,"Advanced Options")]')
-    time.sleep(0.5)
+    time.sleep(1)
 
 
 @then('select PUSH as the Direction then under Transfer Mode, select COPY')

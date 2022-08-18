@@ -319,7 +319,7 @@ def on_the_cloud_sync_task_and_click_edit(driver):
     driver.find_element_by_xpath('//button[@ix-auto="button___edit"]').click()
     assert wait_on_element(driver, 5, '//h4[contains(.,"Transfer")]')
     assert wait_on_element(driver, 5, '//h4[contains(.,"Advanced Options")]')
-    time.sleep(0.5)
+    time.sleep(1)
 
 
 @then('under Transfer Mode, select MOVE, click Save')
@@ -402,7 +402,7 @@ def on_the_bucket_tab_upload_a_file(driver):
     driver.refresh()
     assert wait_on_element(driver, 5, f'//h1[text()="{my_bucket}"]')
     assert wait_on_element(driver, 5, '//span[text()="cloud_test.txt"]', 'clickable')
-    time.sleep(0.5)
+    time.sleep(1)
 
 
 @then('verify the file is sync from the S3 bucket to the dataset')

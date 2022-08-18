@@ -211,6 +211,8 @@ def on_the_nas_cloud_sync_task_tab_click_edit(driver):
     assert wait_on_element(driver, 5, '//button[@ix-auto="button___edit"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button___edit"]').click()
     assert wait_on_element(driver, 7, '//h4[contains(.,"Transfer")]')
+    assert wait_on_element(driver, 5, '//h4[contains(.,"Advanced Options")]')
+    time.sleep(1)
 
 
 @then('select PUSH as the Direction then under Transfer Mode, select COPY')
@@ -260,6 +262,7 @@ def input_user_name_and_password_click_sign_in(driver, user_name, password):
     assert wait_on_element(driver, 5, '//button[@id="login-submit-password"]', 'clickable')
     driver.find_element_by_xpath('//button[@id="login-submit-password"]').click()
     assert wait_on_element(driver, 15, '//h1[text()="All Files"]')
+    time.sleep(1)
 
 
 @then(parsers.parse('click on {folder1} then click on the test folder'))
@@ -268,6 +271,7 @@ def click_on_folder1_then_click_on_the_test_folder(driver, folder1):
     assert wait_on_element(driver, 5, f'//a[text()="{folder1}"]', 'clickable')
     driver.find_element_by_xpath(f'//a[text()="{folder1}"]').click()
     assert wait_on_element(driver, 5, f'//h1[text()="{folder1}"]')
+    time.sleep(1)
     assert wait_on_element(driver, 5, '//a[text()="test"]', 'clickable')
     driver.find_element_by_xpath('//a[text()="test"]').click()
     time.sleep(1)
