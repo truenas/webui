@@ -283,7 +283,9 @@ export class AppSchemaService {
         altDefault = false;
       }
 
-      const newFormControl = new CustomUntypedFormControl(schema.default || altDefault, [
+      const value = schema.default !== undefined ? schema.default : altDefault;
+
+      const newFormControl = new CustomUntypedFormControl(value, [
         schema.required ? Validators.required : Validators.nullValidator,
         schema.max ? Validators.max(schema.max) : Validators.nullValidator,
         schema.min ? Validators.min(schema.min) : Validators.nullValidator,
