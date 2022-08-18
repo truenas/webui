@@ -15,7 +15,6 @@ export type IscsiPortalUpdate = Omit<IscsiPortal, 'id' | 'tag'>;
 
 export interface IscsiInterface {
   ip: string;
-  port?: string;
 }
 
 export interface IscsiInitiatorGroup {

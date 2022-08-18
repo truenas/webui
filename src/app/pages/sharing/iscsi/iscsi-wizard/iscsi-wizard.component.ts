@@ -12,6 +12,7 @@ import globalHelptext from 'app/helptext/global-helptext';
 import { helptextSharingIscsi } from 'app/helptext/sharing/iscsi/iscsi';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { WizardConfiguration } from 'app/interfaces/entity-wizard.interface';
+import { IscsiInterface } from 'app/interfaces/iscsi.interface';
 import { FormComboboxConfig, FormListConfig, FormSelectConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
 import { Wizard } from 'app/modules/entity/entity-form/models/wizard.interface';
 import { forbiddenValues } from 'app/modules/entity/entity-form/validators/forbidden-values-validation';
@@ -381,15 +382,6 @@ export class IscsiWizardComponent implements WizardConfiguration {
               required: true,
               validation: [Validators.required],
             },
-            {
-              type: 'input',
-              name: 'port',
-              placeholder: helptextSharingIscsi.portal_form_placeholder_port,
-              tooltip: helptextSharingIscsi.portal_form_tooltip_port,
-              value: '3260',
-              class: 'inline',
-              width: '30%',
-            },
           ],
           listFields: [],
           isHidden: true,
@@ -602,7 +594,7 @@ export class IscsiWizardComponent implements WizardConfiguration {
     this.iscsiService.listPortals().pipe(untilDestroyed(this)).subscribe((portals) => {
       const field = _.find(this.wizardConfig[1].fieldConfig, { name: 'portal' }) as FormSelectConfig;
       for (const portal of portals) {
-        const ips = portal.listen.map((ip) => ip.ip + ':' + ip.port);
+        const ips = portal.listen.map((ip) => ip.ip);
         field.options.push({ label: portal.tag + ' (' + ips + ')', value: portal.id });
       }
     });
@@ -690,7 +682,8 @@ export class IscsiWizardComponent implements WizardConfiguration {
       'New Portal': {
         'Discovery Auth Method': this.summaryObj.discovery_authmethod,
         'Discovery Auth Group': this.summaryObj.discovery_authgroup === 'NEW' ? `${this.summaryObj.tag} (New Create)` : this.summaryObj.discovery_authgroup,
-        Listen: this.summaryObj.listen === null ? null : this.summaryObj.listen.map((listen: any) => listen.ip + ':' + listen.port),
+        Listen: this.summaryObj.listen === null ? null
+          : this.summaryObj.listen.map((listen: IscsiInterface) => listen.ip),
       },
       'Authorized Access': this.summaryObj.discovery_authgroup,
       'New Authorized Access': {
@@ -829,7 +822,7 @@ export class IscsiWizardComponent implements WizardConfiguration {
           await this.doCreate(value, item).then(
             (res) => {
               if (item === 'zvol') {
-                value['disk'] = 'zvol/' + res.id;
+                value['disk'] = 'zvol/' + res.id.replace(' ', '+');
               } else if (item === 'auth') {
                 value['discovery_authgroup'] = res.tag;
               } else {
