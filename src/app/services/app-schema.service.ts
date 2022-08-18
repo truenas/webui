@@ -427,9 +427,10 @@ export class AppSchemaService {
         operatorValue: item[2],
       }));
       relations.forEach((relation) => {
-        const control = formGroup.controls[relation.fieldName];
+        let control = formGroup.controls[relation.fieldName];
         if (!control) {
           formGroup.addControl(relation.fieldName, new CustomUntypedFormControl());
+          control = formGroup.controls[relation.fieldName];
           const formField = (control as CustomUntypedFormField);
           if (!formField.hidden$) {
             formField.hidden$ = new BehaviorSubject<boolean>(false);
