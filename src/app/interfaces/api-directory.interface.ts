@@ -15,7 +15,7 @@ import {
 import { ActiveDirectoryConfig, LeaveActiveDirectory } from 'app/interfaces/active-directory-config.interface';
 import { ActiveDirectoryUpdate } from 'app/interfaces/active-directory.interface';
 import { AdvancedConfig, AdvancedConfigUpdate } from 'app/interfaces/advanced-config.interface';
-import { AlertService, AlertServiceCreate } from 'app/interfaces/alert-service.interface';
+import { AlertService, AlertServiceEdit } from 'app/interfaces/alert-service.interface';
 import {
   Alert, AlertCategory, AlertClasses, AlertClassesUpdate,
 } from 'app/interfaces/alert.interface';
@@ -212,7 +212,7 @@ import {
 } from 'app/interfaces/ssh-connection-setup.interface';
 import { StaticRoute, UpdateStaticRoute } from 'app/interfaces/static-route.interface';
 import {
-  Disk, ExtraDiskQueryOptions, DiskTemperatures, DiskUpdate, DiskWipeParams, UnusedDisk,
+  Disk, ExtraDiskQueryOptions, DiskTemperatures, DiskTemperatureAgg, DiskUpdate, DiskWipeParams, UnusedDisk,
 } from 'app/interfaces/storage.interface';
 import {
   FetchSupportParams,
@@ -293,10 +293,10 @@ export type ApiDirectory = {
   'alertclasses.update': { params: [AlertClassesUpdate]; response: AlertClasses };
 
   // Alert Service
-  'alertservice.update': { params: [id: number, update: AlertServiceCreate]; response: AlertService };
-  'alertservice.create': { params: [AlertServiceCreate]; response: AlertService };
+  'alertservice.update': { params: [id: number, update: AlertServiceEdit]; response: AlertService };
+  'alertservice.create': { params: [AlertServiceEdit]; response: AlertService };
   'alertservice.query': { params: QueryParams<AlertService>; response: AlertService[] };
-  'alertservice.test': { params: [AlertServiceCreate]; response: boolean };
+  'alertservice.test': { params: [AlertServiceEdit]; response: boolean };
   'alertservice.delete': { params: number; response: boolean };
 
   // Api Key
@@ -441,6 +441,8 @@ export type ApiDirectory = {
   'disk.update': { params: [id: string, update: DiskUpdate]; response: Disk };
   'disk.get_unused': { params: [joinPartitions?: boolean]; response: UnusedDisk[] };
   'disk.temperatures': { params: [disks: string[]]; response: DiskTemperatures };
+  'disk.temperature_agg': { params: [disks: string[], days: number]; response: DiskTemperatureAgg };
+  'disk.temperature_alerts': { params: [disks: string[]]; response: [] };
   'disk.wipe': { params: DiskWipeParams; response: void };
 
   // Directory Services

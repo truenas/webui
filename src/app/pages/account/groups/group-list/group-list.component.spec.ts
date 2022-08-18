@@ -14,7 +14,6 @@ import { GroupsState } from 'app/pages/account/groups/store/group.reducer';
 import { selectGroupState, selectGroups, selectGroupsTotal } from 'app/pages/account/groups/store/group.selectors';
 import { usersInitialState } from 'app/pages/account/users/store/user.reducer';
 import { DialogService, WebSocketService } from 'app/services';
-import { CoreService } from 'app/services/core-service/core.service';
 import { selectPreferences } from 'app/store/preferences/preferences.selectors';
 
 export const fakeGroupDataSource: Group[] = [{
@@ -48,7 +47,6 @@ describe('GroupListComponent', () => {
       GroupDetailsRowComponent,
     ],
     providers: [
-      mockProvider(CoreService),
       mockProvider(WebSocketService),
       mockProvider(DialogService),
       provideMockStore({

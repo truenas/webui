@@ -1,5 +1,5 @@
 import {
-  Component, AfterViewInit, Input, OnDestroy, ElementRef,
+  Component, AfterViewInit, Input, ElementRef, OnChanges,
 } from '@angular/core';
 import { MediaObserver } from '@angular/flex-layout';
 import { NgForm } from '@angular/forms';
@@ -11,9 +11,9 @@ import {
   Chart, ChartData, ChartDataSets, ChartOptions, ChartTooltipItem, InteractionMode,
 } from 'chart.js';
 import * as d3 from 'd3';
-import { Subject } from 'rxjs';
+import { Subject, Subscription } from 'rxjs';
 import {
-  filter, map, switchMap, throttleTime,
+  filter, map, throttleTime,
 } from 'rxjs/operators';
 import { ThemeUtils } from 'app/core/classes/theme-utils/theme-utils';
 import { CoreEvent } from 'app/interfaces/events';
@@ -22,7 +22,6 @@ import { Theme } from 'app/interfaces/theme.interface';
 import { GaugeConfig } from 'app/modules/charts/components/view-chart-gauge/view-chart-gauge.component';
 import { WidgetComponent } from 'app/pages/dashboard/components/widget/widget.component';
 import { WidgetCpuData } from 'app/pages/dashboard/interfaces/widget-data.interface';
-import { CoreService } from 'app/services/core-service/core.service';
 import { ThemeService } from 'app/services/theme/theme.service';
 import { AppState } from 'app/store';
 import { selectTheme } from 'app/store/preferences/preferences.selectors';
@@ -37,7 +36,7 @@ import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
     './widget-cpu.component.scss',
   ],
 })
-export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit, OnDestroy {
+export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit, OnChanges {
   @Input() data: Subject<CoreEvent>;
   @Input() cpuModel: string;
   chart: any;// Chart.js instance with per core data
@@ -76,13 +75,13 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
   labels: string[] = [];
   protected currentTheme: Theme;
   private utils: ThemeUtils;
+  private dataSubscription: Subscription;
 
   constructor(
     public translate: TranslateService,
     public mediaObserver: MediaObserver,
     private el: ElementRef<HTMLElement>,
     public themeService: ThemeService,
-    public core: CoreService,
     private store$: Store<AppState>,
   ) {
     super(translate);
@@ -110,8 +109,25 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
     });
   }
 
-  ngOnDestroy(): void {
-    this.core.unregister({ observerClass: this });
+  ngOnChanges(): void {
+    if (!this.data) {
+      return;
+    }
+
+    this.dataSubscription?.unsubscribe();
+    this.data.pipe(
+      filter((evt) => evt.name === 'CpuStats'),
+      map((evt) => evt.data),
+      throttleTime(500),
+      untilDestroyed(this),
+    ).subscribe((cpuData: AllCpusUpdate) => {
+      if (!cpuData.average) {
+        return;
+      }
+
+      this.setCpuLoadData(['Load', parseInt(cpuData.average.usage.toFixed(1))]);
+      this.setCpuData(cpuData);
+    });
   }
 
   ngAfterViewInit(): void {
@@ -122,22 +138,6 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
       d3.select('#grad1 .begin').style('stop-color', this.getHighlightColor(0));
       d3.select('#grad1 .end').style('stop-color', this.getHighlightColor(0.15));
     });
-
-    this.core.register({ observerClass: this })
-      .pipe(
-        switchMap(() => this.data),
-        filter((evt) => evt.name === 'CpuStats'),
-        map((evt) => evt.data),
-        throttleTime(500),
-        untilDestroyed(this),
-      ).subscribe((cpuData: AllCpusUpdate) => {
-        if (!cpuData.average) {
-          return;
-        }
-
-        this.setCpuLoadData(['Load', parseInt(cpuData.average.usage.toFixed(1))]);
-        this.setCpuData(cpuData);
-      });
   }
 
   parseCpuData(cpuData: AllCpusUpdate): (string | number)[][] {

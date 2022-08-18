@@ -35,7 +35,6 @@ import { OpenVpnClientConfigComponent } from 'app/pages/network/components/open-
 import { OpenVpnServerConfigComponent } from 'app/pages/network/components/open-vpn-server-config/open-vpn-server-config.component';
 import { StaticRouteFormComponent } from 'app/pages/network/components/static-route-form/static-route-form.component';
 import { NetworkService } from 'app/services';
-import { CoreService } from 'app/services/core-service/core.service';
 import { IpmiFormComponent } from './components/forms/ipmi-form.component';
 import { NetworkComponent } from './network.component';
 import { routing } from './network.routing';
@@ -78,7 +77,6 @@ import { routing } from './network.routing';
   providers: [
     NetworkService,
     EntityFormService,
-    CoreService,
     TranslateService,
   ],
 })

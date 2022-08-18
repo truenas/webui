@@ -14,7 +14,7 @@
       <div class="total-snapshots value">{{ dataset.snapshot_count }}</div>
       <a
         class="action"
-        [routerLink]="['/datasets/snapshots']"
+        [routerLink]="['/datasets/snapshots', dataset.id]"
       >{{ 'Manage Snapshots' | translate }}</a>
     </div>
     <div class="details-item">
@@ -22,7 +22,7 @@
       <div class="snapshot-tasks value">{{ dataset.snapshot_tasks_count }}</div>
       <a
         class="action"
-        [routerLink]="['/data-protection/snapshot']"
+        [routerLink]="['/data-protection/snapshot', dataset.id]"
       >{{ 'Manage Snapshot Tasks' | translate }}</a>
     </div>
     <div class="details-item">
@@ -30,7 +30,7 @@
       <div class="replication-tasks value">{{ dataset.replication_tasks_count }}</div>
       <a
         class="action"
-        [routerLink]="['/data-protection/replication']"
+        [routerLink]="['/data-protection/replication', dataset.id]"
       >{{ 'Manage Replication Tasks' | translate }}</a>
     </div>
     <div class="details-item">
@@ -38,7 +38,7 @@
       <div class="cloudsync-tasks value">{{ dataset.cloudsync_tasks_count }}</div>
       <a
         class="action"
-        [routerLink]="['/data-protection/cloudsync']"
+        [routerLink]="['/data-protection/cloudsync', dataset.id]"
       >{{ 'Manage Cloud Sync Tasks' | translate }}</a>
     </div>
     <div class="details-item">
@@ -46,7 +46,7 @@
       <div class="rsync-tasks value">{{ dataset.rsync_tasks_count }}</div>
       <a
         class="action"
-        [routerLink]="['/data-protection/rsync']"
+        [routerLink]="['/data-protection/rsync', dataset.id]"
       >{{ 'Manage Rsync Tasks' | translate }}</a>
     </div>
   </mat-card-content>

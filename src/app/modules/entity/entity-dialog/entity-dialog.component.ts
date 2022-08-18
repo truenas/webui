@@ -44,7 +44,6 @@ export class EntityDialogComponent implements OnInit {
     public ws: WebSocketService,
     public loader: AppLoaderService,
     public mdDialog: MatDialog,
-    public datePipe: DatePipe,
     protected fieldRelationService: FieldRelationService,
   ) {}
 

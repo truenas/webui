@@ -20,7 +20,7 @@ export interface GaugeConfig {
   selector: 'ix-view-chart-gauge',
   templateUrl: './view-chart-gauge.component.html',
 })
-export class ViewChartGaugeComponent /* extends DisplayObject */ implements AfterViewInit, OnChanges {
+export class ViewChartGaugeComponent implements AfterViewInit, OnChanges {
   subtitle = '';
   chartType = 'gauge';
   chartClass = 'view-chart-gauge';

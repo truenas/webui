@@ -1,0 +1,14 @@
+<ng-container [formGroup]="form">
+  <ix-input
+    [label]="'Bot API Token' | translate"
+    formControlName="bot_token"
+    [required]="true"
+    [tooltip]="helptext.Telegram_bot_token_tooltip | translate"
+  ></ix-input>
+  <ix-chips
+    [label]="'List of chat IDs' | translate"
+    formControlName="chat_ids"
+    [required]="true"
+    [tooltip]="helptext.Telegram_chat_ids_tooltip | translate"
+  ></ix-chips>
+</ng-container>

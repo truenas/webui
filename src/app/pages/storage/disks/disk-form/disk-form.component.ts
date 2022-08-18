@@ -10,8 +10,8 @@ import { TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { DiskPowerLevel } from 'app/enums/disk-power-level.enum';
 import { DiskStandby } from 'app/enums/disk-standby.enum';
+import { translateOptions } from 'app/helpers/translate.helper';
 import helptext from 'app/helptext/storage/disks/disks';
-import { Option } from 'app/interfaces/option.interface';
 import { Disk, DiskUpdate } from 'app/interfaces/storage.interface';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { DialogService, WebSocketService } from 'app/services';
@@ -41,7 +41,7 @@ export class DiskFormComponent implements OnInit {
   readonly helptext = helptext;
   readonly title = helptext.disk_form_title;
   readonly hddstandbyOptions$ = of(helptext.disk_form_hddstandby_options);
-  readonly advpowermgmtOptions$ = of(this.translateOptions(this.helptext.disk_form_advpowermgmt_options));
+  readonly advpowermgmtOptions$ = of(translateOptions(this.translate, this.helptext.disk_form_advpowermgmt_options));
   isLoading = false;
   existingDisk: Disk;
 
@@ -63,12 +63,6 @@ export class DiskFormComponent implements OnInit {
   setFormDisk(disk: Disk): void {
     this.existingDisk = disk;
     this.form.patchValue({ ...disk });
-  }
-
-  private translateOptions(options: Option[]): Option[] {
-    return options.map((option) => {
-      return { label: this.translate.instant(option.label), value: option.value };
-    });
   }
 
   private clearPasswordField(): void {

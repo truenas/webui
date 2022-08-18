@@ -10,7 +10,7 @@ export interface TreeNode {
 @Injectable()
 export class EntityTreeTableService {
   // Do we still need this?
-  buildTree(data: any[]): TreeNode[] {
+  buildTree(data: unknown[]): TreeNode[] {
     const tree: TreeNode[] = [];
     data.forEach((item) => {
       const node = this.getNode(item);
@@ -71,7 +71,7 @@ export class EntityTreeTableService {
     return output;
   }
 
-  editNode(prop: keyof TreeNode, value: any, indexPath: number[], treeData: TreeNode[]): TreeNode[] {
+  editNode(prop: keyof TreeNode, value: unknown, indexPath: number[], treeData: TreeNode[]): TreeNode[] {
     const node = this.findNode(indexPath, treeData);
 
     // Clone the data

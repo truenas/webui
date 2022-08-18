@@ -71,7 +71,7 @@ class plugin_test(unittest.TestCase):
 
     def test_01_login(self):
         try:
-            print ("loging in FreeNAS new webui- woot woot")
+            print ("loging in TrueNAS new webui- woot woot")
             # enter username in the username textbox
             driver.find_element_by_xpath(xpaths['usernameTxtBox']).clear()
             driver.find_element_by_xpath(xpaths['usernameTxtBox']).send_keys(username)

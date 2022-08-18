@@ -25,6 +25,7 @@ import { FormatDateTimePipe } from 'app/core/pipes/format-datetime.pipe';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { CastModule } from 'app/modules/cast/cast.module';
 import { AppCommonModule } from 'app/modules/common/app-common.module';
+import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { IxTableModule } from 'app/modules/ix-tables/ix-table.module';
@@ -36,7 +37,7 @@ import { VdevComponent } from 'app/pages/storage2/components/manager/vdev/vdev.c
 import { GaugeChartComponent } from 'app/pages/storage2/components/pools-dashboard/pool-usage-card/gauge-chart/gauge-chart.component';
 import { PoolUsageCardComponent } from 'app/pages/storage2/components/pools-dashboard/pool-usage-card/pool-usage-card.component';
 import { PoolsDashboardComponent } from 'app/pages/storage2/components/pools-dashboard/pools-dashboard.component';
-import { WidgetTopologyComponent } from 'app/pages/storage2/components/pools-dashboard/widget-topology/widget-topology.component';
+import { TopologyCardComponent } from 'app/pages/storage2/components/pools-dashboard/topology-card/topology-card.component';
 import {
   ManageUnusedDiskDialogComponent,
 } from 'app/pages/storage2/components/unused-disk-card/manage-unused-disk-dialog/manage-unused-disk-dialog.component';
@@ -85,13 +86,13 @@ import { ZfsHealthCardComponent } from './components/zfs-health-card/zfs-health-
     MatProgressBarModule,
     NgxSkeletonLoaderModule,
     LayoutModule,
-    MatDialogModule,
+    EntityModule,
   ],
   declarations: [
     PoolsDashboardComponent,
     PoolUsageCardComponent,
     GaugeChartComponent,
-    WidgetTopologyComponent,
+    TopologyCardComponent,
     ImportPoolComponent,
     VdevComponent,
     ManagerComponent,

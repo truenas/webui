@@ -107,7 +107,7 @@ export interface ChartSchemaNodeConf {
   type: ChartSchemaType;
   attrs?: ChartSchemaNode[];
   items?: ChartSchemaNode[];
-  default?: any;
+  default?: unknown;
   enum?: ChartSchemaEnum[];
   required?: boolean;
   value?: string;
@@ -119,7 +119,7 @@ export interface ChartSchemaNodeConf {
   private?: boolean;
   hidden?: boolean;
   show_if?: string[][];
-  show_subquestions_if?: any;
+  show_subquestions_if?: ChartFormValue;
   editable?: boolean;
   subquestions?: ChartSchemaNode[];
 }

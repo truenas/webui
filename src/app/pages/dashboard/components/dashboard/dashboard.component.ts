@@ -25,10 +25,10 @@ import { EmptyConfig, EmptyType } from 'app/modules/entity/entity-empty/entity-e
 import { DashboardFormComponent } from 'app/pages/dashboard/components/dashboard-form/dashboard-form.component';
 import { DashConfigItem } from 'app/pages/dashboard/components/widget-controller/widget-controller.component';
 import { WebSocketService } from 'app/services';
-import { CoreService } from 'app/services/core-service/core.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LayoutService } from 'app/services/layout.service';
 import { AppState } from 'app/store';
+import { dashboardStateLoaded } from 'app/store/preferences/preferences.actions';
 import { waitForDashboardState } from 'app/store/preferences/preferences.selectors';
 import { waitForSystemFeatures, waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 
@@ -117,7 +117,6 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   initialLoading = true;
 
   constructor(
-    protected core: CoreService,
     protected ws: WebSocketService,
     private el: ElementRef,
     private translate: TranslateService,
@@ -157,7 +156,6 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     if (this.interval) {
       clearInterval(this.interval);
     }
-    this.core.unregister({ observerClass: this });
 
     // Restore top level scrolling
     const wrapper = document.querySelector<HTMLElement>('.fn-maincontent');
@@ -461,6 +459,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     const modal = this.slideInService.open(DashboardFormComponent);
     modal.setupForm(this.dashState);
     modal.onSubmit$.pipe(take(1), untilDestroyed(this)).subscribe((dashState) => {
+      this.store$.dispatch(dashboardStateLoaded({ dashboardState: dashState }));
       this.setDashState(dashState);
     });
   }

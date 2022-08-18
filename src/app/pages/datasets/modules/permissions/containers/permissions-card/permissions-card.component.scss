@@ -1,9 +1,5 @@
 @import '~assets/styles/mixins/cards';
 
-:host .spinner {
-  margin: 30px auto;
-}
-
 .card {
   @include details-card();
 
@@ -14,12 +10,19 @@
       border-bottom: 1px solid var(--lines);
       display: flex;
       flex-wrap: wrap;
-      padding: 20px 25px;
+      padding: 20px 25px 10px;
 
       .details-item:not(:last-child) {
-        margin-bottom: 15px;
         width: 50%;
       }
+
+      .details-item {
+        margin-bottom: 10px;
+      }
+    }
+
+    .loader-permissions {
+      padding: 50px 20px 20px;
     }
   }
 }
