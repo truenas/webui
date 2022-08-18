@@ -250,6 +250,7 @@ def open_a_new_tab_navigate_to_google_drive_url_and_input_account_id(driver, dri
     driver.switch_to.window(driver.window_handles[1])
     driver.get(driver_url)
     assert wait_on_element(driver, 5, '//a[@title="Google"]')
+    time.sleep(1)
     assert wait_on_element(driver, 5, '//div[@class="glue-header__container glue-header__container--cta"]//a[contains(text(),"Go to Drive")]', 'clickable')
     driver.find_element_by_xpath('//div[@class="glue-header__container glue-header__container--cta"]//a[contains(text(),"Go to Drive")]').click()
 
@@ -272,6 +273,7 @@ def enter_the_user_name_click_Next_and_enter_the_password_click_Next(driver, use
         assert wait_on_element(driver, 5, '//button[contains(.,"Next")]', 'clickable')
         driver.find_element_by_xpath('//button[contains(.,"Next")]').click()
     assert wait_on_element(driver, 10, '//div[text()="My Drive"]')
+    time.sleep(1)
 
 
 @then(parsers.parse('click on {folder1} then click on the test folder'))
@@ -281,7 +283,7 @@ def click_on_folder1_then_click_on_the_test_folder(driver, folder1):
     action = ActionChains(driver)
     action.double_click(driver.find_element_by_xpath(f'//div[text()="{folder1}"]')).perform()
     assert wait_on_element(driver, 7, f'//div[@aria-label="{folder1}"]')
-    time.sleep(0.5)
+    time.sleep(1)
     assert wait_on_element(driver, 7, '//div[text()="initial"]', 'clickable')
     assert wait_on_element(driver, 5, '//div[text()="test"]', 'clickable')
     action = ActionChains(driver)
