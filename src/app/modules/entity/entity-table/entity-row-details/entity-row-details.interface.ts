@@ -26,8 +26,8 @@ export interface EntityAction {
   label: string;
   icon: string;
   name: string;
-  onClick: (args?: any) => any | void;
-  visible?: (args?: any) => boolean;
+  onClick: (args?: unknown) => unknown | void;
+  visible?: (args?: unknown) => boolean;
 }
 
 export interface EntityDetail {

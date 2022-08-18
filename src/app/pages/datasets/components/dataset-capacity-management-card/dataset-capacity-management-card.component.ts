@@ -46,6 +46,10 @@ export class DatasetCapacityManagementCardComponent implements OnChanges, OnInit
     return Boolean(this.dataset?.quota?.parsed);
   }
 
+  get hasRefQuota(): boolean {
+    return Boolean(this.dataset?.refquota?.parsed);
+  }
+
   get hasInheritedQuotas(): boolean {
     return this.inheritedQuotasDataset?.quota?.parsed && this.inheritedQuotasDataset?.id !== this.dataset?.id;
   }

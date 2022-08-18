@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { JobState } from 'app/enums/job-state.enum';
@@ -52,13 +53,18 @@ export class SnapshotListComponent implements EntityTableConfig<PeriodicSnapshot
     },
   };
 
+  private dataset: string = '';
+
   constructor(
     private dialogService: DialogService,
     private ws: WebSocketService,
     private taskService: TaskService,
     private translate: TranslateService,
     private slideInService: IxSlideInService,
-  ) {}
+    private route: ActivatedRoute,
+  ) {
+    this.dataset = this.route.snapshot.paramMap.get('dataset') || '';
+  }
 
   afterInit(entityList: EntityTableComponent): void {
     this.entityList = entityList;
@@ -68,7 +74,11 @@ export class SnapshotListComponent implements EntityTableConfig<PeriodicSnapshot
   }
 
   resourceTransformIncomingRestData(data: PeriodicSnapshotTask[]): PeriodicSnapshotTaskUi[] {
-    return data.map((task) => {
+    const _data = data.filter((row) =>
+      row.dataset === this.dataset ||
+      row.dataset.includes(`${this.dataset}/`)
+    );
+    return _data.map((task) => {
       const transformedTask = {
         ...task,
         keepfor: `${task.lifetime_value} ${task.lifetime_unit}(S)`,

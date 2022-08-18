@@ -21,7 +21,7 @@
           <ng-container [ngSwitch]="column.widget.component">
             <ix-task-schedule-list
               *ngSwitchCase="'TaskScheduleListComponent'"
-              [value]="getColumnValue(column)"
+              [value]="getColumnValue(column) | cast"
               [config]="config"
               [parent]="parent"
             ></ix-task-schedule-list>

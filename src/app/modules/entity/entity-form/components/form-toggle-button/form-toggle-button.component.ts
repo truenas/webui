@@ -18,7 +18,7 @@ export class FormToggleButtonComponent implements Field, OnInit {
   config: FormToggleButtonConfig;
   group: UntypedFormGroup;
   fieldShow: string;
-  groupValue: any[] = [];
+  groupValue: unknown[] = [];
   protected init: boolean;
   protected control: AbstractControl;
 
@@ -28,7 +28,7 @@ export class FormToggleButtonComponent implements Field, OnInit {
     this.init = true;
     this.control = this.group.controls[this.config.name];
 
-    this.control.valueChanges.pipe(untilDestroyed(this)).subscribe((res: any) => {
+    this.control.valueChanges.pipe(untilDestroyed(this)).subscribe((res: unknown) => {
       if (!this.init || !this.config.options || !res) {
         return;
       }

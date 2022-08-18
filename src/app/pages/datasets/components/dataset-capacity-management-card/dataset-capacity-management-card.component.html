@@ -43,11 +43,16 @@
         </span>
         <span class="value">{{ dataset.available.parsed | filesize: { standard: 'iec', round: 0 } }}</span>
       </div>
-      <div class="details-item" *ngIf="isFilesystem && hasQuota">
-        <span class="label">{{ 'Applied Dataset Quotas' | translate }}:</span>
-        <span class="value">
+      <div class="details-item" *ngIf="isFilesystem && hasQuota || hasRefQuota">
+        <span class="label">{{ 'Applied Dataset Quota' | translate }}:</span>
+        <span class="value" *ngIf="hasQuota; else refquotaValue">
           {{ '{n} (applies to descendants)' | translate: { n: dataset.quota.parsed | filesize: { standard: 'iec', round: 0 } } }}
         </span>
+        <ng-template #refquotaValue>
+          <span class="value">
+            {{ '{n}' | translate: { n: dataset.refquota.parsed | filesize: { standard: 'iec', round: 0 } } }}
+          </span>
+        </ng-template>
       </div>
       <div class="details-item" *ngIf="hasInheritedQuotas">
         <span class="label">{{ 'Inherited Quotas' | translate }}:</span>

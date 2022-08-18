@@ -1,4 +1,3 @@
-import { ElementRef } from '@angular/core';
 import { Selection } from 'd3';
 import * as d3 from 'd3';
 import { Application, Container } from 'pixi.js';
@@ -169,23 +168,6 @@ export class VDevLabelsSvg {
     });
   }
 
-  calculateParentOffsets(el: ElementRef): { x: number; y: number } {
-    // Template uses CSS to center and align text so
-    // we need to compensate with absolute positions
-    // of wrapper elements
-
-    // 1 up
-    const legend = el.nativeElement.childNodes[0].childNodes[1];
-
-    // 2 up
-    const content = el.nativeElement.childNodes[0];
-
-    const xOffset = el.nativeElement.offsetLeft + legend.offsetLeft + content.offsetLeft;
-    const yOffset = el.nativeElement.offsetTop + legend.offsetTop + content.offsetTop;
-
-    return { x: xOffset, y: yOffset - 6 };
-  }
-
   showTile(devname: string): void {
     const targetEl: HTMLElement = this.getParent().querySelector('rect.tile_' + devname);
     if (targetEl) {
@@ -210,9 +192,5 @@ export class VDevLabelsSvg {
     tiles.forEach((item) => {
       item.style.opacity = '1';
     });
-  }
-
-  protected parseColor(color: string): number {
-    return parseInt('0x' + color.substring(1), 16);
   }
 }

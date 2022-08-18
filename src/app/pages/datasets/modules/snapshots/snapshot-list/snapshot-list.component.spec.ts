@@ -4,6 +4,7 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { MockPipe } from 'ng-mocks';
 import { FileSizePipe } from 'ngx-filesize';
+import { ActivatedRoute } from '@angular/router';
 import { CoreComponents } from 'app/core/core-components.module';
 import { FormatDateTimePipe } from 'app/core/pipes/format-datetime.pipe';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
@@ -78,7 +79,20 @@ describe('SnapshotListComponent', () => {
   });
 
   beforeEach(() => {
-    spectator = createComponent();
+    spectator = createComponent({
+      providers: [
+        {
+          provide: ActivatedRoute,
+          useValue: {
+            snapshot: {
+              paramMap: {
+                get: () => 'test-dataset', // represents the dataset
+              },
+            },
+          },
+        }
+      ]
+    });
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     store$ = spectator.inject(MockStore);
   });

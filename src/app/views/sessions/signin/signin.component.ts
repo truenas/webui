@@ -23,7 +23,6 @@ import helptext from 'app/helptext/topbar';
 import { Interval } from 'app/interfaces/timeout.interface';
 import { matchOtherValidator } from 'app/modules/entity/entity-form/validators/password-validation/password-validation';
 import { SystemGeneralService } from 'app/services';
-import { CoreService } from 'app/services/core-service/core.service';
 import { DialogService } from 'app/services/dialog.service';
 import { LocaleService } from 'app/services/locale.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -93,7 +92,6 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
     public translate: TranslateService,
     private dialogService: DialogService,
     private fb: UntypedFormBuilder,
-    private core: CoreService,
     private autofill: AutofillMonitor,
     private sysGeneralService: SystemGeneralService,
     private localeService: LocaleService,
@@ -175,7 +173,6 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
     if (this.haInterval) {
       clearInterval(this.haInterval);
     }
-    this.core.unregister({ observerClass: this });
     if (this.tokenObservable) {
       this.tokenObservable.unsubscribe();
     }

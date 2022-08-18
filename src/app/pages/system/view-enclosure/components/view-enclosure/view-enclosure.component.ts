@@ -5,7 +5,6 @@ import {
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
-import { TranslateService } from '@ngx-translate/core';
 import { Subject } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { PoolScanState } from 'app/enums/pool-scan-state.enum';
@@ -89,7 +88,6 @@ export class ViewEnclosureComponent implements AfterViewInit, OnDestroy {
     private ws: WebSocketService,
     private store$: Store<AppState>,
     private layoutService: LayoutService,
-    private translate: TranslateService,
   ) {
     this.events = new Subject<CoreEvent>();
     this.events.pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {

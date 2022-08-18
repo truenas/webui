@@ -5,7 +5,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
 import { helptextSharingIscsi } from 'app/helptext/sharing';
 import { IscsiGlobalSession } from 'app/interfaces/iscsi-global-config.interface';
-import { IscsiExtent, IscsiInitiatorGroup } from 'app/interfaces/iscsi.interface';
+import { IscsiInitiatorGroup } from 'app/interfaces/iscsi.interface';
 import { QueryFilter } from 'app/interfaces/query-api.interface';
 import {
   FieldConfig,
@@ -28,7 +28,7 @@ export class InitiatorFormComponent implements OnInit {
   protected addCall = 'iscsi.initiator.create' as const;
   protected queryCall = 'iscsi.initiator.query' as const;
   protected editCall = 'iscsi.initiator.update' as const;
-  protected customFilter: [[Partial<QueryFilter<IscsiExtent>>]] = [[['id', '=']]];
+  protected customFilter: [[Partial<QueryFilter<IscsiInitiatorGroup>>]] = [[['id', '=']]];
   routeSuccess: string[] = ['sharing', 'iscsi', 'initiator'];
   protected pk: number;
 
@@ -116,26 +116,28 @@ export class InitiatorFormComponent implements OnInit {
     });
 
     if (this.pk) {
-      this.ws.call(this.queryCall, this.customFilter as any).pipe(untilDestroyed(this)).subscribe(
-        (res) => {
-          for (const i in res[0]) {
-            const ctrl = this.formGroup.controls[i];
-            if (ctrl) {
-              if (i === 'initiators') {
-                ctrl.setValue(new Set(res[0][i]));
-              } else {
-                ctrl.setValue(res[0][i as keyof IscsiInitiatorGroup]);
+      this.ws.call(this.queryCall, this.customFilter as [[QueryFilter<IscsiInitiatorGroup>]])
+        .pipe(untilDestroyed(this))
+        .subscribe(
+          (res) => {
+            for (const i in res[0]) {
+              const ctrl = this.formGroup.controls[i];
+              if (ctrl) {
+                if (i === 'initiators') {
+                  ctrl.setValue(new Set(res[0][i]));
+                } else {
+                  ctrl.setValue(res[0][i as keyof IscsiInitiatorGroup]);
+                }
               }
             }
-          }
-          if (res[0]['initiators'].length === 0) {
-            this.formGroup.controls['all'].setValue(true);
-          }
-        },
-        (err) => {
-          new EntityUtils().handleWsError(this, err);
-        },
-      );
+            if (res[0]['initiators'].length === 0) {
+              this.formGroup.controls['all'].setValue(true);
+            }
+          },
+          (err) => {
+            new EntityUtils().handleWsError(this, err);
+          },
+        );
     }
   }
 

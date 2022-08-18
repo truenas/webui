@@ -136,14 +136,14 @@ export class PortalFormComponent {
     this.listen.splice(index, 1);
   }
 
-  prepareSubmit(values: any): IscsiInterface[] {
+  prepareSubmit(values: PortalFormComponent['form']['value']): IscsiInterface[] {
     const listen = [] as IscsiInterface[];
 
     const tempListen: { name: string; index: string; value: string | number | string[] }[] = [];
     Object.keys(values).forEach((key) => {
       const keys = key.split(this.listPrefix);
       if (keys.length > 1) {
-        tempListen.push({ name: keys[0], index: keys[1], value: values[key] });
+        tempListen.push({ name: keys[0], index: keys[1], value: values[key as keyof PortalFormComponent['form']['value']] });
       }
     });
 
