@@ -12,7 +12,7 @@ import { AclMode, AclType } from 'app/enums/acl-type.enum';
 import {
   DatasetAclType,
   DatasetCaseSensitivity,
-  DatasetChecksum,
+  DatasetChecksum, DatasetCommonOpt,
   DatasetEncryptionType, DatasetRecordSize,
   DatasetShareType,
   DatasetSync,
@@ -581,10 +581,10 @@ export class DatasetFormComponent implements FormConfiguration {
           tooltip: this.translate.instant('Controls whether the volume snapshot devices under /dev/zvol/⟨pool⟩ \
  are hidden or visible. The default value is hidden.'),
           options: [
-            { label: this.translate.instant('Visible'), value: 'VISIBLE' },
-            { label: this.translate.instant('Hidden'), value: 'HIDDEN' },
+            { label: this.translate.instant('Visible'), value: DatasetCommonOpt.Visible },
+            { label: this.translate.instant('Hidden'), value: DatasetCommonOpt.Hidden },
           ],
-          value: 'HIDDEN',
+          value: DatasetCommonOpt.Hidden,
         },
         {
           type: 'select',
@@ -1288,7 +1288,7 @@ export class DatasetFormComponent implements FormConfiguration {
             entityForm.formGroup.controls['readonly'].setValue(inherit);
             entityForm.formGroup.controls['atime'].setValue(inherit);
             entityForm.formGroup.controls['recordsize'].setValue(inherit);
-            entityForm.formGroup.controls['snapdev'].setValue('HIDDEN');
+            entityForm.formGroup.controls['snapdev'].setValue(inherit);
           } else {
             this.ws.call('pool.dataset.query', [[['id', '=', this.parent]]]).pipe(untilDestroyed(this)).subscribe((parentDataset) => {
               this.parentDataset = parentDataset[0];

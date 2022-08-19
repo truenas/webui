@@ -5,7 +5,7 @@ import {
   DatasetChecksum,
   DatasetRecordSize,
   DatasetShareType,
-  DatasetSnapdir,
+  DatasetCommonOpt,
   DatasetSync,
   DatasetType,
   DatasetVolumeBlockSize, DatasetXattr,
@@ -106,8 +106,8 @@ export interface DatasetCreate {
   refreservation?: number;
   special_small_block_size?: WithInherit<number>;
   copies?: WithInherit<number>;
-  snapdir?: DatasetSnapdir;
-  snapdev?: string;
+  snapdir?: DatasetCommonOpt;
+  snapdev?: DatasetCommonOpt;
   deduplication?: string;
   checksum?: DatasetChecksum;
   readonly?: WithInherit<OnOff>;
@@ -149,8 +149,8 @@ export interface DatasetUpdate {
   refreservation?: number;
   special_small_block_size?: number;
   copies?: WithInherit<number>;
-  snapdir?: DatasetSnapdir;
-  snapdev?: string;
+  snapdir?: DatasetCommonOpt;
+  snapdev?: DatasetCommonOpt;
   deduplication?: DeduplicationSetting;
   checksum?: WithInherit<DatasetChecksum>;
   readonly?: WithInherit<OnOff>;

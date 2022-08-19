@@ -615,7 +615,7 @@ export class ZvolFormComponent implements FormConfiguration {
         entityForm.formGroup.controls['compression'].setValue(inherit);
         entityForm.formGroup.controls['deduplication'].setValue(inherit);
         entityForm.formGroup.controls['readonly'].setValue(inherit);
-        entityForm.formGroup.controls['snapdev'].setValue('HIDDEN');
+        entityForm.formGroup.controls['snapdev'].setValue(inherit);
         const root = this.parent.split('/')[0];
         this.ws.call('pool.dataset.recommended_zvol_blocksize', [root]).pipe(untilDestroyed(this)).subscribe((recommendedSize) => {
           this.entityForm.formGroup.controls['volblocksize'].setValue(recommendedSize);
