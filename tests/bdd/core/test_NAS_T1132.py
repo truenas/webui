@@ -208,7 +208,7 @@ def on_the_nas_cloud_sync_task_tab_click_edit(driver):
         driver.find_element_by_xpath('//a[@ix-auto="expander__My BOX Cloud task"]').click()
     assert wait_on_element(driver, 7, '//p[contains(text(),"boxcredentials")]')
     time.sleep(2)
-    assert wait_on_element(driver, 7, '//button[@ix-auto="button___edit"]', 'clickable')
+    assert wait_on_element(driver, 7, '//button[@ix-auto="button___edit"]')
     assert wait_on_element(driver, 5, '//button[@ix-auto="button___edit"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button___edit"]').click()
     assert wait_on_element(driver, 7, '//h4[contains(.,"Transfer")]')
