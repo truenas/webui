@@ -136,6 +136,7 @@ export interface EntityTableColumn {
   button?: boolean;
   enableMatTooltip?: boolean;
   showLockedStatus?: boolean;
+  emptyText?: string;
 
   icon?: string;
   widget?: {

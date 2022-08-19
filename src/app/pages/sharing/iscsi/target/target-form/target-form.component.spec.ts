@@ -38,6 +38,7 @@ describe('TargetFormComponent', () => {
       authmethod: IscsiAuthMethod.ChapMutual,
       auth: 55,
     }],
+    auth_networks: ['192.168.10.0/24', '192.168.0.0/24'],
   } as IscsiTarget;
 
   const createComponent = createComponentFactory({
@@ -58,30 +59,22 @@ describe('TargetFormComponent', () => {
           tag: 11,
           discovery_authgroup: 111,
           discovery_authmethod: IscsiAuthMethod.Chap,
-          listen: [{
-            ip: '1.1.1.1',
-            port: 1111,
-          }],
+          listen: [{ ip: '1.1.1.1' }],
         }, {
           comment: 'comment_2',
           id: 2,
           tag: 22,
           discovery_authgroup: 222,
           discovery_authmethod: IscsiAuthMethod.Chap,
-          listen: [{
-            ip: '2.2.2.2',
-            port: 2222,
-          }],
+          listen: [{ ip: '2.2.2.2' }],
         }] as IscsiPortal[]),
         mockCall('iscsi.initiator.query', [{
           id: 3,
           comment: 'comment_3',
-          auth_network: [],
           initiators: 'initiator_1',
         }, {
           id: 4,
           comment: 'comment_4',
-          auth_network: [],
           initiators: 'initiator_2',
         }] as IscsiInitiatorGroup[]),
         mockCall('iscsi.auth.query', [{
@@ -111,9 +104,11 @@ describe('TargetFormComponent', () => {
   });
 
   it('add new target when form is submitted', async () => {
-    const addButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add' }));
-    await addButton.click();
-    await addButton.click();
+    const addButtons = await loader.getAllHarnesses(MatButtonHarness.with({ text: 'Add' }));
+    await addButtons[0].click();
+    await addButtons[0].click();
+    await addButtons[1].click();
+    await addButtons[1].click();
 
     spectator.component.form.patchValue({
       name: 'name_new',
@@ -133,6 +128,7 @@ describe('TargetFormComponent', () => {
           auth: 23,
         },
       ],
+      auth_networks: ['10.0.0.0/8', '11.0.0.0/8'],
     });
 
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
@@ -142,17 +138,21 @@ describe('TargetFormComponent', () => {
       name: 'name_new',
       alias: 'alias_new',
       mode: 'ISCSI',
-      groups: [{
-        portal: 11,
-        initiator: 12,
-        authmethod: 'CHAP_MUTUAL',
-        auth: 13,
-      }, {
-        portal: 21,
-        initiator: 22,
-        authmethod: 'CHAP',
-        auth: 23,
-      }],
+      groups: [
+        {
+          portal: 11,
+          initiator: 12,
+          authmethod: IscsiAuthMethod.ChapMutual,
+          auth: 13,
+        },
+        {
+          portal: 21,
+          initiator: 22,
+          authmethod: IscsiAuthMethod.Chap,
+          auth: 23,
+        },
+      ],
+      auth_networks: ['10.0.0.0/8', '11.0.0.0/8'],
     }]);
     expect(spectator.inject(IxSlideInService).close).toHaveBeenCalled();
   });
@@ -191,6 +191,7 @@ describe('TargetFormComponent', () => {
               auth: 55,
             },
           ],
+          auth_networks: ['192.168.10.0/24', '192.168.0.0/24'],
         },
       ],
     );

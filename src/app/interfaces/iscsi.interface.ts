@@ -15,11 +15,9 @@ export type IscsiPortalUpdate = Omit<IscsiPortal, 'id' | 'tag'>;
 
 export interface IscsiInterface {
   ip: string;
-  port: number;
 }
 
 export interface IscsiInitiatorGroup {
-  auth_network: string[];
   comment: string;
   id: number;
   initiators: string;
@@ -41,6 +39,7 @@ export type IscsiAuthAccessUpdate = Omit<IscsiAuthAccess, 'id'>;
 export interface IscsiTarget {
   alias: string;
   groups: IscsiTargetGroup[];
+  auth_networks: string[];
   id: number;
   mode: IscsiTargetMode;
   name: string;

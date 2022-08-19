@@ -31,6 +31,7 @@ describe('TargetGlobalConfigurationComponent', () => {
           basename: 'iqn.2005-10.org.freenas.ctl',
           isns_servers: ['188.23.4.23', '92.233.1.1'],
           pool_avail_threshold: 20,
+          listen_port: 3260,
         } as IscsiGlobalConfig),
         mockCall('iscsi.global.update'),
         mockCall('service.query', [{
@@ -65,6 +66,7 @@ describe('TargetGlobalConfigurationComponent', () => {
       'Base Name': 'iqn.2005-10.org.freenas.ctl',
       'ISNS Servers': ['188.23.4.23', '92.233.1.1'],
       'Pool Available Space Threshold (%)': '20',
+      'iSCSI listen port': '3260',
     });
   });
 
@@ -74,6 +76,7 @@ describe('TargetGlobalConfigurationComponent', () => {
       'Base Name': 'iqn.new.org.freenas.ctl',
       'ISNS Servers': ['32.12.112.42', '8.2.1.2'],
       'Pool Available Space Threshold (%)': '15',
+      'iSCSI listen port': '3270',
     });
 
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
@@ -83,6 +86,7 @@ describe('TargetGlobalConfigurationComponent', () => {
       basename: 'iqn.new.org.freenas.ctl',
       isns_servers: ['32.12.112.42', '8.2.1.2'],
       pool_avail_threshold: 15,
+      listen_port: 3270,
     }]);
   });
 

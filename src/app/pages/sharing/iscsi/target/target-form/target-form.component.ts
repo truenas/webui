@@ -78,6 +78,7 @@ export class TargetFormComponent {
     alias: [''],
     mode: [IscsiTargetMode.Iscsi],
     groups: this.formBuilder.array<IscsiTargetGroup>([]),
+    auth_networks: this.formBuilder.array<string>([]),
   });
 
   private editingTarget: IscsiTarget;
@@ -96,6 +97,7 @@ export class TargetFormComponent {
     this.editingTarget = target;
 
     Object.values(target.groups).forEach(() => this.addGroup());
+    Object.values(target.auth_networks).forEach(() => this.addNetwork());
 
     this.form.patchValue({
       ...target,
@@ -137,5 +139,15 @@ export class TargetFormComponent {
 
   deleteGroup(index: number): void {
     this.form.controls.groups.removeAt(index);
+  }
+
+  addNetwork(): void {
+    this.form.controls.auth_networks.push(
+      this.formBuilder.control(''),
+    );
+  }
+
+  deleteNetwork(index: number): void {
+    this.form.controls.auth_networks.removeAt(index);
   }
 }
