@@ -7,6 +7,7 @@ import * as _ from 'lodash';
 import { Observable } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import {
+  DatasetCommonOpt,
   DatasetEncryptionType, DatasetRecordSize, DatasetSync, DatasetType,
 } from 'app/enums/dataset.enum';
 import { DeduplicationSetting } from 'app/enums/deduplication-setting.enum';
@@ -245,10 +246,10 @@ export class ZvolFormComponent implements FormConfiguration {
         tooltip: this.translate.instant('Controls whether the volume snapshot devices under /dev/zvol/⟨pool⟩ \
  are hidden or visible. The default value is hidden.'),
         options: [
-          { label: this.translate.instant('Visible'), value: 'VISIBLE' },
-          { label: this.translate.instant('Hidden'), value: 'HIDDEN' },
+          { label: this.translate.instant('Visible'), value: DatasetCommonOpt.Visible },
+          { label: this.translate.instant('Hidden'), value: DatasetCommonOpt.Hidden },
         ],
-        value: 'HIDDEN',
+        value: DatasetCommonOpt.Hidden,
       },
     ],
   },
