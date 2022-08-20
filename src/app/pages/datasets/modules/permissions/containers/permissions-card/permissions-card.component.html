@@ -28,9 +28,10 @@
             <div class="value">{{ stat.group }}</div>
           </div>
         </ng-container>
-        <div class="details-item">
+        <div class="details-item" [matTooltip]="dataset.name" matTooltipPosition="above">
           <div class="label">{{ 'Path:' | translate }}</div>
-          <div class="value">{{ dataset.mountpoint }}</div>
+          <div class="value dataset-path">{{ dataset.name }}</div>
+          <ix-copy-btn [text]="dataset.name"></ix-copy-btn>
         </div>
       </div>
 
