@@ -31,16 +31,6 @@ export class ReplicationService {
     sshCredential: number;
   }): TreeNodeProvider {
     let cachedDatasets: string[] = null;
-    const datasetToNode = (dataset: string): ExplorerNodeData => {
-      return {
-        path: dataset,
-        name: dataset.split('/').pop(),
-        type: ExplorerNodeType.Directory,
-        hasChildren: cachedDatasets.some((cachedDataset) => {
-          return cachedDataset.startsWith(`${dataset}/`) && cachedDataset !== dataset;
-        }),
-      };
-    };
 
     return (node: TreeNode<ExplorerNodeData>) => {
       const searchPath = node.data.path;
@@ -61,7 +51,16 @@ export class ReplicationService {
 
             return dataset.startsWith(`${searchPath}/`) && datasetLevel === currentLevel + 1;
           })
-          .map(datasetToNode);
+          .map((dataset) => {
+            return {
+              path: dataset,
+              name: dataset.split('/').pop(),
+              type: ExplorerNodeType.Directory,
+              hasChildren: cachedDatasets.some((cachedDataset) => {
+                return cachedDataset.startsWith(`${dataset}/`) && cachedDataset !== dataset;
+              }),
+            };
+          });
       }));
     };
   }
