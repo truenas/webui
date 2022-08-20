@@ -2,19 +2,19 @@ import {
   ChangeDetectionStrategy, Component, Input, ChangeDetectorRef, OnChanges, OnInit,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
 import { PoolStatus } from 'app/enums/pool-status.enum';
 import { SmartTestResultStatus } from 'app/enums/smart-test-result-status.enum';
 import { TemperatureUnit } from 'app/enums/temperature.enum';
-import { Alert } from 'app/interfaces/alert.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { Disk } from 'app/interfaces/storage.interface';
 import { WebSocketService } from 'app/services';
 
 interface DiskState {
   health: DiskHealthLevel;
-  highestTemperature: number;
-  lowestTemperature: number;
-  averageTemperature: number;
+  highestTemperature: number | string;
+  lowestTemperature: number | string;
+  averageTemperature: number | string;
   alters: number;
   smartTests: number;
   unit: string;
@@ -39,16 +39,14 @@ export class DiskHealthCardComponent implements OnInit, OnChanges {
   @Input() loading = true;
   @Input() diskDictionary: { [key: string]: Disk } = {};
 
-  // Disks temperature related alerts
-  private alterts: Alert[];
-
   readonly diskHealthLevel = DiskHealthLevel;
+  readonly noDataText = this.translate.instant('No Data');
 
   diskState: DiskState = {
     health: DiskHealthLevel.Safe,
-    highestTemperature: 0,
-    lowestTemperature: 0,
-    averageTemperature: 0,
+    highestTemperature: this.noDataText,
+    lowestTemperature: this.noDataText,
+    averageTemperature: this.noDataText,
     alters: 0,
     smartTests: 0,
     unit: '',
@@ -58,6 +56,7 @@ export class DiskHealthCardComponent implements OnInit, OnChanges {
   constructor(
     private ws: WebSocketService,
     private cdr: ChangeDetectorRef,
+    private translate: TranslateService,
   ) { }
 
   ngOnInit(): void {
@@ -128,11 +127,15 @@ export class DiskHealthCardComponent implements OnInit, OnChanges {
   private loadTemperatures(): void {
     this.ws.call('disk.temperature_agg', [Object.keys(this.diskDictionary), 14]).pipe(untilDestroyed(this)).subscribe((res) => {
       const temperatures = Object.values(res);
-      const sum = temperatures.map((temperature) => temperature.avg).reduce((a, b) => a + b, 0);
 
-      this.diskState.highestTemperature = Math.max(...temperatures.map((temperature) => temperature.max));
-      this.diskState.lowestTemperature = Math.min(...temperatures.map((temperature) => temperature.min));
-      this.diskState.averageTemperature = sum / temperatures.length;
+      const maxValues = temperatures.map((temperature) => temperature.max).filter((value) => value);
+      const minValues = temperatures.map((temperature) => temperature.min).filter((value) => value);
+      const avgValues = temperatures.map((temperature) => temperature.avg).filter((value) => value);
+      const avgSum = avgValues.reduce((a, b) => a + b, 0);
+
+      this.diskState.highestTemperature = maxValues.length > 0 ? Math.max(...maxValues) : this.noDataText;
+      this.diskState.lowestTemperature = minValues.length > 0 ? Math.min(...minValues) : this.noDataText;
+      this.diskState.averageTemperature = avgValues.length > 0 ? avgSum / avgValues.length : this.noDataText;
       this.diskState.unit = TemperatureUnit.Celsius;
       this.diskState.symbolText = '°';
       this.cdr.markForCheck();
