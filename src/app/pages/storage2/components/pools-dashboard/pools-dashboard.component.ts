@@ -44,6 +44,7 @@ export class PoolsDashboardComponent implements OnInit, AfterViewInit {
     },
   };
 
+  isLoading = true;
   isEmptyPools = false;
 
   constructor(
@@ -62,6 +63,13 @@ export class PoolsDashboardComponent implements OnInit, AfterViewInit {
       .pipe(untilDestroyed(this))
       .subscribe((pools) => {
         this.isEmptyPools = pools.length === 0;
+        this.cdr.markForCheck();
+      });
+
+    this.arePoolsLoading$
+      .pipe(untilDestroyed(this))
+      .subscribe((isLoading) => {
+        this.isLoading = isLoading;
         this.cdr.markForCheck();
       });
 

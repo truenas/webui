@@ -5,6 +5,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
 import { MatRippleModule } from '@angular/material/core';
 import { MatDialogModule } from '@angular/material/dialog';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatSortModule } from '@angular/material/sort';
 import { MatTooltipModule } from '@angular/material/tooltip';
@@ -61,6 +62,7 @@ import { DatasetNodeComponent } from './components/dataset-node/dataset-node.com
     MatSortModule,
     MatSlideToggleModule,
     MatRippleModule,
+    MatProgressSpinnerModule,
     AppCommonModule,
     PermissionsModule,
     EncryptionModule,
