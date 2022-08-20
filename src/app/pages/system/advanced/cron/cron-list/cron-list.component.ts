@@ -13,7 +13,9 @@ import {
 import { EntityUtils } from 'app/modules/entity/utils';
 import { CronFormComponent } from 'app/pages/system/advanced/cron/cron-form/cron-form.component';
 import { CronjobRow } from 'app/pages/system/advanced/cron/cron-list/cronjob-row.interface';
-import { DialogService, TaskService, WebSocketService } from 'app/services';
+import {
+  DialogService, SystemGeneralService, TaskService, WebSocketService,
+} from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { UserService } from 'app/services/user.service';
 
@@ -66,6 +68,7 @@ export class CronListComponent implements EntityTableConfig<CronjobRow> {
     protected taskService: TaskService,
     public dialog: DialogService,
     public slideInService: IxSlideInService,
+    private systemGeneralService: SystemGeneralService,
   ) {}
 
   afterInit(entityList: EntityTableComponent): void {
@@ -142,11 +145,16 @@ export class CronListComponent implements EntityTableConfig<CronjobRow> {
     return data.map((job) => {
       const cronSchedule = `${job.schedule.minute} ${job.schedule.hour} ${job.schedule.dom} ${job.schedule.month} ${job.schedule.dow}`;
 
-      return {
+      const transformedData = {
         ...job,
         cron_schedule: cronSchedule,
-        next_run: this.taskService.getTaskNextRun(cronSchedule),
-      };
+      } as CronjobRow;
+
+      this.systemGeneralService.getGeneralConfig$.pipe(untilDestroyed(this)).subscribe((config) => {
+        transformedData.next_run = this.taskService.getTaskNextRun(cronSchedule, config.timezone);
+      });
+
+      return transformedData;
     });
   }
 }
