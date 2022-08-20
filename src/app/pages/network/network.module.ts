@@ -19,6 +19,9 @@ import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { NetworkConfigurationComponent } from 'app/pages/network/components/configuration/configuration.component';
 import {
+  DefaultGatewayDialogComponent,
+} from 'app/pages/network/components/default-gateway-dialog/default-gateway-dialog.component';
+import {
   DownloadClientConfigModalComponent,
 } from 'app/pages/network/components/download-client-config-modal/download-client-config-modal.component';
 import { InterfaceFormComponent } from 'app/pages/network/components/interface-form/interface-form.component';
@@ -69,6 +72,7 @@ import { routing } from './network.routing';
     NetworkConfigurationCardComponent,
     DownloadClientConfigModalComponent,
     IpmiIdentifyDialogComponent,
+    DefaultGatewayDialogComponent,
   ],
   providers: [
     NetworkService,

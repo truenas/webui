@@ -32,6 +32,7 @@ import {
 import {
   CertificateDetailsComponent,
 } from 'app/pages/credentials/certificates-dash/certificate-details/certificate-details.component';
+import { ConfirmForceDeleteCertificateComponent } from 'app/pages/credentials/certificates-dash/confirm-force-delete-dialog/confirm-force-delete-dialog.component';
 import { AcmednsFormComponent } from 'app/pages/credentials/certificates-dash/forms/acmedns-form/acmedns-form.component';
 import {
   SignCsrDialogComponent,
@@ -69,6 +70,7 @@ import { CertificateAddComponent } from './certificates-dash/forms/certificate-a
     CertificateAuthorityAddComponent,
     CertificateAuthorityEditComponent,
     CertificateEditComponent,
+    ConfirmForceDeleteCertificateComponent,
     AcmednsFormComponent,
     SignCsrDialogComponent,
     ViewCertificateDialogComponent,

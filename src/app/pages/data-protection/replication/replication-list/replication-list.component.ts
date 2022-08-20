@@ -1,7 +1,7 @@
 import { DatePipe } from '@angular/common';
 import { Component } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
+import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { filter } from 'rxjs/operators';
@@ -53,6 +53,7 @@ export class ReplicationListComponent implements EntityTableConfig {
   routeSuccess: string[] = ['tasks', 'replication'];
   entityList: EntityTableComponent;
   asyncView = true;
+  filterValue = '';
 
   columns = [
     { name: this.translate.instant('Name'), prop: 'name', always_display: true },
@@ -79,8 +80,6 @@ export class ReplicationListComponent implements EntityTableConfig {
     },
   };
 
-  private dataset: string = '';
-
   constructor(
     private ws: WebSocketService,
     private dialog: DialogService,
@@ -91,7 +90,7 @@ export class ReplicationListComponent implements EntityTableConfig {
     private matDialog: MatDialog,
     private route: ActivatedRoute,
   ) {
-    this.dataset = this.route.snapshot.paramMap.get('dataset') || '';
+    this.filterValue = this.route.snapshot.paramMap.get('dataset') || '';
   }
 
   afterInit(entityList: EntityTableComponent): void {
@@ -102,12 +101,7 @@ export class ReplicationListComponent implements EntityTableConfig {
   }
 
   resourceTransformIncomingRestData(tasks: ReplicationTask[]): ReplicationTaskUi[] {
-    const _tasks = tasks.filter((task) =>
-      task.target_dataset === this.dataset ||
-      task.source_datasets.includes(this.dataset) ||
-      task.name.includes(`${this.dataset}/`)
-    );
-    return _tasks.map((task) => {
+    return tasks.map((task) => {
       return {
         ...task,
         ssh_connection: task.ssh_credentials ? (task.ssh_credentials as any).name : '-',

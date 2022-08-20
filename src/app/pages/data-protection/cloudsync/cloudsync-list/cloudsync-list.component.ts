@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
+import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { JobState } from 'app/enums/job-state.enum';
@@ -42,6 +42,7 @@ export class CloudsyncListComponent implements EntityTableConfig<CloudSyncTaskUi
   wsDelete = 'cloudsync.delete' as const;
   entityList: EntityTableComponent;
   asyncView = true;
+  filterValue = '';
 
   columns = [
     { name: this.translate.instant('Description'), prop: 'description', always_display: true },
@@ -78,8 +79,6 @@ export class CloudsyncListComponent implements EntityTableConfig<CloudSyncTaskUi
     },
   };
 
-  private dataset: string = '';
-
   constructor(
     protected ws: WebSocketService,
     protected translate: TranslateService,
@@ -91,7 +90,7 @@ export class CloudsyncListComponent implements EntityTableConfig<CloudSyncTaskUi
     private matDialog: MatDialog,
     private route: ActivatedRoute,
   ) {
-    this.dataset = this.route.snapshot.paramMap.get('dataset') || '';
+    this.filterValue = this.route.snapshot.paramMap.get('dataset') || '';
   }
 
   afterInit(entityList: EntityTableComponent): void {
@@ -101,12 +100,8 @@ export class CloudsyncListComponent implements EntityTableConfig<CloudSyncTaskUi
     });
   }
 
-  resourceTransformIncomingRestData(data: CloudSyncTask[]): CloudSyncTaskUi[] {
-    const _data = data.filter((cloud) =>
-      cloud.path.replace('/mnt/', '') === this.dataset ||
-      cloud.path.includes(`${this.dataset}/`)
-    );
-    return _data.map((task) => {
+  resourceTransformIncomingRestData(tasks: CloudSyncTask[]): CloudSyncTaskUi[] {
+    return tasks.map((task) => {
       const transformed = { ...task } as CloudSyncTaskUi;
       const formattedCronSchedule = `${task.schedule.minute} ${task.schedule.hour} ${task.schedule.dom} ${task.schedule.month} ${task.schedule.dow}`;
       transformed.credential = task.credentials.name;

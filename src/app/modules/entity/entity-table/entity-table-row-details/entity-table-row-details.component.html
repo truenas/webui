@@ -21,16 +21,16 @@
           <ng-container [ngSwitch]="column.widget.component">
             <ix-task-schedule-list
               *ngSwitchCase="'TaskScheduleListComponent'"
-              [value]="getPropValue(column.prop) | cast"
+              [value]="getColumnValue(column) | cast"
               [config]="config"
               [parent]="parent"
             ></ix-task-schedule-list>
           </ng-container>
         </mat-menu>
-        <p>{{ config.enabled ? getPropValue(column.prop, true) : getPropValue(column.prop) }}</p>
+        <p>{{ config.enabled ? getColumnValue(column, true) : getColumnValue(column) }}</p>
       </ng-container>
       <ng-template #notScheduleList>
-        <p>{{ getPropValue(column.prop) }}</p>
+        <p>{{ getColumnValue(column) }}</p>
       </ng-template>
     </div>
   </div>

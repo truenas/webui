@@ -328,50 +328,50 @@ describe('AppSchemaService', () => {
   describe('transformNode()', () => {
     beforeIntString.forEach((item, idx) => {
       it('converts schema with "int" and "string" type', () => {
-        const transformed = service.transformNode(item);
+        const transformed = service.transformNode(item, true, false);
         expect(transformed).toEqual(afterIntString[idx]);
       });
     });
     beforeEnum.forEach((item, idx) => {
       it('converts schema with "emum" parameter', () => {
-        const transformed = service.transformNode(item);
+        const transformed = service.transformNode(item, true, false);
         expect(transformed).toEqual(afterEnum[idx]);
       });
     });
     beforeBoolean.forEach((item, idx) => {
       it('converts schema with "boolean" type', () => {
-        const transformed = service.transformNode(item);
+        const transformed = service.transformNode(item, true, false);
         expect(transformed).toEqual(afterBoolean[idx]);
       });
     });
     beforePath.forEach((item, idx) => {
       it('converts schema with "path" type', () => {
-        const transformed = service.transformNode(item);
+        const transformed = service.transformNode(item, true, false);
         expect(transformed).toEqual(afterPath[idx]);
       });
     });
     beforeList.forEach((item, idx) => {
       it('converts schema with "list" type', () => {
-        const transformed = service.transformNode(item);
+        const transformed = service.transformNode(item, true, false);
         expect(transformed).toEqual(afterList[idx]);
       });
     });
     beforeIpaddr.forEach((item, idx) => {
       it('converts schema with "ipaddr" type', () => {
-        const transformed = service.transformNode(item);
+        const transformed = service.transformNode(item, true, false);
         expect(transformed).toEqual(afterIpaddr[idx]);
       });
     });
     beforeHidden.forEach((item, idx) => {
       it('converts schema for hidden field', () => {
-        const transformed = service.transformNode(item);
+        const transformed = service.transformNode(item, true, false);
         expect(transformed).toEqual(afterHidden[idx]);
       });
     });
   });
   describe('addFormControls()', () => {
     beforeIntString.forEach((item) => {
-      service.addFormControls(item, dynamicForm, null);
+      service.addFormControls(item, dynamicForm, null, true, false);
     });
 
     it('creates form for "int" with default value', () => {
@@ -394,7 +394,7 @@ describe('AppSchemaService', () => {
     });
 
     beforeBoolean.forEach((item) => {
-      service.addFormControls(item, dynamicForm, null);
+      service.addFormControls(item, dynamicForm, null, true, false);
     });
 
     it('creates form for "boolean"', () => {
@@ -403,7 +403,7 @@ describe('AppSchemaService', () => {
     });
 
     beforeList.forEach((item) => {
-      service.addFormControls(item, dynamicForm, null);
+      service.addFormControls(item, dynamicForm, null, true, false);
     });
 
     it('creates form for "list"', () => {
@@ -411,7 +411,7 @@ describe('AppSchemaService', () => {
     });
 
     beforeHidden.forEach((item) => {
-      service.addFormControls(item, dynamicForm, null);
+      service.addFormControls(item, dynamicForm, null, true, false);
     });
 
     it('creates form for hidden field', () => {

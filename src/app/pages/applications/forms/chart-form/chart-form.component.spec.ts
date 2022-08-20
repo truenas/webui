@@ -386,6 +386,7 @@ describe('ChartFormComponent', () => {
       version: '1.2.1',
       updateStrategy: 'Recreate',
       hostNetwork: true,
+      externalInterfaces: [],
     });
   });
 
@@ -434,6 +435,15 @@ describe('ChartFormComponent', () => {
       release_name: 'app_name',
       timezone: 'America/Los_Angeles',
     });
+  });
+
+  it('disables immutable fields when form is opened for edit', () => {
+    const existingChartEditWithImmutable = { ...existingChartEdit };
+    existingChartEditWithImmutable.chart_schema.schema.questions[0].schema.immutable = true;
+    spectator.component.setChartEdit(existingChartEditWithImmutable);
+    spectator.detectComponentChanges();
+
+    expect(spectator.component.form.get('timezone').disabled).toBeTruthy();
   });
 
   it('editing when form is submitted', () => {

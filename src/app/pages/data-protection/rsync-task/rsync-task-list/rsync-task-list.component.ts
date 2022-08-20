@@ -30,6 +30,7 @@ export class RsyncTaskListComponent implements EntityTableConfig {
   routeEdit: string[] = ['tasks', 'rsync', 'edit'];
   entityList: EntityTableComponent;
   asyncView = true;
+  filterValue = '';
 
   columns = [
     { name: this.translate.instant('Path'), prop: 'path', always_display: true },
@@ -67,8 +68,6 @@ export class RsyncTaskListComponent implements EntityTableConfig {
     },
   };
 
-  private dataset: string = '';
-
   constructor(
     protected ws: WebSocketService,
     protected taskService: TaskService,
@@ -78,7 +77,7 @@ export class RsyncTaskListComponent implements EntityTableConfig {
     protected translate: TranslateService,
     private route: ActivatedRoute,
   ) {
-    this.dataset = this.route.snapshot.paramMap.get('dataset') || '';
+    this.filterValue = this.route.snapshot.paramMap.get('dataset') || '';
   }
 
   afterInit(entityList: EntityTableComponent): void {
@@ -145,12 +144,8 @@ export class RsyncTaskListComponent implements EntityTableConfig {
     }];
   }
 
-  resourceTransformIncomingRestData(data: RsyncTaskUi[]): RsyncTaskUi[] {
-    const _data = data.filter((task) =>
-      task.path.replace('/mnt/', '') === this.dataset ||
-      task.path.includes(`${this.dataset}/`)
-    );
-    return _data.map((task) => {
+  resourceTransformIncomingRestData(tasks: RsyncTaskUi[]): RsyncTaskUi[] {
+    return tasks.map((task) => {
       task.cron_schedule = `${task.schedule.minute} ${task.schedule.hour} ${task.schedule.dom} ${task.schedule.month} ${task.schedule.dow}`;
       task.next_run = this.taskService.getTaskNextRun(task.cron_schedule);
       task.frequency = this.taskService.getTaskCronDescription(task.cron_schedule);

@@ -124,3 +124,11 @@ ix-dataset-details-panel {
     }
   }
 }
+
+.entity-empty-wrapper {
+  padding: 16px;
+
+  ix-entity-empty {
+    margin: 32px 0;
+  }
+}

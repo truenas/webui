@@ -4,9 +4,11 @@ import {
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
 import { filter, map, pluck } from 'rxjs/operators';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { footerHeight, headerHeight } from 'app/modules/common/layouts/admin-layout/admin-layout.component.const';
+import { EmptyConfig, EmptyType } from 'app/modules/entity/entity-empty/entity-empty.component';
 import { IxNestedTreeDataSource } from 'app/modules/ix-tree/ix-nested-tree-datasource';
 import { flattenTreeWithFilter } from 'app/modules/ix-tree/utils/flattern-tree-with-filter';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
@@ -32,12 +34,30 @@ export class DatasetsManagementComponent implements OnInit {
   footerHeight = footerHeight;
   systemDataset: string;
 
+  entityEmptyConf: EmptyConfig = {
+    type: EmptyType.NoPageData,
+    large: true,
+    title: this.translate.instant('No Datasets'),
+    message: `${this.translate.instant(
+      'It seems you haven\'t configured pools yet.',
+    )} ${this.translate.instant(
+      'Please click the button below to create a pool.',
+    )}`,
+    button: {
+      label: this.translate.instant('Create pool'),
+      action: () => this.createPool(),
+    },
+  };
+
+  isLoading = true;
+
   constructor(
     private ws: WebSocketService,
     private cdr: ChangeDetectorRef,
     private activatedRoute: ActivatedRoute,
     private datasetStore: DatasetTreeStore,
     private router: Router,
+    protected translate: TranslateService,
   ) { }
 
   ngOnInit(): void {
@@ -58,6 +78,13 @@ export class DatasetsManagementComponent implements OnInit {
     ).subscribe((systemDataset) => {
       this.systemDataset = systemDataset;
     });
+
+    this.isLoading$
+      .pipe(untilDestroyed(this))
+      .subscribe((isLoading) => {
+        this.isLoading = isLoading;
+        this.cdr.markForCheck();
+      });
   }
 
   isSystemDataset(dataset: DatasetDetails): boolean {
@@ -133,5 +160,9 @@ export class DatasetsManagementComponent implements OnInit {
         this.sortDatasetsByName(dataset.children);
       }
     });
+  }
+
+  createPool(): void {
+    this.router.navigate(['/storage2/create']);
   }
 }

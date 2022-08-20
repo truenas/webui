@@ -47,6 +47,7 @@ export interface EntityTableConfig<Row = unknown> {
   inlineActions?: boolean;
   addBtnDisabled?: boolean;
   routeAddTooltip?: string;
+  filterValue?: string;
 
   /**
    * Returns EmptyConfig for EmptyType or returns null if default behavior is acceptable for that EmptyType
@@ -135,6 +136,7 @@ export interface EntityTableColumn {
   button?: boolean;
   enableMatTooltip?: boolean;
   showLockedStatus?: boolean;
+  emptyText?: string;
 
   icon?: string;
   widget?: {
