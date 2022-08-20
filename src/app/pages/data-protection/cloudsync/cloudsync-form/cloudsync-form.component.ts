@@ -509,11 +509,6 @@ export class CloudsyncFormComponent implements FormConfiguration {
     return this.ws.call('cloudsync.list_buckets', [credential.id]);
   }
 
-  // TODO: Test how buckets work
-  // TODO: Decide if we can remove useless node.
-  // TODO: If yes, keep current treenode interface.
-  // TODO: If no, figure another to allow for async replication list provider.
-
   getChildren(node: TreeNode): Promise<Promise<ListdirChild[]>> {
     const credential = this.formGroup.controls['credentials'].value;
     let bucket = this.formGroup.controls['bucket'].value;

@@ -32,7 +32,6 @@ export class IxExplorerHarness extends ComponentHarness implements IxFormControl
     if (Array.isArray(value)) {
       value = value.join(',');
     }
-    // TODO: Probably won't update the control
 
     return (await this.getMatInputHarness()).setValue(value);
   }
