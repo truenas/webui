@@ -57,6 +57,15 @@
   font-size: 12px;
   padding-top: 2px;
 
+  &.disabled {
+    cursor: not-allowed;
+    pointer-events: none;
+
+    ::ng-deep > * {
+      opacity: 0.6;
+    }
+  }
+
   ::ng-deep .tree-node {
     // Wrap long file names
     word-break: break-all;

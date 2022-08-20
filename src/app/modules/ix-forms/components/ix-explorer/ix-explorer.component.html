@@ -1,6 +1,6 @@
 <div *ngIf="label" class="label-container">
   <label class="label">
-    {{label}}
+    {{ label }}
     <span *ngIf="required" class="required">*</span>
   </label>
   <ix-tooltip *ngIf="tooltip" [header]="label" class="tooltip" [message]="tooltip"></ix-tooltip>
@@ -8,17 +8,18 @@
 
 <div class="input-container" [class.disabled]="isDisabled">
   <input
+    #input
     matInput
     type="text"
     autocomplete="off"
-    [(ngModel)]="value"
+    [value]="inputValue"
     [required]="required"
     [disabled]="isDisabled"
-    (ngModelChange)="valueChangedCustom($event)"
+    (change)="onInputChanged(input.value)"
     (blur)="onTouch()"
   >
 </div>
-<div *ngIf="!isDisabled" class="tree-container">
+<div class="tree-container" [class.disabled]="isDisabled">
   <tree-root
     #tree
     [nodes]="nodes"
@@ -40,8 +41,8 @@
 
 
 <mat-error *ngIf="loadingError" class="loading-error">
-  {{loadingError}}
+  {{ loadingError }}
 </mat-error>
 <ix-errors [control]="controlDirective.control" [label]="label"></ix-errors>
 
-<mat-hint *ngIf="hint">{{hint}}</mat-hint>
+<mat-hint *ngIf="hint">{{ hint }}</mat-hint>

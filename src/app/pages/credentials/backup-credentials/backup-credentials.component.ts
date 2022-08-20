@@ -14,6 +14,7 @@ import { AppTableAction, AppTableConfig } from 'app/modules/entity/table/table.c
 import {
   CloudCredentialsFormComponent,
 } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/cloud-credentials-form.component';
+import { DemoComponent } from 'app/pages/credentials/backup-credentials/demo/demo.component';
 import {
   SshConnectionFormComponent,
 } from 'app/pages/credentials/backup-credentials/ssh-connection-form/ssh-connection-form.component';
@@ -157,6 +158,10 @@ export class BackupCredentialsComponent implements OnInit {
       }
       return item;
     });
+  }
+
+  onTest(): void {
+    this.slideInService.open(DemoComponent);
   }
 
   sshConnectionsDataSourceHelper(res: KeychainCredential[]): KeychainSshCredentials[] {
