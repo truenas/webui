@@ -21,7 +21,6 @@ import { WidgetComponent } from 'app/pages/dashboard/components/widget/widget.co
 import { WidgetUtils } from 'app/pages/dashboard/utils/widget-utils';
 import { ReportingDatabaseError, ReportsService } from 'app/pages/reports-dashboard/reports.service';
 import { StorageService, WebSocketService } from 'app/services';
-import { CoreService } from 'app/services/core-service/core.service';
 import { DialogService } from 'app/services/dialog.service';
 import { LocaleService } from 'app/services/locale.service';
 import { ThemeService } from 'app/services/theme/theme.service';
@@ -73,7 +72,6 @@ export class WidgetNetworkComponent extends WidgetComponent implements OnInit, A
 
   minSizeToActiveTrafficArrowIcon = 1024;
 
-  chartData: ChartData = {};
   interval: Interval;
   availableNics: BaseNetworkInterface[] = [];
   chartOptions: ChartOptions = {
@@ -162,7 +160,6 @@ export class WidgetNetworkComponent extends WidgetComponent implements OnInit, A
     private storage: StorageService,
     private localeService: LocaleService,
     public themeService: ThemeService,
-    public core: CoreService,
   ) {
     super(translate);
     this.configurable = false;
@@ -170,9 +167,6 @@ export class WidgetNetworkComponent extends WidgetComponent implements OnInit, A
   }
 
   ngOnDestroy(): void {
-    this.core.emit({ name: 'StatsRemoveListener', data: { name: 'NIC', obj: this } });
-    this.core.unregister({ observerClass: this });
-
     if (this.interval) {
       clearInterval(this.interval);
     }

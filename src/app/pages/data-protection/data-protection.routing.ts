@@ -26,6 +26,10 @@ export const dataProtectionRoutes: Routes = [{
         component: CloudsyncListComponent,
         data: { title: 'Cloud Sync Tasks', breadcrumb: 'Cloud Sync Tasks' },
       }, {
+        path: ':dataset',
+        component: CloudsyncListComponent,
+        data: { title: 'Cloud Sync Tasks', breadcrumb: 'Cloud Sync Tasks' },
+      }, {
         path: 'add',
         component: CloudsyncFormComponent,
         data: { title: 'Add', breadcrumb: 'Add' },
@@ -43,10 +47,22 @@ export const dataProtectionRoutes: Routes = [{
         data: { title: 'Periodic Snapshot Tasks', breadcrumb: 'Periodic Snapshot Tasks' },
       }],
     }, {
+      path: 'snapshot/:dataset',
+      data: { title: 'Periodic Snapshot Tasks', breadcrumb: 'Periodic Snapshot Tasks', icon: 'event_note' },
+      children: [{
+        path: '',
+        component: SnapshotListComponent,
+        data: { title: 'Periodic Snapshot Tasks', breadcrumb: 'Periodic Snapshot Tasks' },
+      }],
+    }, {
       path: 'replication',
       data: { title: 'Replication Tasks', breadcrumb: 'Replication Tasks', icon: 'event_note' },
       children: [{
         path: '',
+        component: ReplicationListComponent,
+        data: { title: 'Replication Tasks', breadcrumb: 'Replication Tasks' },
+      }, {
+        path: ':dataset',
         component: ReplicationListComponent,
         data: { title: 'Replication Tasks', breadcrumb: 'Replication Tasks' },
       }, {
@@ -60,6 +76,10 @@ export const dataProtectionRoutes: Routes = [{
       data: { title: 'Rsync Tasks', breadcrumb: 'Rsync Tasks', icon: 'event_note' },
       children: [{
         path: '',
+        component: RsyncTaskListComponent,
+        data: { title: 'Rsync Tasks', breadcrumb: 'Rsync Tasks' },
+      }, {
+        path: ':dataset',
         component: RsyncTaskListComponent,
         data: { title: 'Rsync Tasks', breadcrumb: 'Rsync Tasks' },
       }],

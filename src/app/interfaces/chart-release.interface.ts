@@ -49,7 +49,7 @@ export interface ChartReleaseCreate {
   version: string;
 }
 
-export type ChartFormValue = string | number | boolean | Record<string, unknown>;
+export type ChartFormValue = string | number | boolean | Record<string, unknown> | ChartFormValue[];
 
 export interface ChartFormValues extends HierarchicalObjectMap<ChartFormValue> {
   release_name: string;
@@ -107,7 +107,7 @@ export interface ChartSchemaNodeConf {
   type: ChartSchemaType;
   attrs?: ChartSchemaNode[];
   items?: ChartSchemaNode[];
-  default?: any;
+  default?: unknown;
   enum?: ChartSchemaEnum[];
   required?: boolean;
   value?: string;
@@ -119,8 +119,9 @@ export interface ChartSchemaNodeConf {
   private?: boolean;
   hidden?: boolean;
   show_if?: string[][];
-  show_subquestions_if?: any;
+  show_subquestions_if?: ChartFormValue;
   editable?: boolean;
+  immutable?: boolean;
   subquestions?: ChartSchemaNode[];
 }
 

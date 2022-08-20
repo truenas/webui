@@ -15,6 +15,7 @@ export enum CloudsyncProviderName {
   OpenstackSwift = 'OPENSTACK_SWIFT',
   Pcloud = 'PCLOUD',
   Sftp = 'SFTP',
+  Storj = 'STORJ_IX',
   Webdav = 'WEBDAV',
   Yandex = 'YANDEX',
 }

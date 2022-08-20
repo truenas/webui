@@ -46,6 +46,18 @@ import { SyslogFormComponent } from 'app/pages/system/advanced/syslog-form/syslo
 import { SystemDatasetPoolComponent } from 'app/pages/system/advanced/system-dataset-pool/system-dataset-pool.component';
 import { AlertServiceListComponent } from 'app/pages/system/alert-service/alert-service-list/alert-service-list.component';
 import { AlertServiceComponent } from 'app/pages/system/alert-service/alert-service/alert-service.component';
+import { AwsSnsServiceComponent } from 'app/pages/system/alert-service/alert-service/alert-services/aws-sns-service/aws-sns-service.component';
+import {
+  EmailServiceComponent,
+} from 'app/pages/system/alert-service/alert-service/alert-services/email-service/email-service.component';
+import { InfluxDbServiceComponent } from 'app/pages/system/alert-service/alert-service/alert-services/influx-db-service/influx-db-service.component';
+import { MattermostServiceComponent } from 'app/pages/system/alert-service/alert-service/alert-services/mattermost-service/mattermost-service.component';
+import { OpsGenieServiceComponent } from 'app/pages/system/alert-service/alert-service/alert-services/ops-genie-service/ops-genie-service.component';
+import { PagerDutyServiceComponent } from 'app/pages/system/alert-service/alert-service/alert-services/pager-duty-service/pager-duty-service.component';
+import { SlackServiceComponent } from 'app/pages/system/alert-service/alert-service/alert-services/slack-service/slack-service.component';
+import { SnmpTrapServiceComponent } from 'app/pages/system/alert-service/alert-service/alert-services/snmp-trap-service/snmp-trap-service.component';
+import { TelegramServiceComponent } from 'app/pages/system/alert-service/alert-service/alert-services/telegram-service/telegram-service.component';
+import { VictorOpsServiceComponent } from 'app/pages/system/alert-service/alert-service/alert-services/victor-ops-service/victor-ops-service.component';
 import { AlertConfigComponent } from 'app/pages/system/alert/alert.component';
 import { BootPoolAttachFormComponent } from 'app/pages/system/bootenv/boot-pool-attach/boot-pool-attach-form.component';
 import { BootPoolReplaceFormComponent } from 'app/pages/system/bootenv/boot-pool-replace/boot-pool-replace-form.component';
@@ -168,6 +180,25 @@ import { routing } from './system.routing';
     UploadConfigDialogComponent,
     ManageConfigurationMenuComponent,
     SaveDebugButtonComponent,
+    AwsSnsServiceComponent,
+    InfluxDbServiceComponent,
+    MattermostServiceComponent,
+    OpsGenieServiceComponent,
+    PagerDutyServiceComponent,
+    SlackServiceComponent,
+    SnmpTrapServiceComponent,
+    TelegramServiceComponent,
+    VictorOpsServiceComponent,
+    AwsSnsServiceComponent,
+    EmailServiceComponent,
+    InfluxDbServiceComponent,
+    MattermostServiceComponent,
+    OpsGenieServiceComponent,
+    PagerDutyServiceComponent,
+    SlackServiceComponent,
+    SnmpTrapServiceComponent,
+    TelegramServiceComponent,
+    VictorOpsServiceComponent,
   ],
   providers: [
     TranslateService,

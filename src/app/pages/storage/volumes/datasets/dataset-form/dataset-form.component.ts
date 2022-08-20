@@ -1345,7 +1345,7 @@ export class DatasetFormComponent implements FormConfiguration {
     }
   }
 
-  getFieldValueOrRaw(field: any): any {
+  getFieldValueOrRaw(field: ZfsProperty<unknown>): any {
     if (field === undefined || field.value === undefined) {
       return field;
     }
@@ -1406,7 +1406,7 @@ export class DatasetFormComponent implements FormConfiguration {
     });
 
     const returnValue: DatasetFormData = {
-      name: this.getFieldValueOrRaw(wsResponse.name),
+      name: wsResponse.name,
       atime: this.getFieldValueOrRaw(wsResponse.atime),
       share_type: this.getFieldValueOrRaw(wsResponse.share_type),
       acltype: this.getFieldValueOrRaw(wsResponse.acltype),
@@ -1460,7 +1460,7 @@ export class DatasetFormComponent implements FormConfiguration {
     return returnValue;
   }
 
-  beforeSubmit(data: any): void {
+  beforeSubmit(data: { parent: unknown }): void {
     delete data.parent;
   }
 

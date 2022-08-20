@@ -4,7 +4,9 @@ import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { CatalogApp } from 'app/interfaces/catalog.interface';
-import { ChartSchemaNodeConf } from 'app/interfaces/chart-release.interface';
+import {
+  ChartFormValue, ChartRelease, ChartSchemaNodeConf,
+} from 'app/interfaces/chart-release.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { ChartFormComponent } from 'app/pages/applications/forms/chart-form/chart-form.component';
@@ -287,7 +289,7 @@ describe('ChartFormComponent', () => {
       memLimit: '1234',
       release_name: 'app_name',
       timezone: 'America/Los_Angeles',
-    },
+    } as { [key: string]: ChartFormValue },
     chart_schema: {
       schema: {
         groups: [
@@ -296,6 +298,7 @@ describe('ChartFormComponent', () => {
             description: 'Machinaris Configuration description',
           },
         ],
+        portals: {},
         questions: [
           {
             variable: 'timezone',
@@ -304,9 +307,6 @@ describe('ChartFormComponent', () => {
             description: 'Configure timezone for machinaris',
             schema: {
               type: 'string',
-              $ref: [
-                'definitions/timezone',
-              ],
               enum: [
                 {
                   value: 'America/Los_Angeles',
@@ -323,7 +323,7 @@ describe('ChartFormComponent', () => {
         ],
       },
     },
-  } as any;
+  } as ChartRelease;
 
   const createComponent = createComponentFactory({
     component: ChartFormComponent,
@@ -386,6 +386,7 @@ describe('ChartFormComponent', () => {
       version: '1.2.1',
       updateStrategy: 'Recreate',
       hostNetwork: true,
+      externalInterfaces: [],
     });
   });
 
@@ -434,6 +435,15 @@ describe('ChartFormComponent', () => {
       release_name: 'app_name',
       timezone: 'America/Los_Angeles',
     });
+  });
+
+  it('disables immutable fields when form is opened for edit', () => {
+    const existingChartEditWithImmutable = { ...existingChartEdit };
+    existingChartEditWithImmutable.chart_schema.schema.questions[0].schema.immutable = true;
+    spectator.component.setChartEdit(existingChartEditWithImmutable);
+    spectator.detectComponentChanges();
+
+    expect(spectator.component.form.get('timezone').disabled).toBeTruthy();
   });
 
   it('editing when form is submitted', () => {

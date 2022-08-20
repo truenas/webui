@@ -18,6 +18,12 @@
       [tooltip]="tooltips.pool_avail_threshold | translate"
       type="number"
     ></ix-input>
+    <ix-input
+      formControlName="listen_port"
+      [label]="'iSCSI listen port' | translate"
+      type="number"
+      [required]="true"
+    ></ix-input>
   </ix-fieldset>
 
   <div class="form-actions">

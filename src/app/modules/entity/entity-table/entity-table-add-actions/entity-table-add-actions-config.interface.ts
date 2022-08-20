@@ -12,4 +12,5 @@ export interface EntityTableAddActionsConfig {
     icon?: string;
     onClick: () => void;
   };
+  filterValue?: string;
 }

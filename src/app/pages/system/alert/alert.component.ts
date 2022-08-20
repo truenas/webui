@@ -225,7 +225,6 @@ export class AlertConfigComponent implements OnInit, AfterViewInit {
         }
 
         // Something wrong with Typescript typing or eslint rule.
-        // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
         ((payload.classes[alertClass] as any)[classKey] as AlertLevel | AlertPolicy) = this.formGroup.value[key];
       }
     }

@@ -160,7 +160,7 @@
     "@types/lodash": "4.14.160",
     "@types/node": "~10.12.7",
     "@types/pixi.js": "~4.7.1",
-    "@typescript-eslint/eslint-plugin": "~5.32.0",
+    "@typescript-eslint/eslint-plugin": "~5.33.0",
     "@typescript-eslint/parser": "~5.30.7",
     "codelyzer": "~6.0.2",
     "commander": "~4.1.1",

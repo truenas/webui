@@ -25,6 +25,23 @@
               [tooltip]="helptext.target_form_tooltip_mode | translate"
               [fxHide]="true"
             ></ix-select>
+            <ix-list
+              [empty]="form.controls.auth_networks.length === 0"
+              [label]="helptext.auth_network.placeholder | translate"
+              formArrayName="auth_networks"
+              (add)="addNetwork()"
+            >
+              <ix-list-item
+                *ngFor="let entry of form.controls.auth_networks.controls; let i = index"
+                (delete)="deleteNetwork(i)"
+              >
+                <ix-ip-input-with-netmask
+                  [formControlName]="i"
+                  [label]="'Network' | translate"
+                  [required]="true"
+                ></ix-ip-input-with-netmask>
+              </ix-list-item>
+            </ix-list>
           </ix-fieldset>
         </div>
         <div class="column">

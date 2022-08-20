@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { JobState } from 'app/enums/job-state.enum';
 import helptext from 'app/helptext/data-protection/cloudsync/cloudsync-form';
@@ -26,6 +28,8 @@ import {
   WebSocketService,
 } from 'app/services';
 import { ModalService } from 'app/services/modal.service';
+import { AppState } from 'app/store';
+import { selectTimezone } from 'app/store/system-config/system-config.selectors';
 
 @UntilDestroy()
 @Component({
@@ -41,6 +45,7 @@ export class CloudsyncListComponent implements EntityTableConfig<CloudSyncTaskUi
   wsDelete = 'cloudsync.delete' as const;
   entityList: EntityTableComponent;
   asyncView = true;
+  filterValue = '';
 
   columns = [
     { name: this.translate.instant('Description'), prop: 'description', always_display: true },
@@ -86,7 +91,11 @@ export class CloudsyncListComponent implements EntityTableConfig<CloudSyncTaskUi
     protected loader: AppLoaderService,
     protected taskService: TaskService,
     private matDialog: MatDialog,
-  ) {}
+    private route: ActivatedRoute,
+    private store$: Store<AppState>,
+  ) {
+    this.filterValue = this.route.snapshot.paramMap.get('dataset') || '';
+  }
 
   afterInit(entityList: EntityTableComponent): void {
     this.entityList = entityList;
@@ -95,14 +104,17 @@ export class CloudsyncListComponent implements EntityTableConfig<CloudSyncTaskUi
     });
   }
 
-  resourceTransformIncomingRestData(data: CloudSyncTask[]): CloudSyncTaskUi[] {
-    return data.map((task) => {
+  resourceTransformIncomingRestData(tasks: CloudSyncTask[]): CloudSyncTaskUi[] {
+    return tasks.map((task) => {
       const transformed = { ...task } as CloudSyncTaskUi;
       const formattedCronSchedule = `${task.schedule.minute} ${task.schedule.hour} ${task.schedule.dom} ${task.schedule.month} ${task.schedule.dow}`;
       transformed.credential = task.credentials.name;
       transformed.cron_schedule = task.enabled ? formattedCronSchedule : this.translate.instant('Disabled');
       transformed.frequency = this.taskService.getTaskCronDescription(formattedCronSchedule);
-      transformed.next_run = task.enabled ? this.taskService.getTaskNextRun(formattedCronSchedule) : this.translate.instant('Disabled');
+
+      this.store$.select(selectTimezone).pipe(untilDestroyed(this)).subscribe((timezone) => {
+        transformed.next_run = task.enabled ? this.taskService.getTaskNextRun(formattedCronSchedule, timezone) : this.translate.instant('Disabled');
+      });
 
       if (task.job === null) {
         transformed.state = { state: transformed.locked ? JobState.Locked : JobState.Pending };

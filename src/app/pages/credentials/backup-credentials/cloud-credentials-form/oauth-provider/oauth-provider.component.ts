@@ -8,6 +8,13 @@ import { helptextSystemCloudcredentials as helptext } from 'app/helptext/system/
 import { OauthMessage } from 'app/interfaces/oauth-message.interface';
 import { DialogService } from 'app/services';
 
+export interface OauthProviderData {
+  client_id: string;
+  client_secret: string;
+  token?: string;
+  [key: string]: unknown;
+}
+
 @Component({
   selector: 'ix-oauth-provider-authentication',
   templateUrl: './oauth-provider.component.html',
@@ -38,7 +45,7 @@ export class OauthProviderComponent {
     this.window.addEventListener('message', this.onOauthMessage, false);
   }
 
-  onOauthMessage = (message: OauthMessage): void => {
+  onOauthMessage = (message: OauthMessage<OauthProviderData>): void => {
     this.window.removeEventListener('message', this.onOauthMessage);
 
     if (!('oauth_portal' in message.data)) {

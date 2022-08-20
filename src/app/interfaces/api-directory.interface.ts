@@ -15,7 +15,7 @@ import {
 import { ActiveDirectoryConfig, LeaveActiveDirectory } from 'app/interfaces/active-directory-config.interface';
 import { ActiveDirectoryUpdate } from 'app/interfaces/active-directory.interface';
 import { AdvancedConfig, AdvancedConfigUpdate } from 'app/interfaces/advanced-config.interface';
-import { AlertService, AlertServiceCreate } from 'app/interfaces/alert-service.interface';
+import { AlertService, AlertServiceEdit } from 'app/interfaces/alert-service.interface';
 import {
   Alert, AlertCategory, AlertClasses, AlertClassesUpdate,
 } from 'app/interfaces/alert.interface';
@@ -293,10 +293,10 @@ export type ApiDirectory = {
   'alertclasses.update': { params: [AlertClassesUpdate]; response: AlertClasses };
 
   // Alert Service
-  'alertservice.update': { params: [id: number, update: AlertServiceCreate]; response: AlertService };
-  'alertservice.create': { params: [AlertServiceCreate]; response: AlertService };
+  'alertservice.update': { params: [id: number, update: AlertServiceEdit]; response: AlertService };
+  'alertservice.create': { params: [AlertServiceEdit]; response: AlertService };
   'alertservice.query': { params: QueryParams<AlertService>; response: AlertService[] };
-  'alertservice.test': { params: [AlertServiceCreate]; response: boolean };
+  'alertservice.test': { params: [AlertServiceEdit]; response: boolean };
   'alertservice.delete': { params: number; response: boolean };
 
   // Api Key
@@ -549,6 +549,8 @@ export type ApiDirectory = {
   'interface.checkin': { params: void; response: void };
   'interface.xmit_hash_policy_choices': { params: void; response: Choices };
   'interface.lacpdu_rate_choices': { params: void; response: Choices };
+  'interface.default_route_will_be_removed': { params: void; response: boolean };
+  'interface.save_default_route': { params: string[]; response: void };
 
   // iSCSI
   'iscsi.initiator.query': { params: QueryParams<IscsiInitiatorGroup>; response: IscsiInitiatorGroup[] };
