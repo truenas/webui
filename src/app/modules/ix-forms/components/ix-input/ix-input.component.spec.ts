@@ -46,7 +46,7 @@ describe('IxInputComponent', () => {
       expect(spectator.query('input')).toHaveClass('prefix-padding');
     });
 
-    it('renders a tooltip next when it and the labels are provided', () => {
+    it('renders a tooltip next to a label when it and the label are provided', () => {
       spectator.setInput('tooltip', 'Enter your first name');
       spectator.setInput('label', 'First Name');
 
