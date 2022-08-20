@@ -1,0 +1,16 @@
+.form-actions {
+  margin: 8px 10px;
+
+  button {
+    margin-right: 8px;
+  }
+}
+
+.fieldsets {
+  display: flex;
+  flex-wrap: wrap;
+
+  > ix-fieldset {
+    flex: 1 1 50%;
+  }
+}

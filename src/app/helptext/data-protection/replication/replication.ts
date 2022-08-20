@@ -1,6 +1,8 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
+import repwizardhelptext from 'app/helptext/data-protection/replication/replication-wizard';
 import globalHelptext from 'app/helptext/global-helptext';
 
+// TODO: Clean up
 export default {
   fieldset_general: T('General'),
   fieldset_transport: T('Transport Options'),
@@ -201,25 +203,25 @@ to determine snapshots creation order.'),
  <code>readonly</code> property during replication.'),
 
   encryption_placeholder: T('Encryption'),
-  encryption_tooltip: T(''),
+  encryption_tooltip: repwizardhelptext.encryption_tooltip,
 
   encryption_key_format_placeholder: T('Encryption Key Format'),
-  encryption_key_format_tooltip: T(''),
+  encryption_key_format_tooltip: repwizardhelptext.encryption_key_format_tooltip,
 
   encryption_key_generate_placeholder: T('Generate Encryption Key'),
-  encryption_key_generate_tooltip: T(''),
+  encryption_key_generate_tooltip: repwizardhelptext.encryption_key_generate_tooltip,
 
   encryption_key_hex_placeholder: T('Encryption Key'),
-  encryption_key_hex_tooltip: T(''),
+  encryption_key_hex_tooltip: repwizardhelptext.encryption_key_hex_tooltip,
 
   encryption_key_passphrase_placeholder: T('Passphrase'),
-  encryption_key_passphrase_tooltip: T(''),
+  encryption_key_passphrase_tooltip: repwizardhelptext.encryption_key_passphrase_tooltip,
 
   encryption_key_location_truenasdb_placeholder: T('Store Encryption key in Sending TrueNAS database'),
-  encryption_key_location_truenasdb_tooltip: T(''),
+  encryption_key_location_truenasdb_tooltip: repwizardhelptext.encryption_key_location_truenasdb_tooltip,
 
   encryption_key_location_placeholder: T('Encryption Key Location in Target System'),
-  encryption_key_location_tooltip: T(''),
+  encryption_key_location_tooltip: repwizardhelptext.encryption_key_location_tooltip,
 
   allow_from_scratch_placeholder: T('Synchronize Destination Snapshots With Source'),
   allow_from_scratch_tooltip: T('If the destination system has \

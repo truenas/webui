@@ -3,6 +3,7 @@ import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+import { merge } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { JobState } from 'app/enums/job-state.enum';
 import globalHelptext from 'app/helptext/global-helptext';
@@ -28,6 +29,7 @@ import {
   KeychainCredentialService,
   ReplicationService,
 } from 'app/services';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { ModalService } from 'app/services/modal.service';
 
 @UntilDestroy()
@@ -86,11 +88,15 @@ export class ReplicationListComponent implements EntityTableConfig {
     protected loader: AppLoaderService,
     private translate: TranslateService,
     private matDialog: MatDialog,
+    private slideInService: IxSlideInService,
   ) {}
 
   afterInit(entityList: EntityTableComponent): void {
     this.entityList = entityList;
-    this.modalService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
+    merge([
+      this.slideInService.onClose$,
+      this.modalService.onClose$,
+    ]).pipe(untilDestroyed(this)).subscribe(() => {
       this.entityList.getData();
     });
   }
@@ -99,7 +105,7 @@ export class ReplicationListComponent implements EntityTableConfig {
     return tasks.map((task) => {
       return {
         ...task,
-        ssh_connection: task.ssh_credentials ? (task.ssh_credentials as any).name : '-',
+        ssh_connection: task.ssh_credentials ? (task.ssh_credentials).name : '-',
         task_last_snapshot: task.state.last_snapshot ? task.state.last_snapshot : this.translate.instant('No snapshots sent yet'),
       };
     });
@@ -252,6 +258,8 @@ export class ReplicationListComponent implements EntityTableConfig {
   }
 
   doEdit(id: number): void {
-    this.modalService.openInSlideIn(ReplicationFormComponent, id);
+    const row = this.entityList.rows.find((row) => row.id === id);
+    const form = this.slideInService.open(ReplicationFormComponent, { wide: true });
+    form.setExistingReplication(row);
   }
 }

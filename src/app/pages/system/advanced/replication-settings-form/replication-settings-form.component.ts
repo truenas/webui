@@ -11,11 +11,11 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
 @Component({
-  templateUrl: 'replication-form.component.html',
-  styleUrls: ['./replication-form.component.scss'],
+  templateUrl: 'replication-settings-form.component.html',
+  styleUrls: ['./replication-settings-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ReplicationFormComponent implements OnInit {
+export class ReplicationSettingsFormComponent implements OnInit {
   isFormLoading = false;
   form = this.fb.group({
     max_parallel_replication_tasks: [null as number],

@@ -39,6 +39,7 @@ import { InitShutdownFormComponent } from 'app/pages/system/advanced/initshutdow
 import { InitshutdownListComponent } from 'app/pages/system/advanced/initshutdown/initshutdown-list/initshutdown-list.component';
 import { IsolatedGpuPcisFormComponent } from 'app/pages/system/advanced/isolated-gpu-pcis/isolated-gpu-pcis-form.component';
 import { KernelFormComponent } from 'app/pages/system/advanced/kernel-form/kernel-form.component';
+import { ReplicationSettingsFormComponent } from 'app/pages/system/advanced/replication-settings-form/replication-settings-form.component';
 import { SaveDebugButtonComponent } from 'app/pages/system/advanced/save-debug-button/save-debug-button.component';
 import { SedFormComponent } from 'app/pages/system/advanced/sed-form/sed-form.component';
 import { SyslogFormComponent } from 'app/pages/system/advanced/syslog-form/syslog-form.component';
@@ -80,7 +81,6 @@ import { TwoFactorComponent } from 'app/pages/system/two-factor/two-factor.compo
 import { ManualUpdateFormComponent } from 'app/pages/system/update/manual-update-form/manual-update-form.component';
 import { UpdateComponent } from 'app/pages/system/update/update.component';
 import { EnclosureModule } from 'app/pages/system/view-enclosure/enclosure.module';
-import { ReplicationFormComponent } from './advanced/replication-form/replication-form.component';
 import { FileTicketModule } from './file-ticket/file-ticket.module';
 import { routing } from './system.routing';
 
@@ -152,7 +152,7 @@ import { routing } from './system.routing';
     NtpServerListComponent,
     ProactiveComponent,
     QrDialogComponent,
-    ReplicationFormComponent,
+    ReplicationSettingsFormComponent,
     SupportComponent,
     SysInfoComponent,
     SyslogFormComponent,

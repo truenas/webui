@@ -59,7 +59,7 @@ export interface ReplicationTask {
   source_datasets?: string[];
   source_datasets_from: string;
   speed_limit?: number;
-  ssh_credentials?: SshCredentials | number[];
+  ssh_credentials?: any; // TODO: SshCredentials | number[];
   state: DataProtectionTaskState;
   target_dataset: string;
   target_dataset_from: string;

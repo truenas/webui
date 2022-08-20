@@ -4,7 +4,6 @@ import { SmartTaskListComponent } from 'app/pages/data-protection/smart-task/sma
 import { CloudsyncFormComponent } from './cloudsync/cloudsync-form/cloudsync-form.component';
 import { CloudsyncListComponent } from './cloudsync/cloudsync-list/cloudsync-list.component';
 import { DataProtectionDashboardComponent } from './components/data-protection-dashboard/data-protection-dashboard.component';
-import { ReplicationFormComponent } from './replication/replication-form/replication-form.component';
 import { ReplicationListComponent } from './replication/replication-list/replication-list.component';
 import { ReplicationWizardComponent } from './replication/replication-wizard/replication-wizard.component';
 import { ResilverConfigComponent } from './scrub-task/resilver-config/resilver-config.component';
@@ -50,14 +49,6 @@ export const dataProtectionRoutes: Routes = [{
         path: '',
         component: ReplicationListComponent,
         data: { title: 'Replication Tasks', breadcrumb: 'Replication Tasks' },
-      }, {
-        path: 'add',
-        component: ReplicationFormComponent,
-        data: { title: 'Add', breadcrumb: 'Add' },
-      }, {
-        path: 'edit/:pk',
-        component: ReplicationFormComponent,
-        data: { title: 'Edit', breadcrumb: 'Edit' },
       }, {
         path: 'wizard',
         component: ReplicationWizardComponent,

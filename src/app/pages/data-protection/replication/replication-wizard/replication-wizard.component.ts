@@ -45,6 +45,9 @@ import { EntityWizardComponent } from 'app/modules/entity/entity-wizard/entity-w
 import { EntityUtils } from 'app/modules/entity/utils';
 import { CronPresetValue } from 'app/modules/scheduler/utils/get-default-crontab-presets.utils';
 import {
+  ReplicationFormComponent,
+} from 'app/pages/data-protection/replication/replication-form/replication-form.component';
+import {
   AppLoaderService,
   DialogService,
   KeychainCredentialService,
@@ -52,6 +55,7 @@ import {
   TaskService,
   WebSocketService,
 } from 'app/services';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { ModalService } from 'app/services/modal.service';
 
 @UntilDestroy()
@@ -73,8 +77,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
     name: this.translate.instant('Advanced Replication Creation'),
     function: () => {
       this.modalService.closeSlideIn();
-      const message = { action: 'open', component: 'replicationForm', row: this.pk };
-      this.modalService.message(message);
+      this.slideInService.open(ReplicationFormComponent, { wide: true });
     },
   }];
   protected namesInUse: string[] = [];
@@ -794,6 +797,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
     private entityFormService: EntityFormService,
     private modalService: ModalService,
     private translate: TranslateService,
+    private slideInService: IxSlideInService,
   ) {
     this.ws.call('replication.query').pipe(untilDestroyed(this)).subscribe((res) => {
       this.namesInUse.push(...res.map((replication) => replication.name));

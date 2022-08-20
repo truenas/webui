@@ -36,7 +36,7 @@ import { ScrubTaskFormComponent } from 'app/pages/data-protection/scrub-task/scr
 import { SmartTaskFormComponent } from 'app/pages/data-protection/smart-task/smart-task-form/smart-task-form.component';
 import { SnapshotTaskComponent } from 'app/pages/data-protection/snapshot/snapshot-task/snapshot-task.component';
 import {
-  DialogService, ModalServiceMessage,
+  DialogService,
   StorageService,
   TaskService,
   WebSocketService,
@@ -116,15 +116,6 @@ export class DataProtectionDashboardComponent implements OnInit {
       .subscribe(() => {
         this.refreshTables();
       });
-
-    this.modalService.message$.pipe(untilDestroyed(this)).subscribe((res: ModalServiceMessage) => {
-      if (res['action'] === 'open' && res['component'] === 'replicationForm') {
-        this.modalService.openInSlideIn(ReplicationFormComponent, res['row']);
-      }
-      if (res['action'] === 'open' && res['component'] === 'replicationWizard') {
-        this.modalService.openInSlideIn(ReplicationWizardComponent, res['row']);
-      }
-    });
   }
 
   getCardData(): void {
@@ -254,7 +245,8 @@ export class DataProtectionDashboardComponent implements OnInit {
             this.modalService.openInSlideIn(ReplicationWizardComponent);
           },
           edit: (row: ReplicationTaskUi) => {
-            this.modalService.openInSlideIn(ReplicationFormComponent, row.id);
+            const form = this.slideInService.open(ReplicationFormComponent, { wide: true });
+            form.setExistingReplication(row);
           },
           onButtonClick: (row) => {
             this.stateButton(row);
