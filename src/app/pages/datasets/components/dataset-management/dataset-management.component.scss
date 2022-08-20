@@ -29,7 +29,7 @@ $dualcolumn-slim-max-width: ($card-width-slim * 2 + $gap * 2);
   flex: 1;
   flex-direction: column;
   margin-right: 16px;
-  max-width: $table-width; //700px;
+  max-width: $table-width;
   min-width: $table-min-width;
   position: relative;
 
