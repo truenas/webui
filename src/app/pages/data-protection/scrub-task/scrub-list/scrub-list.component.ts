@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { ScrubTaskUi } from 'app/interfaces/scrub-task.interface';
 import { EntityFormService } from 'app/modules/entity/entity-form/services/entity-form.service';
@@ -8,8 +9,10 @@ import { EntityTableAction, EntityTableConfig } from 'app/modules/entity/entity-
 import {
   ScrubTaskFormComponent,
 } from 'app/pages/data-protection/scrub-task/scrub-task-form/scrub-task-form.component';
-import { UserService, TaskService, SystemGeneralService } from 'app/services';
+import { UserService, TaskService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { AppState } from 'app/store';
+import { selectTimezone } from 'app/store/system-config/system-config.selectors';
 
 @UntilDestroy()
 @Component({
@@ -56,7 +59,7 @@ export class ScrubListComponent implements EntityTableConfig {
     protected taskService: TaskService,
     protected slideInService: IxSlideInService,
     protected translate: TranslateService,
-    protected systemGeneralService: SystemGeneralService,
+    private store$: Store<AppState>,
   ) {}
 
   afterInit(entityList: EntityTableComponent): void {
@@ -70,8 +73,8 @@ export class ScrubListComponent implements EntityTableConfig {
     return data.map((task) => {
       task.cron_schedule = `${task.schedule.minute} ${task.schedule.hour} ${task.schedule.dom} ${task.schedule.month} ${task.schedule.dow}`;
       task.frequency = this.taskService.getTaskCronDescription(task.cron_schedule);
-      this.systemGeneralService.getGeneralConfig$.pipe(untilDestroyed(this)).subscribe((config) => {
-        task.next_run = this.taskService.getTaskNextRun(task.cron_schedule, config.timezone);
+      this.store$.select(selectTimezone).pipe(untilDestroyed(this)).subscribe((timezone) => {
+        task.next_run = this.taskService.getTaskNextRun(task.cron_schedule, timezone);
       });
 
       return task;

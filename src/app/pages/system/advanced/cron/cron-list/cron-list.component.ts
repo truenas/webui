@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { filter, switchMap } from 'rxjs/operators';
 import { Cronjob } from 'app/interfaces/cronjob.interface';
@@ -14,10 +15,12 @@ import { EntityUtils } from 'app/modules/entity/utils';
 import { CronFormComponent } from 'app/pages/system/advanced/cron/cron-form/cron-form.component';
 import { CronjobRow } from 'app/pages/system/advanced/cron/cron-list/cronjob-row.interface';
 import {
-  DialogService, SystemGeneralService, TaskService, WebSocketService,
+  DialogService, TaskService, WebSocketService,
 } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { UserService } from 'app/services/user.service';
+import { AppState } from 'app/store';
+import { selectTimezone } from 'app/store/system-config/system-config.selectors';
 
 @UntilDestroy()
 @Component({
@@ -68,7 +71,7 @@ export class CronListComponent implements EntityTableConfig<CronjobRow> {
     protected taskService: TaskService,
     public dialog: DialogService,
     public slideInService: IxSlideInService,
-    private systemGeneralService: SystemGeneralService,
+    private store$: Store<AppState>,
   ) {}
 
   afterInit(entityList: EntityTableComponent): void {
@@ -150,8 +153,8 @@ export class CronListComponent implements EntityTableConfig<CronjobRow> {
         cron_schedule: cronSchedule,
       } as CronjobRow;
 
-      this.systemGeneralService.getGeneralConfig$.pipe(untilDestroyed(this)).subscribe((config) => {
-        transformedData.next_run = this.taskService.getTaskNextRun(cronSchedule, config.timezone);
+      this.store$.select(selectTimezone).pipe(untilDestroyed(this)).subscribe((timezone) => {
+        transformedData.next_run = this.taskService.getTaskNextRun(cronSchedule, timezone);
       });
 
       return transformedData;

@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { JobState } from 'app/enums/job-state.enum';
 import globalHelptext from 'app/helptext/global-helptext';
@@ -12,9 +13,11 @@ import { EntityTableAction, EntityTableConfig } from 'app/modules/entity/entity-
 import { EntityUtils } from 'app/modules/entity/utils';
 import { RsyncTaskFormComponent } from 'app/pages/data-protection/rsync-task/rsync-task-form/rsync-task-form.component';
 import {
-  WebSocketService, DialogService, TaskService, JobService, UserService, SystemGeneralService,
+  WebSocketService, DialogService, TaskService, JobService, UserService,
 } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { AppState } from 'app/store';
+import { selectTimezone } from 'app/store/system-config/system-config.selectors';
 
 @UntilDestroy()
 @Component({
@@ -76,7 +79,7 @@ export class RsyncTaskListComponent implements EntityTableConfig {
     private slideInService: IxSlideInService,
     protected translate: TranslateService,
     private route: ActivatedRoute,
-    private systemGeneralService: SystemGeneralService,
+    private store$: Store<AppState>,
   ) {
     this.filterValue = this.route.snapshot.paramMap.get('dataset') || '';
   }
@@ -150,8 +153,8 @@ export class RsyncTaskListComponent implements EntityTableConfig {
       task.cron_schedule = `${task.schedule.minute} ${task.schedule.hour} ${task.schedule.dom} ${task.schedule.month} ${task.schedule.dow}`;
       task.frequency = this.taskService.getTaskCronDescription(task.cron_schedule);
 
-      this.systemGeneralService.getGeneralConfig$.pipe(untilDestroyed(this)).subscribe((config) => {
-        task.next_run = this.taskService.getTaskNextRun(task.cron_schedule, config.timezone);
+      this.store$.select(selectTimezone).pipe(untilDestroyed(this)).subscribe((timezone) => {
+        task.next_run = this.taskService.getTaskNextRun(task.cron_schedule, timezone);
       });
 
       if (task.job === null) {

@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { merge } from 'rxjs';
 import { filter } from 'rxjs/operators';
@@ -38,13 +39,14 @@ import { SnapshotTaskComponent } from 'app/pages/data-protection/snapshot/snapsh
 import {
   DialogService, ModalServiceMessage,
   StorageService,
-  SystemGeneralService,
   TaskService,
   WebSocketService,
 } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { JobService } from 'app/services/job.service';
 import { ModalService } from 'app/services/modal.service';
+import { AppState } from 'app/store';
+import { selectTimezone } from 'app/store/system-config/system-config.selectors';
 
 export interface TaskCard {
   name: string;
@@ -93,7 +95,7 @@ export class DataProtectionDashboardComponent implements OnInit {
     private storage: StorageService,
     private translate: TranslateService,
     private job: JobService,
-    private systemGeneralService: SystemGeneralService,
+    private store$: Store<AppState>,
   ) {
     this.storage
       .listDisks()
@@ -415,8 +417,8 @@ export class DataProtectionDashboardComponent implements OnInit {
       task.cron_schedule = `${task.schedule.minute} ${task.schedule.hour} ${task.schedule.dom} ${task.schedule.month} ${task.schedule.dow}`;
       task.frequency = this.taskService.getTaskCronDescription(task.cron_schedule);
 
-      this.systemGeneralService.getGeneralConfig$.pipe(untilDestroyed(this)).subscribe((config) => {
-        task.next_run = this.taskService.getTaskNextRun(task.cron_schedule, config.timezone);
+      this.store$.select(selectTimezone).pipe(untilDestroyed(this)).subscribe((timezone) => {
+        task.next_run = this.taskService.getTaskNextRun(task.cron_schedule, timezone);
       });
 
       return task;
@@ -431,8 +433,8 @@ export class DataProtectionDashboardComponent implements OnInit {
       task.frequency = this.taskService.getTaskCronDescription(formattedCronSchedule);
       task.next_run_time = task.enabled ? this.taskService.getTaskNextTime(formattedCronSchedule) : this.translate.instant('Disabled');
 
-      this.systemGeneralService.getGeneralConfig$.pipe(untilDestroyed(this)).subscribe((config) => {
-        task.next_run = task.enabled ? this.taskService.getTaskNextRun(formattedCronSchedule, config.timezone) : this.translate.instant('Disabled');
+      this.store$.select(selectTimezone).pipe(untilDestroyed(this)).subscribe((timezone) => {
+        task.next_run = task.enabled ? this.taskService.getTaskNextRun(formattedCronSchedule, timezone) : this.translate.instant('Disabled');
       });
 
       if (task.job === null) {
@@ -485,8 +487,8 @@ export class DataProtectionDashboardComponent implements OnInit {
       test.cron_schedule = `0 ${test.schedule.hour} ${test.schedule.dom} ${test.schedule.month} ${test.schedule.dow}`;
       test.frequency = this.taskService.getTaskCronDescription(test.cron_schedule);
 
-      this.systemGeneralService.getGeneralConfig$.pipe(untilDestroyed(this)).subscribe((config) => {
-        test.next_run = this.taskService.getTaskNextRun(test.cron_schedule, config.timezone);
+      this.store$.select(selectTimezone).pipe(untilDestroyed(this)).subscribe((timezone) => {
+        test.next_run = this.taskService.getTaskNextRun(test.cron_schedule, timezone);
       });
 
       if (test.all_disks) {
@@ -514,8 +516,8 @@ export class DataProtectionDashboardComponent implements OnInit {
       task.cron_schedule = `${task.schedule.minute} ${task.schedule.hour} ${task.schedule.dom} ${task.schedule.month} ${task.schedule.dow}`;
       task.frequency = this.taskService.getTaskCronDescription(task.cron_schedule);
 
-      this.systemGeneralService.getGeneralConfig$.pipe(untilDestroyed(this)).subscribe((config) => {
-        task.next_run = this.taskService.getTaskNextRun(task.cron_schedule, config.timezone);
+      this.store$.select(selectTimezone).pipe(untilDestroyed(this)).subscribe((timezone) => {
+        task.next_run = this.taskService.getTaskNextRun(task.cron_schedule, timezone);
       });
 
       return task;
@@ -527,8 +529,8 @@ export class DataProtectionDashboardComponent implements OnInit {
       task.cron_schedule = `${task.schedule.minute} ${task.schedule.hour} ${task.schedule.dom} ${task.schedule.month} ${task.schedule.dow}`;
       task.frequency = this.taskService.getTaskCronDescription(task.cron_schedule);
 
-      this.systemGeneralService.getGeneralConfig$.pipe(untilDestroyed(this)).subscribe((config) => {
-        task.next_run = this.taskService.getTaskNextRun(task.cron_schedule, config.timezone);
+      this.store$.select(selectTimezone).pipe(untilDestroyed(this)).subscribe((timezone) => {
+        task.next_run = this.taskService.getTaskNextRun(task.cron_schedule, timezone);
       });
 
       if (task.job === null) {
