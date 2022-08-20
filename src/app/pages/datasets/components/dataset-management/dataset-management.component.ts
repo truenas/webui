@@ -49,6 +49,8 @@ export class DatasetsManagementComponent implements OnInit {
     },
   };
 
+  isLoading = true;
+
   constructor(
     private ws: WebSocketService,
     private cdr: ChangeDetectorRef,
@@ -76,6 +78,13 @@ export class DatasetsManagementComponent implements OnInit {
     ).subscribe((systemDataset) => {
       this.systemDataset = systemDataset;
     });
+
+    this.isLoading$
+      .pipe(untilDestroyed(this))
+      .subscribe((isLoading) => {
+        this.isLoading = isLoading;
+        this.cdr.markForCheck();
+      });
   }
 
   isSystemDataset(dataset: DatasetDetails): boolean {

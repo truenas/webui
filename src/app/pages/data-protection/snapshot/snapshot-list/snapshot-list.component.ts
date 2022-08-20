@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { JobState } from 'app/enums/job-state.enum';
 import { PeriodicSnapshotTask, PeriodicSnapshotTaskUi } from 'app/interfaces/periodic-snapshot-task.interface';
@@ -8,9 +9,13 @@ import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-tab
 import { EntityTableConfig } from 'app/modules/entity/entity-table/entity-table.interface';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { SnapshotTaskComponent } from 'app/pages/data-protection/snapshot/snapshot-task/snapshot-task.component';
-import { DialogService, StorageService, WebSocketService } from 'app/services';
+import {
+  DialogService, StorageService, WebSocketService,
+} from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { TaskService } from 'app/services/task.service';
+import { AppState } from 'app/store';
+import { selectTimezone } from 'app/store/system-config/system-config.selectors';
 
 @UntilDestroy()
 @Component({
@@ -27,6 +32,7 @@ export class SnapshotListComponent implements EntityTableConfig<PeriodicSnapshot
   routeEdit: string[] = ['tasks', 'snapshot', 'edit'];
   entityList: EntityTableComponent;
   asyncView = true;
+  filterValue = '';
 
   columns = [
     { name: this.translate.instant('Pool/Dataset'), prop: 'dataset', always_display: true },
@@ -53,8 +59,6 @@ export class SnapshotListComponent implements EntityTableConfig<PeriodicSnapshot
     },
   };
 
-  private dataset: string;
-
   constructor(
     private dialogService: DialogService,
     private ws: WebSocketService,
@@ -62,8 +66,9 @@ export class SnapshotListComponent implements EntityTableConfig<PeriodicSnapshot
     private translate: TranslateService,
     private slideInService: IxSlideInService,
     private route: ActivatedRoute,
+    private store$: Store<AppState>,
   ) {
-    this.dataset = this.route.snapshot.paramMap.get('dataset') || '';
+    this.filterValue = this.route.snapshot.paramMap.get('dataset') || '';
   }
 
   afterInit(entityList: EntityTableComponent): void {
@@ -74,11 +79,7 @@ export class SnapshotListComponent implements EntityTableConfig<PeriodicSnapshot
   }
 
   resourceTransformIncomingRestData(tasks: PeriodicSnapshotTask[]): PeriodicSnapshotTaskUi[] {
-    const tasksToShow = tasks.filter((row) => {
-      return row.dataset === this.dataset
-        || row.dataset.includes(`${this.dataset}/`);
-    });
-    return tasksToShow.map((task) => {
+    return tasks.map((task) => {
       const transformedTask = {
         ...task,
         keepfor: `${task.lifetime_value} ${task.lifetime_unit}(S)`,
@@ -86,11 +87,16 @@ export class SnapshotListComponent implements EntityTableConfig<PeriodicSnapshot
         cron_schedule: `${task.schedule.minute} ${task.schedule.hour} ${task.schedule.dom} ${task.schedule.month} ${task.schedule.dow}`,
       } as PeriodicSnapshotTaskUi;
 
-      return {
+      const transformedData = {
         ...transformedTask,
-        next_run: this.taskService.getTaskNextRun(transformedTask.cron_schedule),
         frequency: this.taskService.getTaskCronDescription(transformedTask.cron_schedule),
       };
+
+      this.store$.select(selectTimezone).pipe(untilDestroyed(this)).subscribe((timezone) => {
+        transformedData.next_run = this.taskService.getTaskNextRun(transformedData.cron_schedule, timezone);
+      });
+
+      return transformedData;
     });
   }
 

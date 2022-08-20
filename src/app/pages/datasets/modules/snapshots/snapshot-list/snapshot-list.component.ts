@@ -80,7 +80,7 @@ export class SnapshotListComponent implements OnInit, AfterViewInit {
   readonly defaultColumns: string[] = ['select', 'dataset', 'snapshot_name', 'actions'];
   readonly defaultExtraColumns: string[] = ['select', 'dataset', 'snapshot_name', 'used', 'created', 'referenced', 'actions'];
   displayedColumns: string[] = this.defaultColumns;
-  private dataset: string;
+  dataset = '';
 
   constructor(
     private dialogService: DialogService,
@@ -125,11 +125,7 @@ export class SnapshotListComponent implements OnInit, AfterViewInit {
       select(selectSnapshots),
       untilDestroyed(this),
     ).subscribe((snapshots) => {
-      const snapshotsToShow = snapshots.filter((snapshot) => {
-        return snapshot.dataset === this.dataset
-        || snapshot.dataset.includes(`${this.dataset}/`);
-      });
-      this.createDataSource(snapshotsToShow);
+      this.createDataSource(snapshots);
       this.cdr.markForCheck();
     }, () => {
       this.createDataSource();
@@ -176,6 +172,7 @@ export class SnapshotListComponent implements OnInit, AfterViewInit {
       this.dataSource.sort = this.sort;
       this.cdr.markForCheck();
     }, 0);
+    this.dataSource.filter = this.dataset;
   }
 
   toggleExtraColumns(event: MouseEvent): void {

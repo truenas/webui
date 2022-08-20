@@ -4,6 +4,7 @@ import { Options as CronOptions } from 'cronstrue/dist/options';
 import cronstrue from 'cronstrue/i18n';
 import { formatDistanceToNow } from 'date-fns';
 import { Option } from 'app/interfaces/option.interface';
+import { LocaleService } from 'app/services/locale.service';
 import { LanguageService } from './language.service';
 
 @Injectable({ providedIn: 'root' })
@@ -112,7 +113,10 @@ export class TaskService {
     locale: this.language.currentLanguage,
   };
 
-  constructor(protected language: LanguageService) {}
+  constructor(
+    protected language: LanguageService,
+    protected localeService: LocaleService,
+  ) {}
 
   getTimeOptions(): Option[] {
     return this.timeOptions;
@@ -132,8 +136,8 @@ export class TaskService {
       .map(() => schedule.next().value.toDate());
   }
 
-  getTaskNextRun(scheduleExpression: string): string {
-    const schedule = cronParser.parseExpression(scheduleExpression, { iterator: true });
+  getTaskNextRun(scheduleExpression: string, timeZone: string): string {
+    const schedule = cronParser.parseExpression(scheduleExpression, { iterator: true, tz: timeZone });
 
     return formatDistanceToNow(
       schedule.next().value.toDate(),
@@ -151,6 +155,7 @@ export class TaskService {
    * @deprecated Use crontabDescription pipe.
    */
   getTaskCronDescription(scheduleExpression: string, options: CronOptions = this.cronOptions): string {
+    options.use24HourTimeFormat = this.localeService.getPreferredTimeFormat() === 'HH:mm:ss';
     return cronstrue.toString(scheduleExpression, options);
   }
 }

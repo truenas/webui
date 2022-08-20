@@ -1,9 +1,9 @@
-<div *ngIf="dataSource.data.length === 0; else datasetContainer" class="entity-empty-wrapper" fxFlex="100%" fxLayout="row" fxLayoutAlign="center center" fxLayoutGap="32px">
+<div *ngIf="dataSource.data.length === 0 && !isLoading; else datasetContainer" class="entity-empty-wrapper" fxFlex="100%" fxLayout="row" fxLayoutAlign="center center" fxLayoutGap="32px">
   <ix-entity-empty [conf]="entityEmptyConf"></ix-entity-empty>
 </div>
 
 <ng-template #datasetContainer>
-  <div class="container" fxLayoutGap="16px">
+  <div class="container" fxLayoutGap="16px" *ngIf="!isLoading; else loading">
     <div class="table-container">
       <ix-fake-progress-bar
         class="loader-bar"
@@ -82,4 +82,10 @@
       ></ix-dataset-details-panel>
     </div>
   </div>
+
+  <ng-template #loading>
+    <div fxFlex="100%" fxLayoutAlign="center center">
+      <mat-spinner [diameter]="120" class="spinner"></mat-spinner>
+    </div>
+  </ng-template>
 </ng-template>

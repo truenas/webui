@@ -14,7 +14,6 @@ import { RelationGroup } from 'app/modules/entity/entity-form/models/field-relat
 import { RelationAction } from 'app/modules/entity/entity-form/models/relation-action.enum';
 import { EntityFormService } from 'app/modules/entity/entity-form/services/entity-form.service';
 import { FieldRelationService } from 'app/modules/entity/entity-form/services/field-relation.service';
-import { ipv4or6OptionalCidrValidator } from 'app/modules/entity/entity-form/validators/ip-validation';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { WebSocketService, DialogService, NetworkService } from 'app/services';
@@ -48,26 +47,6 @@ export class InitiatorFormComponent implements OnInit {
       customEventMethod: (parent) => {
         for (const selected of parent.source.selectedOptions.selected) {
           parent.listControl.value.add(selected.value.initiator);
-        }
-        parent.source.deselectAll();
-      },
-      relation: [{
-        action: RelationAction.Disable,
-        when: [{
-          name: 'all',
-          value: true,
-        }],
-      }],
-    },
-    {
-      type: 'input-list',
-      name: 'auth_network',
-      placeholder: helptextSharingIscsi.initiator_form_placeholder_auth_network,
-      tooltip: helptextSharingIscsi.initiator_form_tooltip_auth_network,
-      validation: [ipv4or6OptionalCidrValidator()],
-      customEventMethod: (parent) => {
-        for (const selected of parent.source.selectedOptions.selected.length) {
-          parent.listControl.value.add(selected.value.initiator_addr);
         }
         parent.source.deselectAll();
       },
@@ -144,14 +123,14 @@ export class InitiatorFormComponent implements OnInit {
             for (const i in res[0]) {
               const ctrl = this.formGroup.controls[i];
               if (ctrl) {
-                if (i === 'initiators' || i === 'auth_network') {
+                if (i === 'initiators') {
                   ctrl.setValue(new Set(res[0][i]));
                 } else {
                   ctrl.setValue(res[0][i as keyof IscsiInitiatorGroup]);
                 }
               }
             }
-            if (res[0]['initiators'].length === 0 && res[0]['auth_network'].length === 0) {
+            if (res[0]['initiators'].length === 0) {
               this.formGroup.controls['all'].setValue(true);
             }
           },
@@ -167,7 +146,6 @@ export class InitiatorFormComponent implements OnInit {
     const value = _.cloneDeep(this.formGroup.value);
 
     value['initiators'] = value['all'] ? [] : Array.from(value['initiators']);
-    value['auth_network'] = value['all'] ? [] : Array.from(value['auth_network']);
     delete value['initiators_input'];
     delete value['auth_network_input'];
     delete value['all'];
