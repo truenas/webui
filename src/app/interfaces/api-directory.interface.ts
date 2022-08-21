@@ -23,7 +23,6 @@ import { ApiTimestamp } from 'app/interfaces/api-date.interface';
 import { ApiKey, CreateApiKeyRequest, UpdateApiKeyRequest } from 'app/interfaces/api-key.interface';
 import { UpgradeSummary } from 'app/interfaces/application.interface';
 import { CheckUserQuery, LoginParams } from 'app/interfaces/auth.interface';
-import { BootPoolState } from 'app/interfaces/boot-pool-state.interface';
 import {
   Bootenv,
   CreateBootenvParams,
@@ -323,7 +322,7 @@ export type ApiDirectory = {
   // Boot
   'boot.set_scrub_interval': { params: [number]; response: number };
   'boot.replace': { params: [oldDisk: string, newDisk: string]; response: void };
-  'boot.get_state': { params: void; response: BootPoolState };
+  'boot.get_state': { params: void; response: PoolInstance };
   'boot.detach': { params: [disk: string]; response: void };
   'boot.attach': { params: [disk: string, params: { expand?: boolean }]; response: void };
   'boot.scrub': { params: void; response: void };

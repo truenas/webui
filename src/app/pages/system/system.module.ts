@@ -27,10 +27,13 @@ import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { IxTableModule } from 'app/modules/ix-tables/ix-table.module';
+import { IxTreeModule } from 'app/modules/ix-tree/ix-tree.module';
 import { JobsModule } from 'app/modules/jobs/jobs.module';
 import { LayoutModule } from 'app/modules/layout/layout.module';
+import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { SchedulerModule } from 'app/modules/scheduler/scheduler.module';
 import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
+import { TopologyItemNodeModule } from 'app/pages/storage2/modules/topology-item-node/topology-item-node.module';
 import { AdvancedSettingsComponent } from 'app/pages/system/advanced/advanced-settings.component';
 import { ConsoleFormComponent } from 'app/pages/system/advanced/console-form/console-form.component';
 import { CronFormComponent } from 'app/pages/system/advanced/cron/cron-form/cron-form.component';
@@ -93,11 +96,13 @@ import { ManualUpdateFormComponent } from 'app/pages/system/update/manual-update
 import { UpdateComponent } from 'app/pages/system/update/update.component';
 import { EnclosureModule } from 'app/pages/system/view-enclosure/enclosure.module';
 import { ReplicationFormComponent } from './advanced/replication-form/replication-form.component';
+import { BootenvNodeItemComponent } from './bootenv/bootenv-status/bootenv-node-item/bootenv-node-item.component';
 import { FileTicketModule } from './file-ticket/file-ticket.module';
 import { routing } from './system.routing';
 
 @NgModule({
   imports: [
+    AppLoaderModule,
     CastModule,
     CommonDirectivesModule,
     CommonModule,
@@ -108,6 +113,7 @@ import { routing } from './system.routing';
     FormsModule,
     IxFormsModule,
     IxTableModule,
+    IxTreeModule,
     SchedulerModule,
     JobsModule,
     MarkdownModule.forRoot(),
@@ -134,6 +140,7 @@ import { routing } from './system.routing';
     AppCommonModule,
     LayoutModule,
     FileTicketModule,
+    TopologyItemNodeModule,
   ],
   declarations: [
     AdvancedSettingsComponent,
@@ -199,6 +206,7 @@ import { routing } from './system.routing';
     SnmpTrapServiceComponent,
     TelegramServiceComponent,
     VictorOpsServiceComponent,
+    BootenvNodeItemComponent,
   ],
   providers: [
     TranslateService,

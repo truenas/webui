@@ -1,5 +1,9 @@
 @import '~assets/styles/mixins/grid';
 
+$level-offset: 24px;
+$padding-left: 8px;
+$columns: 7;
+
 :host {
   align-items: center;
   display: flex;
@@ -10,7 +14,7 @@
 }
 
 .tree-node-grid {
-  @include grid-row();
+  @include grid-row($columns);
   align-items: center;
 
   .cell {
@@ -22,19 +26,14 @@
       left: 0;
       position: sticky;
     }
-  }
 
-  .cell-status {
-    justify-content: center;
-    width: 70%;
-
-    span {
-      padding: 10px 20px;
+    &:last-child {
+      justify-content: flex-end;
+      padding-right: $level-offset;
     }
   }
 
   .cell-name {
-    align-items: stretch;
     font-weight: bold;
 
     .icon-container {
@@ -43,12 +42,16 @@
       display: flex;
       padding: 5px;
     }
+  }
 
-    .name {
-      align-items: center;
-      background: linear-gradient(90deg, var(--bg2) 0%, var(--bg2) calc(100% - 11px), transparent 100%);
-      display: inline-flex;
-      padding-right: 15px;
+  .cell-status {
+    gap: 8px;
+
+    .ix-icon {
+      font-size: 20px;
+      height: 20px;
+      margin: 0;
+      width: 20px;
     }
   }
 }
@@ -67,19 +70,16 @@
   }
 }
 
-$level-offset: 25px;
-$padding-left: 8px;
-
 ::ng-deep {
-  @for $i from 2 through 10 {
+  @for $i from 1 through 10 {
     ix-tree-node[aria-level="#{$i}"],
     ix-nested-tree-node[aria-level="#{$i}"] {
-      .mat-icon-button:first-child {
-        left: $padding-left + $level-offset * ($i - 2);
+      > .mat-icon-button:first-child {
+        left: $padding-left + $level-offset * ($i - 1);
       }
 
-      ix-topology-item-node {
-        padding-left: $padding-left + $level-offset * ($i - 2);
+      ix-bootenv-node-item {
+        padding-left: $padding-left + $level-offset * ($i - 1);
       }
     }
   }

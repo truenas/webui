@@ -27,9 +27,17 @@
   }
 
   .toggle-container {
+    align-items: center;
     display: flex;
     justify-content: flex-end;
     position: sticky;
-    right: 0;
+    right: 4px;
   }
+}
+
+::ng-deep .vdev-group-toggle {
+  height: 25px;
+  line-height: 0;
+  margin-right: 10px;
+  width: 25px;
 }

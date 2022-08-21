@@ -1,10 +1,6 @@
-@mixin grid-row() {
+@mixin grid-row($columns: 4) {
   display: grid;
-  gap: 8px;
-  grid-template-columns:
-    minmax(150px, 5fr)
-    minmax(150px, 1fr)
-    minmax(100px, 1fr)
-    minmax(150px, 1fr);
+  grid-gap: 8px;
+  grid-template-columns: minmax(150px, 5fr) repeat($columns - 1, minmax(150px, 1fr));
   min-width: fit-content;
 }
