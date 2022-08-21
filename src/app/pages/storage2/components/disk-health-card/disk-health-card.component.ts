@@ -2,7 +2,6 @@ import {
   ChangeDetectionStrategy, Component, Input, ChangeDetectorRef, OnChanges, OnInit,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateService } from '@ngx-translate/core';
 import { PoolStatus } from 'app/enums/pool-status.enum';
 import { SmartTestResultStatus } from 'app/enums/smart-test-result-status.enum';
 import { TemperatureUnit } from 'app/enums/temperature.enum';
@@ -12,9 +11,9 @@ import { WebSocketService } from 'app/services';
 
 interface DiskState {
   health: DiskHealthLevel;
-  highestTemperature: number | string;
-  lowestTemperature: number | string;
-  averageTemperature: number | string;
+  highestTemperature: number;
+  lowestTemperature: number;
+  averageTemperature: number;
   alters: number;
   smartTests: number;
   unit: string;
@@ -40,13 +39,12 @@ export class DiskHealthCardComponent implements OnInit, OnChanges {
   @Input() diskDictionary: { [key: string]: Disk } = {};
 
   readonly diskHealthLevel = DiskHealthLevel;
-  readonly noDataText = this.translate.instant('No Data');
 
   diskState: DiskState = {
     health: DiskHealthLevel.Safe,
-    highestTemperature: this.noDataText,
-    lowestTemperature: this.noDataText,
-    averageTemperature: this.noDataText,
+    highestTemperature: null,
+    lowestTemperature: null,
+    averageTemperature: null,
     alters: 0,
     smartTests: 0,
     unit: '',
@@ -56,7 +54,6 @@ export class DiskHealthCardComponent implements OnInit, OnChanges {
   constructor(
     private ws: WebSocketService,
     private cdr: ChangeDetectorRef,
-    private translate: TranslateService,
   ) { }
 
   ngOnInit(): void {
@@ -133,9 +130,9 @@ export class DiskHealthCardComponent implements OnInit, OnChanges {
       const avgValues = temperatures.map((temperature) => temperature.avg).filter((value) => value);
       const avgSum = avgValues.reduce((a, b) => a + b, 0);
 
-      this.diskState.highestTemperature = maxValues.length > 0 ? Math.max(...maxValues) : this.noDataText;
-      this.diskState.lowestTemperature = minValues.length > 0 ? Math.min(...minValues) : this.noDataText;
-      this.diskState.averageTemperature = avgValues.length > 0 ? avgSum / avgValues.length : this.noDataText;
+      this.diskState.highestTemperature = maxValues.length > 0 ? Math.max(...maxValues) : null;
+      this.diskState.lowestTemperature = minValues.length > 0 ? Math.min(...minValues) : null;
+      this.diskState.averageTemperature = avgValues.length > 0 ? avgSum / avgValues.length : null;
       this.diskState.unit = TemperatureUnit.Celsius;
       this.diskState.symbolText = '°';
       this.cdr.markForCheck();
