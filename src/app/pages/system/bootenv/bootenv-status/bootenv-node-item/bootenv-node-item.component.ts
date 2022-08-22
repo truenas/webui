@@ -56,12 +56,12 @@ export class BootenvNodeItemComponent {
   }
 
   get errors(): string {
+    let errors = 0;
     if (this.topologyItem.stats) {
       const stats = this.topologyItem.stats;
-      const errors = stats?.checksum_errors + stats?.read_errors + stats?.write_errors;
-      return this.translate.instant('{n, plural, =0 {No Errors} one {# Error} other {# Errors}}', { n: errors });
+      errors = stats?.checksum_errors + stats?.read_errors + stats?.write_errors;
     }
-    return '';
+    return this.translate.instant('{n, plural, =0 {No Errors} one {# Error} other {# Errors}}', { n: errors });
   }
 
   constructor(private translate: TranslateService) {}
