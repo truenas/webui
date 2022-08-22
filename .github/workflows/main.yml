@@ -3,9 +3,13 @@ on:
   push:
     branches:
       - main
+    paths-ignore:
+      - 'tests/**'
   pull_request:
     branches:
       - '**'
+    paths-ignore:
+      - 'tests/**'
 jobs:
   install:
     name: Checkout and Install
