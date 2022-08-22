@@ -33,7 +33,9 @@ export class IxExplorerHarness extends ComponentHarness implements IxFormControl
       value = value.join(',');
     }
 
-    return (await this.getMatInputHarness()).setValue(value);
+    const input = await this.getMatInputHarness();
+    await input.setValue(value);
+    return (await input.host()).dispatchEvent('change');
   }
 
   async isDisabled(): Promise<boolean> {
