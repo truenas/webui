@@ -75,14 +75,14 @@ import { DatasetAclEditorStore } from 'app/pages/storage/volumes/permissions/sto
 import { PermissionsSidebarStore } from 'app/pages/storage/volumes/permissions/stores/permissions-sidebar.store';
 import { VolumeImportWizardComponent } from 'app/pages/storage/volumes/volume-import-wizard/volume-import-wizard.component';
 import { VolumesListControlsComponent } from 'app/pages/storage/volumes/volume-list-controls/volumes-list-controls.component';
-import {
-  ReplaceDiskDialogComponent,
-} from 'app/pages/storage/volumes/volume-status/components/replace-disk-dialog/replace-disk-dialog.component';
 import { VolumeStatusComponent } from 'app/pages/storage/volumes/volume-status/volume-status.component';
 import { ExportDisconnectModalComponent } from 'app/pages/storage/volumes/volumes-list/components/export-disconnect-modal.component';
 import { VolumesListComponent } from 'app/pages/storage/volumes/volumes-list/volumes-list.component';
 import { ZvolFormComponent } from 'app/pages/storage/volumes/zvol/zvol-form/zvol-form.component';
 import { ZvolWizardComponent } from 'app/pages/storage/volumes/zvol/zvol-wizard/zvol-wizard.component';
+import {
+  ReplaceDiskDialogComponent,
+} from 'app/pages/storage2/modules/disks/components/replace-disk-dialog/replace-disk-dialog.component';
 import { FileTicketModule } from 'app/pages/system/file-ticket/file-ticket.module';
 import { UserService, StorageService, JobService } from 'app/services';
 import { routing } from './storage.routing';
