@@ -227,7 +227,7 @@ def click_the_disable_failover_checkbox_click_save_and_confirm_changes(driver):
 def after_settings_are_applied_you_should_see_settings_applied(driver):
     """after settings are applied you should see "Settings applied"."""
     assert wait_on_element(driver, 7, '//span[text()="Failover"]')
-    assert wait_on_element(driver, 15, '//h1[contains(.,"Settings saved")]')
+    assert wait_on_element(driver, 7, '//div[text()="Settings saved."]')
     assert wait_on_element(driver, 7, '//button[contains(.,"Close")]', 'clickable')
     driver.find_element_by_xpath('//button[contains(.,"Close")]').click()
     assert wait_on_element(driver, 7, '//h1[text()="Failover"]')
