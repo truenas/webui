@@ -27,22 +27,28 @@
     <div class="details-item">
       <div class="label">{{ 'Highest Temperature' | translate }}:</div>
       <div class="value" *ngIf="!loading; else skeletonLoader">
-        {{ diskState.highestTemperature | number }}
-        {{ diskState.symbolText }}{{ diskState.unit }}
+        <ng-container *ngIf="diskState.highestTemperature !== null; else noData">
+          {{ diskState.highestTemperature | number }}
+          {{ diskState.symbolText }}{{ diskState.unit }}
+        </ng-container>
       </div>
     </div>
     <div class="details-item">
       <div class="label">{{ 'Lowest Temperature' | translate }}:</div>
       <div class="value" *ngIf="!loading; else skeletonLoader">
-        {{ diskState.lowestTemperature | number }}
-        {{ diskState.symbolText }}{{ diskState.unit }}
+        <ng-container *ngIf="diskState.lowestTemperature !== null; else noData">
+          {{ diskState.lowestTemperature | number }}
+          {{ diskState.symbolText }}{{ diskState.unit }}
+        </ng-container>
       </div>
     </div>
     <div class="details-item">
       <div class="label">{{ 'Average Disk Temperature' | translate }}:</div>
       <div class="value" *ngIf="!loading; else skeletonLoader">
-        {{ diskState.averageTemperature | number }}
-        {{ diskState.symbolText }}{{ diskState.unit }}
+        <ng-container *ngIf="diskState.averageTemperature !== null; else noData">
+          {{ diskState.averageTemperature | number }}
+          {{ diskState.symbolText }}{{ diskState.unit }}
+        </ng-container>
       </div>
       <a [routerLink]="['/reportsdashboard/disk']">{{ 'View Reports' | translate }}</a>
     </div>
@@ -55,6 +61,9 @@
     </div>
     <ng-template #skeletonLoader>
       <ngx-skeleton-loader></ngx-skeleton-loader>
+    </ng-template>
+    <ng-template #noData>
+      {{ 'No Data' | translate }}
     </ng-template>
   </mat-card-content>
 </mat-card>
