@@ -42,7 +42,7 @@ export class EntityTableAddActionsComponent implements OnInit, AfterViewInit {
       this.actions = actions;
     });
 
-    this.filterValue = this.entity.conf.filterValue;
+    this.filterValue = this.entity.conf.filterValue || '';
   }
 
   ngAfterViewInit(): void {
@@ -61,7 +61,7 @@ export class EntityTableAddActionsComponent implements OnInit, AfterViewInit {
           this.entity.filter(this.filter.nativeElement.value);
         });
 
-      this.entity.filter(this.entity.conf.filterValue);
+      this.entity.filter(this.filterValue);
     }
   }
 
