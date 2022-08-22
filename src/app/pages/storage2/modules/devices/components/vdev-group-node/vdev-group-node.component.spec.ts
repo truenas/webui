@@ -1,6 +1,6 @@
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { VDevGroup } from 'app/interfaces/device-nested-data-node.interface';
-import { VDevGroupNodeComponent } from 'app/pages/storage2/modules/topology-item-node/vdev-group-node/vdev-group-node.component';
+import { VDevGroupNodeComponent } from 'app/pages/storage2/modules/devices/components/vdev-group-node/vdev-group-node.component';
 
 describe('VDevGroupNodeComponent', () => {
   let spectator: Spectator<VDevGroupNodeComponent>;

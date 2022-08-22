@@ -5,7 +5,7 @@ import { Disk, TopologyDisk, VDev } from 'app/interfaces/storage.interface';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import {
   TopologyItemIconComponent,
-} from 'app/pages/storage2/modules/topology-item-node/topology-item-icon/topology-item-icon.component';
+} from 'app/pages/storage2/modules/devices/components/topology-item-icon/topology-item-icon.component';
 
 describe('TopologyItemIconComponent', () => {
   let spectator: Spectator<TopologyItemIconComponent>;

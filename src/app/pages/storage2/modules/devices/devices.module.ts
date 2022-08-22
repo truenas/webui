@@ -30,12 +30,12 @@ import {
 import {
   ManageDiskSedDialogComponent,
 } from 'app/pages/storage2/modules/devices/components/hardware-disk-encryption/manage-disk-sed-dialog/manage-disk-sed-dialog.component';
+import { TopologyItemIconComponent } from 'app/pages/storage2/modules/devices/components/topology-item-icon/topology-item-icon.component';
+import { TopologyItemNodeComponent } from 'app/pages/storage2/modules/devices/components/topology-item-node/topology-item-node.component';
+import { VDevGroupNodeComponent } from 'app/pages/storage2/modules/devices/components/vdev-group-node/vdev-group-node.component';
 import { ZfsInfoCardComponent } from 'app/pages/storage2/modules/devices/components/zfs-info-card/zfs-info-card.component';
 import { routes } from 'app/pages/storage2/modules/devices/devices.routing';
 import { DevicesStore } from 'app/pages/storage2/modules/devices/stores/devices-store.service';
-import { TopologyItemIconComponent } from 'app/pages/storage2/modules/topology-item-node/topology-item-icon/topology-item-icon.component';
-import { TopologyItemNodeComponent } from 'app/pages/storage2/modules/topology-item-node/topology-item-node/topology-item-node.component';
-import { VDevGroupNodeComponent } from 'app/pages/storage2/modules/topology-item-node/vdev-group-node/vdev-group-node.component';
 import { SmartInfoCardComponent } from './components/smart-info-card/smart-info-card.component';
 import { ExtendDialogComponent } from './components/zfs-info-card/extend-dialog/extend-dialog.component';
 

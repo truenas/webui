@@ -4,8 +4,8 @@ import { DiskType } from 'app/enums/disk-type.enum';
 import { TopologyItemType } from 'app/enums/v-dev-type.enum';
 import { TopologyItemStatus } from 'app/enums/vdev-status.enum';
 import { Disk, TopologyDisk } from 'app/interfaces/storage.interface';
-import { TopologyItemIconComponent } from 'app/pages/storage2/modules/topology-item-node/topology-item-icon/topology-item-icon.component';
-import { TopologyItemNodeComponent } from 'app/pages/storage2/modules/topology-item-node/topology-item-node/topology-item-node.component';
+import { TopologyItemIconComponent } from 'app/pages/storage2/modules/devices/components/topology-item-icon/topology-item-icon.component';
+import { TopologyItemNodeComponent } from 'app/pages/storage2/modules/devices/components/topology-item-node/topology-item-node.component';
 
 describe('TopologyItemNodeComponent', () => {
   let spectator: Spectator<TopologyItemNodeComponent>;
