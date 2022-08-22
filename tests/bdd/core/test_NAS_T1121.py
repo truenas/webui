@@ -309,12 +309,16 @@ def delete_the_folder_from_the_nas_dataset(driver, nas_ip):
 def on_the_cloud_sync_task_and_click_edit(driver):
     """on the cloud sync task and click Edit."""
     driver.switch_to.window(driver.window_handles[0])
-    time.sleep(1)
     assert wait_on_element(driver, 5, '//div[contains(.,"Cloud Sync Tasks")]')
     assert wait_on_element(driver, 5, '//div[contains(.,"My S3 AWS Share")]')
-    if not wait_on_element(driver, 2, '//button[@ix-auto="button___edit"]', 'clickable'):
+    time.sleep(1)
+    assert wait_on_element(driver, 5, '//a[@title="Expand/Collapse Row"]', 'clickable')
+    if not wait_on_element(driver, 2, '//button[@ix-auto="button___edit"]'):
         assert wait_on_element(driver, 5, '//a[@title="Expand/Collapse Row"]', 'clickable')
         driver.find_element_by_xpath('//a[@title="Expand/Collapse Row"]').click()
+    assert wait_on_element(driver, 7, '//p[contains(text(),"amazons3creds")]')
+    assert wait_on_element(driver, 5, '//button[@ix-auto="button___edit"]')
+    time.sleep(2)
     assert wait_on_element(driver, 5, '//button[@ix-auto="button___edit"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button___edit"]').click()
     assert wait_on_element(driver, 5, '//h4[contains(.,"Transfer")]')

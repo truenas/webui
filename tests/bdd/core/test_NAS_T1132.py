@@ -200,15 +200,15 @@ def verify_all_files_are_copied_from_box_are_into_the_dataset(driver, nas_ip):
 def on_the_nas_cloud_sync_task_tab_click_edit(driver):
     """on the NAS cloud sync task tab, click Edit."""
     driver.switch_to.window(driver.window_handles[0])
-    time.sleep(2)
     assert wait_on_element(driver, 7, '//div[contains(.,"Cloud Sync Tasks")]')
     assert wait_on_element(driver, 10, '//div[contains(text(),"My BOX Cloud task")]')
+    time.sleep(1)
     assert wait_on_element(driver, 5, '//a[@ix-auto="expander__My BOX Cloud task"]', 'clickable')
     if not wait_on_element(driver, 2, '//button[@ix-auto="button___edit"]'):
         driver.find_element_by_xpath('//a[@ix-auto="expander__My BOX Cloud task"]').click()
     assert wait_on_element(driver, 7, '//p[contains(text(),"boxcredentials")]')
-    time.sleep(2)
     assert wait_on_element(driver, 7, '//button[@ix-auto="button___edit"]')
+    time.sleep(2)
     assert wait_on_element(driver, 5, '//button[@ix-auto="button___edit"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button___edit"]').click()
     assert wait_on_element(driver, 7, '//h4[contains(.,"Transfer")]')

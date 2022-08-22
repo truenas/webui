@@ -272,8 +272,8 @@ def on_the_nas_cloud_sync_task_tab_click_edit(driver):
     if not wait_on_element(driver, 2, '//button[@ix-auto="button___edit"]'):
         driver.find_element_by_xpath('//a[@ix-auto="expander__My Backblaze B2 task"]').click()
     assert wait_on_element(driver, 7, '//p[contains(text(),"backblazecreds")]')
-    time.sleep(2)
     assert wait_on_element(driver, 7, '//button[@ix-auto="button___edit"]')
+    time.sleep(2)
     assert wait_on_element(driver, 7, '//button[@ix-auto="button___edit"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button___edit"]').click()
     assert wait_on_element(driver, 5, '//h4[contains(.,"Transfer")]')
