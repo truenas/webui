@@ -112,6 +112,7 @@ describe('FailoverComponent', () => {
   it(`warns when Default TrueNAS controller checkbox is ticked off
     and changes Save button to Save And Failover`, async () => {
     await form.fillForm({
+      'Disable Failover': true,
       'Default TrueNAS controller': false,
     });
 

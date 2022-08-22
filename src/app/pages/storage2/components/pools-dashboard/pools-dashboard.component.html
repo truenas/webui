@@ -13,14 +13,14 @@
   </ix-page-title-header>
 </ng-template>
 
-<ng-container *ngIf="isEmptyPools; else poolContainer">
+<ng-container *ngIf="isEmptyPools && !isLoading; else poolContainer">
   <div class="entity-empty-wrapper" fxFlex="100%" fxLayout="row" fxLayoutAlign="center center" fxLayoutGap="32px">
     <ix-entity-empty [conf]="entityEmptyConf"></ix-entity-empty>
   </div>
 </ng-container>
 
 <ng-template #poolContainer>
-  <div fxFlex="100%" fxLayout="column">
+  <div fxFlex="100%" fxLayout="column" *ngIf="!isLoading; else loading">
     <ix-unused-resources [pools]="pools$ | async" *ngIf="!isEmptyPools"></ix-unused-resources>
 
     <ix-dashboard-pool
@@ -30,4 +30,9 @@
       class="pool"
     ></ix-dashboard-pool>
   </div>
+  <ng-template #loading>
+    <div fxFlex="100%" fxLayoutAlign="center center">
+      <mat-spinner [diameter]="120" class="spinner"></mat-spinner>
+    </div>
+  </ng-template>
 </ng-template>

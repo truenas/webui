@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { JobState } from 'app/enums/job-state.enum';
 import globalHelptext from 'app/helptext/global-helptext';
@@ -15,6 +16,8 @@ import {
   WebSocketService, DialogService, TaskService, JobService, UserService,
 } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { AppState } from 'app/store';
+import { selectTimezone } from 'app/store/system-config/system-config.selectors';
 
 @UntilDestroy()
 @Component({
@@ -76,6 +79,7 @@ export class RsyncTaskListComponent implements EntityTableConfig {
     private slideInService: IxSlideInService,
     protected translate: TranslateService,
     private route: ActivatedRoute,
+    private store$: Store<AppState>,
   ) {
     this.filterValue = this.route.snapshot.paramMap.get('dataset') || '';
   }
@@ -147,8 +151,11 @@ export class RsyncTaskListComponent implements EntityTableConfig {
   resourceTransformIncomingRestData(tasks: RsyncTaskUi[]): RsyncTaskUi[] {
     return tasks.map((task) => {
       task.cron_schedule = `${task.schedule.minute} ${task.schedule.hour} ${task.schedule.dom} ${task.schedule.month} ${task.schedule.dow}`;
-      task.next_run = this.taskService.getTaskNextRun(task.cron_schedule);
       task.frequency = this.taskService.getTaskCronDescription(task.cron_schedule);
+
+      this.store$.select(selectTimezone).pipe(untilDestroyed(this)).subscribe((timezone) => {
+        task.next_run = this.taskService.getTaskNextRun(task.cron_schedule, timezone);
+      });
 
       if (task.job === null) {
         task.state = { state: task.locked ? JobState.Locked : JobState.Pending };
