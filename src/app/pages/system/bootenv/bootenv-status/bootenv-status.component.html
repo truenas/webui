@@ -2,6 +2,30 @@
 
 <div class="disk-tree-wrapper">
   <div class="disk-tree-inner">
+    <mat-accordion *ngIf="poolInstance">
+      <mat-expansion-panel class="mat-elevation-z0">
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            <strong>{{ poolInstance.scan.function }}</strong>
+          </mat-panel-title>
+        </mat-expansion-panel-header>
+        <mat-list>
+          <mat-list-item>
+            {{ 'Status' | translate }}:
+            {{ poolInstance.scan.pause != null ? 'PAUSED' : poolInstance.scan.state ? poolInstance.scan.state : ('None requested' | translate) }}
+          </mat-list-item>
+          <mat-list-item *ngIf="poolInstance.scan.errors != null">
+            {{ 'Errors' | translate }}:
+            {{ poolInstance.scan.errors }}
+          </mat-list-item>
+          <mat-list-item *ngIf="poolInstance.scan.start_time?.$date">
+            {{ 'Date' | translate }}:
+            {{ poolInstance.scan.start_time.$date | formatDateTime }}
+          </mat-list-item>
+        </mat-list>
+      </mat-expansion-panel>
+    </mat-accordion>
+
     <div class="disk-tree-header">
       <div>
         <span class="disk-name-header">{{ 'Name' | translate }}</span>

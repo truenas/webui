@@ -19,7 +19,6 @@ import { IxTreeModule } from 'app/modules/ix-tree/ix-tree.module';
 import { IxTreeHarness } from 'app/modules/ix-tree/testing/ix-tree.harness';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TopologyItemNodeModule } from 'app/pages/storage2/modules/topology-item-node/topology-item-node.module';
 import { BootStatusListComponent } from 'app/pages/system/bootenv/bootenv-status/bootenv-status.component';
 import { DialogService } from 'app/services';
 import { BootenvNodeItemComponent } from './bootenv-node-item/bootenv-node-item.component';
@@ -73,7 +72,6 @@ describe('BootStatusListComponent', () => {
       TranslateModule,
       CoreComponents,
       IxTreeModule,
-      TopologyItemNodeModule,
       IxIconModule,
       MatIconTestingModule,
     ],

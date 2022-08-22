@@ -7,6 +7,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatDividerModule } from '@angular/material/divider';
+import { MatExpansionModule } from '@angular/material/expansion';
 import { MatListModule } from '@angular/material/list';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
@@ -33,7 +34,6 @@ import { LayoutModule } from 'app/modules/layout/layout.module';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { SchedulerModule } from 'app/modules/scheduler/scheduler.module';
 import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
-import { TopologyItemNodeModule } from 'app/pages/storage2/modules/topology-item-node/topology-item-node.module';
 import { AdvancedSettingsComponent } from 'app/pages/system/advanced/advanced-settings.component';
 import { ConsoleFormComponent } from 'app/pages/system/advanced/console-form/console-form.component';
 import { CronFormComponent } from 'app/pages/system/advanced/cron/cron-form/cron-form.component';
@@ -140,7 +140,7 @@ import { routing } from './system.routing';
     AppCommonModule,
     LayoutModule,
     FileTicketModule,
-    TopologyItemNodeModule,
+    MatExpansionModule,
   ],
   declarations: [
     AdvancedSettingsComponent,
