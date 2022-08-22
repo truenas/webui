@@ -12,10 +12,10 @@ import { AclMode, AclType } from 'app/enums/acl-type.enum';
 import {
   DatasetAclType,
   DatasetCaseSensitivity,
-  DatasetChecksum, DatasetCommonOpt,
+  DatasetChecksum,
   DatasetEncryptionType, DatasetRecordSize,
   DatasetShareType,
-  DatasetSync,
+  DatasetSync, DatasetSnapdev,
 } from 'app/enums/dataset.enum';
 import { DeduplicationSetting } from 'app/enums/deduplication-setting.enum';
 import { LicenseFeature } from 'app/enums/license-feature.enum';
@@ -581,10 +581,10 @@ export class DatasetFormComponent implements FormConfiguration {
           tooltip: this.translate.instant('Controls whether the volume snapshot devices under /dev/zvol/⟨pool⟩ \
  are hidden or visible. The default value is hidden.'),
           options: [
-            { label: this.translate.instant('Visible'), value: DatasetCommonOpt.Visible },
-            { label: this.translate.instant('Hidden'), value: DatasetCommonOpt.Hidden },
+            { label: this.translate.instant('Visible'), value: DatasetSnapdev.Visible },
+            { label: this.translate.instant('Hidden'), value: DatasetSnapdev.Hidden },
           ],
-          value: DatasetCommonOpt.Hidden,
+          value: DatasetSnapdev.Hidden,
         },
         {
           type: 'select',

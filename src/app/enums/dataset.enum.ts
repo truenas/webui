@@ -43,7 +43,13 @@ export enum DatasetSync {
   Inherit = 'INHERIT',
 }
 
-export enum DatasetCommonOpt {
+export enum DatasetSnapdir {
+  Visible = 'VISIBLE',
+  Hidden = 'HIDDEN',
+  Inherit = 'INHERIT',
+}
+
+export enum DatasetSnapdev {
   Visible = 'VISIBLE',
   Hidden = 'HIDDEN',
   Inherit = 'INHERIT',
