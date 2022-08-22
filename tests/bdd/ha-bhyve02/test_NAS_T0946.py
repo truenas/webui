@@ -228,8 +228,8 @@ def after_settings_are_applied_you_should_see_settings_applied(driver):
     """after settings are applied you should see "Settings applied"."""
     assert wait_on_element(driver, 7, '//span[text()="Failover"]')
     assert wait_on_element(driver, 15, '//h1[contains(.,"Settings saved")]')
-    assert wait_on_element(driver, 7, '//button[@ix-auto="button__CLOSE"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
+    assert wait_on_element(driver, 7, '//button[contains(.,"Close")]', 'clickable')
+    driver.find_element_by_xpath('//button[contains(.,"Close")]').click()
     assert wait_on_element(driver, 7, '//h1[text()="Failover"]')
 
 
