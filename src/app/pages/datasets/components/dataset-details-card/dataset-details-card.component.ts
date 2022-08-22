@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, Input,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, Input,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -11,6 +11,7 @@ import { ZfsPropertySource } from 'app/enums/zfs-property-source.enum';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { DatasetFormComponent } from 'app/pages/datasets/components/dataset-form/dataset-form.component';
 import { DeleteDatasetDialogComponent } from 'app/pages/datasets/components/delete-dataset-dialog/delete-dataset-dialog.component';
+import { ZvolFormComponent } from 'app/pages/datasets/components/zvol-form/zvol-form.component';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
 import { ModalService } from 'app/services/modal.service';
 
@@ -31,6 +32,7 @@ export class DatasetDetailsCardComponent {
     private translate: TranslateService,
     private mdDialog: MatDialog,
     private datasetStore: DatasetTreeStore,
+    private cdr: ChangeDetectorRef,
   ) { }
 
   get datasetCompression(): string {
@@ -67,5 +69,13 @@ export class DatasetDetailsCardComponent {
     editDatasetComponent.setPk(this.dataset.id);
     editDatasetComponent.setVolId(this.dataset.pool);
     editDatasetComponent.setTitle(this.translate.instant('Edit Dataset'));
+  }
+
+  editZvol(): void {
+    const addZvolComponent = this.modalService.openInSlideIn(ZvolFormComponent, this.dataset.id);
+    addZvolComponent.setParent(this.dataset.id);
+    addZvolComponent.isNew = false;
+    // form doesnt work without cdr.markForCheck
+    this.cdr.markForCheck();
   }
 }
