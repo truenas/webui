@@ -81,7 +81,7 @@ describe('PermissionsCardComponent', () => {
 
     expect(ownerItem).toHaveText('Owner:john');
     expect(groupItem).toHaveText('Group:johns');
-    expect(pathItem).toHaveText('Path:/mnt/testpool/dataset');
+    expect(pathItem).toHaveText('Path:testpool/dataset');
   });
 
   it('shows trivial permissions when acl is trivial', () => {

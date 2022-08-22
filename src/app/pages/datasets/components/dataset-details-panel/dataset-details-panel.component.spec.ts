@@ -74,7 +74,7 @@ describe('DatasetDetailsPanelComponent', () => {
   it('shows a title of current dataset', () => {
     expect(spectator.query('.title .prefix')).toHaveText('Details for');
     expect(spectator.query('.title .mobile-prefix')).toHaveText('Details for');
-    expect(spectator.query('.title .full-path')).toHaveText('/root/parent/ child');
+    expect(spectator.query('.title .full-path')).toHaveText('child');
   });
 
   it('opens a dataset form when Add Dataset is pressed', async () => {
