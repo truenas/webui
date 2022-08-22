@@ -214,7 +214,7 @@ def click_on_the_bucket_being_used_and_then_upload_a_file(driver):
 def on_the_nas_tab_expand_the_task_on_the_nas_ui_and_click_run_now(driver):
     """on the NAS tab, expand the task on the NAS UI and click Run Now."""
     driver.switch_to.window(driver.window_handles[0])
-    assert wait_on_element(driver, 5, '//div[contains(.,"Cloud Sync Tasks")]')
+    assert wait_on_element(driver, 7, '//div[contains(.,"Cloud Sync Tasks")]')
     assert wait_on_element(driver, 5, '//div[contains(.,"My S3 AWS Share")]')
     assert wait_on_element(driver, 5, '//a[@title="Expand/Collapse Row"]', 'clickable')
     driver.find_element_by_xpath('//a[@title="Expand/Collapse Row"]').click()
@@ -266,10 +266,10 @@ def on_the_bucket_tab_create_a_folder_and_upload_a_file_in_it(driver):
 def on_the_nas_tad_on_the_cloud_sync_task_click_run_now(driver):
     """on the NAS tad on the cloud sync task, click Run Now."""
     driver.switch_to.window(driver.window_handles[0])
-    time.sleep(1)
-    assert wait_on_element(driver, 5, '//div[contains(.,"Cloud Sync Tasks")]')
+    assert wait_on_element(driver, 7, '//div[contains(.,"Cloud Sync Tasks")]')
     assert wait_on_element(driver, 5, '//div[contains(.,"My S3 AWS Share")]')
-    if not wait_on_element(driver, 2, '//button[@id="action_button___run_now"]', 'clickable'):
+    time.sleep(1)
+    if not wait_on_element(driver, 2, '//button[@id="action_button___run_now"]'):
         assert wait_on_element(driver, 5, '//a[@title="Expand/Collapse Row"]', 'clickable')
         driver.find_element_by_xpath('//a[@title="Expand/Collapse Row"]').click()
     time.sleep(1)
@@ -561,10 +561,10 @@ def create_a_file_in_the_directory_of_the_dataset(driver, nas_ip):
 def on_the_nas_tab_expand_the_task_and_click_run_now(driver):
     """on the NAS tab, expand the task and click Run Now."""
     driver.switch_to.window(driver.window_handles[0])
-    time.sleep(1)
-    assert wait_on_element(driver, 5, '//div[contains(.,"Cloud Sync Tasks")]')
+    assert wait_on_element(driver, 7, '//div[contains(.,"Cloud Sync Tasks")]')
     assert wait_on_element(driver, 5, '//div[contains(.,"My S3 AWS Share")]')
-    if not wait_on_element(driver, 2, '//button[@id="action_button___run_now"]', 'clickable'):
+    time.sleep(1)
+    if not wait_on_element(driver, 2, '//button[@id="action_button___run_now"]'):
         assert wait_on_element(driver, 5, '//a[@title="Expand/Collapse Row"]', 'clickable')
         driver.find_element_by_xpath('//a[@title="Expand/Collapse Row"]').click()
     assert wait_on_element(driver, 5, '//button[@id="action_button___run_now"]', 'clickable')
@@ -642,10 +642,10 @@ def delete_the_file_from_the_dataset_and_click_run_now(driver, nas_ip):
     results = ssh_cmd(cmd, 'root', 'testing', nas_ip)
     assert results['result'] is True
     driver.switch_to.window(driver.window_handles[0])
-    time.sleep(1)
-    assert wait_on_element(driver, 5, '//div[contains(.,"Cloud Sync Tasks")]')
+    assert wait_on_element(driver, 7, '//div[contains(.,"Cloud Sync Tasks")]')
     assert wait_on_element(driver, 5, '//div[contains(.,"My S3 AWS Share")]')
-    if not wait_on_element(driver, 2, '//button[@id="action_button___run_now"]', 'clickable'):
+    time.sleep(1)
+    if not wait_on_element(driver, 2, '//button[@id="action_button___run_now"]'):
         assert wait_on_element(driver, 5, '//a[@title="Expand/Collapse Row"]', 'clickable')
         driver.find_element_by_xpath('//a[@title="Expand/Collapse Row"]').click()
     assert wait_on_element(driver, 5, '//button[@id="action_button___run_now"]', 'clickable')
@@ -677,10 +677,10 @@ def delete_the_folder_from_the_dataset_then_click_run_now(driver, nas_ip):
     results = ssh_cmd(cmd, 'root', 'testing', nas_ip)
     assert results['result'] is True
     driver.switch_to.window(driver.window_handles[0])
-    time.sleep(1)
-    assert wait_on_element(driver, 5, '//div[contains(.,"Cloud Sync Tasks")]')
+    assert wait_on_element(driver, 7, '//div[contains(.,"Cloud Sync Tasks")]')
     assert wait_on_element(driver, 5, '//div[contains(.,"My S3 AWS Share")]')
-    if not wait_on_element(driver, 2, '//button[@id="action_button___run_now"]', 'clickable'):
+    time.sleep(1)
+    if not wait_on_element(driver, 2, '//button[@id="action_button___run_now"]'):
         assert wait_on_element(driver, 5, '//a[@title="Expand/Collapse Row"]', 'clickable')
         driver.find_element_by_xpath('//a[@title="Expand/Collapse Row"]').click()
     assert wait_on_element(driver, 5, '//button[@id="action_button___run_now"]', 'clickable')
