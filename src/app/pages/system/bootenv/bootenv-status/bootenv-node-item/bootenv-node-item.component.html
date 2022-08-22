@@ -20,9 +20,7 @@
     <span>{{ topologyItem?.stats?.checksum_errors || 0 }}</span>
   </div>
   <div class="cell">
-    <span>{{ '{n, plural, =0 {No Errors} one {# Error} other {# Errors}}' | translate: {
-      n: topologyItem?.stats?.checksum_errors + topologyItem.stats?.read_errors + topologyItem.stats?.write_errors || 0
-    } }}</span>
+    <span>{{ errors }}</span>
   </div>
   <div class="cell cell-actions">
     <button

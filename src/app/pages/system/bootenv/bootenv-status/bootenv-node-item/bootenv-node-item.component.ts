@@ -1,6 +1,7 @@
 import {
   ChangeDetectionStrategy, Component, Input, Output, EventEmitter,
 } from '@angular/core';
+import { TranslateService } from '@ngx-translate/core';
 import { PoolStatus } from 'app/enums/pool-status.enum';
 import { TopologyItemType } from 'app/enums/v-dev-type.enum';
 import { TopologyItemStatus } from 'app/enums/vdev-status.enum';
@@ -53,6 +54,17 @@ export class BootenvNodeItemComponent {
         return '';
     }
   }
+
+  get errors(): string {
+    if (this.topologyItem.stats) {
+      const stats = this.topologyItem.stats;
+      const errors = stats?.checksum_errors + stats?.read_errors + stats?.write_errors;
+      return this.translate.instant('{n, plural, =0 {No Errors} one {# Error} other {# Errors}}', { n: errors });
+    }
+    return '';
+  }
+
+  constructor(private translate: TranslateService) {}
 
   detach(): void {
     this.invokeAction.emit({

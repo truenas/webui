@@ -38,22 +38,18 @@ export class IxTreeNodeHarness extends ContentContainerComponentHarness<string> 
     return getNodePredicate(IxTreeNodeHarness, options);
   }
 
-  /** Whether the tree node is expanded. */
   async isExpanded(): Promise<boolean> {
     return coerceBooleanProperty(await (await this.host()).getAttribute('aria-expanded'));
   }
 
-  /** Whether the tree node is disabled. */
   async isDisabled(): Promise<boolean> {
     return coerceBooleanProperty(await (await this.host()).getProperty('aria-disabled'));
   }
 
-  /** Gets the level of the tree node. Note that this gets the aria-level and is 1 indexed. */
   async getLevel(): Promise<number> {
     return coerceNumberProperty(await (await this.host()).getAttribute('aria-level'));
   }
 
-  /** Gets the tree node's text. */
   async getText(): Promise<string> {
     return (await this.host()).text({ exclude: '.ix-tree-node, .ix-nested-tree-node, button' });
   }

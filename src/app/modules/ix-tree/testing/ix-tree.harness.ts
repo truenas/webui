@@ -16,7 +16,6 @@ export class IxTreeHarness extends MatTreeHarness {
     return new HarnessPredicate(IxTreeHarness, options);
   }
 
-  /** Gets all of the nodes in the tree. */
   async getNodes(filter: TreeNodeHarnessFilters = {}): Promise<IxTreeNodeHarness[]> {
     return this.locatorForAll(IxTreeNodeHarness.with(filter))();
   }
