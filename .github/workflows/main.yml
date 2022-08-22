@@ -10,7 +10,6 @@ on:
       - '**'
     paths-ignore:
       - 'tests/**'
-
 jobs:
   install:
     name: Checkout and Install
