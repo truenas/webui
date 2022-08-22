@@ -177,7 +177,7 @@ def expand_the_task_on_the_nas_ui_and_click_run_now(driver):
     driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
     assert wait_on_element_disappear(driver, 30, '//h1[contains(text(),"Task Started")]')
     time.sleep(1)
-    assert wait_on_element(driver, 120, '//button[@id="My Dropbox task_Status-button" and contains(.,"SUCCESS")]')
+    assert wait_on_element(driver, 180, '//button[@id="My Dropbox task_Status-button" and contains(.,"SUCCESS")]')
 
 
 @then('verify all files are copied from Dropbox are into the dataset')
@@ -522,7 +522,7 @@ def on_the_nas_cloud_sync_task_tab_click_run_now(driver):
     driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
     assert wait_on_element_disappear(driver, 30, '//h1[contains(text(),"Task Started")]')
     time.sleep(1)
-    assert wait_on_element(driver, 120, '//button[@id="My Dropbox task_Status-button" and contains(.,"SUCCESS")]')
+    assert wait_on_element(driver, 180, '//button[@id="My Dropbox task_Status-button" and contains(.,"SUCCESS")]')
 
 
 @then('verify the file is removed from the dataset folder')
