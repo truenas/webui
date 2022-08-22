@@ -6,6 +6,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatSortModule } from '@angular/material/sort';
 import { MatTableModule } from '@angular/material/table';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslateModule } from '@ngx-translate/core';
@@ -23,40 +24,42 @@ import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
 
 @NgModule({
   declarations: [
-    IxTableComponent,
-    IxRowDefDirective,
     IxCellDefDirective,
-    IxDetailRowDirective,
-    IxTablePaginatorComponent,
-    IxTableExpandableRowComponent,
-    IxExpandToggleColumnComponent,
     IxCheckboxColumnComponent,
+    IxDetailRowDirective,
+    IxExpandToggleColumnComponent,
+    IxRowDefDirective,
+    IxTableComponent,
+    IxTableExpandableRowComponent,
+    IxTablePaginatorComponent,
   ],
   imports: [
+    CdkTableModule,
     CommonModule,
     EntityModule,
     FlexLayoutModule,
-    MatPaginatorModule,
-    MatDividerModule,
     IxIconModule,
-    MatTooltipModule,
-    MatCheckboxModule,
-    TranslateModule,
-    CdkTableModule,
-    MatTableModule,
     MatButtonModule,
+    MatCheckboxModule,
+    MatDividerModule,
+    MatPaginatorModule,
+    MatSortModule,
+    MatTableModule,
+    MatTooltipModule,
+    TranslateModule,
   ],
   exports: [
-    IxTableComponent,
-    IxRowDefDirective,
     IxCellDefDirective,
-    IxDetailRowDirective,
-    IxTablePaginatorComponent,
-    MatTableModule,
-    IxTableExpandableRowComponent,
-    IxExpandToggleColumnComponent,
     IxCheckboxColumnComponent,
+    IxDetailRowDirective,
+    IxExpandToggleColumnComponent,
+    IxRowDefDirective,
+    IxTableComponent,
+    IxTableExpandableRowComponent,
+    IxTablePaginatorComponent,
     MatButtonModule,
+    MatSortModule,
+    MatTableModule,
   ],
   providers: [
     EmptyService,
