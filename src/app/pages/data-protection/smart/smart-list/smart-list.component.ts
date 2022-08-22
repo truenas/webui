@@ -9,7 +9,7 @@ import { EntityFormService } from 'app/pages/common/entity/entity-form/services/
 import { EntityTableComponent } from 'app/pages/common/entity/entity-table/entity-table.component';
 import { EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
 import { SmartFormComponent } from 'app/pages/data-protection/smart/smart-form/smart-form.component';
-import { TaskService } from 'app/services';
+import { SystemGeneralService, TaskService } from 'app/services';
 import { ModalService } from 'app/services/modal.service';
 import { StorageService } from 'app/services/storage.service';
 
@@ -66,6 +66,7 @@ export class SmartListComponent implements EntityTableConfig {
     protected taskService: TaskService,
     protected entityFormService: EntityFormService,
     protected translate: TranslateService,
+    protected systemGeneralService: SystemGeneralService,
   ) {
     this.storageService.listDisks().pipe(untilDestroyed(this)).subscribe((listDisks) => {
       this.listDisks = listDisks;
@@ -82,8 +83,11 @@ export class SmartListComponent implements EntityTableConfig {
   resourceTransformIncomingRestData(data: SmartTestUi[]): SmartTestUi[] {
     return data.map((test) => {
       test.cron_schedule = `0 ${test.schedule.hour} ${test.schedule.dom} ${test.schedule.month} ${test.schedule.dow}`;
-      test.next_run = this.taskService.getTaskNextRun(test.cron_schedule);
       test.frequency = this.taskService.getTaskCronDescription(test.cron_schedule);
+
+      this.systemGeneralService.getGeneralConfig$.pipe(untilDestroyed(this)).subscribe((config) => {
+        test.next_run = this.taskService.getTaskNextRun(test.cron_schedule, config.timezone);
+      });
 
       if (test.all_disks) {
         test.disks = [this.translate.instant(helptext.smarttest_all_disks_placeholder)];

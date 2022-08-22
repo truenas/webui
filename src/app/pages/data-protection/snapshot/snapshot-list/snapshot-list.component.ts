@@ -7,7 +7,9 @@ import { EntityTableComponent } from 'app/pages/common/entity/entity-table/entit
 import { EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { SnapshotFormComponent } from 'app/pages/data-protection/snapshot/snapshot-form/snapshot-form.component';
-import { DialogService, StorageService, WebSocketService } from 'app/services';
+import {
+  DialogService, StorageService, SystemGeneralService, WebSocketService,
+} from 'app/services';
 import { ModalService } from 'app/services/modal.service';
 import { TaskService } from 'app/services/task.service';
 
@@ -59,6 +61,7 @@ export class SnapshotListComponent implements EntityTableConfig<PeriodicSnapshot
     private taskService: TaskService,
     private modalService: ModalService,
     private translate: TranslateService,
+    private systemGeneralService: SystemGeneralService,
   ) {}
 
   afterInit(entityList: EntityTableComponent): void {
@@ -77,11 +80,16 @@ export class SnapshotListComponent implements EntityTableConfig<PeriodicSnapshot
         cron_schedule: `${task.schedule.minute} ${task.schedule.hour} ${task.schedule.dom} ${task.schedule.month} ${task.schedule.dow}`,
       } as PeriodicSnapshotTaskUi;
 
-      return {
+      const transformedData = {
         ...transformedTask,
-        next_run: this.taskService.getTaskNextRun(transformedTask.cron_schedule),
         frequency: this.taskService.getTaskCronDescription(transformedTask.cron_schedule),
       };
+
+      this.systemGeneralService.getGeneralConfig$.pipe(untilDestroyed(this)).subscribe((config) => {
+        transformedData.next_run = this.taskService.getTaskNextRun(transformedData.cron_schedule, config.timezone);
+      });
+
+      return transformedData;
     });
   }
 

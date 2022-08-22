@@ -11,7 +11,7 @@ import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/en
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { RsyncFormComponent } from 'app/pages/data-protection/rsync/rsync-form/rsync-form.component';
 import {
-  WebSocketService, DialogService, TaskService, JobService, UserService,
+  WebSocketService, DialogService, TaskService, JobService, UserService, SystemGeneralService,
 } from 'app/services';
 import { ModalService } from 'app/services/modal.service';
 
@@ -74,6 +74,7 @@ export class RsyncListComponent implements EntityTableConfig {
     protected job: JobService,
     protected modalService: ModalService,
     protected translate: TranslateService,
+    protected systemGeneralService: SystemGeneralService,
   ) {}
 
   afterInit(entityList: EntityTableComponent): void {
@@ -145,8 +146,11 @@ export class RsyncListComponent implements EntityTableConfig {
   resourceTransformIncomingRestData(data: RsyncTaskUi[]): RsyncTaskUi[] {
     return data.map((task) => {
       task.cron_schedule = `${task.schedule.minute} ${task.schedule.hour} ${task.schedule.dom} ${task.schedule.month} ${task.schedule.dow}`;
-      task.next_run = this.taskService.getTaskNextRun(task.cron_schedule);
       task.frequency = this.taskService.getTaskCronDescription(task.cron_schedule);
+
+      this.systemGeneralService.getGeneralConfig$.pipe(untilDestroyed(this)).subscribe((config) => {
+        task.next_run = this.taskService.getTaskNextRun(task.cron_schedule, config.timezone);
+      });
 
       if (task.job === null) {
         task.state = { state: task.locked ? JobState.Locked : JobState.Pending };

@@ -6,6 +6,7 @@ import { formatDistanceToNow } from 'date-fns';
 import { Observable } from 'rxjs';
 import { Option } from 'app/interfaces/option.interface';
 import { Pool } from 'app/interfaces/pool.interface';
+import { LocaleService } from 'app/services/locale.service';
 import { LanguageService } from './language.service';
 import { WebSocketService } from './ws.service';
 
@@ -115,7 +116,11 @@ export class TaskService {
     locale: this.language.currentLanguage,
   };
 
-  constructor(protected ws: WebSocketService, protected language: LanguageService) {}
+  constructor(
+    protected ws: WebSocketService,
+    protected language: LanguageService,
+    protected localeService: LocaleService,
+  ) {}
 
   getTimeOptions(): Option[] {
     return this.timeOptions;
@@ -140,8 +145,8 @@ export class TaskService {
       .map(() => ((schedule.next() as unknown) as { value: { _date: any } }).value._date.toDate());
   }
 
-  getTaskNextRun(scheduleExpression: string): string {
-    const schedule = cronParser.parseExpression(scheduleExpression, { iterator: true });
+  getTaskNextRun(scheduleExpression: string, timeZone: string): string {
+    const schedule = cronParser.parseExpression(scheduleExpression, { iterator: true, tz: timeZone });
 
     return formatDistanceToNow(
       ((schedule.next() as unknown) as { value: { _date: any } }).value._date.toDate(),
@@ -156,6 +161,7 @@ export class TaskService {
   }
 
   getTaskCronDescription(scheduleExpression: string, options: CronOptions = this.cronOptions): string {
+    options.use24HourTimeFormat = this.localeService.getPreferredTimeFormat() === 'HH:mm:ss';
     return cronstrue.toString(scheduleExpression, options);
   }
 }
