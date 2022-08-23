@@ -15,7 +15,7 @@ from function import (
 
 def test_new_user(driver):
     """test new user"""
-        """click on the Credentials on the side menu, click on Local Users."""
+    """click on the Credentials on the side menu, click on Local Users."""
     assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Credentials"]', 'clickable')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Credentials"]').click()
     assert wait_on_element(driver, 10, '//*[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Local Users"]', 'clickable')
@@ -27,8 +27,8 @@ def test_new_user(driver):
         assert wait_on_element(driver, 5, '//button[@ix-auto="button__CLOSE"]', 'clickable')
         driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()  
     assert wait_on_element(driver, 10, '//div[contains(.,"Users")]')
-    assert wait_on_element(driver, 10, '//button[@ix-auto="button__Users_ADD"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__Users_ADD"]').click()
+    assert wait_on_element(driver, 10, '//span[contains(.,"Add")]', 'clickable')
+    driver.find_element_by_xpath('//span[contains(.,"Add")]').click()
 
 
     # the Users Add Page should open, input the fields Full Name, Username, Password and click Save')

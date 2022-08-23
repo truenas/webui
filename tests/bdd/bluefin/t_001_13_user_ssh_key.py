@@ -1,6 +1,8 @@
 # coding=utf-8
 """SCALE UI feature tests."""
 
+import os
+import pytest
 import time
 from function import (
     wait_on_element,
@@ -31,7 +33,7 @@ def ssh_key():
     return ssh_key_file.read().strip()
 
 
-def test_user_ssh_key():
+def test_user_ssh_key(driver, nas_ip):
     """user_ssh_key"""
 
     # the Users page should open, click the down carat sign right of the users
