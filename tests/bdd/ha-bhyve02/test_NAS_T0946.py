@@ -251,33 +251,38 @@ def the_edit_interface_should_appear(driver):
     assert wait_on_element(driver, 7, '//h3[contains(.,"Edit Interface")]')
 
 
-@then(parsers.parse('uncheck DHCP, check Critical, Select 1 for Failover Group, input IP Address (This Controller) "{ip1}" then select /"{netmask1}", IP Address (TrueNAS Controller 2) "{ip2}", Virtual IP Address "{vip}"'))
-def uncheck_dhcp_check_critical_select_1_for_failover_group_input_ip_address_this_controller__then_select_23_ip_address_truenas_controller_2_virtual_ip_address(driver, ip1, netmask1, ip2, vip):
+@then(parsers.parse('uncheck DHCP, check Critical, Select 1 for Failover Group, input IP Address (This Controller) "{ip1}" then select /"{netmask}", IP Address (TrueNAS Controller 2) "{ip2}", Virtual IP Address "{vip}"'))
+def uncheck_dhcp_check_critical_select_1_for_failover_group_input_ip_address_this_controller__then_select_23_ip_address_truenas_controller_2_virtual_ip_address(driver, ip1, netmask, ip2, vip):
     """uncheck DHCP, check Critical, Select 1 for Failover Group, input IP Address (This Controller) "{ip1}" then select /"{netmask1}", IP Address (TrueNAS Controller 2) "{ip2}", Virtual IP Address, "{vip}"."""
-    assert wait_on_element(driver, 7, '//mat-checkbox[@ix-auto="checkbox__DHCP"]', 'clickable')
-    driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__DHCP"]').click()
-    driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__Critical"]').click()
-    driver.find_element_by_xpath('//mat-select[@ix-auto="select__Failover Group"]').click()
-    assert wait_on_element(driver, 5, '//mat-option[@ix-auto="option__Failover Group_1"]', 'clickable')
-    driver.find_element_by_xpath('//mat-option[@ix-auto="option__Failover Group_1"]').click()
-    driver.find_element_by_xpath('//button[@ix-auto="button__add-box_aliases"]').click()
-    assert wait_on_element(driver, 5, '//input[@ix-auto="input__IP Address (This Controller)"]', 'clickable')
-    driver.find_element_by_xpath('//input[@ix-auto="input__IP Address (This Controller)"]').clear()
-    driver.find_element_by_xpath('//input[@ix-auto="input__IP Address (This Controller)"]').send_keys(ip1)
-    driver.find_element_by_xpath('//mat-select[@ix-auto="input__IP Address (This Controller)"]').click()
-    driver.find_element_by_xpath(f'//mat-option[@ix-auto="option__{netmask1}"]').click()
-    driver.find_element_by_xpath('//input[@ix-auto="input__IP Address (TrueNAS Controller 2)"]').clear()
-    driver.find_element_by_xpath('//input[@ix-auto="input__IP Address (TrueNAS Controller 2)"]').send_keys(ip2)
-    driver.find_element_by_xpath('//input[@ix-auto="input__Virtual IP Address (Failover Address)"]').clear()
-    driver.find_element_by_xpath('//input[@ix-auto="input__Virtual IP Address (Failover Address)"]').send_keys(vip)
+    assert wait_on_element(driver, 7, '//mat-checkbox[contains(.,"DHCP")]', 'clickable')
+    driver.find_element_by_xpath('//mat-checkbox[contains(.,"DHCP")]').click()
+    assert wait_on_element(driver, 7, '//mat-checkbox[contains(.,"Critical")]', 'clickable')
+    driver.find_element_by_xpath('//mat-checkbox[contains(.,"Critical")]').click()
+    driver.find_element_by_xpath('//ix-select[@formcontrolname="failover_group"]//mat-select').click()
+    assert wait_on_element(driver, 5, '//mat-option[@id="mat-option-1"]', 'clickable')
+    driver.find_element_by_xpath('//mat-option[@id="mat-option-1"]').click()
+    assert wait_on_element(driver, 5, '//ix-select[@formcontrolname="failover_group"]//mat-select//span[text()="1"]', 'clickable')
+    assert wait_on_element(driver, 5, '//div[@class="label-container" and contains(.,"Aliases")]//button', 'clickable')
+    driver.find_element_by_xpath('//div[@class="label-container" and contains(.,"Aliases")]//button').click()
+    assert wait_on_element(driver, 5, '//ix-ip-input-with-netmask//input', 'inputable')
+    driver.find_element_by_xpath('//ix-ip-input-with-netmask//input').clear()
+    driver.find_element_by_xpath('//ix-ip-input-with-netmask//input').send_keys(ip1)
+    driver.find_element_by_xpath('//ix-ip-input-with-netmask//mat-select').click()
+    assert wait_on_element(driver, 5, f'//mat-option[contains(.,"{netmask}")]', 'clickable')
+    driver.find_element_by_xpath(f'//mat-option[contains(.,"{netmask}")]').click()
+    assert wait_on_element(driver, 5, '//ix-input[@formcontrolname="failover_address"]//input', 'inputable')
+    driver.find_element_by_xpath('//ix-input[@formcontrolname="failover_address"]//input').clear()
+    driver.find_element_by_xpath('//ix-input[@formcontrolname="failover_address"]//input').send_keys(ip2)
+    driver.find_element_by_xpath('//ix-input[@formcontrolname="failover_virtual_address"]//input').clear()
+    driver.find_element_by_xpath('//ix-input[@formcontrolname="failover_virtual_address"]//input').send_keys(vip)
 
 
 @then('click Apply and "Please wait" should appear while settings are being applied.')
 def click_apply_and_please_wait_should_appear_while_settings_are_being_applied(driver):
     """click Apply and "Please wait" should appear while settings are being applied."""
-    assert wait_on_element(driver, 7, '//button[@ix-auto="button__APPLY"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__APPLY"]').click()
-    assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
+    assert wait_on_element(driver, 7, '//button[contains(.,"Save")]', 'clickable')
+    driver.find_element_by_xpath('//button[contains(.,"Save")]').click()
+    assert wait_on_element_disappear(driver, 30, '//h6[contains(.,"Please wait")]')
 
 
 @then('click Test Changes, check Confirm, click Test Changes again')
@@ -298,8 +303,6 @@ def please_wait_should_appear_wait_for_save_changes_then_click_save_changes(driv
     driver.find_element_by_xpath('//button[contains(.,"Save Changes")]').click()
     assert wait_on_element(driver, 7, '//h1[contains(.,"Save Changes")]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
-    assert wait_on_element(driver, 7, '//button[@ix-auto="button__CLOSE"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
 
 
 @then('navigate to Storage then click the gear icon and click Disks')
