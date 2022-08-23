@@ -6,7 +6,6 @@ import {
   Component,
   ElementRef,
   OnInit,
-  TemplateRef,
   ViewChild,
   ViewContainerRef,
 } from '@angular/core';
@@ -166,9 +165,15 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked, AfterView
   ngAfterViewInit(): void {
     this.layoutService.pageHeaderUpdater$
       .pipe(untilDestroyed(this))
-      .subscribe((headerContent: TemplateRef<unknown>) => {
-        this.headerPortalOutlet = new TemplatePortal(headerContent, this.viewContainerRef);
-        this.cdr.detectChanges();
+      .subscribe((headerContent) => {
+        try {
+          this.headerPortalOutlet = new TemplatePortal(headerContent, this.viewContainerRef);
+          this.cdr.detectChanges();
+        } catch (error: unknown) {
+          // Prevents an error on one header from breaking headers on all pages.
+          console.error('Error when rendering page header template', error);
+          this.headerPortalOutlet = null;
+        }
       });
   }
 
