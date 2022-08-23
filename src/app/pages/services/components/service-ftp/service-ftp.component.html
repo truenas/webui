@@ -114,6 +114,7 @@
                   formControlName="ssltls_certificate"
                   [label]="'Certificate' | translate"
                   [tooltip]="helptext.ssltls_certificate_tooltip | translate"
+                  [required]="true"
                   [options]="certificates$"
                 ></ix-select>
               </div>
