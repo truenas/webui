@@ -1,12 +1,12 @@
 @import '~assets/styles/scss-imports/splitview';
-$chart-size: 150px;
-$chart-size-singlecolumn: 190px;
-$chart-size-mobile: 240px;
+$chart-size-sm: 150px;
+$chart-size-md: 180px;
+$chart-size-lg: 220px;
 
 :host {
   display: flex;
   gap: 24px;
-  min-height: $chart-size;
+  min-height: $chart-size-sm;
 
   @media (max-width: calc($breakpoint-dualcolumn - 1px)) {
     flex-wrap: wrap;
@@ -14,36 +14,36 @@ $chart-size-mobile: 240px;
 }
 
 .chart-wrapper {
-  height: $chart-size;
-  width: $chart-size;
+  height: $chart-size-sm;
+  width: $chart-size-sm;
 
   @media (max-width: calc($breakpoint-dualcolumn - 1px)) {
     margin: 0 auto;
   }
 
-  @media (max-width: calc($breakpoint-tablet - 1px)) {
-    height: $chart-size-mobile;
-    width: $chart-size-mobile;
+  @media (max-width: $breakpoint-hidden) {
+    height: $chart-size-lg;
+    width: $chart-size-lg;
   }
 
-  @media (min-width: $breakpoint-tablet) and (max-width: calc($breakpoint-dualcolumn - 1px)) {
-    height: $chart-size-singlecolumn;
-    width: $chart-size-singlecolumn;
+  @media (min-width: $breakpoint-singlecolumn) and (max-width: calc($breakpoint-dualcolumn - 1px)) {
+    height: $chart-size-md;
+    width: $chart-size-md;
   }
 }
 
 .chart-wrapper canvas {
-  height: $chart-size !important;
-  width: $chart-size !important;
+  height: $chart-size-sm !important;
+  width: $chart-size-sm !important;
 
-  @media (max-width: calc($breakpoint-tablet - 1px)) {
-    height: $chart-size-mobile !important;
-    width: $chart-size-mobile !important;
+  @media (max-width: $breakpoint-hidden) {
+    height: $chart-size-lg !important;
+    width: $chart-size-lg !important;
   }
 
-  @media (min-width: $breakpoint-tablet) and (max-width: calc($breakpoint-dualcolumn - 1px)) {
-    height: $chart-size-singlecolumn !important;
-    width: $chart-size-singlecolumn !important;
+  @media (min-width: $breakpoint-singlecolumn) and (max-width: calc($breakpoint-dualcolumn - 1px)) {
+    height: $chart-size-md !important;
+    width: $chart-size-md !important;
   }
 }
 
@@ -68,14 +68,14 @@ $chart-size-mobile: 240px;
   align-items: center;
   display: flex;
   flex: 0 0 auto;
-  height: $chart-size;
-  width: $chart-size;
+  height: $chart-size-sm;
+  width: $chart-size-sm;
 
   ::ng-deep .loader {
     border-radius: 50%;
-    height: $chart-size;
+    height: $chart-size-sm;
     margin: 0;
-    width: $chart-size;
+    width: $chart-size-sm;
   }
 }
 
