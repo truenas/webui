@@ -1,5 +1,5 @@
 import {
-  Directive, ElementRef, Inject, Input, OnChanges, OnDestroy, OnInit, SimpleChanges,
+  Directive, ElementRef, Inject, Input, OnChanges, OnDestroy, AfterViewInit, SimpleChanges,
 } from '@angular/core';
 import { WINDOW } from 'app/helpers/window.helper';
 
@@ -11,7 +11,7 @@ import { WINDOW } from 'app/helpers/window.helper';
 @Directive({
   selector: '[ixDetailsHeight]',
 })
-export class IxDetailsHeightDirective implements OnInit, OnDestroy, OnChanges {
+export class IxDetailsHeightDirective implements AfterViewInit, OnDestroy, OnChanges {
   @Input() ixDetailsHeightParentClass: string;
   @Input() hasConsoleFooter = false;
   @Input() headerHeight = 0;
@@ -29,9 +29,10 @@ export class IxDetailsHeightDirective implements OnInit, OnDestroy, OnChanges {
     private element: ElementRef,
   ) {}
 
-  ngOnInit(): void {
+  ngAfterViewInit(): void {
     this.element.nativeElement.style.height = this.heightCssValue;
     this.window.addEventListener('scroll', this.onScrollHandler, true);
+    this.onScroll();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
