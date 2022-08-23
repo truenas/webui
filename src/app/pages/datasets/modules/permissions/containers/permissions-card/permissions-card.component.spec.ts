@@ -77,11 +77,10 @@ describe('PermissionsCardComponent', () => {
   });
 
   it('shows dataset ownership information', () => {
-    const [ownerItem, groupItem, pathItem] = spectator.queryAll('.details-item');
+    const [ownerItem, groupItem] = spectator.queryAll('.details-item');
 
     expect(ownerItem).toHaveText('Owner:john');
     expect(groupItem).toHaveText('Group:johns');
-    expect(pathItem).toHaveText('Path:testpool/dataset');
   });
 
   it('shows trivial permissions when acl is trivial', () => {
