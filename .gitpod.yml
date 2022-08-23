@@ -1,0 +1,31 @@
+# Commands to start on workspace startup
+tasks:
+  - name: Start Docker
+    init: |
+      eval $(command gp env -e)
+      sudo docker-up
+  - name: Pull Image
+    env:
+      TNIP: 192.168.242.130
+      PR_NUMBER: 7004
+    command: docker container run -it -d -e TNIP=$TNIP -p 8080:80 ixsystems/truenas-webui:$PR_NUMBER
+
+# Ports to expose on workspace startup
+ports:
+  - port: 8080 # WebUI
+    onOpen: open-preview
+  - port: 3030 # VS Code extension tests
+  - port: 9229 # Node.js debug port
+    onOpen: ignore
+  - port: 9339 # Node.js debug port
+    onOpen: ignore
+
+github:
+  prebuilds:
+    master: false
+    branches: false
+    pullRequests: true
+    pullRequestsFromForks: true
+    addCheck: true
+    addComment: false
+    addBadge: true
