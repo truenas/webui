@@ -98,6 +98,7 @@ def open_a_new_tab_navigate_to_backblaze_url_click_sign_in(driver, backblaze_url
     driver.execute_script("window.open();")
     driver.switch_to.window(driver.window_handles[1])
     driver.get(backblaze_url)
+    time.sleep(1)
     assert wait_on_element(driver, 7, '//img[@alt="Backblaze Logo"]')
     assert wait_on_element(driver, 5, '//a[text()="Sign In"]', 'clickable')
 
@@ -109,15 +110,16 @@ def enter_the_user_name_click_Next_and_enter_the_password_click_Next(driver, use
     time.sleep(1)
     assert wait_on_element(driver, 5, '//input[@placeholder="Email"]', 'inputable')
     driver.find_element_by_xpath('//input[@placeholder="Email"]').send_keys(user_name)
-    time.sleep(0.5)
+    time.sleep(1)
     assert wait_on_element(driver, 5, '//button[contains(text(),"Next")]', 'clickable')
     driver.find_element_by_xpath('//button[contains(text(),"Next")]').click()
+    time.sleep(1)
     assert wait_on_element(driver, 10, '//p[@class="user-email"]')
     assert wait_on_element(driver, 5, '//input[@placeholder="Password"]', 'inputable')
     driver.find_element_by_xpath('//input[@placeholder="Password"]').send_keys(password)
-    time.sleep(0.5)
-    assert wait_on_element(driver, 5, '//button[contains(text(),"Sign in")]', 'clickable')
-    driver.find_element_by_xpath('//button[contains(text(),"Sign in")]').click()
+    time.sleep(1)
+    assert wait_on_element(driver, 5, '//button[contains(text(),"Sign in") and @type="submit"]', 'clickable')
+    driver.find_element_by_xpath('//button[contains(text(),"Sign in") and @type="submit"]').click()
     time.sleep(1)
 
 
@@ -126,8 +128,8 @@ def click_on_Browser_Files_click_on_bucket_then_click_on_the_test_folder(driver,
     """click on Browser Files, click on {bucket}, then click on the bucket."""
     global my_bucket
     my_bucket = bucket
-    assert wait_on_element(driver, 5, '//span[text()="Overview"]')
-    assert wait_on_element(driver, 5, '//a[text()="Browse Files"]', 'clickable')
+    assert wait_on_element(driver, 10, '//span[text()="Overview"]')
+    assert wait_on_element(driver, 7, '//a[text()="Browse Files"]', 'clickable')
     driver.find_element_by_xpath('//a[text()="Browse Files"]').click()
     assert wait_on_element(driver, 7, '//h1[text()="Browse Files"]')
     assert wait_on_element(driver, 5, '//div[@class="b2-browse-crumbs" and contains(.,"Buckets")]')
@@ -237,7 +239,7 @@ def expand_the_task_on_the_nas_ui_and_click_run_now(driver):
     driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
     assert wait_on_element_disappear(driver, 30, '//h1[contains(text(),"Task Started")]')
     time.sleep(1)
-    assert wait_on_element(driver, 120, '//button[@id="My Backblaze B2 task_Status-button" and contains(.,"SUCCESS")]')
+    assert wait_on_element(driver, 180, '//button[@id="My Backblaze B2 task_Status-button" and contains(.,"SUCCESS")]')
 
 
 @then('verify all files are copied from Backblaze B2 are into the dataset')
@@ -269,13 +271,14 @@ def on_the_nas_cloud_sync_task_tab_click_edit(driver):
     assert wait_on_element(driver, 5, '//a[@ix-auto="expander__My Backblaze B2 task"]', 'clickable')
     if not wait_on_element(driver, 2, '//button[@ix-auto="button___edit"]'):
         driver.find_element_by_xpath('//a[@ix-auto="expander__My Backblaze B2 task"]').click()
-    time.sleep(1.5)
     assert wait_on_element(driver, 7, '//p[contains(text(),"backblazecreds")]')
-    assert wait_on_element(driver, 5, '//button[@ix-auto="button___edit"]', 'clickable')
+    assert wait_on_element(driver, 7, '//button[@ix-auto="button___edit"]')
+    time.sleep(2)
+    assert wait_on_element(driver, 7, '//button[@ix-auto="button___edit"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button___edit"]').click()
     assert wait_on_element(driver, 5, '//h4[contains(.,"Transfer")]')
     assert wait_on_element(driver, 5, '//h4[contains(.,"Advanced Options")]')
-    time.sleep(0.5)
+    time.sleep(1)
 
 
 @then('select PUSH as the Direction then under Transfer Mode, select COPY')
@@ -302,6 +305,8 @@ def under_bucket_select_the_bucket_and_click_save(driver, bucket):
     assert wait_on_element(driver, 5, '//button[@id="save_button"]', 'clickable')
     driver.find_element_by_xpath('//button[@id="save_button"]').click()
     assert wait_on_element_disappear(driver, 30, '//h1[contains(.,"Please wait")]')
+    # give time to the system to handle changes
+    time.sleep(2)
 
 
 @then('on Backblaze B2 verify all files are in the bucket')
@@ -363,6 +368,8 @@ def click_save_the_backblaze_b2_tasks_should_save_without_error(driver):
     assert wait_on_element_disappear(driver, 30, '//h6[contains(.,"Please wait")]')
     assert wait_on_element(driver, 7, '//div[contains(.,"Cloud Sync Tasks")]')
     assert wait_on_element(driver, 10, '//div[contains(text(),"My Backblaze B2 task")]')
+    # give time to the system to handle changes
+    time.sleep(2)
 
 
 @then('verify all files are moved from the Backblaze B2 bucket to the dataset')
@@ -538,7 +545,7 @@ def on_the_nas_cloud_sync_task_tab_click_run_now(driver):
     driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
     assert wait_on_element_disappear(driver, 30, '//h1[contains(text(),"Task Started")]')
     time.sleep(1)
-    assert wait_on_element(driver, 120, '//button[@id="My Backblaze B2 task_Status-button" and contains(.,"SUCCESS")]')
+    assert wait_on_element(driver, 180, '//button[@id="My Backblaze B2 task_Status-button" and contains(.,"SUCCESS")]')
 
 
 @then('verify the file is removed from the dataset folder')

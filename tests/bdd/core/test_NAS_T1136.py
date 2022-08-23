@@ -177,7 +177,7 @@ def expand_the_task_on_the_nas_ui_and_click_run_now(driver):
     driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
     assert wait_on_element_disappear(driver, 30, '//h1[contains(text(),"Task Started")]')
     time.sleep(1)
-    assert wait_on_element(driver, 120, '//button[@id="My Dropbox task_Status-button" and contains(.,"SUCCESS")]')
+    assert wait_on_element(driver, 180, '//button[@id="My Dropbox task_Status-button" and contains(.,"SUCCESS")]')
 
 
 @then('verify all files are copied from Dropbox are into the dataset')
@@ -209,13 +209,14 @@ def on_the_nas_cloud_sync_task_tab_click_edit(driver):
     assert wait_on_element(driver, 5, '//a[@ix-auto="expander__My Dropbox task"]', 'clickable')
     if not wait_on_element(driver, 2, '//button[@ix-auto="button___edit"]'):
         driver.find_element_by_xpath('//a[@ix-auto="expander__My Dropbox task"]').click()
-    time.sleep(1.5)
     assert wait_on_element(driver, 7, '//p[contains(text(),"dropboxcredentials")]')
-    assert wait_on_element(driver, 5, '//button[@ix-auto="button___edit"]', 'clickable')
+    assert wait_on_element(driver, 7, '//button[@ix-auto="button___edit"]')
+    time.sleep(2)
+    assert wait_on_element(driver, 7, '//button[@ix-auto="button___edit"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button___edit"]').click()
     assert wait_on_element(driver, 5, '//h4[contains(.,"Transfer")]')
     assert wait_on_element(driver, 5, '//h4[contains(.,"Advanced Options")]')
-    time.sleep(0.5)
+    time.sleep(1)
 
 
 @then('select PUSH as the Direction then under Transfer Mode, select COPY')
@@ -241,6 +242,8 @@ def select_the_path_folder_and_click_save(driver, path):
     assert wait_on_element(driver, 5, '//button[@id="save_button"]', 'clickable')
     driver.find_element_by_xpath('//button[@id="save_button"]').click()
     assert wait_on_element_disappear(driver, 30, '//h1[contains(.,"Please wait")]')
+    # give time to the system to handle changes
+    time.sleep(2)
 
 
 @then('open a new tab navigate to <box_url>')
@@ -349,6 +352,8 @@ def click_save_the_dropbox_tasks_should_save_without_error(driver):
     assert wait_on_element_disappear(driver, 30, '//h6[contains(.,"Please wait")]')
     assert wait_on_element(driver, 7, '//div[contains(.,"Cloud Sync Tasks")]')
     assert wait_on_element(driver, 10, '//div[contains(text(),"My Dropbox task")]')
+    # give time to the system to handle changes
+    time.sleep(2)
 
 
 @then('verify all files are moved from the Dropbox test folder to the dataset')
@@ -517,7 +522,7 @@ def on_the_nas_cloud_sync_task_tab_click_run_now(driver):
     driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
     assert wait_on_element_disappear(driver, 30, '//h1[contains(text(),"Task Started")]')
     time.sleep(1)
-    assert wait_on_element(driver, 120, '//button[@id="My Dropbox task_Status-button" and contains(.,"SUCCESS")]')
+    assert wait_on_element(driver, 180, '//button[@id="My Dropbox task_Status-button" and contains(.,"SUCCESS")]')
 
 
 @then('verify the file is removed from the dataset folder')

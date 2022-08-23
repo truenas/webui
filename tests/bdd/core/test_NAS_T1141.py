@@ -175,7 +175,7 @@ def expand_the_task_on_the_nas_ui_and_click_run_now(driver):
     driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
     assert wait_on_element_disappear(driver, 30, '//h1[contains(text(),"Task Started")]')
     time.sleep(1)
-    assert wait_on_element(driver, 120, '//button[@id="My Google Drive task_Status-button" and contains(.,"SUCCESS")]')
+    assert wait_on_element(driver, 180, '//button[@id="My Google Drive task_Status-button" and contains(.,"SUCCESS")]')
 
 
 @then('verify all files are copied from Google Drive are into the dataset')
@@ -207,9 +207,10 @@ def on_the_nas_cloud_sync_task_tab_click_edit(driver):
     assert wait_on_element(driver, 5, '//a[@ix-auto="expander__My Google Drive task"]', 'clickable')
     if not wait_on_element(driver, 2, '//button[@ix-auto="button___edit"]'):
         driver.find_element_by_xpath('//a[@ix-auto="expander__My Google Drive task"]').click()
-    time.sleep(1.5)
     assert wait_on_element(driver, 7, '//p[contains(text(),"drivecredentials")]')
-    assert wait_on_element(driver, 5, '//button[@ix-auto="button___edit"]', 'clickable')
+    assert wait_on_element(driver, 7, '//button[@ix-auto="button___edit"]')
+    time.sleep(2)
+    assert wait_on_element(driver, 7, '//button[@ix-auto="button___edit"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button___edit"]').click()
     assert wait_on_element(driver, 5, '//h4[contains(.,"Transfer")]')
     assert wait_on_element(driver, 5, '//h4[contains(.,"Advanced Options")]')
@@ -239,7 +240,8 @@ def select_the_path_folder_and_click_save(driver, path):
     assert wait_on_element(driver, 5, '//button[@id="save_button"]', 'clickable')
     driver.find_element_by_xpath('//button[@id="save_button"]').click()
     assert wait_on_element_disappear(driver, 30, '//h1[contains(.,"Please wait")]')
-    time.sleep(1)
+    # give time to the system to handle changes
+    time.sleep(2)
 
 
 @then('open a new tab navigate to <driver_url>')
@@ -249,6 +251,7 @@ def open_a_new_tab_navigate_to_google_drive_url_and_input_account_id(driver, dri
     driver.switch_to.window(driver.window_handles[1])
     driver.get(driver_url)
     assert wait_on_element(driver, 5, '//a[@title="Google"]')
+    time.sleep(1)
     assert wait_on_element(driver, 5, '//div[@class="glue-header__container glue-header__container--cta"]//a[contains(text(),"Go to Drive")]', 'clickable')
     driver.find_element_by_xpath('//div[@class="glue-header__container glue-header__container--cta"]//a[contains(text(),"Go to Drive")]').click()
 
@@ -271,6 +274,7 @@ def enter_the_user_name_click_Next_and_enter_the_password_click_Next(driver, use
         assert wait_on_element(driver, 5, '//button[contains(.,"Next")]', 'clickable')
         driver.find_element_by_xpath('//button[contains(.,"Next")]').click()
     assert wait_on_element(driver, 10, '//div[text()="My Drive"]')
+    time.sleep(1)
 
 
 @then(parsers.parse('click on {folder1} then click on the test folder'))
@@ -280,7 +284,7 @@ def click_on_folder1_then_click_on_the_test_folder(driver, folder1):
     action = ActionChains(driver)
     action.double_click(driver.find_element_by_xpath(f'//div[text()="{folder1}"]')).perform()
     assert wait_on_element(driver, 7, f'//div[@aria-label="{folder1}"]')
-    time.sleep(0.5)
+    time.sleep(1)
     assert wait_on_element(driver, 7, '//div[text()="initial"]', 'clickable')
     assert wait_on_element(driver, 5, '//div[text()="test"]', 'clickable')
     action = ActionChains(driver)
@@ -344,6 +348,8 @@ def click_save_the_google_drive_tasks_should_save_without_error(driver):
     assert wait_on_element_disappear(driver, 30, '//h6[contains(.,"Please wait")]')
     assert wait_on_element(driver, 7, '//div[contains(.,"Cloud Sync Tasks")]')
     assert wait_on_element(driver, 10, '//div[contains(text(),"My Google Drive task")]')
+    # give time to the system to handle changes
+    time.sleep(2)
 
 
 @then('verify all files are moved from the Google Drive test folder to the dataset')
@@ -512,7 +518,7 @@ def on_the_nas_cloud_sync_task_tab_click_run_now(driver):
     driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
     assert wait_on_element_disappear(driver, 30, '//h1[contains(text(),"Task Started")]')
     time.sleep(1)
-    assert wait_on_element(driver, 120, '//button[@id="My Google Drive task_Status-button" and contains(.,"SUCCESS")]')
+    assert wait_on_element(driver, 180, '//button[@id="My Google Drive task_Status-button" and contains(.,"SUCCESS")]')
 
 
 @then('verify the file is removed from the dataset folder')

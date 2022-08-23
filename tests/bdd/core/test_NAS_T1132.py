@@ -174,7 +174,7 @@ def expand_the_task_on_the_nas_ui_and_click_run_now(driver):
     driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
     assert wait_on_element_disappear(driver, 30, '//h1[contains(text(),"Task Started")]')
     time.sleep(1)
-    assert wait_on_element(driver, 120, '//button[@id="My BOX Cloud task_Status-button" and contains(.,"SUCCESS")]')
+    assert wait_on_element(driver, 180, '//button[@id="My BOX Cloud task_Status-button" and contains(.,"SUCCESS")]')
 
 
 @then('verify all files are copied from Box are into the dataset')
@@ -200,17 +200,20 @@ def verify_all_files_are_copied_from_box_are_into_the_dataset(driver, nas_ip):
 def on_the_nas_cloud_sync_task_tab_click_edit(driver):
     """on the NAS cloud sync task tab, click Edit."""
     driver.switch_to.window(driver.window_handles[0])
-    time.sleep(2)
     assert wait_on_element(driver, 7, '//div[contains(.,"Cloud Sync Tasks")]')
     assert wait_on_element(driver, 10, '//div[contains(text(),"My BOX Cloud task")]')
+    time.sleep(1)
     assert wait_on_element(driver, 5, '//a[@ix-auto="expander__My BOX Cloud task"]', 'clickable')
     if not wait_on_element(driver, 2, '//button[@ix-auto="button___edit"]'):
         driver.find_element_by_xpath('//a[@ix-auto="expander__My BOX Cloud task"]').click()
-    time.sleep(1.5)
     assert wait_on_element(driver, 7, '//p[contains(text(),"boxcredentials")]')
+    assert wait_on_element(driver, 7, '//button[@ix-auto="button___edit"]')
+    time.sleep(2)
     assert wait_on_element(driver, 5, '//button[@ix-auto="button___edit"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button___edit"]').click()
     assert wait_on_element(driver, 7, '//h4[contains(.,"Transfer")]')
+    assert wait_on_element(driver, 5, '//h4[contains(.,"Advanced Options")]')
+    time.sleep(1)
 
 
 @then('select PUSH as the Direction then under Transfer Mode, select COPY')
@@ -236,6 +239,8 @@ def select_the_path_folder_and_click_save(driver, path):
     assert wait_on_element(driver, 5, '//button[@id="save_button"]', 'clickable')
     driver.find_element_by_xpath('//button[@id="save_button"]').click()
     assert wait_on_element_disappear(driver, 30, '//h1[contains(.,"Please wait")]')
+    # give time to the system to handle changes
+    time.sleep(2)
 
 
 @then('open a new tab navigate to <box_url>')
@@ -260,6 +265,7 @@ def input_user_name_and_password_click_sign_in(driver, user_name, password):
     assert wait_on_element(driver, 5, '//button[@id="login-submit-password"]', 'clickable')
     driver.find_element_by_xpath('//button[@id="login-submit-password"]').click()
     assert wait_on_element(driver, 15, '//h1[text()="All Files"]')
+    time.sleep(1)
 
 
 @then(parsers.parse('click on {folder1} then click on the test folder'))
@@ -268,6 +274,7 @@ def click_on_folder1_then_click_on_the_test_folder(driver, folder1):
     assert wait_on_element(driver, 5, f'//a[text()="{folder1}"]', 'clickable')
     driver.find_element_by_xpath(f'//a[text()="{folder1}"]').click()
     assert wait_on_element(driver, 5, f'//h1[text()="{folder1}"]')
+    time.sleep(1)
     assert wait_on_element(driver, 5, '//a[text()="test"]', 'clickable')
     driver.find_element_by_xpath('//a[text()="test"]').click()
     time.sleep(1)
@@ -325,6 +332,8 @@ def click_save_the_box_tasks_should_save_without_error(driver):
     assert wait_on_element_disappear(driver, 30, '//h6[contains(.,"Please wait")]')
     assert wait_on_element(driver, 7, '//div[contains(.,"Cloud Sync Tasks")]')
     assert wait_on_element(driver, 10, '//div[contains(text(),"My BOX Cloud task")]')
+    # give time to the system to handle changes
+    time.sleep(2)
 
 
 @then('verify all files are moved from the Box test folder to the dataset')
@@ -493,7 +502,7 @@ def on_the_nas_cloud_sync_task_tab_click_run_now(driver):
     driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
     assert wait_on_element_disappear(driver, 30, '//h1[contains(text(),"Task Started")]')
     time.sleep(1)
-    assert wait_on_element(driver, 120, '//button[@id="My BOX Cloud task_Status-button" and contains(.,"SUCCESS")]')
+    assert wait_on_element(driver, 180, '//button[@id="My BOX Cloud task_Status-button" and contains(.,"SUCCESS")]')
     # give time to the system to be ready.
 
 
