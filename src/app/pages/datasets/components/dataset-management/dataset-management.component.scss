@@ -4,6 +4,7 @@
 
 $singlecolumn-max-width: ($card-width-slim + $gap * 2);
 $dualcolumn-slim-max-width: ($card-width-slim * 2 + $gap * 2);
+$scrollbar-offset: 20px;
 
 :host {
   display: block;
@@ -54,7 +55,7 @@ $dualcolumn-slim-max-width: ($card-width-slim * 2 + $gap * 2);
 
   // Two Cards Slim Columns
   @media (min-width: $breakpoint-dualcolumn-slim) and (max-width: calc($breakpoint-dualcolumn - 1px)) {
-    max-width: calc(100% - $dualcolumn-slim-max-width - 16px);
+    max-width: calc(100% - $dualcolumn-slim-max-width - 16px - $scrollbar-offset);
     min-width: calc($table-min-width + 0px);
   }
 
@@ -97,7 +98,7 @@ $dualcolumn-slim-max-width: ($card-width-slim * 2 + $gap * 2);
 
   // Two Cards Columns
   @media (min-width: $breakpoint-dualcolumn-slim) and (max-width: calc($breakpoint-dualcolumn - 1px)) {
-    max-width: $dualcolumn-slim-max-width;
+    max-width: ($dualcolumn-slim-max-width + $scrollbar-offset);
   }
 
   // Two Cards Columns
