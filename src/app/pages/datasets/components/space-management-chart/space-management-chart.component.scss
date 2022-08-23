@@ -1,12 +1,10 @@
 @import '~assets/styles/scss-imports/splitview';
-$chart-size-sm: 150px;
-$chart-size-md: 180px;
-$chart-size-lg: 220px;
+$chart-size: 150px;
 
 :host {
   display: flex;
   gap: 24px;
-  min-height: $chart-size-sm;
+  min-height: $chart-size;
 
   @media (max-width: calc($breakpoint-dualcolumn - 1px)) {
     flex-wrap: wrap;
@@ -14,37 +12,17 @@ $chart-size-lg: 220px;
 }
 
 .chart-wrapper {
-  height: $chart-size-sm;
-  width: $chart-size-sm;
+  height: $chart-size;
+  width: $chart-size;
 
   @media (max-width: calc($breakpoint-dualcolumn - 1px)) {
     margin: 0 auto;
   }
-
-  @media (max-width: $breakpoint-hidden) {
-    height: $chart-size-lg;
-    width: $chart-size-lg;
-  }
-
-  @media (min-width: $breakpoint-singlecolumn) and (max-width: calc($breakpoint-dualcolumn - 1px)) {
-    height: $chart-size-md;
-    width: $chart-size-md;
-  }
 }
 
 .chart-wrapper canvas {
-  height: $chart-size-sm !important;
-  width: $chart-size-sm !important;
-
-  @media (max-width: $breakpoint-hidden) {
-    height: $chart-size-lg !important;
-    width: $chart-size-lg !important;
-  }
-
-  @media (min-width: $breakpoint-singlecolumn) and (max-width: calc($breakpoint-dualcolumn - 1px)) {
-    height: $chart-size-md !important;
-    width: $chart-size-md !important;
-  }
+  height: $chart-size !important;
+  width: $chart-size !important;
 }
 
 .chart-description {
@@ -68,14 +46,14 @@ $chart-size-lg: 220px;
   align-items: center;
   display: flex;
   flex: 0 0 auto;
-  height: $chart-size-sm;
-  width: $chart-size-sm;
+  height: $chart-size;
+  width: $chart-size;
 
   ::ng-deep .loader {
     border-radius: 50%;
-    height: $chart-size-sm;
+    height: $chart-size;
     margin: 0;
-    width: $chart-size-sm;
+    width: $chart-size;
   }
 }
 
