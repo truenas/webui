@@ -46,15 +46,15 @@ def the_browser_is_open_navigate_to_the_scale_url(driver, nas_ip, root_password)
 @then('enable root SSH')
 def enable_root_ssh(driver, nas_ip, root_password):
     """enable root SSH"""
-#    import t_000_1_root_ssh
-#    t_000_1_root_ssh.test_root_ssh(nas_ip, driver, root_password)
+    import t_000_1_root_ssh
+    t_000_1_root_ssh.test_root_ssh(nas_ip, driver, root_password)
 
 
 @then(parsers.parse('set interface with "{nameserver1}" "{nameserver2}" "{nameserver3}" "{gateway}"'))
 def set_interface(driver, nas_ip, nas_hostname, nameserver1, nameserver2, nameserver3, gateway):
     """set interface"""
-#    import t_000_2_set_interface
-#    t_000_2_set_interface.test_interface(driver, nas_ip, nas_hostname, nameserver1, nameserver2, nameserver3, gateway)
+    import t_000_2_set_interface
+    t_000_2_set_interface.test_interface(driver, nas_ip, nas_hostname, nameserver1, nameserver2, nameserver3, gateway)
 
 
 @then('create pool')
