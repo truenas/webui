@@ -104,9 +104,9 @@ export class BootStatusListComponent implements OnInit {
           this.translate.instant('<i>{disk}</i> has been detached.', { disk }),
         );
       },
-      (res) => {
+      (error) => {
         this.loader.close();
-        this.dialog.errorReport(res.error, res.reason, res.trace.formatted);
+        this.dialog.errorReport(error.error, error.reason, error.trace.formatted);
       },
     );
   }

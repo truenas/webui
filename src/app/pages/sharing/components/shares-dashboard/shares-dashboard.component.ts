@@ -389,16 +389,16 @@ export class SharesDashboardComponent implements AfterViewInit {
                 matTooltip: helptextSharingSmb.action_share_acl,
                 onClick: (row: SmbShare) => {
                   this.ws.call('pool.dataset.path_in_locked_datasets', [row.path]).pipe(untilDestroyed(this)).subscribe(
-                    (res) => {
-                      if (res) {
+                    (isLocked) => {
+                      if (isLocked) {
                         this.lockedPathDialog(row.path);
                       } else {
                         // A home share has a name (homes) set; row.name works for other shares
                         const searchName = row.home ? 'homes' : row.name;
                         this.ws.call('smb.sharesec.query', [[['share_name', '=', searchName]]]).pipe(untilDestroyed(this)).subscribe(
-                          (res) => {
+                          (sharesecs) => {
                             const form = this.slideInService.open(SmbAclComponent);
-                            form.setSmbShareName(res[0].share_name);
+                            form.setSmbShareName(sharesecs[0].share_name);
                           },
                         );
                       }
@@ -416,8 +416,8 @@ export class SharesDashboardComponent implements AfterViewInit {
                   const datasetId = rowName;
                   const productType = window.localStorage.getItem('product_type') as ProductType;
                   this.ws.call('pool.dataset.path_in_locked_datasets', [row.path]).pipe(untilDestroyed(this)).subscribe(
-                    (res) => {
-                      if (res) {
+                    (isLocked) => {
+                      if (isLocked) {
                         this.lockedPathDialog(row.path);
                       } else if (productType.includes(ProductType.Scale)) {
                         this.router.navigate(['/', 'storage', 'id', poolName, 'dataset', 'posix-acl', datasetId]);

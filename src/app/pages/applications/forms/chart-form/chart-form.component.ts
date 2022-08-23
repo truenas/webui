@@ -289,11 +289,11 @@ export class ChartFormComponent implements OnDestroy {
     this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe(this.onFailure);
   }
 
-  onFailure = (res: Job<null, unknown[]>): void => {
-    if (res.exc_info && res.exc_info.extra) {
-      new EntityUtils().handleWsError(this, res);
+  onFailure = (failedJob: Job<null, unknown[]>): void => {
+    if (failedJob.exc_info && failedJob.exc_info.extra) {
+      new EntityUtils().handleWsError(this, failedJob);
     } else {
-      this.dialogService.errorReport('Error', res.error, res.exception);
+      this.dialogService.errorReport('Error', failedJob.error, failedJob.exception);
     }
   };
 

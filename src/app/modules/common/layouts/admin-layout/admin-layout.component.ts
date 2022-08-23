@@ -221,9 +221,9 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked, AfterView
 
   getLogConsoleMsg(): void {
     this.consoleMsgsSubscriptionId = UUID.UUID();
-    this.ws.sub(this.consoleMsgsSubName, this.consoleMsgsSubscriptionId).pipe(untilDestroyed(this)).subscribe((res) => {
-      if (res && res.data && typeof res.data === 'string') {
-        this.consoleMsg = this.accumulateConsoleMsg(res.data, 3);
+    this.ws.sub(this.consoleMsgsSubName, this.consoleMsgsSubscriptionId).pipe(untilDestroyed(this)).subscribe((log) => {
+      if (log && log.data && typeof log.data === 'string') {
+        this.consoleMsg = this.accumulateConsoleMsg(log.data, 3);
       }
     });
   }

@@ -233,8 +233,8 @@ export class BootEnvironmentListComponent implements EntityTableConfig {
           this.loader.close();
           this.entityList.selection.clear();
         },
-        (res: WebsocketError) => {
-          new EntityUtils().handleWsError(this, res, this.dialog);
+        (error: WebsocketError) => {
+          new EntityUtils().handleWsError(this, error, this.dialog);
           this.loader.close();
         },
       );
@@ -255,8 +255,8 @@ export class BootEnvironmentListComponent implements EntityTableConfig {
             this.loader.close();
             this.entityList.selection.clear();
           },
-          (res: WebsocketError) => {
-            new EntityUtils().handleWsError(this, res, this.dialog);
+          (error: WebsocketError) => {
+            new EntityUtils().handleWsError(this, error, this.dialog);
             this.loader.close();
           },
         );
@@ -274,8 +274,8 @@ export class BootEnvironmentListComponent implements EntityTableConfig {
             this.loader.close();
             this.entityList.selection.clear();
           },
-          (res: WebsocketError) => {
-            new EntityUtils().handleWsError(this, res, this.dialog);
+          (error: WebsocketError) => {
+            new EntityUtils().handleWsError(this, error, this.dialog);
             this.loader.close();
           },
         );
@@ -323,8 +323,8 @@ export class BootEnvironmentListComponent implements EntityTableConfig {
         this.loader.close();
         this.snackbar.success(this.translate.instant('Scrub Started'));
       },
-      (res: WebsocketError) => {
-        new EntityUtils().handleWsError(this, res, this.dialog);
+      (error: WebsocketError) => {
+        new EntityUtils().handleWsError(this, error, this.dialog);
         this.loader.close();
       });
     });
