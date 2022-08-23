@@ -409,17 +409,14 @@ def create_pool_should_appear_while_pool_is_being_created_you_should_be_returned
 def click_disable_failover_to_uncheck_it_click_save_and_confirm_changes(driver):
     """click disable failover to uncheck it, click save and confirm changes."""
     assert wait_on_element(driver, 7, '//mat-checkbox[@ix-auto="checkbox__Disable Failover"]', 'clickable')
-    element = driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__Disable Failover"]')
+    element = driver.find_element_by_xpath('//mat-checkbox[contains(.,"Disable Failover")]')
     global class_attribute
     class_attribute = element.get_attribute('class')
-    if 'mat-checkbox-checked' in class_attribute:
-        driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__Disable Failover"]').click()
-        assert wait_on_element(driver, 7, '//button[@ix-auto="button__SAVE"]', 'clickable')
-        driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
-    element = driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__Disable Failover"]')
-    attribute = element.get_attribute('class')
-    assert 'mat-checkbox-checked' not in attribute, attribute
-    assert wait_on_element(driver, 7, '//h4[contains(.,"Failover Configuration")]')
+    if 'mat-checkbox-checked' not in class_attribute:
+        driver.find_element_by_xpath('//mat-checkbox[contains(.,"Disable Failover")]').click()
+
+    assert wait_on_element(driver, 7, '//button[contains(.,"Save")]', 'clickable')
+    driver.find_element_by_xpath('//button[contains(.,"Save")]').click()
 
 
 @then('navigate to dashboard, wait for HA to be online')
@@ -428,8 +425,8 @@ def navigate_to_dashboard_wait_for_ha_to_be_online(driver):
     assert wait_on_element(driver, 7, '//mat-list-item[@ix-auto="option__Dashboard"]', 'clickable')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
     assert wait_on_element(driver, 10, '//span[contains(.,"System Information")]')
-    assert wait_on_element(driver, 15, '//div[contains(.,"truenas")]')
-    assert wait_on_element(driver, 15, '//div[contains(.,"truenas-b")]')
+    assert wait_on_element(driver, 15, '//span[contains(.,"HostName:") and contains(.,"truenas")]')
+    assert wait_on_element(driver, 15, '//span[contains(.,"HostName:") and contains(.,"truenas-b")]')
     assert wait_on_element(driver, 180, '//mat-icon[@svgicon="ix:ha_enabled"]')
     time.sleep(5)
 
@@ -437,12 +434,12 @@ def navigate_to_dashboard_wait_for_ha_to_be_online(driver):
 @then(parsers.parse('enter Hostname "{host1}", Hostname (TrueNAS Controller 2) "{host2}"'))
 def enter_hostname_hostname_truenas_controller_2(driver, host1, host2):
     """enter Hostname "{host1}", Hostname (TrueNAS Controller 2) "{host2}"."""
-    assert wait_on_element(driver, 7, '//input[@ix-auto="input__Hostname"]', 'inputable')
-    driver.find_element_by_xpath('//input[@ix-auto="input__Hostname"]').clear()
-    driver.find_element_by_xpath('//input[@ix-auto="input__Hostname"]').send_keys(host1)
-    assert wait_on_element(driver, 7, '//input[@ix-auto="input__Hostname (TrueNAS Controller 2)"]', 'inputable')
-    driver.find_element_by_xpath('//input[@ix-auto="input__Hostname (TrueNAS Controller 2)"]').clear()
-    driver.find_element_by_xpath('//input[@ix-auto="input__Hostname (TrueNAS Controller 2)"]').send_keys(host2)
+    assert wait_on_element(driver, 7, '//ix-input[contains(.,"Hostname") and not(contains(.,"TrueNAS") or contains(.,"Virtual"))]//input', 'inputable')
+    driver.find_element_by_xpath('//ix-input[contains(.,"Hostname") and not(contains(.,"TrueNAS") or contains(.,"Virtual"))]//input').clear()
+    driver.find_element_by_xpath('//ix-input[contains(.,"Hostname") and not(contains(.,"TrueNAS") or contains(.,"Virtual"))]//input').send_keys(host1)
+    assert wait_on_element(driver, 7, '//ix-input[contains(.,"Hostname (TrueNAS Controller 2)")]//input', 'inputable')
+    driver.find_element_by_xpath('//ix-input[contains(.,"Hostname (TrueNAS Controller 2)")]//input').clear()
+    driver.find_element_by_xpath('//ix-input[contains(.,"Hostname (TrueNAS Controller 2)")]//input').send_keys(host2)
 
 
 @then('navigate to dashboard, verify both contorler hostname')
@@ -452,15 +449,15 @@ def navigate_to_dashboard_verify_both_contorler_hostname(driver):
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
     assert wait_on_element(driver, 10, '//span[contains(.,"System Information")]')
     assert wait_on_element(driver, 15, '//mat-icon[@svgicon="ix:ha_enabled"]')
-    assert wait_on_element(driver, 15, '//div[contains(.,"tn-bhyve01-nodea")]')
-    assert wait_on_element(driver, 15, '//div[contains(.,"tn-bhyve01-nodeb")]')
+    assert wait_on_element(driver, 15, '//span[contains(.,"HostName:") and contains(.,"tn-bhyve01-nodea")]')
+    assert wait_on_element(driver, 15, '//span[contains(.,"HostName:") and contains(.,"tn-bhyve01-nodeb")]')
 
 
 @then('both controllers should show version and license on the dashboard')
 def both_controllers_should_show_model_and_version_on_the_dashboard(driver):
     """both controllers should show version and license on the dashboard."""
-    version1 = driver.find_element_by_xpath('(//strong[contains(.,"Version:")])[1]/../div/span').text
-    version2 = driver.find_element_by_xpath('(//strong[contains(.,"Version:")])[2]/../div/span').text
+    version1 = driver.find_element_by_xpath('(//strong[contains(.,"Version:")])[1]/../div/div/span').text
+    version2 = driver.find_element_by_xpath('(//strong[contains(.,"Version:")])[2]/../div/div/span').text
     assert version1 == version2
     license1 = driver.find_element_by_xpath('(//strong[contains(.,"License:")])[1]/..').text
     license2 = driver.find_element_by_xpath('(//strong[contains(.,"License:")])[2]/..').text
