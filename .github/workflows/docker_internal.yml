@@ -5,6 +5,8 @@ on:
     types:
       - 'synchronize'
       - 'opened'
+    paths-ignore:
+      - 'tests/**'
 
 env:
   PR_NUMBER: ${{ github.event.pull_request.number }}
