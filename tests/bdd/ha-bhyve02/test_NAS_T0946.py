@@ -303,12 +303,13 @@ def please_wait_should_appear_wait_for_save_changes_then_click_save_changes(driv
     driver.find_element_by_xpath('//button[contains(.,"Save Changes")]').click()
     assert wait_on_element(driver, 7, '//h1[contains(.,"Save Changes")]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
+    assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
 
 
 @then('navigate to Storage then click the gear icon and click Disks')
 def navigate_to_storage_then_click_the_gear_icon_and_click_disks(driver):
     """navigate to Storage then click the gear icon and click Disks."""
-    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Storage"]').click()
+    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Storage (Deprecated)"]').click()
     assert wait_on_element(driver, 7, '//h1[contains(.,"Storage")]')
     assert wait_on_element(driver, 7, '(//button[@ix-auto="button__tab-selector"])[2]', 'clickable')
     driver.find_element_by_xpath('(//button[@ix-auto="button__tab-selector"])[2]').click()
@@ -343,23 +344,23 @@ def wipe_all_disk_without_a_pool(driver):
         assert wait_on_element(driver, 7, f'//button[@ix-auto="button__WIPE_{disk}_{disk}"]', 'clickable')
         driver.find_element_by_xpath(f'//button[@ix-auto="button__WIPE_{disk}_{disk}"]').click()
         assert wait_on_element(driver, 7, f'//h1[contains(.,"Wipe Disk {disk}")]')
-        assert wait_on_element(driver, 7, '//button[@ix-auto="button__WIPE"]', 'clickable')
-        driver.find_element_by_xpath('//button[@ix-auto="button__WIPE"]').click()
+        assert wait_on_element(driver, 7, '//div[@class="form-actions"]//button[contains(.,"Wipe")]', 'clickable')
+        driver.find_element_by_xpath('//div[@class="form-actions"]//button[contains(.,"Wipe")]').click()
         assert wait_on_element(driver, 7, f'//h1[contains(.,"Wipe Disk {disk}")]')
         assert wait_on_element(driver, 7, '//mat-checkbox[@ix-auto="checkbox__CONFIRM"]', 'clickable')
         driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__CONFIRM"]').click()
         assert wait_on_element(driver, 7, '//button[@ix-auto="button__CONTINUE"]', 'clickable')
         driver.find_element_by_xpath('//button[@ix-auto="button__CONTINUE"]').click()
         assert wait_on_element(driver, 15, '//span[contains(.,"Disk Wiped successfully")]')
-        assert wait_on_element(driver, 5, '//button[contains(.,"CLOSE")]', 'clickable')
-        driver.find_element_by_xpath('//button[contains(.,"CLOSE")]').click()
+        assert wait_on_element(driver, 5, '//button[contains(.,"Close")]', 'clickable')
+        driver.find_element_by_xpath('//button[contains(.,"Close")]').click()
 
 
 @then('navigate to Storage click Create')
 def navigate_to_storage_click_create(driver):
     """navigate to Storage click Create"""
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Storage"]').click()
-    assert wait_on_element(driver, 7, '//h1[contains(.,"Storage")]')
+    assert wait_on_element(driver, 7, '//h1[text()="Storage Dashboard"]')
     assert wait_on_element(driver, 7, '//button[contains(.,"Create pool")]', 'clickable')
     driver.find_element_by_xpath('//button[contains(.,"Create pool")]').click()
 
@@ -400,7 +401,8 @@ def create_pool_should_appear_while_pool_is_being_created_you_should_be_returned
     """Create Pool should appear while pool is being created. You should be returned to the Storage page."""
     assert wait_on_element(driver, 7, '//h1[contains(.,"Create Pool")]')
     assert wait_on_element_disappear(driver, 120, '//h1[contains(.,"Create Pool")]')
-    assert wait_on_element(driver, 7, '//mat-panel-title[contains(.,"tank")]')
+    assert wait_on_element(driver, 7, '//h1[text()="Storage Dashboard"]')
+    assert wait_on_element(driver, 7, '//h2[text()="tank"]')
 
 
 @then('click disable failover to uncheck it, click save and confirm changes')
