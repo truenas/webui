@@ -102,22 +102,21 @@ export class DiskHealthCardComponent implements OnInit, OnChanges {
   }
 
   private loadAlerts(): void {
-    this.ws.call('disk.temperature_alerts', [Object.keys(this.diskDictionary)]).pipe(untilDestroyed(this)).subscribe((res) => {
-      this.diskState.alters = res.length;
+    this.ws.call('disk.temperature_alerts', [Object.keys(this.diskDictionary)]).pipe(untilDestroyed(this)).subscribe((alerts) => {
+      this.diskState.alters = alerts.length;
       this.cdr.markForCheck();
     });
   }
 
   private loadSmartTasks(): void {
-    Object.keys(this.diskDictionary).forEach((disk) => {
-      this.ws.call('smart.test.results', [[['disk', '=', disk]]]).pipe(untilDestroyed(this)).subscribe((testResults) => {
-        testResults.forEach((testResult) => {
-          const tests = testResult?.tests ?? [];
-          const results = tests.filter((test) => test.status !== SmartTestResultStatus.Running);
-          this.diskState.smartTests = this.diskState.smartTests + results.length;
-        });
-        this.cdr.markForCheck();
+    const disks = Object.keys(this.diskDictionary);
+    this.ws.call('smart.test.results', [[['disk', 'in', disks]]]).pipe(untilDestroyed(this)).subscribe((testResults) => {
+      testResults.forEach((testResult) => {
+        const tests = testResult?.tests ?? [];
+        const results = tests.filter((test) => test.status !== SmartTestResultStatus.Running);
+        this.diskState.smartTests = this.diskState.smartTests + results.length;
       });
+      this.cdr.markForCheck();
     });
   }
 

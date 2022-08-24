@@ -18,6 +18,9 @@ import { DiskHealthCardComponent } from 'app/pages/storage2/components/disk-heal
 import {
   PoolUsageCardComponent,
 } from 'app/pages/storage2/components/pools-dashboard/pool-usage-card/pool-usage-card.component';
+import {
+  TopologyCardComponent,
+} from 'app/pages/storage2/components/pools-dashboard/topology-card/topology-card.component';
 import { ZfsHealthCardComponent } from 'app/pages/storage2/components/zfs-health-card/zfs-health-card.component';
 import { PoolsDashboardStore } from 'app/pages/storage2/stores/pools-dashboard-store.service';
 import { AppLoaderService, DialogService, WebSocketService } from 'app/services';
@@ -36,6 +39,7 @@ describe('DashboardPoolComponent', () => {
       MockComponent(ExportDisconnectModalComponent),
       MockComponent(PoolUsageCardComponent),
       MockComponent(DiskHealthCardComponent),
+      MockComponent(TopologyCardComponent),
     ],
     providers: [
       mockProvider(MatDialog),
@@ -46,7 +50,6 @@ describe('DashboardPoolComponent', () => {
         confirm: jest.fn(() => of(true)),
       }),
       mockWebsocket([
-        mockCall('pool.dataset.query', []),
         mockCall('disk.query', []),
         mockCall('pool.upgrade'),
         mockJob('pool.expand', fakeSuccessfulJob()),

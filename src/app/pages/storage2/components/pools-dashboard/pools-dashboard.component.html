@@ -20,13 +20,15 @@
 </ng-container>
 
 <ng-template #poolContainer>
-  <div fxFlex="100%" fxLayout="column" *ngIf="!isLoading; else loading">
+  <div *ngIf="!isLoading; else loading" fxFlex="100%" fxLayout="column">
     <ix-unused-resources [pools]="pools$ | async" *ngIf="!isEmptyPools"></ix-unused-resources>
 
     <ix-dashboard-pool
-      *ngFor="let pool of pools$ | async"
+      *ngFor="let pool of pools$ | async; let i = index"
+      [index]="i"
       [pool]="pool"
       [isLoading]="arePoolsLoading$ | async"
+      [rootDataset]="rootDatasets[pool.name]"
       class="pool"
     ></ix-dashboard-pool>
   </div>
