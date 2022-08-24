@@ -48,7 +48,7 @@ def if_login_appear_enter_user_and_password(driver, user, password):
 def you_should_see_the_dashboard(driver):
     """You should see the dashboard."""
     assert wait_on_element(driver, 10, '//h1[contains(.,"Dashboard")]')
-    assert wait_on_element(driver, 10, '//span[contains(.,"System Information")]')
+    # assert wait_on_element(driver, 10, '//span[contains(.,"System Information")]')
     if wait_on_element(driver, 2, '//div[contains(.,"Looking for help?")]'):
         try:
             assert wait_on_element(driver, 2, '//button[@ix-auto="button__CLOSE"]', 'clickable')
@@ -82,43 +82,42 @@ def the_users_page_should_open(driver):
     if wait_on_element(driver, 5, '//h1[contains(.,"Display Note")]'):
         assert wait_on_element(driver, 7, '//button[@ix-auto="button__CLOSE"]', 'clickable')
         driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
-    assert wait_on_element(driver, 7, '//h1[contains(.,"Users")]')
-    driver.find_element_by_xpath('//h1[contains(.,"Users")]')
+    assert wait_on_element(driver, 7, '//h1[text()="Users"]')
 
 
 @then('Click the "Add" Button on the right side of the screen')
 def click_the_add_button_on_the_right_side_of_the_screen(driver):
     """Click the "Add" Button on the right side of the screen."""
-    assert wait_on_element(driver, 2, '//button[@ix-auto="button__Users_ADD"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__Users_ADD"]').click()
+    assert wait_on_element(driver, 2, '//button[contains(.,"Add")]', 'clickable')
+    driver.find_element_by_xpath('//button[contains(.,"Add")]').click()
 
 
 @then('The Users Add Page should open')
 def the_users_add_page_should_open(driver):
     """The Users Add Page should open."""
-    assert wait_on_element(driver, 7, '//h3[contains(.,"Add User")]')
+    assert wait_on_element(driver, 7, '//h3[text()="Add User"]')
     time.sleep(0.5)
 
 
 @then('Fill in the following fields Full Name, Username, Password, Confirm Password and click Save')
 def fill_in_the_following_fields_full_name_username_password_confirm_password_and_click_save(driver):
     """Fill in the following fields Full Name, Username, Password, Confirm Password and click Save."""
-    assert wait_on_element(driver, 7, '//input[@ix-auto="input__Full Name"]', 'inputable')
-    driver.find_element_by_xpath('//input[@ix-auto="input__Full Name"]').clear()
-    driver.find_element_by_xpath('//input[@ix-auto="input__Full Name"]').send_keys('Eric Turgeon')
-    driver.find_element_by_xpath('//input[@ix-auto="input__Username"]').clear()
-    driver.find_element_by_xpath('//input[@ix-auto="input__Username"]').send_keys('ericbsd')
-    driver.find_element_by_xpath('//input[@ix-auto="input__Password"]').clear()
-    driver.find_element_by_xpath('//input[@ix-auto="input__Password"]').send_keys('testing')
-    driver.find_element_by_xpath('//input[@ix-auto="input__Confirm Password"]').clear()
-    driver.find_element_by_xpath('//input[@ix-auto="input__Confirm Password"]').send_keys('testing')
-    assert wait_on_element(driver, 7, '//button[@ix-auto="button__SAVE"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
+    assert wait_on_element(driver, 7, '//ix-input[@formcontrolname="full_name"]//input', 'inputable')
+    driver.find_element_by_xpath('//ix-input[@formcontrolname="full_name"]//input').clear()
+    driver.find_element_by_xpath('//ix-input[@formcontrolname="full_name"]//input').send_keys('Eric Turgeon')
+    driver.find_element_by_xpath('//ix-input[@formcontrolname="username"]//input').clear()
+    driver.find_element_by_xpath('//ix-input[@formcontrolname="username"]//input').send_keys('ericbsd')
+    driver.find_element_by_xpath('//ix-input[@formcontrolname="password"]//input').clear()
+    driver.find_element_by_xpath('//ix-input[@formcontrolname="password"]//input').send_keys('testing')
+    driver.find_element_by_xpath('//ix-input[@formcontrolname="password_conf"]//input').clear()
+    driver.find_element_by_xpath('//ix-input[@formcontrolname="password_conf"]//input').send_keys('testing')
+    assert wait_on_element(driver, 7, '//button[contains(.,"Save")]', 'clickable')
+    driver.find_element_by_xpath('//button[contains(.,"Save")]').click()
 
 
 @then('User should be created and added to the user list')
 def user_should_be_created_and_added_to_the_user_list(driver):
     """User should be created and added to the user list."""
     assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
-    assert wait_on_element(driver, 7, '//h1[contains(.,"Users")]')
-    driver.find_element_by_xpath('//td[contains(.,"ericbsd")]')
+    assert wait_on_element(driver, 7, '//h1[text()="Users"]')
+    assert wait_on_element(driver, 5, '//td[contains(.,"ericbsd")]')
