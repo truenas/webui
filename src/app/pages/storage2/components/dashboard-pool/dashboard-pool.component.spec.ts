@@ -1,5 +1,6 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { fakeAsync, tick } from '@angular/core/testing';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialog } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
@@ -57,12 +58,17 @@ describe('DashboardPoolComponent', () => {
     ],
   });
 
-  beforeEach(() => {
+  beforeEach(fakeAsync(() => {
     spectator = createComponent({
-      props: { pool },
+      props: {
+        index: 0,
+        pool,
+      },
     });
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-  });
+    tick();
+    spectator.detectChanges();
+  }));
 
   it('shows pool name', () => {
     expect(spectator.query('.pool-name')).toHaveText('deadpool');
