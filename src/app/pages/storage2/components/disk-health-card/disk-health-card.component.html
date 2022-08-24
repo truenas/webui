@@ -21,7 +21,7 @@
     <div class="details-item">
       <div class="label">{{ 'Disks temperature related alerts' | translate }}:</div>
       <div class="value" *ngIf="!loading; else skeletonLoader">
-        {{ diskState.alters | number }}
+        {{ diskState.alerts | number }}
       </div>
     </div>
     <div class="details-item">
