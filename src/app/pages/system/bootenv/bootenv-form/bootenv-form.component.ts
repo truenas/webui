@@ -92,6 +92,7 @@ export class BootEnvironmentFormComponent {
   }
 
   onSubmit(): void {
+    this.isFormLoading = true;
     switch (this.operation) {
       case this.Operations.Create:
         const createParams: CreateBootenvParams = [{
@@ -100,10 +101,10 @@ export class BootEnvironmentFormComponent {
 
         this.ws.call('bootenv.create', createParams).pipe(untilDestroyed(this)).subscribe(() => {
           this.isFormLoading = false;
-          this.slideInService.close();
+          this.slideInService.close(null, true);
         }, (error) => {
           this.isFormLoading = false;
-          this.slideInService.close();
+          this.slideInService.close(error, false);
           this.errorHandler.handleWsFormError(error, this.formGroup);
         });
 
@@ -118,10 +119,10 @@ export class BootEnvironmentFormComponent {
 
         this.ws.call('bootenv.update', renameParams).pipe(untilDestroyed(this)).subscribe(() => {
           this.isFormLoading = false;
-          this.slideInService.close();
+          this.slideInService.close(null, true);
         }, (error) => {
           this.isFormLoading = false;
-          this.slideInService.close();
+          this.slideInService.close(error, false);
           this.errorHandler.handleWsFormError(error, this.formGroup);
         });
 
@@ -134,10 +135,10 @@ export class BootEnvironmentFormComponent {
 
         this.ws.call('bootenv.create', cloneParams).pipe(untilDestroyed(this)).subscribe(() => {
           this.isFormLoading = false;
-          this.slideInService.close();
+          this.slideInService.close(null, true);
         }, (error) => {
           this.isFormLoading = false;
-          this.slideInService.close();
+          this.slideInService.close(error, false);
           this.errorHandler.handleWsFormError(error, this.formGroup);
         });
 

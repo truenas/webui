@@ -1,30 +1,29 @@
 import { KeyValue } from '@angular/common';
 import {
-  Component, ChangeDetectionStrategy, Inject, ChangeDetectorRef, TrackByFunction,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, TrackByFunction,
 } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import { Validators, FormBuilder } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { filter } from 'rxjs/operators';
 import { BulkListItem, BulkListItemState } from 'app/core/components/bulk-list-item/bulk-list-item.interface';
-import { ContainerImage, DeleteContainerImageParams } from 'app/interfaces/container-image.interface';
+import { Bootenv } from 'app/interfaces/bootenv.interface';
 import { CoreBulkResponse } from 'app/interfaces/core-bulk.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { WebSocketService } from 'app/services';
 
 @UntilDestroy()
 @Component({
-  templateUrl: './docker-image-delete-dialog.component.html',
-  styleUrls: ['./docker-image-delete-dialog.component.scss'],
+  templateUrl: './boot-pool-delete-dialog.component.html',
+  styleUrls: ['./boot-pool-delete-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class DockerImageDeleteDialogComponent {
+export class BootPoolDeleteDialogComponent {
   form = this.fb.group({
-    force: [false],
     confirm: [false, [Validators.requiredTrue]],
   });
   isJobCompleted = false;
-  bulkItems = new Map<string, BulkListItem<ContainerImage>>();
+  bulkItems = new Map<string, BulkListItem<Bootenv>>();
   hasErrors = false;
 
   get successCount(): number {
@@ -33,49 +32,50 @@ export class DockerImageDeleteDialogComponent {
   get failedCount(): number {
     return [...this.bulkItems.values()].filter((item) => item.state === BulkListItemState.Error).length;
   }
-  readonly trackById: TrackByFunction<KeyValue<string, BulkListItem<ContainerImage>>> = (_, entry) => entry.key;
+  readonly trackById: TrackByFunction<KeyValue<string, BulkListItem<Bootenv>>> = (_, entry) => entry.key;
 
   constructor(
     private fb: FormBuilder,
     private ws: WebSocketService,
     private cdr: ChangeDetectorRef,
-    private dialogRef: MatDialogRef<DockerImageDeleteDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public images: ContainerImage[],
+    private dialogRef: MatDialogRef<BootPoolDeleteDialogComponent>,
+    @Inject(MAT_DIALOG_DATA) public bootenvs: Bootenv[],
   ) {
-    this.images.forEach((image) => {
-      this.bulkItems.set(image.id, { state: BulkListItemState.Initial, item: image });
+    this.bootenvs.forEach((bootenv) => {
+      this.bulkItems.set(bootenv.id, { state: BulkListItemState.Initial, item: bootenv });
     });
   }
 
+  getSelectedNames(selectedBootenvs: Bootenv[]): string[][] {
+    return selectedBootenvs.map((bootenv) => [bootenv.id]);
+  }
+
   onSubmit(): void {
-    const { force } = this.form.value;
+    const params = this.getSelectedNames(this.bootenvs);
 
-    const params = this.images.map((image) => [image.id, { force }]);
-
-    this.images.forEach((image) => {
-      this.bulkItems.set(image.id, { state: BulkListItemState.Running, item: image });
+    this.bootenvs.forEach((bootenv) => {
+      this.bulkItems.set(bootenv.id, { state: BulkListItemState.Running, item: bootenv });
     });
 
-    this.ws.job('core.bulk', ['container.image.delete', params]).pipe(
-      filter((job: Job<CoreBulkResponse<void>[], DeleteContainerImageParams[]>) => !!job.result),
+    this.ws.job('core.bulk', ['bootenv.do_delete', params]).pipe(
+      filter((job: Job<CoreBulkResponse<void>[], string[][]>) => !!job.result),
       untilDestroyed(this),
     ).subscribe((response) => {
       response.arguments[1].forEach((params, index: number) => {
-        const [imageId] = params.toString().split(',');
-        const bulkItem = this.bulkItems.get(imageId);
+        const [bootenvId] = params.toString().split(',');
+        const bulkItem = this.bulkItems.get(bootenvId);
         if (bulkItem) {
           const item = response.result[index];
           if (item.error) {
-            this.bulkItems.set(imageId, {
+            this.bulkItems.set(bootenvId, {
               ...bulkItem,
               state: BulkListItemState.Error,
               message: item.error
                 .replace('[EFAULT]', '')
-                .replace('DockerError(409, \'', '')
                 .replace('\')', ''),
             });
           } else {
-            this.bulkItems.set(imageId, {
+            this.bulkItems.set(bootenvId, {
               ...bulkItem,
               state: BulkListItemState.Success,
               message: null,

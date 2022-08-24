@@ -12,6 +12,7 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -29,6 +30,7 @@ import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { IxTableModule } from 'app/modules/ix-tables/ix-table.module';
 import { JobsModule } from 'app/modules/jobs/jobs.module';
 import { LayoutModule } from 'app/modules/layout/layout.module';
+import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { SchedulerModule } from 'app/modules/scheduler/scheduler.module';
 import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
 import { AdvancedSettingsComponent } from 'app/pages/system/advanced/advanced-settings.component';
@@ -93,6 +95,7 @@ import { ManualUpdateFormComponent } from 'app/pages/system/update/manual-update
 import { UpdateComponent } from 'app/pages/system/update/update.component';
 import { EnclosureModule } from 'app/pages/system/view-enclosure/enclosure.module';
 import { ReplicationFormComponent } from './advanced/replication-form/replication-form.component';
+import { BootPoolDeleteDialogComponent } from './bootenv/boot-pool-delete-dialog/boot-pool-delete-dialog.component';
 import { FileTicketModule } from './file-ticket/file-ticket.module';
 import { routing } from './system.routing';
 
@@ -134,6 +137,8 @@ import { routing } from './system.routing';
     AppCommonModule,
     LayoutModule,
     FileTicketModule,
+    MatSlideToggleModule,
+    AppLoaderModule,
   ],
   declarations: [
     AdvancedSettingsComponent,
@@ -199,10 +204,14 @@ import { routing } from './system.routing';
     SnmpTrapServiceComponent,
     TelegramServiceComponent,
     VictorOpsServiceComponent,
+    BootPoolDeleteDialogComponent,
   ],
   providers: [
     TranslateService,
     DatePipe,
+  ],
+  exports: [
+    BootPoolDeleteDialogComponent,
   ],
 })
 export class SystemModule {}
