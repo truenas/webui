@@ -1,4 +1,10 @@
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  Input,
+  Output,
+  EventEmitter,
+} from '@angular/core';
 import { Disk, isTopologyDisk, TopologyItem } from 'app/interfaces/storage.interface';
 
 @Component({
@@ -12,6 +18,8 @@ export class DiskDetailsPanelComponent {
   @Input() topologyParentItem: TopologyItem;
   @Input() disk: Disk;
 
+  @Output() closeMobileDetails: EventEmitter<void> = new EventEmitter<void>();
+
   get title(): string {
     if (isTopologyDisk(this.topologyItem)) {
       return this.topologyItem.disk || this.topologyItem.guid;
@@ -22,5 +30,9 @@ export class DiskDetailsPanelComponent {
 
   get isTopologyDisk(): boolean {
     return isTopologyDisk(this.topologyItem);
+  }
+
+  onCloseMobileDetails(): void {
+    this.closeMobileDetails.emit();
   }
 }

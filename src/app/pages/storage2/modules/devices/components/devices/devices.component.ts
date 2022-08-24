@@ -1,6 +1,15 @@
+import {
+  Breakpoints,
+  BreakpointState,
+  BreakpointObserver,
+} from '@angular/cdk/layout';
 import { NestedTreeControl } from '@angular/cdk/tree';
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  OnInit,
+  AfterViewInit,
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -21,7 +30,7 @@ import { WebSocketService } from 'app/services';
   styleUrls: ['./devices.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class DevicesComponent implements OnInit {
+export class DevicesComponent implements OnInit, AfterViewInit {
   isLoading$ = this.devicesStore.isLoading$;
   selectedNode$ = this.devicesStore.selectedNode$;
   selectedParentNode$ = this.devicesStore.selectedParentNode$;
@@ -40,11 +49,15 @@ export class DevicesComponent implements OnInit {
   readonly hasNestedChild = (_: number, node: DeviceNestedDataNode): boolean => Boolean(node.children?.length);
   readonly isVdevGroup = (_: number, node: DeviceNestedDataNode): boolean => isVdevGroup(node);
 
+  showMobileDetails = false;
+  isMobileView = false;
+
   constructor(
     private ws: WebSocketService,
     private cdr: ChangeDetectorRef,
     private route: ActivatedRoute,
     private devicesStore: DevicesStore,
+    private breakpointObserver: BreakpointObserver,
   ) { }
 
   getDisk(node: DeviceNestedDataNode): Disk {
@@ -65,6 +78,21 @@ export class DevicesComponent implements OnInit {
       .pipe(untilDestroyed(this))
       .subscribe((advancedConfig) => {
         this.hasConsoleFooter = advancedConfig.consolemsg;
+      });
+  }
+
+  ngAfterViewInit(): void {
+    this.breakpointObserver
+      .observe([Breakpoints.XSmall, Breakpoints.Small, Breakpoints.Medium])
+      .pipe(untilDestroyed(this))
+      .subscribe((state: BreakpointState) => {
+        if (state.matches) {
+          this.isMobileView = true;
+        } else {
+          this.closeMobileDetails();
+          this.isMobileView = false;
+        }
+        this.cdr.detectChanges();
       });
   }
 
@@ -147,5 +175,16 @@ export class DevicesComponent implements OnInit {
     ).subscribe((guid: string) => {
       this.devicesStore.selectNodeByGuid(guid);
     });
+  }
+
+  // Expose hidden details on mobile
+  openMobileDetails(): void {
+    if (this.isMobileView) {
+      this.showMobileDetails = true;
+    }
+  }
+
+  closeMobileDetails(): void {
+    this.showMobileDetails = false;
   }
 }

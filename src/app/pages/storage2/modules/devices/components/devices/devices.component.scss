@@ -89,15 +89,6 @@ $scrollbar-offset: 20px;
 }
 
 .details-container {
-  //  color: var(--fg2);
-  //  display: flex;
-  //  flex: 1;
-  //  max-width: 70%;
-  //  min-width: 60%;
-  //  overflow: hidden;
-  //  padding: 0;
-  //  position: sticky;
-  //  top: 0;
   color: var(--fg2);
   display: flex;
   flex: 1;
@@ -180,7 +171,7 @@ $scrollbar-offset: 20px;
     width: 99% !important;
   }
 
-  ix-dataset-details-panel {
+  ix-disk-details-panel {
     margin-top: -12px;
   }
 }

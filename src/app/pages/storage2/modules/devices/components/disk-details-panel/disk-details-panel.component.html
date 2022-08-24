@@ -1,12 +1,25 @@
 <div class="header">
   <h3 class="title">
-    {{ 'Details for' | translate }}
-    <ix-topology-item-icon
-      class="title-icon"
-      [topologyItem]="topologyItem"
-      [disk]="disk"
-    ></ix-topology-item-icon>
-    {{ title }}
+    <div class="mobile-prefix">
+      <a class="mobile-back-button">
+        <ix-icon
+        name="mdi-chevron-left"
+        (click)="onCloseMobileDetails()"
+        ></ix-icon>
+      </a>
+      {{ 'Details for' | translate }}
+    </div>
+
+    <span class="prefix">{{ 'Details for' | translate }}</span>
+
+    <div class="full-path">
+      <ix-topology-item-icon
+        class="title-icon"
+        [topologyItem]="topologyItem"
+        [disk]="disk"
+      ></ix-topology-item-icon>
+      <span class="device-name">{{ title }}</span>
+    </div>
   </h3>
 </div>
 

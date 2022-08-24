@@ -32,6 +32,7 @@
             [class.selected]="topologyItem.guid === selectedNode?.guid"
             [routerLink]="['/storage2', poolId, 'devices', topologyItem.guid]"
             routerLinkActive="selected"
+            (click)="openMobileDetails()"
           >
             <button mat-icon-button disabled></button>
             <ix-topology-item-node [topologyItem]="topologyItem | cast" [disk]="getDisk(topologyItem)"></ix-topology-item-node>
@@ -73,6 +74,7 @@
               [class.selected]="vdev.guid === selectedNode?.guid"
               [routerLink]="['/storage2', poolId, 'devices', vdev.guid]"
               routerLinkActive="selected"
+              (click)="openMobileDetails()"
             >
               <button
                 mat-icon-button
@@ -93,7 +95,7 @@
       </div>
     </div>
   </div>
-  <div class="details-container"
+  <div class="details-container" [class.details-container-mobile]="showMobileDetails"
     ixDetailsHeight
     ixDetailsHeightParentClass="rightside-content-hold"
     [hasConsoleFooter]="hasConsoleFooter"
@@ -105,6 +107,7 @@
       [topologyItem]="selectedNode | cast"
       [topologyParentItem]="selectedParentNode$ | async | cast"
       [disk]="getDisk(selectedNode)"
+      (closeMobileDetails)="closeMobileDetails()"
     ></ix-disk-details-panel>
   </div>
 </div>
