@@ -53,7 +53,7 @@ export const routes: Routes = [
       }, {
         path: 'status',
         component: BootStatusListComponent,
-        data: { title: T('Status'), breadcrumb: T('Status') },
+        data: { title: T('Boot Pool Status'), breadcrumb: T('Status') },
       }, {
         path: 'attach/:pk',
         component: BootPoolAttachFormComponent,

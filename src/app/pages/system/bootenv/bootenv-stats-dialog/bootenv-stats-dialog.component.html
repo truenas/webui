@@ -7,7 +7,7 @@
 >
   <div class="status-item">
     <span class="status-name">
-      {{ 'Boot Pool Condition:' }}
+      {{ 'Boot Pool Condition' | translate }}:
     </span>
     <span class="status-value">
       {{ condition | mapValue: poolStatusLabels }}
@@ -18,23 +18,23 @@
   </div>
   <div class="status-item">
     <span class="status-name">
-      {{ 'Size:' | translate }}
+      {{ 'Size' | translate }}:
     </span>
     <span class="status-value">
-      {{ state?.properties?.size?.parsed | filesize: { standard: 'iec' } }}
+      {{ state?.size | filesize: { standard: 'iec' } }}
     </span>
   </div>
   <div class="status-item">
     <span class="status-name">
-      {{ 'Used:' | translate }}
+      {{ 'Used' | translate }}:
     </span>
     <span class="status-value">
-      {{ state?.properties?.allocated?.parsed | filesize: { standard: 'iec' } }}
+      {{ state?.allocated | filesize: { standard: 'iec' } }}
     </span>
   </div>
   <div class="status-item">
     <span class="status-name">
-      {{ 'Last Scrub Run:' | translate }}
+      {{ 'Last Scrub Run' | translate }}:
     </span>
     <span class="status-value">
       <ng-container *ngIf="state.scan?.end_time; else noScanTime">
