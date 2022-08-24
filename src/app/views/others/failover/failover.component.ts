@@ -56,8 +56,8 @@ export class FailoverComponent implements OnInit {
     this.dialog.closeAll();
     // TODO: Check if next and error should trade places
     this.ws.call('failover.become_passive').pipe(untilDestroyed(this)).subscribe(
-      (res: any) => { // error on reboot
-        this.dialogService.errorReport(res.error, res.reason, res.trace.formatted)
+      (error: any) => { // error on reboot
+        this.dialogService.errorReport(error.error, error.reason, error.trace.formatted)
           .pipe(untilDestroyed(this))
           .subscribe(() => {
             this.router.navigate(['/session/signin']);

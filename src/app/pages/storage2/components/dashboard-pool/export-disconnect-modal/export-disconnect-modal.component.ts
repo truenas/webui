@@ -119,10 +119,10 @@ export class ExportDisconnectModalComponent implements OnInit {
       }
       entityJobRef.close(true);
     });
-    entityJobRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((res) => {
+    entityJobRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((job) => {
       let conditionalErrMessage = '';
-      if (res.error) {
-        if (res.exc_info.extra && res.exc_info.extra['code'] === 'control_services') {
+      if (job.error) {
+        if (job.exc_info.extra && job.exc_info.extra['code'] === 'control_services') {
           this.dialogRef.close(true);
           this.isFormLoading = false;
           entityJobRef.close(true);
@@ -130,18 +130,18 @@ export class ExportDisconnectModalComponent implements OnInit {
           const restartMsg = this.translate.instant(helptext.exportMessages.onfail.restartServices);
           const continueMsg = this.translate.instant(helptext.exportMessages.onfail.continueMessage);
           // TODO: Extract to template
-          if ((res.exc_info.extra.stop_services as string[]).length > 0) {
+          if ((job.exc_info.extra.stop_services as string[]).length > 0) {
             conditionalErrMessage += '<div class="warning-box">' + stopMsg;
-            (res.exc_info.extra.stop_services as string[]).forEach((item) => {
+            (job.exc_info.extra.stop_services as string[]).forEach((item) => {
               conditionalErrMessage += `<br>- ${item}`;
             });
           }
-          if ((res.exc_info.extra.restart_services as string[]).length > 0) {
-            if ((res.exc_info.extra.stop_services as string[]).length > 0) {
+          if ((job.exc_info.extra.restart_services as string[]).length > 0) {
+            if ((job.exc_info.extra.stop_services as string[]).length > 0) {
               conditionalErrMessage += '<br><br>';
             }
             conditionalErrMessage += '<div class="warning-box">' + restartMsg;
-            (res.exc_info.extra.restart_services as string[]).forEach((item) => {
+            (job.exc_info.extra.restart_services as string[]).forEach((item) => {
               conditionalErrMessage += `<br>- ${item}`;
             });
           }
@@ -158,24 +158,24 @@ export class ExportDisconnectModalComponent implements OnInit {
             this.restartServices = true;
             this.startExportDisconnectJob();
           });
-        } else if ((res as any).extra && (res as any).extra['code'] === 'unstoppable_processes') {
+        } else if ((job as any).extra && (job as any).extra['code'] === 'unstoppable_processes') {
           this.dialogRef.close(true);
           this.isFormLoading = false;
           const msg = this.translate.instant(helptext.exportMessages.onfail.unableToTerminate);
-          conditionalErrMessage = msg + (res as any).extra['processes'];
+          conditionalErrMessage = msg + (job as any).extra['processes'];
           entityJobRef.close(true);
-          this.dialogService.errorReport(helptext.exportError, conditionalErrMessage, res.exception);
+          this.dialogService.errorReport(helptext.exportError, conditionalErrMessage, job.exception);
         } else {
           this.dialogRef.close(true);
           this.isFormLoading = false;
           entityJobRef.close(true);
-          this.dialogService.errorReport(helptext.exportError, res.error, res.exception);
+          this.dialogService.errorReport(helptext.exportError, job.error, job.exception);
         }
       } else {
         this.dialogRef.close(true);
         this.isFormLoading = false;
         entityJobRef.close(true);
-        this.dialogService.errorReport(helptext.exportError, res.error, res.exception);
+        this.dialogService.errorReport(helptext.exportError, job.error, job.exception);
       }
     });
   }

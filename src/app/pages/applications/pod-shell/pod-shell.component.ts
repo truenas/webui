@@ -42,10 +42,10 @@ export class PodShellComponent implements TerminalConfiguration {
         this.podName = params['pname'];
         this.command = params['cname'];
 
-        this.ws.call('chart.release.pod_console_choices', [this.chartReleaseName]).pipe(untilDestroyed(this)).subscribe((res) => {
-          this.podDetails = res;
+        this.ws.call('chart.release.pod_console_choices', [this.chartReleaseName]).pipe(untilDestroyed(this)).subscribe((consoleChoices) => {
+          this.podDetails = consoleChoices;
 
-          const podDetail = res[this.podName];
+          const podDetail = consoleChoices[this.podName];
           if (!podDetail) {
             this.dialogService.confirm({
               title: helptext.podConsole.nopod.title,

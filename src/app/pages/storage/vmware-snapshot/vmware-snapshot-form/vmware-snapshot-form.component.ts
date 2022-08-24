@@ -108,10 +108,10 @@ export class VmwareSnapshotFormComponent implements OnInit {
       username,
       password,
     }]).pipe(untilDestroyed(this)).subscribe(
-      (res: MatchDatastoresWithDatasets) => {
+      (matches: MatchDatastoresWithDatasets) => {
         this.isLoading = false;
-        this.filesystemList = res.filesystems;
-        this.datastoreList = res.datastores;
+        this.filesystemList = matches.filesystems;
+        this.datastoreList = matches.datastores;
 
         this.filesystemOptions$ = of(
           this.filesystemList.map((filesystem) => ({

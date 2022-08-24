@@ -538,9 +538,9 @@ export class IscsiWizardComponent implements WizardConfiguration {
         diskField.options.push({ label: res[i], value: i });
       }
     },
-    (res) => {
+    (error) => {
       this.loader.close();
-      new EntityUtils().handleWsError(this.entityWizard, res);
+      new EntityUtils().handleWsError(this.entityWizard, error);
     });
     const targetField = _.find(this.wizardConfig[0].fieldConfig, { name: 'target' }) as FormSelectConfig;
     this.iscsiService.getTargets().pipe(untilDestroyed(this)).subscribe((targets) => {

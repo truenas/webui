@@ -581,17 +581,17 @@ export class EntityTableComponent<Row extends SomeRow = any> implements OnInit, 
       (res) => {
         this.handleData(res, skipActions);
       },
-      (res: WebsocketError) => {
+      (error: WebsocketError) => {
         this.isTableEmpty = true;
-        this.configureEmptyTable(EmptyType.Errors, String(res.error) || res.reason);
+        this.configureEmptyTable(EmptyType.Errors, String(error.error) || error.reason);
         if (this.loaderOpen) {
           this.loader.close();
           this.loaderOpen = false;
         }
-        if (res.hasOwnProperty('reason') && (res.hasOwnProperty('trace') && res.hasOwnProperty('type'))) {
-          this.dialogService.errorReport(res.type || res.trace.class, res.reason, res.trace.formatted);
+        if (error.hasOwnProperty('reason') && (error.hasOwnProperty('trace') && error.hasOwnProperty('type'))) {
+          this.dialogService.errorReport(error.type || error.trace.class, error.reason, error.trace.formatted);
         } else {
-          new EntityUtils().handleError(this, res);
+          new EntityUtils().handleError(this, error);
         }
       },
     );
@@ -873,8 +873,8 @@ export class EntityTableComponent<Row extends SomeRow = any> implements OnInit, 
         message: dialog.hasOwnProperty('message') ? dialog['message'] + deleteMsg : deleteMsg,
         hideCheckBox: dialog.hasOwnProperty('hideCheckbox') ? dialog['hideCheckbox'] : false,
         buttonMsg: dialog.hasOwnProperty('button') ? dialog['button'] : this.translate.instant('Delete'),
-      }).pipe(untilDestroyed(this)).subscribe((res) => {
-        if (res) {
+      }).pipe(untilDestroyed(this)).subscribe((confirmed) => {
+        if (confirmed) {
           this.toDeleteRow = item;
           this.delete(id);
         }
@@ -983,8 +983,8 @@ export class EntityTableComponent<Row extends SomeRow = any> implements OnInit, 
       message: multiDeleteMsg,
       hideCheckBox: false,
       buttonMsg: this.translate.instant('Delete'),
-    }).pipe(untilDestroyed(this)).subscribe((res) => {
-      if (!res) {
+    }).pipe(untilDestroyed(this)).subscribe((confirmed) => {
+      if (!confirmed) {
         return;
       }
 

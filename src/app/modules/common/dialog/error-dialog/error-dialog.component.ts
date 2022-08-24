@@ -56,8 +56,7 @@ export class ErrorDialogComponent {
 
   downloadLogs(): void {
     this.ws.call('core.download', ['filesystem.get', [this.logs.logs_path], this.logs.id + '.log']).pipe(untilDestroyed(this)).subscribe(
-      (res) => {
-        const url = res[1];
+      ([, url]) => {
         const mimetype = 'text/plain';
         this.storage.streamDownloadFile(url, this.logs.id + '.log', mimetype).pipe(untilDestroyed(this)).subscribe((file) => {
           this.storage.downloadBlob(file, this.logs.id + '.log');

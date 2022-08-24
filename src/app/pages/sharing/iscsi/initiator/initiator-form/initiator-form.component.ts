@@ -84,8 +84,8 @@ export class InitiatorFormComponent implements OnInit {
 
   getConnectedInitiators(): void {
     this.ws.call('iscsi.global.sessions').pipe(untilDestroyed(this)).subscribe(
-      (res) => {
-        this.connectedInitiators = _.unionBy(res, (item) => item['initiator'] && item['initiator_addr']);
+      (sessions) => {
+        this.connectedInitiators = _.unionBy(sessions, (item) => item['initiator'] && item['initiator_addr']);
       },
       (err) => {
         new EntityUtils().handleWsError(this, err);
@@ -111,26 +111,26 @@ export class InitiatorFormComponent implements OnInit {
       }
     });
 
-    this.formGroup.controls['initiators'].statusChanges.pipe(untilDestroyed(this)).subscribe((res) => {
-      this.connectedInitiatorsDisabled = res === 'DISABLED';
+    this.formGroup.controls['initiators'].statusChanges.pipe(untilDestroyed(this)).subscribe((status) => {
+      this.connectedInitiatorsDisabled = status === 'DISABLED';
     });
 
     if (this.pk) {
       this.ws.call(this.queryCall, this.customFilter as [[QueryFilter<IscsiInitiatorGroup>]])
         .pipe(untilDestroyed(this))
         .subscribe(
-          (res) => {
-            for (const i in res[0]) {
+          (initiatorGroups) => {
+            for (const i in initiatorGroups[0]) {
               const ctrl = this.formGroup.controls[i];
               if (ctrl) {
                 if (i === 'initiators') {
-                  ctrl.setValue(new Set(res[0][i]));
+                  ctrl.setValue(new Set(initiatorGroups[0][i]));
                 } else {
-                  ctrl.setValue(res[0][i as keyof IscsiInitiatorGroup]);
+                  ctrl.setValue(initiatorGroups[0][i as keyof IscsiInitiatorGroup]);
                 }
               }
             }
-            if (res[0]['initiators'].length === 0) {
+            if (initiatorGroups[0]['initiators'].length === 0) {
               this.formGroup.controls['all'].setValue(true);
             }
           },

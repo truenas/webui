@@ -68,9 +68,9 @@ export class ReplicationFormComponent implements OnInit {
       this.isFormLoading = false;
       this.cdr.markForCheck();
       this.slideInService.close();
-    }, (res) => {
+    }, (error) => {
       this.isFormLoading = false;
-      new EntityUtils().handleWsError(this, res);
+      new EntityUtils().handleWsError(this, error);
       this.cdr.markForCheck();
     });
   }

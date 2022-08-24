@@ -58,9 +58,9 @@ export class KernelFormComponent {
       this.cdr.markForCheck();
       this.slideInService.close();
       this.store$.dispatch(advancedConfigUpdated());
-    }, (res) => {
+    }, (error) => {
       this.isFormLoading = false;
-      new EntityUtils().handleWsError(this, res);
+      new EntityUtils().handleWsError(this, error);
       this.cdr.markForCheck();
     });
   }

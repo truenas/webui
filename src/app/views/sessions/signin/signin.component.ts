@@ -405,10 +405,8 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
       message: helptext.tcDialog.message,
       is_html: true,
       confirmBtnMsg: helptext.tcDialog.confirmBtnMsg,
-    }).pipe(untilDestroyed(this)).subscribe((res) => {
-      if (res) {
-        window.open(this.truecommandUrl);
-      }
+    }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
+      window.open(this.truecommandUrl);
     });
   }
 }

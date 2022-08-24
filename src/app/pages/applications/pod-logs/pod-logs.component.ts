@@ -79,10 +79,10 @@ export class PodLogsComponent implements OnInit, AfterViewInit, OnDestroy {
       });
 
       // Get pod list for the selected app
-      this.ws.call('chart.release.pod_logs_choices', [this.chartReleaseName]).pipe(untilDestroyed(this)).subscribe((res) => {
-        this.podDetails = res;
+      this.ws.call('chart.release.pod_logs_choices', [this.chartReleaseName]).pipe(untilDestroyed(this)).subscribe((consoleChoices) => {
+        this.podDetails = consoleChoices;
 
-        const podDetail = res[this.podName];
+        const podDetail = consoleChoices[this.podName];
         if (!podDetail) {
           this.dialogService.confirm({
             title: helptext.podLogs.nopod.title,
@@ -122,9 +122,9 @@ export class PodLogsComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.podLogSubscriptionId = UUID.UUID();
     this.podLogsChangedListener = this.ws.sub(this.podLogSubName, this.podLogSubscriptionId)
-      .pipe(untilDestroyed(this)).subscribe((res: PodLogEvent) => {
-        if (res) {
-          this.podLogs.push(res);
+      .pipe(untilDestroyed(this)).subscribe((logEvent: PodLogEvent) => {
+        if (logEvent) {
+          this.podLogs.push(logEvent);
           this.scrollToBottom();
         }
       });
@@ -271,9 +271,9 @@ export class PodLogsComponent implements OnInit, AfterViewInit, OnDestroy {
       containerFc.options = [];
 
       this.loader.open();
-      this.ws.call('chart.release.pod_logs_choices', [value]).pipe(untilDestroyed(this)).subscribe((res) => {
+      this.ws.call('chart.release.pod_logs_choices', [value]).pipe(untilDestroyed(this)).subscribe((logsChoices) => {
         this.loader.close();
-        this.tempPodDetails = res;
+        this.tempPodDetails = logsChoices;
         let podName;
         if (Object.keys(this.tempPodDetails).length > 0) {
           podName = Object.keys(this.tempPodDetails)[0];

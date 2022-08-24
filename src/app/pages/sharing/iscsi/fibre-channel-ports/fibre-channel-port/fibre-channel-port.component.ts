@@ -112,9 +112,9 @@ export class FibreChannelPortComponent implements OnInit {
     this.formGroup = this.entityFormService.createFormGroup(this.fieldConfig);
 
     const targetField = _.find(this.fieldConfig, { name: 'target' });
-    this.formGroup.controls['mode'].valueChanges.pipe(untilDestroyed(this)).subscribe((res) => {
-      targetField.required = res === FibreChannelPortMode.Target;
-      if (res === FibreChannelPortMode.Target) {
+    this.formGroup.controls['mode'].valueChanges.pipe(untilDestroyed(this)).subscribe((mode) => {
+      targetField.required = mode === FibreChannelPortMode.Target;
+      if (mode === FibreChannelPortMode.Target) {
         this.formGroup.controls['target'].setValidators([Validators.required]);
         this.formGroup.controls['target'].updateValueAndValidity();
       } else {

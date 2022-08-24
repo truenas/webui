@@ -181,19 +181,19 @@ export class EntityWizardComponent implements OnInit {
       this.loader.open();
 
       this.ws.job(this.conf.addWsCall, [value]).pipe(untilDestroyed(this)).subscribe(
-        (res) => {
+        (job) => {
           this.loader.close();
-          if (res.error) {
-            this.dialog.errorReport(res.error, (res as any).reason, res.exception);
+          if (job.error) {
+            this.dialog.errorReport(job.error, (job as any).reason, job.exception);
           } else if (this.conf.routeSuccess) {
             this.router.navigate(new Array('/').concat(this.conf.routeSuccess));
           } else {
             this.dialog.info(this.translate.instant('Settings saved'), '');
           }
         },
-        (res) => {
+        (failedJob) => {
           this.loader.close();
-          new EntityUtils().handleError(this, res);
+          new EntityUtils().handleError(this, failedJob);
         },
       );
     }

@@ -58,13 +58,13 @@ export class ImportPoolComponent implements OnInit {
 
   ngOnInit(): void {
     this.isLoading = true;
-    this.ws.job('pool.import_find').pipe(untilDestroyed(this)).subscribe((res) => {
-      if (res.state !== JobState.Success) {
+    this.ws.job('pool.import_find').pipe(untilDestroyed(this)).subscribe((job) => {
+      if (job.state !== JobState.Success) {
         return;
       }
 
       this.isLoading = false;
-      const result: PoolFindResult[] = res.result;
+      const result: PoolFindResult[] = job.result;
       const opts = result.map((pool) => ({
         label: `${pool.name} | ${pool.guid}`,
         value: pool.guid,

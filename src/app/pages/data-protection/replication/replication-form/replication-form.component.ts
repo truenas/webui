@@ -1166,13 +1166,13 @@ export class ReplicationFormComponent implements FormConfiguration {
     this.ws
       .call('replication.count_eligible_manual_snapshots', [payload])
       .pipe(untilDestroyed(this)).subscribe(
-        (res) => {
-          this.formMessage.type = res.eligible === 0 ? 'warning' : 'info';
+        (eligibleSnapshots) => {
+          this.formMessage.type = eligibleSnapshots.eligible === 0 ? 'warning' : 'info';
           this.formMessage.content = this.translate.instant(
             '{eligible} of {total} existing snapshots of dataset {targetDataset} would be replicated with this task.',
             {
-              eligible: res.eligible,
-              total: res.total,
+              eligible: eligibleSnapshots.eligible,
+              total: eligibleSnapshots.total,
               targetDataset: this.entityForm.formGroup.controls['target_dataset_PUSH'].value,
             },
           );
@@ -1213,9 +1213,9 @@ export class ReplicationFormComponent implements FormConfiguration {
     this.entityForm.formGroup.controls['schema_or_regex'].valueChanges.pipe(untilDestroyed(this)).subscribe(() => {
       this.toggleNamingSchemaOrRegex();
     });
-    entityForm.formGroup.controls['direction'].valueChanges.pipe(untilDestroyed(this)).subscribe((res) => {
+    entityForm.formGroup.controls['direction'].valueChanges.pipe(untilDestroyed(this)).subscribe((direction) => {
       if (
-        res === Direction.Push
+        direction === Direction.Push
         && entityForm.formGroup.controls['transport'].value !== TransportMode.Local
         && (entityForm.formGroup.controls['also_include_naming_schema'].value !== undefined || entityForm.formGroup.controls['name_regex'].value !== undefined)
       ) {
@@ -1223,14 +1223,14 @@ export class ReplicationFormComponent implements FormConfiguration {
       } else {
         this.formMessage.content = '';
       }
-      this.fieldSets.config('schema_or_regex').placeholder = helptext[(res === Direction.Push ? 'name_schema_or_regex_placeholder_push' : 'name_schema_or_regex_placeholder_pull')];
+      this.fieldSets.config('schema_or_regex').placeholder = helptext[(direction === Direction.Push ? 'name_schema_or_regex_placeholder_push' : 'name_schema_or_regex_placeholder_pull')];
       this.toggleNamingSchemaOrRegex();
     });
 
     const retentionPolicyField = this.fieldSets.config('retention_policy') as FormSelectConfig;
-    entityForm.formGroup.controls['transport'].valueChanges.pipe(untilDestroyed(this)).subscribe((res) => {
+    entityForm.formGroup.controls['transport'].valueChanges.pipe(untilDestroyed(this)).subscribe((transport) => {
       if (
-        res !== TransportMode.Local
+        transport !== TransportMode.Local
         && entityForm.formGroup.controls['direction'].value === Direction.Push
         && (entityForm.formGroup.controls['also_include_naming_schema'].value !== undefined || entityForm.formGroup.controls['name_regex'].value !== undefined)
       ) {
@@ -1243,7 +1243,7 @@ export class ReplicationFormComponent implements FormConfiguration {
         retentionPolicyField.options = this.retentionPolicyChoice;
       }
 
-      if (res === TransportMode.Local) {
+      if (transport === TransportMode.Local) {
         entityForm.formGroup.controls['direction'].setValue(Direction.Push);
         entityForm.setDisabled('target_dataset_PUSH', true, true);
         entityForm.setDisabled('ssh_credentials', true, true);
@@ -1251,11 +1251,11 @@ export class ReplicationFormComponent implements FormConfiguration {
       }
     });
 
-    entityForm.formGroup.controls['schedule'].valueChanges.pipe(untilDestroyed(this)).subscribe((res) => {
-      entityForm.setDisabled('schedule_picker', !res, !res);
-      entityForm.setDisabled('schedule_begin', !res, !res);
-      entityForm.setDisabled('schedule_end', !res, !res);
-      entityForm.setDisabled('only_matching_schedule', !res, !res);
+    entityForm.formGroup.controls['schedule'].valueChanges.pipe(untilDestroyed(this)).subscribe((schedule) => {
+      entityForm.setDisabled('schedule_picker', !schedule, !schedule);
+      entityForm.setDisabled('schedule_begin', !schedule, !schedule);
+      entityForm.setDisabled('schedule_end', !schedule, !schedule);
+      entityForm.setDisabled('only_matching_schedule', !schedule, !schedule);
     });
 
     entityForm.formGroup.controls['schedule_picker'].valueChanges.pipe(untilDestroyed(this)).subscribe((value) => {

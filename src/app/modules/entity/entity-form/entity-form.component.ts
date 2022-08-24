@@ -522,15 +522,15 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
               });
             }
           },
-          (res) => {
+          (error) => {
             this.loader.close();
             this.loaderOpen = false;
             if (this.conf.errorReport) {
-              this.conf.errorReport(res);
-            } else if (res.hasOwnProperty('reason') && (res.hasOwnProperty('trace'))) {
-              new EntityUtils().handleWsError(this, res);
+              this.conf.errorReport(error);
+            } else if (error.hasOwnProperty('reason') && (error.hasOwnProperty('trace'))) {
+              new EntityUtils().handleWsError(this, error);
             } else {
-              new EntityUtils().handleError(this, res);
+              new EntityUtils().handleError(this, error);
             }
           },
         );

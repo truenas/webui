@@ -264,24 +264,24 @@ export class ManagerComponent implements OnInit, AfterViewInit {
   }
 
   getPoolData(): void {
-    this.ws.call(this.queryCall, [[['id', '=', this.pk]]]).pipe(untilDestroyed(this)).subscribe((res) => {
-      if (!res[0]) {
+    this.ws.call(this.queryCall, [[['id', '=', this.pk]]]).pipe(untilDestroyed(this)).subscribe((pools) => {
+      if (!pools[0]) {
         return;
       }
 
-      this.firstDataVdevType = res[0].topology.data[0].type.toLowerCase();
+      this.firstDataVdevType = pools[0].topology.data[0].type.toLowerCase();
       if (this.firstDataVdevType === 'raidz1') {
         this.firstDataVdevType = 'raidz';
       }
-      this.firstDataVdevDisknum = res[0].topology.data[0].children.length;
+      this.firstDataVdevDisknum = pools[0].topology.data[0].children.length;
 
       let firstDisk: TopologyDisk;
       if (this.firstDataVdevDisknum === 0 && this.firstDataVdevType === 'disk') {
         this.firstDataVdevDisknum = 1;
         this.firstDataVdevType = 'stripe';
-        firstDisk = res[0].topology.data[0] as TopologyDisk;
+        firstDisk = pools[0].topology.data[0] as TopologyDisk;
       } else {
-        firstDisk = res[0].topology.data[0].children[0];
+        firstDisk = pools[0].topology.data[0].children[0];
       }
       this.ws.call('disk.query', [[['name', '=', firstDisk.disk]]]).pipe(untilDestroyed(this)).subscribe((disk) => {
         if (disk[0]) {
@@ -290,9 +290,9 @@ export class ManagerComponent implements OnInit, AfterViewInit {
         }
         this.getDuplicableDisks();
       });
-      this.nameControl.setValue(res[0].name);
-      this.volEncrypt = res[0].encrypt;
-      this.ws.call(this.datasetQueryCall, [[['id', '=', res[0].name]]]).pipe(untilDestroyed(this)).subscribe((datasets) => {
+      this.nameControl.setValue(pools[0].name);
+      this.volEncrypt = pools[0].encrypt;
+      this.ws.call(this.datasetQueryCall, [[['id', '=', pools[0].name]]]).pipe(untilDestroyed(this)).subscribe((datasets) => {
         if (datasets[0]) {
           this.extendedAvailable = datasets[0].available.parsed;
           this.size = filesize(this.extendedAvailable, { standard: 'iec' });
@@ -327,9 +327,9 @@ export class ManagerComponent implements OnInit, AfterViewInit {
       this.sizeMessage = this.extendedSizeMessage;
       this.getPoolData();
     } else {
-      this.ws.call(this.queryCall, []).pipe(untilDestroyed(this)).subscribe((res) => {
-        if (res) {
-          this.existingPools = res;
+      this.ws.call(this.queryCall, []).pipe(untilDestroyed(this)).subscribe((pools) => {
+        if (pools) {
+          this.existingPools = pools;
         }
       });
     }
@@ -340,10 +340,10 @@ export class ManagerComponent implements OnInit, AfterViewInit {
   ngAfterViewInit(): void {
     this.loader.open();
     this.loaderOpen = true;
-    this.ws.call('disk.get_unused', []).pipe(untilDestroyed(this)).subscribe((res) => {
+    this.ws.call('disk.get_unused', []).pipe(untilDestroyed(this)).subscribe((unusedDisks) => {
       this.loader.close();
       this.loaderOpen = false;
-      this.disks = res.map((disk) => {
+      this.disks = unusedDisks.map((disk) => {
         const details: Option[] = [];
         if (disk.rotationrate) {
           details.push({ label: this.translate.instant('Rotation Rate'), value: disk.rotationrate });
@@ -696,8 +696,8 @@ export class ManagerComponent implements OnInit, AfterViewInit {
         title: this.translate.instant('Warning'),
         message: this.encryptionMessage,
         buttonMsg: this.translate.instant('I Understand'),
-      }).pipe(untilDestroyed(this)).subscribe((res) => {
-        if (res) {
+      }).pipe(untilDestroyed(this)).subscribe((confirmed) => {
+        if (confirmed) {
           this.isEncryptedControl.setValue(true);
           this.volEncrypt = 1;
         } else {

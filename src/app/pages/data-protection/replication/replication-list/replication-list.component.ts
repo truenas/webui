@@ -239,9 +239,9 @@ export class ReplicationListComponent implements EntityTableConfig {
 
   onCheckboxChange(row: ReplicationTaskUi): void {
     this.ws.call('replication.update', [row.id, { enabled: row.enabled }]).pipe(untilDestroyed(this)).subscribe(
-      (res) => {
-        row.enabled = res.enabled;
-        if (!res) {
+      (task) => {
+        row.enabled = task.enabled;
+        if (!task) {
           row.enabled = !row.enabled;
         }
       },
