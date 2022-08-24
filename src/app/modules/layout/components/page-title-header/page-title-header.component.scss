@@ -7,13 +7,21 @@
   display: block;
   margin: 0 auto 32px;
   padding-bottom: 8px;
+  padding-top: 0;
   width: calc(100% - 16px);
 
   @media (max-width: $breakpoint-tablet) {
-    margin: 8px auto 32px;
-    padding-bottom: unset;
-    transform: scale(0.95);
     width: 100%;
+  }
+
+  @media (max-width: $breakpoint-xs) {
+    padding-top: 8px;
+  }
+}
+
+.header-container {
+  @media (max-width: $breakpoint-xs) {
+    padding: 0 16px;
   }
 }
 
@@ -26,10 +34,10 @@
 
   @media (max-width: $breakpoint-tablet) {
     flex-wrap: wrap;
+  }
     
-    h1 {
-      margin-bottom: 12px;
-    }
+  h1 {
+    margin-bottom: 12px;
   }
 }
 
