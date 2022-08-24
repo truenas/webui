@@ -147,8 +147,9 @@ export class DatasetQuotasGrouplistComponent implements OnInit, AfterViewInit, O
       this.isLoading = false;
       this.createDataSource(quotas);
       this.checkInvalidQuotas();
-    }, () => {
+    }, (err) => {
       this.emptyOrErrorConfig = this.errorConfig;
+      new EntityUtils().handleWsError(this, err, this.dialogService);
     });
   }
 
@@ -169,6 +170,8 @@ export class DatasetQuotasGrouplistComponent implements OnInit, AfterViewInit, O
       if (quotas?.length) {
         this.invalidQuotas = quotas;
       }
+    }, (err) => {
+      new EntityUtils().handleWsError(this, err, this.dialogService);
     });
   }
 

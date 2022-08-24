@@ -206,8 +206,14 @@ export class DatasetAclEditorStore extends ComponentStore<DatasetAclEditorState>
             dialogRef.componentInstance.success.pipe(takeUntil(this.destroy$)).subscribe(() => {
               dialogRef.close();
               this.router.navigate(['/datasets']);
+            }, (err) => {
+              dialogRef.close();
+              new EntityUtils().errorReport(err, this.dialog);
             });
             dialogRef.componentInstance.failure.pipe(takeUntil(this.destroy$)).subscribe((err) => {
+              dialogRef.close();
+              new EntityUtils().errorReport(err, this.dialog);
+            }, (err) => {
               dialogRef.close();
               new EntityUtils().errorReport(err, this.dialog);
             });
@@ -247,8 +253,14 @@ export class DatasetAclEditorStore extends ComponentStore<DatasetAclEditorState>
         dialogRef.componentInstance.success.pipe(takeUntil(this.destroy$)).subscribe(() => {
           dialogRef.close();
           this.router.navigate(['/datasets']);
+        }, (err) => {
+          dialogRef.close();
+          new EntityUtils().errorReport(err, this.dialog);
         });
         dialogRef.componentInstance.failure.pipe(takeUntil(this.destroy$)).subscribe((err) => {
+          dialogRef.close();
+          new EntityUtils().errorReport(err, this.dialog);
+        }, (err) => {
           dialogRef.close();
           new EntityUtils().errorReport(err, this.dialog);
         });

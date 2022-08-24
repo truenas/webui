@@ -118,6 +118,9 @@ export class DatasetTrivialPermissionsComponent implements OnInit {
     jobComponent.success.pipe(untilDestroyed(this)).subscribe(() => {
       dialogRef.close();
       this.router.navigate(['/datasets', this.datasetId]);
+    }, (err) => {
+      dialogRef.close();
+      new EntityUtils().errorReport(err, this.dialog);
     });
   }
 

@@ -8,8 +8,9 @@ import { filter, map } from 'rxjs/operators';
 import { CoreBulkQuery, CoreBulkResponse } from 'app/interfaces/core-bulk.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { ZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
+import { EntityUtils } from 'app/modules/entity/utils';
 import { SnapshotDialogData } from 'app/pages/datasets/modules/snapshots/interfaces/snapshot-dialog-data.interface';
-import { WebSocketService } from 'app/services';
+import { DialogService, WebSocketService } from 'app/services';
 
 @UntilDestroy()
 @Component({
@@ -32,6 +33,7 @@ export class SnapshotBatchDeleteDialogComponent implements OnInit {
     private websocket: WebSocketService,
     private cdr: ChangeDetectorRef,
     @Inject(MAT_DIALOG_DATA) private snapshots: ZfsSnapshot[],
+    private dialogService: DialogService,
   ) { }
 
   ngOnInit(): void {
@@ -70,6 +72,8 @@ export class SnapshotBatchDeleteDialogComponent implements OnInit {
       });
       this.isJobCompleted = true;
       this.cdr.markForCheck();
+    }, (error) => {
+      new EntityUtils().errorReport(error, this.dialogService);
     });
   }
 

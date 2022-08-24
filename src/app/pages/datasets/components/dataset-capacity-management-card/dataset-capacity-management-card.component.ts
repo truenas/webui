@@ -9,9 +9,10 @@ import {
 } from 'rxjs/operators';
 import { DatasetType, DatasetQuotaType } from 'app/enums/dataset.enum';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
+import { EntityUtils } from 'app/modules/entity/utils';
 import { DatasetCapacitySettingsComponent } from 'app/pages/datasets/components/dataset-capacity-management-card/dataset-capacity-settings/dataset-capacity-settings.component';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
-import { WebSocketService } from 'app/services';
+import { DialogService, WebSocketService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
@@ -59,6 +60,7 @@ export class DatasetCapacityManagementCardComponent implements OnChanges, OnInit
     private cdr: ChangeDetectorRef,
     private datasetStore: DatasetTreeStore,
     private slideInService: IxSlideInService,
+    private dialogService: DialogService,
   ) {}
 
   ngOnInit(): void {
@@ -94,6 +96,10 @@ export class DatasetCapacityManagementCardComponent implements OnChanges, OnInit
       this.isLoadingQuotas = false;
       this.cdr.markForCheck();
       // TODO: Handle error.
+    },
+    (error) => {
+      new EntityUtils().errorReport(error, this.dialogService);
+      this.cdr.markForCheck();
     });
   }
 
@@ -107,6 +113,9 @@ export class DatasetCapacityManagementCardComponent implements OnChanges, OnInit
       untilDestroyed(this),
     ).subscribe((dataset) => {
       this.inheritedQuotasDataset = dataset;
+      this.cdr.markForCheck();
+    }, (error) => {
+      new EntityUtils().errorReport(error, this.dialogService);
       this.cdr.markForCheck();
     });
   }
