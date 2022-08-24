@@ -13,6 +13,7 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -62,6 +63,7 @@ import { TelegramServiceComponent } from 'app/pages/system/alert-service/alert-s
 import { VictorOpsServiceComponent } from 'app/pages/system/alert-service/alert-service/alert-services/victor-ops-service/victor-ops-service.component';
 import { AlertConfigComponent } from 'app/pages/system/alert/alert.component';
 import { BootPoolAttachFormComponent } from 'app/pages/system/bootenv/boot-pool-attach/boot-pool-attach-form.component';
+import { BootPoolDeleteDialogComponent } from 'app/pages/system/bootenv/boot-pool-delete-dialog/boot-pool-delete-dialog.component';
 import { BootPoolReplaceFormComponent } from 'app/pages/system/bootenv/boot-pool-replace/boot-pool-replace-form.component';
 import { BootEnvironmentFormComponent } from 'app/pages/system/bootenv/bootenv-form/bootenv-form.component';
 import { BootEnvironmentListComponent } from 'app/pages/system/bootenv/bootenv-list/bootenv-list.component';
@@ -141,6 +143,8 @@ import { routing } from './system.routing';
     LayoutModule,
     FileTicketModule,
     MatExpansionModule,
+    MatSlideToggleModule,
+    AppLoaderModule,
   ],
   declarations: [
     AdvancedSettingsComponent,
@@ -207,6 +211,7 @@ import { routing } from './system.routing';
     TelegramServiceComponent,
     VictorOpsServiceComponent,
     BootenvNodeItemComponent,
+    BootPoolDeleteDialogComponent,
   ],
   providers: [
     TranslateService,

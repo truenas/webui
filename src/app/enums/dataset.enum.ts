@@ -49,6 +49,12 @@ export enum DatasetSnapdir {
   Inherit = 'INHERIT',
 }
 
+export enum DatasetSnapdev {
+  Visible = 'VISIBLE',
+  Hidden = 'HIDDEN',
+  Inherit = 'INHERIT',
+}
+
 export enum DatasetChecksum {
   On = 'ON',
   Off = 'OFF',

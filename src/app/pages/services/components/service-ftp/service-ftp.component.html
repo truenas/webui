@@ -47,19 +47,6 @@
               [tooltip]="helptext.timeout_tooltip | translate"
               type="number"
             ></ix-input>
-            <div class="linked-select">
-              <div class="link-wrapper">
-                <a class="link" (click)="onLinkClicked()">
-                  {{ 'Manage Certificates' | translate }}
-                </a>
-              </div>
-              <ix-select
-                formControlName="ssltls_certificate"
-                [label]="'Certificate' | translate"
-                [tooltip]="helptext.ssltls_certificate_tooltip | translate"
-                [options]="certificates$"
-              ></ix-select>
-            </div>
           </ix-fieldset>
 
           <ng-container *ngIf="isAdvancedMode">
@@ -117,6 +104,20 @@
               [tooltip]="helptext.tls_tooltip | translate"
             ></ix-checkbox>
             <ng-container *ngIf="isTlsEnabled$ | async">
+              <div class="linked-select">
+                <div class="link-wrapper">
+                  <a class="link" (click)="onLinkClicked()">
+                    {{ 'Manage Certificates' | translate }}
+                  </a>
+                </div>
+                <ix-select
+                  formControlName="ssltls_certificate"
+                  [label]="'Certificate' | translate"
+                  [tooltip]="helptext.ssltls_certificate_tooltip | translate"
+                  [required]="true"
+                  [options]="certificates$"
+                ></ix-select>
+              </div>
               <ix-select
                 formControlName="tls_policy"
                 [label]="'TLS Policy' | translate"
