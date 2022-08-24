@@ -571,13 +571,13 @@ export class VmWizardComponent implements WizardConfiguration {
       vms.forEach((i) => this.namesInUse.push(i.name));
     });
 
-    this.ws.call('vm.device.bind_choices').pipe(untilDestroyed(this)).subscribe((res) => {
-      if (res && Object.keys(res).length > 0) {
+    this.ws.call('vm.device.bind_choices').pipe(untilDestroyed(this)).subscribe((bindChoices) => {
+      if (bindChoices && Object.keys(bindChoices).length > 0) {
         const bind = _.find(this.wizardConfig[0].fieldConfig, { name: 'bind' }) as FormSelectConfig;
-        Object.keys(res).forEach((address) => {
+        Object.keys(bindChoices).forEach((address) => {
           bind.options.push({ label: address, value: address });
         });
-        this.getFormControlFromFieldName('bind').setValue(res['0.0.0.0']);
+        this.getFormControlFromFieldName('bind').setValue(bindChoices['0.0.0.0']);
       }
     });
 
@@ -627,13 +627,13 @@ export class VmWizardComponent implements WizardConfiguration {
       }
     });
 
-    this.getFormControlFromFieldName('enable_display').valueChanges.pipe(untilDestroyed(this)).subscribe((res) => {
+    this.getFormControlFromFieldName('enable_display').valueChanges.pipe(untilDestroyed(this)).subscribe((enableDisplay) => {
       if (!this.productType.includes(ProductType.Scale)) {
-        _.find(this.wizardConfig[0].fieldConfig, { name: 'wait' }).isHidden = !res;
+        _.find(this.wizardConfig[0].fieldConfig, { name: 'wait' }).isHidden = !enableDisplay;
       }
-      _.find(this.wizardConfig[0].fieldConfig, { name: 'display_type' }).isHidden = !res;
-      _.find(this.wizardConfig[0].fieldConfig, { name: 'bind' }).isHidden = !res;
-      if (res) {
+      _.find(this.wizardConfig[0].fieldConfig, { name: 'display_type' }).isHidden = !enableDisplay;
+      _.find(this.wizardConfig[0].fieldConfig, { name: 'bind' }).isHidden = !enableDisplay;
+      if (enableDisplay) {
         this.ws.call('vm.port_wizard').pipe(untilDestroyed(this)).subscribe(({ port }) => {
           this.displayPort = port;
         });
@@ -649,8 +649,8 @@ export class VmWizardComponent implements WizardConfiguration {
       }
     });
 
-    this.getFormControlFromFieldName('os').valueChanges.pipe(untilDestroyed(this)).subscribe((res) => {
-      this.summary[this.translate.instant('Guest Operating System')] = res;
+    this.getFormControlFromFieldName('os').valueChanges.pipe(untilDestroyed(this)).subscribe((os) => {
+      this.summary[this.translate.instant('Guest Operating System')] = os;
       this.getFormControlFromFieldName('name').valueChanges.pipe(untilDestroyed(this)).subscribe((name) => {
         this.summary[this.translate.instant('Name')] = name;
       });
@@ -789,7 +789,7 @@ export class VmWizardComponent implements WizardConfiguration {
       });
       const grub = this.bootloader.options.find((option) => option.value === VmBootloader.Grub);
       const grubIndex = this.bootloader.options.indexOf(grub);
-      if (res === 'Windows') {
+      if (os === 'Windows') {
         if (grub) {
           this.bootloader.options.splice(grubIndex, 1);
         }
@@ -809,8 +809,8 @@ export class VmWizardComponent implements WizardConfiguration {
         this.getFormControlFromFieldName('volsize').setValue('10 GiB');
       }
     });
-    this.getFormControlFromFieldName('disk_radio').valueChanges.pipe(untilDestroyed(this)).subscribe((res) => {
-      if (res) {
+    this.getFormControlFromFieldName('disk_radio').valueChanges.pipe(untilDestroyed(this)).subscribe((createNewDisk) => {
+      if (createNewDisk) {
         _.find(this.wizardConfig[2].fieldConfig, { name: 'volsize' }).isHidden = false;
         _.find(this.wizardConfig[2].fieldConfig, { name: 'datastore' }).isHidden = false;
         _.find(this.wizardConfig[2].fieldConfig, { name: 'hdd_path' }).isHidden = true;
@@ -822,8 +822,8 @@ export class VmWizardComponent implements WizardConfiguration {
         entityWizard.setDisabled('datastore', true, '2');
       }
     });
-    this.getFormControlFromFieldName('upload_iso_checkbox').valueChanges.pipe(untilDestroyed(this)).subscribe((res) => {
-      if (res) {
+    this.getFormControlFromFieldName('upload_iso_checkbox').valueChanges.pipe(untilDestroyed(this)).subscribe((uploadIso) => {
+      if (uploadIso) {
         _.find(this.wizardConfig[4].fieldConfig, { name: 'upload_iso' })['isHidden'] = false;
         _.find(this.wizardConfig[4].fieldConfig, { name: 'upload_iso_path' })['isHidden'] = false;
       } else {
@@ -831,16 +831,16 @@ export class VmWizardComponent implements WizardConfiguration {
         _.find(this.wizardConfig[4].fieldConfig, { name: 'upload_iso_path' })['isHidden'] = true;
       }
     });
-    this.getFormControlFromFieldName('upload_iso_path').valueChanges.pipe(untilDestroyed(this)).subscribe((res) => {
-      if (res) {
+    this.getFormControlFromFieldName('upload_iso_path').valueChanges.pipe(untilDestroyed(this)).subscribe((uploadPath) => {
+      if (uploadPath) {
         const config = _.find(this.wizardConfig[4].fieldConfig, { name: 'upload_iso' }) as FormUploadConfig;
-        config.fileLocation = res;
+        config.fileLocation = uploadPath;
       }
     });
 
-    this.networkService.getVmNicChoices().pipe(untilDestroyed(this)).subscribe((res) => {
+    this.networkService.getVmNicChoices().pipe(untilDestroyed(this)).subscribe((nicChoices) => {
       this.nicAttach = _.find(this.wizardConfig[3].fieldConfig, { name: 'nic_attach' }) as FormSelectConfig;
-      this.nicAttach.options = Object.keys(res || {}).map((nicId) => ({
+      this.nicAttach.options = Object.keys(nicChoices || {}).map((nicId) => ({
         label: nicId,
         value: nicId,
       }));
@@ -1114,7 +1114,7 @@ export class VmWizardComponent implements WizardConfiguration {
         }
       }
       this.ws.call('system.advanced.update', [{ isolated_gpu_pci_ids: finalIsolatedPciIds }]).pipe(untilDestroyed(this)).subscribe(
-        (res) => res,
+        () => {},
         (err) => new EntityUtils().handleWsError(this.entityWizard, err),
       );
     }
@@ -1132,7 +1132,6 @@ export class VmWizardComponent implements WizardConfiguration {
         for (const device of devices) {
           device.vm = newVm.id;
           observables.push(this.ws.call('vm.device.create', [device]).pipe(
-            map((res) => res),
             catchError((err) => {
               err.device = { ...device };
               throw err;
@@ -1177,7 +1176,6 @@ export class VmWizardComponent implements WizardConfiguration {
         for (const device of devices) {
           device.vm = newVm.id;
           observables.push(this.ws.call('vm.device.create', [device]).pipe(
-            map((res) => res),
             catchError((err) => {
               err.device = { ...device };
               throw err;

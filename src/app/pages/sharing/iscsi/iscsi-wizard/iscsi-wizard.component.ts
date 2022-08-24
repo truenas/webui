@@ -532,10 +532,10 @@ export class IscsiWizardComponent implements WizardConfiguration {
     const diskField = _.find(this.wizardConfig[0].fieldConfig, { name: 'disk' }) as FormComboboxConfig;
     // get device options
     this.loader.open(this.translate.instant('Loading devices. Please wait.'));
-    this.iscsiService.getExtentDevices().pipe(untilDestroyed(this)).subscribe((res) => {
+    this.iscsiService.getExtentDevices().pipe(untilDestroyed(this)).subscribe((deviceChoices) => {
       this.loader.close();
-      for (const i in res) {
-        diskField.options.push({ label: res[i], value: i });
+      for (const i in deviceChoices) {
+        diskField.options.push({ label: deviceChoices[i], value: i });
       }
     },
     (error) => {
@@ -820,15 +820,15 @@ export class IscsiWizardComponent implements WizardConfiguration {
                     || ((item === 'initiator' || item === 'portal' || item === 'target') && value['target'] !== 'NEW')
         )) {
           await this.doCreate(value, item).then(
-            (res) => {
+            (createdItem) => {
               if (item === 'zvol') {
-                value['disk'] = 'zvol/' + res.id.replace(' ', '+');
+                value['disk'] = 'zvol/' + createdItem.id.replace(' ', '+');
               } else if (item === 'auth') {
-                value['discovery_authgroup'] = res.tag;
+                value['discovery_authgroup'] = createdItem.tag;
               } else {
-                value[item] = res.id;
+                value[item] = createdItem.id;
               }
-              createdItems[item] = res.id;
+              createdItems[item] = createdItem.id;
             },
             (err) => {
               new EntityUtils().handleWsError(this, err, this.dialogService);
@@ -934,8 +934,8 @@ export class IscsiWizardComponent implements WizardConfiguration {
       }
 
       this.ws.call((this.deleteCalls as any)[type], [id]).pipe(untilDestroyed(this)).subscribe(
-        (res) => {
-          console.info('rollback ' + type, res);
+        (deleteResponse) => {
+          console.info('rollback ' + type, deleteResponse);
         },
       );
     });

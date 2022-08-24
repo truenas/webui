@@ -29,8 +29,8 @@ export class TruecommandStatusModalComponent {
       message: helptext.tcDialog.message,
       is_html: true,
       confirmBtnMsg: helptext.tcDialog.confirmBtnMsg,
-    }).pipe(untilDestroyed(this)).subscribe((res) => {
-      if (res) {
+    }).pipe(untilDestroyed(this)).subscribe((confirmed) => {
+      if (confirmed) {
         window.open(this.tc.remote_url);
       }
     });

@@ -234,15 +234,12 @@ export class PodLogsComponent implements OnInit, AfterViewInit, OnDestroy {
         [chartReleaseName, { pod_name: podName, container_name: containerName, tail_lines: tailLines }],
         fileName,
       ],
-    ).pipe(untilDestroyed(this)).subscribe((res) => {
+    ).pipe(untilDestroyed(this)).subscribe(([, url]) => {
       this.loader.close();
-      const url = res[1];
       this.storageService.streamDownloadFile(url, fileName, mimetype)
         .pipe(untilDestroyed(this))
         .subscribe((file: Blob) => {
-          if (res !== null) {
-            this.storageService.downloadBlob(file, fileName);
-          }
+          this.storageService.downloadBlob(file, fileName);
         });
     }, (error) => {
       this.loader.close();

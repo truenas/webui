@@ -337,8 +337,8 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow>, On
   updateRows(rows: VirtualMachineRow[]): Promise<VirtualMachineRow[]> {
     return new Promise((resolve, reject) => {
       this.ws.call(this.queryCall).pipe(untilDestroyed(this)).subscribe(
-        (res) => {
-          rows = this.resourceTransformIncomingRestData(res);
+        (vms) => {
+          rows = this.resourceTransformIncomingRestData(vms);
           resolve(rows);
         },
         (err) => {
@@ -650,8 +650,8 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow>, On
   }
 
   checkMemory(): void {
-    this.ws.call(this.wsMethods.getAvailableMemory).pipe(untilDestroyed(this)).subscribe((res) => {
-      this.availableMemory = this.storageService.convertBytesToHumanReadable(res);
+    this.ws.call(this.wsMethods.getAvailableMemory).pipe(untilDestroyed(this)).subscribe((memory) => {
+      this.availableMemory = this.storageService.convertBytesToHumanReadable(memory);
     });
   }
 

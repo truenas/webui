@@ -642,8 +642,8 @@ export class CertificateAuthorityAddComponent implements WizardConfiguration {
       if (fieldConfig.value !== undefined) {
         this.summary[fieldConfig.placeholder] = this.getSummaryValueLabel(fieldConfig, fieldConfig.value);
       }
-      this.getField(fieldName).valueChanges.pipe(untilDestroyed(this)).subscribe((res) => {
-        this.summary[fieldConfig.placeholder] = this.getSummaryValueLabel(fieldConfig, res);
+      this.getField(fieldName).valueChanges.pipe(untilDestroyed(this)).subscribe((value) => {
+        this.summary[fieldConfig.placeholder] = this.getSummaryValueLabel(fieldConfig, value);
       });
     }
   }

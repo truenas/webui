@@ -69,8 +69,9 @@ export class StorageService {
     return this.http.post(url, '',
       { responseType: 'blob' }).pipe(
       map(
-        (res) => {
-          const blob = new Blob([res], { type: mimeType });
+        (blobResponse) => {
+          // TODO: Not needed and can return res directly?
+          const blob = new Blob([blobResponse], { type: mimeType });
           return blob;
         },
       ),

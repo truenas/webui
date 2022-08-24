@@ -1005,7 +1005,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
     }
     return new Promise((resolve) => {
       this.replicationService.getRemoteDataset(TransportMode.Ssh, sshCredentials, this).then(
-        (res) => {
+        (explorerNodes) => {
           const sourceDatasetsFormControl = this.entityWizard.formArray.get([0]).get('source_datasets');
           const prevErrors = sourceDatasetsFormControl.errors;
           delete prevErrors.failedToLoadChildren;
@@ -1017,7 +1017,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
           const sourceDatasetsFieldConfig = _.find(this.wizardConfig[0].fieldConfig, { name: 'source_datasets' });
           sourceDatasetsFieldConfig.warnings = null;
 
-          resolve(res);
+          resolve(explorerNodes);
         },
         () => {
           node.collapse();
@@ -1049,7 +1049,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
     }
     return new Promise((resolve) => {
       this.replicationService.getRemoteDataset(TransportMode.Ssh, sshCredentials, this).then(
-        (res) => {
+        (explorerNodes) => {
           const targetDatasetFormControl = this.entityWizard.formArray.get([0]).get('target_dataset');
           const prevErrors = targetDatasetFormControl.errors;
           delete prevErrors.failedToLoadChildren;
@@ -1061,7 +1061,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
           const targetDatasetFieldConfig = _.find(this.wizardConfig[0].fieldConfig, { name: 'target_dataset' });
           targetDatasetFieldConfig.warnings = null;
 
-          resolve(res);
+          resolve(explorerNodes);
         },
         () => {
           node.collapse();
@@ -1308,10 +1308,10 @@ export class ReplicationWizardComponent implements WizardConfiguration {
         payload['transport'],
         payload['ssh_credentials'],
       ]).toPromise().then(
-        (res) => {
+        (snapshotsByDataset) => {
           let hasBadSnapshots = false;
-          for (const ds in res) {
-            if (res[ds].length > 0) {
+          for (const ds in snapshotsByDataset) {
+            if (snapshotsByDataset[ds].length > 0) {
               hasBadSnapshots = true;
               break;
             }
@@ -1355,15 +1355,15 @@ export class ReplicationWizardComponent implements WizardConfiguration {
         if (!(item === 'periodic_snapshot_tasks' && (value['schedule_method'] !== ScheduleMethod.Cron || value['source_datasets_from'] !== DatasetSource.Local))
                 && !(item === 'snapshot' && (this.eligibleSnapshots > 0 || value['source_datasets_from'] !== DatasetSource.Local))) {
           await this.doCreate(value, item).then(
-            (res) => {
+            (createdItem) => {
               if (item === 'snapshot') {
-                createdItems[item] = res;
+                createdItems[item] = createdItem;
               } else {
-                value[item] = res.id || res.map((snapshot: any) => snapshot.id);
+                value[item] = createdItem.id || createdItem.map((snapshot: any) => snapshot.id);
                 if (item === 'periodic_snapshot_tasks' && this.existSnapshotTasks.length !== 0) {
                   value[item].push(...this.existSnapshotTasks);
                 }
-                createdItems[item] = res.id || res.map((snapshot: any) => snapshot.id);
+                createdItems[item] = createdItem.id || createdItem.map((snapshot: any) => snapshot.id);
               }
             },
             (err) => {
@@ -1439,8 +1439,8 @@ export class ReplicationWizardComponent implements WizardConfiguration {
         }
         if (value['setup_method'] === 'manual') {
           await this.getRemoteHostKey(value).then(
-            (res) => {
-              value['remote_host_key'] = res;
+            (key) => {
+              value['remote_host_key'] = key;
             },
             (err) => {
               prerequisite = false;
@@ -1461,19 +1461,19 @@ export class ReplicationWizardComponent implements WizardConfiguration {
         for (const item in createdItems) {
           if (!((item === 'private_key' && value['private_key'] !== 'NEW'))) {
             await this.doCreate(value, item).then(
-              (res) => {
-                value[item] = res.id;
-                createdItems[item] = res.id;
+              (createdItem) => {
+                value[item] = createdItem.id;
+                createdItems[item] = createdItem.id;
                 if (item === 'private_key') {
                   const privateKeyField = _.find(this.dialogFieldConfig, { name: 'private_key' }) as FormSelectConfig;
-                  privateKeyField.options.push({ label: res.name + ' (New Created)', value: res.id });
+                  privateKeyField.options.push({ label: createdItem.name + ' (New Created)', value: createdItem.id });
                 }
                 if (item === 'ssh_credentials') {
                   const sshCredentialsSourceField = _.find(this.wizardConfig[0].fieldConfig, { name: 'ssh_credentials_source' }) as FormSelectConfig;
                   const sshCredentialsTargetField = _.find(this.wizardConfig[0].fieldConfig, { name: 'ssh_credentials_target' }) as FormSelectConfig;
-                  sshCredentialsSourceField.options.push({ label: res.name + ' (New Created)', value: res.id });
-                  sshCredentialsTargetField.options.push({ label: res.name + ' (New Created)', value: res.id });
-                  this.entityWizard.formArray.get([0]).get([activatedField]).setValue(res.id);
+                  sshCredentialsSourceField.options.push({ label: createdItem.name + ' (New Created)', value: createdItem.id });
+                  sshCredentialsTargetField.options.push({ label: createdItem.name + ' (New Created)', value: createdItem.id });
+                  this.entityWizard.formArray.get([0]).get([activatedField]).setValue(createdItem.id);
                 }
               },
               (err) => {
@@ -1543,19 +1543,19 @@ export class ReplicationWizardComponent implements WizardConfiguration {
 
     if (payload[0].datasets.length > 0) {
       this.ws.call('replication.count_eligible_manual_snapshots', [payload[0]]).pipe(untilDestroyed(this)).subscribe(
-        (res) => {
-          this.eligibleSnapshots = res.eligible;
+        (eligibleSnapshots) => {
+          this.eligibleSnapshots = eligibleSnapshots.eligible;
           const isPush = this.entityWizard.formArray.get([0]).get('source_datasets_from').value === DatasetSource.Local;
           let spanClass = 'info-paragraph';
           let snapexpl = '';
-          if (res.eligible === 0) {
+          if (eligibleSnapshots.eligible === 0) {
             if (isPush) {
               snapexpl = 'Snapshots will be created automatically.';
             } else {
               spanClass = 'warning-paragraph';
             }
           }
-          this.snapshotsCountField.paraText = `<span class="${spanClass}"><b>${res.eligible}</b> snapshots found. ${snapexpl}</span>`;
+          this.snapshotsCountField.paraText = `<span class="${spanClass}"><b>${eligibleSnapshots.eligible}</b> snapshots found. ${snapexpl}</span>`;
         },
         (err) => {
           this.eligibleSnapshots = 0;

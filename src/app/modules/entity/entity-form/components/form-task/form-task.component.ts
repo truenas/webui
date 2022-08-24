@@ -47,8 +47,8 @@ export class FormTaskComponent implements Field, AfterViewInit, OnInit {
       });
     }
 
-    this.group.controls[this.config.name].valueChanges.pipe(untilDestroyed(this)).subscribe((res) => {
-      if (this.init && res) {
+    this.group.controls[this.config.name].valueChanges.pipe(untilDestroyed(this)).subscribe((value) => {
+      if (this.init && value) {
         this.init = false;
         if (_.startsWith(this.control.value, '*/')) {
           this.tabGroup.selectedIndex = 0;

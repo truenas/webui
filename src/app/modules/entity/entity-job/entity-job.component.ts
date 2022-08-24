@@ -273,9 +273,9 @@ export class EntityJobComponent implements OnInit, AfterViewChecked {
     this.realtimeLogsSubscribed = true;
     const subscriptionId = UUID.UUID();
     const subName = 'filesystem.file_tail_follow:' + this.job.logs_path;
-    this.ws.sub(subName, subscriptionId).pipe(untilDestroyed(this)).subscribe((res) => {
-      if (res && res.data && typeof res.data === 'string') {
-        this.realtimeLogs += res.data;
+    this.ws.sub(subName, subscriptionId).pipe(untilDestroyed(this)).subscribe((log) => {
+      if (log && log.data && typeof log.data === 'string') {
+        this.realtimeLogs += log.data;
       }
     });
     return subscriptionId;

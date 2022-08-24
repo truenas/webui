@@ -85,8 +85,8 @@ export class TruecommandButtonComponent implements OnInit {
       icon: helptext.stopTCConnectingDialog.icon,
       message: helptext.stopTCConnectingDialog.message,
       confirmBtnMsg: helptext.stopTCConnectingDialog.confirmBtnMsg,
-    }).pipe(untilDestroyed(this)).subscribe((res) => {
-      if (res) {
+    }).pipe(untilDestroyed(this)).subscribe((confirm) => {
+      if (confirm) {
         this.loader.open();
         this.ws.call('truecommand.update', [{ enabled: false }]).pipe(untilDestroyed(this)).subscribe(
           () => {

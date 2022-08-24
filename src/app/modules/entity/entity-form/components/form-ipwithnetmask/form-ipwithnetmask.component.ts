@@ -34,8 +34,8 @@ export class FormIpWithNetmaskComponent implements Field, OnInit {
 
   ngOnInit(): void {
     this.control = this.group.controls[this.config.name];
-    this.control.valueChanges.pipe(untilDestroyed(this)).subscribe((res: string) => {
-      this.setAddressAndNetmask(res);
+    this.control.valueChanges.pipe(untilDestroyed(this)).subscribe((addressAndNetmask: string) => {
+      this.setAddressAndNetmask(addressAndNetmask);
     });
     if (this.control.value) {
       this.setAddressAndNetmask(this.control.value);

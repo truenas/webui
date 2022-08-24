@@ -564,8 +564,8 @@ export class NetworkComponent implements OnInit, OnDestroy {
     }];
   }
 
-  openvpnDataSourceHelper(res: any[]): any[] {
-    return res.filter((item) => {
+  openvpnDataSourceHelper(service: any[]): any[] {
+    return service.filter((item) => {
       if (item.service.includes('openvpn_')) {
         item.service_label = item.service.charAt(8).toUpperCase() + item.service.slice(9);
         return item;

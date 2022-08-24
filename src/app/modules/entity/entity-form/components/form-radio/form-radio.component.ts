@@ -37,7 +37,7 @@ export class FormRadioComponent implements Field, OnInit, OnDestroy {
   ngOnInit(): void {
     this.valueChangesSubscription = this.group.controls[this.config.name].valueChanges
       .pipe(untilDestroyed(this))
-      .subscribe((res) => this.radioValue = res);
+      .subscribe((value) => this.radioValue = value);
   }
 
   ngOnDestroy(): void {

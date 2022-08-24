@@ -88,8 +88,8 @@ export class TruecommandSignupModalComponent implements OnInit {
       icon: helptext.tcDeregisterDialog.icon,
       message: helptext.tcDeregisterDialog.message,
       confirmBtnMsg: helptext.tcDeregisterDialog.confirmBtnMsg,
-    }).pipe(untilDestroyed(this)).subscribe((res) => {
-      if (!res) {
+    }).pipe(untilDestroyed(this)).subscribe((confirmed) => {
+      if (!confirmed) {
         return;
       }
 

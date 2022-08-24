@@ -232,6 +232,7 @@ module.exports = {
         }],
         "@shopify/typescript/prefer-singular-enums": "error",
         "@shopify/prefer-early-return": ["error", { maximumStatements: 3 }],
+        "id-denylist": ["error", "res"],
 
         // RxJS rules
         "rxjs/no-unsafe-takeuntil": ["error", {

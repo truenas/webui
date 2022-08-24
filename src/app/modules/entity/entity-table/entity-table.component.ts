@@ -578,8 +578,8 @@ export class EntityTableComponent<Row extends SomeRow = any> implements OnInit, 
 
   callGetFunction(skipActions = false): void {
     this.getFunction.pipe(untilDestroyed(this)).subscribe(
-      (res) => {
-        this.handleData(res, skipActions);
+      (response) => {
+        this.handleData(response, skipActions);
       },
       (error: WebsocketError) => {
         this.isTableEmpty = true;
@@ -597,36 +597,36 @@ export class EntityTableComponent<Row extends SomeRow = any> implements OnInit, 
     );
   }
 
-  handleData(res: any, skipActions = false): any {
+  handleData(response: any, skipActions = false): any {
     this.expandedRows = document.querySelectorAll('.expanded-row').length;
     const cache = this.expandedElement;
     this.expandedElement = this.expandedRows > 0 ? cache : null;
 
-    if (typeof (res) === 'undefined' || typeof (res.data) === 'undefined') {
-      res = {
-        data: res,
+    if (typeof (response) === 'undefined' || typeof (response.data) === 'undefined') {
+      response = {
+        data: response,
       };
     }
 
-    if (res.data) {
+    if (response.data) {
       if (typeof (this.conf.resourceTransformIncomingRestData) !== 'undefined') {
-        res.data = this.conf.resourceTransformIncomingRestData(res.data);
+        response.data = this.conf.resourceTransformIncomingRestData(response.data);
         for (const prop of ['schedule', 'cron_schedule', 'cron', 'scrub_schedule']) {
-          if (res.data.length > 0 && res.data[0].hasOwnProperty(prop) && typeof res.data[0][prop] === 'string') {
-            res.data.map((row: any) => row[prop] = new EntityUtils().parseDow(row[prop]));
+          if (response.data.length > 0 && response.data[0].hasOwnProperty(prop) && typeof response.data[0][prop] === 'string') {
+            response.data.map((row: any) => row[prop] = new EntityUtils().parseDow(row[prop]));
           }
         }
       }
     } else if (typeof (this.conf.resourceTransformIncomingRestData) !== 'undefined') {
-      res = this.conf.resourceTransformIncomingRestData(res);
+      response = this.conf.resourceTransformIncomingRestData(response);
       for (const prop of ['schedule', 'cron_schedule', 'cron', 'scrub_schedule']) {
-        if (res.length > 0 && res[0].hasOwnProperty(prop) && typeof res[0][prop] === 'string') {
-          res.map((row: any) => row[prop] = new EntityUtils().parseDow(row[prop]));
+        if (response.length > 0 && response[0].hasOwnProperty(prop) && typeof response[0][prop] === 'string') {
+          response.map((row: any) => row[prop] = new EntityUtils().parseDow(row[prop]));
         }
       }
     }
 
-    this.rows = this.generateRows(res);
+    this.rows = this.generateRows(response);
     if (!skipActions) {
       this.storageService.tableSorter(this.rows, this.sortKey, 'asc');
     }
@@ -671,7 +671,7 @@ export class EntityTableComponent<Row extends SomeRow = any> implements OnInit, 
 
     this.dataSourceStreamer$.next(this.currentRows);
 
-    return res;
+    return response;
   }
 
   patchCurrentRows(
@@ -705,21 +705,21 @@ export class EntityTableComponent<Row extends SomeRow = any> implements OnInit, 
     return hasHorizontalScrollbar;
   }
 
-  generateRows(res: any): Row[] {
+  generateRows(response: any): Row[] {
     let rows: any[];
     if (this.loaderOpen) {
       this.loader.close();
       this.loaderOpen = false;
     }
 
-    if (res.data) {
-      if (res.data.result) {
-        rows = new EntityUtils().flattenData(res.data.result);
+    if (response.data) {
+      if (response.data.result) {
+        rows = new EntityUtils().flattenData(response.data.result);
       } else {
-        rows = new EntityUtils().flattenData(res.data);
+        rows = new EntityUtils().flattenData(response.data);
       }
     } else {
-      rows = new EntityUtils().flattenData(res);
+      rows = new EntityUtils().flattenData(response);
     }
 
     rows.forEach((row) => {

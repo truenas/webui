@@ -41,22 +41,22 @@ export class ReportsService implements OnDestroy {
 
     this.core.register({ observerClass: this, eventName: 'ReportDataRequest' }).subscribe((evt: CoreEvent) => {
       const chartId = (evt.sender as ReportComponent).chartId;
-      this.ws.call('reporting.get_data', [[evt.data.params], evt.data.timeFrame]).subscribe((reportingData) => {
-        let res;
+      this.ws.call('reporting.get_data', [[evt.data.params], evt.data.timeFrame]).subscribe((rawReportingData) => {
+        let reportingData;
 
         // If requested, we truncate trailing null values
         if (evt.data.truncate) {
-          const truncated = this.truncateData(reportingData[0].data);
-          res = Object.assign([], reportingData);
-          res[0].data = truncated;
+          const truncated = this.truncateData(rawReportingData[0].data);
+          reportingData = Object.assign([], rawReportingData);
+          reportingData[0].data = truncated;
         } else {
-          res = reportingData;
+          reportingData = rawReportingData;
         }
 
         const commands = [
           {
             command: 'optimizeLegend',
-            input: res[0],
+            input: reportingData[0],
           },
           {
             command: 'convertAggregations',
@@ -71,7 +71,7 @@ export class ReportsService implements OnDestroy {
           // Do a complete replacement instead...
           const repl = [{
             command: 'avgCpuTempReport',
-            input: res[0],
+            input: reportingData[0],
           }];
 
           this.reportsUtils.postMessage({ name: 'ProcessCommandsAsReportData', data: repl, sender: chartId });

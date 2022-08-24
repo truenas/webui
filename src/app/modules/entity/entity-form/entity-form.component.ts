@@ -276,9 +276,9 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
       if (!this.isNew && this.conf.queryCall && this.getFunction) {
         this.loader.open();
         this.loaderOpen = true;
-        this.getFunction.pipe(untilDestroyed(this)).subscribe((res: any) => {
-          if (res.data) {
-            this.data = res.data;
+        this.getFunction.pipe(untilDestroyed(this)).subscribe((response: any) => {
+          if (response.data) {
+            this.data = response.data;
             if (typeof (this.conf.resourceTransformIncomingRestData) !== 'undefined') {
               this.data = this.conf.resourceTransformIncomingRestData(this.data);
               const extraFieldSets = this.data['extra_fieldsets'];
@@ -311,11 +311,11 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
               }
             }
           } else {
-            this.queryResponse = res;
-            if (res[0]) {
-              this.wsResponse = res[0];
+            this.queryResponse = response;
+            if (response[0]) {
+              this.wsResponse = response[0];
             } else {
-              this.wsResponse = res;
+              this.wsResponse = response;
             }
 
             if (typeof (this.conf.resourceTransformIncomingRestData) !== 'undefined') {
@@ -485,15 +485,15 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
       this.loaderOpen = true;
       this.submitFunction(value)
         .pipe(untilDestroyed(this)).subscribe(
-          (res) => {
+          (submitResult) => {
             this.loader.close();
             this.loaderOpen = false;
 
-            if ((this.conf.isEditJob || this.conf.isCreateJob) && res.error) {
-              if (res.exc_info && res.exc_info.extra) {
-                new EntityUtils().handleWsError(this, res);
+            if ((this.conf.isEditJob || this.conf.isCreateJob) && submitResult.error) {
+              if (submitResult.exc_info && submitResult.exc_info.extra) {
+                new EntityUtils().handleWsError(this, submitResult);
               } else {
-                this.dialog.errorReport('Error', res.error, res.exception);
+                this.dialog.errorReport('Error', submitResult.error, submitResult.exception);
               }
             } else {
               if (this.conf.afterSave) {
@@ -512,7 +512,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
                   this.conf.afterSubmit(value);
                 }
                 if (this.conf.responseOnSubmit) {
-                  this.conf.responseOnSubmit(res);
+                  this.conf.responseOnSubmit(submitResult);
                 }
               }
               this.modalService.closeSlideIn().then((closed) => {
