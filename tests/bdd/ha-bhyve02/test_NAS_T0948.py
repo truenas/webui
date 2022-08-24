@@ -74,7 +74,7 @@ def click_on_localusers(driver):
 @then('The Users page should open')
 def the_users_page_should_open(driver):
     """The Users page should open."""
-    assert wait_on_element(driver, 7, '//div[contains(.,"Users")]')
+    assert wait_on_element(driver, 7, '//h1[text()="Users"]')
 
 
 @then('On the right side of the table, click the Greater-Than-Sign for one of the users')
@@ -121,8 +121,8 @@ def change_the_users_shell_and_click_save(driver):
 @then('Change should be saved')
 def change_should_be_saved(driver):
     """Change should be saved."""
-    assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
-    assert wait_on_element(driver, 7, '//div[contains(.,"Users")]')
+    assert wait_on_element_disappear(driver, 15, '//mat-progress-bar')
+    assert wait_on_element(driver, 7, '//h1[text()="Users"]')
 
 
 @then('Open the user drop down to verify the shell was changed')

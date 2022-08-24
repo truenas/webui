@@ -118,6 +118,6 @@ def fill_in_the_following_fields_full_name_username_password_confirm_password_an
 @then('User should be created and added to the user list')
 def user_should_be_created_and_added_to_the_user_list(driver):
     """User should be created and added to the user list."""
-    assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
+    assert wait_on_element_disappear(driver, 15, '//mat-progress-bar')
     assert wait_on_element(driver, 7, '//h1[text()="Users"]')
     assert wait_on_element(driver, 5, '//td[contains(.,"ericbsd")]')
