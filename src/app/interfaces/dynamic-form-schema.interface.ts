@@ -2,7 +2,7 @@ import { UntypedFormArray } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { DynamicFormSchemaType } from 'app/enums/dynamic-form-schema-type.enum';
 import { Option } from 'app/interfaces/option.interface';
-import { TreeNodeProvider } from 'app/modules/ix-forms/components/ix-explorer/ix-explorer.component';
+import { TreeNodeProvider } from 'app/modules/ix-forms/components/ix-explorer/tree-node-provider.interface';
 
 export interface DynamicFormSchema {
   name: string;
