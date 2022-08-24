@@ -6,6 +6,7 @@
   color: var(--fg2);
   display: block;
   margin: 0 auto 32px;
+  padding-bottom: 8px;
   padding-top: 0;
   width: calc(100% - 16px);
 
@@ -24,19 +25,21 @@
   }
 }
 
+ix-breadcrumb {
+  position: relative;
+  top: 8px;
+}
+
 .title-container {
   align-items: flex-end;
   display: flex;
   flex-direction: row;
   flex-grow: 1;
+  margin: 8px 0;
   min-height: 40px;
 
   @media (max-width: $breakpoint-tablet) {
     flex-wrap: wrap;
-  }
-    
-  h1 {
-    margin-bottom: 12px;
   }
 }
 
@@ -52,9 +55,9 @@
     flex-wrap: wrap;
     gap: 8px;
     justify-content: center;
+    margin-top: 12px;
     padding: 14px 0;
     width: 100%;
-    //margin-top: 12px;
   }
 }
 
