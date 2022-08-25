@@ -39,8 +39,8 @@ export class ShutdownComponent implements OnInit {
     this.ws.call('system.shutdown', {}).pipe(untilDestroyed(this)).subscribe(
       () => {
       },
-      (res) => { // error on shutdown
-        this.dialogService.errorReport(res.error, res.reason, res.trace.formatted)
+      (error) => { // error on shutdown
+        this.dialogService.errorReport(error.error, error.reason, error.trace.formatted)
           .pipe(untilDestroyed(this))
           .subscribe(() => {
             this.router.navigate(['/session/signin']);

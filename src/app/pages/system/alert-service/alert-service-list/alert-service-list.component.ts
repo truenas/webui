@@ -89,8 +89,8 @@ export class AlertServiceListComponent implements EntityTableConfig<AlertService
     row.enabled = !row.enabled;
     this.ws.call('alertservice.update', [row.id, { enabled: row.enabled }])
       .pipe(untilDestroyed(this)).subscribe(
-        (res) => {
-          if (!res) {
+        (alertService) => {
+          if (!alertService) {
             row.enabled = !row.enabled;
           }
         },

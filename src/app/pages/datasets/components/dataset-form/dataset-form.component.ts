@@ -1622,16 +1622,16 @@ export class DatasetFormComponent implements FormConfiguration {
       this.loader.close();
       this.modalService.closeSlideIn();
       const parentPath = `/mnt/${this.parent}`;
-      this.ws.call('filesystem.acl_is_trivial', [parentPath]).pipe(untilDestroyed(this)).subscribe((res) => {
-        if (!res) {
+      this.ws.call('filesystem.acl_is_trivial', [parentPath]).pipe(untilDestroyed(this)).subscribe((isTrivial) => {
+        if (!isTrivial) {
           this.dialogService.confirm({
             title: helptext.afterSubmitDialog.title,
             message: helptext.afterSubmitDialog.message,
             hideCheckBox: true,
             buttonMsg: helptext.afterSubmitDialog.actionBtn,
             cancelMsg: helptext.afterSubmitDialog.cancelBtn,
-          }).pipe(untilDestroyed(this)).subscribe((res) => {
-            if (res) {
+          }).pipe(untilDestroyed(this)).subscribe((confirmed) => {
+            if (confirmed) {
               this.ws.call('filesystem.getacl', [parentPath]).pipe(untilDestroyed(this)).subscribe(({ acltype }) => {
                 if (acltype === AclType.Posix1e) {
                   this.router.navigate(
@@ -1654,9 +1654,9 @@ export class DatasetFormComponent implements FormConfiguration {
         }
         this.modalService.refreshTable();
       });
-    }, (res) => {
+    }, (error) => {
       this.loader.close();
-      new EntityUtils().handleWsError(this.entityForm, res);
+      new EntityUtils().handleWsError(this.entityForm, error);
     });
   }
 

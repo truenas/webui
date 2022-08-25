@@ -14,7 +14,7 @@ interface DiskState {
   highestTemperature: number;
   lowestTemperature: number;
   averageTemperature: number;
-  alters: number;
+  alerts: number;
   smartTests: number;
   unit: string;
   symbolText: string;
@@ -45,7 +45,7 @@ export class DiskHealthCardComponent implements OnInit, OnChanges {
     highestTemperature: null,
     lowestTemperature: null,
     averageTemperature: null,
-    alters: 0,
+    alerts: 0,
     smartTests: 0,
     unit: '',
     symbolText: '',

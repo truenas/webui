@@ -7,12 +7,12 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { filter } from 'rxjs/operators';
 import { DiskType } from 'app/enums/disk-type.enum';
 import { Disk } from 'app/interfaces/storage.interface';
-import { DiskFormComponent } from 'app/pages/storage/disks/disk-form/disk-form.component';
+import { DevicesStore } from 'app/pages/storage2/modules/devices/stores/devices-store.service';
+import { DiskFormComponent } from 'app/pages/storage2/modules/disks/components/disk-form/disk-form.component';
 import {
   ReplaceDiskDialogComponent,
   ReplaceDiskDialogData,
-} from 'app/pages/storage/volumes/volume-status/components/replace-disk-dialog/replace-disk-dialog.component';
-import { DevicesStore } from 'app/pages/storage2/modules/devices/stores/devices-store.service';
+} from 'app/pages/storage2/modules/disks/components/replace-disk-dialog/replace-disk-dialog.component';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()

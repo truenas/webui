@@ -121,12 +121,12 @@ export class DataProtectionDashboardComponent implements OnInit {
         this.refreshTables();
       });
 
-    this.modalService.message$.pipe(untilDestroyed(this)).subscribe((res: ModalServiceMessage) => {
-      if (res['action'] === 'open' && res['component'] === 'replicationForm') {
-        this.modalService.openInSlideIn(ReplicationFormComponent, res['row']);
+    this.modalService.message$.pipe(untilDestroyed(this)).subscribe((message: ModalServiceMessage) => {
+      if (message['action'] === 'open' && message['component'] === 'replicationForm') {
+        this.modalService.openInSlideIn(ReplicationFormComponent, message['row']);
       }
-      if (res['action'] === 'open' && res['component'] === 'replicationWizard') {
-        this.modalService.openInSlideIn(ReplicationWizardComponent, res['row']);
+      if (message['action'] === 'open' && message['component'] === 'replicationWizard') {
+        this.modalService.openInSlideIn(ReplicationWizardComponent, message['row']);
       }
     });
   }

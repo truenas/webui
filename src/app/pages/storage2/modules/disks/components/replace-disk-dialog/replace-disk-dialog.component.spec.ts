@@ -13,7 +13,7 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import {
   ReplaceDiskDialogData,
   ReplaceDiskDialogComponent,
-} from 'app/pages/storage/volumes/volume-status/components/replace-disk-dialog/replace-disk-dialog.component';
+} from 'app/pages/storage2/modules/disks/components/replace-disk-dialog/replace-disk-dialog.component';
 import { DialogService } from 'app/services';
 
 describe('ReplaceDiskDialogComponent', () => {

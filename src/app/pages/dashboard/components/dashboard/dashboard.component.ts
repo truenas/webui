@@ -2,11 +2,11 @@ import {
   Component, OnInit, AfterViewInit, OnDestroy, ElementRef, TemplateRef, ViewChild, Inject,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { Store } from '@ngrx/store';
+import { select, Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { tween, styler } from 'popmotion';
 import { Subject } from 'rxjs';
-import { take } from 'rxjs/operators';
+import { filter, take } from 'rxjs/operators';
 import { NetworkInterfaceAliasType, NetworkInterfaceType } from 'app/enums/network-interface.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { Dataset } from 'app/interfaces/dataset.interface';
@@ -29,7 +29,8 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LayoutService } from 'app/services/layout.service';
 import { AppState } from 'app/store';
 import { dashboardStateLoaded } from 'app/store/preferences/preferences.actions';
-import { waitForDashboardState } from 'app/store/preferences/preferences.selectors';
+import { PreferencesState } from 'app/store/preferences/preferences.reducer';
+import { selectPreferencesState } from 'app/store/preferences/preferences.selectors';
 import { waitForSystemFeatures, waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 
 // TODO: This adds additional fields. Unclear if vlan is coming from backend
@@ -590,11 +591,17 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private loadUserAttributes(): void {
     this.store$.pipe(
-      waitForDashboardState,
+      select(selectPreferencesState),
+      filter(Boolean),
       take(1),
       untilDestroyed(this),
-    ).subscribe((dashState) => {
-      this.applyState(dashState);
+    ).subscribe((preferences: PreferencesState) => {
+      if (preferences.dashboardState) {
+        this.applyState(preferences.dashboardState);
+      } else {
+        this.availableWidgets = this.generateDefaultConfig();
+        this.setDashState(this.availableWidgets);
+      }
       this.dashStateReady = true;
     });
   }

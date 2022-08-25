@@ -212,8 +212,8 @@ export class BootEnvironmentListComponent implements OnInit, AfterViewInit {
       this.loader.close();
       this.checkboxColumn.clearSelection();
     },
-    (res: WebsocketError) => {
-      new EntityUtils().handleWsError(this, res, this.dialog);
+    (error: WebsocketError) => {
+      new EntityUtils().handleWsError(this, error, this.dialog);
       this.loader.close();
     });
   }
@@ -234,8 +234,8 @@ export class BootEnvironmentListComponent implements OnInit, AfterViewInit {
             this.loader.close();
             this.checkboxColumn.clearSelection();
           },
-          (res: WebsocketError) => {
-            new EntityUtils().handleWsError(this, res, this.dialog);
+          (error: WebsocketError) => {
+            new EntityUtils().handleWsError(this, error, this.dialog);
             this.loader.close();
           },
         );
@@ -255,8 +255,8 @@ export class BootEnvironmentListComponent implements OnInit, AfterViewInit {
         this.loader.close();
         this.checkboxColumn.selection.clear();
       },
-      (res: WebsocketError) => {
-        new EntityUtils().handleWsError(this, res, this.dialog);
+      (error: WebsocketError) => {
+        new EntityUtils().handleWsError(this, error, this.dialog);
         this.loader.close();
       });
     }

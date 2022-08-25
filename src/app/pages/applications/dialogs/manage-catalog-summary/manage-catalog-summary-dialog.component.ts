@@ -42,13 +42,13 @@ export class ManageCatalogSummaryDialogComponent implements OnInit {
 
   ngOnInit(): void {
     this.loader.open();
-    this.ws.job('catalog.items', [this.catalog.label]).pipe(untilDestroyed(this)).subscribe((res: Job<CatalogItems>) => {
-      if (res.state !== JobState.Success) {
+    this.ws.job('catalog.items', [this.catalog.label]).pipe(untilDestroyed(this)).subscribe((job: Job<CatalogItems>) => {
+      if (job.state !== JobState.Success) {
         return;
       }
 
       this.loader.close();
-      const result = res.result;
+      const result = job.result;
       this.catalogItems = [];
       this.trainOptions = ['All'];
       if (result) {

@@ -25,7 +25,7 @@
 </ng-container>
 
 <ng-template #poolContainer>
-  <div *ngIf="!isLoading; else loading" fxFlex="100%" fxLayout="column">
+  <div fxFlex="100%" fxLayout="column">
     <!-- TODO: https://ixsystems.atlassian.net/browse/NAS-117820 -->
     <ix-unused-resources *ngIf="!isEmptyPools && false" [pools]="pools$ | async"></ix-unused-resources>
 
@@ -38,9 +38,4 @@
       class="pool"
     ></ix-dashboard-pool>
   </div>
-  <ng-template #loading>
-    <div fxFlex="100%" fxLayoutAlign="center center">
-      <mat-spinner [diameter]="120" class="spinner"></mat-spinner>
-    </div>
-  </ng-template>
 </ng-template>

@@ -188,8 +188,8 @@ export class DatasetQuotasUserlistComponent implements OnInit, AfterViewInit, On
       message,
       hideCheckBox: true,
       buttonMsg: button,
-    }).pipe(untilDestroyed(this)).subscribe((res: boolean) => {
-      if (res) {
+    }).pipe(untilDestroyed(this)).subscribe((confirmed) => {
+      if (confirmed) {
         window.localStorage.setItem('useFullFilter', this.useFullFilter.toString());
         this.getUserQuotas();
       } else {

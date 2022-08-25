@@ -31,8 +31,8 @@ export class RebootComponent implements OnInit {
     private localeService: LocaleService,
     private location: Location,
   ) {
-    this.sysGeneralService.getProductType$.pipe(untilDestroyed(this)).subscribe((res) => {
-      this.productType = res;
+    this.sysGeneralService.getProductType$.pipe(untilDestroyed(this)).subscribe((productType) => {
+      this.productType = productType;
     });
   }
 
@@ -61,8 +61,8 @@ export class RebootComponent implements OnInit {
     this.ws.call('system.reboot').pipe(untilDestroyed(this)).subscribe(
       () => {
       },
-      (res) => { // error on reboot
-        this.dialogService.errorReport(res.error, res.reason, res.trace.formatted)
+      (error) => { // error on reboot
+        this.dialogService.errorReport(error.error, error.reason, error.trace.formatted)
           .pipe(untilDestroyed(this))
           .subscribe(() => {
             this.router.navigate(['/session/signin']);

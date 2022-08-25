@@ -35,8 +35,8 @@ export class ConfigResetComponent implements OnInit {
     private localeService: LocaleService,
     private location: Location,
   ) {
-    this.sysGeneralService.getProductType$.pipe(untilDestroyed(this)).subscribe((res) => {
-      this.productType = res;
+    this.sysGeneralService.getProductType$.pipe(untilDestroyed(this)).subscribe((productType) => {
+      this.productType = productType;
     });
   }
 
@@ -75,9 +75,9 @@ export class ConfigResetComponent implements OnInit {
         this.isWsConnected();
       }, 15000);
     });
-    this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((res) => {
+    this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((failedJob) => {
       this.dialogRef.close();
-      this.dialogService.errorReport(res.error, res.state, res.exception);
+      this.dialogService.errorReport(failedJob.error, failedJob.state, failedJob.exception);
     });
   }
 }
