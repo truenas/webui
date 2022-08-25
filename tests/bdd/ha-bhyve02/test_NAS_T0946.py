@@ -411,7 +411,7 @@ def click_disable_failover_to_uncheck_it_click_save_and_confirm_changes(driver):
     element = driver.find_element_by_xpath('//mat-checkbox[contains(.,"Disable Failover")]')
     global class_attribute
     class_attribute = element.get_attribute('class')
-    if 'mat-checkbox-checked' not in class_attribute:
+    if 'mat-checkbox-checked' in class_attribute:
         driver.find_element_by_xpath('//mat-checkbox[contains(.,"Disable Failover")]').click()
 
     assert wait_on_element(driver, 7, '//button[contains(.,"Save")]', 'clickable')
@@ -425,8 +425,8 @@ def navigate_to_dashboard_wait_for_ha_to_be_online(driver):
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
     assert wait_on_element(driver, 10, '//span[text()="System Information"]')
     assert wait_on_element(driver, 15, '//span[contains(.,"HostName:") and contains(.,"truenas")]')
-    assert wait_on_element(driver, 15, '//span[contains(.,"HostName:") and contains(.,"truenas-b")]')
-    assert wait_on_element(driver, 180, '//mat-icon[@svgicon="ix:ha_enabled"]')
+    assert wait_on_element(driver, 180, '//span[contains(.,"HostName:") and contains(.,"truenas-b")]')
+    assert wait_on_element(driver, 30, '//mat-icon[@svgicon="ix:ha_enabled"]')
     time.sleep(5)
 
 
