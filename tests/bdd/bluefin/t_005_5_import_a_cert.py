@@ -1,6 +1,8 @@
 # coding=utf-8
 """SCALE UI feature tests."""
 import time
+import os
+from pathlib import Path
 from function import (
     wait_on_element,
     is_element_present,
@@ -70,8 +72,8 @@ def test_import_a_cert(driver):
 
 
     # click save on the confirm options page
-    assert wait_on_element(driver, 10, '//button[@ix-auto="button__SAVE"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
+    assert wait_on_element(driver, 10, '//span[contains(text(),"Save")]', 'clickable')
+    driver.find_element_by_xpath('//span[contains(text(),"Save")]').click()
     assert wait_on_element(driver, 5, '/*[contains(.,"Creating Certificate")]')
     assert wait_on_element_disappear(driver, 10, '//*[contains(.,"Creating Certificate")]')
 

@@ -12,8 +12,8 @@ from function import (
 
 
 
-def test_change_an_interal_cert(driver):
-    """test_change_an_interal_cert"""
+def test_create_an_internal_cert(driver):
+    """test_change_an_intenral_cert"""
     assert wait_on_element(driver, 7, '//mat-list-item[@ix-auto="option__Credentials"]', 'clickable')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Credentials"]').click()
     assert wait_on_element(driver, 7, '//*[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Certificates"]', 'clickable')
@@ -92,8 +92,8 @@ def test_change_an_interal_cert(driver):
 
 
     # click save on the confirm options page
-    assert wait_on_element(driver, 10, '//button[@ix-auto="button__SAVE"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
+    assert wait_on_element(driver, 10, '//span[contains(text(),"Save")]', 'clickable')
+    driver.find_element_by_xpath('//span[contains(text(),"Save")]').click()
     assert wait_on_element(driver, 5, '/*[contains(.,"Creating Certificate")]')
     assert wait_on_element_disappear(driver, 10, '//*[contains(.,"Creating Certificate")]')
 

@@ -88,8 +88,8 @@ def test_create_a_ca(driver):
 
 
     # click save on the confirm options page
-    assert wait_on_element(driver, 10, '//button[@ix-auto="button__SAVE"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
+    assert wait_on_element(driver, 10, '//span[contains(text(),"Save")]', 'clickable')
+    driver.find_element_by_xpath('//span[contains(text(),"Save")]').click()
     assert wait_on_element(driver, 5, '/*[contains(.,"Please wait")]')
     assert wait_on_element_disappear(driver, 10, '//*[contains(.,"Please wait")]')
 
