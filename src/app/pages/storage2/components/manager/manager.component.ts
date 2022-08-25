@@ -20,12 +20,12 @@ import { Job } from 'app/interfaces/job.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { CreatePool, Pool, UpdatePool } from 'app/interfaces/pool.interface';
 import { TopologyDisk } from 'app/interfaces/storage.interface';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { DownloadKeyDialogComponent } from 'app/modules/common/dialog/download-key/download-key-dialog.component';
 import { DialogFormConfiguration } from 'app/modules/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/modules/entity/entity-dialog/entity-dialog.component';
 import { FormParagraphConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
-import { EntityUtils } from 'app/modules/entity/utils';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { DialogService, WebSocketService } from 'app/services';
 import { StorageService } from 'app/services/storage.service';
@@ -246,6 +246,10 @@ export class ManagerComponent implements OnInit, AfterViewInit {
     this.dialog.dialogForm(conf);
   }
 
+  handleError = (error: WebsocketError | Job<null, unknown[]>): void => {
+    this.dialog.errorReportMiddleware(error);
+  };
+
   getDiskNumErrorMsg(disks: number): void {
     this.disknumError = `${this.translate.instant(this.disknumErrorMessage)} ${this.translate.instant('First vdev has {n} disks, new vdev has {m}', { n: this.firstDataVdevDisknum, m: disks })}`;
   }
@@ -289,7 +293,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
           this.firstDataVdevDisktype = disk[0].type;
         }
         this.getDuplicableDisks();
-      });
+      }, this.handleError);
       this.nameControl.setValue(res[0].name);
       this.volEncrypt = res[0].encrypt;
       this.ws.call(this.datasetQueryCall, [[['id', '=', res[0].name]]]).pipe(untilDestroyed(this)).subscribe((datasets) => {
@@ -297,11 +301,8 @@ export class ManagerComponent implements OnInit, AfterViewInit {
           this.extendedAvailable = datasets[0].available.parsed;
           this.size = filesize(this.extendedAvailable, { standard: 'iec' });
         }
-      });
-    },
-    (err) => {
-      new EntityUtils().handleWsError(this, err, this.dialog);
-    });
+      }, this.handleError);
+    }, this.handleError);
   }
 
   ngOnInit(): void {
@@ -311,10 +312,10 @@ export class ManagerComponent implements OnInit, AfterViewInit {
           this.encryptionAlgorithmOptions.push({ label: algorithm, value: algorithm });
         }
       }
-    });
+    }, this.handleError);
     this.store$.pipe(waitForAdvancedConfig, untilDestroyed(this)).subscribe((config) => {
       this.swapondrive = config.swapondrive;
-    });
+    }, this.handleError);
     this.route.params.pipe(untilDestroyed(this)).subscribe((params) => {
       if (params['poolId']) {
         this.pk = parseInt(params['poolId'], 10);
@@ -331,7 +332,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
         if (res) {
           this.existingPools = res;
         }
-      });
+      }, this.handleError);
     }
     this.nameFilter = new RegExp('');
     this.capacityFilter = new RegExp('');
@@ -384,7 +385,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
       this.getDuplicableDisks();
     }, (err) => {
       this.loader.close();
-      new EntityUtils().handleWsError(this, err, this.dialog);
+      this.handleError(err);
     });
   }
 
@@ -672,7 +673,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
           )
           .pipe(untilDestroyed(this)).subscribe(
             () => {},
-            (error) => new EntityUtils().handleWsError(this, error, this.dialog),
+            this.handleError,
             () => {
               dialogRef.close(false);
               this.goBack();
@@ -680,8 +681,8 @@ export class ManagerComponent implements OnInit, AfterViewInit {
           );
         dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((error) => {
           dialogRef.close(false);
-          new EntityUtils().handleWsError(this, error, this.dialog);
-        });
+          this.handleError(error);
+        }, this.handleError);
         dialogRef.componentInstance.submit();
       });
   }

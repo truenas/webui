@@ -71,7 +71,7 @@ export class ImportPoolComponent implements OnInit {
       } as Option));
       this.pool.options = of(opts);
       this.cdr.markForCheck();
-    });
+    }, this.dialogService.errorReportMiddleware);
   }
 
   onSubmit(): void {
@@ -91,12 +91,12 @@ export class ImportPoolComponent implements OnInit {
       this.isLoading = false;
       this.slideInService.close();
       this.modalService.refreshTable();
-    });
+    }, this.dialogService.errorReportMiddleware);
     dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((result) => {
       dialogRef.close(false);
       this.isLoading = false;
       this.errorReport(result);
-    });
+    }, this.dialogService.errorReportMiddleware);
   }
 
   errorReport(result: Job | WebsocketError): void {

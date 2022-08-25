@@ -12,7 +12,6 @@ import helptext from 'app/helptext/storage/volumes/volume-status';
 import { Option } from 'app/interfaces/option.interface';
 import { PoolAttachParams } from 'app/interfaces/pool.interface';
 import { UnusedDisk } from 'app/interfaces/storage.interface';
-import { EntityUtils } from 'app/modules/entity/utils';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { AppLoaderService, DialogService, WebSocketService } from 'app/services';
 
@@ -75,9 +74,9 @@ export class ExtendDialogComponent implements OnInit {
           this.snackbar.success(this.translate.instant('Vdev successfully extended.'));
           this.dialogRef.close(true);
         },
-        (error) => {
+        (err) => {
           this.loader.close();
-          new EntityUtils().handleWsError(this, error, this.dialogService);
+          this.dialogService.errorReportMiddleware(err);
         },
       );
   }
@@ -94,6 +93,6 @@ export class ExtendDialogComponent implements OnInit {
         );
 
         this.disksWithDuplicateSerials = disks.filter((disk) => disk.duplicate_serial.length);
-      });
+      }, this.dialogService.errorReportMiddleware);
   }
 }

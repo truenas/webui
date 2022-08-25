@@ -4,7 +4,7 @@ import {
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Pool } from 'app/interfaces/pool.interface';
 import { UnusedDisk } from 'app/interfaces/storage.interface';
-import { WebSocketService } from 'app/services';
+import { DialogService, WebSocketService } from 'app/services';
 
 @UntilDestroy()
 @Component({
@@ -20,12 +20,13 @@ export class UnusedResourcesComponent implements OnInit {
   constructor(
     private ws: WebSocketService,
     private cdr: ChangeDetectorRef,
+    private dialogService: DialogService,
   ) {}
 
   ngOnInit(): void {
     this.ws.call('disk.get_unused').pipe(untilDestroyed(this)).subscribe((disks) => {
       this.unusedDisks = disks;
       this.cdr.markForCheck();
-    });
+    }, this.dialogService.errorReportMiddleware);
   }
 }

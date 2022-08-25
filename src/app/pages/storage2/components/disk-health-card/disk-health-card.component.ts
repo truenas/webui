@@ -7,7 +7,7 @@ import { SmartTestResultStatus } from 'app/enums/smart-test-result-status.enum';
 import { TemperatureUnit } from 'app/enums/temperature.enum';
 import { Pool } from 'app/interfaces/pool.interface';
 import { Disk } from 'app/interfaces/storage.interface';
-import { WebSocketService } from 'app/services';
+import { DialogService, WebSocketService } from 'app/services';
 
 interface DiskState {
   health: DiskHealthLevel;
@@ -54,6 +54,7 @@ export class DiskHealthCardComponent implements OnInit, OnChanges {
   constructor(
     private ws: WebSocketService,
     private cdr: ChangeDetectorRef,
+    private dialogService: DialogService,
   ) { }
 
   ngOnInit(): void {
@@ -105,7 +106,7 @@ export class DiskHealthCardComponent implements OnInit, OnChanges {
     this.ws.call('disk.temperature_alerts', [Object.keys(this.diskDictionary)]).pipe(untilDestroyed(this)).subscribe((res) => {
       this.diskState.alters = res.length;
       this.cdr.markForCheck();
-    });
+    }, this.dialogService.errorReportMiddleware);
   }
 
   private loadSmartTasks(): void {
@@ -117,7 +118,7 @@ export class DiskHealthCardComponent implements OnInit, OnChanges {
           this.diskState.smartTests = this.diskState.smartTests + results.length;
         });
         this.cdr.markForCheck();
-      });
+      }, this.dialogService.errorReportMiddleware);
     });
   }
 
@@ -136,6 +137,6 @@ export class DiskHealthCardComponent implements OnInit, OnChanges {
       this.diskState.unit = TemperatureUnit.Celsius;
       this.diskState.symbolText = '°';
       this.cdr.markForCheck();
-    });
+    }, this.dialogService.errorReportMiddleware);
   }
 }

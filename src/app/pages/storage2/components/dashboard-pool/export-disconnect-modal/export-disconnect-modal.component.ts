@@ -118,7 +118,7 @@ export class ExportDisconnectModalComponent implements OnInit {
         this.dialogService.info(helptext.exportDisconnect, message + ' ' + destroyed);
       }
       entityJobRef.close(true);
-    });
+    }, this.dialogService.errorReportMiddleware);
     entityJobRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((res) => {
       let conditionalErrMessage = '';
       if (res.error) {
@@ -177,7 +177,7 @@ export class ExportDisconnectModalComponent implements OnInit {
         entityJobRef.close(true);
         this.dialogService.errorReport(helptext.exportError, res.error, res.exception);
       }
-    });
+    }, this.dialogService.errorReportMiddleware);
   }
 
   private loadRelatedEntities(): void {

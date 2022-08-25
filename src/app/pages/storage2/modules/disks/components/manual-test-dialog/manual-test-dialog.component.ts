@@ -9,7 +9,6 @@ import { of } from 'rxjs';
 import { SmartTestType } from 'app/enums/smart-test-type.enum';
 import { ManualSmartTest } from 'app/interfaces/smart-test.interface';
 import { Disk } from 'app/interfaces/storage.interface';
-import { EntityUtils } from 'app/modules/entity/utils';
 import { DialogService, WebSocketService } from 'app/services';
 
 export interface ManualTestDialogParams {
@@ -80,7 +79,7 @@ export class ManualTestDialogComponent {
           this.cdr.markForCheck();
         },
         (err) => {
-          new EntityUtils().handleWsError(this, err, this.dialogService);
+          this.dialogService.errorReportMiddleware(err);
           this.cdr.markForCheck();
         },
       );

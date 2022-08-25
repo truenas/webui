@@ -15,7 +15,6 @@ import { Dataset } from 'app/interfaces/dataset.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { Disk } from 'app/interfaces/storage.interface';
 import { VolumeData, VolumesData } from 'app/interfaces/volume-data.interface';
-import { EntityUtils } from 'app/modules/entity/utils';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import {
   ExportDisconnectModalComponent,
@@ -77,7 +76,7 @@ export class DashboardPoolComponent implements OnInit {
         this.volumeData = vd[this.pool.name];
         this.isVolumeDataLoading = false;
         this.cdr.markForCheck();
-      });
+      }, this.dialogService.errorReportMiddleware);
   }
 
   loadDisks(): void {
@@ -87,7 +86,7 @@ export class DashboardPoolComponent implements OnInit {
         this.diskDictionary = _.keyBy(disks, (disk) => disk.devname);
         this.isDisksLoading = false;
         this.cdr.markForCheck();
-      });
+      }, this.dialogService.errorReportMiddleware);
   }
 
   onExport(): void {
@@ -127,7 +126,7 @@ export class DashboardPoolComponent implements OnInit {
         }),
         catchError((error) => {
           this.loader.close();
-          new EntityUtils().handleWsError(this, error, this.dialogService);
+          this.dialogService.errorReportMiddleware(error);
           return EMPTY;
         }),
         untilDestroyed(this),
@@ -154,7 +153,7 @@ export class DashboardPoolComponent implements OnInit {
       }),
       catchError((error) => {
         this.loader.close();
-        new EntityUtils().handleWsError(this, error, this.dialogService);
+        this.dialogService.errorReportMiddleware(error);
         return EMPTY;
       }),
       untilDestroyed(this),

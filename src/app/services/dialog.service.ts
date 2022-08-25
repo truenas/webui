@@ -5,6 +5,7 @@ import { Observable } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { ConfirmOptions, ConfirmOptionsWithSecondaryCheckbox } from 'app/interfaces/dialog.interface';
 import { Job } from 'app/interfaces/job.interface';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { ConfirmDialogComponent } from 'app/modules/common/dialog/confirm-dialog/confirm-dialog.component';
 import { ErrorDialogComponent } from 'app/modules/common/dialog/error-dialog/error-dialog.component';
 import { GeneralDialogComponent, GeneralDialogConfig } from 'app/modules/common/dialog/general-dialog/general-dialog.component';
@@ -86,6 +87,17 @@ export class DialogService {
       return dialogRef;
     }
     return dialogRef.afterClosed();
+  }
+
+  errorReportMiddleware(res: WebsocketError | Job): void {
+    if ('trace' in res && res.trace.formatted) {
+      this.errorReport(res.trace.class, res.reason, res.trace.formatted);
+    } else if ('state' in res && res.error && res.exception) {
+      this.errorReport(res.state, res.error, res.exception);
+    } else {
+      // if it can't print the error at least put it on the console.
+      console.error(res);
+    }
   }
 
   errorReport(title: string, message: string, backtrace = '', logs?: Job): Observable<boolean> {
