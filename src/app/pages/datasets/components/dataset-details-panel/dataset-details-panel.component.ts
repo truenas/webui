@@ -39,7 +39,8 @@ export class DatasetDetailsPanelComponent implements OnInit {
     || this.datasetHasChildrenWithShares
     || !!this.dataset.smb_shares?.length
     || !!this.dataset.nfs_shares?.length
-    || !!this.dataset.iscsi_shares?.length;
+    || !!this.dataset.iscsi_shares?.length
+    || this.dataset.name.endsWith('ix-applications');
   }
 
   get datasetHasChildrenWithShares(): boolean {

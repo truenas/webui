@@ -3,10 +3,11 @@
     <h3 mat-card-title>{{ 'Roles' | translate }}</h3>
   </mat-card-header>
   <mat-card-content>
-    <div class="details-item" *ngIf="dataset.apps?.length">
+    <div class="details-item" *ngIf="dataset.apps?.length || isApplications">
       <mat-icon class="icon">apps</mat-icon>
       <div class="label">{{ 'Apps' | translate }}:</div>
-      <div class="apps value">{{ 'This dataset is used by one or more apps' | translate }}</div>
+      <div class="apps value" *ngIf="!isApplications">{{ 'This dataset is used by: {apps}' | translate: { apps: appsNames } }}</div>
+      <div class="apps value" *ngIf="isApplications">{{ 'This dataset is used to store Kubernetes config and other container related data' | translate }}</div>
       <a
         class="action"
         [routerLink]="['/apps']"

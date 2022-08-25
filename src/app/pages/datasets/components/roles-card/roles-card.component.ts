@@ -1,4 +1,5 @@
 import { Component, Input } from '@angular/core';
+import _ from 'lodash';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
 
 @Component({
@@ -10,6 +11,14 @@ export class RolesCardComponent {
   @Input() dataset: DatasetDetails;
 
   @Input() hasChildrenWithShares = false;
+
+  get isApplications(): boolean {
+    return this.dataset.name && this.dataset.name.endsWith('ix-applications');
+  }
+
+  get appsNames(): string {
+    return _.uniq(this.dataset.apps.map((app) => app.name)).join(', ');
+  }
 
   get smbSharesNames(): string {
     if (!this.dataset.smb_shares?.length) {
