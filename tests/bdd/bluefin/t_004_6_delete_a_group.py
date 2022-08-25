@@ -22,22 +22,23 @@ def test_delete_a_group(driver):
     assert wait_on_element(driver, 7, '//h1[contains(text(),"Groups")]')
 
     # on the Groups page click to expand the gidtestdupe entry."""
-    assert wait_on_element(driver, 10, '//tr[@ix-auto="expander__gidtestdupe"]/td', 'clickable')
-    driver.find_element_by_xpath('//tr[@ix-auto="expander__gidtestdupe"]/td').click()
-    
+    assert wait_on_element(driver, 10, '//tr[contains(.,"gidtestdupe")]//mat-icon', 'clickable')
+    driver.find_element_by_xpath('//tr[contains(.,"gidtestdupe")]//mat-icon').click()
 
     # click delete, click the confirm checkbox, and click delete
-    assert wait_on_element(driver, 7, '//button[@ix-auto="button__DELETE_gidtestdupe_gidtestdupe"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__DELETE_gidtestdupe_gidtestdupe"]').click()
+    assert wait_on_element(driver, 7, '//mat-icon[contains(text(),"delete")]', 'clickable')
+    driver.find_element_by_xpath('//mat-icon[contains(text(),"delete")]').click()
 
-    assert wait_on_element(driver, 10, '//mat-checkbox[@ix-auto="checkbox__CONFIRM"]', 'clickable')
-    driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__CONFIRM"]').click()
+    #assert wait_on_element(driver, 10, '//ix-form-checkbox//div[1]//mat-checkbox//label//span', 'clickable')
+    #driver.find_element_by_xpath('//ix-form-checkbox//div[1]//mat-checkbox//label//span').click()
 
-    assert wait_on_element(driver, 7, '//span[contains(text(),"DELETE")]', 'clickable')
-    driver.find_element_by_xpath('//span[contains(text(),"DELETE")]').click()
+    assert wait_on_element(driver, 10, '//mat-dialog-container//ix-entity-dialog//div[3]//mat-checkbox//label', 'clickable')
+    driver.find_element_by_xpath('//mat-dialog-container//ix-entity-dialog//div[3]//mat-checkbox//label').click()
 
+    assert wait_on_element(driver, 20, '//button//span[contains(.,"Confirm")]', 'clickable')
+    driver.find_element_by_xpath('//button//span[contains(.,"Confirm")]').click()
 
     # verify the group was deleted
-    assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
+    #assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
     assert wait_on_element(driver, 10, '//h1[contains(.,"Groups")]')
     assert wait_on_element(driver, 10, '//div[contains(.,"gidtestdupe")]') is False

@@ -14,19 +14,10 @@ from function import (
 
 def test_change_a_group_name(driver):
     """test_change_a_group_name"""
-    if not is_element_present(driver, '//h1[contains(text(),"Groups")]'):
-        assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Credentials"]', 'clickable')
-        driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Credentials"]').click()
-        assert wait_on_element(driver, 10, '//*[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Local Groups"]', 'clickable')
-        driver.find_element_by_xpath('//*[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Local Groups"]').click()
-    assert wait_on_element(driver, 7, '//h1[contains(text(),"Groups")]')
-
     # on the Groups page expand QE group and click edit
     assert wait_on_element(driver, 10, '//h1[contains(text(),"Groups")]')
-    assert wait_on_element(driver, 10, '//tr[@ix-auto="expander__qetest"]/td', 'clickable')
-    driver.find_element_by_xpath('//tr[@ix-auto="expander__qetest"]/td').click()
-    assert wait_on_element(driver, 7, '//button[@ix-auto="button__EDIT_qetest_qetest"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__EDIT_qetest_qetest"]').click()
+    assert wait_on_element(driver, 7, '//span[contains(text(),"Edit")]', 'clickable')
+    driver.find_element_by_xpath('//span[contains(text(),"Edit")]').click()
 
 
     # change the group name from qetest to qatest and click save

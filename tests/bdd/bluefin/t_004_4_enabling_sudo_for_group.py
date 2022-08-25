@@ -1,6 +1,7 @@
 # coding=utf-8
 """SCALE UI feature tests."""
 import time
+from selenium.webdriver.common.keys import Keys
 from function import (
     wait_on_element,
     is_element_present,
@@ -13,13 +14,8 @@ from function import (
 
 
 
-def test_enabling_sudo_for_group(driver):
+def test_enabling_sudo_for_group(driver, nas_ip):
     """test_enabling_sudo_for_group"""
-    if not is_element_present(driver, '//h1[contains(text(),"Groups")]'):
-        assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Credentials"]', 'clickable')
-        driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Credentials"]').click()
-        assert wait_on_element(driver, 10, '//*[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Local Groups"]', 'clickable')
-        driver.find_element_by_xpath('//*[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Local Groups"]').click()
     assert wait_on_element(driver, 7, '//h1[contains(text(),"Groups")]')
 
     # click on Credentials and Local Users
@@ -31,35 +27,42 @@ def test_enabling_sudo_for_group(driver):
 
     # create new qetestuser user add to qatest group
     assert wait_on_element(driver, 10, '//div[contains(.,"Users")]')
-    assert wait_on_element(driver, 10, '//button[@ix-auto="button__Users_ADD"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__Users_ADD"]').click()
+    assert wait_on_element(driver, 10, '//span[contains(.,"Add")]', 'clickable')
+    driver.find_element_by_xpath('//span[contains(.,"Add")]').click()
     assert wait_on_element(driver, 7, '//h3[contains(.,"Add User")]')
-    assert wait_on_element(driver, 7, '//input[@ix-auto="input__Full Name"]')
-    driver.find_element_by_xpath('//input[@ix-auto="input__Full Name"]').clear()
-    driver.find_element_by_xpath('//input[@ix-auto="input__Full Name"]').send_keys('QE user')
-    driver.find_element_by_xpath('//input[@ix-auto="input__Username"]').clear()
-    driver.find_element_by_xpath('//input[@ix-auto="input__Username"]').send_keys('qetestuser')
-    driver.find_element_by_xpath('//input[@ix-auto="input__Password"]').clear()
-    driver.find_element_by_xpath('//input[@ix-auto="input__Password"]').send_keys('testing')
-    driver.find_element_by_xpath('//input[@ix-auto="input__Confirm Password"]').clear()
-    driver.find_element_by_xpath('//input[@ix-auto="input__Confirm Password"]').send_keys('testing')
-    assert wait_on_element(driver, 7, '//mat-select[@ix-auto="select__Auxiliary Groups"]', 'clickable')
-    # scroll down to Auxiliary Groups
-    element = driver.find_element_by_xpath('//mat-select[@ix-auto="select__Auxiliary Groups"]')
+    assert wait_on_element_disappear(driver, 10, '//h6[contains(.,"Please wait")]')
+    """input in the following fields Full Name, Username, and password."""
+    assert wait_on_element(driver, 7, '//ix-input[@formcontrolname="full_name"]//input')
+    driver.find_element_by_xpath('//ix-input[@formcontrolname="full_name"]//input').clear()
+    driver.find_element_by_xpath('//ix-input[@formcontrolname="full_name"]//input').send_keys('QE user')
+    driver.find_element_by_xpath('//ix-input[@formcontrolname="username"]//input').clear()
+    driver.find_element_by_xpath('//ix-input[@formcontrolname="username"]//input').send_keys('qetestuser')
+    driver.find_element_by_xpath('//ix-input[@formcontrolname="password"]//input').clear()
+    driver.find_element_by_xpath('//ix-input[@formcontrolname="password"]//input').send_keys('testing')
+    driver.find_element_by_xpath('//ix-input[@formcontrolname="password_conf"]//input').clear()
+    driver.find_element_by_xpath('//ix-input[@formcontrolname="password_conf"]//input').send_keys('testing')
+    # set group
+    assert wait_on_element(driver, 7, '//ix-select[@formcontrolname="groups"]//mat-select', 'clickable')
+    element = driver.find_element_by_xpath('//ix-select[@formcontrolname="groups"]//mat-select')
+    # Scroll to qatest
     driver.execute_script("arguments[0].scrollIntoView();", element)
-    assert wait_on_element(driver, 7, '//mat-select[@ix-auto="select__Auxiliary Groups"]', 'clickable')
-    driver.find_element_by_xpath('//mat-select[@ix-auto="select__Auxiliary Groups"]').click()
+    time.sleep(0.5)
+    driver.find_element_by_xpath('//ix-select[@formcontrolname="groups"]//mat-select').click()
+    assert wait_on_element(driver, 7, '//mat-option[span[contains(., "qatest")]]', 'clickable')
     element = driver.find_element_by_xpath('//span[contains(.,"qatest")]')
     # Scroll to qatest
     driver.execute_script("arguments[0].scrollIntoView();", element)
-    assert wait_on_element(driver, 15, '//mat-option[@ix-auto="option__Auxiliary Groups_qatest"]', 'clickable')
-    driver.find_element_by_xpath('//mat-option[@ix-auto="option__Auxiliary Groups_qatest"]').click()
-    # time.sleep(2)
-    driver.find_element_by_xpath('//mat-option[@ix-auto="option__Auxiliary Groups_qatest"]').send_keys(Keys.TAB)
-    element = driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]')
+    time.sleep(0.5)
+    assert wait_on_element(driver, 7, '//mat-option[span[contains(., "qatest")]]', 'clickable')
+    driver.find_element_by_xpath('//mat-option[span[contains(., "qatest")]]').click()
+    driver.find_element_by_xpath('//mat-option[span[contains(., "qatest")]]').send_keys(Keys.TAB)
+    assert wait_on_element(driver, 10, '//button[span[contains(.,"Save")]]', 'clickable')
+    element = driver.find_element_by_xpath('//button[span[contains(.,"Save")]]')
     driver.execute_script("arguments[0].scrollIntoView();", element)
-    wait_on_element(driver, 10, '//button[@ix-auto="button__SAVE"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
+    driver.find_element_by_xpath('//button[span[contains(.,"Save")]]').click()
+
+
+
     assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
     assert wait_on_element(driver, 10, '//div[contains(.,"Users")]')
     assert wait_on_element(driver, 10, '//div[contains(.,"qetestuser")]')
@@ -81,10 +84,10 @@ def test_enabling_sudo_for_group(driver):
 
     # on the Groups page expand QE group and click edit
     assert wait_on_element(driver, 10, '//h1[contains(text(),"Groups")]')
-    assert wait_on_element(driver, 10, '//tr[@ix-auto="expander__qatest"]/td', 'clickable')
-    driver.find_element_by_xpath('//tr[@ix-auto="expander__qatest"]/td').click()
-    assert wait_on_element(driver, 7, '//button[@ix-auto="button__EDIT_qatest_qatest"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__EDIT_qatest_qatest"]').click()
+    assert wait_on_element(driver, 10, '//td[contains(text(),"qetest")]', 'clickable')
+    driver.find_element_by_xpath('//td[contains(text(),"qetest")]').click()
+    assert wait_on_element(driver, 7, '//span[contains(text(),"Edit")]', 'clickable')
+    driver.find_element_by_xpath('//span[contains(text(),"Edit")]').click()
 
 
     # check the enable sudo box and click save

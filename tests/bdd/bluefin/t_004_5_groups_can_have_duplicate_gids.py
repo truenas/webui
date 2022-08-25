@@ -23,9 +23,8 @@ def test_groups_can_have_duplicate_gids(driver):
 
     # click on Credentials and Local Users
     assert wait_on_element(driver, 10, '//h1[contains(text(),"Groups")]')
-    assert wait_on_element(driver, 10, '//button[@ix-auto="button__Groups_ADD"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__Groups_ADD"]').click()
-
+    assert wait_on_element(driver, 10, '//span[contains(.,"Add")]', 'clickable')
+    driver.find_element_by_xpath('//span[contains(.,"Add")]').click()
 
     # input the group name, GID, enable duplicate gids and click save
     assert wait_on_element(driver, 7, '//h3[contains(.,"Add Group")]')
@@ -52,8 +51,8 @@ def test_groups_can_have_duplicate_gids(driver):
 
     # on the Groups page click Add again
     assert wait_on_element(driver, 10, '//h1[contains(text(),"Groups")]')
-    assert wait_on_element(driver, 10, '//button[@ix-auto="button__Groups_ADD"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__Groups_ADD"]').click()
+    assert wait_on_element(driver, 10, '//span[contains(.,"Add")]', 'clickable')
+    driver.find_element_by_xpath('//span[contains(.,"Add")]').click()
 
 
     # input the duplicate group name, GID, enable duplicate gids and click save

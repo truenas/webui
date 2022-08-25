@@ -28,12 +28,9 @@ def test_create_a_group(driver):
 
 
     # on the Groups page, close the note and click Add
-    assert wait_on_element(driver, 7, '//h1[contains(.,"Display Note")]')
-    assert wait_on_element(driver, 5, '//span[contains(text(),"CLOSE")]', 'clickable')
-    driver.find_element_by_xpath('//span[contains(text(),"CLOSE")]').click()  
     assert wait_on_element(driver, 10, '//h1[contains(text(),"Groups")]')
-    assert wait_on_element(driver, 10, '//button[@ix-auto="button__Groups_ADD"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__Groups_ADD"]').click()
+    assert wait_on_element(driver, 10, '//span[contains(.,"Add")]', 'clickable')
+    driver.find_element_by_xpath('//span[contains(.,"Add")]').click()
 
 
     # input the group name and click save
