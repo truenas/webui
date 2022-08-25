@@ -46,11 +46,12 @@
         </span>
       </div>
       <div class="details-item">
-        <span class="label">{{ 'Case Sensitivity:' | translate }} </span>
-        <span *ngIf="!isLoading; else loaderSkel" class="value">
-          <ng-container *ngIf="extraProperties?.casesensitivity?.value; else notAvailable">
-            {{ extraProperties.casesensitivity.value }}
-          </ng-container>
+        <span class="label">{{ 'Path:' | translate }} </span>
+        <span *ngIf="!isLoading; else loaderSkel"
+          [matTooltip]="dataset.name"
+          matTooltipPosition="above"
+          class="value dataset-path">
+          {{ dataset.name }}
         </span>
       </div>
     </mat-card-content>

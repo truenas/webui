@@ -1,8 +1,9 @@
+import { MediaMatcher } from '@angular/cdk/layout';
 import {
-  Component, Inject, Input, OnDestroy, OnInit,
+  AfterViewInit, Component, Inject, Input, OnDestroy, OnInit,
 } from '@angular/core';
 import { MediaObserver } from '@angular/flex-layout';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MatDialog, MatDialogRef, DialogPosition } from '@angular/material/dialog';
 import { MatSidenav } from '@angular/material/sidenav';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -55,7 +56,7 @@ import { alertIndicatorPressed, sidenavUpdated, jobIndicatorPressed } from 'app/
   styleUrls: ['./topbar.component.scss'],
   templateUrl: './topbar.component.html',
 })
-export class TopbarComponent implements OnInit, OnDestroy {
+export class TopbarComponent implements OnInit, AfterViewInit, OnDestroy {
   @Input() sidenav: MatSidenav;
 
   interval: Interval;
@@ -88,6 +89,13 @@ export class TopbarComponent implements OnInit, OnDestroy {
   screenSize = 'waiting';
   productType: ProductType;
 
+  breakpoints!: MediaQueryList;
+
+  dialogPosition: DialogPosition = {
+    top: '48px',
+    right: '16px',
+  };
+
   jobBadgeCount$ = this.store$.select(selectRunningJobsCount);
   alertBadgeCount$ = this.store$.select(selectImportantUnreadAlertsCount);
 
@@ -110,6 +118,7 @@ export class TopbarComponent implements OnInit, OnDestroy {
     private store$: Store<AlertSlice>,
     private core: CoreService,
     private snackbar: SnackbarService,
+    public mediaMatcher: MediaMatcher,
     @Inject(WINDOW) private window: Window,
   ) {
     this.systemGeneralService.getProductType$.pipe(untilDestroyed(this)).subscribe((productType) => {
@@ -212,10 +221,7 @@ export class TopbarComponent implements OnInit, OnDestroy {
         width: '400px',
         hasBackdrop: true,
         panelClass: 'topbar-panel',
-        position: {
-          top: '48px',
-          right: '16px',
-        },
+        position: this.dialogPosition,
       });
 
       this.taskDialogRef.beforeClosed().pipe(
@@ -224,6 +230,34 @@ export class TopbarComponent implements OnInit, OnDestroy {
         this.onJobPanelClosed();
       });
     });
+  }
+
+  ngAfterViewInit(): void {
+    this.breakpoints = this.mediaMatcher.matchMedia('(max-width: 767px)');
+
+    const positioner = (hasFooter: boolean): void => {
+      if (hasFooter) {
+        this.dialogPosition = {
+          bottom: '48px',
+          right: '16px',
+        };
+      } else {
+        this.dialogPosition = {
+          top: '48px',
+          right: '16px',
+        };
+      }
+
+      if (this.taskDialogRef) {
+        this.taskDialogRef.updatePosition(this.dialogPosition);
+      }
+    };
+
+    // Check width on page load
+    positioner(window.innerWidth < 768);
+
+    // Check width on resize
+    this.breakpoints.addEventListener('change', (state) => positioner(state.matches));
   }
 
   ngOnDestroy(): void {

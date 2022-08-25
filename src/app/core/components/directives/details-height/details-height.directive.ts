@@ -45,9 +45,7 @@ export class IxDetailsHeightDirective implements OnInit, OnDestroy, OnChanges {
   }
 
   onScroll(): void {
-    const parentElement = this.window.document.getElementsByClassName(
-      this.ixDetailsHeightParentClass,
-    )[0] as HTMLElement;
+    const parentElement = this.getParentElement();
 
     if (!this.parentPadding) {
       this.parentPadding = parseFloat(
@@ -72,6 +70,12 @@ export class IxDetailsHeightDirective implements OnInit, OnDestroy, OnChanges {
     }
 
     this.element.nativeElement.style.height = this.heightCssValue;
+  }
+
+  private getParentElement(): HTMLElement {
+    return this.window.document.getElementsByClassName(
+      this.ixDetailsHeightParentClass,
+    )[0] as HTMLElement;
   }
 
   private getInitialTopPosition(element: HTMLElement): number {

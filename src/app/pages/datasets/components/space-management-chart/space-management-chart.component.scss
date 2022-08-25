@@ -1,14 +1,23 @@
-$chart-size: 150px !default;
+@import '~assets/styles/scss-imports/splitview';
+$chart-size: 150px;
 
 :host {
   display: flex;
   gap: 24px;
   min-height: $chart-size;
+
+  @media (max-width: calc($breakpoint-dualcolumn - 1px)) {
+    flex-wrap: wrap;
+  }
 }
 
 .chart-wrapper {
   height: $chart-size;
   width: $chart-size;
+
+  @media (max-width: calc($breakpoint-dualcolumn - 1px)) {
+    margin: 0 auto;
+  }
 }
 
 .chart-wrapper canvas {

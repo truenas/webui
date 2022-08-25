@@ -2,6 +2,18 @@
 
 .card {
   @include details-card();
+
+  .value.dataset-path {
+    display: flow-root;
+    max-width: calc(100% - 85px);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  ix-copy-btn {
+    margin-top: -4px;
+  }
 }
 
 .loader-skel {

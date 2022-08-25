@@ -1,0 +1,17 @@
+@import '~assets/styles/scss-imports/cssvars';
+
+// TreeTable - Cards split view breakpoints & other variables
+$table-min-width: 620px;
+$table-width: 700px;
+$card-width: 455px;
+$card-width-slim: 356px;
+$gap: 8px;
+$breakpoint-min-mobile: 320px;
+$breakpoint-tablet: 767px;
+$breakpoint-singlecolumn: $breakpoint-md;
+$breakpoint-dualcolumn-slim: 1680px;
+$breakpoint-dualcolumn: $breakpoint-lg;
+$breakpoint-triplecolumn: 2500px;
+$breakpoint-flex: 3132px;
+$breakpoint-hidden: calc($breakpoint-singlecolumn - 1px); 
+

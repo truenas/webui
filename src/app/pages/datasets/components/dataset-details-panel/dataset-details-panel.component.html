@@ -1,26 +1,39 @@
 <div class="header">
   <h3 class="title">
-    {{ 'Details for' | translate }}
-    <ng-container *ngIf="!isRoot">
-      {{ parentPath }}
-    </ng-container>
-    <span class="own-name-and-icon">
-      <ix-dataset-icon [dataset]="dataset"></ix-dataset-icon>
-      {{ ownName }}
+
+    <div class="mobile-prefix">
+      <a [routerLink]="['/datasets']" class="mobile-back-button">
+        <ix-icon 
+        name="mdi-chevron-left"
+        (click)="onCloseMobileDetails()"
+        ></ix-icon>
+      </a>
+      {{ 'Details for' | translate }}
+    </div>
+
+    <span class="prefix">
+      {{ 'Details for' | translate }}
     </span>
+
+    <div class="full-path">
+        <ix-dataset-icon [dataset]="dataset"></ix-dataset-icon>
+        <span class="own-name">{{ ownName }}</span>
+    </div>
   </h3>
 
-  <div *ngIf="!dataset.locked" class="add-buttons">
-    <button
-      *ngIf="!isZvol"
-      mat-button
-      (click)="onAddZvol()"
-    >{{ 'Add Zvol' | translate }}</button>
-    <button
-      mat-button
-      color="primary"
-      (click)="onAddDataset()"
-    >{{ 'Add Dataset' | translate }}</button>
+  <div class="add-buttons">
+    <ng-container *ngIf="!dataset.locked" >
+      <button
+        *ngIf="!isZvol"
+        mat-button
+        (click)="onAddZvol()"
+      >{{ 'Add Zvol' | translate }}</button>
+      <button
+        mat-button
+        color="primary"
+        (click)="onAddDataset()"
+      >{{ 'Add Dataset' | translate }}</button>
+    </ng-container>
   </div>
 </div>
 
