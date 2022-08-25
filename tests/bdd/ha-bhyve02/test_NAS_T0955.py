@@ -52,7 +52,7 @@ def if_login_page_appear_enter_root_and_password(driver, user, password):
 def you_should_see_the_dashboard(driver):
     """You should see the dashboard."""
     assert wait_on_element(driver, 10, '//h1[contains(.,"Dashboard")]')
-    assert wait_on_element(driver, 10, '//span[contains(.,"System Information")]')
+    assert wait_on_element(driver, 10, '//span[text()="System Information"]')
 
 
 @then('Click on the Credentials item in the left side menu')
@@ -76,7 +76,7 @@ def click_on_localusers(driver):
 @then('The Users page should open')
 def the_users_page_should_open(driver):
     """The Users page should open."""
-    assert wait_on_element(driver, 7, '//div[contains(.,"Users")]')
+    assert wait_on_element(driver, 7, '//h1[text()="Users"]')
     time.sleep(0.5)
 
 
@@ -90,37 +90,38 @@ def on_the_right_side_of_the_table_click_the_expand_arrow_for_one_of_the_users(d
 @then('The User Field should expand down to list further details')
 def the_user_field_should_expand_down_to_list_further_details(driver):
     """The User Field should expand down to list further details."""
-    assert wait_on_element(driver, 7, '(//tr[contains(.,"ericbsd")]/following-sibling::tr)[1]//button[contains(.,"Edit")]')
+    assert wait_on_element(driver, 7, '//tr[contains(.,"ericbsd")]/following-sibling::ix-user-details-row//button[contains(.,"Edit")]')
 
 
 @then('Click the Edit button that appears')
 def click_the_edit_button_that_appears(driver):
     """Click the Edit button that appears."""
-    driver.find_element_by_xpath('(//tr[contains(.,"ericbsd")]/following-sibling::tr)[1]//button[contains(.,"Edit")]').click()
+    driver.find_element_by_xpath('//tr[contains(.,"ericbsd")]/following-sibling::ix-user-details-row//button[contains(.,"Edit")]').click()
 
 
 @then('The User Edit Page should open')
 def the_user_edit_page_should_open(driver):
     """The User Edit Page should open."""
-    assert wait_on_element(driver, 7, '//h3[contains(.,"Edit User")]')
+    assert wait_on_element(driver, 7, '//h3[text()="Edit User"]')
 
 
 @then('Change the password in both fields and click save')
 def change_the_password_in_both_fields_and_click_save(driver):
     """Change the password in both fields and click save."""
-    assert wait_on_element(driver, 7, '//input[@ix-auto="input__Password"]', 'inputable')
-    driver.find_element_by_xpath('//input[@ix-auto="input__Password"]').send_keys('testing1')
-    driver.find_element_by_xpath('//input[@ix-auto="input__Confirm Password"]').clear()
-    driver.find_element_by_xpath('//input[@ix-auto="input__Confirm Password"]').send_keys('testing1')
+    assert wait_on_element(driver, 7, '//ix-input[@formcontrolname="password"]//input', 'inputable')
+    driver.find_element_by_xpath('//ix-input[@formcontrolname="password"]//input').clear()
+    driver.find_element_by_xpath('//ix-input[@formcontrolname="password"]//input').send_keys('testing1')
+    driver.find_element_by_xpath('//ix-input[@formcontrolname="password_conf"]//input').clear()
+    driver.find_element_by_xpath('//ix-input[@formcontrolname="password_conf"]//input').send_keys('testing1')
 
 
 @then('Change should be saved')
 def change_should_be_saved(driver):
     """Change should be saved."""
-    assert wait_on_element(driver, 7, '//button[@ix-auto="button__SAVE"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
+    assert wait_on_element(driver, 7, '//button[contains(.,"Save")]', 'clickable')
+    driver.find_element_by_xpath('//button[contains(.,"Save")]').click()
     assert wait_on_element_disappear(driver, 7, '//h6[contains(.,"Please wait")]')
-    assert wait_on_element(driver, 7, '//div[contains(.,"Users")]')
+    assert wait_on_element(driver, 7, '//h1[text()="Users"]')
 
 
 @then('Log out and try to log back in with the old password for that user')
